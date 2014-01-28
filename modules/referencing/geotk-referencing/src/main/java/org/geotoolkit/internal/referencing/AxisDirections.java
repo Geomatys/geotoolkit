@@ -127,6 +127,6 @@ public final class AxisDirections extends Static {
      * @since 3.20
      */
     public static int indexOf(final CoordinateSystem cs, final AxisDirection direction) {
-        return org.apache.sis.internal.referencing.AxisDirections.indexOf(cs, direction);
+        return org.apache.sis.internal.referencing.AxisDirections.indexOfColinear(cs, direction);
     }
 }

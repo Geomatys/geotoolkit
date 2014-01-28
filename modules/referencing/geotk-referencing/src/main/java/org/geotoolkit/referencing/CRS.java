@@ -52,15 +52,12 @@ import org.geotoolkit.factory.FactoryNotFoundException;
 import org.geotoolkit.factory.FactoryRegistryException;
 import org.geotoolkit.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.metadata.iso.extent.DefaultGeographicBoundingBox;
 import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
-import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.cs.DefaultEllipsoidalCS;
 import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;
 import org.geotoolkit.referencing.operation.MathTransforms;
 import org.geotoolkit.internal.referencing.CRSUtilities;
-import org.geotoolkit.internal.referencing.AxisDirections;
 import org.geotoolkit.internal.referencing.OperationContext;
 import org.geotoolkit.resources.Errors;
 
@@ -613,29 +610,12 @@ public final class CRS extends Static {
      *
      * @category information
      * @since 2.3
+     *
+     * @deprecated Moved to Apache SIS {@link org.apache.sis.referencing.CRS} class.
      */
+    @Deprecated
     public static GeographicBoundingBox getGeographicBoundingBox(final CoordinateReferenceSystem crs) {
-        GeographicBoundingBox bounds = null;
-        DefaultGeographicBoundingBox merged = null;
-        if (crs != null) {
-            final Extent domainOfValidity = crs.getDomainOfValidity();
-            if (domainOfValidity != null) {
-                for (final GeographicExtent extent : domainOfValidity.getGeographicElements()) {
-                    if (extent instanceof GeographicBoundingBox) {
-                        final GeographicBoundingBox candidate = (GeographicBoundingBox) extent;
-                        if (bounds == null) {
-                            bounds = candidate;
-                        } else {
-                            if (merged == null) {
-                                bounds = merged = new DefaultGeographicBoundingBox(bounds);
-                            }
-                            merged.add(candidate);
-                        }
-                    }
-                }
-            }
-        }
-        return bounds;
+        return org.apache.sis.referencing.CRS.getGeographicBoundingBox(crs);
     }
 
     /**
@@ -677,7 +657,11 @@ public final class CRS extends Static {
      *
      * @category information
      * @since 3.05
+     *
+     * @deprecated Moved to Apache SIS {@link org.apache.sis.referencing.CRS} class,
+     *             with a more conservative semantic.
      */
+    @Deprecated
     public static boolean isHorizontalCRS(CoordinateReferenceSystem crs) {
         if (crs instanceof SingleCRS) {
             final int dimension = crs.getCoordinateSystem().getDimension();
@@ -793,7 +777,10 @@ search:             if (DefaultCoordinateSystemAxis.isCompassDirection(axis.getD
      *
      * @category information
      * @since 2.4
+     *
+     * @deprecated Generalized by {@link #getHorizontalCRS(CoordinateReferenceSystem)}.
      */
+    @Deprecated
     public static ProjectedCRS getProjectedCRS(final CoordinateReferenceSystem crs) {
         if (crs instanceof ProjectedCRS) {
             return (ProjectedCRS) crs;
@@ -819,28 +806,12 @@ search:             if (DefaultCoordinateSystemAxis.isCompassDirection(axis.getD
      *
      * @category information
      * @since 2.4
+     *
+     * @deprecated Moved to Apache SIS {@link org.apache.sis.referencing.CRS} class.
      */
+    @Deprecated
     public static VerticalCRS getVerticalCRS(final CoordinateReferenceSystem crs) {
-        if (crs instanceof VerticalCRS) {
-            return (VerticalCRS) crs;
-        }
-        if (crs instanceof CompoundCRS) {
-            final CompoundCRS cp = (CompoundCRS) crs;
-            for (final CoordinateReferenceSystem c : cp.getComponents()) {
-                final VerticalCRS candidate = getVerticalCRS(c);
-                if (candidate != null) {
-                    return candidate;
-                }
-            }
-        }
-        if (crs instanceof GeographicCRS) {
-            final CoordinateSystem cs = crs.getCoordinateSystem();
-            if (cs.getDimension()  >= 3) {
-                assert AxisDirections.indexOf(cs, AxisDirection.UP) >= 0 : cs;
-                return DefaultVerticalCRS.ELLIPSOIDAL_HEIGHT;
-            }
-        }
-        return null;
+        return org.apache.sis.referencing.CRS.getVerticalCRS(crs, true);
     }
 
     /**
@@ -852,21 +823,12 @@ search:             if (DefaultCoordinateSystemAxis.isCompassDirection(axis.getD
      *
      * @category information
      * @since 2.4
+     *
+     * @deprecated Moved to Apache SIS {@link org.apache.sis.referencing.CRS} class.
      */
+    @Deprecated
     public static TemporalCRS getTemporalCRS(final CoordinateReferenceSystem crs) {
-        if (crs instanceof TemporalCRS) {
-            return (TemporalCRS) crs;
-        }
-        if (crs instanceof CompoundCRS) {
-            final CompoundCRS cp = (CompoundCRS) crs;
-            for (final CoordinateReferenceSystem c : cp.getComponents()) {
-                final TemporalCRS candidate = getTemporalCRS(c);
-                if (candidate != null) {
-                    return candidate;
-                }
-            }
-        }
-        return null;
+        return org.apache.sis.referencing.CRS.getTemporalCRS(crs);
     }
 
     /**
