@@ -17,6 +17,7 @@
 package org.geotoolkit.display2d.service;
 
 import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.Polygon;
@@ -38,6 +39,7 @@ import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.filter.DefaultFilterFactory2;
+import org.geotoolkit.geometry.GeometricUtilities;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapBuilder;
@@ -86,7 +88,7 @@ public class MeridianTest {
             new Coordinate( 0,  0)
         });
         
-        final MapContext context = createFeatureLayer(poly);
+        final MapContext context = createFeatureLayer(poly, Polygon.class);
         final SceneDef sceneDef = new SceneDef(context);
         
         final GeneralEnvelope env = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
@@ -113,7 +115,7 @@ public class MeridianTest {
             new Coordinate(+170, +10)
         });
         
-        final MapContext context = createFeatureLayer(poly);
+        final MapContext context = createFeatureLayer(poly, Polygon.class);
         final SceneDef sceneDef = new SceneDef(context);
         
         final GeneralEnvelope env = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
@@ -141,7 +143,7 @@ public class MeridianTest {
             new Coordinate(-170, +10)
         });
         
-        final MapContext context = createFeatureLayer(poly);
+        final MapContext context = createFeatureLayer(poly, Polygon.class);
         final SceneDef sceneDef = new SceneDef(context);
         
         final GeneralEnvelope env = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
@@ -169,7 +171,7 @@ public class MeridianTest {
             new Coordinate(+170, +10)
         });
         
-        final MapContext context = createFeatureLayer(poly);
+        final MapContext context = createFeatureLayer(poly, Polygon.class);
         final SceneDef sceneDef = new SceneDef(context);
         
         final GeneralEnvelope env = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
@@ -197,7 +199,7 @@ public class MeridianTest {
             new Coordinate(-170, +10)
         });
         
-        final MapContext context = createFeatureLayer(poly);
+        final MapContext context = createFeatureLayer(poly, Polygon.class);
         final SceneDef sceneDef = new SceneDef(context);
         
         final GeneralEnvelope env = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
@@ -227,7 +229,7 @@ public class MeridianTest {
             new Coordinate(-180, +10)
         });
         
-        final MapContext context = createFeatureLayer(poly);
+        final MapContext context = createFeatureLayer(poly, Polygon.class);
         final SceneDef sceneDef = new SceneDef(context);
         
         final GeneralEnvelope env = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
@@ -254,7 +256,7 @@ public class MeridianTest {
             new Coordinate( 0,  0)
         });
         
-        final MapContext context = createFeatureLayer(poly);
+        final MapContext context = createFeatureLayer(poly, Polygon.class);
         final SceneDef sceneDef = new SceneDef(context);
         
         final GeneralEnvelope env = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
@@ -284,7 +286,7 @@ public class MeridianTest {
             new Coordinate( 0,  0)
         });
         
-        final MapContext context = createFeatureLayer(poly);
+        final MapContext context = createFeatureLayer(poly, Polygon.class);
         final SceneDef sceneDef = new SceneDef(context);
         
         final GeneralEnvelope env = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
@@ -369,7 +371,7 @@ public class MeridianTest {
         
         final Polygon poly = JTS.toGeometry(genv);
         
-        final MapContext context = createFeatureLayer(poly);
+        final MapContext context = createFeatureLayer(poly, Polygon.class);
         final SceneDef sceneDef = new SceneDef(context);
         
         final GeneralEnvelope env = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
@@ -393,7 +395,7 @@ public class MeridianTest {
         
         final Polygon poly = JTS.toGeometry(genv);
         
-        final MapContext context = createFeatureLayer(poly);
+        final MapContext context = createFeatureLayer(poly, Polygon.class);
         final SceneDef sceneDef = new SceneDef(context);
         
         final GeneralEnvelope env = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
@@ -412,11 +414,11 @@ public class MeridianTest {
         
         final GeneralEnvelope genv = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
         genv.setRange(0, +170, -170);
-        genv.setRange(1, +10, -10);
+        genv.setRange(1, -10, +10);
         
-        final Polygon poly = JTS.toGeometry(genv);
+        final Geometry poly = GeometricUtilities.toJTSGeometry(genv, GeometricUtilities.WrapResolution.SPLIT);
         
-        final MapContext context = createFeatureLayer(poly);
+        final MapContext context = createFeatureLayer(poly, Geometry.class);
         final SceneDef sceneDef = new SceneDef(context);
         
         final GeneralEnvelope env = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
@@ -514,11 +516,11 @@ public class MeridianTest {
     }
     
     
-    private static MapContext createFeatureLayer(Polygon geometry){
+    private static <T extends Geometry> MapContext  createFeatureLayer(T geometry, Class<T> geomClass){
         
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("test");
-        ftb.add("geom", Polygon.class, DefaultGeographicCRS.WGS84);
+        ftb.add("geom", geomClass, DefaultGeographicCRS.WGS84);
         final FeatureType type = ftb.buildFeatureType();
         
         final Feature feature = FeatureUtilities.defaultFeature(type, "0");
