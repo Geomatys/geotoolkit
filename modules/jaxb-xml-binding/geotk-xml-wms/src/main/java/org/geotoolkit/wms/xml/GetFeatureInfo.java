@@ -41,7 +41,7 @@ import org.opengis.sld.StyledLayerDescriptor;
  * @see GetMap
  */
 @Immutable
-public final class GetFeatureInfo extends GetMap {
+public final class GetFeatureInfo extends GetMap implements org.geotoolkit.ows.xml.GetFeatureInfo {
     /**
      * X coordinate to request.
      */
@@ -120,6 +120,7 @@ public final class GetFeatureInfo extends GetMap {
     /**
      * Returns the format of the information to returned.
      */
+    @Override
     public String getInfoFormat() {
         return infoFormat;
     }

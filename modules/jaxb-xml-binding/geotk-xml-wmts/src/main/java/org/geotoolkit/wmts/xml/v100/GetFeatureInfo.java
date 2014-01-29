@@ -59,7 +59,7 @@ import org.apache.sis.util.Version;
     "infoFormat"
 })
 @XmlRootElement(name = "GetFeatureInfo")
-public class GetFeatureInfo implements RequestBase {
+public class GetFeatureInfo implements RequestBase, org.geotoolkit.ows.xml.GetFeatureInfo{
 
     @XmlElement(name = "GetTile", required = true)
     private GetTile getTile;
@@ -156,6 +156,7 @@ public class GetFeatureInfo implements RequestBase {
      *     {@link String }
      *     
      */
+    @Override
     public String getInfoFormat() {
         return infoFormat;
     }
