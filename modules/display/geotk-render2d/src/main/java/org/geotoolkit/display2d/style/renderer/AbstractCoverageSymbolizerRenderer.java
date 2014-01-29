@@ -100,9 +100,8 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
             return false;
         }
 
-        final Area area = new Area(mask);
-
         for(Shape shape : shapes){
+            final Area area = new Area(mask);
             switch(filter){
                 case INTERSECTS :
                     area.intersect(new Area(shape));

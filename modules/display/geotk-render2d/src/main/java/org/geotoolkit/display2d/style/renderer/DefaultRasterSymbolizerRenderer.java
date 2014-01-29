@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.display2d.style.renderer;
 
+import com.vividsolutions.jts.geom.Geometry;
 import java.awt.Color;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
@@ -71,6 +72,7 @@ import org.geotoolkit.coverage.grid.GridEnvelope2D;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.geometry.Envelopes;
+import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.image.interpolation.Interpolation;
 import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.image.interpolation.Resample;
@@ -230,17 +232,38 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             RenderedImage img = applyStyle(dataCoverage, elevationCoverage, coverageLayer.getElevationModel(), symbol.getSource(), hints, isReprojected);
             final MathTransform2D trs2D = dataCoverage.getGridGeometry().getGridToCRS2D(PixelOrientation.UPPER_LEFT);
 
+            
             if(renderingContext.wraps == null){
                 //single rendering
                 renderCoverage(projectedCoverage, img, trs2D);
             }else{
+                
+                //check if the geometry overlaps the meridian
+                int nbIncRep = renderingContext.wraps.wrapIncNb;
+                int nbDecRep = renderingContext.wraps.wrapDecNb;
+                final Geometry objBounds = JTS.toGeometry(dataCoverage.getEnvelope());
+                
+                // geometry cross the far east meridian, geometry is like : 
+                // POLYGON(-179,10,  181,10,  181,-10,  179,-10)
+                if(objBounds.intersects(renderingContext.wraps.wrapIncLine)){
+                    //duplicate geometry on the other warp line
+                    nbDecRep++;
+                }
+                // geometry cross the far west meridian, geometry is like : 
+                // POLYGON(-179,10, -181,10, -181,-10,  -179,-10)
+                else if(objBounds.intersects(renderingContext.wraps.wrapDecLine)){
+                    //duplicate geometry on the other warp line
+                    nbIncRep++;
+                }
+                
                 renderCoverage(projectedCoverage, img, trs2D);
+                
                 //repetition of incresing and decreasing sides.
-                for(int i=0;i<renderingContext.wraps.wrapDecNb;i++){
+                for(int i=0;i<nbDecRep;i++){
                     g2d.setTransform(renderingContext.wraps.wrapDecObjToDisp[i]);
                     renderCoverage(projectedCoverage, img, trs2D);
                 }
-                for(int i=0;i<renderingContext.wraps.wrapIncNb;i++){
+                for(int i=0;i<nbIncRep;i++){
                     g2d.setTransform(renderingContext.wraps.wrapIncObjToDisp[i]);
                     renderCoverage(projectedCoverage, img, trs2D);
                 }
