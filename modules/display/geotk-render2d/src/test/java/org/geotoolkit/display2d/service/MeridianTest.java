@@ -18,6 +18,7 @@ package org.geotoolkit.display2d.service;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.Polygon;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -26,6 +27,8 @@ import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import javax.imageio.ImageIO;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
@@ -34,6 +37,7 @@ import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.FeatureUtilities;
+import org.geotoolkit.filter.DefaultFilterFactory2;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapBuilder;
@@ -42,12 +46,17 @@ import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyle;
+import org.geotoolkit.style.StyleConstants;
 import org.junit.Assert;
 import org.junit.Test;
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
+import org.opengis.filter.FilterFactory2;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.datum.PixelInCell;
+import org.opengis.style.Graphic;
+import org.opengis.style.GraphicalSymbol;
+import org.opengis.style.PointSymbolizer;
 import org.opengis.style.PolygonSymbolizer;
 import org.opengis.style.RasterSymbolizer;
 
@@ -60,6 +69,7 @@ public class MeridianTest {
     
     private static final GeometryFactory GF = new GeometryFactory();
     private static final DefaultStyleFactory SF = new DefaultStyleFactory();
+    private static final FilterFactory2 FF = new DefaultFilterFactory2();
     
     /**
      * Sanity test.
@@ -290,6 +300,66 @@ public class MeridianTest {
                           new Rectangle(-5 +1080, 80, 20, 10));
     }
     
+    @Test
+    public void testMultiPointCrossP170toP190() throws Exception{
+        
+        final MultiPoint points = GF.createMultiPoint(new Coordinate[]{
+            new Coordinate(+170, +10),
+            new Coordinate(+190, +10),
+            new Coordinate(+190, -10),
+            new Coordinate(+170, -10)
+        });
+        
+        final MapContext context = createFeatureLayer(points);
+        final SceneDef sceneDef = new SceneDef(context);
+        
+        final GeneralEnvelope env = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
+        env.setRange(0, -180, +180);
+        env.setRange(1, -90, +90);
+        final ViewDef viewDef = new ViewDef(env);
+        final CanvasDef canvasDef = new CanvasDef(new Dimension(360, 180), Color.WHITE);
+        
+        final BufferedImage image = DefaultPortrayalService.portray(canvasDef, sceneDef, viewDef);
+        
+        ImageIO.write(image, "PNG", new File("/home/husky/test.png"));
+        
+        checkImage(image, new Rectangle(349, 79, 2, 2), 
+                          new Rectangle(349, 99, 2, 2),
+                          new Rectangle(  9, 79, 2, 2),
+                          new Rectangle(  9, 99, 2, 2));
+        
+    }
+    
+    @Test
+    public void testMultiPointWideSpan() throws Exception{
+        
+        final MultiPoint points = GF.createMultiPoint(new Coordinate[]{
+            new Coordinate(+170, +10),
+            new Coordinate(-170, +10),
+            new Coordinate(-170, -10),
+            new Coordinate(+170, -10)
+        });
+        
+        final MapContext context = createFeatureLayer(points);
+        final SceneDef sceneDef = new SceneDef(context);
+        
+        final GeneralEnvelope env = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
+        env.setRange(0, -180, +180);
+        env.setRange(1, -90, +90);
+        final ViewDef viewDef = new ViewDef(env);
+        final CanvasDef canvasDef = new CanvasDef(new Dimension(360, 180), Color.WHITE);
+        
+        final BufferedImage image = DefaultPortrayalService.portray(canvasDef, sceneDef, viewDef);
+        
+        ImageIO.write(image, "PNG", new File("/home/husky/test.png"));
+        
+        checkImage(image, new Rectangle(349, 79, 2, 2), 
+                          new Rectangle(349, 99, 2, 2),
+                          new Rectangle(  9, 79, 2, 2),
+                          new Rectangle(  9, 99, 2, 2));
+        
+    }
+    
     /**
      * Test coverage that overlaps the +180 meridian.
      */
@@ -387,6 +457,31 @@ public class MeridianTest {
         
         final PolygonSymbolizer symbol = SF.polygonSymbolizer(SF.stroke(Color.BLACK, 0), SF.fill(Color.BLACK), null);
         final MutableStyle style = SF.style(symbol);
+        final MapLayer layer = MapBuilder.createFeatureLayer(col, style);
+        
+        final MapContext context = MapBuilder.createContext();
+        context.layers().add(layer);
+        return context;
+    }
+    
+    private static MapContext createFeatureLayer(MultiPoint geometry){
+        
+        final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
+        ftb.setName("test");
+        ftb.add("geom", MultiPoint.class, DefaultGeographicCRS.WGS84);
+        final FeatureType type = ftb.buildFeatureType();
+        
+        final Feature feature = FeatureUtilities.defaultFeature(type, "0");
+        JTS.setCRS(geometry, DefaultGeographicCRS.WGS84);
+        feature.getProperty("geom").setValue(geometry);
+        final FeatureCollection col = FeatureStoreUtilities.collection(feature);
+        
+        final List<GraphicalSymbol> symbols = new ArrayList<GraphicalSymbol>();
+        symbols.add(SF.mark(StyleConstants.MARK_SQUARE, SF.fill(Color.BLACK), SF.stroke(Color.BLACK, 0)));
+        final Graphic graphic = SF.graphic(symbols, StyleConstants.LITERAL_ONE_FLOAT, FF.literal(2), StyleConstants.LITERAL_ZERO_FLOAT, null, null);
+        final PointSymbolizer ps = SF.pointSymbolizer(graphic, null);
+        
+        final MutableStyle style = SF.style(ps);
         final MapLayer layer = MapBuilder.createFeatureLayer(col, style);
         
         final MapContext context = MapBuilder.createContext();

@@ -185,7 +185,7 @@ public class ProjectedGeometry  {
             
             if(params.context.wraps != null){
                 
-                com.vividsolutions.jts.geom.Geometry objBounds = objBase.getBoundary();
+                com.vividsolutions.jts.geom.Geometry objBounds = JTS.toGeometry(objBase.getEnvelopeInternal());
                 final com.vividsolutions.jts.geom.Envelope objEnv = objBounds.getEnvelopeInternal();
                 final double dx = params.context.wraps.wrapPoints[1].getOrdinate(0) - params.context.wraps.wrapPoints[0].getOrdinate(0);
                 final double dy = params.context.wraps.wrapPoints[1].getOrdinate(1) - params.context.wraps.wrapPoints[0].getOrdinate(1);
