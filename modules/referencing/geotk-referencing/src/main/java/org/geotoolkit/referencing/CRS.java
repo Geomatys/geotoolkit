@@ -811,7 +811,7 @@ search:             if (DefaultCoordinateSystemAxis.isCompassDirection(axis.getD
      */
     @Deprecated
     public static VerticalCRS getVerticalCRS(final CoordinateReferenceSystem crs) {
-        return org.apache.sis.referencing.CRS.getVerticalCRS(crs, true);
+        return org.apache.sis.referencing.CRS.getVerticalComponent(crs, true);
     }
 
     /**
@@ -828,7 +828,7 @@ search:             if (DefaultCoordinateSystemAxis.isCompassDirection(axis.getD
      */
     @Deprecated
     public static TemporalCRS getTemporalCRS(final CoordinateReferenceSystem crs) {
-        return org.apache.sis.referencing.CRS.getTemporalCRS(crs);
+        return org.apache.sis.referencing.CRS.getTemporalComponent(crs);
     }
 
     /**
