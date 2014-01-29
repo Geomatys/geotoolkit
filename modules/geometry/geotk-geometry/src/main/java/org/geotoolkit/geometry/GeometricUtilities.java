@@ -17,29 +17,96 @@
  */
 package org.geotoolkit.geometry;
 
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.LinearRing;
+import com.vividsolutions.jts.geom.Polygon;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.datum.DefaultEllipsoid;
+import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.display.shape.ShapeUtilities;
-import org.opengis.util.FactoryException;
+import org.geotoolkit.internal.referencing.CRSUtilities;
+import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.referencing.ReferencingUtilities;
+import org.geotoolkit.referencing.datum.DefaultEllipsoid;
+import org.opengis.geometry.DirectPosition;
+import org.opengis.geometry.Envelope;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.referencing.operation.CoordinateOperation;
 import org.opengis.referencing.operation.CoordinateOperationFactory;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
+import org.opengis.util.FactoryException;
 
 /**
- * An utilies class containing methods to calculate distance between geometric object.
- * @author Guilhem Legal
+ * A utility class containing methods to manipulate geometries.
+ * 
+ * @author Guilhem Legal (Geomatys)
+ * @author Johann Sorel (Geomatys)
  * @module pending
  */
 public class GeometricUtilities {
+    
+    private static final GeometryFactory GF = new GeometryFactory();
+    
+    public static enum WrapResolution {
+        /**
+         * Convert the coordinates without checking the antemeridian.
+         * If the envelope crosses the antemeridian (lower corner values > upper corner values)
+         * the created polygon will be wrong since it will define a different area then the envelope.
+         * Use this method only knowing the envelopes do not cross the antemeridian.
+         * 
+         * Example :
+         * ENV(+170 +10,  -170 -10)
+         * POLYGON(+170 +10,  -170 +10,  -170 -10,  +170 -10,  +170 +10)
+         * 
+         */
+        NONE,
+        /**
+         * Convert the coordinates checking the antemeridian.
+         * If the envelope crosses the antemeridian (lower corner values > upper corner values)
+         * the created polygon will go from axis minimum value to axis maximum value.
+         * This ensure the create polygon contains the envelope but is wider.
+         * 
+         * Example :
+         * ENV(+170 +10,  -170 -10)
+         * POLYGON(-180 +10,  +180 +10,  +180 -10,  -180 -10,  -180 +10)
+         */
+        EXPAND,
+        /**
+         * Convert the coordinates checking the antemeridian.
+         * If the envelope crosses the antemeridian (lower corner values > upper corner values)
+         * the created polygon will be cut in 2 polygons on each side of the coordinate system.
+         * This ensure the create polygon exactly match the envelope but with a more
+         * complex geometry.
+         * 
+         * Example :
+         * ENV(+170 +10,  -170 -10)
+         * MULTI-POLYGON(
+         *     (-180 +10,  -170 +10,  -170 -10,  -180 -10,  -180 +10)
+         *     (+170 +10,  +180 +10,  +180 -10,  +170 -10,  +170 +10)
+         * )
+         */
+        SPLIT,
+        /**
+         * Convert the coordinates checking the antemeridian.
+         * If the envelope crosses the antemeridian (lower corner values > upper corner values)
+         * the created polygon coordinate will increase over the antemeridian making
+         * a contiguous geometry.
+         * 
+         * Example :
+         * ENV(+170 +10,  -170 -10)
+         * POLYGON(+170 +10,  +190 +10,  +190 -10,  +170 -10,  +170 +10)
+         */
+        CONTIGUOUS
+    }
     
     /**
      *  WGS 1984 ellipsoid with axis in {@linkplain SI#METRE metres}.
@@ -47,6 +114,7 @@ public class GeometricUtilities {
     private static final DefaultEllipsoid DE = DefaultEllipsoid.WGS84;
 
     private GeometricUtilities() {}
+    
     /**
      * Return the shortest orthodromic distance between a boundingBox and a point.
      * if the boundingBox contains the point it return 0.
@@ -593,7 +661,8 @@ public class GeometricUtilities {
             throw new IllegalArgumentException("Unknow geometry types: allowed ones are: GeneralEnvelope, Line2D, GeneralDirectPosition");
         }
     }
-     /**
+    
+    /**
      * Reproject the specified bbox string From the sourceCRS to the targetCRS.
      * 
      * @param targetCRSName The coordinate reference system in which we have to reproject the geometry. 
@@ -619,4 +688,157 @@ public class GeometricUtilities {
       return lowerCorner[0]+","+lowerCorner[1]+","+upperCorner[0]+","+upperCorner[1];
     }
 
+    /**
+     * Transform an OpenGIS envelope in JTS Geometry.
+     * 
+     * @param env envelope to convert, expected to be 2D.
+     * @param resolution type of solution to use for envelope crossing the antemeridian.
+     * @return Geometry
+     */
+    public static Geometry toJTSGeometry(Envelope env, WrapResolution resolution) {
+        ArgumentChecks.ensureNonNull("resolution", resolution);
+                
+        //most simple case, do not check anything
+        if(WrapResolution.NONE == resolution){
+            final double minX = env.getMinimum(0);
+            final double minY = env.getMinimum(1);
+            final double maxX = env.getMaximum(0);
+            final double maxY = env.getMaximum(1);
+            final Coordinate[] coordinates = new Coordinate[]{
+                new Coordinate(minX, minY),
+                new Coordinate(minX, maxY),
+                new Coordinate(maxX, maxY),
+                new Coordinate(maxX, minY),
+                new Coordinate(minX, minY),
+            };
+            return GF.createPolygon(GF.createLinearRing(coordinates), new LinearRing[0]);
+        }
+        
+        //ensure the envelope is correctely defined.
+        final GeneralEnvelope genv = new GeneralEnvelope(env);
+        genv.normalize();
+          
+        if(WrapResolution.EXPAND == resolution){
+            genv.simplify();
+            
+            final double minX = genv.getMinimum(0);
+            final double minY = genv.getMinimum(1);
+            final double maxX = genv.getMaximum(0);
+            final double maxY = genv.getMaximum(1);
+            final Coordinate[] coordinates = new Coordinate[]{
+                new Coordinate(minX, minY),
+                new Coordinate(minX, maxY),
+                new Coordinate(maxX, maxY),
+                new Coordinate(maxX, minY),
+                new Coordinate(minX, minY),
+            };
+            return GF.createPolygon(GF.createLinearRing(coordinates), new LinearRing[0]);
+            
+        }
+        
+        final boolean wrapOnX = genv.getLowerCorner().getOrdinate(0) > genv.getUpperCorner().getOrdinate(0);
+        final boolean wrapOnY = genv.getLowerCorner().getOrdinate(1) > genv.getUpperCorner().getOrdinate(1);
+        
+        if(!wrapOnX && !wrapOnY){
+            //no need for corrections
+            final double minX = env.getMinimum(0);
+            final double minY = env.getMinimum(1);
+            final double maxX = env.getMaximum(0);
+            final double maxY = env.getMaximum(1);
+            final Coordinate[] coordinates = new Coordinate[]{
+                new Coordinate(minX, minY),
+                new Coordinate(minX, maxY),
+                new Coordinate(maxX, maxY),
+                new Coordinate(maxX, minY),
+                new Coordinate(minX, minY),
+            };
+            return GF.createPolygon(GF.createLinearRing(coordinates), new LinearRing[0]);
+        }
+        
+        //find the wrap points and axis
+        final CoordinateReferenceSystem crs = genv.getCoordinateReferenceSystem();
+        final CoordinateSystemAxis axis = crs.getCoordinateSystem().getAxis(wrapOnX ? 0 : 1);
+        final double axisMin = axis.getMinimumValue();
+        final double axisMax = axis.getMaximumValue();
+        final double wrapRange = axis.getMaximumValue() - axis.getMinimumValue() ;
+        final DirectPosition lowerCorner = genv.getLowerCorner();
+        final DirectPosition upperCorner = genv.getUpperCorner();
+        
+        if(WrapResolution.SPLIT == resolution){
+            double minX;
+            double minY;
+            double maxX;
+            double maxY;
+            
+            if(wrapOnX){
+                minX = axisMin;
+                minY = lowerCorner.getOrdinate(1);
+                maxX = upperCorner.getOrdinate(0);
+                maxY = upperCorner.getOrdinate(1);
+            }else{
+                minX = lowerCorner.getOrdinate(0);
+                minY = axisMin;
+                maxX = upperCorner.getOrdinate(0);
+                maxY = upperCorner.getOrdinate(1);
+            }
+            final Polygon leftpoly = GF.createPolygon(GF.createLinearRing(new Coordinate[]{
+                new Coordinate(minX, minY),
+                new Coordinate(minX, maxY),
+                new Coordinate(maxX, maxY),
+                new Coordinate(maxX, minY),
+                new Coordinate(minX, minY),
+            }));
+            
+            if(wrapOnX){
+                minX = lowerCorner.getOrdinate(0);
+                minY = lowerCorner.getOrdinate(1);
+                maxX = axisMax;
+                maxY = upperCorner.getOrdinate(1);
+            }else{
+                minX = lowerCorner.getOrdinate(0);
+                minY = lowerCorner.getOrdinate(1);
+                maxX = upperCorner.getOrdinate(0);
+                maxY = axisMax;
+            }
+            final Polygon rightpoly = GF.createPolygon(GF.createLinearRing(new Coordinate[]{
+                new Coordinate(minX, minY),
+                new Coordinate(minX, maxY),
+                new Coordinate(maxX, maxY),
+                new Coordinate(maxX, minY),
+                new Coordinate(minX, minY),
+            }));
+            
+            return GF.createMultiPolygon(new Polygon[]{leftpoly,rightpoly});
+            
+        }else if(WrapResolution.CONTIGUOUS == resolution){
+            
+            final double minX;
+            final double minY;
+            final double maxX;
+            final double maxY;
+            if(wrapOnX){
+                minX = lowerCorner.getOrdinate(0);
+                minY = lowerCorner.getOrdinate(1);
+                maxX = upperCorner.getOrdinate(0) + wrapRange;
+                maxY = upperCorner.getOrdinate(1);
+            }else{
+                minX = lowerCorner.getOrdinate(0);
+                minY = lowerCorner.getOrdinate(1);
+                maxX = upperCorner.getOrdinate(0);
+                maxY = upperCorner.getOrdinate(1) + wrapRange;
+            }
+            
+            final Coordinate[] coordinates = new Coordinate[]{
+                new Coordinate(minX, minY),
+                new Coordinate(minX, maxY),
+                new Coordinate(maxX, maxY),
+                new Coordinate(maxX, minY),
+                new Coordinate(minX, minY),
+            };
+            return GF.createPolygon(GF.createLinearRing(coordinates), new LinearRing[0]);
+        }
+        
+        throw new IllegalArgumentException("Unknowed or unset wrap resolution : "+resolution);
+    }
+    
 }
