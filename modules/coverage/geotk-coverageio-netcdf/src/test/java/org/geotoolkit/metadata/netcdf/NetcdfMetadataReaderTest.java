@@ -141,7 +141,9 @@ public final strictfp class NetcdfMetadataReaderTest extends NetcdfMetadataTest 
      */
     @Test
     @Override
+    @Ignore("Conflict in version of UCAR library used by Geotk and GeoAPI.")
     public void testNCEP() throws IOException {
+        org.junit.Assume.assumeTrue(false); // TODO
         addCommonProperties(expectedProperties, true);
         super.testNCEP();
         assertSame("hierarchyLevel", ScopeCode.DATASET, getSingleton(metadata.getHierarchyLevels()));
@@ -177,6 +179,7 @@ public final strictfp class NetcdfMetadataReaderTest extends NetcdfMetadataTest 
      * @throws CoverageStoreException Should never happen.
      */
     @Test
+    @Ignore("Conflict in version of UCAR library used by Geotk and GeoAPI.")
     public void testIntegratedNCEP() throws IOException, CoverageStoreException {
         integrationTest = true;
         testNCEP();
