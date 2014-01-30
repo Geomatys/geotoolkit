@@ -64,6 +64,7 @@ import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.algorithm.CGAlgorithms;
 import java.awt.Rectangle;
 import javax.vecmath.Vector3d;
+import org.geotoolkit.geometry.GeometricUtilities;
 
 /**
  * JTS Geometry utility methods, bringing GeotoolKit to JTS. <p> Offers
@@ -594,6 +595,14 @@ public final class JTS {
                 }), null);
     }
 
+    /**
+     * This method is not correct when dealing with antemeridian.
+     * 
+     * @param env
+     * @return
+     * @deprecated Use GeometricUtilities.toGeometryJTS(Envelope, WrapResolution.NONE) for exact same behavior
+     */
+    @Deprecated
     public static Polygon toGeometry(final org.opengis.geometry.Envelope env){
         final GeometryFactory gf = new GeometryFactory();
         final Coordinate[] coordinates = new Coordinate[]{

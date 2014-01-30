@@ -369,9 +369,9 @@ public class MeridianTest {
         genv.setRange(0, +170, +190);
         genv.setRange(1, -10, +10);
         
-        final Polygon poly = JTS.toGeometry(genv);
+        final Geometry poly = GeometricUtilities.toJTSGeometry(genv, GeometricUtilities.WrapResolution.SPLIT);
         
-        final MapContext context = createFeatureLayer(poly, Polygon.class);
+        final MapContext context = createFeatureLayer(poly, Geometry.class);
         final SceneDef sceneDef = new SceneDef(context);
         
         final GeneralEnvelope env = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
@@ -393,9 +393,9 @@ public class MeridianTest {
         genv.setRange(0, -190, -170);
         genv.setRange(1, -10, +10);
         
-        final Polygon poly = JTS.toGeometry(genv);
+        final Geometry poly = GeometricUtilities.toJTSGeometry(genv, GeometricUtilities.WrapResolution.SPLIT);
         
-        final MapContext context = createFeatureLayer(poly, Polygon.class);
+        final MapContext context = createFeatureLayer(poly, Geometry.class);
         final SceneDef sceneDef = new SceneDef(context);
         
         final GeneralEnvelope env = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
@@ -430,6 +430,50 @@ public class MeridianTest {
         final BufferedImage image = DefaultPortrayalService.portray(canvasDef, sceneDef, viewDef);
         checkImage(image, new Rectangle(350, 80, 10, 20), 
                           new Rectangle(0, 80, 10, 20));        
+    }
+    
+    @Test
+    public void testEnvelopeLarge() throws Exception{
+        
+        final GeneralEnvelope genv = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
+        genv.setRange(0, -120, +140);
+        genv.setRange(1, -70, +40);
+        
+        final Geometry poly = GeometricUtilities.toJTSGeometry(genv, GeometricUtilities.WrapResolution.SPLIT);
+        
+        final MapContext context = createFeatureLayer(poly, Geometry.class);
+        final SceneDef sceneDef = new SceneDef(context);
+        
+        final GeneralEnvelope env = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
+        env.setRange(0, -180, +180);
+        env.setRange(1, -90, +90);
+        final ViewDef viewDef = new ViewDef(env);
+        final CanvasDef canvasDef = new CanvasDef(new Dimension(360, 180), Color.WHITE);
+        
+        final BufferedImage image = DefaultPortrayalService.portray(canvasDef, sceneDef, viewDef);
+        checkImage(image, new Rectangle(60, 50, 260, 110));        
+    }
+    
+    @Test
+    public void testEnvelopeWorld() throws Exception{
+        
+        final GeneralEnvelope genv = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
+        genv.setRange(0, -180, +180);
+        genv.setRange(1, -90, +90);
+        
+        final Geometry poly = GeometricUtilities.toJTSGeometry(genv, GeometricUtilities.WrapResolution.SPLIT);
+        
+        final MapContext context = createFeatureLayer(poly, Geometry.class);
+        final SceneDef sceneDef = new SceneDef(context);
+        
+        final GeneralEnvelope env = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
+        env.setRange(0, -180, +180);
+        env.setRange(1, -90, +90);
+        final ViewDef viewDef = new ViewDef(env);
+        final CanvasDef canvasDef = new CanvasDef(new Dimension(360, 180), Color.WHITE);
+        
+        final BufferedImage image = DefaultPortrayalService.portray(canvasDef, sceneDef, viewDef);
+        checkImage(image, new Rectangle(0, 0, 360, 180));        
     }
     
     

@@ -26,6 +26,8 @@ import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.util.ArgumentChecks;
@@ -38,7 +40,9 @@ import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
+import org.opengis.referencing.cs.RangeMeaning;
 import org.opengis.referencing.operation.CoordinateOperation;
 import org.opengis.referencing.operation.CoordinateOperationFactory;
 import org.opengis.referencing.operation.MathTransform;
@@ -696,6 +700,18 @@ public class GeometricUtilities {
      * @return Geometry
      */
     public static Geometry toJTSGeometry(Envelope env, WrapResolution resolution) {
+        return toJTSGeometry(env, resolution, true);
+    }
+    /**
+     * Transform an OpenGIS envelope in JTS Geometry.
+     * 
+     * @param env envelope to convert, expected to be 2D.
+     * @param resolution type of solution to use for envelope crossing the antemeridian.
+     * @param insertMedianPoints if the envelope is very large (superior to half coordinate system wrap axis)
+     *        the method will add 1 or 2 points to ensure each polygon segment direction is not ambiguous.
+     * @return Geometry
+     */
+    public static Geometry toJTSGeometry(Envelope env, WrapResolution resolution, boolean insertMedianPoints) {
         ArgumentChecks.ensureNonNull("resolution", resolution);
                 
         //most simple case, do not check anything
@@ -714,6 +730,8 @@ public class GeometricUtilities {
             return GF.createPolygon(GF.createLinearRing(coordinates), new LinearRing[0]);
         }
         
+        final CoordinateReferenceSystem crs = env.getCoordinateReferenceSystem();
+        
         //ensure the envelope is correctely defined.
         final GeneralEnvelope genv = new GeneralEnvelope(env);
         genv.normalize();
@@ -725,15 +743,7 @@ public class GeometricUtilities {
             final double minY = genv.getMinimum(1);
             final double maxX = genv.getMaximum(0);
             final double maxY = genv.getMaximum(1);
-            final Coordinate[] coordinates = new Coordinate[]{
-                new Coordinate(minX, minY),
-                new Coordinate(minX, maxY),
-                new Coordinate(maxX, maxY),
-                new Coordinate(maxX, minY),
-                new Coordinate(minX, minY),
-            };
-            return GF.createPolygon(GF.createLinearRing(coordinates), new LinearRing[0]);
-            
+            return builEnvelopePiece(minX,minY,maxX,maxY,crs,insertMedianPoints);
         }
         
         final boolean wrapOnX = genv.getLowerCorner().getOrdinate(0) > genv.getUpperCorner().getOrdinate(0);
@@ -745,18 +755,10 @@ public class GeometricUtilities {
             final double minY = env.getMinimum(1);
             final double maxX = env.getMaximum(0);
             final double maxY = env.getMaximum(1);
-            final Coordinate[] coordinates = new Coordinate[]{
-                new Coordinate(minX, minY),
-                new Coordinate(minX, maxY),
-                new Coordinate(maxX, maxY),
-                new Coordinate(maxX, minY),
-                new Coordinate(minX, minY),
-            };
-            return GF.createPolygon(GF.createLinearRing(coordinates), new LinearRing[0]);
+            return builEnvelopePiece(minX,minY,maxX,maxY,crs,insertMedianPoints);
         }
         
         //find the wrap points and axis
-        final CoordinateReferenceSystem crs = genv.getCoordinateReferenceSystem();
         final CoordinateSystemAxis axis = crs.getCoordinateSystem().getAxis(wrapOnX ? 0 : 1);
         final double axisMin = axis.getMinimumValue();
         final double axisMax = axis.getMaximumValue();
@@ -781,13 +783,7 @@ public class GeometricUtilities {
                 maxX = upperCorner.getOrdinate(0);
                 maxY = upperCorner.getOrdinate(1);
             }
-            final Polygon leftpoly = GF.createPolygon(GF.createLinearRing(new Coordinate[]{
-                new Coordinate(minX, minY),
-                new Coordinate(minX, maxY),
-                new Coordinate(maxX, maxY),
-                new Coordinate(maxX, minY),
-                new Coordinate(minX, minY),
-            }));
+            final Polygon leftpoly = builEnvelopePiece(minX,minY,maxX,maxY,crs,insertMedianPoints);
             
             if(wrapOnX){
                 minX = lowerCorner.getOrdinate(0);
@@ -800,13 +796,7 @@ public class GeometricUtilities {
                 maxX = upperCorner.getOrdinate(0);
                 maxY = axisMax;
             }
-            final Polygon rightpoly = GF.createPolygon(GF.createLinearRing(new Coordinate[]{
-                new Coordinate(minX, minY),
-                new Coordinate(minX, maxY),
-                new Coordinate(maxX, maxY),
-                new Coordinate(maxX, minY),
-                new Coordinate(minX, minY),
-            }));
+            final Polygon rightpoly = builEnvelopePiece(minX,minY,maxX,maxY,crs,insertMedianPoints);
             
             return GF.createMultiPolygon(new Polygon[]{leftpoly,rightpoly});
             
@@ -828,17 +818,87 @@ public class GeometricUtilities {
                 maxY = upperCorner.getOrdinate(1) + wrapRange;
             }
             
-            final Coordinate[] coordinates = new Coordinate[]{
+            return builEnvelopePiece(minX,minY,maxX,maxY,crs,insertMedianPoints);
+        }
+        
+        throw new IllegalArgumentException("Unknowed or unset wrap resolution : "+resolution);
+    }
+    
+    private static Polygon builEnvelopePiece(double minX, double minY, double maxX, double maxY, 
+            CoordinateReferenceSystem crs, boolean insertMedianPoints){
+        final DirectPosition[] wrapPoints;
+        try {
+            wrapPoints = ReferencingUtilities.findWrapAround(crs);
+        } catch (TransformException ex) {
+            //normaly, that should never happen
+            throw new RuntimeException(ex.getMessage(),ex);
+        }
+        
+        if(!insertMedianPoints || wrapPoints == null){
+            //not wrap points to insert
+            return buildEnvelope(minX, minY, maxX, maxY);
+        }
+        
+        //check if we need to insert points
+        final boolean wrapOnX = wrapPoints[0].getOrdinate(0) != 0 || wrapPoints[1].getOrdinate(0) != 0;
+        if(wrapOnX){
+            final double wrapRange = wrapPoints[1].getOrdinate(0) - wrapPoints[0].getOrdinate(0);
+            final double envRange = maxX-minX;
+            final int nbPoint = (int)((envRange) / (wrapRange/2));
+            
+            if(nbPoint==0) return buildEnvelope(minX, minY, maxX, maxY);
+            
+            final Coordinate[] coordinates = new Coordinate[5+2*nbPoint];
+            int index=0;
+            coordinates[index++] = new Coordinate(minX, minY);
+            coordinates[index++] = new Coordinate(minX, maxY);
+            for(int i=0;i<nbPoint;i++){
+                coordinates[index++] = new Coordinate(minX+(i+1)*(envRange/(nbPoint+1)), maxY);
+            }
+            coordinates[index++] = new Coordinate(maxX, maxY);
+            coordinates[index++] = new Coordinate(maxX, minY);
+            for(int i=0;i<nbPoint;i++){
+                coordinates[index++] = new Coordinate(maxX-(i+1)*(envRange/(nbPoint+1)), minY);
+            }
+            coordinates[index++] = new Coordinate(minX, minY);
+            
+            return GF.createPolygon(GF.createLinearRing(coordinates), new LinearRing[0]);
+            
+        }else{
+            final double wrapRange = wrapPoints[1].getOrdinate(1) - wrapPoints[0].getOrdinate(1);
+            final double envRange = maxY-minY;
+            final int nbPoint = (int)((envRange) / wrapRange);
+            
+            if(nbPoint==0) return buildEnvelope(minX, minY, maxX, maxY);
+            
+            final Coordinate[] coordinates = new Coordinate[5+2*nbPoint];
+            int index=0;
+            coordinates[index++] = new Coordinate(minX, minY);
+            for(int i=0;i<nbPoint;i++){
+                coordinates[index++] = new Coordinate(minX, maxY+(i+1)*(envRange/(nbPoint+1)));
+            }
+            coordinates[index++] = new Coordinate(minX, maxY);
+            coordinates[index++] = new Coordinate(maxX, maxY);
+            for(int i=0;i<nbPoint;i++){
+                coordinates[index++] = new Coordinate(maxX, maxY-(i+1)*(envRange/(nbPoint+1)));
+            }
+            coordinates[index++] = new Coordinate(maxX, minY);
+            coordinates[index++] = new Coordinate(minX, minY);
+            
+            return GF.createPolygon(GF.createLinearRing(coordinates), new LinearRing[0]);
+        }
+        
+    }
+    
+    private static Polygon buildEnvelope(double minX, double minY, double maxX, double maxY){
+        final Coordinate[] coordinates = new Coordinate[]{
                 new Coordinate(minX, minY),
                 new Coordinate(minX, maxY),
                 new Coordinate(maxX, maxY),
                 new Coordinate(maxX, minY),
                 new Coordinate(minX, minY),
             };
-            return GF.createPolygon(GF.createLinearRing(coordinates), new LinearRing[0]);
-        }
-        
-        throw new IllegalArgumentException("Unknowed or unset wrap resolution : "+resolution);
+        return GF.createPolygon(GF.createLinearRing(coordinates), new LinearRing[0]);
     }
     
 }
