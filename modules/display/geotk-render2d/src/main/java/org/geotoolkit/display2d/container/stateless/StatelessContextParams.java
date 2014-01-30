@@ -36,6 +36,8 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 public class StatelessContextParams<T extends MapLayer> {
 
+    public static final int CLIP_PIXEL_MARGIN = 5;
+    
     public RenderingContext2D context;
     public final AbstractCanvas2D canvas;
     public final T layer;
@@ -75,7 +77,12 @@ public class StatelessContextParams<T extends MapLayer> {
                     .setTransform(objtoDisp);
         }
         
-        displayClipRect = context.getCanvasDisplayBounds();
+        displayClipRect = (Rectangle2D) context.getCanvasDisplayBounds().clone();
+        displayClipRect.setRect(
+                displayClipRect.getX()-CLIP_PIXEL_MARGIN, 
+                displayClipRect.getY()-CLIP_PIXEL_MARGIN, 
+                displayClipRect.getWidth()+2*CLIP_PIXEL_MARGIN, 
+                displayClipRect.getHeight()+2*CLIP_PIXEL_MARGIN);
         displayClip = JTS.toGeometry(context.getCanvasDisplayBounds());
         
     }

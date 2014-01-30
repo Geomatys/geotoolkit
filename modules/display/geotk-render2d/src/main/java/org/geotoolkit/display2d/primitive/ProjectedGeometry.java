@@ -16,10 +16,12 @@
  */
 package org.geotoolkit.display2d.primitive;
 
+import com.bric.geom.Clipper;
 import java.awt.Shape;
 import java.awt.geom.Rectangle2D;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.geotoolkit.display.shape.ProjectedShape;
 import org.geotoolkit.display2d.container.stateless.StatelessContextParams;
 import org.geotoolkit.display2d.primitive.jts.JTSGeometryJ2D;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
@@ -289,6 +291,12 @@ public class ProjectedGeometry  {
             displayShape = new Shape[displayGeometryJTS.length];
             for(int i=0;i<displayShape.length;i++){
                 displayShape[i] = new JTSGeometryJ2D(displayGeometryJTS[i]);
+                if(params.displayClipRect!=null){
+                    //clip to display bounds
+                    displayShape[i] = Clipper.clipToRect(displayShape[i], params.displayClipRect);
+                }
+                //TODO find a way to reactive curves is there is no transformation
+                //displayShape = ProjectedShape.wrap(shape, dataToDisplay);
             }
         }
         return displayShape;
