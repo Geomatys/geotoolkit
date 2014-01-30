@@ -53,9 +53,6 @@ import org.geotoolkit.factory.FactoryRegistryException;
 import org.geotoolkit.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
-import org.geotoolkit.referencing.cs.DefaultEllipsoidalCS;
-import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;
 import org.geotoolkit.referencing.operation.MathTransforms;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.internal.referencing.OperationContext;
@@ -690,82 +687,12 @@ public final class CRS extends Static {
      *
      * @category information
      * @since 2.4
+     *
+     * @deprecated Moved to Apache SIS {@link org.apache.sis.referencing.CRS} class.
      */
+    @Deprecated
     public static SingleCRS getHorizontalCRS(final CoordinateReferenceSystem crs) {
-        if (crs instanceof SingleCRS) {
-            final CoordinateSystem cs = crs.getCoordinateSystem();
-            final int dimension = cs.getDimension();
-            if (dimension == 2) {
-                /*
-                 * For two-dimensional CRS, returns the CRS directly if it is either a
-                 * GeographicCRS, or any kind of derived CRS having a GeographicCRS as
-                 * its base and a geodetic datum.
-                 */
-                final Datum datum = ((SingleCRS) crs).getDatum();
-                if (datum instanceof GeodeticDatum) {
-                    CoordinateReferenceSystem base = crs;
-                    while (base instanceof GeneralDerivedCRS) {
-                        base = ((GeneralDerivedCRS) base).getBaseCRS();
-                    }
-                    // No need to test for ProjectedCRS, since the code above unwrap it.
-                    if (base instanceof GeographicCRS) {
-                        assert isHorizontalCRS(crs) : crs;
-                        return (SingleCRS) crs; // Really returns 'crs', not 'base'.
-                    }
-                }
-            } else if (dimension >= 3 && crs instanceof GeographicCRS) {
-                /*
-                 * For three-dimensional Geographic CRS, extracts the axis having a direction
-                 * like "North", "North-East", "East", etc. If we find exactly two of them,
-                 * we can build a new GeographicCRS using them.
-                 */
-                CoordinateSystemAxis axis0 = null, axis1 = null;
-                int count = 0;
-                for (int i=0; i<dimension; i++) {
-                    final CoordinateSystemAxis axis = cs.getAxis(i);
-search:             if (DefaultCoordinateSystemAxis.isCompassDirection(axis.getDirection())) {
-                        switch (count++) {
-                            case 0: axis0 = axis; break;
-                            case 1: axis1 = axis; break;
-                            default: break search;
-                        }
-                    }
-                }
-                if (count == 2) {
-                    final GeodeticDatum datum = ((GeographicCRS) crs).getDatum();
-                    Map<String,?> properties = CRSUtilities.changeDimensionInName(cs, "3D", "2D");
-                    EllipsoidalCS horizontalCS;
-                    try {
-                        horizontalCS = FactoryFinder.getCSFactory(null).
-                                createEllipsoidalCS(properties, axis0, axis1);
-                    } catch (FactoryException e) {
-                        Logging.recoverableException(CRS.class, "getHorizontalCRS", e);
-                        horizontalCS = new DefaultEllipsoidalCS(properties, axis0, axis1);
-                    }
-                    properties = CRSUtilities.changeDimensionInName(crs, "3D", "2D");
-                    GeographicCRS horizontalCRS;
-                    try {
-                        horizontalCRS = getCRSFactory().createGeographicCRS(properties, datum, horizontalCS);
-                    } catch (FactoryException e) {
-                        Logging.recoverableException(CRS.class, "getHorizontalCRS", e);
-                        horizontalCRS = new DefaultGeographicCRS(properties, datum, horizontalCS);
-                    }
-                    assert isHorizontalCRS(horizontalCRS) : horizontalCRS;
-                    return horizontalCRS;
-                }
-            }
-        }
-        if (crs instanceof CompoundCRS) {
-            final CompoundCRS cp = (CompoundCRS) crs;
-            for (final CoordinateReferenceSystem c : cp.getComponents()) {
-                final SingleCRS candidate = getHorizontalCRS(c);
-                if (candidate != null) {
-                    assert isHorizontalCRS(candidate) : candidate;
-                    return candidate;
-                }
-            }
-        }
-        return null;
+        return org.apache.sis.referencing.CRS.getHorizontalComponent(crs);
     }
 
     /**
