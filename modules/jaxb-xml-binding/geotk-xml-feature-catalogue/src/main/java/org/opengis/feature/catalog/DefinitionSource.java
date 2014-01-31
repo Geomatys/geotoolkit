@@ -10,7 +10,6 @@
  *************************************************************************************************/
 package org.opengis.feature.catalog;
 
-import org.opengis.annotation.Extension;
 import org.opengis.annotation.UML;
 import org.opengis.metadata.citation.Citation;
 import static org.opengis.annotation.Obligation.*;
@@ -29,7 +28,7 @@ public interface DefinitionSource {
      /**
       * an unique identifier used in the XML instance. 
       */
-     @Extension
+     //@Extension
      String getId();
      
      /**

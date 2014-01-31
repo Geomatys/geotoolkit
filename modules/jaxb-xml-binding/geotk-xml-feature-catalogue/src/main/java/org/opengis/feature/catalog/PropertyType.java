@@ -11,7 +11,6 @@
 package org.opengis.feature.catalog;
 
 import java.util.List;
-import org.opengis.annotation.Extension;
 import org.opengis.annotation.UML;
 import org.opengis.util.LocalName;
 import org.geotoolkit.util.Multiplicity;
@@ -31,7 +30,7 @@ public interface PropertyType {
      /**
      * an unique identifier used in the XML instance. 
      */
-     @Extension
+     //@Extension
      String getId();
      
     /**

@@ -12,7 +12,6 @@ package org.opengis.feature.catalog;
 
 import java.util.Date;
 import java.util.List;
-import org.opengis.annotation.Extension;
 import org.opengis.annotation.UML;
 import org.opengis.metadata.citation.ResponsibleParty;
 import static org.opengis.annotation.Obligation.*;
@@ -31,7 +30,7 @@ public interface FeatureCatalogue {
      /**
      * an unique identifier used in the XML instance. 
      */
-     @Extension
+     //@Extension
      String getId();
      
     /**

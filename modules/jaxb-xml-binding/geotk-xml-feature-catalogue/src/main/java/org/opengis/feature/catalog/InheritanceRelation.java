@@ -10,7 +10,6 @@
  *************************************************************************************************/
 package org.opengis.feature.catalog;
 
-import org.opengis.annotation.Extension;
 import org.opengis.annotation.UML;
 import static org.opengis.annotation.Obligation.*;
 import static org.opengis.annotation.Specification.*;
@@ -24,7 +23,7 @@ import static org.opengis.annotation.Specification.*;
 //@UML(identifier="FC_InheritanceRelation", specification=ISO_19110)
 public interface InheritanceRelation {
 
-    @Extension
+    //@Extension
     String getId();
     
     /**

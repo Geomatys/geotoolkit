@@ -11,7 +11,6 @@
 package org.opengis.feature.catalog;
 
 import java.util.List;
-import org.opengis.annotation.Extension;
 import org.opengis.util.LocalName;
 
 /**
@@ -23,7 +22,7 @@ import org.opengis.util.LocalName;
 //@UML(identifier="FC_FeatureType", specification=ISO_19110)
 public interface FeatureType {
 
-    @Extension
+    //@Extension
     String getId();
     
     /**
