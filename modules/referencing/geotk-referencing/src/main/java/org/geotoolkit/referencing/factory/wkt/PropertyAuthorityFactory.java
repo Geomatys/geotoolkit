@@ -318,7 +318,7 @@ public class PropertyAuthorityFactory extends WKTParsingAuthorityFactory
              * neither if the user intend to modify it after construction.
              */
             if (!containsAxis) {
-                final Symbols s = Symbols.DEFAULT;
+                final Symbols s = Symbols.getDefault();
                 for (final Object wkt : definitions.values()) {
                     if (s.containsAxis((String) wkt)) {
                         containsAxis = true;

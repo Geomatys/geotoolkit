@@ -78,7 +78,7 @@ public class MathTransformParser extends Parser {
      * Creates a parser using the default set of symbols and factory.
      */
     public MathTransformParser() {
-        this(Symbols.DEFAULT, FactoryFinder.getMathTransformFactory(null));
+        this(Symbols.getDefault(), FactoryFinder.getMathTransformFactory(null));
     }
 
     /**

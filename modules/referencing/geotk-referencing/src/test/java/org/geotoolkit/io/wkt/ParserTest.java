@@ -209,7 +209,7 @@ public final strictfp class ParserTest {
              " PARAMETER[\"False_Northing\", -86.99]," +
              " UNIT [\"Meter\", 1]]";
 
-        assertFalse(Symbols.DEFAULT.containsAxis(wkt));
+        assertFalse(Symbols.getDefault().containsAxis(wkt));
         final ReferencingParser parser = new ReferencingParser();
         final CoordinateReferenceSystem crs1 = parser.parseCoordinateReferenceSystem(wkt);
         final String check = crs1.toWKT();

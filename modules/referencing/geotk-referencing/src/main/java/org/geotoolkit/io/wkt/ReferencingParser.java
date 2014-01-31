@@ -188,7 +188,7 @@ public class ReferencingParser extends MathTransformParser {
      * Creates a parser using the default set of symbols and factories.
      */
     public ReferencingParser() {
-        this(Symbols.DEFAULT, (Hints) null);
+        this(Symbols.getDefault(), (Hints) null);
     }
 
     /**

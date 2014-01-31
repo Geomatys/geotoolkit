@@ -1074,7 +1074,7 @@ public class ReferencingObjectFactory extends ReferencingFactory
          */
         ReferencingParser parser = this.parser.get();
         if (parser == null) {
-            parser = new ReferencingParser(Symbols.DEFAULT,
+            parser = new ReferencingParser(Symbols.getDefault(),
                     getDatumFactory(), this, this, getMathTransformFactory());
             parser.setISOConform(true);
             this.parser.set(parser);

@@ -87,7 +87,7 @@ public final strictfp class WKTFormatTest {
                "  UNIT[“metre”, 1.0],\n" +
                "  AXIS[“x”, EAST],\n" +
                "  AXIS[“y”, NORTH]]\n");
-        assertTrue(Symbols.DEFAULT.containsAxis(wkt1));
+        assertTrue(Symbols.getDefault().containsAxis(wkt1));
         final WKTFormat wktFormat = new WKTFormat();
         final DefaultProjectedCRS crs1  = (DefaultProjectedCRS) wktFormat.parseObject(wkt1);
         final String              wkt2  = wktFormat.format(crs1);
@@ -132,7 +132,7 @@ public final strictfp class WKTFormatTest {
                "  UNIT[“metre”, 1.0],\n" +
                "  AXIS[“x”, EAST],\n" +
                "  AXIS[“y”, NORTH]]\n");
-        assertTrue(Symbols.DEFAULT.containsAxis(wkt1));
+        assertTrue(Symbols.getDefault().containsAxis(wkt1));
         final WKTFormat wktFormat = new WKTFormat();
         final DefaultProjectedCRS crs1  = (DefaultProjectedCRS) wktFormat.parseObject(wkt1);
         final String              wkt2  = wktFormat.format(crs1);
@@ -178,7 +178,7 @@ public final strictfp class WKTFormatTest {
                "  AXIS[“E”,EAST],\n" +
                "  AXIS[“N”,NORTH],\n" +
                "  AUTHORITY[“EPSG”, “27700”]]\n");
-        assertTrue(Symbols.DEFAULT.containsAxis(wkt1));
+        assertTrue(Symbols.getDefault().containsAxis(wkt1));
         final WKTFormat wktFormat = new WKTFormat();
         final DefaultProjectedCRS crs1  = (DefaultProjectedCRS) wktFormat.parseObject(wkt1);
         final String              wkt2  = wktFormat.format(crs1);
@@ -224,7 +224,7 @@ public final strictfp class WKTFormatTest {
                "  UNIT[“feet”, 0.304800609601219],\n" +
                "  AXIS[“x”, EAST],\n" +
                "  AXIS[“y”, NORTH]]");
-        assertTrue(Symbols.DEFAULT.containsAxis(wkt1));
+        assertTrue(Symbols.getDefault().containsAxis(wkt1));
         final WKTFormat wktFormat = new WKTFormat();
         final DefaultProjectedCRS crs1  = (DefaultProjectedCRS) wktFormat.parseObject(wkt1);
         final String              wkt2  = wktFormat.format(crs1);
@@ -256,7 +256,7 @@ public final strictfp class WKTFormatTest {
                "  PRIMEM[“Greenwich”, 0],\n" +
                "  UNIT[“Decimal_Second”, 4.84813681109536e-06],\n" +
                "  AUTHORITY[“EPSG”, “100001”]]");
-        assertFalse(Symbols.DEFAULT.containsAxis(wkt1));
+        assertFalse(Symbols.getDefault().containsAxis(wkt1));
         final WKTFormat wktFormat = new WKTFormat();
         final String wkt2 = wktFormat.format(wktFormat.parseObject(wkt1));
         assertFalse(wkt2.contains("semi_major"));
@@ -294,7 +294,7 @@ public final strictfp class WKTFormatTest {
         final String wkt = crs.toWKT();
         assertTrue(wkt.contains("semi_major"));
         assertTrue(wkt.contains("semi_minor"));
-        final ReferencingParser parser = new ReferencingParser(Symbols.DEFAULT, (Hints) null);
+        final ReferencingParser parser = new ReferencingParser(Symbols.getDefault(), (Hints) null);
         CoordinateReferenceSystem check = parser.parseCoordinateReferenceSystem(wkt);
         assertEquals(wkt, check.toWKT());
     }

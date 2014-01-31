@@ -150,6 +150,7 @@ public class WKTFormat extends org.apache.sis.io.wkt.WKTFormat {
      * Constructs a format using the default factories.
      */
     public WKTFormat() {
+        super(null, null);
     }
 
     /**
@@ -159,6 +160,7 @@ public class WKTFormat extends org.apache.sis.io.wkt.WKTFormat {
      *              {@code null} for the system-wide default hints.
      */
     public WKTFormat(final Hints hints) {
+        this();
         if (!isNullOrEmpty(hints)) {
             parser = new ReferencingParser(super.getSymbols(), hints);
         }

@@ -679,7 +679,7 @@ public class DefaultMathTransformFactory extends ReferencingFactory implements M
         final Variables localVariables = getLocalVariables();
         MathTransformParser parser = localVariables.parser;
         if (parser == null) {
-            parser = new MathTransformParser(Symbols.DEFAULT, this);
+            parser = new MathTransformParser(Symbols.getDefault(), this);
             localVariables.parser = parser;
         }
         try {
