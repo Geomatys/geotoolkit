@@ -208,11 +208,4 @@ public abstract class Parser {
     final String keyword(final Element key) {
         return key.keyword.trim().toUpperCase(symbols.getLocale());
     }
-
-    /**
-     * Creates a new formatter using the same symbols and number format than this parser.
-     */
-    final Formatter formatter() {
-        return Accessor.newFormatter(symbols, numberFormat);
-    }
 }

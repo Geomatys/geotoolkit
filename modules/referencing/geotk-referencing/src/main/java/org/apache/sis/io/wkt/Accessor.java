@@ -17,10 +17,6 @@ public final class Accessor {
     public static void init() { // Dummy method for forcing class initialization by the caller.
     }
 
-    public static Formatter newFormatter(Symbols symbols, NumberFormat numberFormat) {
-        return new Formatter(symbols, numberFormat);
-    }
-
     public static NumberFormat createNumberFormat(Symbols symbols) {
         return symbols.createNumberFormat();
     }
