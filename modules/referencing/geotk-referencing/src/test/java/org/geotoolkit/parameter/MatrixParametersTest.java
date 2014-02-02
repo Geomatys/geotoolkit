@@ -24,10 +24,8 @@ import java.awt.geom.AffineTransform;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.operation.MathTransform;
 
-import org.apache.sis.io.wkt.Formatter;
-import org.geotoolkit.io.wkt.WKTFormat;
+import org.apache.sis.io.wkt.WKTFormat;
 import org.apache.sis.io.wkt.Convention;
-import org.apache.sis.io.wkt.Symbols;
 
 import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
 import org.geotoolkit.referencing.operation.MathTransforms;
@@ -87,28 +85,29 @@ public final strictfp class MatrixParametersTest extends ParameterTestBase {
      */
     @Test
     public void testFormatting() {
-        final Formatter  formatter = new Formatter(Convention.WKT1, Symbols.getDefault(), WKTFormat.SINGLE_LINE);
+        final WKTFormat formatter = new WKTFormat(null, null);
+        formatter.setConvention(Convention.WKT1);
         final GeneralMatrix matrix = new GeneralMatrix(4);
         matrix.setElement(0,2,  4);
         matrix.setElement(1,0, -2);
         matrix.setElement(2,3,  7);
         MathTransform transform = MathTransforms.linear(matrix);
         assertFalse(transform instanceof AffineTransform);
-        formatter.append(transform);
-        assertEquals("PARAM_MT[\"Affine\", "          +
-                     "PARAMETER[\"num_row\", 4], "    +
-                     "PARAMETER[\"num_col\", 4], "    +
-                     "PARAMETER[\"elt_0_2\", 4.0], "  +
-                     "PARAMETER[\"elt_1_0\", -2.0], " +
-                     "PARAMETER[\"elt_2_3\", 7.0]]", formatter.toString());
+        org.apache.sis.referencing.Assert.assertMultilinesEquals(
+                "PARAM_MT[\"Affine\",\n"          +
+                "PARAMETER[\"num_row\", 4],\n"    +
+                "PARAMETER[\"num_col\", 4],\n"    +
+                "PARAMETER[\"elt_0_2\", 4.0],\n"  +
+                "PARAMETER[\"elt_1_0\", -2.0],\n" +
+                "PARAMETER[\"elt_2_3\", 7.0]]", formatter.format(transform));
         matrix.setSize(3,3);
         transform = MathTransforms.linear(matrix);
         assertTrue(transform instanceof AffineTransform);
-        formatter.append(transform);
-        assertEquals("PARAM_MT[\"Affine\", "          +
-                     "PARAMETER[\"num_row\", 3], "    +
-                     "PARAMETER[\"num_col\", 3], "    +
-                     "PARAMETER[\"elt_0_2\", 4.0], "  +
-                     "PARAMETER[\"elt_1_0\", -2.0]]", formatter.toString());
+        org.apache.sis.referencing.Assert.assertMultilinesEquals(
+                "PARAM_MT[\"Affine\",\n"         +
+                "PARAMETER[\"num_row\", 3],\n"   +
+                "PARAMETER[\"num_col\", 3],\n"   +
+                "PARAMETER[\"elt_0_2\", 4.0],\n" +
+                "PARAMETER[\"elt_1_0\", -2.0]]", formatter.format(transform));
     }
 }
