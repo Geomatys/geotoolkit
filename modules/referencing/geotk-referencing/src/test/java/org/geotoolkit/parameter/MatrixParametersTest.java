@@ -104,7 +104,6 @@ public final strictfp class MatrixParametersTest extends ParameterTestBase {
         matrix.setSize(3,3);
         transform = MathTransforms.linear(matrix);
         assertTrue(transform instanceof AffineTransform);
-        formatter.clear();
         formatter.append(transform);
         assertEquals("PARAM_MT[\"Affine\", "          +
                      "PARAMETER[\"num_row\", 3], "    +
