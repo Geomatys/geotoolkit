@@ -93,7 +93,7 @@ public final strictfp class MatrixParametersTest extends ParameterTestBase {
         matrix.setElement(2,3,  7);
         MathTransform transform = MathTransforms.linear(matrix);
         assertFalse(transform instanceof AffineTransform);
-        org.apache.sis.referencing.Assert.assertMultilinesEquals(
+        org.apache.sis.test.Assert.assertMultilinesEquals(
                 "PARAM_MT[\"Affine\",\n"          +
                 "PARAMETER[\"num_row\", 4],\n"    +
                 "PARAMETER[\"num_col\", 4],\n"    +
@@ -103,7 +103,7 @@ public final strictfp class MatrixParametersTest extends ParameterTestBase {
         matrix.setSize(3,3);
         transform = MathTransforms.linear(matrix);
         assertTrue(transform instanceof AffineTransform);
-        org.apache.sis.referencing.Assert.assertMultilinesEquals(
+        org.apache.sis.test.Assert.assertMultilinesEquals(
                 "PARAM_MT[\"Affine\",\n"         +
                 "PARAMETER[\"num_row\", 3],\n"   +
                 "PARAMETER[\"num_col\", 3],\n"   +
