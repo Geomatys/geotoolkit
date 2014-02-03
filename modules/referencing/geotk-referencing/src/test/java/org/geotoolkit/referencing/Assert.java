@@ -54,6 +54,10 @@ public strictfp final class Assert extends org.geotoolkit.test.Assert {
      */
     private static final double EPS = 1E-7;
 
+    static {
+        org.apache.sis.io.wkt.Accessor.init();
+    }
+
     /**
      * Do not allow instantiation of this class.
      */
