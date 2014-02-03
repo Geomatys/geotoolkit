@@ -12,6 +12,7 @@ public final class Accessor {
 
     static {
         Convention.DEFAULT = Convention.WKT1;
+        Convention.DEFAULT_SIMPLIFIED = Convention.WKT1;
     }
 
     public static void init() { // Dummy method for forcing class initialization by the caller.

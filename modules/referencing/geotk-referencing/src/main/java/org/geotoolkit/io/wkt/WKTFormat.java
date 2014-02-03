@@ -27,7 +27,6 @@ import java.io.IOException;
 import java.io.EOFException;
 import java.text.ParseException;
 import java.text.ParsePosition;
-import javax.measure.quantity.Angle;
 
 import org.opengis.metadata.citation.Citation;
 import org.opengis.parameter.InvalidParameterValueException;
@@ -48,6 +47,7 @@ import org.geotoolkit.io.ContentFormatException;
 import org.geotoolkit.lang.Configuration;
 import org.geotoolkit.resources.Errors;
 
+import javax.measure.unit.NonSI;
 import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
 
 
@@ -220,7 +220,7 @@ public class WKTFormat extends org.apache.sis.io.wkt.WKTFormat {
         final ReferencingParser parser = (ReferencingParser) this.parser;
         if (parser instanceof ReferencingParser) {
             final Convention convention = super.getConvention();
-            parser.setForcedAngularUnit((convention != null) ? convention.getForcedUnit(Angle.class) : null);
+            parser.setForcedAngularUnit((convention == Convention.WKT1_COMMON_UNITS) ? NonSI.DEGREE_ANGLE : null);
         }
     }
 
