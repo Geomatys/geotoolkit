@@ -151,6 +151,7 @@ public class WKTFormat extends org.apache.sis.io.wkt.WKTFormat {
      */
     public WKTFormat() {
         super(null, null);
+        super.setConvention(Convention.WKT1);
     }
 
     /**

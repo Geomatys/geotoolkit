@@ -316,7 +316,7 @@ public final strictfp class WKTFormatTest {
         final DefaultGeocentricCRS crs = DefaultGeocentricCRS.CARTESIAN;
         String wkt = decodeQuotes(
                 "GEOCCS[“" + name + "”,\n" +
-                "  DATUM[“WGS84”,\n" +
+                "  DATUM[“World Geodetic System 1984”,\n" +
                 "    SPHEROID[“WGS84”, 6378137.0, 298.257223563, AUTHORITY[“EPSG”, “7030”]],\n" +
                 "    AUTHORITY[“EPSG”, “6326”]],\n" +
                 "  PRIMEM[“Greenwich”, 0.0, AUTHORITY[“EPSG”, “8901”]],\n" +
@@ -492,7 +492,7 @@ public final strictfp class WKTFormatTest {
             "      SPHEROID[“Airy 1830”, 6377563.396, 299.3249646],\n" +
             "      TOWGS84[375.0, -111.0, 431.0, 0.0, 0.0, 0.0, 0.0]],\n" +
             "    PRIMEM[“Greenwich”, 0.0],\n" +
-            "    UNIT[“degree”, 0.017453292519943295],\n" +
+            "    ANGLEUNIT[“degree”, 0.017453292519943295],\n" +
             "    AXIS[“Latitude”, NORTH],\n" +
             "    AXIS[“Longitude”, EAST]],\n" +
             "  PROJECTION[“Transverse Mercator”],\n" +
@@ -501,7 +501,7 @@ public final strictfp class WKTFormatTest {
             "  PARAMETER[“Scale factor at natural origin”, 0.999601272],\n" +
             "  PARAMETER[“False easting”, 400000.0],\n" +
             "  PARAMETER[“False northing”, -100000.0],\n" +
-            "  UNIT[“metre”, 1.0],\n" +
+            "  LENGTHUNIT[“metre”, 1.0],\n" +
             "  AXIS[“Easting”, EAST],\n" +
             "  AXIS[“Northing”, NORTH]]"),
             crs.toString(Convention.EPSG));
