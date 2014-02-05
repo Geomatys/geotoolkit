@@ -31,7 +31,7 @@ import org.opengis.referencing.operation.*;
 import org.opengis.geometry.Envelope;
 
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.internal.referencing.ReferencingUtilities;
+import org.apache.sis.internal.metadata.ReferencingUtilities;
 
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.lang.Workaround;

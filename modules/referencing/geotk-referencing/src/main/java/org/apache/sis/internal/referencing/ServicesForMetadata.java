@@ -33,6 +33,9 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.metadata.extent.GeographicBoundingBox;
 import org.opengis.geometry.Envelope;
 
+import org.opengis.referencing.IdentifiedObject;
+import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.Matrix;
 import org.opengis.temporal.TemporalPrimitive;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.Factories;
@@ -40,8 +43,10 @@ import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.FactoryNotFoundException;
 import org.geotoolkit.geometry.Envelopes;
 import org.geotoolkit.referencing.CRS;
-import org.apache.sis.referencing.crs.DefaultTemporalCRS;
+import org.apache.sis.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.crs.DefaultTemporalCRS;
+import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.geotoolkit.referencing.operation.TransformPathNotFoundException;
 import org.apache.sis.metadata.iso.extent.DefaultExtent;
 import org.apache.sis.metadata.iso.extent.DefaultVerticalExtent;
@@ -105,6 +110,28 @@ public final class ServicesForMetadata extends ReferencingServices implements Ch
             factory = FactoryFinder.getCoordinateOperationFactory(hints);
         }
         return factory;
+    }
+
+    /**
+     * Returns the matrix for the given transform, or {@code null} if none.
+     *
+     * @param  tr The transform for which to get the matrix.
+     * @return The matrix, or {@code null} if none.
+     */
+    @Override
+    public Matrix getMatrix(final MathTransform tr) {
+        return (tr instanceof LinearTransform) ? ((LinearTransform) tr).getMatrix() : null;
+    }
+
+    /**
+     * Converts the given object in a {@link org.apache.sis.io.wkt.FormattableObject} instance.
+     *
+     * @param  object The object to wrap.
+     * @return The given object converted to a {@code FormattableObject} instance.
+     */
+    @Override
+    public IdentifiedObject toFormattableObject(final IdentifiedObject object) {
+        return AbstractIdentifiedObject.castOrCopy(object);
     }
 
     /**
