@@ -63,6 +63,10 @@ import static org.geotoolkit.referencing.Assert.*;
  */
 @DependsOn({ParserTest.class, DatumAliasesTest.class})
 public final strictfp class WKTFormatTest {
+    static {
+        org.apache.sis.io.wkt.Accessor.init();
+    }
+
     /**
      * Test a hard coded version of a WKT. This is more convenient for debugging.
      *
@@ -325,7 +329,17 @@ public final strictfp class WKTFormatTest {
                 "  AXIS[“Geocentric Y”, GEOCENTRIC_Y],\n" +
                 "  AXIS[“Geocentric Z”, GEOCENTRIC_Z]]");
         wktFormat.setConvention(Convention.INTERNAL);
-        assertMultilinesEquals(wkt, wktFormat.format(crs));
+        assertMultilinesEquals(wkt, decodeQuotes(
+                "GEOCCS[“" + name + "”,\n" +
+                "  DATUM[“World Geodetic System 1984”,\n" +
+                "    SPHEROID[“WGS84”, 6378137.0, 298.257223563, ID[“EPSG”, 7030]],\n" +
+                "    ID[“EPSG”, 6326]],\n" +
+                "  PRIMEM[“Greenwich”, 0.0, ID[“EPSG”, 8901]],\n" +
+                "  UNIT[“metre”, 1.0],\n" +
+                "  AXIS[“Geocentric X”, GEOCENTRIC_X],\n" +
+                "  AXIS[“Geocentric Y”, GEOCENTRIC_Y],\n" +
+                "  AXIS[“Geocentric Z”, GEOCENTRIC_Z]]"),
+                wktFormat.format(crs));
         assertEqualsIgnoreMetadata(crs, wktFormat.parseObject(wkt), false);
         /*
          * Now try the fomatting as standard WKT.
