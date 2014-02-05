@@ -409,7 +409,7 @@ public class AffineTransform2D extends XAffineTransform
     @Override
     public String formatTo(final Formatter formatter) {
         final ParameterValueGroup parameters = getParameterValues();
-        formatter.append(formatter.getName(parameters.getDescriptor()));
+        formatter.append(formatter.getName(parameters.getDescriptor()), null);
         formatter.append(parameters);
         return "PARAM_MT";
     }

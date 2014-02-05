@@ -1226,7 +1226,7 @@ public abstract class AbstractMathTransform extends FormattableObject
     public String formatTo(final Formatter formatter) {
         final ParameterValueGroup parameters = getParameterValues();
         if (parameters != null) {
-            formatter.append(formatter.getName(parameters.getDescriptor()));
+            formatter.append(formatter.getName(parameters.getDescriptor()), null);
             formatter.append(parameters);
         }
         return "PARAM_MT";
@@ -1469,7 +1469,7 @@ public abstract class AbstractMathTransform extends FormattableObject
         public String formatTo(final Formatter formatter) {
             final ParameterValueGroup parameters = getParameterValues();
             if (parameters != null) {
-                formatter.append(formatter.getName(parameters.getDescriptor()));
+                formatter.append(formatter.getName(parameters.getDescriptor()), null);
                 formatter.append(parameters);
                 return "PARAM_MT";
             } else {

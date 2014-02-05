@@ -436,7 +436,7 @@ public abstract class AbstractMathTransform2D extends AbstractMathTransform impl
             public synchronized String formatTo(final Formatter formatter) {
                 if (!inverse) {
                     final ParameterValueGroup parameters = getParameterValues();
-                    formatter.append(formatter.getName(parameters.getDescriptor()));
+                    formatter.append(formatter.getName(parameters.getDescriptor()), null);
                     formatter.append(parameters);
                     return "PARAM_MT";
                 }

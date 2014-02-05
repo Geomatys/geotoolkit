@@ -257,7 +257,7 @@ class DiscreteCRS<T extends CoordinateReferenceSystem> extends FormattableObject
         if (crs instanceof Formattable) {
             return ((Formattable) crs).formatTo(formatter);
         } else {
-            return super.formatTo(formatter);
+            return null;
         }
     }
 
