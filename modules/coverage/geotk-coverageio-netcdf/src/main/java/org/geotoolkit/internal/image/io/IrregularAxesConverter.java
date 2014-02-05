@@ -25,19 +25,23 @@ import org.opengis.referencing.datum.Ellipsoid;
 import org.opengis.referencing.crs.CRSFactory;
 import org.opengis.referencing.crs.ProjectedCRS;
 import org.opengis.referencing.crs.GeographicCRS;
+import org.opengis.referencing.operation.Conversion;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransformFactory;
 import org.opengis.referencing.operation.TransformException;
 
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.lang.Debug;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.cs.DefaultCartesianCS;
 import org.geotoolkit.referencing.cs.DiscreteCoordinateSystemAxis;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.cs.DiscreteReferencingFactory;
+import org.geotoolkit.referencing.operation.DefaultConversion;
 import org.geotoolkit.referencing.operation.DefiningConversion;
+import org.geotoolkit.referencing.operation.transform.AbstractMathTransform;
 
 
 /**
@@ -63,6 +67,12 @@ import org.geotoolkit.referencing.operation.DefiningConversion;
  */
 public final class IrregularAxesConverter {
     /**
+     * Temporary hacked method.
+     */
+    @Deprecated
+    private static final String HACK = "ModifiedMercator";
+
+    /**
      * A collection of source geographic CRS to try, in preference order.
      */
     private static final GeographicCRS[] SOURCES = {
@@ -73,7 +83,7 @@ public final class IrregularAxesConverter {
     /**
      * The operation methods to try.
      */
-    private static final String[] METHODS = {"Mercator_1SP"};
+    private static final String[] METHODS = {"Mercator_1SP", HACK};
 
     /**
      * A tolerance factor, relative to the increment.
@@ -117,6 +127,21 @@ public final class IrregularAxesConverter {
     private ProjectedCRS createProjectedCRS(final GeographicCRS baseCRS, final String method)
             throws FactoryException
     {
+        /*
+         * TEMPORARY UGLY HACK
+         */
+        if (method.equals(HACK)) {
+            ProjectedCRS crs = createProjectedCRS(baseCRS, "Mercator_1SP");
+            Conversion cnv = crs.getConversionFromBase();
+            cnv = new DefaultConversion(Collections.singletonMap(ProjectedCRS.NAME_KEY, "Mixed cnv."), baseCRS, crs,
+                    new ModifiedMercator((AbstractMathTransform) cnv.getMathTransform()), cnv.getMethod());
+            crs = crsFactory.createProjectedCRS(Collections.singletonMap(ProjectedCRS.NAME_KEY,
+                method + " (" + baseCRS.getName().getCode() + ')'), baseCRS, cnv, crs.getCoordinateSystem());
+            return crs;
+        }
+        /*
+         * END OF UGLY HACK.
+         */
         final Ellipsoid ellipsoid = baseCRS.getDatum().getEllipsoid();
         final ParameterValueGroup parameters = mtFactory.getDefaultParameters(method);
         parameters.parameter("semi_major").setValue(ellipsoid.getSemiMajorAxis());
@@ -165,6 +190,14 @@ public final class IrregularAxesConverter {
                                    final DiscreteCoordinateSystemAxis<?> y)
     {
         for (final String method : METHODS) {
+            if (method.equals(HACK)) {
+                if (!(Number.class.isAssignableFrom(y.getElementType()) &&
+                        ((Number) y.getOrdinateAt(0)).doubleValue() < -77 &&
+                        ((Number) y.getOrdinateAt(y.length()-1)).doubleValue() > 89))
+                {
+                    continue;
+                }
+            }
             try {
                 final ProjectedCRS targetCRS = createProjectedCRS(sourceCRS, method);
                 final MathTransform tr = CRS.findMathTransform(sourceCRS, targetCRS);
@@ -179,6 +212,18 @@ public final class IrregularAxesConverter {
             }
         }
         return null;
+    }
+
+    /**
+     * Debugging code only.
+     */
+    @Debug
+    static String toArray(final double[] coords) {
+        final StringBuilder buffer = new StringBuilder();
+        for (int i=1; i<coords.length; i+=2) {
+            buffer.append(coords[i]).append('\n');
+        }
+        return buffer.toString();
     }
 
     /**
@@ -225,8 +270,12 @@ public final class IrregularAxesConverter {
         final double oy = coords[1];
         final double dx = ((coords[coords.length - 2] - ox) / (numPts-1));
         final double dy = ((coords[coords.length - 1] - oy) / (numPts-1));
-        final double tx = dx * tolerance;
-        final double ty = dy * tolerance;
+        double tx = dx * tolerance;
+        double ty = dy * tolerance;
+        if (tr instanceof ModifiedMercator) { // TEMPORARY HACK!!
+            tx *= 4000;
+            ty *= 4000;
+        }
         for (int p=1; p<numPts; p++) {
             final int i = p << 1;
             if (!(Math.abs(coords[i  ] - (ox + dx*p)) <= tx) ||
