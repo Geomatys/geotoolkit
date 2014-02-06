@@ -27,9 +27,7 @@ import org.opengis.referencing.operation.MathTransform;
 import org.apache.sis.util.Utilities;
 import org.apache.sis.util.ComparisonMode;
 import org.apache.sis.io.wkt.Convention;
-import org.apache.sis.io.wkt.Accessor;
-import org.geotoolkit.io.wkt.WKTFormat;
-import org.apache.sis.io.wkt.FormattableObject;
+import org.apache.sis.io.wkt.WKTFormat;
 import org.apache.sis.geometry.AbstractEnvelope;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.geotoolkit.referencing.operation.transform.LinearTransform;
@@ -160,18 +158,19 @@ public strictfp final class Assert extends org.geotoolkit.test.Assert {
      * @param expected The expected text, or {@code null} if {@code object} is expected to be null.
      *        If non-null, the expected text can use the format produced by
      *        {@link org.geotoolkit.test.Tools#printAsJavaCode} for easier reading.
+     *
+     * @deprecated Moved to Apache SIS.
      */
+    @Deprecated
     public static void assertWktEquals(final IdentifiedObject object, final String expected) {
         if (expected == null) {
             assertNull(object);
         } else {
             assertNotNull(object);
-            final String wkt;
-            if (isSingleLine(expected) && (object instanceof FormattableObject)) {
-                wkt = Accessor.formatWKT((FormattableObject) object, Convention.WKT1, (byte) WKTFormat.SINGLE_LINE, false, true);
-            } else {
-                wkt = object.toWKT();
-            }
+            final WKTFormat format = new WKTFormat(null, null);
+            format.setConvention(Convention.WKT1);
+            format.setIndentation(org.apache.sis.io.wkt.WKTFormat.SINGLE_LINE);
+            final String wkt = format.format(object);
             assertMultilinesEquals(object.getName().getCode(), decodeQuotes(expected), wkt);
         }
     }

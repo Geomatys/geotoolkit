@@ -285,7 +285,7 @@ public class Parameter<T> extends AbstractParameterValue<T> {
      * the <code>FloatParameter</code> class, since this method throws an exception instead than
      * returning <code>NaN</code> if no value has been explicitely set. This method behaves that
      * way for consistency will other methods defined in this class, since all of them except
-     * <code>getValue()</code> throw an exception in such case.}
+     * <code>getValue()</code> to throw an exception in such case.}
      *
      * @return The numeric value represented by this parameter after conversion to type {@code double}.
      *         This method returns {@link Double#NaN} only if such "value" has been explicitely set.

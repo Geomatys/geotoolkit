@@ -25,13 +25,13 @@ import java.nio.channels.WritableByteChannel;
 
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.apache.sis.io.wkt.Convention;
+import org.apache.sis.io.wkt.WKTFormat;
 
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.io.ContentFormatException;
-import org.apache.sis.io.wkt.Accessor;
-import org.apache.sis.io.wkt.FormattableObject;
 
 
 /**
@@ -179,15 +179,15 @@ public final class PrjFiles extends Static {
      * @throws ContentFormatException if the given CRS is not formattable as a WKT.
      */
     private static String format(final CoordinateReferenceSystem crs) throws ContentFormatException {
-        try {
-            if (crs instanceof FormattableObject) {
-                return Accessor.formatWKT(((FormattableObject) crs), Convention.OGC, (byte) WKTFormat.SINGLE_LINE, false, true);
-            } else {
-                return crs.toWKT();
-            }
-        } catch (UnsupportedOperationException e) {
-            throw new ContentFormatException(e.getLocalizedMessage(), e);
+        final WKTFormat format = new WKTFormat(null, null);
+        format.setConvention(Convention.WKT1);
+        format.setIndentation(WKTFormat.SINGLE_LINE);
+        final String wkt = format.format(crs);
+        final String warning = format.getWarning();
+        if (warning != null) {
+            throw new ContentFormatException(warning);
         }
+        return wkt;
     }
 
     /**

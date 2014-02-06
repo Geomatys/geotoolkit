@@ -49,6 +49,7 @@ import org.geotoolkit.referencing.operation.DefaultProjection;
 import org.geotoolkit.referencing.operation.DefiningConversion;
 import org.geotoolkit.referencing.operation.DefaultOperationMethod;
 import org.geotoolkit.referencing.operation.transform.AbstractMathTransform;
+import org.apache.sis.internal.referencing.WKTUtilities;
 import org.apache.sis.io.wkt.Formatter;
 
 
@@ -324,7 +325,7 @@ public class DefaultProjectedCRS extends AbstractDerivedCRS implements Projected
                     }
                 }
             }
-            formatter.append(param);
+            WKTUtilities.append(param, formatter);
         }
         formatter.append(unit);
         final CartesianCS cs = getCoordinateSystem();

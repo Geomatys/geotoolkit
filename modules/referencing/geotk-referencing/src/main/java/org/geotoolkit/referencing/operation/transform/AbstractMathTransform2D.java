@@ -35,10 +35,11 @@ import org.apache.sis.io.wkt.FormattableObject;
 import org.geotoolkit.util.Utilities;
 import org.apache.sis.util.logging.Logging;
 import org.apache.sis.util.collection.WeakHashSet;
+import org.apache.sis.internal.referencing.WKTUtilities;
 import org.geotoolkit.referencing.operation.MathTransforms;
+import org.geotoolkit.io.wkt.Formattable;
 
 import static org.geotoolkit.internal.InternalUtilities.adjustForRoundingError;
-import org.geotoolkit.io.wkt.Formattable;
 import static org.geotoolkit.referencing.operation.transform.ConcatenatedTransform.IDENTITY_TOLERANCE;
 
 
@@ -436,8 +437,8 @@ public abstract class AbstractMathTransform2D extends AbstractMathTransform impl
             public synchronized String formatTo(final Formatter formatter) {
                 if (!inverse) {
                     final ParameterValueGroup parameters = getParameterValues();
-                    formatter.append(formatter.getName(parameters.getDescriptor()), null);
-                    formatter.append(parameters);
+                    WKTUtilities.appendName(parameters.getDescriptor(), formatter, null);
+                    WKTUtilities.append(parameters, formatter);
                     return "PARAM_MT";
                 }
                 inverse = false;

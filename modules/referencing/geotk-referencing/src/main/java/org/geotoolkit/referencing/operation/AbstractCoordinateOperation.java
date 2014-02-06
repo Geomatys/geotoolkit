@@ -53,6 +53,7 @@ import org.apache.sis.measure.Units;
 import static org.apache.sis.util.Utilities.deepEquals;
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 import static org.geotoolkit.internal.InternalUtilities.nonEmptySet;
+import org.apache.sis.internal.referencing.WKTUtilities;
 import static org.apache.sis.util.collection.Containers.property;
 
 
@@ -625,16 +626,12 @@ public class AbstractCoordinateOperation extends AbstractIdentifiedObject implem
     static void append(final Formatter formatter, final IdentifiedObject object, final String type) {
         if (object != null) {
             final Map<String,Object> properties = new HashMap<>(4);
-            properties.put(IdentifiedObject.NAME_KEY,        formatter.getName(object));
-            properties.put(IdentifiedObject.IDENTIFIERS_KEY, formatter.getIdentifier(object));
+            properties.put(IdentifiedObject.NAME_KEY,        object.getName());
+            properties.put(IdentifiedObject.IDENTIFIERS_KEY, object.getIdentifiers());
             formatter.append((IdentifiedObject) new AbstractIdentifiedObject(properties) {
                 @Override
                 protected String formatTo(final Formatter formatter) {
-                    /*
-                     * Do not invoke super.formatWKT(formatter), since it doesn't do anything
-                     * more than invoking 'formatter.setInvalidWKT(...)' (we ignore the value
-                     * returned). This method will rather be invoked by the enclosing class.
-                     */
+                    WKTUtilities.appendName(this, formatter, null);
                     return type;
                 }
             });

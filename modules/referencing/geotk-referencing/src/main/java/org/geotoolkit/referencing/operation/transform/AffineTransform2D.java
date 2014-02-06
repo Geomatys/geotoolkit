@@ -38,6 +38,7 @@ import org.geotoolkit.referencing.operation.matrix.Matrix3;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 import org.geotoolkit.referencing.operation.provider.Affine;
 import org.geotoolkit.util.Cloneable;
+import org.apache.sis.internal.referencing.WKTUtilities;
 import org.apache.sis.io.wkt.FormattableObject;
 import org.apache.sis.util.ComparisonMode;
 
@@ -409,8 +410,8 @@ public class AffineTransform2D extends XAffineTransform
     @Override
     public String formatTo(final Formatter formatter) {
         final ParameterValueGroup parameters = getParameterValues();
-        formatter.append(formatter.getName(parameters.getDescriptor()), null);
-        formatter.append(parameters);
+        WKTUtilities.appendName(parameters.getDescriptor(), formatter, null);
+        WKTUtilities.append(parameters, formatter);
         return "PARAM_MT";
     }
 

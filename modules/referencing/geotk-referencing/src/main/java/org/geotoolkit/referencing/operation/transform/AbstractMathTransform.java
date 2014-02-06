@@ -59,6 +59,7 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
 
 import static org.geotoolkit.util.Utilities.hash;
+import org.apache.sis.internal.referencing.WKTUtilities;
 import static org.apache.sis.util.ArgumentChecks.ensureDimensionMatches;
 
 
@@ -1226,8 +1227,8 @@ public abstract class AbstractMathTransform extends FormattableObject
     public String formatTo(final Formatter formatter) {
         final ParameterValueGroup parameters = getParameterValues();
         if (parameters != null) {
-            formatter.append(formatter.getName(parameters.getDescriptor()), null);
-            formatter.append(parameters);
+            WKTUtilities.appendName(parameters.getDescriptor(), formatter, null);
+            WKTUtilities.append(parameters, formatter);
         }
         return "PARAM_MT";
     }
@@ -1469,8 +1470,8 @@ public abstract class AbstractMathTransform extends FormattableObject
         public String formatTo(final Formatter formatter) {
             final ParameterValueGroup parameters = getParameterValues();
             if (parameters != null) {
-                formatter.append(formatter.getName(parameters.getDescriptor()), null);
-                formatter.append(parameters);
+                WKTUtilities.appendName(parameters.getDescriptor(), formatter, null);
+                WKTUtilities.append(parameters, formatter);
                 return "PARAM_MT";
             } else {
                 formatter.append((FormattableObject) AbstractMathTransform.this);

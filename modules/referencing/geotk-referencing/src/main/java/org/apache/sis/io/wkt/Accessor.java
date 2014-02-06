@@ -21,10 +21,4 @@ public final class Accessor {
     public static NumberFormat createNumberFormat(Symbols symbols) {
         return symbols.createNumberFormat();
     }
-
-    public static String formatWKT(FormattableObject object,
-            Convention convention, byte indentation, boolean colorize, boolean strict)
-    {
-        return object.formatWKT(convention, indentation, colorize, strict);
-    }
 }

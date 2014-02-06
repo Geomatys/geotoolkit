@@ -32,6 +32,7 @@ import org.opengis.referencing.operation.OperationMethod;
 import org.apache.sis.io.wkt.Formatter;
 import org.geotoolkit.referencing.IdentifiedObjects;
 
+import org.apache.sis.internal.referencing.WKTUtilities;
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 
 
@@ -138,7 +139,7 @@ public class DefiningConversion extends DefaultConversion {
     @Override
     public String formatTo(final Formatter formatter) {
         final String name = super.formatTo(formatter);
-        formatter.append(parameters);
+        WKTUtilities.append(parameters, formatter);
         return name;
     }
 }
