@@ -32,6 +32,7 @@ import org.geotoolkit.gml.xml.v321.EnvelopeType;
 import org.geotoolkit.gml.xml.v321.EnvelopeWithTimePeriodType;
 import org.geotoolkit.gml.xml.v321.TimePeriodType;
 import org.geotoolkit.sos.xml.ObservationOffering;
+import org.geotoolkit.sos.xml.ResponseModeType;
 import org.geotoolkit.swes.xml.v200.AbstractOfferingType;
 
 
@@ -225,7 +226,7 @@ public class ObservationOfferingType extends AbstractOfferingType implements Obs
     @Override
     public List<String> getResponseFormat() {
         if (responseFormat == null) {
-            responseFormat = new ArrayList<String>();
+            responseFormat = new ArrayList<>();
         }
         return this.responseFormat;
     }
@@ -239,7 +240,7 @@ public class ObservationOfferingType extends AbstractOfferingType implements Obs
      */
     public List<String> getObservationType() {
         if (observationType == null) {
-            observationType = new ArrayList<String>();
+            observationType = new ArrayList<>();
         }
         return this.observationType;
     }
@@ -253,7 +254,7 @@ public class ObservationOfferingType extends AbstractOfferingType implements Obs
      */
     public List<String> getFeatureOfInterestType() {
         if (featureOfInterestType == null) {
-            featureOfInterestType = new ArrayList<String>();
+            featureOfInterestType = new ArrayList<>();
         }
         return this.featureOfInterestType;
     }
@@ -271,7 +272,7 @@ public class ObservationOfferingType extends AbstractOfferingType implements Obs
         if (getProcedure() != null) {
             return Arrays.asList(getProcedure());
         }
-        return new ArrayList<String>();
+        return new ArrayList<>();
     }
     
     /**
@@ -279,7 +280,7 @@ public class ObservationOfferingType extends AbstractOfferingType implements Obs
      */ 
     @Override
     public List<String> getSrsName() {
-        return new ArrayList<String>();
+        return new ArrayList<>();
     }
 
     /**
@@ -287,7 +288,7 @@ public class ObservationOfferingType extends AbstractOfferingType implements Obs
      */ 
     @Override
     public List<String> getFeatureOfInterestIds() {
-        final List<String> results = new ArrayList<String>();
+        final List<String> results = new ArrayList<>();
         for (RelatedFeature feat : getRelatedFeature()) {
             if (feat.getFeatureRelationship() != null &&
                 feat.getFeatureRelationship().getTarget() != null &&
@@ -303,7 +304,7 @@ public class ObservationOfferingType extends AbstractOfferingType implements Obs
      */
     @Override
     public List<QName> getResultModel() {
-        return new ArrayList<QName>();
+        return new ArrayList<>();
     }
 
     @Override
@@ -338,6 +339,12 @@ public class ObservationOfferingType extends AbstractOfferingType implements Obs
         }
         return sb.toString();
     }
+
+    @Override
+    public List<ResponseModeType> getResponseMode() {
+        return new ArrayList<>();
+    }
+    
     /**
      * <p>Java class for anonymous complex type.
      * 

@@ -62,6 +62,21 @@ public class FilterXmlFactory {
             throw new IllegalArgumentException("unexpected version number:" + currentVersion);
         }
     }
+
+    public static Literal buildLiteral(final String currentVersion, final Object value) {
+        if ("2.0.0".equals(currentVersion)) {
+            return new org.geotoolkit.ogc.xml.v200.LiteralType(value);
+
+        } else if ("1.1.0".equals(currentVersion)) {
+            return new org.geotoolkit.ogc.xml.v110.LiteralType(value);
+
+        } else if ("1.0.0".equals(currentVersion)) {
+            return new org.geotoolkit.ogc.xml.v100.LiteralType(value);
+
+        } else {
+            throw new IllegalArgumentException("unexpected version number:" + currentVersion);
+        }
+    }
     
     public static After buildTimeAfter(final String currentVersion, final String propertyName, final Object temporal) {
         if ("2.0.0".equals(currentVersion)) {

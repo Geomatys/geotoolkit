@@ -89,7 +89,7 @@ public abstract class AbstractOfferingType extends AbstractSWESType {
         this.procedure = procedure;
         this.observableProperty = observableProperty;
         if (relatedFeature != null) {
-            this.relatedFeature = new ArrayList<RelatedFeature>();
+            this.relatedFeature = new ArrayList<>();
             for (String feature : relatedFeature) {
                 this.relatedFeature.add(new RelatedFeature(feature));
             }
@@ -130,7 +130,7 @@ public abstract class AbstractOfferingType extends AbstractSWESType {
      */
     public List<String> getProcedureDescriptionFormat() {
         if (procedureDescriptionFormat == null) {
-            procedureDescriptionFormat = new ArrayList<String>();
+            procedureDescriptionFormat = new ArrayList<>();
         }
         return this.procedureDescriptionFormat;
     }
@@ -144,7 +144,7 @@ public abstract class AbstractOfferingType extends AbstractSWESType {
      */
     public List<String> getObservableProperty() {
         if (observableProperty == null) {
-            observableProperty = new ArrayList<String>();
+            observableProperty = new ArrayList<>();
         }
         return this.observableProperty;
     }
@@ -158,7 +158,7 @@ public abstract class AbstractOfferingType extends AbstractSWESType {
      */
     public List<AbstractOfferingType.RelatedFeature> getRelatedFeature() {
         if (relatedFeature == null) {
-            relatedFeature = new ArrayList<AbstractOfferingType.RelatedFeature>();
+            relatedFeature = new ArrayList<>();
         }
         return this.relatedFeature;
     }

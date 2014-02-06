@@ -84,35 +84,35 @@ public class ObservationOfferingType extends AbstractFeatureType implements Obse
         super(that);
         if (that != null) {
             if (that.intendedApplication != null) {
-                this.intendedApplication = new ArrayList<String>(that.intendedApplication);
+                this.intendedApplication = new ArrayList<>(that.intendedApplication);
             }
             this.time = that.time; // todo clone
             if (that.featureOfInterest != null) {
-                this.featureOfInterest = new ArrayList<ReferenceType>();
+                this.featureOfInterest = new ArrayList<>();
                 for (ReferenceType ref : that.featureOfInterest) {
                     this.featureOfInterest.add(new ReferenceType(ref));
                 }
             }
             if (that.procedure != null) {
-                this.procedure = new ArrayList<ReferenceType>();
+                this.procedure = new ArrayList<>();
                 for (ReferenceType ref : that.procedure) {
                     this.procedure.add(new ReferenceType(ref));
                 }
             }
             if (that.observedProperty != null) {
-                this.observedProperty = new ArrayList<PhenomenonPropertyType>();
+                this.observedProperty = new ArrayList<>();
                 for (PhenomenonPropertyType ref : that.observedProperty) {
                     this.observedProperty.add(ref); // todo clone
                 }
             }
             if (that.responseFormat != null) {
-                this.responseFormat = new ArrayList<String>(that.responseFormat);
+                this.responseFormat = new ArrayList<>(that.responseFormat);
             }
             if (that.responseMode != null) {
-                this.responseMode = new ArrayList<ResponseModeType>(that.responseMode);
+                this.responseMode = new ArrayList<>(that.responseMode);
             }
             if (that.resultModel != null) {
-                this.resultModel = new ArrayList<QName>(that.resultModel);
+                this.resultModel = new ArrayList<>(that.resultModel);
             }
         }
     } 
@@ -145,14 +145,14 @@ public class ObservationOfferingType extends AbstractFeatureType implements Obse
 
         super(id, name, description, null, null, srsName);
         if (procedure != null) {
-            this.procedure = new ArrayList<ReferenceType>();
+            this.procedure = new ArrayList<>();
             for (String proc : procedure) {
                 this.procedure.add(new ReferenceType(null, proc));
             }
         }
         this.observedProperty = observedProperties;
         if (featureOfInterest != null) {
-            this.featureOfInterest = new ArrayList<ReferenceType>();
+            this.featureOfInterest = new ArrayList<>();
             for (String foi : featureOfInterest) {
                 this.featureOfInterest.add(new ReferenceType(null, foi));
             }
@@ -177,7 +177,7 @@ public class ObservationOfferingType extends AbstractFeatureType implements Obse
      */
     public List<String> getIntendedApplication() {
         if (intendedApplication == null) {
-            intendedApplication = new ArrayList<String>();
+            intendedApplication = new ArrayList<>();
         }
         return intendedApplication;
     }
@@ -207,7 +207,7 @@ public class ObservationOfferingType extends AbstractFeatureType implements Obse
      */
     public List<ReferenceType> getProcedure() {
         if (procedure == null) {
-            procedure = new ArrayList<ReferenceType>();
+            procedure = new ArrayList<>();
         }
         return procedure;
     }
@@ -215,9 +215,9 @@ public class ObservationOfferingType extends AbstractFeatureType implements Obse
     @Override
     public List<String> getProcedures() {
         if (procedure == null) {
-            procedure = new ArrayList<ReferenceType>();
+            procedure = new ArrayList<>();
         }
-        final List<String> result = new ArrayList<String>();
+        final List<String> result = new ArrayList<>();
         for (ReferenceType ref : procedure) {
             result.add(ref.getHref());
         }
@@ -226,7 +226,7 @@ public class ObservationOfferingType extends AbstractFeatureType implements Obse
     
     public void setProcedures(final List<String> procedures) {
         if (procedures != null) {
-            procedure = new ArrayList<ReferenceType>();
+            procedure = new ArrayList<>();
             for (String s : procedures) {
                 procedure.add(new ReferenceType(null, s));
             }
@@ -238,10 +238,10 @@ public class ObservationOfferingType extends AbstractFeatureType implements Obse
      */
     public List<PhenomenonType> getObservedProperty() {
         if (observedProperty == null){
-           return new ArrayList<PhenomenonType>();
+           return new ArrayList<>();
 
         } else {
-            List<PhenomenonType> result = new ArrayList<PhenomenonType>();
+            List<PhenomenonType> result = new ArrayList<>();
             for (PhenomenonPropertyType pp:observedProperty){
                 result.add(pp.getPhenomenon());
             }
@@ -251,9 +251,15 @@ public class ObservationOfferingType extends AbstractFeatureType implements Obse
     
     @Override
     public List<String> getObservedProperties() {
-        final List<String> result = new ArrayList<String>();
-        for (PhenomenonType phen : getObservedProperty()) {
-            result.add(phen.getId());
+        final List<String> result = new ArrayList<>();
+        if (observedProperty != null) {
+            for (PhenomenonPropertyType phen : observedProperty) {
+                if (phen.getPhenomenon() != null) {
+                    result.add(phen.getPhenomenon().getId());
+                } else {
+                    result.add(phen.getHref());
+                }
+            }
         }
         return result;
     }
@@ -263,7 +269,7 @@ public class ObservationOfferingType extends AbstractFeatureType implements Obse
      */
     public List<PhenomenonPropertyType> getRealObservedProperty() {
         if (observedProperty == null){
-           return new ArrayList<PhenomenonPropertyType>();
+           return new ArrayList<>();
 
         } else {
             return observedProperty;
@@ -276,7 +282,7 @@ public class ObservationOfferingType extends AbstractFeatureType implements Obse
      */
     public List<ReferenceType> getFeatureOfInterest() {
         if (featureOfInterest == null){
-            featureOfInterest = new ArrayList<ReferenceType>();
+            featureOfInterest = new ArrayList<>();
         }
         return featureOfInterest;
     }
@@ -284,9 +290,9 @@ public class ObservationOfferingType extends AbstractFeatureType implements Obse
     @Override
     public List<String> getFeatureOfInterestIds() {
         if (featureOfInterest == null) {
-            featureOfInterest = new ArrayList<ReferenceType>();
+            featureOfInterest = new ArrayList<>();
         }
-        final List<String> result = new ArrayList<String>();
+        final List<String> result = new ArrayList<>();
         for (ReferenceType ref : featureOfInterest) {
             result.add(ref.getHref());
         }
@@ -300,7 +306,7 @@ public class ObservationOfferingType extends AbstractFeatureType implements Obse
     @Override
     public List<String> getResponseFormat() {
         if (responseFormat == null){
-            responseFormat = new ArrayList<String>();
+            responseFormat = new ArrayList<>();
         }
         return responseFormat;
     }
@@ -312,7 +318,7 @@ public class ObservationOfferingType extends AbstractFeatureType implements Obse
     @Override
     public List<QName> getResultModel() {
         if (resultModel == null){
-            resultModel = new ArrayList<QName>();
+            resultModel = new ArrayList<>();
         }
         return resultModel;
     }
@@ -321,9 +327,10 @@ public class ObservationOfferingType extends AbstractFeatureType implements Obse
      * Return the value of the responseMode property.
      * 
      */
+    @Override
     public List<ResponseModeType> getResponseMode() {
        if (responseMode == null){
-            responseMode = new ArrayList<ResponseModeType>();
+            responseMode = new ArrayList<>();
         }
        return responseMode;
     }

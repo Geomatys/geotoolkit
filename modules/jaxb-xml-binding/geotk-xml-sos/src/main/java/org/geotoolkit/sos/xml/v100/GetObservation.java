@@ -457,7 +457,7 @@ public class GetObservation extends RequestBaseType implements org.geotoolkit.so
         @XmlElement(name = "Within", namespace = "http://www.opengis.net/ogc")
         private BinarySpatialOpType within;
         @XmlElement(name = "ObjectID")
-        private List<String> objectID = new ArrayList<String>();
+        private List<String> objectID = new ArrayList<>();
 
         public FeatureOfInterest() {
 

@@ -90,7 +90,7 @@ public abstract class AbstractSWESType {
         this.id = id;
         this.identifier = identifier;
         if (name != null) {
-            this.name = new ArrayList<CodeType>();
+            this.name = new ArrayList<>();
             this.name.add(new CodeType(name));
         }
         this.description = description;
@@ -160,7 +160,7 @@ public abstract class AbstractSWESType {
      */
     public List<CodeType> getFullName() {
         if (name == null) {
-            name = new ArrayList<CodeType>();
+            name = new ArrayList<>();
         }
         return this.name;
     }
@@ -174,7 +174,7 @@ public abstract class AbstractSWESType {
      */
     public List<Object> getExtension() {
         if (extension == null) {
-            extension = new ArrayList<Object>();
+            extension = new ArrayList<>();
         }
         return this.extension;
     }

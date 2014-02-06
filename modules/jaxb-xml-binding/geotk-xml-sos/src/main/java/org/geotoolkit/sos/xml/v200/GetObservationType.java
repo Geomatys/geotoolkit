@@ -22,6 +22,7 @@ import java.util.Arrays;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
@@ -87,6 +88,7 @@ import org.opengis.filter.Filter;
     "spatialFilter",
     "responseFormat"
 })
+@XmlRootElement(name = "GetObservation")
 public class GetObservationType extends ExtensibleRequestType implements GetObservation {
 
     @XmlSchemaType(name = "anyURI")

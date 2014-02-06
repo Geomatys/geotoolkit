@@ -53,4 +53,6 @@ public interface ObservationOffering {
     List<String> getObservedProperties();
     
     List<String> getResponseFormat();
+
+    List<ResponseModeType> getResponseMode();
 }

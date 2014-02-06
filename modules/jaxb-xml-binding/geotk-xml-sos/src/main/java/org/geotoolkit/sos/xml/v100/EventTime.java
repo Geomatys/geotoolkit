@@ -93,7 +93,9 @@ public class EventTime {
     /**
      * An empty constructor used by jaxB
      */
-     EventTime(){}
+     public EventTime() {
+
+     }
      
     /**
      * Build a new Event time with T_After parameter
@@ -265,6 +267,38 @@ public class EventTime {
             return temporalOps;
         }
         return null;
+    }
+
+    public void setFilter(Filter filter) {
+        if (filter instanceof TimeOverlapsType) {
+            tOveralps = (TimeOverlapsType) filter;
+        } else if (filter instanceof TimeEqualsType) {
+            tEquals = (TimeEqualsType) filter;
+        } else if (filter instanceof TimeMeetsType) {
+            tMeets = (TimeMeetsType) filter;
+        } else if (filter instanceof TimeOverlappedByType) {
+            tOverlappedBy = (TimeOverlappedByType) filter;
+        } else if (filter instanceof TimeEndedByType) {
+            tEndedBy = (TimeEndedByType) filter;
+        } else if (filter instanceof TimeEndsType) {
+            tEnds = (TimeEndsType) filter;
+        } else if (filter instanceof TimeAfterType) {
+            tAfter = (TimeAfterType) filter;
+        } else if (filter instanceof TimeMetByType) {
+            tMetBy = (TimeMetByType) filter;
+        } else if (filter instanceof TimeBeginsType) {
+            tBegins = (TimeBeginsType) filter;
+        } else if (filter instanceof TimeBeforeType) {
+            tBefore = (TimeBeforeType) filter;
+        } else if (filter instanceof TimeBegunByType) {
+            tBegunBy = (TimeBegunByType) filter;
+        } else if (filter instanceof TimeContainsType) {
+            tContains = (TimeContainsType) filter;
+        } else if (filter instanceof TimeDuringType) {
+            tDuring = (TimeDuringType) filter;
+        } else if (filter instanceof TemporalOpsType) {
+            temporalOps = (TemporalOpsType) filter;
+        }
     }
     
     /**
