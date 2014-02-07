@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.display2d.container.stateless;
 
+import com.vividsolutions.jts.geom.Geometry;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.geom.AffineTransform;
@@ -23,12 +24,14 @@ import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.imageio.ImageReader;
 import org.geotoolkit.coverage.*;
 import org.geotoolkit.coverage.finder.CoverageFinder;
@@ -58,6 +61,12 @@ import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.coverage.io.CoverageStoreException;
+import org.geotoolkit.coverage.io.GridCoverageReader;
+import org.geotoolkit.display2d.primitive.DefaultSearchAreaJ2D;
+import org.geotoolkit.display2d.primitive.GraphicJ2D;
+import org.geotoolkit.geometry.jts.JTS;
+import org.geotoolkit.map.GraphicBuilder;
 import org.geotoolkit.util.Cancellable;
 import org.geotoolkit.util.ImageIOUtilities;
 import org.opengis.coverage.SampleDimension;
@@ -108,143 +117,26 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
     @Override
     public void paintLayer(final RenderingContext2D context2D) {
 
-        final Name coverageName = item.getCoverageReference().getName();
-        final CachedRule[] rules = GO2Utilities.getValidCachedRules(item.getStyle(),
-                context2D.getSEScale(), coverageName,null);
-
-        //we perform a first check on the style to see if there is at least
-        //one valid rule at this scale, if not we just continue.
-        if (rules.length == 0) {
-            return;
-        }
-
         final CanvasMonitor monitor = context2D.getMonitor();
-
-        final Envelope canvasEnv2D = context2D.getCanvasObjectiveBounds2D();
-        final Envelope canvasEnv = context2D.getCanvasObjectiveBounds();
-        final PyramidSet pyramidSet;
-        try {
-            pyramidSet = model.getPyramidSet();
-        } catch (DataStoreException ex) {
-            monitor.exceptionOccured(ex, Level.WARNING);
+        final TileSetResult result = listTiles(context2D);
+        if(result==null){
+            //no pyramid or tiles match this context definition
             return;
         }
-
-        Pyramid pyramid = null;
-        try {
-            pyramid = coverageFinder.findPyramid(pyramidSet, canvasEnv2D.getCoordinateReferenceSystem());
-        } catch (FactoryException ex) {
-            monitor.exceptionOccured(ex, Level.WARNING);
-            return;
-        }
-
-        if(pyramid == null){
-            //no reliable pyramid
-            return;
-        }
-
-        final CoordinateReferenceSystem pyramidCRS = pyramid.getCoordinateReferenceSystem();
-        final CoordinateReferenceSystem pyramidCRS2D;
-        GeneralEnvelope wantedEnv2D;
-        GeneralEnvelope wantedEnv;
-        try {
-            pyramidCRS2D = CRSUtilities.getCRS2D(pyramidCRS);
-            wantedEnv2D = new GeneralEnvelope(CRS.transform(canvasEnv2D, pyramidCRS2D));
-            wantedEnv = new GeneralEnvelope(ReferencingUtilities.transform(canvasEnv, pyramidCRS));
-        } catch (TransformException ex) {
-            monitor.exceptionOccured(ex, Level.WARNING);
-            return;
-        }
-
-        /*
-         * Apply CoverageMapLayer query (if not null) to wantedEnv Envelope.
-         */
-        final Map<String, Double> queryValues = DefaultRasterSymbolizerRenderer.extractQuery(item);
-        wantedEnv = new GeneralEnvelope(DefaultRasterSymbolizerRenderer.fixEnvelopeWithQuery(queryValues, wantedEnv, pyramidCRS));
-
-        //ensure we don't go out of the crs envelope
-        final Envelope maxExt = CRS.getEnvelope(pyramidCRS);
-        if(maxExt != null){
-            wantedEnv2D.intersect(maxExt);
-            if(Double.isNaN(wantedEnv2D.getMinimum(0))){ wantedEnv2D.setRange(0, maxExt.getMinimum(0), wantedEnv2D.getMaximum(0));  }
-            if(Double.isNaN(wantedEnv2D.getMaximum(0))){ wantedEnv2D.setRange(0, wantedEnv2D.getMinimum(0), maxExt.getMaximum(0));  }
-            if(Double.isNaN(wantedEnv2D.getMinimum(1))){ wantedEnv2D.setRange(1, maxExt.getMinimum(1), wantedEnv2D.getMaximum(1));  }
-            if(Double.isNaN(wantedEnv2D.getMaximum(1))){ wantedEnv2D.setRange(1, wantedEnv2D.getMinimum(1), maxExt.getMaximum(1));  }
-            wantedEnv.setRange(0, wantedEnv2D.getMinimum(0), wantedEnv2D.getMaximum(0));
-            wantedEnv.setRange(1, wantedEnv2D.getMinimum(1), wantedEnv2D.getMaximum(1));
-        }
-
-        //the wanted image resolution
-        final double wantedResolution;
-        try {
-            wantedResolution = GO2Utilities.pixelResolution(context2D, wantedEnv);
-        } catch (TransformException ex) {
-            monitor.exceptionOccured(ex, Level.WARNING);
-            return;
-        }
-
-        GridMosaic mosaic = null;
-        try {
-            mosaic = coverageFinder.findMosaic(pyramid, wantedResolution, tolerance, wantedEnv,100);
-        } catch (FactoryException ex) {
-            monitor.exceptionOccured(ex, Level.WARNING);
-            return;
-        }
-        if(mosaic == null){
-            //no reliable mosaic
-            return;
-        }
-
-
-        //we definitly do not want some NaN values
-        if(Double.isNaN(wantedEnv.getMinimum(0))){ wantedEnv.setRange(0, Double.NEGATIVE_INFINITY, wantedEnv.getMaximum(0));  }
-        if(Double.isNaN(wantedEnv.getMaximum(0))){ wantedEnv.setRange(0, wantedEnv.getMinimum(0), Double.POSITIVE_INFINITY);  }
-        if(Double.isNaN(wantedEnv.getMinimum(1))){ wantedEnv.setRange(1, Double.NEGATIVE_INFINITY, wantedEnv.getMaximum(1));  }
-        if(Double.isNaN(wantedEnv.getMaximum(1))){ wantedEnv.setRange(1, wantedEnv.getMinimum(1), Double.POSITIVE_INFINITY);  }
-
-
-        final DirectPosition ul = mosaic.getUpperLeftCorner();
-        final double tileMatrixMinX = ul.getOrdinate(0);
-        final double tileMatrixMaxY = ul.getOrdinate(1);
-        final Dimension gridSize = mosaic.getGridSize();
-        final Dimension tileSize = mosaic.getTileSize();
-        final double scale = mosaic.getScale();
-        final double tileSpanX = scale * tileSize.width;
-        final double tileSpanY = scale * tileSize.height;
-        final int gridWidth = gridSize.width;
-        final int gridHeight = gridSize.height;
-
-        //find all the tiles we need --------------------------------------
-
-        final double epsilon = 1e-6;
-        final double bBoxMinX = wantedEnv.getMinimum(0);
-        final double bBoxMaxX = wantedEnv.getMaximum(0);
-        final double bBoxMinY = wantedEnv.getMinimum(1);
-        final double bBoxMaxY = wantedEnv.getMaximum(1);
-        double tileMinCol = Math.floor( (bBoxMinX - tileMatrixMinX) / tileSpanX + epsilon);
-        double tileMaxCol = Math.floor( (bBoxMaxX - tileMatrixMinX) / tileSpanX - epsilon)+1;
-        double tileMinRow = Math.floor( (tileMatrixMaxY - bBoxMaxY) / tileSpanY - epsilon);
-        double tileMaxRow = Math.floor( (tileMatrixMaxY - bBoxMinY) / tileSpanY + epsilon)+1;
-
-        //ensure we dont go out of the grid
-        if(tileMinCol < 0) tileMinCol = 0;
-        if(tileMaxCol > gridWidth) tileMaxCol = gridWidth;
-        if(tileMinRow < 0) tileMinRow = 0;
-        if(tileMaxRow > gridHeight) tileMaxRow = gridHeight;
-
+        
         //tiles to render
         final Map<Point,MathTransform> queries = new HashMap<Point,MathTransform>();
         final Map hints = new HashMap(item.getUserProperties());
 
-        for(int tileCol=(int)tileMinCol; tileCol<tileMaxCol; tileCol++){
-            for(int tileRow=(int)tileMinRow; tileRow<tileMaxRow; tileRow++){
-                if(mosaic.isMissing(tileCol, tileRow)){
+        for(int tileCol=(int)result.tileMinCol; tileCol<result.tileMaxCol; tileCol++){
+            for(int tileRow=(int)result.tileMinRow; tileRow<result.tileMaxRow; tileRow++){
+                if(result.mosaic.isMissing(tileCol, tileRow)){
                     //tile not available
                     continue;
                 }
 
                 final Point pt = new Point(tileCol, tileRow);
-                final MathTransform trs = AbstractGridMosaic.getTileGridToCRS(mosaic, pt);
+                final MathTransform trs = AbstractGridMosaic.getTileGridToCRS(result.mosaic, pt);
                 queries.put(pt,trs);
             }
         }
@@ -263,7 +155,7 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
 
         final BlockingQueue<Object> queue;
         try {
-            queue = mosaic.getTiles(queries.keySet(), hints);
+            queue = result.mosaic.getTiles(queries.keySet(), hints);
         } catch (DataStoreException ex) {
             monitor.exceptionOccured(ex, Level.WARNING);
             return;
@@ -293,7 +185,7 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
             if(obj instanceof TileReference){
                 final TileReference tile = (TileReference)obj;
                 final MathTransform trs = queries.get(tile.getPosition());
-                paintTile(context2D, params, rules, pyramidCRS2D, tile, trs);
+                paintTile(context2D, params, result.rules, result.pyramidCRS2D, tile, trs);
             }
         }
 
@@ -316,34 +208,213 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
 
         final RenderingContext2D renderingContext = (RenderingContext2D) context;
 
-        final Name coverageName = item.getCoverageReference().getName();
-        final CachedRule[] rules = GO2Utilities.getValidCachedRules(item.getStyle(),
-                renderingContext.getSEScale(), coverageName,null);
-
-        //we perform a first check on the style to see if there is at least
-        //one valid rule at this scale, if not we just continue.
-        if (rules.length == 0) {
+        //search special graphic builders
+        final GraphicBuilder<GraphicJ2D> builder = (GraphicBuilder<GraphicJ2D>) item.getGraphicBuilder(GraphicJ2D.class);
+        if(builder != null){
+            //this layer hasa special graphic rendering, use it instead of normal rendering
+            final Collection<GraphicJ2D> gras = builder.createGraphics(item, canvas);
+            for(final GraphicJ2D gra : gras){
+                graphics = gra.getGraphicAt(renderingContext, mask, filter,graphics);
+            }
             return graphics;
         }
-
-        if(graphics == null) graphics = new ArrayList<Graphic>();
+                
+        if(graphics == null) graphics = new ArrayList<>();
         if(mask instanceof SearchAreaJ2D){
-            //TODO
+            graphics = searchAt(renderingContext,(SearchAreaJ2D)mask,filter,graphics);
         }else{
-            //TODO
+            graphics = searchAt(renderingContext,new DefaultSearchAreaJ2D(mask),filter,graphics);
         }
 
         return graphics;
     }
 
-    private void paintTile(final RenderingContext2D context, StatelessContextParams params, CachedRule[] rules,
+    private List<Graphic> searchAt(final RenderingContext2D context2D, 
+            final SearchAreaJ2D mask, final VisitFilter filter, List<Graphic> graphics) {
+        
+        //search tiles visible on this area
+        final TileSetResult result = listTiles(context2D);
+        if(result==null){
+            //no pyramid or tiles match this context definition
+            return graphics;
+        }
+        
+        final Geometry searchGeom;
+        try {
+            searchGeom = JTS.transform(mask.getObjectiveGeometryJTS(), CRS.findMathTransform(context2D.getObjectiveCRS2D(), result.pyramidCRS2D));
+        } catch (Exception ex) {
+            LOGGER.log(Level.INFO, ex.getMessage(),ex);
+            return graphics;
+        }
+        
+        final StatelessContextParams params = new StatelessContextParams(getCanvas(), getUserObject());
+        params.update(context2D);
+                    
+        //search for a tile which intersects the seach area
+        try{
+            for(int tileCol=(int)result.tileMinCol; tileCol<result.tileMaxCol; tileCol++){
+                for(int tileRow=(int)result.tileMinRow; tileRow<result.tileMaxRow; tileRow++){
+                    if(result.mosaic.isMissing(tileCol, tileRow)){
+                        //tile not available
+                        continue;
+                    }
+
+                    final Envelope tileEnvelope = result.mosaic.getEnvelope(tileCol, tileRow);
+                    final Geometry geom = JTS.toGeometry(tileEnvelope);
+
+                    if(searchGeom.intersects(geom)){
+                        final Point pt = new Point(tileCol, tileRow);
+                        final MathTransform trs = AbstractGridMosaic.getTileGridToCRS(result.mosaic, pt);
+                        final TileReference tile = result.mosaic.getTile(tileCol, tileRow, null);
+                        final ProjectedCoverage pc = asCoverage(context2D, params, result.pyramidCRS2D, tile, trs);
+                        graphics.add(pc);
+                    }
+                }
+            }
+        }catch(DataStoreException ex){
+            LOGGER.log(Level.INFO, ex.getMessage(),ex);
+        }
+
+        return graphics;
+    }
+    
+    /**
+     * File the tiles to read for rendering.
+     * 
+     * @param context2D
+     * @return 
+     */
+    private TileSetResult listTiles(RenderingContext2D context2D){
+        final TileSetResult result = new TileSetResult();
+        
+        final Name coverageName = item.getCoverageReference().getName();
+        result.rules = GO2Utilities.getValidCachedRules(item.getStyle(),
+                context2D.getSEScale(), coverageName,null);
+
+        //we perform a first check on the style to see if there is at least
+        //one valid rule at this scale, if not we just continue.
+        if (result.rules.length == 0) {
+            return null;
+        }
+
+        final CanvasMonitor monitor = context2D.getMonitor();
+        final Envelope canvasEnv2D = context2D.getCanvasObjectiveBounds2D();
+        final Envelope canvasEnv = context2D.getCanvasObjectiveBounds();
+        
+        //find the best pyramid
+        try {
+            result.pyramidSet = model.getPyramidSet();
+        } catch (DataStoreException ex) {
+            monitor.exceptionOccured(ex, Level.WARNING);
+            return null;
+        }
+
+        try {
+            result.pyramid = coverageFinder.findPyramid(result.pyramidSet, canvasEnv2D.getCoordinateReferenceSystem());
+        } catch (FactoryException ex) {
+            monitor.exceptionOccured(ex, Level.WARNING);
+            return null;
+        }
+
+        if(result.pyramid == null){
+            //no reliable pyramid
+            return null;
+        }
+
+        //convert context envelope to pyramid CRS
+        final CoordinateReferenceSystem pyramidCRS = result.pyramid.getCoordinateReferenceSystem();
+        GeneralEnvelope wantedEnv2D;
+        GeneralEnvelope wantedEnv;
+        try {
+            result.pyramidCRS2D = CRSUtilities.getCRS2D(pyramidCRS);
+            wantedEnv2D = new GeneralEnvelope(CRS.transform(canvasEnv2D, result.pyramidCRS2D));
+            wantedEnv = new GeneralEnvelope(ReferencingUtilities.transform(canvasEnv, pyramidCRS));
+        } catch (TransformException ex) {
+            monitor.exceptionOccured(ex, Level.WARNING);
+            return null;
+        }
+
+        /*
+         * Apply CoverageMapLayer query (if not null) to wantedEnv Envelope.
+         */
+        final Map<String, Double> queryValues = DefaultRasterSymbolizerRenderer.extractQuery(item);
+        wantedEnv = new GeneralEnvelope(DefaultRasterSymbolizerRenderer.fixEnvelopeWithQuery(queryValues, wantedEnv, pyramidCRS));
+
+        //ensure we don't go out of the crs envelope
+        final Envelope maxExt = CRS.getEnvelope(pyramidCRS);
+        if(maxExt != null){
+            wantedEnv2D.intersect(maxExt);
+            if(Double.isNaN(wantedEnv2D.getMinimum(0))){ wantedEnv2D.setRange(0, maxExt.getMinimum(0), wantedEnv2D.getMaximum(0));  }
+            if(Double.isNaN(wantedEnv2D.getMaximum(0))){ wantedEnv2D.setRange(0, wantedEnv2D.getMinimum(0), maxExt.getMaximum(0));  }
+            if(Double.isNaN(wantedEnv2D.getMinimum(1))){ wantedEnv2D.setRange(1, maxExt.getMinimum(1), wantedEnv2D.getMaximum(1));  }
+            if(Double.isNaN(wantedEnv2D.getMaximum(1))){ wantedEnv2D.setRange(1, wantedEnv2D.getMinimum(1), maxExt.getMaximum(1));  }
+            wantedEnv.setRange(0, wantedEnv2D.getMinimum(0), wantedEnv2D.getMaximum(0));
+            wantedEnv.setRange(1, wantedEnv2D.getMinimum(1), wantedEnv2D.getMaximum(1));
+        }
+
+        //find the correct pyramid
+        final double wantedResolution;
+        try {
+            wantedResolution = GO2Utilities.pixelResolution(context2D, wantedEnv);
+        } catch (TransformException ex) {
+            monitor.exceptionOccured(ex, Level.WARNING);
+            return null;
+        }
+
+        try {
+            result.mosaic = coverageFinder.findMosaic(result.pyramid, wantedResolution, tolerance, wantedEnv,100);
+        } catch (FactoryException ex) {
+            monitor.exceptionOccured(ex, Level.WARNING);
+            return null;
+        }
+        if(result.mosaic == null){
+            //no reliable mosaic
+            return null;
+        }
+
+
+        //we definitly do not want some NaN values
+        if(Double.isNaN(wantedEnv.getMinimum(0))){ wantedEnv.setRange(0, Double.NEGATIVE_INFINITY, wantedEnv.getMaximum(0));  }
+        if(Double.isNaN(wantedEnv.getMaximum(0))){ wantedEnv.setRange(0, wantedEnv.getMinimum(0), Double.POSITIVE_INFINITY);  }
+        if(Double.isNaN(wantedEnv.getMinimum(1))){ wantedEnv.setRange(1, Double.NEGATIVE_INFINITY, wantedEnv.getMaximum(1));  }
+        if(Double.isNaN(wantedEnv.getMaximum(1))){ wantedEnv.setRange(1, wantedEnv.getMinimum(1), Double.POSITIVE_INFINITY);  }
+
+
+        final DirectPosition ul = result.mosaic.getUpperLeftCorner();
+        final double tileMatrixMinX = ul.getOrdinate(0);
+        final double tileMatrixMaxY = ul.getOrdinate(1);
+        final Dimension gridSize = result.mosaic.getGridSize();
+        final Dimension tileSize = result.mosaic.getTileSize();
+        final double scale = result.mosaic.getScale();
+        final double tileSpanX = scale * tileSize.width;
+        final double tileSpanY = scale * tileSize.height;
+        final int gridWidth = gridSize.width;
+        final int gridHeight = gridSize.height;
+
+        //find all the tiles we need --------------------------------------
+
+        final double epsilon = 1e-6;
+        final double bBoxMinX = wantedEnv.getMinimum(0);
+        final double bBoxMaxX = wantedEnv.getMaximum(0);
+        final double bBoxMinY = wantedEnv.getMinimum(1);
+        final double bBoxMaxY = wantedEnv.getMaximum(1);
+        result.tileMinCol = Math.floor( (bBoxMinX - tileMatrixMinX) / tileSpanX + epsilon);
+        result.tileMaxCol = Math.floor( (bBoxMaxX - tileMatrixMinX) / tileSpanX - epsilon)+1;
+        result.tileMinRow = Math.floor( (tileMatrixMaxY - bBoxMaxY) / tileSpanY - epsilon);
+        result.tileMaxRow = Math.floor( (tileMatrixMaxY - bBoxMinY) / tileSpanY + epsilon)+1;
+
+        //ensure we dont go out of the grid
+        if(result.tileMinCol < 0) result.tileMinCol = 0;
+        if(result.tileMaxCol > gridWidth) result.tileMaxCol = gridWidth;
+        if(result.tileMinRow < 0) result.tileMinRow = 0;
+        if(result.tileMaxRow > gridHeight) result.tileMaxRow = gridHeight;
+
+        return result;
+    }
+    
+    private ProjectedCoverage asCoverage(final RenderingContext2D context, StatelessContextParams params,
             final CoordinateReferenceSystem tileCRS ,final TileReference tile, MathTransform trs) {
         final CanvasMonitor monitor = context.getMonitor();
-        final CoordinateReferenceSystem objCRS2D = context.getObjectiveCRS2D();
-
-        if(monitor.stopRequested()){
-            return;
-        }
 
         Object input = tile.getInput();
         RenderedImage image;
@@ -356,24 +427,11 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
                 image = reader.read(tile.getImageIndex());
             } catch (IOException ex) {
                 monitor.exceptionOccured(ex, Level.WARNING);
-                return;
+                return null;
             } finally {
                 //dispose reader and substream
                 ImageIOUtilities.releaseReader(reader);
             }
-        }
-
-        //check the crs
-        if(!CRS.equalsIgnoreMetadata(tileCRS,objCRS2D) ){
-            //will be reprojected, we must check that image has alpha support
-            //otherwise we will have black borders after reprojection
-            //we can do this only when image if of RGB type, otherwise it will break
-            //the sample model
-//            if(!image.getColorModel().hasAlpha()){
-//                final BufferedImage buffer = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
-//                buffer.createGraphics().drawRenderedImage(image, new AffineTransform());
-//                image = buffer;
-//            }
         }
 
         //build the coverage ---------------------------------------------------
@@ -391,9 +449,13 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
         gcb.setSampleDimensions(sampleDims);
         final GridCoverage2D coverage = (GridCoverage2D) gcb.build();
 
-
         final CoverageMapLayer tilelayer = MapBuilder.createCoverageLayer(coverage, getUserObject().getStyle(), "");
-        final ProjectedCoverage projectedCoverage = new ProjectedCoverage(params, tilelayer);
+        return new ProjectedCoverage(params, tilelayer);
+    }
+    
+    private void paintTile(final RenderingContext2D context, StatelessContextParams params, CachedRule[] rules,
+            final CoordinateReferenceSystem tileCRS ,final TileReference tile, MathTransform trs) {
+        final ProjectedCoverage projectedCoverage = asCoverage(context, params, tileCRS, tile, trs);
         for(final CachedRule rule : rules){
             for(final CachedSymbolizer symbol : rule.symbolizers()){
                 try {
@@ -417,4 +479,19 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
         }
     }
 
+    
+    private static class TileSetResult{
+        //style informations
+        private CachedRule[] rules;
+        private CoordinateReferenceSystem pyramidCRS2D;
+        //tiles informations
+        private PyramidSet pyramidSet;
+        private Pyramid pyramid;
+        private GridMosaic mosaic;
+        private double tileMinCol;
+        private double tileMaxCol;
+        private double tileMinRow;
+        private double tileMaxRow;
+    }
+    
 }
