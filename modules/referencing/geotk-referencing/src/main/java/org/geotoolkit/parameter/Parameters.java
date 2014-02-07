@@ -26,7 +26,10 @@ import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import javax.measure.unit.Unit;
+import javax.measure.unit.NonSI;
+import javax.measure.unit.SI;
 
+import org.opengis.util.CodeList;
 import org.opengis.util.InternationalString;
 import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.ParameterValueGroup;
@@ -44,6 +47,7 @@ import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.resources.Descriptions;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.referencing.IdentifiedObjects;
+import org.apache.sis.measure.Units;
 import org.apache.sis.metadata.iso.quality.DefaultConformanceResult;
 import org.apache.sis.util.iso.DefaultNameSpace;
 
@@ -106,6 +110,81 @@ public final class Parameters extends Static {
     }
 
     /**
+     * Constructs a parameter from the specified name and value.
+     *
+     * {@section Proposed alternative}
+     * This convenience constructor creates a {@link DefaultParameterDescriptor} object. But
+     * if such descriptor is available, then the preferred way to get a {@code ParameterValue}
+     * is to invoke {@link ParameterDescriptor#createValue()}.
+     *
+     * @param  name  The parameter name.
+     * @param  value The parameter value.
+     * @return A new parameter instance for the given name and value.
+     */
+    public static Parameter<Integer> create(final String name, final int value) {
+        final ParameterDescriptor<Integer> descriptor =
+                new DefaultParameterDescriptor<>(name, Integer.class, null, null);
+        final Parameter<Integer> parameter = new Parameter<>(descriptor);
+        parameter.setSafeValue(value, null);
+        return parameter;
+    }
+
+    /**
+     * Constructs a parameter from the specified name, value and unit.
+     *
+     * {@section Proposed alternative}
+     * This convenience constructor creates a {@link DefaultParameterDescriptor} object. But
+     * if such descriptor is available, then the preferred way to get a {@code ParameterValue}
+     * is to invoke {@link ParameterDescriptor#createValue()}.
+     *
+     * @param name  The parameter name.
+     * @param value The parameter value.
+     * @param unit  The unit for the parameter value.
+     * @return A new parameter instance for the given name and value.
+     */
+    public static Parameter<Double> create(final String name, final double value, Unit<?> unit) {
+        /*
+         * Normalizes the specified unit into one of "standard" units used in projections.
+         * This is for the descriptor only; the parameter will use exactly the given unit.
+         */
+        if (unit != null) {
+            if (Units.isLinear(unit)) {
+                unit = SI.METRE;
+            } else if (Units.isTemporal(unit)) {
+                unit = NonSI.DAY;
+            } else if (Units.isAngular(unit)) {
+                unit = NonSI.DEGREE_ANGLE;
+            }
+        }
+        final ParameterDescriptor<Double> descriptor = DefaultParameterDescriptor.create(
+                name, Double.NaN, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, unit);
+        final Parameter<Double> parameter = new Parameter<>(descriptor);
+        parameter.setSafeValue(value, unit);
+        return parameter;
+    }
+
+    /**
+     * Constructs a parameter from the specified code list.
+     *
+     * {@section Proposed alternative}
+     * This convenience constructor creates a {@link DefaultParameterDescriptor} object. But
+     * if such descriptor is available, then the preferred way to get a {@code ParameterValue}
+     * is to invoke {@link ParameterDescriptor#createValue()}.
+     *
+     * @param  <T>   The parameter type.
+     * @param  name  The parameter name.
+     * @param  type  The parameter type.
+     * @param  value The parameter value.
+     * @return A new parameter instance for the given name and value.
+     */
+    public static <T extends CodeList<T>> Parameter<T> create(final String name, final Class<T> type, final T value) {
+        final ParameterDescriptor<T> descriptor = new DefaultParameterDescriptor<>(name, null, type, null, true);
+        final Parameter<T> parameter = new Parameter<>(descriptor);
+        parameter.setSafeValue(value, null);
+        return parameter;
+    }
+
+    /**
      * Casts the given parameter descriptor to the given type. An exception is thrown
      * immediately if the parameter does not have the expected value class. This
      * is a helper method for type safety when using Java 5 parameterized types.
@@ -118,21 +197,14 @@ public final class Parameters extends Static {
      *
      * @category verification
      * @since 2.5
+     *
+     * @deprecated Moved to Apache SIS {@link org.apache.sis.parameter.Parameters}.
      */
-    @SuppressWarnings("unchecked")
+    @Deprecated
     public static <T> ParameterDescriptor<T> cast(final ParameterDescriptor<?> descriptor, final Class<T> type)
             throws ClassCastException
     {
-        if (descriptor != null) {
-            final Class<?> actual = descriptor.getValueClass();
-            // We require a strict equality - not type.isAssignableFrom(actual) - because in
-            // the later case we could have (to be strict) to return a <? extends T> type.
-            if (!type.equals(actual)) {
-                throw new ClassCastException(Errors.format(Errors.Keys.ILLEGAL_PARAMETER_TYPE_2,
-                        descriptor.getName().getCode(), actual));
-            }
-        }
-        return (ParameterDescriptor<T>) descriptor;
+        return org.apache.sis.parameter.Parameters.cast(descriptor, type);
     }
 
     /**
@@ -148,20 +220,14 @@ public final class Parameters extends Static {
      *
      * @category verification
      * @since 2.5
+     *
+     * @deprecated Moved to Apache SIS {@link org.apache.sis.parameter.Parameters}.
      */
-    @SuppressWarnings("unchecked")
+    @Deprecated
     public static <T> ParameterValue<T> cast(final ParameterValue<?> value, final Class<T> type)
             throws ClassCastException
     {
-        if (value != null) {
-            final ParameterDescriptor<?> descriptor = value.getDescriptor();
-            final Class<?> actual = descriptor.getValueClass();
-            if (!type.equals(actual)) { // Same comment than cast(ParameterDescriptor)...
-                throw new ClassCastException(Errors.format(Errors.Keys.ILLEGAL_PARAMETER_TYPE_2,
-                        descriptor.getName().getCode(), actual));
-            }
-        }
-        return (ParameterValue<T>) value;
+        return org.apache.sis.parameter.Parameters.cast(value, type);
     }
 
     /**
@@ -184,7 +250,7 @@ public final class Parameters extends Static {
      *
      * @category verification
      */
-    public static boolean isValid(final ParameterValue<?> value) {
+    public static boolean isValid(final ParameterValue<?> value) { // LGPL
         return isValidValue(value.getDescriptor(), value.getValue(), false) == null;
     }
 
@@ -201,7 +267,7 @@ public final class Parameters extends Static {
      * @return {@code null} if the given parameter is valid, or an error message otherwise.
      */
     private static <T> InternationalString isValidValue(final ParameterDescriptor<T> descriptor,
-            final Object value, final boolean localized)
+            final Object value, final boolean localized) // LGPL
     {
         /*
          * Accept null values only if explicitly authorized.
@@ -666,7 +732,7 @@ public final class Parameters extends Static {
      * @category query
      */
     public static List<GeneralParameterValue> search(final GeneralParameterValue parameter,
-            final String name, int maxDepth)
+            final String name, int maxDepth) // LGPL
     {
         final List<GeneralParameterValue> list = new ArrayList<>();
         search(parameter, name, maxDepth, list);

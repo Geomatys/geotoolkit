@@ -65,7 +65,7 @@ public final strictfp class ParameterTest extends ParameterTestBase {
      */
     @Test
     public void testIntegerType() {
-        final Parameter<Integer> parameter  = Parameter.create("Test", 14);
+        final Parameter<Integer> parameter  = Parameters.create("Test", 14);
         final ParameterDescriptor<Integer> descriptor = parameter.getDescriptor();
         validate(parameter);
 
@@ -145,7 +145,7 @@ public final strictfp class ParameterTest extends ParameterTestBase {
      */
     @Test
     public void testDoubleType() {
-        final Parameter<Double> parameter = Parameter.create("Test", 3, METRE);
+        final Parameter<Double> parameter = Parameters.create("Test", 3, METRE);
         final ParameterDescriptor<Double> descriptor = parameter.getDescriptor();
         validate(parameter);
 
@@ -218,7 +218,7 @@ public final strictfp class ParameterTest extends ParameterTestBase {
      */
     @Test
     public void testCodeList() {
-        final Parameter<AxisDirection> parameter = Parameter.create("Test", AxisDirection.class, AxisDirection.NORTH);
+        final Parameter<AxisDirection> parameter = Parameters.create("Test", AxisDirection.class, AxisDirection.NORTH);
         final ParameterDescriptor<AxisDirection> descriptor = parameter.getDescriptor();
         final Set<AxisDirection> validValues = descriptor.getValidValues();
         validate(parameter);
@@ -251,7 +251,7 @@ public final strictfp class ParameterTest extends ParameterTestBase {
      */
     @Test
     public void testCodeListAddition() {
-        Parameter<AxisDirection> p = Parameter.create("Test", AxisDirection.class, AxisDirection.DISPLAY_DOWN);
+        Parameter<AxisDirection> p = Parameters.create("Test", AxisDirection.class, AxisDirection.DISPLAY_DOWN);
         ParameterDescriptor<AxisDirection> d = p.getDescriptor();
         Set<AxisDirection> validValues = d.getValidValues();
         validate(p);
@@ -279,7 +279,7 @@ public final strictfp class ParameterTest extends ParameterTestBase {
          * Recreates the parameter. Because the dummy axis direction has been created in the
          * above step, it should be accepted now.
          */
-        p = Parameter.create("Test", AxisDirection.class, AxisDirection.COLUMN_POSITIVE);
+        p = Parameters.create("Test", AxisDirection.class, AxisDirection.COLUMN_POSITIVE);
         validate(p);
 
         assertEquals("Actual value", AxisDirection.COLUMN_POSITIVE, p.getValue());
@@ -298,7 +298,7 @@ public final strictfp class ParameterTest extends ParameterTestBase {
         Parameter<? extends Number> p;
         ParameterDescriptor<? extends Number> d;
         for (int i=-500; i<=500; i++) {
-            p = Parameter.create("Unitlesss integer value", i);
+            p = Parameters.create("Unitlesss integer value", i);
             d = p.getDescriptor();
             validate(p);
 
@@ -313,7 +313,7 @@ public final strictfp class ParameterTest extends ParameterTestBase {
             assertEquals ("Expected integer value", i,    p.intValue());
             assertEquals ("Expected integer value", i,    p.doubleValue(), STRICT);
 
-            p = Parameter.create("Unitlesss double value", i, null);
+            p = Parameters.create("Unitlesss double value", i, null);
             d = p.getDescriptor();
             validate(p);
 
@@ -328,7 +328,7 @@ public final strictfp class ParameterTest extends ParameterTestBase {
             assertEquals ("Expected integer value", i,    p.intValue());
             assertEquals ("Expected integer value", i,    p.doubleValue(), STRICT);
 
-            p = Parameter.create("Dimensionless double value", i, Unit.ONE);
+            p = Parameters.create("Dimensionless double value", i, Unit.ONE);
             d = p.getDescriptor();
             validate(p);
 
@@ -343,7 +343,7 @@ public final strictfp class ParameterTest extends ParameterTestBase {
             assertEquals ("Expected integer value", i,    p.intValue());
             assertEquals ("Expected integer value", i,    p.doubleValue(), STRICT);
 
-            p = Parameter.create("Angular double value", i, DEGREE_ANGLE);
+            p = Parameters.create("Angular double value", i, DEGREE_ANGLE);
             d = p.getDescriptor();
             validate(p);
 

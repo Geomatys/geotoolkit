@@ -20,12 +20,9 @@
  */
 package org.geotoolkit.parameter;
 
-import java.util.Set;
 import java.util.Map;
-import java.util.HashSet;
 import java.util.HashMap;
 import java.util.Collections;
-import java.util.Objects;
 import javax.measure.unit.Unit;
 import net.jcip.annotations.Immutable;
 
@@ -34,22 +31,10 @@ import org.opengis.util.InternationalString;
 import org.opengis.metadata.citation.Citation;
 import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.ParameterDescriptor;
-import org.opengis.referencing.IdentifiedObject;
 
-import org.apache.sis.util.ComparisonMode;
-import org.apache.sis.util.Classes;
-import org.geotoolkit.resources.Errors;
 import org.apache.sis.referencing.NamedIdentifier;
-import org.geotoolkit.referencing.IdentifiedObjects;
 import org.apache.sis.referencing.AbstractIdentifiedObject;
-import org.geotoolkit.metadata.iso.citation.Citations;
-
-import static org.geotoolkit.util.Utilities.hash;
-import static org.apache.sis.util.Utilities.deepHashCode;
-import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
-import static org.apache.sis.util.ArgumentChecks.ensureCanCast;
-import static org.apache.sis.util.collection.Containers.hashMapCapacity;
-import static org.geotoolkit.util.collection.XCollections.unmodifiableOrCopy;
+import org.apache.sis.metadata.iso.citation.Citations;
 
 
 /**
@@ -75,83 +60,16 @@ import static org.geotoolkit.util.collection.XCollections.unmodifiableOrCopy;
  *
  * @since 2.0
  * @module
+ *
+ * @deprecated Moved to Apache SIS as {@link org.apache.sis.parameter.DefaultParameterDescriptor}.
  */
 @Immutable
-public class DefaultParameterDescriptor<T> extends AbstractParameterDescriptor
-        implements ParameterDescriptor<T>
-{
+@Deprecated
+public class DefaultParameterDescriptor<T> extends org.apache.sis.parameter.DefaultParameterDescriptor<T> {
     /**
      * Serial number for inter-operability with different versions.
      */
 //  private static final long serialVersionUID = -295668622297737705L;
-
-    /**
-     * Some frequently used {@link Double} values. As of Java 6, those values don't
-     * seem to be cached by {@link Double#valueOf} like JDK does for integers.
-     */
-    private static final Map<Double,Double> CACHE = new HashMap<>(13);
-    static {
-        cache(   0.0);
-        cache(   1.0);
-        cache( -90.0);
-        cache( +90.0);
-        cache(-180.0);
-        cache(+180.0);
-        cache(-180.0*60*60);
-        cache(+180.0*60*60);
-        cache(Double.NEGATIVE_INFINITY);
-        cache(Double.POSITIVE_INFINITY);
-    }
-
-    /**
-     * Helper method for the construction of the {@link #CACHE} map.
-     */
-    private static void cache(final Double value) {
-        if (CACHE.put(value,value) != null) {
-            throw new AssertionError(value);
-        }
-    }
-
-    /**
-     * If the given value is presents in the cache, returns the cached value.
-     */
-    private static <T> T cached(final T value) {
-        @SuppressWarnings("unchecked")
-        final T candidate = (T) (Object) CACHE.get(value);
-        return (candidate != null) ? candidate : value;
-    }
-
-    /**
-     * The class that describe the type of the parameter.
-     * This is the value class that the user specified at construction time.
-     */
-    private final Class<T> valueClass;
-
-    /**
-     * A immutable, finite set of valid values (usually from a {@linkplain CodeList code list})
-     * or {@code null} if it doesn't apply. This set is immutable.
-     */
-    private final Set<T> validValues;
-
-    /**
-     * The default value for the parameter, or {@code null}.
-     */
-    private final T defaultValue;
-
-    /**
-     * The minimum parameter value, or {@code null}.
-     */
-    private final Comparable<T> minimum;
-
-    /**
-     * The maximum parameter value, or {@code null}.
-     */
-    private final Comparable<T> maximum;
-
-    /**
-     * The unit for default, minimum and maximum values, or {@code null}.
-     */
-    private final Unit<?> unit;
 
     /**
      * Constructs a descriptor with the same values than the specified one. This copy constructor
@@ -163,12 +81,6 @@ public class DefaultParameterDescriptor<T> extends AbstractParameterDescriptor
      */
     public DefaultParameterDescriptor(final ParameterDescriptor<T> descriptor) {
         super(descriptor);
-        valueClass   = descriptor.getValueClass();
-        validValues  = descriptor.getValidValues();
-        defaultValue = descriptor.getDefaultValue();
-        minimum      = descriptor.getMinimumValue();
-        maximum      = descriptor.getMaximumValue();
-        unit         = descriptor.getUnit();
     }
 
     /**
@@ -233,7 +145,7 @@ public class DefaultParameterDescriptor<T> extends AbstractParameterDescriptor
      * @since 2.5
      */
     public DefaultParameterDescriptor(final String name, final CharSequence remarks,
-            final Class<T> valueClass, final T defaultValue, final boolean required)
+            final Class<T> valueClass, final T defaultValue, final boolean required) // LGPL
     {
         this(properties(name, remarks), valueClass, codeList(valueClass),
                 defaultValue, null, null, null, required);
@@ -263,34 +175,7 @@ public class DefaultParameterDescriptor<T> extends AbstractParameterDescriptor
                                       final Unit<?>       unit,
                                       final boolean       required)
     {
-        super(properties, required ? 1 : 0, 1);
-        this.valueClass   = valueClass;
-        this.defaultValue = cached(defaultValue);
-        this.minimum      = cached(minimum);
-        this.maximum      = cached(maximum);
-        this.unit         = unit;
-        ensureNonNull("valueClass", valueClass);
-        ensureCanCast("defaultValue", valueClass, defaultValue);
-        ensureCanCast("minimum",      valueClass, minimum);
-        ensureCanCast("maximum",      valueClass, maximum);
-        if (minimum!=null && maximum!=null) {
-            if (minimum.compareTo(valueClass.cast(maximum)) > 0) {
-                throw new IllegalArgumentException(Errors.format(
-                        Errors.Keys.ILLEGAL_RANGE_2, minimum, maximum));
-            }
-        }
-        if (validValues != null) {
-            final Set<T> valids = new HashSet<>(Math.max(hashMapCapacity(validValues.length), 8));
-            for (int i=0; i<validValues.length; i++) {
-                final T value = cached(validValues[i]);
-                ensureCanCast("validValues", valueClass, value);
-                valids.add(value);
-            }
-            this.validValues = unmodifiableOrCopy(valids);
-        } else {
-            this.validValues = null;
-        }
-        AbstractParameter.ensureValidValue(this, defaultValue);
+        super(properties, valueClass, validValues, defaultValue, minimum, maximum, unit, required);
     }
 
     /**
@@ -411,35 +296,6 @@ public class DefaultParameterDescriptor<T> extends AbstractParameterDescriptor
     }
 
     /**
-     * Returns the GeoAPI interface implemented by this class.
-     * The SIS implementation returns {@code ParameterDescriptor.class}.
-     *
-     * {@note Subclasses usually do not need to override this method since GeoAPI does not define
-     *        <code>ParameterDescriptor</code> sub-interface. Overriding possibility is left mostly
-     *        for implementors who wish to extend GeoAPI with their own set of interfaces.}
-     *
-     * @return {@code ParameterDescriptor.class} or a user-defined sub-interface.
-     */
-    @Override
-    public Class<? extends ParameterDescriptor<T>> getInterface() {
-        return (Class) ParameterDescriptor.class;
-    }
-
-    /**
-     * The maximum number of times that values for this parameter group or parameter can be
-     * included. For a {@linkplain DefaultParameterDescriptor single parameter}, the value
-     * is always 1.
-     *
-     * @return The maximum occurrence.
-     *
-     * @see #getMinimumOccurs
-     */
-    @Override
-    public int getMaximumOccurs() {
-        return 1;
-    }
-
-    /**
      * Creates a new instance of {@code ParameterValue} initialized with the
      * {@linkplain #getDefaultValue default value}. The {@linkplain DefaultParameterDescriptor
      * parameter descriptor} for the created parameter value will be {@code this} object.
@@ -449,173 +305,9 @@ public class DefaultParameterDescriptor<T> extends AbstractParameterDescriptor
     @Override
     @SuppressWarnings("unchecked")
     public ParameterValue<T> createValue() {
-        if (valueClass == Double.class) {
+        if (super.getValueClass() == Double.class) {
             return (ParameterValue<T>) new FloatParameter((ParameterDescriptor<Double>) this);
         }
         return new Parameter<>(this);
-    }
-
-    /**
-     * Returns the class that describe the type of the parameter.
-     *
-     * @return The parameter value class.
-     */
-    @Override
-    public Class<T> getValueClass() {
-        return valueClass;
-    }
-
-    /**
-     * If this parameter allows only a finite set of values, returns this set. This set is
-     * usually a {@linkplain CodeList code list} or enumerations. This method returns
-     * {@code null} if this parameter doesn't limits values to a finite set.
-     *
-     * @return A finite set of valid values (usually from a {@linkplain CodeList code list}),
-     *         or {@code null} if it doesn't apply.
-     */
-    @Override
-    public Set<T> getValidValues() {
-        return validValues;
-    }
-
-    /**
-     * Returns the default value for the parameter. The return type can be any type
-     * including a {@link Number} or a {@link String}. If there is no default value,
-     * then this method returns {@code null}.
-     *
-     * @return The default value, or {@code null} in none.
-     */
-    @Override
-    public T getDefaultValue() {
-        return defaultValue;
-    }
-
-    /**
-     * Returns the minimum parameter value. If there is no minimum value, or if minimum
-     * value is inappropriate for the {@linkplain #getValueClass parameter type}, then
-     * this method returns {@code null}.
-     *
-     * @return The minimum parameter value (often an instance of {@link Double}), or {@code null}.
-     */
-    @Override
-    public Comparable<T> getMinimumValue() {
-        return minimum;
-    }
-
-    /**
-     * Returns the maximum parameter value. If there is no maximum value, or if maximum
-     * value is inappropriate for the {@linkplain #getValueClass parameter type}, then
-     * this method returns {@code null}.
-     *
-     * @return The minimum parameter value (often an instance of {@link Double}), or {@code null}.
-     */
-    @Override
-    public Comparable<T> getMaximumValue() {
-        return maximum;
-    }
-
-    /**
-     * Returns the unit for {@linkplain #getDefaultValue default},
-     * {@linkplain #getMinimumValue minimum} and
-     * {@linkplain #getMaximumValue maximum} values.
-     * This attribute apply only if the values is of numeric type
-     * (usually an instance of {@link Double}).
-     *
-     * @return The unit for numeric value, or {@code null} if it doesn't apply to the value type.
-     */
-    @Override
-    public Unit<?> getUnit() {
-        return unit;
-    }
-
-    /**
-     * Compares the specified object with this parameter for equality.
-     *
-     * @param  object The object to compare to {@code this}.
-     * @param  mode {@link ComparisonMode#STRICT STRICT} for performing a strict comparison, or
-     *         {@link ComparisonMode#IGNORE_METADATA IGNORE_METADATA} for comparing only properties
-     *         relevant to transformations.
-     * @return {@code true} if both objects are equal.
-     */
-    @Override
-    @SuppressWarnings("fallthrough")
-    public boolean equals(final Object object, final ComparisonMode mode) {
-        if (object == this) {
-            return true;
-        }
-        if (super.equals(object, mode)) {
-            switch (mode) {
-                default: {
-                    /*
-                     * Tests for name, since parameters with different name have
-                     * completely different meaning. For example there is no difference
-                     * between "semi_major" and "semi_minor" parameters except the name.
-                     * We don't perform this comparison if the user asked for metadata
-                     * comparison, because in such case the names have already been
-                     * compared by the subclass.
-                     */
-                    final IdentifiedObject that = (IdentifiedObject) object;
-                    if (!isHeuristicMatchForName(that. getName().getCode()) &&
-                        !IdentifiedObjects.nameMatches(that, getName().getCode()))
-                    {
-                        return false;
-                    }
-                    // Fall through
-                }
-                case BY_CONTRACT: {
-                    final ParameterDescriptor<?> that = (ParameterDescriptor<?>) object;
-                    return Objects.    equals(getValidValues(),  that.getValidValues())  &&
-                           Objects.deepEquals(getDefaultValue(), that.getDefaultValue()) &&
-                           Objects.    equals(getMinimumValue(), that.getMinimumValue()) &&
-                           Objects.    equals(getMaximumValue(), that.getMaximumValue()) &&
-                           Objects.    equals(getUnit(),         that.getUnit());
-                }
-                case STRICT: {
-                    final DefaultParameterDescriptor<?> that = (DefaultParameterDescriptor<?>) object;
-                    return Objects.    equals(this.validValues,  that.validValues)  &&
-                           Objects.deepEquals(this.defaultValue, that.defaultValue) &&
-                           Objects.    equals(this.minimum,      that.minimum)      &&
-                           Objects.    equals(this.maximum,      that.maximum)      &&
-                           Objects.    equals(this.unit,         that.unit);
-                }
-            }
-        }
-        return false;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected long computeHashCode() {
-        return hash(valueClass, hash(deepHashCode(defaultValue),
-               hash(minimum, hash(maximum, hash(unit, 0))))) + super.computeHashCode();
-    }
-
-    /**
-     * Returns a string representation of this descriptor. The string returned by this
-     * method is for information purpose only and may change in future version.
-     *
-     * @since 3.17
-     */
-    @Override
-    public String toString() {
-        final StringBuilder buffer = new StringBuilder(Classes.getShortClassName(this))
-                .append("[\"").append(getName().getCode()).append("\", ")
-                .append(getMinimumOccurs() == 0 ? "optional" : "mandatory");
-        buffer.append(", class=").append(Classes.getShortName(valueClass));
-        if (minimum != null || maximum != null) {
-            buffer.append(", valid=[").append(minimum != null ? minimum : "-\u221E")
-                  .append(" \u2026 ") .append(maximum != null ? maximum :  "\u221E").append(']');
-        } else if (validValues != null) {
-            buffer.append(", valid=").append(validValues);
-        }
-        if (defaultValue != null) {
-            buffer.append(", default=").append(defaultValue);
-        }
-        if (unit != null) {
-            buffer.append(", unit=").append(unit);
-        }
-        return buffer.append(']').toString();
     }
 }

@@ -42,6 +42,7 @@ import org.geotoolkit.resources.Errors;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.apache.sis.referencing.AbstractIdentifiedObject;
+import org.apache.sis.parameter.AbstractParameterDescriptor;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.apache.sis.util.ComparisonMode;

@@ -26,9 +26,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Objects;
 
-import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
-import javax.measure.unit.NonSI;
 import javax.measure.converter.UnitConverter;
 import javax.measure.converter.ConversionException;
 
@@ -37,7 +35,6 @@ import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.InvalidParameterTypeException;
 import org.opengis.parameter.InvalidParameterValueException;
 
-import org.apache.sis.measure.Units;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.internal.storage.IOUtilities;
 
@@ -146,13 +143,12 @@ public class Parameter<T> extends AbstractParameterValue<T> {
      * @return A new parameter instance for the given name and value.
      *
      * @since 2.5
+     *
+     * @deprecated Moved to {@link Parameters}
      */
+    @Deprecated
     public static Parameter<Integer> create(final String name, final int value) {
-        final ParameterDescriptor<Integer> descriptor =
-                new DefaultParameterDescriptor<>(name, Integer.class, null, null);
-        final Parameter<Integer> parameter = new Parameter<>(descriptor);
-        parameter.value = value;
-        return parameter;
+        return Parameters.create(name, value);
     }
 
     /**
@@ -169,27 +165,12 @@ public class Parameter<T> extends AbstractParameterValue<T> {
      * @return A new parameter instance for the given name and value.
      *
      * @since 2.5
+     *
+     * @deprecated Moved to {@link Parameters}
      */
+    @Deprecated
     public static Parameter<Double> create(final String name, final double value, Unit<?> unit) {
-        /*
-         * Normalizes the specified unit into one of "standard" units used in projections.
-         * This is for the descriptor only; the parameter will use exactly the given unit.
-         */
-        if (unit != null) {
-            if (Units.isLinear(unit)) {
-                unit = SI.METRE;
-            } else if (Units.isTemporal(unit)) {
-                unit = NonSI.DAY;
-            } else if (Units.isAngular(unit)) {
-                unit = NonSI.DEGREE_ANGLE;
-            }
-        }
-        final ParameterDescriptor<Double> descriptor = DefaultParameterDescriptor.create(
-                name, Double.NaN, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, unit);
-        final Parameter<Double> parameter = new Parameter<>(descriptor);
-        parameter.value = value;
-        parameter.unit  = unit;
-        return parameter;
+        return Parameters.create(name, value, unit);
     }
 
     /**
@@ -207,12 +188,12 @@ public class Parameter<T> extends AbstractParameterValue<T> {
      * @return A new parameter instance for the given name and value.
      *
      * @since 2.5
+     *
+     * @deprecated Moved to {@link Parameters}
      */
+    @Deprecated
     public static <T extends CodeList<T>> Parameter<T> create(final String name, final Class<T> type, final T value) {
-        final ParameterDescriptor<T> descriptor = new DefaultParameterDescriptor<>(name, null, type, null, true);
-        final Parameter<T> parameter = new Parameter<>(descriptor);
-        parameter.value = value;
-        return parameter;
+        return Parameters.create(name, type, value);
     }
 
     /**
@@ -285,7 +266,7 @@ public class Parameter<T> extends AbstractParameterValue<T> {
      * the <code>FloatParameter</code> class, since this method throws an exception instead than
      * returning <code>NaN</code> if no value has been explicitely set. This method behaves that
      * way for consistency will other methods defined in this class, since all of them except
-     * <code>getValue()</code> to throw an exception in such case.}
+     * <code>getValue()</code> throw an exception in such case.}
      *
      * @return The numeric value represented by this parameter after conversion to type {@code double}.
      *         This method returns {@link Double#NaN} only if such "value" has been explicitely set.
