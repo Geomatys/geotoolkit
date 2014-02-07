@@ -29,7 +29,7 @@ import org.apache.sis.io.wkt.Convention;
 
 import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
 import org.geotoolkit.referencing.operation.MathTransforms;
-import org.geotoolkit.test.referencing.ParameterTestBase;
+import org.geotoolkit.test.TestBase;
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -44,7 +44,7 @@ import static org.opengis.test.Validators.*;
  *
  * @since 2.1
  */
-public final strictfp class MatrixParametersTest extends ParameterTestBase {
+public final strictfp class MatrixParametersTest extends TestBase {
     /**
      * Tests the storage of matrix parameters.
      */

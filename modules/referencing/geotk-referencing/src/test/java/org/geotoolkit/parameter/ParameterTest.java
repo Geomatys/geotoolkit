@@ -21,20 +21,21 @@ import java.util.Set;
 import java.util.Arrays;
 import java.util.HashSet;
 import javax.measure.unit.Unit;
-import static javax.measure.unit.SI.*;
-import static javax.measure.unit.NonSI.DEGREE_ANGLE;
 
 import org.opengis.parameter.*;
 import org.opengis.referencing.cs.AxisDirection;
 
 import org.apache.sis.test.DependsOn;
+import org.apache.sis.parameter.DefaultParameterDescriptorTest;
 import org.geotoolkit.internal.referencing.VerticalDatumTypes;
-import org.geotoolkit.test.referencing.ParameterTestBase;
+import org.geotoolkit.test.TestBase;
+import org.junit.Test;
 
-import org.junit.*;
+import static java.lang.StrictMath.*;
 import static org.apache.sis.test.Assert.*;
 import static org.opengis.test.Validators.*;
-import static java.lang.StrictMath.*;
+import static javax.measure.unit.SI.*;
+import static javax.measure.unit.NonSI.DEGREE_ANGLE;
 
 
 /**
@@ -45,8 +46,8 @@ import static java.lang.StrictMath.*;
  *
  * @since 2.1
  */
-@DependsOn(ParameterDescriptorTest.class)
-public final strictfp class ParameterTest extends ParameterTestBase {
+@DependsOn(DefaultParameterDescriptorTest.class)
+public final strictfp class ParameterTest extends TestBase {
     /**
      * Strict tolerance factor for floating point comparisons. In the particular
      * case of this test suite, we can afford to be strict since we will perform
