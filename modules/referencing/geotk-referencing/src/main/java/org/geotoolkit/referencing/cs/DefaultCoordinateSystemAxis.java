@@ -604,7 +604,21 @@ public class DefaultCoordinateSystemAxis extends org.apache.sis.referencing.cs.D
                                        final double        maximum,
                                        final RangeMeaning  rangeMeaning)
     {
-        super(properties, abbreviation, direction, unit, minimum, maximum, rangeMeaning);
+        super(complete(properties, minimum, maximum, rangeMeaning), abbreviation, direction, unit);
+    }
+
+    /**
+     * Work around for RFE #4093999 in Sun's bug database
+     * ("Relax constraint on placement of this()/super() call in constructors").
+     */
+    private static Map<String,?> complete(Map<String,?> properties,
+            final double minimum, final double maximum, final RangeMeaning reangeMeaning)
+    {
+        final Map<String,Object> copy = new HashMap<>(properties);
+        copy.put(RANGE_MEANING_KEY, reangeMeaning);
+        copy.put(MINIMUM_VALUE_KEY, minimum);
+        copy.put(MAXIMUM_VALUE_KEY, maximum);
+        return copy;
     }
 
     /**
