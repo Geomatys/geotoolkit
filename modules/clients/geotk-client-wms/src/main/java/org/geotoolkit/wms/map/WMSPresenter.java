@@ -17,31 +17,31 @@
 
 package org.geotoolkit.wms.map;
 
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Dimension;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.image.BufferedImage;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.StringWriter;
-import org.geotoolkit.client.Request;
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextPane;
+import javax.swing.*;
+import javax.swing.text.html.HTMLDocument;
+import javax.swing.text.html.StyleSheet;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
+
+import org.apache.sis.util.logging.Logging;
+import org.apache.sis.xml.MarshallerPool;
+
+import org.geotoolkit.client.Request;
 import org.geotoolkit.client.CapabilitiesException;
 import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display.SearchArea;
@@ -49,15 +49,19 @@ import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.CoverageMapLayer;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.gui.swing.render2d.control.information.presenter.AbstractInformationPresenter;
+import org.geotoolkit.ogc.xml.exception.ServiceExceptionReport;
+import org.geotoolkit.ogc.xml.exception.ServiceExceptionType;
 import org.geotoolkit.wms.WMSCoverageReference;
 import org.geotoolkit.wms.WebMapServer;
 import org.geotoolkit.wms.xml.AbstractWMSCapabilities;
+import org.geotoolkit.wms.xml.WMSMarshallerPool;
+
 import org.jdesktop.swingx.JXBusyLabel;
 import org.jdesktop.swingx.JXHyperlink;
 import org.jdesktop.swingx.combobox.ListComboBoxModel;
+
 import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
@@ -66,6 +70,7 @@ import org.opengis.util.FactoryException;
  * Presenter for WMS layer, this will send a getFeatureInfo query to retrieve more information.
  *
  * @author Johann Sorel (Geomatys)
+ * @author Quentin Boileau (Geomatys)
  * @module pending
  */
 public class WMSPresenter extends AbstractInformationPresenter{
@@ -119,7 +124,8 @@ public class WMSPresenter extends AbstractInformationPresenter{
                 guiCenterPanel.removeAll();
 
                 try {
-                    final Request request = getFeatureInfo(reference, context, area, guiMimeTypes.getSelectedItem().toString(), 20);
+                    final String requestMT = guiMimeTypes.getSelectedItem().toString();
+                    final Request request = getFeatureInfo(reference, context, area, requestMT, 20);
                     try{
                         final JXHyperlink link = new JXHyperlink();
                         link.setURI(request.getURL().toURI());
@@ -131,7 +137,7 @@ public class WMSPresenter extends AbstractInformationPresenter{
                     new Thread(){
                         @Override
                         public void run() {
-                            downloadGetFeatureInfo(guiCenterPanel, request);
+                            downloadGetFeatureInfo(guiCenterPanel, request, requestMT);
                         }
                     }.start();
 
@@ -176,7 +182,7 @@ public class WMSPresenter extends AbstractInformationPresenter{
             return url;
         }
 
-    private static void downloadGetFeatureInfo(final JPanel contentPane, final Request request){
+    private static void downloadGetFeatureInfo(final JPanel contentPane, final Request request, String requestMT){
 
         final JXBusyLabel guiBuzy = new JXBusyLabel(new Dimension(30, 30));
         guiBuzy.setBusy(true);
@@ -184,51 +190,196 @@ public class WMSPresenter extends AbstractInformationPresenter{
         contentPane.revalidate();
         contentPane.repaint();
 
+        try {
+            final URL url = request.getURL();
+            final HttpURLConnection cnx = (HttpURLConnection)url.openConnection();
+            final String respContentType = cnx.getContentType();
 
-        InputStream input = null;
+            InputStream in = cnx.getInputStream();
+            if (!in.markSupported()) {
+                in = new BufferedInputStream(in);
+            }
 
-        try{
-            input = request.getResponseStream();
-
-            Component content;
+            Component content = null;
+            Dimension dim = contentPane.getPreferredSize();
             try {
 
-                final BufferedImage image = ImageIO.read(input);
-                content = new JLabel(new ImageIcon(image));
+                //maybe an error occurs
+                try {
+                    in.mark(4096);
+                    Object result = unmarshallWMSResp(in);
+                    if (result instanceof ServiceExceptionReport) {
+                        final ServiceExceptionReport report = (ServiceExceptionReport) result;
+
+                        final StringBuilder builder = new StringBuilder("An error occurred : \n");
+                        for (ServiceExceptionType expType : report.getServiceExceptions()) {
+                            builder.append(expType.getMessage());
+                        }
+                        content = renderError(builder.toString());
+                    }
+                } catch (JAXBException ex) {
+                    //can't unmarshall -> maybe not an actual error
+                    in.reset();
+                }
+
+                if (content == null) {
+                    //try to guess response type
+                    if (respContentType.startsWith("image")) {
+                        content = renderImage(in, dim);
+                    } else if (respContentType.equals("text/html")) {
+                        content = renderHTML(in);
+                    } else if (respContentType.equals("text/xml")) {
+                        content = renderXML(in);
+                    } else {
+                        content = renderText(in, null);
+                    }
+                }
 
             } catch (Exception ex) {
-                try {
-                    StringWriter writer = new StringWriter();
-                    InputStreamReader streamReader = new InputStreamReader(input);
-                    BufferedReader buffer = new BufferedReader(streamReader);
-                    String line="";
-                    while ( null!=(line=buffer.readLine())){
-                        writer.write(line);
-                    }
-                    content = new JTextPane();
-                    ((JTextPane)content).setText(writer.toString());
-                } catch (Exception ex2) {
-                    content = new JPanel();
-                }
+                LOGGER.log(Level.WARNING, ex.getMessage(), ex);
+                content = renderError("Error when request the FeatureInfo : \n"+ex.getMessage());
+            }
+
+            //can't render response
+            if (content == null) {
+                content = renderError("Can't render GetFeatureInfo response for requested URL : "+url.toString());
             }
 
             contentPane.remove(guiBuzy);
-            contentPane.add(BorderLayout.CENTER,new JScrollPane(content));
+            contentPane.add(BorderLayout.CENTER, new JScrollPane(content));
+            contentPane.setSize(dim);
             contentPane.revalidate();
             contentPane.repaint();
 
         } catch (IOException ex) {
             LOGGER.log(Level.WARNING, ex.getMessage(), ex);
-        }finally{
-            if(input != null){
-                try {
-                    input.close();
-                } catch (IOException ex) {
-                    LOGGER.log(Level.WARNING, ex.getMessage(), ex);
-                }
+        }
+    }
+
+    /**
+     * Unmarshall WMS service response.
+     * @param stream InputStream
+     * @return Object like
+     * @throws JAXBException
+     * @throws IOException
+     */
+    private static Object unmarshallWMSResp(InputStream stream) throws JAXBException, IOException {
+        Unmarshaller unMarshaller   = null;
+        MarshallerPool selectedPool = WMSMarshallerPool.getInstance();
+        try {
+            unMarshaller = selectedPool.acquireUnmarshaller();
+            return unMarshaller.unmarshal(stream);
+        } finally {
+            if (selectedPool != null && unMarshaller != null) {
+                selectedPool.recycle(unMarshaller);
             }
         }
+    }
 
+    /**
+     * Render html in a JTextPane
+     * @param stream InputStream
+     * @throws IOException
+     */
+    private static Component renderHTML(InputStream stream) throws IOException {
+        String html = getStringContent(stream);
+        String css = null;
+        final Pattern style = Pattern.compile("<style>([^><]+?)</style>", Pattern.MULTILINE);
+        final Matcher matcher = style.matcher(html);
+        if (matcher.find()) {
+            css = matcher.group(1);
+            html = html.substring(0, matcher.start(0)) + html.substring(matcher.end(0));
+        }
+
+        final StyleSheet styles = new StyleSheet();
+        if (css != null) {
+            styles.addRule(css);
+        }
+
+        final JTextPane textPane = new JTextPane();
+        textPane.setEditable(false);
+        textPane.setContentType("text/html");
+        textPane.setStyledDocument(new HTMLDocument(styles));
+        textPane.setText(html);
+
+        return textPane;
+    }
+
+    /**
+     * Render xml in a JTextPane
+     * @param stream InputStream
+     * @throws IOException
+     */
+    private static Component renderXML(InputStream stream) throws IOException {
+        return renderText(stream, "text/xml");
+    }
+
+    /**
+     * Render text in a JTextPane
+     * @param stream InputStream
+     * @param contentType String
+     * @return JTextPane
+     * @throws IOException
+     */
+    private static Component renderText(InputStream stream, final String contentType) throws IOException {
+        final String content = getStringContent(stream);
+        final JTextPane textPane = new JTextPane();
+        textPane.setEditable(false);
+        if (contentType != null) {
+            textPane.setContentType(contentType);
+        }
+        textPane.setText(content);
+
+        return textPane;
+    }
+
+    /**
+     * Get String from an InputStream
+     * @param stream
+     * @return
+     * @throws IOException
+     */
+    private static String getStringContent(InputStream stream) throws IOException {
+        final BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
+        final StringBuilder out = new StringBuilder();
+        final String newLine = System.getProperty("line.separator");
+        String line;
+        while ((line = reader.readLine()) != null) {
+            out.append(line);
+            out.append(newLine);
+        }
+        return out.toString();
+    }
+
+    /**
+     * Render error message in a JTextPane
+     * @param error String
+     * @return JTextPane with error
+     */
+    private static Component renderError(final String error){
+        final JTextPane errorPane = new JTextPane();
+        Font font = errorPane.getFont();
+        font = font.deriveFont(Font.BOLD);
+        errorPane.setFont(font);
+        errorPane.setForeground(Color.RED);
+        errorPane.setText(error);
+        return errorPane;
+    }
+
+    /**
+     * Try to render Image in Component from URLConnection.
+     * @param stream InputStream
+     * @return JLabel with Image inside or null.
+     * @throws IOException
+     */
+    private static Component renderImage(final InputStream stream, Dimension dim) throws IOException {
+
+        BufferedImage img = ImageIO.read(stream);
+        if (img != null) {
+            dim.setSize(img.getWidth(), img.getHeight());
+            return new JLabel(new ImageIcon(img));
+        }
+        return null;
     }
 
 }
