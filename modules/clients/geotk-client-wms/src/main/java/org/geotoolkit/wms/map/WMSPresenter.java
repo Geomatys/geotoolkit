@@ -219,7 +219,12 @@ public class WMSPresenter extends AbstractInformationPresenter{
                     }
                 } catch (JAXBException ex) {
                     //can't unmarshall -> maybe not an actual error
-                    in.reset();
+                    try {
+                        in.reset();
+                    } catch (IOException ioe) {
+                        //error when reset the InputStream -> recreate a new one
+                        in = url.openConnection().getInputStream();
+                    }
                 }
 
                 if (content == null) {
