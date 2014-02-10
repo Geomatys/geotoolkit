@@ -449,7 +449,8 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
         gcb.setSampleDimensions(sampleDims);
         final GridCoverage2D coverage = (GridCoverage2D) gcb.build();
 
-        final CoverageMapLayer tilelayer = MapBuilder.createCoverageLayer(coverage, getUserObject().getStyle(), "");
+        final String name = getUserObject().getName();
+        final CoverageMapLayer tilelayer = MapBuilder.createCoverageLayer(coverage, getUserObject().getStyle(), name);
         return new ProjectedCoverage(params, tilelayer);
     }
     
