@@ -175,7 +175,24 @@ public class DefaultParameterDescriptor<T> extends org.apache.sis.parameter.Defa
                                       final Unit<?>       unit,
                                       final boolean       required)
     {
-        super(properties, valueClass, validValues, defaultValue, minimum, maximum, unit, required);
+        super(complete(properties, validValues, minimum, maximum), valueClass, defaultValue, unit, required);
+    }
+
+    /**
+     * Work around for RFE #4093999 in Sun's bug database
+     * ("Relax constraint on placement of this()/super() call in constructors").
+     */
+    private static Map<String,?> complete(Map<String,?> properties, final Object[] validValues,
+            final Comparable<?> minimum, final Comparable<?> maximum)
+    {
+        if (validValues != null || minimum != null || maximum != null) {
+            final Map<String,Object> copy = new HashMap<>(properties);
+            copy.put(VALID_VALUES_KEY, validValues);
+            copy.put(MINIMUM_VALUE_KEY, minimum);
+            copy.put(MAXIMUM_VALUE_KEY, maximum);
+            properties = copy;
+        }
+        return properties;
     }
 
     /**
