@@ -426,7 +426,7 @@ public class AffineTransform2D extends XAffineTransform
                 return AffineTransform2D.this.formatTo(formatter);
             }
         });
-        return formatter.toString();
+        return formatter.toWKT();
     }
 
     /**

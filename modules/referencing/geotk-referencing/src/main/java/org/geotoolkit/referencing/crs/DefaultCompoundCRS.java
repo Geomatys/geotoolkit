@@ -418,8 +418,10 @@ public class DefaultCompoundCRS extends AbstractCRS implements CompoundCRS {
     @Override
     public String formatTo(final Formatter formatter) { // TODO: should be protected.
         for (final CoordinateReferenceSystem element : components) {
+            formatter.newLine();
             formatter.append(element);
         }
+        formatter.newLine(); // For writing the ID[…] element on its own line.
         return "COMPD_CS";
     }
 }

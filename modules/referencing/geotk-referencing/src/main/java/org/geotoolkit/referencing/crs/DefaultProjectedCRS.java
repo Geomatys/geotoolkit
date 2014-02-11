@@ -298,12 +298,14 @@ public class DefaultProjectedCRS extends AbstractDerivedCRS implements Projected
         final Ellipsoid ellipsoid = getDatum().getEllipsoid();
         @SuppressWarnings({"unchecked","rawtypes"}) // Formatter.setLinearUnit(...) will do the check for us.
         final Unit<Length> unit        = (Unit) getUnit();
-        final Unit<Length> linearUnit  = formatter.getLinearUnit();
-        final Unit<Angle>  angularUnit = formatter.getAngularUnit();
+        final Unit<Length> linearUnit  = formatter.getContextualUnit(Length.class);
+        final Unit<Angle>  angularUnit = formatter.getContextualUnit(Angle.class);
         final Unit<Length> axisUnit    = ellipsoid.getAxisUnit();
-        formatter.setLinearUnit(unit);
-        formatter.setAngularUnit(DefaultGeographicCRS.getAngularUnit(baseCRS.getCoordinateSystem()));
+        formatter.setContextualUnit(Length.class, unit);
+        formatter.setContextualUnit(Angle.class, DefaultGeographicCRS.getAngularUnit(baseCRS.getCoordinateSystem()));
+        formatter.newLine();
         formatter.append(baseCRS);
+        formatter.newLine();
         formatter.append(conversionFromBase.getMethod());
         for (final GeneralParameterValue param : conversionFromBase.getParameterValues().values()) {
             final GeneralParameterDescriptor desc = param.getDescriptor();
@@ -331,13 +333,15 @@ public class DefaultProjectedCRS extends AbstractDerivedCRS implements Projected
         final CartesianCS cs = getCoordinateSystem();
         final int dimension = cs.getDimension();
         for (int i=0; i<dimension; i++) {
+            formatter.newLine();
             formatter.append(cs.getAxis(i));
         }
         if (unit == null) {
             formatter.setInvalidWKT(this, null);
         }
-        formatter.setAngularUnit(angularUnit);
-        formatter.setLinearUnit(linearUnit);
+        formatter.setContextualUnit(Angle.class, angularUnit);
+        formatter.setContextualUnit(Length.class, linearUnit);
+        formatter.newLine(); // For writing the ID[…] element on its own line.
         return "PROJCS";
     }
 }

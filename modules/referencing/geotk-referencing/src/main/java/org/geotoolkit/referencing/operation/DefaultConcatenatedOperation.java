@@ -374,6 +374,7 @@ public class DefaultConcatenatedOperation extends AbstractCoordinateOperation
     public String formatTo(final Formatter formatter) {
         final String label = super.formatTo(formatter);
         for (final CoordinateOperation op : operations) {
+            formatter.newLine();
             formatter.append(op);
         }
         return label;

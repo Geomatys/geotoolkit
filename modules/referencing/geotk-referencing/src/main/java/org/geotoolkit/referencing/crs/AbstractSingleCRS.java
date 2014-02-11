@@ -22,6 +22,7 @@ package org.geotoolkit.referencing.crs;
 
 import java.util.Map;
 import net.jcip.annotations.Immutable;
+import javax.measure.unit.Unit;
 
 import org.opengis.referencing.datum.Datum;
 import org.opengis.referencing.crs.SingleCRS;
@@ -195,8 +196,22 @@ public class AbstractSingleCRS extends AbstractCRS implements SingleCRS {
      * {@inheritDoc}
      */
     @Override
-    final void formatDefaultWKT(final Formatter formatter) {
+    public String formatTo(final Formatter formatter) {  // TODO: should be protected.
+        super.formatTo(formatter);
         formatter.append(datum);
-        super.formatDefaultWKT(formatter);
+        final Unit<?> unit = getUnit();
+        formatter.newLine();
+        formatter.append(unit);
+        final CoordinateSystem cs = getCoordinateSystem();
+        final int dimension = cs.getDimension();
+        for (int i=0; i<dimension; i++) {
+            formatter.newLine();
+            formatter.append(cs.getAxis(i));
+        }
+        if (unit == null) {
+            formatter.setInvalidWKT(cs, null);
+        }
+        formatter.newLine(); // For writing the ID[…] element on its own line.
+        return null;
     }
 }

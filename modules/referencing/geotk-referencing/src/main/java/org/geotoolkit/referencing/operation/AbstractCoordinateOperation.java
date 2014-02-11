@@ -628,6 +628,7 @@ public class AbstractCoordinateOperation extends AbstractIdentifiedObject implem
             final Map<String,Object> properties = new HashMap<>(4);
             properties.put(IdentifiedObject.NAME_KEY,        object.getName());
             properties.put(IdentifiedObject.IDENTIFIERS_KEY, object.getIdentifiers());
+            formatter.newLine();
             formatter.append((IdentifiedObject) new AbstractIdentifiedObject(properties) {
                 @Override
                 protected String formatTo(final Formatter formatter) {

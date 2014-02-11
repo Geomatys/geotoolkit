@@ -27,10 +27,8 @@ import net.jcip.annotations.Immutable;
 
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.util.InternationalString;
 
-import org.geotoolkit.measure.Measure;
 import org.apache.sis.io.wkt.Formatter;
 import org.geotoolkit.referencing.cs.AbstractCS;
 import org.apache.sis.referencing.AbstractReferenceSystem;
@@ -225,24 +223,19 @@ public abstract class AbstractCRS extends AbstractReferenceSystem implements Coo
      */
     @Override
     public String formatTo(final Formatter formatter) {  // TODO: should be protected.
-        formatDefaultWKT(formatter);
-        // Will declares the WKT as invalid.
-        return super.formatTo(formatter);
-    }
-
-    /**
-     * Default implementation of {@link #formatWKT}. For {@link DefaultEngineeringCRS}
-     * and {@link DefaultVerticalCRS} use only.
-     */
-    void formatDefaultWKT(final Formatter formatter) {
+        super.formatTo(formatter);
         final Unit<?> unit = getUnit();
+        formatter.newLine();
         formatter.append(unit);
         final int dimension = coordinateSystem.getDimension();
         for (int i=0; i<dimension; i++) {
+            formatter.newLine();
             formatter.append(coordinateSystem.getAxis(i));
         }
         if (unit == null) {
             formatter.setInvalidWKT(coordinateSystem, null);
         }
+        formatter.newLine(); // For writing the ID[…] element on its own line.
+        return null;
     }
 }

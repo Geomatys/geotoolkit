@@ -362,7 +362,9 @@ public class AbstractDerivedCRS extends AbstractSingleCRS implements GeneralDeri
             // TODO: provide a more accurate error message.
             throw new IllegalStateException(exception.getLocalizedMessage(), exception);
         }
+        formatter.newLine();
         formatter.append(inverse);
+        formatter.newLine();
         formatter.append(baseCRS);
         return "FITTED_CS";
     }

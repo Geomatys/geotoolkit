@@ -968,6 +968,7 @@ public class ConcatenatedTransform extends AbstractMathTransform implements Seri
             return ((Formattable) transforms.get(0)).formatTo(formatter);
         }
         for (final Object step : transforms) {
+            formatter.newLine();
             if (step instanceof MathTransform) {
                 formatter.append((MathTransform) step);
             } else {
