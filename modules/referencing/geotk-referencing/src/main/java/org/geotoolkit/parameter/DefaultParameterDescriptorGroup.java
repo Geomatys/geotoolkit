@@ -42,7 +42,6 @@ import org.geotoolkit.resources.Errors;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.apache.sis.referencing.AbstractIdentifiedObject;
-import org.apache.sis.parameter.AbstractParameterDescriptor;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.apache.sis.util.ComparisonMode;
@@ -66,7 +65,7 @@ import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
  * @module
  */
 @Immutable
-public class DefaultParameterDescriptorGroup extends AbstractParameterDescriptor
+public class DefaultParameterDescriptorGroup extends AbstractIdentifiedObject
         implements ParameterDescriptorGroup
 {
     /**
@@ -75,8 +74,12 @@ public class DefaultParameterDescriptorGroup extends AbstractParameterDescriptor
 //  private static final long serialVersionUID = -4613190550542423839L;
 
     /**
-     * The maximum number of times that values for this parameter group or
-     * parameter are required.
+     * The minimum number of times that values for this parameter group are required.
+     */
+    private final int minimumOccurs;
+
+    /**
+     * The maximum number of times that values for this parameter group are required.
      */
     private final int maximumOccurs;
 
@@ -101,6 +104,7 @@ public class DefaultParameterDescriptorGroup extends AbstractParameterDescriptor
      */
     public DefaultParameterDescriptorGroup(final ParameterDescriptorGroup group) {
         super(group);
+        minimumOccurs = group.getMinimumOccurs();
         maximumOccurs = group.getMaximumOccurs();
         final List<GeneralParameterDescriptor> c = group.descriptors();
         parameters = c.toArray(new GeneralParameterDescriptor[c.size()]);
@@ -166,8 +170,13 @@ public class DefaultParameterDescriptorGroup extends AbstractParameterDescriptor
                                            final int maximumOccurs,
                                            GeneralParameterDescriptor... parameters)
     {
-        super(properties, minimumOccurs, maximumOccurs);
+        super(properties);
+        this.minimumOccurs = minimumOccurs;
         this.maximumOccurs = maximumOccurs;
+        if (minimumOccurs < 0  || minimumOccurs > maximumOccurs) {
+            throw new IllegalArgumentException(org.apache.sis.util.resources.Errors.getResources(properties)
+                    .getString(org.apache.sis.util.resources.Errors.Keys.IllegalRange_2, minimumOccurs, maximumOccurs));
+        }
         ensureNonNull("parameters", parameters);
         this.parameters = new GeneralParameterDescriptor[parameters.length];
         for (int i=0; i<parameters.length; i++) {
@@ -205,6 +214,17 @@ public class DefaultParameterDescriptorGroup extends AbstractParameterDescriptor
     @Override
     public Class<? extends ParameterDescriptorGroup> getInterface() {
         return ParameterDescriptorGroup.class;
+    }
+
+    /**
+     * The minimum number of times that values for this parameter group or parameter are required.
+     * The default value is one. A value of 0 means an optional parameter.
+     *
+     * @see #getMaximumOccurs()
+     */
+    @Override
+    public int getMinimumOccurs() {
+        return minimumOccurs;
     }
 
     /**
@@ -334,12 +354,15 @@ public class DefaultParameterDescriptorGroup extends AbstractParameterDescriptor
             switch (mode) {
                 case STRICT: {
                     final DefaultParameterDescriptorGroup that = (DefaultParameterDescriptorGroup) object;
-                    return maximumOccurs == that.maximumOccurs && Arrays.equals(parameters, that.parameters);
+                    return minimumOccurs == that.minimumOccurs &&
+                           maximumOccurs == that.maximumOccurs &&
+                           Arrays.equals(parameters, that.parameters);
                 }
                 default: {
                     final ParameterDescriptorGroup that = (ParameterDescriptorGroup) object;
-                    return deepEquals(descriptors(), that.descriptors(), mode);
-                    // Note: maximumOccurs is tested by the parent class.
+                    return getMinimumOccurs() == that.getMinimumOccurs() &&
+                           getMaximumOccurs() == that.getMaximumOccurs() &&
+                           deepEquals(descriptors(), that.descriptors(), mode);
                 }
             }
         }
