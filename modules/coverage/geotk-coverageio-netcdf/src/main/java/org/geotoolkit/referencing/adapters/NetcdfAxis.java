@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import javax.imageio.IIOException;
 import javax.measure.unit.Unit;
+import javax.measure.unit.NonSI;
 
 import ucar.nc2.Attribute;
 import ucar.nc2.Dimension;
@@ -427,13 +428,21 @@ public class NetcdfAxis extends NetcdfIdentifiedObject implements CoordinateSyst
         Unit<?> unit = this.unit;
         if (unit == null) {
             final String symbol = getUnitsString();
-            if (symbol != null) try {
+            if (symbol != null && !symbol.isEmpty()) try {
                 this.unit = unit = Units.valueOf(symbol);
+                return unit;
             } catch (IllegalArgumentException e) {
                 // TODO: use Unit library in order to parse this kind of units.
-                // For now just report that the unit is unknown, which is compatible
-                // with the method contract.
             }
+            // TODO: The following fallback on default values is probably the wrong thing to do.
+            final AxisType type = axis.getAxisType();
+            if (type != null) {
+                switch (type) {
+                    case Lat:
+                    case Lon: unit = NonSI.DEGREE_ANGLE; break;
+                }
+            }
+            this.unit = unit;
         }
         return unit;
     }
