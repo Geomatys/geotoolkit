@@ -242,7 +242,7 @@ public abstract class AbstractCRS extends AbstractReferenceSystem implements Coo
             formatter.append(coordinateSystem.getAxis(i));
         }
         if (unit == null) {
-            formatter.setInvalidWKT(coordinateSystem);
+            formatter.setInvalidWKT(coordinateSystem, null);
         }
     }
 }

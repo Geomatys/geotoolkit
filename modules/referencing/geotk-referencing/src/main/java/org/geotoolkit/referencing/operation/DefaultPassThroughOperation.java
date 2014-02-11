@@ -176,8 +176,8 @@ public class DefaultPassThroughOperation extends DefaultSingleOperation implemen
                 formatter.append(ordinates[i]);
             }
         } catch (UnsupportedOperationException exception) {
-            // Ignore: no indices will be formatted.
-            formatter.setInvalidWKT(this);
+            // No indices will be formatted.
+            formatter.setInvalidWKT(this, exception);
         }
         formatter.append(operation);
         return name;

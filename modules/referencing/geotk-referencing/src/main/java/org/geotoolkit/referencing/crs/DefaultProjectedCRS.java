@@ -334,7 +334,7 @@ public class DefaultProjectedCRS extends AbstractDerivedCRS implements Projected
             formatter.append(cs.getAxis(i));
         }
         if (unit == null) {
-            formatter.setInvalidWKT(this);
+            formatter.setInvalidWKT(this, null);
         }
         formatter.setAngularUnit(angularUnit);
         formatter.setLinearUnit(linearUnit);
