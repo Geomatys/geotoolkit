@@ -140,11 +140,13 @@ public class InformationHandler extends AbstractNavigationHandler {
 
         @Override
         public void mouseEntered(final MouseEvent e) {
-            map.getComponent().setCursor(Cursor.getDefaultCursor());
+            map.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         }
 
         @Override
-        public void mouseExited(final MouseEvent e) {}
+        public void mouseExited(final MouseEvent e) {
+            map.setCursor(null);
+        }
 
         @Override
         public void mouseDragged(final MouseEvent e) {

@@ -393,12 +393,13 @@ public class DefaultSelectionHandler implements CanvasHandler {
 
         @Override
         public void mouseEntered(final MouseEvent e) {
-            map2D.getComponent().setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
+            map2D.setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
             map2D.getComponent().requestFocus();
         }
 
         @Override
         public void mouseExited(final MouseEvent e) {
+            map2D.setCursor(null);
         }
 
         @Override

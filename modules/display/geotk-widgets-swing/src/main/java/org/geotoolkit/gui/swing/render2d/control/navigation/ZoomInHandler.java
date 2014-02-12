@@ -35,7 +35,9 @@ import org.geotoolkit.gui.swing.render2d.JMap2D;
  */
 public class ZoomInHandler extends AbstractNavigationHandler {
 
-    private static final Cursor CUR_ZOOM_IN = cleanCursor(ZoomInAction.ICON.getImage(),new Point(0,0),"zoomin");
+    //we could use this cursor, but java do not handle translucent cursor correctly on every platform
+    //private static final Cursor CUR_ZOOM_IN = cleanCursor(ZoomInAction.ICON.getImage(),new Point(0,0),"zoomin");
+    private static  final Cursor CUR_ZOOM_IN = Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR);
     private final MouseListen mouseInputListener = new MouseListen();
     private double zoomFactor = 2;
 

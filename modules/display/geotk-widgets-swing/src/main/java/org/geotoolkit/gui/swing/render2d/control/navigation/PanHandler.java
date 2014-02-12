@@ -35,9 +35,11 @@ import org.geotoolkit.gui.swing.render2d.JMap2D;
  */
 public class PanHandler extends AbstractNavigationHandler {
 
-    private static  final Cursor CUR_ZOOM_PAN = cleanCursor(PanAction.ICON.getImage(),new Point(8, 8),"zoompan");
+    //we could use this cursor, but java do not handle translucent cursor correctly on every platform
+    //private static  final Cursor CUR_ZOOM_PAN = cleanCursor(PanAction.ICON.getImage(),new Point(8, 8),"zoompan");
+    private static  final Cursor CUR_ZOOM_PAN = Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR);
     private final MouseListen mouseInputListener = new MouseListen();
-    private double zoomFactor = 2;
+    private final double zoomFactor = 2;
 
     public PanHandler(final JMap2D map) {
         super(map);

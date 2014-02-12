@@ -137,8 +137,15 @@ public class LenghtHandler implements CanvasHandler {
 
         @Override
         public void mouseEntered(final MouseEvent e) {
-            map.getComponent().setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
+            map.setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
         }
+
+        @Override
+        public void mouseExited(MouseEvent e) {
+            map.setCursor(null);
+        }
+        
+        
 
     }
 
