@@ -26,29 +26,34 @@ public interface AbstractCapabilitiesBase extends AbstractCapabilitiesCore {
     /**
      * Gets the value of the serviceIdentification property.
      *
+     * @return
      */
     AbstractServiceIdentification getServiceIdentification();
 
     /**
      * Gets the value of the serviceProvider property.
      *
+     * @return
      */
     AbstractServiceProvider getServiceProvider();
 
     /**
      * Gets the value of the operationsMetadata property.
+     * @return
      */
     AbstractOperationsMetadata getOperationsMetadata();
 
     /**
      * Gets the value of the version property.
      *
+     * @return
      */
     String getVersion();
 
     /**
      * Gets the value of the updateSequence property.
      *
+     * @return
      */
     String getUpdateSequence();
 }

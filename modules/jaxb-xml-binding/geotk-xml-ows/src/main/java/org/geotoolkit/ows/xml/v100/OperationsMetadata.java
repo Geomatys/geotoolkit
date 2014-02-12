@@ -129,6 +129,7 @@ public class OperationsMetadata implements AbstractOperationsMetadata {
      * Gets the value of the operation property.
      * 
      */
+    @Override
     public List<Operation> getOperation() {
         if (operation == null) {
             operation = new ArrayList<>();

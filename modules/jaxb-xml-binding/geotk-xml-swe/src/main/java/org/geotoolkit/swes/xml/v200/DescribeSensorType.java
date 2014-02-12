@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.v321.AbstractTimeGeometricPrimitiveType;
@@ -67,6 +68,7 @@ import org.geotoolkit.swes.xml.DescribeSensor;
     "procedureDescriptionFormat",
     "validTime"
 })
+@XmlRootElement(name = "DescribeSensor")
 public class DescribeSensorType extends ExtensibleRequestType implements DescribeSensor {
 
     @XmlElement(required = true)

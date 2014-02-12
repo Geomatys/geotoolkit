@@ -106,7 +106,9 @@ public class OperationsMetadata implements AbstractOperationsMetadata {
      * The list of required and optional operations implemented shall be specified in
      * the Implementation Specification for this service.Gets the value of the operation property.
      * 
+     * @return
      */
+    @Override
     public List<Operation> getOperation() {
         if (operation == null) {
             operation = new ArrayList<>();

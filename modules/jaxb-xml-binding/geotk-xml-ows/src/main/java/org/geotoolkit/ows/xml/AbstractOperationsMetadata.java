@@ -17,6 +17,8 @@
 
 package org.geotoolkit.ows.xml;
 
+import java.util.List;
+
 /**
  *
  * @author Guilhem Legal (Geomatys)
@@ -31,7 +33,9 @@ public interface AbstractOperationsMetadata {
     void updateURL(String url);
     
     void addConstraint(final AbstractDomain domain);
-    
+
+    List<? extends AbstractOperation> getOperation();
+
     AbstractOperation getOperation(final String operationName);
     
     void removeOperation(final String operationName);

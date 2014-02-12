@@ -26,7 +26,9 @@ import java.util.List;
  * @module pending
  */
 public interface AbstractOperation {
-    
+
+    String getName();
+
     List<? extends AbstractDCP> getDCP();
 
     List<? extends AbstractDomain> getParameter();

@@ -252,6 +252,7 @@ public class Operation implements AbstractOperation {
     /**
      * Gets the value of the name property.
      */
+    @Override
     public String getName() {
         return name;
     }
