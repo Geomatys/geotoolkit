@@ -26,6 +26,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Image;
+import java.awt.LinearGradientPaint;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
@@ -97,6 +98,7 @@ import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.filter.DefaultLiteral;
 import org.geotoolkit.gui.swing.resource.FontAwesomeIcons;
 import org.geotoolkit.gui.swing.resource.IconBuilder;
+import org.geotoolkit.internal.image.ColorRamp;
 
 import org.jdesktop.swingx.JXTable;
 import org.jdesktop.swingx.combobox.ListComboBoxModel;
@@ -117,6 +119,7 @@ import org.opengis.filter.expression.Function;
 
 import static org.geotoolkit.style.StyleConstants.*;
 import org.geotoolkit.style.function.Categorize;
+import org.geotoolkit.style.function.DefaultInterpolationPoint;
 import org.geotoolkit.style.function.ThreshholdsBelongTo;
 import org.opengis.style.SelectedChannelType;
 import org.opengis.util.GenericName;
@@ -176,6 +179,9 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
     //keep track of where the symbolizer was to avoid rewriting the complete style
     private MutableRule parentRule = null;
     private int parentIndex = 0;
+    
+    private String name = "";
+    private String desc = "";
 
     public JRasterColorMapStylePanel() {
         initComponents();
@@ -232,10 +238,12 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
         }
 
         model = null;
+        name = "";
+        desc = "";
 
         if(rs != null){
-            guiName.setText(rs.getName());
-            guiDesc.setText(rs.getDescription()== null ? "" : ((rs.getDescription().getTitle()==null) ? "" : rs.getDescription().getTitle().toString()));
+            name = rs.getName();
+            desc = rs.getDescription()== null ? "" : ((rs.getDescription().getTitle()==null) ? "" : rs.getDescription().getTitle().toString());
 
             if(rs.getColorMap()!=null && rs.getColorMap().getFunction()!=null){
                 final Function fct = rs.getColorMap().getFunction();
@@ -331,10 +339,8 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
         guiLblBand = new JLabel();
         guiBand = new JSpinner();
         guiInterpolate = new JCheckBox();
-        jLabel2 = new JLabel();
-        guiName = new JTextField();
-        jLabel3 = new JLabel();
-        guiDesc = new JTextField();
+        guiLblStep = new JLabel();
+        guiNbStep = new JSpinner();
         jScrollPane1 = new JScrollPane();
         guiTable = new JXTable();
 
@@ -368,6 +374,7 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
 
         guiInvert.setText(MessageBundle.getString("style.rastercolormappane.invert")); // NOI18N
 
+        guiLblBand.setHorizontalAlignment(SwingConstants.RIGHT);
         guiLblBand.setText(MessageBundle.getString("style.rastercolormappane.band")); // NOI18N
 
         guiBand.setModel(new SpinnerNumberModel(Integer.valueOf(0), Integer.valueOf(0), null, Integer.valueOf(1)));
@@ -379,9 +386,9 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
             }
         });
 
-        jLabel2.setText(MessageBundle.getString("name")); // NOI18N
+        guiLblStep.setText(MessageBundle.getString("style.rastersymbolizer.divisions")); // NOI18N
 
-        jLabel3.setText(MessageBundle.getString("description")); // NOI18N
+        guiNbStep.setModel(new SpinnerNumberModel(Integer.valueOf(3), Integer.valueOf(2), null, Integer.valueOf(1)));
 
         GroupLayout jPanel1Layout = new GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -391,59 +398,51 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(Alignment.LEADING)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(guiNaN)
-                                .addPreferredGap(ComponentPlacement.RELATED)
-                                .addComponent(guiInvert)
-                                .addPreferredGap(ComponentPlacement.RELATED)
-                                .addComponent(guiInterpolate)
-                                .addGap(0, 135, Short.MAX_VALUE))
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(guiLblPalette)
-                                .addPreferredGap(ComponentPlacement.RELATED)
-                                .addComponent(guiPalette, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addPreferredGap(ComponentPlacement.RELATED)
-                                .addComponent(guiLblBand)))
+                        .addComponent(guiLblPalette)
                         .addPreferredGap(ComponentPlacement.RELATED)
-                        .addGroup(jPanel1Layout.createParallelGroup(Alignment.LEADING, false)
-                            .addComponent(guiBand)
-                            .addComponent(guiGenerate, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addComponent(guiPalette, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel2)
+                        .addComponent(guiLblStep)
                         .addPreferredGap(ComponentPlacement.RELATED)
-                        .addComponent(guiName))
+                        .addComponent(guiNbStep, GroupLayout.PREFERRED_SIZE, 62, GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(ComponentPlacement.RELATED)
+                        .addComponent(guiLblBand)
+                        .addPreferredGap(ComponentPlacement.RELATED)
+                        .addComponent(guiBand, GroupLayout.PREFERRED_SIZE, 80, GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel3)
+                        .addComponent(guiNaN)
                         .addPreferredGap(ComponentPlacement.RELATED)
-                        .addComponent(guiDesc)))
+                        .addComponent(guiInvert)
+                        .addPreferredGap(ComponentPlacement.RELATED)
+                        .addComponent(guiInterpolate)
+                        .addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(guiGenerate)))
                 .addContainerGap())
         );
 
-        jPanel1Layout.linkSize(SwingConstants.HORIZONTAL, new Component[] {guiLblPalette, jLabel2, jLabel3});
+        jPanel1Layout.linkSize(SwingConstants.HORIZONTAL, new Component[] {guiLblBand, guiLblPalette, guiLblStep});
 
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(Alignment.LEADING)
             .addGroup(Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addGroup(jPanel1Layout.createParallelGroup(Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(guiName, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(Alignment.BASELINE)
-                    .addComponent(jLabel3)
-                    .addComponent(guiDesc, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(ComponentPlacement.RELATED)
+                .addGap(0, 0, 0)
                 .addGroup(jPanel1Layout.createParallelGroup(Alignment.BASELINE)
                     .addComponent(guiPalette, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                    .addComponent(guiLblPalette, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE)
-                    .addComponent(guiLblBand)
-                    .addComponent(guiBand, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                    .addComponent(guiLblPalette, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(Alignment.BASELINE)
+                    .addComponent(guiLblBand)
+                    .addComponent(guiBand, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                    .addComponent(guiLblStep)
+                    .addComponent(guiNbStep, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(Alignment.BASELINE)
                     .addComponent(guiNaN)
-                    .addComponent(guiGenerate)
                     .addComponent(guiInvert)
-                    .addComponent(guiInterpolate)))
+                    .addComponent(guiInterpolate)
+                    .addComponent(guiGenerate))
+                .addContainerGap())
         );
 
         jScrollPane1.setViewportView(guiTable);
@@ -519,19 +518,17 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private JButton guiAddOne;
     private JSpinner guiBand;
-    private JTextField guiDesc;
     private JButton guiGenerate;
     private JCheckBox guiInterpolate;
     private JCheckBox guiInvert;
     private JLabel guiLblBand;
     private JLabel guiLblPalette;
+    private JLabel guiLblStep;
     private JCheckBox guiNaN;
-    private JTextField guiName;
+    private JSpinner guiNbStep;
     private JComboBox guiPalette;
     private JButton guiRemoveAll;
     private JXTable guiTable;
-    private JLabel jLabel2;
-    private JLabel jLabel3;
     private JPanel jPanel1;
     private JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables
@@ -586,6 +583,29 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
             }
         }
 
+        //recalculate number of steps
+        final int nbStep = (Integer)guiNbStep.getValue();
+        if(steps.size() != nbStep){
+            //recalculate steps
+            double min = steps.get(0).getKey();
+            double max = min;
+            final List<InterpolationPoint> points = new ArrayList<>();
+            for(int i=0;i<steps.size();i++){
+                points.add(new DefaultInterpolationPoint(steps.get(i).getKey(), SF.literal(steps.get(i).getValue())));
+                min = Math.min(min, steps.get(i).getKey());
+                max = Math.max(max, steps.get(i).getKey());
+            }
+            Interpolate inter = SF.interpolateFunction(DEFAULT_CATEGORIZE_LOOKUP, points,Method.COLOR, Mode.LINEAR, DEFAULT_FALLBACK);
+            
+            //rebuild steps
+            steps.clear();
+            for(int i=0;i<nbStep;i++){
+                final double val = min + ( (max-min)/(nbStep-1) * i );
+                final Color color = inter.evaluate(val, Color.class);
+                steps.add(new AbstractMap.SimpleEntry<>(val,color));
+            }
+        }
+        
         if(guiInvert.isSelected()){
             final List<Entry<Double, Color>> inverted = new ArrayList<>();
             for(int i=0,n=steps.size();i<n;i++){
@@ -699,8 +719,7 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
         final Symbolizer outline = null;
         final Unit uom = NonSI.PIXEL;
         final String geom = DEFAULT_GEOM;
-        final String name = guiName.getText();
-        final Description desc = SF.description(guiDesc.getText(), guiDesc.getText());
+        final Description desc = SF.description(this.desc, this.desc);
 
         final RasterSymbolizer symbol = SF.rasterSymbolizer(
                 name,geom,desc,uom,opacity, selection, overlap, colorMap, enchance, relief, outline);
@@ -922,11 +941,8 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
 
         @Override
         public Function createFunction() {
-            final Expression lookup = DEFAULT_CATEGORIZE_LOOKUP;
-            final Literal fallback = DEFAULT_FALLBACK;
-
-            return SF.interpolateFunction(lookup, new ArrayList<>(points),
-                    Method.COLOR, Mode.LINEAR, fallback);
+            return SF.interpolateFunction(DEFAULT_CATEGORIZE_LOOKUP, new ArrayList<>(points),
+                    Method.COLOR, Mode.LINEAR, DEFAULT_FALLBACK);
         }
 
     }
@@ -1059,10 +1075,10 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
             ths.clear();
             Entry<Expression,Expression> th1 = new AbstractMap.SimpleEntry<>(
                     (Expression)StyleConstants.CATEGORIZE_LESS_INFINITY,(Expression)SF.literal(new Color(0f,0f,0f,0f)));
-            Entry<Expression,Expression> th2 = new AbstractMap.SimpleEntry<>(
-                    (Expression)FF.literal(0d),(Expression)SF.literal(new Color(0f,0f,0f,0f)));
+//            Entry<Expression,Expression> th2 = new AbstractMap.SimpleEntry<>(
+//                    (Expression)FF.literal(0d),(Expression)SF.literal(new Color(0f,0f,0f,0f)));
             ths.add(th1);
-            ths.add(th2);
+//            ths.add(th2);
             fireTableDataChanged();
         }
 
