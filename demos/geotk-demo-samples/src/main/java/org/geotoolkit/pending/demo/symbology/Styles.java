@@ -2,57 +2,54 @@
 package org.geotoolkit.pending.demo.symbology;
 
 
-import org.opengis.filter.expression.Literal;
-import org.geotoolkit.style.function.Method;
-import org.geotoolkit.style.function.Mode;
-import org.opengis.style.ContrastMethod;
-import org.geotoolkit.style.function.InterpolationPoint;
-import org.geotoolkit.coverage.io.CoverageIO;
 import java.awt.Color;
-import java.util.ArrayList;
-import java.util.List;
 import java.io.File;
 import java.io.Serializable;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import javax.measure.unit.SI;
 import javax.measure.unit.NonSI;
+import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
-
-import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.io.CoverageStoreException;
+import org.geotoolkit.coverage.io.GridCoverageReader;
+import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.FeatureStoreFinder;
-import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.query.QueryBuilder;
-import org.geotoolkit.map.MapBuilder;
-import org.geotoolkit.map.MapContext;
-import org.geotoolkit.map.MapLayer;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
-import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.filter.DefaultLiteral;
 import org.geotoolkit.map.ElevationModel;
+import org.geotoolkit.map.MapBuilder;
+import org.geotoolkit.map.MapContext;
+import org.geotoolkit.map.MapLayer;
+import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.sld.DefaultSLDFactory;
 import org.geotoolkit.sld.MutableSLDFactory;
+import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.StyleConstants;
 
+import static org.geotoolkit.style.StyleConstants.*;
+import org.geotoolkit.style.function.InterpolationPoint;
+import org.geotoolkit.style.function.Method;
+import org.geotoolkit.style.function.Mode;
+import org.geotoolkit.style.function.ThreshholdsBelongTo;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.expression.Expression;
-import org.opengis.style.RasterSymbolizer;
-import org.opengis.style.PolygonSymbolizer;
-import org.opengis.style.LineSymbolizer;
-import org.opengis.style.Mark;
+import org.opengis.filter.expression.Function;
+import org.opengis.filter.expression.Literal;
 import org.opengis.style.AnchorPoint;
 import org.opengis.style.ChannelSelection;
 import org.opengis.style.ColorMap;
 import org.opengis.style.ContrastEnhancement;
+import org.opengis.style.ContrastMethod;
 import org.opengis.style.Description;
 import org.opengis.style.Displacement;
 import org.opengis.style.Fill;
@@ -63,15 +60,16 @@ import org.opengis.style.GraphicStroke;
 import org.opengis.style.GraphicalSymbol;
 import org.opengis.style.Halo;
 import org.opengis.style.LabelPlacement;
+import org.opengis.style.LineSymbolizer;
+import org.opengis.style.Mark;
 import org.opengis.style.OverlapBehavior;
 import org.opengis.style.PointSymbolizer;
+import org.opengis.style.PolygonSymbolizer;
+import org.opengis.style.RasterSymbolizer;
 import org.opengis.style.ShadedRelief;
 import org.opengis.style.Stroke;
 import org.opengis.style.Symbolizer;
 import org.opengis.style.TextSymbolizer;
-
-import static org.geotoolkit.style.StyleConstants.*;
-import org.geotoolkit.style.function.ThreshholdsBelongTo;
 
 /**
  *
@@ -86,7 +84,7 @@ public class Styles {
     protected static final MutableSLDFactory SLDF = new DefaultSLDFactory();
     protected static final MutableStyleFactory SF = (MutableStyleFactory) FactoryFinder.getStyleFactory(
                                                    new Hints(Hints.STYLE_FACTORY, MutableStyleFactory.class));
-
+    
     //////////////////////////////////////////////////////////////////////
     // POINT SYMBOLIZER //////////////////////////////////////////////////
     //////////////////////////////////////////////////////////////////////
@@ -534,7 +532,7 @@ public class Styles {
 
     public static MutableStyle colorInterpolationRaster(){
 
-        final List<InterpolationPoint> values = new ArrayList<InterpolationPoint>();
+        final List<InterpolationPoint> values = new ArrayList<>();
         values.add( SF.interpolationPoint(1003, SF.literal(new Color(46,154,88))));
         values.add( SF.interpolationPoint(1800, SF.literal(new Color(251,255,128))));
         values.add( SF.interpolationPoint(2800, SF.literal(new Color(224,108,31))));
@@ -542,7 +540,7 @@ public class Styles {
         values.add( SF.interpolationPoint(4397, SF.literal(new Color(215,244,244 ))));
         final Expression lookup = DEFAULT_CATEGORIZE_LOOKUP;
         final Literal fallback = DEFAULT_FALLBACK;
-        final Expression function = SF.interpolateFunction(
+        final Function function = SF.interpolateFunction(
                 lookup, values, Method.COLOR, Mode.LINEAR, fallback);
 
         final ChannelSelection selection = null;
@@ -564,7 +562,7 @@ public class Styles {
 
     public static MutableStyle colorCategorizeRaster(){
 
-        final Map<Expression, Expression> values = new HashMap<Expression, Expression>();
+        final Map<Expression, Expression> values = new HashMap<>();
         values.put( StyleConstants.CATEGORIZE_LESS_INFINITY, SF.literal(new Color(46,154,88)));
         values.put( new DefaultLiteral<Number>(1003), SF.literal(new Color(46,154,88)));
         values.put( new DefaultLiteral<Number>(1800), SF.literal(new Color(251,255,128)));
@@ -573,7 +571,7 @@ public class Styles {
         values.put( new DefaultLiteral<Number>(4397), SF.literal(new Color(215,244,244 )));
         final Expression lookup = DEFAULT_CATEGORIZE_LOOKUP;
         final Literal fallback = DEFAULT_FALLBACK;
-        final Expression function = SF.categorizeFunction(lookup, values, ThreshholdsBelongTo.SUCCEEDING, fallback);
+        final Function function = SF.categorizeFunction(lookup, values, ThreshholdsBelongTo.SUCCEEDING, fallback);
 
         final ChannelSelection selection = null;
         final Expression opacity = LITERAL_ONE_FLOAT;
