@@ -435,15 +435,15 @@ public class ResampleProcess extends AbstractProcess {
         }
 
         //try to optimize resample using java wrap operation
-        if(canUseJavaInterpolation(sourceImage, allSteps2D, interpolationType)){
-            allSteps2D = PixelTranslation.translate(allSteps2D, PixelOrientation.CENTER,PixelOrientation.UPPER_LEFT,0,1);
-            try{
-                return resampleUsingJava(sourceCoverage, sourceImage, interpolationType,
-                                   allSteps2D, targetImage, targetGG, finalView, hints);
-            }catch(ImagingOpException ex){
-                LOGGER.log(Level.WARNING, "Resampling process : Failed to use java affine resampling.");
-            }
-        }
+//        if(canUseJavaInterpolation(sourceImage, allSteps2D, interpolationType)){
+//            allSteps2D = PixelTranslation.translate(allSteps2D, PixelOrientation.CENTER,PixelOrientation.UPPER_LEFT,0,1);
+//            try{
+//                return resampleUsingJava(sourceCoverage, sourceImage, interpolationType,
+//                                   allSteps2D, targetImage, targetGG, finalView, hints);
+//            }catch(ImagingOpException ex){
+//                LOGGER.log(Level.WARNING, "Resampling process : Failed to use java affine resampling.");
+//            }
+//        }
 
         MathTransform targetToSource = allSteps2D;
         if(!(targetToSource instanceof AffineTransform)){
