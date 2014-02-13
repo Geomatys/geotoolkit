@@ -1076,6 +1076,10 @@ public class SOSXmlFactory {
     public static AcceptVersions buildAcceptVersion(final String currentVersion, final List<String> acceptVersion) {
        return OWSXmlFactory.buildAcceptVersion("1.1.0", acceptVersion);
     }
+
+    public static AcceptFormats buildAcceptFormats(final String currentVersion, final List<String> acceptFormat) {
+       return OWSXmlFactory.buildAcceptFormat("1.1.0", acceptFormat);
+    }
     
     public static InsertResultTemplateResponse buildInsertResultTemplateResponse(final String version, final String templateID) {
         if ("2.0.0".equals(version)) {

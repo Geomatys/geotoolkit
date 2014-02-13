@@ -223,7 +223,7 @@ public class Request {
 
         public DescribeCoverage(final DescribeCoverage that) {
             if (that != null && that.dcpType != null) {
-                this.dcpType = new ArrayList<DCPTypeType>();
+                this.dcpType = new ArrayList<>();
                 for (DCPTypeType t : that.dcpType) {
                     this.dcpType.add(new DCPTypeType(t));
                 }
@@ -241,7 +241,7 @@ public class Request {
         @Override
         public List<DCPTypeType> getDCP() {
             if (dcpType == null) {
-                dcpType = new ArrayList<DCPTypeType>();
+                dcpType = new ArrayList<>();
             }
             return this.dcpType;
         }
@@ -257,7 +257,7 @@ public class Request {
         @Override
         public List<? extends AbstractDomain> getParameter() {
             //no parameter
-            return new ArrayList<AbstractDomain>();
+            return new ArrayList<>();
         }
 
         @Override
@@ -275,7 +275,7 @@ public class Request {
         @Override
         public List<? extends AbstractDomain> getConstraint() {
             //no constraint
-            return new ArrayList<AbstractDomain>();
+            return new ArrayList<>();
         }
 
         @Override
@@ -298,6 +298,11 @@ public class Request {
         @Override
         public void updateParameter(String parameterName, Range range) {
             //no parameter
+        }
+
+        @Override
+        public String getName() {
+            return "DescribeCoverage";
         }
     }
 
@@ -335,7 +340,7 @@ public class Request {
 
         public GetCapabilities(final GetCapabilities that) {
             if (that != null && that.dcpType != null) {
-                this.dcpType = new ArrayList<DCPTypeType>();
+                this.dcpType = new ArrayList<>();
                 for (DCPTypeType t : that.dcpType) {
                     this.dcpType.add(new DCPTypeType(t));
                 }
@@ -353,7 +358,7 @@ public class Request {
         @Override
         public List<DCPTypeType> getDCP() {
             if (dcpType == null) {
-                dcpType = new ArrayList<DCPTypeType>();
+                dcpType = new ArrayList<>();
             }
             return this.dcpType;
         }
@@ -369,7 +374,7 @@ public class Request {
         @Override
         public List<? extends AbstractDomain> getParameter() {
             //no parameter
-            return new ArrayList<AbstractDomain>();
+            return new ArrayList<>();
         }
 
         @Override
@@ -387,7 +392,7 @@ public class Request {
         @Override
         public List<? extends AbstractDomain> getConstraint() {
             //no constraint
-            return new ArrayList<AbstractDomain>();
+            return new ArrayList<>();
         }
 
         @Override
@@ -410,6 +415,11 @@ public class Request {
         @Override
         public void updateParameter(String parameterName, Range range) {
             //no parameter
+        }
+
+        @Override
+        public String getName() {
+            return "GetCapabilities";
         }
     }
 
@@ -447,7 +457,7 @@ public class Request {
 
         public GetCoverage(final GetCoverage that) {
             if (that != null && that.dcpType != null) {
-                this.dcpType = new ArrayList<DCPTypeType>();
+                this.dcpType = new ArrayList<>();
                 for (DCPTypeType t : that.dcpType) {
                     this.dcpType.add(new DCPTypeType(t));
                 }
@@ -465,7 +475,7 @@ public class Request {
         @Override
         public List<DCPTypeType> getDCP() {
             if (dcpType == null) {
-                dcpType = new ArrayList<DCPTypeType>();
+                dcpType = new ArrayList<>();
             }
             return this.dcpType;
         }
@@ -481,7 +491,7 @@ public class Request {
         @Override
         public List<? extends AbstractDomain> getParameter() {
             //no parameter
-            return new ArrayList<AbstractDomain>();
+            return new ArrayList<>();
         }
 
         @Override
@@ -499,7 +509,7 @@ public class Request {
         @Override
         public List<? extends AbstractDomain> getConstraint() {
             //no constraint
-            return new ArrayList<AbstractDomain>();
+            return new ArrayList<>();
         }
 
         @Override
@@ -522,6 +532,11 @@ public class Request {
         @Override
         public void updateParameter(String parameterName, Range range) {
             //no parameter
+        }
+
+        @Override
+        public String getName() {
+            return "GetCoverage";
         }
     }
 }

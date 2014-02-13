@@ -236,6 +236,21 @@ public class WCSCapabilityType implements AbstractOperationsMetadata {
     }
 
     @Override
+    public List<? extends AbstractOperation> getOperation() {
+        final List<AbstractOperation>  operations = new ArrayList<>();
+        if (request.getDescribeCoverage() != null) {
+            operations.add(request.getDescribeCoverage());
+        }
+        if (request.getGetCapabilities()!= null) {
+            operations.add(request.getGetCapabilities());
+        }
+        if (request.getGetCoverage()!= null) {
+            operations.add(request.getGetCoverage());
+        }
+        return operations;
+    }
+
+    @Override
     public AbstractDomain getParameter(String name) {
         //no constraint
         return null;
@@ -275,7 +290,7 @@ public class WCSCapabilityType implements AbstractOperationsMetadata {
         }
         Exception e = null; 
         if (this.exception != null) {
-            e = new Exception(new ArrayList<String>(this.exception.getFormat()));
+            e = new Exception(new ArrayList<>(this.exception.getFormat()));
         }
         VendorSpecificCapabilities v = null;
         if (this.vendorSpecificCapabilities != null) {
