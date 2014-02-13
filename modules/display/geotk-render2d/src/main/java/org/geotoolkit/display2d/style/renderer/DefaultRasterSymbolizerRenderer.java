@@ -24,18 +24,16 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.ComponentColorModel;
+import java.awt.image.DataBuffer;
 import java.awt.image.IndexColorModel;
 import java.awt.image.RenderedImage;
 import java.awt.image.renderable.ParameterBlock;
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.imageio.ImageIO;
 import javax.media.jai.Histogram;
 import javax.media.jai.ImageLayout;
 import javax.media.jai.JAI;
@@ -44,11 +42,20 @@ import javax.media.jai.NullOpImage;
 import javax.media.jai.OpImage;
 import javax.media.jai.RenderedOp;
 import javax.media.jai.operator.BandSelectDescriptor;
+import org.apache.sis.geometry.Envelope2D;
+import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.math.Statistics;
+import org.geotoolkit.coverage.CoverageReference;
+import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.geotoolkit.coverage.grid.GridCoverageBuilder;
+import org.geotoolkit.coverage.grid.GridEnvelope2D;
+import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
+import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.processing.CoverageProcessingException;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.display.PortrayalException;
@@ -57,20 +64,8 @@ import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.style.CachedRasterSymbolizer;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
-import org.geotoolkit.map.CoverageMapLayer;
-import org.geotoolkit.style.function.CompatibleColorModel;
 import org.geotoolkit.display2d.style.raster.ShadedReliefOp;
-import org.geotoolkit.process.coverage.copy.StatisticOp;
 import org.geotoolkit.filter.visitor.DefaultFilterVisitor;
-import org.apache.sis.geometry.Envelope2D;
-import org.geotoolkit.coverage.grid.GridCoverageBuilder;
-import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.math.Statistics;
-import org.geotoolkit.coverage.CoverageReference;
-import org.geotoolkit.coverage.grid.GeneralGridGeometry;
-import org.geotoolkit.coverage.grid.GridEnvelope2D;
-import org.geotoolkit.coverage.grid.GridGeometry2D;
-import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.geometry.Envelopes;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.image.interpolation.Interpolation;
@@ -81,10 +76,12 @@ import org.geotoolkit.image.iterator.PixelIteratorFactory;
 import org.geotoolkit.image.jai.FloodFill;
 import org.geotoolkit.image.relief.ReliefShadow;
 import org.geotoolkit.internal.referencing.CRSUtilities;
+import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.DefaultCoverageMapLayer;
 import org.geotoolkit.map.ElevationModel;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
+import org.geotoolkit.process.coverage.copy.StatisticOp;
 import org.geotoolkit.process.image.statistics.ImageStatisticsDescriptor;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.MathTransforms;
@@ -92,6 +89,7 @@ import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.geotoolkit.referencing.operation.transform.LinearTransform;
 import org.geotoolkit.style.StyleConstants;
 import org.geotoolkit.style.function.Categorize;
+import org.geotoolkit.style.function.CompatibleColorModel;
 import org.geotoolkit.style.function.DefaultInterpolationPoint;
 import org.geotoolkit.style.function.Interpolate;
 import org.geotoolkit.style.function.InterpolationPoint;
@@ -108,8 +106,6 @@ import org.opengis.geometry.Envelope;
 import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.cs.AxisDirection;
-import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
@@ -143,6 +139,10 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
     public void portray(final ProjectedCoverage projectedCoverage) throws PortrayalException{
 
         try {
+            
+            ////////////////////////////////////////////////////////////////////
+            // 1 - Get data and elevation coverage                            //
+            ////////////////////////////////////////////////////////////////////
             double[] resolution = renderingContext.getResolution();
             Envelope bounds = new GeneralEnvelope(renderingContext.getCanvasObjectiveBounds());
             resolution = checkResolution(resolution,bounds);
@@ -156,7 +156,6 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             }
 
             final GridCoverageReadParam param = new GridCoverageReadParam();
-
             param.setEnvelope(bounds);
             param.setResolution(resolution);
 
@@ -177,6 +176,24 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
                 return;
             }
 
+            ////////////////////////////////////////////////////////////////////
+            // 2 - Apply style                                                //
+            // TODO : we should do this after the reprojection but it is      //
+            // really hard to adapt datatypes correctly                       //
+            ////////////////////////////////////////////////////////////////////
+            
+            RenderedImage dataImage = applyStyle(dataCoverage, elevationCoverage, coverageLayer.getElevationModel(), symbol.getSource(), hints, false);
+            GridCoverageBuilder gcb = new GridCoverageBuilder();
+            gcb.setRenderedImage(dataImage);
+            gcb.setName(dataCoverage.getName());
+            gcb.setCoordinateReferenceSystem(dataCoverage.getCoordinateReferenceSystem2D());
+            gcb.setGridToCRS(dataCoverage.getGridGeometry().getGridToCRS2D(PixelOrientation.CENTER));
+            dataCoverage = (GridCoverage2D) gcb.build();
+            
+            ////////////////////////////////////////////////////////////////////
+            // 3 - Reproject datas                                            //
+            ////////////////////////////////////////////////////////////////////
+                        
             boolean isReprojected = false;
             final CoordinateReferenceSystem coverageCRS = dataCoverage.getCoordinateReferenceSystem();
             try{
@@ -202,6 +219,18 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
                             dataCoverage = null;
                         }else{
                             isReprojected = true;
+                            
+                            //if(!dataImage.getColorModel().hasAlpha()){
+                                final BufferedImage temp = new BufferedImage(dataImage.getWidth(), dataImage.getHeight(), BufferedImage.TYPE_INT_ARGB);
+                                temp.createGraphics().drawRenderedImage(dataImage, new AffineTransform());
+                                gcb = new GridCoverageBuilder();
+                                gcb.setRenderedImage(temp);
+                                gcb.setName(dataCoverage.getName());
+                                gcb.setCoordinateReferenceSystem(dataCoverage.getCoordinateReferenceSystem2D());
+                                gcb.setGridToCRS(dataCoverage.getGridGeometry().getGridToCRS2D(PixelOrientation.CENTER));
+                                dataCoverage = (GridCoverage2D) gcb.build();
+                            //}
+                            
                             dataCoverage = GO2Utilities.resample(dataCoverage,targetCRS);
                         }
                     }
@@ -225,17 +254,18 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
                 return;
             }
 
+            dataImage = dataCoverage.getRenderedImage();
+            
             //we must switch to objectiveCRS for grid coverage
             renderingContext.switchToObjectiveCRS();
 
-
-            RenderedImage img = applyStyle(dataCoverage, elevationCoverage, coverageLayer.getElevationModel(), symbol.getSource(), hints, isReprojected);
+            
             final MathTransform2D trs2D = dataCoverage.getGridGeometry().getGridToCRS2D(PixelOrientation.UPPER_LEFT);
 
             
             if(renderingContext.wraps == null){
                 //single rendering
-                renderCoverage(projectedCoverage, img, trs2D);
+                renderCoverage(projectedCoverage, dataImage, trs2D);
             }else{
                 
                 //check if the geometry overlaps the meridian
@@ -256,16 +286,16 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
                     nbIncRep++;
                 }
                 
-                renderCoverage(projectedCoverage, img, trs2D);
+                renderCoverage(projectedCoverage, dataImage, trs2D);
                 
                 //repetition of incresing and decreasing sides.
                 for(int i=0;i<nbDecRep;i++){
                     g2d.setTransform(renderingContext.wraps.wrapDecObjToDisp[i]);
-                    renderCoverage(projectedCoverage, img, trs2D);
+                    renderCoverage(projectedCoverage, dataImage, trs2D);
                 }
                 for(int i=0;i<nbIncRep;i++){
                     g2d.setTransform(renderingContext.wraps.wrapIncObjToDisp[i]);
-                    renderCoverage(projectedCoverage, img, trs2D);
+                    renderCoverage(projectedCoverage, dataImage, trs2D);
                 }
             }
 
@@ -275,6 +305,19 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
         }
     }
 
+    private static double[] nextDataType(int type){
+        switch(type){
+            case DataBuffer.TYPE_BYTE   : return new double[]{DataBuffer.TYPE_SHORT,Short.MIN_VALUE};
+            case DataBuffer.TYPE_USHORT : return new double[]{DataBuffer.TYPE_INT,Integer.MIN_VALUE};
+            case DataBuffer.TYPE_SHORT  : return new double[]{DataBuffer.TYPE_INT,Integer.MIN_VALUE};
+            case DataBuffer.TYPE_INT    : return new double[]{DataBuffer.TYPE_INT,Integer.MIN_VALUE};
+            case DataBuffer.TYPE_FLOAT  : return new double[]{DataBuffer.TYPE_FLOAT,Float.NaN};
+            case DataBuffer.TYPE_DOUBLE : return new double[]{DataBuffer.TYPE_DOUBLE,Double.NaN};
+            default : throw new IllegalArgumentException("");
+                
+        }
+    }
+    
     private void renderCoverage(final ProjectedCoverage projectedCoverage, RenderedImage img, MathTransform2D trs2D) throws PortrayalException{
         if (trs2D instanceof AffineTransform) {
             g2d.setComposite(symbol.getJ2DComposite());
