@@ -230,7 +230,7 @@ public final class IrregularGridConverter {
             return crs;
         }
         /*
-         * TODO: it is a little bit to realize that computing the CRS was useless.
+         * TODO: it is a little bit late to realize that computing the CRS was useless.
          *       But actually this case should never happen. Should we log a warning?
          */
         return null;

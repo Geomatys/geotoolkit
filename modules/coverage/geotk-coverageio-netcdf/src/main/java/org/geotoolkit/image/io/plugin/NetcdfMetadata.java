@@ -53,6 +53,8 @@ import org.opengis.coverage.grid.GridGeometry;
 import org.opengis.metadata.content.TransferFunctionType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
+import org.apache.sis.util.logging.Logging;
+import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.metadata.MetadataNodeAccessor;
 import org.geotoolkit.image.io.metadata.ReferencingBuilder;
@@ -70,7 +72,6 @@ import org.geotoolkit.metadata.netcdf.NetcdfMetadataReader;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.util.collection.BackingStoreException;
 
-import org.apache.sis.internal.util.UnmodifiableArrayList;
 import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.ISO_FORMAT_NAME;
 import static org.geotoolkit.image.io.plugin.NetcdfImageReader.Spi.NATIVE_FORMAT_NAME;
 import static ucar.nc2.constants.CF.GRID_MAPPING;
@@ -367,12 +368,13 @@ final class NetcdfMetadata extends SpatialMetadata {
                 try {
                     final CoordinateReferenceSystem candidate = c.forROM();
                     if (candidate != null) {
-                        regularCRS = candidate;
+                        crs = regularCRS = candidate;
                         gridGeometry = c.getGridToCRS(regularCRS);
                     }
                 } catch (Exception e) {
-                    // We haven been unable to create a CRS. Do not write CRS metadata
-                    // and continue reading. TODO: we should log a warning here.
+                    // We haven been unable to create a CRS. Do not write CRS metadata and continue reading.
+                    // TODO: we should do something better than logging here...
+                    Logging.unexpectedException(LOGGER, e);
                 }
                 // End of hack.
             }

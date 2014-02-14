@@ -357,6 +357,21 @@ public abstract class AbstractParameter extends FormattableObject
      */
     @Override
     public String formatTo(final Formatter formatter) {
+        if (this instanceof ParameterValue<?>) {
+            return new Bridge((ParameterValue<?>) this).formatTo(formatter);
+        }
         return "PARAMETER";
+    }
+
+    @Deprecated // Temporary bridge while we complete the migration to SIS.
+    private static final class Bridge<T> extends org.apache.sis.parameter.DefaultParameterValue<T> {
+        Bridge(final ParameterValue<T> param) {
+            super(param);
+        }
+
+        @Override
+        public String formatTo(final Formatter formatter) {
+            return super.formatTo(formatter);
+        }
     }
 }
