@@ -53,6 +53,7 @@ public class BandExtractor extends RowMajorIterator {
 
     @Override
     public void moveTo(int x, int y, int b) {
+        position = b;
         super.moveTo(x, y, roi[b]);
     }
 

@@ -98,7 +98,7 @@ class RowMajorIterator extends PixelIterator{
                 this.rasterNumBand = currentRaster.getNumBands();
             }
         }
-        return true;
+        return (x <= maxX && y <= maxY);
     }
 
     /**
