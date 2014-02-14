@@ -700,12 +700,8 @@ public final class FeatureUtilities {
         final ParameterDescriptor descriptor = parameter.getDescriptor();
         final Object value = parameter.getValue();
         
-        final AttributeTypeBuilder atb = new AttributeTypeBuilder();
-        atb.setName(descriptor.getName().getCode());
-        atb.setDescription(descriptor.getRemarks());
-        atb.setBinding(descriptor.getValueClass());
+        final AttributeType at = (AttributeType) FeatureTypeUtilities.toPropertyType(descriptor);
         
-        final AttributeType at = atb.buildType();
         final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
         adb.setType(at);
         adb.setName(descriptor.getName().getCode());
