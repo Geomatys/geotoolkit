@@ -19,9 +19,8 @@ package org.geotoolkit.feature.type;
 import com.vividsolutions.jts.geom.Geometry;
 import java.util.Collection;
 import java.util.List;
-
 import org.geotoolkit.feature.simple.DefaultSimpleFeatureType;
-
+import org.opengis.coverage.Coverage;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AssociationDescriptor;
 import org.opengis.feature.type.AssociationType;
@@ -114,7 +113,9 @@ public class DefaultFeatureTypeFactory implements FeatureTypeFactory {
     public AttributeType createAttributeType(final Name name, final Class binding,
             final boolean isIdentifiable, final boolean isAbstract, final List restrictions,
             final AttributeType superType, final InternationalString description){
-        if(Geometry.class.isAssignableFrom(binding) || org.opengis.geometry.Geometry.class.isAssignableFrom(binding)){
+        if(Geometry.class.isAssignableFrom(binding) 
+                || org.opengis.geometry.Geometry.class.isAssignableFrom(binding)
+                || Coverage.class.isAssignableFrom(binding)){
             return createGeometryType(name, binding, null, isIdentifiable, isAbstract,
                 restrictions, superType, description);
         }else{

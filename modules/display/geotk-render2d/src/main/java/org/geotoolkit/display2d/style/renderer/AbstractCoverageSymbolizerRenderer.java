@@ -33,6 +33,7 @@ import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.opengis.coverage.Coverage;
+import org.opengis.feature.GeometryAttribute;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.style.Symbolizer;
 
@@ -54,8 +55,14 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
     public void portray(final ProjectedObject graphic) throws PortrayalException {
         if(graphic instanceof ProjectedFeature){
             final ProjectedFeature pf = (ProjectedFeature) graphic;
-            final Object obj = GO2Utilities.evaluate(GO2Utilities.FILTER_FACTORY.property(
-                    symbol.getSource().getGeometryPropertyName()), pf.getCandidate(), null, null);
+            final String geomName = symbol.getSource().getGeometryPropertyName();
+            final Object obj;
+            if(geomName == null || geomName.isEmpty()){
+                final GeometryAttribute att = pf.getCandidate().getDefaultGeometryProperty();
+                obj = (att!=null) ? att.getValue() : null;
+            }else{
+                obj = GO2Utilities.evaluate(GO2Utilities.FILTER_FACTORY.property(geomName), pf.getCandidate(), null, null);
+            }
             if(obj instanceof GridCoverage2D){
                 final CoverageMapLayer ml = MapBuilder.createCoverageLayer((GridCoverage2D)obj, GO2Utilities.STYLE_FACTORY.style(), "");
                 final StatelessContextParams params = new StatelessContextParams(renderingContext.getCanvas(),ml);

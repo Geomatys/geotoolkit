@@ -21,12 +21,14 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Map;
+import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.Version;
 import org.geotoolkit.db.FilterToSQL;
 import org.geotoolkit.db.reverse.ColumnMetaModel;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.AttributeTypeBuilder;
-import org.apache.sis.storage.DataStoreException;
+import org.opengis.coverage.Coverage;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.ComplexType;
 import org.opengis.feature.type.FeatureType;
@@ -113,6 +115,8 @@ public interface SQLDialect {
 
     void encodeGeometryValue(StringBuilder sql, Geometry value, int srid) throws DataStoreException;
     
+    void encodeCoverageValue(StringBuilder sql, Coverage value) throws DataStoreException;
+    
     void encodePrimaryKey(StringBuilder sql, Class binding, String sqlType);
 
     void encodePostColumnCreateTable(StringBuilder sql, AttributeDescriptor att);
@@ -140,7 +144,7 @@ public interface SQLDialect {
     void decodeGeometryColumnType(final AttributeTypeBuilder atb, final Connection cx, final ResultSet rs, final int columnIndex) throws SQLException;
     
     Integer getGeometrySRID(final String schemaName, final String tableName,
-            final String columnName, final Connection cx) throws SQLException;
+            final String columnName, Map metas, final Connection cx) throws SQLException;
 
     CoordinateReferenceSystem createCRS(final int srid, final Connection cx) throws SQLException;
     
@@ -149,8 +153,14 @@ public interface SQLDialect {
     
     Geometry decodeGeometryValue(GeometryDescriptor descriptor, ResultSet rs,
         String column) throws IOException, SQLException;
+    
+    Coverage decodeCoverageValue(GeometryDescriptor descriptor, ResultSet rs,
+        String column) throws IOException, SQLException;
 
     Geometry decodeGeometryValue(GeometryDescriptor descriptor, ResultSet rs,
+        int column) throws IOException, SQLException;
+    
+    Coverage decodeCoverageValue(GeometryDescriptor descriptor, ResultSet rs,
         int column) throws IOException, SQLException;
 
     

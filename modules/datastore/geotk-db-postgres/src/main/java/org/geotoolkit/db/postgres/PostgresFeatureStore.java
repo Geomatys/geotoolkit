@@ -17,6 +17,7 @@
 package org.geotoolkit.db.postgres;
 
 import java.io.IOException;
+import java.net.URL;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -30,6 +31,9 @@ import org.geotoolkit.db.JDBCFeatureStoreUtilities;
 import org.geotoolkit.db.dialect.SQLQueryBuilder;
 import org.geotoolkit.internal.sql.ScriptRunner;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.db.dialect.SQLDialect;
+import org.geotoolkit.parameter.Parameters;
+import org.geotoolkit.parameter.ParametersExt;
 import org.geotoolkit.version.VersionControl;
 import org.geotoolkit.version.VersioningException;
 import org.opengis.feature.type.FeatureType;
@@ -49,10 +53,27 @@ public class PostgresFeatureStore extends DefaultJDBCFeatureStore{
     private Boolean hasHSFunctions;
     private PostgresQueryBuilder querybuilder = null;
     
+    public PostgresFeatureStore(String host, int port, String database, String schema, String user, String password) throws DataStoreException {
+        super(toParameters(host,port,database,schema,user,password), PostgresFeatureStoreFactory.NAME);
+        ((PostgresFeatureStoreFactory)getFactory()).prepareStore(this, parameters);
+    }
+    
     public PostgresFeatureStore(ParameterValueGroup params, String factoryId) {
         super(params, factoryId);
     }
 
+    private static ParameterValueGroup toParameters(String host, int port, 
+            String database, String schema, String user, String password){
+        final ParameterValueGroup params = PostgresFeatureStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
+        Parameters.getOrCreate(PostgresFeatureStoreFactory.HOST,    params).setValue(host);
+        Parameters.getOrCreate(PostgresFeatureStoreFactory.PORT,    params).setValue(port);
+        Parameters.getOrCreate(PostgresFeatureStoreFactory.DATABASE,params).setValue(database);
+        Parameters.getOrCreate(PostgresFeatureStoreFactory.SCHEMA,  params).setValue(schema);
+        Parameters.getOrCreate(PostgresFeatureStoreFactory.USER,    params).setValue(user);
+        Parameters.getOrCreate(PostgresFeatureStoreFactory.PASSWORD,params).setValue(password);
+        return params;
+    }
+    
     @Override
     public QueryCapabilities getQueryCapabilities() {
         return PG_CAPA;

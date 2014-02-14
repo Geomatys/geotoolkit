@@ -122,6 +122,10 @@ public class CategoryStyleBuilder extends Factory {
             GeometryDescriptor geo = schema.getGeometryDescriptor();
             Class<?> geoClass = (geo!=null)?geo.getType().getBinding():null;
 
+            if(geo==null){
+                return;
+            }
+            
             if(Polygon.class.isAssignableFrom(geoClass) || MultiPolygon.class.isAssignableFrom(geoClass)){
                 Stroke stroke = sf.stroke(Color.BLACK, 1);
                 Fill fill = sf.fill(Color.BLUE);

@@ -67,6 +67,7 @@ import org.geotoolkit.filter.capability.DefaultSpatialOperators;
 import org.geotoolkit.filter.capability.DefaultTemporalCapabilities;
 import org.geotoolkit.filter.capability.DefaultTemporalOperators;
 import org.geotoolkit.util.Converters;
+import org.opengis.coverage.Coverage;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.ComplexType;
 
@@ -471,7 +472,7 @@ public class MySQLDialect extends AbstractSQLDialect {
     ////////////////////////////////////////////////////////////////////////////
     
     @Override
-    public Integer getGeometrySRID(String schemaName, String tableName, String columnName, Connection cx) throws SQLException {
+    public Integer getGeometrySRID(String schemaName, String tableName, String columnName, Map metas, Connection cx) throws SQLException {
         throw new UnsupportedOperationException("Geometry types not supported in MySQL.");
     }
 
@@ -503,6 +504,21 @@ public class MySQLDialect extends AbstractSQLDialect {
     @Override
     public void decodeGeometryColumnType(AttributeTypeBuilder atb, Connection cx, ResultSet rs, int columnIndex) throws SQLException {
         throw new UnsupportedOperationException("Geometry types not supported in MySQL.");
+    }
+
+    @Override
+    public void encodeCoverageValue(StringBuilder sql, Coverage value) throws DataStoreException {
+        throw new UnsupportedOperationException("Coverage types not supported in MySQL.");
+    }
+
+    @Override
+    public Coverage decodeCoverageValue(GeometryDescriptor descriptor, ResultSet rs, String column) throws IOException, SQLException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Coverage decodeCoverageValue(GeometryDescriptor descriptor, ResultSet rs, int column) throws IOException, SQLException {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
 }

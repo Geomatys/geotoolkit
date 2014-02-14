@@ -343,6 +343,11 @@ public class IntervalStyleBuilder extends AbstractTableModel{
 
         //find the geometry class for template
         GeometryDescriptor geo = schema.getGeometryDescriptor();
+        
+        if(geo==null){
+            return;
+        }
+        
         Class<?> geoClass = geo.getType().getBinding();
 
         if(Polygon.class.isAssignableFrom(geoClass) || MultiPolygon.class.isAssignableFrom(geoClass)){

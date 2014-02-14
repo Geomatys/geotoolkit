@@ -834,7 +834,10 @@ public class PostgresFilterToSQL implements FilterToSQL {
             if (featureType != null) {
                 final AttributeDescriptor descriptor = (AttributeDescriptor) property.evaluate(featureType);
                 if (descriptor instanceof GeometryDescriptor) {
-                    currentsrid = (Integer) descriptor.getUserData().get(JDBCFeatureStore.JDBC_PROPERTY_SRID);
+                    Integer srid = (Integer) descriptor.getUserData().get(JDBCFeatureStore.JDBC_PROPERTY_SRID);
+                    if(srid!=null){
+                        currentsrid = srid;
+                    }
                 }
             }
             

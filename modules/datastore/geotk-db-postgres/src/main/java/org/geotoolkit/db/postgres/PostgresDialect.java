@@ -44,7 +44,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import net.iharder.Base64;
+import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.Version;
+import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.geotoolkit.coverage.wkb.WKBRasterReader;
+import org.geotoolkit.coverage.wkb.WKBRasterWriter;
 import org.geotoolkit.db.DefaultJDBCFeatureStore;
 import org.geotoolkit.db.FilterToSQL;
 import org.geotoolkit.db.JDBCFeatureStore;
@@ -52,6 +56,7 @@ import org.geotoolkit.db.JDBCFeatureStoreUtilities;
 import static org.geotoolkit.db.JDBCFeatureStoreUtilities.*;
 import org.geotoolkit.db.dialect.AbstractSQLDialect;
 import org.geotoolkit.db.reverse.ColumnMetaModel;
+import org.geotoolkit.db.reverse.MetaDataConstants;
 import org.geotoolkit.db.reverse.PrimaryKey;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.AttributeTypeBuilder;
@@ -69,8 +74,8 @@ import org.geotoolkit.filter.capability.DefaultTemporalCapabilities;
 import org.geotoolkit.filter.capability.DefaultTemporalOperators;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.IdentifiedObjects;
-import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.util.Converters;
+import org.opengis.coverage.Coverage;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.ComplexType;
 import org.opengis.feature.type.FeatureType;
@@ -262,7 +267,7 @@ final class PostgresDialect extends AbstractSQLDialect{
         CLASS_TO_TYPENAME.put(java.util.Date.class, "timestamp");
         CLASS_TO_TYPENAME.put(Timestamp.class, "timestamp");
         CLASS_TO_TYPENAME.put(byte[].class, "blob");
-
+        CLASS_TO_TYPENAME.put(Coverage.class, "raster");
 
 
         //POSTGIS extension
@@ -282,6 +287,7 @@ final class PostgresDialect extends AbstractSQLDialect{
         TYPENAME_TO_CLASS.put("MULTIPOLYGONM", MultiPolygon.class);
         TYPENAME_TO_CLASS.put("GEOMETRYCOLLECTION", GeometryCollection.class);
         TYPENAME_TO_CLASS.put("GEOMETRYCOLLECTIONM", GeometryCollection.class);
+        TYPENAME_TO_CLASS.put("RASTER", Coverage.class);
         
         CLASS_TO_TYPENAME.put(Geometry.class, "GEOMETRY");
         CLASS_TO_TYPENAME.put(Point.class, "POINT");
@@ -573,7 +579,16 @@ final class PostgresDialect extends AbstractSQLDialect{
             res = Double.MAX_VALUE;
         }
 
-
+        //postgis raster type
+        final Class binding = gatt.getType().getBinding();
+        if(Coverage.class.isAssignableFrom(binding)){
+            sql.append("encode(st_asbinary(");
+            encodeColumnName(sql, gatt.getLocalName());
+            sql.append("),'base64')");
+            return;
+        }
+                
+        
         final CoordinateReferenceSystem crs = gatt.getCoordinateReferenceSystem();
         final int dimensions = (crs == null) ? 2 : crs.getCoordinateSystem().getDimension();
         sql.append("encode(");
@@ -653,6 +668,18 @@ final class PostgresDialect extends AbstractSQLDialect{
     }
 
     @Override
+    public void encodeCoverageValue(StringBuilder sql, Coverage value) throws DataStoreException {
+        try{
+            final WKBRasterWriter writer = new WKBRasterWriter();
+            final byte[] wkbimg = writer.write((GridCoverage2D)value);
+            final String base64 = Base64.encodeBytes(wkbimg);
+            sql.append("(encode(").append("decode('").append(base64).append("','base64')").append(",'hex')").append(")::raster");
+        }catch(IOException | FactoryException ex){
+            throw new DataStoreException(ex);
+        }
+    }
+    
+    @Override
     public void encodePrimaryKey(StringBuilder sql, Class binding, String sqlType) {
         if(Integer.class.isAssignableFrom(binding) || Short.class.isAssignableFrom(binding)){
             sql.append(" SERIAL ");
@@ -680,7 +707,7 @@ final class PostgresDialect extends AbstractSQLDialect{
             for (PropertyDescriptor att : featureType.getDescriptors()) {                
                 if (att instanceof GeometryDescriptor) {
                     final GeometryDescriptor gd = (GeometryDescriptor) att;
-
+                    
                     // lookup or reverse engineer the srid
                     int srid = -1;
                     if (gd.getUserData().get(JDBCFeatureStore.JDBC_PROPERTY_SRID) != null) {
@@ -696,6 +723,30 @@ final class PostgresDialect extends AbstractSQLDialect{
                                     + "epsg code for metadata "
                                     + "insertion, assuming -1", e);
                         }
+                    }
+                    
+                    Class binding = gd.getType().getBinding();
+                    if(Coverage.class.isAssignableFrom(binding)){
+                        //postgis raster type
+                        final StringBuilder sb = new StringBuilder();
+                        sb.append("select addrasterconstraints('");
+                        sb.append(schemaName);
+                        sb.append("', '");
+                        sb.append(featureType.getName().getLocalPart());
+                        sb.append("', '");
+                        sb.append(att.getName().getLocalPart());
+                        sb.append("', ");
+                        sb.append("true"); 
+                        sb.append(", false, false, false, false, false, false, false, false, false, false, false);");
+                        final String sql = sb.toString();
+                        featurestore.getLogger().fine( sql );
+                        st.execute( sql );
+                        
+                        //add the srid in the comments
+                        //the view crs is not set until a first raster in added, so we store it in the comments
+                        st.execute("COMMENT ON COLUMN \""+schemaName+"\".\""+featureType.getName().getLocalPart()+"\".\""+att.getName().getLocalPart()+"\" IS '"+srid+"';");
+                        
+                        continue;
                     }
 
                     // assume 2 dimensions, but ease future customisation
@@ -826,6 +877,13 @@ final class PostgresDialect extends AbstractSQLDialect{
                     schemaName, tableName,columnName);
         
         typeName = typeName.toUpperCase();
+        
+        //postgis raster type
+        if("RASTER".equals(typeName)){
+            atb.setBinding(Coverage.class);
+            return;
+        }
+        
         if (!TYPE_TO_ST_TYPE_MAP.containsKey(typeName)) {
             return;
         }
@@ -936,12 +994,14 @@ final class PostgresDialect extends AbstractSQLDialect{
     
     @Override
     public Integer getGeometrySRID(String schemaName, final String tableName, final String columnName,
-            final Connection cx) throws SQLException{
+            Map metas, final Connection cx) throws SQLException{
 
         // first attempt, try with the geometry metadata
         Statement statement = null;
         ResultSet result = null;
         Integer srid = null;
+        
+        //search in the geometry columns
         try {
             final StringBuilder sb = new StringBuilder("SELECT SRID FROM GEOMETRY_COLUMNS WHERE ");
             if (schemaName != null && !schemaName.isEmpty()) {
@@ -962,6 +1022,45 @@ final class PostgresDialect extends AbstractSQLDialect{
         } finally {
             JDBCFeatureStoreUtilities.closeSafe(featurestore.getLogger(), null,statement,result);
         }
+        
+        if(srid==null || srid==0){
+            //search the raster columns view
+            try {
+                final StringBuilder sb = new StringBuilder("SELECT SRID FROM RASTER_COLUMNS WHERE ");
+                if (schemaName != null && !schemaName.isEmpty()) {
+                    sb.append("R_TABLE_SCHEMA = '").append(schemaName).append("' ");
+                    sb.append(" AND ");
+                }
+                sb.append("R_TABLE_NAME = '").append(tableName).append("' ");
+                sb.append("AND R_RASTER_COLUMN = '").append(columnName).append('\'');
+                final String sqlStatement = sb.toString();
+
+                featurestore.getLogger().log(Level.FINE, "Raster type check; {0} ", sqlStatement);
+                statement = cx.createStatement();
+                result = statement.executeQuery(sqlStatement);
+
+                if (result.next()) {
+                    srid = result.getInt(1);
+                }
+            } finally {
+                JDBCFeatureStoreUtilities.closeSafe(featurestore.getLogger(), null,statement,result);
+            }
+        }
+        
+        if(srid==null || srid==0){
+            //still nothing ? search in the comment, if it is a raster column the srid
+            //can not be set until there is a real data. so we stored the srid in the comment
+            final String comments = (String) metas.get(MetaDataConstants.Column.REMARKS);
+            if(comments != null){
+                try{
+                    srid = Integer.valueOf(comments);
+                }catch(NumberFormatException ex){
+                    //we tryed
+                }
+            }
+            
+        }
+        
 
         return srid;
     }
@@ -1109,6 +1208,32 @@ final class PostgresDialect extends AbstractSQLDialect{
                 return null;
             default:
                 throw new IllegalStateException("Can not decode geometry not knowing it's encoding.");
+        }
+    }
+
+    @Override
+    public Coverage decodeCoverageValue(GeometryDescriptor descriptor, ResultSet rs, String column) throws IOException, SQLException {
+        byte[] data = rs.getBytes(column);
+        try {
+            data = Base64.decode(data);
+            final WKBRasterReader reader = new WKBRasterReader();
+            return reader.readCoverage(data, null);
+            
+        } catch (IOException | FactoryException ex) {
+            throw new SQLException("Failed to uncompressed base64 : "+ex.getMessage(),ex);
+        }
+    }
+
+    @Override
+    public Coverage decodeCoverageValue(GeometryDescriptor descriptor, ResultSet rs, int column) throws IOException, SQLException {
+        byte[] data = rs.getBytes(column);
+        try {
+            data = Base64.decode(data);
+            final WKBRasterReader reader = new WKBRasterReader();
+            return reader.readCoverage(data, null);
+            
+        } catch (IOException | FactoryException ex) {
+            throw new SQLException("Failed to uncompressed base64 : "+ex.getMessage(),ex);
         }
     }
     

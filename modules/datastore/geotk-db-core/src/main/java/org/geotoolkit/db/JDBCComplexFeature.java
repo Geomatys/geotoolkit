@@ -46,6 +46,7 @@ import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.geometry.jts.JTS;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.util.collection.CloseableIterator;
+import org.opengis.coverage.Coverage;
 import org.opengis.feature.Property;
 import org.opengis.feature.type.AssociationDescriptor;
 import org.opengis.feature.type.AssociationType;
@@ -330,19 +331,33 @@ public class JDBCComplexFeature extends AbstractFeature<Collection<Property>> {
     public static Object readSimpleValue(final SQLDialect dialect, final ResultSet rs, int index, PropertyDescriptor desc) throws SQLException{
         if(desc instanceof GeometryDescriptor){
             final GeometryDescriptor gatt = (GeometryDescriptor) desc;
-            //read the geometry
-            final Geometry geom;
-            try {
-                geom = dialect.decodeGeometryValue(gatt, rs, index);
-            } catch (IOException e) {
-                throw new SQLException(e);
-            }
+            final Class binding = gatt.getType().getBinding();
+            if(Coverage.class.isAssignableFrom(binding)){
+                //raster type
+                final Coverage coverage;
+                try {
+                    coverage = dialect.decodeCoverageValue(gatt, rs, index);
+                } catch (IOException e) {
+                    throw new SQLException(e);
+                }
+                return coverage;
+            }else{
+                //vector type
+                final Geometry geom;
+                try {
+                    geom = dialect.decodeGeometryValue(gatt, rs, index);
+                } catch (IOException e) {
+                    throw new SQLException(e);
+                }
 
-            if(geom != null && geom.getUserData() == null){ 
-                //set crs is not set
-                JTS.setCRS(geom, gatt.getCoordinateReferenceSystem());
+                if(geom != null && geom.getUserData() == null){ 
+                    //set crs is not set
+                    JTS.setCRS(geom, gatt.getCoordinateReferenceSystem());
+                }
+                return geom;
             }
-            return geom;
+            
+            
         }else{
             return dialect.decodeAttributeValue((AttributeDescriptor)desc, rs, index);
         }

@@ -35,10 +35,11 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.logging.Level;
+import org.apache.sis.storage.DataStoreException;
+import static org.geotoolkit.data.AbstractFeatureStore.*;
 import org.geotoolkit.db.AbstractJDBCFeatureStoreFactory;
 import org.geotoolkit.db.JDBCFeatureStore;
 import static org.geotoolkit.db.JDBCFeatureStoreUtilities.*;
-import static org.geotoolkit.data.AbstractFeatureStore.*;
 import org.geotoolkit.db.dialect.SQLDialect;
 import org.geotoolkit.db.reverse.ColumnMetaModel.Type;
 import org.geotoolkit.db.reverse.MetaDataConstants.Column;
@@ -56,7 +57,7 @@ import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.type.ModifiableFeatureTypeFactory;
 import org.geotoolkit.feature.type.ModifiableType;
 import org.geotoolkit.parameter.Parameters;
-import org.apache.sis.storage.DataStoreException;
+import org.opengis.coverage.Coverage;
 import org.opengis.feature.type.*;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
@@ -208,7 +209,8 @@ public final class DataBaseModel {
                     Column.DATA_TYPE,
                     Column.TYPE_NAME,
                     Column.IS_NULLABLE,
-                    Column.IS_AUTOINCREMENT);
+                    Column.IS_AUTOINCREMENT,
+                    Column.REMARKS);
             if(dialect.supportGlobalMetadata()){
                 cachePrimaryKeys = new CachedResultSet(metadata.getPrimaryKeys(null, null, null),
                         Column.TABLE_SCHEM,
@@ -613,7 +615,7 @@ public final class DataBaseModel {
         //nullability
         adb.setNillable(!Column.VALUE_NO.equalsIgnoreCase(columnNullable));
 
-        if(Geometry.class.isAssignableFrom(atb.getBinding())){
+        if(Geometry.class.isAssignableFrom(atb.getBinding()) || Coverage.class.isAssignableFrom(atb.getBinding())){
             adb.setType(atb.buildGeometryType());
         }else{
             adb.setType(atb.buildType());
@@ -742,13 +744,22 @@ public final class DataBaseModel {
                     adb.setType(atb.buildType());
 
                     //Set the CRS if it's a geometry
-                    if (Geometry.class.isAssignableFrom(type.getBinding())) {
+                    final Class binding = type.getBinding();
+                    if (Geometry.class.isAssignableFrom(binding) || Coverage.class.isAssignableFrom(binding)) {
+                        
+                        //look up the type ( should only be one row )
+                        final Filter tableFilter = filter(Table.TABLE_SCHEM, schema.name, Table.TABLE_NAME, tableName);
+                        final Filter colFilter = FF.equals(FF.property(Column.COLUMN_NAME), FF.literal(name));
+                        final Iterator<Map> meta = cacheColumns.filter(
+                                FF.and(tableFilter, colFilter));
+                        final Map metas = meta.next();
+                        
                         //add the attribute as a geometry, try to figure out
                         // its srid first
                         Integer srid = null;
                         CoordinateReferenceSystem crs = null;
                         try {
-                            srid = dialect.getGeometrySRID(store.getDatabaseSchema(), tableName, name, cx);
+                            srid = dialect.getGeometrySRID(store.getDatabaseSchema(), tableName, name, metas, cx);
                             if(srid != null)
                                 crs = dialect.createCRS(srid, cx);
                         } catch (SQLException e) {

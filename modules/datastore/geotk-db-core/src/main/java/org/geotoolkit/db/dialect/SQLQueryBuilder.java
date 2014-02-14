@@ -36,6 +36,7 @@ import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.filter.visitor.FIDFixVisitor;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.apache.sis.storage.DataStoreException;
+import org.opengis.coverage.Coverage;
 import org.opengis.feature.ComplexAttribute;
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.AssociationDescriptor;
@@ -205,6 +206,9 @@ public class SQLQueryBuilder {
                     final Geometry g = (Geometry) value;
                     final int srid = getGeometrySRID(g, desc);
                     dialect.encodeGeometryValue(sqlValues, g, srid);
+                } else if (Coverage.class.isAssignableFrom(binding)) {
+                    final Coverage g = (Coverage) value;
+                    dialect.encodeCoverageValue(sqlValues, g);
                 } else {
                     dialect.encodeValue(sqlValues, value, binding);
                 }

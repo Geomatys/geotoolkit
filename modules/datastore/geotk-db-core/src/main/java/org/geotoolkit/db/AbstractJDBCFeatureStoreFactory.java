@@ -129,7 +129,19 @@ public abstract class AbstractJDBCFeatureStoreFactory extends AbstractFeatureSto
         
         final DefaultJDBCFeatureStore featureStore = toFeatureStore(params,
                 getIdentification().getCitation().getIdentifiers().iterator().next().getCode());
-
+        prepareStore(featureStore, params);
+        return featureStore;
+    }
+    
+    /**
+     * Configure feature store datasource and dialect.
+     * 
+     * @param featureStore
+     * @param params
+     * @throws DataStoreException 
+     */
+    public void prepareStore(DefaultJDBCFeatureStore featureStore, final ParameterValueGroup params) throws DataStoreException{
+        
         // datasource
         final DataSource ds = (DataSource) params.parameter(DATASOURCE.getName().getCode()).getValue();
         try {
@@ -141,9 +153,6 @@ public abstract class AbstractJDBCFeatureStoreFactory extends AbstractFeatureSto
         // dialect
         final SQLDialect dialect = createSQLDialect(featureStore);
         featureStore.setDialect(dialect);
-
-
-        return featureStore;
     }
 
     protected DefaultJDBCFeatureStore toFeatureStore(final ParameterValueGroup params,String factoryId){
