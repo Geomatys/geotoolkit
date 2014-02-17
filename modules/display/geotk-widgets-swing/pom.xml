@@ -78,6 +78,11 @@
   <dependencies>
     <dependency>
       <groupId>org.geotoolkit</groupId>
+      <artifactId>geotk-setup</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.geotoolkit</groupId>
       <artifactId>geotk-referencing</artifactId>
       <version>${project.version}</version>
     </dependency>
@@ -205,6 +210,10 @@
     <dependency>
       <groupId>org.netbeans.api</groupId>
       <artifactId>org-openide-awt</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.netbeans</groupId>
+      <artifactId>wizard</artifactId>
     </dependency>
     <dependency>
        <groupId>org.netbeans.api</groupId>

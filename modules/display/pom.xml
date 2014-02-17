@@ -85,7 +85,6 @@
        =========================================================== -->
   <modules>
     <module>geotk-widgets-swing</module>
-    <module>geotk-wizards-swing</module>
     <module>geotk-style</module>
     <module>geotk-svg</module>
     <module>geotk-render</module>
