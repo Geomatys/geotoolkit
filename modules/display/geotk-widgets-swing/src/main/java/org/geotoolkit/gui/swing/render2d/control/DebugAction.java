@@ -1,0 +1,149 @@
+/*
+ *    Geotoolkit - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
+ *
+ *    (C) 2010-2013, Geomatys
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation;
+ *    version 2.1 of the License.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
+ */
+package org.geotoolkit.gui.swing.render2d.control;
+
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import javax.swing.ImageIcon;
+
+import javax.swing.JComponent;
+import javax.swing.JEditorPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.text.html.HTMLEditorKit;
+
+import org.geotoolkit.display2d.canvas.RenderingContext2D;
+import org.geotoolkit.display2d.primitive.GraphicProbe;
+import org.geotoolkit.gui.swing.render2d.JMap2D;
+import org.geotoolkit.gui.swing.render2d.decoration.AbstractMapDecoration;
+import org.geotoolkit.gui.swing.render2d.decoration.MapDecoration;
+import org.geotoolkit.gui.swing.resource.FontAwesomeIcons;
+import org.geotoolkit.gui.swing.resource.IconBuilder;
+import org.geotoolkit.gui.swing.resource.MessageBundle;
+import org.geotoolkit.util.StringUtilities;
+
+/**
+ * Action that display a Text area on the right side on the map.
+ * A graphic probe is added in the map canvas container an collected informations
+ * are displayed in the text area.
+ *
+ * @author Johann Sorel (Geomatys)
+ * @module pending
+ */
+public class DebugAction extends AbstractMapAction {
+
+    private static final ImageIcon ICON = IconBuilder.createIcon(FontAwesomeIcons.ICON_WARNING_SIGN, 16, FontAwesomeIcons.DEFAULT_COLOR);
+
+    private final DebugDecoration deco = new DebugDecoration();
+
+    public DebugAction() {
+        this(null);
+    }
+
+    public DebugAction(final JMap2D map) {
+        super("config", ICON,map);
+        putValue(SHORT_DESCRIPTION, MessageBundle.getString("map_debug"));
+        setMap(map);
+    }
+
+    @Override
+    public void actionPerformed(final ActionEvent arg0) {
+        if (map != null) {
+            for (MapDecoration dec : map.getDecorations()) {
+                if (dec.equals(deco)) {
+                    map.removeDecoration(deco);
+                    return;
+                }
+            }
+            map.addDecoration(deco);
+        }
+    }
+
+    @Override
+    public void setMap(final JMap2D map) {
+        if (map == this.map) {
+            return;
+        }
+        if (this.map != null) {
+            this.map.removeDecoration(deco);
+        }
+        super.setMap(map);
+    }
+
+    private static class DebugDecoration extends AbstractMapDecoration implements GraphicProbe.ProbeMonitor {
+
+        private final JPanel pan = new JPanel(new BorderLayout());
+        private final JEditorPane jta = new JEditorPane();
+
+        public DebugDecoration() {
+            pan.setOpaque(false);
+            pan.setFocusable(false);
+            jta.setEditorKit(new HTMLEditorKit());
+            JScrollPane pane = new JScrollPane(jta);
+            pane.setPreferredSize(new Dimension(320, 200));
+            pan.add(BorderLayout.EAST, pane);
+        }
+
+        @Override
+        public void refresh() {
+        }
+
+        @Override
+        public void setMap2D(final JMap2D map) {
+            super.setMap2D(map);
+
+            if (map != null) {
+                final GraphicProbe gp = new GraphicProbe(map.getCanvas(), this);
+                map.getCanvas().getContainer().getRoot().getChildren().add(gp);
+            }
+
+        }
+
+        @Override
+        public JComponent getComponent() {
+            return pan;
+        }
+
+        @Override
+        public void contextPaint(final RenderingContext2D context) {
+            final StringBuilder sb = new StringBuilder("<html><body bgcolor=\"white\"><code>");
+            toHTML(context.toString(),sb);
+            sb.append("</code></body></html>");
+            jta.setText(sb.toString());
+        }
+
+        private static void toHTML(final String text, final StringBuilder sb){
+            String[] parts = text.split("\n");
+            for(String str : parts){
+
+                int[] cnt = StringUtilities.getIndexes(str, '=');
+
+                if(cnt.length == 1){
+                    sb.append("<font color=\"blue\">");
+                    sb.append(str.substring(0, cnt[0]+1));
+                    sb.append("</font>");
+                    sb.append(str.substring(cnt[0]+1));
+                }else{
+                    sb.append(str);
+                }
+                sb.append("<br/>");
+            }
+        }
+
+    }
+}

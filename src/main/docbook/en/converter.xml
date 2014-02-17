@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE book [
+  <!ENTITY % book.entities SYSTEM "../book.entities">
+  %book.entities;
+]>
+<chapter xmlns="http://docbook.org/ns/docbook" version="5.0"
+         xmlns:xi    = "http://www.w3.org/2001/XInclude"
+         xmlns:xlink = "http://www.w3.org/1999/xlink">
+
+    <title ooclass="chapiterTitle">
+        ObjectConverter
+    </title>
+
+    <section>
+        <title>ObjectConverter</title>
+        <para>
+            Geotoolkit Offer the possibility to create your own conversion objects. Most of the time theyre are used for simple type conversion
+            (StringToFile, StringToURL, URLToFile ...), but it can also be used for more complex types.
+            A list of casual simple type converters already exist and is available in Geotoolkit in 
+            <link xlink:href="http://www.geotoolkit.org/apidocs/org/geotoolkit/util/converter/package-summary.html" >package org.geotoolkit.util.converter</link>.
+        </para>
+
+        <section>
+            <title>Create an ObjectConverter.</title>
+            <para>
+                A converter is defined by :
+            </para>
+            <itemizedlist>
+                <listitem>A <emphasis role="bold">SOURCE</emphasis> class of the object we wish to convert.</listitem>
+                <listitem>A <emphasis role="bold">TARGET</emphasis> class toward wish we want to convert the object.</listitem>
+            </itemizedlist>
+
+            <para>
+                To create your own ObjectConverter, you need to implement 
+                <link xlink:href="http://www.geotoolkit.org/apidocs/org/geotoolkit/util/converter/ObjectConverter.html">ObjectConverter</link>
+                or extend the abstract class <link xlink:href="http://www.geotoolkit.org/apidocs/org/geotoolkit/util/converter/SimpleConverter.html">SimpleConverter</link>.
+            </para>
+
+            <para>
+                The following example shows how to convert a <link xlink:href="http://en.wikipedia.org/wiki/Well-known_text">WKT</link> String in a
+                <link xlink:href="http://www.vividsolutions.com/jts/jtshome.htm">JTS</link> geometry.
+            </para>
+
+            <example>
+                <title>Complete source code from WKT String to JTS Geometry.</title>
+                <link xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/util/StringToGeometryConverter.java" >
+                    geotoolkit-pending/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/util/StringToGeometryConverter.java
+                </link>
+            </example>
+
+            <para>
+		The main method to implement is 'T convert(S source)' which makes the conversion from S to T type. Whenever an exception occurs on vérification or processing
+		the conversion, the method must throw a <link xlink:href="http://hg.geotoolkit.org/geotoolkit/files/tip/modules/utility/geotk-utility/src/main/java/org/geotoolkit/util/converter/NonconvertibleObjectException.java">NonconvertibleObjectException</link>.
+                Following example shows how to convert a String in a JTS Geometry after a few verifications.
+            </para>
+
+            <example>
+                <title>Convert WKT to Geometry</title>
+                <programlisting>
+    @Override
+    public Geometry convert(String source) throws NonconvertibleObjectException {
+
+        if (source != null &amp;&amp; !source.isEmpty()) {
+
+            try {
+                //Create GeometryFactory and WKTReader
+                final GeometryFactory gf = new GeometryFactory();
+                final WKTReader reader = new WKTReader(gf);
+
+                //read String source
+                return reader.read(source);
+
+            } catch (ParseException ex) {
+                throw new NonconvertibleObjectException(ex);
+            }
+        } else {
+            throw new NonconvertibleObjectException("Source string can't be null or empty and should be formated in WKT.");
+        }
+    }
+                </programlisting>
+            </example>
+
+            <para>
+		The remaining methods are used to retrieve the source and targer classes, and additional flags to know if the converter preserve
+		object natural sorting order, if they are some restrictions or if the order is reversed. For more informations check the Javadoc of
+                <link xlink:href="http://www.geotoolkit.org/apidocs/org/geotoolkit/util/converter/ObjectConverter.html">ObjectConverter</link>.
+            </para>
+
+            <para>
+		To use converters, we need to create a Registry which will hold a list of ObjectConverters and register it.
+		Or we create the ObjectConverter and register it in the default ConverterRegistry using ServiceRegistry.
+            </para>
+        </section>
+
+        <section>
+            <title>Using an ObjectConverter</title>
+             <example>
+                <title>Example using a ConverterRegistry.</title>
+                <link xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/util/ConverterDemo.java" >
+                    geotoolkit-pending/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/util/ConverterDemo.java
+                </link>
+            </example>
+
+            <para>
+		In this example we start by retrieving the default ConverterRegistry and ask him for the whished converter : String > Geometry.
+		Then we can convert the WKT String in a Geometry using the convert method.
+            </para>
+
+            <example>
+                <title>Convert WKT in Geometry</title>
+                <programlisting>
+    //get converter from registry
+    final ObjectConverter&lt;String, Geometry&gt; strToGeom = ConverterRegistry.system().converter(String.class, Geometry.class);
+    final String wkt = "POLYGON ((110 240, 50 80, 240 70, 110 240))"; //a triangle
+
+    final Geometry geom = strToGeom.convert(wkt);
+
+    System.out.println("###############################################################");
+    System.out.println("WKT source : " + wkt);
+    System.out.println("Geometry target : " + geom);
+    System.out.println("###############################################################");
+                </programlisting>
+            </example>
+        </section>
+
+    </section>
+
+</chapter>

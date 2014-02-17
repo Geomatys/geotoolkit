@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE book [
+  <!ENTITY % book.entities SYSTEM "book.entities">
+  %book.entities;
+]>
+<book xmlns="http://docbook.org/ns/docbook" version="5.0"
+      xmlns:xi    = "http://www.w3.org/2001/XInclude"
+      xmlns:xlink = "http://www.w3.org/1999/xlink"
+     lang="en">
+
+  <info>
+    <title>Geotoolkit.org red book</title>
+    <orgname class="informal">Geotoolkit.org</orgname>
+    <para>
+      Everything about GeotoolKit.org
+    </para>
+    <keywordset>
+      <keyword>Geotoolkit.org</keyword> <keyword>Geotk</keyword> <keyword>GeoAPI</keyword>
+      <keyword>OGC</keyword> <keyword>geospatial</keyword>
+    </keywordset>
+  </info>
+
+<figure> <title>GeoToolkit</title>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="../images/Troll.jpg" format="jpg"></imagedata>
+    </imageobject>
+  </mediaobject>
+</figure>
+
+<figure> <title>GeoToolkit Model</title>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="../images/schema_complet.png" format="png"></imagedata>
+    </imageobject>
+    <textobject>
+      <phrase> Geotoolkit Model
+      </phrase>
+    </textobject>
+  </mediaobject>
+</figure>
+
+  <xi:include href="en/introduction.xml"/>
+
+  <xi:include href="en/ressources.xml"/>
+
+  <xi:include href="en/data.xml"/>
+
+  <xi:include href="en/map.xml"/>
+
+  <xi:include href="en/process.xml"/>
+  
+  <xi:include href="en/converter.xml"/>
+
+  <xi:include href="en/swing.xml"/>
+
+
+
+</book>

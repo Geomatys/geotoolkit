@@ -57,5 +57,6 @@
   <modules>
     <module>maven</module>
     <module>tools</module>
+    <module>shell</module>
   </modules>
 </project>

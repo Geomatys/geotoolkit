@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE book [
+  <!ENTITY % book.entities SYSTEM "../../../../book.entities">
+  %book.entities;
+]>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0"
+         xmlns:xlink = "http://www.w3.org/1999/xlink">
+             
+    <title>Format shapefile</title>
+    
+    <para>
+        Un fichier shapefile est en fait une combinaison de plusieurs fichiers :
+        <itemizedlist>
+            <listitem>.shp - obligatoire - contient les données attributaires relatives aux objets contenus dans le shapefile</listitem>
+            <listitem>.dbf - optionel -  stocke l'index de la géométrie</listitem>
+            <listitem>.prj - optionel - information sur le système de coordonnées, utilisant le format WKT (Well Known Text).</listitem>
+            <listitem>.shx - obligatoire - contient le lien entre les enregistrements shp et dbf</listitem>
+            <listitem>.shp.xml - optionel - métadonnées du shapefile.</listitem>
+            <listitem>.qix - optionnel - Quad tree</listitem>
+        </itemizedlist>
+        C'est le format vecteur fichier le plus utilisé dans les SIG. Il ne permet de stocker qu'un seul FeatureType.
+    </para>
+    
+    <example>
+        <title>Lecture d'un fichier shapefile</title>
+            <programlisting>
+                
+                    final Map&lt;String,Serializable&gt; map = new HashMap&lt;String, Serializable&gt;();
+                    map.put("url", ShapefileDemo.class.getResource("/data/world/Countries.shp"));
+  
+                    final DataStore store = DataStoreFinder.getDataStore(map);
+                
+            </programlisting>
+    </example>
+</section>

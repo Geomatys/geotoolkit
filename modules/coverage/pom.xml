@@ -84,9 +84,12 @@
            Modules included in the build
        =========================================================== -->
   <modules>
-    <module>geotk-coverage</module>
-    <module>geotk-coverageio</module>
-    <module>geotk-coverageio-netcdf</module>
-    <module>geotk-coverage-sql</module>
+    <module>geotk-coverageio-store</module>
+    <module>geotk-coverageio-bil</module>
+    <module>geotk-coverageio-dimap</module>
+    <module>geotk-coverageio-geotiff</module>
+    <module>geotk-coverageio-wkb</module>
+    <module>geotk-coverageio-postgresql</module>
+    <module>geotk-coverageio-imagery</module>
   </modules>
 </project>

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<racine xmlns="http://www.sandres.com">
+  <element>Je suis un element.</element>
+  <element>J'en suis un autre.</element>
+</racine>

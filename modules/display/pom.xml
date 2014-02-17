@@ -87,5 +87,11 @@
     <module>geotk-display</module>
     <module>geotk-widgets-swing</module>
     <module>geotk-wizards-swing</module>
+    <module>geotk-style</module>
+    <module>geotk-svg</module>
+    <module>geotk-render</module>
+    <module>geotk-render2d</module>
+    <module>geotk-render3d</module>
+    <module>geotk-jasperreport</module>
   </modules>
 </project>

@@ -1,49 +1,87 @@
-/* Override styles in maven-base.css */
-#leftColumn {
- width: 180px;
-}
-#bodyColumn {
-  margin-left: 207px;
+
+body {
+  background-color: #FFFFFF;
+  font-family: Helvetica;
+  margin-left: 0;
+  margin-right: 0;
+  font-size: 14px;
+  padding: 0px;
 }
 
-/* Override styles in maven-theme.css */
-a {
-  color: #387085;
-}
-a:active, a:hover {
-  text-decoration: underline;
-}
-p {
-  text-align: justify;
-}
 h2 {
-  color: #606060;
-  height: 30px;
-  padding-left: 15px;
+  font-size: 17px;
+  color: #333333;
 }
 h3 {
-  color: #404040;
-}
-h4 {
-  color: #606060;
-  border: none;
-  font-size: medium;
+  padding: 4px 2px 4px 2px;
+  color: #003333;
+  background-color: #FFFFFF;
   font-weight: bold;
-  padding-left: 0px;
-  padding-bottom: 0px;
+  font-size: 14px;
+  border-bottom: 1px solid #333333;
 }
-h5 {
-  color: #404040;
+p {
+  line-height: 1.3em;
+  font-size: 12px;
+  color: #000;
 }
-dl {
-  border: 0px;
-  background-color: #ffffff;
+
+a {
+  text-decoration: none;
 }
+a:link {
+  color:#333388;
+}
+a:visited {
+  color:#333388;
+}
+a:active, a:hover {
+  color:#000088;
+}
+
+#navcolumn ul {
+  margin: 0px 0 0px 0em;
+}
+#navcolumn ul a {
+  color: #666666;
+}
+#navcolumn ul a:visited {
+  color: #338888;
+}
+#navcolumn ul a:hover {
+  color: #000088;
+}
+
+
+#leftColumn {
+  margin: 10px 0 10px 0;
+  background-color: #FFFFFF;
+  border-top-color: #333333;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-right-color: #333333;
+  border-right-style: solid;
+  border-right-width: 1px;
+  border-bottom-color: #333333;
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+  padding-right: 2px;
+  padding-left: 4px;
+}
+
+#navcolumn h5 {
+  font-size: 13px;
+  border-bottom: 1px solid #333333;
+  padding-top: 10px;
+  padding-left: 4px;
+  padding-right: 0px;
+  color: #336666;
+}
+
 #breadcrumbs {
-  color: black;
-  height: 21px;
-  line-height: 20px;
-}
-#breadcrumbs a {
-  color: black;
+  height: 14px;
+  background-color: #FFFFFF;
+  padding: 5px 5px 5px 5px;
+  border-bottom: 1px solid #333333;
+  border-top: 1px solid #333333;
 }

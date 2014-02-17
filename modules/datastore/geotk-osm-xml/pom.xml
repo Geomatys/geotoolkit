@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- =======================================================================
+        Maven Project Configuration File
+
+        The Geotoolkit Project
+            http://www.geotoolkit.org/
+     ======================================================================= -->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                             http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.geotoolkit.pending</groupId>
+    <artifactId>featurestore</artifactId>
+    <version>4.x-SNAPSHOT</version>
+  </parent>
+
+
+  <!-- =========================================================== -->
+  <!--     Module Description                                      -->
+  <!-- =========================================================== -->
+  <artifactId>geotk-osm-xml</artifactId>
+  <packaging>jar</packaging>
+  <name>FeatureStore OSM XML</name>
+
+  <description>
+    FeatureStore implementation for open street map xml files format.
+  </description>
+
+
+  <!-- =========================================================== -->
+  <!--     Developers and Contributors                             -->
+  <!-- =========================================================== -->
+  <developers>
+    <developer>
+      <name>Johann Sorel</name>
+      <id>eclesia</id>
+      <email>johann.sorel@geomatys.com</email>
+      <organization>Geomatys</organization>
+      <organizationUrl>http://www.geomatys.fr/</organizationUrl>
+      <timezone>+1</timezone>
+      <roles>
+        <role>Developer</role>
+      </roles>
+    </developer>
+  </developers>
+
+
+  <!-- =========================================================== -->
+  <!--     Dependency Management                                   -->
+  <!-- =========================================================== -->
+  <dependencies>
+      <dependency>
+          <groupId>org.geotoolkit.pending</groupId>
+          <artifactId>geotk-osm-core</artifactId>
+          <version>${project.version}</version>
+      </dependency>
+      <dependency>
+          <groupId>org.geotoolkit.pending</groupId>
+          <artifactId>geotk-jaxp-core</artifactId>
+          <version>${project.version}</version>
+      </dependency>
+      <dependency>
+          <groupId>org.geotoolkit.pending</groupId>
+          <artifactId>geotk-db-postgres</artifactId>
+          <version>${project.version}</version>
+      </dependency>
+
+      <dependency>
+          <groupId>org.swinglabs</groupId>
+          <artifactId>jxlayer</artifactId>
+      </dependency>
+      <dependency>
+          <groupId>org.swinglabs</groupId>
+          <artifactId>swingx</artifactId>
+      </dependency>
+      <dependency>
+          <groupId>org.codehaus.woodstox</groupId>
+          <artifactId>wstx-lgpl</artifactId>
+          <exclusions>
+              <exclusion> <!--included in JRE 1.6 -->
+                  <groupId>stax</groupId>
+                  <artifactId>stax-api</artifactId>
+              </exclusion>
+          </exclusions>
+      </dependency>
+  </dependencies>
+
+</project>

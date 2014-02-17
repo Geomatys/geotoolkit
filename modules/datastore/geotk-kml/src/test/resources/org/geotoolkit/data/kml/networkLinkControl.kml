@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+<NetworkLinkControl>
+   <cookie>cookie=sometext</cookie>
+   <message>This is a pop-up message. You will only see this once</message>
+   <linkName>New KML features</linkName>
+   <linkDescription><![CDATA[<span>KML now has new features available!</span>]]></linkDescription>
+</NetworkLinkControl>
+</kml>

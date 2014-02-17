@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE book [
+  <!ENTITY % book.entities SYSTEM "../book.entities">
+  %book.entities;
+]>
+<chapter xmlns="http://docbook.org/ns/docbook" version="5.0"
+         xmlns:xi    = "http://www.w3.org/2001/XInclude"
+         xmlns:xlink = "http://www.w3.org/1999/xlink"
+	 lang="en">
+
+    <title ooclass="chapiterTitle">
+        Process
+    </title>
+
+    <section>
+        <title>What is a process ?</title>
+        <para>
+	    A process is a treatment which is applied to the datas. Their complexity can be changed. Sometimes we can link them with differents applications.
+        </para>
+        <para> Geotoolkit contains different process. They are order by modules which using to basic treatments.</para>
+        <para>
+            We can find this modules :
+        </para>
+        <itemizedlist>
+            <listitem><emphasis role="bold">Math</emphasis> : contain mathematical functions like cos(), add(), avg(), ceil(), ...</listitem>
+            <listitem><emphasis role="bold">JTS Geometry</emphasis> : allowing call functions from JTS library on geometries (buffer, contain, intersect, ...)</listitem>
+            <listitem><emphasis role="bold">Vector</emphasis> : operating on features vectorial datas (centroid, merge, spacialJoin, ...) </listitem>
+            <listitem><emphasis role="bold">Referencing</emphasis> : contain for the moment a process to create an EPSG database only.</listitem>
+            <listitem><emphasis role="bold">Coverage</emphasis> : functions for creating pyramids and tiles.</listitem>
+            <listitem><emphasis role="bold">IO</emphasis> : traitments files (suppressing, createTempFile, unpackFile, ...).</listitem>
+            <listitem><emphasis role="bold">Metadata</emphasis> : traitments metadata (merge, ...).</listitem>
+        </itemizedlist>
+    </section>
+
+    <xi:include href="process/process-create.xml"/>
+
+    <xi:include href="process/process-using.xml"/>
+
+    <xi:include href="process/process-tools.xml"/>
+
+</chapter>

@@ -1,0 +1,2 @@
+org.geotoolkit.data.shapefile.ShapefileFeatureStoreFactory
+org.geotoolkit.data.shapefile.ShapefileFolderFeatureStoreFactory

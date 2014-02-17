@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- =======================================================================
+        User Prototype Configuration File
+     ======================================================================= -->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                             http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.geotoolkit.pending</groupId>
+        <artifactId>display</artifactId>
+        <version>4.x-SNAPSHOT</version>
+    </parent>
+
+
+  <!-- =========================================================== -->
+  <!--     Module Description                                      -->
+  <!-- =========================================================== -->
+    <artifactId>geotk-render2d</artifactId>
+    <packaging>jar</packaging>
+    <name>Display engine 2D</name>
+    <description>New generation of Java2D renderer based on GeoAPI Display package.</description>
+    <licenses>
+        <license>
+            <name>Lesser General Public License (LGPL)</name>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+  <!-- =========================================================== -->
+  <!--     Developers and Contributors                             -->
+  <!-- =========================================================== -->
+    <developers>
+        <developer>
+            <name>Martin Desruisseaux</name>
+            <id>desruisseaux</id>
+            <email>desruisseaux@users.sourceforge.net</email>
+            <organization>Geomatys</organization>
+            <organizationUrl>http://www.geomatys.fr/</organizationUrl>
+            <timezone>+1</timezone>
+            <roles>
+                <role>Java Developer</role>
+                <role>Module Maintainer</role>
+            </roles>
+        </developer>
+        <developer>
+            <name>Johann Sorel</name>
+            <id>jsorel</id>
+            <email>johann.sorel@geomatys.fr</email>
+            <organization>Geomatys</organization>
+            <organizationUrl>http://www.geomatys.fr/</organizationUrl>
+            <timezone>+1</timezone>
+            <roles>
+                <role>Java Developer</role>
+            </roles>
+        </developer>
+    </developers>
+
+
+  <!-- =========================================================== -->
+  <!--     Dependencies                                            -->
+  <!-- =========================================================== -->
+    <dependencies>
+        <dependency>
+            <groupId>org.geotoolkit</groupId>
+            <artifactId>geotk-display</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.geotoolkit.pending</groupId>
+            <artifactId>geotk-filter</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.geotoolkit.pending</groupId>
+            <artifactId>geotk-processing-coverage</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.geotoolkit.pending</groupId>
+            <artifactId>geotk-jtswrapper</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.geotoolkit.pending</groupId>
+            <artifactId>geotk-render</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.geotoolkit.pending</groupId>
+            <artifactId>geotk-svg</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.derby</groupId>
+            <artifactId>derby</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+</project>

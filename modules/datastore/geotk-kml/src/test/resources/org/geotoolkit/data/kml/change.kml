@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+<NetworkLinkControl>
+  <Update>
+    <targetHref>http://www/~sam/January14Data/Point.kml</targetHref>
+    <Change>
+      <Point targetId="point123">
+        <coordinates>-95.48,40.43,0.0</coordinates>
+      </Point>
+    </Change>
+  </Update>
+</NetworkLinkControl>
+</kml>

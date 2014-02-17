@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+<Placemark>
+    <name>Colorado</name>
+    <Model id="khModel543">
+        <altitudeMode>relativeToGround</altitudeMode>
+        <Location>
+            <longitude>39.55375305703105</longitude>
+            <latitude>-18.9813220168456</latitude>
+            <altitude>1223.0</altitude>
+        </Location>
+        <Orientation>
+            <heading>45.0</heading>
+            <tilt>10.0</tilt>
+            <roll>0.5</roll>
+        </Orientation>
+        <Scale>
+            <x>4.0</x>
+            <y>2.0</y>
+            <z>3.0</z>
+        </Scale>
+        <Link>
+            <href>house.dae</href>
+            <refreshMode>onExpire</refreshMode>
+        </Link>
+        <ResourceMap>
+            <Alias>
+                <targetHref>../files/CU-Macky---Center-StairsnoCulling.jpg</targetHref>
+                <sourceHref>CU-Macky---Center-StairsnoCulling.jpg</sourceHref>
+            </Alias>
+            <Alias>
+                <targetHref>../files/CU-Macky-4sideturretnoCulling.jpg</targetHref>
+                <sourceHref>CU-Macky-4sideturretnoCulling.jpg</sourceHref>
+            </Alias>
+            <Alias>
+                <targetHref>../files/CU-Macky-Back-NorthnoCulling.jpg</targetHref>
+                <sourceHref>CU-Macky-Back-NorthnoCulling.jpg</sourceHref>
+            </Alias>
+        </ResourceMap>
+    </Model>
+</Placemark>
+</kml>

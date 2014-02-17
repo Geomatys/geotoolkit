@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2"
+ xmlns:gx="http://www.google.com/kml/ext/2.2">
+<gx:Tour>
+  <gx:Playlist>
+    <gx:FlyTo>
+      <gx:duration>5.0</gx:duration>
+      <gx:flyToMode>smooth</gx:flyToMode>
+      <LookAt>
+        <longitude>-79.387</longitude>
+        <latitude>43.643</latitude>
+        <altitude>10.0</altitude>
+        <heading>-172.3</heading>
+        <tilt>10.0</tilt>
+        <range>1200.0</range>
+        <altitudeMode>relativeToGround</altitudeMode>
+      </LookAt>
+    </gx:FlyTo>
+    <gx:TourControl>
+      <gx:playMode>pause</gx:playMode>
+    </gx:TourControl>
+    <gx:SoundCue>
+      <href>http://dev.keyhole.com/codesite/cntowerfacts.mp3</href>
+    </gx:SoundCue>
+    <gx:Wait>
+      <gx:duration>10.0</gx:duration>
+    </gx:Wait>
+  </gx:Playlist>
+</gx:Tour>
+</kml>

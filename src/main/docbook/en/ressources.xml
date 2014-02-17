@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE book [
+  <!ENTITY % book.entities SYSTEM "../book.entities">
+  %book.entities;
+]>
+
+<chapter xmlns="http://docbook.org/ns/docbook" version="5.0"
+         xmlns:xlink = "http://www.w3.org/1999/xlink"
+         lang="en">
+
+    <title>
+        Ressources
+    </title>
+    
+    <para>
+        Different resources are using in these tutorials. You will find common information in this chapter.
+    </para>
+
+    <section>
+        <title>
+            Sources
+        </title>
+
+        <para>
+            A collection of source code examples are available in Geotoolkit official project
+        </para>
+        <para>
+            Online :
+            <link xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/file/0237bc78daa2/demos">
+                <acronym>GeotoolKit Mercurial repository</acronym>
+            </link>
+        </para>
+
+        <section>
+            <title>
+                Get and update sources
+            </title>
+
+            <para>
+                The distributed revision control system used with GeotoolKit is  
+                <link xlink:href="http://mercurial.selenic.com/">
+                    <acronym>Mercurial</acronym>
+                </link>.
+            </para>
+
+            <para>
+                When Mercurial installed, you can copy sources with the command :
+            </para>
+
+            <programlisting>
+                hg clone http://hg.geotoolkit.org/geotoolkit-pending geotk-pending
+            </programlisting>
+
+            <para>
+                To get the last version (update) :
+            </para>
+            <programlisting>
+                hg pull -u
+            </programlisting>
+
+        </section>
+
+    </section>
+
+    <section>
+        <title>
+            Precompile
+        </title>
+
+        <para>
+            All projects compile every nights and archives are public.
+        </para>
+
+        <para>
+            <link xlink:href="http://jenkins.geomatys.com/">
+                <acronym>Jenkins repository</acronym>
+            </link>
+        </para>
+    </section>
+
+    <section>
+        <title>
+            Local compilation
+        </title>
+
+        <para>
+            Compilation requiered :
+            <itemizedlist>
+                <listitem>
+                    <para>
+                        <link xlink:href="http://www.oracle.com/technetwork/java/javase/downloads/index.html">
+                            <acronym>JDK 1.6+</acronym>
+                        </link>
+                        with extensions
+                        <link xlink:href="http://java.net/projects/jai/">
+                            <acronym>JAI</acronym>
+                        </link>
+                        (pre-installed on Mac) and
+                        <link xlink:href="http://java.net/projects/jai-imageio/">
+                            <acronym>ImageIO</acronym>
+                        </link>
+                    </para>
+                </listitem>
+
+                <listitem>
+                    <para>
+                        <link xlink:href="http://maven.apache.org/">
+                            <acronym>Maven 3.0.4 or more</acronym>
+                        </link>
+                    </para>
+                </listitem>
+            </itemizedlist>
+        </para>
+
+        <para> When you have installed these, use this command to compile :
+        </para>
+        <programlisting>
+            mvn clean install -DskipTests
+        </programlisting>
+        <para>
+            Compile time depends of your hardware and your Internet connection. The first compilation is longer to get differents packages missing (around thirty minutes the first time).
+        </para>
+        <para>
+            GeotoolKit Jars are in the subdirectory 
+            <emphasis>target</emphasis>.
+        </para>
+    </section>
+</chapter>

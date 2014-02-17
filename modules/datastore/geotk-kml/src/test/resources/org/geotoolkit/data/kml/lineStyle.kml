@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+<Document>
+  <name>LineStyle.kml</name>
+  <open>1</open>
+  <Style id="linestyleExample">
+    <LineStyle>
+      <color>7f0000ff</color>
+      <width>4.0</width>
+    </LineStyle>
+  </Style>
+  <Placemark>
+    <name>LineStyle Example</name>
+    <styleUrl>#linestyleExample</styleUrl>
+    <LineString>
+      <extrude>1</extrude>
+      <tessellate>1</tessellate>
+      <coordinates>
+        -122.364383,37.824664,0.0 -122.364152,37.824322,0.0
+      </coordinates>
+    </LineString>
+  </Placemark>
+</Document>
+</kml>

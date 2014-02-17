@@ -126,5 +126,127 @@
            For server applications, this is already part of J2EE. -->
       <scope>provided</scope>
     </dependency>
+    
+    <dependency>
+      <groupId>org.geotoolkit.pending</groupId>
+      <artifactId>geotk-filter</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.geotoolkit.pending</groupId>
+      <artifactId>geotk-render2d</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+      
+    <dependency>
+      <groupId>org.geotoolkit.pending</groupId>
+      <artifactId>geotk-render3d</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.geotoolkit.pending</groupId>
+      <artifactId>geotk-style</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.geotoolkit.pending</groupId>
+      <artifactId>geotk-featurestore-core</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.geotoolkit.pending</groupId>
+      <artifactId>geotk-coverageio-store</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.geotoolkit.pending</groupId>
+      <artifactId>geotk-clients-core</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.geotoolkit.pending</groupId>
+      <artifactId>geotk-jasperreport</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.geotoolkit.pending</groupId>
+      <artifactId>geotk-filter-cql</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <!--widgets that work only when the correct jars are in the project -->
+    <dependency>
+      <groupId>org.geotoolkit.pending</groupId>
+      <artifactId>geotk-shapefile</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.geotoolkit.pending</groupId>
+      <artifactId>geotk-xml-sld</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+
+    <!-- Additional swing componants -->
+    <dependency>
+      <groupId>net.java.dev.timingframework</groupId>
+      <artifactId>timingframework</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.swinglabs</groupId>
+      <artifactId>swingx</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.swinglabs</groupId>
+      <artifactId>swing-worker</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.swinglabs</groupId>
+      <artifactId>jxlayer</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.jhlabs</groupId>
+      <artifactId>filters</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.netbeans.api</groupId>
+      <artifactId>org-netbeans-swing-outline</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.sun</groupId>
+      <artifactId>jlfgr</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.netbeans.api</groupId>
+      <artifactId>org-openide-awt</artifactId>
+    </dependency>
+    <dependency>
+       <groupId>org.netbeans.api</groupId>
+       <artifactId>org-netbeans-api-visual</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.jdesktop</groupId>
+      <artifactId>beansbinding</artifactId>
+      <version>1.2.1</version>
+    </dependency>
   </dependencies>
+
+
+  <repositories>
+    <repository>
+      <id>netbeans</id>
+        <name>Repository for hosting NetBeans API artifacts</name>
+        <url>http://bits.netbeans.org/maven2/</url>
+        <releases>
+          <enabled>true</enabled>
+        </releases>
+        <snapshots>
+          <enabled>false</enabled>
+        </snapshots>
+      </repository>
+  </repositories>
+
 </project>

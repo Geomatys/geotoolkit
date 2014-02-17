@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- =======================================================================
+        Maven Project Configuration File
+
+        The Geotoolkit Project
+            http://www.geotoolkit.org/
+
+     ======================================================================= -->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                             http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.geotoolkit.pending</groupId>
+    <artifactId>geometry</artifactId>
+    <version>4.x-SNAPSHOT</version>
+  </parent>
+
+
+  <!-- =========================================================== -->
+  <!--     Module Description                                      -->
+  <!-- =========================================================== -->
+  <artifactId>geotk-geometry</artifactId>
+  <packaging>jar</packaging>
+  <name>Geometry base implementation</name>
+
+  <description>
+    Implementation of GeoAPI geometries interface.
+  </description>
+
+  <licenses>
+    <license>
+      <name>Lesser General Public License (LGPL)</name>
+      <url>http://www.gnu.org/copyleft/lesser.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+
+  <!-- =========================================================== -->
+  <!--     Dependencies                                            -->
+  <!-- =========================================================== -->
+  <dependencies>
+      <dependency>
+          <groupId>com.vividsolutions</groupId>
+          <artifactId>jts</artifactId>
+      </dependency>
+      <dependency>
+          <groupId>org.geotoolkit</groupId>
+          <artifactId>geotk-utility</artifactId>
+      </dependency>
+      <dependency>
+          <groupId>org.geotoolkit</groupId>
+          <artifactId>geotk-referencing</artifactId>
+      </dependency>
+      <dependency>
+          <groupId>org.geotoolkit.pending</groupId>
+          <artifactId>geotk-utility-pending</artifactId>
+          <version>${project.version}</version>
+      </dependency>
+      <dependency>
+          <groupId>org.geotoolkit.project</groupId>
+          <artifactId>geotk-provided</artifactId>
+          <scope>provided</scope>
+      </dependency>
+      <dependency>
+          <groupId>org.geotoolkit</groupId>
+          <artifactId>geotk-epsg-javadb</artifactId>
+          <scope>test</scope>
+      </dependency>
+      <dependency>
+          <groupId>postgresql</groupId>
+          <artifactId>postgresql</artifactId>
+          <scope>test</scope>
+    </dependency>
+
+  </dependencies>
+
+  </project>

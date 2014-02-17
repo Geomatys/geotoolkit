@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+<Document>
+  <name>Document.kml</name>
+  <open>1</open>
+  <Style id="exampleStyleDocument">
+    <LabelStyle>
+      <color>ff0000cc</color>
+    </LabelStyle>
+  </Style>
+  <Placemark>
+    <name>Document Feature 1</name>
+    <styleUrl>#exampleStyleDocument</styleUrl>
+    <Point>
+      <coordinates>-122.371,37.816,0.0</coordinates>
+    </Point>
+  </Placemark>
+  <Placemark>
+    <name>Document Feature 2</name>
+    <styleUrl>#exampleStyleDocument</styleUrl>
+    <Point>
+      <coordinates>-122.37,37.817,0.0</coordinates>
+    </Point>
+  </Placemark>
+</Document>
+</kml>

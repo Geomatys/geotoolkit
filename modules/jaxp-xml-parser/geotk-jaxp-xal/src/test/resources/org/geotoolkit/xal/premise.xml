@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xAL xmlns="urn:oasis:names:tc:ciq:xsdschema:xAL:2.0">
+<AddressDetails>
+<Country>
+<Thoroughfare>
+<Premise Type="externalPremise" PremiseDependency="bof" PremiseDependencyType="null" PremiseThoroughfareConnector="connector">
+<AddressLine>premise address</AddressLine>
+<PremiseName Type="premiseNameType" TypeOccurrence="After" Code="premiseNameCode">premise name</PremiseName>
+<PremiseLocation Code="premiseLocationCode">premise location</PremiseLocation>
+<PremiseNumberPrefix Type="prefix" Code="prefixCode" NumberPrefixSeparator="pS">premise number prefix</PremiseNumberPrefix>
+<PremiseNumberSuffix Type="suffix" Code="suffixCode" NumberSuffixSeparator="sS">premise number suffix</PremiseNumberSuffix>
+<BuildingName Type="BN"></BuildingName>
+<SubPremise Type="external">
+<AddressLine>sub premise address</AddressLine>
+<SubPremiseName Type="name" TypeOccurrence="Before" Code="yep">sub premise name</SubPremiseName>
+<SubPremiseLocation Code="subPremiseLocationCode">sub premise location</SubPremiseLocation>
+<SubPremiseNumberPrefix NumberPrefixSeparator="pSeparator" Type="prefixType" Code="pCode">sub prefix</SubPremiseNumberPrefix>
+<SubPremiseNumberSuffix NumberSuffixSeparator="sSeparator" Type="suffixType" Code="sCode">sub suffix</SubPremiseNumberSuffix>
+<BuildingName Type="subBN"></BuildingName>
+<Firm Type="subFirm"></Firm>
+<MailStop Type="subMS"></MailStop>
+<PostalCode Type="subPC"></PostalCode>
+<SubPremise Type="internal">
+<SubPremiseNumber Indicator="indicator" IndicatorOccurrence="After" NumberTypeOccurrence="Before" PremiseNumberSeparator="separator" Type="internalType" Code="internalCode">internal sub premise number</SubPremiseNumber>
+</SubPremise>
+</SubPremise>
+<MailStop Type="MS"></MailStop>
+<PostalCode Type="PC"></PostalCode>
+<Premise Type="internalPremise">
+<PremiseNumber NumberType="Range" Type="premiseNumberType" Indicator="premiseNumberIndicator" IndicatorOccurrence="After" NumberTypeOccurrence="Before" Code="premiseNumberCode">premise number</PremiseNumber>
+<Firm Type="subSubFirm"></Firm>
+<Premise Type="subPremise">
+<PremiseNumberRange>
+<PremiseNumberRangeFrom>
+<AddressLine>PNRF address</AddressLine>
+<PremiseNumberPrefix Type="internalPrefixFrom"></PremiseNumberPrefix>
+<PremiseNumber Type="internalNumberFrom"></PremiseNumber>
+<PremiseNumberSuffix Type="internalSuffixFrom"></PremiseNumberSuffix>
+</PremiseNumberRangeFrom>
+<PremiseNumberRangeTo>
+<AddressLine>PNRT address</AddressLine>
+<PremiseNumberPrefix Type="internalPrefixTo"></PremiseNumberPrefix>
+<PremiseNumber Type="internalNumberTo"></PremiseNumber>
+<PremiseNumberSuffix Type="internalSuffixTo"></PremiseNumberSuffix>
+</PremiseNumberRangeTo>
+</PremiseNumberRange>
+</Premise>
+</Premise>
+</Premise>
+</Thoroughfare>
+</Country>
+</AddressDetails>
+</xAL>

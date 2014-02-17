@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+<Folder>
+  <name>Folder.kml</name>
+  <open>1</open>
+  <description>
+    A folder is a container that can hold multiple other objects
+  </description>
+  <Placemark>
+    <name>Folder object 1 (Placemark)</name>
+    <Point>
+      <coordinates>-122.377588,37.830266,0.0</coordinates>
+    </Point>
+  </Placemark>
+  <Placemark>
+    <name>Folder object 2 (Polygon)</name>
+    <Polygon>
+      <outerBoundaryIs>
+        <LinearRing>
+          <coordinates>
+            -122.37783,37.830445,0.0 -122.377576,37.830631,0.0 -122.37784,37.830642,0.0 -122.37783,37.830445,0.0
+          </coordinates>
+        </LinearRing>
+      </outerBoundaryIs>
+    </Polygon>
+  </Placemark>
+  <Placemark>
+    <name>Folder object 3 (Path)</name>
+    <LineString>
+      <tessellate>1</tessellate>
+      <coordinates>
+        -122.378009,37.830128,0.0 -122.377885,37.830379,0.0
+      </coordinates>
+    </LineString>
+  </Placemark>
+</Folder>
+</kml>

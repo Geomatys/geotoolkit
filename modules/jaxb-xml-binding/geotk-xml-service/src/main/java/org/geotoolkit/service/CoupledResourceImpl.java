@@ -1,0 +1,128 @@
+/*
+ *    GeotoolKit - An Open Source Java GIS Toolkit
+ *    http://geotoolkit.org
+ * 
+ *    (C) 2009, Geomatys
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation; either
+ *    version 2.1 of the License, or (at your option) any later version.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
+ */
+
+package org.geotoolkit.service;
+
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
+import org.opengis.service.CoupledResource;
+import org.opengis.util.ScopedName;
+
+
+/**
+ * <p>Java class for SV_CoupledResource_Type complex type.
+ * 
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ * 
+ * <pre>
+ * &lt;complexType name="SV_CoupledResource_Type">
+ *   &lt;complexContent>
+ *     &lt;extension base="{http://www.isotc211.org/2005/gco}AbstractObject_Type">
+ *       &lt;sequence>
+ *         &lt;element name="operationName" type="{http://www.isotc211.org/2005/gco}CharacterString_PropertyType"/>
+ *         &lt;element name="identifier" type="{http://www.isotc211.org/2005/gco}CharacterString_PropertyType"/>
+ *         &lt;element ref="{http://www.isotc211.org/2005/gco}ScopedName" minOccurs="0"/>
+ *       &lt;/sequence>
+ *     &lt;/extension>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
+ * </pre>
+ * 
+ * 
+ * @module pending
+ */
+@XmlType(name = "SV_CoupledResource_Type", propOrder = {
+    "operationName",
+    "identifier",
+    "scopedName"
+})
+@XmlRootElement(name="SV_CoupledResource")
+public class CoupledResourceImpl implements CoupledResource {
+
+    private String operationName;
+    private String identifier;
+    private ScopedName scopedName;
+
+    /**
+     * An empty constructor used by JAXB
+     */
+    public CoupledResourceImpl() {
+        
+    }
+    
+    /**
+     * Clone an coupled resource.
+     */
+    public CoupledResourceImpl(final CoupledResource resource) {
+        this.identifier    = resource.getIdentifier();
+        this.operationName = resource.getOperationName();
+        this.scopedName    = resource.getScopedName();
+    }
+    
+    /**
+     * Gets the value of the operationName property.
+     * 
+     */
+    @XmlElement(name = "operationName", required = true)
+    public String getOperationName() {
+        return operationName;
+    }
+
+    /**
+     * Sets the value of the operationName property.
+     * 
+    */
+    public void setOperationName(final String value) {
+        this.operationName = value;
+    }
+
+    /**
+     * Gets the value of the identifier property.
+     * 
+    */
+    @XmlElement(name = "identifier", required = true)
+    public String getIdentifier() {
+        return identifier;
+    }
+
+    /**
+     * Sets the value of the identifier property.
+     * 
+     */
+    public void setIdentifier(final String value) {
+        this.identifier = value;
+    }
+
+    /**
+     * Gets the value of the scopedName property.
+     * 
+    */
+    @XmlElement(name = "scopedName", namespace = "http://www.isotc211.org/2005/gco")
+    public ScopedName getScopedName() {
+        return scopedName;
+    }
+
+    /**
+     * Sets the value of the scopedName property.
+     * 
+    */
+    public void setScopedName(final ScopedName value) {
+        this.scopedName = value;
+    }
+
+}

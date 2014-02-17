@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE book [
+  <!ENTITY % book.entities SYSTEM "../book.entities">
+  %book.entities;
+]>
+<chapter xmlns="http://docbook.org/ns/docbook" version="5.0"
+      xmlns:xlink = "http://www.w3.org/1999/xlink">
+
+<title>Introduction</title>
+  <para>
+Geotookit est une librairie dédiée à la cartographie, toutefois ce domaine recoupe beaucoup d'autre domaines. Y sont inclus la manipulation des images, des métadonnées, des géometries, les méchanismes de retroingénierie sur les bases de données, la sécurisation de connexion ou encore les interfaces utilisateurs.
+  </para>
+  <para>
+Aujourd'hui le projet compte plus d'une centaine de modules.
+  </para>
+</chapter>

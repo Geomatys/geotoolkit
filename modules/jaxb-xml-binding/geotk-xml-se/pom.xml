@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- =======================================================================
+  Maven Project Configuration File
+
+  	The Geotoolkit Project
+            http://www.geotoolkit.org/
+
+
+  ======================================================================= -->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                             http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.geotoolkit.pending</groupId>
+        <artifactId>jaxb-xml-binding</artifactId>
+        <version>4.x-SNAPSHOT</version>
+    </parent>
+
+
+  <!-- =========================================================== -->
+  <!--     Module Description                                      -->
+  <!-- =========================================================== -->
+    <artifactId>geotk-xml-se</artifactId>
+    <packaging>jar</packaging>
+    <name>Bindings OGC - SE : Symbology Encoding</name>
+    <description>OGC XML Symbology Encoding implementation.</description>
+    <licenses>
+        <license>
+            <name>Lesser General Public License (LGPL)</name>
+            <url>http://www.gnu.org/copyleft/lesser.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+
+  <!-- =========================================================== -->
+  <!--     Developers and Contributors                             -->
+  <!-- =========================================================== -->
+    <developers>
+        <developer>
+            <name>Johan Sorel</name>
+            <id>jsorel</id>
+            <email>johann.sorel@geomatys.fr</email>
+            <organization>Geomatys</organization>
+            <roles>
+                <role>Module Maintainer</role>
+                <role>Java Developer</role>
+            </roles>
+        </developer>
+    </developers>
+
+
+  <!-- =========================================================== -->
+  <!--     Dependency Management                                   -->
+  <!-- =========================================================== -->
+    <dependencies>
+        <dependency>
+            <groupId>org.geotoolkit.pending</groupId>
+            <artifactId>geotk-xml-ogc</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.geotoolkit.project</groupId>
+            <artifactId>geotk-provided</artifactId>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+</project>

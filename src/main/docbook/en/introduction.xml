@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE book [
+  <!ENTITY % book.entities SYSTEM "../book.entities">
+  %book.entities;
+]>
+<chapter xmlns="http://docbook.org/ns/docbook" version="5.0"
+      xmlns:xlink = "http://www.w3.org/1999/xlink">
+
+<title>Introduction</title>
+  <para>
+Geotookit is a library dedicated to mapping, however this area overlaps with many other areas. Included are the manipulating images, metadata geometries, the reverse engineering Mechanisms of databases, secure connection or user interfaces.
+  </para>
+  <para>
+Today the project has more than one hundred modules.
+  </para>
+</chapter>

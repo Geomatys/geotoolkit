@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xAL xmlns="urn:oasis:names:tc:ciq:xsdschema:xAL:2.0">
+<AddressDetails>
+        <AddressLines>
+                <AddressLine Type="type1" Code="code1">Première ligne</AddressLine>
+                <AddressLine Type= "type2" Code="code2">Seconde ligne</AddressLine>
+        </AddressLines>
+</AddressDetails>
+</xAL>

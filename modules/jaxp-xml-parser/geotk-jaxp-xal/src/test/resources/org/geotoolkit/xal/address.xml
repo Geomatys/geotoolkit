@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xAL xmlns="urn:oasis:names:tc:ciq:xsdschema:xAL:2.0" Version="v">
+<AddressDetails AddressType="addressType" CurrentStatus="currentStatus" ValidFromDate="validFrom" ValidToDate="validTo" Usage="usage" Code="code" AddressDetailsKey="key">
+<PostalServiceElements Type="typePostalServiceElement">
+
+<AddressIdentifier Code="code34" IdentifierType="identifierType34" Type="type34">Hérault</AddressIdentifier>
+<AddressIdentifier Code="code11" IdentifierType="identifierType11" Type="type11">Aude</AddressIdentifier>
+
+<EndorsementLineCode Code="code30" Type="type30">Gard</EndorsementLineCode>
+
+<KeyLineCode Code="code64" Type="type64">Pyrénées Atlantiques</KeyLineCode>
+
+<Barcode Code="code66" Type="type66">Pyrénées Orientales</Barcode>
+
+<SortingCode Code="codeSortingCode" Type="typeSortingCode" />
+
+<AddressLatitude Code="codeAddressLatitude" Type="typeAddressLatitude">Latitude</AddressLatitude>
+
+<AddressLatitudeDirection Code="codeLatitudeDirection" Type="typeLatitudeDirection">LatitudeDirection</AddressLatitudeDirection>
+
+<AddressLongitude Code="codeLongitude" Type="typeLongitude">Longitude</AddressLongitude>
+
+<AddressLongitudeDirection Code="codeLongitudeDirection" Type="typeLongitudeDirection">LongitudeDirection</AddressLongitudeDirection>
+
+<SupplementaryPostalServiceData Code="codeSPS1" Type="typeSPS1">First supplementary postal service data</SupplementaryPostalServiceData>
+
+<SupplementaryPostalServiceData Code="codeSPS2" Type="typeSPS2">Second supplementary postal service data</SupplementaryPostalServiceData>
+
+
+
+</PostalServiceElements>
+
+<Address Code="addressCode" Type="addressType">Une adresse</Address>
+</AddressDetails>
+</xAL>

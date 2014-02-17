@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xAL xmlns="urn:oasis:names:tc:ciq:xsdschema:xAL:2.0">
+<AddressDetails>
+<Country>
+<Locality Type="countryLocality">
+<PostBox Type="localityPostBox">
+<PostBoxNumber Code="obligatoire">PBNcontent</PostBoxNumber>
+</PostBox>
+</Locality>
+</Country>
+</AddressDetails>
+</xAL>
+

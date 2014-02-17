@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- =======================================================================
+        Maven Project Configuration File
+
+        The Geotoolkit Project
+            http://www.geotoolkit.org/
+     ======================================================================= -->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                             http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.geotoolkit.pending</groupId>
+    <artifactId>modules</artifactId>
+    <version>4.x-SNAPSHOT</version>
+  </parent>
+
+
+  <!-- =========================================================== -->
+  <!--     Module Description                                      -->
+  <!-- =========================================================== -->
+  <artifactId>jaxb-xml-binding</artifactId>
+  <packaging>pom</packaging>
+  <name>Bindings</name>
+
+  <description>
+    Projects group for jaxb bindings.
+  </description>
+
+
+  <!-- =========================================================== -->
+  <!--     Developers and Contributors                             -->
+  <!-- =========================================================== -->
+  <developers>
+    <developer>
+      <name>Martin Desruisseaux</name>
+      <id>desruisseaux</id>
+      <email>desruisseaux@users.sourceforge.net</email>
+      <organization>Geomatys</organization>
+      <organizationUrl>http://www.geomatys.fr/</organizationUrl>
+      <timezone>+1</timezone>
+      <roles>
+        <role>Administrator</role>
+      </roles>
+    </developer>
+    <developer>
+      <name>Johann Sorel</name>
+      <id>eclesia</id>
+      <email>johann.sorel@geomatys.com</email>
+      <organization>Geomatys</organization>
+      <organizationUrl>http://www.geomatys.fr/</organizationUrl>
+      <timezone>+1</timezone>
+      <roles>
+        <role>Developer</role>
+      </roles>
+    </developer>
+  </developers>
+
+
+  <!-- =========================================================== -->
+  <!--     Dependencies to be inherited by all modules.            -->
+  <!-- =========================================================== -->
+  <dependencies>
+    <dependency>
+      <groupId>org.opengis</groupId>
+      <artifactId>geoapi-pending</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.sis.core</groupId>
+      <artifactId>sis-utility</artifactId>
+      <version>${sis.version}</version>
+    </dependency>
+  </dependencies>
+
+
+  <!-- =========================================================== -->
+  <!--     Modules included in the build                           -->
+  <!-- =========================================================== -->
+  <modules>
+    <module>geotk-xml-xsd</module>
+    <module>geotk-xml-feature-catalogue</module>
+    <module>geotk-xml-service</module>
+    <!--module>geotk-xml-metadata-imagery</module-->
+    <module>geotk-xml-gml</module>
+    <module>geotk-xml-citygml</module>
+    <module>geotk-xml-kml</module>
+    <module>geotk-xml-csw</module>
+    <module>geotk-xml-observation</module>
+    <module>geotk-xml-owc</module>
+    <module>geotk-xml-ows</module>
+    <module>geotk-xml-sensorML</module>
+    <module>geotk-xml-ogc</module>
+    <module>geotk-xml-ols</module>
+    <module>geotk-xml-se</module>
+    <module>geotk-xml-sld</module>
+    <module>geotk-xml-sos</module>
+    <module>geotk-xml-swe</module>
+    <module>geotk-xml-wcs</module>
+    <module>geotk-xml-wfs</module>
+    <module>geotk-xml-wmc</module>
+    <module>geotk-xml-wms</module>
+    <module>geotk-xml-wmts</module>
+    <module>geotk-xml-wps</module>
+    <module>geotk-xml-ebrim</module>
+    <module>geotk-xml-xacml</module>
+    <module>geotk-xml-skos</module>
+    <module>geotk-xml-mathml</module>
+    <module>geotk-xml-providers</module>
+  </modules>
+
+</project>

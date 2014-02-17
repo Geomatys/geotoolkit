@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE book [
+  <!ENTITY % book.entities SYSTEM "../../book.entities">
+  %book.entities;
+]>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0"
+         xmlns:xi    = "http://www.w3.org/2001/XInclude"
+         xmlns:xlink = "http://www.w3.org/1999/xlink"
+        id="client" xreflabel="client" lang="fr">
+          
+    <title>
+        Client
+    </title>
+    
+    <para>
+        GeotoolKit contient plus d'une dizaine de modules permettant de se connecter à différents services distants.
+    </para>
+    <para>
+        Chaque client s'appuie sur une classe implémentant 
+        <emphasis>Server</emphasis>. On trouvera dans cette classe :
+        <itemizedlist>
+            <listitem>Un object 
+                <emphasis>ClientSecurity</emphasis> : permettant de gérer l'authentification, les jetons ou le cryptage
+            </listitem>
+            <listitem>Une méthode 
+                <emphasis>getCapabilities</emphasis> : la majorité des services étant spécifiés par l'OGC, un objet 
+                <emphasis>capability</emphasis> est souvent mis en cache.
+            </listitem>
+            <listitem>Diverses méthodes 
+                <emphasis>create</emphasis> : pour la création de chaque type de requête 
+            </listitem>
+        </itemizedlist>
+    </para>
+    
+    <section>
+        <title>
+            Sécurité
+        </title>
+        <para>
+            Tout service peut être sécurisé ou crypté. L'objet responsable de cette tâche doit être une implémentation de ClientSecurity .
+        </para>
+        <para>
+            Actuellement, GeotoolKit contient trois façon de sécuriser les clients :
+            <itemizedlist>
+                <listitem>BasicAuthenticationSecurity : pour les connexions avec login et mot de passe.</listitem>
+                <listitem>RefererClientSecurity : permet de spécifier un referer lors des requêtes</listitem>
+                <listitem>TokenClientSecurity :  spécifique à l'IGN, permet de gérer les jetons</listitem>
+            </itemizedlist>
+        </para>
+        <para>
+            Les sécurités peuvent être combinées en utilisant :
+        </para>
+        <programlisting>
+            ClientSecurityStack.wrap(security1, security2, ...);
+        </programlisting>
+    </section>
+    
+    <section>
+        <title>Clients</title>
+        <para>
+            <simplelist>
+                <member>CSW</member>
+
+                <member>OSM</member>
+
+                <member>OSM-TMS</member>
+
+                <member>SOS</member>
+
+                <member>WCS</member>
+
+                <member>WFS</member>
+
+                <member>WMS</member>
+
+                <member>WMS-C</member>
+
+                <member>ncWMS</member>
+
+                <member>WMTS</member>
+
+                <member>WPS</member>
+
+                <member>IGN RM</member>
+
+                <member>Google Static Maps</member>            
+            </simplelist>
+        </para>
+    </section>
+    
+    <xi:include href="client/serverstore.xml"/>
+    
+    <xi:include href="client/csw.xml"/>
+    
+    <xi:include href="client/ignrm.xml"/>
+    
+    <xi:include href="client/osmtms.xml"/>
+    
+    <xi:include href="client/sos.xml"/>
+    
+    <xi:include href="client/wms.xml"/>
+    
+</section>

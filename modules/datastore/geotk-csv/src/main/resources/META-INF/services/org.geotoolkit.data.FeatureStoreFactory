@@ -1,0 +1,2 @@
+org.geotoolkit.data.csv.CSVFeatureStoreFactory
+org.geotoolkit.data.csv.CSVFolderFeatureStoreFactory

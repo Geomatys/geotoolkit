@@ -1,0 +1,402 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE book [
+  <!ENTITY % book.entities SYSTEM "../book.entities">
+  %book.entities;
+]>
+<chapter xmlns="http://docbook.org/ns/docbook" version="5.0"
+         xmlns:xi    = "http://www.w3.org/2001/XInclude"
+         xmlns:xlink = "http://www.w3.org/1999/xlink"
+        lang="fr">
+          
+    <title>
+        Données
+    </title>
+          
+    <para>
+        GeotoolKit implémente 
+        <link xlink:href="http://www.opengeospatial.org/standards/geoapi">
+            <acronym>la norme OGC </acronym>
+        </link> et 
+        <link xlink:href="http://www.geoapi.org/">
+            <acronym>GeoAPI 3</acronym>
+        </link>. 
+    </para>
+    
+    <para>
+        De ce fait, la manipulation des images et des données vecteurs se fait avec des modèles respectifs qui seront les mêmes quelle que soit la source de données utilisée. On parle alors de :
+    
+        <itemizedlist>
+            <listitem>
+                <emphasis>Coverage / Coveragestore </emphasis>pour les images/rasters
+            </listitem>
+            <listitem>
+                <emphasis>Feature / Datastore </emphasis>pour les données vecteurs et attributaires. 
+            </listitem>
+            <listitem>
+                <emphasis>Client / Server </emphasis>pour les connexions distantes 
+            </listitem>
+        </itemizedlist>
+    </para>
+    <para>
+        Tous les formats ne sont pas toujours normalisés ou n'entre pas exactement dans l'un ou l'autre modèle. En particulier l'usage des services distants qui peuvent être normalisés mais ne fournissent pas toujours un résultat sous forme de coverage ou de feature. On trouvera donc des servers qui peuvent implementer Datastore ou CoverageStore. GeotoolKit s'occupe de gérer le nécessaire pour communiquer avec ces services, fournissant l'authentification, l'envoi de requête et le traitement des réponses.
+
+        <itemizedlist>
+            <listitem>
+                Coverage : 
+                <xref linkend="coverage"/>
+            </listitem>
+            <listitem>
+                Feature et Datastore :
+                <xref linkend="vectoriel"/>
+            </listitem>
+            <listitem>
+                Client distant :
+                <xref linkend="client"/>
+            </listitem>
+        </itemizedlist>
+    </para>
+
+    <para>
+        Résumé des formats supportés. 
+    </para>
+    
+    <section>
+        <title>Coverage</title>
+        <table frame="all">
+            <title>Coverages : formats supportés</title>
+            <tgroup cols='3' align='center' colsep='1' rowsep='1'>
+                <thead>
+                    <row>
+                        <entry spanname="span1" align="center">Format</entry>
+                        <entry align="center">Lecture</entry>
+                        <entry>Ecriture</entry>
+                    </row>
+                </thead>
+                <tbody>
+                    <row>
+                        <entry>RAW</entry>
+                        <entry>OUI</entry>
+                        <entry>OUI</entry>
+                    </row>
+                    <row>
+                        <entry>ASCII-Grid</entry>
+                        <entry>OUI</entry>
+                        <entry>OUI</entry>
+                    </row>
+                    <row>
+                        <entry>Matrix</entry>
+                        <entry>OUI</entry>
+                        <entry>OUI</entry>
+                    </row>
+                    <row>
+                        <entry>BMP</entry>
+                        <entry>OUI</entry>
+                        <entry>OUI</entry>
+                    </row>
+                    <row>
+                        <entry>WBMP</entry>
+                        <entry>OUI</entry>
+                        <entry>OUI</entry>
+                    </row>
+                    <row>
+                        <entry>GIF</entry>
+                        <entry>OUI</entry>
+                        <entry>OUI</entry>
+                    </row>
+                    <row>
+                        <entry>JPEG</entry>
+                        <entry>OUI</entry>
+                        <entry>INSTABLE</entry>
+                    </row>
+                    <row>
+                        <entry>PNM</entry>
+                        <entry>OUI</entry>
+                        <entry>OUI</entry>
+                    </row>
+                    <row>
+                        <entry>PNG</entry>
+                        <entry>OUI</entry>
+                        <entry>OUI</entry>
+                    </row>
+                    <row>
+                        <entry>TIFF</entry>
+                        <entry>OUI</entry>
+                        <entry>OUI</entry>
+                    </row>
+                    <row>
+                        <entry>BILL</entry>
+                        <entry>OUI</entry>
+                        <entry>NON</entry>
+                    </row>
+                    <row>
+                        <entry>ECW</entry>
+                        <entry>NON</entry>
+                        <entry>NON</entry>
+                    </row>
+                    <row>
+                        <entry>MrSID</entry>
+                        <entry>NON</entry>
+                        <entry>NON</entry>
+                    </row>
+                    <row>
+                        <entry>JPEG2000</entry>
+                        <entry>INSTABLE</entry>
+                        <entry>INSTABLE</entry>
+                    </row>
+                    <row>
+                        <entry>WORLD-IMAGE</entry>
+                        <entry>OUI</entry>
+                        <entry>OUI</entry>
+                    </row>
+                    <row>
+                        <entry>GEOTIFF</entry>
+                        <entry>OUI</entry>
+                        <entry>OUI</entry>
+                    </row>
+                    <row>
+                        <entry>DIMAP(Spot)</entry>
+                        <entry>OUI</entry>
+                        <entry>NON</entry>
+                    </row>
+                    <row>
+                        <entry>NetCDF</entry>
+                        <entry>OUI</entry>
+                        <entry>INSTABLE</entry>
+                    </row>
+                    <row>
+                        <entry>Geotk-CoverageSQL</entry>
+                        <entry>OUI</entry>
+                        <entry>INSTABLE</entry>
+                    </row>
+                    <row>
+                        <entry>Geotk - PyramidXML</entry>
+                        <entry>OUI</entry>
+                        <entry>OUI</entry>
+                    </row>
+            
+                </tbody>
+            </tgroup>
+        </table>
+    </section>
+    
+    <section>
+        <title>Vecteur</title>
+        <table frame="all">
+            <title>Données vecteur : formats de fichier supportés</title>
+            <tgroup cols='3' align='center' colsep='1' rowsep='1'>
+                <thead>
+                    <row>
+                        <entry spanname="span1" align="center">Format</entry>
+                        <entry align="center">Lecture</entry>
+                        <entry>Ecriture</entry>
+                    </row>
+                </thead>
+                <tbody>
+                    <row>
+                        <entry>Shapefile 2D</entry>
+                        <entry>OUI</entry>
+                        <entry>OUI</entry>
+                    </row>
+                    <row>
+                        <entry>Shapefile 3D</entry>
+                        <entry>OUI</entry>
+                        <entry>OUI</entry>
+                    </row>
+                    <row>
+                        <entry>CSV</entry>
+                        <entry>OUI</entry>
+                        <entry>OUI</entry>
+                    </row>
+                    <row>
+                        <entry>GPX</entry>
+                        <entry>OUI</entry>
+                        <entry>OUI</entry>
+                    </row>
+                    <row>
+                        <entry>GML</entry>
+                        <entry>OUI</entry>
+                        <entry>OUI</entry>
+                    </row>
+                    <row>
+                        <entry>KML</entry>
+                        <entry>OUI</entry>
+                        <entry>OUI</entry>
+                    </row>
+                    <row>
+                        <entry>DBF</entry>
+                        <entry>OUI</entry>
+                        <entry>OUI</entry>
+                    </row>
+                    <row>
+                        <entry>OSM XML</entry>
+                        <entry>OUI</entry>
+                        <entry>OUI</entry>
+                    </row>
+                    <row>
+                        <entry>MIF/MID</entry>
+                        <entry>NON</entry>
+                        <entry>NON</entry>
+                    </row>
+                    <row>
+                        <entry>MapInfo TAB</entry>
+                        <entry>NON</entry>
+                        <entry>NON</entry>
+                    </row>
+                    <row>
+                        <entry>DXF</entry>
+                        <entry>NON</entry>
+                        <entry>NON</entry>
+                    </row>
+                    <row>
+                        <entry>DWG</entry>
+                        <entry>NON</entry>
+                        <entry>NON</entry>
+                    </row>
+                    <row>
+                        <entry>OSM binary</entry>
+                        <entry>NON</entry>
+                        <entry>NON</entry>
+                    </row>
+            
+                </tbody>
+            </tgroup>
+        </table>
+            
+            
+        <table frame="all">
+            
+            <title>Données vecteur : base de données supportées</title>
+            <tgroup cols='3' align='center' colsep='1' rowsep='1'>
+                <thead>
+                    <row>
+                        <entry spanname="span1" align="center">Format</entry>
+                        <entry align="center">Lecture</entry>
+                        <entry>Ecriture</entry>
+                    </row>
+                </thead>
+                <tbody>
+                    <row>
+                        <entry>PostGIS</entry>
+                        <entry>OUI</entry>
+                        <entry>OUI</entry>
+                    </row>
+            
+                    <row>
+                        <entry>Oracle-spatialite</entry>
+                        <entry>NON</entry>
+                        <entry>NON</entry>
+                    </row>
+            
+                    <row>
+                        <entry>ArcSDE</entry>
+                        <entry>NON</entry>
+                        <entry>NON</entry>
+                    </row>
+            
+                </tbody>
+            </tgroup>
+        </table>
+            
+    </section>
+    
+    <section>
+        <title>Client</title>
+        <table frame="all">
+            <title>Services supportés</title>            
+            <tgroup cols='2' align='center' colsep='1' rowsep='1'>
+                <thead>
+                    <row>
+                        <entry spanname="span1" align="center">Service</entry>
+                        <entry align="center">Lecture</entry>
+                    </row>
+                </thead>
+                <tbody>
+                    <row>
+                        <entry>OGC - WMS : Web Map Service</entry>
+                        <entry>OUI</entry>
+                    </row>
+                    <row>
+                        <entry>WMS-C : Web Map Server - Cached</entry>
+                        <entry>OUI</entry>
+                    </row>
+                    <row>
+                        <entry>NcWMS : NetCDF Web Map Server</entry>
+                        <entry>OUI</entry>
+                    </row>
+                    <row>
+                        <entry>OGC - WMTS : Web Map Tile Service</entry>
+                        <entry>OUI</entry>
+                    </row>
+                    <row>
+                        <entry>OGC - WFS : Web Feature Service</entry>
+                        <entry>OUI</entry>
+                    </row>
+                    <row>
+                        <entry>OGC - WCS : Web Coverage Service</entry>
+                        <entry>OUI</entry>
+                    </row>
+                    <row>
+                        <entry>OGC - WPS : Web Processing Service</entry>
+                        <entry>OUI</entry>
+                    </row>
+                    <row>
+                        <entry>OGC - WCPS : Web Coverage Processing Service</entry>
+                        <entry>NON</entry>
+                    </row>
+                    <row>
+                        <entry>OGC - CSW : Catalog Service Web</entry>
+                        <entry>OUI</entry>
+                    </row>
+                    <row>
+                        <entry>OGC - CTS : Coordinate Transformation Service</entry>
+                        <entry>NON</entry>
+                    </row>
+                    <row>
+                        <entry>OGC - OLS : Open Location Service</entry>
+                        <entry>NON</entry>
+                    </row>
+                    <row>
+                        <entry>OGC - SOS : Sensor Observation Service</entry>
+                        <entry>OUI</entry>
+                    </row>
+                    <row>
+                        <entry>OGC - SPS : Sensor Planning Service</entry>
+                        <entry>NON</entry>
+                    </row>
+                    <row>
+                        <entry>OGC - TJS : Table Join Service</entry>
+                        <entry>NON</entry>
+                    </row>
+                    <row>
+                        <entry>OSM - TMS : Tile Manager Service</entry>
+                        <entry>OUI</entry>
+                    </row>
+                    <row>
+                        <entry>OSM - Data Service</entry>
+                        <entry>OUI</entry>
+                    </row>
+                    <row>
+                        <entry>Google - Static Maps</entry>
+                        <entry>OUI</entry>
+                    </row>
+                    <row>
+                        <entry>ArcGIS - ArcIMS</entry>
+                        <entry>NON</entry>
+                    </row>
+                    <row>
+                        <entry>IGN - Right Management</entry>
+                        <entry>OUI</entry>
+                    </row>
+                </tbody>
+            </tgroup>
+        </table>
+    </section>     
+     
+    <xi:include href="data/vectoriel.xml"/>
+  
+    <xi:include href="data/coverage.xml"/>
+  
+    <xi:include href="data/client.xml"/>
+        
+</chapter>

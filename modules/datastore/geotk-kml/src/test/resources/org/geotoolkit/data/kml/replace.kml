@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://earth.google.com/kml/2.1">
+  <NetworkLinkControl>
+   <Update>
+    <targetHref>http://chezmoi.com/tests.kml</targetHref>
+    <Replace>
+      <Placemark>
+        <name>Replace placemark</name>
+      </Placemark>
+    </Replace>
+    <Replace>
+      <GroundOverlay>
+        <name>Replace overlay</name>
+      </GroundOverlay>
+    </Replace>
+  </Update>
+ </NetworkLinkControl>
+</kml>

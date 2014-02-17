@@ -1,0 +1,3 @@
+org.geotoolkit.process.converters.StringToCRSConverter
+org.geotoolkit.process.converters.StringToFilterConverter
+org.geotoolkit.process.converters.StringToUnitConverter

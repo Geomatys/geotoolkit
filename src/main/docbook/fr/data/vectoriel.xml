@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE book [
+  <!ENTITY % book.entities SYSTEM "../../book.entities">
+  %book.entities;
+]>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0"
+         xmlns:xi    = "http://www.w3.org/2001/XInclude"
+         xmlns:xlink = "http://www.w3.org/1999/xlink"
+        id="vectoriel" xreflabel="vectoriel" lang="fr">
+          
+    <title>
+        Vectoriel
+    </title>
+    
+    <section>
+        <title>
+            Structure et manipulation
+        </title>
+        
+        <para>
+            Lorsque l'on parle de données vectorielles, on sous-entend l'ensemble comprenant :
+            <itemizedlist>
+                <listitem>
+                    Les géométries (geometries)
+                </listitem>
+                <listitem>
+                    Les attributs (attributes)
+                </listitem>
+            </itemizedlist>
+            En ce sens, les géométries ne sont qu'un type d'attribut avec la particularité de définir une forme dans une projection cartographique.
+        </para>
+        
+        <para>
+            <emphasis>
+                Utilisation des géométries
+            </emphasis>
+            <itemizedlist>
+                <listitem>
+                    Consulter la page :
+                    <xref linkend="geometry-jts" />
+                </listitem>
+            </itemizedlist>
+            <emphasis>
+                Définition d'un modèle de données
+            </emphasis>
+            <itemizedlist>
+                <listitem>
+                    Consulter la page : 
+                    <xref linkend="featuretype" />
+                </listitem>
+            </itemizedlist>
+            <emphasis>
+                Création et manipulation des enregistrements
+            </emphasis>
+            <itemizedlist>
+                <listitem>
+                    Consulter la page : 
+                    <xref linkend="feature" />
+                </listitem>
+            </itemizedlist>
+            <emphasis>
+                Accéder et modifier les données
+            </emphasis>
+            <itemizedlist>
+                <listitem>
+                    Consulter la page :  
+                    <xref linkend="datastore" />
+                </listitem>
+            </itemizedlist>
+        </para>
+    
+    </section>
+            
+    <section>
+        <title>
+            Filtres et expressions
+        </title>
+        <para>
+            Afin de requêter plus efficacement les données, on utilise des filtres et des expressions.
+
+            Consulter la page : 
+            <xref linkend="filter-expression" />
+            <emphasis>
+                Les filtres peuvent aussi être exprimés textuellement :
+            </emphasis>
+            Consulter la page : 
+            <xref linkend="filter-cql" />
+        </para>
+    </section>
+            
+    <section>
+        <title>
+            Formats
+        </title>
+                
+        <para>
+            <simplelist type='vert'>
+                <member>
+                    <xref linkend="shapefile" />
+                </member>
+                <member>
+                    <xref linkend="gpx" />
+                </member>
+                <member>
+                    CSV
+                </member>
+                <member>
+                    DBF
+                </member>
+                <member>
+                    KML
+                </member>
+                <member>
+                    GML
+                </member>
+                <member>
+                    CityGML
+                </member>
+                <member>
+                    WFS
+                </member>
+                <member>
+                    OSM
+                </member>
+                <member>
+                    <xref linkend="postgis" />
+                </member>                        
+            </simplelist>
+        </para>
+    </section>
+    
+    <xi:include href="vectoriel/datastore.xml"/>
+    
+    <xi:include href="vectoriel/geometry-jts.xml"/>
+    
+    <xi:include href="vectoriel/featuretype.xml"/>
+    
+    <xi:include href="vectoriel/feature.xml"/>
+    
+    <xi:include href="vectoriel/filter-expression.xml"/>
+    
+    <xi:include href="vectoriel/filter-cql.xml"/>
+    
+    <xi:include href="vectoriel/formats.xml"/>
+</section>

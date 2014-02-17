@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+<PhotoOverlay>
+<Camera>
+<longitude>4.0</longitude>
+<latitude>43.0</latitude>
+<altitude>625.0</altitude>
+<heading>2.0</heading>
+<tilt>1.0</tilt>
+<roll>2.0</roll>
+<altitudeMode>relativeToGround</altitudeMode>
+</Camera>
+</PhotoOverlay>
+</kml>

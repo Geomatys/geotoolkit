@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gml:Person xmlns:gml="http://www.opengis.net/gml" gml:id="id-0">
+    <gml:insuranceNumber>345678345</gml:insuranceNumber>
+    <gml:lastName>Smith</gml:lastName>
+    <gml:firstName>John</gml:firstName>
+    <gml:age>35</gml:age>
+    <gml:sex>male</gml:sex>
+    <gml:location>
+        <gml:Point srsName="urn:ogc:def:crs:epsg:7.9:4326" xmlns:wfs="http://www.opengis.net/wfs">
+            <gml:pos>10.0 10.0</gml:pos>
+        </gml:Point>
+    </gml:location>
+    <gml:mailAddress>
+        <gml:Address>
+            <gml:streetName>Main</gml:streetName>
+            <gml:streetNumber>10</gml:streetNumber>
+            <gml:city>SomeTown</gml:city>
+            <gml:province>Ontario</gml:province>
+            <gml:postalCode>M1R1K9</gml:postalCode>
+            <gml:country>Canada</gml:country>
+        </gml:Address>
+    </gml:mailAddress>
+    <gml:phone>4161234567</gml:phone>
+    <gml:phone>4168901234</gml:phone>
+</gml:Person>
+

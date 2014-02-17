@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ogc:Filter xmlns:ogc="http://www.opengis.net/ogc" xmlns:gml="http://www.opengis.net/gml">
+    <ogc:Or>
+        <ogc:PropertyIsEqualTo>
+            <ogc:PropertyName>sf:str4Property</ogc:PropertyName>
+            <ogc:Literal>abc3</ogc:Literal>
+        </ogc:PropertyIsEqualTo>
+        <ogc:BBOX>
+            <ogc:PropertyName>sf:attribut.Géométrie</ogc:PropertyName>
+            <gml:Envelope srsName="urn:x-ogc:def:crs:EPSG:4326">
+                <gml:lowerCorner>34.0 15.0</gml:lowerCorner>
+                <gml:upperCorner>40.0 19.0</gml:upperCorner>
+            </gml:Envelope>
+        </ogc:BBOX>
+    </ogc:Or>
+</ogc:Filter>

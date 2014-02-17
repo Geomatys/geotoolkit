@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE book [
+  <!ENTITY % book.entities SYSTEM "../../../book.entities">
+  %book.entities;
+]>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0"
+         xmlns:xlink = "http://www.w3.org/1999/xlink"
+	 lang="en">
+          
+    <title>
+        Service-portrayal
+    </title>
+    
+    <example>
+        <title>Generating images</title>
+        <link xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/rendering/PortrayalDemo.java">
+            <acronym>geotoolkit-pending/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/rendering/PortrayalDemo.java</acronym>
+        </link>        
+    </example>
+        
+    <para>
+        For this task, we use one class : 
+        <emphasis>DefaultPortrayalService</emphasis> which contains two méthods :
+        <itemizedlist>
+            <listitem>
+                <emphasis>portray</emphasis> : will generate a 
+                <emphasis>BufferedImage</emphasis> or will write image inside the given flow/file.
+            </listitem>
+            <listitem>
+                <emphasis>visit</emphasis> : will search elements which touch requested areava
+            </listitem>
+        </itemizedlist>
+    </para>
+    <para>
+        Definition that we will draw and how it will do is splitting between 4 groups :
+        <itemizedlist>
+            <listitem>
+                <emphasis>CanvasDef</emphasis> : define size of drawing box and color background.
+            </listitem>
+            <listitem>
+                <emphasis>SceneDef</emphasis> : define MapContext and element of the scene we will draw.
+            </listitem>
+            <listitem>
+                <emphasis>ViewDef</emphasis> : define geographical area we will draw and an azimuth (rotation).
+            </listitem>
+            <listitem>
+                <emphasis>OutputDef</emphasis> : define output flow (flow, files, uri,...).
+            </listitem>
+        </itemizedlist>
+    </para>
+    
+    <example>
+        <title>Create and show an image-map </title>
+        <programlisting>
+            
+                //generate a map context
+                final MapContext context = createContext();
+ 
+                //prepare the rendering context
+                final CanvasDef canvasdef = new CanvasDef(new Dimension(800, 600), Color.WHITE);
+                final SceneDef scenedef = new SceneDef(context);
+                final ViewDef viewdef = new ViewDef(context.getBounds());
+ 
+                //generate the image
+                final BufferedImage img = DefaultPortrayalService.portray(canvasdef, scenedef, viewdef);
+ 
+                //show the image
+                final JFrame frm = new JFrame();
+                frm.setContentPane(new JLabel(new ImageIcon(img)));
+                frm.pack();
+                frm.setLocationRelativeTo(null);
+                frm.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                frm.setVisible(true);
+            
+        </programlisting>
+    </example>
+</section>

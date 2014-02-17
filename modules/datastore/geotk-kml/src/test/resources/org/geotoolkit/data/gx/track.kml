@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2"
+ xmlns:gx="http://www.google.com/kml/ext/2.2">
+<Folder>
+  <Placemark>
+    <gx:Track>
+      <when>2010-05-28T02:02:09Z</when>
+      <when>2010-05-28T02:02:35Z</when>
+      <gx:coord>-122.207881 37.371915 156.0</gx:coord>
+      <gx:coord>-122.205712 37.373288 152.0</gx:coord>
+      <gx:angles>45.54676 66.2342 77.0</gx:angles>
+      <gx:angles>46.54676 67.2342 78.0</gx:angles>
+    </gx:Track>
+  </Placemark>
+</Folder>
+</kml>

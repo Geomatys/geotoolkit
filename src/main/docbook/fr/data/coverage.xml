@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE book [
+  <!ENTITY % book.entities SYSTEM "../../book.entities">
+  %book.entities;
+]>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0"
+         xmlns:xi    = "http://www.w3.org/2001/XInclude"
+         xmlns:xlink = "http://www.w3.org/1999/xlink" id="coverage" xreflabel="coverage" lang="fr">
+          
+    <title>
+        Coverage
+    </title>
+    
+    <para>
+        GeotoolKit traite les images en s'appuyant sur l'api standard du java.
+
+        L'image décrit le modèle de stockage ainsi que le modèle de couleur.
+
+        Le coverage est une surcouche qui vient ajouter l'aspect georéférencement et métadonnée.
+    </para>
+    
+    <section>
+        <title>Manipulation par lots</title>
+        
+        <para>
+            Il existe actuallement un seul modèle qui permet de manipuler plusieurs coverages à la fois. 
+            Il s'agit du modèle Coverage-SQL (aussi appelé PostGrid). Toutefois ce modèle ne se compose 
+            pas d'interface et fait le lien avec un mode de stockage qui lui est propre. Afin de rendre 
+            le modèle plus généraliste et permettre sa réutilisation par d'autre mode de stockage une 
+            nouvelle interface CoverageStore est en court d'élaboration dans Geotoolkit-pending. Ce nouveau
+            modèle est expliqué plus en détail <xref linkend="coverageReader"/>.
+        </para>
+    </section>
+    
+    <section>
+        <title>
+            Manipulation par Reader/Writer
+        </title>
+        <para>
+            La manipulation d'un coverage ce fait en utilisant :
+            <itemizedlist>
+                <listitem>CoverageReader : pour la lecture </listitem>
+                <listitem>CoverageWriter : pour l'ecriture </listitem>
+            </itemizedlist>
+        </para>
+    </section>
+    
+    <xi:include href="coverage/coveragestore.xml"/>    
+    <xi:include href="coverage/coveragereader.xml"/>
+    
+</section>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE book [
+  <!ENTITY % book.entities SYSTEM "../book.entities">
+  %book.entities;
+]>
+<chapter xmlns="http://docbook.org/ns/docbook" version="5.0"
+         xmlns:xi    = "http://www.w3.org/2001/XInclude"
+         xmlns:xlink = "http://www.w3.org/1999/xlink">
+          
+    <title>
+        Map
+    </title>
+    
+    <xi:include href="map/mapcontext.xml"/>
+    
+    <xi:include href="map/symbology.xml"/>
+    
+    <xi:include href="map/engine.xml"/>
+    
+    <xi:include href="map/2dengine.xml"/>
+    
+</chapter>

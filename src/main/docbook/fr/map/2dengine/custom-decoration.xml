@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE book [
+  <!ENTITY % book.entities SYSTEM "../../../book.entities">
+  %book.entities;
+]>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0"
+         xmlns:xlink = "http://www.w3.org/1999/xlink">
+          
+    <title>
+        Custom decoration
+    </title>
+    
+    <example>
+        <title>Object graphic sur mesure</title>
+        <link xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/rendering/customgraphicbuilder/GraphicBuilderDemo.java">
+            <acronym>geotoolkit-pending/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/rendering/customgraphicbuilder/GraphicBuilderDemo.java</acronym>
+        </link>        
+    </example>
+    
+    <section>
+        <title>Quand utiliser une décoration ?</title>
+        Les décorations ne sont disponibles qu'avec le composant de carte swing : 
+        <emphasis>JMap2D</emphasis>. Une décoration n'est rien de plus qu'un composant swing placé par dessus la carte.
+
+        Elles sont généralement utilisées pour afficher des éléments de contrôle ou d'informations comme une boussole, un pop-up ou encore pour l'édition de géométries. 
+        
+        <figure> 
+            <title>
+                Exemples de décorations :
+            </title>
+            <mediaobject>
+                <imageobject>
+                    <imagedata fileref="../images/boussoleneo.png" format="png"></imagedata>
+                </imageobject>
+                
+                <imageobject>
+                    <imagedata fileref="../images/scalebar.png" format="png"></imagedata>
+                </imageobject>
+            </mediaobject>
+        </figure>
+    </section>
+    
+    <section>
+        <title>Comment en créer ?</title>
+        <para>
+        Il est possible d'implémenter l'interface 
+        <emphasis>MapDecoration</emphasis> ou alors d'étendre 
+        <emphasis>AbstractMapDecoration</emphasis> qui s'occupera de gérer la plupart des méthodes.</para>
+    </section>
+    
+    <section>
+        <title>Faire un rendu comme si on était sur la carte</title>
+        <para>   
+            Une possibilité intéressante des décorations est de dessiner comme s'il s'agissait du canvas de la carte et ainsi de récupérer toute les transformations mathématiques.
+            Ceci est possible car les composants swing et le moteur de rendue GO2 utilise tous les deux <emphasis>Java2D</emphasis>.
+        </para>
+        <para>
+            Dans les turoriels GraphicObject et GraphicBuilder, l'objet permettant de dessiner est le <emphasis>RenderingContext2D</emphasis>. Cet objet peut être créer à tout moment et donner au canvas pour qu'il le configure. 
+        </para>
+        <para>
+            En supposant que vous avez surchargé la méthode <emphasis>paintComponant</emphasis> de votre décoration :
+        </para>
+            <programlisting>
+                    @Override
+                    protected void paintComponent(Graphics g) {
+                    super.paintComponent(g);
+ 
+                    final Graphics2D g2d = (Graphics2D) g;
+ 
+                    final DefaultRenderingContext2D context = new DefaultRenderingContext2D(map.getCanvas());
+                    map.getCanvas().prepareContext(context, g2d, g.getClip());
+ 
+                    context.switchToObjectiveCRS();
+                    // and paint like in a graphic object
+                    }
+            </programlisting>
+        </section>
+        
+        </section>
