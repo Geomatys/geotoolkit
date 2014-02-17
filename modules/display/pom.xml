@@ -84,7 +84,6 @@
            Modules included in the build
        =========================================================== -->
   <modules>
-    <module>geotk-display</module>
     <module>geotk-widgets-swing</module>
     <module>geotk-wizards-swing</module>
     <module>geotk-style</module>

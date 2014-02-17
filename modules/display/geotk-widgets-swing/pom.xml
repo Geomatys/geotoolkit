@@ -97,11 +97,6 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.geotoolkit</groupId>
-      <artifactId>geotk-display</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
       <groupId>org.swinglabs</groupId>
       <artifactId>swingx</artifactId>
     </dependency>
@@ -197,14 +192,6 @@
     </dependency>
     <dependency>
       <groupId>org.swinglabs</groupId>
-      <artifactId>swingx</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.swinglabs</groupId>
-      <artifactId>swing-worker</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.swinglabs</groupId>
       <artifactId>jxlayer</artifactId>
     </dependency>
     <dependency>
@@ -214,10 +201,6 @@
     <dependency>
       <groupId>org.netbeans.api</groupId>
       <artifactId>org-netbeans-swing-outline</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.sun</groupId>
-      <artifactId>jlfgr</artifactId>
     </dependency>
     <dependency>
       <groupId>org.netbeans.api</groupId>
