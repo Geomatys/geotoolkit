@@ -7,41 +7,18 @@ The Geotoolkit.org library
 
   Geotoolkit.org (abridged <Geotk>) is a free software, Java language library for developing
   geospatial applications. The library can be used for desktop or server applications.
-  Geotk is the reference implementation of {{{http://www.geoapi.org}GeoAPI 3.0}} interfaces.
 
-  Geotk provides data structures for geographic data and associated metadata along with methods
-  to manipulate those data structures. The library rests on a set of utility classes which include a
-  framework for factory classes. The Geotk metadata
-  module forms the base of the library and enables the creation of metadata objects which comply
-  with the ISO\ 19115 metadata model and which can be read from or written to ISO\ 19139 compliant
-  XML documents. The Geotk referencing module enables the construction of geodetic data
-  structures for geospatial referencing based on the ISO\ 19111 model such as axis, projection and
-  coordinate reference system definitions, along with the associated operations which enable the
-  mathematical conversion of coordinates between different systems of reference. The Geotk
-  coverage module applies the Java Advanced Imaging library to the geospatial realm by providing
-  georeferencing wrappers to the JAI data model. The Geotk coverage I/O module provides a common
-  approach to the reading and writing of grid coverages applicable to simple imagery as to many
-  dimensional data structures.
+  Geotk is built on top of {{{http://sis.apache.org}Apache SIS}} and is used as a laboratory for the later.
+  The Geotk modules will be reviewed, refactored, and - if accepted - integrated into the core Apache SIS.
+  These modules currently provide the experimental rendering module, a feature model, a coverage model,
+  and the symbology extension modules.
+
+  The Geotk metadata module has already migrated to Apache SIS.
+  The Geotk referencing module is in process of being migrated to Apache SIS.
 
   The Geotk project plans to extend the library both by expanding the current modules and
   providing more modules for the library. The referencing module will be extended to handle new
   projections. The coverage module will be extended by formalizing an API for image operations.
-  The modules which are currently hosted in
-  the separate, experimental repository <<<geotoolkit-pending>>> will be
-  reviewed, refactored, and integrated into the core repository. These modules currently provide the
-  experimental rendering module, the feature model from the GeoTools\ 2 project, and the symbology
-  extension modules.
-
-
-* GeoAPI 3.0 branch
-
-  The Geotoolkit.org project maintains a branch of the {{{./modules/metadata/index.html}metadata}}
-  and {{{./modules/referencing/index.html}referencing}} modules implementing the
-  {{{http://www.geoapi.org/3.0/index.html}GeoAPI 3.0.0}} interfaces as published by OGC in their
-  {{{http://www.opengeospatial.org/standards/geoapi}GeoAPI specification}}. This branch is deployed
-  on the {{{http://search.maven.org/#search|ga|1|Geotoolkit}Maven Central repository}}. Maven
-  projects can use this branch by appending <<<-geoapi-3.0>>> to the Geotk version number in
-  their dependencies. See the {{{./branches.html}branches page}} for more information.
 
 
 * Apache SIS and Geotk 3.<x>/4.<x> series
@@ -59,9 +36,6 @@ The Geotoolkit.org library
   The Geotk 3.<x> series still have no dependency to SIS, and their classes are not deprecated.
   However we expect that most future developments will happen in the Apache SIS project together
   with the Geotk 4.<x> series, and the Geotk 3.<x> series may receive only occasional bug fixes.
-
-  Furthermore, the <<<geotoolkit>>> and <<<geotoolkit-pending>>> repositories will be merged in a
-  single project in the 4.<x> series.
 
 
 * Latest releases
@@ -136,14 +110,3 @@ mvn install
 
    The {{{./develop.html}Developing Geotoolkit.org}} page explains the basics of how to write code which
    is coherently integrated into the Geotk system.
-
-
-* The Geotoolkit.org project
-
-  The Geotk project has not yet formalized its system of
-  collaboration nor decided on any particular style of project management. However, the project has
-  been conceived to maximize the flexibility of all participants while ensuring the project can
-  maintain high quality standards and evolve systematically with improvements in the Java language
-  and with new technical visions of its contributors.
-
-  The {{{./project.html}Geotoolkit.org Project}} page provides more information on the Geotk project.
