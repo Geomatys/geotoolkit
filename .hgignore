@@ -2,18 +2,31 @@
 # works better than glob with NetBeans.
 syntax: regexp
 
-\.svn$
-\.git$
 \.project$
 \.classpath$
 \.settings$
-\.idea
-\.iml$
 \.DS_Store$
-target$
+\.git$
+\.tmp$
 ^tmp$
-derby.log$
+\.log$
+\.orig$
+
+# old svn files
+\.svn$
+
+# Maven files
+target$
+
+# Netbeans files
+nbactions.xml$
 nbproject$
+
+# Intellij files
+\.iml$
+\.ipr$
+\.iws$
+\.idea$
 
 # Relatively big images not to be commited (for now)
 ^modules/display/geotk-wizards-swing/src/site/resources/screenshots$
