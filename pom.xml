@@ -9,7 +9,6 @@
 
           - package         Also package source code.
           - sign-artifacts  Apply GPG signature on the JAR files.
-          - javadoc-all     Includes the internal classes in the javadoc.
      ======================================================================= -->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -36,12 +35,11 @@
   <description>
     Geotoolkit.org (abridged Geotk) is a free software, Java language library for developing
     geospatial applications. The library can be used for desktop or server applications.
+    The library is built on top of Apache SIS, and is used as a laboratory for the later:
+    some features are first developed in Geotk, then the most stable parts are submitted
+    to Apache SIS.
   </description>
 
-  <!-- TODO: the information below is used by Maven for generating the copyright
-       sentence at the bottom of every page, so we should probably put OSGEO if
-       the Geotk project get incubated. Maybe the year should be 2001, which is
-       the beginning of the legacy SeaGIS project on SourceForge. -->
   <organization>
     <name>Geotoolkit.org</name>
     <url>http://www.geotoolkit.org/</url>
@@ -51,7 +49,6 @@
   <licenses>
     <license>
       <name>Lesser General Public License (LGPL)</name>
-<!--  <url>http://www.gnu.org/copyleft/lesser.txt</url> -->
       <url>http://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt</url>
       <distribution>repo</distribution>
     </license>
@@ -94,6 +91,18 @@
        =========================================================== -->
   <developers>
     <developer>
+      <name>Johann Sorel</name>
+      <id>eclesia</id>
+      <email>johann.sorel@geomatys.com</email>
+      <organization>Geomatys</organization>
+      <organizationUrl>http://www.geomatys.fr/</organizationUrl>
+      <timezone>+1</timezone>
+      <roles>
+        <role>Administrator</role>
+        <role>Developer</role>
+      </roles>
+    </developer>
+    <developer>
       <name>Martin Desruisseaux</name>
       <id>desruisseaux</id>
       <email>martin.desruisseaux@geomatys.fr</email>
@@ -102,6 +111,7 @@
       <timezone>+1</timezone>
       <roles>
         <role>Administrator</role>
+        <role>Developer</role>
       </roles>
     </developer>
   </developers>
@@ -152,24 +162,14 @@
         </plugins>
       </build>
     </profile>
-    <profile>
-      <id>javadoc-all</id>
-      <properties>
-        <javadoc.exclude>com</javadoc.exclude> <!-- Clears the exclusion list, except the com packages. -->
-      </properties>
-    </profile>
   </profiles>
 
 
 
   <!-- ===========================================================
-           Global properties. Some of them are modified by the
-           above profiles.
+           Global properties.
        =========================================================== -->
   <properties>
-    <javadoc.exclude>
-      org.geotoolkit.build:org.geotoolkit.test:org.geotoolkit.demo:org.geotoolkit.maven:org.geotoolkit.openoffice:org.geotoolkit.internal:org.geotoolkit.resources:org.geotoolkit.legacy:org.geotoolkit.metadata.fra:org.opengis:com
-    </javadoc.exclude>
     <geoapi.version>3.1-SNAPSHOT</geoapi.version>
     <sis.version>0.4-jdk7-SNAPSHOT</sis.version>
     <derby.version>10.8.2.2</derby.version> <!-- If updated, need to search occurrences in APT files. -->
@@ -230,16 +230,83 @@
         <version>2.0.235</version>
       </dependency>
 
-      <!-- Libraries (language, XML, network) -->
+      <!-- Geometries -->
+      <dependency>
+        <groupId>com.vividsolutions</groupId>
+        <artifactId>jts</artifactId>
+        <version>1.13</version>
+        <exclusions>
+          <exclusion>
+            <groupId>xerces</groupId>
+            <artifactId>xercesImpl</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+
+      <!-- Miscellaneous utilities -->
       <dependency>
         <groupId>net.jcip</groupId>
         <artifactId>jcip-annotations</artifactId>
         <version>1.0</version>
       </dependency>
       <dependency>
+        <groupId>org.quartz-scheduler</groupId>
+        <artifactId>quartz</artifactId>
+        <version>2.0.1</version>
+      </dependency>
+      <dependency>
+        <groupId>commons-collections</groupId> <!-- @todo - used only in Jasper exclusion. Should we omit? -->
+        <artifactId>commons-collections</artifactId>
+        <version>3.2.1</version>
+      </dependency>
+      <dependency>
+        <groupId>commons-beanutils</groupId> <!-- @todo see excludes in sub-modules. -->
+        <artifactId>commons-beanutils</artifactId>
+        <version>1.8.3</version>
+      </dependency>
+      <dependency>
+          <groupId>io.netty</groupId>
+          <artifactId>netty</artifactId>
+          <version>3.3.1.Final</version>
+      </dependency>
+
+      <!-- XML -->
+      <dependency>
+        <groupId>xml-apis</groupId> <!-- @deprecated - this Jasper's dependency conflicts with JDK classes. -->
+        <artifactId>xml-apis</artifactId>
+        <version>1.3.04</version>
+      </dependency>
+      <dependency>
         <groupId>org.jdom</groupId>
         <artifactId>jdom</artifactId>
         <version>1.1.3</version>
+      </dependency>
+      <dependency>
+        <groupId>xerces</groupId>  <!-- @todo - used only in JTS exclusion. Should we omit? -->
+        <artifactId>xercesImpl</artifactId>
+        <version>2.7.1</version>
+      </dependency>
+      <dependency>
+        <groupId>org.codehaus.woodstox</groupId>
+        <artifactId>woodstox-core-lgpl</artifactId>
+        <version>4.1.2</version>
+      </dependency>
+      <dependency>
+        <groupId>org.codehaus.woodstox</groupId>
+        <artifactId>wstx-lgpl</artifactId>
+        <version>4.0.6</version> <!-- @todo - mismatched dependency version. -->
+      </dependency>
+      <dependency>
+        <groupId>jaxen</groupId>
+        <artifactId>jaxen-limited</artifactId> <!-- Jaxen limited for xpath support -->
+        <version>1.1.2</version>
+      </dependency>
+
+      <!-- Web -->
+      <dependency>
+        <groupId>net.iharder</groupId> <!-- This dependency will be removed with JDK8. -->
+        <artifactId>base64</artifactId>
+        <version>2.3.8</version>
       </dependency>
       <dependency>
         <groupId>javax.servlet</groupId>
@@ -250,7 +317,8 @@
         <groupId>commons-httpclient</groupId>
         <artifactId>commons-httpclient</artifactId>
         <version>3.1</version>
-        <!-- Transitive dependencies: commons-codec 1.2 and commons-logging 1.0.4 -->
+        <!-- Transitive dependencies: commons-codec 1.2 and commons-logging 1.0.4.
+             Those two dependencies are overwritten with more recent versions in this pom.xml. -->
       </dependency>
       <dependency>
         <groupId>commons-codec</groupId>
@@ -331,13 +399,28 @@
         <version>9.1-901-1.jdbc4</version> <!-- Note that setenv.sh needs to declare the same version number. -->
       </dependency>
       <dependency>
+        <groupId>org.postgis</groupId>
+        <artifactId>postgis-jdbc</artifactId>
+        <version>1.5.1</version>
+      </dependency>
+      <dependency>
+        <groupId>mysql</groupId>
+        <artifactId>mysql-connector-java</artifactId>
+        <version>5.1.16</version>
+      </dependency>
+      <dependency>
+        <groupId>commons-dbcp</groupId>
+        <artifactId>commons-dbcp</artifactId>
+        <version>1.4</version>
+      </dependency>
+      <dependency>
         <groupId>javax.mail</groupId>
         <artifactId>mail</artifactId>
         <version>1.4.5</version>
         <scope>provided</scope> <!-- Already included in JEE -->
       </dependency>
 
-      <!-- GUI -->
+      <!-- GUI and application platform -->
       <dependency>
         <groupId>org.swinglabs</groupId>
         <artifactId>swingx</artifactId>
@@ -349,15 +432,95 @@
         <version>1.1</version>
       </dependency>
       <dependency>
+        <groupId>org.swinglabs</groupId>
+        <artifactId>jxlayer</artifactId>
+        <version>3.0.4</version>
+      </dependency>
+      <dependency>
         <groupId>org.netbeans</groupId>
         <artifactId>wizard</artifactId>
         <version>0.998.1</version>
+      </dependency>
+      <dependency>
+        <groupId>org.netbeans.api</groupId>
+        <artifactId>org-netbeans-swing-outline</artifactId>
+        <version>RELEASE73</version>
+      </dependency>
+      <dependency>
+        <groupId>org.netbeans.api</groupId>
+        <artifactId>org-openide-awt</artifactId>
+        <version>RELEASE73</version>
+      </dependency>
+      <dependency>
+        <groupId>org.netbeans.api</groupId>
+        <artifactId>org-netbeans-api-visual</artifactId>
+        <version>RELEASE73</version>
+      </dependency>
+      <dependency>
+        <groupId>net.java.dev.timingframework</groupId>
+        <artifactId>timingframework</artifactId>
+        <version>1.0</version>
+      </dependency>
+      <dependency>
+        <groupId>jfree</groupId>
+        <artifactId>jfreechart</artifactId>
+        <version>1.0.13</version>
       </dependency>
       <dependency>
         <groupId>com.sun</groupId>
         <artifactId>jlfgr</artifactId>
         <version>1.0</version>
         <scope>runtime</scope>
+      </dependency>
+
+      <!-- Lucene -->
+      <dependency>
+         <groupId>org.apache.lucene</groupId>
+         <artifactId>lucene-analyzers-common</artifactId>
+         <version>4.6.0</version>
+      </dependency>
+      <dependency>
+         <groupId>org.apache.lucene</groupId>
+         <artifactId>lucene-queryparser</artifactId>
+         <version>4.6.0</version>
+      </dependency>
+
+      <!-- Batik SVG -->
+      <dependency>
+        <groupId>org.apache.xmlgraphics</groupId>
+        <artifactId>batik-transcoder</artifactId>
+        <version>1.7</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.xmlgraphics</groupId>
+        <artifactId>batik-svggen</artifactId>
+        <version>1.7</version>
+      </dependency>
+
+      <!-- Jasper report -->
+      <dependency>
+        <groupId>net.sf.jasperreports</groupId>
+        <artifactId>jasperreports</artifactId>
+        <version>5.2.0</version>
+      </dependency>
+
+      <!-- Groovy -->
+      <dependency>
+        <groupId>org.codehaus.groovy</groupId>
+        <artifactId>groovy-all</artifactId>
+        <version>2.1.1</version>
+      </dependency>
+
+      <!-- Data sources -->
+      <dependency>
+        <groupId>net.sf.marineapi</groupId>
+        <artifactId>marineapi</artifactId>
+        <version>0.6.0</version>
+      </dependency>
+      <dependency>
+        <groupId>org.rxtx</groupId>
+        <artifactId>rxtxcomm</artifactId>
+        <version>2.2pre2</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
@@ -473,10 +636,6 @@
     <plugins>
       <!-- =======================================================
                Compile Java source files
-
-           Note: experimentation suggests that <debug>false</..>
-           is equivalent to <compilerArgument>-g:source,lines</..>
-           which is what we actually want.
            ======================================================= -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -484,12 +643,11 @@
         <configuration>
           <source>1.7</source>       <!-- The -source argument for the Java compiler.   -->
           <target>1.7</target>       <!-- The -target argument for the Java compiler.   -->
-          <debug>false</debug>       <!-- Whether to include debugging information.     -->
-          <optimize>true</optimize>  <!-- Whether to optimize the compiled code.        -->
+          <debug>true</debug>        <!-- Whether to include debugging information.     -->
+          <optimize>false</optimize> <!-- Whether to optimize the compiled code.        -->
           <encoding>${project.build.sourceEncoding}</encoding>
           <showWarnings>true</showWarnings>
           <showDeprecation>true</showDeprecation>
-          <maxmem>1G</maxmem>
         </configuration>
       </plugin>
 
@@ -543,19 +701,14 @@
             </manifestEntries>
           </archive>
         </configuration>
-      </plugin>
-
-
-
-      <!-- =======================================================
-               Execute tests
-           ======================================================= -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <argLine>-Xmx512M</argLine>
-        </configuration>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>test-jar</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
 
 
@@ -628,7 +781,7 @@
                 <quiet>true</quiet>              <!-- Shuts off non-error and non-warning messages.              -->
                 <keywords>true</keywords>        <!-- Adds HTML meta keyword tags to the generated files.        -->
                 <breakiterator>true</breakiterator>
-                <excludePackageNames>${javadoc.exclude}</excludePackageNames>
+                <excludePackageNames>org.geotoolkit.build:org.geotoolkit.test:org.geotoolkit.maven:org.geotoolkit.openoffice:org.geotoolkit.internal:org.geotoolkit.resources:org.geotoolkit.legacy:org.opengis:com</excludePackageNames>
                 <!-- stylesheetfile>src/main/javadoc/stylesheet.css</stylesheetfile -->
 
                 <!-- Custom taglets implemented in Java. -->
@@ -660,32 +813,64 @@
                 <!-- Separates packages on the overview page into the groups specified. -->
                 <groups>
                   <group>
-                    <title>Display</title>
-                    <packages>org.geotoolkit.display*:org.geotoolkit.gui*</packages>
+                    <title>Feature</title>
+                    <packages>org.geotoolkit.feature*</packages>
+                  </group>
+                  <group>
+                    <title>Feature stores</title>
+                    <packages>org.geotoolkit.storage:org.geotoolkit.data*</packages>
+                  </group>
+                  <group>
+                    <title>Filter and Expression</title>
+                    <packages>org.geotoolkit.filter*</packages>
                   </group>
                   <group>
                     <title>Geometry</title>
                     <packages>org.geotoolkit.geometry*:org.geotoolkit.topology*</packages>
                   </group>
                   <group>
-                    <title>Feature and filter</title>
-                    <packages>org.geotoolkit.storage*</packages>
-                  </group>
-                  <group>
                     <title>Coverage and Raster</title>
                     <packages>org.geotoolkit.coverage*:org.geotoolkit.image*</packages>
                   </group>
                   <group>
-                    <title>Referencing (ISO 19111)</title>
+                    <title>Referencing</title>
                     <packages>org.geotoolkit.referencing*:org.geotoolkit.parameter*</packages>
                   </group>
                   <group>
-                    <title>Metadata (ISO 19115)</title>
+                    <title>Metadata</title>
                     <packages>org.geotoolkit.metadata*:org.geotoolkit.naming*</packages>
                   </group>
                   <group>
                     <title>Numerical calculation and processing</title>
-                    <packages>org.geotoolkit.index*:org.geotoolkit.math*:org.geotoolkit.measure*:org.geotoolkit.nature*:org.geotoolkit.process*</packages>
+                    <packages>org.geotoolkit.math*:org.geotoolkit.measure*:org.geotoolkit.nature*:org.geotoolkit.process*</packages>
+                  </group>
+                  <group>
+                    <title>Indexing and Searching</title>
+                    <packages>org.geotoolkit.index*:org.geotoolkit.lucene*</packages>
+                  </group>
+                  <group>
+                    <title>Rendering</title>
+                    <packages>org.geotoolkit.display*:org.geotoolkit.map*:org.geotoolkit.renderer*</packages>
+                  </group>
+                  <group>
+                    <title>Rendering 2D</title>
+                    <packages>org.geotoolkit.display2d*</packages>
+                  </group>
+                  <group>
+                    <title>Rendering 3D</title>
+                    <packages>org.geotoolkit.display3d*</packages>
+                  </group>
+                  <group>
+                    <title>Styling</title>
+                    <packages>org.geotoolkit.style*:org.geotoolkit.sld*:org.geotoolkit.se.*</packages>
+                  </group>
+                  <group>
+                    <title>Reporting : JasperReport</title>
+                    <packages>org.geotoolkit.report*</packages>
+                  </group>
+                  <group>
+                    <title>User Interface</title>
+                    <packages>org.geotoolkit.gui*</packages>
                   </group>
                   <group>
                     <title>Utilities</title>
@@ -824,15 +1009,6 @@
         </executions>
       </plugin>
     </plugins>
-
-    <!-- Following is for users who need to deploy using the ssh rather then the file protocol. -->
-    <extensions>
-      <extension>
-        <groupId>org.apache.maven.wagon</groupId>
-         <artifactId>wagon-ssh-external</artifactId>
-         <version>1.0-beta-6</version>
-      </extension>
-    </extensions>
   </build>
 
 
