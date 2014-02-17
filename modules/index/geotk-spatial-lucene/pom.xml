@@ -12,7 +12,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>org.geotoolkit.pending</groupId>
+    <groupId>org.geotoolkit</groupId>
     <artifactId>index</artifactId>
     <version>4.x-SNAPSHOT</version>
   </parent>
@@ -36,12 +36,12 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.geotoolkit.pending</groupId>
+            <groupId>org.geotoolkit</groupId>
             <artifactId>geotk-filter</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.geotoolkit.pending</groupId>
+            <groupId>org.geotoolkit</groupId>
             <artifactId>geotk-index-tree</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -66,6 +66,7 @@
         <dependency>
             <groupId>org.geotoolkit</groupId>
             <artifactId>geotk-utility</artifactId>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
 

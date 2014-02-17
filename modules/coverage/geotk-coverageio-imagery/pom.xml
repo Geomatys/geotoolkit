@@ -13,7 +13,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>org.geotoolkit.pending</groupId>
+        <groupId>org.geotoolkit</groupId>
         <artifactId>coverage</artifactId>
         <version>4.x-SNAPSHOT</version>
     </parent>
@@ -62,6 +62,7 @@
         <dependency>
             <groupId>org.geotoolkit</groupId>
             <artifactId>geotk-coverageio</artifactId>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
 

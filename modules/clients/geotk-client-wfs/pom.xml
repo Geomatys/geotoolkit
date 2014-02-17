@@ -13,7 +13,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>org.geotoolkit.pending</groupId>
+    <groupId>org.geotoolkit</groupId>
     <artifactId>clients</artifactId>
     <version>4.x-SNAPSHOT</version>
   </parent>
@@ -58,37 +58,37 @@
   <!-- =========================================================== -->
     <dependencies>
         <dependency>
-            <groupId>org.geotoolkit.pending</groupId>
+            <groupId>org.geotoolkit</groupId>
             <artifactId>geotk-clients-core</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.geotoolkit.pending</groupId>
+            <groupId>org.geotoolkit</groupId>
             <artifactId>geotk-featurestore-core</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.geotoolkit.pending</groupId>
+            <groupId>org.geotoolkit</groupId>
             <artifactId>geotk-utility-pending</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.geotoolkit.pending</groupId>
+            <groupId>org.geotoolkit</groupId>
             <artifactId>geotk-xml-wfs</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.geotoolkit.pending</groupId>
+            <groupId>org.geotoolkit</groupId>
             <artifactId>geotk-xml-sld</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.geotoolkit.pending</groupId>
+            <groupId>org.geotoolkit</groupId>
             <artifactId>geotk-jaxp-core</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.geotoolkit.pending</groupId>
+            <groupId>org.geotoolkit</groupId>
             <artifactId>geotk-jaxp-gml</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -96,11 +96,13 @@
         <dependency>
             <groupId>org.geotoolkit.project</groupId>
             <artifactId>geotk-test</artifactId>
+            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.geotoolkit</groupId>
             <artifactId>geotk-epsg</artifactId>
+            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>

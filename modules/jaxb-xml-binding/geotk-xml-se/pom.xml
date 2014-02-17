@@ -13,7 +13,7 @@
                              http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>org.geotoolkit.pending</groupId>
+        <groupId>org.geotoolkit</groupId>
         <artifactId>jaxb-xml-binding</artifactId>
         <version>4.x-SNAPSHOT</version>
     </parent>
@@ -57,13 +57,14 @@
   <!-- =========================================================== -->
     <dependencies>
         <dependency>
-            <groupId>org.geotoolkit.pending</groupId>
+            <groupId>org.geotoolkit</groupId>
             <artifactId>geotk-xml-ogc</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.geotoolkit.project</groupId>
             <artifactId>geotk-provided</artifactId>
+            <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

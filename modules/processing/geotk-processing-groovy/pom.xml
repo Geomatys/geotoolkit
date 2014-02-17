@@ -12,7 +12,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>org.geotoolkit.pending</groupId>
+        <groupId>org.geotoolkit</groupId>
         <artifactId>processing</artifactId>
         <version>4.x-SNAPSHOT</version>
     </parent>
@@ -58,7 +58,7 @@
         </dependency>
 
         <dependency>
-            <groupId>org.geotoolkit.pending</groupId>
+            <groupId>org.geotoolkit</groupId>
             <artifactId>geotk-processing-core</artifactId>
             <version>${project.version}</version>
         </dependency>

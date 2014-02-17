@@ -13,7 +13,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>org.geotoolkit.pending</groupId>
+    <groupId>org.geotoolkit</groupId>
     <artifactId>display</artifactId>
     <version>4.x-SNAPSHOT</version>
   </parent>
@@ -61,7 +61,7 @@
   <!-- =========================================================== -->
   <dependencies>
     <dependency>
-      <groupId>org.geotoolkit.pending</groupId>
+      <groupId>org.geotoolkit</groupId>
       <artifactId>geotk-render</artifactId>
       <version>${project.version}</version>
     </dependency>

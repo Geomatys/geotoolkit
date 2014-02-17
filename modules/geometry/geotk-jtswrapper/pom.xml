@@ -13,7 +13,7 @@
     <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>org.geotoolkit.pending</groupId>
+    <groupId>org.geotoolkit</groupId>
     <artifactId>geometry</artifactId>
     <version>4.x-SNAPSHOT</version>
   </parent>
@@ -44,7 +44,7 @@
   <!-- =========================================================== -->
   <dependencies>
       <dependency>
-          <groupId>org.geotoolkit.pending</groupId>
+          <groupId>org.geotoolkit</groupId>
           <artifactId>geotk-geometry</artifactId>
           <version>${project.version}</version>
       </dependency>
@@ -55,6 +55,7 @@
       <dependency>
           <groupId>org.geotoolkit</groupId>
           <artifactId>geotk-utility</artifactId>
+          <version>${project.version}</version>
       </dependency>
       <dependency>
          <groupId>postgresql</groupId>
@@ -69,10 +70,11 @@
       <dependency>
           <groupId>org.geotoolkit.project</groupId>
           <artifactId>geotk-test</artifactId>
+          <version>${project.version}</version>
           <scope>test</scope>
       </dependency>
       <dependency>
-          <groupId>org.geotoolkit.pending</groupId>
+          <groupId>org.geotoolkit</groupId>
           <artifactId>geotk-utility-pending</artifactId>
 	  <version>${project.version}</version>
           <scope>test</scope>

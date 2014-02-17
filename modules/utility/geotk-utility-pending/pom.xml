@@ -12,7 +12,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>org.geotoolkit.pending</groupId>
+    <groupId>org.geotoolkit</groupId>
     <artifactId>utility</artifactId>
     <version>4.x-SNAPSHOT</version>
   </parent>
@@ -21,6 +21,7 @@
   <!-- =========================================================== -->
   <!--     Module Description                                      -->
   <!-- =========================================================== -->
+  <groupId>org.geotoolkit</groupId>
   <artifactId>geotk-utility-pending</artifactId>
   <packaging>jar</packaging>
   <name>Utility core</name>
@@ -95,14 +96,17 @@
     <dependency>
       <groupId>org.geotoolkit</groupId>
       <artifactId>geotk-utility</artifactId>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.geotoolkit</groupId>
       <artifactId>geotk-coverage</artifactId>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.geotoolkit</groupId>
       <artifactId>geotk-referencing</artifactId>
+      <version>${project.version}</version>
     </dependency>
     <!-- for AnchoredMarshallerPool remove ? -->
     <dependency>

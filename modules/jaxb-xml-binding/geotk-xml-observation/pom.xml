@@ -8,7 +8,7 @@
                              http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>org.geotoolkit.pending</groupId>
+    <groupId>org.geotoolkit</groupId>
     <artifactId>jaxb-xml-binding</artifactId>
     <version>4.x-SNAPSHOT</version>
   </parent>
@@ -63,7 +63,7 @@
   -->
   <dependencies>
     <dependency>
-      <groupId>org.geotoolkit.pending</groupId>
+      <groupId>org.geotoolkit</groupId>
       <artifactId>geotk-xml-swe</artifactId>
       <version>${project.version}</version>
     </dependency>
@@ -74,6 +74,7 @@
     <dependency>
       <groupId>org.geotoolkit</groupId>
       <artifactId>geotk-utility</artifactId>
+      <version>${project.version}</version>
     </dependency>
   </dependencies>
 

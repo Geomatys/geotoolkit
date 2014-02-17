@@ -12,7 +12,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>org.geotoolkit.pending</groupId>
+    <groupId>org.geotoolkit</groupId>
     <artifactId>processing</artifactId>
     <version>4.x-SNAPSHOT</version>
   </parent>
@@ -64,46 +64,49 @@
   <!-- =========================================================== -->
   <dependencies>
       <dependency>
-          <groupId>org.geotoolkit.pending</groupId>
+          <groupId>org.geotoolkit</groupId>
           <artifactId>geotk-processing-core</artifactId>
           <version>${project.version}</version>
       </dependency>
       <dependency>
-          <groupId>org.geotoolkit.pending</groupId>
+          <groupId>org.geotoolkit</groupId>
           <artifactId>geotk-geometry</artifactId>
           <version>${project.version}</version>
       </dependency>
       <dependency>
-          <groupId>org.geotoolkit.pending</groupId>
+          <groupId>org.geotoolkit</groupId>
           <artifactId>geotk-render</artifactId>
           <version>${project.version}</version>
       </dependency>
       <dependency>
-          <groupId>org.geotoolkit.pending</groupId>
+          <groupId>org.geotoolkit</groupId>
           <artifactId>geotk-coverageio-store</artifactId>
           <version>${project.version}</version>
       </dependency>
       <dependency>
-          <groupId>org.geotoolkit.pending</groupId>
+          <groupId>org.geotoolkit</groupId>
           <artifactId>geotk-coverageio-postgresql</artifactId>
           <version>${project.version}</version>
       </dependency>
       <dependency>
-          <groupId>org.geotoolkit.pending</groupId>
+          <groupId>org.geotoolkit</groupId>
           <artifactId>geotk-coverageio-imagery</artifactId>
           <version>${project.version}</version>
       </dependency>
       <dependency>
           <groupId>org.geotoolkit</groupId>
           <artifactId>geotk-coverage</artifactId>
+        <version>${project.version}</version>
       </dependency>
       <dependency>
           <groupId>org.geotoolkit</groupId>
           <artifactId>geotk-analytics</artifactId>
+          <version>${project.version}</version>
       </dependency>
       <dependency>
           <groupId>org.geotoolkit</groupId>
           <artifactId>geotk-coverageio</artifactId>
+          <version>${project.version}</version>
       </dependency>
       <dependency>
           <groupId>com.vividsolutions</groupId>
@@ -113,6 +116,7 @@
       <dependency>
             <groupId>org.geotoolkit</groupId>
             <artifactId>geotk-epsg-javadb</artifactId>
+            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>

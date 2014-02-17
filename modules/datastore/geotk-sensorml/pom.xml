@@ -8,7 +8,7 @@
                              http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>org.geotoolkit.pending</groupId>
+        <groupId>org.geotoolkit</groupId>
         <artifactId>featurestore</artifactId>
         <version>4.x-SNAPSHOT</version>
     </parent>
@@ -52,13 +52,13 @@
   <!-- =========================================================== -->
     <dependencies>
         <dependency>
-            <groupId>org.geotoolkit.pending</groupId>
+            <groupId>org.geotoolkit</groupId>
             <artifactId>geotk-db-core</artifactId>
             <version>${project.version}</version>
         </dependency>
 
         <dependency>
-            <groupId>org.geotoolkit.pending</groupId>
+            <groupId>org.geotoolkit</groupId>
             <artifactId>geotk-featurestore-core</artifactId>
             <version>${project.version}</version>
             <type>test-jar</type>
@@ -67,6 +67,7 @@
         <dependency>
             <groupId>org.geotoolkit</groupId>
             <artifactId>geotk-epsg</artifactId>
+            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>

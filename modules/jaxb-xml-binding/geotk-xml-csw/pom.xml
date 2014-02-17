@@ -8,7 +8,7 @@
                              http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>org.geotoolkit.pending</groupId>
+        <groupId>org.geotoolkit</groupId>
         <artifactId>jaxb-xml-binding</artifactId>
         <version>4.x-SNAPSHOT</version>
     </parent>
@@ -68,37 +68,37 @@
           <artifactId>xercesImpl</artifactId>
         </dependency-->
         <dependency>
-            <groupId>org.geotoolkit.pending</groupId>
+            <groupId>org.geotoolkit</groupId>
             <artifactId>geotk-xml-feature-catalogue</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.geotoolkit.pending</groupId>
+            <groupId>org.geotoolkit</groupId>
             <artifactId>geotk-xml-ogc</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.geotoolkit.pending</groupId>
+            <groupId>org.geotoolkit</groupId>
             <artifactId>geotk-xml-ows</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.geotoolkit.pending</groupId>
+            <groupId>org.geotoolkit</groupId>
             <artifactId>geotk-xml-service</artifactId>
             <version>${project.version}</version>
         </dependency>
         <!--dependency>
-          <groupId>org.geotoolkit.pending</groupId>
+          <groupId>org.geotoolkit</groupId>
           <artifactId>geotk-xml-metadata-imagery</artifactId>
           <version>${project.version}</version>
         </dependency-->
         <dependency>
-            <groupId>org.geotoolkit.pending</groupId>
+            <groupId>org.geotoolkit</groupId>
             <artifactId>geotk-xml-xsd</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.geotoolkit.pending</groupId>
+            <groupId>org.geotoolkit</groupId>
             <artifactId>geotk-utility-pending</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -110,6 +110,7 @@
         <dependency>
             <groupId>org.geotoolkit</groupId>
             <artifactId>geotk-referencing</artifactId>
+            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
         <!--dependency>
