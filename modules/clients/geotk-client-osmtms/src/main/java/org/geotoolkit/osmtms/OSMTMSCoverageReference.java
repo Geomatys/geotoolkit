@@ -39,7 +39,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 public class OSMTMSCoverageReference extends AbstractCoverageReference implements PyramidalCoverageReference{
 
-    OSMTMSCoverageReference(OSMTileMapServer server, Name name){
+    OSMTMSCoverageReference(OSMTileMapClient server, Name name){
         super(server,name);
     }
 
@@ -67,7 +67,7 @@ public class OSMTMSCoverageReference extends AbstractCoverageReference implement
 
     @Override
     public PyramidSet getPyramidSet() throws DataStoreException {
-        return ((OSMTileMapServer)store).getPyramidSet();
+        return ((OSMTileMapClient)store).getPyramidSet();
     }
 
     @Override

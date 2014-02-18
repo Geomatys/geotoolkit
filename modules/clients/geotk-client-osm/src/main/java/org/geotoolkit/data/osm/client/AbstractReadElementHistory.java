@@ -35,7 +35,7 @@ public abstract class AbstractReadElementHistory extends AbstractRequest impleme
      *
      * @param server The server.
      */
-    protected AbstractReadElementHistory(final OpenStreetMapServer server, final String subpath){
+    protected AbstractReadElementHistory(final OpenStreetMapClient server, final String subpath){
         super(server, subpath);
     }
 

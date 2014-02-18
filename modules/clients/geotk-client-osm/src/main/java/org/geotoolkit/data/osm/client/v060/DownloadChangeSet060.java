@@ -18,7 +18,7 @@
 package org.geotoolkit.data.osm.client.v060;
 
 import org.geotoolkit.data.osm.client.AbstractDownloadChangeSet;
-import org.geotoolkit.data.osm.client.OpenStreetMapServer;
+import org.geotoolkit.data.osm.client.OpenStreetMapClient;
 
 /**
  *
@@ -27,7 +27,7 @@ import org.geotoolkit.data.osm.client.OpenStreetMapServer;
  */
 public class DownloadChangeSet060 extends AbstractDownloadChangeSet{
 
-    public DownloadChangeSet060(final OpenStreetMapServer server){
+    public DownloadChangeSet060(final OpenStreetMapClient server){
         super(server,"");
     }
 

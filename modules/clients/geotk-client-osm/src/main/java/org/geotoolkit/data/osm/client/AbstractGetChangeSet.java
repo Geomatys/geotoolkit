@@ -34,7 +34,7 @@ public abstract class AbstractGetChangeSet extends AbstractRequest implements Ge
      *
      * @param server The server.
      */
-    protected AbstractGetChangeSet(final OpenStreetMapServer server, final String subpath){
+    protected AbstractGetChangeSet(final OpenStreetMapClient server, final String subpath){
         super(server, subpath);
     }
 

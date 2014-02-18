@@ -17,7 +17,7 @@ import org.geotoolkit.sml.xml.AbstractSensorML;
 import org.geotoolkit.sos.DescribeSensorRequest;
 import org.geotoolkit.sos.GetCapabilitiesRequest;
 import org.geotoolkit.sos.GetObservationRequest;
-import org.geotoolkit.sos.SensorObservationServiceServer;
+import org.geotoolkit.sos.SensorObservationServiceClient;
 import org.geotoolkit.sos.xml.SOSMarshallerPool;
 import org.geotoolkit.sos.xml.v100.Capabilities;
 import org.geotoolkit.sos.xml.v100.GetObservation.FeatureOfInterest;
@@ -36,7 +36,7 @@ public class SOSClientDemo {
         final Unmarshaller um = pool.acquireUnmarshaller();
 
         // build a new SOS client
-        final SensorObservationServiceServer sosServer = new SensorObservationServiceServer(new URL("http://test.geomatys.com/swe_TS/WS/sos?"), "1.0.0");
+        final SensorObservationServiceClient sosServer = new SensorObservationServiceClient(new URL("http://test.geomatys.com/swe_TS/WS/sos?"), "1.0.0");
 
         /**
          * make a getCapabilities request

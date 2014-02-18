@@ -30,7 +30,7 @@ public class ReleaseTokenRequest extends AbstractRequest{
     
     private Token token;
     
-    public ReleaseTokenRequest(final IGNRMServer server){
+    public ReleaseTokenRequest(final IGNRMClient server){
         super(server,SUBPATH);
     }
 

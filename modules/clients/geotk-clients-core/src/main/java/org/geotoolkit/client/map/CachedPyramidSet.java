@@ -45,7 +45,7 @@ import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.MemoryCacheImageInputStream;
 import org.geotoolkit.client.Request;
-import org.geotoolkit.client.Server;
+import org.geotoolkit.client.Client;
 import org.geotoolkit.coverage.*;
 import org.geotoolkit.security.DefaultClientSecurity;
 import org.apache.sis.storage.DataStoreException;
@@ -98,11 +98,11 @@ public abstract class CachedPyramidSet extends DefaultPyramidSet {
      * Cache the last queried tiles
      */
     private final Cache<String, RenderedImage> tileCache;
-    protected final Server server;
+    protected final Client server;
     protected final boolean useURLQueries;
     protected final boolean cacheImages;
 
-    public CachedPyramidSet(Server server, boolean useURLQueries, boolean cacheImages) {
+    public CachedPyramidSet(Client server, boolean useURLQueries, boolean cacheImages) {
         this.server = server;
         this.useURLQueries = useURLQueries;
         this.cacheImages = cacheImages;
@@ -113,7 +113,7 @@ public abstract class CachedPyramidSet extends DefaultPyramidSet {
         }
     }
 
-    protected Server getServer() {
+    protected Client getServer() {
         return server;
     }
 
@@ -197,7 +197,7 @@ public abstract class CachedPyramidSet extends DefaultPyramidSet {
             return queryUnoptimizedIO(mosaic, locations, hints);
         }
 
-        final Server server = getServer();
+        final Client server = getServer();
 
         if (server == null) {
             return queryUnoptimizedIO(mosaic, locations, hints);

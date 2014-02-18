@@ -51,7 +51,7 @@ public abstract class AbstractDescribeResultModel extends AbstractSOSRequest imp
      * @param server The server.
      * @param version The version of the request.
      */
-    protected AbstractDescribeResultModel(final SensorObservationServiceServer server, final String version) {
+    protected AbstractDescribeResultModel(final SensorObservationServiceClient server, final String version) {
         super(server);
         this.version = version;
     }

@@ -23,8 +23,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.geotoolkit.client.AbstractServerFactory;
-import org.geotoolkit.client.ServerFactory;
+import org.geotoolkit.client.AbstractClientFactory;
+import org.geotoolkit.client.ClientFactory;
 import org.geotoolkit.data.AbstractFeatureStoreFactory;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
@@ -44,7 +44,7 @@ import org.opengis.parameter.*;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class WFSFeatureStoreFactory extends AbstractFeatureStoreFactory implements ServerFactory{
+public class WFSFeatureStoreFactory extends AbstractFeatureStoreFactory implements ClientFactory{
 
     /** factory identification **/
     public static final String NAME = "wfs";
@@ -65,7 +65,7 @@ public class WFSFeatureStoreFactory extends AbstractFeatureStoreFactory implemen
     public static final ParameterDescriptor<String> VERSION;
     static{
         final String code = "version";
-        final CharSequence remarks = AbstractServerFactory.I18N_VERSION;
+        final CharSequence remarks = AbstractClientFactory.I18N_VERSION;
         final Map<String,Object> params = new HashMap<String, Object>();
         params.put(DefaultParameterDescriptor.NAME_KEY, code);
         params.put(DefaultParameterDescriptor.REMARKS_KEY, remarks);
@@ -95,8 +95,8 @@ public class WFSFeatureStoreFactory extends AbstractFeatureStoreFactory implemen
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
             new DefaultParameterDescriptorGroup("WFSParameters",
-                IDENTIFIER, AbstractServerFactory.URL, VERSION, AbstractServerFactory.SECURITY,
-                LONGITUDE_FIRST,POST_REQUEST,AbstractServerFactory.TIMEOUT);
+                IDENTIFIER, AbstractClientFactory.URL, VERSION, AbstractClientFactory.SECURITY,
+                LONGITUDE_FIRST,POST_REQUEST,AbstractClientFactory.TIMEOUT);
 
     @Override
     public Identification getIdentification() {
@@ -127,26 +127,26 @@ public class WFSFeatureStoreFactory extends AbstractFeatureStoreFactory implemen
     }
 
     @Override
-    public WebFeatureServer open(Map<String, ? extends Serializable> params) throws DataStoreException {
-        return (WebFeatureServer)super.open(params);
+    public WebFeatureClient open(Map<String, ? extends Serializable> params) throws DataStoreException {
+        return (WebFeatureClient)super.open(params);
     }
 
     @Override
-    public WebFeatureServer open(ParameterValueGroup params) throws DataStoreException {
+    public WebFeatureClient open(ParameterValueGroup params) throws DataStoreException {
         checkCanProcessWithError(params);
-        return new WebFeatureServer(params);
+        return new WebFeatureClient(params);
     }
 
     @Override
-    public WebFeatureServer create(Map<String, ? extends Serializable> params) throws DataStoreException {
-        return (WebFeatureServer)super.create(params);
+    public WebFeatureClient create(Map<String, ? extends Serializable> params) throws DataStoreException {
+        return (WebFeatureClient)super.create(params);
     }
 
     /**
      * {@inheritDoc }
      */
     @Override
-    public WebFeatureServer create(final ParameterValueGroup params) throws DataStoreException {
+    public WebFeatureClient create(final ParameterValueGroup params) throws DataStoreException {
         throw new DataStoreException("Can not create any new WFS DataStore");
     }
 }

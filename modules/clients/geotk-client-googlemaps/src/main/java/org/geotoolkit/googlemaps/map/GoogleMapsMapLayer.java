@@ -20,7 +20,7 @@ import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.coverage.PyramidSet;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.googlemaps.GetMapRequest;
-import org.geotoolkit.googlemaps.StaticGoogleMapsServer;
+import org.geotoolkit.googlemaps.StaticGoogleMapsClient;
 import org.geotoolkit.map.DefaultCoverageMapLayer;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.style.DefaultStyleFactory;
@@ -40,7 +40,7 @@ public class GoogleMapsMapLayer extends DefaultCoverageMapLayer {
     /**
      * The server to request.
      */
-    private final StaticGoogleMapsServer server;
+    private final StaticGoogleMapsClient server;
 
     /**
      * Output format of the response.
@@ -48,7 +48,7 @@ public class GoogleMapsMapLayer extends DefaultCoverageMapLayer {
     private static final String DEFAULT_FORMAT = GetMapRequest.FORMAT_PNG8;
 
 
-    private static CoverageReference getReference(StaticGoogleMapsServer server, String mapType){
+    private static CoverageReference getReference(StaticGoogleMapsClient server, String mapType){
         try {
             for(Name n : server.getNames()){
                 if(n.getLocalPart().equalsIgnoreCase(mapType)){
@@ -62,7 +62,7 @@ public class GoogleMapsMapLayer extends DefaultCoverageMapLayer {
         }
     }
 
-    public GoogleMapsMapLayer(final StaticGoogleMapsServer server, String maptype) {
+    public GoogleMapsMapLayer(final StaticGoogleMapsClient server, String maptype) {
         super(getReference(server,maptype),
               new DefaultStyleFactory().style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER));
         this.server = server;
@@ -91,10 +91,10 @@ public class GoogleMapsMapLayer extends DefaultCoverageMapLayer {
     }
 
     /**
-     * Returns the {@link StaticGoogleMapsServer} to request. Can't be {@code null}.
+     * Returns the {@link StaticGoogleMapsClient} to request. Can't be {@code null}.
      * @return
      */
-    public StaticGoogleMapsServer getServer() {
+    public StaticGoogleMapsClient getServer() {
         return server;
     }
 

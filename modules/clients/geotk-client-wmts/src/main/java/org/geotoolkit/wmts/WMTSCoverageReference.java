@@ -41,7 +41,7 @@ public class WMTSCoverageReference extends AbstractCoverageReference implements 
 
     private final PyramidSet set;
 
-    WMTSCoverageReference(WebMapTileServer server, Name name, boolean cacheImage){
+    WMTSCoverageReference(WebMapTileClient server, Name name, boolean cacheImage){
         super(server,name);
         set = new WMTSPyramidSet(server, name.getLocalPart(), cacheImage);
     }

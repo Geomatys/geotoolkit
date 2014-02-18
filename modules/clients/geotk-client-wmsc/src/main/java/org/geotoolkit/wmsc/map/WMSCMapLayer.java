@@ -20,7 +20,7 @@ import org.geotoolkit.client.CapabilitiesException;
 import org.geotoolkit.wms.map.WMSGraphicBuilder;
 import org.geotoolkit.wms.map.WMSMapLayer;
 import org.geotoolkit.wmsc.WMSCCoverageReference;
-import org.geotoolkit.wmsc.WebMapServerCached;
+import org.geotoolkit.wmsc.WebMapClientCached;
 import org.opengis.feature.type.Name;
 
 /**
@@ -30,7 +30,7 @@ import org.opengis.feature.type.Name;
  */
 public class WMSCMapLayer extends WMSMapLayer{
     
-    private static WMSCCoverageReference toReference(final WebMapServerCached server, final Name name) throws CapabilitiesException{
+    private static WMSCCoverageReference toReference(final WebMapClientCached server, final Name name) throws CapabilitiesException{
         return new WMSCCoverageReference(server, name);
     }
     
@@ -38,7 +38,7 @@ public class WMSCMapLayer extends WMSMapLayer{
      * @param server
      * @param layer : only one layer possible in wms-c
      */
-    public WMSCMapLayer(final WebMapServerCached server, final Name name) throws CapabilitiesException {
+    public WMSCMapLayer(final WebMapClientCached server, final Name name) throws CapabilitiesException {
         super(toReference(server, name));
         graphicBuilders().add(WMSGraphicBuilder.INSTANCE);
     }

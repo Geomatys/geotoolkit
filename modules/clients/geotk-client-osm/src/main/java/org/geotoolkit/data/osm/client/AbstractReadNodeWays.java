@@ -34,7 +34,7 @@ public abstract class AbstractReadNodeWays extends AbstractRequest implements Re
      *
      * @param server The server url.
      */
-    protected AbstractReadNodeWays(final OpenStreetMapServer server, final String subpath){
+    protected AbstractReadNodeWays(final OpenStreetMapClient server, final String subpath){
         super(server, subpath);
     }
 

@@ -58,7 +58,7 @@ public class AbstractSOSRequest extends AbstractRequest {
         POOL = temp;
     }
 
-    public AbstractSOSRequest(final SensorObservationServiceServer server) {
+    public AbstractSOSRequest(final SensorObservationServiceClient server) {
         super(server);
     }
 }

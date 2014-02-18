@@ -125,7 +125,7 @@ public class WMSCoverageReader extends GridCoverageReader{
         }
 
         final WMSCoverageReference ref = getInput();
-        final WebMapServer server = (WebMapServer)ref.getStore();
+        final WebMapClient server = (WebMapClient)ref.getStore();
 
         CoordinateReferenceSystem crs = param.getCoordinateReferenceSystem();
         Envelope wantedEnv = param.getEnvelope();

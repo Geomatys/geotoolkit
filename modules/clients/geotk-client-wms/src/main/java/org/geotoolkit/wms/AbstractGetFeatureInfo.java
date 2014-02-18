@@ -38,7 +38,7 @@ public abstract class AbstractGetFeatureInfo extends AbstractGetMap implements G
         super(serverURL, version, security);
     }
 
-    protected AbstractGetFeatureInfo(final WebMapServer server, final String version, final ClientSecurity security) {
+    protected AbstractGetFeatureInfo(final WebMapClient server, final String version, final ClientSecurity security) {
         super(server,version,security);
     }
 

@@ -15,8 +15,8 @@ import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.style.DefaultDescription;
 import org.geotoolkit.style.RandomStyleBuilder;
 import org.apache.sis.util.iso.SimpleInternationalString;
-import org.geotoolkit.wms.WMSServerFactory;
-import org.geotoolkit.wmts.WMTSServerFactory;
+import org.geotoolkit.wms.WMSClientFactory;
+import org.geotoolkit.wmts.WMTSClientFactory;
 import org.opengis.feature.type.Name;
 import org.opengis.parameter.ParameterValueGroup;
 
@@ -31,9 +31,9 @@ public class IGN_INSPIRE_WMS {
         final ClientSecurity authentication = new BasicAuthenticationSecurity(login,password);
         final URL url = new URL("https://gpp3-wxs.ign.fr/"+key+"/inspire/r/wms?");
 
-        final ParameterValueGroup params = WMSServerFactory.PARAMETERS.createValue();
-        Parameters.getOrCreate(WMTSServerFactory.URL, params).setValue(url);
-        Parameters.getOrCreate(WMTSServerFactory.SECURITY, params).setValue(authentication);
+        final ParameterValueGroup params = WMSClientFactory.PARAMETERS.createValue();
+        Parameters.getOrCreate(WMTSClientFactory.URL, params).setValue(url);
+        Parameters.getOrCreate(WMTSClientFactory.SECURITY, params).setValue(authentication);
 
         final CoverageStore store = CoverageStoreFinder.open(params);
 

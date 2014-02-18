@@ -30,7 +30,7 @@ public abstract class AbstractDownloadGPSTraceData extends AbstractRequest imple
 
     protected int id = -1;
 
-    public AbstractDownloadGPSTraceData(final OpenStreetMapServer server, final String subPath){
+    public AbstractDownloadGPSTraceData(final OpenStreetMapClient server, final String subPath){
         super(server, subPath);
     }
 

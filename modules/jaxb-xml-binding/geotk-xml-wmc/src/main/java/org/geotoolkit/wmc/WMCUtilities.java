@@ -27,9 +27,9 @@ import java.util.logging.Logger;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
-import org.geotoolkit.client.Server;
-import org.geotoolkit.client.ServerFactory;
-import org.geotoolkit.client.ServerFinder;
+import org.geotoolkit.client.Client;
+import org.geotoolkit.client.ClientFactory;
+import org.geotoolkit.client.ClientFinder;
 import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.coverage.CoverageStore;
 import org.geotoolkit.data.FeatureStore;
@@ -163,13 +163,13 @@ public class WMCUtilities {
 
             //build server from parameters.
             final ServerType serverType = layerType.getServer();
-            final Server server;
+            final Client server;
             final String serviceId = getServiceId(serverType.getService().value());
             final Name layerName = DefaultName.valueOf(layerType.getName());
             try {
                 final URL serviceURL = new URL(serverType.getOnlineResource().getHref());
 
-                final ServerFactory factory = ServerFinder.getFactoryById(serviceId);
+                final ClientFactory factory = ClientFinder.getFactoryById(serviceId);
                 final Map<String, Serializable> parameters = new HashMap<String, Serializable>();
                 parameters.put("identifier", serviceId);
                 parameters.put("version", serverType.getVersion());

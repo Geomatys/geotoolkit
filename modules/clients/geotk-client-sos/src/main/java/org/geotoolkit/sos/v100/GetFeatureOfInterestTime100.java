@@ -17,7 +17,7 @@
 package org.geotoolkit.sos.v100;
 
 import org.geotoolkit.sos.AbstractGetFeatureOfInterestTime;
-import org.geotoolkit.sos.SensorObservationServiceServer;
+import org.geotoolkit.sos.SensorObservationServiceClient;
 
 
 /**
@@ -32,7 +32,7 @@ public class GetFeatureOfInterestTime100 extends AbstractGetFeatureOfInterestTim
      *
      * @param server The webservice.
      */
-    public GetFeatureOfInterestTime100(final SensorObservationServiceServer server){
+    public GetFeatureOfInterestTime100(final SensorObservationServiceClient server){
         super(server, "1.0.0");
     }
 

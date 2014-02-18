@@ -24,7 +24,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.StyleConstants;
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.wmts.WebMapTileServer;
+import org.geotoolkit.wmts.WebMapTileClient;
 import org.geotoolkit.wmts.model.WMTSPyramidSet;
 import org.opengis.feature.type.Name;
 
@@ -44,9 +44,9 @@ public class WMTSMapLayer extends DefaultCoverageMapLayer {
     /**
      * The server to request.
      */
-    private final WebMapTileServer server;
+    private final WebMapTileClient server;
 
-    private static CoverageReference getReference(WebMapTileServer server, String mapType){
+    private static CoverageReference getReference(WebMapTileClient server, String mapType){
         try {
             for(Name n : server.getNames()){
                 if(n.getLocalPart().equalsIgnoreCase(mapType)){
@@ -60,7 +60,7 @@ public class WMTSMapLayer extends DefaultCoverageMapLayer {
         }
     }
 
-    public WMTSMapLayer(final WebMapTileServer server, String layerName) {
+    public WMTSMapLayer(final WebMapTileClient server, String layerName) {
         super(getReference(server, layerName),
               new DefaultStyleFactory().style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER));
         setUserProperty(PyramidSet.HINT_FORMAT, DEFAULT_FORMAT);
@@ -108,10 +108,10 @@ public class WMTSMapLayer extends DefaultCoverageMapLayer {
     }
 
     /**
-     * Returns the {@link WebMapTileServer} to request. Can't be {@code null}.
+     * Returns the {@link WebMapTileClient} to request. Can't be {@code null}.
      * @return
      */
-    public WebMapTileServer getServer() {
+    public WebMapTileClient getServer() {
         return server;
     }
 

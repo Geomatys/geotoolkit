@@ -42,7 +42,7 @@ public class WMSCCoverageReference extends WMSCoverageReference implements Pyram
 
     private final PyramidSet set;
 
-    public WMSCCoverageReference(final WebMapServerCached server,
+    public WMSCCoverageReference(final WebMapClientCached server,
             final Name name) throws CapabilitiesException{
         super(server, name);
         set = new WMSCPyramidSet(server, name.getLocalPart());

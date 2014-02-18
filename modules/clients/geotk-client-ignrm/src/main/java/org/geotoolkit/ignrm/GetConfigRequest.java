@@ -32,7 +32,7 @@ public class GetConfigRequest extends AbstractRequest{
     
     private String key;
     
-    public GetConfigRequest(final IGNRMServer server){
+    public GetConfigRequest(final IGNRMClient server){
         super(server,SUBPATH);
     }
 

@@ -54,7 +54,7 @@ import org.geotoolkit.gui.swing.render2d.control.information.presenter.AbstractI
 import org.geotoolkit.ogc.xml.exception.ServiceExceptionReport;
 import org.geotoolkit.ogc.xml.exception.ServiceExceptionType;
 import org.geotoolkit.wms.WMSCoverageReference;
-import org.geotoolkit.wms.WebMapServer;
+import org.geotoolkit.wms.WebMapClient;
 import org.geotoolkit.wms.xml.AbstractWMSCapabilities;
 import org.geotoolkit.wms.xml.WMSMarshallerPool;
 
@@ -100,7 +100,7 @@ public class WMSPresenter extends AbstractInformationPresenter{
 
         //get the different mime types
         final List<String> mimeTypes = new ArrayList<String>();
-        final WebMapServer server = (WebMapServer)reference.getStore();
+        final WebMapClient server = (WebMapClient)reference.getStore();
         try {
             final AbstractWMSCapabilities capa = server.getCapabilities();
             mimeTypes.addAll(capa.getCapability().getRequest().getGetFeatureInfo().getFormats());

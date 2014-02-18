@@ -41,7 +41,7 @@ public class WMTSCoverageStoreFactoryTest {
         
         boolean found = false;
         while (ite.hasNext()){
-            if(ite.next() instanceof WMTSServerFactory){
+            if(ite.next() instanceof WMTSClientFactory){
                 found = true;
             }
         }

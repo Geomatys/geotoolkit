@@ -18,7 +18,7 @@
 package org.geotoolkit.data.osm.client.v060;
 
 import org.geotoolkit.data.osm.client.AbstractGetCapabilities;
-import org.geotoolkit.data.osm.client.OpenStreetMapServer;
+import org.geotoolkit.data.osm.client.OpenStreetMapClient;
 
 /**
  *
@@ -27,7 +27,7 @@ import org.geotoolkit.data.osm.client.OpenStreetMapServer;
  */
 public class GetCapabilities060 extends AbstractGetCapabilities{
 
-    public GetCapabilities060(final OpenStreetMapServer server){
+    public GetCapabilities060(final OpenStreetMapClient server){
         super(server);
     }
 

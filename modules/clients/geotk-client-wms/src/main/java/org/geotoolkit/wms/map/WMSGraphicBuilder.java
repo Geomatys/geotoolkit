@@ -36,7 +36,7 @@ import org.geotoolkit.map.GraphicBuilder;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.wms.GetLegendRequest;
 import org.geotoolkit.wms.WMSCoverageReference;
-import org.geotoolkit.wms.WebMapServer;
+import org.geotoolkit.wms.WebMapClient;
 
 /**
  * Render WMS layer in default geotoolkit rendering engine.
@@ -92,7 +92,7 @@ public class WMSGraphicBuilder implements GraphicBuilder<GraphicJ2D>{
         }
 
         final WMSCoverageReference reference = (WMSCoverageReference) cr;
-        final WebMapServer server = (WebMapServer)reference.getStore();
+        final WebMapClient server = (WebMapClient)reference.getStore();
 
         final GetLegendRequest request = server.createGetLegend();
         request.setLayer(reference.getLayerNames()[0]);

@@ -18,7 +18,7 @@
 package org.geotoolkit.data.osm.client.v060;
 
 import org.geotoolkit.data.osm.client.AbstractCloseChangeSet;
-import org.geotoolkit.data.osm.client.OpenStreetMapServer;
+import org.geotoolkit.data.osm.client.OpenStreetMapClient;
 
 /**
  *
@@ -27,7 +27,7 @@ import org.geotoolkit.data.osm.client.OpenStreetMapServer;
  */
 public class CloseChangeSet060 extends AbstractCloseChangeSet{
 
-    public CloseChangeSet060(final OpenStreetMapServer server){
+    public CloseChangeSet060(final OpenStreetMapClient server){
         super(server,"");
     }
 

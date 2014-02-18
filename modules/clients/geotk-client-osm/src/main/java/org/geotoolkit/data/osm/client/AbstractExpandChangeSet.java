@@ -42,7 +42,7 @@ public abstract class AbstractExpandChangeSet extends AbstractRequest implements
     protected int id = -1;
     protected Envelope env = null;
 
-    public AbstractExpandChangeSet(final OpenStreetMapServer server, final String subPath){
+    public AbstractExpandChangeSet(final OpenStreetMapClient server, final String subPath){
         super(server, subPath);
     }
 

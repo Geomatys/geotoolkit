@@ -41,7 +41,7 @@ public class OSMTMSCoverageStoreFactoryTest {
         
         boolean found = false;
         while (ite.hasNext()){
-            if(ite.next() instanceof OSMTMSServerFactory){
+            if(ite.next() instanceof OSMTMSClientFactory){
                 found = true;
             }
         }

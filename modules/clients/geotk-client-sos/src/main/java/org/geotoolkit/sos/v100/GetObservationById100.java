@@ -17,7 +17,7 @@
 package org.geotoolkit.sos.v100;
 
 import org.geotoolkit.sos.AbstractGetObservationById;
-import org.geotoolkit.sos.SensorObservationServiceServer;
+import org.geotoolkit.sos.SensorObservationServiceClient;
 
 
 /**
@@ -32,7 +32,7 @@ public class GetObservationById100 extends AbstractGetObservationById {
      *
      * @param server The webservice.
      */
-    public GetObservationById100(final SensorObservationServiceServer server){
+    public GetObservationById100(final SensorObservationServiceClient server){
         super(server, "1.0.0");
     }
 

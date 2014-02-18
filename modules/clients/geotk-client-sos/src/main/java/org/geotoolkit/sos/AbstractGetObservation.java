@@ -63,7 +63,7 @@ public abstract class AbstractGetObservation extends AbstractSOSRequest implemen
      * @param server The server.
      * @param version The version of the request.
      */
-    protected AbstractGetObservation(final SensorObservationServiceServer server, final String version) {
+    protected AbstractGetObservation(final SensorObservationServiceClient server, final String version) {
         super(server);
         this.version = version;
     }

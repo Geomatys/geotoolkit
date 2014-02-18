@@ -18,7 +18,7 @@
 package org.geotoolkit.data.osm.client.v060;
 
 import org.geotoolkit.data.osm.client.AbstractCreateChangeSet;
-import org.geotoolkit.data.osm.client.OpenStreetMapServer;
+import org.geotoolkit.data.osm.client.OpenStreetMapClient;
 
 /**
  *
@@ -27,7 +27,7 @@ import org.geotoolkit.data.osm.client.OpenStreetMapServer;
  */
 public class CreateChangeSet060 extends AbstractCreateChangeSet{
 
-    public CreateChangeSet060(final OpenStreetMapServer server){
+    public CreateChangeSet060(final OpenStreetMapClient server){
         super(server,"api/0.6/changeset/create");
     }
 

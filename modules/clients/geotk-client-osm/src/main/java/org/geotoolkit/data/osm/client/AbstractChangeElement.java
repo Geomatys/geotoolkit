@@ -40,7 +40,7 @@ public abstract class AbstractChangeElement extends AbstractRequest implements C
     protected final Type type;
     protected IdentifiedElement element = null;
 
-    public AbstractChangeElement(final OpenStreetMapServer server, final String subPath, final Type type){
+    public AbstractChangeElement(final OpenStreetMapClient server, final String subPath, final Type type){
         super(server, subPath);
         this.type = type;
     }

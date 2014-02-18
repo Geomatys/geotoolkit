@@ -93,14 +93,14 @@ public class WFSFeatureStore extends AbstractFeatureStore{
     private static final AtomicLong NS_INC = new AtomicLong();
 
     private final QueryCapabilities queryCapabilities = new DefaultQueryCapabilities(false);
-    private final WebFeatureServer server;
+    private final WebFeatureClient server;
     private final List<Name> typeNames = new ArrayList<Name>();
     private final Map<Name,FeatureType> types = new HashMap<Name,FeatureType>();
     private final Map<Name,Envelope> bounds = new HashMap<Name, Envelope>();
     private final Map<String,String> prefixes = new HashMap<String, String>();
 
 
-    public WFSFeatureStore(WebFeatureServer server){
+    public WFSFeatureStore(WebFeatureClient server){
         super(server.getConfiguration());
 
         this.server = server;

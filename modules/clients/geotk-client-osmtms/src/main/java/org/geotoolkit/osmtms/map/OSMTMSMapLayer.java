@@ -20,7 +20,7 @@ import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.coverage.PyramidSet;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.map.DefaultCoverageMapLayer;
-import org.geotoolkit.osmtms.OSMTileMapServer;
+import org.geotoolkit.osmtms.OSMTileMapClient;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.StyleConstants;
@@ -35,7 +35,7 @@ import org.apache.sis.util.ArgumentChecks;
  */
 public class OSMTMSMapLayer extends DefaultCoverageMapLayer {
 
-    private static CoverageReference getReference(OSMTileMapServer server){
+    private static CoverageReference getReference(OSMTileMapClient server){
         try {
             return server.getCoverageReference(server.getNames().iterator().next());
         } catch (DataStoreException ex) {
@@ -48,7 +48,7 @@ public class OSMTMSMapLayer extends DefaultCoverageMapLayer {
     private static final String DEFAULT_FORMAT = ".png";
 
 
-    public OSMTMSMapLayer(final OSMTileMapServer server) {
+    public OSMTMSMapLayer(final OSMTileMapClient server) {
         super(getReference(server),
               new DefaultStyleFactory().style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER));
         setUserProperty(PyramidSet.HINT_FORMAT, DEFAULT_FORMAT);

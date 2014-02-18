@@ -18,7 +18,7 @@ package org.geotoolkit.wcs.v100;
 
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.wcs.AbstractDescribeCoverage;
-import org.geotoolkit.wcs.WebCoverageServer;
+import org.geotoolkit.wcs.WebCoverageClient;
 
 
 /**

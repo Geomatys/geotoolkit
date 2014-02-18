@@ -25,7 +25,7 @@ import org.geotoolkit.coverage.GridMosaic;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.osmtms.GetTileRequest;
-import org.geotoolkit.osmtms.OSMTileMapServer;
+import org.geotoolkit.osmtms.OSMTileMapClient;
 import org.geotoolkit.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
 import org.opengis.geometry.Envelope;
@@ -60,7 +60,7 @@ public class OSMTMSPyramidSet extends CachedPyramidSet{
         }       
     }
     
-    public OSMTMSPyramidSet(final OSMTileMapServer server, final int maxScale, boolean cacheImage) {
+    public OSMTMSPyramidSet(final OSMTileMapClient server, final int maxScale, boolean cacheImage) {
         super(server,true,cacheImage);
         
         final DefaultPyramid pyramid = new DefaultPyramid(this,GOOGLE_MERCATOR);
@@ -94,8 +94,8 @@ public class OSMTMSPyramidSet extends CachedPyramidSet{
     }
 
     @Override
-    protected OSMTileMapServer getServer() {
-        return (OSMTileMapServer) server;
+    protected OSMTileMapClient getServer() {
+        return (OSMTileMapClient) server;
     }
     
     @Override

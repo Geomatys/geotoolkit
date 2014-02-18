@@ -2,8 +2,8 @@
 package org.geotoolkit.pending.demo.clients;
 
 import java.util.Iterator;
-import org.geotoolkit.client.ServerFactory;
-import org.geotoolkit.client.ServerFinder;
+import org.geotoolkit.client.ClientFactory;
+import org.geotoolkit.client.ClientFinder;
 import org.geotoolkit.pending.demo.Demos;
 import org.opengis.parameter.ParameterDescriptorGroup;
 
@@ -14,11 +14,11 @@ public class ListAllFactoriesDemo {
         Demos.init();
         
         // Listing or creating new servers are made through the serverFinder utility class        
-        final Iterator<ServerFactory> ite = ServerFinder.getAllFactories(null).iterator();
+        final Iterator<ClientFactory> ite = ClientFinder.getAllFactories(null).iterator();
         
         while(ite.hasNext()){
             
-            final ServerFactory factory = ite.next();
+            final ClientFactory factory = ite.next();
             
             //display general informations about this factory
             System.out.println(factory.getDisplayName());

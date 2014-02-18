@@ -11,7 +11,7 @@ import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.wms.GetCapabilitiesRequest;
 import org.geotoolkit.wms.GetLegendRequest;
 import org.geotoolkit.wms.GetMapRequest;
-import org.geotoolkit.wms.WebMapServer;
+import org.geotoolkit.wms.WebMapClient;
 import org.geotoolkit.wms.map.WMSMapLayer;
 import org.geotoolkit.wms.xml.WMSVersion;
 
@@ -20,7 +20,7 @@ public class WMSClientDemo {
     public static void main(String[] args) throws MalformedURLException {
         Demos.init();
         
-        final WebMapServer wmsServer = new WebMapServer(new URL("http://demo.geomatys.com/constellation/WS/wms?"), WMSVersion.v130);
+        final WebMapClient wmsServer = new WebMapClient(new URL("http://demo.geomatys.com/constellation/WS/wms?"), WMSVersion.v130);
         final GetCapabilitiesRequest getCapa = wmsServer.createGetCapabilities();
         final GetMapRequest getMap = wmsServer.createGetMap();
         final GetLegendRequest getLegend = wmsServer.createGetLegend();

@@ -30,7 +30,7 @@ import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.googlemaps.GetMapRequest;
 import org.geotoolkit.googlemaps.GoogleCoverageReference;
-import org.geotoolkit.googlemaps.StaticGoogleMapsServer;
+import org.geotoolkit.googlemaps.StaticGoogleMapsClient;
 import org.geotoolkit.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
 import org.opengis.geometry.DirectPosition;
@@ -86,7 +86,7 @@ public class GoogleMapsPyramidSet extends CachedPyramidSet{
     private final String mapType;
 
     public GoogleMapsPyramidSet(final GoogleCoverageReference ref, final boolean cacheImage) throws DataStoreException{
-        super((StaticGoogleMapsServer)ref.getStore(),true,cacheImage);
+        super((StaticGoogleMapsClient)ref.getStore(),true,cacheImage);
         this.ref = ref;
         this.mapType = ref.getName().getLocalPart();
 
@@ -133,8 +133,8 @@ public class GoogleMapsPyramidSet extends CachedPyramidSet{
     }
 
     @Override
-    protected StaticGoogleMapsServer getServer() {
-        return (StaticGoogleMapsServer)super.getServer();
+    protected StaticGoogleMapsClient getServer() {
+        return (StaticGoogleMapsClient)super.getServer();
     }
 
     @Override

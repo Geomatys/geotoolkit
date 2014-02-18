@@ -50,7 +50,7 @@ public abstract class AbstractDescribeFeatureType extends AbstractSOSRequest imp
      * @param server The server.
      * @param version The version of the request.
      */
-    protected AbstractDescribeFeatureType(final SensorObservationServiceServer server, final String version) {
+    protected AbstractDescribeFeatureType(final SensorObservationServiceClient server, final String version) {
         super(server);
         this.version = version;
     }

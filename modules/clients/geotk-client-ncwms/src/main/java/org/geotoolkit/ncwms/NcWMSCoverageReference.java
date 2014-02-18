@@ -103,11 +103,11 @@ public class NcWMSCoverageReference extends WMSCoverageReference{
      */
     private Boolean logScale = null;
 
-    public NcWMSCoverageReference(NcWebMapServer server, Name name) {
+    public NcWMSCoverageReference(NcWebMapClient server, Name name) {
         super(server, name);
     }
 
-    public NcWMSCoverageReference(NcWebMapServer server, String... layers) {
+    public NcWMSCoverageReference(NcWebMapClient server, String... layers) {
         super(server, layers);
     }
 
@@ -187,7 +187,7 @@ public class NcWMSCoverageReference extends WMSCoverageReference{
     @Override
     public URL query(final Envelope env, final Dimension rect) throws MalformedURLException,
     TransformException, FactoryException {
-        final NcGetMapRequest request = ((NcWebMapServer) getStore()).createGetMap();
+        final NcGetMapRequest request = ((NcWebMapClient) getStore()).createGetMap();
         prepareQuery(request, new GeneralEnvelope(env), rect, null);
         return request.getURL();
     }
@@ -199,7 +199,7 @@ public class NcWMSCoverageReference extends WMSCoverageReference{
     public Request queryFeatureInfo(final Envelope env, final Dimension rect, int x,
             int y, final String[] queryLayers, final String infoFormat,
             final int featureCount) throws TransformException, FactoryException {
-        final NcGetFeatureInfoRequest request = ((NcWebMapServer) getStore()).createGetFeatureInfo();
+        final NcGetFeatureInfoRequest request = ((NcWebMapClient) getStore()).createGetFeatureInfo();
         prepareGetFeatureInfoRequest(request, env, rect, x, y, queryLayers, infoFormat, featureCount);
         return request;
     }
@@ -211,7 +211,7 @@ public class NcWMSCoverageReference extends WMSCoverageReference{
     public Request queryLegend(final Dimension rect, final String format, final String rule,
             final Double scale) throws MalformedURLException {
 
-        final NcGetLegendRequest request = ((NcWebMapServer) getStore()).createGetLegend();
+        final NcGetLegendRequest request = ((NcWebMapClient) getStore()).createGetLegend();
         prepareGetLegendRequest(request, rect, format, rule, scale);
 
         /*
@@ -252,7 +252,7 @@ public class NcWMSCoverageReference extends WMSCoverageReference{
      * @throws MalformedURLException
      */
     public URL queryMetadataLayerDetails() throws MalformedURLException {
-        final NcGetMetadataRequest request = ((NcWebMapServer) getStore()).createGetMetadata();
+        final NcGetMetadataRequest request = ((NcWebMapClient) getStore()).createGetMetadata();
         prepareQueryMetadata(request, "layerDetails");
         request.setTime(dimensions().get("TIME"));
         return request.getURL();
@@ -267,7 +267,7 @@ public class NcWMSCoverageReference extends WMSCoverageReference{
      * @throws MalformedURLException
      */
     public URL queryMetadataAnimationTimesteps(final String  start, final String end) throws MalformedURLException {
-        final NcGetMetadataRequest request = ((NcWebMapServer) getStore()).createGetMetadata();
+        final NcGetMetadataRequest request = ((NcWebMapClient) getStore()).createGetMetadata();
         prepareQueryMetadata(request, "animationTimesteps");
         request.setStart(start);
         request.setEnd(end);
@@ -281,7 +281,7 @@ public class NcWMSCoverageReference extends WMSCoverageReference{
      * @throws MalformedURLException
      */
     public URL queryMetadataTimesteps() throws MalformedURLException {
-        final NcGetMetadataRequest request = ((NcWebMapServer) getStore()).createGetMetadata();
+        final NcGetMetadataRequest request = ((NcWebMapClient) getStore()).createGetMetadata();
         prepareQueryMetadata(request, "timesteps");
         request.setDay(dimensions().get("TIME"));
         return request.getURL();
@@ -304,7 +304,7 @@ public class NcWMSCoverageReference extends WMSCoverageReference{
      * @throws MalformedURLException
      */
     public URL queryMetadataMinmax(final String crsCode, final String bbox, final String width, final String height) throws MalformedURLException {
-        final NcGetMetadataMinMaxRequest request = ((NcWebMapServer) getStore()).createGetMetadataMinMax();
+        final NcGetMetadataMinMaxRequest request = ((NcWebMapClient) getStore()).createGetMetadataMinMax();
         prepareQueryMetadata(request, "minmax");
         request.setTime(dimensions().get("TIME"));
         request.setElevation(dimensions().get("ELEVATION"));
@@ -327,7 +327,7 @@ public class NcWMSCoverageReference extends WMSCoverageReference{
      */
     public URL queryTransect(final String crsCode, final String lineString,
             final String outputFormat) throws MalformedURLException {
-        final NcGetTransectRequest request = ((NcWebMapServer) getStore()).createGetTransect();
+        final NcGetTransectRequest request = ((NcWebMapClient) getStore()).createGetTransect();
 
         // Mandatory
         request.setLayer(getLayerNames()[0]);
@@ -354,7 +354,7 @@ public class NcWMSCoverageReference extends WMSCoverageReference{
      */
     public URL queryVerticalProfile(final String crsCode, float x, float y,
             final String outputFormat) throws MalformedURLException {
-        final NcGetVerticalProfileRequest request = ((NcWebMapServer) getStore()).createGetVerticalProfile();
+        final NcGetVerticalProfileRequest request = ((NcWebMapClient) getStore()).createGetVerticalProfile();
 
         // Mandatory
         request.setLayer(getLayerNames()[0]);
@@ -383,7 +383,7 @@ public class NcWMSCoverageReference extends WMSCoverageReference{
     public URL queryTimeseries(final Envelope env, final Dimension rect, int x,
             int y, final String infoFormat,
             final String dateBegin, final String dateEnd) throws MalformedURLException, TransformException, FactoryException {
-        final NcGetTimeseriesRequest request = ((NcWebMapServer) getStore()).createGetTimeseries();
+        final NcGetTimeseriesRequest request = ((NcWebMapClient) getStore()).createGetTimeseries();
 
         final String[] layer = new String[]{getLayerNames()[0]};
         prepareGetFeatureInfoRequest(request, env, rect, x, y, layer, infoFormat, 0);

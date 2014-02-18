@@ -30,7 +30,7 @@ public final class Token {
     
     private static int TIME_MARGIN = 30; //seconds
     
-    private final IGNRMServer server;
+    private final IGNRMClient server;
     private final String key;
     private final String name;
     String value;
@@ -38,7 +38,7 @@ public final class Token {
     private TokenInformation information;
     private long lastUpdate;
 
-    public Token(IGNRMServer server, String key, String name, String value) {
+    public Token(IGNRMClient server, String key, String name, String value) {
         this.server = server;
         this.key = key;
         this.name = name;
@@ -86,7 +86,7 @@ public final class Token {
     /**
      * @return The IGN RM server
      */
-    public IGNRMServer getServer() {
+    public IGNRMClient getServer() {
         return server;
     }
 

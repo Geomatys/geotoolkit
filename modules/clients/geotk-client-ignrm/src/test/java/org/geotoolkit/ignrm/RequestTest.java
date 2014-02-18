@@ -32,7 +32,7 @@ public class RequestTest {
     @Test
     public void testGetTokenURL() throws MalformedURLException{
         
-        final IGNRMServer server = new IGNRMServer(new URL("http://test.com"));
+        final IGNRMClient server = new IGNRMClient(new URL("http://test.com"));
         
         final GetTokenRequest request =server.createGetToken();
         request.setKey("AAAAABBBBB");
@@ -46,7 +46,7 @@ public class RequestTest {
     @Test
     public void testGetConfigURL() throws MalformedURLException{
         
-        final IGNRMServer server = new IGNRMServer(new URL("http://test.com"));
+        final IGNRMClient server = new IGNRMClient(new URL("http://test.com"));
         
         final GetConfigRequest request = server.createGetConfig();
         request.setKey("AAAAABBBBB");
@@ -60,7 +60,7 @@ public class RequestTest {
     @Test
     public void testgReleaseTokenURL() throws MalformedURLException{
         
-        final IGNRMServer server = new IGNRMServer(new URL("http://test.com"));
+        final IGNRMClient server = new IGNRMClient(new URL("http://test.com"));
         
         final ReleaseTokenRequest request = server.createReleaseToken();
         request.setToken(new Token(server, "aaa", "gppkey", "123456"));

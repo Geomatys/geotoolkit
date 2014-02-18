@@ -10,7 +10,7 @@ import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.wfs.GetCapabilitiesRequest;
 import org.geotoolkit.data.wfs.GetFeatureRequest;
 import org.geotoolkit.data.wfs.WFSFeatureStore;
-import org.geotoolkit.data.wfs.WebFeatureServer;
+import org.geotoolkit.data.wfs.WebFeatureClient;
 import org.geotoolkit.pending.demo.Demos;
 
 public class WFSClientDemo {
@@ -19,7 +19,7 @@ public class WFSClientDemo {
         Demos.init();
         
         
-        final WebFeatureServer wfsServer = new WebFeatureServer(new URL("http://demo.geomatys.com/constellation/WS/wfs?"), "1.1.0");
+        final WebFeatureClient wfsServer = new WebFeatureClient(new URL("http://demo.geomatys.com/constellation/WS/wfs?"), "1.1.0");
         final GetCapabilitiesRequest getCapa = wfsServer.createGetCapabilities();
         final GetFeatureRequest getFeature = wfsServer.createGetFeature();
 

@@ -39,7 +39,7 @@ public abstract class AbstractCreateChangeSet extends AbstractRequest implements
 
     protected ChangeSet cs = null;
 
-    public AbstractCreateChangeSet(final OpenStreetMapServer server, final String subPath){
+    public AbstractCreateChangeSet(final OpenStreetMapClient server, final String subPath){
         super(server, subPath);
     }
 

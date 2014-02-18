@@ -4,7 +4,7 @@ package org.geotoolkit.pending.demo.clients.ignrm;
 import java.net.URL;
 import javax.swing.JOptionPane;
 import org.geotoolkit.gui.swing.render2d.JMap2DFrame;
-import org.geotoolkit.ignrm.IGNRMServer;
+import org.geotoolkit.ignrm.IGNRMClient;
 import org.geotoolkit.ignrm.Token;
 import org.geotoolkit.ignrm.TokenClientSecurity;
 import org.geotoolkit.map.MapBuilder;
@@ -16,7 +16,7 @@ import org.geotoolkit.security.ClientSecurityStack;
 import org.geotoolkit.security.RefererClientSecurity;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
-import org.geotoolkit.wmsc.WebMapServerCached;
+import org.geotoolkit.wmsc.WebMapClientCached;
 import org.geotoolkit.wmsc.map.WMSCMapLayer;
 import org.opengis.feature.type.Name;
 
@@ -52,12 +52,12 @@ public class IGNClientDemo {
 
         final ClientSecurity refererInfo = new RefererClientSecurity("http://localhost/");
         
-        final IGNRMServer geodrmServer = new IGNRMServer(new URL("http://jeton-api.ign.fr"),refererInfo);
+        final IGNRMClient geodrmServer = new IGNRMClient(new URL("http://jeton-api.ign.fr"),refererInfo);
         final Token token = geodrmServer.getToken(key);
         final ClientSecurity tokenInfo = new TokenClientSecurity(token);
         final ClientSecurity tokenAndReferer = ClientSecurityStack.wrap(refererInfo,tokenInfo);
         
-        final WebMapServerCached server = new WebMapServerCached(
+        final WebMapClientCached server = new WebMapClientCached(
                 new URL("http://wxs.ign.fr/inspire/wmsc?"), tokenAndReferer,true);
         
         for(Name name : server.getNames()){

@@ -18,7 +18,7 @@
 package org.geotoolkit.data.osm.client.v060;
 
 import org.geotoolkit.data.osm.client.AbstractChangeElement;
-import org.geotoolkit.data.osm.client.OpenStreetMapServer;
+import org.geotoolkit.data.osm.client.OpenStreetMapClient;
 import org.geotoolkit.data.osm.model.Node;
 import org.geotoolkit.data.osm.model.Relation;
 import org.geotoolkit.data.osm.model.Way;
@@ -30,7 +30,7 @@ import org.geotoolkit.data.osm.model.Way;
  */
 public class ChangeElement060 extends AbstractChangeElement{
 
-    public ChangeElement060(final OpenStreetMapServer server, final Type type){
+    public ChangeElement060(final OpenStreetMapClient server, final Type type){
         super(server,"",type);
     }
 

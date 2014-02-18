@@ -46,7 +46,7 @@ public class DefaultGetTile extends AbstractRequest implements GetTileRequest {
      *
      * @param serverURL The server url.
      */
-    protected DefaultGetTile(final OSMTileMapServer server){
+    protected DefaultGetTile(final OSMTileMapClient server){
         super(server);
     }
 

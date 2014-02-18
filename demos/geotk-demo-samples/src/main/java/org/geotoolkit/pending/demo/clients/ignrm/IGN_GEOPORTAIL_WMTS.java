@@ -15,8 +15,8 @@ import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.style.DefaultDescription;
 import org.geotoolkit.style.RandomStyleBuilder;
 import org.apache.sis.util.iso.SimpleInternationalString;
-import org.geotoolkit.wmts.WMTSServerFactory;
-import org.geotoolkit.wmts.WebMapTileServer;
+import org.geotoolkit.wmts.WMTSClientFactory;
+import org.geotoolkit.wmts.WebMapTileClient;
 import org.opengis.feature.type.Name;
 import org.opengis.parameter.ParameterValueGroup;
 
@@ -32,13 +32,13 @@ public class IGN_GEOPORTAIL_WMTS {
         final ClientSecurity authentication = new BasicAuthenticationSecurity(login,password);
         final URL url = new URL("https://wxs.ign.fr/"+key+"/wmts?");
 
-        final ParameterValueGroup params = WMTSServerFactory.PARAMETERS.createValue();
-        Parameters.getOrCreate(WMTSServerFactory.URL, params).setValue(url);
-        Parameters.getOrCreate(WMTSServerFactory.SECURITY, params).setValue(authentication);
-        Parameters.getOrCreate(WMTSServerFactory.IMAGE_CACHE, params).setValue(true);
-        Parameters.getOrCreate(WMTSServerFactory.NIO_QUERIES, params).setValue(true);
+        final ParameterValueGroup params = WMTSClientFactory.PARAMETERS.createValue();
+        Parameters.getOrCreate(WMTSClientFactory.URL, params).setValue(url);
+        Parameters.getOrCreate(WMTSClientFactory.SECURITY, params).setValue(authentication);
+        Parameters.getOrCreate(WMTSClientFactory.IMAGE_CACHE, params).setValue(true);
+        Parameters.getOrCreate(WMTSClientFactory.NIO_QUERIES, params).setValue(true);
 
-        final WebMapTileServer store = (WebMapTileServer) CoverageStoreFinder.open(params);
+        final WebMapTileClient store = (WebMapTileClient) CoverageStoreFinder.open(params);
 
 
         final MapContext context = MapBuilder.createContext();

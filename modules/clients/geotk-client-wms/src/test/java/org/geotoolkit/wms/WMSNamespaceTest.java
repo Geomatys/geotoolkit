@@ -38,12 +38,12 @@ import static org.junit.Assert.*;
  */
 public class WMSNamespaceTest {
 
-    private final WebMapServer SERVER_111;
-    private final WebMapServer SERVER_130;
+    private final WebMapClient SERVER_111;
+    private final WebMapClient SERVER_130;
 
     public WMSNamespaceTest() throws MalformedURLException, JAXBException {
-        SERVER_111 = new MockWebMapServer(WMSVersion.v111);
-        SERVER_130 = new MockWebMapServer(WMSVersion.v130);
+        SERVER_111 = new MockWebMapClient(WMSVersion.v111);
+        SERVER_130 = new MockWebMapClient(WMSVersion.v130);
     }
 
     /**

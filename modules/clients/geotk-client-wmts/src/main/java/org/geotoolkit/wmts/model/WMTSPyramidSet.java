@@ -26,7 +26,7 @@ import org.geotoolkit.ows.xml.v110.LanguageStringType;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.wmts.GetTileRequest;
-import org.geotoolkit.wmts.WebMapTileServer;
+import org.geotoolkit.wmts.WebMapTileClient;
 import org.geotoolkit.wmts.xml.v100.*;
 
 /**
@@ -46,7 +46,7 @@ public class WMTSPyramidSet extends CachedPyramidSet{
     private LayerType wmtsLayer;
     private Collection<Pyramid> pyramids;
 
-    public WMTSPyramidSet(final WebMapTileServer server, final String layerName, boolean cacheImage){
+    public WMTSPyramidSet(final WebMapTileClient server, final String layerName, boolean cacheImage){
         super(server,true,cacheImage);
         ArgumentChecks.ensureNonNull("layer name", layerName);
         this.layerName = layerName;
@@ -63,8 +63,8 @@ public class WMTSPyramidSet extends CachedPyramidSet{
     }
 
     @Override
-    protected WebMapTileServer getServer() {
-        return (WebMapTileServer)super.getServer();
+    protected WebMapTileClient getServer() {
+        return (WebMapTileClient)super.getServer();
     }
 
     public Capabilities getCapabilities() {

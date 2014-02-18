@@ -35,7 +35,7 @@ public abstract class AbstractReadElementRelations extends AbstractRequest imple
      *
      * @param server The server.
      */
-    protected AbstractReadElementRelations(final OpenStreetMapServer server, final String subpath){
+    protected AbstractReadElementRelations(final OpenStreetMapClient server, final String subpath){
         super(server, subpath);
     }
 

@@ -44,7 +44,7 @@ public class GetMapTest {
     @Test
     public void testRequestStructure() throws NoSuchAuthorityCodeException, FactoryException, TransformException, DataStoreException {
 
-        final StaticGoogleMapsServer gmserver = new StaticGoogleMapsServer();
+        final StaticGoogleMapsClient gmserver = new StaticGoogleMapsClient();
         final GoogleCoverageReference ref = (GoogleCoverageReference) gmserver.getCoverageReference(gmserver.getNames().iterator().next());
 
         final GetMapRequest request = ref.createGetMap();

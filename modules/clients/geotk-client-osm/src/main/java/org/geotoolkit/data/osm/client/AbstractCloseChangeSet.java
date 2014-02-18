@@ -34,7 +34,7 @@ public abstract class AbstractCloseChangeSet extends AbstractRequest implements 
 
     protected int id = -1;
 
-    public AbstractCloseChangeSet(final OpenStreetMapServer server, final String subPath){
+    public AbstractCloseChangeSet(final OpenStreetMapClient server, final String subPath){
         super(server, subPath);
     }
 

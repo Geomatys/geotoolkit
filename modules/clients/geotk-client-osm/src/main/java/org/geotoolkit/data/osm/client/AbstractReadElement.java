@@ -36,7 +36,7 @@ public abstract class AbstractReadElement extends AbstractRequest implements Rea
      *
      * @param server The server url.
      */
-    protected AbstractReadElement(final OpenStreetMapServer server, final String subpath){
+    protected AbstractReadElement(final OpenStreetMapClient server, final String subpath){
         super(server, subpath);
     }
 

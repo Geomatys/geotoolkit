@@ -44,7 +44,7 @@ public abstract class AbstractUpdateChangeSet extends AbstractRequest implements
     protected int id = -1;
     protected final List<Tag> tags = new ArrayList<Tag>();
 
-    public AbstractUpdateChangeSet(final OpenStreetMapServer server, final String subPath){
+    public AbstractUpdateChangeSet(final OpenStreetMapClient server, final String subPath){
         super(server, subPath);
     }
 

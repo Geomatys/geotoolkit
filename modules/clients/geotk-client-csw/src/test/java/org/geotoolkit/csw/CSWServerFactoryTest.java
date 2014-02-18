@@ -17,8 +17,8 @@
 package org.geotoolkit.csw;
 
 import java.util.Iterator;
-import org.geotoolkit.client.ServerFactory;
-import org.geotoolkit.client.ServerFinder;
+import org.geotoolkit.client.ClientFactory;
+import org.geotoolkit.client.ClientFinder;
 import static org.junit.Assert.fail;
 import org.junit.Test;
 
@@ -36,11 +36,11 @@ public class CSWServerFactoryTest {
     @Test
     public void testFactory() {
         
-        final Iterator<ServerFactory> ite = ServerFinder.getAllFactories(null).iterator();
+        final Iterator<ClientFactory> ite = ClientFinder.getAllFactories(null).iterator();
         
         boolean found = false;
         while (ite.hasNext()){
-            if(ite.next() instanceof CSWServerFactory){
+            if(ite.next() instanceof CSWClientFactory){
                 found = true;
             }
         }

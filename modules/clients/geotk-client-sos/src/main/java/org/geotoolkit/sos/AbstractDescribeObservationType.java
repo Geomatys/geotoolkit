@@ -50,7 +50,7 @@ public abstract class AbstractDescribeObservationType extends AbstractSOSRequest
      * @param server The server.
      * @param version The version of the request.
      */
-    protected AbstractDescribeObservationType(final SensorObservationServiceServer server, final String version) {
+    protected AbstractDescribeObservationType(final SensorObservationServiceClient server, final String version) {
         super(server);
         this.version = version;
     }

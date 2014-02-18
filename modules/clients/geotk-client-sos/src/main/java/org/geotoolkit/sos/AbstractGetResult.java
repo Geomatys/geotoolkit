@@ -53,7 +53,7 @@ public abstract class AbstractGetResult extends AbstractSOSRequest implements Ge
      * @param server The server url.
      * @param version The version of the request.
      */
-    protected AbstractGetResult(final SensorObservationServiceServer server, final String version) {
+    protected AbstractGetResult(final SensorObservationServiceClient server, final String version) {
         super(server);
         this.version = version;
     }

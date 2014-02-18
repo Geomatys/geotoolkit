@@ -24,7 +24,7 @@ import java.awt.geom.Point2D;
 
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.ncwms.NcWMSCoverageReference;
-import org.geotoolkit.ncwms.NcWebMapServer;
+import org.geotoolkit.ncwms.NcWebMapClient;
 import org.geotoolkit.wms.GetMapRequest;
 import org.geotoolkit.wms.map.WMSMapLayer;
 
@@ -41,11 +41,11 @@ import org.opengis.util.FactoryException;
  */
 public class NcWMSMapLayer extends WMSMapLayer {
 
-    private static NcWMSCoverageReference toReference(final NcWebMapServer server, final String... layers) {
+    private static NcWMSCoverageReference toReference(final NcWebMapClient server, final String... layers) {
         return new NcWMSCoverageReference(server, layers);
     }
 
-    public NcWMSMapLayer(final NcWebMapServer server, final String... layers) {
+    public NcWMSMapLayer(final NcWebMapClient server, final String... layers) {
         super(toReference(server, layers));
     }
 

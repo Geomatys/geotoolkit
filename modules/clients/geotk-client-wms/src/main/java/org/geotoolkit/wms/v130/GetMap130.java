@@ -24,7 +24,7 @@ import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.wms.AbstractGetMap;
-import org.geotoolkit.wms.WebMapServer;
+import org.geotoolkit.wms.WebMapClient;
 
 import org.opengis.geometry.Envelope;
 import org.opengis.util.FactoryException;
@@ -48,7 +48,7 @@ public class GetMap130 extends AbstractGetMap {
         super(serverURL,"1.3.0", security);
     }
     
-    public GetMap130(final WebMapServer server, final ClientSecurity security){
+    public GetMap130(final WebMapClient server, final ClientSecurity security){
         super(server,"1.3.0", security);
     }
 

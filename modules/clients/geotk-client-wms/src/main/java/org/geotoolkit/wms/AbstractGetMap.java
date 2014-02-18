@@ -75,7 +75,7 @@ public abstract class AbstractGetMap extends AbstractRequest implements GetMapRe
     protected String sldVersion = null;
     protected String sldBody = null;
     protected Boolean transparent = null;
-    protected WebMapServer server = null;
+    protected WebMapClient server = null;
     
     /**
      * Defines the server url and the service version for this kind of request.
@@ -88,7 +88,7 @@ public abstract class AbstractGetMap extends AbstractRequest implements GetMapRe
         this.version = version;
     }
     
-    protected AbstractGetMap(final WebMapServer server, final String version, final ClientSecurity security) {
+    protected AbstractGetMap(final WebMapClient server, final String version, final ClientSecurity security) {
         super(server.getURL().toString(),security,null);
         this.server = server;
         this.version = version;

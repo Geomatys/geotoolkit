@@ -25,7 +25,7 @@ import org.apache.sis.geometry.Envelope2D;
 import org.geotoolkit.map.AbstractMapLayer;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.wcs.GetCoverageRequest;
-import org.geotoolkit.wcs.WebCoverageServer;
+import org.geotoolkit.wcs.WebCoverageClient;
 
 import org.opengis.geometry.Envelope;
 
@@ -44,7 +44,7 @@ public class WCSMapLayer extends AbstractMapLayer {
     /**
      * The web coverage server to request.
      */
-    private final WebCoverageServer server;
+    private final WebCoverageClient server;
 
     /**
      * The layer to request.
@@ -56,7 +56,7 @@ public class WCSMapLayer extends AbstractMapLayer {
      */
     private String format = "image/png";
 
-    public WCSMapLayer(final WebCoverageServer server, final String layer) {
+    public WCSMapLayer(final WebCoverageClient server, final String layer) {
         super(new DefaultStyleFactory().style());
         this.server = server;
         this.layer = layer;
@@ -66,9 +66,9 @@ public class WCSMapLayer extends AbstractMapLayer {
     }
 
     /**
-     * Returns the {@link WebCoverageServer} to request. Can't be {@code null}.
+     * Returns the {@link WebCoverageClient} to request. Can't be {@code null}.
      */
-    public WebCoverageServer getServer() {
+    public WebCoverageClient getServer() {
         return server;
     }
 

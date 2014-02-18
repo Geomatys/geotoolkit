@@ -35,7 +35,7 @@ public abstract class AbstractReadElementFull extends AbstractRequest implements
      *
      * @param server The server.
      */
-    protected AbstractReadElementFull(final OpenStreetMapServer server, final String subpath){
+    protected AbstractReadElementFull(final OpenStreetMapClient server, final String subpath){
         super(server, subpath);
     }
 

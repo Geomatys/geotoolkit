@@ -44,11 +44,11 @@ import org.opengis.util.FactoryException;
  */
 public class WMSMapLayer extends DefaultCoverageMapLayer {
 
-    private static WMSCoverageReference toReference(final WebMapServer server, final String... layers){
+    private static WMSCoverageReference toReference(final WebMapClient server, final String... layers){
         return new WMSCoverageReference(server, layers);
     }
 
-    public WMSMapLayer(final WebMapServer server, final String... layers) {
+    public WMSMapLayer(final WebMapClient server, final String... layers) {
         this(toReference(server, layers));
         graphicBuilders().add(WMSGraphicBuilder.INSTANCE);
     }
@@ -195,8 +195,8 @@ public class WMSMapLayer extends DefaultCoverageMapLayer {
     /**
      * @deprecated use getCoverageReference() methods
      */
-    public WebMapServer getServer() {
-        return (WebMapServer)getCoverageReference().getStore();
+    public WebMapClient getServer() {
+        return (WebMapClient)getCoverageReference().getStore();
     }
 
     /**

@@ -26,9 +26,9 @@ import java.util.logging.Logger;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import org.geotoolkit.client.Server;
-import org.geotoolkit.client.ServerFactory;
-import org.geotoolkit.client.ServerFinder;
+import org.geotoolkit.client.Client;
+import org.geotoolkit.client.ClientFactory;
+import org.geotoolkit.client.ClientFinder;
 import org.geotoolkit.coverage.CoverageStoreFactory;
 import org.geotoolkit.data.FeatureStoreFactory;
 import org.geotoolkit.data.FileFeatureStoreFactory;
@@ -57,9 +57,9 @@ public class JServerChooser extends javax.swing.JPanel {
 
     private static final Logger LOGGER = Logging.getLogger(JCoverageStoreChooser.class);
 
-    private static final Comparator<ServerFactory> SORTER = new Comparator<ServerFactory>() {
+    private static final Comparator<ClientFactory> SORTER = new Comparator<ClientFactory>() {
         @Override
-        public int compare(ServerFactory o1, ServerFactory o2) {
+        public int compare(ClientFactory o1, ClientFactory o2) {
             return o1.getDisplayName().toString().compareTo(o2.getDisplayName().toString());
         }
     };
@@ -72,7 +72,7 @@ public class JServerChooser extends javax.swing.JPanel {
         guiEditPane.add(BorderLayout.CENTER,guiEditor);
         guiEditor.setHelpVisible(false);
 
-        final List<ServerFactory> factories = new ArrayList<>(ServerFinder.getAvailableFactories(null));
+        final List<ClientFactory> factories = new ArrayList<>(ClientFinder.getAvailableFactories(null));
         Collections.sort(factories, SORTER);
 
         guiList.setHighlighters(HighlighterFactory.createAlternateStriping() );
@@ -81,7 +81,7 @@ public class JServerChooser extends javax.swing.JPanel {
         guiList.addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
-                final ServerFactory factory = (ServerFactory) guiList.getSelectedValue();
+                final ClientFactory factory = (ClientFactory) guiList.getSelectedValue();
                 final ParameterValueGroup param = factory.getParametersDescriptor().createValue();
                 guiEditor.setParameterValue(param);
             }
@@ -100,8 +100,8 @@ public class JServerChooser extends javax.swing.JPanel {
         }
     }
 
-    public Server getServer() throws DataStoreException{
-        final ServerFactory factory = (ServerFactory) guiList.getSelectedValue();
+    public Client getServer() throws DataStoreException{
+        final ClientFactory factory = (ClientFactory) guiList.getSelectedValue();
 
         if(factory == null){
             return null;
@@ -191,7 +191,7 @@ public class JServerChooser extends javax.swing.JPanel {
 
 private void guiConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guiConnectActionPerformed
 
-        Server store = null;
+        Client store = null;
         try {
             chooser.setSource(null);
             store = getServer();
@@ -223,7 +223,7 @@ private void guiConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
      * @return
      * @throws DataStoreException
      */
-    public static List<Server> showDialog(Component parent) throws DataStoreException{
+    public static List<Client> showDialog(Component parent) throws DataStoreException{
         return showDialog(parent,Collections.EMPTY_LIST);
     }
 
@@ -245,7 +245,7 @@ private void guiConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
      * @return
      * @throws DataStoreException
      */
-    public static List<Server> showDialog(Component parent, List<PropertyValueEditor> editors) throws DataStoreException{
+    public static List<Client> showDialog(Component parent, List<PropertyValueEditor> editors) throws DataStoreException{
         return showDialog(parent,editors, false);
     }
 
@@ -262,7 +262,7 @@ private void guiConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
             if (layerVisible) {
                 return chooser.getSelectedLayers();
             } else {
-                final Server store = chooser.getServer();
+                final Client store = chooser.getServer();
                 if (store == null) {
                     return Collections.EMPTY_LIST;
                 } else {
@@ -283,8 +283,8 @@ private void guiConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
             String name = "";
             String desc = "";
 
-            if(value instanceof ServerFactory){
-                final ServerFactory factory = (ServerFactory) value;
+            if(value instanceof ClientFactory){
+                final ClientFactory factory = (ClientFactory) value;
                 name = String.valueOf(factory.getDisplayName());
                 desc = String.valueOf(factory.getDescription());
             }else if(value instanceof FeatureStoreFactory){
@@ -313,8 +313,8 @@ private void guiConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
 
         ImageIcon icon = EMPTY_24;
         String name = "";
-        if(candidate instanceof ServerFactory){
-            name = ((ServerFactory)candidate).getDisplayName().toString().toLowerCase();
+        if(candidate instanceof ClientFactory){
+            name = ((ClientFactory)candidate).getDisplayName().toString().toLowerCase();
             icon = IconBundle.getIcon("24_server");
         }else if(candidate instanceof CoverageStoreFactory){
             name = ((CoverageStoreFactory)candidate).getDisplayName().toString().toLowerCase();

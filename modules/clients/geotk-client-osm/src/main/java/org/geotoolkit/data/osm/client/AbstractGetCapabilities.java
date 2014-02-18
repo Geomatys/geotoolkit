@@ -33,7 +33,7 @@ public abstract class AbstractGetCapabilities extends AbstractRequest implements
      *
      * @param server The server url.
      */
-    protected AbstractGetCapabilities(final OpenStreetMapServer server){
+    protected AbstractGetCapabilities(final OpenStreetMapClient server){
         super(server, "api/capabilities");
     }
 

@@ -51,12 +51,12 @@ import static org.junit.Assert.*;
  */
 public class WMSMapLayerTest {
 
-    private final WebMapServer SERVER_111;
-    private final WebMapServer SERVER_130;
+    private final WebMapClient SERVER_111;
+    private final WebMapClient SERVER_130;
 
     public WMSMapLayerTest() throws MalformedURLException, JAXBException {
-        SERVER_111 = new MockWebMapServer(WMSVersion.v111);
-        SERVER_130 = new MockWebMapServer(WMSVersion.v130);
+        SERVER_111 = new MockWebMapClient(WMSVersion.v111);
+        SERVER_130 = new MockWebMapClient(WMSVersion.v130);
     }
 
     /**
@@ -187,11 +187,11 @@ public class WMSMapLayerTest {
         final MarshallerPool pool = WMSMarshallerPool.getInstance();
         final Unmarshaller unmarshaller = pool.acquireUnmarshaller();
         final AbstractWMSCapabilities capa;
-        capa = (AbstractWMSCapabilities) unmarshaller.unmarshal(MockWebMapServer.class.getResource(
+        capa = (AbstractWMSCapabilities) unmarshaller.unmarshal(MockWebMapClient.class.getResource(
                 "/org/geotoolkit/wms/test_v111_GetFeatureInfo_EPSG4326.xml"));
         pool.recycle(unmarshaller);
 
-        final WebMapServer server = new WebMapServer(new URL("http://test.com"), WMSVersion.v111,capa);
+        final WebMapClient server = new WebMapClient(new URL("http://test.com"), WMSVersion.v111,capa);
 
         final WMSMapLayer layer = new WMSMapLayer(server, "test");
 
@@ -232,11 +232,11 @@ public class WMSMapLayerTest {
         final MarshallerPool pool = WMSMarshallerPool.getInstance();
         final Unmarshaller unmarshaller = pool.acquireUnmarshaller();
         final AbstractWMSCapabilities capa;
-        capa = (AbstractWMSCapabilities) unmarshaller.unmarshal(MockWebMapServer.class.getResource(
+        capa = (AbstractWMSCapabilities) unmarshaller.unmarshal(MockWebMapClient.class.getResource(
                 "/org/geotoolkit/wms/test_v130_GetFeatureInfo_EPSG4326.xml"));
         pool.recycle(unmarshaller);
 
-        final WebMapServer server = new WebMapServer(new URL("http://test.com"), WMSVersion.v130, capa);
+        final WebMapClient server = new WebMapClient(new URL("http://test.com"), WMSVersion.v130, capa);
 
         final WMSMapLayer layer = new WMSMapLayer(server, "test");
 
@@ -277,11 +277,11 @@ public class WMSMapLayerTest {
         final MarshallerPool pool = WMSMarshallerPool.getInstance();
         final Unmarshaller unmarshaller = pool.acquireUnmarshaller();
         final AbstractWMSCapabilities capa;
-        capa = (AbstractWMSCapabilities) unmarshaller.unmarshal(MockWebMapServer.class.getResource(
+        capa = (AbstractWMSCapabilities) unmarshaller.unmarshal(MockWebMapClient.class.getResource(
                 "/org/geotoolkit/wms/test_v130_GetFeatureInfo_CRS84.xml"));
         pool.recycle(unmarshaller);
 
-        final WebMapServer server = new WebMapServer(new URL("http://test.com"), WMSVersion.v130,capa);
+        final WebMapClient server = new WebMapClient(new URL("http://test.com"), WMSVersion.v130,capa);
 
         final WMSMapLayer layer = new WMSMapLayer(server, "test");
 
@@ -322,11 +322,11 @@ public class WMSMapLayerTest {
         final MarshallerPool pool = WMSMarshallerPool.getInstance();
         final Unmarshaller unmarshaller = pool.acquireUnmarshaller();
         final AbstractWMSCapabilities capa;
-        capa = (AbstractWMSCapabilities) unmarshaller.unmarshal(MockWebMapServer.class.getResource(
+        capa = (AbstractWMSCapabilities) unmarshaller.unmarshal(MockWebMapClient.class.getResource(
                 "/org/geotoolkit/wms/test_v111_GetFeatureInfo_Reproject_EPSG4326_to_CRS84.xml"));
         pool.recycle(unmarshaller);
 
-        final WebMapServer server = new WebMapServer(new URL("http://test.com"), WMSVersion.v111,capa);
+        final WebMapClient server = new WebMapClient(new URL("http://test.com"), WMSVersion.v111,capa);
 
         final WMSMapLayer layer = new WMSMapLayer(server, "test");
         layer.getCoverageReference().setUseLocalReprojection(true);
@@ -368,11 +368,11 @@ public class WMSMapLayerTest {
         final MarshallerPool pool = WMSMarshallerPool.getInstance();
         final Unmarshaller unmarshaller = pool.acquireUnmarshaller();
         final AbstractWMSCapabilities capa;
-        capa = (AbstractWMSCapabilities) unmarshaller.unmarshal(MockWebMapServer.class.getResource(
+        capa = (AbstractWMSCapabilities) unmarshaller.unmarshal(MockWebMapClient.class.getResource(
                 "/org/geotoolkit/wms/test_v130_GetFeatureInfo_Reproject_EPSG4326_to_CRS84.xml"));
         pool.recycle(unmarshaller);
 
-        final WebMapServer server = new WebMapServer(new URL("http://test.com"), WMSVersion.v130,capa);
+        final WebMapClient server = new WebMapClient(new URL("http://test.com"), WMSVersion.v130,capa);
 
         final WMSMapLayer layer = new WMSMapLayer(server, "test");
         layer.getCoverageReference().setUseLocalReprojection(true);
@@ -414,11 +414,11 @@ public class WMSMapLayerTest {
         final MarshallerPool pool = WMSMarshallerPool.getInstance();
         final Unmarshaller unmarshaller = pool.acquireUnmarshaller();
         final AbstractWMSCapabilities capa;
-        capa = (AbstractWMSCapabilities) unmarshaller.unmarshal(MockWebMapServer.class.getResource(
+        capa = (AbstractWMSCapabilities) unmarshaller.unmarshal(MockWebMapClient.class.getResource(
                 "/org/geotoolkit/wms/test_v111_GetFeatureInfo_Reproject_CRS84_to_EPSG3857.xml"));
         pool.recycle(unmarshaller);
 
-        final WebMapServer server = new WebMapServer(new URL("http://test.com"), WMSVersion.v111,capa);
+        final WebMapClient server = new WebMapClient(new URL("http://test.com"), WMSVersion.v111,capa);
 
         final WMSMapLayer layer = new WMSMapLayer(server, "test");
         layer.getCoverageReference().setUseLocalReprojection(true);
@@ -462,11 +462,11 @@ public class WMSMapLayerTest {
         final MarshallerPool pool = WMSMarshallerPool.getInstance();
         final Unmarshaller unmarshaller = pool.acquireUnmarshaller();
         final AbstractWMSCapabilities capa;
-        capa = (AbstractWMSCapabilities) unmarshaller.unmarshal(MockWebMapServer.class.getResource(
+        capa = (AbstractWMSCapabilities) unmarshaller.unmarshal(MockWebMapClient.class.getResource(
                 "/org/geotoolkit/wms/test_v130_GetFeatureInfo_Reproject_CRS84_to_EPSG3857.xml"));
         pool.recycle(unmarshaller);
 
-        final WebMapServer server = new WebMapServer(new URL("http://test.com"), WMSVersion.v130,capa);
+        final WebMapClient server = new WebMapClient(new URL("http://test.com"), WMSVersion.v130,capa);
 
         final WMSMapLayer layer = new WMSMapLayer(server, "test");
         layer.getCoverageReference().setUseLocalReprojection(true);
@@ -508,12 +508,12 @@ public class WMSMapLayerTest {
         final MarshallerPool pool = WMSMarshallerPool.getInstance();
         final Unmarshaller unmarshaller = pool.acquireUnmarshaller();
         final AbstractWMSCapabilities capa;
-        capa = (AbstractWMSCapabilities) unmarshaller.unmarshal(MockWebMapServer.class.getResource(
+        capa = (AbstractWMSCapabilities) unmarshaller.unmarshal(MockWebMapClient.class.getResource(
                 "/org/geotoolkit/wms/test_v111_GetFeatureInfo_Reproject_EPSG4326_to_EPSG3857.xml"));
         pool.recycle(unmarshaller);
 
 
-        final WebMapServer server = new WebMapServer(new URL("http://test.com"), WMSVersion.v111, capa);
+        final WebMapClient server = new WebMapClient(new URL("http://test.com"), WMSVersion.v111, capa);
 
         final WMSMapLayer layer = new WMSMapLayer(server, "test");
         layer.getCoverageReference().setUseLocalReprojection(true);
@@ -556,11 +556,11 @@ public class WMSMapLayerTest {
         final MarshallerPool pool = WMSMarshallerPool.getInstance();
         final Unmarshaller unmarshaller = pool.acquireUnmarshaller();
         final AbstractWMSCapabilities capa;
-        capa = (AbstractWMSCapabilities) unmarshaller.unmarshal(MockWebMapServer.class.getResource(
+        capa = (AbstractWMSCapabilities) unmarshaller.unmarshal(MockWebMapClient.class.getResource(
                 "/org/geotoolkit/wms/test_v130_GetFeatureInfo_Reproject_EPSG4326_to_EPSG3857.xml"));
         pool.recycle(unmarshaller);
 
-        final WebMapServer server = new WebMapServer(new URL("http://test.com"), WMSVersion.v130,capa);
+        final WebMapClient server = new WebMapClient(new URL("http://test.com"), WMSVersion.v130,capa);
 
         final WMSMapLayer layer = new WMSMapLayer(server, "test");
         layer.getCoverageReference().setUseLocalReprojection(true);

@@ -44,7 +44,7 @@ public abstract class AbstractUpload extends AbstractRequest implements UploadRe
     protected String generator = "GeotoolKit.org";
     protected String version = "3";
 
-    public AbstractUpload(final OpenStreetMapServer server, final String subPath){
+    public AbstractUpload(final OpenStreetMapClient server, final String subPath){
         super(server, subPath);
     }
 

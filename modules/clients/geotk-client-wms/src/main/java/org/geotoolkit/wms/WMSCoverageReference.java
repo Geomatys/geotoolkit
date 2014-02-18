@@ -118,7 +118,7 @@ public class WMSCoverageReference extends AbstractCoverageReference{
     /**
      * The web map server to request.
      */
-    private final WebMapServer server;
+    private final WebMapClient server;
 
     /**
      * Map for optional dimensions specified for the GetMap request.
@@ -188,11 +188,11 @@ public class WMSCoverageReference extends AbstractCoverageReference{
     private Envelope env;
 
 
-    public WMSCoverageReference(final WebMapServer server, String ... layers) {
+    public WMSCoverageReference(final WebMapClient server, String ... layers) {
         this(server,toNames(layers));
     }
 
-    public WMSCoverageReference(final WebMapServer server, final Name ... names) {
+    public WMSCoverageReference(final WebMapClient server, final Name ... names) {
         super(server,names[0]);
         this.server = server;
 

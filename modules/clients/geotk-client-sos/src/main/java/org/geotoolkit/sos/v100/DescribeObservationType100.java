@@ -17,7 +17,7 @@
 package org.geotoolkit.sos.v100;
 
 import org.geotoolkit.sos.AbstractDescribeObservationType;
-import org.geotoolkit.sos.SensorObservationServiceServer;
+import org.geotoolkit.sos.SensorObservationServiceClient;
 
 
 /**
@@ -32,7 +32,7 @@ public class DescribeObservationType100 extends AbstractDescribeObservationType 
      *
      * @param server The webservice.
      */
-    public DescribeObservationType100(final SensorObservationServiceServer server){
+    public DescribeObservationType100(final SensorObservationServiceClient server){
         super(server, "1.0.0");
     }
 

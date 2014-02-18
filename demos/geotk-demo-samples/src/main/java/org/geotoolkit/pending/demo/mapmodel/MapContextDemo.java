@@ -4,7 +4,6 @@ package org.geotoolkit.pending.demo.mapmodel;
 
 import java.io.File;
 import java.io.Serializable;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import org.geotoolkit.coverage.io.CoverageIO;
@@ -28,9 +27,6 @@ import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.StyleConstants;
-import org.geotoolkit.wms.WebMapServer;
-import org.geotoolkit.wms.map.WMSMapLayer;
-import org.geotoolkit.wms.xml.WMSVersion;
 
 
 public class MapContextDemo {

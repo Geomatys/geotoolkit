@@ -9,7 +9,7 @@ import java.net.URL;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
-import org.geotoolkit.csw.CatalogServicesServer;
+import org.geotoolkit.csw.CatalogServicesClient;
 import org.geotoolkit.csw.GetCapabilitiesRequest;
 import org.geotoolkit.csw.GetRecordByIdRequest;
 import org.geotoolkit.csw.GetRecordsRequest;
@@ -36,7 +36,7 @@ public class CSWClientDemo {
         final Unmarshaller um = pool.acquireUnmarshaller();
 
         // build a new CSW client
-        final CatalogServicesServer cswServer = new CatalogServicesServer(new URL("http://demo.geomatys.com/mdweb-demo/WS/csw/default?"), "2.0.2");
+        final CatalogServicesClient cswServer = new CatalogServicesClient(new URL("http://demo.geomatys.com/mdweb-demo/WS/csw/default?"), "2.0.2");
 
 
         /**

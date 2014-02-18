@@ -50,7 +50,7 @@ public abstract class AbstractGetFeatureOfInterestTime extends AbstractSOSReques
      * @param server The server.
      * @param version The version of the request.
      */
-    protected AbstractGetFeatureOfInterestTime(final SensorObservationServiceServer server, final String version) {
+    protected AbstractGetFeatureOfInterestTime(final SensorObservationServiceClient server, final String version) {
         super(server);
         this.version = version;
     }

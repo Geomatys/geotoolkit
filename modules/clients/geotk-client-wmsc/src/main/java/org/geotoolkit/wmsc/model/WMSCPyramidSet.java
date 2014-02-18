@@ -27,7 +27,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.wms.GetMapRequest;
 import org.geotoolkit.wms.xml.v111.Capability;
 import org.geotoolkit.wms.xml.v111.VendorSpecificCapabilities;
-import org.geotoolkit.wmsc.WebMapServerCached;
+import org.geotoolkit.wmsc.WebMapClientCached;
 import org.geotoolkit.wmsc.xml.v111.TileSet;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.util.FactoryException;
@@ -41,7 +41,7 @@ public class WMSCPyramidSet extends CachedPyramidSet{
     
     private final String layer;
     
-    public WMSCPyramidSet(final WebMapServerCached server, final String layer) throws CapabilitiesException {
+    public WMSCPyramidSet(final WebMapClientCached server, final String layer) throws CapabilitiesException {
         super(server,true,server.isCacheImage());
         this.layer = layer;
         
@@ -80,8 +80,8 @@ public class WMSCPyramidSet extends CachedPyramidSet{
     }
 
     @Override
-    protected WebMapServerCached getServer() {
-        return (WebMapServerCached)super.getServer();
+    protected WebMapClientCached getServer() {
+        return (WebMapClientCached)super.getServer();
     }
     
     public String getLayer() {

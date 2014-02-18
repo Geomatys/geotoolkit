@@ -41,7 +41,7 @@ public class GoogleCoverageReference extends AbstractCoverageReference implement
 
     private final GoogleMapsPyramidSet set;
 
-    GoogleCoverageReference(final StaticGoogleMapsServer server, final Name name, boolean cacheImage) throws DataStoreException{
+    GoogleCoverageReference(final StaticGoogleMapsClient server, final Name name, boolean cacheImage) throws DataStoreException{
         super(server,name);
         this.set = new GoogleMapsPyramidSet(this,cacheImage);
     }
@@ -57,7 +57,7 @@ public class GoogleCoverageReference extends AbstractCoverageReference implement
     }
 
     public GetMapRequest createGetMap() {
-        return new DefaultGetMap( (StaticGoogleMapsServer)store, name.getLocalPart());
+        return new DefaultGetMap( (StaticGoogleMapsClient)store, name.getLocalPart());
     }
 
     @Override

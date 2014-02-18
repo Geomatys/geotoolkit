@@ -25,7 +25,7 @@ import org.geotoolkit.lang.Setup;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.util.NullProgressListener;
-import org.geotoolkit.wps.WebProcessingServer;
+import org.geotoolkit.wps.WebProcessingClient;
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -84,8 +84,8 @@ public class WPSClientDemo {
 
         // Instantiate client :
         final URL wpsURL = new URL(SERVICE_URL);
-        final WebProcessingServer wpsClient =
-                new WebProcessingServer(wpsURL, WebProcessingServer.WPSVersion.v100.getCode());
+        final WebProcessingClient wpsClient =
+                new WebProcessingClient(wpsURL, WebProcessingClient.WPSVersion.v100.getCode());
 
         // Once initialized, we can ask a description of wanted process, using its id.
         ProcessDescriptor desc = wpsClient.getDescriptor(PROCESS_ID);

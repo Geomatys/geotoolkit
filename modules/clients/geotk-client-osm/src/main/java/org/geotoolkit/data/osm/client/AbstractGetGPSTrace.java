@@ -41,7 +41,7 @@ public abstract class AbstractGetGPSTrace extends AbstractRequest implements Get
      *
      * @param server The server.
      */
-    protected AbstractGetGPSTrace(final OpenStreetMapServer server, final String subpath){
+    protected AbstractGetGPSTrace(final OpenStreetMapClient server, final String subpath){
         super(server, subpath);
     }
 

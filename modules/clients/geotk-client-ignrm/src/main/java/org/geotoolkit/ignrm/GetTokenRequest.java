@@ -32,7 +32,7 @@ public class GetTokenRequest extends AbstractRequest{
     
     private String key;
     
-    public GetTokenRequest(final IGNRMServer server){
+    public GetTokenRequest(final IGNRMClient server){
         super(server,SUBPATH);
     }
 

@@ -8,13 +8,13 @@ import org.geotoolkit.gui.swing.render2d.JMap2DFrame;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
-import org.geotoolkit.osmtms.OSMTileMapServer;
+import org.geotoolkit.osmtms.OSMTileMapClient;
 import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.StyleConstants;
-import org.geotoolkit.wmts.WebMapTileServer;
+import org.geotoolkit.wmts.WebMapTileClient;
 import org.geotoolkit.wmts.xml.WMTSVersion;
 import org.opengis.feature.type.Name;
 
@@ -35,7 +35,7 @@ public class WMTSClientDemo {
     public static MapContext createContext() throws Exception{
         final MapContext context = MapBuilder.createContext(DefaultGeographicCRS.WGS84);
 
-        final WebMapTileServer server = new WebMapTileServer(
+        final WebMapTileClient server = new WebMapTileClient(
                 new URL("http://localhost:8080/constellation/WS/wmts/test"),
                 WMTSVersion.v100);
         

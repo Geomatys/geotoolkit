@@ -25,7 +25,7 @@ import org.geotoolkit.client.AbstractRequest;
  */
 public class MockRequest extends AbstractRequest{
 
-    public MockRequest(MockServer server) {
+    public MockRequest(MockClient server) {
         super(server);
     }
     

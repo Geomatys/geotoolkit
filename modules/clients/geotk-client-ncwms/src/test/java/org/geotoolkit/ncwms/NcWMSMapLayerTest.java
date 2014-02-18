@@ -42,12 +42,12 @@ import static org.junit.Assert.*;
  */
 public class NcWMSMapLayerTest {
 
-    private final NcWebMapServer SERVER_111;
-    private final NcWebMapServer SERVER_130;
+    private final NcWebMapClient SERVER_111;
+    private final NcWebMapClient SERVER_130;
 
     public NcWMSMapLayerTest() throws MalformedURLException, JAXBException {
-        SERVER_111 = new MockWebMapServer(WMSVersion.v111);
-        SERVER_130 = new MockWebMapServer(WMSVersion.v130);
+        SERVER_111 = new MockWebMapClient(WMSVersion.v111);
+        SERVER_130 = new MockWebMapClient(WMSVersion.v130);
     }
 
     /**

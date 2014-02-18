@@ -47,7 +47,7 @@ public class SecurityTest {
 
         };
 
-        final MockServer server = new MockServer(security);        
+        final MockClient server = new MockClient(security);        
         final MockRequest request = server.createRequest();
             
         try {

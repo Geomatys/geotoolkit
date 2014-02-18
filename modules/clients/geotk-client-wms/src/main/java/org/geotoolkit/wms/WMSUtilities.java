@@ -83,7 +83,7 @@ public final class WMSUtilities {
      * @throws FactoryException
      * @throws CapabilitiesException if failed to read capabilities or layer name does not exist in document
      */
-    public static boolean supportCRS(final WebMapServer server, final String layername, final CoordinateReferenceSystem crs)
+    public static boolean supportCRS(final WebMapClient server, final String layername, final CoordinateReferenceSystem crs)
             throws FactoryException, CapabilitiesException {
         ArgumentChecks.ensureNonNull("server", server);
         ArgumentChecks.ensureNonNull("layer name", layername);
@@ -125,7 +125,7 @@ public final class WMSUtilities {
      * @throws FactoryException
      * @throws CapabilitiesException
      */
-    public static CoordinateReferenceSystem findOriginalCRS(final WebMapServer server,
+    public static CoordinateReferenceSystem findOriginalCRS(final WebMapClient server,
             final String layername) throws CapabilitiesException {
         ArgumentChecks.ensureNonNull("server", server);
         ArgumentChecks.ensureNonNull("layer name", layername);
@@ -164,7 +164,7 @@ public final class WMSUtilities {
      * @param layername wms layer name
      * @return
      */
-    public static Long findClosestDate(final WebMapServer server, final String layername,
+    public static Long findClosestDate(final WebMapClient server, final String layername,
             final long date) throws CapabilitiesException {
         ArgumentChecks.ensureNonNull("server", server);
         ArgumentChecks.ensureNonNull("layer name", layername);
@@ -212,7 +212,7 @@ public final class WMSUtilities {
      * @return
      * @throws CapabilitiesException
      */
-    public static Envelope findEnvelope(final WebMapServer server,
+    public static Envelope findEnvelope(final WebMapClient server,
             final String layername) throws CapabilitiesException {
         ArgumentChecks.ensureNonNull("server", server);
         ArgumentChecks.ensureNonNull("layer name", layername);
@@ -353,7 +353,7 @@ public final class WMSUtilities {
      * @return
      * @throws CapabilitiesException
      */
-    public static List<? extends Style> findStyleCandidates(final WebMapServer server,
+    public static List<? extends Style> findStyleCandidates(final WebMapClient server,
             final String layername) throws CapabilitiesException{
         ArgumentChecks.ensureNonNull("server", server);
         ArgumentChecks.ensureNonNull("layer name", layername);

@@ -38,14 +38,14 @@ import org.geotoolkit.security.ByThreadAuthenticator;
  */
 public class OpenStreetMapSimpleSession {
 
-    private final OpenStreetMapServer server;
+    private final OpenStreetMapClient server;
     private final String user;
     private final char[] password;
     private final String generator;
     private final String generatorVersion;
     private int changeSetId = -1;
 
-    public OpenStreetMapSimpleSession(final OpenStreetMapServer server, final String user, final char[] password,
+    public OpenStreetMapSimpleSession(final OpenStreetMapClient server, final String user, final char[] password,
             final String generator, final String generatorVersion){
         this.server = server;
         this.user = user;
@@ -54,7 +54,7 @@ public class OpenStreetMapSimpleSession {
         this.generatorVersion = generatorVersion;
     }
 
-    public OpenStreetMapServer getServer(){
+    public OpenStreetMapClient getServer(){
         return server;
     }
 
