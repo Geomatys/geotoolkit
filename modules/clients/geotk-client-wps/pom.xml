@@ -78,7 +78,7 @@
         </dependency>
         <dependency>
             <groupId>org.geotoolkit</groupId>
-            <artifactId>geotk-processing-core</artifactId>
+            <artifactId>geotk-processing</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

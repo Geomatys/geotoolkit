@@ -21,7 +21,7 @@
   <!-- =========================================================== -->
   <!--     Module Description                                      -->
   <!-- =========================================================== -->
-    <artifactId>geotk-processing-core</artifactId>
+    <artifactId>geotk-processing</artifactId>
     <packaging>jar</packaging>
     <name>Processing core</name>
 
