@@ -42,7 +42,7 @@
         </dependency>
         <dependency>
             <groupId>org.geotoolkit</groupId>
-            <artifactId>geotk-index-tree</artifactId>
+            <artifactId>geotk-index</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

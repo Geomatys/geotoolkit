@@ -54,7 +54,6 @@
   <!-- =========================================================== -->
   <modules>
     <module>geotk-index</module>
-    <module>geotk-index-tree</module>
     <module>geotk-spatial-lucene</module>
   </modules>
 
