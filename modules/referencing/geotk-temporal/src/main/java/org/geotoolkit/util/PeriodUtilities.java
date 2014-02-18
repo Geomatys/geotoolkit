@@ -36,25 +36,25 @@ import static org.geotoolkit.temporal.object.TemporalConstants.*;
  * @author Mehdi Sidhoum
  */
 public class PeriodUtilities {
-            
+
     /**
-     * The format of the dates. 
+     * The format of the dates.
      */
     private DateFormat dateFormat;
-    
+
     /**
-     * The date parser. 
+     * The date parser.
      */
     private ISODateParser dateParser = new ISODateParser();
-    
-    
+
+
     /**
-     * Build a new period worker with the specified DateFormat 
+     * Build a new period worker with the specified DateFormat
      */
     public PeriodUtilities(final DateFormat dateFormat) {
         this.dateFormat = dateFormat;
     }
-    
+
     /**
      * Evaluate the periodical gap between the different available time.
      * Return a String concatening periods and isolated date.
@@ -70,8 +70,8 @@ public class PeriodUtilities {
             return "";
         }
 
-        final StringBuffer response = new StringBuffer();        
-        
+        final StringBuffer response = new StringBuffer();
+
         Date first          = dates.first();
         Date previousDate   = first;
         long previousGap    = 0;
@@ -88,7 +88,7 @@ public class PeriodUtilities {
                     if (response.indexOf(firstDate + ',') != -1) {
                         final int pos = response.indexOf(firstDate);
                         response.delete(pos, pos + firstDate.length() + 1);
-                    } 
+                    }
                     response.append(getPeriodDescription(dates.subSet(first, d), previousGap)).append(',');
                     nbDataInGap = 1;
                 } else {
@@ -112,7 +112,7 @@ public class PeriodUtilities {
                 if (response.indexOf(firstDate + ',') != -1) {
                     final int pos = response.indexOf(firstDate);
                     response.delete(pos, pos + firstDate.length() + 1);
-                } 
+                }
                 response.append(getPeriodDescription(dates.tailSet(first), gap));
                 nbDataInGap = 1;
             } else {
@@ -128,17 +128,12 @@ public class PeriodUtilities {
 
     /**
      * Return a String for a range of date (or just one)
-     * 
-     * @param first
-     * @param last
-     * @param gap
-     * @return
      */
     public String getPeriodDescription(final SortedSet<Date> dates, long gap) {
         final StringBuffer response = new StringBuffer();
         dateFormat.format(dates.first(), response, new FieldPosition(0));
         response.append('/');
-        
+
         dateFormat.format(dates.last(), response, new FieldPosition(0));
         response.append("/P");
 
@@ -202,11 +197,6 @@ public class PeriodUtilities {
 
     /**
      * Return a sorted set from a string description.
-     * 
-     * @param periods
-     * @param df
-     * @return
-     * @throws java.text.ParseException
      */
     public SortedSet<Date> getDatesFromPeriodDescription(final String periods) throws ParseException {
         final SortedSet<Date> response = new TreeSet<Date>();
@@ -222,15 +212,15 @@ public class PeriodUtilities {
 
                 //we get the begin position
                 final String begin = dates.substring(0, slash);
-                final Date first = (dateFormat == null) ? dateParser.parseToDate(begin) :  dateFormat.parse(begin);                
+                final Date first = (dateFormat == null) ? dateParser.parseToDate(begin) :  dateFormat.parse(begin);
                 dates = dates.substring(slash+1);
-                
+
                 //we get the end position
                 slash = dates.indexOf('/');
                 final String end = dates.substring(0, slash);
                 final Date last = (dateFormat == null) ? dateParser.parseToDate(end) :  dateFormat.parse(end);
                     dates = dates.substring(slash+1);
-                    
+
                 //then we get the period Description
                 final long gap = getTimeFromPeriodDescription(dates);
 
@@ -247,9 +237,6 @@ public class PeriodUtilities {
 
     /**
      * Return a Date (long time) from a String description
-     * 
-     * @param periodDescription
-     * @return
      */
     public long getTimeFromPeriodDescription(String periodDescription) {
 
@@ -265,13 +252,13 @@ public class PeriodUtilities {
         }
 
         //we look if the period contains months (2628000000 ms)
-        if (    periodDescription.indexOf('M') != -1 && 
+        if (    periodDescription.indexOf('M') != -1 &&
                 (periodDescription.indexOf('T') == -1 || periodDescription.indexOf('T') > periodDescription.indexOf('M')) ) {
             final int nbMonth = Integer.parseInt(periodDescription.substring(0, periodDescription.indexOf('M')));
             time += nbMonth * MONTH_MS;
             periodDescription = periodDescription.substring(periodDescription.indexOf('M') + 1);
         }
-        
+
         //we look if the period contains weeks (604800000 ms)
         if (periodDescription.indexOf('W') != -1) {
             final int nbWeek = Integer.parseInt(periodDescription.substring(0, periodDescription.indexOf('W')));
