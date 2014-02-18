@@ -72,7 +72,7 @@
         <dependency><groupId>org.geotoolkit</groupId><artifactId>geotk-om</artifactId>                  <version>${project.version}</version></dependency>
         <dependency><groupId>org.geotoolkit</groupId><artifactId>geotk-osm-core</artifactId>            <version>${project.version}</version></dependency>
         <dependency><groupId>org.geotoolkit</groupId><artifactId>geotk-osm-xml</artifactId>             <version>${project.version}</version></dependency>
-        <dependency><groupId>org.geotoolkit</groupId><artifactId>geotk-processing-core</artifactId>     <version>${project.version}</version></dependency>
+        <dependency><groupId>org.geotoolkit</groupId><artifactId>geotk-processing</artifactId>     <version>${project.version}</version></dependency>
         <dependency><groupId>org.geotoolkit</groupId><artifactId>geotk-render</artifactId>              <version>${project.version}</version></dependency>
         <dependency><groupId>org.geotoolkit</groupId><artifactId>geotk-sensorML</artifactId>            <version>${project.version}</version></dependency>
         <dependency><groupId>org.geotoolkit</groupId><artifactId>geotk-shapefile</artifactId>           <version>${project.version}</version></dependency>
