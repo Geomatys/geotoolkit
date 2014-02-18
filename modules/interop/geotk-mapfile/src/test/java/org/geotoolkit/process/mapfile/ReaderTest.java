@@ -14,8 +14,10 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.mapfile;
+package org.geotoolkit.process.mapfile;
 
+import org.geotoolkit.process.mapfile.MapfileReader;
+import org.geotoolkit.process.mapfile.MapfileTypes;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.opengis.filter.FilterFactory;
 import org.geotoolkit.factory.FactoryFinder;

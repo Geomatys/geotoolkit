@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.mapfile;
+package org.geotoolkit.process.mapfile;
 
 import org.junit.Ignore;
 import org.opengis.filter.Filter;
@@ -37,7 +37,7 @@ import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.NoSuchIdentifierException;
 
 import static org.geotoolkit.test.Assert.*;
-import static org.geotoolkit.mapfile.process.MapfileFilterToOGCFilterDescriptor.*;
+import static org.geotoolkit.process.mapfile.MapfileFilterToOGCFilterDescriptor.*;
 import static org.geotoolkit.parameter.Parameters.*;
 
 /**

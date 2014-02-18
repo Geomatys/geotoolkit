@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.mapfile.process;
+package org.geotoolkit.process.mapfile;
 
 import java.awt.Color;
 import java.util.List;
@@ -27,7 +27,6 @@ import javax.measure.unit.NonSI;
 import javax.measure.unit.Unit;
 
 import org.geotoolkit.filter.DefaultFilterFactory2;
-import org.geotoolkit.mapfile.MapfileReader;
 import org.geotoolkit.process.AbstractProcess;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
@@ -70,9 +69,9 @@ import org.opengis.feature.Property;
 import org.opengis.filter.expression.Literal;
 import org.opengis.parameter.ParameterValueGroup;
 
-import static org.geotoolkit.mapfile.process.MapfileToSLDDescriptor.*;
+import static org.geotoolkit.process.mapfile.MapfileToSLDDescriptor.*;
 import static org.geotoolkit.parameter.Parameters.*;
-import static org.geotoolkit.mapfile.MapfileTypes.*;
+import static org.geotoolkit.process.mapfile.MapfileTypes.*;
 import static org.geotoolkit.style.StyleConstants.*;
 
 /**

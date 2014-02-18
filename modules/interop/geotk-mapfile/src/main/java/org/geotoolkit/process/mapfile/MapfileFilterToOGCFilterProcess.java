@@ -14,12 +14,12 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.mapfile.process;
+package org.geotoolkit.process.mapfile;
 
 import java.util.List;
 import java.util.ArrayList;
 
-import org.geotoolkit.mapfile.process.MapfileExpressionTokenizer.Token;
+import org.geotoolkit.process.mapfile.MapfileExpressionTokenizer.Token;
 import org.geotoolkit.filter.DefaultFilterFactory2;
 import org.geotoolkit.process.AbstractProcess;
 import org.geotoolkit.process.ProcessException;
@@ -31,7 +31,7 @@ import org.opengis.filter.expression.Expression;
 import org.opengis.filter.FilterFactory;
 import org.opengis.parameter.ParameterValueGroup;
 
-import static org.geotoolkit.mapfile.process.MapfileFilterToOGCFilterDescriptor.*;
+import static org.geotoolkit.process.mapfile.MapfileFilterToOGCFilterDescriptor.*;
 import static org.geotoolkit.parameter.Parameters.*;
 
 /**

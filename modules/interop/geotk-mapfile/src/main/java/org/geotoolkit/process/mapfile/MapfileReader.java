@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.mapfile;
+package org.geotoolkit.process.mapfile;
 
 import java.awt.Color;
 import java.awt.geom.Point2D;
@@ -42,7 +42,7 @@ import org.opengis.filter.FilterFactory;
 import org.opengis.filter.expression.Expression;
 
 import org.opengis.filter.expression.PropertyName;
-import static org.geotoolkit.mapfile.MapfileTypes.*;
+import static org.geotoolkit.process.mapfile.MapfileTypes.*;
 
 /**
  * Read the given mapfile and return a feature which type is MapFileTypes.MAP.

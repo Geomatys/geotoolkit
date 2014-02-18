@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.mapfile;
+package org.geotoolkit.process.mapfile;
 
 import java.awt.Color;
 import java.awt.geom.Point2D;
