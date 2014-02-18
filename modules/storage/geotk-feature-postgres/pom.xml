@@ -54,7 +54,7 @@
     </dependency>
     <dependency>
       <groupId>org.geotoolkit</groupId>
-      <artifactId>geotk-coverageio-wkb</artifactId>
+      <artifactId>geotk-coverage-wkb</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

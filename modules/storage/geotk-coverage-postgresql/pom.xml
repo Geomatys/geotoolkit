@@ -14,7 +14,7 @@
 
     <parent>
         <groupId>org.geotoolkit</groupId>
-        <artifactId>coverage</artifactId>
+        <artifactId>storage</artifactId>
         <version>4.x-SNAPSHOT</version>
     </parent>
 
@@ -22,12 +22,12 @@
   <!-- =========================================================== -->
   <!--     Module Description                                      -->
   <!-- =========================================================== -->
-    <artifactId>geotk-coverageio-dimap</artifactId>
+    <artifactId>geotk-coverage-postgresql</artifactId>
     <packaging>jar</packaging>
-    <name>Coverage Dimap</name>
+    <name>Coverage PostgreSQL</name>
 
     <description>
-    Datasource created to read dimap files
+    Coverage store for postgis coverage
     </description>
 
     <licenses>
@@ -66,28 +66,35 @@
         </dependency>
         <dependency>
             <groupId>org.geotoolkit</groupId>
-            <artifactId>geotk-feature</artifactId>
+            <artifactId>geotk-coverage-wkb</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.geotoolkit</groupId>
-            <artifactId>geotk-coverageio-geotiff</artifactId>
+            <artifactId>geotk-coverage-store</artifactId>
             <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.geotoolkit</groupId>
+            <artifactId>geotk-utility-jdbc</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.postgis</groupId>
+            <artifactId>postgis-jdbc</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>net.iharder</groupId>
+            <artifactId>base64</artifactId>
         </dependency>
         <dependency>
             <groupId>org.geotoolkit</groupId>
             <artifactId>geotk-epsg-javadb</artifactId>
             <version>${project.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>postgresql</groupId>
-            <artifactId>postgresql</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.derby</groupId>
-            <artifactId>derby</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>

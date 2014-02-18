@@ -110,6 +110,15 @@
     <module>geotk-feature-mysql</module>
     <module>geotk-feature-mapinfo</module>
     <module>geotk-feature-nmea</module>
+    <module>geotk-coverage-bil</module>
+    <module>geotk-coverage-dimap</module>
+    <module>geotk-coverage-geotiff</module>
+    <module>geotk-coverage-imagery</module>
+    <module>geotk-coverage-netcdf</module>
+    <module>geotk-coverage-postgresql</module>
+    <module>geotk-coverage-store</module>
+    <module>geotk-coverage-sql</module>
+    <module>geotk-coverage-wkb</module>
   </modules>
 
 </project>

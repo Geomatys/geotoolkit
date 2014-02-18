@@ -79,7 +79,7 @@
 
     <dependency>
       <groupId>org.geotoolkit</groupId>
-      <artifactId>geotk-coverageio-store</artifactId>
+      <artifactId>geotk-coverage-store</artifactId>
       <version>${project.version}</version>
     </dependency>
 

@@ -14,7 +14,7 @@
 
     <parent>
         <groupId>org.geotoolkit</groupId>
-        <artifactId>coverage</artifactId>
+        <artifactId>storage</artifactId>
         <version>4.x-SNAPSHOT</version>
     </parent>
 
@@ -22,12 +22,12 @@
   <!-- =========================================================== -->
   <!--     Module Description                                      -->
   <!-- =========================================================== -->
-    <artifactId>geotk-coverageio-bil</artifactId>
+    <artifactId>geotk-coverage-imagery</artifactId>
     <packaging>jar</packaging>
-    <name>Coverage BIL</name>
+    <name>Coverage Imagery</name>
 
     <description>
-    Datasource created to read bil files
+    	Replace JAI
     </description>
 
     <licenses>
@@ -44,9 +44,9 @@
   <!-- =========================================================== -->
     <developers>
         <developer>
-            <name>Johann Sorel (Geomatys)</name>
-            <id>jsorel</id>
-            <email>sorel.johann@geomatys.fr</email>
+            <name>Remi Marechal (Geomatys)</name>
+            <id>rmarechal</id>
+            <email>remi.marechal@geomatys.fr</email>
             <roles>
                 <role>module maintainer</role>
                 <role>Java Developer</role>
@@ -63,27 +63,6 @@
             <groupId>org.geotoolkit</groupId>
             <artifactId>geotk-coverageio</artifactId>
             <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.geotoolkit</groupId>
-            <artifactId>geotk-feature</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.geotoolkit</groupId>
-            <artifactId>geotk-epsg-javadb</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>postgresql</groupId>
-            <artifactId>postgresql</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.derby</groupId>
-            <artifactId>derby</artifactId>
-            <scope>test</scope>
         </dependency>
     </dependencies>
 

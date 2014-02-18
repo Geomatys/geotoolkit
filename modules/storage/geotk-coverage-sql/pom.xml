@@ -13,7 +13,7 @@
 
   <parent>
     <groupId>org.geotoolkit</groupId>
-    <artifactId>coverage</artifactId>
+    <artifactId>storage</artifactId>
     <version>4.x-SNAPSHOT</version>
   </parent>
 
@@ -83,7 +83,7 @@
     </dependency>
     <dependency>
       <groupId>org.geotoolkit</groupId>
-      <artifactId>geotk-coverageio-netcdf</artifactId>
+      <artifactId>geotk-coverage-netcdf</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>

@@ -14,7 +14,7 @@
 
     <parent>
         <groupId>org.geotoolkit</groupId>
-        <artifactId>coverage</artifactId>
+        <artifactId>storage</artifactId>
         <version>4.x-SNAPSHOT</version>
     </parent>
 
@@ -22,12 +22,12 @@
   <!-- =========================================================== -->
   <!--     Module Description                                      -->
   <!-- =========================================================== -->
-    <artifactId>geotk-coverageio-wkb</artifactId>
+    <artifactId>geotk-coverage-geotiff</artifactId>
     <packaging>jar</packaging>
-    <name>Coverage WKB</name>
+    <name>Coverage Geotiff</name>
 
     <description>
-    Coverage Reader for WKB
+    Datasource created to read geotiff files
     </description>
 
     <licenses>
@@ -63,12 +63,22 @@
             <groupId>org.geotoolkit</groupId>
             <artifactId>geotk-coverageio</artifactId>
             <version>${project.version}</version>
-        </dependency>      
+        </dependency>
         <dependency>
             <groupId>org.geotoolkit</groupId>
-            <artifactId>geotk-utility-pending</artifactId>
+            <artifactId>geotk-feature</artifactId>
             <version>${project.version}</version>
-        </dependency>    
+        </dependency>
+        <dependency>
+            <groupId>postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.derby</groupId>
+            <artifactId>derby</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
 </project>

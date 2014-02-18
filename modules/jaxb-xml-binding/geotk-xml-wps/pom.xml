@@ -126,7 +126,7 @@
         </dependency>
         <dependency>
             <groupId>org.geotoolkit</groupId>
-            <artifactId>geotk-coverageio-geotiff</artifactId>
+            <artifactId>geotk-coverage-geotiff</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>

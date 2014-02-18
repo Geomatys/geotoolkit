@@ -14,7 +14,7 @@
 
     <parent>
         <groupId>org.geotoolkit</groupId>
-        <artifactId>coverage</artifactId>
+        <artifactId>storage</artifactId>
         <version>4.x-SNAPSHOT</version>
     </parent>
 
@@ -22,12 +22,12 @@
   <!-- =========================================================== -->
   <!--     Module Description                                      -->
   <!-- =========================================================== -->
-    <artifactId>geotk-coverageio-store</artifactId>
+    <artifactId>geotk-coverage-wkb</artifactId>
     <packaging>jar</packaging>
-    <name>Coverage Store</name>
+    <name>Coverage WKB</name>
 
     <description>
-    	Coverage store model
+    Coverage Reader for WKB
     </description>
 
     <licenses>
@@ -66,28 +66,8 @@
         </dependency>
         <dependency>
             <groupId>org.geotoolkit</groupId>
-            <artifactId>geotk-coverage-sql</artifactId>
+            <artifactId>geotk-utility-pending</artifactId>
             <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.geotoolkit</groupId>
-            <artifactId>geotk-coverageio-imagery</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.geotoolkit</groupId>
-            <artifactId>geotk-feature</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>postgresql</groupId>
-            <artifactId>postgresql</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.derby</groupId>
-            <artifactId>derby</artifactId>
-            <scope>test</scope>
         </dependency>
     </dependencies>
 

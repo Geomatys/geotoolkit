@@ -117,17 +117,17 @@
         </dependency>
         <dependency>
             <groupId>org.geotoolkit</groupId>
-            <artifactId>geotk-coverageio-geotiff</artifactId>
+            <artifactId>geotk-coverage-geotiff</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.geotoolkit</groupId>
-            <artifactId>geotk-coverageio-postgresql</artifactId>
+            <artifactId>geotk-coverage-postgresql</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.geotoolkit</groupId>
-            <artifactId>geotk-coverageio-netcdf</artifactId>
+            <artifactId>geotk-coverage-netcdf</artifactId>
             <version>${project.version}</version>
         </dependency>
 

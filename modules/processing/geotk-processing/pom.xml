@@ -84,17 +84,17 @@
         </dependency>
         <dependency>
             <groupId>org.geotoolkit</groupId>
-            <artifactId>geotk-coverageio-store</artifactId>
+            <artifactId>geotk-coverage-store</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.geotoolkit</groupId>
-            <artifactId>geotk-coverageio-postgresql</artifactId>
+            <artifactId>geotk-coverage-postgresql</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.geotoolkit</groupId>
-            <artifactId>geotk-coverageio-imagery</artifactId>
+            <artifactId>geotk-coverage-imagery</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
