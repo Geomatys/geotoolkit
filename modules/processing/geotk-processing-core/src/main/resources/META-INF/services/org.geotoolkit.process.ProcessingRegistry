@@ -3,3 +3,4 @@ org.geotoolkit.process.coverage.CoverageProcessingRegistry
 org.geotoolkit.process.vector.VectorProcessingRegistry
 org.geotoolkit.process.datastore.DatastoreProcessingRegistry
 org.geotoolkit.process.math.MathProcessingRegistry
+org.geotoolkit.process.io.IOProcessingRegistry
