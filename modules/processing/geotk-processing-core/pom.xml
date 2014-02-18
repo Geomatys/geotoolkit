@@ -125,6 +125,12 @@
             <artifactId>groovy-all</artifactId>
             <version>2.0.0</version>
         </dependency>
+        <dependency>
+            <groupId>org.geotoolkit</groupId>
+            <artifactId>geotk-xml-csw</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
 
         <dependency>
             <groupId>org.geotoolkit</groupId>
