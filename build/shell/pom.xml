@@ -44,7 +44,6 @@
         <dependency><groupId>org.geotoolkit</groupId><artifactId>geotk-epsg-javadb</artifactId>                 <version>${project.version}</version></dependency>
         <dependency><groupId>org.geotoolkit</groupId><artifactId>geotk-metadata</artifactId>                    <version>${project.version}</version></dependency>
         <dependency><groupId>org.geotoolkit</groupId><artifactId>geotk-metadata-sql</artifactId>                <version>${project.version}</version></dependency>
-        <dependency><groupId>org.geotoolkit</groupId><artifactId>geotk-nature</artifactId>                      <version>${project.version}</version></dependency>
         <dependency><groupId>org.geotoolkit</groupId><artifactId>geotk-referencing</artifactId>                 <version>${project.version}</version></dependency>
         <dependency><groupId>org.geotoolkit</groupId><artifactId>geotk-setup</artifactId>                       <version>${project.version}</version></dependency>
         <dependency><groupId>org.geotoolkit</groupId><artifactId>geotk-utility</artifactId>                     <version>${project.version}</version></dependency>

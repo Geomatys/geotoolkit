@@ -85,5 +85,6 @@
     <module>geotk-demo-samples</module>
     <module>geotk-demo-referencing-javadb</module>
     <module>geotk-demo-referencing-wkt</module>
+    <!-- module>geotk-openoffice</module -->
   </modules>
 </project>

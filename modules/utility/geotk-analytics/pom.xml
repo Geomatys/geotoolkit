@@ -13,7 +13,7 @@
 
   <parent>
     <groupId>org.geotoolkit</groupId>
-    <artifactId>modules</artifactId>
+    <artifactId>analytics</artifactId>
     <version>4.x-SNAPSHOT</version>
   </parent>
 
@@ -22,12 +22,13 @@
            Module Description
        =========================================================== -->
   <groupId>org.geotoolkit</groupId>
-  <artifactId>analytics</artifactId>
-  <packaging>pom</packaging>
+  <artifactId>geotk-analytics</artifactId>
+  <packaging>jar</packaging>
   <name>Analytics</name>
 
   <description>
-    Projects group for analytics utilities.
+    Miscellaneous analytics algorithms, including algorithms related to natural quantities.
+    The later algorithms are determined empirically.
   </description>
 
 
@@ -43,18 +44,41 @@
       <organizationUrl>http://www.geomatys.com/</organizationUrl>
       <timezone>+1</timezone>
       <roles>
-        <role>Administrator</role>
+        <role>Module Maintainer</role>
+        <role>Java Developer</role>
+      </roles>
+    </developer>
+    <developer>
+      <name>Johann Sorel</name>
+      <id>eclesia</id>
+      <email>johann.sorel@geomatys.com</email>
+      <organization>Geomatys</organization>
+      <organizationUrl>http://www.geomatys.com/</organizationUrl>
+      <timezone>+1</timezone>
+      <roles>
+        <role>Java Developer</role>
       </roles>
     </developer>
   </developers>
 
 
   <!-- ===========================================================
-           Modules included in the build
+           Dependency Management
        =========================================================== -->
-  <modules>
-    <module>geotk-nature</module>
-    <module>geotk-analytics</module>
-    <!-- module>geotk-openoffice</module -->
-  </modules>
+  <dependencies>
+    <dependency>
+      <groupId>java3d</groupId>
+      <artifactId>vecmath</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.geotoolkit</groupId>
+      <artifactId>geotk-utility</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.geotoolkit</groupId>
+      <artifactId>geotk-coverage</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+  </dependencies>
 </project>

@@ -111,7 +111,7 @@
     </dependency>
     <dependency>
       <groupId>org.geotoolkit</groupId>
-      <artifactId>geotk-nature</artifactId>
+      <artifactId>geotk-analytics</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

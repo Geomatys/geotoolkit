@@ -122,7 +122,6 @@
     <module>datastore</module>
     <module>processing</module>
     <module>display</module>
-    <module>analytics</module>
     <module>jaxb-xml-binding</module>
     <module>clients</module>
     <module>interop</module>

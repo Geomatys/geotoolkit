@@ -80,5 +80,6 @@
     <module>geotk-setup</module>
     <module>geotk-utility-pending</module>
     <module>geotk-utility-jdbc</module>
+    <module>geotk-analytics</module>
   </modules>
 </project>
