@@ -47,7 +47,6 @@
         <dependency><groupId>org.geotoolkit</groupId><artifactId>geotk-nature</artifactId>                      <version>${project.version}</version></dependency>
         <dependency><groupId>org.geotoolkit</groupId><artifactId>geotk-openoffice</artifactId>                  <version>${project.version}</version></dependency>
         <dependency><groupId>org.geotoolkit</groupId><artifactId>geotk-referencing</artifactId>                 <version>${project.version}</version></dependency>
-        <dependency><groupId>org.geotoolkit</groupId><artifactId>geotk-referencing3D</artifactId>               <version>${project.version}</version></dependency>
         <dependency><groupId>org.geotoolkit</groupId><artifactId>geotk-setup</artifactId>                       <version>${project.version}</version></dependency>
         <dependency><groupId>org.geotoolkit</groupId><artifactId>geotk-utility</artifactId>                     <version>${project.version}</version></dependency>
         <dependency><groupId>org.geotoolkit</groupId><artifactId>geotk-widgets-swing</artifactId>               <version>${project.version}</version></dependency>

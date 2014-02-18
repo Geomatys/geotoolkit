@@ -40,3 +40,4 @@ org.geotoolkit.referencing.operation.provider.Krovak
 org.geotoolkit.referencing.operation.provider.NADCON
 org.geotoolkit.referencing.operation.provider.NTv2
 org.geotoolkit.referencing.operation.provider.RGF93
+org.geotoolkit.referencing.operation.provider.EllipsoidToGeoid

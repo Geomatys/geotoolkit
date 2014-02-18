@@ -110,7 +110,6 @@
        =========================================================== -->
   <modules>
     <module>geotk-referencing</module>
-    <module>geotk-referencing3D</module>
     <module>geotk-epsg</module>
     <module>geotk-epsg-javadb</module>
     <module>geotk-temporal</module>
