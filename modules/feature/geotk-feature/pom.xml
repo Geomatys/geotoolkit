@@ -46,25 +46,52 @@
   <!--     Dependency Management                                   -->
   <!-- =========================================================== -->
   <dependencies>
-    <dependency>
-      <groupId>org.geotoolkit</groupId>
-      <artifactId>geotk-filter</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-        <groupId>jaxen</groupId>
-        <artifactId>jaxen-limited</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>postgresql</groupId>
-      <artifactId>postgresql</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.derby</groupId>
-      <artifactId>derby</artifactId>
-      <scope>test</scope>
-    </dependency>
+      <dependency>
+          <groupId>org.geotoolkit</groupId>
+          <artifactId>geotk-utility-pending</artifactId>
+          <version>${project.version}</version>
+      </dependency>
+      <dependency>
+          <groupId>org.geotoolkit</groupId>
+          <artifactId>geotk-temporal</artifactId>
+          <version>${project.version}</version>
+      </dependency>
+      <dependency>
+          <groupId>org.geotoolkit</groupId>
+          <artifactId>geotk-jtswrapper</artifactId>
+          <version>${project.version}</version>
+      </dependency>
+      <dependency>
+          <groupId>org.codehaus.groovy</groupId>
+          <artifactId>groovy-all</artifactId>
+          <scope>provided</scope>
+      </dependency>
+      
+      <dependency>
+        <groupId>commons-beanutils</groupId>
+        <artifactId>commons-beanutils</artifactId>
+        <exclusions>
+            <exclusion>
+                <groupId>commons-logging</groupId>
+                <artifactId>commons-logging</artifactId>
+            </exclusion>
+        </exclusions>
+      </dependency>
+      
+      <dependency>
+          <groupId>jaxen</groupId>
+          <artifactId>jaxen-limited</artifactId>
+      </dependency>
+      <dependency>
+          <groupId>postgresql</groupId>
+          <artifactId>postgresql</artifactId>
+          <scope>test</scope>
+      </dependency>
+      <dependency>
+          <groupId>org.apache.derby</groupId>
+          <artifactId>derby</artifactId>
+          <scope>test</scope>
+      </dependency>
   </dependencies>
 
 </project>

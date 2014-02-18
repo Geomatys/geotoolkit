@@ -28,6 +28,8 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.Polygon;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
@@ -59,11 +61,13 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 public class FilterTestConstants {
 
+    
     private static final Logger LOGGER = Logging.getLogger(FilterTestConstants.class);
 
     public static final FilterFactory2 FF = (FilterFactory2)
             FactoryFinder.getFilterFactory(new Hints(Hints.FILTER_FACTORY, FilterFactory2.class));
     public static final GeometryFactory GF = new GeometryFactory();
+
     public static final FeatureFactory FEAF = new ValidatingFeatureFactory();
 
     public static final Geometry RIGHT_GEOMETRY;
@@ -73,6 +77,8 @@ public class FilterTestConstants {
     public static final Feature FEATURE_1;
     public static final FeatureType CX_FEATURE_TYPE;
     public static final Feature CX_FEATURE;
+    
+    public static final Object CANDIDATE_1;
 
     static{
         CoordinateReferenceSystem crs = null;
@@ -84,6 +90,49 @@ public class FilterTestConstants {
             LOGGER.log(Level.WARNING, null, ex);
         }
 
+        Coordinate[] coords = new Coordinate[5];
+        coords[0] = new Coordinate(5, 5);
+        coords[1] = new Coordinate(5, 10);
+        coords[2] = new Coordinate(10,10);
+        coords[3] = new Coordinate(10,5);
+        coords[4] = new Coordinate(5,5);
+        LinearRing ring = GF.createLinearRing(coords);
+        RIGHT_GEOMETRY = GF.createPolygon(ring, new LinearRing[0]);
+
+        coords = new Coordinate[4];
+        coords[0] = new Coordinate(45, 8);
+        coords[1] = new Coordinate(39, 12);
+        coords[2] = new Coordinate(1, 9);
+        coords[3] = new Coordinate(45, 8);
+        ring = GF.createLinearRing(coords);
+        WRONG_GEOMETRY = GF.createPolygon(ring, new LinearRing[0]);
+
+        DATE = new Date();
+
+        // Builds the test candidate
+        final Map<String,Object> candidate = new HashMap<String, Object>();
+        candidate.put("@id", "testFeatureType.1");
+        candidate.put("testGeometry", RIGHT_GEOMETRY);
+        candidate.put("testBoolean", Boolean.TRUE);
+        candidate.put("testCharacter", 't');
+        candidate.put("testByte", Byte.valueOf((byte)101));
+        candidate.put("testShort", Short.valueOf((short)101));
+        candidate.put("testInteger", Integer.valueOf(101));
+        candidate.put("testLong", Long.valueOf(101l));
+        candidate.put("testFloat", Float.valueOf(101f));
+        candidate.put("testDouble", Double.valueOf(101d));
+        candidate.put("testString", "test string data");
+        candidate.put("testString2", "cow $10");
+        candidate.put("date", new java.sql.Date(DATE.getTime()));
+        candidate.put("time", new java.sql.Time(DATE.getTime()));
+        candidate.put("datetime1", DATE);
+        candidate.put("datetime2", new java.sql.Timestamp(DATE.getTime()));
+        candidate.put("testNull", null);
+        candidate.put("attribut.Géométrie", "POINT(45,32)");
+
+        // assign the candidate
+        CANDIDATE_1 = candidate;
+        
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("testFeatureType");
         ftb.add("testGeometry", Polygon.class, crs);
@@ -105,23 +154,6 @@ public class FilterTestConstants {
         ftb.add("attribut.Géométrie", String.class);
         final SimpleFeatureType ft = ftb.buildSimpleFeatureType();
 
-        Coordinate[] coords = new Coordinate[5];
-        coords[0] = new Coordinate(5, 5);
-        coords[1] = new Coordinate(5, 10);
-        coords[2] = new Coordinate(10,10);
-        coords[3] = new Coordinate(10,5);
-        coords[4] = new Coordinate(5,5);
-        LinearRing ring = GF.createLinearRing(coords);
-        RIGHT_GEOMETRY = GF.createPolygon(ring, new LinearRing[0]);
-
-        coords = new Coordinate[4];
-        coords[0] = new Coordinate(45, 8);
-        coords[1] = new Coordinate(39, 12);
-        coords[2] = new Coordinate(1, 9);
-        coords[3] = new Coordinate(45, 8);
-        ring = GF.createLinearRing(coords);
-        WRONG_GEOMETRY = GF.createPolygon(ring, new LinearRing[0]);
-
         // Builds the test feature
         final Collection<Property> properties = new ArrayList<Property>();
         properties.add(FEAF.createAttribute(RIGHT_GEOMETRY, (AttributeDescriptor) ft.getDescriptor("testGeometry"), null));
@@ -135,7 +167,6 @@ public class FilterTestConstants {
         properties.add(FEAF.createAttribute(101d, (AttributeDescriptor) ft.getDescriptor("testDouble"), null));
         properties.add(FEAF.createAttribute("test string data", (AttributeDescriptor) ft.getDescriptor("testString"), null));
         properties.add(FEAF.createAttribute("cow $10", (AttributeDescriptor) ft.getDescriptor("testString2"), null));
-        DATE = new Date();
         properties.add(FEAF.createAttribute(new java.sql.Date(DATE.getTime()), (AttributeDescriptor) ft.getDescriptor("date"), null));
         properties.add(FEAF.createAttribute(new java.sql.Time(DATE.getTime()), (AttributeDescriptor) ft.getDescriptor("time"), null));
         properties.add(FEAF.createAttribute(DATE, (AttributeDescriptor) ft.getDescriptor("datetime1"), null));

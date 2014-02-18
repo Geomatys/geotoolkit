@@ -66,7 +66,7 @@
         </dependency>
         <dependency>
             <groupId>org.geotoolkit</groupId>
-            <artifactId>geotk-filter</artifactId>
+            <artifactId>geotk-feature</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

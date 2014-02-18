@@ -1,3 +1,7 @@
+org.geotoolkit.filter.binding.MapBinding
+org.geotoolkit.filter.binding.ParameterBinding
+org.geotoolkit.filter.binding.BeanBinding
+
 org.geotoolkit.filter.binding.AttributeBinding
 org.geotoolkit.filter.binding.ComplexAttributeBinding
 #org.geotoolkit.filter.binding.ComplexAttributeArrayBinding

@@ -32,13 +32,20 @@ public class BindingTest {
     public void testList(){
         final Binding[] factories = Bindings.getBindings();
         assertNotNull(factories);
-        assertEquals(5, factories.length);
+        assertEquals(11, factories.length);
 
         //check correct order, by priority
-        assertTrue( factories[0] instanceof MockBinding2); //higher priority
-        assertTrue( factories[1] instanceof MapBinding);
-        assertTrue( factories[2] instanceof ParameterBinding);
-        assertTrue( factories[3] instanceof MockBinding1); //lower priority
+        assertTrue( factories[0] instanceof AttributeBinding);
+        assertTrue( factories[1] instanceof ComplexAttributeBinding);
+        assertTrue( factories[2] instanceof XPathBinding.CAXPath);
+        assertTrue( factories[3] instanceof ComplexTypeArrayBinding);
+        assertTrue( factories[4] instanceof ComplexTypeBinding);
+        assertTrue( factories[5] instanceof XPathBinding.CTXPath);
+        assertTrue( factories[6] instanceof MockBinding2); //higher priority
+        assertTrue( factories[7] instanceof MapBinding);
+        assertTrue( factories[8] instanceof ParameterBinding);
+        assertTrue( factories[9] instanceof MockBinding1); //lower priority
+        assertTrue( factories[10] instanceof BeanBinding);
     }
 
 //    @Test
