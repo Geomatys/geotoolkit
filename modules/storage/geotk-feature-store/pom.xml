@@ -13,7 +13,7 @@
 
   <parent>
     <groupId>org.geotoolkit</groupId>
-    <artifactId>clients</artifactId>
+    <artifactId>storage</artifactId>
     <version>4.x-SNAPSHOT</version>
   </parent>
 
@@ -21,30 +21,15 @@
   <!-- =========================================================== -->
   <!--     Module Description                                      -->
   <!-- =========================================================== -->
-  <artifactId>geotk-client-osm</artifactId>
+  <artifactId>geotk-feature-store</artifactId>
   <packaging>jar</packaging>
-  <name>Java Client OSM</name>
-
-  <description>
-    Open Street Map API Client.
-  </description>
+  <name>FeatureStore Core</name>
 
 
   <!-- =========================================================== -->
   <!--     Developers and Contributors                             -->
   <!-- =========================================================== -->
   <developers>
-    <developer>
-      <name>Johann Sorel</name>
-      <id>eclesia</id>
-      <email>johann.sorel@geomatys.com</email>
-      <organization>Geomatys</organization>
-      <organizationUrl>http://www.geomatys.fr/</organizationUrl>
-      <timezone>+1</timezone>
-      <roles>
-        <role>Developer</role>
-      </roles>
-    </developer>
   </developers>
 
 
@@ -52,16 +37,42 @@
   <!--     Dependency Management                                   -->
   <!-- =========================================================== -->
   <dependencies>
-      <dependency>
-          <groupId>org.geotoolkit</groupId>
-          <artifactId>geotk-feature-osm</artifactId>
-          <version>${project.version}</version>
-      </dependency>
-      <dependency>
-          <groupId>org.geotoolkit</groupId>
-          <artifactId>geotk-clients-core</artifactId>
-          <version>${project.version}</version>
-      </dependency>
+    <dependency>
+      <groupId>org.apache.sis.storage</groupId>
+      <artifactId>sis-storage</artifactId>
+      <version>${sis.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.geotoolkit</groupId>
+      <artifactId>geotk-coverage</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.geotoolkit</groupId>
+      <artifactId>geotk-feature</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+        <groupId>org.geotoolkit</groupId>
+        <artifactId>geotk-epsg</artifactId>
+        <version>${project.version}</version>
+        <scope>test</scope>
+    </dependency>
+    <dependency>
+        <groupId>postgresql</groupId>
+        <artifactId>postgresql</artifactId>
+        <scope>test</scope>
+    </dependency>
+    <dependency>
+        <groupId>org.apache.derby</groupId>
+        <artifactId>derby</artifactId>
+        <scope>test</scope>
+    </dependency>
+    <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <scope>test</scope>
+    </dependency>
   </dependencies>
 
 </project>

@@ -98,7 +98,7 @@
             <version>2.4</version>
             <classifier>jdk15</classifier>
         </dependency>
-        
+
         <!-- Provided dependencies for converters -->
         <dependency>
             <groupId>org.geotoolkit</groupId>
@@ -133,12 +133,12 @@
 
         <dependency>
             <groupId>org.geotoolkit</groupId>
-            <artifactId>geotk-geojson</artifactId>
+            <artifactId>geotk-feature-geojson</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
-    
+
     <build>
         <plugins>
             <plugin>
@@ -152,5 +152,5 @@
             </plugin>
         </plugins>
     </build>
-    
+
 </project>

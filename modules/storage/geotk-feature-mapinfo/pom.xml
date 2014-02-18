@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- =======================================================================
+        User Prototype Configuration File
+     ======================================================================= -->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                             http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.geotoolkit</groupId>
+        <artifactId>storage</artifactId>
+        <version>4.x-SNAPSHOT</version>
+    </parent>
+
+
+  <!-- =========================================================== -->
+  <!--     Module Description                                      -->
+  <!-- =========================================================== -->
+    <artifactId>geotk-feature-mapinfo</artifactId>
+    <packaging>jar</packaging>
+    <name>FeatureStore MapInfo</name>
+    <description>Featurestore for MapInfo exchange (MIF/MID) file formats.</description>
+    <licenses>
+        <license>
+            <name>Lesser General Public License (LGPL)</name>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+  <!-- =========================================================== -->
+  <!--     Developers and Contributors                             -->
+  <!-- =========================================================== -->
+    <developers>
+        <developer>
+            <name>Alexis Manin</name>
+            <id>amanin</id>
+            <email>alexis.manin@geomatys.com</email>
+            <organization>Geomatys</organization>
+            <organizationUrl>http://www.geomatys.com/</organizationUrl>
+            <timezone>+1</timezone>
+            <roles>
+                <role>Java Developer</role>
+            </roles>
+        </developer>
+    </developers>
+
+
+  <!-- =========================================================== -->
+  <!--     Dependencies                                            -->
+  <!-- =========================================================== -->
+    <dependencies>
+        <dependency>
+            <groupId>org.geotoolkit</groupId>
+            <artifactId>geotk-feature-store</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.geotoolkit</groupId>
+            <artifactId>geotk-utility-pending</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.geotoolkit</groupId>
+            <artifactId>geotk-style</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.geotoolkit.project</groupId>
+            <artifactId>geotk-test</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.geotoolkit</groupId>
+            <artifactId>geotk-epsg</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.derby</groupId>
+            <artifactId>derby</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>stax</groupId>
+            <artifactId>stax</artifactId>
+            <version>1.2.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.geotoolkit</groupId>
+            <artifactId>geotk-feature-store</artifactId>
+            <version>${project.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.geotoolkit</groupId>
+            <artifactId>geotk-temporal</artifactId>
+            <version>${project.version}</version>
+            <type>jar</type>
+        </dependency>
+    </dependencies>
+
+</project>
+
+
+
+

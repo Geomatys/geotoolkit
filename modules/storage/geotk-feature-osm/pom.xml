@@ -13,7 +13,7 @@
 
   <parent>
     <groupId>org.geotoolkit</groupId>
-    <artifactId>clients</artifactId>
+    <artifactId>storage</artifactId>
     <version>4.x-SNAPSHOT</version>
   </parent>
 
@@ -21,12 +21,12 @@
   <!-- =========================================================== -->
   <!--     Module Description                                      -->
   <!-- =========================================================== -->
-  <artifactId>geotk-client-osm</artifactId>
+  <artifactId>geotk-feature-osm</artifactId>
   <packaging>jar</packaging>
-  <name>Java Client OSM</name>
+  <name>FeatureStore OSM XML</name>
 
   <description>
-    Open Street Map API Client.
+    FeatureStore implementation for open street map xml files format.
   </description>
 
 
@@ -54,13 +54,37 @@
   <dependencies>
       <dependency>
           <groupId>org.geotoolkit</groupId>
-          <artifactId>geotk-feature-osm</artifactId>
+          <artifactId>geotk-feature</artifactId>
           <version>${project.version}</version>
       </dependency>
       <dependency>
           <groupId>org.geotoolkit</groupId>
-          <artifactId>geotk-clients-core</artifactId>
+          <artifactId>geotk-jaxp-core</artifactId>
           <version>${project.version}</version>
+      </dependency>
+      <dependency>
+          <groupId>org.geotoolkit</groupId>
+          <artifactId>geotk-feature-postgres</artifactId>
+          <version>${project.version}</version>
+      </dependency>
+
+      <dependency>
+          <groupId>org.swinglabs</groupId>
+          <artifactId>jxlayer</artifactId>
+      </dependency>
+      <dependency>
+          <groupId>org.swinglabs</groupId>
+          <artifactId>swingx</artifactId>
+      </dependency>
+      <dependency>
+          <groupId>org.codehaus.woodstox</groupId>
+          <artifactId>wstx-lgpl</artifactId>
+          <exclusions>
+              <exclusion> <!--included in JRE 1.6 -->
+                  <groupId>stax</groupId>
+                  <artifactId>stax-api</artifactId>
+              </exclusion>
+          </exclusions>
       </dependency>
   </dependencies>
 

@@ -52,12 +52,12 @@
         </dependency>
         <dependency>
             <groupId>org.geotoolkit</groupId>
-            <artifactId>geotk-shapefile</artifactId>
+            <artifactId>geotk-feature-shapefile</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.geotoolkit</groupId>
-            <artifactId>geotk-nmea</artifactId>
+            <artifactId>geotk-feature-nmea</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -67,7 +67,7 @@
         </dependency>
         <dependency>
             <groupId>org.geotoolkit</groupId>
-            <artifactId>geotk-db-postgres</artifactId>
+            <artifactId>geotk-feature-postgres</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -147,7 +147,7 @@
         <!-- OSM -->
         <dependency>
             <groupId>org.geotoolkit</groupId>
-            <artifactId>geotk-osm-xml</artifactId>
+            <artifactId>geotk-feature-osm</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -159,19 +159,19 @@
         <!--GPX -->
         <dependency>
             <groupId>org.geotoolkit</groupId>
-            <artifactId>geotk-gpx</artifactId>
+            <artifactId>geotk-feature-gpx</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.geotoolkit</groupId>
-            <artifactId>geotk-csv</artifactId>
+            <artifactId>geotk-feature-csv</artifactId>
             <version>${project.version}</version>
         </dependency>
 
         <!--OM -->
         <dependency>
             <groupId>org.geotoolkit</groupId>
-            <artifactId>geotk-om</artifactId>
+            <artifactId>geotk-feature-om</artifactId>
             <version>${project.version}</version>
         </dependency>
 
@@ -188,7 +188,7 @@
 
         <dependency>
             <groupId>org.geotoolkit</groupId>
-            <artifactId>geotk-mapinfo</artifactId>
+            <artifactId>geotk-feature-mapinfo</artifactId>
             <version>${project.version}</version>
         </dependency>
 

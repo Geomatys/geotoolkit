@@ -1,10 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- =======================================================================
-        Maven Project Configuration File
-
-        The Geotoolkit Project
-            http://www.geotoolkit.org/
-     ======================================================================= -->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
@@ -13,7 +7,7 @@
 
   <parent>
     <groupId>org.geotoolkit</groupId>
-    <artifactId>clients</artifactId>
+    <artifactId>storage</artifactId>
     <version>4.x-SNAPSHOT</version>
   </parent>
 
@@ -21,12 +15,12 @@
   <!-- =========================================================== -->
   <!--     Module Description                                      -->
   <!-- =========================================================== -->
-  <artifactId>geotk-client-osm</artifactId>
+  <artifactId>geotk-feature-mysql</artifactId>
   <packaging>jar</packaging>
-  <name>Java Client OSM</name>
+  <name>FeatureStore MySQL</name>
 
   <description>
-    Open Street Map API Client.
+    FeatureStore for MySQL database.
   </description>
 
 
@@ -39,29 +33,45 @@
       <id>eclesia</id>
       <email>johann.sorel@geomatys.com</email>
       <organization>Geomatys</organization>
-      <organizationUrl>http://www.geomatys.fr/</organizationUrl>
-      <timezone>+1</timezone>
       <roles>
-        <role>Developer</role>
+        <role>Module Maintainer</role>
+        <role>Java Developer</role>
       </roles>
     </developer>
   </developers>
 
-
-  <!-- =========================================================== -->
-  <!--     Dependency Management                                   -->
-  <!-- =========================================================== -->
   <dependencies>
-      <dependency>
-          <groupId>org.geotoolkit</groupId>
-          <artifactId>geotk-feature-osm</artifactId>
-          <version>${project.version}</version>
-      </dependency>
-      <dependency>
-          <groupId>org.geotoolkit</groupId>
-          <artifactId>geotk-clients-core</artifactId>
-          <version>${project.version}</version>
-      </dependency>
+    <dependency>
+      <groupId>org.geotoolkit</groupId>
+      <artifactId>geotk-feature-sql</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>mysql</groupId>
+      <artifactId>mysql-connector-java</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>postgresql</groupId>
+      <artifactId>postgresql</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>net.iharder</groupId>
+      <artifactId>base64</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.geotoolkit</groupId>
+      <artifactId>geotk-feature-sql</artifactId>
+      <version>${project.version}</version>
+      <type>test-jar</type>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.geotoolkit</groupId>
+      <artifactId>geotk-epsg-javadb</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
 </project>

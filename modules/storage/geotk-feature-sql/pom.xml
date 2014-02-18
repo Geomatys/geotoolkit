@@ -6,14 +6,14 @@
             http://www.geotoolkit.org/
      ======================================================================= -->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
-                             http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                               http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
     <groupId>org.geotoolkit</groupId>
-    <artifactId>clients</artifactId>
+    <artifactId>storage</artifactId>
     <version>4.x-SNAPSHOT</version>
   </parent>
 
@@ -21,12 +21,12 @@
   <!-- =========================================================== -->
   <!--     Module Description                                      -->
   <!-- =========================================================== -->
-  <artifactId>geotk-client-osm</artifactId>
+  <artifactId>geotk-feature-sql</artifactId>
   <packaging>jar</packaging>
-  <name>Java Client OSM</name>
+  <name>FeatureStore Database</name>
 
   <description>
-    Open Street Map API Client.
+	FeatureStore support for JDBC Databases.
   </description>
 
 
@@ -47,21 +47,22 @@
     </developer>
   </developers>
 
-
-  <!-- =========================================================== -->
-  <!--     Dependency Management                                   -->
-  <!-- =========================================================== -->
   <dependencies>
-      <dependency>
-          <groupId>org.geotoolkit</groupId>
-          <artifactId>geotk-feature-osm</artifactId>
-          <version>${project.version}</version>
-      </dependency>
-      <dependency>
-          <groupId>org.geotoolkit</groupId>
-          <artifactId>geotk-clients-core</artifactId>
-          <version>${project.version}</version>
-      </dependency>
+    <dependency>
+      <groupId>org.geotoolkit</groupId>
+      <artifactId>geotk-feature-store</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.geotoolkit</groupId>
+      <artifactId>geotk-utility-jdbc</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>commons-dbcp</groupId>
+      <artifactId>commons-dbcp</artifactId>
+    </dependency>
   </dependencies>
 
 </project>

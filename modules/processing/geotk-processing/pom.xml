@@ -55,7 +55,7 @@
         <dependency>
             <groupId>org.geotoolkit</groupId>
             <artifactId>geotk-utility</artifactId>
-            <version>${project.version}</version> 
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.geotoolkit</groupId>
@@ -69,7 +69,7 @@
         </dependency>
         <dependency>
             <groupId>org.geotoolkit</groupId>
-            <artifactId>geotk-featurestore-core</artifactId>
+            <artifactId>geotk-feature-store</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

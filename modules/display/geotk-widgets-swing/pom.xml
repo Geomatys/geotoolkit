@@ -126,13 +126,13 @@
            For server applications, this is already part of J2EE. -->
       <scope>provided</scope>
     </dependency>
-    
+
     <dependency>
       <groupId>org.geotoolkit</groupId>
       <artifactId>geotk-render2d</artifactId>
       <version>${project.version}</version>
     </dependency>
-      
+
     <dependency>
       <groupId>org.geotoolkit</groupId>
       <artifactId>geotk-render3d</artifactId>
@@ -145,7 +145,7 @@
     </dependency>
     <dependency>
       <groupId>org.geotoolkit</groupId>
-      <artifactId>geotk-featurestore-core</artifactId>
+      <artifactId>geotk-feature-store</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
@@ -167,7 +167,7 @@
     <!--widgets that work only when the correct jars are in the project -->
     <dependency>
       <groupId>org.geotoolkit</groupId>
-      <artifactId>geotk-shapefile</artifactId>
+      <artifactId>geotk-feature-shapefile</artifactId>
       <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>

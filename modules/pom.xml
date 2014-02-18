@@ -118,7 +118,7 @@
     <module>coverage</module>
     <module>index</module>
     <module>jaxp-xml-parser</module>
-    <module>datastore</module>
+    <module>storage</module>
     <module>processing</module>
     <module>display</module>
     <module>jaxb-xml-binding</module>
