@@ -90,7 +90,6 @@
   <!--     Modules included in the build                           -->
   <!-- =========================================================== -->
   <modules>
-    <module>geotk-filter-cql</module>
     <module>geotk-feature</module>
   </modules>
 

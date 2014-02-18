@@ -96,7 +96,7 @@
         </dependency>
         <dependency>
             <groupId>org.geotoolkit</groupId>
-            <artifactId>geotk-filter-cql</artifactId>
+            <artifactId>geotk-feature</artifactId>
             <version>${project.version}</version>
         </dependency>
 

@@ -64,7 +64,6 @@
         <dependency><groupId>org.geotoolkit</groupId><artifactId>geotk-dbf</artifactId>                 <version>${project.version}</version></dependency>
         <dependency><groupId>org.geotoolkit</groupId><artifactId>geotk-featurestore-core</artifactId>   <version>${project.version}</version></dependency>
         <dependency><groupId>org.geotoolkit</groupId><artifactId>geotk-feature</artifactId>             <version>${project.version}</version></dependency>
-        <dependency><groupId>org.geotoolkit</groupId><artifactId>geotk-filter-cql</artifactId>          <version>${project.version}</version></dependency>
         <dependency><groupId>org.geotoolkit</groupId><artifactId>geotk-geometry</artifactId>            <version>${project.version}</version></dependency>
         <dependency><groupId>org.geotoolkit</groupId><artifactId>geotk-render2d</artifactId>            <version>${project.version}</version></dependency>
         <dependency><groupId>org.geotoolkit</groupId><artifactId>geotk-gpx</artifactId>                 <version>${project.version}</version></dependency>

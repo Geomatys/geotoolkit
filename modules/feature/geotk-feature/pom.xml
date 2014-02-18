@@ -61,6 +61,14 @@
           <artifactId>geotk-jtswrapper</artifactId>
           <version>${project.version}</version>
       </dependency>
+      
+      <dependency>
+          <groupId>org.antlr</groupId>
+          <artifactId>antlr-runtime</artifactId>  
+          <version>3.4</version>  
+          <scope>compile</scope>
+      </dependency>
+      
       <dependency>
           <groupId>org.codehaus.groovy</groupId>
           <artifactId>groovy-all</artifactId>
@@ -93,5 +101,25 @@
           <scope>test</scope>
       </dependency>
   </dependencies>
+
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.antlr</groupId>
+                <artifactId>antlr3-maven-plugin</artifactId>
+                <version>3.4</version>
+                <executions>  
+                    <execution>    
+                        <id>run antlr</id>    
+                        <phase>generate-sources</phase>    
+                        <goals>
+                            <goal>antlr</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>            
+        </plugins>
+    </build>
 
 </project>
