@@ -114,7 +114,6 @@
     <module>utility</module>
     <module>metadata</module>
     <module>referencing</module>
-    <module>geometry</module>
     <module>feature</module>
     <module>coverage</module>
     <module>index</module>

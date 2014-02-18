@@ -14,7 +14,7 @@
 
   <parent>
     <groupId>org.geotoolkit</groupId>
-    <artifactId>geometry</artifactId>
+    <artifactId>feature</artifactId>
     <version>4.x-SNAPSHOT</version>
   </parent>
 

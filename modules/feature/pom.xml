@@ -90,6 +90,8 @@
   <!--     Modules included in the build                           -->
   <!-- =========================================================== -->
   <modules>
+    <module>geotk-geometry</module>
+    <module>geotk-jtswrapper</module>
     <module>geotk-feature</module>
   </modules>
 
