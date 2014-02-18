@@ -5,3 +5,4 @@ org.geotoolkit.process.datastore.DatastoreProcessingRegistry
 org.geotoolkit.process.math.MathProcessingRegistry
 org.geotoolkit.process.io.IOProcessingRegistry
 org.geotoolkit.process.groovy.GroovyProcessingRegistry
+org.geotoolkit.process.jts.JTSProcessingRegistry
