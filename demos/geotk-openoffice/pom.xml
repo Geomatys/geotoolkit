@@ -13,7 +13,7 @@
 
   <parent>
     <groupId>org.geotoolkit</groupId>
-    <artifactId>analytics</artifactId>
+    <artifactId>demos</artifactId>
     <version>4.x-SNAPSHOT</version>
   </parent>
 
