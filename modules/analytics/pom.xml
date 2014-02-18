@@ -55,6 +55,6 @@
   <modules>
     <module>geotk-nature</module>
     <module>geotk-analytics</module>
-    <module>geotk-openoffice</module>
+    <!-- module>geotk-openoffice</module -->
   </modules>
 </project>
