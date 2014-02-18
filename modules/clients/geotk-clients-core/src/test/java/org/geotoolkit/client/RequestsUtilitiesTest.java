@@ -14,8 +14,9 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.client.util;
+package org.geotoolkit.client;
 
+import org.geotoolkit.client.RequestsUtilities;
 import org.apache.sis.geometry.GeneralEnvelope;
 
 import org.opengis.geometry.Envelope;

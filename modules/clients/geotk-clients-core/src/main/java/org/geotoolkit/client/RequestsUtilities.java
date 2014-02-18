@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.client.util;
+package org.geotoolkit.client;
 
 import java.awt.Color;
 import java.text.ParseException;
