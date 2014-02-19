@@ -81,7 +81,6 @@
            Modules for the build in approximate dependency order
        =========================================================== -->
   <modules>
-    <module>geotk-simples</module>
     <module>geotk-demo-samples</module>
     <module>geotk-demo-referencing-javadb</module>
     <module>geotk-demo-referencing-wkt</module>
