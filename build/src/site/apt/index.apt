@@ -100,16 +100,6 @@ mvn site
   in the <<<target/site/apidocs>>> directory.
 
 
-* Building the PACK200 bundles
-
-  Execute the following command after a successful build of JAR files and javadoc
-  (replace <<<4.x-SNAPSHOT>>> by the actual Geotk version number to be built):
-
------------------------------------------------------------------------------------------
-mvn org.geotoolkit.project:geotk-jar-collector:4.x-SNAPSHOT:pack-specific --non-recursive
------------------------------------------------------------------------------------------
-
-
 Updating the source code
 
   This work only if the source code was obtained from the Mercurial repository.

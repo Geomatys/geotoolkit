@@ -65,9 +65,7 @@
        =========================================================== -->
   <modules>
     <module>geotk-resource-compiler</module>
-    <module>geotk-jar-collector</module>
     <module>geotk-unopkg</module>
     <module>geotk-javadoc</module>
-    <module>geotk-site</module>
   </modules>
 </project>

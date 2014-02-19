@@ -18,6 +18,4 @@ Maven plugins for Geotk
 
   * {{{./geotk-javadoc/index.html}Javadoc plugins}} for custom taglets.
 
-  * {{{./geotk-jar-collector/index.html}JAR collector}} for creating PACK200 files.
-
   * {{{./geotk-unopkg/index.html}UNO packager}}, for creating Libre/OpenOffice.org add-ins.
