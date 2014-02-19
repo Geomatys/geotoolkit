@@ -298,11 +298,10 @@ public class DefaultProjectedCRS extends AbstractDerivedCRS implements Projected
         final Ellipsoid ellipsoid = getDatum().getEllipsoid();
         @SuppressWarnings({"unchecked","rawtypes"}) // Formatter.setLinearUnit(...) will do the check for us.
         final Unit<Length> unit        = (Unit) getUnit();
-        final Unit<Length> linearUnit  = formatter.getContextualUnit(Length.class);
-        final Unit<Angle>  angularUnit = formatter.getContextualUnit(Angle.class);
+        final Unit<Angle>  geoUnit     = DefaultGeographicCRS.getAngularUnit(baseCRS.getCoordinateSystem());
+        final Unit<Length> linearUnit  = formatter.addContextualUnit(unit);
+        final Unit<Angle>  angularUnit = formatter.addContextualUnit(geoUnit);
         final Unit<Length> axisUnit    = ellipsoid.getAxisUnit();
-        formatter.setContextualUnit(Length.class, unit);
-        formatter.setContextualUnit(Angle.class, DefaultGeographicCRS.getAngularUnit(baseCRS.getCoordinateSystem()));
         formatter.newLine();
         formatter.append(baseCRS);
         formatter.newLine();
@@ -339,8 +338,10 @@ public class DefaultProjectedCRS extends AbstractDerivedCRS implements Projected
         if (unit == null) {
             formatter.setInvalidWKT(this, null);
         }
-        formatter.setContextualUnit(Angle.class, angularUnit);
-        formatter.setContextualUnit(Length.class, linearUnit);
+        formatter.removeContextualUnit(unit);
+        formatter.removeContextualUnit(geoUnit);
+        formatter.addContextualUnit(angularUnit);
+        formatter.addContextualUnit(linearUnit);
         formatter.newLine(); // For writing the ID[…] element on its own line.
         return "PROJCS";
     }
