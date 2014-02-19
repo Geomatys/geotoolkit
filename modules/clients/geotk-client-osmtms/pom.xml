@@ -22,7 +22,7 @@
   <!-- =========================================================== -->
   <!--     Module Description                                      -->
   <!-- =========================================================== -->
-  <artifactId>geotk-client-osm-tms</artifactId>
+  <artifactId>geotk-client-osmtms</artifactId>
   <packaging>jar</packaging>
   <name>Java Client OSM TMS</name>
 

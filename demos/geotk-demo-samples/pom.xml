@@ -82,7 +82,7 @@
         </dependency>
         <dependency>
             <groupId>org.geotoolkit</groupId>
-            <artifactId>geotk-client-osm-tms</artifactId>
+            <artifactId>geotk-client-osmtms</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
