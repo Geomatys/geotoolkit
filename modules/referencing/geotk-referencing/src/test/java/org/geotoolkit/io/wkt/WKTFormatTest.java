@@ -63,10 +63,6 @@ import static org.geotoolkit.referencing.Assert.*;
  */
 @DependsOn({ParserTest.class, DatumAliasesTest.class})
 public final strictfp class WKTFormatTest {
-    static {
-        org.apache.sis.io.wkt.Accessor.init();
-    }
-
     /**
      * Test a hard coded version of a WKT. This is more convenient for debugging.
      *

@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.io.wkt;
 
-import org.opengis.metadata.citation.Citation;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.crs.GeographicCRS;
 import org.opengis.referencing.crs.GeocentricCRS;
@@ -27,7 +26,6 @@ import org.opengis.referencing.operation.CoordinateOperation;
 import org.geotoolkit.lang.Debug;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;
-import org.apache.sis.io.wkt.Accessor;
 
 
 /**
@@ -57,10 +55,6 @@ import org.apache.sis.io.wkt.Accessor;
  */
  @Deprecated
 public final class Convention {
-    static {
-        Accessor.init();
-    }
-
     /**
      * The <A HREF="http://www.opengeospatial.org">Open Geospatial consortium</A> convention.
      * This is the default convention for all WKT formatting in the Geotk library.
