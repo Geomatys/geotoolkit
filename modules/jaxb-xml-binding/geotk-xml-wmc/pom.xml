@@ -59,7 +59,7 @@
             
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>geotk-clients-core</artifactId>
+            <artifactId>geotk-client-store</artifactId>
             <version>${project.version}</version>
         </dependency>
     

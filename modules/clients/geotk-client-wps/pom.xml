@@ -56,7 +56,7 @@
         </dependency>
         <dependency>
             <groupId>org.geotoolkit</groupId>
-            <artifactId>geotk-clients-core</artifactId>
+            <artifactId>geotk-client-store</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

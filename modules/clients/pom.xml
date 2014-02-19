@@ -95,7 +95,7 @@
   <!--     Modules included in the build                           -->
   <!-- =========================================================== -->
   <modules>
-    <module>geotk-clients-core</module>
+    <module>geotk-client-store</module>
     <module>geotk-client-csw</module>
     <module>geotk-client-osm</module>
     <module>geotk-client-osmtms</module>

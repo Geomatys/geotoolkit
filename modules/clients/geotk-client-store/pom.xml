@@ -21,7 +21,7 @@
   <!-- =========================================================== -->
   <!--     Module Description                                      -->
   <!-- =========================================================== -->
-  <artifactId>geotk-clients-core</artifactId>
+  <artifactId>geotk-client-store</artifactId>
   <packaging>jar</packaging>
   <name>Java Client Core</name>
 
