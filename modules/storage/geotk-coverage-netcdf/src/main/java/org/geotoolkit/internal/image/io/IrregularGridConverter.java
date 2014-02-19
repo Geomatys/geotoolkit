@@ -164,8 +164,10 @@ public final class IrregularGridConverter {
                     if (matches((MathTransform2D) mtFactory.createParameterizedTransform(p),
                                 longitudes.read(), latitudes.read(), 1E-4))
                     {
+                        // Use WGS84 ellipsoid even if the projection use spherical formulas.
+                        // This is the same than what Google do, but this is not right...
                         return replace(crsFactory.createProjectedCRS(singletonMap(NAME_KEY, "ROM"),
-                                DefaultGeographicCRS.SPHERE, new DefiningConversion("ROM", p),
+                                DefaultGeographicCRS.WGS84, new DefiningConversion("ROM", p),
                                 DefaultCartesianCS.PROJECTED));
                     }
                 }
