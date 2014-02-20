@@ -49,10 +49,10 @@ import org.geotoolkit.gui.swing.style.JTextExpressionPane;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.FeatureMapLayer.DimensionDef;
 import org.geotoolkit.map.MapLayer;
-import org.geotoolkit.referencing.crs.AbstractSingleCRS;
+import org.apache.sis.referencing.crs.DefaultEngineeringCRS;
 import org.apache.sis.referencing.cs.AbstractCS;
 import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;
-import org.apache.sis.referencing.datum.AbstractDatum;
+import org.apache.sis.referencing.datum.DefaultEngineeringDatum;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.gui.swing.resource.FontAwesomeIcons;
 import org.geotoolkit.gui.swing.resource.IconBuilder;
@@ -63,6 +63,7 @@ import org.netbeans.swing.outline.RenderDataProvider;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
+import org.opengis.referencing.datum.EngineeringDatum;
 
 
 /**
@@ -269,10 +270,10 @@ public class LayerGeneralPanel extends javax.swing.JPanel implements PropertyPan
     }//GEN-LAST:event_guiBtnAddDimensionActionPerformed
 
     private CoordinateReferenceSystem buildCrs1DFromName(final String crsName) {
-        final AbstractDatum customDatum = new AbstractDatum(Collections.singletonMap("name", crsName));
+        final EngineeringDatum customDatum = new DefaultEngineeringDatum(Collections.singletonMap("name", crsName));
         final CoordinateSystemAxis csAxis = new DefaultCoordinateSystemAxis(crsName, "u", AxisDirection.valueOf(crsName), Unit.ONE);
         final AbstractCS customCs = new AbstractCS(Collections.singletonMap("name", crsName), csAxis);
-        return new AbstractSingleCRS(Collections.singletonMap("name", crsName), customDatum, customCs);
+        return new DefaultEngineeringCRS(Collections.singletonMap("name", crsName), customDatum, customCs);
     }
 
     private void parse() {

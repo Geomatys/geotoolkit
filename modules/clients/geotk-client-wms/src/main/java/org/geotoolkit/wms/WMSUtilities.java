@@ -32,14 +32,14 @@ import org.geotoolkit.client.CapabilitiesException;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.IdentifiedObjects;
-import org.geotoolkit.referencing.crs.AbstractSingleCRS;
+import org.apache.sis.referencing.crs.DefaultEngineeringCRS;
 import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
 import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
 import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
 import org.apache.sis.referencing.cs.AbstractCS;
 import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;
 import org.geotoolkit.referencing.cs.DiscreteReferencingFactory;
-import org.apache.sis.referencing.datum.AbstractDatum;
+import org.apache.sis.referencing.datum.DefaultEngineeringDatum;
 import org.geotoolkit.temporal.object.ISODateParser;
 import org.geotoolkit.temporal.object.TemporalUtilities;
 import org.apache.sis.util.ArgumentChecks;
@@ -252,10 +252,10 @@ public final class WMSUtilities {
                 } else if ("elevation".equals(dimName)) {
                     dimCRS = DefaultVerticalCRS.ELLIPSOIDAL_HEIGHT;
                 } else {
-                    final AbstractDatum dimDatum = new AbstractDatum(Collections.singletonMap("name", dimName));
+                    final DefaultEngineeringDatum dimDatum = new DefaultEngineeringDatum(Collections.singletonMap("name", dimName));
                     final CoordinateSystemAxis csAxis = new DefaultCoordinateSystemAxis(dimName, dimName.substring(0, 1), AxisDirection.OTHER, unit);
                     final AbstractCS dimCs = new AbstractCS(Collections.singletonMap("name", dimName), csAxis);
-                    dimCRS = new AbstractSingleCRS(Collections.singletonMap("name", dimName), dimDatum, dimCs);
+                    dimCRS = new DefaultEngineeringCRS(Collections.singletonMap("name", dimName), dimDatum, dimCs);
                 }
 
                 double minVal = Double.MIN_VALUE;
