@@ -61,20 +61,20 @@
           <artifactId>geotk-jtswrapper</artifactId>
           <version>${project.version}</version>
       </dependency>
-      
+
       <dependency>
           <groupId>org.antlr</groupId>
-          <artifactId>antlr-runtime</artifactId>  
-          <version>3.4</version>  
+          <artifactId>antlr-runtime</artifactId>
+          <version>3.4</version>
           <scope>compile</scope>
       </dependency>
-      
+
       <dependency>
           <groupId>org.codehaus.groovy</groupId>
           <artifactId>groovy-all</artifactId>
           <scope>provided</scope>
       </dependency>
-      
+
       <dependency>
         <groupId>commons-beanutils</groupId>
         <artifactId>commons-beanutils</artifactId>
@@ -85,13 +85,13 @@
             </exclusion>
         </exclusions>
       </dependency>
-      
+
       <dependency>
           <groupId>jaxen</groupId>
           <artifactId>jaxen-limited</artifactId>
       </dependency>
       <dependency>
-          <groupId>postgresql</groupId>
+          <groupId>org.postgresql</groupId>
           <artifactId>postgresql</artifactId>
           <scope>test</scope>
       </dependency>
@@ -109,16 +109,16 @@
                 <groupId>org.antlr</groupId>
                 <artifactId>antlr3-maven-plugin</artifactId>
                 <version>3.4</version>
-                <executions>  
-                    <execution>    
-                        <id>run antlr</id>    
-                        <phase>generate-sources</phase>    
+                <executions>
+                    <execution>
+                        <id>run antlr</id>
+                        <phase>generate-sources</phase>
                         <goals>
                             <goal>antlr</goal>
                         </goals>
                     </execution>
                 </executions>
-            </plugin>            
+            </plugin>
         </plugins>
     </build>
 

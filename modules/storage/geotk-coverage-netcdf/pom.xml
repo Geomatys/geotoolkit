@@ -152,7 +152,7 @@
     <!-- Following is useful only for those who customize
          their EPSG database connection parameters. -->
     <dependency>
-      <groupId>postgresql</groupId>
+      <groupId>org.postgresql</groupId>
       <artifactId>postgresql</artifactId>
       <scope>test</scope>
     </dependency>

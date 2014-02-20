@@ -14,7 +14,7 @@ export GEOTOOLKIT_VERSION=4.x-SNAPSHOT
 export JARS="$BASE_DIR/jar"
 
 # The default classpath, in addition to the classpath specific to the script being executed.
-export CLASSPATH="$JARS/postgresql-9.1-901-1.jdbc4.jar"
+export CLASSPATH="$JARS/postgresql-9.3-1101-jdbc41.jar"
 
 # Options used by every scripts.
 export OPTS="-Djava.util.logging.config.file=$BASE_DIR/etc/logging.properties"

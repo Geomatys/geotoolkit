@@ -394,9 +394,9 @@
         <version>2.2.8</version>
       </dependency>
       <dependency>
-        <groupId>postgresql</groupId>
+        <groupId>org.postgresql</groupId>
         <artifactId>postgresql</artifactId>
-        <version>9.1-901-1.jdbc4</version> <!-- Note that setenv.sh needs to declare the same version number. -->
+        <version>9.3-1101-jdbc41</version> <!-- Note that setenv.sh needs to declare the same version number. -->
       </dependency>
       <dependency>
         <groupId>org.postgis</groupId>
