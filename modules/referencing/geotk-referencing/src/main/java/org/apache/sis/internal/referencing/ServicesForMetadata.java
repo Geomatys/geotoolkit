@@ -57,6 +57,7 @@ import org.apache.sis.internal.metadata.ReferencingServices;
 import org.geotoolkit.internal.TemporalUtilities;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.resources.Errors;
+import org.apache.sis.io.wkt.FormattableObject;
 
 import static org.geotoolkit.internal.InternalUtilities.isPoleToPole;
 import static org.apache.sis.metadata.iso.ISOMetadata.LOGGER;
@@ -130,7 +131,7 @@ public final class ServicesForMetadata extends ReferencingServices implements Ch
      * @return The given object converted to a {@code FormattableObject} instance.
      */
     @Override
-    public IdentifiedObject toFormattableObject(final IdentifiedObject object) {
+    public FormattableObject toFormattableObject(final IdentifiedObject object) {
         return AbstractIdentifiedObject.castOrCopy(object);
     }
 

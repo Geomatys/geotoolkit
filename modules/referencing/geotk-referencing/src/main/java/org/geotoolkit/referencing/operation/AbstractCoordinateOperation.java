@@ -629,7 +629,7 @@ public class AbstractCoordinateOperation extends AbstractIdentifiedObject implem
             properties.put(IdentifiedObject.NAME_KEY,        object.getName());
             properties.put(IdentifiedObject.IDENTIFIERS_KEY, object.getIdentifiers());
             formatter.newLine();
-            formatter.append((IdentifiedObject) new AbstractIdentifiedObject(properties) {
+            formatter.append(new AbstractIdentifiedObject(properties) {
                 @Override
                 protected String formatTo(final Formatter formatter) {
                     WKTUtilities.appendName(this, formatter, null);

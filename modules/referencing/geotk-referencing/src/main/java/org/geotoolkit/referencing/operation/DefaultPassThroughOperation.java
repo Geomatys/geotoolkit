@@ -179,7 +179,7 @@ public class DefaultPassThroughOperation extends DefaultSingleOperation implemen
             // No indices will be formatted.
             formatter.setInvalidWKT(this, exception);
         }
-        formatter.append(operation);
+        formatter.append((org.apache.sis.io.wkt.FormattableObject) operation); // TODO
         return name;
     }
 }

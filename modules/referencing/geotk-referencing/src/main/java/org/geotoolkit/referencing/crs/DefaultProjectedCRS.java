@@ -53,6 +53,8 @@ import org.apache.sis.internal.metadata.ReferencingUtilities;
 import org.apache.sis.internal.referencing.WKTUtilities;
 import org.apache.sis.io.wkt.Formatter;
 
+import static org.apache.sis.internal.referencing.WKTUtilities.toFormattable;
+
 
 /**
  * A 2D coordinate reference system used to approximate the shape of the earth on a planar surface.
@@ -314,9 +316,9 @@ public class DefaultProjectedCRS extends AbstractDerivedCRS implements Projected
         final Unit<Angle>  angularUnit = formatter.addContextualUnit(geoUnit);
         final Unit<Length> axisUnit    = ellipsoid.getAxisUnit();
         formatter.newLine();
-        formatter.append(baseCRS);
+        formatter.append(toFormattable(baseCRS));
         formatter.newLine();
-        formatter.append(conversionFromBase.getMethod());
+        formatter.append((org.apache.sis.io.wkt.FormattableObject) conversionFromBase.getMethod()); // TODO
         for (final GeneralParameterValue param : conversionFromBase.getParameterValues().values()) {
             final GeneralParameterDescriptor desc = param.getDescriptor();
             String name;
@@ -344,7 +346,7 @@ public class DefaultProjectedCRS extends AbstractDerivedCRS implements Projected
         final int dimension = cs.getDimension();
         for (int i=0; i<dimension; i++) {
             formatter.newLine();
-            formatter.append(cs.getAxis(i));
+            formatter.append(toFormattable(cs.getAxis(i)));
         }
         if (unit == null) {
             formatter.setInvalidWKT(this, null);

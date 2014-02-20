@@ -46,6 +46,7 @@ import org.geotoolkit.resources.Errors;
 
 import static org.apache.sis.util.Utilities.deepEquals;
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
+import static org.apache.sis.internal.referencing.WKTUtilities.toFormattable;
 
 
 /**
@@ -367,7 +368,7 @@ public class AbstractDerivedCRS extends AbstractSingleCRS implements GeneralDeri
         formatter.newLine();
         formatter.append(inverse);
         formatter.newLine();
-        formatter.append(baseCRS);
+        formatter.append(toFormattable(baseCRS));
         return "FITTED_CS";
     }
 }

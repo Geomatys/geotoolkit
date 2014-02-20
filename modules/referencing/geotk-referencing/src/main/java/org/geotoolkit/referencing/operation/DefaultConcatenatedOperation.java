@@ -375,7 +375,7 @@ public class DefaultConcatenatedOperation extends AbstractCoordinateOperation
         final String label = super.formatTo(formatter);
         for (final CoordinateOperation op : operations) {
             formatter.newLine();
-            formatter.append(op);
+            formatter.append((org.apache.sis.io.wkt.FormattableObject) op); // TODO
         }
         return label;
     }
