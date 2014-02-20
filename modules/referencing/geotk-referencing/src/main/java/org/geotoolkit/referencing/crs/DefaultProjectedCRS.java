@@ -49,6 +49,7 @@ import org.geotoolkit.referencing.operation.DefaultProjection;
 import org.geotoolkit.referencing.operation.DefiningConversion;
 import org.geotoolkit.referencing.operation.DefaultOperationMethod;
 import org.geotoolkit.referencing.operation.transform.AbstractMathTransform;
+import org.apache.sis.internal.metadata.ReferencingUtilities;
 import org.apache.sis.internal.referencing.WKTUtilities;
 import org.apache.sis.io.wkt.Formatter;
 
@@ -236,9 +237,18 @@ public class DefaultProjectedCRS extends AbstractDerivedCRS implements Projected
 
     /**
      * Used by JAXB only (invoked by reflection).
+     *
+     * @todo Temporary patch.
      */
     final void setCoordinateSystem(final CartesianCS cs) {
-        super.setCoordinateSystem(cs);
+        try {
+            final java.lang.reflect.Method method = org.apache.sis.referencing.crs.AbstractCRS.class.getMethod(
+                    "setCoordinateSystem", String.class, CoordinateSystem.class);
+            method.setAccessible(true);
+            method.invoke("cartesianCS", cs);
+        } catch (Exception e) {
+            throw new AssertionError(e);
+        }
     }
 
     /**
@@ -295,9 +305,10 @@ public class DefaultProjectedCRS extends AbstractDerivedCRS implements Projected
      */
     @Override
     public String formatTo(final Formatter formatter) { // TODO: should be protected
+        WKTUtilities.appendName(this, formatter, null);
         final Ellipsoid ellipsoid = getDatum().getEllipsoid();
         @SuppressWarnings({"unchecked","rawtypes"}) // Formatter.setLinearUnit(...) will do the check for us.
-        final Unit<Length> unit        = (Unit) getUnit();
+        final Unit<Length> unit        = (Unit) ReferencingUtilities.getUnit(super.getCoordinateSystem());
         final Unit<Angle>  geoUnit     = DefaultGeographicCRS.getAngularUnit(baseCRS.getCoordinateSystem());
         final Unit<Length> linearUnit  = formatter.addContextualUnit(unit);
         final Unit<Angle>  angularUnit = formatter.addContextualUnit(geoUnit);

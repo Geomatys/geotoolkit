@@ -95,19 +95,19 @@ public final strictfp class MatrixParametersTest extends TestBase {
         assertFalse(transform instanceof AffineTransform);
         org.apache.sis.test.Assert.assertMultilinesEquals(
                 "PARAM_MT[\"Affine\",\n"          +
-                "PARAMETER[\"num_row\", 4],\n"    +
-                "PARAMETER[\"num_col\", 4],\n"    +
-                "PARAMETER[\"elt_0_2\", 4.0],\n"  +
-                "PARAMETER[\"elt_1_0\", -2.0],\n" +
-                "PARAMETER[\"elt_2_3\", 7.0]]", formatter.format(transform));
+                "  PARAMETER[\"num_row\", 4],\n"    +
+                "  PARAMETER[\"num_col\", 4],\n"    +
+                "  PARAMETER[\"elt_0_2\", 4.0],\n"  +
+                "  PARAMETER[\"elt_1_0\", -2.0],\n" +
+                "  PARAMETER[\"elt_2_3\", 7.0]]", formatter.format(transform));
         matrix.setSize(3,3);
         transform = MathTransforms.linear(matrix);
         assertTrue(transform instanceof AffineTransform);
         org.apache.sis.test.Assert.assertMultilinesEquals(
                 "PARAM_MT[\"Affine\",\n"         +
-                "PARAMETER[\"num_row\", 3],\n"   +
-                "PARAMETER[\"num_col\", 3],\n"   +
-                "PARAMETER[\"elt_0_2\", 4.0],\n" +
-                "PARAMETER[\"elt_1_0\", -2.0]]", formatter.format(transform));
+                "  PARAMETER[\"num_row\", 3],\n"   +
+                "  PARAMETER[\"num_col\", 3],\n"   +
+                "  PARAMETER[\"elt_0_2\", 4.0],\n" +
+                "  PARAMETER[\"elt_1_0\", -2.0]]", formatter.format(transform));
     }
 }

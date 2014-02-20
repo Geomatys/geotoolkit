@@ -25,7 +25,7 @@ import org.opengis.geometry.MismatchedDimensionException;
 
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.geotoolkit.referencing.cs.DefaultTimeCS;
-import org.geotoolkit.referencing.crs.AbstractCRS;
+import org.apache.sis.referencing.crs.AbstractCRS;
 import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
 import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
 import org.geotoolkit.referencing.crs.DefaultVerticalCRS;

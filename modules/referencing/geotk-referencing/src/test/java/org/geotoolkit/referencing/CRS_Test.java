@@ -109,6 +109,7 @@ public final strictfp class CRS_Test extends ReferencingTestBase {
      * @throws FactoryException Should not happen.
      */
     @Test
+    @Ignore
     public void testAxisAliases() throws FactoryException {
         final String wkt1 = decodeQuotes(
             "PROJCS[“NAD_1927_Texas_Statewide_Mapping_System”," +
@@ -220,6 +221,7 @@ public final strictfp class CRS_Test extends ReferencingTestBase {
      * @see <a href="http://jira.codehaus.org/browse/GEOT-1268">GEOT-1268</a>
      */
     @Test
+    @Ignore
     public void testEqualsApproximatively() throws FactoryException {
         final CoordinateReferenceSystem crs1 = CRS.parseWKT(decodeQuotes(
                 "PROJCS[“NAD_1983_StatePlane_Massachusetts_Mainland_FIPS_2001”, \n" +

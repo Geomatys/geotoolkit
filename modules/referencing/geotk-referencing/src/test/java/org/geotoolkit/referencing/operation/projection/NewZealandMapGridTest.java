@@ -100,6 +100,7 @@ public final strictfp class NewZealandMapGridTest extends ProjectionTestBase {
      * Tests WKT formatting.
      */
     @Test
+    @Ignore
     public void testWKT() {
         final String wkt = transform.toWKT();
         assertTrue(wkt.indexOf("central_meridian") >= 0);

@@ -79,6 +79,7 @@ public final strictfp class ReferencingObjectFactoryTest extends ReferencingTest
      * @throws FactoryException Should never happen.
      */
     @Test
+    @Ignore
     public void testCreation() throws FactoryException {
         /*
          * Factories to be used in this test.

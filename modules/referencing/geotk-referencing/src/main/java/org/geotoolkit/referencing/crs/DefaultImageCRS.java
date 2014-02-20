@@ -36,7 +36,7 @@ import org.geotoolkit.referencing.cs.DefaultCartesianCS;
 import org.geotoolkit.referencing.datum.DefaultImageDatum;
 import org.geotoolkit.resources.Vocabulary;
 
-import static org.geotoolkit.referencing.crs.AbstractCRS.name;
+import static org.geotoolkit.referencing.crs.UnprefixedMap.name;
 
 
 /**

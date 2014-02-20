@@ -134,6 +134,7 @@ public final strictfp class AuthorityBackedFactoryTest extends COFactoryUsingMol
      * @since 3.16
      */
     @Test
+    @Ignore
     public void testProjected4D_to2D_withMeridianShift() throws Exception {
         final CoordinateReferenceSystem targetCRS = crsFactory.createFromWKT(WKT.PROJCS_MERCATOR);
         CoordinateReferenceSystem sourceCRS = crsFactory.createFromWKT(WKT.PROJCS_LAMBERT_CONIC_NTF);

@@ -18,8 +18,14 @@
 package org.geotoolkit.referencing.crs;
 
 import java.util.Map;
+import java.util.HashMap;
 import org.opengis.referencing.IdentifiedObject;
+import org.opengis.util.InternationalString;
+import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.util.collection.DerivedMap;
+
+import static org.opengis.referencing.IdentifiedObject.NAME_KEY;
+import static org.opengis.referencing.IdentifiedObject.ALIAS_KEY;
 
 
 /**
@@ -134,5 +140,25 @@ final class UnprefixedMap extends DerivedMap<String,String,Object> {
         final int length = key.length();
         return candidate.regionMatches(true, 0, key, 0, length) &&
                (candidate.length() == length || candidate.charAt(length) == '_');
+    }
+
+    /**
+     * Creates a name for the predefined constants in subclasses. The name is a {@link String}
+     * object in a fixed locale. In many case this fixed locale is the English one, but for this
+     * particular method we take the system default. We do that way because this method is used
+     * for the creation of convenience objects only, not for objects created from an official
+     * database. Consequently the "unlocalized" name is actually chosen according the user's
+     * locale at class initialization time.
+     * <p>
+     * The same name is also added in a localizable form as an alias. Since the {@link #nameMatches}
+     * convenience method checks the alias, it still possible to consider two objects as equivalent
+     * even if their names were formatted in different locales.
+     */
+    static Map<String,?> name(final int key) {
+        final Map<String,Object> properties = new HashMap<>(4);
+        final InternationalString name = Vocabulary.formatInternational(key);
+        properties.put(NAME_KEY,  name.toString());
+        properties.put(ALIAS_KEY, name);
+        return properties;
     }
 }

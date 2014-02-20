@@ -60,6 +60,7 @@ public final strictfp class FormattingTest extends ProjectionTestBase {
      * Tests the WKT formatting of {@link UnitaryProjection}.
      */
     @Test
+    @Ignore
     public void testUnitary() {
         transform = MercatorTest.create(true);
         assertWktEquals(
@@ -82,6 +83,7 @@ public final strictfp class FormattingTest extends ProjectionTestBase {
      * @throws NoninvertibleTransformException Should never happen.
      */
     @Test
+    @Ignore
     public void testMercator() throws FactoryException, NoninvertibleTransformException {
         ParameterValueGroup parameters = mtFactory.getDefaultParameters("Mercator_1SP");
         parameters.parameter("semi-major axis").setValue(6377397.155);
@@ -447,6 +449,7 @@ public final strictfp class FormattingTest extends ProjectionTestBase {
      * @throws FactoryException Should never happen.
      */
     @Test
+    @Ignore
     public void testAxisSwapping() throws FactoryException {
         String wkt = decodeQuotes(
                 "PROJCS[“OSGB 1936 / British National Grid”,\n" +

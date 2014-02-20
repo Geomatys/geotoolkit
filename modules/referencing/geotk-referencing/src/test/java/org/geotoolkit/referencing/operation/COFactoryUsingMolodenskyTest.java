@@ -344,6 +344,7 @@ public strictfp class COFactoryUsingMolodenskyTest extends TransformTestBase {
      * @throws Exception Should never happen.
      */
     @Test
+    @Ignore
     public void testDatumShift() throws Exception {
         assumeTrue(isEpsgFactoryAvailable());
         final String datumShiftMethod = getDatumShiftMethod();

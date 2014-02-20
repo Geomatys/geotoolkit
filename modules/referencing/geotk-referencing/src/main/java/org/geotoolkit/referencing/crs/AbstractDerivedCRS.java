@@ -39,6 +39,7 @@ import org.geotoolkit.referencing.operation.DefaultOperationMethod;
 import org.geotoolkit.referencing.operation.transform.AbstractMathTransform;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.internal.referencing.Semaphores;
+import org.apache.sis.internal.referencing.WKTUtilities;
 import org.apache.sis.util.ComparisonMode;
 import org.apache.sis.io.wkt.Formatter;
 import org.geotoolkit.resources.Errors;
@@ -355,6 +356,7 @@ public class AbstractDerivedCRS extends AbstractSingleCRS implements GeneralDeri
      */
     @Override
     public String formatTo(final Formatter formatter) { // TODO: should be protected.
+        WKTUtilities.appendName(this, formatter, null);
         MathTransform inverse = conversionFromBase.getMathTransform();
         try {
             inverse = inverse.inverse();

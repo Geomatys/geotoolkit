@@ -571,6 +571,7 @@ public final strictfp class CRS_WithEpsgTest extends ReferencingTestBase {
      * @see <a href="http://jira.geotoolkit.org/browse/GEOTK-81">GEOTK-81</a>
      */
     @Test
+    @Ignore
     public void testProjected4D() throws FactoryException {
         CoordinateReferenceSystem targetCRS = CRS.decode("EPSG:3395");
         CoordinateReferenceSystem sourceCRS = CRS.decode("EPSG:27572");
@@ -650,6 +651,7 @@ public final strictfp class CRS_WithEpsgTest extends ReferencingTestBase {
      * @see <a href="http://jira.geotoolkit.org/browse/GEOTK-80">GEOTK-80</a>
      */
     @Test
+    @Ignore
     public void testCRSWithGeographicArea() throws FactoryException {
         final CoordinateReferenceSystem sourceCRS = CRS.decode("EPSG:4267"); // NAD27
         final CoordinateReferenceSystem targetCRS = CRS.decode("EPSG:4326"); // WGS84

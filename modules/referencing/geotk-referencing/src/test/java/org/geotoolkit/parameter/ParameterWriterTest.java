@@ -81,13 +81,13 @@ public final strictfp class ParameterWriterTest extends LocaleDependantTestBase 
             "╚═════════════════════════╧════════╧═════════╧═════════╧═══════════════╧════════╝\n",
             ParameterWriter.toString(parameters));
 
-        assertMultilinesEquals("Mercator_1SP : " +
-            "semi_major         = 6378137.0\n" +
-            "semi_minor         = 6356752.314245179\n" +
-            "latitude_of_origin = 40.0\n" +
-            "central_meridian   = 2.337229166666667\n" +
-            "scale_factor       = 1.0\n" +
-            "false_easting      = 0.0\n" +
-            "false_northing     = 0.0\n", parameters.toString());
+        assertMultilinesEquals(
+            "Mercator_1SP : semi_major         = 6378137.0\n" +
+            "               semi_minor         = 6356752.314245179\n" +
+            "               latitude_of_origin = 40.0\n" +
+            "               central_meridian   = 2.337229166666667\n" +
+            "               scale_factor       = 1.0\n" +
+            "               false_easting      = 0.0\n" +
+            "               false_northing     = 0.0\n", parameters.toString());
     }
 }

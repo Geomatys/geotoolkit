@@ -21,8 +21,6 @@
 package org.geotoolkit.referencing.crs;
 
 import java.util.Map;
-import net.jcip.annotations.Immutable;
-import javax.measure.unit.Unit;
 
 import org.opengis.referencing.datum.Datum;
 import org.opengis.referencing.crs.SingleCRS;
@@ -31,7 +29,6 @@ import org.opengis.referencing.cs.CoordinateSystem;
 import org.geotoolkit.internal.referencing.NilReferencingObject;
 import org.apache.sis.referencing.AbstractReferenceSystem;
 import org.apache.sis.util.ComparisonMode;
-import org.apache.sis.io.wkt.Formatter;
 
 import static org.apache.sis.util.Utilities.deepEquals;
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
@@ -68,8 +65,7 @@ import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
  * @since 2.1
  * @module
  */
-@Immutable
-public class AbstractSingleCRS extends AbstractCRS implements SingleCRS {
+class AbstractSingleCRS extends org.apache.sis.referencing.crs.AbstractCRS implements SingleCRS {
     /**
      * The datum. This field should be considered as final.
      * It is modified only by JAXB at unmarshalling time.
@@ -190,28 +186,5 @@ public class AbstractSingleCRS extends AbstractCRS implements SingleCRS {
     @Override
     protected long computeHashCode() {
         return super.computeHashCode() + 31*datum.hashCode();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String formatTo(final Formatter formatter) {  // TODO: should be protected.
-        super.formatTo(formatter);
-        formatter.append(datum);
-        final Unit<?> unit = getUnit();
-        formatter.newLine();
-        formatter.append(unit);
-        final CoordinateSystem cs = getCoordinateSystem();
-        final int dimension = cs.getDimension();
-        for (int i=0; i<dimension; i++) {
-            formatter.newLine();
-            formatter.append(cs.getAxis(i));
-        }
-        if (unit == null) {
-            formatter.setInvalidWKT(cs, null);
-        }
-        formatter.newLine(); // For writing the ID[…] element on its own line.
-        return null;
     }
 }

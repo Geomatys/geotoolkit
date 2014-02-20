@@ -367,10 +367,12 @@ public class DefaultOperationMethod extends AbstractIdentifiedObject implements 
      */
     @Override
     public String formatTo(final Formatter formatter) {
+        String keyword = super.formatTo(formatter);
+        formatter.newLine();
         if (Projection.class.isAssignableFrom(getOperationType())) {
-            return "PROJECTION";
+            keyword = "PROJECTION";
         }
-        return super.formatTo(formatter);
+        return keyword;
     }
 
     /**

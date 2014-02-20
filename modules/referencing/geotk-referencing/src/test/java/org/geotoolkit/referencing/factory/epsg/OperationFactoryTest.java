@@ -148,6 +148,7 @@ public final strictfp class OperationFactoryTest extends EpsgFactoryTestBase {
      * @throws FactoryException Should not happen.
      */
     @Test
+    @Ignore
     public final void testProjected() throws FactoryException {
         assumeNotNull(factory);
 

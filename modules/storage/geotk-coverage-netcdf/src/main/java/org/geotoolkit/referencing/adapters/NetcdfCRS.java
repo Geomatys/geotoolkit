@@ -461,7 +461,11 @@ public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateRefer
          */
         @Override
         public String formatTo(final Formatter formatter) {
-            return new DefaultCompoundCRS(this).formatTo(formatter);
+            return new DefaultCompoundCRS(this) {
+                @Override public String formatTo(final Formatter formatter) {
+                    return super.formatTo(formatter);
+                }
+            }.formatTo(formatter);
         }
     }
 

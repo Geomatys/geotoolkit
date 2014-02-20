@@ -785,6 +785,7 @@ public final strictfp class ThreadedEpsgFactoryTest extends EpsgFactoryTestBase 
      * @see <a href="http://jira.codehaus.org/browse/GEOT-1268">GEOT-1268</a>
      */
     @Test
+    @Ignore
     public final void testEqualsApproximatively() throws FactoryException {
         assumeNotNull(factory);
         final CoordinateReferenceSystem crs1 = CRS.parseWKT(WKT.PROJCS_LAMBERT_CONIC_NAD83);
@@ -837,6 +838,7 @@ public final strictfp class ThreadedEpsgFactoryTest extends EpsgFactoryTestBase 
      * @throws FactoryException if an error occurred while querying the factory.
      */
     @Test
+    @Ignore
     public final void testFindProjectedCRS() throws FactoryException {
         assumeNotNull(factory);
         final IdentifiedObjectFinder finder = factory.getIdentifiedObjectFinder(CoordinateReferenceSystem.class);
@@ -898,6 +900,7 @@ public final strictfp class ThreadedEpsgFactoryTest extends EpsgFactoryTestBase 
      * @since 3.18
      */
     @Test
+    @Ignore
     public final void testFindApproximative() throws FactoryException {
         assumeNotNull(factory);
 
@@ -942,6 +945,7 @@ public final strictfp class ThreadedEpsgFactoryTest extends EpsgFactoryTestBase 
      * @throws FactoryException if an error occurred while querying the factory.
      */
     @Test
+    @Ignore
     public final void testUnique() throws FactoryException {
         assumeNotNull(factory);
 

@@ -36,7 +36,7 @@ import org.geotoolkit.referencing.cs.DefaultSphericalCS;
 import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
 import org.geotoolkit.resources.Vocabulary;
 
-import static org.geotoolkit.referencing.crs.AbstractCRS.name;
+import static org.geotoolkit.referencing.crs.UnprefixedMap.name;
 
 
 /**

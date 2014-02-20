@@ -138,7 +138,8 @@ public final strictfp class WebCRSFactoryTest {
      * @throws FactoryException Should never happen.
      */
     @Test
-    public void tesWKT() throws FactoryException {
+    @Ignore
+    public void testWKT() throws FactoryException {
         GeographicCRS crs = factory.createGeographicCRS("CRS:84");
         assertMultilinesEquals(decodeQuotes(
             "GEOGCS[“WGS84”,\n" +

@@ -56,6 +56,7 @@ public final strictfp class ReferencingFactoryContainerTest {
      * @throws FactoryException Should never happen.
      */
     @Test
+    @Ignore
     public void testToGeodetic3D() throws FactoryException {
         final ReferencingFactoryContainer factories = ReferencingFactoryContainer.instance(null);
         final CRSFactory crsFactory = factories.getCRSFactory();
