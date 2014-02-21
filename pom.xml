@@ -589,21 +589,6 @@
           <version>3.3</version>
         </plugin>
         <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-javadoc-plugin</artifactId>
-          <version>2.9.1</version>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-project-info-reports-plugin</artifactId>
-          <version>2.7</version>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-surefire-report-plugin</artifactId>
-          <version>2.16</version>
-        </plugin>
-        <plugin>
           <groupId>org.apache.felix</groupId>
           <artifactId>maven-bundle-plugin</artifactId>
           <version>2.4.0</version>
@@ -617,11 +602,6 @@
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>build-helper-maven-plugin</artifactId>
           <version>1.8</version>
-        </plugin>
-        <plugin>
-          <groupId>org.codehaus.mojo</groupId>
-          <artifactId>taglist-maven-plugin</artifactId>
-          <version>2.4</version>
         </plugin>
         <plugin>
           <groupId>com.agilejava.docbkx</groupId>
@@ -734,246 +714,6 @@
 
 
 
-      <!-- =======================================================
-               Build the web site
-           ======================================================= -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-site-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>attach-descriptor</id>
-            <goals>
-              <goal>attach-descriptor</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <locales>en</locales>
-          <inputEncoding>${project.build.sourceEncoding}</inputEncoding>
-          <outputEncoding>${website.encoding}</outputEncoding>
-          <reportPlugins>
-
-
-
-            <!-- =======================================================
-                     Build the Javadoc to be published on the web site
-                 ======================================================= -->
-            <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-javadoc-plugin</artifactId>
-              <reportSets>
-                <reportSet>
-                  <reports>
-                    <report>javadoc</report>     <!-- We want API javadoc only, not tests javadoc. -->
-                  </reports>
-                </reportSet>
-              </reportSets>
-              <configuration>
-                <encoding>${project.build.sourceEncoding}</encoding>
-                <docencoding>${website.encoding}</docencoding>
-                <charset>${website.encoding}</charset>
-                <source>1.7</source>             <!-- Enables javadoc to handle assertions present in J2SE 1.4.  -->
-                <locale>en</locale>              <!-- Locale that javadoc uses when generating documentation.    -->
-                <noqualifier>all</noqualifier>   <!-- Omit qualifying package name before class names in output. -->
-                <aggregate>true</aggregate>      <!-- Build an aggregated report at the root.                    -->
-                <maxmemory>1G</maxmemory>        <!-- maximum Java heap size to be used when launching the tool. -->
-                <quiet>true</quiet>              <!-- Shuts off non-error and non-warning messages.              -->
-                <keywords>true</keywords>        <!-- Adds HTML meta keyword tags to the generated files.        -->
-                <breakiterator>true</breakiterator>
-                <excludePackageNames>org.geotoolkit.build:org.geotoolkit.test:org.geotoolkit.maven:org.geotoolkit.openoffice:org.geotoolkit.internal:org.geotoolkit.resources:org.geotoolkit.legacy:org.opengis:com</excludePackageNames>
-                <!-- stylesheetfile>src/main/javadoc/stylesheet.css</stylesheetfile -->
-
-                <!-- Custom taglets implemented in Java. -->
-                <taglets>
-                  <taglet><tagletClass>org.geotoolkit.maven.taglet.Module</tagletClass></taglet>
-                  <taglet><tagletClass>org.geotoolkit.maven.taglet.Section</tagletClass></taglet>
-                  <taglet><tagletClass>org.geotoolkit.maven.taglet.Note</tagletClass></taglet>
-                  <taglet><tagletClass>org.geotoolkit.maven.taglet.Preformat</tagletClass></taglet>
-                </taglets>
-                <tagletArtifact>
-                  <groupId>org.geotoolkit.project</groupId>
-                  <artifactId>geotk-javadoc</artifactId>
-                  <version>${project.version}</version>
-                </tagletArtifact>
-
-                <!-- Creates links to existing javadoc-generated documentation of external referenced classes. -->
-                <links>
-                  <link>http://docs.oracle.com/javase/7/docs/api</link>
-                  <link>http://download.java.net/media/jai/javadoc/1.1.3/jai-apidocs</link>
-                  <link>http://download.java.net/media/jai-imageio/javadoc/1.1</link>
-                  <link>http://download.java.net/media/java3d/javadoc/1.5.2</link>
-                  <link>http://jcip.net/annotations/doc</link>
-                  <link>http://www.unidata.ucar.edu/software/netcdf-java/v4.3/javadoc</link>
-                  <link>http://javadoc.geotoolkit.org/external/swingx</link>
-                  <link>http://jscience.org/api</link>
-                  <link>http://www.geoapi.org/snapshot/pending</link>
-                </links>
-
-                <!-- Separates packages on the overview page into the groups specified. -->
-                <groups>
-                  <group>
-                    <title>Feature</title>
-                    <packages>org.geotoolkit.feature*</packages>
-                  </group>
-                  <group>
-                    <title>Feature stores</title>
-                    <packages>org.geotoolkit.storage:org.geotoolkit.data*</packages>
-                  </group>
-                  <group>
-                    <title>Filter and Expression</title>
-                    <packages>org.geotoolkit.filter*</packages>
-                  </group>
-                  <group>
-                    <title>Geometry</title>
-                    <packages>org.geotoolkit.geometry*:org.geotoolkit.topology*</packages>
-                  </group>
-                  <group>
-                    <title>Coverage and Raster</title>
-                    <packages>org.geotoolkit.coverage*:org.geotoolkit.image*</packages>
-                  </group>
-                  <group>
-                    <title>Referencing</title>
-                    <packages>org.geotoolkit.referencing*:org.geotoolkit.parameter*</packages>
-                  </group>
-                  <group>
-                    <title>Metadata</title>
-                    <packages>org.geotoolkit.metadata*:org.geotoolkit.naming*</packages>
-                  </group>
-                  <group>
-                    <title>Numerical calculation and processing</title>
-                    <packages>org.geotoolkit.math*:org.geotoolkit.measure*:org.geotoolkit.nature*:org.geotoolkit.process*</packages>
-                  </group>
-                  <group>
-                    <title>Indexing and Searching</title>
-                    <packages>org.geotoolkit.index*:org.geotoolkit.lucene*</packages>
-                  </group>
-                  <group>
-                    <title>Rendering</title>
-                    <packages>org.geotoolkit.display*:org.geotoolkit.map*:org.geotoolkit.renderer*</packages>
-                  </group>
-                  <group>
-                    <title>Rendering 2D</title>
-                    <packages>org.geotoolkit.display2d*</packages>
-                  </group>
-                  <group>
-                    <title>Rendering 3D</title>
-                    <packages>org.geotoolkit.display3d*</packages>
-                  </group>
-                  <group>
-                    <title>Styling</title>
-                    <packages>org.geotoolkit.style*:org.geotoolkit.sld*:org.geotoolkit.se.*</packages>
-                  </group>
-                  <group>
-                    <title>Reporting : JasperReport</title>
-                    <packages>org.geotoolkit.report*</packages>
-                  </group>
-                  <group>
-                    <title>User Interface</title>
-                    <packages>org.geotoolkit.gui*</packages>
-                  </group>
-                  <group>
-                    <title>Utilities</title>
-                    <packages>org.geotoolkit.console*:org.geotoolkit.io*:org.geotoolkit.factory*:org.geotoolkit.lang*:org.geotoolkit.util*:org.geotoolkit.sql*:org.geotoolkit.xml*</packages>
-                  </group>
-                </groups>
-
-                <!-- Enables the Javadoc tool to interpret a simple, one-argument
-                     custom block tag tagname in doc comments. Note: <placement/>
-                     should be a combination of the letters Xaoptcmf. -->
-                <tags>
-                  <tag><placement>t</placement> <name>goal</name>        <head>Maven goal:</head></tag>
-                  <tag><placement>t</placement> <name>phase</name>       <head>Maven phase:</head></tag>
-                  <tag><placement>t</placement> <name>description</name> <head>Description:</head></tag>
-                  <tag><placement>X</placement> <name>level</name>       <head>API level:</head></tag>
-                  <tag><placement>X</placement> <name>category</name>    <head>Category:</head></tag>
-                  <tag><placement>a</placement> <name>todo</name>        <head>TODO:</head></tag>
-                </tags>
-              </configuration>
-            </plugin>
-
-
-
-            <!-- ====================================================
-                     Reports configuration for the web site
-                 ==================================================== -->
-            <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-project-info-reports-plugin</artifactId>
-              <reportSets>
-                <reportSet>
-                  <reports>
-                    <report>index</report>
-                    <report>summary</report>
-                    <report>modules</report>
-                    <report>license</report>
-                    <report>scm</report>
-                    <report>cim</report>
-                    <report>project-team</report>
-                    <report>mailing-list</report>
-                    <report>issue-tracking</report>
-                    <report>dependencies</report>
-                    <report>dependency-convergence</report>
-                    <report>dependency-management</report>
-                    <report>plugin-management</report>
-                  </reports>
-                </reportSet>
-              </reportSets>
-            </plugin>
-
-
-
-            <!-- ====================================================
-                     JUnit test results
-                 ==================================================== -->
-            <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-surefire-report-plugin</artifactId>
-              <configuration>
-                <aggregate>true</aggregate>
-                <showSuccess>false</showSuccess>
-              </configuration>
-              <executions> <!-- Workaround for http://jira.codehaus.org/browse/SUREFIRE-257 -->
-                <execution>
-                  <phase>test</phase>
-                  <goals>
-                    <goal>report-only</goal>
-                  </goals>
-                </execution>
-              </executions>
-            </plugin>
-
-
-
-            <!-- ====================================================
-                     TODO tags
-                 ==================================================== -->
-            <plugin>
-              <groupId>org.codehaus.mojo</groupId>
-              <artifactId>taglist-maven-plugin</artifactId>
-              <configuration>
-                <aggregate>true</aggregate>
-                <tagListOptions>
-                  <tagClasses>
-                    <tagClass>
-                      <displayName>TODO</displayName>
-                      <tags>
-                        <tag>
-                          <matchString>@todo</matchString>
-                          <matchType>ignoreCase</matchType>
-                        </tag>
-                      </tags>
-                    </tagClass>
-                  </tagClasses>
-                </tagListOptions>
-              </configuration>
-            </plugin>
-          </reportPlugins>
-        </configuration>
-      </plugin>
-
-
-
       <!-- ====================================================
              Build XHTML pages from the Docbook files.
              Can also be run from the command line as:
@@ -1017,8 +757,251 @@
           </execution>
         </executions>
       </plugin>
+
+
+
+      <!-- =======================================================
+               Build the web site
+           ======================================================= -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-site-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>attach-descriptor</id>
+            <goals>
+              <goal>attach-descriptor</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <locales>en</locales>
+          <inputEncoding>${project.build.sourceEncoding}</inputEncoding>
+          <outputEncoding>${website.encoding}</outputEncoding>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
+
+
+
+  <!-- ==============================================================
+         Reports configuration.
+       ============================================================== -->
+  <reporting>
+    <plugins>
+      <plugin>
+        <artifactId>maven-project-info-reports-plugin</artifactId>
+        <version>2.7</version>
+        <reportSets>
+          <reportSet>
+            <reports>
+              <report>index</report>
+              <report>summary</report>
+              <report>modules</report>
+              <report>license</report>
+              <report>scm</report>
+              <report>cim</report>
+              <report>project-team</report>
+              <report>mailing-list</report>
+              <report>issue-tracking</report>
+              <report>dependencies</report>
+              <report>dependency-convergence</report>
+              <report>dependency-management</report>
+              <report>plugin-management</report>
+            </reports>
+          </reportSet>
+        </reportSets>
+      </plugin>
+
+
+
+      <!-- =======================================================
+               Build the Javadoc to be published on the web site
+           ======================================================= -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>2.9.1</version>
+        <reportSets>
+          <reportSet>
+            <reports>
+              <report>javadoc</report>     <!-- We want API javadoc only, not tests javadoc. -->
+            </reports>
+          </reportSet>
+        </reportSets>
+        <configuration>
+          <encoding>${project.build.sourceEncoding}</encoding>
+          <docencoding>${website.encoding}</docencoding>
+          <charset>${website.encoding}</charset>
+          <source>1.7</source>             <!-- Enables javadoc to handle assertions present in J2SE 1.4.  -->
+          <locale>en</locale>              <!-- Locale that javadoc uses when generating documentation.    -->
+          <noqualifier>all</noqualifier>   <!-- Omit qualifying package name before class names in output. -->
+          <aggregate>true</aggregate>      <!-- Build an aggregated report at the root.                    -->
+          <maxmemory>1G</maxmemory>        <!-- maximum Java heap size to be used when launching the tool. -->
+          <quiet>true</quiet>              <!-- Shuts off non-error and non-warning messages.              -->
+          <keywords>true</keywords>        <!-- Adds HTML meta keyword tags to the generated files.        -->
+          <breakiterator>true</breakiterator>
+          <excludePackageNames>org.geotoolkit.build:org.geotoolkit.test:org.geotoolkit.maven:org.geotoolkit.openoffice:org.geotoolkit.internal:org.geotoolkit.resources:org.geotoolkit.legacy:org.opengis:com</excludePackageNames>
+          <!-- stylesheetfile>src/main/javadoc/stylesheet.css</stylesheetfile -->
+
+          <!-- Custom taglets implemented in Java. -->
+          <taglets>
+            <taglet><tagletClass>org.geotoolkit.maven.taglet.Module</tagletClass></taglet>
+            <taglet><tagletClass>org.geotoolkit.maven.taglet.Section</tagletClass></taglet>
+            <taglet><tagletClass>org.geotoolkit.maven.taglet.Note</tagletClass></taglet>
+            <taglet><tagletClass>org.geotoolkit.maven.taglet.Preformat</tagletClass></taglet>
+          </taglets>
+          <tagletArtifact>
+            <groupId>org.geotoolkit.project</groupId>
+            <artifactId>geotk-javadoc</artifactId>
+            <version>${project.version}</version>
+          </tagletArtifact>
+
+          <!-- Creates links to existing javadoc-generated documentation of external referenced classes. -->
+          <links>
+            <link>http://docs.oracle.com/javase/7/docs/api</link>
+            <link>http://download.java.net/media/jai/javadoc/1.1.3/jai-apidocs</link>
+            <link>http://download.java.net/media/jai-imageio/javadoc/1.1</link>
+            <link>http://download.java.net/media/java3d/javadoc/1.5.2</link>
+            <link>http://jcip.net/annotations/doc</link>
+            <link>http://www.unidata.ucar.edu/software/netcdf-java/v4.3/javadoc</link>
+            <link>http://javadoc.geotoolkit.org/external/swingx</link>
+            <link>http://jscience.org/api</link>
+            <link>http://www.geoapi.org/snapshot/pending</link>
+          </links>
+
+          <!-- Separates packages on the overview page into the groups specified. -->
+          <groups>
+            <group>
+              <title>Feature</title>
+              <packages>org.geotoolkit.feature*</packages>
+            </group>
+            <group>
+              <title>Feature stores</title>
+              <packages>org.geotoolkit.storage:org.geotoolkit.data*</packages>
+            </group>
+            <group>
+              <title>Filter and Expression</title>
+              <packages>org.geotoolkit.filter*</packages>
+            </group>
+            <group>
+              <title>Geometry</title>
+              <packages>org.geotoolkit.geometry*:org.geotoolkit.topology*</packages>
+            </group>
+            <group>
+              <title>Coverage and Raster</title>
+              <packages>org.geotoolkit.coverage*:org.geotoolkit.image*</packages>
+            </group>
+            <group>
+              <title>Referencing</title>
+              <packages>org.geotoolkit.referencing*:org.geotoolkit.parameter*</packages>
+            </group>
+            <group>
+              <title>Metadata</title>
+              <packages>org.geotoolkit.metadata*:org.geotoolkit.naming*</packages>
+            </group>
+            <group>
+              <title>Numerical calculation and processing</title>
+              <packages>org.geotoolkit.math*:org.geotoolkit.measure*:org.geotoolkit.nature*:org.geotoolkit.process*</packages>
+            </group>
+            <group>
+              <title>Indexing and Searching</title>
+              <packages>org.geotoolkit.index*:org.geotoolkit.lucene*</packages>
+            </group>
+            <group>
+              <title>Rendering</title>
+              <packages>org.geotoolkit.display*:org.geotoolkit.map*:org.geotoolkit.renderer*</packages>
+            </group>
+            <group>
+              <title>Rendering 2D</title>
+              <packages>org.geotoolkit.display2d*</packages>
+            </group>
+            <group>
+              <title>Rendering 3D</title>
+              <packages>org.geotoolkit.display3d*</packages>
+            </group>
+            <group>
+              <title>Styling</title>
+              <packages>org.geotoolkit.style*:org.geotoolkit.sld*:org.geotoolkit.se.*</packages>
+            </group>
+            <group>
+              <title>Reporting : JasperReport</title>
+              <packages>org.geotoolkit.report*</packages>
+            </group>
+            <group>
+              <title>User Interface</title>
+              <packages>org.geotoolkit.gui*</packages>
+            </group>
+            <group>
+              <title>Utilities</title>
+              <packages>org.geotoolkit.console*:org.geotoolkit.io*:org.geotoolkit.factory*:org.geotoolkit.lang*:org.geotoolkit.util*:org.geotoolkit.sql*:org.geotoolkit.xml*</packages>
+            </group>
+          </groups>
+
+          <!-- Enables the Javadoc tool to interpret a simple, one-argument
+               custom block tag tagname in doc comments. Note: <placement/>
+               should be a combination of the letters Xaoptcmf. -->
+          <tags>
+            <tag><placement>t</placement> <name>goal</name>        <head>Maven goal:</head></tag>
+            <tag><placement>t</placement> <name>phase</name>       <head>Maven phase:</head></tag>
+            <tag><placement>t</placement> <name>description</name> <head>Description:</head></tag>
+            <tag><placement>X</placement> <name>level</name>       <head>API level:</head></tag>
+            <tag><placement>X</placement> <name>category</name>    <head>Category:</head></tag>
+            <tag><placement>a</placement> <name>todo</name>        <head>TODO:</head></tag>
+          </tags>
+        </configuration>
+      </plugin>
+
+
+
+      <!-- ====================================================
+               JUnit test results
+           ==================================================== -->
+      <plugin>
+        <artifactId>maven-surefire-report-plugin</artifactId>
+        <version>2.16</version>
+        <configuration>
+          <aggregate>true</aggregate>
+          <showSuccess>false</showSuccess>
+        </configuration>
+        <reportSets> <!-- Workaround for http://jira.codehaus.org/browse/SUREFIRE-257 -->
+          <reportSet>
+            <reports>
+              <report>report-only</report>
+            </reports>
+          </reportSet>
+        </reportSets>
+      </plugin>
+
+
+
+      <!-- ====================================================
+               TODO tags
+           ==================================================== -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>taglist-maven-plugin</artifactId>
+        <version>2.4</version>
+        <configuration>
+          <aggregate>true</aggregate>
+          <tagListOptions>
+            <tagClasses>
+              <tagClass>
+                <displayName>TODO</displayName>
+                <tags>
+                  <tag>
+                    <matchString>@todo</matchString>
+                    <matchType>ignoreCase</matchType>
+                  </tag>
+                </tags>
+              </tagClass>
+            </tagClasses>
+          </tagListOptions>
+        </configuration>
+      </plugin>
+    </plugins>
+  </reporting>
 
 
 
