@@ -70,20 +70,4 @@
     <module>geotk-epsg-pack</module>
   </modules>
 
-  <!--
-    The modules excluded from the above list. We will keep them when
-    we are not generating the web site, in order to reduce the risk
-    of build failure for users just running "mvn install".
-  -->
-  <profiles>
-    <profile>
-      <id>no-site</id>
-      <activation>
-        <activeByDefault>true</activeByDefault>
-      </activation>
-      <modules>
-        <module>geotk-provided</module>
-      </modules>
-    </profile>
-  </profiles>
 </project>

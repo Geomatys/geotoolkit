@@ -111,11 +111,6 @@
       <scope>runtime</scope>
     </dependency>
     <dependency>
-      <groupId>com.jhlabs</groupId>
-      <artifactId>filters</artifactId>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
       <groupId>com.sun</groupId>
       <artifactId>jlfgr</artifactId>
     </dependency>
