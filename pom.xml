@@ -170,7 +170,7 @@
            Global properties.
        =========================================================== -->
   <properties>
-    <geoapi.version>3.1-SNAPSHOT</geoapi.version>
+    <geoapi.version>3.1-SNAPSHOT</geoapi.version> <!-- Must be same than the version used by SIS. -->
     <sis.version>0.4-jdk7-SNAPSHOT</sis.version>
     <derby.version>10.8.2.2</derby.version> <!-- If updated, need to search occurrences in APT files. -->
     <netcdf.version>4.3.10</netcdf.version>
@@ -191,26 +191,16 @@
        =========================================================== -->
   <dependencyManagement>
     <dependencies>
-      <!-- Import all dependency management used by the GeAPI project. -->
+      <!-- Import all dependency management used by the Apache SIS project.
+           This include an import of NetCDF and Log4J dependencies, which
+           are overwritten in this pom.xml because Geotk uses a different
+           NetCDF library version for now. -->
       <dependency>
-        <groupId>org.opengis</groupId>
-        <artifactId>geoapi-parent</artifactId>
-        <version>${geoapi.version}</version>
+        <groupId>org.apache.sis</groupId>
+        <artifactId>parent</artifactId>
+        <version>${sis.version}</version>
         <type>pom</type>
         <scope>import</scope>
-      </dependency>
-
-      <!-- GeoAPI and its dependencies -->
-      <dependency>
-        <groupId>org.opengis</groupId>
-        <artifactId>geoapi-pending</artifactId>
-        <version>${geoapi.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.opengis</groupId>
-        <artifactId>geoapi-conformance</artifactId>
-        <version>${geoapi.version}</version>
-        <scope>test</scope>
       </dependency>
 
       <!-- Imaging -->
@@ -340,12 +330,12 @@
       <dependency>
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-api</artifactId>
-        <version>1.6.4</version>
+        <version>1.6.4</version> <!-- See comment for edu.ucar dependency. -->
       </dependency>
       <dependency>
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-jdk14</artifactId>
-        <version>1.6.4</version>
+        <version>1.6.4</version> <!-- See comment for edu.ucar dependency. -->
         <scope>runtime</scope> <!-- Should never be needed at compile time. -->
       </dependency>
 
@@ -359,6 +349,9 @@
            commons-codec        1.3
            commons-httpclient   3.1
            jdom                 1.1
+
+        Note that Geotk may use a different version of the NetCDF library than SIS, which cause
+        the above-cited dependencies to be also different.
       -->
       <dependency>
         <groupId>edu.ucar</groupId>
