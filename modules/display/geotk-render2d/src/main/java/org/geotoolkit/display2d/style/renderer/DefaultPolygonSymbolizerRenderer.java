@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.display2d.style.renderer;
 
+import com.vividsolutions.jts.geom.Geometry;
 import java.awt.Image;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
@@ -40,7 +41,7 @@ import org.geotoolkit.display2d.style.CachedStroke;
 import org.geotoolkit.display2d.style.CachedStrokeGraphic;
 import org.geotoolkit.display2d.style.CachedStrokeSimple;
 import org.geotoolkit.display2d.style.j2d.PathWalker;
-import org.opengis.geometry.Geometry;
+//import org.opengis.geometry.Geometry;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 
@@ -310,10 +311,10 @@ public class DefaultPolygonSymbolizerRenderer extends AbstractSymbolizerRenderer
             final Unit symbolUnit, final float offset) throws TransformException{
 
         //TODO use symbol unit to adjust offset
-        final Geometry[] geoms = projectedFeature.getObjectiveGeometry();
+        final Geometry[] geoms = projectedFeature.getObjectiveGeometryJTS();
         final Shape[] shapes = new Shape[geoms.length];
         for(int i=0;i<geoms.length;i++){
-            geoms[i] = geoms[i].getBuffer(offset);
+            geoms[i] = geoms[i].buffer(offset);
             shapes[i] = GO2Utilities.toJava2D(geoms[i]);
         }
 
@@ -327,11 +328,11 @@ public class DefaultPolygonSymbolizerRenderer extends AbstractSymbolizerRenderer
     private static  Shape[] bufferDisplayGeometry(final RenderingContext2D context, final ProjectedGeometry projectedFeature,
             final float offset) throws TransformException{
 
-        final Geometry[] geoms = projectedFeature.getDisplayGeometry();
+        final Geometry[] geoms = projectedFeature.getDisplayGeometryJTS();
         final Shape[] shapes = new Shape[geoms.length];
         for(int i=0;i<geoms.length;i++){
             try{
-                geoms[i] = geoms[i].getBuffer(offset);
+                geoms[i] = geoms[i].buffer(offset);
             }catch(IllegalArgumentException ex){
                 //can happen if the geometry has too few points, like a ring of 3points
                 LOGGER.log(Level.FINE, ex.getLocalizedMessage(), ex);
