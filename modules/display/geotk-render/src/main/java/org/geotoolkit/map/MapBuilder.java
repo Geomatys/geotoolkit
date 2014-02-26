@@ -198,7 +198,6 @@ public final class MapBuilder {
      * @return ElevationModel
      */
     public static ElevationModel createElevationModel(final GridCoverageReader grid) {
-        FilterFactory FF = FactoryFinder.getFilterFactory(null);
         return createElevationModel(grid, 130, 2, 55);
     }
 
