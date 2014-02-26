@@ -4,6 +4,7 @@ package org.geotoolkit.lucene;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.document.Document;
@@ -32,6 +33,12 @@ public class DocumentIndexer extends AbstractIndexer<DocumentEnvelope>{
             ids.add(doc.doc.get("id"));
         }
         return ids;
+    }
+
+    @Override
+    protected Iterator<String> getIdentifierIterator() throws IndexingException {
+        final Collection<String> ids = getAllIdentifiers();
+        return ids.iterator();
     }
 
     @Override

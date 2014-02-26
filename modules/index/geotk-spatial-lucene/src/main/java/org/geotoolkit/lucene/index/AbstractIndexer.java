@@ -47,6 +47,7 @@ import org.geotoolkit.lucene.LuceneUtils;
 import org.geotoolkit.lucene.filter.LuceneOGCFilter;
 import static org.geotoolkit.lucene.index.IndexLucene.LOGGER;
 import org.geotoolkit.util.FileUtilities;
+import org.geotoolkit.util.collection.CloseableIterator;
 import org.opengis.geometry.MismatchedReferenceSystemException;
 
 // Types dependencies
@@ -164,12 +165,15 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
     }
     
     protected abstract Collection<String> getAllIdentifiers() throws IndexingException;
+
+    protected abstract Iterator<String> getIdentifierIterator() throws IndexingException;
     
     protected abstract E getEntry(final String identifier) throws IndexingException;
     
     /**
      * Create a new Index with the specified list of object.
      *
+     * @param toIndex objects to index.
      * @throws IndexingException
      */
     public void createIndex(final List<E> toIndex) throws IndexingException {
@@ -217,14 +221,15 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
         final long time  = System.currentTimeMillis();
         int nbEntries      = 0;
         try {
-            final IndexWriterConfig conf   = new IndexWriterConfig(Version.LUCENE_46, analyzer);
-            final IndexWriter writer       = new IndexWriter(LuceneUtils.getAppropriateDirectory(getFileDirectory()), conf);
-            final String serviceID         = getServiceID();
-            final Collection<String> identifiers = getAllIdentifiers();
+            final IndexWriterConfig conf       = new IndexWriterConfig(Version.LUCENE_46, analyzer);
+            final IndexWriter writer           = new IndexWriter(LuceneUtils.getAppropriateDirectory(getFileDirectory()), conf);
+            final String serviceID             = getServiceID();
+            final Iterator<String> identifiers = getIdentifierIterator();
 
             resetTree();
-            LOGGER.log(logLevel, "{0} entry to read.", identifiers.size());
-            for (String identifier : identifiers) {
+            LOGGER.log(logLevel, "starting indexing...");
+            while (identifiers.hasNext()) {
+                final String identifier = identifiers.next();
                 if (!stopIndexing && !indexationToStop.contains(serviceID)) {
                     try {
                         final E entry = getEntry(identifier);
@@ -239,6 +244,11 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
                      return;
                 }
             }
+
+            if (identifiers instanceof CloseableIterator) {
+                ((CloseableIterator)identifiers).close();
+            }
+
             // writer.optimize(); no longer justified
             writer.close();
             
@@ -258,7 +268,7 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
      * Used when indexing in line many document.
      *
      * @param writer An Lucene index writer.
-     * @param object The object to index.
+     * @param meta The object to index.
      */
     public void indexDocument(final IndexWriter writer, final E meta) {
         try {
