@@ -252,6 +252,18 @@ public interface MutableStyleFactory extends org.opengis.style.StyleFactory {
 
     SelectedChannelType selectedChannelType(String name, Expression gammaValue);
 
+    /**
+     * Return {@link ShadedRelief} with expected shadow coefficient between 0 and 100 per cent.<br/>
+     * 0 means no shadow.<br/>
+     * 100 means maximum shadow.<br/><br/>
+     * 
+     * For example : <br/>
+     * {@code shadedRelief(Expression.literal(60))}.<br/>
+     * In this example each samples values from pixels within shadow area, will be reduce by 60 %.
+     * 
+     * @param reliefFactor shadow factor in percent apply on each pixel within shadow area.
+     * @return {@link ShadedRelief} with expected shadow coefficient
+     */
     ShadedRelief shadedRelief(Expression reliefFactor);
 
     Stroke stroke();
