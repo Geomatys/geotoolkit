@@ -77,22 +77,50 @@ public class CompatibleColorModel extends ColorModel{
     
     @Override
     public int getRed(int pixel) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        final int argb = getRGB((Object)pixel);
+        return 0xFF & (argb >> 16);
     }
 
     @Override
     public int getGreen(int pixel) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        final int argb = getRGB((Object)pixel);
+        return 0xFF & ( argb >> 8);
     }
 
     @Override
     public int getBlue(int pixel) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        final int argb = getRGB((Object)pixel);
+        return 0xFF & ( argb >> 0);
     }
 
     @Override
     public int getAlpha(int pixel) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        final int argb = getRGB((Object)pixel);
+        return 0xFF & ( argb >> 24);
+    }
+
+    @Override
+    public int getRed(Object pixel) {
+        final int argb = getRGB((Object)pixel);
+        return 0xFF & (argb >> 16);
+    }
+
+    @Override
+    public int getGreen(Object pixel) {
+        final int argb = getRGB((Object)pixel);
+        return 0xFF & ( argb >> 8);
+    }
+    
+    @Override
+    public int getBlue(Object pixel) {
+        final int argb = getRGB((Object)pixel);
+        return 0xFF & ( argb >> 0);
+    }
+
+    @Override
+    public int getAlpha(Object pixel) {
+        final int argb = getRGB((Object)pixel);
+        return 0xFF & ( argb >> 24);
     }
 
     @Override
