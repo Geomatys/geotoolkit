@@ -424,7 +424,7 @@ browseCRS:          for (CoordinateReferenceSystem part : parts) {
 
         def.nav.setMap(null);
         axis.remove(def);
-        
+                
         updateLayout();
     }
 

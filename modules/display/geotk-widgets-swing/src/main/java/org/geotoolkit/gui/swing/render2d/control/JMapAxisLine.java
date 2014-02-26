@@ -129,15 +129,7 @@ import org.opengis.referencing.operation.TransformException;
     /** The CRS containing the axis to browse. This CRS should have only one dimension. */
     private final CoordinateReferenceSystem crs;
 
-    private final Comparator<CoordinateSystemAxis> axisIndexFinder = new Comparator<CoordinateSystemAxis>() {
-        @Override
-        public int compare(CoordinateSystemAxis o1, CoordinateSystemAxis o2) {
-            if(o1.getName().getCode().equals(crs.getCoordinateSystem().getAxis(0).getName().getCode())){
-                return 0;
-            }
-            return -1;
-        }
-    };
+    private final Comparator<CoordinateSystemAxis> axisIndexFinder;
 
     /**
      * A boolean to determine what mecanism must be used for layer activation.
@@ -157,6 +149,7 @@ import org.opengis.referencing.operation.TransformException;
 
     public JMapAxisLine(final CoordinateReferenceSystem crs, final boolean useMenu) {
         this.crs = crs;
+        this.axisIndexFinder = new AbstractCanvas2D.AxisFinder(crs.getCoordinateSystem().getAxis(0));
         this.useMenu = useMenu;
         animation.setSpeedFactor(10);
         setModelRenderer(new DoubleRenderer());

@@ -45,6 +45,7 @@ import org.apache.sis.util.Classes;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
 import org.geotoolkit.referencing.crs.DefaultDerivedCRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
@@ -74,6 +75,24 @@ import org.opengis.util.FactoryException;
  */
 public abstract class AbstractCanvas2D extends AbstractCanvas{
 
+    public static final class AxisFinder implements Comparator<CoordinateSystemAxis>{
+
+        private final CoordinateSystemAxis crs;
+
+        public AxisFinder(CoordinateSystemAxis crs) {
+            this.crs = crs;
+        }
+        
+        @Override
+        public int compare(CoordinateSystemAxis o1, CoordinateSystemAxis o2) {
+            if(o1.getName().getCode().equals(crs.getName().getCode())){
+                return 0;
+            }
+            return -1;
+        }
+        
+    }
+        
     /**
      * The name of the {@linkplain PropertyChangeEvent property change event} fired when the
      * {@linkplain AbstractCanvas2D#getObjectiveCRS canvas crs} changed.
@@ -910,25 +929,40 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
         Rectangle2D rect2D = new Rectangle2D.Double(env2D.getMinimum(0), env2D.getMinimum(1), env2D.getSpan(0), env2D.getSpan(1));
         resetTransform(rect2D, true,false);
 
-        //set the temporal and elevation if some
+        
         final CoordinateSystem cs = envCRS.getCoordinateSystem();
 
-        for(int i=0, n= cs.getDimension(); i<n;i++){
-            final CoordinateSystemAxis axis = cs.getAxis(i);
-            final AxisDirection ad = axis.getDirection();
-            if(ad.equals(AxisDirection.FUTURE) || ad.equals(AxisDirection.PAST)){
-                //found a temporal axis
-                final double minT = env.getMinimum(i);
-                final double maxT = env.getMaximum(i);
-                setTemporalRange(toDate(minT), toDate(maxT));
-            } else if(ad.equals(AxisDirection.UP) || ad.equals(AxisDirection.DOWN)){
-                //found a vertical axis
-                final double minT = env.getMinimum(i);
-                final double maxT = env.getMaximum(i);
-                //todo should use the axis unit
-                setElevationRange(minT, maxT, SI.METRE);
+        //set the extra xis if some exist
+        int index=0;
+        final List<CoordinateReferenceSystem> dcrss = ReferencingUtilities.decompose(envCRS);
+        for(CoordinateReferenceSystem dcrs : dcrss){
+            if(dcrs.getCoordinateSystem().getDimension()==1){
+                final CoordinateSystemAxis axis = dcrs.getCoordinateSystem().getAxis(0);
+                final AxisFinder finder = new AxisFinder(axis);
+                final int cindex = getAxisIndex(finder);
+                if(cindex>=0){
+                    setAxisRange(env.getMinimum(index), env.getMaximum(index), finder, dcrs);
+                }
             }
+            index += dcrs.getCoordinateSystem().getDimension();
         }
+        
+//        for(int i=0, n= cs.getDimension(); i<n;i++){
+//            final CoordinateSystemAxis axis = cs.getAxis(i);
+//            final AxisDirection ad = axis.getDirection();
+//            if(ad.equals(AxisDirection.FUTURE) || ad.equals(AxisDirection.PAST)){
+//                //found a temporal axis
+//                final double minT = env.getMinimum(i);
+//                final double maxT = env.getMaximum(i);
+//                setTemporalRange(toDate(minT), toDate(maxT));
+//            } else if(ad.equals(AxisDirection.UP) || ad.equals(AxisDirection.DOWN)){
+//                //found a vertical axis
+//                final double minT = env.getMinimum(i);
+//                final double maxT = env.getMaximum(i);
+//                //todo should use the axis unit
+//                setElevationRange(minT, maxT, SI.METRE);
+//            }
+//        }
     }
 
     /**
