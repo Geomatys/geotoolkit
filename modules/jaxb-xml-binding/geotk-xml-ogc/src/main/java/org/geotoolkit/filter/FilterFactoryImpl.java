@@ -168,7 +168,7 @@ import org.opengis.filter.temporal.OverlappedBy;
 import org.opengis.filter.temporal.TContains;
 import org.opengis.filter.temporal.TEquals;
 import org.opengis.filter.temporal.TOverlaps;
-import org.opengis.geometry.BoundingBox;
+import org.opengis.geometry.Envelope;
 import org.opengis.geometry.Geometry;
 
 
@@ -563,7 +563,7 @@ public class FilterFactoryImpl implements FilterFactory2 {
     }
 
     @Override
-    public BBOX bbox(final Expression geometry, final BoundingBox bounds) {
+    public BBOX bbox(final Expression geometry, final Envelope bounds) {
         String propertyName = "";
         final String CRSName;
         if (geometry instanceof PropertyNameType) {
@@ -574,7 +574,8 @@ public class FilterFactoryImpl implements FilterFactory2 {
         } else {
             CRSName = "CRS:84";
         }
-        return new BBOXType(propertyName, bounds.getMinX(), bounds.getMinY(), bounds.getMaxX(), bounds.getMaxY(), CRSName);
+        return new BBOXType(propertyName, bounds.getMinimum(0), bounds.getMinimum(1),
+                                          bounds.getMaximum(0), bounds.getMaximum(1), CRSName);
     }
 
     @Override

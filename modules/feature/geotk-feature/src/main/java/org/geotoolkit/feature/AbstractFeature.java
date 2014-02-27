@@ -100,7 +100,7 @@ public abstract class AbstractFeature<C extends Collection<Property>> extends Ab
                 if (ga == null) {
                     continue;
                 }
-                final BoundingBox bbox = ga.getBounds();
+                final BoundingBox bbox = DefaultBoundingBox.castOrCopy(ga.getBounds());
                 if(bbox == null || bbox.isEmpty()){
                     continue;
                 }
@@ -114,7 +114,7 @@ public abstract class AbstractFeature<C extends Collection<Property>> extends Ab
                         copy = true;
                         bounds = new DefaultBoundingBox(bounds);
                     }
-                    bounds.include(ga.getBounds());
+                    bounds.include(DefaultBoundingBox.castOrCopy(ga.getBounds()));
                 }
             }
         }

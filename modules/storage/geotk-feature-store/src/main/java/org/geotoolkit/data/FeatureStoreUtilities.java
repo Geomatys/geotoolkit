@@ -53,7 +53,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  * Convinient methods to manipulate FeatureStore and FeatureCollection.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
@@ -138,7 +138,7 @@ public class FeatureStoreUtilities {
     /**
      * Write the features from the given collection and return the list of generated FeatureID
      * send by the writer.
-     * 
+     *
      * @param writer
      * @param collection
      * @return List of generated FeatureId
@@ -158,7 +158,7 @@ public class FeatureStoreUtilities {
                 ids.add(candidate.getIdentifier());
             }
         }finally{
-            
+
             //close reader before the writer to ensure no more read lock might still exist
             //if we write on the same source
             FeatureStoreRuntimeException e = null;
@@ -170,9 +170,9 @@ public class FeatureStoreUtilities {
                     e = new FeatureStoreRuntimeException(ex);
                 }
             }
-            
+
             writer.close();
-            
+
             if(e != null){
                 throw e;
             }
@@ -206,13 +206,13 @@ public class FeatureStoreUtilities {
      */
     public static Envelope calculateEnvelope(final FeatureIterator iterator) throws FeatureStoreRuntimeException{
         ensureNonNull("iterator", iterator);
-        
+
         BoundingBox env = null;
 
         try{
             while(iterator.hasNext()){
                 final Feature f = iterator.next();
-                final BoundingBox bbox = f.getBounds();
+                final BoundingBox bbox = DefaultBoundingBox.castOrCopy(f.getBounds());
                 if(bbox != null){
                     if(env != null){
                         env.include(bbox);
@@ -223,7 +223,7 @@ public class FeatureStoreUtilities {
                         }
                         if(crs == null){
                             //what should we do ?
-                            //we choose to continue, assuming it is normal and the 
+                            //we choose to continue, assuming it is normal and the
                             //features are in cartesian space. or it's a temporary work collection.
                         }
                         env = new DefaultBoundingBox(bbox, crs);
@@ -244,7 +244,7 @@ public class FeatureStoreUtilities {
     public static <F extends Feature> FeatureIterator<F> sequence(final FeatureIterator<F> ... iterators){
         return new FeatureIteratorSequence<F>(iterators);
     }
-    
+
     public static <T extends FeatureType, F extends Feature> FeatureReader<T,F> sequence(final FeatureReader<T,F> ... readers){
         return new FeatureReaderSequence<T, F>(readers);
     }
@@ -619,7 +619,7 @@ public class FeatureStoreUtilities {
      * Combine several FeatureIterator and merge them using the comparator given.
      * All given iterator must already be ordered this same comparator, otherwise the results
      * are unpredictable.
-     * 
+     *
      * @param <F> extends Feature
      */
     private static class FeatureIteratorCombine<F extends Feature> implements FeatureIterator<F>{
@@ -678,7 +678,7 @@ public class FeatureStoreUtilities {
             }
 
             if (ite1next != null && ite2next != null) {
-                
+
                 if(comparator.compare(ite1next, ite2next) <= 0){
                     //ite1next is before
                     next = ite1next;
@@ -689,7 +689,7 @@ public class FeatureStoreUtilities {
                     ite2next = null;
                     active = ite2;
                 }
-                
+
             } else if (ite1next == null) {
                 next = ite2next;
                 ite2next = null;
@@ -701,8 +701,8 @@ public class FeatureStoreUtilities {
             } else {
                 next = null;
                 active = null;
-            } 
-            
+            }
+
             return next != null;
         }
 

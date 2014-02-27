@@ -246,11 +246,11 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      * {@inheritDoc }
      */
     @Override
-    public BBOX bbox(final Expression e, final BoundingBox bounds) {
+    public BBOX bbox(final Expression e, final Envelope bounds) {
         if(e != null && !(e instanceof PropertyName)){
             throw new IllegalArgumentException("Expression expected to be a PropertyName, instead found a " + e.getClass());
         }
-        return new DefaultBBox((PropertyName)e, new DefaultLiteral<BoundingBox>(bounds));
+        return new DefaultBBox((PropertyName)e, new DefaultLiteral<BoundingBox>(DefaultBoundingBox.castOrCopy(bounds)));
     }
 
     /**
@@ -464,7 +464,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
 //  FILTERS
 //
 ////////////////////////////////////////////////////////////////////////////////
-    
+
     /**
      * {@inheritDoc }
      */
@@ -659,7 +659,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
             final String wildcard, final String singleChar, final String escape) {
         return like(expr,pattern,wildcard,singleChar,escape,false);
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -677,7 +677,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
     public PropertyIsNull isNull(final Expression expr) {
         return new DefaultPropertyIsNull(expr);
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -691,7 +691,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
 //  TEMPORAL FILTER
 //
 ////////////////////////////////////////////////////////////////////////////////
-    
+
     /**
      * {@inheritDoc }
      */
@@ -804,7 +804,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
         return new DefaultTOverlaps(expr1, expr2);
     }
 
-    
+
 ////////////////////////////////////////////////////////////////////////////////
 //
 //  EXPRESSIONS

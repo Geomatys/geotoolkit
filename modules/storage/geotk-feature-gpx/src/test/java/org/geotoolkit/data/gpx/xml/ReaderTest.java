@@ -37,6 +37,7 @@ import org.opengis.feature.ComplexAttribute;
 import org.opengis.feature.Feature;
 import org.opengis.feature.Property;
 import org.opengis.geometry.BoundingBox;
+import org.geotoolkit.geometry.DefaultBoundingBox;
 import static org.junit.Assert.*;
 
 /**
@@ -229,7 +230,7 @@ public class ReaderTest {
         checkPoint((Feature) points.get(1), 1, false);
         checkPoint((Feature) points.get(2), 2, false);
 
-        BoundingBox bbox = f.getBounds();
+        BoundingBox bbox = DefaultBoundingBox.castOrCopy(f.getBounds());
         assertEquals(bbox.getMinX(), 15.0d, DELTA);
         assertEquals(bbox.getMaxX(), 35.0d, DELTA);
         assertEquals(bbox.getMinY(), 10.0d, DELTA);
@@ -250,7 +251,7 @@ public class ReaderTest {
         points = new ArrayList<Property>(f.getProperties("rtept"));
         assertEquals(0,points.size());
 
-        bbox = f.getBounds();
+        bbox = DefaultBoundingBox.castOrCopy(f.getBounds());
         assertNull(bbox);
 
         assertFalse(reader.hasNext());
@@ -297,7 +298,7 @@ public class ReaderTest {
         checkPoint((Feature) points.get(1), 1, true);
         checkPoint((Feature) points.get(2), 2, true);
 
-        BoundingBox bbox = f.getBounds();
+        BoundingBox bbox = DefaultBoundingBox.castOrCopy(f.getBounds());
         assertEquals(bbox.getMinX(), 15.0d, DELTA);
         assertEquals(bbox.getMaxX(), 35.0d, DELTA);
         assertEquals(bbox.getMinY(), 10.0d, DELTA);
@@ -318,7 +319,7 @@ public class ReaderTest {
         points = new ArrayList<Property>(f.getProperties("rtept"));
         assertEquals(0,points.size());
 
-        bbox = f.getBounds();
+        bbox = DefaultBoundingBox.castOrCopy(f.getBounds());
         assertNull(bbox);
 
         assertFalse(reader.hasNext());
@@ -369,7 +370,7 @@ public class ReaderTest {
         points = new ArrayList<Property>(seg2.getProperties("trkpt"));
         assertEquals(0, points.size());
 
-        BoundingBox bbox = f.getBounds();
+        BoundingBox bbox = DefaultBoundingBox.castOrCopy(f.getBounds());
         assertEquals(bbox.getMinX(), 15.0d, DELTA);
         assertEquals(bbox.getMaxX(), 35.0d, DELTA);
         assertEquals(bbox.getMinY(), 10.0d, DELTA);
@@ -389,7 +390,7 @@ public class ReaderTest {
         segments = new ArrayList<Property>(f.getProperties("trkseg"));
         assertEquals(0,segments.size());
 
-        bbox = f.getBounds();
+        bbox = DefaultBoundingBox.castOrCopy(f.getBounds());
         assertNull(bbox);
 
 
@@ -443,7 +444,7 @@ public class ReaderTest {
         points = new ArrayList<Property>(seg2.getProperties("trkpt"));
         assertEquals(0, points.size());
 
-        BoundingBox bbox = f.getBounds();
+        BoundingBox bbox = DefaultBoundingBox.castOrCopy(f.getBounds());
         assertEquals(bbox.getMinX(), 15.0d, DELTA);
         assertEquals(bbox.getMaxX(), 35.0d, DELTA);
         assertEquals(bbox.getMinY(), 10.0d, DELTA);
@@ -463,7 +464,7 @@ public class ReaderTest {
         segments = new ArrayList<Property>(f.getProperties("trkseg"));
         assertEquals(0,segments.size());
 
-        bbox = f.getBounds();
+        bbox = DefaultBoundingBox.castOrCopy(f.getBounds());
         assertNull(bbox);
 
 
@@ -504,7 +505,7 @@ public class ReaderTest {
                 assertEquals("http://first-adress1.org", links.get(0).getValue().toString());
             }
 
-            final BoundingBox bbox = f.getBounds();
+            final BoundingBox bbox = DefaultBoundingBox.castOrCopy(f.getBounds());
             assertEquals(bbox.getMinX(), 15.0d, DELTA);
             assertEquals(bbox.getMaxX(), 15.0d, DELTA);
             assertEquals(bbox.getMinY(), 10.0d, DELTA);
@@ -535,7 +536,7 @@ public class ReaderTest {
             final List<Property> links = new ArrayList<Property>(f.getProperties("link"));
             assertEquals(0,links.size());
 
-            final BoundingBox bbox = f.getBounds();
+            final BoundingBox bbox = DefaultBoundingBox.castOrCopy(f.getBounds());
             assertEquals(bbox.getMinX(), 25.0d, DELTA);
             assertEquals(bbox.getMaxX(), 25.0d, DELTA);
             assertEquals(bbox.getMinY(), 20.0d, DELTA);
@@ -573,7 +574,7 @@ public class ReaderTest {
                 assertEquals("http://third-adress1.org", links.get(0).getValue().toString());
             }
 
-            final BoundingBox bbox = f.getBounds();
+            final BoundingBox bbox = DefaultBoundingBox.castOrCopy(f.getBounds());
             assertEquals(bbox.getMinX(), 35.0d, DELTA);
             assertEquals(bbox.getMaxX(), 35.0d, DELTA);
             assertEquals(bbox.getMinY(), 30.0d, DELTA);

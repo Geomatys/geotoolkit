@@ -32,12 +32,14 @@ import static org.apache.sis.test.Assert.assertSerializedEquals;
 
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.geotoolkit.geometry.DefaultBoundingBox;
 import org.geotoolkit.test.Assert;
 
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.IllegalAttributeException;
+import com.vividsolutions.jts.geom.Envelope;
 
 public class FeatureFlatTest extends TestCase {
 
@@ -150,20 +152,24 @@ public class FeatureFlatTest extends TestCase {
         SimpleFeatureType t = tb.buildSimpleFeatureType();
 
         SimpleFeature f = SimpleFeatureBuilder.build(t, g, null);
-        assertEquals(gc.getEnvelopeInternal().getMinX(), f.getBounds().getMinX());
-        assertEquals(gc.getEnvelopeInternal().getMinY(), f.getBounds().getMinY());
-        assertEquals(gc.getEnvelopeInternal().getMaxX(), f.getBounds().getMaxX());
-        assertEquals(gc.getEnvelopeInternal().getMaxY(), f.getBounds().getMaxY());
+        Envelope b1 = gc.getEnvelopeInternal();
+        DefaultBoundingBox b2 = DefaultBoundingBox.castOrCopy(f.getBounds());
+        assertEquals(b1.getMinX(), b2.getMinX());
+        assertEquals(b1.getMinY(), b2.getMinY());
+        assertEquals(b1.getMaxX(), b2.getMaxX());
+        assertEquals(b1.getMaxY(), b2.getMaxY());
 
         g[1].getCoordinate().y = 20;
         g[2].getCoordinate().x = 20;
         f.setAttribute(1, g[1]);
         f.setAttribute(2, g[2]);
         gc = gf.createGeometryCollection(g);
-        assertEquals(gc.getEnvelopeInternal().getMinX(), f.getBounds().getMinX());
-        assertEquals(gc.getEnvelopeInternal().getMinY(), f.getBounds().getMinY());
-        assertEquals(gc.getEnvelopeInternal().getMaxX(), f.getBounds().getMaxX());
-        assertEquals(gc.getEnvelopeInternal().getMaxY(), f.getBounds().getMaxY());
+        b1 = gc.getEnvelopeInternal();
+        b2 = DefaultBoundingBox.castOrCopy(f.getBounds());
+        assertEquals(b1.getMinX(), b2.getMinX());
+        assertEquals(b1.getMinY(), b2.getMinY());
+        assertEquals(b1.getMaxX(), b2.getMaxX());
+        assertEquals(b1.getMaxY(), b2.getMaxY());
 
         //test serialize
         assertSerializedEquals(f);

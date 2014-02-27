@@ -35,6 +35,8 @@ import org.opengis.feature.type.PropertyType;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.filter.identity.Identifier;
 import org.opengis.geometry.BoundingBox;
+import org.opengis.geometry.Envelope;
+import org.geotoolkit.geometry.DefaultBoundingBox;
 
 /**
  * Decorate a given property with a descriptor.
@@ -167,11 +169,11 @@ abstract class WrapProperty<P extends org.opengis.feature.Property> extends Abst
 
         @Override
         public BoundingBox getBounds() {
-            return prop.getBounds();
+            return DefaultBoundingBox.castOrCopy(prop.getBounds());
         }
 
         @Override
-        public void setBounds(final BoundingBox bounds) {
+        public void setBounds(final Envelope bounds) {
             prop.setBounds(bounds);
         }
 
@@ -245,7 +247,7 @@ abstract class WrapProperty<P extends org.opengis.feature.Property> extends Abst
 
         @Override
         public BoundingBox getBounds() {
-            return prop.getBounds();
+            return DefaultBoundingBox.castOrCopy(prop.getBounds());
         }
 
         @Override

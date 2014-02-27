@@ -25,6 +25,7 @@ import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.feature.type.GeometryType;
 import org.opengis.filter.identity.Identifier;
 import org.opengis.geometry.BoundingBox;
+import org.opengis.geometry.Envelope;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -37,10 +38,11 @@ import com.vividsolutions.jts.geom.MultiPolygon;
 import java.util.Objects;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
+import org.geotoolkit.geometry.DefaultBoundingBox;
 
 
 /**
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
@@ -68,8 +70,8 @@ public class DefaultGeometryAttribute extends DefaultAttribute<Object,GeometryDe
      * Set the bounds for the contained geometry.
      */
     @Override
-    public synchronized void setBounds(final BoundingBox bbox) {
-        bounds = bbox;
+    public synchronized void setBounds(final Envelope bbox) {
+        bounds = DefaultBoundingBox.castOrCopy(bbox);
     }
 
     /**
@@ -84,7 +86,7 @@ public class DefaultGeometryAttribute extends DefaultAttribute<Object,GeometryDe
         final Object val = getValue();
         if(bounds == null){
             //we explicitly use the getValue method, since subclass can override it
-            
+
             //get the type crs if defined
             CoordinateReferenceSystem crs = getType().getCoordinateReferenceSystem();
 
@@ -105,13 +107,13 @@ public class DefaultGeometryAttribute extends DefaultAttribute<Object,GeometryDe
 
             bounds = new JTSEnvelope2D(crs);
         }
-        
+
         if (val instanceof Geometry) {
             ((JTSEnvelope2D)bounds).init(((Geometry)val).getEnvelopeInternal());
         } else {
             ((JTSEnvelope2D)bounds).setToNull();
         }
-        
+
         return bounds;
     }
 

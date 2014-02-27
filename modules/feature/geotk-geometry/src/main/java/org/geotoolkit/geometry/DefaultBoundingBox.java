@@ -30,8 +30,11 @@ import org.apache.sis.geometry.GeneralEnvelope;
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
+ *
+ * @deprecated Deprecated together with the {@code BoundingBox} interface.
  */
-public class DefaultBoundingBox extends GeneralEnvelope implements BoundingBox,Envelope{
+@Deprecated
+public class DefaultBoundingBox extends GeneralEnvelope implements BoundingBox {
 
     public DefaultBoundingBox(final CoordinateReferenceSystem crs){
         super(crs);
@@ -50,6 +53,13 @@ public class DefaultBoundingBox extends GeneralEnvelope implements BoundingBox,E
 
     public DefaultBoundingBox(final double[] min, final double[] max){
         super(min,max);
+    }
+
+    public static DefaultBoundingBox castOrCopy(final Envelope box) {
+        if (box == null || box instanceof DefaultBoundingBox) {
+            return (DefaultBoundingBox) box;
+        }
+        return new DefaultBoundingBox(box);
     }
 
     @Override

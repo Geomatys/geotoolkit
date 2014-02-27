@@ -41,6 +41,7 @@ import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
+import org.geotoolkit.geometry.DefaultBoundingBox;
 
 /**
  * A set of constructs and utility methods used to test the data module.
@@ -201,8 +202,8 @@ public abstract class DataTestCase extends TestCase {
                     }), "rv2", new Double(3.0)
                 }, "river.rv2");
         riverBounds = new JTSEnvelope2D();
-        riverBounds.expandToInclude(JTSEnvelope2D.reference(riverFeatures[0].getBounds()));
-        riverBounds.expandToInclude(JTSEnvelope2D.reference(riverFeatures[1].getBounds()));
+        riverBounds.expandToInclude(JTSEnvelope2D.reference(DefaultBoundingBox.castOrCopy(riverFeatures[0].getBounds())));
+        riverBounds.expandToInclude(JTSEnvelope2D.reference(DefaultBoundingBox.castOrCopy(riverFeatures[1].getBounds())));
 
         rv1Filter = ff.id(Collections.singleton(ff.featureId("river.rv1")));
 
@@ -235,7 +236,7 @@ public abstract class DataTestCase extends TestCase {
                 },
                 "lake.lk1");
         lakeBounds = new JTSEnvelope2D();
-        lakeBounds.expandToInclude(JTSEnvelope2D.reference(lakeFeatures[0].getBounds()));
+        lakeBounds.expandToInclude(JTSEnvelope2D.reference(DefaultBoundingBox.castOrCopy(lakeFeatures[0].getBounds())));
     }
 
     /**

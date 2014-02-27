@@ -79,10 +79,11 @@ import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.test.TestData;
 import org.opengis.feature.type.Name;
 
+import org.geotoolkit.geometry.DefaultBoundingBox;
 import static org.junit.Assert.*;
 
 /**
- * 
+ *
  * @version $Id$
  * @author Ian Schneider
  * @module pending
@@ -226,7 +227,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
         while (indexIter.hasNext()) {
             SimpleFeature newFeature = indexIter.next();
 
-            BoundingBox bounds = newFeature.getBounds();
+            BoundingBox bounds = DefaultBoundingBox.castOrCopy(newFeature.getBounds());
             Geometry geometry = factory.toGeometry(new JTSEnvelope2D(
                     bounds));
             double newArea = geometry.getArea();
