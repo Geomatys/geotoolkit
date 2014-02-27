@@ -26,20 +26,20 @@ public class CoverageReaderDemo {
     public static void main(String[] args) throws Exception {
         Demos.init();
 
-        final File input = new File("data/clouds.jpg");
-        final GridCoverageReader reader = CoverageIO.createSimpleReader(input);
+//        final File input = new File("data/clouds.jpg");
+//        final GridCoverageReader reader = CoverageIO.createSimpleReader(input);
                 
-        //print the iso 19115 metadata
-        final Metadata metadata = reader.getMetadata();
-        System.out.println(metadata);
-
-        //read a piece of coverage
-        final GridCoverageReadParam param = new GridCoverageReadParam();
-        param.setResolution(1,1);
-        param.setEnvelope(new Rectangle2D.Double(0, 0, 100, 100), DefaultGeographicCRS.WGS84);
-
-        final GridCoverage2D coverage = (GridCoverage2D) reader.read(0, param);
-        coverage.show();
+//        //print the iso 19115 metadata
+//        final Metadata metadata = reader.getMetadata();
+//        System.out.println(metadata);
+//
+//        //read a piece of coverage
+//        final GridCoverageReadParam param = new GridCoverageReadParam();
+//        param.setResolution(1,1);
+//        param.setEnvelope(new Rectangle2D.Double(0, 0, 100, 100), DefaultGeographicCRS.WGS84);
+//
+//        final GridCoverage2D coverage = (GridCoverage2D) reader.read(0, param);
+//        coverage.show();
 
 
         //create a mapcontext

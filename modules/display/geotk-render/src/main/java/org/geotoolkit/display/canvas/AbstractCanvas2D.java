@@ -371,8 +371,16 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
      * Can be used to temporal or elevation range of the map.
      */
     private void setRange(final int ordinate, final double min, final double max){
+        if(envelope.getMinimum(ordinate) == min && envelope.getMaximum(ordinate) == max){
+            //same values
+            return;
+        }
+        
+        final GeneralEnvelope old = new GeneralEnvelope(envelope);
         envelope.setRange(ordinate, min, max);
+        final GeneralEnvelope nw = new GeneralEnvelope(envelope);
         repaintIfAuto();
+        firePropertyChange(ENVELOPE_KEY, old, nw);
     }
 
     public final void repaint(){
