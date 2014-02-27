@@ -45,11 +45,24 @@ public class DefaultGridTemplate implements GridTemplate{
     private final Paint labelPaint;
     private final float haloWidth;
     private final Paint haloPaint;
+    
+    private final float xTextOffset;
+    private final float yTextOffset;
 
     public DefaultGridTemplate(final CoordinateReferenceSystem crs, final Stroke mainLineStroke,
             final Paint mainLinePaint, final Stroke lineStroke, final Paint linePaint, final Font mainLabelFont,
             final Paint mainLabelPaint, final float mainHaloWidth, final Paint mainHaloPaint, final Font labelFont,
             final Paint labelPaint, final float haloWidth, final Paint haloPaint) {
+        this(crs, mainLineStroke, 
+             mainLinePaint, lineStroke, linePaint, mainLabelFont, 
+             mainLabelPaint, mainHaloWidth, mainHaloPaint, labelFont, 
+             labelPaint, haloWidth, haloPaint, 0, 0);
+    }
+    
+    public DefaultGridTemplate(final CoordinateReferenceSystem crs, final Stroke mainLineStroke,
+            final Paint mainLinePaint, final Stroke lineStroke, final Paint linePaint, final Font mainLabelFont,
+            final Paint mainLabelPaint, final float mainHaloWidth, final Paint mainHaloPaint, final Font labelFont,
+            final Paint labelPaint, final float haloWidth, final Paint haloPaint, float xTextOffset, float yTextOffset) {
         this.crs = crs;
         this.mainLineStroke = mainLineStroke;
         this.mainLinePaint = mainLinePaint;
@@ -63,6 +76,8 @@ public class DefaultGridTemplate implements GridTemplate{
         this.labelPaint = labelPaint;
         this.haloWidth = haloWidth;
         this.haloPaint = haloPaint;
+        this.xTextOffset = xTextOffset;
+        this.yTextOffset = yTextOffset;
     }
 
     @Override
@@ -130,4 +145,14 @@ public class DefaultGridTemplate implements GridTemplate{
         return mainHaloPaint;
     }
 
+    @Override
+    public float getXTextOffset() {
+        return xTextOffset;
+    }
+
+    @Override
+    public float getYTextOffset() {
+        return yTextOffset;
+    }
+    
 }

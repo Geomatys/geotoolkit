@@ -23,6 +23,7 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.Polygon;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
@@ -41,6 +42,7 @@ import org.geotoolkit.display2d.style.labeling.LabelLayer;
 import org.geotoolkit.display2d.style.labeling.LabelRenderer;
 import org.geotoolkit.display2d.style.labeling.LinearLabelDescriptor;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.geotoolkit.display.shape.TransformedShape;
 import org.geotoolkit.display2d.primitive.ProjectedGeometry;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.referencing.CRS;
@@ -72,7 +74,14 @@ public class J2DGridUtilities {
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g.setComposite(GO2Utilities.ALPHA_COMPOSITE_1F);
 
-        final Shape shp = context.getCanvasObjectiveShape();
+        //calculate the cliping zone for texts
+        final float xTextOffset = template.getXTextOffset();
+        final float yTextOffset = template.getYTextOffset();
+        final Rectangle clip = new Rectangle(context.getCanvasDisplayBounds());
+        clip.x += xTextOffset;
+        clip.height -= yTextOffset;
+        
+        final Shape shp = new TransformedShape(clip, context.getDisplayToObjective());
         final List<Coordinate> coords = new ArrayList<Coordinate>();
         final PathIterator ite = shp.getPathIterator(new AffineTransform());
 
