@@ -182,15 +182,15 @@ public final strictfp class WorldFileImageWriterTest extends TextImageWriterTest
                 "SPHEROID[“WGS 84”, 6378137.0, 298.257223563]],\n" +
                 "PRIMEM[“Greenwich”, 0.0],\n" +
                 "UNIT[“degree”, 0.017453292519943295],\n" +
-                "AXIS[“Geodetic longitude”, EAST],\n" +
-                "AXIS[“Geodetic latitude”, NORTH]],\n" +
+                "AXIS[“Longitude”, EAST],\n" +
+                "AXIS[“Latitude”, NORTH]],\n" +
                 "PROJECTION[“Mercator_1SP”, AUTHORITY[“EPSG”, “9804”]],\n" +
                 "PARAMETER[“latitude_of_origin”, 0.0],\n" +
                 "PARAMETER[“central_meridian”, 0.0],\n" +
                 "PARAMETER[“scale_factor”, 1.0],\n" +
                 "PARAMETER[“false_easting”, 0.0],\n" +
                 "PARAMETER[“false_northing”, 0.0],\n" +
-                "UNIT[“metre”, 1.0],\n" +
+                "UNIT[“metre”, 1],\n" +
                 "AXIS[“Easting”, EAST],\n" +
                 "AXIS[“Northing”, NORTH]]\n"), wkt);
         } finally {

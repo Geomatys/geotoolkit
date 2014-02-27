@@ -141,9 +141,9 @@ public final strictfp class TextMatrixImageWriterTest extends TextImageWriterTes
             out.getBuffer().setLength(0);
             writer.write(null, image, param);
             assertMultilinesEquals(
-                "   0.12  0.13  0.14  0.15\n" +
-                "   0.22  0.23  0.24  0.25\n" +
-                "   0.32  0.33  0.34  0.35\n", out.toString());
+                "  0.12  0.13  0.14  0.15\n" +
+                "  0.22  0.23  0.24  0.25\n" +
+                "  0.32  0.33  0.34  0.35\n", out.toString());
             /*
              * Adds a subsampling of (2,3).
              */
@@ -151,7 +151,7 @@ public final strictfp class TextMatrixImageWriterTest extends TextImageWriterTes
             out.getBuffer().setLength(0);
             writer.write(null, image, param);
             assertMultilinesEquals(
-                "   0.22  0.24\n", out.toString());
+                "  0.22  0.24\n", out.toString());
         }
         writer.dispose();
     }

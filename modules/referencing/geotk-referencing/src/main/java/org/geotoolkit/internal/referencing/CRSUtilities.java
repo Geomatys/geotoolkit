@@ -311,20 +311,20 @@ public final class CRSUtilities extends Static {
      * @see CRS#getEllipsoid(CoordinateReferenceSystem)
      */
     public static Datum getDatum(final CoordinateReferenceSystem crs) {
-        Datum datum;
+        Datum datum = null;
         if (crs instanceof SingleCRS) {
             datum = ((SingleCRS) crs).getDatum();
-        } else {
-            datum = null;
-            for (final SingleCRS component : DefaultCompoundCRS.getSingleCRS(crs)) {
-                final Datum candidate = component.getDatum();
+        } else if (crs instanceof CompoundCRS) {
+            for (final CoordinateReferenceSystem component : ((CompoundCRS) crs).getComponents()) {
+                final Datum candidate = getDatum(component);
                 if (datum != null && !datum.equals(candidate)) {
                     if (isGeodetic3D(datum, candidate)) {
                         continue; // Keep the current datum unchanged.
                     }
-                    if (!isGeodetic3D(candidate, datum)) {
-                        return null; // Can't build a 3D geodetic datum.
+                    if (isGeodetic3D(candidate, datum)) {
+                        continue;
                     }
+                    return null; // Can't build a 3D geodetic datum.
                 }
                 datum = candidate;
             }
@@ -338,6 +338,9 @@ public final class CRSUtilities extends Static {
      * @param  geodetic The presumed geodetic datum.
      * @param  vertical The presumed vertical datum.
      * @return If the given datum can form a 3D geodetic datum.
+     *
+     * @deprecated This is not right: we can not said that we have a match if we do not known
+     *             on which geodetic datum the ellipsoidal height is.
      */
     private static boolean isGeodetic3D(final Datum geodetic, final Datum vertical) {
         return (geodetic instanceof GeodeticDatum) && (vertical instanceof VerticalDatum) &&

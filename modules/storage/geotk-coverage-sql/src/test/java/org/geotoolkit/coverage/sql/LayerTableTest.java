@@ -138,6 +138,7 @@ public final strictfp class LayerTableTest extends CatalogTestBase {
      * @throws IOException If an error occurred while writing the legend to disk.
      */
     @Test
+    @Ignore("This test requires geotk-display module.")
     public void testTemperature() throws SQLException, CoverageStoreException, IOException {
         final LayerTable table = getDatabase().getTable(LayerTable.class);
         final LayerEntry entry = table.getEntry(TEMPERATURE);
