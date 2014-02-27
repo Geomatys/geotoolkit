@@ -59,7 +59,7 @@ class IndexedShapefileFeatureWriter extends ShapefileFeatureWriter{
              final FeatureReader<SimpleFeatureType, SimpleFeature> featureReader, final IndexedShapefileFeatureStore featurestore,
              final Charset charset)
             throws DataStoreException,IOException {
-        super(typeName, shpFiles, attsReader, featureReader, charset);
+        super(featurestore, typeName, shpFiles, attsReader, featureReader, charset);
 
         this.indexedShapefileFeatureStore = featurestore;
         if (!featurestore.indexUseable(FIX)) {

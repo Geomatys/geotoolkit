@@ -46,10 +46,16 @@ import org.opengis.feature.type.GeometryDescriptor;
 
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
+import java.util.HashSet;
+import java.util.Set;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.data.FeatureStoreContentEvent;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.shapefile.lock.AccessManager;
 import org.geotoolkit.data.shapefile.lock.ShpFileType;
+import org.geotoolkit.factory.FactoryFinder;
+import org.opengis.filter.FilterFactory;
+import org.opengis.filter.identity.Identifier;
 
 /**
  * A FeatureWriter for ShapefileDataStore. Uses a write and annotate technique
@@ -63,6 +69,10 @@ import org.geotoolkit.data.shapefile.lock.ShpFileType;
  */
 public class ShapefileFeatureWriter implements FeatureWriter<SimpleFeatureType, SimpleFeature> {
 
+    protected final FilterFactory FF = FactoryFinder.getFilterFactory(null);
+    
+    private final ShapefileFeatureStore parent;
+    
     // the  FeatureReader<SimpleFeatureType, SimpleFeature> to obtain the current Feature from
     protected FeatureReader<SimpleFeatureType, SimpleFeature> featureReader;
 
@@ -96,7 +106,8 @@ public class ShapefileFeatureWriter implements FeatureWriter<SimpleFeatureType, 
     protected DbaseFileWriter dbfWriter;
     private DbaseFileHeader dbfHeader;
 
-    protected final Map<ShpFileType, StorageFile> storageFiles = new HashMap<ShpFileType, StorageFile>();
+    private final Set<Identifier> deletedIds = new HashSet<>();
+    protected final Map<ShpFileType, StorageFile> storageFiles = new HashMap<>();
 
     // keep track of bounds during write
     protected Envelope bounds = new Envelope();
@@ -104,9 +115,11 @@ public class ShapefileFeatureWriter implements FeatureWriter<SimpleFeatureType, 
     protected final ShpFiles shpFiles;
     private final FileChannel dbfChannel;
     private final Charset dbfCharset;
+    
 
-    public ShapefileFeatureWriter(final String typeName, final ShpFiles shpFiles, final ShapefileAttributeReader attsReader,  
+    public ShapefileFeatureWriter(final ShapefileFeatureStore parent, final String typeName, final ShpFiles shpFiles, final ShapefileAttributeReader attsReader,  
             final FeatureReader<SimpleFeatureType, SimpleFeature> featureReader, final Charset charset) throws IOException,DataStoreException {
+        this.parent = parent;
         this.shpFiles = shpFiles;
         this.dbfCharset = charset;
         // set up reader
@@ -270,6 +283,11 @@ public class ShapefileFeatureWriter implements FeatureWriter<SimpleFeatureType, 
         } catch (IOException ex) {
             throw new FeatureStoreRuntimeException(ex);
         }
+        
+        if (!deletedIds.isEmpty()) {
+            final FeatureStoreContentEvent event = new FeatureStoreContentEvent(this, FeatureStoreContentEvent.Type.DELETE, featureType.getName(), FF.id(deletedIds));
+            parent.forwardContentEvent(event);
+        }
     }
 
     protected void doClose() throws FeatureStoreRuntimeException {
@@ -372,6 +390,7 @@ public class ShapefileFeatureWriter implements FeatureWriter<SimpleFeatureType, 
             throw new FeatureStoreRuntimeException("Current feature is null");
         }
 
+        deletedIds.add(currentFeature.getIdentifier());
         // mark the current feature as null, this will result in it not
         // being rewritten to the stream
         currentFeature = null;
