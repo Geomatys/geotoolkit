@@ -23,7 +23,6 @@ import java.awt.image.*;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.EventListener;
-import java.util.List;
 import java.util.Vector;
 import javax.media.jai.RasterFactory;
 import javax.swing.event.EventListenerList;
@@ -41,6 +40,7 @@ import org.geotoolkit.image.iterator.PixelIteratorFactory;
 import org.geotoolkit.internal.image.ImageUtilities;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.referencing.operation.MathTransforms;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.geotoolkit.util.BufferedImageUtilities;
@@ -271,7 +271,7 @@ public class CoverageReferenceRenderedImage implements RenderedImage{
         final GeneralEnvelope genv = new GeneralEnvelope(tenv);
         genv.setRange(0, tenv.getMinimum(0) - mosaic.getScale(), tenv.getMaximum(0) + mosaic.getScale());
         genv.setRange(1, tenv.getMinimum(1) - mosaic.getScale(), tenv.getMaximum(1) + mosaic.getScale());
-        tenv = CRS.transform(genv, dataEnv.getCoordinateReferenceSystem());
+        tenv = ReferencingUtilities.transform(genv, dataEnv.getCoordinateReferenceSystem());
         rparam.setEnvelope(tenv);
 
         final GridCoverageReader reader = ref.acquireReader();
