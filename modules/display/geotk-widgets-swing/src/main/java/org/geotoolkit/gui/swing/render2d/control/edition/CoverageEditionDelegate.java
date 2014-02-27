@@ -498,7 +498,7 @@ public class CoverageEditionDelegate extends AbstractEditionDelegate {
                 public void actionPerformed(ActionEvent e) {
                     try {
                         setCoverage(null,null);
-                        map.setHandler(new PanHandler(map));
+                        map.setHandler(new PanHandler(map,false));
                     } catch (Exception ex) {
                         LOGGER.log(Level.WARNING, ex.getMessage(),ex);
                     }

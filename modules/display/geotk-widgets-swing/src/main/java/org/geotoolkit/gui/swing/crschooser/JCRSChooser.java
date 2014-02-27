@@ -195,7 +195,7 @@ public class JCRSChooser extends javax.swing.JDialog {
                                             RenderingHints.VALUE_ANTIALIAS_ON);
         guiMap.getContainer().setContext(MapBuilder.createContext());
         guiNav.setMap(guiMap);
-        guiMap.setHandler(new PanHandler(guiMap));
+        guiMap.setHandler(new PanHandler(guiMap,false));
 
         GridTemplate gridTemplate = new DefaultGridTemplate(
                         DefaultGeographicCRS.WGS84,

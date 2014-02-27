@@ -22,10 +22,20 @@ import java.awt.Cursor;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
-import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.geom.Area;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.event.MouseInputListener;
-
+import org.geotoolkit.display.SearchArea;
+import org.geotoolkit.display.VisitFilter;
+import org.geotoolkit.display.canvas.RenderingContext;
+import org.geotoolkit.display2d.GraphicVisitor;
+import org.geotoolkit.display2d.canvas.RenderingContext2D;
+import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.gui.swing.render2d.JMap2D;
+import org.geotoolkit.gui.swing.render2d.control.information.JInformationDialog;
+import org.geotoolkit.gui.swing.render2d.control.information.presenter.TreeFeaturePresenter;
 
 /**
  * Panoramic handler
@@ -40,9 +50,13 @@ public class PanHandler extends AbstractNavigationHandler {
     private static  final Cursor CUR_ZOOM_PAN = Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR);
     private final MouseListen mouseInputListener = new MouseListen();
     private final double zoomFactor = 2;
-
-    public PanHandler(final JMap2D map) {
+    private final boolean infoOnRightClick;
+    private final TreeFeaturePresenter presenter = new TreeFeaturePresenter();
+    
+    
+    public PanHandler(final JMap2D map, boolean infoOnRightClick) {
         super(map);
+        this.infoOnRightClick= infoOnRightClick;
     }
 
     /**
@@ -84,6 +98,18 @@ public class PanHandler extends AbstractNavigationHandler {
             startY = e.getY();
             lastX = startX;
             lastY = startY;
+            
+            if (infoOnRightClick && MouseEvent.BUTTON3 == e.getButton()) {
+                final Area searchArea = new Area(new Rectangle(e.getPoint().x - 2, e.getPoint().y - 2, 4, 4));
+                final InformationVisitor visitor = new InformationVisitor();
+                map.getCanvas().getGraphicsIn(searchArea, visitor, VisitFilter.INTERSECTS);
+
+                if (!visitor.graphics.isEmpty()) {
+                    final JInformationDialog dialog = new JInformationDialog(map);
+                    dialog.display(visitor.graphics, presenter, e.getLocationOnScreen(), visitor.ctx, visitor.area);
+                }
+            }
+            
         }
 
         @Override
@@ -178,5 +204,34 @@ public class PanHandler extends AbstractNavigationHandler {
             }
         }
     }
+    
+    
+    private static class InformationVisitor implements GraphicVisitor {
+
+        private final List<org.opengis.display.primitive.Graphic> graphics = new ArrayList<org.opengis.display.primitive.Graphic>();
+        private RenderingContext2D ctx = null;
+        private SearchAreaJ2D area = null;
+
+        @Override
+        public void startVisit() {
+        }
+
+        @Override
+        public void endVisit() {
+        }
+
+        @Override
+        public boolean isStopRequested() {
+            return false;
+        }
+
+        @Override
+        public void visit(org.opengis.display.primitive.Graphic graphic, RenderingContext context, SearchArea area) {
+            this.graphics.add(graphic);
+            this.ctx = (RenderingContext2D) context;
+            this.area = (SearchAreaJ2D) area;
+        }
+    }
+    
     
 }

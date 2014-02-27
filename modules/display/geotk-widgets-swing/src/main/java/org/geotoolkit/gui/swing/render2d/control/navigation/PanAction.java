@@ -33,7 +33,14 @@ public class PanAction extends AbstractMapAction {
 
     public static final ImageIcon ICON = IconBuilder.createIcon(FontAwesomeIcons.ICON_MOVE, 16, FontAwesomeIcons.DEFAULT_COLOR);
 
+    private final boolean infoOnClick;
+    
     public PanAction() {
+        this(false);
+    }
+    
+    public PanAction(boolean infoOnClick) {
+        this.infoOnClick = infoOnClick;
         putValue(SMALL_ICON, ICON);
         putValue(SHORT_DESCRIPTION, MessageBundle.getString("map_pan"));
     }
@@ -44,7 +51,7 @@ public class PanAction extends AbstractMapAction {
     @Override
     public void actionPerformed(final ActionEvent arg0) {
         if (map != null ) {
-            map.setHandler(new PanHandler(map));
+            map.setHandler(new PanHandler(map,infoOnClick));
         }
     }
 

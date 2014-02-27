@@ -165,7 +165,7 @@ public class JMap2DFrame extends javax.swing.JFrame {
         guiSelectionBar.setMap(guiMap2D);
         guiEditBar.setMap(guiMap2D);
         guiMap2D.getCanvas().setAutoRepaint(true);
-        guiMap2D.setHandler(new PanHandler(guiMap2D));
+        guiMap2D.setHandler(new PanHandler(guiMap2D,false));
 
         //3D map
         guiMap3D = new JMap3D();

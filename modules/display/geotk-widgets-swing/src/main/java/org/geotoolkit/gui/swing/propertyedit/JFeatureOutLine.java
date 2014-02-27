@@ -271,7 +271,7 @@ public class JFeatureOutLine extends Outline{
 
     }
 
-    private static class PropertyDataProvider implements RenderDataProvider {
+    public static class PropertyDataProvider implements RenderDataProvider {
 
         @Override
         public java.awt.Color getBackground(final Object o) {

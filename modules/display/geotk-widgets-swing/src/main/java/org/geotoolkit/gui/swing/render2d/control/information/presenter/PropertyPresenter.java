@@ -58,6 +58,8 @@ public class PropertyPresenter extends AbstractInformationPresenter{
         if (candidate != null && candidate instanceof Property) {
             final JFeatureOutLine outline = new JFeatureOutLine();
             outline.setEdited((Property) candidate);
+            // As outline looks to have difficulties computing its better size, we give it an hint by setting row height.
+            outline.setRowHeight(36);
             final JScrollPane pane = new JScrollPane(outline);
             pane.setBorder(null);
             return pane;
