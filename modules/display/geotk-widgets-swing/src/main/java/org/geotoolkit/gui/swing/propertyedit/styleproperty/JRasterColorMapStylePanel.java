@@ -302,6 +302,8 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
             guiNaN.setVisible(true);
             guiInvert.setVisible(true);
             guiGenerate.setVisible(true);
+            guiLblStep.setVisible(true);
+            guiNbStep.setVisible(true);
 
         }else{
             guiLblPalette.setVisible(false);
@@ -311,6 +313,8 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
             guiNaN.setVisible(false);
             guiInvert.setVisible(false);
             guiGenerate.setVisible(false);
+            guiLblStep.setVisible(false);
+            guiNbStep.setVisible(false);
         }
 
         revalidate();
