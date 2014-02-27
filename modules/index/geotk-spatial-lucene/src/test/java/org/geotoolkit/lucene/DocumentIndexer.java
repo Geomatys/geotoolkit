@@ -68,6 +68,16 @@ public class DocumentIndexer extends AbstractIndexer<DocumentEnvelope>{
         return object.doc;
     }
 
+    @Override
+    protected Iterator<DocumentEnvelope> getEntryIterator() throws IndexingException {
+        throw new UnsupportedOperationException("Not supported byt this implementation.");
+    }
+
+    @Override
+    protected boolean useEntryIterator() {
+        return false;
+    }
+
     public static class DocumentEnvelope {
         public NamedEnvelope env;
         public Document doc;

@@ -167,6 +167,10 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
     protected abstract Collection<String> getAllIdentifiers() throws IndexingException;
 
     protected abstract Iterator<String> getIdentifierIterator() throws IndexingException;
+
+    protected abstract Iterator<E> getEntryIterator() throws IndexingException;
+
+    protected abstract boolean useEntryIterator();
     
     protected abstract E getEntry(final String identifier) throws IndexingException;
     
@@ -224,31 +228,50 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
             final IndexWriterConfig conf       = new IndexWriterConfig(Version.LUCENE_46, analyzer);
             final IndexWriter writer           = new IndexWriter(LuceneUtils.getAppropriateDirectory(getFileDirectory()), conf);
             final String serviceID             = getServiceID();
-            final Iterator<String> identifiers = getIdentifierIterator();
 
             resetTree();
             LOGGER.log(logLevel, "starting indexing...");
-            while (identifiers.hasNext()) {
-                final String identifier = identifiers.next();
-                if (!stopIndexing && !indexationToStop.contains(serviceID)) {
-                    try {
-                        final E entry = getEntry(identifier);
+
+            if (useEntryIterator()) {
+                final Iterator<E> entries = getEntryIterator();
+                while (entries.hasNext()) {
+                    if (!stopIndexing && !indexationToStop.contains(serviceID)) {
+                        
+                        final E entry = entries.next();
                         indexDocument(writer, entry);
                         nbEntries++;
-                    } catch (IndexingException ex) {
-                        LOGGER.warning("Metadata IO exeption while indexing metadata: " + identifier + " " + ex.getMessage() + "\nmove to next metadata...");
+                        
+                    } else {
+                         LOGGER.info("Index creation stopped after " + (System.currentTimeMillis() - time) + " ms for service:" + serviceID);
+                         stopIndexation(writer, serviceID);
+                         return;
                     }
-                } else {
-                     LOGGER.info("Index creation stopped after " + (System.currentTimeMillis() - time) + " ms for service:" + serviceID);
-                     stopIndexation(writer, serviceID);
-                     return;
+                }
+                if (entries instanceof CloseableIterator) {
+                    ((CloseableIterator)entries).close();
+                }
+            } else {
+                final Iterator<String> identifiers = getIdentifierIterator();
+                while (identifiers.hasNext()) {
+                    final String identifier = identifiers.next();
+                    if (!stopIndexing && !indexationToStop.contains(serviceID)) {
+                        try {
+                            final E entry = getEntry(identifier);
+                            indexDocument(writer, entry);
+                            nbEntries++;
+                        } catch (IndexingException ex) {
+                            LOGGER.warning("Metadata IO exeption while indexing metadata: " + identifier + " " + ex.getMessage() + "\nmove to next metadata...");
+                        }
+                    } else {
+                         LOGGER.info("Index creation stopped after " + (System.currentTimeMillis() - time) + " ms for service:" + serviceID);
+                         stopIndexation(writer, serviceID);
+                         return;
+                    }
+                }
+                if (identifiers instanceof CloseableIterator) {
+                    ((CloseableIterator)identifiers).close();
                 }
             }
-
-            if (identifiers instanceof CloseableIterator) {
-                ((CloseableIterator)identifiers).close();
-            }
-
             // writer.optimize(); no longer justified
             writer.close();
             
