@@ -14,6 +14,7 @@ import javax.measure.unit.NonSI;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.data.FeatureCollection;
@@ -593,7 +594,7 @@ public class Styles {
     /**
      * Relief shading requieres a secondary data for the elevation model.
      */
-    public static MapLayer ShadedReliefRaster(){
+    public static MapLayer ShadedReliefRaster() throws CoverageStoreException{
 
         final RasterSymbolizer shadedSymbolizer = SF.rasterSymbolizer(
                 null,
@@ -607,7 +608,7 @@ public class Styles {
 
 
         //create your maplayer with your datas
-        final GridCoverageReader elevationData = null;
+        final CoverageReference elevationData = null;
 
         final MapLayer layer = MapBuilder.createCoverageLayer(null, SF.style(shadedSymbolizer));
         final ElevationModel elevationModel = MapBuilder.createElevationModel(elevationData);

@@ -17,6 +17,8 @@
 package org.geotoolkit.map;
 
 import org.apache.sis.util.ArgumentChecks;
+import org.geotoolkit.coverage.CoverageReference;
+import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -53,7 +55,7 @@ public class ElevationModel {
      * Angle in degrees between Digital Elevation Model ground and light source.
      */
     private final double altitude;
-
+    
     /**
      * Define positive altitude value sens.<br/>
      * {@link AxisDirection} should be instance of following type: <br/>
@@ -66,29 +68,29 @@ public class ElevationModel {
      * 
      * Note : The default value of {@linkplain #axisDirection} is {@link AxisDirection#UP}.
      * 
-     * @param coverage {@link GridCoverageReader} where we can read DEM.
+     * @param ref {@link CoverageReference} where we can read DEM.
      * @param azimuth Light angle in degree from  {@link CoordinateReferenceSystem} North {@link CoordinateSystemAxis} from {@link GridCoverage}.
      * @param altitude Light angle in degree of the light from the ground.
      * @param scale Coefficient (or factor) in per cent to controle shadow length spread in function of maximum DEM amplitude value.
      */
-    public ElevationModel(final GridCoverageReader coverage, final double azimuth, final double altitude, final double scale) {
-        this(coverage, azimuth, altitude, scale, AxisDirection.UP);
+    public ElevationModel(final CoverageReference ref, final double azimuth, final double altitude, final double scale) throws CoverageStoreException {
+        this(ref, azimuth, altitude, scale, AxisDirection.UP);
     }    
     
     /**
      * Build {@link ElevationModel} object which contain some elevation information need to build shadow relief.
      * 
-     * @param coverage {@link GridCoverageReader} where we can read DEM.
+     * @param ref {@link CoverageReference} where we can read DEM.
      * @param azimuth Light angle in degree from  {@link CoordinateReferenceSystem} North {@link CoordinateSystemAxis} from {@link GridCoverage}.
      * @param altitude Light angle in degree of the light from the ground.
      * @param scale Coefficient (or factor) in per cent to controle shadow length spread in function of maximum DEM amplitude value.
      * @param axisDirection 
      * @throws IllegalArgumentException if axis direction is not instance of {@link AxisDirection#DOWN} or {@link AxisDirection#UP}.
      */
-    public ElevationModel(final GridCoverageReader coverage, final double azimuth, final double altitude,
-                          final double scale, final AxisDirection axisDirection) {
-        ArgumentChecks.ensureNonNull("GridCoverageReader", coverage);
-        this.coverage = coverage;
+    public ElevationModel(final CoverageReference ref, final double azimuth, final double altitude,
+                          final double scale, final AxisDirection axisDirection) throws CoverageStoreException {
+        ArgumentChecks.ensureNonNull("CoverageReference", ref);
+        this.coverage = ref.acquireReader();
         this.azimuth  = azimuth;
         this.altitude = altitude;
         this.scale    = scale;

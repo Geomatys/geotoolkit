@@ -20,7 +20,7 @@ import java.util.Collection;
 import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.coverage.DefaultCoverageReference;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.io.GridCoverageReader;
+import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
@@ -197,8 +197,8 @@ public final class MapBuilder {
      * @param grid : Coverage reader holding elevation values
      * @return ElevationModel
      */
-    public static ElevationModel createElevationModel(final GridCoverageReader grid) {
-        return createElevationModel(grid, 130, 2, 55);
+    public static ElevationModel createElevationModel(final CoverageReference ref) throws CoverageStoreException {
+        return createElevationModel(ref, 130, 2, 55);
     }
 
     /**
@@ -209,7 +209,7 @@ public final class MapBuilder {
      * @param scale : a multiplication factor to use on the coverage values
      * @return ElevationModel
      */
-    public static ElevationModel createElevationModel(final GridCoverageReader grid, final double azimuthAngle, final double altitudeAngle, final double altitudeScale) {
-        return new ElevationModel(grid, azimuthAngle, altitudeAngle, altitudeScale);
+    public static ElevationModel createElevationModel(final CoverageReference ref, final double azimuthAngle, final double altitudeAngle, final double altitudeScale) throws CoverageStoreException {
+        return new ElevationModel(ref, azimuthAngle, altitudeAngle, altitudeScale);
     }
-}
+ }

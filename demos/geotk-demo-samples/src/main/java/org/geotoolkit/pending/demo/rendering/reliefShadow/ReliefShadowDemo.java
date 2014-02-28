@@ -6,6 +6,8 @@ import javax.imageio.ImageReader;
 import javax.measure.unit.NonSI;
 import javax.measure.unit.Unit;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.geotoolkit.coverage.CoverageReference;
+import org.geotoolkit.coverage.filestore.FileCoverageStore;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageIO;
 import org.geotoolkit.coverage.io.GridCoverageReader;
@@ -24,6 +26,7 @@ import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.StyleConstants;
 import static org.geotoolkit.style.StyleConstants.DEFAULT_DESCRIPTION;
 import static org.geotoolkit.style.StyleConstants.LITERAL_ONE_FLOAT;
+import org.opengis.feature.type.Name;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.expression.Expression;
 import org.opengis.referencing.cs.AxisDirection;
@@ -57,21 +60,24 @@ public class ReliefShadowDemo {
         Demos.init();
         ImageReader covPath = XImageIO.getReaderByFormatName("tiff-wf", reliefPath, Boolean.FALSE, false);
             covPath.setInput(reliefPath);
-        final GridCoverageReader  demGCR = CoverageIO.createSimpleReader(covPath);
+//        final GridCoverageReader  demGCR = CoverageIO.createSimpleReader(covPath);
         
         /*
          * Coverage which will be shadowed.
          */
         final File input = new File("data/clouds.jpg");
-        final GridCoverageReader reader = CoverageIO.createSimpleReader(input);
-        final GridCoverage2D grid = (GridCoverage2D) reader.read(0, null);
+        final FileCoverageStore store = new FileCoverageStore(input.toURL(), "JPEG");
+        final Name name = store.getNames().iterator().next();
+        final CoverageReference ref = store.getCoverageReference(name);
+//        final GridCoverageReader reader = CoverageIO.createSimpleReader(input);
+//        final GridCoverage2D grid = (GridCoverage2D) reader.read(0, null);
         //create a mapcontext
         final MapContext context  = MapBuilder.createContext();        
-        final CoverageMapLayer cl = MapBuilder.createCoverageLayer(grid, SF.style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER), "raster");
+        final CoverageMapLayer cl = MapBuilder.createCoverageLayer(ref, SF.style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER));
         final double azimuth = 130;
         final double altitude = 2;
         final double scale = 55;
-        final ElevationModel elevModel = new ElevationModel(demGCR, azimuth, altitude, scale, AxisDirection.UP);
+        final ElevationModel elevModel = new ElevationModel(ref, azimuth, altitude, scale, AxisDirection.UP);
         
         /*
          * Define Elevation Model object to get informations necessary to compute shadow on coverage. 

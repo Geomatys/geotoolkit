@@ -205,7 +205,7 @@ public final class ReliefShadow {
         }
         this.shadowDimming = shadowDimming;
         this.brightness    = brightness;
-        alpha              = (PI/2) - ((lightSRCAzimuth % 360) * PI / 180);// on enleve les n 2kPI
+        alpha              = (PI/2) - ((lightSRCAzimuth % 360) * PI / 180);//-- delete n 2kPI
         cosAlpha           = Math.cos(alpha);
         sinAlpha           = Math.sin(alpha);
         tanAlpha           = Math.tan(alpha);
@@ -213,35 +213,29 @@ public final class ReliefShadow {
         this.axisDirection = 1;
         
         if (Math.abs(cosAlpha) >= COS45) {
-            // alpha € [-PI/4 ; PI/4] U [3PI/4 ; 5PI/4] + 2kPI
-            // we iterate along x axis
+            //-- alpha € [-PI/4 ; PI/4] U [3PI/4 ; 5PI/4] + 2kPI
+            //-- we iterate along x axis
             ordinateX = 0;
             ordinateY = 1;
             
-            // step on x axis.
-            pasv = (int) Math.signum(cosAlpha);
+            //-- step on x axis.
+            pasv  = (int) Math.signum(cosAlpha);
             
-            // step on y axis.
+            //-- step on y axis.
             pasfv = tanAlpha * pasv;
-            
-            // step on z axis.
-            pash = - Math.abs(1/cosAlpha) * tanAltitude;
-            
         } else {
-            // alpha € ]PI/4 ; 3PI/4[ U ]5PI/4 ; 7PI/4[ + 2kPI
-            // we iterate along y axis.
+            //-- alpha € ]PI/4 ; 3PI/4[ U ]5PI/4 ; 7PI/4[ + 2kPI
+            //-- we iterate along y axis.
             ordinateX = 1;
             ordinateY = 0;
             
-            // step on Y axis.
-            pasv = (int) Math.signum(sinAlpha);
+            //-- step on Y axis.
+            pasv  = (int) Math.signum(sinAlpha);
             
-            // step on x axis.
+            //-- step on x axis.
             pasfv = pasv/tanAlpha;
-            
-            // step on z axis.
-            pash = - Math.abs(1/sinAlpha) * tanAltitude;
         }
+        pash  = - Math.hypot(pasv, pasfv) * Math.abs(tanAltitude);
     }
     
     /**
@@ -298,48 +292,48 @@ public final class ReliefShadow {
         this.sourceColorModel  = imgSource.getColorModel();
         
         final Raster srcRaster = imgSource.getData();
-        // define step altitude, when iterator travel up along v axis. 
+        //-- define step altitude, when iterator travel up along v axis. 
         pasz                   = pash * scaleZ;
         final BufferedImage imgDest = new BufferedImage(imgWidth, imgHeight, BufferedImage.TYPE_INT_ARGB);
         mntIter                     = PixelIteratorFactory.createRowMajorIterator(dem);
         destIter                    = PixelIteratorFactory.createRowMajorWriteableIterator(imgDest, imgDest);
         
-        // iteration attribut
+        //-- iteration attribut
         final int iterBeginX;
         final int iterPasX;
         
         int iterBeginY;
         final int iterPasY;
         
-        // we define destination image iteration sens, in function of alpha angle value.
+        //-- we define destination image iteration sens, in function of alpha angle value.
         if (cosAlpha >= 0) {
-            // travel left to right on X axis.
+            //-- travel left to right on X axis.
                 iterBeginX = minX;
                 iterPasX   = 1;
             if (sinAlpha >= 0) {
-                // lower left corner
-                // travel down to up on Y axis.
+                //-- lower left corner
+                //-- travel down to up on Y axis.
                 iterBeginY = minY;
                 iterPasY   = 1;
             } else {
-                // upper left corner
-                // travel up to down on Y axis
+                //-- upper left corner
+                //-- travel up to down on Y axis
                 iterBeginY = maxY-1;
                 iterPasY   = -1;
             }
         } else {
-            // travel right to left on X axis.
-                iterBeginX = maxX-1;
+            //-- travel right to left on X axis.
+                iterBeginX = maxX - 1;
                 iterPasX   = -1;
             if (sinAlpha >= 0) {
-                // lower right corner
-                // travel down to up on Y axis.
+                //-- lower right corner
+                //-- travel down to up on Y axis.
                 iterBeginY = minY;
                 iterPasY   = 1;
             } else {
-                // upper right corner
-                // travel up to down on Y axis
-                iterBeginY = maxY-1;
+                //-- upper right corner
+                //-- travel up to down on Y axis
+                iterBeginY = maxY - 1;
                 iterPasY   = -1;
             }
         }
@@ -349,35 +343,34 @@ public final class ReliefShadow {
             while (x >= minX && x < maxX) {
                 destIter.moveTo(x, iterBeginY, 0);
                 final Object pix = srcRaster.getDataElements(x, iterBeginY, null);
-                // alpha transparency
-                final int  alphaTrans = sourceColorModel.getAlpha(pix);
-                // blue
-                final int blue = sourceColorModel.getBlue(pix);
-                // red
-                final int red = sourceColorModel.getRed(pix);
-                // green
-                final int green = sourceColorModel.getGreen(pix);
+                
+                //-- get pixel
+                final int pixel = sourceColorModel.getRGB(pix);
+                final int red   = (pixel & 0x00FF0000) >> 16;
+                final int green = (pixel & 0x0000FF00) >> 8;
+                final int blue  = (pixel & 0x000000FF);
+                
                 if (destIter.getSample() == 1) {
-                    // already define as a shadow
-                    // set alpha transparency
-                    int color = ((int)(alphaTrans)            << 24)
-                              | ((int)(red   * shadowDimming) << 16)
-                              | ((int)(green * shadowDimming) << 8)
-                              | ((int)(blue  * shadowDimming));
+                    //-- already define as a shadow
+                    //-- set alpha transparency
+                    int color = (pixel & 0xFF000000)
+                              | (((int) (red   * shadowDimming)) << 16)
+                              | (((int) (green * shadowDimming)) << 8)
+                              | (((int) (blue  * shadowDimming)));
                     imgDest.setRGB(x, iterBeginY, color);
                 } else {
-                    // current pixel is a pikes.
-                    // already define as a shadow
-                    // set alpha transparency
-                    int color = ((int)(alphaTrans )                       << 24)
-                              | (Math.min(255, (int)(red   * brightness)) << 16)
-                              | (Math.min(255, (int)(green * brightness)) << 8)
-                              | (Math.min(255, (int)(blue  * brightness)));
+                    //-- current pixel is a pikes.
+                    //-- already define as a shadow
+                    //-- set alpha transparency
+                    int color = (pixel & 0xFF000000) 
+                              | (((int) (red   * brightness)) << 16)
+                              | (((int) (green * brightness)) << 8)
+                              | (((int) (blue  * brightness)));
                     imgDest.setRGB(x, iterBeginY, color);
                     mntIter.moveTo(x, iterBeginY, 0);
-                    double z  = mntIter.getSampleDouble();
+                    final double z = mntIter.getSampleDouble();
                     if (Double.isNaN(z)) {
-                        x+=iterPasX;
+                        x += iterPasX;
                         continue;
                     }
                     TABV[ordinateX] = x;
@@ -397,15 +390,15 @@ public final class ReliefShadow {
      * @param z pixel elevation of current pixel (pikes).
      */
     private void computeShadow(final double z) {
-        // position on pixel center and go to next pixel
+        //-- position on pixel center and go to next pixel
         TABV[0] += 0.5 + pasv;
         TABV[1] += 0.5 + pasfv;
         
-        // define pixel x, y position
+        //-- define pixel x, y position
         int ordX  = (int) TABV[ordinateX];
         int ordY  = (int) TABV[ordinateY];
         
-        // current altitude.
+        //-- current altitude.
         double sz = z + pasz;
         
         while (ordX >= minX && ordX < maxX && ordY >= minY && ordY < maxY) {
@@ -422,7 +415,7 @@ public final class ReliefShadow {
             TABV[1] += pasfv;
             sz      += pasz;
             
-            // define pixel x, y position
+            //-- define pixel x, y position
             ordX = (int) TABV[ordinateX];
             ordY = (int) TABV[ordinateY];
         }
@@ -444,8 +437,8 @@ public final class ReliefShadow {
         } else if (altitudeDirection.equals(AxisDirection.UP)) {
             this.axisDirection = 1;
         } else {
-            throw new IllegalArgumentException("setted altitude direction should be instance of "
-                    + "AxisDirection.DOWN or AxisDirection.UP. stted altitude = "+altitudeDirection);
+            throw new IllegalArgumentException("Defined altitude direction should be instance of "
+                    + "AxisDirection.DOWN or AxisDirection.UP. Defined altitude = "+altitudeDirection);
         }
     }
 }
