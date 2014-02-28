@@ -32,6 +32,8 @@ import org.opengis.metadata.citation.Citation;
 import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.ParameterDescriptor;
 
+import org.apache.sis.measure.Range;
+import org.apache.sis.measure.MeasurementRange;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.referencing.AbstractIdentifiedObject;
 import org.apache.sis.metadata.iso.citation.Citations;
@@ -175,21 +177,20 @@ public class DefaultParameterDescriptor<T> extends org.apache.sis.parameter.Defa
                                       final Unit<?>       unit,
                                       final boolean       required)
     {
-        super(complete(properties, validValues, minimum, maximum), valueClass, defaultValue, unit, required);
+        super(complete(properties, validValues), valueClass,
+                (unit != null) ? new MeasurementRange((Class) valueClass, (Number) minimum, true, (Number) maximum, true, unit) :
+                (minimum != null || maximum != null) ? new Range(valueClass, minimum, true, maximum, true) : null,
+                defaultValue, required);
     }
 
     /**
      * Work around for RFE #4093999 in Sun's bug database
      * ("Relax constraint on placement of this()/super() call in constructors").
      */
-    private static Map<String,?> complete(Map<String,?> properties, final Object[] validValues,
-            final Comparable<?> minimum, final Comparable<?> maximum)
-    {
-        if (validValues != null || minimum != null || maximum != null) {
+    private static Map<String,?> complete(Map<String,?> properties, final Object[] validValues) {
+        if (validValues != null) {
             final Map<String,Object> copy = new HashMap<>(properties);
             copy.put(VALID_VALUES_KEY, validValues);
-            copy.put(MINIMUM_VALUE_KEY, minimum);
-            copy.put(MAXIMUM_VALUE_KEY, maximum);
             properties = copy;
         }
         return properties;
