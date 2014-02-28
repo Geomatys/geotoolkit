@@ -34,6 +34,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
+import javax.measure.converter.UnitConverter;
+import javax.measure.unit.Unit;
 import javax.media.jai.Histogram;
 import javax.media.jai.ImageLayout;
 import javax.media.jai.JAI;
@@ -106,6 +108,7 @@ import org.opengis.geometry.Envelope;
 import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
@@ -202,7 +205,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
                 if(!CRS.equalsIgnoreMetadata(candidate2D,targetCRS) ){
 
                     //calculate best intersection area
-                    final Envelope2D covEnv = dataCoverage.getEnvelope2D();
+                    final Envelope2D covEnv = dataCoverage.getGridGeometry().getEnvelope2D();
                     final GeneralEnvelope tmp = new GeneralEnvelope(renderingContext.getPaintingObjectiveBounds2D());
                     tmp.intersect(CRS.transform(covEnv, targetCRS));
 
@@ -491,7 +494,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
         final GridGeometry2D covGridGeom       = coverage.getGridGeometry();
         final GridEnvelope2D covExtend         = covGridGeom.getExtent2D();
         final CoordinateReferenceSystem covCRS = coverage.getCoordinateReferenceSystem2D();
-        final Envelope2D covEnv2d              = coverage.getEnvelope2D();
+        final Envelope2D covEnv2d              = coverage.getGridGeometry().getEnvelope2D();
         final double[] covResolution           = coverage.getGridGeometry().getResolution();
 
         final GridCoverageReader elevationReader = elevationModel.getCoverageReader();
@@ -505,7 +508,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
 
         final MathTransform demCRSToCov        = CRS.findMathTransform(demCRS, covCRS); // dem -> cov
 
-        if (elevGridGeom2D.getEnvelope2D().equals(coverage.getEnvelope2D())
+        if (elevGridGeom2D.getEnvelope2D().equals(coverage.getGridGeometry().getEnvelope2D())
          && covExtend.equals(elevGridGeom2D.getExtent2D())) return (GridCoverage2D) elevationReader.read(0, null);
 
         final GeneralEnvelope readParamEnv = Envelopes.transform(demCRSToCov.inverse(), covEnv2d);
@@ -541,9 +544,9 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
 
         final MathTransform demCRSToCov = CRS.findMathTransform(demCRS, covCRS); // dem -> cov
 
-        final GeneralEnvelope demDestEnv = Envelopes.transform(demCRSToCov, dem.getEnvelope2D());
+        final GeneralEnvelope demDestEnv = Envelopes.transform(demCRSToCov, demGridGeom.getEnvelope2D());
         // coverage envelope
-        final Envelope2D covEnv = coverage.getEnvelope2D();
+        final Envelope2D covEnv = covGridGeom.getEnvelope2D();
 
         /**
          * if the 2 coverage don't represent the same area we can't compute shadow on coverage.
@@ -562,8 +565,8 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
 
         intersec = Envelopes.transform(covGridGeom.getGridToCRS(PixelInCell.CELL_CORNER).inverse(), intersec);
 
-        final Rectangle areaIterate = new Rectangle((int) intersec.getMinimum(0), (int) intersec.getMinimum(1), (int) intersec.getSpan(0), (int) intersec.getSpan(1));
-
+        final Rectangle areaIterate = new Rectangle((int) intersec.getMinimum(0), (int) intersec.getMinimum(1), (int) Math.ceil(intersec.getSpan(0)), (int) Math.ceil(intersec.getSpan(1)));
+        
         // dem source to dem dest
         final MathTransform sourcetodest = MathTransforms.concatenate(dem.getGridGeometry().getGridToCRS(PixelInCell.CELL_CENTER),
                                                                       demCRSToCov,
@@ -655,6 +658,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
         }
 
         //shaded relief---------------------------------------------------------
+        
         if (elevationCoverage != null) {
             final ShadedRelief shadedRel = styleElement.getShadedRelief();
             // azimuth angle
@@ -685,25 +689,27 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             u /= magn;
             v /= magn;
 
-            // angle (azimuth) exprimate in image space
+            //-- angle (azimuth) exprimate in image space
             final double gridAzim = ((Math.PI / 2) - Math.atan2(v, u)) * 180 / Math.PI;
 
-            // altitude angle
+            //-- altitude angle
             final double altitude = elevationModel.getAltitude();
 
-            // relief factor
+            //-- relief factor
             final double relfactor = 1 - shadedRel.getReliefFactor().evaluate(null, Double.class) / 100.0;
-
             final boolean isBrightness = shadedRel.isBrightnessOnly();
             final double brightness = (isBrightness) ? 2.0 - relfactor : 1;
 
-            final double altiScale = elevationModel.getAmplitudeScale() / 100.0;
-            // ReliefShadow creating
+            //-- arbitrary altitude scale define by user to have an homogenious shadow computing.
+            final double altiScale = elevationModel.getAmplitudeScale();
+            
+            //-- ReliefShadow creating
             final GridCoverage2D mntCoverage = getDEMCoverage(coverage, elevationCoverage);
+            
             final ReliefShadow rfs = new ReliefShadow(gridAzim, altitude, brightness, relfactor);
             rfs.setAltitudeAxisDirection(elevationModel.getAltitudeDirection());
             final RenderedImage mnt = mntCoverage.getRenderedImage();
-            // mnt should be null if current elevation coverage doesn't concord with coverage.
+            //-- mnt should be null if current elevation coverage doesn't concord with coverage.
             if (mnt != null) {
                 if (mnt.getSampleModel().getNumBands() > 1) {
                     throw new IllegalStateException("The Digital Elevation Model should have only one band. band number found : "+mnt.getSampleModel().getNumBands());
@@ -711,13 +717,9 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
                 final ProcessDescriptor statsDescriptor = ImageStatisticsDescriptor.INSTANCE;
                 final ParameterValueGroup statsInput    = statsDescriptor.getInputDescriptor().createValue();
                 statsInput.parameter(ImageStatisticsDescriptor.INPUT_IMAGE_PARAM_NAME).setValue(mnt);
-                org.geotoolkit.process.Process statProcess = statsDescriptor.createProcess(statsInput);
-                final Statistics[] stats = (Statistics[]) statProcess.call().parameter(ImageStatisticsDescriptor.OUTPUT_STATS_PARAM_NAME).getValue();
-                final double elevationAmplitude = stats[0].span();
-                image = rfs.getRelief(image, mnt, elevationAmplitude * altiScale);
+                image = rfs.getRelief(image, mnt, altiScale);
             }
         }
-
 
         //contrast enhancement -------------------------------------------------
         if (image == null) {
@@ -733,24 +735,21 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
 
             // histogram/normalize adjustment ----------------------------------
             final ContrastMethod method = ce.getMethod();
-            if(ContrastMethod.HISTOGRAM.equals(method)){
+            if (ContrastMethod.HISTOGRAM.equals(method)) {
                 image = equalize(image);
-            }else if(ContrastMethod.NORMALIZE.equals(method)){
+            } else if(ContrastMethod.NORMALIZE.equals(method)) {
                 image = normalize(image);
             }
 
             // gamma correction ------------------------------------------------
             final Double gamma = ce.getGammaValue().evaluate(null, Double.class);
-            if(gamma != null && gamma != 1){
+            if (gamma != null && gamma != 1) {
                 //Specification : page 35
                 // A “GammaValue” tells how much to brighten (values greater than 1.0) or dim (values less than 1.0) an image.
-                image = brigthen(image, (int)( (gamma-1)*255f ) );
+                image = brigthen(image, (int) ((gamma - 1) * 255f));
             }
-
         }
-
         return image;
-
     }
 
     /**
