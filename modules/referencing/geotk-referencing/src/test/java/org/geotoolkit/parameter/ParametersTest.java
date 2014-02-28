@@ -35,35 +35,6 @@ import static org.junit.Assert.*;
  */
 public final strictfp class ParametersTest {
     /**
-     * Tests the {@link Parameters#cast(ParameterDescriptor, Class)} methods.
-     */
-    @Test
-    public void testCast() {
-        final ParameterDescriptor<Integer> descriptor = DefaultParameterDescriptor.create("Test", 10, 5, 15);
-        assertSame(descriptor, Parameters.cast(descriptor, Integer.class));
-        try {
-            assertSame(descriptor, Parameters.cast(descriptor, Double.class));
-            fail("Expected a ClassCastException.");
-        } catch (ClassCastException e) {
-            assertTrue("The error message should contains the name of the parameter.",
-                    e.getLocalizedMessage().contains("Test"));
-        }
-        /*
-         * Tests the cast of values.
-         */
-        final ParameterValue<Integer> value = descriptor.createValue();
-        assertEquals("Expected a parameter initialized to the default value.", 10, value.intValue());
-        assertSame(value, Parameters.cast(value, Integer.class));
-        try {
-            assertSame(value, Parameters.cast(value, Double.class));
-            fail("Expected a ClassCastException.");
-        } catch (ClassCastException e) {
-            assertTrue("The error message should contains the name of the invalid parameter.",
-                    e.getLocalizedMessage().contains("Test"));
-        }
-    }
-
-    /**
      * Tests the {@link Parameters#isValid(GeneralParameterValue, GeneralParameterDescriptor)}
      * method.
      */
