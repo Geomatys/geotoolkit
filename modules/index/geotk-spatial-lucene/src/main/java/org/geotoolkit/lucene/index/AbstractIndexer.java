@@ -95,18 +95,18 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
      * Build a new Indexer witch create an index in the specified directory,
      * with the specified analyzer.
      *
-     * @param serviceID
+     * @param indexID
      * @param configDirectory
      * @param analyzer
      */
-    public AbstractIndexer(final String serviceID, final File configDirectory, final Analyzer analyzer) {
+    public AbstractIndexer(final String indexID, final File configDirectory, final Analyzer analyzer) {
         super(analyzer);
         
         // we get the last index directory
         long maxTime = 0;
         File currentIndexDirectory = null;
         if (configDirectory != null && configDirectory.exists() && configDirectory.isDirectory()) {
-            for (File indexDirectory : configDirectory.listFiles(new IndexDirectoryFilter(serviceID))) {
+            for (File indexDirectory : configDirectory.listFiles(new IndexDirectoryFilter(indexID))) {
                 String suffix = indexDirectory.getName();
                 suffix = suffix.substring(suffix.lastIndexOf('-') + 1);
                 try {
@@ -122,13 +122,13 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
         }
 
         if (currentIndexDirectory == null) {
-            currentIndexDirectory = new File(configDirectory, serviceID + "index-" + System.currentTimeMillis());
+            currentIndexDirectory = new File(configDirectory, indexID + "index-" + System.currentTimeMillis());
             currentIndexDirectory.mkdir();
             needCreation = true;
             setFileDirectory(currentIndexDirectory);
         } else {
             LOGGER.log(logLevel, "Index already created.");
-            deleteOldIndexDir(configDirectory, serviceID, currentIndexDirectory.getName());
+            deleteOldIndexDir(configDirectory, indexID, currentIndexDirectory.getName());
             // must be set before reading tree
             setFileDirectory(currentIndexDirectory);
             needCreation = false;
@@ -140,11 +140,11 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
      * Build a new Indexer witch create an index in the specified directory,
      * with a Keyword analyzer.
      *
-     * @param serviceID
+     * @param indexID
      * @param configDirectory
      */
-    public AbstractIndexer(final String serviceID, final File configDirectory) {
-        this(serviceID, configDirectory, null);
+    public AbstractIndexer(final String indexID, final File configDirectory) {
+        this(indexID, configDirectory, null);
     }
 
     public boolean needCreation() {
