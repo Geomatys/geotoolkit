@@ -124,6 +124,7 @@ public class LuceneOGCFilter extends org.apache.lucene.search.Filter implements 
                         final Literal lit = (Literal) sp.getExpression2();
                         final GeneralEnvelope bound = getExtendedReprojectedEnvelope(lit.getValue(), tree.getCrs(), sp.getDistanceUnits(), sp.getDistance());
                         final int[] resultID = tree.searchID(bound);
+                        Arrays.sort(resultID);
                         results.clear();
                         TreeElementMapper<NamedEnvelope> tem = tree.getTreeElementMapper();
                         for (int id : resultID) {
@@ -155,6 +156,7 @@ public class LuceneOGCFilter extends org.apache.lucene.search.Filter implements 
                                 reverse = true;
                             }
                             final int[] resultID = tree.searchID(boundFilter);
+                            Arrays.sort(resultID);
                             final TreeElementMapper<NamedEnvelope> tem = tree.getTreeElementMapper();
                             results.clear();
                             for (int id : resultID) {
@@ -164,6 +166,7 @@ public class LuceneOGCFilter extends org.apache.lucene.search.Filter implements 
                             envelopeOnly = false;
                         } else {
                             final int[] resultID = TreeX.search(tree, boundFilter, filterType);
+                            Arrays.sort(resultID);
                             final TreeElementMapper<NamedEnvelope> tem = tree.getTreeElementMapper();
                             results.clear();
                             for (int id : resultID) {

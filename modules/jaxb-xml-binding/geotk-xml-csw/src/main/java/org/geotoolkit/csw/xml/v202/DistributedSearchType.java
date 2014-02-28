@@ -62,6 +62,12 @@ public class DistributedSearchType implements DistributedSearch {
     public DistributedSearchType(){
         
     }
+
+    public DistributedSearchType(final DistributedSearchType other){
+        if (other != null && other.hopCount != null) {
+            this.hopCount = new Integer(other.hopCount);
+        }
+    }
     
     /**
      * Build a new Distributed search

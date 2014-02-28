@@ -71,6 +71,15 @@ public class ElementSetNameType implements ElementSetName {
     public ElementSetNameType(final ElementSetType value){
         this.value = value;
     }
+
+    public ElementSetNameType(final ElementSetNameType other) {
+        if (other != null) {
+            this.value = other.value;
+            if (other.typeNames != null) {
+                this.typeNames = new ArrayList<>(other.typeNames);
+            }
+        }
+    }
     
     /**
      * Named subsets of catalogue object properties; 
@@ -94,7 +103,7 @@ public class ElementSetNameType implements ElementSetName {
      */
     public List<QName> getTypeNames() {
         if (typeNames == null) {
-            typeNames = new ArrayList<QName>();
+            typeNames = new ArrayList<>();
         }
         return this.typeNames;
     }

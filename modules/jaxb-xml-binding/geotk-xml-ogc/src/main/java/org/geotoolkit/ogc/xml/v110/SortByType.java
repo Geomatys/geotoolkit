@@ -73,7 +73,7 @@ public class SortByType implements SortBy {
     
     public SortByType(final SortByType that) {
         if (that != null && that.sortProperty != null) {
-            this.sortProperty = new ArrayList<SortPropertyType>();
+            this.sortProperty = new ArrayList<>();
             for (SortPropertyType sp : that.sortProperty) {
                 this.sortProperty.add(new SortPropertyType(sp));
             }
@@ -87,7 +87,7 @@ public class SortByType implements SortBy {
     @Override
     public List<SortPropertyType> getSortProperty() {
         if (sortProperty == null) {
-            sortProperty = new ArrayList<SortPropertyType>();
+            sortProperty = new ArrayList<>();
         }
         return Collections.unmodifiableList(sortProperty);
     }

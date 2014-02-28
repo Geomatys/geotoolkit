@@ -129,10 +129,34 @@ public class GetRecordsType extends RequestBaseType implements GetRecordsRequest
         this.maxRecords        = maxRecords;
         this.abstractQuery     = abstractQuery;
         this.distributedSearch = distributedSearch;
-        
-        
     }
-    
+
+    public GetRecordsType(final GetRecordsType other) {
+        if (other != null) {
+            if (other.abstractQuery instanceof QueryType) {
+                this.abstractQuery = new QueryType((QueryType)other.abstractQuery);
+            } else if (other.abstractQuery != null) {
+                throw new IllegalArgumentException("Uncloneable query object:" + other.getClass().getName());
+            }
+            if (other.distributedSearch != null) {
+                this.distributedSearch = new DistributedSearchType(other.distributedSearch);
+            }
+            if (other.maxRecords != null) {
+                this.maxRecords = new Integer(other.maxRecords);
+            }
+            this.outputFormat = other.outputFormat;
+            this.outputSchema = other.outputSchema;
+            this.requestId    = other.requestId;
+            if (other.responseHandler != null) {
+                this.responseHandler = new ArrayList<>(other.responseHandler);
+            }
+            this.resultType = other.resultType;
+            if (other.startPosition != null) {
+                this.startPosition = new Integer(other.startPosition);
+            }
+
+        }
+    }
     /**
      * Gets the value of the distributedSearch property.
      * 
@@ -155,7 +179,7 @@ public class GetRecordsType extends RequestBaseType implements GetRecordsRequest
      */
     public List<String> getResponseHandler() {
         if (responseHandler == null) {
-            responseHandler = new ArrayList<String>();
+            responseHandler = new ArrayList<>();
         }
         return this.responseHandler;
     }

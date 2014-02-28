@@ -117,7 +117,7 @@ public class FilterType implements Filter, XMLFilter {
 
         // id operator
         } else if (obj instanceof AbstractIdType) {
-            this.id = new ArrayList<JAXBElement<? extends AbstractIdType>>();
+            this.id = new ArrayList<>();
             this.id.add(createIdOps((AbstractIdType) obj));
 
         // clone
@@ -128,7 +128,7 @@ public class FilterType implements Filter, XMLFilter {
                 this.comparisonOps = createComparisonOps(comp);
             }
             if (that.id != null) {
-                this.id = new ArrayList<JAXBElement<? extends AbstractIdType>>();
+                this.id = new ArrayList<>();
                 for (JAXBElement<? extends AbstractIdType> jb : that.id) {
                     AbstractIdType aid = jb.getValue();
                     if (aid instanceof FeatureIdType) {
@@ -147,7 +147,7 @@ public class FilterType implements Filter, XMLFilter {
                 this.logicOps = createLogicOps(log);
             }
             if (that.prefixMapping != null) {
-                this.prefixMapping = new HashMap<String, String>(that.prefixMapping);
+                this.prefixMapping = new HashMap<>(that.prefixMapping);
             }
             if (that.spatialOps != null) {
                 final SpatialOpsType spa = that.spatialOps.getValue().getClone();
@@ -262,7 +262,7 @@ public class FilterType implements Filter, XMLFilter {
      */
     public List<JAXBElement<? extends AbstractIdType>> getId() {
         if (id == null) {
-            id = new ArrayList<JAXBElement<? extends AbstractIdType>>();
+            id = new ArrayList<>();
         }
         verifyIdFilter();
         return id;
@@ -273,7 +273,7 @@ public class FilterType implements Filter, XMLFilter {
         if (comparisonOps != null) {
             return comparisonOps.getValue();
         } else if (id != null && !id.isEmpty()) {
-            final List<AbstractIdType> featureId = new ArrayList<AbstractIdType>();
+            final List<AbstractIdType> featureId = new ArrayList<>();
             for (JAXBElement<? extends AbstractIdType> jb : id) {
                 featureId.add(jb.getValue());
             }

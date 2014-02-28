@@ -127,6 +127,26 @@ public class QueryType extends AbstractQueryType implements Query {
         this.sortBy         = sortBy;
         this.constraint     = constraint;
     }
+
+    public QueryType(final QueryType other) {
+        if (other != null) {
+            if (other.constraint != null) {
+                this.constraint = new QueryConstraintType(other.constraint);
+            }
+            if (other.elementName != null) {
+                this.elementName = new ArrayList<>(other.elementName);
+            }
+            if (other.elementSetName != null) {
+                this.elementSetName = new ElementSetNameType(other.elementSetName);
+            }
+            if (other.sortBy != null) {
+                this.sortBy = new SortByType(other.sortBy);
+            }
+            if (other.typeNames != null) {
+                this.typeNames = new ArrayList<>(other.typeNames);
+            }
+        }
+    }
     
     /**
      * Gets the value of the elementSetName property.
@@ -150,7 +170,7 @@ public class QueryType extends AbstractQueryType implements Query {
     @Override
     public List<QName> getElementName() {
         if (elementName == null) {
-            elementName = new ArrayList<QName>();
+            elementName = new ArrayList<>();
         }
         return Collections.unmodifiableList(elementName);
     }
@@ -160,7 +180,7 @@ public class QueryType extends AbstractQueryType implements Query {
      */
     public void setElementName(final QName elementName) {
         if (this.elementName == null) {
-            this.elementName = new ArrayList<QName>();
+            this.elementName = new ArrayList<>();
         }
         this.elementName.add(elementName);
     }
@@ -211,7 +231,7 @@ public class QueryType extends AbstractQueryType implements Query {
     @Override
     public List<QName> getTypeNames() {
         if (typeNames == null) {
-            typeNames = new ArrayList<QName>();
+            typeNames = new ArrayList<>();
         }
         return Collections.unmodifiableList(typeNames);
     }
@@ -226,7 +246,7 @@ public class QueryType extends AbstractQueryType implements Query {
      */
     public void setTypeNames(final QName typeName) {
         if (typeNames == null) {
-            typeNames = new ArrayList<QName>();
+            typeNames = new ArrayList<>();
         }
         typeNames.add(typeName);
     }

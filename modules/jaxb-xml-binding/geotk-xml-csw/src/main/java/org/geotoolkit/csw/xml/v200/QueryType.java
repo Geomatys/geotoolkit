@@ -95,7 +95,6 @@ public class QueryType extends AbstractQueryType implements Query{
      * Build a new Query
      */
     public QueryType(final List<QName> typeNames, final ElementSetNameType elementSetName, final QueryConstraintType constraint) {
-        
         this.typeNames      = typeNames;
         this.elementSetName = elementSetName; 
         this.constraint     = constraint;
@@ -108,10 +107,26 @@ public class QueryType extends AbstractQueryType implements Query{
      * @param constraint
      */
     public QueryType(final List<QName> typeNames, final List<QName> elementName, final QueryConstraintType constraint) {
-        
         this.typeNames      = typeNames;
         this.elementName    = elementName; 
         this.constraint     = constraint;
+    }
+
+    public QueryType(final QueryType other) {
+        if (other != null) {
+            if (other.constraint != null) {
+                this.constraint = new QueryConstraintType(other.constraint);
+            }
+            if (other.elementName != null) {
+                this.elementName = new ArrayList<>(other.elementName);
+            }
+            if (other.elementSetName != null) {
+                this.elementSetName = new ElementSetNameType(other.elementSetName);
+            }
+            if (other.typeNames != null) {
+                this.typeNames = new ArrayList<>(other.typeNames);
+            }
+        }
     }
     
     /**

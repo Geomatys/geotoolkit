@@ -88,7 +88,16 @@ public class QueryConstraintType implements QueryConstraint {
         this.cqlText = cqlText;
         this.version = version;
     }
-    
+
+    public QueryConstraintType(final QueryConstraintType other){
+        if (other != null) {
+            this.cqlText = other.cqlText;
+            this.version = other.version;
+            if (other.filter != null) {
+                this.filter = new FilterType(other.filter);
+            }
+        }
+    }
     
     /**
      * Gets the value of the filter property.

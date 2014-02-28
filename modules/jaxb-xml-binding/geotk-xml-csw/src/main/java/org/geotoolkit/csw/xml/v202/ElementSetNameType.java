@@ -68,9 +68,19 @@ public class ElementSetNameType implements ElementSetName {
     
     /**
      * Build a elementSetName with only the elementSet value (no typeNames).
+     * @param value
      */
     public ElementSetNameType(final ElementSetType value){
         this.value = value;
+    }
+
+    public ElementSetNameType(final ElementSetNameType other) {
+        if (other != null) {
+            this.value = other.value;
+            if (other.typeNames != null) {
+                this.typeNames = new ArrayList<>(other.typeNames);
+            }
+        }
     }
 
     /**
@@ -99,7 +109,7 @@ public class ElementSetNameType implements ElementSetName {
      */
     public List<QName> getTypeNames() {
         if (typeNames == null) {
-            typeNames = new ArrayList<QName>();
+            typeNames = new ArrayList<>();
         }
         return Collections.unmodifiableList(typeNames);
     }
@@ -109,7 +119,7 @@ public class ElementSetNameType implements ElementSetName {
      */
     public void setTypeNames(final QName typeName) {
         if (this.typeNames == null) {
-            this.typeNames = new ArrayList<QName>();
+            this.typeNames = new ArrayList<>();
         }
         this.typeNames.add(typeName);
     }

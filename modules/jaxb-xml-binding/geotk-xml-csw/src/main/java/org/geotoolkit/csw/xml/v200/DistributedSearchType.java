@@ -73,6 +73,12 @@ public class DistributedSearchType implements DistributedSearch {
     public DistributedSearchType(final Integer hopCount){
         this.hopCount = hopCount;
     }
+
+    public DistributedSearchType(final DistributedSearchType other){
+        if (other != null && other.hopCount != null) {
+            this.hopCount = new Integer(other.hopCount);
+        }
+    }
     
     /**
      * Gets the value of the hopCount property.
