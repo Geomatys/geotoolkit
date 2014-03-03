@@ -37,6 +37,7 @@ import org.apache.sis.measure.MeasurementRange;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.referencing.AbstractIdentifiedObject;
 import org.apache.sis.metadata.iso.citation.Citations;
+import org.apache.sis.util.Numbers;
 
 
 /**
@@ -168,6 +169,7 @@ public class DefaultParameterDescriptor<T> extends org.apache.sis.parameter.Defa
      *                     or {@code null} if none.
      * @param required     {@code true} if this parameter is required, or {@code false} if it is optional.
      */
+    @Deprecated
     public DefaultParameterDescriptor(final Map<String,?> properties,
                                       final Class<T>      valueClass,
                                       final T[]           validValues,
@@ -177,23 +179,11 @@ public class DefaultParameterDescriptor<T> extends org.apache.sis.parameter.Defa
                                       final Unit<?>       unit,
                                       final boolean       required)
     {
-        super(complete(properties, validValues), valueClass,
-                (unit != null) ? new MeasurementRange((Class) valueClass, (Number) minimum, true, (Number) maximum, true, unit) :
+        super(properties, valueClass,
+                (unit != null) ? new MeasurementRange((Class) (valueClass.isArray() ?
+                        Numbers.primitiveToWrapper(valueClass.getComponentType()) : valueClass), (Number) minimum, true, (Number) maximum, true, unit) :
                 (minimum != null || maximum != null) ? new Range(valueClass, minimum, true, maximum, true) : null,
-                defaultValue, required);
-    }
-
-    /**
-     * Work around for RFE #4093999 in Sun's bug database
-     * ("Relax constraint on placement of this()/super() call in constructors").
-     */
-    private static Map<String,?> complete(Map<String,?> properties, final Object[] validValues) {
-        if (validValues != null) {
-            final Map<String,Object> copy = new HashMap<>(properties);
-            copy.put(VALID_VALUES_KEY, validValues);
-            properties = copy;
-        }
-        return properties;
+                validValues, defaultValue, required);
     }
 
     /**
