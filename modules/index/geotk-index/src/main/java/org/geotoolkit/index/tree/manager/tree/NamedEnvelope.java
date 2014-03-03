@@ -139,4 +139,15 @@ public class NamedEnvelope extends GeneralEnvelope implements Externalizable {
         }
         return false;
     }
+
+    public boolean fullEquals(final Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj instanceof NamedEnvelope && super.equals(obj)) {
+            final NamedEnvelope that = (NamedEnvelope) obj;
+            return Objects.equals(this.id, that.id);
+        }
+        return false;
+    }
 }
