@@ -136,6 +136,7 @@ public class GetRecordsType extends RequestBaseType implements GetRecordsRequest
     }
 
     public GetRecordsType(final GetRecordsType other) {
+        super(other);
         if (other != null) {
             if (other.abstractQuery instanceof QueryType) {
                 this.abstractQuery = new QueryType((QueryType)other.abstractQuery);

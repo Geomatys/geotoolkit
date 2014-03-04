@@ -85,6 +85,13 @@ public abstract class RequestBaseType implements RequestBase, AbstractCswRequest
         this.service = service;
         this.version = version;
     }
+
+    protected RequestBaseType(final RequestBaseType other) {
+        if (other != null) {
+            this.service = other.service;
+            this.version = other.version;
+        }
+    }
     
     /**
      * Gets the value of the service property.
