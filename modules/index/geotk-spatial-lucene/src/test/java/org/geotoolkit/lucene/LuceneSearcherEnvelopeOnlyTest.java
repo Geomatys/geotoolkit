@@ -41,8 +41,8 @@ import org.geotoolkit.geometry.jts.SRIDGenerator;
 import org.geotoolkit.geometry.jts.SRIDGenerator.Version;
 import org.geotoolkit.index.tree.Tree;
 import org.geotoolkit.index.tree.TreeElementMapper;
-import org.geotoolkit.index.tree.manager.tree.NamedEnvelope;
-import org.geotoolkit.index.tree.manager.tree.RtreeManager;
+import org.geotoolkit.index.tree.manager.NamedEnvelope;
+import org.geotoolkit.index.tree.manager.FileRtreeManager;
 import org.geotoolkit.io.wkb.WKBUtils;
 import org.geotoolkit.lucene.DocumentIndexer.DocumentEnvelope;
 import org.geotoolkit.lucene.analysis.standard.ClassicAnalyzer;
@@ -81,7 +81,7 @@ public class LuceneSearcherEnvelopeOnlyTest {
     static{
         try {
             WGS84 = CRS.decode("CRS:84");
-        } catch (Exception ex) {
+        } catch (FactoryException ex) {
             throw new RuntimeException(ex);
         }
     }
@@ -123,6 +123,7 @@ public class LuceneSearcherEnvelopeOnlyTest {
 
     /**
      * Test the spatial filter BBOX.
+     * @throws java.lang.Exception
      */
     @Test
     public void BBOXTest() throws Exception {
@@ -204,10 +205,11 @@ public class LuceneSearcherEnvelopeOnlyTest {
 
     /**
      * Test the rTree.
+     * @throws java.lang.Exception
      */
     @Test
     public void rTreeBBOXTest() throws Exception {
-        final Tree rTree = RtreeManager.get(searcher.getFileDirectory(), this);
+        final Tree rTree = FileRtreeManager.get(searcher.getFileDirectory(), this);
         
         /*
          * first bbox
@@ -1650,6 +1652,7 @@ public class LuceneSearcherEnvelopeOnlyTest {
 
     /**
      * Test the Distance spatial filter BEYOND.
+     * @throws java.lang.Exception
      */
     @Test
     public void beyondTest() throws Exception {
@@ -2015,6 +2018,7 @@ public class LuceneSearcherEnvelopeOnlyTest {
 
     /**
      * Test the combination of a String query and/or spatial filter.
+     * @throws java.lang.Exception
      */
     @Test
     public void QueryAndSpatialFilterTest() throws Exception {
@@ -2114,6 +2118,7 @@ public class LuceneSearcherEnvelopeOnlyTest {
 
     /**
      * Test the combination of a String query and/or spatial filter.
+     * @throws java.lang.Exception
      */
     @Test
     public void QueryAndSpatialFilterAfterRemoveTest() throws Exception {

@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.index.tree.manager.tree;
+package org.geotoolkit.index.tree.manager;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

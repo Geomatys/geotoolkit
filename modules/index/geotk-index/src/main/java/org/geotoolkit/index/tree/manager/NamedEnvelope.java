@@ -15,7 +15,7 @@
  *    Lesser General Public License for more details.
  */
 
-package org.geotoolkit.index.tree.manager.tree;
+package org.geotoolkit.index.tree.manager;
 
 import java.io.*;
 import java.util.Objects;

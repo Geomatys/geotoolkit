@@ -39,8 +39,8 @@ import org.apache.lucene.util.Version;
 
 // Geotoolkit dependencies
 import org.geotoolkit.index.tree.StoreIndexException;
-import org.geotoolkit.index.tree.manager.tree.NamedEnvelope;
-import org.geotoolkit.index.tree.manager.tree.RtreeManager;
+import org.geotoolkit.index.tree.manager.NamedEnvelope;
+import org.geotoolkit.index.tree.manager.FileRtreeManager;
 import org.geotoolkit.io.wkb.WKBUtils;
 import org.geotoolkit.lucene.IndexingException;
 import org.geotoolkit.lucene.LuceneUtils;
@@ -133,7 +133,7 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
             setFileDirectory(currentIndexDirectory);
             needCreation = false;
         }
-        rTree = RtreeManager.get(currentIndexDirectory, this);
+        rTree = FileRtreeManager.get(currentIndexDirectory, this);
     }
 
     /**

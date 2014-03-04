@@ -40,7 +40,7 @@ import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.index.tree.StoreIndexException;
 import org.geotoolkit.index.tree.TreeElementMapper;
 import org.geotoolkit.index.tree.TreeX;
-import org.geotoolkit.index.tree.manager.tree.NamedEnvelope;
+import org.geotoolkit.index.tree.manager.NamedEnvelope;
 
 import static org.geotoolkit.lucene.LuceneUtils.*;
         

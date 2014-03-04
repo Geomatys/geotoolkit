@@ -45,8 +45,8 @@ import org.geotoolkit.geometry.jts.SRIDGenerator;
 import org.geotoolkit.geometry.jts.SRIDGenerator.Version;
 import org.geotoolkit.index.tree.Tree;
 import org.geotoolkit.index.tree.TreeElementMapper;
-import org.geotoolkit.index.tree.manager.tree.NamedEnvelope;
-import org.geotoolkit.index.tree.manager.tree.RtreeManager;
+import org.geotoolkit.index.tree.manager.NamedEnvelope;
+import org.geotoolkit.index.tree.manager.FileRtreeManager;
 import org.geotoolkit.io.wkb.WKBUtils;
 import org.geotoolkit.lucene.DocumentIndexer.DocumentEnvelope;
 import org.geotoolkit.lucene.analysis.standard.ClassicAnalyzer;
@@ -64,6 +64,7 @@ import org.opengis.geometry.Envelope;
 
 import org.junit.*;
 import static org.junit.Assert.*;
+import org.opengis.util.FactoryException;
 
 /**
  * A Test classes testing the different spatial filters.
@@ -82,13 +83,13 @@ public class LuceneSearcherTest {
     static {
         try {
             WGS84 = CRS.decode("CRS:84");
-        } catch (Exception ex) {
+        } catch (FactoryException ex) {
             throw new RuntimeException(ex);
         }
     }
 
-    private Map<String, NamedEnvelope> envelopes = new HashMap<>();
-    private File directory = new File("luceneSearcherTest");
+    private final Map<String, NamedEnvelope> envelopes = new HashMap<>();
+    private final File directory = new File("luceneSearcherTest");
     private LuceneIndexSearcher searcher;    
     private CoordinateReferenceSystem treeCrs;
     private org.opengis.filter.Filter filter;
@@ -122,6 +123,7 @@ public class LuceneSearcherTest {
 
     /**
      * Test the spatial filter BBOX.
+     * @throws java.lang.Exception
      */
     @Test
     public void BBOXTest() throws Exception {
@@ -222,10 +224,11 @@ public class LuceneSearcherTest {
 
     /**
      * Test the rTree.
+     * @throws java.lang.Exception
      */
     @Test
     public void rTreeBBOXTest() throws Exception {
-        Tree rTree = RtreeManager.get(searcher.getFileDirectory(), this);
+        Tree rTree = FileRtreeManager.get(searcher.getFileDirectory(), this);
         /*
          * first bbox
          */
@@ -372,6 +375,7 @@ public class LuceneSearcherTest {
 
     /**
      * Test the spatial filter INTERSECT.
+     * @throws java.lang.Exception
      */
     @Test
     public void intersectTest() throws Exception {
@@ -1860,6 +1864,7 @@ public class LuceneSearcherTest {
 
     /**
      * Test the Distance spatial filter BEYOND.
+     * @throws java.lang.Exception
      */
     @Test
     public void beyondTest() throws Exception {
@@ -2371,6 +2376,7 @@ public class LuceneSearcherTest {
 
     /**
      * Test the combination of a String query and/or spatial filter.
+     * @throws java.lang.Exception
      */
     @Test
     public void QueryAndSpatialFilterAfterRemoveTest() throws Exception {

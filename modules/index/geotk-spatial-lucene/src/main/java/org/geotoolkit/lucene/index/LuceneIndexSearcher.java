@@ -41,7 +41,7 @@ import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.util.Version;
-import org.geotoolkit.index.tree.manager.tree.RtreeManager;
+import org.geotoolkit.index.tree.manager.FileRtreeManager;
 import org.geotoolkit.lucene.IndexingException;
 import org.geotoolkit.lucene.LuceneUtils;
 import org.geotoolkit.lucene.SearchingException;
@@ -117,6 +117,8 @@ public class LuceneIndexSearcher extends IndexLucene {
      * @param configDir The configuration directory where to build the index directory.
      * @param serviceID the "ID" of the service (allow multiple index in the same directory). The value "" is allowed.
      * @param analyzer  A lucene Analyzer (Default is ClassicAnalyzer)
+     *
+     * @throws org.geotoolkit.lucene.IndexingException
      */
     public LuceneIndexSearcher(final File configDir, final String serviceID, final Analyzer analyzer) throws IndexingException {
         this(configDir, serviceID, analyzer, false);
@@ -129,6 +131,8 @@ public class LuceneIndexSearcher extends IndexLucene {
      * @param serviceID the "ID" of the service (allow multiple index in the same directory). The value "" is allowed.
      * @param analyzer  A lucene Analyzer (Default is ClassicAnalyzer)
      * @param envelopeOnly A flag indicating if all the geometry indexed are envelope.
+     * 
+     * @throws org.geotoolkit.lucene.IndexingException
      */
     public LuceneIndexSearcher(final File configDir, final String serviceID, final Analyzer analyzer, final boolean envelopeOnly) throws IndexingException {
         super(analyzer);
@@ -188,7 +192,7 @@ public class LuceneIndexSearcher extends IndexLucene {
      */
     private void initSearcher() throws CorruptIndexException, IOException {
         final File indexDirectory = getFileDirectory();
-        this.rTree = RtreeManager.get(indexDirectory, this);
+        this.rTree = FileRtreeManager.get(indexDirectory, this);
         final IndexReader reader  = DirectoryReader.open(LuceneUtils.getAppropriateDirectory(indexDirectory));
         searcher                  = new IndexSearcher(reader);
         LOGGER.log(Level.INFO, "Creating new Index Searcher with index directory:{0}", indexDirectory.getPath());
