@@ -300,8 +300,8 @@
       </dependency>
       <dependency>
         <groupId>javax.servlet</groupId>
-        <artifactId>servlet-api</artifactId>
-        <version>2.5</version> <!-- TODO: version mismatch with constellation. -->
+        <artifactId>javax.servlet-api</artifactId>
+        <version>3.1.0</version> <!-- TODO: version mismatch with constellation. -->
       </dependency>
       <dependency>
         <groupId>commons-httpclient</groupId>
