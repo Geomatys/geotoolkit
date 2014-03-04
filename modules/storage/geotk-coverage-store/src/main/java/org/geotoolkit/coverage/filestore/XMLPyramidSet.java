@@ -30,6 +30,9 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.*;
+
+import org.apache.sis.io.wkt.Convention;
+import org.apache.sis.io.wkt.FormattableObject;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.AbstractPyramidSet;
 import org.geotoolkit.coverage.Pyramid;
@@ -181,7 +184,7 @@ public class XMLPyramidSet extends AbstractPyramidSet{
      */
     Pyramid createPyramid(CoordinateReferenceSystem crs) {
         final XMLPyramid pyramid = new XMLPyramid();
-        pyramid.crs = crs.toWKT();
+        pyramid.crs = ((FormattableObject)crs).toString(Convention.WKT1);
         try {
             pyramid.id = URLEncoder.encode(IdentifiedObjects.getIdentifier(crs),"UTF-8");
         } catch (UnsupportedEncodingException ex) {
