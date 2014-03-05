@@ -138,26 +138,26 @@ public class XMLCoverageReference extends AbstractPyramidalModel {
             if(xmlDimensions.isEmpty()) return null;
 
             dimensions = new ArrayList<>();
-            int i=0;
+//            int i=0;
             for(XMLSampleDimension xsd : xmlDimensions){
-                double min = (xsd.min == null) ? Double.NEGATIVE_INFINITY : xsd.min;
-                double max = (xsd.max == null) ? Double.POSITIVE_INFINITY : xsd.max;
-                final Unit unit = xsd.getUnit();
-                final double offset = (xsd.offset == null) ? 0 : xsd.offset;
-                final double scale = (xsd.scale == null) ? 1 : xsd.scale;
+//                double min = (xsd.min == null) ? Double.NEGATIVE_INFINITY : xsd.min;
+//                double max = (xsd.max == null) ? Double.POSITIVE_INFINITY : xsd.max;
+//                final Unit unit = xsd.getUnit();
+//                final double offset = (xsd.offset == null) ? 0 : xsd.offset;
+//                final double scale = (xsd.scale == null) ? 1 : xsd.scale;
+//
+//                //Categories do not like infinites
+//                if(Double.isInfinite(min)) min = Double.MIN_VALUE;
+//                if(Double.isInfinite(max)) max = Double.MAX_VALUE;
 
-                //Categories do not like infinites
-                if(Double.isInfinite(min)) min = Double.MIN_VALUE;
-                if(Double.isInfinite(max)) max = Double.MAX_VALUE;
+//                final Category[] categories = new Category[2];
+//                categories[0] = new Category("data", new Color[]{Color.BLACK}, NumberRange.create(min, true, max, true), scale, offset);
+//                categories[1] = new Category(Vocabulary.formatInternational(Vocabulary.Keys.NODATA), new Color(0,0,0,0), Double.NaN);
 
-                final Category[] categories = new Category[2];
-                categories[0] = new Category("data", new Color[]{Color.BLACK}, NumberRange.create(min, true, max, true), scale, offset);
-                categories[1] = new Category(Vocabulary.formatInternational(Vocabulary.Keys.NODATA), new Color(0,0,0,0), Double.NaN);
-
-                final GridSampleDimension gsd = new GridSampleDimension(xsd.name, categories, unit);
+                final GridSampleDimension gsd = new GridSampleDimension(xsd.name, null, (Unit)null);
 
                 dimensions.add(gsd);
-                i++;
+//                i++;
             }
         }
 
