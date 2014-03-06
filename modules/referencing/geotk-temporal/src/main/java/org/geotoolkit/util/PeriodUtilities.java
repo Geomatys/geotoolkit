@@ -225,7 +225,7 @@ public class PeriodUtilities {
                 final long gap = getTimeFromPeriodDescription(dates);
 
                 Date currentDate = first;
-                while (!currentDate.equals(last)) {
+                while (currentDate.getTime() <= last.getTime()) {
                     response.add(currentDate);
                     currentDate = new Date(currentDate.getTime() + gap);
                 }
