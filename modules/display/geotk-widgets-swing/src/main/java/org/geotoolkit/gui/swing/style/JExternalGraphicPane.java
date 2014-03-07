@@ -37,6 +37,7 @@ import org.geotoolkit.gui.swing.resource.MessageBundle;
 import static org.geotoolkit.gui.swing.style.StyleElementEditor.getStyleFactory;
 import org.geotoolkit.map.MapLayer;
 import org.opengis.feature.type.PropertyType;
+import org.opengis.metadata.citation.OnlineResource;
 import org.opengis.style.ExternalGraphic;
 import org.openide.util.Exceptions;
 
@@ -89,10 +90,14 @@ public class JExternalGraphicPane extends StyleElementEditor<ExternalGraphic> {
             //TODO : not handled yet
             //external.getCustomProperties();
             guiMime.setText(external.getFormat());
-            try {
-                guiURL.setValue(URLTYPE, external.getOnlineResource().getLinkage().toURL());
-            } catch (MalformedURLException ex) {
-                Exceptions.printStackTrace(ex);
+            
+            final OnlineResource res = external.getOnlineResource();
+            if(res != null && res.getLinkage() != null){
+                try {
+                    guiURL.setValue(URLTYPE, res.getLinkage().toURL());
+                } catch (MalformedURLException ex) {
+                    Exceptions.printStackTrace(ex);
+                }
             }
             guiPreview.parse(ext);
         }

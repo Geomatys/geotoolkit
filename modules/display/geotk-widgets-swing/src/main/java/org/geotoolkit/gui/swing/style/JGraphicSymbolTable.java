@@ -51,11 +51,13 @@ import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.StyleConstants;
 import org.jdesktop.swingx.JXTable;
+import org.opengis.metadata.citation.OnlineResource;
 import org.opengis.style.ExternalGraphic;
 import org.opengis.style.Graphic;
 import org.opengis.style.GraphicalSymbol;
 import org.opengis.style.Mark;
 import org.opengis.style.PointSymbolizer;
+import org.openide.util.Exceptions;
 
 /**
  * graphic symbol table
@@ -349,7 +351,7 @@ public class JGraphicSymbolTable <T> extends StyleElementEditor<List> {
             lbl.setIcon(null);
 
             if(value instanceof GraphicalSymbol){
-                final List<GraphicalSymbol> lst = new ArrayList<GraphicalSymbol>();
+                final List<GraphicalSymbol> lst = new ArrayList<>();
                 lst.add((GraphicalSymbol)value);
 
                 final Graphic gra = GO2Utilities.STYLE_FACTORY.graphic(
@@ -370,7 +372,12 @@ public class JGraphicSymbolTable <T> extends StyleElementEditor<List> {
                 lbl.setText(m.getWellKnownName().toString());
             } else if (value instanceof ExternalGraphic) {
                 final ExternalGraphic m = (ExternalGraphic) value;
-                lbl.setText(m.getOnlineResource().getName());
+                final OnlineResource res = m.getOnlineResource();
+                if(res != null && res.getLinkage() != null){
+                    lbl.setText(res.getName());
+                }else{
+                    lbl.setText("");
+                }
             }
             return lbl;
         }
