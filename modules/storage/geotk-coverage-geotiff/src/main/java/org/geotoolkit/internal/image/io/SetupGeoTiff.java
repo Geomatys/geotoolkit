@@ -17,7 +17,7 @@
 package org.geotoolkit.internal.image.io;
 
 import java.util.Properties;
-import org.geotoolkit.image.io.plugin.GeoTiffImageReader;
+//import org.geotoolkit.image.io.plugin.GeoTiffImageReader;
 import org.geotoolkit.image.io.plugin.GeoTiffImageWriter;
 import org.geotoolkit.internal.SetupService;
 
@@ -34,7 +34,7 @@ public final class SetupGeoTiff implements SetupService {
      */
     @Override
     public void initialize(final Properties properties, final boolean reinit) {
-        GeoTiffImageReader.Spi.registerDefaults(null);
+//        GeoTiffImageReader.Spi.registerDefaults(null);
         GeoTiffImageWriter.Spi.registerDefaults(null);
     }
 
@@ -43,7 +43,7 @@ public final class SetupGeoTiff implements SetupService {
      */
     @Override
     public void shutdown() {
-        GeoTiffImageReader.Spi.unregisterDefaults(null);
+//        GeoTiffImageReader.Spi.unregisterDefaults(null);
         GeoTiffImageWriter.Spi.unregisterDefaults(null);
     }
 }
