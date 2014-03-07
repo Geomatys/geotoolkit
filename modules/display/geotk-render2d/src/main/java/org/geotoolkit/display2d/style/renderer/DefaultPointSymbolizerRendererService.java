@@ -74,11 +74,16 @@ public class DefaultPointSymbolizerRendererService extends AbstractSymbolizerRen
      */
     @Override
     public void glyph(final Graphics2D g2d, final Rectangle2D rectangle, final CachedPointSymbolizer symbol, final MapLayer layer) {
+        glyph(g2d,rectangle,symbol,layer,null);
+    }
+    
+    public void glyph(final Graphics2D g2d, final Rectangle2D rectangle, final CachedPointSymbolizer symbol, 
+            final MapLayer layer, final Float forcedSize) {
         g2d.setClip(rectangle);
         
         final Object feature = mimicObject(layer);
         final float coeff = 1;
-        final BufferedImage img = symbol.getImage(feature, coeff, null);
+        final BufferedImage img = symbol.getImage(feature, forcedSize, coeff, null);
         if(img == null) return;
         
         final float[] disps = new float[]{0,0};
@@ -89,6 +94,7 @@ public class DefaultPointSymbolizerRendererService extends AbstractSymbolizerRen
         final int x = (int) (-img.getWidth()*anchor[0] + rectangle.getCenterX() + disps[0]);
         final int y = (int) (-img.getHeight()*anchor[1] + rectangle.getCenterY() - disps[1]);
         g2d.drawImage(img, x, y, null);
+        g2d.setClip(null);
     }
 
 }

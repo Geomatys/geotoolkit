@@ -288,6 +288,14 @@ public class CachedGraphic<C extends Graphic> extends Cache<C>{
      * @return BufferedImage for a feature
      */
     public BufferedImage getImage(final Object candidate, final float coeff, final RenderingHints hints) {
+        return getImage(candidate, null, coeff, hints);
+    }
+    
+    /**
+     *
+     * @return BufferedImage for a feature
+     */
+    public BufferedImage getImage(final Object candidate, final Float forcedSize, final float coeff, final RenderingHints hints) {
         evaluate();
 
 
@@ -299,7 +307,7 @@ public class CachedGraphic<C extends Graphic> extends Cache<C>{
         //-------- grab the cached parameters ----------------------------------------------------
         float candidateOpacity = cachedOpacity;
         float candidateRotation = cachedRotation;
-        Float candidateSize = cachedSize;
+        Float candidateSize = (forcedSize!=null) ? forcedSize : cachedSize;
 
         if(Float.isNaN(candidateOpacity)){
             final Expression expOpacity = styleElement.getOpacity();

@@ -96,6 +96,16 @@ public class CachedPointSymbolizer extends CachedSymbolizer<PointSymbolizer>{
         //no cache recalculate image
         return cachedGraphic.getImage(candidate, coeff, hints);
     }
+    
+    /**
+     * 
+     * @return BufferedImage for a feature 
+     */
+    public BufferedImage getImage(final Object candidate, final float forcedSize, final float coeff, final RenderingHints hints) {
+        evaluate();
+        //no cache recalculate image
+        return cachedGraphic.getImage(candidate, forcedSize, coeff, hints);
+    }
 
     /**
      * return an Array of 2 floats always in display unit.

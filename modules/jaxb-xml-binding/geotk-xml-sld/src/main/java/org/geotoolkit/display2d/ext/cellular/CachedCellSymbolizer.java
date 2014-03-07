@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.display2d.ext.cellular;
 
+import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.style.CachedPointSymbolizer;
 import org.geotoolkit.display2d.style.CachedRule;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
@@ -40,6 +41,11 @@ public class CachedCellSymbolizer extends CachedSymbolizer<CellSymbolizer>{
         super(symbol,renderer);
     }
 
+    public CachedPointSymbolizer getCachedPointSymbolizer() {
+        evaluate();
+        return cps;
+    }
+
     /**
      * {@inheritDoc }
      */
@@ -60,6 +66,7 @@ public class CachedCellSymbolizer extends CachedSymbolizer<CellSymbolizer>{
         
         if(styleElement.getPointSymbolizer()!=null){
             r.symbolizers().add(styleElement.getPointSymbolizer());
+            cps = (CachedPointSymbolizer) GO2Utilities.getCached(styleElement.getPointSymbolizer(), null);
         }
         
         if(styleElement.getTextSymbolizer()!=null){

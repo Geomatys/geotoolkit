@@ -498,6 +498,7 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
             objToDisp.concatenate(change);
         }
         updateEnvelope();
+        firePropertyChange(TRANSFORM_KEY, null, null);
         repaintIfAuto();
     }
 
