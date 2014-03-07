@@ -90,17 +90,4 @@
       </roles>
     </contributor>
   </contributors>
-
-
-  <!-- ===========================================================
-           Dependency Management
-       =========================================================== -->
-  <dependencies>
-    <dependency>
-      <groupId>org.geotoolkit.project</groupId>
-      <artifactId>geotk-provided</artifactId>
-      <version>${project.version}</version>
-      <scope>provided</scope>
-    </dependency>
-  </dependencies>
 </project>

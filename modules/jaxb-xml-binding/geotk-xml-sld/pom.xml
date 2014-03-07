@@ -80,12 +80,6 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.geotoolkit.project</groupId>
-            <artifactId>geotk-provided</artifactId>
-            <version>${project.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <scope>test</scope>

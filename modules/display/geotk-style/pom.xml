@@ -64,12 +64,6 @@
           <artifactId>geotk-coverage-imagery</artifactId>
           <version>${project.version}</version>
       </dependency>
-      <dependency>
-          <groupId>org.geotoolkit.project</groupId>
-          <artifactId>geotk-provided</artifactId>
-          <version>${project.version}</version>
-          <scope>provided</scope>
-      </dependency>
   </dependencies>
 
   </project>
