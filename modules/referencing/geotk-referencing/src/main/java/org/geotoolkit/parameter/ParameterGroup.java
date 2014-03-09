@@ -63,7 +63,10 @@ import static org.apache.sis.util.collection.Containers.hashMapCapacity;
  *
  * @since 2.0
  * @module
+ *
+ * @deprecated Moved to Apache SIS {@link org.apache.sis.parameter.DefaultParameterValueGroup}.
  */
+@Deprecated
 public class ParameterGroup extends AbstractParameter implements ParameterValueGroup {
     /**
      * Serial number for inter-operability with different versions.

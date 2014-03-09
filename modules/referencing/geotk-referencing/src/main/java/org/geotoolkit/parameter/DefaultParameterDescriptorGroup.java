@@ -21,34 +21,16 @@
 package org.geotoolkit.parameter;
 
 import java.util.Map;
-import java.util.Set;
-import java.util.List;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Collections;
-import java.util.LinkedList;
 import net.jcip.annotations.Immutable;
-
-import org.opengis.metadata.Identifier;
 import org.opengis.metadata.citation.Citation;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.GeneralParameterDescriptor;
-import org.opengis.parameter.ParameterNotFoundException;
-import org.opengis.parameter.InvalidParameterNameException;
-
-import org.geotoolkit.resources.Errors;
 import org.apache.sis.referencing.NamedIdentifier;
-import org.geotoolkit.referencing.IdentifiedObjects;
 import org.apache.sis.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.metadata.iso.citation.Citations;
-import org.apache.sis.internal.util.UnmodifiableArrayList;
-import org.apache.sis.util.ComparisonMode;
-
-import static org.apache.sis.util.Utilities.deepEquals;
-import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
-import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
 
 
 /**
@@ -63,37 +45,11 @@ import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
  *
  * @since 2.0
  * @module
+ *
+ * @deprecated Moved to Apache SIS as {@link org.apache.sis.parameter.DefaultParameterDescriptorGroup}.
  */
 @Immutable
-public class DefaultParameterDescriptorGroup extends AbstractIdentifiedObject
-        implements ParameterDescriptorGroup
-{
-    /**
-     * Serial number for inter-operability with different versions.
-     */
-//  private static final long serialVersionUID = -4613190550542423839L;
-
-    /**
-     * The minimum number of times that values for this parameter group are required.
-     */
-    private final int minimumOccurs;
-
-    /**
-     * The maximum number of times that values for this parameter group are required.
-     */
-    private final int maximumOccurs;
-
-    /**
-     * The {@linkplain #descriptors() parameter descriptors} for this group.
-     */
-    private final GeneralParameterDescriptor[] parameters;
-
-    /**
-     * A view of {@link #parameters} as an immutable list. Will be constructed
-     * only when first needed.
-     */
-    private transient List<GeneralParameterDescriptor> asList;
-
+public class DefaultParameterDescriptorGroup extends org.apache.sis.parameter.DefaultParameterDescriptorGroup {
     /**
      * Constructs a group with the same values than the specified one. This copy constructor
      * may be used in order to wraps an arbitrary implementation into a Geotk one.
@@ -104,10 +60,6 @@ public class DefaultParameterDescriptorGroup extends AbstractIdentifiedObject
      */
     public DefaultParameterDescriptorGroup(final ParameterDescriptorGroup group) {
         super(group);
-        minimumOccurs = group.getMinimumOccurs();
-        maximumOccurs = group.getMaximumOccurs();
-        final List<GeneralParameterDescriptor> c = group.descriptors();
-        parameters = c.toArray(new GeneralParameterDescriptor[c.size()]);
     }
 
     /**
@@ -170,71 +122,7 @@ public class DefaultParameterDescriptorGroup extends AbstractIdentifiedObject
                                            final int maximumOccurs,
                                            GeneralParameterDescriptor... parameters)
     {
-        super(properties);
-        this.minimumOccurs = minimumOccurs;
-        this.maximumOccurs = maximumOccurs;
-        if (minimumOccurs < 0  || minimumOccurs > maximumOccurs) {
-            throw new IllegalArgumentException(org.apache.sis.util.resources.Errors.getResources(properties)
-                    .getString(org.apache.sis.util.resources.Errors.Keys.IllegalRange_2, minimumOccurs, maximumOccurs));
-        }
-        ensureNonNull("parameters", parameters);
-        this.parameters = new GeneralParameterDescriptor[parameters.length];
-        for (int i=0; i<parameters.length; i++) {
-            this.parameters[i] = parameters[i];
-            ensureNonNull("parameters", i, parameters);
-        }
-        /*
-         * Ensure there is no conflict in parameter names.
-         */
-        parameters = this.parameters;
-        for (int i=0; i<parameters.length; i++) {
-            final String name = parameters[i].getName().getCode();
-            for (int j=0; j<parameters.length; j++) {
-                if (i != j) {
-                    if (IdentifiedObjects.nameMatches(parameters[j], name)) {
-                        throw new InvalidParameterNameException(Errors.format(
-                                Errors.Keys.DUPLICATED_PARAMETER_NAME_4,
-                                parameters[j].getName().getCode(), j, name, i), name);
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * Returns the GeoAPI interface implemented by this class.
-     * The SIS implementation returns {@code ParameterDescriptorGroup.class}.
-     *
-     * {@note Subclasses usually do not need to override this method since GeoAPI does not define
-     *        <code>ParameterDescriptorGroup</code> sub-interface. Overriding possibility is left mostly
-     *        for implementors who wish to extend GeoAPI with their own set of interfaces.}
-     *
-     * @return {@code ParameterDescriptorGroup.class} or a user-defined sub-interface.
-     */
-    @Override
-    public Class<? extends ParameterDescriptorGroup> getInterface() {
-        return ParameterDescriptorGroup.class;
-    }
-
-    /**
-     * The minimum number of times that values for this parameter group or parameter are required.
-     * The default value is one. A value of 0 means an optional parameter.
-     *
-     * @see #getMaximumOccurs()
-     */
-    @Override
-    public int getMinimumOccurs() {
-        return minimumOccurs;
-    }
-
-    /**
-     * The maximum number of times that values for this parameter group are required.
-     *
-     * @see #getMinimumOccurs
-     */
-    @Override
-    public int getMaximumOccurs() {
-        return maximumOccurs;
+        super(properties, minimumOccurs, maximumOccurs, parameters);
     }
 
     /**
@@ -246,135 +134,6 @@ public class DefaultParameterDescriptorGroup extends AbstractIdentifiedObject
     @Override
     public ParameterValueGroup createValue() {
         return new ParameterGroup(this);
-    }
-
-    /**
-     * A view of {@link #parameters} as an unmodifiable list. This class overides
-     * {@link #contains} with a faster implementation based on {@link HashSet}.
-     * It can help for map projection implementations (among other), which test
-     * often for a parameter validity.
-     */
-    private static final class AsList extends UnmodifiableArrayList<GeneralParameterDescriptor> {
-        /** For compatibility with different versions. */
-        private static final long serialVersionUID = -2116304004367396735L;
-
-        /** The element as a set. Will be constructed only when first needed. */
-        private transient Set<GeneralParameterDescriptor> asSet;
-
-        /** Constructs a list for the specified array. */
-        public AsList(final GeneralParameterDescriptor[] array) {
-            super(array);
-        }
-
-        /** Tests for the inclusion of the specified descriptor. */
-        @Override
-        public boolean contains(final Object object) {
-            if (asSet == null) {
-                asSet = new HashSet<>(this);
-            }
-            return asSet.contains(object);
-        }
-    }
-
-    /**
-     * Returns the parameters in this group.
-     */
-    @Override
-    @SuppressWarnings("fallthrough")
-    public List<GeneralParameterDescriptor> descriptors() {
-        if (asList == null) {
-            if (parameters == null) {
-                asList = Collections.emptyList();
-            } else switch (parameters.length) {
-                case 0:  asList = Collections.emptyList();                  break;
-                case 1:  asList = Collections.singletonList(parameters[0]); break;
-                case 2:  // fall through
-                case 3:  asList = UnmodifiableArrayList.wrap(parameters);   break;
-                default: asList = new AsList(parameters);                   break;
-            }
-        }
-        return asList;
-    }
-
-    /**
-     * Returns the first parameter in this group for the specified
-     * {@linkplain Identifier#getCode identifier code}.
-     *
-     * @param  name The case insensitive identifier code of the parameter to search for.
-     * @return The parameter for the given identifier code.
-     * @throws ParameterNotFoundException if there is no parameter for the given identifier code.
-     */
-    @Override
-    public GeneralParameterDescriptor descriptor(String name) throws ParameterNotFoundException {
-        ensureNonNull("name", name);
-        name = name.trim();
-        List<DefaultParameterDescriptorGroup> subgroups = null;
-        List<GeneralParameterDescriptor> parameters = descriptors();
-        while (parameters != null) {
-            for (final GeneralParameterDescriptor param : parameters) {
-                if (IdentifiedObjects.nameMatches(param, name)) {
-                    return param;
-                }
-                if (param instanceof DefaultParameterDescriptorGroup) {
-                    if (subgroups == null) {
-                        subgroups = new LinkedList<>();
-                    }
-                    assert !subgroups.contains(param) : param;
-                    subgroups.add((DefaultParameterDescriptorGroup) param);
-                }
-            }
-            /*
-             * Looks in subgroups only after all parameters in the current group have been verified.
-             * Search in a "first in, first out" basis.
-             */
-            if (isNullOrEmpty(subgroups)) {
-                break;
-            }
-            parameters = subgroups.remove(0).descriptors();
-        }
-        throw new ParameterNotFoundException(Errors.format(Errors.Keys.UNKNOWN_PARAMETER_NAME_1, name), name);
-    }
-
-    /**
-     * Compares the specified object with this parameter group for equality.
-     *
-     * @param  object The object to compare to {@code this}.
-     * @param  mode {@link ComparisonMode#STRICT STRICT} for performing a strict comparison, or
-     *         {@link ComparisonMode#IGNORE_METADATA IGNORE_METADATA} for comparing only properties
-     *         relevant to transformations.
-     * @return {@code true} if both objects are equal.
-     */
-    @Override
-    public boolean equals(final Object object, final ComparisonMode mode) {
-        if (object == this) {
-            // Slight optimization
-            return true;
-        }
-        if (super.equals(object, mode)) {
-            switch (mode) {
-                case STRICT: {
-                    final DefaultParameterDescriptorGroup that = (DefaultParameterDescriptorGroup) object;
-                    return minimumOccurs == that.minimumOccurs &&
-                           maximumOccurs == that.maximumOccurs &&
-                           Arrays.equals(parameters, that.parameters);
-                }
-                default: {
-                    final ParameterDescriptorGroup that = (ParameterDescriptorGroup) object;
-                    return getMinimumOccurs() == that.getMinimumOccurs() &&
-                           getMaximumOccurs() == that.getMaximumOccurs() &&
-                           deepEquals(descriptors(), that.descriptors(), mode);
-                }
-            }
-        }
-        return false;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected long computeHashCode() {
-        return Arrays.hashCode(parameters) + super.computeHashCode();
     }
 
     /**

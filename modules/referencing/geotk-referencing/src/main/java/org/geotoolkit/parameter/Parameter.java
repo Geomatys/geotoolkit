@@ -80,7 +80,10 @@ import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
  *
  * @since 2.0
  * @module
+ *
+ * @deprecated Moved to Apache SIS {@link org.apache.sis.parameter.DefaultParameterValue}.
  */
+@Deprecated
 public class Parameter<T> extends AbstractParameterValue<T> {
     /**
      * Serial number for inter-operability with different versions.

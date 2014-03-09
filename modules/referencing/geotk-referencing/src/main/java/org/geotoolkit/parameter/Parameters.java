@@ -46,7 +46,7 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.resources.Descriptions;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.referencing.IdentifiedObjects;
+import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.measure.Units;
 import org.apache.sis.metadata.iso.quality.DefaultConformanceResult;
 import org.apache.sis.util.iso.DefaultNameSpace;
@@ -120,7 +120,10 @@ public final class Parameters extends Static {
      * @param  name  The parameter name.
      * @param  value The parameter value.
      * @return A new parameter instance for the given name and value.
+     *
+     * @deprecated Replaced by Apache SIS {@link org.apache.sis.parameter.ParameterBuilder}.
      */
+    @Deprecated
     public static Parameter<Integer> create(final String name, final int value) {
         final ParameterDescriptor<Integer> descriptor =
                 new DefaultParameterDescriptor<>(name, Integer.class, null, null);
@@ -141,7 +144,10 @@ public final class Parameters extends Static {
      * @param value The parameter value.
      * @param unit  The unit for the parameter value.
      * @return A new parameter instance for the given name and value.
+     *
+     * @deprecated Replaced by Apache SIS {@link org.apache.sis.parameter.ParameterBuilder}.
      */
+    @Deprecated
     public static Parameter<Double> create(final String name, final double value, Unit<?> unit) {
         /*
          * Normalizes the specified unit into one of "standard" units used in projections.
@@ -176,7 +182,10 @@ public final class Parameters extends Static {
      * @param  type  The parameter type.
      * @param  value The parameter value.
      * @return A new parameter instance for the given name and value.
+     *
+     * @deprecated Replaced by Apache SIS {@link org.apache.sis.parameter.ParameterBuilder}.
      */
+    @Deprecated
     public static <T extends CodeList<T>> Parameter<T> create(final String name, final Class<T> type, final T value) {
         final ParameterDescriptor<T> descriptor = new DefaultParameterDescriptor<>(name, null, type, null, true);
         final Parameter<T> parameter = new Parameter<>(descriptor);
@@ -537,7 +546,8 @@ public final class Parameters extends Static {
     public static ParameterValue<?> getOrCreate(final ParameterDescriptor<?> parameter,
             final ParameterValueGroup group) throws ParameterNotFoundException
     {
-        return cast(group.parameter(getName(parameter, group.getDescriptor())), parameter.getValueClass());
+        return org.apache.sis.parameter.Parameters.cast(
+                group.parameter(getName(parameter, group.getDescriptor())), parameter.getValueClass());
     }
 
     /**
@@ -746,7 +756,7 @@ public final class Parameters extends Static {
             final int maxDepth, final Collection<GeneralParameterValue> list)
     {
         if (maxDepth >= 0) {
-            if (IdentifiedObjects.nameMatches(parameter.getDescriptor(), name)) {
+            if (IdentifiedObjects.isHeuristicMatchForName(parameter.getDescriptor(), name)) {
                 list.add(parameter);
             }
             if ((maxDepth != 0) && (parameter instanceof ParameterValueGroup)) {
