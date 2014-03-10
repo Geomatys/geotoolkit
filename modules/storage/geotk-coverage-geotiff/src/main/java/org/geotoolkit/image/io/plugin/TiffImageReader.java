@@ -183,18 +183,11 @@ public class TiffImageReader extends SpatialImageReader {
 
     private final static short LZW_CLEAR_CODE = 256;
     private final static short LZW_EOI_CODE   = 257;
-    
-    private int  countBitsLZW;
-    private long containerLZW;
-//    private ChannelImageInputStream inputLZW;
     private ImageInputStream inputLZW;
     
     private int currentLZWCodeLength;
-//    private short currentLZWCode;
-    private int wkPos;
-    private byte[] wk = null;
-    private Map<Short, byte[]> lzwTab;
-//    private LZWMap lzwTab;
+//    private Map<Short, byte[]> lzwTab;
+    private byte[][] lzwTab;
 
     /**
      * The channel to the TIFF file. Will be created from the {@linkplain #input} when first needed.
@@ -1021,6 +1014,31 @@ public class TiffImageReader extends SpatialImageReader {
                         headProperties.put(tag, tagAttributs);
                         break;
                     }
+                    case TYPE_FLOAT : {
+                        if ((isBigTIFF && count > 2) || ((!isBigTIFF) && count > 1))
+                            throw new IIOException(error(Errors.Keys.DUPLICATED_VALUE_1, getName(tag)));
+                        final float[] result = new float[(int)count];
+                        for (int i = 0; i < count; i++) {
+                            result[i] = buffer.getFloat();
+                        }
+                        tagAttributs.put(ATT_VALUE, result);
+                        headProperties.put(tag, tagAttributs);
+                        break;
+                    }
+                    case TYPE_RATIONAL  : 
+                    case TYPE_URATIONAL : 
+                    case TYPE_DOUBLE    : {
+                        if (count > 1)
+                            throw new IIOException(error(Errors.Keys.DUPLICATED_VALUE_1, getName(tag)));
+                        if (!isBigTIFF) {
+                            throw new IllegalStateException("in standard tiff offset or value in tiff tag, should not be instance of double or rational.");
+                        }
+                        final double[] result = new double[1];
+                        result[0] = readAsDouble(type);
+                        tagAttributs.put(ATT_VALUE, result);
+                        headProperties.put(tag, tagAttributs);
+                        break;
+                    }
                     /*
                      * Only use by bigTiff format.
                      */
@@ -1379,8 +1397,15 @@ public class TiffImageReader extends SpatialImageReader {
                         break;
                     } 
                     case 3 : {
-                        if (bitsPerSample != null) assert sampleBitSize == Float.SIZE : "With Float sample format bits per sample must be equals to Float.size = 32 bits";
                         databufferType = DataBuffer.TYPE_FLOAT;// adapted for debug
+                        switch (sampleBitSize) {
+                           case Float.SIZE  : databufferType = DataBuffer.TYPE_FLOAT; break;
+                           case Double.SIZE : databufferType = DataBuffer.TYPE_DOUBLE; break;
+                           default : {
+                               throw new UnsupportedImageFormatException(error(
+                                       Errors.Keys.ILLEGAL_PARAMETER_VALUE_2, "bitsPerSample", sampleBitSize));
+                           }
+                       }
                         break;
                     }    
                     default: {
@@ -1396,9 +1421,7 @@ public class TiffImageReader extends SpatialImageReader {
                        switch (sampleBitSize) {
                            case Byte   .SIZE : databufferType = DataBuffer.TYPE_BYTE;   break;
                            case Short  .SIZE : databufferType = DataBuffer.TYPE_USHORT; break;
-                           case Integer.SIZE : databufferType = DataBuffer.TYPE_INT;    break;
-                           case Double.SIZE  : databufferType = DataBuffer.TYPE_DOUBLE; break;
-                           default: {
+                           default : {
                                throw new UnsupportedImageFormatException(error(
                                        Errors.Keys.ILLEGAL_PARAMETER_VALUE_2, "bitsPerSample", sampleBitSize));
                            }
@@ -1406,9 +1429,6 @@ public class TiffImageReader extends SpatialImageReader {
                     }
                 }
             }
-            
-            
-            
             
             switch (photoInter) {
                 case 0 :   //--minIsWhite
@@ -1424,73 +1444,9 @@ public class TiffImageReader extends SpatialImageReader {
                     Map<String, Object> colorMod = headProperties.get(ColorMap);
                     if (colorMod == null)
                         throw new UnsupportedImageFormatException("image should own colorMap informations.");
-
-//                    //-- find appropriate databuffer image type from size of sample or sample format or both of them. --//
-//                    final int databufferType;
-//                    
-//                    if (sampleFormat != null) {
-//                        final short samplFormat = (short) ((long[]) sampleFormat.get(ATT_VALUE)) [0];
-//                        switch (samplFormat) {
-//                            case 1 :   
-//                            case 2 : {
-//                                if ()
-//                                databufferType = DataBuffer.TYPE_USHORT;
-//                                break;
-//                            } 
-//                            case 3 : {
-//                                databufferType = DataBuffer.TYPE_INT;
-//                                break;
-//                            }    
-//                            default: {
-//                                throw new UnsupportedImageFormatException(error(
-//                                        Errors.Keys.ILLEGAL_PARAMETER_VALUE_2, "bitsPerSample", bitpersampl));
-//                            }
-//                        }
-//                        
-//                        
-//                    } else {
-//                        if (bitsPerSamples == null)
-//                            throw new UnsupportedImageFormatException(error(Errors.Keys.FORBIDDEN_ATTRIBUTE_2,
-//                                "bitsPerSamples", "color map"));
-//
-//                        final int bitpersampl = (int) ((long[]) bitsPerSamples.get(ATT_VALUE)) [0];
-//
-//    //                    //-- find appropriate databuffer image type from size of sample.
-//    //                    final int databufferType;
-//                        switch (bitpersampl) {
-//                            case Byte   .SIZE : databufferType = DataBuffer.TYPE_BYTE;   break;
-//                            case Short  .SIZE : databufferType = DataBuffer.TYPE_USHORT; break;
-//                            case Integer.SIZE : databufferType = DataBuffer.TYPE_INT;    break;
-//                            case Double.SIZE  : databufferType = DataBuffer.TYPE_DOUBLE; break;
-//                            default: {
-//                                throw new UnsupportedImageFormatException(error(
-//                                        Errors.Keys.ILLEGAL_PARAMETER_VALUE_2, "bitsPerSample", bitpersampl));
-//                            }
-//                        }
-//                    }
-//                        if (bitsPerSamples == null)
-//                            throw new UnsupportedImageFormatException(error(Errors.Keys.FORBIDDEN_ATTRIBUTE_2,
-//                                "bitsPerSamples", "color map"));
-//
-//                        final int bitpersampl = (int) ((long[]) bitsPerSamples.get(ATT_VALUE)) [0];
-//
-//    //                    //-- find appropriate databuffer image type from size of sample.
-//    //                    final int databufferType;
-//                        switch (bitpersampl) {
-//                            case Byte   .SIZE : databufferType = DataBuffer.TYPE_BYTE;   break;
-//                            case Short  .SIZE : databufferType = DataBuffer.TYPE_USHORT; break;
-//                            case Integer.SIZE : databufferType = DataBuffer.TYPE_INT;    break;
-//                            case Double.SIZE  : databufferType = DataBuffer.TYPE_DOUBLE; break;
-//                            default: {
-//                                throw new UnsupportedImageFormatException(error(
-//                                        Errors.Keys.ILLEGAL_PARAMETER_VALUE_2, "bitsPerSample", bitpersampl));
-//                            }
-//                        }
-
                     final long[] index  = (long[]) colorMod.get(ATT_VALUE);
                     final int[] indexes = buildColorMapArray(index);
                     final ColorModel cm = new IndexColorModel(sampleBitSize, indexes.length, indexes, 0, true, -1, databufferType);
-//                    rawImageType        = new ImageTypeSpecifier(cm, cm.createCompatibleSampleModel(imageWidth, imageHeight));
                     rawImageType        = new ImageTypeSpecifier(cm, cm.createCompatibleSampleModel(dstRegion.width, dstRegion.height));
                     return rawImageType;
                 }
@@ -1499,48 +1455,6 @@ public class TiffImageReader extends SpatialImageReader {
                             "photometricInterpretation", photoInter));
                 }
             }
-
-//            final int type;
-//            final int[] bits;
-//            final long[] bitsPerSample = this.bitsPerSample;
-//            if (bitsPerSample != null) {
-//                int size = 0;
-//                bits = new int[bitsPerSample.length];
-//                for (int i=0; i < bits.length; i++) {
-//                    final long b = bitsPerSample[i];
-//                    if ((bits[i] = (int) b) != b) {
-//                        //-- Verify that 'bitPerSample' values are inside 'int' range (paranoiac check).
-//                        throw new UnsupportedImageFormatException(error(
-//                                Errors.Keys.ILLEGAL_PARAMETER_VALUE_2, "bitsPerSample", b));
-//                    }
-//                    if (i != 0 && b != size) {
-//                        //-- Current implementation requires all sample values to be of the same size.
-//                        throw new UnsupportedImageFormatException(error(Errors.Keys.INCONSISTENT_VALUE));
-//                    }
-//                    size = (int) b;
-//                }
-//                /*
-//                 * We require exact value, because the reading process read all sample values
-//                 * in one contiguous read operation.
-//                 */
-//                switch (size) {
-//                    case Byte   .SIZE : type = DataBuffer.TYPE_BYTE;   break;
-//                    case Short  .SIZE : type = DataBuffer.TYPE_USHORT; break;
-//                    case Integer.SIZE : type = DataBuffer.TYPE_INT;    break;
-//                    case Double.SIZE  : type = DataBuffer.TYPE_DOUBLE; break;
-//                    default: {
-//                        throw new UnsupportedImageFormatException(error(
-//                                Errors.Keys.ILLEGAL_PARAMETER_VALUE_2, "bitsPerSample", size));
-//                    }
-//                }
-//            } else {
-//                /*
-//                 * If the bitsPerSample field were not specified, assume bytes.
-//                 */
-//                type = DataBuffer.TYPE_BYTE;
-//                bits = new int[(samplesPerPixel != 0) ? samplesPerPixel : cs.getNumComponents()];
-//                Arrays.fill(bits, 8);
-//            }
             final boolean hasAlpha = bits.length > cs.getNumComponents();
             final ColorModel cm = new ComponentColorModel(cs, bits, hasAlpha, false,
                     hasAlpha ? Transparency.TRANSLUCENT : Transparency.OPAQUE, databufferType);
@@ -1889,27 +1803,11 @@ public class TiffImageReader extends SpatialImageReader {
         final int dataType             = dataBuffer.getDataType();
         final int sampleSize           = DataBuffer.getDataTypeSize(dataType) / Byte.SIZE;
         final int sourcePixelStride    = samplesPerPixel;
-        final int targetPixelStride    = numBands;
+//        final int targetPixelStride    = numBands;
         final int sourceScanlineStride = samplesPerPixel * imageWidth;
         final int targetScanlineStride = SampleModels.getScanlineStride(raster.getSampleModel());
-
-//        assert dataType == DataBuffer.TYPE_BYTE : "with packBits compression input and output databuffer type should be instance of DataBuffer.TYPE_BYTE";
-        /*
-         * Get a view of the ByteBuffer as a NIO Buffer of the appropriate type.
-         * The buffer is cleared first because the 'sourceBuffer' capacity will
-         * be set to this buffer limit.
-         */
-        final ByteBuffer sourceBuffer;
-        // For keep position and limit variables locale.
-        final int position = buffer.position();
-        final int limit    = buffer.limit();
-        buffer.clear();
-        sourceBuffer = buffer.duplicate();
-        buffer.limit(limit).position(position);
-
-        //-- lzw attributs --//
         
-//        short oldCodeLZW = LZW_CLEAR_CODE;
+        //-- lzw attributs --//
         byte[] oldCodeLZW = null;
         int idLZWTab = 0;
         currentLZWCodeLength = 9;
@@ -1921,22 +1819,13 @@ public class TiffImageReader extends SpatialImageReader {
             fO = (short) ((long[]) fillOrder.get(ATT_VALUE)) [0];
         }
         
-//        inputLZW = new ChannelImageInputStream(null, channel, buffer, true);
         inputLZW = (fO == 2) ? ImageIO.createImageInputStream(new InvertFilterInputStream(fIStImageReader)) : ImageIO.createImageInputStream(input);
-//        
-//        //------------------------------ debug -------------------------------//
-//        inputLZW = new CompareReader(ImageIO.createImageInputStream(input), new ChannelImageInputStream(null, channel, buffer, true));
-        //--------------------------------------------------------------------//
-        
-        lzwTab = new HashMap<>();
-        
+//        lzwTab = new HashMap<>();
         
         for (int bank = 0; bank < bankOffsets.length; bank++) {
             /*
              * Get the underlying array of the image DataBuffer in which to write the data.
              */
-//            final byte[] targetArray = ((DataBufferByte) dataBuffer).getData(bank);
-//            Arrays.fill(targetArray, (byte) 255);
             final Object targetArray;
             switch (dataType) {
                 case DataBuffer.TYPE_BYTE:   targetArray = ((DataBufferByte)   dataBuffer).getData(bank); break;
@@ -1956,9 +1845,7 @@ public class TiffImageReader extends SpatialImageReader {
             int hdb = 0;
             
             final long bitpersampl = bitsPerSample[0];
-            final long dataMask = (1 << bitsPerSample[0]) - 1;
             long dataContainer = 0;
-            long mask = 0x000000FFL;
             int maskCount = 0;
             
             /*
@@ -1983,16 +1870,19 @@ public class TiffImageReader extends SpatialImageReader {
             
             // on parcour les stripOffset necessaire
             //-- follow only necessarry stripOffsets to fill target image --//
-            for (int cSO = currentStripOffset; cSO < maxStripOffset; cSO++) {
+            nextStrip : for (int cSO = currentStripOffset; cSO < maxStripOffset; cSO++) {
+                
                 //-- buffer start position
                 long currentBuffPos        = stripOffsets[cSO];
 //                System.out.println("strip "+cSO+" at position "+currentBuffPos);
                 inputLZW.seek(currentBuffPos);
-//                inputLZW.getStreamPosition();
-                
-//                final long expectedPos = currentBuffPos + stripByteCounts[cSO];
                 currentLZWCodeLength = 9;
-                lzwTab.clear();
+//                lzwTab.clear();
+//                Arrays.fill(lzwTab, null);
+                lzwTab = new byte[LZW_CLEAR_CODE][];
+                idLZWTab = 0;
+                oldCodeLZW = null;
+                hdb = 0;
                 // on parcours tout le strip jusqua max
                 // mais d'abord 
                 // definir la posref de depart
@@ -2003,37 +1893,27 @@ public class TiffImageReader extends SpatialImageReader {
                 
                 //-- bytePos must follow all file byte per byte --//
                 int bytePos = 0;
-                
-                //-- horizontal differencing attributs --//
-//                int hdPosRef = Math.max(0, posRef - samplesPerPixel);
-                // get premier pixel de la ligne source
-                int hdBytePosRef = (ypos - cSO * rowsPerStrip) * sourceScanlineStride * sampleSize;
-                //---------------------------------------//
-                
-                // a reconcatener en 1 seul step.
-                final int stepBeforeXref = srcRegion.x * sourcePixelStride;
-                final int stepAfterXref  = sourceScanlineStride - srcMaxx;
-                int maxRowRefPos         = posRef + srcRegion.width * sourcePixelStride;
+                int maxRowRefPos         = posRef + dstRegion.width * samplesPerPixel * sourceXSubsampling;
                 int b = 0;
-                
-//                readLZWCode(9);
                 
                 //-- work sample by sample --//
                 while (samplePos < maxSamplePos) {
-                    
-                    //--------------------- debut -----------------------------//
-                    
+                    //-- continue at next stripOffset if its unneccessary to read end of current strip --// 
+                    if (ypos > (cSO + 1) * rowsPerStrip) {
+                        //-- initialize predic array --//
+                        Arrays.fill(prediPix, 0);
+                        continue nextStrip;
+                    }
+                    //-- get LZW code --//
                     short codeLZW  = readLZWCode(currentLZWCodeLength);
-//                    if (fillOrder == 2) {
-//                        codeLZW = (short) (Integer.reverse(codeLZW) >>> (Integer.SIZE - currentLZWCodeLength));
-//                    }
-//                    assert codeLZW != LZW_EOI_CODE : "LZW code should never be equals to 257 (EOI)";
 //                    System.out.println("bank = "+bankID+" samplePos = "+samplePos+" bytePos = "+bytePos+" code = "+codeLZW);
                     
                     if (codeLZW == LZW_EOI_CODE) break; 
                     if (codeLZW == LZW_CLEAR_CODE) {
                         currentLZWCodeLength = 9;
-                        lzwTab.clear();
+//                        lzwTab.clear();
+//                        Arrays.fill(lzwTab, null);
+                        lzwTab = new byte[LZW_CLEAR_CODE][];
                         idLZWTab = 0;
                         oldCodeLZW = null;
                         continue;
@@ -2044,14 +1924,22 @@ public class TiffImageReader extends SpatialImageReader {
                     byte[] entree;
                     if (codeLZW >= 258) {
 //                            assert !lzwTab.isEmpty();
-                        if (lzwTab.containsKey((short) (codeLZW - 258))) {
-                            entree = lzwTab.get((short) (codeLZW - 258));
+//                        if (lzwTab.containsKey((short) (codeLZW - 258))) {
+//                            entree = lzwTab.get((short) (codeLZW - 258));
+//                        } else {
+//                            // w + w[0]
+//                            final int oldCLen = oldCodeLZW.length;
+//                            entree = Arrays.copyOf(oldCodeLZW, oldCLen + 1);
+//                            entree[oldCLen] = oldCodeLZW[0];
+//                        }  
+                        if (lzwTab[codeLZW - 258] != null) {
+                            entree = lzwTab[codeLZW - 258];
                         } else {
                             // w + w[0]
                             final int oldCLen = oldCodeLZW.length;
                             entree = Arrays.copyOf(oldCodeLZW, oldCLen + 1);
                             entree[oldCLen] = oldCodeLZW[0];
-                        }  
+                        }
                     } else {
                         entree = new byte[] { (byte) codeLZW };
                     }
@@ -2059,10 +1947,8 @@ public class TiffImageReader extends SpatialImageReader {
                     assert entree != null;
 
                     //-- write entree
-                    // pour l'instant 1 byte = 1 sample
                     for (int i = 0; i < entree.length; i++) {
-                        //-- faire une etude du fill order
-                        if (bytePos >= hdBytePosRef) {
+                        //-- faire une etude du fill order --//
                             final long val = entree[i] & 0x000000FFL;
                             dataContainer = dataContainer | (val << maskCount);
                             maskCount += Byte.SIZE;
@@ -2078,9 +1964,7 @@ public class TiffImageReader extends SpatialImageReader {
                                 maskCount = 0;
                                 
                                 //-- write sample in target array if its necessary --//
-                                if (samplePos == posRef) { // modifier ici pour tout concatener dans un long qui sera caster kan le nombre de bit per samples sera atteint
-        //                        System.out.println("bank = "+bankID);
-        //                            ((byte[]) targetArray) [bankID++] = prediPix[b];
+                                if (samplePos == posRef) { 
                                     switch (dataType) {
                                         case DataBuffer.TYPE_BYTE   : Array.setByte(targetArray, bankID++, (byte) (prediPix[b] & 0xFF)); break;
                                         case DataBuffer.TYPE_SHORT  : 
@@ -2099,39 +1983,33 @@ public class TiffImageReader extends SpatialImageReader {
 
                                     //-- this if means pass to the next destination image row --//
                                     if (posRef == maxRowRefPos) {
-                                        //-- begin source position writing --//
-                                        posRef += stepAfterXref;
-                                        posRef += (sourceYSubsampling - 1) * sourceScanlineStride;
-                                        posRef += stepBeforeXref;
-                                        //-- ending source position writing --//
-                                        maxRowRefPos += sourceScanlineStride * sourceYSubsampling;
-
-                                        //-- horizontal differencing --//
+                                        assert hdb == 0 : "hdb should be zero. hdb = "+hdb;
                                         ypos += sourceYSubsampling;
-        //                                hdPosRef = posRef - samplesPerPixel;
-                                        //-- shift at the next row first byte --// 
-                                        hdBytePosRef = (ypos - cSO * rowsPerStrip) * sourceScanlineStride * sampleSize;// + Math.max(0, (srcRegion.x - 1) * samplesPerPixel);
-
-                                        //-- initialize predic table --//
-                                        Arrays.fill(prediPix, 0);
-                                        //-------------------------------//
-
+                                        
+                                        //-- begin source position writing --//
+                                        posRef = (ypos - cSO * rowsPerStrip) * sourceScanlineStride + srcRegion.x * samplesPerPixel;
+                                        //-- ending source position writing --//
+//                                        maxRowRefPos = posRef + dstRegion.width * samplesPerPixel * sourceXSubsampling;
+                                        maxRowRefPos += sourceScanlineStride * sourceYSubsampling;
+                                        
                                         //-- destination shifts --//
                                         bankID += dstStepAfterReadX;
                                         bankID += dstStepBeforeReadX;
                                     }
                                 }
-                                
                                 //-- shift by one when a sample was build --//
                                 samplePos++;
                             }
+                        if (++bytePos == sourceScanlineStride) {
+                            //-- initialize predic array --//
+                            Arrays.fill(prediPix, 0);
+                            bytePos = 0;
                         }
-                        bytePos++;
                     }
 
                     if (oldCodeLZW == null) {
                         assert idLZWTab == 0 : "With old code null : lzw tab must be equals to zero.";
-                        assert lzwTab.isEmpty() : "With old code null : lzwTab should be empty.";
+//                        assert lzwTab.isEmpty() : "With old code null : lzwTab should be empty.";
                         assert entree.length == 1;
                         oldCodeLZW = entree;
                         continue;
@@ -2142,26 +2020,275 @@ public class TiffImageReader extends SpatialImageReader {
                     final int oldLen = oldCodeLZW.length;
                     final byte[] addedTab = Arrays.copyOf(oldCodeLZW, oldLen + 1);
                     addedTab[oldLen] = entree[0];
-
-                    lzwTab.put((short) idLZWTab++, addedTab);
+                    lzwTab[idLZWTab++] = addedTab;
+//                    lzwTab.put((short) idLZWTab++, addedTab);
                     if (((idLZWTab + 258) & 0xFFFF) >= ((1 << currentLZWCodeLength) - 1)) {
-//                        System.out.println("up currentlzw val = "+((1 << currentLZWCodeLength) - 1));
-//                        System.out.println("idlzwtab = "+idLZWTab);
                         currentLZWCodeLength++;
+                        lzwTab = Arrays.copyOf(lzwTab, (1 << currentLZWCodeLength));
                     }
                     oldCodeLZW = entree;
                     //---------------------------------------------------------//
                     //--------------------- fin -------------------------------//
                 }
                 assert samplePos == maxSamplePos : "pos = "+samplePos+" Expected pos = "+maxSamplePos;
-                // ca ca va pas 
-//                ypos += rowsPerStrip;
-//                System.out.println("currr = "+currentLZWCodeLength);
-                //assert
-//                assert inputLZW.getStreamPosition() == expectedPos : "streampos = "+inputLZW.getStreamPosition()+"  expectedpos = "+expectedPos;
             }
         }
     }
+    
+//    /**
+//     * 
+//     * @param raster
+//     * @param param
+//     * @param srcRegion
+//     * @param dstRegion
+//     * @throws IOException 
+//     */
+//    private void readFromStripLZW(final WritableRaster raster, final ImageReadParam param,
+//            final Rectangle srcRegion, final Rectangle dstRegion) throws IOException {
+//        clearAbortRequest();
+//        final int numBands = raster.getNumBands();
+//        checkReadParamBandSettings(param, samplesPerPixel, numBands);
+//        final int[]      sourceBands;
+//        final int[] destinationBands;
+//        final int sourceXSubsampling;
+//        final int sourceYSubsampling;
+//        if (param != null) {
+//            sourceBands        = param.getSourceBands();
+//            destinationBands   = param.getDestinationBands();
+//            sourceXSubsampling = param.getSourceXSubsampling();
+//            sourceYSubsampling = param.getSourceYSubsampling();
+//        } else {
+//            sourceBands        = null;
+//            destinationBands   = null;
+//            sourceXSubsampling = 1;
+//            sourceYSubsampling = 1;
+//        }
+//        if (sourceBands != null || destinationBands != null) {
+//            throw new IIOException("Source and target bands not yet supported.");
+//        }
+//        final DataBuffer dataBuffer    = raster.getDataBuffer();
+//        final int[] bankOffsets        = dataBuffer.getOffsets();
+//        final int dataType             = dataBuffer.getDataType();
+//        final int sampleSize           = DataBuffer.getDataTypeSize(dataType) / Byte.SIZE;
+//        final int sourcePixelStride    = samplesPerPixel;
+////        final int targetPixelStride    = numBands;
+//        final int sourceScanlineStride = samplesPerPixel * imageWidth;
+//        final int targetScanlineStride = SampleModels.getScanlineStride(raster.getSampleModel());
+//        
+//        //-- lzw attributs --//
+//        byte[] oldCodeLZW = null;
+//        int idLZWTab = 0;
+//        currentLZWCodeLength = 9;
+//        
+//        //-- fillOrder --//
+//        final Map<String, Object> fillOrder = headProperties.get(FillOrder);
+//        short fO = 1;
+//        if (fillOrder != null) {
+//            fO = (short) ((long[]) fillOrder.get(ATT_VALUE)) [0];
+//        }
+//        
+//        inputLZW = (fO == 2) ? ImageIO.createImageInputStream(new InvertFilterInputStream(fIStImageReader)) : ImageIO.createImageInputStream(input);
+//        lzwTab = new HashMap<>();
+//        
+//        for (int bank = 0; bank < bankOffsets.length; bank++) {
+//            /*
+//             * Get the underlying array of the image DataBuffer in which to write the data.
+//             */
+//            final Object targetArray;
+//            switch (dataType) {
+//                case DataBuffer.TYPE_BYTE:   targetArray = ((DataBufferByte)   dataBuffer).getData(bank); break;
+//                case DataBuffer.TYPE_USHORT: targetArray = ((DataBufferUShort) dataBuffer).getData(bank); break;
+//                case DataBuffer.TYPE_SHORT:  targetArray = ((DataBufferShort)  dataBuffer).getData(bank); break;
+//                case DataBuffer.TYPE_INT:    targetArray = ((DataBufferInt)    dataBuffer).getData(bank); break;
+//                case DataBuffer.TYPE_FLOAT:  targetArray = ((DataBufferFloat)  dataBuffer).getData(bank); break;
+//                case DataBuffer.TYPE_DOUBLE: targetArray = ((DataBufferDouble) dataBuffer).getData(bank); break;
+//                default: throw new AssertionError(dataType);
+//            }
+//            
+//            
+//            //-- predictor study ---//
+//            final Map<String, Object> predictor = (headProperties.get(Predictor));
+//            final short predic = (predictor != null) ? (short) ((long[]) predictor.get(ATT_VALUE)) [0] : 1;
+//            final long[] prediPix = new long[samplesPerPixel];
+//            int hdb = 0;
+//            
+//            final long bitpersampl = bitsPerSample[0];
+//            long dataContainer = 0;
+//            int maskCount = 0;
+//            
+//            /*
+//             * Iterate over the strip to read, in sequential file access order (which is not
+//             * necessarily the same than row indices order).
+//             */
+//            final int srcMaxx = (srcRegion.x + srcRegion.width) * samplesPerPixel;
+//            final int srcMaxy = srcRegion.y  + srcRegion.height;
+//
+//            //-- step on x axis in target window (dstRegion)
+//            final int dstStepBeforeReadX = dstRegion.x * numBands;
+//            final int dstStepAfterReadX  = (targetScanlineStride - (dstRegion.x + dstRegion.width) * numBands);
+//
+//            //-- target start
+//            int bankID = bankOffsets[bank] + targetScanlineStride * dstRegion.y;
+//
+//            //-- stripoffset array index start
+//            int currentStripOffset    = srcRegion.y / rowsPerStrip;
+//            final int maxStripOffset = (srcMaxy + rowsPerStrip - 1) / rowsPerStrip;
+//            
+//            int ypos = srcRegion.y;
+//            
+//            // on parcour les stripOffset necessaire
+//            //-- follow only necessarry stripOffsets to fill target image --//
+//            nextStrip : for (int cSO = currentStripOffset; cSO < maxStripOffset; cSO++) {
+//                
+//                //-- buffer start position
+//                long currentBuffPos        = stripOffsets[cSO];
+////                System.out.println("strip "+cSO+" at position "+currentBuffPos);
+//                inputLZW.seek(currentBuffPos);
+//                currentLZWCodeLength = 9;
+//                lzwTab.clear();
+//                idLZWTab = 0;
+//                oldCodeLZW = null;
+//                hdb = 0;
+//                // on parcours tout le strip jusqua max
+//                // mais d'abord 
+//                // definir la posref de depart
+//                int posRef       = (ypos - cSO * rowsPerStrip) * sourceScanlineStride + srcRegion.x * samplesPerPixel;
+////                final int maxPos = (((rowsPerStrip / sourceYSubsampling) * sourceYSubsampling) - 1) * sourceScanlineStride + srcMaxx;
+//                final int maxSamplePos = (Math.min((cSO + 1) * rowsPerStrip, srcMaxy) - cSO * rowsPerStrip) * sourceScanlineStride;
+//                int samplePos = 0;
+//                
+//                //-- bytePos must follow all file byte per byte --//
+//                int bytePos = 0;
+//                int maxRowRefPos         = posRef + dstRegion.width * samplesPerPixel * sourceXSubsampling;
+//                int b = 0;
+//                
+//                //-- work sample by sample --//
+//                while (samplePos < maxSamplePos) {
+//                    //-- continue at next stripOffset if its unneccessary to read end of current strip --// 
+//                    if (ypos > (cSO + 1) * rowsPerStrip) {
+//                        //-- initialize predic array --//
+//                        Arrays.fill(prediPix, 0);
+//                        continue nextStrip;
+//                    }
+//                    //-- get LZW code --//
+//                    short codeLZW  = readLZWCode(currentLZWCodeLength);
+////                    System.out.println("bank = "+bankID+" samplePos = "+samplePos+" bytePos = "+bytePos+" code = "+codeLZW);
+//                    
+//                    if (codeLZW == LZW_EOI_CODE) break; 
+//                    if (codeLZW == LZW_CLEAR_CODE) {
+//                        currentLZWCodeLength = 9;
+//                        lzwTab.clear();
+//                        idLZWTab = 0;
+//                        oldCodeLZW = null;
+//                        continue;
+//                    }
+//                    
+//                    if (oldCodeLZW == null) assert codeLZW < LZW_CLEAR_CODE : "After a clear code, next code should be smaller than 256";
+//                    
+//                    byte[] entree;
+//                    if (codeLZW >= 258) {
+////                            assert !lzwTab.isEmpty();
+//                        if (lzwTab.containsKey((short) (codeLZW - 258))) {
+//                            entree = lzwTab.get((short) (codeLZW - 258));
+//                        } else {
+//                            // w + w[0]
+//                            final int oldCLen = oldCodeLZW.length;
+//                            entree = Arrays.copyOf(oldCodeLZW, oldCLen + 1);
+//                            entree[oldCLen] = oldCodeLZW[0];
+//                        }  
+//                    } else {
+//                        entree = new byte[] { (byte) codeLZW };
+//                    }
+//
+//                    assert entree != null;
+//
+//                    //-- write entree
+//                    for (int i = 0; i < entree.length; i++) {
+//                        //-- faire une etude du fill order --//
+//                            final long val = entree[i] & 0x000000FFL;
+//                            dataContainer = dataContainer | (val << maskCount);
+//                            maskCount += Byte.SIZE;
+//                            //-- a sample is build --//
+//                            if (maskCount == bitpersampl) {
+//                                //-- add in precedently table before insertion --//
+//                                //-- if horizontal differencing add with precedently value --//
+//                                prediPix[hdb] = (predic == 2) ? (prediPix[hdb] + dataContainer) : dataContainer;
+//                                if (++hdb == samplesPerPixel) hdb = 0;
+//                                
+//                                //-- re-initialize datacontainer --//
+//                                dataContainer = 0;
+//                                maskCount = 0;
+//                                
+//                                //-- write sample in target array if its necessary --//
+//                                if (samplePos == posRef) { 
+//                                    switch (dataType) {
+//                                        case DataBuffer.TYPE_BYTE   : Array.setByte(targetArray, bankID++, (byte) (prediPix[b] & 0xFF)); break;
+//                                        case DataBuffer.TYPE_SHORT  : 
+//                                        case DataBuffer.TYPE_USHORT : Array.setShort(targetArray, bankID++, (short) (prediPix[b] & 0xFFFF)); break;
+////                                            case DataBuffer.TYPE_FLOAT  :
+//                                        case DataBuffer.TYPE_INT    : Array.setInt(targetArray, bankID++, (int) (prediPix[b] & 0xFFFFFFFF)); break;
+//                                        case DataBuffer.TYPE_FLOAT  : Array.setFloat(targetArray, bankID++, Float.intBitsToFloat((int) (prediPix[b] & 0xFFFFFFFF))); break;
+//                                        case DataBuffer.TYPE_DOUBLE : Array.setDouble(targetArray, bankID++, Double.longBitsToDouble(prediPix[b])); break;
+//                                        default: throw new AssertionError(dataType);
+//                                    }
+//                                    if (++b == samplesPerPixel) {
+//                                        posRef += (sourceXSubsampling - 1) * samplesPerPixel;
+//                                        b = 0;
+//                                    }
+//                                    posRef++;
+//
+//                                    //-- this if means pass to the next destination image row --//
+//                                    if (posRef == maxRowRefPos) {
+//                                        assert hdb == 0 : "hdb should be zero. hdb = "+hdb;
+//                                        ypos += sourceYSubsampling;
+//                                        
+//                                        //-- begin source position writing --//
+//                                        posRef = (ypos - cSO * rowsPerStrip) * sourceScanlineStride + srcRegion.x * samplesPerPixel;
+//                                        //-- ending source position writing --//
+////                                        maxRowRefPos = posRef + dstRegion.width * samplesPerPixel * sourceXSubsampling;
+//                                        maxRowRefPos += sourceScanlineStride * sourceYSubsampling;
+//                                        
+//                                        //-- destination shifts --//
+//                                        bankID += dstStepAfterReadX;
+//                                        bankID += dstStepBeforeReadX;
+//                                    }
+//                                }
+//                                //-- shift by one when a sample was build --//
+//                                samplePos++;
+//                            }
+//                        if (++bytePos == sourceScanlineStride) {
+//                            //-- initialize predic array --//
+//                            Arrays.fill(prediPix, 0);
+//                            bytePos = 0;
+//                        }
+//                    }
+//
+//                    if (oldCodeLZW == null) {
+//                        assert idLZWTab == 0 : "With old code null : lzw tab must be equals to zero.";
+//                        assert lzwTab.isEmpty() : "With old code null : lzwTab should be empty.";
+//                        assert entree.length == 1;
+//                        oldCodeLZW = entree;
+//                        continue;
+//                    }
+//
+//                    assert oldCodeLZW != null;
+//
+//                    final int oldLen = oldCodeLZW.length;
+//                    final byte[] addedTab = Arrays.copyOf(oldCodeLZW, oldLen + 1);
+//                    addedTab[oldLen] = entree[0];
+//
+//                    lzwTab.put((short) idLZWTab++, addedTab);
+//                    if (((idLZWTab + 258) & 0xFFFF) >= ((1 << currentLZWCodeLength) - 1)) {
+//                        currentLZWCodeLength++;
+//                    }
+//                    oldCodeLZW = entree;
+//                    //---------------------------------------------------------//
+//                    //--------------------- fin -------------------------------//
+//                }
+//                assert samplePos == maxSamplePos : "pos = "+samplePos+" Expected pos = "+maxSamplePos;
+//            }
+//        }
+//    }
     
     
 //    /**
