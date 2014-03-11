@@ -56,6 +56,7 @@ import java.awt.image.DataBufferDouble;
 import java.awt.image.IndexColorModel;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Array;
+import java.nio.channels.ReadableByteChannel;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -511,9 +512,7 @@ public class TiffImageReader extends SpatialImageReader {
      * @return inverted <code>byte</code>.
      */
     private static int reverseByte(final int b) {
-        final int r = (int) (((b * 0x80200802L) & 0x0884422110L) * 0x0101010101L >>> 32);
-        assert r == ((Integer.reverse(b) >>> 24) & 0xFF) : b;
-        return r;
+        return ((Integer.reverse(b) >>> 24));
     }
     
     /**
@@ -1860,14 +1859,18 @@ public class TiffImageReader extends SpatialImageReader {
         int idLZWTab = 0;
         currentLZWCodeLength = 9;
         
+        //-- predictor study ---//
+        final Map<String, Object> predictor = (headProperties.get(Predictor));
+        final short predic    = (predictor != null) ? (short) ((long[]) predictor.get(ATT_VALUE)) [0] : 1;
+        
         //-- fillOrder --//
         final Map<String, Object> fillOrder = headProperties.get(FillOrder);
         short fO = 1;
         if (fillOrder != null) {
             fO = (short) ((long[]) fillOrder.get(ATT_VALUE)) [0];
         }
-//        ImageIO.setUseCache(false);
-        inputLZW = (fO == 2) ? ImageIO.createImageInputStream(new InvertFilterInputStream(fIStImageReader)) : ImageIO.createImageInputStream(input);
+        final ReadableByteChannel fillOrderChannel = (fO == 2) ? new ReversedBitsChannel(fIStImageReader.getChannel()) : fIStImageReader.getChannel();
+        inputLZW = new ChannelImageInputStream(null, fillOrderChannel, ByteBuffer.allocateDirect(8196), false);
         
         for (int bank = 0; bank < bankOffsets.length; bank++) {
             /*
@@ -1883,10 +1886,7 @@ public class TiffImageReader extends SpatialImageReader {
                 case DataBuffer.TYPE_DOUBLE: targetArray = ((DataBufferDouble) dataBuffer).getData(bank); break;
                 default: throw new AssertionError(dataType);
             }
-            
-            //-- predictor study ---//
-            final Map<String, Object> predictor = (headProperties.get(Predictor));
-            final short predic    = (predictor != null) ? (short) ((long[]) predictor.get(ATT_VALUE)) [0] : 1;
+                        
             final long[] prediPix = new long[samplesPerPixel];
             int hdb               = 0;
             
@@ -2005,11 +2005,11 @@ public class TiffImageReader extends SpatialImageReader {
                             //-- write sample in target array if its necessary --//
                             if (samplePos == posRef) { 
                                 switch (dataType) {
-                                    case DataBuffer.TYPE_BYTE   : Array.setByte(targetArray, bankID++, (byte) (prediPix[b] & 0xFF)); break;
+                                    case DataBuffer.TYPE_BYTE   : Array.setByte(targetArray, bankID++, (byte) (prediPix[b])); break;
                                     case DataBuffer.TYPE_SHORT  : 
-                                    case DataBuffer.TYPE_USHORT : Array.setShort(targetArray, bankID++, (short) (prediPix[b] & 0xFFFF)); break;
-                                    case DataBuffer.TYPE_INT    : Array.setInt(targetArray, bankID++, (int) (prediPix[b] & 0xFFFFFFFF)); break;
-                                    case DataBuffer.TYPE_FLOAT  : Array.setFloat(targetArray, bankID++, Float.intBitsToFloat((int) (prediPix[b] & 0xFFFFFFFF))); break;
+                                    case DataBuffer.TYPE_USHORT : Array.setShort(targetArray, bankID++, (short) (prediPix[b])); break;
+                                    case DataBuffer.TYPE_INT    : Array.setInt(targetArray, bankID++, (int) (prediPix[b])); break;
+                                    case DataBuffer.TYPE_FLOAT  : Array.setFloat(targetArray, bankID++, Float.intBitsToFloat((int) (prediPix[b]))); break;
                                     case DataBuffer.TYPE_DOUBLE : Array.setDouble(targetArray, bankID++, Double.longBitsToDouble(prediPix[b])); break;
                                     default: throw new AssertionError(dataType);
                                 }
