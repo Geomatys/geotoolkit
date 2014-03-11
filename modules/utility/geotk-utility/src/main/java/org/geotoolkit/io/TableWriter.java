@@ -376,7 +376,7 @@ public class TableWriter extends FilterWriter {
      */
     public void writeHorizontalSeparator() {
         synchronized (lock) {
-            formatter.writeHorizontalSeparator();
+            formatter.appendHorizontalSeparator();
         }
     }
 
