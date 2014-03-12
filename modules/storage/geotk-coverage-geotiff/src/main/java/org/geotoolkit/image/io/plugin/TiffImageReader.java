@@ -182,18 +182,16 @@ public class TiffImageReader extends SpatialImageReader {
         size[TYPE_URATIONAL] = size[TYPE_RATIONAL]             = (Integer.SIZE << 1) / Byte.SIZE; //rational = Integer / Integer. 2 Integer values red.
     }
 
+    /**
+     * Particularity code LZW.
+     * Only use in readFromStripLZW() method.
+     */
     private final static short LZW_CLEAR_CODE = 256;
     private final static short LZW_EOI_CODE   = 257;
-//    private ImageInputStream inputLZW;
-    
-//    private int currentLZWCodeLength;
-//    private Map<Short, byte[]> lzwTab;
-//    private byte[][] lzwTab;
 
     /**
      * The channel to the TIFF file. Will be created from the {@linkplain #input} when first needed.
      */
-
     private FileChannel channel;
 
     /**
@@ -296,10 +294,7 @@ public class TiffImageReader extends SpatialImageReader {
     private int offsetSize;
     
     FileInputStream fIStImageReader;
-    
-    Rectangle srcRegion;
-    Rectangle dstRegion;
-    
+        
     private boolean reverseByte;
     
 
@@ -383,12 +378,6 @@ public class TiffImageReader extends SpatialImageReader {
                 throw new IllegalStateException(error(Errors.Keys.NO_IMAGE_INPUT));
             }
             final FileInputStream in;
-//            if (input instanceof String) {
-//                in = new FileInputStream((String) input);
-//            } else {
-//                in = new FileInputStream((File) input);
-//            }
-//            channel = in.getChannel();
             if (input instanceof String) {
                 in = new FileInputStream((String) input);
                 fIStImageReader = new FileInputStream((String) input);
@@ -450,12 +439,7 @@ public class TiffImageReader extends SpatialImageReader {
         } else {
             buffer.clear();
             if (position != filePosition) {
-//                try {
-                    channel.position(position);
-//                } catch (Exception ex) {
-//                    System.out.println("pos de merde : "+position);
-//                }
-                
+                channel.position(position);
             }
             readFully(min, Math.max(min, max));
         }
@@ -847,7 +831,6 @@ public class TiffImageReader extends SpatialImageReader {
         final short type    = buffer.getShort();
         final long count    = readInt();
         final long datasize = count * TYPE_SIZE[type];
-//        System.out.println("tag : "+tag+" : "+getName(tag));
         if (datasize <= offsetSize) {
             //-- offset is the real value(s).
             entryValue(tag, type, count);
@@ -1138,15 +1121,9 @@ public class TiffImageReader extends SpatialImageReader {
             while (currentPos < maxBuffPos) {
                 final int currentByteLength = Math.min(currentPos + buffCapacity, maxBuffPos) - currentPos;
                 assert currentByteLength % dataSize == 0 : "current length = "+currentByteLength+" samplesize = "+dataSize;
-//                try {
-                    ensureBufferContains(currentPos, Math.min(currentByteLength, buffCapacity), Math.max(currentByteLength, 1024));
-//                } catch (Exception ex) {
-//                    System.out.println("");
-//                }
-                
-//                    ensureBufferContains(currentPos, Math.min(currentByteLength, buffCapacity), Math.max(currentByteLength, 1024));
-                    final int dataNumber = currentByteLength / dataSize;
-                    assert buffer.remaining() >= currentByteLength;
+                ensureBufferContains(currentPos, Math.min(currentByteLength, buffCapacity), Math.max(currentByteLength, 1024));
+                final int dataNumber = currentByteLength / dataSize;
+                assert buffer.remaining() >= currentByteLength;
 
                 if (type == TYPE_DOUBLE || type == TYPE_FLOAT || type == TYPE_RATIONAL || type == TYPE_URATIONAL) {
                     for (int i = 0; i < dataNumber; i++) {
@@ -1572,8 +1549,8 @@ public class TiffImageReader extends SpatialImageReader {
     @Override
     public BufferedImage read(final int imageIndex, final ImageReadParam param) throws IOException {
         selectImage(imageIndex);
-        srcRegion = new Rectangle();
-        dstRegion = new Rectangle();
+        final Rectangle srcRegion = new Rectangle();
+        final Rectangle dstRegion = new Rectangle();
         final BufferedImage image = getDestination(param, getImageTypes(imageIndex), imageWidth, imageHeight);
         /*
          * compute region : ajust les 2 rectangles src region et dest region en fonction des coeff subsampling present dans Imagereadparam.
@@ -1739,8 +1716,6 @@ public class TiffImageReader extends SpatialImageReader {
 
             //-- byte number read for each buffer read action.
             final int srcBuffReadLength = readLength * sampleSize;
-
-//            assert srcStepBeforeReadX + srcBuffReadLength + srcStepAfterReadX == (sourceScanlineStride * sampleSize) : "expected "+(sourceScanlineStride * sampleSize)+" found = "+(srcStepBeforeReadX + srcBuffReadLength + srcStepAfterReadX);
             
             //-- buffer.capacity
             final int buffCapacity = buffer.capacity();
@@ -2694,12 +2669,6 @@ public class TiffImageReader extends SpatialImageReader {
         @Override
         public boolean canDecodeInput(final Object source) throws IOException {
              final FileInputStream in;
-//            if (input instanceof String) {
-//                in = new FileInputStream((String) input);
-//            } else {
-//                in = new FileInputStream((File) input);
-//            }
-//            channel = in.getChannel();
             if (source instanceof String) {
                 in = new FileInputStream((String) source);
             } else if (source instanceof  File) {
@@ -2712,7 +2681,6 @@ public class TiffImageReader extends SpatialImageReader {
             ByteBuffer buffer = ByteBuffer.allocateDirect(16);
             buffer.clear();
             channel.read(buffer);
-//            readFully(16, 1024); //-- Header size of Big TIFF (the standard header size is 8 bytes).
             buffer.position(0);
             final byte c = buffer.get();
             if (c != buffer.get()) {
@@ -2730,11 +2698,9 @@ public class TiffImageReader extends SpatialImageReader {
             if ((version == 0x002B)) {
                 if (buffer.getShort() != 8 || buffer.getShort() != 0) {
                     return false; //-- invalide offset size
-//                    throw invalidFile("OffsetSize");
                 }
             } else if (version != 0x002A) {
                 return false;//-- invalid magic number
-//                throw invalidFile("MagicNumber");
             }
             return true;
         }
