@@ -34,8 +34,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
-import javax.measure.converter.UnitConverter;
-import javax.measure.unit.Unit;
 import javax.media.jai.Histogram;
 import javax.media.jai.ImageLayout;
 import javax.media.jai.JAI;
@@ -108,7 +106,6 @@ import org.opengis.geometry.Envelope;
 import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
@@ -178,25 +175,11 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
                 //LOGGER.log(Level.WARNING, "Requested an area where no coverage where found.");
                 return;
             }
-
-            ////////////////////////////////////////////////////////////////////
-            // 2 - Apply style                                                //
-            // TODO : we should do this after the reprojection but it is      //
-            // really hard to adapt datatypes correctly                       //
-            ////////////////////////////////////////////////////////////////////
-            
-            RenderedImage dataImage = applyStyle(dataCoverage, elevationCoverage, coverageLayer.getElevationModel(), symbol.getSource(), hints, false);
-            GridCoverageBuilder gcb = new GridCoverageBuilder();
-            gcb.setRenderedImage(dataImage);
-            gcb.setName(dataCoverage.getName());
-            gcb.setCoordinateReferenceSystem(dataCoverage.getCoordinateReferenceSystem2D());
-            gcb.setGridToCRS(dataCoverage.getGridGeometry().getGridToCRS2D(PixelOrientation.CENTER));
-            dataCoverage = (GridCoverage2D) gcb.build();
             
             ////////////////////////////////////////////////////////////////////
-            // 3 - Reproject datas                                            //
+            // 2 - Reproject datas                                            //
             ////////////////////////////////////////////////////////////////////
-                        
+            
             boolean isReprojected = false;
             final CoordinateReferenceSystem coverageCRS = dataCoverage.getCoordinateReferenceSystem();
             try{
@@ -222,18 +205,6 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
                             dataCoverage = null;
                         }else{
                             isReprojected = true;
-                            
-                            //if(!dataImage.getColorModel().hasAlpha()){
-                                final BufferedImage temp = new BufferedImage(dataImage.getWidth(), dataImage.getHeight(), BufferedImage.TYPE_INT_ARGB);
-                                temp.createGraphics().drawRenderedImage(dataImage, new AffineTransform());
-                                gcb = new GridCoverageBuilder();
-                                gcb.setRenderedImage(temp);
-                                gcb.setName(dataCoverage.getName());
-                                gcb.setCoordinateReferenceSystem(dataCoverage.getCoordinateReferenceSystem2D());
-                                gcb.setGridToCRS(dataCoverage.getGridGeometry().getGridToCRS2D(PixelOrientation.CENTER));
-                                dataCoverage = (GridCoverage2D) gcb.build();
-                            //}
-                            
                             dataCoverage = GO2Utilities.resample(dataCoverage,targetCRS);
                         }
                     }
@@ -257,12 +228,12 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
                 return;
             }
 
-            dataImage = dataCoverage.getRenderedImage();
-            
             //we must switch to objectiveCRS for grid coverage
             renderingContext.switchToObjectiveCRS();
 
-            
+
+            // 3 - Apply style
+            RenderedImage dataImage = applyStyle(dataCoverage, elevationCoverage, coverageLayer.getElevationModel(), symbol.getSource(), hints, isReprojected);
             final MathTransform2D trs2D = dataCoverage.getGridGeometry().getGridToCRS2D(PixelOrientation.UPPER_LEFT);
 
             
@@ -566,7 +537,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
         intersec = Envelopes.transform(covGridGeom.getGridToCRS(PixelInCell.CELL_CORNER).inverse(), intersec);
 
         final Rectangle areaIterate = new Rectangle((int) intersec.getMinimum(0), (int) intersec.getMinimum(1), (int) Math.ceil(intersec.getSpan(0)), (int) Math.ceil(intersec.getSpan(1)));
-        
+
         // dem source to dem dest
         final MathTransform sourcetodest = MathTransforms.concatenate(dem.getGridGeometry().getGridToCRS(PixelInCell.CELL_CENTER),
                                                                       demCRSToCov,
