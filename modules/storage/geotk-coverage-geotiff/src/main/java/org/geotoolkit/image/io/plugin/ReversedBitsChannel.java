@@ -32,6 +32,18 @@ import org.apache.sis.util.ArgumentChecks;
 final class ReversedBitsChannel implements ReadableByteChannel {
 
     /**
+     * Array which contain reversed value.
+     */
+    private static final byte[] REVERSE = new byte[256];
+    
+    static {
+        int val = 255;
+        for (int p = 0; p < 256; p++) {
+            REVERSE[p] = (byte) val--;
+        }
+    }
+    
+    /**
      * ReadableByteChannel where to read originals Bytes.
      */
     private final ReadableByteChannel input;
@@ -102,18 +114,8 @@ final class ReversedBitsChannel implements ReadableByteChannel {
     private static void reverseBytes(final ByteBuffer buffer, int position, final int limit) {
         while (position < limit) {
             final byte b = buffer.get(position);
-            buffer.put(position++, (byte) reverseBits(b));
+            buffer.put(position++, REVERSE[b]);
         }
-    }
-    
-    /**
-     * Reverse <code>bits</code> sens from 8 first Integer <code>bits</code>.
-     * 
-     * @param b <code>byte</code> which will be invert.
-     * @return inverted <code>byte</code>.
-     */
-    private static int reverseBits(final int b) {
-        return (Integer.reverse(b) >>> 24);
     }
     
     /**
