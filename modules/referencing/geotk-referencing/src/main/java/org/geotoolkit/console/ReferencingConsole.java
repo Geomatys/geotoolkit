@@ -164,7 +164,7 @@ public class ReferencingConsole extends InteractiveConsole {
             format.setNameAuthority(Citations.fromName(authority));
         }
         if (Boolean.TRUE.equals(commands.colors)) {
-            format.setColors(Colors.CONSOLE);
+            format.setColors(Colors.DEFAULT);
         }
         format.setIndentation(commands.indent);
         parser = format;
