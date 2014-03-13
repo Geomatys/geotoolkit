@@ -39,8 +39,9 @@ import org.apache.lucene.util.Version;
 
 // Geotoolkit dependencies
 import org.geotoolkit.index.tree.StoreIndexException;
+import org.geotoolkit.index.tree.TreeElementMapper;
 import org.geotoolkit.index.tree.manager.NamedEnvelope;
-import org.geotoolkit.index.tree.manager.FileRtreeManager;
+import org.geotoolkit.index.tree.manager.SQLRtreeManager;
 import org.geotoolkit.io.wkb.WKBUtils;
 import org.geotoolkit.lucene.IndexingException;
 import org.geotoolkit.lucene.LuceneUtils;
@@ -133,7 +134,7 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
             setFileDirectory(currentIndexDirectory);
             needCreation = false;
         }
-        rTree = FileRtreeManager.get(currentIndexDirectory, this);
+        rTree = SQLRtreeManager.get(currentIndexDirectory, this);
     }
 
     /**
@@ -400,7 +401,18 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
 
             // look for DOC ID for R-Tree removal
             final NamedEnvelope env = new NamedEnvelope(getTreeCrs(), identifier);
-            rTree.remove(env);
+            final TreeElementMapper<NamedEnvelope> mapper = rTree.getTreeElementMapper();
+            final int treeID = mapper.getTreeIdentifier(env);
+            if (treeID != -1) {
+                final NamedEnvelope realEnv = mapper.getObjectFromTreeIdentifier(treeID);
+                boolean removed = rTree.remove(realEnv);
+                if (!removed) {
+                    LOGGER.log(Level.WARNING, "unable to remove envelope for:{0}", identifier);
+                } else {
+                    //remove from mapper
+                    mapper.setTreeIdentifier(null, treeID);
+                }
+            }
             
             final IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_46, analyzer);
             final IndexWriter writer       = new IndexWriter(dir, config);

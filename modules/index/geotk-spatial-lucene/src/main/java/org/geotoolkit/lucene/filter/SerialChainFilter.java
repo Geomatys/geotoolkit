@@ -125,7 +125,19 @@ public class SerialChainFilter extends Filter implements  org.geotoolkit.lucene.
             }
 
         }
-        return new DocIdBitSet(bits);
+        // invalidate deleted document
+        return invalidateDeletedDocument(bits, b);
+    }
+
+    private DocIdBitSet invalidateDeletedDocument(final BitSet results, final Bits initial) {
+        if (initial != null) {
+            for (int i = 0; i < initial.length(); i++) {
+                if (!initial.get(i)) {
+                    results.set(i, false);
+                }
+            }
+        }
+        return new DocIdBitSet(results);
     }
 
       /**

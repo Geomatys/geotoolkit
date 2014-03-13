@@ -32,7 +32,7 @@ import org.geotoolkit.lucene.analysis.standard.ClassicAnalyzer;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.index.tree.StoreIndexException;
 import org.geotoolkit.index.tree.manager.NamedEnvelope;
-import org.geotoolkit.index.tree.manager.FileRtreeManager;
+import org.geotoolkit.index.tree.manager.SQLRtreeManager;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
@@ -153,12 +153,12 @@ public abstract class IndexLucene {
     }
 
     protected void resetTree() throws StoreIndexException, IOException {
-        rTree = FileRtreeManager.resetTree(getFileDirectory(), rTree, this);
+        rTree = SQLRtreeManager.resetTree(getFileDirectory(), rTree, this);
     }
 
     private void closeTree() {
         try {
-            FileRtreeManager.close(getFileDirectory(), rTree, this);
+            SQLRtreeManager.close(getFileDirectory(), rTree, this);
         } catch (StoreIndexException | IOException ex) {
             LOGGER.log(Level.WARNING, null, ex);
         }

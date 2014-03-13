@@ -88,14 +88,14 @@ public class LuceneEnvelopeOnlyTest {
         }
     }
 
-    private final File directory = new File("luceneEnvolopeOnlyTest");
-    private IndexSearcher searcher;
-    private Query simpleQuery;
+    private static final File directory = new File("luceneEnvolopeOnlyTest");
+    private static IndexSearcher searcher;
+    private static Query simpleQuery;
     private org.opengis.filter.Filter filter;
     private Geometry geom;
 
-    @Before
-    public void setUpMethod() throws Exception {
+    @BeforeClass
+    public static void setUpMethod() throws Exception {
 
         FileUtilities.deleteDirectory(directory);
         directory.mkdir();
@@ -113,8 +113,8 @@ public class LuceneEnvelopeOnlyTest {
         simpleQuery = new TermQuery(new Term("metafile", "doc"));
     }
 
-    @After
-    public void tearDownMethod() throws Exception {
+    @AfterClass
+    public static void tearDownMethod() throws Exception {
         FileUtilities.deleteDirectory(directory);
     }
 
@@ -2670,7 +2670,8 @@ public class LuceneEnvelopeOnlyTest {
 
         indexer = new DocumentIndexer(directory, null, analyzer);
         indexer.indexDocument(new DocumentEnvelope(docu, null));
-
+        indexer.destroy();
+        
         reader = DirectoryReader.open(LuceneUtils.getAppropriateDirectory(directory.listFiles()[0]));
         searcher = new IndexSearcher(reader);
 
@@ -2696,7 +2697,7 @@ public class LuceneEnvelopeOnlyTest {
         assertTrue(results.contains("box 2 projected"));
     }
 
-    private List<DocumentEnvelope> fillTestData() throws Exception {
+    private static List<DocumentEnvelope> fillTestData() throws Exception {
 
         final List<DocumentEnvelope> docs = new ArrayList<>();
         final int srid4326 = SRIDGenerator.toSRID(WGS84, Version.V1);
@@ -2757,7 +2758,7 @@ public class LuceneEnvelopeOnlyTest {
      * @param maxy the maximum Y coordinate of the bounding box.
      * @param crsName The coordinate reference system in witch the coordinates are expressed.
      */
-    private NamedEnvelope addBoundingBox(final Document doc, final double minx, final double maxx, final double miny, final double maxy, final int srid) throws FactoryException, TransformException {
+    private static NamedEnvelope addBoundingBox(final Document doc, final double minx, final double maxx, final double miny, final double maxy, final int srid) throws FactoryException, TransformException {
 
         final Geometry poly = LuceneUtils.getPolygon(minx, maxx, miny, maxy, srid);
         final String id = doc.get("id");

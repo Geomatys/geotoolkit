@@ -85,41 +85,49 @@ public class LuceneSQLTreeEltMapper implements TreeElementMapper<NamedEnvelope> 
     @Override
     public void setTreeIdentifier(final NamedEnvelope env, final int treeIdentifier) throws IOException {
         try {
-            final PreparedStatement exist = conRO.prepareStatement("SELECT \"id\" FROM \"treemap\".\"records\" WHERE \"id\"=?");
-            exist.setInt(1, treeIdentifier);
-            final ResultSet rs = exist.executeQuery();
-            if (rs.next()) {
-                final PreparedStatement stmt = conT.prepareStatement("UPDATE \"treemap\".\"records\" "
-                                                                   + "SET \"identifier\"=?, \"nbenv\"=?, \"minx\"=?, \"maxx\"=?, \"miny\"=?, \"maxy\"=? "
-                                                                   + "WHERE \"id\"=?");
-                stmt.setString(1, env.getId());
-                stmt.setInt(2, env.getNbEnv());
-                stmt.setDouble(3, env.getMinimum(0));
-                stmt.setDouble(4, env.getMaximum(0));
-                stmt.setDouble(5, env.getMinimum(1));
-                stmt.setDouble(6, env.getMaximum(2));
+            if (env != null) {
+                final PreparedStatement exist = conRO.prepareStatement("SELECT \"id\" FROM \"treemap\".\"records\" WHERE \"id\"=?");
+                exist.setInt(1, treeIdentifier);
+                final ResultSet rs = exist.executeQuery();
+                if (rs.next()) {
+                    final PreparedStatement stmt = conT.prepareStatement("UPDATE \"treemap\".\"records\" "
+                                                                       + "SET \"identifier\"=?, \"nbenv\"=?, \"minx\"=?, \"maxx\"=?, \"miny\"=?, \"maxy\"=? "
+                                                                       + "WHERE \"id\"=?");
+                    stmt.setString(1, env.getId());
+                    stmt.setInt(2, env.getNbEnv());
+                    stmt.setDouble(3, env.getMinimum(0));
+                    stmt.setDouble(4, env.getMaximum(0));
+                    stmt.setDouble(5, env.getMinimum(1));
+                    stmt.setDouble(6, env.getMaximum(2));
 
-                stmt.setInt(7, treeIdentifier);
-                stmt.executeUpdate();
-                stmt.close();
-                conT.commit();
+                    stmt.setInt(7, treeIdentifier);
+                    stmt.executeUpdate();
+                    stmt.close();
+                    conT.commit();
+                } else {
+                    final PreparedStatement stmt = conT.prepareStatement("INSERT INTO \"treemap\".\"records\" "
+                                                                       + "VALUES (?, ?, ?, ?, ?, ?, ?)");
+                    stmt.setInt(1, treeIdentifier);
+                    stmt.setString(2, env.getId());
+                    stmt.setInt(3, env.getNbEnv());
+                    stmt.setDouble(4, env.getMinimum(0));
+                    stmt.setDouble(5, env.getMaximum(0));
+                    stmt.setDouble(6, env.getMinimum(1));
+                    stmt.setDouble(7, env.getMaximum(1));
+
+                    stmt.executeUpdate();
+                    stmt.close();
+                    conT.commit();
+                }
+                rs.close();
+                exist.close();
             } else {
-                final PreparedStatement stmt = conT.prepareStatement("INSERT INTO \"treemap\".\"records\" "
-                                                                   + "VALUES (?, ?, ?, ?, ?, ?, ?)");
-                stmt.setInt(1, treeIdentifier);
-                stmt.setString(2, env.getId());
-                stmt.setInt(3, env.getNbEnv());
-                stmt.setDouble(4, env.getMinimum(0));
-                stmt.setDouble(5, env.getMaximum(0));
-                stmt.setDouble(6, env.getMinimum(1));
-                stmt.setDouble(7, env.getMaximum(1));
-
-                stmt.executeUpdate();
-                stmt.close();
+                final PreparedStatement remove = conT.prepareStatement("DELETE FROM \"treemap\".\"records\" WHERE \"id\"=?");
+                remove.setInt(1, treeIdentifier);
+                remove.executeUpdate();
+                remove.close();
                 conT.commit();
             }
-            rs.close();
-            exist.close();
         } catch (SQLException ex) {
             throw new IOException("Error while getting tree identifier for envelope", ex);
         }

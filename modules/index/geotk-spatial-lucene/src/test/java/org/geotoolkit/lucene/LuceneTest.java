@@ -89,16 +89,16 @@ public class LuceneTest {
         }
     }
 
-    private final File directory = new File("luceneTest");
-    private IndexSearcher searcher;
-    private Query         simpleQuery;
+    private static final File directory = new File("luceneTest");
+    private static IndexSearcher searcher;
+    private static Query simpleQuery;
     private org.opengis.filter.Filter filter;
     private Geometry geom;
 
 
 
-    @Before
-    public void setUpMethod() throws Exception {
+    @BeforeClass
+    public static void setUpMethod() throws Exception {
         if (directory.exists()) {
             FileUtilities.deleteDirectory(directory);
         }
@@ -115,8 +115,8 @@ public class LuceneTest {
         simpleQuery = new TermQuery(new Term("metafile", "doc"));
     }
 
-    @After
-    public void tearDownMethod() throws Exception {
+    @AfterClass
+    public static void tearDownMethod() throws Exception {
         FileUtilities.deleteDirectory(directory);
     }
 
@@ -2980,7 +2980,7 @@ public class LuceneTest {
         assertTrue(results.contains("line 1 projected"));
     }
 
-    private List<DocumentEnvelope> fillTestData() throws Exception {
+    private static List<DocumentEnvelope> fillTestData() throws Exception {
 
         final List<DocumentEnvelope> docs = new ArrayList<>();
         final int srid4326 = SRIDGenerator.toSRID(WGS84, Version.V1);
@@ -3104,7 +3104,7 @@ public class LuceneTest {
      * @param y2  the Y coordinate of the first point of the line.
      * @param crsName The coordinate reference system in witch the coordinates are expressed.
      */
-    private NamedEnvelope addLine(final Document doc, final double x1, final double y1, final double x2, final double y2, final int srid) throws Exception {
+    private static NamedEnvelope addLine(final Document doc, final double x1, final double y1, final double x2, final double y2, final int srid) throws Exception {
 
         LineString line = GF.createLineString(new Coordinate[]{
             new Coordinate(x1,y1),
@@ -3127,7 +3127,7 @@ public class LuceneTest {
      * @param y       The y coordinate of the point.
      * @param crsName The coordinate reference system in witch the coordinates are expressed.
      */
-    private NamedEnvelope addPoint(final Document doc, final double x, final double y, final int srid) throws Exception {
+    private static NamedEnvelope addPoint(final Document doc, final double x, final double y, final int srid) throws Exception {
 
         Point pt = GF.createPoint(new Coordinate(x, y));
         pt.setSRID(srid);
@@ -3149,7 +3149,7 @@ public class LuceneTest {
      * @param maxy the maximum Y coordinate of the bounding box.
      * @param crsName The coordinate reference system in witch the coordinates are expressed.
      */
-    private NamedEnvelope addBoundingBox(final Document doc, final double minx, final double maxx, final double miny, final double maxy, final int srid) throws Exception {
+    private static NamedEnvelope addBoundingBox(final Document doc, final double minx, final double maxx, final double miny, final double maxy, final int srid) throws Exception {
 
         final Geometry poly = LuceneUtils.getPolygon(minx, maxx, miny, maxy, srid);
         final String id = doc.get("id");

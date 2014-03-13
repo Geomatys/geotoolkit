@@ -46,7 +46,7 @@ import org.geotoolkit.geometry.jts.SRIDGenerator.Version;
 import org.geotoolkit.index.tree.Tree;
 import org.geotoolkit.index.tree.TreeElementMapper;
 import org.geotoolkit.index.tree.manager.NamedEnvelope;
-import org.geotoolkit.index.tree.manager.FileRtreeManager;
+import org.geotoolkit.index.tree.manager.SQLRtreeManager;
 import org.geotoolkit.io.wkb.WKBUtils;
 import org.geotoolkit.lucene.DocumentIndexer.DocumentEnvelope;
 import org.geotoolkit.lucene.analysis.standard.ClassicAnalyzer;
@@ -88,15 +88,15 @@ public class LuceneSearcherTest {
         }
     }
 
-    private final Map<String, NamedEnvelope> envelopes = new HashMap<>();
-    private final File directory = new File("luceneSearcherTest");
-    private LuceneIndexSearcher searcher;    
-    private CoordinateReferenceSystem treeCrs;
+    private static final Map<String, NamedEnvelope> envelopes = new HashMap<>();
+    private static final File directory = new File("luceneSearcherTest");
+    private static LuceneIndexSearcher searcher;
+    private static CoordinateReferenceSystem treeCrs;
     private org.opengis.filter.Filter filter;
     private Geometry geom;
 
-    @Before
-    public void setUpMethod() throws Exception {
+    @BeforeClass
+    public static void setUpMethod() throws Exception {
         if (directory.exists()) {
             FileUtilities.deleteDirectory(directory);
         }
@@ -110,13 +110,15 @@ public class LuceneSearcherTest {
         final Analyzer analyzer  = new StandardAnalyzer(org.apache.lucene.util.Version.LUCENE_46);
         final DocumentIndexer indexer = new DocumentIndexer(directory, fillTestData(), analyzer);
         indexer.createIndex();
+        indexer.destroy();
 
         searcher = new LuceneIndexSearcher(directory, null, new StandardAnalyzer(org.apache.lucene.util.Version.LUCENE_46), false);
     }
 
-    @After
-    public void tearDownMethod() throws Exception {
+    @AfterClass
+    public static void tearDownMethod() throws Exception {
         searcher.destroy();
+        
         FileUtilities.deleteDirectory(directory);
     }
 
@@ -228,7 +230,7 @@ public class LuceneSearcherTest {
      */
     @Test
     public void rTreeBBOXTest() throws Exception {
-        Tree rTree = FileRtreeManager.get(searcher.getFileDirectory(), this);
+        Tree rTree = SQLRtreeManager.get(searcher.getFileDirectory(), this);
         /*
          * first bbox
          */
@@ -371,6 +373,7 @@ public class LuceneSearcherTest {
          //we verify that we obtain the correct results
         assertEquals(nbResults, 1);
         assertTrue(results.contains("box 5"));
+        SQLRtreeManager.close(searcher.getFileDirectory(), rTree, this);
     }
 
     /**
@@ -2386,7 +2389,9 @@ public class LuceneSearcherTest {
 
         DocumentIndexer indexer = new DocumentIndexer(directory, null, analyzer);
         indexer.removeDocument("box 2 projected");
-
+        indexer.destroy();
+        
+        searcher.destroy();
         searcher = new LuceneIndexSearcher(directory, null, new ClassicAnalyzer(org.apache.lucene.util.Version.LUCENE_46), false);
 
         /*
@@ -2428,7 +2433,9 @@ public class LuceneSearcherTest {
         
         indexer = new DocumentIndexer(directory, null, analyzer);
         indexer.indexDocument(new DocumentIndexer.DocumentEnvelope(docu, env));
+        indexer.destroy();
 
+        searcher.destroy();
         searcher = new LuceneIndexSearcher(directory, null, new ClassicAnalyzer(org.apache.lucene.util.Version.LUCENE_46), false);
 
 
@@ -2452,7 +2459,7 @@ public class LuceneSearcherTest {
         assertTrue(results.contains("line 1 projected"));
     }
 
-    private List<DocumentEnvelope> fillTestData() throws Exception {
+    private static List<DocumentEnvelope> fillTestData() throws Exception {
 
         final List<DocumentEnvelope> docs = new ArrayList<>();
         final int srid4326 = SRIDGenerator.toSRID(WGS84, Version.V1);
@@ -2604,7 +2611,7 @@ public class LuceneSearcherTest {
      * @param y2  the Y coordinate of the first point of the line.
      * @param crsName The coordinate reference system in witch the coordinates are expressed.
      */
-    private NamedEnvelope addLine(final Document doc, final double x1, final double y1, final double x2, final double y2, final int srid) throws Exception {
+    private static NamedEnvelope addLine(final Document doc, final double x1, final double y1, final double x2, final double y2, final int srid) throws Exception {
 
         LineString line = GF.createLineString(new Coordinate[]{
             new Coordinate(x1,y1),
@@ -2627,7 +2634,7 @@ public class LuceneSearcherTest {
      * @param y       The y coordinate of the point.
      * @param crsName The coordinate reference system in witch the coordinates are expressed.
      */
-    private NamedEnvelope addPoint(final Document doc, final double x, final double y, final int srid) throws Exception {
+    private static NamedEnvelope addPoint(final Document doc, final double x, final double y, final int srid) throws Exception {
 
         Point pt = GF.createPoint(new Coordinate(x, y));
         pt.setSRID(srid);
@@ -2649,7 +2656,7 @@ public class LuceneSearcherTest {
      * @param maxy the maximum Y coordinate of the bounding box.
      * @param crsName The coordinate reference system in witch the coordinates are expressed.
      */
-    private NamedEnvelope addBoundingBox(final Document doc, final double minx, final double maxx, final double miny, final double maxy, final int srid) throws Exception {
+    private static NamedEnvelope addBoundingBox(final Document doc, final double minx, final double maxx, final double miny, final double maxy, final int srid) throws Exception {
 
         final Geometry poly = LuceneUtils.getPolygon(minx, maxx, miny, maxy, srid);
         final String id = doc.get("id");

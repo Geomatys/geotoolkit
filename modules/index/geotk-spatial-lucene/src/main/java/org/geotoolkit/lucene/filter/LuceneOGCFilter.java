@@ -106,11 +106,10 @@ public class LuceneOGCFilter extends org.apache.lucene.search.Filter implements 
     @Override
     public DocIdSet getDocIdSet(final AtomicReaderContext ctx, final Bits b) throws IOException {
 
-        final Set<String> treeMatching = new HashSet<>();
-        boolean treeSearch = false;
-        boolean reverse = false;
+        boolean treeSearch     = false;
+        boolean reverse        = false;
         boolean distanceFilter = false;
-        final List<Envelope> results = new ArrayList<>();
+        final Set<String> treeMatching = new HashSet<>();
         if (tree != null) {
             /*
              * For distance buffer filter no envelope only mode
@@ -125,10 +124,13 @@ public class LuceneOGCFilter extends org.apache.lucene.search.Filter implements 
                         final GeneralEnvelope bound = getExtendedReprojectedEnvelope(lit.getValue(), tree.getCrs(), sp.getDistanceUnits(), sp.getDistance());
                         final int[] resultID = tree.searchID(bound);
                         Arrays.sort(resultID);
-                        results.clear();
+                        treeMatching.clear();
                         TreeElementMapper<NamedEnvelope> tem = tree.getTreeElementMapper();
                         for (int id : resultID) {
-                            results.add(tem.getObjectFromTreeIdentifier(id));
+                            final NamedEnvelope env = tem.getObjectFromTreeIdentifier(id);
+                            if (env != null) {
+                                treeMatching.add(env.getId());
+                            }
                         }
                         treeSearch = true;
                     } catch (FactoryException ex) {
@@ -158,9 +160,12 @@ public class LuceneOGCFilter extends org.apache.lucene.search.Filter implements 
                             final int[] resultID = tree.searchID(boundFilter);
                             Arrays.sort(resultID);
                             final TreeElementMapper<NamedEnvelope> tem = tree.getTreeElementMapper();
-                            results.clear();
+                            treeMatching.clear();
                             for (int id : resultID) {
-                                results.add(tem.getObjectFromTreeIdentifier(id));
+                                final NamedEnvelope env = tem.getObjectFromTreeIdentifier(id);
+                                if (env != null) {
+                                    treeMatching.add(env.getId());
+                                }
                             }
                             treeSearch   = true;
                             envelopeOnly = false;
@@ -168,9 +173,12 @@ public class LuceneOGCFilter extends org.apache.lucene.search.Filter implements 
                             final int[] resultID = TreeX.search(tree, boundFilter, filterType);
                             Arrays.sort(resultID);
                             final TreeElementMapper<NamedEnvelope> tem = tree.getTreeElementMapper();
-                            results.clear();
+                            treeMatching.clear();
                             for (int id : resultID) {
-                                results.add(tem.getObjectFromTreeIdentifier(id));
+                                final NamedEnvelope env = tem.getObjectFromTreeIdentifier(id);
+                                if (env != null) {
+                                    treeMatching.add(env.getId());
+                                }
                             }
                             treeSearch = true;
                         }
@@ -188,9 +196,6 @@ public class LuceneOGCFilter extends org.apache.lucene.search.Filter implements 
             } else {
                 LOGGER.log(Level.WARNING, "not a spatial operator:{0}", filter.getClass().getName());
             }
-            for (Envelope result : results) {
-                treeMatching.add(((NamedEnvelope) result).getId());
-            }
         } else {
             LOGGER.finer("Null R-tree in spatial search");
         }
@@ -198,7 +203,8 @@ public class LuceneOGCFilter extends org.apache.lucene.search.Filter implements 
         final AtomicReader reader = ctx.reader();
         final DocIdBitSet set = new DocIdBitSet(new BitSet(reader.maxDoc()));
         final DocsEnum termDocs = reader.termDocsEnum(META_FIELD);
-        while (termDocs.nextDoc() != DocsEnum.NO_MORE_DOCS){
+        int n = termDocs.nextDoc();
+        while (n != DocsEnum.NO_MORE_DOCS){
             final int docId     = termDocs.docID();
             final Document doc  = reader.document(docId, ID_FIELDS);
             final String id     = doc.get(IDENTIFIER_FIELD_NAME);
@@ -216,6 +222,7 @@ public class LuceneOGCFilter extends org.apache.lucene.search.Filter implements 
                     }
                 }
             }
+            n = termDocs.nextDoc();
         }
 
         return set;

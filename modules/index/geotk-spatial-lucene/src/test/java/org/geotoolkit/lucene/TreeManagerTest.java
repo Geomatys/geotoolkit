@@ -19,7 +19,7 @@ package org.geotoolkit.lucene;
 
 import java.io.File;
 import org.geotoolkit.index.tree.Tree;
-import org.geotoolkit.index.tree.manager.FileRtreeManager;
+import org.geotoolkit.index.tree.manager.SQLRtreeManager;
 import org.geotoolkit.util.FileUtilities;
 
 import org.junit.*;
@@ -49,12 +49,12 @@ public class TreeManagerTest {
     @Test
     public void openEmptyTestTest() throws Exception {
 
-        Tree tree = FileRtreeManager.get(directory, this);
+        Tree tree = SQLRtreeManager.get(directory, this);
         assertNotNull(tree);
 
-        FileRtreeManager.close(directory, tree, this);
+        SQLRtreeManager.close(directory, tree, this);
 
-        tree = FileRtreeManager.get(directory, this);
+        tree = SQLRtreeManager.get(directory, this);
 
         assertNotNull(tree);
 
