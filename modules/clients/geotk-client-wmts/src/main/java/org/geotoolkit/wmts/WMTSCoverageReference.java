@@ -18,15 +18,16 @@ package org.geotoolkit.wmts;
 
 import java.awt.Dimension;
 import java.awt.Image;
+import java.awt.image.ColorModel;
 import java.awt.image.RenderedImage;
 import java.util.List;
-import java.util.Map;
 import javax.swing.ProgressMonitor;
 import org.geotoolkit.coverage.*;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.wmts.model.WMTSPyramidSet;
 import org.opengis.feature.type.Name;
 import org.opengis.geometry.DirectPosition;
@@ -113,13 +114,33 @@ public class WMTSCoverageReference extends AbstractCoverageReference implements 
     }
 
     @Override
-    public List<GridSampleDimension> getSampleDimensions(int index) throws DataStoreException {
+    public ViewType getPackMode() throws DataStoreException {
+        return ViewType.RENDERED;
+    }
+
+    @Override
+    public void setPackMode(ViewType packMode) throws DataStoreException {
         throw new DataStoreException("Not supported.");
     }
 
     @Override
-    public void createSampleDimension(List<GridSampleDimension> dimensions, final Map<String, Object> analyse) throws DataStoreException {
-        throw new DataStoreException("Model is not writeable.");
+    public List<GridSampleDimension> getSampleDimensions() throws DataStoreException {
+        return null;
+    }
+
+    @Override
+    public void setSampleDimensions(List<GridSampleDimension> dimensions) throws DataStoreException {
+        throw new DataStoreException("Not supported.");
+    }
+
+    @Override
+    public ColorModel getColorModel() throws DataStoreException {
+        return null;
+    }
+
+    @Override
+    public void setColorModel(ColorModel colorModel) throws DataStoreException {
+        throw new DataStoreException("Not supported.");
     }
 
 }

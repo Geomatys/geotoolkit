@@ -22,11 +22,11 @@ import java.awt.image.*;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 import org.apache.sis.storage.DataStoreException;
 
 import org.geotoolkit.coverage.*;
+import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.opengis.feature.type.Name;
 import org.opengis.geometry.DirectPosition;
@@ -41,7 +41,9 @@ public class MPCoverageReference extends AbstractPyramidalModel {
 
     private final DefaultPyramidSet pyramidSet;
     private final AtomicLong mosaicID = new AtomicLong(0);
+    private ViewType viewType;
     private List<GridSampleDimension> dimensions;
+    private ColorModel colorModel;
 
     public MPCoverageReference(final MPCoverageStore store, final Name name) {
         super(store,name,0);
@@ -68,7 +70,7 @@ public class MPCoverageReference extends AbstractPyramidalModel {
      * {@inheritDoc }.
      */
     @Override
-    public List<GridSampleDimension> getSampleDimensions(int index) throws DataStoreException {
+    public List<GridSampleDimension> getSampleDimensions() throws DataStoreException {
         return dimensions;
     }
 
@@ -76,8 +78,40 @@ public class MPCoverageReference extends AbstractPyramidalModel {
      * {@inheritDoc }.
      */
     @Override
-    public void createSampleDimension(List<GridSampleDimension> dimensions, Map<String, Object> analyse) throws DataStoreException {
+    public void setSampleDimensions(List<GridSampleDimension> dimensions) throws DataStoreException {
         this.dimensions = dimensions;
+    }
+
+    /**
+     * {@inheritDoc }.
+     */
+    @Override
+    public ColorModel getColorModel() throws DataStoreException {
+        return colorModel;
+    }
+
+    /**
+     * {@inheritDoc }.
+     */
+    @Override
+    public void setColorModel(ColorModel colorModel) {
+        this.colorModel = colorModel;
+    }
+
+    /**
+     * {@inheritDoc }.
+     */
+    @Override
+    public ViewType getPackMode() throws DataStoreException {
+        return viewType;
+    }
+
+    /**
+     * {@inheritDoc }.
+     */
+    @Override
+    public void setPackMode(ViewType packMode) throws DataStoreException {
+        this.viewType = packMode;
     }
 
     /**

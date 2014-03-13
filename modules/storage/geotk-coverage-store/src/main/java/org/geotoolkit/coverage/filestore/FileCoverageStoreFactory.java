@@ -130,9 +130,11 @@ public class FileCoverageStoreFactory extends AbstractCoverageStoreFactory{
     }
 
     /**
+     * ONLY FOR INTERNAL USE.
+     * 
      * List all available formats.
      */
-    static LinkedList<String> getReaderTypeList(){
+    public static LinkedList<String> getReaderTypeList(){
 
         final IIORegistry registry = IIORegistry.getDefaultInstance();
         final Iterator<? extends ImageReaderSpi> it = registry.getServiceProviders(ImageReaderSpi.class, true);

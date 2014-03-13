@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.coverage.filestore;
+package org.geotoolkit.coverage.xmlstore;
 
 import java.io.File;
 import java.net.URISyntaxException;
@@ -30,6 +30,7 @@ import org.geotoolkit.coverage.CoverageStoreFinder;
 import org.geotoolkit.coverage.CoverageType;
 import org.geotoolkit.feature.DefaultName;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.coverage.filestore.FileCoverageStoreFactory;
 import org.geotoolkit.storage.DataNode;
 import org.geotoolkit.storage.DefaultDataNode;
 import org.opengis.feature.type.Name;
@@ -85,9 +86,11 @@ public class XMLCoverageStore extends AbstractCoverageStore{
 
                 //try to parse the file
                 try {
-                    final XMLPyramidSet set = XMLPyramidSet.read(f);
+                    //TODO useless copy here
+                    final XMLCoverageReference set = XMLCoverageReference.read(f);
                     final Name name = new DefaultName(getDefaultNamespace(), set.getId());
-                    final XMLCoverageReference ref = new XMLCoverageReference(this,name,set);
+                    final XMLCoverageReference ref = new XMLCoverageReference(this,name,set.getPyramidSet());
+                    ref.copy(set);
                     rootNode.getChildren().add(ref);
                 } catch (JAXBException ex) {
                     getLogger().log(Level.FINE, "file is not a pyramid : {0}", f.getPath());
@@ -109,8 +112,8 @@ public class XMLCoverageStore extends AbstractCoverageStore{
         }
 
         final XMLPyramidSet set = new XMLPyramidSet(format);
-        set.initialize(new File(root, name.getLocalPart()+".xml"));
         final XMLCoverageReference ref = new XMLCoverageReference(this,name,set);
+        ref.initialize(new File(root, name.getLocalPart()+".xml"));
         rootNode.getChildren().add(ref);
         ref.save();
         return ref;

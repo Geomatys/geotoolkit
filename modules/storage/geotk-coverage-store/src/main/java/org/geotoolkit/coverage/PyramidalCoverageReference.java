@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2012 - 2013, Geomatys
+ *    (C) 2012 - 2014, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -17,11 +17,12 @@
 package org.geotoolkit.coverage;
 
 import java.awt.Dimension;
+import java.awt.image.ColorModel;
 import java.awt.image.RenderedImage;
 import java.util.List;
-import java.util.Map;
 import javax.swing.ProgressMonitor;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -37,22 +38,57 @@ public interface PyramidalCoverageReference extends CoverageReference{
 
     PyramidSet getPyramidSet() throws DataStoreException;
 
-    List<GridSampleDimension> getSampleDimensions(int index) throws DataStoreException;
+    /**
+     * Get the defined mode in which datas are stored.
+     * @return ViewType
+     * @throws org.apache.sis.storage.DataStoreException
+     */
+    ViewType getPackMode() throws DataStoreException;
+    
+    /**
+     * Set stored data mode.
+     * This won't change the data itself.
+     * 
+     * @param packMode 
+     * @throws org.apache.sis.storage.DataStoreException 
+     */
+    void setPackMode(ViewType packMode) throws DataStoreException;
+    
+    /**
+     * List sample dimensions.
+     * @return
+     * @throws DataStoreException 
+     */
+    List<GridSampleDimension> getSampleDimensions() throws DataStoreException;
 
+    /**
+     * Set sample dimensions.
+     * @param dimensions 
+     * @throws org.apache.sis.storage.DataStoreException 
+     */
+    void setSampleDimensions(final List<GridSampleDimension> dimensions) throws DataStoreException;
+    
+    /**
+     * Get default color model.
+     * @return ColorModel
+     * @throws org.apache.sis.storage.DataStoreException
+     */
+    ColorModel getColorModel() throws DataStoreException;
+    
+    /**
+     * Set default color model.
+     * @param colorModel
+     * @throws org.apache.sis.storage.DataStoreException
+     */
+    void setColorModel(ColorModel colorModel) throws DataStoreException;
+    
     /**
      *
      * @return true if model can be modified
+     * @throws org.geotoolkit.coverage.io.CoverageStoreException
      */
     @Override
     boolean isWritable() throws CoverageStoreException;
-
-    /**
-     * Create SampleDimension.
-     * @param dimensions samples
-     * @param analyse a map of min/max values per bands (can be null)
-     * @throws DataStoreException
-     */
-    void createSampleDimension(final List<GridSampleDimension> dimensions, final Map<String, Object> analyse) throws DataStoreException;
 
     /**
      *

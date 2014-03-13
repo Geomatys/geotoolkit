@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.coverage.filestore;
+package org.geotoolkit.coverage.xmlstore;
 
 import java.awt.Dimension;
 import java.io.File;
@@ -84,7 +84,7 @@ public class XMLPyramid implements Pyramid{
     }
 
     public File getFolder(){
-        return new File(getPyramidSet().getFolder(),getId());
+        return new File(getPyramidSet().getRef().getFolder(),getId());
     }
 
     @Override

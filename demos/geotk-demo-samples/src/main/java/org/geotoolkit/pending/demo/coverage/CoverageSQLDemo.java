@@ -28,7 +28,7 @@ public class CoverageSQLDemo {
 
     public static void main(String[] args) throws DataStoreException {
         Demos.init();
-
+        
         ParameterDescriptorGroup desc = CoverageSQLStoreFactory.PARAMETERS;
         System.out.println("desc:" + desc);
 

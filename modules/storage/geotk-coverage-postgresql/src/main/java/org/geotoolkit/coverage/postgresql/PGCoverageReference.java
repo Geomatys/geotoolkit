@@ -21,6 +21,7 @@ import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.awt.image.WritableRaster;
@@ -35,7 +36,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.TimeZone;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
@@ -67,6 +67,7 @@ import org.geotoolkit.coverage.wkb.WKBRasterWriter;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.temporal.object.TemporalUtilities;
 import org.apache.sis.measure.NumberRange;
+import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.version.Version;
 import org.opengis.coverage.SampleDimensionType;
@@ -450,7 +451,7 @@ public class PGCoverageReference extends AbstractCoverageReference implements Py
     }
 
     @Override
-    public List<GridSampleDimension> getSampleDimensions(int index) throws DataStoreException{
+    public List<GridSampleDimension> getSampleDimensions() throws DataStoreException{
         final List<GridSampleDimension> dimensions = new LinkedList<GridSampleDimension>();
 
         boolean versionSupport = isVersionColumnExist();
@@ -535,22 +536,70 @@ public class PGCoverageReference extends AbstractCoverageReference implements Py
         return dimensions;
     }
 
-    @Override
-    public void createSampleDimension(List<GridSampleDimension> dimensions, final Map<String, Object> analyse) throws DataStoreException {
+    private boolean isVersionColumnExist() {
+        Connection cnx = null;
+        Statement stmt = null;
+        ResultSet rs = null;
+        try {
+            cnx = pgstore.getDataSource().getConnection();
+            cnx.setReadOnly(false);
 
+            final StringBuilder query = new StringBuilder();
+            query.append("SELECT \"version\" ");
+            query.append("FROM ").append(pgstore.encodeTableName("Band"));
+
+            stmt = cnx.createStatement();
+            rs = stmt.executeQuery(query.toString());
+            return rs.next();
+
+        } catch(SQLException ex) {
+            return false;
+        } finally {
+            pgstore.closeSafe(cnx, stmt, rs);
+        }
+    }
+
+    /**
+     * Postgres do not like this value.
+     * Caused by : ERROR: "4.9E-324" is out of range for type double precision
+     * org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2103)
+     *
+     * @param d
+     * @return
+     */
+    private static double fixCloseToZero(double d){
+        if(d == 4.9E-324){
+            return 0.0;
+        }
+        return d;
+    }
+
+    @Override
+    public ViewType getPackMode() throws DataStoreException {
+        return ViewType.RENDERED;
+    }
+
+    @Override
+    public void setPackMode(ViewType packMode) throws DataStoreException {
+        throw new DataStoreException("Not supported yet.");
+    }
+
+    @Override
+    public void setSampleDimensions(List<GridSampleDimension> dimensions) throws DataStoreException {
+        
         boolean versionSupport = isVersionColumnExist();
 
         if (dimensions != null) {
             double[] maxDimValues = new double[dimensions.size()];
             double[] minDimValues =  new double[dimensions.size()];
 
-            if (analyse != null) {
-                maxDimValues = (double[]) analyse.get("max");
-                minDimValues = (double[]) analyse.get("min");
-            } else {
+//            if (analyse != null) {
+//                maxDimValues = (double[]) analyse.get("max");
+//                minDimValues = (double[]) analyse.get("min");
+//            } else {
                 Arrays.fill(maxDimValues, Double.MAX_VALUE);
                 Arrays.fill(minDimValues, Double.MIN_VALUE);
-            }
+//            }
 
             Connection cnx = null;
             PreparedStatement pstmt = null;
@@ -651,43 +700,14 @@ public class PGCoverageReference extends AbstractCoverageReference implements Py
         }
     }
 
-
-    private boolean isVersionColumnExist() {
-        Connection cnx = null;
-        Statement stmt = null;
-        ResultSet rs = null;
-        try {
-            cnx = pgstore.getDataSource().getConnection();
-            cnx.setReadOnly(false);
-
-            final StringBuilder query = new StringBuilder();
-            query.append("SELECT \"version\" ");
-            query.append("FROM ").append(pgstore.encodeTableName("Band"));
-
-            stmt = cnx.createStatement();
-            rs = stmt.executeQuery(query.toString());
-            return rs.next();
-
-        } catch(SQLException ex) {
-            return false;
-        } finally {
-            pgstore.closeSafe(cnx, stmt, rs);
-        }
+    @Override
+    public ColorModel getColorModel() throws DataStoreException {
+        return null;
     }
 
-    /**
-     * Postgres do not like this value.
-     * Caused by : ERROR: "4.9E-324" is out of range for type double precision
-     * org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2103)
-     *
-     * @param d
-     * @return
-     */
-    private static double fixCloseToZero(double d){
-        if(d == 4.9E-324){
-            return 0.0;
-        }
-        return d;
+    @Override
+    public void setColorModel(ColorModel colorModel) throws DataStoreException {
+        throw new DataStoreException("Not supported yet.");
     }
 
 }

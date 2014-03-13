@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.coverage.filestore;
 
+import org.geotoolkit.coverage.xmlstore.XMLCoverageStoreFactory;
 import org.geotoolkit.coverage.CoverageStore;
 import org.geotoolkit.coverage.CoverageStoreFinder;
 import org.geotoolkit.coverage.PyramidalModelStoreTest;

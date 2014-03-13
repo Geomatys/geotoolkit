@@ -17,6 +17,7 @@
 package org.geotoolkit.coverage;
 
 import java.awt.Dimension;
+import java.awt.image.DataBuffer;
 import java.awt.image.RenderedImage;
 import java.io.IOException;
 import java.util.*;
@@ -41,6 +42,7 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 
 import javax.imageio.ImageReader;
+import org.opengis.coverage.SampleDimensionType;
 
 /**
  * Utility functions for coverage and mosaic.
@@ -406,4 +408,33 @@ public final class CoverageUtilities {
             }
         }
     }
+
+    public static int getDataType(SampleDimensionType sdt){
+        if(SampleDimensionType.REAL_32BITS.equals(sdt)){
+            return DataBuffer.TYPE_FLOAT;
+        }else if(SampleDimensionType.REAL_64BITS.equals(sdt)){
+            return DataBuffer.TYPE_DOUBLE;
+        }else if(SampleDimensionType.SIGNED_8BITS.equals(sdt)){
+            return DataBuffer.TYPE_BYTE;
+        }else if(SampleDimensionType.SIGNED_16BITS.equals(sdt)){
+            return DataBuffer.TYPE_SHORT;
+        }else if(SampleDimensionType.SIGNED_32BITS.equals(sdt)){
+            return DataBuffer.TYPE_INT;
+        }else if(SampleDimensionType.UNSIGNED_1BIT.equals(sdt)){
+            return DataBuffer.TYPE_BYTE;
+        }else if(SampleDimensionType.UNSIGNED_2BITS.equals(sdt)){
+            return DataBuffer.TYPE_BYTE;
+        }else if(SampleDimensionType.UNSIGNED_4BITS.equals(sdt)){
+            return DataBuffer.TYPE_BYTE;
+        }else if(SampleDimensionType.UNSIGNED_8BITS.equals(sdt)){
+            return DataBuffer.TYPE_BYTE;
+        }else if(SampleDimensionType.UNSIGNED_16BITS.equals(sdt)){
+            return DataBuffer.TYPE_USHORT;
+        }else if(SampleDimensionType.UNSIGNED_32BITS.equals(sdt)){
+            return DataBuffer.TYPE_INT;
+        }else {
+            throw new IllegalArgumentException("Unexprected data type : "+sdt);
+        }
+    }
+    
 }

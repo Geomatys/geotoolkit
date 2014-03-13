@@ -19,7 +19,6 @@ package org.geotoolkit.coverage;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
-import java.awt.image.DataBuffer;
 import java.awt.image.RenderedImage;
 import java.util.AbstractQueue;
 import java.util.Collection;
@@ -48,7 +47,6 @@ import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.referencing.operation.MathTransforms;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.coverage.filestore.XMLSampleDimension;
 import org.geotoolkit.util.BufferedImageUtilities;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.geometry.DirectPosition;
@@ -455,14 +453,14 @@ public class PyramidalModelWriter extends GridCoverageWriter {
             }else{
                 try {
                     //todo not exact
-                    final List<GridSampleDimension> dims = pm.getSampleDimensions(0);
+                    final List<GridSampleDimension> dims = pm.getSampleDimensions();
                     if(nbBand==3){
                         currentlyTile = new BufferedImage(tileWidth, tileHeight,BufferedImage.TYPE_INT_RGB);
                     }else if(nbBand==4){
                         currentlyTile = new BufferedImage(tileWidth, tileHeight,BufferedImage.TYPE_INT_ARGB);
                     }else{
                         currentlyTile = BufferedImageUtilities.createImage(tileWidth, tileHeight, dims.size(),
-                                XMLSampleDimension.getDataType(dims.get(0).getSampleDimensionType()));
+                                CoverageUtilities.getDataType(dims.get(0).getSampleDimensionType()));
                     }
                 } catch (DataStoreException ex) {
                     throw new RuntimeException(ex);

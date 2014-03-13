@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2012, Geomatys
+ *    (C) 2012-2014, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.coverage.filestore;
+package org.geotoolkit.coverage.xmlstore;
 
 import java.awt.Dimension;
 import java.awt.Point;
@@ -127,7 +127,7 @@ public class XMLMosaic implements GridMosaic{
     private synchronized byte[] createEmptyTile(){
         if(emptyTileEncoded==null){
             //create an empty tile
-            final List<XMLSampleDimension> dims = pyramid.getPyramidSet().getSampleDimensions();
+            final List<XMLSampleDimension> dims = pyramid.getPyramidSet().getRef().getXMLSampleDimensions();
             final BufferedImage emptyTile;
             if(dims!=null && !dims.isEmpty()){
                 emptyTile = BufferedImageUtilities.createImage(tileWidth, tileHeight, dims.size(), dims.get(0).getDataType());

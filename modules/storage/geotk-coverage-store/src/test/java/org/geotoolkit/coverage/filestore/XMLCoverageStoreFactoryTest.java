@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.coverage.filestore;
 
+import org.geotoolkit.coverage.xmlstore.XMLCoverageStoreFactory;
 import java.util.Iterator;
 import java.util.Set;
 import org.geotoolkit.coverage.CoverageStoreFactory;

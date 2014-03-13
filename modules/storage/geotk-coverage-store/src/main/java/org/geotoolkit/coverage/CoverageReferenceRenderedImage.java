@@ -28,7 +28,7 @@ import javax.media.jai.RasterFactory;
 import javax.swing.event.EventListenerList;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.coverage.filestore.XMLSampleDimension;
+import org.geotoolkit.coverage.xmlstore.XMLSampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
@@ -300,7 +300,7 @@ public class CoverageReferenceRenderedImage implements RenderedImage{
             final double res = mosaic.getScale();
             if(sampleDimensions.length>0){
                 workTile = BufferedImageUtilities.createImage(tileWidth, tileHeight, sampleDimensions.length,
-                        XMLSampleDimension.getDataType(sampleDimensions[0].getSampleDimensionType()));
+                        CoverageUtilities.getDataType(sampleDimensions[0].getSampleDimensionType()));
                 for(int i=0;i<nbBand;i++){
                     final double[] nodata = sampleDimensions[i].geophysics(true).getNoDataValues();
                     if(nodata!=null && nodata.length>0){

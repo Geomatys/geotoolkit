@@ -75,7 +75,7 @@ public class PyramidElevationLoader extends AbstractElevationLoader {
 
         ArgumentChecks.ensureNonNull("pyramid", dataSource);
 
-        final GridSampleDimension elevationDim = ref.getSampleDimensions(0).get(0).geophysics(true);
+        final GridSampleDimension elevationDim = ref.getSampleDimensions().get(0).geophysics(true);
         this.minElevation = elevationDim.getMinimumValue();
         this.maxElevation = elevationDim.getMaximumValue();
     }

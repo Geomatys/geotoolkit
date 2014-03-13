@@ -25,7 +25,6 @@ import java.awt.image.DataBuffer;
 import java.awt.image.DataBufferFloat;
 import java.awt.image.RenderedImage;
 import java.awt.image.WritableRaster;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -33,7 +32,6 @@ import java.util.Map;
 import javax.media.jai.RasterFactory;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.GridMosaic;
 import org.geotoolkit.coverage.GridMosaicCoverage2D;
 import org.geotoolkit.coverage.GridSampleDimension;
@@ -44,9 +42,7 @@ import org.geotoolkit.coverage.memory.MPCoverageStore;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.process.ProcessDescriptor;
-import org.geotoolkit.process.ProcessEvent;
 import org.geotoolkit.process.ProcessFinder;
-import org.geotoolkit.process.ProcessListenerAdapter;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.util.BufferedImageUtilities;
 import org.junit.Test;
@@ -54,7 +50,6 @@ import org.opengis.feature.type.Name;
 import org.opengis.geometry.Envelope;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.util.InternationalString;
 
 /**
  *
@@ -82,7 +77,7 @@ public class PyramidTest {
         final GridSampleDimension dim2 = new GridSampleDimension("sampleDesc2");
         dims.add(dim1);
         dims.add(dim2);
-        pcr.createSampleDimension(dims, null);
+        pcr.setSampleDimensions(dims);
 
         final Pyramid pyramid = pcr.createPyramid(crs);
         final GridMosaic mosaic = pcr.createMosaic(pyramid.getId(), new Dimension(2, 1), new Dimension(tileSize, tileSize), upperLeft, 1);

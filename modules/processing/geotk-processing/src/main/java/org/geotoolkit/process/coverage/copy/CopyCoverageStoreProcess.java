@@ -64,6 +64,7 @@ import org.geotoolkit.process.coverage.straighten.StraightenDescriptor;
 import org.geotoolkit.referencing.cs.DiscreteCoordinateSystemAxis;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.temporal.object.TemporalUtilities;
 import org.geotoolkit.util.ImageIOUtilities;
 import org.opengis.feature.type.Name;
@@ -139,9 +140,9 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
     private void savePMtoPM(final PyramidalCoverageReference inPM, final PyramidalCoverageReference outPM) throws DataStoreException{
         final PyramidSet inPS = inPM.getPyramidSet();
 
-        final List<GridSampleDimension> sampleDimensions = inPM.getSampleDimensions(0);
+        final List<GridSampleDimension> sampleDimensions = inPM.getSampleDimensions();
         if(sampleDimensions != null){
-            outPM.createSampleDimension(sampleDimensions, null);
+            outPM.setSampleDimensions(sampleDimensions);
         }
 
         //count total number of tiles
@@ -322,7 +323,7 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
         //TODO remove analyse when CoverageImageReader getSampleDimensions will be fix with min/max values.
         final Map<String, Object> analyse = StatisticOp.analyze(reader, imageIndex);
         final List<GridSampleDimension> sampleDimensions = reader.getSampleDimensions(imageIndex);
-        outPM.createSampleDimension(sampleDimensions, analyse);
+        outPM.setSampleDimensions(sampleDimensions);
 
         final Pyramid pyramid = outPM.createPyramid(crs);
 

@@ -1,5 +1,6 @@
 package org.geotoolkit.pending.demo.processing;
 
+import org.geotoolkit.coverage.xmlstore.XMLCoverageStoreFactory;
 import java.awt.Dimension;
 import java.net.MalformedURLException;
 import java.net.URL;

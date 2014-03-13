@@ -201,7 +201,7 @@ public class PyramidalModelReader extends GridCoverageReader{
     @Override
     public List<GridSampleDimension> getSampleDimensions(int index) throws CoverageStoreException, CancellationException {
         try {
-            return getPyramidalModel().getSampleDimensions(index);
+            return getPyramidalModel().getSampleDimensions();
         } catch (DataStoreException ex) {
             throw new CoverageStoreException(ex.getMessage(), ex);
         }
