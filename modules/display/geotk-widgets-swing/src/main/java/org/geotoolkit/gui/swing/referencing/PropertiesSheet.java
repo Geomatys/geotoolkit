@@ -119,7 +119,7 @@ public class PropertiesSheet extends JComponent {
         wktArea.setEditable(false);
         wktArea.setContentType("text/html");
         formatter = new WKTFormat();
-        formatter.setColors(Colors.CONSOLE);
+        formatter.setColors(Colors.DEFAULT);
         /*
          * Add the tabs.
          */
