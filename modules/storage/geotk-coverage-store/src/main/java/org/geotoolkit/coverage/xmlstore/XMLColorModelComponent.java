@@ -28,7 +28,7 @@ import javax.xml.bind.annotation.XmlElement;
  * @author Johann Sorel (Geomatys)
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class XMLColorModelComponent implements XMLColorModel {
+public class XMLColorModelComponent extends XMLColorModel {
     
     @XmlElement(name="ColorSpace")
     private int colorSpace;

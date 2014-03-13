@@ -129,7 +129,8 @@ public abstract class PyramidalModelStoreTest {
         ref.recycle(reader);
 
         //check coverage informations
-        assertTrue(CRS.equalsIgnoreMetadata(crs,  coverage.getCoordinateReferenceSystem()));
+        final CoordinateReferenceSystem covcrs = coverage.getCoordinateReferenceSystem();
+        assertTrue(CRS.equalsIgnoreMetadata(crs,  covcrs));
         final Envelope env = coverage.getEnvelope();
         assertEquals(corner.getOrdinate(0), env.getMinimum(0), DELTA);
         assertEquals(corner.getOrdinate(1), env.getMaximum(1), DELTA);

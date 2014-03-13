@@ -23,12 +23,12 @@ import java.awt.image.ColorModel;
  * 
  * @author Johann Sorel (Geomatys)
  */
-public interface XMLColorModel {
+public abstract class XMLColorModel {
     
     /**
      * 
      * @return ColorModel
      */
-    ColorModel buildColorModel();
+    public abstract ColorModel buildColorModel();
     
 }

@@ -27,7 +27,7 @@ import javax.xml.bind.annotation.XmlElement;
  * @author Johann Sorel (Geomatys)
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class XMLColorModelIndexed implements XMLColorModel {
+public class XMLColorModelIndexed extends XMLColorModel {
     
     @XmlElement(name="Bits")
     private int bits;

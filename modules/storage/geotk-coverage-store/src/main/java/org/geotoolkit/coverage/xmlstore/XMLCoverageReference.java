@@ -65,7 +65,7 @@ public class XMLCoverageReference extends AbstractPyramidalModel {
 
     private static synchronized MarshallerPool getPoolInstance() throws JAXBException{
         if(POOL == null){
-            POOL = new MarshallerPool(JAXBContext.newInstance(XMLPyramidSet.class), null);
+            POOL = new MarshallerPool(JAXBContext.newInstance(XMLCoverageReference.class), null);
         }
         return POOL;
     }
@@ -97,6 +97,7 @@ public class XMLCoverageReference extends AbstractPyramidalModel {
     public XMLCoverageReference(XMLCoverageStore store, Name name, XMLPyramidSet set) {
         super(store,name,0);
         this.set = set;
+        this.set.setRef(this);
     }
 
     public List<XMLSampleDimension> getXMLSampleDimensions() {
@@ -107,8 +108,13 @@ public class XMLCoverageReference extends AbstractPyramidalModel {
     }
 
     public void copy(XMLCoverageReference ref){
-        this.set = ref.set;
-        this.colorModel = ref.colorModel;
+        this.id                 = ref.id;
+        this.mainfile           = ref.mainfile;
+        this.set                = ref.set;
+        this.packMode           = ref.packMode;
+        this.sampleDimensions   = ref.sampleDimensions;
+        this.colorModel         = ref.colorModel;
+        this.set.setRef(this);
     }
     
     void initialize(File mainFile){
