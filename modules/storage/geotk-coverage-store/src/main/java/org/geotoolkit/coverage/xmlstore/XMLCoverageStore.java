@@ -112,7 +112,7 @@ public class XMLCoverageStore extends AbstractCoverageStore{
                     ref.copy(set);
                     rootNode.getChildren().add(ref);
                 } catch (JAXBException ex) {
-                    getLogger().log(Level.FINE, "file is not a pyramid : {0}", f.getPath());
+                    getLogger().log(Level.INFO, "file is not a pyramid : {0}", f.getPath());
                 }
             }
         }

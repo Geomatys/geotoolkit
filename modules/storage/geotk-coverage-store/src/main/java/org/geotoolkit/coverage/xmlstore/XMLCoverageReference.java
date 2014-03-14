@@ -46,6 +46,7 @@ import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.Pyramid;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.CoverageStoreException;
+import org.geotoolkit.feature.DefaultName;
 import org.opengis.coverage.SampleDimensionType;
 import org.opengis.feature.type.Name;
 import org.opengis.geometry.DirectPosition;
@@ -90,7 +91,7 @@ public class XMLCoverageReference extends AbstractPyramidalModel {
     private List<GridSampleDimension> cacheDimensions = null;
 
     public XMLCoverageReference() {
-        super(null, null, 0);
+        super(null, new DefaultName("test"), 0);
     }
 
     public XMLCoverageReference(XMLCoverageStore store, Name name, XMLPyramidSet set) {
