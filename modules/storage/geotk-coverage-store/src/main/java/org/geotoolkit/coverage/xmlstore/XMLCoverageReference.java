@@ -22,6 +22,7 @@ import java.awt.image.ComponentColorModel;
 import java.awt.image.DirectColorModel;
 import java.awt.image.IndexColorModel;
 import java.awt.image.RenderedImage;
+import java.awt.image.SampleModel;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -59,10 +60,8 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class XMLCoverageReference extends AbstractPyramidalModel {
 
-    
     @XmlTransient
     private static MarshallerPool POOL;
-
     private static synchronized MarshallerPool getPoolInstance() throws JAXBException{
         if(POOL == null){
             POOL = new MarshallerPool(JAXBContext.newInstance(XMLCoverageReference.class), null);
@@ -74,11 +73,13 @@ public class XMLCoverageReference extends AbstractPyramidalModel {
     private XMLPyramidSet set;
     /** One of geophysics/native */
     @XmlElement(name="packMode")
-    private String packMode;
+    private String packMode = ViewType.RENDERED.name();
     @XmlElement(name="SampleDimension")
     private List<XMLSampleDimension> sampleDimensions;
-    @XmlElement(name="ColorModel")
-    private XMLColorModel colorModel;
+    @XmlElement(name="NumDimension")
+    private int numDimension;
+    @XmlElement(name="Sampletype")
+    private int sampleType;
     
     @XmlTransient
     private String id;
@@ -87,8 +88,6 @@ public class XMLCoverageReference extends AbstractPyramidalModel {
     //caches
     @XmlTransient
     private List<GridSampleDimension> cacheDimensions = null;
-    @XmlTransient
-    private ColorModel cacheColorModel = null;
 
     public XMLCoverageReference() {
         super(null, null, 0);
@@ -113,7 +112,6 @@ public class XMLCoverageReference extends AbstractPyramidalModel {
         this.set                = ref.set;
         this.packMode           = ref.packMode;
         this.sampleDimensions   = ref.sampleDimensions;
-        this.colorModel         = ref.colorModel;
         this.set.setRef(this);
     }
     
@@ -275,29 +273,24 @@ public class XMLCoverageReference extends AbstractPyramidalModel {
 
     @Override
     public ColorModel getColorModel() {
-        if(cacheColorModel==null && colorModel!=null){
-            cacheColorModel = colorModel.buildColorModel();
-        }
-        return cacheColorModel;
+        return null;
     }
 
     @Override
     public void setColorModel(ColorModel colorModel) throws DataStoreException {
-        this.cacheColorModel = null; //clear cache
-        
-        if(colorModel instanceof ComponentColorModel){
-            this.colorModel = new XMLColorModelComponent();
-            ((XMLColorModelComponent)this.colorModel).fill((ComponentColorModel)colorModel);
-        }else if(colorModel instanceof DirectColorModel){
-            this.colorModel = new XMLColorModelDirect();
-            ((XMLColorModelDirect)this.colorModel).fill((DirectColorModel)colorModel);
-        }else if(colorModel instanceof IndexColorModel){
-            this.colorModel = new XMLColorModelIndexed();
-            ((XMLColorModelIndexed)this.colorModel).fill((IndexColorModel)colorModel);
-        }
         save();
     }
 
+    @Override
+    public SampleModel getSampleModel() throws DataStoreException {
+        return null;
+    }
+
+    @Override
+    public void setSampleModel(SampleModel sampleModel) throws DataStoreException {
+        
+    }
+    
     @Override
     public ViewType getPackMode() {
         return ViewType.valueOf(packMode);
@@ -307,5 +300,6 @@ public class XMLCoverageReference extends AbstractPyramidalModel {
     public void setPackMode(ViewType packMode) {
         this.packMode = packMode.name();
     }
+
 
 }

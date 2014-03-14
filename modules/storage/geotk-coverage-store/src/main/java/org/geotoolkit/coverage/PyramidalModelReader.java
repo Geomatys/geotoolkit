@@ -19,9 +19,7 @@ package org.geotoolkit.coverage;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
-import java.awt.image.ColorModel;
 import java.awt.image.RenderedImage;
-import java.awt.image.WritableRaster;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -53,6 +51,7 @@ import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.referencing.cs.DiscreteCoordinateSystemAxis;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
+import org.geotoolkit.util.BufferedImageUtilities;
 import org.geotoolkit.util.Cancellable;
 import org.geotoolkit.util.ImageIOUtilities;
 import org.opengis.coverage.grid.GridCoverage;
@@ -258,10 +257,11 @@ public class PyramidalModelReader extends GridCoverageReader{
             resolution = new double[]{Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY};
         }
 
-
+        final PyramidalCoverageReference covref = getPyramidalModel();
+        
         final PyramidSet pyramidSet;
         try {
-            pyramidSet = getPyramidalModel().getPyramidSet();
+            pyramidSet = covref.getPyramidSet();
         } catch (DataStoreException ex) {
             throw new CoverageStoreException(ex);
         }
@@ -384,7 +384,7 @@ public class PyramidalModelReader extends GridCoverageReader{
         //image in which all tiles will be aggregated
         BufferedImage image = null;
 
-
+        
         final BlockingQueue<Object> queue;
         try {
             queue = mosaic.getTiles(candidates, hints);
@@ -435,12 +435,9 @@ public class PyramidalModelReader extends GridCoverageReader{
                 }
 
                 if(image == null){
-                    final ColorModel cm = tileImage.getColorModel();
-                    final WritableRaster raster = cm.createCompatibleWritableRaster(
-                            (int)(tileMaxCol-tileMinCol)*tileSize.width,
-                            (int)(tileMaxRow-tileMinRow)*tileSize.height);
-
-                    image = new BufferedImage(cm, raster, cm.isAlphaPremultiplied(), null);
+                    image = BufferedImageUtilities.createImage(
+                            (int)(tileMaxCol-tileMinCol)*tileSize.width, 
+                            (int)(tileMaxRow-tileMinRow)*tileSize.height, tileImage);
                 }
 
                 image.getRaster().setDataElements(offset.x, offset.y, tileImage.getData());

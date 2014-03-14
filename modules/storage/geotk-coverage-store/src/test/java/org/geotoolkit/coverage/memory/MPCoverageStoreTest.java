@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2014, Geomatys
+ *    (C) 2013, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -14,21 +14,20 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.coverage.xmlstore;
+package org.geotoolkit.coverage.memory;
 
-import java.awt.image.ColorModel;
+import org.geotoolkit.coverage.CoverageStore;
+import org.geotoolkit.coverage.AbstractPyramidalModelStoreTest;
 
 /**
- * Map Java color models in XML.
- * 
  * @author Johann Sorel (Geomatys)
  */
-public abstract class XMLColorModel {
-    
-    /**
-     * 
-     * @return ColorModel
-     */
-    public abstract ColorModel buildColorModel();
-    
+public class MPCoverageStoreTest extends AbstractPyramidalModelStoreTest {
+
+    @Override
+    protected CoverageStore createStore() throws Exception{
+        final MPCoverageStore store = new MPCoverageStore();
+        return store;
+    }
+
 }

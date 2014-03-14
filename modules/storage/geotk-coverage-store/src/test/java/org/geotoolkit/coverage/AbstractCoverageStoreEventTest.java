@@ -27,16 +27,19 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 /**
- *
+ * Coverage store event tests.
+ * 
  * @author Johann Sorel (Geomatys)
  */
-public class MemoryStoreTest {
+public abstract class AbstractCoverageStoreEventTest {
 
+    protected abstract CoverageStore createStore() throws Exception ;
+    
     /**
      * Check events
      */
     @Test
-    public void testEvent() throws DataStoreException{
+    public void testEvent() throws DataStoreException {
 
         final StorageCountListener storelistener = new StorageCountListener();
         final StorageCountListener reflistener = new StorageCountListener();

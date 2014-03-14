@@ -14,21 +14,17 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.coverage.filestore;
+package org.geotoolkit.coverage.xmlstore;
 
-import org.geotoolkit.coverage.xmlstore.XMLCoverageStoreFactory;
 import org.geotoolkit.coverage.CoverageStore;
-import org.geotoolkit.coverage.CoverageStoreFinder;
-import org.geotoolkit.coverage.PyramidalModelStoreTest;
-import org.geotoolkit.parameter.Parameters;
-import org.opengis.parameter.ParameterValueGroup;
+import org.geotoolkit.coverage.AbstractPyramidalModelStoreTest;
 
 import java.io.File;
 
 /**
  * @author Johann Sorel (Geomatys)
  */
-public class XMLCoverageStoreTest extends PyramidalModelStoreTest {
+public class XMLCoverageStoreTest extends AbstractPyramidalModelStoreTest {
 
     @Override
     protected CoverageStore createStore() throws Exception{
@@ -36,10 +32,7 @@ public class XMLCoverageStoreTest extends PyramidalModelStoreTest {
         final File tempFolder = File.createTempFile("mosaic", "");
         tempFolder.delete();
         tempFolder.mkdirs();
-
-        final ParameterValueGroup params = XMLCoverageStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
-        Parameters.getOrCreate(XMLCoverageStoreFactory.PATH, params).setValue(tempFolder.toURI().toURL());
-        final CoverageStore store = CoverageStoreFinder.open(params);
+        final CoverageStore store = new XMLCoverageStore(tempFolder);
 
         return store;
     }

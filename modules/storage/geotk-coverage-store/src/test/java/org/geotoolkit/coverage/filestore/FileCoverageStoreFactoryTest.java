@@ -16,8 +16,6 @@
  */
 package org.geotoolkit.coverage.filestore;
 
-import org.geotoolkit.coverage.xmlstore.XMLCoverageStoreFactory;
-import java.util.Iterator;
 import java.util.Set;
 import org.geotoolkit.coverage.CoverageStoreFactory;
 import org.geotoolkit.coverage.CoverageStoreFinder;
@@ -25,14 +23,14 @@ import static org.junit.Assert.fail;
 import org.junit.Test;
 
 /**
- * Tests for XMLCoverageStore
+ * Tests for FileCoverageStore
  * 
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class XMLCoverageStoreFactoryTest {
+public class FileCoverageStoreFactoryTest {
     
-    public XMLCoverageStoreFactoryTest() {
+    public FileCoverageStoreFactoryTest() {
     }
 
     @Test
@@ -42,7 +40,7 @@ public class XMLCoverageStoreFactoryTest {
         
         boolean found = false;
         for(CoverageStoreFactory fact : set){
-            if(fact instanceof XMLCoverageStoreFactory){
+            if(fact instanceof FileCoverageStoreFactory){
                 found = true;
             }
         }

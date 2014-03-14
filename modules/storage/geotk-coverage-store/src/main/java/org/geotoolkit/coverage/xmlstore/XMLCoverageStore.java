@@ -17,6 +17,7 @@
 package org.geotoolkit.coverage.xmlstore;
 
 import java.io.File;
+import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Set;
@@ -31,6 +32,7 @@ import org.geotoolkit.coverage.CoverageType;
 import org.geotoolkit.feature.DefaultName;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.filestore.FileCoverageStoreFactory;
+import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.storage.DataNode;
 import org.geotoolkit.storage.DefaultDataNode;
 import org.opengis.feature.type.Name;
@@ -46,18 +48,35 @@ public class XMLCoverageStore extends AbstractCoverageStore{
 
     private final File root;
     private final URL rootPath;
-    private String format;
     private final DataNode rootNode = new DefaultDataNode();
 
-    XMLCoverageStore(ParameterValueGroup params) throws URISyntaxException{
+    public XMLCoverageStore(File root) throws URISyntaxException, MalformedURLException{
+        this(toParameters(root));
+    }
+    
+    public XMLCoverageStore(URL rootPath) throws URISyntaxException{
+        this(toParameters(rootPath));
+    }
+        
+    public XMLCoverageStore(ParameterValueGroup params) throws URISyntaxException{
         super(params);
         rootPath = (URL) params.parameter(XMLCoverageStoreFactory.PATH.getName().getCode()).getValue();
         root = new File(rootPath.toURI());
-        format = (String) params.parameter(FileCoverageStoreFactory.TYPE.getName().getCode()).getValue();
-        if(format.equals("AUTO")) format = "PNG";
         explore();
     }
 
+    private static ParameterValueGroup toParameters(File root) throws MalformedURLException{
+        final ParameterValueGroup params = XMLCoverageStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
+        Parameters.getOrCreate(XMLCoverageStoreFactory.PATH, params).setValue(root.toURI().toURL());
+        return params;
+    }
+    
+    private static ParameterValueGroup toParameters(URL rootPath) {
+        final ParameterValueGroup params = XMLCoverageStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
+        Parameters.getOrCreate(XMLCoverageStoreFactory.PATH, params).setValue(rootPath);
+        return params;
+    }
+    
     @Override
     public CoverageStoreFactory getFactory() {
         return CoverageStoreFinder.getFactoryById(XMLCoverageStoreFactory.NAME);
@@ -111,7 +130,7 @@ public class XMLCoverageStore extends AbstractCoverageStore{
             throw new DataStoreException("Name already used in store : " + name.getLocalPart());
         }
 
-        final XMLPyramidSet set = new XMLPyramidSet(format);
+        final XMLPyramidSet set = new XMLPyramidSet();
         final XMLCoverageReference ref = new XMLCoverageReference(this,name,set);
         ref.initialize(new File(root, name.getLocalPart()+".xml"));
         rootNode.getChildren().add(ref);

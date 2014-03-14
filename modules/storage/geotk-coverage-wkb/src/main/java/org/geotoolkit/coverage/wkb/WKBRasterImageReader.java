@@ -32,7 +32,6 @@ import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.stream.ImageInputStream;
-import org.apache.sis.util.Version;
 import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.internal.io.IOUtilities;
 

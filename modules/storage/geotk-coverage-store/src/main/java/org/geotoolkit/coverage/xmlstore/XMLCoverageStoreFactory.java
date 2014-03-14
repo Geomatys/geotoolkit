@@ -19,9 +19,6 @@ package org.geotoolkit.coverage.xmlstore;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.iso.ResourceInternationalString;
 import org.geotoolkit.coverage.AbstractCoverageStoreFactory;
@@ -29,7 +26,6 @@ import org.geotoolkit.coverage.CoverageStore;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
-import org.geotoolkit.coverage.filestore.FileCoverageStoreFactory;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.opengis.metadata.Identifier;
@@ -65,29 +61,10 @@ public class XMLCoverageStoreFactory extends AbstractCoverageStoreFactory{
     public static final ParameterDescriptor<URL> PATH =
             new DefaultParameterDescriptor<>("path","folder path",URL.class,null,true);
 
-    /**
-     * Mandatory - the image reader type.
-     * Use AUTO if type should be detected automaticaly.
-     */
-    public static final ParameterDescriptor<String> TYPE;
-    static{
-        final String code = "type";
-        final CharSequence remarks = "Reader type";
-        final Map<String,Object> params = new HashMap<>();
-        params.put(DefaultParameterDescriptor.NAME_KEY, code);
-        params.put(DefaultParameterDescriptor.REMARKS_KEY, remarks);
-        final LinkedList<String> validValues = new LinkedList<>(FileCoverageStoreFactory.getReaderTypeList());
-        validValues.add("AUTO");
-        Collections.sort(validValues);
-
-        TYPE = new DefaultParameterDescriptor<>(params, String.class,
-                validValues.toArray(new String[validValues.size()]),
-                "AUTO", null, null, null, true);
-    }
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
             new DefaultParameterDescriptorGroup("XMLCoverageStoreParameters",
-                IDENTIFIER,PATH,TYPE,NAMESPACE);
+                IDENTIFIER,PATH,NAMESPACE);
 
     @Override
     public Identification getIdentification() {

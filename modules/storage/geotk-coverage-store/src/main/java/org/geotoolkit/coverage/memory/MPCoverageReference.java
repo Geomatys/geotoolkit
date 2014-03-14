@@ -24,7 +24,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 import org.apache.sis.storage.DataStoreException;
-
 import org.geotoolkit.coverage.*;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.CoverageStoreException;
@@ -43,6 +42,7 @@ public class MPCoverageReference extends AbstractPyramidalModel {
     private final AtomicLong mosaicID = new AtomicLong(0);
     private ViewType viewType;
     private List<GridSampleDimension> dimensions;
+    private SampleModel sampleModel;
     private ColorModel colorModel;
 
     public MPCoverageReference(final MPCoverageStore store, final Name name) {
@@ -98,6 +98,22 @@ public class MPCoverageReference extends AbstractPyramidalModel {
         this.colorModel = colorModel;
     }
 
+    /**
+     * {@inheritDoc }.
+     */
+    @Override
+    public SampleModel getSampleModel() throws DataStoreException {
+        return sampleModel;
+    }
+
+    /**
+     * {@inheritDoc }.
+     */
+    @Override
+    public void setSampleModel(SampleModel sampleModel) {
+        this.sampleModel = sampleModel;
+    }
+    
     /**
      * {@inheritDoc }.
      */

@@ -47,8 +47,10 @@ import java.util.logging.Logger;
 import javax.measure.unit.Unit;
 import javax.swing.ProgressMonitor;
 import net.iharder.Base64;
+import org.apache.sis.measure.NumberRange;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.AbstractCoverageReference;
+import org.geotoolkit.coverage.AbstractPyramidalCoverageReference;
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.CoverageStoreContentEvent;
 import org.geotoolkit.coverage.CoverageStoreManagementEvent;
@@ -59,6 +61,8 @@ import org.geotoolkit.coverage.PyramidSet;
 import org.geotoolkit.coverage.PyramidalCoverageReference;
 import org.geotoolkit.coverage.PyramidalModelReader;
 import org.geotoolkit.coverage.PyramidalModelWriter;
+import org.geotoolkit.coverage.grid.ViewType;
+import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.coverage.postgresql.epsg.PGEPSGWriter;
@@ -66,9 +70,6 @@ import org.geotoolkit.coverage.wkb.WKBRasterConstants;
 import org.geotoolkit.coverage.wkb.WKBRasterWriter;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.temporal.object.TemporalUtilities;
-import org.apache.sis.measure.NumberRange;
-import org.geotoolkit.coverage.grid.ViewType;
-import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.version.Version;
 import org.opengis.coverage.SampleDimensionType;
 import org.opengis.feature.type.Name;
@@ -82,7 +83,7 @@ import org.opengis.util.FactoryException;
  * @author Johann Sorel (Geomatys)
  * @author Cédric Briançon (Geomatys)
  */
-public class PGCoverageReference extends AbstractCoverageReference implements PyramidalCoverageReference{
+public class PGCoverageReference extends AbstractPyramidalCoverageReference {
 
     private final PGCoverageStore pgstore;
     private final PGPyramidSet pyramidSet;
@@ -111,20 +112,8 @@ public class PGCoverageReference extends AbstractCoverageReference implements Py
     }
 
     @Override
-    public GridCoverageReader acquireReader() throws CoverageStoreException {
-        final PyramidalModelReader reader = new PyramidalModelReader();
-        reader.setInput(this);
-        return reader;
-    }
-
-    @Override
     public GridCoverageWriter acquireWriter() throws CoverageStoreException {
         return new PyramidalModelWriter(this);
-    }
-
-    @Override
-    public Image getLegend() throws DataStoreException {
-        return null;
     }
 
     @Override
@@ -581,7 +570,6 @@ public class PGCoverageReference extends AbstractCoverageReference implements Py
 
     @Override
     public void setPackMode(ViewType packMode) throws DataStoreException {
-        throw new DataStoreException("Not supported yet.");
     }
 
     @Override
@@ -698,16 +686,6 @@ public class PGCoverageReference extends AbstractCoverageReference implements Py
                 pgstore.closeSafe(cnx, pstmt, rs);
             }
         }
-    }
-
-    @Override
-    public ColorModel getColorModel() throws DataStoreException {
-        return null;
-    }
-
-    @Override
-    public void setColorModel(ColorModel colorModel) throws DataStoreException {
-        throw new DataStoreException("Not supported yet.");
     }
 
 }

@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2012, Geomatys
+ *    (C) 2012-2014, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -36,6 +36,7 @@ import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.apache.sis.util.Classes;
+import org.geotoolkit.coverage.grid.ViewType;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -53,8 +54,6 @@ public class XMLPyramidSet extends AbstractPyramidSet{
 
     @XmlElement(name="Pyramid")
     private List<XMLPyramid> pyramids;
-    @XmlElement(name="FormatName")
-    private String formatName;
 
     @XmlTransient
     private ImageReaderSpi spi;
@@ -64,14 +63,11 @@ public class XMLPyramidSet extends AbstractPyramidSet{
     public XMLPyramidSet() {
     }
 
-    public XMLPyramidSet(String formatName){
-        this.formatName = formatName;
-    }
-
     public String getFormatName() {
-        return formatName;
+        return ref.getPackMode().equals(ViewType.GEOPHYSICS) ? "PostGISWKBraster" : "PNG";
     }
 
+    
     public XMLCoverageReference getRef() {
         return ref;
     }
@@ -83,7 +79,7 @@ public class XMLPyramidSet extends AbstractPyramidSet{
     public ImageReaderSpi getReaderSpi() throws DataStoreException{
         if(spi == null){
             try {
-                final ImageReader reader = XImageIO.getReaderByFormatName(formatName, null, Boolean.TRUE, Boolean.TRUE);
+                final ImageReader reader = XImageIO.getReaderByFormatName(getFormatName(), null, Boolean.TRUE, Boolean.TRUE);
                 spi = reader.getOriginatingProvider();
                 reader.dispose();
             } catch (IOException ex) {
