@@ -319,6 +319,7 @@ public class DefaultProjectedCRS extends AbstractDerivedCRS implements Projected
         formatter.append(toFormattable(baseCRS));
         formatter.newLine();
         formatter.append((org.apache.sis.io.wkt.FormattableObject) conversionFromBase.getMethod()); // TODO
+        formatter.newLine();
         for (final GeneralParameterValue param : conversionFromBase.getParameterValues().values()) {
             final GeneralParameterDescriptor desc = param.getDescriptor();
             String name;
