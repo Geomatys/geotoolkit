@@ -37,9 +37,8 @@ final class ReversedBitsChannel implements ReadableByteChannel {
     private static final byte[] REVERSE = new byte[256];
     
     static {
-        int val = 255;
         for (int p = 0; p < 256; p++) {
-            REVERSE[p] = (byte) val--;
+            REVERSE[p] = (byte) (Integer.reverse(p) >>> 24);
         }
     }
     
@@ -114,7 +113,7 @@ final class ReversedBitsChannel implements ReadableByteChannel {
     private static void reverseBytes(final ByteBuffer buffer, int position, final int limit) {
         while (position < limit) {
             final byte b = buffer.get(position);
-            buffer.put(position++, REVERSE[b]);
+            buffer.put(position++, REVERSE[b & 0xFF]);
         }
     }
     
