@@ -41,7 +41,6 @@ import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
  * <p>
  * <ul>
  *   <li>Values are always floating point numbers of type {@code double}.</li>
- *   <li>Units are the same than the {@linkplain ParameterDescriptor#getUnit() default units}.</li>
  * </ul>
  * <p>
  * When those conditions are meet, {@code FloatParameter} is slightly more efficient
@@ -69,7 +68,10 @@ import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
  *
  * @since 2.0
  * @module
+ *
+ * @deprecated Replaced by {@link org.apache.sis.parameter.DefaultParameterValue}.
  */
+@Deprecated
 public class FloatParameter extends AbstractParameterValue<Double> {
     /**
      * Serial number for inter-operability with different versions.
