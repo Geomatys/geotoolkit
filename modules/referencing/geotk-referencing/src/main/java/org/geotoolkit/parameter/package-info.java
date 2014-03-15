@@ -60,4 +60,5 @@
  * @since 2.0
  * @module
  */
+@Deprecated
 package org.geotoolkit.parameter;

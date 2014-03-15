@@ -58,7 +58,10 @@ import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
  *
  * @since 2.0
  * @module
+ *
+ * @deprecated Moved to Apache SIS as {@link org.apache.sis.parameter.TensorParameters}.
  */
+@Deprecated
 public class MatrixParameters extends ParameterGroup implements ParameterDescriptorGroup {
     /**
      * Serial number for inter-operability with different versions.

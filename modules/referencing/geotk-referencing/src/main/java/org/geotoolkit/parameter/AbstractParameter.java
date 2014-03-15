@@ -59,6 +59,7 @@ import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
  * @since 2.0
  * @module
  */
+@Deprecated
 public abstract class AbstractParameter extends FormattableObject
            implements GeneralParameterValue, Serializable, Cloneable, Formattable
 {

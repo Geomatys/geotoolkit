@@ -62,7 +62,10 @@ import static org.apache.sis.util.collection.Containers.hashMapCapacity;
  *
  * @since 2.1
  * @module
+ *
+ * @deprecated Moved to Apache SIS as {@link org.apache.sis.parameter.ParameterFormat}.
  */
+@Deprecated
 @Decorator(Writer.class)
 public class ParameterWriter extends FilterWriter implements Localized {
     /**

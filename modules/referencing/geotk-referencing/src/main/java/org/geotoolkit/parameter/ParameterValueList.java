@@ -44,6 +44,7 @@ import org.geotoolkit.referencing.IdentifiedObjects;
  * @since 2.1
  * @module
  */
+@Deprecated
 final class ParameterValueList extends AbstractList<GeneralParameterValue>
         implements RandomAccess, Serializable
 {

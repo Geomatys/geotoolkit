@@ -46,6 +46,7 @@ import org.geotoolkit.internal.Listeners;
  * @since 3.20
  * @module
  */
+@Deprecated
 public abstract class AbstractParameterValue<T> extends AbstractParameter implements ParameterValue<T> {
     /**
      * Serial number for inter-operability with different versions.

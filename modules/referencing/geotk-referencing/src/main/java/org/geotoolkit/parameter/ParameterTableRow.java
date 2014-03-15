@@ -49,6 +49,7 @@ import static org.apache.sis.util.CharSequences.spaces;
  * @since 3.00
  * @module
  */
+@Deprecated
 final class ParameterTableRow {
     /**
      * The value. May be a list if there is more than one.
