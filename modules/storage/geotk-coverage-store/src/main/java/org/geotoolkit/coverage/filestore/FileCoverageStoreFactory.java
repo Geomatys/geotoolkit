@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
+import javax.imageio.ImageIO;
 import javax.imageio.spi.IIORegistry;
 import javax.imageio.spi.ImageReaderSpi;
 import org.apache.sis.storage.DataStoreException;
@@ -32,6 +33,7 @@ import org.geotoolkit.coverage.CoverageStore;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
+import org.geotoolkit.lang.Setup;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.opengis.metadata.Identifier;
@@ -87,9 +89,15 @@ public class FileCoverageStoreFactory extends AbstractCoverageStoreFactory{
                 "AUTO", null, null, null, true);
     }
 
+    public static final DefaultParameterDescriptor<String> PATH_SEPARATOR =
+            new DefaultParameterDescriptor<>(
+                    "pathSeparator",
+                    "If specified, layer names will be built by concatenating image file name with its parent folder until the store root. Given separator will be used as separator in path.",
+                    String.class, null, false);
+
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
             new DefaultParameterDescriptorGroup("FileCoverageStoreParameters",
-                IDENTIFIER,PATH,TYPE,NAMESPACE);
+                IDENTIFIER,PATH,TYPE,NAMESPACE, PATH_SEPARATOR);
 
     @Override
     public Identification getIdentification() {
@@ -134,31 +142,13 @@ public class FileCoverageStoreFactory extends AbstractCoverageStoreFactory{
      * 
      * List all available formats.
      */
-    public static LinkedList<String> getReaderTypeList(){
-
-        final IIORegistry registry = IIORegistry.getDefaultInstance();
-        final Iterator<? extends ImageReaderSpi> it = registry.getServiceProviders(ImageReaderSpi.class, true);
+    public static LinkedList<String> getReaderTypeList() {
+        ImageIO.scanForPlugins();
         final LinkedList<String> formatsDone = new LinkedList<>();
-
-        skip:
-        while (it.hasNext()) {
-            final ImageReaderSpi spi = it.next();
-
-            String temp = null;
-            for (String format : spi.getFormatNames()) {
-                if(temp == null){
-                    temp = format;
-                    continue;
-                }
-
-                // Remember the longuest format string. If two of them
-                // have the same length, favor the one in upper case.
-                temp = longest(temp, format);
-            }
-
-            if(temp != null && !formatsDone.contains(temp)) formatsDone.add(temp);
-
+        for (String format : ImageIO.getReaderFormatNames()) {
+            formatsDone.add(format);
         }
+
         return formatsDone;
     }
 
