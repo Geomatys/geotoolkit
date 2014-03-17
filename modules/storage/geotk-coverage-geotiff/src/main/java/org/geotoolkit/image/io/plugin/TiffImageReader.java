@@ -1821,8 +1821,8 @@ public class TiffImageReader extends SpatialImageReader {
                         } else {
                             // w + w[0]
                             final int oldCLen = oldCodeLZW.length;
-                            entree = Arrays.copyOf(oldCodeLZW, oldCLen + 1);
-                            entree[oldCLen] = oldCodeLZW[0];
+                            entree            = Arrays.copyOf(oldCodeLZW, oldCLen + 1);
+                            entree[oldCLen]   = oldCodeLZW[0];
                         }
                     } else {
                         entree = new byte[] { (byte) codeLZW };
@@ -1834,8 +1834,8 @@ public class TiffImageReader extends SpatialImageReader {
                     for (int i = 0; i < entree.length; i++) {
                         //-- build sample in relation with bits per samples --//
                         final long val = entree[i] & 0x000000FFL;
-                        dataContainer = dataContainer | (val << maskCount);
-                        maskCount += Byte.SIZE;
+                        dataContainer  = dataContainer | (val << maskCount);
+                        maskCount     += Byte.SIZE;
                         
                         //-- if a sample is built --//
                         if (maskCount == bitpersampl) {
@@ -1972,13 +1972,8 @@ public class TiffImageReader extends SpatialImageReader {
         final DataBuffer dataBuffer    = raster.getDataBuffer();
         final int[] bankOffsets        = dataBuffer.getOffsets();
         final int dataType             = dataBuffer.getDataType();
-        final int sampleSize           = DataBuffer.getDataTypeSize(dataType) / Byte.SIZE;
-        final int sourcePixelStride    = sampleSize * samplesPerPixel;
-        final int targetPixelStride    = sampleSize * numBands;
-        final int sourceScanlineStride = sourcePixelStride * imageWidth;
+        final int sourceScanlineStride = samplesPerPixel * imageWidth;
         final int targetScanlineStride = SampleModels.getScanlineStride(raster.getSampleModel());
-
-        assert dataType == DataBuffer.TYPE_BYTE : "with packBits compression input and output databuffer type should be instance of DataBuffer.TYPE_BYTE";
 
         //-- fillOrder --//
         final Map<String, Object> fillOrder = headProperties.get(FillOrder);
@@ -1994,23 +1989,34 @@ public class TiffImageReader extends SpatialImageReader {
         } else {
             rasterReader = channel;
         }
+        
+        final long bitpersampl = bitsPerSample[0];
 
         for (int bank = 0; bank < bankOffsets.length; bank++) {
             /*
              * Get the underlying array of the image DataBuffer in which to write the data.
              */
-            final byte[] targetArray = ((DataBufferByte) dataBuffer).getData(bank);
+            final Object targetArray;
+            switch (dataType) {
+                case DataBuffer.TYPE_BYTE   : targetArray = ((DataBufferByte)   dataBuffer).getData(bank); break;
+                case DataBuffer.TYPE_USHORT : targetArray = ((DataBufferUShort) dataBuffer).getData(bank); break;
+                case DataBuffer.TYPE_SHORT  : targetArray = ((DataBufferShort)  dataBuffer).getData(bank); break;
+                case DataBuffer.TYPE_INT    : targetArray = ((DataBufferInt)    dataBuffer).getData(bank); break;
+                case DataBuffer.TYPE_FLOAT  : targetArray = ((DataBufferFloat)  dataBuffer).getData(bank); break;
+                case DataBuffer.TYPE_DOUBLE : targetArray = ((DataBufferDouble) dataBuffer).getData(bank); break;
+                default: throw new AssertionError(dataType);
+            }
 
             /*
              * Iterate over the strip to read, in sequential file access order (which is not
              * necessarily the same than row indices order).
              */
-            final int srcMaxx = (srcRegion.x + srcRegion.width) * sourcePixelStride;
+            final int srcMaxx = (srcRegion.x + srcRegion.width) * samplesPerPixel;
             final int srcMaxy = srcRegion.y  + srcRegion.height;
 
             //-- step on x axis in target window (dstRegion)
             final int dstStepBeforeReadX = dstRegion.x * numBands;
-            final int dstStepAfterReadX  = (targetScanlineStride - (dstRegion.x + dstRegion.width) * targetPixelStride) / sampleSize;
+            final int dstStepAfterReadX  = (targetScanlineStride - (dstRegion.x + dstRegion.width) * numBands);// / sampleSize;
 
             //-- target start
             int bankID = bankOffsets[bank] + targetScanlineStride * dstRegion.y;
@@ -2030,7 +2036,11 @@ public class TiffImageReader extends SpatialImageReader {
             //-- row index to begin to write
             int yref                  = srcRegion.y;
             int xref, bankStepBefore, bankStepAfter;
-
+            
+            //-- attributs to build appropriate sample from dataType --//
+            long dataContainer = 0;
+            int maskCount = 0;
+            
             while (ypos < srcMaxy) {
                 if (ypos >= currentMaxRowperStrip) {
                     currentStripOffset++;
@@ -2040,37 +2050,52 @@ public class TiffImageReader extends SpatialImageReader {
 
                 if (ypos == yref) {
                     //-- we write current row
-                    xref     = srcRegion.x * sourcePixelStride;
+                    xref     = srcRegion.x * samplesPerPixel;
                     yref    += sourceYSubsampling;
                     bankStepBefore = dstStepBeforeReadX;
                     bankStepAfter  = dstStepAfterReadX;
                 } else {
                     //-- we travel row without writing action
-                    xref = srcMaxx; // assertion (xpos == xref && xref < srcMaxx) will never be append
+                    xref = srcMaxx;
                     bankStepBefore = bankStepAfter = 0;
                 }
 
                 int xpos = 0;
                 bankID += bankStepBefore;
                 int b = 0;
-                while (xpos < sourceScanlineStride) {                  
+                while (xpos < sourceScanlineStride) {
                     rasterReader.seek(currentBuffPos);
                     int n = rasterReader.readByte();
                     if (n >= -127 && n <= - 1) {
                         n = - n + 1; //-- we write n times the following value.
-                        final byte writeValue = rasterReader.readByte();
+                        final int writeValue = rasterReader.readByte() & 0xFF;
                         for (int i = 0; i < n; i++) {
-                            if (xpos == xref && xref < srcMaxx) {
-                                //-- setter le byte courant dans un long avec conteur et 
-                                // faire avancer xref et xpos seulement quand on a attein assez de sample en rapport avec datasize
-                                ((byte[]) targetArray) [bankID++] = writeValue;
-                                if (++b == sourcePixelStride) {
-                                    xref += (sourceXSubsampling - 1) * sourcePixelStride;
-                                    b = 0;
+                            //-- build sample in relation with bits per samples --//
+                            dataContainer = dataContainer | (writeValue << maskCount);
+                            maskCount += Byte.SIZE;
+                            if (maskCount == bitpersampl) {
+                                if (xpos == xref && xref < srcMaxx) {
+                                    switch (dataType) {
+                                        case DataBuffer.TYPE_BYTE   : Array.setByte(targetArray, bankID++, (byte) dataContainer); break;
+                                        case DataBuffer.TYPE_SHORT  : 
+                                        case DataBuffer.TYPE_USHORT : Array.setShort(targetArray, bankID++, (short) dataContainer); break;
+                                        case DataBuffer.TYPE_INT    : Array.setInt(targetArray, bankID++, (int) dataContainer); break;
+                                        case DataBuffer.TYPE_FLOAT  : Array.setFloat(targetArray, bankID++, Float.intBitsToFloat((int) dataContainer)); break;
+                                        case DataBuffer.TYPE_DOUBLE : Array.setDouble(targetArray, bankID++, Double.longBitsToDouble(dataContainer)); break;
+                                        default: throw new AssertionError(dataType);
+                                    }
+                                    if (++b == samplesPerPixel) {
+                                        xref += (sourceXSubsampling - 1) * samplesPerPixel;
+                                        b = 0;
+                                    }
+                                    xref++;
                                 }
-                                xref++;
+                                xpos++;
+                                
+                                //-- initialize sample build --//
+                                dataContainer = 0;
+                                maskCount = 0;
                             }
-                            xpos++;
                         }
                         currentBuffPos += 2;//-- read n + value
                     } else if (n >= 0 && n < 128) {
@@ -2090,7 +2115,7 @@ public class TiffImageReader extends SpatialImageReader {
                                 }
 
                                 final int length = (endx - debx);
-                                rasterReader.readFully(targetArray, bankID, length);
+                                rasterReader.readFully((byte[]) targetArray, bankID, length);
                                 bankID         += length;
                                 xref           += length;
                                 currentBuffPos += 1 + xpos + n - debx;
@@ -2100,16 +2125,34 @@ public class TiffImageReader extends SpatialImageReader {
                             xpos += n + 1;
                         } else {
                             for (int i = 0; i < n + 1; i++) {// copy the next n + 1 bytes
-                                final byte val = rasterReader.readByte();
-                                if (xpos == xref && xref < srcMaxx) {
-                                    ((byte[])targetArray)[bankID++] = val;
-                                    if (++b == sourcePixelStride) {
-                                        xref += (sourceXSubsampling - 1) * sourcePixelStride;
-                                        b = 0;
-                                    } 
-                                    xref++;
+                                final int val = rasterReader.readByte() & 0xFF;
+                                //-- build sample in relation with bits per samples --//
+                                dataContainer = dataContainer | (val << maskCount);
+                                maskCount += Byte.SIZE;
+                                
+                                if (maskCount == bitpersampl) {
+                                    if (xpos == xref && xref < srcMaxx) {
+                                        switch (dataType) {
+                                            case DataBuffer.TYPE_BYTE   : Array.setByte(targetArray, bankID++, (byte) dataContainer); break;
+                                            case DataBuffer.TYPE_SHORT  : 
+                                            case DataBuffer.TYPE_USHORT : Array.setShort(targetArray, bankID++, (short) dataContainer); break;
+                                            case DataBuffer.TYPE_INT    : Array.setInt(targetArray, bankID++, (int) dataContainer); break;
+                                            case DataBuffer.TYPE_FLOAT  : Array.setFloat(targetArray, bankID++, Float.intBitsToFloat((int) dataContainer)); break;
+                                            case DataBuffer.TYPE_DOUBLE : Array.setDouble(targetArray, bankID++, Double.longBitsToDouble(dataContainer)); break;
+                                            default: throw new AssertionError(dataType);
+                                        }
+                                        if (++b == samplesPerPixel) {
+                                            xref += (sourceXSubsampling - 1) * samplesPerPixel;
+                                            b = 0;
+                                        } 
+                                        xref++;
+                                    }
+                                    xpos++;
+                                    
+                                    //-- initialize sample build --//
+                                    dataContainer = 0;
+                                    maskCount = 0;
                                 }
-                                xpos++;
                             }
                             assert n >= 0;
                             currentBuffPos += (n + 2); // n + 1 + 1. we write n + 1 bytes and we shift buffer cursor by 1.
