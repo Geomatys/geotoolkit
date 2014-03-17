@@ -90,9 +90,13 @@ public class LayerType extends DatasetDescriptionSummaryBaseType {
      */
     public List<Style> getStyle() {
         if (style == null) {
-            style = new ArrayList<Style>();
+            style = new ArrayList<>();
         }
         return this.style;
+    }
+
+    public void setStyle(final List<Style> style) {
+        this.style = style;
     }
 
     /**
@@ -100,9 +104,13 @@ public class LayerType extends DatasetDescriptionSummaryBaseType {
      */
     public List<String> getFormat() {
         if (format == null) {
-            format = new ArrayList<String>();
+            format = new ArrayList<>();
         }
         return this.format;
+    }
+
+    public void setFormat(final List<String> format) {
+        this.format = format;
     }
 
     /**
@@ -110,9 +118,13 @@ public class LayerType extends DatasetDescriptionSummaryBaseType {
      */
     public List<String> getInfoFormat() {
         if (infoFormat == null) {
-            infoFormat = new ArrayList<String>();
+            infoFormat = new ArrayList<>();
         }
         return this.infoFormat;
+    }
+
+    public void setInfoFormat(final List<String> infoFormat) {
+        this.infoFormat = infoFormat;
     }
 
     /**
@@ -121,9 +133,13 @@ public class LayerType extends DatasetDescriptionSummaryBaseType {
      */
     public List<Dimension> getDimension() {
         if (dimension == null) {
-            dimension = new ArrayList<Dimension>();
+            dimension = new ArrayList<>();
         }
         return this.dimension;
+    }
+
+    public void setDimension(final List<Dimension> dimension) {
+        this.dimension = dimension;
     }
 
     /**
@@ -132,7 +148,7 @@ public class LayerType extends DatasetDescriptionSummaryBaseType {
      */
     public List<TileMatrixSetLink> getTileMatrixSetLink() {
         if (tileMatrixSetLink == null) {
-            tileMatrixSetLink = new ArrayList<TileMatrixSetLink>();
+            tileMatrixSetLink = new ArrayList<>();
         }
         return this.tileMatrixSetLink;
     }
@@ -140,10 +156,14 @@ public class LayerType extends DatasetDescriptionSummaryBaseType {
     public void addTileMatrixSetLink(final TileMatrixSetLink tmsl) {
         if (tmsl != null) {
             if (tileMatrixSetLink == null) {
-                tileMatrixSetLink = new ArrayList<TileMatrixSetLink>();
+                tileMatrixSetLink = new ArrayList<>();
             }
             this.tileMatrixSetLink.add(tmsl);
         }
+    }
+
+    public void setTileMatrixSetLink(final List<TileMatrixSetLink> tileMatrixSetLink) {
+        this.tileMatrixSetLink = tileMatrixSetLink;
     }
 
     /**
@@ -151,9 +171,13 @@ public class LayerType extends DatasetDescriptionSummaryBaseType {
      */
     public List<URLTemplateType> getResourceURL() {
         if (resourceURL == null) {
-            resourceURL = new ArrayList<URLTemplateType>();
+            resourceURL = new ArrayList<>();
         }
         return this.resourceURL;
+    }
+
+    public void setResourceURL(final List<URLTemplateType> resourceURL) {
+        this.resourceURL = resourceURL;
     }
 
 

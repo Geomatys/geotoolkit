@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -108,7 +109,12 @@ public class XMLPyramidSet extends AbstractPyramidSet{
 
     @Override
     public List<String> getFormats() {
-        return Collections.EMPTY_LIST;
+        final String format = getFormatName();
+        switch (format) {
+            case "PNG": return Arrays.asList("image/png");
+            case "PostGISWKBraster" : return Arrays.asList("application/wkb"); // better mime type ?
+            default : throw new IllegalStateException("unexpected pyramid format");
+        }
     }
 
     @Override
