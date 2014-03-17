@@ -100,7 +100,7 @@ public class WebProcessingClient extends AbstractClient implements ProcessingReg
     /**
      * A map to specify for each process if we should ask its outputs as reference. Key is process identifier, and value
      * a boolean : true if we want references, false otherwise. It's important to notice that even if we set a value to
-     * true, references will be used ONLY if this process can handle it (check it with {@link WebProcessingServer#supportStorage(String)}.
+     * true, references will be used ONLY if this process can handle it (check it with {@link WebProcessingClient#supportStorage(String)}.
      */
     private final Map<String, Boolean> outputAsReference = new HashMap<String, Boolean>();
 
@@ -703,7 +703,7 @@ scan:   for (final ProcessBriefType processBriefType : processBrief) {
     /**
      * Set all processes to send (or not) references for its outputs. Default behaviour is no reference. An important
      * fact is that references are going to be used only if the process support storage (see
-     * {@link WebProcessingServer#supportStorage(String)}).
+     * {@link WebProcessingClient#supportStorage(String)}).
      * @param choice True if you want reference as output, false otherwise.
      */
     public void setOutputAsReferenceForAll(final boolean choice) {
@@ -875,7 +875,27 @@ scan:   for (final ProcessBriefType processBriefType : processBrief) {
             respObj = checkResult(respObj);
 
             if (respObj instanceof ExecuteResponse) {
-                return (ExecuteResponse) respObj;
+                final ExecuteResponse response = (ExecuteResponse) respObj;
+                // Check if distant process has failed, in case we throw an exception.
+                final ProcessFailedType processFailed = response.getStatus().getProcessFailed();
+                if (processFailed != null) {
+                    final StringBuilder errorText = new StringBuilder(process.getDescriptor().getIdentifier().getCode()+ " failed.");
+                    final ExceptionReport report = processFailed.getExceptionReport();
+                    if (report != null) {
+                        final List<ExceptionType> exceptionTypes = report.getException();
+                        for (ExceptionType type : exceptionTypes) {
+                            errorText.append('\n').append(type.getExceptionCode()).append(" : ");
+                            for (String txt : type.getExceptionText()) {
+                                errorText.append("\n\t").append(txt);
+                            }
+                        }
+                    }
+                    throw new ProcessException(errorText.toString(), process, null);
+
+                } else {
+                    return response;
+                }
+
             } else if (respObj instanceof ExceptionReport) {
                 final ExceptionReport report = (ExceptionReport) respObj;
                 final ExceptionType excep = report.getException().get(0);
