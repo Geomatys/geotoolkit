@@ -17,6 +17,7 @@
 package org.geotoolkit.coverage;
 
 import java.util.Set;
+import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.storage.DataNode;
 import org.geotoolkit.storage.StorageListener;
@@ -31,21 +32,21 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public interface CoverageStore {
+public abstract class CoverageStore extends DataStore {
 
     /**
      * Get the parameters used to initialize this source from it's factory.
      *
      * @return source configuration parameters
      */
-    ParameterValueGroup getConfiguration();
+    public abstract ParameterValueGroup getConfiguration();
 
     /**
      * Get the factory which created this source.
      *
      * @return this source original factory
      */
-    CoverageStoreFactory getFactory();
+    public abstract CoverageStoreFactory getFactory();
 
     /**
      * Returns the root node of the coverage store.
@@ -55,7 +56,7 @@ public interface CoverageStore {
      *
      * @return DataNode never null.
      */
-    DataNode getRootNode() throws DataStoreException;
+    public abstract DataNode getRootNode() throws DataStoreException;
 
 
     ////////////////////////////////////////////////////////////////////////////
@@ -67,19 +68,19 @@ public interface CoverageStore {
      * @return Set<Name> , never null, but can be empty.
      * @throws DataStoreException
      */
-    Set<Name> getNames() throws DataStoreException;
+    public abstract Set<Name> getNames() throws DataStoreException;
 
     /**
      * Check if this coverage store support versioning.
      * @return true if versioning is supported.
      */
-    boolean handleVersioning();
+    public abstract boolean handleVersioning();
 
     /**
      * Get version history for given coverage.
      * @return VersionHistory for given name.
      */
-    VersionControl getVersioning(Name typeName) throws VersioningException;
+    public abstract VersionControl getVersioning(Name typeName) throws VersioningException;
 
     /**
      * Get the coverage reference for the given name.
@@ -87,7 +88,7 @@ public interface CoverageStore {
      * @return CoverageReference
      * @throws DataStoreException
      */
-    CoverageReference getCoverageReference(Name name) throws DataStoreException;
+    public abstract CoverageReference getCoverageReference(Name name) throws DataStoreException;
 
     /**
      * Get the coverage reference for the given name and version.
@@ -98,7 +99,7 @@ public interface CoverageStore {
      * @return CoverageReference
      * @throws DataStoreException
      */
-    CoverageReference getCoverageReference(Name name, Version version) throws DataStoreException;
+    public abstract CoverageReference getCoverageReference(Name name, Version version) throws DataStoreException;
 
     /**
      * Create a new coverage reference.
@@ -108,13 +109,13 @@ public interface CoverageStore {
      * @return CoverageReference
      * @throws DataStoreException
      */
-    CoverageReference create(Name name) throws DataStoreException;
+    public abstract CoverageReference create(Name name) throws DataStoreException;
 
     /**
      * Check coverage type define in {@link CoverageType}
      * @return a {@link CoverageType}
      */
-    CoverageType getType();
+    public abstract CoverageType getType();
 
     /**
      * Delete an existing coverage reference.
@@ -122,26 +123,19 @@ public interface CoverageStore {
      * @param name
      * @throws DataStoreException
      */
-    void delete(Name name) throws DataStoreException;
-
-    /**
-     * Dispose the coveragestore caches and underlying resources.
-     * The CoverageStore should not be used after this call or it may raise errors.
-     */
-    void dispose();
-
+    public abstract void delete(Name name) throws DataStoreException;
 
     /**
      * Add a storage listener which will be notified when structure changes or
      * when coverage data changes.
      * @param listener to add
      */
-    void addStorageListener(StorageListener listener);
+    public abstract void addStorageListener(StorageListener listener);
 
     /**
      * Remove a storage listener
      * @param listener to remove
      */
-    void removeStorageListener(StorageListener listener);
+    public abstract void removeStorageListener(StorageListener listener);
 
 }

@@ -345,7 +345,7 @@ public class PGCoverageStore extends AbstractCoverageStore{
     }
 
     @Override
-    public void dispose() {
+    public void close() {
         if (source instanceof ManageableDataSource) {
             try {
                 final ManageableDataSource mds = (ManageableDataSource) source;
@@ -365,7 +365,7 @@ public class PGCoverageStore extends AbstractCoverageStore{
                     "not disposing them. This may lead to temporary loss of database connections. " +
                     "Please make sure all data access code calls CoverageStore.dispose() " +
                     "before freeing all references to it");
-            dispose();
+            close();
         }
         super.finalize();
     }

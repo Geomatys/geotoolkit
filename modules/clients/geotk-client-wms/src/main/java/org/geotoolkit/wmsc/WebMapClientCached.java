@@ -19,7 +19,6 @@ package org.geotoolkit.wmsc;
 import java.net.URL;
 import org.geotoolkit.client.CapabilitiesException;
 import org.geotoolkit.coverage.CoverageReference;
-import org.geotoolkit.coverage.CoverageStore;
 import org.geotoolkit.security.ClientSecurity;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.wms.GetMapRequest;
@@ -34,7 +33,7 @@ import org.opengis.feature.type.Name;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class WebMapClientCached extends WebMapClient implements CoverageStore{
+public class WebMapClientCached extends WebMapClient {
 
     private final boolean cacheImage;
 
@@ -101,7 +100,7 @@ public class WebMapClientCached extends WebMapClient implements CoverageStore{
     }
 
     @Override
-    public void dispose() {
+    public void close() {
     }
 
 }

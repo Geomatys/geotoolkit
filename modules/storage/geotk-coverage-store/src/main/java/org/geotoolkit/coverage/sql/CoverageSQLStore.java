@@ -19,11 +19,10 @@ package org.geotoolkit.coverage.sql;
 import java.awt.Image;
 import java.util.HashSet;
 import java.util.Set;
-
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.AbstractCoverageReference;
+import org.geotoolkit.coverage.AbstractCoverageStore;
 import org.geotoolkit.coverage.CoverageReference;
-import org.geotoolkit.coverage.CoverageStore;
 import org.geotoolkit.coverage.CoverageStoreContentEvent;
 import org.geotoolkit.coverage.CoverageStoreFactory;
 import org.geotoolkit.coverage.CoverageStoreFinder;
@@ -34,6 +33,7 @@ import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.storage.DataNode;
+import org.geotoolkit.storage.DefaultDataNode;
 import org.geotoolkit.storage.StorageListener;
 import org.geotoolkit.version.Version;
 import org.geotoolkit.version.VersionControl;
@@ -49,8 +49,9 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class CoverageSQLStore extends CoverageDatabase implements CoverageStore {
+public class CoverageSQLStore extends AbstractCoverageStore {
 
+    private CoverageDatabase db;
     private final Set<StorageListener> listeners = new HashSet<StorageListener>();
     private final ParameterValueGroup parameters;
 
@@ -103,17 +104,12 @@ public class CoverageSQLStore extends CoverageDatabase implements CoverageStore 
 
     @Override
     public DataNode getRootNode() throws DataStoreException {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public Set<Name> getNames() throws DataStoreException {
-        final Set<String> layers = getLayers().result();
-        final Set<Name> names = new HashSet<Name>(layers.size());
+        final DataNode dn = new DefaultDataNode();
+        final Set<String> layers = db.getLayers().result();
         for (String layer : layers) {
-            names.add(new DefaultName(layer));
+            dn.getChildren().add(new CoverageSQLLayerReference(new DefaultName(layer)));
         }
-        return names;
+        return dn;
     }
 
     @Override
@@ -132,11 +128,6 @@ public class CoverageSQLStore extends CoverageDatabase implements CoverageStore 
     }
 
     @Override
-    public CoverageReference getCoverageReference(Name name) throws DataStoreException {
-        return new CoverageSQLLayerReference(name);
-    }
-
-    @Override
     public CoverageReference create(Name name) throws DataStoreException {
         throw new DataStoreException("Not supported.");
     }
@@ -146,6 +137,11 @@ public class CoverageSQLStore extends CoverageDatabase implements CoverageStore 
         throw new DataStoreException("Not supported.");
     }
 
+    @Override
+    public void close() throws DataStoreException {
+        db.dispose();
+    }
+    
     ////////////////////////////////////////////////////////////////////////////
     // listeners methods ///////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
@@ -218,7 +214,7 @@ public class CoverageSQLStore extends CoverageDatabase implements CoverageStore 
 
         @Override
         public GridCoverageReader acquireReader() throws CoverageStoreException {
-            final LayerCoverageReader reader = CoverageSQLStore.this.createGridCoverageReader(name.getLocalPart());
+            final LayerCoverageReader reader = CoverageSQLStore.this.db.createGridCoverageReader(name.getLocalPart());
             return reader;
         }
 

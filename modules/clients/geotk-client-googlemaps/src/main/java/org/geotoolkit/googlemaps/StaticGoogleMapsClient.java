@@ -40,7 +40,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class StaticGoogleMapsClient extends AbstractCoverageClient implements CoverageStore{
+public class StaticGoogleMapsClient extends AbstractCoverageClient {
 
     public static final URL DEFAULT_GOOGLE_STATIC_MAPS;
 
@@ -115,7 +115,7 @@ public class StaticGoogleMapsClient extends AbstractCoverageClient implements Co
     }
 
     @Override
-    public void dispose() {
+    public void close() {
     }
 
     @Override

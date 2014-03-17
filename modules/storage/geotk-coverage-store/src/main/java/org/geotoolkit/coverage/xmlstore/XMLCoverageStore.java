@@ -31,7 +31,6 @@ import org.geotoolkit.coverage.CoverageStoreFinder;
 import org.geotoolkit.coverage.CoverageType;
 import org.geotoolkit.feature.DefaultName;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.coverage.filestore.FileCoverageStoreFactory;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.storage.DataNode;
 import org.geotoolkit.storage.DefaultDataNode;
@@ -119,7 +118,7 @@ public class XMLCoverageStore extends AbstractCoverageStore{
     }
 
     @Override
-    public void dispose() {
+    public void close() {
     }
 
     @Override

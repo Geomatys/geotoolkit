@@ -119,7 +119,7 @@ public class MemoryCoverageStore extends AbstractCoverageStore {
      * Do nothing in this implementation.
      */
     @Override
-    public void dispose() {
+    public void close() {
     }
 
     private class MemoryCoverageReference extends DefaultCoverageReference{

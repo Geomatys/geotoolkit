@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2012, Geomatys
+ *    (C) 2012-2014, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -20,21 +20,28 @@ package org.geotoolkit.coverage;
 import java.awt.Point;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.util.Classes;
 import org.apache.sis.util.collection.TreeTable.Node;
 import org.geotoolkit.parameter.Parameters;
-import org.geotoolkit.storage.AbstractStorage;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.parameter.ParametersExt;
 import org.geotoolkit.storage.AbstractDataStore;
 import org.geotoolkit.storage.DataNode;
+import org.geotoolkit.storage.StorageEvent;
+import org.geotoolkit.storage.StorageListener;
 import org.geotoolkit.version.Version;
 import org.geotoolkit.version.VersionControl;
 import org.geotoolkit.version.VersioningException;
 import org.opengis.feature.type.Name;
+import org.opengis.metadata.Metadata;
+import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.ParameterValueGroup;
 
 /**
@@ -43,7 +50,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public abstract class AbstractCoverageStore extends AbstractDataStore implements CoverageStore{
+public abstract class AbstractCoverageStore extends CoverageStore{
 
 
     protected static final String NO_NAMESPACE = "no namespace";
@@ -51,10 +58,14 @@ public abstract class AbstractCoverageStore extends AbstractDataStore implements
     private final Logger Logger = Logging.getLogger(getClass().getPackage().getName());
     private final String defaultNamespace;
     protected final ParameterValueGroup parameters;
+    protected final Set<StorageListener> listeners = new HashSet<>();
+
 
     protected AbstractCoverageStore(final ParameterValueGroup params) {
         this.parameters = params;
-        String namespace = Parameters.value(AbstractCoverageStoreFactory.NAMESPACE, params);
+        
+        ParameterValue pv = ParametersExt.getValue(params, AbstractCoverageStoreFactory.NAMESPACE.getName().getCode());
+        String namespace = (pv==null) ? null : pv.stringValue();
 
         if (namespace == null) {
             defaultNamespace = "http://geotoolkit.org";
@@ -65,6 +76,11 @@ public abstract class AbstractCoverageStore extends AbstractDataStore implements
         }
     }
 
+    @Override
+    public Metadata getMetadata() throws DataStoreException {
+        return null;
+    }
+    
     @Override
     public ParameterValueGroup getConfiguration() {
         return parameters;
@@ -78,6 +94,32 @@ public abstract class AbstractCoverageStore extends AbstractDataStore implements
         return Logger;
     }
 
+    
+    /**
+     * Returns the root node of the data store.
+     * This node is the main access point to the content of the store.
+     *
+     * TODO move this in Apache SIS DataStore class when ready
+     *
+     * @return DataNode never null.
+     */
+    public abstract DataNode getRootNode() throws DataStoreException;
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder();
+        sb.append(Classes.getShortClassName(this));
+        try {
+            final DataNode node = getRootNode();
+            sb.append(' ');
+            sb.append(node.toString());
+        } catch (DataStoreException ex) {
+            Logger.getLogger(AbstractDataStore.class.getName()).log(Level.WARNING, null, ex);
+        }
+
+        return sb.toString();
+    }
+    
     @Override
     public CoverageReference create(Name name) throws DataStoreException {
         throw new DataStoreException("Creation of new coverage not supported.");
@@ -252,4 +294,62 @@ public abstract class AbstractCoverageStore extends AbstractDataStore implements
         }
     }
 
+    public void addStorageListener(final StorageListener listener) {
+        synchronized (listeners) {
+            listeners.add(listener);
+        }
+    }
+
+    public void removeStorageListener(final StorageListener listener) {
+        synchronized (listeners) {
+            listeners.remove(listener);
+        }
+    }
+
+    /**
+     * Forward a structure event to all listeners.
+     * @param event , event to send to listeners.
+     */
+    protected void sendStructureEvent(final StorageEvent event){
+        final StorageListener[] lst;
+        synchronized (listeners) {
+            lst = listeners.toArray(new StorageListener[listeners.size()]);
+        }
+        for(final StorageListener listener : lst){
+            listener.structureChanged(event);
+        }
+    }
+
+    /**
+     * Forward a data event to all listeners.
+     * @param event , event to send to listeners.
+     */
+    protected void sendContentEvent(final StorageEvent event){
+        final StorageListener[] lst;
+        synchronized (listeners) {
+            lst = listeners.toArray(new StorageListener[listeners.size()]);
+        }
+        for(final StorageListener listener : lst){
+            listener.contentChanged(event);
+        }
+    }
+
+    /**
+     * Forward given event, changing the source by this object.
+     * For implementation use only.
+     * @param event
+     */
+    public void forwardStructureEvent(StorageEvent event){
+        sendStructureEvent(event.copy(this));
+    }
+
+    /**
+     * Forward given event, changing the source by this object.
+     * For implementation use only.
+     * @param event
+     */
+    public void forwardContentEvent(StorageEvent event){
+        sendContentEvent(event.copy(this));
+    }
+    
 }

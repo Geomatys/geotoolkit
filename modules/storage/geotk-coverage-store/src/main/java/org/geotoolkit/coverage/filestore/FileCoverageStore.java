@@ -215,7 +215,7 @@ public class FileCoverageStore extends AbstractCoverageStore{
     }
 
     @Override
-    public void dispose() {
+    public void close() {
     }
 
     /**

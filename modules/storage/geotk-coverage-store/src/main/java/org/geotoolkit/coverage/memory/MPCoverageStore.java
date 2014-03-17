@@ -16,10 +16,6 @@
  */
 package org.geotoolkit.coverage.memory;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.AbstractCoverageStore;
 import org.geotoolkit.coverage.AbstractCoverageStoreFactory;
@@ -67,7 +63,7 @@ public class MPCoverageStore extends AbstractCoverageStore {
     }
 
     @Override
-    public void dispose() {
+    public void close() {
     }
 
     @Override

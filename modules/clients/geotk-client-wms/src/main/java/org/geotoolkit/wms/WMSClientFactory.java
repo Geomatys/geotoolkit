@@ -3,6 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2012, Johann Sorel
+ *    (C) 2012-2014, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -22,17 +23,17 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.geotoolkit.client.AbstractClientFactory;
-import org.geotoolkit.coverage.CoverageStore;
-import org.geotoolkit.coverage.CoverageStoreFactory;
-import org.geotoolkit.feature.FeatureUtilities;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
-import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.iso.ResourceInternationalString;
+import org.geotoolkit.client.AbstractClientFactory;
+import org.geotoolkit.client.CoverageClientFactory;
+import org.geotoolkit.coverage.CoverageStore;
+import org.geotoolkit.feature.FeatureUtilities;
+import org.geotoolkit.parameter.DefaultParameterDescriptor;
+import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.wms.xml.WMSVersion;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.identification.Identification;
@@ -44,7 +45,7 @@ import org.opengis.parameter.*;
  * @author Johann Sorel (Puzzle-GIS)
  * @module pending
  */
-public class WMSClientFactory extends AbstractClientFactory implements CoverageStoreFactory{
+public class WMSClientFactory extends AbstractClientFactory implements CoverageClientFactory{
 
     /** factory identification **/
     public static final String NAME = "wms";

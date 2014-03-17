@@ -61,7 +61,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Cédric Briançon (Geomatys)
  * @module pending
  */
-public class WebMapClient extends AbstractCoverageClient implements CoverageStore{
+public class WebMapClient extends AbstractCoverageClient {
 
     private static final Logger LOGGER = Logging.getLogger(WebMapClient.class);
 
@@ -77,7 +77,7 @@ public class WebMapClient extends AbstractCoverageClient implements CoverageStor
      * The request header map for this server
      * that contains a set of key-value for HTTP header fields (user-agent, referer, accept-language...)
      */
-    private final Map<String,String> requestHeaderMap = new HashMap<String, String>();
+    private final Map<String,String> requestHeaderMap = new HashMap<>();
 
     /**
      * Builds a web map server with the given server url and version.
@@ -379,7 +379,7 @@ public class WebMapClient extends AbstractCoverageClient implements CoverageStor
     }
 
     @Override
-    public void dispose() {
+    public void close() {
     }
 
     @Override

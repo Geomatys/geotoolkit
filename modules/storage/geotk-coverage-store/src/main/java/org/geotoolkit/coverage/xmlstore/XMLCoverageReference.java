@@ -18,9 +18,6 @@ package org.geotoolkit.coverage.xmlstore;
 
 import java.awt.Dimension;
 import java.awt.image.ColorModel;
-import java.awt.image.ComponentColorModel;
-import java.awt.image.DirectColorModel;
-import java.awt.image.IndexColorModel;
 import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
 import java.io.File;

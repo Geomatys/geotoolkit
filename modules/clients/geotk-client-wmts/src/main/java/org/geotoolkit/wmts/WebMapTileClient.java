@@ -18,10 +18,7 @@ package org.geotoolkit.wmts;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -31,7 +28,6 @@ import org.geotoolkit.client.ClientFinder;
 import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.coverage.CoverageStore;
 import org.geotoolkit.coverage.CoverageType;
-import org.geotoolkit.coverage.PyramidalCoverageReference;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.security.ClientSecurity;
@@ -55,7 +51,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Guilhem Legal (Geomatys)
  * @module pending
  */
-public class WebMapTileClient extends AbstractCoverageClient implements CoverageStore{
+public class WebMapTileClient extends AbstractCoverageClient {
 
     private static final Logger LOGGER = Logging.getLogger(WebMapTileClient.class);
 
@@ -244,7 +240,7 @@ public class WebMapTileClient extends AbstractCoverageClient implements Coverage
     }
 
     @Override
-    public void dispose() {
+    public void close() {
     }
 
     @Override

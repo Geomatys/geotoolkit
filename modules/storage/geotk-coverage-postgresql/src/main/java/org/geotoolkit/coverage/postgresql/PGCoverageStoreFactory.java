@@ -67,51 +67,51 @@ public class PGCoverageStoreFactory extends AbstractCoverageStoreFactory{
      * Parameter for database port
      */
     public static final ParameterDescriptor<Integer> PORT =
-             new DefaultParameterDescriptor<Integer>("port","Port",Integer.class,5432,true);
+             new DefaultParameterDescriptor<>("port","Port",Integer.class,5432,true);
 
     /** parameter for database host */
     public static final ParameterDescriptor<String> HOST =
-             new DefaultParameterDescriptor<String>("host","Host",String.class,"localhost",true);
+             new DefaultParameterDescriptor<>("host","Host",String.class,"localhost",true);
 
     /** parameter for database instance */
     public static final ParameterDescriptor<String> DATABASE =
-             new DefaultParameterDescriptor<String>("database","Database",String.class,null,false);
+             new DefaultParameterDescriptor<>("database","Database",String.class,null,false);
 
     /** parameter for database schema */
     public static final ParameterDescriptor<String> SCHEMA =
-             new DefaultParameterDescriptor<String>("schema","Schema",String.class,null,false);
+             new DefaultParameterDescriptor<>("schema","Schema",String.class,null,false);
 
     /** parameter for database user */
     public static final ParameterDescriptor<String> USER =
-             new DefaultParameterDescriptor<String>("user","user name to login as",String.class,null,true);
+             new DefaultParameterDescriptor<>("user","user name to login as",String.class,null,true);
 
     /** parameter for database password */
     public static final ParameterDescriptor<String> PASSWORD =
-             new DefaultParameterDescriptor<String>("password","password used to login",String.class,null,true);
+             new DefaultParameterDescriptor<>("password","password used to login",String.class,null,true);
 
     /** parameter for data source */
     public static final ParameterDescriptor<DataSource> DATASOURCE =
-             new DefaultParameterDescriptor<DataSource>("Data Source","Data Source",DataSource.class,null,false);
+             new DefaultParameterDescriptor<>("Data Source","Data Source",DataSource.class,null,false);
 
     /** Maximum number of connections in the connection pool */
     public static final ParameterDescriptor<Integer> MAXCONN =
-             new DefaultParameterDescriptor<Integer>("max connections","maximum number of open connections",Integer.class,10,false);
+             new DefaultParameterDescriptor<>("max connections","maximum number of open connections",Integer.class,10,false);
 
     /** Minimum number of connections in the connection pool */
     public static final ParameterDescriptor<Integer> MINCONN =
-             new DefaultParameterDescriptor<Integer>("min connections","minimum number of pooled connection",Integer.class,1,false);
+             new DefaultParameterDescriptor<>("min connections","minimum number of pooled connection",Integer.class,1,false);
 
     /** If connections should be validated before using them */
     public static final ParameterDescriptor<Boolean> VALIDATECONN =
-             new DefaultParameterDescriptor<Boolean>("validate connections","check connection is alive before using it",Boolean.class,false,false);
+             new DefaultParameterDescriptor<>("validate connections","check connection is alive before using it",Boolean.class,false,false);
 
     /** If connections should be validated before using them */
     public static final ParameterDescriptor<Integer> FETCHSIZE =
-             new DefaultParameterDescriptor<Integer>("fetch size","number of records read with each iteraction with the dbms",Integer.class,1000,false);
+             new DefaultParameterDescriptor<>("fetch size","number of records read with each iteraction with the dbms",Integer.class,1000,false);
 
     /** Maximum amount of time the pool will wait when trying to grab a new connection **/
     public static final ParameterDescriptor<Integer> MAXWAIT =
-             new DefaultParameterDescriptor<Integer>("Connection timeout","number of seconds the connection pool wait for login",Integer.class,20,false);
+             new DefaultParameterDescriptor<>("Connection timeout","number of seconds the connection pool wait for login",Integer.class,20,false);
 
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
@@ -233,17 +233,17 @@ public class PGCoverageStoreFactory extends AbstractCoverageStoreFactory{
             return store;
         } catch (SQLException ex) {
             if(store != null){
-                store.dispose();
+                store.close();
             }
             throw new DataStoreException(ex);
         } catch (IOException ex) {
             if(store != null){
-                store.dispose();
+                store.close();
             }
             throw new DataStoreException(ex);
         } catch (FactoryException ex) {
             if(store != null){
-                store.dispose();
+                store.close();
             }
             throw new DataStoreException(ex);
         }finally{

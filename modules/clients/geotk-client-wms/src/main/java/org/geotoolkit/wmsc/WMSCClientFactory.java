@@ -20,17 +20,17 @@ import java.io.Serializable;
 import java.net.URL;
 import java.util.Collections;
 import java.util.Map;
-import org.geotoolkit.client.AbstractClientFactory;
-import org.geotoolkit.client.map.CachedPyramidSet;
-import org.geotoolkit.coverage.CoverageStoreFactory;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.util.iso.ResourceInternationalString;
+import org.geotoolkit.client.AbstractClientFactory;
+import org.geotoolkit.client.CoverageClientFactory;
+import org.geotoolkit.client.map.CachedPyramidSet;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.security.ClientSecurity;
-import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.util.iso.ResourceInternationalString;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.identification.Identification;
 import org.opengis.parameter.ParameterDescriptor;
@@ -45,7 +45,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Johann Sorel (Puzzle-GIS)
  * @module pending
  */
-public class WMSCClientFactory extends AbstractClientFactory implements CoverageStoreFactory{
+public class WMSCClientFactory extends AbstractClientFactory implements CoverageClientFactory{
 
     /** factory identification **/
     public static final String NAME = "wmsc";

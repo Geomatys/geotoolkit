@@ -98,7 +98,7 @@ public class PGCVersioningTest {
 
     private void reload() throws DataStoreException, VersioningException {
         if(store != null){
-            store.dispose();
+            store.close();
         }
 
         final CoverageStoreFactory factory = CoverageStoreFinder.getFactoryById("pgraster");

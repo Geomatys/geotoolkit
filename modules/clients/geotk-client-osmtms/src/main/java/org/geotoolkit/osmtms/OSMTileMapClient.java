@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2011, Geomatys
+ *    (C) 2011-2014, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -17,13 +17,10 @@
 package org.geotoolkit.osmtms;
 
 import java.net.URL;
-import java.util.Collections;
-import java.util.Set;
 
 import org.geotoolkit.client.AbstractCoverageClient;
 import org.geotoolkit.client.ClientFinder;
 import org.geotoolkit.coverage.CoverageReference;
-import org.geotoolkit.coverage.CoverageStore;
 import org.geotoolkit.coverage.CoverageType;
 import org.geotoolkit.coverage.PyramidSet;
 import org.geotoolkit.feature.DefaultName;
@@ -42,7 +39,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class OSMTileMapClient extends AbstractCoverageClient implements CoverageStore{
+public class OSMTileMapClient extends AbstractCoverageClient {
 
     private final OSMTMSPyramidSet pyramidSet;
     private final DataNode rootNode = new DefaultDataNode();
@@ -133,7 +130,7 @@ public class OSMTileMapClient extends AbstractCoverageClient implements Coverage
     }
 
     @Override
-    public void dispose() {
+    public void close() {
     }
 
     @Override

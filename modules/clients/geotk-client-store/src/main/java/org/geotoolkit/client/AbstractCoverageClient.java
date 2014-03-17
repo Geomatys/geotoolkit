@@ -16,79 +16,142 @@
  */
 package org.geotoolkit.client;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import org.geotoolkit.coverage.CoverageReference;
-import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.util.collection.TreeTable;
-import org.geotoolkit.storage.DataNode;
-import org.geotoolkit.version.Version;
-import org.geotoolkit.version.VersionControl;
-import org.geotoolkit.version.VersioningException;
-import org.opengis.feature.type.Name;
+import java.util.logging.Level;
+import org.apache.sis.util.ArgumentChecks;
+import org.geotoolkit.coverage.AbstractCoverageStore;
+import org.geotoolkit.parameter.Parameters;
+import org.geotoolkit.security.ClientSecurity;
+import org.geotoolkit.security.DefaultClientSecurity;
+import org.opengis.parameter.ParameterDescriptorGroup;
+import org.opengis.parameter.ParameterNotFoundException;
 import org.opengis.parameter.ParameterValueGroup;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
-public abstract class AbstractCoverageClient extends AbstractClient {
+public abstract class AbstractCoverageClient extends AbstractCoverageStore implements Client {
 
-    public AbstractCoverageClient(ParameterValueGroup params) {
+    private final Map<String,Object> userProperties = new HashMap<String,Object>();
+    protected final URL serverURL;
+    private String sessionId = null;
+    
+    public AbstractCoverageClient(ParameterValueGroup params){
         super(params);
+        this.serverURL = Parameters.value(AbstractClientFactory.URL,params);
+        ArgumentChecks.ensureNonNull("server url", serverURL);
     }
 
-    public abstract DataNode getRootNode() throws DataStoreException;
-
-    public final Set<Name> getNames() throws DataStoreException {
-        final Map<Name,CoverageReference> map = listReferences(getRootNode(), new HashMap<Name, CoverageReference>());
-        return map.keySet();
+    @Override
+    public abstract CoverageClientFactory getFactory();
+    
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public URL getURL() {
+        return serverURL;
     }
 
-    public final CoverageReference getCoverageReference(Name name) throws DataStoreException {
-        final Map<Name,CoverageReference> map = listReferences(getRootNode(), new HashMap<Name, CoverageReference>());
-        final CoverageReference ref = map.get(name);
-        if(ref==null){
-            final StringBuilder sb = new StringBuilder("Type name : ");
-            sb.append(name);
-            sb.append(" do not exist in this datastore, available names are : ");
-            for(final Name n : map.keySet()){
-                sb.append(n).append(", ");
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public URI getURI() {
+        try {
+            return serverURL.toURI();
+        } catch (URISyntaxException ex) {
+            getLogger().log(Level.WARNING, ex.getLocalizedMessage(), ex);
+        }
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ClientSecurity getClientSecurity() {
+        ClientSecurity securityManager = null;
+        try {
+            securityManager = Parameters.value(AbstractClientFactory.SECURITY,parameters);
+        } catch (ParameterNotFoundException ex) {
+            // do nothing
+        }
+        return (securityManager == null) ?  DefaultClientSecurity.NO_SECURITY : securityManager;
+    }
+
+    @Override
+    public int getTimeOutValue() {
+        Integer timeout = null;
+        try {
+            timeout = Parameters.value(AbstractClientFactory.TIMEOUT,parameters);
+        } catch (ParameterNotFoundException ex) {
+            // do nothing
+        }
+        return (timeout == null) ?  AbstractClientFactory.TIMEOUT.getDefaultValue() : timeout;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void setUserProperty(final String key,final Object value){
+        userProperties.put(key, value);
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public Object getUserProperty(final String key){
+        return userProperties.get(key);
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public Map<String, Object> getUserProperties() {
+        return userProperties;
+    }
+    
+    
+    protected void applySessionId(final URLConnection conec) {
+        if (sessionId != null) {
+            conec.setRequestProperty("Cookie", sessionId);
+        }
+    }
+
+    protected void readSessionId(final URLConnection conec) {
+        if (sessionId == null) {
+            final Map<String, List<String>> headers = conec.getHeaderFields();
+            for (String key : headers.keySet()) {
+                for (String value : headers.get(key)) {
+                    final int beginIndex = value.indexOf("JSESSIONID=");
+                    if (beginIndex != -1) {
+                        sessionId = value;
+                    }
+                }
             }
-            throw new DataStoreException(sb.toString());
         }
-        return ref;
     }
 
-    private Map<Name,CoverageReference> listReferences(TreeTable.Node node, Map<Name,CoverageReference> map){
-
-        if(node instanceof CoverageReference){
-            final CoverageReference cr = (CoverageReference) node;
-            map.put(cr.getName(), cr);
+    protected static ParameterValueGroup create(final ParameterDescriptorGroup desc,
+            final URL url, final ClientSecurity security){
+        final ParameterValueGroup param = desc.createValue();
+        param.parameter(AbstractClientFactory.URL.getName().getCode()).setValue(url);
+        if (security != null) {
+            Parameters.getOrCreate(AbstractClientFactory.SECURITY, param).setValue(security);
         }
-
-        for(TreeTable.Node child : node.getChildren()){
-            listReferences(child, map);
-        }
-
-        return map;
+        return param;
     }
-
-    ////////////////////////////////////////////////////////////////////////////
-    // versioning methods : handle nothing by default                         //
-    ////////////////////////////////////////////////////////////////////////////
-
-    public boolean handleVersioning() {
-        return false;
-    }
-
-    public VersionControl getVersioning(Name typeName) throws VersioningException {
-        throw new VersioningException("Versioning not supported");
-    }
-
-    public CoverageReference getCoverageReference(Name name, Version version) throws DataStoreException {
-        throw new DataStoreException("Versioning not supported");
-    }
-
+    
 }
