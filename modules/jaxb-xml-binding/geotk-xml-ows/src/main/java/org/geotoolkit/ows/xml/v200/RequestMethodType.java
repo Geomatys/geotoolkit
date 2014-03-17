@@ -19,10 +19,12 @@ package org.geotoolkit.ows.xml.v200;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.ows.xml.AbstractRequestMethod;
 
 
 /**
@@ -54,7 +56,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "RequestMethodType", propOrder = {
     "constraint"
 })
-public class RequestMethodType extends OnlineResourceType {
+public class RequestMethodType extends OnlineResourceType implements AbstractRequestMethod {
 
     @XmlElement(name = "Constraint")
     private List<DomainType> constraint;
@@ -68,11 +70,21 @@ public class RequestMethodType extends OnlineResourceType {
     public RequestMethodType(final RequestMethodType that){
         super(that);
         if (that != null && that.constraint != null) {
-            this.constraint = new ArrayList<DomainType>();
+            this.constraint = new ArrayList<>();
             for (DomainType d : that.constraint) {
                 this.constraint.add(new DomainType(d));
             }
         }
+    }
+
+    /**
+     * Build a new Request method.
+     * @param href an url.
+     * @param constraints
+     */
+    public RequestMethodType(final String href, final List<DomainType> constraints){
+        super(href);
+        this.constraint = constraints;
     }
     
     /**
@@ -97,11 +109,42 @@ public class RequestMethodType extends OnlineResourceType {
      * 
      * 
      */
+    @Override
     public List<DomainType> getConstraint() {
         if (constraint == null) {
-            constraint = new ArrayList<DomainType>();
+            constraint = new ArrayList<>();
         }
         return this.constraint;
     }
 
+    /**
+     * Verify that this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof RequestMethodType) {
+            final RequestMethodType that = (RequestMethodType) object;
+            return Objects.equals(this.constraint, that.constraint);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 59 * hash + (this.constraint != null ? this.constraint.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public String toString() {
+        String s = super.toString();
+        if (constraint!= null) {
+            s += "constraint: " + constraint.toString();
+        }
+        return s;
+    }
 }

@@ -98,6 +98,24 @@ public class HTTP implements AbstractHTTP {
             this.getOrPost.add(factory.createHTTPPost(post));
         }
     }
+
+    /**
+     * build a new HTTP object.
+     */
+    public HTTP(final List<RequestMethodType> get, final List<RequestMethodType> post){
+        ObjectFactory factory = new ObjectFactory();
+        this.getOrPost = new ArrayList<>();
+        if (get != null) {
+            for (RequestMethodType r : get) {
+                this.getOrPost.add(factory.createHTTPGet(r));
+            }
+        }
+        if (post != null) {
+            for (RequestMethodType r : post) {
+                this.getOrPost.add(factory.createHTTPPost(r));
+            }
+        }
+    }
     
     /**
      * Gets the value of the getOrPost property.

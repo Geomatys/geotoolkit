@@ -126,6 +126,48 @@ public class OWSXmlFactory {
         }
     }
 
+    public static AbstractRequestMethod buildRrequestMethod(final String currentVersion, final String url, final List<AbstractDomain> constraints) {
+        if ("1.1.0".equals(currentVersion)) {
+            final List<org.geotoolkit.ows.xml.v110.DomainType> constraintsV110 = new ArrayList<>();
+            if (constraints != null) {
+                for (AbstractDomain constraint : constraints) {
+                    if (constraint != null && !(constraint instanceof org.geotoolkit.ows.xml.v110.DomainType)) {
+                        throw new IllegalArgumentException("unexpected object version for constraint");
+                    } else if (constraint != null) {
+                        constraintsV110.add((org.geotoolkit.ows.xml.v110.DomainType)constraint);
+                    }
+                }
+            }
+            return new org.geotoolkit.ows.xml.v110.RequestMethodType(url, constraintsV110);
+        } else if ("1.0.0".equals(currentVersion)) {
+            final List<org.geotoolkit.ows.xml.v100.DomainType> constraintsV100 = new ArrayList<>();
+            if (constraints != null) {
+                for (AbstractDomain constraint : constraints) {
+                    if (constraint != null && !(constraint instanceof org.geotoolkit.ows.xml.v100.DomainType)) {
+                        throw new IllegalArgumentException("unexpected object version for constraint");
+                    } else if (constraint != null) {
+                        constraintsV100.add((org.geotoolkit.ows.xml.v100.DomainType)constraint);
+                    }
+                }
+            }
+            return new org.geotoolkit.ows.xml.v100.RequestMethodType(url, constraintsV100);
+        } else if ("2.0.0".equals(currentVersion)) {
+            final List<org.geotoolkit.ows.xml.v200.DomainType> constraintsV200 = new ArrayList<>();
+            if (constraints != null) {
+                for (AbstractDomain constraint : constraints) {
+                    if (constraint != null && !(constraint instanceof org.geotoolkit.ows.xml.v200.DomainType)) {
+                        throw new IllegalArgumentException("unexpected object version for constraint");
+                    } else if (constraint != null) {
+                        constraintsV200.add((org.geotoolkit.ows.xml.v200.DomainType)constraint);
+                    }
+                }
+            }
+            return new org.geotoolkit.ows.xml.v200.RequestMethodType(url, constraintsV200);
+        } else {
+            throw new IllegalArgumentException("unexpected version number:" + currentVersion);
+        }
+    }
+    
     public static AbstractDCP buildDCP(final String currentVersion, final String getURL, final String postURL) {
         if ("1.1.0".equals(currentVersion)) {
             org.geotoolkit.ows.xml.v110.RequestMethodType getReq = null;
@@ -160,6 +202,99 @@ public class OWSXmlFactory {
             }
             final org.geotoolkit.ows.xml.v200.HTTP http = new org.geotoolkit.ows.xml.v200.HTTP(getReq, postReq);
             return new org.geotoolkit.ows.xml.v200.DCP(http);
+        } else {
+            throw new IllegalArgumentException("unexpected version number:" + currentVersion);
+        }
+    }
+
+    public static AbstractHTTP buildHttp(final String currentVersion, final List<AbstractRequestMethod> get, final List<AbstractRequestMethod> post) {
+        if ("1.1.0".equals(currentVersion)) {
+            final List<org.geotoolkit.ows.xml.v110.RequestMethodType> getV110 = new ArrayList<>();
+            if (get != null) {
+                for (AbstractRequestMethod g : get) {
+                    if (g != null && !(g instanceof org.geotoolkit.ows.xml.v110.RequestMethodType)) {
+                        throw new IllegalArgumentException("unexpected object version for get requestMethod");
+                    } else if (g != null) {
+                        getV110.add((org.geotoolkit.ows.xml.v110.RequestMethodType)g);
+                    }
+                }
+            }
+            final List<org.geotoolkit.ows.xml.v110.RequestMethodType> postV110 = new ArrayList<>();
+            if (post != null) {
+                for (AbstractRequestMethod p : post) {
+                    if (p != null && !(p instanceof org.geotoolkit.ows.xml.v110.RequestMethodType)) {
+                        throw new IllegalArgumentException("unexpected object version for post requestMethod");
+                    } else if (p != null) {
+                        postV110.add((org.geotoolkit.ows.xml.v110.RequestMethodType)p);
+                    }
+                }
+            }
+            return new org.geotoolkit.ows.xml.v110.HTTP(getV110, postV110);
+        } else if ("1.0.0".equals(currentVersion)) {
+            final List<org.geotoolkit.ows.xml.v100.RequestMethodType> getV100 = new ArrayList<>();
+            if (get != null) {
+                for (AbstractRequestMethod g : get) {
+                    if (g != null && !(g instanceof org.geotoolkit.ows.xml.v100.RequestMethodType)) {
+                        throw new IllegalArgumentException("unexpected object version for get requestMethod");
+                    } else if (g != null) {
+                        getV100.add((org.geotoolkit.ows.xml.v100.RequestMethodType)g);
+                    }
+                }
+            }
+            final List<org.geotoolkit.ows.xml.v100.RequestMethodType> postV100 = new ArrayList<>();
+            if (post != null) {
+                for (AbstractRequestMethod p : post) {
+                    if (p != null && !(p instanceof org.geotoolkit.ows.xml.v100.RequestMethodType)) {
+                        throw new IllegalArgumentException("unexpected object version for post requestMethod");
+                    } else if (p != null) {
+                        postV100.add((org.geotoolkit.ows.xml.v100.RequestMethodType)p);
+                    }
+                }
+            }
+            return new org.geotoolkit.ows.xml.v100.HTTP(getV100, postV100);
+        } else if ("2.0.0".equals(currentVersion)) {
+            final List<org.geotoolkit.ows.xml.v200.RequestMethodType> getV200 = new ArrayList<>();
+            if (get != null) {
+                for (AbstractRequestMethod g : get) {
+                    if (g != null && !(g instanceof org.geotoolkit.ows.xml.v200.RequestMethodType)) {
+                        throw new IllegalArgumentException("unexpected object version for get requestMethod");
+                    } else if (g != null) {
+                        getV200.add((org.geotoolkit.ows.xml.v200.RequestMethodType)g);
+                    }
+                }
+            }
+            final List<org.geotoolkit.ows.xml.v200.RequestMethodType> postV200 = new ArrayList<>();
+            if (post != null) {
+                for (AbstractRequestMethod p : post) {
+                    if (p != null && !(p instanceof org.geotoolkit.ows.xml.v200.RequestMethodType)) {
+                        throw new IllegalArgumentException("unexpected object version for post requestMethod");
+                    } else if (p != null) {
+                        postV200.add((org.geotoolkit.ows.xml.v200.RequestMethodType)p);
+                    }
+                }
+            }
+            return new org.geotoolkit.ows.xml.v200.HTTP(getV200, postV200);
+        } else {
+            throw new IllegalArgumentException("unexpected version number:" + currentVersion);
+        }
+    }
+
+    public static AbstractDCP buildDCP(final String currentVersion, final AbstractHTTP http) {
+        if ("1.1.0".equals(currentVersion)) {
+            if (http != null && !(http instanceof org.geotoolkit.ows.xml.v110.HTTP)) {
+                throw new IllegalArgumentException("unexpected object version for http element");
+            }
+            return new org.geotoolkit.ows.xml.v110.DCP((org.geotoolkit.ows.xml.v110.HTTP)http);
+        } else if ("1.0.0".equals(currentVersion)) {
+            if (http != null && !(http instanceof org.geotoolkit.ows.xml.v100.HTTP)) {
+                throw new IllegalArgumentException("unexpected object version for http element");
+            }
+            return new org.geotoolkit.ows.xml.v100.DCP((org.geotoolkit.ows.xml.v100.HTTP)http);
+        } else if ("2.0.0".equals(currentVersion)) {
+            if (http != null && !(http instanceof org.geotoolkit.ows.xml.v200.HTTP)) {
+                throw new IllegalArgumentException("unexpected object version for http element");
+            }
+            return new org.geotoolkit.ows.xml.v200.DCP((org.geotoolkit.ows.xml.v200.HTTP)http);
         } else {
             throw new IllegalArgumentException("unexpected version number:" + currentVersion);
         }

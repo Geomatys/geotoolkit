@@ -71,9 +71,9 @@ public class HTTP implements AbstractHTTP {
     
     public HTTP(final HTTP that){
         if (that != null && that.getOrPost != null) {
-            this.getOrPost = new ArrayList<JAXBElement<RequestMethodType>>();
+            this.getOrPost = new ArrayList<>();
             for (JAXBElement<RequestMethodType> j : that.getOrPost) {
-                this.getOrPost.add(new JAXBElement<RequestMethodType>(j.getName(), j.getDeclaredType(), new RequestMethodType(j.getValue())));
+                this.getOrPost.add(new JAXBElement<>(j.getName(), j.getDeclaredType(), new RequestMethodType(j.getValue())));
             }
         }
     }
@@ -89,13 +89,31 @@ public class HTTP implements AbstractHTTP {
      * build a new HTTP object.
      */
     public HTTP(final RequestMethodType get, final RequestMethodType post){
-        ObjectFactory factory = new ObjectFactory();
-        this.getOrPost = new ArrayList<JAXBElement<RequestMethodType>>();
+        final ObjectFactory factory = new ObjectFactory();
+        this.getOrPost = new ArrayList<>();
         if (get != null) {
             this.getOrPost.add(factory.createHTTPGet(get));
         }
         if (post != null) {
             this.getOrPost.add(factory.createHTTPPost(post));
+        }
+    }
+
+    /**
+     * build a new HTTP object.
+     */
+    public HTTP(final List<RequestMethodType> get, final List<RequestMethodType> post){
+        final ObjectFactory factory = new ObjectFactory();
+        this.getOrPost = new ArrayList<>();
+        if (get != null) {
+            for (RequestMethodType r : get) {
+                this.getOrPost.add(factory.createHTTPGet(r));
+            }
+        }
+        if (post != null) {
+            for (RequestMethodType r : post) {
+                this.getOrPost.add(factory.createHTTPPost(r));
+            }
         }
     }
     
@@ -104,7 +122,7 @@ public class HTTP implements AbstractHTTP {
      */
     public List<JAXBElement<RequestMethodType>> getRealGetOrPost() {
         if (getOrPost == null) {
-            getOrPost = new ArrayList<JAXBElement<RequestMethodType>>();
+            getOrPost = new ArrayList<>();
         }
         return getOrPost;
     }
@@ -114,9 +132,9 @@ public class HTTP implements AbstractHTTP {
      */
     public List<String> getProtocolNames() {
         if (getOrPost == null) {
-            getOrPost = new ArrayList<JAXBElement<RequestMethodType>>();
+            getOrPost = new ArrayList<>();
         }
-        List<String> protocols = new ArrayList<String>();
+        List<String> protocols = new ArrayList<>();
         for (JAXBElement<RequestMethodType> jb : getOrPost) {
             protocols.add(jb.getName().getLocalPart());
         }
@@ -128,7 +146,7 @@ public class HTTP implements AbstractHTTP {
      */
     public List<RequestMethodType> getGetOrPost() {
         
-        List<RequestMethodType> result = new ArrayList<RequestMethodType>();
+        List<RequestMethodType> result = new ArrayList<>();
         for (JAXBElement<RequestMethodType> jb: getOrPost) {
             if(jb != null && jb.getValue() != null){
                 result.add(jb.getValue());

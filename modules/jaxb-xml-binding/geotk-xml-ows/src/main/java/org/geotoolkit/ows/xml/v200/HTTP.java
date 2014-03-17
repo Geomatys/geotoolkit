@@ -19,6 +19,7 @@ package org.geotoolkit.ows.xml.v200;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -70,9 +71,9 @@ public class HTTP implements AbstractHTTP {
     
     public HTTP(final HTTP that){
         if (that != null && that.getOrPost != null) {
-            this.getOrPost = new ArrayList<JAXBElement<RequestMethodType>>();
+            this.getOrPost = new ArrayList<>();
             for (JAXBElement<RequestMethodType> j : that.getOrPost) {
-                this.getOrPost.add(new JAXBElement<RequestMethodType>(j.getName(), j.getDeclaredType(), new RequestMethodType(j.getValue())));
+                this.getOrPost.add(new JAXBElement<>(j.getName(), j.getDeclaredType(), new RequestMethodType(j.getValue())));
             }
         }
     }
@@ -89,12 +90,30 @@ public class HTTP implements AbstractHTTP {
      */
     public HTTP(final RequestMethodType get, final RequestMethodType post){
         ObjectFactory factory = new ObjectFactory();
-        this.getOrPost = new ArrayList<JAXBElement<RequestMethodType>>();
+        this.getOrPost = new ArrayList<>();
         if (get != null) {
             this.getOrPost.add(factory.createHTTPGet(get));
         }
         if (post != null) {
             this.getOrPost.add(factory.createHTTPPost(post));
+        }
+    }
+
+    /**
+     * build a new HTTP object.
+     */
+    public HTTP(final List<RequestMethodType> get, final List<RequestMethodType> post){
+        final ObjectFactory factory = new ObjectFactory();
+        this.getOrPost = new ArrayList<>();
+        if (get != null) {
+            for (RequestMethodType r : get) {
+                this.getOrPost.add(factory.createHTTPGet(r));
+            }
+        }
+        if (post != null) {
+            for (RequestMethodType r : post) {
+                this.getOrPost.add(factory.createHTTPPost(r));
+            }
         }
     }
     
@@ -109,7 +128,7 @@ public class HTTP implements AbstractHTTP {
      */
     public List<JAXBElement<RequestMethodType>> getRealGetOrPost() {
         if (getOrPost == null) {
-            getOrPost = new ArrayList<JAXBElement<RequestMethodType>>();
+            getOrPost = new ArrayList<>();
         }
         return this.getOrPost;
     }
@@ -117,7 +136,7 @@ public class HTTP implements AbstractHTTP {
     @Override
     public List<RequestMethodType> getGetOrPost() {
         
-        List<RequestMethodType> result = new ArrayList<RequestMethodType>();
+        List<RequestMethodType> result = new ArrayList<>();
         for (JAXBElement<RequestMethodType> jb: getOrPost) {
             if(jb != null && jb.getValue() != null){
                 result.add(jb.getValue());
@@ -126,4 +145,42 @@ public class HTTP implements AbstractHTTP {
         return result;
     }
 
+     /**
+     * Verify that this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof HTTP) {
+            final HTTP that = (HTTP) object;
+            int i=0;
+            for (JAXBElement<RequestMethodType> j:getOrPost) {
+                if (!Objects.equals(j.getValue(), that.getOrPost.get(i).getValue()))
+                    return false;
+
+                i++;
+            }
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 29 * hash + (this.getOrPost != null ? this.getOrPost.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder s = new StringBuilder();
+        s.append("class HTTP: getorPos=").append('\n');
+        for (JAXBElement<RequestMethodType> j:getOrPost){
+            s.append(j.getValue().toString()).append('\n');
+        }
+        return s.toString();
+    }
 }

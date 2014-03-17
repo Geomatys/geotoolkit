@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.ows.xml.AbstractRequestMethod;
 
 
 /**
@@ -52,7 +53,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "RequestMethodType", propOrder = {
     "constraint"
 })
-public class RequestMethodType extends OnlineResourceType {
+public class RequestMethodType extends OnlineResourceType implements AbstractRequestMethod {
 
     @XmlElement(name = "Constraint")
     private List<DomainType> constraint;
@@ -65,15 +66,26 @@ public class RequestMethodType extends OnlineResourceType {
 
     /**
      * Build a new Request method.
+     * @param href
      */
     public RequestMethodType(final String href){
         super(href);
     }
 
+    /**
+     * Build a new Request method.
+     * @param href an url.
+     * @param constraints
+     */
+    public RequestMethodType(final String href, final List<DomainType> constraints){
+        super(href);
+        this.constraint = constraints;
+    }
+    
     public RequestMethodType(final RequestMethodType that){
         super(that);
         if (that != null && that.constraint != null) {
-            this.constraint = new ArrayList<DomainType>();
+            this.constraint = new ArrayList<>();
             for (DomainType d : that.constraint) {
                 this.constraint.add(new DomainType(d));
             }
@@ -90,9 +102,10 @@ public class RequestMethodType extends OnlineResourceType {
     /**
      * Gets the value of the constraint property.
      */
+    @Override
     public List<DomainType> getConstraint() {
         if(constraint != null) {
-            constraint = new ArrayList<DomainType>();
+            constraint = new ArrayList<>();
         }
         return Collections.unmodifiableList(constraint);
     }
