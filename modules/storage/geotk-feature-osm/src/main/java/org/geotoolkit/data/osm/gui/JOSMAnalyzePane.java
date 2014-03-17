@@ -29,6 +29,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
@@ -132,7 +134,11 @@ public class JOSMAnalyzePane extends javax.swing.JPanel {
 
     public void setDBParameters(final Map<String, Serializable> dBConnectionParameters) {
         if(store != null){
-            store.dispose();
+            try {
+                store.close();
+            } catch (DataStoreException ex) {
+                Logger.getLogger(JOSMAnalyzePane.class.getName()).log(Level.SEVERE, null, ex);
+            }
             store = null;
         }
         this.dbParameters = dBConnectionParameters;

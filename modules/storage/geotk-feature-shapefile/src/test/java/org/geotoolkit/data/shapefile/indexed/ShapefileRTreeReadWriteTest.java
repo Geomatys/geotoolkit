@@ -92,7 +92,7 @@ public class ShapefileRTreeReadWriteTest extends AbstractTestCaseSupport {
         doubleWrite(type, one, getTempFile(), false);
         doubleWrite(type, one, getTempFile(), true);
 
-        s1.dispose();
+        s1.close();
     }
 
     private void doubleWrite(final SimpleFeatureType type, final FeatureCollection<SimpleFeature> one,
@@ -110,7 +110,7 @@ public class ShapefileRTreeReadWriteTest extends AbstractTestCaseSupport {
         s = new IndexedShapefileFeatureStore(tmp.toURI().toURL());
         assertEquals(one.size() * 2, s.getCount(QueryBuilder.all(s.getName())));
         
-        s.dispose();
+        s.close();
     }
 
     void test(final String f) throws Exception {
@@ -122,7 +122,7 @@ public class ShapefileRTreeReadWriteTest extends AbstractTestCaseSupport {
         test(type, one, getTempFile(), false);
         test(type, one, getTempFile(), true);
 
-        s.dispose();
+        s.close();
     }
 
     private void test(final SimpleFeatureType type, final FeatureCollection<SimpleFeature> one, final File tmp, final boolean memorymapped)
@@ -138,7 +138,7 @@ public class ShapefileRTreeReadWriteTest extends AbstractTestCaseSupport {
         session.addFeatures(s.getName(),one);
         session.commit();
         
-        s.dispose();
+        s.close();
 
         s = new IndexedShapefileFeatureStore(tmp.toURI().toURL());
         typeName = s.getName();
@@ -154,7 +154,7 @@ public class ShapefileRTreeReadWriteTest extends AbstractTestCaseSupport {
         two.containsAll(one);
 
 //        compare(one.iterator(), two.iterator());
-        s.dispose();
+        s.close();
     }
 
     static void compare(final FeatureIterator<SimpleFeature> fs1, final FeatureIterator<SimpleFeature> fs2)

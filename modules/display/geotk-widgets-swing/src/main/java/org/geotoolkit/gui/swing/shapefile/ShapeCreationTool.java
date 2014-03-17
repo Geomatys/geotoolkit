@@ -130,7 +130,7 @@ public class ShapeCreationTool extends JPanel {
             // Tell the featurestore what type of Coordinate Reference System (CRS) to use
             //myData.forceSchemaCRS(crs);
 
-            myData.dispose();
+            myData.close();
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Incorrect File : " + e.getMessage());
         }

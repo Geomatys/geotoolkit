@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -53,8 +54,9 @@ import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.geometry.jts.transform.GeometryScaleTransformer;
 import org.geotoolkit.parameter.Parameters;
-import org.geotoolkit.storage.AbstractStorage;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.storage.StorageEvent;
+import org.geotoolkit.storage.StorageListener;
 import org.geotoolkit.version.Version;
 import org.geotoolkit.version.VersionControl;
 import org.geotoolkit.version.VersioningException;
@@ -69,6 +71,7 @@ import org.opengis.filter.Id;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.filter.sort.SortBy;
 import org.opengis.geometry.Envelope;
+import org.opengis.metadata.Metadata;
 import org.opengis.parameter.ParameterNotFoundException;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -82,7 +85,7 @@ import org.opengis.util.FactoryException;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public abstract class AbstractFeatureStore extends AbstractStorage implements FeatureStore{
+public abstract class AbstractFeatureStore extends FeatureStore {
 
     /**
      * Static variables refering to GML model.
@@ -97,7 +100,8 @@ public abstract class AbstractFeatureStore extends AbstractStorage implements Fe
 
     protected final ParameterValueGroup parameters;
     protected String defaultNamespace;
-
+    protected final Set<StorageListener> listeners = new HashSet<>();
+    
     protected AbstractFeatureStore(final ParameterValueGroup params) {
         
         this.parameters = params;
@@ -133,6 +137,11 @@ public abstract class AbstractFeatureStore extends AbstractStorage implements Fe
         return Logger;
     }
 
+    @Override
+    public Metadata getMetadata() throws DataStoreException {
+        return null;
+    }
+    
     @Override
     public VersionControl getVersioning(String typeName) throws VersioningException{
         final Name n = DefaultName.valueOf(typeName);
@@ -363,7 +372,7 @@ public abstract class AbstractFeatureStore extends AbstractStorage implements Fe
      * {@inheritDoc }
      */
     @Override
-    public void dispose() {
+    public void close() throws DataStoreException {
         synchronized (listeners) {
             listeners.clear();
         }
@@ -731,4 +740,64 @@ public abstract class AbstractFeatureStore extends AbstractStorage implements Fe
         return ftb.buildFeatureType();
     }
 
+    @Override
+    public void addStorageListener(final StorageListener listener) {
+        synchronized (listeners) {
+            listeners.add(listener);
+        }
+    }
+
+    @Override
+    public void removeStorageListener(final StorageListener listener) {
+        synchronized (listeners) {
+            listeners.remove(listener);
+        }
+    }
+
+    /**
+     * Forward a structure event to all listeners.
+     * @param event , event to send to listeners.
+     */
+    protected void sendStructureEvent(final StorageEvent event){
+        final StorageListener[] lst;
+        synchronized (listeners) {
+            lst = listeners.toArray(new StorageListener[listeners.size()]);
+        }
+        for(final StorageListener listener : lst){
+            listener.structureChanged(event);
+        }
+    }
+
+    /**
+     * Forward a data event to all listeners.
+     * @param event , event to send to listeners.
+     */
+    protected void sendContentEvent(final StorageEvent event){
+        final StorageListener[] lst;
+        synchronized (listeners) {
+            lst = listeners.toArray(new StorageListener[listeners.size()]);
+        }
+        for(final StorageListener listener : lst){
+            listener.contentChanged(event);
+        }
+    }
+
+    /**
+     * Forward given event, changing the source by this object.
+     * For implementation use only.
+     * @param event
+     */
+    public void forwardStructureEvent(StorageEvent event){
+        sendStructureEvent(event.copy(this));
+    }
+
+    /**
+     * Forward given event, changing the source by this object.
+     * For implementation use only.
+     * @param event
+     */
+    public void forwardContentEvent(StorageEvent event){
+        sendContentEvent(event.copy(this));
+    }
+    
 }

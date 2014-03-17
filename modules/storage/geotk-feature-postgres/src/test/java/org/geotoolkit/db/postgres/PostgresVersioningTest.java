@@ -129,7 +129,7 @@ public class PostgresVersioningTest {
     
     private void reload(boolean simpleType) throws DataStoreException, VersioningException {
         if(store != null){
-            store.dispose();
+            store.close();
         }
         
         //open in complex type to delete all types
@@ -141,7 +141,7 @@ public class PostgresVersioningTest {
             store.deleteFeatureType(n);
         }
         assertTrue(store.getNames().isEmpty());
-        store.dispose();
+        store.close();
         
         //reopen the way it was asked
         ParametersExt.getOrCreateValue(params, PostgresFeatureStoreFactory.SIMPLETYPE.getName().getCode()).setValue(simpleType);

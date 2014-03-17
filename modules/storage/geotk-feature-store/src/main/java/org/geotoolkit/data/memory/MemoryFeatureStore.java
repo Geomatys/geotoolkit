@@ -55,6 +55,7 @@ import org.opengis.filter.FilterFactory;
 import org.opengis.filter.Id;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.filter.identity.Identifier;
+import org.opengis.metadata.Metadata;
 
 /**
  * @todo : make this concurrent
@@ -459,8 +460,8 @@ public class MemoryFeatureStore extends AbstractFeatureStore{
      * {@inheritDoc }
      */
     @Override
-    public void dispose() {
-        super.dispose();
+    public void close() throws DataStoreException{
+        super.close();
         groups.clear();
     }
 

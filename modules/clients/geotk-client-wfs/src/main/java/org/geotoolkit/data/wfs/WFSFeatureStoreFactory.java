@@ -23,16 +23,16 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.geotoolkit.client.AbstractClientFactory;
-import org.geotoolkit.client.ClientFactory;
-import org.geotoolkit.data.AbstractFeatureStoreFactory;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
-import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.iso.ResourceInternationalString;
+import org.geotoolkit.client.AbstractClientFactory;
+import org.geotoolkit.client.FeatureClientFactory;
+import org.geotoolkit.data.AbstractFeatureStoreFactory;
+import org.geotoolkit.parameter.DefaultParameterDescriptor;
+import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.wfs.xml.WFSVersion;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.identification.Identification;
@@ -44,7 +44,7 @@ import org.opengis.parameter.*;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class WFSFeatureStoreFactory extends AbstractFeatureStoreFactory implements ClientFactory{
+public class WFSFeatureStoreFactory extends AbstractFeatureStoreFactory implements FeatureClientFactory{
 
     /** factory identification **/
     public static final String NAME = "wfs";
@@ -115,8 +115,6 @@ public class WFSFeatureStoreFactory extends AbstractFeatureStoreFactory implemen
     public CharSequence getDisplayName() {
         return new ResourceInternationalString("org/geotoolkit/wfs/bundle", "datastoreTitle");
     }
-
-
 
     /**
      * {@inheritDoc }

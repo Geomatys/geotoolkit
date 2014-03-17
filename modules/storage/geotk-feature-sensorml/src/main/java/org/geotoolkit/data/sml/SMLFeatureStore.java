@@ -326,8 +326,8 @@ public class SMLFeatureStore extends AbstractFeatureStore {
      * {@inheritDoc }
      */
     @Override
-    public void dispose() {
-        super.dispose();
+    public void close() throws DataStoreException {
+        super.close();
     }
 
     /**

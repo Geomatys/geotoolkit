@@ -110,7 +110,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
             features = s.createSession(true).getFeatureCollection(q);
         }
 
-        s.dispose();
+        s.close();
         return features;
     }
 
@@ -127,7 +127,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
             features = s.createSession(true).getFeatureCollection(q);
         }
 
-        s.dispose();
+        s.close();
         return features;
     }
 
@@ -180,7 +180,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
 
         IndexedShapefileFeatureStore s = new IndexedShapefileFeatureStore(u);
         loadFeatures(s);
-        s.dispose();
+        s.close();
     }
 
     /**
@@ -201,7 +201,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
         FeatureCollection<SimpleFeature> all = s.createSession(true).getFeatureCollection(QueryBuilder.all(typeName));
 
         assertEquals(features.getEnvelope(), all.getEnvelope());
-        s.dispose();
+        s.close();
     }
 
     @Test
@@ -254,8 +254,8 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
         performQueryComparison(ds, ds2, new JTSEnvelope2D(smallestFeature.getBounds()));
 
         assertTrue(file.exists());
-        ds.dispose();
-        ds2.dispose();
+        ds.close();
+        ds2.close();
     }
 
     @Test
@@ -417,7 +417,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
             assertEquals(-1, ((Byte) i.next().getAttribute(1)).byteValue());
         }
         i.close();
-        sds.dispose();
+        sds.close();
     }
 
     /**
@@ -446,7 +446,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
 
             assertEquals(--idx, loadFeatures(sds).size());
         }
-        sds.dispose();
+        sds.close();
     }
 
     /**
@@ -506,7 +506,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
 
             assertEquals(--idx, loadFeatures(sds).size());
         }
-        sds.dispose();
+        sds.close();
     }
 
     @Test
@@ -529,7 +529,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
         session.addFeatures(sds.getName(),FeatureStoreUtilities.collection(newFeatures2));
         session.commit();
         assertEquals(idx + 3, sds.getCount(QueryBuilder.all(sds.getName())));
-        sds.dispose();
+        sds.close();
 
     }
 
@@ -587,7 +587,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
 
         IndexedShapefileFeatureStore s = new IndexedShapefileFeatureStore(tmpFile.toURI().toURL());
         writeFeatures(s, features);
-        s.dispose();
+        s.close();
     }
 
     @Test
@@ -663,7 +663,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
         s.createFeatureType(type.getName(),type);
         writeFeatures(s, features);
 
-        s.dispose();
+        s.close();
 
         // read features
         s = new IndexedShapefileFeatureStore(tmpFile.toURI().toURL());
@@ -702,7 +702,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
             }
         }finally{
             fci.close();
-            s.dispose();
+            s.close();
             tmpFile.delete();
         }
     }
@@ -723,7 +723,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
         assertFalse(ds.needsGeneration(fix));
         assertTrue(fixFile.delete());
         assertTrue(ds.needsGeneration(fix));
-        ds.dispose();
+        ds.close();
     }
 
 

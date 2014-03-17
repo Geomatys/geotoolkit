@@ -97,7 +97,7 @@ import org.opengis.util.FactoryException;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class DefaultJDBCFeatureStore extends AbstractFeatureStore implements JDBCFeatureStore{
+public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
     
     private static enum EditMode{
         UPDATE,
@@ -110,7 +110,7 @@ public class DefaultJDBCFeatureStore extends AbstractFeatureStore implements JDB
     protected final GeometryFactory geometryFactory = new GeometryFactory();
     protected final FilterFactory filterFactory = FactoryFinder.getFilterFactory(null);
     
-    private final DataBaseModel dbmodel; 
+    private final DataBaseModel dbmodel;
     private final String factoryId;
     private DataSource source;
     private SQLDialect dialect;
@@ -153,22 +153,6 @@ public class DefaultJDBCFeatureStore extends AbstractFeatureStore implements JDB
     @Override
     public FeatureStoreFactory getFactory() {
         return FeatureStoreFinder.getFactoryById(factoryId);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public String getDefaultNamespace() {
-        return super.getDefaultNamespace();
-    }
-    
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Logger getLogger() {
-        return super.getLogger();
     }
     
     /**
@@ -1210,13 +1194,13 @@ public class DefaultJDBCFeatureStore extends AbstractFeatureStore implements JDB
                     "JDBC feature store has not been disposed properly. "+
                     "This may cause connexions to remain open, "+
                     "dispose feature stores when not needed anymore before dereferencing.");
-            dispose();
+            close();
         }
         super.finalize();
     }
 
     @Override
-    public void dispose() {
+    public void close() {
         if (source instanceof ManageableDataSource) {
             try {
                 final ManageableDataSource mds = (ManageableDataSource) source;

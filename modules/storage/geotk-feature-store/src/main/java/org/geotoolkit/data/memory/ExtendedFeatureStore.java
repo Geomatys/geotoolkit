@@ -253,8 +253,8 @@ public final class ExtendedFeatureStore extends AbstractFeatureStore{
     }
 
     @Override
-    public void dispose() {
-        wrapped.dispose();
+    public void close() throws DataStoreException {
+        wrapped.close();
     }
 
     @Override

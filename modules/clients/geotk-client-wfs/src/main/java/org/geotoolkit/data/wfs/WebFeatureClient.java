@@ -24,12 +24,14 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.client.AbstractClient;
+import org.geotoolkit.client.AbstractFeatureClient;
 import org.geotoolkit.client.ClientFinder;
-import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.FeatureReader;
+import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.FeatureWriter;
-import org.geotoolkit.storage.StorageListener;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.data.session.Session;
@@ -38,8 +40,7 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.security.ClientSecurity;
-import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.storage.StorageListener;
 import org.geotoolkit.version.Version;
 import org.geotoolkit.version.VersionControl;
 import org.geotoolkit.version.VersioningException;
@@ -61,7 +62,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class WebFeatureClient extends AbstractClient implements FeatureStore{
+public class WebFeatureClient extends AbstractFeatureClient {
 
     private static final Logger LOGGER = Logging.getLogger(WebFeatureClient.class);
 
@@ -255,11 +256,6 @@ public class WebFeatureClient extends AbstractClient implements FeatureStore{
     ////////////////////////////////////////////////////////////////////////////
 
     @Override
-    public Session createSession(boolean asynchrone) {
-        return createSession(asynchrone, null);
-    }
-
-    @Override
     public Session createSession(boolean asynchrone, Version version) {
         return getStore().createSession(asynchrone,version);
     }
@@ -335,11 +331,6 @@ public class WebFeatureClient extends AbstractClient implements FeatureStore{
     }
 
     @Override
-    public List<FeatureId> addFeatures(Name groupName, Collection<? extends Feature> newFeatures) throws DataStoreException {
-        return getStore().addFeatures(groupName, newFeatures);
-    }
-
-    @Override
     public List<FeatureId> addFeatures(Name groupName, Collection<? extends Feature> newFeatures, Hints hints) throws DataStoreException {
         return getStore().addFeatures(groupName, newFeatures, hints);
     }
@@ -365,18 +356,8 @@ public class WebFeatureClient extends AbstractClient implements FeatureStore{
     }
 
     @Override
-    public FeatureWriter getFeatureWriter(Name typeName, Filter filter) throws DataStoreException {
-        return getStore().getFeatureWriter(typeName,filter);
-    }
-
-    @Override
     public FeatureWriter getFeatureWriter(Name typeName, Filter filter, Hints hints) throws DataStoreException {
         return getStore().getFeatureWriter(typeName,filter,hints);
-    }
-
-    @Override
-    public FeatureWriter getFeatureWriterAppend(Name typeName) throws DataStoreException {
-        return getStore().getFeatureWriterAppend(typeName);
     }
 
     @Override
@@ -385,8 +366,8 @@ public class WebFeatureClient extends AbstractClient implements FeatureStore{
     }
 
     @Override
-    public void dispose() {
-        getStore().dispose();
+    public void close() throws DataStoreException {
+        getStore().close();
     }
 
     @Override

@@ -170,8 +170,8 @@ public class OMFeatureStore extends AbstractFeatureStore {
      * {@inheritDoc }
      */
     @Override
-    public void dispose() {
-        super.dispose();
+    public void close() throws DataStoreException {
+        super.close();
         try {
             source.close();
         } catch (SQLException ex) {

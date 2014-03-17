@@ -254,7 +254,7 @@ public class MySQLFeatureStoreTest {
     
     private void reload(boolean simpleType) throws DataStoreException, VersioningException {
         if(store != null){
-            store.dispose();
+            store.close();
         }
         
         //open in complex type to delete all types
@@ -266,7 +266,7 @@ public class MySQLFeatureStoreTest {
             store.deleteFeatureType(n);
         }
         assertTrue(store.getNames().isEmpty());
-        store.dispose();
+        store.close();
         
         //reopen the way it was asked
         ParametersExt.getOrCreateValue(params, MySQLFeatureStoreFactory.SIMPLETYPE.getName().getCode()).setValue(simpleType);
