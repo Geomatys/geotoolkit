@@ -21,6 +21,7 @@ import javax.imageio.*;
 import javax.imageio.stream.ImageOutputStream;
 
 import org.apache.sis.internal.storage.IOUtilities;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.image.interpolation.Interpolation;
 import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.image.interpolation.Resample;
@@ -44,7 +45,7 @@ import org.opengis.referencing.operation.MathTransform;
  */
 public class GenericResampleProcess extends AbstractProcess {
 
-    private static final Logger LOGGER = Logger.getLogger(GenericResampleProcess.class.getName());
+    private static final Logger LOGGER = Logging.getLogger(GenericResampleProcess.class);
 
     private static int LANCZOS_WINDOW = 2;
 
@@ -206,7 +207,7 @@ public class GenericResampleProcess extends AbstractProcess {
                 final BufferedImage destImage = new BufferedImage(colorModel, raster, false, null);
 
                 final AffineTransform2D gridTranslation = new AffineTransform2D(1d, 0, 0, 1d, 0d, (double)y);
-                final MathTransform transformer = MathTransforms.concatenate(operator, gridTranslation.inverse());
+                final MathTransform transformer = MathTransforms.concatenate(gridTranslation, operator);
                 
                 // If the last tile is smaller than others, we don't mess with threads.
                 if (tileHeight < tile_size_y) {
