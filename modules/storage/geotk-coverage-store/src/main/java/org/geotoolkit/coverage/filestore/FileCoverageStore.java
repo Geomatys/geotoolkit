@@ -34,9 +34,11 @@ import org.geotoolkit.coverage.CoverageStoreFinder;
 import org.geotoolkit.coverage.CoverageType;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.image.io.NamedImageStore;
+import org.geotoolkit.image.io.UnsupportedImageFormatException;
 import org.geotoolkit.image.io.XImageIO;
 import org.apache.sis.internal.storage.IOUtilities;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.parameter.ParametersExt;
 import org.geotoolkit.storage.DataNode;
 import org.geotoolkit.storage.DefaultDataNode;
@@ -53,9 +55,21 @@ import org.opengis.parameter.ParameterValueGroup;
 public class FileCoverageStore extends AbstractCoverageStore{
 
     private static final Logger LOGGER = Logging.getLogger(FileCoverageStore.class);
+
+    private static final String REGEX_SEPARATOR;
+    static {
+        if (File.separatorChar == '\\') {
+            REGEX_SEPARATOR = "\\\\";
+        } else {
+            REGEX_SEPARATOR = File.separator;
+        }
+    }
+
     private final File root;
     private final String format;
     private final URL rootPath;
+
+    private final String separator;
 
     private final DataNode rootNode = new DefaultDataNode();
 
@@ -72,11 +86,13 @@ public class FileCoverageStore extends AbstractCoverageStore{
         root = new File(rootPath.toURI());
         format = (String) params.parameter(FileCoverageStoreFactory.TYPE.getName().getCode()).getValue();
 
-        if("AUTO".equals(format)){
+        if("AUTO".equalsIgnoreCase(format)){
             spi = null;
         }else{
             spi = XImageIO.getReaderSpiByFormatName(format);
         }
+
+        separator = Parameters.value(FileCoverageStoreFactory.PATH_SEPARATOR, params);
 
         visit(root);
     }
@@ -119,6 +135,21 @@ public class FileCoverageStore extends AbstractCoverageStore{
         }
     }
 
+    private String createLayerName(final File candidate) {
+        String fullName;
+        if (separator != null) {
+            fullName = candidate.getAbsolutePath().replace(root.getAbsolutePath(), "");
+            if (fullName.startsWith(File.separator)) {
+                fullName = fullName.substring(1);
+            }
+            fullName = fullName.replaceAll(REGEX_SEPARATOR, separator);
+        } else {
+            fullName = candidate.getName();
+        }
+        final int idx = fullName.lastIndexOf('.');
+        return fullName.substring(0, idx);
+    }
+
     /**
      *
      * @param candidate Candidate to be a image file.
@@ -133,10 +164,8 @@ public class FileCoverageStore extends AbstractCoverageStore{
             //don't comment this block, This raise an error if no reader for the file can be found
             //this way we are sure that the file is an image.
             reader = createReader(candidate,spi);
-            final String fullName = candidate.getName();
-            final int idx = fullName.lastIndexOf('.');
-            final String filename = fullName.substring(0, idx);
             final String nmsp = getDefaultNamespace();
+            final String filename = createLayerName(candidate);
 
             final int nbImage = reader.getNumImages(true);
 
@@ -173,6 +202,9 @@ public class FileCoverageStore extends AbstractCoverageStore{
                 }
             }
 
+            // Tried to parse a incompatible file, not really an error.
+        } catch (UnsupportedImageFormatException ex) {
+            LOGGER.log(Level.FINE, "Error for file {0} : {1}", new Object[]{candidate.getName(), ex.getMessage()});
 
         } catch (Exception ex) {
             //Exception type is not specified cause we can get IOException as IllegalArgumentException.
