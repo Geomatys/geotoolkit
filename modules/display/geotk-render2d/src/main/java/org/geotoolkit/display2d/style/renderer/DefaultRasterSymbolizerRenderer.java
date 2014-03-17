@@ -670,9 +670,9 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             final double relfactor = 1 - shadedRel.getReliefFactor().evaluate(null, Double.class) / 100.0;
             final boolean isBrightness = shadedRel.isBrightnessOnly();
             final double brightness = (isBrightness) ? 2.0 - relfactor : 1;
-
+            
             //-- arbitrary altitude scale define by user to have an homogenious shadow computing.
-            final double altiScale = elevationModel.getAmplitudeScale();
+            final double altiScale = elevationModel.getAmplitudeScale() / magn;
             
             //-- ReliefShadow creating
             final GridCoverage2D mntCoverage = getDEMCoverage(coverage, elevationCoverage);
