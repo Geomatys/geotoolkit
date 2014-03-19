@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.se.xml.vext;
+package org.geotoolkit.display2d.ext.pattern;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +28,7 @@ import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.se.xml.v110.ParameterValueType;
 import org.geotoolkit.se.xml.v110.SymbolizerType;
 import org.geotoolkit.se.xml.v110.ThreshholdsBelongToType;
+import org.geotoolkit.se.xml.vext.RangeType;
 
 /**
  * <p>Java class for RasterSymbolizerType complex type.

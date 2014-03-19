@@ -22,7 +22,6 @@ import javax.xml.bind.annotation.XmlElementDecl;
 import javax.xml.bind.annotation.XmlRegistry;
 import javax.xml.namespace.QName;
 import org.geotoolkit.se.xml.vext.JenksType;
-import org.geotoolkit.se.xml.vext.PatternSymbolizerType;
 import org.geotoolkit.se.xml.vext.RangeType;
 import org.geotoolkit.se.xml.vext.RecolorType;
 
@@ -146,7 +145,6 @@ public class ObjectFactory {
     private static final QName _ChangeCase_QNAME = new QName("http://www.opengis.net/se", "ChangeCase");
 
     //extension ----------------------------------------------------------------
-    private static final QName _PatternSymbolizer_QNAME = new QName("http://www.opengis.net/se", "PatternSymbolizer");
     private static final QName _Range_QNAME = new QName("http://www.opengis.net/se", "Range");
     private static final QName _Recolor_QNAME = new QName("http://www.opengis.net/se", "Recolor");
     private static final QName _Jenks_QNAME = new QName("http://www.opengis.net/se", "Jenks");
@@ -590,14 +588,6 @@ public class ObjectFactory {
     //extension ----------------------------------------------------------------
 
     /**
-     * Create an instance of {@link PatternSymbolizerType }
-     *
-     */
-    public PatternSymbolizerType createPatternSymbolizerType() {
-        return new PatternSymbolizerType();
-    }
-
-    /**
      * Create an instance of {@link RangeType }
      *
      */
@@ -619,15 +609,6 @@ public class ObjectFactory {
      */
     public JenksType createJenksType() {
         return new JenksType();
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link PatternSymbolizerType }{@code >}}
-     *
-     */
-    @XmlElementDecl(namespace = "http://www.opengis.net/se", name = "PatternSymbolizer", substitutionHeadNamespace = "http://www.opengis.net/se", substitutionHeadName = "Symbolizer")
-    public JAXBElement<PatternSymbolizerType> createPatternSymbolizer(final PatternSymbolizerType value) {
-        return new JAXBElement<PatternSymbolizerType>(_PatternSymbolizer_QNAME, PatternSymbolizerType.class, null, value);
     }
 
     /**

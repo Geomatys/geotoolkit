@@ -16,8 +16,8 @@
  */
 package org.geotoolkit.sld.xml;
 
+import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
 import java.awt.Color;
-import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -31,9 +31,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.measure.quantity.Length;
 import javax.measure.unit.NonSI;
@@ -43,9 +41,6 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
-import net.iharder.Base64;
-
-import org.geotoolkit.display2d.ext.pattern.PatternSymbolizer;
 
 import org.geotoolkit.feature.DefaultName;
 
@@ -105,7 +100,6 @@ import org.geotoolkit.se.xml.v110.TrimType;
 
 import org.geotoolkit.se.xml.vext.ColorItemType;
 import org.geotoolkit.se.xml.vext.JenksType;
-import org.geotoolkit.se.xml.vext.PatternSymbolizerType;
 import org.geotoolkit.se.xml.vext.RangeType;
 import org.geotoolkit.se.xml.vext.RecolorType;
 import org.geotoolkit.style.DefaultColorReplacement;
@@ -633,9 +627,6 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
         } else if (st instanceof RasterSymbolizerType) {
             final RasterSymbolizerType pst = (RasterSymbolizerType) st;
             return visit(pst);
-        } else if (st instanceof PatternSymbolizerType) {
-            final PatternSymbolizerType pst = (PatternSymbolizerType) st;
-            return visit(pst);
         } else if(st instanceof Symbolizer){
             //jaxbelement is a conform opengis symbolizer
             //this element is an extension symbolizer
@@ -734,29 +725,6 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
         if(label == null) return null;
 
         return styleFactory.textSymbolizer(name,geom,desc,uom,label, font, placement, halo, fill);
-    }
-
-    /**
-     * Transform a SLD ext pattern symbolizer in GT pattern symbolizer.
-     */
-    public PatternSymbolizer visit(final PatternSymbolizerType rst) {
-        if(rst == null) return null;
-
-        final Expression selection = visitExpression(rst.getChannel());
-
-        final ThreshholdsBelongTo belongs;
-        if(ThreshholdsBelongToType.PRECEDING.equals(rst.getThreshholdsBelongTo()) ){
-            belongs = ThreshholdsBelongTo.PRECEDING;
-        }else {
-            belongs = ThreshholdsBelongTo.SUCCEEDING;
-        }
-
-        final Map<Expression,List<Symbolizer>> ranges = visitRanges(rst.getRange());
-        final Unit uom = visitUOM(rst.getUom());
-        final String name = rst.getName();
-        final Description desc = visitDescription(rst.getDescription());
-
-        return new PatternSymbolizer(selection, ranges, belongs);
     }
 
     //Sub elements -------------------------------------------------------------

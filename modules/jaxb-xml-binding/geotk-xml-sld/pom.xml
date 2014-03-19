@@ -75,9 +75,8 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.geotoolkit</groupId>
-            <artifactId>geotk-render2d</artifactId>
-            <version>${project.version}</version>
+            <groupId>net.iharder</groupId>
+            <artifactId>base64</artifactId>
         </dependency>
         <dependency>
             <groupId>org.postgresql</groupId>

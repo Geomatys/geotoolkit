@@ -45,7 +45,6 @@ import javax.xml.namespace.QName;
 import net.iharder.Base64;
 import org.apache.sis.util.logging.Logging;
 
-import org.geotoolkit.display2d.ext.pattern.PatternSymbolizer;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
 import org.geotoolkit.geometry.jts.SRIDGenerator;
@@ -146,7 +145,6 @@ import org.geotoolkit.se.xml.v110.TextSymbolizerType;
 import org.geotoolkit.se.xml.v110.ThreshholdsBelongToType;
 import org.geotoolkit.se.xml.vext.ColorItemType;
 import org.geotoolkit.se.xml.vext.JenksType;
-import org.geotoolkit.se.xml.vext.PatternSymbolizerType;
 import org.geotoolkit.se.xml.vext.RangeType;
 import org.geotoolkit.se.xml.vext.RecolorType;
 import org.geotoolkit.style.StyleConstants;
@@ -1051,8 +1049,6 @@ public class GTtoSE110Transformer implements StyleVisitor {
                 rt.getSymbolizer().add(visit((RasterSymbolizer) symbol, null));
             } else if (symbol instanceof TextSymbolizer) {
                 rt.getSymbolizer().add(visit((TextSymbolizer) symbol, null));
-            } else if (symbol instanceof PatternSymbolizer) {
-                rt.getSymbolizer().add(visit((PatternSymbolizer) symbol, null));
             } else if (symbol instanceof ExtensionSymbolizer) {
                 ((List) rt.getSymbolizer()).add(visit((ExtensionSymbolizer) symbol, null));
             }
@@ -1205,33 +1201,6 @@ public class GTtoSE110Transformer implements StyleVisitor {
         return se_factory.createRasterSymbolizer(tst);
     }
 
-    /**
-     * Transform a GT raster symbolizer in jaxb raster symbolizer.
-     */
-    public JAXBElement<PatternSymbolizerType> visit(final PatternSymbolizer pattern, final Object data) {
-        final PatternSymbolizerType tst = se_factory.createPatternSymbolizerType();
-        tst.setName(pattern.getName());
-        tst.setDescription(visit(pattern.getDescription(), null));
-        tst.setUom(visitUOM(pattern.getUnitOfMeasure()));
-
-        if (pattern.getChannel() != null) {
-            tst.setChannel(visitExpression(pattern.getChannel()));
-        }
-
-        if (ThreshholdsBelongTo.PRECEDING == pattern.getBelongTo()) {
-            tst.setThreshholdsBelongTo(ThreshholdsBelongToType.PRECEDING);
-        } else {
-            tst.setThreshholdsBelongTo(ThreshholdsBelongToType.SUCCEEDING);
-        }
-
-        Map<Expression, List<Symbolizer>> ranges = pattern.getRanges();
-        for (Map.Entry<Expression, List<Symbolizer>> entry : ranges.entrySet()) {
-            tst.getRange().add(visitRange(entry.getKey(), entry.getValue()));
-        }
-
-        return se_factory.createPatternSymbolizer(tst);
-    }
-
     public JAXBElement<RangeType> visitRange(final Expression thredhold, final List<Symbolizer> symbols) {
         final RangeType type = se_factory.createRangeType();
 
@@ -1250,8 +1219,6 @@ public class GTtoSE110Transformer implements StyleVisitor {
                 type.getSymbolizer().add(visit((RasterSymbolizer) symbol, null));
             } else if (symbol instanceof TextSymbolizer) {
                 type.getSymbolizer().add(visit((TextSymbolizer) symbol, null));
-            } else if (symbol instanceof PatternSymbolizer) {
-                type.getSymbolizer().add(visit((PatternSymbolizer) symbol, null));
             } else if (symbol instanceof ExtensionSymbolizer) {
                 ((List) type.getSymbolizer()).add(visit((ExtensionSymbolizer) symbol, null));
             }
