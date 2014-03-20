@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2013, Geomatys
+ *    (C) 2013-2014, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -16,14 +16,13 @@
  */
 package org.geotoolkit.display2d.ext.cellular;
 
-import org.geotoolkit.display2d.GO2Utilities;
-import org.geotoolkit.display2d.style.CachedPointSymbolizer;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 import org.geotoolkit.display2d.style.CachedRule;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
-import org.geotoolkit.display2d.style.CachedTextSymbolizer;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
-import org.geotoolkit.style.DefaultStyleFactory;
-import org.geotoolkit.style.MutableRule;
+import org.opengis.style.Rule;
 
 /**
  *
@@ -32,18 +31,11 @@ import org.geotoolkit.style.MutableRule;
  */
 public class CachedCellSymbolizer extends CachedSymbolizer<CellSymbolizer>{
 
-    private CachedPointSymbolizer cps = null;
-    private CachedTextSymbolizer cs = null;
     private CachedRule cr = null;
     
     public CachedCellSymbolizer(final CellSymbolizer symbol,
             final SymbolizerRendererService<CellSymbolizer,? extends CachedSymbolizer<CellSymbolizer>> renderer){
         super(symbol,renderer);
-    }
-
-    public CachedPointSymbolizer getCachedPointSymbolizer() {
-        evaluate();
-        return cps;
     }
 
     /**
@@ -60,24 +52,20 @@ public class CachedCellSymbolizer extends CachedSymbolizer<CellSymbolizer>{
     @Override
     protected void evaluate() {
         if(!isNotEvaluated) return;
-
-        final MutableRule r = new DefaultStyleFactory().rule();
         
-        
-        if(styleElement.getPointSymbolizer()!=null){
-            r.symbolizers().add(styleElement.getPointSymbolizer());
-            cps = (CachedPointSymbolizer) GO2Utilities.getCached(styleElement.getPointSymbolizer(), null);
-        }
-        
-        if(styleElement.getTextSymbolizer()!=null){
-            r.symbolizers().add(styleElement.getTextSymbolizer());
-        }
-        
-        if(styleElement.getFilter()!=null){
-            r.setFilter(styleElement.getFilter());
-        }
-        
+        final Rule r = styleElement.getRule();
         cr = new CachedRule(r, null);
+        
+        //the cached rules refer to cell properties name
+        final Set<String> properties = new HashSet<>();
+        cr.getRequieredAttributsName(properties);
+        for(String s : properties){
+            s = CellSymbolizer.cellToBasePropertyName(s);
+            if(s!=null){
+                requieredAttributs.add(s);
+            }
+        }
+        
         isNotEvaluated = false;
     }
 
@@ -90,5 +78,5 @@ public class CachedCellSymbolizer extends CachedSymbolizer<CellSymbolizer>{
         evaluate();
         return cr;
     }
-    
+
 }

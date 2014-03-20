@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2013, Geomatys
+ *    (C) 2013-2014, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -29,6 +29,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
+import org.geotoolkit.display2d.ext.legend.DefaultLegendService;
 import org.geotoolkit.display2d.service.DefaultGlyphService;
 import org.geotoolkit.display2d.style.CachedPointSymbolizer;
 import org.geotoolkit.display2d.style.CachedRule;
@@ -42,6 +43,7 @@ import org.geotoolkit.map.MapLayer;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.filter.expression.Expression;
 import org.opengis.style.PointSymbolizer;
+import org.opengis.style.Rule;
 
 /**
  *
@@ -55,7 +57,7 @@ public class CellRendererService extends AbstractSymbolizerRendererService<CellS
     
     @Override
     public boolean isGroupSymbolizer() {
-        return false;
+        return true;
     }
 
     @Override
@@ -84,20 +86,22 @@ public class CellRendererService extends AbstractSymbolizerRendererService<CellS
         //fake layer
         final FeatureMapLayer fakelayer = mimicCellLayer(layer);
         
-        if(layer instanceof CoverageMapLayer && symbol.getSource().getPointSymbolizer() != null){
-            //generate 4 arrows base on an approximate size
-            final CoverageMapLayer cml = (CoverageMapLayer) layer;
-            final PointSymbolizer ps = symbol.getSource().getPointSymbolizer();
-            final Expression exp = ps.getGraphic().getSize();
-            String text = getTitle(ps);
-            
-            int width = FM.stringWidth(text);
-            width = Math.max(100, width);
-            
-            Dimension dim = new Dimension(width,32*3+HEADER_SIZE);
-            return new Rectangle2D.Double(0, 0, dim.width, dim.height);
-            
-        }else{
+        final Rule rule = symbol.getSource().getRule();
+        
+        
+//        if(symbol.getSource().getPointSymbolizer() != null){
+//            //generate 4 arrows base on an approximate size
+//            final PointSymbolizer ps = symbol.getSource().getPointSymbolizer();
+//            final Expression exp = ps.getGraphic().getSize();
+//            String text = getTitle(ps);
+//            
+//            int width = FM.stringWidth(text);
+//            width = Math.max(100, width);
+//            
+//            Dimension dim = new Dimension(width,32*3+HEADER_SIZE);
+//            return new Rectangle2D.Double(0, 0, dim.width, dim.height);
+//            
+//        }else{
             Dimension dim = new Dimension(5,5);
             final CachedRule r = symbol.getCachedRule();
             dim = DefaultGlyphService.glyphPreferredSize(r.getSource(), dim, fakelayer);
@@ -105,7 +109,7 @@ public class CellRendererService extends AbstractSymbolizerRendererService<CellS
             dim.width = dim.width*2;
             dim.height = dim.height*2;
             return new Rectangle2D.Double(0, 0, dim.width, dim.height);
-        }
+//        }
         
     }
     
@@ -117,44 +121,44 @@ public class CellRendererService extends AbstractSymbolizerRendererService<CellS
         //fake layer
         final FeatureMapLayer fakelayer = mimicCellLayer(layer);
                 
-        if(layer instanceof CoverageMapLayer && symbol.getSource().getPointSymbolizer() != null){
-            //generate 4 arrows base on an approximate size
-            final PointSymbolizer ps = symbol.getSource().getPointSymbolizer();
-            final String text = getTitle(ps);
-            
-            g.setColor(Color.BLACK);
-            g.setFont(HEADER_FONT);
-            g.drawString(text, (int)rect.getX()+2, HEADER_SIZE-5);
-            
-            final double best = (rect.getHeight() - HEADER_SIZE)/3 ;
-            
-            final DefaultPointSymbolizerRendererService srs = new DefaultPointSymbolizerRendererService();
-            final CachedPointSymbolizer cps = symbol.getCachedPointSymbolizer();
-            
-            //first symbol at 1/1 size
-            Rectangle.Double rectA = new Rectangle.Double(rect.getX(), rect.getY()+HEADER_SIZE, best, best);
-            srs.glyph(g, rectA, cps, fakelayer, (float)best);
-            g.setColor(Color.BLACK);
-            g.drawString(NumberFormat.getNumberInstance().format(best), (int)rectA.getMaxX(), (int)rectA.getCenterY());
-            
-            //second symbol at 1/2 size
-            rectA = new Rectangle.Double(rect.getX(), rect.getY()+HEADER_SIZE+best, best, best);
-            srs.glyph(g, rectA, cps, fakelayer, (float)best*0.6f);
-            g.setColor(Color.BLACK);
-            g.drawString(NumberFormat.getNumberInstance().format(best*0.6), (int)rectA.getMaxX(), (int)rectA.getCenterY());
-            
-            //thrid symbol at 1/10 size
-            rectA = new Rectangle.Double(rect.getX(), rect.getY()+HEADER_SIZE+best*2, best, best);
-            srs.glyph(g, rectA, cps, fakelayer, (float)best*0.2f);
-            g.setColor(Color.BLACK);
-            g.drawString(NumberFormat.getNumberInstance().format(best*0.2), (int)rectA.getMaxX(), (int)rectA.getCenterY());
-            
-        }else{
+//        if(fakelayer != null && symbol.getSource().getPointSymbolizer() != null){
+//            //generate 4 arrows base on an approximate size
+//            final PointSymbolizer ps = symbol.getSource().getPointSymbolizer();
+//            final String text = getTitle(ps);
+//            
+//            g.setColor(Color.BLACK);
+//            g.setFont(HEADER_FONT);
+//            g.drawString(text, (int)rect.getX()+2, HEADER_SIZE-5);
+//            
+//            final double best = (rect.getHeight() - HEADER_SIZE)/3 ;
+//            
+//            final DefaultPointSymbolizerRendererService srs = new DefaultPointSymbolizerRendererService();
+//            final CachedPointSymbolizer cps = symbol.getCachedPointSymbolizer();
+//            
+//            //first symbol at 1/1 size
+//            Rectangle.Double rectA = new Rectangle.Double(rect.getX(), rect.getY()+HEADER_SIZE, best, best);
+//            srs.glyph(g, rectA, cps, fakelayer, (float)best);
+//            g.setColor(Color.BLACK);
+//            g.drawString(NumberFormat.getNumberInstance().format(best), (int)rectA.getMaxX(), (int)rectA.getCenterY());
+//            
+//            //second symbol at 1/2 size
+//            rectA = new Rectangle.Double(rect.getX(), rect.getY()+HEADER_SIZE+best, best, best);
+//            srs.glyph(g, rectA, cps, fakelayer, (float)best*0.6f);
+//            g.setColor(Color.BLACK);
+//            g.drawString(NumberFormat.getNumberInstance().format(best*0.6), (int)rectA.getMaxX(), (int)rectA.getCenterY());
+//            
+//            //thrid symbol at 1/10 size
+//            rectA = new Rectangle.Double(rect.getX(), rect.getY()+HEADER_SIZE+best*2, best, best);
+//            srs.glyph(g, rectA, cps, fakelayer, (float)best*0.2f);
+//            g.setColor(Color.BLACK);
+//            g.drawString(NumberFormat.getNumberInstance().format(best*0.2), (int)rectA.getMaxX(), (int)rectA.getCenterY());
+//            
+//        }else{
             glyphBlock(g, new Rectangle.Double(rect.getX(),           rect.getY(),            halfwidth, halfheight), symbol, fakelayer);
             glyphBlock(g, new Rectangle.Double(rect.getX(),           rect.getY()+halfheight, halfwidth, halfheight), symbol, fakelayer);
             glyphBlock(g, new Rectangle.Double(rect.getX()+halfwidth, rect.getY(),            halfwidth, halfheight), symbol, fakelayer);
             glyphBlock(g, new Rectangle.Double(rect.getX()+halfwidth, rect.getY()+halfheight, halfwidth, halfheight), symbol, fakelayer);
-        }
+//        }
     }
     
     private void glyphBlock(Graphics2D g, Rectangle2D rect, CachedCellSymbolizer symbol, MapLayer layer){
@@ -171,6 +175,9 @@ public class CellRendererService extends AbstractSymbolizerRendererService<CellS
             } catch (DataStoreException ex) {
                 //not important
             }
+        }else if(layer instanceof FeatureMapLayer){
+            final SimpleFeatureType sft = CellSymbolizer.buildCellType( ((FeatureMapLayer)layer).getCollection().getFeatureType() );
+            layer = MapBuilder.createFeatureLayer(FeatureStoreUtilities.collection("", sft), GO2Utilities.STYLE_FACTORY.style());
         }else{
             layer = null;
         }

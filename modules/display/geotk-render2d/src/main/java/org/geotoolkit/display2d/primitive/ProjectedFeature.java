@@ -88,7 +88,7 @@ public class ProjectedFeature extends DefaultProjectedObject<Feature> {
         //worst case, return the partial feature
         return candidate;
     }
-
+    
     @Override
     public ProjectedGeometry getGeometry(String name) {
         if(name == null) name = DEFAULT_GEOM;

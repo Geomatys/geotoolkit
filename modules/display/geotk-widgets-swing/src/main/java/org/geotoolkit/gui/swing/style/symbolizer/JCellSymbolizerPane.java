@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2013, Geomatys
+ *    (C) 2013-2014, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -228,9 +228,9 @@ public class JCellSymbolizerPane extends StyleElementEditor<CellSymbolizer> impl
 
         if(target!=null){
             guiCellSize.setValue(target.getCellSize());
-            final PointSymbolizer ps = target.getPointSymbolizer();
-            final TextSymbolizer ts = target.getTextSymbolizer();
-            filter = target.getFilter();
+            final PointSymbolizer ps = null; //target.getPointSymbolizer();
+            final TextSymbolizer ts = null; //target.getTextSymbolizer();
+            filter = target.getRule().getFilter();
 
             if(ps!=null){
                 guiTypeList.setSelectedIndex(0);
@@ -264,7 +264,15 @@ public class JCellSymbolizerPane extends StyleElementEditor<CellSymbolizer> impl
             }
         }
 
-        return new CellSymbolizer((Integer)guiCellSize.getValue(), filter, ps, ts);
+        final MutableRule rule = SF.rule();
+        if(ps!=null){
+            rule.symbolizers().add(ps);
+        }
+        if(ts!=null){
+            rule.symbolizers().add(ts);
+        }
+        
+        return new CellSymbolizer((Integer)guiCellSize.getValue(), rule);
     }
 
     /**

@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2013, Geomatys
+ *    (C) 2013-2014, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -17,9 +17,12 @@
 package org.geotoolkit.display2d.ext.cellular;
 
 import com.vividsolutions.jts.geom.Point;
+import com.vividsolutions.jts.geom.Polygon;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.measure.quantity.Length;
@@ -32,30 +35,30 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
-import org.geotoolkit.feature.FeatureTypeBuilder;
-import org.geotoolkit.map.CoverageMapLayer;
-import org.geotoolkit.ogc.xml.v110.FilterType;
-import org.geotoolkit.se.xml.v110.PointSymbolizerType;
-import org.geotoolkit.se.xml.v110.SymbolizerType;
-import org.geotoolkit.se.xml.v110.TextSymbolizerType;
-import org.geotoolkit.sld.xml.StyleXmlIO;
-import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.feature.AttributeDescriptorBuilder;
 import org.geotoolkit.feature.AttributeTypeBuilder;
+import org.geotoolkit.feature.FeatureTypeBuilder;
+import org.geotoolkit.map.CoverageMapLayer;
+import org.geotoolkit.se.xml.v110.RuleType;
+import org.geotoolkit.se.xml.v110.SymbolizerType;
+import org.geotoolkit.sld.xml.StyleXmlIO;
 import org.opengis.feature.simple.SimpleFeatureType;
-import org.opengis.filter.Filter;
+import org.opengis.feature.type.AttributeDescriptor;
+import org.opengis.feature.type.FeatureType;
+import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.filter.expression.Expression;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.style.ExtensionSymbolizer;
-import org.opengis.style.PointSymbolizer;
+import org.opengis.style.Rule;
 import org.opengis.style.StyleVisitor;
-import org.opengis.style.TextSymbolizer;
 import org.opengis.util.FactoryException;
 
 /**
@@ -67,45 +70,39 @@ import org.opengis.util.FactoryException;
 @XmlRootElement(name="CellSymbolizer",namespace="http://geotoolkit.org")
 public class CellSymbolizer extends SymbolizerType implements ExtensionSymbolizer{
 
+    public static final String PROPERY_GEOM_CENTER = "geom_center";
+    public static final String PROPERY_GEOM_CONTOUR = "geom_contour";
+    public static final String PROPERY_SUFFIX_COUNT = "_count";
+    public static final String PROPERY_SUFFIX_MIN = "_min";
+    public static final String PROPERY_SUFFIX_MEAN = "_mean";
+    public static final String PROPERY_SUFFIX_MAX = "_max";
+    public static final String PROPERY_SUFFIX_RANGE = "_range";
+    public static final String PROPERY_SUFFIX_RMS = "_rms";
+    public static final String PROPERY_SUFFIX_SUM = "_sum";
+    
     private static final Logger LOGGER = Logging.getLogger(CellSymbolizer.class);
     public static final String NAME = "Cell";
 
     @XmlElement(name = "CellSize",namespace="http://geotoolkit.org")
     private int cellSize;
+    
+    @XmlElement(name = "Rule", type = RuleType.class)
+    private RuleType ruleType;
+    
     @XmlTransient
-    private Filter filter;
-    @XmlTransient
-    private PointSymbolizer pointSymbolizer;
-    @XmlTransient
-    private TextSymbolizer textSymbolizer;
-
-    @XmlElement(name = "Filter", namespace = "http://www.opengis.net/ogc")
-    private FilterType filterType;
-
-    @XmlElement(name = "PointSymbolizer",namespace="http://geotoolkit.org")
-    private PointSymbolizerType pointSymbolizerType;
-    @XmlElement(name = "TextSymbolizer",namespace="http://geotoolkit.org")
-    private TextSymbolizerType textSymbolizerType;
+    private Rule rule;
 
 
     public CellSymbolizer() {
     }
 
-    public CellSymbolizer(int cellSize, Filter filter, PointSymbolizer ps, TextSymbolizer ts){
+    public CellSymbolizer(int cellSize, Rule rule){
         this.cellSize = cellSize;
-        this.filter = filter;
-        this.pointSymbolizer = ps;
-        this.textSymbolizer = ts;
+        this.rule = rule;
 
         final StyleXmlIO util = new StyleXmlIO();
-        if(filter!=null){
-            this.filterType = util.getTransformerXMLv110().visit(filter);
-        }
-        if(ps!=null){
-            this.pointSymbolizerType = util.getTransformerXMLv110().visit(ps,null).getValue();
-        }
-        if(ts!=null){
-            this.textSymbolizerType = util.getTransformerXMLv110().visit(ts,null).getValue();
+        if(rule!=null){
+            this.ruleType = (RuleType) util.getTransformerXMLv110().visit(rule,null);
         }
 
     }
@@ -133,79 +130,44 @@ public class CellSymbolizer extends SymbolizerType implements ExtensionSymbolize
         return cellSize;
     }
 
-    public Filter getFilter() {
-        if(filter!=null){
-            return filter;
+    public Rule getRule() {
+        if(rule!=null){
+            return rule;
         }
 
-        if(filterType!=null){
+        if(ruleType!=null){
             final StyleXmlIO util = new StyleXmlIO();
             try {
-                filter = util.getTransformer110().visitFilter(filterType);
+                rule = util.getTransformer110().visitRule(ruleType);
             } catch (FactoryException ex) {
                 LOGGER.log(Level.WARNING, ex.getMessage(), ex);
             }
         }
 
-        return filter;
+        return rule;
     }
 
-    public PointSymbolizer getPointSymbolizer() {
-        if(pointSymbolizer!=null){
-            return pointSymbolizer;
-        }
-
-        if(pointSymbolizerType!=null){
-            final StyleXmlIO util = new StyleXmlIO();
-            pointSymbolizer = util.getTransformer110().visit(pointSymbolizerType);
-        }
-
-        return pointSymbolizer;
+    public RuleType getRuleType() {
+        return ruleType;
     }
 
-    public TextSymbolizer getTextSymbolizer() {
-        if(textSymbolizer!=null){
-            return textSymbolizer;
-        }
-
-        if(textSymbolizerType!=null){
-            final StyleXmlIO util = new StyleXmlIO();
-            textSymbolizer = util.getTransformer110().visit(textSymbolizerType);
-        }
-
-        return textSymbolizer;
-    }
-
-    public FilterType getFilterType() {
-        return filterType;
-    }
-
-    public void setfilterType(FilterType jaxfilter) {
-        this.filterType = jaxfilter;
-        this.filter = null;
-    }
-
-    public PointSymbolizerType getPointSymbolizerType() {
-        return pointSymbolizerType;
-    }
-
-    public void setPointSymbolizerType(PointSymbolizerType jaxpointSymbolizer) {
-        this.pointSymbolizerType = jaxpointSymbolizer;
-        this.pointSymbolizer = null;
-    }
-
-    public TextSymbolizerType getTextSymbolizerType() {
-        return textSymbolizerType;
-    }
-
-    public void setTextSymbolizerType(TextSymbolizerType jaxtextSymbolizer) {
-        this.textSymbolizerType = jaxtextSymbolizer;
-        this.textSymbolizer = null;
+    public void setRuleType(RuleType jaxrule) {
+        this.ruleType = jaxrule;
+        this.rule = null;
     }
 
     @Override
     public Map<String, Expression> getParameters() {
-        final Map<String,Expression> config = new HashMap<String, Expression>();
+        final Map<String,Expression> config = new HashMap<>();
+        final Set<String> props = GO2Utilities.propertiesNames(Collections.singleton(getRule()));
+        int i=0;
+        for(String s : props){
+            s = cellToBasePropertyName(s);
+            if(s!=null){
+                config.put(""+i, GO2Utilities.FILTER_FACTORY.property(s));
+            }
+            i++;
+        }
         return config;
     }
 
@@ -214,6 +176,28 @@ public class CellSymbolizer extends SymbolizerType implements ExtensionSymbolize
         return sv.visit(this, o);
     }
 
+    public static String cellToBasePropertyName(String s){
+        if(s.endsWith(CellSymbolizer.PROPERY_SUFFIX_COUNT)){
+            return s.substring(0, s.length()-CellSymbolizer.PROPERY_SUFFIX_COUNT.length());
+        }else if(s.endsWith(CellSymbolizer.PROPERY_SUFFIX_MAX)){
+            return s.substring(0, s.length()-CellSymbolizer.PROPERY_SUFFIX_MAX.length());
+        }else if(s.endsWith(CellSymbolizer.PROPERY_SUFFIX_MEAN)){
+            return s.substring(0, s.length()-CellSymbolizer.PROPERY_SUFFIX_MEAN.length());
+        }else if(s.endsWith(CellSymbolizer.PROPERY_SUFFIX_MIN)){
+            return s.substring(0, s.length()-CellSymbolizer.PROPERY_SUFFIX_MIN.length());
+        }else if(s.endsWith(CellSymbolizer.PROPERY_SUFFIX_RANGE)){
+            return s.substring(0, s.length()-CellSymbolizer.PROPERY_SUFFIX_RANGE.length());
+        }else if(s.endsWith(CellSymbolizer.PROPERY_SUFFIX_RMS)){
+            return s.substring(0, s.length()-CellSymbolizer.PROPERY_SUFFIX_RMS.length());
+        }else if(s.endsWith(CellSymbolizer.PROPERY_SUFFIX_SUM)){
+            return s.substring(0, s.length()-CellSymbolizer.PROPERY_SUFFIX_SUM.length());
+        }else if(CellSymbolizer.PROPERY_GEOM_CENTER.equals(s) || CellSymbolizer.PROPERY_GEOM_CONTOUR.equals(s)){
+            return null;
+        }else{
+            return s;
+        }
+    }
+    
     public static SimpleFeatureType buildCellType(CoverageMapLayer layer) throws DataStoreException{
         return buildCellType(layer.getCoverageReference());
     }
@@ -262,40 +246,98 @@ public class CellSymbolizer extends SymbolizerType implements ExtensionSymbolize
         atb.setBinding(double.class);
 
         ftb.setName("cell");
-        ftb.add("geom", Point.class,crs);
+        ftb.add(PROPERY_GEOM_CENTER, Point.class,crs);
+        ftb.add(PROPERY_GEOM_CONTOUR, Polygon.class,crs);
+        ftb.setDefaultGeometry(PROPERY_GEOM_CENTER);
+        
         for(int b=0,n=nbBand;b<n;b++){
             final String name = "band_"+b;
             final String bandName = (bandnames!=null) ? bandnames[b] : "";
             atb.setDescription(bandName);
 
-            adb.setName(name+"_count");
+            adb.setName(name+PROPERY_SUFFIX_COUNT);
             adb.setType(atb.buildType());
             ftb.add(adb.buildDescriptor());
 
-            adb.setName(name+"_min");
+            adb.setName(name+PROPERY_SUFFIX_MIN);
             adb.setType(atb.buildType());
             ftb.add(adb.buildDescriptor());
 
-            adb.setName(name+"_mean");
+            adb.setName(name+PROPERY_SUFFIX_MEAN);
             adb.setType(atb.buildType());
             ftb.add(adb.buildDescriptor());
 
-            adb.setName(name+"_max");
+            adb.setName(name+PROPERY_SUFFIX_MAX);
             adb.setType(atb.buildType());
             ftb.add(adb.buildDescriptor());
 
-            adb.setName(name+"_range");
+            adb.setName(name+PROPERY_SUFFIX_RANGE);
             adb.setType(atb.buildType());
             ftb.add(adb.buildDescriptor());
 
-            adb.setName(name+"_rms");
+            adb.setName(name+PROPERY_SUFFIX_RMS);
             adb.setType(atb.buildType());
             ftb.add(adb.buildDescriptor());
 
-            adb.setName(name+"_sum");
+            adb.setName(name+PROPERY_SUFFIX_SUM);
             adb.setType(atb.buildType());
             ftb.add(adb.buildDescriptor());
         }
+        return ftb.buildSimpleFeatureType();
+    }
+    
+    public static SimpleFeatureType buildCellType(final FeatureType basetype){
+        final CoordinateReferenceSystem crs = basetype.getCoordinateReferenceSystem();
+        final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
+        final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
+        final AttributeTypeBuilder atb = new AttributeTypeBuilder();
+        atb.setBinding(double.class);
+
+        ftb.setName("cell");
+        ftb.add(PROPERY_GEOM_CENTER, Point.class,crs);
+        ftb.add(PROPERY_GEOM_CONTOUR, Polygon.class,crs);
+        ftb.setDefaultGeometry(PROPERY_GEOM_CENTER);
+        
+        //loop on all properties, extract numeric fields only
+        for(PropertyDescriptor desc : basetype.getDescriptors()){
+            if(desc instanceof AttributeDescriptor){
+                final AttributeDescriptor att = (AttributeDescriptor) desc;
+                final Class binding = att.getType().getBinding();
+                if(Number.class.isAssignableFrom(binding) || String.class.isAssignableFrom(binding)){
+                    final String name = att.getLocalName();
+                    atb.setDescription(name);
+
+                    adb.setName(name+PROPERY_SUFFIX_COUNT);
+                    adb.setType(atb.buildType());
+                    ftb.add(adb.buildDescriptor());
+
+                    adb.setName(name+PROPERY_SUFFIX_MIN);
+                    adb.setType(atb.buildType());
+                    ftb.add(adb.buildDescriptor());
+
+                    adb.setName(name+PROPERY_SUFFIX_MEAN);
+                    adb.setType(atb.buildType());
+                    ftb.add(adb.buildDescriptor());
+
+                    adb.setName(name+PROPERY_SUFFIX_MAX);
+                    adb.setType(atb.buildType());
+                    ftb.add(adb.buildDescriptor());
+
+                    adb.setName(name+PROPERY_SUFFIX_RANGE);
+                    adb.setType(atb.buildType());
+                    ftb.add(adb.buildDescriptor());
+
+                    adb.setName(name+PROPERY_SUFFIX_RMS);
+                    adb.setType(atb.buildType());
+                    ftb.add(adb.buildDescriptor());
+
+                    adb.setName(name+PROPERY_SUFFIX_SUM);
+                    adb.setType(atb.buildType());
+                    ftb.add(adb.buildDescriptor());
+                }
+            }
+        }
+        
         return ftb.buildSimpleFeatureType();
     }
 
