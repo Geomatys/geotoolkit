@@ -19,10 +19,6 @@ package org.geotoolkit.display2d.container.stateless;
 import com.vividsolutions.jts.geom.Geometry;
 import java.awt.Dimension;
 import java.awt.Point;
-import java.awt.geom.AffineTransform;
-import java.awt.image.BufferedImage;
-import java.awt.image.RenderedImage;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -31,15 +27,10 @@ import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.imageio.ImageReader;
 import org.geotoolkit.coverage.*;
 import org.geotoolkit.coverage.finder.CoverageFinder;
 import org.geotoolkit.coverage.finder.CoverageFinderFactory;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.grid.GridCoverageBuilder;
-import org.geotoolkit.coverage.grid.GridEnvelope2D;
-import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display.VisitFilter;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
@@ -61,21 +52,16 @@ import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.coverage.io.CoverageStoreException;
-import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.display2d.primitive.DefaultSearchAreaJ2D;
 import org.geotoolkit.display2d.primitive.GraphicJ2D;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.map.GraphicBuilder;
 import org.geotoolkit.util.Cancellable;
-import org.geotoolkit.util.ImageIOUtilities;
-import org.opengis.coverage.SampleDimension;
 import org.opengis.display.primitive.Graphic;
 import org.opengis.feature.type.Name;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
@@ -184,8 +170,7 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
 
             if(obj instanceof TileReference){
                 final TileReference tile = (TileReference)obj;
-                final MathTransform trs = queries.get(tile.getPosition());
-                paintTile(context2D, params, result.rules, result.pyramidCRS2D, tile, trs);
+                paintTile(context2D, params, result.rules, result.pyramid.getId(), result.mosaic.getId(), tile);
             }
         }
 
@@ -251,28 +236,22 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
         params.update(context2D);
                     
         //search for a tile which intersects the seach area
-        try{
-            for(int tileCol=(int)result.tileMinCol; tileCol<result.tileMaxCol; tileCol++){
-                for(int tileRow=(int)result.tileMinRow; tileRow<result.tileMaxRow; tileRow++){
-                    if(result.mosaic.isMissing(tileCol, tileRow)){
-                        //tile not available
-                        continue;
-                    }
+        final PyramidalCoverageReference covRef = (PyramidalCoverageReference) item.getCoverageReference();
+        for(int tileCol=(int)result.tileMinCol; tileCol<result.tileMaxCol; tileCol++){
+            for(int tileRow=(int)result.tileMinRow; tileRow<result.tileMaxRow; tileRow++){
+                if(result.mosaic.isMissing(tileCol, tileRow)){
+                    //tile not available
+                    continue;
+                }
 
-                    final Envelope tileEnvelope = result.mosaic.getEnvelope(tileCol, tileRow);
-                    final Geometry geom = JTS.toGeometry(tileEnvelope);
+                final Envelope tileEnvelope = result.mosaic.getEnvelope(tileCol, tileRow);
+                final Geometry geom = JTS.toGeometry(tileEnvelope);
 
-                    if(searchGeom.intersects(geom)){
-                        final Point pt = new Point(tileCol, tileRow);
-                        final MathTransform trs = AbstractGridMosaic.getTileGridToCRS(result.mosaic, pt);
-                        final TileReference tile = result.mosaic.getTile(tileCol, tileRow, null);
-                        final ProjectedCoverage pc = asCoverage(context2D, params, result.pyramidCRS2D, tile, trs);
-                        graphics.add(pc);
-                    }
+                if(searchGeom.intersects(geom)){
+                    final ProjectedCoverage pc = asCoverage(context2D, params, covRef, result.pyramid.getId(), result.mosaic.getId(),tileCol,tileRow);
+                    graphics.add(pc);
                 }
             }
-        }catch(DataStoreException ex){
-            LOGGER.log(Level.INFO, ex.getMessage(),ex);
         }
 
         return graphics;
@@ -413,50 +392,41 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
     }
     
     private ProjectedCoverage asCoverage(final RenderingContext2D context, StatelessContextParams params,
-            final CoordinateReferenceSystem tileCRS ,final TileReference tile, MathTransform trs) {
-        final CanvasMonitor monitor = context.getMonitor();
+            PyramidalCoverageReference ref, String pyramidId, String mosaicId, int tileX, int tileY) {
 
-        Object input = tile.getInput();
-        RenderedImage image;
-        if(input instanceof RenderedImage){
-            image = (RenderedImage) input;
-        }else{
-            ImageReader reader = null;
-            try {
-                reader = tile.getImageReader();
-                image = reader.read(tile.getImageIndex());
-            } catch (IOException ex) {
-                monitor.exceptionOccured(ex, Level.WARNING);
-                return null;
-            } finally {
-                //dispose reader and substream
-                ImageIOUtilities.releaseReader(reader);
-            }
+        final GridCoverage2D coverage;
+        try {
+            coverage = AbstractPyramidalCoverageReference.getTileAsCoverage(ref,pyramidId,mosaicId,tileX,tileY);
+        } catch (DataStoreException ex) {
+            LOGGER.log(Level.WARNING, ex.getMessage(), ex);
+            return null;
         }
+        
+        final CoverageMapLayer tilelayer = MapBuilder.createCoverageLayer(coverage, getUserObject().getStyle(), getUserObject().getName());
+        return new ProjectedCoverage(params, tilelayer);
+    }
+    
+    private ProjectedCoverage asCoverage(final RenderingContext2D context, StatelessContextParams params,
+            PyramidalCoverageReference ref, String pyramidId, String mosaicId, TileReference tile) {
 
-        //build the coverage ---------------------------------------------------
-        final GridCoverageBuilder gcb = new GridCoverageBuilder();
-        gcb.setName("tile");
-
-        final GridEnvelope2D ge = new GridEnvelope2D(0, 0, image.getWidth(), image.getHeight());
-        final GridGeometry2D gridgeo = new GridGeometry2D(ge, PixelInCell.CELL_CORNER, trs, tileCRS, null);
-        gcb.setGridGeometry(gridgeo);
-        gcb.setRenderedImage(image);
-        final SampleDimension[] sampleDims = new SampleDimension[image.getSampleModel().getNumBands()];
-        for(int i=0;i<sampleDims.length;i++){
-            sampleDims[i] = new GridSampleDimension(String.valueOf(i));
+        final GridCoverage2D coverage;
+        try {
+            coverage = AbstractPyramidalCoverageReference.getTileAsCoverage(ref,pyramidId,mosaicId,tile);
+        } catch (DataStoreException ex) {
+            LOGGER.log(Level.WARNING, ex.getMessage(), ex);
+            return null;
         }
-        gcb.setSampleDimensions(sampleDims);
-        final GridCoverage2D coverage = (GridCoverage2D) gcb.build();
-
-        final String name = getUserObject().getName();
-        final CoverageMapLayer tilelayer = MapBuilder.createCoverageLayer(coverage, getUserObject().getStyle(), name);
+        
+        final CoverageMapLayer tilelayer = MapBuilder.createCoverageLayer(coverage, getUserObject().getStyle(), getUserObject().getName());
         return new ProjectedCoverage(params, tilelayer);
     }
     
     private void paintTile(final RenderingContext2D context, StatelessContextParams params, CachedRule[] rules,
-            final CoordinateReferenceSystem tileCRS ,final TileReference tile, MathTransform trs) {
-        final ProjectedCoverage projectedCoverage = asCoverage(context, params, tileCRS, tile, trs);
+            final String pyramidId, final String mosaicId, final TileReference tile) {
+        final PyramidalCoverageReference covRef = (PyramidalCoverageReference) item.getCoverageReference();
+        
+        final ProjectedCoverage projectedCoverage = asCoverage(context, 
+                params, covRef, pyramidId, mosaicId, tile);
         for(final CachedRule rule : rules){
             for(final CachedSymbolizer symbol : rule.symbolizers()){
                 try {

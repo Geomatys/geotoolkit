@@ -90,15 +90,10 @@ public class PGCoverageReference extends AbstractPyramidalCoverageReference {
     final Version version;
 
     public PGCoverageReference(final PGCoverageStore store, final Name name, Version version) {
-        super(store,name);
+        super(store,name,0);
         this.pgstore = store;
         this.pyramidSet = new PGPyramidSet(this);
         this.version = version;
-    }
-
-    @Override
-    public int getImageIndex() {
-        return 0;
     }
 
     @Override

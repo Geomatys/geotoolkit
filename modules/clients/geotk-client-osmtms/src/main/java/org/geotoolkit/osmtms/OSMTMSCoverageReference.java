@@ -29,12 +29,7 @@ import org.opengis.feature.type.Name;
 public class OSMTMSCoverageReference extends AbstractPyramidalCoverageReference {
 
     OSMTMSCoverageReference(OSMTileMapClient server, Name name){
-        super(server,name);
-    }
-
-    @Override
-    public int getImageIndex() {
-        return 0;
+        super(server,name,0);
     }
 
     @Override

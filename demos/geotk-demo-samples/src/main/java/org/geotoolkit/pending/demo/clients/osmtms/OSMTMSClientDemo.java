@@ -16,7 +16,6 @@ import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.style.DefaultDescription;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
-import org.geotoolkit.style.RandomStyleBuilder;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.opengis.feature.type.Name;
 import org.opengis.parameter.ParameterValueGroup;

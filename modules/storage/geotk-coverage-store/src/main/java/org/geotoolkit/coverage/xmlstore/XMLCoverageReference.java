@@ -37,7 +37,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.xml.MarshallerPool;
-import org.geotoolkit.coverage.AbstractPyramidalModel;
+import org.geotoolkit.coverage.AbstractPyramidalCoverageReference;
 import org.geotoolkit.coverage.GridMosaic;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.Pyramid;
@@ -56,7 +56,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 @XmlRootElement(name="CoverageReference")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class XMLCoverageReference extends AbstractPyramidalModel {
+public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
 
     @XmlTransient
     private static MarshallerPool POOL;

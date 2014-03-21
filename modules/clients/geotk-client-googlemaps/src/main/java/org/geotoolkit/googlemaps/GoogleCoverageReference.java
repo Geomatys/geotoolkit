@@ -32,13 +32,8 @@ public class GoogleCoverageReference extends AbstractPyramidalCoverageReference{
     private final GoogleMapsPyramidSet set;
 
     GoogleCoverageReference(final StaticGoogleMapsClient server, final Name name, boolean cacheImage) throws DataStoreException{
-        super(server,name);
+        super(server,name,0);
         this.set = new GoogleMapsPyramidSet(this,cacheImage);
-    }
-
-    @Override
-    public int getImageIndex() {
-        return 0;
     }
 
     public GetMapRequest createGetMap() {

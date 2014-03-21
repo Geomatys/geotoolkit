@@ -22,7 +22,6 @@ import org.geotoolkit.client.map.CachedPyramidSet;
 import org.geotoolkit.coverage.GridMosaic;
 import org.geotoolkit.coverage.Pyramid;
 import org.geotoolkit.coverage.PyramidSet;
-import org.geotoolkit.ows.xml.v110.LanguageStringType;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.wmts.GetTileRequest;
