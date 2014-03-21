@@ -1609,7 +1609,7 @@ public class GTtoSE110Transformer implements StyleVisitor {
 
     public InterpolateType visit(final Interpolate interpolate) {
         final InterpolateType type = se_factory.createInterpolateType();
-        type.setFallbackValue(interpolate.getFallbackValue().getValue().toString());
+        type.setFallbackValue(interpolate.getFallbackValue().toString());
         type.setLookupValue(visitExpression(interpolate.getLookupValue()));
 
         if (interpolate.getMethod() == Method.COLOR) {
