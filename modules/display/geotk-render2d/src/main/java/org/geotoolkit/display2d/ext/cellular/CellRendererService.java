@@ -176,7 +176,7 @@ public class CellRendererService extends AbstractSymbolizerRendererService<CellS
                 //not important
             }
         }else if(layer instanceof FeatureMapLayer){
-            final SimpleFeatureType sft = CellSymbolizer.buildCellType( ((FeatureMapLayer)layer).getCollection().getFeatureType() );
+            final SimpleFeatureType sft = CellSymbolizer.buildCellType( ((FeatureMapLayer)layer).getCollection().getFeatureType(),null);
             layer = MapBuilder.createFeatureLayer(FeatureStoreUtilities.collection("", sft), GO2Utilities.STYLE_FACTORY.style());
         }else{
             layer = null;

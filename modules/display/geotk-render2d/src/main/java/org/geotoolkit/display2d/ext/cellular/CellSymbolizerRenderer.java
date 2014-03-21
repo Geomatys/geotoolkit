@@ -149,7 +149,7 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
                 if(baseType==null){
                     //we expect all features to have the same type
                     baseType = projFeature.getCandidate().getType();
-                    cellType = CellSymbolizer.buildCellType(baseType);
+                    cellType = CellSymbolizer.buildCellType(baseType,crs);
                     
                     final List<String> props = new ArrayList<>();
                     for(PropertyDescriptor desc : baseType.getDescriptors()){

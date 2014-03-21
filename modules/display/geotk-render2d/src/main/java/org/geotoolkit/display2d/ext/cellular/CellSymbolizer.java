@@ -286,8 +286,8 @@ public class CellSymbolizer extends SymbolizerType implements ExtensionSymbolize
         return ftb.buildSimpleFeatureType();
     }
     
-    public static SimpleFeatureType buildCellType(final FeatureType basetype){
-        final CoordinateReferenceSystem crs = basetype.getCoordinateReferenceSystem();
+    public static SimpleFeatureType buildCellType(final FeatureType basetype, CoordinateReferenceSystem crs){
+        crs = (crs==null)? basetype.getCoordinateReferenceSystem() : crs;
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
         final AttributeTypeBuilder atb = new AttributeTypeBuilder();
