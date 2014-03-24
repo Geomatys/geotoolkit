@@ -323,9 +323,13 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
             writer.addDocument(createDocument(meta, docId));
             LOGGER.log(Level.FINER, "Metadata: {0} indexed", getIdentifier(meta));
             writer.close();
+            if (rTree != null) {
+                rTree.getTreeElementMapper().flush();
+                rTree.flush();
+            }
 
-        } catch (IndexingException ex) {
-            LOGGER.log(Level.WARNING, "IndexingException " + ex.getMessage(), ex);
+        } catch (IndexingException | StoreIndexException ex) {
+            LOGGER.log(Level.WARNING, "Error while indexing single document", ex);
         } catch (IOException ex) {
             LOGGER.log(Level.WARNING, IO_SINGLE_MSG + ex.getMessage(), ex);
         }
@@ -411,6 +415,8 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
                 } else {
                     //remove from mapper
                     mapper.setTreeIdentifier(null, treeID);
+                    mapper.flush();
+                    rTree.flush();
                 }
             }
             
@@ -475,7 +481,9 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
             final String id = doc.get("id");
             namedBound      = LuceneUtils.getNamedEnvelope(id, geom, crs);
             rTree.insert(namedBound);
-        } catch (TransformException | FactoryException | MismatchedReferenceSystemException | StoreIndexException ex) {
+            rTree.getTreeElementMapper().flush();
+            rTree.flush();
+        } catch (TransformException | FactoryException | MismatchedReferenceSystemException | StoreIndexException | IOException ex) {
             LOGGER.log(Level.WARNING, "Unable to insert envelope in R-Tree.", ex);
         }
         doc.add(new StoredField(LuceneOGCFilter.GEOMETRY_FIELD_NAME,WKBUtils.toWKBwithSRID(geom)));
