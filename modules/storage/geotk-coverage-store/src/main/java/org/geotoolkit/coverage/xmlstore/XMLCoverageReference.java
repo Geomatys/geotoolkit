@@ -78,6 +78,8 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
     private int numDimension;
     @XmlElement(name="Sampletype")
     private int sampleType;
+    @XmlElement(name="PreferredFormat")
+    private String preferredFormat;
     
     @XmlTransient
     private String id;
@@ -147,51 +149,10 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
     }
     
     @Override
-    public boolean isWritable() throws CoverageStoreException {
-        return true;
-    }
-
-    @Override
     public XMLPyramidSet getPyramidSet() {
         return set;
     }
-
-    @Override
-    public Pyramid createPyramid(CoordinateReferenceSystem crs) throws DataStoreException {
-        final XMLPyramidSet set = getPyramidSet();
-        save();
-        return set.createPyramid(crs);
-    }
-
-    @Override
-    public void deletePyramid(String pyramidId) throws DataStoreException {
-        throw new DataStoreException("Not supported yet.");
-    }
-
-    @Override
-    public GridMosaic createMosaic(String pyramidId, Dimension gridSize,
-    Dimension tilePixelSize, DirectPosition upperleft, double pixelscale) throws DataStoreException {
-        final XMLPyramidSet set = getPyramidSet();
-        final XMLPyramid pyramid = (XMLPyramid) set.getPyramid(pyramidId);
-        final XMLMosaic mosaic = pyramid.createMosaic(gridSize, tilePixelSize, upperleft, pixelscale);
-        save();
-        return mosaic;
-    }
-
-    @Override
-    public void deleteMosaic(String pyramidId, String mosaicId) throws DataStoreException {
-        throw new DataStoreException("Not supported yet.");
-    }
-
-    @Override
-    public void writeTile(String pyramidId, String mosaicId, int col, int row, RenderedImage image) throws DataStoreException {
-        final XMLPyramidSet set = getPyramidSet();
-        final XMLPyramid pyramid = (XMLPyramid) set.getPyramid(pyramidId);
-        final XMLMosaic mosaic = pyramid.getMosaic(mosaicId);
-        mosaic.createTile(col,row,image);
-        save();
-    }
-
+    
     /**
      * Save the coverage reference in the file
      * @throws DataStoreException
@@ -225,20 +186,18 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
         return ref;
     }
     
-    @Override
-    public void writeTiles(String pyramidId, String mosaicId, RenderedImage image, boolean onlyMissing, ProgressMonitor monitor) throws DataStoreException {
-        final XMLPyramidSet set = getPyramidSet();
-        final XMLPyramid pyramid = (XMLPyramid) set.getPyramid(pyramidId);
-        final XMLMosaic mosaic = pyramid.getMosaic(mosaicId);
-        mosaic.writeTiles(image,onlyMissing, monitor);
-        save();
+    ////////////////////////////////////////////////////////////////////////////
+    // Meta informations methods ///////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+    
+    public void setPreferredFormat(String preferredFormat) {
+        this.preferredFormat = preferredFormat;
     }
 
-    @Override
-    public void deleteTile(String pyramidId, String mosaicId, int col, int row) throws DataStoreException {
-        throw new DataStoreException("Not supported yet.");
+    public String getPreferredFormat() {
+        return preferredFormat;
     }
-
+    
     @Override
     public synchronized List<GridSampleDimension> getSampleDimensions() throws DataStoreException {
         if(cacheDimensions==null){
@@ -298,6 +257,64 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
     public void setPackMode(ViewType packMode) {
         this.packMode = packMode.name();
     }
+    
+    ////////////////////////////////////////////////////////////////////////////
+    // Creation,Edition methods ////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+    
+    @Override
+    public boolean isWritable() throws CoverageStoreException {
+        return true;
+    }
 
+    @Override
+    public Pyramid createPyramid(CoordinateReferenceSystem crs) throws DataStoreException {
+        final XMLPyramidSet set = getPyramidSet();
+        save();
+        return set.createPyramid(crs);
+    }
+
+    @Override
+    public void deletePyramid(String pyramidId) throws DataStoreException {
+        throw new DataStoreException("Not supported yet.");
+    }
+
+    @Override
+    public GridMosaic createMosaic(String pyramidId, Dimension gridSize,
+    Dimension tilePixelSize, DirectPosition upperleft, double pixelscale) throws DataStoreException {
+        final XMLPyramidSet set = getPyramidSet();
+        final XMLPyramid pyramid = (XMLPyramid) set.getPyramid(pyramidId);
+        final XMLMosaic mosaic = pyramid.createMosaic(gridSize, tilePixelSize, upperleft, pixelscale);
+        save();
+        return mosaic;
+    }
+
+    @Override
+    public void deleteMosaic(String pyramidId, String mosaicId) throws DataStoreException {
+        throw new DataStoreException("Not supported yet.");
+    }
+
+    @Override
+    public void writeTile(String pyramidId, String mosaicId, int col, int row, RenderedImage image) throws DataStoreException {
+        final XMLPyramidSet set = getPyramidSet();
+        final XMLPyramid pyramid = (XMLPyramid) set.getPyramid(pyramidId);
+        final XMLMosaic mosaic = pyramid.getMosaic(mosaicId);
+        mosaic.createTile(col,row,image);
+        save();
+    }
+    
+    @Override
+    public void writeTiles(String pyramidId, String mosaicId, RenderedImage image, boolean onlyMissing, ProgressMonitor monitor) throws DataStoreException {
+        final XMLPyramidSet set = getPyramidSet();
+        final XMLPyramid pyramid = (XMLPyramid) set.getPyramid(pyramidId);
+        final XMLMosaic mosaic = pyramid.getMosaic(mosaicId);
+        mosaic.writeTiles(image,onlyMissing, monitor);
+        save();
+    }
+
+    @Override
+    public void deleteTile(String pyramidId, String mosaicId, int col, int row) throws DataStoreException {
+        throw new DataStoreException("Not supported yet.");
+    }
 
 }

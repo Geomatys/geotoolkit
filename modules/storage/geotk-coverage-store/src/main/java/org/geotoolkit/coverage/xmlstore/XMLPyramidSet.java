@@ -65,10 +65,11 @@ public class XMLPyramidSet extends AbstractPyramidSet{
     }
 
     public String getFormatName() {
+        final String format = ref.getPreferredFormat();
+        if(format!=null && !format.isEmpty()) return format;
         return ref.getPackMode().equals(ViewType.GEOPHYSICS) ? "PostGISWKBraster" : "PNG";
     }
 
-    
     public XMLCoverageReference getRef() {
         return ref;
     }
@@ -111,6 +112,7 @@ public class XMLPyramidSet extends AbstractPyramidSet{
     public List<String> getFormats() {
         final String format = getFormatName();
         switch (format) {
+            case "JPEG": return Arrays.asList("image/jpeg");
             case "PNG": return Arrays.asList("image/png");
             case "PostGISWKBraster" : return Arrays.asList("application/wkb"); // better mime type ?
             default : throw new IllegalStateException("unexpected pyramid format");
