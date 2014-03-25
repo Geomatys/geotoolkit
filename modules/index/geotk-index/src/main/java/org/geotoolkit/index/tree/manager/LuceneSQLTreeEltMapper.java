@@ -161,7 +161,13 @@ public class LuceneSQLTreeEltMapper implements TreeElementMapper<NamedEnvelope> 
 
     @Override
     public void clear() throws IOException {
-        // do nothing in this implementation
+        try {
+            final PreparedStatement stmt = conT.prepareStatement("DELETE * FROM \"treemap\".\"records\"");
+            stmt.executeUpdate();
+            stmt.close();
+        } catch (SQLException ex) {
+            throw new IOException("Error while removing all records", ex);
+        }
     }
 
     @Override
