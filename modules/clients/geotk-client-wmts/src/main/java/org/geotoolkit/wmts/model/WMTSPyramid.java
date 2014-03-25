@@ -43,7 +43,9 @@ public class WMTSPyramid extends DefaultPyramid{
         
         final String crsstr = matrixset.getSupportedCRS();
         try {
-            crs = CRS.decode(crsstr);
+            // WMTS is made for display like WMS, so longitude is expected to be on the X axis.
+            // Note : this is not written in the spec.
+            crs = CRS.decode(crsstr,true);
         } catch (NoSuchAuthorityCodeException ex) {
             Logger.getLogger(WMTSPyramid.class.getName()).log(Level.WARNING, null, ex);
         } catch (FactoryException ex) {
