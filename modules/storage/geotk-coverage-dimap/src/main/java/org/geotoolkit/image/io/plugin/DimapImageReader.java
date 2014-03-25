@@ -287,7 +287,7 @@ public class DimapImageReader extends ImageReaderAdapter {
             }
 
             //dimap requiere geotiff
-            GeoTiffImageReader.Spi.registerDefaults(registry);
+
 
             for (int index=0; ;index++) {
                 final Spi provider;
