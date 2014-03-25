@@ -23,13 +23,16 @@ import java.io.IOException;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.imageio.ImageReader;
+import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
-import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.util.ImageIOUtilities;
+import org.opengis.coverage.SampleDimensionType;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -40,9 +43,6 @@ import org.opengis.referencing.cs.SphericalCS;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
-
-import javax.imageio.ImageReader;
-import org.opengis.coverage.SampleDimensionType;
 
 /**
  * Utility functions for coverage and mosaic.
@@ -435,6 +435,69 @@ public final class CoverageUtilities {
         }else {
             throw new IllegalArgumentException("Unexprected data type : "+sdt);
         }
+    }
+    
+    /**
+     * Get or create a pyramid and it's mosaic for the given envelope and scales.
+     * 
+     * @param container
+     * @param envelope
+     * @param tileSize
+     * @param scales
+     * @return
+     * @throws DataStoreException 
+     */
+    public static Pyramid getOrCreatePyramid(PyramidalCoverageReference container, 
+            Envelope envelope, Dimension tileSize, double[] scales) throws DataStoreException{
+
+        //find if we already have a pyramid in the given CRS
+        Pyramid pyramid = null;
+        final CoordinateReferenceSystem crs = envelope.getCoordinateReferenceSystem();
+        for (Pyramid candidate : container.getPyramidSet().getPyramids()) {
+            if (CRS.equalsApproximatively(crs, candidate.getCoordinateReferenceSystem())) {
+                pyramid = candidate;
+                break;
+            }
+        }
+
+        if (pyramid == null) {
+            //we didn't find a pyramid, create one
+            pyramid = container.createPyramid(crs);
+        }
+
+        //generate each mosaic
+        for (final double scale : scales) {
+            final double gridWidth  = envelope.getSpan(0) / (scale*tileSize.width);
+            final double gridHeight = envelope.getSpan(1) / (scale*tileSize.height);
+
+            //those parameters can change if another mosaic already exist
+            DirectPosition upperleft = new GeneralDirectPosition(crs);
+            upperleft.setOrdinate(0, envelope.getMinimum(0));
+            upperleft.setOrdinate(1, envelope.getMaximum(1));
+            Dimension tileDim = tileSize;
+            Dimension gridSize = new Dimension( (int)(Math.ceil(gridWidth)), (int)(Math.ceil(gridHeight)));
+
+            //check if we already have a mosaic at this scale
+            GridMosaic mosaic = null;
+            int index = 0;
+            for (GridMosaic m : pyramid.getMosaics()) {
+                if (m.getScale() == scale) {
+                    //this mosaic definition replaces the given one
+                    upperleft = m.getUpperLeftCorner();
+                    tileDim = m.getTileSize();
+                    gridSize = m.getGridSize();
+                    break;
+                }
+                index++;
+            }
+
+            if (mosaic == null) {
+                //create a new mosaic
+                mosaic = container.createMosaic(pyramid.getId(),gridSize, tileDim, upperleft, scale);
+            }
+        }
+        
+        return pyramid;
     }
     
 }
