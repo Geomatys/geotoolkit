@@ -27,7 +27,7 @@ import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.coverage.CoverageProcessingRegistry;
 import org.apache.sis.util.iso.SimpleInternationalString;
-import org.opengis.coverage.grid.GridCoverage;
+import org.geotoolkit.coverage.CoverageReference;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -46,9 +46,9 @@ public class PyramidDescriptor extends AbstractProcessDescriptor{
     /**
      * Input coverage which will be resample.
      */
-    public static final ParameterDescriptor<GridCoverage> IN_COVERAGE =
-            new DefaultParameterDescriptor<>("coverage",
-            "Coverage which will be tile.", GridCoverage.class, null, true);
+    public static final ParameterDescriptor<CoverageReference> IN_COVERAGEREF =
+            new DefaultParameterDescriptor<>("coverageref",
+            "Coverage which will be tile.", CoverageReference.class, null, true);
 
     /**
      * Coverage store within pyramid will be store.
@@ -108,7 +108,7 @@ public class PyramidDescriptor extends AbstractProcessDescriptor{
     //Input group
     public static final ParameterDescriptorGroup INPUT_DESC =
             new DefaultParameterDescriptorGroup(NAME+"InputParameters",
-                IN_COVERAGE, IN_COVERAGESTORE, IN_PYRAMID_NAME, IN_TILE_SIZE, IN_INTERPOLATIONCASE, IN_RES_PER_ENVELOPE, IN_FILLVALUES);
+                IN_COVERAGEREF, IN_COVERAGESTORE, IN_PYRAMID_NAME, IN_TILE_SIZE, IN_INTERPOLATIONCASE, IN_RES_PER_ENVELOPE, IN_FILLVALUES);
     //Output group
     public static final ParameterDescriptorGroup OUTPUT_DESC =
             new DefaultParameterDescriptorGroup(NAME+"OutputParameters", OUT_COVERAGESTORE);

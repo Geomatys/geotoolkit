@@ -30,9 +30,9 @@ import org.geotoolkit.process.AbstractProcess;
 import org.geotoolkit.process.ProcessException;
 import static org.geotoolkit.process.coverage.pyramid.PyramidDescriptor.*;
 import org.apache.sis.util.ArgumentChecks;
+import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.process.ProcessEvent;
 import org.geotoolkit.process.ProcessListener;
-import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.geometry.Envelope;
 import org.opengis.parameter.ParameterValueGroup;
 
@@ -57,7 +57,7 @@ public class PyramidProcess extends AbstractProcess implements ProcessListener {
 
         ArgumentChecks.ensureNonNull("inputParameters", inputParameters);
 
-        final GridCoverage coverage               = value(IN_COVERAGE         , inputParameters);
+        final CoverageReference coverageref       = value(IN_COVERAGEREF      , inputParameters);
         final CoverageStore coverageStore         = value(IN_COVERAGESTORE    , inputParameters);
         final InterpolationCase interpolationcase = value(IN_INTERPOLATIONCASE, inputParameters);
         final Map resolution_per_envelope         = value(IN_RES_PER_ENVELOPE , inputParameters);
@@ -78,7 +78,7 @@ public class PyramidProcess extends AbstractProcess implements ProcessListener {
             throw new CancellationException();
         }
         try {
-            pgcb.create(coverage, coverageStore, new DefaultName(pyramid_name), resolution_per_envelope, fillvalue,
+            pgcb.create(coverageref, coverageStore, new DefaultName(pyramid_name), resolution_per_envelope, fillvalue,
                     this, new PyramidMonitor(this));
         } catch (Exception ex) {
             throw new ProcessException(ex.getMessage(), this, ex);
