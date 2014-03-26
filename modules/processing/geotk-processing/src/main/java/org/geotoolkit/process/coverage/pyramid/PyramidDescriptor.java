@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.process.coverage.pgpyramid;
+package org.geotoolkit.process.coverage.pyramid;
 
 import java.awt.Dimension;
 import java.util.Map;

@@ -32,7 +32,7 @@ import org.geotoolkit.process.coverage.isoline2.IsolineDescriptor2;
 import org.geotoolkit.process.coverage.kriging.KrigingDescriptor;
 import org.geotoolkit.process.coverage.merge.MergeDescriptor;
 import org.geotoolkit.process.coverage.metadataextractor.ExtractionDescriptor;
-import org.geotoolkit.process.coverage.pgpyramid.PyramidDescriptor;
+import org.geotoolkit.process.coverage.pyramid.PyramidDescriptor;
 import org.geotoolkit.process.coverage.reducetodomain.ReduceToDomainDescriptor;
 import org.geotoolkit.process.coverage.reformat.ReformatDescriptor;
 import org.geotoolkit.process.coverage.resample.GenericResampleDescriptor;
