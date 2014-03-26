@@ -86,10 +86,13 @@ public class LuceneSQLTreeEltMapper implements TreeElementMapper<NamedEnvelope> 
     public void setTreeIdentifier(final NamedEnvelope env, final int treeIdentifier) throws IOException {
         try {
             if (env != null) {
-                final PreparedStatement exist = conRO.prepareStatement("SELECT \"id\" FROM \"treemap\".\"records\" WHERE \"id\"=?");
-                exist.setInt(1, treeIdentifier);
-                final ResultSet rs = exist.executeQuery();
-                if (rs.next()) {
+                final PreparedStatement existStmt = conRO.prepareStatement("SELECT \"id\" FROM \"treemap\".\"records\" WHERE \"id\"=?");
+                existStmt.setInt(1, treeIdentifier);
+                final ResultSet rs = existStmt.executeQuery();
+                final boolean exist = rs.next();
+                rs.close();
+                existStmt.close();
+                if (exist) {
                     final PreparedStatement stmt = conT.prepareStatement("UPDATE \"treemap\".\"records\" "
                                                                        + "SET \"identifier\"=?, \"nbenv\"=?, \"minx\"=?, \"maxx\"=?, \"miny\"=?, \"maxy\"=? "
                                                                        + "WHERE \"id\"=?");
@@ -119,8 +122,6 @@ public class LuceneSQLTreeEltMapper implements TreeElementMapper<NamedEnvelope> 
                     stmt.close();
                     conT.commit();
                 }
-                rs.close();
-                exist.close();
             } else {
                 final PreparedStatement remove = conT.prepareStatement("DELETE FROM \"treemap\".\"records\" WHERE \"id\"=?");
                 remove.setInt(1, treeIdentifier);
@@ -162,9 +163,10 @@ public class LuceneSQLTreeEltMapper implements TreeElementMapper<NamedEnvelope> 
     @Override
     public void clear() throws IOException {
         try {
-            final PreparedStatement stmt = conT.prepareStatement("DELETE * FROM \"treemap\".\"records\"");
+            final PreparedStatement stmt = conT.prepareStatement("DELETE FROM \"treemap\".\"records\"");
             stmt.executeUpdate();
             stmt.close();
+            conT.commit();
         } catch (SQLException ex) {
             throw new IOException("Error while removing all records", ex);
         }
