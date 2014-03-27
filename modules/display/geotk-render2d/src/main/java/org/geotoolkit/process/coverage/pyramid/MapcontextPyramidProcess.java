@@ -134,6 +134,7 @@ public final class MapcontextPyramidProcess extends AbstractProcess {
                 int index = 0;
                 for (GridMosaic m : pyramid.getMosaics()) {
                     if (m.getScale() == scale) {
+                        mosaic = m;
                         //this mosaic definition replaces the given one
                         upperleft = m.getUpperLeftCorner();
                         tileDim = m.getTileSize();
