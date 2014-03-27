@@ -291,7 +291,6 @@ public class PyramidCoverageBuilder {
                 }
                 final GridCoverageReadParam rp = new GridCoverageReadParam();
                 rp.setEnvelope(envDest);
-                BufferedImage img = new BufferedImage(tileWidth, tileHeight, niemeTile);
                 final GridCoverageReader reader = gridCoverageRef.acquireReader();
                 final GridCoverage gridCoverage = reader.read(gridCoverageRef.getImageIndex(), rp);
                 final GridGeometry gg           = gridCoverage.getGridGeometry();
@@ -551,7 +550,7 @@ public class PyramidCoverageBuilder {
                     final int destMinY  = cTY * tileHeight;
                     final WritableRenderedImage destImg = BufferedImageUtilities.createImage(tileWidth, tileHeight, baseImg);
                     //ensure fill value is set.
-                    ImageUtilities.fill(destImg, fillValue[0]);
+                    ImageUtilities.fill(destImg, fill[0]);
 
                     if (processListener != null) {
                         processListener.progressing(new ProcessEvent(fakeProcess, (++niemeTile)+"/"+globalTileNumber, (niemeTile * 100 / globalTileNumber)));
