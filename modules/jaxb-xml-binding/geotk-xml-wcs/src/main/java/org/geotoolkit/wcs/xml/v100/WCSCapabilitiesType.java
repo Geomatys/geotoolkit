@@ -172,6 +172,14 @@ public class WCSCapabilitiesType implements GetCapabilitiesResponse, WCSResponse
         this.contentMetadata = value;
     }
 
+    @Override
+    public void updateURL(final String url) {
+        if (capability != null) {
+            capability.updateURL(url);
+        }
+    }
+
+    
     /**
      * Gets the value of the version property.
      */

@@ -130,6 +130,17 @@ public abstract class CapabilitiesBaseType implements AbstractCapabilitiesBase {
         return operationsMetadata;
     }
 
+    public void setOperationsMetadata(final OperationsMetadata operationsMetadata) {
+        this.operationsMetadata = operationsMetadata;
+    }
+    
+    @Override
+    public void updateURL(String url) {
+        if (this.operationsMetadata != null) {
+            this.operationsMetadata.updateURL(url);
+        }
+    }
+    
     /**
      * Gets the value of the version property.
      * 
@@ -202,7 +213,7 @@ public abstract class CapabilitiesBaseType implements AbstractCapabilitiesBase {
             s.append("serviceProvider is null").append('\n');
         }
         if (updateSequence != null) {
-            s.append(updateSequence.toString()).append('\n');
+            s.append(updateSequence).append('\n');
         } else {
             s.append("updateSequence is null").append('\n');
         }

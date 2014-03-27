@@ -201,6 +201,13 @@ public abstract class CapabilitiesBaseType implements AbstractCapabilitiesBase {
         this.operationsMetadata = value;
     }
 
+    @Override
+    public void updateURL(String url) {
+        if (this.operationsMetadata != null) {
+            this.operationsMetadata.updateURL(url);
+        }
+    }
+    
     /**
      * Gets the value of the languages property.
      * 

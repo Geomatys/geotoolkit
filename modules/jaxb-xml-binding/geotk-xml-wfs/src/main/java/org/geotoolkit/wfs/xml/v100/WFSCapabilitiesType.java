@@ -143,6 +143,13 @@ public class WFSCapabilitiesType implements WFSResponse, WFSCapabilities {
     public void setCapability(CapabilityType value) {
         this.capability = value;
     }
+    
+    @Override
+    public void updateURL(final String url) {
+        if (capability != null && capability.getRequest() != null) {
+            capability.getRequest().updateURL(url);
+        }
+    }
 
     /**
      * Gets the value of the featureTypeList property.

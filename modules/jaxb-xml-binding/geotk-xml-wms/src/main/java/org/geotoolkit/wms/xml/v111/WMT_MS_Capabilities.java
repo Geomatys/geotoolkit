@@ -116,6 +116,41 @@ public class WMT_MS_Capabilities implements AbstractWMSCapabilities, WMSResponse
         }
     }
 
+    @Override
+    public void updateURL(final String url) {
+        if (capability != null) {
+            if (capability.getRequest() != null) {
+                capability.getRequest().updateURL(url);
+            }
+            final Layer mainLayer = capability.getLayer();
+            if (mainLayer != null) {
+                updateLayerURL(url, mainLayer);
+            }
+        }
+    }
+    
+    private void updateLayerURL(final String url, final Layer layer) {
+        if (layer.getStyle() != null) {
+            for (Style style : layer.getStyle()) {
+                if (style.getLegendURL() != null) {
+                    for (LegendURL legend : style.getLegendURL()) {
+                        if (legend.getOnlineResource() != null &&
+                            legend.getOnlineResource().getHref() != null) {
+                            final String legendURL = legend.getOnlineResource().getHref();
+                            final int index = legendURL.indexOf('?');
+                            if (index != -1) {
+                                final String s = legendURL.substring(index + 1);
+                                legend.getOnlineResource().setHref(url + s);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        for (Layer childLayer : layer.getLayer()) {
+            updateLayerURL(url, childLayer);
+        }
+    }
     /**
      * Gets the value of the version property.
      * 

@@ -99,5 +99,8 @@ public class RequestType {
         }
         return this.getCapabilitiesOrDescribeFeatureTypeOrTransaction;
     }
-
+    
+    public void updateURL(final String url) {
+        //TODO
+    }
 }

@@ -114,6 +114,28 @@ public class Capabilities extends CapabilitiesBaseType implements WMTSResponse {
         this.contents = value;
     }
 
+    @Override
+    public void updateURL(String url) {
+        super.updateURL(url);
+        if (contents != null) {
+            for (LayerType layer : contents.getLayers()) {
+                if (layer.getResourceURL() != null) {
+                    for (URLTemplateType template : layer.getResourceURL()) {
+                        if (template.getTemplate() != null) {
+                            final String templateURL = template.getTemplate();
+                            final int index = templateURL.indexOf(layer.getIdentifier().getValue()) - 1;
+                            if (index != -1) {
+                                final String s = templateURL.substring(index);
+                                template.setTemplate(url.substring(0, url.length() - 1) + s);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    
     /**
      * Metadata describing a theme hierarchy for the layers
      * Gets the value of the themes property.

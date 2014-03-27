@@ -79,7 +79,7 @@ public abstract class CapabilitiesBaseType implements AbstractCapabilitiesBase {
     private String updateSequence;
 
     /**
-     *Build the base of a Capabilities document.
+     * Build the base of a Capabilities document.
      */
     public CapabilitiesBaseType(final String version, final String updateSequence) {
         this.version        = version;
@@ -108,6 +108,7 @@ public abstract class CapabilitiesBaseType implements AbstractCapabilitiesBase {
      * Gets the value of the serviceIdentification property.
      * 
      */
+    @Override
     public ServiceIdentification getServiceIdentification() {
         return serviceIdentification;
     }
@@ -120,6 +121,7 @@ public abstract class CapabilitiesBaseType implements AbstractCapabilitiesBase {
      * Gets the value of the serviceProvider property.
      * 
      */
+    @Override
     public ServiceProvider getServiceProvider() {
         return serviceProvider;
     }
@@ -131,6 +133,7 @@ public abstract class CapabilitiesBaseType implements AbstractCapabilitiesBase {
     /**
      * Gets the value of the operationsMetadata property.
      */
+    @Override
     public OperationsMetadata getOperationsMetadata() {
         return operationsMetadata;
     }
@@ -139,10 +142,18 @@ public abstract class CapabilitiesBaseType implements AbstractCapabilitiesBase {
         this.operationsMetadata = operationsMetadata;
     }
 
+    @Override
+    public void updateURL(String url) {
+        if (this.operationsMetadata != null) {
+            this.operationsMetadata.updateURL(url);
+        }
+    }
+    
     /**
      * Gets the value of the version property.
      * 
      */
+    @Override
     public String getVersion() {
         return version;
     }
@@ -151,6 +162,7 @@ public abstract class CapabilitiesBaseType implements AbstractCapabilitiesBase {
      * Gets the value of the updateSequence property.
      * 
      */
+    @Override
     public String getUpdateSequence() {
         return updateSequence;
     }
@@ -187,25 +199,22 @@ public abstract class CapabilitiesBaseType implements AbstractCapabilitiesBase {
     
     @Override
     public String toString() {
-        StringBuilder s = new StringBuilder("[").append(this.getClass().getSimpleName()).append(']');
-
-        if (operationsMetadata != null)
+        final StringBuilder s = new StringBuilder("[").append(this.getClass().getSimpleName()).append(']');
+        if (operationsMetadata != null) {
             s.append("operations metadata:").append(operationsMetadata).append('\n');
-        
-        if (serviceIdentification != null)
+        }
+        if (serviceIdentification != null) {
             s.append("service identification:").append(serviceIdentification).append('\n');
-        
-        if (serviceProvider != null)
+        }
+        if (serviceProvider != null) {
             s.append("service provider:").append(serviceProvider).append('\n');
-        
-        if (updateSequence != null)
+        }
+        if (updateSequence != null) {
             s.append("updateSequence:").append(updateSequence).append('\n');
-        
-        if (version != null)
+        }
+        if (version != null) {
             s.append("version:").append(version).append('\n');
-        
-        
+        }
         return s.toString();
     }
-
 }    

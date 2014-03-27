@@ -23,4 +23,6 @@ package org.geotoolkit.ows.xml;
 public interface AbstractCapabilitiesCore {
     
      AbstractCapabilitiesCore applySections(final Sections sections);
+     
+     void updateURL(final String url);
 }
