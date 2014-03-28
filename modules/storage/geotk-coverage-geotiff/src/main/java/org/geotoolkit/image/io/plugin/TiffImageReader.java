@@ -52,6 +52,7 @@ import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Array;
 import java.nio.channels.ReadableByteChannel;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import javax.imageio.IIOException;
 import javax.imageio.ImageReader;
@@ -119,12 +120,6 @@ import static org.geotoolkit.metadata.geotiff.GeoTiffConstants.*;
  * @module
  */
 public class TiffImageReader extends SpatialImageReader {
-//    /**
-//     * Typical size of a <cite>Image File Directory</cite> (IFD). This is only a hint;
-//     * FIDs can safely be larger than that. The only purpose of this value is to reduce
-//     * the amount of unneeded data to read from the disk.
-//     */
-//    private static final int IFD_SIZE = 1024;
 
     /**
      * Size of data structures in standard TIFF files ({@code SIZE_*}) and in big TIFF files
@@ -265,6 +260,11 @@ public class TiffImageReader extends SpatialImageReader {
      * Map which contain all tiff properties of the current selected image.
      */
     private Map<Integer, Map> headProperties;
+    
+    /**
+     * Map which do relation between image and thumbnail indexes and layer index.
+     */
+    private Map<Integer, List<Integer>> imgAndThumbs;
 
     /**
      * Define size in {@code Byte} of offset in each Tiff tag.<br/>
@@ -305,6 +305,24 @@ public class TiffImageReader extends SpatialImageReader {
     public boolean isRandomAccessEasy(final int imageIndex) throws IOException {
         return true;
     }
+   
+    /**
+     * Return true if the current layer is a thumbnail else false.
+     * @return true if the current layer is a thumbnail else false.
+     */
+    private boolean isThumbnail() {
+        final long[] newSubFil = (long[]) headProperties.get(NewSubfileType).get(ATT_VALUE);
+        if (newSubFil == null) return false;
+        return newSubFil[0] != 0;
+    }
+
+    /**
+     * {@inheritDoc} 
+     */
+    @Override
+    public boolean readerSupportsThumbnails() {
+        return true;
+    }
 
     /**
      * {@inheritDoc }.
@@ -316,10 +334,13 @@ public class TiffImageReader extends SpatialImageReader {
             //stream metadata
             return super.createMetadata(imageIndex);
         }
-        if (metaHeads[imageIndex] == null) {
-            selectImage(imageIndex);
+        
+        checkLayers();
+        final int layerIndex = getLayerIndex(imageIndex);
+        if (metaHeads[layerIndex] == null) {
+            selectLayer(layerIndex);
         }
-
+        headProperties = metaHeads[layerIndex];
         //-- if there are not geotiff tag return null
         boolean isGeotiff = false;
         for(int key : headProperties.keySet()) {
@@ -331,8 +352,8 @@ public class TiffImageReader extends SpatialImageReader {
 
         if (!isGeotiff) return null;
 
-        fillRootMetadataNode(imageIndex);
-        final IIOMetadata metadata = new IIOTiffMetadata(roots[imageIndex]);
+        fillRootMetadataNode(layerIndex);
+        final IIOMetadata metadata = new IIOTiffMetadata(roots[layerIndex]);
             final GeoTiffMetaDataReader metareader = new GeoTiffMetaDataReader(metadata);
         try {
             return metareader.readSpatialMetaData();
@@ -344,147 +365,394 @@ public class TiffImageReader extends SpatialImageReader {
     }
 
     /**
-     * Ensures that the channel is open. If the channel is already open, then this method
-     * does nothing.
-     *
-     * @throws IllegalStateException if the input is not set.
-     * @throws IOException If an error occurred while opening the channel.
-     */
-    private void open() throws IllegalStateException, IOException {
-
-        if (channel == null) {
-            if (input == null) {
-                throw new IllegalStateException(error(Errors.Keys.NO_IMAGE_INPUT));
-            }
-            final FileInputStream in;
-            if (input instanceof String) {
-                in = new FileInputStream((String) input);
-                currentInput = new File((String) input);
-            } else {
-                in = new FileInputStream((File) input);
-                currentInput = (File) input;
-            }
-            //-- Closing the channel will close the input stream.
-            buffer.clear();
-            channel = new ChannelImageInputStream(null, in.getChannel(), buffer, false);
-            
-            final byte c = channel.readByte();
-            if (c != channel.readByte()) {
-                throw invalidFile("ByteOrder");
-            }
-            final ByteOrder order;
-            if (c == 'M') {
-                order = ByteOrder.BIG_ENDIAN;
-            } else if (c == 'I') {
-                order = ByteOrder.LITTLE_ENDIAN;
-            } else {
-                throw invalidFile("ByteOrder");
-            }
-            channel.setByteOrder(order);
-            final short version = channel.readShort();
-            if (isBigTIFF = (version == 0x002B)) {
-                if (channel.readShort() != 8 || channel.readShort() != 0) {
-                    throw invalidFile("OffsetSize");
-                }
-            } else if (version != 0x002A) {
-                throw invalidFile("MagicNumber");
-            }
-            offsetSize = ((isBigTIFF) ? Long.SIZE : Integer.SIZE) / Byte.SIZE;
-            countIFD = 0;
-            nextImageFileDirectory();
-            currentImage = -1;
-        }
-    }
-    
-    /**
-     * Reads the next bytes in the {@linkplain #buffer}, which must be the 32 or 64 bits
-     * offset to the next <cite>Image File Directory</cite> (IFD). The offset is then stored
-     * in the next free slot of {@link #positionIFD}.
-     *
-     * @return {@code true} if we found a new IFD, or {@code false} if there is no more IFD.
-     */
-    private boolean nextImageFileDirectory() throws IOException {
-        assert countIFD >= 0;
-        final long position = readInt();//-- long if it's big tiff
-        if (position != 0) {
-            if (countIFD == positionIFD.length) {
-                final int countIFD2 = countIFD << 1;
-                positionIFD = Arrays.copyOf(positionIFD, Math.max(4, countIFD2));//-- head table
-                metaHeads   = Arrays.copyOf(metaHeads,   Math.max(4, countIFD2));
-                roots       = Arrays.copyOf(roots,       Math.max(4, countIFD2));
-            }
-            positionIFD[countIFD++] = position;
-            return true;
-        } else {
-            positionIFD = ArraysExt.resize(positionIFD, countIFD);
-            countIFD = -1;
-            return false;
-        }
-    }
-    
-    /**
-     * Reads the {@code int} or {@code long} value (depending if the file is
-     * standard of big TIFF) at the current {@linkplain #buffer} position.
-     *
-     * @return The next integer.
-     */
-    private long readInt() throws IOException {
-        return isBigTIFF ? channel.readLong() : channel.readInt() & 0xFFFFFFFFL;
-    }
-    
-    /**
-     * Reads the {@code short} or {@code long} value (depending if the file is
-     * standard of big TIFF) at the current {@linkplain #buffer} position.
-     *
-     * @return The next short.
-     */
-    private long readShort() throws IOException {
-        return isBigTIFF ? channel.readLong() : channel.readShort() & 0xFFFFL;
-    }
-
-    /**
      * Returns the number of images available from the current input file. This method
      * will scan the file the first time it is invoked with a {@code true} argument value.
      */
     @Override
     public int getNumImages(boolean allowSearch) throws IOException {
-        open(); //-- Does nothing if already open.
-        if (countIFD >= 0) { //-- Should never be 0 actually.
-            if (!allowSearch) {
-                return -1;
-            }
-            final int entrySize, shortSize, intSize;
-            if (isBigTIFF) {
-                entrySize = SIZE_BIG_ENTRY;
-                shortSize = SIZE_BIG_SHORT;
-                intSize   = SIZE_BIG_INT;
-            } else {
-                entrySize = SIZE_ENTRY;
-                shortSize = SIZE_SHORT;
-                intSize   = SIZE_INT;
-            }
-            do {
-                long position = positionIFD[countIFD - 1];
-                channel.seek(position);
-                final long n = readShort();
-                position += shortSize;
-                channel.seek(position + n * entrySize);
-            } while (nextImageFileDirectory());
+        if (imgAndThumbs == null) {
+            if (!allowSearch) return -1;
+            checkLayers();
         }
-        return positionIFD.length;
+        return imgAndThumbs.size();
+    }
+    
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public int getNumThumbnails(int imageIndex) throws IOException {
+        checkLayers();
+        return imgAndThumbs.get(getLayerIndex(imageIndex)).size();
+    }
+    
+    /**
+     * Returns the number of bands available for the specified image.
+     *
+     * @param  imageIndex The image index.
+     * @return The number of bands available for the specified image.
+     * @throws IOException if an error occurs reading the information from the input source.
+     */
+    @Override
+    public int getNumBands(final int imageIndex) throws IOException {
+        checkLayers();
+        selectLayer(getLayerIndex(imageIndex));
+        return samplesPerPixel;
     }
 
     /**
+     * Returns the width of the image at the given index.
+     *
+     * @param  imageIndex the index of the image to be queried.
+     * @return The width of the given image.
+     * @throws IOException If an error occurred while reading the file.
+     */
+    @Override
+    public int getWidth(final int imageIndex) throws IOException {
+        checkLayers();
+        selectLayer(getLayerIndex(imageIndex));
+        return imageWidth;
+    }
+    
+    /**
+     * Returns the height of the image at the given index.
+     *
+     * @param  imageIndex the index of the image to be queried.
+     * @return The height of the given image.
+     * @throws IOException If an error occurred while reading the file.
+     */
+    @Override
+    public int getHeight(int imageIndex) throws IOException {
+        checkLayers();
+        selectLayer(getLayerIndex(imageIndex));
+        return imageHeight;
+    }
+
+    /**
+     * Return width of thumbnail at thumbnailIndex in relation with image at imageIndex.
+     * 
+     * @param imageIndex 
+     * @param thumbnailIndex the index of the thumbnail to be queried.
+     * @return width of thumbnail at thumbnailIndex in relation with image at imageIndex.
+     * @throws IOException 
+     */
+    @Override
+    public int getThumbnailWidth(int imageIndex, int thumbnailIndex) throws IOException {
+        checkLayers();
+        selectLayer(getLayerIndex(imageIndex, thumbnailIndex));
+        return imageWidth;
+    }
+
+    /**
+     * 
+     * Return height of thumbnail at thumbnailIndex in relation with image at imageIndex.
+     * 
+     * @param imageIndex 
+     * @param thumbnailIndex the index of the thumbnail to be queried.
+     * @return height of thumbnail at thumbnailIndex in relation with image at imageIndex.
+     * @throws IOException 
+     */
+    @Override
+    public int getThumbnailHeight(int imageIndex, int thumbnailIndex) throws IOException {
+        checkLayers();
+        selectLayer(getLayerIndex(imageIndex, thumbnailIndex));
+        return imageHeight;
+    }
+    
+    /**
+     * Returns the width of the tiles in the given image.
+     *
+     * @param  imageIndex the index of the image to be queried.
+     * @return The width of the tile in the given image.
+     * @throws IOException If an error occurred while reading the file.
+     */
+    @Override
+    public int getTileWidth(final int imageIndex) throws IOException {
+        checkLayers();
+        selectLayer(getLayerIndex(imageIndex));
+        return (tileWidth >= 0) ? tileWidth : imageWidth;
+    }
+
+    /**
+     * Returns the height of the tiles in the given image.
+     *
+     * @param  imageIndex the index of the image to be queried.
+     * @return The height of the tile in the given image.
+     * @throws IOException If an error occurred while reading the file.
+     */
+    @Override
+    public int getTileHeight(int imageIndex) throws IOException {
+        checkLayers();
+        selectLayer(getLayerIndex(imageIndex));
+        return (tileHeight >= 0) ? tileHeight : imageHeight;
+    }
+
+    /**
+     * Returns {@code true} if the image is organized into tiles.
+     *
+     * @param  imageIndex the index of the image to be queried.
+     * @return {@code true} if the image is organized into tiles.
+     * @throws IOException If an error occurred while reading the file.
+     */
+    @Override
+    public boolean isImageTiled(final int imageIndex) throws IOException {
+        checkLayers();
+        selectLayer(getLayerIndex(imageIndex));
+        return (tileWidth >= 0) && (tileHeight >= 0);
+    }
+    
+    /**
+     * Returns {@code true} since TIFF images have color palette.
+     */
+    @Override
+    public boolean hasColors(final int imageIndex) throws IOException {
+        checkLayers();
+        selectLayer(getLayerIndex(imageIndex));
+        final int photoInter = ((short[]) headProperties.get(PhotometricInterpretation).get(ATT_VALUE))[0];
+        return photoInter == 3;//-- see tiff specification in relation with photometric interpretation. --//
+    }
+
+    /**
+     * Returns the data type which most closely represents the "raw" internal data of the image.
+     * The default implementation is as below:
+     *
+     * {@preformat java
+     *     return getRawImageType(imageIndex).getSampleModel().getDataType();
+     * }
+     *
+     * @param  layerIndex The index of the image to be queried.
+     * @return The data type (typically {@link DataBuffer#TYPE_BYTE}).
+     * @throws IOException If an error occurs reading the format information from the input source.
+     */
+    @Override
+    protected int getRawDataType(final int layerIndex) throws IOException {
+        return getRawImageType(layerIndex).getSampleModel().getDataType();
+    }
+
+    /**
+     * Returns the {@link SampleModel} and {@link ColorModel} which most closely represents the
+     * internal format of the image.
+     *
+     * @param  layerIndex The index of the image to be queried.
+     * @return The internal format of the image.
+     * @throws IOException If an error occurs reading the format information from the input source.
+     */
+    @Override
+    public ImageTypeSpecifier getRawImageType(final int layerIndex) throws IOException {
+        selectLayer(layerIndex);
+        if (rawImageType == null) {
+            // switch photo metrique interpretation
+            final ColorSpace cs;
+            final int photoInter = ((short[]) headProperties.get(PhotometricInterpretation).get(ATT_VALUE))[0];
+            final Map<String, Object> bitsPerSamples = (headProperties.get(BitsPerSample));
+            final Map<String, Object> sampleFormat = (headProperties.get(SampleFormat));
+            
+            //-- find appropriate databuffer image type from size of sample or sample format or both of them. --//
+            int databufferType;
+            
+            //-- bits per sample study --//
+            int[] bits = null;
+            int sampleBitSize = 0;
+            long[] bitsPerSample = null;
+            if (bitsPerSamples != null) {
+                bitsPerSample = ((long[]) bitsPerSamples.get(ATT_VALUE));
+                assert bitsPerSample != null : "bitsPerSample array should not be null.";
+                bits = new int[bitsPerSample.length];
+                for (int i=0; i < bits.length; i++) {
+                    final long b = bitsPerSample[i];
+                    if ((bits[i] = (int) b) != b) {
+                        //-- Verify that 'bitPerSample' values are inside 'int' range (paranoiac check).
+                        throw new UnsupportedImageFormatException(error(
+                                Errors.Keys.ILLEGAL_PARAMETER_VALUE_2, "bitsPerSample", b));
+                    }
+                    if (i != 0 && b != sampleBitSize) {
+                        //-- Current implementation requires all sample values to be of the same size.
+                        throw new UnsupportedImageFormatException(error(Errors.Keys.INCONSISTENT_VALUE));
+                    }
+                    sampleBitSize = (int) b;
+                }
+            }
+            
+            //-- sample format study --//
+            if (sampleFormat == null) {
+                if (bitsPerSamples == null) {
+                    if (samplesPerPixel == 0) {
+                        switch (photoInter) {
+                            case 0  : 
+                            case 1  : samplesPerPixel = 1; break; //-- gray color model --//
+                            case 2  : samplesPerPixel = 3; break; //-- RGB color model --//
+                            default : throw new UnsupportedImageFormatException(error(Errors.Keys.FORBIDDEN_ATTRIBUTE_2,
+                                "bitsPerSamples", "sampleFormats"));
+                        }
+                    } 
+                    /*
+                    * If bitsPerSample and sample format fields were not specified, assume bytes.
+                    */
+                   databufferType = DataBuffer.TYPE_BYTE;
+                   bits           = new int[samplesPerPixel];
+                   Arrays.fill(bits, 8);
+                } else {
+                    /*
+                     * We require exact value, because the reading process read all sample values
+                     * in one contiguous read operation.
+                     */
+                    switch (sampleBitSize) {
+                        case Byte   .SIZE : databufferType = DataBuffer.TYPE_BYTE;   break;
+                        case Short  .SIZE : databufferType = DataBuffer.TYPE_USHORT; break;
+                        case Integer.SIZE : databufferType = DataBuffer.TYPE_INT;    break;
+                        case Double.SIZE  : databufferType = DataBuffer.TYPE_DOUBLE; break;
+                        default: {
+                            throw new UnsupportedImageFormatException(error(
+                                    Errors.Keys.ILLEGAL_PARAMETER_VALUE_2, "bitsPerSample", sampleBitSize));
+                        }
+                    }
+                }                    
+            } else {
+                final short samplFormat = (short) ((long[]) sampleFormat.get(ATT_VALUE)) [0];
+                if (samplFormat == 3) {
+                    /*
+                     * Case to defferency 32 bits Float to 32 bits Integer. 
+                     */
+                    switch (sampleBitSize) {
+                        case Float.SIZE  : databufferType = DataBuffer.TYPE_FLOAT; break;
+                        case Double.SIZE : databufferType = DataBuffer.TYPE_DOUBLE; break;
+                        default : {
+                            throw new UnsupportedImageFormatException(error(
+                                    Errors.Keys.ILLEGAL_PARAMETER_VALUE_2, "bitsPerSample", sampleBitSize));
+                        }
+                    }
+                } else {
+                    //-- undefined sample format --//
+                    if (bitsPerSample == null) 
+                    throw new UnsupportedImageFormatException(error(
+                            Errors.Keys.ILLEGAL_PARAMETER_VALUE_2, "sampleformat value", samplFormat));
+
+                   /*
+                    * We require exact value, because the reading process read all sample values
+                    * in one contiguous read operation.
+                    */
+                   switch (sampleBitSize) {
+                       case Byte   .SIZE : databufferType = DataBuffer.TYPE_BYTE;   break;
+                       case Short  .SIZE : databufferType = DataBuffer.TYPE_USHORT; break;
+                       case Integer.SIZE : databufferType = DataBuffer.TYPE_INT;    break;
+                       case Double.SIZE  : databufferType = DataBuffer.TYPE_DOUBLE; break;
+                       default : {
+                           throw new UnsupportedImageFormatException(error(
+                                   Errors.Keys.ILLEGAL_PARAMETER_VALUE_2, "bitsPerSample", sampleBitSize));
+                       }
+                   }
+                }
+            }
+            
+            switch (photoInter) {
+                case 0 :   //--minIsWhite
+                case 1 : { //-- minIsBlack
+                    cs = ColorSpace.getInstance(ColorSpace.CS_GRAY);
+                    break;
+                }
+                case 2 : { //-- RGB
+                    cs = ColorSpace.getInstance(ColorSpace.CS_sRGB);
+                    break;
+                }
+                case 3 : {//-- palette
+                    Map<String, Object> colorMod = headProperties.get(ColorMap);
+                    if (colorMod == null)
+                        throw new UnsupportedImageFormatException("image should own colorMap informations.");
+                    final long[] index  = (long[]) colorMod.get(ATT_VALUE);
+                    final int[] indexes = buildColorMapArray(index);
+                    final ColorModel cm = new IndexColorModel(sampleBitSize, indexes.length, indexes, 0, true, -1, databufferType);
+                    /*
+                     * Create a SampleModel with size of 1x1 volontary just to know image properties.
+                     * Image with correctively size will be create later with getDestination() in #read(int index, param) method.
+                     */
+                    rawImageType        = new ImageTypeSpecifier(cm, cm.createCompatibleSampleModel(1, 1));
+                    return rawImageType;
+                }
+                default : {
+                    throw new UnsupportedImageFormatException(error(Errors.Keys.ILLEGAL_PARAMETER_VALUE_2,
+                            "photometricInterpretation", photoInter));
+                }
+            }
+            final boolean hasAlpha = bits.length > cs.getNumComponents();
+            final ColorModel cm = new ComponentColorModel(cs, bits, hasAlpha, false,
+                    hasAlpha ? Transparency.TRANSLUCENT : Transparency.OPAQUE, databufferType);
+           /*
+            * Create a SampleModel with size of 1x1 volontary just to know image properties.
+            * Image with correctively size will be create later with getDestination() in #read(int index, param) method.
+            */
+            rawImageType = new ImageTypeSpecifier(cm, cm.createCompatibleSampleModel(1, 1));
+        }
+        return rawImageType;
+    }
+    
+    /**
+     * Returns a collection of {@link ImageTypeSpecifier} containing possible image types to which
+     * the given image may be decoded. The default implementation returns a singleton containing
+     * only the {@linkplain #getRawImageType(int) raw image type}.
+     *
+     * @param  imageIndex The index of the image to be queried.
+     * @return A set of suggested image types for decoding the current given image.
+     * @throws IOException If an error occurs reading the format information from the input source.
+     */
+    @Override
+    public Iterator<ImageTypeSpecifier> getImageTypes(final int imageIndex) throws IOException {
+        return Collections.singleton(getRawImageType(imageIndex)).iterator();
+    }
+
+    /**
+     * Reads the image at the given index.
+     *
+     * @param  imageIndex The index of the image to read.
+     * @param  param Parameters used to control the reading process, or {@code null}.
+     * @return The image.
+     * @throws IOException If an error occurred while reading the image.
+     */
+    @Override
+    public BufferedImage read(final int imageIndex, final ImageReadParam param) throws IOException {
+        checkLayers();
+        return readLayer(getLayerIndex(imageIndex), param);
+    }
+    
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public BufferedImage readThumbnail(int imageIndex, int thumbnailIndex) throws IOException {
+        checkLayers();
+        return readLayer(getLayerIndex(getLayerIndex(imageIndex), thumbnailIndex), null);
+    }
+    
+    /**
+     * Closes the file channel. If the channel is already closed, then this method does nothing.
+     *
+     * @throws IOException If an error occurred while closing the channel.
+     */
+    @Override
+    protected void close() throws IOException {
+        super.close();
+        countIFD       = 0;
+        currentImage   = -1;
+        bitsPerSample  = null;
+        tileOffsets    = null;
+        rawImageType   = null;
+        if (channel != null) {
+            channel.close();
+            channel = null;
+            // Keep the buffer, since we may reuse it for the next image.
+        }
+    }
+    
+    /**
      * Selects the image at the given index.
      *
-     * @param  imageIndex  The index of the image to make the current one.
+     * @param  layerIndex  The index of the image to make the current one.
      * @throws IOException If an error occurred while reading the file.
      * @throws IndexOutOfBoundsException If the given image index is out of bounds.
      */
-    private void selectImage(final int imageIndex) throws IOException, IndexOutOfBoundsException {
-        if (imageIndex != currentImage) {
+    private void selectLayer(final int layerIndex) throws IOException, IndexOutOfBoundsException {
+        if (layerIndex != currentImage) {
             open(); //-- Does nothing if already open.
-            if (imageIndex >= minIndex) {
+            if (layerIndex >= minIndex) {
                 final int entrySize, shortSize, intSize;
                 if (isBigTIFF) {
                     entrySize = SIZE_BIG_ENTRY;
@@ -500,7 +768,7 @@ public class TiffImageReader extends SpatialImageReader {
                  * scan the file until we find the IFD location.
                  */
                 if (countIFD >= 0) { //-- Should never be 0 actually.
-                    int imageAhead = imageIndex - countIFD;
+                    int imageAhead = layerIndex - countIFD;
                     while (imageAhead >= 0) {
                         long position = positionIFD[countIFD - 1];
                         channel.seek(position);
@@ -509,7 +777,7 @@ public class TiffImageReader extends SpatialImageReader {
                         channel.seek(position + n * entrySize);
                         if (!nextImageFileDirectory()) {
                             throw new IndexOutOfBoundsException(error(
-                                    Errors.Keys.INDEX_OUT_OF_BOUNDS_1, imageIndex));
+                                    Errors.Keys.INDEX_OUT_OF_BOUNDS_1, layerIndex));
                         }
                         imageAhead--;
                     }
@@ -517,7 +785,7 @@ public class TiffImageReader extends SpatialImageReader {
                 /*
                  * Read the Image File Directory (IFD) content.
                  */
-                if (imageIndex < positionIFD.length) {
+                if (layerIndex < positionIFD.length) {
                     imageWidth      = -1;
                     imageHeight     = -1;
                     tileWidth       = -1;
@@ -526,37 +794,37 @@ public class TiffImageReader extends SpatialImageReader {
                     bitsPerSample   = null;
                     tileOffsets     = null;
                     rawImageType    = null;
-
-                    if (metaHeads[imageIndex] == null) {
-                        metaHeads[imageIndex] = new HashMap<Integer, Map>();
-                    }
-                    headProperties = metaHeads[imageIndex];
-
-                    final Collection<long[]> deferred = new ArrayList<>(4);
-                    long position = positionIFD[imageIndex];
-                    channel.seek(position);
-                    final long n = readShort();//-- n : tag number which define tiff image properties.
-                    position += shortSize;
-                    for (int i = 0; i < n; i++) {
+                    
+                    headProperties  = metaHeads[layerIndex];
+                    if (headProperties == null) {
+                        headProperties = new HashMap<Integer, Map>();
+                        final Collection<long[]> deferred = new ArrayList<>(4);
+                        long position = positionIFD[layerIndex];
                         channel.seek(position);
-                        parseDirectoryEntries(deferred);
-                        position += entrySize;
+                        final long n = readShort();//-- n : tag number which define tiff image properties.
+                        position += shortSize;
+                        for (int i = 0; i < n; i++) {
+                            channel.seek(position);
+                            parseDirectoryEntries(deferred);
+                            position += entrySize;
+                        }
+                        /*
+                         * Complete the arrays that needs further processing.
+                         * Get the values that we lack.
+                         */
+                        readDeferredArrays(deferred.toArray(new long[deferred.size()][]));
+                        metaHeads[layerIndex] = headProperties;
                     }
-                    /*
-                     * Complete the arrays that needs further processing.
-                     * Get the values that we lack.
-                     */
-                    readDeferredArrays(deferred.toArray(new long[deferred.size()][]));
 
                     final Map<String, Object> iwObj   = headProperties.get(ImageWidth);
                     final Map<String, Object> ihObj   = headProperties.get(ImageLength);
                     final Map<String, Object> isppObj = headProperties.get(SamplesPerPixel);
                     final Map<String, Object> ibpsObj = headProperties.get(BitsPerSample);
 
-                    imageWidth      = (int) ((iwObj == null)   ? -1 : ((long[]) iwObj.get(ATT_VALUE))[0]);
-                    imageHeight     = (int) ((ihObj == null)   ? -1 : ((long[]) ihObj.get(ATT_VALUE))[0]);
+                    imageWidth      = (int) ((iwObj   == null) ? -1 : ((long[]) iwObj.get(ATT_VALUE))[0]);
+                    imageHeight     = (int) ((ihObj   == null) ? -1 : ((long[]) ihObj.get(ATT_VALUE))[0]);
                     samplesPerPixel = (int) ((isppObj == null) ? -1 : ((long[]) isppObj.get(ATT_VALUE))[0]);
-                    bitsPerSample   =  ((long[]) ibpsObj.get(ATT_VALUE));
+                    bitsPerSample   = ((long[]) ibpsObj.get(ATT_VALUE));
 
                     final Map<String, Object> twObj   =  headProperties.get(TileWidth);
                     final Map<String, Object> thObj   =  headProperties.get(TileLength);
@@ -585,20 +853,20 @@ public class TiffImageReader extends SpatialImageReader {
                         ensureDefined(tileHeight,  "tileHeight");
                         ensureDefined(tileOffsets, "tileOffsets");
                     }
-                    currentImage = imageIndex;
+                    currentImage = layerIndex;
                     return;
                 }
             }
-            throw new IndexOutOfBoundsException(error(Errors.Keys.INDEX_OUT_OF_BOUNDS_1, imageIndex));
+            throw new IndexOutOfBoundsException(error(Errors.Keys.INDEX_OUT_OF_BOUNDS_1, layerIndex));
         }
     }
 
     /**
      * Fill {@link IIOMetadataNode} root in native metadata format to create {@link SpatialMetadata}.
      */
-    private void fillRootMetadataNode(final int indexImage) throws UnsupportedEncodingException {
-        if (roots[indexImage] != null) return;
-        roots[indexImage] = new IIOMetadataNode(TAG_GEOTIFF_IFD);
+    private void fillRootMetadataNode(final int layerIndex) throws UnsupportedEncodingException {
+        if (roots[layerIndex] != null) return;
+        roots[layerIndex] = new IIOMetadataNode(TAG_GEOTIFF_IFD);
         for (int tag : headProperties.keySet()) {
             final Map<String, Object> currenTagAttributs = headProperties.get(tag);
 
@@ -684,7 +952,7 @@ public class TiffImageReader extends SpatialImageReader {
                 }
                 default : throw new IllegalStateException("unknow type. type : "+type);
             }
-            roots[indexImage].appendChild(tagBody);
+            roots[layerIndex].appendChild(tagBody);
         }
     }
 
@@ -746,28 +1014,28 @@ public class TiffImageReader extends SpatialImageReader {
      */
     private long read(final short type) throws IOException {
         switch (type) {
-            case TYPE_BYTE:  
+            case TYPE_BYTE  :  
             case TYPE_ASCII : return channel.readByte();
-            case TYPE_UBYTE:  return channel.readByte() & 0xFFL;
-            case TYPE_SHORT:  {
+            case TYPE_UBYTE : return channel.readByte() & 0xFFL;
+            case TYPE_SHORT : {
                 return channel.readShort();
             }
-            case TYPE_USHORT: {
+            case TYPE_USHORT : {
                 return channel.readShort() & 0xFFFFL;
             }
-            case TYPE_INT:    return channel.readInt();
-            case TYPE_IFD:
-            case TYPE_UINT:   return channel.readInt() & 0xFFFFFFFFL;
-            case TYPE_LONG:   return channel.readLong();
-            case TYPE_IFD8:
-            case TYPE_ULONG: {
+            case TYPE_INT   : return channel.readInt();
+            case TYPE_IFD   :
+            case TYPE_UINT  : return channel.readInt() & 0xFFFFFFFFL;
+            case TYPE_LONG  : return channel.readLong();
+            case TYPE_IFD8  :
+            case TYPE_ULONG : {
                 final long value = channel.readLong();
                 if (value < 0) {
                     throw new UnsupportedImageFormatException(error(Errors.Keys.UNSUPPORTED_DATA_TYPE));
                 }
                 return value;
             }
-            default: throw new AssertionError(type);
+            default : throw new AssertionError(type);
         }
     }
 
@@ -854,7 +1122,6 @@ public class TiffImageReader extends SpatialImageReader {
                  * because data(s) size is lesser or equal with offset byte size.
                  * 4 bytes to normal tiff (Integer.size) and 8 bytes to big tiff (Long.size).
                  */
-                // utiliser les methodes avec read et tableaux
                switch (type) {
                     case TYPE_ASCII :
                     case TYPE_BYTE  : {
@@ -1031,84 +1298,6 @@ public class TiffImageReader extends SpatialImageReader {
     };
 
     /**
-     * Returns the number of bands available for the specified image.
-     *
-     * @param  imageIndex The image index.
-     * @return The number of bands available for the specified image.
-     * @throws IOException if an error occurs reading the information from the input source.
-     */
-    @Override
-    public int getNumBands(final int imageIndex) throws IOException {
-        selectImage(imageIndex);
-        return samplesPerPixel;
-    }
-
-    /**
-     * Returns the width of the image at the given index.
-     *
-     * @param  imageIndex the index of the image to be queried.
-     * @return The width of the given image.
-     * @throws IOException If an error occurred while reading the file.
-     */
-    @Override
-    public int getWidth(final int imageIndex) throws IOException {
-        selectImage(imageIndex);
-        return imageWidth;
-    }
-
-    /**
-     * Returns the height of the image at the given index.
-     *
-     * @param  imageIndex the index of the image to be queried.
-     * @return The height of the given image.
-     * @throws IOException If an error occurred while reading the file.
-     */
-    @Override
-    public int getHeight(int imageIndex) throws IOException {
-        selectImage(imageIndex);
-        return imageHeight;
-    }
-
-    /**
-     * Returns the width of the tiles in the given image.
-     *
-     * @param  imageIndex the index of the image to be queried.
-     * @return The width of the tile in the given image.
-     * @throws IOException If an error occurred while reading the file.
-     */
-    @Override
-    public int getTileWidth(final int imageIndex) throws IOException {
-        selectImage(imageIndex);
-        return (tileWidth >= 0) ? tileWidth : imageWidth;
-    }
-
-    /**
-     * Returns the height of the tiles in the given image.
-     *
-     * @param  imageIndex the index of the image to be queried.
-     * @return The height of the tile in the given image.
-     * @throws IOException If an error occurred while reading the file.
-     */
-    @Override
-    public int getTileHeight(int imageIndex) throws IOException {
-        selectImage(imageIndex);
-        return (tileHeight >= 0) ? tileHeight : imageHeight;
-    }
-
-    /**
-     * Returns {@code true} if the image is organized into tiles.
-     *
-     * @param  imageIndex the index of the image to be queried.
-     * @return {@code true} if the image is organized into tiles.
-     * @throws IOException If an error occurred while reading the file.
-     */
-    @Override
-    public boolean isImageTiled(final int imageIndex) throws IOException {
-        selectImage(imageIndex);
-        return (tileWidth >= 0) && (tileHeight >= 0);
-    }
-
-    /**
      * Information about a tile. The inherited {@link Rectangle} contains the coordinate of
      * the region to write in the target image, <em>relative to the upper-left pixel to be
      * written (i.e. the upper-left pixel in the set of tiles returned by {@link #getTiles}
@@ -1173,188 +1362,6 @@ public class TiffImageReader extends SpatialImageReader {
     }
 
     /**
-     * Returns {@code true} since TIFF images have color palette.
-     */
-    @Override
-    public boolean hasColors(final int imageIndex) throws IOException {
-        selectImage(imageIndex);
-        return true;
-    }
-
-    /**
-     * Returns the data type which most closely represents the "raw" internal data of the image.
-     * The default implementation is as below:
-     *
-     * {@preformat java
-     *     return getRawImageType(imageIndex).getSampleModel().getDataType();
-     * }
-     *
-     * @param  imageIndex The index of the image to be queried.
-     * @return The data type (typically {@link DataBuffer#TYPE_BYTE}).
-     * @throws IOException If an error occurs reading the format information from the input source.
-     */
-    @Override
-    protected int getRawDataType(final int imageIndex) throws IOException {
-        return getRawImageType(imageIndex).getSampleModel().getDataType();
-    }
-
-    /**
-     * Returns the {@link SampleModel} and {@link ColorModel} which most closely represents the
-     * internal format of the image.
-     *
-     * @param  imageIndex The index of the image to be queried.
-     * @return The internal format of the image.
-     * @throws IOException If an error occurs reading the format information from the input source.
-     */
-    @Override
-    public ImageTypeSpecifier getRawImageType(final int imageIndex) throws IOException {
-        selectImage(imageIndex);
-        if (rawImageType == null) {
-            // switch photo metrique interpretation
-            final ColorSpace cs;
-            final int photoInter = ((short[]) headProperties.get(PhotometricInterpretation).get(ATT_VALUE))[0];
-            final Map<String, Object> bitsPerSamples = (headProperties.get(BitsPerSample));
-            final Map<String, Object> sampleFormat = (headProperties.get(SampleFormat));
-            
-            //-- find appropriate databuffer image type from size of sample or sample format or both of them. --//
-            int databufferType;
-            
-            //-- bits per sample study --//
-            int[] bits = null;
-            int sampleBitSize = 0;
-            long[] bitsPerSample = null;
-            if (bitsPerSamples != null) {
-                bitsPerSample = ((long[]) bitsPerSamples.get(ATT_VALUE));
-                assert bitsPerSample != null : "bitsPerSample array should not be null.";
-                bits = new int[bitsPerSample.length];
-                for (int i=0; i < bits.length; i++) {
-                    final long b = bitsPerSample[i];
-                    if ((bits[i] = (int) b) != b) {
-                        //-- Verify that 'bitPerSample' values are inside 'int' range (paranoiac check).
-                        throw new UnsupportedImageFormatException(error(
-                                Errors.Keys.ILLEGAL_PARAMETER_VALUE_2, "bitsPerSample", b));
-                    }
-                    if (i != 0 && b != sampleBitSize) {
-                        //-- Current implementation requires all sample values to be of the same size.
-                        throw new UnsupportedImageFormatException(error(Errors.Keys.INCONSISTENT_VALUE));
-                    }
-                    sampleBitSize = (int) b;
-                }
-            }
-            
-            //-- sample format study --//
-            if (sampleFormat == null) {
-                if (bitsPerSamples == null) {
-                    if (samplesPerPixel == 0) {
-                        switch (photoInter) {
-                            case 0  : 
-                            case 1  : samplesPerPixel = 1; break; //-- gray color model --//
-                            case 2  : samplesPerPixel = 3; break; //-- RGB color model --//
-                            default : throw new UnsupportedImageFormatException(error(Errors.Keys.FORBIDDEN_ATTRIBUTE_2,
-                                "bitsPerSamples", "sampleFormats"));
-                        }
-                    } 
-                    /*
-                    * If bitsPerSample and sample format fields were not specified, assume bytes.
-                    */
-                   databufferType = DataBuffer.TYPE_BYTE;
-                   bits           = new int[samplesPerPixel];
-                   Arrays.fill(bits, 8);
-                } else {
-                    /*
-                     * We require exact value, because the reading process read all sample values
-                     * in one contiguous read operation.
-                     */
-                    switch (sampleBitSize) {
-                        case Byte   .SIZE : databufferType = DataBuffer.TYPE_BYTE;   break;
-                        case Short  .SIZE : databufferType = DataBuffer.TYPE_USHORT; break;
-                        case Integer.SIZE : databufferType = DataBuffer.TYPE_INT;    break;
-                        case Double.SIZE  : databufferType = DataBuffer.TYPE_DOUBLE; break;
-                        default: {
-                            throw new UnsupportedImageFormatException(error(
-                                    Errors.Keys.ILLEGAL_PARAMETER_VALUE_2, "bitsPerSample", sampleBitSize));
-                        }
-                    }
-                }                    
-            } else {
-                final short samplFormat = (short) ((long[]) sampleFormat.get(ATT_VALUE)) [0];
-                if (samplFormat == 3) {
-                    /*
-                     * Case to defferency 32 bits Float to 32 bits Integer. 
-                     */
-                    switch (sampleBitSize) {
-                        case Float.SIZE  : databufferType = DataBuffer.TYPE_FLOAT; break;
-                        case Double.SIZE : databufferType = DataBuffer.TYPE_DOUBLE; break;
-                        default : {
-                            throw new UnsupportedImageFormatException(error(
-                                    Errors.Keys.ILLEGAL_PARAMETER_VALUE_2, "bitsPerSample", sampleBitSize));
-                        }
-                    }
-                } else {
-                    //-- undefined sample format --//
-                    if (bitsPerSample == null) 
-                    throw new UnsupportedImageFormatException(error(
-                            Errors.Keys.ILLEGAL_PARAMETER_VALUE_2, "sampleformat value", samplFormat));
-
-                   /*
-                    * We require exact value, because the reading process read all sample values
-                    * in one contiguous read operation.
-                    */
-                   switch (sampleBitSize) {
-                       case Byte   .SIZE : databufferType = DataBuffer.TYPE_BYTE;   break;
-                       case Short  .SIZE : databufferType = DataBuffer.TYPE_USHORT; break;
-                       case Integer.SIZE : databufferType = DataBuffer.TYPE_INT;    break;
-                       case Double.SIZE  : databufferType = DataBuffer.TYPE_DOUBLE; break;
-                       default : {
-                           throw new UnsupportedImageFormatException(error(
-                                   Errors.Keys.ILLEGAL_PARAMETER_VALUE_2, "bitsPerSample", sampleBitSize));
-                       }
-                   }
-                }
-            }
-            
-            switch (photoInter) {
-                case 0 :   //--minIsWhite
-                case 1 : { //-- minIsBlack
-                    cs = ColorSpace.getInstance(ColorSpace.CS_GRAY);
-                    break;
-                }
-                case 2 : { //-- RGB
-                    cs = ColorSpace.getInstance(ColorSpace.CS_sRGB);
-                    break;
-                }
-                case 3 : {//-- palette
-                    Map<String, Object> colorMod = headProperties.get(ColorMap);
-                    if (colorMod == null)
-                        throw new UnsupportedImageFormatException("image should own colorMap informations.");
-                    final long[] index  = (long[]) colorMod.get(ATT_VALUE);
-                    final int[] indexes = buildColorMapArray(index);
-                    final ColorModel cm = new IndexColorModel(sampleBitSize, indexes.length, indexes, 0, true, -1, databufferType);
-                    /*
-                     * Create a SampleModel with size of 1x1 volontary just to know image properties.
-                     * Image with correctively size will be create later with getDestination() in #read(int index, param) method.
-                     */
-                    rawImageType        = new ImageTypeSpecifier(cm, cm.createCompatibleSampleModel(1, 1));
-                    return rawImageType;
-                }
-                default : {
-                    throw new UnsupportedImageFormatException(error(Errors.Keys.ILLEGAL_PARAMETER_VALUE_2,
-                            "photometricInterpretation", photoInter));
-                }
-            }
-            final boolean hasAlpha = bits.length > cs.getNumComponents();
-            final ColorModel cm = new ComponentColorModel(cs, bits, hasAlpha, false,
-                    hasAlpha ? Transparency.TRANSLUCENT : Transparency.OPAQUE, databufferType);
-           /*
-            * Create a SampleModel with size of 1x1 volontary just to know image properties.
-            * Image with correctively size will be create later with getDestination() in #read(int index, param) method.
-            */
-            rawImageType = new ImageTypeSpecifier(cm, cm.createCompatibleSampleModel(1, 1));
-        }
-        return rawImageType;
-    }
-
-    /**
      * Convert and return color map array from tiff file to an Integer array adapted to build {@link IndexColorModel} in java.
      *
      * @param colorMap array given by tiff reading.
@@ -1396,35 +1403,190 @@ public class TiffImageReader extends SpatialImageReader {
         }
         return result;
     }
-
+    
     /**
-     * Returns a collection of {@link ImageTypeSpecifier} containing possible image types to which
-     * the given image may be decoded. The default implementation returns a singleton containing
-     * only the {@linkplain #getRawImageType(int) raw image type}.
+     * Ensures that the channel is open. If the channel is already open, then this method
+     * does nothing.
      *
-     * @param  imageIndex The index of the image to be queried.
-     * @return A set of suggested image types for decoding the current given image.
-     * @throws IOException If an error occurs reading the format information from the input source.
+     * @throws IllegalStateException if the input is not set.
+     * @throws IOException If an error occurred while opening the channel.
      */
-    @Override
-    public Iterator<ImageTypeSpecifier> getImageTypes(final int imageIndex) throws IOException {
-        return Collections.singleton(getRawImageType(imageIndex)).iterator();
-    }
+    private void open() throws IllegalStateException, IOException {
 
+        if (channel == null) {
+            if (input == null) {
+                throw new IllegalStateException(error(Errors.Keys.NO_IMAGE_INPUT));
+            }
+            final FileInputStream in;
+            if (input instanceof String) {
+                in = new FileInputStream((String) input);
+                currentInput = new File((String) input);
+            } else {
+                in = new FileInputStream((File) input);
+                currentInput = (File) input;
+            }
+            //-- Closing the channel will close the input stream.
+            buffer.clear();
+            channel = new ChannelImageInputStream(null, in.getChannel(), buffer, false);
+            
+            final byte c = channel.readByte();
+            if (c != channel.readByte()) {
+                throw invalidFile("ByteOrder");
+            }
+            final ByteOrder order;
+            if (c == 'M') {
+                order = ByteOrder.BIG_ENDIAN;
+            } else if (c == 'I') {
+                order = ByteOrder.LITTLE_ENDIAN;
+            } else {
+                throw invalidFile("ByteOrder");
+            }
+            channel.setByteOrder(order);
+            final short version = channel.readShort();
+            if (isBigTIFF = (version == 0x002B)) {
+                if (channel.readShort() != 8 || channel.readShort() != 0) {
+                    throw invalidFile("OffsetSize");
+                }
+            } else if (version != 0x002A) {
+                throw invalidFile("MagicNumber");
+            }
+            offsetSize = ((isBigTIFF) ? Long.SIZE : Integer.SIZE) / Byte.SIZE;
+            countIFD = 0;
+            nextImageFileDirectory();
+            currentImage = -1;
+        }
+    }
+    
     /**
-     * Reads the image at the given index.
+     * Reads the next bytes in the {@linkplain #buffer}, which must be the 32 or 64 bits
+     * offset to the next <cite>Image File Directory</cite> (IFD). The offset is then stored
+     * in the next free slot of {@link #positionIFD}.
      *
-     * @param  imageIndex The index of the image to read.
+     * @return {@code true} if we found a new IFD, or {@code false} if there is no more IFD.
+     */
+    private boolean nextImageFileDirectory() throws IOException {
+        assert countIFD >= 0;
+        final long position = readInt();//-- long if it's big tiff
+        if (position != 0) {
+            if (countIFD == positionIFD.length) {
+                final int countIFD2 = countIFD << 1;
+                positionIFD = Arrays.copyOf(positionIFD, Math.max(4, countIFD2));//-- head table
+                metaHeads   = Arrays.copyOf(metaHeads,   Math.max(4, countIFD2));
+                roots       = Arrays.copyOf(roots,       Math.max(4, countIFD2));
+            }
+            positionIFD[countIFD++] = position;
+            return true;
+        } else {
+            positionIFD = ArraysExt.resize(positionIFD, countIFD);
+            countIFD = -1;
+            return false;
+        }
+    }
+    
+    /**
+     * Reads the {@code int} or {@code long} value (depending if the file is
+     * standard of big TIFF) at the current {@linkplain #buffer} position.
+     *
+     * @return The next integer.
+     */
+    private long readInt() throws IOException {
+        return isBigTIFF ? channel.readLong() : channel.readInt() & 0xFFFFFFFFL;
+    }
+    
+    /**
+     * Reads the {@code short} or {@code long} value (depending if the file is
+     * standard of big TIFF) at the current {@linkplain #buffer} position.
+     *
+     * @return The next short.
+     */
+    private long readShort() throws IOException {
+        return isBigTIFF ? channel.readLong() : channel.readShort() & 0xFFFFL;
+    }
+    
+    /**
+     * Define layer index from image index.
+     * 
+     * @param imageIndex image index ask by user.
+     * @return layer index.
+     */
+    private int getLayerIndex(final int imageIndex) {
+        final Object[] keys = imgAndThumbs.keySet().toArray();
+        if (imageIndex >= keys.length)
+            throw new IndexOutOfBoundsException(error(
+                                    Errors.Keys.INDEX_OUT_OF_BOUNDS_1, imageIndex));
+        return (int) keys[imageIndex];
+    }
+    
+    /**
+     * Define layer index from image index and thumbnail index.
+     * 
+     * @param imageIndex image index ask by user.
+     * @param thumbnailsIndex thumbnail index ask by user.
+     * @return layer index.
+     */
+    private int getLayerIndex(final int imageIndex, final int thumbnailsIndex) {
+        final int imgLayIndex = getLayerIndex(imageIndex);
+        final List<Integer> thumbs = imgAndThumbs.get(imgLayIndex);
+        if (thumbnailsIndex >= thumbs.size())
+            throw new IndexOutOfBoundsException(error(
+                                    Errors.Keys.INDEX_OUT_OF_BOUNDS_1, thumbnailsIndex));
+        return thumbs.get(thumbnailsIndex);
+    }
+    
+    /**
+     * If {@linkplain #checkLayers() } never been asked before, follow all layer 
+     * head to define which layers are images and which layers are thumbnails.
+     */
+    private void checkLayers() throws IOException {
+        if (imgAndThumbs == null) {
+            imgAndThumbs = new HashMap<>();
+            open();
+            int idCuLayer = 0;
+            int idCuImg = -1;
+            
+            final int entrySize, shortSize;
+            if (isBigTIFF) {
+                entrySize = SIZE_BIG_ENTRY;
+                shortSize = SIZE_BIG_SHORT;
+            } else {
+                entrySize = SIZE_ENTRY;
+                shortSize = SIZE_SHORT;
+            }
+            
+            do {
+                assert idCuLayer == countIFD - 1;
+                long position = positionIFD[idCuLayer];
+                channel.seek(position);
+                final long n = readShort();
+                position += shortSize;
+                selectLayer(idCuLayer);
+                if (isThumbnail()) {
+                    //-- add in thumbnail list at the correct image key --//
+                    assert idCuImg >= 0;
+                    imgAndThumbs.get(idCuImg).add(idCuLayer++);
+                } else {
+                    //-- add an other key in imgAndThumbs Map --//
+                    idCuImg = idCuLayer;
+                    imgAndThumbs.put(idCuLayer++, new ArrayList<Integer>());
+                }
+                channel.seek(position + n * entrySize);
+            } while (nextImageFileDirectory());
+        }
+    }
+    
+    /**
+     * Reads the layer at the given index.
+     * 
+     * @param layerIndex The index of the image to read.
      * @param  param Parameters used to control the reading process, or {@code null}.
      * @return The image.
      * @throws IOException If an error occurred while reading the image.
      */
-    @Override
-    public BufferedImage read(final int imageIndex, final ImageReadParam param) throws IOException {
-        selectImage(imageIndex);
+    private BufferedImage readLayer(final int layerIndex, final ImageReadParam param) throws IOException {
+        selectLayer(layerIndex);
         final Rectangle srcRegion = new Rectangle();
         final Rectangle dstRegion = new Rectangle();
-        final BufferedImage image = getDestination(param, getImageTypes(imageIndex), imageWidth, imageHeight);
+        final BufferedImage image = getDestination(param, getImageTypes(layerIndex), imageWidth, imageHeight);
         /*
          * compute region : ajust les 2 rectangles src region et dest region en fonction des coeff subsampling present dans Imagereadparam.
          */
@@ -2366,31 +2528,6 @@ public class TiffImageReader extends SpatialImageReader {
     private String error(final short key, final Object arg0, final Object arg1) {
         return Errors.getResources(getLocale()).getString(key, arg0, arg1);
     }
-
-    /**
-     * Closes the file channel. If the channel is already closed, then this method does nothing.
-     *
-     * @throws IOException If an error occurred while closing the channel.
-     */
-    @Override
-    protected void close() throws IOException {
-        super.close();
-//        positionBuffer = 0;
-//        filePosition   = 0;
-        countIFD       = 0;
-        currentImage   = -1;
-        bitsPerSample  = null;
-        tileOffsets    = null;
-        rawImageType   = null;
-        if (channel != null) {
-            channel.close();
-            channel = null;
-            // Keep the buffer, since we may reuse it for the next image.
-        }
-    }
-
-
-
 
     /**
      * Service provider interface (SPI) for {@code RawTiffImageReader}s. This SPI provides
