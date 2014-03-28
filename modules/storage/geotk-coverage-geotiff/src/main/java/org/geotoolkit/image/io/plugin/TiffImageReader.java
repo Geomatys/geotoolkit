@@ -311,9 +311,9 @@ public class TiffImageReader extends SpatialImageReader {
      * @return true if the current layer is a thumbnail else false.
      */
     private boolean isThumbnail() {
-        final long[] newSubFil = (long[]) headProperties.get(NewSubfileType).get(ATT_VALUE);
+        final Map newSubFil = headProperties.get(NewSubfileType);
         if (newSubFil == null) return false;
-        return newSubFil[0] != 0;
+        return ((long[]) newSubFil.get(ATT_VALUE))[0] != 0;
     }
 
     /**
