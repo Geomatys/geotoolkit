@@ -24,6 +24,13 @@ import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
 import org.opengis.metadata.identification.Identification;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
+import org.opengis.parameter.ParameterValueGroup;
+
+import java.io.File;
+import java.io.FilenameFilter;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.logging.Level;
 
 /**
  * FeatureStore for a folder of DBF files.
@@ -80,4 +87,49 @@ public class DbaseFolderFeatureStoreFactory extends AbstractFolderFeatureStoreFa
     }
 
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean canProcess(final ParameterValueGroup params) {
+        final boolean valid = super.canProcess(params);
+        if (!valid) {
+            return false;
+        }
+
+        final Object obj = params.parameter(URLFOLDER.getName().toString()).getValue();
+        if(!(obj instanceof URL)){
+            return false;
+        }
+
+        final URL path = (URL)obj;
+        File pathFile;
+        try {
+            pathFile = new File(path.toURI());
+        } catch (URISyntaxException e) {
+            // Should not happen if the url is well-formed.
+            LOGGER.log(Level.INFO, e.getLocalizedMessage());
+            pathFile = new File(path.toExternalForm());
+        }
+        if (pathFile.exists() && pathFile.isDirectory()){
+            File[] dbaseFiles = pathFile.listFiles(new ExtentionFileNameFilter(".dbf"));
+            File[] shapeFiles = pathFile.listFiles(new ExtentionFileNameFilter(".shp"));
+            return (shapeFiles.length==0 && dbaseFiles.length>0);
+        }
+        return false;
+    }
+
+    //FileNameFilter implementation
+    public static class ExtentionFileNameFilter implements FilenameFilter {
+
+        private String ext;
+
+        public ExtentionFileNameFilter(String ext){
+            this.ext = ext.toLowerCase();
+        }
+        @Override
+        public boolean accept(File dir, String name) {
+            return name.toLowerCase().endsWith(ext);
+        }
+    }
 }
