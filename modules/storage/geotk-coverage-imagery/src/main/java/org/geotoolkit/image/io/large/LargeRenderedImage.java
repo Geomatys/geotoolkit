@@ -310,8 +310,12 @@ public class LargeRenderedImage implements RenderedImage {
      * {@inheritDoc }.
      */
     @Override
-    public synchronized Raster getTile(int tileX, int tileY) {
+    public Raster getTile(int tileX, int tileY) {
         if (isRead[tileY][tileX]) return tilecache.getTile(this, tileX, tileY);
+        return loadTile(tileX, tileY);
+    }
+
+    private synchronized Raster loadTile(int tileX, int tileY) {
         // si elle na pas ete demandée :
         // 1 : la demandée au reader
         final int minRx = tileX * tileWidth;
@@ -332,9 +336,9 @@ public class LargeRenderedImage implements RenderedImage {
         final WritableRaster wRaster = Raster.createWritableRaster(buff.getSampleModel(), buff.getRaster().getDataBuffer(), ptOffset);
         tilecache.add(this, tileX, tileY, wRaster);
         isRead[tileY][tileX] = true;
-        return wRaster;
+        return wRaster;        
     }
-
+    
     /**
      * {@inheritDoc }.
      */

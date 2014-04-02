@@ -180,7 +180,7 @@ public class GenericResampleProcess extends AbstractProcess {
             final int threadHeight = (int) Math.ceil(tile_size_y / (double) threadNumber);
             for (int threadCounter = 0 ; threadCounter < threadNumber ; threadCounter++) {
                 // Duplicate iterators and interpolator because they're not thread-safe.
-                final PixelIterator it = PixelIteratorFactory.createRowMajorIterator(rawImage);
+                final PixelIterator it = PixelIteratorFactory.createDefaultIterator(rawImage);
                 final Interpolation interpol = Interpolation.create(it, toUse, LANCZOS_WINDOW);
                 final int startRow = threadCounter*threadHeight;
                 final Rectangle area = new Rectangle(0, startRow, width, Math.min(tile_size_y-startRow, threadHeight));
@@ -211,7 +211,7 @@ public class GenericResampleProcess extends AbstractProcess {
                 
                 // If the last tile is smaller than others, we don't mess with threads.
                 if (tileHeight < tile_size_y) {
-                    final PixelIterator it = PixelIteratorFactory.createRowMajorIterator(rawImage);
+                    final PixelIterator it = PixelIteratorFactory.createDefaultIterator(rawImage);
                     final Interpolation interpol = Interpolation.create(it, toUse, LANCZOS_WINDOW);
                     final Resample resampler = new Resample(transformer, destImage, interpol, defaultPixelValue);
                     resampler.fillImage();
@@ -277,7 +277,7 @@ public class GenericResampleProcess extends AbstractProcess {
         while (writers.hasNext()) {
             writer = writers.next();
             try {
-            writer.setOutput(output);
+                writer.setOutput(output);
             } catch (IllegalArgumentException e) {
                 continue;
             }
