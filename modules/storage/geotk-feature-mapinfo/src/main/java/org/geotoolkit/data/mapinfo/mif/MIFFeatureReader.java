@@ -337,8 +337,24 @@ public class MIFFeatureReader implements FeatureReader<FeatureType, Feature> {
      *
      * WARNING : YOU <b>MUST NOT</b> USE THIS FUNCTION IF SCANNERS ARE NOT EARLY PLACED IN THE INPUT FILE.
      */
-    private void repositionMIFReader() {
-        int mifPosition = 0;
+    private void repositionMIFReader() throws DataStoreException {
+         // Check for column pattern
+        while (mifScanner.hasNextLine()) {
+            if (mifScanner.hasNext("(?i)\\s*"+MIFUtils.HeaderCategory.COLUMNS.name())) {
+                mifScanner.next();
+                if (mifScanner.hasNextShort()) {
+                    short mifColumnsCount = mifScanner.nextShort();
+                    for (int i = 0 ; i < mifColumnsCount ; i++) {
+                        mifScanner.nextLine();
+                    }
+                    break;
+                } else {
+                    throw new DataStoreException("MIF Columns has no attribute count specified.");
+                }
+            }
+            mifScanner.nextLine();
+        }
+
         // Go to the first feature.
         while (mifScanner.hasNextLine()) {
             if (mifScanner.hasNext(GEOMETRY_ID_PATTERN)) {
@@ -348,6 +364,7 @@ public class MIFFeatureReader implements FeatureReader<FeatureType, Feature> {
         }
 
         //Browse file until we're well placed.
+        int mifPosition = 0;
         while (mifPosition < mifCounter) {
             while (mifScanner.hasNextLine()) {
                 mifScanner.nextLine();
