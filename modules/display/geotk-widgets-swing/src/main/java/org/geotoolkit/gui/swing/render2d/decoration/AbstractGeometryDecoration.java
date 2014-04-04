@@ -103,7 +103,6 @@ public abstract class AbstractGeometryDecoration extends JPanel implements MapDe
         }else{
             context = null;
         }
-
     }
 
     @Override

@@ -39,18 +39,15 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.*;
-import javax.swing.event.CellEditorListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
-import org.geotoolkit.cql.CQLException;
 import org.geotoolkit.cql.JCQLTextPane;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureStore;
-import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.query.Selector;
 import org.geotoolkit.data.query.Source;
@@ -88,7 +85,6 @@ import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.PropertyDescriptor;
-import org.opengis.feature.type.PropertyType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.Id;
@@ -230,8 +226,6 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
                 changes = session.hasPendingChanges();
             }
         }
-
-
         guiCommit.setEnabled(changes);
         guiRollback.setEnabled(changes);
     }
@@ -333,7 +327,6 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
         });
         jPanel2.add(guiQueryButton, BorderLayout.EAST);
 
-        guiPanFilter.setMinimumSize(new Dimension(10, 10));
         guiPanFilter.setPreferredSize(new Dimension(10, 0));
         guiPanFilter.setLayout(new BorderLayout());
         jPanel2.add(guiPanFilter, BorderLayout.CENTER);
@@ -414,27 +407,33 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap(40, Short.MAX_VALUE)
+                .addComponent(guiCount, GroupLayout.DEFAULT_SIZE, 45, Short.MAX_VALUE)
+                .addPreferredGap(ComponentPlacement.RELATED, 40, Short.MAX_VALUE)
                 .addComponent(jcb_edit)
                 .addPreferredGap(ComponentPlacement.RELATED)
                 .addComponent(guiShowId)
-                .addPreferredGap(ComponentPlacement.RELATED)
-                .addComponent(guiCount, GroupLayout.DEFAULT_SIZE, 93, Short.MAX_VALUE)
-                .addPreferredGap(ComponentPlacement.RELATED)
+                .addPreferredGap(ComponentPlacement.UNRELATED)
                 .addComponent(guiCommit)
-                .addPreferredGap(ComponentPlacement.RELATED)
+                .addPreferredGap(ComponentPlacement.UNRELATED)
                 .addComponent(guiRollback)
-                .addPreferredGap(ComponentPlacement.RELATED)
-                .addComponent(jbu_action, GroupLayout.PREFERRED_SIZE, 51, GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(ComponentPlacement.UNRELATED)
+                .addComponent(jbu_action))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(Alignment.LEADING)
-            .addGroup(jPanel1Layout.createParallelGroup(Alignment.BASELINE)
-                .addComponent(jbu_action, GroupLayout.PREFERRED_SIZE, 27, GroupLayout.PREFERRED_SIZE)
-                .addComponent(guiCount)
-                .addComponent(jcb_edit)
-                .addComponent(guiRollback)
-                .addComponent(guiCommit)
-                .addComponent(guiShowId))
+            .addComponent(guiCount)
+            .addGroup(Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createParallelGroup(Alignment.BASELINE)
+                        .addComponent(jcb_edit)
+                        .addComponent(guiShowId))
+                    .addGroup(jPanel1Layout.createParallelGroup(Alignment.BASELINE)
+                        .addComponent(jbu_action, GroupLayout.PREFERRED_SIZE, 27, GroupLayout.PREFERRED_SIZE)
+                        .addComponent(guiRollback)
+                        .addComponent(guiCommit)))
+                .addContainerGap())
         );
 
         add(jPanel1, BorderLayout.SOUTH);
@@ -597,9 +596,18 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
                 }
             }
             guiVersions.setModel(new ListComboBoxModel(lst));
+            if (lst.size() < 2) {
+                guiVersions.setVisible(false);
+                jLabel1.setVisible(false);
+                jSeparator1.setVisible(false);
+            } else {
+                guiVersions.setVisible(true);
+                jSeparator1.setVisible(true);
+            }
 
         }
-
+        guiCommit.setVisible(false);
+        guiRollback.setVisible(false);
         panCenter.revalidate();
 
         revalidate();

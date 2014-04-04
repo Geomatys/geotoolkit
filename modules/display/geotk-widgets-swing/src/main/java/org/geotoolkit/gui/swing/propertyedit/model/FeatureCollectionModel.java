@@ -57,8 +57,8 @@ import org.opengis.filter.FilterFactory;
  */
 public class FeatureCollectionModel extends DefaultTableModel {
 
-    private final ArrayList<PropertyDescriptor> columns = new ArrayList<PropertyDescriptor>();
-    private final ArrayList<Feature> features = new ArrayList<Feature>();
+    private final ArrayList<PropertyDescriptor> columns = new ArrayList<>();
+    private final ArrayList<Feature> features = new ArrayList<>();
     private final boolean selectIds;
     private FeatureCollection featureCollection = null;
     private MapLayer layer;
