@@ -45,6 +45,8 @@ import org.geotoolkit.referencing.factory.DatumAliasesTest;
 
 import org.apache.sis.io.wkt.Symbols;
 import org.apache.sis.test.DependsOn;
+import org.apache.sis.io.wkt.Convention;
+
 import org.junit.*;
 
 import static org.geotoolkit.test.Commons.*;
@@ -355,7 +357,7 @@ public final strictfp class WKTFormatTest {
                 "  AXIS[“X”, OTHER],\n" +
                 "  AXIS[“Y”, EAST],\n" +
                 "  AXIS[“Z”, NORTH]]");
-        wktFormat.setConvention(Convention.OGC);
+        wktFormat.setConvention(Convention.WKT1);
         assertMultilinesEquals(wkt, wktFormat.format(crs));
         assertEqualsIgnoreMetadata(crs, wktFormat.parseObject(wkt), false);
     }
@@ -443,7 +445,7 @@ public final strictfp class WKTFormatTest {
             "  UNIT[“metre”, 1],\n" +
             "  AXIS[“Easting”, EAST],\n" +
             "  AXIS[“Northing”, NORTH]]"),
-            crs.toString(Convention.OGC));
+            crs.toString(Convention.WKT1));
         /*
          * Formats using GeoTiff identifiers. We should get different strings in PROJECTION[...]
          * and PARAMETER[...] elements, but the other ones (especially DATUM[...]) are unchanged.
@@ -470,7 +472,7 @@ public final strictfp class WKTFormatTest {
             "  UNIT[“metre”, 1],\n" +
             "  AXIS[“Easting”, EAST],\n" +
             "  AXIS[“Northing”, NORTH]]"),
-            crs.toString(Convention.GEOTIFF));
+            crs.toString(Convention.WKT1_COMMON_UNITS));
         /*
          * Formats using ESRI identifiers. The most important change we are looking for is
          * the name inside DATUM[...].
@@ -495,7 +497,7 @@ public final strictfp class WKTFormatTest {
             "  UNIT[“meter”, 1],\n" +
             "  AXIS[“Easting”, EAST],\n" +
             "  AXIS[“Northing”, NORTH]]"),
-            crs.toString(Convention.ESRI));
+            crs.toString(Convention.WKT1_COMMON_UNITS));
 
         if (true) return; // TODO
 
@@ -522,7 +524,7 @@ public final strictfp class WKTFormatTest {
             "  LENGTHUNIT[“metre”, 1],\n" +
             "  AXIS[“Easting”, EAST],\n" +
             "  AXIS[“Northing”, NORTH]]"),
-            crs.toString(Convention.EPSG));
+            crs.toString(Convention.WKT2));
     }
 
     /**
@@ -550,7 +552,7 @@ public final strictfp class WKTFormatTest {
             "  UNIT[“grade”, 0.015707963267948967],\n" +
             "  AXIS[“λ”, EAST],\n" +
             "  AXIS[“φ”, NORTH]]"),
-            crs.toString(Convention.OGC));
+            crs.toString(Convention.WKT1));
 
         // ESRI flavor: prime meridian in degrees.
         assertMultilinesEquals(decodeQuotes(
@@ -561,7 +563,7 @@ public final strictfp class WKTFormatTest {
             "  UNIT[“grade”, 0.015707963267948967],\n" +
             "  AXIS[“λ”, EAST],\n" +
             "  AXIS[“φ”, NORTH]]"),
-            crs.toString(Convention.ESRI));
+            crs.toString(Convention.WKT1_COMMON_UNITS));
     }
 
     /**
@@ -579,7 +581,7 @@ public final strictfp class WKTFormatTest {
         /*
          * Now force the angular unit to degrees, and test again.
          */
-        wktFormat.setConvention(Convention.ESRI);
+        wktFormat.setConvention(Convention.WKT1_COMMON_UNITS);
         crs = (ProjectedCRS) wktFormat.parseObject(ParserTest.IGNF_LAMBE);
         ParserTest.verifyLambertII(crs, true);
         /*
@@ -592,7 +594,7 @@ public final strictfp class WKTFormatTest {
          * When formatting using OGC conventions, the angles shall be in gradians
          * (in the particular case of this CRS).
          */
-        wktFormat.setConvention(Convention.OGC);
+        wktFormat.setConvention(Convention.WKT1);
         wkt = wktFormat.format(crs);
         assertTrue(wkt, wkt.contains("PRIMEM[\"Paris\", 2.59692129"));
         assertTrue(wkt, wkt.contains("PARAMETER[\"latitude_of_origin\", 52.0"));
