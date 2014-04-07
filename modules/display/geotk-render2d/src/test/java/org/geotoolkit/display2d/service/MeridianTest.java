@@ -323,7 +323,7 @@ public class MeridianTest {
         
         final BufferedImage image = DefaultPortrayalService.portray(canvasDef, sceneDef, viewDef);
         
-        ImageIO.write(image, "PNG", new File("/home/husky/test.png"));
+        ImageIO.write(image, "PNG", File.createTempFile("test", ".png"));
         
         checkImage(image, new Rectangle(349, 79, 2, 2), 
                           new Rectangle(349, 99, 2, 2),
@@ -353,7 +353,7 @@ public class MeridianTest {
         
         final BufferedImage image = DefaultPortrayalService.portray(canvasDef, sceneDef, viewDef);
         
-        ImageIO.write(image, "PNG", new File("/home/husky/test.png"));
+        ImageIO.write(image, "PNG", File.createTempFile("test", ".png"));
         
         checkImage(image, new Rectangle(349, 79, 2, 2), 
                           new Rectangle(349, 99, 2, 2),
