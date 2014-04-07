@@ -418,7 +418,7 @@ public final strictfp class WKTFormatTest {
             "  PARAMETER[“scale_factor”, 0.999601272],\n" +
             "  PARAMETER[“false_easting”, 400000.0],\n" +
             "  PARAMETER[“false_northing”, -100000.0],\n" +
-            "  UNIT[“metre”, 1.0],\n" +
+            "  UNIT[“metre”, 1],\n" +
             "  AXIS[“E”,EAST],\n" +
             "  AXIS[“N”,NORTH]]"));
         /*
@@ -440,7 +440,7 @@ public final strictfp class WKTFormatTest {
             "  PARAMETER[“scale_factor”, 0.999601272],\n" +
             "  PARAMETER[“false_easting”, 400000.0],\n" +
             "  PARAMETER[“false_northing”, -100000.0],\n" +
-            "  UNIT[“metre”, 1.0],\n" +
+            "  UNIT[“metre”, 1],\n" +
             "  AXIS[“Easting”, EAST],\n" +
             "  AXIS[“Northing”, NORTH]]"),
             crs.toString(Convention.OGC));
@@ -467,7 +467,7 @@ public final strictfp class WKTFormatTest {
             "  PARAMETER[“ScaleAtNatOrigin”, 0.999601272],\n" +
             "  PARAMETER[“FalseEasting”, 400000.0],\n" +
             "  PARAMETER[“FalseNorthing”, -100000.0],\n" +
-            "  UNIT[“metre”, 1.0],\n" +
+            "  UNIT[“metre”, 1],\n" +
             "  AXIS[“Easting”, EAST],\n" +
             "  AXIS[“Northing”, NORTH]]"),
             crs.toString(Convention.GEOTIFF));
@@ -492,7 +492,7 @@ public final strictfp class WKTFormatTest {
             "  PARAMETER[“Scale_Factor”, 0.999601272],\n" +
             "  PARAMETER[“False_Easting”, 400000.0],\n" +
             "  PARAMETER[“False_Northing”, -100000.0],\n" +
-            "  UNIT[“meter”, 1.0],\n" +
+            "  UNIT[“meter”, 1],\n" +
             "  AXIS[“Easting”, EAST],\n" +
             "  AXIS[“Northing”, NORTH]]"),
             crs.toString(Convention.ESRI));
@@ -519,7 +519,7 @@ public final strictfp class WKTFormatTest {
             "  PARAMETER[“Scale factor at natural origin”, 0.999601272],\n" +
             "  PARAMETER[“False easting”, 400000.0],\n" +
             "  PARAMETER[“False northing”, -100000.0],\n" +
-            "  LENGTHUNIT[“metre”, 1.0],\n" +
+            "  LENGTHUNIT[“metre”, 1],\n" +
             "  AXIS[“Easting”, EAST],\n" +
             "  AXIS[“Northing”, NORTH]]"),
             crs.toString(Convention.EPSG));
