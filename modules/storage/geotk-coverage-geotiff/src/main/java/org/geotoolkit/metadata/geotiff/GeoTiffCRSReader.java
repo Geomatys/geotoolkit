@@ -528,7 +528,7 @@ final class GeoTiffCRSReader {
      */
     private double getScaleFactor(final ValueMap metadata) {
         String scale = metadata.getAsString(ProjScaleAtCenterGeoKey);
-        if (scale == null) {
+        if (isZero(scale)) {
             scale = metadata.getAsString(ProjScaleAtNatOriginGeoKey);
         }
         if (scale == null) {
@@ -548,7 +548,7 @@ final class GeoTiffCRSReader {
      */
     private double getFalseEasting(final ValueMap metadata) {
         String easting = metadata.getAsString(ProjFalseEastingGeoKey);
-        if (easting == null) {
+        if (isZero(easting)) {
             easting = metadata.getAsString(ProjFalseOriginEastingGeoKey);
         }
         if (easting == null) {
@@ -569,7 +569,7 @@ final class GeoTiffCRSReader {
      */
     private double getFalseNorthing(final ValueMap metadata) {
         String northing = metadata.getAsString(ProjFalseNorthingGeoKey);
-        if (northing == null) {
+        if (isZero(northing)) {
             northing = metadata.getAsString(ProjFalseOriginNorthingGeoKey);
         }
         if (northing == null) {
@@ -591,13 +591,13 @@ final class GeoTiffCRSReader {
      */
     private double getOriginLong(final ValueMap metadata) {
         String origin = metadata.getAsString(ProjCenterLongGeoKey);
-        if (origin == null) {
+        if (isZero(origin)) {
             origin = metadata.getAsString(ProjNatOriginLongGeoKey);
         }
-        if (origin == null) {
+        if (isZero(origin)) {
             origin = metadata.getAsString(ProjFalseOriginLongGeoKey);
         }
-        if (origin == null) {
+        if (isZero(origin)) {
             origin = metadata.getAsString(ProjFalseNorthingGeoKey);
         }
         if (origin == null) {
@@ -617,10 +617,10 @@ final class GeoTiffCRSReader {
      */
     private double getOriginLat(final ValueMap metadata) {
         String origin = metadata.getAsString(ProjCenterLatGeoKey);
-        if (origin == null) {
+        if (isZero(origin)) {
             origin = metadata.getAsString(ProjNatOriginLatGeoKey);
         }
-        if (origin == null) {
+        if (isZero(origin)) {
             origin = metadata.getAsString(ProjFalseOriginLatGeoKey);
         }
         if (origin == null) {
@@ -630,8 +630,25 @@ final class GeoTiffCRSReader {
         return Double.parseDouble(origin);
     }
 
-
-
+    /**
+     * Check if given string is null, empty or equals to zero.
+     * Geotiff tags are often badly defined, this ensure we skip "0.0" tags in the
+     * hope another tag will define a proper value.
+     * In the worst case if no valid tags are found the 0.0 value will be used anyway.
+     * 
+     * @param code
+     * @return true if value is zero
+     */
+    private static boolean isZero(String code){
+        if(code==null ||code.isEmpty()) return true;
+        
+        try{
+            final double d = Double.parseDouble(code);
+            return d==0.0;
+        }catch(NumberFormatException ex){
+            return true;
+        }
+    }
 
     /**
      * @todo we should somehow try to to support user defined coordinate
