@@ -79,7 +79,7 @@ public class TimeType extends AbstractSimpleComponentType implements AbstractTim
     }
 
     public TimeType(final String definition, final UnitReference uom) {
-        super(null, definition);
+        super(null, definition, null);
         if (uom != null) {
             this.uom = uom;
         } else {
@@ -147,7 +147,7 @@ public class TimeType extends AbstractSimpleComponentType implements AbstractTim
     @Override
     public List<String> getValue() {
         if (value == null) {
-            value = new ArrayList<String>();
+            value = new ArrayList<>();
         }
         return this.value;
     }

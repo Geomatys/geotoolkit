@@ -23,6 +23,8 @@ package org.geotoolkit.swe.xml;
  */
 public interface PhenomenonProperty {
  
+    String getHref();
+            
     void setToHref();
     
     Phenomenon getPhenomenon();

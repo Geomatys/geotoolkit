@@ -63,10 +63,16 @@ public class QuantityType extends AbstractSimpleComponentType implements Quantit
     }
     
     public QuantityType(final String definition, final String uomCode, final Double value) {
-        super(null, definition);
+        super(null, definition, null);
         if (uomCode != null) {
             this.uom = new UnitReference(uomCode);
         }
+        this.value = value;
+    }
+    
+    public QuantityType(final String axisId, final String definition, final UnitReference uom, final Double value) {
+        super(null, definition, axisId);
+        this.uom = uom;
         this.value = value;
     }
     

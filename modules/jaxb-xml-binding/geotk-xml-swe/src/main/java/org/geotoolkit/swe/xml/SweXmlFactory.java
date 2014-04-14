@@ -32,6 +32,7 @@ public class SweXmlFactory {
     /**
      * Build a Coordinate in the factory version.
      *
+     * @param version
      * @param name
      * @param quantity
      * @return
@@ -57,6 +58,7 @@ public class SweXmlFactory {
     /**
      * Build a Quantity object in the factory version.
      *
+     * @param version
      * @param definition
      * @param uom
      * @param value
@@ -96,6 +98,8 @@ public class SweXmlFactory {
     /**
      * Build a Quantity object in the factory version.
      *
+     * @param version
+     * @param axisID
      * @param definition
      * @param uom
      * @param value
@@ -120,6 +124,34 @@ public class SweXmlFactory {
                                                                definition,
                                                                (org.geotoolkit.swe.xml.v101.UomPropertyType)uom,
                                                                value);
+        } else if ("2.0.0".equals(version)) {
+            if (uom != null && !(uom instanceof org.geotoolkit.swe.xml.v200.UnitReference)) {
+                throw new IllegalArgumentException("Unexpected SWE version for uomProperty object.");
+            }
+            return new org.geotoolkit.swe.xml.v200.QuantityType(axisID,
+                                                               definition,
+                                                               (org.geotoolkit.swe.xml.v200.UnitReference)uom,
+                                                               value);
+        } else {
+            throw new IllegalArgumentException("Unexpected SWE version:" + version);
+        }
+    }
+    
+    /**
+     * Build a Quantity object in the factory version.
+     *
+     * @param version
+     * @param definition
+     * @param value
+     * @return
+     */
+    public static AbstractText createText(final String version, final String definition, final String value) {
+        if ("1.0.0".equals(version)) {
+            return new org.geotoolkit.swe.xml.v100.Text(definition, value);
+        } else if ("1.0.1".equals(version)) {
+            return new org.geotoolkit.swe.xml.v101.Text(definition, value);
+        } else if ("2.0.0".equals(version)) {
+            return new org.geotoolkit.swe.xml.v200.TextType(definition, value);
         } else {
             throw new IllegalArgumentException("Unexpected SWE version:" + version);
         }
@@ -128,6 +160,7 @@ public class SweXmlFactory {
     /**
      * Build a Uom object in the factory version.
      * 
+     * @param version
      * @param code
      * @param href
      * @return
@@ -227,6 +260,9 @@ public class SweXmlFactory {
     /**
      * Build a Vector in the factory version.
      *
+     * @param version
+     * @param definition
+     * @param coordinates
      */
     public static Vector createVector(final String version, final String definition, final List<? extends Coordinate> coordinates) {
         if ("1.0.0".equals(version)) {

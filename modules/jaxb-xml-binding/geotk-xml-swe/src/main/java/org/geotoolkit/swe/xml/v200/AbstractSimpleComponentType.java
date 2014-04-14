@@ -81,8 +81,9 @@ public abstract class AbstractSimpleComponentType extends AbstractDataComponentT
 
     }
 
-    public AbstractSimpleComponentType(final String id, final String definition) {
+    public AbstractSimpleComponentType(final String id, final String definition, final String axisID) {
         super(id, definition, null);
+        this.axisID = axisID;
     }
 
     /**
@@ -95,7 +96,7 @@ public abstract class AbstractSimpleComponentType extends AbstractDataComponentT
      */
     public List<QualityPropertyType> getQuality() {
         if (quality == null) {
-            quality = new ArrayList<QualityPropertyType>();
+            quality = new ArrayList<>();
         }
         return this.quality;
     }

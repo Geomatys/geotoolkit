@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.observation.xml;
 
+import org.geotoolkit.swe.xml.PhenomenonProperty;
 import org.opengis.observation.Observation;
 import org.opengis.temporal.Period;
 import org.opengis.temporal.TemporalGeometricPrimitive;
@@ -41,6 +42,8 @@ public interface AbstractObservation extends Observation {
     void extendSamplingTime(final String newEndBound);
     
     boolean matchTemplate(final Observation template);
+    
+    PhenomenonProperty getPropertyObservedProperty();
     
     AbstractObservation getTemporaryTemplate(final String temporaryName, TemporalGeometricPrimitive time);
 }

@@ -58,7 +58,7 @@ public class TextType extends AbstractSimpleComponentType implements AbstractTex
     }
     
     public TextType(final String definition, final String value) {
-        super(null, definition);
+        super(null, definition, null);
         this.value = value;
     }
     

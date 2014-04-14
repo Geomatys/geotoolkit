@@ -22,7 +22,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import org.apache.sis.util.ComparisonMode;
-import org.opengis.observation.CompositePhenomenon;
+import org.geotoolkit.swe.xml.CompositePhenomenon;
 
 // geotoolkit dependencies
 
@@ -60,7 +60,7 @@ public class CompositePhenomenonType extends CompoundPhenomenonType implements C
             final PhenomenonType base, final Collection<PhenomenonType> component) {
         super(id, name, description, component.size());
         this.base = base;
-        this.component = new ArrayList<PhenomenonPropertyType>();
+        this.component = new ArrayList<>();
         for (PhenomenonType pheno: component) {
             this.component.add(new PhenomenonPropertyType(pheno));
         }
@@ -84,7 +84,7 @@ public class CompositePhenomenonType extends CompoundPhenomenonType implements C
      * Return the components.
      */
     public List<PhenomenonType> getComponent() {
-        List<PhenomenonType> result = new ArrayList<PhenomenonType>();
+        List<PhenomenonType> result = new ArrayList<>();
         for (PhenomenonPropertyType phen: component) {
             result.add(phen.getPhenomenon());
         }
@@ -113,7 +113,7 @@ public class CompositePhenomenonType extends CompoundPhenomenonType implements C
      */
     public List<PhenomenonPropertyType> getRealComponent() {
         if (component == null) {
-            component = new ArrayList<PhenomenonPropertyType>();
+            component = new ArrayList<>();
         }
         return component;
     }

@@ -43,6 +43,7 @@ import org.geotoolkit.swe.xml.v200.DataArrayPropertyType;
 import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.gml.xml.v321.TimeInstantType;
 import org.geotoolkit.gml.xml.v321.TimePositionType;
+import org.geotoolkit.swe.xml.PhenomenonProperty;
 import org.opengis.metadata.Metadata;
 import org.opengis.metadata.quality.Element;
 import org.opengis.observation.Observation;
@@ -139,25 +140,27 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
 
     /**
      * Build a clone of an observation
+     * 
+     * @param observation observation to clone.
      */
     public OMObservationType(final OMObservationType observation) {
         super(observation);
         this.type                = observation.type;
         this.metadata            = observation.metadata;
         if (observation.relatedObservation != null) {
-            this.relatedObservation  = new ArrayList<ObservationContextPropertyType>(observation.relatedObservation);
+            this.relatedObservation  = new ArrayList<>(observation.relatedObservation);
         }
         this.phenomenonTime      = observation.phenomenonTime;
         this.validTime           = observation.validTime;
         this.resultTime          = observation.resultTime;
         this.procedure           = observation.procedure;
         if (observation.parameter != null) {
-            this.parameter       = new ArrayList<NamedValuePropertyType>(observation.parameter);
+            this.parameter       = new ArrayList<>(observation.parameter);
         }
         this.observedProperty    = observation.observedProperty;
         this.featureOfInterest   = observation.featureOfInterest;
         if (observation.resultQuality != null) {
-            this.resultQuality   = new ArrayList<Element>(observation.resultQuality);
+            this.resultQuality   = new ArrayList<>(observation.resultQuality);
         }
         if (observation.result instanceof DataArrayPropertyType) {
             this.result = new DataArrayPropertyType((DataArrayPropertyType)observation.result);
@@ -230,7 +233,7 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
      */
     public List<ObservationContextPropertyType> getRelatedObservation() {
         if (relatedObservation == null) {
-            relatedObservation = new ArrayList<ObservationContextPropertyType>();
+            relatedObservation = new ArrayList<>();
         }
         return this.relatedObservation;
     }
@@ -397,7 +400,7 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
      */
     public List<NamedValuePropertyType> getParameter() {
         if (parameter == null) {
-            parameter = new ArrayList<NamedValuePropertyType>();
+            parameter = new ArrayList<>();
         }
         return this.parameter;
     }
@@ -442,6 +445,15 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
         this.observedProperty = value;
     }
 
+    @Override
+    public PhenomenonProperty getPropertyObservedProperty() {
+        if (observedProperty != null) {
+            return new InternalPhenomenonProperty(observedProperty);
+        }
+        return null;
+    }
+
+    
     /**
      * Gets the value of the featureOfInterest property.
      *
@@ -670,5 +682,56 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
             hash = 7 * hash + (this.getName() != null ? this.getName().hashCode() : 0);
             return hash;
         }
+    }
+    
+    @XmlRootElement
+    public static class InternalPhenomenonProperty implements org.geotoolkit.swe.xml.PhenomenonProperty {
+
+        private final String href;
+
+        public InternalPhenomenonProperty() {
+            this.href = null;
+        }
+
+        public InternalPhenomenonProperty(final ReferenceType phenRef) {
+            this.href = phenRef.getHref();
+        }
+
+        @Override
+        public String getHref() {
+            return href;
+        }
+        
+        @Override
+        public void setToHref() {
+            // already in href mode
+        }
+
+        @Override
+        public org.geotoolkit.swe.xml.Phenomenon getPhenomenon() {
+            return new InternalPhenomenon(href);
+        }
+
+        @Override
+        public boolean equals(final Object obj) {
+            if (obj instanceof org.geotoolkit.swe.xml.PhenomenonProperty) {
+                final org.geotoolkit.swe.xml.PhenomenonProperty that = (org.geotoolkit.swe.xml.PhenomenonProperty) obj;
+                return Objects.equals(this.href, that.getHref());
+            }
+            return false;
+        }
+
+        @Override
+        public String toString() {
+            return "[Anonymous Phenomenon Property] href:" + getHref();
+        }
+
+        @Override
+        public int hashCode() {
+            int hash = 7;
+            hash = 7 * hash + (this.getHref() != null ? this.getHref().hashCode() : 0);
+            return hash;
+        }
+
     }
 }

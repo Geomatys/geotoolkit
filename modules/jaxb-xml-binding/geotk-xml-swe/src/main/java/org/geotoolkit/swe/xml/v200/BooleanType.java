@@ -55,7 +55,7 @@ public class BooleanType extends AbstractSimpleComponentType implements Abstract
     }
     
     public BooleanType(final Boolean value, final String definition) {
-        super(null, definition);
+        super(null, definition, null);
         this.value = value;
     }
     

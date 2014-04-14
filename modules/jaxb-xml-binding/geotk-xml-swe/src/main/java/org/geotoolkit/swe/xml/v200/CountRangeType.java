@@ -62,7 +62,7 @@ public class CountRangeType extends AbstractSimpleComponentType implements Abstr
     }
     
     public CountRangeType(final String definition, final List<Integer> value) {
-        super(null, definition);
+        super(null, definition, null);
         this.value = value;
     }
     
@@ -102,9 +102,8 @@ public class CountRangeType extends AbstractSimpleComponentType implements Abstr
     @Override
     public List<Integer> getValue() {
         if (value == null) {
-            value = new ArrayList<Integer>();
+            value = new ArrayList<>();
         }
         return this.value;
     }
-
 }

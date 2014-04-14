@@ -62,7 +62,7 @@ public class CategoryType extends AbstractSimpleComponentType implements Abstrac
     }
     
     public CategoryType(final String definition, final String value) {
-        super(null, definition);
+        super(null, definition, null);
         this.value = value;
     }
     

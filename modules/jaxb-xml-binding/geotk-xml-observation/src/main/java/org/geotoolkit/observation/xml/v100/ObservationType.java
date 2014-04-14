@@ -444,6 +444,7 @@ public class ObservationType implements Entry, AbstractObservation {
         this.observedProperty = observedProperty;
     }
     
+    @Override
     public PhenomenonPropertyType getPropertyObservedProperty() {
        return observedProperty;
     }

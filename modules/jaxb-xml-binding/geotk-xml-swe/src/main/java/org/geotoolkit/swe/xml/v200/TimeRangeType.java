@@ -78,7 +78,7 @@ public class TimeRangeType extends AbstractSimpleComponentType implements Abstra
     }
     
     public TimeRangeType(final String definition, final List<String> value) {
-        super(null, definition);
+        super(null, definition, null);
         this.value = value;
     }
     
@@ -142,7 +142,7 @@ public class TimeRangeType extends AbstractSimpleComponentType implements Abstra
     @Override
     public List<String> getValue() {
         if (value == null) {
-            value = new ArrayList<String>();
+            value = new ArrayList<>();
         }
         return this.value;
     }

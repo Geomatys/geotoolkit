@@ -43,6 +43,7 @@ import org.geotoolkit.swe.xml.AbstractBoolean;
 import org.geotoolkit.swe.xml.AbstractDataComponent;
 import org.geotoolkit.swe.xml.AbstractDataRecord;
 import org.geotoolkit.swe.xml.AbstractEncoding;
+import org.geotoolkit.swe.xml.AbstractText;
 import org.geotoolkit.swe.xml.AbstractTime;
 import org.geotoolkit.swe.xml.AnyScalar;
 import org.geotoolkit.swe.xml.DataArray;
@@ -1028,6 +1029,16 @@ public class SOSXmlFactory {
             return SweXmlFactory.createBoolean("2.0.0", definition, value);
         } else if ("1.0.0".equals(version)) {
             return SweXmlFactory.createBoolean("1.0.1", definition, value);
+        } else {
+            throw new IllegalArgumentException("Unexpected SOS version:" + version);
+        }
+    }
+    
+    public static AbstractText buildText(final String version, final String definition, final String value) {
+        if ("2.0.0".equals(version)) {
+            return SweXmlFactory.createText("2.0.0", definition, value);
+        } else if ("1.0.0".equals(version)) {
+            return SweXmlFactory.createText("1.0.1", definition, value);
         } else {
             throw new IllegalArgumentException("Unexpected SOS version:" + version);
         }

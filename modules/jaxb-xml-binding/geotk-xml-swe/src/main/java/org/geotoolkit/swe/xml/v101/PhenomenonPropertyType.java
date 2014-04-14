@@ -189,6 +189,7 @@ public class PhenomenonPropertyType implements PhenomenonProperty {
     /**
      * Gets the value of the href property.
      */
+    @Override
     public String getHref() {
         return href;
     }

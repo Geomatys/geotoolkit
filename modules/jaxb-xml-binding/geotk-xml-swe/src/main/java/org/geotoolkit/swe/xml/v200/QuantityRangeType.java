@@ -68,7 +68,7 @@ public class QuantityRangeType extends AbstractSimpleComponentType implements Ab
     }
     
     public QuantityRangeType(final String definition, final List<Double> value) {
-        super(null, definition);
+        super(null, definition, null);
         this.value = value;
     }
     
@@ -133,7 +133,7 @@ public class QuantityRangeType extends AbstractSimpleComponentType implements Ab
     @Override
     public List<Double> getValue() {
         if (value == null) {
-            value = new ArrayList<Double>();
+            value = new ArrayList<>();
         }
         return this.value;
     }
