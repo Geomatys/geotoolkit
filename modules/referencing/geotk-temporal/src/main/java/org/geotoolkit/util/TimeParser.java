@@ -48,8 +48,6 @@ import org.geotoolkit.util.logging.LoggedFormat;
  * @author Cédric Briançon     (Geomatys)
  * @author Martin Desruisseaux (Geomatys)
  * @author Adrian Custer       (Geomatys)
- *
- * @deprecated To be replaced by {@code java.time} in JDK8.
  */
 public final class TimeParser {
 
@@ -145,7 +143,6 @@ public final class TimeParser {
      * @param  value The date, time and period to parse.
      * @param  defaultPeriod The default period (in milliseconds) if it is needed but not specified.
      * @param  dates The destination list where to append the parsed dates.
-     * @return A list of dates, or an empty list of the {@code value} string is null or empty.
      * @throws ParseException if the string can not be parsed.
      */
     public static void parse(String value, final long defaultPeriod, final List<Date> dates)
@@ -305,7 +302,7 @@ public final class TimeParser {
         }
         final List<Date> dates = new ArrayList<Date>();
         TimeParser.parse(strTime, 0L, dates);
-        return (dates != null && !dates.isEmpty()) ? dates.get(0) : null;
+        return !dates.isEmpty() ? dates.get(0) : null;
     }
 
     /**

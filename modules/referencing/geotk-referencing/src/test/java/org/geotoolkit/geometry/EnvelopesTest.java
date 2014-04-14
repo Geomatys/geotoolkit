@@ -118,7 +118,7 @@ public final strictfp class EnvelopesTest extends ReferencingTestBase {
         envelopeBack.setCoordinateReferenceSystem(sourceCRS);
         assertRectangleEquals(rectBack, envelopeBack.toRectangle2D(), GEOGRAPHIC_CENTIMETRE, GEOGRAPHIC_CENTIMETRE);
 
-        assertTrue("Transformed envelope should not be smaller than the original one.", envelopeBack.contains(envelopeλφ, true));
+        assertTrue("Transformed envelope should not be smaller than the original one.", envelopeBack.contains(envelopeλφ));
         assertTrue("Final envelope should be only slightly bigger than the original.",  envelopeBack.equals(envelopeλφ, 1.0, false));
     }
 

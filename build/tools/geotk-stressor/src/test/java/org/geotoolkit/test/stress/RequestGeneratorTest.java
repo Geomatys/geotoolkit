@@ -75,7 +75,7 @@ public final strictfp class RequestGeneratorTest {
             final GridEnvelope        sr = sg.getExtent();
             final Envelope            se = sg.getEnvelope();
             assertTrue("Grid envelope out of bounds.", range.contains(sr.getLow(0), sr.getLow(1), sr.getSpan(0), sr.getSpan(1)));
-            assertTrue("Geodetic envelope out of bounds.", envelope.contains(se, true));
+            assertTrue("Geodetic envelope out of bounds.", envelope.contains(se));
             for (int i=sr.getDimension(); --i>=0;) {
                 final int span = sr.getSpan(i);
                 assertTrue("Min", span >= minimalGridSize[i]);
