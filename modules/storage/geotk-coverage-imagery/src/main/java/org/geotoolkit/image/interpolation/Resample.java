@@ -20,6 +20,7 @@ import java.awt.Rectangle;
 import java.awt.image.WritableRenderedImage;
 import org.geotoolkit.image.iterator.PixelIterator;
 import org.geotoolkit.image.iterator.PixelIteratorFactory;
+import org.geotoolkit.math.XMath;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
 import org.opengis.referencing.operation.TransformException;
@@ -168,11 +169,13 @@ public class Resample {
                     destIterator.next();
                     destIterator.setSampleDouble(fillValue[band]);
                 }
-            }else{
-                destIterator.setSampleDouble(interpol.interpolate(src0, src1, band));
+            } else {
+                srcCoords[0] = XMath.clamp(srcCoords[0], minSourceX, maxSourceX);
+                srcCoords[1] = XMath.clamp(srcCoords[1], minSourceY, maxSourceY);
+                destIterator.setSampleDouble(interpol.interpolate(srcCoords[0], srcCoords[1], band));
                 while (++band != numBands) {
                     destIterator.next();
-                    destIterator.setSampleDouble(interpol.interpolate(src0, src1, band));
+                    destIterator.setSampleDouble(interpol.interpolate(srcCoords[0], srcCoords[1], band));
                 }
             }
             
