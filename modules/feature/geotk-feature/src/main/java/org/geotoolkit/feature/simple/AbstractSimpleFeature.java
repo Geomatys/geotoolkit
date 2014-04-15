@@ -324,7 +324,7 @@ public abstract class AbstractSimpleFeature extends AbstractFeature<List<Propert
 
         //make a nice table to display
         final TableAppender tablewriter = new TableAppender(writer);
-        tablewriter.writeHorizontalSeparator();
+        tablewriter.appendHorizontalSeparator();
         tablewriter.append("@id\t"+getID()+"\n");
 
         for(Property prop : getProperties()){
@@ -341,7 +341,7 @@ public abstract class AbstractSimpleFeature extends AbstractFeature<List<Propert
             tablewriter.append("\n");
         }
 
-        tablewriter.writeHorizontalSeparator();
+        tablewriter.appendHorizontalSeparator();
 
         try {
             tablewriter.flush();

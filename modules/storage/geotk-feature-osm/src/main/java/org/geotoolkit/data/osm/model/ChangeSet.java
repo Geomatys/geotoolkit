@@ -108,19 +108,19 @@ public class ChangeSet {
         final StringWriter writer = new StringWriter();
         final TableAppender tablewriter = new TableAppender(writer);
 
-        tablewriter.writeHorizontalSeparator();
+        tablewriter.appendHorizontalSeparator();
         tablewriter.append("OSM-CHANGESET\t \n");
-        tablewriter.writeHorizontalSeparator();
+        tablewriter.appendHorizontalSeparator();
         tablewriter.append("ID\t"+getId()+"\n");
         tablewriter.append("User\t"+getUser()+"\n");
         tablewriter.append("Open\t"+getOpen()+"\n");
         tablewriter.append("Created at\t"+new Date(getTimestamp())+"\n");
         tablewriter.append("Envelope\t"+getEnv()+"\n");
-        tablewriter.writeHorizontalSeparator();
+        tablewriter.appendHorizontalSeparator();
         for(Tag t : getTags()){
             tablewriter.append(t.getK()+"\t"+t.getV()+"\n");
         }
-        tablewriter.writeHorizontalSeparator();
+        tablewriter.appendHorizontalSeparator();
 
         try {
             tablewriter.flush();

@@ -88,24 +88,24 @@ public class Way extends IdentifiedElement{
         final StringWriter writer = new StringWriter();
         final TableAppender tablewriter = new TableAppender(writer);
 
-        tablewriter.writeHorizontalSeparator();
+        tablewriter.appendHorizontalSeparator();
         tablewriter.append("OSM-WAY\t \n");
-        tablewriter.writeHorizontalSeparator();
+        tablewriter.appendHorizontalSeparator();
         tablewriter.append("nodes count\t"+nodes.size()+"\n");
         for(int i=0;i<nodes.size();i++){
             tablewriter.append("node " +i +"\t"+nodes.get(i)+"\n");
         }
-        tablewriter.writeHorizontalSeparator();
+        tablewriter.appendHorizontalSeparator();
         tablewriter.append("ID\t"+getId()+"\n");
         tablewriter.append("ChangeSet\t"+getChangeset()+"\n");
         tablewriter.append("User\t"+getUser()+"\n");
         tablewriter.append("TimeStamp\t"+new Date(getTimestamp())+"\n");
         tablewriter.append("version\t"+getVersion()+"\n");
-        tablewriter.writeHorizontalSeparator();
+        tablewriter.appendHorizontalSeparator();
         for(Tag t : getTags()){
             tablewriter.append(t.getK()+"\t"+t.getV()+"\n");
         }
-        tablewriter.writeHorizontalSeparator();
+        tablewriter.appendHorizontalSeparator();
 
         try {
             tablewriter.flush();

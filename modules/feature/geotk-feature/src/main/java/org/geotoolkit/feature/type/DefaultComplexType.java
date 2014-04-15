@@ -208,9 +208,9 @@ public class DefaultComplexType extends DefaultAttributeType<AttributeType> impl
         //make a nice table to display
         final StringWriter writer = new StringWriter();
         final TableAppender tablewriter = new TableAppender(writer);
-        tablewriter.writeHorizontalSeparator();
+        tablewriter.appendHorizontalSeparator();
         tablewriter.append("name\t min\t max\t nillable\t type\t CRS\t UserData\n");
-        tablewriter.writeHorizontalSeparator();
+        tablewriter.appendHorizontalSeparator();
 
         final Collection<PropertyDescriptor> descs = getDescriptors();
         final Set<Name> loops = new HashSet<Name>();
@@ -219,7 +219,7 @@ public class DefaultComplexType extends DefaultAttributeType<AttributeType> impl
             tablewriter.append(toString(property,loops));
             tablewriter.append('\n');
         }
-        tablewriter.writeHorizontalSeparator();
+        tablewriter.appendHorizontalSeparator();
         try {
             tablewriter.flush();
             writer.flush();

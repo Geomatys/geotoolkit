@@ -45,16 +45,16 @@ import org.apache.sis.util.logging.Logging;
 
 /**
  * Manage reader and writer creation with proper read/write locks.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
 public final class AccessManager {
-    
+
     private static final Logger LOGGER =  Logging.getLogger(AccessManager.class);
-    
+
     private static class AccessEntry{
-        
+
         final ShpFileType type;
         final URL url;
         final Closeable holder;
@@ -74,43 +74,43 @@ public final class AccessManager {
             .append("\t").append(holder);
             return sb.toString();
         }
-        
+
     }
-    
+
     private final ShpFiles files;
     private final List<AccessEntry> readEntries = new ArrayList<AccessEntry>();
     private final List<AccessEntry> writeEntries = new ArrayList<AccessEntry>();
     private final List<StorageFile> tempFiles = new ArrayList<StorageFile>();
-    
+
     /**
      * Can only be created by a shpFiles object.
-     * @param files 
+     * @param files
      */
     AccessManager(final ShpFiles files){
         this.files = files;
     }
-    
+
     private void getReadLock(){
         files.aquiereReadLock();
     }
-    
+
     private void getWriteLock(){
         files.aquiereWriteLock();
     }
-    
+
     private void releaseReadLock(){
         files.releaseReadLock();
     }
-    
+
     private void releaseWriteLock(){
         files.releaseWriteLock();
     }
-    
-    
+
+
     public DbaseFileReader getDBFReader(final boolean memoryMapped, final Charset set) throws IOException{
-        
+
         final URL url = files.getURL(ShpFileType.DBF);
-        
+
         if (url == null) {
             return null;
         }
@@ -118,16 +118,16 @@ public final class AccessManager {
         if (files.isLocal() && !files.exists(ShpFileType.DBF)) {
             return null;
         }
-        
+
         final ReadableByteChannel rbc = toClosingChannel(files.getReadChannel(url),false);
-        final DbaseFileReader reader = new DbaseFileReader(rbc, memoryMapped, set);        
-        readEntries.add(new AccessEntry(ShpFileType.DBF, url, reader));        
+        final DbaseFileReader reader = new DbaseFileReader(rbc, memoryMapped, set);
+        readEntries.add(new AccessEntry(ShpFileType.DBF, url, reader));
         return reader;
     }
-    
-    public ShapefileReader getSHPReader(final boolean strict, final boolean memoryMapped, 
+
+    public ShapefileReader getSHPReader(final boolean strict, final boolean memoryMapped,
             final boolean read3D, final double[] resample) throws IOException, DataStoreException{
-        
+
         final URL shpUrl = files.getURL(ShpFileType.SHP);
         final ReadableByteChannel shpChannel = toClosingChannel(files.getReadChannel(shpUrl),false);
         final URL shxUrl = files.getURL(ShpFileType.SHX);
@@ -136,16 +136,16 @@ public final class AccessManager {
             //shx does not exist
             shxChannel = null;
         }else{
-            shxChannel = toClosingChannel(files.getReadChannel(shxUrl),false); 
+            shxChannel = toClosingChannel(files.getReadChannel(shxUrl),false);
         }
-        
+
         final ShapefileReader shpReader = new ShapefileReader(
-                shpChannel,shxChannel,strict,memoryMapped,read3D,resample);           
-        readEntries.add(new AccessEntry(ShpFileType.SHP, shpUrl, shpReader));           
-        readEntries.add(new AccessEntry(ShpFileType.SHX, shxUrl, shpReader));             
+                shpChannel,shxChannel,strict,memoryMapped,read3D,resample);
+        readEntries.add(new AccessEntry(ShpFileType.SHP, shpUrl, shpReader));
+        readEntries.add(new AccessEntry(ShpFileType.SHX, shxUrl, shpReader));
         return shpReader;
     }
-        
+
     public ShxReader getSHXReader(final boolean memoryMapped) throws IOException {
         final URL shxUrl = files.getURL(ShpFileType.SHX);
         if (shxUrl == null) {
@@ -155,18 +155,18 @@ public final class AccessManager {
         if (files.isLocal() && !files.exists(shxUrl)) {
             return null;
         }
-        
+
         final ReadableByteChannel shxChannel = toClosingChannel(files.getReadChannel(shxUrl),false);
-        final ShxReader reader = new ShxReader(shxChannel, memoryMapped);         
-        readEntries.add(new AccessEntry(ShpFileType.SHX, shxUrl, reader)); 
+        final ShxReader reader = new ShxReader(shxChannel, memoryMapped);
+        readEntries.add(new AccessEntry(ShpFileType.SHX, shxUrl, reader));
         return reader;
     }
-    
+
     public IndexedFidReader getFIXReader(final RecordNumberTracker tracker) throws IOException{
         final URL url = files.getURL(ShpFileType.FIX);
         final ReadableByteChannel rbc = toClosingChannel(files.getReadChannel(url),false);
-        final IndexedFidReader reader = new IndexedFidReader(url,rbc, tracker);               
-        readEntries.add(new AccessEntry(ShpFileType.FIX, url, reader));      
+        final IndexedFidReader reader = new IndexedFidReader(url,rbc, tracker);
+        readEntries.add(new AccessEntry(ShpFileType.FIX, url, reader));
         return reader;
     }
 
@@ -175,27 +175,27 @@ public final class AccessManager {
             throw new IllegalArgumentException(
                     "Currently only local files are supported for writing");
         }
-        
-        final URL url = files.getURL(ShpFileType.FIX);  
+
+        final URL url = files.getURL(ShpFileType.FIX);
         ReadableByteChannel rbc = null;
         try {
             rbc = toClosingChannel(files.getReadChannel(url),true);
         } catch (FileNotFoundException e) {
             rbc = storage.getWriteChannel();
         }
-        
+
         final IndexedFidWriter writer = new IndexedFidWriter(
                 url,rbc,storage.getWriteChannel());
-        writeEntries.add(new AccessEntry(ShpFileType.FIX, url, writer));        
+        writeEntries.add(new AccessEntry(ShpFileType.FIX, url, writer));
         return writer;
     }
-    
+
     /**
      * Obtains a Storage file for the type indicated. An id is provided so that
      * the same file can be obtained at a later time with just the id
-     * 
+     *
      * @param type the type of file to create and return
-     * 
+     *
      * @return StorageFile
      * @throws IOException if temporary files cannot be created
      */
@@ -209,7 +209,7 @@ public final class AccessManager {
         tempFiles.add(tempFile);
         return tempFile;
     }
-    
+
     /**
      * Close all readers and writers.
      */
@@ -222,7 +222,7 @@ public final class AccessManager {
             }
         }
         writeEntries.clear();
-        
+
         for(final AccessEntry entry : readEntries){
             try {
                 entry.holder.close();
@@ -231,19 +231,19 @@ public final class AccessManager {
             }
         }
         readEntries.clear();
-        
+
     }
-    
+
     /**
      * Aquiere a write lock and replace all storage files.
      * At this step all readers and writers must have been closed.
      */
     public synchronized void replaceStorageFiles() throws IOException{
-                
+
         if(!allRWClosed()){
             throw new IOException("Can not replace files while readers or writers are still open :\n"+this.toString());
         }
-        
+
         getWriteLock();
         try{
             final StorageFile[] files = tempFiles.toArray(new StorageFile[tempFiles.size()]);
@@ -253,9 +253,9 @@ public final class AccessManager {
             //whatever happens we release the lock
             releaseWriteLock();
         }
-        
+
     }
-    
+
     private boolean allRWClosed(){
         boolean cleanState = true;
         for(final AccessEntry entry : readEntries){
@@ -266,16 +266,16 @@ public final class AccessManager {
         }
         return cleanState;
     }
-    
+
     /**
      * Will close all created readers and writers and release any lock.
      */
     public void dispose(){
-        
+
         if(!tempFiles.isEmpty()){
             LOGGER.log(Level.WARNING, "Disposing manager with temporary files remaining.");
         }
-        
+
         for(final AccessEntry entry : writeEntries){
             try {
                 entry.holder.close();
@@ -283,7 +283,7 @@ public final class AccessManager {
                 LOGGER.log(Level.WARNING, "Failed to close writer : "+entry.holder, ex);
             }
         }
-        
+
         for(final AccessEntry entry : readEntries){
             try {
                 entry.holder.close();
@@ -292,63 +292,63 @@ public final class AccessManager {
             }
         }
     }
-    
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder();
-        
+
         try{
             final StringWriter writer = new StringWriter();
             final TableAppender tb = new TableAppender(writer);
-            tb.writeHorizontalSeparator();
+            tb.appendHorizontalSeparator();
             tb.append("type\topen\tpath\tholder\n");
-            tb.writeHorizontalSeparator();
-            
+            tb.appendHorizontalSeparator();
+
             tb.append("Reading\n");
             for(final AccessEntry entry : readEntries){
                 tb.append(entry.toString());
                 tb.append('\n');
             }
-        
-            tb.writeHorizontalSeparator();
-            
+
+            tb.appendHorizontalSeparator();
+
             tb.append("Writing\n");
             for(final AccessEntry entry : writeEntries){
                 tb.append(entry.toString());
                 tb.append('\n');
             }
-            tb.writeHorizontalSeparator();
+            tb.appendHorizontalSeparator();
             tb.flush();
             sb.append(writer.getBuffer().toString()).append("\n");
-            
+
         }catch(IOException ex){
             //will not happen
         }
-               
+
         return sb.toString();
     }
 
     @Override
     protected void finalize() throws Throwable {
-        
+
         if(!allRWClosed()){
             throw new IOException("Access Manager has not been closed in proper state, readers or writers are still open :\n"+this.toString());
         }
-        
+
     }
- 
+
     private ReadableByteChannel toClosingChannel(final ReadableByteChannel channel, final boolean writing){
         if(channel instanceof ClosingFileChannel || channel instanceof ClosingReadableByteChannel){
             throw new RuntimeException("Wrapping an already auto closing channel.");
         }
-        
+
         if(channel instanceof FileChannel){
             return new ClosingFileChannel((FileChannel)channel, writing);
         }else{
             return new ClosingReadableByteChannel(channel);
         }
     }
-    
+
     private final class ClosingReadableByteChannel implements ReadableByteChannel{
 
         private final ReadableByteChannel wrapped;
@@ -357,7 +357,7 @@ public final class AccessManager {
             this.wrapped = wrapped;
             getReadLock();
         }
-        
+
         @Override
         public int read(final ByteBuffer dst) throws IOException {
             return wrapped.read(dst);
@@ -373,11 +373,11 @@ public final class AccessManager {
             wrapped.close();
             releaseReadLock();
         }
-        
+
     }
-    
+
     private final class ClosingFileChannel extends FileChannel implements ReadableByteChannel{
-                
+
         private final FileChannel wrapped;
         private final boolean write;
         private boolean closed;
@@ -412,7 +412,7 @@ public final class AccessManager {
         public long position() throws IOException {
             return wrapped.position();
         }
-        
+
         @Override
         public FileChannel position(final long newPosition) throws IOException {
             return wrapped.position(newPosition);
@@ -493,5 +493,5 @@ public final class AccessManager {
 
         }
     }
-    
+
 }

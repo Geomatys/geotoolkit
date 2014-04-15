@@ -30,7 +30,7 @@ import org.opengis.geometry.Envelope;
 
 /**
  * Metadatas of GPX files.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
@@ -99,9 +99,9 @@ public class MetaData {
         final StringWriter writer = new StringWriter();
         final TableAppender tablewriter = new TableAppender(writer);
 
-        tablewriter.writeHorizontalSeparator();
+        tablewriter.appendHorizontalSeparator();
         tablewriter.append("GPX-Metadata\t \n");
-        tablewriter.writeHorizontalSeparator();
+        tablewriter.appendHorizontalSeparator();
 
         tablewriter.append("Name\t"+getName()+"\n");
         tablewriter.append("Desc\t"+getDescription()+"\n");
@@ -137,8 +137,8 @@ public class MetaData {
                 tablewriter.append("\t"+uri+"\n");
             }
         }
-        
-        tablewriter.writeHorizontalSeparator();
+
+        tablewriter.appendHorizontalSeparator();
 
         try {
             tablewriter.flush();
@@ -189,7 +189,7 @@ public class MetaData {
         if(!Objects.equals(this.links, other.links)){
             return false;
         }
-        
+
         if (this.time != other.time && (this.time == null || !this.time.equals(other.time))) {
             return false;
         }

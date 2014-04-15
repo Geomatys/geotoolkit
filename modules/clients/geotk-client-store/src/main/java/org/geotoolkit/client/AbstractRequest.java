@@ -261,7 +261,7 @@ public abstract class AbstractRequest implements Request {
             final StringWriter writer = new StringWriter();
             final TableAppender tablewriter = new TableAppender(writer);
 
-            tablewriter.writeHorizontalSeparator();
+            tablewriter.appendHorizontalSeparator();
 
             for(Entry<String,List<String>> entry : cnx.getHeaderFields().entrySet()){
                 tablewriter.append((entry.getKey()!= null)? entry.getKey() : "null");
@@ -269,7 +269,7 @@ public abstract class AbstractRequest implements Request {
                 tablewriter.append(StringUtilities.toCommaSeparatedValues(entry.getValue()));
                 tablewriter.append('\n');
             }
-            tablewriter.writeHorizontalSeparator();
+            tablewriter.appendHorizontalSeparator();
 
             try {
                 tablewriter.flush();

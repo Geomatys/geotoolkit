@@ -82,24 +82,24 @@ public class Relation extends IdentifiedElement{
         final StringWriter writer = new StringWriter();
         final TableAppender tablewriter = new TableAppender(writer);
 
-        tablewriter.writeHorizontalSeparator();
+        tablewriter.appendHorizontalSeparator();
         tablewriter.append("OSM-RELATION\t \n");
-        tablewriter.writeHorizontalSeparator();
+        tablewriter.appendHorizontalSeparator();
         tablewriter.append("members count\t"+members.size()+"\n");
         for(int i=0;i<members.size();i++){
             tablewriter.append("member " +i +"\t"+members.get(i)+"\n");
         }
-        tablewriter.writeHorizontalSeparator();
+        tablewriter.appendHorizontalSeparator();
         tablewriter.append("ID\t"+getId()+"\n");
         tablewriter.append("ChangeSet\t"+getChangeset()+"\n");
         tablewriter.append("User\t"+getUser()+"\n");
         tablewriter.append("TimeStamp\t"+new Date(getTimestamp())+"\n");
         tablewriter.append("version\t"+getVersion()+"\n");
-        tablewriter.writeHorizontalSeparator();
+        tablewriter.appendHorizontalSeparator();
         for(Tag t : getTags()){
             tablewriter.append(t.getK()+"\t"+t.getV()+"\n");
         }
-        tablewriter.writeHorizontalSeparator();
+        tablewriter.appendHorizontalSeparator();
 
         try {
             tablewriter.flush();

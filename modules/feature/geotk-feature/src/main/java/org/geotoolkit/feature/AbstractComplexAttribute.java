@@ -183,14 +183,14 @@ public abstract class AbstractComplexAttribute<V extends Collection<Property>,I 
         //make a nice table to display
         final StringWriter writer = new StringWriter();
         final TableAppender tablewriter = new TableAppender(writer);
-        tablewriter.writeHorizontalSeparator();
+        tablewriter.appendHorizontalSeparator();
         tablewriter.append("name\tid\tvalue\n");
-        tablewriter.writeHorizontalSeparator();
+        tablewriter.appendHorizontalSeparator();
 
         final Set<FeatureId> visited = new HashSet<FeatureId>();
         toString(tablewriter, this, null, true, depth, maxarray, visited);
 
-        tablewriter.writeHorizontalSeparator();
+        tablewriter.appendHorizontalSeparator();
         try {
             tablewriter.flush();
             writer.flush();
