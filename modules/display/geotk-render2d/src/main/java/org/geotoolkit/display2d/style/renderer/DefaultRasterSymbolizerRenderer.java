@@ -44,7 +44,6 @@ import javax.media.jai.RenderedOp;
 import javax.media.jai.operator.BandSelectDescriptor;
 import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.math.Statistics;
 import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
@@ -84,10 +83,12 @@ import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.process.coverage.copy.StatisticOp;
 import org.geotoolkit.process.coverage.resample.ResampleDescriptor;
+import org.geotoolkit.process.coverage.shadedrelief.ShadedReliefDescriptor;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.MathTransforms;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.geotoolkit.referencing.operation.transform.LinearTransform;
+import org.geotoolkit.referencing.operation.transform.LinearTransform1D;
 import org.geotoolkit.style.StyleConstants;
 import org.geotoolkit.style.function.Categorize;
 import org.geotoolkit.style.function.CompatibleColorModel;
@@ -97,8 +98,7 @@ import org.geotoolkit.style.function.InterpolationPoint;
 import org.geotoolkit.style.function.Jenks;
 import org.geotoolkit.style.function.Method;
 import org.geotoolkit.style.function.Mode;
-import org.geotoolkit.process.coverage.shadedrelief.ShadedReliefDescriptor;
-import org.geotoolkit.referencing.operation.transform.LinearTransform1D;
+import org.geotoolkit.util.BufferedImageUtilities;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterVisitor;
 import org.opengis.filter.PropertyIsEqualTo;
@@ -598,8 +598,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
         final RenderedImage demImage = dem.getRenderedImage();
 
         // output mnt creation
-        final BufferedImage destMNT = new BufferedImage(demImage.getColorModel(), demImage.getColorModel().createCompatibleWritableRaster(covExtend.width, covExtend.height), true, null);
-
+        final BufferedImage destMNT = BufferedImageUtilities.createImage(covExtend.width, covExtend.height, demImage);
         intersec = Envelopes.transform(covGridGeom.getGridToCRS(PixelInCell.CELL_CORNER).inverse(), intersec);
 
         final Rectangle areaIterate = new Rectangle((int) intersec.getMinimum(0), (int) intersec.getMinimum(1), (int) Math.ceil(intersec.getSpan(0)), (int) Math.ceil(intersec.getSpan(1)));
@@ -743,10 +742,23 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             
             //-- ReliefShadow creating
             final GridCoverage2D mntCoverage = getDEMCoverage(coverage, elevationCoverage);
+                        
+            //BUG ? When using the grid coverage builder the color model is changed
+            if(image.getColorModel() instanceof CompatibleColorModel){
+                final BufferedImage bi = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
+                bi.createGraphics().drawRenderedImage(image, new AffineTransform());
+                image = bi;
+            }
+            
+            final GridCoverageBuilder gcb = new GridCoverageBuilder();
+            gcb.setGridGeometry(coverage.getGridGeometry());
+            gcb.setRenderedImage(image);
+            gcb.setName("tempimg");
+            final GridCoverage2D ti = gcb.getGridCoverage2D();
             
             final MathTransform1D trs = LinearTransform1D.create(rf, 0);
             final org.geotoolkit.process.coverage.shadedrelief.ShadedRelief proc = new org.geotoolkit.process.coverage.shadedrelief.ShadedRelief(
-                    coverage, mntCoverage, trs);
+                    ti, mntCoverage, trs);
             final ParameterValueGroup res = proc.call();
             final GridCoverage2D shaded = (GridCoverage2D) res.parameter(ShadedReliefDescriptor.OUT_COVERAGE_PARAM_NAME).getValue();
             image = shaded.getRenderedImage();

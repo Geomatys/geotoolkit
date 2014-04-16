@@ -21,11 +21,14 @@ import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.vecmath.Vector2f;
 import javax.vecmath.Vector3f;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.grid.ViewType;
+import org.geotoolkit.math.XMath;
 import org.geotoolkit.parameter.Parameters;
 import static org.geotoolkit.parameter.Parameters.value;
 import org.geotoolkit.parameter.ParametersExt;
@@ -49,6 +52,15 @@ import org.opengis.util.FactoryException;
  */
 public class ShadedRelief extends AbstractProcess {
 
+    private static CoordinateReferenceSystem MERCATOR;
+    static {
+        try {
+            MERCATOR = CRS.decode("EPSG:3395");
+        } catch (FactoryException ex) {
+            Logger.getLogger(ShadedRelief.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
     public ShadedRelief(GridCoverage2D coverage, GridCoverage2D elevation, MathTransform1D eleConv){
         this(ShadedReliefDescriptor.INSTANCE,toParameters(coverage, elevation, eleConv));
     }
@@ -76,13 +88,14 @@ public class ShadedRelief extends AbstractProcess {
         
         //light informations
         final Vector3f lightDirection = new Vector3f(1, 1, 1);
+        final Vector3f fragToEye = new Vector3f(0, 0, 1);
         lightDirection.normalize();
         
         final RenderedImage baseImage = coverage.getRenderedImage();
         final ColorModel cm = baseImage.getColorModel();
-        final Raster baseRaster = baseImage.getData();
+        final Raster baseRaster = getData(baseImage);
         
-        final Raster eleImage = elevation.getRenderedImage().getData();        
+        final Raster eleImage = getData(elevation.getRenderedImage());
         final int width = baseImage.getWidth();
         final int height = baseImage.getHeight();
         final BufferedImage resImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
@@ -102,11 +115,9 @@ public class ShadedRelief extends AbstractProcess {
 //        final Unit eleUnit = elevation.getSampleDimension(0).getUnits();
 //        final UnitConverter eleConv = eleUnit.getConverterTo(SI.METRE);
         final MathTransform gridToData = coverage.getGridGeometry().getGridToCRS2D(PixelOrientation.UPPER_LEFT);
-        final CoordinateReferenceSystem mercator;
         final MathTransform dataToMercator;
         try {
-            mercator = CRS.decode("EPSG:3395");
-            dataToMercator = CRS.findMathTransform(coverage.getCoordinateReferenceSystem2D(), mercator);
+            dataToMercator = CRS.findMathTransform(coverage.getCoordinateReferenceSystem2D(), MERCATOR);
             final MathTransform gridToMercator = ConcatenatedTransform.create(gridToData, dataToMercator);
             gridToMercator.transform(coords, 0, coords, 0, coords.length/2);
 
@@ -120,12 +131,8 @@ public class ShadedRelief extends AbstractProcess {
             final Vector3f v1 = new Vector3f();
             final Vector3f v2 = new Vector3f();
             final Vector3f v3 = new Vector3f();
-            final Vector3f c = new Vector3f();
-            final Vector3f d = new Vector3f();
             final Vector3f n1 = new Vector3f();
             final Vector3f n2 = new Vector3f();
-            final Vector3f n3 = new Vector3f();
-            final Vector3f n4 = new Vector3f();
             final Vector3f n = new Vector3f();
             for(int y=0;y<height;y++){
                 for(int x=0;x<width;x++){
@@ -138,31 +145,48 @@ public class ShadedRelief extends AbstractProcess {
                     fb[0]=coords[offset1+2]; fb[1]=coords[offset1+3]; fb[2]=(float)eleConv.transform(eleImage.getSampleFloat(ex, y,  0));
                     fc[0]=coords[offset2+0]; fc[1]=coords[offset2+1]; fc[2]=(float)eleConv.transform(eleImage.getSampleFloat(x,  ey, 0));
                     fd[0]=coords[offset2+2]; fd[1]=coords[offset2+3]; fd[2]=(float)eleConv.transform(eleImage.getSampleFloat(ex, ey, 0));
+                    double dx = Math.abs(fa[0]-fb[0]);
                     
-                    //calculate normal of each side
-                    v1.set(0, fa[1], fa[2]);
-                    v2.set(0, fc[1], fc[2]);
-                    v3.set(1, fa[1], fa[2]);
-                    n1.set(calculateNormal(v1, v2, v3));
-                    v1.set(0, fb[1], fb[2]);
-                    v2.set(0, fd[1], fd[2]);
-                    v3.set(1, fb[1], fb[2]);
-                    n1.add(calculateNormal(v1, v2, v3));
-                    n1.normalize();
                     
-                    v1.set(fa[0], 0, fa[2]);
-                    v2.set(fb[0], 0, fb[2]);
-                    v3.set(fa[0], 1, fa[2]);
+//                    //calculate normal of each side
+//                    v1.set(0, fa[1], fa[2]);
+//                    v2.set(0, fc[1], fc[2]);
+//                    v3.set(1, fa[1], fa[2]);
+//                    n1.set(calculateNormal(v1, v2, v3));
+//                    v1.set(0, fb[1], fb[2]);
+//                    v2.set(0, fd[1], fd[2]);
+//                    v3.set(1, fb[1], fb[2]);
+//                    n1.add(calculateNormal(v1, v2, v3));
+//                    n1.normalize();
+//                    
+//                    v1.set(fa[0], 0, fa[2]);
+//                    v2.set(fb[0], 0, fb[2]);
+//                    v3.set(fa[0], 1, fa[2]);
+//                    n2.set(calculateNormal(v1, v2, v3));
+//                    v1.set(fc[0], 0, fc[2]);
+//                    v2.set(fd[0], 0, fd[2]);
+//                    v3.set(fc[0], 1, fc[2]);
+//                    n2.add(calculateNormal(v1, v2, v3));
+//                    n2.normalize();
+//                    
+//                    n.set(n1);
+//                    n.add(n2);
+//                    n.normalize();
+                    
+                    
+                    //calculate average normal of the triangles
+                    v1.set(fa[0], fa[1], fa[2]);
+                    v2.set(fb[0], fb[1], fb[2]);
+                    v3.set(fc[0], fc[1], fc[2]);
+                    n1.set(calculateNormal(v1, v3, v2));
+                    v1.set(fb[0], fb[1], fb[2]);
+                    v2.set(fc[0], fc[1], fc[2]);
+                    v3.set(fd[0], fd[1], fd[2]);
                     n2.set(calculateNormal(v1, v2, v3));
-                    v1.set(fc[0], 0, fc[2]);
-                    v2.set(fd[0], 0, fd[2]);
-                    v3.set(fc[0], 1, fc[2]);
-                    n2.add(calculateNormal(v1, v2, v3));
-                    n2.normalize();
-                    
                     n.set(n1);
                     n.add(n2);
                     n.normalize();
+                    
                     
                     //calculate shaded color
                     int argb = cm.getRGB(baseRaster.getDataElements(x, y, null));
@@ -170,7 +194,10 @@ public class ShadedRelief extends AbstractProcess {
                     float cg = (float)((argb>>8) & 0xFF) / 255f;
                     float cb = (float)((argb>>0) & 0xFF) / 255f;
                     float ca = (float)((argb>>24) & 0xFF) / 255f;
-                    final float ratio = Math.max(lightDirection.dot(n),0.0f);
+                    float ratio = Math.max(Math.abs(lightDirection.dot(n)),0.0f);
+                    
+                    //next line is to indensify average colors, lights darken flat areas so we compensate a little
+                    ratio = ratio + (float) (Math.sin(ratio*Math.PI)*0.20);
                     argb = toARGB(cr*ratio, cg*ratio, cb*ratio, ca);
                     resImage.setRGB(x, y, argb);
 
@@ -207,6 +234,18 @@ public class ShadedRelief extends AbstractProcess {
 
     private static int toARGB(float r, float g, float b, float a) {
         return toARGB((int)(a*255), (int)(r*255), (int)(g*255), (int)(b*255));
+    }
+    
+    private static Raster getData(RenderedImage ri){
+        if(ri instanceof BufferedImage){
+            return ((BufferedImage)ri).getRaster();
+        }
+        
+        if(ri.getNumXTiles()==1 && ri.getNumYTiles()==1){
+            return ri.getTile(0, 0);
+        }
+        
+        return ri.getData();
     }
     
 }
