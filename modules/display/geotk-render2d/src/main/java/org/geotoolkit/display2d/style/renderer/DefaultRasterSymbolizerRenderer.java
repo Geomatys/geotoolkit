@@ -75,18 +75,15 @@ import org.geotoolkit.image.interpolation.Resample;
 import org.geotoolkit.image.iterator.PixelIterator;
 import org.geotoolkit.image.iterator.PixelIteratorFactory;
 import org.geotoolkit.image.jai.FloodFill;
-import org.geotoolkit.image.relief.ReliefShadow;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.DefaultCoverageMapLayer;
 import org.geotoolkit.map.ElevationModel;
-import org.geotoolkit.metadata.iso.spatial.PixelTranslation;
 import org.geotoolkit.parameter.ParametersExt;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.process.coverage.copy.StatisticOp;
 import org.geotoolkit.process.coverage.resample.ResampleDescriptor;
-import org.geotoolkit.process.image.statistics.ImageStatisticsDescriptor;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.MathTransforms;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
@@ -100,6 +97,8 @@ import org.geotoolkit.style.function.InterpolationPoint;
 import org.geotoolkit.style.function.Jenks;
 import org.geotoolkit.style.function.Method;
 import org.geotoolkit.style.function.Mode;
+import org.geotoolkit.process.coverage.shadedrelief.ShadedReliefDescriptor;
+import org.geotoolkit.referencing.operation.transform.LinearTransform1D;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterVisitor;
 import org.opengis.filter.PropertyIsEqualTo;
@@ -113,6 +112,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.style.ChannelSelection;
@@ -733,7 +733,8 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             final double altitude = elevationModel.getAltitude();
 
             //-- relief factor
-            final double relfactor = 1 - shadedRel.getReliefFactor().evaluate(null, Double.class) / 100.0;
+            final double rf = shadedRel.getReliefFactor().evaluate(null, Double.class);
+            final double relfactor = 1 - rf / 100.0;
             final boolean isBrightness = shadedRel.isBrightnessOnly();
             final double brightness = (isBrightness) ? 2.0 - relfactor : 1;
             
@@ -743,19 +744,26 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             //-- ReliefShadow creating
             final GridCoverage2D mntCoverage = getDEMCoverage(coverage, elevationCoverage);
             
-            final ReliefShadow rfs = new ReliefShadow(gridAzim, altitude, brightness, relfactor);
-            rfs.setAltitudeAxisDirection(elevationModel.getAltitudeDirection());
-            final RenderedImage mnt = mntCoverage.getRenderedImage();
-            //-- mnt should be null if current elevation coverage doesn't concord with coverage.
-            if (mnt != null) {
-                if (mnt.getSampleModel().getNumBands() > 1) {
-                    throw new IllegalStateException("The Digital Elevation Model should have only one band. band number found : "+mnt.getSampleModel().getNumBands());
-                }
-                final ProcessDescriptor statsDescriptor = ImageStatisticsDescriptor.INSTANCE;
-                final ParameterValueGroup statsInput    = statsDescriptor.getInputDescriptor().createValue();
-                statsInput.parameter(ImageStatisticsDescriptor.INPUT_IMAGE_PARAM_NAME).setValue(mnt);
-                image = rfs.getRelief(image, mnt, altiScale);
-            }
+            final MathTransform1D trs = LinearTransform1D.create(rf, 0);
+            final org.geotoolkit.process.coverage.shadedrelief.ShadedRelief proc = new org.geotoolkit.process.coverage.shadedrelief.ShadedRelief(
+                    coverage, mntCoverage, trs);
+            final ParameterValueGroup res = proc.call();
+            final GridCoverage2D shaded = (GridCoverage2D) res.parameter(ShadedReliefDescriptor.OUT_COVERAGE_PARAM_NAME).getValue();
+            image = shaded.getRenderedImage();
+            
+//            final ReliefShadow rfs = new ReliefShadow(gridAzim, altitude, brightness, relfactor);
+//            rfs.setAltitudeAxisDirection(elevationModel.getAltitudeDirection());
+//            final RenderedImage mnt = mntCoverage.getRenderedImage();
+//            //-- mnt should be null if current elevation coverage doesn't concord with coverage.
+//            if (mnt != null) {
+//                if (mnt.getSampleModel().getNumBands() > 1) {
+//                    throw new IllegalStateException("The Digital Elevation Model should have only one band. band number found : "+mnt.getSampleModel().getNumBands());
+//                }
+//                final ProcessDescriptor statsDescriptor = ImageStatisticsDescriptor.INSTANCE;
+//                final ParameterValueGroup statsInput    = statsDescriptor.getInputDescriptor().createValue();
+//                statsInput.parameter(ImageStatisticsDescriptor.INPUT_IMAGE_PARAM_NAME).setValue(mnt);
+//                image = rfs.getRelief(image, mnt, altiScale);
+//            }
         }
 
         //contrast enhancement -------------------------------------------------

@@ -59,21 +59,25 @@ public class ReliefShadowDemo {
     public static void main(String[] args) throws Exception {
         Demos.init();
         ImageReader covPath = XImageIO.getReaderByFormatName("tiff-wf", reliefPath, Boolean.FALSE, false);
-            covPath.setInput(reliefPath);
+        covPath.setInput(reliefPath);
+        
+        FileCoverageStore store = new FileCoverageStore(reliefPath.toURL(), "AUTO");
+        final CoverageReference ref = store.getCoverageReference(store.getNames().iterator().next());
+        
 //        final GridCoverageReader  demGCR = CoverageIO.createSimpleReader(covPath);
         
         /*
          * Coverage which will be shadowed.
          */
-        final File input = new File("data/clouds.jpg");
-        final FileCoverageStore store = new FileCoverageStore(input.toURL(), "JPEG");
-        final Name name = store.getNames().iterator().next();
-        final CoverageReference ref = store.getCoverageReference(name);
+//        final File input = new File("data/clouds.jpg");
+//        final FileCoverageStore store = new FileCoverageStore(input.toURL(), "JPEG");
+//        final Name name = store.getNames().iterator().next();
+//        final CoverageReference ref = store.getCoverageReference(name);
 //        final GridCoverageReader reader = CoverageIO.createSimpleReader(input);
 //        final GridCoverage2D grid = (GridCoverage2D) reader.read(0, null);
         //create a mapcontext
         final MapContext context  = MapBuilder.createContext();        
-        final CoverageMapLayer cl = MapBuilder.createCoverageLayer(ref, SF.style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER));
+        final CoverageMapLayer cl = MapBuilder.createCoverageLayer(new File("data/clouds.jpg"));
         final double azimuth = 130;
         final double altitude = 2;
         final double scale = 55;
@@ -112,7 +116,7 @@ public class ReliefShadowDemo {
          * First argument define in percent the dimming of shadow pixel value.
          * Second argument define if we want increase sunny pixel value.
          */
-        final ShadedRelief relief = SF.shadedRelief(FF.literal(60),false);
+        final ShadedRelief relief = SF.shadedRelief(FF.literal(10),false);
         final Symbolizer outline = null;
 
         final RasterSymbolizer symbol = SF.rasterSymbolizer(
