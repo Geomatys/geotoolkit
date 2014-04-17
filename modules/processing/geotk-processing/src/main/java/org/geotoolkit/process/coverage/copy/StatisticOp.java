@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2011, Geomatys
+ *    (C) 2011-2014, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -21,14 +21,15 @@ import java.awt.image.SampleModel;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import javax.media.jai.iterator.RectIter;
-import javax.media.jai.iterator.RectIterFactory;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
+import org.geotoolkit.image.iterator.PixelIterator;
+import org.geotoolkit.image.iterator.PixelIteratorFactory;
 
 /**
  *
+ * @author Remi Marechal (Geomatys)
  * @author Johann Sorel (Geomatys)
  * @author Quentin Boileau (Geomatys)
  * @module pending
@@ -70,30 +71,16 @@ public class StatisticOp{
         Arrays.fill(min, Double.MAX_VALUE);
         Arrays.fill(max, Double.MIN_VALUE);
         
-        final RectIter ite = RectIterFactory.create(image, null);        
-        
-        int bandIndex = 0;
-        ite.startBands();
-        if (!ite.finishedBands()) do {
-            
-            ite.startLines();
-            if (!ite.finishedLines()) do {
-                
-                ite.startPixels();
-                if (!ite.finishedPixels()) do {
-                    
-                    final double sample = ite.getSampleDouble() ;
-                    if (!Double.isNaN(sample)) {
-                        min[bandIndex] = Math.min( min[bandIndex], sample);
-                        max[bandIndex] = Math.max( max[bandIndex], sample);
-                    }
-                } while (!ite.nextPixelDone());
-                
-            } while (!ite.nextLineDone());
-            
-            bandIndex++;
-        } while (!ite.nextBandDone());
-
+        int b = 0;        
+        final PixelIterator pix = PixelIteratorFactory.createDefaultIterator(image);
+        while (pix.next()) {
+            final double d = pix.getSampleDouble();
+            if (!Double.isNaN(d)) {
+                min[b] = Math.min(min[b], d);
+                max[b] = Math.max(max[b], d);
+            }
+            if (++b == nbBands) b = 0; 
+        }
         analyze.put(MINIMUM, min);
         analyze.put(MAXIMUM, max);
         return analyze;

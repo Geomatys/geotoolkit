@@ -48,7 +48,7 @@ public class ImageStatisticsProcess extends AbstractProcess {
     protected void execute() throws ProcessException {
         final RenderedImage inImg = value(INPUT_IMAGE,  inputParameters);
         
-        final PixelIterator pix = PixelIteratorFactory.createRowMajorIterator(inImg);
+        final PixelIterator pix = PixelIteratorFactory.createDefaultIterator(inImg);
         
         final int numBand = pix.getNumBands();
         final Statistics[] stats = new Statistics[numBand];
