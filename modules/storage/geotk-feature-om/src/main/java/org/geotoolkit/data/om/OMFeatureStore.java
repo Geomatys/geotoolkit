@@ -96,7 +96,7 @@ public class OMFeatureStore extends AbstractFeatureStore {
 
     private static final QueryCapabilities capabilities = new DefaultQueryCapabilities(false);
 
-    private final Map<Name, FeatureType> types = new HashMap<Name,FeatureType>();
+    private final Map<Name, FeatureType> types = new HashMap<>();
 
     private final ManageableDataSource source;
 
@@ -211,7 +211,7 @@ public class OMFeatureStore extends AbstractFeatureStore {
     public List<FeatureId> addFeatures(final Name groupName, final Collection<? extends Feature> newFeatures, 
             final Hints hints) throws DataStoreException {
         final FeatureType featureType = getFeatureType(groupName); //raise an error if type doesn't exist
-        final List<FeatureId> result = new ArrayList<FeatureId>();
+        final List<FeatureId> result = new ArrayList<>();
 
 
         Connection cnx = null;
@@ -432,7 +432,7 @@ public class OMFeatureStore extends AbstractFeatureStore {
                 }
             }
 
-            final Collection<Property> props = new ArrayList<Property>();
+            final Collection<Property> props = new ArrayList<>();
             final String id = result.getString("id");
             final double x = result.getDouble("x_value");
             final double y = result.getDouble("y_value");

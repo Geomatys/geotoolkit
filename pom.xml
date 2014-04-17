@@ -1010,6 +1010,14 @@
       <name>Geotoolkit.org repository</name>
       <url>http://maven.geotoolkit.org</url>
     </repository>
+    <repository>
+      <id>unidata</id>
+      <name>unidata</name>
+      <url>http://artifacts.unidata.ucar.edu/content/repositories/unidata-releases/</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+  </repository>
   </repositories>
 
   <pluginRepositories>
