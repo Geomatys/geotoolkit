@@ -403,6 +403,7 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
         }
         
         final CoverageMapLayer tilelayer = MapBuilder.createCoverageLayer(coverage, getUserObject().getStyle(), getUserObject().getName());
+        tilelayer.setElevationModel(getUserObject().getElevationModel());
         return new ProjectedCoverage(params, tilelayer);
     }
     
@@ -418,6 +419,7 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
         }
         
         final CoverageMapLayer tilelayer = MapBuilder.createCoverageLayer(coverage, getUserObject().getStyle(), getUserObject().getName());
+        tilelayer.setElevationModel(getUserObject().getElevationModel());
         return new ProjectedCoverage(params, tilelayer);
     }
     
