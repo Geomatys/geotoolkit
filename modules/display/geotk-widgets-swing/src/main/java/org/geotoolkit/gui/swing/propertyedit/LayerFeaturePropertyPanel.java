@@ -152,9 +152,11 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
     /** Creates new form DefaultMapLayerTablePanel */
     public LayerFeaturePropertyPanel() {
         initComponents();
-
+        
+        JLabel label = new JLabel(MessageBundle.getString("cql.text.help"));
+        guiPanFilter.add(BorderLayout.NORTH, label);
         guiPanFilter.add(BorderLayout.CENTER,guiCQL);
-
+        
         tab_data.setEditable(false);
         tab_data.setColumnControlVisible(true);
         tab_data.setHorizontalScrollEnabled(true);
@@ -302,8 +304,6 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
         guiPanFilter = new JPanel();
         jPanel4 = new JPanel();
         jPanel3 = new JPanel();
-        jLabel2 = new JLabel();
-        jSeparator1 = new JSeparator();
         jLabel1 = new JLabel();
         guiVersions = new JComboBox();
         jPanel1 = new JPanel();
@@ -333,10 +333,6 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
 
         jPanel4.setLayout(new GridLayout(2, 1));
 
-        jLabel2.setText(MessageBundle.getString("filter")); // NOI18N
-
-        jSeparator1.setOrientation(SwingConstants.VERTICAL);
-
         jLabel1.setHorizontalAlignment(SwingConstants.CENTER);
         jLabel1.setText(MessageBundle.getString("version")); // NOI18N
 
@@ -346,16 +342,11 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
             jPanel3Layout.createParallelGroup(Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addComponent(jLabel1)
-                .addPreferredGap(ComponentPlacement.RELATED)
-                .addComponent(jSeparator1, GroupLayout.PREFERRED_SIZE, 11, GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(ComponentPlacement.RELATED)
-                .addComponent(jLabel2, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(Alignment.LEADING)
-            .addComponent(jSeparator1)
             .addComponent(jLabel1, GroupLayout.DEFAULT_SIZE, 25, Short.MAX_VALUE)
-            .addComponent(jLabel2, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         jPanel4.add(jPanel3);
@@ -532,12 +523,10 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
     private JCheckBox guiShowId;
     private JComboBox guiVersions;
     private JLabel jLabel1;
-    private JLabel jLabel2;
     private JPanel jPanel1;
     private JPanel jPanel2;
     private JPanel jPanel3;
     private JPanel jPanel4;
-    private JSeparator jSeparator1;
     private JButton jbu_action;
     private JCheckBox jcb_edit;
     private JPanel panCenter;
@@ -599,10 +588,8 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
             if (lst.size() < 2) {
                 guiVersions.setVisible(false);
                 jLabel1.setVisible(false);
-                jSeparator1.setVisible(false);
             } else {
                 guiVersions.setVisible(true);
-                jSeparator1.setVisible(true);
             }
 
         }
