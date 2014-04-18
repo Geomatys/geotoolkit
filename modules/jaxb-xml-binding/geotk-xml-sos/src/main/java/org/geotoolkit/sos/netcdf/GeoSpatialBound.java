@@ -107,11 +107,14 @@ public class GeoSpatialBound {
     }
 
     public TemporalGeometricPrimitive getTimeObject(final String version) {
-        if (dateStart.getTime() == dateEnd.getTime()) {
-            return SOSXmlFactory.buildTimeInstant(version, new Timestamp(dateStart.getTime()));
-        } else {
-            return SOSXmlFactory.buildTimePeriod(version, new Timestamp(dateStart.getTime()), new Timestamp(dateEnd.getTime()));
+        if (dateStart != null && dateEnd != null) {
+            if (dateStart.getTime() == dateEnd.getTime()) {
+                return SOSXmlFactory.buildTimeInstant(version, new Timestamp(dateStart.getTime()));
+            } else {
+                return SOSXmlFactory.buildTimePeriod(version, new Timestamp(dateStart.getTime()), new Timestamp(dateEnd.getTime()));
+            }
         }
+        return null;
     }
 
     public Envelope getSpatialObject(final String version) {

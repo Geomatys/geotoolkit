@@ -86,7 +86,7 @@ public abstract class ExtensibleResponseType implements SOSResponse {
      */
     public List<Object> getExtension() {
         if (extension == null) {
-            extension = new ArrayList<Object>();
+            extension = new ArrayList<>();
         }
         return this.extension;
     }

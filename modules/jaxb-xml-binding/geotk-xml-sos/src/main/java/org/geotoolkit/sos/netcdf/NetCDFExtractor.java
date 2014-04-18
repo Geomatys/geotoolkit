@@ -38,6 +38,7 @@ import static org.geotoolkit.sos.netcdf.NetCDFUtils.*;
 import org.geotoolkit.sos.xml.SOSXmlFactory;
 import org.geotoolkit.swe.xml.AbstractDataRecord;
 import org.geotoolkit.swe.xml.DataArrayProperty;
+import org.geotoolkit.swe.xml.Phenomenon;
 import static org.geotoolkit.swe.xml.v200.TextEncodingType.DEFAULT_ENCODING;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.observation.Observation;
@@ -61,7 +62,11 @@ public class NetCDFExtractor {
     
     public List<Observation> getObservationFromNetCDF(final File netCDFFile, final String procedureID) {
         final NCFieldAnalyze analyze = analyzeResult(netCDFFile);
-        return parseDataBlockTS(analyze, procedureID);
+        if (analyze.timeSeries) {
+            return parseDataBlockTS(analyze, procedureID);
+        } else {
+            return parseDataBlockXY(analyze, procedureID);
+        }
     }
     
     public NCFieldAnalyze analyzeResult(final File netCDFFile) {
@@ -109,6 +114,7 @@ public class NetCDFExtractor {
                             currentField.type = Type.DATE;
                             analyze.mainField = currentField;
                         }
+                        analyze.timeField = currentField;
 
                     } else if (name.equalsIgnoreCase("Latitude") || name.equalsIgnoreCase("lat")) {
                         currentField.type = Type.DOUBLE;
@@ -183,22 +189,15 @@ public class NetCDFExtractor {
         try {
 
             final List<String> separators = parseSeparatorValues(analyze.file, analyze);
-
-            boolean single = false;
-            if (separators.isEmpty()) {
-                single = true;
-                separators.add("");
-            }
+            final boolean single          = separators.isEmpty();
             
-            Variable latVar = null;
-            Variable lonVar = null;
             Array latArray  = null;
             Array lonArray  = null;
             if (analyze.hasSpatial()) {
-                latVar   = analyze.vars.get(analyze.latField.label);
-                lonVar   = analyze.vars.get(analyze.lonField.label);
-                latArray = analyze.file.readArrays(Arrays.asList(latVar)).get(0);
-                lonArray = analyze.file.readArrays(Arrays.asList(lonVar)).get(0);
+                Variable latVar = analyze.vars.get(analyze.latField.label);
+                Variable lonVar = analyze.vars.get(analyze.lonField.label);
+                latArray        = analyze.file.readArrays(Arrays.asList(latVar)).get(0);
+                lonArray        = analyze.file.readArrays(Arrays.asList(lonVar)).get(0);
             }
             
             final Variable timeVar  = analyze.vars.get(analyze.mainField.label);
@@ -215,7 +214,7 @@ public class NetCDFExtractor {
             }
             
             final AbstractDataRecord datarecord = OMUtils.getDataRecordTimeSeries("2.0.0", analyze.phenfields);
-            final org.geotoolkit.swe.xml.Phenomenon phenomenon = OMUtils.getPhenomenon("2.0.0", analyze.phenfields);
+            final Phenomenon phenomenon         = OMUtils.getPhenomenon("2.0.0", analyze.phenfields);
 
             if (single) {
                 final StringBuilder sb   = new StringBuilder();
@@ -276,7 +275,7 @@ public class NetCDFExtractor {
             } else {
                 for (int j = 0; j < separators.size(); j++) {
                     
-                    final String separator   = separators.get(j);
+                    final String identifier  = separators.get(j);
                     final StringBuilder sb   = new StringBuilder();
                     int count                = timeVar.getDimension(0).getLength();
                     final GeoSpatialBound gb = new GeoSpatialBound();
@@ -288,7 +287,7 @@ public class NetCDFExtractor {
                         final double longitude        = getDoubleValue(lonArray, j);
                         final DirectPosition position = SOSXmlFactory.buildDirectPosition("2.0.0", null, 2, Arrays.asList(latitude, longitude));
                         final Point geom              = SOSXmlFactory.buildPoint("2.0.0", "SamplingPoint", position);
-                        final SamplingFeature sp      = SOSXmlFactory.buildSamplingPoint("2.0.0", separator, null, null, null, geom);
+                        final SamplingFeature sp      = SOSXmlFactory.buildSamplingPoint("2.0.0", identifier, null, null, null, geom);
                         foi                           = SOSXmlFactory.buildFeatureProperty("2.0.0", sp);
                     }
                 
@@ -322,8 +321,8 @@ public class NetCDFExtractor {
                     }
                     final DataArrayProperty result = SOSXmlFactory.buildDataArrayProperty("2.0.0", "array-1", count, "SimpleDataArray", datarecord, DEFAULT_ENCODING, sb.toString());
                     results.add(OMXmlFactory.buildObservation("2.0.0",           // version
-                                                  separator,                     // id
-                                                  separator,                     // name
+                                                  identifier,                    // id
+                                                  identifier,                    // name
                                                   null,                          // description
                                                   foi,                           // foi
                                                   phenomenon,                    // phenomenon
@@ -349,7 +348,7 @@ public class NetCDFExtractor {
      *
      * @return a datablock containing the observations.
      */
-    private List<Observation> parseDataBlockXY(final NetcdfFile file, final NCFieldAnalyze analyze, final String seriePrefix) {
+    private List<Observation> parseDataBlockXY(final NCFieldAnalyze analyze, final String procedureID) {
         final List<Observation> results = new ArrayList<>();
         if (analyze.mainField == null) {
             LOGGER.warning("No main field found");
@@ -358,35 +357,64 @@ public class NetCDFExtractor {
         LOGGER.info("parsing datablock XY");
 
         try {
-            final List<String> separators = parseSeparatorValues(file, analyze);
+            final List<String> separators = parseSeparatorValues(analyze.file, analyze);
+            final boolean single          = separators.isEmpty();
 
-            boolean single = false;
-            if (separators.isEmpty()) {
-                single = true;
-                separators.add("");
+            Array latArray  = null;
+            Array lonArray  = null;
+            if (analyze.hasSpatial()) {
+                Variable latVar = analyze.vars.get(analyze.latField.label);
+                Variable lonVar = analyze.vars.get(analyze.lonField.label);
+                latArray        = analyze.file.readArrays(Arrays.asList(latVar)).get(0);
+                lonArray        = analyze.file.readArrays(Arrays.asList(lonVar)).get(0);
             }
-
-            for (String identifier : separators) {
-                for (Field field : analyze.phenfields) {
-                    final String serieName = identifier + field.label;
-                    
-                }
+            
+            Array timeArray  = null;
+            if (analyze.hasTime()) {
+                Variable timeVar = analyze.vars.get(analyze.timeField.label);
+                timeArray        = analyze.file.readArrays(Arrays.asList(timeVar)).get(0);
             }
-
-            final Variable zVar      = analyze.vars.get(analyze.mainField.label);
-            final Array zArray      = file.readArrays(Arrays.asList(zVar)).get(0);
+            
+            final Variable zVar     = analyze.vars.get(analyze.mainField.label);
+            final Array zArray      = analyze.file.readArrays(Arrays.asList(zVar)).get(0);
             final boolean constantZ = analyze.mainField.dimension == 1;
             final boolean Zfirst    = analyze.mainField.mainVariableFirst;
 
             final Map<String, Array> phenArrays = new HashMap<>();
             for (Field field : analyze.phenfields) {
                 final Variable phenVar = analyze.vars.get(field.label);
-                final Array phenArray  = file.readArrays(Arrays.asList(phenVar)).get(0);
+                final Array phenArray  = analyze.file.readArrays(Arrays.asList(phenVar)).get(0);
                 phenArrays.put(field.label, phenArray);
             }
-
+            
+            final AbstractDataRecord datarecord = OMUtils.getDataRecordProfile("2.0.0", analyze.phenfields);
+            final Phenomenon phenomenon         = OMUtils.getPhenomenon("2.0.0", analyze.phenfields);
+            
             if (single) {
-                final StringBuilder sb = new StringBuilder();
+                final StringBuilder sb   = new StringBuilder();
+                final int count          = zVar.getDimension(0).getLength();
+                final GeoSpatialBound gb = new GeoSpatialBound();
+                final String identifier  = UUID.randomUUID().toString();
+                
+                //read geometry (assume point)
+                FeatureProperty foi = null;
+                if (analyze.hasSpatial()) {
+                    final double latitude         = getDoubleValue(latArray, 0);
+                    final double longitude        = getDoubleValue(lonArray, 0);
+                    final DirectPosition position = SOSXmlFactory.buildDirectPosition("2.0.0", null, 2, Arrays.asList(latitude, longitude));
+                    final Point geom              = SOSXmlFactory.buildPoint("2.0.0", "SamplingPoint", position);
+                    final SamplingFeature sp      = SOSXmlFactory.buildSamplingPoint("2.0.0", identifier, null, null, null, geom);
+                    foi                           = SOSXmlFactory.buildFeatureProperty("2.0.0", sp);
+                }
+                if (analyze.hasTime()) {
+                    long millis = getTimeValue(timeArray, 0);
+
+                    if (millis != 0 && millis != ((Integer.MIN_VALUE * -1) + 1)) {
+                        final Date d = new Date(millis * 1000);
+                        gb.addDate(d);
+                    }
+                }
+                
                 for (int zIndex = 0; zIndex < zVar.getDimension(0).getLength(); zIndex++) {
 
                     double zLevel = getDoubleValue(zArray, zIndex);
@@ -394,7 +422,8 @@ public class NetCDFExtractor {
                     if (zLevel == 0 || zLevel == FILL_VALUE) {
                         continue;
                     }
-
+                    sb.append(zLevel).append(DEFAULT_ENCODING.getTokenSeparator());
+                    
                     for (Field field : analyze.phenfields) {
                         final Array phenArray = phenArrays.get(field.label);
                         final double value    = getDoubleValue(phenArray, zIndex);
@@ -409,10 +438,42 @@ public class NetCDFExtractor {
                     sb.deleteCharAt(sb.length() - 1);
                     sb.append(DEFAULT_ENCODING.getBlockSeparator());
                 }
+                final DataArrayProperty result = SOSXmlFactory.buildDataArrayProperty("2.0.0", "array-1", count, "SimpleDataArray", datarecord, DEFAULT_ENCODING, sb.toString());
+                results.add(OMXmlFactory.buildObservation("2.0.0",             // version
+                                              identifier,                      // id
+                                              identifier,                      // name
+                                              null,                            // description
+                                              foi,                             // foi
+                                              phenomenon,                      // phenomenon
+                                              procedureID,                     // procedure
+                                              result,                          // result
+                                              gb.getTimeObject("2.0.0")));     // time
                 
             } else {
                 for (int profileIndex = 0; profileIndex < separators.size(); profileIndex++) {
-                    final String separator = separators.get(profileIndex);
+                    
+                    final String identifier  = separators.get(profileIndex);
+                    final int count          = zVar.getDimension(0).getLength();
+                    final GeoSpatialBound gb = new GeoSpatialBound();
+                    
+                    //read geometry (assume point)
+                    FeatureProperty foi = null;
+                    if (analyze.hasSpatial()) {
+                        final double latitude         = getDoubleValue(latArray, 0);
+                        final double longitude        = getDoubleValue(lonArray, 0);
+                        final DirectPosition position = SOSXmlFactory.buildDirectPosition("2.0.0", null, 2, Arrays.asList(latitude, longitude));
+                        final Point geom              = SOSXmlFactory.buildPoint("2.0.0", "SamplingPoint", position);
+                        final SamplingFeature sp      = SOSXmlFactory.buildSamplingPoint("2.0.0", identifier, null, null, null, geom);
+                        foi                           = SOSXmlFactory.buildFeatureProperty("2.0.0", sp);
+                    }
+                    if (analyze.hasTime()) {
+                        long millis = getTimeValue(timeArray, 0);
+
+                        if (millis != 0 && millis != ((Integer.MIN_VALUE * -1) + 1)) {
+                            final Date d = new Date(millis * 1000);
+                            gb.addDate(d);
+                        }
+                    }
                     
                     final StringBuilder sb = new StringBuilder();
                     for (int zIndex = 0; zIndex < zVar.getDimension(0).getLength(); zIndex++) {
@@ -421,6 +482,7 @@ public class NetCDFExtractor {
                         if (zLevel == 0 || zLevel == FILL_VALUE) {
                             continue;
                         }
+                        sb.append(zLevel).append(DEFAULT_ENCODING.getTokenSeparator());
 
                         for (Field field : analyze.phenfields) {
                             final Array phenArray   = phenArrays.get(field.label);
@@ -437,7 +499,16 @@ public class NetCDFExtractor {
                         sb.deleteCharAt(sb.length() - 1);
                         sb.append(DEFAULT_ENCODING.getBlockSeparator());
                     }
-                    final String dataValue = sb.toString();
+                    final DataArrayProperty result = SOSXmlFactory.buildDataArrayProperty("2.0.0", "array-1", count, "SimpleDataArray", datarecord, DEFAULT_ENCODING, sb.toString());
+                    results.add(OMXmlFactory.buildObservation("2.0.0",           // version
+                                                  identifier,                    // id
+                                                  identifier,                    // name
+                                                  null,                          // description
+                                                  foi,                           // foi
+                                                  phenomenon,                    // phenomenon
+                                                  procedureID,                   // procedure
+                                                  result,                        // result
+                                                  gb.getTimeObject("2.0.0")));   // time
                 }
             }
 

@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.v311.AbstractFeatureType;
 import org.geotoolkit.gml.xml.v311.EnvelopeType;
 import org.apache.sis.util.ComparisonMode;
+import org.geotoolkit.swes.xml.SOSResponse;
 import org.opengis.observation.Observation;
 import org.opengis.observation.ObservationCollection;
 
@@ -38,7 +39,7 @@ import org.opengis.observation.ObservationCollection;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ObservationCollection")
 @XmlRootElement(name = "ObservationCollection")
-public class ObservationCollectionType extends AbstractFeatureType implements ObservationCollection {
+public class ObservationCollectionType extends AbstractFeatureType implements ObservationCollection, SOSResponse {
 
     /**
      *  The observation collection
@@ -51,20 +52,20 @@ public class ObservationCollectionType extends AbstractFeatureType implements Ob
      */
     public ObservationCollectionType() {
         super(null, null, null);
-        this.member = new ArrayList<ObservationPropertyType>();
+        this.member = new ArrayList<>();
     }
     
     
     public ObservationCollectionType(final String title) {
         super(null, null, null);
-        this.member = new ArrayList<ObservationPropertyType>();
+        this.member = new ArrayList<>();
         this.member.add(new ObservationPropertyType(title));
     }
     
     public ObservationCollectionType(final String id, final EnvelopeType env, final List<ObservationType> observations) {
         super(id, null, null);
         if (observations != null) {
-            this.member = new ArrayList<ObservationPropertyType>();
+            this.member = new ArrayList<>();
             for (ObservationType observation : observations) {
                 this.member.add(new ObservationPropertyType(observation));
             }
@@ -76,6 +77,7 @@ public class ObservationCollectionType extends AbstractFeatureType implements Ob
     
     /**
      * Add a new Observation to the collection. 
+     * @param observation
      */
     public void add(final ObservationType observation) {
         if (observation != null) {
@@ -88,7 +90,7 @@ public class ObservationCollectionType extends AbstractFeatureType implements Ob
      */
     @Override
     public List<Observation> getMember() {
-        List result = new ArrayList<Observation>();
+        List result = new ArrayList<>();
         
         for (ObservationPropertyType obprop: member) {
             result.add(obprop.getObservation());
@@ -144,6 +146,9 @@ public class ObservationCollectionType extends AbstractFeatureType implements Ob
         }
         return s.toString();
     }
-    
 
+    @Override
+    public String getSpecificationVersion() {
+        return "1.0.0";
+    }
 }

@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.observation.xml.v200.OMObservationType;
+import org.geotoolkit.swes.xml.SOSResponse;
 import org.geotoolkit.swes.xml.v200.ExtensibleResponseType;
 import org.opengis.observation.ObservationCollection;
 
@@ -62,7 +63,7 @@ import org.opengis.observation.ObservationCollection;
     "observation"
 })
 @XmlRootElement(name="GetObservationByIdResponse")
-public class GetObservationByIdResponseType extends ExtensibleResponseType implements ObservationCollection {
+public class GetObservationByIdResponseType extends ExtensibleResponseType implements ObservationCollection, SOSResponse {
 
     private List<GetObservationByIdResponseType.Observation> observation;
 
@@ -72,7 +73,7 @@ public class GetObservationByIdResponseType extends ExtensibleResponseType imple
     
     public GetObservationByIdResponseType(final List<OMObservationType> observations) {
         if (observations != null) {
-            this.observation = new ArrayList<Observation>();
+            this.observation = new ArrayList<>();
             for (OMObservationType o : observations) {
                 this.observation.add(new Observation(o));
             }
@@ -87,14 +88,14 @@ public class GetObservationByIdResponseType extends ExtensibleResponseType imple
      */
     public List<GetObservationByIdResponseType.Observation> getObservation() {
         if (observation == null) {
-            observation = new ArrayList<GetObservationByIdResponseType.Observation>();
+            observation = new ArrayList<>();
         }
         return this.observation;
     }
 
     @Override
     public List<org.opengis.observation.Observation> getMember() {
-        final List<org.opengis.observation.Observation> observations = new ArrayList<org.opengis.observation.Observation>();
+        final List<org.opengis.observation.Observation> observations = new ArrayList<>();
         if (observation != null) {
             for (Observation data : observation) {
                 observations.add(data.omObservation);

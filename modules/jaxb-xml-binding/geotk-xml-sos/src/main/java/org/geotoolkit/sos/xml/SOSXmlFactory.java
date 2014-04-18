@@ -296,7 +296,7 @@ public class SOSXmlFactory {
                 for (Observation obs : observations) {
                     if (obs instanceof org.geotoolkit.observation.xml.v200.OMObservationType) {
                         obs200.add((org.geotoolkit.observation.xml.v200.OMObservationType) obs);
-                    } else {
+                    } else if (obs != null){
                         throw new IllegalArgumentException("unexpected object version for observation element");
                     }
                 }
@@ -308,7 +308,7 @@ public class SOSXmlFactory {
                 for (Observation obs : observations) {
                     if (obs instanceof org.geotoolkit.observation.xml.v100.ObservationType) {
                         obs100.add((org.geotoolkit.observation.xml.v100.ObservationType) obs);
-                    } else {
+                    } else if (obs != null){
                         throw new IllegalArgumentException("unexpected object version for observation element");
                     }
                 }
