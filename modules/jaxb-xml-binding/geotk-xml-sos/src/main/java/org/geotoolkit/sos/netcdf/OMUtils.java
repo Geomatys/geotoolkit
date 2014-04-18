@@ -126,7 +126,6 @@ public class OMUtils {
         fields.add(TIME_FIELD.get(version));
         fields.add(LATITUDE_FIELD.get(version));
         fields.add(LONGITUDE_FIELD.get(version));
-        fields.add(PRESSION_FIELD.get(version));
         for (Field phenomenon : phenomenons) {
             final UomProperty uom = SOSXmlFactory.buildUomProperty(version, phenomenon.unit, null);
             final Quantity cat    = SOSXmlFactory.buildQuantity(version, phenomenon.label, uom, null);

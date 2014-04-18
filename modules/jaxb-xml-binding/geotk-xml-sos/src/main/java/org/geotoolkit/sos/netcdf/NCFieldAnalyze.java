@@ -38,7 +38,7 @@ public class NCFieldAnalyze {
         public Field timeField                  = null;
         public NetcdfFile file                  = null;
         public final List<Field> phenfields     = new ArrayList<>();
-        public boolean timeSeries               = true;
+        public FeatureType featureType          = null;
         public final List<Field> skippedFields  = new ArrayList<>();
         public final Map<String, Variable> vars = new HashMap<>();
 
@@ -79,7 +79,7 @@ public class NCFieldAnalyze {
                        Objects.equals(this.phenfields,     that.phenfields) &&
                        Objects.equals(this.separatorField, that.separatorField) &&
                        Objects.equals(this.skippedFields,  that.skippedFields) &&
-                       Objects.equals(this.timeSeries,     that.timeSeries);
+                       Objects.equals(this.featureType,    that.featureType);
             }
             return false;
         }
@@ -90,7 +90,7 @@ public class NCFieldAnalyze {
             hash = 17 * hash + (this.mainField != null ? this.mainField.hashCode() : 0);
             hash = 17 * hash + (this.separatorField != null ? this.separatorField.hashCode() : 0);
             hash = 17 * hash + (this.phenfields != null ? this.phenfields.hashCode() : 0);
-            hash = 17 * hash + (this.timeSeries ? 1 : 0);
+            hash = 17 * hash + (this.featureType != null ? this.featureType.hashCode() : 0);
             hash = 17 * hash + (this.skippedFields != null ? this.skippedFields.hashCode() : 0);
             return hash;
         }

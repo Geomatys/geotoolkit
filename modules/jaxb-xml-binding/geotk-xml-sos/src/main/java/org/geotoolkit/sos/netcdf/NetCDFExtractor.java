@@ -32,8 +32,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.gml.xml.FeatureProperty;
+import org.geotoolkit.gml.xml.LineString;
 import org.geotoolkit.gml.xml.Point;
 import org.geotoolkit.observation.xml.OMXmlFactory;
+import static org.geotoolkit.sos.netcdf.FeatureType.*;
 import static org.geotoolkit.sos.netcdf.NetCDFUtils.*;
 import org.geotoolkit.sos.xml.SOSXmlFactory;
 import org.geotoolkit.swe.xml.AbstractDataRecord;
@@ -62,10 +64,14 @@ public class NetCDFExtractor {
     
     public List<Observation> getObservationFromNetCDF(final File netCDFFile, final String procedureID) {
         final NCFieldAnalyze analyze = analyzeResult(netCDFFile);
-        if (analyze.timeSeries) {
+        switch (analyze.featureType) {
+            case TIMESERIES :
             return parseDataBlockTS(analyze, procedureID);
-        } else {
+            case PROFILE :
             return parseDataBlockXY(analyze, procedureID);
+            case TRAJECTORY :
+            return parseDataBlockTraj(analyze, procedureID);
+            default : return null;
         }
     }
     
@@ -79,11 +85,17 @@ public class NetCDFExtractor {
             final Attribute ftAtt = file.findGlobalAttribute("featureType");
             if (ftAtt != null) {
                 final String value = ftAtt.getStringValue();
-                if ("timeSeries".equals(value) || "trajectory".equals(value)) {
-                    analyze.timeSeries = true;
+                if ("timeSeries".equals(value)) {
+                    analyze.featureType = TIMESERIES;
                 } else if ("profile".equals(value)) {
-                    analyze.timeSeries = false;
+                    analyze.featureType = PROFILE;
+                } else if ("trajectory".equals(value)) {
+                    analyze.featureType = TRAJECTORY;
+                } else {
+                    analyze.featureType = TIMESERIES;
                 }
+            } else {
+                analyze.featureType = TIMESERIES;
             }
 
             final Attribute titAtt = file.findGlobalAttribute("title");
@@ -110,9 +122,11 @@ public class NetCDFExtractor {
                     }
                     
                     if (name.equalsIgnoreCase("Time")) {
-                        if (analyze.timeSeries) {
+                        if (analyze.featureType == TIMESERIES || analyze.featureType == TRAJECTORY) {
                             currentField.type = Type.DATE;
                             analyze.mainField = currentField;
+                        } else {
+                            analyze.skippedFields.add(currentField);
                         }
                         analyze.timeField = currentField;
 
@@ -129,7 +143,7 @@ public class NetCDFExtractor {
                     
                     } else if (name.equalsIgnoreCase("Pression") || name.equalsIgnoreCase("Depth") || name.equalsIgnoreCase("zLevel") || name.equalsIgnoreCase("z")) {
                         currentField.type = Type.DOUBLE;
-                        if (!analyze.timeSeries) {
+                        if (analyze.featureType == PROFILE) {
                             analyze.mainField = currentField;
                         } else if (dimension > 1) {
                             analyze.phenfields.add(currentField);
@@ -140,7 +154,6 @@ public class NetCDFExtractor {
                     } else if (name.equalsIgnoreCase("timeserie") || name.equalsIgnoreCase("trajectory") || name.equalsIgnoreCase("profile")) {
                         currentField.type = Type.STRING;
                         analyze.separatorField = currentField;
-                        
                         
                     } else  {
                         currentField.type = getTypeFromDataType(variable.getDataType());
@@ -155,18 +168,19 @@ public class NetCDFExtractor {
             
             // post analyze
             for (Field f : all) {
-                final String mainDimension = analyze.mainField.label;
-                
-                // dimension order
-                if (!f.dimensionLabel.startsWith(mainDimension)) {
-                    f.mainVariableFirst = false;
-                }
-                
-                // exclude phenomenon field not related to main
-                if (analyze.phenfields.contains(f)) {
-                    if (!f.dimensionLabel.contains(mainDimension)) {
-                        analyze.phenfields.remove(f);
-                        analyze.skippedFields.add(f);
+                if (analyze.featureType != TRAJECTORY) {
+                    final String mainDimension = analyze.mainField.label;
+                    // dimension order
+                    if (!f.dimensionLabel.startsWith(mainDimension)) {
+                        f.mainVariableFirst = false;
+                    }
+
+                    // exclude phenomenon field not related to main
+                    if (analyze.phenfields.contains(f)) {
+                        if (!f.dimensionLabel.contains(mainDimension)) {
+                            analyze.phenfields.remove(f);
+                            analyze.skippedFields.add(f);
+                        }
                     }
                 }
             }
@@ -516,6 +530,183 @@ public class NetCDFExtractor {
             LOGGER.log(Level.WARNING, "error while parsing netcdf timeserie", ex);
         }
 
+        return results;
+    }
+    
+    private List<Observation> parseDataBlockTraj(final NCFieldAnalyze analyze, final String procedureID) {
+        final List<Observation> results = new ArrayList<>();
+        if (analyze.mainField == null) {
+            LOGGER.warning("No main field found");
+            return results;
+        }
+        LOGGER.info("parsing netCDF Traj");
+
+        try {
+
+            final List<String> separators = parseSeparatorValues(analyze.file, analyze);
+            final boolean single          = separators.isEmpty();
+            
+            Array latArray  = null;
+            Array lonArray  = null;
+            if (analyze.hasSpatial()) {
+                Variable latVar = analyze.vars.get(analyze.latField.label);
+                Variable lonVar = analyze.vars.get(analyze.lonField.label);
+                latArray        = analyze.file.readArrays(Arrays.asList(latVar)).get(0);
+                lonArray        = analyze.file.readArrays(Arrays.asList(lonVar)).get(0);
+            }
+            
+            final Variable timeVar  = analyze.vars.get(analyze.mainField.label);
+            final Array timeArray   = analyze.file.readArrays(Arrays.asList(timeVar)).get(0);
+            final boolean constantT = analyze.mainField.dimension == 1;
+            final boolean timeFirst = !analyze.timeField.dimensionLabel.startsWith(analyze.separatorField.dimensionLabel);
+            
+            
+            final Map<String, Array> phenArrays = new HashMap<>();
+            for (Field field : analyze.phenfields) {
+                final Variable phenVar = analyze.vars.get(field.label);
+                final Array phenArray  = analyze.file.readArrays(Arrays.asList(phenVar)).get(0);
+                phenArrays.put(field.label, phenArray);
+            }
+            
+            final AbstractDataRecord datarecord = OMUtils.getDataRecordTrajectory("2.0.0", analyze.phenfields);
+            final Phenomenon phenomenon         = OMUtils.getPhenomenon("2.0.0", analyze.phenfields);
+
+            if (single) {
+                final StringBuilder sb   = new StringBuilder();
+                final int count          = timeVar.getDimension(0).getLength();
+                final GeoSpatialBound gb = new GeoSpatialBound();
+                final String identifier  = UUID.randomUUID().toString();
+                
+                final List<DirectPosition> positions = new ArrayList<>();
+                DirectPosition previousPosition = null;
+                
+                // iterating over time
+                for (int i = 0; i < count; i++) {
+
+                    long millis = getTimeValue(timeArray, i);
+
+                    if (millis == 0 || millis == ((Integer.MIN_VALUE * -1) + 1)) {
+                        continue;
+                    }
+                    final Date d = new Date(millis * 1000);
+                    gb.addDate(d);
+                    synchronized(FORMATTER) {
+                        sb.append(FORMATTER.format(d)).append(DEFAULT_ENCODING.getTokenSeparator());
+                    }
+                    
+                    final double latitude         = getDoubleValue(latArray, i);
+                    sb.append(latitude).append(DEFAULT_ENCODING.getTokenSeparator());
+                    final double longitude        = getDoubleValue(lonArray, i);
+                    sb.append(longitude).append(DEFAULT_ENCODING.getTokenSeparator());
+                    final DirectPosition position = SOSXmlFactory.buildDirectPosition("2.0.0", null, 2, Arrays.asList(latitude, longitude));
+                    if (!position.equals(previousPosition)) {
+                        positions.add(position);
+                    }
+                    previousPosition = position;
+                    
+                    for (Field field : analyze.phenfields) {
+                        final Array phenArray = phenArrays.get(field.label);
+                        final Double value    = getDoubleValue(phenArray, i);
+
+                        //empty string for missing value
+                        if (!Double.isNaN(value)) {
+                            sb.append(value);
+                        }
+                        sb.append(DEFAULT_ENCODING.getTokenSeparator());
+                    }
+                    // remove the last token separator
+                    sb.deleteCharAt(sb.length() - 1);
+                    sb.append(DEFAULT_ENCODING.getBlockSeparator());
+                }
+                
+                final LineString geom         = SOSXmlFactory.buildLineString("2.0.0", positions);
+                final SamplingFeature sp      = SOSXmlFactory.buildSamplingCurve("2.0.0", identifier, null, null, null, geom, null, null, null);
+                final FeatureProperty foi     = SOSXmlFactory.buildFeatureProperty("2.0.0", sp);
+                
+                final DataArrayProperty result = SOSXmlFactory.buildDataArrayProperty("2.0.0", "array-1", count, "SimpleDataArray", datarecord, DEFAULT_ENCODING, sb.toString());
+                results.add(OMXmlFactory.buildObservation("2.0.0",             // version
+                                              identifier,                      // id
+                                              identifier,                      // name
+                                              null,                            // description
+                                              foi,                             // foi
+                                              phenomenon,                      // phenomenon
+                                              procedureID,                     // procedure
+                                              result,                          // result
+                                              gb.getTimeObject("2.0.0")));     // time
+                
+                
+            } else {
+                for (int j = 0; j < separators.size(); j++) {
+                    
+                    final String identifier  = separators.get(j);
+                    final StringBuilder sb   = new StringBuilder();
+                    int count                = timeVar.getDimension(0).getLength();
+                    final GeoSpatialBound gb = new GeoSpatialBound();
+                    
+                    final List<DirectPosition> positions = new ArrayList<>();
+                    DirectPosition previousPosition = null;
+                    
+                    for (int i = 0; i < count; i++) {
+
+                        long millis = getTimeValue(timeFirst, constantT, timeArray, i, j);
+
+                        if (millis == 0 || millis == ((Integer.MIN_VALUE * -1) + 1)) {
+                            continue;
+                        }
+                        final Date d = new Date(millis * 1000);
+                        gb.addDate(d);
+                        synchronized(FORMATTER) {
+                            sb.append(FORMATTER.format(d)).append(DEFAULT_ENCODING.getTokenSeparator());
+                        }
+                        
+                        final double latitude         = getDoubleValue(true, latArray, i, j);
+                        sb.append(latitude).append(DEFAULT_ENCODING.getTokenSeparator());
+                        final double longitude        = getDoubleValue(true, lonArray, i, j);
+                        sb.append(longitude).append(DEFAULT_ENCODING.getTokenSeparator());
+                        final DirectPosition position = SOSXmlFactory.buildDirectPosition("2.0.0", null, 2, Arrays.asList(latitude, longitude));
+                        if (!position.equals(previousPosition)) {
+                            positions.add(position);
+                        }
+                        previousPosition = position;
+                        
+                        for (Field field : analyze.phenfields) {
+                            final Array phenArray   = phenArrays.get(field.label);
+                            final boolean mainFirst = field.mainVariableFirst;
+                            final Double value      = getDoubleValue(mainFirst, phenArray, i, j);
+                            
+                            //empty string for missing value
+                            if (!Double.isNaN(value)) {
+                                sb.append(value);
+                            }
+                            sb.append(DEFAULT_ENCODING.getTokenSeparator());
+                        }
+                        // remove the last token separator
+                        sb.deleteCharAt(sb.length() - 1);
+                        sb.append(DEFAULT_ENCODING.getBlockSeparator());
+                    }
+                    
+                    final LineString geom          = SOSXmlFactory.buildLineString("2.0.0", positions);
+                    final SamplingFeature sp       = SOSXmlFactory.buildSamplingCurve("2.0.0", identifier, null, null, null, geom, null, null, null);
+                    final FeatureProperty foi      = SOSXmlFactory.buildFeatureProperty("2.0.0", sp);
+                    
+                    final DataArrayProperty result = SOSXmlFactory.buildDataArrayProperty("2.0.0", "array-1", count, "SimpleDataArray", datarecord, DEFAULT_ENCODING, sb.toString());
+                    results.add(OMXmlFactory.buildObservation("2.0.0",           // version
+                                                  identifier,                    // id
+                                                  identifier,                    // name
+                                                  null,                          // description
+                                                  foi,                           // foi
+                                                  phenomenon,                    // phenomenon
+                                                  procedureID,                   // procedure
+                                                  result,                        // result
+                                                  gb.getTimeObject("2.0.0")));   // time
+                }
+            }
+
+        } catch (IOException ex) {
+            LOGGER.log(Level.WARNING, "error while parsing netcdf timeserie", ex);
+        }
+
+        LOGGER.info("datablock parsed");
         return results;
     }
     
