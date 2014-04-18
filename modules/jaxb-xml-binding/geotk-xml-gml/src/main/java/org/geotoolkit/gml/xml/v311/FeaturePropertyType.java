@@ -134,6 +134,7 @@ public class FeaturePropertyType implements FeatureProperty {
      *     {@link JAXBElement }{@code <}{@link AbstractFeatureCollectionType }{@code >}
      *     
      */
+    @Override
     public AbstractFeatureType getAbstractFeature() {
         if (abstractFeature != null) {
             return abstractFeature.getValue();
@@ -217,6 +218,7 @@ public class FeaturePropertyType implements FeatureProperty {
      *     {@link String }
      *     
      */
+    @Override
     public String getHref() {
         return href;
     }

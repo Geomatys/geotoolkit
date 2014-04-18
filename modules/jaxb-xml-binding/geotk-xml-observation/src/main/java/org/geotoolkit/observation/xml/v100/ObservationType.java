@@ -411,6 +411,7 @@ public class ObservationType implements Entry, AbstractObservation {
         }
     }
     
+    @Override
     public FeaturePropertyType getPropertyFeatureOfInterest(){
         return featureOfInterest;
     }

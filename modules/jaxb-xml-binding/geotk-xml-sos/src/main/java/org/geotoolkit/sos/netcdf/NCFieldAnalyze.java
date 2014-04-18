@@ -33,6 +33,8 @@ public class NCFieldAnalyze {
         public String title                     = null;
         public Field mainField                  = null;
         public Field separatorField             = null;
+        public Field latField                   = null;
+        public Field lonField                   = null;
         public NetcdfFile file                  = null;
         public final List<Field> phenfields     = new ArrayList<>();
         public boolean timeSeries               = true;
@@ -55,6 +57,10 @@ public class NCFieldAnalyze {
                 return mainField.label;
             }
             return null;
+        }
+        
+        public boolean hasSpatial() {
+            return latField != null && lonField != null;
         }
 
         @Override

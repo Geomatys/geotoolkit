@@ -24,4 +24,8 @@ package org.geotoolkit.gml.xml;
 public interface FeatureProperty {
     
     void setToHref();
+    
+    String getHref();
+    
+    AbstractFeature getAbstractFeature();
 }

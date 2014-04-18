@@ -462,7 +462,8 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
      *     {@link FeaturePropertyType }
      *
      */
-    public FeaturePropertyType getFeatureOfInterestProperty() {
+    @Override
+    public FeaturePropertyType getPropertyFeatureOfInterest() {
         return featureOfInterest;
     }
 
