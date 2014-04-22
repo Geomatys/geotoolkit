@@ -71,7 +71,7 @@ class LargeMap2D {
      */
     final HashMap<Integer, HashMap<Integer, LargeRaster> > map;
 
-    private final LinkedList<Point> stack = new LinkedList<Point>();
+    private final LinkedList<Point> stack = new LinkedList<>();
 
 
     /**
@@ -101,7 +101,7 @@ class LargeMap2D {
         this.minTileX      = ri.getMinTileX();
         this.minTileY      = ri.getMinTileY();
 
-        map = new HashMap<Integer, HashMap<Integer, LargeRaster>>(numTilesY);
+        map = new HashMap<>(numTilesY);
 
         //quad tree directory architecture.
         this.dirPath = TEMPORARY_PATH + "/img_"+ri.hashCode();
@@ -140,7 +140,7 @@ class LargeMap2D {
 
         HashMap<Integer, LargeRaster> row = map.get(tileY);
         if (row == null) {
-            row = new HashMap<Integer, LargeRaster>(numTilesX);
+            row = new HashMap<>(numTilesX);
             map.put(tY, row);
         }
         row.put(tX, new LargeRaster(tX, tY, rastWeight, checkRaster(raster, tX, tY)));
@@ -187,7 +187,7 @@ class LargeMap2D {
 
         HashMap<Integer, LargeRaster> row = map.get(tY);
         if (row == null) {
-            row = new HashMap<Integer, LargeRaster>(numTilesX);
+            row = new HashMap<>(numTilesX);
             map.put(tY, row);
         }
         LargeRaster lRaster = row.get(tX);
@@ -287,15 +287,15 @@ class LargeMap2D {
     private void writeRaster(File path, Raster raster) throws IOException {
         final WritableRaster wr  = RasterFactory.createWritableRaster(raster.getSampleModel(), raster.getDataBuffer(), WPOINT);
         final BufferedImage rast = new BufferedImage(cm, wr, true, null);
-        final ImageOutputStream stream = ImageIO.createImageOutputStream(path);
-        if (stream == null) {
-            throw new IOException("No output connexion can be opened to write tile.");
+        try (ImageOutputStream stream = ImageIO.createImageOutputStream(path)) {
+            if (stream == null) {
+                throw new IOException("No output connexion can be opened to write tile.");
+            }
+            imgWriter.setOutput(stream);
+            imgWriter.write(rast);
+            imgWriter.setOutput(null);
+            imgWriter.dispose();
         }
-        imgWriter.setOutput(stream);
-        imgWriter.write(rast);
-        imgWriter.setOutput(null);
-        imgWriter.dispose();
-        stream.close();
         path.deleteOnExit();
     }
 

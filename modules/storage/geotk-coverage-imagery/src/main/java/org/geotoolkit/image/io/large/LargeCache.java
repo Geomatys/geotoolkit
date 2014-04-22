@@ -41,7 +41,7 @@ public class LargeCache implements TileCache {
     private static final long DEFAULT_CAPACITY = 1024l*1024l*8l*256l;
 
     private long memoryCapacity;
-    private HashMap<RenderedImage, LargeMap2D> map  = new HashMap<RenderedImage, LargeMap2D>();
+    private HashMap<RenderedImage, LargeMap2D> map  = new HashMap<>();
 
     private static LargeCache INSTANCE;
 
@@ -72,23 +72,21 @@ public class LargeCache implements TileCache {
         if (!(raster instanceof WritableRaster))
             throw new IllegalArgumentException("raster must be WritableRaster instance");
         final WritableRaster wRaster = (WritableRaster) raster;
-        LargeMap2D lL = null;
-        if (map.containsKey(ri)) {
-            lL = map.get(ri);
-        } else {
+        LargeMap2D lL = map.get(ri);
+        if (lL == null) {
             final long mC = memoryCapacity / (map.size() + 1);
             updateLList(mC);
             try {
                 lL = new LargeMap2D(ri, mC);
+                map.put(ri, lL);
             } catch (IOException ex) {
-                LOGGER.log(Level.SEVERE, "impossible to create cache list", ex);
+                throw new RuntimeException("impossible to create cache list", ex);
             }
-            map.put(ri, lL);
         }
         try {
             lL.add(i, i1, wRaster);
         } catch (IOException ex) {
-            LOGGER.log(Level.SEVERE, "impossible to add raster (write raster on disk)", ex);
+            throw new RuntimeException("impossible to add raster (write raster on disk)", ex);
         }
     }
 
@@ -105,9 +103,9 @@ public class LargeCache implements TileCache {
      */
     @Override
     public void remove(RenderedImage ri, int i, int i1) {
-        if (!map.containsKey(ri))
-            throw new IllegalArgumentException("renderedImage don't exist in this "+LargeCache.class.getName());
         final LargeMap2D lL = map.get(ri);
+        if (lL == null)
+            throw new IllegalArgumentException("renderedImage don't exist in this "+LargeCache.class.getName());
         lL.remove(i, i1);
     }
 
@@ -116,14 +114,14 @@ public class LargeCache implements TileCache {
      */
     @Override
     public Raster getTile(RenderedImage ri, int i, int i1) {
-        if (!map.containsKey(ri))
+        final LargeMap2D cache = map.get(ri);
+        if (cache == null)
             throw new IllegalArgumentException("renderedImage don't exist in this "+LargeCache.class.getName());
         try {
-            return map.get(ri).getRaster(i, i1);
+            return cache.getRaster(i, i1);
         } catch (IOException ex) {
-            Logger.getLogger(LargeCache.class.getName()).log(Level.SEVERE, null, ex);
+            throw new RuntimeException(ex);
         }
-        return null;
     }
 
     /**
@@ -147,8 +145,8 @@ public class LargeCache implements TileCache {
      */
     @Override
     public void removeTiles(RenderedImage ri) {
-        if (map.containsKey(ri)) {
-            final LargeMap2D lL = map.get(ri);
+        final LargeMap2D lL = map.get(ri);
+        if (lL != null) {
             lL.removeTiles();
             map.remove(ri);
         }
@@ -161,16 +159,14 @@ public class LargeCache implements TileCache {
     public void addTiles(RenderedImage ri, Point[] points, Raster[] rasters, Object o) {
         if (points.length != rasters.length)
             throw new IllegalArgumentException("points and rasters tables must have same length.");
-        LargeMap2D lL = null;
-        if (map.containsKey(ri)) {
-            lL = map.get(ri);
-        } else {
+        LargeMap2D lL = map.get(ri);
+        if (lL == null) {
             try {
                 lL = new LargeMap2D(ri, memoryCapacity/(map.size()+1));
+                map.put(ri, lL);
             } catch (IOException ex) {
-                LOGGER.log(Level.SEVERE, "impossible to create cache list", ex);
+                throw new RuntimeException("impossible to create cache list", ex);
             }
-            map.put(ri, lL);
         }
         for (int id = 0, l = points.length; id < l; id++) {
             if (!(rasters[id] instanceof WritableRaster))
@@ -178,7 +174,7 @@ public class LargeCache implements TileCache {
             try {
                 lL.add(points[id].x, points[id].y, (WritableRaster) rasters[id]);
             } catch (IOException ex) {
-                LOGGER.log(Level.SEVERE, "impossible to add raster (write raster on disk)", ex);
+                throw new RuntimeException("impossible to add raster (write raster on disk)", ex);
             }
         }
     }
@@ -188,10 +184,10 @@ public class LargeCache implements TileCache {
      */
     @Override
     public Raster[] getTiles(RenderedImage ri, Point[] points) {
-        if (!map.containsKey(ri))
-            throw new IllegalArgumentException("renderedImage don't exist in this "+LargeCache.class.getName());
         final LargeMap2D lL = map.get(ri);
-        final int l        = points.length;
+        if (lL == null)
+            throw new IllegalArgumentException("renderedImage don't exist in this "+LargeCache.class.getName());
+        final int l = points.length;
         final Raster[] rasters = new Raster[l];
         for (int id = 0; id < l; id++) {
             try {
@@ -256,7 +252,7 @@ public class LargeCache implements TileCache {
             try {
                 map.get(r).setCapacity(listMemoryCapacity);
             } catch (IOException ex) {
-                LOGGER.log(Level.SEVERE, "updateLList method : raster too large from remaining capacity memory", ex);
+                throw new RuntimeException("Raster too large for remaining memory capacity", ex);
             }
         }
     }

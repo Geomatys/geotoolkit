@@ -60,6 +60,14 @@ public class LargeRenderedImage implements RenderedImage {
     private static final int MIN_TILE_SIZE = 64;
     
     /**
+     * Maximum allowed tile size.
+     */
+    private static final int MAX_TILE_SIZE = 2048;
+    
+    /** Maximum dimension which will be allowed for {@link #getData(java.awt.Rectangle) } method. */
+    private static final Dimension RASTER_MAX_SIZE = new Dimension(10000, 10000);
+    
+    /**
      * Upper left corner of currently stored {@link Raster}. 
      */
     private static final Point ptOffset = new Point();
@@ -147,8 +155,8 @@ public class LargeRenderedImage implements RenderedImage {
         this.tileGridXOffset = 0;
         this.tileGridYOffset = 0;
         if (tileSize != null) {
-            tileWidth  = Math.min(Math.max(MIN_TILE_SIZE, tileSize.width),  DEFAULT_TILE_SIZE);
-            tileHeight = Math.min(Math.max(MIN_TILE_SIZE, tileSize.height), DEFAULT_TILE_SIZE);
+            tileWidth  = Math.min(Math.max(MIN_TILE_SIZE, tileSize.width),  MAX_TILE_SIZE);
+            tileHeight = Math.min(Math.max(MIN_TILE_SIZE, tileSize.height), MAX_TILE_SIZE);
         } else {
             tileWidth = tileHeight = DEFAULT_TILE_SIZE;
         }
@@ -316,6 +324,8 @@ public class LargeRenderedImage implements RenderedImage {
     }
 
     private synchronized Raster loadTile(int tileX, int tileY) {
+        // Re-check if the tile is not already loaded, because another thread could already did it.
+        if (isRead[tileY][tileX]) return tilecache.getTile(this, tileX, tileY);
         // si elle na pas ete demandée :
         // 1 : la demandée au reader
         final int minRx = tileX * tileWidth;
@@ -346,7 +356,7 @@ public class LargeRenderedImage implements RenderedImage {
     public Raster getData() {
         // in contradiction with this class aim.
         // in attempt to replace JAI dependencies.
-        if (width <= 5000 && height <= 5000) {
+        if (width <= RASTER_MAX_SIZE.width && height <= RASTER_MAX_SIZE.height) {
             ptOffset.setLocation(0, 0);
             final WritableRaster wr = Raster.createWritableRaster(cm.createCompatibleSampleModel(width, height), ptOffset);
             final Rectangle rect = new Rectangle();
@@ -354,7 +364,7 @@ public class LargeRenderedImage implements RenderedImage {
             for (int ty = 0, tmy = 0 + nbrTileY; ty < tmy; ty++) {
                 int mx = 0;
                 for (int tx = 0, tmx = 0 + nbrTileX; tx < tmx; tx++) {
-                    final Raster r = tilecache.getTile(this, tx, ty);
+                    final Raster r = getTile(tx, ty);
                     rect.setBounds(mx, my, tileWidth, tileHeight);
                     //recopie
                     final PixelIterator copix = PixelIteratorFactory.createDefaultWriteableIterator(wr, wr, rect);
@@ -387,7 +397,7 @@ public class LargeRenderedImage implements RenderedImage {
         final int ry = Math.max(rect.y, minY);
         final int rw = Math.min(rect.x+rect.width, minX+width)-rx;
         final int rh = Math.min(rect.y+rect.height, minY+height)-ry;
-        if (rw <= 5000 && rh <= 5000) {
+        if (rw <= RASTER_MAX_SIZE.width && rh <= RASTER_MAX_SIZE.height) {
             ptOffset.setLocation(rx, ry);
             final WritableRaster wr = Raster.createWritableRaster(cm.createCompatibleSampleModel(rw, rh), ptOffset);
             final Rectangle area = new Rectangle();
@@ -398,7 +408,7 @@ public class LargeRenderedImage implements RenderedImage {
             int tmaxX = (rx+rw-minX+tileWidth-1)/tileWidth;
             for (; ty < tmaxY; ty++) {
                 for (int tx = tbx; tx < tmaxX; tx++) {
-                    final Raster r = tilecache.getTile(this, tx, ty);
+                    final Raster r = getTile(tx, ty);
                     final int ix = Math.max(rx, minX + (tx-minTileGridX) * tileWidth);
                     final int iy = Math.max(ry, minY + (ty-minTileGridY) * tileHeight);
                     final int imx = Math.min(rx + rw, minX + (tx + 1 - minTileGridX) * tileWidth);
