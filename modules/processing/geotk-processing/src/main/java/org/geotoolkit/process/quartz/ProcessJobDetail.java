@@ -84,7 +84,7 @@ public class ProcessJobDetail extends JobDetailImpl {
     }
     
     public List<ProcessListener> getListeners(){
-        final List<ProcessListener> listeners = new ArrayList<ProcessListener>();
+        final List<ProcessListener> listeners = new ArrayList<>();
         if(getJobDataMap().get(KEY_PROCESS) != null){
             final AbstractProcess process = (AbstractProcess) getJobDataMap().get(KEY_PROCESS);
             Collections.addAll(listeners, process.getListeners());
@@ -93,7 +93,7 @@ public class ProcessJobDetail extends JobDetailImpl {
     }
     
     /**
-     * Crate the job name composed by the process identifier and his factory and an unic UUID.
+     * Crate the job name composed by the process identifier and his factory and an unique UUID.
      * @param process
      * @return job name.
      */

@@ -16,16 +16,16 @@
  */
 package org.geotoolkit.process.quartz;
 
+import java.util.ArrayList;
+import java.util.List;
+import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessEvent;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.process.ProcessFinder;
-import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessListener;
-
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.NoSuchIdentifierException;
-
 import org.quartz.Job;
 import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
@@ -44,6 +44,12 @@ public class ProcessJob implements Job{
     public static final String KEY_PARAMETERS = "processParams";
     public static final String KEY_PROCESS    = "processObj";
 
+    private final List<ProcessListener> listeners = new ArrayList<>();
+    
+    public void addListener(ProcessListener listener){
+        listeners.add(listener);
+    }
+    
     @Override
     public void execute(final JobExecutionContext jec) throws JobExecutionException {
         final JobDataMap parameters = jec.getJobDetail().getJobDataMap();
@@ -82,6 +88,9 @@ public class ProcessJob implements Job{
         }
         final StoreExceptionMonitor monitor = new StoreExceptionMonitor();
         process.addListener(monitor);
+        for(ProcessListener pl : listeners){
+            process.addListener(pl);
+        }
 
         //set the result int he context, for listener that might want it.
         final ParameterValueGroup result;
