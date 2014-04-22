@@ -616,10 +616,13 @@ public class ObservationType implements Entry, AbstractObservation {
     
     /**
      * Return true if the observation match the specified template.
+     * @param abstractTemplate
      */ 
     @Override
     public boolean matchTemplate(final Observation abstractTemplate) {
-        if (!(abstractTemplate instanceof ObservationType)) {
+        if (abstractTemplate == null) {
+            throw new IllegalArgumentException("cannot match null template");
+        } else if (!(abstractTemplate instanceof ObservationType)) {
             throw new IllegalArgumentException("Unexpected object version");
         }
         final ObservationType template = (ObservationType) abstractTemplate;

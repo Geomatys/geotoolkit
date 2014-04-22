@@ -16,8 +16,7 @@
  */
 package org.geotoolkit.sml.xml;
 
-import org.geotoolkit.gml.xml.v311.AbstractCurveType;
-import org.geotoolkit.gml.xml.v311.PointType;
+import org.geotoolkit.gml.xml.AbstractGeometry;
 
 /**
  *
@@ -26,9 +25,7 @@ import org.geotoolkit.gml.xml.v311.PointType;
  */
 public interface AbstractLocation {
     
-    PointType getPoint();
-
-    public AbstractCurveType getCurve();
+    AbstractGeometry getGeometry();
 
     String getRemoteSchema();
 

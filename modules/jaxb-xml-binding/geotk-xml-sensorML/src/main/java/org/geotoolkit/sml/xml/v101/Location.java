@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.gml.xml.AbstractGeometry;
 import org.geotoolkit.gml.xml.v311.AbstractCurveType;
 import org.geotoolkit.gml.xml.v311.CompositeCurveType;
 import org.geotoolkit.gml.xml.v311.CurveType;
@@ -103,10 +104,11 @@ public class Location implements AbstractLocation {
             this.show    = loc.getShow();
             this.title   = loc.getTitle();
             this.type    = loc.getType();
-            this.point   = loc.getPoint();
-            if (loc.getCurve() != null) {
+            if (loc.getGeometry() instanceof PointType) {
+                this.point   = (PointType) loc.getGeometry();
+            } else if (loc.getGeometry() instanceof AbstractCurveType) {
                 org.geotoolkit.gml.xml.v311.ObjectFactory f = new org.geotoolkit.gml.xml.v311.ObjectFactory();
-                AbstractCurveType curve = loc.getCurve();
+                AbstractCurveType curve = (AbstractCurveType) loc.getGeometry();
                 if (curve instanceof CompositeCurveType) {
                     this.abstractCurve = f.createCompositeCurve((CompositeCurveType) curve);
                 } else if (curve instanceof LineStringType) {
@@ -124,6 +126,16 @@ public class Location implements AbstractLocation {
 
     public Location(final PointType point) {
         this.point = point;
+    }
+
+    @Override
+    public AbstractGeometry getGeometry() {
+        if (point != null) {
+            return point;
+        } else if (abstractCurve != null) {
+            return abstractCurve.getValue();
+        }
+        return null;
     }
     
     /**
