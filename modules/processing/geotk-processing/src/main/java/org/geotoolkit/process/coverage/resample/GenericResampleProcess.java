@@ -1,26 +1,21 @@
 package org.geotoolkit.process.coverage.resample;
 
 import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.awt.image.ColorModel;
-import java.awt.image.WritableRaster;
+import java.awt.geom.Point2D;
+import java.awt.image.*;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.*;
 import java.util.List;
-import java.util.UUID;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.concurrent.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.*;
 import javax.imageio.stream.ImageOutputStream;
 
+import groovy.util.MapEntry;
 import org.apache.sis.internal.storage.IOUtilities;
+import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.image.interpolation.Interpolation;
 import org.geotoolkit.image.interpolation.InterpolationCase;
@@ -40,6 +35,18 @@ import org.opengis.referencing.operation.MathTransform;
 
 /**
  * A resample operation using a provided MathTransform to convert a source coverage.
+ * 
+ * The process is designed to use multi-threading capacity, and not overload in memory.
+ * To do such things, we need an {@link ImageWriter} suporting {@link ImageWriter#canReplacePixels(int) } operation.
+ * 
+ * Here is how it works : 
+ * 1 - Using specified parameter {@link GenericResampleDescriptor#BLOCK_SIZE}, we take strips from input image, and put them in a queue, waiting for resampling.
+ * 2 - We create a fix number of threads (as specified by {@link GenericResampleDescriptor#THREAD_COUNT}), which will poll data from above queue, and resmple it.
+ * 3 - Each resampled strip is put into another queue, waiting to be written.
+ * 4 - We've got a thread for image writing. It's listening on output queue, and write each resampled strip inserted into it.
+ * 
+ * /!\ IMPORTANT : The process is designed to work with strips, but it can be easily modified to use tiles instead : 
+ * Modify {@link #populateResamplingQueue(int, int, int)} to build tiles instead of strips.
  *
  * @author Alexis Manin (Geomatys)
  */
@@ -47,16 +54,31 @@ public class GenericResampleProcess extends AbstractProcess {
 
     private static final Logger LOGGER = Logging.getLogger(GenericResampleProcess.class);
 
-    private static int LANCZOS_WINDOW = 2;
+    private static final int LANCZOS_WINDOW = 2;
 
     /**
-     * The default size (in number of bytes) for the tiles to create. To make it easier to understand (and modify), we
-     * decompose it as :
+     * The default size (in number of bytes) for the tiles to create. It will be used if no {@link GenericResampleDescriptor#BLOCK_SIZE} is given by user.
+     * To make it easier to understand (and modify), we decompose it as :
      * tile width(px) * tile height(px) * band number * component type size (byte)
      */
     public final static long BASE_MEMORY_SIZE = 1024 * 1024 * 4 * 1;
 
+    /** Maximum size for image cache. */
     public final static long MAX_MEMORY_SIZE = BASE_MEMORY_SIZE * 512;
+
+    public static final int WAIT_TIME = 100;
+
+    /**
+     * A queue to store strips we want to resample.
+     */
+    private final LinkedBlockingQueue<Rectangle> resamplingQueue = new LinkedBlockingQueue<>();
+
+    /**
+     * A queue to store resampled strips we must write.
+     */
+    private final LinkedBlockingQueue<Map.Entry<Point, RenderedImage>> writingQueue = new LinkedBlockingQueue<>();
+
+    private Integer threadNumber;
 
     public GenericResampleProcess(ProcessDescriptor desc, ParameterValueGroup input) {
         super(desc, input);
@@ -65,16 +87,19 @@ public class GenericResampleProcess extends AbstractProcess {
     @Override
     protected void execute() throws ProcessException {
 
-        final List<Long> execTimes = new ArrayList<Long>();
+        final List<Long> execTimes = new ArrayList<>();
         execTimes.add(System.currentTimeMillis());
 
+        /*
+         * CHECK INPUTS
+         */
         final ImageReader inImage = (ImageReader) inputParameters.parameter("image").getValue();
         final MathTransform operator = (MathTransform) inputParameters.parameter("operation").getValue();
         final String interpolation = (String) inputParameters.parameter("interpolation").getValue();
 
-        Integer threadNumber = Parameters.value(GenericResampleDescriptor.THREAD_COUNT, inputParameters);
+        threadNumber = Parameters.value(GenericResampleDescriptor.THREAD_COUNT, inputParameters);
         if (threadNumber == null || threadNumber != threadNumber || threadNumber < 1) {
-            threadNumber = Math.min(5, Math.max(2, Runtime.getRuntime().availableProcessors()/2 ));
+            threadNumber = Math.min(5, Math.max(2, Runtime.getRuntime().availableProcessors() / 2));
         }
 
         Long blockSize = Parameters.value(GenericResampleDescriptor.BLOCK_SIZE, inputParameters);
@@ -90,8 +115,12 @@ public class GenericResampleProcess extends AbstractProcess {
         }
 
         try {
+            /*
+             * INITIALIZE IO OBJECTS
+             */
+
             // Prepare the input image. We use a LargeRenderedImage, because we'll get random access to image pixels,
-            // and if it's too big, we'll have to use a cache system.
+            // and if it's too big, we need a cache system.
             final ImageTypeSpecifier rawImageType = inImage.getRawImageType(0);
             final ColorModel colorModel = rawImageType.getColorModel();
             final Dimension rawTileSize = new Dimension(512, 512);
@@ -117,10 +146,10 @@ public class GenericResampleProcess extends AbstractProcess {
                     imageFormat = IOUtilities.extension(output);
                 }
             } catch (Exception e) {
-                output =  File.createTempFile("GR_" + UUID.randomUUID(), ".tif");
+                output = File.createTempFile("GR_" + UUID.randomUUID(), ".tif");
             }
 
-            if(imageFormat == null || imageFormat.isEmpty()) {
+            if (imageFormat == null || imageFormat.isEmpty()) {
                 imageFormat = "tif";
             }
 
@@ -135,19 +164,17 @@ public class GenericResampleProcess extends AbstractProcess {
             }
 
             if (writer == null) {
-                throw new IOException("No fitting image writer can be found on the system for format : "+imageFormat
-                        +". Note that orthorectification process needs a writer capable of writing images piece by piece.");
+                throw new IOException("No fitting image writer can be found on the system for format : " + imageFormat
+                        + ". Note that orthorectification process needs a writer capable of writing images piece by piece.");
             }
 
             writer.prepareWriteEmpty(null, rawImageType, width, height, null, null, null);
             writer.prepareReplacePixels(0, new Rectangle(0, 0, width, height));
-            final ImageWriteParam writeParam = writer.getDefaultWriteParam();
 
             final int bandNumber = colorModel.getNumComponents();
             final double[] defaultPixelValue = new double[bandNumber];
-
-            LOGGER.log(Level.INFO, "We'll now start resampling pass. Output image dimension : width {0} px | height {1} px.",
-                    new Object[] {width, height});
+            Arrays.fill(defaultPixelValue, Double.NaN);
+            
             /*
              * Due to ImageIO bug, the writing of final image piece by piece can't be set with square tile. Problem is :
              * when using replacePixels with an ImageWriteParam using destination offset, the X component
@@ -159,89 +186,58 @@ public class GenericResampleProcess extends AbstractProcess {
              * The number of rows will be computed to ensure a tile does not exceed a given constant :
              * Tile height = allowed_memory_size / (tile width * image band number * Component type size (Byte, int, etc.)).
              * 
-             * We also ensure we've got at least as many lines as threads to process them.
+             * We also ensure we've got at least one line to process.
              */
-            int tile_size_y;
             long rowSize = 0;
             for (int bandCount = 0; bandCount < bandNumber; bandCount++) {
                 rowSize += (width * rawImageType.getBitsPerBand(bandCount));
             }
-            if ((tile_size_y = (int)(blockSize / rowSize)) < threadNumber) {
-                tile_size_y = threadNumber;
-            }
+            final int tile_size_y = Math.max(1, (int) (blockSize / rowSize));
 
-            /* Prepare multi-threading service. We'll divide each tile to treat
-             * into a fix number of areas we will fill in different threads. Each
-             * thread treat the tile on his entire width, but start at different 
-             * rows.
-             */
+            // Prepare multi-threading service. We create as many threads as user asked for resampling, plus one for strip writing.
             final ExecutorService threadService = Executors.newFixedThreadPool(threadNumber);
-            final ArrayList<ResampleThread> threads = new ArrayList<ResampleThread>(threadNumber);
-            final int threadHeight = (int) Math.ceil(tile_size_y / (double) threadNumber);
-            for (int threadCounter = 0 ; threadCounter < threadNumber ; threadCounter++) {
+            final ArrayList<Runnable> threads = new ArrayList<>(threadNumber);
+            for (int threadCounter = 0; threadCounter < threadNumber; threadCounter++) {
                 // Duplicate iterators and interpolator because they're not thread-safe.
                 final PixelIterator it = PixelIteratorFactory.createDefaultIterator(rawImage);
                 final Interpolation interpol = Interpolation.create(it, toUse, LANCZOS_WINDOW);
-                final int startRow = threadCounter*threadHeight;
-                final Rectangle area = new Rectangle(0, startRow, width, Math.min(tile_size_y-startRow, threadHeight));
-                threads.add(new ResampleThread(interpol, area, defaultPixelValue));
+                threads.add(new ResampleThread(operator, interpol, defaultPixelValue, colorModel));
             }
             
+            Thread writingThread = new Thread(new Writer(writer));
+
+            LOGGER.log(Level.INFO, "We'll now start resampling. Output image dimension : width " + width + " px | height " + height + " px.");
             execTimes.add(System.currentTimeMillis());
 
-            int tileHeight;
-            // Iterate through upper left corner of tiles.
-            for (int y = 0; y < height; y += tile_size_y) {
-                if (y + tile_size_y > height) {
-                    tileHeight = height - y;
-                } else {
-                    tileHeight = tile_size_y;
-                }
-
-                LOGGER.log(Level.INFO, "Computing rows {0} to {1}. Total row number : {2}",
-                        new Object[] {y, y+tileHeight, height});
-
-                final long begin = System.currentTimeMillis();
-
-                final WritableRaster raster = colorModel.createCompatibleWritableRaster(width, tileHeight);
-                final BufferedImage destImage = new BufferedImage(colorModel, raster, false, null);
-
-                final AffineTransform2D gridTranslation = new AffineTransform2D(1d, 0, 0, 1d, 0d, (double)y);
-                final MathTransform transformer = MathTransforms.concatenate(gridTranslation, operator);
-                
-                // If the last tile is smaller than others, we don't mess with threads.
-                if (tileHeight < tile_size_y) {
-                    final PixelIterator it = PixelIteratorFactory.createDefaultIterator(rawImage);
-                    final Interpolation interpol = Interpolation.create(it, toUse, LANCZOS_WINDOW);
-                    final Resample resampler = new Resample(transformer, destImage, interpol, defaultPixelValue);
-                    resampler.fillImage();
-                } else {
-                    for (ResampleThread thread : threads) {
-                        thread.setDestination(destImage);
-                        thread.setGridTransform(transformer);
-                    }
-                    final List<Future<Boolean>> status = threadService.invokeAll(threads);
-                    try {
-                        for (Future threadStatus : status) {
-                            threadStatus.get();
-                        }
-                    } catch (ExecutionException e) {
-                        throw e.getCause();
-                    }
-                }
-
-                final long endResample = System.currentTimeMillis();
-
-                writeParam.setDestinationOffset(new Point(0, y));
-                writer.replacePixels(raster, writeParam);
-
-                final long endWriting = System.currentTimeMillis();
-
-                LOGGER.log(Level.INFO, "Resample times for current rows : {0}," +
-                        "\nWriting time for row writing : {1}",
-                        new Object[]{endResample-begin, endWriting-endResample});
+            // Start all the workers
+            writingThread.start();
+            final ArrayList<Future> status = new ArrayList<>();
+            for (Runnable task : threads) {
+                status.add(threadService.submit(task));
             }
+
+            populateResamplingQueue(width, height, tile_size_y);
+
+            try {
+                for (Future threadStatus : status) {
+                    threadStatus.get();
+                }
+            } catch (ExecutionException e) {
+                throw e.getCause();
+            }
+            threadService.shutdown();
             
+            // All strips have been resampled, so the writing queue should be full. We add the end trigger.
+            poisonWritingQueue();
+            
+            while (writingThread.isAlive()) {
+                try {
+                    writingThread.join(WAIT_TIME);
+                } catch (InterruptedException e) {
+                    throw new ProcessException("Writing thread has been stopped.", this, e);
+                }
+            }
+
             writer.endReplacePixels();
             writer.endWriteEmpty();
             writer.setOutput(null);
@@ -250,23 +246,77 @@ public class GenericResampleProcess extends AbstractProcess {
                 outStream.close();
             }
 
-            threadService.shutdown();
-            
-            execTimes.add(System.currentTimeMillis());
-
             Parameters.getOrCreate(GenericResampleDescriptor.OUT_COVERAGE, outputParameters).setValue(output);
 
             LOGGER.log(Level.INFO, "Data preparation lasts " + (execTimes.get(1) - execTimes.get(0)) + " ms\n");
-            LOGGER.log(Level.INFO, "Resample lasts " + (execTimes.get(2) - execTimes.get(1)) + " ms\n");
+            LOGGER.log(Level.INFO, "Resample lasts " + (System.currentTimeMillis() - execTimes.get(1)) + " ms\n");
         } catch (Throwable e) {
-            throw new ProcessException(e.getMessage(), this, e);
+            throw new ProcessException(e.getLocalizedMessage(), this, e);
+        }
+    }
+
+    /**
+     * Fill the list of strips to resample. For now, the methods creates strips to fill, maybe in the future we could replace it
+     * to work with tiles.
+     *
+     * /!\ WARNING : All the process is based on the fact that "Poisonous objects" will be put in the queue to notify threads
+     * there is no more data to treat. Don't forget it if you modify this method.
+     *
+     * @param imageWidth  Total width to fill
+     * @param imageHeight Total height to fill
+     * @param tile_size_y The height we want for a single strip.
+     */
+    private void populateResamplingQueue(final int imageWidth, final int imageHeight, final int tile_size_y) throws InterruptedException {
+        int tileHeight;
+        // Iterate through upper left corner of tiles.
+        for (int y = 0; y < imageHeight; y += tile_size_y) {
+            if (y + tile_size_y > imageHeight) {
+                tileHeight = imageHeight - y;
+            } else {
+                tileHeight = tile_size_y;
+            }
+
+            final Rectangle resampleZone = new Rectangle(0, y, imageWidth, tileHeight);
+            while (!resamplingQueue.offer(resampleZone)) {
+                wait(WAIT_TIME);
+            }
+        }
+
+        // insert poison objects, so our threads will know it's over when they get it.
+        poisonResamplingQueue();
+    }
+
+    private void poisonResamplingQueue() {
+        for (int i = 0 ; i <= threadNumber ; i++) {
+            while (!resamplingQueue.offer(new EmptyBox())) {
+                try {
+                    wait(WAIT_TIME);
+                } catch (InterruptedException e) {
+                    LOGGER.log(Level.INFO, "Process interrupted !");
+                    Thread.currentThread().interrupt();
+                    return;
+                }
+            }
+        }
+    }
+
+    private void poisonWritingQueue() {
+        while (!writingQueue.offer(new NightShade<Point, RenderedImage>())) {
+            try {
+                wait(WAIT_TIME);
+            } catch (InterruptedException e) {
+                LOGGER.log(Level.INFO, "Process interrupted !");
+                Thread.currentThread().interrupt();
+                return;
+            }
         }
     }
 
     /**
      * Try to get an image writer which can process output image piece by piece.
+     *
      * @param extension The extension of the output image file, used to get the right format writer.
-     * @param output The output the writer will have to fill.
+     * @param output    The output the writer will have to fill.
      * @return A writer fitting our needs, or null if we couldn't find it.
      * @throws IOException if an error occured while checking writer capabilities.
      */
@@ -291,39 +341,131 @@ public class GenericResampleProcess extends AbstractProcess {
     /**
      * A utility thread class to resample a piece of image.
      */
-    private class ResampleThread implements Callable<Boolean> {
+    private class ResampleThread implements Runnable {
+
+        /**
+         * The math transform which contains main transformation for resampling. It will be concatenated with additional
+         * transformation which is the offset for the image to fill.
+         */
+        final MathTransform baseTransform;
 
         final Interpolation interpolator;
-        final Rectangle area;
         final double[] fillValue;
-        
-        BufferedImage destination = null;
-        MathTransform gridTransform = null;
-        
-        public ResampleThread(Interpolation source, Rectangle toFill, double[] defaultValue) {
+
+        final ColorModel outCModel;
+
+        public ResampleThread(MathTransform operator, Interpolation source, double[] defaultValue, ColorModel outputModel) {
+            ArgumentChecks.ensureNonNull("Math transform", operator);
+            ArgumentChecks.ensureNonNull("interpolator", source);
+            ArgumentChecks.ensureNonNull("Fill value", defaultValue);
+            ArgumentChecks.ensureNonNull("Output color model", outputModel);
+            baseTransform = operator;
             interpolator = source;
-            area = toFill;
             fillValue = defaultValue;
+            outCModel = outputModel;
         }
-        
-        public void setDestination (BufferedImage toSet) {
-            final Rectangle imageDim = new Rectangle(toSet.getMinX(), toSet.getMinY(), toSet.getWidth(), toSet.getHeight());
-            if (!imageDim.contains(area)) {
-                throw new IllegalArgumentException("The given bufferedImage does not contains the area to fill.");
-            }
-            destination = toSet;
-        }
-        
-        public void setGridTransform(final MathTransform transform) {
-            gridTransform = transform;
-        }
-        
+
         @Override
-        public Boolean call() throws Exception {
-            final Resample resampler = new Resample(gridTransform, destination, area, interpolator, fillValue);
-            resampler.fillImage();
-            return true;
+        public void run() {
+            Rectangle computeZone;
+            BufferedImage destination;
+            MathTransform gridTransform;
+            try {
+                while (!Thread.currentThread().isInterrupted()) {
+                    computeZone = resamplingQueue.take();
+                    if (computeZone instanceof EmptyBox) {
+                        return;
+                    }
+                    gridTransform = MathTransforms.concatenate(
+                            new AffineTransform2D(1d, 0, 0, 1d, (double) computeZone.x, (double) computeZone.y), baseTransform);
+                    destination = new BufferedImage(outCModel,
+                            outCModel.createCompatibleWritableRaster(computeZone.width, computeZone.height), false, null);
+                    final Resample resampler = new Resample(gridTransform, destination, interpolator, fillValue);
+                    resampler.fillImage();
+                    final Map.Entry<Point, RenderedImage> output = new AbstractMap.SimpleEntry<>(computeZone.getLocation(), (RenderedImage) destination);
+
+                    while (!writingQueue.offer(output)) {
+                        wait(WAIT_TIME);
+                    }
+                }
+            } catch (InterruptedException e) {
+                LOGGER.log(Level.INFO, "Resampling worker interrupted !");
+                Thread.currentThread().interrupt();
+            } catch (Exception e) {
+                // We die, but not alone
+                poisonResamplingQueue();
+                poisonWritingQueue();
+                throw new RuntimeException(e);
+            }
         }
-        
     }
+
+    /**
+     * A thread for image writing passes. The aim is to have a single runnable which will wait for strips to write. When
+     * a new strip is available, the thread will put himself into the queue which was given to him as available.
+     */
+    private class Writer implements Runnable {
+
+        private final ImageWriter writer;
+        final ImageWriteParam writeParam;
+
+        public Writer(final ImageWriter writer) throws IOException {
+            ArgumentChecks.ensureNonNull("Image writer", writer);
+
+            if (!writer.canReplacePixels(0)) {
+                throw new IllegalArgumentException("Input image writer is not able to write images piece by piece.");
+            }
+
+            this.writer = writer;
+            writeParam = writer.getDefaultWriteParam();
+        }
+
+
+        @Override
+        public void run() {
+
+            Map.Entry<Point, RenderedImage> toWrite;
+            try {
+                while (!Thread.currentThread().isInterrupted()) {
+                    toWrite = writingQueue.take();
+                    if (toWrite instanceof NightShade) {
+                        return;
+                    }
+
+                    writeParam.setDestinationOffset(toWrite.getKey());
+                    writer.replacePixels(toWrite.getValue(), writeParam);
+                }
+            } catch (InterruptedException e) {
+                LOGGER.log(Level.INFO, "Writing thread interrupted !");
+                // We die, but not alone
+                poisonResamplingQueue();
+                poisonWritingQueue();
+                Thread.currentThread().interrupt();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    /** A poisonous object to tell our resamplers there is no more data. */
+    private static class EmptyBox extends Rectangle {}
+
+    /** A poisonous object to tell writer he can shutdown. */
+    private static class NightShade<A, B> implements Map.Entry<A, B> {
+        @Override
+        public A getKey() {
+            throw new RuntimeException("Poisonous object !");
+        }
+
+        @Override
+        public B getValue() {
+            throw new RuntimeException("Poisonous object !");
+        }
+
+        @Override
+        public B setValue(B value) {
+            throw new RuntimeException("Poisonous object !");
+        }
+    }
+
 }
