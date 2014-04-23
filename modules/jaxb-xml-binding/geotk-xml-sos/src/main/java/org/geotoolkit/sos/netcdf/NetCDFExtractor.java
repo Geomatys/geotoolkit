@@ -71,6 +71,8 @@ public class NetCDFExtractor {
             return parseDataBlockXY(analyze, procedureID);
             case TRAJECTORY :
             return parseDataBlockTraj(analyze, procedureID);
+            case GRID :
+            return parseDataBlockGrid(analyze, procedureID);
             default : return null;
         }
     }
@@ -92,10 +94,10 @@ public class NetCDFExtractor {
                 } else if ("trajectory".equals(value)) {
                     analyze.featureType = TRAJECTORY;
                 } else {
-                    analyze.featureType = TIMESERIES;
+                    analyze.featureType = GRID;
                 }
             } else {
-                analyze.featureType = TIMESERIES;
+                analyze.featureType = GRID;
             }
 
             final Attribute titAtt = file.findGlobalAttribute("title");
@@ -122,7 +124,7 @@ public class NetCDFExtractor {
                     }
                     
                     if (name.equalsIgnoreCase("Time")) {
-                        if (analyze.featureType == TIMESERIES || analyze.featureType == TRAJECTORY) {
+                        if (analyze.featureType == TIMESERIES || analyze.featureType == TRAJECTORY || analyze.featureType == GRID) {
                             currentField.type = Type.DATE;
                             analyze.mainField = currentField;
                         } else {
@@ -701,6 +703,104 @@ public class NetCDFExtractor {
                                                   gb.getTimeObject("2.0.0")));   // time
                 }
             }
+
+        } catch (IOException ex) {
+            LOGGER.log(Level.WARNING, "error while parsing netcdf timeserie", ex);
+        }
+
+        LOGGER.info("datablock parsed");
+        return results;
+    }
+    
+    private List<Observation> parseDataBlockGrid(final NCFieldAnalyze analyze, final String procedureID) {
+        final List<Observation> results = new ArrayList<>();
+        if (analyze.mainField == null) {
+            LOGGER.warning("No main field found");
+            return results;
+        }
+        LOGGER.info("parsing netCDF GRID");
+
+        try {
+
+            final Variable latVar = analyze.vars.get(analyze.latField.label);
+            final Variable lonVar = analyze.vars.get(analyze.lonField.label);
+            final Array latArray  = analyze.file.readArrays(Arrays.asList(latVar)).get(0);;
+            final Array lonArray  = analyze.file.readArrays(Arrays.asList(lonVar)).get(0);
+            
+            final Variable timeVar  = analyze.vars.get(analyze.mainField.label);
+            final Array timeArray   = analyze.file.readArrays(Arrays.asList(timeVar)).get(0);
+            
+            
+            final Map<String, Array> phenArrays = new HashMap<>();
+            for (Field field : analyze.phenfields) {
+                final Variable phenVar = analyze.vars.get(field.label);
+                final Array phenArray  = analyze.file.readArrays(Arrays.asList(phenVar)).get(0);
+                phenArrays.put(field.label, phenArray);
+            }
+            
+            final AbstractDataRecord datarecord = OMUtils.getDataRecordTimeSeries("2.0.0", analyze.phenfields);
+            final Phenomenon phenomenon         = OMUtils.getPhenomenon("2.0.0", analyze.phenfields);
+
+            final int latSize = latVar.getDimension(0).getLength();
+            for (int latIndex = 0; latIndex < latSize; latIndex++) {
+
+                final int lonSize = lonVar.getDimension(0).getLength();
+                for (int lonIndex = 0; lonIndex < lonSize; lonIndex++) {
+
+                    final String identifier  = UUID.randomUUID().toString();
+                    final StringBuilder sb   = new StringBuilder();
+                    final int count          = timeVar.getDimension(0).getLength();
+                    final GeoSpatialBound gb = new GeoSpatialBound();
+
+                    
+                    final double latitude         = getDoubleValue(latArray, latIndex);
+                    final double longitude        = getDoubleValue(lonArray, lonIndex);
+                    final DirectPosition position = SOSXmlFactory.buildDirectPosition("2.0.0", null, 2, Arrays.asList(latitude, longitude));
+                    final Point geom              = SOSXmlFactory.buildPoint("2.0.0", "SamplingPoint", position);
+                    final SamplingFeature sp      = SOSXmlFactory.buildSamplingPoint("2.0.0", identifier, null, null, null, geom);
+                    final FeatureProperty foi     = SOSXmlFactory.buildFeatureProperty("2.0.0", sp);
+
+                    for (int i = 0; i < count; i++) {
+
+                        long millis = getTimeValue(timeArray, i);
+
+                        if (millis == 0 || millis == ((Integer.MIN_VALUE * -1) + 1)) {
+                            continue;
+                        }
+                        final Date d = new Date(millis * 1000);
+                        gb.addDate(d);
+                        synchronized(FORMATTER) {
+                            sb.append(FORMATTER.format(d)).append(DEFAULT_ENCODING.getTokenSeparator());
+                        }
+
+                        for (Field field : analyze.phenfields) {
+                            final Array phenArray   = phenArrays.get(field.label);
+                            final Double value      = getDoubleValue(phenArray, i, latIndex, lonIndex);
+
+                            //empty string for missing value
+                            if (!Double.isNaN(value)) {
+                                sb.append(value);
+                            }
+                            sb.append(DEFAULT_ENCODING.getTokenSeparator());
+                        }
+                        // remove the last token separator
+                        sb.deleteCharAt(sb.length() - 1);
+                        sb.append(DEFAULT_ENCODING.getBlockSeparator());
+                    }
+
+                    final DataArrayProperty result = SOSXmlFactory.buildDataArrayProperty("2.0.0", "array-1", count, "SimpleDataArray", datarecord, DEFAULT_ENCODING, sb.toString());
+                    results.add(OMXmlFactory.buildObservation("2.0.0",           // version
+                                                  identifier,                    // id
+                                                  identifier,                    // name
+                                                  null,                          // description
+                                                  foi,                           // foi
+                                                  phenomenon,                    // phenomenon
+                                                  procedureID,                   // procedure
+                                                  result,                        // result
+                                                  gb.getTimeObject("2.0.0")));   // time
+                }
+            }
+            
 
         } catch (IOException ex) {
             LOGGER.log(Level.WARNING, "error while parsing netcdf timeserie", ex);

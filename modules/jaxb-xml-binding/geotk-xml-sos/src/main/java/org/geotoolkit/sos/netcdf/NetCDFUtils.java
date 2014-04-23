@@ -104,6 +104,40 @@ public class NetCDFUtils {
         return Double.NaN;
     }
     
+    public static double getDoubleValue(final Array array, int i, int j, int k) {
+        
+        
+        if (array instanceof ArrayInt.D3) {
+            int val = ((ArrayInt.D3)array).get(i, j, k);
+            if (val != N3iosp.NC_FILL_INT) {
+                return val;
+            }
+        } else if (array instanceof ArrayDouble.D3) {
+            double val = ((ArrayDouble.D3)array).get(i, j, k);
+            if (val != N3iosp.NC_FILL_DOUBLE) {
+                return val;
+            }
+        } else if (array instanceof ArrayFloat.D3) {
+            float val = ((ArrayFloat.D3)array).get(i, j, k);
+            if (val != N3iosp.NC_FILL_FLOAT) {
+                return val;
+            }
+        } else if (array instanceof ArrayShort.D3) {
+            short val = ((ArrayShort.D3)array).get(i, j, k);
+            if (val != N3iosp.NC_FILL_SHORT) {
+                return val;
+            }
+        } else if (array instanceof ArrayLong.D3) {
+            long val = ((ArrayLong.D3)array).get(i, j, k);
+            if (val != N3iosp.NC_FILL_LONG) {
+                return val;
+            }
+        } else {
+            throw new IllegalArgumentException("Unexpected Array type for field:" + array.getClass().getName());
+        }
+        return Double.NaN;
+    }
+    
     public static long getTimeValue(final boolean mainFirst, boolean constantT, final Array array, int i, int j) {
         if (constantT) {
             return getTimeValue(array, i);

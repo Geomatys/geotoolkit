@@ -25,5 +25,6 @@ public enum FeatureType {
     
     PROFILE,
     TIMESERIES,
-    TRAJECTORY
+    TRAJECTORY,
+    GRID
 }
