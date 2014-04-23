@@ -293,30 +293,20 @@ public class XMLMosaic implements GridMosaic{
         final File f = getTileFile(col, row);
         f.getParentFile().mkdirs();
 
-        ImageOutputStream out = null;
         ImageWriter writer = null;
-        try {
-            out = ImageIO.createImageOutputStream(f);
+        try (ImageOutputStream out = ImageIO.createImageOutputStream(f)) {            
             writer = XImageIO.getWriterByFormatName(
                     getPyramid().getPyramidSet().getFormatName(), out, image);
             writer.setOutput(out);
             writer.write(image);
-            writer.dispose();
             tileExist.set(getTileIndex(col, row), true);
             tileEmpty.set(getTileIndex(col, row), false);
             updateCompletionString();
         } catch (IOException ex) {
             throw new DataStoreException(ex.getMessage(),ex);
-        } finally{
+        } finally {
             if(writer != null){
                 writer.dispose();
-            }
-            if(out != null){
-                try {
-                    out.close();
-                } catch (IOException ex) {
-                    throw new DataStoreException(ex.getMessage(),ex);
-                }
             }
         }
     }
