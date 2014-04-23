@@ -194,6 +194,7 @@ public class ShapefileAttributeReader {
         final int index = attributIndex[param];
         if(index == -1){
             if(estimateRes &&
+               !(Double.isNaN(record.maxX) || Double.isNaN(record.maxY) || Double.isNaN(record.minY) || Double.isNaN(record.minX)) &&
                !(estimateX <= (record.maxX - record.minX) || estimateY <= (record.maxY - record.minY))){
                 //read estimated shape
                 return record.estimatedShape();
