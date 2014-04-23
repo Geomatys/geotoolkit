@@ -123,7 +123,7 @@ public class GenericResampleProcess extends AbstractProcess {
             // and if it's too big, we need a cache system.
             final ImageTypeSpecifier rawImageType = inImage.getRawImageType(0);
             final ColorModel colorModel = rawImageType.getColorModel();
-            final Dimension rawTileSize = new Dimension(512, 512);
+            final Dimension rawTileSize = new Dimension(256, 256);
             final LargeRenderedImage rawImage = new LargeRenderedImage(inImage, 0, LargeCache.getInstance(MAX_MEMORY_SIZE), rawTileSize);
 
             /*
@@ -217,6 +217,7 @@ public class GenericResampleProcess extends AbstractProcess {
             }
 
             populateResamplingQueue(width, height, tile_size_y);
+//            populateResamplingQueue(width, height, 1);
 
             try {
                 for (Future threadStatus : status) {
@@ -234,6 +235,7 @@ public class GenericResampleProcess extends AbstractProcess {
                 try {
                     writingThread.join(WAIT_TIME);
                 } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
                     throw new ProcessException("Writing thread has been stopped.", this, e);
                 }
             }
@@ -267,6 +269,7 @@ public class GenericResampleProcess extends AbstractProcess {
      * @param tile_size_y The height we want for a single strip.
      */
     private void populateResamplingQueue(final int imageWidth, final int imageHeight, final int tile_size_y) throws InterruptedException {
+        final Thread currentThread = Thread.currentThread();
         int tileHeight;
         // Iterate through upper left corner of tiles.
         for (int y = 0; y < imageHeight; y += tile_size_y) {
@@ -277,7 +280,7 @@ public class GenericResampleProcess extends AbstractProcess {
             }
 
             final Rectangle resampleZone = new Rectangle(0, y, imageWidth, tileHeight);
-            while (!resamplingQueue.offer(resampleZone)) {
+            while (!currentThread.isInterrupted() && !resamplingQueue.offer(resampleZone)) {
                 wait(WAIT_TIME);
             }
         }
@@ -287,8 +290,9 @@ public class GenericResampleProcess extends AbstractProcess {
     }
 
     private void poisonResamplingQueue() {
+        final Thread currentThread = Thread.currentThread();
         for (int i = 0 ; i <= threadNumber ; i++) {
-            while (!resamplingQueue.offer(new EmptyBox())) {
+            while (!currentThread.isInterrupted() && !resamplingQueue.offer(new EmptyBox())) {
                 try {
                     wait(WAIT_TIME);
                 } catch (InterruptedException e) {
@@ -301,7 +305,8 @@ public class GenericResampleProcess extends AbstractProcess {
     }
 
     private void poisonWritingQueue() {
-        while (!writingQueue.offer(new NightShade<Point, RenderedImage>())) {
+        final Thread currentThread = Thread.currentThread();
+        while (!currentThread.isInterrupted() && !writingQueue.offer(new NightShade<Point, RenderedImage>())) {
             try {
                 wait(WAIT_TIME);
             } catch (InterruptedException e) {
@@ -381,7 +386,7 @@ public class GenericResampleProcess extends AbstractProcess {
                     destination = new BufferedImage(outCModel,
                             outCModel.createCompatibleWritableRaster(computeZone.width, computeZone.height), false, null);
                     final Resample resampler = new Resample(gridTransform, destination, interpolator, fillValue);
-                    resampler.fillImage();
+                    resampler.fillImagePx();
                     final Map.Entry<Point, RenderedImage> output = new AbstractMap.SimpleEntry<>(computeZone.getLocation(), (RenderedImage) destination);
 
                     while (!writingQueue.offer(output)) {
