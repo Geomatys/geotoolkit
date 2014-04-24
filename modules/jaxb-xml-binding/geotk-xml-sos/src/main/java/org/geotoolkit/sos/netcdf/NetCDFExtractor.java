@@ -62,8 +62,8 @@ public class NetCDFExtractor {
     
     private static final DateFormat FORMATTER = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
     
-    public List<Observation> getObservationFromNetCDF(final File netCDFFile, final String procedureID) {
-        final NCFieldAnalyze analyze = analyzeResult(netCDFFile);
+    public static List<Observation> getObservationFromNetCDF(final File netCDFFile, final String procedureID) {
+        final NCFieldAnalyze analyze = analyzeResult(netCDFFile, null);
         switch (analyze.featureType) {
             case TIMESERIES :
             return parseDataBlockTS(analyze, procedureID);
@@ -77,7 +77,22 @@ public class NetCDFExtractor {
         }
     }
     
-    public NCFieldAnalyze analyzeResult(final File netCDFFile) {
+    public static List<Observation> getObservationFromNetCDF(final File netCDFFile, final String procedureID, final String selectedBand) {
+        final NCFieldAnalyze analyze = analyzeResult(netCDFFile, selectedBand);
+        switch (analyze.featureType) {
+            case TIMESERIES :
+            return parseDataBlockTS(analyze, procedureID);
+            case PROFILE :
+            return parseDataBlockXY(analyze, procedureID);
+            case TRAJECTORY :
+            return parseDataBlockTraj(analyze, procedureID);
+            case GRID :
+            return parseDataBlockGrid(analyze, procedureID);
+            default : return null;
+        }
+    }
+    
+    public static NCFieldAnalyze analyzeResult(final File netCDFFile, final String selectedBand) {
         final NCFieldAnalyze analyze = new NCFieldAnalyze();
         try {
             
@@ -147,7 +162,7 @@ public class NetCDFExtractor {
                         currentField.type = Type.DOUBLE;
                         if (analyze.featureType == PROFILE) {
                             analyze.mainField = currentField;
-                        } else if (dimension > 1) {
+                        } else if (dimension > 1 && (selectedBand == null || name.equals(selectedBand))) {
                             analyze.phenfields.add(currentField);
                         } else {
                             analyze.skippedFields.add(currentField);
@@ -159,7 +174,7 @@ public class NetCDFExtractor {
                         
                     } else  {
                         currentField.type = getTypeFromDataType(variable.getDataType());
-                        if ((currentField.type == Type.DOUBLE || currentField.type == Type.INT) && dimension != 0) {
+                        if ((currentField.type == Type.DOUBLE || currentField.type == Type.INT) && dimension != 0 && (selectedBand == null || name.equals(selectedBand))) {
                             analyze.phenfields.add(currentField);
                         } else {
                             analyze.skippedFields.add(currentField);
@@ -194,7 +209,7 @@ public class NetCDFExtractor {
         return analyze;
     }
     
-    private List<Observation> parseDataBlockTS(final NCFieldAnalyze analyze, final String procedureID) {
+    private static List<Observation> parseDataBlockTS(final NCFieldAnalyze analyze, final String procedureID) {
         final List<Observation> results = new ArrayList<>();
         if (analyze.mainField == null) {
             LOGGER.warning("No main field found");
@@ -364,7 +379,7 @@ public class NetCDFExtractor {
      *
      * @return a datablock containing the observations.
      */
-    private List<Observation> parseDataBlockXY(final NCFieldAnalyze analyze, final String procedureID) {
+    private static List<Observation> parseDataBlockXY(final NCFieldAnalyze analyze, final String procedureID) {
         final List<Observation> results = new ArrayList<>();
         if (analyze.mainField == null) {
             LOGGER.warning("No main field found");
@@ -535,7 +550,7 @@ public class NetCDFExtractor {
         return results;
     }
     
-    private List<Observation> parseDataBlockTraj(final NCFieldAnalyze analyze, final String procedureID) {
+    private static List<Observation> parseDataBlockTraj(final NCFieldAnalyze analyze, final String procedureID) {
         final List<Observation> results = new ArrayList<>();
         if (analyze.mainField == null) {
             LOGGER.warning("No main field found");
@@ -712,7 +727,7 @@ public class NetCDFExtractor {
         return results;
     }
     
-    private List<Observation> parseDataBlockGrid(final NCFieldAnalyze analyze, final String procedureID) {
+    private static List<Observation> parseDataBlockGrid(final NCFieldAnalyze analyze, final String procedureID) {
         final List<Observation> results = new ArrayList<>();
         if (analyze.mainField == null) {
             LOGGER.warning("No main field found");
@@ -810,7 +825,7 @@ public class NetCDFExtractor {
         return results;
     }
     
-    private List<String> parseSeparatorValues(final NetcdfFile file, final NCFieldAnalyze analyze) throws IOException {
+    private static List<String> parseSeparatorValues(final NetcdfFile file, final NCFieldAnalyze analyze) throws IOException {
         final List<String> separators = new ArrayList<>();
         if (analyze.separatorField != null) {
             final Variable separatorVar = analyze.vars.get(analyze.separatorField.label);
