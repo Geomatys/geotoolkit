@@ -68,11 +68,11 @@ public class GMLXmlFactory {
         }
     }
     
-    public static LineString buildLineString(final String version, final List<org.opengis.geometry.DirectPosition> pos) {
+    public static LineString buildLineString(final String version, final String id, final String srsName, final List<org.opengis.geometry.DirectPosition> pos) {
         if ("3.2.1".equals(version)) {
-            return new org.geotoolkit.gml.xml.v321.LineStringType(pos);
+            return new org.geotoolkit.gml.xml.v321.LineStringType(id, srsName, pos);
         } else if ("3.1.1".equals(version)) {
-            return new org.geotoolkit.gml.xml.v311.LineStringType(pos);
+            return new org.geotoolkit.gml.xml.v311.LineStringType(id, srsName, pos);
         } else {
             throw new IllegalArgumentException("unexpected gml version number:" + version);
         }

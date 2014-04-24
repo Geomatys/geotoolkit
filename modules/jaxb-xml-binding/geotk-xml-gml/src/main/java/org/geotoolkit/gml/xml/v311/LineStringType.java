@@ -30,7 +30,6 @@ import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.Envelope;
 import org.geotoolkit.gml.xml.LineString;
 import org.apache.sis.util.ComparisonMode;
-import org.geotoolkit.util.Utilities;
 import org.opengis.geometry.DirectPosition;
 
 
@@ -95,16 +94,31 @@ public class LineStringType extends AbstractCurveType implements LineString {
 
     /**
      * Build a new LineString with the specified coordinates
+     * @param coordinates
      */
     public LineStringType(final CoordinatesType coordinates) {
         this.coordinates = coordinates;
     }
 
+    public LineStringType(final String id, final String srsName, final List<DirectPosition> positions) {
+        super(id, srsName);
+        this.pos = new ArrayList<>();
+        for (DirectPosition currentPos : positions) {
+            final DirectPositionType position;
+            if (currentPos instanceof DirectPositionType) {
+                position = (DirectPositionType) currentPos;
+            } else {
+                position = new DirectPositionType(currentPos, true);
+            }
+            pos.add(position);
+        }
+    }
+    
     /**
      * Build a new LineString with the specified coordinates
      */
     public LineStringType(final List<DirectPosition> positions) {
-        this.pos = new ArrayList<DirectPositionType>();
+        this.pos = new ArrayList<>();
         for (DirectPosition currentPos : positions) {
             DirectPositionType position;
             if (currentPos instanceof DirectPositionType) {
@@ -121,7 +135,7 @@ public class LineStringType extends AbstractCurveType implements LineString {
      */
     public LineStringType(final String id, final String srsname, final Collection<DirectPositionType> positions) {
         super(id, srsname);
-        this.pos = new ArrayList<DirectPositionType>();
+        this.pos = new ArrayList<>();
         for (DirectPositionType currentPos : positions) {
             pos.add(currentPos);
         }
@@ -130,7 +144,7 @@ public class LineStringType extends AbstractCurveType implements LineString {
     @Override
     public List<DirectPositionType> getPos() {
         if (pos == null) {
-            pos = new ArrayList<DirectPositionType>();
+            pos = new ArrayList<>();
         }
         return pos;
     }
@@ -147,7 +161,7 @@ public class LineStringType extends AbstractCurveType implements LineString {
      */
     public List<JAXBElement<?>> getPointPropertyOrPointRep() {
         if (pointPropertyOrPointRep == null) {
-            pointPropertyOrPointRep = new ArrayList<JAXBElement<?>>();
+            pointPropertyOrPointRep = new ArrayList<>();
         }
         return this.pointPropertyOrPointRep;
     }

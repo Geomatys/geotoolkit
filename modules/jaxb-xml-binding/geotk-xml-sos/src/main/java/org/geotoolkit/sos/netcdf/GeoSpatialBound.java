@@ -20,7 +20,9 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import org.geotoolkit.gml.xml.AbstractGeometry;
 import org.geotoolkit.gml.xml.Envelope;
+import org.geotoolkit.gml.xml.v321.AbstractGeometryType;
 import org.geotoolkit.sos.xml.SOSXmlFactory;
 import org.opengis.temporal.TemporalGeometricPrimitive;
 
@@ -39,7 +41,7 @@ public class GeoSpatialBound {
     public Double miny;
     public Double maxy;
 
-    private final List<Double> positions = new ArrayList<>();
+    private final List<AbstractGeometry> geometries = new ArrayList<>();
 
     public void addDate(final Date date) {
         if (dateStart == null) {
@@ -88,8 +90,11 @@ public class GeoSpatialBound {
         }
     }
 
-    public List<Double> getPositions() {
-        return positions;
+      
+    public void addGeometry(final AbstractGeometry geometry) {
+        if (!geometries.contains(geometry)) {
+            geometries.add(geometry);
+        }
     }
 
     public boolean hasFullSpatialCoordinates() {
@@ -104,6 +109,12 @@ public class GeoSpatialBound {
         addXCoordinate(other.maxx);
         addYCoordinate(other.miny);
         addYCoordinate(other.maxy);
+        
+        for (AbstractGeometry geom : other.geometries) {
+            if (!this.geometries.contains(geom)) {
+                this.geometries.add(geom);
+            }
+        }
     }
 
     public TemporalGeometricPrimitive getTimeObject(final String version) {
@@ -117,7 +128,7 @@ public class GeoSpatialBound {
         return null;
     }
 
-    public Envelope getSpatialObject(final String version) {
+    public Envelope getSpatialBounds(final String version) {
         if (!hasFullSpatialCoordinates()) {
             return null;
         }
@@ -131,6 +142,55 @@ public class GeoSpatialBound {
             return new org.geotoolkit.gml.xml.v321.EnvelopeType(lower, upper, null);
         } else {
             throw new IllegalArgumentException("unexpected version:" + version);
+        }
+    }
+    
+    public AbstractGeometry getPolyGonBounds(final String version) {
+        if (!hasFullSpatialCoordinates()) {
+            return null;
+        }
+        final List<Double> positions = new ArrayList<>();
+        positions.add(minx);
+        positions.add(miny);
+        
+        positions.add(minx);
+        positions.add(maxy);
+        
+        positions.add(maxx);
+        positions.add(maxy);
+        
+        positions.add(maxx);
+        positions.add(miny);
+        
+        positions.add(minx);
+        positions.add(miny);
+        
+        
+        if ("1.0.0".equals(version)) {
+            final org.geotoolkit.gml.xml.v311.DirectPositionListType posList = new org.geotoolkit.gml.xml.v311.DirectPositionListType(positions);
+            final org.geotoolkit.gml.xml.v311.AbstractRingType exterior = new org.geotoolkit.gml.xml.v311.LinearRingType("EPSG:4326", posList);
+            return new org.geotoolkit.gml.xml.v311.PolygonType(exterior, null);
+        } else if ("2.0.0".equals(version)) {
+            final org.geotoolkit.gml.xml.v321.DirectPositionListType posList = new org.geotoolkit.gml.xml.v321.DirectPositionListType(positions);
+            final org.geotoolkit.gml.xml.v321.AbstractRingType exterior = new org.geotoolkit.gml.xml.v321.LinearRingType("EPSG:4326", posList);
+            return new org.geotoolkit.gml.xml.v321.PolygonType(exterior, null);
+        } else {
+            throw new IllegalArgumentException("unexpected version:" + version);
+        }
+    }
+    
+    public AbstractGeometry getGeometry(final String version) {
+        if (geometries.isEmpty()) {
+            return null;
+        } else if (geometries.size() == 1) {
+            return geometries.get(0);
+        } else {
+            final List<org.geotoolkit.gml.xml.v321.GeometryPropertyType> members = new ArrayList<>();
+            for (AbstractGeometry geom : geometries) {
+                members.add(new org.geotoolkit.gml.xml.v321.GeometryPropertyType((AbstractGeometryType) geom));
+            }
+            final org.geotoolkit.gml.xml.v321.MultiGeometryType geom = new org.geotoolkit.gml.xml.v321.MultiGeometryType(members);
+            return geom;
         }
     }
 }

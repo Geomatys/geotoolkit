@@ -267,6 +267,7 @@ public class NetCDFExtractor {
                     foi                           = SOSXmlFactory.buildFeatureProperty("2.0.0", sp);
                     gb.addXCoordinate(longitude);
                     gb.addYCoordinate(latitude);
+                    gb.addGeometry(geom);
                 }
                 
                 // iterating over time
@@ -328,6 +329,7 @@ public class NetCDFExtractor {
                         foi                           = SOSXmlFactory.buildFeatureProperty("2.0.0", sp);
                         gb.addXCoordinate(longitude);
                         gb.addYCoordinate(latitude);
+                        gb.addGeometry(geom);
                     }
                 
                     for (int i = 0; i < count; i++) {
@@ -440,6 +442,7 @@ public class NetCDFExtractor {
                     foi                           = SOSXmlFactory.buildFeatureProperty("2.0.0", sp);
                     gb.addXCoordinate(longitude);
                     gb.addYCoordinate(latitude);
+                    gb.addGeometry(geom);
                 }
                 if (analyze.hasTime()) {
                     long millis = getTimeValue(timeArray, 0);
@@ -503,6 +506,7 @@ public class NetCDFExtractor {
                         foi                           = SOSXmlFactory.buildFeatureProperty("2.0.0", sp);
                         gb.addXCoordinate(longitude);
                         gb.addYCoordinate(latitude);
+                        gb.addGeometry(geom);
                     }
                     if (analyze.hasTime()) {
                         long millis = getTimeValue(timeArray, 0);
@@ -647,9 +651,10 @@ public class NetCDFExtractor {
                     sb.append(DEFAULT_ENCODING.getBlockSeparator());
                 }
                 
-                final LineString geom         = SOSXmlFactory.buildLineString("2.0.0", positions);
+                final LineString geom         = SOSXmlFactory.buildLineString("2.0.0", null, "EPSG:4326", positions);
                 final SamplingFeature sp      = SOSXmlFactory.buildSamplingCurve("2.0.0", identifier, null, null, null, geom, null, null, null);
                 final FeatureProperty foi     = SOSXmlFactory.buildFeatureProperty("2.0.0", sp);
+                gb.addGeometry(geom);
                 
                 final DataArrayProperty result = SOSXmlFactory.buildDataArrayProperty("2.0.0", "array-1", count, "SimpleDataArray", datarecord, DEFAULT_ENCODING, sb.toString());
                 results.observations.add(OMXmlFactory.buildObservation("2.0.0",             // version
@@ -716,9 +721,10 @@ public class NetCDFExtractor {
                         sb.append(DEFAULT_ENCODING.getBlockSeparator());
                     }
                     
-                    final LineString geom          = SOSXmlFactory.buildLineString("2.0.0", positions);
+                    final LineString geom          = SOSXmlFactory.buildLineString("2.0.0", null, "EPSG:4326", positions);
                     final SamplingFeature sp       = SOSXmlFactory.buildSamplingCurve("2.0.0", identifier, null, null, null, geom, null, null, null);
                     final FeatureProperty foi      = SOSXmlFactory.buildFeatureProperty("2.0.0", sp);
+                    gb.addGeometry(geom);
                     
                     final DataArrayProperty result = SOSXmlFactory.buildDataArrayProperty("2.0.0", "array-1", count, "SimpleDataArray", datarecord, DEFAULT_ENCODING, sb.toString());
                     results.observations.add(OMXmlFactory.buildObservation("2.0.0",           // version
@@ -834,6 +840,8 @@ public class NetCDFExtractor {
                     results.spatialBound.merge(gb);
                 }
             }
+            
+            results.spatialBound.addGeometry(results.spatialBound.getPolyGonBounds("2.0.0"));
             
 
         } catch (IOException ex) {

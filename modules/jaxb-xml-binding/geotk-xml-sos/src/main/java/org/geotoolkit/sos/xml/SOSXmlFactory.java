@@ -974,11 +974,11 @@ public class SOSXmlFactory {
         }
     }
     
-    public static LineString buildLineString(final String version, final List<DirectPosition> position) {
+    public static LineString buildLineString(final String version, final String id, final String srsName, final List<DirectPosition> position) {
         if ("2.0.0".equals(version)) {
-            return GMLXmlFactory.buildLineString("3.2.1", position);
+            return GMLXmlFactory.buildLineString("3.2.1", id, srsName, position);
         } else if ("1.0.0".equals(version)) {
-            return GMLXmlFactory.buildLineString("3.1.1", position);
+            return GMLXmlFactory.buildLineString("3.1.1", id, srsName, position);
         } else {
             throw new IllegalArgumentException("unexpected SOS version number:" + version);
         }

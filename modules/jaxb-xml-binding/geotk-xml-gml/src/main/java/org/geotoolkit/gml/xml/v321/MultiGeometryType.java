@@ -57,6 +57,14 @@ public class MultiGeometryType extends AbstractGeometricAggregateType implements
     private List<GeometryPropertyType> geometryMember;
     private GeometryArrayPropertyType geometryMembers;
 
+    public MultiGeometryType() {
+        
+    }
+    
+    public MultiGeometryType(List<GeometryPropertyType> geometryMember) {
+        this.geometryMember = geometryMember;
+    }
+    
     /**
      * Gets the value of the geometryMember property.
      * 

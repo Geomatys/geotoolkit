@@ -87,6 +87,15 @@ public class GeometryPropertyType implements GeometryProperty {
     @XmlAttribute
     private java.lang.Boolean owns;
 
+    public GeometryPropertyType() {
+        
+    }
+    
+    public GeometryPropertyType(final AbstractGeometryType geom) {
+        final ObjectFactory factory = new ObjectFactory();
+        this.abstractGeometry = (JAXBElement<? extends AbstractGeometryType>) factory.buildAnyGeometry(geom);
+    }
+    
     /**
      * Gets the value of the abstractGeometry property.
      * 

@@ -88,6 +88,7 @@ public class LineStringType extends AbstractCurveType implements LineString {
 
     /**
      * Build a new LineString with the specified coordinates
+     * @param coordinates
      */
     public LineStringType(final CoordinatesType coordinates) {
         this.coordinates = coordinates;
@@ -97,12 +98,27 @@ public class LineStringType extends AbstractCurveType implements LineString {
         super(id, null);
         this.pos = pos;
     }
+    
+    public LineStringType(final String id, final String srsName, final List<DirectPosition> positions) {
+        super(id, srsName);
+        this.pos = new ArrayList<>();
+        for (DirectPosition currentPos : positions) {
+            final DirectPositionType position;
+            if (currentPos instanceof DirectPositionType) {
+                position = (DirectPositionType) currentPos;
+            } else {
+                position = new DirectPositionType(currentPos, true);
+            }
+            pos.add(position);
+        }
+    }
 
     /**
      * Build a new LineString with the specified coordinates
+     * @param positions
      */
     public LineStringType(final List<DirectPosition> positions) {
-        this.pos = new ArrayList<DirectPositionType>();
+        this.pos = new ArrayList<>();
         for (DirectPosition currentPos : positions) {
             final DirectPositionType position;
             if (currentPos instanceof DirectPositionType) {
@@ -125,7 +141,7 @@ public class LineStringType extends AbstractCurveType implements LineString {
      */
     public List<JAXBElement<?>> getPointPropertyOrPointRep() {
         if (pointPropertyOrPointRep == null) {
-            pointPropertyOrPointRep = new ArrayList<JAXBElement<?>>();
+            pointPropertyOrPointRep = new ArrayList<>();
         }
         return this.pointPropertyOrPointRep;
     }
@@ -133,7 +149,7 @@ public class LineStringType extends AbstractCurveType implements LineString {
     @Override
     public List<DirectPositionType> getPos() {
         if (pos == null) {
-            pos = new ArrayList<DirectPositionType>();
+            pos = new ArrayList<>();
         }
         return pos;
     }
