@@ -187,19 +187,21 @@ public class NetCDFExtractor {
             }
             
             // post analyze
-            for (Field f : all) {
-                if (analyze.featureType != TRAJECTORY) {
-                    final String mainDimension = analyze.mainField.label;
-                    // dimension order
-                    if (!f.dimensionLabel.startsWith(mainDimension)) {
-                        f.mainVariableFirst = false;
-                    }
+            if (analyze.mainField != null) {
+                for (Field f : all) {
+                    if (analyze.featureType != TRAJECTORY) {
+                        final String mainDimension = analyze.mainField.label;
+                        // dimension order
+                        if (!f.dimensionLabel.startsWith(mainDimension)) {
+                            f.mainVariableFirst = false;
+                        }
 
-                    // exclude phenomenon field not related to main
-                    if (analyze.phenfields.contains(f)) {
-                        if (!f.dimensionLabel.contains(mainDimension)) {
-                            analyze.phenfields.remove(f);
-                            analyze.skippedFields.add(f);
+                        // exclude phenomenon field not related to main
+                        if (analyze.phenfields.contains(f)) {
+                            if (!f.dimensionLabel.contains(mainDimension)) {
+                                analyze.phenfields.remove(f);
+                                analyze.skippedFields.add(f);
+                            }
                         }
                     }
                 }

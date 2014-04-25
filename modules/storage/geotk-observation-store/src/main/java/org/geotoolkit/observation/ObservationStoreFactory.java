@@ -1,8 +1,8 @@
 /*
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
- * 
- *    (C) 2009-2012, Geomatys
+ *
+ *    (C) 2014, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -14,7 +14,8 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.data;
+
+package org.geotoolkit.observation;
 
 import java.io.Serializable;
 import java.util.Map;
@@ -29,18 +30,16 @@ import org.opengis.parameter.ParameterValueGroup;
  * <br/>
  * Factories must be declared using standard java services.
  * <br/>
- * Example, for a factory : x.y.XYFeatureStoreFactory<br/>
+ * Example, for a factory : x.y.XYObservationStoreFactory<br/>
  * A service registration file must be declared like :<br/>
- * <code>META-INF/services/org.geotoolkit.data.FeatureStoreFactory</code>
+ * <code>META-INF/services/org.geotoolkit.data.ObservationStoreFactory</code>
  * And contain a single line :<br/>
- * <code>x.y.XYFeatureStoreFactory</code>
+ * <code>x.y.XYObservationStoreFactory</code>
  * 
- * 
- * @author Johann Sorel (Geomatys)
- * @module pending
+ * @author Guilhem Legal (Geomatys)
  */
-public interface FeatureStoreFactory {
-
+public interface ObservationStoreFactory {
+    
     /**
      * General information about this factory. 
      * If a given ParameterValueGroup has an identifier parameter set, it's value must
@@ -89,9 +88,9 @@ public interface FeatureStoreFactory {
      * @return ParameterDescriptorGroup
      */
     ParameterDescriptorGroup getParametersDescriptor();
-
+    
     /**
-     * @see FeatureStoreFactory#canProcess(org.opengis.parameter.ParameterValueGroup) 
+     * @see ObservationStoreFactory#canProcess(org.opengis.parameter.ParameterValueGroup) 
      */
     boolean canProcess(Map<String, ? extends Serializable> params);
 
@@ -103,39 +102,38 @@ public interface FeatureStoreFactory {
     boolean canProcess(ParameterValueGroup params);
 
     /**
-     * @see FeatureStoreFactory#open(org.opengis.parameter.ParameterValueGroup)
+     * @see ObservationStoreFactory#open(org.opengis.parameter.ParameterValueGroup)
      */
-    FeatureStore open(Map<String, ? extends Serializable> params) throws DataStoreException;
+    ObservationStore open(Map<String, ? extends Serializable> params) throws DataStoreException;
 
     /**
      * Open a link to the storage location.
      * This method is intended to open an existing storage.
      * <br/>
      * If the purpose is to create a new one storage use the create method :
-     * @see FeatureStoreFactory#create(org.opengis.parameter.ParameterValueGroup)
+     * @see ObservationStoreFactory#create(org.opengis.parameter.ParameterValueGroup)
      * 
      * @param params
-     * @return FeatureStore opened store
+     * @return ObservationStore opened store
      * @throws DataStoreException if parameters are incorrect or connexion failed.
      */
-    FeatureStore open(ParameterValueGroup params) throws DataStoreException;
+    ObservationStore open(ParameterValueGroup params) throws DataStoreException;
 
     /**
-     * @see FeatureStoreFactory#create(org.opengis.parameter.ParameterValueGroup)
+     * @see ObservationStoreFactory#create(org.opengis.parameter.ParameterValueGroup)
      */
-    FeatureStore create(Map<String, ? extends Serializable> params) throws DataStoreException;
+    ObservationStore create(Map<String, ? extends Serializable> params) throws DataStoreException;
 
     /**
      * Create a new storage location.
      * This method is intended to create from scratch a new storage location.
      * <br/>
      * If the purpose is to open an already existing  storage use the open method :
-     * @see FeatureStoreFactory#open(org.opengis.parameter.ParameterValueGroup)
+     * @see ObservationStoreFactory#open(org.opengis.parameter.ParameterValueGroup)
      * 
      * @param params
      * @return FeatureStore created store
      * @throws DataStoreException if parameters are incorrect or creation failed.
      */
-    FeatureStore create(ParameterValueGroup params) throws DataStoreException;
-
+    ObservationStore create(ParameterValueGroup params) throws DataStoreException;
 }

@@ -119,6 +119,7 @@
     <module>geotk-coverage-store</module>
     <module>geotk-coverage-sql</module>
     <module>geotk-coverage-wkb</module>
+    <module>geotk-observation-store</module>
   </modules>
 
 </project>
