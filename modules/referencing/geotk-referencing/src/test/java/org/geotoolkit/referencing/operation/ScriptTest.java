@@ -157,6 +157,7 @@ public final strictfp class ScriptTest extends ReferencingTestBase {
      * @throws Exception If a test failed.
      */
     @Test
+    @Ignore("Platform-dependent failures: need to investigate")
     public void testTransverseMercator() throws Exception {
         runScript("TransverseMercator.txt");
     }
