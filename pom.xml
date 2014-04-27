@@ -173,7 +173,7 @@
     <geoapi.version>3.1-SNAPSHOT</geoapi.version> <!-- Must be same than the version used by SIS. -->
     <sis.version>0.5-jdk7-SNAPSHOT</sis.version>
     <derby.version>10.8.2.2</derby.version> <!-- If updated, need to search occurrences in APT files. -->
-    <netcdf.version>4.3.10</netcdf.version>
+    <netcdf.version>4.3.21</netcdf.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <website.encoding>UTF-8</website.encoding>
     <maven.build.timestamp.format>yyyy-MM-dd HH:mm:ss</maven.build.timestamp.format>
