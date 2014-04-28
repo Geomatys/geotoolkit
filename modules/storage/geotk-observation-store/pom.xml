@@ -47,6 +47,11 @@
         <artifactId>geotk-feature</artifactId>
         <version>${project.version}</version>
     </dependency>
+     <dependency>
+        <groupId>org.geotoolkit</groupId>
+        <artifactId>geotk-xml-sos</artifactId>
+        <version>${project.version}</version>
+    </dependency>
     <dependency>
         <groupId>org.geotoolkit</groupId>
         <artifactId>geotk-epsg</artifactId>

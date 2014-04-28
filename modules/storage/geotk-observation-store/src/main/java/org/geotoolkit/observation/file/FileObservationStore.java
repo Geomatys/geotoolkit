@@ -23,8 +23,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.observation.AbstractObservationStore;
 import static org.geotoolkit.observation.file.FileObservationStoreFactory.FILE_PATH;
+import org.geotoolkit.sos.netcdf.NCFieldAnalyze;
+import org.geotoolkit.sos.netcdf.NetCDFExtractor;
 import org.opengis.feature.type.Name;
 import org.opengis.parameter.ParameterValueGroup;
 
@@ -35,10 +38,13 @@ import org.opengis.parameter.ParameterValueGroup;
 public class FileObservationStore extends AbstractObservationStore {
     
     private final File dataFile;
+    private final NCFieldAnalyze analyze;
+    
     
     public FileObservationStore(final ParameterValueGroup params) {
         super(params);
         dataFile = (File) params.parameter(FILE_PATH.getName().toString()).getValue();
+        analyze = NetCDFExtractor.analyzeResult(dataFile, null);
     }
 
     /**
@@ -55,6 +61,14 @@ public class FileObservationStore extends AbstractObservationStore {
 
     @Override
     public Set<Name> getProcedureNames() {
-        return new HashSet<>();
+        final Set<Name> names = new HashSet<>();
+        String local;
+        if (dataFile.getName().indexOf('.') != -1) {
+            local = dataFile.getName().substring(0, dataFile.getName().lastIndexOf('.'));
+        } else {
+            local = dataFile.getName();
+        }
+        names.add(new DefaultName(local));
+        return names;
     }
 }
