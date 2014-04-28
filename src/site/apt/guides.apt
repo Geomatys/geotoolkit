@@ -13,7 +13,7 @@ Geotoolkit.org guides
   French version will be more complete.
 
 
-   * {{{http://builds.apache.org/job/sis-trunk/site/book/fr.xhtml}Introduction à Apache SIS™}} (French version)
+   * {{{https://builds.apache.org/job/sis-trunk/ws/target/site/book/fr.xhtml}Introduction à Apache SIS™}} (French version)
 
    * {{{./book/fr.xhtml}Guide du développeur}} (French version)
 
