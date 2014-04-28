@@ -214,6 +214,24 @@ public class NetCDFExtractor {
         return analyze;
     }
     
+    public static boolean isObservationFile(final String nfilePath) {
+        try {
+            final NetcdfFile file = NetcdfFile.open(nfilePath);
+            final Attribute ftAtt = file.findGlobalAttribute("featureType");
+            if (ftAtt != null) {
+                final String value = ftAtt.getStringValue();
+                if ("timeSeries".equals(value) ||
+                        "profile".equals(value)   ||
+                        "trajectory".equals(value)) {
+                    return true;
+                }
+            }
+        } catch (IOException ex) {
+            LOGGER.log(Level.WARNING, "IO exception while opening netCDF file", ex);
+        }
+        return false;
+    }
+    
     private static ExtractionResult parseDataBlockTS(final NCFieldAnalyze analyze, final String procedureID) {
         final ExtractionResult results = new ExtractionResult();
         if (analyze.mainField == null) {
