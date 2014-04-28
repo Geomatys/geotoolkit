@@ -26,6 +26,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.observation.AbstractObservationStore;
 import static org.geotoolkit.observation.file.FileObservationStoreFactory.FILE_PATH;
+import org.geotoolkit.sos.netcdf.ExtractionResult;
 import org.geotoolkit.sos.netcdf.NCFieldAnalyze;
 import org.geotoolkit.sos.netcdf.NetCDFExtractor;
 import org.opengis.feature.type.Name;
@@ -62,13 +63,21 @@ public class FileObservationStore extends AbstractObservationStore {
     @Override
     public Set<Name> getProcedureNames() {
         final Set<Name> names = new HashSet<>();
+        names.add(new DefaultName(getProcedureID()));
+        return names;
+    }
+    
+    private String getProcedureID() {
         String local;
         if (dataFile.getName().indexOf('.') != -1) {
             local = dataFile.getName().substring(0, dataFile.getName().lastIndexOf('.'));
         } else {
             local = dataFile.getName();
         }
-        names.add(new DefaultName(local));
-        return names;
+        return local;
+    }
+    
+    public ExtractionResult getResults() {
+        return NetCDFExtractor.getObservationFromNetCDF(dataFile, getProcedureID());
     }
 }

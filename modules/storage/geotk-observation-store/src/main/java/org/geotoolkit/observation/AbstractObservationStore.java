@@ -16,9 +16,7 @@
  */
 package org.geotoolkit.observation;
 
-import java.util.List;
 import org.apache.sis.storage.DataStoreException;
-import org.opengis.feature.type.Name;
 import org.opengis.metadata.Metadata;
 import org.opengis.parameter.ParameterValueGroup;
 

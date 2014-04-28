@@ -19,6 +19,7 @@ package org.geotoolkit.observation;
 
 import java.util.Set;
 import org.apache.sis.storage.DataStore;
+import org.geotoolkit.sos.netcdf.ExtractionResult;
 import org.opengis.feature.type.Name;
 import org.opengis.parameter.ParameterValueGroup;
 
@@ -36,4 +37,6 @@ public abstract class ObservationStore extends DataStore {
     public abstract ParameterValueGroup getConfiguration();
     
     public abstract Set<Name> getProcedureNames();
+    
+    public abstract ExtractionResult getResults();
 }
