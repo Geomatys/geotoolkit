@@ -1228,7 +1228,16 @@ public class SOSXmlFactory {
             throw new IllegalArgumentException("Unexpected SOS version:" + version);
         }
     }
-    
+
+     public static TextBlock getCsvTextEncoding(final String version) {
+        if ("2.0.0".equals(version)) {
+            return org.geotoolkit.swe.xml.v200.TextEncodingType.CSV_ENCODING;
+        } else if ("1.0.0".equals(version)) {
+            return org.geotoolkit.swe.xml.v101.TextBlockType.CSV_ENCODING;
+        } else {
+            throw new IllegalArgumentException("Unexpected SOS version:" + version);
+        }
+    }
     public static AnyScalar getDefaultTimeField(final String version) {
         if ("2.0.0".equals(version)) {
             return org.geotoolkit.swe.xml.v200.Field.TIME_FIELD;
