@@ -234,8 +234,8 @@ public abstract class Interpolation {
         final int boundH = boundary.height;
         final int bx     = boundary.x;
         final int by     = boundary.y;
-        minX  = (int) x;
-        minY  = (int) y;
+        minX  = (int) (x - 0.5);
+        minY  = (int) (y - 0.5);
 
         //-- Adjust truncation.
         if (x < minX) minX--;

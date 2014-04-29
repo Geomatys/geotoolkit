@@ -60,9 +60,9 @@ abstract class SeparableInterpolation extends Interpolation {
                 pixelIterator.moveTo(dx, dy, b);
                 tabInteRow[dx - minX] = pixelIterator.getSampleDouble();
             }
-            tabInteCol[dy-minY] = interpolate1D(minX, x, tabInteRow);
+            tabInteCol[dy-minY] = interpolate1D(minX + 0.5, x, tabInteRow);
         }
-        return interpolate1D(minY, y, tabInteCol);
+        return interpolate1D(minY + 0.5, y, tabInteCol);
     }
 
     /**

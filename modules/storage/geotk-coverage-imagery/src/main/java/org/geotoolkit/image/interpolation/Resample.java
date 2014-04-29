@@ -18,6 +18,11 @@ package org.geotoolkit.image.interpolation;
 
 import java.awt.Rectangle;
 import java.awt.image.WritableRenderedImage;
+import org.apache.sis.geometry.Envelope2D;
+import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.util.ArgumentChecks;
+import org.geotoolkit.geometry.Envelopes;
+import org.geotoolkit.image.io.large.WritableLargeRenderedImage;
 import org.geotoolkit.image.iterator.PixelIterator;
 import org.geotoolkit.image.iterator.PixelIteratorFactory;
 import org.geotoolkit.math.XMath;
@@ -95,10 +100,20 @@ public class Resample {
      * Iterator use to fill destination image from interpolation of source image pixel value.
      */
     final PixelIterator destIterator;
+    
+    /**
+     * On the border of the destination image, projection of destination border 
+     * pixel coordinates should be out of source image boundary.
+     * This enum explain the expected comportement define by user.
+     * By default is {@link ResampleBorderComportement#EXTRAPOLATION}, 
+     * which allow interpolation outside of source pixel validity area. 
+     */
+    ResampleBorderComportement rbc;
 
     /**
      * <p>Fill destination image from interpolation of source pixels.<br/>
      * Source pixel coordinate is obtained from invert transformation of destination pixel coordinates.</p>
+     * The default border comportement is {@link ResampleBorderComportement#EXTRAPOLATION}.
      *
      * @param mathTransform Transformation use to transform target point to source point.
      * @param imageDest image will be fill by image source pixel interpolation.
@@ -107,10 +122,26 @@ public class Resample {
      * @throws NoninvertibleTransformException if it is impossible to invert {@code MathTransform} parameter.
      */
     public Resample(MathTransform mathTransform, WritableRenderedImage imageDest, Interpolation interpol, double[] fillValue) throws NoninvertibleTransformException, TransformException {
-        this(mathTransform,imageDest,null,interpol,fillValue);
+        this(mathTransform, imageDest, null, interpol, fillValue);
         
     }
 
+    /**
+     * <p>Fill destination image area from interpolation of source pixels.<br/>
+     * Source pixel coordinate is obtained from invert transformation of destination pixel coordinates.</p>
+     * The default border comportement is {@link ResampleBorderComportement#EXTRAPOLATION}.
+     * 
+     * @param mathTransform Transformation use to transform target point to source point.
+     * @param imageDest image will be fill by image source pixel interpolation.
+     * @param resampleArea destination image area within pixels are resample.
+     * @param interpol Interpolation use to interpolate source image pixels.
+     * @param fillValue contains value use when pixel transformation is out of source image boundary.
+     * @throws NoninvertibleTransformException if it is impossible to invert {@code MathTransform} parameter.
+     */
+    public Resample(MathTransform mathTransform, WritableRenderedImage imageDest, Rectangle resampleArea, Interpolation interpol, double[] fillValue) throws NoninvertibleTransformException, TransformException {
+        this(mathTransform, imageDest, resampleArea, interpol, fillValue, ResampleBorderComportement.EXTRAPOLATION);
+    }
+    
     /**
      * <p>Fill destination image area from interpolation of source pixels.<br/>
      * Source pixel coordinate is obtained from invert transformation of destination pixel coordinates.</p>
@@ -120,24 +151,45 @@ public class Resample {
      * @param resampleArea destination image area within pixels are resample.
      * @param interpol Interpolation use to interpolate source image pixels.
      * @param fillValue contains value use when pixel transformation is out of source image boundary.
+     * @param rbc comportement of the destination image border. 
      * @throws NoninvertibleTransformException if it is impossible to invert {@code MathTransform} parameter.
+     * @see ResampleBorderComportement
      */
-    public Resample(MathTransform mathTransform, WritableRenderedImage imageDest, Rectangle resampleArea, Interpolation interpol, double[] fillValue) throws NoninvertibleTransformException, TransformException {
+    public Resample(MathTransform mathTransform, WritableRenderedImage imageDest, Rectangle resampleArea, 
+            Interpolation interpol, double[] fillValue, ResampleBorderComportement rbc) throws NoninvertibleTransformException, TransformException {
+        ArgumentChecks.ensureNonNull("mathTransform", mathTransform);
+        ArgumentChecks.ensureNonNull("interpolation", interpol);
+        final Rectangle bound    = interpol.getBoundary();
+        if (imageDest == null) {
+            final Envelope2D srcGrid = new Envelope2D();
+            srcGrid.setFrame(bound.x + 0.5, bound.y + 0.5, bound.width - 1, bound.height - 1);
+            final GeneralEnvelope dest = Envelopes.transform(mathTransform, srcGrid);
+            final int minx = (int) dest.getLower(0);
+            final int miny = (int) dest.getLower(1);
+            final int w    = (int) dest.getSpan(0);
+            final int h    = (int) dest.getSpan(1);
+            this.imageDest = new WritableLargeRenderedImage(minx, miny, w, h, null, 0, 0, interpol.pixelIterator.getRenderedImage().getColorModel());
+        } else {
+            /*
+             * If a user give a destination image he should hope that his image boundary stay unchanged.
+             */
+            if (rbc == ResampleBorderComportement.CROP) 
+                throw new IllegalArgumentException("It is impossible to define appropriate border comportement with a given image and crop request.");
+            this.imageDest = imageDest;
+        }
         this.numBands = interpol.getNumBands();
         if (fillValue.length != numBands)
             throw new IllegalArgumentException("fillValue table length and numbands are different : "+fillValue.length+" numbands = "+this.numBands);
         assert(numBands == imageDest.getWritableTile(imageDest.getMinTileX(), imageDest.getMinTileY()).getNumBands())
                 : "destination image numbands different from source image numbands";
-        this.destIterator        = PixelIteratorFactory.createDefaultWriteableIterator(imageDest, imageDest, resampleArea);
+        this.destIterator        = PixelIteratorFactory.createDefaultWriteableIterator(this.imageDest, this.imageDest, resampleArea);
         this.fillValue           = fillValue;
         this.invertMathTransform = mathTransform;
-        this.imageDest           = imageDest;
         this.interpol            = interpol;
-        final Rectangle bound    = interpol.getBoundary();
         minSourceX = bound.x;
         minSourceY = bound.y;
-        maxSourceX = minSourceX + bound.width  - 1;
-        maxSourceY = minSourceY + bound.height - 1;
+        maxSourceX = minSourceX + bound.width;
+        maxSourceY = minSourceY + bound.height;
         srcCoords  = new double[2];
         destCoords = new double[2];
         
@@ -154,16 +206,17 @@ public class Resample {
         
         while (destIterator.next()) {
             band = 0;
+            
             //Compute interpolation value from source image.
-            destCoords[0] = destIterator.getX();
-            destCoords[1] = destIterator.getY();
+            destCoords[0] = destIterator.getX() + 0.5;
+            destCoords[1] = destIterator.getY() + 0.5;
             invertMathTransform.transform(destCoords, 0, srcCoords, 0, 1);
             src0 = (int) srcCoords[0];
             src1 = (int) srcCoords[1];
             
             //check out of range
-            if (src0 < minSourceX || src0 > maxSourceX
-                || src1 < minSourceY || src1 > maxSourceY) {
+            if (src0 < minSourceX || src0 >= maxSourceX
+             || src1 < minSourceY || src1 >= maxSourceY) {
                 destIterator.setSampleDouble(fillValue[band]);
                 while (++band != numBands) {
                     destIterator.next();
@@ -178,7 +231,6 @@ public class Resample {
                     destIterator.setSampleDouble(interpol.interpolate(srcCoords[0], srcCoords[1], band));
                 }
             }
-            
         }
     }
 }

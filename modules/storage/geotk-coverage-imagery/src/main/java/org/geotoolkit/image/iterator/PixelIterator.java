@@ -358,6 +358,15 @@ public abstract class PixelIterator {
     }
 
     /**
+     * Return {@link RenderedImage} that this iterator travel. 
+     * 
+     * @return {@link RenderedImage} that this iterator travel. 
+     */
+    public RenderedImage getRenderedImage() {
+        return renderedImage;
+    }
+
+    /**
      * Verify raster conformity.
      */
     protected void checkRasters(final Raster readableRaster, final WritableRaster writableRaster){

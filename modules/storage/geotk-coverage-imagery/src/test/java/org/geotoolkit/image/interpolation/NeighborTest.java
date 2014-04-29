@@ -18,7 +18,7 @@ package org.geotoolkit.image.interpolation;
 
 import java.awt.Rectangle;
 import org.junit.Assert;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import org.junit.Test;
 
 /**
@@ -28,6 +28,8 @@ import org.junit.Test;
  */
 public class NeighborTest extends InterpolationTest {
 
+    private static double TOLERANCE = 1E-9;
+    
     public NeighborTest() {
         super();
         super.interpol = new NeighborInterpolation(pixIterator);
@@ -35,62 +37,62 @@ public class NeighborTest extends InterpolationTest {
 
     @Test
     public void lowLCornerTest() {
-        double resulTest = interpol.interpolate(-0.7, -0.6, 0);
-        assertTrue(resulTest == 0);
+        double resulTest = interpol.interpolate(-1, -1, 0);
+        assertEquals("lowLCornerTest : at coordinate : (-1, -1)", 0, resulTest, TOLERANCE);
 
-        resulTest = interpol.interpolate(-0.4, -0.6, 0);
-        assertTrue(resulTest == 1);
+        resulTest = interpol.interpolate(0.4, -0.6, 0);
+        assertEquals("lowLCornerTest : at coordinate : (0.4, -0.6)", 1, resulTest, TOLERANCE);
 
-        resulTest = interpol.interpolate(-0.7, -0.4, 0);
-        assertTrue(resulTest == 3);
+        resulTest = interpol.interpolate(-0.7, 0.4, 0);
+        assertEquals("lowLCornerTest : at coordinate : (-0.7, 0.4)", 3, resulTest, TOLERANCE);
 
-        resulTest = interpol.interpolate(-0.4, -0.2, 0);
-        assertTrue(resulTest == 4);
+        resulTest = interpol.interpolate(0.4, 0.2, 0);
+        assertEquals("lowLCornerTest : at coordinate : (0.4, 0.2)", 4, resulTest, TOLERANCE);
     }
 
     @Test
     public void lowRCornerTest() {
         double resulTest = interpol.interpolate(0.7, -0.6, 0);
-        assertTrue(resulTest == 2);
+        assertEquals("lowRCornerTest : at coordinate : (0.7, -0.6)", 1, resulTest, TOLERANCE);
 
-        resulTest = interpol.interpolate(0.4, -0.6, 0);
-        assertTrue(resulTest == 1);
+        resulTest = interpol.interpolate(1.4, -0.6, 0);
+        assertEquals("lowRCornerTest : at coordinate : (1.4, -0.6)", 2, resulTest, TOLERANCE);
 
-        resulTest = interpol.interpolate(0.7, -0.4, 0);
-        assertTrue(resulTest == 5);
+        resulTest = interpol.interpolate(1.7, 0.4, 0);
+        assertEquals("lowRCornerTest : at coordinate : (1.7, 0.4)", 5, resulTest, TOLERANCE);
 
-        resulTest = interpol.interpolate(0.4, -0.2, 0);
-        assertTrue(resulTest == 4);
+        resulTest = interpol.interpolate(0.4, 0.2, 0);
+        assertEquals("lowRCornerTest : at coordinate : (0.4, 0.2)", 4, resulTest, TOLERANCE);
     }
 
     @Test
     public void uppLCornerTest() {
-        double resulTest = interpol.interpolate(-0.7, 0.6, 0);
-        assertTrue(resulTest == 6);
+        double resulTest = interpol.interpolate(-0.2, 1.6, 0);
+        assertEquals("uppLCornerTest : at coordinate : (-0.2, 1.6)", 6, resulTest, TOLERANCE);
 
-        resulTest = interpol.interpolate(-0.4, 0.6, 0);
-        assertTrue(resulTest == 7);
+        resulTest = interpol.interpolate(0.4, 1.6, 0);
+        assertEquals("uppLCornerTest : at coordinate : (0.4, 1.6)", 7, resulTest, TOLERANCE);
 
         resulTest = interpol.interpolate(-0.7, 0.4, 0);
-        assertTrue(resulTest == 3);
+        assertEquals("uppLCornerTest : at coordinate : (-0.7, 0.4)", 3, resulTest, TOLERANCE);
 
-        resulTest = interpol.interpolate(-0.4, 0.2, 0);
-        assertTrue(resulTest == 4);
+        resulTest = interpol.interpolate(0.1, 0.2, 0);
+        assertEquals("uppLCornerTest : at coordinate : (0.1, 0.2)", 4, resulTest, TOLERANCE);
     }
 
     @Test
     public void uppRCornerTest() {
-        double resulTest = interpol.interpolate(0.7, 0.6, 0);
-        assertTrue(resulTest == 8);
+        double resulTest = interpol.interpolate(1.7, 0.6, 0);
+        assertEquals("uppRCornerTest : at coordinate : (1.7, 0.6)", 5, resulTest, TOLERANCE);
 
-        resulTest = interpol.interpolate(0.4, 0.6, 0);
-        assertTrue(resulTest == 7);
+        resulTest = interpol.interpolate(1.4, 1.6, 0);
+        assertEquals("uppRCornerTest : at coordinate : (1.4, 1.6)", 8, resulTest, TOLERANCE);
 
-        resulTest = interpol.interpolate(0.7, 0.4, 0);
-        assertTrue(resulTest == 5);
+        resulTest = interpol.interpolate(0.7, 1.4, 0);
+        assertEquals("uppRCornerTest : at coordinate : (0.7, 1.4)", 7, resulTest, TOLERANCE);
 
         resulTest = interpol.interpolate(0.4, 0.2, 0);
-        assertTrue(resulTest == 4);
+        assertEquals("uppRCornerTest : at coordinate : (0.4, 0.2)", 4, resulTest, TOLERANCE);
     }
 
     @Test
