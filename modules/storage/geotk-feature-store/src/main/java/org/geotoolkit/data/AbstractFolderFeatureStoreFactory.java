@@ -170,6 +170,7 @@ public abstract class AbstractFolderFeatureStoreFactory extends AbstractFeatureS
         params.add(0,identifierParam);
         params.add(1,URLFOLDER);
         params.add(2,RECURSIVE);
+        params.add(3,EMPTY_DIRECTORY);
 
         return new DefaultParameterDescriptorGroup(sd.getName().getCode()+"Folder",
                 params.toArray(new GeneralParameterDescriptor[params.size()]));
