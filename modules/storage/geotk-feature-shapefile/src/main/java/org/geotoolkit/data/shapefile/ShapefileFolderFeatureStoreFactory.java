@@ -99,9 +99,14 @@ public class ShapefileFolderFeatureStoreFactory extends AbstractFolderFeatureSto
             LOGGER.log(Level.INFO, e.getLocalizedMessage());
             pathFile = new File(path.toExternalForm());
         }
+
+        final Boolean emptyDirectory = (Boolean) params.parameter(EMPTY_DIRECTORY.getName().toString()).getValue();
         if (pathFile.exists() && pathFile.isDirectory()){
+            if(emptyDirectory.booleanValue()){
+                return true;
+            }
            File[] shapeFiles = pathFile.listFiles(new ExtentionFileNameFilter(".shp"));
-            return shapeFiles.length>0;
+           return shapeFiles.length>0;
         }
         return false;
     }

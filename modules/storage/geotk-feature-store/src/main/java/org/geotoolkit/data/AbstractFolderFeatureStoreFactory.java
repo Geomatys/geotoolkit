@@ -62,6 +62,10 @@ public abstract class AbstractFolderFeatureStoreFactory extends AbstractFeatureS
             new DefaultParameterDescriptor<Boolean>("recursive","Recursively explore the given folder. default is true.",
             Boolean.class,true,false);
 
+    public static final ParameterDescriptor<Boolean> EMPTY_DIRECTORY =
+            new DefaultParameterDescriptor<Boolean>("emptyDirectory","Allow opening an empty directory. default is false.",
+                    Boolean.class,false,false);
+
     private final ParameterDescriptorGroup paramDesc;
 
     public AbstractFolderFeatureStoreFactory(final ParameterDescriptorGroup desc){
