@@ -156,8 +156,8 @@ public class NetCDFExtractor {
                     }
                     
                     if (name.equalsIgnoreCase("Time")) {
+                        currentField.type = Type.DATE;
                         if (analyze.featureType == TIMESERIES || analyze.featureType == TRAJECTORY || analyze.featureType == GRID) {
-                            currentField.type = Type.DATE;
                             analyze.mainField = currentField;
                         } else {
                             analyze.skippedFields.add(currentField);

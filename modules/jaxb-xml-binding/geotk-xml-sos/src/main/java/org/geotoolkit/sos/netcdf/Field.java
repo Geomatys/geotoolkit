@@ -50,7 +50,13 @@ public class Field implements Serializable {
             if (dimension > 0) {
                 dimLabel = "=> " + dimensionLabel;
             }
-            return label + " : " + type.name() + '(' + dimension + dimLabel + ')';
+            String typeName;
+            if (type == null) {
+                typeName = "NULL TYPE";
+            } else {
+                typeName = type.name();
+            }
+            return label + " : " + typeName + '(' + dimension + dimLabel + ')';
         }
 
         @Override
