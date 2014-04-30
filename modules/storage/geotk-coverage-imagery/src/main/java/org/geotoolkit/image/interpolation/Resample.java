@@ -43,7 +43,7 @@ public class Resample {
      * Transform multi-dimensional point (in our case pixel coordinate) from target image
      * {@code CoordinateReferenceSystem} to source image {@code CoordinateReferenceSystem}.
      */
-    private MathTransform invertMathTransform;
+    private MathTransform destToSourceMathTransform;
 
     /**
      * Image in which image source pixel interpolation result is push.
@@ -184,7 +184,7 @@ public class Resample {
                 : "destination image numbands different from source image numbands";
         this.destIterator        = PixelIteratorFactory.createDefaultWriteableIterator(this.imageDest, this.imageDest, resampleArea);
         this.fillValue           = fillValue;
-        this.invertMathTransform = mathTransform;
+        this.destToSourceMathTransform = mathTransform;
         this.interpol            = interpol;
         minSourceX = bound.x;
         minSourceY = bound.y;
@@ -192,8 +192,7 @@ public class Resample {
         maxSourceY = minSourceY + bound.height;
         srcCoords  = new double[2];
         destCoords = new double[2];
-        
-        
+        this.rbc   = rbc;
     }
 
     /**
@@ -210,7 +209,7 @@ public class Resample {
             //Compute interpolation value from source image.
             destCoords[0] = destIterator.getX() + 0.5;
             destCoords[1] = destIterator.getY() + 0.5;
-            invertMathTransform.transform(destCoords, 0, srcCoords, 0, 1);
+            destToSourceMathTransform.transform(destCoords, 0, srcCoords, 0, 1);
             src0 = (int) srcCoords[0];
             src1 = (int) srcCoords[1];
             
@@ -223,12 +222,23 @@ public class Resample {
                     destIterator.setSampleDouble(fillValue[band]);
                 }
             } else {
-                srcCoords[0] = XMath.clamp(srcCoords[0], minSourceX, maxSourceX);
-                srcCoords[1] = XMath.clamp(srcCoords[1], minSourceY, maxSourceY);
-                destIterator.setSampleDouble(interpol.interpolate(srcCoords[0], srcCoords[1], band));
-                while (++band != numBands) {
-                    destIterator.next();
+                //-- check border comportement --//
+                if (rbc == ResampleBorderComportement.FILL_VALUE && interpol instanceof SeparableInterpolation &&
+                        (srcCoords[0] < minSourceX + 0.5 || srcCoords[0] > maxSourceX - 0.5
+                      || srcCoords[1] < minSourceY + 0.5 || srcCoords[1] > maxSourceY - 0.5)) {
+                    destIterator.setSampleDouble(fillValue[band]);
+                    while (++band != numBands) {
+                        destIterator.next();
+                        destIterator.setSampleDouble(fillValue[band]);
+                    }
+                } else {
+                    srcCoords[0] = XMath.clamp(srcCoords[0], minSourceX, maxSourceX);
+                    srcCoords[1] = XMath.clamp(srcCoords[1], minSourceY, maxSourceY);
                     destIterator.setSampleDouble(interpol.interpolate(srcCoords[0], srcCoords[1], band));
+                    while (++band != numBands) {
+                        destIterator.next();
+                        destIterator.setSampleDouble(interpol.interpolate(srcCoords[0], srcCoords[1], band));
+                    }
                 }
             }
         }

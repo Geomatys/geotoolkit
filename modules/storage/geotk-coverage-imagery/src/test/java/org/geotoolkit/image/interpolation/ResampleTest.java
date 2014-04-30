@@ -22,7 +22,7 @@ import javax.media.jai.*;
 import javax.media.jai.operator.AffineDescriptor;
 import org.geotoolkit.image.iterator.PixelIteratorConform;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import org.junit.Test;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
@@ -146,27 +146,14 @@ public class ResampleTest {
         /*
          * Resampling
          */
-        Resample resample = new Resample(mathTransform.inverse(), targetImage, interpolation, new double[]{0, 0, 0});
-         resample.fillImage();
+        Resample resample = new Resample(mathTransform.inverse(), targetImage, null, interpolation, new double[]{0, 0, 0}, ResampleBorderComportement.FILL_VALUE);
+        resample.fillImage();
         Raster coverageRaster = targetImage.getTile(0, 0);
-
-        //check border
-        for (int b = 1; b <= 2; b++) {
-            for (int y = tIminy; y < tIminy+tIH-1;y++) {
-                assertTrue((coverageRaster.getSampleDouble(0, y, b-1)-b) <= 1E-9);
-            }
-            for (int x = tIminx; x < tIminx+tIW; x++) {
-                assertTrue((coverageRaster.getSampleDouble(x, 0, b-1)-b) <= 1E-9);
-            }
-        }
         
-        /*
-         * Compare JAI and Interpolation results.
-         */
-        for (int b = 0; b<tINB; b++) {
-            for (int y = tIminy+1; y<tIminy+tIH-1; y++) {
-                for (int x = tIminx+1; x<tIminx+tIW-1; x++) {
-                    assertTrue(Math.abs(rastresult.getSampleDouble(x, y, b) - coverageRaster.getSampleDouble(x, y, b)) <= 1E-9);
+        for (int b = 0; b < tINB; b++) {
+            for (int y = tIminy; y < tIminy + tIH; y++) {
+                for (int x = tIminx; x < tIminx + tIW; x++) {
+                    assertEquals("at position : ("+x+", "+y+", "+b+") : expected "+rastresult.getSampleDouble(x, y, b)+" found : "+coverageRaster.getSampleDouble(x, y, b), rastresult.getSampleDouble(x, y, b), coverageRaster.getSampleDouble(x, y, b), 1E-9);
                 }
             }
         }
@@ -201,48 +188,17 @@ public class ResampleTest {
         /*
          * Resampling
          */
-        final Resample resample = new Resample(mathTransform.inverse(), targetImage, null, interpolation, new double[]{0, 0, 0});
+        final Resample resample = new Resample(mathTransform.inverse(), targetImage, null, interpolation, new double[]{0, 0, 0}, ResampleBorderComportement.FILL_VALUE);
         resample.fillImage();
         final Raster coverageRaster = targetImage.getTile(0, 0);
-
-        //-- todo tester border avec enum approprié
-        
-//        //check border
-//        for (int b = 1; b <= 2; b++) {
-//            for (int y = tIminy; y < tIminy+tIH-1;y++) {
-//                assertTrue((coverageRaster.getSampleDouble(0, y, b-1)-b) <= 1E-9);
-//            }
-//            for (int x = tIminx; x < tIminx+tIW; x++) {
-//                assertTrue((coverageRaster.getSampleDouble(x, 0, b-1)-b) <= 1E-9);
-//            }
-//        }
-
-//        System.out.println("expected");
-//        for (int y = 0; y < 8; y++) {
-//            String str = "|";
-//            for (int x = 0; x < 8; x++) {
-//                str+= rastresult.getSampleDouble(x, y, 0)+"|";
-//            }
-//            System.out.println(str);
-//        }
-//        
-//        System.out.println("found");
-//        for (int y = 0; y < 8; y++) {
-//            String str = "|";
-//            for (int x = 0; x < 8; x++) {
-//                str+= coverageRaster.getSampleDouble(x, y, 0)+"|";
-//            }
-//            System.out.println(str);
-//        }
         
         /*
          * Compare JAI and Interpolation results.
-         * min + 1 and max - 1 to exclude destination image border volontary.
          */
-        for (int b = 0; b<tINB; b++) {
-            for (int y = tIminy + 1; y < tIminy + tIH - 1; y++) {
-                for (int x = tIminx + 1; x < tIminx + tIW - 1; x++) {
-                    assertTrue("at position : ("+x+", "+y+", "+b+") : expected "+rastresult.getSampleDouble(x, y, b)+" found : "+coverageRaster.getSampleDouble(x, y, b), Math.abs(rastresult.getSampleDouble(x, y, b) - coverageRaster.getSampleDouble(x, y, b)) <= 1E-9);
+        for (int b = 0; b < tINB; b++) {
+            for (int y = tIminy; y < tIminy + tIH; y++) {
+                for (int x = tIminx; x < tIminx + tIW; x++) {
+                    assertEquals("at position : ("+x+", "+y+", "+b+") : expected "+rastresult.getSampleDouble(x, y, b)+" found : "+coverageRaster.getSampleDouble(x, y, b), rastresult.getSampleDouble(x, y, b), coverageRaster.getSampleDouble(x, y, b), 1E-9);
                 }
             }
         }
@@ -276,7 +232,7 @@ public class ResampleTest {
         /*
          * Resampling
          */
-        final Resample resample = new Resample(mathTransform.inverse(), targetImage, interpolation, new double[]{0, 0, 0});
+        final Resample resample = new Resample(mathTransform.inverse(), targetImage, null, interpolation, new double[]{0, 0, 0}, ResampleBorderComportement.FILL_VALUE);
         resample.fillImage();
         final Raster coverageRaster = targetImage.getTile(0, 0);
         
@@ -287,7 +243,7 @@ public class ResampleTest {
         for (int b = 0; b< tINB; b++) {
             for (int y = tIminy + 3; y < tIminy + tIH - 3; y++) {
                 for (int x = tIminx + 3; x <tIminx + tIW - 3; x++) {
-                    assertTrue(Math.abs(rastresult.getSampleDouble(x, y, b) - coverageRaster.getSampleDouble(x, y, b)) <= 1E-9);
+                   assertEquals("at position : ("+x+", "+y+", "+b+") : expected "+rastresult.getSampleDouble(x, y, b)+" found : "+coverageRaster.getSampleDouble(x, y, b), rastresult.getSampleDouble(x, y, b), coverageRaster.getSampleDouble(x, y, b), 1E-9);
                 }
             }
         }
