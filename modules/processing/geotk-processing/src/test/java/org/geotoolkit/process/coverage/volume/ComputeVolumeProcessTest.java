@@ -124,7 +124,7 @@ public strictfp class ComputeVolumeProcessTest {
      */
     @Test
     public void testBicubicGeographic() throws ProcessException {
-        basicTest(7, 7, 3.070735084708062E11, GEO_CRS,/* envelope coords -> */ 0, 0, 7, 7, 
+        basicTest(7, 7, 3.070735084708064E11, GEO_CRS,/* envelope coords -> */ 0, 0, 7, 7, 
                                                       /* geometry coords -> */ 1, 1, 1, 6, 6, 6, 6, 1, 1, 1);
     }
     
@@ -186,7 +186,7 @@ public strictfp class ComputeVolumeProcessTest {
      */
     @Test
     public void testAltitudesInGeographicSpace() throws ProcessException {
-        altitudesTest(GEO_CRS, 7.985004325473668E10, 7.985004325473668E10, 3.992502162736838E10);
+        altitudesTest(GEO_CRS, 7.985004325473668E10, 7.985004325473668E10, 3.992502162736839E10);
     }
     
     /**
@@ -252,9 +252,9 @@ public strictfp class ComputeVolumeProcessTest {
     @Test
     public void testPikeCartesian() throws ProcessException {
         pikeOrHoleTest(new double[]{1.5, 3.5}, 9, 9, 1, 1, new double[]{1, 0.5, 3}, CARTESIAN_CRS, 
-                       /*resolution = 1 -> */  54.5121953487,  107.487804651, 
-                       /*resolution = 0.5 -> */13.628048837,   26.871951162, 
-                       /*resolution = 3 -> */  490.609758138,  967.390241861);
+                       /*resolution = 1 -> */  53.72712182998657,  108.27287817001343, 
+                       /*resolution = 0.5 -> */13.431780457496643, 27.068219542503357, 
+                       /*resolution = 3 -> */  483.54409646987915,  974.4559035301208);
     }
     
     /**
@@ -263,9 +263,9 @@ public strictfp class ComputeVolumeProcessTest {
     @Test
     public void testPikeGeographic() throws ProcessException {
         pikeOrHoleTest(new double[]{1.5, 3.5}, 9, 9, 1, 1, new double[]{1, 0.5, 3}, GEO_CRS, 
-                       /*resolution = 1 -> */  6.682903349942173E11,  1.3178076433819812E12, 
-                       /*resolution = 0.5 -> */1.6757953095079672E11, 3.30439308736253E11, 
-                       /*resolution = 3 -> */  5.821184848428063E12,  1.1484593908367705E13);
+                       /*resolution = 1 -> */  6.590783448178236E11,  1.327019633558373E12, 
+                       /*resolution = 0.5 -> */1.6519189509155865E11, 3.3282694459549146E11, 
+                       /*resolution = 3 -> */  5.770442307446779E12,  1.1535336449348941E13);
     }
     
     /**
@@ -274,9 +274,9 @@ public strictfp class ComputeVolumeProcessTest {
     @Test
     public void testHoleCartesian() throws ProcessException {
         pikeOrHoleTest(new double[]{2.5, 4.5}, 9, 9, 5, -1, new double[]{1, 0.5, 3}, CARTESIAN_CRS, 
-                       /*resolution = 1 -> */  107.333855986,  54.666144013, 
-                       /*resolution = 0.5 -> */26.833463996,   13.666536003, 
-                       /*resolution = 3 -> */  966.004703879,  491.995296121);
+                       /*resolution = 1 -> */  108.27287817001343,  53.72712182998657, 
+                       /*resolution = 0.5 -> */27.068219542503357, 13.431780457496643, 
+                       /*resolution = 3 -> */  974.4559035301208,  483.54409646987915);
     }
     
     /**
@@ -285,9 +285,9 @@ public strictfp class ComputeVolumeProcessTest {
     @Test
     public void testHoleGeographic() throws ProcessException {
         pikeOrHoleTest(new double[]{2.5, 4.5}, 9, 9, 5, -1, new double[]{1, 0.5, 3}, GEO_CRS, 
-                       /*resolution = 1 -> */  1.3159128177964934E12,  6.701851605797041E11, 
-                       /*resolution = 0.5 -> */3.299655761603671E11,   1.6805326352668262E11, 
-                       /*resolution = 3 -> */  1.1467550530245646E13,  5.838228226550119E12);
+                       /*resolution = 1 -> */  1.3270196335583735E12,  6.590783448178241E11, 
+                       /*resolution = 0.5 -> */3.328269445954914E11,   1.6519189509155847E11, 
+                       /*resolution = 3 -> */  1.1535336449348945E13,  5.770442307446776E12);
     }
     
     
