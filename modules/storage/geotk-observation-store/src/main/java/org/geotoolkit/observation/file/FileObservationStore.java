@@ -18,9 +18,7 @@
 package org.geotoolkit.observation.file;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.feature.DefaultName;
@@ -41,7 +39,6 @@ public class FileObservationStore extends AbstractObservationStore {
     private final File dataFile;
     private final NCFieldAnalyze analyze;
     
-    
     public FileObservationStore(final ParameterValueGroup params) {
         super(params);
         dataFile = (File) params.parameter(FILE_PATH.getName().toString()).getValue();
@@ -55,11 +52,6 @@ public class FileObservationStore extends AbstractObservationStore {
         return dataFile;
     }
     
-    @Override
-    public void close() throws DataStoreException {
-        // do nothing
-    }
-
     @Override
     public Set<Name> getProcedureNames() {
         final Set<Name> names = new HashSet<>();
@@ -77,7 +69,13 @@ public class FileObservationStore extends AbstractObservationStore {
         return local;
     }
     
+    @Override
     public ExtractionResult getResults() {
-        return NetCDFExtractor.getObservationFromNetCDF(dataFile, getProcedureID());
+        return NetCDFExtractor.getObservationFromNetCDF(analyze, getProcedureID());
+    }
+    
+    @Override
+    public void close() throws DataStoreException {
+        // do nothing
     }
 }

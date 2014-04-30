@@ -76,6 +76,20 @@ public class NetCDFExtractor {
         }
     }
     
+    public static ExtractionResult getObservationFromNetCDF(final NCFieldAnalyze analyze, final String procedureID) {
+        switch (analyze.featureType) {
+            case TIMESERIES :
+            return parseDataBlockTS(analyze, procedureID);
+            case PROFILE :
+            return parseDataBlockXY(analyze, procedureID);
+            case TRAJECTORY :
+            return parseDataBlockTraj(analyze, procedureID);
+            case GRID :
+            return parseDataBlockGrid(analyze, procedureID);
+            default : return null;
+        }
+    }
+    
     public static ExtractionResult getObservationFromNetCDF(final File netCDFFile, final String procedureID, final String selectedBand) {
         final NCFieldAnalyze analyze = analyzeResult(netCDFFile, selectedBand);
         if (analyze.phenfields.isEmpty()) {

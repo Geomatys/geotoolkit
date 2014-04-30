@@ -89,6 +89,16 @@ public class GeoSpatialBound {
             maxy = y;
         }
     }
+    
+   /**
+    * TODO int from a CRS
+    */
+    public void initBoundary() {
+        minx = -180.0;
+        maxx = 180.0;
+        miny = -90.0;
+        maxy = 90.0;
+    }
 
       
     public void addGeometry(final AbstractGeometry geometry) {
