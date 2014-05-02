@@ -97,6 +97,7 @@ public class XmlObservationStore extends AbstractObservationStore {
             for (Observation obs : collection.getMember()) {
                 final AbstractObservation o = (AbstractObservation)obs;
                 result.phenomenons.addAll(getPhenomenons(o.getPropertyObservedProperty()));
+                result.procedures.add(o.getProcedure().getHref());
                 appendTime(obs.getSamplingTime(), result);
                 appendGeometry(obs.getFeatureOfInterest(), result);
             }
@@ -105,6 +106,7 @@ public class XmlObservationStore extends AbstractObservationStore {
             final AbstractObservation obs = (AbstractObservation)obj;
             result.observations .add(obs);
             result.phenomenons.addAll(getPhenomenons(obs.getPropertyObservedProperty()));
+            result.procedures.add(obs.getProcedure().getHref());
             appendTime(obs.getSamplingTime(), result);
             appendGeometry(obs.getFeatureOfInterest(), result);
         }

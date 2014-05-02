@@ -66,6 +66,8 @@ public interface ObservationFilterReader extends ObservationFilter {
      * @throws org.apache.sis.storage.DataStoreException
      */
     String getResults() throws DataStoreException;
+    
+    String getDecimatedResults(final int width) throws DataStoreException;
 
     /**
      * Return an encoded block of data in a string.

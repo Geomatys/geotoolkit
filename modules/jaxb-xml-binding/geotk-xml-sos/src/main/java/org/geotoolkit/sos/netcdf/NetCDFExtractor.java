@@ -248,6 +248,7 @@ public class NetCDFExtractor {
     
     private static ExtractionResult parseDataBlockTS(final NCFieldAnalyze analyze, final String procedureID) {
         final ExtractionResult results = new ExtractionResult();
+        results.procedures.add(procedureID);
         if (analyze.mainField == null) {
             LOGGER.warning("No main field found");
             return results;
@@ -418,6 +419,7 @@ public class NetCDFExtractor {
     
     private static ExtractionResult parseDataBlockXY(final NCFieldAnalyze analyze, final String procedureID) {
         final ExtractionResult results = new ExtractionResult();
+        results.procedures.add(procedureID);
         if (analyze.mainField == null) {
             LOGGER.warning("No main field found");
             return results;
@@ -598,6 +600,7 @@ public class NetCDFExtractor {
     
     private static ExtractionResult parseDataBlockTraj(final NCFieldAnalyze analyze, final String procedureID) {
         final ExtractionResult results = new ExtractionResult();
+        results.procedures.add(procedureID);
         if (analyze.mainField == null) {
             LOGGER.warning("No main field found");
             return results;
