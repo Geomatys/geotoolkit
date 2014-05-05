@@ -52,8 +52,8 @@ public class OMDataStoreTest extends AbstractReadingTests{
 
     private static DefaultDataSource ds;
     private static FeatureStore store;
-    private static Set<Name> names = new HashSet<Name>();
-    private static List<ExpectedResult> expecteds = new ArrayList<ExpectedResult>();
+    private static Set<Name> names = new HashSet<>();
+    private static List<ExpectedResult> expecteds = new ArrayList<>();
     static{
         try{
             final String url = "jdbc:derby:memory:TestOM;create=true";
@@ -65,7 +65,7 @@ public class OMDataStoreTest extends AbstractReadingTests{
             exec.run(getResourceAsStream("org/geotoolkit/sql/structure-observations.sql"));
             exec.run(getResourceAsStream("org/geotoolkit/sql/sos-data.sql"));
 
-            final Map params = new HashMap<String, Object>();
+            final Map params = new HashMap<>();
             params.put("dbtype", "OM");
             params.put(OMFeatureStoreFactory.SGBDTYPE.getName().toString(), "derby");
             params.put(OMFeatureStoreFactory.DERBYURL.getName().toString(), url);
@@ -85,10 +85,10 @@ public class OMDataStoreTest extends AbstractReadingTests{
             featureTypeBuilder.add(new DefaultName(nsOM, "position"),Point.class,1,1,false,null);
             featureTypeBuilder.setDefaultGeometry(new DefaultName(nsOM, "position"));
 
-            int size = 2;
+            int size = 6;
             GeneralEnvelope env = new GeneralEnvelope(CRS.decode("EPSG:27582"));
-            env.setRange(0, 65400, 65400);
-            env.setRange(1, 1731368, 1731368);
+            env.setRange(0, -30.711, 70800);
+            env.setRange(1, 134.196, 2567987);
 
             final ExpectedResult res = new ExpectedResult(name,
                     featureTypeBuilder.buildFeatureType(), size, env);

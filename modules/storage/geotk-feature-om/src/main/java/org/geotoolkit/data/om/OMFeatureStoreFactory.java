@@ -181,8 +181,10 @@ public class OMFeatureStoreFactory extends AbstractFeatureStoreFactory {
             dataSource.setPoolPreparedStatements(true);
 
             // driver
-            dataSource.setDriverClassName(getDriverClassName(params));
-
+            final String driver = getDriverClassName(params);
+            dataSource.setDriverClassName(driver);
+            final boolean isPostgres = driver.startsWith("org.postgresql");
+            
             // url
             dataSource.setUrl(getJDBCUrl(params));
 
@@ -200,7 +202,7 @@ public class OMFeatureStoreFactory extends AbstractFeatureStoreFactory {
             dataSource.setAccessToUnderlyingConnectionAllowed(true);
 
             final ManageableDataSource source = new DBCPDataSource(dataSource);
-            return new OMFeatureStore(params,source);
+            return new OMFeatureStore(params,source,isPostgres);
         } catch (IOException ex) {
             throw new DataStoreException(ex);
         }

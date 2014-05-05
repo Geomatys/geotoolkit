@@ -18,9 +18,11 @@
 package org.geotoolkit.data.om;
 
 import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
-
+import com.vividsolutions.jts.io.WKBReader;
+import com.vividsolutions.jts.io.WKBWriter;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -35,13 +37,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.AbstractFeatureStore;
+import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureStoreFactory;
 import org.geotoolkit.data.FeatureStoreFinder;
-import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
-import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.query.DefaultQueryCapabilities;
 import org.geotoolkit.data.query.Query;
@@ -49,15 +50,13 @@ import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.DefaultName;
-import org.geotoolkit.feature.simple.DefaultSimpleFeatureType;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.LenientFeatureFactory;
+import org.geotoolkit.feature.simple.DefaultSimpleFeatureType;
 import org.geotoolkit.feature.type.DefaultGeometryDescriptor;
 import org.geotoolkit.filter.identity.DefaultFeatureId;
 import org.geotoolkit.jdbc.ManageableDataSource;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.IdentifiedObjects;
-
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureFactory;
 import org.opengis.feature.Property;
@@ -68,9 +67,9 @@ import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.parameter.ParameterValueGroup;
-import org.opengis.util.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.util.FactoryException;
 
 /**
  *
@@ -100,15 +99,18 @@ public class OMFeatureStore extends AbstractFeatureStore {
 
     private final ManageableDataSource source;
 
-    private static final String SQL_ALL_SAMPLING_POINT = "SELECT * FROM \"observation\".\"sampling_points\"";
-    private static final String SQL_WRITE_SAMPLING_POINT = "INSERT INTO \"observation\".\"sampling_points\" VALUES(?,?,?,?,?,?,?,?,?)";
-    private static final String SQL_GET_LAST_ID = "SELECT COUNT(*) FROM \"observation\".\"sampling_points\"";
-    private static final String SQL_DELETE_SAMPLING_POINT = "DELETE FROM \"observation\".\"sampling_points\" WHERE \"id\" = ?";
+    private static final String SQL_ALL_SAMPLING_POINT_D  = "SELECT * FROM \"om\".\"sampling_features\"";
+    private static final String SQL_ALL_SAMPLING_POINT_PG = "SELECT \"id\", \"name\", \"description\", \"sampledfeature\", \"postgis\".st_asBinary(\"shape\"), \"crs\" FROM \"om\".\"sampling_features\" WHERE \"id\"=?";
+    private static final String SQL_WRITE_SAMPLING_POINT = "INSERT INTO \"om\".\"sampling_features\" VALUES(?,?,?,?,?,?)";
+    private static final String SQL_GET_LAST_ID = "SELECT COUNT(*) FROM \"om\".\"sampling_features\"";
+    private static final String SQL_DELETE_SAMPLING_POINT = "DELETE FROM \"om\".\"sampling_features\" WHERE \"id\" = ?";
 
+    private final boolean isPostgres;
 
-    public OMFeatureStore(final ParameterValueGroup params, final ManageableDataSource source) {
+    public OMFeatureStore(final ParameterValueGroup params, final ManageableDataSource source, final boolean isPostgres) {
         super(params);
         this.source = source;
+        this.isPostgres = isPostgres;
         initTypes();
     }
 
@@ -228,34 +230,18 @@ public class OMFeatureStore extends AbstractFeatureStore {
 
 
                 stmtWrite.setString(1, identifier.getID());
-                stmtWrite.setString(2, (String)feature.getProperty(ATT_DESC).getValue());
-                stmtWrite.setString(3, (String)feature.getProperty(ATT_NAME).getValue());
+                stmtWrite.setString(2, (String)feature.getProperty(ATT_NAME).getValue());
+                stmtWrite.setString(3, (String)feature.getProperty(ATT_DESC).getValue());
                 stmtWrite.setString(4, (String)feature.getProperty(ATT_SAMPLED).getValue());
-                stmtWrite.setNull(5, java.sql.Types.VARCHAR);
-                final Object geometry = feature.getDefaultGeometryProperty().getValue();
-                if (geometry instanceof Point) {
-                    final Point pt = (Point) geometry;
-                    String crsIdentifier = null;
-                    if (featureType.getCoordinateReferenceSystem() != null) {
-                        try {
-                            crsIdentifier = IdentifiedObjects.lookupIdentifier(featureType.getCoordinateReferenceSystem(), true);
-                        } catch (FactoryException ex) {
-                            LOGGER.log(Level.WARNING, null, ex);
-                        }
-                    }
-                    if (identifier != null) {
-                        stmtWrite.setString(6, crsIdentifier);
-                    } else {
-                        stmtWrite.setNull(6, Types.VARCHAR);
-                    }
-                    stmtWrite.setInt(7, 2);
-                    stmtWrite.setDouble(8, pt.getX());
-                    stmtWrite.setDouble(9, pt.getY());
+                final Geometry geom = (Geometry) feature.getDefaultGeometryProperty().getValue();
+                if (geom != null) {
+                    WKBWriter writer = new WKBWriter();
+                    final int SRID = geom.getSRID();
+                    stmtWrite.setBytes(5, writer.write(geom));
+                    stmtWrite.setInt(6, SRID);
                 } else {
-                    stmtWrite.setNull(6, Types.VARCHAR);
-                    stmtWrite.setNull(7, Types.INTEGER);
-                    stmtWrite.setNull(8, Types.DOUBLE);
-                    stmtWrite.setNull(9, Types.DOUBLE);
+                    stmtWrite.setNull(5, java.sql.Types.VARBINARY);
+                    stmtWrite.setNull(6, java.sql.Types.INTEGER);
                 }
                 stmtWrite.executeUpdate();
                 result.add(identifier);
@@ -377,7 +363,12 @@ public class OMFeatureStore extends AbstractFeatureStore {
         private OMReader(final FeatureType type) throws SQLException{
             this.type = type;
             cnx = getConnection();
-            final PreparedStatement stmtAll = cnx.prepareStatement(SQL_ALL_SAMPLING_POINT);
+            final PreparedStatement stmtAll;
+            if(isPostgres) {
+                stmtAll = cnx.prepareStatement(SQL_ALL_SAMPLING_POINT_PG);
+            } else {
+                stmtAll = cnx.prepareStatement(SQL_ALL_SAMPLING_POINT_D);
+            }
             result = stmtAll.executeQuery();
         }
 
@@ -417,7 +408,7 @@ public class OMFeatureStore extends AbstractFeatureStore {
 
             if (firstCRS) {
                 try {
-                    CoordinateReferenceSystem crs = CRS.decode(result.getString("point_srsname"));
+                    CoordinateReferenceSystem crs = CRS.decode("EPSG:" + result.getString("crs"));
                     if (type instanceof DefaultSimpleFeatureType) {
                         ((DefaultSimpleFeatureType) type).setCoordinateReferenceSystem(crs);
                     }
@@ -434,14 +425,19 @@ public class OMFeatureStore extends AbstractFeatureStore {
 
             final Collection<Property> props = new ArrayList<>();
             final String id = result.getString("id");
-            final double x = result.getDouble("x_value");
-            final double y = result.getDouble("y_value");
-            final Coordinate coord = new Coordinate(x, y);
+            final byte[] b = result.getBytes(5);
+            final Geometry geom;
+            if (b != null) {
+                WKBReader reader = new WKBReader();
+                geom             = reader.read(b);
+            } else {
+                geom = null;
+            } 
 
             props.add(FF.createAttribute(result.getString("description"), (AttributeDescriptor) type.getDescriptor(ATT_DESC), null));
             props.add(FF.createAttribute(result.getString("name"), (AttributeDescriptor) type.getDescriptor(ATT_NAME), null));
-            props.add(FF.createAttribute(result.getString("sampled_feature"), (AttributeDescriptor) type.getDescriptor(ATT_SAMPLED), null));
-            props.add(FF.createAttribute(GF.createPoint(coord), (AttributeDescriptor) type.getDescriptor(ATT_POSITION), null));
+            props.add(FF.createAttribute(result.getString("sampledfeature"), (AttributeDescriptor) type.getDescriptor(ATT_SAMPLED), null));
+            props.add(FF.createAttribute(geom, (AttributeDescriptor) type.getDescriptor(ATT_POSITION), null));
 
             current = FF.createFeature(props, type, id);
         }
