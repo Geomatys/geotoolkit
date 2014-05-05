@@ -18,6 +18,7 @@ package org.geotoolkit.sos.netcdf;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import org.opengis.observation.Observation;
 import org.opengis.observation.Phenomenon;
 
@@ -35,5 +36,42 @@ public class ExtractionResult {
     
     public final List<Phenomenon> phenomenons = new ArrayList<>();
     
-    public final List<String> procedures = new ArrayList<>();
+    public final List<ProcedureTree> procedures = new ArrayList<>();
+    
+    public static class ProcedureTree {
+        
+        public final String id;
+        
+        public final String type;
+         
+        public final List<ProcedureTree> children = new ArrayList<>();
+        
+        public ProcedureTree(final String id, final String type) {
+            this.id   = id;
+            this.type = type;
+        }
+
+        @Override
+        public boolean equals(final Object obj) {
+            if (obj == this) {
+                return true;
+            }
+            if (obj instanceof ProcedureTree) {
+                final ProcedureTree that = (ProcedureTree) obj;
+                return Objects.equals(this.id,       that.id)   &&
+                       Objects.equals(this.type,     that.type) &&
+                       Objects.equals(this.children, that.children);
+            }
+            return false;
+        }
+        
+        @Override
+        public int hashCode() {
+            int hash = 3;
+            hash = 79 * hash + Objects.hashCode(this.id);
+            hash = 79 * hash + Objects.hashCode(this.type);
+            hash = 79 * hash + Objects.hashCode(this.children);
+            return hash;
+        }
+    }
 }

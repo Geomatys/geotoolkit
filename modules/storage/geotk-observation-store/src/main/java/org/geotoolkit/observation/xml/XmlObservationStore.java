@@ -18,7 +18,6 @@ package org.geotoolkit.observation.xml;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -39,7 +38,7 @@ import org.geotoolkit.observation.AbstractObservationStore;
 import static org.geotoolkit.observation.xml.XmlObservationStoreFactory.FILE_PATH;
 import org.geotoolkit.sampling.xml.SamplingFeature;
 import org.geotoolkit.sos.netcdf.ExtractionResult;
-import org.geotoolkit.sos.netcdf.NetCDFExtractor;
+import org.geotoolkit.sos.netcdf.ExtractionResult.ProcedureTree;
 import org.geotoolkit.sos.xml.SOSMarshallerPool;
 import org.geotoolkit.swe.xml.PhenomenonProperty;
 import org.geotoolkit.swe.xml.v101.PhenomenonType;
@@ -108,7 +107,7 @@ public class XmlObservationStore extends AbstractObservationStore {
                 if (!result.phenomenons.contains(phen)) {
                     result.phenomenons.add(phen);
                 }
-                final String procedure = o.getProcedure().getHref();
+                final ProcedureTree procedure = new ProcedureTree(o.getProcedure().getHref(), "Component");
                 if (!result.procedures.contains(procedure)) {
                     result.procedures.add(procedure);
                 }
@@ -122,7 +121,7 @@ public class XmlObservationStore extends AbstractObservationStore {
             final PhenomenonProperty phenProp = obs.getPropertyObservedProperty();
             result.fields.addAll(getPhenomenonsFields(phenProp));
             result.phenomenons.add(getPhenomenons(phenProp));
-            result.procedures.add(obs.getProcedure().getHref());
+            result.procedures.add(new ProcedureTree(obs.getProcedure().getHref(), "Component"));
             appendTime(obs.getSamplingTime(), result);
             appendGeometry(obs.getFeatureOfInterest(), result);
         }

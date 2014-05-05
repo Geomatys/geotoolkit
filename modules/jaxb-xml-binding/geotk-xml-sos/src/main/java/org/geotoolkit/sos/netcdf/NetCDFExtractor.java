@@ -35,6 +35,7 @@ import org.geotoolkit.gml.xml.FeatureProperty;
 import org.geotoolkit.gml.xml.LineString;
 import org.geotoolkit.gml.xml.Point;
 import org.geotoolkit.observation.xml.OMXmlFactory;
+import org.geotoolkit.sos.netcdf.ExtractionResult.ProcedureTree;
 import static org.geotoolkit.sos.netcdf.FeatureType.*;
 import static org.geotoolkit.sos.netcdf.NetCDFUtils.*;
 import org.geotoolkit.sos.xml.SOSXmlFactory;
@@ -248,7 +249,6 @@ public class NetCDFExtractor {
     
     private static ExtractionResult parseDataBlockTS(final NCFieldAnalyze analyze, final String procedureID) {
         final ExtractionResult results = new ExtractionResult();
-        results.procedures.add(procedureID);
         if (analyze.mainField == null) {
             LOGGER.warning("No main field found");
             return results;
@@ -288,6 +288,9 @@ public class NetCDFExtractor {
             results.phenomenons.add(phenomenon);
 
             if (single) {
+                final ProcedureTree compo = new ProcedureTree(procedureID, "Component");
+                results.procedures.add(compo);
+        
                 final StringBuilder sb   = new StringBuilder();
                 final int count          = timeVar.getDimension(0).getLength();
                 final GeoSpatialBound gb = new GeoSpatialBound();
@@ -347,6 +350,8 @@ public class NetCDFExtractor {
                 results.spatialBound.merge(gb);
                 
             } else {
+                final ProcedureTree system = new ProcedureTree(procedureID, "System");
+                results.procedures.add(system);
                 for (int j = 0; j < separators.size(); j++) {
                     
                     final String identifier  = separators.get(j);
@@ -397,13 +402,17 @@ public class NetCDFExtractor {
                         sb.append(DEFAULT_ENCODING.getBlockSeparator());
                     }
                     final DataArrayProperty result = SOSXmlFactory.buildDataArrayProperty("2.0.0", "array-1", count, "SimpleDataArray", datarecord, DEFAULT_ENCODING, sb.toString());
+                    
+                    final String currentProcedureID = procedureID + '-' + identifier;
+                    system.children.add(new ProcedureTree(currentProcedureID, "Component"));
+                    
                     results.observations.add(OMXmlFactory.buildObservation("2.0.0",           // version
                                                   identifier,                    // id
                                                   identifier,                    // name
                                                   null,                          // description
                                                   foi,                           // foi
                                                   phenomenon,                    // phenomenon
-                                                  procedureID,                   // procedure
+                                                  currentProcedureID,            // procedure
                                                   result,                        // result
                                                   gb.getTimeObject("2.0.0")));   // time
                     results.spatialBound.merge(gb);
@@ -420,7 +429,6 @@ public class NetCDFExtractor {
     
     private static ExtractionResult parseDataBlockXY(final NCFieldAnalyze analyze, final String procedureID) {
         final ExtractionResult results = new ExtractionResult();
-        results.procedures.add(procedureID);
         if (analyze.mainField == null) {
             LOGGER.warning("No main field found");
             return results;
@@ -464,6 +472,9 @@ public class NetCDFExtractor {
             results.phenomenons.add(phenomenon);
             
             if (single) {
+                final ProcedureTree compo = new ProcedureTree(procedureID, "Component");
+                results.procedures.add(compo);
+                
                 final StringBuilder sb   = new StringBuilder();
                 final int count          = zVar.getDimension(0).getLength();
                 final GeoSpatialBound gb = new GeoSpatialBound();
@@ -527,6 +538,9 @@ public class NetCDFExtractor {
                 results.spatialBound.merge(gb);
                 
             } else {
+                final ProcedureTree system = new ProcedureTree(procedureID, "System");
+                results.procedures.add(system);
+                
                 for (int profileIndex = 0; profileIndex < separators.size(); profileIndex++) {
                     
                     final String identifier  = separators.get(profileIndex);
@@ -580,13 +594,18 @@ public class NetCDFExtractor {
                         sb.append(DEFAULT_ENCODING.getBlockSeparator());
                     }
                     final DataArrayProperty result = SOSXmlFactory.buildDataArrayProperty("2.0.0", "array-1", count, "SimpleDataArray", datarecord, DEFAULT_ENCODING, sb.toString());
+                    
+                    final String currentProcedureID = procedureID + '-' + identifier;
+                    system.children.add(new ProcedureTree(currentProcedureID, "Component"));
+                    
+                    
                     results.observations.add(OMXmlFactory.buildObservation("2.0.0",           // version
                                                   identifier,                    // id
                                                   identifier,                    // name
                                                   null,                          // description
                                                   foi,                           // foi
                                                   phenomenon,                    // phenomenon
-                                                  procedureID,                   // procedure
+                                                  currentProcedureID,            // procedure
                                                   result,                        // result
                                                   gb.getTimeObject("2.0.0")));   // time
                     results.spatialBound.merge(gb);
@@ -602,7 +621,6 @@ public class NetCDFExtractor {
     
     private static ExtractionResult parseDataBlockTraj(final NCFieldAnalyze analyze, final String procedureID) {
         final ExtractionResult results = new ExtractionResult();
-        results.procedures.add(procedureID);
         if (analyze.mainField == null) {
             LOGGER.warning("No main field found");
             return results;
@@ -642,6 +660,9 @@ public class NetCDFExtractor {
             results.phenomenons.add(phenomenon);
 
             if (single) {
+                final ProcedureTree compo = new ProcedureTree(procedureID, "Component");
+                results.procedures.add(compo);
+                
                 final StringBuilder sb   = new StringBuilder();
                 final int count          = timeVar.getDimension(0).getLength();
                 final GeoSpatialBound gb = new GeoSpatialBound();
@@ -710,6 +731,9 @@ public class NetCDFExtractor {
                 
                 
             } else {
+                final ProcedureTree system = new ProcedureTree(procedureID, "System");
+                results.procedures.add(system);
+                
                 for (int j = 0; j < separators.size(); j++) {
                     
                     final String identifier  = separators.get(j);
@@ -767,13 +791,18 @@ public class NetCDFExtractor {
                     gb.addGeometry(geom);
                     
                     final DataArrayProperty result = SOSXmlFactory.buildDataArrayProperty("2.0.0", "array-1", count, "SimpleDataArray", datarecord, DEFAULT_ENCODING, sb.toString());
+                    
+                    final String currentProcedureID = procedureID + '-' + identifier;
+                    system.children.add(new ProcedureTree(currentProcedureID, "Component"));
+                    
+                    
                     results.observations.add(OMXmlFactory.buildObservation("2.0.0",           // version
                                                   identifier,                    // id
                                                   identifier,                    // name
                                                   null,                          // description
                                                   foi,                           // foi
                                                   phenomenon,                    // phenomenon
-                                                  procedureID,                   // procedure
+                                                  currentProcedureID,            // procedure
                                                   result,                        // result
                                                   gb.getTimeObject("2.0.0")));   // time
                     results.spatialBound.merge(gb);
@@ -790,6 +819,9 @@ public class NetCDFExtractor {
     
     private static ExtractionResult parseDataBlockGrid(final NCFieldAnalyze analyze, final String procedureID) {
         final ExtractionResult results = new ExtractionResult();
+        final ProcedureTree compo = new ProcedureTree(procedureID, "Component");
+        results.procedures.add(compo);
+                
         if (analyze.mainField == null) {
             LOGGER.warning("No main field found");
             return results;
