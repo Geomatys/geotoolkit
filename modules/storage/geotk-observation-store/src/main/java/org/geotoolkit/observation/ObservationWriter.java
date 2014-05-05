@@ -20,11 +20,10 @@ package org.geotoolkit.observation;
 import java.util.List;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.gml.xml.AbstractGeometry;
-
-// Geotoolkit dependencies
 import org.geotoolkit.sos.xml.ObservationOffering;
 import org.geotoolkit.swes.xml.ObservationTemplate;
 import org.opengis.observation.Observation;
+import org.opengis.observation.Phenomenon;
 
 /**
  *
@@ -64,6 +63,15 @@ public interface ObservationWriter {
      * @throws org.apache.sis.storage.DataStoreException
      */
     List<String> writeObservations(final List<Observation> observations) throws DataStoreException;
+    
+     /**
+     * Write a list of phenomenons into the database
+     *
+     * @param phenomenons A list of swe phenomenons
+     *
+     * @throws org.apache.sis.storage.DataStoreException
+     */
+    void writePhenomenons(final List<Phenomenon> phenomenons) throws DataStoreException;
 
     /**
      * Remove an observation with the specified identifier.

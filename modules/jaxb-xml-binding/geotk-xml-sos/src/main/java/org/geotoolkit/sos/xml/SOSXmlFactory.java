@@ -30,6 +30,7 @@ import org.geotoolkit.gml.xml.LineString;
 import org.geotoolkit.gml.xml.Point;
 import org.geotoolkit.gml.xml.Polygon;
 import org.geotoolkit.gml.xml.TimeIndeterminateValueType;
+import org.geotoolkit.gml.xml.v321.ReferenceType;
 import org.geotoolkit.observation.xml.OMXmlFactory;
 import org.geotoolkit.ows.xml.AbstractOperationsMetadata;
 import org.geotoolkit.ows.xml.AbstractServiceIdentification;
@@ -719,6 +720,19 @@ public class SOSXmlFactory {
             return new org.geotoolkit.gml.xml.v321.FeaturePropertyType(featureid);
         } else if ("1.0.0".equals(version)) {
             return new org.geotoolkit.gml.xml.v311.FeaturePropertyType(featureid);
+        } else {
+            throw new IllegalArgumentException("unexpected sos version number:" + version);
+        }
+    }
+    
+    public static PhenomenonProperty buildPhenomenonProperty(final String version, final Phenomenon phenomenon) {
+        if ("2.0.0".equals(version)) {
+            return new org.geotoolkit.observation.xml.v200.OMObservationType.InternalPhenomenonProperty(new ReferenceType(phenomenon.getName()));
+        } else if ("1.0.0".equals(version)) {
+            if (phenomenon != null && !(phenomenon instanceof org.geotoolkit.swe.xml.v101.PhenomenonType)) {
+                throw new IllegalArgumentException("unexpected object version for phenomenon component element");
+            }
+            return new org.geotoolkit.swe.xml.v101.PhenomenonPropertyType((org.geotoolkit.swe.xml.v101.PhenomenonType)phenomenon);
         } else {
             throw new IllegalArgumentException("unexpected sos version number:" + version);
         }

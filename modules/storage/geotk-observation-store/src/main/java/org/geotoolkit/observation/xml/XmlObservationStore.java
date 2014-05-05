@@ -42,6 +42,7 @@ import org.geotoolkit.sos.netcdf.ExtractionResult;
 import org.geotoolkit.sos.netcdf.NetCDFExtractor;
 import org.geotoolkit.sos.xml.SOSMarshallerPool;
 import org.geotoolkit.swe.xml.PhenomenonProperty;
+import org.geotoolkit.swe.xml.v101.PhenomenonType;
 import org.opengis.feature.type.Name;
 import org.opengis.geometry.Geometry;
 import org.opengis.observation.AnyFeature;
@@ -96,8 +97,21 @@ public class XmlObservationStore extends AbstractObservationStore {
             result.observations.addAll(collection.getMember());
             for (Observation obs : collection.getMember()) {
                 final AbstractObservation o = (AbstractObservation)obs;
-                result.phenomenons.addAll(getPhenomenons(o.getPropertyObservedProperty()));
-                result.procedures.add(o.getProcedure().getHref());
+                final PhenomenonProperty phenProp = o.getPropertyObservedProperty();
+                final List<String> fields = getPhenomenonsFields(phenProp);
+                for (String field : fields) {
+                    if (!result.fields.contains(field)) {
+                        result.fields.add(field);
+                    }
+                }
+                final Phenomenon phen = getPhenomenons(phenProp);
+                if (!result.phenomenons.contains(phen)) {
+                    result.phenomenons.add(phen);
+                }
+                final String procedure = o.getProcedure().getHref();
+                if (!result.procedures.contains(procedure)) {
+                    result.procedures.add(procedure);
+                }
                 appendTime(obs.getSamplingTime(), result);
                 appendGeometry(obs.getFeatureOfInterest(), result);
             }
@@ -105,7 +119,9 @@ public class XmlObservationStore extends AbstractObservationStore {
         } else if (obj instanceof AbstractObservation) {
             final AbstractObservation obs = (AbstractObservation)obj;
             result.observations .add(obs);
-            result.phenomenons.addAll(getPhenomenons(obs.getPropertyObservedProperty()));
+            final PhenomenonProperty phenProp = obs.getPropertyObservedProperty();
+            result.fields.addAll(getPhenomenonsFields(phenProp));
+            result.phenomenons.add(getPhenomenons(phenProp));
             result.procedures.add(obs.getProcedure().getHref());
             appendTime(obs.getSamplingTime(), result);
             appendGeometry(obs.getFeatureOfInterest(), result);
@@ -113,7 +129,7 @@ public class XmlObservationStore extends AbstractObservationStore {
         return result;
     }
     
-    private List<String> getPhenomenons(final PhenomenonProperty phenProp) {
+    private List<String> getPhenomenonsFields(final PhenomenonProperty phenProp) {
         final List<String> results = new ArrayList<>();
         if (phenProp.getHref() != null) {
             results.add(phenProp.getHref());
@@ -130,6 +146,16 @@ public class XmlObservationStore extends AbstractObservationStore {
             results.add(p.getName());
         }
         return results;
+    }
+    
+    private Phenomenon getPhenomenons(final PhenomenonProperty phenProp) {
+        if (phenProp.getHref() != null) {
+            return new PhenomenonType(phenProp.getHref(), phenProp.getHref());
+        } else if (phenProp.getPhenomenon() != null) {
+            return phenProp.getPhenomenon();
+            
+        }
+        return null;
     }
     
     private void appendTime(final TemporalObject time, final ExtractionResult result) {

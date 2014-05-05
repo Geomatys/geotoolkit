@@ -280,11 +280,12 @@ public class NetCDFExtractor {
                 final Variable phenVar = analyze.vars.get(field.label);
                 final Array phenArray  = analyze.file.readArrays(Arrays.asList(phenVar)).get(0);
                 phenArrays.put(field.label, phenArray);
-                results.phenomenons.add(field.label);
+                results.fields.add(field.label);
             }
             
             final AbstractDataRecord datarecord = OMUtils.getDataRecordTimeSeries("2.0.0", analyze.phenfields);
             final Phenomenon phenomenon         = OMUtils.getPhenomenon("2.0.0", analyze.phenfields);
+            results.phenomenons.add(phenomenon);
 
             if (single) {
                 final StringBuilder sb   = new StringBuilder();
@@ -455,11 +456,12 @@ public class NetCDFExtractor {
                 final Variable phenVar = analyze.vars.get(field.label);
                 final Array phenArray  = analyze.file.readArrays(Arrays.asList(phenVar)).get(0);
                 phenArrays.put(field.label, phenArray);
-                results.phenomenons.add(field.label);
+                results.fields.add(field.label);
             }
             
             final AbstractDataRecord datarecord = OMUtils.getDataRecordProfile("2.0.0", analyze.phenfields);
             final Phenomenon phenomenon         = OMUtils.getPhenomenon("2.0.0", analyze.phenfields);
+            results.phenomenons.add(phenomenon);
             
             if (single) {
                 final StringBuilder sb   = new StringBuilder();
@@ -632,11 +634,12 @@ public class NetCDFExtractor {
                 final Variable phenVar = analyze.vars.get(field.label);
                 final Array phenArray  = analyze.file.readArrays(Arrays.asList(phenVar)).get(0);
                 phenArrays.put(field.label, phenArray);
-                results.phenomenons.add(field.label);
+                results.fields.add(field.label);
             }
             
             final AbstractDataRecord datarecord = OMUtils.getDataRecordTrajectory("2.0.0", analyze.phenfields);
             final Phenomenon phenomenon         = OMUtils.getPhenomenon("2.0.0", analyze.phenfields);
+            results.phenomenons.add(phenomenon);
 
             if (single) {
                 final StringBuilder sb   = new StringBuilder();
@@ -809,12 +812,13 @@ public class NetCDFExtractor {
                 final Variable phenVar = analyze.vars.get(field.label);
                 final Array phenArray  = analyze.file.readArrays(Arrays.asList(phenVar)).get(0);
                 phenArrays.put(field.label, phenArray);
-                results.phenomenons.add(field.label);
+                results.fields.add(field.label);
             }
             
             final AbstractDataRecord datarecord = OMUtils.getDataRecordTimeSeries("2.0.0", analyze.phenfields);
             final Phenomenon phenomenon         = OMUtils.getPhenomenon("2.0.0", analyze.phenfields);
-
+            results.phenomenons.add(phenomenon);
+            
             final int latSize = latVar.getDimension(0).getLength();
             for (int latIndex = 0; latIndex < latSize; latIndex++) {
 
