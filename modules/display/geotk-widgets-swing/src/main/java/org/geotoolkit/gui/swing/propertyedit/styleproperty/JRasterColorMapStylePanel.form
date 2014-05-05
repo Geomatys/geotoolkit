@@ -141,6 +141,9 @@
               <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="style.rastercolormappane.nan" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="guiNaNActionPerformed"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JLabel" name="guiLblPalette">
           <Properties>

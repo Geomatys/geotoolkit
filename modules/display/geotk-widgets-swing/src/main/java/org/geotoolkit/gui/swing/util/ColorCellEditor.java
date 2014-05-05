@@ -19,13 +19,15 @@ package org.geotoolkit.gui.swing.util;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.AbstractCellEditor;
 import javax.swing.JButton;
-import javax.swing.JColorChooser;
 import javax.swing.JTable;
 import javax.swing.table.TableCellEditor;
+import static org.geotoolkit.gui.swing.util.ColorCellRenderer.paintComp;
 
 /**
  * Cell Renderer for Color objects.
@@ -35,7 +37,15 @@ import javax.swing.table.TableCellEditor;
  */
 public class ColorCellEditor extends AbstractCellEditor implements TableCellEditor,ActionListener {
 
-    private final JButton button = new JButton();
+    private final JButton button = new JButton(){
+
+        @Override
+        protected void paintComponent(Graphics g) {
+            final Graphics2D g2d = (Graphics2D) g;
+            paintComp(g2d, this, getForeground());
+        }
+        
+    };
     private Object value;
 
     public ColorCellEditor() {

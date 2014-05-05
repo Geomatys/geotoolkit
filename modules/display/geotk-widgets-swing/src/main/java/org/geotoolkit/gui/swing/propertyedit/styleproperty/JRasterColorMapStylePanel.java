@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit//GEN-LAST:event_guiRemoveAllActionPerformed
  *    http://www.geotoolkit.org
  *
- *    (C) 2009-2011 Geomatys
+ *    (C) 2009-2014 Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -24,9 +24,7 @@ import javax.measure.unit.NonSI;
 import javax.measure.unit.Unit;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.Image;
-import java.awt.LinearGradientPaint;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
@@ -36,10 +34,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.AbstractCellEditor;
@@ -62,9 +58,7 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellEditor;
-import javax.swing.table.TableModel;
 import org.geotoolkit.coverage.CoverageReference;
 
 import org.geotoolkit.coverage.io.CoverageStoreException;
@@ -98,7 +92,6 @@ import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.filter.DefaultLiteral;
 import org.geotoolkit.gui.swing.resource.FontAwesomeIcons;
 import org.geotoolkit.gui.swing.resource.IconBuilder;
-import org.geotoolkit.internal.image.ColorRamp;
 
 import org.jdesktop.swingx.JXTable;
 import org.jdesktop.swingx.combobox.ListComboBoxModel;
@@ -122,7 +115,6 @@ import org.geotoolkit.style.function.Categorize;
 import org.geotoolkit.style.function.DefaultInterpolationPoint;
 import org.geotoolkit.style.function.ThreshholdsBelongTo;
 import org.opengis.style.SelectedChannelType;
-import org.opengis.util.GenericName;
 
 /**
  * Style editor which handle Raster colormap edition.
@@ -173,6 +165,7 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
 
     private static final MutableStyleFactory SF = (MutableStyleFactory) FactoryFinder.getStyleFactory(new Hints(Hints.STYLE_FACTORY, MutableStyleFactory.class));
     private static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
+    private static final Literal TRS = SF.literal(new Color(0, 0, 0, 0));
 
     private ColorMapModel model = new InterpolateColorModel(Collections.EMPTY_LIST);
     private MapLayer layer = null;
@@ -366,6 +359,11 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
 
         guiNaN.setSelected(true);
         guiNaN.setText(MessageBundle.getString("style.rastercolormappane.nan")); // NOI18N
+        guiNaN.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                guiNaNActionPerformed(evt);
+            }
+        });
 
         guiLblPalette.setText(MessageBundle.getString("style.rastercolormappane.palette")); // NOI18N
 
@@ -500,14 +498,14 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
                 //nothing to do
             }else if(model == null){
                 final Map<Expression, Expression> values = new HashMap<>();
-                values.put(StyleConstants.CATEGORIZE_LESS_INFINITY, SF.literal(new Color(0f,0f,0f,0f)));
-                values.put(new DefaultLiteral<Number>(0), SF.literal(new Color(0f,0f,0f,0f)));
+                values.put(StyleConstants.CATEGORIZE_LESS_INFINITY, TRS);
+                values.put(new DefaultLiteral<Number>(0), TRS);
                 model = new CategorizeColorModel(values);
                 postParse();
             }else{
                 //we need to convert from interpolate to categorize
                 final Map<Expression, Expression> values = new HashMap<>();
-                values.put( StyleConstants.CATEGORIZE_LESS_INFINITY, SF.literal(new Color(0f,0f,0f,0f)));
+                values.put( StyleConstants.CATEGORIZE_LESS_INFINITY, TRS);
                 final List<InterpolationPoint> points = ((InterpolateColorModel)model).points;
                 for(InterpolationPoint pt : points){
                     values.put(new DefaultLiteral(pt.getData()), pt.getValue());
@@ -516,8 +514,76 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
                 postParse();
             }
         }
+        
+        //ensure the NaN is set as defined
+        guiNaNActionPerformed(null);
 
     }//GEN-LAST:event_guiInterpolateActionPerformed
+
+    /**
+     * And or Remove NaN value in the model
+     * @param evt 
+     */
+    private void guiNaNActionPerformed(ActionEvent evt) {//GEN-FIRST:event_guiNaNActionPerformed
+        
+        final boolean withNaN = guiNaN.isSelected();
+        
+        if(model instanceof CategorizeColorModel){
+            final Map<Expression,Expression> values = new HashMap<>();
+            final List<Entry<Expression, Expression>> ths = ((CategorizeColorModel)model).ths;
+            for(int i=0,n=ths.size();i<n;i++){
+                final Entry<Expression, Expression> entry = ths.get(i);
+                
+                final Object num = ((Literal)entry.getKey()).getValue();
+                if(num instanceof Number && (Double.isNaN(((Number)num).doubleValue()) || Float.isNaN(((Number)num).floatValue()))){
+                    if(withNaN){
+                        //color model already has a NaN
+                        return;
+                    }else{
+                        //remove it
+                    }
+                }else{
+                    values.put(entry.getKey(), entry.getValue());
+                }
+            }
+            
+            if(withNaN){
+                //add NaN entry
+                values.put(new DefaultLiteral<Number>(Float.NaN), TRS);
+            }
+            
+            model = new CategorizeColorModel(values);
+            postParse();
+            
+        }else if(model instanceof InterpolateColorModel){
+            //we need to convert from interpolate to categorize
+            final List<InterpolationPoint> newPoints = new ArrayList<>();
+            final List<InterpolationPoint> points = ((InterpolateColorModel)model).points;
+            for(InterpolationPoint pt : points){
+                final Number num = pt.getData();
+                if(Double.isNaN(num.doubleValue()) || Float.isNaN(num.floatValue())){
+                    if(withNaN){
+                        //color model already has a NaN
+                        return;
+                    }else{
+                        //remove it
+                    }
+                }else{
+                    newPoints.add(pt);
+                }
+            }
+            
+            if(withNaN){
+                //add NaN entry
+                newPoints.add(SF.interpolationPoint(Float.NaN, TRS));
+            }
+            
+            model = new InterpolateColorModel(newPoints);
+            postParse();
+        }
+        
+        
+    }//GEN-LAST:event_guiNaNActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private JButton guiAddOne;
@@ -556,7 +622,7 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
         model.removeAll();
 
         //add the NaN if specified
-        if(guiNaN.isSelected() && guiInterpolate.isSelected()){
+        if(guiNaN.isSelected()){
             model.addValue(Float.NaN, new Color(0, 0, 0, 0));
         }
 
@@ -1078,7 +1144,7 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
         public void removeAll() {
             ths.clear();
             Entry<Expression,Expression> th1 = new AbstractMap.SimpleEntry<>(
-                    (Expression)StyleConstants.CATEGORIZE_LESS_INFINITY,(Expression)SF.literal(new Color(0f,0f,0f,0f)));
+                    (Expression)StyleConstants.CATEGORIZE_LESS_INFINITY,(Expression)TRS);
 //            Entry<Expression,Expression> th2 = new AbstractMap.SimpleEntry<>(
 //                    (Expression)FF.literal(0d),(Expression)SF.literal(new Color(0f,0f,0f,0f)));
             ths.add(th1);

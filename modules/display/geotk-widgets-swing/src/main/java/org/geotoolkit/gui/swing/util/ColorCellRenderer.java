@@ -19,9 +19,13 @@ package org.geotoolkit.gui.swing.util;
 
 import java.awt.Color;
 import java.awt.Component;
-import javax.swing.JLabel;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Point;
+import java.awt.Shape;
+import javax.swing.JComponent;
 import javax.swing.JTable;
-import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 
 /**
@@ -30,19 +34,55 @@ import javax.swing.table.TableCellRenderer;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class ColorCellRenderer implements TableCellRenderer {
+public class ColorCellRenderer extends JComponent implements TableCellRenderer {
+
+    private static final int SQR_SIZE = 6;
+    
+    public ColorCellRenderer() {
+        setOpaque(true);
+    }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        final Graphics2D g2d = (Graphics2D) g;
+        paintComp(g2d, this, getForeground());
+        
+    }
 
     @Override
     public Component getTableCellRendererComponent(final JTable table, final Object value, final boolean isSelected, final boolean hasFocus, final int row, final int column) {
-       
-        final JLabel lbl = new JLabel();        
-        lbl.setText("");
-        lbl.setOpaque(true);
         if(value instanceof Color){
-            lbl.setBackground((Color)value);
-            lbl.setForeground((Color)value);
+            setForeground((Color)value);
+        }
+        return this;
+    }
+    
+    public static void paintComp(Graphics2D g2d, JComponent comp, Color color){
+        final Dimension dim = comp.getSize();
+        final int SQR_SIZE = dim.height/2;
+        
+        final Color LIGHT_GRAY = new Color(0.8f, 0.8f, 0.8f);
+        
+        final Shape oldClip = g2d.getClip();
+        g2d.setClip(0,0,dim.width,dim.height);
+        g2d.setColor(Color.WHITE);
+        g2d.fillRect(0, 0, dim.width, dim.height);
+        //draw grey squares to represent transparency
+        boolean swap = false;
+        g2d.setColor(LIGHT_GRAY);
+        for(int y=0;y<dim.height;y+=SQR_SIZE){
+            for(int x=swap?0:SQR_SIZE; x<dim.width; x+=SQR_SIZE*2){
+                g2d.fillRect(x, y,SQR_SIZE, SQR_SIZE);
+            }            
+            swap = !swap;
         }
         
-        return lbl;
+        //paint color above
+        g2d.setColor(color);
+        g2d.fillRect(0, 0, dim.width, dim.height);
+        
+        g2d.setClip(oldClip);
     }
+    
+    
 }
