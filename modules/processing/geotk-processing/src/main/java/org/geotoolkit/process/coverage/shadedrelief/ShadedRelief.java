@@ -38,6 +38,7 @@ import org.geotoolkit.process.ProcessException;
 import static org.geotoolkit.process.coverage.shadedrelief.ShadedReliefDescriptor.*;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.transform.ConcatenatedTransform;
+import org.geotoolkit.referencing.operation.transform.LinearTransform1D;
 import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -81,7 +82,7 @@ public class ShadedRelief extends AbstractProcess {
     protected void execute() throws ProcessException {
         GridCoverage2D coverage = value(COVERAGE, inputParameters);
         GridCoverage2D elevation = value(ELEVATION, inputParameters);
-        final MathTransform1D eleConv = value(ELECONV,inputParameters);
+        MathTransform1D eleConv = value(ELECONV,inputParameters);
         //prepare coverage for the expected work
         coverage = coverage.view(ViewType.RENDERED);
         elevation = elevation.view(ViewType.GEOPHYSICS);
@@ -112,8 +113,6 @@ public class ShadedRelief extends AbstractProcess {
         }
         
         //we convert everything to meters
-//        final Unit eleUnit = elevation.getSampleDimension(0).getUnits();
-//        final UnitConverter eleConv = eleUnit.getConverterTo(SI.METRE);
         final MathTransform gridToData = coverage.getGridGeometry().getGridToCRS2D(PixelOrientation.UPPER_LEFT);
         final MathTransform dataToMercator;
         try {
@@ -144,35 +143,11 @@ public class ShadedRelief extends AbstractProcess {
                     fa[0]=coords[offset1+0]; fa[1]=coords[offset1+1]; fa[2]=(float)eleConv.transform(eleImage.getSampleFloat(x,  y,  0));
                     fb[0]=coords[offset1+2]; fb[1]=coords[offset1+3]; fb[2]=(float)eleConv.transform(eleImage.getSampleFloat(ex, y,  0));
                     fc[0]=coords[offset2+0]; fc[1]=coords[offset2+1]; fc[2]=(float)eleConv.transform(eleImage.getSampleFloat(x,  ey, 0));
-                    fd[0]=coords[offset2+2]; fd[1]=coords[offset2+3]; fd[2]=(float)eleConv.transform(eleImage.getSampleFloat(ex, ey, 0));
-                    double dx = Math.abs(fa[0]-fb[0]);
+                    fd[0]=coords[offset2+2]; fd[1]=coords[offset2+3]; fd[2]=(float)eleConv.transform(eleImage.getSampleFloat(ex, ey, 0));                    
                     
-                    
-//                    //calculate normal of each side
-//                    v1.set(0, fa[1], fa[2]);
-//                    v2.set(0, fc[1], fc[2]);
-//                    v3.set(1, fa[1], fa[2]);
-//                    n1.set(calculateNormal(v1, v2, v3));
-//                    v1.set(0, fb[1], fb[2]);
-//                    v2.set(0, fd[1], fd[2]);
-//                    v3.set(1, fb[1], fb[2]);
-//                    n1.add(calculateNormal(v1, v2, v3));
-//                    n1.normalize();
-//                    
-//                    v1.set(fa[0], 0, fa[2]);
-//                    v2.set(fb[0], 0, fb[2]);
-//                    v3.set(fa[0], 1, fa[2]);
-//                    n2.set(calculateNormal(v1, v2, v3));
-//                    v1.set(fc[0], 0, fc[2]);
-//                    v2.set(fd[0], 0, fd[2]);
-//                    v3.set(fc[0], 1, fc[2]);
-//                    n2.add(calculateNormal(v1, v2, v3));
-//                    n2.normalize();
-//                    
-//                    n.set(n1);
-//                    n.add(n2);
-//                    n.normalize();
-                    
+                    boolean flipx = (fa[0] > fb[0]);
+                    boolean flipy = (fa[1] < fc[1]);
+                    boolean invert = (flipx || flipy) && !(flipx && flipy);
                     
                     //calculate average normal of the triangles
                     v1.set(fa[0], fa[1], fa[2]);
@@ -186,19 +161,32 @@ public class ShadedRelief extends AbstractProcess {
                     n.set(n1);
                     n.add(n2);
                     n.normalize();
+                                     
+                    if(invert){
+                        n.scale(-1f);
+                    }
                     
-                    
-                    //calculate shaded color
                     int argb = cm.getRGB(baseRaster.getDataElements(x, y, null));
                     float cr = (float)((argb>>16) & 0xFF) / 255f;
                     float cg = (float)((argb>>8) & 0xFF) / 255f;
                     float cb = (float)((argb>>0) & 0xFF) / 255f;
                     float ca = (float)((argb>>24) & 0xFF) / 255f;
-                    float ratio = Math.max(Math.abs(lightDirection.dot(n)),0.0f);
+                    float ratio = 1f;
+                            
+                    //if we have an NaN in the normal we skip shading for this cell
+                    //the elevation model has a hole in the grid
+                    if(!Float.isNaN(n.x) && !Float.isNaN(n.y) && !Float.isNaN(n.z)){
+                        //calculate shaded color
+                        ratio = Math.max(lightDirection.dot(n),0.0f);                    
+                        //next line is to indensify average colors, lights darken flat areas so we compensate a little
+                        ratio = ratio + (float) (Math.sin(ratio*Math.PI)*0.20);
+                    }
                     
-                    //next line is to indensify average colors, lights darken flat areas so we compensate a little
-                    ratio = ratio + (float) (Math.sin(ratio*Math.PI)*0.20);
                     argb = toARGB(cr*ratio, cg*ratio, cb*ratio, ca);
+                    
+//                    float r = XMath.clamp( (fa[2] * 0.0001f), 0f, 1f);
+//                    argb = toARGB(r, r, r, 1f);
+                    
                     resImage.setRGB(x, y, argb);
 
                 }
@@ -224,7 +212,7 @@ public class ShadedRelief extends AbstractProcess {
         ab.sub(a,b);
         ac.sub(a,c);
         cross.cross(ab,ac);
-        cross.normalize();
+        //cross.normalize();
         return cross;
     }
             
