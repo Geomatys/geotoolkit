@@ -18,6 +18,8 @@
 package org.geotoolkit.gui.swing.style;
 
 import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import javax.swing.GroupLayout;
@@ -26,8 +28,6 @@ import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SwingConstants;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.MapLayer;
 import org.opengis.style.ShadedRelief;
@@ -48,7 +48,7 @@ public class JShadedReliefPane extends StyleElementEditor<ShadedRelief>{
     public JShadedReliefPane() {
         super(ShadedRelief.class);
         initComponents();
-        guiFactor.setModel(1d, 0d, 1d, 0.1d);
+        guiFactor.setModel(1d, 0d, 10000000d, 0.1d);
     }
     
     public void setExpressionVisible(boolean visible){
@@ -99,9 +99,9 @@ public class JShadedReliefPane extends StyleElementEditor<ShadedRelief>{
         jLabel1.setText(MessageBundle.getString("factor")); // NOI18N
 
         guiBrightness.setText(MessageBundle.getString("brightnessonly")); // NOI18N
-        guiBrightness.addChangeListener(new ChangeListener() {
-            public void stateChanged(ChangeEvent evt) {
-                guiBrightnessStateChanged(evt);
+        guiBrightness.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                guiBrightnessActionPerformed(evt);
             }
         });
 
@@ -143,10 +143,9 @@ public class JShadedReliefPane extends StyleElementEditor<ShadedRelief>{
         }
     }//GEN-LAST:event_propertyChange
 
-    private void guiBrightnessStateChanged(ChangeEvent evt) {//GEN-FIRST:event_guiBrightnessStateChanged
-        // TODO add your handling code here:
+    private void guiBrightnessActionPerformed(ActionEvent evt) {//GEN-FIRST:event_guiBrightnessActionPerformed
         firePropertyChange(PROPERTY_TARGET, null, create());
-    }//GEN-LAST:event_guiBrightnessStateChanged
+    }//GEN-LAST:event_guiBrightnessActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
