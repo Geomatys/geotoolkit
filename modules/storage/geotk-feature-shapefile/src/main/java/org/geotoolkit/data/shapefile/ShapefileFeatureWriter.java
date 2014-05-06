@@ -54,6 +54,7 @@ import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.shapefile.lock.AccessManager;
 import org.geotoolkit.data.shapefile.lock.ShpFileType;
 import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.feature.FeatureUtilities;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.identity.Identifier;
 
@@ -81,7 +82,10 @@ public class ShapefileFeatureWriter implements FeatureWriter<SimpleFeatureType, 
 
     // the current Feature
     protected SimpleFeature currentFeature;
-
+    
+    /** Initial value for current feature */
+    protected SimpleFeature originalFeature;
+    
     // the FeatureType we are representing
     protected final SimpleFeatureType featureType;
 
@@ -107,6 +111,8 @@ public class ShapefileFeatureWriter implements FeatureWriter<SimpleFeatureType, 
     private DbaseFileHeader dbfHeader;
 
     private final Set<Identifier> deletedIds = new HashSet<>();
+    private final Set<Identifier> updatedIds = new HashSet<>();
+    private final Set<Identifier> addedIds   = new HashSet<>();
     protected final Map<ShpFileType, StorageFile> storageFiles = new HashMap<>();
 
     // keep track of bounds during write
@@ -283,7 +289,17 @@ public class ShapefileFeatureWriter implements FeatureWriter<SimpleFeatureType, 
         } catch (IOException ex) {
             throw new FeatureStoreRuntimeException(ex);
         }
-        
+
+        if (!addedIds.isEmpty()) {
+            final FeatureStoreContentEvent event = new FeatureStoreContentEvent(this, FeatureStoreContentEvent.Type.ADD, featureType.getName(), FF.id(addedIds));
+            parent.forwardContentEvent(event);
+        }
+
+        if (!updatedIds.isEmpty()) {
+            final FeatureStoreContentEvent event = new FeatureStoreContentEvent(this, FeatureStoreContentEvent.Type.UPDATE, featureType.getName(), FF.id(updatedIds));
+            parent.forwardContentEvent(event);
+        }
+
         if (!deletedIds.isEmpty()) {
             final FeatureStoreContentEvent event = new FeatureStoreContentEvent(this, FeatureStoreContentEvent.Type.DELETE, featureType.getName(), FF.id(deletedIds));
             parent.forwardContentEvent(event);
@@ -352,7 +368,9 @@ public class ShapefileFeatureWriter implements FeatureWriter<SimpleFeatureType, 
         // is there another? If so, return it
         if (featureReader.hasNext()) {
             try {
-                return currentFeature = featureReader.next();
+                currentFeature = featureReader.next();
+                originalFeature = FeatureUtilities.copy(currentFeature);
+                return currentFeature;
             } catch (IllegalAttributeException iae) {
                 throw new FeatureStoreRuntimeException("Error in reading", iae);
             }
@@ -362,6 +380,7 @@ public class ShapefileFeatureWriter implements FeatureWriter<SimpleFeatureType, 
         // so return an empty feature
         try {
             final String featureID = getFeatureType().getTypeName()+"."+(records+1);
+            originalFeature = null;
             return currentFeature = FeatureTypeUtilities.template(getFeatureType(),featureID,emptyAtts);
         } catch (IllegalAttributeException iae) {
             throw new FeatureStoreRuntimeException("Error creating empty Feature", iae);
@@ -471,6 +490,11 @@ public class ShapefileFeatureWriter implements FeatureWriter<SimpleFeatureType, 
         // one more down...
         records++;
 
+        if (originalFeature == null) {
+            addedIds.add(currentFeature.getIdentifier());
+        } else if (!originalFeature.equals(currentFeature)) {
+            updatedIds.add(currentFeature.getIdentifier());
+        }
         // clear the currentFeature
         currentFeature = null;
     }
