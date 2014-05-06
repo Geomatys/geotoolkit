@@ -940,7 +940,7 @@ scan:   for (final ProcessBriefType processBriefType : processBrief) {
          * over time, until we get the right content. The time interval used for checking increase at each request, to
          * avoid overloading.
          */
-            final int maxTimeLapse = 128000;
+            final int maxTimeLapse = 30000;
             int timeLapse = 250;
             while (true) {
                 timeLapse = Math.min(timeLapse * 2, maxTimeLapse);
@@ -995,7 +995,7 @@ scan:   for (final ProcessBriefType processBriefType : processBrief) {
         security.secure(serverURL);
         final URLConnection conec = serverURL.openConnection();
         conec.setRequestProperty("content-type", "text/xml");
-        conec.setConnectTimeout(60);
+        conec.setConnectTimeout((int)TIMEOUT_CAPS);
         conec.setDoOutput(true);
         security.secure(conec);
 
