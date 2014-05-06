@@ -46,6 +46,8 @@ public class ExtractionResult {
          
         public final List<ProcedureTree> children = new ArrayList<>();
         
+        public final GeoSpatialBound spatialBound = new GeoSpatialBound();
+        
         public ProcedureTree(final String id, final String type) {
             this.id   = id;
             this.type = type;

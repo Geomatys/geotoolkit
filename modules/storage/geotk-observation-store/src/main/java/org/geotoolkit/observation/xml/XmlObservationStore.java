@@ -39,6 +39,7 @@ import static org.geotoolkit.observation.xml.XmlObservationStoreFactory.FILE_PAT
 import org.geotoolkit.sampling.xml.SamplingFeature;
 import org.geotoolkit.sos.netcdf.ExtractionResult;
 import org.geotoolkit.sos.netcdf.ExtractionResult.ProcedureTree;
+import org.geotoolkit.sos.netcdf.GeoSpatialBound;
 import org.geotoolkit.sos.xml.SOSMarshallerPool;
 import org.geotoolkit.swe.xml.PhenomenonProperty;
 import org.geotoolkit.swe.xml.v101.PhenomenonType;
@@ -111,8 +112,10 @@ public class XmlObservationStore extends AbstractObservationStore {
                 if (!result.procedures.contains(procedure)) {
                     result.procedures.add(procedure);
                 }
-                appendTime(obs.getSamplingTime(), result);
-                appendGeometry(obs.getFeatureOfInterest(), result);
+                appendTime(obs.getSamplingTime(), result.spatialBound);
+                appendTime(obs.getSamplingTime(), procedure.spatialBound);
+                appendGeometry(obs.getFeatureOfInterest(), result.spatialBound);
+                appendGeometry(obs.getFeatureOfInterest(), procedure.spatialBound);
             }
             
         } else if (obj instanceof AbstractObservation) {
@@ -121,9 +124,13 @@ public class XmlObservationStore extends AbstractObservationStore {
             final PhenomenonProperty phenProp = obs.getPropertyObservedProperty();
             result.fields.addAll(getPhenomenonsFields(phenProp));
             result.phenomenons.add(getPhenomenons(phenProp));
-            result.procedures.add(new ProcedureTree(obs.getProcedure().getHref(), "Component"));
-            appendTime(obs.getSamplingTime(), result);
-            appendGeometry(obs.getFeatureOfInterest(), result);
+            final ProcedureTree procedure = new ProcedureTree(obs.getProcedure().getHref(), "Component");
+            result.procedures.add(procedure);
+            appendTime(obs.getSamplingTime(), result.spatialBound);
+            appendTime(obs.getSamplingTime(), procedure.spatialBound);
+            appendGeometry(obs.getFeatureOfInterest(), result.spatialBound);
+            appendGeometry(obs.getFeatureOfInterest(), procedure.spatialBound);
+            
         }
         return result;
     }
@@ -157,18 +164,18 @@ public class XmlObservationStore extends AbstractObservationStore {
         return null;
     }
     
-    private void appendTime(final TemporalObject time, final ExtractionResult result) {
+    private void appendTime(final TemporalObject time, final GeoSpatialBound spatialBound) {
         if (time instanceof Instant) {
             final Instant i = (Instant) time;
-            result.spatialBound.addDate(i.getPosition().getDate());
+            spatialBound.addDate(i.getPosition().getDate());
         } else if (time instanceof Period) {
             final Period p = (Period) time;
-            result.spatialBound.addDate(p.getBeginning().getPosition().getDate());
-            result.spatialBound.addDate(p.getEnding().getPosition().getDate());
+            spatialBound.addDate(p.getBeginning().getPosition().getDate());
+            spatialBound.addDate(p.getEnding().getPosition().getDate());
         }
     }
     
-    private void appendGeometry(final AnyFeature feature, final ExtractionResult result){
+    private void appendGeometry(final AnyFeature feature, final GeoSpatialBound spatialBound){
         if (feature instanceof SamplingFeature) {
             final SamplingFeature sf = (SamplingFeature) feature;
             final Geometry geom = sf.getGeometry();
@@ -180,26 +187,28 @@ public class XmlObservationStore extends AbstractObservationStore {
             } else {
                 ageom = null;
             }
-            result.spatialBound.addGeometry(ageom);
-            extractBoundary(ageom, result);
+            spatialBound.addGeometry(ageom);
+            spatialBound.addGeometry(ageom);
+            extractBoundary(ageom, spatialBound);
+            extractBoundary(ageom, spatialBound);
         }
     }
     
-    private void extractBoundary(final AbstractGeometry geom, final ExtractionResult result) {
+    private void extractBoundary(final AbstractGeometry geom, final GeoSpatialBound spatialBound) {
         if (geom instanceof Point) {
             final Point p = (Point) geom;
             if (p.getPos() != null) {
-                result.spatialBound.addXCoordinate(p.getPos().getOrdinate(0));
-                result.spatialBound.addYCoordinate(p.getPos().getOrdinate(1));
+                spatialBound.addXCoordinate(p.getPos().getOrdinate(0));
+                spatialBound.addYCoordinate(p.getPos().getOrdinate(1));
             }
         } else if (geom instanceof LineString) {
             final LineString ls = (LineString) geom;
             final Envelope env = ls.getBounds();
             if (env != null) {
-                result.spatialBound.addXCoordinate(env.getMinimum(0));
-                result.spatialBound.addXCoordinate(env.getMaximum(0));
-                result.spatialBound.addYCoordinate(env.getMinimum(1));
-                result.spatialBound.addYCoordinate(env.getMaximum(1));
+                spatialBound.addXCoordinate(env.getMinimum(0));
+                spatialBound.addXCoordinate(env.getMaximum(0));
+                spatialBound.addYCoordinate(env.getMinimum(1));
+                spatialBound.addYCoordinate(env.getMaximum(1));
             }
         } else if (geom instanceof Polygon) {
             final Polygon p = (Polygon) geom;

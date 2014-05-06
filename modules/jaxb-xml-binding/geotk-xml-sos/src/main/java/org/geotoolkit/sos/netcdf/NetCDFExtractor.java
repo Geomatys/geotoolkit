@@ -348,6 +348,7 @@ public class NetCDFExtractor {
                                               result,                          // result
                                               gb.getTimeObject("2.0.0")));     // time
                 results.spatialBound.merge(gb);
+                compo.spatialBound.merge(gb);
                 
             } else {
                 final ProcedureTree system = new ProcedureTree(procedureID, "System");
@@ -404,7 +405,9 @@ public class NetCDFExtractor {
                     final DataArrayProperty result = SOSXmlFactory.buildDataArrayProperty("2.0.0", "array-1", count, "SimpleDataArray", datarecord, DEFAULT_ENCODING, sb.toString());
                     
                     final String currentProcedureID = procedureID + '-' + identifier;
-                    system.children.add(new ProcedureTree(currentProcedureID, "Component"));
+                    final ProcedureTree compo = new ProcedureTree(currentProcedureID, "Component");
+                    compo.spatialBound.merge(gb);
+                    system.children.add(compo);
                     
                     results.observations.add(OMXmlFactory.buildObservation("2.0.0",           // version
                                                   identifier,                    // id
@@ -536,6 +539,7 @@ public class NetCDFExtractor {
                                               result,                          // result
                                               gb.getTimeObject("2.0.0")));     // time
                 results.spatialBound.merge(gb);
+                compo.spatialBound.merge(gb);
                 
             } else {
                 final ProcedureTree system = new ProcedureTree(procedureID, "System");
@@ -596,7 +600,9 @@ public class NetCDFExtractor {
                     final DataArrayProperty result = SOSXmlFactory.buildDataArrayProperty("2.0.0", "array-1", count, "SimpleDataArray", datarecord, DEFAULT_ENCODING, sb.toString());
                     
                     final String currentProcedureID = procedureID + '-' + identifier;
-                    system.children.add(new ProcedureTree(currentProcedureID, "Component"));
+                    final ProcedureTree compo = new ProcedureTree(currentProcedureID, "Component");
+                    compo.spatialBound.merge(gb);
+                    system.children.add(compo);
                     
                     
                     results.observations.add(OMXmlFactory.buildObservation("2.0.0",           // version
@@ -728,7 +734,7 @@ public class NetCDFExtractor {
                                               result,                          // result
                                               gb.getTimeObject("2.0.0")));     // time
                 results.spatialBound.merge(gb);
-                
+                compo.spatialBound.merge(gb);
                 
             } else {
                 final ProcedureTree system = new ProcedureTree(procedureID, "System");
@@ -793,7 +799,9 @@ public class NetCDFExtractor {
                     final DataArrayProperty result = SOSXmlFactory.buildDataArrayProperty("2.0.0", "array-1", count, "SimpleDataArray", datarecord, DEFAULT_ENCODING, sb.toString());
                     
                     final String currentProcedureID = procedureID + '-' + identifier;
-                    system.children.add(new ProcedureTree(currentProcedureID, "Component"));
+                    final ProcedureTree compo = new ProcedureTree(currentProcedureID, "Component");
+                    compo.spatialBound.merge(gb);
+                    system.children.add(compo);
                     
                     
                     results.observations.add(OMXmlFactory.buildObservation("2.0.0",           // version
@@ -915,6 +923,7 @@ public class NetCDFExtractor {
             }
             
             results.spatialBound.addGeometry(results.spatialBound.getPolyGonBounds("2.0.0"));
+            compo.spatialBound.addGeometry(results.spatialBound.getPolyGonBounds("2.0.0"));
             
 
         } catch (IOException ex) {
