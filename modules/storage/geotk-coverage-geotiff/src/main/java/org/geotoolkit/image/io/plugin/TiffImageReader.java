@@ -71,6 +71,7 @@ import org.geotoolkit.image.SampleModels;
 import org.geotoolkit.image.io.SpatialImageReader;
 import org.geotoolkit.image.io.UnsupportedImageFormatException;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
+import org.geotoolkit.internal.image.ScaledColorSpace;
 import org.geotoolkit.lang.SystemOverride;
 import org.geotoolkit.metadata.geotiff.GeoTiffMetaDataReader;
 import org.geotoolkit.resources.Errors;
@@ -655,7 +656,11 @@ public class TiffImageReader extends SpatialImageReader {
             switch (photoInter) {
                 case 0 :   //--minIsWhite
                 case 1 : { //-- minIsBlack
-                    cs = ColorSpace.getInstance(ColorSpace.CS_GRAY);
+                    if (bits.length > 1) {
+                        cs = new ScaledColorSpace(bits.length, 0, Double.MIN_VALUE, Double.MAX_VALUE);// attention au choix de la bande !!!!
+                    } else {
+                        cs = ColorSpace.getInstance(ColorSpace.CS_GRAY); 
+                    }
                     break;
                 }
                 case 2 : { //-- RGB
