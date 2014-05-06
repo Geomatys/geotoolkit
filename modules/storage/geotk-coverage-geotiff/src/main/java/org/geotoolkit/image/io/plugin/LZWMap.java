@@ -79,7 +79,7 @@ class LZWMap extends HashMap<byte[], Short> {
      */
     private void putCode(final int position, final int eltLength, final short code) {
         if (values[position] == null) {
-            values[position] = new short[DEFAULTVALUES_LENGTH];
+            values[position] = new short[((eltLength + DEFAULTVALUES_LENGTH - 1) / DEFAULTVALUES_LENGTH) * DEFAULTVALUES_LENGTH];
         } else if (values[position].length <= eltLength - 2) {
             values[position] = Arrays.copyOf(values[position], values[position].length << 1);
         }
