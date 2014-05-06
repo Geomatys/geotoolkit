@@ -73,7 +73,7 @@ public class ComponentList implements AbstractComponentList {
 
     public ComponentList(final AbstractComponentList component) {
         if (component != null) {
-            this.component = new ArrayList<ComponentPropertyType>();
+            this.component = new ArrayList<>();
             for (ComponentProperty cp :component.getComponent()) {
                 this.component.add(new ComponentPropertyType(cp));
             }
@@ -90,13 +90,13 @@ public class ComponentList implements AbstractComponentList {
      */
     public List<ComponentPropertyType> getComponent() {
         if (component == null) {
-            component = new ArrayList<ComponentPropertyType>();
+            component = new ArrayList<>();
         }
         return this.component;
     }
 
     /**
-     * Gets the value of the component property.
+     * Sets the value of the component property.
      *
      */
     public void setComponent(final List<ComponentPropertyType> component) {
@@ -104,13 +104,14 @@ public class ComponentList implements AbstractComponentList {
     }
 
     /**
-     * Gets the value of the component property.
+     * Sets the value of the component property.
      *
+     * @param component
      */
     public void setComponent(final ComponentPropertyType component) {
         if (component != null) {
             if (this.component == null) {
-                this.component = new ArrayList<ComponentPropertyType>();
+                this.component = new ArrayList<>();
             }
             this.component.add(component);
         }
@@ -119,13 +120,24 @@ public class ComponentList implements AbstractComponentList {
     /**
      * Gets the value of the component property.
      *
+     * @param component
      */
     public void setComponent(final ComponentType component) {
         if (component != null) {
             if (this.component == null) {
-                this.component = new ArrayList<ComponentPropertyType>();
+                this.component = new ArrayList<>();
             }
             this.component.add(new ComponentPropertyType(component));
+        }
+    }
+    
+    @Override
+    public void removeComponent(final String href) {
+        for (ComponentPropertyType compo : component) {
+            if (href.equals(compo.getHref())) {
+                component.remove(compo);
+                return;
+            }
         }
     }
 

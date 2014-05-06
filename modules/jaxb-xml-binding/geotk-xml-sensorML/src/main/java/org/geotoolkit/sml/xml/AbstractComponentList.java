@@ -26,5 +26,7 @@ import java.util.List;
 public interface AbstractComponentList {
 
     public List<? extends ComponentProperty> getComponent();
+    
+    public void removeComponent(final String href);
 
 }
