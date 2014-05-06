@@ -23,6 +23,7 @@ import java.awt.event.ActionListener;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.Action;
 import javax.swing.JComponent;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
@@ -44,7 +45,7 @@ import org.geotoolkit.map.FeatureMapLayer;
 public class LayerFeatureItem extends AbstractTreePopupItem{
 
     private WeakReference<FeatureMapLayer> layerRef;
-    private final List<JComponent> actions = new ArrayList<JComponent>();
+    private final List<Action> actions = new ArrayList<>();
 
     /**
      * Creates a new instance of DefaultContextPropertyPop
@@ -63,7 +64,7 @@ public class LayerFeatureItem extends AbstractTreePopupItem{
                 FeatureMapLayer layer = layerRef.get();
                 if(layer == null) return;
 
-                ArrayList<PropertyPane> lst = new ArrayList<PropertyPane>();
+                ArrayList<PropertyPane> lst = new ArrayList<>();
 
                 LayerFeaturePropertyPanel panel = new LayerFeaturePropertyPanel();
                 panel.actions().addAll(actions);
@@ -76,7 +77,7 @@ public class LayerFeatureItem extends AbstractTreePopupItem{
         );
     }
 
-    public List<JComponent> actions() {
+    public List<Action> actions() {
         return actions;
     }
 
@@ -88,7 +89,7 @@ public class LayerFeatureItem extends AbstractTreePopupItem{
     @Override
     public Component getComponent(final TreePath[] selection) {
         DefaultMutableTreeNode node = (DefaultMutableTreeNode) selection[0].getLastPathComponent();
-        layerRef = new WeakReference<FeatureMapLayer>((FeatureMapLayer) node.getUserObject());
+        layerRef = new WeakReference<>((FeatureMapLayer) node.getUserObject());
         return this;
     }
 

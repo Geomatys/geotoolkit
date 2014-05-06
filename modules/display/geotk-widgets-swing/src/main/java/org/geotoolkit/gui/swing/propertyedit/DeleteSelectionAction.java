@@ -18,7 +18,7 @@
 package org.geotoolkit.gui.swing.propertyedit;
 
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 
 import org.apache.sis.storage.DataStoreException;
@@ -29,46 +29,55 @@ import org.geotoolkit.map.FeatureMapLayer;
 import org.opengis.filter.Filter;
 
 /**
- *
  * @author Johann Sorel (Puzzle-GIS)
+ * @author Alexis Manin (Geomatys)
  * @module pending
  */
-public class DeleteSelectionAction extends JFeaturePanelAction{
+public class DeleteSelectionAction extends AbstractAction {
 
     public DeleteSelectionAction(){
-        setText(MessageBundle.getString("delete"));
-        addActionListener(new ActionListener() {
+        super(MessageBundle.getString("delete"));
+    }
 
-            @Override
-            public void actionPerformed(ActionEvent arg0) {
-                final LayerFeaturePropertyPanel panel = getFeaturePanel();
-                if(panel == null) return;
-                final FeatureMapLayer layer = panel.getTarget();
-                if(layer == null) return;
-
-                final FeatureCollection collection = layer.getCollection();
-                if(collection.isWritable()){
-                    final Filter fid = layer.getSelectionFilter();
-                    if(fid != null){
-                        final int confirm = JOptionPane.showConfirmDialog(null, MessageBundle.getString("confirm_delete"),
-                                MessageBundle.getString("confirm_delete"), JOptionPane.OK_CANCEL_OPTION);
-                        if (JOptionPane.OK_OPTION == confirm) {
-
-                            try {
-                                collection.remove(fid);
-                                if(collection.getSession() != null){
-                                    collection.getSession().commit();
-                                }
-                            } catch (DataStoreException ex) {
-                                ex.printStackTrace();
-                            }
-                            panel.reset();
-                        }
-                    }
-                }
-
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        final FeatureMapLayer layer;
+        final LayerFeaturePropertyPanel panel;
+        Object source = e.getSource();
+        if (source instanceof LayerFeaturePropertyPanel) {
+            panel = (LayerFeaturePropertyPanel) source;
+        } else if (source instanceof JFeaturePanelAction) {
+            panel = ((JFeaturePanelAction) source).getFeaturePanel();
+        } else {
+            source = getValue(LayerFeaturePropertyPanel.ACTION_REF);
+            if (source != null && source instanceof LayerFeaturePropertyPanel) {
+                panel = (LayerFeaturePropertyPanel) source;
+            } else {
+                return;
             }
-        });
+        }
+
+        layer = panel.getTarget();
+        final FeatureCollection collection = layer.getCollection();
+        if (collection.isWritable()) {
+            final Filter fid = layer.getSelectionFilter();
+            if (fid != null) {
+                final int confirm = JOptionPane.showConfirmDialog(null, MessageBundle.getString("confirm_delete"),
+                        MessageBundle.getString("confirm_delete"), JOptionPane.OK_CANCEL_OPTION);
+                if (JOptionPane.OK_OPTION == confirm) {
+
+                    try {
+                        collection.remove(fid);
+                        if (collection.getSession() != null) {
+                            collection.getSession().commit();
+                        }
+                    } catch (DataStoreException ex) {
+                        ex.printStackTrace();
+                    }
+                    panel.reset();
+                }
+            }
+        }
     }
 
 }

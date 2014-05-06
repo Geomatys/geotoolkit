@@ -18,31 +18,39 @@
 package org.geotoolkit.gui.swing.propertyedit;
 
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import javax.swing.AbstractAction;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.FeatureMapLayer;
 
 /**
  *
  * @author Johann Sorel (Puzzle-GIS)
+ * @author Alexis Manin (Geomatys)
  * @module pending
  */
-public class ClearSelectionAction extends JFeaturePanelAction{
+public class ClearSelectionAction extends AbstractAction {
 
-    public ClearSelectionAction(){
-        setText(MessageBundle.getString("clear_selection"));
-        addActionListener(new ActionListener() {
+    public ClearSelectionAction() {
+        super(MessageBundle.getString("clear_selection"));
+    }
 
-            @Override
-            public void actionPerformed(ActionEvent arg0) {
-                final LayerFeaturePropertyPanel panel = getFeaturePanel();
-                if(panel == null) return;
-                final FeatureMapLayer layer = panel.getTarget();
-                if(layer == null) return;
-
-                layer.setSelectionFilter(null);
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        Object target = e.getSource();
+        if (target instanceof LayerFeaturePropertyPanel) {
+            target = ((LayerFeaturePropertyPanel)target).getTarget();
+        } else if (target instanceof JFeaturePanelAction) {
+            target = ((JFeaturePanelAction)target).getFeaturePanel().getTarget();
+        } else {
+            target = getValue(LayerFeaturePropertyPanel.ACTION_REF);
+            if (target != null && target instanceof LayerFeaturePropertyPanel) {
+                target = ((LayerFeaturePropertyPanel)target).getTarget();
             }
-        });
+        }       
+        
+        if (target instanceof FeatureMapLayer) {
+            ((FeatureMapLayer)target).setSelectionFilter(null);
+        }
     }
 
 }

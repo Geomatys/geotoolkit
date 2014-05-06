@@ -101,7 +101,8 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
 
     private static final ImageIcon ICON_VERSIONED = IconBundle.getIcon("16_temporal");
 
-
+    public static final String ACTION_REF = "LayerFeaturePropertyPanel";
+    
     private final ListSelectionListener selectionListener = new ListSelectionListener() {
 
         @Override
@@ -119,14 +120,14 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
     };
 
 
-    private final List<JComponent> actions = new ArrayList<JComponent>();
+    private final List<Action> actions = new ArrayList<Action>();
     private final LockableUI lockableUI = new LoadingLockableUI();
     private final JCQLTextPane guiCQL = new JCQLTextPane();
 
     private FeatureMapLayer layer = null;
     private boolean editable = false;
     private final LayerListener.Weak weakListener = new LayerListener.Weak(this);
-    private final List<PropertyValueEditor> editors = new CopyOnWriteArrayList<PropertyValueEditor>();
+    private final List<PropertyValueEditor> editors = new CopyOnWriteArrayList<>();
 
     private final JXTable tab_data = new JXTable(){
         @Override
@@ -287,7 +288,7 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
         tab_data.getSelectionModel().addListSelectionListener(selectionListener);
     }
 
-    public List<JComponent> actions(){
+    public List<Action> actions(){
         return actions;
     }
 
@@ -398,9 +399,9 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap(40, Short.MAX_VALUE)
-                .addComponent(guiCount, GroupLayout.DEFAULT_SIZE, 45, Short.MAX_VALUE)
-                .addPreferredGap(ComponentPlacement.RELATED, 40, Short.MAX_VALUE)
+                .addContainerGap()
+                .addComponent(guiCount)
+                .addPreferredGap(ComponentPlacement.RELATED, 109, Short.MAX_VALUE)
                 .addComponent(jcb_edit)
                 .addPreferredGap(ComponentPlacement.RELATED)
                 .addComponent(guiShowId)
@@ -413,19 +414,21 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(Alignment.LEADING)
-            .addComponent(guiCount)
             .addGroup(Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(Alignment.LEADING)
                     .addGroup(jPanel1Layout.createParallelGroup(Alignment.BASELINE)
                         .addComponent(jcb_edit)
-                        .addComponent(guiShowId))
+                        .addComponent(guiShowId)
+                        .addComponent(guiCount))
                     .addGroup(jPanel1Layout.createParallelGroup(Alignment.BASELINE)
                         .addComponent(jbu_action, GroupLayout.PREFERRED_SIZE, 27, GroupLayout.PREFERRED_SIZE)
                         .addComponent(guiRollback)
                         .addComponent(guiCommit)))
                 .addContainerGap())
         );
+
+        jPanel1Layout.linkSize(SwingConstants.VERTICAL, new Component[] {guiCommit, guiCount, guiRollback, guiShowId, jbu_action, jcb_edit});
 
         add(jPanel1, BorderLayout.SOUTH);
 
@@ -659,11 +662,11 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
         public void setVisible(final boolean visible) {
             DynamicMenu.this.removeAll();
             if(visible){
-                for(final JComponent item : actions){
-                    if(item instanceof JFeaturePanelAction){
-                        ((JFeaturePanelAction)item).setFeaturePanel(LayerFeaturePropertyPanel.this);
-                    }
-                    DynamicMenu.this.add(item);
+                for(final Action item : actions){
+                    item.putValue(ACTION_REF, LayerFeaturePropertyPanel.this);
+                    final JFeaturePanelAction jfa = new JFeaturePanelAction(item);
+                    jfa.setFeaturePanel(LayerFeaturePropertyPanel.this);
+                    DynamicMenu.this.add(jfa);
                 }
             }
             super.setVisible(visible);
