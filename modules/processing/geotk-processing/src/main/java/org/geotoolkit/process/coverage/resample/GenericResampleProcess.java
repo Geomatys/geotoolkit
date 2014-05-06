@@ -1,7 +1,6 @@
 package org.geotoolkit.process.coverage.resample;
 
 import java.awt.*;
-import java.awt.geom.Point2D;
 import java.awt.image.*;
 import java.io.File;
 import java.io.IOException;
@@ -13,7 +12,7 @@ import java.util.logging.Logger;
 import javax.imageio.*;
 import javax.imageio.stream.ImageOutputStream;
 
-import groovy.util.MapEntry;
+import java.io.RandomAccessFile;
 import org.apache.sis.internal.storage.IOUtilities;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.logging.Logging;
@@ -46,7 +45,7 @@ import org.opengis.referencing.operation.MathTransform;
  * 4 - We've got a thread for image writing. It's listening on output queue, and write each resampled strip inserted into it.
  * 
  * /!\ IMPORTANT : The process is designed to work with strips, but it can be easily modified to use tiles instead : 
- * Modify {@link #populateResamplingQueue(int, int, int)} to build tiles instead of strips.
+ * Modify {@link #populateResamplingQueue(int, int, java.awt.Dimension)} parameters to build tiles instead of strips.
  *
  * @author Alexis Manin (Geomatys)
  */
@@ -71,12 +70,22 @@ public class GenericResampleProcess extends AbstractProcess {
     /**
      * A queue to store strips we want to resample.
      */
-    private final LinkedBlockingQueue<Rectangle> resamplingQueue = new LinkedBlockingQueue<>();
+    private final LinkedBlockingQueue<Rectangle> resamplingQueue = new LinkedBlockingQueue<>(100);
 
     /**
      * A queue to store resampled strips we must write.
      */
-    private final LinkedBlockingQueue<Map.Entry<Point, RenderedImage>> writingQueue = new LinkedBlockingQueue<>();
+    private final PriorityBlockingQueue<Map.Entry<Point, RenderedImage>> writingQueue = new PriorityBlockingQueue<>(100, new Comparator<Map.Entry<Point, RenderedImage>>() {
+        @Override
+        public int compare(Map.Entry<Point, RenderedImage> o1, Map.Entry<Point, RenderedImage> o2) {
+            Point first = o1.getKey();
+            Point second = o2.getKey();
+
+            final int linePriority = second.x - first.x;
+            // If the two point are on the same line, we must know which is the most advanced on it.
+            return (linePriority != 0)? linePriority : second.y - first.y;
+        }
+    });
 
     private Integer threadNumber;
 
@@ -153,7 +162,7 @@ public class GenericResampleProcess extends AbstractProcess {
                 imageFormat = "tif";
             }
 
-            ImageOutputStream outStream = ImageIO.createImageOutputStream(output);
+            ImageOutputStream outStream = ImageIO.createImageOutputStream(new RandomAccessFile(output, "rw"));
             ImageWriter writer;
             try {
                 writer = getWriter(imageFormat, outStream);
@@ -210,14 +219,14 @@ public class GenericResampleProcess extends AbstractProcess {
             execTimes.add(System.currentTimeMillis());
 
             // Start all the workers
+            writingThread.setPriority(Thread.MAX_PRIORITY);
             writingThread.start();
             final ArrayList<Future> status = new ArrayList<>();
             for (Runnable task : threads) {
                 status.add(threadService.submit(task));
             }
 
-            populateResamplingQueue(width, height, tile_size_y);
-//            populateResamplingQueue(width, height, 1);
+            populateResamplingQueue(width, height, new Dimension(width, tile_size_y));
 
             try {
                 for (Future threadStatus : status) {
@@ -253,6 +262,8 @@ public class GenericResampleProcess extends AbstractProcess {
             LOGGER.log(Level.INFO, "Data preparation lasts " + (execTimes.get(1) - execTimes.get(0)) + " ms\n");
             LOGGER.log(Level.INFO, "Resample lasts " + (System.currentTimeMillis() - execTimes.get(1)) + " ms\n");
         } catch (Throwable e) {
+            poisonResamplingQueue();
+            poisonWritingQueue();
             throw new ProcessException(e.getLocalizedMessage(), this, e);
         }
     }
@@ -280,8 +291,33 @@ public class GenericResampleProcess extends AbstractProcess {
             }
 
             final Rectangle resampleZone = new Rectangle(0, y, imageWidth, tileHeight);
-            while (!currentThread.isInterrupted() && !resamplingQueue.offer(resampleZone)) {
-                wait(WAIT_TIME);
+            while (!currentThread.isInterrupted() && !resamplingQueue.offer(resampleZone, WAIT_TIME, TimeUnit.MILLISECONDS)) {}
+        }
+
+        // insert poison objects, so our threads will know it's over when they get it.
+        poisonResamplingQueue();
+    }
+    
+    private void populateResamplingQueue(final int imageWidth, final int imageHeight, final Dimension tileSize) throws InterruptedException {
+        final Thread currentThread = Thread.currentThread();
+        int tileHeight, tileWidth;
+        // Iterate through upper left corner of tiles.
+        for (int y = 0; y < imageHeight; y += tileSize.height) {
+            if (y + tileSize.height > imageHeight) {
+                tileHeight = imageHeight - y;
+            } else {
+                tileHeight = tileSize.height;
+            }
+
+            for (int x = 0; x < imageWidth; x += tileSize.width) {
+                if (x + tileSize.width > imageWidth) {
+                    tileWidth = imageWidth - x;
+                } else {
+                    tileWidth = tileSize.width;
+                }
+
+                final Rectangle resampleZone = new Rectangle(x, y, tileWidth, tileHeight);
+                while (!currentThread.isInterrupted() && !resamplingQueue.offer(resampleZone, WAIT_TIME, TimeUnit.MILLISECONDS)) {}
             }
         }
 
@@ -291,30 +327,20 @@ public class GenericResampleProcess extends AbstractProcess {
 
     private void poisonResamplingQueue() {
         final Thread currentThread = Thread.currentThread();
-        for (int i = 0 ; i <= threadNumber ; i++) {
-            while (!currentThread.isInterrupted() && !resamplingQueue.offer(new EmptyBox())) {
-                try {
-                    wait(WAIT_TIME);
-                } catch (InterruptedException e) {
-                    LOGGER.log(Level.INFO, "Process interrupted !");
-                    Thread.currentThread().interrupt();
-                    return;
-                }
-            }
-        }
-    }
-
-    private void poisonWritingQueue() {
-        final Thread currentThread = Thread.currentThread();
-        while (!currentThread.isInterrupted() && !writingQueue.offer(new NightShade<Point, RenderedImage>())) {
+        for (int i = 0; i <= threadNumber; i++) {
             try {
-                wait(WAIT_TIME);
+                while (!currentThread.isInterrupted() && !resamplingQueue.offer(new EmptyBox(), WAIT_TIME, TimeUnit.MILLISECONDS)) {}
             } catch (InterruptedException e) {
                 LOGGER.log(Level.INFO, "Process interrupted !");
                 Thread.currentThread().interrupt();
                 return;
             }
         }
+    }
+
+    private void poisonWritingQueue() {
+        final Thread currentThread = Thread.currentThread();
+        while (!currentThread.isInterrupted() && !writingQueue.offer(new NightShade<Point, RenderedImage>(), WAIT_TIME, TimeUnit.MILLISECONDS)) {}
     }
 
     /**
@@ -389,9 +415,7 @@ public class GenericResampleProcess extends AbstractProcess {
                     resampler.fillImagePx();
                     final Map.Entry<Point, RenderedImage> output = new AbstractMap.SimpleEntry<>(computeZone.getLocation(), (RenderedImage) destination);
 
-                    while (!writingQueue.offer(output)) {
-                        wait(WAIT_TIME);
-                    }
+                    while (!writingQueue.offer(output, WAIT_TIME, TimeUnit.MILLISECONDS)) {}
                 }
             } catch (InterruptedException e) {
                 LOGGER.log(Level.INFO, "Resampling worker interrupted !");
