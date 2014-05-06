@@ -23,7 +23,6 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -51,12 +50,11 @@ import javax.swing.SwingConstants;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellEditor;
-
 import org.geotoolkit.display2d.service.DefaultGlyphService;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.gui.swing.propertyedit.AbstractPropertyPane;
 import org.geotoolkit.gui.swing.propertyedit.JPropertyPane;
-import org.geotoolkit.gui.swing.propertyedit.PropertyPane;
 import org.geotoolkit.gui.swing.resource.FontAwesomeIcons;
 import org.geotoolkit.gui.swing.resource.IconBuilder;
 import org.geotoolkit.gui.swing.resource.IconBundle;
@@ -68,12 +66,10 @@ import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.category.CategoryStyleBuilder;
 import org.geotoolkit.style.interval.DefaultRandomPalette;
 import org.geotoolkit.style.interval.RandomPalette;
-
 import org.jdesktop.swingx.JXTable;
 import org.jdesktop.swingx.combobox.ListComboBoxModel;
 import org.jdesktop.swingx.decorator.Highlighter;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
-
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.PropertyIsEqualTo;
@@ -88,7 +84,7 @@ import org.opengis.style.Symbolizer;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class JClassificationSingleStylePanel extends JPanel implements PropertyPane{
+public class JClassificationSingleStylePanel extends AbstractPropertyPane{
 
     private static final ImageIcon ICON_DELETE = IconBuilder.createIcon(FontAwesomeIcons.ICON_TRASH, 16, Color.BLACK);
 
@@ -109,6 +105,10 @@ public class JClassificationSingleStylePanel extends JPanel implements PropertyP
     private FeatureMapLayer layer = null;
 
     public JClassificationSingleStylePanel() {
+        super(MessageBundle.getString("property_style_classification_unique"), 
+              IconBundle.getIcon("16_classification_single"), 
+              IconBundle.getIcon("preview_style_class1").getImage(), 
+              "");
         initComponents();
         guiTable.setModel(model);
 
@@ -358,31 +358,6 @@ public class JClassificationSingleStylePanel extends JPanel implements PropertyP
         if(layer != null){
             parse();
         }
-    }
-
-    @Override
-    public String getTitle() {
-        return MessageBundle.getString("property_style_classification_unique");
-    }
-
-    @Override
-    public ImageIcon getIcon() {
-        return IconBundle.getIcon("16_classification_single");
-    }
-
-    @Override
-    public Image getPreview() {
-        return IconBundle.getIcon("preview_style_class1").getImage();
-    }
-
-    @Override
-    public String getToolTip() {
-        return "";
-    }
-
-    @Override
-    public Component getComponent() {
-        return this;
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

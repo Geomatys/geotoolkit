@@ -73,17 +73,16 @@ import org.opengis.referencing.datum.EngineeringDatum;
  * @author Cédric Briançon (Geomatys)
  * @module pending
  */
-public class LayerGeneralPanel extends javax.swing.JPanel implements PropertyPane {
+public class LayerGeneralPanel extends AbstractPropertyPane {
 
     private MapLayer layer = null;
-    private final String title;
 
     private static final ImageIcon ICON_DELETE = IconBuilder.createIcon(FontAwesomeIcons.ICON_TRASH, 16, Color.BLACK);
 
     /** Creates new form LayerGeneralPanel */
     public LayerGeneralPanel() {
+        super(MessageBundle.getString("property_general_title"),null,null,MessageBundle.getString("property_general_title"));
         initComponents();
-        title = MessageBundle.getString("property_general_title");
 
         guiTable.setDefaultRenderer(LayerGeneralTableRowModel.CrsCookie.class, new CrsRenderer());
         guiTable.setDefaultRenderer(LayerGeneralTableRowModel.LowerCookie.class, new ExpressionLowerRenderer());
@@ -344,31 +343,6 @@ public class LayerGeneralPanel extends javax.swing.JPanel implements PropertyPan
     @Override
     public boolean canHandle(Object target) {
         return true;
-    }
-
-    @Override
-    public String getTitle() {
-        return title;
-    }
-
-    @Override
-    public ImageIcon getIcon() {
-        return null;
-    }
-
-    @Override
-    public Image getPreview() {
-        return null;
-    }
-
-    @Override
-    public String getToolTip() {
-        return title;
-    }
-
-    @Override
-    public Component getComponent() {
-        return this;
     }
 
     private void updateTableModel() {

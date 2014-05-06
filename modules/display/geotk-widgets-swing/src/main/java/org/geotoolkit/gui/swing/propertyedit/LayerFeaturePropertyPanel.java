@@ -97,7 +97,7 @@ import org.openide.util.Exceptions;
  * @author  Johann Sorel
  * @module pending
  */
-public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements PropertyPane, LayerListener {
+public class LayerFeaturePropertyPanel extends AbstractPropertyPane implements LayerListener {
 
     private static final ImageIcon ICON_VERSIONED = IconBundle.getIcon("16_temporal");
 
@@ -152,6 +152,7 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
 
     /** Creates new form DefaultMapLayerTablePanel */
     public LayerFeaturePropertyPanel() {
+        super(MessageBundle.getString("property_feature_table"),IconBundle.getIcon("16_feature_table"),null,MessageBundle.getString("crs"));
         initComponents();
         
         JLabel label = new JLabel(MessageBundle.getString("cql.text.help"));
@@ -621,31 +622,6 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
 
     @Override
     public void apply() {
-    }
-
-    @Override
-    public String getTitle() {
-        return MessageBundle.getString("property_feature_table");
-    }
-
-    @Override
-    public ImageIcon getIcon() {
-        return IconBundle.getIcon("16_feature_table");
-    }
-
-    @Override
-    public Image getPreview() {
-        return null;
-    }
-
-    @Override
-    public String getToolTip() {
-        return "";
-    }
-
-    @Override
-    public Component getComponent() {
-        return this;
     }
 
     @Override

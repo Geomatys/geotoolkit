@@ -27,8 +27,8 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
 import org.geotoolkit.gui.swing.contexttree.AbstractTreePopupItem;
+import org.geotoolkit.gui.swing.propertyedit.JLayerCRSPane;
 import org.geotoolkit.gui.swing.propertyedit.JPropertyPane;
-import org.geotoolkit.gui.swing.propertyedit.LayerCRSPropertyPanel;
 import org.geotoolkit.gui.swing.propertyedit.LayerFilterPropertyPanel;
 import org.geotoolkit.gui.swing.propertyedit.LayerGeneralPanel;
 import org.geotoolkit.gui.swing.propertyedit.LayerStylePropertyPanel;
@@ -66,7 +66,7 @@ public class LayerPropertyItem extends AbstractTreePopupItem {
 
     private void init() {
         lst.add(new LayerGeneralPanel());
-        lst.add(new LayerCRSPropertyPanel());
+        lst.add(new JLayerCRSPane());
         lst.add(new LayerFilterPropertyPanel());
         lst.add(new LayerStylePropertyPanel());
 

@@ -18,13 +18,8 @@
 package org.geotoolkit.gui.swing.propertyedit.styleproperty;
 
 
-import java.util.Map;
-import java.util.Map.Entry;
-import javax.measure.unit.NonSI;
-import javax.measure.unit.Unit;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
@@ -35,15 +30,18 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.measure.unit.NonSI;
+import javax.measure.unit.Unit;
 import javax.swing.AbstractCellEditor;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultCellEditor;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -59,15 +57,21 @@ import javax.swing.SwingConstants;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellEditor;
+import org.apache.sis.measure.MeasurementRange;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.CoverageReference;
-
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.gui.swing.propertyedit.PropertyPane;
+import org.geotoolkit.filter.DefaultLiteral;
+import org.geotoolkit.gui.swing.propertyedit.AbstractPropertyPane;
+import org.geotoolkit.gui.swing.resource.FontAwesomeIcons;
+import org.geotoolkit.gui.swing.resource.IconBuilder;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
+import org.geotoolkit.gui.swing.util.ColorCellEditor;
+import org.geotoolkit.gui.swing.util.ColorCellRenderer;
 import org.geotoolkit.image.io.PaletteFactory;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.FeatureMapLayer;
@@ -77,25 +81,25 @@ import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.StyleConstants;
-import org.geotoolkit.style.function.InterpolationPoint;
-import org.geotoolkit.style.interval.DefaultRandomPalette;
+
+import static org.geotoolkit.style.StyleConstants.*;
+import org.geotoolkit.style.function.Categorize;
+import org.geotoolkit.style.function.DefaultInterpolationPoint;
 import org.geotoolkit.style.function.Interpolate;
+import org.geotoolkit.style.function.InterpolationPoint;
 import org.geotoolkit.style.function.Method;
 import org.geotoolkit.style.function.Mode;
+import org.geotoolkit.style.function.ThreshholdsBelongTo;
 import org.geotoolkit.style.interval.DefaultIntervalPalette;
+import org.geotoolkit.style.interval.DefaultRandomPalette;
 import org.geotoolkit.style.interval.Palette;
-import org.geotoolkit.gui.swing.util.ColorCellEditor;
-import org.geotoolkit.gui.swing.util.ColorCellRenderer;
 import org.geotoolkit.util.Converters;
-import org.apache.sis.measure.MeasurementRange;
-import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.filter.DefaultLiteral;
-import org.geotoolkit.gui.swing.resource.FontAwesomeIcons;
-import org.geotoolkit.gui.swing.resource.IconBuilder;
-
 import org.jdesktop.swingx.JXTable;
 import org.jdesktop.swingx.combobox.ListComboBoxModel;
-
+import org.opengis.filter.FilterFactory;
+import org.opengis.filter.expression.Expression;
+import org.opengis.filter.expression.Function;
+import org.opengis.filter.expression.Literal;
 import org.opengis.style.ChannelSelection;
 import org.opengis.style.ColorMap;
 import org.opengis.style.ContrastEnhancement;
@@ -103,18 +107,9 @@ import org.opengis.style.ContrastMethod;
 import org.opengis.style.Description;
 import org.opengis.style.OverlapBehavior;
 import org.opengis.style.RasterSymbolizer;
-import org.opengis.style.ShadedRelief;
-import org.opengis.filter.FilterFactory;
-import org.opengis.filter.expression.Expression;
-import org.opengis.filter.expression.Literal;
-import org.opengis.style.Symbolizer;
-import org.opengis.filter.expression.Function;
-
-import static org.geotoolkit.style.StyleConstants.*;
-import org.geotoolkit.style.function.Categorize;
-import org.geotoolkit.style.function.DefaultInterpolationPoint;
-import org.geotoolkit.style.function.ThreshholdsBelongTo;
 import org.opengis.style.SelectedChannelType;
+import org.opengis.style.ShadedRelief;
+import org.opengis.style.Symbolizer;
 
 /**
  * Style editor which handle Raster colormap edition.
@@ -122,7 +117,7 @@ import org.opengis.style.SelectedChannelType;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
+public class JRasterColorMapStylePanel extends AbstractPropertyPane{
 
     private static final Logger LOGGER = Logging.getLogger(JRasterColorMapStylePanel.class);
 
@@ -177,6 +172,9 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
     private String desc = "";
 
     public JRasterColorMapStylePanel() {
+        super(MessageBundle.getString("property_style_colormap"), 
+              IconBundle.getIcon("16_classification_single"), 
+              null, "");
         initComponents();
         guiPalette.setModel(new ListComboBoxModel(PALETTES));
         guiPalette.setRenderer(new PaletteCellRenderer());
@@ -811,32 +809,6 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
             parse();
         }
     }
-
-    @Override
-    public String getTitle() {
-        return MessageBundle.getString("property_style_colormap");
-    }
-
-    @Override
-    public ImageIcon getIcon() {
-        return IconBundle.getIcon("16_classification_single");
-    }
-
-    @Override
-    public Image getPreview() {
-        return null;
-    }
-
-    @Override
-    public String getToolTip() {
-        return "";
-    }
-
-    @Override
-    public Component getComponent() {
-        return this;
-    }
-
 
     private void getInterpolationPoints(final GridCoverageReader reader, final CoverageMapLayer cml, List<Entry<Double, Color>> steps) throws CoverageStoreException {
         //we explore the image and try to find the min and max
