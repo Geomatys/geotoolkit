@@ -47,6 +47,7 @@ public class PaletteCellRenderer extends DefaultListCellRenderer {
         super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 
         this.setText(" Palette ");
+        this.setPreferredSize(new Dimension(120, 18));
         paletteValue = value;
         return this;
     }
@@ -64,7 +65,7 @@ public class PaletteCellRenderer extends DefaultListCellRenderer {
                 try {
                     final String paletteName = String.valueOf(paletteValue);
                     final org.geotoolkit.image.io.Palette palette = PF.getPalette(paletteName, 10);
-                    final RenderedImage img = palette.getImage(rect.getSize());
+                    final RenderedImage img = palette.getLegend(rect.getSize());
                     ((Graphics2D) g).drawRenderedImage(img, new AffineTransform(1,0,0,1,2,2));
                 } catch (IOException ex) {
                     LOGGER.log(Level.WARNING, ex.getMessage(), ex);

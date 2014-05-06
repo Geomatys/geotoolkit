@@ -283,24 +283,8 @@ public class DefaultInterpolate extends AbstractExpression implements Interpolat
                 //datas are not numbers, looks like we deal with colors
                 final Color c1 = before.getValue().evaluate(object,Color.class);
                 final Color c2 = after.getValue().evaluate(object,Color.class);
-                final int argb1 = c1.getRGB();
-                final int argb2 = c2.getRGB();
-
-                final int lastAlpha     = (argb1>>>24) & 0xFF;
-                final int lastRed       = (argb1>>>16) & 0xFF;
-                final int lastGreen     = (argb1>>> 8) & 0xFF;
-                final int lastBlue      = (argb1>>> 0) & 0xFF;
-                final int alphaInterval = ((argb2>>>24) & 0xFF) - lastAlpha;
-                final int redInterval   = ((argb2>>>16) & 0xFF) - lastRed;
-                final int greenInterval = ((argb2>>> 8) & 0xFF) - lastGreen;
-                final int blueInterval  = ((argb2>>> 0) & 0xFF) - lastBlue;
-
-                //calculate interpolated color
-                int a = lastAlpha + (int)(pourcent*alphaInterval);
-                int r = lastRed   + (int)(pourcent*redInterval);
-                int g = lastGreen + (int)(pourcent*greenInterval);
-                int b = lastBlue  + (int)(pourcent*blueInterval);
-                return Converters.convert( new Color(r, g, b, a) , c);
+                final Color in = interpolate(c1, c2, pourcent);
+                return Converters.convert( in , c);
             }else{
                 final Double n1 = before.getValue().evaluate(object,Double.class);
                 final Double n2 = after.getValue().evaluate(object,Double.class);
@@ -497,4 +481,25 @@ public class DefaultInterpolate extends AbstractExpression implements Interpolat
         return method;
     }
 
+    public static Color interpolate(Color c1, Color c2, double pourcent){
+        final int argb1 = c1.getRGB();
+        final int argb2 = c2.getRGB();
+
+        final int lastAlpha     = (argb1>>>24) & 0xFF;
+        final int lastRed       = (argb1>>>16) & 0xFF;
+        final int lastGreen     = (argb1>>> 8) & 0xFF;
+        final int lastBlue      = (argb1>>> 0) & 0xFF;
+        final int alphaInterval = ((argb2>>>24) & 0xFF) - lastAlpha;
+        final int redInterval   = ((argb2>>>16) & 0xFF) - lastRed;
+        final int greenInterval = ((argb2>>> 8) & 0xFF) - lastGreen;
+        final int blueInterval  = ((argb2>>> 0) & 0xFF) - lastBlue;
+
+        //calculate interpolated color
+        int a = lastAlpha + (int)(pourcent*alphaInterval);
+        int r = lastRed   + (int)(pourcent*redInterval);
+        int g = lastGreen + (int)(pourcent*greenInterval);
+        int b = lastBlue  + (int)(pourcent*blueInterval);
+        return new Color(r, g, b, a) ;
+    }
+    
 }

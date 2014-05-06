@@ -3,7 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2008 - 2009, Johann Sorel
- *    (C) 2011 Geomatys
+ *    (C) 2011 - 2014 Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -37,12 +37,14 @@ import static org.geotoolkit.gui.swing.util.ColorCellRenderer.paintComp;
  */
 public class ColorCellEditor extends AbstractCellEditor implements TableCellEditor,ActionListener {
 
+    private Color[] colors = null;
+    
     private final JButton button = new JButton(){
 
         @Override
         protected void paintComponent(Graphics g) {
             final Graphics2D g2d = (Graphics2D) g;
-            paintComp(g2d, this, getForeground());
+            paintComp(g2d, ColorCellEditor.this.button, colors);
         }
         
     };
@@ -52,7 +54,7 @@ public class ColorCellEditor extends AbstractCellEditor implements TableCellEdit
         button.setBorderPainted(false);
         button.setContentAreaFilled(false);
         button.addActionListener(this);
-        button.setOpaque(true);
+        button.setOpaque(false);
     }
 
     @Override
@@ -63,8 +65,12 @@ public class ColorCellEditor extends AbstractCellEditor implements TableCellEdit
     @Override
     public Component getTableCellEditorComponent(final JTable table, final Object value, final boolean isSelected, final int row, final int column) {
         this.value = value;
-        button.setBackground((Color)value);
-        button.setForeground((Color)value);
+        if(value instanceof Color){
+            colors = new Color[]{(Color)value};
+        }else if(value instanceof Color[]){
+            colors = ((Color[])value);
+            this.value = colors[1];
+        }
         return button;
     }
 
@@ -77,5 +83,12 @@ public class ColorCellEditor extends AbstractCellEditor implements TableCellEdit
         }
         button.setBackground((Color)value);
         button.setForeground((Color)value);
+        if(colors.length==1){
+            colors[0] = (Color)value;
+        }else{
+            colors[1] = (Color)value;
+        }
+        button.repaint();
+        fireEditingStopped();
     }
 }

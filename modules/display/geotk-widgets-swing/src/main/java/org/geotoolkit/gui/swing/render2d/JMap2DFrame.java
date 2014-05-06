@@ -74,7 +74,6 @@ import org.geotoolkit.gui.swing.propertyedit.PropertyPane;
 import org.geotoolkit.gui.swing.propertyedit.filterproperty.JCQLPropertyPanel;
 import org.geotoolkit.gui.swing.propertyedit.styleproperty.JAdvancedStylePanel;
 import org.geotoolkit.gui.swing.propertyedit.styleproperty.JClassificationIntervalStylePanel;
-import org.geotoolkit.gui.swing.propertyedit.styleproperty.JClassificationJenksPanel;
 import org.geotoolkit.gui.swing.propertyedit.styleproperty.JClassificationSingleStylePanel;
 import org.geotoolkit.gui.swing.propertyedit.styleproperty.JRasterColorMapStylePanel;
 import org.geotoolkit.gui.swing.propertyedit.styleproperty.JSLDImportExportPanel;
@@ -205,7 +204,6 @@ public class JMap2DFrame extends javax.swing.JFrame {
         styles.addPropertyPanel(MessageBundle.getString("analyze"),new JSimpleStylePanel());
         styles.addPropertyPanel(MessageBundle.getString("analyze_vector"),new JClassificationSingleStylePanel());
         styles.addPropertyPanel(MessageBundle.getString("analyze_vector"),new JClassificationIntervalStylePanel());
-        styles.addPropertyPanel(MessageBundle.getString("analyze_raster"),new JClassificationJenksPanel());
         styles.addPropertyPanel(MessageBundle.getString("analyze_raster"),new JRasterColorMapStylePanel());
         styles.addPropertyPanel(MessageBundle.getString("analyze_raster"),new JCellSymbolizerPane());
         styles.addPropertyPanel(MessageBundle.getString("sld"),new JAdvancedStylePanel());

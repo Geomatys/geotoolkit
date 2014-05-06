@@ -3,7 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2008 - 2009, Johann Sorel
- *    (C) 2011 Geomatys
+ *    (C) 2011 - 2014 Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -22,6 +22,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.LinearGradientPaint;
 import java.awt.Point;
 import java.awt.Shape;
 import javax.swing.JComponent;
@@ -35,8 +36,8 @@ import javax.swing.table.TableCellRenderer;
  * @module pending
  */
 public class ColorCellRenderer extends JComponent implements TableCellRenderer {
-
-    private static final int SQR_SIZE = 6;
+    
+    private Color[] colors = null;
     
     public ColorCellRenderer() {
         setOpaque(true);
@@ -45,19 +46,21 @@ public class ColorCellRenderer extends JComponent implements TableCellRenderer {
     @Override
     protected void paintComponent(Graphics g) {
         final Graphics2D g2d = (Graphics2D) g;
-        paintComp(g2d, this, getForeground());
+        paintComp(g2d, this, colors);
         
     }
 
     @Override
     public Component getTableCellRendererComponent(final JTable table, final Object value, final boolean isSelected, final boolean hasFocus, final int row, final int column) {
         if(value instanceof Color){
-            setForeground((Color)value);
+            colors = new Color[]{(Color)value};
+        }else if(value instanceof Color[]){
+            colors = ((Color[])value);
         }
         return this;
     }
     
-    public static void paintComp(Graphics2D g2d, JComponent comp, Color color){
+    public static void paintComp(Graphics2D g2d, JComponent comp, Color[] colors){
         final Dimension dim = comp.getSize();
         final int SQR_SIZE = dim.height/2;
         
@@ -78,7 +81,22 @@ public class ColorCellRenderer extends JComponent implements TableCellRenderer {
         }
         
         //paint color above
-        g2d.setColor(color);
+        if(colors.length==1){
+            g2d.setColor(colors[0]);
+        }else{
+            //interpolate
+            final float[] fractions = new float[colors.length];
+            for (int i=0; i<colors.length; i++) {
+                fractions[i] = (float) i / (colors.length - 1);
+            }
+        
+            g2d.setPaint(new LinearGradientPaint(
+                    new Point(0,0), 
+                    new Point(0,(int)dim.getHeight()), 
+                    fractions, 
+                    colors
+                ));
+        }
         g2d.fillRect(0, 0, dim.width, dim.height);
         
         g2d.setClip(oldClip);
