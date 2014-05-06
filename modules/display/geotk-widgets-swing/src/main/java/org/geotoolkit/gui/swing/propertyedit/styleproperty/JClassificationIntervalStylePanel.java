@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2009 Geomatys
+ *    (C) 2009-2014 Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -21,7 +21,6 @@ package org.geotoolkit.gui.swing.propertyedit.styleproperty;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -58,15 +57,17 @@ import javax.swing.event.ChangeListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellEditor;
-
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.display2d.service.DefaultGlyphService;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.gui.swing.util.JOptionDialog;
+import org.geotoolkit.gui.swing.propertyedit.AbstractPropertyPane;
 import org.geotoolkit.gui.swing.propertyedit.JPropertyPane;
-import org.geotoolkit.gui.swing.propertyedit.PropertyPane;
+import org.geotoolkit.gui.swing.resource.FontAwesomeIcons;
+import org.geotoolkit.gui.swing.resource.IconBuilder;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
+import org.geotoolkit.gui.swing.util.JOptionDialog;
 import org.geotoolkit.image.io.PaletteFactory;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
@@ -76,16 +77,11 @@ import org.geotoolkit.style.interval.DefaultIntervalPalette;
 import org.geotoolkit.style.interval.IntervalPalette;
 import org.geotoolkit.style.interval.IntervalStyleBuilder;
 import org.geotoolkit.style.interval.IntervalStyleBuilder.METHOD;
-import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.gui.swing.resource.FontAwesomeIcons;
-import org.geotoolkit.gui.swing.resource.IconBuilder;
-
 import org.jdesktop.swingx.JXTable;
 import org.jdesktop.swingx.combobox.EnumComboBoxModel;
 import org.jdesktop.swingx.combobox.ListComboBoxModel;
 import org.jdesktop.swingx.decorator.Highlighter;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
-
 import org.opengis.filter.And;
 import org.opengis.filter.BinaryComparisonOperator;
 import org.opengis.filter.Filter;
@@ -102,7 +98,7 @@ import org.opengis.style.Symbolizer;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class JClassificationIntervalStylePanel extends JPanel implements PropertyPane{
+public class JClassificationIntervalStylePanel extends AbstractPropertyPane{
 
     private static final Logger LOGGER = Logging.getLogger(JClassificationIntervalStylePanel.class);
     private static NumberFormat FORMAT = NumberFormat.getNumberInstance();
@@ -134,6 +130,10 @@ public class JClassificationIntervalStylePanel extends JPanel implements Propert
     private FeatureMapLayer layer = null;
 
     public JClassificationIntervalStylePanel() {
+        super(MessageBundle.getString("property_style_classification_interval"), 
+              IconBundle.getIcon("16_classification_interval"), 
+              IconBundle.getIcon("preview_style_class2").getImage(), 
+              "");
         initComponents();
         guiTable.setModel(model);
 
@@ -533,31 +533,6 @@ public class JClassificationIntervalStylePanel extends JPanel implements Propert
         if(layer != null){
             parse();
         }
-    }
-
-    @Override
-    public String getTitle() {
-        return MessageBundle.getString("property_style_classification_interval");
-    }
-
-    @Override
-    public ImageIcon getIcon() {
-        return IconBundle.getIcon("16_classification_interval");
-    }
-
-    @Override
-    public Image getPreview() {
-        return IconBundle.getIcon("preview_style_class2").getImage();
-    }
-
-    @Override
-    public String getToolTip() {
-        return "";
-    }
-
-    @Override
-    public Component getComponent() {
-        return this;
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

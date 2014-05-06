@@ -67,7 +67,6 @@ import org.geotoolkit.gui.swing.render2d.control.JSelectionBar;
 import org.geotoolkit.gui.swing.render2d.decoration.JClassicNavigationDecoration;
 import org.geotoolkit.gui.swing.propertyedit.ClearSelectionAction;
 import org.geotoolkit.gui.swing.propertyedit.DeleteSelectionAction;
-import org.geotoolkit.gui.swing.propertyedit.LayerCRSPropertyPanel;
 import org.geotoolkit.gui.swing.propertyedit.LayerFilterPropertyPanel;
 import org.geotoolkit.gui.swing.propertyedit.LayerGeneralPanel;
 import org.geotoolkit.gui.swing.propertyedit.LayerStylePropertyPanel;
@@ -87,6 +86,7 @@ import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.display3d.scene.ContextContainer3D;
+import org.geotoolkit.gui.swing.propertyedit.JLayerCRSPane;
 import org.geotoolkit.gui.swing.render2d.control.navigation.PanHandler;
 import org.geotoolkit.gui.swing.util.JOptionDialog;
 import org.geotoolkit.gui.swing.render3d.JMap3D;
@@ -195,7 +195,7 @@ public class JMap2DFrame extends javax.swing.JFrame {
         LayerPropertyItem property = new LayerPropertyItem();
         List<PropertyPane> lstproperty = new ArrayList<PropertyPane>();
         lstproperty.add(new LayerGeneralPanel());
-        lstproperty.add(new LayerCRSPropertyPanel());
+        lstproperty.add(new JLayerCRSPane());
 
         LayerFilterPropertyPanel filters = new LayerFilterPropertyPanel();
         filters.addPropertyPanel(MessageBundle.getString("filter"),new JCQLPropertyPanel());

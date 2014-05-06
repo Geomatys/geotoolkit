@@ -3,6 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2009-2011, Johann Sorel
+ *    (C) 2014, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -23,8 +24,9 @@ import java.util.logging.Level;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.xml.bind.JAXBException;
+import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.gui.swing.propertyedit.AbstractPropertyPane;
 
-import org.geotoolkit.gui.swing.propertyedit.PropertyPane;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.MapLayer;
@@ -34,9 +36,7 @@ import org.geotoolkit.sld.xml.Specification;
 import org.geotoolkit.sld.xml.Specification.StyledLayerDescriptor;
 import org.geotoolkit.sld.xml.StyleXmlIO;
 import org.geotoolkit.style.MutableStyle;
-import org.apache.sis.util.logging.Logging;
 import org.jdesktop.swingx.combobox.EnumComboBoxModel;
-
 import org.opengis.sld.LayerStyle;
 import org.opengis.sld.NamedLayer;
 import org.opengis.sld.UserLayer;
@@ -49,12 +49,16 @@ import org.opengis.util.FactoryException;
  *
  * @author Johann Sorel (Puzzle-GIS)
  */
-public class JSLDImportExportPanel extends javax.swing.JPanel implements PropertyPane{
+public class JSLDImportExportPanel extends AbstractPropertyPane{
 
     private MapLayer layer = null;
 
     /** Creates new form JSLDExportPanel */
     public JSLDImportExportPanel() {
+        super(MessageBundle.getString("import_export"), 
+              IconBundle.getIcon("16_advanced_style"), 
+              null, 
+              null);
         initComponents();
         guiVersion.setModel(new EnumComboBoxModel(StyledLayerDescriptor.class));
         guiVersion.setSelectedItem(StyledLayerDescriptor.V_1_1_0);
@@ -213,31 +217,6 @@ public class JSLDImportExportPanel extends javax.swing.JPanel implements Propert
 
     @Override
     public void reset() {
-    }
-
-    @Override
-    public String getTitle() {
-        return MessageBundle.getString("import_export");
-    }
-
-    @Override
-    public ImageIcon getIcon() {
-        return IconBundle.getIcon("16_advanced_style");
-    }
-
-    @Override
-    public Image getPreview() {
-        return null;
-    }
-
-    @Override
-    public String getToolTip() {
-        return "";
-    }
-
-    @Override
-    public Component getComponent() {
-        return this;
     }
 
 

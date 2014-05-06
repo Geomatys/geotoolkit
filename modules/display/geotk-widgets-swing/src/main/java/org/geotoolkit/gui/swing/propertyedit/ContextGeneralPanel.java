@@ -17,13 +17,10 @@
  */
 package org.geotoolkit.gui.swing.propertyedit;
 
-import java.awt.Component;
 
 import java.awt.Font;
-import java.awt.Image;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
-import javax.swing.ImageIcon;
 
 import javax.swing.JLabel;
 import javax.swing.JTextField;
@@ -38,12 +35,13 @@ import org.geotoolkit.map.MapContext;
  * @author Johann Sorel
  * @module pending
  */
-public class ContextGeneralPanel extends javax.swing.JPanel implements PropertyPane{
+public class ContextGeneralPanel extends AbstractPropertyPane {
     
     private MapContext context = null;
     
     /** Creates new form ContextGeneralPanel */
     public ContextGeneralPanel() {
+        super("General",null,null,"General");
         initComponents();
     }
     
@@ -120,33 +118,7 @@ public class ContextGeneralPanel extends javax.swing.JPanel implements PropertyP
     public boolean canHandle(Object target) {
         return true;
     }
-    
-    @Override
-    public String getTitle() {
-        return "General";
-    }
-
-    @Override
-    public ImageIcon getIcon() {
-        return null;
-    }
-
-    @Override
-    public Image getPreview() {
-        return null;
-    }
-    
-    @Override
-    public String getToolTip() {
-        return "General";
-    }
-
-    @Override
-    public Component getComponent() {
-        return this;
-    }
-    
-    
+        
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private JTextField gui_jtf_name;
     private JLabel jLabel1;

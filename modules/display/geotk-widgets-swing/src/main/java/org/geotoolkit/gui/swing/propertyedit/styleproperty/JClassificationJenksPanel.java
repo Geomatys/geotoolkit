@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2009 Geomatys
+ *    (C) 2009-2014 Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -16,29 +16,14 @@
  */
 package org.geotoolkit.gui.swing.propertyedit.styleproperty;
 
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.Rectangle;
-import java.awt.geom.AffineTransform;
-import java.awt.image.RenderedImage;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.measure.unit.NonSI;
 import javax.measure.unit.Unit;
-import javax.swing.DefaultListCellRenderer;
-import javax.swing.ImageIcon;
-import javax.swing.JList;
-import javax.swing.JPanel;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.gui.swing.propertyedit.PropertyPane;
+import org.geotoolkit.gui.swing.propertyedit.AbstractPropertyPane;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.image.io.PaletteFactory;
@@ -49,7 +34,6 @@ import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyleFactory;
 import static org.geotoolkit.style.StyleConstants.*;
 import org.geotoolkit.style.function.Jenks;
-import org.apache.sis.util.logging.Logging;
 import org.jdesktop.swingx.combobox.ListComboBoxModel;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.expression.Expression;
@@ -70,10 +54,7 @@ import org.opengis.style.Symbolizer;
  *
  * @author Quentin Boileau (Geomatys)
  */
-public class JClassificationJenksPanel extends JPanel implements PropertyPane{
-
-    
-    private static final Logger LOGGER = Logging.getLogger(JRasterColorMapStylePanel.class);
+public class JClassificationJenksPanel extends AbstractPropertyPane{
     
     private final PaletteFactory PF = PaletteFactory.getDefault();
     private static final MutableStyleFactory SF = (MutableStyleFactory) FactoryFinder.getStyleFactory(new Hints(Hints.STYLE_FACTORY, MutableStyleFactory.class));
@@ -88,6 +69,10 @@ public class JClassificationJenksPanel extends JPanel implements PropertyPane{
      * Creates new form JClassificationJenksPanel
      */
     public JClassificationJenksPanel() {
+        super(MessageBundle.getString("property_style_jenks"), 
+              IconBundle.getIcon("16_classification_single"), 
+              null, 
+              "Dynamic Jenks classifictation");
         initComponents();
         
         geotkPalettes = new ArrayList<String>();
@@ -270,31 +255,6 @@ public class JClassificationJenksPanel extends JPanel implements PropertyPane{
         if(layer != null){
             parse();
         }
-    }
-
-    @Override
-    public String getTitle() {
-        return MessageBundle.getString("property_style_jenks");
-    }
-
-    @Override
-    public ImageIcon getIcon() {
-        return IconBundle.getIcon("16_classification_single");
-    }
-
-    @Override
-    public Image getPreview() {
-        return null;
-    }
-
-    @Override
-    public String getToolTip() {
-        return "Dynamic Jenks classifictation";
-    }
-
-    @Override
-    public Component getComponent() {
-        return this;
     }
     
 }

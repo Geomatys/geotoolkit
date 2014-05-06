@@ -4,6 +4,7 @@
  *
  *    (C) 2007 - 2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2008 - 2009, Johann Sorel
+ *    (C) 2014, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -18,16 +19,12 @@
 package org.geotoolkit.gui.swing.propertyedit;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
-import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -58,7 +55,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @author  Johann Sorel
  * @module pending
  */
-public class ContextCRSPropertyPanel extends javax.swing.JPanel implements PropertyPane {
+public class ContextCRSPropertyPanel extends AbstractPropertyPane {
 
     private MapContext context;
     private JCRSList liste = null;
@@ -68,6 +65,7 @@ public class ContextCRSPropertyPanel extends javax.swing.JPanel implements Prope
      * Creates new form DefaultMapContextCRSEditPanel 
      */
     public ContextCRSPropertyPanel() {
+        super("CRS",IconBundle.EMPTY_ICON,null,"Projection");
         initComponents();
 
         final JXBusyLabel lbl = new JXBusyLabel();
@@ -241,31 +239,6 @@ public class ContextCRSPropertyPanel extends javax.swing.JPanel implements Prope
     @Override
     public void apply() {
         if(liste!=null)context.setCoordinateReferenceSystem(liste.getCRS());
-    }
-
-    @Override
-    public String getTitle() {
-        return "CRS";
-    }
-
-    @Override
-    public ImageIcon getIcon() {
-        return IconBundle.EMPTY_ICON;
-    }
-
-    @Override
-    public Image getPreview() {
-        return null;
-    }
-    
-    @Override
-    public String getToolTip() {
-        return "Projection";
-    }
-
-    @Override
-    public Component getComponent() {
-        return this;
     }
 
     private void init() {

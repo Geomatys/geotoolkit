@@ -35,7 +35,7 @@ import org.geotoolkit.gui.swing.contexttree.menu.SeparatorItem;
 import org.geotoolkit.gui.swing.render2d.JMap2D;
 import org.geotoolkit.gui.swing.render2d.decoration.JClassicNavigationDecoration;
 import org.geotoolkit.gui.swing.propertyedit.ClearSelectionAction;
-import org.geotoolkit.gui.swing.propertyedit.LayerCRSPropertyPanel;
+import org.geotoolkit.gui.swing.propertyedit.JLayerCRSPane;
 import org.geotoolkit.gui.swing.propertyedit.LayerFilterPropertyPanel;
 import org.geotoolkit.gui.swing.propertyedit.LayerGeneralPanel;
 import org.geotoolkit.gui.swing.propertyedit.LayerStylePropertyPanel;
@@ -145,7 +145,7 @@ public abstract class JAbstractMapPane extends javax.swing.JPanel {
         LayerPropertyItem property = new LayerPropertyItem();
         List<PropertyPane> lstproperty = new ArrayList<PropertyPane>();
         lstproperty.add(new LayerGeneralPanel());
-        lstproperty.add(new LayerCRSPropertyPanel());
+        lstproperty.add(new JLayerCRSPane());
 
         LayerFilterPropertyPanel filters = new LayerFilterPropertyPanel();
         filters.addPropertyPanel(MessageBundle.getString("filter"),new JCQLPropertyPanel());

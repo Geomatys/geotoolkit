@@ -19,7 +19,6 @@ package org.geotoolkit.gui.swing.propertyedit;
 import java.awt.Component;
 import java.awt.Image;
 import javax.swing.ImageIcon;
-import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.gui.swing.image.IIOMetadataPanel;
 import org.geotoolkit.map.CoverageMapLayer;
 
@@ -33,8 +32,7 @@ public class CoverageMetaDataPanel extends IIOMetadataPanel implements PropertyP
     @Override
     public void setTarget(final Object target) {
         if(target instanceof CoverageMapLayer){
-            final CoverageMapLayer layer = (CoverageMapLayer) target;            
-
+            final CoverageMapLayer layer = (CoverageMapLayer) target;
             //how do we recover metadatas from here ?
 
         }else{

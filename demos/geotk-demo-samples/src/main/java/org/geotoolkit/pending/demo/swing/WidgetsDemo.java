@@ -30,7 +30,6 @@ import org.geotoolkit.gui.swing.contexttree.menu.SeparatorItem;
 import org.geotoolkit.gui.swing.contexttree.menu.ZoomToLayerItem;
 import org.geotoolkit.gui.swing.propertyedit.ClearSelectionAction;
 import org.geotoolkit.gui.swing.propertyedit.DeleteSelectionAction;
-import org.geotoolkit.gui.swing.propertyedit.LayerCRSPropertyPanel;
 import org.geotoolkit.gui.swing.propertyedit.LayerFilterPropertyPanel;
 import org.geotoolkit.gui.swing.propertyedit.LayerGeneralPanel;
 import org.geotoolkit.gui.swing.propertyedit.LayerStylePropertyPanel;
@@ -47,6 +46,7 @@ import org.geotoolkit.map.MapContext;
 import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.pending.demo.rendering.PortrayalDemo;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.gui.swing.propertyedit.JLayerCRSPane;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.StyleConstants;
@@ -102,7 +102,7 @@ public class WidgetsDemo extends javax.swing.JFrame {
         LayerPropertyItem property = new LayerPropertyItem();
         List<PropertyPane> lstproperty = new ArrayList<PropertyPane>();
         lstproperty.add(new LayerGeneralPanel());
-        lstproperty.add(new LayerCRSPropertyPanel());
+        lstproperty.add(new JLayerCRSPane());
 
         LayerFilterPropertyPanel filters = new LayerFilterPropertyPanel();
         filters.addPropertyPanel(MessageBundle.getString("filter"),new JCQLPropertyPanel());
