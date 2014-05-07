@@ -18,6 +18,7 @@ package org.geotoolkit.display2d.primitive;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.util.collection.Cache;
 import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
@@ -27,6 +28,7 @@ import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.display.canvas.AbstractCanvas2D;
 import org.geotoolkit.display2d.GO2Hints;
+import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.container.stateless.StatelessContextParams;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.map.CoverageMapLayer;
@@ -123,6 +125,8 @@ public class ProjectedCoverage implements ProjectedObject<CoverageMapLayer> {
             } catch (TransformException ex) {
                 Logger.getLogger(ProjectedCoverage.class.getName()).log(Level.SEVERE, null, ex);
             }
+            env = new GeneralEnvelope(env);
+            GO2Utilities.removeNaN((GeneralEnvelope)env);
 
             border = new ProjectedGeometry(params);
             border.setDataGeometry(JTS.toGeometry(env),env.getCoordinateReferenceSystem());

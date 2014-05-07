@@ -60,6 +60,7 @@ import javax.media.jai.JAI;
 import javax.media.jai.OperationDescriptor;
 import javax.media.jai.OperationRegistry;
 import javax.media.jai.registry.RIFRegistry;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.ViewType;
@@ -1403,4 +1404,12 @@ public final class GO2Utilities {
         return new Color(r, g, b);
     }
 
+    public static void removeNaN(GeneralEnvelope env){
+        //we definitly do not want some NaN values
+        if(Double.isNaN(env.getMinimum(0))){ env.setRange(0, Double.NEGATIVE_INFINITY, env.getMaximum(0));  }
+        if(Double.isNaN(env.getMaximum(0))){ env.setRange(0, env.getMinimum(0), Double.POSITIVE_INFINITY);  }
+        if(Double.isNaN(env.getMinimum(1))){ env.setRange(1, Double.NEGATIVE_INFINITY, env.getMaximum(1));  }
+        if(Double.isNaN(env.getMaximum(1))){ env.setRange(1, env.getMinimum(1), Double.POSITIVE_INFINITY);  }
+    }
+    
 }
