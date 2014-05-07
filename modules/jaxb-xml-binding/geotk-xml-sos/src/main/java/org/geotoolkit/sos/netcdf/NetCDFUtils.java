@@ -61,7 +61,39 @@ public class NetCDFUtils {
                 return val;
             }
         } else {
-            throw new IllegalArgumentException("Unexpected Array type for field:" + array.getClass().getName());
+            throw new IllegalArgumentException("Unexpected Array type for field:" + array.getClass().getName() + " expecting D1");
+        }
+        return Double.NaN;
+    }
+    
+    public static double getDoubleValue(final Array array) {
+        if (array instanceof ArrayInt.D0) {
+            int val = ((ArrayInt.D0)array).get();
+            if (val != N3iosp.NC_FILL_INT) {
+                return val;
+            }
+        } else if (array instanceof ArrayDouble.D0) {
+            double val =  ((ArrayDouble.D0)array).get();
+            if (val != N3iosp.NC_FILL_DOUBLE) {
+                return val;
+            }
+        } else if (array instanceof ArrayFloat.D0) {
+            float val =  ((ArrayFloat.D0)array).get();
+            if (val != N3iosp.NC_FILL_FLOAT) {
+                return val;
+            }
+        } else if (array instanceof ArrayShort.D0) {
+            short val =  ((ArrayShort.D0)array).get();
+            if (val != N3iosp.NC_FILL_SHORT) {
+                return val;
+            }
+        } else if (array instanceof ArrayLong.D0) {
+            long val =  ((ArrayLong.D0)array).get();
+            if (val != N3iosp.NC_FILL_LONG) {
+                return val;
+            }
+        } else {
+            throw new IllegalArgumentException("Unexpected Array type for field:" + array.getClass().getName() + " expecting D0");
         }
         return Double.NaN;
     }
@@ -99,7 +131,7 @@ public class NetCDFUtils {
                 return val;
             }
         } else {
-            throw new IllegalArgumentException("Unexpected Array type for field:" + array.getClass().getName());
+            throw new IllegalArgumentException("Unexpected Array type for field:" + array.getClass().getName() + " expecting D2");
         }
         return Double.NaN;
     }
@@ -133,7 +165,7 @@ public class NetCDFUtils {
                 return val;
             }
         } else {
-            throw new IllegalArgumentException("Unexpected Array type for field:" + array.getClass().getName());
+            throw new IllegalArgumentException("Unexpected Array type for field:" + array.getClass().getName() + " expecting D3");
         }
         return Double.NaN;
     }
@@ -163,7 +195,7 @@ public class NetCDFUtils {
         } else if (array instanceof ArrayDouble.D1) {
             return new Double(((ArrayDouble.D1)array).get(i)).longValue();
         } else {
-            throw new IllegalArgumentException("Unexpected Array type for time field:" + array.getClass().getName());
+            throw new IllegalArgumentException("Unexpected Array type for time field:" + array.getClass().getName() + " expecting D1");
         }
     }
     

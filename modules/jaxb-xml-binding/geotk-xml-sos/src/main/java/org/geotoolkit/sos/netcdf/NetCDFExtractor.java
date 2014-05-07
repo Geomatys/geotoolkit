@@ -170,7 +170,7 @@ public class NetCDFExtractor {
                         analyze.skippedFields.add(currentField);
                         analyze.latField = currentField;
                     
-                    } else if (name.equalsIgnoreCase("Longitude") || name.equalsIgnoreCase("long")) {
+                    } else if (name.equalsIgnoreCase("Longitude") || name.equalsIgnoreCase("long") || name.equalsIgnoreCase("lon")) {
                         currentField.type = Type.DOUBLE;
                         analyze.skippedFields.add(currentField);
                         analyze.lonField = currentField;
@@ -298,8 +298,8 @@ public class NetCDFExtractor {
                 //read geometry (assume point)
                 FeatureProperty foi = null;
                 if (analyze.hasSpatial()) {
-                    final double latitude         = getDoubleValue(latArray, 0);
-                    final double longitude        = getDoubleValue(lonArray, 0);
+                    final double latitude         = getDoubleValue(latArray);
+                    final double longitude        = getDoubleValue(lonArray);
                     final DirectPosition position = SOSXmlFactory.buildDirectPosition("2.0.0", null, 2, Arrays.asList(latitude, longitude));
                     final Point geom              = SOSXmlFactory.buildPoint("2.0.0", "SamplingPoint", position);
                     final SamplingFeature sp      = SOSXmlFactory.buildSamplingPoint("2.0.0", identifier, null, null, null, geom);
@@ -650,7 +650,7 @@ public class NetCDFExtractor {
             final Variable timeVar  = analyze.vars.get(analyze.mainField.label);
             final Array timeArray   = analyze.file.readArrays(Arrays.asList(timeVar)).get(0);
             final boolean constantT = analyze.mainField.dimension == 1;
-            final boolean timeFirst = !analyze.timeField.dimensionLabel.startsWith(analyze.separatorField.dimensionLabel);
+            final boolean timeFirst = analyze.mainField.mainVariableFirst;
             
             
             final Map<String, Array> phenArrays = new HashMap<>();
