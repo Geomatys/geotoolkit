@@ -49,6 +49,7 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.internal.io.IOUtilities;
 import org.apache.sis.storage.DataStoreException;
 
+import org.geotoolkit.storage.DataFileStore;
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.Name;
@@ -69,7 +70,7 @@ import static org.geotoolkit.data.gpx.model.GPXModelConstants.*;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class GPXFeatureStore extends AbstractFeatureStore{
+public class GPXFeatureStore extends AbstractFeatureStore implements DataFileStore {
 
     private final ReadWriteLock RWLock = new ReentrantReadWriteLock();
     private final ReadWriteLock TempLock = new ReentrantReadWriteLock();
@@ -212,6 +213,10 @@ public class GPXFeatureStore extends AbstractFeatureStore{
         handleRemoveWithFeatureWriter(groupName, filter);
     }
 
+    @Override
+    public File[] getDataFiles() throws DataStoreException {
+        return new File[] { this.file };
+    }
 
     private class GPXFeatureReader implements FeatureReader<FeatureType, Feature>{
 

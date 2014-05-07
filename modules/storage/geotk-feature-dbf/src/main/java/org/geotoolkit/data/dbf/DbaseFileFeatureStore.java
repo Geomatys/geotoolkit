@@ -44,6 +44,7 @@ import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.parameter.Parameters;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.storage.DataFileStore;
 import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -60,7 +61,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class DbaseFileFeatureStore extends AbstractFeatureStore{
+public class DbaseFileFeatureStore extends AbstractFeatureStore implements DataFileStore {
 
     private final ReadWriteLock RWLock = new ReentrantReadWriteLock();
     private final ReadWriteLock TempLock = new ReentrantReadWriteLock();
@@ -256,6 +257,11 @@ public class DbaseFileFeatureStore extends AbstractFeatureStore{
     @Override
     public void removeFeatures(final Name groupName, final Filter filter) throws DataStoreException {
         handleRemoveWithFeatureWriter(groupName, filter);
+    }
+
+    @Override
+    public File[] getDataFiles() throws DataStoreException {
+        return new File[] { this.file };
     }
 
     private class DBFFeatureReader implements FeatureReader<FeatureType, Feature>{

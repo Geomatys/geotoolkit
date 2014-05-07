@@ -28,6 +28,7 @@ import javax.imageio.ImageReader;
 import javax.imageio.ImageWriter;
 import javax.imageio.spi.ImageReaderSpi;
 
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.AbstractCoverageStore;
 import org.geotoolkit.coverage.CoverageStoreFactory;
 import org.geotoolkit.coverage.CoverageStoreFinder;
@@ -40,6 +41,7 @@ import org.apache.sis.internal.storage.IOUtilities;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.parameter.ParametersExt;
+import org.geotoolkit.storage.DataFileStore;
 import org.geotoolkit.storage.DataNode;
 import org.geotoolkit.storage.DefaultDataNode;
 import org.geotoolkit.util.ImageIOUtilities;
@@ -52,7 +54,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class FileCoverageStore extends AbstractCoverageStore{
+public class FileCoverageStore extends AbstractCoverageStore implements DataFileStore {
 
     private static final Logger LOGGER = Logging.getLogger(FileCoverageStore.class);
 
@@ -264,5 +266,10 @@ public class FileCoverageStore extends AbstractCoverageStore{
     @Override
     public CoverageType getType() {
         return CoverageType.GRID;
+    }
+
+    @Override
+    public File[] getDataFiles() throws DataStoreException {
+        return new File[] {root};
     }
 }

@@ -66,6 +66,7 @@ import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.storage.DataFileStore;
 import org.geotoolkit.temporal.object.TemporalUtilities;
 import org.geotoolkit.util.Converters;
 import org.geotoolkit.util.StringUtilities;
@@ -92,7 +93,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class CSVFeatureStore extends AbstractFeatureStore{
+public class CSVFeatureStore extends AbstractFeatureStore implements DataFileStore {
 
     static final String BUNDLE_PATH = "org/geotoolkit/csv/bundle";
 
@@ -456,6 +457,11 @@ public class CSVFeatureStore extends AbstractFeatureStore{
     @Override
     public void removeFeatures(final Name groupName, final Filter filter) throws DataStoreException {
         handleRemoveWithFeatureWriter(groupName, filter);
+    }
+
+    @Override
+    public File[] getDataFiles() throws DataStoreException {
+        return new File[] { this.file };
     }
 
     private class CSVFeatureReader implements FeatureReader<FeatureType, Feature>{

@@ -319,6 +319,11 @@ public class DefaultFolderFeatureStore extends AbstractFeatureStore{
         }
     }
 
+    public File[] getDataFiles() throws DataStoreException {
+        final File folder = getFolder(folderParameters);
+        return new File[]{ folder };
+    }
+
     @Override
     public void refreshMetaModel() {
         stores=null;

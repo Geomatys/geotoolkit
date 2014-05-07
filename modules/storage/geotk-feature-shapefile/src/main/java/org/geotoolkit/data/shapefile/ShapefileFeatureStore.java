@@ -19,6 +19,7 @@
 package org.geotoolkit.data.shapefile;
 
 import org.geotoolkit.data.FeatureStoreFactory;
+import org.geotoolkit.data.shapefile.lock.ShpFileType;
 import org.geotoolkit.data.shapefile.lock.StorageFile;
 import org.geotoolkit.data.shapefile.lock.ShpFiles;
 import org.geotoolkit.data.shapefile.lock.AccessManager;
@@ -29,6 +30,7 @@ import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -77,6 +79,7 @@ import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 
+import org.geotoolkit.storage.DataFileStore;
 import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -100,7 +103,7 @@ import org.opengis.filter.Id;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class ShapefileFeatureStore extends AbstractFeatureStore{
+public class ShapefileFeatureStore extends AbstractFeatureStore implements DataFileStore {
 
     // This is the default character as specified by the DBF specification
     public static final Charset DEFAULT_STRING_CHARSET = DbaseFileReader.DEFAULT_STRING_CHARSET;
@@ -666,6 +669,18 @@ public class ShapefileFeatureStore extends AbstractFeatureStore{
         } catch (IOException ex) {
             throw new DataStoreException(ex);
         }
+    }
+
+    @Override
+    public File[] getDataFiles() throws DataStoreException {
+        final List<File> files = new ArrayList<>();
+        for (final ShpFileType type : ShpFileType.values()) {
+            final File f = shpFiles.getFile(type);
+            if (f != null && f.exists()) {
+                files.add(f);
+            }
+        }
+        return files.toArray(new File[0]);
     }
 
     ////////////////////////////////////////////////////////////////////////////
