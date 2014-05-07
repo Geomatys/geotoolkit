@@ -65,7 +65,8 @@ public class GenericResampleProcess extends AbstractProcess {
     /** Maximum size for image cache. */
     public final static long MAX_MEMORY_SIZE = BASE_MEMORY_SIZE * 512;
 
-    public static final int WAIT_TIME = 100;
+    public static final int TIMEOUT = 100;
+    private static final TimeUnit TIMEOUT_UNIT = TimeUnit.SECONDS;
 
     /**
      * A queue to store strips we want to resample.
@@ -239,14 +240,12 @@ public class GenericResampleProcess extends AbstractProcess {
             
             // All strips have been resampled, so the writing queue should be full. We add the end trigger.
             poisonWritingQueue();
-            
-            while (writingThread.isAlive()) {
-                try {
-                    writingThread.join(WAIT_TIME);
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                    throw new ProcessException("Writing thread has been stopped.", this, e);
-                }
+
+            try {
+                writingThread.join(TimeUnit.DAYS.toMillis(1));
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                throw new ProcessException("Writing thread has been stopped.", this, e);
             }
 
             writer.endReplacePixels();
@@ -291,7 +290,7 @@ public class GenericResampleProcess extends AbstractProcess {
             }
 
             final Rectangle resampleZone = new Rectangle(0, y, imageWidth, tileHeight);
-            while (!currentThread.isInterrupted() && !resamplingQueue.offer(resampleZone, WAIT_TIME, TimeUnit.MILLISECONDS)) {}
+            resamplingQueue.offer(resampleZone, TIMEOUT, TIMEOUT_UNIT);
         }
 
         // insert poison objects, so our threads will know it's over when they get it.
@@ -317,7 +316,7 @@ public class GenericResampleProcess extends AbstractProcess {
                 }
 
                 final Rectangle resampleZone = new Rectangle(x, y, tileWidth, tileHeight);
-                while (!currentThread.isInterrupted() && !resamplingQueue.offer(resampleZone, WAIT_TIME, TimeUnit.MILLISECONDS)) {}
+                resamplingQueue.offer(resampleZone, TIMEOUT, TIMEOUT_UNIT);
             }
         }
 
@@ -329,7 +328,7 @@ public class GenericResampleProcess extends AbstractProcess {
         final Thread currentThread = Thread.currentThread();
         for (int i = 0; i <= threadNumber; i++) {
             try {
-                while (!currentThread.isInterrupted() && !resamplingQueue.offer(new EmptyBox(), WAIT_TIME, TimeUnit.MILLISECONDS)) {}
+                resamplingQueue.offer(new EmptyBox(), TIMEOUT, TIMEOUT_UNIT);
             } catch (InterruptedException e) {
                 LOGGER.log(Level.INFO, "Process interrupted !");
                 Thread.currentThread().interrupt();
@@ -340,7 +339,7 @@ public class GenericResampleProcess extends AbstractProcess {
 
     private void poisonWritingQueue() {
         final Thread currentThread = Thread.currentThread();
-        while (!currentThread.isInterrupted() && !writingQueue.offer(new NightShade<Point, RenderedImage>(), WAIT_TIME, TimeUnit.MILLISECONDS)) {}
+        writingQueue.offer(new NightShade<Point, RenderedImage>(), TIMEOUT, TIMEOUT_UNIT);
     }
 
     /**
@@ -415,7 +414,7 @@ public class GenericResampleProcess extends AbstractProcess {
                     resampler.fillImagePx();
                     final Map.Entry<Point, RenderedImage> output = new AbstractMap.SimpleEntry<>(computeZone.getLocation(), (RenderedImage) destination);
 
-                    while (!writingQueue.offer(output, WAIT_TIME, TimeUnit.MILLISECONDS)) {}
+                    writingQueue.offer(output, TIMEOUT, TIMEOUT_UNIT);
                 }
             } catch (InterruptedException e) {
                 LOGGER.log(Level.INFO, "Resampling worker interrupted !");
