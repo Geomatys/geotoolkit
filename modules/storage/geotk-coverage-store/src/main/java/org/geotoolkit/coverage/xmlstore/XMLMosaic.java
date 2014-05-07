@@ -149,7 +149,7 @@ public class XMLMosaic implements GridMosaic{
         return emptyTileEncoded;
     }
 
-    private void updateCompletionString(){
+    private synchronized void updateCompletionString(){
         final StringBuilder sb = new StringBuilder();
         int index = 0;
         for(int y=0,l=getGridSize().height;y<l;y++){
@@ -281,8 +281,26 @@ public class XMLMosaic implements GridMosaic{
         return new File(getFolder(),row+"_"+col+"."+postfix);
     }
 
+    ImageWriter acquireImageWriter() throws IOException {
+        return XImageIO.getWriterByFormatName(getPyramid().getPyramidSet().getFormatName(), null, null);
+    }
+
     void createTile(int col, int row, RenderedImage image) throws DataStoreException {
-        if(isEmpty(image.getData())){
+        ImageWriter writer = null;
+        try {
+            writer = acquireImageWriter();
+            createTile(col, row, image, writer);
+        } catch (IOException ex) {
+            throw new DataStoreException(ex.getMessage(), ex);
+        } finally {
+            if(writer != null){
+                writer.dispose();
+            }
+        }
+    }
+
+    void createTile(final int col, final int row, final RenderedImage image, final ImageWriter writer) throws DataStoreException {
+        if (isEmpty(image.getData())) {
             tileExist.set(getTileIndex(col, row), true);
             tileEmpty.set(getTileIndex(col, row), true);
             updateCompletionString();
@@ -293,20 +311,17 @@ public class XMLMosaic implements GridMosaic{
         final File f = getTileFile(col, row);
         f.getParentFile().mkdirs();
 
-        ImageWriter writer = null;
-        try (ImageOutputStream out = ImageIO.createImageOutputStream(f)) {            
-            writer = XImageIO.getWriterByFormatName(
-                    getPyramid().getPyramidSet().getFormatName(), out, image);
+        try (ImageOutputStream out = ImageIO.createImageOutputStream(f)) {
             writer.setOutput(out);
             writer.write(image);
             tileExist.set(getTileIndex(col, row), true);
             tileEmpty.set(getTileIndex(col, row), false);
             updateCompletionString();
         } catch (IOException ex) {
-            throw new DataStoreException(ex.getMessage(),ex);
+            throw new DataStoreException(ex.getMessage(), ex);
         } finally {
-            if(writer != null){
-                writer.dispose();
+            if (writer != null) {
+                writer.setOutput(null);
             }
         }
     }

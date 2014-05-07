@@ -23,6 +23,7 @@ import java.awt.image.SampleModel;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.BlockingQueue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ProgressMonitor;
@@ -292,6 +293,10 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
     @Override
     public void deleteMosaic(String pyramidId, String mosaicId) throws DataStoreException {
         throw new DataStoreException("Not supported yet.");
+    }
+
+    public Runnable acquireTileWriter(final BlockingQueue<XMLTileWriter.XMLTileInfo> tilesToWrite) {
+        return new XMLTileWriter(tilesToWrite, this);
     }
 
     @Override
