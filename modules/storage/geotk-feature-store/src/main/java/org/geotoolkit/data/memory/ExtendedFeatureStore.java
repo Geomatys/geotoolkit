@@ -189,6 +189,10 @@ public final class ExtendedFeatureStore extends AbstractFeatureStore{
         return wrapped.getEnvelope(query);
     }
 
+    public FeatureStore getWrapped() {
+        return wrapped;
+    }
+
     @Override
     public List<FeatureId> addFeatures(final Name groupName, 
             final Collection<? extends Feature> newFeatures, final Hints hints) throws DataStoreException {
