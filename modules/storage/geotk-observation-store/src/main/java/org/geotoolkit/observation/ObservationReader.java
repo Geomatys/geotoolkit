@@ -27,6 +27,7 @@ import org.geotoolkit.sos.xml.ObservationOffering;
 import org.geotoolkit.sos.xml.ResponseModeType;
 import org.opengis.observation.Observation;
 import org.opengis.observation.sampling.SamplingFeature;
+import org.opengis.temporal.TemporalGeometricPrimitive;
 import org.opengis.temporal.TemporalPrimitive;
 
 /**
@@ -103,7 +104,17 @@ public interface ObservationReader {
      * @return
      * @throws org.apache.sis.storage.DataStoreException
      */
-    Collection<String> getPhenomenonsForProcedure(String sensorID) throws DataStoreException;
+    Collection<String> getPhenomenonsForProcedure(final String sensorID) throws DataStoreException;
+    
+    /**
+     * Return a the temporal bounds for the specified procedure.
+     * 
+     * @param version SOS version of the request.
+     * @param sensorID an procedure identifier.
+     * @return
+     * @throws org.apache.sis.storage.DataStoreException
+     */
+    TemporalGeometricPrimitive getTimeForProcedure(final String version, final String sensorID) throws DataStoreException;
     
     /**
      * 
@@ -125,7 +136,7 @@ public interface ObservationReader {
      * Return a sampling feature for the specified sampling feature.
      *
      * @param samplingFeatureName The identifier of the feature of interest.
-     * @param version SOS version of the request
+     * @param version SOS version of the request.
      *
      * @return the corresponding feature Of interest.
      * @throws org.apache.sis.storage.DataStoreException
@@ -137,7 +148,7 @@ public interface ObservationReader {
      * Return a sampling feature for the specified sampling feature.
      *
      * @param samplingFeatureName
-     * @param version SOS version of the request
+     * @param version SOS version of the request.
      * 
      * @return
      * @throws org.apache.sis.storage.DataStoreException
