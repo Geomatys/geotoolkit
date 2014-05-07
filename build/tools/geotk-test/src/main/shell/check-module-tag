@@ -24,8 +24,3 @@ find . -regex ".*/src/main/java/.*\\.java" -exec grep --files-without-match "@mo
 echo
 echo "Files having extra @module javadoc tag:"
 find . -regex ".*/src/test/java/.*\\.java" -exec grep --files-with-match "@module" '{}' \;
-
-if ! cd ../build
-then exit 1; fi
-
-find . -name "*.java" -exec grep --files-with-match "@module" '{}' \; | grep -v "maven/geotk-javadoc/"

@@ -16,6 +16,4 @@ Maven plugins for Geotk
   * {{{./geotk-resource-compiler/index.html}Resources compiler}} for creating the binary files used for
     internationalization in Geotk.
 
-  * {{{./geotk-javadoc/index.html}Javadoc plugins}} for custom taglets.
-
   * {{{./geotk-unopkg/index.html}UNO packager}}, for creating Libre/OpenOffice.org add-ins.

@@ -840,15 +840,13 @@
 
           <!-- Custom taglets implemented in Java. -->
           <taglets>
-            <taglet><tagletClass>org.geotoolkit.maven.taglet.Module</tagletClass></taglet>
-            <taglet><tagletClass>org.geotoolkit.maven.taglet.Section</tagletClass></taglet>
-            <taglet><tagletClass>org.geotoolkit.maven.taglet.Note</tagletClass></taglet>
-            <taglet><tagletClass>org.geotoolkit.maven.taglet.Preformat</tagletClass></taglet>
+            <taglet><tagletClass>org.apache.sis.internal.taglet.Section</tagletClass></taglet>
+            <taglet><tagletClass>org.apache.sis.internal.taglet.Preformat</tagletClass></taglet>
           </taglets>
           <tagletArtifact>
-            <groupId>org.geotoolkit.project</groupId>
-            <artifactId>geotk-javadoc</artifactId>
-            <version>${project.version}</version>
+            <groupId>org.apache.sis.core</groupId>
+            <artifactId>sis-build-helper</artifactId>
+            <version>0.4</version>
           </tagletArtifact>
 
           <!-- Creates links to existing javadoc-generated documentation of external referenced classes. -->
