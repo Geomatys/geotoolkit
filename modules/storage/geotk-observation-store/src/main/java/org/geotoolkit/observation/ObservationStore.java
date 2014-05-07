@@ -22,6 +22,7 @@ import org.apache.sis.storage.DataStore;
 import org.geotoolkit.sos.netcdf.ExtractionResult;
 import org.opengis.feature.type.Name;
 import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.temporal.TemporalGeometricPrimitive;
 
 /**
  *
@@ -37,6 +38,10 @@ public abstract class ObservationStore extends DataStore {
     public abstract ParameterValueGroup getConfiguration();
     
     public abstract Set<Name> getProcedureNames();
+    
+    public abstract Set<String> getPhenomenonNames();
+    
+    public abstract TemporalGeometricPrimitive getTemporalBounds();
     
     public abstract ExtractionResult getResults();
 }

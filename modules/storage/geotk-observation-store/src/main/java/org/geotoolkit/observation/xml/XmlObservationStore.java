@@ -53,6 +53,7 @@ import org.opengis.observation.Phenomenon;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.temporal.Instant;
 import org.opengis.temporal.Period;
+import org.opengis.temporal.TemporalGeometricPrimitive;
 import org.opengis.temporal.TemporalObject;
 
 /**
@@ -66,6 +67,11 @@ public class XmlObservationStore extends AbstractObservationStore {
     public XmlObservationStore(final ParameterValueGroup params) {
         super(params);
         xmlFile = (File) params.parameter(FILE_PATH.getName().toString()).getValue();
+    }
+    
+    public XmlObservationStore(final File xmlFile) {
+        super(null);
+        this.xmlFile = xmlFile;
     }
 
     @Override
@@ -235,5 +241,43 @@ public class XmlObservationStore extends AbstractObservationStore {
     @Override
     public void close() throws DataStoreException {
         // do nothing
+    }
+
+    @Override
+    public Set<String> getPhenomenonNames() {
+        final Set<String> phenomenons = new HashSet<>();
+        final Object obj = readFile();
+        if (obj instanceof ObservationCollection) {
+            final ObservationCollection collection = (ObservationCollection)obj;
+            for (Observation obs : collection.getMember()) {
+                final AbstractObservation o = (AbstractObservation)obs;
+                final PhenomenonProperty phenProp = o.getPropertyObservedProperty();
+                phenomenons.addAll(getPhenomenonsFields(phenProp));
+            }
+            
+        } else if (obj instanceof AbstractObservation) {
+            final AbstractObservation obs = (AbstractObservation)obj;
+            final PhenomenonProperty phenProp = obs.getPropertyObservedProperty();
+            phenomenons.addAll(getPhenomenonsFields(phenProp));
+        }
+        return phenomenons;
+    }
+    
+    @Override
+    public TemporalGeometricPrimitive getTemporalBounds() {
+        final ExtractionResult result = new ExtractionResult();
+        result.spatialBound.initBoundary();
+        final Object obj = readFile();
+        if (obj instanceof ObservationCollection) {
+            final ObservationCollection collection = (ObservationCollection)obj;
+            for (Observation obs : collection.getMember()) {
+                appendTime(obs.getSamplingTime(), result.spatialBound);
+            }
+            
+        } else if (obj instanceof AbstractObservation) {
+            final AbstractObservation obs = (AbstractObservation)obj;
+            appendTime(obs.getSamplingTime(), result.spatialBound);
+        }
+        return result.spatialBound.getTimeObject("2.0.0");
     }
 }

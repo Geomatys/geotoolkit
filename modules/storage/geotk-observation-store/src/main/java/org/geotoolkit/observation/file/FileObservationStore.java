@@ -25,10 +25,12 @@ import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.observation.AbstractObservationStore;
 import static org.geotoolkit.observation.file.FileObservationStoreFactory.FILE_PATH;
 import org.geotoolkit.sos.netcdf.ExtractionResult;
+import org.geotoolkit.sos.netcdf.Field;
 import org.geotoolkit.sos.netcdf.NCFieldAnalyze;
 import org.geotoolkit.sos.netcdf.NetCDFExtractor;
 import org.opengis.feature.type.Name;
 import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.temporal.TemporalGeometricPrimitive;
 
 /**
  *
@@ -42,6 +44,12 @@ public class FileObservationStore extends AbstractObservationStore {
     public FileObservationStore(final ParameterValueGroup params) {
         super(params);
         dataFile = (File) params.parameter(FILE_PATH.getName().toString()).getValue();
+        analyze = NetCDFExtractor.analyzeResult(dataFile, null);
+    }
+    
+    public FileObservationStore(final File observationFile) {
+        super(null);
+        dataFile = observationFile;
         analyze = NetCDFExtractor.analyzeResult(dataFile, null);
     }
 
@@ -77,5 +85,23 @@ public class FileObservationStore extends AbstractObservationStore {
     @Override
     public void close() throws DataStoreException {
         // do nothing
+    }
+
+    @Override
+    public Set<String> getPhenomenonNames() {
+        final Set<String> phenomenons = new HashSet<>();
+        for (Field field : analyze.phenfields) {
+            phenomenons.add(field.label);
+        }
+        return phenomenons;
+    }
+    
+    @Override
+    public TemporalGeometricPrimitive getTemporalBounds() {
+        final ExtractionResult result = NetCDFExtractor.getObservationFromNetCDF(analyze, getProcedureID());
+        if (result != null && result.spatialBound != null) {
+            return result.spatialBound.getTimeObject("2.0.0");
+        }
+        return null;
     }
 }
