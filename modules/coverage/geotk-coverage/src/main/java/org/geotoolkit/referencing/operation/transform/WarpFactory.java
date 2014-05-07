@@ -306,6 +306,8 @@ public class WarpFactory {
             final double ycnt = domain.getCenterY();
             double m00, m10, m01, m11;
             Point2D p;
+            // TODO: we must check for the cases where xmin > xmax after transformation,
+            //       and handle that as an Envelope the cross the anti-meridian.
             point.x=xmax; point.y=ycnt; p=transform.transform(point, point); m00  = p.getX(); m10  = p.getY();
             point.x=xmin; point.y=ycnt; p=transform.transform(point, point); m00 -= p.getX(); m10 -= p.getY();
             point.x=xcnt; point.y=ymax; p=transform.transform(point, point); m01  = p.getX(); m11  = p.getY();
