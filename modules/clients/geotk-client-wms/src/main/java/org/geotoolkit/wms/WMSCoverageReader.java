@@ -221,5 +221,14 @@ public class WMSCoverageReader extends GridCoverageReader{
 
     }
 
+    @Override
+    public void dispose() throws CoverageStoreException {
+        //nothing to dispose, we must preserve the input
+    }
+
+    @Override
+    public void reset() throws CoverageStoreException {
+        //nothing to reset, we must preserve the input
+    }
 
 }
