@@ -24,13 +24,14 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
 import org.geotoolkit.gui.swing.contexttree.AbstractTreePopupItem;
-import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapItem;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.DefaultDescription;
 import org.apache.sis.util.iso.SimpleInternationalString;
+import org.geotoolkit.gui.swing.resource.FontAwesomeIcons;
+import org.geotoolkit.gui.swing.resource.IconBuilder;
 
 /**
  * New MapItem menu item for JContextTree
@@ -51,7 +52,7 @@ public class NewGroupItem extends AbstractTreePopupItem{
     }
 
     private void init(){
-        setIcon( IconBundle.getIcon("16_attach") );
+        setIcon( IconBuilder.createIcon(FontAwesomeIcons.ICON_FOLDER_CLOSE_ALT,16,FontAwesomeIcons.DEFAULT_COLOR) );
 
         addActionListener(new ActionListener() {
             @Override

@@ -4,6 +4,7 @@
  *
  *    (C) 2007 - 2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2008 - 2009, Johann Sorel
+ *    (C) 2009 - 2014, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -58,13 +59,12 @@ import javax.swing.JTree;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
 import javax.swing.tree.DefaultTreeCellRenderer;
-import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 import org.geotoolkit.display2d.service.DefaultGlyphService;
 import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.gui.swing.resource.IconBundle;
-import org.geotoolkit.gui.swing.tree.DefaultMutableTreeNode;
+import org.geotoolkit.gui.swing.resource.FontAwesomeIcons;
+import org.geotoolkit.gui.swing.resource.IconBuilder;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyle;
@@ -86,15 +86,15 @@ public class JStyleTree<T> extends JXTree implements DragGestureListener, DragSo
 
     private static final MutableStyleFactory SF = (MutableStyleFactory) FactoryFinder.getStyleFactory(null);
 
-    private static final Icon ICON_STYLE = IconBundle.getIcon("16_style");
-    private static final Icon ICON_FTS = IconBundle.getIcon("16_style_fts");
-    private static final Icon ICON_RULE = IconBundle.getIcon("16_style_rule");
-    private static final Icon ICON_NEW = IconBundle.getIcon("16_add_data");
-    private static final Icon ICON_DUPLICATE = IconBundle.getIcon("16_duplicate");
-    private static final Icon ICON_DELETE = IconBundle.getIcon("16_delete");
+    public static final ImageIcon ICON_STYLE     = IconBuilder.createIcon(FontAwesomeIcons.ICON_BOOK,16,FontAwesomeIcons.DEFAULT_COLOR);
+    public static final ImageIcon ICON_FTS       = IconBuilder.createIcon(FontAwesomeIcons.ICON_TAG,16,FontAwesomeIcons.DEFAULT_COLOR);
+    public static final ImageIcon ICON_RULE      = IconBuilder.createIcon(FontAwesomeIcons.ICON_FILTER,16,FontAwesomeIcons.DEFAULT_COLOR);
+    public static final ImageIcon ICON_NEW       = IconBuilder.createIcon(FontAwesomeIcons.ICON_PLUS,16,FontAwesomeIcons.DEFAULT_COLOR);
+    public static final ImageIcon ICON_DUPLICATE = IconBuilder.createIcon(FontAwesomeIcons.ICON_COPY,16,FontAwesomeIcons.DEFAULT_COLOR);
+    public static final ImageIcon ICON_DELETE    = IconBuilder.createIcon(FontAwesomeIcons.ICON_REMOVE,16,FontAwesomeIcons.DEFAULT_COLOR);
 
     private T style = null;
-    private StyleTreeModel<T> treemodel = null;
+    private final StyleTreeModel treemodel = new StyleTreeModel(null);
     /** Variables needed for DnD */
     private DragSource dragSource = null;
 
@@ -126,8 +126,7 @@ public class JStyleTree<T> extends JXTree implements DragGestureListener, DragSo
         this.style = style;
 
         if (style != null) {
-            treemodel = new StyleTreeModel(style);
-            setModel(treemodel);
+            treemodel.setRoot(style);
             revalidate();
         }
         expandAll();
@@ -139,13 +138,10 @@ public class JStyleTree<T> extends JXTree implements DragGestureListener, DragSo
     @Override
     public void dragGestureRecognized(final DragGestureEvent e) {
         final TreePath path = getSelectionModel().getSelectionPath();
-        final DefaultMutableTreeNode dragNode = (DefaultMutableTreeNode) path.getLastPathComponent();
-
-        if (dragNode != null) {
-            final Object dragged = dragNode.getUserObject();
-            final DefaultMutableTreeNode parentNode = (DefaultMutableTreeNode) dragNode.getParent();
-            final Object parent = (parentNode != null) ? parentNode.getUserObject() : null;
-
+        final Object[] pathObjs = path.getPath();
+        final Object dragged = path.getLastPathComponent();
+        if (dragged != null) {
+            final Object parent = (pathObjs.length>1) ? pathObjs[pathObjs.length-2] : null;
             dd = new StyleElementTransferable(dragged, parent);
             e.startDrag(null, dd);
         }
@@ -201,10 +197,9 @@ public class JStyleTree<T> extends JXTree implements DragGestureListener, DragSo
 
 
         if (targetPath != null && strs.getStyleElement() != null && strs.getParent() != null) {
-            final DefaultMutableTreeNode targetNode = (DefaultMutableTreeNode) targetPath.getLastPathComponent();
-            final DefaultMutableTreeNode targetParentNode = (DefaultMutableTreeNode)targetNode.getParent();
-            final Object targetObj = targetNode.getUserObject();
-            final Object targetParentObj = (targetParentNode != null) ? targetParentNode.getUserObject() : null;
+            final Object[] pathObjs = targetPath.getPath();
+            final Object targetObj = targetPath.getLastPathComponent();
+            final Object targetParentObj =  (pathObjs.length>1) ? pathObjs[pathObjs.length-2] : null;
 
             final Object movedObj = strs.getStyleElement();
             final Object movedParentObj = strs.getParent();
@@ -271,6 +266,13 @@ public class JStyleTree<T> extends JXTree implements DragGestureListener, DragSo
         }
 
     }
+    
+    private static boolean isDeletable(final Object removeObject){
+        return     removeObject instanceof MutableFeatureTypeStyle
+                || removeObject instanceof MutableRule
+                || removeObject instanceof Symbolizer;
+    }
+    
 
     //-------------private classes----------------------------------------------
     class StyleCellRenderer extends DefaultTreeCellRenderer {
@@ -282,8 +284,7 @@ public class JStyleTree<T> extends JXTree implements DragGestureListener, DragSo
 
             if (comp instanceof JLabel) {
                 final JLabel lbl = (JLabel) comp;
-                final DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;
-                final Object val = node.getUserObject();
+                final Object val = value;
 
                 if (val instanceof MutableStyle) {
                     final MutableStyle style = (MutableStyle) val;
@@ -346,24 +347,23 @@ public class JStyleTree<T> extends JXTree implements DragGestureListener, DragSo
             if (path != null && visible) {
                 removeAll();
 
-                final DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
-                final Object val = node.getUserObject();
+                final Object val = path.getLastPathComponent();
 
                 if (val instanceof MutableStyle) {
                     final MutableStyle style = (MutableStyle) val;
                     add(new NewFTSAction(style));
                     add(new JSeparator(SwingConstants.HORIZONTAL));
-                    add(new ExpandAction(node));
-                    add(new CollapseAction(node));
+                    add(new ExpandAction(path));
+                    add(new CollapseAction(path));
                 } else if (val instanceof MutableFeatureTypeStyle) {
                     final MutableFeatureTypeStyle fts = (MutableFeatureTypeStyle) val;
                     add(new NewRuleAction(fts));
                     add(new JSeparator(SwingConstants.HORIZONTAL));
-                    add(new ExpandAction(node));
-                    add(new CollapseAction(node));
+                    add(new ExpandAction(path));
+                    add(new CollapseAction(path));
                     add(new ChangeRuleScaleAction(fts));
                     add(new JSeparator(SwingConstants.HORIZONTAL));
-                    add(new DuplicateAction(node));
+                    add(new DuplicateAction(path));
                 } else if (val instanceof MutableRule) {
                     final MutableRule rule = (MutableRule) val;
                     final List<StyleElementEditor> editors = StyleElementEditor.findEditorsForType(Symbolizer.class);
@@ -371,55 +371,58 @@ public class JStyleTree<T> extends JXTree implements DragGestureListener, DragSo
                         add(new NewSymbolizerAction(rule,editor));
                     }
                     add(new JSeparator(SwingConstants.HORIZONTAL));
-                    add(new ExpandAction(node));
-                    add(new CollapseAction(node));
+                    add(new ExpandAction(path));
+                    add(new CollapseAction(path));
                     add(new JSeparator(SwingConstants.HORIZONTAL));
-                    add(new DuplicateAction(node));
+                    add(new DuplicateAction(path));
                 } else if (val instanceof Symbolizer) {
-                    final Symbolizer symb = (Symbolizer) val;
-                    add(new DuplicateAction(node));
+                    add(new DuplicateAction(path));
                 }
 
-                if(treemodel.isDeletable(node)){
+                if(isDeletable(path.getLastPathComponent())){
                     add(new JSeparator(SwingConstants.HORIZONTAL));
-                    add(new DeleteAction(node));
+                    add(new DeleteAction(path));
                 }
             }
 
             super.setVisible(visible);
         }
     }
-
+    
     class CollapseAction extends AbstractAction{
-        private final DefaultMutableTreeNode parentNode;
+        private final TreePath path;
 
-        CollapseAction(final DefaultMutableTreeNode node) {
+        CollapseAction(final TreePath path) {
             super("Collapse sub nodes.");
-            this.parentNode = node;
+            this.path = path;
         }
 
         @Override
         public void actionPerformed(final ActionEvent ae) {
-            for(int i=0,n=parentNode.getChildCount(); i<n; i++){
-                collapsePath(new TreePath(treemodel.getPathToRoot(parentNode.getChildAt(i))));
+            final Object parent = path.getLastPathComponent();
+            for(int i=0,n=treeModel.getChildCount(parent); i<n; i++){
+                final Object child = treemodel.getChild(parent, i);
+                collapsePath(path.pathByAddingChild(child));
             }
         }
     }
 
     class ExpandAction extends AbstractAction{
-        private final DefaultMutableTreeNode parentNode;
+        private final TreePath path;
 
-        ExpandAction(final DefaultMutableTreeNode node) {
+        ExpandAction(final TreePath path) {
             super("Expand sub nodes.");
-            this.parentNode = node;
+            this.path = path;
         }
 
         @Override
         public void actionPerformed(final ActionEvent ae) {
-            for(int i=0,n=parentNode.getChildCount(); i<n; i++){
-                final TreeNode child = parentNode.getChildAt(i);
-                for(int k=0,l=child.getChildCount(); k<l; k++){
-                    expandPath(new TreePath(treemodel.getPathToRoot(child.getChildAt(k))));
+            final Object parent = path.getLastPathComponent();
+            for(int i=0,n=treeModel.getChildCount(parent); i<n; i++){
+                final Object child = treemodel.getChild(parent, i);
+                final TreePath tp1 = path.pathByAddingChild(child);
+                for(int k=0,l=treeModel.getChildCount(child); k<l; k++){
+                    expandPath(tp1.pathByAddingChild(treemodel.getChild(child, k)));
                 }
             }
         }
@@ -507,30 +510,36 @@ public class JStyleTree<T> extends JXTree implements DragGestureListener, DragSo
     }
 
     class DuplicateAction extends AbstractAction {
-        private final DefaultMutableTreeNode parentNode;
+        private final TreePath path;
 
-        DuplicateAction(final DefaultMutableTreeNode node) {
+        DuplicateAction(final TreePath path) {
             super("Duplicate", ICON_DUPLICATE);
-            this.parentNode = node;
+            this.path = path;
         }
 
         @Override
         public void actionPerformed(final ActionEvent e) {
-            treemodel.duplicateNode(parentNode);
+            final Object[] pathObjs = path.getPath();
+            if(pathObjs.length>1){
+                treemodel.duplicateNode(pathObjs[pathObjs.length-2],pathObjs[pathObjs.length-1]);
+            }
         }
     }
 
     class DeleteAction extends AbstractAction {
-        private final DefaultMutableTreeNode parentNode;
+        private final TreePath path;
 
-        DeleteAction(final DefaultMutableTreeNode node) {
+        DeleteAction(final TreePath path) {
             super("Delete",ICON_DELETE);
-            this.parentNode = node;
+            this.path = path;
         }
 
         @Override
         public void actionPerformed(final ActionEvent e) {
-            treemodel.deleteNode(parentNode);
+            final Object[] pathObjs = path.getPath();
+            if(pathObjs.length>1){
+                treemodel.removeChild(pathObjs[pathObjs.length-2],pathObjs[pathObjs.length-1]);
+            }
         }
     }
 

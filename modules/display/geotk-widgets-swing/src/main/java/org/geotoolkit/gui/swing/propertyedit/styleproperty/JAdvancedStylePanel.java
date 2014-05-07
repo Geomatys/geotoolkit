@@ -4,7 +4,7 @@
  *
  *    (C) 2007 - 2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2008 - 2010, Johann Sorel
- *    (C) 2013, Geomatys
+ *    (C) 2013 - 2014, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -56,7 +56,6 @@ import javax.swing.text.StyledEditorKit;
 import javax.swing.text.Utilities;
 import javax.swing.text.View;
 import javax.swing.text.ViewFactory;
-import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 import javax.xml.bind.JAXBException;
 import org.geotoolkit.gui.swing.propertyedit.PropertyPane;
@@ -95,7 +94,7 @@ public class JAdvancedStylePanel extends StyleElementEditor implements PropertyP
             pan_info.removeAll();
             
             if (path != null) {
-                final Object val = ((DefaultMutableTreeNode) path.getLastPathComponent()).getUserObject();
+                final Object val = path.getLastPathComponent();
                 editor = StyleElementEditor.findEditor(val);
                 if(editor != null){
                     editor.setLayer(getLayer());
@@ -147,11 +146,11 @@ public class JAdvancedStylePanel extends StyleElementEditor implements PropertyP
         if(obj instanceof Symbolizer){
             //in case of a symbolizer we must update it.
             if(oldPath != null && oldPath.getLastPathComponent() != null){
-                final Symbolizer symbol = (Symbolizer) ((DefaultMutableTreeNode)oldPath.getLastPathComponent()).getUserObject();
+                final Symbolizer symbol = (Symbolizer) oldPath.getLastPathComponent();
 
                 if(!symbol.equals(obj)){
                     //new symbol created is different, update in the rule
-                    final MutableRule rule = (MutableRule) ((DefaultMutableTreeNode)oldPath.getParentPath().getLastPathComponent()).getUserObject();
+                    final MutableRule rule = (MutableRule) oldPath.getParentPath().getLastPathComponent();
 
                     final int index = rule.symbolizers().indexOf(symbol);
                     if(index >= 0){

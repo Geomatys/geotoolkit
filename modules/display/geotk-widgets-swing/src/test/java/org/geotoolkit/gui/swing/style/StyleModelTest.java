@@ -17,8 +17,6 @@
 
 package org.geotoolkit.gui.swing.style;
 
-import javax.swing.tree.DefaultMutableTreeNode;
-
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
@@ -69,48 +67,48 @@ public class StyleModelTest {
     public void ruleTest(){
         final MutableRule rule = SF.rule();
 
-        final StyleTreeModel<MutableRule> model = new StyleTreeModel<MutableRule>(rule);
-        final DefaultMutableTreeNode root = model.getRoot();
+        final StyleTreeModel model = new StyleTreeModel(rule);
+        final Object root = model.getRoot();
 
-        assertEquals(rule, root.getUserObject());
-        assertEquals(0, root.getChildCount());
+        assertEquals(rule, root);
+        assertEquals(0, model.getChildCount(root));
 
         final Symbolizer symbol1 = SF.lineSymbolizer();
         final Symbolizer symbol2 = SF.polygonSymbolizer();
 
         rule.symbolizers().add(symbol1);
-        assertEquals(1, root.getChildCount());
-        assertEquals(symbol1, ((DefaultMutableTreeNode)root.getChildAt(0)).getUserObject() );
+        assertEquals(1, model.getChildCount(root));
+        assertEquals(symbol1, model.getChild(root, 0));
 
         rule.symbolizers().add(symbol2);
-        assertEquals(2, root.getChildCount());
-        assertEquals(symbol1, ((DefaultMutableTreeNode)root.getChildAt(0)).getUserObject() );
-        assertEquals(symbol2, ((DefaultMutableTreeNode)root.getChildAt(1)).getUserObject() );
+        assertEquals(2, model.getChildCount(root));
+        assertEquals(symbol1, model.getChild(root, 0));
+        assertEquals(symbol2, model.getChild(root, 1));
         
         rule.symbolizers().remove(symbol1);
-        assertEquals(1, root.getChildCount());
-        assertEquals(symbol2, ((DefaultMutableTreeNode)root.getChildAt(0)).getUserObject() );
+        assertEquals(1, model.getChildCount(root));
+        assertEquals(symbol2, model.getChild(root, 0));
 
         rule.symbolizers().remove(symbol2);
-        assertEquals(0, root.getChildCount());
+        assertEquals(0, model.getChildCount(root));
 
 
         //try modifying the properties -----------------------------------------
         rule.symbolizers().add(symbol1);
         rule.symbolizers().add(symbol2);
-        assertEquals(2, root.getChildCount());
-        assertEquals(symbol1, ((DefaultMutableTreeNode)root.getChildAt(0)).getUserObject() );
-        assertEquals(symbol2, ((DefaultMutableTreeNode)root.getChildAt(1)).getUserObject() );
+        assertEquals(2, model.getChildCount(root));
+        assertEquals(symbol1, model.getChild(root, 0));
+        assertEquals(symbol2, model.getChild(root, 1));
 
         rule.setElseFilter(true);
-        assertEquals(2, root.getChildCount());
-        assertEquals(symbol1, ((DefaultMutableTreeNode)root.getChildAt(0)).getUserObject() );
-        assertEquals(symbol2, ((DefaultMutableTreeNode)root.getChildAt(1)).getUserObject() );
+        assertEquals(2, model.getChildCount(root));
+        assertEquals(symbol1, model.getChild(root, 0));
+        assertEquals(symbol2, model.getChild(root, 1));
 
         rule.setName("hello");
-        assertEquals(2, root.getChildCount());
-        assertEquals(symbol1, ((DefaultMutableTreeNode)root.getChildAt(0)).getUserObject() );
-        assertEquals(symbol2, ((DefaultMutableTreeNode)root.getChildAt(1)).getUserObject() );
+        assertEquals(2, model.getChildCount(root));
+        assertEquals(symbol1, model.getChild(root, 0));
+        assertEquals(symbol2, model.getChild(root, 1));
         
     }
 
@@ -118,57 +116,57 @@ public class StyleModelTest {
     public void ftsTest(){
         final MutableFeatureTypeStyle fts = SF.featureTypeStyle();
 
-        final StyleTreeModel<MutableFeatureTypeStyle> model = new StyleTreeModel<MutableFeatureTypeStyle>(fts);
-        final DefaultMutableTreeNode root = model.getRoot();
+        final StyleTreeModel model = new StyleTreeModel(fts);
+        final Object root = model.getRoot();
 
-        assertEquals(fts, root.getUserObject());
-        assertEquals(0, root.getChildCount());
+        assertEquals(fts, root);
+        assertEquals(0, model.getChildCount(root));
 
         final MutableRule rule1 = SF.rule();
         final MutableRule rule2 = SF.rule();
 
         fts.rules().add(rule1);
-        assertEquals(1, root.getChildCount());
-        assertEquals(rule1, ((DefaultMutableTreeNode)root.getChildAt(0)).getUserObject() );
+        assertEquals(1, model.getChildCount(root));
+        assertEquals(rule1, model.getChild(root, 0));
 
         fts.rules().add(rule2);
-        assertEquals(2, root.getChildCount());
-        assertEquals(rule1, ((DefaultMutableTreeNode)root.getChildAt(0)).getUserObject() );
-        assertEquals(rule2, ((DefaultMutableTreeNode)root.getChildAt(1)).getUserObject() );
+        assertEquals(2, model.getChildCount(root));
+        assertEquals(rule1, model.getChild(root, 0));
+        assertEquals(rule2, model.getChild(root, 1));
 
         fts.rules().remove(rule1);
-        assertEquals(1, root.getChildCount());
-        assertEquals(rule2, ((DefaultMutableTreeNode)root.getChildAt(0)).getUserObject() );
+        assertEquals(1, model.getChildCount(root));
+        assertEquals(rule2, model.getChild(root, 0));
 
         fts.rules().remove(rule2);
-        assertEquals(0, root.getChildCount());
+        assertEquals(0, model.getChildCount(root));
 
         //try modifying the properties -----------------------------------------
         fts.rules().add(rule1);
         fts.rules().add(rule2);
-        assertEquals(2, root.getChildCount());
-        assertEquals(rule1, ((DefaultMutableTreeNode)root.getChildAt(0)).getUserObject() );
-        assertEquals(rule2, ((DefaultMutableTreeNode)root.getChildAt(1)).getUserObject() );
+        assertEquals(2, model.getChildCount(root));
+        assertEquals(rule1, model.getChild(root, 0));
+        assertEquals(rule2, model.getChild(root, 1));
 
         fts.setOnlineResource(null);
-        assertEquals(2, root.getChildCount());
-        assertEquals(rule1, ((DefaultMutableTreeNode)root.getChildAt(0)).getUserObject() );
-        assertEquals(rule2, ((DefaultMutableTreeNode)root.getChildAt(1)).getUserObject() );
+        assertEquals(2, model.getChildCount(root));
+        assertEquals(rule1, model.getChild(root, 0));
+        assertEquals(rule2, model.getChild(root, 1));
 
         fts.setName("hello");
-        assertEquals(2, root.getChildCount());
-        assertEquals(rule1, ((DefaultMutableTreeNode)root.getChildAt(0)).getUserObject() );
-        assertEquals(rule2, ((DefaultMutableTreeNode)root.getChildAt(1)).getUserObject() );
+        assertEquals(2, model.getChildCount(root));
+        assertEquals(rule1, model.getChild(root, 0));
+        assertEquals(rule2, model.getChild(root, 1));
 
         fts.semanticTypeIdentifiers().clear();
-        assertEquals(2, root.getChildCount());
-        assertEquals(rule1, ((DefaultMutableTreeNode)root.getChildAt(0)).getUserObject() );
-        assertEquals(rule2, ((DefaultMutableTreeNode)root.getChildAt(1)).getUserObject() );
+        assertEquals(2, model.getChildCount(root));
+        assertEquals(rule1, model.getChild(root, 0));
+        assertEquals(rule2, model.getChild(root, 1));
 
         fts.semanticTypeIdentifiers().add(SemanticType.LINE);
-        assertEquals(2, root.getChildCount());
-        assertEquals(rule1, ((DefaultMutableTreeNode)root.getChildAt(0)).getUserObject() );
-        assertEquals(rule2, ((DefaultMutableTreeNode)root.getChildAt(1)).getUserObject() );
+        assertEquals(2, model.getChildCount(root));
+        assertEquals(rule1, model.getChild(root, 0));
+        assertEquals(rule2, model.getChild(root, 1));
 
 
     }
@@ -177,47 +175,47 @@ public class StyleModelTest {
     public void styleTest(){
         final MutableStyle style = SF.style();
 
-        final StyleTreeModel<MutableStyle> model = new StyleTreeModel<MutableStyle>(style);
-        final DefaultMutableTreeNode root = model.getRoot();
+        final StyleTreeModel model = new StyleTreeModel(style);
+        final Object root = model.getRoot();
 
-        assertEquals(style, root.getUserObject());
-        assertEquals(0, root.getChildCount());
+        assertEquals(style, root);
+        assertEquals(0, model.getChildCount(root));
 
         final MutableFeatureTypeStyle fts1 = SF.featureTypeStyle();
         final MutableFeatureTypeStyle fts2 = SF.featureTypeStyle();
 
         style.featureTypeStyles().add(fts1);
-        assertEquals(1, root.getChildCount());
-        assertEquals(fts1, ((DefaultMutableTreeNode)root.getChildAt(0)).getUserObject() );
+        assertEquals(1, model.getChildCount(root));
+        assertEquals(fts1, model.getChild(root, 0));
 
         style.featureTypeStyles().add(fts2);
-        assertEquals(2, root.getChildCount());
-        assertEquals(fts1, ((DefaultMutableTreeNode)root.getChildAt(0)).getUserObject() );
-        assertEquals(fts2, ((DefaultMutableTreeNode)root.getChildAt(1)).getUserObject() );
+        assertEquals(2, model.getChildCount(root));
+        assertEquals(fts1, model.getChild(root, 0));
+        assertEquals(fts2, model.getChild(root, 1));
 
         style.featureTypeStyles().remove(fts1);
-        assertEquals(1, root.getChildCount());
-        assertEquals(fts2, ((DefaultMutableTreeNode)root.getChildAt(0)).getUserObject() );
+        assertEquals(1, model.getChildCount(root));
+        assertEquals(fts2, model.getChild(root, 0));
 
         style.featureTypeStyles().remove(fts2);
-        assertEquals(0, root.getChildCount());
+        assertEquals(0, model.getChildCount(root));
 
         //try modifying the properties -----------------------------------------
         style.featureTypeStyles().add(fts1);
         style.featureTypeStyles().add(fts2);
-        assertEquals(2, root.getChildCount());
-        assertEquals(fts1, ((DefaultMutableTreeNode)root.getChildAt(0)).getUserObject() );
-        assertEquals(fts2, ((DefaultMutableTreeNode)root.getChildAt(1)).getUserObject() );
+        assertEquals(2, model.getChildCount(root));
+        assertEquals(fts1, model.getChild(root, 0));
+        assertEquals(fts2, model.getChild(root, 1));
 
         style.setDefault(true);
-        assertEquals(2, root.getChildCount());
-        assertEquals(fts1, ((DefaultMutableTreeNode)root.getChildAt(0)).getUserObject() );
-        assertEquals(fts2, ((DefaultMutableTreeNode)root.getChildAt(1)).getUserObject() );
+        assertEquals(2, model.getChildCount(root));
+        assertEquals(fts1, model.getChild(root, 0));
+        assertEquals(fts2, model.getChild(root, 1));
 
         style.setName("hello");
-        assertEquals(2, root.getChildCount());
-        assertEquals(fts1, ((DefaultMutableTreeNode)root.getChildAt(0)).getUserObject() );
-        assertEquals(fts2, ((DefaultMutableTreeNode)root.getChildAt(1)).getUserObject() );
+        assertEquals(2, model.getChildCount(root));
+        assertEquals(fts1, model.getChild(root, 0));
+        assertEquals(fts2, model.getChild(root, 1));
 
     }
 
@@ -225,11 +223,11 @@ public class StyleModelTest {
     public void deepTest(){
         final MutableStyle style = SF.style();
 
-        final StyleTreeModel<MutableStyle> model = new StyleTreeModel<MutableStyle>(style);
-        final DefaultMutableTreeNode root = model.getRoot();
+        final StyleTreeModel model = new StyleTreeModel(style);
+        final Object root = model.getRoot();
 
-        assertEquals(style, root.getUserObject());
-        assertEquals(0, root.getChildCount());
+        assertEquals(style, root);
+        assertEquals(0, model.getChildCount(root));
 
         final MutableFeatureTypeStyle fts1 = SF.featureTypeStyle();
         final MutableFeatureTypeStyle fts2 = SF.featureTypeStyle();
@@ -238,48 +236,48 @@ public class StyleModelTest {
         final Symbolizer symbol1 = SF.lineSymbolizer();
 
         style.featureTypeStyles().add(fts1);
-        assertEquals(1, root.getChildCount());
-        assertEquals(fts1, ((DefaultMutableTreeNode)root.getChildAt(0)).getUserObject() );
+        assertEquals(1, model.getChildCount(root));
+        assertEquals(fts1, model.getChild(root, 0));
 
         style.featureTypeStyles().add(fts2);
-        assertEquals(2, root.getChildCount());
-        assertEquals(fts1, ((DefaultMutableTreeNode)root.getChildAt(0)).getUserObject() );
-        assertEquals(fts2, ((DefaultMutableTreeNode)root.getChildAt(1)).getUserObject() );
+        assertEquals(2, model.getChildCount(root));
+        assertEquals(fts1, model.getChild(root, 0));
+        assertEquals(fts2, model.getChild(root, 1));
 
         style.featureTypeStyles().add(fts3);
-        assertEquals(3, root.getChildCount());
-        assertEquals(fts1, ((DefaultMutableTreeNode)root.getChildAt(0)).getUserObject() );
-        assertEquals(fts2, ((DefaultMutableTreeNode)root.getChildAt(1)).getUserObject() );
-        assertEquals(fts3, ((DefaultMutableTreeNode)root.getChildAt(2)).getUserObject() );
+        assertEquals(3, model.getChildCount(root));
+        assertEquals(fts1, model.getChild(root, 0));
+        assertEquals(fts2, model.getChild(root, 1));
+        assertEquals(fts3, model.getChild(root, 2));
 
         fts1.rules().add(rule1);
-        assertEquals(3, root.getChildCount());
-        assertEquals(fts1, ((DefaultMutableTreeNode)root.getChildAt(0)).getUserObject() );
-        assertEquals(fts2, ((DefaultMutableTreeNode)root.getChildAt(1)).getUserObject() );
-        assertEquals(fts3, ((DefaultMutableTreeNode)root.getChildAt(2)).getUserObject() );
-        assertEquals(1, root.getChildAt(0).getChildCount() );
-        assertEquals(rule1, ((DefaultMutableTreeNode)root.getChildAt(0).getChildAt(0)).getUserObject() );
+        assertEquals(3, model.getChildCount(root));
+        assertEquals(fts1, model.getChild(root, 0));
+        assertEquals(fts2, model.getChild(root, 1));
+        assertEquals(fts3, model.getChild(root, 2));
+        assertEquals(1, model.getChildCount(model.getChild(root, 0)) );
+        assertEquals(rule1, model.getChild(model.getChild(root, 0),0));
         
         rule1.symbolizers().add(symbol1);
-        assertEquals(3, root.getChildCount());
-        assertEquals(fts1, ((DefaultMutableTreeNode)root.getChildAt(0)).getUserObject() );
-        assertEquals(fts2, ((DefaultMutableTreeNode)root.getChildAt(1)).getUserObject() );
-        assertEquals(fts3, ((DefaultMutableTreeNode)root.getChildAt(2)).getUserObject() );
-        assertEquals(1, root.getChildAt(0).getChildCount() );
-        assertEquals(rule1, ((DefaultMutableTreeNode)root.getChildAt(0).getChildAt(0)).getUserObject() );
-        assertEquals(1, root.getChildAt(0).getChildAt(0).getChildCount() );
-        assertEquals(symbol1, ((DefaultMutableTreeNode)root.getChildAt(0).getChildAt(0).getChildAt(0)).getUserObject() );
+        assertEquals(3, model.getChildCount(root));
+        assertEquals(fts1, model.getChild(root, 0));
+        assertEquals(fts2, model.getChild(root, 1));
+        assertEquals(fts3, model.getChild(root, 2));
+        assertEquals(1, model.getChildCount(model.getChild(root, 0)) );
+        assertEquals(rule1, model.getChild(model.getChild(root, 0),0));
+        assertEquals(1, model.getChildCount(model.getChild(model.getChild(root, 0),0)) );
+        assertEquals(symbol1, model.getChild(model.getChild(model.getChild(root, 0),0),0));
 
 
         fts2.semanticTypeIdentifiers().clear();
-        assertEquals(3, root.getChildCount());
-        assertEquals(fts1, ((DefaultMutableTreeNode)root.getChildAt(0)).getUserObject() );
-        assertEquals(fts2, ((DefaultMutableTreeNode)root.getChildAt(1)).getUserObject() );
-        assertEquals(fts3, ((DefaultMutableTreeNode)root.getChildAt(2)).getUserObject() );
-        assertEquals(1, root.getChildAt(0).getChildCount() );
-        assertEquals(rule1, ((DefaultMutableTreeNode)root.getChildAt(0).getChildAt(0)).getUserObject() );
-        assertEquals(1, root.getChildAt(0).getChildAt(0).getChildCount() );
-        assertEquals(symbol1, ((DefaultMutableTreeNode)root.getChildAt(0).getChildAt(0).getChildAt(0)).getUserObject() );
+        assertEquals(3, model.getChildCount(root));
+        assertEquals(fts1, model.getChild(root, 0));
+        assertEquals(fts2, model.getChild(root, 1));
+        assertEquals(fts3, model.getChild(root, 2));
+        assertEquals(1, model.getChildCount(model.getChild(root, 0)) );
+        assertEquals(rule1, model.getChild(model.getChild(root, 0),0));
+        assertEquals(1, model.getChildCount(model.getChild(model.getChild(root, 0),0)) );
+        assertEquals(symbol1, model.getChild(model.getChild(model.getChild(root, 0),0),0));
         
         fts2.semanticTypeIdentifiers().add(SemanticType.ANY);
         fts2.semanticTypeIdentifiers().add(SemanticType.POINT);
@@ -287,34 +285,34 @@ public class StyleModelTest {
         fts2.semanticTypeIdentifiers().add(SemanticType.POLYGON);
         fts2.semanticTypeIdentifiers().add(SemanticType.TEXT);
         fts2.semanticTypeIdentifiers().add(SemanticType.RASTER);
-        assertEquals(3, root.getChildCount());
-        assertEquals(fts1, ((DefaultMutableTreeNode)root.getChildAt(0)).getUserObject() );
-        assertEquals(fts2, ((DefaultMutableTreeNode)root.getChildAt(1)).getUserObject() );
-        assertEquals(fts3, ((DefaultMutableTreeNode)root.getChildAt(2)).getUserObject() );
-        assertEquals(1, root.getChildAt(0).getChildCount() );
-        assertEquals(rule1, ((DefaultMutableTreeNode)root.getChildAt(0).getChildAt(0)).getUserObject() );
-        assertEquals(1, root.getChildAt(0).getChildAt(0).getChildCount() );
-        assertEquals(symbol1, ((DefaultMutableTreeNode)root.getChildAt(0).getChildAt(0).getChildAt(0)).getUserObject() );
+        assertEquals(3, model.getChildCount(root));
+        assertEquals(fts1, model.getChild(root, 0));
+        assertEquals(fts2, model.getChild(root, 1));
+        assertEquals(fts3, model.getChild(root, 2));
+        assertEquals(1, model.getChildCount(model.getChild(root, 0)) );
+        assertEquals(rule1, model.getChild(model.getChild(root, 0),0));
+        assertEquals(1, model.getChildCount(model.getChild(model.getChild(root, 0),0)) );
+        assertEquals(symbol1, model.getChild(model.getChild(model.getChild(root, 0),0),0));
 
         fts2.setDescription(SF.description("tadam", "plopplop"));
-        assertEquals(3, root.getChildCount());
-        assertEquals(fts1, ((DefaultMutableTreeNode)root.getChildAt(0)).getUserObject() );
-        assertEquals(fts2, ((DefaultMutableTreeNode)root.getChildAt(1)).getUserObject() );
-        assertEquals(fts3, ((DefaultMutableTreeNode)root.getChildAt(2)).getUserObject() );
-        assertEquals(1, root.getChildAt(0).getChildCount() );
-        assertEquals(rule1, ((DefaultMutableTreeNode)root.getChildAt(0).getChildAt(0)).getUserObject() );
-        assertEquals(1, root.getChildAt(0).getChildAt(0).getChildCount() );
-        assertEquals(symbol1, ((DefaultMutableTreeNode)root.getChildAt(0).getChildAt(0).getChildAt(0)).getUserObject() );
+        assertEquals(3, model.getChildCount(root));
+        assertEquals(fts1, model.getChild(root, 0));
+        assertEquals(fts2, model.getChild(root, 1));
+        assertEquals(fts3, model.getChild(root, 2));
+        assertEquals(1, model.getChildCount(model.getChild(root, 0)) );
+        assertEquals(rule1, model.getChild(model.getChild(root, 0),0));
+        assertEquals(1, model.getChildCount(model.getChild(model.getChild(root, 0),0)) );
+        assertEquals(symbol1, model.getChild(model.getChild(model.getChild(root, 0),0),0));
 
         fts2.setName("the name");
-        assertEquals(3, root.getChildCount());
-        assertEquals(fts1, ((DefaultMutableTreeNode)root.getChildAt(0)).getUserObject() );
-        assertEquals(fts2, ((DefaultMutableTreeNode)root.getChildAt(1)).getUserObject() );
-        assertEquals(fts3, ((DefaultMutableTreeNode)root.getChildAt(2)).getUserObject() );
-        assertEquals(1, root.getChildAt(0).getChildCount() );
-        assertEquals(rule1, ((DefaultMutableTreeNode)root.getChildAt(0).getChildAt(0)).getUserObject() );
-        assertEquals(1, root.getChildAt(0).getChildAt(0).getChildCount() );
-        assertEquals(symbol1, ((DefaultMutableTreeNode)root.getChildAt(0).getChildAt(0).getChildAt(0)).getUserObject() );
+        assertEquals(3, model.getChildCount(root));
+        assertEquals(fts1, model.getChild(root, 0));
+        assertEquals(fts2, model.getChild(root, 1));
+        assertEquals(fts3, model.getChild(root, 2));
+        assertEquals(1, model.getChildCount(model.getChild(root, 0)) );
+        assertEquals(rule1, model.getChild(model.getChild(root, 0),0));
+        assertEquals(1, model.getChildCount(model.getChild(model.getChild(root, 0),0)) );
+        assertEquals(symbol1, model.getChild(model.getChild(model.getChild(root, 0),0),0));
 
     }
 

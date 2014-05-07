@@ -58,7 +58,6 @@ import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreeCellEditor;
-import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
@@ -68,7 +67,6 @@ import org.geotoolkit.data.FeatureStoreManagementEvent;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.primitive.GraphicJ2D;
-import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.display2d.service.DefaultGlyphService;
 import org.geotoolkit.gui.swing.style.JOpacitySlider;
 import org.geotoolkit.map.FeatureMapLayer;
@@ -90,13 +88,16 @@ import org.opengis.style.FeatureTypeStyle;
 import org.opengis.style.Rule;
 
 import static org.apache.sis.util.ArgumentChecks.*;
+import org.geotoolkit.gui.swing.resource.FontAwesomeIcons;
+import org.geotoolkit.gui.swing.resource.IconBuilder;
+import org.geotoolkit.gui.swing.style.JStyleTree;
 
 public class JContextTree extends JScrollPane {
 
     private static final DataFlavor ITEM_FLAVOR = new DataFlavor(org.geotoolkit.map.MapItem.class, "geo/item");
     private static final MutableStyleFactory SF = new DefaultStyleFactory();
-    private static final ImageIcon ICON_FTS = IconBundle.getIcon("16_style_fts");
-    private static final ImageIcon ICON_GROUP = IconBundle.getIcon("16_attach");
+    private static final ImageIcon ICON_FTS = JStyleTree.ICON_FTS;
+    private static final ImageIcon ICON_GROUP = IconBuilder.createIcon(FontAwesomeIcons.ICON_FOLDER_CLOSE_ALT,16,FontAwesomeIcons.DEFAULT_COLOR);
 
     private final List<TreePopupItem> controls = new ArrayList<TreePopupItem>();
     private final JTree tree = new JTree(new DefaultTreeModel(new DefaultMutableTreeNode()));
@@ -398,11 +399,11 @@ public class JContextTree extends JScrollPane {
                 final MapLayer layer = (MapLayer) obj;
 
                 opacity.setOpacity(layer.getOpacity());
-                panel.add(opacity);
                 this.visibleCheck.setSelected(layer.isVisible());
                 panel.add(visibleCheck);
                 this.selectCheck.setSelected(layer.isSelectable());
                 panel.add(selectCheck);
+                panel.add(opacity);
                 if(edition){
                     this.field.setText(label(layer));
                     panel.add(field);
@@ -422,10 +423,8 @@ public class JContextTree extends JScrollPane {
             } else if (obj instanceof MapItem) {
                 final MapItem item = (MapItem) obj;
 
-                if(!(item instanceof MapContext)){
-                    this.icon.setIcon(ICON_GROUP);
-                    panel.add(icon);
-                }
+                this.icon.setIcon(ICON_GROUP);
+                panel.add(icon);
 
                 this.visibleCheck.setSelected(item.isVisible());
                 panel.add(visibleCheck);

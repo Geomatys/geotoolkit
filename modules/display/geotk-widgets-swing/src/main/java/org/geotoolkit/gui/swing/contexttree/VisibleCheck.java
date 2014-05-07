@@ -4,6 +4,7 @@
  *
  *    (C) 2007 - 2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2008 - 2009, Johann Sorel
+ *    (C) 2009 - 2014, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -17,12 +18,12 @@
  */
 package org.geotoolkit.gui.swing.contexttree;
 
-import java.awt.Graphics;
+import java.awt.Color;
 
 import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
-
-import org.geotoolkit.gui.swing.resource.IconBundle;
+import org.geotoolkit.gui.swing.resource.FontAwesomeIcons;
+import org.geotoolkit.gui.swing.resource.IconBuilder;
 
 
 /**
@@ -33,13 +34,19 @@ import org.geotoolkit.gui.swing.resource.IconBundle;
  */
 class VisibleCheck extends JCheckBox {
 
-    private static final ImageIcon ICO_VISIBLE = IconBundle.getIcon("16_visible");
-    private static final ImageIcon ICO_NOVISIBLE = IconBundle.getIcon("16_novisible");
+    private static final ImageIcon ICO_VISIBLE = IconBuilder.createIcon(FontAwesomeIcons.ICON_EYE_OPEN, 16, FontAwesomeIcons.DEFAULT_COLOR);
+    private static final ImageIcon ICO_NOVISIBLE = IconBuilder.createIcon(FontAwesomeIcons.ICON_EYE_CLOSE, 16, Color.LIGHT_GRAY);
 
-    @Override
-    public void paintComponent(final Graphics g) {
-        int x = (getWidth() - 16) / 2;
-        int y = (getHeight() - 16) / 2;
-        g.drawImage((isSelected()) ? ICO_VISIBLE.getImage() : ICO_NOVISIBLE.getImage(), x, y, this);
+    public VisibleCheck() {
+        setOpaque(false);
+        setBorderPainted(false);
+        setPressedIcon(         ICO_NOVISIBLE);
+        setRolloverIcon(        ICO_NOVISIBLE);
+        setRolloverSelectedIcon(ICO_VISIBLE);
+        setIcon(                ICO_NOVISIBLE);
+        setSelectedIcon(        ICO_VISIBLE);
+        setDisabledIcon(        ICO_NOVISIBLE);
+        setDisabledSelectedIcon(ICO_VISIBLE);
     }
+
 }

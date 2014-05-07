@@ -17,13 +17,15 @@
  */
 package org.geotoolkit.gui.swing.style;
 
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import org.geotoolkit.cql.CQLException;
 import org.geotoolkit.gui.swing.filter.JCQLEditor;
-import org.geotoolkit.gui.swing.resource.IconBundle;
+import org.geotoolkit.gui.swing.resource.FontAwesomeIcons;
+import org.geotoolkit.gui.swing.resource.IconBuilder;
 import org.geotoolkit.map.MapLayer;
 import org.opengis.filter.expression.Expression;
 
@@ -36,8 +38,8 @@ public class JSpecialExpressionButton extends JButton{
 
     public static final String EXPRESSION_PROPERTY = "expression";
 
-    private static final Icon ICON_EXP_NO = IconBundle.getIcon("16_expression_no");
-    private static final Icon ICON_EXP_YES = IconBundle.getIcon("16_expression_yes");
+    private static final Icon ICON_EXP_NO = IconBuilder.createIcon(FontAwesomeIcons.ICON_PENCIL, 14, Color.LIGHT_GRAY);
+    private static final Icon ICON_EXP_YES = IconBuilder.createIcon(FontAwesomeIcons.ICON_PENCIL, 14, Color.RED);
     private Expression exp = null;
     private MapLayer layer = null;
 

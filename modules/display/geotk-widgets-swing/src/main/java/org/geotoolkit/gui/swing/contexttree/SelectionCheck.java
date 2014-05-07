@@ -17,12 +17,11 @@
  */
 package org.geotoolkit.gui.swing.contexttree;
 
-import java.awt.Graphics;
-
+import java.awt.Color;
 import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
-
-import org.geotoolkit.gui.swing.resource.IconBundle;
+import org.geotoolkit.gui.swing.resource.FontAwesomeIcons;
+import org.geotoolkit.gui.swing.resource.IconBuilder;
 
 
 /**
@@ -33,13 +32,19 @@ import org.geotoolkit.gui.swing.resource.IconBundle;
  */
 class SelectionCheck extends JCheckBox {
 
-    private static final ImageIcon ICO_SELECT = IconBundle.getIcon("16_select");
-    private static final ImageIcon ICO_NOSELECT = IconBundle.getIcon("16_noselect");
+    private static final ImageIcon ICO_SELECT = IconBuilder.createIcon(FontAwesomeIcons.ICON_INFO, 16, FontAwesomeIcons.DEFAULT_COLOR);
+    private static final ImageIcon ICO_NOSELECT = IconBuilder.createIcon(FontAwesomeIcons.ICON_INFO, 16, Color.LIGHT_GRAY);
 
-    @Override
-    public void paintComponent(final Graphics g) {
-        int x = (getWidth() - 16) / 2;
-        int y = (getHeight() - 16) / 2;
-        g.drawImage((isSelected()) ? ICO_SELECT.getImage() : ICO_NOSELECT.getImage(), x, y, this);
+    public SelectionCheck() {
+        setOpaque(false);
+        setBorderPainted(false);
+        setPressedIcon(         ICO_NOSELECT);
+        setRolloverIcon(        ICO_NOSELECT);
+        setRolloverSelectedIcon(ICO_SELECT);
+        setIcon(                ICO_NOSELECT);
+        setSelectedIcon(        ICO_SELECT);
+        setDisabledIcon(        ICO_NOSELECT);
+        setDisabledSelectedIcon(ICO_SELECT);
     }
+    
 }

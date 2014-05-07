@@ -52,7 +52,7 @@ public class DeleteItem extends AbstractTreePopupItem{
     }
 
     private void init(){
-        setIcon(IconBuilder.createIcon(FontAwesomeIcons.ICON_TRASH, 16, Color.BLACK) );
+        setIcon(IconBuilder.createIcon(FontAwesomeIcons.ICON_TRASH, 16, FontAwesomeIcons.DEFAULT_COLOR) );
         setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE,0));
 
         addActionListener(new ActionListener() {
