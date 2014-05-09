@@ -49,6 +49,7 @@ import ucar.ma2.Array;
 import ucar.ma2.ArrayChar;
 import ucar.ma2.ArrayInt;
 import ucar.nc2.Attribute;
+import ucar.nc2.Dimension;
 import ucar.nc2.NetcdfFile;
 import ucar.nc2.Variable;
 
@@ -120,11 +121,11 @@ public class NetCDFExtractor {
             final Attribute ftAtt = file.findGlobalAttribute("featureType");
             if (ftAtt != null) {
                 final String value = ftAtt.getStringValue();
-                if ("timeSeries".equals(value)) {
+                if ("timeSeries".equalsIgnoreCase(value)) {
                     analyze.featureType = TIMESERIES;
-                } else if ("profile".equals(value)) {
+                } else if ("profile".equalsIgnoreCase(value)) {
                     analyze.featureType = PROFILE;
-                } else if ("trajectory".equals(value)) {
+                } else if ("trajectory".equalsIgnoreCase(value)) {
                     analyze.featureType = TRAJECTORY;
                 } else {
                     analyze.featureType = GRID;
@@ -220,6 +221,26 @@ public class NetCDFExtractor {
                         }
                     }
                 }
+                
+                //look for invisible separator
+                if (analyze.featureType != TRAJECTORY && analyze.separatorField == null) {
+                    for (Field phenField : analyze.phenfields) {
+                        if (phenField.dimension > 1) {
+                            final String separatorDim = phenField.dimensionLabel.replace(analyze.mainField.label, "").trim();
+                            analyze.dimensionSeparator = separatorDim;
+                        }
+                    }
+                } else if (analyze.featureType == TRAJECTORY && analyze.separatorField == null) {
+                    for (Field phenField : analyze.phenfields) {
+                        if (phenField.dimension > 1) {
+                            final Dimension dim = file.findDimension("trajectory");
+                            if (dim != null) {
+                                final String separatorDim = "trajectory";
+                                analyze.dimensionSeparator = separatorDim;
+                            }
+                        }
+                    }
+                }
             }
 
 
@@ -235,9 +256,9 @@ public class NetCDFExtractor {
             final Attribute ftAtt = file.findGlobalAttribute("featureType");
             if (ftAtt != null) {
                 final String value = ftAtt.getStringValue();
-                if ("timeSeries".equals(value) ||
-                        "profile".equals(value)   ||
-                        "trajectory".equals(value)) {
+                if ("timeSeries".equalsIgnoreCase(value) ||
+                    "profile".equalsIgnoreCase(value)   ||
+                    "trajectory".equalsIgnoreCase(value)) {
                     return true;
                 }
             }
@@ -409,9 +430,10 @@ public class NetCDFExtractor {
                     compo.spatialBound.merge(gb);
                     system.children.add(compo);
                     
+                    final String obsid = UUID.randomUUID().toString();
                     results.observations.add(OMXmlFactory.buildObservation("2.0.0",           // version
-                                                  identifier,                    // id
-                                                  identifier,                    // name
+                                                  obsid,                         // id
+                                                  obsid,                         // name
                                                   null,                          // description
                                                   foi,                           // foi
                                                   phenomenon,                    // phenomenon
@@ -604,10 +626,10 @@ public class NetCDFExtractor {
                     compo.spatialBound.merge(gb);
                     system.children.add(compo);
                     
-                    
+                    final String obsid = UUID.randomUUID().toString();
                     results.observations.add(OMXmlFactory.buildObservation("2.0.0",           // version
-                                                  identifier,                    // id
-                                                  identifier,                    // name
+                                                  obsid,                         // id
+                                                  obsid,                         // name
                                                   null,                          // description
                                                   foi,                           // foi
                                                   phenomenon,                    // phenomenon
@@ -803,10 +825,10 @@ public class NetCDFExtractor {
                     compo.spatialBound.merge(gb);
                     system.children.add(compo);
                     
-                    
+                    final String obsid = UUID.randomUUID().toString();
                     results.observations.add(OMXmlFactory.buildObservation("2.0.0",           // version
-                                                  identifier,                    // id
-                                                  identifier,                    // name
+                                                  obsid,                    // id
+                                                  obsid,                    // name
                                                   null,                          // description
                                                   foi,                           // foi
                                                   phenomenon,                    // phenomenon
@@ -959,6 +981,11 @@ public class NetCDFExtractor {
                     final String identifier = Integer.toString(id).trim() + '-';
                     separators.add(identifier);
                 }
+            }
+        } else if (analyze.dimensionSeparator != null) {
+            final Dimension dim = analyze.file.findDimension(analyze.dimensionSeparator);
+            for (int i = 0; i < dim.getLength(); i++) {
+                separators.add(Integer.toString(i));
             }
         }
         return separators;

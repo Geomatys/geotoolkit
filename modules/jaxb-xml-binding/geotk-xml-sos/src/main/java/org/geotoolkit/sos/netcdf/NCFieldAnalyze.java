@@ -33,6 +33,7 @@ public class NCFieldAnalyze {
         public String title                     = null;
         public Field mainField                  = null;
         public Field separatorField             = null;
+        public String dimensionSeparator        = null;
         public Field latField                   = null;
         public Field lonField                   = null;
         public Field timeField                  = null;

@@ -23,6 +23,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import org.geotoolkit.sos.xml.SOSXmlFactory;
 import org.geotoolkit.swe.xml.AbstractDataComponent;
 import org.geotoolkit.swe.xml.AbstractDataRecord;
@@ -143,7 +144,8 @@ public class OMUtils {
             for (Field phen : phenomenons) {
                 types.add(new PhenomenonType(phen.label, phen.label));
             }
-            phenomenon = new CompositePhenomenonType("composite", "composite", null, null, types);
+            final String compositeName = "composite" + UUID.randomUUID().toString();
+            phenomenon = new CompositePhenomenonType(compositeName, compositeName, null, null, types);
         }
         return phenomenon;
     }
