@@ -48,7 +48,7 @@ import javax.imageio.stream.ImageOutputStream;
 import javax.swing.ProgressMonitor;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlElement;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.AbstractGridMosaic;
 import org.geotoolkit.coverage.DefaultTileReference;
@@ -69,40 +69,41 @@ import org.opengis.geometry.Envelope;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-@XmlAccessorType(XmlAccessType.FIELD)
+@XmlAccessorType(XmlAccessType.NONE)
 public class XMLMosaic implements GridMosaic{
 
-    @XmlTransient
     private static final Logger LOGGER = Logging.getLogger(XMLMosaic.class);
 
     /** Executor used to write images */
-    @XmlTransient
     private static final RejectedExecutionHandler LOCAL_REJECT_EXECUTION_HANDLER = new ThreadPoolExecutor.CallerRunsPolicy();
-    @XmlTransient
+
     private static final BlockingQueue IMAGEQUEUE = new ArrayBlockingQueue(Runtime.getRuntime().availableProcessors()*2);
-    @XmlTransient
+
     private static final ThreadPoolExecutor TILEWRITEREXECUTOR = new ThreadPoolExecutor(
             0, Runtime.getRuntime().availableProcessors(), 1, TimeUnit.MINUTES, IMAGEQUEUE, LOCAL_REJECT_EXECUTION_HANDLER);
 
     //empty tile informations
-    @XmlTransient
     private byte[] emptyTileEncoded = null;
 
     //written values
+    @XmlElement
     double scale;
+    @XmlElement
     double upperleftX;
+    @XmlElement
     double upperleftY;
+    @XmlElement
     int gridWidth;
+    @XmlElement
     int gridHeight;
+    @XmlElement
     int tileWidth;
+    @XmlElement
     int tileHeight;
     String completion;
 
-    @XmlTransient
     XMLPyramid pyramid = null;
-    @XmlTransient
     BitSet tileExist;
-    @XmlTransient
     BitSet tileEmpty;
 
 
@@ -149,7 +150,7 @@ public class XMLMosaic implements GridMosaic{
         return emptyTileEncoded;
     }
 
-    private synchronized void updateCompletionString(){
+    private void updateCompletionString() {
         final StringBuilder sb = new StringBuilder();
         int index = 0;
         for(int y=0,l=getGridSize().height;y<l;y++){
@@ -163,7 +164,9 @@ public class XMLMosaic implements GridMosaic{
             }
         }
         sb.append('\n');
-        completion = sb.toString();
+        synchronized (completion) {
+            completion = sb.toString();
+        }
     }
 
     /**
@@ -303,7 +306,6 @@ public class XMLMosaic implements GridMosaic{
         if (isEmpty(image.getData())) {
             tileExist.set(getTileIndex(col, row), true);
             tileEmpty.set(getTileIndex(col, row), true);
-            updateCompletionString();
             return;
         }
 
@@ -316,7 +318,6 @@ public class XMLMosaic implements GridMosaic{
             writer.write(image);
             tileExist.set(getTileIndex(col, row), true);
             tileEmpty.set(getTileIndex(col, row), false);
-            updateCompletionString();
         } catch (IOException ex) {
             throw new DataStoreException(ex.getMessage(), ex);
         } finally {
@@ -328,39 +329,34 @@ public class XMLMosaic implements GridMosaic{
 
     void writeTiles(final RenderedImage image, final boolean onlyMissing, final ProgressMonitor monitor) throws DataStoreException{
         final List<Future> futurs = new ArrayList<>();
-        try {
-            for(int y=0,ny=image.getNumYTiles(); y<ny; y++){
-                for(int x=0,nx=image.getNumXTiles(); x<nx; x++){
-                    if (monitor != null && monitor.isCanceled()) {
-                        // Stops submitting new thread
-                        return;
-                    }
-
-                    if(onlyMissing && !isMissing(x, y)){
-                        continue;
-                    }
-
-                    final int tileIndex = getTileIndex(x, y);
-                    checkPosition(x, y);
-
-                    final File f = getTileFile(x, y);
-                    f.getParentFile().mkdirs();
-                    Future fut = TILEWRITEREXECUTOR.submit(new TileWriter(f, image, x, y, tileIndex, image.getColorModel(), getPyramid().getPyramidSet().getFormatName(), monitor));
-                    futurs.add(fut);
+        for(int y=0,ny=image.getNumYTiles(); y<ny; y++){
+            for(int x=0,nx=image.getNumXTiles(); x<nx; x++){
+                if (monitor != null && monitor.isCanceled()) {
+                    // Stops submitting new thread
+                    return;
                 }
-            }
 
-            //wait for all writing tobe done
-            for(Future f : futurs){
-                try {
-                    f.get();
-                } catch (InterruptedException | ExecutionException ex) {
-                    LOGGER.log(Level.WARNING, ex.getMessage(), ex);
+                if(onlyMissing && !isMissing(x, y)){
+                    continue;
                 }
-            }
 
-        } finally{
-            updateCompletionString();
+                final int tileIndex = getTileIndex(x, y);
+                checkPosition(x, y);
+
+                final File f = getTileFile(x, y);
+                f.getParentFile().mkdirs();
+                Future fut = TILEWRITEREXECUTOR.submit(new TileWriter(f, image, x, y, tileIndex, image.getColorModel(), getPyramid().getPyramidSet().getFormatName(), monitor));
+                futurs.add(fut);
+            }
+        }
+
+        //wait for all writing tobe done
+        for(Future f : futurs){
+            try {
+                f.get();
+            } catch (InterruptedException | ExecutionException ex) {
+                LOGGER.log(Level.WARNING, ex.getMessage(), ex);
+            }
         }
 
     }
@@ -374,6 +370,16 @@ public class XMLMosaic implements GridMosaic{
     private int getTileIndex(int col, int row){
         final int index = row*getGridSize().width + col;
         return index;
+    }
+
+    @XmlElement
+    protected String getCompletion() {
+        updateCompletionString();
+        return completion;
+    }
+
+    protected void setCompletion(String newValue) {
+        completion = newValue;
     }
 
     /**
