@@ -225,8 +225,24 @@ public class DefaultFolderFeatureStore extends AbstractFeatureStore implements D
      * Unsupported, throws a {@link DataStoreException}.
      */
     @Override
-    public void deleteFeatureType(final Name typeName) throws DataStoreException {
-        throw new DataStoreException("Not supported yet.");
+    public synchronized void deleteFeatureType(final Name typeName) throws DataStoreException {
+        final FeatureStore store = stores.get(typeName);
+        if (store == null) {
+            throw new DataStoreException("There's no data with the following type name : "+typeName);
+        }
+        // We should get a file feature store, so we must find an url parameter to delete source file.
+        final URL fileURL = Parameters.value(URLP, store.getConfiguration());
+        if (fileURL == null) {
+            throw new DataStoreException("Source data cannot be reached for type name : "+typeName);
+        }
+        try {
+            File toDelete = new File(fileURL.toURI());
+            toDelete.delete();
+        } catch (URISyntaxException e) {
+            throw new DataStoreException("Source data cannot be reached for type name : "+typeName, e);
+        }
+
+        stores.remove(typeName);
     }
 
     /**
