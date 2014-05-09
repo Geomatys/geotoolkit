@@ -1382,25 +1382,5 @@ public final class FeatureTypeUtilities {
         }
         return names;
     }
-
-
-    /**
-     * Search in the given feature type for a property whose name matches given pattern.
-     * Comparison only occurs on local part of the attribute names.
-     * @param regex The regex used to describe wanted name.
-     * @param toSearchIn The feature type in which we'll perform the search.
-     * @return The name of all the attributes which are compliant with given pattern.
-     * Can return an empty list, but never null.
-     */
-    public static ArrayList<Name> hasNameLike(final String regex, final FeatureType toSearchIn) {
-        final ArrayList<Name> names = new ArrayList<>();
-        for (final PropertyDescriptor desc : toSearchIn.getDescriptors()) {
-            final Name name = desc.getName();
-            if (name != null && name.getLocalPart().matches(regex)) {
-                names.add(name);
-            }
-        }
-        return names;
-    }
     
 }
