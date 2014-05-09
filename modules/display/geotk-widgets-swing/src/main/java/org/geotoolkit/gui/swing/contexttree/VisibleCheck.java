@@ -34,8 +34,8 @@ import org.geotoolkit.gui.swing.resource.IconBuilder;
  */
 class VisibleCheck extends JCheckBox {
 
-    private static final ImageIcon ICO_VISIBLE = IconBuilder.createIcon(FontAwesomeIcons.ICON_EYE_OPEN, 16, FontAwesomeIcons.DEFAULT_COLOR);
-    private static final ImageIcon ICO_NOVISIBLE = IconBuilder.createIcon(FontAwesomeIcons.ICON_EYE_CLOSE, 16, Color.LIGHT_GRAY);
+    private static final ImageIcon ICO_VISIBLE = IconBuilder.createIcon(FontAwesomeIcons.ICON_EYE, 16, FontAwesomeIcons.DEFAULT_COLOR);
+    private static final ImageIcon ICO_NOVISIBLE = IconBuilder.createIcon(FontAwesomeIcons.ICON_EYE_SLASH, 16, Color.LIGHT_GRAY);
 
     public VisibleCheck() {
         setOpaque(false);

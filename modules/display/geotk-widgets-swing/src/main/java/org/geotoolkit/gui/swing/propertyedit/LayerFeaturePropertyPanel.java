@@ -67,6 +67,8 @@ import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapItem;
 import org.geotoolkit.map.MapLayer;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.gui.swing.resource.FontAwesomeIcons;
+import org.geotoolkit.gui.swing.resource.IconBuilder;
 import org.geotoolkit.style.RandomStyleBuilder;
 import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.geotoolkit.version.Version;
@@ -99,7 +101,8 @@ import org.openide.util.Exceptions;
  */
 public class LayerFeaturePropertyPanel extends AbstractPropertyPane implements LayerListener {
 
-    private static final ImageIcon ICON_VERSIONED = IconBundle.getIcon("16_temporal");
+    private static final ImageIcon ICON_TABLE = IconBuilder.createIcon(FontAwesomeIcons.ICON_LIST, 16, FontAwesomeIcons.DEFAULT_COLOR);
+    private static final ImageIcon ICON_VERSIONED = IconBuilder.createIcon(FontAwesomeIcons.ICON_CLOCK_O, 16, FontAwesomeIcons.DEFAULT_COLOR);
 
     public static final String ACTION_REF = "LayerFeaturePropertyPanel";
     
@@ -152,7 +155,7 @@ public class LayerFeaturePropertyPanel extends AbstractPropertyPane implements L
 
     /** Creates new form DefaultMapLayerTablePanel */
     public LayerFeaturePropertyPanel() {
-        super(MessageBundle.getString("property_feature_table"),IconBundle.getIcon("16_feature_table"),null,MessageBundle.getString("crs"));
+        super(MessageBundle.getString("property_feature_table"),ICON_TABLE,null,MessageBundle.getString("crs"));
         initComponents();
         
         JLabel label = new JLabel(MessageBundle.getString("cql.text.help"));

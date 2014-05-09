@@ -38,8 +38,8 @@ public class JSpecialExpressionButton extends JButton{
 
     public static final String EXPRESSION_PROPERTY = "expression";
 
-    private static final Icon ICON_EXP_NO = IconBuilder.createIcon(FontAwesomeIcons.ICON_PENCIL, 14, Color.LIGHT_GRAY);
-    private static final Icon ICON_EXP_YES = IconBuilder.createIcon(FontAwesomeIcons.ICON_PENCIL, 14, Color.RED);
+    private static final Icon ICON_EXP_NO = IconBuilder.createIcon(FontAwesomeIcons.ICON_PENCIL_SQUARE, 16, Color.LIGHT_GRAY);
+    private static final Icon ICON_EXP_YES = IconBuilder.createIcon(FontAwesomeIcons.ICON_PENCIL_SQUARE, 16, Color.RED);
     private Expression exp = null;
     private MapLayer layer = null;
 

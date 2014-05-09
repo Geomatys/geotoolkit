@@ -258,7 +258,7 @@ public final class JParameterValueGroupListPanel extends GeneralParameterValuePa
         guiExpenderBtn = new FontIconJButton(FontAwesomeIcons.ICON_CARET_DOWN, 18, Color.BLACK);
         guiGroupNameLbl = new javax.swing.JLabel();
         topRightPanel = new javax.swing.JPanel();
-        guiNewGroupBtn = new FontIconJButton(FontAwesomeIcons.ICON_PLUS_SIGN_ALT, 18, Color.BLACK);
+        guiNewGroupBtn = new FontIconJButton(FontAwesomeIcons.ICON_PLUS_CIRCLE, 18, Color.BLACK);
         bottomPanel = new javax.swing.JPanel();
         containerPanel = new javax.swing.JPanel();
 

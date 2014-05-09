@@ -73,7 +73,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 public class JCoordinateBar extends AbstractMapControlBar {
 
-    private static final ImageIcon ICON_HINT = IconBuilder.createIcon(FontAwesomeIcons.ICON_LIGHTBULB, 16, FontAwesomeIcons.DEFAULT_COLOR);
+    private static final ImageIcon ICON_HINT = IconBuilder.createIcon(FontAwesomeIcons.ICON_LIGHTBULB_O, 16, FontAwesomeIcons.DEFAULT_COLOR);
     private static final ImageIcon ICON_DIMENSIONS = IconBuilder.createIcon(FontAwesomeIcons.ICON_TASKS, 16, FontAwesomeIcons.DEFAULT_COLOR);
     private static final ImageIcon ICON_FRAME = IconBuilder.createIcon(FontAwesomeIcons.ICON_EXTERNAL_LINK, 16, FontAwesomeIcons.DEFAULT_COLOR);
 

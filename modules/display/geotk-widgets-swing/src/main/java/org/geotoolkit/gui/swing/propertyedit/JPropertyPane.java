@@ -84,9 +84,9 @@ public class JPropertyPane extends JPanel{
         if(rev)bas.add(revert);
         if(clo)bas.add(close);
 
-        apply.setIcon(IconBuilder.createIcon(FontAwesomeIcons.ICON_CHECK_SIGN, 16, new Color(0, 100, 0)));
+        apply.setIcon(IconBuilder.createIcon(FontAwesomeIcons.ICON_CHECK, 16, new Color(0, 100, 0)));
         revert.setIcon(IconBuilder.createIcon(FontAwesomeIcons.ICON_UNDO, 16, new Color(255, 150, 50)));
-        close.setIcon(IconBuilder.createIcon(FontAwesomeIcons.ICON_CHEVRON_SIGN_RIGHT, 16, new Color(0, 100, 0)));
+        close.setIcon(IconBuilder.createIcon(FontAwesomeIcons.ICON_CHEVRON_RIGHT, 16, new Color(0, 100, 0)));
 
 
         tabs.addChangeListener(new ChangeListener() {

@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2011, Geomatys
+ *    (C) 2011 - 2014, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -16,11 +16,13 @@
  */
 package org.geotoolkit.gui.swing.render2d.control.edition;
 
+import javax.swing.ImageIcon;
 import org.geotoolkit.gui.swing.render2d.JMap2D;
-import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.apache.sis.util.iso.SimpleInternationalString;
+import org.geotoolkit.gui.swing.resource.FontAwesomeIcons;
+import org.geotoolkit.gui.swing.resource.IconBuilder;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.GeometryDescriptor;
 
@@ -32,10 +34,12 @@ import org.opengis.feature.type.GeometryDescriptor;
  */
 public class GeometryFromClipboardTool extends AbstractEditionTool {
 
+    private static final ImageIcon ICON_PASTE = IconBuilder.createIcon(FontAwesomeIcons.ICON_CLIPBOARD, 16, FontAwesomeIcons.DEFAULT_COLOR);
+    
     public GeometryFromClipboardTool() {
         super(120,"geometryFromClipboard", MessageBundle.getI18NString("clipboard"),
              new SimpleInternationalString("Tool to paste geometries from clipboard."), 
-             IconBundle.getIcon("16_paste"),FeatureMapLayer.class);
+             ICON_PASTE,FeatureMapLayer.class);
     }
 
     @Override

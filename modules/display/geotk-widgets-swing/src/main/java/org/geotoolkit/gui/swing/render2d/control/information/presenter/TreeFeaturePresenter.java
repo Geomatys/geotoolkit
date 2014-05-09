@@ -175,7 +175,7 @@ public class TreeFeaturePresenter extends AbstractInformationPresenter {
         StringSelection selection = null;
 
         public ClipCopy() {
-            button = new JButton(IconBuilder.createIcon(FontAwesomeIcons.ICON_COPY, BTN_WIDTH, Color.BLACK));
+            button = new JButton(IconBuilder.createIcon(FontAwesomeIcons.ICON_FILES_O, BTN_WIDTH, FontAwesomeIcons.DEFAULT_COLOR));
             button.setToolTipText("Copy value to clipboard.");
             button.setBorderPainted(false);
             button.setContentAreaFilled(false);

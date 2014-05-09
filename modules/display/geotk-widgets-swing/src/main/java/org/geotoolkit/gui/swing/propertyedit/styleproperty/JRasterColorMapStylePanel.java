@@ -975,7 +975,7 @@ public class JRasterColorMapStylePanel extends AbstractPropertyPane{
         @Override
         public Component getTableCellRendererComponent(final JTable table, final Object value, final boolean isSelected, final boolean hasFocus, final int row, final int column) {
             super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-            DeleteRenderer.this.setIcon(IconBuilder.createIcon(FontAwesomeIcons.ICON_TRASH, 16, Color.BLACK));
+            DeleteRenderer.this.setIcon(IconBuilder.createIcon(FontAwesomeIcons.ICON_TRASH_O, 16, FontAwesomeIcons.DEFAULT_COLOR));
             return DeleteRenderer.this;
         }
 
@@ -989,7 +989,7 @@ public class JRasterColorMapStylePanel extends AbstractPropertyPane{
         public DeleteEditor() {
             button.setBorderPainted(false);
             button.setContentAreaFilled(false);
-            button.setIcon(IconBuilder.createIcon(FontAwesomeIcons.ICON_TRASH, 16, Color.BLACK));
+            button.setIcon(IconBuilder.createIcon(FontAwesomeIcons.ICON_TRASH_O, 16, FontAwesomeIcons.DEFAULT_COLOR));
 
             button.addActionListener(new ActionListener() {
                 @Override

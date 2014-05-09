@@ -102,7 +102,7 @@ public class JClassificationIntervalStylePanel extends AbstractPropertyPane{
 
     private static final Logger LOGGER = Logging.getLogger(JClassificationIntervalStylePanel.class);
     private static NumberFormat FORMAT = NumberFormat.getNumberInstance();
-    private static final ImageIcon DELETE = IconBuilder.createIcon(FontAwesomeIcons.ICON_TRASH, 16, Color.BLACK);
+    private static final ImageIcon DELETE = IconBuilder.createIcon(FontAwesomeIcons.ICON_TRASH_O, 16, FontAwesomeIcons.DEFAULT_COLOR);
 
     private final Dimension GLYPH_DIMENSION = new Dimension(30, 20);
 

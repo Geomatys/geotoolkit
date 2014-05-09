@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2012, Geomatys
+ *    (C) 2012 - 2014, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -41,6 +41,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -52,7 +53,6 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
 import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.coverage.CoverageUtilities;
-import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.io.*;
@@ -64,7 +64,6 @@ import org.geotoolkit.gui.swing.render2d.control.navigation.PanHandler;
 import org.geotoolkit.gui.swing.render2d.decoration.AbstractMapDecoration;
 import org.geotoolkit.gui.swing.render2d.decoration.MapDecoration;
 import org.geotoolkit.gui.swing.util.JOptionDialog;
-import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.map.CoverageMapLayer;
@@ -73,6 +72,8 @@ import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;
 import org.geotoolkit.referencing.operation.MathTransforms;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.gui.swing.resource.FontAwesomeIcons;
+import org.geotoolkit.gui.swing.resource.IconBuilder;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
@@ -88,6 +89,10 @@ import org.opengis.util.FactoryException;
  */
 public class CoverageEditionDelegate extends AbstractEditionDelegate {
 
+    private static final ImageIcon ICON_COMMIT = IconBuilder.createIcon(FontAwesomeIcons.ICON_FLOPPY_O, 16, FontAwesomeIcons.DEFAULT_COLOR);
+    private static final ImageIcon ICON_ROLLBACK = IconBuilder.createIcon(FontAwesomeIcons.ICON_UNDO, 16, FontAwesomeIcons.DEFAULT_COLOR);
+    private static final ImageIcon ICON_SELECT = IconBuilder.createIcon(FontAwesomeIcons.ICON_LOCATION_ARROW, 16, FontAwesomeIcons.DEFAULT_COLOR);
+    
     private final CoverageMapDecoration decoration;
     private final CoverageMapLayer layer;
 
@@ -446,7 +451,7 @@ public class CoverageEditionDelegate extends AbstractEditionDelegate {
 
             //select area
             final JButton guiSelect = new JButton(MessageBundle.getString("select_area"));
-            guiSelect.setIcon(IconBundle.getIcon("16_select"));
+            guiSelect.setIcon(ICON_SELECT);
             guiSelect.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
@@ -477,7 +482,7 @@ public class CoverageEditionDelegate extends AbstractEditionDelegate {
 
             //save edition
             final JButton guiSave = new JButton(MessageBundle.getString("save"));
-            guiSave.setIcon(IconBundle.getIcon("16_session_commit"));
+            guiSave.setIcon(ICON_COMMIT);
             guiSave.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
@@ -492,7 +497,7 @@ public class CoverageEditionDelegate extends AbstractEditionDelegate {
 
             //cancel edition
             final JButton guiCancel = new JButton(MessageBundle.getString("cancel"));
-            guiCancel.setIcon(IconBundle.getIcon("16_session_rollback"));
+            guiCancel.setIcon(ICON_ROLLBACK);
             guiCancel.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {

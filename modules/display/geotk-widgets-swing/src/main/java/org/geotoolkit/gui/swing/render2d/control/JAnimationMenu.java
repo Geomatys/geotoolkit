@@ -32,7 +32,8 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.Timer;
 
 import org.geotoolkit.gui.swing.render2d.JMap2D;
-import org.geotoolkit.gui.swing.resource.IconBundle;
+import org.geotoolkit.gui.swing.resource.FontAwesomeIcons;
+import org.geotoolkit.gui.swing.resource.IconBuilder;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 
 /**
@@ -42,10 +43,10 @@ import org.geotoolkit.gui.swing.resource.MessageBundle;
  */
 public abstract class JAnimationMenu extends JMenu{
 
-    private final ImageIcon ICON_PLAY = IconBundle.getIcon("16_play");
-    private final ImageIcon ICON_PLAY_OVER = IconBundle.getIcon("16_play");
-    private final ImageIcon ICON_PAUSE = IconBundle.getIcon("16_stop");
-    private final ImageIcon ICON_PAUSE_OVER = IconBundle.getIcon("16_stop");
+    private final ImageIcon ICON_PLAY = IconBuilder.createIcon(FontAwesomeIcons.ICON_PLAY, 16, FontAwesomeIcons.DEFAULT_COLOR);;
+    private final ImageIcon ICON_PLAY_OVER = IconBuilder.createIcon(FontAwesomeIcons.ICON_PLAY, 16, FontAwesomeIcons.DEFAULT_COLOR);
+    private final ImageIcon ICON_PAUSE = IconBuilder.createIcon(FontAwesomeIcons.ICON_STOP, 16, FontAwesomeIcons.DEFAULT_COLOR);
+    private final ImageIcon ICON_PAUSE_OVER = IconBuilder.createIcon(FontAwesomeIcons.ICON_STOP, 16, FontAwesomeIcons.DEFAULT_COLOR);
 
     private final JMenuItem run = new JMenuItem();
     private final JSpinner factor = new JSpinner(new SpinnerNumberModel(1000d, 0.1d, Double.POSITIVE_INFINITY, 10d));

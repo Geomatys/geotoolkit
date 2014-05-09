@@ -41,6 +41,8 @@ import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.tree.DefaultMutableTreeNode;
 import org.geotoolkit.gui.swing.tree.MutableTreeNode;
 import org.apache.sis.util.Classes;
+import org.geotoolkit.gui.swing.resource.FontAwesomeIcons;
+import org.geotoolkit.gui.swing.resource.IconBuilder;
 import org.jdesktop.swingx.table.DatePickerCellEditor;
 import org.netbeans.swing.outline.*;
 import org.opengis.feature.ComplexAttribute;
@@ -63,10 +65,10 @@ import org.opengis.util.InternationalString;
  */
 public class JFeatureOutLine extends Outline{
 
-    private static final ImageIcon ICON_ADD = IconBundle.getIcon("16_off");
-    private static final ImageIcon ICON_REMOVE = IconBundle.getIcon("16_on");
-    private static final ImageIcon ICON_OCC_ADD = IconBundle.getIcon("16_occurence_add");
-    private static final ImageIcon ICON_OCC_REMOVE = IconBundle.getIcon("16_occurence_remove");
+    private static final ImageIcon ICON_ADD = IconBuilder.createIcon(FontAwesomeIcons.ICON_CIRCLE_O, 16, FontAwesomeIcons.DEFAULT_COLOR);
+    private static final ImageIcon ICON_REMOVE = IconBuilder.createIcon(FontAwesomeIcons.ICON_CIRCLE, 16, FontAwesomeIcons.DEFAULT_COLOR);
+    private static final ImageIcon ICON_OCC_ADD = IconBuilder.createIcon(FontAwesomeIcons.ICON_PLUS_SQUARE, 16, FontAwesomeIcons.DEFAULT_COLOR);
+    private static final ImageIcon ICON_OCC_REMOVE = IconBuilder.createIcon(FontAwesomeIcons.ICON_MINUS_SQUARE, 16, FontAwesomeIcons.DEFAULT_COLOR);
 
     private final List<PropertyValueEditor> editors = new CopyOnWriteArrayList<PropertyValueEditor>();
     private final JFeatureOutLine.PropertyRowModel rowModel = new JFeatureOutLine.PropertyRowModel();

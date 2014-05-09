@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2013, Geomatys
+ *    (C) 2013 - 2014, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -24,22 +24,20 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.geom.Path2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import org.geotoolkit.gui.swing.resource.IconBundle;
-import org.geotoolkit.gui.swing.resource.MessageBundle;
+import org.geotoolkit.gui.swing.resource.FontAwesomeIcons;
+import org.geotoolkit.gui.swing.resource.IconBuilder;
 import static org.geotoolkit.gui.swing.style.StyleElementEditor.PROPERTY_TARGET;
 import org.geotoolkit.map.MapLayer;
-import org.openide.awt.DropDownButtonFactory;
 
 /**
  * A Two state editor.
@@ -48,8 +46,9 @@ import org.openide.awt.DropDownButtonFactory;
  */
 public class JTwoStateEditor<T> extends StyleElementEditor<T> implements PropertyChangeListener{
 
-    private static final ImageIcon ICON_SIMPLE = IconBundle.getIcon("16_simple_style");
-    private static final ImageIcon ICON_ADVANCED = IconBundle.getIcon("16_statefull_disable");
+    private static final ImageIcon ICON = IconBuilder.createIcon(FontAwesomeIcons.ICON_ADJUST, 16, FontAwesomeIcons.DEFAULT_COLOR);
+    /** store the default displayed mode */
+    private static volatile boolean DEFAULT_SIMPLE = true;
 
     private final StyleElementEditor<T> simple;
     private final StyleElementEditor<T> advanced;
@@ -87,43 +86,29 @@ public class JTwoStateEditor<T> extends StyleElementEditor<T> implements Propert
         setLayout(new BorderLayout());
         this.simple = simple;
         this.advanced = advanced;
-        this.current = simple;
+        this.current = DEFAULT_SIMPLE ? simple : advanced;
         current.addPropertyChangeListener(this);
 
-        final JPopupMenu menu = new JPopupMenu();
-        menu.add(new AbstractAction(MessageBundle.getString("style.twostate.simple"), ICON_SIMPLE) {
+        typeselect = new JButton(ICON);
+        typeselect.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 current.removePropertyChangeListener(JTwoStateEditor.this);
                 layeredpane.remove(simple);
                 layeredpane.remove(advanced);
-                layeredpane.add(simple,new Integer(0));
-                typeselect.setIcon(ICON_SIMPLE);
-                current = simple;
+                current = (current==simple)?advanced:simple;
+                layeredpane.add(current,new Integer(0));
                 current.addPropertyChangeListener(JTwoStateEditor.this);
+                DEFAULT_SIMPLE = current == simple;
             }
         });
-        menu.add(new AbstractAction(MessageBundle.getString("style.twostate.advanced"), ICON_ADVANCED) {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                current.removePropertyChangeListener(JTwoStateEditor.this);
-                layeredpane.remove(simple);
-                layeredpane.remove(advanced);
-                layeredpane.add(advanced,new Integer(0));
-                typeselect.setIcon(ICON_ADVANCED);
-                current = advanced;
-                current.addPropertyChangeListener(JTwoStateEditor.this);
-            }
-        });
-
-
-        typeselect = DropDownButtonFactory.createDropDownButton(ICON_SIMPLE, menu);
+        
         typeselect.setBorderPainted(false);
         typeselect.setContentAreaFilled(false);
         typeselect.setMargin(new Insets(0, 0, 0, 0));
         typeSelectPane.add(typeselect);
         typeSelectPane.setOpaque(false);
-        layeredpane.add(simple,new Integer(0));
+        layeredpane.add(current,new Integer(0));
         layeredpane.add(typeSelectPane,new Integer(1));
 
         add(layeredpane,BorderLayout.CENTER);

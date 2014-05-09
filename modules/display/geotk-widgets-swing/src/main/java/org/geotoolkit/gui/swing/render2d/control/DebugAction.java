@@ -47,7 +47,7 @@ import org.geotoolkit.util.StringUtilities;
  */
 public class DebugAction extends AbstractMapAction {
 
-    private static final ImageIcon ICON = IconBuilder.createIcon(FontAwesomeIcons.ICON_WARNING_SIGN, 16, FontAwesomeIcons.DEFAULT_COLOR);
+    private static final ImageIcon ICON = IconBuilder.createIcon(FontAwesomeIcons.ICON_EXCLAMATION_TRIANGLE, 16, FontAwesomeIcons.DEFAULT_COLOR);
 
     private final DebugDecoration deco = new DebugDecoration();
 

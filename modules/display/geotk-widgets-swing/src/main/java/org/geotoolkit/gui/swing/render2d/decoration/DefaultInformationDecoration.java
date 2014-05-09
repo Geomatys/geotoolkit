@@ -45,9 +45,9 @@ import org.jdesktop.swingx.JXBusyLabel;
  */
 public class DefaultInformationDecoration extends JPanel implements InformationDecoration {
 
-    private static final ImageIcon ICO_ERROR = IconBuilder.createIcon(FontAwesomeIcons.ICON_WARNING_SIGN, 16, Color.RED);
-    private static final ImageIcon ICO_WARNING = IconBuilder.createIcon(FontAwesomeIcons.ICON_WARNING_SIGN, 16, Color.YELLOW);
-    private static final ImageIcon ICO_INFO = IconBuilder.createIcon(FontAwesomeIcons.ICON_WARNING_SIGN, 16, Color.BLUE);
+    private static final ImageIcon ICO_ERROR = IconBuilder.createIcon(FontAwesomeIcons.ICON_EXCLAMATION_TRIANGLE, 16, Color.RED);
+    private static final ImageIcon ICO_WARNING = IconBuilder.createIcon(FontAwesomeIcons.ICON_EXCLAMATION_TRIANGLE, 16, Color.YELLOW);
+    private static final ImageIcon ICO_INFO = IconBuilder.createIcon(FontAwesomeIcons.ICON_EXCLAMATION_TRIANGLE, 16, Color.BLUE);
 
     private JMap2D map = null;
     

@@ -32,7 +32,7 @@ import org.geotoolkit.gui.swing.resource.MessageBundle;
  */
 public class ZoomInAction extends AbstractMapAction {
 
-    public static final ImageIcon ICON = IconBuilder.createIcon(FontAwesomeIcons.ICON_ZOOM_IN, 16, FontAwesomeIcons.DEFAULT_COLOR);
+    public static final ImageIcon ICON = IconBuilder.createIcon(FontAwesomeIcons.ICON_SEARCH_PLUS, 16, FontAwesomeIcons.DEFAULT_COLOR);
 
     public ZoomInAction() {
         putValue(SMALL_ICON, ICON);

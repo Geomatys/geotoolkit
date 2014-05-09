@@ -48,7 +48,6 @@ import org.geotoolkit.filter.function.Functions;
 import org.geotoolkit.gui.swing.util.JOptionDialog;
 import org.geotoolkit.gui.swing.resource.FontAwesomeIcons;
 import org.geotoolkit.gui.swing.resource.IconBuilder;
-import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapLayer;
@@ -68,8 +67,9 @@ import org.opengis.util.InternationalString;
  */
 public class JCQLEditor extends javax.swing.JPanel{
 
+    private static final ImageIcon ICON_FILTER = IconBuilder.createIcon(FontAwesomeIcons.ICON_FILTER, 16, FontAwesomeIcons.DEFAULT_COLOR);
     private static final ImageIcon ICON_FUNCTION = IconBuilder.createIcon(FontAwesomeIcons.ICON_COG, 16, Color.GRAY);
-    private static final ImageIcon ICON_GROUP = IconBuilder.createIcon(FontAwesomeIcons.ICON_FOLDER_CLOSE, 16, Color.GRAY);
+    private static final ImageIcon ICON_GROUP = IconBuilder.createIcon(FontAwesomeIcons.ICON_FOLDER, 16, Color.GRAY);
 
     private MapLayer layer;
 
@@ -703,7 +703,7 @@ public class JCQLEditor extends javax.swing.JPanel{
     }
 
     public ImageIcon getIcon() {
-        return IconBundle.getIcon("16_filter_cql");
+        return ICON_FILTER;
     }
 
     public String getToolTip() {

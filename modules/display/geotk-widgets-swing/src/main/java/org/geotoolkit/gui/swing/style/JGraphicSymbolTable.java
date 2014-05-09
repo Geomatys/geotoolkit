@@ -46,7 +46,6 @@ import org.geotoolkit.gui.swing.util.ActionCell;
 import org.geotoolkit.gui.swing.util.JOptionDialog;
 import org.geotoolkit.gui.swing.resource.FontAwesomeIcons;
 import org.geotoolkit.gui.swing.resource.IconBuilder;
-import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.StyleConstants;
@@ -57,7 +56,6 @@ import org.opengis.style.Graphic;
 import org.opengis.style.GraphicalSymbol;
 import org.opengis.style.Mark;
 import org.opengis.style.PointSymbolizer;
-import org.openide.util.Exceptions;
 
 /**
  * graphic symbol table
@@ -67,11 +65,11 @@ import org.openide.util.Exceptions;
  */
 public class JGraphicSymbolTable <T> extends StyleElementEditor<List> {
 
-    private static final Icon ICO_ADD = IconBundle.getIcon("16_edit_add");
-    private static final Icon ICO_EDIT = IconBundle.getIcon("16_edit_geom");
-    private static final ImageIcon ICO_UP = IconBuilder.createIcon(FontAwesomeIcons.ICON_CHEVRON_UP, 16, Color.BLACK);
-    private static final ImageIcon ICO_DOWN = IconBuilder.createIcon(FontAwesomeIcons.ICON_CHEVRON_DOWN, 16, Color.BLACK);
-    private static final ImageIcon ICO_DELETE = IconBuilder.createIcon(FontAwesomeIcons.ICON_TRASH, 16, Color.BLACK);
+    private static final Icon ICO_ADD = IconBuilder.createIcon(FontAwesomeIcons.ICON_PLUS, 16, FontAwesomeIcons.DEFAULT_COLOR);
+    private static final Icon ICO_EDIT = IconBuilder.createIcon(FontAwesomeIcons.ICON_PENCIL, 16, FontAwesomeIcons.DEFAULT_COLOR);
+    private static final ImageIcon ICO_UP = IconBuilder.createIcon(FontAwesomeIcons.ICON_CHEVRON_UP, 16, FontAwesomeIcons.DEFAULT_COLOR);
+    private static final ImageIcon ICO_DOWN = IconBuilder.createIcon(FontAwesomeIcons.ICON_CHEVRON_DOWN, 16, FontAwesomeIcons.DEFAULT_COLOR);
+    private static final ImageIcon ICO_DELETE = IconBuilder.createIcon(FontAwesomeIcons.ICON_TRASH_O, 16, FontAwesomeIcons.DEFAULT_COLOR);
 
     private MapLayer layer = null;
     private final GraphicalModel model = new GraphicalModel(null);

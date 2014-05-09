@@ -18,7 +18,6 @@
  */
 package org.geotoolkit.gui.swing.style;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Point;
@@ -70,9 +69,6 @@ import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.RandomStyleBuilder;
-import org.jdesktop.swingx.JXTree;
-import org.jdesktop.swingx.decorator.ColorHighlighter;
-import org.jdesktop.swingx.decorator.HighlightPredicate;
 import org.opengis.style.Description;
 import org.opengis.style.Symbolizer;
 import org.opengis.util.InternationalString;
@@ -82,7 +78,7 @@ import org.opengis.util.InternationalString;
  * @author Johann Sorel (Puzzle-GIS)
  * @module pending
  */
-public class JStyleTree<T> extends JXTree implements DragGestureListener, DragSourceListener, DropTargetListener {
+public class JStyleTree<T> extends JTree implements DragGestureListener, DragSourceListener, DropTargetListener {
 
     private static final MutableStyleFactory SF = (MutableStyleFactory) FactoryFinder.getStyleFactory(null);
 
@@ -90,8 +86,8 @@ public class JStyleTree<T> extends JXTree implements DragGestureListener, DragSo
     public static final ImageIcon ICON_FTS       = IconBuilder.createIcon(FontAwesomeIcons.ICON_TAG,16,FontAwesomeIcons.DEFAULT_COLOR);
     public static final ImageIcon ICON_RULE      = IconBuilder.createIcon(FontAwesomeIcons.ICON_FILTER,16,FontAwesomeIcons.DEFAULT_COLOR);
     public static final ImageIcon ICON_NEW       = IconBuilder.createIcon(FontAwesomeIcons.ICON_PLUS,16,FontAwesomeIcons.DEFAULT_COLOR);
-    public static final ImageIcon ICON_DUPLICATE = IconBuilder.createIcon(FontAwesomeIcons.ICON_COPY,16,FontAwesomeIcons.DEFAULT_COLOR);
-    public static final ImageIcon ICON_DELETE    = IconBuilder.createIcon(FontAwesomeIcons.ICON_REMOVE,16,FontAwesomeIcons.DEFAULT_COLOR);
+    public static final ImageIcon ICON_DUPLICATE = IconBuilder.createIcon(FontAwesomeIcons.ICON_FILES_O,16,FontAwesomeIcons.DEFAULT_COLOR);
+    public static final ImageIcon ICON_DELETE    = IconBuilder.createIcon(FontAwesomeIcons.ICON_TRASH_O,16,FontAwesomeIcons.DEFAULT_COLOR);
 
     private T style = null;
     private final StyleTreeModel treemodel = new StyleTreeModel(null);
@@ -112,9 +108,6 @@ public class JStyleTree<T> extends JXTree implements DragGestureListener, DragSo
         dgr.setSourceActions(dgr.getSourceActions() & ~InputEvent.BUTTON3_MASK);
         DropTarget dropTarget = new DropTarget(this, this);
 
-        setRolloverEnabled(true);
-        addHighlighter(new ColorHighlighter(HighlightPredicate.ROLLOVER_ROW, null, Color.RED));
-
     }
 
     public T getStyleElement() {
@@ -129,7 +122,6 @@ public class JStyleTree<T> extends JXTree implements DragGestureListener, DragSo
             treemodel.setRoot(style);
             revalidate();
         }
-        expandAll();
     }
 
     //-------------Drag & drop -------------------------------------------------

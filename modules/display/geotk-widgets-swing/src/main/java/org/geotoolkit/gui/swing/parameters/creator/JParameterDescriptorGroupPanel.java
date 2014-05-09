@@ -174,8 +174,8 @@ public final class JParameterDescriptorGroupPanel extends GeneralParameterDescri
         guiExpenderBtn = new FontIconJButton(FontAwesomeIcons.ICON_CARET_DOWN, 18, Color.BLACK);
         guiGroupNameLbl = new javax.swing.JLabel();
         topRightPanel = new javax.swing.JPanel();
-        guiRemoveParamBtn = new FontIconJButton(FontAwesomeIcons.ICON_MINUS_SIGN_ALT, 18, Color.RED);
-        guiNewGroupBtn = new FontIconJButton(FontAwesomeIcons.ICON_PLUS_SIGN_ALT, 18, Color.BLACK);
+        guiRemoveParamBtn = new FontIconJButton(FontAwesomeIcons.ICON_MINUS_CIRCLE, 18, Color.RED);
+        guiNewGroupBtn = new FontIconJButton(FontAwesomeIcons.ICON_PLUS_CIRCLE, 18, Color.BLACK);
         guiNewParamBtn = new FontIconJButton(FontAwesomeIcons.ICON_PLUS, 18, Color.BLACK);
         bottomPanel = new javax.swing.JPanel();
         paddingPanel = new javax.swing.JPanel();

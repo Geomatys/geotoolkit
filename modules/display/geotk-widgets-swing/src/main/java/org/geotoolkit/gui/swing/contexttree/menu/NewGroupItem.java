@@ -52,7 +52,7 @@ public class NewGroupItem extends AbstractTreePopupItem{
     }
 
     private void init(){
-        setIcon( IconBuilder.createIcon(FontAwesomeIcons.ICON_FOLDER_CLOSE_ALT,16,FontAwesomeIcons.DEFAULT_COLOR) );
+        setIcon( IconBuilder.createIcon(FontAwesomeIcons.ICON_FOLDER_O,16,FontAwesomeIcons.DEFAULT_COLOR) );
 
         addActionListener(new ActionListener() {
             @Override

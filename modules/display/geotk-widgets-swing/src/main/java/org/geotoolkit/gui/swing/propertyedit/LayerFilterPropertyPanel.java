@@ -77,7 +77,6 @@ public class LayerFilterPropertyPanel extends MultiPropertyPanel {
     @Override
     public ImageIcon getIcon() {
         return IconBundle.EMPTY_ICON;
-        //return IconBundle.getResource().getIcon("16_filter");
     }
 
     @Override
