@@ -645,7 +645,7 @@ public class PyramidCoverageBuilder {
      * @return a {@link Pyramid} in a {@link PyramidalCoverageReference} from its {@link CoordinateReferenceSystem} properties.
      * @throws DataStoreException
      */
-    private synchronized Pyramid getOrCreatePyramid(final PyramidalCoverageReference pm, final CoordinateReferenceSystem crs) throws DataStoreException {
+    public static synchronized Pyramid getOrCreatePyramid(final PyramidalCoverageReference pm, final CoordinateReferenceSystem crs) throws DataStoreException {
         Pyramid pyramid = null;
         for (Pyramid p : pm.getPyramidSet().getPyramids()) {
             if (CRS.equalsIgnoreMetadata(p.getCoordinateReferenceSystem(), crs)) {
