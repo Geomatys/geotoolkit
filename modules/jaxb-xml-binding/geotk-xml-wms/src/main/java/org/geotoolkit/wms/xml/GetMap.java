@@ -73,7 +73,7 @@ public class GetMap implements RequestBase {
     /**
      * Time to request in a nD layer. It can be a period. Optional.
      */
-    private final Date time;
+    private final List<Date> time;
 
     /**
      * Dimension of the output file, which matches with the {@code Width} and {@code Height} parameters.
@@ -140,7 +140,7 @@ public class GetMap implements RequestBase {
      */
     public GetMap(final Envelope envelope, final Version version, final String format,
                   final List<Name> layers, final List<String> styles, final Double elevation,
-                  final Date date, final Dimension size, Object parameters)
+                  final List<Date> date, final Dimension size, Object parameters)
     {
         this(envelope, version, format, layers, styles, null, elevation, date, size, null, null, 0, null, parameters);
     }
@@ -150,7 +150,7 @@ public class GetMap implements RequestBase {
      */
     public GetMap(final Envelope envelope, final Version version, final String format,
                   final List<Name> layers, final List<String> styles,
-                  final StyledLayerDescriptor sld, final Double elevation, final Date date,
+                  final StyledLayerDescriptor sld, final Double elevation, final List<Date> date,
                   final Dimension size, final Color background,
                   final Boolean transparent, double azimuth, final String exceptions,
                   final Object parameters) {
@@ -268,7 +268,7 @@ public class GetMap implements RequestBase {
     /**
      * Returns the time to request in a nD layer, or {@code null} if not defined.
      */
-    public Date getTime() {
+    public List<Date> getTime() {
         return time;
     }
 

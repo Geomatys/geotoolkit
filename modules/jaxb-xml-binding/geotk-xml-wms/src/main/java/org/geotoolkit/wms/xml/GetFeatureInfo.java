@@ -81,13 +81,13 @@ public final class GetFeatureInfo extends GetMap implements org.geotoolkit.ows.x
 
     public GetFeatureInfo(final Envelope envelope, final Version version,
                   final String format, final List<Name> layers, final List<String> styles,
-                  final StyledLayerDescriptor sld, final Double elevation, final Date date,
+                  final StyledLayerDescriptor sld, final Double elevation, final List<Date> dates,
                   final Dimension size, final Color background,
                   final Boolean transparent, final String exceptions, final int x, final int y,
                   final List<Name> queryLayers, final String infoFormat, final Integer featureCount,
                   final Object parameters)
     {
-        super(envelope, version, format, layers, styles, sld, elevation, date, size,
+        super(envelope, version, format, layers, styles, sld, elevation, dates, size,
                 background, transparent, 0,exceptions, parameters);
         this.x = x;
         this.y = y;
