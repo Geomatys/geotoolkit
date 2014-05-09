@@ -230,16 +230,25 @@ public class DefaultFolderFeatureStore extends AbstractFeatureStore implements D
         if (store == null) {
             throw new DataStoreException("There's no data with the following type name : "+typeName);
         }
-        // We should get a file feature store, so we must find an url parameter to delete source file.
-        final URL fileURL = Parameters.value(URLP, store.getConfiguration());
-        if (fileURL == null) {
-            throw new DataStoreException("Source data cannot be reached for type name : "+typeName);
-        }
+        // We should get a file feature store.
+        final File[] sourceFiles;
         try {
-            File toDelete = new File(fileURL.toURI());
-            toDelete.delete();
+            if (store instanceof DataFileStore) {
+                sourceFiles = ((DataFileStore) store).getDataFiles();
+            } else {
+                // Not a file store ? We try to find an url parameter and see if it's a file one.
+                final URL fileURL = Parameters.value(URLP, store.getConfiguration());
+                if (fileURL == null) {
+                    throw new DataStoreException("Source data cannot be reached for type name : " + typeName);
+                }
+                sourceFiles = new File[]{new File(fileURL.toURI())};
+            }
+
+            for (File f : sourceFiles) {
+                f.delete();
+            }
         } catch (URISyntaxException e) {
-            throw new DataStoreException("Source data cannot be reached for type name : "+typeName, e);
+            throw new DataStoreException("Source data cannot be reached for type name : " + typeName, e);
         }
 
         stores.remove(typeName);
