@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2012 Geomatys
+ *    (C) 2012 - 2014 Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -27,10 +27,10 @@ import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
-import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -46,7 +46,6 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import org.geotoolkit.gui.swing.util.ActionCell;
-import org.geotoolkit.gui.swing.util.EmptyCellRenderer;
 import org.geotoolkit.gui.swing.util.JOptionDialog;
 import org.geotoolkit.gui.swing.propertyedit.PropertyPane;
 import org.geotoolkit.gui.swing.resource.FontAwesomeIcons;
@@ -62,6 +61,7 @@ import org.geotoolkit.gui.swing.style.symbolizer.JPointSymbolizerPane;
 import org.geotoolkit.gui.swing.style.symbolizer.JPolygonSymbolizerPane;
 import org.geotoolkit.gui.swing.style.symbolizer.JTextSymbolizerPane;
 import org.geotoolkit.map.MapLayer;
+import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.jdesktop.swingx.JXTable;
@@ -84,6 +84,7 @@ public class JSimpleStylePanel extends StyleElementEditor implements PropertyPan
 
     private static final ImageIcon ICO_UP = IconBuilder.createIcon(FontAwesomeIcons.ICON_CHEVRON_UP, 16, FontAwesomeIcons.DEFAULT_COLOR);
     private static final ImageIcon ICO_DOWN = IconBuilder.createIcon(FontAwesomeIcons.ICON_CHEVRON_DOWN, 16, FontAwesomeIcons.DEFAULT_COLOR);
+    private static final ImageIcon ICO_ADD = IconBuilder.createIcon(FontAwesomeIcons.ICON_PLUS, 16, FontAwesomeIcons.DEFAULT_COLOR);
     private static final ImageIcon ICO_DELETE = IconBuilder.createIcon(FontAwesomeIcons.ICON_TRASH_O, 16, FontAwesomeIcons.DEFAULT_COLOR);
 
     private final SymbolizerModel model = new SymbolizerModel();
@@ -110,6 +111,9 @@ public class JSimpleStylePanel extends StyleElementEditor implements PropertyPan
     //current visible editor
     private StyleElementEditor currentEditor = null;
 
+    //keep track of where the rule was to avoid rewriting the complete style
+    private MutableRule parentRule = null;
+    
     /**
      * Creates new form jStylePane
      */
@@ -121,6 +125,8 @@ public class JSimpleStylePanel extends StyleElementEditor implements PropertyPan
         guiTable.setTableHeader(null);
         guiTable.setModel(model);
         guiTable.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        guiTable.setRowMargin(0);
+        guiTable.setColumnMargin(0);
 
         guiTable.getColumn(0).setCellRenderer(new SymbolizerRenderer());
 
@@ -218,6 +224,7 @@ public class JSimpleStylePanel extends StyleElementEditor implements PropertyPan
         });
 
         guiOverviewLabel.setMir(true);
+        jAddButton.setIcon(ICO_ADD);
     }
 
 
@@ -265,7 +272,6 @@ public class JSimpleStylePanel extends StyleElementEditor implements PropertyPan
             .addGap(0, 109, Short.MAX_VALUE)
         );
 
-        jAddButton.setIcon(new ImageIcon(getClass().getResource("/org/geotoolkit/gui/swing/resource/icon/crystalproject/16x16/actions/edit_add.png"))); // NOI18N
         jAddButton.setText(MessageBundle.getString("addSymbol")); // NOI18N
         jAddButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
@@ -370,13 +376,19 @@ public class JSimpleStylePanel extends StyleElementEditor implements PropertyPan
 
             final MutableStyleFactory SF = getStyleFactory();
             final Symbolizer[] array = model.symbolizers.toArray(new Symbolizer[0]);
-            layer.setStyle(SF.style(array));
+            if(parentRule==null){
+                layer.setStyle(SF.style(array));
+            }else{
+                parentRule.symbolizers().clear();
+                parentRule.symbolizers().addAll(Arrays.asList(array));
+            }
+            
         }
     }
 
     @Override
     public void reset() {
-
+        parse(null);
     }
 
     @Override
@@ -417,12 +429,13 @@ public class JSimpleStylePanel extends StyleElementEditor implements PropertyPan
 
     @Override
     public void parse(final Object obj) {
-
         model.clear();
 
+        parentRule = null;        
         if(layer != null){
             for(final FeatureTypeStyle fts : layer.getStyle().featureTypeStyles()){
                 for(final Rule rule : fts.rules()){
+                    parentRule = (MutableRule) rule;
                     for(final Symbolizer symbol : rule.symbolizers()){
                         if(symbol instanceof Symbolizer){
                             model.addSymbolizer(symbol);
@@ -573,8 +586,7 @@ public class JSimpleStylePanel extends StyleElementEditor implements PropertyPan
         public Component getTableCellRendererComponent(final JTable table, final Object value,
             final boolean isSelected, final boolean hasFocus, final int row, final int column) {
 
-            final JLabel lbl = (JLabel) super.getTableCellRendererComponent(table, "", isSelected, hasFocus, row, column);
-            lbl.setIcon(null);
+            final JLabel lbl = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 
             if (value instanceof Symbolizer) {
                 Symbolizer symbol = (Symbolizer) value;
@@ -588,13 +600,9 @@ public class JSimpleStylePanel extends StyleElementEditor implements PropertyPan
                 }
             }
 
-            final JPanel pane = new JPanel(new BorderLayout());
-            pane.add(BorderLayout.CENTER, lbl);
-            pane.add(BorderLayout.WEST, preview);
-            pane.setOpaque(false);
-            EmptyCellRenderer.mimicStyle(lbl, preview);
-
-            return pane;
+            preview.setSize(lbl.getHeight(), lbl.getHeight());
+            lbl.setIcon(new ImageIcon(preview.getImage()));
+            return lbl;
         }
     }
 

@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2012 Geomatys
+ *    (C) 2012 -2014 Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -106,6 +106,11 @@ public class JPreview extends JPanel implements ComponentListener {
         repaint();
     }
 
+    public BufferedImage getImage() {
+        if(image==null) updateImage();
+        return image;
+    }
+    
     private void updateImage() {
         
         //There is already an image or there is no object to draw => exit
