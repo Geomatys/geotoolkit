@@ -1,3 +1,19 @@
+/*
+ *    Geotoolkit.org - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
+ *
+ *    (C) 2014, Geomatys
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation;
+ *    version 2.1 of the License.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
+ */
 package org.geotoolkit.process.coverage.resample;
 
 import java.awt.*;
@@ -39,8 +55,8 @@ import org.opengis.referencing.operation.MathTransform;
  * To do such things, we need an {@link ImageWriter} suporting {@link ImageWriter#canReplacePixels(int) } operation.
  * 
  * Here is how it works : 
- * 1 - Using specified parameter {@link GenericResampleDescriptor#BLOCK_SIZE}, we take strips from input image, and put them in a queue, waiting for resampling.
- * 2 - We create a fix number of threads (as specified by {@link GenericResampleDescriptor#THREAD_COUNT}), which will poll data from above queue, and resmple it.
+ * 1 - Using specified parameter {@link IOResampleDescriptor#BLOCK_SIZE}, we take strips from input image, and put them in a queue, waiting for resampling.
+ * 2 - We create a fix number of threads (as specified by {@link IOResampleDescriptor#THREAD_COUNT}), which will poll data from above queue, and resmple it.
  * 3 - Each resampled strip is put into another queue, waiting to be written.
  * 4 - We've got a thread for image writing. It's listening on output queue, and write each resampled strip inserted into it.
  * 
@@ -49,14 +65,14 @@ import org.opengis.referencing.operation.MathTransform;
  *
  * @author Alexis Manin (Geomatys)
  */
-public class GenericResampleProcess extends AbstractProcess {
+public class IOResampleProcess extends AbstractProcess {
 
-    private static final Logger LOGGER = Logging.getLogger(GenericResampleProcess.class);
+    private static final Logger LOGGER = Logging.getLogger(IOResampleProcess.class);
 
     private static final int LANCZOS_WINDOW = 2;
 
     /**
-     * The default size (in number of bytes) for the tiles to create. It will be used if no {@link GenericResampleDescriptor#BLOCK_SIZE} is given by user.
+     * The default size (in number of bytes) for the tiles to create. It will be used if no {@link IOResampleDescriptor#BLOCK_SIZE} is given by user.
      * To make it easier to understand (and modify), we decompose it as :
      * tile width(px) * tile height(px) * band number * component type size (byte)
      */
@@ -82,15 +98,21 @@ public class GenericResampleProcess extends AbstractProcess {
             Point first = o1.getKey();
             Point second = o2.getKey();
 
-            final int linePriority = second.x - first.x;
-            // If the two point are on the same line, we must know which is the most advanced on it.
-            return (linePriority != 0)? linePriority : second.y - first.y;
+            if (o1 instanceof EndOfFile) {
+                return -1;
+            } else if (o2 instanceof EndOfFile) {
+                return 1;
+            } else {
+                final int linePriority = second.x - first.x;
+                // If the two point are on the same line, we must know which is the most advanced on it.
+                return (linePriority != 0) ? linePriority : second.y - first.y;
+            }
         }
     });
 
     private Integer threadNumber;
 
-    public GenericResampleProcess(ProcessDescriptor desc, ParameterValueGroup input) {
+    public IOResampleProcess(ProcessDescriptor desc, ParameterValueGroup input) {
         super(desc, input);
     }
 
@@ -107,12 +129,12 @@ public class GenericResampleProcess extends AbstractProcess {
         final MathTransform operator = (MathTransform) inputParameters.parameter("operation").getValue();
         final String interpolation = (String) inputParameters.parameter("interpolation").getValue();
 
-        threadNumber = Parameters.value(GenericResampleDescriptor.THREAD_COUNT, inputParameters);
+        threadNumber = Parameters.value(IOResampleDescriptor.THREAD_COUNT, inputParameters);
         if (threadNumber == null || threadNumber != threadNumber || threadNumber < 1) {
             threadNumber = Math.min(5, Math.max(2, Runtime.getRuntime().availableProcessors() / 2));
         }
 
-        Long blockSize = Parameters.value(GenericResampleDescriptor.BLOCK_SIZE, inputParameters);
+        Long blockSize = Parameters.value(IOResampleDescriptor.BLOCK_SIZE, inputParameters);
         if (blockSize == null || blockSize != blockSize || blockSize < 0) {
             blockSize = BASE_MEMORY_SIZE;
         }
@@ -256,7 +278,7 @@ public class GenericResampleProcess extends AbstractProcess {
                 outStream.close();
             }
 
-            Parameters.getOrCreate(GenericResampleDescriptor.OUT_COVERAGE, outputParameters).setValue(output);
+            Parameters.getOrCreate(IOResampleDescriptor.OUT_COVERAGE, outputParameters).setValue(output);
 
             LOGGER.log(Level.INFO, "Data preparation lasts " + (execTimes.get(1) - execTimes.get(0)) + " ms\n");
             LOGGER.log(Level.INFO, "Resample lasts " + (System.currentTimeMillis() - execTimes.get(1)) + " ms\n");
@@ -339,7 +361,7 @@ public class GenericResampleProcess extends AbstractProcess {
 
     private void poisonWritingQueue() {
         final Thread currentThread = Thread.currentThread();
-        writingQueue.offer(new NightShade<Point, RenderedImage>(), TIMEOUT, TIMEOUT_UNIT);
+        writingQueue.offer(new EndOfFile<Point, RenderedImage>(), TIMEOUT, TIMEOUT_UNIT);
     }
 
     /**
@@ -456,7 +478,7 @@ public class GenericResampleProcess extends AbstractProcess {
             try {
                 while (!Thread.currentThread().isInterrupted()) {
                     toWrite = writingQueue.take();
-                    if (toWrite instanceof NightShade) {
+                    if (toWrite instanceof EndOfFile) {
                         return;
                     }
 
@@ -479,7 +501,7 @@ public class GenericResampleProcess extends AbstractProcess {
     private static class EmptyBox extends Rectangle {}
 
     /** A poisonous object to tell writer he can shutdown. */
-    private static class NightShade<A, B> implements Map.Entry<A, B> {
+    private static class EndOfFile<A, B> implements Map.Entry<A, B> {
         @Override
         public A getKey() {
             throw new RuntimeException("Poisonous object !");

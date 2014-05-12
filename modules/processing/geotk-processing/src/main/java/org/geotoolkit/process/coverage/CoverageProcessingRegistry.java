@@ -35,7 +35,7 @@ import org.geotoolkit.process.coverage.metadataextractor.ExtractionDescriptor;
 import org.geotoolkit.process.coverage.pyramid.PyramidDescriptor;
 import org.geotoolkit.process.coverage.reducetodomain.ReduceToDomainDescriptor;
 import org.geotoolkit.process.coverage.reformat.ReformatDescriptor;
-import org.geotoolkit.process.coverage.resample.GenericResampleDescriptor;
+import org.geotoolkit.process.coverage.resample.IOResampleDescriptor;
 import org.geotoolkit.process.coverage.resample.ResampleDescriptor;
 import org.geotoolkit.process.coverage.shadedrelief.ShadedReliefDescriptor;
 import org.geotoolkit.process.coverage.straighten.StraightenDescriptor;
@@ -84,7 +84,7 @@ public class CoverageProcessingRegistry extends AbstractProcessingRegistry{
               PyramidDescriptor.INSTANCE,
               ImageStatisticsDescriptor.INSTANCE,
               ComputeVolumeDescriptor.INSTANCE,
-              GenericResampleDescriptor.INSTANCE,
+              IOResampleDescriptor.INSTANCE,
               ShadedReliefDescriptor.INSTANCE);
     }
 
