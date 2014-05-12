@@ -39,6 +39,7 @@ import org.geotoolkit.coverage.Pyramid;
 import org.geotoolkit.coverage.PyramidalCoverageReference;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.memory.MPCoverageStore;
+import org.geotoolkit.coverage.DefaultCoverageReference;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.process.ProcessDescriptor;
@@ -99,7 +100,7 @@ public class PyramidTest {
 
         final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("coverage", "coveragepyramid");
         final ParameterValueGroup input = desc.getInputDescriptor().createValue();
-        input.parameter("coverage").setValue(coverage);
+        input.parameter("coverageref").setValue(new DefaultCoverageReference(coverage, name));
         input.parameter("in_coverage_store").setValue(store);
         input.parameter("tile_size").setValue(new Dimension(tileSize, tileSize));
         input.parameter("interpolation_type").setValue(InterpolationCase.NEIGHBOR);
