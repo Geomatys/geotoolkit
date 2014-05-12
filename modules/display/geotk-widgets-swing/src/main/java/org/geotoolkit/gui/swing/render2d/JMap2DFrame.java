@@ -75,7 +75,7 @@ import org.geotoolkit.gui.swing.propertyedit.filterproperty.JCQLPropertyPanel;
 import org.geotoolkit.gui.swing.propertyedit.styleproperty.JAdvancedStylePanel;
 import org.geotoolkit.gui.swing.propertyedit.styleproperty.JClassificationIntervalStylePanel;
 import org.geotoolkit.gui.swing.propertyedit.styleproperty.JClassificationSingleStylePanel;
-import org.geotoolkit.gui.swing.propertyedit.styleproperty.JColorMapPane;
+import org.geotoolkit.gui.swing.style.JColorMapPane;
 import org.geotoolkit.gui.swing.propertyedit.styleproperty.JSLDImportExportPanel;
 import org.geotoolkit.gui.swing.propertyedit.styleproperty.JSimpleStylePanel;
 import org.geotoolkit.gui.swing.resource.MessageBundle;

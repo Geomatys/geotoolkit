@@ -15,7 +15,7 @@
  *    Lesser General Public License for more details.
  */
 
-package org.geotoolkit.gui.swing.propertyedit.styleproperty;
+package org.geotoolkit.gui.swing.style;
 
 
 import java.awt.Color;
@@ -75,6 +75,7 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.filter.DefaultLiteral;
 import org.geotoolkit.gui.swing.propertyedit.AbstractPropertyPane;
 import org.geotoolkit.gui.swing.propertyedit.PropertyPane;
+import org.geotoolkit.gui.swing.propertyedit.styleproperty.PaletteCellRenderer;
 import org.geotoolkit.gui.swing.resource.FontAwesomeIcons;
 import org.geotoolkit.gui.swing.resource.IconBuilder;
 import org.geotoolkit.gui.swing.resource.IconBundle;

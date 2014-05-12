@@ -27,7 +27,6 @@ import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
@@ -45,8 +44,6 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
-import org.geotoolkit.gui.swing.util.ActionCell;
-import org.geotoolkit.gui.swing.util.JOptionDialog;
 import org.geotoolkit.gui.swing.propertyedit.PropertyPane;
 import org.geotoolkit.gui.swing.resource.FontAwesomeIcons;
 import org.geotoolkit.gui.swing.resource.IconBuilder;
@@ -54,20 +51,22 @@ import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.gui.swing.style.JBankPanel;
 import org.geotoolkit.gui.swing.style.JPreview;
-import org.geotoolkit.gui.swing.style.symbolizer.JRasterSymbolizerPane;
 import org.geotoolkit.gui.swing.style.StyleElementEditor;
 import org.geotoolkit.gui.swing.style.symbolizer.JLineSymbolizerPane;
 import org.geotoolkit.gui.swing.style.symbolizer.JPointSymbolizerPane;
 import org.geotoolkit.gui.swing.style.symbolizer.JPolygonSymbolizerPane;
+import org.geotoolkit.gui.swing.style.symbolizer.JRasterSymbolizerPane;
 import org.geotoolkit.gui.swing.style.symbolizer.JTextSymbolizerPane;
+import org.geotoolkit.gui.swing.util.ActionCell;
+import org.geotoolkit.gui.swing.util.JOptionDialog;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyle;
-import org.geotoolkit.style.MutableStyleFactory;
+import org.geotoolkit.style.RuleListener;
+import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.jdesktop.swingx.JXTable;
 import org.opengis.style.FeatureTypeStyle;
 import org.opengis.style.LineSymbolizer;
-import org.opengis.style.Mark;
 import org.opengis.style.PointSymbolizer;
 import org.opengis.style.PolygonSymbolizer;
 import org.opengis.style.RasterSymbolizer;
@@ -87,7 +86,7 @@ public class JSimpleStylePanel extends StyleElementEditor implements PropertyPan
     private static final ImageIcon ICO_ADD = IconBuilder.createIcon(FontAwesomeIcons.ICON_PLUS, 16, FontAwesomeIcons.DEFAULT_COLOR);
     private static final ImageIcon ICO_DELETE = IconBuilder.createIcon(FontAwesomeIcons.ICON_TRASH_O, 16, FontAwesomeIcons.DEFAULT_COLOR);
 
-    private final SymbolizerModel model = new SymbolizerModel();
+    private final SymbolizerModel model = new SymbolizerModel(getStyleFactory().rule());
 
     private MapLayer layer = null;
     private MutableStyle style = null;
@@ -101,8 +100,8 @@ public class JSimpleStylePanel extends StyleElementEditor implements PropertyPan
                         guiOverviewLabel.parse(s);
                         final int selecteRow = guiTable.getSelectedRow();
                         if (selecteRow >= 0) {
-                            model.getSymbolizers().get(selecteRow);
-                            model.change(selecteRow, s);
+                            model.rule.symbolizers().get(selecteRow);
+                            model.rule.symbolizers().set(selecteRow,s);
                         }
                     }
                 }
@@ -153,7 +152,7 @@ public class JSimpleStylePanel extends StyleElementEditor implements PropertyPan
             @Override
             public void actionPerformed(final ActionEvent e, Object value) {
                 final Symbolizer symbol = (Symbolizer) value;
-                model.deleteSymbolizer(symbol);
+                model.rule.symbolizers().remove(symbol);
             }
         });
 
@@ -190,8 +189,8 @@ public class JSimpleStylePanel extends StyleElementEditor implements PropertyPan
 
                 // Get all selected items
                 final int selectetRow = guiTable.getSelectedRow();
-                if (selectetRow >= 0 && model.symbolizers.size() > selectetRow) {
-                    final Object item = model.symbolizers.get(selectetRow);
+                if (selectetRow >= 0 && model.rule.symbolizers().size() > selectetRow) {
+                    final Object item = model.rule.symbolizers().get(selectetRow);
 
                     if (item != null) {
 
@@ -374,13 +373,8 @@ public class JSimpleStylePanel extends StyleElementEditor implements PropertyPan
                  currentEditor.apply();
              }
 
-            final MutableStyleFactory SF = getStyleFactory();
-            final Symbolizer[] array = model.symbolizers.toArray(new Symbolizer[0]);
             if(parentRule==null){
-                layer.setStyle(SF.style(array));
-            }else{
-                parentRule.symbolizers().clear();
-                parentRule.symbolizers().addAll(Arrays.asList(array));
+                layer.setStyle(getStyleFactory().style(model.rule.symbolizers().toArray(new Symbolizer[0])));
             }
             
         }
@@ -429,23 +423,27 @@ public class JSimpleStylePanel extends StyleElementEditor implements PropertyPan
 
     @Override
     public void parse(final Object obj) {
-        model.clear();
+        model.setRule(getStyleFactory().rule());
 
         parentRule = null;        
         if(layer != null){
             for(final FeatureTypeStyle fts : layer.getStyle().featureTypeStyles()){
                 for(final Rule rule : fts.rules()){
-                    parentRule = (MutableRule) rule;
-                    for(final Symbolizer symbol : rule.symbolizers()){
-                        if(symbol instanceof Symbolizer){
-                            model.addSymbolizer(symbol);
-                        }
-                    }
+                    parse((MutableRule)rule);
                     break; //we only retrieve the first rule.
                 }
             }
         }
 
+    }
+    
+    private void parse(final MutableRule rule) {
+
+        //listen to rule change from other syle editors
+        if(parentRule!=rule){
+            parentRule = (MutableRule) rule;
+            model.setRule(rule);
+        }
     }
 
     @Override
@@ -468,8 +466,9 @@ public class JSimpleStylePanel extends StyleElementEditor implements PropertyPan
         final int result = JOptionDialog.show(this, bankController,JOptionPane.OK_CANCEL_OPTION);
 
         if (result == JOptionPane.OK_OPTION) {
-            if (bankController.getSelectedSymbol() != null) {
-                int index = model.addSymbolizer((Symbolizer)bankController.getSelectedSymbol());
+            if (bankController.getSelectedSymbol() != null) {                
+                model.rule.symbolizers().add( (Symbolizer)bankController.getSelectedSymbol());
+                final int index = model.rule.symbolizers().size()-1;
                 guiTable.getSelectionModel().setSelectionInterval(index, index);
             }
         }
@@ -491,70 +490,46 @@ public class JSimpleStylePanel extends StyleElementEditor implements PropertyPan
     private JSplitPane jSplitPane1;
     // End of variables declaration//GEN-END:variables
 
+    private static final class SymbolizerModel extends AbstractTableModel implements RuleListener{
+        
+        private MutableRule rule;
+        private final Weak ruleListener = new Weak(this);
 
-    private static class SymbolizerModel extends AbstractTableModel {
-
-        private final List<Symbolizer> symbolizers = new ArrayList<Symbolizer>();
-
-        private SymbolizerModel() {
+        public SymbolizerModel(MutableRule rule) {
+            setRule(rule);
         }
 
-        public void clear(){
-            symbolizers.clear();
-            fireTableDataChanged();
-        }
-
-        public int addSymbolizer(Symbolizer s){
-            symbolizers.add(s);
-            int last = symbolizers.size() - 1;
-            fireTableRowsInserted(last, last);
-            return last;
-        }
-
-        public void deleteSymbolizer(final Symbolizer symbolizer) {
-            final int index = symbolizers.indexOf(symbolizer);
-            if (index >= 0) {
-                symbolizers.remove(index);
-                fireTableRowsDeleted(index, index);
+        public void setRule(MutableRule rule) {
+            if(this.rule==rule) return;
+            
+            if(this.rule!=null){
+                this.ruleListener.unregisterSource(this.rule);
             }
+            this.rule = rule;
+            this.ruleListener.registerSource(rule);
+            
+            fireTableDataChanged();
         }
 
         public void moveUp(final Symbolizer s) {
-            int index = symbolizers.indexOf(s);
+            int index = rule.symbolizers().indexOf(s);
             if (index != 0) {
-                symbolizers.remove(s);
-                symbolizers.add(index - 1, s);
-                fireTableDataChanged();
+                rule.symbolizers().remove(s);
+                rule.symbolizers().add(index - 1, s);
             }
         }
-
-        public void change(int index, final Symbolizer s) {
-            symbolizers.set(index, s);
-            fireTableRowsUpdated(index, index);
-        }
-
+        
         public void moveDown(final Symbolizer s) {
-            int index = symbolizers.indexOf(s);
-            if (index != symbolizers.size() - 1) {
-                symbolizers.remove(s);
-                symbolizers.add(index + 1, s);
-                fireTableDataChanged();
+            int index = rule.symbolizers().indexOf(s);
+            if (index != rule.symbolizers().size() - 1) {
+                rule.symbolizers().remove(s);
+                rule.symbolizers().add(index + 1, s);
             }
         }
-
-        public void setGraphics(final List<Symbolizer> symbols) {
-            this.symbolizers.clear();
-            this.symbolizers.addAll(symbols);
-            fireTableDataChanged();
-        }
-
-        public List<Symbolizer> getSymbolizers() {
-            return new ArrayList<Symbolizer>(this.symbolizers);
-        }
-
+        
         @Override
         public int getRowCount() {
-            return symbolizers.size();
+            return rule.symbolizers().size();
         }
 
         @Override
@@ -563,21 +538,33 @@ public class JSimpleStylePanel extends StyleElementEditor implements PropertyPan
         }
 
         @Override
-        public boolean isCellEditable(final int rowIndex, final int columnIndex) {
+        public boolean isCellEditable(int rowIndex, int columnIndex) {
             return columnIndex > 0;
         }
 
         @Override
-        public Class<?> getColumnClass(final int columnIndex) {
-            return Mark.class;
+        public Object getValueAt(int rowIndex, int columnIndex) {
+            return rule.symbolizers().get(rowIndex);
         }
 
         @Override
-        public Object getValueAt(final int rowIndex, final int columnIndex) {
-            return symbolizers.get(rowIndex);
+        public void symbolizerChange(CollectionChangeEvent<Symbolizer> event) {
+            final int type = event.getType();
+            if(type == CollectionChangeEvent.ITEM_ADDED){
+                fireTableRowsInserted((int)event.getRange().getMinDouble(), (int)event.getRange().getMaxDouble());
+            }else if(type == CollectionChangeEvent.ITEM_REMOVED){
+                fireTableRowsDeleted((int)event.getRange().getMinDouble(), (int)event.getRange().getMaxDouble());
+            }else if(type == CollectionChangeEvent.ITEM_CHANGED){
+                fireTableRowsUpdated((int)event.getRange().getMinDouble(), (int)event.getRange().getMaxDouble());
+            }
         }
-    }
 
+        @Override
+        public void propertyChange(PropertyChangeEvent evt) {
+        }
+        
+    }
+    
     private static class SymbolizerRenderer extends DefaultTableCellRenderer {
 
         private final JPreview preview = new JPreview();

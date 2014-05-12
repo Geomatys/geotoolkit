@@ -36,7 +36,7 @@ import javax.swing.JRadioButton;
 import javax.swing.JTabbedPane;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SwingConstants;
-import org.geotoolkit.gui.swing.propertyedit.styleproperty.JColorMapPane;
+import org.geotoolkit.gui.swing.style.JColorMapPane;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.gui.swing.style.JChannelSelectionPane;
 import org.geotoolkit.gui.swing.style.JContrastEnhancement;
