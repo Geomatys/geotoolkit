@@ -115,8 +115,6 @@ public class JAdvancedStylePanel extends StyleElementEditor implements PropertyP
         tree.addTreeSelectionListener(listener);
         guiXml.setEditorKit(new XMLEditorKit());
         
-        
-        
         guiTabs.addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {

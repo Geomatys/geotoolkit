@@ -21,6 +21,7 @@ package org.geotoolkit.gui.swing.propertyedit.styleproperty;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -46,6 +47,7 @@ import javax.swing.DefaultCellEditor;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -72,10 +74,12 @@ import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.filter.DefaultLiteral;
 import org.geotoolkit.gui.swing.propertyedit.AbstractPropertyPane;
+import org.geotoolkit.gui.swing.propertyedit.PropertyPane;
 import org.geotoolkit.gui.swing.resource.FontAwesomeIcons;
 import org.geotoolkit.gui.swing.resource.IconBuilder;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
+import org.geotoolkit.gui.swing.style.StyleElementEditor;
 import org.geotoolkit.gui.swing.util.ColorCellEditor;
 import org.geotoolkit.gui.swing.util.ColorCellRenderer;
 import org.geotoolkit.gui.swing.util.NumberAlignRenderer;
@@ -126,9 +130,9 @@ import org.opengis.style.Symbolizer;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class JRasterColorMapStylePanel extends AbstractPropertyPane{
+public class JColorMapPane extends StyleElementEditor<ColorMap> implements PropertyPane{
 
-    private static final Logger LOGGER = Logging.getLogger(JRasterColorMapStylePanel.class);
+    private static final Logger LOGGER = Logging.getLogger(JColorMapPane.class);
 
     private static final PaletteFactory PF = PaletteFactory.getDefault();
     private static final List<Object> PALETTES = new ArrayList<>();
@@ -172,6 +176,11 @@ public class JRasterColorMapStylePanel extends AbstractPropertyPane{
     private static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
     private static final Literal TRS = SF.literal(new Color(0, 0, 0, 0));
 
+    private final String title;
+    private final ImageIcon icon;
+    private final Image preview;
+    private final String tooltip;
+    
     private ColorMapModel model = new InterpolateColorModel(Collections.EMPTY_LIST);
     private MapLayer layer = null;
     //keep track of where the symbolizer was to avoid rewriting the complete style
@@ -182,10 +191,12 @@ public class JRasterColorMapStylePanel extends AbstractPropertyPane{
     private String desc = "";
     private List<Object> currentPaletteList = null;
 
-    public JRasterColorMapStylePanel() {
-        super(MessageBundle.getString("property_style_colormap"), 
-              IconBundle.getIcon("16_classification_single"), 
-              null, "");
+    public JColorMapPane() {
+        super(ColorMap.class);
+        title = MessageBundle.getString("property_style_colormap"); 
+        icon = IconBundle.getIcon("16_classification_single");
+        preview = null;
+        tooltip = "";
         initComponents();
         setPalettes(PALETTES);
         guiPalette.setRenderer(new PaletteCellRenderer());
@@ -207,9 +218,38 @@ public class JRasterColorMapStylePanel extends AbstractPropertyPane{
                 return lbl;
             }
         });
-        parse(null);
+        parse((RasterSymbolizer)null);
     }
 
+    @Override
+    public final String getTitle() {
+        return title;
+    }
+
+    @Override
+    public final ImageIcon getIcon() {
+        return icon;
+    }
+
+    @Override
+    public final Image getPreview() {
+        return preview;
+    }
+
+    @Override
+    public final String getToolTip() {
+        return tooltip;
+    }
+
+    @Override
+    public final Component getComponent() {
+        return this;
+    }
+    
+    public String getSelectedBand(){
+        return String.valueOf(guiBand.getValue());
+    }
+    
     private void setPalettes(List<Object> palettes){
         if(currentPaletteList == palettes) return;
         this.currentPaletteList = palettes;
@@ -269,21 +309,29 @@ public class JRasterColorMapStylePanel extends AbstractPropertyPane{
             name = rs.getName();
             desc = rs.getDescription()== null ? "" : ((rs.getDescription().getTitle()==null) ? "" : rs.getDescription().getTitle().toString());
 
-            if(rs.getColorMap()!=null && rs.getColorMap().getFunction()!=null){
-                final Function fct = rs.getColorMap().getFunction();
-                if(fct instanceof Interpolate){
-                    final List<InterpolationPoint> points = ((Interpolate)fct).getInterpolationPoints();
-                    model = new InterpolateColorModel(points);
-                }else if(fct instanceof Categorize){
-                    final Map<Expression,Expression> th = ((Categorize)fct).getThresholds();
-                    model = new CategorizeColorModel(th);
-                }else{
-                    model = new InterpolateColorModel(Collections.EMPTY_LIST);
-                    LOGGER.log(Level.WARNING, "Unknowned colormap function : {0}", fct);
-                }
+            parse(rs.getColorMap());
+            
+        }else{
+            //create an empty interpolate colormodel
+            model = new InterpolateColorModel(Collections.EMPTY_LIST);
+        }
+        
+        postParse();
+    }
+
+    @Override
+    public void parse(ColorMap target) {
+        if(target!=null && target.getFunction()!=null){
+            final Function fct = target.getFunction();
+            if(fct instanceof Interpolate){
+                final List<InterpolationPoint> points = ((Interpolate)fct).getInterpolationPoints();
+                model = new InterpolateColorModel(points);
+            }else if(fct instanceof Categorize){
+                final Map<Expression,Expression> th = ((Categorize)fct).getThresholds();
+                model = new CategorizeColorModel(th);
             }else{
-                //create an empty interpolate colormodel
                 model = new InterpolateColorModel(Collections.EMPTY_LIST);
+                LOGGER.log(Level.WARNING, "Unknowned colormap function : {0}", fct);
             }
         }else{
             //create an empty interpolate colormodel
@@ -913,26 +961,17 @@ public class JRasterColorMapStylePanel extends AbstractPropertyPane{
     public void apply() {
         if(layer == null) return;
 
-        final Expression lookup = DEFAULT_CATEGORIZE_LOOKUP;
-        final Literal fallback = DEFAULT_FALLBACK;
-
-        final Function function = ((ColorMapModel)guiTable.getModel()).createFunction();
-
         final ChannelSelection selection = SF.channelSelection(
-                SF.selectedChannelType(String.valueOf(guiBand.getValue()),DEFAULT_CONTRAST_ENHANCEMENT));
+                SF.selectedChannelType(getSelectedBand(),DEFAULT_CONTRAST_ENHANCEMENT));
 
-        final Expression opacity = LITERAL_ONE_FLOAT;
-        final OverlapBehavior overlap = OverlapBehavior.LATEST_ON_TOP;
-        final ColorMap colorMap = SF.colorMap(function);
+        final ColorMap colorMap = create();
         final ContrastEnhancement enchance = SF.contrastEnhancement(LITERAL_ONE_FLOAT,ContrastMethod.NONE);
-        final ShadedRelief relief = SF.shadedRelief(LITERAL_ONE_FLOAT);
-        final Symbolizer outline = null;
-        final Unit uom = NonSI.PIXEL;
-        final String geom = DEFAULT_GEOM;
+        final ShadedRelief relief = SF.shadedRelief(LITERAL_ONE_FLOAT);        
         final Description desc = SF.description(this.desc, this.desc);
 
         final RasterSymbolizer symbol = SF.rasterSymbolizer(
-                name,geom,desc,uom,opacity, selection, overlap, colorMap, enchance, relief, outline);
+                name,DEFAULT_GEOM,desc,NonSI.PIXEL,LITERAL_ONE_FLOAT, 
+                selection, OverlapBehavior.LATEST_ON_TOP, colorMap, enchance, relief, null);
 
         if(parentRule!=null){
             parentRule.symbolizers().remove(parentIndex);
@@ -950,6 +989,12 @@ public class JRasterColorMapStylePanel extends AbstractPropertyPane{
         if(layer != null){
             parse();
         }
+    }
+
+    @Override
+    public ColorMap create() {
+        final Function function = ((ColorMapModel)guiTable.getModel()).createFunction();
+        return SF.colorMap(function);
     }
 
     private void getInterpolationPoints(final double min, final double max, List<Entry<Double, Color>> steps) throws CoverageStoreException {

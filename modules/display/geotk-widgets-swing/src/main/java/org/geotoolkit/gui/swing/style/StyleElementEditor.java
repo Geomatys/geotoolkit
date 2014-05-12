@@ -41,13 +41,14 @@ import org.opengis.util.InternationalString;
 /**
  * Style element editor
  *
- * @param T : style element class edited
+ * @param <T> : style element class edited
  * @author Johann Sorel
  * @module pending
  */
 public abstract class StyleElementEditor<T> extends JPanel {
 
     public static final String PROPERTY_TARGET = "target";
+    public static final String PROPERTY_EDITED = "edited";
 
     /**
      * The service loader. This loader and its iterator are not synchronized;

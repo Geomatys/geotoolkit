@@ -2,9 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2007 - 2008, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2008 - 2009, Johann Sorel
- *    (C) 2009 - 2014, Geomatys
+ *    (C) 2014, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -18,24 +16,27 @@
  */
 package org.geotoolkit.gui.swing.style.symbolizer;
 
+import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.Arrays;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
-import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.JTabbedPane;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SwingConstants;
-import org.geotoolkit.gui.swing.util.JOptionDialog;
+import org.geotoolkit.gui.swing.propertyedit.styleproperty.JColorMapPane;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.gui.swing.style.JChannelSelectionPane;
 import org.geotoolkit.gui.swing.style.JContrastEnhancement;
@@ -47,6 +48,8 @@ import org.geotoolkit.gui.swing.style.JUOMPane;
 import org.geotoolkit.gui.swing.style.StyleElementEditor;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.StyleConstants;
+import static org.geotoolkit.style.StyleConstants.DEFAULT_CONTRAST_ENHANCEMENT;
+import org.jdesktop.swingx.combobox.ListComboBoxModel;
 import org.opengis.style.ChannelSelection;
 import org.opengis.style.ColorMap;
 import org.opengis.style.LineSymbolizer;
@@ -56,25 +59,41 @@ import org.opengis.style.RasterSymbolizer;
 import org.opengis.style.Symbolizer;
 
 /**
- * Raster Symbolizer edition panel
+ * Raster symbolizer editor.
  *
- * @author Johann Sorel
- * @module pending
+ * @author Johann Sorel (Geomatys)
  */
 public class JRasterSymbolizerPane extends StyleElementEditor<RasterSymbolizer> {
 
     private MapLayer layer = null;
     private RasterSymbolizer oldSymbolizer;
-    private Symbolizer outLine = null;
-    private ChannelSelection channelSelection = null;
-    private ColorMap colorMap = null;
 
-    /** Creates new form RasterStylePanel
-     * @param layer the layer style to edit
-     */
+    private final JChannelSelectionPane guiChannelPane = new JChannelSelectionPane();
+    private final JColorMapPane guiColorMapPane = new JColorMapPane();
+    private final JLineSymbolizerPane guiLinePane = new JLineSymbolizerPane();
+    private final JPolygonSymbolizerPane guiPolygonPane = new JPolygonSymbolizerPane();
+    
+    private final String cmRGB = MessageBundle.getString("style.rastersymbolizer.cm_rgb");
+    private final String cmColorMap = MessageBundle.getString("style.rastersymbolizer.cm_colormap");
+    
     public JRasterSymbolizerPane() {
         super(RasterSymbolizer.class);
         initComponents();
+        
+        guiColorCombo.setModel(new ListComboBoxModel(Arrays.asList("-",cmRGB,cmColorMap)));
+        guiColorCombo.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                guiColorimetryPane.removeAll();
+                if(cmRGB.equals(guiColorCombo.getSelectedItem())){
+                    guiColorimetryPane.add(guiChannelPane, BorderLayout.CENTER);
+                }else if(cmColorMap.equals(guiColorCombo.getSelectedItem())){
+                    guiColorimetryPane.add(guiColorMapPane, BorderLayout.CENTER);
+                }
+                guiColorimetryPane.revalidate();
+                guiColorimetryPane.repaint();
+            }
+        });
     }
 
     /**
@@ -88,6 +107,10 @@ public class JRasterSymbolizerPane extends StyleElementEditor<RasterSymbolizer> 
         guiOverLap.setLayer(layer);
         guiContrast.setLayer(layer);
         guiRelief.setLayer(layer);
+        guiChannelPane.setLayer(layer);
+        guiColorMapPane.setLayer(layer);
+        guiLinePane.setLayer(layer);
+        guiPolygonPane.setLayer(layer);
     }
 
     /**
@@ -112,25 +135,26 @@ public class JRasterSymbolizerPane extends StyleElementEditor<RasterSymbolizer> 
             //guiOverLap.parse(symbol.getOverlapBehavior());
             guiContrast.parse(symbol.getContrastEnhancement());
             guiRelief.parse(symbol.getShadedRelief());
+            guiChannelPane.parse(symbol.getChannelSelection());
+            guiColorMapPane.parse(symbol.getColorMap());
             
-            outLine = symbol.getImageOutline();
-            channelSelection = symbol.getChannelSelection();
-            colorMap = symbol.getColorMap();
+            final Symbolizer outLine = symbol.getImageOutline();
+            if(outLine instanceof LineSymbolizer){
+                guiLine.setSelected(true);
+                guiLinePane.parse((LineSymbolizer)outLine);
+            }else if(outLine instanceof PolygonSymbolizer){
+                guiPolygon.setSelected(true);
+                guiPolygonPane.parse((PolygonSymbolizer)outLine);
+            }else{
+                guinone.setSelected(true);
+            }
             
-        }else{
-            outLine = null;
-            colorMap = null;
-            channelSelection = null;
-        }
-        
-        butLineSymbolizer.setEnabled(false);
-        butPolygonSymbolizer.setEnabled(false);
-        if(outLine instanceof LineSymbolizer){
-            guiLine.setSelected(true);
-        }else if(outLine instanceof LineSymbolizer){
-            guiPolygon.setSelected(true);
-        }else{
-            guinone.setSelected(true);
+            if(symbol.getColorMap()!=null && symbol.getColorMap().getFunction()!=null){
+                guiColorCombo.getModel().setSelectedItem(cmColorMap);
+            }else{
+                guiColorCombo.getModel().setSelectedItem(cmRGB);
+            }
+            
         }
         
     }
@@ -140,18 +164,39 @@ public class JRasterSymbolizerPane extends StyleElementEditor<RasterSymbolizer> 
      */
     @Override
     public RasterSymbolizer create() {
+        Symbolizer outline = null;
+        if(guiLine.isSelected()){
+            outline = guiLinePane.create();
+        }else if(guiPolygon.isSelected()){
+            outline = guiPolygonPane.create();
+        }
+        
+        final ChannelSelection chanSelect;
+        final ColorMap colorMap;
+        if(cmRGB.equals(guiColorCombo.getSelectedItem())){
+            chanSelect = guiChannelPane.create();
+            colorMap = null;
+        }else if(cmColorMap.equals(guiColorCombo.getSelectedItem())){
+            chanSelect = getStyleFactory().channelSelection(getStyleFactory()
+                    .selectedChannelType(guiColorMapPane.getSelectedBand(),DEFAULT_CONTRAST_ENHANCEMENT));
+            colorMap = guiColorMapPane.create();
+        }else{
+            chanSelect = null;
+            colorMap = null;
+        }
+        
         return getStyleFactory().rasterSymbolizer(
-                "RasterSymbolizer",
+                (oldSymbolizer!=null) ? oldSymbolizer.getName(): "RasterSymbolizer",
                 guiGeom.getGeom(),
                 (oldSymbolizer!=null) ? oldSymbolizer.getDescription() : StyleConstants.DEFAULT_DESCRIPTION,
                 guiUOM.create(),
                 guiOpacity.create(),
-                channelSelection,
+                chanSelect,
                 (oldSymbolizer!=null) ? oldSymbolizer.getOverlapBehavior() : OverlapBehavior.AVERAGE, 
                 colorMap, 
                 guiContrast.create(), 
                 guiRelief.create(), 
-                outLine);
+                outline);
     
     }
     
@@ -164,53 +209,30 @@ public class JRasterSymbolizerPane extends StyleElementEditor<RasterSymbolizer> 
     private void initComponents() {
 
         grpOutline = new ButtonGroup();
-        guiContrast = new JContrastEnhancement();
-        guiRelief = new JShadedReliefPane();
         jPanel1 = new JPanel();
-        butChannels = new JButton();
-        jLabel3 = new JLabel();
         guiOverLap = new JTextExpressionPane();
         jLabel2 = new JLabel();
         jLabel1 = new JLabel();
         guiOpacity = new JNumberExpressionPane();
         guiUOM = new JUOMPane();
         guiGeom = new JGeomPane();
+        jTabbedPane1 = new JTabbedPane();
+        jPanel3 = new JPanel();
+        jLabel4 = new JLabel();
+        guiColorCombo = new JComboBox();
+        guiColorimetryPane = new JPanel();
         jPanel2 = new JPanel();
         guinone = new JRadioButton();
         guiLine = new JRadioButton();
         guiPolygon = new JRadioButton();
-        butPolygonSymbolizer = new JButton();
-        butLineSymbolizer = new JButton();
+        guiOutlinePane = new JPanel();
+        guiContrast = new JContrastEnhancement();
+        guiRelief = new JShadedReliefPane();
 
         setOpaque(false);
 
-        guiContrast.setBorder(BorderFactory.createTitledBorder(MessageBundle.getString("contrast"))); // NOI18N
-        guiContrast.addPropertyChangeListener(new PropertyChangeListener() {
-            public void propertyChange(PropertyChangeEvent evt) {
-                JRasterSymbolizerPane.this.propertyChange(evt);
-            }
-        });
-
-        guiRelief.setBorder(BorderFactory.createTitledBorder(MessageBundle.getString("relief"))); // NOI18N
-        guiRelief.addPropertyChangeListener(new PropertyChangeListener() {
-            public void propertyChange(PropertyChangeEvent evt) {
-                JRasterSymbolizerPane.this.propertyChange(evt);
-            }
-        });
-
         jPanel1.setBorder(BorderFactory.createTitledBorder(MessageBundle.getString("style.rastersymbolizer.general"))); // NOI18N
         jPanel1.setOpaque(false);
-
-        butChannels.setText(MessageBundle.getString("style.rastersymbolizer.edit")); // NOI18N
-        butChannels.setPreferredSize(new Dimension(79, 22));
-        butChannels.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                butChannelsActionPerformed(evt);
-            }
-        });
-
-        jLabel3.setHorizontalAlignment(SwingConstants.RIGHT);
-        jLabel3.setText(MessageBundle.getString("style.rastersymbolizer.channels")); // NOI18N
 
         guiOverLap.addPropertyChangeListener(new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent evt) {
@@ -240,53 +262,70 @@ public class JRasterSymbolizerPane extends StyleElementEditor<RasterSymbolizer> 
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addPreferredGap(ComponentPlacement.RELATED)
-                        .addComponent(guiOpacity, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(guiOpacity, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(ComponentPlacement.RELATED)
                         .addComponent(jLabel2)
                         .addPreferredGap(ComponentPlacement.RELATED)
                         .addComponent(guiOverLap, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel3)
-                        .addPreferredGap(ComponentPlacement.RELATED)
-                        .addComponent(butChannels, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel1Layout.createParallelGroup(Alignment.TRAILING, false)
-                        .addComponent(guiUOM, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(guiGeom, Alignment.LEADING, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(guiGeom, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(guiUOM, GroupLayout.PREFERRED_SIZE, 152, GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
-
-        jPanel1Layout.linkSize(SwingConstants.HORIZONTAL, new Component[] {jLabel1, jLabel2, jLabel3});
-
-        jPanel1Layout.linkSize(SwingConstants.HORIZONTAL, new Component[] {butChannels, guiOpacity, guiOverLap});
-
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addComponent(guiGeom, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(ComponentPlacement.RELATED)
-                .addComponent(guiUOM, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(Alignment.LEADING)
+                    .addComponent(guiUOM, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                    .addComponent(guiGeom, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                .addGap(11, 11, 11)
                 .addGroup(jPanel1Layout.createParallelGroup(Alignment.LEADING)
                     .addComponent(jLabel1)
-                    .addComponent(guiOpacity, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                    .addComponent(guiOpacity, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                    .addComponent(guiOverLap, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel2, Alignment.TRAILING))
+                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        jPanel1Layout.linkSize(SwingConstants.VERTICAL, new Component[] {guiOpacity, guiOverLap, jLabel1, jLabel2});
+
+        jTabbedPane1.setTabPlacement(JTabbedPane.LEFT);
+
+        jLabel4.setText(MessageBundle.getString("style.rastersymbolizer.colormodel")); // NOI18N
+
+        guiColorimetryPane.setLayout(new BorderLayout());
+
+        GroupLayout jPanel3Layout = new GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel3Layout.createParallelGroup(Alignment.LEADING)
+                    .addComponent(guiColorimetryPane, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(jLabel4)
+                        .addPreferredGap(ComponentPlacement.RELATED)
+                        .addComponent(guiColorCombo, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 212, Short.MAX_VALUE)))
+                .addContainerGap())
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(Alignment.LEADING)
+            .addGroup(Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel3Layout.createParallelGroup(Alignment.BASELINE)
+                    .addComponent(jLabel4)
+                    .addComponent(guiColorCombo, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(Alignment.LEADING)
-                    .addComponent(jLabel2)
-                    .addComponent(guiOverLap, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(Alignment.BASELINE)
-                    .addComponent(butChannels, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel3))
+                .addComponent(guiColorimetryPane, GroupLayout.DEFAULT_SIZE, 149, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
-        jPanel1Layout.linkSize(SwingConstants.VERTICAL, new Component[] {guiOpacity, jLabel1});
+        jTabbedPane1.addTab(MessageBundle.getString("colors"), jPanel3); // NOI18N
 
-        jPanel1Layout.linkSize(SwingConstants.VERTICAL, new Component[] {guiOverLap, jLabel2});
-
-        jPanel1Layout.linkSize(SwingConstants.VERTICAL, new Component[] {butChannels, jLabel3});
-
-        jPanel2.setBorder(BorderFactory.createTitledBorder(MessageBundle.getString("style.rastersymbolizer.outline"))); // NOI18N
+        jPanel2.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
         jPanel2.setOpaque(false);
 
         grpOutline.add(guinone);
@@ -302,7 +341,7 @@ public class JRasterSymbolizerPane extends StyleElementEditor<RasterSymbolizer> 
         guiLine.setText(MessageBundle.getString("style.rastersymbolizer.line")); // NOI18N
         guiLine.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
-                guiLineActionPerformed(evt);
+                guinoneActionPerformed(evt);
             }
         });
 
@@ -310,29 +349,11 @@ public class JRasterSymbolizerPane extends StyleElementEditor<RasterSymbolizer> 
         guiPolygon.setText(MessageBundle.getString("style.rastersymbolizer.polygon")); // NOI18N
         guiPolygon.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
-                guiPolygonActionPerformed(evt);
+                guinoneActionPerformed(evt);
             }
         });
 
-        butPolygonSymbolizer.setText(MessageBundle.getString("style.rastersymbolizer.edit")); // NOI18N
-        butPolygonSymbolizer.setBorderPainted(false);
-        butPolygonSymbolizer.setEnabled(false);
-        butPolygonSymbolizer.setPreferredSize(new Dimension(79, 20));
-        butPolygonSymbolizer.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                butPolygonSymbolizerActionPerformed(evt);
-            }
-        });
-
-        butLineSymbolizer.setText(MessageBundle.getString("style.rastersymbolizer.edit")); // NOI18N
-        butLineSymbolizer.setBorderPainted(false);
-        butLineSymbolizer.setEnabled(false);
-        butLineSymbolizer.setPreferredSize(new Dimension(79, 20));
-        butLineSymbolizer.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                butLineSymbolizerActionPerformed(evt);
-            }
-        });
+        guiOutlinePane.setLayout(new BorderLayout());
 
         GroupLayout jPanel2Layout = new GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -340,17 +361,13 @@ public class JRasterSymbolizerPane extends StyleElementEditor<RasterSymbolizer> 
             jPanel2Layout.createParallelGroup(Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(Alignment.LEADING)
-                    .addComponent(guinone)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGroup(jPanel2Layout.createParallelGroup(Alignment.TRAILING)
-                            .addComponent(guiLine)
-                            .addComponent(guiPolygon))
-                        .addPreferredGap(ComponentPlacement.RELATED)
-                        .addGroup(jPanel2Layout.createParallelGroup(Alignment.LEADING, false)
-                            .addComponent(butPolygonSymbolizer, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(butLineSymbolizer, GroupLayout.DEFAULT_SIZE, 101, Short.MAX_VALUE))))
-                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(guinone)
+                .addPreferredGap(ComponentPlacement.RELATED)
+                .addComponent(guiLine)
+                .addPreferredGap(ComponentPlacement.RELATED)
+                .addComponent(guiPolygon)
+                .addContainerGap(126, Short.MAX_VALUE))
+            .addComponent(guiOutlinePane, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         jPanel2Layout.linkSize(SwingConstants.HORIZONTAL, new Component[] {guiLine, guiPolygon, guinone});
@@ -359,89 +376,59 @@ public class JRasterSymbolizerPane extends StyleElementEditor<RasterSymbolizer> 
             jPanel2Layout.createParallelGroup(Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(guinone)
-                .addPreferredGap(ComponentPlacement.RELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(Alignment.BASELINE)
-                    .addComponent(butLineSymbolizer, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                    .addComponent(guiLine))
-                .addPreferredGap(ComponentPlacement.RELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(Alignment.BASELINE)
-                    .addComponent(butPolygonSymbolizer, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                    .addComponent(guinone)
+                    .addComponent(guiLine)
                     .addComponent(guiPolygon))
-                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(ComponentPlacement.UNRELATED)
+                .addComponent(guiOutlinePane, GroupLayout.DEFAULT_SIZE, 158, Short.MAX_VALUE))
         );
+
+        jTabbedPane1.addTab(MessageBundle.getString("style.rastersymbolizer.outline"), jPanel2); // NOI18N
+
+        guiContrast.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
+        guiContrast.addPropertyChangeListener(new PropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent evt) {
+                JRasterSymbolizerPane.this.propertyChange(evt);
+            }
+        });
+        jTabbedPane1.addTab(MessageBundle.getString("contrast"), guiContrast); // NOI18N
+
+        guiRelief.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
+        guiRelief.addPropertyChangeListener(new PropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent evt) {
+                JRasterSymbolizerPane.this.propertyChange(evt);
+            }
+        });
+        jTabbedPane1.addTab(MessageBundle.getString("relief"), guiRelief); // NOI18N
 
         GroupLayout layout = new GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(Alignment.LEADING)
             .addComponent(jPanel1, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(jPanel2, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(guiRelief, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(guiContrast, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jTabbedPane1)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(ComponentPlacement.RELATED)
-                .addComponent(jPanel2, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(ComponentPlacement.RELATED)
-                .addComponent(guiRelief, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(ComponentPlacement.RELATED)
-                .addComponent(guiContrast, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                .addComponent(jTabbedPane1, GroupLayout.DEFAULT_SIZE, 207, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void butPolygonSymbolizerActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_butPolygonSymbolizerActionPerformed
-        
-        final JPolygonSymbolizerPane pane = new JPolygonSymbolizerPane();
-        pane.setLayer(layer);
-        pane.parse((PolygonSymbolizer)outLine);
-        
-        if(JOptionDialog.show(this, pane, JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION){
-            outLine = pane.create();
-        }
-    }//GEN-LAST:event_butPolygonSymbolizerActionPerformed
-
-    private void butLineSymbolizerActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_butLineSymbolizerActionPerformed
-        final JLineSymbolizerPane pane = new JLineSymbolizerPane();
-        pane.setLayer(layer);
-        pane.parse((LineSymbolizer)outLine);
-        
-        if(JOptionDialog.show(this, pane, JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION){
-            outLine = pane.create();
-        }
-    }//GEN-LAST:event_butLineSymbolizerActionPerformed
-
-    private void guiLineActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_guiLineActionPerformed
-        if(!(outLine instanceof LineSymbolizer)) outLine = null;
-        butLineSymbolizer.setEnabled(true);
-        butPolygonSymbolizer.setEnabled(false);
-        
-}//GEN-LAST:event_guiLineActionPerformed
-
     private void guinoneActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_guinoneActionPerformed
-       outLine = null;
-       firePropertyChange(PROPERTY_TARGET, null, create());
-    }//GEN-LAST:event_guinoneActionPerformed
-
-    private void guiPolygonActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_guiPolygonActionPerformed
-        if(!(outLine instanceof PolygonSymbolizer)) outLine = null;
-        butLineSymbolizer.setEnabled(false);
-        butPolygonSymbolizer.setEnabled(true);
-    }//GEN-LAST:event_guiPolygonActionPerformed
-
-    private void butChannelsActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_butChannelsActionPerformed
-        
-        final JChannelSelectionPane pane = new JChannelSelectionPane();
-        pane.setLayer(layer);
-        pane.parse(channelSelection);
-        
-        if(JOptionDialog.show(this, pane, JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION){
-            channelSelection = pane.create();
+        guiOutlinePane.removeAll();
+        if(guiLine.isSelected()){
+            guiOutlinePane.add(guiLinePane, BorderLayout.CENTER);
+        }else if(guiPolygon.isSelected()){
+            guiOutlinePane.add(guiPolygonPane, BorderLayout.CENTER);
         }
-    }//GEN-LAST:event_butChannelsActionPerformed
+        guiOutlinePane.revalidate();
+        guiOutlinePane.repaint();
+        
+    }//GEN-LAST:event_guinoneActionPerformed
 
     private void propertyChange(PropertyChangeEvent evt) {//GEN-FIRST:event_propertyChange
         if (PROPERTY_TARGET.equalsIgnoreCase(evt.getPropertyName())) {            
@@ -451,14 +438,14 @@ public class JRasterSymbolizerPane extends StyleElementEditor<RasterSymbolizer> 
     }//GEN-LAST:event_propertyChange
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private JButton butChannels;
-    private JButton butLineSymbolizer;
-    private JButton butPolygonSymbolizer;
     private ButtonGroup grpOutline;
+    private JComboBox guiColorCombo;
+    private JPanel guiColorimetryPane;
     private JContrastEnhancement guiContrast;
     private JGeomPane guiGeom;
     private JRadioButton guiLine;
     private JNumberExpressionPane guiOpacity;
+    private JPanel guiOutlinePane;
     private JTextExpressionPane guiOverLap;
     private JRadioButton guiPolygon;
     private JShadedReliefPane guiRelief;
@@ -466,9 +453,11 @@ public class JRasterSymbolizerPane extends StyleElementEditor<RasterSymbolizer> 
     private JRadioButton guinone;
     private JLabel jLabel1;
     private JLabel jLabel2;
-    private JLabel jLabel3;
+    private JLabel jLabel4;
     private JPanel jPanel1;
     private JPanel jPanel2;
+    private JPanel jPanel3;
+    private JTabbedPane jTabbedPane1;
     // End of variables declaration//GEN-END:variables
     
 }

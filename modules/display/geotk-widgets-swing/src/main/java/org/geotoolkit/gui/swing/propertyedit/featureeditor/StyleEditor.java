@@ -29,7 +29,7 @@ import org.geotoolkit.gui.swing.propertyedit.LayerStylePropertyPanel;
 import org.geotoolkit.gui.swing.propertyedit.styleproperty.JAdvancedStylePanel;
 import org.geotoolkit.gui.swing.propertyedit.styleproperty.JClassificationIntervalStylePanel;
 import org.geotoolkit.gui.swing.propertyedit.styleproperty.JClassificationSingleStylePanel;
-import org.geotoolkit.gui.swing.propertyedit.styleproperty.JRasterColorMapStylePanel;
+import org.geotoolkit.gui.swing.propertyedit.styleproperty.JColorMapPane;
 import org.geotoolkit.gui.swing.propertyedit.styleproperty.JSLDImportExportPanel;
 import org.geotoolkit.gui.swing.propertyedit.styleproperty.JSimpleStylePanel;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
@@ -102,7 +102,7 @@ public class StyleEditor extends PropertyValueEditor implements ActionListener{
         editors.addPropertyPanel(MessageBundle.getString("analyze"),new JSimpleStylePanel());
         editors.addPropertyPanel(MessageBundle.getString("analyze_vector"),new JClassificationSingleStylePanel());
         editors.addPropertyPanel(MessageBundle.getString("analyze_vector"),new JClassificationIntervalStylePanel());
-        editors.addPropertyPanel(MessageBundle.getString("analyze_raster"),new JRasterColorMapStylePanel());
+        editors.addPropertyPanel(MessageBundle.getString("analyze_raster"),new JColorMapPane());
         editors.addPropertyPanel(MessageBundle.getString("analyze_raster"),new JCellSymbolizerPane());
         editors.addPropertyPanel(MessageBundle.getString("sld"),new JAdvancedStylePanel());
         editors.addPropertyPanel(MessageBundle.getString("sld"),new JSLDImportExportPanel());
