@@ -1,9 +1,8 @@
-package org.geotoolkit.data.om;
 /*
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2010, Geomatys
+ *    (C) 2014, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -16,59 +15,46 @@ package org.geotoolkit.data.om;
  *    Lesser General Public License for more details.
  */
 
+
+package org.geotoolkit.data.om;
+
 import com.vividsolutions.jts.geom.Point;
+import java.io.File;
 import java.io.InputStream;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
-
-import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.data.AbstractReadingTests;
 import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.FeatureStoreFinder;
-import org.geotoolkit.data.om.OMFeatureStoreFactory;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.FeatureTypeBuilder;
-import org.apache.sis.geometry.GeneralEnvelope;
-import org.geotoolkit.internal.sql.DefaultDataSource;
-import org.geotoolkit.internal.sql.ScriptRunner;
 import org.geotoolkit.referencing.CRS;
-
+import org.geotoolkit.util.FileUtilities;
 import org.opengis.feature.type.Name;
-
 
 /**
  *
- * @author Johann Sorel (Geomatys)
- * @module pending
+ * @author Guilhem Legal (Geomatys)
  */
-public class OMDataStoreTest extends AbstractReadingTests{
-
-    private static DefaultDataSource ds;
+public class NetCDFFeatureStoreTest extends AbstractReadingTests{
+    
     private static FeatureStore store;
-    private static Set<Name> names = new HashSet<>();
-    private static List<ExpectedResult> expecteds = new ArrayList<>();
+    private static final Set<Name> names = new HashSet<>();
+    private static final List<AbstractReadingTests.ExpectedResult> expecteds = new ArrayList<>();
     static{
         try{
-            final String url = "jdbc:derby:memory:TestOM;create=true";
-            ds = new DefaultDataSource(url);
 
-            Connection con = ds.getConnection();
-
-            final ScriptRunner exec = new ScriptRunner(con);
-            exec.run(getResourceAsStream("org/geotoolkit/sql/structure-observations.sql"));
-            exec.run(getResourceAsStream("org/geotoolkit/sql/sos-data.sql"));
-
+            final File f = FileUtilities.getFileFromResource("org/geotoolkit/sql/test-trajectories.nc");
             final Map params = new HashMap<>();
-            params.put("dbtype", "OM");
-            params.put(OMFeatureStoreFactory.SGBDTYPE.getName().toString(), "derby");
-            params.put(OMFeatureStoreFactory.DERBYURL.getName().toString(), url);
+            params.put(NetCDFFeatureStoreFactory.IDENTIFIER.getName().toString(), "omNetCDF");
+            params.put(NetCDFFeatureStoreFactory.FILE_PATH.getName().toString(), f);
 
             store = FeatureStoreFinder.open(params);
 
@@ -81,16 +67,16 @@ public class OMDataStoreTest extends AbstractReadingTests{
             featureTypeBuilder.setName(name);
             featureTypeBuilder.add(new DefaultName(nsGML, "description"),String.class,0,1,true,null);
             featureTypeBuilder.add(new DefaultName(nsGML, "name"),String.class,1,Integer.MAX_VALUE,false,null);
-            featureTypeBuilder.add(new DefaultName(nsOM, "sampledFeature"),String.class,1,Integer.MAX_VALUE,true,null);
+            featureTypeBuilder.add(new DefaultName(nsOM, "sampledFeature"),String.class,0,Integer.MAX_VALUE,true,null);
             featureTypeBuilder.add(new DefaultName(nsOM, "position"),Point.class,1,1,false,null);
             featureTypeBuilder.setDefaultGeometry(new DefaultName(nsOM, "position"));
 
-            int size = 6;
+            int size = 4;
             GeneralEnvelope env = new GeneralEnvelope(CRS.decode("EPSG:27582"));
-            env.setRange(0, -30.711, 70800);
-            env.setRange(1, 134.196, 2567987);
+            env.setRange(0, -51.78333, 27.816);
+            env.setRange(1, -19.802, 128.6);
 
-            final ExpectedResult res = new ExpectedResult(name,
+            final AbstractReadingTests.ExpectedResult res = new AbstractReadingTests.ExpectedResult(name,
                     featureTypeBuilder.buildFeatureType(), size, env);
             expecteds.add(res);
 
@@ -131,7 +117,7 @@ public class OMDataStoreTest extends AbstractReadingTests{
     }
 
     @Override
-    protected List<ExpectedResult> getReaderTests() {
+    protected List<AbstractReadingTests.ExpectedResult> getReaderTests() {
         return expecteds;
     }
 

@@ -28,7 +28,6 @@ import org.opengis.parameter.ParameterDescriptor;
 import org.apache.commons.dbcp.BasicDataSource;
 
 import java.io.IOException;
-import java.util.logging.Logger;
 
 import org.geotoolkit.data.AbstractFeatureStoreFactory;
 import org.geotoolkit.data.FeatureStore;
@@ -52,7 +51,7 @@ import org.apache.sis.util.iso.ResourceInternationalString;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class OMFeatureStoreFactory extends AbstractFeatureStoreFactory {
+public class SOSDatabaseFeatureStoreFactory extends AbstractFeatureStoreFactory {
 
     /** factory identification **/
     public static final String NAME = "om";
@@ -117,7 +116,7 @@ public class OMFeatureStoreFactory extends AbstractFeatureStoreFactory {
              new DefaultParameterDescriptor<>("password","Password", String.class, null, false);
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
-            new DefaultParameterDescriptorGroup("OMParameters",
+            new DefaultParameterDescriptorGroup("SOSDBParameters",
                 IDENTIFIER,DBTYPE,HOST,PORT,DATABASE,USER,PASSWD,NAMESPACE, SGBDTYPE, DERBYURL);
 
     @Override
@@ -130,12 +129,12 @@ public class OMFeatureStoreFactory extends AbstractFeatureStoreFactory {
      */
     @Override
     public CharSequence getDescription() {
-        return new ResourceInternationalString("org/geotoolkit/om/bundle", "datastoreDescription");
+        return new ResourceInternationalString("org/geotoolkit/om/bundle", "SOSdatastoreDescription");
     }
 
     @Override
     public CharSequence getDisplayName() {
-        return new ResourceInternationalString("org/geotoolkit/om/bundle", "datastoreTitle");
+        return new ResourceInternationalString("org/geotoolkit/om/bundle", "SOSdatastoreTitle");
     }
 
     /**
@@ -202,7 +201,7 @@ public class OMFeatureStoreFactory extends AbstractFeatureStoreFactory {
             dataSource.setAccessToUnderlyingConnectionAllowed(true);
 
             final ManageableDataSource source = new DBCPDataSource(dataSource);
-            return new OMFeatureStore(params,source,isPostgres);
+            return new SOSDatabaseFeatureStore(params,source,isPostgres);
         } catch (IOException ex) {
             throw new DataStoreException(ex);
         }
@@ -241,6 +240,4 @@ public class OMFeatureStoreFactory extends AbstractFeatureStoreFactory {
         result.setPass(true);
         return result;
     }
-   
-
 }

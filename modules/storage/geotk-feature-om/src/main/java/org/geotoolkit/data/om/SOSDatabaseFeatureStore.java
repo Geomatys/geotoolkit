@@ -17,10 +17,7 @@
 
 package org.geotoolkit.data.om;
 
-import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.io.WKBReader;
 import com.vividsolutions.jts.io.WKBWriter;
 import java.io.IOException;
@@ -28,29 +25,21 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.data.AbstractFeatureStore;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureStoreFactory;
 import org.geotoolkit.data.FeatureStoreFinder;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureWriter;
-import org.geotoolkit.data.query.DefaultQueryCapabilities;
 import org.geotoolkit.data.query.Query;
-import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.feature.DefaultName;
-import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.LenientFeatureFactory;
 import org.geotoolkit.feature.simple.DefaultSimpleFeatureType;
 import org.geotoolkit.feature.type.DefaultGeometryDescriptor;
@@ -70,6 +59,7 @@ import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
+import static org.geotoolkit.data.om.OMFeatureTypes.*;
 
 /**
  *
@@ -77,26 +67,8 @@ import org.opengis.util.FactoryException;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class OMFeatureStore extends AbstractFeatureStore {
-    /** the feature factory */
-    private static final FeatureFactory FF = FactoryFinder.getFeatureFactory(
-                        new Hints(Hints.FEATURE_FACTORY,LenientFeatureFactory.class));
-    private static final GeometryFactory GF = new GeometryFactory();
-
-    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.data.om");
-
-    private static final String OM_NAMESPACE = "http://www.opengis.net/sampling/1.0";
-    private static final Name OM_TN_SAMPLINGPOINT = new DefaultName(OM_NAMESPACE, "SamplingPoint");
-
-    protected static final Name ATT_DESC     = new DefaultName(GML_NAMESPACE, "description");
-    protected static final Name ATT_NAME     = new DefaultName(GML_NAMESPACE, "name");
-    protected static final Name ATT_SAMPLED  = new DefaultName(OM_NAMESPACE, "sampledFeature");
-    protected static final Name ATT_POSITION = new DefaultName(OM_NAMESPACE, "position");
-
-    private static final QueryCapabilities capabilities = new DefaultQueryCapabilities(false);
-
-    private final Map<Name, FeatureType> types = new HashMap<>();
-
+public class SOSDatabaseFeatureStore extends AbstractOMFeatureStore {
+    
     private final ManageableDataSource source;
 
     private static final String SQL_ALL_SAMPLING_POINT_D  = "SELECT * FROM \"om\".\"sampling_features\"";
@@ -107,31 +79,19 @@ public class OMFeatureStore extends AbstractFeatureStore {
 
     private final boolean isPostgres;
 
-    public OMFeatureStore(final ParameterValueGroup params, final ManageableDataSource source, final boolean isPostgres) {
+    public SOSDatabaseFeatureStore(final ParameterValueGroup params, final ManageableDataSource source, final boolean isPostgres) {
         super(params);
         this.source = source;
         this.isPostgres = isPostgres;
-        initTypes();
     }
 
     @Override
     public FeatureStoreFactory getFactory() {
-        return FeatureStoreFinder.getFactoryById(OMFeatureStoreFactory.NAME);
+        return FeatureStoreFinder.getFactoryById(SOSDatabaseFeatureStoreFactory.NAME);
     }
 
     private Connection getConnection() throws SQLException{
         return source.getConnection();
-    }
-
-    private void initTypes() {
-        final FeatureTypeBuilder featureTypeBuilder = new FeatureTypeBuilder();
-        featureTypeBuilder.setName(OM_TN_SAMPLINGPOINT);
-        featureTypeBuilder.add(ATT_DESC,String.class,0,1,true,null);
-        featureTypeBuilder.add(ATT_NAME,String.class,1,Integer.MAX_VALUE,false,null);
-        featureTypeBuilder.add(ATT_SAMPLED,String.class,1,Integer.MAX_VALUE,true,null);
-        featureTypeBuilder.add(ATT_POSITION,Point.class,1,1,false,null);
-        featureTypeBuilder.setDefaultGeometry(ATT_POSITION);
-        types.put(OM_TN_SAMPLINGPOINT, featureTypeBuilder.buildFeatureType());
     }
 
     /**
@@ -179,31 +139,6 @@ public class OMFeatureStore extends AbstractFeatureStore {
         } catch (SQLException ex) {
             getLogger().info("SQL Exception while closing O&M datastore");
         }
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Set<Name> getNames() throws DataStoreException {
-        return types.keySet();
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public FeatureType getFeatureType(final Name typeName) throws DataStoreException {
-        typeCheck(typeName);
-        return types.get(typeName);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public QueryCapabilities getQueryCapabilities() {
-        return capabilities;
     }
 
     /**
@@ -302,7 +237,22 @@ public class OMFeatureStore extends AbstractFeatureStore {
         return null;
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void removeFeatures(final Name groupName, final Filter filter) throws DataStoreException {
+        handleRemoveWithFeatureWriter(groupName, filter);
+    }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void refreshMetaModel() {
+        return;
+    }
+    
     ////////////////////////////////////////////////////////////////////////////
     // No supported stuffs /////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
@@ -338,15 +288,6 @@ public class OMFeatureStore extends AbstractFeatureStore {
     public void updateFeatures(final Name groupName, final Filter filter, final Map<? extends PropertyDescriptor, ? extends Object> values) throws DataStoreException {
         throw new DataStoreException("Not supported.");
     }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public void removeFeatures(final Name groupName, final Filter filter) throws DataStoreException {
-        handleRemoveWithFeatureWriter(groupName, filter);
-    }
-
 
     ////////////////////////////////////////////////////////////////////////////
     // Feature Reader //////////////////////////////////////////////////////////
@@ -511,10 +452,4 @@ public class OMFeatureStore extends AbstractFeatureStore {
             throw new FeatureStoreRuntimeException("Not supported.");
         }
     }
-
-	@Override
-	public void refreshMetaModel() {
-		return;
-		
-	}
 }

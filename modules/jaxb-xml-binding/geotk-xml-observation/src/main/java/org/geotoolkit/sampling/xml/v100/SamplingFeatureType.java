@@ -74,7 +74,7 @@ public class SamplingFeatureType extends AbstractFeatureType implements Sampling
      * Les features designé
      */
     @XmlElement(required = true)
-    private Collection<FeaturePropertyType> sampledFeature = new ArrayList<FeaturePropertyType>();
+    private List<FeaturePropertyType> sampledFeature = new ArrayList<>();
     
     /**
      * Connexion vers la table des "survey details"
@@ -97,7 +97,7 @@ public class SamplingFeatureType extends AbstractFeatureType implements Sampling
      * @param id  L'identifiant numérique de la station.
      * @param name        Le nom de la station.
      * @param description Une description de la station.
-     * @param le
+     * @param sampledFeature
      */
     public SamplingFeatureType(   final String               id,
                                    final String               name,
@@ -105,7 +105,7 @@ public class SamplingFeatureType extends AbstractFeatureType implements Sampling
                                    final FeaturePropertyType sampledFeature)
     {
         super(id, name, description);
-        this.sampledFeature         = new ArrayList<FeaturePropertyType>();
+        this.sampledFeature         = new ArrayList<>();
         if (sampledFeature != null) {
             this.sampledFeature.add(sampledFeature);
         }
@@ -146,9 +146,13 @@ public class SamplingFeatureType extends AbstractFeatureType implements Sampling
      /**
      * {@inheritDoc}
      */
-    public synchronized Collection<FeaturePropertyType> getSampledFeatures() {
-        
+    public synchronized List<FeaturePropertyType> getSampledFeatures() {
         return sampledFeature;
+    }
+    
+    @Override
+    public List<AnyFeature> getSampledFeature() {
+        return new ArrayList<>();// TODO
     }
 
     @Override
@@ -200,11 +204,6 @@ public class SamplingFeatureType extends AbstractFeatureType implements Sampling
             s.append("sampledFeature = ").append(sampledFeatures);
         }
         return s.toString();
-    }
-
-    @Override
-    public List<AnyFeature> getSampledFeature() {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override

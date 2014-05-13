@@ -16,11 +16,13 @@
  */
 package org.geotoolkit.sampling.xml;
 
+import java.util.List;
+import org.geotoolkit.gml.xml.FeatureProperty;
 import org.opengis.geometry.Geometry;
 
 /**
  *
- * @author guilhem
+ * @author Guilhem Legal (Geomatys)
  */
 public interface SamplingFeature extends org.opengis.observation.sampling.SamplingFeature {
 
@@ -31,4 +33,6 @@ public interface SamplingFeature extends org.opengis.observation.sampling.Sampli
     String getDescription();
     
     Geometry getGeometry();
+    
+    List<? extends FeatureProperty> getSampledFeatures();
 }

@@ -17,6 +17,7 @@
 package org.geotoolkit.sampling.xml.v200;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -33,7 +34,6 @@ import org.geotoolkit.sampling.xml.SamplingFeature;
 import org.apache.sis.internal.jaxb.metadata.LI_Lineage;
 import org.geotoolkit.observation.xml.v200.NamedValuePropertyType;
 import org.geotoolkit.observation.xml.v200.OMObservationPropertyType;
-import org.geotoolkit.observation.xml.v200.OMObservationType;
 import org.apache.sis.util.ComparisonMode;
 import org.opengis.geometry.Geometry;
 import org.opengis.metadata.lineage.Lineage;
@@ -134,10 +134,18 @@ public class SFSamplingFeatureType extends AbstractFeatureType implements Sampli
     public FeaturePropertyType getSampledFeatureProperty() {
         return sampledFeature;
     }
+    
+    @Override
+    public List<FeaturePropertyType> getSampledFeatures() {
+        if (sampledFeature != null) {
+            return Arrays.asList(sampledFeature);
+        }
+        return new ArrayList<>();
+    }
 
     @Override
     public List<AnyFeature> getSampledFeature() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return new ArrayList<>();// TODO
     }
 
     /**

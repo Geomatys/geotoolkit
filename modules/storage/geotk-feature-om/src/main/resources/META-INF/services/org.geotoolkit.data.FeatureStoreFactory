@@ -1,1 +1,3 @@
-org.geotoolkit.data.om.OMFeatureStoreFactory
+org.geotoolkit.data.om.SOSDatabaseFeatureStoreFactory
+org.geotoolkit.data.om.OMXmlFeatureStoreFactory
+org.geotoolkit.data.om.NetCDFFeatureStoreFactory
