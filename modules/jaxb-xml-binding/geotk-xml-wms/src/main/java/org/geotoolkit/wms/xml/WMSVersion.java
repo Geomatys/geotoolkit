@@ -22,7 +22,8 @@ package org.geotoolkit.wms.xml;
  */
 public enum WMSVersion {
     v111("1.1.1"),
-    v130("1.3.0");
+    v130("1.3.0"),
+    auto("auto");
     
     private final String code;
 

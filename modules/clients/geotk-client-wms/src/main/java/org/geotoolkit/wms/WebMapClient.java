@@ -16,27 +16,19 @@
  */
 package org.geotoolkit.wms;
 
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.client.AbstractCoverageClient;
 import org.geotoolkit.client.CapabilitiesException;
 import org.geotoolkit.client.ClientFinder;
 import org.geotoolkit.coverage.CoverageReference;
-import org.geotoolkit.coverage.CoverageStore;
 import org.geotoolkit.coverage.CoverageType;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.security.ClientSecurity;
-import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.storage.DataNode;
 import org.geotoolkit.storage.DefaultDataNode;
+import org.geotoolkit.wms.auto.GetCapabilitiesAuto;
 import org.geotoolkit.wms.v111.GetCapabilities111;
 import org.geotoolkit.wms.v111.GetFeatureInfo111;
 import org.geotoolkit.wms.v111.GetLegend111;
@@ -51,6 +43,16 @@ import org.geotoolkit.wms.xml.WMSBindingUtilities;
 import org.geotoolkit.wms.xml.WMSVersion;
 import org.opengis.feature.type.Name;
 import org.opengis.parameter.ParameterValueGroup;
+
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 /**
@@ -78,6 +80,14 @@ public class WebMapClient extends AbstractCoverageClient {
      * that contains a set of key-value for HTTP header fields (user-agent, referer, accept-language...)
      */
     private final Map<String,String> requestHeaderMap = new HashMap<>();
+
+    /**
+     * Constructor with only URL
+     * @param serverURL
+     */
+    public WebMapClient(final URL serverURL){
+        this(serverURL, null, null, null);
+    }
 
     /**
      * Builds a web map server with the given server url and version.
@@ -144,10 +154,31 @@ public class WebMapClient extends AbstractCoverageClient {
      * @param capabilities A getCapabilities response.
      */
     public WebMapClient(final URL serverURL, final ClientSecurity security,
-            final WMSVersion version, final AbstractWMSCapabilities capabilities) {
+            WMSVersion version, final AbstractWMSCapabilities capabilities) {
         super(create(WMSClientFactory.PARAMETERS, serverURL, security));
-        Parameters.getOrCreate(WMSClientFactory.VERSION, parameters).setValue(version.getCode());
+
         this.capabilities = capabilities;
+
+        //if version is null, call getCapabilities to found service version
+        if(version==null){
+            if(LOGGER.isLoggable(Level.FINE)){
+                LOGGER.log(Level.FINE, "No version define : search it on getCapabilities");
+            }
+            try {
+                if(capabilities!=null){
+                    this.capabilities = capabilities;
+                }else{
+                    this.capabilities = getCapabilities();
+                }
+
+                //set version
+                version = WMSVersion.getVersion(this.capabilities.getVersion());
+            } catch (CapabilitiesException e) {
+                LOGGER.log(Level.WARNING,  e.getLocalizedMessage(), e);
+                version = WMSVersion.v130;
+            }
+        }
+        Parameters.getOrCreate(WMSClientFactory.VERSION, parameters).setValue(version.getCode());
     }
 
     public WebMapClient(ParameterValueGroup params) {
@@ -264,7 +295,7 @@ public class WebMapClient extends AbstractCoverageClient {
      * @return
      */
     public WMSVersion getVersion() {
-        return WMSVersion.getVersion(Parameters.value(WMSClientFactory.VERSION, parameters));
+            return WMSVersion.getVersion(Parameters.value(WMSClientFactory.VERSION, parameters));
     }
 
     /**
@@ -297,7 +328,10 @@ public class WebMapClient extends AbstractCoverageClient {
             case v130:
                 return new GetCapabilities130(serverURL.toString(),getClientSecurity());
             default:
-                throw new IllegalArgumentException("Version was not defined");
+                if(LOGGER.isLoggable(Level.FINE)){
+                    LOGGER.log(Level.FINE, "Version was not defined");
+                }
+                return new GetCapabilitiesAuto(serverURL.toString(), getClientSecurity());
         }
     }
 

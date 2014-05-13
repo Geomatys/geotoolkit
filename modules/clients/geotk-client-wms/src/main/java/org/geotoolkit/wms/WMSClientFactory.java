@@ -17,12 +17,6 @@
  */
 package org.geotoolkit.wms;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
@@ -37,7 +31,17 @@ import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.wms.xml.WMSVersion;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.identification.Identification;
-import org.opengis.parameter.*;
+import org.opengis.parameter.InvalidParameterValueException;
+import org.opengis.parameter.ParameterDescriptor;
+import org.opengis.parameter.ParameterDescriptorGroup;
+import org.opengis.parameter.ParameterValueGroup;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * WMS Server factory.
@@ -78,7 +82,7 @@ public class WMSClientFactory extends AbstractClientFactory implements CoverageC
 
         VERSION = new DefaultParameterDescriptor<String>(params, String.class,
                 validValues.toArray(new String[validValues.size()]),
-                WMSVersion.v130.getCode(), null, null, null, true);
+                WMSVersion.auto.getCode(), null, null, null, true);
     }
 
     public static final ParameterDescriptorGroup PARAMETERS =

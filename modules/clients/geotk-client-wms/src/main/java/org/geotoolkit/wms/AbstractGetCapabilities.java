@@ -16,10 +16,11 @@
  */
 package org.geotoolkit.wms;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import org.geotoolkit.client.AbstractRequest;
 import org.geotoolkit.security.ClientSecurity;
+
+import java.net.MalformedURLException;
+import java.net.URL;
 
 
 /**
@@ -74,7 +75,11 @@ public abstract class AbstractGetCapabilities extends AbstractRequest implements
     public URL getURL() throws MalformedURLException {
         requestParameters.put("SERVICE",    "WMS");
         requestParameters.put("REQUEST",    "GetCapabilities");
-        requestParameters.put("VERSION",    version);
+
+        if(version!=null){
+            requestParameters.put("VERSION",    version);
+        }
+
         if (updateSequence != null && !updateSequence.isEmpty()) {
             requestParameters.put("UPDATESEQUENCE", updateSequence);
         }
