@@ -64,7 +64,7 @@ public class XmlObservationStoreFactory extends AbstractObservationStoreFactory 
     
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
             new DefaultParameterDescriptorGroup("ObservationXmlFileParameters",
-                IDENTIFIER,FILE_PATH);
+                IDENTIFIER,NAMESPACE,FILE_PATH);
     
     @Override
     public Identification getIdentification() {

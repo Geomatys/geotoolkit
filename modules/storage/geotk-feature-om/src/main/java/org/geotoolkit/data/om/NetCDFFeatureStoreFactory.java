@@ -45,7 +45,7 @@ import org.opengis.parameter.ParameterValueGroup;
 public class NetCDFFeatureStoreFactory extends AbstractFeatureStoreFactory {
 
     /** factory identification **/
-    public static final String NAME = "omNetCDF";
+    public static final String NAME = "observationFile";
     public static final DefaultServiceIdentification IDENTIFICATION;
     static {
         IDENTIFICATION = new DefaultServiceIdentification();
@@ -61,11 +61,11 @@ public class NetCDFFeatureStoreFactory extends AbstractFeatureStoreFactory {
      * Parameter for database port
      */
     public static final ParameterDescriptor<File> FILE_PATH =
-             new DefaultParameterDescriptor<>("path","Path",File.class,null, true);
+             new DefaultParameterDescriptor<>("url","url",File.class,null, true);
 
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
-            new DefaultParameterDescriptorGroup("OMNetCDFParameters",IDENTIFIER,NAMESPACE,FILE_PATH);
+            new DefaultParameterDescriptorGroup("ObservationFileParameters",IDENTIFIER,NAMESPACE,FILE_PATH);
 
     @Override
     public Identification getIdentification() {

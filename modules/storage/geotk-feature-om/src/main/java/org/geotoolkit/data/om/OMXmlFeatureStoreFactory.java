@@ -46,7 +46,7 @@ import org.opengis.parameter.ParameterValueGroup;
 public class OMXmlFeatureStoreFactory extends AbstractFeatureStoreFactory {
 
     /** factory identification **/
-    public static final String NAME = "omXml";
+    public static final String NAME = "observationXmlFile";
     public static final DefaultServiceIdentification IDENTIFICATION;
     static {
         IDENTIFICATION = new DefaultServiceIdentification();
@@ -62,11 +62,11 @@ public class OMXmlFeatureStoreFactory extends AbstractFeatureStoreFactory {
      * Parameter for database port
      */
     public static final ParameterDescriptor<File> FILE_PATH =
-             new DefaultParameterDescriptor<>("path","Path",File.class,null, true);
+             new DefaultParameterDescriptor<>("url","url",File.class,null, true);
 
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
-            new DefaultParameterDescriptorGroup("OMXmlParameters",IDENTIFIER,NAMESPACE,FILE_PATH);
+            new DefaultParameterDescriptorGroup("ObservationXmlFileParameters",IDENTIFIER,NAMESPACE,FILE_PATH);
 
     @Override
     public Identification getIdentification() {

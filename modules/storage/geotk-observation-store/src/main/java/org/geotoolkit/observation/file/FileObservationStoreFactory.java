@@ -52,6 +52,7 @@ public class FileObservationStoreFactory extends AbstractObservationStoreFactory
     
     public static final ParameterDescriptor<String> IDENTIFIER = createFixedIdentifier(NAME);
     
+    
     /**
      * url to the file.
      */
@@ -62,7 +63,7 @@ public class FileObservationStoreFactory extends AbstractObservationStoreFactory
     
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
             new DefaultParameterDescriptorGroup("ObservationFileParameters",
-                IDENTIFIER,FILE_PATH);
+                IDENTIFIER,NAMESPACE,FILE_PATH);
     
     @Override
     public Identification getIdentification() {

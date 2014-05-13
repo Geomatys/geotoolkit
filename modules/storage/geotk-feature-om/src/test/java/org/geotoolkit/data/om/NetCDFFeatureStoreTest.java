@@ -53,7 +53,7 @@ public class NetCDFFeatureStoreTest extends AbstractReadingTests{
 
             final File f = FileUtilities.getFileFromResource("org/geotoolkit/sql/test-trajectories.nc");
             final Map params = new HashMap<>();
-            params.put(NetCDFFeatureStoreFactory.IDENTIFIER.getName().toString(), "omNetCDF");
+            params.put(NetCDFFeatureStoreFactory.IDENTIFIER.getName().toString(), "observationFile");
             params.put(NetCDFFeatureStoreFactory.FILE_PATH.getName().toString(), f);
 
             store = FeatureStoreFinder.open(params);

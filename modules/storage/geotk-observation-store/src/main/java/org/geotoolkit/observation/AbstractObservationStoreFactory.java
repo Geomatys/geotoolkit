@@ -57,6 +57,15 @@ public abstract class AbstractObservationStoreFactory extends Factory implements
                     String.class,null,null,null,null,null,true);
 
     /**
+     * Namespace, Optional.
+     * Default namespace used for feature type.
+     */
+    public static final ParameterDescriptor<String> NAMESPACE = createDescriptor("namespace",
+                    new ResourceInternationalString(BUNDLE_PATH,"paramNamespaceAlias"),
+                    new ResourceInternationalString(BUNDLE_PATH,"paramNamespaceRemarks"),
+                    String.class,null,null,null,null,null,false);
+    
+    /**
      * {@inheritDoc }
      *
      * @return a display name derivate from class name.
