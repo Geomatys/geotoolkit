@@ -107,6 +107,3 @@ mvn install
    subsequently the command can be run with the <<<--offline>>> parameter if there is no network
    connection. {{{http://maven.apache.org/}Maven}} provides a powerful build tool for the
    management of Java language projects.
-
-   The {{{./develop.html}Developing Geotoolkit.org}} page explains the basics of how to write code which
-   is coherently integrated into the Geotk system.
