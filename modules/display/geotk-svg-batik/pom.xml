@@ -22,7 +22,7 @@
   <!-- =========================================================== -->
   <!--     Module Description                                      -->
   <!-- =========================================================== -->
-  <artifactId>geotk-svg</artifactId>
+  <artifactId>geotk-svg-batik</artifactId>
   <packaging>jar</packaging>
   <name>Display SVG</name>
 

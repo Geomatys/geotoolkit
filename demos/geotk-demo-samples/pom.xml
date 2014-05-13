@@ -47,7 +47,7 @@
 
         <dependency>
             <groupId>org.geotoolkit</groupId>
-            <artifactId>geotk-svg</artifactId>
+            <artifactId>geotk-svg-batik</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

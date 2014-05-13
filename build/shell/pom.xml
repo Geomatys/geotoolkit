@@ -76,7 +76,7 @@
         <dependency><groupId>org.geotoolkit</groupId><artifactId>geotk-feature-shapefile</artifactId>   <version>${project.version}</version></dependency>
         <dependency><groupId>org.geotoolkit</groupId><artifactId>geotk-spatial-lucene</artifactId>      <version>${project.version}</version></dependency>
         <dependency><groupId>org.geotoolkit</groupId><artifactId>geotk-style</artifactId>               <version>${project.version}</version></dependency>
-        <dependency><groupId>org.geotoolkit</groupId><artifactId>geotk-svg</artifactId>                 <version>${project.version}</version></dependency>
+        <dependency><groupId>org.geotoolkit</groupId><artifactId>geotk-svg-batik</artifactId>           <version>${project.version}</version></dependency>
         <dependency><groupId>org.geotoolkit</groupId><artifactId>geotk-temporal</artifactId>            <version>${project.version}</version></dependency>
         <dependency><groupId>org.geotoolkit</groupId><artifactId>geotk-utility-pending</artifactId>     <version>${project.version}</version></dependency>
         <dependency><groupId>org.geotoolkit</groupId><artifactId>geotk-xml-citygml</artifactId>         <version>${project.version}</version></dependency>
