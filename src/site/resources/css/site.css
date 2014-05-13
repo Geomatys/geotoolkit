@@ -1,87 +1,49 @@
-
-body {
-  background-color: #FFFFFF;
-  font-family: Helvetica;
-  margin-left: 0;
-  margin-right: 0;
-  font-size: 14px;
-  padding: 0px;
+/* Override styles in maven-base.css */
+#leftColumn {
+ width: 180px;
+}
+#bodyColumn {
+  margin-left: 207px;
 }
 
-h2 {
-  font-size: 17px;
-  color: #333333;
-}
-h3 {
-  padding: 4px 2px 4px 2px;
-  color: #003333;
-  background-color: #FFFFFF;
-  font-weight: bold;
-  font-size: 14px;
-  border-bottom: 1px solid #333333;
-}
-p {
-  line-height: 1.3em;
-  font-size: 12px;
-  color: #000;
-}
-
+/* Override styles in maven-theme.css */
 a {
-  text-decoration: none;
-}
-a:link {
-  color:#333388;
-}
-a:visited {
-  color:#333388;
+  color: #387085;
 }
 a:active, a:hover {
-  color:#000088;
+  text-decoration: underline;
 }
-
-#navcolumn ul {
-  margin: 0px 0 0px 0em;
+p {
+  text-align: justify;
 }
-#navcolumn ul a {
-  color: #666666;
+h2 {
+  color: #606060;
+  height: 30px;
+  padding-left: 15px;
 }
-#navcolumn ul a:visited {
-  color: #338888;
+h3 {
+  color: #404040;
 }
-#navcolumn ul a:hover {
-  color: #000088;
+h4 {
+  color: #606060;
+  border: none;
+  font-size: medium;
+  font-weight: bold;
+  padding-left: 0px;
+  padding-bottom: 0px;
 }
-
-
-#leftColumn {
-  margin: 10px 0 10px 0;
-  background-color: #FFFFFF;
-  border-top-color: #333333;
-  border-top-style: solid;
-  border-top-width: 1px;
-  border-right-color: #333333;
-  border-right-style: solid;
-  border-right-width: 1px;
-  border-bottom-color: #333333;
-  border-bottom-style: solid;
-  border-bottom-width: 1px;
-  padding-right: 2px;
-  padding-left: 4px;
+h5 {
+  color: #404040;
 }
-
-#navcolumn h5 {
-  font-size: 13px;
-  border-bottom: 1px solid #333333;
-  padding-top: 10px;
-  padding-left: 4px;
-  padding-right: 0px;
-  color: #336666;
+dl {
+  border: 0px;
+  background-color: #ffffff;
 }
-
 #breadcrumbs {
-  height: 14px;
-  background-color: #FFFFFF;
-  padding: 5px 5px 5px 5px;
-  border-bottom: 1px solid #333333;
-  border-top: 1px solid #333333;
+  color: black;
+  height: 21px;
+  line-height: 20px;
+}
+#breadcrumbs a {
+  color: black;
 }
