@@ -44,6 +44,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
+import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.gui.swing.propertyedit.PropertyPane;
 import org.geotoolkit.gui.swing.resource.FontAwesomeIcons;
 import org.geotoolkit.gui.swing.resource.IconBuilder;
@@ -382,7 +383,7 @@ public class JSimpleStylePanel extends StyleElementEditor implements PropertyPan
 
     @Override
     public void reset() {
-        parse(null);
+        parse(parentRule);
     }
 
     @Override
@@ -500,8 +501,9 @@ public class JSimpleStylePanel extends StyleElementEditor implements PropertyPan
         }
 
         public void setRule(MutableRule rule) {
+            ArgumentChecks.ensureNonNull("rule", rule);
             if(this.rule==rule) return;
-            
+                        
             if(this.rule!=null){
                 this.ruleListener.unregisterSource(this.rule);
             }

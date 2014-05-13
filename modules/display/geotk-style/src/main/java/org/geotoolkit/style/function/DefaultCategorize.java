@@ -438,7 +438,7 @@ public class DefaultCategorize extends AbstractExpression implements Categorize 
         for(int k=0;k<SE_VALUES.length-1;k++){
             final double geoValue = SE_VALUES[k+1];
             int color = SE_ARGB[k];
-            int sampleValue = (int) geoValue;
+            int sampleValue = (int)(Double.isNaN(geoValue)?Integer.MAX_VALUE:geoValue);
 
             for(int i=step ; (i<sampleValue && i<ARGB.length) ; i++){
                 ARGB[i] = color;

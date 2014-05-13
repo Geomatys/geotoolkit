@@ -40,7 +40,6 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.measure.unit.NonSI;
-import javax.measure.unit.Unit;
 import javax.swing.AbstractCellEditor;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultCellEditor;
@@ -73,14 +72,12 @@ import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.filter.DefaultLiteral;
-import org.geotoolkit.gui.swing.propertyedit.AbstractPropertyPane;
 import org.geotoolkit.gui.swing.propertyedit.PropertyPane;
 import org.geotoolkit.gui.swing.propertyedit.styleproperty.PaletteCellRenderer;
 import org.geotoolkit.gui.swing.resource.FontAwesomeIcons;
 import org.geotoolkit.gui.swing.resource.IconBuilder;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
-import org.geotoolkit.gui.swing.style.StyleElementEditor;
 import org.geotoolkit.gui.swing.util.ColorCellEditor;
 import org.geotoolkit.gui.swing.util.ColorCellRenderer;
 import org.geotoolkit.gui.swing.util.NumberAlignRenderer;
@@ -246,9 +243,27 @@ public class JColorMapPane extends StyleElementEditor<ColorMap> implements Prope
     public final Component getComponent() {
         return this;
     }
+
+    @Override
+    public void setLayer(MapLayer layer) {
+        this.layer = layer;
+        postParse();
+    }
+
+    @Override
+    public MapLayer getLayer() {
+        return layer;
+    }
     
     public String getSelectedBand(){
         return String.valueOf(guiBand.getValue());
+    }
+    
+    public void setSelectedBand(String name){
+        try{
+            final int n = Integer.parseInt(name);
+            guiBand.setValue(n);
+        }catch(Exception ex){/*not important*/}
     }
     
     private void setPalettes(List<Object> palettes){
@@ -285,7 +300,7 @@ public class JColorMapPane extends StyleElementEditor<ColorMap> implements Prope
         parse(rs);
     }
 
-    private void parse(RasterSymbolizer rs){
+    public void parse(RasterSymbolizer rs){
         //find channel
         if(rs!=null){
             final ChannelSelection selection = rs.getChannelSelection();
@@ -354,6 +369,28 @@ public class JColorMapPane extends StyleElementEditor<ColorMap> implements Prope
             guiTable.getColumnModel().getColumn(2).setCellRenderer(new DeleteRenderer());
             guiTable.getColumnModel().getColumn(2).setCellEditor(new DeleteEditor());
             guiTable.getColumnExt(2).setMaxWidth(20);
+            
+            final InterpolateColorModel icm = (InterpolateColorModel) model;
+            //restore NaN and min/max values
+            boolean hasNaN = false;
+            double min = Double.NaN;
+            double max = Double.NaN;
+            for(int i=0,n=icm.points.size();i<n;i++){
+                final double v = icm.points.get(i).getData().doubleValue();
+                if(!Double.isNaN(v)){
+                    min = Double.isNaN(min) ? v : Math.min(v, min);
+                    max = Double.isNaN(max) ? v : Math.max(v, max);
+                }else{
+                    hasNaN = true;
+                }
+            }
+            if(!Double.isNaN(min)){
+                guiMinSpinner.setValue(min);
+                guiMaxSpinner.setValue(max);
+            }
+            guiNbStep.setValue(icm.points.size()-(hasNaN?1:0));
+            guiNaN.setSelected(hasNaN);
+            
         }else if(model instanceof CategorizeColorModel){
             guiMethod.setSelectedItem(Categorize.class);
             setPalettes(PALETTES);
@@ -366,6 +403,34 @@ public class JColorMapPane extends StyleElementEditor<ColorMap> implements Prope
             guiTable.getColumnModel().getColumn(3).setCellRenderer(new DeleteRenderer());
             guiTable.getColumnModel().getColumn(3).setCellEditor(new DeleteEditor());
             guiTable.getColumnExt(3).setMaxWidth(20);
+            
+            final CategorizeColorModel ccm = (CategorizeColorModel) model;
+            //restore NaN and min/max values
+            boolean hasNaN = false;
+            double min = Double.NaN;
+            double max = Double.NaN;
+            for(int i=0,n=ccm.ths.size();i<n;i++){
+                final Entry<Expression,Expression> exps = ccm.ths.get(i);
+                Object val = exps.getKey().evaluate(n, Number.class);
+                if(val instanceof Number){
+                    final double v = ((Number)val).doubleValue();
+                    if(!Double.isNaN(v)){
+                        if(!Double.isInfinite(v)){
+                            min = Double.isNaN(min) ? v : Math.min(v, min);
+                            max = Double.isNaN(max) ? v : Math.max(v, max);
+                        }
+                    }else{
+                        hasNaN = true;
+                    }
+                }
+            }
+            if(!Double.isNaN(min)){
+                guiMinSpinner.setValue(min);
+                guiMaxSpinner.setValue(max);
+            }
+            guiNbStep.setValue(ccm.ths.size()-(hasNaN?2:1));
+            guiNaN.setSelected(hasNaN);
+            
         }else if(model instanceof JenksColorModel){
             guiMethod.setSelectedItem(Jenks.class);
             setPalettes(PALETTES_NAMED);
@@ -505,7 +570,7 @@ public class JColorMapPane extends StyleElementEditor<ColorMap> implements Prope
 
         guiLblStep.setText(MessageBundle.getString("style.rastersymbolizer.divisions")); // NOI18N
 
-        guiNbStep.setModel(new SpinnerNumberModel(Integer.valueOf(3), Integer.valueOf(2), null, Integer.valueOf(1)));
+        guiNbStep.setModel(new SpinnerNumberModel(Integer.valueOf(3), Integer.valueOf(0), null, Integer.valueOf(1)));
 
         jLabel1.setText(MessageBundle.getString("method")); // NOI18N
 
@@ -713,6 +778,7 @@ public class JColorMapPane extends StyleElementEditor<ColorMap> implements Prope
         if(Interpolate.class.equals(method)){
             if(model instanceof InterpolateColorModel){
                 //nothing to do
+                return;
             }else if(model instanceof CategorizeColorModel){
                 //we need to convert from categorize thredholds to interpolation points.
                 final List<InterpolationPoint> points = new ArrayList<>();
@@ -730,6 +796,7 @@ public class JColorMapPane extends StyleElementEditor<ColorMap> implements Prope
         }else if(Categorize.class.equals(method)){
             if(model instanceof CategorizeColorModel){
                 //nothing to do
+                return;
             }else if(model instanceof InterpolateColorModel){
                 //we need to convert from interpolate to categorize
                 final Map<Expression, Expression> values = new HashMap<>();
@@ -750,6 +817,7 @@ public class JColorMapPane extends StyleElementEditor<ColorMap> implements Prope
         }else{
             if(model instanceof JenksColorModel){
                 //nothing to do
+                return;
             }else{
                 model = new JenksColorModel();
                 postParse();
@@ -951,10 +1019,10 @@ public class JColorMapPane extends StyleElementEditor<ColorMap> implements Prope
     @Override
     public void setTarget(final Object layer) {
         if(layer instanceof MapLayer){
-            this.layer = (MapLayer)layer;
+            setLayer((MapLayer)layer);
             parse();
         }else{
-            this.layer = null;
+            setLayer((MapLayer)null);
         }
     }
 

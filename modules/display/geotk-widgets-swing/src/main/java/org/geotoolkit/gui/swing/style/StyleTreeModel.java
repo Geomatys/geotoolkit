@@ -19,7 +19,9 @@ package org.geotoolkit.gui.swing.style;
 
 import java.beans.PropertyChangeEvent;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.EventObject;
+import java.util.List;
 import javax.swing.event.EventListenerList;
 import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
@@ -287,6 +289,19 @@ public final class StyleTreeModel implements TreeModel, StyleListener, FeatureTy
                     }
                     final TreeModelEvent te = new TreeModelEvent(this, path, indices, objs);
                     fireNodesRemoved(te);
+                    
+                    //the change event contain the old element
+                    final Object parent = path.getLastPathComponent();
+                    if(parent instanceof Style){
+                        final List lst = ((Style)parent).featureTypeStyles();
+                        for(int i=0;i<indices.length;i++)objs[i]=lst.get(indices[i]);
+                    }else if(parent instanceof FeatureTypeStyle){
+                        final List lst = ((FeatureTypeStyle)parent).rules();
+                        for(int i=0;i<indices.length;i++)objs[i]=lst.get(indices[i]);
+                    }else if(parent instanceof Rule){
+                        final List lst = ((Rule)parent).symbolizers();
+                        for(int i=0;i<indices.length;i++)objs[i]=lst.get(indices[i]);
+                    }
                     fireNodesInserted(te);
                 }
             }

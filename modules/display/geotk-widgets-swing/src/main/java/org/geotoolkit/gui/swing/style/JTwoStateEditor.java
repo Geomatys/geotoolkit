@@ -36,6 +36,7 @@ import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 import org.geotoolkit.gui.swing.resource.FontAwesomeIcons;
 import org.geotoolkit.gui.swing.resource.IconBuilder;
+import org.geotoolkit.gui.swing.resource.MessageBundle;
 import static org.geotoolkit.gui.swing.style.StyleElementEditor.PROPERTY_TARGET;
 import org.geotoolkit.map.MapLayer;
 
@@ -46,7 +47,8 @@ import org.geotoolkit.map.MapLayer;
  */
 public class JTwoStateEditor<T> extends StyleElementEditor<T> implements PropertyChangeListener{
 
-    private static final ImageIcon ICON = IconBuilder.createIcon(FontAwesomeIcons.ICON_ADJUST, 16, FontAwesomeIcons.DEFAULT_COLOR);
+    private static final ImageIcon ICON_SIMPLE = IconBuilder.createIcon(FontAwesomeIcons.ICON_TINT, 16, FontAwesomeIcons.DEFAULT_COLOR);
+    private static final ImageIcon ICON_ADVANCED = IconBuilder.createIcon(FontAwesomeIcons.ICON_COGS, 16, FontAwesomeIcons.DEFAULT_COLOR);
     /** store the default displayed mode */
     private static volatile boolean DEFAULT_SIMPLE = true;
 
@@ -61,7 +63,7 @@ public class JTwoStateEditor<T> extends StyleElementEditor<T> implements Propert
         @Override
         protected void paintComponent(Graphics g) {
             super.paintComponent(g);
-
+            
             final Graphics2D g2d = (Graphics2D) g;
             g2d.setColor(Color.WHITE);
 
@@ -89,7 +91,9 @@ public class JTwoStateEditor<T> extends StyleElementEditor<T> implements Propert
         this.current = DEFAULT_SIMPLE ? simple : advanced;
         current.addPropertyChangeListener(this);
 
-        typeselect = new JButton(ICON);
+        typeselect = new JButton(DEFAULT_SIMPLE ? ICON_SIMPLE : ICON_ADVANCED);
+        typeselect.setToolTipText(MessageBundle.getString(DEFAULT_SIMPLE ? 
+                "style.twostate.simple" : "style.twostate.advanced"));
         typeselect.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -100,6 +104,9 @@ public class JTwoStateEditor<T> extends StyleElementEditor<T> implements Propert
                 layeredpane.add(current,new Integer(0));
                 current.addPropertyChangeListener(JTwoStateEditor.this);
                 DEFAULT_SIMPLE = current == simple;
+                typeselect.setIcon(DEFAULT_SIMPLE ? ICON_SIMPLE : ICON_ADVANCED);
+                typeselect.setToolTipText(MessageBundle.getString(DEFAULT_SIMPLE ? 
+                        "style.twostate.simple" : "style.twostate.advanced"));
             }
         });
         

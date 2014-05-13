@@ -22,6 +22,7 @@ import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -81,7 +82,9 @@ public class JCQLEditor extends javax.swing.JPanel{
 
         for(FunctionFactory ff : Functions.getFactories()){
             final DefaultMutableTreeNode fnode = new org.geotoolkit.gui.swing.tree.DefaultMutableTreeNode(ff.getIdentifier());
-            for(String str : ff.getNames()){
+            String[] names = ff.getNames();
+            Arrays.sort(names);
+            for(String str : names){
                 final ParameterDescriptorGroup desc = ff.describeFunction(str);
                 final DefaultMutableTreeNode enode = new org.geotoolkit.gui.swing.tree.DefaultMutableTreeNode(desc);
                 fnode.add(enode);

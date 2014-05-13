@@ -31,6 +31,7 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.logging.Level;
@@ -45,6 +46,8 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.event.TreeModelEvent;
+import javax.swing.event.TreeModelListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.text.BadLocationException;
@@ -82,6 +85,11 @@ public class JAdvancedStylePanel extends StyleElementEditor implements PropertyP
     private MapLayer layer = null;
     private Object style = null;
     private StyleElementEditor editor = null;
+    private TreePath editedPath = null;
+    
+    //used to dissociate selection and apply
+    private volatile boolean applying = false;
+    
     private final TreeSelectionListener listener = new TreeSelectionListener() {
 
         @Override
@@ -89,22 +97,26 @@ public class JAdvancedStylePanel extends StyleElementEditor implements PropertyP
             final TreePath path = e.getNewLeadSelectionPath();
 
             //we validate the previous edition pane
-            applyEditor(e.getOldLeadSelectionPath());
+            
+            if(!applying){
+                //we keep the same editor if we are currently applying changes
+                applyEditor(e.getOldLeadSelectionPath());
 
-            pan_info.removeAll();
-            
-            if (path != null) {
-                final Object val = path.getLastPathComponent();
-                editor = StyleElementEditor.findEditor(val);
-                if(editor != null){
-                    editor.setLayer(getLayer());
-                    editor.parse(val);
-                    pan_info.add(editor);
-                }                
+                pan_info.removeAll();
+
+                if (path != null) {
+                    final Object val = path.getLastPathComponent();
+                    editor = StyleElementEditor.findEditor(val);
+                    if(editor != null){
+                        editor.setLayer(getLayer());
+                        editor.parse(val);
+                        pan_info.add(editor);
+                    }
+                }
+
+                pan_info.revalidate();
+                pan_info.repaint();
             }
-            
-            pan_info.revalidate();
-            pan_info.repaint();
         }
     };
 
@@ -132,14 +144,35 @@ public class JAdvancedStylePanel extends StyleElementEditor implements PropertyP
             }
         });
         
+        tree.getModel().addTreeModelListener(new TreeModelListener() {
+
+            public void treeNodesChanged(TreeModelEvent e) {
+            }
+
+            public void treeNodesInserted(TreeModelEvent e) {
+                if(applying){
+                    final TreePath tp = e.getTreePath().pathByAddingChild(e.getChildren()[0]);
+                    //select the new element
+                    if(tp!=null){
+                        tree.getSelectionModel().setSelectionPath(tp);
+                    }
+                }
+            }
+
+            public void treeNodesRemoved(TreeModelEvent e) {
+            }
+
+            public void treeStructureChanged(TreeModelEvent e) {
+            }
+        });
+        
     }
 
-    private void applyEditor(final TreePath oldPath){
+    private void applyEditor(final TreePath oldPath){        
         if(editor == null) return;
 
         //create implies a call to apply if a style element is present
         final Object obj = editor.create();
-        editor.parse(obj);
         
         if(obj instanceof Symbolizer){
             //in case of a symbolizer we must update it.
@@ -244,7 +277,9 @@ public class JAdvancedStylePanel extends StyleElementEditor implements PropertyP
     @Override
     public void apply() {
 
+        applying = true;
         applyEditor(tree.getSelectionModel().getSelectionPath());
+        applying = false;
 
         style = tree.getStyleElement();
 

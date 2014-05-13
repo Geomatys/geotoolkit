@@ -136,7 +136,7 @@ public class JRasterSymbolizerPane extends StyleElementEditor<RasterSymbolizer> 
             guiContrast.parse(symbol.getContrastEnhancement());
             guiRelief.parse(symbol.getShadedRelief());
             guiChannelPane.parse(symbol.getChannelSelection());
-            guiColorMapPane.parse(symbol.getColorMap());
+            guiColorMapPane.parse(symbol);
             
             final Symbolizer outLine = symbol.getImageOutline();
             if(outLine instanceof LineSymbolizer){

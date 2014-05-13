@@ -305,13 +305,13 @@ public class JStyleTree<T> extends JTree implements DragGestureListener, DragSou
 
         private String text(Description desc){
             if(desc == null){
-                return " \u26AB unnamed";
+                return " - ";
             }else{
                 final InternationalString str = desc.getTitle();
                 if(str != null && !str.toString().trim().isEmpty()){
                     return str.toString();
                 }else{
-                    return " \u26AB unnamed";
+                    return " - ";
                 }
             }
         }
@@ -413,6 +413,7 @@ public class JStyleTree<T> extends JTree implements DragGestureListener, DragSou
             for(int i=0,n=treeModel.getChildCount(parent); i<n; i++){
                 final Object child = treemodel.getChild(parent, i);
                 final TreePath tp1 = path.pathByAddingChild(child);
+                expandPath(tp1);
                 for(int k=0,l=treeModel.getChildCount(child); k<l; k++){
                     expandPath(tp1.pathByAddingChild(treemodel.getChild(child, k)));
                 }
