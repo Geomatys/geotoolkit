@@ -17,7 +17,7 @@
 
 package org.geotoolkit.data.om;
 
-import com.vividsolutions.jts.geom.Point;
+import com.vividsolutions.jts.geom.Geometry;
 import java.util.HashMap;
 import java.util.Map;
 import static org.geotoolkit.data.AbstractFeatureStore.GML_NAMESPACE;
@@ -48,7 +48,7 @@ public class OMFeatureTypes {
         featureTypeBuilder.add(ATT_DESC,String.class,0,1,true,null);
         featureTypeBuilder.add(ATT_NAME,String.class,1,Integer.MAX_VALUE,false,null);
         featureTypeBuilder.add(ATT_SAMPLED,String.class,0,Integer.MAX_VALUE,true,null);
-        featureTypeBuilder.add(ATT_POSITION,Point.class,1,1,false,null);
+        featureTypeBuilder.add(ATT_POSITION,Geometry.class,1,1,false,null);
         featureTypeBuilder.setDefaultGeometry(ATT_POSITION);
         types.put(OM_TN_SAMPLINGPOINT, featureTypeBuilder.buildFeatureType());
         

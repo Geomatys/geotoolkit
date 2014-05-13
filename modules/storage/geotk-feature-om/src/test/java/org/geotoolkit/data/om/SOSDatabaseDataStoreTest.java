@@ -17,7 +17,7 @@
 
 package org.geotoolkit.data.om;
 
-import com.vividsolutions.jts.geom.Point;
+import com.vividsolutions.jts.geom.Geometry;
 import java.io.InputStream;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
@@ -82,7 +82,7 @@ public class SOSDatabaseDataStoreTest extends AbstractReadingTests{
             featureTypeBuilder.add(new DefaultName(nsGML, "description"),String.class,0,1,true,null);
             featureTypeBuilder.add(new DefaultName(nsGML, "name"),String.class,1,Integer.MAX_VALUE,false,null);
             featureTypeBuilder.add(new DefaultName(nsOM, "sampledFeature"),String.class,0,Integer.MAX_VALUE,true,null);
-            featureTypeBuilder.add(new DefaultName(nsOM, "position"),Point.class,1,1,false,null);
+            featureTypeBuilder.add(new DefaultName(nsOM, "position"),Geometry.class,1,1,false,null);
             featureTypeBuilder.setDefaultGeometry(new DefaultName(nsOM, "position"));
 
             int size = 6;
