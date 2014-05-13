@@ -22,9 +22,9 @@
   <!-- =========================================================== -->
   <!--     Module Description                                      -->
   <!-- =========================================================== -->
-  <artifactId>geotk-svg-batik</artifactId>
+  <artifactId>geotk-svg-salamander</artifactId>
   <packaging>jar</packaging>
-  <name>Display SVG (Batik)</name>
+  <name>Display SVG (Salamander)</name>
 
   <description>
     The svg module contains utility classes for SVG and an external image factory.
@@ -66,14 +66,9 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.xmlgraphics</groupId>
-      <artifactId>batik-transcoder</artifactId>
-      <exclusions>
-        <exclusion>
-          <groupId>xalan</groupId>
-          <artifactId>xalan</artifactId>
-        </exclusion>
-      </exclusions>
+      <groupId>com.kitfox.svg</groupId>
+      <artifactId>svg-salamander</artifactId>
+      <version>1.0</version>
     </dependency>
   </dependencies>
 

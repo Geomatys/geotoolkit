@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2010, Geomatys
+ *    (C) 2014, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -15,23 +15,24 @@
  *    Lesser General Public License for more details.
  */
 
-package org.geotoolkit.renderer.svg;
+package org.geotoolkit.renderer.salamander;
 
+import com.kitfox.svg.SVGDiagram;
+import com.kitfox.svg.SVGUniverse;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.io.InputStream;
 import java.net.URI;
 import java.util.Collection;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.geotoolkit.renderer.style.ExternalGraphicFactory;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
+import org.geotoolkit.renderer.style.ExternalGraphicFactory;
 
 /**
- * Factory capable to read SVG files.
+ * Factory capable to read SVG files using Salamander library.
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
@@ -52,27 +53,20 @@ public class SVGGraphicFactory implements ExternalGraphicFactory {
             dim = new Dimension(size.intValue(), size.intValue());
         }
 
-        InputStream stream = null;
-        try{
-            //try distant url
-            stream = uri.toURL().openStream();
-        }catch(Exception ex){
-            //try class loader
-            try{
-                stream = SVGGraphicFactory.class.getResourceAsStream(uri.toString());
-            }catch(Exception e){
-                Logger.getLogger(SVGGraphicFactory.class.getName()).log(Level.WARNING, e.getMessage(), e);
-            }
-        }
-
-        if(stream != null){
-            try{
-                return (BufferedImage) SvgUtils.read(stream, dim, hints);
-            }finally{
-                stream.close();
-            }
-        }
-        return null;
+        final SVGUniverse svgUniverse = new SVGUniverse();
+        final SVGDiagram diagram = svgUniverse.getDiagram(uri);
+        diagram.setIgnoringClipHeuristic(true);
+        
+        final BufferedImage img = new BufferedImage(dim.width, dim.height, BufferedImage.TYPE_INT_ARGB);
+        final Graphics2D g = img.createGraphics();
+        final Rectangle2D rect = diagram.getViewRect();
+        final double scale = Math.min( ((double)dim.width)/rect.getWidth(), ((double)dim.height)/rect.getHeight() );
+        final AffineTransform trs = new AffineTransform(scale, 0, 0, scale, -rect.getMinX(), -rect.getMinY());
+        g.setTransform(trs);
+        diagram.render(g); 
+        g.dispose();
+        
+        return img;
     }
 
     @Override
@@ -85,10 +79,24 @@ public class SVGGraphicFactory implements ExternalGraphicFactory {
         final float rsize = size/2f;
         
         g.translate(center.getX()-rsize,center.getY()-rsize);
-        SvgUtils.render(uri, new Point2D.Float(size, size), g, hints);
+        
+        //render
+        final SVGUniverse svgUniverse = new SVGUniverse();
+        final SVGDiagram diagram = svgUniverse.getDiagram(uri);
+        diagram.setIgnoringClipHeuristic(true);
+        
+        final Rectangle2D bounds = diagram.getViewRect();
+        final double scale = Math.min( ((double)size)/bounds.getWidth(), ((double)size)/bounds.getHeight() );
+        g.scale(scale, scale);
+        try {
+            diagram.render(g);
+        } finally {
+            g.scale(1.0/scale, 1.0/scale);
+        }
+        
         g.translate(-center.getX()+rsize,-center.getY()+rsize);
     }
-
+    
     /**
      * {@inheritDoc }
      */

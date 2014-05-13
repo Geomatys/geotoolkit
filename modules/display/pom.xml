@@ -87,6 +87,7 @@
     <module>geotk-widgets-swing</module>
     <module>geotk-style</module>
     <module>geotk-svg-batik</module>
+    <module>geotk-svg-salamander</module>
     <module>geotk-render</module>
     <module>geotk-render2d</module>
     <module>geotk-render3d</module>
