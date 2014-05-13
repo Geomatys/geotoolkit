@@ -17,7 +17,7 @@
 
 package org.geotoolkit.renderer.svg;
 
-import com.sun.prism.paint.Color;
+import java.awt.Color;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.net.URI;
@@ -39,10 +39,10 @@ public class SVGTest {
         
         final BufferedImage image = factory.getImage(uri, "image/svg", 20f, null);
         
-        assertEquals(Color.RED.getIntArgbPre(), image.getRGB(2, 2));
-        assertEquals(Color.GREEN.getIntArgbPre(), image.getRGB(18, 2));
-        assertEquals(Color.BLUE.getIntArgbPre(), image.getRGB(2, 18));
-        assertEquals(Color.BLACK.getIntArgbPre(), image.getRGB(18, 18));
+        assertEquals(Color.RED.getRGB(), image.getRGB(2, 2));
+        assertEquals(Color.GREEN.getRGB(), image.getRGB(18, 2));
+        assertEquals(Color.BLUE.getRGB(), image.getRGB(2, 18));
+        assertEquals(Color.BLACK.getRGB(), image.getRGB(18, 18));
         
     }
     
@@ -55,10 +55,10 @@ public class SVGTest {
         final BufferedImage image = new BufferedImage(20, 20, BufferedImage.TYPE_INT_ARGB);
         factory.renderImage(uri, "image/svg", 20f, image.createGraphics(), new Point2D.Double(10, 10), null);
         
-        assertEquals(Color.RED.getIntArgbPre(), image.getRGB(2, 2));
-        assertEquals(Color.GREEN.getIntArgbPre(), image.getRGB(18, 2));
-        assertEquals(Color.BLUE.getIntArgbPre(), image.getRGB(2, 18));
-        assertEquals(Color.BLACK.getIntArgbPre(), image.getRGB(18, 18));
+        assertEquals(Color.RED.getRGB(), image.getRGB(2, 2));
+        assertEquals(Color.GREEN.getRGB(), image.getRGB(18, 2));
+        assertEquals(Color.BLUE.getRGB(), image.getRGB(2, 18));
+        assertEquals(Color.BLACK.getRGB(), image.getRGB(18, 18));
         
     }
     
