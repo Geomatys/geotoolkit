@@ -22,21 +22,18 @@ import java.util.Arrays;
 import java.util.AbstractMap;
 import org.geotoolkit.resources.Vocabulary;
 
-import org.apache.sis.test.DependsOn;
 import org.junit.*;
 import static org.geotoolkit.test.Assert.*;
 
 
 /**
- * Tests the {@link Trees} implementation. Those methods test also indirectly the
- * {@link TreeFormat} methods.
+ * Tests the {@link Trees} implementation.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.18
  *
  * @since 3.00
  */
-@DependsOn(TreeFormat.class)
 public final strictfp class TreesTest {
     /**
      * Tests the formatting as a tree.

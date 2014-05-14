@@ -26,17 +26,13 @@ import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.logging.Level;
-import java.util.logging.LogRecord;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.io.IOException;
 import net.jcip.annotations.NotThreadSafe;
 
 import org.geotoolkit.gui.swing.tree.Trees;
-import org.geotoolkit.gui.swing.tree.TreeFormat;
 import org.geotoolkit.util.Cloneable;
-
-import static org.geotoolkit.image.io.mosaic.Tile.LOGGER;
 
 
 /**
@@ -281,17 +277,6 @@ final class RTree implements Cloneable {
         if (bestCandidate != null) {
             assert bestCandidate.checkValidity() : bestCandidate.toTree();
             bestCandidate.getTiles(tiles);
-            if (LOGGER.isLoggable(LEVEL)) {
-                final TreeFormat tf = new TreeFormat();
-                final StringBuilder message = new StringBuilder("Tiles count: ")
-                        .append(tiles.size()).append(tf.getLineSeparator());
-                tf.format((javax.swing.tree.TreeNode) bestCandidate, message);
-                final LogRecord record = new LogRecord(LEVEL, message.toString());
-                record.setSourceClassName("org.geotoolkit.image.io.mosaic.TileManager");
-                record.setSourceMethodName("getTiles"); // This is the public API for this method.
-                record.setLoggerName(LOGGER.getName());
-                LOGGER.log(record);
-            }
         }
         assert tiles.isEmpty() == !intersects() : tiles;
         return tiles;

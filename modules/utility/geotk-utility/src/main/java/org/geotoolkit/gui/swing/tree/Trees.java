@@ -56,8 +56,6 @@ import org.geotoolkit.internal.io.IOUtilities;
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @version 3.18
  *
- * @see TreeFormat
- *
  * @since 2.0
  * @module
  */
@@ -300,10 +298,6 @@ public final class Trees extends Static {
      * Returns a graphical representation of the specified tree model. This representation can
      * be printed to the {@linkplain System#out standard output stream} (for example) if it uses
      * a monospaced font and supports unicode.
-     * <p>
-     * This convenience method delegates to {@link TreeFormat#format(TreeModel, Appendable)}.
-     * Users are encouraged to use {@code TreeFormat} directly if they want more control on
-     * the formatting process.
      *
      * @param  tree The tree to format.
      * @return A string representation of the tree.
@@ -320,10 +314,6 @@ public final class Trees extends Static {
      * Returns a graphical representation of the specified tree. This representation can be
      * printed to the {@linkplain System#out standard output stream} (for example) if it uses
      * a monospaced font and supports unicode.
-     * <p>
-     * This convenience method delegates to {@link TreeFormat#format(TreeNode, Appendable)}.
-     * Users are encouraged to use {@code TreeFormat} directly if they want more control on
-     * the formatting process.
      *
      * @param  node The root node of the tree to format.
      * @return A string representation of the tree.
@@ -340,10 +330,6 @@ public final class Trees extends Static {
      * Returns a graphical representation of the specified nodes. This representation can be
      * printed to the {@linkplain System#out standard output stream} (for example) if it uses
      * a monospaced font and supports unicode.
-     * <p>
-     * This convenience method delegates to {@link TreeFormat#format(Iterable, Appendable)}.
-     * Users are encouraged to use {@code TreeFormat} directly if they want more control on
-     * the formatting process.
      *
      * {@section Recursivity}
      * This method does not perform any check on the element types. In particular, elements of type
