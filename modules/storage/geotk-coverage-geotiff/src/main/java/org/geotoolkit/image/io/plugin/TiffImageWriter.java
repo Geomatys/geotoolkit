@@ -37,6 +37,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Array;
+import java.net.URI;
+import java.net.URL;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -522,12 +524,25 @@ public class TiffImageWriter extends SpatialImageWriter {
         return new TiffImageWriteParam(this);
     }
 
+    @Override
+    public boolean canReplacePixels(int imageIndex) throws IOException {
+        // TODO : Check if image at given index is compliant with the method.
+        return true;
+    }
+
     /**
      * {@inheritDoc }
      */
     @Override
     public void prepareWriteEmpty(IIOMetadata streamMetadata, ImageTypeSpecifier imageType, int width, int height, IIOMetadata imageMetadata, List<? extends BufferedImage> thumbnails, ImageWriteParam param) throws IOException {
         ArgumentChecks.ensureNonNull("imageType", imageType);
+        if (param == null) {
+            param = getDefaultWriteParam();
+        }
+        // TODO : Remove test when tiles won't be necessary.
+        if (param.getTileWidth() <= 0 || param.getTileHeight() <= 0) {
+            throw new IllegalStateException("Only tiled image can be used for pixel replacement.");
+        }
         // avant d'appeler open definir sil sagit d'une bigtiff
         
         // 1 : isBigTiff
@@ -686,6 +701,11 @@ public class TiffImageWriter extends SpatialImageWriter {
         //-- ecrire les thumbnails
         channel.seek(endOfFile - 1);
         channel.writeByte(0);
+    }
+
+    @Override
+    public void endReplacePixels() throws IOException {
+        // Nothing to do
     }
 
     /**
@@ -949,7 +969,12 @@ public class TiffImageWriter extends SpatialImageWriter {
         final int imageWeight = imgWidth * imgHeight * pixelSize / Byte.SIZE;
         return imageWeight >= 4E9;// >= 4Go
     }
-    
+
+    @Override
+    public boolean canWriteEmpty() throws IOException {
+        return true;
+    }
+
     /**
      * 
      * @param imageType
@@ -1043,7 +1068,7 @@ public class TiffImageWriter extends SpatialImageWriter {
         }
         
         //-- compression --//
-        compression = 1; 
+        compression = 1;
         if (param.canWriteCompressed() && param.getCompressionMode() == ImageWriteParam.MODE_EXPLICIT) {
             final String comp = param.getCompressionType();
             if (comp != null) {
@@ -2311,8 +2336,8 @@ public class TiffImageWriter extends SpatialImageWriter {
                 }
             }
             // vrai version : tileregion remplacer par srcregion
-            destRegion = new Rectangle((tileRegion.width + srcXsubsampling - 1) / srcXsubsampling, (tileRegion.height + srcYsubsampling - 1) / srcYsubsampling);
-//            destRegion = new Rectangle((srcRegion.width + srcXsubsampling - 1) / srcXsubsampling, (srcRegion.height + srcYsubsampling - 1) / srcYsubsampling);
+            //destRegion = new Rectangle((tileRegion.width + srcXsubsampling - 1) / srcXsubsampling, (tileRegion.height + srcYsubsampling - 1) / srcYsubsampling);
+            destRegion = new Rectangle((srcRegion.width + srcXsubsampling - 1) / srcXsubsampling, (srcRegion.height + srcYsubsampling - 1) / srcYsubsampling);
 
         }
         assert srcRegion != null;
@@ -3411,32 +3436,29 @@ public class TiffImageWriter extends SpatialImageWriter {
      * @see TiffImageReader.Spi
      * @module
      */
-    public static class Spi extends ImageWriterAdapter.Spi {
+    public static class Spi extends SpatialImageWriter.Spi {
+
+       static final Class<?>[] TYPES = new Class<?>[] {
+               File.class,
+               //URI.class,
+               //URL.class,
+               String.class // To be interpreted as file path.
+// TODO     OutputStream.class,
+//          ImageOutputStream.class
+       };
         /**
          * Creates a provider which will use the given format for writing pixel values.
          *
          * @param main The provider of the writers to use for writing the pixel values.
          */
-        public Spi(final ImageWriterSpi main) {
-            super(main);
+        public Spi() {
+            super();
             names           = new String[] {"geotiff", "tiff"};
             MIMETypes       = new String[] {"image/x-geotiff", "image/tiff;subtype=geotiff"};
-            pluginClassName = "org.geotoolkit.image.io.plugin.GeoTiffImageWriter";
+            pluginClassName = "org.geotoolkit.image.io.plugin.TiffImageWriter";
             vendorName      = "Geotoolkit.org";
             version         = Utilities.VERSION.toString();
-            outputTypes     = ArraysExt.append(outputTypes, ImageOutputStream.class);
-        }
-
-        /**
-         * Creates a provider which will use the given format for writing pixel values.
-         * This is a convenience constructor for the above constructor with a provider
-         * fetched from the given format name.
-         *
-         * @param  format The name of the provider to use for writing the pixel values.
-         * @throws IllegalArgumentException If no provider is found for the given format.
-         */
-        public Spi(final String format) throws IllegalArgumentException {
-            this(Formats.getWriterByFormatName(format, GeoTiffImageWriter.Spi.class));
+            outputTypes     = TYPES;
         }
 
         /**
@@ -3450,7 +3472,12 @@ public class TiffImageWriter extends SpatialImageWriter {
             return "Tiff / Geotiff format.";
         }
 
-        /**
+       @Override
+       public boolean canEncodeImage(ImageTypeSpecifier type) {
+           return true;
+       }
+
+       /**
          * Creates a new <cite>World File</cite> writer. The {@code extension} argument
          * is forwarded to the {@linkplain #main main} provider with no change.
          *
@@ -3462,81 +3489,6 @@ public class TiffImageWriter extends SpatialImageWriter {
         public ImageWriter createWriterInstance(final Object extension) throws IOException {
             return new TiffImageWriter(this);
         }
-        
-        /**
-         * Registers a default set of <cite>GeoTiff</cite> formats. This method shall be invoked
-         * at least once by client application before to use Image I/O library if they wish to encode
-         * <cite>GeoTiff</cite> images. This method can also be invoked more time if the TIFF
-         * writer changed, and this change needs to be taken in account by the
-         * <cite>GeoTiff</cite> writers. See the <cite>System initialization</cite> section in
-         * the <a href="../package-summary.html#package_description">package description</a>
-         * for more information.
-         * <p>
-         * The current implementation registers plugins for the TIFF.
-         *
-         * @param registry The registry where to register the formats, or {@code null} for
-         *        the {@linkplain IIORegistry#getDefaultInstance() default registry}.
-         *
-         * @see org.geotoolkit.image.jai.Registry#setDefaultCodecPreferences()
-         * @see org.geotoolkit.lang.Setup
-         */
-        @Configuration
-        public static void registerDefaults(ServiceRegistry registry) {
-            if (registry == null) {
-                registry = IIORegistry.getDefaultInstance();
-            }
-            for (int index=0; ;index++) {
-                final TiffImageWriter.Spi provider;
-                try {
-                    switch (index) {
-                        case 0: provider = new TiffImageWriter.TIFF(); break;
-                        default: return;
-                    }
-                } catch (RuntimeException e) {
-                    /*
-                     * If we failed to register a plugin, this is not really a big deal.
-                     * This format will not be available, but it will not prevent the
-                     * rest of the application to work.
-                     */
-                    Logging.recoverableException(Logging.getLogger("org.geotoolkit.image.io"),
-                            GeoTiffImageWriter.Spi.class, "registerDefaults", e);
-                    continue;
-                }
-                registry.registerServiceProvider(provider, ImageWriterSpi.class);
-                registry.setOrdering(ImageWriterSpi.class, provider.main, provider);
-            }
-        }
-
-        /**
-         * Unregisters the providers registered by {@link #registerDefaults(ServiceRegistry)}.
-         *
-         * @param registry The registry from which to unregister the formats, or {@code null}
-         *        for the {@linkplain IIORegistry#getDefaultInstance() default registry}.
-         *
-         * @see org.geotoolkit.lang.Setup
-         */
-        @Configuration
-        public static void unregisterDefaults(ServiceRegistry registry) {
-            if (registry == null) {
-                registry = IIORegistry.getDefaultInstance();
-            }
-            for (int index=0; ;index++) {
-                final Class<? extends GeoTiffImageWriter.Spi> type;
-                switch (index) {
-                    case 0: type = GeoTiffImageWriter.TIFF.class; break;
-                    default: return;
-                }
-                final GeoTiffImageWriter.Spi provider = registry.getServiceProviderByClass(type);
-                if (provider != null) {
-                    registry.deregisterServiceProvider(provider, ImageWriterSpi.class);
-                }
-            }
-        }
     }
 
-    /**
-     * Providers for common formats. Each provider needs to be a different class because
-     * {@link ServiceRegistry} allows the registration of only one instance of each class.
-     */
-    static final class TIFF extends TiffImageWriter.Spi {TIFF() {super("TIFF");}}
 }

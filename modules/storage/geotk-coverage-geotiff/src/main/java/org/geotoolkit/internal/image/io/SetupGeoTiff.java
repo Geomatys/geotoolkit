@@ -35,7 +35,7 @@ public final class SetupGeoTiff implements SetupService {
     @Override
     public void initialize(final Properties properties, final boolean reinit) {
 //        GeoTiffImageReader.Spi.registerDefaults(null);
-        GeoTiffImageWriter.Spi.registerDefaults(null);
+        //GeoTiffImageWriter.Spi.registerDefaults(null);
     }
 
     /**
@@ -44,6 +44,6 @@ public final class SetupGeoTiff implements SetupService {
     @Override
     public void shutdown() {
 //        GeoTiffImageReader.Spi.unregisterDefaults(null);
-        GeoTiffImageWriter.Spi.unregisterDefaults(null);
+        //GeoTiffImageWriter.Spi.unregisterDefaults(null);
     }
 }
