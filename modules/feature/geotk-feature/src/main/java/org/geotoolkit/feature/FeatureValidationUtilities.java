@@ -21,7 +21,7 @@ import java.util.TreeSet;
 
 import org.geotoolkit.util.Converters;
 
-import org.opengis.feature.IllegalAttributeException;
+import org.geotoolkit.feature.IllegalAttributeException;
 import org.opengis.feature.Attribute;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;

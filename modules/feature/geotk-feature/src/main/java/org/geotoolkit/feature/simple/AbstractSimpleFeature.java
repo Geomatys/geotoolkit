@@ -33,7 +33,7 @@ import org.geotoolkit.feature.FeatureValidationUtilities;
 import org.geotoolkit.feature.SimpleIllegalAttributeException;
 
 import org.opengis.feature.GeometryAttribute;
-import org.opengis.feature.IllegalAttributeException;
+import org.geotoolkit.feature.IllegalAttributeException;
 import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;

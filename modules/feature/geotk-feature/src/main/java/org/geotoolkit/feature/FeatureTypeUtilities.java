@@ -55,7 +55,7 @@ import org.opengis.filter.PropertyIsLessThan;
 import org.opengis.filter.PropertyIsLessThanOrEqualTo;
 import org.opengis.filter.expression.Literal;
 import org.opengis.feature.Property;
-import org.opengis.feature.IllegalAttributeException;
+import org.geotoolkit.feature.IllegalAttributeException;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.geometry.MismatchedDimensionException;
@@ -187,7 +187,7 @@ public final class FeatureTypeUtilities {
     public static final SimpleFeatureType EMPTY = new DefaultSimpleFeatureType(
             new DefaultName("Empty"), Collections.EMPTY_LIST, null, false, Collections.EMPTY_LIST, null, null);
 
-    
+
     private FeatureTypeUtilities() {}
 
     /**
@@ -328,14 +328,14 @@ public final class FeatureTypeUtilities {
             final String[] properties) throws SchemaException{
         if (properties == null) {
             return featureType;
-        }        
+        }
         final Name[] props = new Name[properties.length];
         for(int i=0; i<properties.length; i++){
             props[i] = DefaultName.valueOf(properties[i]);
         }
         return createSubType(featureType, props);
     }
-    
+
     /**
      * DOCUMENT ME!
      *
@@ -993,7 +993,7 @@ public final class FeatureTypeUtilities {
         final Name n = isParentType.getName();
         return isDecendedFrom(featureType, n.getNamespaceURI(), n.getLocalPart());
     }
-    
+
     /** Exact equality based on typeNames, namespace, attributes and ancestors */
     public static boolean equals(final FeatureType typeA, final FeatureType typeB) {
         if (typeA == typeB) {
@@ -1003,11 +1003,11 @@ public final class FeatureTypeUtilities {
         if (typeA == null || typeB == null) {
             return false;
         }
-        return equalsId(typeA, typeB) && 
+        return equalsId(typeA, typeB) &&
                equals(typeA.getDescriptors(), typeB.getDescriptors()) &&
                equalsAncestors(typeA, typeB);
     }
-    
+
 
     public static boolean equals(final Collection attributesA, final Collection attributesB) {
         return equals(
@@ -1015,7 +1015,7 @@ public final class FeatureTypeUtilities {
                 (PropertyDescriptor[]) attributesB.toArray(new PropertyDescriptor[attributesB.size()]));
     }
 
-    public static boolean equals(final PropertyDescriptor[] attributesA, 
+    public static boolean equals(final PropertyDescriptor[] attributesA,
             final PropertyDescriptor[] attributesB) {
         if (attributesA.length != attributesB.length) {
             return false;
@@ -1052,7 +1052,7 @@ public final class FeatureTypeUtilities {
     public static boolean equals(final PropertyDescriptor a, final PropertyDescriptor b) {
         return a == b || (a != null && a.equals(b));
     }
-    
+
     /** Quick check of namespace and typename */
     public static boolean equalsId(final FeatureType typeA, final FeatureType typeB) {
         if (typeA == typeB) {
@@ -1196,7 +1196,7 @@ public final class FeatureTypeUtilities {
             return new DefaultProperty(value, desc);
         }
     }
-    
+
     /**
      * Constructs an empty feature to use as a Template for new content.
      *
@@ -1280,34 +1280,34 @@ public final class FeatureTypeUtilities {
         return SimpleFeatureBuilder.build(featureType, attributes, id);
     }
 
-    
+
     ////////////////////////////////////////////////////////////////////////////
     // PARAMETERS API MAPPING OPERATIONS ///////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
-    
+
     /**
      * Convert given parameter descriptor to a feature type.
      * the original parameter descriptor will be store in the user map with key "origin"
-     * 
+     *
      * @param descriptor
      * @return ComplexType
      */
     public static ComplexType toPropertyType(final ParameterDescriptorGroup descriptor){
         return (ComplexType) toPropertyType((GeneralParameterDescriptor)descriptor);
     }
-    
+
     /**
      * Convert given parameter descriptor to a feature type.
      * the original parameter descriptor will be store in the user map with key "origin"
-     * 
+     *
      * @param descriptor
      * @return PropertyType
      */
     public static PropertyType toPropertyType(final GeneralParameterDescriptor descriptor){
-        
+
         if(descriptor instanceof ParameterDescriptor){
             final ParameterDescriptor desc = (ParameterDescriptor) descriptor;
-            
+
             final AttributeTypeBuilder atb = new AttributeTypeBuilder();
             atb.setName(DefaultName.valueOf(desc.getName().getCode()));
             atb.setDescription(desc.getRemarks());
@@ -1322,41 +1322,41 @@ public final class FeatureTypeUtilities {
                 }
                 final Function in = ff.function("in", values.toArray(new Expression[values.size()]));
                 atb.addRestriction(ff.equals(in, ff.literal(true)));
-            }            
-            
+            }
+
             //store the original descriptor, it contain additional informations
             //not mapped in the feature type.
             final AttributeType at = atb.buildType();
             at.getUserData().put("origin", descriptor);
             return at;
-            
+
         }else if (descriptor instanceof ParameterDescriptorGroup){
             final ParameterDescriptorGroup desc = (ParameterDescriptorGroup) descriptor;
-            
+
             final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
             ftb.setName(DefaultName.valueOf(desc.getName().getCode()));
-            
+
             for(GeneralParameterDescriptor sd : desc.descriptors()){
                 final PropertyType pt = toPropertyType(sd);
-                
+
                 final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
                 adb.setName(pt.getName());
                 adb.setType(pt);
                 adb.setMinOccurs(sd.getMinimumOccurs());
                 adb.setMaxOccurs(sd.getMaximumOccurs());
-                
+
                 if(sd instanceof ParameterDescriptor){
-                    adb.setDefaultValue( ((ParameterDescriptor)sd).getDefaultValue() );                    
+                    adb.setDefaultValue( ((ParameterDescriptor)sd).getDefaultValue() );
                 }
-                
-                ftb.add(adb.buildDescriptor());                
+
+                ftb.add(adb.buildDescriptor());
             }
-            
+
             ComplexType type = ftb.buildType();
             //store the original descriptor, it contain additional informations
             //not mapped in the feature type.
             type.getUserData().put("origin", descriptor);
-            
+
             return type;
         }else{
             throw new IllegalArgumentException("Unsupported type : " + descriptor.getClass());
@@ -1382,5 +1382,5 @@ public final class FeatureTypeUtilities {
         }
         return names;
     }
-    
+
 }

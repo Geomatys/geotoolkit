@@ -39,7 +39,7 @@ import org.geotoolkit.data.shapefile.shp.ShapeType;
 import org.geotoolkit.data.shapefile.shp.ShapefileWriter;
 import org.geotoolkit.feature.FeatureTypeUtilities;
 
-import org.opengis.feature.IllegalAttributeException;
+import org.geotoolkit.feature.IllegalAttributeException;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.GeometryDescriptor;

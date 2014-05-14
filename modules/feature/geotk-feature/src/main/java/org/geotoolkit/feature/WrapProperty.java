@@ -19,7 +19,7 @@ package org.geotoolkit.feature;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import org.opengis.feature.IllegalAttributeException;
+import org.geotoolkit.feature.IllegalAttributeException;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AssociationDescriptor;
 import org.opengis.feature.type.AssociationType;
