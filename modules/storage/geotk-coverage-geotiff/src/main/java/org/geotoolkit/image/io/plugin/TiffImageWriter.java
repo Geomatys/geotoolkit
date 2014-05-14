@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.image.io.plugin;
 
-import com.sun.media.imageioimpl.stream.ChannelImageOutputStreamSpi;
 import java.awt.Rectangle;
 import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
@@ -37,15 +36,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Array;
-import java.net.URI;
-import java.net.URL;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.nio.DoubleBuffer;
-import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
-import java.nio.ShortBuffer;
 import java.nio.channels.FileChannel;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -62,19 +55,12 @@ import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.spi.IIORegistry;
-import javax.imageio.spi.ImageWriterSpi;
 import javax.imageio.spi.ServiceRegistry;
-import javax.imageio.stream.ImageOutputStream;
 import org.apache.sis.internal.storage.ChannelImageOutputStream;
 import org.apache.sis.util.ArgumentChecks;
-import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.NullArgumentException;
-import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.image.io.ImageWriterAdapter;
 import org.geotoolkit.image.io.SpatialImageWriteParam;
 import org.geotoolkit.image.io.SpatialImageWriter;
-import org.geotoolkit.internal.image.io.Formats;
-import org.geotoolkit.lang.Configuration;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.Utilities;
 import static org.geotoolkit.metadata.geotiff.GeoTiffConstants.*;
@@ -84,7 +70,9 @@ import org.w3c.dom.NodeList;
 
 /**
  *
- * @author Remi Marechal (Geomatys).
+ * @author Martin Desruisseaux (Geomatys)
+ * @author Remi Marechal       (Geomatys)
+ * @author Alexis Manin        (Geomatys)
  */
 public class TiffImageWriter extends SpatialImageWriter {
 
@@ -3453,7 +3441,7 @@ public class TiffImageWriter extends SpatialImageWriter {
          */
         public Spi() {
             super();
-            names           = new String[] {"geotiff", "tiff"};
+            names           = new String[] {"geotiff", "geotif", "tiff", "tif"};
             MIMETypes       = new String[] {"image/x-geotiff", "image/tiff;subtype=geotiff"};
             pluginClassName = "org.geotoolkit.image.io.plugin.TiffImageWriter";
             vendorName      = "Geotoolkit.org";

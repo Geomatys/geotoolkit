@@ -17,6 +17,8 @@
  */
 package org.geotoolkit.image.io.plugin;
 
+import java.io.*;
+import java.nio.channels.Channels;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -25,12 +27,8 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Locale;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.nio.ByteOrder;
 import java.nio.ByteBuffer;
-import java.nio.channels.FileChannel;
 
 import java.awt.Rectangle;
 import java.awt.Transparency;
@@ -48,7 +46,6 @@ import java.awt.image.DataBufferInt;
 import java.awt.image.DataBufferFloat;
 import java.awt.image.DataBufferDouble;
 import java.awt.image.IndexColorModel;
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Array;
 import java.nio.channels.ReadableByteChannel;
 import java.util.HashMap;
@@ -63,11 +60,13 @@ import javax.imageio.metadata.IIOMetadataNode;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.spi.ServiceRegistry;
 import javax.imageio.stream.ImageInputStream;
+
 import org.apache.sis.internal.storage.ChannelImageInputStream;
 
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.image.SampleModels;
+import org.geotoolkit.image.io.InputStreamAdapter;
 import org.geotoolkit.image.io.SpatialImageReader;
 import org.geotoolkit.image.io.UnsupportedImageFormatException;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
@@ -115,6 +114,7 @@ import static org.geotoolkit.metadata.geotiff.GeoTiffConstants.*;
  *
  * @author Martin Desruisseaux (Geomatys)
  * @author Remi Marechal       (Geomatys)
+ * @author Alexis Manin        (Geomatys)
  * @version 3.16
  *
  * @since 3.16
@@ -177,14 +177,19 @@ public class TiffImageReader extends SpatialImageReader {
     private final static short LZW_EOI_CODE   = 257;
 
     /**
-     * The channel to the TIFF file. Will be created from the {@linkplain #input} when first needed.
+     * Reading channel initialized from input, used for imageStream and reverse reading channels creation.
      */
-    private ChannelImageInputStream channel;
+    private ReadableByteChannel channel;
+
+    /**
+     * The imageStream to the TIFF file. Will be created from the {@linkplain #input} when first needed.
+     */
+    private ImageInputStream imageStream;
 
     /**
      * The buffer for reading blocks of data.
      */
-    private final ByteBuffer buffer;
+    private ByteBuffer buffer;
 
     /**
      * Positions of each <cite>Image File Directory</cite> (IFD) in this file. The positions are
@@ -277,7 +282,7 @@ public class TiffImageReader extends SpatialImageReader {
     /**
      * File object of current input.
      */
-    private File currentInput;
+    private Object currentInput;
         
     /**
      * Creates a new reader.
@@ -736,9 +741,9 @@ public class TiffImageReader extends SpatialImageReader {
     }
     
     /**
-     * Closes the file channel. If the channel is already closed, then this method does nothing.
+     * Closes the file imageStream. If the imageStream is already closed, then this method does nothing.
      *
-     * @throws IOException If an error occurred while closing the channel.
+     * @throws IOException If an error occurred while closing the imageStream.
      */
     @Override
     protected void close() throws IOException {
@@ -748,9 +753,9 @@ public class TiffImageReader extends SpatialImageReader {
         bitsPerSample  = null;
         tileOffsets    = null;
         rawImageType   = null;
-        if (channel != null) {
-            channel.close();
-            channel = null;
+        if (imageStream != null) {
+            imageStream.close();
+            imageStream = null;
             // Keep the buffer, since we may reuse it for the next image.
         }
     }
@@ -784,10 +789,10 @@ public class TiffImageReader extends SpatialImageReader {
                     int imageAhead = layerIndex - countIFD;
                     while (imageAhead >= 0) {
                         long position = positionIFD[countIFD - 1];
-                        channel.seek(position);
+                        imageStream.seek(position);
                         final long n = readShort();
                         position += shortSize;
-                        channel.seek(position + n * entrySize);
+                        imageStream.seek(position + n * entrySize);
                         if (!nextImageFileDirectory()) {
                             throw new IndexOutOfBoundsException(error(
                                     Errors.Keys.INDEX_OUT_OF_BOUNDS_1, layerIndex));
@@ -813,11 +818,11 @@ public class TiffImageReader extends SpatialImageReader {
                         headProperties = new HashMap<Integer, Map>();
                         final Collection<long[]> deferred = new ArrayList<>(4);
                         long position = positionIFD[layerIndex];
-                        channel.seek(position);
+                        imageStream.seek(position);
                         final long n = readShort();//-- n : tag number which define tiff image properties.
                         position += shortSize;
                         for (int i = 0; i < n; i++) {
-                            channel.seek(position);
+                            imageStream.seek(position);
                             parseDirectoryEntries(deferred);
                             position += entrySize;
                         }
@@ -974,7 +979,6 @@ public class TiffImageReader extends SpatialImageReader {
      *
      * @param  value  The value which must be positive.
      * @param  name   The name for the parameter value, to be used in case of error.
-     * @param  locale The locale to use for formatting the error message.
      * @throws IIOException If the given value is considered undefined.
      */
     private void ensureDefined(final int value, final String name) throws IIOException {
@@ -988,7 +992,6 @@ public class TiffImageReader extends SpatialImageReader {
      *
      * @param  value  The value which must be non-null.
      * @param  name   The name for the parameter value, to be used in case of error.
-     * @param  locale The locale to use for formatting the error message.
      * @throws IIOException If the given value is considered undefined.
      */
     private void ensureDefined(final long[] value, final String name) throws IIOException {
@@ -1005,8 +1008,8 @@ public class TiffImageReader extends SpatialImageReader {
      * @throws IIOException If an error occurred while parsing an entry.
      */
     private void parseDirectoryEntries(final Collection<long[]> deferred) throws IOException {
-        final int tag       = channel.readShort() & 0xFFFF;
-        final short type    = channel.readShort();
+        final int tag       = imageStream.readShort() & 0xFFFF;
+        final short type    = imageStream.readShort();
         final long count    = readInt();
         final long datasize = count * TYPE_SIZE[type];
         if (datasize <= offsetSize) {
@@ -1028,21 +1031,21 @@ public class TiffImageReader extends SpatialImageReader {
     private long read(final short type) throws IOException {
         switch (type) {
             case TYPE_BYTE  :  
-            case TYPE_ASCII : return channel.readByte();
-            case TYPE_UBYTE : return channel.readByte() & 0xFFL;
+            case TYPE_ASCII : return imageStream.readByte();
+            case TYPE_UBYTE : return imageStream.readByte() & 0xFFL;
             case TYPE_SHORT : {
-                return channel.readShort();
+                return imageStream.readShort();
             }
             case TYPE_USHORT : {
-                return channel.readShort() & 0xFFFFL;
+                return imageStream.readShort() & 0xFFFFL;
             }
-            case TYPE_INT   : return channel.readInt();
+            case TYPE_INT   : return imageStream.readInt();
             case TYPE_IFD   :
-            case TYPE_UINT  : return channel.readInt() & 0xFFFFFFFFL;
-            case TYPE_LONG  : return channel.readLong();
+            case TYPE_UINT  : return imageStream.readInt() & 0xFFFFFFFFL;
+            case TYPE_LONG  : return imageStream.readLong();
             case TYPE_IFD8  :
             case TYPE_ULONG : {
-                final long value = channel.readLong();
+                final long value = imageStream.readLong();
                 if (value < 0) {
                     throw new UnsupportedImageFormatException(error(Errors.Keys.UNSUPPORTED_DATA_TYPE));
                 }
@@ -1062,17 +1065,17 @@ public class TiffImageReader extends SpatialImageReader {
     private double readAsDouble(final short type) throws IOException {
         switch (type) {
             case TYPE_URATIONAL : {
-                final long num = channel.readInt() & 0xFFFFFFFFL;
-                final long den = channel.readInt() & 0xFFFFFFFFL;
+                final long num = imageStream.readInt() & 0xFFFFFFFFL;
+                final long den = imageStream.readInt() & 0xFFFFFFFFL;
                 return num / (double) den;
             }
             case TYPE_RATIONAL : {
-                final int num = channel.readInt();
-                final int den = channel.readInt();
+                final int num = imageStream.readInt();
+                final int den = imageStream.readInt();
                 return num / (double) den;
             }
-            case TYPE_DOUBLE : return channel.readDouble();
-            case TYPE_FLOAT  : return channel.readFloat();
+            case TYPE_DOUBLE : return imageStream.readDouble();
+            case TYPE_FLOAT  : return imageStream.readFloat();
             default: throw new AssertionError(type);
         }
     }
@@ -1085,14 +1088,13 @@ public class TiffImageReader extends SpatialImageReader {
      * @param tag Tiff tag integer.
      * @param type type of tag
      * @param count data number will be read
-     * @param  name The name of the entry being parsed.
      * @throws IIOException If the entry can not be read as an integer.
      */
     private void entryValue(final int tag, final short type, final long count) throws IOException {
         assert count != 0;
         if (count > 0xFFFFFFFFL) throw new IllegalStateException("count value too expensive. not supported yet.");
         final int offsetSize = (isBigTIFF) ? Long.SIZE : Integer.SIZE;
-        final Map<String, Object> tagAttributs = new HashMap<String, Object>();
+        final Map<String, Object> tagAttributs = new HashMap<>();
         tagAttributs.put(ATT_NAME, getName(tag));
         tagAttributs.put(ATT_TYPE, type);
         tagAttributs.put(ATT_COUNT, count);
@@ -1100,21 +1102,21 @@ public class TiffImageReader extends SpatialImageReader {
         switch(tag) {
             case PlanarConfiguration: { //-- PlanarConfiguration.
                 assert count == 1 : "with tiff PlanarConfiguration tag, count should be equal 1.";
-                final short planarConfiguration = (short) channel.readShort();
+                final short planarConfiguration = (short) imageStream.readShort();
                 tagAttributs.put(ATT_VALUE, new short[]{planarConfiguration});
                 headProperties.put(tag, tagAttributs);
                 break;
             }
             case PhotometricInterpretation: { //-- PhotometricInterpretation.
                 assert count == 1 : "with tiff PhotometricInterpretation tag, count should be equal 1.";
-                final short photometricInterpretation = (short) channel.readShort();
+                final short photometricInterpretation = (short) imageStream.readShort();
                 tagAttributs.put(ATT_VALUE, new short[]{photometricInterpretation});
                 headProperties.put(tag, tagAttributs);
                 break;
             }
             case Compression: { //-- Compression.
                 assert count == 1 : "with tiff compression tag, count should be equal 1.";
-                compression = (int) (channel.readShort() & 0xFFFF);
+                compression = (int) (imageStream.readShort() & 0xFFFF);
                 if (compression != 1 && compression != 32773 && compression != 5) { // '1' stands for "uncompressed". // '32 773' stands for packbits compression
                     final Object nameCompress;
                     switch (compression) {
@@ -1142,7 +1144,7 @@ public class TiffImageReader extends SpatialImageReader {
                             throw new IIOException(error(Errors.Keys.DUPLICATED_VALUE_1, getName(tag)));
                         final long[] result = new long[(int) count]; 
                         for (int i = 0; i < count; i++) {
-                            result[i] = channel.readByte();
+                            result[i] = imageStream.readByte();
                         }
                         tagAttributs.put(ATT_VALUE, result);
                         headProperties.put(tag, tagAttributs);
@@ -1153,7 +1155,7 @@ public class TiffImageReader extends SpatialImageReader {
                             throw new IIOException(error(Errors.Keys.DUPLICATED_VALUE_1, getName(tag)));
                         final long[] result = new long[(int)count]; 
                         for (int i = 0; i < count; i++) {
-                            result[i] = channel.readByte() & 0xFF;
+                            result[i] = imageStream.readByte() & 0xFF;
                         }
                         tagAttributs.put(ATT_VALUE, result);
                         headProperties.put(tag, tagAttributs);
@@ -1164,7 +1166,7 @@ public class TiffImageReader extends SpatialImageReader {
                             throw new IIOException(error(Errors.Keys.DUPLICATED_VALUE_1, getName(tag)));
                         final long[] result = new long[(int)count];
                         for (int i = 0; i < count; i++) {
-                            result[i] = channel.readShort();
+                            result[i] = imageStream.readShort();
                         }
                         tagAttributs.put(ATT_VALUE, result);
                         headProperties.put(tag, tagAttributs);
@@ -1175,7 +1177,7 @@ public class TiffImageReader extends SpatialImageReader {
                             throw new IIOException(error(Errors.Keys.DUPLICATED_VALUE_1, getName(tag)));
                         final long[] result = new long[(int)count];
                         for (int i = 0; i < count; i++) {
-                            result[i] = (int) (channel.readShort() & 0xFFFF);
+                            result[i] = (int) (imageStream.readShort() & 0xFFFF);
                         }
                         tagAttributs.put(ATT_VALUE, result);
                         headProperties.put(tag, tagAttributs);
@@ -1186,7 +1188,7 @@ public class TiffImageReader extends SpatialImageReader {
                             throw new IIOException(error(Errors.Keys.DUPLICATED_VALUE_1, getName(tag)));
                         final long[] result = new long[(int)count];
                         for (int i = 0; i < count; i++) {
-                            result[i] = channel.readInt();
+                            result[i] = imageStream.readInt();
                         }
                         tagAttributs.put(ATT_VALUE, result);
                         headProperties.put(tag, tagAttributs);
@@ -1198,7 +1200,7 @@ public class TiffImageReader extends SpatialImageReader {
                             throw new IIOException(error(Errors.Keys.DUPLICATED_VALUE_1, getName(tag)));
                         final long[] result = new long[(int)count];
                         for (int i = 0; i < count; i++) {
-                            result[i] = channel.readInt() & 0xFFFFFFFFL;
+                            result[i] = imageStream.readInt() & 0xFFFFFFFFL;
                         }
                         tagAttributs.put(ATT_VALUE, result);
                         headProperties.put(tag, tagAttributs);
@@ -1209,7 +1211,7 @@ public class TiffImageReader extends SpatialImageReader {
                             throw new IIOException(error(Errors.Keys.DUPLICATED_VALUE_1, getName(tag)));
                         final float[] result = new float[(int)count];
                         for (int i = 0; i < count; i++) {
-                            result[i] = channel.readFloat();
+                            result[i] = imageStream.readFloat();
                         }
                         tagAttributs.put(ATT_VALUE, result);
                         headProperties.put(tag, tagAttributs);
@@ -1242,7 +1244,7 @@ public class TiffImageReader extends SpatialImageReader {
                         }
                         final long[] result = new long[(int)count];
                         for (int i = 0; i < count; i++) {
-                            result[i] = channel.readLong();
+                            result[i] = imageStream.readLong();
                         }
                         tagAttributs.put(ATT_VALUE, result);
                         headProperties.put(tag, tagAttributs);
@@ -1258,7 +1260,7 @@ public class TiffImageReader extends SpatialImageReader {
     }
 
     /**
-     * To be invoked after {@link #entryValues(String, Collection)} in order to process all
+     * To be invoked during {@linkplain #selectLayer(int)}  in order to process all
      * the deferred arrays. This method tries to read the arrays in sequential order as much
      * as possible.
      *
@@ -1277,12 +1279,12 @@ public class TiffImageReader extends SpatialImageReader {
             final int count    = (int) defTab[2];
             //-- in tiff spec offset or data are always unsigned
             final long offset  = defTab[3] & 0xFFFFFFFFL;
-            final Map<String, Object> tagAttributs = new HashMap<String, Object>();
+            final Map<String, Object> tagAttributs = new HashMap<>();
             tagAttributs.put(ATT_NAME, getName(tag));
             tagAttributs.put(ATT_TYPE, type);
             tagAttributs.put(ATT_COUNT, (long) count);
             
-            channel.seek(offset);
+            imageStream.seek(offset);
             final Object result;
             if (type == TYPE_DOUBLE || type == TYPE_FLOAT || type == TYPE_RATIONAL || type == TYPE_URATIONAL) {
                 result = new double[count];
@@ -1419,32 +1421,52 @@ public class TiffImageReader extends SpatialImageReader {
     }
     
     /**
-     * Ensures that the channel is open. If the channel is already open, then this method
+     * Ensures that the imageStream is open. If the imageStream is already open, then this method
      * does nothing.
      *
      * @throws IllegalStateException if the input is not set.
-     * @throws IOException If an error occurred while opening the channel.
+     * @throws IOException If an error occurred while opening the imageStream.
      */
     private void open() throws IllegalStateException, IOException {
 
-        if (channel == null) {
+        if (imageStream == null) {
             if (input == null) {
                 throw new IllegalStateException(error(Errors.Keys.NO_IMAGE_INPUT));
             }
             final FileInputStream in;
             if (input instanceof String) {
-                in = new FileInputStream((String) input);
                 currentInput = new File((String) input);
+                if (!((File)currentInput).isFile()) {
+                    throw new IOException("Given input is not a valid file : "+input);
+                }
             } else {
-                in = new FileInputStream((File) input);
-                currentInput = (File) input;
+                currentInput = input;
             }
-            //-- Closing the channel will close the input stream.
-            buffer.clear();
-            channel = new ChannelImageInputStream(null, in.getChannel(), buffer, false);
+
+            if (currentInput instanceof InputStream) {
+                InputStream stream = (InputStream) currentInput;
+                if (stream.markSupported()) {
+                    try {
+                        stream.reset();
+                    } catch (IOException e) {
+                        stream.mark(Integer.MAX_VALUE);
+                    }
+                } else {
+                    throw new IllegalStateException("Given input stream does not support rewinding.");
+                }
+            } else if (currentInput instanceof ImageInputStream) {
+                ImageInputStream stream = (ImageInputStream) currentInput;
+                stream.reset();
+                stream.mark();
+            }
+
+
+            //-- Closing the imageStream will close the input stream.
+            //buffer.clear();
+            imageStream = getImageInputStream(false);
             
-            final byte c = channel.readByte();
-            if (c != channel.readByte()) {
+            final byte c = imageStream.readByte();
+            if (c != imageStream.readByte()) {
                 throw invalidFile("ByteOrder");
             }
             final ByteOrder order;
@@ -1455,10 +1477,10 @@ public class TiffImageReader extends SpatialImageReader {
             } else {
                 throw invalidFile("ByteOrder");
             }
-            channel.setByteOrder(order);
-            final short version = channel.readShort();
+            imageStream.setByteOrder(order);
+            final short version = imageStream.readShort();
             if (isBigTIFF = (version == 0x002B)) {
-                if (channel.readShort() != 8 || channel.readShort() != 0) {
+                if (imageStream.readShort() != 8 || imageStream.readShort() != 0) {
                     throw invalidFile("OffsetSize");
                 }
             } else if (version != 0x002A) {
@@ -1504,7 +1526,7 @@ public class TiffImageReader extends SpatialImageReader {
      * @return The next integer.
      */
     private long readInt() throws IOException {
-        return isBigTIFF ? channel.readLong() : channel.readInt() & 0xFFFFFFFFL;
+        return isBigTIFF ? imageStream.readLong() : imageStream.readInt() & 0xFFFFFFFFL;
     }
     
     /**
@@ -1514,7 +1536,7 @@ public class TiffImageReader extends SpatialImageReader {
      * @return The next short.
      */
     private long readShort() throws IOException {
-        return isBigTIFF ? channel.readLong() : channel.readShort() & 0xFFFFL;
+        return isBigTIFF ? imageStream.readLong() : imageStream.readShort() & 0xFFFFL;
     }
     
     /**
@@ -1570,7 +1592,7 @@ public class TiffImageReader extends SpatialImageReader {
             do {
                 assert idCuLayer == countIFD - 1;
                 long position = positionIFD[idCuLayer];
-                channel.seek(position);
+                imageStream.seek(position);
                 final long n = readShort();
                 position += shortSize;
                 selectLayer(idCuLayer);
@@ -1583,7 +1605,7 @@ public class TiffImageReader extends SpatialImageReader {
                     idCuImg = idCuLayer;
                     imgAndThumbs.put(idCuLayer++, new ArrayList<Integer>());
                 }
-                channel.seek(position + n * entrySize);
+                imageStream.seek(position + n * entrySize);
             } while (nextImageFileDirectory());
         }
     }
@@ -1674,14 +1696,7 @@ public class TiffImageReader extends SpatialImageReader {
         if (fillOrder != null) {
             fO = (short) ((long[]) fillOrder.get(ATT_VALUE)) [0];
         }
-        final ChannelImageInputStream rasterReader;
-        if (fO == 2) {
-            final ReadableByteChannel fillOrderChannel = new ReversedBitsChannel(new FileInputStream(currentInput).getChannel());
-            rasterReader = new ChannelImageInputStream(null, fillOrderChannel, ByteBuffer.allocateDirect(8196), false);
-            rasterReader.setByteOrder(channel.getByteOrder());
-        } else {
-            rasterReader = channel;
-        }
+        final ImageInputStream rasterReader = getImageInputStream(fO == 2);
         
         //-- planar configuration --//
         final Map<String, Object> planarConfig = headProperties.get(PlanarConfiguration);
@@ -1718,7 +1733,7 @@ public class TiffImageReader extends SpatialImageReader {
                 if (sourceXSubsampling == 1) {
                     /*
                      * if we want to read all image which mean : srcRegion = dstRegion
-                     * and all strip are organize inascending order in tiff file and
+                     * and all strip are organize in ascending order in tiff file and
                      * moreover if datatype is Byte, we can fill a byteBuffer in one time, by all red samples values.
                      */
                     if (sourceYSubsampling == 1 && dstRegion.equals(srcRegion)
@@ -1886,10 +1901,8 @@ public class TiffImageReader extends SpatialImageReader {
         if (fillOrder != null) {
             fO = (short) ((long[]) fillOrder.get(ATT_VALUE)) [0];
         }
-        //-- adapt channel in function of fill order value --//
-        final ReadableByteChannel fillOrderChannel = (fO == 2) ? new ReversedBitsChannel(new FileInputStream(currentInput).getChannel()) : new FileInputStream(currentInput).getChannel();
-        final ChannelImageInputStream inputLZW = new ChannelImageInputStream(null, fillOrderChannel, ByteBuffer.allocateDirect(8196), false);
-        inputLZW.setByteOrder(channel.getByteOrder());
+        //-- adapt imageStream in function of fill order value --//
+        final ImageInputStream inputLZW = getImageInputStream(fO == 2);
         
         final long bitpersampl = bitsPerSample[0];
         
@@ -2171,14 +2184,7 @@ public class TiffImageReader extends SpatialImageReader {
         if (fillOrder != null) {
             fO = (short) ((long[]) fillOrder.get(ATT_VALUE)) [0];
         }
-        final ChannelImageInputStream rasterReader;
-        if (fO == 2) {
-            final ReadableByteChannel fillOrderChannel = new ReversedBitsChannel(new FileInputStream(currentInput).getChannel());
-            rasterReader = new ChannelImageInputStream(null, fillOrderChannel, ByteBuffer.allocateDirect(8196), false);
-            rasterReader.setByteOrder(channel.getByteOrder());
-        } else {
-            rasterReader = channel;
-        }
+        final ImageInputStream rasterReader = getImageInputStream(fO == 2);
         
         final long bitpersampl = bitsPerSample[0];
 
@@ -2419,14 +2425,7 @@ public class TiffImageReader extends SpatialImageReader {
         if (fillOrder != null) {
             fO = (short) ((long[]) fillOrder.get(ATT_VALUE)) [0];
         }
-        final ChannelImageInputStream rasterReader;
-        if (fO == 2) {
-            final ReadableByteChannel fillOrderChannel = new ReversedBitsChannel(new FileInputStream(currentInput).getChannel());
-            rasterReader = new ChannelImageInputStream(null, fillOrderChannel, ByteBuffer.allocateDirect(8196), false);
-            rasterReader.setByteOrder(channel.getByteOrder());
-        } else {
-            rasterReader = channel;
-        }
+        final ImageInputStream rasterReader = getImageInputStream(fO == 2);
         
         for (int bank = 0; bank < bankOffsets.length; bank++) {
             /*
@@ -2589,10 +2588,8 @@ public class TiffImageReader extends SpatialImageReader {
         if (fillOrder != null) {
             fO = (short) ((long[]) fillOrder.get(ATT_VALUE)) [0];
         }
-        //-- adapt channel in function of fill order value --//
-        final ReadableByteChannel fillOrderChannel    = (fO == 2) ? new ReversedBitsChannel(new FileInputStream(currentInput).getChannel()) : new FileInputStream(currentInput).getChannel();
-        final ChannelImageInputStream rasterLZWReader = new ChannelImageInputStream(null, fillOrderChannel, ByteBuffer.allocateDirect(8196), false);
-        rasterLZWReader.setByteOrder(channel.getByteOrder());
+        //-- adapt imageStream in function of fill order value --//
+        final ImageInputStream rasterLZWReader = getImageInputStream(fO == 2);
         
         //-- tile index from source area --//
         final int minTileX = srcRegion.x / tileWidth;
@@ -2837,7 +2834,58 @@ public class TiffImageReader extends SpatialImageReader {
             }
         }
     }
-    
+
+    /**
+     * Return an image input stream for data usage.
+     * @param reversedReading True if we want the returned stream to inverse byte values at reading. False otherwise.
+     * @param forceReset True if we want to force returned stream to point at the beginning of the image.
+     * @return an {@link javax.imageio.stream.ImageInputStream} for data reading.
+     * @throws IOException If we've got a problem while reseting stream position, or initializing it.
+     */
+    private ImageInputStream getImageInputStream(boolean reversedReading) throws IOException {
+        // If we've got an uncompressed image, we are not forced to rewind our source input stream.
+        if (!reversedReading && compression != 1) {
+            if (imageStream != null) return imageStream;
+            else if (currentInput instanceof ImageInputStream) return (ImageInputStream) currentInput;
+        }
+
+        channel = openChannel(currentInput);
+        buffer = null;
+
+        final boolean containData;
+        if (buffer == null) {
+            containData = false;
+            buffer = ByteBuffer.allocateDirect(8192);
+        } else {
+            containData = true;
+        }
+
+        final ImageInputStream result = new ChannelImageInputStream(null, reversedReading? new ReversedBitsChannel(channel) : channel, buffer, containData);
+        if (imageStream != null) result.setByteOrder(imageStream.getByteOrder());
+        return result;
+    }
+
+    /**
+     * Create the channel used as source data for reading {@link javax.imageio.stream.ImageInputStream}.
+     * @param input The input data to open a channel from.
+     * @return A {@link java.nio.channels.ReadableByteChannel} to get data from input object.
+     * @throws IOException If given object is of unsupported type.
+     */
+    private static ReadableByteChannel openChannel(final Object input) throws IOException {
+        if (input instanceof File) {
+            return new FileInputStream((File)input).getChannel();
+        } else if (input instanceof InputStream) {
+            ((InputStream) input).reset();
+            return Channels.newChannel((InputStream) input);
+        } else if (input instanceof ImageInputStream) {
+            final ImageInputStream IIS = (ImageInputStream) input;
+            IIS.reset(); IIS.mark();
+            return Channels.newChannel(new InputStreamAdapter((ImageInputStream) input));
+        } else {
+            throw new IOException("Input object is not a valid file or input stream.");
+        }
+    }
+
     /**
      * Formats an error message for an invalid TIFF file.
      *
@@ -2899,7 +2947,7 @@ public class TiffImageReader extends SpatialImageReader {
         /**
          * Default list of file extensions.
          */
-        private static final String[] SUFFIXES = new String[] {"tiff", "tif", "geotiff"};
+        private static final String[] SUFFIXES = new String[] {"tiff", "tif", "geotiff", "geotif"};
 
         /**
          * The mime types for the {@link RawTiffImageReader}.
@@ -2910,7 +2958,7 @@ public class TiffImageReader extends SpatialImageReader {
          * The list of valid input types.
          */
         private static final Class<?>[] INPUT_TYPES = new Class<?>[] {
-            File.class, String.class
+            File.class, String.class, InputStream.class, ImageInputStream.class
         };
 
         /**
@@ -2956,16 +3004,23 @@ public class TiffImageReader extends SpatialImageReader {
          */
         @Override
         public boolean canDecodeInput(final Object source) throws IOException {
-             final FileInputStream in;
-            if (source instanceof String) {
-                in = new FileInputStream((String) source);
-            } else if (source instanceof  File) {
-                in = new FileInputStream((File) source);
-            } else {
-                return false;
+            if (source instanceof InputStream) {
+                final InputStream stream = (InputStream) source;
+                if (stream.markSupported()) {
+                    try {
+                        stream.reset();
+                    } catch (IOException e) {
+                        stream.mark(Integer.MAX_VALUE);
+                    }
+                }else {
+                    return false;
+                }
+            } else if (source instanceof ImageInputStream) {
+                ((ImageInputStream) source).reset();
+                ((ImageInputStream) source).mark();
             }
-            final FileChannel channel = in.getChannel();
-            //-- Closing the channel will close the input stream.
+            final ReadableByteChannel channel = openChannel(source);
+            //-- Closing the imageStream will close the input stream.
             ByteBuffer buffer = ByteBuffer.allocateDirect(16);
             buffer.clear();
             channel.read(buffer);
@@ -2989,6 +3044,12 @@ public class TiffImageReader extends SpatialImageReader {
                 }
             } else if (version != 0x002A) {
                 return false;//-- invalid magic number
+            }
+
+            if (source instanceof InputStream) {
+                ((InputStream) source).reset();
+            } else if (source instanceof ImageInputStream) {
+                ((ImageInputStream) source).reset();
             }
             return true;
         }

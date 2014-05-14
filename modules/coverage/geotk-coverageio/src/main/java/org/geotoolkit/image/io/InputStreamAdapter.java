@@ -31,7 +31,7 @@ import javax.imageio.stream.ImageInputStream;
  * @since 1.2
  * @module
  */
-final class InputStreamAdapter extends InputStream {
+public final class InputStreamAdapter extends InputStream {
     /**
      * The wrapped image input stream.
      */
