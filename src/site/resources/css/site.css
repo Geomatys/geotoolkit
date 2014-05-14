@@ -1,4 +1,7 @@
 /* Override styles in maven-base.css */
+#banner {
+  background: #3799CA;
+}
 #leftColumn {
  width: 180px;
 }
