@@ -41,14 +41,15 @@ public abstract class AbstractOMFeatureStore extends AbstractFeatureStore {
  
     private static final QueryCapabilities capabilities = new DefaultQueryCapabilities(false);
 
-    private final Map<Name, FeatureType> types = OMFeatureTypes.getFeatureTypes();
+    protected final Map<Name, FeatureType> types;
  
     protected static final Logger LOGGER = Logging.getLogger(AbstractOMFeatureStore.class);
     
     protected static final FeatureFactory FF = FactoryFinder.getFeatureFactory(new Hints(Hints.FEATURE_FACTORY,LenientFeatureFactory.class));
     
-    public AbstractOMFeatureStore(final ParameterValueGroup params) {
+    public AbstractOMFeatureStore(final ParameterValueGroup params, final String featureTypeName) {
         super(params);
+        types = OMFeatureTypes.getFeatureTypes(featureTypeName);
     }
     
     /**

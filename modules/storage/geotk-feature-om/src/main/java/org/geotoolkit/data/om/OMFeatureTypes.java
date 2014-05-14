@@ -33,16 +33,17 @@ import org.opengis.feature.type.Name;
 public class OMFeatureTypes {
     
     private static final String OM_NAMESPACE = "http://www.opengis.net/sampling/1.0";
-    protected static final Name OM_TN_SAMPLINGPOINT = new DefaultName(OM_NAMESPACE, "SamplingPoint");
+    //protected static final Name OM_TN_SAMPLINGPOINT = new DefaultName(OM_NAMESPACE, "SamplingPoint");
 
     protected static final Name ATT_DESC     = new DefaultName(GML_NAMESPACE, "description");
     protected static final Name ATT_NAME     = new DefaultName(GML_NAMESPACE, "name");
     protected static final Name ATT_SAMPLED  = new DefaultName(OM_NAMESPACE, "sampledFeature");
     protected static final Name ATT_POSITION = new DefaultName(OM_NAMESPACE, "position");
 
-    public static Map<Name, FeatureType> getFeatureTypes() {
+    public static Map<Name, FeatureType> getFeatureTypes(final String name) {
         final Map<Name, FeatureType> types = new HashMap<>();
         
+        final Name OM_TN_SAMPLINGPOINT = new DefaultName(OM_NAMESPACE, name);
         final FeatureTypeBuilder featureTypeBuilder = new FeatureTypeBuilder();
         featureTypeBuilder.setName(OM_TN_SAMPLINGPOINT);
         featureTypeBuilder.add(ATT_DESC,String.class,0,1,true,null);

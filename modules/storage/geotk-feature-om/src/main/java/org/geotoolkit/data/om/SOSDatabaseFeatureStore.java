@@ -30,7 +30,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureStoreFactory;
@@ -38,16 +37,13 @@ import org.geotoolkit.data.FeatureStoreFinder;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.query.Query;
-import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.feature.LenientFeatureFactory;
 import org.geotoolkit.feature.simple.DefaultSimpleFeatureType;
 import org.geotoolkit.feature.type.DefaultGeometryDescriptor;
 import org.geotoolkit.filter.identity.DefaultFeatureId;
 import org.geotoolkit.jdbc.ManageableDataSource;
 import org.geotoolkit.referencing.CRS;
 import org.opengis.feature.Feature;
-import org.opengis.feature.FeatureFactory;
 import org.opengis.feature.Property;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.FeatureType;
@@ -80,7 +76,7 @@ public class SOSDatabaseFeatureStore extends AbstractOMFeatureStore {
     private final boolean isPostgres;
 
     public SOSDatabaseFeatureStore(final ParameterValueGroup params, final ManageableDataSource source, final boolean isPostgres) {
-        super(params);
+        super(params, "SamplingPoint");
         this.source = source;
         this.isPostgres = isPostgres;
     }

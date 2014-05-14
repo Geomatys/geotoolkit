@@ -41,11 +41,10 @@ import org.geotoolkit.feature.type.DefaultGeometryDescriptor;
 import org.geotoolkit.gml.GeometrytoJTS;
 import org.geotoolkit.gml.xml.AbstractGeometry;
 import org.geotoolkit.gml.xml.FeatureProperty;
-import org.geotoolkit.observation.xml.AbstractObservation;
 import org.geotoolkit.sampling.xml.SamplingFeature;
 import org.geotoolkit.sos.netcdf.ExtractionResult;
-import org.geotoolkit.sos.netcdf.NCFieldAnalyze;
 import org.geotoolkit.sos.netcdf.NetCDFExtractor;
+import org.geotoolkit.util.FileUtilities;
 import org.opengis.feature.Feature;
 import org.opengis.feature.Property;
 import org.opengis.feature.type.AttributeDescriptor;
@@ -56,7 +55,6 @@ import org.opengis.filter.Filter;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.observation.AnyFeature;
 import org.opengis.observation.Observation;
-import org.opengis.observation.ObservationCollection;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
@@ -70,7 +68,7 @@ public class NetCDFFeatureStore extends AbstractOMFeatureStore {
     private final File source;
     
     public NetCDFFeatureStore(final ParameterValueGroup params, final File source) {
-        super(params);
+        super(params, FileUtilities.getFileName(source));
         this.source = source;
     }
 

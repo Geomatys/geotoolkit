@@ -44,6 +44,7 @@ import org.geotoolkit.gml.xml.FeatureProperty;
 import org.geotoolkit.observation.xml.AbstractObservation;
 import org.geotoolkit.sampling.xml.SamplingFeature;
 import org.geotoolkit.sos.xml.SOSMarshallerPool;
+import org.geotoolkit.util.FileUtilities;
 import org.opengis.feature.Feature;
 import org.opengis.feature.Property;
 import org.opengis.feature.type.AttributeDescriptor;
@@ -68,7 +69,7 @@ public class OMXmlFeatureStore extends AbstractOMFeatureStore {
     private final File source;
     
     public OMXmlFeatureStore(final ParameterValueGroup params, final File source) {
-        super(params);
+        super(params, FileUtilities.getFileName(source));
         this.source = source;
     }
 
