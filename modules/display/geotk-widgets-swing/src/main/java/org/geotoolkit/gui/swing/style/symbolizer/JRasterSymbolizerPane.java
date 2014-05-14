@@ -100,6 +100,7 @@ public class JRasterSymbolizerPane extends StyleElementEditor<RasterSymbolizer> 
         //those are not used by geotk engine, hide them to avoid confusing the user
         guiOverLap.setVisible(false);
         guiOverlapsLbl.setVisible(false);
+        guiOpacity.setExpressionVisible(false);
     }
 
     /**

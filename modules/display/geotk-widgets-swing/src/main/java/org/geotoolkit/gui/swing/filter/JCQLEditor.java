@@ -68,31 +68,20 @@ import org.opengis.util.InternationalString;
  */
 public class JCQLEditor extends javax.swing.JPanel{
 
+    public static volatile boolean DEFAULT_SIMPLE = true;
+    
     private static final ImageIcon ICON_FILTER = IconBuilder.createIcon(FontAwesomeIcons.ICON_FILTER, 16, FontAwesomeIcons.DEFAULT_COLOR);
     private static final ImageIcon ICON_FUNCTION = IconBuilder.createIcon(FontAwesomeIcons.ICON_COG, 16, Color.GRAY);
     private static final ImageIcon ICON_GROUP = IconBuilder.createIcon(FontAwesomeIcons.ICON_FOLDER, 16, Color.GRAY);
 
     private MapLayer layer;
+    private boolean isFilter = false;
 
     /** Creates new form JCQLPropertyPanel */
     public JCQLEditor() {
         initComponents();
 
-        final DefaultMutableTreeNode root = new org.geotoolkit.gui.swing.tree.DefaultMutableTreeNode("root");
-
-        for(FunctionFactory ff : Functions.getFactories()){
-            final DefaultMutableTreeNode fnode = new org.geotoolkit.gui.swing.tree.DefaultMutableTreeNode(ff.getIdentifier());
-            String[] names = ff.getNames();
-            Arrays.sort(names);
-            for(String str : names){
-                final ParameterDescriptorGroup desc = ff.describeFunction(str);
-                final DefaultMutableTreeNode enode = new org.geotoolkit.gui.swing.tree.DefaultMutableTreeNode(desc);
-                fnode.add(enode);
-            }
-            root.add(fnode);
-        }
-
-        guiFunctions.setModel(new DefaultTreeModel(root));
+        guiFunctions.setModel(new DefaultTreeModel(new DefaultMutableTreeNode("-")));
         guiFunctions.setRootVisible(false);
         guiFunctions.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
         guiFunctions.getSelectionModel().addTreeSelectionListener(new TreeSelectionListener() {
@@ -137,7 +126,7 @@ public class JCQLEditor extends javax.swing.JPanel{
             }
 
         });
-
+        
         guiProperties.addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
@@ -206,8 +195,42 @@ public class JCQLEditor extends javax.swing.JPanel{
         guiPropertiesPane.setVisible(false);
         guiFilterOps.setVisible(false);
         guiFilterOps.setSize(1,1);
+        
+        guiSimple.setSelected(DEFAULT_SIMPLE);
+        updateSimpleAdvanced();
     }
 
+    private void updateSimpleAdvanced(){
+        final DefaultMutableTreeNode root = new org.geotoolkit.gui.swing.tree.DefaultMutableTreeNode("root");
+
+        final boolean simple = guiSimple.isSelected();
+        for(FunctionFactory ff : Functions.getFactories()){
+            final String factoryName = ff.getIdentifier();
+            if(simple && !"math".equals(factoryName)) continue;
+            final DefaultMutableTreeNode fnode = new org.geotoolkit.gui.swing.tree.DefaultMutableTreeNode(factoryName);
+            String[] names = ff.getNames();
+            Arrays.sort(names);
+            for(String str : names){
+                final ParameterDescriptorGroup desc = ff.describeFunction(str);
+                final DefaultMutableTreeNode enode = new org.geotoolkit.gui.swing.tree.DefaultMutableTreeNode(desc);
+                fnode.add(enode);
+            }
+            root.add(fnode);
+        }
+
+        guiFunctions.setModel(new DefaultTreeModel(root));
+        guiFunctions.setRootVisible(false);
+        
+        if(guiSimple.isSelected()){
+            guiFilterOps.setVisible(false);
+            guiFilterOps.setSize(1,1);
+        }else if(isFilter){
+            guiFilterOps.setVisible(true);
+            guiFilterOps.setSize(guiFilterOps.getPreferredSize());
+        }
+        
+    }
+    
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -557,22 +580,45 @@ public class JCQLEditor extends javax.swing.JPanel{
 
         jScrollPane3.setViewportView(guiFunctions);
 
+        jPanel1.setLayout(new java.awt.GridLayout(1, 2));
+
+        groupType.add(guiSimple);
+        guiSimple.setText(MessageBundle.getString("cql.simple")); // NOI18N
+        guiSimple.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                guiToggleAction(evt);
+            }
+        });
+        jPanel1.add(guiSimple);
+
+        groupType.add(guiAdvanced);
+        guiAdvanced.setText(MessageBundle.getString("cql.advanced")); // NOI18N
+        guiAdvanced.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                guiToggleAction(evt);
+            }
+        });
+        jPanel1.add(guiAdvanced);
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, 296, Short.MAX_VALUE)
             .addComponent(guiFilterOps, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jScrollPane3)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jXTitledSeparator1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jXTitledSeparator5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-            .addComponent(jScrollPane3)
+                    .addComponent(jXTitledSeparator5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jXTitledSeparator1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jXTitledSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -581,7 +627,7 @@ public class JCQLEditor extends javax.swing.JPanel{
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jXTitledSeparator5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 89, Short.MAX_VALUE))
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 69, Short.MAX_VALUE))
         );
 
         jScrollPane1.setViewportView(jPanel2);
@@ -590,13 +636,22 @@ public class JCQLEditor extends javax.swing.JPanel{
 
         add(jSplitPane1, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
+
+    private void guiToggleAction(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guiToggleAction
+        DEFAULT_SIMPLE = guiSimple.isSelected();
+        updateSimpleAdvanced();
+    }//GEN-LAST:event_guiToggleAction
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private final javax.swing.ButtonGroup groupType = new javax.swing.ButtonGroup();
+    private final javax.swing.JToggleButton guiAdvanced = new javax.swing.JToggleButton();
     private final org.geotoolkit.cql.JCQLTextPane guiCQL = new org.geotoolkit.cql.JCQLTextPane();
     private final javax.swing.JPanel guiFilterOps = new javax.swing.JPanel();
     private final javax.swing.JTree guiFunctions = new javax.swing.JTree();
     private final javax.swing.JList guiProperties = new javax.swing.JList();
     private final javax.swing.JPanel guiPropertiesPane = new javax.swing.JPanel();
     private final javax.swing.JScrollPane guiScroll = new javax.swing.JScrollPane();
+    private final javax.swing.JToggleButton guiSimple = new javax.swing.JToggleButton();
     private final javax.swing.JSplitPane guiTextPropertySplit = new javax.swing.JSplitPane();
     private final javax.swing.JButton jButton1 = new javax.swing.JButton();
     private final javax.swing.JButton jButton10 = new javax.swing.JButton();
@@ -641,6 +696,7 @@ public class JCQLEditor extends javax.swing.JPanel{
     private final javax.swing.JButton jButton7 = new javax.swing.JButton();
     private final javax.swing.JButton jButton8 = new javax.swing.JButton();
     private final javax.swing.JButton jButton9 = new javax.swing.JButton();
+    private final javax.swing.JPanel jPanel1 = new javax.swing.JPanel();
     private final javax.swing.JPanel jPanel2 = new javax.swing.JPanel();
     private final javax.swing.JPanel jPanel3 = new javax.swing.JPanel();
     private final javax.swing.JPanel jPanel4 = new javax.swing.JPanel();
@@ -658,9 +714,9 @@ public class JCQLEditor extends javax.swing.JPanel{
     // End of variables declaration//GEN-END:variables
 
     public void setExpression(final Expression exp){
+        isFilter = false;
         guiCQL.setExpression(exp);
-        guiFilterOps.setVisible(false);
-        guiFilterOps.setSize(1,1);
+        updateSimpleAdvanced();
     }
 
     public Expression getExpression() throws CQLException{
@@ -668,9 +724,9 @@ public class JCQLEditor extends javax.swing.JPanel{
     }
 
     public void setFilter(final Filter filter) {
+        isFilter = true;
         guiCQL.setFilter(filter);
-        guiFilterOps.setVisible(true);
-        guiFilterOps.setSize(guiFilterOps.getPreferredSize());
+        updateSimpleAdvanced();
     }
 
     public Filter getFilter() throws CQLException {
