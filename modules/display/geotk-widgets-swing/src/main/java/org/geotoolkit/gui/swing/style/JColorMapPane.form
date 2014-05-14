@@ -108,7 +108,7 @@
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="guiBand" linkSize="2" min="-2" pref="51" max="-2" attributes="0"/>
                       </Group>
-                      <Group type="102" alignment="0" attributes="0">
+                      <Group type="102" attributes="0">
                           <Component id="jLabel1" linkSize="3" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="guiMethod" min="-2" max="-2" attributes="0"/>
@@ -116,6 +116,11 @@
                           <Component id="guiNaN" linkSize="3" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="guiInvert" linkSize="3" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <Group type="102" alignment="0" attributes="0">
+                          <Component id="guiNoDataLabel" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="noDataContainer" max="32767" attributes="0"/>
                       </Group>
                   </Group>
               </Group>
@@ -133,8 +138,13 @@
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="jLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="guiMethod" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="guiNaN" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="guiNaN" linkSize="5" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="guiInvert" alignment="3" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="1" attributes="0">
+                      <Component id="guiNoDataLabel" linkSize="5" alignment="1" min="-2" max="-2" attributes="0"/>
+                      <Component id="noDataContainer" linkSize="5" min="-2" pref="14" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
@@ -266,6 +276,13 @@
             </Property>
           </Properties>
         </Component>
+        <Component class="javax.swing.JLabel" name="guiNoDataLabel">
+          <Properties>
+            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+              <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="noData" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
+            </Property>
+          </Properties>
+        </Component>
         <Component class="javax.swing.JButton" name="guiFitToData">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
@@ -276,6 +293,10 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="guiFitToDataActionPerformed"/>
           </Events>
         </Component>
+        <Container class="javax.swing.JPanel" name="noDataContainer">
+
+          <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout"/>
+        </Container>
       </SubComponents>
     </Container>
     <Container class="javax.swing.JScrollPane" name="guiTableScroll">

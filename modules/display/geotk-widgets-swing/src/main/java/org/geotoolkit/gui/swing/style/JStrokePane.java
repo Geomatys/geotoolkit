@@ -154,6 +154,11 @@ public class JStrokePane extends StyleElementEditor<Stroke> {
         graphicFill = pane.create();
     }
 
+    @Override
+    protected Object[] getFirstColumnComponents() {
+        return new Object[]{guiLabelAlpha,guiLabelCap,guiLabelDashes,guiLabelJoin,guiLabelWidth};
+    }
+    
     private void showGraphicStrokeDialog() {
         //TODO
 //        final JGraphicFillPane pane = new JGraphicFillPane();
@@ -183,11 +188,11 @@ public class JStrokePane extends StyleElementEditor<Stroke> {
         GuiStrokeDashes = new JDashPane();
         butFill = new JButton();
         butStroke = new JButton();
-        jLabel1 = new JLabel();
-        jLabel2 = new JLabel();
-        lbl_b_alpha = new JLabel();
-        lbl_b_width = new JLabel();
-        lbl_b_alpha1 = new JLabel();
+        guiLabelCap = new JLabel();
+        guiLabelJoin = new JLabel();
+        guiLabelAlpha = new JLabel();
+        guiLabelWidth = new JLabel();
+        guiLabelDashes = new JLabel();
         GuiStrokeColor = new JColorExpressionPane();
         GuiStrokeLineJoin = new JLineJoinExpressionPane();
         GuiStrokeLineCap = new JLineCapExpressionPane();
@@ -211,11 +216,6 @@ public class JStrokePane extends StyleElementEditor<Stroke> {
 
         butStroke.setText(MessageBundle.getString("stroke")); // NOI18N
         butStroke.setEnabled(false);
-
-
-
-
-
         butStroke.setPreferredSize(new Dimension(68, 22));
         butStroke.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
@@ -223,24 +223,22 @@ public class JStrokePane extends StyleElementEditor<Stroke> {
             }
         });
 
-        jLabel1.setHorizontalAlignment(SwingConstants.RIGHT);
-        jLabel1.setText(MessageBundle.getString("linecap")); // NOI18N
-        jLabel2.setHorizontalAlignment(SwingConstants.RIGHT);
-        jLabel2.setText(MessageBundle.getString("linejoin")); // NOI18N
-        lbl_b_alpha.setHorizontalAlignment(SwingConstants.RIGHT);
-        lbl_b_alpha.setText(MessageBundle.getString("opacity")); // NOI18N
-        lbl_b_width.setHorizontalAlignment(SwingConstants.RIGHT);
-        lbl_b_width.setText(MessageBundle.getString("width")); // NOI18N
-        lbl_b_alpha1.setHorizontalAlignment(SwingConstants.RIGHT);
-        lbl_b_alpha1.setText(MessageBundle.getString("dashes")); // NOI18N
+        guiLabelCap.setText(MessageBundle.getString("linecap")); // NOI18N
+
+        guiLabelJoin.setText(MessageBundle.getString("linejoin")); // NOI18N
+
+        guiLabelAlpha.setText(MessageBundle.getString("opacity")); // NOI18N
+
+        guiLabelWidth.setText(MessageBundle.getString("width")); // NOI18N
+
+        guiLabelDashes.setText(MessageBundle.getString("dashes")); // NOI18N
+
         typeGroup.add(guiGraphicColor);
         guiGraphicColor.setSelected(true);
         guiGraphicColor.setText(MessageBundle.getString("graphic_color")); // NOI18N
-        guiGraphicColor.setOpaque(false);
 
         typeGroup.add(guiGraphicFill);
         guiGraphicFill.setText(MessageBundle.getString("graphic_fill")); // NOI18N
-        guiGraphicFill.setOpaque(false);
         guiGraphicFill.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 guiGraphicFillActionPerformed(evt);
@@ -250,7 +248,6 @@ public class JStrokePane extends StyleElementEditor<Stroke> {
         typeGroup.add(guiGraphicStroke);
         guiGraphicStroke.setText(MessageBundle.getString("graphic_stroke")); // NOI18N
         guiGraphicStroke.setEnabled(false);
-        guiGraphicStroke.setOpaque(false);
         guiGraphicStroke.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 guiGraphicStrokeActionPerformed(evt);
@@ -262,23 +259,23 @@ public class JStrokePane extends StyleElementEditor<Stroke> {
         layout.setHorizontalGroup(
             layout.createParallelGroup(Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jLabel1)
+                .addComponent(guiLabelCap)
                 .addPreferredGap(ComponentPlacement.RELATED)
                 .addComponent(GuiStrokeLineCap, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jLabel2)
+                .addComponent(guiLabelJoin)
                 .addPreferredGap(ComponentPlacement.RELATED)
                 .addComponent(GuiStrokeLineJoin, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
             .addGroup(layout.createSequentialGroup()
-                .addComponent(lbl_b_width)
+                .addComponent(guiLabelWidth)
                 .addPreferredGap(ComponentPlacement.RELATED)
                 .addComponent(GuiStrokeWidth, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
             .addGroup(layout.createSequentialGroup()
-                .addComponent(lbl_b_alpha)
+                .addComponent(guiLabelAlpha)
                 .addPreferredGap(ComponentPlacement.RELATED)
                 .addComponent(GuiStrokeAlpha, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
             .addGroup(layout.createSequentialGroup()
-                .addComponent(lbl_b_alpha1)
+                .addComponent(guiLabelDashes)
                 .addPreferredGap(ComponentPlacement.RELATED)
                 .addComponent(GuiStrokeDashes, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
             .addGroup(layout.createSequentialGroup()
@@ -295,7 +292,7 @@ public class JStrokePane extends StyleElementEditor<Stroke> {
                 .addComponent(butStroke, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
         );
 
-        layout.linkSize(SwingConstants.HORIZONTAL, new Component[] {jLabel1, jLabel2, lbl_b_alpha, lbl_b_alpha1, lbl_b_width});
+        layout.linkSize(SwingConstants.HORIZONTAL, new Component[] {guiLabelAlpha, guiLabelCap, guiLabelDashes, guiLabelJoin, guiLabelWidth});
 
         layout.linkSize(SwingConstants.HORIZONTAL, new Component[] {guiGraphicColor, guiGraphicFill, guiGraphicStroke});
 
@@ -303,23 +300,23 @@ public class JStrokePane extends StyleElementEditor<Stroke> {
             layout.createParallelGroup(Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(Alignment.TRAILING, false)
-                    .addComponent(jLabel1, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(guiLabelCap, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(GuiStrokeLineCap, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(8, 8, 8)
                 .addGroup(layout.createParallelGroup(Alignment.TRAILING, false)
-                    .addComponent(jLabel2, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(guiLabelJoin, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(GuiStrokeLineJoin, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(Alignment.TRAILING, false)
-                    .addComponent(lbl_b_width, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(guiLabelWidth, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(GuiStrokeWidth, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(Alignment.TRAILING, false)
-                    .addComponent(lbl_b_alpha, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(guiLabelAlpha, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(GuiStrokeAlpha, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(Alignment.LEADING, false)
-                    .addComponent(lbl_b_alpha1, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(guiLabelDashes, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(GuiStrokeDashes, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(Alignment.TRAILING)
@@ -335,9 +332,9 @@ public class JStrokePane extends StyleElementEditor<Stroke> {
                     .addComponent(butStroke, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
         );
 
-        layout.linkSize(SwingConstants.VERTICAL, new Component[] {GuiStrokeLineCap, jLabel1});
+        layout.linkSize(SwingConstants.VERTICAL, new Component[] {GuiStrokeLineCap, guiLabelCap});
 
-        layout.linkSize(SwingConstants.VERTICAL, new Component[] {GuiStrokeLineJoin, jLabel2});
+        layout.linkSize(SwingConstants.VERTICAL, new Component[] {GuiStrokeLineJoin, guiLabelJoin});
 
         layout.linkSize(SwingConstants.VERTICAL, new Component[] {GuiStrokeColor, guiGraphicColor});
 
@@ -382,11 +379,11 @@ private void guiGraphicStrokeActionPerformed(final ActionEvent evt) {//GEN-FIRST
     private JRadioButton guiGraphicColor;
     private JRadioButton guiGraphicFill;
     private JRadioButton guiGraphicStroke;
-    private JLabel jLabel1;
-    private JLabel jLabel2;
-    private JLabel lbl_b_alpha;
-    private JLabel lbl_b_alpha1;
-    private JLabel lbl_b_width;
+    private JLabel guiLabelAlpha;
+    private JLabel guiLabelCap;
+    private JLabel guiLabelDashes;
+    private JLabel guiLabelJoin;
+    private JLabel guiLabelWidth;
     private ButtonGroup typeGroup;
     // End of variables declaration//GEN-END:variables
 }

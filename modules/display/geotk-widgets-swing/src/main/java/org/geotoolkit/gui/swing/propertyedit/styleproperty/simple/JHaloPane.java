@@ -152,4 +152,10 @@ public class JHaloPane extends StyleElementEditor<Halo> {
     public Halo create() {
         return getStyleFactory().halo(guiHaloFillPane.create(), guiRadius.create());
     }
+    
+    @Override
+    protected Object[] getFirstColumnComponents() {
+        return new Object[]{};
+    }
+    
 }

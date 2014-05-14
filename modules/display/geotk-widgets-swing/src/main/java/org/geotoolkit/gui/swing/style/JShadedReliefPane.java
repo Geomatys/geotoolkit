@@ -49,6 +49,10 @@ public class JShadedReliefPane extends StyleElementEditor<ShadedRelief>{
         super(ShadedRelief.class);
         initComponents();
         guiFactor.setModel(1d, 0d, 10000000d, 0.1d);
+        
+        //those are not used by geotk engine, hide them to avoid confusing the user
+        guiLabelBrightness.setVisible(false);
+        guiBrightness.setVisible(false);
     }
     
     public void setExpressionVisible(boolean visible){
@@ -81,6 +85,10 @@ public class JShadedReliefPane extends StyleElementEditor<ShadedRelief>{
                 guiBrightness.isSelected());
     }
 
+    @Override
+    protected Object[] getFirstColumnComponents() {
+        return new Object[]{guiLabelFactor,guiLabelBrightness};
+    }
     
     /** This method is called from within the constructor to
      * initialize the form.
@@ -90,15 +98,16 @@ public class JShadedReliefPane extends StyleElementEditor<ShadedRelief>{
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jLabel1 = new JLabel();
+        guiLabelFactor = new JLabel();
         guiBrightness = new JCheckBox();
         guiFactor = new JNumberExpressionPane();
+        guiLabelBrightness = new JLabel();
 
         setOpaque(false);
 
-        jLabel1.setText(MessageBundle.getString("factor")); // NOI18N
+        guiLabelFactor.setText(MessageBundle.getString("factor")); // NOI18N
 
-        guiBrightness.setText(MessageBundle.getString("brightnessonly")); // NOI18N
+        guiBrightness.setText(" ");
         guiBrightness.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 guiBrightnessActionPerformed(evt);
@@ -111,27 +120,37 @@ public class JShadedReliefPane extends StyleElementEditor<ShadedRelief>{
             }
         });
 
+        guiLabelBrightness.setText(MessageBundle.getString("brightnessonly")); // NOI18N
+
         GroupLayout layout = new GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jLabel1)
+                .addComponent(guiLabelFactor)
                 .addPreferredGap(ComponentPlacement.RELATED)
                 .addComponent(guiFactor, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-            .addComponent(guiBrightness)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(guiLabelBrightness)
+                .addPreferredGap(ComponentPlacement.UNRELATED)
+                .addComponent(guiBrightness))
         );
+
+        layout.linkSize(SwingConstants.HORIZONTAL, new Component[] {guiLabelBrightness, guiLabelFactor});
+
         layout.setVerticalGroup(
             layout.createParallelGroup(Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(Alignment.LEADING)
-                    .addComponent(jLabel1)
+                    .addComponent(guiLabelFactor)
                     .addComponent(guiFactor, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(ComponentPlacement.RELATED)
-                .addComponent(guiBrightness))
+                .addGroup(layout.createParallelGroup(Alignment.BASELINE)
+                    .addComponent(guiLabelBrightness)
+                    .addComponent(guiBrightness)))
         );
 
-        layout.linkSize(SwingConstants.VERTICAL, new Component[] {guiFactor, jLabel1});
+        layout.linkSize(SwingConstants.VERTICAL, new Component[] {guiFactor, guiLabelFactor});
 
     }// </editor-fold>//GEN-END:initComponents
 
@@ -151,6 +170,7 @@ public class JShadedReliefPane extends StyleElementEditor<ShadedRelief>{
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private JCheckBox guiBrightness;
     private JNumberExpressionPane guiFactor;
-    private JLabel jLabel1;
+    private JLabel guiLabelBrightness;
+    private JLabel guiLabelFactor;
     // End of variables declaration//GEN-END:variables
 }

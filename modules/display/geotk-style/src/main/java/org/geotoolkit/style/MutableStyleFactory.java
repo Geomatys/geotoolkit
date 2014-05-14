@@ -298,6 +298,6 @@ public interface MutableStyleFactory extends org.opengis.style.StyleFactory {
     
     public InterpolationPoint interpolationPoint(Number data,Expression value);
     
-    public Jenks jenksFunction(Literal classNumber, Literal paletteName, Literal fallback);
+    public Jenks jenksFunction(Literal classNumber, Literal paletteName, Literal fallback, List<Literal> noData);
         
 }

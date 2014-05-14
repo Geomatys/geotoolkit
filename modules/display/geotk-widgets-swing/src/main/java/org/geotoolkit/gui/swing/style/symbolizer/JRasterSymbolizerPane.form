@@ -5,9 +5,6 @@
     <Component class="javax.swing.ButtonGroup" name="grpOutline">
     </Component>
   </NonVisualComponents>
-  <Properties>
-    <Property name="opaque" type="boolean" value="false"/>
-  </Properties>
   <AuxValues>
     <AuxValue name="FormSettings_autoResourcing" type="java.lang.Integer" value="0"/>
     <AuxValue name="FormSettings_autoSetComponentName" type="java.lang.Boolean" value="false"/>
@@ -61,7 +58,7 @@
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="guiOpacity" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
+                          <Component id="guiOverlapsLbl" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="guiOverLap" min="-2" max="-2" attributes="0"/>
                       </Group>
@@ -87,7 +84,7 @@
                       <Component id="jLabel1" linkSize="4" min="-2" max="-2" attributes="1"/>
                       <Component id="guiOpacity" linkSize="4" min="-2" max="-2" attributes="0"/>
                       <Component id="guiOverLap" linkSize="4" alignment="0" min="-2" max="-2" attributes="0"/>
-                      <Component id="jLabel2" linkSize="4" alignment="1" min="-2" max="-2" attributes="1"/>
+                      <Component id="guiOverlapsLbl" linkSize="4" alignment="1" min="-2" max="-2" attributes="1"/>
                   </Group>
                   <EmptySpace max="32767" attributes="0"/>
               </Group>
@@ -100,7 +97,7 @@
             <EventHandler event="propertyChange" listener="java.beans.PropertyChangeListener" parameters="java.beans.PropertyChangeEvent" handler="propertyChange"/>
           </Events>
         </Component>
-        <Component class="javax.swing.JLabel" name="jLabel2">
+        <Component class="javax.swing.JLabel" name="guiOverlapsLbl">
           <Properties>
             <Property name="horizontalAlignment" type="int" value="4"/>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
@@ -172,7 +169,7 @@
                           <Component id="guiColorCombo" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="guiColorimetryPane" pref="149" max="32767" attributes="0"/>
+                      <Component id="guiColorimetryPane" pref="150" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -238,7 +235,7 @@
                           <Component id="guiPolygon" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                      <Component id="guiOutlinePane" pref="158" max="32767" attributes="0"/>
+                      <Component id="guiOutlinePane" pref="159" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -249,7 +246,6 @@
                 <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
                   <ComponentRef name="grpOutline"/>
                 </Property>
-                <Property name="selected" type="boolean" value="true"/>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
                   <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="style.rastersymbolizer.none" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
                 </Property>

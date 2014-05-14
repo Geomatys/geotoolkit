@@ -70,19 +70,20 @@ public class JRulePane extends StyleElementEditor<MutableRule> {
     private void initComponents() {
 
         jPanel1 = new JPanel();
-        but_edit = new JButton();
-        jLabel3 = new JLabel();
+        guiFilterEdit = new JButton();
+        guiLabelMinScale = new JLabel();
         jsp_minscale = new JSpinner();
-        jLabel4 = new JLabel();
+        guiLabelMaxScale = new JLabel();
         jsp_maxscale = new JSpinner();
         jck_else = new JCheckBox();
         guiCQL = new JCQLTextPane();
+        guiLabelElse = new JLabel();
         jPanel2 = new JPanel();
         jtf_title = new JTextField();
-        jLabel1 = new JLabel();
-        jLabel6 = new JLabel();
+        guiLabelTitle = new JLabel();
+        guiLabelAbstract = new JLabel();
         jtf_abstract = new JTextField();
-        jLabel2 = new JLabel();
+        guiLabelName = new JLabel();
         jtf_name = new JTextField();
 
         setOpaque(false);
@@ -90,24 +91,24 @@ public class JRulePane extends StyleElementEditor<MutableRule> {
         jPanel1.setBorder(BorderFactory.createEtchedBorder());
         jPanel1.setOpaque(false);
 
-        but_edit.setText(MessageBundle.getString("edit")); // NOI18N
-        but_edit.addActionListener(new ActionListener() {
+        guiFilterEdit.setText(MessageBundle.getString("edit")); // NOI18N
+        guiFilterEdit.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
-                but_editActionPerformed(evt);
+                guiFilterEditActionPerformed(evt);
             }
         });
 
-        jLabel3.setHorizontalAlignment(SwingConstants.RIGHT);
-        jLabel3.setText(MessageBundle.getString("minscale")); // NOI18N
+        guiLabelMinScale.setText(MessageBundle.getString("minscale")); // NOI18N
 
         jsp_minscale.setModel(new SpinnerNumberModel(Double.valueOf(0.0d), Double.valueOf(0.0d), null, Double.valueOf(1000.0d)));
 
-        jLabel4.setHorizontalAlignment(SwingConstants.RIGHT);
-        jLabel4.setText(MessageBundle.getString("maxscale")); // NOI18N
+        guiLabelMaxScale.setText(MessageBundle.getString("maxscale")); // NOI18N
 
         jsp_maxscale.setModel(new SpinnerNumberModel(Double.valueOf(0.0d), Double.valueOf(0.0d), null, Double.valueOf(1000.0d)));
 
-        jck_else.setText(MessageBundle.getString("else_filter")); // NOI18N
+        jck_else.setText(" ");
+
+        guiLabelElse.setText(MessageBundle.getString("else_filter")); // NOI18N
 
         GroupLayout jPanel1Layout = new GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -117,44 +118,51 @@ public class JRulePane extends StyleElementEditor<MutableRule> {
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(but_edit)
+                        .addComponent(guiFilterEdit)
                         .addPreferredGap(ComponentPlacement.RELATED)
                         .addComponent(guiCQL, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(Alignment.LEADING)
-                            .addGroup(jPanel1Layout.createParallelGroup(Alignment.LEADING, false)
-                                .addGroup(jPanel1Layout.createSequentialGroup()
-                                    .addComponent(jLabel3)
-                                    .addPreferredGap(ComponentPlacement.RELATED)
-                                    .addComponent(jsp_minscale, GroupLayout.PREFERRED_SIZE, 146, GroupLayout.PREFERRED_SIZE))
-                                .addGroup(jPanel1Layout.createSequentialGroup()
-                                    .addComponent(jLabel4)
-                                    .addPreferredGap(ComponentPlacement.RELATED)
-                                    .addComponent(jsp_maxscale)))
-                            .addComponent(jck_else))
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(guiLabelMaxScale)
+                                .addPreferredGap(ComponentPlacement.RELATED)
+                                .addComponent(jsp_maxscale))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGroup(jPanel1Layout.createParallelGroup(Alignment.LEADING)
+                                    .addGroup(jPanel1Layout.createSequentialGroup()
+                                        .addComponent(guiLabelMinScale)
+                                        .addPreferredGap(ComponentPlacement.RELATED)
+                                        .addComponent(jsp_minscale, GroupLayout.PREFERRED_SIZE, 146, GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(jPanel1Layout.createSequentialGroup()
+                                        .addComponent(guiLabelElse)
+                                        .addPreferredGap(ComponentPlacement.RELATED)
+                                        .addComponent(jck_else)))
+                                .addGap(0, 0, Short.MAX_VALUE)))
+                        .addGap(0, 140, Short.MAX_VALUE)))
                 .addContainerGap())
         );
 
-        jPanel1Layout.linkSize(SwingConstants.HORIZONTAL, new Component[] {jLabel3, jLabel4});
+        jPanel1Layout.linkSize(SwingConstants.HORIZONTAL, new Component[] {guiLabelElse, guiLabelMaxScale, guiLabelMinScale});
 
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jck_else)
+                .addGroup(jPanel1Layout.createParallelGroup(Alignment.BASELINE)
+                    .addComponent(jck_else)
+                    .addComponent(guiLabelElse))
                 .addGap(4, 4, 4)
                 .addGroup(jPanel1Layout.createParallelGroup(Alignment.BASELINE)
-                    .addComponent(jLabel3)
+                    .addComponent(guiLabelMinScale)
                     .addComponent(jsp_minscale, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(Alignment.BASELINE)
-                    .addComponent(jLabel4)
+                    .addComponent(guiLabelMaxScale)
                     .addComponent(jsp_maxscale, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(but_edit)
+                        .addComponent(guiFilterEdit)
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addComponent(guiCQL, GroupLayout.DEFAULT_SIZE, 50, Short.MAX_VALUE))
                 .addContainerGap())
@@ -163,14 +171,12 @@ public class JRulePane extends StyleElementEditor<MutableRule> {
         jPanel2.setBorder(BorderFactory.createEtchedBorder());
         jPanel2.setOpaque(false);
 
-        jLabel1.setFont(jLabel1.getFont().deriveFont(jLabel1.getFont().getStyle() | Font.BOLD));
-        jLabel1.setHorizontalAlignment(SwingConstants.RIGHT);
-        jLabel1.setText(MessageBundle.getString("title")); // NOI18N
+        guiLabelTitle.setFont(guiLabelTitle.getFont().deriveFont(guiLabelTitle.getFont().getStyle() | Font.BOLD));
+        guiLabelTitle.setText(MessageBundle.getString("title")); // NOI18N
 
-        jLabel6.setText(MessageBundle.getString("abstract")); // NOI18N
+        guiLabelAbstract.setText(MessageBundle.getString("abstract")); // NOI18N
 
-        jLabel2.setHorizontalAlignment(SwingConstants.RIGHT);
-        jLabel2.setText(MessageBundle.getString("name")); // NOI18N
+        guiLabelName.setText(MessageBundle.getString("name")); // NOI18N
 
         GroupLayout jPanel2Layout = new GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -180,33 +186,36 @@ public class JRulePane extends StyleElementEditor<MutableRule> {
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jLabel2)
+                        .addComponent(guiLabelName)
                         .addPreferredGap(ComponentPlacement.RELATED)
-                        .addComponent(jtf_name, GroupLayout.DEFAULT_SIZE, 310, Short.MAX_VALUE))
+                        .addComponent(jtf_name, GroupLayout.DEFAULT_SIZE, 299, Short.MAX_VALUE))
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jLabel1)
+                        .addComponent(guiLabelTitle)
                         .addPreferredGap(ComponentPlacement.RELATED)
-                        .addComponent(jtf_title, GroupLayout.DEFAULT_SIZE, 317, Short.MAX_VALUE))
+                        .addComponent(jtf_title, GroupLayout.DEFAULT_SIZE, 299, Short.MAX_VALUE))
                     .addGroup(Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                        .addComponent(jLabel6)
+                        .addComponent(guiLabelAbstract)
                         .addPreferredGap(ComponentPlacement.RELATED)
                         .addComponent(jtf_abstract, GroupLayout.DEFAULT_SIZE, 292, Short.MAX_VALUE)))
                 .addContainerGap())
         );
+
+        jPanel2Layout.linkSize(SwingConstants.HORIZONTAL, new Component[] {guiLabelAbstract, guiLabelName, guiLabelTitle});
+
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(Alignment.BASELINE)
-                    .addComponent(jLabel2)
+                    .addComponent(guiLabelName)
                     .addComponent(jtf_name, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(ComponentPlacement.RELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(Alignment.BASELINE)
-                    .addComponent(jLabel1)
+                    .addComponent(guiLabelTitle)
                     .addComponent(jtf_title, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(ComponentPlacement.RELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(Alignment.BASELINE)
-                    .addComponent(jLabel6)
+                    .addComponent(guiLabelAbstract)
                     .addComponent(jtf_abstract, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -233,7 +242,7 @@ public class JRulePane extends StyleElementEditor<MutableRule> {
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void but_editActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_but_editActionPerformed
+    private void guiFilterEditActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_guiFilterEditActionPerformed
         if(rule == null){
             rule = getStyleFactory().rule();
         }
@@ -246,15 +255,16 @@ public class JRulePane extends StyleElementEditor<MutableRule> {
             Logger.getLogger(JRulePane.class.getName()).log(Level.INFO, ex.getMessage(), ex);
         }
 
-    }//GEN-LAST:event_but_editActionPerformed
+    }//GEN-LAST:event_guiFilterEditActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private JButton but_edit;
     private JCQLTextPane guiCQL;
-    private JLabel jLabel1;
-    private JLabel jLabel2;
-    private JLabel jLabel3;
-    private JLabel jLabel4;
-    private JLabel jLabel6;
+    private JButton guiFilterEdit;
+    private JLabel guiLabelAbstract;
+    private JLabel guiLabelElse;
+    private JLabel guiLabelMaxScale;
+    private JLabel guiLabelMinScale;
+    private JLabel guiLabelName;
+    private JLabel guiLabelTitle;
     private JPanel jPanel1;
     private JPanel jPanel2;
     private JCheckBox jck_else;
@@ -324,6 +334,11 @@ public class JRulePane extends StyleElementEditor<MutableRule> {
     @Override
     public void apply() {
         create();
+    }
+    
+    @Override
+    protected Object[] getFirstColumnComponents() {
+        return new Object[]{guiLabelAbstract,guiLabelElse,guiLabelMaxScale,guiLabelMinScale,guiLabelName,guiLabelTitle};
     }
 
 }

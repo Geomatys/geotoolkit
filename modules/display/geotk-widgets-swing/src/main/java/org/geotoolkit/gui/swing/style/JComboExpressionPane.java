@@ -198,5 +198,10 @@ private void guiSpecialPropertyChange(final PropertyChangeEvent evt) {//GEN-FIRS
             return (Literal)guiCombo.getSelectedItem();
         }
     }
+    
+    @Override
+    protected Object[] getFirstColumnComponents() {
+        return new Object[]{};
+    }
 
 }

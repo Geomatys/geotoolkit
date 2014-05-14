@@ -75,80 +75,79 @@ public class JLineCapExpressionPane extends StyleElementEditor<Expression>{
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
-        GridBagConstraints gridBagConstraints;
+        java.awt.GridBagConstraints gridBagConstraints;
 
-        capGroup = new ButtonGroup();
-        guiSpecial = new JSpecialExpressionButton();
-        guiSquare = new JToggleButton();
-        guiRound = new JToggleButton();
-        guiButt = new JToggleButton();
-        jLabel1 = new JLabel();
+        capGroup = new javax.swing.ButtonGroup();
+        guiSpecial = new org.geotoolkit.gui.swing.style.JSpecialExpressionButton();
+        guiSquare = new javax.swing.JToggleButton();
+        guiRound = new javax.swing.JToggleButton();
+        guiButt = new javax.swing.JToggleButton();
+        jLabel1 = new javax.swing.JLabel();
 
         setOpaque(false);
-        setLayout(new GridBagLayout());
+        setLayout(new java.awt.GridBagLayout());
 
-        guiSpecial.addPropertyChangeListener(new PropertyChangeListener() {
-            public void propertyChange(PropertyChangeEvent evt) {
+        guiSpecial.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
                 guiSpecialPropertyChange(evt);
             }
         });
-        gridBagConstraints = new GridBagConstraints();
+        gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 3;
         gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = GridBagConstraints.BOTH;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weighty = 1.0;
         add(guiSpecial, gridBagConstraints);
 
         capGroup.add(guiSquare);
         guiSquare.setBorderPainted(false);
         guiSquare.setIconTextGap(0);
-        guiSquare.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
+        guiSquare.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 guiSquareActionPerformed(evt);
             }
         });
-        gridBagConstraints = new GridBagConstraints();
+        gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = GridBagConstraints.BOTH;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weighty = 1.0;
-        gridBagConstraints.insets = new Insets(0, 6, 0, 0);
         add(guiSquare, gridBagConstraints);
 
         capGroup.add(guiRound);
         guiRound.setSelected(true);
         guiRound.setBorderPainted(false);
         guiRound.setIconTextGap(0);
-        guiRound.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
+        guiRound.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 guiRoundActionPerformed(evt);
             }
         });
-        gridBagConstraints = new GridBagConstraints();
+        gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = GridBagConstraints.BOTH;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weighty = 1.0;
         add(guiRound, gridBagConstraints);
 
         capGroup.add(guiButt);
         guiButt.setBorderPainted(false);
         guiButt.setIconTextGap(0);
-        guiButt.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
+        guiButt.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 guiButtActionPerformed(evt);
             }
         });
-        gridBagConstraints = new GridBagConstraints();
+        gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = GridBagConstraints.BOTH;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weighty = 1.0;
         add(guiButt, gridBagConstraints);
-        gridBagConstraints = new GridBagConstraints();
+        gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 4;
         gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = GridBagConstraints.BOTH;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
         add(jLabel1, gridBagConstraints);
@@ -174,12 +173,12 @@ private void guiButtActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_gu
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private ButtonGroup capGroup;
-    private JToggleButton guiButt;
-    private JToggleButton guiRound;
-    private JSpecialExpressionButton guiSpecial;
-    private JToggleButton guiSquare;
-    private JLabel jLabel1;
+    private javax.swing.ButtonGroup capGroup;
+    private javax.swing.JToggleButton guiButt;
+    private javax.swing.JToggleButton guiRound;
+    private org.geotoolkit.gui.swing.style.JSpecialExpressionButton guiSpecial;
+    private javax.swing.JToggleButton guiSquare;
+    private javax.swing.JLabel jLabel1;
     // End of variables declaration//GEN-END:variables
 
     @Override
@@ -218,4 +217,9 @@ private void guiButtActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_gu
         }
     }
 
+    @Override
+    protected Object[] getFirstColumnComponents() {
+        return new Object[]{};
+    }
+    
 }

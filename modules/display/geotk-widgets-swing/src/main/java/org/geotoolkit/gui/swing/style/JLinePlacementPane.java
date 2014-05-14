@@ -93,6 +93,12 @@ public class JLinePlacementPane extends StyleElementEditor<LinePlacement>{
                 );
     }
     
+    @Override
+    protected Object[] getFirstColumnComponents() {
+        return new Object[]{guiLabelAlign,guiLabelGap,guiLabelGeneralize,
+            guiLabelInitial,guiLabelOffset,guiLabelRepeat};
+    }
+    
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -101,80 +107,110 @@ public class JLinePlacementPane extends StyleElementEditor<LinePlacement>{
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jLabel1 = new JLabel();
+        guiLabelOffset = new JLabel();
         guiOffset = new JNumberExpressionPane();
         guiInitial = new JNumberExpressionPane();
-        jLabel2 = new JLabel();
-        jLabel3 = new JLabel();
+        guiLabelInitial = new JLabel();
+        guiLabelGap = new JLabel();
         guiGap = new JNumberExpressionPane();
         guiRepetead = new JCheckBox();
         guiAligned = new JCheckBox();
         guiGeneralized = new JCheckBox();
+        guiLabelRepeat = new JLabel();
+        guiLabelAlign = new JLabel();
+        guiLabelGeneralize = new JLabel();
 
         setOpaque(false);
 
+        guiLabelOffset.setText(MessageBundle.getString("offset2")); // NOI18N
 
+        guiLabelInitial.setText(MessageBundle.getString("initial_gap")); // NOI18N
 
+        guiLabelGap.setText(MessageBundle.getString("gap")); // NOI18N
 
+        guiRepetead.setText(" ");
 
+        guiAligned.setText(" ");
 
+        guiGeneralized.setText(" ");
 
-        jLabel1.setText(MessageBundle.getString("offset2")); // NOI18N
-        jLabel2.setText(MessageBundle.getString("initial_gap")); // NOI18N
-        jLabel3.setText(MessageBundle.getString("gap")); // NOI18N
-        guiRepetead.setText(MessageBundle.getString("repeated")); // NOI18N
-        guiAligned.setText(MessageBundle.getString("aligned")); // NOI18N
-        guiGeneralized.setText(MessageBundle.getString("generalize")); // NOI18N
+        guiLabelRepeat.setText(MessageBundle.getString("repeated")); // NOI18N
+
+        guiLabelAlign.setText(MessageBundle.getString("aligned")); // NOI18N
+
+        guiLabelGeneralize.setText(MessageBundle.getString("generalize")); // NOI18N
+
         GroupLayout layout = new GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jLabel1)
-                .addPreferredGap(ComponentPlacement.RELATED)
-                .addComponent(guiOffset, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                .addGroup(layout.createParallelGroup(Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(guiLabelOffset)
+                        .addPreferredGap(ComponentPlacement.RELATED)
+                        .addComponent(guiOffset, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(guiLabelInitial)
+                        .addPreferredGap(ComponentPlacement.RELATED)
+                        .addComponent(guiInitial, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(guiLabelGap)
+                        .addPreferredGap(ComponentPlacement.RELATED)
+                        .addComponent(guiGap, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
+                .addGap(0, 0, Short.MAX_VALUE))
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jLabel2)
-                .addPreferredGap(ComponentPlacement.RELATED)
-                .addComponent(guiInitial, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jLabel3)
-                .addPreferredGap(ComponentPlacement.RELATED)
-                .addComponent(guiGap, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-            .addComponent(guiRepetead)
-            .addComponent(guiAligned)
-            .addComponent(guiGeneralized)
+                .addGroup(layout.createParallelGroup(Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(guiLabelGeneralize)
+                        .addPreferredGap(ComponentPlacement.RELATED)
+                        .addComponent(guiGeneralized))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(guiLabelRepeat)
+                        .addPreferredGap(ComponentPlacement.RELATED)
+                        .addComponent(guiRepetead))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(guiLabelAlign)
+                        .addPreferredGap(ComponentPlacement.RELATED)
+                        .addComponent(guiAligned)))
+                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        layout.linkSize(SwingConstants.HORIZONTAL, new Component[] {jLabel1, jLabel2, jLabel3});
+        layout.linkSize(SwingConstants.HORIZONTAL, new Component[] {guiLabelAlign, guiLabelGap, guiLabelGeneralize, guiLabelInitial, guiLabelOffset, guiLabelRepeat});
 
         layout.setVerticalGroup(
             layout.createParallelGroup(Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(Alignment.LEADING)
                     .addComponent(guiOffset, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1))
+                    .addComponent(guiLabelOffset))
                 .addPreferredGap(ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(Alignment.LEADING)
-                    .addComponent(jLabel2)
+                    .addComponent(guiLabelInitial)
                     .addComponent(guiInitial, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(Alignment.TRAILING)
-                    .addComponent(jLabel3)
+                    .addComponent(guiLabelGap)
                     .addComponent(guiGap, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(ComponentPlacement.UNRELATED)
-                .addComponent(guiRepetead)
+                .addGroup(layout.createParallelGroup(Alignment.BASELINE)
+                    .addComponent(guiRepetead)
+                    .addComponent(guiLabelRepeat))
                 .addPreferredGap(ComponentPlacement.RELATED)
-                .addComponent(guiAligned)
+                .addGroup(layout.createParallelGroup(Alignment.BASELINE)
+                    .addComponent(guiAligned)
+                    .addComponent(guiLabelAlign))
                 .addPreferredGap(ComponentPlacement.RELATED)
-                .addComponent(guiGeneralized))
+                .addGroup(layout.createParallelGroup(Alignment.BASELINE)
+                    .addComponent(guiGeneralized)
+                    .addComponent(guiLabelGeneralize)))
         );
 
-        layout.linkSize(SwingConstants.VERTICAL, new Component[] {guiOffset, jLabel1});
+        layout.linkSize(SwingConstants.VERTICAL, new Component[] {guiLabelOffset, guiOffset});
 
-        layout.linkSize(SwingConstants.VERTICAL, new Component[] {guiInitial, jLabel2});
+        layout.linkSize(SwingConstants.VERTICAL, new Component[] {guiInitial, guiLabelInitial});
 
-        layout.linkSize(SwingConstants.VERTICAL, new Component[] {guiGap, jLabel3});
+        layout.linkSize(SwingConstants.VERTICAL, new Component[] {guiGap, guiLabelGap});
 
     }// </editor-fold>//GEN-END:initComponents
     
@@ -184,11 +220,14 @@ public class JLinePlacementPane extends StyleElementEditor<LinePlacement>{
     private JNumberExpressionPane guiGap;
     private JCheckBox guiGeneralized;
     private JNumberExpressionPane guiInitial;
+    private JLabel guiLabelAlign;
+    private JLabel guiLabelGap;
+    private JLabel guiLabelGeneralize;
+    private JLabel guiLabelInitial;
+    private JLabel guiLabelOffset;
+    private JLabel guiLabelRepeat;
     private JNumberExpressionPane guiOffset;
     private JCheckBox guiRepetead;
-    private JLabel jLabel1;
-    private JLabel jLabel2;
-    private JLabel jLabel3;
     // End of variables declaration//GEN-END:variables
     
 }

@@ -354,6 +354,11 @@ public class JAdvancedStylePanel extends StyleElementEditor implements PropertyP
         return this;
     }
     
+    @Override
+    protected Object[] getFirstColumnComponents() {
+        return new Object[]{};
+    }
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     JButton guiApply;
     JTabbedPane guiTabs;

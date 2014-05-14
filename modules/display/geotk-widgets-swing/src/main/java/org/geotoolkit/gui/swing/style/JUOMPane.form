@@ -21,7 +21,7 @@
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
-              <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
+              <Component id="guiLabel" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="jcb_uom" pref="63" max="32767" attributes="0"/>
           </Group>
@@ -30,14 +30,14 @@
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="103" alignment="0" groupAlignment="3" attributes="0">
-              <Component id="jLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
+              <Component id="guiLabel" alignment="3" min="-2" max="-2" attributes="0"/>
               <Component id="jcb_uom" alignment="3" min="-2" max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
   </Layout>
   <SubComponents>
-    <Component class="javax.swing.JLabel" name="jLabel1">
+    <Component class="javax.swing.JLabel" name="guiLabel">
       <Properties>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
           <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="unit" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>

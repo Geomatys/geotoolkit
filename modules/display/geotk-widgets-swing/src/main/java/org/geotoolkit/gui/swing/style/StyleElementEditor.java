@@ -18,6 +18,7 @@
 package org.geotoolkit.gui.swing.style;
 
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.LayoutManager;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -116,6 +117,66 @@ public abstract class StyleElementEditor<T> extends JPanel {
      */
     public abstract T create();
 
+    /**
+     * Style editor elements are often group on a single panel.
+     * Since each editor has it's own layout we need a way to align all the
+     * first column components. This method is expected to return the largest 
+     * width of those components. 
+     * If there are none, value -1 should be return.
+     * @return largest first column width
+     */
+    public final int getLabelColumnWidth(){
+        int width = -1;
+        for(Object obj : getFirstColumnComponents()){
+            if(obj instanceof StyleElementEditor){
+                width = Math.max(width, ((StyleElementEditor)obj).getLabelColumnWidth());
+            }else if(obj instanceof Component){
+                width = Math.max(width, ((Component)obj).getPreferredSize().width);
+            }
+        }
+        return width;
+    }
+    
+    /**
+     * Set label column widgets width.
+     * @param width
+     */
+    public void setLabelColumnWidth(int width){
+        for(Object obj : getFirstColumnComponents()){
+            if(obj instanceof StyleElementEditor){
+                ((StyleElementEditor)obj).setLabelColumnWidth(width);
+            }else if(obj instanceof Component){
+                final Dimension dim = ((Component)obj).getPreferredSize();
+                dim.width = width;
+                ((Component)obj).setMinimumSize(new Dimension(dim));
+                ((Component)obj).setMaximumSize(new Dimension(dim));
+                ((Component)obj).setPreferredSize(new Dimension(dim));
+                ((Component)obj).revalidate();
+                ((Component)obj).repaint();
+            }
+        }
+        revalidate();
+        repaint();
+    }
+    
+    /**
+     * List the first column components or sub style element editors.
+     * @return never null, but can be empty
+     */
+    protected abstract Object[] getFirstColumnComponents();
+    
+    public static void alignLabelColumnWidth(StyleElementEditor ... editors){
+        int width = -1;
+        for(StyleElementEditor obj : editors){
+            width = Math.max(width, obj.getLabelColumnWidth());
+        }
+        if(width!=-1){
+            for(StyleElementEditor obj : editors){
+                obj.setLabelColumnWidth(width);
+            }
+        }
+    }
+    
     public void apply(){
     }
 

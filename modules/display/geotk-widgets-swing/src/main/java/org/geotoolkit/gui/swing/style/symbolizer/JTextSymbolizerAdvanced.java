@@ -54,6 +54,9 @@ public class JTextSymbolizerAdvanced extends StyleElementEditor<TextSymbolizer> 
     public JTextSymbolizerAdvanced() {
         super(TextSymbolizer.class);
         initComponents();
+        
+        //align labels
+        alignLabelColumnWidth(this);
     }
 
     /**
@@ -85,7 +88,7 @@ public class JTextSymbolizerAdvanced extends StyleElementEditor<TextSymbolizer> 
     public TextSymbolizer create() {
         return getStyleFactory().textSymbolizer(
                 "TextSymbolizer",
-                guiGeom.getGeom(),
+                guiGeom.create(),
                 StyleConstants.DEFAULT_DESCRIPTION,
                 guiUOM.create(),
                 guiLabel.create(), 
@@ -101,7 +104,7 @@ public class JTextSymbolizerAdvanced extends StyleElementEditor<TextSymbolizer> 
     @Override
     public void parse(final TextSymbolizer symbol) {
         if (symbol != null) {
-            guiGeom.setGeom(symbol.getGeometryPropertyName());
+            guiGeom.parse(symbol.getGeometryPropertyName());
             guiUOM.parse(symbol.getUnitOfMeasure());
             guiLabel.parse(symbol.getLabel());
             guiFont.parse(symbol.getFont());
@@ -109,6 +112,11 @@ public class JTextSymbolizerAdvanced extends StyleElementEditor<TextSymbolizer> 
             guiHalo.parse(symbol.getHalo());   
             guiFill.parse(symbol.getFill()); 
         }
+    }
+    
+    @Override
+    protected Object[] getFirstColumnComponents() {
+        return new Object[]{guiUOM,guiGeom,guiLabelLabel,guiFont,guiFill,guiHalo,guiPlacement};
     }
 
     /** This method is called from within the constructor to
@@ -123,10 +131,14 @@ public class JTextSymbolizerAdvanced extends StyleElementEditor<TextSymbolizer> 
         guiGeom = new JGeomPane();
         guiUOM = new JUOMPane();
         guiLabel = new JTextExpressionPane();
-        jLabel1 = new JLabel();
+        guiLabelLabel = new JLabel();
+        jPanel2 = new JPanel();
         guiFont = new JFontPane();
-        guiHalo = new JHaloPane();
+        jPanel3 = new JPanel();
         guiFill = new JFillPane();
+        jPanel4 = new JPanel();
+        guiHalo = new JHaloPane();
+        jPanel5 = new JPanel();
         guiPlacement = new JLabelPlacementPane();
 
         setOpaque(false);
@@ -134,7 +146,7 @@ public class JTextSymbolizerAdvanced extends StyleElementEditor<TextSymbolizer> 
         jPanel1.setBorder(BorderFactory.createTitledBorder(MessageBundle.getString("general"))); // NOI18N
         jPanel1.setOpaque(false);
 
-        jLabel1.setText(MessageBundle.getString("label")); // NOI18N
+        guiLabelLabel.setText(MessageBundle.getString("label")); // NOI18N
 
         GroupLayout jPanel1Layout = new GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -147,10 +159,10 @@ public class JTextSymbolizerAdvanced extends StyleElementEditor<TextSymbolizer> 
                         .addComponent(guiUOM, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(guiGeom, Alignment.LEADING, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel1)
+                        .addComponent(guiLabelLabel)
                         .addPreferredGap(ComponentPlacement.RELATED)
                         .addComponent(guiLabel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(206, Short.MAX_VALUE))
+                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(Alignment.LEADING)
@@ -162,62 +174,139 @@ public class JTextSymbolizerAdvanced extends StyleElementEditor<TextSymbolizer> 
                 .addPreferredGap(ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(Alignment.TRAILING)
                     .addComponent(guiLabel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1, GroupLayout.PREFERRED_SIZE, 22, GroupLayout.PREFERRED_SIZE))
+                    .addComponent(guiLabelLabel, GroupLayout.PREFERRED_SIZE, 22, GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jPanel1Layout.linkSize(SwingConstants.VERTICAL, new Component[] {guiLabel, jLabel1});
+        jPanel1Layout.linkSize(SwingConstants.VERTICAL, new Component[] {guiLabel, guiLabelLabel});
 
-        guiFont.setBorder(BorderFactory.createTitledBorder(MessageBundle.getString("fonts"))); // NOI18N
+        jPanel2.setBorder(BorderFactory.createTitledBorder(MessageBundle.getString("fonts"))); // NOI18N
+        jPanel2.setOpaque(false);
+
         guiFont.addPropertyChangeListener(new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent evt) {
                 JTextSymbolizerAdvanced.this.propertyChange(evt);
             }
         });
 
-        guiHalo.setBorder(BorderFactory.createTitledBorder(MessageBundle.getString("halo"))); // NOI18N
-        guiHalo.addPropertyChangeListener(new PropertyChangeListener() {
-            public void propertyChange(PropertyChangeEvent evt) {
-                JTextSymbolizerAdvanced.this.propertyChange(evt);
-            }
-        });
+        GroupLayout jPanel2Layout = new GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(guiFont, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(guiFont, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
 
-        guiFill.setBorder(BorderFactory.createTitledBorder(MessageBundle.getString("fill"))); // NOI18N
+        jPanel3.setBorder(BorderFactory.createTitledBorder(MessageBundle.getString("fill"))); // NOI18N
+        jPanel3.setOpaque(false);
+
         guiFill.addPropertyChangeListener(new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent evt) {
                 JTextSymbolizerAdvanced.this.propertyChange(evt);
             }
         });
 
-        guiPlacement.setBorder(BorderFactory.createTitledBorder(MessageBundle.getString("placement"))); // NOI18N
+        GroupLayout jPanel3Layout = new GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(guiFill, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(guiFill, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        jPanel4.setBorder(BorderFactory.createTitledBorder(MessageBundle.getString("halo"))); // NOI18N
+        jPanel4.setOpaque(false);
+
+        guiHalo.addPropertyChangeListener(new PropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent evt) {
+                JTextSymbolizerAdvanced.this.propertyChange(evt);
+            }
+        });
+
+        GroupLayout jPanel4Layout = new GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+            jPanel4Layout.createParallelGroup(Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(guiHalo, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        jPanel4Layout.setVerticalGroup(
+            jPanel4Layout.createParallelGroup(Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(guiHalo, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        jPanel5.setBorder(BorderFactory.createTitledBorder(MessageBundle.getString("placement"))); // NOI18N
+        jPanel5.setOpaque(false);
+
         guiPlacement.addPropertyChangeListener(new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent evt) {
                 JTextSymbolizerAdvanced.this.propertyChange(evt);
             }
         });
 
+        GroupLayout jPanel5Layout = new GroupLayout(jPanel5);
+        jPanel5.setLayout(jPanel5Layout);
+        jPanel5Layout.setHorizontalGroup(
+            jPanel5Layout.createParallelGroup(Alignment.LEADING)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(guiPlacement, GroupLayout.DEFAULT_SIZE, 391, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        jPanel5Layout.setVerticalGroup(
+            jPanel5Layout.createParallelGroup(Alignment.LEADING)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(guiPlacement, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
         GroupLayout layout = new GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(Alignment.LEADING)
             .addComponent(jPanel1, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(guiFont, GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
-            .addComponent(guiFill, GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
-            .addComponent(guiHalo, GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
-            .addComponent(guiPlacement, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel2, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel3, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel4, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel5, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(ComponentPlacement.RELATED)
-                .addComponent(guiFont, GroupLayout.PREFERRED_SIZE, 162, GroupLayout.PREFERRED_SIZE)
+                .addComponent(jPanel2, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(ComponentPlacement.RELATED)
-                .addComponent(guiFill, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                .addComponent(jPanel3, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(ComponentPlacement.RELATED)
-                .addComponent(guiHalo, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                .addComponent(jPanel4, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(ComponentPlacement.RELATED)
-                .addComponent(guiPlacement, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                .addComponent(jPanel5, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -234,10 +323,14 @@ public class JTextSymbolizerAdvanced extends StyleElementEditor<TextSymbolizer> 
     private JGeomPane guiGeom;
     private JHaloPane guiHalo;
     private JTextExpressionPane guiLabel;
+    private JLabel guiLabelLabel;
     private JLabelPlacementPane guiPlacement;
     private JUOMPane guiUOM;
-    private JLabel jLabel1;
     private JPanel jPanel1;
+    private JPanel jPanel2;
+    private JPanel jPanel3;
+    private JPanel jPanel4;
+    private JPanel jPanel5;
     // End of variables declaration//GEN-END:variables
 
 }

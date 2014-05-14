@@ -59,27 +59,34 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
-                          <Component id="but_edit" min="-2" max="-2" attributes="0"/>
+                          <Component id="guiFilterEdit" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="guiCQL" max="32767" attributes="0"/>
                       </Group>
                       <Group type="102" attributes="0">
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="103" alignment="0" groupAlignment="0" max="-2" attributes="0">
-                                  <Group type="102" alignment="0" attributes="0">
-                                      <Component id="jLabel3" linkSize="1" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="jsp_minscale" min="-2" pref="146" max="-2" attributes="0"/>
-                                  </Group>
-                                  <Group type="102" alignment="0" attributes="1">
-                                      <Component id="jLabel4" linkSize="1" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="jsp_maxscale" max="32767" attributes="0"/>
-                                  </Group>
+                              <Group type="102" alignment="0" attributes="1">
+                                  <Component id="guiLabelMaxScale" linkSize="1" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace max="-2" attributes="0"/>
+                                  <Component id="jsp_maxscale" max="32767" attributes="0"/>
                               </Group>
-                              <Component id="jck_else" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Group type="102" attributes="0">
+                                  <Group type="103" groupAlignment="0" attributes="0">
+                                      <Group type="102" alignment="0" attributes="0">
+                                          <Component id="guiLabelMinScale" linkSize="1" min="-2" max="-2" attributes="0"/>
+                                          <EmptySpace max="-2" attributes="0"/>
+                                          <Component id="jsp_minscale" min="-2" pref="146" max="-2" attributes="0"/>
+                                      </Group>
+                                      <Group type="102" alignment="0" attributes="0">
+                                          <Component id="guiLabelElse" linkSize="1" min="-2" max="-2" attributes="0"/>
+                                          <EmptySpace max="-2" attributes="0"/>
+                                          <Component id="jck_else" min="-2" max="-2" attributes="0"/>
+                                      </Group>
+                                  </Group>
+                                  <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                              </Group>
                           </Group>
-                          <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                          <EmptySpace min="0" pref="140" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
@@ -90,21 +97,24 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="jck_else" min="-2" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="jck_else" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="guiLabelElse" alignment="3" min="-2" max="-2" attributes="0"/>
+                  </Group>
                   <EmptySpace min="-2" pref="4" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="jLabel3" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="guiLabelMinScale" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="jsp_minscale" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="jLabel4" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="guiLabelMaxScale" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="jsp_maxscale" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" attributes="0">
-                          <Component id="but_edit" min="-2" max="-2" attributes="0"/>
+                          <Component id="guiFilterEdit" min="-2" max="-2" attributes="0"/>
                           <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                       </Group>
                       <Component id="guiCQL" pref="50" max="32767" attributes="0"/>
@@ -115,19 +125,18 @@
         </DimensionLayout>
       </Layout>
       <SubComponents>
-        <Component class="javax.swing.JButton" name="but_edit">
+        <Component class="javax.swing.JButton" name="guiFilterEdit">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
               <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="edit" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="but_editActionPerformed"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="guiFilterEditActionPerformed"/>
           </Events>
         </Component>
-        <Component class="javax.swing.JLabel" name="jLabel3">
+        <Component class="javax.swing.JLabel" name="guiLabelMinScale">
           <Properties>
-            <Property name="horizontalAlignment" type="int" value="4"/>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
               <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="minscale" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
             </Property>
@@ -140,9 +149,8 @@
             </Property>
           </Properties>
         </Component>
-        <Component class="javax.swing.JLabel" name="jLabel4">
+        <Component class="javax.swing.JLabel" name="guiLabelMaxScale">
           <Properties>
-            <Property name="horizontalAlignment" type="int" value="4"/>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
               <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="maxscale" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
             </Property>
@@ -157,12 +165,17 @@
         </Component>
         <Component class="javax.swing.JCheckBox" name="jck_else">
           <Properties>
+            <Property name="text" type="java.lang.String" value=" "/>
+          </Properties>
+        </Component>
+        <Component class="org.geotoolkit.cql.JCQLTextPane" name="guiCQL">
+        </Component>
+        <Component class="javax.swing.JLabel" name="guiLabelElse">
+          <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
               <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="else_filter" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
-        </Component>
-        <Component class="org.geotoolkit.cql.JCQLTextPane" name="guiCQL">
         </Component>
       </SubComponents>
     </Container>
@@ -183,17 +196,17 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
-                          <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
+                          <Component id="guiLabelName" linkSize="2" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="jtf_name" pref="310" max="32767" attributes="0"/>
+                          <Component id="jtf_name" pref="299" max="32767" attributes="0"/>
                       </Group>
                       <Group type="102" alignment="0" attributes="0">
-                          <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
+                          <Component id="guiLabelTitle" linkSize="2" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="jtf_title" pref="317" max="32767" attributes="0"/>
+                          <Component id="jtf_title" pref="299" max="32767" attributes="0"/>
                       </Group>
                       <Group type="102" alignment="1" attributes="0">
-                          <Component id="jLabel6" min="-2" max="-2" attributes="0"/>
+                          <Component id="guiLabelAbstract" linkSize="2" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="jtf_abstract" pref="292" max="32767" attributes="0"/>
                       </Group>
@@ -207,17 +220,17 @@
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="jLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="guiLabelName" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="jtf_name" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="jLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="guiLabelTitle" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="jtf_title" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="jLabel6" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="guiLabelAbstract" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="jtf_abstract" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="32767" attributes="0"/>
@@ -228,20 +241,19 @@
       <SubComponents>
         <Component class="javax.swing.JTextField" name="jtf_title">
         </Component>
-        <Component class="javax.swing.JLabel" name="jLabel1">
+        <Component class="javax.swing.JLabel" name="guiLabelTitle">
           <Properties>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.modules.form.editors2.FontEditor">
               <FontInfo relative="true">
-                <Font bold="true" component="jLabel1" property="font" relativeSize="true" size="0"/>
+                <Font bold="true" component="guiLabelTitle" property="font" relativeSize="true" size="0"/>
               </FontInfo>
             </Property>
-            <Property name="horizontalAlignment" type="int" value="4"/>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
               <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="title" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
         </Component>
-        <Component class="javax.swing.JLabel" name="jLabel6">
+        <Component class="javax.swing.JLabel" name="guiLabelAbstract">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
               <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="abstract" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
@@ -250,9 +262,8 @@
         </Component>
         <Component class="javax.swing.JTextField" name="jtf_abstract">
         </Component>
-        <Component class="javax.swing.JLabel" name="jLabel2">
+        <Component class="javax.swing.JLabel" name="guiLabelName">
           <Properties>
-            <Property name="horizontalAlignment" type="int" value="4"/>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
               <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="name" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
             </Property>

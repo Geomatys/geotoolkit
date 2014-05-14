@@ -104,6 +104,12 @@ public class JContrastEnhancement extends StyleElementEditor<ContrastEnhancement
             return getStyleFactory().contrastEnhancement(guiGamma.create(),ContrastMethod.NONE);
         }
     }
+    
+    @Override
+    protected Object[] getFirstColumnComponents() {
+        return new Object[]{guiLabelContrast};
+    }
+    
 
     /** This method is called from within the constructor to
      * initialize the form.
@@ -114,7 +120,7 @@ public class JContrastEnhancement extends StyleElementEditor<ContrastEnhancement
     private void initComponents() {
 
         methodGroup = new ButtonGroup();
-        jLabel2 = new JLabel();
+        guiLabelContrast = new JLabel();
         guiGamma = new JNumberExpressionPane();
         guiNone = new JRadioButton();
         guiHistogram = new JRadioButton();
@@ -122,8 +128,7 @@ public class JContrastEnhancement extends StyleElementEditor<ContrastEnhancement
 
         setOpaque(false);
 
-        jLabel2.setHorizontalAlignment(SwingConstants.RIGHT);
-        jLabel2.setText(MessageBundle.getString("gamma")); // NOI18N
+        guiLabelContrast.setText(MessageBundle.getString("gamma")); // NOI18N
 
         guiGamma.addPropertyChangeListener(new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent evt) {
@@ -160,7 +165,7 @@ public class JContrastEnhancement extends StyleElementEditor<ContrastEnhancement
         layout.setHorizontalGroup(
             layout.createParallelGroup(Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jLabel2)
+                .addComponent(guiLabelContrast)
                 .addPreferredGap(ComponentPlacement.RELATED)
                 .addComponent(guiGamma, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
             .addComponent(guiHistogram)
@@ -175,7 +180,7 @@ public class JContrastEnhancement extends StyleElementEditor<ContrastEnhancement
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(Alignment.LEADING)
                     .addComponent(guiGamma, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel2))
+                    .addComponent(guiLabelContrast))
                 .addPreferredGap(ComponentPlacement.RELATED)
                 .addComponent(guiNone)
                 .addPreferredGap(ComponentPlacement.RELATED)
@@ -184,7 +189,7 @@ public class JContrastEnhancement extends StyleElementEditor<ContrastEnhancement
                 .addComponent(guiNormalize))
         );
 
-        layout.linkSize(SwingConstants.VERTICAL, new Component[] {guiGamma, jLabel2});
+        layout.linkSize(SwingConstants.VERTICAL, new Component[] {guiGamma, guiLabelContrast});
 
     }// </editor-fold>//GEN-END:initComponents
 
@@ -205,9 +210,9 @@ public class JContrastEnhancement extends StyleElementEditor<ContrastEnhancement
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private JNumberExpressionPane guiGamma;
     private JRadioButton guiHistogram;
+    private JLabel guiLabelContrast;
     private JRadioButton guiNone;
     private JRadioButton guiNormalize;
-    private JLabel jLabel2;
     private ButtonGroup methodGroup;
     // End of variables declaration//GEN-END:variables
 }

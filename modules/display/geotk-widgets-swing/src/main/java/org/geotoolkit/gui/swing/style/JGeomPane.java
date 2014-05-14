@@ -17,10 +17,7 @@
  */
 package org.geotoolkit.gui.swing.style;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JLabel;
@@ -28,15 +25,16 @@ import javax.swing.LayoutStyle.ComponentPlacement;
 import org.geotoolkit.map.MapLayer;
 
 /**
- * Geometrie panel
+ * Geometry panel
  *
  * @author Johann Sorel
  * @module pending
  */
-public class JGeomPane extends javax.swing.JPanel {
+public class JGeomPane extends StyleElementEditor<String> {
 
     /** Creates new form JGeomPane */
     public JGeomPane() {
+        super(String.class);
         initComponents();
     }
 
@@ -48,14 +46,21 @@ public class JGeomPane extends javax.swing.JPanel {
         return guiBox.getLayer();
     }
 
-    public String getGeom(){
+    @Override
+    public void parse(String target) {
+        guiBox.setGeom(target);
+    }
+
+    @Override
+    public String create() {
         return guiBox.getGeom();
     }
-
-    public void setGeom(final String name){
-        guiBox.setGeom(name);
+    
+    @Override
+    protected Object[] getFirstColumnComponents() {
+        return new Object[]{guiLabel};
     }
-
+    
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -65,27 +70,27 @@ public class JGeomPane extends javax.swing.JPanel {
     private void initComponents() {
 
         guiBox = new JGeomBox();
-        lbl = new JLabel();
+        guiLabel = new JLabel();
 
         setOpaque(false);
 
         guiBox.setEditable(true);
 
-        lbl.setText(MessageBundle.getString("geometry")); // NOI18N
+        guiLabel.setText(MessageBundle.getString("geometry")); // NOI18N
 
         GroupLayout layout = new GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(lbl)
+                .addComponent(guiLabel)
                 .addPreferredGap(ComponentPlacement.RELATED)
                 .addComponent(guiBox, GroupLayout.PREFERRED_SIZE, 76, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(Alignment.LEADING)
             .addGroup(layout.createParallelGroup(Alignment.BASELINE)
-                .addComponent(lbl, GroupLayout.PREFERRED_SIZE, 17, GroupLayout.PREFERRED_SIZE)
+                .addComponent(guiLabel, GroupLayout.PREFERRED_SIZE, 17, GroupLayout.PREFERRED_SIZE)
                 .addComponent(guiBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -93,7 +98,7 @@ public class JGeomPane extends javax.swing.JPanel {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private JGeomBox guiBox;
-    private JLabel lbl;
+    private JLabel guiLabel;
     // End of variables declaration//GEN-END:variables
 
 }

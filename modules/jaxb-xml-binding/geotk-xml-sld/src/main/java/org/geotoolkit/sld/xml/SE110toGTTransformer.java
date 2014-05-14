@@ -1236,12 +1236,19 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
      */
     public Jenks visit(final JenksType jenks) {
         if(jenks == null) return null;
-
+        
         final Literal fallback = filterFactory.literal(jenks.getFallbackValue());
         final Literal classNumber = filterFactory.literal(jenks.getClassNumber());
         final Literal palette = filterFactory.literal(jenks.getPalette());
+        final double[] noData = jenks.getNoData();
+        final List<Literal> noDataLiteral = new ArrayList<Literal>();
+        if (noData != null) {
+            for (int i = 0; i < noData.length; i++) {
+                noDataLiteral.add(filterFactory.literal(noData[i]));
+            }
+        }
 
-        return styleFactory.jenksFunction(classNumber, palette, fallback);
+        return styleFactory.jenksFunction(classNumber, palette, fallback, noDataLiteral);
     }
 
     /**

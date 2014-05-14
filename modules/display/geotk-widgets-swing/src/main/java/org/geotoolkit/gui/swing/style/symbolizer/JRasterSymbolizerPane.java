@@ -18,6 +18,7 @@ package org.geotoolkit.gui.swing.style.symbolizer;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -36,6 +37,7 @@ import javax.swing.JRadioButton;
 import javax.swing.JTabbedPane;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SwingConstants;
+import javax.swing.border.TitledBorder;
 import org.geotoolkit.gui.swing.style.JColorMapPane;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.gui.swing.style.JChannelSelectionPane;
@@ -94,6 +96,10 @@ public class JRasterSymbolizerPane extends StyleElementEditor<RasterSymbolizer> 
                 guiColorimetryPane.repaint();
             }
         });
+        
+        //those are not used by geotk engine, hide them to avoid confusing the user
+        guiOverLap.setVisible(false);
+        guiOverlapsLbl.setVisible(false);
     }
 
     /**
@@ -129,7 +135,7 @@ public class JRasterSymbolizerPane extends StyleElementEditor<RasterSymbolizer> 
         this.oldSymbolizer = symbol;
         
         if (symbol != null) {
-            guiGeom.setGeom(symbol.getGeometryPropertyName());
+            guiGeom.parse(symbol.getGeometryPropertyName());
             guiUOM.parse(symbol.getUnitOfMeasure());
             guiOpacity.parse(symbol.getOpacity());
             //guiOverLap.parse(symbol.getOverlapBehavior());
@@ -187,7 +193,7 @@ public class JRasterSymbolizerPane extends StyleElementEditor<RasterSymbolizer> 
         
         return getStyleFactory().rasterSymbolizer(
                 (oldSymbolizer!=null) ? oldSymbolizer.getName(): "RasterSymbolizer",
-                guiGeom.getGeom(),
+                guiGeom.create(),
                 (oldSymbolizer!=null) ? oldSymbolizer.getDescription() : StyleConstants.DEFAULT_DESCRIPTION,
                 guiUOM.create(),
                 guiOpacity.create(),
@@ -198,6 +204,11 @@ public class JRasterSymbolizerPane extends StyleElementEditor<RasterSymbolizer> 
                 guiRelief.create(), 
                 outline);
     
+    }
+    
+    @Override
+    protected Object[] getFirstColumnComponents() {
+        return new Object[]{};
     }
     
     /** This method is called from within the constructor to
@@ -211,7 +222,7 @@ public class JRasterSymbolizerPane extends StyleElementEditor<RasterSymbolizer> 
         grpOutline = new ButtonGroup();
         jPanel1 = new JPanel();
         guiOverLap = new JTextExpressionPane();
-        jLabel2 = new JLabel();
+        guiOverlapsLbl = new JLabel();
         jLabel1 = new JLabel();
         guiOpacity = new JNumberExpressionPane();
         guiUOM = new JUOMPane();
@@ -229,8 +240,6 @@ public class JRasterSymbolizerPane extends StyleElementEditor<RasterSymbolizer> 
         guiContrast = new JContrastEnhancement();
         guiRelief = new JShadedReliefPane();
 
-        setOpaque(false);
-
         jPanel1.setBorder(BorderFactory.createTitledBorder(MessageBundle.getString("style.rastersymbolizer.general"))); // NOI18N
         jPanel1.setOpaque(false);
 
@@ -240,8 +249,8 @@ public class JRasterSymbolizerPane extends StyleElementEditor<RasterSymbolizer> 
             }
         });
 
-        jLabel2.setHorizontalAlignment(SwingConstants.RIGHT);
-        jLabel2.setText(MessageBundle.getString("style.rastersymbolizer.overlap")); // NOI18N
+        guiOverlapsLbl.setHorizontalAlignment(SwingConstants.RIGHT);
+        guiOverlapsLbl.setText(MessageBundle.getString("style.rastersymbolizer.overlap")); // NOI18N
 
         jLabel1.setHorizontalAlignment(SwingConstants.RIGHT);
         jLabel1.setText(MessageBundle.getString("style.rastersymbolizer.opacity")); // NOI18N
@@ -264,7 +273,7 @@ public class JRasterSymbolizerPane extends StyleElementEditor<RasterSymbolizer> 
                         .addPreferredGap(ComponentPlacement.RELATED)
                         .addComponent(guiOpacity, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(ComponentPlacement.RELATED)
-                        .addComponent(jLabel2)
+                        .addComponent(guiOverlapsLbl)
                         .addPreferredGap(ComponentPlacement.RELATED)
                         .addComponent(guiOverLap, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
@@ -284,11 +293,11 @@ public class JRasterSymbolizerPane extends StyleElementEditor<RasterSymbolizer> 
                     .addComponent(jLabel1)
                     .addComponent(guiOpacity, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                     .addComponent(guiOverLap, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel2, Alignment.TRAILING))
+                    .addComponent(guiOverlapsLbl, Alignment.TRAILING))
                 .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jPanel1Layout.linkSize(SwingConstants.VERTICAL, new Component[] {guiOpacity, guiOverLap, jLabel1, jLabel2});
+        jPanel1Layout.linkSize(SwingConstants.VERTICAL, new Component[] {guiOpacity, guiOverLap, guiOverlapsLbl, jLabel1});
 
         jTabbedPane1.setTabPlacement(JTabbedPane.LEFT);
 
@@ -319,7 +328,7 @@ public class JRasterSymbolizerPane extends StyleElementEditor<RasterSymbolizer> 
                     .addComponent(jLabel4)
                     .addComponent(guiColorCombo, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(ComponentPlacement.RELATED)
-                .addComponent(guiColorimetryPane, GroupLayout.DEFAULT_SIZE, 149, Short.MAX_VALUE)
+                .addComponent(guiColorimetryPane, GroupLayout.DEFAULT_SIZE, 150, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -329,7 +338,6 @@ public class JRasterSymbolizerPane extends StyleElementEditor<RasterSymbolizer> 
         jPanel2.setOpaque(false);
 
         grpOutline.add(guinone);
-        guinone.setSelected(true);
         guinone.setText(MessageBundle.getString("style.rastersymbolizer.none")); // NOI18N
         guinone.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
@@ -381,7 +389,7 @@ public class JRasterSymbolizerPane extends StyleElementEditor<RasterSymbolizer> 
                     .addComponent(guiLine)
                     .addComponent(guiPolygon))
                 .addPreferredGap(ComponentPlacement.UNRELATED)
-                .addComponent(guiOutlinePane, GroupLayout.DEFAULT_SIZE, 158, Short.MAX_VALUE))
+                .addComponent(guiOutlinePane, GroupLayout.DEFAULT_SIZE, 159, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab(MessageBundle.getString("style.rastersymbolizer.outline"), jPanel2); // NOI18N
@@ -414,7 +422,7 @@ public class JRasterSymbolizerPane extends StyleElementEditor<RasterSymbolizer> 
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(ComponentPlacement.RELATED)
-                .addComponent(jTabbedPane1, GroupLayout.DEFAULT_SIZE, 207, Short.MAX_VALUE))
+                .addComponent(jTabbedPane1))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -447,12 +455,12 @@ public class JRasterSymbolizerPane extends StyleElementEditor<RasterSymbolizer> 
     private JNumberExpressionPane guiOpacity;
     private JPanel guiOutlinePane;
     private JTextExpressionPane guiOverLap;
+    private JLabel guiOverlapsLbl;
     private JRadioButton guiPolygon;
     private JShadedReliefPane guiRelief;
     private JUOMPane guiUOM;
     private JRadioButton guinone;
     private JLabel jLabel1;
-    private JLabel jLabel2;
     private JLabel jLabel4;
     private JPanel jPanel1;
     private JPanel jPanel2;

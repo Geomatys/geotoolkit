@@ -20,11 +20,11 @@
   <Layout>
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Component id="jXTitledSeparator1" alignment="0" pref="253" max="32767" attributes="0"/>
+          <Component id="guiSeparator" alignment="0" pref="253" max="32767" attributes="0"/>
           <Group type="102" attributes="0">
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" attributes="0">
-                      <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
+                      <Component id="guiLabelName" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="guiName" min="-2" pref="142" max="-2" attributes="0"/>
                   </Group>
@@ -38,11 +38,11 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
               <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="jLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="guiLabelName" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="guiName" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="jXTitledSeparator1" min="-2" max="-2" attributes="0"/>
+              <Component id="guiSeparator" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="guiContrast" min="-2" max="-2" attributes="0"/>
           </Group>
@@ -52,7 +52,7 @@
   <SubComponents>
     <Component class="org.geotoolkit.gui.swing.style.JContrastEnhancement" name="guiContrast">
     </Component>
-    <Component class="org.jdesktop.swingx.JXTitledSeparator" name="jXTitledSeparator1">
+    <Component class="org.jdesktop.swingx.JXTitledSeparator" name="guiSeparator">
       <Properties>
         <Property name="alpha" type="float" value="0.5"/>
         <Property name="horizontalAlignment" type="int" value="0"/>
@@ -61,7 +61,7 @@
         </Property>
       </Properties>
     </Component>
-    <Component class="javax.swing.JLabel" name="jLabel1">
+    <Component class="javax.swing.JLabel" name="guiLabelName">
       <Properties>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
           <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="name" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>

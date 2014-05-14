@@ -115,4 +115,10 @@ public class JNumberSliderExpressionPane extends StyleElementEditor<Expression> 
     public Expression create() {
         return guiNumber.create();
     }
+    
+    @Override
+    protected Object[] getFirstColumnComponents() {
+        return new Object[]{};
+    }
+    
 }

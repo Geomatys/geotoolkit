@@ -178,6 +178,11 @@ public class JFillPane extends StyleElementEditor<Fill> {
         } else {
             return getStyleFactory().fill();
         }
-
     }
+    
+    @Override
+    protected Object[] getFirstColumnComponents() {
+        return new Object[]{};
+    }
+    
 }

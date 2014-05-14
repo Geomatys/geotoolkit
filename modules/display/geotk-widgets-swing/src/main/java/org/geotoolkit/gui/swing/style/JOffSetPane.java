@@ -23,6 +23,7 @@ import java.beans.PropertyChangeListener;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JLabel;
+import javax.swing.LayoutStyle;
 import javax.swing.SwingConstants;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.MapLayer;
@@ -74,6 +75,11 @@ public class JOffSetPane extends StyleElementEditor<Expression> {
         return guiOffset.create();
     }
 
+    @Override
+    protected Object[] getFirstColumnComponents() {
+        return new Object[]{guiLabel};
+    }
+    
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -83,12 +89,12 @@ public class JOffSetPane extends StyleElementEditor<Expression> {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jLabel1 = new JLabel();
+        guiLabel = new JLabel();
         guiOffset = new JNumberExpressionPane();
 
         setOpaque(false);
 
-        jLabel1.setText(MessageBundle.getString("offset")); // NOI18N
+        guiLabel.setText(MessageBundle.getString("offset")); // NOI18N
 
         guiOffset.addPropertyChangeListener(new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent evt) {
@@ -101,17 +107,17 @@ public class JOffSetPane extends StyleElementEditor<Expression> {
         layout.setHorizontalGroup(
             layout.createParallelGroup(Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jLabel1)
-                .addGap(4, 4, 4)
-                .addComponent(guiOffset, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                .addComponent(guiLabel)
+                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(guiOffset, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(Alignment.LEADING)
+            .addComponent(guiLabel)
             .addComponent(guiOffset, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-            .addComponent(jLabel1)
         );
 
-        layout.linkSize(SwingConstants.VERTICAL, new Component[] {guiOffset, jLabel1});
+        layout.linkSize(SwingConstants.VERTICAL, new Component[] {guiLabel, guiOffset});
 
     }// </editor-fold>//GEN-END:initComponents
 
@@ -125,8 +131,8 @@ public class JOffSetPane extends StyleElementEditor<Expression> {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private JLabel guiLabel;
     private JNumberExpressionPane guiOffset;
-    private JLabel jLabel1;
     // End of variables declaration//GEN-END:variables
 
 }

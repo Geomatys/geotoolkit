@@ -25,7 +25,7 @@
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" attributes="0">
-              <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
+              <Component id="guiLabelContrast" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="guiGamma" min="-2" max="-2" attributes="0"/>
           </Group>
@@ -39,7 +39,7 @@
           <Group type="102" alignment="0" attributes="0">
               <Group type="103" groupAlignment="0" attributes="0">
                   <Component id="guiGamma" linkSize="5" min="-2" max="-2" attributes="0"/>
-                  <Component id="jLabel2" linkSize="5" alignment="0" min="-2" max="-2" attributes="1"/>
+                  <Component id="guiLabelContrast" linkSize="5" alignment="0" min="-2" max="-2" attributes="1"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="guiNone" min="-2" max="-2" attributes="0"/>
@@ -52,9 +52,8 @@
     </DimensionLayout>
   </Layout>
   <SubComponents>
-    <Component class="javax.swing.JLabel" name="jLabel2">
+    <Component class="javax.swing.JLabel" name="guiLabelContrast">
       <Properties>
-        <Property name="horizontalAlignment" type="int" value="4"/>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
           <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="gamma" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
         </Property>

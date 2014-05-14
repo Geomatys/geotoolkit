@@ -115,6 +115,11 @@ public class JExternalGraphicPane extends StyleElementEditor<ExternalGraphic> {
         return external;
     }
     
+    @Override
+    protected Object[] getFirstColumnComponents() {
+        return new Object[]{};
+    }
+    
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -131,11 +136,11 @@ public class JExternalGraphicPane extends StyleElementEditor<ExternalGraphic> {
 
         setOpaque(false);
 
-        jLabel2.setHorizontalAlignment(SwingConstants.RIGHT);
         jLabel2.setText(MessageBundle.getString("mime")); // NOI18N
 
-        jLabel3.setHorizontalAlignment(SwingConstants.RIGHT);
         jLabel3.setText(MessageBundle.getString("url")); // NOI18N
+
+        guiPreview.setLayout(null);
 
         GroupLayout layout = new GroupLayout(this);
         this.setLayout(layout);

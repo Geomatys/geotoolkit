@@ -113,5 +113,10 @@ public class JGraphicalSymbolPane extends StyleElementEditor<GraphicalSymbol> {
         }
         return symbol;
     }
+    
+    @Override
+    protected Object[] getFirstColumnComponents() {
+        return new Object[]{};
+    }
 
 }

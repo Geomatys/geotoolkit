@@ -452,6 +452,11 @@ public class JSimpleStylePanel extends StyleElementEditor implements PropertyPan
         return style;
     }
 
+    @Override
+    protected Object[] getFirstColumnComponents() {
+        return new Object[]{};
+    }
+    
     private void jAddButtonActionPerformed(ActionEvent evt) {//GEN-FIRST:event_jAddButtonActionPerformed
 
         final List<Class> clazz = new ArrayList<Class>();

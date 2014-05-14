@@ -18,12 +18,12 @@
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
-              <Component id="jLabel1" linkSize="1" min="-2" max="-2" attributes="0"/>
+              <Component id="guiLabelX" linkSize="1" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="guiX" min="-2" max="-2" attributes="0"/>
           </Group>
           <Group type="102" alignment="0" attributes="0">
-              <Component id="jLabel2" linkSize="1" min="-2" max="-2" attributes="0"/>
+              <Component id="guiLabelY" linkSize="1" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="guiY" min="-2" max="-2" attributes="0"/>
           </Group>
@@ -33,30 +33,28 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="jLabel1" linkSize="2" alignment="0" min="-2" max="-2" attributes="1"/>
+                  <Component id="guiLabelX" linkSize="2" alignment="0" min="-2" max="-2" attributes="1"/>
                   <Component id="guiX" linkSize="2" alignment="0" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
                   <Component id="guiY" linkSize="3" alignment="0" min="-2" max="-2" attributes="0"/>
-                  <Component id="jLabel2" linkSize="3" alignment="0" min="-2" max="-2" attributes="1"/>
+                  <Component id="guiLabelY" linkSize="3" alignment="0" min="-2" max="-2" attributes="1"/>
               </Group>
           </Group>
       </Group>
     </DimensionLayout>
   </Layout>
   <SubComponents>
-    <Component class="javax.swing.JLabel" name="jLabel1">
+    <Component class="javax.swing.JLabel" name="guiLabelX">
       <Properties>
-        <Property name="horizontalAlignment" type="int" value="4"/>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
           <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="style.anchorpoint.x" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
         </Property>
       </Properties>
     </Component>
-    <Component class="javax.swing.JLabel" name="jLabel2">
+    <Component class="javax.swing.JLabel" name="guiLabelY">
       <Properties>
-        <Property name="horizontalAlignment" type="int" value="4"/>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
           <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="style.anchorpoint.y" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
         </Property>

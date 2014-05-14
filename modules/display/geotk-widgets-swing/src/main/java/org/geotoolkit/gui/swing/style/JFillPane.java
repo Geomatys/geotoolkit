@@ -97,6 +97,11 @@ public class JFillPane extends StyleElementEditor<Fill>{
                 guiAlpha.create());
     }
 
+    @Override
+    protected Object[] getFirstColumnComponents() {
+        return new Object[]{guiLabelColor,guiLabelAlpha,guiLabelFill};
+    }
+    
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -106,9 +111,9 @@ public class JFillPane extends StyleElementEditor<Fill>{
     private void initComponents() {
 
         butFill = new JButton();
-        jLabel3 = new JLabel();
-        lbl2 = new JLabel();
-        lbl_color1 = new JLabel();
+        guiLabelFill = new JLabel();
+        guiLabelAlpha = new JLabel();
+        guiLabelColor = new JLabel();
         guiColor = new JColorExpressionPane();
         guiAlpha = new JNumberExpressionPane();
 
@@ -124,14 +129,11 @@ public class JFillPane extends StyleElementEditor<Fill>{
             }
         });
 
-        jLabel3.setHorizontalAlignment(SwingConstants.RIGHT);
-        jLabel3.setText(MessageBundle.getString("graphic")); // NOI18N
+        guiLabelFill.setText(MessageBundle.getString("graphic")); // NOI18N
 
-        lbl2.setHorizontalAlignment(SwingConstants.RIGHT);
-        lbl2.setText(MessageBundle.getString("opacity")); // NOI18N
+        guiLabelAlpha.setText(MessageBundle.getString("opacity")); // NOI18N
 
-        lbl_color1.setHorizontalAlignment(SwingConstants.RIGHT);
-        lbl_color1.setText(MessageBundle.getString("color")); // NOI18N
+        guiLabelColor.setText(MessageBundle.getString("color")); // NOI18N
 
         guiColor.addPropertyChangeListener(new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent evt) {
@@ -150,34 +152,34 @@ public class JFillPane extends StyleElementEditor<Fill>{
         layout.setHorizontalGroup(
             layout.createParallelGroup(Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(lbl_color1)
+                .addComponent(guiLabelColor)
                 .addPreferredGap(ComponentPlacement.RELATED)
                 .addComponent(guiColor, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
             .addGroup(layout.createSequentialGroup()
-                .addComponent(lbl2)
+                .addComponent(guiLabelAlpha)
                 .addPreferredGap(ComponentPlacement.RELATED)
                 .addComponent(guiAlpha, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jLabel3)
+                .addComponent(guiLabelFill)
                 .addPreferredGap(ComponentPlacement.RELATED)
                 .addComponent(butFill, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
         );
 
-        layout.linkSize(SwingConstants.HORIZONTAL, new Component[] {jLabel3, lbl2, lbl_color1});
+        layout.linkSize(SwingConstants.HORIZONTAL, new Component[] {guiLabelAlpha, guiLabelColor, guiLabelFill});
 
         layout.setVerticalGroup(
             layout.createParallelGroup(Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(Alignment.TRAILING)
-                    .addComponent(lbl_color1)
+                    .addComponent(guiLabelColor)
                     .addComponent(guiColor, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(Alignment.LEADING, false)
-                    .addComponent(lbl2, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(guiLabelAlpha, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(guiAlpha, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(Alignment.BASELINE)
-                    .addComponent(jLabel3)
+                    .addComponent(guiLabelFill)
                     .addComponent(butFill, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -197,8 +199,8 @@ public class JFillPane extends StyleElementEditor<Fill>{
     private JButton butFill;
     private JNumberExpressionPane guiAlpha;
     private JColorExpressionPane guiColor;
-    private JLabel jLabel3;
-    private JLabel lbl2;
-    private JLabel lbl_color1;
+    private JLabel guiLabelAlpha;
+    private JLabel guiLabelColor;
+    private JLabel guiLabelFill;
     // End of variables declaration//GEN-END:variables
 }

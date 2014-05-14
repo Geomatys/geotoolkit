@@ -116,6 +116,11 @@ public class JFillMarkPane extends StyleElementEditor<Mark> {
         } else {
             return getStyleFactory().mark(StyleConstants.MARK_SQUARE, markFill, getStyleFactory().stroke());
         }
-
     }
+    
+    @Override
+    protected Object[] getFirstColumnComponents() {
+        return new Object[]{};
+    }
+    
 }

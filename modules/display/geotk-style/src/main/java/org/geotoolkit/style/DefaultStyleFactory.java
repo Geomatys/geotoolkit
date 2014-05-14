@@ -998,8 +998,8 @@ public class DefaultStyleFactory extends Factory implements MutableStyleFactory 
     }
 
     @Override
-    public Jenks jenksFunction(Literal classNumber, Literal paletteName, Literal fallback) {
-        return new DefaultJenks(classNumber, paletteName, fallback);
+    public Jenks jenksFunction(Literal classNumber, Literal paletteName, Literal fallback, List<Literal> noData) {
+        return new DefaultJenks(classNumber, paletteName, fallback, noData);
     }
    
 }

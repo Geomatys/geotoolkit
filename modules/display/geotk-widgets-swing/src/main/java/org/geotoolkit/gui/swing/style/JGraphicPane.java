@@ -91,6 +91,10 @@ public class JGraphicPane extends StyleElementEditor<Graphic> {
                 guiDisplacement.create());
     }
 
+    @Override
+    protected Object[] getFirstColumnComponents() {
+        return new Object[]{guiLabelAlpha,guiLabelRotation,guiLabelSize,guiDisplacement};
+    }
 
     /** This method is called from within the constructor to
      * initialize the form.
@@ -101,9 +105,9 @@ public class JGraphicPane extends StyleElementEditor<Graphic> {
     private void initComponents() {
 
         jPanel1 = new JPanel();
-        jLabel1 = new JLabel();
-        jLabel2 = new JLabel();
-        jLabel3 = new JLabel();
+        guiLabelSize = new JLabel();
+        guiLabelRotation = new JLabel();
+        guiLabelAlpha = new JLabel();
         guiDisplacement = new JDisplacementPane();
         guiSize = new JNumberExpressionPane();
         guiRotation = new JNumberExpressionPane();
@@ -114,14 +118,11 @@ public class JGraphicPane extends StyleElementEditor<Graphic> {
 
         jPanel1.setOpaque(false);
 
-        jLabel1.setHorizontalAlignment(SwingConstants.RIGHT);
-        jLabel1.setText(MessageBundle.getString("size")); // NOI18N
+        guiLabelSize.setText(MessageBundle.getString("size")); // NOI18N
 
-        jLabel2.setHorizontalAlignment(SwingConstants.RIGHT);
-        jLabel2.setText(MessageBundle.getString("rotation")); // NOI18N
+        guiLabelRotation.setText(MessageBundle.getString("rotation")); // NOI18N
 
-        jLabel3.setHorizontalAlignment(SwingConstants.RIGHT);
-        jLabel3.setText(MessageBundle.getString("opacity")); // NOI18N
+        guiLabelAlpha.setText(MessageBundle.getString("opacity")); // NOI18N
 
         guiDisplacement.addPropertyChangeListener(new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent evt) {
@@ -151,47 +152,49 @@ public class JGraphicPane extends StyleElementEditor<Graphic> {
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(Alignment.LEADING)
-            .addComponent(guiDisplacement, Alignment.TRAILING, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-            .addGroup(Alignment.TRAILING, jPanel1Layout.createParallelGroup(Alignment.LEADING)
-                .addGroup(jPanel1Layout.createSequentialGroup()
-                    .addComponent(jLabel3)
-                    .addPreferredGap(ComponentPlacement.RELATED)
-                    .addComponent(guiAlpha, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                .addGroup(jPanel1Layout.createSequentialGroup()
-                    .addComponent(jLabel2)
-                    .addPreferredGap(ComponentPlacement.RELATED)
-                    .addComponent(guiRotation, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                .addGroup(jPanel1Layout.createSequentialGroup()
-                    .addComponent(jLabel1)
-                    .addPreferredGap(ComponentPlacement.RELATED)
-                    .addComponent(guiSize, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGroup(jPanel1Layout.createParallelGroup(Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(guiLabelAlpha)
+                        .addPreferredGap(ComponentPlacement.RELATED)
+                        .addComponent(guiAlpha, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(guiLabelRotation)
+                        .addPreferredGap(ComponentPlacement.RELATED)
+                        .addComponent(guiRotation, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(guiLabelSize)
+                        .addPreferredGap(ComponentPlacement.RELATED)
+                        .addComponent(guiSize, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                    .addComponent(guiDisplacement, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                .addGap(8, 8, 8))
         );
 
-        jPanel1Layout.linkSize(SwingConstants.HORIZONTAL, new Component[] {jLabel1, jLabel2, jLabel3});
+        jPanel1Layout.linkSize(SwingConstants.HORIZONTAL, new Component[] {guiLabelAlpha, guiLabelRotation, guiLabelSize});
 
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(Alignment.LEADING)
-                    .addComponent(jLabel1)
+                    .addComponent(guiLabelSize)
                     .addComponent(guiSize, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(Alignment.LEADING)
-                    .addComponent(jLabel2)
+                    .addComponent(guiLabelRotation)
                     .addComponent(guiRotation, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(Alignment.TRAILING)
-                    .addComponent(jLabel3)
+                    .addComponent(guiLabelAlpha)
                     .addComponent(guiAlpha, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(ComponentPlacement.RELATED)
                 .addComponent(guiDisplacement, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
         );
 
-        jPanel1Layout.linkSize(SwingConstants.VERTICAL, new Component[] {guiAlpha, jLabel3});
+        jPanel1Layout.linkSize(SwingConstants.VERTICAL, new Component[] {guiAlpha, guiLabelAlpha});
 
-        jPanel1Layout.linkSize(SwingConstants.VERTICAL, new Component[] {guiRotation, jLabel2});
+        jPanel1Layout.linkSize(SwingConstants.VERTICAL, new Component[] {guiLabelRotation, guiRotation});
 
-        jPanel1Layout.linkSize(SwingConstants.VERTICAL, new Component[] {guiSize, jLabel1});
+        jPanel1Layout.linkSize(SwingConstants.VERTICAL, new Component[] {guiLabelSize, guiSize});
 
         guiGraphics.addPropertyChangeListener(new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent evt) {
@@ -206,7 +209,7 @@ public class JGraphicPane extends StyleElementEditor<Graphic> {
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(31, Short.MAX_VALUE))
-            .addComponent(guiGraphics, GroupLayout.DEFAULT_SIZE, 181, Short.MAX_VALUE)
+            .addComponent(guiGraphics, GroupLayout.PREFERRED_SIZE, 181, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(Alignment.LEADING)
@@ -229,11 +232,11 @@ public class JGraphicPane extends StyleElementEditor<Graphic> {
     private JNumberExpressionPane guiAlpha;
     private JDisplacementPane guiDisplacement;
     private JGraphicSymbolTable guiGraphics;
+    private JLabel guiLabelAlpha;
+    private JLabel guiLabelRotation;
+    private JLabel guiLabelSize;
     private JNumberExpressionPane guiRotation;
     private JNumberExpressionPane guiSize;
-    private JLabel jLabel1;
-    private JLabel jLabel2;
-    private JLabel jLabel3;
     private JPanel jPanel1;
     // End of variables declaration//GEN-END:variables
 }

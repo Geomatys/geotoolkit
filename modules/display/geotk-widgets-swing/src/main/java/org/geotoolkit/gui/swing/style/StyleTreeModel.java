@@ -19,7 +19,6 @@ package org.geotoolkit.gui.swing.style;
 
 import java.beans.PropertyChangeEvent;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.EventObject;
 import java.util.List;
 import javax.swing.event.EventListenerList;

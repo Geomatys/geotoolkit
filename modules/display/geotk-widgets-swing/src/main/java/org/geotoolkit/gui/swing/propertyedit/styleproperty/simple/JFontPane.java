@@ -266,4 +266,10 @@ public class JFontPane extends StyleElementEditor<Font> {
                 getFilterFactory().literal(weight),
                 getFilterFactory().literal(guiSize.getText()));
     }
+    
+    @Override
+    protected Object[] getFirstColumnComponents() {
+        return new Object[]{};
+    }
+    
 }

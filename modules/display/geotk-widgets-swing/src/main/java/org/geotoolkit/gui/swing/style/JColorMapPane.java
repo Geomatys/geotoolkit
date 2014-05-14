@@ -18,6 +18,7 @@
 package org.geotoolkit.gui.swing.style;
 
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
@@ -33,12 +34,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.measure.unit.NonSI;
 import javax.swing.AbstractCellEditor;
 import javax.swing.BorderFactory;
@@ -65,14 +66,17 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellEditor;
 import org.apache.sis.measure.MeasurementRange;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.feature.FeatureTypeBuilder;
+import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.filter.DefaultLiteral;
 import org.geotoolkit.gui.swing.propertyedit.PropertyPane;
+import org.geotoolkit.gui.swing.propertyedit.featureeditor.ArrayEditor;
+import org.geotoolkit.gui.swing.propertyedit.featureeditor.PropertyValueEditor;
 import org.geotoolkit.gui.swing.propertyedit.styleproperty.PaletteCellRenderer;
 import org.geotoolkit.gui.swing.resource.FontAwesomeIcons;
 import org.geotoolkit.gui.swing.resource.IconBuilder;
@@ -107,6 +111,8 @@ import org.geotoolkit.style.interval.Palette;
 import org.geotoolkit.util.Converters;
 import org.jdesktop.swingx.JXTable;
 import org.jdesktop.swingx.combobox.ListComboBoxModel;
+import org.opengis.feature.Property;
+import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Function;
@@ -129,8 +135,6 @@ import org.opengis.style.Symbolizer;
  * @module pending
  */
 public class JColorMapPane extends StyleElementEditor<ColorMap> implements PropertyPane{
-
-    private static final Logger LOGGER = Logging.getLogger(JColorMapPane.class);
 
     private static final PaletteFactory PF = PaletteFactory.getDefault();
     private static final List<Object> PALETTES = new ArrayList<>();
@@ -179,6 +183,10 @@ public class JColorMapPane extends StyleElementEditor<ColorMap> implements Prope
     private final Image preview;
     private final String tooltip;
     
+    private final PropertyValueEditor noDataEditor = new ArrayEditor();
+    private final PropertyDescriptor nodataDesc;
+    private final Property noDataProp;
+    
     private ColorMapModel model = new InterpolateColorModel(Collections.EMPTY_LIST);
     private MapLayer layer = null;
     //keep track of where the symbolizer was to avoid rewriting the complete style
@@ -196,6 +204,14 @@ public class JColorMapPane extends StyleElementEditor<ColorMap> implements Prope
         preview = null;
         tooltip = "";
         initComponents();
+        
+        
+        //for noData
+        nodataDesc = new FeatureTypeBuilder().add("noData", double[].class);
+        noDataProp = FeatureUtilities.defaultProperty(nodataDesc);
+        noDataEditor.setValue(noDataProp.getType(), new double[0]);
+        noDataContainer.add(noDataEditor, BorderLayout.CENTER);
+        
         setPalettes(PALETTES);
         guiPalette.setRenderer(new PaletteCellRenderer());
         guiPalette.setSelectedIndex(0);
@@ -345,6 +361,12 @@ public class JColorMapPane extends StyleElementEditor<ColorMap> implements Prope
             }else if(fct instanceof Categorize){
                 final Map<Expression,Expression> th = ((Categorize)fct).getThresholds();
                 model = new CategorizeColorModel(th);
+            }else if(fct instanceof Jenks){
+                final Jenks jenks = (Jenks) fct;
+                double[] vals = jenks.getNoData();
+                if(vals==null) vals = new double[0];
+                model = new JenksColorModel();
+                noDataEditor.setValue(nodataDesc.getType(), vals);
             }else{
                 model = new InterpolateColorModel(Collections.EMPTY_LIST);
                 LOGGER.log(Level.WARNING, "Unknowned colormap function : {0}", fct);
@@ -441,6 +463,8 @@ public class JColorMapPane extends StyleElementEditor<ColorMap> implements Prope
         guiRemoveAll.setVisible(!(model instanceof JenksColorModel));
         guiTableScroll.setVisible(!(model instanceof JenksColorModel));
         guiJenksMessage.setVisible(model instanceof JenksColorModel);
+        guiNoDataLabel.setVisible(model instanceof JenksColorModel);
+        noDataContainer.setVisible(model instanceof JenksColorModel);
 
         if(layer instanceof CoverageMapLayer){
             guiLblPalette.setVisible(true);
@@ -523,7 +547,9 @@ public class JColorMapPane extends StyleElementEditor<ColorMap> implements Prope
         guiMinSpinner = new JSpinner();
         maxLabel = new JLabel();
         guiMaxSpinner = new JSpinner();
+        guiNoDataLabel = new JLabel();
         guiFitToData = new JButton();
+        noDataContainer = new JPanel();
         guiTableScroll = new JScrollPane();
         guiTable = new JXTable();
         guiJenksMessage = new JLabel();
@@ -588,12 +614,16 @@ public class JColorMapPane extends StyleElementEditor<ColorMap> implements Prope
 
         guiMaxSpinner.setModel(new SpinnerNumberModel(Double.valueOf(0.0d), null, null, Double.valueOf(1.0d)));
 
+        guiNoDataLabel.setText(MessageBundle.getString("noData")); // NOI18N
+
         guiFitToData.setText(MessageBundle.getString("style.rastercolormappane.fittodata")); // NOI18N
         guiFitToData.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 guiFitToDataActionPerformed(evt);
             }
         });
+
+        noDataContainer.setLayout(new BorderLayout());
 
         GroupLayout jPanel1Layout = new GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -633,7 +663,11 @@ public class JColorMapPane extends StyleElementEditor<ColorMap> implements Prope
                         .addPreferredGap(ComponentPlacement.UNRELATED)
                         .addComponent(guiNaN)
                         .addPreferredGap(ComponentPlacement.RELATED)
-                        .addComponent(guiInvert))))
+                        .addComponent(guiInvert))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(guiNoDataLabel)
+                        .addPreferredGap(ComponentPlacement.RELATED)
+                        .addComponent(noDataContainer, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
 
         jPanel1Layout.linkSize(SwingConstants.HORIZONTAL, new Component[] {guiBand, guiMaxSpinner, guiMinSpinner, guiNbStep});
@@ -656,6 +690,10 @@ public class JColorMapPane extends StyleElementEditor<ColorMap> implements Prope
                     .addComponent(guiNaN)
                     .addComponent(guiInvert))
                 .addPreferredGap(ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(Alignment.TRAILING)
+                    .addComponent(guiNoDataLabel)
+                    .addComponent(noDataContainer, GroupLayout.PREFERRED_SIZE, 14, GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(Alignment.BASELINE)
                     .addComponent(guiLblBand)
                     .addComponent(guiBand, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
@@ -672,6 +710,8 @@ public class JColorMapPane extends StyleElementEditor<ColorMap> implements Prope
                     .addComponent(guiGenerate)
                     .addComponent(guiFitToData)))
         );
+
+        jPanel1Layout.linkSize(SwingConstants.VERTICAL, new Component[] {guiNaN, guiNoDataLabel, noDataContainer});
 
         guiTableScroll.setViewportView(guiTable);
 
@@ -847,6 +887,7 @@ public class JColorMapPane extends StyleElementEditor<ColorMap> implements Prope
     private JSpinner guiMinSpinner;
     private JCheckBox guiNaN;
     private JSpinner guiNbStep;
+    private JLabel guiNoDataLabel;
     private JComboBox guiPalette;
     private JButton guiRemoveAll;
     private JXTable guiTable;
@@ -855,6 +896,7 @@ public class JColorMapPane extends StyleElementEditor<ColorMap> implements Prope
     private JPanel jPanel1;
     private JLabel maxLabel;
     private JLabel minLabel;
+    private JPanel noDataContainer;
     // End of variables declaration//GEN-END:variables
 
     private void guiAddOneActionPerformed(final ActionEvent evt) {
@@ -1066,6 +1108,11 @@ public class JColorMapPane extends StyleElementEditor<ColorMap> implements Prope
         return SF.colorMap(function);
     }
 
+    @Override
+    protected Object[] getFirstColumnComponents() {
+        return new Object[]{};
+    }
+    
     private void getInterpolationPoints(final double min, final double max, List<Entry<Double, Color>> steps) throws CoverageStoreException {
         for(int s=0,l=steps.size();s<l;s++){
             final Entry<Double, Color> step = steps.get(s);
@@ -1449,7 +1496,15 @@ public class JColorMapPane extends StyleElementEditor<ColorMap> implements Prope
             if(item instanceof String){
                 paletteName = (String)item;
             }
-            return SF.jenksFunction(FF.literal(guiNbStep.getModel().getValue()), FF.literal(paletteName), fallback);
+            final double [] noData = (double[])noDataEditor.getValue();
+            final Set<Literal> noDataLiteral = new HashSet<Literal>();
+            if (guiNaN.isSelected()) {
+                noDataLiteral.add(FF.literal(Double.NaN));
+            }
+            for (int i = 0; i < noData.length; i++) {
+                noDataLiteral.add(FF.literal(noData[i]));
+            }
+            return SF.jenksFunction(FF.literal(guiNbStep.getModel().getValue()), FF.literal(paletteName), fallback, new ArrayList<Literal>(noDataLiteral));
         }
 
         @Override

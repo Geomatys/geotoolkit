@@ -25,10 +25,12 @@ import java.awt.image.RenderedImage;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -57,16 +59,27 @@ public class DefaultJenks extends AbstractExpression implements Jenks {
     private Literal paletteName;
     private Literal fallback;
 
+    private double[] noData;
     private Map<Double, Color> colorMap;
     
     public DefaultJenks() {
     }
 
-    public DefaultJenks(final Literal classNumber, final Literal paletteName, final Literal fallback) {
+    public DefaultJenks(final Literal classNumber, final Literal paletteName, final Literal fallback, List<Literal> noDataLiteral) {
         this.classNumber = (classNumber == null) ? new DefaultLiteral(10) : classNumber;
         this.paletteName = (paletteName == null) ? new DefaultLiteral("rainbow") : paletteName;
         this.fallback = (fallback == null) ? DEFAULT_FALLBACK : fallback;
         colorMap = new HashMap<Double, Color>();
+        
+        if (noDataLiteral == null || noDataLiteral.isEmpty()) {
+            noData = new double[] {Double.NaN};
+        } else {
+            noData = new double[noDataLiteral.size()];
+            for (int i = 0; i < noDataLiteral.size(); i++) {
+                noData[i] = (Double) noDataLiteral.get(i).getValue();
+            }
+            Arrays.sort(noData);
+        }
     }
     
     @Override
@@ -77,6 +90,11 @@ public class DefaultJenks extends AbstractExpression implements Jenks {
     @Override
     public Literal getPalette() {
         return paletteName;
+    }
+    
+    @Override
+    public double[] getNoData() {
+        return noData;
     }
 
     @Override
@@ -89,6 +107,9 @@ public class DefaultJenks extends AbstractExpression implements Jenks {
         final List<Expression> params = new ArrayList<Expression>();
         params.add(classNumber);
         params.add(paletteName);
+        for (int i = 0; i < noData.length; i++) {
+            params.add(new DefaultLiteral(noData[i]));
+        }
         return params;
     }
 
@@ -115,38 +136,37 @@ public class DefaultJenks extends AbstractExpression implements Jenks {
             final int width = data.getWidth();
             final int height = data.getHeight();
 
-            //TODO use a simple list to get all distinct pixel values and sort this list before
-            //convert it into an array and give it to classification algorithm
-            final Map<Double, Double> valuesStats = new TreeMap<Double, Double>();
+            final Set<Double> values = new TreeSet<Double>();
             
-            int[] pixel = new int[numBands];
+            double[] pixel = new double[numBands];
             Double key = Double.NaN;
             for (int y = 0; y < height; y++) {
                 for (int x = 0; x < width; x++) {
                     data.getPixel(x, y, pixel);
+                    
+                    //arbitrary only get the value ofthe first band
+                    //TODO add bandIndex input parameter in Jenks function
                     key = Double.valueOf(pixel[0]);
-                    if (valuesStats.containsKey(key)) {
-                        valuesStats.put(key, valuesStats.get(key) + 1);
-                    } else {
-                        valuesStats.put(key, 1.0);
+                    
+                    //bypass noData values
+                    if (Arrays.binarySearch(noData, key) < 0 && !values.contains(key)) {
+                        values.add(key);
                     }
                 }
             }
             
             //prevent classification errors if requested classes is superior to computable classe number.
-            final int computableClasses = valuesStats.size();
+            final int computableClasses = values.size();
             if (classes > computableClasses) {
                 classes = computableClasses;
                 LOGGER.log(Level.WARNING, "Not enough distinct data to compute the requested number of class. Jenks will be computed for {0} classes.", classes);
             }
             
-            final double[] pixelValues = new double[valuesStats.size()];
-            final double[] pixelOccurs = new double[valuesStats.size()];
+            final double[] pixelValues = new double[values.size()];
             
             int index = 0;
-            for (final Map.Entry<Double, Double> pix : valuesStats.entrySet()) {
-                pixelValues[index] = pix.getKey().doubleValue(); 
-                pixelOccurs[index] = pix.getValue().doubleValue();
+            for (Double val : values) {
+                pixelValues[index] = val.doubleValue(); 
                 index++;
             }
             
@@ -187,14 +207,17 @@ public class DefaultJenks extends AbstractExpression implements Jenks {
                 lastindex = indexes[i];
             }
             
+            //set no-data value as transparent
+            for (int i = 0; i < noData.length; i++) {
+                colorMap.put(noData[i], new Color(0, 0, 0, 0));
+            }
+             
             /*
              * HACK byte -> no-data = 255 else no-data = Double.NaN 
              * TODO find more elegent way to support no-data values.
              */
             if (dataType == DataBuffer.TYPE_BYTE) {
                 colorMap.put(255.0, new Color(0, 0, 0, 0));
-            } else {
-                colorMap.put(Double.NaN, new Color(0, 0, 0, 0));
             }
             
             final BufferedImage bufferedImg = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);

@@ -56,30 +56,30 @@ public class JStylePane extends StyleElementEditor<MutableStyle>{
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-
-
-
-
-
         jXTitledPanel1 = new JXTitledPanel();
         jck_default = new JCheckBox();
-        jLabel2 = new JLabel();
+        guiName = new JLabel();
         jtf_name = new JTextField();
-        jLabel1 = new JLabel();
+        guiTitle = new JLabel();
         jtf_title = new JTextField();
         jtf_abstract = new JTextField();
-        jLabel3 = new JLabel();
+        guiAbstract = new JLabel();
+        guiLabelDefault = new JLabel();
 
         jXTitledPanel1.setBorder(BorderFactory.createEtchedBorder());
         jXTitledPanel1.setTitle(MessageBundle.getString("general")); // NOI18N
-        jck_default.setText(MessageBundle.getString("default")); // NOI18N
-        jLabel2.setHorizontalAlignment(SwingConstants.RIGHT);
-        jLabel2.setText(MessageBundle.getString("name")); // NOI18N
-        jLabel1.setFont(jLabel1.getFont().deriveFont(jLabel1.getFont().getStyle() | Font.BOLD));
-        jLabel1.setHorizontalAlignment(SwingConstants.RIGHT);
-        jLabel1.setText(MessageBundle.getString("title")); // NOI18N
-        jLabel3.setHorizontalAlignment(SwingConstants.RIGHT);
-        jLabel3.setText(MessageBundle.getString("abstract")); // NOI18N
+
+        jck_default.setText(" ");
+
+        guiName.setText(MessageBundle.getString("name")); // NOI18N
+
+        guiTitle.setFont(guiTitle.getFont().deriveFont(guiTitle.getFont().getStyle() | Font.BOLD));
+        guiTitle.setText(MessageBundle.getString("title")); // NOI18N
+
+        guiAbstract.setText(MessageBundle.getString("abstract")); // NOI18N
+
+        guiLabelDefault.setText(MessageBundle.getString("default")); // NOI18N
+
         GroupLayout jXTitledPanel1Layout = new GroupLayout(jXTitledPanel1);
         jXTitledPanel1.setLayout(jXTitledPanel1Layout);
         jXTitledPanel1Layout.setHorizontalGroup(
@@ -88,44 +88,49 @@ public class JStylePane extends StyleElementEditor<MutableStyle>{
                 .addGroup(jXTitledPanel1Layout.createParallelGroup(Alignment.LEADING)
                     .addGroup(jXTitledPanel1Layout.createSequentialGroup()
                         .addGap(12, 12, 12)
-                        .addComponent(jLabel2, GroupLayout.DEFAULT_SIZE, 75, Short.MAX_VALUE)
+                        .addComponent(guiName, GroupLayout.DEFAULT_SIZE, 75, Short.MAX_VALUE)
                         .addPreferredGap(ComponentPlacement.RELATED)
                         .addComponent(jtf_name, GroupLayout.DEFAULT_SIZE, 199, Short.MAX_VALUE))
                     .addGroup(jXTitledPanel1Layout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(jLabel1)
+                        .addComponent(guiTitle)
                         .addPreferredGap(ComponentPlacement.RELATED)
                         .addComponent(jtf_title, GroupLayout.DEFAULT_SIZE, 199, Short.MAX_VALUE))
                     .addGroup(jXTitledPanel1Layout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(jLabel3)
+                        .addGroup(jXTitledPanel1Layout.createParallelGroup(Alignment.LEADING)
+                            .addComponent(guiAbstract)
+                            .addComponent(guiLabelDefault))
                         .addPreferredGap(ComponentPlacement.RELATED)
-                        .addComponent(jtf_abstract, GroupLayout.DEFAULT_SIZE, 199, Short.MAX_VALUE))
-                    .addGroup(jXTitledPanel1Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jck_default)))
+                        .addGroup(jXTitledPanel1Layout.createParallelGroup(Alignment.LEADING)
+                            .addGroup(jXTitledPanel1Layout.createSequentialGroup()
+                                .addComponent(jck_default)
+                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addComponent(jtf_abstract, GroupLayout.DEFAULT_SIZE, 199, Short.MAX_VALUE))))
                 .addContainerGap())
         );
 
-        jXTitledPanel1Layout.linkSize(SwingConstants.HORIZONTAL, new Component[] {jLabel1, jLabel2, jLabel3});
+        jXTitledPanel1Layout.linkSize(SwingConstants.HORIZONTAL, new Component[] {guiAbstract, guiName, guiTitle});
 
         jXTitledPanel1Layout.setVerticalGroup(
             jXTitledPanel1Layout.createParallelGroup(Alignment.LEADING)
             .addGroup(jXTitledPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jXTitledPanel1Layout.createParallelGroup(Alignment.BASELINE)
-                    .addComponent(jLabel2)
+                    .addComponent(guiName)
                     .addComponent(jtf_name, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(ComponentPlacement.RELATED)
                 .addGroup(jXTitledPanel1Layout.createParallelGroup(Alignment.BASELINE)
-                    .addComponent(jLabel1)
+                    .addComponent(guiTitle)
                     .addComponent(jtf_title, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(ComponentPlacement.RELATED)
                 .addGroup(jXTitledPanel1Layout.createParallelGroup(Alignment.BASELINE)
-                    .addComponent(jLabel3)
+                    .addComponent(guiAbstract)
                     .addComponent(jtf_abstract, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(ComponentPlacement.RELATED)
-                .addComponent(jck_default)
+                .addGroup(jXTitledPanel1Layout.createParallelGroup(Alignment.BASELINE)
+                    .addComponent(jck_default)
+                    .addComponent(guiLabelDefault))
                 .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -143,9 +148,10 @@ public class JStylePane extends StyleElementEditor<MutableStyle>{
     
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private JLabel jLabel1;
-    private JLabel jLabel2;
-    private JLabel jLabel3;
+    private JLabel guiAbstract;
+    private JLabel guiLabelDefault;
+    private JLabel guiName;
+    private JLabel guiTitle;
     private JXTitledPanel jXTitledPanel1;
     private JCheckBox jck_default;
     private JTextField jtf_abstract;
@@ -191,6 +197,11 @@ public class JStylePane extends StyleElementEditor<MutableStyle>{
     @Override
     public void apply() {
         create();
+    }
+    
+    @Override
+    protected Object[] getFirstColumnComponents() {
+        return new Object[]{guiTitle,guiName,guiAbstract,guiLabelDefault};
     }
     
 }

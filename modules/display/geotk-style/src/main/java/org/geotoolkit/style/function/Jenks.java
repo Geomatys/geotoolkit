@@ -47,6 +47,13 @@ public interface Jenks extends Function {
     Literal getPalette();
     
     /**
+     * Get no-data values
+     * @return
+     */
+    @XmlElement("noData")
+    double[] getNoData();
+    
+    /**
     * Generated color map. 
     * @return map of value and associated color.
     */

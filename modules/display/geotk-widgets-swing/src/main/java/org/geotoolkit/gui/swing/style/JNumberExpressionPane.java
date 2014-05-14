@@ -170,4 +170,9 @@ private void guiNumberStateChanged(final ChangeEvent evt) {//GEN-FIRST:event_gui
         }
     }
 
+    @Override
+    protected Object[] getFirstColumnComponents() {
+        return new Object[]{};
+    }
+    
 }

@@ -150,6 +150,10 @@ public class JChannelSelectionPane extends StyleElementEditor<ChannelSelection>{
         
     }
     
+    @Override
+    protected Object[] getFirstColumnComponents() {
+        return new Object[]{guiRed,guiGreen,guiBlue,guiGray};
+    }
     
     /** This method is called from within the constructor to
      * initialize the form.
@@ -252,7 +256,7 @@ public class JChannelSelectionPane extends StyleElementEditor<ChannelSelection>{
                 .addComponent(jPanel1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(ComponentPlacement.RELATED)
                 .addComponent(jSeparator2, GroupLayout.PREFERRED_SIZE, 10, GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(Alignment.TRAILING, false)
                     .addComponent(jSeparator1, Alignment.LEADING)
                     .addGroup(Alignment.LEADING, layout.createSequentialGroup()
@@ -271,7 +275,7 @@ public class JChannelSelectionPane extends StyleElementEditor<ChannelSelection>{
                         .addComponent(guiLblGray, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(ComponentPlacement.RELATED)
                         .addComponent(guiGray, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap())
+                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 

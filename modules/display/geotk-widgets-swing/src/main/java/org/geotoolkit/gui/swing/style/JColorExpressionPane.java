@@ -161,4 +161,9 @@ private void guiSpecialPropertyChange(final PropertyChangeEvent evt) {//GEN-FIRS
         }
     }
 
+    @Override
+    protected Object[] getFirstColumnComponents() {
+        return new Object[]{};
+    }
+    
 }

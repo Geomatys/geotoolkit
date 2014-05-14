@@ -95,7 +95,6 @@ public class JLineJoinExpressionPane extends StyleElementEditor<Expression>{
         gridBagConstraints.gridx = 3;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = GridBagConstraints.BOTH;
-        gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
         add(guiSpecial, gridBagConstraints);
 
@@ -112,7 +111,6 @@ public class JLineJoinExpressionPane extends StyleElementEditor<Expression>{
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = GridBagConstraints.BOTH;
-        gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
         add(guiRound, gridBagConstraints);
 
@@ -128,7 +126,6 @@ public class JLineJoinExpressionPane extends StyleElementEditor<Expression>{
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = GridBagConstraints.BOTH;
-        gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
         add(guiMiter, gridBagConstraints);
 
@@ -144,7 +141,6 @@ public class JLineJoinExpressionPane extends StyleElementEditor<Expression>{
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = GridBagConstraints.BOTH;
-        gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
         add(guiBevel, gridBagConstraints);
         gridBagConstraints = new GridBagConstraints();
@@ -220,4 +216,9 @@ private void guiBevelActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_g
         }
     }
 
+    @Override
+    protected Object[] getFirstColumnComponents() {
+        return new Object[]{};
+    }
+    
 }

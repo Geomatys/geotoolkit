@@ -52,6 +52,10 @@ public class JPolygonSymbolizerAdvanced extends StyleElementEditor<PolygonSymbol
     public JPolygonSymbolizerAdvanced() {
         super(PolygonSymbolizer.class);
         initComponents();
+        
+        //align labels
+        alignLabelColumnWidth(this);
+        
     }
 
     /**
@@ -82,7 +86,7 @@ public class JPolygonSymbolizerAdvanced extends StyleElementEditor<PolygonSymbol
     @Override
     public void parse(final PolygonSymbolizer symbol) {
         if (symbol != null) {
-            guiGeom.setGeom(symbol.getGeometryPropertyName());
+            guiGeom.parse(symbol.getGeometryPropertyName());
             guiFill.parse(symbol.getFill());
             guiStroke.parse(symbol.getStroke());
             guiOffset.parse(symbol.getPerpendicularOffset());
@@ -98,7 +102,7 @@ public class JPolygonSymbolizerAdvanced extends StyleElementEditor<PolygonSymbol
     public PolygonSymbolizer create() {
         return getStyleFactory().polygonSymbolizer(
                 "PolygonSymbolizer",
-                guiGeom.getGeom(),
+                guiGeom.create(),
                 StyleConstants.DEFAULT_DESCRIPTION,
                 guiUOM.create(),
                 guiStroke.create(), 
@@ -107,6 +111,11 @@ public class JPolygonSymbolizerAdvanced extends StyleElementEditor<PolygonSymbol
                 guiOffset.create() );
     }
 
+    @Override
+    protected Object[] getFirstColumnComponents() {
+        return new Object[]{guiGeom,guiUOM,guiFill,guiStroke,guiOffset,guiDisp};
+    }
+    
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -121,7 +130,9 @@ public class JPolygonSymbolizerAdvanced extends StyleElementEditor<PolygonSymbol
         jPanel4 = new JPanel();
         guiOffset = new JOffSetPane();
         guiDisp = new JDisplacementPane();
+        jPanel2 = new JPanel();
         guiFill = new JFillPane();
+        jPanel3 = new JPanel();
         guiStroke = new JStrokePane();
 
         setOpaque(false);
@@ -138,7 +149,7 @@ public class JPolygonSymbolizerAdvanced extends StyleElementEditor<PolygonSymbol
                 .addGroup(jPanel1Layout.createParallelGroup(Alignment.LEADING)
                     .addComponent(guiGeom, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                     .addComponent(guiUOM, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(77, Short.MAX_VALUE))
+                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jPanel1Layout.linkSize(SwingConstants.HORIZONTAL, new Component[] {guiGeom, guiUOM});
@@ -146,6 +157,7 @@ public class JPolygonSymbolizerAdvanced extends StyleElementEditor<PolygonSymbol
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
                 .addComponent(guiGeom, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(ComponentPlacement.RELATED)
                 .addComponent(guiUOM, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
@@ -164,28 +176,65 @@ public class JPolygonSymbolizerAdvanced extends StyleElementEditor<PolygonSymbol
                 .addGroup(jPanel4Layout.createParallelGroup(Alignment.LEADING)
                     .addComponent(guiOffset, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                     .addComponent(guiDisp, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(86, Short.MAX_VALUE))
+                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
+                .addContainerGap()
                 .addComponent(guiOffset, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(ComponentPlacement.RELATED)
                 .addComponent(guiDisp, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        guiFill.setBorder(BorderFactory.createTitledBorder(MessageBundle.getString("fill"))); // NOI18N
+        jPanel2.setBorder(BorderFactory.createTitledBorder(MessageBundle.getString("fill"))); // NOI18N
+        jPanel2.setOpaque(false);
 
-        guiStroke.setBorder(BorderFactory.createTitledBorder(MessageBundle.getString("stroke"))); // NOI18N
+        GroupLayout jPanel2Layout = new GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(guiFill, GroupLayout.DEFAULT_SIZE, 226, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(guiFill, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
+        jPanel3.setBorder(BorderFactory.createTitledBorder(MessageBundle.getString("stroke"))); // NOI18N
+        jPanel3.setOpaque(false);
+
+        GroupLayout jPanel3Layout = new GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(guiStroke, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(guiStroke, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+        );
 
         GroupLayout layout = new GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(Alignment.LEADING)
             .addComponent(jPanel1, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(guiFill, GroupLayout.DEFAULT_SIZE, 271, Short.MAX_VALUE)
-            .addComponent(guiStroke, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel2, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel3, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(jPanel4, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
@@ -193,11 +242,12 @@ public class JPolygonSymbolizerAdvanced extends StyleElementEditor<PolygonSymbol
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(ComponentPlacement.RELATED)
-                .addComponent(guiFill, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                .addComponent(jPanel3, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(ComponentPlacement.RELATED)
-                .addComponent(guiStroke, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                .addComponent(jPanel2, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(ComponentPlacement.RELATED)
-                .addComponent(jPanel4, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                .addComponent(jPanel4, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -208,6 +258,8 @@ public class JPolygonSymbolizerAdvanced extends StyleElementEditor<PolygonSymbol
     private JStrokePane guiStroke;
     private JUOMPane guiUOM;
     private JPanel jPanel1;
+    private JPanel jPanel2;
+    private JPanel jPanel3;
     private JPanel jPanel4;
     // End of variables declaration//GEN-END:variables
 }

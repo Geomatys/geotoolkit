@@ -93,6 +93,10 @@ public class JDisplacementPane extends StyleElementEditor<Displacement>{
                 guiY.create());
     }
 
+    @Override
+    protected Object[] getFirstColumnComponents() {
+        return new Object[]{guiLabelX,jLabel2};
+    }
 
     /** This method is called from within the constructor to
      * initialize the form.
@@ -102,14 +106,14 @@ public class JDisplacementPane extends StyleElementEditor<Displacement>{
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jLabel1 = new JLabel();
+        guiLabelX = new JLabel();
         jLabel2 = new JLabel();
         guiX = new JNumberExpressionPane();
         guiY = new JNumberExpressionPane();
 
         setOpaque(false);
 
-        jLabel1.setText(MessageBundle.getString("x")); // NOI18N
+        guiLabelX.setText(MessageBundle.getString("x")); // NOI18N
 
         jLabel2.setText(MessageBundle.getString("y")); // NOI18N
         jLabel2.setVerticalTextPosition(SwingConstants.TOP);
@@ -131,22 +135,19 @@ public class JDisplacementPane extends StyleElementEditor<Displacement>{
         layout.setHorizontalGroup(
             layout.createParallelGroup(Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jLabel1)
+                .addGroup(layout.createParallelGroup(Alignment.LEADING)
+                    .addComponent(guiLabelX)
+                    .addComponent(jLabel2))
                 .addPreferredGap(ComponentPlacement.RELATED)
-                .addComponent(guiX, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jLabel2)
-                .addPreferredGap(ComponentPlacement.RELATED)
-                .addComponent(guiY, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                .addGroup(layout.createParallelGroup(Alignment.LEADING)
+                    .addComponent(guiY, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(guiX, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
         );
-
-        layout.linkSize(SwingConstants.HORIZONTAL, new Component[] {jLabel1, jLabel2});
-
         layout.setVerticalGroup(
             layout.createParallelGroup(Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(Alignment.LEADING)
-                    .addComponent(jLabel1)
+                    .addComponent(guiLabelX)
                     .addComponent(guiX, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(Alignment.LEADING)
@@ -154,7 +155,7 @@ public class JDisplacementPane extends StyleElementEditor<Displacement>{
                     .addComponent(jLabel2)))
         );
 
-        layout.linkSize(SwingConstants.VERTICAL, new Component[] {guiX, jLabel1});
+        layout.linkSize(SwingConstants.VERTICAL, new Component[] {guiLabelX, guiX});
 
         layout.linkSize(SwingConstants.VERTICAL, new Component[] {guiY, jLabel2});
 
@@ -170,9 +171,9 @@ public class JDisplacementPane extends StyleElementEditor<Displacement>{
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private JLabel guiLabelX;
     private JNumberExpressionPane guiX;
     private JNumberExpressionPane guiY;
-    private JLabel jLabel1;
     private JLabel jLabel2;
     // End of variables declaration//GEN-END:variables
 

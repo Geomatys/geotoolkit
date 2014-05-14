@@ -25,27 +25,27 @@
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
-              <Component id="jLabel1" linkSize="1" min="-2" max="-2" attributes="0"/>
+              <Component id="guiLabelCap" linkSize="1" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="GuiStrokeLineCap" min="-2" max="-2" attributes="0"/>
           </Group>
           <Group type="102" alignment="0" attributes="0">
-              <Component id="jLabel2" linkSize="1" min="-2" max="-2" attributes="0"/>
+              <Component id="guiLabelJoin" linkSize="1" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="GuiStrokeLineJoin" min="-2" max="-2" attributes="0"/>
           </Group>
           <Group type="102" alignment="0" attributes="0">
-              <Component id="lbl_b_width" linkSize="1" min="-2" max="-2" attributes="0"/>
+              <Component id="guiLabelWidth" linkSize="1" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="GuiStrokeWidth" min="-2" max="-2" attributes="0"/>
           </Group>
           <Group type="102" alignment="0" attributes="0">
-              <Component id="lbl_b_alpha" linkSize="1" min="-2" max="-2" attributes="0"/>
+              <Component id="guiLabelAlpha" linkSize="1" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="GuiStrokeAlpha" min="-2" max="-2" attributes="0"/>
           </Group>
           <Group type="102" alignment="0" attributes="0">
-              <Component id="lbl_b_alpha1" linkSize="1" min="-2" max="-2" attributes="0"/>
+              <Component id="guiLabelDashes" linkSize="1" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="GuiStrokeDashes" min="-2" max="-2" attributes="1"/>
           </Group>
@@ -70,27 +70,27 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
               <Group type="103" groupAlignment="1" max="-2" attributes="0">
-                  <Component id="jLabel1" linkSize="2" max="32767" attributes="1"/>
+                  <Component id="guiLabelCap" linkSize="2" max="32767" attributes="1"/>
                   <Component id="GuiStrokeLineCap" linkSize="2" alignment="1" max="32767" attributes="1"/>
               </Group>
               <EmptySpace min="-2" pref="8" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="1" max="-2" attributes="0">
-                  <Component id="jLabel2" linkSize="3" max="32767" attributes="1"/>
+                  <Component id="guiLabelJoin" linkSize="3" max="32767" attributes="1"/>
                   <Component id="GuiStrokeLineJoin" linkSize="3" alignment="1" max="32767" attributes="1"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="1" max="-2" attributes="0">
-                  <Component id="lbl_b_width" max="32767" attributes="1"/>
+                  <Component id="guiLabelWidth" max="32767" attributes="1"/>
                   <Component id="GuiStrokeWidth" alignment="1" min="-2" max="-2" attributes="1"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="1" max="-2" attributes="0">
-                  <Component id="lbl_b_alpha" max="32767" attributes="1"/>
+                  <Component id="guiLabelAlpha" max="32767" attributes="1"/>
                   <Component id="GuiStrokeAlpha" alignment="1" min="-2" max="-2" attributes="1"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                  <Component id="lbl_b_alpha1" max="32767" attributes="1"/>
+                  <Component id="guiLabelDashes" max="32767" attributes="1"/>
                   <Component id="GuiStrokeDashes" alignment="0" min="-2" max="-2" attributes="1"/>
               </Group>
               <EmptySpace type="separate" max="-2" attributes="0"/>
@@ -145,41 +145,36 @@
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="butStrokeActionPerformed"/>
       </Events>
     </Component>
-    <Component class="javax.swing.JLabel" name="jLabel1">
+    <Component class="javax.swing.JLabel" name="guiLabelCap">
       <Properties>
-        <Property name="horizontalAlignment" type="int" value="4"/>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
           <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="linecap" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
         </Property>
       </Properties>
     </Component>
-    <Component class="javax.swing.JLabel" name="jLabel2">
+    <Component class="javax.swing.JLabel" name="guiLabelJoin">
       <Properties>
-        <Property name="horizontalAlignment" type="int" value="4"/>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
           <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="linejoin" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
         </Property>
       </Properties>
     </Component>
-    <Component class="javax.swing.JLabel" name="lbl_b_alpha">
+    <Component class="javax.swing.JLabel" name="guiLabelAlpha">
       <Properties>
-        <Property name="horizontalAlignment" type="int" value="4"/>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
           <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="opacity" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
         </Property>
       </Properties>
     </Component>
-    <Component class="javax.swing.JLabel" name="lbl_b_width">
+    <Component class="javax.swing.JLabel" name="guiLabelWidth">
       <Properties>
-        <Property name="horizontalAlignment" type="int" value="4"/>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
           <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="width" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
         </Property>
       </Properties>
     </Component>
-    <Component class="javax.swing.JLabel" name="lbl_b_alpha1">
+    <Component class="javax.swing.JLabel" name="guiLabelDashes">
       <Properties>
-        <Property name="horizontalAlignment" type="int" value="4"/>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
           <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="dashes" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
         </Property>

@@ -21,17 +21,17 @@
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
-              <Component id="lbl_color1" linkSize="1" min="-2" max="-2" attributes="0"/>
+              <Component id="guiLabelColor" linkSize="1" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="guiColor" min="-2" max="-2" attributes="0"/>
           </Group>
           <Group type="102" alignment="0" attributes="0">
-              <Component id="lbl2" linkSize="1" min="-2" max="-2" attributes="0"/>
+              <Component id="guiLabelAlpha" linkSize="1" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="guiAlpha" min="-2" max="-2" attributes="0"/>
           </Group>
           <Group type="102" alignment="0" attributes="0">
-              <Component id="jLabel3" linkSize="1" min="-2" max="-2" attributes="0"/>
+              <Component id="guiLabelFill" linkSize="1" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="butFill" min="-2" max="-2" attributes="0"/>
           </Group>
@@ -41,17 +41,17 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
               <Group type="103" groupAlignment="1" attributes="0">
-                  <Component id="lbl_color1" min="-2" max="-2" attributes="1"/>
+                  <Component id="guiLabelColor" min="-2" max="-2" attributes="1"/>
                   <Component id="guiColor" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                  <Component id="lbl2" max="32767" attributes="1"/>
+                  <Component id="guiLabelAlpha" max="32767" attributes="1"/>
                   <Component id="guiAlpha" alignment="0" max="32767" attributes="1"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="jLabel3" alignment="3" min="-2" max="-2" attributes="1"/>
+                  <Component id="guiLabelFill" alignment="3" min="-2" max="-2" attributes="1"/>
                   <Component id="butFill" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
           </Group>
@@ -73,25 +73,22 @@
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="butFillActionPerformed"/>
       </Events>
     </Component>
-    <Component class="javax.swing.JLabel" name="jLabel3">
+    <Component class="javax.swing.JLabel" name="guiLabelFill">
       <Properties>
-        <Property name="horizontalAlignment" type="int" value="4"/>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
           <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="graphic" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
         </Property>
       </Properties>
     </Component>
-    <Component class="javax.swing.JLabel" name="lbl2">
+    <Component class="javax.swing.JLabel" name="guiLabelAlpha">
       <Properties>
-        <Property name="horizontalAlignment" type="int" value="4"/>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
           <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="opacity" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
         </Property>
       </Properties>
     </Component>
-    <Component class="javax.swing.JLabel" name="lbl_color1">
+    <Component class="javax.swing.JLabel" name="guiLabelColor">
       <Properties>
-        <Property name="horizontalAlignment" type="int" value="4"/>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
           <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="color" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
         </Property>

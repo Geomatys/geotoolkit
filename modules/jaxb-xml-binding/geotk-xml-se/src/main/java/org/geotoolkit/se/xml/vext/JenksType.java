@@ -16,21 +16,22 @@
  */
 package org.geotoolkit.se.xml.vext;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.*;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
+
 import org.geotoolkit.se.xml.v110.FunctionType;
 
 /**
- * Java class for Jenks function.
- * @module pending
+ * JAXB binding class for Jenks function.
+ *
  * @author Quentin Boileau (Geomatys)
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "JenksType", propOrder = {
     "classNumber",
-    "palette"
+    "palette",
+    "noData"
 })
 public class JenksType extends FunctionType {
     
@@ -39,6 +40,9 @@ public class JenksType extends FunctionType {
     
     @XmlElement(name = "Palette", namespace="http://www.opengis.net/se")
     protected String palette;
+
+    @XmlElement(name = "noData", namespace="http://www.opengis.net/se")
+    protected double[] noData;
 
     public Integer getClassNumber() {
         return classNumber;
@@ -55,5 +59,12 @@ public class JenksType extends FunctionType {
     public void setPalette(final String paletteName) {
         this.palette= paletteName;
     }
-    
+
+    public double[] getNoData() {
+        return noData;
+    }
+
+    public void setNoData(double[] noData) {
+        this.noData = noData;
+    }
 }

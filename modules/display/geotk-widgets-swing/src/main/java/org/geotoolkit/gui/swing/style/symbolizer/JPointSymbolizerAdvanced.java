@@ -48,6 +48,9 @@ public class JPointSymbolizerAdvanced extends StyleElementEditor<PointSymbolizer
     public JPointSymbolizerAdvanced() {
         super(PointSymbolizer.class);
         initComponents();
+        
+        //align labels
+        alignLabelColumnWidth(this);
     }
 
     /**
@@ -75,7 +78,7 @@ public class JPointSymbolizerAdvanced extends StyleElementEditor<PointSymbolizer
     @Override
     public void parse(final PointSymbolizer symbol) {
         if (symbol instanceof PointSymbolizer) {
-            guiGeom.setGeom(symbol.getGeometryPropertyName());
+            guiGeom.parse(symbol.getGeometryPropertyName());
             guiUOM.parse(symbol.getUnitOfMeasure());
             guiGraphic.parse(symbol.getGraphic());
     }
@@ -88,12 +91,17 @@ public class JPointSymbolizerAdvanced extends StyleElementEditor<PointSymbolizer
     public PointSymbolizer create() {
         return getStyleFactory().pointSymbolizer(
                 "PointSymbolizer",
-                guiGeom.getGeom(),
+                guiGeom.create(),
                 StyleConstants.DEFAULT_DESCRIPTION,
                 guiUOM.create(),
                 guiGraphic.create());
     }
 
+    @Override
+    protected Object[] getFirstColumnComponents() {
+        return new Object[]{guiUOM,guiGeom,guiGraphic};
+    }
+    
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -105,6 +113,7 @@ public class JPointSymbolizerAdvanced extends StyleElementEditor<PointSymbolizer
         jPanel1 = new JPanel();
         guiGeom = new JGeomPane();
         guiUOM = new JUOMPane();
+        jPanel2 = new JPanel();
         guiGraphic = new JGraphicPane();
 
         setOpaque(false);
@@ -129,32 +138,52 @@ public class JPointSymbolizerAdvanced extends StyleElementEditor<PointSymbolizer
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
                 .addComponent(guiGeom, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(ComponentPlacement.RELATED)
                 .addComponent(guiUOM, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        guiGraphic.setBorder(BorderFactory.createTitledBorder(MessageBundle.getString("graphic"))); // NOI18N
+        jPanel2.setBorder(BorderFactory.createTitledBorder(MessageBundle.getString("graphic"))); // NOI18N
+        jPanel2.setOpaque(false);
+
         guiGraphic.addPropertyChangeListener(new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent evt) {
                 JPointSymbolizerAdvanced.this.propertyChange(evt);
             }
         });
 
+        GroupLayout jPanel2Layout = new GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(guiGraphic, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(guiGraphic, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
         GroupLayout layout = new GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(Alignment.LEADING)
             .addComponent(jPanel1, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(guiGraphic, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel2, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(ComponentPlacement.RELATED)
-                .addComponent(guiGraphic, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                .addComponent(jPanel2, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -171,5 +200,6 @@ public class JPointSymbolizerAdvanced extends StyleElementEditor<PointSymbolizer
     private JGraphicPane guiGraphic;
     private JUOMPane guiUOM;
     private JPanel jPanel1;
+    private JPanel jPanel2;
     // End of variables declaration//GEN-END:variables
 }

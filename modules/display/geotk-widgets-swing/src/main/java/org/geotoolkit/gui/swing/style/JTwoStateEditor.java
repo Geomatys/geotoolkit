@@ -165,6 +165,11 @@ public class JTwoStateEditor<T> extends StyleElementEditor<T> implements Propert
         return current.create();
     }
 
+    @Override
+    protected Object[] getFirstColumnComponents() {
+        return new Object[]{};
+    }
+    
     public void propertyChange(PropertyChangeEvent evt) {
         if (PROPERTY_TARGET.equalsIgnoreCase(evt.getPropertyName())) {
             firePropertyChange(PROPERTY_TARGET, null, create());

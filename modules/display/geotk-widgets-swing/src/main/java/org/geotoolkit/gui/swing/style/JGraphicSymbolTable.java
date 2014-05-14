@@ -182,6 +182,11 @@ public class JGraphicSymbolTable <T> extends StyleElementEditor<List> {
         return model.getGraphics();
     }
 
+    @Override
+    protected Object[] getFirstColumnComponents() {
+        return new Object[]{};
+    }
+    
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is

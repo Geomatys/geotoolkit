@@ -90,6 +90,11 @@ public class JAnchorPointPane extends StyleElementEditor<AnchorPoint>{
                 guiX.create(),
                 guiY.create());
     }
+    
+    @Override
+    protected Object[] getFirstColumnComponents() {
+        return new Object[]{guiLabelX,guiLabelY};
+    }
 
     /** This method is called from within the constructor to
      * initialize the form.
@@ -99,16 +104,14 @@ public class JAnchorPointPane extends StyleElementEditor<AnchorPoint>{
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jLabel1 = new JLabel();
-        jLabel2 = new JLabel();
+        guiLabelX = new JLabel();
+        guiLabelY = new JLabel();
         guiX = new JNumberExpressionPane();
         guiY = new JNumberExpressionPane();
 
-        jLabel1.setHorizontalAlignment(SwingConstants.RIGHT);
-        jLabel1.setText(MessageBundle.getString("style.anchorpoint.x")); // NOI18N
+        guiLabelX.setText(MessageBundle.getString("style.anchorpoint.x")); // NOI18N
 
-        jLabel2.setHorizontalAlignment(SwingConstants.RIGHT);
-        jLabel2.setText(MessageBundle.getString("style.anchorpoint.y")); // NOI18N
+        guiLabelY.setText(MessageBundle.getString("style.anchorpoint.y")); // NOI18N
 
         guiX.addPropertyChangeListener(new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent evt) {
@@ -127,32 +130,32 @@ public class JAnchorPointPane extends StyleElementEditor<AnchorPoint>{
         layout.setHorizontalGroup(
             layout.createParallelGroup(Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jLabel1)
+                .addComponent(guiLabelX)
                 .addPreferredGap(ComponentPlacement.RELATED)
                 .addComponent(guiX, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jLabel2)
+                .addComponent(guiLabelY)
                 .addPreferredGap(ComponentPlacement.RELATED)
                 .addComponent(guiY, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
         );
 
-        layout.linkSize(SwingConstants.HORIZONTAL, new Component[] {jLabel1, jLabel2});
+        layout.linkSize(SwingConstants.HORIZONTAL, new Component[] {guiLabelX, guiLabelY});
 
         layout.setVerticalGroup(
             layout.createParallelGroup(Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(Alignment.LEADING)
-                    .addComponent(jLabel1)
+                    .addComponent(guiLabelX)
                     .addComponent(guiX, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(Alignment.LEADING)
                     .addComponent(guiY, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel2)))
+                    .addComponent(guiLabelY)))
         );
 
-        layout.linkSize(SwingConstants.VERTICAL, new Component[] {guiX, jLabel1});
+        layout.linkSize(SwingConstants.VERTICAL, new Component[] {guiLabelX, guiX});
 
-        layout.linkSize(SwingConstants.VERTICAL, new Component[] {guiY, jLabel2});
+        layout.linkSize(SwingConstants.VERTICAL, new Component[] {guiLabelY, guiY});
 
     }// </editor-fold>//GEN-END:initComponents
 
@@ -165,10 +168,10 @@ public class JAnchorPointPane extends StyleElementEditor<AnchorPoint>{
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private JLabel guiLabelX;
+    private JLabel guiLabelY;
     private JNumberExpressionPane guiX;
     private JNumberExpressionPane guiY;
-    private JLabel jLabel1;
-    private JLabel jLabel2;
     // End of variables declaration//GEN-END:variables
 
 }

@@ -24,6 +24,7 @@ import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SwingConstants;
 import org.geotoolkit.factory.FactoryFinder;
@@ -95,6 +96,11 @@ public class JMarkPane extends StyleElementEditor<Mark> {
                 guiFill.create());
     }
 
+    @Override
+    protected Object[] getFirstColumnComponents() {
+        return new Object[]{guiStroke,guiFill};
+    }
+    
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -103,72 +109,99 @@ public class JMarkPane extends StyleElementEditor<Mark> {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jXTitledPanel3 = new JXTitledPanel();
-        guiWKN = new JComboExpressionPane();
-        jLabel1 = new JLabel();
-        jXTitledPanel2 = new JXTitledPanel();
-        guiFill = new JFillPane();
-        jXTitledPanel1 = new JXTitledPanel();
+        jPanel2 = new JPanel();
         guiStroke = new JStrokePane();
+        jPanel4 = new JPanel();
+        guiFill = new JFillPane();
+        jPanel1 = new JPanel();
+        jLabel1 = new JLabel();
+        guiWKN = new JComboExpressionPane();
 
         setOpaque(false);
 
+        jPanel2.setBorder(BorderFactory.createTitledBorder(MessageBundle.getString("stroke"))); // NOI18N
 
+        GroupLayout jPanel2Layout = new GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(guiStroke, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(guiStroke, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
 
-        jXTitledPanel3.setBorder(BorderFactory.createEtchedBorder());
-        jXTitledPanel3.setTitle(MessageBundle.getString("general")); // NOI18N
+        jPanel4.setBorder(BorderFactory.createTitledBorder(MessageBundle.getString("fill"))); // NOI18N
+
+        GroupLayout jPanel4Layout = new GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+            jPanel4Layout.createParallelGroup(Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(guiFill, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        jPanel4Layout.setVerticalGroup(
+            jPanel4Layout.createParallelGroup(Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(guiFill, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        jPanel1.setBorder(BorderFactory.createTitledBorder(MessageBundle.getString("general"))); // NOI18N
+
         jLabel1.setFont(jLabel1.getFont().deriveFont(jLabel1.getFont().getStyle() | Font.BOLD));
-        jLabel1.setHorizontalAlignment(SwingConstants.RIGHT);
         jLabel1.setText(MessageBundle.getString("wellknownname")); // NOI18N
-        GroupLayout jXTitledPanel3Layout = new GroupLayout(jXTitledPanel3.getContentContainer());
-        jXTitledPanel3.getContentContainer().setLayout(jXTitledPanel3Layout);
-        jXTitledPanel3Layout.setHorizontalGroup(
-            jXTitledPanel3Layout.createParallelGroup(Alignment.LEADING)
-            .addGroup(jXTitledPanel3Layout.createSequentialGroup()
+
+        GroupLayout jPanel1Layout = new GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel1)
                 .addPreferredGap(ComponentPlacement.RELATED)
                 .addComponent(guiWKN, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(96, Short.MAX_VALUE))
+                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
-        jXTitledPanel3Layout.setVerticalGroup(
-            jXTitledPanel3Layout.createParallelGroup(Alignment.LEADING)
-            .addGroup(jXTitledPanel3Layout.createSequentialGroup()
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jXTitledPanel3Layout.createParallelGroup(Alignment.LEADING)
+                .addGroup(jPanel1Layout.createParallelGroup(Alignment.LEADING)
                     .addComponent(jLabel1)
                     .addComponent(guiWKN, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jXTitledPanel3Layout.linkSize(SwingConstants.VERTICAL, new Component[] {guiWKN, jLabel1});
-
-        jXTitledPanel2.setBorder(BorderFactory.createEtchedBorder());
-        jXTitledPanel2.setTitle(MessageBundle.getString("fill")); // NOI18N
-        jXTitledPanel2.getContentContainer().setLayout(new FlowLayout(FlowLayout.LEFT, 10, 5));
-        jXTitledPanel2.getContentContainer().add(guiFill);
-
-        jXTitledPanel1.setBorder(BorderFactory.createEtchedBorder());
-        jXTitledPanel1.setTitle(MessageBundle.getString("stroke")); // NOI18N
-        jXTitledPanel1.getContentContainer().setLayout(new FlowLayout(FlowLayout.LEFT, 10, 5));
-        jXTitledPanel1.getContentContainer().add(guiStroke);
+        jPanel1Layout.linkSize(SwingConstants.VERTICAL, new Component[] {guiWKN, jLabel1});
 
         GroupLayout layout = new GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(Alignment.LEADING)
-            .addComponent(jXTitledPanel3, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(jXTitledPanel1, GroupLayout.DEFAULT_SIZE, 272, Short.MAX_VALUE)
-            .addComponent(jXTitledPanel2, GroupLayout.DEFAULT_SIZE, 272, Short.MAX_VALUE)
+            .addComponent(jPanel1, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel2, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel4, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jXTitledPanel3, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                .addComponent(jPanel1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(ComponentPlacement.RELATED)
-                .addComponent(jXTitledPanel1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                .addComponent(jPanel2, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(ComponentPlacement.RELATED)
-                .addComponent(jXTitledPanel2, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                .addComponent(jPanel4, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -176,8 +209,9 @@ public class JMarkPane extends StyleElementEditor<Mark> {
     private JStrokePane guiStroke;
     private JComboExpressionPane guiWKN;
     private JLabel jLabel1;
-    private JXTitledPanel jXTitledPanel1;
-    private JXTitledPanel jXTitledPanel2;
-    private JXTitledPanel jXTitledPanel3;
+    private JPanel jPanel1;
+    private JPanel jPanel2;
+    private JPanel jPanel3;
+    private JPanel jPanel4;
     // End of variables declaration//GEN-END:variables
 }

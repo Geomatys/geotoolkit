@@ -67,6 +67,10 @@ public class JUOMPane extends StyleElementEditor<Unit>{
         }
     }
 
+    @Override
+    protected Object[] getFirstColumnComponents() {
+        return new Object[]{guiLabel};
+    }
     
     /** This method is called from within the constructor to
      * initialize the form.
@@ -77,12 +81,12 @@ public class JUOMPane extends StyleElementEditor<Unit>{
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jLabel1 = new JLabel();
+        guiLabel = new JLabel();
         jcb_uom = new JComboBox();
 
         setOpaque(false);
 
-        jLabel1.setText(MessageBundle.getString("unit")); // NOI18N
+        guiLabel.setText(MessageBundle.getString("unit")); // NOI18N
 
         jcb_uom.setModel(new DefaultComboBoxModel(new String[] { "Pixels", "Meters", "Feet" }));
         jcb_uom.addItemListener(new ItemListener() {
@@ -96,14 +100,14 @@ public class JUOMPane extends StyleElementEditor<Unit>{
         layout.setHorizontalGroup(
             layout.createParallelGroup(Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jLabel1)
+                .addComponent(guiLabel)
                 .addPreferredGap(ComponentPlacement.RELATED)
                 .addComponent(jcb_uom, 0, 63, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(Alignment.LEADING)
             .addGroup(layout.createParallelGroup(Alignment.BASELINE)
-                .addComponent(jLabel1)
+                .addComponent(guiLabel)
                 .addComponent(jcb_uom, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -115,7 +119,7 @@ public class JUOMPane extends StyleElementEditor<Unit>{
 
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private JLabel jLabel1;
+    private JLabel guiLabel;
     private JComboBox jcb_uom;
     // End of variables declaration//GEN-END:variables
 

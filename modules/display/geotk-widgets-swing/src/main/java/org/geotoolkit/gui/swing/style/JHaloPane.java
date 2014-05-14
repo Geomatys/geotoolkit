@@ -76,6 +76,11 @@ public class JHaloPane extends StyleElementEditor<Halo> {
     @Override
     public void apply() {
     }
+    
+    @Override
+    protected Object[] getFirstColumnComponents() {
+        return new Object[]{guiLabelWidth,guiFill};
+    }
 
     /** This method is called from within the constructor to
      * initialize the form.
@@ -86,7 +91,7 @@ public class JHaloPane extends StyleElementEditor<Halo> {
     private void initComponents() {
 
         guiFill = new JFillPane();
-        jLabel1 = new JLabel();
+        guiLabelWidth = new JLabel();
         guiRadius = new JNumberExpressionPane();
 
         setOpaque(false);
@@ -97,7 +102,7 @@ public class JHaloPane extends StyleElementEditor<Halo> {
             }
         });
 
-        jLabel1.setText(MessageBundle.getString("radius")); // NOI18N
+        guiLabelWidth.setText(MessageBundle.getString("radius")); // NOI18N
 
         guiRadius.addPropertyChangeListener(new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent evt) {
@@ -110,7 +115,7 @@ public class JHaloPane extends StyleElementEditor<Halo> {
         layout.setHorizontalGroup(
             layout.createParallelGroup(Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jLabel1)
+                .addComponent(guiLabelWidth)
                 .addPreferredGap(ComponentPlacement.RELATED)
                 .addComponent(guiRadius, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
             .addComponent(guiFill, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
@@ -119,7 +124,7 @@ public class JHaloPane extends StyleElementEditor<Halo> {
             layout.createParallelGroup(Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(Alignment.LEADING, false)
-                    .addComponent(jLabel1, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(guiLabelWidth, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(guiRadius, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(ComponentPlacement.RELATED)
                 .addComponent(guiFill, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
@@ -136,8 +141,8 @@ public class JHaloPane extends StyleElementEditor<Halo> {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private JFillPane guiFill;
+    private JLabel guiLabelWidth;
     private JNumberExpressionPane guiRadius;
-    private JLabel jLabel1;
     // End of variables declaration//GEN-END:variables
 
 }

@@ -116,4 +116,9 @@ public class JFillControlPane extends StyleElementEditor<Fill> {
         guiColorLabel.setVisible(bool);
     }
    
+    @Override
+    protected Object[] getFirstColumnComponents() {
+        return new Object[]{};
+    }
+    
 }

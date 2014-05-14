@@ -109,5 +109,10 @@ public class JGraphicSymbolControlPane extends StyleElementEditor<GraphicalSymbo
     public GraphicalSymbol create() {
         return paneGraphicalSymbolChooser.create();
     }
+    
+    @Override
+    protected Object[] getFirstColumnComponents() {
+        return new Object[]{};
+    }
    
 }

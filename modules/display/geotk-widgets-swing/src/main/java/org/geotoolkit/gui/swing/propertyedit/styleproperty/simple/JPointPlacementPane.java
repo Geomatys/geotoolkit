@@ -191,6 +191,11 @@ public class JPointPlacementPane extends StyleElementEditor<PointPlacement>{
                 guiRotation.create());
     }
     
+    @Override
+    protected Object[] getFirstColumnComponents() {
+        return new Object[]{};
+    }
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private JAnchorPointPane guiAnchor;
     private JNumberExpressionPane guiDisplacementX;

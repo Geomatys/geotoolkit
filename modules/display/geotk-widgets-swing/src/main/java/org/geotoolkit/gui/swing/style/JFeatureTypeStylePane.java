@@ -78,19 +78,16 @@ public class JFeatureTypeStylePane extends StyleElementEditor<MutableFeatureType
 
         setOpaque(false);
 
-
-
-
-
         jXTitledPanel1.setBorder(BorderFactory.createEtchedBorder());
         jXTitledPanel1.setTitle(MessageBundle.getString("general")); // NOI18N
+
         jLabel1.setFont(jLabel1.getFont().deriveFont(jLabel1.getFont().getStyle() | Font.BOLD));
-        jLabel1.setHorizontalAlignment(SwingConstants.RIGHT);
         jLabel1.setText(MessageBundle.getString("title")); // NOI18N
-        jLabel2.setHorizontalAlignment(SwingConstants.RIGHT);
+
         jLabel2.setText(MessageBundle.getString("name")); // NOI18N
-        jLabel3.setHorizontalAlignment(SwingConstants.RIGHT);
+
         jLabel3.setText(MessageBundle.getString("abstract")); // NOI18N
+
         jtf_title.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 jtf_titleActionPerformed(evt);
@@ -99,13 +96,6 @@ public class JFeatureTypeStylePane extends StyleElementEditor<MutableFeatureType
 
         GroupLayout jXTitledPanel1Layout = new GroupLayout(jXTitledPanel1);
         jXTitledPanel1.setLayout(jXTitledPanel1Layout);
-
-
-
-
-
-
-
         jXTitledPanel1Layout.setHorizontalGroup(
             jXTitledPanel1Layout.createParallelGroup(Alignment.LEADING)
             .addGroup(jXTitledPanel1Layout.createSequentialGroup()
@@ -148,12 +138,19 @@ public class JFeatureTypeStylePane extends StyleElementEditor<MutableFeatureType
 
         jXTitledPanel2.setBorder(BorderFactory.createEtchedBorder());
         jXTitledPanel2.setTitle(MessageBundle.getString("filter2")); // NOI18N
+
         jck_any.setText(MessageBundle.getString("semantic_any")); // NOI18N
+
         jck_point.setText(MessageBundle.getString("semantic_point")); // NOI18N
+
         jck_line.setText(MessageBundle.getString("semantic_line")); // NOI18N
+
         jck_polygon.setText(MessageBundle.getString("semantic_polygon")); // NOI18N
+
         jck_text.setText(MessageBundle.getString("semantic_text")); // NOI18N
+
         jck_raster.setText(MessageBundle.getString("semantic_raster")); // NOI18N
+
         jLabel4.setHorizontalAlignment(SwingConstants.RIGHT);
         jLabel4.setText(MessageBundle.getString("featuretypename")); // NOI18N
         jLabel4.setEnabled(false);
@@ -304,6 +301,11 @@ public class JFeatureTypeStylePane extends StyleElementEditor<MutableFeatureType
     @Override
     public void apply() {
         create();
+    }
+    
+    @Override
+    protected Object[] getFirstColumnComponents() {
+        return new Object[]{};
     }
     
 }

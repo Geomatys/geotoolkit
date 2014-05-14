@@ -115,5 +115,10 @@ public class JStrokeControlPane extends StyleElementEditor<Stroke> {
         guiStrokeButton.setEnabled(bool);
         guiStrokeLabel.setVisible(bool);
     }
+    
+    @Override
+    protected Object[] getFirstColumnComponents() {
+        return new Object[]{};
+    }
 
 }
