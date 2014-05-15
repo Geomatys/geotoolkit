@@ -202,11 +202,23 @@ public class NetCDFExtractor {
                 }
             }
             
+            // another round to try to find a main field
+            if (analyze.mainField == null) {
+                for (Field field : all) {
+                    // try to find a time field
+                    if ((analyze.featureType == TIMESERIES || analyze.featureType == TRAJECTORY || analyze.featureType == GRID) && field.label.toLowerCase().contains("time")) {
+                        analyze.mainField = field;
+                        analyze.phenfields.remove(field);
+                        break;
+                    }
+                }
+            }
+            
             // post analyze
             if (analyze.mainField != null) {
                 for (Field f : all) {
                     if (analyze.featureType != TRAJECTORY) {
-                        final String mainDimension = analyze.mainField.label;
+                        final String mainDimension = analyze.mainField.dimensionLabel;
                         // dimension order
                         if (!f.dimensionLabel.startsWith(mainDimension)) {
                             f.mainVariableFirst = false;

@@ -161,20 +161,20 @@ public class GeoSpatialBound {
             return null;
         }
         final List<Double> positions = new ArrayList<>();
-        positions.add(minx);
         positions.add(miny);
-        
         positions.add(minx);
-        positions.add(maxy);
         
+        positions.add(miny);
         positions.add(maxx);
+        
         positions.add(maxy);
-        
         positions.add(maxx);
-        positions.add(miny);
         
+        positions.add(maxy);
         positions.add(minx);
+        
         positions.add(miny);
+        positions.add(minx);
         
         
         if ("1.0.0".equals(version)) {

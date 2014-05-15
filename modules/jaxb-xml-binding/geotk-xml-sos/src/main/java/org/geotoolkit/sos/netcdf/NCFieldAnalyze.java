@@ -18,9 +18,11 @@ package org.geotoolkit.sos.netcdf;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import ucar.nc2.NetcdfFile;
 import ucar.nc2.Variable;
 
@@ -69,6 +71,24 @@ public class NCFieldAnalyze {
             return timeField != null;
         }
 
+        public Set<Field> getAllFields() {
+            final Set<Field> results = new HashSet<>(phenfields);
+            results.addAll(skippedFields);
+            if (mainField != null){
+                results.add(mainField);
+            }
+            if (latField != null) {
+                results.add(latField);
+            }
+            if (separatorField != null) {
+                results.add(separatorField);
+            }
+            if (timeField != null) {
+                results.add(timeField);
+            }
+            return results; 
+        }
+        
         @Override
         public boolean equals(final Object obj) {
             if (obj == this) {
