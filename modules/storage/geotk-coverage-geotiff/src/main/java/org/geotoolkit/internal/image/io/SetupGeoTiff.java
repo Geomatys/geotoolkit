@@ -16,10 +16,16 @@
  */
 package org.geotoolkit.internal.image.io;
 
+import java.util.Iterator;
 import java.util.Properties;
 //import org.geotoolkit.image.io.plugin.GeoTiffImageReader;
+import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.image.io.plugin.GeoTiffImageWriter;
+import org.geotoolkit.image.io.plugin.TiffImageReader;
 import org.geotoolkit.internal.SetupService;
+
+import javax.imageio.spi.IIORegistry;
+import javax.imageio.spi.ImageReaderSpi;
 
 
 /**
@@ -34,8 +40,15 @@ public final class SetupGeoTiff implements SetupService {
      */
     @Override
     public void initialize(final Properties properties, final boolean reinit) {
-//        GeoTiffImageReader.Spi.registerDefaults(null);
-        //GeoTiffImageWriter.Spi.registerDefaults(null);
+        IIORegistry registery = IIORegistry.getDefaultInstance();
+        final TiffImageReader.Spi tiffSpi = registery.getServiceProviderByClass(TiffImageReader.Spi.class);
+        final Iterator<ImageReaderSpi> it = registery.getServiceProviders(ImageReaderSpi.class, false);
+        while (it.hasNext()) {
+            final ImageReaderSpi current = it.next();
+            if (current != tiffSpi && ArraysExt.containsIgnoreCase(current.getFormatNames(), "tiff")) {
+                registery.setOrdering(ImageReaderSpi.class, tiffSpi, current);
+            }
+        }
     }
 
     /**
@@ -43,7 +56,5 @@ public final class SetupGeoTiff implements SetupService {
      */
     @Override
     public void shutdown() {
-//        GeoTiffImageReader.Spi.unregisterDefaults(null);
-        //GeoTiffImageWriter.Spi.unregisterDefaults(null);
     }
 }
