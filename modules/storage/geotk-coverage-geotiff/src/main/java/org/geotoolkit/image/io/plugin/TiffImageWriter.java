@@ -355,13 +355,15 @@ public class TiffImageWriter extends SpatialImageWriter {
     */
     @Override
     public void write(final IIOMetadata streamMetadata, final IIOImage image, final ImageWriteParam param) throws IOException {
-        ArgumentChecks.ensureNonNull("streamMetadata", streamMetadata);
         ArgumentChecks.ensureNonNull("IIOImage image", image);
         
         headProperties.clear();
-        //-- add streamMetadatas properties --//
-        addMetadataProperties(streamMetadata.getAsTree(streamMetadata.getNativeMetadataFormatName()), headProperties);
         
+        if (streamMetadata != null) {
+            //-- add streamMetadatas properties --//
+            addMetadataProperties(streamMetadata.getAsTree(streamMetadata.getNativeMetadataFormatName()), headProperties);
+        }
+            
         //-- get image --//
         final RenderedImage img   = image.getRenderedImage();
         
@@ -687,8 +689,11 @@ public class TiffImageWriter extends SpatialImageWriter {
     public void endWriteEmpty() throws IOException {
         //-- ecrire les bytecounts
         //-- ecrire les thumbnails
-        channel.seek(endOfFile - 1);
-        channel.writeByte(0);
+        if (!endOfFileReached) {
+            channel.seek(endOfFile - 1);
+            channel.writeByte(0);
+        }
+        endOfFileReached = false;
     }
 
     @Override
@@ -707,9 +712,10 @@ public class TiffImageWriter extends SpatialImageWriter {
         if (region == null) {
             dstRepRegion = destRegion;
         } else {
+            if (!destRegion.intersects(region))
+                throw new IllegalArgumentException("The specified region : "+region.toString()+" doesn't intersect region from image at index : "+imageIndex);
             dstRepRegion = destRegion.intersection(region);
         }
-//        super.prepareReplacePixels(imageIndex, region); //To change body of generated methods, choose Tools | Templates.
     }
         
     /**
@@ -1247,7 +1253,7 @@ public class TiffImageWriter extends SpatialImageWriter {
         final int subsampleX = param.getSourceXSubsampling();
         final int subsampleY = param.getSourceYSubsampling();
         if (subsampleX > 1 || subsampleY > 1)
-            throw new IllegalStateException("replace pixel with subsampling is not yet supported.");
+            throw new IllegalStateException("replace pixel with subsampling is not supported yet.");
         
         // ------------ Image properties ------------//
         final int imageMinX = image.getMinX();
@@ -1271,9 +1277,6 @@ public class TiffImageWriter extends SpatialImageWriter {
         final int dstNumXT = tileRegion.width / currentImgTW;
         assert tileRegion.width % currentImgTW == 0;
         
-//        final int dstNumYT = tileRegion.height / currentImgTH;
-//        assert tileRegion.height % currentImgTH == 0;
-        
         //-- definir intersection entre le rectangle de prepareReplacePixel et la zone representée par l'image
         //-- image coordinates
         final int imgMinX = param.getDestinationOffset().x;
@@ -1287,16 +1290,33 @@ public class TiffImageWriter extends SpatialImageWriter {
         final int trMaxX = trMinX + tileRegion.width;
         final int trMaxY = trMinY + tileRegion.height;
         
+//        //-- intersection between tile region and replace pixel area --//
+//        final int replaceMinX = Math.max(trMinX, dstRepRegion.x);
+//        final int replaceMinY = Math.max(trMinY, dstRepRegion.y);
+//        final int replaceMaxX = Math.min(trMaxX, dstRepRegion.x + dstRepRegion.width);
+//        final int replaceMaxY = Math.min(trMaxY, dstRepRegion.y + dstRepRegion.height);
+        
+        //-- inter
+//        final int interMinX = Math.max(imgMinX, replaceMinX);
+//        final int interMinY = Math.max(imgMinY, replaceMinY);
+//        final int interMaxX = Math.min(imgMaxX, replaceMaxX);
+//        final int interMaxY = Math.min(imgMaxY, replaceMaxY);
+        
         //-- inter
         final int interMinX = Math.max(imgMinX, trMinX);
         final int interMinY = Math.max(imgMinY, trMinY);
         final int interMaxX = Math.min(imgMaxX, trMaxX);
         final int interMaxY = Math.min(imgMaxY, trMaxY);
         
+        //-- if no intersection between current given image and replace pixel area do nothing --//
+        if (interMinX >= interMaxX || interMinY >= interMaxY) return;
+        
         //-- 
-        if (interMaxX == trMaxX && interMaxY == trMaxY) {
-            endOfFileReached = true;
-        }
+//        if (interMaxX == trMaxX && interMaxY == trMaxY) {
+//            endOfFileReached = true;
+//        }
+        
+        endOfFileReached = (interMaxX == trMaxX && interMaxY == trMaxY);
         
         //-- definir index destination des tuiles a parcourir
         final int ctMinX = (interMinX - trMinX) / currentImgTW;
@@ -1304,55 +1324,6 @@ public class TiffImageWriter extends SpatialImageWriter {
         final int ctMaxX = (interMaxX - trMinX + currentImgTW - 1) / currentImgTW;
         final int ctMaxY = (interMaxY - trMinY + currentImgTH - 1) / currentImgTH;
         //----------------------------------------------------------------//
-        
-//        assert bitPerSample != 0;
-//        
-//        final int numTiles = dstNumXT * dstNumYT;
-//        final Object byteCountArray;
-//        final long byteCountArraySize;
-//        final Object offsetArray;
-//        final long offsetArraySize;
-//        final short arrayType;
-//        if (isBigTIFF) {
-//            byteCountArray = new long[numTiles];
-//            offsetArray = new long[numTiles];
-//            arrayType = TYPE_LONG;
-//            byteCountArraySize = offsetArraySize = numTiles * TYPE_SIZE[TYPE_LONG];
-//        } else {
-//            byteCountArray = new int[numTiles];
-//            offsetArray = new int[numTiles];
-//            arrayType = TYPE_INT;
-//            byteCountArraySize = offsetArraySize = numTiles * TYPE_SIZE[TYPE_INT];
-//        }
-//
-//        final int buffPos = (int) channel.getStreamPosition();
-//        final int sampleSize = bitPerSample / Byte.SIZE;
-//        
-//        //-- to know if bytecountArray will be written deffered
-//        final int datasize = (isBigTIFF) ? Long.SIZE / Byte.SIZE : Integer.SIZE / Byte.SIZE;
-//        final long destByteCountArraySize = (byteCountArraySize > datasize) ? byteCountArraySize : 0;
-//        final long destOffsetArraySize    = (offsetArraySize    > datasize) ? offsetArraySize    : 0;
-//        
-//        //-- write current tile byte position --//
-//        final int currentByteCount = currentImgTW * currentImgTH * bitPerSample *  imagePixelStride / Byte.SIZE;
-//        final long tileOffsetBeg   = buffPos + destByteCountArraySize + destOffsetArraySize;//-- position in bytes
-//        long currentoffset         = tileOffsetBeg;
-//
-//        // fill byte count array
-//        if (isBigTIFF) {
-//            Arrays.fill((long[]) byteCountArray, currentByteCount);
-//            for (int i = 0; i < numTiles; i++) {
-//                Array.setLong(offsetArray, i, currentoffset);
-//                currentoffset += currentByteCount;
-//            }
-//        } else {
-//            Arrays.fill((int[]) byteCountArray, (int) currentByteCount);
-//            for (int i = 0; i < numTiles; i++) {
-//                Array.setInt(offsetArray, i, (int) currentoffset);
-//                currentoffset += currentByteCount;
-//            }
-//        }
-//        writeByteCountAndOffsets(byteCountTagPosition, arrayType, byteCountArray, offsetTagPosition, arrayType, offsetArray);
         
         final int destTileByteCount = currentImgTH * currentImgTW * imagePixelStride * sampleSize;
         
@@ -1365,9 +1336,6 @@ public class TiffImageWriter extends SpatialImageWriter {
         final DataBuffer initRastBuff = initRast.getDataBuffer();
         final int numbanks = initRastBuff.getNumBanks();
         final int dataType = initRastBuff.getDataType();
-        
-//        final int srcRegionMaxX = srcRegion.x + srcRegion.width;
-//        final int srcRegionMaxY = srcRegion.y + srcRegion.height;
         
         for (int bank = 0; bank < numbanks; bank++) {
             for (int cty = ctMinY; cty < ctMaxY; cty++) {//-- pour chaque tuile destination dans l'espace de l'image on determine 
