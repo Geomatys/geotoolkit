@@ -30,7 +30,7 @@ import org.geotoolkit.gui.swing.propertyedit.styleproperty.simple.JStrokeControl
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.gui.swing.style.JNumberExpressionPane;
 import org.geotoolkit.gui.swing.style.StyleElementEditor;
-import static org.geotoolkit.gui.swing.style.StyleElementEditor.PROPERTY_TARGET;
+import static org.geotoolkit.gui.swing.style.StyleElementEditor.PROPERTY_UPDATED;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.StyleConstants;
 import org.opengis.style.PolygonSymbolizer;
@@ -119,8 +119,8 @@ public class JPolygonSymbolizerSimple extends StyleElementEditor<PolygonSymboliz
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        if (PROPERTY_TARGET.equalsIgnoreCase(evt.getPropertyName())) {
-            firePropertyChange(PROPERTY_TARGET, null, create());
+        if (PROPERTY_UPDATED.equalsIgnoreCase(evt.getPropertyName())) {
+            firePropertyChange(PROPERTY_UPDATED, null, create());
         }
     }
 

@@ -19,8 +19,6 @@ package org.geotoolkit.gui.swing.style;
 
 import java.awt.Component;
 import java.awt.GraphicsEnvironment;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Arrays;
@@ -182,19 +180,22 @@ public class JFontPane extends StyleElementEditor<Font>{
             layout.createParallelGroup(GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                    .addComponent(guiLabelStyle)
-                    .addComponent(guiLabelSize)
-                    .addComponent(guiLabelFamily))
-                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                    .addComponent(guiSize, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                    .addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING, false)
-                        .addComponent(guiStyle, GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(guiFamily, GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(guiLabelWeight)
-                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(guiWeight, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                            .addComponent(guiLabelSize)
+                            .addComponent(guiLabelFamily)
+                            .addComponent(guiLabelStyle, GroupLayout.Alignment.TRAILING))
+                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                            .addComponent(guiSize, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                            .addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING, false)
+                                .addComponent(guiStyle, GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(guiFamily, GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(guiLabelWeight)
+                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(guiWeight, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
+                .addGap(6, 6, 6))
         );
 
         layout.linkSize(SwingConstants.HORIZONTAL, new Component[] {guiLabelFamily, guiLabelSize, guiLabelStyle, guiLabelWeight});
@@ -207,16 +208,17 @@ public class JFontPane extends StyleElementEditor<Font>{
                     .addComponent(guiLabelFamily))
                 .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                    .addComponent(guiStyle, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                    .addComponent(guiLabelSize))
-                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-                    .addComponent(guiSize, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                    .addComponent(guiLabelStyle))
-                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                    .addComponent(guiLabelWeight)
-                    .addComponent(guiWeight, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(guiStyle, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                        .addGap(12, 12, 12)
+                        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+                            .addComponent(guiSize, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                            .addComponent(guiLabelSize))
+                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                            .addComponent(guiLabelWeight)
+                            .addComponent(guiWeight, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(guiLabelStyle)))
         );
 
         layout.linkSize(SwingConstants.VERTICAL, new Component[] {guiFamily, guiLabelFamily});
@@ -231,8 +233,8 @@ public class JFontPane extends StyleElementEditor<Font>{
 
     private void propertyChange(PropertyChangeEvent evt) {//GEN-FIRST:event_propertyChange
         // TODO add your handling code here:
-        if (PROPERTY_TARGET.equalsIgnoreCase(evt.getPropertyName())) {            
-            firePropertyChange(PROPERTY_TARGET, null, create());
+        if (PROPERTY_UPDATED.equalsIgnoreCase(evt.getPropertyName())) {            
+            firePropertyChange(PROPERTY_UPDATED, null, create());
         }
     }//GEN-LAST:event_propertyChange
     

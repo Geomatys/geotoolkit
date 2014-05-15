@@ -247,7 +247,7 @@ public abstract class AbstractMapLayer extends AbstractMapItem implements MapLay
         }
 
         //fire a property change for others
-        firePropertyChange(STYLE_PROPERTY, event, this.getStyle());
+        firePropertyChange(STYLE_PROPERTY, this.getStyle(), this.getStyle());
 
     }
 

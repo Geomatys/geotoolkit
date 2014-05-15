@@ -18,15 +18,11 @@
 
 package org.geotoolkit.gui.swing.propertyedit.styleproperty;
 
-import java.awt.Component;
-import java.awt.Image;
 import java.util.logging.Level;
-import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.xml.bind.JAXBException;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.gui.swing.propertyedit.AbstractPropertyPane;
-
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.MapLayer;

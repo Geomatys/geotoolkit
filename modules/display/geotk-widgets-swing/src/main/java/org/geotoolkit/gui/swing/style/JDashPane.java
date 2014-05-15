@@ -24,6 +24,8 @@ import javax.swing.JSpinner;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import org.geotoolkit.factory.FactoryFinder;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.expression.Expression;
@@ -42,20 +44,34 @@ public class JDashPane extends javax.swing.JPanel {
      */
     public JDashPane() {
         initComponents();
-
+        
+        final ChangeListener chl = new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                propertyChange();
+            }
+        };
+        
+        guiBetween.addChangeListener(chl);
+        guiLength.addChangeListener(chl);
+        guiOffset.addChangeListener(chl);
     }
 
+    private void propertyChange(){
+        firePropertyChange(StyleElementEditor.PROPERTY_UPDATED, null, getDashes());
+    }
+    
     /**
      * 
      * @return float[]
      */
     public float[] getDashes() {
-        if ( ((Number)jsp_lenght.getValue()).doubleValue() == 0 || ((Number)jsp_between.getValue()).doubleValue() == 0) {
+        if ( ((Number)guiLength.getValue()).doubleValue() == 0 || ((Number)guiBetween.getValue()).doubleValue() == 0) {
             return null;
         } else {
             return new float[]{
-                (Float)jsp_lenght.getValue(),
-                (Float)jsp_between.getValue()
+                (Float)guiLength.getValue(),
+                (Float)guiBetween.getValue()
             };
         }
     }
@@ -67,11 +83,11 @@ public class JDashPane extends javax.swing.JPanel {
     public void setDashes(final float[] dashes) {
 
         if (dashes!= null && dashes.length != 0) {
-            jsp_lenght.setValue(dashes[0]);
-            jsp_between.setValue(dashes[1]);
+            guiLength.setValue(dashes[0]);
+            guiBetween.setValue(dashes[1]);
         }else{
-            jsp_lenght.setValue(0f);
-            jsp_between.setValue(0f);
+            guiLength.setValue(0f);
+            guiBetween.setValue(0f);
         }
     }
     
@@ -81,7 +97,7 @@ public class JDashPane extends javax.swing.JPanel {
      */
     public Expression getOffset(){
         FilterFactory FF = FactoryFinder.getFilterFactory(null);
-        return FF.literal(jsp_offset.getValue());
+        return FF.literal(guiOffset.getValue());
     }
 
        
@@ -92,9 +108,9 @@ public class JDashPane extends javax.swing.JPanel {
     public void setOffset(final Expression exp){
         
         if(exp != null){
-            jsp_offset.setValue( Float.parseFloat(exp.toString()) );
+            guiOffset.setValue( Float.parseFloat(exp.toString()) );
         }else{
-            jsp_offset.setValue(0f);
+            guiOffset.setValue(0f);
         }
       
     }
@@ -107,47 +123,45 @@ public class JDashPane extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jsp_offset = new JSpinner();
-        jsp_between = new JSpinner();
-        jsp_lenght = new JSpinner();
+        guiOffset = new JSpinner();
+        guiBetween = new JSpinner();
+        guiLength = new JSpinner();
 
-        jsp_offset.setModel(new SpinnerNumberModel(Float.valueOf(0.0f), null, null, Float.valueOf(1.0f)));
-        jsp_offset.setToolTipText("null");
+        guiOffset.setModel(new SpinnerNumberModel(Float.valueOf(0.0f), null, null, Float.valueOf(1.0f)));
 
-        jsp_between.setModel(new SpinnerNumberModel(Float.valueOf(0.0f), Float.valueOf(0.0f), null, Float.valueOf(1.0f)));
-        jsp_between.setToolTipText("null");
+        guiBetween.setModel(new SpinnerNumberModel(Float.valueOf(0.0f), Float.valueOf(0.0f), null, Float.valueOf(1.0f)));
 
-        jsp_lenght.setModel(new SpinnerNumberModel(Float.valueOf(0.0f), Float.valueOf(0.0f), null, Float.valueOf(1.0f)));
-        jsp_lenght.setToolTipText("null");
+        guiLength.setModel(new SpinnerNumberModel(Float.valueOf(0.0f), Float.valueOf(0.0f), null, Float.valueOf(1.0f)));
 
         GroupLayout layout = new GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jsp_lenght, GroupLayout.PREFERRED_SIZE, 46, GroupLayout.PREFERRED_SIZE)
+                .addComponent(guiLength, GroupLayout.PREFERRED_SIZE, 46, GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(ComponentPlacement.RELATED)
-                .addComponent(jsp_between, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                .addComponent(guiBetween, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(ComponentPlacement.RELATED)
-                .addComponent(jsp_offset, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                .addComponent(guiOffset, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
         );
 
-        layout.linkSize(SwingConstants.HORIZONTAL, new Component[] {jsp_between, jsp_lenght, jsp_offset});
+        layout.linkSize(SwingConstants.HORIZONTAL, new Component[] {guiBetween, guiLength, guiOffset});
 
         layout.setVerticalGroup(
             layout.createParallelGroup(Alignment.LEADING)
             .addGroup(layout.createParallelGroup(Alignment.BASELINE)
-                .addComponent(jsp_lenght, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                .addComponent(jsp_between, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                .addComponent(jsp_offset, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                .addComponent(guiLength, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                .addComponent(guiBetween, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                .addComponent(guiOffset, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
         );
 
-        layout.linkSize(SwingConstants.VERTICAL, new Component[] {jsp_between, jsp_lenght, jsp_offset});
+        layout.linkSize(SwingConstants.VERTICAL, new Component[] {guiBetween, guiLength, guiOffset});
 
     }// </editor-fold>//GEN-END:initComponents
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private JSpinner jsp_between;
-    private JSpinner jsp_lenght;
-    private JSpinner jsp_offset;
+    private JSpinner guiBetween;
+    private JSpinner guiLength;
+    private JSpinner guiOffset;
     // End of variables declaration//GEN-END:variables
 }

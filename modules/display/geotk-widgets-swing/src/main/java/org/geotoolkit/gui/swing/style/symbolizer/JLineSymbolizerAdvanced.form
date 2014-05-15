@@ -77,8 +77,14 @@
       </Layout>
       <SubComponents>
         <Component class="org.geotoolkit.gui.swing.style.JGeomPane" name="guiGeom">
+          <Events>
+            <EventHandler event="propertyChange" listener="java.beans.PropertyChangeListener" parameters="java.beans.PropertyChangeEvent" handler="propertyChange"/>
+          </Events>
         </Component>
         <Component class="org.geotoolkit.gui.swing.style.JUOMPane" name="guiUOM">
+          <Events>
+            <EventHandler event="propertyChange" listener="java.beans.PropertyChangeListener" parameters="java.beans.PropertyChangeEvent" handler="propertyChange"/>
+          </Events>
         </Component>
       </SubComponents>
     </Container>

@@ -18,12 +18,16 @@
 package org.geotoolkit.gui.swing.style;
 
 import java.awt.Component;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SwingConstants;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.MapLayer;
 import org.opengis.style.LinePlacement;
@@ -124,15 +128,48 @@ public class JLinePlacementPane extends StyleElementEditor<LinePlacement>{
 
         guiLabelOffset.setText(MessageBundle.getString("offset2")); // NOI18N
 
+        guiOffset.addPropertyChangeListener(new PropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent evt) {
+                propertyChange2(evt);
+            }
+        });
+
+        guiInitial.addPropertyChangeListener(new PropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent evt) {
+                propertyChange2(evt);
+            }
+        });
+
         guiLabelInitial.setText(MessageBundle.getString("initial_gap")); // NOI18N
 
         guiLabelGap.setText(MessageBundle.getString("gap")); // NOI18N
 
+        guiGap.addPropertyChangeListener(new PropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent evt) {
+                propertyChange2(evt);
+            }
+        });
+
         guiRepetead.setText(" ");
+        guiRepetead.addChangeListener(new ChangeListener() {
+            public void stateChanged(ChangeEvent evt) {
+                propertyChange(evt);
+            }
+        });
 
         guiAligned.setText(" ");
+        guiAligned.addChangeListener(new ChangeListener() {
+            public void stateChanged(ChangeEvent evt) {
+                propertyChange(evt);
+            }
+        });
 
         guiGeneralized.setText(" ");
+        guiGeneralized.addChangeListener(new ChangeListener() {
+            public void stateChanged(ChangeEvent evt) {
+                propertyChange(evt);
+            }
+        });
 
         guiLabelRepeat.setText(MessageBundle.getString("repeated")); // NOI18N
 
@@ -213,6 +250,16 @@ public class JLinePlacementPane extends StyleElementEditor<LinePlacement>{
         layout.linkSize(SwingConstants.VERTICAL, new Component[] {guiGap, guiLabelGap});
 
     }// </editor-fold>//GEN-END:initComponents
+
+    private void propertyChange(ChangeEvent evt) {//GEN-FIRST:event_propertyChange
+        firePropertyChange(PROPERTY_UPDATED, null, create());
+    }//GEN-LAST:event_propertyChange
+
+    private void propertyChange2(PropertyChangeEvent evt) {//GEN-FIRST:event_propertyChange2
+        if (PROPERTY_UPDATED.equalsIgnoreCase(evt.getPropertyName())) {            
+            firePropertyChange(PROPERTY_UPDATED, null, create());
+        }
+    }//GEN-LAST:event_propertyChange2
     
     
     // Variables declaration - do not modify//GEN-BEGIN:variables

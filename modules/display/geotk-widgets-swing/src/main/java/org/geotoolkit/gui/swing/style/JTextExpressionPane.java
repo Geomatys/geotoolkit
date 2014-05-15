@@ -116,7 +116,7 @@ public class JTextExpressionPane extends StyleElementEditor<Expression>{
     }//GEN-LAST:event_guiSpecialPropertyChange
 
     private void guiTextActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_guiTextActionPerformed
-        firePropertyChange(PROPERTY_TARGET, null, create());
+        firePropertyChange(PROPERTY_UPDATED, null, create());
         parse( getFilterFactory().literal( guiText.getText()) );
     }//GEN-LAST:event_guiTextActionPerformed
 

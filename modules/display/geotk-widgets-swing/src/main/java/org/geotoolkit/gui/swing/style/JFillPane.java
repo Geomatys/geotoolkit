@@ -189,8 +189,8 @@ public class JFillPane extends StyleElementEditor<Fill>{
 
     private void propertyChange(PropertyChangeEvent evt) {//GEN-FIRST:event_propertyChange
         // TODO add your handling code here:
-        if (PROPERTY_TARGET.equalsIgnoreCase(evt.getPropertyName())) {            
-            firePropertyChange(PROPERTY_TARGET, null, create());
+        if (PROPERTY_UPDATED.equalsIgnoreCase(evt.getPropertyName())) {            
+            firePropertyChange(PROPERTY_UPDATED, null, create());
             parse(create());
         }
     }//GEN-LAST:event_propertyChange

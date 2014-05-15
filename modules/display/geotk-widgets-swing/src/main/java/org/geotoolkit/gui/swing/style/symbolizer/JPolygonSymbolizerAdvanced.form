@@ -80,8 +80,14 @@
       </Layout>
       <SubComponents>
         <Component class="org.geotoolkit.gui.swing.style.JGeomPane" name="guiGeom">
+          <Events>
+            <EventHandler event="propertyChange" listener="java.beans.PropertyChangeListener" parameters="java.beans.PropertyChangeEvent" handler="propertyChange"/>
+          </Events>
         </Component>
         <Component class="org.geotoolkit.gui.swing.style.JUOMPane" name="guiUOM">
+          <Events>
+            <EventHandler event="propertyChange" listener="java.beans.PropertyChangeListener" parameters="java.beans.PropertyChangeEvent" handler="propertyChange"/>
+          </Events>
         </Component>
       </SubComponents>
     </Container>
@@ -124,8 +130,14 @@
       </Layout>
       <SubComponents>
         <Component class="org.geotoolkit.gui.swing.style.JOffSetPane" name="guiOffset">
+          <Events>
+            <EventHandler event="propertyChange" listener="java.beans.PropertyChangeListener" parameters="java.beans.PropertyChangeEvent" handler="propertyChange"/>
+          </Events>
         </Component>
         <Component class="org.geotoolkit.gui.swing.style.JDisplacementPane" name="guiDisp">
+          <Events>
+            <EventHandler event="propertyChange" listener="java.beans.PropertyChangeListener" parameters="java.beans.PropertyChangeEvent" handler="propertyChange"/>
+          </Events>
         </Component>
       </SubComponents>
     </Container>
@@ -146,7 +158,7 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="guiFill" pref="226" max="32767" attributes="0"/>
+                  <Component id="guiFill" max="32767" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
@@ -163,6 +175,9 @@
       </Layout>
       <SubComponents>
         <Component class="org.geotoolkit.gui.swing.style.JFillPane" name="guiFill">
+          <Events>
+            <EventHandler event="propertyChange" listener="java.beans.PropertyChangeListener" parameters="java.beans.PropertyChangeEvent" handler="propertyChange"/>
+          </Events>
         </Component>
       </SubComponents>
     </Container>
@@ -200,6 +215,9 @@
       </Layout>
       <SubComponents>
         <Component class="org.geotoolkit.gui.swing.style.JStrokePane" name="guiStroke">
+          <Events>
+            <EventHandler event="propertyChange" listener="java.beans.PropertyChangeListener" parameters="java.beans.PropertyChangeEvent" handler="propertyChange"/>
+          </Events>
         </Component>
       </SubComponents>
     </Container>

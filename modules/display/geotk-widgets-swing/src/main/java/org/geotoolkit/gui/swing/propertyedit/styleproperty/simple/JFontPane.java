@@ -197,7 +197,7 @@ public class JFontPane extends StyleElementEditor<Font> {
         guiStyle.setText(String.valueOf(guiStyleList.getSelectedValue()));
         guiFontFamily.setText(String.valueOf(guiFamilyFontList.getSelectedValue()));
         
-        firePropertyChange(PROPERTY_TARGET, null, create());
+        firePropertyChange(PROPERTY_UPDATED, null, create());
     }//GEN-LAST:event_propertyChange
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private JList guiFamilyFontList;

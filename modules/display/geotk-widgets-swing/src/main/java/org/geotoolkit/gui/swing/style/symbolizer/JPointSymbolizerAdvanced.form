@@ -73,8 +73,14 @@
       </Layout>
       <SubComponents>
         <Component class="org.geotoolkit.gui.swing.style.JGeomPane" name="guiGeom">
+          <Events>
+            <EventHandler event="propertyChange" listener="java.beans.PropertyChangeListener" parameters="java.beans.PropertyChangeEvent" handler="propertyChange"/>
+          </Events>
         </Component>
         <Component class="org.geotoolkit.gui.swing.style.JUOMPane" name="guiUOM">
+          <Events>
+            <EventHandler event="propertyChange" listener="java.beans.PropertyChangeListener" parameters="java.beans.PropertyChangeEvent" handler="propertyChange"/>
+          </Events>
         </Component>
       </SubComponents>
     </Container>
@@ -82,7 +88,7 @@
       <Properties>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-            <TitledBorder title="Graphics :">
+            <TitledBorder title="Graphics">
               <ResourceString PropertyName="titleX" bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="graphic" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
             </TitledBorder>
           </Border>

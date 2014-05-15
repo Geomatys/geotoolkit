@@ -28,7 +28,7 @@ import javax.swing.JOptionPane;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.gui.swing.style.JPreview;
 import org.geotoolkit.gui.swing.style.StyleElementEditor;
-import static org.geotoolkit.gui.swing.style.StyleElementEditor.PROPERTY_TARGET;
+import static org.geotoolkit.gui.swing.style.StyleElementEditor.PROPERTY_UPDATED;
 import org.geotoolkit.map.MapLayer;
 import org.opengis.style.Fill;
 
@@ -45,7 +45,7 @@ public class JFillControlPane extends StyleElementEditor<Fill> {
             JOptionPane.showMessageDialog(null, paneFillChooser, "", JOptionPane.PLAIN_MESSAGE);
             final Fill created = create();
             parse(created);
-            JFillControlPane.this.firePropertyChange(PROPERTY_TARGET, null, created);
+            JFillControlPane.this.firePropertyChange(PROPERTY_UPDATED, null, created);
         }
     };
             

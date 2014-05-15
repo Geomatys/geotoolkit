@@ -107,8 +107,14 @@
       </Properties>
     </Component>
     <Component class="org.geotoolkit.gui.swing.style.JNumberExpressionPane" name="guiOffset">
+      <Events>
+        <EventHandler event="propertyChange" listener="java.beans.PropertyChangeListener" parameters="java.beans.PropertyChangeEvent" handler="propertyChange2"/>
+      </Events>
     </Component>
     <Component class="org.geotoolkit.gui.swing.style.JNumberExpressionPane" name="guiInitial">
+      <Events>
+        <EventHandler event="propertyChange" listener="java.beans.PropertyChangeListener" parameters="java.beans.PropertyChangeEvent" handler="propertyChange2"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JLabel" name="guiLabelInitial">
       <Properties>
@@ -125,21 +131,33 @@
       </Properties>
     </Component>
     <Component class="org.geotoolkit.gui.swing.style.JNumberExpressionPane" name="guiGap">
+      <Events>
+        <EventHandler event="propertyChange" listener="java.beans.PropertyChangeListener" parameters="java.beans.PropertyChangeEvent" handler="propertyChange2"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JCheckBox" name="guiRepetead">
       <Properties>
         <Property name="text" type="java.lang.String" value=" "/>
       </Properties>
+      <Events>
+        <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="propertyChange"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JCheckBox" name="guiAligned">
       <Properties>
         <Property name="text" type="java.lang.String" value=" "/>
       </Properties>
+      <Events>
+        <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="propertyChange"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JCheckBox" name="guiGeneralized">
       <Properties>
         <Property name="text" type="java.lang.String" value=" "/>
       </Properties>
+      <Events>
+        <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="propertyChange"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JLabel" name="guiLabelRepeat">
       <Properties>

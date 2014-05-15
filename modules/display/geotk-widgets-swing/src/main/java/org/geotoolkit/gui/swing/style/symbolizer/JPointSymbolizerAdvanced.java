@@ -121,6 +121,18 @@ public class JPointSymbolizerAdvanced extends StyleElementEditor<PointSymbolizer
         jPanel1.setBorder(BorderFactory.createTitledBorder(MessageBundle.getString("general"))); // NOI18N
         jPanel1.setOpaque(false);
 
+        guiGeom.addPropertyChangeListener(new PropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent evt) {
+                JPointSymbolizerAdvanced.this.propertyChange(evt);
+            }
+        });
+
+        guiUOM.addPropertyChangeListener(new PropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent evt) {
+                JPointSymbolizerAdvanced.this.propertyChange(evt);
+            }
+        });
+
         GroupLayout jPanel1Layout = new GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -188,10 +200,8 @@ public class JPointSymbolizerAdvanced extends StyleElementEditor<PointSymbolizer
     }// </editor-fold>//GEN-END:initComponents
 
     private void propertyChange(PropertyChangeEvent evt) {//GEN-FIRST:event_propertyChange
-        // TODO add your handling code here:
-        if (PROPERTY_TARGET.equalsIgnoreCase(evt.getPropertyName())) {            
-            firePropertyChange(PROPERTY_TARGET, null, create());
-            parse(create());
+        if (PROPERTY_UPDATED.equalsIgnoreCase(evt.getPropertyName())) {            
+            firePropertyChange(PROPERTY_UPDATED, null, create());
         }
     }//GEN-LAST:event_propertyChange
 

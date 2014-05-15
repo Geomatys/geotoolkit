@@ -202,6 +202,8 @@ private void guiBevelActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_g
             guiRound.setSelected(false);
             guiMiter.setSelected(false);
         }
+        
+        firePropertyChange(PROPERTY_UPDATED, null, create());
     }
 
     @Override

@@ -27,11 +27,12 @@ import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.util.EventObject;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.logging.Level;
@@ -72,6 +73,9 @@ import org.geotoolkit.sld.xml.StyleXmlIO;
 import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyle;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.map.LayerListener;
+import org.geotoolkit.map.MapItem;
+import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.opengis.style.Style;
 import org.opengis.style.Symbolizer;
 import org.opengis.util.FactoryException;
@@ -80,17 +84,18 @@ import org.opengis.util.FactoryException;
  * @author Johann Sorel (Puzzle-GIS)
  * @module pending
  */
-public class JAdvancedStylePanel extends StyleElementEditor implements PropertyPane {
+public class JAdvancedStylePanel extends StyleElementEditor implements PropertyPane, LayerListener {
 
     private MapLayer layer = null;
     private Object style = null;
+    
     private StyleElementEditor editor = null;
     private TreePath editedPath = null;
     
     //used to dissociate selection and apply
     private volatile boolean applying = false;
-    
-    private final TreeSelectionListener listener = new TreeSelectionListener() {
+        
+    private final TreeSelectionListener treeListener = new TreeSelectionListener() {
 
         @Override
         public void valueChanged(TreeSelectionEvent e) {
@@ -103,10 +108,11 @@ public class JAdvancedStylePanel extends StyleElementEditor implements PropertyP
                 applyEditor(e.getOldLeadSelectionPath());
 
                 pan_info.removeAll();
-
+                
                 if (path != null) {
                     final Object val = path.getLastPathComponent();
                     editor = StyleElementEditor.findEditor(val);
+                    editedPath = path;
                     if(editor != null){
                         editor.setLayer(getLayer());
                         editor.parse(val);
@@ -119,12 +125,14 @@ public class JAdvancedStylePanel extends StyleElementEditor implements PropertyP
             }
         }
     };
+        
+    private final Weak layerListener = new Weak(this);
 
     /** Creates new form JAdvancedStylePanel */
     public JAdvancedStylePanel() {
         super(Object.class);
         initComponents();
-        tree.addTreeSelectionListener(listener);
+        tree.addTreeSelectionListener(treeListener);
         guiXml.setEditorKit(new XMLEditorKit());
         
         guiTabs.addChangeListener(new ChangeListener() {
@@ -290,7 +298,15 @@ public class JAdvancedStylePanel extends StyleElementEditor implements PropertyP
 
     @Override
     public void setLayer(final MapLayer layer) {
+        if(this.layer==layer)return;
+        
+        if(this.layer!=null){
+            layerListener.unregisterSource(this.layer);
+        }        
         this.layer = layer;
+        if(this.layer!=null){
+            layerListener.registerSource(this.layer);
+        }
     }
 
     @Override
@@ -372,6 +388,20 @@ public class JAdvancedStylePanel extends StyleElementEditor implements PropertyP
     JPanel pan_info;
     JStyleTree tree;
     // End of variables declaration//GEN-END:variables
+
+    //style events    
+    @Override
+    public void styleChange(MapLayer source, EventObject event) {}
+
+    @Override
+    public void itemChange(CollectionChangeEvent<MapItem> event) {}
+
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+        if(MapLayer.STYLE_PROPERTY.equals(evt.getPropertyName()) && evt.getOldValue()!=evt.getNewValue()){
+            parse(this.layer.getStyle());
+        }
+    }
 
 
     private static final class XMLEditorKit extends StyledEditorKit {

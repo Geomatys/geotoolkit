@@ -48,8 +48,10 @@ import org.opengis.util.InternationalString;
  */
 public abstract class StyleElementEditor<T> extends JPanel {
 
-    public static final String PROPERTY_TARGET = "target";
-    public static final String PROPERTY_EDITED = "edited";
+    /**
+     * Called when the style definition has changed.
+     */
+    public static final String PROPERTY_UPDATED = "updated";
 
     /**
      * The service loader. This loader and its iterator are not synchronized;

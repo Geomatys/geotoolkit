@@ -17,6 +17,8 @@
  */
 package org.geotoolkit.gui.swing.style;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
@@ -75,6 +77,11 @@ public class JGeomPane extends StyleElementEditor<String> {
         setOpaque(false);
 
         guiBox.setEditable(true);
+        guiBox.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                guiBoxActionPerformed(evt);
+            }
+        });
 
         guiLabel.setText(MessageBundle.getString("geometry")); // NOI18N
 
@@ -94,6 +101,10 @@ public class JGeomPane extends StyleElementEditor<String> {
                 .addComponent(guiBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
         );
     }// </editor-fold>//GEN-END:initComponents
+
+    private void guiBoxActionPerformed(ActionEvent evt) {//GEN-FIRST:event_guiBoxActionPerformed
+        firePropertyChange(PROPERTY_UPDATED, null, create());
+    }//GEN-LAST:event_guiBoxActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

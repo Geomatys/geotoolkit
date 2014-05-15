@@ -48,6 +48,7 @@ import org.geotoolkit.gui.swing.style.JShadedReliefPane;
 import org.geotoolkit.gui.swing.style.JTextExpressionPane;
 import org.geotoolkit.gui.swing.style.JUOMPane;
 import org.geotoolkit.gui.swing.style.StyleElementEditor;
+import static org.geotoolkit.gui.swing.style.StyleElementEditor.PROPERTY_UPDATED;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.StyleConstants;
 import static org.geotoolkit.style.StyleConstants.DEFAULT_CONTRAST_ENHANCEMENT;
@@ -94,6 +95,7 @@ public class JRasterSymbolizerPane extends StyleElementEditor<RasterSymbolizer> 
                 }
                 guiColorimetryPane.revalidate();
                 guiColorimetryPane.repaint();
+                firePropertyChange(PROPERTY_UPDATED, null, create());
             }
         });
         
@@ -101,6 +103,19 @@ public class JRasterSymbolizerPane extends StyleElementEditor<RasterSymbolizer> 
         guiOverLap.setVisible(false);
         guiOverlapsLbl.setVisible(false);
         guiOpacity.setExpressionVisible(false);
+        
+        final PropertyChangeListener propListener = new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent evt) {
+                JRasterSymbolizerPane.this.propertyChange(evt);
+            }
+        };
+        
+        guiChannelPane.addPropertyChangeListener(propListener);
+        guiColorMapPane.addPropertyChangeListener(propListener);
+        guiLinePane.addPropertyChangeListener(propListener);
+        guiPolygonPane.addPropertyChangeListener(propListener);
+        
     }
 
     /**
@@ -440,9 +455,8 @@ public class JRasterSymbolizerPane extends StyleElementEditor<RasterSymbolizer> 
     }//GEN-LAST:event_guinoneActionPerformed
 
     private void propertyChange(PropertyChangeEvent evt) {//GEN-FIRST:event_propertyChange
-        if (PROPERTY_TARGET.equalsIgnoreCase(evt.getPropertyName())) {            
-            firePropertyChange(PROPERTY_TARGET, null, create());
-            parse(create());
+        if (PROPERTY_UPDATED.equalsIgnoreCase(evt.getPropertyName())) {            
+            firePropertyChange(PROPERTY_UPDATED, null, create());
         }
     }//GEN-LAST:event_propertyChange
 

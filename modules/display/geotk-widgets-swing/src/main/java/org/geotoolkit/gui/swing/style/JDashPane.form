@@ -18,52 +18,43 @@
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
-              <Component id="jsp_lenght" linkSize="2" min="-2" pref="46" max="-2" attributes="0"/>
+              <Component id="guiLength" linkSize="2" min="-2" pref="46" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="jsp_between" linkSize="2" min="-2" max="-2" attributes="0"/>
+              <Component id="guiBetween" linkSize="2" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="jsp_offset" linkSize="2" min="-2" max="-2" attributes="0"/>
+              <Component id="guiOffset" linkSize="2" min="-2" max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="103" groupAlignment="3" attributes="0">
-              <Component id="jsp_lenght" linkSize="3" alignment="3" min="-2" max="-2" attributes="0"/>
-              <Component id="jsp_between" linkSize="3" alignment="3" min="-2" max="-2" attributes="0"/>
-              <Component id="jsp_offset" linkSize="3" alignment="3" min="-2" max="-2" attributes="0"/>
+              <Component id="guiLength" linkSize="3" alignment="3" min="-2" max="-2" attributes="0"/>
+              <Component id="guiBetween" linkSize="3" alignment="3" min="-2" max="-2" attributes="0"/>
+              <Component id="guiOffset" linkSize="3" alignment="3" min="-2" max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
   </Layout>
   <SubComponents>
-    <Component class="javax.swing.JSpinner" name="jsp_offset">
+    <Component class="javax.swing.JSpinner" name="guiOffset">
       <Properties>
         <Property name="model" type="javax.swing.SpinnerModel" editor="org.netbeans.modules.form.editors2.SpinnerModelEditor">
           <SpinnerModel initial="0.0" numberType="java.lang.Float" stepSize="1.0" type="number"/>
         </Property>
-        <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="" key="tooltip_offset" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
-        </Property>
       </Properties>
     </Component>
-    <Component class="javax.swing.JSpinner" name="jsp_between">
+    <Component class="javax.swing.JSpinner" name="guiBetween">
       <Properties>
         <Property name="model" type="javax.swing.SpinnerModel" editor="org.netbeans.modules.form.editors2.SpinnerModelEditor">
           <SpinnerModel initial="0.0" minimum="0.0" numberType="java.lang.Float" stepSize="1.0" type="number"/>
         </Property>
-        <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="" key="tooltip_gap" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
-        </Property>
       </Properties>
     </Component>
-    <Component class="javax.swing.JSpinner" name="jsp_lenght">
+    <Component class="javax.swing.JSpinner" name="guiLength">
       <Properties>
         <Property name="model" type="javax.swing.SpinnerModel" editor="org.netbeans.modules.form.editors2.SpinnerModelEditor">
           <SpinnerModel initial="0.0" minimum="0.0" numberType="java.lang.Float" stepSize="1.0" type="number"/>
-        </Property>
-        <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="" key="tooltip_lenght" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
         </Property>
       </Properties>
     </Component>

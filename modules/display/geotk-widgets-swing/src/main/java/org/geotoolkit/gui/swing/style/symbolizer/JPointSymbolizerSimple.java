@@ -383,8 +383,8 @@ public class JPointSymbolizerSimple extends StyleElementEditor<PointSymbolizer> 
     }// </editor-fold>//GEN-END:initComponents
 
     private void propertyChange(PropertyChangeEvent evt) {//GEN-FIRST:event_propertyChange
-        if (PROPERTY_TARGET.equalsIgnoreCase(evt.getPropertyName())) {
-            firePropertyChange(PROPERTY_TARGET, null, create());
+        if (PROPERTY_UPDATED.equalsIgnoreCase(evt.getPropertyName())) {
+            firePropertyChange(PROPERTY_UPDATED, null, create());
             parse(create());
         }
     }//GEN-LAST:event_propertyChange

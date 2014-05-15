@@ -20,25 +20,30 @@
   <Layout>
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Group type="102" alignment="0" attributes="0">
+          <Group type="102" attributes="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="guiLabelStyle" linkSize="6" min="-2" max="-2" attributes="0"/>
-                  <Component id="guiLabelSize" linkSize="6" alignment="0" min="-2" max="-2" attributes="0"/>
-                  <Component id="guiLabelFamily" linkSize="6" alignment="0" min="-2" max="-2" attributes="0"/>
-              </Group>
-              <EmptySpace max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="guiSize" max="-2" attributes="0"/>
-                  <Group type="103" alignment="0" groupAlignment="1" max="-2" attributes="0">
-                      <Component id="guiStyle" alignment="0" max="32767" attributes="0"/>
-                      <Component id="guiFamily" alignment="0" max="32767" attributes="0"/>
+                  <Group type="102" alignment="0" attributes="0">
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="guiLabelSize" linkSize="6" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="guiLabelFamily" linkSize="6" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="guiLabelStyle" linkSize="6" alignment="1" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="guiSize" max="-2" attributes="0"/>
+                          <Group type="103" alignment="0" groupAlignment="1" max="-2" attributes="0">
+                              <Component id="guiStyle" alignment="0" max="32767" attributes="0"/>
+                              <Component id="guiFamily" alignment="0" max="32767" attributes="0"/>
+                          </Group>
+                      </Group>
+                  </Group>
+                  <Group type="102" alignment="0" attributes="0">
+                      <Component id="guiLabelWeight" linkSize="6" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="guiWeight" min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
-          </Group>
-          <Group type="102" alignment="0" attributes="0">
-              <Component id="guiLabelWeight" linkSize="6" min="-2" max="-2" attributes="0"/>
-              <EmptySpace max="-2" attributes="0"/>
-              <Component id="guiWeight" min="-2" max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -51,18 +56,20 @@
               </Group>
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="guiStyle" linkSize="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="guiLabelSize" linkSize="4" min="-2" max="-2" attributes="0"/>
-              </Group>
-              <EmptySpace max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="1" attributes="0">
-                  <Component id="guiSize" linkSize="4" min="-2" max="-2" attributes="0"/>
+                  <Group type="102" attributes="0">
+                      <Component id="guiStyle" linkSize="3" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="1" attributes="0">
+                          <Component id="guiSize" linkSize="4" min="-2" max="-2" attributes="0"/>
+                          <Component id="guiLabelSize" linkSize="4" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="guiLabelWeight" linkSize="5" min="-2" max="-2" attributes="0"/>
+                          <Component id="guiWeight" linkSize="5" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                  </Group>
                   <Component id="guiLabelStyle" linkSize="3" min="-2" max="-2" attributes="0"/>
-              </Group>
-              <EmptySpace max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="guiLabelWeight" linkSize="5" min="-2" max="-2" attributes="0"/>
-                  <Component id="guiWeight" linkSize="5" min="-2" max="-2" attributes="0"/>
               </Group>
           </Group>
       </Group>

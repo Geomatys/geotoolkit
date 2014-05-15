@@ -259,55 +259,55 @@ public class JAnchorPointPane extends StyleElementEditor<AnchorPoint> {
     private void guiRightActionPerformed(ActionEvent evt) {//GEN-FIRST:event_guiRightActionPerformed
         this.x = 0f;
         this.y = 0.5f;
-        firePropertyChange(PROPERTY_TARGET, null, create());
+        firePropertyChange(PROPERTY_UPDATED, null, create());
     }//GEN-LAST:event_guiRightActionPerformed
 
     private void guiUpperRightActionPerformed(ActionEvent evt) {//GEN-FIRST:event_guiUpperRightActionPerformed
         this.x = 0f;
         this.y = 0f;
-        firePropertyChange(PROPERTY_TARGET, null, create());
+        firePropertyChange(PROPERTY_UPDATED, null, create());
     }//GEN-LAST:event_guiUpperRightActionPerformed
 
     private void guiUpperLeftActionPerformed(ActionEvent evt) {//GEN-FIRST:event_guiUpperLeftActionPerformed
         this.x = 1f;
         this.y = 0f;
-        firePropertyChange(PROPERTY_TARGET, null, create());
+        firePropertyChange(PROPERTY_UPDATED, null, create());
     }//GEN-LAST:event_guiUpperLeftActionPerformed
 
     private void guiUpperActionPerformed(ActionEvent evt) {//GEN-FIRST:event_guiUpperActionPerformed
         this.x = 0.5f;
         this.y = 0f;
-        firePropertyChange(PROPERTY_TARGET, null, create());
+        firePropertyChange(PROPERTY_UPDATED, null, create());
     }//GEN-LAST:event_guiUpperActionPerformed
 
     private void guiLeftActionPerformed(ActionEvent evt) {//GEN-FIRST:event_guiLeftActionPerformed
         this.x = 1f;
         this.y = 0.5f;
-        firePropertyChange(PROPERTY_TARGET, null, create());
+        firePropertyChange(PROPERTY_UPDATED, null, create());
     }//GEN-LAST:event_guiLeftActionPerformed
 
     private void guiCenterActionPerformed(ActionEvent evt) {//GEN-FIRST:event_guiCenterActionPerformed
         this.x = 0.5f;
         this.y = 0.5f;
-        firePropertyChange(PROPERTY_TARGET, null, create());
+        firePropertyChange(PROPERTY_UPDATED, null, create());
     }//GEN-LAST:event_guiCenterActionPerformed
 
     private void guiDownLeftActionPerformed(ActionEvent evt) {//GEN-FIRST:event_guiDownLeftActionPerformed
         this.x = 1f;
         this.y = 1f;
-        firePropertyChange(PROPERTY_TARGET, null, create());
+        firePropertyChange(PROPERTY_UPDATED, null, create());
     }//GEN-LAST:event_guiDownLeftActionPerformed
 
     private void guiDownActionPerformed(ActionEvent evt) {//GEN-FIRST:event_guiDownActionPerformed
         this.x = 0.5f;
         this.y = 1f;
-        firePropertyChange(PROPERTY_TARGET, null, create());
+        firePropertyChange(PROPERTY_UPDATED, null, create());
     }//GEN-LAST:event_guiDownActionPerformed
 
     private void guiDownRightActionPerformed(ActionEvent evt) {//GEN-FIRST:event_guiDownRightActionPerformed
         this.x = 0f;
         this.y = 1f;
-        firePropertyChange(PROPERTY_TARGET, null, create());
+        firePropertyChange(PROPERTY_UPDATED, null, create());
     }//GEN-LAST:event_guiDownRightActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private ButtonGroup buttonGroup1;

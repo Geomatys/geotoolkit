@@ -28,7 +28,7 @@ import javax.swing.JOptionPane;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.gui.swing.style.JPreview;
 import org.geotoolkit.gui.swing.style.StyleElementEditor;
-import static org.geotoolkit.gui.swing.style.StyleElementEditor.PROPERTY_TARGET;
+import static org.geotoolkit.gui.swing.style.StyleElementEditor.PROPERTY_UPDATED;
 import org.geotoolkit.map.MapLayer;
 import org.opengis.style.Stroke;
 
@@ -45,7 +45,7 @@ public class JStrokeControlPane extends StyleElementEditor<Stroke> {
             if (JOptionPane.OK_OPTION == JOptionPane.showConfirmDialog(JStrokeControlPane.this, paneStrokeChooser, "", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE)) {
                 final Stroke created = create();
                 parse(created);
-                JStrokeControlPane.this.firePropertyChange(PROPERTY_TARGET, null, created);
+                JStrokeControlPane.this.firePropertyChange(PROPERTY_UPDATED, null, created);
             }
         }
     };
@@ -65,7 +65,7 @@ public class JStrokeControlPane extends StyleElementEditor<Stroke> {
         guiStrokeLabel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent evt) {
-                strokeChange.actionPerformed(new ActionEvent(JStrokeControlPane.this, evt.getID(), PROPERTY_TARGET));
+                strokeChange.actionPerformed(new ActionEvent(JStrokeControlPane.this, evt.getID(), PROPERTY_UPDATED));
             }
         });
         

@@ -27,6 +27,7 @@ import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
+import java.util.EventObject;
 import java.util.List;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
@@ -53,14 +54,12 @@ import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.gui.swing.style.JBankPanel;
 import org.geotoolkit.gui.swing.style.JPreview;
 import org.geotoolkit.gui.swing.style.StyleElementEditor;
-import org.geotoolkit.gui.swing.style.symbolizer.JLineSymbolizerPane;
-import org.geotoolkit.gui.swing.style.symbolizer.JPointSymbolizerPane;
-import org.geotoolkit.gui.swing.style.symbolizer.JPolygonSymbolizerPane;
-import org.geotoolkit.gui.swing.style.symbolizer.JRasterSymbolizerPane;
-import org.geotoolkit.gui.swing.style.symbolizer.JTextSymbolizerPane;
 import org.geotoolkit.gui.swing.util.ActionCell;
 import org.geotoolkit.gui.swing.util.JOptionDialog;
+import org.geotoolkit.map.LayerListener;
+import org.geotoolkit.map.MapItem;
 import org.geotoolkit.map.MapLayer;
+import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.RuleListener;
@@ -80,7 +79,7 @@ import org.opengis.style.TextSymbolizer;
  * @author Fabien Rétif (Geomatys)
  * @author Johann Sorel (Geomatys)
  */
-public class JSimpleStylePanel extends StyleElementEditor implements PropertyPane{
+public class JSimpleStylePanel extends StyleElementEditor implements PropertyPane, LayerListener{
 
     private static final ImageIcon ICO_UP = IconBuilder.createIcon(FontAwesomeIcons.ICON_CHEVRON_UP, 16, FontAwesomeIcons.DEFAULT_COLOR);
     private static final ImageIcon ICO_DOWN = IconBuilder.createIcon(FontAwesomeIcons.ICON_CHEVRON_DOWN, 16, FontAwesomeIcons.DEFAULT_COLOR);
@@ -95,19 +94,20 @@ public class JSimpleStylePanel extends StyleElementEditor implements PropertyPan
     private final PropertyChangeListener changeListener = new PropertyChangeListener() {
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
-                if(PROPERTY_TARGET.equals(evt.getPropertyName())){
+                if(PROPERTY_UPDATED.equals(evt.getPropertyName())){
                     if (evt.getNewValue() instanceof Symbolizer) {
                         final Symbolizer s = (Symbolizer) evt.getNewValue();
                         guiOverviewLabel.parse(s);
                         final int selecteRow = guiTable.getSelectedRow();
                         if (selecteRow >= 0) {
-                            model.rule.symbolizers().get(selecteRow);
                             model.rule.symbolizers().set(selecteRow,s);
                         }
                     }
                 }
             }
         };
+    
+    private final LayerListener.Weak layerListener = new LayerListener.Weak(this);
     //current visible editor
     private StyleElementEditor currentEditor = null;
 
@@ -184,7 +184,6 @@ public class JSimpleStylePanel extends StyleElementEditor implements PropertyPan
                     currentEditor.removePropertyChangeListener(changeListener);
                 }
 
-
                 guiScrollInfo.setViewportView(null);
                 guiOverviewLabel.parse(null);
 
@@ -192,20 +191,9 @@ public class JSimpleStylePanel extends StyleElementEditor implements PropertyPan
                 final int selectetRow = guiTable.getSelectedRow();
                 if (selectetRow >= 0 && model.rule.symbolizers().size() > selectetRow) {
                     final Object item = model.rule.symbolizers().get(selectetRow);
-
+                    
                     if (item != null) {
-
-                        if (item instanceof PointSymbolizer) {
-                            currentEditor = new JPointSymbolizerPane();
-                        } else if (item instanceof LineSymbolizer) {
-                            currentEditor = new JLineSymbolizerPane();
-                        } else if (item instanceof PolygonSymbolizer) {
-                            currentEditor = new JPolygonSymbolizerPane();
-                        } else if (item instanceof TextSymbolizer) {
-                            currentEditor = new JTextSymbolizerPane();
-                        } else if (item instanceof RasterSymbolizer) {
-                            currentEditor = new JRasterSymbolizerPane();
-                        }
+                        currentEditor = StyleElementEditor.findEditor(item);
 
                         if (currentEditor != null) {
                             currentEditor.setLayer(layer);
@@ -361,9 +349,9 @@ public class JSimpleStylePanel extends StyleElementEditor implements PropertyPan
 
     @Override
     public void setTarget(Object target) {
-         if(target instanceof MapLayer){
-            this.layer = (MapLayer) target;
-            parse(layer);
+        if(target instanceof MapLayer){
+            setLayer((MapLayer)target);
+            parse(target);
         }
     }
 
@@ -415,6 +403,13 @@ public class JSimpleStylePanel extends StyleElementEditor implements PropertyPan
     public void setLayer(final MapLayer layer) {
         this.layer = layer;
 
+        if(this.layer!=null){
+            layerListener.unregisterSource(this.layer);
+        }        
+        this.layer = layer;
+        if(this.layer!=null){
+            layerListener.registerSource(this.layer);
+        }
     }
 
     @Override
@@ -496,6 +491,37 @@ public class JSimpleStylePanel extends StyleElementEditor implements PropertyPan
     private JSplitPane jSplitPane1;
     // End of variables declaration//GEN-END:variables
 
+    //style events    
+    @Override
+    public void styleChange(MapLayer source, EventObject event) {
+        //check if the first rule changed
+        final MutableStyle ms = this.layer.getStyle();
+        if(ms.featureTypeStyles().isEmpty()){
+            parse(this.layer.getStyle());
+            return;
+        }
+        final MutableFeatureTypeStyle fts = ms.featureTypeStyles().get(0);
+        if(fts.rules().isEmpty()){
+            parse(this.layer.getStyle());
+            return;
+        }
+        final MutableRule r = fts.rules().get(0);
+        if(parentRule!=r){
+            parse(this.layer.getStyle());
+            return;
+        }
+    }
+
+    @Override
+    public void itemChange(CollectionChangeEvent<MapItem> event) {}
+
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+        if(MapLayer.STYLE_PROPERTY.equals(evt.getPropertyName()) && evt.getOldValue()!=evt.getNewValue()){
+            parse(this.layer.getStyle());
+        }
+    }
+    
     private static final class SymbolizerModel extends AbstractTableModel implements RuleListener{
         
         private MutableRule rule;

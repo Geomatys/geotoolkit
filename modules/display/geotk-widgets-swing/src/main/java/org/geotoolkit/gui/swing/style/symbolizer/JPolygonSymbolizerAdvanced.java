@@ -18,6 +18,8 @@
 package org.geotoolkit.gui.swing.style.symbolizer;
 
 import java.awt.Component;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
@@ -140,6 +142,18 @@ public class JPolygonSymbolizerAdvanced extends StyleElementEditor<PolygonSymbol
         jPanel1.setBorder(BorderFactory.createTitledBorder(MessageBundle.getString("general"))); // NOI18N
         jPanel1.setOpaque(false);
 
+        guiGeom.addPropertyChangeListener(new PropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent evt) {
+                JPolygonSymbolizerAdvanced.this.propertyChange(evt);
+            }
+        });
+
+        guiUOM.addPropertyChangeListener(new PropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent evt) {
+                JPolygonSymbolizerAdvanced.this.propertyChange(evt);
+            }
+        });
+
         GroupLayout jPanel1Layout = new GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -167,6 +181,18 @@ public class JPolygonSymbolizerAdvanced extends StyleElementEditor<PolygonSymbol
         jPanel4.setBorder(BorderFactory.createTitledBorder(MessageBundle.getString("displacement"))); // NOI18N
         jPanel4.setOpaque(false);
 
+        guiOffset.addPropertyChangeListener(new PropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent evt) {
+                JPolygonSymbolizerAdvanced.this.propertyChange(evt);
+            }
+        });
+
+        guiDisp.addPropertyChangeListener(new PropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent evt) {
+                JPolygonSymbolizerAdvanced.this.propertyChange(evt);
+            }
+        });
+
         GroupLayout jPanel4Layout = new GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
@@ -191,13 +217,19 @@ public class JPolygonSymbolizerAdvanced extends StyleElementEditor<PolygonSymbol
         jPanel2.setBorder(BorderFactory.createTitledBorder(MessageBundle.getString("fill"))); // NOI18N
         jPanel2.setOpaque(false);
 
+        guiFill.addPropertyChangeListener(new PropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent evt) {
+                JPolygonSymbolizerAdvanced.this.propertyChange(evt);
+            }
+        });
+
         GroupLayout jPanel2Layout = new GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(guiFill, GroupLayout.DEFAULT_SIZE, 226, Short.MAX_VALUE)
+                .addComponent(guiFill, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
@@ -210,6 +242,12 @@ public class JPolygonSymbolizerAdvanced extends StyleElementEditor<PolygonSymbol
 
         jPanel3.setBorder(BorderFactory.createTitledBorder(MessageBundle.getString("stroke"))); // NOI18N
         jPanel3.setOpaque(false);
+
+        guiStroke.addPropertyChangeListener(new PropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent evt) {
+                JPolygonSymbolizerAdvanced.this.propertyChange(evt);
+            }
+        });
 
         GroupLayout jPanel3Layout = new GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -250,6 +288,13 @@ public class JPolygonSymbolizerAdvanced extends StyleElementEditor<PolygonSymbol
                 .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
+
+    private void propertyChange(PropertyChangeEvent evt) {//GEN-FIRST:event_propertyChange
+        if (PROPERTY_UPDATED.equalsIgnoreCase(evt.getPropertyName())) {            
+            firePropertyChange(PROPERTY_UPDATED, null, create());
+        }
+    }//GEN-LAST:event_propertyChange
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private JDisplacementPane guiDisp;
     private JFillPane guiFill;

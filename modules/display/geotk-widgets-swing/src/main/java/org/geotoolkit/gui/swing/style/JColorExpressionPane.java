@@ -30,7 +30,7 @@ import javax.swing.JButton;
 import javax.swing.JColorChooser;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import org.geotoolkit.filter.FilterUtilities;
-import static org.geotoolkit.gui.swing.style.StyleElementEditor.PROPERTY_TARGET;
+import static org.geotoolkit.gui.swing.style.StyleElementEditor.PROPERTY_UPDATED;
 import org.geotoolkit.map.MapLayer;
 import org.opengis.filter.expression.Expression;
 
@@ -110,7 +110,7 @@ public class JColorExpressionPane extends StyleElementEditor<Expression>{
 private void guiColorActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_guiColorActionPerformed
     final Color color = JColorChooser.showDialog(null, "", guiColor.getBackground());
     parse(getStyleFactory().literal(color));
-    firePropertyChange(PROPERTY_TARGET, null, create());
+    firePropertyChange(PROPERTY_UPDATED, null, create());
 }//GEN-LAST:event_guiColorActionPerformed
 
 private void guiSpecialPropertyChange(final PropertyChangeEvent evt) {//GEN-FIRST:event_guiSpecialPropertyChange

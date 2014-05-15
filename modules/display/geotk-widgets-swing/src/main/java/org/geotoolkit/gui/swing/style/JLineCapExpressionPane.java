@@ -203,6 +203,8 @@ private void guiButtActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_gu
             guiRound.setSelected(false);
             guiSquare.setSelected(false);
         }
+        
+        firePropertyChange(PROPERTY_UPDATED, null, create());
     }
 
     @Override

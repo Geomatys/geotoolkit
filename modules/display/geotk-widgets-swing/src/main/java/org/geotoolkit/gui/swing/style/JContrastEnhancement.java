@@ -195,15 +195,15 @@ public class JContrastEnhancement extends StyleElementEditor<ContrastEnhancement
 
     private void propertyChange(PropertyChangeEvent evt) {//GEN-FIRST:event_propertyChange
         // TODO add your handling code here:
-         if (PROPERTY_TARGET.equalsIgnoreCase(evt.getPropertyName())) {            
-            firePropertyChange(PROPERTY_TARGET, null, create());
+         if (PROPERTY_UPDATED.equalsIgnoreCase(evt.getPropertyName())) {            
+            firePropertyChange(PROPERTY_UPDATED, null, create());
             parse(create());
         }
     }//GEN-LAST:event_propertyChange
 
     private void guiNoneActionPerformed(ActionEvent evt) {//GEN-FIRST:event_guiNoneActionPerformed
         // TODO add your handling code here:
-        firePropertyChange(PROPERTY_TARGET, null, create());
+        firePropertyChange(PROPERTY_UPDATED, null, create());
     }//GEN-LAST:event_guiNoneActionPerformed
 
 

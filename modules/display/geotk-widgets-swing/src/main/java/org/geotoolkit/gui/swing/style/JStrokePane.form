@@ -117,6 +117,9 @@
       <Properties>
         <Property name="opaque" type="boolean" value="false"/>
       </Properties>
+      <Events>
+        <EventHandler event="propertyChange" listener="java.beans.PropertyChangeListener" parameters="java.beans.PropertyChangeEvent" handler="propertyChange"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JButton" name="butFill">
       <Properties>
@@ -181,14 +184,29 @@
       </Properties>
     </Component>
     <Component class="org.geotoolkit.gui.swing.style.JColorExpressionPane" name="GuiStrokeColor">
+      <Events>
+        <EventHandler event="propertyChange" listener="java.beans.PropertyChangeListener" parameters="java.beans.PropertyChangeEvent" handler="propertyChange"/>
+      </Events>
     </Component>
     <Component class="org.geotoolkit.gui.swing.style.JLineJoinExpressionPane" name="GuiStrokeLineJoin">
+      <Events>
+        <EventHandler event="propertyChange" listener="java.beans.PropertyChangeListener" parameters="java.beans.PropertyChangeEvent" handler="propertyChange"/>
+      </Events>
     </Component>
     <Component class="org.geotoolkit.gui.swing.style.JLineCapExpressionPane" name="GuiStrokeLineCap">
+      <Events>
+        <EventHandler event="propertyChange" listener="java.beans.PropertyChangeListener" parameters="java.beans.PropertyChangeEvent" handler="propertyChange"/>
+      </Events>
     </Component>
     <Component class="org.geotoolkit.gui.swing.style.JNumberExpressionPane" name="GuiStrokeWidth">
+      <Events>
+        <EventHandler event="propertyChange" listener="java.beans.PropertyChangeListener" parameters="java.beans.PropertyChangeEvent" handler="propertyChange"/>
+      </Events>
     </Component>
     <Component class="org.geotoolkit.gui.swing.style.JNumberExpressionPane" name="GuiStrokeAlpha">
+      <Events>
+        <EventHandler event="propertyChange" listener="java.beans.PropertyChangeListener" parameters="java.beans.PropertyChangeEvent" handler="propertyChange"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JRadioButton" name="guiGraphicColor">
       <Properties>

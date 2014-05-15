@@ -86,6 +86,9 @@
           <SpinnerModel initial="3" minimum="3" numberType="java.lang.Integer" stepSize="1" type="number"/>
         </Property>
       </Properties>
+      <Events>
+        <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="guiCellSizeStateChanged"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel2">
       <Properties>

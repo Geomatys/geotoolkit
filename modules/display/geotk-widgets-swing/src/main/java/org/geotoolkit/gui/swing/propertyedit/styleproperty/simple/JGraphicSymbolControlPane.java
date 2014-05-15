@@ -28,7 +28,7 @@ import javax.swing.JOptionPane;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.gui.swing.style.JPreview;
 import org.geotoolkit.gui.swing.style.StyleElementEditor;
-import static org.geotoolkit.gui.swing.style.StyleElementEditor.PROPERTY_TARGET;
+import static org.geotoolkit.gui.swing.style.StyleElementEditor.PROPERTY_UPDATED;
 import org.geotoolkit.map.MapLayer;
 import org.opengis.style.GraphicalSymbol;
 
@@ -46,7 +46,7 @@ public class JGraphicSymbolControlPane extends StyleElementEditor<GraphicalSymbo
             JOptionPane.showMessageDialog(null,paneGraphicalSymbolChooser,"",JOptionPane.PLAIN_MESSAGE);
             final GraphicalSymbol created = create();
             parse(created);
-            JGraphicSymbolControlPane.this.firePropertyChange(PROPERTY_TARGET, null, created);
+            JGraphicSymbolControlPane.this.firePropertyChange(PROPERTY_UPDATED, null, created);
         }
     };
     
@@ -66,7 +66,7 @@ public class JGraphicSymbolControlPane extends StyleElementEditor<GraphicalSymbo
         guiMarkLabel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent evt) {
-                symbolChange.actionPerformed(new ActionEvent(JGraphicSymbolControlPane.this, evt.getID(), PROPERTY_TARGET));
+                symbolChange.actionPerformed(new ActionEvent(JGraphicSymbolControlPane.this, evt.getID(), PROPERTY_UPDATED));
             }
         });
         

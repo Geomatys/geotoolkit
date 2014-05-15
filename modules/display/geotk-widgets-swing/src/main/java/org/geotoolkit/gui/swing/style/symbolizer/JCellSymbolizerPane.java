@@ -304,6 +304,11 @@ public class JCellSymbolizerPane extends StyleElementEditor<CellSymbolizer> impl
         org.openide.awt.Mnemonics.setLocalizedText(jLabel1, MessageBundle.getString("style.cellsymbolizer.cellsize")); // NOI18N
 
         guiCellSize.setModel(new javax.swing.SpinnerNumberModel(Integer.valueOf(3), Integer.valueOf(3), null, Integer.valueOf(1)));
+        guiCellSize.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                guiCellSizeStateChanged(evt);
+            }
+        });
 
         org.openide.awt.Mnemonics.setLocalizedText(jLabel2, MessageBundle.getString("style.cellsymbolizer.type")); // NOI18N
 
@@ -379,11 +384,16 @@ public class JCellSymbolizerPane extends StyleElementEditor<CellSymbolizer> impl
         try {
             filter = JCQLEditor.showDialog(this, cellMimicLayer, filter);
             guiCQL.setFilter(filter);
+            firePropertyChange(PROPERTY_UPDATED, null, create());
         } catch (CQLException ex) {
             LOGGER.log(Level.INFO, ex.getMessage(), ex);
         }
 
     }//GEN-LAST:event_but_editActionPerformed
+
+    private void guiCellSizeStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_guiCellSizeStateChanged
+        firePropertyChange(PROPERTY_UPDATED, null, create());
+    }//GEN-LAST:event_guiCellSizeStateChanged
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton but_edit;

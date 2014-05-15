@@ -50,6 +50,7 @@ import org.opengis.filter.PropertyIsEqualTo;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Literal;
 import org.opengis.filter.expression.PropertyName;
+import org.opengis.style.FeatureTypeStyle;
 import org.opengis.style.Fill;
 import org.opengis.style.Graphic;
 import org.opengis.style.GraphicalSymbol;
@@ -73,7 +74,7 @@ public class CategoryStyleBuilder extends Factory {
     private final MutableStyleFactory sf;
     private final FilterFactory ff;
 
-    private final List<Rule> rules = new ArrayList<Rule>();
+    private final MutableFeatureTypeStyle fts;
     private final List<PropertyName> properties = new ArrayList<PropertyName>();
     private Class<? extends Symbolizer> expectedType = null;
     private boolean other = false;
@@ -99,12 +100,14 @@ public class CategoryStyleBuilder extends Factory {
         }else{
             ff = filterFactory;
         }
+        
+        fts = sf.featureTypeStyle();
 
     }
 
     public void analyze(final FeatureMapLayer layer){
         this.layer = layer;
-        rules.clear();
+        fts.rules().clear();
 
         properties.clear();
         if(layer != null){
@@ -166,7 +169,7 @@ public class CategoryStyleBuilder extends Factory {
 
                         if(r.isElseFilter()){
                             //it looks like it's a valid classification "other" rule
-                            this.rules.add((MutableRule) r);
+                            this.fts.rules().add((MutableRule) r);
                             template = symbol;
                             other = true;
                         }else{
@@ -179,7 +182,7 @@ public class CategoryStyleBuilder extends Factory {
                                 if(exp1 instanceof PropertyName && exp2 instanceof Literal){
                                     if(properties.contains(exp1)){
                                         //it looks like it's a valid classification property rule
-                                        this.rules.add((MutableRule) r);
+                                        this.fts.rules().add((MutableRule) r);
                                         template = symbol;
                                         currentProperty = (PropertyName) exp1;
                                     }else{
@@ -189,7 +192,7 @@ public class CategoryStyleBuilder extends Factory {
                                 }else if(exp2 instanceof PropertyName && exp1 instanceof Literal){
                                     if(properties.contains(exp2)){
                                         //it looks like it's a valid classification property rule
-                                        this.rules.add((MutableRule) r);
+                                        this.fts.rules().add((MutableRule) r);
                                         template = symbol;
                                         currentProperty = (PropertyName) exp2;
                                     }else{
@@ -229,8 +232,8 @@ public class CategoryStyleBuilder extends Factory {
         this.palette = palette;
     }
 
-    public List<Rule> getRules() {
-        return rules;
+    public MutableFeatureTypeStyle getFeatureTypeStyle() {
+        return fts;
     }
 
     public List<PropertyName> getProperties() {
@@ -253,7 +256,7 @@ public class CategoryStyleBuilder extends Factory {
         this.other = other;
     }
 
-    public List<Rule> create(){
+    public List<MutableRule> create(){
         //search the different values
         final Set<Object> differentValues = new HashSet<Object>();
         final PropertyName property = currentProperty;
@@ -280,10 +283,10 @@ public class CategoryStyleBuilder extends Factory {
         }
 
         //generate the different rules
-        rules.clear();
+        fts.rules().clear();
 
         for(Object obj : differentValues){
-            rules.add(createRule(property, obj));
+            fts.rules().add(createRule(property, obj));
         }
 
         //generate the other rule if asked
@@ -291,10 +294,10 @@ public class CategoryStyleBuilder extends Factory {
             MutableRule r = sf.rule(createSymbolizer());
             r.setElseFilter(true);
             r.setDescription(sf.description("other", "other"));
-            rules.add(r);
+            fts.rules().add(r);
         }
 
-        return rules;
+        return fts.rules();
     }
 
 
@@ -336,7 +339,7 @@ public class CategoryStyleBuilder extends Factory {
 
     }
 
-    public Rule createRule(final PropertyName property, final Object obj){
+    public MutableRule createRule(final PropertyName property, final Object obj){
         MutableRule r = sf.rule(createSymbolizer());
         r.setFilter(ff.equals(property, ff.literal(obj)));
         r.setDescription(sf.description(obj.toString(), obj.toString()));

@@ -25,6 +25,12 @@ import javax.swing.ImageIcon;
 
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
+import org.geotoolkit.map.CoverageMapLayer;
+import org.geotoolkit.map.FeatureMapLayer;
+import org.geotoolkit.map.MapBuilder;
+import org.geotoolkit.map.MapLayer;
+import org.geotoolkit.style.MutableStyle;
+import org.geotoolkit.style.visitor.CopyStyleVisitor;
 
 /**
  * layer style panel
@@ -34,10 +40,56 @@ import org.geotoolkit.gui.swing.resource.MessageBundle;
  */
 public class LayerStylePropertyPanel extends MultiPropertyPanel {
 
+    private Object target = null;
+    
+    //store a copy of the layer and it's style
+    //we do this to handle properly the apply and reset actions
+    private MapLayer mimicLayer = null;
 
     /** Creates new form DefaultMapContextCRSEditPanel */
     public LayerStylePropertyPanel() {
         super();
+    }
+
+    @Override
+    public void setTarget(Object target) {
+        this.target = target;
+        this.mimicLayer = createMimic(target);
+        super.setTarget((mimicLayer!=null)?mimicLayer:target);
+    }
+
+    @Override
+    public void apply() {
+        super.apply();
+        if(target instanceof MapLayer && mimicLayer!=null){
+            final MutableStyle newSyle = CopyStyleVisitor.INSTANCE.visit(mimicLayer.getStyle(),null);
+            ((MapLayer)target).setStyle(newSyle);
+        }
+    }
+
+    @Override
+    public void reset() {
+        setTarget(target);
+    }
+    
+    private MapLayer createMimic(Object target){
+        if(target instanceof MapLayer){
+            final MapLayer origLayer = (MapLayer) target;
+            final MapLayer mimic;
+            if(target instanceof CoverageMapLayer){
+                final CoverageMapLayer original = (CoverageMapLayer) target;
+                mimic = MapBuilder.createCoverageLayer(original.getCoverageReference());
+            }else if(target instanceof FeatureMapLayer){
+                final FeatureMapLayer original = (FeatureMapLayer) target;
+                mimic = MapBuilder.createFeatureLayer(original.getCollection(), origLayer.getStyle());
+            }else{
+                mimic = MapBuilder.createEmptyMapLayer();
+            }
+            mimic.setStyle(CopyStyleVisitor.INSTANCE.visit(origLayer.getStyle(),null));
+            return mimic;
+        }
+        //could not mimic it, not a maplayer
+        return null;
     }
 
     /** This method is called from within the constructor to

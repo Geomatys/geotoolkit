@@ -115,9 +115,9 @@ public class JNumberExpressionPane extends StyleElementEditor<Expression>{
     }// </editor-fold>//GEN-END:initComponents
 
 private void guiSpecialPropertyChange(final PropertyChangeEvent evt) {//GEN-FIRST:event_guiSpecialPropertyChange
-    if (PROPERTY_TARGET.equalsIgnoreCase(evt.getPropertyName())) {
+    if (PROPERTY_UPDATED.equalsIgnoreCase(evt.getPropertyName())) {
         final Expression created = create();
-            firePropertyChange(PROPERTY_TARGET, null, created);
+            firePropertyChange(PROPERTY_UPDATED, null, created);
             parse(created);
         }
     if(evt.getPropertyName().equals(JSpecialExpressionButton.EXPRESSION_PROPERTY)) {
@@ -126,7 +126,7 @@ private void guiSpecialPropertyChange(final PropertyChangeEvent evt) {//GEN-FIRS
 }//GEN-LAST:event_guiSpecialPropertyChange
 
 private void guiNumberStateChanged(final ChangeEvent evt) {//GEN-FIRST:event_guiNumberStateChanged
-    firePropertyChange(PROPERTY_TARGET, null, create());
+    firePropertyChange(PROPERTY_UPDATED, null, create());
     parse(  getFilterFactory().literal( ((SpinnerNumberModel)guiNumber.getModel()).getNumber() ));
 }//GEN-LAST:event_guiNumberStateChanged
 

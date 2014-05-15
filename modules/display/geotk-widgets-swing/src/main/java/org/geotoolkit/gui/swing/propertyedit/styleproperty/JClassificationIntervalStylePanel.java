@@ -25,6 +25,7 @@ import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
+import java.beans.PropertyChangeEvent;
 import java.io.IOException;
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -70,6 +71,7 @@ import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.gui.swing.util.JOptionDialog;
 import org.geotoolkit.image.io.PaletteFactory;
 import org.geotoolkit.map.FeatureMapLayer;
+import org.geotoolkit.style.FeatureTypeStyleListener;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyleFactory;
@@ -77,11 +79,13 @@ import org.geotoolkit.style.interval.DefaultIntervalPalette;
 import org.geotoolkit.style.interval.IntervalPalette;
 import org.geotoolkit.style.interval.IntervalStyleBuilder;
 import org.geotoolkit.style.interval.IntervalStyleBuilder.METHOD;
+import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.jdesktop.swingx.JXTable;
 import org.jdesktop.swingx.combobox.EnumComboBoxModel;
 import org.jdesktop.swingx.combobox.ListComboBoxModel;
 import org.jdesktop.swingx.decorator.Highlighter;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
+import org.opengis.feature.type.Name;
 import org.opengis.filter.And;
 import org.opengis.filter.BinaryComparisonOperator;
 import org.opengis.filter.Filter;
@@ -91,6 +95,7 @@ import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Literal;
 import org.opengis.filter.expression.PropertyName;
 import org.opengis.style.Rule;
+import org.opengis.style.SemanticType;
 import org.opengis.style.Symbolizer;
 
 /**
@@ -101,7 +106,7 @@ import org.opengis.style.Symbolizer;
 public class JClassificationIntervalStylePanel extends AbstractPropertyPane{
 
     private static final Logger LOGGER = Logging.getLogger(JClassificationIntervalStylePanel.class);
-    private static NumberFormat FORMAT = NumberFormat.getNumberInstance();
+    private static final NumberFormat FORMAT = NumberFormat.getNumberInstance();
     private static final ImageIcon DELETE = IconBuilder.createIcon(FontAwesomeIcons.ICON_TRASH_O, 16, FontAwesomeIcons.DEFAULT_COLOR);
 
     private final Dimension GLYPH_DIMENSION = new Dimension(30, 20);
@@ -178,12 +183,12 @@ public class JClassificationIntervalStylePanel extends AbstractPropertyPane{
     }
 
     private void parse(){
-        model.rules.clear();
+        model.fts.rules().clear();
 
         if(layer != null){
             analyze.setLayer(layer);
             if(analyze.isIntervalStyle(layer.getStyle())){
-                model.rules.addAll(layer.getStyle().featureTypeStyles().get(0).rules());
+                model.fts.rules().addAll(layer.getStyle().featureTypeStyles().get(0).rules());
             }
         }
 
@@ -200,8 +205,6 @@ public class JClassificationIntervalStylePanel extends AbstractPropertyPane{
         guiMethod.setSelectedItem(analyze.getMethod());
         guiClasses.setValue(analyze.getNbClasses());
 
-        guiTable.revalidate();
-        guiTable.repaint();
     }
 
     private void updateNormalizeList(){
@@ -438,17 +441,12 @@ public class JClassificationIntervalStylePanel extends AbstractPropertyPane{
     }// </editor-fold>//GEN-END:initComponents
 
     private void guiRemoveAllActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_guiRemoveAllActionPerformed
-        model.rules.clear();
-        guiTable.revalidate();
-        guiTable.repaint();
+        model.fts.rules().clear();
     }//GEN-LAST:event_guiRemoveAllActionPerformed
 
     private void guiGenerateActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_guiGenerateActionPerformed
-        model.rules.clear();
-        model.rules.addAll(analyze.generateRules((IntervalPalette) guiPalette.getSelectedItem()));
-        model.fireTableDataChanged();
-        guiTable.revalidate();
-        guiTable.repaint();
+        model.fts.rules().clear();
+        model.fts.rules().addAll(analyze.generateRules((IntervalPalette) guiPalette.getSelectedItem()));
     }//GEN-LAST:event_guiGenerateActionPerformed
 
     private void guiModelActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_guiModelActionPerformed
@@ -472,19 +470,16 @@ public class JClassificationIntervalStylePanel extends AbstractPropertyPane{
 
     private void guiInvertActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_guiInvertActionPerformed
 
-        Symbolizer[] symbols = new Symbolizer[model.rules.size()];
+        Symbolizer[] symbols = new Symbolizer[model.fts.rules().size()];
 
-        for(int i=0;i<model.rules.size();i++){
-            symbols[model.rules.size()-1-i] = model.rules.get(i).symbolizers().get(0);
+        for(int i=0;i<model.fts.rules().size();i++){
+            symbols[model.fts.rules().size()-1-i] = model.fts.rules().get(i).symbolizers().get(0);
         }
 
-        for(int i=0;i<model.rules.size();i++){
-            model.rules.get(i).symbolizers().clear();
-            ((MutableRule)model.rules.get(i)).symbolizers().add(symbols[i]);
+        for(int i=0;i<model.fts.rules().size();i++){
+            model.fts.rules().get(i).symbolizers().clear();
+            ((MutableRule)model.fts.rules().get(i)).symbolizers().add(symbols[i]);
         }
-
-        guiTable.revalidate();
-        guiTable.repaint();
 
     }//GEN-LAST:event_guiInvertActionPerformed
 
@@ -524,7 +519,7 @@ public class JClassificationIntervalStylePanel extends AbstractPropertyPane{
         layer.getStyle().featureTypeStyles().clear();
 
         MutableFeatureTypeStyle fts = SF.featureTypeStyle(
-                "", SF.description("analyze", "analyze"), null, null, null, model.rules);
+                "", SF.description("analyze", "analyze"), null, null, null, (List)model.fts.rules());
         layer.getStyle().featureTypeStyles().add(fts);
     }
 
@@ -618,9 +613,7 @@ public class JClassificationIntervalStylePanel extends AbstractPropertyPane{
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     if(value != null && value instanceof Rule){
-                        model.rules.remove(value);
-                        guiTable.revalidate();
-                        guiTable.repaint();
+                        model.fts.rules().remove(value);
                     }
                 }
             });
@@ -794,8 +787,6 @@ public class JClassificationIntervalStylePanel extends AbstractPropertyPane{
                         Symbolizer symbol = JPropertyPane.showSymbolizerDialog(JClassificationIntervalStylePanel.this,value.symbolizers().get(0), layer);
                         value.symbolizers().clear();
                         value.symbolizers().add(symbol);
-                        guiTable.revalidate();
-                        guiTable.repaint();
                     }
                 }
             });
@@ -824,11 +815,30 @@ public class JClassificationIntervalStylePanel extends AbstractPropertyPane{
 
     private class RuleModel extends AbstractTableModel{
 
-        private final List<Rule> rules = new ArrayList<Rule>();
+        private final MutableFeatureTypeStyle fts = SF.featureTypeStyle();
+
+        public RuleModel() {
+            fts.addListener(new FeatureTypeStyleListener() {
+
+                @Override
+                public void ruleChange(CollectionChangeEvent<MutableRule> event) {
+                    JClassificationIntervalStylePanel.RuleModel.this.fireTableDataChanged();
+                }
+
+                @Override
+                public void featureTypeNameChange(CollectionChangeEvent<Name> event) {}
+
+                @Override
+                public void semanticTypeChange(CollectionChangeEvent<SemanticType> event) {}
+
+                @Override
+                public void propertyChange(PropertyChangeEvent evt) {}
+            });
+        }
 
         @Override
         public int getRowCount() {
-            return rules.size();
+            return fts.rules().size();
         }
 
         @Override
@@ -843,7 +853,7 @@ public class JClassificationIntervalStylePanel extends AbstractPropertyPane{
 
         @Override
         public Object getValueAt(final int rowIndex, final int columnIndex) {
-            return rules.get(rowIndex);
+            return fts.rules().get(rowIndex);
         }
 
         @Override
@@ -861,7 +871,7 @@ public class JClassificationIntervalStylePanel extends AbstractPropertyPane{
         @Override
         public void setValueAt(final Object aValue, final int rowIndex, final int columnIndex) {
 
-            MutableRule rule = (MutableRule) rules.get(rowIndex);
+            MutableRule rule = (MutableRule) fts.rules().get(rowIndex);
 
             if(aValue instanceof Literal){
                 //the property value field has changed

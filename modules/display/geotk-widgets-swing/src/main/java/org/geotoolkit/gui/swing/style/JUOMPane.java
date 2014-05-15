@@ -114,7 +114,7 @@ public class JUOMPane extends StyleElementEditor<Unit>{
 
     private void jcb_uomItemStateChanged(ItemEvent evt) {//GEN-FIRST:event_jcb_uomItemStateChanged
         // TODO add your handling code here:
-        firePropertyChange(PROPERTY_TARGET, null, create());
+        firePropertyChange(PROPERTY_UPDATED, null, create());
     }//GEN-LAST:event_jcb_uomItemStateChanged
 
     

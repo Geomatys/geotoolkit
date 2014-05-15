@@ -21,6 +21,8 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import javax.swing.ButtonGroup;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
@@ -152,6 +154,7 @@ public class JStrokePane extends StyleElementEditor<Stroke> {
 
         JOptionDialog.show(null, pane,JOptionPane.OK_OPTION);
         graphicFill = pane.create();
+        firePropertyChange(PROPERTY_UPDATED, null, create());
     }
 
     @Override
@@ -205,6 +208,11 @@ public class JStrokePane extends StyleElementEditor<Stroke> {
         setOpaque(false);
 
         GuiStrokeDashes.setOpaque(false);
+        GuiStrokeDashes.addPropertyChangeListener(new PropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent evt) {
+                JStrokePane.this.propertyChange(evt);
+            }
+        });
 
         butFill.setText(MessageBundle.getString("fill")); // NOI18N
         butFill.setPreferredSize(new Dimension(68, 22));
@@ -232,6 +240,36 @@ public class JStrokePane extends StyleElementEditor<Stroke> {
         guiLabelWidth.setText(MessageBundle.getString("width")); // NOI18N
 
         guiLabelDashes.setText(MessageBundle.getString("dashes")); // NOI18N
+
+        GuiStrokeColor.addPropertyChangeListener(new PropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent evt) {
+                JStrokePane.this.propertyChange(evt);
+            }
+        });
+
+        GuiStrokeLineJoin.addPropertyChangeListener(new PropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent evt) {
+                JStrokePane.this.propertyChange(evt);
+            }
+        });
+
+        GuiStrokeLineCap.addPropertyChangeListener(new PropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent evt) {
+                JStrokePane.this.propertyChange(evt);
+            }
+        });
+
+        GuiStrokeWidth.addPropertyChangeListener(new PropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent evt) {
+                JStrokePane.this.propertyChange(evt);
+            }
+        });
+
+        GuiStrokeAlpha.addPropertyChangeListener(new PropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent evt) {
+                JStrokePane.this.propertyChange(evt);
+            }
+        });
 
         typeGroup.add(guiGraphicColor);
         guiGraphicColor.setSelected(true);
@@ -367,6 +405,13 @@ private void guiGraphicStrokeActionPerformed(final ActionEvent evt) {//GEN-FIRST
         showGraphicStrokeDialog();
     }
 }//GEN-LAST:event_guiGraphicStrokeActionPerformed
+
+    private void propertyChange(PropertyChangeEvent evt) {//GEN-FIRST:event_propertyChange
+        if (PROPERTY_UPDATED.equalsIgnoreCase(evt.getPropertyName())) {            
+            firePropertyChange(PROPERTY_UPDATED, null, create());
+        }
+    }//GEN-LAST:event_propertyChange
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private JNumberExpressionPane GuiStrokeAlpha;
     private JColorExpressionPane GuiStrokeColor;

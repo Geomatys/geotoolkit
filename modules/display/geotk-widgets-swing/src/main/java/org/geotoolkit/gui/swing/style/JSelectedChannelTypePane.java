@@ -17,6 +17,10 @@
  */
 package org.geotoolkit.gui.swing.style;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JLabel;
@@ -96,6 +100,12 @@ public class JSelectedChannelTypePane extends StyleElementEditor<SelectedChannel
 
         setOpaque(false);
 
+        guiContrast.addPropertyChangeListener(new PropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent evt) {
+                JSelectedChannelTypePane.this.propertyChange(evt);
+            }
+        });
+
         guiSeparator.setAlpha(0.5F);
         guiSeparator.setHorizontalAlignment(0);
         guiSeparator.setTitle(MessageBundle.getString("contrast")); // NOI18N
@@ -103,6 +113,11 @@ public class JSelectedChannelTypePane extends StyleElementEditor<SelectedChannel
         guiLabelName.setText(MessageBundle.getString("name")); // NOI18N
 
         guiName.setOpaque(false);
+        guiName.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                guiNameActionPerformed(evt);
+            }
+        });
 
         GroupLayout layout = new GroupLayout(this);
         this.setLayout(layout);
@@ -130,6 +145,16 @@ public class JSelectedChannelTypePane extends StyleElementEditor<SelectedChannel
                 .addComponent(guiContrast, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
         );
     }// </editor-fold>//GEN-END:initComponents
+
+    private void propertyChange(PropertyChangeEvent evt) {//GEN-FIRST:event_propertyChange
+        if (PROPERTY_UPDATED.equalsIgnoreCase(evt.getPropertyName())) {            
+            firePropertyChange(PROPERTY_UPDATED, null, create());
+        }
+    }//GEN-LAST:event_propertyChange
+
+    private void guiNameActionPerformed(ActionEvent evt) {//GEN-FIRST:event_guiNameActionPerformed
+        firePropertyChange(PROPERTY_UPDATED, null, create());
+    }//GEN-LAST:event_guiNameActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private JContrastEnhancement guiContrast;

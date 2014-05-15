@@ -27,6 +27,7 @@ import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
+import java.beans.PropertyChangeEvent;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.AbstractCellEditor;
@@ -60,16 +61,20 @@ import org.geotoolkit.gui.swing.resource.IconBuilder;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.FeatureMapLayer;
+import org.geotoolkit.style.FeatureTypeStyleListener;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.category.CategoryStyleBuilder;
 import org.geotoolkit.style.interval.DefaultRandomPalette;
 import org.geotoolkit.style.interval.RandomPalette;
+import org.geotoolkit.style.visitor.CopyStyleVisitor;
+import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.jdesktop.swingx.JXTable;
 import org.jdesktop.swingx.combobox.ListComboBoxModel;
 import org.jdesktop.swingx.decorator.Highlighter;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
+import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.PropertyIsEqualTo;
@@ -77,6 +82,7 @@ import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Literal;
 import org.opengis.filter.expression.PropertyName;
 import org.opengis.style.Rule;
+import org.opengis.style.SemanticType;
 import org.opengis.style.Symbolizer;
 
 /**
@@ -137,17 +143,12 @@ public class JClassificationSingleStylePanel extends AbstractPropertyPane{
 
     private void parse(){
         builder.analyze(layer);
-
-        guiTable.revalidate();
-        guiTable.repaint();
         guiOther.setSelected(false);
 
         guiProperty.setModel(new ListComboBoxModel(builder.getProperties()));
         guiProperty.setSelectedItem(builder.getCurrentProperty());
 
         updateModelGlyph();
-        guiTable.revalidate();
-        guiTable.repaint();
     }
 
     private void updateModelGlyph(){
@@ -297,17 +298,13 @@ public class JClassificationSingleStylePanel extends AbstractPropertyPane{
 
     private void guiAddOneActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_guiAddOneActionPerformed
         String val = JOptionPane.showInputDialog(MessageBundle.getString("value")+" :");
-        Rule r = builder.createRule((PropertyName) guiProperty.getSelectedItem(), val);
+        MutableRule r = builder.createRule((PropertyName) guiProperty.getSelectedItem(), val);
 
-        model.rules.add(r);
-        guiTable.revalidate();
-        guiTable.repaint();
+        model.fts.rules().add(r);
     }//GEN-LAST:event_guiAddOneActionPerformed
 
     private void guiRemoveAllActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_guiRemoveAllActionPerformed
-        model.rules.clear();
-        guiTable.revalidate();
-        guiTable.repaint();
+        model.fts.rules().clear();
     }//GEN-LAST:event_guiRemoveAllActionPerformed
 
     private void guiGenerateActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_guiGenerateActionPerformed
@@ -316,9 +313,6 @@ public class JClassificationSingleStylePanel extends AbstractPropertyPane{
         builder.setOther(guiOther.isSelected());
         builder.setCurrentProperty((PropertyName) guiProperty.getSelectedItem());
         builder.create();
-        model.fireTableDataChanged();
-        guiTable.revalidate();
-        guiTable.repaint();
 
     }//GEN-LAST:event_guiGenerateActionPerformed
 
@@ -349,8 +343,8 @@ public class JClassificationSingleStylePanel extends AbstractPropertyPane{
         layer.getStyle().featureTypeStyles().clear();
 
         MutableFeatureTypeStyle fts = SF.featureTypeStyle(
-                "", SF.description("analyze", "analyze"), null, null, null, model.rules);
-        layer.getStyle().featureTypeStyles().add(fts);
+                "", SF.description("analyze", "analyze"), null, null, null, (List)model.fts.rules());
+        layer.getStyle().featureTypeStyles().add( CopyStyleVisitor.INSTANCE.visit(fts,null) );
     }
 
     @Override
@@ -444,9 +438,7 @@ public class JClassificationSingleStylePanel extends AbstractPropertyPane{
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     if(value != null && value instanceof Rule){
-                        model.rules.remove(value);
-                        guiTable.revalidate();
-                        guiTable.repaint();
+                        model.fts.rules().remove(value);
                     }
                 }
             });
@@ -619,8 +611,6 @@ public class JClassificationSingleStylePanel extends AbstractPropertyPane{
                         Symbolizer symbol = JPropertyPane.showSymbolizerDialog(JClassificationSingleStylePanel.this, value.symbolizers().get(0), layer);
                         value.symbolizers().clear();
                         value.symbolizers().add(symbol);
-                        guiTable.revalidate();
-                        guiTable.repaint();
                     }
                 }
             });
@@ -649,11 +639,30 @@ public class JClassificationSingleStylePanel extends AbstractPropertyPane{
 
     private class RuleModel extends AbstractTableModel{
 
-        private final List<Rule> rules = builder.getRules();
+        private final MutableFeatureTypeStyle fts = builder.getFeatureTypeStyle();
 
+        public RuleModel() {
+            fts.addListener(new FeatureTypeStyleListener() {
+
+                @Override
+                public void ruleChange(CollectionChangeEvent<MutableRule> event) {
+                    RuleModel.this.fireTableDataChanged();
+                }
+
+                @Override
+                public void featureTypeNameChange(CollectionChangeEvent<Name> event) {}
+
+                @Override
+                public void semanticTypeChange(CollectionChangeEvent<SemanticType> event) {}
+
+                @Override
+                public void propertyChange(PropertyChangeEvent evt) {}
+            });
+        }
+        
         @Override
         public int getRowCount() {
-            return rules.size();
+            return fts.rules().size();
         }
 
         @Override
@@ -668,7 +677,7 @@ public class JClassificationSingleStylePanel extends AbstractPropertyPane{
 
         @Override
         public Object getValueAt(final int rowIndex, final int columnIndex) {
-            return rules.get(rowIndex);
+            return fts.rules().get(rowIndex);
         }
 
         @Override
@@ -686,7 +695,7 @@ public class JClassificationSingleStylePanel extends AbstractPropertyPane{
         @Override
         public void setValueAt(final Object aValue, final int rowIndex, final int columnIndex) {
 
-            MutableRule rule = (MutableRule) rules.get(rowIndex);
+            MutableRule rule = (MutableRule) fts.rules().get(rowIndex);
 
             if(aValue instanceof Literal){
                 //the property value field has changed

@@ -128,7 +128,7 @@ public class JHaloPane extends StyleElementEditor<Halo> {
     }// </editor-fold>//GEN-END:initComponents
 
     private void propertyChange(PropertyChangeEvent evt) {//GEN-FIRST:event_propertyChange
-       firePropertyChange(PROPERTY_TARGET, null, create());
+       firePropertyChange(PROPERTY_UPDATED, null, create());
     }//GEN-LAST:event_propertyChange
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

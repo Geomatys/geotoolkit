@@ -146,6 +146,24 @@ public class JTextSymbolizerAdvanced extends StyleElementEditor<TextSymbolizer> 
         jPanel1.setBorder(BorderFactory.createTitledBorder(MessageBundle.getString("general"))); // NOI18N
         jPanel1.setOpaque(false);
 
+        guiGeom.addPropertyChangeListener(new PropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent evt) {
+                JTextSymbolizerAdvanced.this.propertyChange(evt);
+            }
+        });
+
+        guiUOM.addPropertyChangeListener(new PropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent evt) {
+                JTextSymbolizerAdvanced.this.propertyChange(evt);
+            }
+        });
+
+        guiLabel.addPropertyChangeListener(new PropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent evt) {
+                JTextSymbolizerAdvanced.this.propertyChange(evt);
+            }
+        });
+
         guiLabelLabel.setText(MessageBundle.getString("label")); // NOI18N
 
         GroupLayout jPanel1Layout = new GroupLayout(jPanel1);
@@ -312,8 +330,8 @@ public class JTextSymbolizerAdvanced extends StyleElementEditor<TextSymbolizer> 
 
     private void propertyChange(PropertyChangeEvent evt) {//GEN-FIRST:event_propertyChange
         // TODO add your handling code here:
-        if (PROPERTY_TARGET.equalsIgnoreCase(evt.getPropertyName())) {            
-            firePropertyChange(PROPERTY_TARGET, null, create());
+        if (PROPERTY_UPDATED.equalsIgnoreCase(evt.getPropertyName())) {            
+            firePropertyChange(PROPERTY_UPDATED, null, create());
         }
     }//GEN-LAST:event_propertyChange
 

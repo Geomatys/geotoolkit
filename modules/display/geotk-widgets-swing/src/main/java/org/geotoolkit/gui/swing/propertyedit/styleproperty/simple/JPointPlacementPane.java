@@ -154,8 +154,8 @@ public class JPointPlacementPane extends StyleElementEditor<PointPlacement>{
     }// </editor-fold>//GEN-END:initComponents
 
     private void propertyChange(PropertyChangeEvent evt) {//GEN-FIRST:event_propertyChange
-        if (PROPERTY_TARGET.equalsIgnoreCase(evt.getPropertyName())) {
-            firePropertyChange(PROPERTY_TARGET, null, create());
+        if (PROPERTY_UPDATED.equalsIgnoreCase(evt.getPropertyName())) {
+            firePropertyChange(PROPERTY_UPDATED, null, create());
         }
     }//GEN-LAST:event_propertyChange
 
