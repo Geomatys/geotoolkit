@@ -17,6 +17,7 @@
 
 package org.geotoolkit.observation;
 
+import java.util.List;
 import java.util.Set;
 import org.apache.sis.storage.DataStore;
 import org.geotoolkit.sos.netcdf.ExtractionResult;
@@ -44,4 +45,6 @@ public abstract class ObservationStore extends DataStore {
     public abstract TemporalGeometricPrimitive getTemporalBounds();
     
     public abstract ExtractionResult getResults();
+    
+    public abstract ExtractionResult getResults(final List<String> sensorIds);
 }

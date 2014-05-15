@@ -19,6 +19,7 @@ package org.geotoolkit.observation.file;
 
 import java.io.File;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.feature.DefaultName;
@@ -80,7 +81,12 @@ public class FileObservationStore extends AbstractObservationStore implements Da
     
     @Override
     public ExtractionResult getResults() {
-        return NetCDFExtractor.getObservationFromNetCDF(analyze, getProcedureID());
+        return NetCDFExtractor.getObservationFromNetCDF(analyze, getProcedureID(), null);
+    }
+    
+    @Override
+    public ExtractionResult getResults(final List<String> sensorIDs) {
+        return NetCDFExtractor.getObservationFromNetCDF(analyze, getProcedureID(), sensorIDs);
     }
     
     @Override
@@ -99,7 +105,7 @@ public class FileObservationStore extends AbstractObservationStore implements Da
     
     @Override
     public TemporalGeometricPrimitive getTemporalBounds() {
-        final ExtractionResult result = NetCDFExtractor.getObservationFromNetCDF(analyze, getProcedureID());
+        final ExtractionResult result = NetCDFExtractor.getObservationFromNetCDF(analyze, getProcedureID(), null);
         if (result != null && result.spatialBound != null) {
             return result.spatialBound.getTimeObject("2.0.0");
         }

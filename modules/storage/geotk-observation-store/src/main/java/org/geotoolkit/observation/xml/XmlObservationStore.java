@@ -96,47 +96,56 @@ public class XmlObservationStore extends AbstractObservationStore implements Dat
 
     @Override
     public ExtractionResult getResults() {
+        return getResults(null);
+    }
+    
+    @Override
+    public ExtractionResult getResults(final List<String> sensorIDs) {
         final ExtractionResult result = new ExtractionResult();
         result.spatialBound.initBoundary();
         final Object obj = readFile();
         if (obj instanceof ObservationCollection) {
             final ObservationCollection collection = (ObservationCollection)obj;
-            result.observations.addAll(collection.getMember());
             for (Observation obs : collection.getMember()) {
                 final AbstractObservation o = (AbstractObservation)obs;
-                final PhenomenonProperty phenProp = o.getPropertyObservedProperty();
-                final List<String> fields = getPhenomenonsFields(phenProp);
-                for (String field : fields) {
-                    if (!result.fields.contains(field)) {
-                        result.fields.add(field);
-                    }
-                }
-                final Phenomenon phen = getPhenomenons(phenProp);
-                if (!result.phenomenons.contains(phen)) {
-                    result.phenomenons.add(phen);
-                }
                 final ProcedureTree procedure = new ProcedureTree(o.getProcedure().getHref(), "Component");
-                if (!result.procedures.contains(procedure)) {
-                    result.procedures.add(procedure);
+                if (sensorIDs == null || sensorIDs.contains(procedure.id)) {
+                    if (!result.procedures.contains(procedure)) {
+                        result.procedures.add(procedure);
+                    }
+                    final PhenomenonProperty phenProp = o.getPropertyObservedProperty();
+                    final List<String> fields = getPhenomenonsFields(phenProp);
+                    for (String field : fields) {
+                        if (!result.fields.contains(field)) {
+                            result.fields.add(field);
+                        }
+                    }
+                    final Phenomenon phen = getPhenomenons(phenProp);
+                    if (!result.phenomenons.contains(phen)) {
+                        result.phenomenons.add(phen);
+                    }
+                    appendTime(obs.getSamplingTime(), result.spatialBound);
+                    appendTime(obs.getSamplingTime(), procedure.spatialBound);
+                    appendGeometry(obs.getFeatureOfInterest(), result.spatialBound);
+                    appendGeometry(obs.getFeatureOfInterest(), procedure.spatialBound);
+                    result.observations.add(o);
                 }
+            }
+            
+        } else if (obj instanceof AbstractObservation) {
+            final AbstractObservation obs = (AbstractObservation)obj;
+            final ProcedureTree procedure = new ProcedureTree(obs.getProcedure().getHref(), "Component");
+            if (sensorIDs == null || sensorIDs.contains(procedure.id)) {
+                result.observations .add(obs);
+                final PhenomenonProperty phenProp = obs.getPropertyObservedProperty();
+                result.fields.addAll(getPhenomenonsFields(phenProp));
+                result.phenomenons.add(getPhenomenons(phenProp));
+                result.procedures.add(procedure);
                 appendTime(obs.getSamplingTime(), result.spatialBound);
                 appendTime(obs.getSamplingTime(), procedure.spatialBound);
                 appendGeometry(obs.getFeatureOfInterest(), result.spatialBound);
                 appendGeometry(obs.getFeatureOfInterest(), procedure.spatialBound);
             }
-            
-        } else if (obj instanceof AbstractObservation) {
-            final AbstractObservation obs = (AbstractObservation)obj;
-            result.observations .add(obs);
-            final PhenomenonProperty phenProp = obs.getPropertyObservedProperty();
-            result.fields.addAll(getPhenomenonsFields(phenProp));
-            result.phenomenons.add(getPhenomenons(phenProp));
-            final ProcedureTree procedure = new ProcedureTree(obs.getProcedure().getHref(), "Component");
-            result.procedures.add(procedure);
-            appendTime(obs.getSamplingTime(), result.spatialBound);
-            appendTime(obs.getSamplingTime(), procedure.spatialBound);
-            appendGeometry(obs.getFeatureOfInterest(), result.spatialBound);
-            appendGeometry(obs.getFeatureOfInterest(), procedure.spatialBound);
             
         }
         return result;
