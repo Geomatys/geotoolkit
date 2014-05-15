@@ -34,6 +34,7 @@ import org.geotoolkit.data.shapefile.lock.ShpFiles;
 import org.geotoolkit.data.shapefile.lock.StorageFile;
 import org.geotoolkit.data.shapefile.fix.IndexedFidWriter;
 import org.apache.sis.internal.storage.IOUtilities;
+import org.geotoolkit.data.FeatureStoreContentEvent;
 
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -138,6 +139,21 @@ class IndexedShapefileFeatureWriter extends ShapefileFeatureWriter{
                     indexedShapefileFeatureStore
                             .buildQuadTree(indexedShapefileFeatureStore.maxDepth);
                 }
+            }
+            
+            if (!addedIds.isEmpty()) {
+                final FeatureStoreContentEvent event = new FeatureStoreContentEvent(this, FeatureStoreContentEvent.Type.ADD, featureType.getName(), FF.id(addedIds));
+                parent.forwardContentEvent(event);
+            }
+
+            if (!updatedIds.isEmpty()) {
+                final FeatureStoreContentEvent event = new FeatureStoreContentEvent(this, FeatureStoreContentEvent.Type.UPDATE, featureType.getName(), FF.id(updatedIds));
+                parent.forwardContentEvent(event);
+            }
+
+            if (!deletedIds.isEmpty()) {
+                final FeatureStoreContentEvent event = new FeatureStoreContentEvent(this, FeatureStoreContentEvent.Type.DELETE, featureType.getName(), FF.id(deletedIds));
+                parent.forwardContentEvent(event);
             }
         } catch (Throwable e) {
             indexedShapefileFeatureStore.treeType = IndexType.NONE;

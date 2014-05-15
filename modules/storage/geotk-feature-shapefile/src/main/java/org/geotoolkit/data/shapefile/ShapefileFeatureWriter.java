@@ -51,6 +51,7 @@ import java.util.Set;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.FeatureStoreContentEvent;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
+import org.geotoolkit.data.shapefile.indexed.IndexedShapefileFeatureStore;
 import org.geotoolkit.data.shapefile.lock.AccessManager;
 import org.geotoolkit.data.shapefile.lock.ShpFileType;
 import org.geotoolkit.factory.FactoryFinder;
@@ -72,7 +73,7 @@ public class ShapefileFeatureWriter implements FeatureWriter<SimpleFeatureType, 
 
     protected final FilterFactory FF = FactoryFinder.getFilterFactory(null);
     
-    private final ShapefileFeatureStore parent;
+    protected final ShapefileFeatureStore parent;
     
     // the  FeatureReader<SimpleFeatureType, SimpleFeature> to obtain the current Feature from
     protected FeatureReader<SimpleFeatureType, SimpleFeature> featureReader;
@@ -110,9 +111,9 @@ public class ShapefileFeatureWriter implements FeatureWriter<SimpleFeatureType, 
     protected DbaseFileWriter dbfWriter;
     private DbaseFileHeader dbfHeader;
 
-    private final Set<Identifier> deletedIds = new HashSet<>();
-    private final Set<Identifier> updatedIds = new HashSet<>();
-    private final Set<Identifier> addedIds   = new HashSet<>();
+    protected final Set<Identifier> deletedIds = new HashSet<>();
+    protected final Set<Identifier> updatedIds = new HashSet<>();
+    protected final Set<Identifier> addedIds   = new HashSet<>();
     protected final Map<ShpFileType, StorageFile> storageFiles = new HashMap<>();
 
     // keep track of bounds during write
@@ -290,19 +291,22 @@ public class ShapefileFeatureWriter implements FeatureWriter<SimpleFeatureType, 
             throw new FeatureStoreRuntimeException(ex);
         }
 
-        if (!addedIds.isEmpty()) {
-            final FeatureStoreContentEvent event = new FeatureStoreContentEvent(this, FeatureStoreContentEvent.Type.ADD, featureType.getName(), FF.id(addedIds));
-            parent.forwardContentEvent(event);
-        }
+        // TODO : find a proper way to handle it.
+        if (!(parent instanceof IndexedShapefileFeatureStore)) {
+            if (!addedIds.isEmpty()) {
+                final FeatureStoreContentEvent event = new FeatureStoreContentEvent(this, FeatureStoreContentEvent.Type.ADD, featureType.getName(), FF.id(addedIds));
+                parent.forwardContentEvent(event);
+            }
 
-        if (!updatedIds.isEmpty()) {
-            final FeatureStoreContentEvent event = new FeatureStoreContentEvent(this, FeatureStoreContentEvent.Type.UPDATE, featureType.getName(), FF.id(updatedIds));
-            parent.forwardContentEvent(event);
-        }
+            if (!updatedIds.isEmpty()) {
+                final FeatureStoreContentEvent event = new FeatureStoreContentEvent(this, FeatureStoreContentEvent.Type.UPDATE, featureType.getName(), FF.id(updatedIds));
+                parent.forwardContentEvent(event);
+            }
 
-        if (!deletedIds.isEmpty()) {
-            final FeatureStoreContentEvent event = new FeatureStoreContentEvent(this, FeatureStoreContentEvent.Type.DELETE, featureType.getName(), FF.id(deletedIds));
-            parent.forwardContentEvent(event);
+            if (!deletedIds.isEmpty()) {
+                final FeatureStoreContentEvent event = new FeatureStoreContentEvent(this, FeatureStoreContentEvent.Type.DELETE, featureType.getName(), FF.id(deletedIds));
+                parent.forwardContentEvent(event);
+            }
         }
     }
 
