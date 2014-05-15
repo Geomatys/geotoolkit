@@ -66,12 +66,7 @@ public class LargeRenderedImage implements RenderedImage {
     
     /** Maximum dimension which will be allowed for {@link #getData(java.awt.Rectangle) } method. */
     private static final Dimension RASTER_MAX_SIZE = new Dimension(10000, 10000);
-    
-    /**
-     * Upper left corner of currently stored {@link Raster}. 
-     */
-    private static final Point ptOffset = new Point();
-    
+
     /**
      * Default store memory capacity.
      */
@@ -81,11 +76,6 @@ public class LargeRenderedImage implements RenderedImage {
      * {@link ImageReader} where is read each image tile.
      */
     private final ImageReader imageReader;
-    
-    /**
-     * To read some area (Tile) from {@link #imageReader}.
-     */
-    private final ImageReadParam imgParam;
     
     /**
      * Tile number in X direction.
@@ -101,11 +91,6 @@ public class LargeRenderedImage implements RenderedImage {
      * Define if tile will be read from {@link #imageReader} or call from {@link #tilecache}. 
      */
     private final boolean[][] isRead;
-    
-    /**
-     * Use to read a define area in {@link #imageReader}.
-     */
-    private final Rectangle srcRegion = new Rectangle();
 
     /**
      * Image attributs.
@@ -148,7 +133,6 @@ public class LargeRenderedImage implements RenderedImage {
         ArgumentChecks.ensurePositive("image index", imageIndex);
         this.imageReader = imageReader;
         this.imageIndex  = imageIndex;
-        this.imgParam    = new ImageReadParam();
         this.width       = imageReader.getWidth(imageIndex);
         this.height      = imageReader.getHeight(imageIndex);
         this.tilecache = (tilecache != null) ? tilecache : LargeCache.getInstance(DEFAULT_MEMORY_CAPACITY);
@@ -320,33 +304,33 @@ public class LargeRenderedImage implements RenderedImage {
     @Override
     public Raster getTile(int tileX, int tileY) {
         if (isRead[tileY][tileX]) return tilecache.getTile(this, tileX, tileY);
-        return loadTile(tileX, tileY);
+        try {
+            return loadTile(tileX, tileY);
+        } catch (IOException e) {
+            throw new IllegalStateException("Impossible to read tile from image reader.", e);
+        }
     }
 
-    private synchronized Raster loadTile(int tileX, int tileY) {
-        // Re-check if the tile is not already loaded, because another thread could already did it.
+    private synchronized Raster loadTile(int tileX, int tileY) throws IOException {
+        // Re-check if the tile is not already loaded, because another thread could have did it.
         if (isRead[tileY][tileX]) return tilecache.getTile(this, tileX, tileY);
-        // si elle na pas ete demandée :
-        // 1 : la demandée au reader
+
+        // Compute tile position in source image
         final int minRx = tileX * tileWidth;
         final int minRy = tileY * tileHeight;
         int wRx = Math.min(minRx + tileWidth, width) - minRx;
         int hRy = Math.min(minRy + tileHeight, height) - minRy;
-        srcRegion.setBounds(minRx, minRy, wRx, hRy);
-        imgParam.setSourceRegion(srcRegion);
-        BufferedImage buff = null;
-        try {
-            buff = imageReader.read(imageIndex, imgParam);
-        } catch (IOException ex) {
-            throw new IllegalStateException("Impossible to read tile from image reader.", ex);
-        }
-        // 2 : la setter au tile cache
+        final ImageReadParam imgParam = imageReader.getDefaultReadParam();
+        imgParam.setSourceRegion(new Rectangle(minRx, minRy, wRx, hRy));
+
+        // Load tile and give it to cache.
+        BufferedImage buff = imageReader.read(imageIndex, imgParam);
         if (cm == null) cm = buff.getColorModel();
-        ptOffset.setLocation(minRx, minRy);
-        final WritableRaster wRaster = Raster.createWritableRaster(buff.getSampleModel(), buff.getRaster().getDataBuffer(), ptOffset);
+        final WritableRaster wRaster = Raster.createWritableRaster(buff.getSampleModel(), buff.getRaster().getDataBuffer(), new Point(minRx, minRy));
         tilecache.add(this, tileX, tileY, wRaster);
+
         isRead[tileY][tileX] = true;
-        return wRaster;        
+        return wRaster;
     }
     
     /**
@@ -357,8 +341,7 @@ public class LargeRenderedImage implements RenderedImage {
         // in contradiction with this class aim.
         // in attempt to replace JAI dependencies.
         if (width <= RASTER_MAX_SIZE.width && height <= RASTER_MAX_SIZE.height) {
-            ptOffset.setLocation(0, 0);
-            final WritableRaster wr = Raster.createWritableRaster(cm.createCompatibleSampleModel(width, height), ptOffset);
+            final WritableRaster wr = Raster.createWritableRaster(cm.createCompatibleSampleModel(width, height), new Point(0, 0));
             final Rectangle rect = new Rectangle();
             int my = 0;
             for (int ty = 0, tmy = 0 + nbrTileY; ty < tmy; ty++) {
@@ -398,8 +381,7 @@ public class LargeRenderedImage implements RenderedImage {
         final int rw = Math.min(rect.x+rect.width, minX+width)-rx;
         final int rh = Math.min(rect.y+rect.height, minY+height)-ry;
         if (rw <= RASTER_MAX_SIZE.width && rh <= RASTER_MAX_SIZE.height) {
-            ptOffset.setLocation(rx, ry);
-            final WritableRaster wr = Raster.createWritableRaster(cm.createCompatibleSampleModel(rw, rh), ptOffset);
+            final WritableRaster wr = Raster.createWritableRaster(cm.createCompatibleSampleModel(rw, rh), new Point(rx, ry));
             final Rectangle area = new Rectangle();
 
             int ty = minTileGridY  + (ry - minY) / tileHeight;

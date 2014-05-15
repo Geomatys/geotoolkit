@@ -34,10 +34,10 @@ import java.util.HashMap;
 import java.util.LinkedList;
 
 /**
-* Stock all {@link java.awt.image.Raster} contained from define {@link java.awt.image.RenderedImage}.
-*
-* @author Rémi Maréchal (Geomatys).
-* @author Alexis Manin  (Geomatys).
+ * Stock all {@link java.awt.image.Raster} contained from define {@link java.awt.image.RenderedImage}.
+ *
+ * @author Rémi Maréchal (Geomatys).
+ * @author Alexis Manin  (Geomatys).
 */
 class LargeMap2D {
 
@@ -66,7 +66,7 @@ class LargeMap2D {
     private final boolean isWritableRenderedImage;
 
     /**
-     * A 2D map whose first key is row number, and second the the column number of the target raster.
+     * A 2D map whose first key is row number, and second is the column number of the target raster.
      * Ex : to get a tile whose coordinate is (tileX, tileY), do map.get(tileY).get(tileX).
      */
     final HashMap<Integer, HashMap<Integer, LargeRaster> > map;
@@ -120,7 +120,7 @@ class LargeMap2D {
             case DataBuffer.TYPE_SHORT     : dataTypeWeight = 2; break;
             case DataBuffer.TYPE_UNDEFINED : dataTypeWeight = 8; break;
             case DataBuffer.TYPE_USHORT    : dataTypeWeight = 2; break;
-            default : throw new IllegalStateException("unknow raster data type");
+            default : throw new IllegalStateException("unknown raster data type");
         }
     }
 
@@ -138,16 +138,23 @@ class LargeMap2D {
         final long rastWeight = getRasterWeight(raster);
         if (rastWeight > memoryCapacity) throw new IllegalImageDimensionException("raster too large");
 
-        HashMap<Integer, LargeRaster> row = map.get(tileY);
-        if (row == null) {
-            row = new HashMap<>(numTilesX);
-            map.put(tY, row);
-        }
-        row.put(tX, new LargeRaster(tX, tY, rastWeight, checkRaster(raster, tX, tY)));
-        stack.addLast(new Point(tX, tY));
+        synchronized (this) {
+            HashMap<Integer, LargeRaster> row = map.get(tileY);
+            if (row == null) {
+                row = new HashMap<>(numTilesX);
+                map.put(tY, row);
+            } else if (row.get(tX) != null) {
+                final Point position = new Point(tX, tY);
+                flushTile(position);
+                stack.remove(position);
+            }
 
-        remainingCapacity -= rastWeight;
-        checkMap();
+            row.put(tX, new LargeRaster(tX, tY, rastWeight, checkRaster(raster, tX, tY)));
+            stack.addLast(new Point(tX, tY));
+
+            remainingCapacity -= rastWeight;
+            checkMap();
+        }
     }
 
     /**
@@ -181,38 +188,49 @@ class LargeMap2D {
      */
     Raster getRaster(int tileX, int tileY) throws IOException {
         Raster result = null;
-
         final int tX = tileX - minTileX;
         final int tY = tileY - minTileY;
 
         HashMap<Integer, LargeRaster> row = map.get(tY);
         if (row == null) {
-            row = new HashMap<>(numTilesX);
-            map.put(tY, row);
+            synchronized (this) {
+                // Re-check to ensure another thread have not done the job for us.
+                row = map.get(tY);
+                if (row == null) {
+                    row = new HashMap<>(numTilesX);
+                    map.put(tY, row);
+                }
+            }
         }
-        LargeRaster lRaster = row.get(tX);
 
+        LargeRaster lRaster = row.get(tX);
         if (lRaster != null) {
             result = lRaster.getRaster();
         } else {
-            final File getFile = new File(qTD.getPath(tX, tY));
-
-            if (getFile.exists()) {
-                final ImageInputStream stream = ImageIO.createImageInputStream(getFile);
-                if (stream != null) {
-                    imgReader.setInput(stream);
-                    final BufferedImage buff = imgReader.read(0);
-                    imgReader.setInput(null);
-                    imgReader.dispose();
-                    stream.close();
-                    //add in cache list.
-                    final Raster wr = checkRaster(buff.getRaster(), tX, tY);
-                    final long rastWeight = getRasterWeight(wr);
-                    row.put(tX, new LargeRaster(tX, tY, rastWeight, wr));
-                    stack.addLast(new Point(tX, tY));
-                    remainingCapacity -= rastWeight;
-                    checkMap();
-                    result = wr;
+            synchronized (this) {
+                // Check another time, to ensure another thread has not load the tile while we were waiting.
+                lRaster = row.get(tX);
+                if (lRaster != null) {
+                    result = lRaster.getRaster();
+                } else {
+                    final File getFile = new File(qTD.getPath(tX, tY));
+                    if (getFile.exists()) {
+                        final ImageInputStream stream = ImageIO.createImageInputStream(getFile);
+                        if (stream != null) {
+                            imgReader.setInput(stream);
+                            final BufferedImage buff = imgReader.read(0);
+                            imgReader.setInput(null);
+                            stream.close();
+                            //add in cache list.
+                            final Raster wr = checkRaster(buff.getRaster(), tX, tY);
+                            final long rastWeight = getRasterWeight(wr);
+                            row.put(tX, new LargeRaster(tX, tY, rastWeight, wr));
+                            stack.addLast(new Point(tX, tY));
+                            remainingCapacity -= rastWeight;
+                            checkMap();
+                            result = wr;
+                        }
+                    }
                 }
             }
         }
@@ -239,7 +257,7 @@ class LargeMap2D {
     /**
      * Remove all file and directory relevant to this cache system.
      */
-    void removeTiles() {
+    synchronized void removeTiles() {
         remainingCapacity = memoryCapacity;
         for (HashMap row : map.values()) {
             row.clear();
@@ -257,7 +275,7 @@ class LargeMap2D {
      * @throws org.geotoolkit.image.io.IllegalImageDimensionException if capacity is too low from raster weight.
      * @throws java.io.IOException if impossible to write raster on disk.
      */
-    void setCapacity(long memoryCapacity) throws IllegalImageDimensionException, IOException {
+    synchronized void setCapacity(long memoryCapacity) throws IOException {
         ArgumentChecks.ensurePositive("LargeList : memory capacity", memoryCapacity);
         final long diff    = this.memoryCapacity - memoryCapacity;
         remainingCapacity -= diff;
@@ -294,7 +312,6 @@ class LargeMap2D {
             imgWriter.setOutput(stream);
             imgWriter.write(rast);
             imgWriter.setOutput(null);
-            imgWriter.dispose();
         }
         path.deleteOnExit();
     }
@@ -346,27 +363,41 @@ class LargeMap2D {
 
     /**
      * <p>Verify that list weight do not exceed memory capacity.<br/>
-     * If memory capacity is exceed write {@link java.awt.image.Raster} on hard disk up to don't exceed memory capacity.</p>
+     * If memory capacity is exceeded, write as many {@link java.awt.image.Raster} objects needed to not exceed memory capacity anymore.</p>
      *
      * @throws org.geotoolkit.image.io.IllegalImageDimensionException if raster too large for this Tilecache.
      * @throws java.io.IOException if impossible to write raster.
      */
     private void checkMap() throws IOException {
-        while (remainingCapacity < 0) {
-            if (stack.isEmpty())
-                throw new IllegalImageDimensionException("raster too large");
+        if (remainingCapacity >= 0) return;
+        else if (map.isEmpty()) throw new IllegalImageDimensionException("raster too large");
 
-            final Point tileCorner = stack.pollFirst();
-            final HashMap<Integer, LargeRaster> row = map.get(tileCorner.y);
-            if (row != null) {
-                final LargeRaster lr = row.remove(tileCorner.x);
-                if (lr != null) {
-                    remainingCapacity   += lr.getWeight();
-                    //quad tree
-                    writeRaster(lr);
-                }
+        synchronized (this) {
+            while (remainingCapacity < 0) {
+                if (stack.isEmpty())
+                    throw new IllegalImageDimensionException("raster too large");
+
+                final Point tileCorner = stack.pollFirst();
+                flushTile(tileCorner);
             }
+        }
+    }
 
+    /**
+     * Remove a tile from the cache and flush it into the tmp quad-tree on disk.
+     *
+     * @param tileCorner The coordinate of the tile to flush.
+     * @throws IOException If an error happens while writing the tile into the file-system.
+     */
+    private void flushTile(Point tileCorner) throws IOException {
+        final HashMap<Integer, LargeRaster> row = map.get(tileCorner.y);
+        if (row != null) {
+            final LargeRaster lr = row.remove(tileCorner.x);
+            if (lr != null) {
+                remainingCapacity += lr.getWeight();
+                //quad tree
+                writeRaster(lr);
+            }
         }
     }
 }

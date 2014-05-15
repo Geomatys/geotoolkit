@@ -72,30 +72,27 @@ public class LargeCache implements TileCache {
         if (!(raster instanceof WritableRaster))
             throw new IllegalArgumentException("raster must be WritableRaster instance");
         final WritableRaster wRaster = (WritableRaster) raster;
-        LargeMap2D lL = map.get(ri);
-        if (lL == null) {
-            final long mC = memoryCapacity / (map.size() + 1);
-            updateLList(mC);
-            try {
-                lL = new LargeMap2D(ri, mC);
-                map.put(ri, lL);
-            } catch (IOException ex) {
-                throw new RuntimeException("impossible to create cache list", ex);
+
+        LargeMap2D lL;
+        synchronized (ri) {
+            lL = map.get(ri);
+            if (lL == null) {
+                final long mC = memoryCapacity / (map.size() + 1);
+                updateLList(mC);
+                try {
+                    lL = new LargeMap2D(ri, mC);
+                    map.put(ri, lL);
+                } catch (IOException ex) {
+                    throw new RuntimeException("impossible to create cache list", ex);
+                }
             }
         }
+
         try {
             lL.add(i, i1, wRaster);
         } catch (IOException ex) {
             throw new RuntimeException("impossible to add raster (write raster on disk)", ex);
         }
-    }
-
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
-    public void add(RenderedImage ri, int i, int i1, Raster raster, Object o) {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     /**
@@ -128,27 +125,15 @@ public class LargeCache implements TileCache {
      * {@inheritDoc }.
      */
     @Override
-    public Raster[] getTiles(RenderedImage ri) {
-        throw new UnsupportedOperationException("Not supported yet.");
-//        if (!map.containsKey(ri))
-//            throw new IllegalArgumentException("renderedImage don't exist in this "+LargeCache.class.getName());
-//        try {
-//            return map.get(ri).getTiles();
-//        } catch (IOException ex) {
-//            Logger.getLogger(LargeCache.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-//        return null;
-    }
-
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
     public void removeTiles(RenderedImage ri) {
-        final LargeMap2D lL = map.get(ri);
-        if (lL != null) {
-            lL.removeTiles();
-            map.remove(ri);
+        synchronized (ri) {
+            final LargeMap2D lL = map.get(ri);
+            if (lL != null) {
+                lL.removeTiles();
+                synchronized (map) {
+                    map.remove(ri);
+                }
+            }
         }
     }
 
@@ -158,16 +143,20 @@ public class LargeCache implements TileCache {
     @Override
     public void addTiles(RenderedImage ri, Point[] points, Raster[] rasters, Object o) {
         if (points.length != rasters.length)
-            throw new IllegalArgumentException("points and rasters tables must have same length.");
-        LargeMap2D lL = map.get(ri);
-        if (lL == null) {
-            try {
-                lL = new LargeMap2D(ri, memoryCapacity/(map.size()+1));
-                map.put(ri, lL);
-            } catch (IOException ex) {
-                throw new RuntimeException("impossible to create cache list", ex);
+            throw new IllegalArgumentException("point and raster tables must have same length.");
+        LargeMap2D lL;
+        synchronized (ri) {
+            lL = map.get(ri);
+            if (lL == null) {
+                try {
+                    lL = new LargeMap2D(ri, memoryCapacity / (map.size() + 1));
+                    map.put(ri, lL);
+                } catch (IOException ex) {
+                    throw new RuntimeException("impossible to create cache list", ex);
+                }
             }
         }
+
         for (int id = 0, l = points.length; id < l; id++) {
             if (!(rasters[id] instanceof WritableRaster))
                 throw new IllegalArgumentException("raster must be WritableRaster instance");
@@ -193,10 +182,90 @@ public class LargeCache implements TileCache {
             try {
                 rasters[id] = lL.getRaster(points[id].x, points[id].y);
             } catch (IOException ex) {
-                LOGGER.log(Level.SEVERE, null, ex);
+                LOGGER.log(Level.WARNING, "Unreadable tile : "+points[id], ex);
             }
         }
         return rasters;
+    }
+
+    /**
+     * {@inheritDoc }.
+     */
+    @Override
+    public synchronized void setMemoryCapacity(long l) {
+        this.memoryCapacity = l;
+        updateLList(memoryCapacity / map.size());
+    }
+
+    /**
+     * Affect a new memory capacity and update {@link Raster} list from new memory capacity set.
+     *
+     * @param listMemoryCapacity new memory capacity.
+     */
+    private void updateLList(long listMemoryCapacity) {
+        for (RenderedImage r : map.keySet()) {
+            try {
+                map.get(r).setCapacity(listMemoryCapacity);
+            } catch (IOException ex) {
+                throw new RuntimeException("Raster too large for remaining memory capacity", ex);
+            }
+        }
+    }
+
+    /**
+     * {@inheritDoc }.
+     */
+    @Override
+    public long getMemoryCapacity() {
+        return memoryCapacity;
+    }
+
+    /**
+     * {@inheritDoc }.
+     */
+    @Override
+    public Raster[] getTiles(RenderedImage ri) {
+        throw new UnsupportedOperationException("Not supported yet.");
+//        if (!map.containsKey(ri))
+//            throw new IllegalArgumentException("renderedImage don't exist in this "+LargeCache.class.getName());
+//        try {
+//            return map.get(ri).getTiles();
+//        } catch (IOException ex) {
+//            Logger.getLogger(LargeCache.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+//        return null;
+    }
+
+    /**
+     * {@inheritDoc }.
+     */
+    @Override
+    public void setMemoryThreshold(float f) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    /**
+     * {@inheritDoc }.
+     */
+    @Override
+    public float getMemoryThreshold() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    /**
+     * {@inheritDoc }.
+     */
+    @Override
+    public void setTileComparator(Comparator cmprtr) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    /**
+     * {@inheritDoc }.
+     */
+    @Override
+    public Comparator getTileComparator() {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     /**
@@ -237,64 +306,7 @@ public class LargeCache implements TileCache {
      * {@inheritDoc }.
      */
     @Override
-    public void setMemoryCapacity(long l) {
-        this.memoryCapacity = l;
-        updateLList(memoryCapacity / map.size());
-    }
-
-    /**
-     * Affect a new memory capacity and update {@link Raster} list from new memory capacity set.
-     *
-     * @param listMemoryCapacity new memory capacity.
-     */
-    private void updateLList(long listMemoryCapacity) {
-        for (RenderedImage r : map.keySet()) {
-            try {
-                map.get(r).setCapacity(listMemoryCapacity);
-            } catch (IOException ex) {
-                throw new RuntimeException("Raster too large for remaining memory capacity", ex);
-            }
-        }
-    }
-
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
-    public long getMemoryCapacity() {
-        return memoryCapacity;
-    }
-
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
-    public void setMemoryThreshold(float f) {
+    public void add(RenderedImage ri, int i, int i1, Raster raster, Object o) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
-    public float getMemoryThreshold() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
-    public void setTileComparator(Comparator cmprtr) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
-    public Comparator getTileComparator() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
 }
