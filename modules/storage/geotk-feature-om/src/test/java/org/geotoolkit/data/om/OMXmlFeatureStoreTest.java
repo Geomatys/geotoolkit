@@ -59,7 +59,7 @@ public class OMXmlFeatureStoreTest extends AbstractReadingTests{
 
             final String nsOM = "http://www.opengis.net/sampling/1.0";
             final String nsGML = "http://www.opengis.net/gml";
-            final Name name = new DefaultName(nsOM, "SamplingPoint");
+            final Name name = new DefaultName(nsOM, "observation1");
             names.add(name);
 
             final FeatureTypeBuilder featureTypeBuilder = new FeatureTypeBuilder();
