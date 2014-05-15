@@ -65,6 +65,7 @@ public class GeoTiffRWTest {
     }
 
     @Test
+    @Ignore
     public void test1() throws Exception {
 
         test("002025_0100_010722_l7_01_utm2.tiff", CRS.decode("EPSG:26921",true),
@@ -123,6 +124,7 @@ public class GeoTiffRWTest {
     }
 
     @Test
+    @Ignore
     public void test3() throws Exception {
         //Origin = (440818,99902)
         //Pixel Size = (256,-256)
@@ -131,6 +133,7 @@ public class GeoTiffRWTest {
     }
 
     @Test
+    @Ignore
     public void test4() throws Exception {
         //Origin = (577252.740264483261853,4659702.512972613796592)
         //Pixel Size = (1537.233673966386050,-1527.550597774195239)
@@ -139,6 +142,7 @@ public class GeoTiffRWTest {
     }
 
     @Test
+    @Ignore
     public void test5() throws Exception {
 
         //Origin = (-113.116327999999996,47.564808800000002)
@@ -148,6 +152,7 @@ public class GeoTiffRWTest {
     }
 
     @Test
+    @Ignore
     public void test6() throws Exception {
 
         //Origin = (79074.166666666671517,1439192.637681159656495)
@@ -157,6 +162,7 @@ public class GeoTiffRWTest {
     }
 
     @Test
+    @Ignore
     public void test7() throws Exception {
 
         //Origin = (664769.191709000035189,4600950.488848333247006)
@@ -177,6 +183,7 @@ public class GeoTiffRWTest {
         }
 
     @Test
+    @Ignore
     public void test9() throws Exception {
 
         //Origin = (613872.879663333296776,227462.954336666676681)
@@ -186,6 +193,7 @@ public class GeoTiffRWTest {
     }
 
     @Test
+    @Ignore
     public void test10() throws Exception {
 
         //Origin = (-2.235599743981481,2.923495299537037)
@@ -222,6 +230,7 @@ public class GeoTiffRWTest {
     }
 
     @Test
+    @Ignore
     public void test12() throws Exception {
 
         //Origin = (-117.640105492592596,33.902752573232327)
@@ -392,6 +401,7 @@ public class GeoTiffRWTest {
     }
 
     @Test
+    @Ignore
     public void test19() throws Exception {
 
 //    PROJCS["NTF (Paris) / Nord France",
@@ -420,6 +430,7 @@ public class GeoTiffRWTest {
     }
 
     @Test
+    @Ignore
     public void test20() throws Exception {
 
 //    PROJCS["WGS 84 / UTM zone 17N",
@@ -508,6 +519,7 @@ public class GeoTiffRWTest {
     }
 
     @Test
+    @Ignore
     public void test23() throws Exception {
 
 //    PROJCS["NAD83 / Alabama West",
@@ -565,6 +577,7 @@ public class GeoTiffRWTest {
     }
 
     @Test
+    @Ignore
     public void test25() throws Exception {
 
 //    PROJCS["NAD83 / California zone 6",
@@ -776,6 +789,7 @@ public class GeoTiffRWTest {
     }
 
     @Test
+    @Ignore
     public void test33() throws Exception {
 
 //    PROJCS["NAD27 / UTM zone 11N",
@@ -804,6 +818,7 @@ public class GeoTiffRWTest {
     }
 
     @Test
+    @Ignore
     public void testStreamWriting() throws CoverageStoreException, IOException{
 
         File file = TestData.file(GeoTiffRWTest.class, "002025_0100_010722_l7_01_utm2.tiff");
