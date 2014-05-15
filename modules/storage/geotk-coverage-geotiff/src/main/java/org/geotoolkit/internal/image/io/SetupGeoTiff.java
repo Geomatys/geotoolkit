@@ -22,10 +22,12 @@ import java.util.Properties;
 import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.image.io.plugin.GeoTiffImageWriter;
 import org.geotoolkit.image.io.plugin.TiffImageReader;
+import org.geotoolkit.image.io.plugin.TiffImageWriter;
 import org.geotoolkit.internal.SetupService;
 
 import javax.imageio.spi.IIORegistry;
 import javax.imageio.spi.ImageReaderSpi;
+import javax.imageio.spi.ImageWriterSpi;
 
 
 /**
@@ -36,17 +38,27 @@ import javax.imageio.spi.ImageReaderSpi;
  */
 public final class SetupGeoTiff implements SetupService {
     /**
-     * Register geotiff reader and writer in default registry.
+     * Give a higher priority for Geotk  reader and writer in default registry.
      */
     @Override
     public void initialize(final Properties properties, final boolean reinit) {
-        IIORegistry registery = IIORegistry.getDefaultInstance();
-        final TiffImageReader.Spi tiffSpi = registery.getServiceProviderByClass(TiffImageReader.Spi.class);
-        final Iterator<ImageReaderSpi> it = registery.getServiceProviders(ImageReaderSpi.class, false);
+        IIORegistry registry = IIORegistry.getDefaultInstance();
+
+        final TiffImageReader.Spi tiffReaderSpi = registry.getServiceProviderByClass(TiffImageReader.Spi.class);
+        final Iterator<ImageReaderSpi> it = registry.getServiceProviders(ImageReaderSpi.class, false);
         while (it.hasNext()) {
             final ImageReaderSpi current = it.next();
-            if (current != tiffSpi && ArraysExt.containsIgnoreCase(current.getFormatNames(), "tiff")) {
-                registery.setOrdering(ImageReaderSpi.class, tiffSpi, current);
+            if (current != tiffReaderSpi && ArraysExt.containsIgnoreCase(current.getFormatNames(), "tiff")) {
+                registry.setOrdering(ImageReaderSpi.class, tiffReaderSpi, current);
+            }
+        }
+
+        final TiffImageWriter.Spi tiffWriterSpi = registry.getServiceProviderByClass(TiffImageWriter.Spi.class);
+        final Iterator<ImageWriterSpi> it2 = registry.getServiceProviders(ImageWriterSpi.class, false);
+        while (it2.hasNext()) {
+            final ImageWriterSpi current = it2.next();
+            if (current != tiffWriterSpi && ArraysExt.containsIgnoreCase(current.getFormatNames(), "tiff")) {
+                registry.setOrdering(ImageWriterSpi.class, tiffWriterSpi, current);
             }
         }
     }
