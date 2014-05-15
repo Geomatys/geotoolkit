@@ -754,7 +754,10 @@ public class TiffImageReader extends SpatialImageReader {
         tileOffsets    = null;
         rawImageType   = null;
         if (imageStream != null) {
-            imageStream.close();
+            // If given input was a stream or an ImageInputStream, it's the owner of the stream who should close it.
+            if (currentInput instanceof File) {
+                imageStream.close();
+            }
             imageStream = null;
             // Keep the buffer, since we may reuse it for the next image.
         }
