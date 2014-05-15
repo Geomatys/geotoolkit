@@ -102,6 +102,20 @@ public final class WPSIO {
 
         FORMATSUPPORTS.add(new FormatSupport(FeatureType.class, IOType.BOTH, WPSMimeType.TEXT_XML.val(), WPSEncoding.UTF8.getValue(), WPSSchema.OGC_FEATURE_3_1_1.getValue(), true));
 
+        //Coverage support
+        FORMATSUPPORTS.add(new FormatSupport(GridCoverage2D.class, IOType.BOTH, WPSMimeType.IMG_GEOTIFF_BIS.val(), null, null, true));
+        FORMATSUPPORTS.add(new FormatSupport(GridCoverage2D.class, IOType.BOTH, WPSMimeType.IMG_GEOTIFF_BIS.val(), WPSEncoding.BASE64.getValue(), null, false));
+        FORMATSUPPORTS.add(new FormatSupport(GridCoverage2D.class, IOType.BOTH, WPSMimeType.IMG_GEOTIFF.val(), null, null, false));
+        FORMATSUPPORTS.add(new FormatSupport(GridCoverage2D.class, IOType.BOTH, WPSMimeType.IMG_GEOTIFF.val(), WPSEncoding.BASE64.getValue(), null, false));
+
+        FORMATSUPPORTS.add(new FormatSupport(Coverage.class, IOType.OUTPUT, WPSMimeType.OGC_WMS.val(), WPSEncoding.UTF8.getValue(), null, false));
+
+        //TODO test NetCDF & GRIB in base64
+        //FORMATSUPPORTS.add(new FormatSupport(GridCoverage2D.class, IOType.INPUT, WPSMimeType.APP_NETCDF.val(), null, null, false));
+        //FORMATSUPPORTS.add(new FormatSupport(GridCoverage2D.class, IOType.INPUT, WPSMimeType.APP_NETCDF.val(), WPSEncoding.BASE64.getValue(), null, false));
+        //FORMATSUPPORTS.add(new FormatSupport(GridCoverage2D.class, IOType.INPUT, WPSMimeType.APP_GRIB.val(), null, null, false));
+        //FORMATSUPPORTS.add(new FormatSupport(GridCoverage2D.class, IOType.INPUT, WPSMimeType.APP_GRIB.val(), WPSEncoding.BASE64.getValue(), null, false));
+
         // Images support
         for (final String readerMime : ImageIO.getReaderMIMETypes()) {
             if (!readerMime.isEmpty()) {
@@ -126,42 +140,6 @@ public final class WPSIO {
                 }
             }
         }
-
-        //Coverage support
-        for (final String readerMime : ImageIO.getReaderMIMETypes()) {
-            if (!readerMime.isEmpty()) {
-                if (readerMime.equals(WPSMimeType.IMG_GEOTIFF_BIS.val())) {
-                    FORMATSUPPORTS.add(new FormatSupport(Coverage.class, IOType.INPUT, readerMime, null, null, true));
-                    FORMATSUPPORTS.add(new FormatSupport(Coverage.class, IOType.INPUT, readerMime, WPSEncoding.BASE64.getValue(), null, true));
-                    FORMATSUPPORTS.add(new FormatSupport(Coverage.class, IOType.INPUT, WPSMimeType.IMG_GEOTIFF.val(), null, null, true));
-                    FORMATSUPPORTS.add(new FormatSupport(Coverage.class, IOType.INPUT, WPSMimeType.IMG_GEOTIFF.val(), WPSEncoding.BASE64.getValue(), null, true));
-                } else {
-                    FORMATSUPPORTS.add(new FormatSupport(Coverage.class, IOType.INPUT, readerMime, null, null, false));
-                    FORMATSUPPORTS.add(new FormatSupport(Coverage.class, IOType.INPUT, readerMime, WPSEncoding.BASE64.getValue(), null, true));
-                }
-            }
-        }
-
-        for (final String writerMime : ImageIO.getWriterMIMETypes()) {
-            if (!writerMime.isEmpty()) {
-                if (writerMime.equals(WPSMimeType.IMG_GEOTIFF_BIS.val())) {
-                    FORMATSUPPORTS.add(new FormatSupport(Coverage.class, IOType.OUTPUT, writerMime, null, null, true));
-                    FORMATSUPPORTS.add(new FormatSupport(Coverage.class, IOType.OUTPUT, writerMime, WPSEncoding.BASE64.getValue(), null, true));
-                    FORMATSUPPORTS.add(new FormatSupport(Coverage.class, IOType.OUTPUT, WPSMimeType.IMG_GEOTIFF.val(), null, null, true));
-                    FORMATSUPPORTS.add(new FormatSupport(Coverage.class, IOType.OUTPUT, WPSMimeType.IMG_GEOTIFF.val(), WPSEncoding.BASE64.getValue(), null, true));
-                } else {
-                    FORMATSUPPORTS.add(new FormatSupport(Coverage.class, IOType.OUTPUT, writerMime, null, null, false));
-                    FORMATSUPPORTS.add(new FormatSupport(Coverage.class, IOType.OUTPUT, writerMime, WPSEncoding.BASE64.getValue(), null, false));
-                }
-            }
-        }
-        FORMATSUPPORTS.add(new FormatSupport(Coverage.class, IOType.OUTPUT, WPSMimeType.OGC_WMS.val(), WPSEncoding.UTF8.getValue(), null, false));
-
-        //TODO test NetCDF & GRIB in base64
-        //FORMATSUPPORTS.add(new FormatSupport(GridCoverage2D.class, IOType.INPUT, WPSMimeType.APP_NETCDF.val(), null, null, false));
-        //FORMATSUPPORTS.add(new FormatSupport(GridCoverage2D.class, IOType.INPUT, WPSMimeType.APP_NETCDF.val(), WPSEncoding.BASE64.getValue(), null, false));
-        //FORMATSUPPORTS.add(new FormatSupport(GridCoverage2D.class, IOType.INPUT, WPSMimeType.APP_GRIB.val(), null, null, false));
-        //FORMATSUPPORTS.add(new FormatSupport(GridCoverage2D.class, IOType.INPUT, WPSMimeType.APP_GRIB.val(), WPSEncoding.BASE64.getValue(), null, false));
 
 
         FORMATSUPPORTS.add(new FormatSupport(AffineTransform.class, IOType.INPUT, WPSMimeType.TEXT_XML.val(), WPSEncoding.UTF8.getValue(), WPSSchema.MATHML_3.getValue(), true));
