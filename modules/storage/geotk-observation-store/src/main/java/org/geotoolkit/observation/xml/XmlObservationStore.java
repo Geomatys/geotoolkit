@@ -41,6 +41,7 @@ import org.geotoolkit.sos.netcdf.ExtractionResult;
 import org.geotoolkit.sos.netcdf.ExtractionResult.ProcedureTree;
 import org.geotoolkit.sos.netcdf.GeoSpatialBound;
 import org.geotoolkit.sos.xml.SOSMarshallerPool;
+import org.geotoolkit.storage.DataFileStore;
 import org.geotoolkit.swe.xml.PhenomenonProperty;
 import org.geotoolkit.swe.xml.v101.PhenomenonType;
 import org.opengis.feature.type.Name;
@@ -60,7 +61,7 @@ import org.opengis.temporal.TemporalObject;
  *
  * @author Guilhem Legal (Geomatys)
  */
-public class XmlObservationStore extends AbstractObservationStore {
+public class XmlObservationStore extends AbstractObservationStore implements DataFileStore {
 
     private final File xmlFile;
     
@@ -279,5 +280,13 @@ public class XmlObservationStore extends AbstractObservationStore {
             appendTime(obs.getSamplingTime(), result.spatialBound);
         }
         return result.spatialBound.getTimeObject("2.0.0");
+    }
+    
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public File[] getDataFiles() throws DataStoreException {
+        return new File[]{xmlFile};
     }
 }

@@ -28,6 +28,7 @@ import org.geotoolkit.sos.netcdf.ExtractionResult;
 import org.geotoolkit.sos.netcdf.Field;
 import org.geotoolkit.sos.netcdf.NCFieldAnalyze;
 import org.geotoolkit.sos.netcdf.NetCDFExtractor;
+import org.geotoolkit.storage.DataFileStore;
 import org.opengis.feature.type.Name;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.temporal.TemporalGeometricPrimitive;
@@ -36,7 +37,7 @@ import org.opengis.temporal.TemporalGeometricPrimitive;
  *
  * @author Guilhem Legal (Geomatys)
  */
-public class FileObservationStore extends AbstractObservationStore {
+public class FileObservationStore extends AbstractObservationStore implements DataFileStore {
     
     private final File dataFile;
     private final NCFieldAnalyze analyze;
@@ -103,5 +104,13 @@ public class FileObservationStore extends AbstractObservationStore {
             return result.spatialBound.getTimeObject("2.0.0");
         }
         return null;
+    }
+    
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public File[] getDataFiles() throws DataStoreException {
+        return new File[]{dataFile};
     }
 }

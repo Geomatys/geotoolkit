@@ -44,6 +44,7 @@ import org.geotoolkit.gml.xml.FeatureProperty;
 import org.geotoolkit.observation.xml.AbstractObservation;
 import org.geotoolkit.sampling.xml.SamplingFeature;
 import org.geotoolkit.sos.xml.SOSMarshallerPool;
+import org.geotoolkit.storage.DataFileStore;
 import org.geotoolkit.util.FileUtilities;
 import org.opengis.feature.Feature;
 import org.opengis.feature.Property;
@@ -64,7 +65,7 @@ import org.opengis.util.FactoryException;
  *
  *  @author Guilhem Legal (Geomatys)
  */
-public class OMXmlFeatureStore extends AbstractOMFeatureStore {
+public class OMXmlFeatureStore extends AbstractOMFeatureStore implements DataFileStore {
 
     private final File source;
     
@@ -94,6 +95,14 @@ public class OMXmlFeatureStore extends AbstractOMFeatureStore {
     @Override
     public void refreshMetaModel() {
         return;
+    }
+    
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public File[] getDataFiles() throws DataStoreException {
+        return new File[]{source};
     }
     
     private static Object unmarshallObservationFile(final File f) throws JAXBException {
@@ -167,7 +176,7 @@ public class OMXmlFeatureStore extends AbstractOMFeatureStore {
     public FeatureWriter getFeatureWriter(Name typeName, Filter filter, Hints hints) throws DataStoreException {
         throw new DataStoreException("Not Supported.");
     }
-    
+
     ////////////////////////////////////////////////////////////////////////////
     // Feature Reader //////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////

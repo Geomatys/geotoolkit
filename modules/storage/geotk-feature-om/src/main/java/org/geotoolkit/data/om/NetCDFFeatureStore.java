@@ -44,6 +44,7 @@ import org.geotoolkit.gml.xml.FeatureProperty;
 import org.geotoolkit.sampling.xml.SamplingFeature;
 import org.geotoolkit.sos.netcdf.ExtractionResult;
 import org.geotoolkit.sos.netcdf.NetCDFExtractor;
+import org.geotoolkit.storage.DataFileStore;
 import org.geotoolkit.util.FileUtilities;
 import org.opengis.feature.Feature;
 import org.opengis.feature.Property;
@@ -63,7 +64,7 @@ import org.opengis.util.FactoryException;
  *
  *  @author Guilhem Legal (Geomatys)
  */
-public class NetCDFFeatureStore extends AbstractOMFeatureStore {
+public class NetCDFFeatureStore extends AbstractOMFeatureStore implements DataFileStore {
 
     private final File source;
     
@@ -93,6 +94,14 @@ public class NetCDFFeatureStore extends AbstractOMFeatureStore {
     @Override
     public void refreshMetaModel() {
         return;
+    }
+    
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public File[] getDataFiles() throws DataStoreException {
+        return new File[]{source};
     }
     
     ////////////////////////////////////////////////////////////////////////////
