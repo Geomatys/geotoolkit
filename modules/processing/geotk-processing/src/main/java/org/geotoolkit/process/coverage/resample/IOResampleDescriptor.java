@@ -28,6 +28,7 @@ import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.operation.MathTransform;
 
 import javax.imageio.ImageReader;
+import java.awt.*;
 import java.io.File;
 
 /**
@@ -50,7 +51,7 @@ public class IOResampleDescriptor extends AbstractProcessDescriptor {
     public static final ParameterDescriptor<Integer> OUT_HEIGHT;
     public static final ParameterDescriptor<String> OUT_LOC;
     public static final ParameterDescriptor<Integer> THREAD_COUNT;
-    public static final ParameterDescriptor<Long> BLOCK_SIZE;
+    public static final ParameterDescriptor<Dimension> TILE_SIZE;
 
     public static final ParameterDescriptorGroup INPUT_DESC;
 
@@ -68,7 +69,7 @@ public class IOResampleDescriptor extends AbstractProcessDescriptor {
         OUT_LOC = builder.addName("outputLocation").setRemarks("An absolute path to specify where target ortho-Image should be saved (future file path or its parent directory)."+
                 " If this parameter is not specified, a temporary file is created.").setRequired(false).create(String.class, null);
         THREAD_COUNT = builder.addName("threadCount").setRemarks("The number of threads to use for orthorectification computing.").setRequired(false).create(Integer.class, null);
-        BLOCK_SIZE = builder.addName("blockSize").setRemarks("The size (in bytes) of the reading block for input image. If not set, a default size of 4 Mo will be taken.").setRequired(false).create(Long.class, null);
+        TILE_SIZE = builder.addName("tileSize").setRemarks("The size of the tiles to generate for output image. If not specified, a default value will be set.").setRequired(false).create(Dimension.class, null);
         INPUT_DESC = builder.addName(NAME + ".input").createGroup(
                 IN_COVERAGE,
                 OPERATOR,
@@ -77,10 +78,10 @@ public class IOResampleDescriptor extends AbstractProcessDescriptor {
                 OUT_HEIGHT,
                 OUT_LOC,
                 THREAD_COUNT,
-                BLOCK_SIZE);
+                TILE_SIZE);
 
 
-        OUT_COVERAGE = builder.addName("image").setRemarks("The image to store the resampled result.").setRequired(true).create(File.class, null);
+        OUT_COVERAGE = builder.addName("image").setRemarks("The image to store the resampled result in.").setRequired(true).create(File.class, null);
 
         OUTPUT_DESC  = builder.addName(NAME + ".output").createGroup(OUT_COVERAGE);
     }

@@ -26,12 +26,12 @@ import java.util.concurrent.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.*;
-import javax.imageio.stream.ImageOutputStream;
 
-import java.io.RandomAccessFile;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.storage.IOUtilities;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.geometry.Envelopes;
 import org.geotoolkit.image.interpolation.Interpolation;
 import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.image.interpolation.Resample;
@@ -52,16 +52,13 @@ import org.opengis.referencing.operation.MathTransform;
  * A resample operation using a provided MathTransform to convert a source coverage.
  * 
  * The process is designed to use multi-threading capacity, and not overload in memory.
- * To do such things, we need an {@link ImageWriter} suporting {@link ImageWriter#canReplacePixels(int) } operation.
+ * To do such things, we need an {@link ImageWriter} supporting {@link ImageWriter#canReplacePixels(int) } operation.
  * 
  * Here is how it works : 
- * 1 - Using specified parameter {@link IOResampleDescriptor#BLOCK_SIZE}, we take strips from input image, and put them in a queue, waiting for resampling.
- * 2 - We create a fix number of threads (as specified by {@link IOResampleDescriptor#THREAD_COUNT}), which will poll data from above queue, and resmple it.
- * 3 - Each resampled strip is put into another queue, waiting to be written.
- * 4 - We've got a thread for image writing. It's listening on output queue, and write each resampled strip inserted into it.
- * 
- * /!\ IMPORTANT : The process is designed to work with strips, but it can be easily modified to use tiles instead : 
- * Modify {@link #populateResamplingQueue(int, int, java.awt.Dimension)} parameters to build tiles instead of strips.
+ * 1 - Using specified parameter {@link IOResampleDescriptor#TILE_SIZE}, we prepare tiles from output image, and put them in a queue, waiting for resampling.
+ * 2 - We create a fix number of threads (as specified by {@link IOResampleDescriptor#THREAD_COUNT}), which will poll data from above queue, and resample it.
+ * 3 - Each computed tile is put into another queue, waiting to be written.
+ * 4 - We've got a thread for image writing. It's listening on output queue, and write each ready tile inserted into it.
  *
  * @author Alexis Manin (Geomatys)
  */
@@ -72,17 +69,15 @@ public class IOResampleProcess extends AbstractProcess {
     private static final int LANCZOS_WINDOW = 2;
 
     /**
-     * The default size (in number of bytes) for the tiles to create. It will be used if no {@link IOResampleDescriptor#BLOCK_SIZE} is given by user.
-     * To make it easier to understand (and modify), we decompose it as :
-     * tile width(px) * tile height(px) * band number * component type size (byte)
+     * Maximum size for image cache as bytes. To make it easier to understand (and modify), we decompose it as :
+     * tile width(px) * tile height(px) * band number * component type size (byte) * number of images
      */
-    public final static long BASE_MEMORY_SIZE = 1024 * 1024 * 4 * 1;
-
-    /** Maximum size for image cache. */
-    public final static long MAX_MEMORY_SIZE = BASE_MEMORY_SIZE * 512;
+    public final static long MAX_MEMORY_SIZE = 1024 * 1024 * 4 * 1 * 512;
 
     public static final int TIMEOUT = 100;
     private static final TimeUnit TIMEOUT_UNIT = TimeUnit.SECONDS;
+
+    private static final Dimension DEFAULT_TILE_SIZE = new Dimension(256, 256);
 
     /**
      * A queue to store strips we want to resample.
@@ -90,7 +85,7 @@ public class IOResampleProcess extends AbstractProcess {
     private final LinkedBlockingQueue<Rectangle> resamplingQueue = new LinkedBlockingQueue<>(100);
 
     /**
-     * A queue to store resampled strips we must write.
+     * A queue to store resampled strips we must write. We give priority to the tiles which are closer to upper-left corner of the output image.
      */
     private final PriorityBlockingQueue<Map.Entry<Point, RenderedImage>> writingQueue = new PriorityBlockingQueue<>(100, new Comparator<Map.Entry<Point, RenderedImage>>() {
         @Override
@@ -134,10 +129,11 @@ public class IOResampleProcess extends AbstractProcess {
             threadNumber = Math.min(5, Math.max(2, Runtime.getRuntime().availableProcessors() / 2));
         }
 
-        Long blockSize = Parameters.value(IOResampleDescriptor.BLOCK_SIZE, inputParameters);
-        if (blockSize == null || blockSize != blockSize || blockSize < 0) {
-            blockSize = BASE_MEMORY_SIZE;
+        Dimension tileSize = Parameters.value(IOResampleDescriptor.TILE_SIZE, inputParameters);
+        if (tileSize == null || tileSize.width <= 0 || tileSize.height <= 0) {
+            tileSize = DEFAULT_TILE_SIZE;
         }
+
         InterpolationCase toUse = InterpolationCase.BILINEAR;
         for (final InterpolationCase icase : InterpolationCase.values()) {
             if (icase.name().equalsIgnoreCase(interpolation)) {
@@ -151,21 +147,25 @@ public class IOResampleProcess extends AbstractProcess {
              * INITIALIZE IO OBJECTS
              */
 
-            // Prepare the input image. We use a LargeRenderedImage, because we'll get random access to image pixels,
-            // and if it's too big, we need a cache system.
+            // Prepare the input image. We use a LargeRenderedImage, because we'll get random access to pixels, and if it's too big, we need a cache system.
             final ImageTypeSpecifier rawImageType = inImage.getRawImageType(0);
             final ColorModel colorModel = rawImageType.getColorModel();
-            final Dimension rawTileSize = new Dimension(256, 256);
-            final LargeRenderedImage rawImage = new LargeRenderedImage(inImage, 0, LargeCache.getInstance(MAX_MEMORY_SIZE), rawTileSize);
+            final LargeRenderedImage rawImage = new LargeRenderedImage(inImage, 0, LargeCache.getInstance(MAX_MEMORY_SIZE), DEFAULT_TILE_SIZE);
 
             /*
              * Prepare output image for writing. If no file location is given, we create a new TIF temporary file to
-             * store result. If user did not specified size for target image, we take the same as raw image.
+             * store result. If user did not specified size for target image, we compute one from given transformation.
              */
-            Integer value = (Integer) inputParameters.parameter("width").getValue();
-            final int width = (value != null) ? value : rawImage.getWidth();
-            value = (Integer) inputParameters.parameter("height").getValue();
-            final int height = (value != null) ? value : rawImage.getHeight();
+            Integer width = (Integer) inputParameters.parameter("width").getValue();
+            Integer height = (Integer) inputParameters.parameter("height").getValue();
+            if (width == null || height == null || width <= 0 || height <= 0) {
+                final GeneralEnvelope transformed = Envelopes.transform(operator, new GeneralEnvelope(new double[]{0, 0}, new double[]{rawImage.getWidth(), rawImage.getHeight()}));
+                width = (int) Math.ceil(transformed.getSpan(0));
+                height = (int) Math.ceil(transformed.getSpan(1));
+            }
+            if (width <= 0 && height <= 0) {
+                throw new ProcessException("Impossible to define a proper size for output image.", this, null);
+            }
 
             File output;
             String imageFormat = null;
@@ -185,46 +185,23 @@ public class IOResampleProcess extends AbstractProcess {
                 imageFormat = "tif";
             }
 
-            ImageOutputStream outStream = ImageIO.createImageOutputStream(new RandomAccessFile(output, "rw"));
-            ImageWriter writer;
-            try {
-                writer = getWriter(imageFormat, outStream);
-            } catch (Exception e) {
-                writer = getWriter(imageFormat, output);
-                outStream.close();
-                outStream = null;
-            }
+            ImageWriter writer = getWriter(imageFormat, output);
 
             if (writer == null) {
                 throw new IOException("No fitting image writer can be found on the system for format : " + imageFormat
                         + ". Note that orthorectification process needs a writer capable of writing images piece by piece.");
             }
 
-            writer.prepareWriteEmpty(null, rawImageType, width, height, null, null, null);
-            writer.prepareReplacePixels(0, new Rectangle(0, 0, width, height));
+            // We want to create a tiled image as output.
+            ImageWriteParam outputParam = writer.getDefaultWriteParam();
+            outputParam.setTilingMode(ImageWriteParam.MODE_EXPLICIT);
+            outputParam.setTiling(DEFAULT_TILE_SIZE.width, DEFAULT_TILE_SIZE.height, 0, 0);
+            writer.prepareWriteEmpty(null, rawImageType, width, height, null, null, outputParam);
+            writer.prepareReplacePixels(0, null);
 
             final int bandNumber = colorModel.getNumComponents();
             final double[] defaultPixelValue = new double[bandNumber];
             Arrays.fill(defaultPixelValue, Double.NaN);
-            
-            /*
-             * Due to ImageIO bug, the writing of final image piece by piece can't be set with square tile. Problem is :
-             * when using replacePixels with an ImageWriteParam using destination offset, the X component
-             * of this same offset provokes severe bugs in final raster (Memory size increase, bad xAxis pixels position).
-             *
-             * To bypass this problem, we must write entire rows in one pass. In consequence, used tile size must be
-             * computed as following :
-             * Tile width = final image width.
-             * The number of rows will be computed to ensure a tile does not exceed a given constant :
-             * Tile height = allowed_memory_size / (tile width * image band number * Component type size (Byte, int, etc.)).
-             * 
-             * We also ensure we've got at least one line to process.
-             */
-            long rowSize = 0;
-            for (int bandCount = 0; bandCount < bandNumber; bandCount++) {
-                rowSize += (width * rawImageType.getBitsPerBand(bandCount));
-            }
-            final int tile_size_y = Math.max(1, (int) (blockSize / rowSize));
 
             // Prepare multi-threading service. We create as many threads as user asked for resampling, plus one for strip writing.
             final ExecutorService threadService = Executors.newFixedThreadPool(threadNumber);
@@ -241,26 +218,16 @@ public class IOResampleProcess extends AbstractProcess {
             LOGGER.log(Level.INFO, "We'll now start resampling. Output image dimension : width " + width + " px | height " + height + " px.");
             execTimes.add(System.currentTimeMillis());
 
-            // Start all the workers
-            writingThread.setPriority(Thread.MAX_PRIORITY);
+//            writingThread.setPriority(Thread.MAX_PRIORITY);
             writingThread.start();
-            final ArrayList<Future> status = new ArrayList<>();
             for (Runnable task : threads) {
-                status.add(threadService.submit(task));
+                threadService.submit(task);
             }
 
-            populateResamplingQueue(width, height, new Dimension(width, tile_size_y));
-
-            try {
-                for (Future threadStatus : status) {
-                    threadStatus.get();
-                }
-            } catch (ExecutionException e) {
-                throw e.getCause();
-            }
+            // once we've submit all tiles to compute, we just have to wait resamplers to end their work. After that, should be full. We will add the end trigger.
+            populateResamplingQueue(width, height, tileSize);
             threadService.shutdown();
-            
-            // All strips have been resampled, so the writing queue should be full. We add the end trigger.
+            threadService.awaitTermination(1, TimeUnit.DAYS);
             poisonWritingQueue();
 
             try {
@@ -274,9 +241,6 @@ public class IOResampleProcess extends AbstractProcess {
             writer.endWriteEmpty();
             writer.setOutput(null);
             writer.dispose();
-            if (outStream != null) {
-                outStream.close();
-            }
 
             Parameters.getOrCreate(IOResampleDescriptor.OUT_COVERAGE, outputParameters).setValue(output);
 
@@ -298,29 +262,9 @@ public class IOResampleProcess extends AbstractProcess {
      *
      * @param imageWidth  Total width to fill
      * @param imageHeight Total height to fill
-     * @param tile_size_y The height we want for a single strip.
+     * @param tileSize The {@link Dimension} we want for a single tile.
      */
-    private void populateResamplingQueue(final int imageWidth, final int imageHeight, final int tile_size_y) throws InterruptedException {
-        final Thread currentThread = Thread.currentThread();
-        int tileHeight;
-        // Iterate through upper left corner of tiles.
-        for (int y = 0; y < imageHeight; y += tile_size_y) {
-            if (y + tile_size_y > imageHeight) {
-                tileHeight = imageHeight - y;
-            } else {
-                tileHeight = tile_size_y;
-            }
-
-            final Rectangle resampleZone = new Rectangle(0, y, imageWidth, tileHeight);
-            resamplingQueue.offer(resampleZone, TIMEOUT, TIMEOUT_UNIT);
-        }
-
-        // insert poison objects, so our threads will know it's over when they get it.
-        poisonResamplingQueue();
-    }
-    
     private void populateResamplingQueue(final int imageWidth, final int imageHeight, final Dimension tileSize) throws InterruptedException {
-        final Thread currentThread = Thread.currentThread();
         int tileHeight, tileWidth;
         // Iterate through upper left corner of tiles.
         for (int y = 0; y < imageHeight; y += tileSize.height) {
@@ -347,7 +291,6 @@ public class IOResampleProcess extends AbstractProcess {
     }
 
     private void poisonResamplingQueue() {
-        final Thread currentThread = Thread.currentThread();
         for (int i = 0; i <= threadNumber; i++) {
             try {
                 resamplingQueue.offer(new EmptyBox(), TIMEOUT, TIMEOUT_UNIT);
@@ -360,7 +303,6 @@ public class IOResampleProcess extends AbstractProcess {
     }
 
     private void poisonWritingQueue() {
-        final Thread currentThread = Thread.currentThread();
         writingQueue.offer(new EndOfFile<Point, RenderedImage>(), TIMEOUT, TIMEOUT_UNIT);
     }
 
@@ -374,7 +316,7 @@ public class IOResampleProcess extends AbstractProcess {
      */
     private ImageWriter getWriter(final String extension, Object output) throws IOException {
         // Check the tiff writers to know if they fit our needs : writing piece per piece.
-        final Iterator<ImageWriter> writers = ImageIO.getImageWritersBySuffix(extension);
+        final Iterator<ImageWriter> writers = ImageIO.getImageWritersByFormatName(extension);
         ImageWriter writer = null;
         while (writers.hasNext()) {
             writer = writers.next();
