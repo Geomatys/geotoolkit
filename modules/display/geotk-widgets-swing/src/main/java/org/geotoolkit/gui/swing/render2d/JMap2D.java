@@ -185,7 +185,7 @@ public class JMap2D extends JPanel{
                 this.handler.install(geoComponent);
             }
 
-//            propertyListeners.firePropertyChange(HANDLER_PROPERTY, old, handler);
+            firePropertyChange(HANDLER_PROPERTY, old, handler);
         }
 
     }
