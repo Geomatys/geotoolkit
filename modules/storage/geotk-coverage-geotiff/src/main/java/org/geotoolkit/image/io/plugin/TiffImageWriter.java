@@ -713,6 +713,9 @@ public class TiffImageWriter extends SpatialImageWriter {
         endOfFile = -1;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public void endReplacePixels() throws IOException {
         // Nothing to do
@@ -745,7 +748,6 @@ public class TiffImageWriter extends SpatialImageWriter {
         
         //-- write image raster(s) datas --//
         replacePixelsByTiles(image, param);
-//        writeImage(image, headProperties, param);
     }
     
     /**
@@ -1405,52 +1407,35 @@ public class TiffImageWriter extends SpatialImageWriter {
         final int imgMaxX = imgMinX + image.getWidth();// voir ici avec le param pour voir setSource region
         final int imgMaxY = imgMinY + image.getHeight();
         
-        //-- tile region coordinate dans l'espace de l'image --//
+        //-- tile region coordinate  --//
         final int trMinX = tileRegion.x;
         final int trMinY = tileRegion.y;
         final int trMaxX = trMinX + tileRegion.width;
         final int trMaxY = trMinY + tileRegion.height;
         
-//        //-- intersection between tile region and replace pixel area --//
-//        final int replaceMinX = Math.max(trMinX, dstRepRegion.x);
-//        final int replaceMinY = Math.max(trMinY, dstRepRegion.y);
-//        final int replaceMaxX = Math.min(trMaxX, dstRepRegion.x + dstRepRegion.width);
-//        final int replaceMaxY = Math.min(trMaxY, dstRepRegion.y + dstRepRegion.height);
-//        
-//        //-- inter
-//        final int interMinX = Math.max(imgMinX, replaceMinX);
-//        final int interMinY = Math.max(imgMinY, replaceMinY);
-//        final int interMaxX = Math.min(imgMaxX, replaceMaxX);
-//        final int interMaxY = Math.min(imgMaxY, replaceMaxY);
+        //-- intersection between image replace pixel area --//
+        final int imgInterRepMinX = Math.max(dstRepRegion.x, imgMinX);
+        final int imgInterRepMaxX = Math.min(dstRepRegion.x + dstRepRegion.width, imgMaxX);
+        final int imgInterRepMinY = Math.max(dstRepRegion.y, imgMinY);
+        final int imgInterRepMaxY = Math.min(dstRepRegion.y + dstRepRegion.height, imgMaxY);
         
-        //-- inter
-        final int interMinX = Math.max(imgMinX, trMinX);
-        final int interMinY = Math.max(imgMinY, trMinY);
-        final int interMaxX = Math.min(imgMaxX, trMaxX);
-        final int interMaxY = Math.min(imgMaxY, trMaxY);
+        //-- if image don't intersect replace pixel region --//
+        if (imgInterRepMinX >= imgInterRepMaxX || imgInterRepMinY >= imgInterRepMaxY) return;
         
-        //-- if no intersection between current given image and replace pixel area do nothing --//
-//        if (interMinX >= interMaxX || interMinY >= interMaxY) return;
-        
-        //-- 
-//        if (interMaxX == trMaxX && interMaxY == trMaxY) {
-//            endOfFileReached = true;
-//        }
+        //-- if last byte of image is not reach --//
         if (!endOfFileReached)
-            endOfFileReached = (interMaxX == trMaxX && interMaxY == trMaxY);
+            endOfFileReached = (imgInterRepMaxX == trMaxX && imgInterRepMaxY == trMaxY);
         
         //-- definir index destination des tuiles a parcourir
-        final int ctMinX = (interMinX - trMinX) / currentImgTW;
-        final int ctMinY = (interMinY - trMinY) / currentImgTH;
-        final int ctMaxX = (interMaxX - trMinX + currentImgTW - 1) / currentImgTW;
-        final int ctMaxY = (interMaxY - trMinY + currentImgTH - 1) / currentImgTH;
+        final int ctMinX = (imgInterRepMinX - trMinX) / currentImgTW;
+        final int ctMinY = (imgInterRepMinY - trMinY) / currentImgTH;
+        final int ctMaxX = (imgInterRepMaxX - trMinX + currentImgTW - 1) / currentImgTW;
+        final int ctMaxY = (imgInterRepMaxY - trMinY + currentImgTH - 1) / currentImgTH;
         //----------------------------------------------------------------//
         
         final int destTileByteCount = currentImgTH * currentImgTW * imagePixelStride * sampleSize;
         
         channel.seek(replacePixelPos);
-        
-//        assert channel.getStreamPosition() == tileOffsetBeg : "Expected channel position = "+tileOffsetBeg+" found : "+channel.getStreamPosition();
         
         //------------------- raster properties ------------------//        
         final Raster initRast         = image.getTile(imageTileGridXOffset, imageTileGridYOffset);
@@ -1473,22 +1458,22 @@ public class TiffImageWriter extends SpatialImageWriter {
                     final int ctRmaxx = ctRminx + currentImgTW;
                     
                     //-- define intersection between destination image tiles and intersection replace pixel area
-                    final int ctInterMinY = Math.max(interMinY, ctRminy);
-                    final int ctInterMaxY = Math.min(interMaxY, ctRmaxy);
-                    final int ctInterMinX = Math.max(interMinX, ctRminx);
-                    final int ctInterMaxX = Math.min(interMaxX, ctRmaxx); 
+                    final int ctInterMinY = Math.max(imgInterRepMinY, ctRminy);
+                    final int ctInterMaxY = Math.min(imgInterRepMaxY, ctRmaxy);
+                    final int ctInterMinX = Math.max(imgInterRepMinX, ctRminx);
+                    final int ctInterMaxX = Math.min(imgInterRepMaxX, ctRmaxx); 
                     
                     
-                    // we looking for which tiles from image will be used to fill destination tile.
+                    //-- we looking for which tiles from image will be used to fill destination tile.
                     //-- define image tile index which will be follow
-                    final int imageminTy = imageTileGridYOffset + (ctInterMinY - interMinY - imageMinY) / imageTileHeight;
-                    int imagemaxTy = imageTileGridYOffset + (ctInterMaxY - interMinY - imageMinY + imageTileHeight - 1) / imageTileHeight;
+                    final int imageminTy = imageTileGridYOffset + (ctInterMinY - imgMinY - imageMinY) / imageTileHeight;
+                    int imagemaxTy = imageTileGridYOffset + (ctInterMaxY - imgMinY - imageMinY + imageTileHeight - 1) / imageTileHeight;
                     
                     // -- in cause of padding imagemaxTy should exceed max tile grid offset from image.
                     imagemaxTy = Math.min(imagemaxTy, imageMaxTileGridYOffset);
                     
-                    final int imageminTx = imageTileGridXOffset + (ctInterMinX - interMinX - imageMinX) / imageTileWidth;
-                    int imagemaxTx = imageTileGridXOffset + (ctInterMaxX - interMinX - imageMinX + imageTileWidth - 1) / imageTileWidth;
+                    final int imageminTx = imageTileGridXOffset + (ctInterMinX - imgMinX - imageMinX) / imageTileWidth;
+                    int imagemaxTx = imageTileGridXOffset + (ctInterMaxX - imgMinX - imageMinX + imageTileWidth - 1) / imageTileWidth;
                     
                     // -- in cause of padding imagemaxTx should exceed max tile grid offset from image.
                     imagemaxTx = Math.min(imagemaxTx, imageMaxTileGridXOffset);
@@ -1496,7 +1481,7 @@ public class TiffImageWriter extends SpatialImageWriter {
                     for (int imgTy = imageminTy; imgTy < imagemaxTy; imgTy++) {//-- pour chaque tuile de l'image source
                         
                         //-- current image tile coordinates in Y direction
-                        int cuImgTileMinY = interMinY + imageMinY + (imageminTy - imageTileGridYOffset) * imageTileHeight;
+                        int cuImgTileMinY = imgMinY + imageMinY + (imageminTy - imageTileGridYOffset) * imageTileHeight;
                         int cuImgTileMaxY = cuImgTileMinY + imageTileHeight;
                                             
                         //-- row intersection on y axis in image space
@@ -1520,7 +1505,7 @@ public class TiffImageWriter extends SpatialImageWriter {
                             //-- travel tile on X direction --//
                             for (int imgTx = imageminTx; imgTx < imagemaxTx; imgTx++) {
                                 // -- current image tile coordinates in X direction
-                                int cuImgTileMinX = interMinX + imageMinX + (imageminTx - imageTileGridXOffset) * imageTileWidth;
+                                int cuImgTileMinX = imgMinX + imageMinX + (imageminTx - imageTileGridXOffset) * imageTileWidth;
                                 int cuImgTileMaxX = cuImgTileMinX + imageTileWidth;
                                 
                                 //-- column intersection on X axis
@@ -1652,7 +1637,6 @@ public class TiffImageWriter extends SpatialImageWriter {
         }
 
         final int buffPos = (int) channel.getStreamPosition();
-//        System.out.println("stream pos = "+channel.getStreamPosition());
         
         //------------------- raster properties ------------------//        
         final Raster initRast         = image.getTile(imageTileGridXOffset, imageTileGridYOffset);
@@ -1790,7 +1774,6 @@ public class TiffImageWriter extends SpatialImageWriter {
         
         // initialize tile offset
         long tileOffsetBeg = channel.getStreamPosition();//-- position in bytes
-//        System.out.println("tile offset begin = "+tileOffsetBeg);
         int tileOffsetID = 0;
         
         for (int bank = 0; bank < numbanks; bank++) {
