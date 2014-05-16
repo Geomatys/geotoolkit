@@ -1810,7 +1810,7 @@ public class TiffImageReader extends SpatialImageReader {
                     int sampleNumberRead = 0;
                     for (int x = srcRegion.x; x < srcMaxx; x += srcStepX) {
                         //-- adjust read length in function of buffer capacity.
-                        long currentPos       = srcBuffPos;
+                        long currentPos = srcBuffPos;
                         rasterReader.seek(currentPos);
                         switch (dataType) {
                             case DataBuffer.TYPE_BYTE   : rasterReader.readFully((byte[])   targetArray, bankID, readLength); break;
@@ -2419,7 +2419,7 @@ public class TiffImageReader extends SpatialImageReader {
         final int dataType             = dataBuffer.getDataType();
         final int sampleSize           = DataBuffer.getDataTypeSize(dataType) / Byte.SIZE;
         final int sourcePixelStride    = sampleSize * samplesPerPixel;
-        final int sourceScanlineStride = sourcePixelStride * tileWidth;
+        final int sourceScanTileStride = sourcePixelStride * tileWidth;
         final int targetScanlineStride = SampleModels.getScanlineStride(raster.getSampleModel());
         
         //-- fillOrder --//
@@ -2450,13 +2450,13 @@ public class TiffImageReader extends SpatialImageReader {
              * the tiles are the coordinates where to write in the target image.
              */
             final int targetImageStart = bankOffsets[bank] + targetScanlineStride * dstRegion.y + numBands * dstRegion.x;
-            for (final TiffImageReader.Tile tile : getTiles(srcRegion, sourceXSubsampling, sourceYSubsampling, sourcePixelStride, sourceScanlineStride)) {
+            for (final TiffImageReader.Tile tile : getTiles(srcRegion, sourceXSubsampling, sourceYSubsampling, sourcePixelStride, sourceScanTileStride)) {
                 /*
                  * Constants used for the iterations.
                  */
                 final int targetTileStart = targetImageStart + targetScanlineStride * tile.y + numBands * tile.x;
                 final int numSourceBytesToRead =
-                        (tile.height - 1) * sourceScanlineStride * sourceYSubsampling +
+                        (tile.height - 1) * sourceScanTileStride * sourceYSubsampling +
                         (tile.width  - 1) * sourcePixelStride    * sourceXSubsampling + sourcePixelStride;
                 
                 int numTargetPixelsPerRow = tile.width;
@@ -2466,7 +2466,7 @@ public class TiffImageReader extends SpatialImageReader {
                  * read is like a single line.
                  */
                 if (tile.width * numBands == targetScanlineStride &&
-                    tile.width * sourcePixelStride == sourceScanlineStride &&
+                    tile.width * sourcePixelStride == sourceScanTileStride &&
                     sourceYSubsampling == 1)
                 {
                     numTargetPixelsPerRow *= tile.height;
@@ -2486,7 +2486,6 @@ public class TiffImageReader extends SpatialImageReader {
                 int sourcePosition = 0;
                 int targetPosition = targetTileStart;
                 while (sourcePosition < numSourceBytesToRead) {
-                    
                     assert (remainingRowPixels >= 0) : remainingRowPixels;
                     if (remainingRowPixels == 0) {
                         /*
@@ -2495,33 +2494,34 @@ public class TiffImageReader extends SpatialImageReader {
                          * source buffer contains at least one pixel.
                          */
                         remainingRowPixels = numTargetPixelsPerRow;
-                        sourcePosition = ++row * sourceScanlineStride * sourceYSubsampling;
+                        sourcePosition = ++row * sourceScanTileStride * sourceYSubsampling;
                         targetPosition =   row * targetScanlineStride + targetTileStart;
                     } 
                     /*
                      * We will copy the pixel values in the target array using a fast bulk method
                      * if possible, or a slow loop if we need to apply a subsampling on the fly.
                      */
-                    final int sourceStep, targetStep;
+                    int sourceStep, targetStep;
                     if (sourceXSubsampling == 1) {
-                        sourceStep = targetStep = remainingRowPixels * numBands;
+                        sourceStep = targetStep = remainingRowPixels * numBands;//-- targetstep exprimate in number of sample. 
+                        sourceStep *= sampleSize;//-- sourcestep exprimate in byte length.
                         remainingRowPixels = 1;
                     } else {
-                        sourceStep = numBands * sourceXSubsampling;
+                        sourceStep = numBands * sourceXSubsampling * sampleSize;
                         targetStep = numBands;
                     }
                     do {
                         //-- move at correct pixel position in byte in file --//
-                        rasterReader.seek(tile.position + sourcePosition);
-                        switch (dataType) {
-                            case DataBuffer.TYPE_BYTE   : rasterReader.readFully((byte[])   targetArray, targetPosition, targetStep); break;
-                            case DataBuffer.TYPE_USHORT :
-                            case DataBuffer.TYPE_SHORT  : rasterReader.readFully((short[])  targetArray, targetPosition, targetStep); break;
-                            case DataBuffer.TYPE_FLOAT  : rasterReader.readFully((float[])  targetArray, targetPosition, targetStep); break;
-                            case DataBuffer.TYPE_INT    : rasterReader.readFully((int[])    targetArray, targetPosition, targetStep); break;
-                            case DataBuffer.TYPE_DOUBLE : rasterReader.readFully((double[]) targetArray, targetPosition, targetStep); break;
-                            default: throw new AssertionError(dataType);
-                        }
+                            rasterReader.seek(tile.position + sourcePosition);
+                                switch (dataType) {
+                                case DataBuffer.TYPE_BYTE   : rasterReader.readFully((byte[])   targetArray, targetPosition, targetStep); break;
+                                case DataBuffer.TYPE_USHORT :
+                                case DataBuffer.TYPE_SHORT  : rasterReader.readFully((short[])  targetArray, targetPosition, targetStep); break;
+                                case DataBuffer.TYPE_FLOAT  : rasterReader.readFully((float[])  targetArray, targetPosition, targetStep); break;
+                                case DataBuffer.TYPE_INT    : rasterReader.readFully((int[])    targetArray, targetPosition, targetStep); break;
+                                case DataBuffer.TYPE_DOUBLE : rasterReader.readFully((double[]) targetArray, targetPosition, targetStep); break;
+                                default: throw new AssertionError(dataType);
+                            }
                         sourcePosition += sourceStep;
                         targetPosition += targetStep;
                     } while (--remainingRowPixels != 0);
