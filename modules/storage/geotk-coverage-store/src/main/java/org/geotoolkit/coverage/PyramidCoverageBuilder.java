@@ -539,7 +539,7 @@ public class PyramidCoverageBuilder {
             final int nbrTileX  = (int)Math.ceil(imgWidth/tileWidth);
             final int nbrTileY  = (int)Math.ceil(imgHeight/tileHeight);
 
-            final GridMosaic mosaic = pm.createMosaic(pyramidID, new Dimension(nbrTileX, nbrTileY), tileSize, upperLeft, pixelScal);
+            final GridMosaic mosaic = getOrCreateMosaic(pm, pyramidID, new Dimension(nbrTileX, nbrTileY), tileSize, upperLeft, pixelScal);
             final String mosaicId   = mosaic.getId();
 
             final Interpolation interpolation = Interpolation.create(PixelIteratorFactory.createRowMajorIterator(baseImg), interpolationCase, lanczosWindow);
@@ -660,4 +660,16 @@ public class PyramidCoverageBuilder {
 
         return pyramid;
     }
+    
+    public static synchronized GridMosaic getOrCreateMosaic(final PyramidalCoverageReference pm, 
+            String pyramidID, Dimension gridsize, Dimension tileSize, DirectPosition upperLeft, double pixelScal) throws DataStoreException {
+        final Pyramid pyramid = pm.getPyramidSet().getPyramid(pyramidID);
+        for(GridMosaic gm : pyramid.getMosaics()){
+            if(gm.getScale() == pixelScal && Arrays.equals(upperLeft.getCoordinate(),gm.getUpperLeftCorner().getCoordinate())){
+                return gm;
+            }
+        }
+        return pm.createMosaic(pyramidID, tileSize, tileSize, upperLeft, pixelScal);
+    }
+    
 }
