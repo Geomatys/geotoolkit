@@ -15,18 +15,25 @@ public class Rescaler extends PipeLineInterpolation {
     protected final double[] scale;
 
     public Rescaler(final Interpolation source, final double minValue, final double maxValue) {
+        this(source, minValue, maxValue, null);
+    }
+    public Rescaler(final Interpolation source, final double minValue, final double maxValue, double[] minMax) {
         super(source);
         min = Math.min(minValue, maxValue);
         max = Math.max(minValue, maxValue);
         final double destSpan = max-min;
 
-        this.getMinMaxValue(null);
+        if (minMax == null || minMax.length < numBands*6) {
+            this.getMinMaxValue(null);
+        } else {
+            this.minMax = minMax;
+        }
 
         translation = new double[numBands];
         scale = new double[numBands];
         for(int i = 0, j = 0 ; i < numBands ; i++, j+=6) {
-            scale[i] = destSpan/(minMax[j+3] - minMax[j]);
-            translation[i] = min-minMax[j];
+            scale[i] = destSpan/(this.minMax[j+3] - this.minMax[j]);
+            translation[i] = min-this.minMax[j];
         }
     }
 
