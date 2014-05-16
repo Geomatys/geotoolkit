@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.image.io.plugin;
 
+import com.sun.media.imageioimpl.plugins.tiff.TIFFImageMetadata;
 import java.awt.Rectangle;
 import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
@@ -58,12 +59,20 @@ import javax.imageio.spi.IIORegistry;
 import javax.imageio.spi.ServiceRegistry;
 import org.apache.sis.internal.storage.ChannelImageOutputStream;
 import org.apache.sis.util.ArgumentChecks;
+import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.NullArgumentException;
+import org.geotoolkit.image.io.ImageMetadataException;
 import org.geotoolkit.image.io.SpatialImageWriteParam;
 import org.geotoolkit.image.io.SpatialImageWriter;
+import org.geotoolkit.image.io.metadata.SpatialMetadata;
+import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.Utilities;
 import static org.geotoolkit.metadata.geotiff.GeoTiffConstants.*;
+import org.geotoolkit.metadata.geotiff.GeoTiffMetaDataUtils;
+import org.geotoolkit.metadata.geotiff.GeoTiffMetaDataWriter;
+import org.geotoolkit.util.DomUtilities;
+import org.opengis.util.FactoryException;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -360,14 +369,16 @@ public class TiffImageWriter extends SpatialImageWriter {
         headProperties.clear();
         
         if (streamMetadata != null) {
+            final IIOMetadata strMetadata = convertMetadata(streamMetadata);
             //-- add streamMetadatas properties --//
-            addMetadataProperties(streamMetadata.getAsTree(streamMetadata.getNativeMetadataFormatName()), headProperties);
+            addMetadataProperties(strMetadata.getAsTree(strMetadata.getNativeMetadataFormatName()), headProperties);
         }
             
         //-- get image --//
         final RenderedImage img   = image.getRenderedImage();
         
         //-- get metadata from IIOImage --//
+        adaptMetadatas(image, param);
         final IIOMetadata iioMeth = image.getMetadata();
         if (iioMeth != null) {
             final Node iioNode    = iioMeth.getAsTree(iioMeth.getNativeMetadataFormatName());
@@ -400,6 +411,7 @@ public class TiffImageWriter extends SpatialImageWriter {
         final RenderedImage img   = image.getRenderedImage();
         
         //-- get metadata from IIOImage --//
+        adaptMetadatas(image, null);
         final IIOMetadata iioMeth = image.getMetadata();
         if (iioMeth != null) {
             final Node iioNode    = iioMeth.getAsTree(iioMeth.getNativeMetadataFormatName());
@@ -430,6 +442,7 @@ public class TiffImageWriter extends SpatialImageWriter {
         final RenderedImage img   = image.getRenderedImage();
         
         //-- get metadata from IIOImage --//
+        adaptMetadatas(image, param);
         final IIOMetadata iioMeth = image.getMetadata();
         if (iioMeth != null) {
             final Node iioNode    = iioMeth.getAsTree(iioMeth.getNativeMetadataFormatName());
@@ -587,13 +600,15 @@ public class TiffImageWriter extends SpatialImageWriter {
         //-- metadatas study --//
         //-- get metadata from stream --//
         if (streamMetadata != null) {
-            final Node iioNode    = streamMetadata.getAsTree(streamMetadata.getNativeMetadataFormatName());
+            final IIOMetadata strMetadata = convertMetadata(streamMetadata);
+            final Node iioNode    = strMetadata.getAsTree(strMetadata.getNativeMetadataFormatName());
             addMetadataProperties(iioNode, headProperties);
         }
         
         //-- get metadata from image --//
         if (imageMetadata != null) {
-            final Node iioNode    = imageMetadata.getAsTree(imageMetadata.getNativeMetadataFormatName());
+            final IIOMetadata imgMetadata = convertMetadata(streamMetadata);
+            final Node iioNode    = imgMetadata.getAsTree(imgMetadata.getNativeMetadataFormatName());
             addMetadataProperties(iioNode, headProperties);
         }
         //-- end metadatas --//
@@ -668,6 +683,7 @@ public class TiffImageWriter extends SpatialImageWriter {
                 }
             }
             endOfFile = currentoffset;
+            assert endOfFile == tileOffsetBeg + numTiles * currentByteCount;
             writeByteCountAndOffsets(byteCountTagPosition, arrayType, byteCountArray, offsetTagPosition, arrayType, offsetArray);
             assert tileOffsetBeg == channel.getStreamPosition();
             replacePixelPos = tileOffsetBeg;
@@ -694,6 +710,7 @@ public class TiffImageWriter extends SpatialImageWriter {
             channel.writeByte(0);
         }
         endOfFileReached = false;
+        endOfFile = -1;
     }
 
     @Override
@@ -729,6 +746,107 @@ public class TiffImageWriter extends SpatialImageWriter {
         //-- write image raster(s) datas --//
         replacePixelsByTiles(image, param);
 //        writeImage(image, headProperties, param);
+    }
+    
+    /**
+     * Try to translate metadata from image into Tiff metadatas if its possible.
+     * Temporary method in attempt to refactor metadatas using.
+     * 
+     * @param image 
+     * @param param
+     * @throws IOException 
+     */
+    private void adaptMetadatas(final IIOImage image, ImageWriteParam param) throws IOException {
+        
+        IIOMetadata iioImgMetadata = image.getMetadata();
+        
+        if (!(iioImgMetadata instanceof SpatialMetadata)) return;
+        
+        final SpatialMetadata spatialMetadata = (SpatialMetadata) iioImgMetadata;
+
+        Node tiffTree = null;
+
+        final String tiffFormatName = getOriginatingProvider().getNativeImageMetadataFormatName();
+
+        final String[] formatNames = iioImgMetadata.getMetadataFormatNames();
+        if(ArraysExt.contains(formatNames, "geotiff")){
+            //already has a geotiff metadata associated
+        }else if(ArraysExt.contains(formatNames, tiffFormatName)){
+            //has a tiff metadata but no geotiff metadatas
+            tiffTree = iioImgMetadata.getAsTree(tiffFormatName);
+            if(GeoTiffMetaDataUtils.isGeoTiffTree(tiffTree)){
+                //tiff with geotiff tags, also valid, no need to fill parameters.
+                tiffTree = null;
+            }
+        }else{
+            //no tiff metadatas, create one
+            final ImageTypeSpecifier spec = ImageTypeSpecifier.createFromRenderedImage(image.getRenderedImage());
+            iioImgMetadata = getDefaultImageMetadata(spec, param);
+            iioImgMetadata = convertImageMetadata(iioImgMetadata, spec, param);
+            tiffTree = iioImgMetadata.getAsTree(SpatialMetadataFormat.GEOTK_FORMAT_NAME);
+            image.setMetadata(iioImgMetadata);
+        }
+
+        if (tiffTree != null) {
+            final GeoTiffMetaDataWriter writer = new GeoTiffMetaDataWriter();
+            try {
+                writer.fillMetadata(tiffTree, spatialMetadata);
+            } catch (FactoryException ex) {
+                throw new IOException(ex);
+            }
+
+            //the tree changes are not stored in the model, imageio bug ?
+            //I didn't found a way to update the tree so I recreate the iiometadata.
+            iioImgMetadata = new TIFFImageMetadata(
+                    TIFFImageMetadata.parseIFD(DomUtilities.getNodeByLocalName(tiffTree, TAG_GEOTIFF_IFD)));
+            image.setMetadata(iioImgMetadata);
+        }
+    }
+    
+    /**
+     * Try to translate metadata into Tiff metadatas format if its possible.
+     * Temporary method in attempt to refactor metadatas using.
+     *
+     * @param metadata
+     * @return converted metadatas
+     * @throws IOException 
+     */
+    private IIOMetadata convertMetadata(IIOMetadata metadata) throws IOException {
+        
+        if (!(metadata instanceof SpatialMetadata)) return metadata;
+        
+        final SpatialMetadata spatialMetadata = (SpatialMetadata) metadata;
+
+        Node tiffTree = null;
+
+        final String tiffFormatName = getOriginatingProvider().getNativeImageMetadataFormatName();
+
+        final String[] formatNames = metadata.getMetadataFormatNames();
+        if(ArraysExt.contains(formatNames, "geotiff")){
+            //already has a geotiff metadata associated
+        }else if(ArraysExt.contains(formatNames, tiffFormatName)){
+            //has a tiff metadata but no geotiff metadatas
+            tiffTree = metadata.getAsTree(tiffFormatName);
+            if(GeoTiffMetaDataUtils.isGeoTiffTree(tiffTree)){
+                //tiff with geotiff tags, also valid, no need to fill parameters.
+                tiffTree = null;
+            }
+        }
+
+        if (tiffTree != null) {
+            final GeoTiffMetaDataWriter writer = new GeoTiffMetaDataWriter();
+            try {
+                writer.fillMetadata(tiffTree, spatialMetadata);
+            } catch (FactoryException ex) {
+                throw new IOException(ex);
+            }
+
+            //the tree changes are not stored in the model, imageio bug ?
+            //I didn't found a way to update the tree so I recreate the iiometadata.
+            metadata = new TIFFImageMetadata(
+                    TIFFImageMetadata.parseIFD(DomUtilities.getNodeByLocalName(tiffTree, TAG_GEOTIFF_IFD)));
+        }
+        return metadata;
     }
     
     /**
@@ -964,6 +1082,9 @@ public class TiffImageWriter extends SpatialImageWriter {
         return imageWeight >= 4E9;// >= 4Go
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public boolean canWriteEmpty() throws IOException {
         return true;
@@ -1295,8 +1416,8 @@ public class TiffImageWriter extends SpatialImageWriter {
 //        final int replaceMinY = Math.max(trMinY, dstRepRegion.y);
 //        final int replaceMaxX = Math.min(trMaxX, dstRepRegion.x + dstRepRegion.width);
 //        final int replaceMaxY = Math.min(trMaxY, dstRepRegion.y + dstRepRegion.height);
-        
-        //-- inter
+//        
+//        //-- inter
 //        final int interMinX = Math.max(imgMinX, replaceMinX);
 //        final int interMinY = Math.max(imgMinY, replaceMinY);
 //        final int interMaxX = Math.min(imgMaxX, replaceMaxX);
@@ -1309,14 +1430,14 @@ public class TiffImageWriter extends SpatialImageWriter {
         final int interMaxY = Math.min(imgMaxY, trMaxY);
         
         //-- if no intersection between current given image and replace pixel area do nothing --//
-        if (interMinX >= interMaxX || interMinY >= interMaxY) return;
+//        if (interMinX >= interMaxX || interMinY >= interMaxY) return;
         
         //-- 
 //        if (interMaxX == trMaxX && interMaxY == trMaxY) {
 //            endOfFileReached = true;
 //        }
-        
-        endOfFileReached = (interMaxX == trMaxX && interMaxY == trMaxY);
+        if (!endOfFileReached)
+            endOfFileReached = (interMaxX == trMaxX && interMaxY == trMaxY);
         
         //-- definir index destination des tuiles a parcourir
         final int ctMinX = (interMinX - trMinX) / currentImgTW;
@@ -1346,8 +1467,8 @@ public class TiffImageWriter extends SpatialImageWriter {
                     final long dstTileOffset = (cty * dstNumXT + ctx) * destTileByteCount; 
                     
                     //-- compute current destination tile coordinates in image space  
-                    final int ctRminy = trMinY  + cty * currentImgTW;
-                    final int ctRmaxy = ctRminy + currentImgTW;
+                    final int ctRminy = trMinY  + cty * currentImgTH;
+                    final int ctRmaxy = ctRminy + currentImgTH;
                     final int ctRminx = trMinX  + ctx * currentImgTW;
                     final int ctRmaxx = ctRminx + currentImgTW;
                     
@@ -1451,269 +1572,6 @@ public class TiffImageWriter extends SpatialImageWriter {
                             }
                         }
                     }
-                }
-            }
-        }
-    }
-    
-    /**
-     * Write {@link RenderedImage} by tile with all tile properties precedently setted by {@link ImageWriteParam}.
-     * 
-     * @param image source image which will be written.
-     * @param param Image parameter to define written area and subsampling if exists else {@code null}.
-     * @throws IOException if problem during buffer writing action or unsupported ata type.
-     */
-    private void replacePixelsByTiles2(final RenderedImage image, final ImageWriteParam param) throws IOException {
-       
-        final int subsampleX;
-        final int subsampleY;
-        
-        if (param != null) {
-            subsampleX = param.getSourceXSubsampling();
-            subsampleY = param.getSourceYSubsampling();
-        } else {
-            subsampleX = subsampleY = 1;
-        }
-        
-        // ------------ Image properties ------------//
-        final int imageMinX = image.getMinX();
-        final int imageMinY = image.getMinY();
-        
-        final int imageTileWidth = image.getTileWidth();
-        final int imageTileHeight = image.getTileHeight();
-        
-        final int imageTileGridXOffset    = image.getTileGridXOffset();
-        final int imageMaxTileGridXOffset = imageTileGridXOffset + image.getNumXTiles();
-        final int imageTileGridYOffset    = image.getTileGridYOffset();
-        final int imageMaxTileGridYOffset = imageTileGridYOffset + image.getNumYTiles();
-        
-        // ----------- Area define by tiles ----------// 
-        final int minx = tileRegion.x;
-        final int miny = tileRegion.y;
-        final int maxx = minx + tileRegion.width;
-        final int maxy = miny + tileRegion.height;
-
-        final SampleModel sm       = image.getSampleModel();
-        final int imagePixelStride = sm.getNumDataElements();
-        
-        assert currentImgTW != 0;
-        assert currentImgTH != 0;
-        
-        //-- on ramene tout dans l'espace source de l'image
-        final int subsampletileWidth  = currentImgTW * subsampleX;
-        final int subsampletileHeight = currentImgTH * subsampleY;
-        
-//        final int currentNumXT = tileRegion.width / subsampletileWidth;
-//        assert tileRegion.width % subsampletileWidth == 0;
-//        
-//        final int currentNumYT = tileRegion.height / subsampletileHeight;
-        assert tileRegion.height % subsampletileHeight == 0;
-        
-        final int dstNumXT = tileRegion.width / currentImgTW;
-        assert tileRegion.width % currentImgTW == 0;
-        
-        final int dstNumYT = tileRegion.height / currentImgTH;
-        assert tileRegion.height % currentImgTH == 0;
-        
-        //-- definir intersection entre le rectangle de prepareReplacePixel et la zone representée par l'image
-        //-- image coordinates
-        final int imgMinX = param.getDestinationOffset().x * subsampleX;
-        final int imgMinY = param.getDestinationOffset().y * subsampleY;
-        final int imgMaxX = imgMinX + image.getWidth();
-        final int imgMaxY = imgMinY + image.getHeight();
-        
-        //-- tile region coordinate dans l'espace de l'image --//
-        final int trMinX = tileRegion.x * subsampleX;
-        final int trMinY = tileRegion.y * subsampleY;
-        final int trMaxX = trMinX + tileRegion.width * subsampleX;
-        final int trMaxY = trMinY + tileRegion.height * subsampleY;
-        
-        //-- inter
-        final int interMinX = Math.max(imgMinX, trMaxX);
-        final int interMinY = Math.max(imgMinY, trMinY);
-        final int interMaxX = Math.min(imgMaxX, trMaxX);
-        final int interMaxY = Math.min(imgMaxY, trMaxY);
-        
-        //-- definir index destination des tuiles a parcourir
-        final int ctMinX = (interMinX - trMinX) / subsampletileWidth;
-        final int ctMinY = (interMinY - trMinY) / subsampletileHeight;
-        final int ctMaxX = (interMaxX - trMinX + subsampletileWidth - 1) / subsampletileWidth;
-        final int ctMaxY = (interMaxY - trMinY + subsampletileHeight - 1) / subsampletileHeight;
-        //----------------------------------------------------------------//
-        
-//        assert currentNumXT != 0;
-//        assert currentNumYT != 0;
-        assert bitPerSample != 0;
-        
-        final int numTiles = dstNumXT * dstNumYT;
-        final Object byteCountArray;
-        final long byteCountArraySize;
-        final Object offsetArray;
-        final long offsetArraySize;
-        final short arrayType;
-        if (isBigTIFF) {
-            byteCountArray = new long[numTiles];
-            offsetArray = new long[numTiles];
-            arrayType = TYPE_LONG;
-            byteCountArraySize = offsetArraySize = numTiles * TYPE_SIZE[TYPE_LONG];
-        } else {
-            byteCountArray = new int[numTiles];
-            offsetArray = new int[numTiles];
-            arrayType = TYPE_INT;
-            byteCountArraySize = offsetArraySize = numTiles * TYPE_SIZE[TYPE_INT];
-        }
-
-        final int buffPos = (int) channel.getStreamPosition();
-        
-        //------------------- raster properties ------------------//        
-        final Raster initRast         = image.getTile(imageTileGridXOffset, imageTileGridYOffset);
-        final DataBuffer initRastBuff = initRast.getDataBuffer();
-        final int numbanks = initRastBuff.getNumBanks();
-        final int dataType = initRastBuff.getDataType();
-        
-        final int srcRegionMaxX = srcRegion.x + srcRegion.width;
-        final int srcRegionMaxY = srcRegion.y + srcRegion.height;
-        
-        // ----------------- padding array --------------------//
-        assert tileRegion.width  % subsampleX == 0;
-        assert tileRegion.height % subsampleY == 0; 
-        
-        final int sampleSize = bitPerSample / Byte.SIZE;
-        
-        //-- write current tile byte position --//
-        final int currentByteCount = currentImgTW * currentImgTH * bitPerSample *  imagePixelStride / Byte.SIZE;
-        final long tileOffsetBeg = buffPos + byteCountArraySize + offsetArraySize;//-- position in bytes
-        long currentoffset = tileOffsetBeg;
-
-        // fill byte count array
-        if (isBigTIFF) {
-            Arrays.fill((long[]) byteCountArray, currentByteCount);
-            for (int i = 0; i < numTiles; i++) {
-                Array.setLong(offsetArray, i, currentoffset);
-                currentoffset += currentByteCount;
-            }
-        } else {
-            Arrays.fill((int[]) byteCountArray, (int) currentByteCount);
-            for (int i = 0; i < numTiles; i++) {
-                Array.setInt(offsetArray, i, (int) currentoffset);
-                currentoffset += currentByteCount;
-            }
-        }
-        writeByteCountAndOffsets(byteCountTagPosition, arrayType, byteCountArray, offsetTagPosition, arrayType, offsetArray);
-        
-        final int destTileByteCount = currentImgTH * currentImgTW * imagePixelStride * sampleSize;
-        
-        assert channel.getStreamPosition() == tileOffsetBeg : "Expected channel position = "+tileOffsetBeg+" found : "+channel.getStreamPosition();
-
-        int tileOffsetID = 0;
-        
-        for (int bank = 0; bank < numbanks; bank++) {
-            for (int cty = ctMinY; cty < ctMaxY; cty++) {//-- pour chaque tuile destination dans l'espace de l'image on determine 
-                for (int ctx = ctMinX; ctx < ctMaxX; ctx++) {
-                    assert channel.getBitOffset() == 0;
-                    
-                    final long dstTileOffset = (cty * dstNumXT + ctx) * destTileByteCount; 
-                    
-                    //-- compute current destination tile coordinates in image space  
-                    final int ctRminy = miny * subsampleY + cty * subsampletileHeight;
-                    final int ctRmaxy = ctRminy + subsampletileHeight;
-                    final int ctRminx = minx * subsampleX + ctx * subsampletileWidth;
-                    final int ctRmaxx = ctRminx + subsampletileWidth;
-
-                    // we looking for which tiles from image will be used to fill destination tile.
-                    final int imageminTy = imageTileGridYOffset + (ctRminy - imageMinY) / imageTileHeight;
-                    int imagemaxTy = imageTileGridYOffset + (ctRmaxy - imageMinY + imageTileHeight - 1) / imageTileHeight;
-                    
-                    // -- in cause of padding imagemaxTy should exceed max tile grid offset from image.
-                    imagemaxTy = Math.min(imagemaxTy, imageMaxTileGridYOffset);
-
-                    final int imageminTx = imageTileGridXOffset + (ctRminx - imageMinX) / imageTileWidth;
-                    int imagemaxTx = imageTileGridXOffset + (ctRmaxx - imageMinX + imageTileWidth - 1) / imageTileWidth;
-                    
-                    // -- in cause of padding imagemaxTx should exceed max tile grid offset from image.
-                    imagemaxTx = Math.min(imagemaxTx, imageMaxTileGridXOffset);
-
-                    int cuImgTileMinY = imageMinY + (imageminTy - imageTileGridYOffset) * imageTileHeight;
-                    int cuImgTileMaxY = cuImgTileMinY + imageTileHeight;
-                    
-                    for (int imgTy = imageminTy; imgTy < imagemaxTy; imgTy++) {//-- pour chaque tuile de l'image source
-
-                        //-- row intersection on y axis
-                        final int deby  = Math.max(cuImgTileMinY, ctRminy);
-                        final int tendy = Math.min(cuImgTileMaxY, ctRmaxy);
-                        final int endy  = Math.min(srcRegionMaxY, tendy);
-
-                        //-- offset in pixels number in source image currently tile
-                        final int stepOffsetBeforeY = (deby - cuImgTileMinY) * imageTileWidth;
-
-                        for (int y = deby; y < endy; y += subsampleY) {
-                            
-                            // -- offset in y direction
-                            final int stepY = (y - deby) * imageTileWidth;
-                            
-                            // -- current image tile coordinates in X direction
-                            int cuImgTileMinX = imageMinX + (imageminTx - imageTileGridXOffset) * imageTileWidth;
-                            int cuImgTileMaxX = cuImgTileMinX + imageTileWidth;
-                            
-                            //-- travel tile on X direction --//
-                            for (int imgTx = imageminTx; imgTx < imagemaxTx; imgTx++) {
-                                
-                                // -- get the following image raster
-                                final Raster imageTile        = image.getTile(imgTx, imgTy);
-                                final DataBuffer rasterBuffer = imageTile.getDataBuffer();
-                                
-                                final Object sourceArray;
-                                switch (dataType) {
-                                    case DataBuffer.TYPE_BYTE:   sourceArray = ((DataBufferByte)   rasterBuffer).getData(bank); break;
-                                    case DataBuffer.TYPE_USHORT: sourceArray = ((DataBufferUShort) rasterBuffer).getData(bank); break;
-                                    case DataBuffer.TYPE_SHORT:  sourceArray = ((DataBufferShort)  rasterBuffer).getData(bank); break;
-                                    case DataBuffer.TYPE_INT:    sourceArray = ((DataBufferInt)    rasterBuffer).getData(bank); break;
-                                    case DataBuffer.TYPE_FLOAT:  sourceArray = ((DataBufferFloat)  rasterBuffer).getData(bank); break;
-                                    case DataBuffer.TYPE_DOUBLE: sourceArray = ((DataBufferDouble) rasterBuffer).getData(bank); break;
-                                    default: throw new AssertionError(dataType);
-                                }
-                                
-                                // intersection
-                                // gerer les decalages offsets x et y dans le databuffer
-                                final int debx  = Math.max(cuImgTileMinX, ctRminx);
-                                final int tendx = Math.min(cuImgTileMaxX, ctRmaxx);
-                                final int endx  = Math.min(srcRegionMaxX, tendx);
-                                final int currentXSubSample;
-                                final int writeSize;
-                                if (subsampleX == 1) {
-                                    currentXSubSample = endx - debx;
-                                    writeSize         = currentXSubSample * imagePixelStride; // eh !! oui on ecrit en coord tableau et pas en nbre de byte
-                                } else {
-                                    currentXSubSample = subsampleX;
-                                    writeSize         = imagePixelStride;
-                                }
-                                
-                                for (int x = debx; x < endx; x += currentXSubSample) {
-                                    final int writeArrayOffset = (stepOffsetBeforeY + stepY + (x-cuImgTileMinX)) * imagePixelStride;
-                                    write(sourceArray, dataType, writeArrayOffset, writeSize, bitPerSample, compression);
-                                }
-                                
-                                // -- next tile X coordinates
-                                cuImgTileMinX += imageTileWidth;
-                                cuImgTileMaxX += imageTileWidth;
-                            }
-                        }
-                        
-                        //-- next tile Y coordinates.
-                        cuImgTileMinY += imageTileHeight;
-                        cuImgTileMaxY += imageTileHeight;
-                    }
-                    
-                    //-- Use during packBit compression --//
-                    lastByte32773     += destTileByteCount;
-                    precLastByte32773 += destTileByteCount;
-                    
-                    /*
-                     * To stipulate end of current destination tile.
-                     * Moreover in this current algorithm channel is automaticaly 
-                     * flushed when we write LZW end of file value.
-                     */
-                    if (compression == 5) writeWithLZWCompression(LZW_EOI_CODE);
                 }
             }
         }
@@ -3415,6 +3273,10 @@ public class TiffImageWriter extends SpatialImageWriter {
             vendorName      = "Geotoolkit.org";
             version         = Utilities.VERSION.toString();
             outputTypes     = TYPES;
+            nativeImageMetadataFormatName = "geotiff";
+            extraImageMetadataFormatNames = new String[]{SpatialMetadataFormat.GEOTK_FORMAT_NAME};
+            nativeStreamMetadataFormatName = "geotiff";
+            extraStreamMetadataFormatNames = new String[]{SpatialMetadataFormat.GEOTK_FORMAT_NAME};
         }
 
         /**
