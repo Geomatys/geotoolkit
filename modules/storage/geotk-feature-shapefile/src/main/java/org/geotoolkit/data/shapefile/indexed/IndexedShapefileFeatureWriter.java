@@ -70,6 +70,30 @@ class IndexedShapefileFeatureWriter extends ShapefileFeatureWriter{
             storageFiles.put(FIX, storageFile);
             this.fidWriter = getLocker().getFIXWriter(storageFile);
         }
+        
+        //runnable called when closing writer, we use it to rebuild id index and quadtree
+        postClose = new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    if (shpFiles.isLocal()) {
+                        if (indexedShapefileFeatureStore.needsGeneration(ShpFileType.FIX)) {
+                            IndexedFidWriter.generate(shpFiles);
+                        }
+                        deleteFile(ShpFileType.QIX);
+                        if (indexedShapefileFeatureStore.treeType == IndexType.QIX) {
+                            indexedShapefileFeatureStore
+                                    .buildQuadTree(indexedShapefileFeatureStore.maxDepth);
+                        }
+                    }
+                } catch (Throwable e) {
+                    indexedShapefileFeatureStore.treeType = IndexType.NONE;
+                    ShapefileFeatureStoreFactory.LOGGER.log(Level.WARNING,
+                            "Error creating Spatial index", e);
+                }
+            }
+        };
+        
     }
 
     @Override
@@ -119,49 +143,7 @@ class IndexedShapefileFeatureWriter extends ShapefileFeatureWriter{
         }
         super.write();
     }
-
-    /**
-     * Release resources and flush the header information.
-     */
-    @Override
-    public void close() throws FeatureStoreRuntimeException {
-        super.close();
-
-        try {
-            if (shpFiles.isLocal()) {
-                if (indexedShapefileFeatureStore.needsGeneration(ShpFileType.FIX)) {
-                    IndexedFidWriter.generate(shpFiles);
-                }
-
-                deleteFile(ShpFileType.QIX);
-
-                if (indexedShapefileFeatureStore.treeType == IndexType.QIX) {
-                    indexedShapefileFeatureStore
-                            .buildQuadTree(indexedShapefileFeatureStore.maxDepth);
-                }
-            }
-            
-            if (!addedIds.isEmpty()) {
-                final FeatureStoreContentEvent event = new FeatureStoreContentEvent(this, FeatureStoreContentEvent.Type.ADD, featureType.getName(), FF.id(addedIds));
-                parent.forwardContentEvent(event);
-            }
-
-            if (!updatedIds.isEmpty()) {
-                final FeatureStoreContentEvent event = new FeatureStoreContentEvent(this, FeatureStoreContentEvent.Type.UPDATE, featureType.getName(), FF.id(updatedIds));
-                parent.forwardContentEvent(event);
-            }
-
-            if (!deletedIds.isEmpty()) {
-                final FeatureStoreContentEvent event = new FeatureStoreContentEvent(this, FeatureStoreContentEvent.Type.DELETE, featureType.getName(), FF.id(deletedIds));
-                parent.forwardContentEvent(event);
-            }
-        } catch (Throwable e) {
-            indexedShapefileFeatureStore.treeType = IndexType.NONE;
-            ShapefileFeatureStoreFactory.LOGGER.log(Level.WARNING,
-                    "Error creating Spatial index", e);
-        }
-    }
-
+    
     @Override
     protected void doClose() throws FeatureStoreRuntimeException {
         super.doClose();

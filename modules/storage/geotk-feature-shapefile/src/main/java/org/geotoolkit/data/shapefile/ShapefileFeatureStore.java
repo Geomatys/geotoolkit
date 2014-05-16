@@ -694,8 +694,6 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
     public List<FeatureId> addFeatures(final Name groupName, final Collection<? extends Feature> newFeatures,
             final Hints hints) throws DataStoreException {
         final List<FeatureId> ids = handleAddWithFeatureWriter(groupName, newFeatures, hints);
-        final Id id = FactoryFinder.getFilterFactory(null).id(new HashSet<>(ids));
-        fireFeaturesAdded(groupName, id);
         return ids;
     }
 
@@ -715,8 +713,8 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
         handleRemoveWithFeatureWriter(groupName, filter);
     }
 
-	@Override
-	public void refreshMetaModel() {
+    @Override
+    public void refreshMetaModel() {
 		name = null;
 		schema = null;
 

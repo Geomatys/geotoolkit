@@ -123,6 +123,9 @@ public class ShapefileFeatureWriter implements FeatureWriter<SimpleFeatureType, 
     private final FileChannel dbfChannel;
     private final Charset dbfCharset;
     
+    //Runnable used after closing shapefile, to rebuild indexes for example
+    protected Runnable postClose = null;
+    
 
     public ShapefileFeatureWriter(final ShapefileFeatureStore parent, final String typeName, final ShpFiles shpFiles, final ShapefileAttributeReader attsReader,  
             final FeatureReader<SimpleFeatureType, SimpleFeature> featureReader, final Charset charset) throws IOException,DataStoreException {
@@ -230,7 +233,7 @@ public class ShapefileFeatureWriter implements FeatureWriter<SimpleFeatureType, 
      */
     protected void clean() throws IOException {
         getLocker().disposeReaderAndWriters();
-        getLocker().replaceStorageFiles();
+        getLocker().replaceStorageFiles(postClose);
     }
 
     /**
@@ -290,26 +293,27 @@ public class ShapefileFeatureWriter implements FeatureWriter<SimpleFeatureType, 
         } catch (IOException ex) {
             throw new FeatureStoreRuntimeException(ex);
         }
-
-        // TODO : find a proper way to handle it.
-        if (!(parent instanceof IndexedShapefileFeatureStore)) {
-            if (!addedIds.isEmpty()) {
-                final FeatureStoreContentEvent event = new FeatureStoreContentEvent(this, FeatureStoreContentEvent.Type.ADD, featureType.getName(), FF.id(addedIds));
-                parent.forwardContentEvent(event);
-            }
-
-            if (!updatedIds.isEmpty()) {
-                final FeatureStoreContentEvent event = new FeatureStoreContentEvent(this, FeatureStoreContentEvent.Type.UPDATE, featureType.getName(), FF.id(updatedIds));
-                parent.forwardContentEvent(event);
-            }
-
-            if (!deletedIds.isEmpty()) {
-                final FeatureStoreContentEvent event = new FeatureStoreContentEvent(this, FeatureStoreContentEvent.Type.DELETE, featureType.getName(), FF.id(deletedIds));
-                parent.forwardContentEvent(event);
-            }
-        }
+        
+        fireDataChangeEvents();
     }
 
+    private void fireDataChangeEvents(){
+        if (!addedIds.isEmpty()) {
+            final FeatureStoreContentEvent event = new FeatureStoreContentEvent(this, FeatureStoreContentEvent.Type.ADD, featureType.getName(), FF.id(addedIds));
+            parent.forwardContentEvent(event);
+        }
+
+        if (!updatedIds.isEmpty()) {
+            final FeatureStoreContentEvent event = new FeatureStoreContentEvent(this, FeatureStoreContentEvent.Type.UPDATE, featureType.getName(), FF.id(updatedIds));
+            parent.forwardContentEvent(event);
+        }
+
+        if (!deletedIds.isEmpty()) {
+            final FeatureStoreContentEvent event = new FeatureStoreContentEvent(this, FeatureStoreContentEvent.Type.DELETE, featureType.getName(), FF.id(deletedIds));
+            parent.forwardContentEvent(event);
+        }
+    }
+    
     protected void doClose() throws FeatureStoreRuntimeException {
         // close reader, flush headers, and copy temp files, if any
         try {

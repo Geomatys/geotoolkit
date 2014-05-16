@@ -386,17 +386,16 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
 
         CloseableCollection<ShpData> goodCollec = null;
 
-        final ShxReader shx;
-        try {
-            shx = locker.getSHXReader(useMemoryMappedBuffer);
-        } catch (IOException ex) {
-            throw new DataStoreException("Error opening Shx file: " + ex.getMessage(), ex);
-        }
-
         try {
             final QuadTree quadTree = openQuadTree();
-            final DataReader<ShpData> dr = new IndexDataReader(shx);
             if (quadTree != null) {
+                final ShxReader shx;
+                try {
+                    shx = locker.getSHXReader(useMemoryMappedBuffer);
+                } catch (IOException ex) {
+                    throw new DataStoreException("Error opening Shx file: " + ex.getMessage(), ex);
+                }
+                final DataReader<ShpData> dr = new IndexDataReader(shx);
                 goodCollec = quadTree.search(dr,bbox,minRes);
             }
 
@@ -404,16 +403,15 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
             throw new DataStoreException("Error querying index: " + e.getMessage());
         }
         final LazySearchCollection<ShpData> col = (LazySearchCollection) goodCollec;
+        final LazyTyleSearchIterator.Buffered<ShpData> ite = (col!=null) ? col.bboxIterator() : null;
 
         //check if we need to open the dbf reader, no need when only geometry
         final boolean readDBF = !(properties.size()==1 && properties.get(0) instanceof GeometryDescriptor);
         final PropertyDescriptor[] atts = properties.toArray(new PropertyDescriptor[properties.size()]);
         try {
             return new IndexedBBoxShapefileAttributeReader(locker,atts,
-                    read3D, useMemoryMappedBuffer,res,
-                    readDBF, dbfCharset, minRes,
-                    col, (LazyTyleSearchIterator.Buffered<ShpData>)col.bboxIterator(),
-                    bbox,loose,minRes);
+                    read3D, useMemoryMappedBuffer,res,readDBF, dbfCharset, 
+                    minRes,col, ite, bbox,loose,minRes);
         } catch (IOException ex) {
             throw new DataStoreException(ex);
         }

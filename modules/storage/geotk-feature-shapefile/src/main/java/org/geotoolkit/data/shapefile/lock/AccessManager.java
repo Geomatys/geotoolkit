@@ -234,11 +234,15 @@ public final class AccessManager {
 
     }
 
+    public synchronized void replaceStorageFiles() throws IOException{
+        replaceStorageFiles(null);
+    }
+
     /**
      * Aquiere a write lock and replace all storage files.
      * At this step all readers and writers must have been closed.
      */
-    public synchronized void replaceStorageFiles() throws IOException{
+    public synchronized void replaceStorageFiles(Runnable postReplaceRunnable) throws IOException{
 
         if(!allRWClosed()){
             throw new IOException("Can not replace files while readers or writers are still open :\n"+this.toString());
@@ -254,6 +258,10 @@ public final class AccessManager {
             releaseWriteLock();
         }
 
+        if(postReplaceRunnable!=null){
+            postReplaceRunnable.run();
+        }
+        
     }
 
     private boolean allRWClosed(){
