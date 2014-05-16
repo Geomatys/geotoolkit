@@ -47,4 +47,6 @@ public abstract class ObservationStore extends DataStore {
     public abstract ExtractionResult getResults();
     
     public abstract ExtractionResult getResults(final List<String> sensorIds);
+    
+    public abstract ExtractionResult getResults(final String affectedSensorID, final List<String> sensorIds);
 }

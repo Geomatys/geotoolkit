@@ -90,6 +90,11 @@ public class FileObservationStore extends AbstractObservationStore implements Da
     }
     
     @Override
+    public ExtractionResult getResults(final String affectedSensorID, final List<String> sensorIDs) {
+        return NetCDFExtractor.getObservationFromNetCDF(analyze, affectedSensorID, sensorIDs);
+    }
+    
+    @Override
     public void close() throws DataStoreException {
         // do nothing
     }

@@ -100,6 +100,12 @@ public class XmlObservationStore extends AbstractObservationStore implements Dat
     }
     
     @Override
+    public ExtractionResult getResults(final String affectedSensorId, final List<String> sensorIDs) {
+        LOGGER.warning("XMLObservation store does not allow to override sensor ID");
+        return getResults(sensorIDs);
+    }
+    
+    @Override
     public ExtractionResult getResults(final List<String> sensorIDs) {
         final ExtractionResult result = new ExtractionResult();
         result.spatialBound.initBoundary();

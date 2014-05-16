@@ -30,6 +30,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.sis.measure.Longitude;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.gml.xml.FeatureProperty;
 import org.geotoolkit.gml.xml.LineString;
@@ -217,19 +218,17 @@ public class NetCDFExtractor {
             // post analyze
             if (analyze.mainField != null) {
                 for (Field f : all) {
-                    if (analyze.featureType != TRAJECTORY) {
-                        final String mainDimension = analyze.mainField.dimensionLabel;
-                        // dimension order
-                        if (!f.dimensionLabel.startsWith(mainDimension)) {
-                            f.mainVariableFirst = false;
-                        }
+                    final String mainDimension = analyze.mainField.dimensionLabel;
+                    // dimension order
+                    if (!f.dimensionLabel.startsWith(mainDimension)) {
+                        f.mainVariableFirst = false;
+                    }
 
-                        // exclude phenomenon field not related to main
-                        if (analyze.phenfields.contains(f)) {
-                            if (!f.dimensionLabel.contains(mainDimension)) {
-                                analyze.phenfields.remove(f);
-                                analyze.skippedFields.add(f);
-                            }
+                    // exclude phenomenon field not related to main
+                    if (analyze.phenfields.contains(f)) {
+                        if (!f.dimensionLabel.contains(mainDimension)) {
+                            analyze.phenfields.remove(f);
+                            analyze.skippedFields.add(f);
                         }
                     }
                 }
@@ -333,7 +332,7 @@ public class NetCDFExtractor {
                     FeatureProperty foi = null;
                     if (analyze.hasSpatial()) {
                         final double latitude         = getDoubleValue(latArray);
-                        final double longitude        = getDoubleValue(lonArray);
+                        final double longitude        = Longitude.normalize(getDoubleValue(lonArray));
                         final DirectPosition position = SOSXmlFactory.buildDirectPosition("2.0.0", null, 2, Arrays.asList(latitude, longitude));
                         final Point geom              = SOSXmlFactory.buildPoint("2.0.0", "SamplingPoint", position);
                         final SamplingFeature sp      = SOSXmlFactory.buildSamplingPoint("2.0.0", identifier, null, null, null, geom);
@@ -403,7 +402,7 @@ public class NetCDFExtractor {
                         FeatureProperty foi = null;
                         if (analyze.hasSpatial()) {
                             final double latitude         = getDoubleValue(latArray, j);
-                            final double longitude        = getDoubleValue(lonArray, j);
+                            final double longitude        = Longitude.normalize(getDoubleValue(lonArray, j));
                             final DirectPosition position = SOSXmlFactory.buildDirectPosition("2.0.0", null, 2, Arrays.asList(latitude, longitude));
                             final Point geom              = SOSXmlFactory.buildPoint("2.0.0", "SamplingPoint", position);
                             final SamplingFeature sp      = SOSXmlFactory.buildSamplingPoint("2.0.0", identifier, null, null, null, geom);
@@ -527,7 +526,7 @@ public class NetCDFExtractor {
                     FeatureProperty foi = null;
                     if (analyze.hasSpatial()) {
                         final double latitude         = getDoubleValue(latArray, 0);
-                        final double longitude        = getDoubleValue(lonArray, 0);
+                        final double longitude        = Longitude.normalize(getDoubleValue(lonArray, 0));
                         final DirectPosition position = SOSXmlFactory.buildDirectPosition("2.0.0", null, 2, Arrays.asList(latitude, longitude));
                         final Point geom              = SOSXmlFactory.buildPoint("2.0.0", "SamplingPoint", position);
                         final SamplingFeature sp      = SOSXmlFactory.buildSamplingPoint("2.0.0", identifier, null, null, null, geom);
@@ -599,7 +598,7 @@ public class NetCDFExtractor {
                         FeatureProperty foi = null;
                         if (analyze.hasSpatial()) {
                             final double latitude         = getDoubleValue(latArray, 0);
-                            final double longitude        = getDoubleValue(lonArray, 0);
+                            final double longitude        = Longitude.normalize(getDoubleValue(lonArray, 0));
                             final DirectPosition position = SOSXmlFactory.buildDirectPosition("2.0.0", null, 2, Arrays.asList(latitude, longitude));
                             final Point geom              = SOSXmlFactory.buildPoint("2.0.0", "SamplingPoint", position);
                             final SamplingFeature sp      = SOSXmlFactory.buildSamplingPoint("2.0.0", identifier, null, null, null, geom);
@@ -737,7 +736,7 @@ public class NetCDFExtractor {
 
                         final double latitude         = getDoubleValue(latArray, i);
                         sb.append(latitude).append(DEFAULT_ENCODING.getTokenSeparator());
-                        final double longitude        = getDoubleValue(lonArray, i);
+                        final double longitude        = Longitude.normalize(getDoubleValue(lonArray, i));
                         sb.append(longitude).append(DEFAULT_ENCODING.getTokenSeparator());
                         final DirectPosition position = SOSXmlFactory.buildDirectPosition("2.0.0", null, 2, Arrays.asList(latitude, longitude));
                         if (!position.equals(previousPosition)) {
@@ -813,7 +812,7 @@ public class NetCDFExtractor {
 
                             final double latitude         = getDoubleValue(true, latArray, i, j);
                             sb.append(latitude).append(DEFAULT_ENCODING.getTokenSeparator());
-                            final double longitude        = getDoubleValue(true, lonArray, i, j);
+                            final double longitude        = Longitude.normalize(getDoubleValue(true, lonArray, i, j));
                             sb.append(longitude).append(DEFAULT_ENCODING.getTokenSeparator());
                             final DirectPosition position = SOSXmlFactory.buildDirectPosition("2.0.0", null, 2, Arrays.asList(latitude, longitude));
                             if (!position.equals(previousPosition)) {
@@ -920,7 +919,7 @@ public class NetCDFExtractor {
 
 
                         final double latitude         = getDoubleValue(latArray, latIndex);
-                        final double longitude        = getDoubleValue(lonArray, lonIndex);
+                        final double longitude        = Longitude.normalize(getDoubleValue(lonArray, lonIndex));
                         final DirectPosition position = SOSXmlFactory.buildDirectPosition("2.0.0", null, 2, Arrays.asList(latitude, longitude));
                         final Point geom              = SOSXmlFactory.buildPoint("2.0.0", "SamplingPoint", position);
                         final SamplingFeature sp      = SOSXmlFactory.buildSamplingPoint("2.0.0", identifier, null, null, null, geom);
