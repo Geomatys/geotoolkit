@@ -19,6 +19,7 @@ package org.geotoolkit.display2d.primitive;
 import com.bric.geom.Clipper;
 import java.awt.Shape;
 import java.awt.geom.Rectangle2D;
+import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.geotoolkit.display.shape.ProjectedShape;
@@ -187,8 +188,7 @@ public class ProjectedGeometry  {
             
             if(params.context.wraps != null){
                 
-                com.vividsolutions.jts.geom.Geometry objBounds = JTS.toGeometry(objBase.getEnvelopeInternal());
-                final com.vividsolutions.jts.geom.Envelope objEnv = objBounds.getEnvelopeInternal();
+                com.vividsolutions.jts.geom.Envelope objBounds = objBase.getEnvelopeInternal();
                 final double dx = params.context.wraps.wrapPoints[1].getOrdinate(0) - params.context.wraps.wrapPoints[0].getOrdinate(0);
                 final double dy = params.context.wraps.wrapPoints[1].getOrdinate(1) - params.context.wraps.wrapPoints[0].getOrdinate(1);
                 
@@ -198,29 +198,30 @@ public class ProjectedGeometry  {
                     throw new TransformException("Coordinate Reference System, wrap around points are not axis aligned.");
                 }
                 
-                if( (dx>0 && (objEnv.getWidth() > (dx/2.0))) || 
-                    (dy>0 && (objEnv.getHeight() > (dy/2.0)))){
+                if( (dx>0 && (objBounds.getWidth() > (dx/2.0))) || 
+                    (dy>0 && (objBounds.getHeight() > (dy/2.0)))){
                     // this is a possible wrap around geometry
                     final double[] wrapTranslate = new double[]{dx,dy};
                     final CoordinateSequenceWrapTransformer cstrs = new CoordinateSequenceWrapTransformer(wrapTranslate);
                     final GeometryCSTransformer transformer = new GeometryCSTransformer(cstrs);
                     objBase = transformer.transform(objBase);
-                    objBounds = objBase.getBoundary();
+                    objBounds = objBase.getEnvelopeInternal();
                 }
                 
                 //check if the geometry overlaps the meridian
                 int nbIncRep = params.context.wraps.wrapIncNb;
                 int nbDecRep = params.context.wraps.wrapDecNb;
+                com.vividsolutions.jts.geom.Geometry objBoundsGeom = JTS.toGeometry(objBounds);
                 
                 // geometry cross the far east meridian, geometry is like : 
                 // POLYGON(-179,10,  181,10,  181,-10,  179,-10)
-                if(objBounds.intersects(params.context.wraps.wrapIncLine)){
+                if(objBoundsGeom.intersects(params.context.wraps.wrapIncLine)){
                     //duplicate geometry on the other warp line
                     nbDecRep++;
                 }
                 // geometry cross the far west meridian, geometry is like : 
                 // POLYGON(-179,10, -181,10, -181,-10,  -179,-10)
-                else if(objBounds.intersects(params.context.wraps.wrapDecLine)){
+                else if(objBoundsGeom.intersects(params.context.wraps.wrapDecLine)){
                     //duplicate geometry on the other warp line
                     nbIncRep++;
                 }
@@ -228,12 +229,27 @@ public class ProjectedGeometry  {
                 objectiveGeometryJTS = new com.vividsolutions.jts.geom.Geometry[nbIncRep+nbDecRep+1];
                 int n=0;
                 for(int i=0;i<nbIncRep;i++){
-                    objectiveGeometryJTS[n++] = JTS.transform(objBase, params.context.wraps.wrapIncObj[i]);
+                    //check that the futur geometry will intersect the visible area
+                    final com.vividsolutions.jts.geom.Envelope candidate = JTS.transform(objBounds, params.context.wraps.wrapIncObj[i]);
+                    if(candidate.intersects(params.context.wraps.objectiveJTSEnvelope)){
+                        objectiveGeometryJTS[n++] = JTS.transform(objBase, params.context.wraps.wrapIncObj[i]);
+                    }
                 }
-                objectiveGeometryJTS[n++] = objBase;
+                if(objBounds.intersects(params.context.wraps.objectiveJTSEnvelope)){
+                    objectiveGeometryJTS[n++] = objBase;
+                }
                 for(int i=0;i<nbDecRep;i++){
-                    objectiveGeometryJTS[n++] = JTS.transform(objBase, params.context.wraps.wrapDecObj[i]);
+                    //check that the futur geometry will intersect the visible area
+                    final com.vividsolutions.jts.geom.Envelope candidate = JTS.transform(objBounds, params.context.wraps.wrapDecObj[i]);
+                    if(candidate.intersects(params.context.wraps.objectiveJTSEnvelope)){
+                        objectiveGeometryJTS[n++] = JTS.transform(objBase, params.context.wraps.wrapDecObj[i]);
+                    }
                 }
+                if(n!=objectiveGeometryJTS.length){
+                    //some of the wrapped geometries do not intersect the visible area
+                    objectiveGeometryJTS = Arrays.copyOf(objectiveGeometryJTS, n);
+                }
+                
                 
             }else{
                 //geometry is valid with no modifications or repetition

@@ -45,7 +45,7 @@ import org.geotoolkit.io.Closeable;
  * @author Ian Schneider
  * @module pending
  */
-public class ShapefileReader implements Closeable{
+public final class ShapefileReader implements Closeable{
     
     /**
      *  Used to mark the current shape is not known, either because someone moved the reader

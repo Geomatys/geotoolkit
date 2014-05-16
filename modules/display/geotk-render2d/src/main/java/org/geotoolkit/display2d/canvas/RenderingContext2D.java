@@ -432,6 +432,9 @@ public class RenderingContext2D implements RenderingContext{
                         new Coordinate(env.getMaximum(0), max)});
                 }
                 wraps.wrapArea = (com.vividsolutions.jts.geom.Polygon)JTS.toGeometry(env);
+                wraps.objectiveJTSEnvelope = new com.vividsolutions.jts.geom.Envelope(
+                        canvasObjectiveBounds.getMinX(),canvasObjectiveBounds.getMaxX(),
+                        canvasObjectiveBounds.getMinY(),canvasObjectiveBounds.getMaxY());
 
                 //fix the envelopes, normalize them using wrap infos
                 canvasObjectiveBBox = ReferencingUtilities.wrapNormalize(canvasObjectiveBBox, wrapPoints);
