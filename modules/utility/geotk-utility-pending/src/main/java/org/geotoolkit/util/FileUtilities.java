@@ -321,7 +321,7 @@ public final class FileUtilities extends Static {
         }
         return null;
     }
-    
+
 
     /**
      * Load the properties from a properies file.
@@ -695,13 +695,10 @@ public final class FileUtilities extends Static {
         }
 
         final ZipOutputStream zout = new ZipOutputStream(buf);
-        try {
-            zout.setMethod(method);
-            zout.setLevel(level);
-            zipCore(zout, method, level, "", resources);
-        } finally {
-            zout.close();
-        }
+        zout.setMethod(method);
+        zout.setLevel(level);
+        zipCore(zout, method, level, "", resources);
+        zout.close();
     }
 
     /**
@@ -839,7 +836,7 @@ public final class FileUtilities extends Static {
         final ZipInputStream zis = new ZipInputStream(zip);
 
         final List<File> unzipped = new ArrayList<File>();
-        
+
         try {
             final String extractPath = getPath(resource);
             ZipEntry entry;
@@ -866,10 +863,10 @@ public final class FileUtilities extends Static {
         } finally {
             zis.close();
         }
-        
+
         return unzipped;
     }
-    
+
     /**
      * This method returns a file list from a Zip file.
      *
@@ -887,7 +884,7 @@ public final class FileUtilities extends Static {
                     final String fileName = removeDirectory(zi.getName());
                     final String fileExt = extractExtension(zi.getName());
                     final String suffix = "." + (fileExt != null ? fileExt : "tmp");
-                    
+
                     final File f = File.createTempFile(fileName, suffix);
 
                     final FileOutputStream out = new FileOutputStream(f);
@@ -913,7 +910,7 @@ public final class FileUtilities extends Static {
         }
         return files;
     }
-    
+
     /**
      * Remove the directory names before the file name.
      *
@@ -932,11 +929,11 @@ public final class FileUtilities extends Static {
         }
         return fileName;
     }
-    
+
     /**
-     * Extract the file extension from a string. 
+     * Extract the file extension from a string.
      * If the there is no extension, return null.
-     * 
+     *
      * @param name A zipEntry file name.
      * @return The zipEntry extension, or null if not found.
      */
@@ -949,10 +946,10 @@ public final class FileUtilities extends Static {
         }
     }
 
-    
+
     /**
      * Return an unic name for the file in the specified list fileNames.
-     * 
+     *
      * @param fileName a file name.
      * @param fileNames a list of unic file name
      * @return an unic name for the file in the list fileNames.
