@@ -64,7 +64,7 @@ public class NetCDFExtractor {
     
     private static final DateFormat FORMATTER = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
     
-    public static ExtractionResult getObservationFromNetCDF(final File netCDFFile, final String procedureID) {
+    public static ExtractionResult getObservationFromNetCDF(final File netCDFFile, final String procedureID) throws NetCDFParsingException {
         final NCFieldAnalyze analyze = analyzeResult(netCDFFile, null);
         switch (analyze.featureType) {
             case TIMESERIES :
@@ -79,7 +79,7 @@ public class NetCDFExtractor {
         }
     }
     
-    public static ExtractionResult getObservationFromNetCDF(final NCFieldAnalyze analyze, final String procedureID, final List<String> acceptedProcedureIDs) {
+    public static ExtractionResult getObservationFromNetCDF(final NCFieldAnalyze analyze, final String procedureID, final List<String> acceptedProcedureIDs) throws NetCDFParsingException {
         switch (analyze.featureType) {
             case TIMESERIES :
             return parseDataBlockTS(analyze, procedureID, acceptedProcedureIDs);
@@ -93,7 +93,7 @@ public class NetCDFExtractor {
         }
     }
     
-    public static ExtractionResult getObservationFromNetCDF(final File netCDFFile, final String procedureID, final String selectedBand) {
+    public static ExtractionResult getObservationFromNetCDF(final File netCDFFile, final String procedureID, final String selectedBand) throws NetCDFParsingException {
         final NCFieldAnalyze analyze = analyzeResult(netCDFFile, selectedBand);
         if (analyze.phenfields.isEmpty()) {
             LOGGER.info("There is no variable to collect in this file");
@@ -147,7 +147,7 @@ public class NetCDFExtractor {
                 final String name = variable.getFullName();
                 if (name != null) {
                     final int dimension = variable.getDimensions().size();
-                    final String dimensionLabel = variable.getDimensionsString();
+                    final String dimensionLabel = getDimensionString(variable);
                     final Field currentField = new Field(name, dimension, dimensionLabel);
                     all.add(currentField);
                     analyze.vars.put(name, variable);
@@ -178,7 +178,7 @@ public class NetCDFExtractor {
                         analyze.lonField = currentField;
 
                     
-                    } else if (name.equalsIgnoreCase("Pression") || name.equalsIgnoreCase("Depth") || name.equalsIgnoreCase("zLevel") || name.equalsIgnoreCase("z")) {
+                    } else if (name.equalsIgnoreCase("pression") || name.equalsIgnoreCase("pres") || name.equalsIgnoreCase("depth") || name.equalsIgnoreCase("zLevel") || name.equalsIgnoreCase("z")) {
                         currentField.type = Type.DOUBLE;
                         if (analyze.featureType == PROFILE) {
                             analyze.mainField = currentField;
@@ -238,10 +238,15 @@ public class NetCDFExtractor {
                     for (Field phenField : analyze.phenfields) {
                         if (phenField.dimension > 1) {
                             final String separatorDim = phenField.dimensionLabel.replace(analyze.mainField.label, "").trim();
-                            analyze.dimensionSeparator = separatorDim;
+                            final Dimension dim = file.findDimension(separatorDim);
+                            if (dim != null) {
+                                analyze.dimensionSeparator = separatorDim;
+                            }
                         }
                     }
-                } else if (analyze.featureType == TRAJECTORY && analyze.separatorField == null) {
+                } 
+                
+                if (analyze.featureType == TRAJECTORY && analyze.separatorField == null) {
                     for (Field phenField : analyze.phenfields) {
                         if (phenField.dimension > 1) {
                             final Dimension dim = file.findDimension("trajectory");
@@ -249,6 +254,25 @@ public class NetCDFExtractor {
                                 final String separatorDim = "trajectory";
                                 analyze.dimensionSeparator = separatorDim;
                             }
+                        }
+                    }
+                } else if (analyze.featureType == TIMESERIES && analyze.separatorField == null && analyze.dimensionSeparator == null) {
+                    for (Field phenField : analyze.phenfields) {
+                        if (phenField.dimension > 1) {
+                            final Dimension dim = file.findDimension("timeseries");
+                            if (dim != null) {
+                                final String separatorDim = "timeseries";
+                                analyze.dimensionSeparator = separatorDim;
+                            }
+                        }
+                    }
+                }
+                
+                if (analyze.dimensionSeparator != null) {
+                    for (Field f : all) {
+                        // dimension order
+                        if (f.dimensionLabel.startsWith(analyze.dimensionSeparator)) {
+                            f.mainVariableFirst = false;
                         }
                     }
                 }
@@ -279,7 +303,7 @@ public class NetCDFExtractor {
         return false;
     }
     
-    private static ExtractionResult parseDataBlockTS(final NCFieldAnalyze analyze, final String procedureID, final List<String> acceptedSensorID) {
+    private static ExtractionResult parseDataBlockTS(final NCFieldAnalyze analyze, final String procedureID, final List<String> acceptedSensorID) throws NetCDFParsingException {
         final ExtractionResult results = new ExtractionResult();
         if (analyze.mainField == null) {
             LOGGER.warning("No main field found");
@@ -391,7 +415,7 @@ public class NetCDFExtractor {
                     
                     final String identifier    = separators.get(j);
                     final StringBuilder sb     = new StringBuilder();
-                    int count                  = timeVar.getDimension(0).getLength();
+                    final int count            = getGoodTimeDimension(timeVar, analyze.dimensionSeparator).getLength();
                     final GeoSpatialBound gb   = new GeoSpatialBound();
                     final String currentProcID = procedureID + '-' + identifier;
                     final ProcedureTree compo  = new ProcedureTree(currentProcID, "Component");
@@ -460,15 +484,15 @@ public class NetCDFExtractor {
                 }
             }
 
-        } catch (IOException ex) {
-            LOGGER.log(Level.WARNING, "error while parsing netcdf timeserie", ex);
+        } catch (IOException | IllegalArgumentException ex) {
+            throw new NetCDFParsingException("error while parsing netcdf timeserie", ex);
         }
 
         LOGGER.info("datablock parsed");
         return results;
     }
     
-    private static ExtractionResult parseDataBlockXY(final NCFieldAnalyze analyze, final String procedureID, final List<String> acceptedSensorID) {
+    private static ExtractionResult parseDataBlockXY(final NCFieldAnalyze analyze, final String procedureID, final List<String> acceptedSensorID) throws NetCDFParsingException {
         final ExtractionResult results = new ExtractionResult();
         if (analyze.mainField == null) {
             LOGGER.warning("No main field found");
@@ -660,14 +684,14 @@ public class NetCDFExtractor {
                 }
             }
 
-        } catch (IOException ex) {
-            LOGGER.log(Level.WARNING, "error while parsing netcdf timeserie", ex);
+        } catch (IOException | IllegalArgumentException ex) {
+            throw new NetCDFParsingException("error while parsing netcdf profile", ex);
         }
 
         return results;
     }
     
-    private static ExtractionResult parseDataBlockTraj(final NCFieldAnalyze analyze, final String procedureID, final List<String> acceptedSensorID) {
+    private static ExtractionResult parseDataBlockTraj(final NCFieldAnalyze analyze, final String procedureID, final List<String> acceptedSensorID) throws NetCDFParsingException {
         final ExtractionResult results = new ExtractionResult();
         if (analyze.mainField == null) {
             LOGGER.warning("No main field found");
@@ -863,15 +887,15 @@ public class NetCDFExtractor {
                 }
             }
 
-        } catch (IOException ex) {
-            LOGGER.log(Level.WARNING, "error while parsing netcdf timeserie", ex);
+        } catch (IOException | IllegalArgumentException ex) {
+            throw new NetCDFParsingException("error while parsing netcdf trajectory", ex);
         }
 
         LOGGER.info("datablock parsed");
         return results;
     }
     
-    private static ExtractionResult parseDataBlockGrid(final NCFieldAnalyze analyze, final String procedureID, final List<String> acceptedSensorID) {
+    private static ExtractionResult parseDataBlockGrid(final NCFieldAnalyze analyze, final String procedureID, final List<String> acceptedSensorID) throws NetCDFParsingException {
         final ExtractionResult results = new ExtractionResult();
         final ProcedureTree compo = new ProcedureTree(procedureID, "Component");
         if (acceptedSensorID == null || acceptedSensorID.contains(procedureID)) {
@@ -972,8 +996,8 @@ public class NetCDFExtractor {
                 results.spatialBound.addGeometry(results.spatialBound.getPolyGonBounds("2.0.0"));
                 compo.spatialBound.addGeometry(results.spatialBound.getPolyGonBounds("2.0.0"));
 
-            } catch (IOException ex) {
-                LOGGER.log(Level.WARNING, "error while parsing netcdf timeserie", ex);
+            } catch (IOException | IllegalArgumentException ex) {
+                throw new NetCDFParsingException("error while parsing netcdf grid", ex);
             }
         }
 
@@ -1009,8 +1033,10 @@ public class NetCDFExtractor {
             }
         } else if (analyze.dimensionSeparator != null) {
             final Dimension dim = analyze.file.findDimension(analyze.dimensionSeparator);
-            for (int i = 0; i < dim.getLength(); i++) {
-                separators.add(Integer.toString(i));
+            if (dim != null) {
+                for (int i = 0; i < dim.getLength(); i++) {
+                    separators.add(Integer.toString(i));
+                }
             }
         }
         return separators;

@@ -44,6 +44,7 @@ import org.geotoolkit.gml.xml.FeatureProperty;
 import org.geotoolkit.sampling.xml.SamplingFeature;
 import org.geotoolkit.sos.netcdf.ExtractionResult;
 import org.geotoolkit.sos.netcdf.NetCDFExtractor;
+import org.geotoolkit.sos.netcdf.NetCDFParsingException;
 import org.geotoolkit.storage.DataFileStore;
 import org.geotoolkit.util.FileUtilities;
 import org.opengis.feature.Feature;
@@ -83,7 +84,7 @@ public class NetCDFFeatureStore extends AbstractOMFeatureStore implements DataFi
         final FeatureType sft = getFeatureType(query.getTypeName());
         try {
             return handleRemaining(new OMReader(sft), query);
-        } catch (JAXBException ex) {
+        } catch (NetCDFParsingException ex) {
             throw new DataStoreException(ex);
         }
     }
@@ -175,7 +176,7 @@ public class NetCDFFeatureStore extends AbstractOMFeatureStore implements DataFi
         protected List<Feature> features = new ArrayList<>();
         protected int cpt = 0;
 
-        private OMReader(final FeatureType type) throws JAXBException {
+        private OMReader(final FeatureType type) throws NetCDFParsingException {
             this.type = type;
             ExtractionResult result = NetCDFExtractor.getObservationFromNetCDF(source, "temp");
             for (Observation obs : result.observations) {

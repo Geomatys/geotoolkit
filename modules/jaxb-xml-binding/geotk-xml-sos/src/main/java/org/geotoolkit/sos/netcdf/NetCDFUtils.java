@@ -17,6 +17,7 @@
 
 package org.geotoolkit.sos.netcdf;
 
+import java.util.List;
 import ucar.ma2.Array;
 import ucar.ma2.ArrayDouble;
 import ucar.ma2.ArrayFloat;
@@ -24,6 +25,8 @@ import ucar.ma2.ArrayInt;
 import ucar.ma2.ArrayLong;
 import ucar.ma2.ArrayShort;
 import ucar.ma2.DataType;
+import ucar.nc2.Dimension;
+import ucar.nc2.Variable;
 import ucar.nc2.iosp.netcdf3.N3iosp;
 
 /**
@@ -243,5 +246,35 @@ public class NetCDFUtils {
                 return Type.UNSUPPORTED;*/
             default: return Type.UNSUPPORTED;
         }
+    }
+    
+    public static Dimension getGoodTimeDimension(final Variable timeVar, final String separatorDim) {
+        if (separatorDim == null || timeVar.getDimensions().size() == 1) {
+            return timeVar.getDimension(0);
+        } else {
+            for (Dimension d : timeVar.getDimensions()) {
+                if (!d.getFullName().equals(separatorDim)) {
+                    return d;
+                }
+            }
+        }
+        return null;
+    }
+    
+    /**
+     * The method Variable.getDimensionsString() seems to have issues.
+     * @param var
+     * @return 
+     */
+    public static String getDimensionString(final Variable var) {
+        final List<Dimension> dims = var.getDimensions();
+        final StringBuilder result = new StringBuilder();
+        for (Dimension dim : dims) {
+            result.append(dim.getFullName()).append(' ');
+        }
+        if (result.length() > 0) {
+            result.deleteCharAt(result.length() -1);
+        }
+        return result.toString();
     }
 }

@@ -29,6 +29,7 @@ import org.geotoolkit.sos.netcdf.ExtractionResult;
 import org.geotoolkit.sos.netcdf.Field;
 import org.geotoolkit.sos.netcdf.NCFieldAnalyze;
 import org.geotoolkit.sos.netcdf.NetCDFExtractor;
+import org.geotoolkit.sos.netcdf.NetCDFParsingException;
 import org.geotoolkit.storage.DataFileStore;
 import org.opengis.feature.type.Name;
 import org.opengis.parameter.ParameterValueGroup;
@@ -80,18 +81,30 @@ public class FileObservationStore extends AbstractObservationStore implements Da
     }
     
     @Override
-    public ExtractionResult getResults() {
-        return NetCDFExtractor.getObservationFromNetCDF(analyze, getProcedureID(), null);
+    public ExtractionResult getResults() throws DataStoreException {
+        try {
+            return NetCDFExtractor.getObservationFromNetCDF(analyze, getProcedureID(), null);
+        } catch (NetCDFParsingException ex) {
+            throw new DataStoreException(ex);
+        }
     }
     
     @Override
-    public ExtractionResult getResults(final List<String> sensorIDs) {
-        return NetCDFExtractor.getObservationFromNetCDF(analyze, getProcedureID(), sensorIDs);
+    public ExtractionResult getResults(final List<String> sensorIDs) throws DataStoreException {
+        try {
+            return NetCDFExtractor.getObservationFromNetCDF(analyze, getProcedureID(), sensorIDs);
+        } catch (NetCDFParsingException ex) {
+            throw new DataStoreException(ex);
+        }
     }
     
     @Override
-    public ExtractionResult getResults(final String affectedSensorID, final List<String> sensorIDs) {
-        return NetCDFExtractor.getObservationFromNetCDF(analyze, affectedSensorID, sensorIDs);
+    public ExtractionResult getResults(final String affectedSensorID, final List<String> sensorIDs) throws DataStoreException {
+        try {
+            return NetCDFExtractor.getObservationFromNetCDF(analyze, affectedSensorID, sensorIDs);
+        } catch (NetCDFParsingException ex) {
+            throw new DataStoreException(ex);
+        }
     }
     
     @Override
@@ -109,12 +122,16 @@ public class FileObservationStore extends AbstractObservationStore implements Da
     }
     
     @Override
-    public TemporalGeometricPrimitive getTemporalBounds() {
-        final ExtractionResult result = NetCDFExtractor.getObservationFromNetCDF(analyze, getProcedureID(), null);
-        if (result != null && result.spatialBound != null) {
-            return result.spatialBound.getTimeObject("2.0.0");
+    public TemporalGeometricPrimitive getTemporalBounds() throws DataStoreException {
+        try {
+            final ExtractionResult result = NetCDFExtractor.getObservationFromNetCDF(analyze, getProcedureID(), null);
+            if (result != null && result.spatialBound != null) {
+                return result.spatialBound.getTimeObject("2.0.0");
+            }
+            return null;
+        } catch (NetCDFParsingException ex) {
+            throw new DataStoreException(ex);
         }
-        return null;
     }
     
     /**

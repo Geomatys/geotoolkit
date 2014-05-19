@@ -20,6 +20,7 @@ package org.geotoolkit.observation;
 import java.util.List;
 import java.util.Set;
 import org.apache.sis.storage.DataStore;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.sos.netcdf.ExtractionResult;
 import org.opengis.feature.type.Name;
 import org.opengis.parameter.ParameterValueGroup;
@@ -42,11 +43,11 @@ public abstract class ObservationStore extends DataStore {
     
     public abstract Set<String> getPhenomenonNames();
     
-    public abstract TemporalGeometricPrimitive getTemporalBounds();
+    public abstract TemporalGeometricPrimitive getTemporalBounds() throws DataStoreException;
     
-    public abstract ExtractionResult getResults();
+    public abstract ExtractionResult getResults() throws DataStoreException;
     
-    public abstract ExtractionResult getResults(final List<String> sensorIds);
+    public abstract ExtractionResult getResults(final List<String> sensorIds) throws DataStoreException;
     
-    public abstract ExtractionResult getResults(final String affectedSensorID, final List<String> sensorIds);
+    public abstract ExtractionResult getResults(final String affectedSensorID, final List<String> sensorIds) throws DataStoreException;
 }
