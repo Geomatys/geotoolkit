@@ -43,7 +43,8 @@ import org.opengis.filter.expression.Literal;
 public class JComboExpressionPane extends StyleElementEditor<Expression>{
 
     private final List<Literal> values = new ArrayList<Literal>();
-
+    private volatile boolean updatingModel = false;
+    
     private final Dimension specialSize;
     
     /** Creates new form JColorExpressionPane */
@@ -66,19 +67,23 @@ public class JComboExpressionPane extends StyleElementEditor<Expression>{
     }
     
     public void setModel(final List<Literal> values){
+        updatingModel = true;
         this.values.clear();
         this.values.add(getFilterFactory().literal("-"));
         this.values.addAll(values);
         guiCombo.setModel(new ListComboBoxModel(this.values));
+        updatingModel = false;
     }
     
     public void setModel(final Literal ... values){
+        updatingModel = true;
         this.values.clear();
         this.values.add(getFilterFactory().literal("-"));
         for(final Literal lit : values){
             this.values.add(lit);
         }
         guiCombo.setModel(new ListComboBoxModel(this.values));
+        updatingModel = false;
     }
 
     /**
@@ -157,13 +162,16 @@ private void guiSpecialPropertyChange(final PropertyChangeEvent evt) {//GEN-FIRS
 
     private void guiComboItemStateChanged(ItemEvent evt) {//GEN-FIRST:event_guiComboItemStateChanged
        
-        final Expression exp = (Expression) evt.getItem();
-        if(exp instanceof Literal && "-".equals(((Literal)exp).getValue())){
-            return;
+        if(!updatingModel && evt.getStateChange() == ItemEvent.SELECTED){
+            final Expression exp = (Expression) evt.getItem();
+            if(exp instanceof Literal && "-".equals(((Literal)exp).getValue())){
+                return;
+            }
+
+            Expression old = null;
+            parse((Literal)guiCombo.getSelectedItem());
+            firePropertyChange(PROPERTY_UPDATED, old, create());
         }
-        
-        firePropertyChange(PROPERTY_UPDATED, null, create());
-        guiSpecial.parse(null);
         
     }//GEN-LAST:event_guiComboItemStateChanged
 
@@ -175,6 +183,7 @@ private void guiSpecialPropertyChange(final PropertyChangeEvent evt) {//GEN-FIRS
 
     @Override
     public void parse(final Expression target) {
+        
         if(target != null){
             if(values != null && values.contains(target)){
                 guiSpecial.parse(null);
@@ -187,6 +196,9 @@ private void guiSpecialPropertyChange(final PropertyChangeEvent evt) {//GEN-FIRS
             guiSpecial.parse(null);
             guiCombo.setSelectedItem(values.get(1));
         }
+        
+        guiCombo.setEnabled(guiSpecial.get()==null);
+        guiCombo.setToolTipText(guiSpecial.getToolTipText());
     }
 
     @Override

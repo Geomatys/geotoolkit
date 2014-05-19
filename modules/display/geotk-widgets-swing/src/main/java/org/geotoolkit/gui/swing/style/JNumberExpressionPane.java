@@ -19,6 +19,7 @@
 package org.geotoolkit.gui.swing.style;
 
 import java.awt.Dimension;
+import java.awt.GridBagConstraints;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import javax.swing.GroupLayout;
@@ -79,6 +80,7 @@ public class JNumberExpressionPane extends StyleElementEditor<Expression>{
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        GridBagConstraints gridBagConstraints;
 
         guiSpecial = new JSpecialExpressionButton();
         guiNumber = new JSpinner();
@@ -103,13 +105,14 @@ public class JNumberExpressionPane extends StyleElementEditor<Expression>{
         layout.setHorizontalGroup(
             layout.createParallelGroup(Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(guiNumber, GroupLayout.PREFERRED_SIZE, 75, GroupLayout.PREFERRED_SIZE)
+                .addComponent(guiNumber, GroupLayout.PREFERRED_SIZE, 90, GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(ComponentPlacement.RELATED)
-                .addComponent(guiSpecial, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                .addComponent(guiSpecial, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(22, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(Alignment.LEADING)
-            .addComponent(guiNumber, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+            .addComponent(guiNumber)
             .addComponent(guiSpecial, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -117,17 +120,17 @@ public class JNumberExpressionPane extends StyleElementEditor<Expression>{
 private void guiSpecialPropertyChange(final PropertyChangeEvent evt) {//GEN-FIRST:event_guiSpecialPropertyChange
     if (PROPERTY_UPDATED.equalsIgnoreCase(evt.getPropertyName())) {
         final Expression created = create();
-            firePropertyChange(PROPERTY_UPDATED, null, created);
-            parse(created);
-        }
+        firePropertyChange(PROPERTY_UPDATED, null, created);
+        parse(created);
+    }
     if(evt.getPropertyName().equals(JSpecialExpressionButton.EXPRESSION_PROPERTY)) {
         parse(guiSpecial.get());
     }
 }//GEN-LAST:event_guiSpecialPropertyChange
 
 private void guiNumberStateChanged(final ChangeEvent evt) {//GEN-FIRST:event_guiNumberStateChanged
-    firePropertyChange(PROPERTY_UPDATED, null, create());
     parse(  getFilterFactory().literal( ((SpinnerNumberModel)guiNumber.getModel()).getNumber() ));
+    firePropertyChange(PROPERTY_UPDATED, null, create());
 }//GEN-LAST:event_guiNumberStateChanged
 
 
@@ -158,6 +161,8 @@ private void guiNumberStateChanged(final ChangeEvent evt) {//GEN-FIRST:event_gui
         }else{
             guiSpecial.parse(null);
         }
+        guiNumber.setEnabled(guiSpecial.get()==null);
+        guiNumber.setToolTipText(guiSpecial.getToolTipText());
     }
 
     @Override

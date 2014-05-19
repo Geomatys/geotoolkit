@@ -28,6 +28,9 @@ public class JPolygonSymbolizerPane extends JTwoStateEditor<PolygonSymbolizer>{
 
     public JPolygonSymbolizerPane() {
         super(new JPolygonSymbolizerSimple(), new JPolygonSymbolizerAdvanced());
+        
+        //configure panel with a default symbolizer
+        parse(getStyleFactory().polygonSymbolizer());
     }
     
 }

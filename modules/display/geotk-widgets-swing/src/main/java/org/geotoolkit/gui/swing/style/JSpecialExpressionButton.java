@@ -18,10 +18,13 @@
 package org.geotoolkit.gui.swing.style;
 
 import java.awt.Color;
+import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.Icon;
 import javax.swing.JButton;
+import javax.swing.JPanel;
+import org.geotoolkit.cql.CQL;
 import org.geotoolkit.cql.CQLException;
 import org.geotoolkit.gui.swing.filter.JCQLEditor;
 import org.geotoolkit.gui.swing.resource.FontAwesomeIcons;
@@ -34,37 +37,60 @@ import org.opengis.filter.expression.Expression;
  * @author Johann Sorel (Puzzle-GIS)
  * @module pending
  */
-public class JSpecialExpressionButton extends JButton{
+public class JSpecialExpressionButton extends JPanel{
 
     public static final String EXPRESSION_PROPERTY = "expression";
 
-    private static final Icon ICON_EXP_NO = IconBuilder.createIcon(FontAwesomeIcons.ICON_PENCIL_SQUARE, 16, Color.LIGHT_GRAY);
-    private static final Icon ICON_EXP_YES = IconBuilder.createIcon(FontAwesomeIcons.ICON_PENCIL_SQUARE, 16, Color.RED);
+    private static final Icon ICON_EXP_NO = IconBuilder.createIcon(FontAwesomeIcons.ICON_PENCIL, 16, FontAwesomeIcons.DISABLE_COLOR);
+    private static final Icon ICON_EXP_YES = IconBuilder.createIcon(FontAwesomeIcons.ICON_PENCIL, 16, FontAwesomeIcons.DEFAULT_COLOR);
+    private static final Icon ICON_ERASE = IconBuilder.createIcon(FontAwesomeIcons.ICON_ERASER, 16, FontAwesomeIcons.DEFAULT_COLOR);
+    
     private Expression exp = null;
     private MapLayer layer = null;
 
+    private final JButton guiEdit = new JButton();
+    private final JButton guiErase = new JButton();
+    
     public JSpecialExpressionButton(){
-        setBorderPainted(false);
-        setContentAreaFilled(false);
-        setBorder(null);
-        setIcon(ICON_EXP_NO);
+        super(new FlowLayout());
+        add(guiEdit);
+        add(guiErase);
+        
+        guiEdit.setBorderPainted(false);
+        guiEdit.setContentAreaFilled(false);
+        guiEdit.setBorder(null);
+        guiEdit.setIcon(ICON_EXP_NO);
+        
+        guiErase.setBorderPainted(false);
+        guiErase.setContentAreaFilled(false);
+        guiErase.setBorder(null);
+        guiErase.setIcon(ICON_ERASE);
 
-        addActionListener(new ActionListener() {
-
+        guiEdit.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
-
                 try{
                     final Expression ne = JCQLEditor.showDialog(JSpecialExpressionButton.this, layer, exp);
                     if(ne != null && ne != exp){
+                        final Expression oldExp = exp;
                         parse(ne);
-                        firePropertyChange(EXPRESSION_PROPERTY, exp, ne);
+                        JSpecialExpressionButton.this.firePropertyChange(EXPRESSION_PROPERTY, oldExp, ne);
                     }
                 }catch(CQLException ex){
                     ex.printStackTrace();
                 }
             }
         });
+        
+        guiErase.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                final Expression oldExp = exp;
+                parse(null);
+                JSpecialExpressionButton.this.firePropertyChange(EXPRESSION_PROPERTY, oldExp, null);
+            }
+        });
+        
     }
 
     public void setLayer(final MapLayer layer){
@@ -77,7 +103,19 @@ public class JSpecialExpressionButton extends JButton{
 
     public void parse(final Expression exp){
         this.exp = exp;
-        setIcon( (exp == null) ? ICON_EXP_NO : ICON_EXP_YES);
+        String tooltip = null;
+        if(exp==null){
+            guiEdit.setIcon(ICON_EXP_NO);
+            guiErase.setVisible(false);
+        }else{
+            guiEdit.setIcon(ICON_EXP_YES);
+            guiErase.setVisible(true);
+            tooltip = CQL.write(exp);
+        }
+        
+        setToolTipText(tooltip);
+        guiEdit.setToolTipText(tooltip);
+        guiErase.setToolTipText(tooltip);
     }
 
     public Expression get(){

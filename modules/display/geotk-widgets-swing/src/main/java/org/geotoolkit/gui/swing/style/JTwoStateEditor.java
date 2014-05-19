@@ -55,7 +55,7 @@ public class JTwoStateEditor<T> extends StyleElementEditor<T> implements Propert
     private final StyleElementEditor<T> simple;
     private final StyleElementEditor<T> advanced;
     private StyleElementEditor<T> current;
-
+    
     private final JLayeredPane layeredpane = new JLayeredPane();
     private final JButton typeselect;
     private final JPanel typeSelectPane = new JPanel(new FlowLayout(FlowLayout.RIGHT,0,0)){
@@ -97,6 +97,7 @@ public class JTwoStateEditor<T> extends StyleElementEditor<T> implements Propert
         typeselect.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                final T ele = current.create();
                 current.removePropertyChangeListener(JTwoStateEditor.this);
                 layeredpane.remove(simple);
                 layeredpane.remove(advanced);
@@ -107,6 +108,9 @@ public class JTwoStateEditor<T> extends StyleElementEditor<T> implements Propert
                 typeselect.setIcon(DEFAULT_SIMPLE ? ICON_SIMPLE : ICON_ADVANCED);
                 typeselect.setToolTipText(MessageBundle.getString(DEFAULT_SIMPLE ? 
                         "style.twostate.simple" : "style.twostate.advanced"));
+                
+                //copy the style between editors
+                current.parse(ele);
             }
         });
         

@@ -20,6 +20,7 @@ import java.awt.Component;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import javax.measure.unit.NonSI;
+import javax.measure.unit.Unit;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JLabel;
@@ -33,6 +34,7 @@ import org.geotoolkit.gui.swing.style.StyleElementEditor;
 import static org.geotoolkit.gui.swing.style.StyleElementEditor.PROPERTY_UPDATED;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.StyleConstants;
+import org.opengis.style.Description;
 import org.opengis.style.PolygonSymbolizer;
 
 /**
@@ -44,6 +46,7 @@ import org.opengis.style.PolygonSymbolizer;
 public class JPolygonSymbolizerSimple extends StyleElementEditor<PolygonSymbolizer> implements PropertyChangeListener {
 
     private MapLayer layer = null;
+    private PolygonSymbolizer oldSymbolizer = null;
     
     /** 
      * Creates new form JPolygonSymbolizerPane and sets range of number component
@@ -91,7 +94,7 @@ public class JPolygonSymbolizerSimple extends StyleElementEditor<PolygonSymboliz
      */
     @Override
     public void parse(final PolygonSymbolizer symbol) {
-
+        oldSymbolizer = symbol;
         if (symbol != null) {
             guiStrokeControlPane.parse(symbol.getStroke());
             guiFillControlPane.parse(symbol.getFill());
@@ -106,11 +109,22 @@ public class JPolygonSymbolizerSimple extends StyleElementEditor<PolygonSymboliz
      */
     @Override
     public PolygonSymbolizer create(){
+        String name = "polygonSymbolizer";
+        String geomName = null;
+        Description desc = StyleConstants.DEFAULT_DESCRIPTION;
+        Unit unit = NonSI.PIXEL;
+        if(oldSymbolizer!=null){
+            name = oldSymbolizer.getName();
+            geomName = oldSymbolizer.getGeometryPropertyName();
+            desc = oldSymbolizer.getDescription();
+            unit = oldSymbolizer.getUnitOfMeasure();
+        }
+        
         return getStyleFactory().polygonSymbolizer(
-                    "polygonSymbolizer",
-                    (String)null,
-                    StyleConstants.DEFAULT_DESCRIPTION,
-                    NonSI.PIXEL,
+                    name,
+                    geomName,
+                    desc,
+                    unit,
                     guiStrokeControlPane.create(),
                     guiFillControlPane.create(), 
                     getStyleFactory().displacement(guiDisplacementX.create(),guiDisplacementY.create()),
@@ -184,14 +198,12 @@ public class JPolygonSymbolizerSimple extends StyleElementEditor<PolygonSymboliz
                             .addComponent(guiOffset, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                             .addComponent(guiDisplacementX, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                             .addComponent(guiDisplacementY, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(50, Short.MAX_VALUE))
+                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        layout.linkSize(SwingConstants.HORIZONTAL, new Component[] {jLabel10, jLabel2});
-
-        layout.linkSize(SwingConstants.HORIZONTAL, new Component[] {guiOffsetLabel, jLabel5, jLabel6});
-
         layout.linkSize(SwingConstants.HORIZONTAL, new Component[] {guiDisplacementX, guiDisplacementY, guiOffset});
+
+        layout.linkSize(SwingConstants.HORIZONTAL, new Component[] {guiOffsetLabel, jLabel10, jLabel2, jLabel5, jLabel6});
 
         layout.setVerticalGroup(
             layout.createParallelGroup(Alignment.LEADING)
@@ -200,11 +212,11 @@ public class JPolygonSymbolizerSimple extends StyleElementEditor<PolygonSymboliz
                 .addGroup(layout.createParallelGroup(Alignment.LEADING)
                     .addComponent(jLabel2)
                     .addComponent(guiFillControlPane, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(ComponentPlacement.UNRELATED)
+                .addPreferredGap(ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(Alignment.LEADING, false)
                     .addComponent(guiStrokeControlPane, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jLabel10, GroupLayout.PREFERRED_SIZE, 32, GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                .addPreferredGap(ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(Alignment.LEADING)
                     .addComponent(guiOffsetLabel)
                     .addComponent(guiOffset, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))

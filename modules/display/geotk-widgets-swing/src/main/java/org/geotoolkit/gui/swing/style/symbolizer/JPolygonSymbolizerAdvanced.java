@@ -36,6 +36,7 @@ import org.geotoolkit.gui.swing.style.JUOMPane;
 import org.geotoolkit.gui.swing.style.StyleElementEditor;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.StyleConstants;
+import org.opengis.style.Description;
 import org.opengis.style.PolygonSymbolizer;
 
 /**
@@ -48,6 +49,7 @@ public class JPolygonSymbolizerAdvanced extends StyleElementEditor<PolygonSymbol
 
     
     private MapLayer layer = null;
+    private PolygonSymbolizer oldSymbolizer = null;
 
     /** Creates new form LineStylePanel
      */
@@ -58,6 +60,8 @@ public class JPolygonSymbolizerAdvanced extends StyleElementEditor<PolygonSymbol
         //align labels
         alignLabelColumnWidth(this);
         
+        //configure panel with a default symbolizer
+        parse(getStyleFactory().polygonSymbolizer());
     }
 
     /**
@@ -87,6 +91,7 @@ public class JPolygonSymbolizerAdvanced extends StyleElementEditor<PolygonSymbol
      */
     @Override
     public void parse(final PolygonSymbolizer symbol) {
+        oldSymbolizer = symbol;
         if (symbol != null) {
             guiGeom.parse(symbol.getGeometryPropertyName());
             guiFill.parse(symbol.getFill());
@@ -102,10 +107,17 @@ public class JPolygonSymbolizerAdvanced extends StyleElementEditor<PolygonSymbol
      */
     @Override
     public PolygonSymbolizer create() {
+        String name = "PolygonSymbolizer";
+        Description desc = StyleConstants.DEFAULT_DESCRIPTION;
+        if(oldSymbolizer!=null){
+            name = oldSymbolizer.getName();
+            desc = oldSymbolizer.getDescription();
+        }
+        
         return getStyleFactory().polygonSymbolizer(
-                "PolygonSymbolizer",
+                name,
                 guiGeom.create(),
-                StyleConstants.DEFAULT_DESCRIPTION,
+                desc,
                 guiUOM.create(),
                 guiStroke.create(), 
                 guiFill.create(), 

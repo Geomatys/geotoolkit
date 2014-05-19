@@ -18,7 +18,6 @@
 package org.geotoolkit.gui.swing.style.symbolizer;
 
 
-import java.awt.Component;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import javax.swing.BorderFactory;
@@ -26,7 +25,6 @@ import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JPanel;
 import javax.swing.LayoutStyle.ComponentPlacement;
-import javax.swing.SwingConstants;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.gui.swing.style.JGeomPane;
 import org.geotoolkit.gui.swing.style.JOffSetPane;
@@ -35,6 +33,7 @@ import org.geotoolkit.gui.swing.style.JUOMPane;
 import org.geotoolkit.gui.swing.style.StyleElementEditor;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.StyleConstants;
+import org.opengis.style.Description;
 import org.opengis.style.LineSymbolizer;
 
 
@@ -47,6 +46,7 @@ import org.opengis.style.LineSymbolizer;
 public class JLineSymbolizerAdvanced extends  StyleElementEditor<LineSymbolizer> {
     
     private MapLayer layer = null;
+    private LineSymbolizer oldSymbolizer = null;
     
     /** 
      * Creates new form JLineSymbolizerPanel
@@ -57,7 +57,7 @@ public class JLineSymbolizerAdvanced extends  StyleElementEditor<LineSymbolizer>
         
         //align labels
         alignLabelColumnWidth(this);
-        
+                
     }
     
     /**
@@ -85,13 +85,13 @@ public class JLineSymbolizerAdvanced extends  StyleElementEditor<LineSymbolizer>
      */
     @Override
     public void parse(final LineSymbolizer symbol) {
-        
+        oldSymbolizer = symbol;
         if (symbol != null) {            
             guiGeom.parse(symbol.getGeometryPropertyName());
             guiStroke.parse(symbol.getStroke());
             guiOffset.parse(symbol.getPerpendicularOffset());
             guiUOM.parse(symbol.getUnitOfMeasure());
-    }
+        }
     }
 
     /**
@@ -99,10 +99,17 @@ public class JLineSymbolizerAdvanced extends  StyleElementEditor<LineSymbolizer>
      */
     @Override
     public LineSymbolizer create(){
+        String name = "LineSymbolizer";
+        Description desc = StyleConstants.DEFAULT_DESCRIPTION;
+        if(oldSymbolizer!=null){
+            name = oldSymbolizer.getName();
+            desc = oldSymbolizer.getDescription();
+        }
+        
         return getStyleFactory().lineSymbolizer(
-                    "lineSymbolizer",
+                    name,
                     guiGeom.create(),
-                    StyleConstants.DEFAULT_DESCRIPTION,
+                    desc,
                     guiUOM.create(),
                     guiStroke.create(), 
                     guiOffset.create());

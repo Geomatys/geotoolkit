@@ -28,6 +28,9 @@ public class JPointSymbolizerPane extends JTwoStateEditor<PointSymbolizer>{
 
     public JPointSymbolizerPane() {
         super(new JPointSymbolizerSimple(), new JPointSymbolizerAdvanced());
+        
+        //configure panel with a default symbolizer
+        parse(getStyleFactory().pointSymbolizer());
     }
     
 }

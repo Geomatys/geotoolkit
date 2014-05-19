@@ -38,6 +38,7 @@ import org.geotoolkit.gui.swing.style.JUOMPane;
 import org.geotoolkit.gui.swing.style.StyleElementEditor;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.StyleConstants;
+import org.opengis.style.Description;
 import org.opengis.style.TextSymbolizer;
 
 /**
@@ -49,6 +50,7 @@ import org.opengis.style.TextSymbolizer;
 public class JTextSymbolizerAdvanced extends StyleElementEditor<TextSymbolizer> {
     
     private MapLayer layer = null;
+    private TextSymbolizer oldSymbolizer = null;
 
     /** Creates new form JTextSymbolizer */
     public JTextSymbolizerAdvanced() {
@@ -57,6 +59,9 @@ public class JTextSymbolizerAdvanced extends StyleElementEditor<TextSymbolizer> 
         
         //align labels
         alignLabelColumnWidth(this);
+        
+        //configure panel with a default symbolizer
+        parse(getStyleFactory().textSymbolizer());
     }
 
     /**
@@ -86,10 +91,17 @@ public class JTextSymbolizerAdvanced extends StyleElementEditor<TextSymbolizer> 
      */
     @Override
     public TextSymbolizer create() {
+        String name = "TextSymbolizer";
+        Description desc = StyleConstants.DEFAULT_DESCRIPTION;
+        if(oldSymbolizer!=null){
+            name = oldSymbolizer.getName();
+            desc = oldSymbolizer.getDescription();
+        }
+        
         return getStyleFactory().textSymbolizer(
-                "TextSymbolizer",
+                name,
                 guiGeom.create(),
-                StyleConstants.DEFAULT_DESCRIPTION,
+                desc,
                 guiUOM.create(),
                 guiLabel.create(), 
                 guiFont.create(), 
@@ -103,6 +115,7 @@ public class JTextSymbolizerAdvanced extends StyleElementEditor<TextSymbolizer> 
      */
     @Override
     public void parse(final TextSymbolizer symbol) {
+        oldSymbolizer = symbol;
         if (symbol != null) {
             guiGeom.parse(symbol.getGeometryPropertyName());
             guiUOM.parse(symbol.getUnitOfMeasure());

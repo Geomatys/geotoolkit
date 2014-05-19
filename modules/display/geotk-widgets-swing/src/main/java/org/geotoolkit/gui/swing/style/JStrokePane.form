@@ -35,24 +35,14 @@
               <Component id="GuiStrokeLineJoin" min="-2" max="-2" attributes="0"/>
           </Group>
           <Group type="102" alignment="0" attributes="0">
-              <Component id="guiLabelWidth" linkSize="1" min="-2" max="-2" attributes="0"/>
-              <EmptySpace max="-2" attributes="0"/>
-              <Component id="GuiStrokeWidth" min="-2" max="-2" attributes="0"/>
-          </Group>
-          <Group type="102" alignment="0" attributes="0">
               <Component id="guiLabelAlpha" linkSize="1" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="GuiStrokeAlpha" min="-2" max="-2" attributes="0"/>
+              <Component id="GuiStrokeAlpha" min="-2" pref="130" max="-2" attributes="0"/>
           </Group>
           <Group type="102" alignment="0" attributes="0">
               <Component id="guiLabelDashes" linkSize="1" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="GuiStrokeDashes" min="-2" max="-2" attributes="1"/>
-          </Group>
-          <Group type="102" alignment="0" attributes="0">
-              <Component id="guiGraphicColor" linkSize="5" min="-2" max="-2" attributes="0"/>
-              <EmptySpace max="-2" attributes="0"/>
-              <Component id="GuiStrokeColor" min="-2" max="-2" attributes="0"/>
           </Group>
           <Group type="102" alignment="0" attributes="0">
               <Component id="guiGraphicFill" linkSize="5" min="-2" max="-2" attributes="0"/>
@@ -64,6 +54,16 @@
               <EmptySpace max="-2" attributes="0"/>
               <Component id="butStroke" min="-2" max="-2" attributes="0"/>
           </Group>
+          <Group type="102" alignment="0" attributes="0">
+              <Component id="guiLabelWidth" linkSize="1" min="-2" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="GuiStrokeWidth" max="-2" attributes="0"/>
+          </Group>
+          <Group type="102" alignment="0" attributes="0">
+              <Component id="guiGraphicColor" linkSize="5" min="-2" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="GuiStrokeColor" min="-2" max="-2" attributes="0"/>
+          </Group>
       </Group>
     </DimensionLayout>
     <DimensionLayout dim="1">
@@ -71,12 +71,12 @@
           <Group type="102" alignment="0" attributes="0">
               <Group type="103" groupAlignment="1" max="-2" attributes="0">
                   <Component id="guiLabelCap" linkSize="2" max="32767" attributes="1"/>
-                  <Component id="GuiStrokeLineCap" linkSize="2" alignment="1" max="32767" attributes="1"/>
+                  <Component id="GuiStrokeLineCap" linkSize="2" alignment="1" max="-2" attributes="1"/>
               </Group>
               <EmptySpace min="-2" pref="8" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="1" max="-2" attributes="0">
                   <Component id="guiLabelJoin" linkSize="3" max="32767" attributes="1"/>
-                  <Component id="GuiStrokeLineJoin" linkSize="3" alignment="1" max="32767" attributes="1"/>
+                  <Component id="GuiStrokeLineJoin" linkSize="3" alignment="1" max="-2" attributes="1"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="1" max="-2" attributes="0">

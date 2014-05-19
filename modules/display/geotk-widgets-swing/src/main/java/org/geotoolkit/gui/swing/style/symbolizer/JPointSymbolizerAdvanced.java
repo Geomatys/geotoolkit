@@ -33,6 +33,7 @@ import org.geotoolkit.gui.swing.style.JUOMPane;
 import org.geotoolkit.gui.swing.style.StyleElementEditor;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.StyleConstants;
+import org.opengis.style.Description;
 import org.opengis.style.PointSymbolizer;
 
 /**
@@ -44,6 +45,7 @@ import org.opengis.style.PointSymbolizer;
 public class JPointSymbolizerAdvanced extends StyleElementEditor<PointSymbolizer> {
 
     private MapLayer layer = null;
+    private PointSymbolizer oldSymbolizer = null;
 
     public JPointSymbolizerAdvanced() {
         super(PointSymbolizer.class);
@@ -51,6 +53,9 @@ public class JPointSymbolizerAdvanced extends StyleElementEditor<PointSymbolizer
         
         //align labels
         alignLabelColumnWidth(this);
+        
+        //configure panel with a default symbolizer
+        parse(getStyleFactory().pointSymbolizer());
     }
 
     /**
@@ -77,11 +82,12 @@ public class JPointSymbolizerAdvanced extends StyleElementEditor<PointSymbolizer
      */
     @Override
     public void parse(final PointSymbolizer symbol) {
+        this.oldSymbolizer = symbol;
         if (symbol instanceof PointSymbolizer) {
             guiGeom.parse(symbol.getGeometryPropertyName());
             guiUOM.parse(symbol.getUnitOfMeasure());
             guiGraphic.parse(symbol.getGraphic());
-    }
+        }
     }
 
     /**
@@ -89,10 +95,17 @@ public class JPointSymbolizerAdvanced extends StyleElementEditor<PointSymbolizer
      */
     @Override
     public PointSymbolizer create() {
+        String name = "PointSymbolizer";
+        Description desc = StyleConstants.DEFAULT_DESCRIPTION;
+        if(oldSymbolizer!=null){
+            name = oldSymbolizer.getName();
+            desc = oldSymbolizer.getDescription();
+        }
+        
         return getStyleFactory().pointSymbolizer(
-                "PointSymbolizer",
+                name,
                 guiGeom.create(),
-                StyleConstants.DEFAULT_DESCRIPTION,
+                desc,
                 guiUOM.create(),
                 guiGraphic.create());
     }

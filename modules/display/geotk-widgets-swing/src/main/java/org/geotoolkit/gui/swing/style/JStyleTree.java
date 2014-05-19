@@ -69,6 +69,7 @@ import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.RandomStyleBuilder;
+import org.jdesktop.swingx.JXTree;
 import org.opengis.style.Description;
 import org.opengis.style.Symbolizer;
 import org.opengis.util.InternationalString;
@@ -78,7 +79,7 @@ import org.opengis.util.InternationalString;
  * @author Johann Sorel (Puzzle-GIS)
  * @module pending
  */
-public class JStyleTree<T> extends JTree implements DragGestureListener, DragSourceListener, DropTargetListener {
+public class JStyleTree<T> extends JXTree implements DragGestureListener, DragSourceListener, DropTargetListener {
 
     private static final MutableStyleFactory SF = (MutableStyleFactory) FactoryFinder.getStyleFactory(null);
 
@@ -122,6 +123,8 @@ public class JStyleTree<T> extends JTree implements DragGestureListener, DragSou
             treemodel.setRoot(style);
             revalidate();
         }
+        
+        expandAll();
     }
 
     //-------------Drag & drop -------------------------------------------------

@@ -20,6 +20,7 @@ import java.awt.Component;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import javax.measure.unit.NonSI;
+import javax.measure.unit.Unit;
 import javax.swing.ButtonGroup;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
@@ -37,6 +38,7 @@ import org.geotoolkit.gui.swing.style.JTextExpressionPane;
 import org.geotoolkit.gui.swing.style.StyleElementEditor;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.StyleConstants;
+import org.opengis.style.Description;
 import org.opengis.style.TextSymbolizer;
 
 /**
@@ -48,6 +50,7 @@ import org.opengis.style.TextSymbolizer;
 public class JTextSymbolizerSimple extends StyleElementEditor<TextSymbolizer> {
 
     private MapLayer layer = null;
+    private TextSymbolizer oldSymbolizer = null;
 
     /**
      * Creates new form JTextSymbolizerPane
@@ -83,7 +86,7 @@ public class JTextSymbolizerSimple extends StyleElementEditor<TextSymbolizer> {
      */
     @Override
     public void parse(final TextSymbolizer text) {
-
+        oldSymbolizer = text;
         if (text != null) {
             guiLabel.parse(text.getLabel());
             guiFont.parse(text.getFont());
@@ -98,11 +101,23 @@ public class JTextSymbolizerSimple extends StyleElementEditor<TextSymbolizer> {
      */
     @Override
     public TextSymbolizer create() {
+        
+        String name = "textSymbolizer";
+        String geomName = null;
+        Description desc = StyleConstants.DEFAULT_DESCRIPTION;
+        Unit unit = NonSI.PIXEL;
+        if(oldSymbolizer!=null){
+            name = oldSymbolizer.getName();
+            geomName = oldSymbolizer.getGeometryPropertyName();
+            desc = oldSymbolizer.getDescription();
+            unit = oldSymbolizer.getUnitOfMeasure();
+        }
+        
         return getStyleFactory().textSymbolizer(
-                "textSymbolizer",
-                    (String)null,
-                    StyleConstants.DEFAULT_DESCRIPTION,
-                    NonSI.PIXEL,
+                    name,
+                    geomName,
+                    desc,
+                    unit,
                     guiLabel.create(),
                     guiFont.create(), 
                     guiLabelPlacement.create(),
@@ -177,18 +192,16 @@ public class JTextSymbolizerSimple extends StyleElementEditor<TextSymbolizer> {
                                 .addComponent(jLabel5)
                                 .addPreferredGap(ComponentPlacement.RELATED)
                                 .addComponent(guiFill, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                                .addGap(0, 516, Short.MAX_VALUE)))
+                                .addGap(0, 0, Short.MAX_VALUE)))
                         .addContainerGap())
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(Alignment.LEADING)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(guiHalo, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                                .addGap(0, 0, Short.MAX_VALUE))
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(jLabel10)
-                                .addPreferredGap(ComponentPlacement.RELATED)
-                                .addComponent(guiLabel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addComponent(jLabel10)
+                        .addPreferredGap(ComponentPlacement.RELATED)
+                        .addComponent(guiLabel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGap(12, 12, 12))))
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addComponent(guiHalo, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(Alignment.LEADING)
@@ -205,7 +218,7 @@ public class JTextSymbolizerSimple extends StyleElementEditor<TextSymbolizer> {
                     .addComponent(guiFill, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(ComponentPlacement.RELATED)
                 .addComponent(guiHalo, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jPanel1Layout.linkSize(SwingConstants.VERTICAL, new Component[] {guiFill, jLabel5});
@@ -225,7 +238,7 @@ public class JTextSymbolizerSimple extends StyleElementEditor<TextSymbolizer> {
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(Alignment.LEADING)
-            .addComponent(jTabbedPane1)
+            .addComponent(jTabbedPane1, GroupLayout.DEFAULT_SIZE, 630, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(Alignment.LEADING)

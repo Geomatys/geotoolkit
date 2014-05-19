@@ -28,6 +28,9 @@ public class JLineSymbolizerPane extends JTwoStateEditor<LineSymbolizer>{
 
     public JLineSymbolizerPane() {
         super(new JLineSymbolizerSimple(), new JLineSymbolizerAdvanced());
+        
+        //configure panel with a default symbolizer
+        parse(getStyleFactory().lineSymbolizer());
     }
     
 }

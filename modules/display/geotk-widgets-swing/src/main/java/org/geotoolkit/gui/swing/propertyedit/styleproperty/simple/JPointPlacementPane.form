@@ -64,12 +64,12 @@
               <Component id="guiAnchor" min="-2" max="-2" attributes="0"/>
               <EmptySpace type="separate" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                  <Component id="guiDisplacementY" max="32767" attributes="0"/>
+                  <Component id="guiDisplacementY" max="-2" attributes="0"/>
                   <Component id="jLabel5" min="-2" pref="26" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                  <Component id="guiDisplacementX" max="32767" attributes="0"/>
+                  <Component id="guiDisplacementX" max="-2" attributes="0"/>
                   <Component id="jLabel6" min="-2" pref="26" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="32767" attributes="0"/>

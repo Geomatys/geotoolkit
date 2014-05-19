@@ -17,6 +17,7 @@
 package org.geotoolkit.gui.swing.resource;
 
 import java.awt.Color;
+import javax.swing.UIManager;
 import org.apache.sis.util.Static;
 
 /**
@@ -25,7 +26,8 @@ import org.apache.sis.util.Static;
  */
 public final class FontAwesomeIcons extends Static {
 
-    public static final Color DEFAULT_COLOR = Color.DARK_GRAY;
+    public static final Color DEFAULT_COLOR = UIManager.getColor("Button.foreground");
+    public static final Color DISABLE_COLOR = UIManager.getColor("Button.disabledText");
 
     public static final String ICON_GLASS = "\uf000";
     public static final String ICON_MUSIC = "\uf001";

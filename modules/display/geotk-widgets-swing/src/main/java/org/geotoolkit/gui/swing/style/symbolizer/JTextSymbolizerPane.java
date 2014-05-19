@@ -28,6 +28,9 @@ public class JTextSymbolizerPane extends JTwoStateEditor<TextSymbolizer>{
 
     public JTextSymbolizerPane() {
         super(new JTextSymbolizerSimple(), new JTextSymbolizerAdvanced());
+        
+        //configure panel with a default symbolizer
+        parse(getStyleFactory().textSymbolizer());
     }
     
 }

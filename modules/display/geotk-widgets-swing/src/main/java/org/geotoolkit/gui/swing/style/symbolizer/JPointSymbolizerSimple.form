@@ -22,17 +22,17 @@
                   <Group type="102" attributes="0">
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
-                              <Component id="jLabel1" linkSize="5" min="-2" max="-2" attributes="0"/>
+                              <Component id="jLabel1" linkSize="1" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="guiGraphicSymbol" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <Group type="102" alignment="0" attributes="0">
-                              <Component id="jLabel2" linkSize="5" min="-2" max="-2" attributes="0"/>
+                              <Component id="jLabel2" linkSize="1" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="guiFill" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <Group type="102" alignment="0" attributes="0">
-                              <Component id="jLabel10" linkSize="5" min="-2" max="-2" attributes="0"/>
+                              <Component id="jLabel10" linkSize="1" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="guiStroke" min="-2" max="-2" attributes="0"/>
                           </Group>
@@ -91,7 +91,7 @@
                   <Component id="jLabel10" linkSize="4" min="-2" max="-2" attributes="0"/>
                   <Component id="guiStroke" linkSize="4" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace type="separate" max="-2" attributes="0"/>
+              <EmptySpace type="unrelated" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" max="-2" attributes="0">
                   <Component id="jLabel4" linkSize="6" alignment="1" min="-2" max="-2" attributes="0"/>
                   <Component id="guiSize" linkSize="6" alignment="1" min="-2" max="-2" attributes="0"/>

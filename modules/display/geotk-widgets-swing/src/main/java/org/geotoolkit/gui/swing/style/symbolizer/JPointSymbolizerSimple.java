@@ -59,6 +59,7 @@ import org.opengis.style.Stroke;
 public class JPointSymbolizerSimple extends StyleElementEditor<PointSymbolizer> {
 
     private MapLayer layer = null;
+    private PointSymbolizer oldSymbolizer = null;
 
     public JPointSymbolizerSimple() {
         super(PointSymbolizer.class);
@@ -111,6 +112,8 @@ public class JPointSymbolizerSimple extends StyleElementEditor<PointSymbolizer> 
      */
     @Override
     public void parse(final PointSymbolizer symbol) {
+        oldSymbolizer = symbol;
+        
         if (symbol instanceof PointSymbolizer) {
 
             guiSize.parse(symbol.getGraphic().getSize());
@@ -150,12 +153,18 @@ public class JPointSymbolizerSimple extends StyleElementEditor<PointSymbolizer> 
      */
     @Override
     public PointSymbolizer create() {        
-        final String name = "mySymbol";
-        final Description desc = StyleConstants.DEFAULT_DESCRIPTION;
-        final String geometry = null; //use the default geometry of the feature
-        final Unit unit = NonSI.PIXEL;
-        final Expression offset = StyleConstants.LITERAL_ONE_FLOAT;
+        String name = "mySymbol";
+        String geometry = null; //use the default geometry of the feature
+        Description desc = StyleConstants.DEFAULT_DESCRIPTION;
+        Unit unit = NonSI.PIXEL;
 
+        if(oldSymbolizer!=null){
+            name = oldSymbolizer.getName();
+            geometry = oldSymbolizer.getGeometryPropertyName();
+            desc = oldSymbolizer.getDescription();
+            unit = oldSymbolizer.getUnitOfMeasure();
+        }
+        
         //the visual element
         final List<GraphicalSymbol> symbols = new ArrayList<GraphicalSymbol>();
         final AnchorPoint anchor = StyleConstants.DEFAULT_ANCHOR_POINT;
@@ -322,9 +331,7 @@ public class JPointSymbolizerSimple extends StyleElementEditor<PointSymbolizer> 
                         .addGap(0, 0, Short.MAX_VALUE))))
         );
 
-        layout.linkSize(SwingConstants.HORIZONTAL, new Component[] {jLabel3, jLabel4, jLabel5, jLabel7, jLabel8});
-
-        layout.linkSize(SwingConstants.HORIZONTAL, new Component[] {jLabel1, jLabel10, jLabel2});
+        layout.linkSize(SwingConstants.HORIZONTAL, new Component[] {jLabel1, jLabel10, jLabel2, jLabel3, jLabel4, jLabel5, jLabel7, jLabel8});
 
         layout.setVerticalGroup(
             layout.createParallelGroup(Alignment.LEADING)
@@ -341,7 +348,7 @@ public class JPointSymbolizerSimple extends StyleElementEditor<PointSymbolizer> 
                 .addGroup(layout.createParallelGroup(Alignment.LEADING)
                     .addComponent(jLabel10)
                     .addComponent(guiStroke, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                .addPreferredGap(ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(Alignment.LEADING, false)
                     .addComponent(jLabel4, Alignment.TRAILING)
                     .addComponent(guiSize, Alignment.TRAILING, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))

@@ -150,6 +150,12 @@ public class JFontPane extends StyleElementEditor<Font>{
 
         guiLabelFamily.setText(MessageBundle.getString("family")); // NOI18N
 
+        guiFamily.addPropertyChangeListener(new PropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent evt) {
+                JFontPane.this.propertyChange(evt);
+            }
+        });
+
         guiLabelStyle.setText(MessageBundle.getString("style")); // NOI18N
 
         guiStyle.addPropertyChangeListener(new PropertyChangeListener() {

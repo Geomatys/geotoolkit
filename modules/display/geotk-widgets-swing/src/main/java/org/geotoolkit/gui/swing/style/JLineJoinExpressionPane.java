@@ -203,6 +203,12 @@ private void guiBevelActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_g
             guiMiter.setSelected(false);
         }
         
+        guiBevel.setEnabled(guiSpecial.get()==null);
+        guiBevel.setToolTipText(guiSpecial.getToolTipText());
+        guiRound.setEnabled(guiSpecial.get()==null);
+        guiRound.setToolTipText(guiSpecial.getToolTipText());
+        guiMiter.setEnabled(guiSpecial.get()==null);
+        guiMiter.setToolTipText(guiSpecial.getToolTipText());
         firePropertyChange(PROPERTY_UPDATED, null, create());
     }
 

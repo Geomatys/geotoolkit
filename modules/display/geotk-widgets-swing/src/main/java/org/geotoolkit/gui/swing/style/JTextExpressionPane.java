@@ -112,12 +112,13 @@ public class JTextExpressionPane extends StyleElementEditor<Expression>{
     private void guiSpecialPropertyChange(final PropertyChangeEvent evt) {//GEN-FIRST:event_guiSpecialPropertyChange
         if(evt.getPropertyName().equals(JSpecialExpressionButton.EXPRESSION_PROPERTY)) {
             parse(guiSpecial.get());
+            firePropertyChange(PROPERTY_UPDATED, null, create());
         }
     }//GEN-LAST:event_guiSpecialPropertyChange
 
     private void guiTextActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_guiTextActionPerformed
-        firePropertyChange(PROPERTY_UPDATED, null, create());
         parse( getFilterFactory().literal( guiText.getText()) );
+        firePropertyChange(PROPERTY_UPDATED, null, create());
     }//GEN-LAST:event_guiTextActionPerformed
 
 
@@ -138,6 +139,8 @@ public class JTextExpressionPane extends StyleElementEditor<Expression>{
         }else{
             guiSpecial.parse(null);
         }
+        guiText.setEnabled(guiSpecial.get()==null);
+        guiText.setToolTipText(guiSpecial.getToolTipText());
     }
 
     @Override

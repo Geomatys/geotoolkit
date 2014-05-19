@@ -20,6 +20,7 @@ import java.awt.Component;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import javax.measure.unit.NonSI;
+import javax.measure.unit.Unit;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JLabel;
@@ -31,6 +32,7 @@ import org.geotoolkit.gui.swing.style.JNumberExpressionPane;
 import org.geotoolkit.gui.swing.style.StyleElementEditor;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.StyleConstants;
+import org.opengis.style.Description;
 import org.opengis.style.LineSymbolizer;
 
 /**
@@ -42,6 +44,7 @@ import org.opengis.style.LineSymbolizer;
 public class JLineSymbolizerSimple extends StyleElementEditor<LineSymbolizer> {
 
     private MapLayer layer = null;
+    private LineSymbolizer oldSymbolizer = null;
 
     /**
      * Creates new form JLineSymbolizerPanel
@@ -76,7 +79,7 @@ public class JLineSymbolizerSimple extends StyleElementEditor<LineSymbolizer> {
      */
     @Override
     public void parse(final LineSymbolizer symbol) {
-
+        oldSymbolizer = symbol;
         if (symbol != null) {
             guiStrokeControlPane.parse(symbol.getStroke());
             guiDisplacementX.parse(symbol.getPerpendicularOffset());
@@ -88,11 +91,22 @@ public class JLineSymbolizerSimple extends StyleElementEditor<LineSymbolizer> {
      */
     @Override
     public LineSymbolizer create() {
+        String name = "lineSymbolizer";
+        String geomName = null;
+        Description desc = StyleConstants.DEFAULT_DESCRIPTION;
+        Unit unit = NonSI.PIXEL;
+        if(oldSymbolizer!=null){
+            name = oldSymbolizer.getName();
+            geomName = oldSymbolizer.getGeometryPropertyName();
+            desc = oldSymbolizer.getDescription();
+            unit = oldSymbolizer.getUnitOfMeasure();
+        }
+        
         return getStyleFactory().lineSymbolizer(
-                "lineSymbolizer",
-                (String) null,
-                StyleConstants.DEFAULT_DESCRIPTION,
-                NonSI.PIXEL,
+                name,
+                geomName,
+                desc,
+                unit,
                 guiStrokeControlPane.create(),
                 guiDisplacementX.create());
     }
@@ -147,8 +161,11 @@ public class JLineSymbolizerSimple extends StyleElementEditor<LineSymbolizer> {
                         .addComponent(jLabel1)
                         .addPreferredGap(ComponentPlacement.RELATED)
                         .addComponent(guiStrokeControlPane, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(126, Short.MAX_VALUE))
+                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
+
+        layout.linkSize(SwingConstants.HORIZONTAL, new Component[] {jLabel1, jLabel5});
+
         layout.setVerticalGroup(
             layout.createParallelGroup(Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
@@ -156,11 +173,11 @@ public class JLineSymbolizerSimple extends StyleElementEditor<LineSymbolizer> {
                 .addGroup(layout.createParallelGroup(Alignment.LEADING, false)
                     .addComponent(guiStrokeControlPane, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jLabel1, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(18, 18, 18)
+                .addPreferredGap(ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(Alignment.LEADING)
                     .addComponent(jLabel5)
                     .addComponent(guiDisplacementX, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                .addContainerGap())
+                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         layout.linkSize(SwingConstants.VERTICAL, new Component[] {guiDisplacementX, jLabel5});

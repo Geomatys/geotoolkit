@@ -18,17 +18,9 @@
 package org.geotoolkit.gui.swing.style;
 
 import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.JToggleButton;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.StyleConstants;
@@ -204,6 +196,12 @@ private void guiButtActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_gu
             guiSquare.setSelected(false);
         }
         
+        guiButt.setEnabled(guiSpecial.get()==null);
+        guiButt.setToolTipText(guiSpecial.getToolTipText());
+        guiRound.setEnabled(guiSpecial.get()==null);
+        guiRound.setToolTipText(guiSpecial.getToolTipText());
+        guiSquare.setEnabled(guiSpecial.get()==null);
+        guiSquare.setToolTipText(guiSpecial.getToolTipText());
         firePropertyChange(PROPERTY_UPDATED, null, create());
     }
 
