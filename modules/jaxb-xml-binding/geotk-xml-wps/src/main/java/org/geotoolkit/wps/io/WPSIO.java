@@ -22,10 +22,12 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.RenderedImage;
 import java.io.File;
 import java.util.*;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.measure.unit.Unit;
+
+import org.apache.sis.util.ObjectConverters;
+import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 
 import org.geotoolkit.data.FeatureCollection;
@@ -44,7 +46,6 @@ import org.geotoolkit.wps.xml.v100.ComplexDataType;
 import org.geotoolkit.wps.xml.v100.DataType;
 import org.geotoolkit.wps.xml.v100.ReferenceType;
 import org.opengis.coverage.Coverage;
-import org.opengis.coverage.grid.GridCoverage;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
@@ -111,10 +112,10 @@ public final class WPSIO {
         FORMATSUPPORTS.add(new FormatSupport(Coverage.class, IOType.OUTPUT, WPSMimeType.OGC_WMS.val(), WPSEncoding.UTF8.getValue(), null, false));
 
         //TODO test NetCDF & GRIB in base64
-        //FORMATSUPPORTS.add(new FormatSupport(GridCoverage2D.class, IOType.INPUT, WPSMimeType.APP_NETCDF.val(), null, null, false));
-        //FORMATSUPPORTS.add(new FormatSupport(GridCoverage2D.class, IOType.INPUT, WPSMimeType.APP_NETCDF.val(), WPSEncoding.BASE64.getValue(), null, false));
-        //FORMATSUPPORTS.add(new FormatSupport(GridCoverage2D.class, IOType.INPUT, WPSMimeType.APP_GRIB.val(), null, null, false));
-        //FORMATSUPPORTS.add(new FormatSupport(GridCoverage2D.class, IOType.INPUT, WPSMimeType.APP_GRIB.val(), WPSEncoding.BASE64.getValue(), null, false));
+        FORMATSUPPORTS.add(new FormatSupport(GridCoverage2D.class, IOType.INPUT, WPSMimeType.APP_NETCDF.val(), null, null, false));
+        FORMATSUPPORTS.add(new FormatSupport(GridCoverage2D.class, IOType.INPUT, WPSMimeType.APP_NETCDF.val(), WPSEncoding.BASE64.getValue(), null, false));
+        FORMATSUPPORTS.add(new FormatSupport(GridCoverage2D.class, IOType.INPUT, WPSMimeType.APP_GRIB.val(), null, null, false));
+        FORMATSUPPORTS.add(new FormatSupport(GridCoverage2D.class, IOType.INPUT, WPSMimeType.APP_GRIB.val(), WPSEncoding.BASE64.getValue(), null, false));
 
         // Images support
         for (final String readerMime : ImageIO.getReaderMIMETypes()) {
@@ -197,11 +198,10 @@ public final class WPSIO {
         if (clazz != null) {
             if (dataType.equals(FormChoice.LITERAL) || dataType.equals(FormChoice.ALL)) {
                 try {
-
-                    ConverterRegistry.system().converter(String.class, clazz);
+                    ObjectConverters.find(String.class, clazz);
                     isSupported = true;
 
-                } catch (NonconvertibleObjectException ex) {
+                } catch (UnconvertibleObjectException ex) {
                     //Do nothing. In this case no simple converter where found
                 }
             }
@@ -210,8 +210,7 @@ public final class WPSIO {
             final IOType classIOType = findIOType(clazz);
 
             if (!isSupported && classIOType != null) {
-                Class source = null;
-                Class target = null;
+                Class source, target;
 
                 Class formClass = null;
                 if (dataType.equals(FormChoice.LITERAL)) {
@@ -309,7 +308,7 @@ public final class WPSIO {
         final List<FormatSupport> supports = new ArrayList<FormatSupport>();
 
         for (final FormatSupport formatSupport : FORMATSUPPORTS) {
-            if (formatSupport.getClazz().equals(clazz) || formatSupport.getClazz().isAssignableFrom(clazz)) {
+            if (clazz != null && formatSupport.getClazz().equals(clazz) || clazz.isAssignableFrom(formatSupport.getClazz())) {
                 if (formatSupport.getIOType().equals(IOType.BOTH) || formatSupport.getIOType().equals(ioType)) {
                     supports.add(formatSupport);
                 }
@@ -524,13 +523,17 @@ public final class WPSIO {
                     formatOK = true;
                 }
             }
-            if (!formatOK && bestMatch != null) {
-                final String bestMime = bestMatch.getMimeType();
-                final String bestSchema = bestMatch.getSchema() != null ? bestMatch.getSchema() : null;
-                final String bestEncoding = bestMatch.getEncoding() != null ? bestMatch.getEncoding() : null;
 
-                throw new NonconvertibleObjectException("Can't find a converter for these format : " + WPSConvertersUtils.dataFormatToString(mimeType, encoding, schema)
-                        + ". You can try with this tuple : " + WPSConvertersUtils.dataFormatToString(bestMime, bestEncoding, bestSchema));
+            if (!formatOK) {
+                final StringBuilder errorMsg = new StringBuilder("Can't find a converter for these format : ");
+                errorMsg.append(WPSConvertersUtils.dataFormatToString(mimeType, encoding, schema));
+                if (bestMatch != null) {
+                    final String bestMime = bestMatch.getMimeType();
+                    final String bestSchema = bestMatch.getSchema() != null ? bestMatch.getSchema() : null;
+                    final String bestEncoding = bestMatch.getEncoding() != null ? bestMatch.getEncoding() : null;
+                    errorMsg.append(". You can try with this tuple : ").append(WPSConvertersUtils.dataFormatToString(bestMime, bestEncoding, bestSchema));
+                }
+                throw new NonconvertibleObjectException(errorMsg.toString());
             }
         }
     }
