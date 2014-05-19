@@ -85,8 +85,12 @@ import org.geotoolkit.process.coverage.copy.StatisticOp;
 import org.geotoolkit.process.coverage.resample.ResampleDescriptor;
 import org.geotoolkit.process.coverage.shadedrelief.ShadedReliefDescriptor;
 import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
 import org.geotoolkit.referencing.operation.MathTransforms;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
+import org.geotoolkit.referencing.operation.transform.ConcatenatedTransform;
+import org.geotoolkit.referencing.operation.transform.EarthGravitationalModel;
 import org.geotoolkit.referencing.operation.transform.LinearTransform;
 import org.geotoolkit.referencing.operation.transform.LinearTransform1D;
 import org.geotoolkit.style.StyleConstants;
@@ -621,6 +625,43 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
         return gcb.getGridCoverage2D();
     }
 
+    /**
+     * Create a geoide coverage to mimic an elevation model.
+     * @param coverage
+     * @return
+     * @throws IllegalArgumentException
+     * @throws FactoryException
+     * @throws TransformException 
+     */
+    public static GridCoverage2D getGeoideCoverage(final GridCoverage2D coverage) throws IllegalArgumentException, FactoryException, TransformException{
+        
+        final RenderedImage base = coverage.getRenderedImage();
+        final float[][] matrix = new float[base.getHeight()][base.getWidth()];
+        
+        final EarthGravitationalModel trs = EarthGravitationalModel.create(DefaultGeodeticDatum.WGS84, 180);
+        final MathTransform dataToLongLat = CRS.findMathTransform(coverage.getCoordinateReferenceSystem2D(), DefaultGeographicCRS.WGS84);
+        final MathTransform2D gridToCRS = coverage.getGridGeometry().getGridToCRS2D();
+        final MathTransform gridToLonLat = ConcatenatedTransform.create(gridToCRS, dataToLongLat);
+        
+        final float[] buffer = new float[6];
+        
+        for(int y=0;y<matrix.length;y++){
+            for(int x=0;x<matrix[0].length;x++){
+                buffer[0]=x;buffer[1]=y;buffer[2]=0;
+                gridToLonLat.transform(buffer, 0, buffer, 0, 1);
+                trs.transform(buffer, 0, buffer, 0, 1);
+                matrix[y][x] = buffer[2];
+            }
+        }
+        
+        GridCoverageBuilder gcb = new GridCoverageBuilder();
+        gcb.setName("geoide");
+        gcb.setRenderedImage(matrix);
+        gcb.setCoordinateReferenceSystem(coverage.getCoordinateReferenceSystem2D());
+        gcb.setGridToCRS(gridToCRS);
+        return gcb.getGridCoverage2D();
+    }
+    
 
     ////////////////////////////////////////////////////////////////////////////
     // Renderedmage JAI image operations ///////////////////////////////////////
@@ -694,60 +735,28 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
         }
 
         //shaded relief---------------------------------------------------------
-        
-        if (elevationCoverage != null) {
-            final ShadedRelief shadedRel = styleElement.getShadedRelief();
-            // azimuth angle
-            final double azimuth = elevationModel.getAzimuth();
-
-            /*
-             * Sometimes Y axis coverage representation is positive in south direction (or other).
-             * In this fact, azimuth is not exprimate in North direction.
-             * Next computes adapt azimuth angle in function of gridToCrs.
-             */
-            // unitary azimuth vector in PI / 2 - azimuth direction
-            final GridGeometry2D gg2d = coverage.getGridGeometry();
-            final Envelope2D env = gg2d.getEnvelope2D();
-            final double[] uniVect = new double[4];
-            uniVect[0] = env.getMedian(gg2d.axisDimensionX);
-            uniVect[1] = env.getMedian(gg2d.axisDimensionY);
-            final double crsAlpha = Math.PI/2 - (azimuth * Math.PI / 180);
-            uniVect[2] = uniVect[0] + Math.cos(crsAlpha);
-            uniVect[3] = uniVect[1] + Math.sin(crsAlpha);
-            final MathTransform2D crsToGrid = gg2d.getGridToCRS2D().inverse();
-
-            // angle vector projection
-            final double[] resultVect = new double[4];
-            crsToGrid.transform(uniVect, 0, resultVect, 0, 2);
-            double u = resultVect[2] - resultVect[0];
-            double v = resultVect[3] - resultVect[1];
-            final double magn = Math.hypot(u, v);
-            u /= magn;
-            v /= magn;
-
-            //-- angle (azimuth) exprimate in image space
-            final double gridAzim = ((Math.PI / 2) - Math.atan2(v, u)) * 180 / Math.PI;
-
-            //-- altitude angle
-            final double altitude = elevationModel.getAltitude();
-
-            //-- relief factor
-            final double rf = shadedRel.getReliefFactor().evaluate(null, Double.class);
-            final double relfactor = 1 - rf / 100.0;
-            final boolean isBrightness = shadedRel.isBrightnessOnly();
-            final double brightness = (isBrightness) ? 2.0 - relfactor : 1;
+        final ShadedRelief shadedRel = styleElement.getShadedRelief();
+        shadingCase:
+        if(shadedRel!=null && shadedRel.getReliefFactor()!= null) {
+            final double factor = shadedRel.getReliefFactor().evaluate(null, Double.class);
+            if(factor== 0.0) break shadingCase;
             
-            //-- arbitrary altitude scale define by user to have an homogenious shadow computing.
-            final double altiScale = elevationModel.getAmplitudeScale() / magn;
-            
-            //-- ReliefShadow creating
-            final GridCoverage2D mntCoverage = getDEMCoverage(coverage, elevationCoverage);
-                        
             //BUG ? When using the grid coverage builder the color model is changed
             if(image.getColorModel() instanceof CompatibleColorModel){
                 final BufferedImage bi = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
                 bi.createGraphics().drawRenderedImage(image, new AffineTransform());
                 image = bi;
+            }
+            
+            //ReliefShadow creating
+            final GridCoverage2D mntCoverage;
+            if(elevationCoverage!=null){
+                mntCoverage = getDEMCoverage(coverage, elevationCoverage);
+            }else{
+                break shadingCase;
+                //does not have a nice result, still better then nothing
+                //but is really slow to calculate, disabled for now.
+                //mntCoverage = getGeoideCoverage(coverage);
             }
             
             final GridCoverageBuilder gcb = new GridCoverageBuilder();
@@ -756,26 +765,12 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             gcb.setName("tempimg");
             final GridCoverage2D ti = gcb.getGridCoverage2D();
             
-            final MathTransform1D trs = LinearTransform1D.create(rf, 0);
+            final MathTransform1D trs = LinearTransform1D.create(factor, 0);
             final org.geotoolkit.process.coverage.shadedrelief.ShadedRelief proc = new org.geotoolkit.process.coverage.shadedrelief.ShadedRelief(
                     ti, mntCoverage, trs);
             final ParameterValueGroup res = proc.call();
             final GridCoverage2D shaded = (GridCoverage2D) res.parameter(ShadedReliefDescriptor.OUT_COVERAGE_PARAM_NAME).getValue();
             image = shaded.getRenderedImage();
-            
-//            final ReliefShadow rfs = new ReliefShadow(gridAzim, altitude, brightness, relfactor);
-//            rfs.setAltitudeAxisDirection(elevationModel.getAltitudeDirection());
-//            final RenderedImage mnt = mntCoverage.getRenderedImage();
-//            //-- mnt should be null if current elevation coverage doesn't concord with coverage.
-//            if (mnt != null) {
-//                if (mnt.getSampleModel().getNumBands() > 1) {
-//                    throw new IllegalStateException("The Digital Elevation Model should have only one band. band number found : "+mnt.getSampleModel().getNumBands());
-//                }
-//                final ProcessDescriptor statsDescriptor = ImageStatisticsDescriptor.INSTANCE;
-//                final ParameterValueGroup statsInput    = statsDescriptor.getInputDescriptor().createValue();
-//                statsInput.parameter(ImageStatisticsDescriptor.INPUT_IMAGE_PARAM_NAME).setValue(mnt);
-//                image = rfs.getRelief(image, mnt, altiScale);
-//            }
         }
 
         //contrast enhancement -------------------------------------------------
