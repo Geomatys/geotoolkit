@@ -42,6 +42,10 @@ public final class SetupGeoTiff implements SetupService {
      */
     @Override
     public void initialize(final Properties properties, final boolean reinit) {
+        initialize();
+    }
+
+    public static void initialize() {
         IIORegistry registry = IIORegistry.getDefaultInstance();
 
         final TiffImageReader.Spi tiffReaderSpi = registry.getServiceProviderByClass(TiffImageReader.Spi.class);
