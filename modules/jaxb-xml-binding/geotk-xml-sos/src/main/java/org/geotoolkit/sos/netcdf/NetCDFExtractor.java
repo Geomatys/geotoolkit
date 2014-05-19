@@ -326,6 +326,7 @@ public class NetCDFExtractor {
             }
             
             final Variable timeVar  = analyze.vars.get(analyze.mainField.label);
+            final String timeUnits  = analyze.mainField.unit;
             final Array timeArray   = analyze.file.readArrays(Arrays.asList(timeVar)).get(0);
             final boolean constantT = analyze.mainField.dimension == 1;
             final boolean timeFirst = analyze.mainField.mainVariableFirst;
@@ -369,12 +370,12 @@ public class NetCDFExtractor {
                     // iterating over time
                     for (int i = 0; i < count; i++) {
 
-                        long millis = getTimeValue(timeArray, i);
+                        long millis = getTimeValue(timeUnits, timeArray, i);
 
                         if (millis == 0 || millis == ((Integer.MIN_VALUE * -1) + 1)) {
                             continue;
                         }
-                        final Date d = new Date(millis * 1000);
+                        final Date d = new Date(millis);
                         gb.addDate(d);
 
                         synchronized(FORMATTER) {
@@ -438,12 +439,12 @@ public class NetCDFExtractor {
 
                         for (int i = 0; i < count; i++) {
 
-                            long millis = getTimeValue(timeFirst, constantT, timeArray, i, j);
+                            long millis = getTimeValue(timeUnits, timeFirst, constantT, timeArray, i, j);
 
                             if (millis == 0 || millis == ((Integer.MIN_VALUE * -1) + 1)) {
                                 continue;
                             }
-                            final Date d = new Date(millis * 1000);
+                            final Date d = new Date(millis);
                             gb.addDate(d);
 
                             synchronized(FORMATTER) {
@@ -514,8 +515,10 @@ public class NetCDFExtractor {
             }
             
             Array timeArray  = null;
+            String timeUnits = null;
             if (analyze.hasTime()) {
                 Variable timeVar = analyze.vars.get(analyze.timeField.label);
+                timeUnits        = analyze.timeField.unit;
                 timeArray        = analyze.file.readArrays(Arrays.asList(timeVar)).get(0);
             }
             
@@ -560,10 +563,10 @@ public class NetCDFExtractor {
                         gb.addGeometry(geom);
                     }
                     if (analyze.hasTime()) {
-                        long millis = getTimeValue(timeArray, 0);
+                        long millis = getTimeValue(timeUnits, timeArray, 0);
 
                         if (millis != 0 && millis != ((Integer.MIN_VALUE * -1) + 1)) {
-                            final Date d = new Date(millis * 1000);
+                            final Date d = new Date(millis);
                             gb.addDate(d);
                         }
                     }
@@ -632,10 +635,10 @@ public class NetCDFExtractor {
                             gb.addGeometry(geom);
                         }
                         if (analyze.hasTime()) {
-                            long millis = getTimeValue(timeArray, 0);
+                            long millis = getTimeValue(timeUnits, timeArray, 0);
 
                             if (millis != 0 && millis != ((Integer.MIN_VALUE * -1) + 1)) {
-                                final Date d = new Date(millis * 1000);
+                                final Date d = new Date(millis);
                                 gb.addDate(d);
                             }
                         }
@@ -714,6 +717,7 @@ public class NetCDFExtractor {
             }
             
             final Variable timeVar  = analyze.vars.get(analyze.mainField.label);
+            final String timeUnits  = analyze.mainField.unit;
             final Array timeArray   = analyze.file.readArrays(Arrays.asList(timeVar)).get(0);
             final boolean constantT = analyze.mainField.dimension == 1;
             final boolean timeFirst = analyze.mainField.mainVariableFirst;
@@ -747,12 +751,12 @@ public class NetCDFExtractor {
                     // iterating over time
                     for (int i = 0; i < count; i++) {
 
-                        long millis = getTimeValue(timeArray, i);
+                        long millis = getTimeValue(timeUnits, timeArray, i);
 
                         if (millis == 0 || millis == ((Integer.MIN_VALUE * -1) + 1)) {
                             continue;
                         }
-                        final Date d = new Date(millis * 1000);
+                        final Date d = new Date(millis);
                         gb.addDate(d);
                         synchronized(FORMATTER) {
                             sb.append(FORMATTER.format(d)).append(DEFAULT_ENCODING.getTokenSeparator());
@@ -823,12 +827,12 @@ public class NetCDFExtractor {
 
                         for (int i = 0; i < count; i++) {
 
-                            long millis = getTimeValue(timeFirst, constantT, timeArray, i, j);
+                            long millis = getTimeValue(timeUnits, timeFirst, constantT, timeArray, i, j);
 
                             if (millis == 0 || millis == ((Integer.MIN_VALUE * -1) + 1)) {
                                 continue;
                             }
-                            final Date d = new Date(millis * 1000);
+                            final Date d = new Date(millis);
                             gb.addDate(d);
                             synchronized(FORMATTER) {
                                 sb.append(FORMATTER.format(d)).append(DEFAULT_ENCODING.getTokenSeparator());
@@ -915,6 +919,7 @@ public class NetCDFExtractor {
                 final Array lonArray  = analyze.file.readArrays(Arrays.asList(lonVar)).get(0);
 
                 final Variable timeVar  = analyze.vars.get(analyze.mainField.label);
+                final String timeUnits  = analyze.mainField.unit;
                 final Array timeArray   = analyze.file.readArrays(Arrays.asList(timeVar)).get(0);
 
 
@@ -953,12 +958,12 @@ public class NetCDFExtractor {
 
                         for (int i = 0; i < count; i++) {
 
-                            long millis = getTimeValue(timeArray, i);
+                            long millis = getTimeValue(timeUnits, timeArray, i);
 
                             if (millis == 0 || millis == ((Integer.MIN_VALUE * -1) + 1)) {
                                 continue;
                             }
-                            final Date d = new Date(millis * 1000);
+                            final Date d = new Date(millis);
                             gb.addDate(d);
                             synchronized(FORMATTER) {
                                 sb.append(FORMATTER.format(d)).append(DEFAULT_ENCODING.getTokenSeparator());

@@ -28,6 +28,8 @@ import ucar.ma2.DataType;
 import ucar.nc2.Dimension;
 import ucar.nc2.Variable;
 import ucar.nc2.iosp.netcdf3.N3iosp;
+import ucar.nc2.time.CalendarDate;
+import ucar.nc2.time.CalendarDateUnit;
 
 /**
  *
@@ -173,9 +175,9 @@ public class NetCDFUtils {
         return Double.NaN;
     }
     
-    public static long getTimeValue(final boolean mainFirst, boolean constantT, final Array array, int i, int j) {
+    public static long getTimeValue(final String units, final boolean mainFirst, boolean constantT, final Array array, int i, int j) {
         if (constantT) {
-            return getTimeValue(array, i);
+            return getTimeValue(units, array, i);
         } else {
             if (!mainFirst) {
                 final int tmp = i;
@@ -183,20 +185,24 @@ public class NetCDFUtils {
                 j = tmp;
             }
             if (array instanceof ArrayInt.D2) {
-                return ((ArrayInt.D2)array).get(i, j);
+                final int value =  ((ArrayInt.D2)array).get(i, j);
+                return parseTime(value, units);
             } else if (array instanceof ArrayDouble.D2) {
-                return new Double(((ArrayDouble.D2)array).get(i, j)).longValue();
+                final Double value = ((ArrayDouble.D2)array).get(i, j);
+                return parseTime(value.longValue(), units);
             } else {
                 throw new IllegalArgumentException("Unexpected Array type for time field:" + array.getClass().getName());
             }
         }
     }
     
-    public static long getTimeValue(final Array array, final int i) {
+    public static long getTimeValue(final String units, final Array array, final int i) {
         if (array instanceof ArrayInt.D1) {
-            return ((ArrayInt.D1)array).get(i);
+            final int value = ((ArrayInt.D1)array).get(i);
+            return parseTime(value, units);
         } else if (array instanceof ArrayDouble.D1) {
-            return new Double(((ArrayDouble.D1)array).get(i)).longValue();
+            final Double value = ((ArrayDouble.D1)array).get(i);
+            return parseTime(value.longValue(), units);
         } else {
             throw new IllegalArgumentException("Unexpected Array type for time field:" + array.getClass().getName() + " expecting D1");
         }
@@ -276,5 +282,11 @@ public class NetCDFUtils {
             result.deleteCharAt(result.length() -1);
         }
         return result.toString();
+    }
+    
+    public static long parseTime(final long l, final String unit) {
+        final CalendarDateUnit c = CalendarDateUnit.of("gregorian", unit);
+        final CalendarDate date  = c.makeCalendarDate(l);
+        return date.getMillis();
     }
 }
