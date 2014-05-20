@@ -204,7 +204,7 @@ public class WorldFileImageReader extends ImageReaderAdapter {
      */
     @Override
     protected SpatialMetadata createMetadata(final int imageIndex) throws IOException {
-        SpatialMetadata metadata = super.createMetadata(imageIndex);
+        SpatialMetadata metadata = null;//super.createMetadata(imageIndex);
         if (imageIndex >= 0) {
             AffineTransform gridToCRS = null;
             CoordinateReferenceSystem crs = null;
