@@ -126,10 +126,13 @@ public class JPropertyPane extends JPanel{
 
     public void addEditPanel(final PropertyPane pan){
         panels.add(pan);
-        tabs.addTab(pan.getTitle(),pan.getIcon(),pan.getComponent(),pan.getToolTip());
-
+        
         removeAll();
+        tabs.removeAll();
         if(panels.size()>1){
+            for(PropertyPane pp : panels){
+                tabs.addTab(pp.getTitle(),pp.getIcon(),pp.getComponent(),pp.getToolTip());
+            }
             add(BorderLayout.CENTER,tabs);
         }else if(panels.size() == 1){
             final JComponent comp = (JComponent)panels.get(0);
