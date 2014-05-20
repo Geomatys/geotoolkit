@@ -39,7 +39,7 @@ public class NetCDFUtils {
 
     public static final double FILL_VALUE = Double.parseDouble("1.e+36");
     
-    public static double getDoubleValue(final Array array, final int i) {
+    public static double getDoubleValue(final Array array, final int i, final Number fillValue) {
         if (array instanceof ArrayInt.D1) {
             int val = ((ArrayInt.D1)array).get(i);
             if (val != N3iosp.NC_FILL_INT) {
@@ -47,22 +47,22 @@ public class NetCDFUtils {
             }
         } else if (array instanceof ArrayDouble.D1) {
             double val =  ((ArrayDouble.D1)array).get(i);
-            if (val != N3iosp.NC_FILL_DOUBLE) {
+            if (val != N3iosp.NC_FILL_DOUBLE && (fillValue == null || !fillValue.equals(val))) {
                 return val;
             }
         } else if (array instanceof ArrayFloat.D1) {
             float val =  ((ArrayFloat.D1)array).get(i);
-            if (val != N3iosp.NC_FILL_FLOAT) {
+            if (val != N3iosp.NC_FILL_FLOAT && (fillValue == null || !fillValue.equals(val))) {
                 return val;
             }
         } else if (array instanceof ArrayShort.D1) {
             short val =  ((ArrayShort.D1)array).get(i);
-            if (val != N3iosp.NC_FILL_SHORT) {
+            if (val != N3iosp.NC_FILL_SHORT && (fillValue == null || !fillValue.equals(val))) {
                 return val;
             }
         } else if (array instanceof ArrayLong.D1) {
             long val =  ((ArrayLong.D1)array).get(i);
-            if (val != N3iosp.NC_FILL_LONG) {
+            if (val != N3iosp.NC_FILL_LONG && (fillValue == null || !fillValue.equals(val))) {
                 return val;
             }
         } else {
@@ -71,30 +71,30 @@ public class NetCDFUtils {
         return Double.NaN;
     }
     
-    public static double getDoubleValue(final Array array) {
+    public static double getDoubleValue(final Array array, final Number fillValue) {
         if (array instanceof ArrayInt.D0) {
             int val = ((ArrayInt.D0)array).get();
-            if (val != N3iosp.NC_FILL_INT) {
+            if (val != N3iosp.NC_FILL_INT && (fillValue == null || !fillValue.equals(val))) {
                 return val;
             }
         } else if (array instanceof ArrayDouble.D0) {
             double val =  ((ArrayDouble.D0)array).get();
-            if (val != N3iosp.NC_FILL_DOUBLE) {
+            if (val != N3iosp.NC_FILL_DOUBLE && (fillValue == null || !fillValue.equals(val))) {
                 return val;
             }
         } else if (array instanceof ArrayFloat.D0) {
             float val =  ((ArrayFloat.D0)array).get();
-            if (val != N3iosp.NC_FILL_FLOAT) {
+            if (val != N3iosp.NC_FILL_FLOAT && (fillValue == null || !fillValue.equals(val))) {
                 return val;
             }
         } else if (array instanceof ArrayShort.D0) {
             short val =  ((ArrayShort.D0)array).get();
-            if (val != N3iosp.NC_FILL_SHORT) {
+            if (val != N3iosp.NC_FILL_SHORT && (fillValue == null || !fillValue.equals(val))) {
                 return val;
             }
         } else if (array instanceof ArrayLong.D0) {
             long val =  ((ArrayLong.D0)array).get();
-            if (val != N3iosp.NC_FILL_LONG) {
+            if (val != N3iosp.NC_FILL_LONG && (fillValue == null || !fillValue.equals(val))) {
                 return val;
             }
         } else {
@@ -103,7 +103,7 @@ public class NetCDFUtils {
         return Double.NaN;
     }
     
-    public static double getDoubleValue(final boolean mainFirst, final Array array, int i, int j) {
+    public static double getDoubleValue(final boolean mainFirst, final Array array, int i, int j, final Number fillValue) {
         if (!mainFirst) {
             final int tmp = i;
             i = j;
@@ -112,27 +112,27 @@ public class NetCDFUtils {
         
         if (array instanceof ArrayInt.D2) {
             int val = ((ArrayInt.D2)array).get(i, j);
-            if (val != N3iosp.NC_FILL_INT) {
+            if (val != N3iosp.NC_FILL_INT && (fillValue == null || !fillValue.equals(val))) {
                 return val;
             }
         } else if (array instanceof ArrayDouble.D2) {
             double val = ((ArrayDouble.D2)array).get(i, j);
-            if (val != N3iosp.NC_FILL_DOUBLE) {
+            if (val != N3iosp.NC_FILL_DOUBLE && (fillValue == null || !fillValue.equals(val))) {
                 return val;
             }
         } else if (array instanceof ArrayFloat.D2) {
             float val = ((ArrayFloat.D2)array).get(i, j);
-            if (val != N3iosp.NC_FILL_FLOAT) {
+            if (val != N3iosp.NC_FILL_FLOAT && (fillValue == null || !fillValue.equals(val))) {
                 return val;
             }
         } else if (array instanceof ArrayShort.D2) {
             short val = ((ArrayShort.D2)array).get(i, j);
-            if (val != N3iosp.NC_FILL_SHORT) {
+            if (val != N3iosp.NC_FILL_SHORT && (fillValue == null || !fillValue.equals(val))) {
                 return val;
             }
         } else if (array instanceof ArrayLong.D2) {
             long val = ((ArrayLong.D2)array).get(i, j);
-            if (val != N3iosp.NC_FILL_LONG) {
+            if (val != N3iosp.NC_FILL_LONG && (fillValue == null || !fillValue.equals(val))) {
                 return val;
             }
         } else {
@@ -141,32 +141,32 @@ public class NetCDFUtils {
         return Double.NaN;
     }
     
-    public static double getDoubleValue(final Array array, int i, int j, int k) {
+    public static double getDoubleValue(final Array array, int i, int j, int k, final Number fillValue) {
         
         
         if (array instanceof ArrayInt.D3) {
             int val = ((ArrayInt.D3)array).get(i, j, k);
-            if (val != N3iosp.NC_FILL_INT) {
+            if (val != N3iosp.NC_FILL_INT && (fillValue == null || !fillValue.equals(val))) {
                 return val;
             }
         } else if (array instanceof ArrayDouble.D3) {
             double val = ((ArrayDouble.D3)array).get(i, j, k);
-            if (val != N3iosp.NC_FILL_DOUBLE) {
+            if (val != N3iosp.NC_FILL_DOUBLE && (fillValue == null || !fillValue.equals(val))) {
                 return val;
             }
         } else if (array instanceof ArrayFloat.D3) {
             float val = ((ArrayFloat.D3)array).get(i, j, k);
-            if (val != N3iosp.NC_FILL_FLOAT) {
+            if (val != N3iosp.NC_FILL_FLOAT && (fillValue == null || !fillValue.equals(val))) {
                 return val;
             }
         } else if (array instanceof ArrayShort.D3) {
             short val = ((ArrayShort.D3)array).get(i, j, k);
-            if (val != N3iosp.NC_FILL_SHORT) {
+            if (val != N3iosp.NC_FILL_SHORT && (fillValue == null || !fillValue.equals(val))) {
                 return val;
             }
         } else if (array instanceof ArrayLong.D3) {
             long val = ((ArrayLong.D3)array).get(i, j, k);
-            if (val != N3iosp.NC_FILL_LONG) {
+            if (val != N3iosp.NC_FILL_LONG && (fillValue == null || !fillValue.equals(val))) {
                 return val;
             }
         } else {
@@ -208,11 +208,11 @@ public class NetCDFUtils {
         }
     }
     
-    public static double getZValue(final boolean mainFirst, boolean constantZ, final Array zArray, final int i, final int j) {
+    public static double getZValue(final boolean mainFirst, boolean constantZ, final Array zArray, final int i, final int j, final Number fillValue) {
         if (constantZ) {
-            return getDoubleValue(zArray, i);
+            return getDoubleValue(zArray, i, fillValue);
         } else {
-            return getDoubleValue(mainFirst, zArray, i, j);
+            return getDoubleValue(mainFirst, zArray, i, j, fillValue);
         }
     }
     

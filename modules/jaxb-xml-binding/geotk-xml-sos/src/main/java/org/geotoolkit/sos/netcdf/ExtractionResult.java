@@ -32,6 +32,8 @@ public class ExtractionResult {
     
     public final List<Observation> observations = new ArrayList<>();
     
+    public final List<String> featureOfInterest = new ArrayList<>();
+    
     public final List<String> fields = new ArrayList<>();
     
     public final List<Phenomenon> phenomenons = new ArrayList<>();

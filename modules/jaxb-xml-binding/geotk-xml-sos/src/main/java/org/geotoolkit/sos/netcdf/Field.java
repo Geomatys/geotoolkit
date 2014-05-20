@@ -27,6 +27,7 @@ import java.util.Objects;
 public class Field implements Serializable {
         public String label;
         public String unit;
+        public Number fillValue;
         public Type type;
         public int dimension;
         public String dimensionLabel;
