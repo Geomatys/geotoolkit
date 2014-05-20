@@ -34,7 +34,7 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.opengis.feature.FeatureFactory;
+import org.geotoolkit.feature.FeatureFactory;
 import org.xml.sax.SAXException;
 
 /**

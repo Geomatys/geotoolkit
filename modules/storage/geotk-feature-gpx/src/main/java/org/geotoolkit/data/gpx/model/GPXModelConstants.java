@@ -41,12 +41,12 @@ import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 
 import org.opengis.feature.ComplexAttribute;
 import org.opengis.feature.Feature;
-import org.opengis.feature.FeatureFactory;
+import org.geotoolkit.feature.FeatureFactory;
 import org.opengis.feature.Property;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.ComplexType;
 import org.opengis.feature.type.FeatureType;
-import org.opengis.feature.type.FeatureTypeFactory;
+import org.geotoolkit.feature.type.FeatureTypeFactory;
 import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;

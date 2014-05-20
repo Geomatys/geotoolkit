@@ -25,10 +25,10 @@ import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.LenientFeatureFactory;
 
-import org.opengis.feature.FeatureFactory;
+import org.geotoolkit.feature.FeatureFactory;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.FeatureType;
-import org.opengis.feature.type.FeatureTypeFactory;
+import org.geotoolkit.feature.type.FeatureTypeFactory;
 
 import static org.geotoolkit.data.kml.model.KmlModelConstants.*;
 

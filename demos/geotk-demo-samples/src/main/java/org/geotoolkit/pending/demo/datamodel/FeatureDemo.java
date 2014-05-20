@@ -16,7 +16,7 @@ import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.pending.demo.Demos;
 import org.opengis.feature.ComplexAttribute;
 import org.opengis.feature.Feature;
-import org.opengis.feature.FeatureFactory;
+import org.geotoolkit.feature.FeatureFactory;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.referencing.NoSuchAuthorityCodeException;

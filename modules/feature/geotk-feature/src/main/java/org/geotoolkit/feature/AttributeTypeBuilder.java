@@ -29,7 +29,7 @@ import org.geotoolkit.filter.function.other.OtherFunctionFactory;
 
 import org.opengis.feature.type.AssociationType;
 import org.opengis.feature.type.AttributeType;
-import org.opengis.feature.type.FeatureTypeFactory;
+import org.geotoolkit.feature.type.FeatureTypeFactory;
 import org.opengis.feature.type.GeometryType;
 import org.opengis.feature.type.Name;
 import org.opengis.feature.type.PropertyType;

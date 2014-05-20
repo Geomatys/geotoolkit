@@ -54,7 +54,7 @@ import org.apache.sis.xml.Namespaces;
 import org.geotoolkit.xml.StaxStreamReader;
 
 import org.opengis.feature.Feature;
-import org.opengis.feature.FeatureFactory;
+import org.geotoolkit.feature.FeatureFactory;
 import org.opengis.feature.Property;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.FeatureType;

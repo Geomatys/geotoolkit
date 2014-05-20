@@ -31,7 +31,7 @@ import org.geotoolkit.feature.LenientFeatureFactory;
 import org.geotoolkit.filter.identity.DefaultFeatureId;
 import org.geotoolkit.util.Converters;
 
-import org.opengis.feature.FeatureFactory;
+import org.geotoolkit.feature.FeatureFactory;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;

@@ -62,6 +62,8 @@ import org.opengis.feature.type.*;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.geotoolkit.feature.type.*;
+
 
 /**
  * Represent the structure of the database. The work done here is similar to
@@ -237,7 +239,7 @@ public final class DataBaseModel {
                 cachePrimaryKeys = new CachedResultSet();
                 cacheImportedKeys = new CachedResultSet();
                 cacheExportedKeys = new CachedResultSet();
-                
+
                 final Iterator<Map> ite = cacheSchemas.filter(Filter.INCLUDE);
                 while(ite.hasNext()) {
                     final String schemaName = (String)ite.next().get(Schema.TABLE_SCHEM);
@@ -312,7 +314,7 @@ public final class DataBaseModel {
         for(SchemaMetaModel schema : candidates){
            if (schema != null) {
                 for(TableMetaModel table : schema.tables.values()){
-                    
+
                     final ComplexType ft;
                     if(simpleTypes){
                         ft = table.getType(TableMetaModel.View.SIMPLE_FEATURE_TYPE);
@@ -331,7 +333,7 @@ public final class DataBaseModel {
                 throw new DataStoreException("Specifed schema " + baseSchemaName + " does not exist.");
              }
          }
-        
+
     }
 
     private SchemaMetaModel analyzeSchema(final String schemaName, final Connection cx) throws DataStoreException{
@@ -746,14 +748,14 @@ public final class DataBaseModel {
                     //Set the CRS if it's a geometry
                     final Class binding = type.getBinding();
                     if (Geometry.class.isAssignableFrom(binding) || Coverage.class.isAssignableFrom(binding)) {
-                        
+
                         //look up the type ( should only be one row )
                         final Filter tableFilter = filter(Table.TABLE_SCHEM, schema.name, Table.TABLE_NAME, tableName);
                         final Filter colFilter = FF.equals(FF.property(Column.COLUMN_NAME), FF.literal(name));
                         final Iterator<Map> meta = cacheColumns.filter(
                                 FF.and(tableFilter, colFilter));
                         final Map metas = meta.next();
-                        
+
                         //add the attribute as a geometry, try to figure out
                         // its srid first
                         Integer srid = null;

@@ -4,7 +4,7 @@
  */
 package org.geotoolkit.feature.type;
 
-import org.opengis.feature.type.FeatureTypeFactory;
+import org.geotoolkit.feature.type.FeatureTypeFactory;
 
 /**
  *

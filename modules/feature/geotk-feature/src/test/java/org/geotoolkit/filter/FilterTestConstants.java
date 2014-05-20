@@ -41,7 +41,7 @@ import org.apache.sis.util.logging.Logging;
 import org.opengis.feature.Attribute;
 
 import org.opengis.feature.Feature;
-import org.opengis.feature.FeatureFactory;
+import org.geotoolkit.feature.FeatureFactory;
 import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;

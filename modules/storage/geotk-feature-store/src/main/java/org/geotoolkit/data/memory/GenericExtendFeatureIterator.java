@@ -35,7 +35,7 @@ import org.geotoolkit.feature.LenientFeatureFactory;
 import org.geotoolkit.feature.type.DefaultAttributeDescriptor;
 import org.apache.sis.util.Classes;
 import org.opengis.feature.Feature;
-import org.opengis.feature.FeatureFactory;
+import org.geotoolkit.feature.FeatureFactory;
 import org.opengis.feature.Property;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.FeatureType;

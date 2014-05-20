@@ -68,7 +68,7 @@ import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.util.FileUtilities;
 
 import org.opengis.feature.Feature;
-import org.opengis.feature.FeatureFactory;
+import org.geotoolkit.feature.FeatureFactory;
 import org.opengis.feature.Property;
 import org.opengis.filter.expression.Expression;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;

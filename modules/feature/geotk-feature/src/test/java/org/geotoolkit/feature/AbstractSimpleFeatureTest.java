@@ -38,6 +38,8 @@ import org.opengis.feature.*;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.type.*;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.geotoolkit.feature.type.*;
+
 
 /**
  * A class to test methods from a FeatureFactory, only supports simple features.
@@ -251,7 +253,7 @@ public abstract class AbstractSimpleFeatureTest {
         //Name
         assertNotNull("Name is NULL", feature.getIdentifier());
         assertEquals("Name is not right", "id_0", feature.getIdentifier().toString());
-        //type        
+        //type
         assertNotNull("The feature type should never be null", feature.getType());
         assertEquals("The feature type is not right", fType, feature.getType());
         //Value
@@ -285,7 +287,7 @@ public abstract class AbstractSimpleFeatureTest {
             } catch (Exception e) {
             }
         }
-        
+
         //insert a value whose id is already referenced
         try {
             feature.getProperties().add(same_id_attr);

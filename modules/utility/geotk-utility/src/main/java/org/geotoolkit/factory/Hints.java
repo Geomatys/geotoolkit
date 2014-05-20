@@ -569,7 +569,7 @@ public class Hints extends RenderingHints {
     ////////////////////////////////////////////////////////////////////////
 
     /**
-     * The {@link org.opengis.feature.type.FeatureTypeFactory} instance to use.
+     * The {@link org.geotoolkit.feature.type.FeatureTypeFactory} instance to use.
      *
      * @see FactoryFinder#getFeatureTypeFactory(Hints)
      *
@@ -577,10 +577,10 @@ public class Hints extends RenderingHints {
      *
      * @since 3.15
      */
-    public static final ClassKey FEATURE_TYPE_FACTORY = new ClassKey("org.opengis.feature.type.FeatureTypeFactory");
+    public static final ClassKey FEATURE_TYPE_FACTORY = new ClassKey("org.geotoolkit.feature.type.FeatureTypeFactory");
 
     /**
-     * The {@link org.opengis.feature.FeatureFactory} instance to use.
+     * The {@link org.geotoolkit.feature.FeatureFactory} instance to use.
      *
      * @see FactoryFinder#getFeatureFactory(Hints)
      *
@@ -588,7 +588,7 @@ public class Hints extends RenderingHints {
      *
      * @since 3.01
      */
-    public static final ClassKey FEATURE_FACTORY = new ClassKey("org.opengis.feature.FeatureFactory");
+    public static final ClassKey FEATURE_FACTORY = new ClassKey("org.geotoolkit.feature.FeatureFactory");
 
     /**
      * The {@link org.opengis.filter.FilterFactory} instance to use.

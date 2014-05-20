@@ -32,7 +32,7 @@ import org.geotoolkit.feature.LenientFeatureFactory;
 import org.geotoolkit.feature.simple.DefaultSimpleFeature;
 import org.apache.sis.util.Classes;
 import org.opengis.feature.Feature;
-import org.opengis.feature.FeatureFactory;
+import org.geotoolkit.feature.FeatureFactory;
 import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
