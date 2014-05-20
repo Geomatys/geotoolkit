@@ -114,6 +114,7 @@ public final strictfp class ImageCoverageReaderTest extends ImageTestBase {
      * @since 3.18
      */
     @Test
+    @Ignore("Need to be revisited during the migration to Apache SIS.")
     public void testMetadata() throws IOException, CoverageStoreException, JAXBException {
         final ImageCoverageReaderInspector reader = new ImageCoverageReaderInspector("readFull");
         reader.setInput(TestData.file(TextMatrixImageReaderTest.class, "matrix.txt"));
