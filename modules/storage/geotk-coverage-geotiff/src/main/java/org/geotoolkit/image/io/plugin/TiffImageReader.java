@@ -945,10 +945,12 @@ public class TiffImageReader extends SpatialImageReader {
                     tagBody.appendChild(valueNode);
                     break;
                 }
-                case TYPE_INT :
-                case TYPE_UINT :
-                case TYPE_LONG :
-                case TYPE_ULONG : {
+                case TYPE_INT   :
+                case TYPE_UINT  :
+                case TYPE_IFD   :
+                case TYPE_LONG  :
+                case TYPE_ULONG :
+                case TYPE_IFD8  : {
                     final IIOMetadataNode valueNode = new IIOMetadataNode(TAG_GEOTIFF_LONGS);
                     for (int i = 0; i < count; i++) {
                         final IIOMetadataNode valN = new IIOMetadataNode(TAG_GEOTIFF_LONG);
