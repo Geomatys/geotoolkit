@@ -70,6 +70,7 @@ public final strictfp class WorldFileImageReaderTest extends TextImageReaderTest
      * @throws IOException if an error occurred while reading the file.
      */
     @Test
+    @Ignore("Need to be revisited during the migration to Apache SIS.")
     public void testMetadata() throws IOException {
         prepareImageReader(true);
         assertEquals(20, reader.getWidth (0));
