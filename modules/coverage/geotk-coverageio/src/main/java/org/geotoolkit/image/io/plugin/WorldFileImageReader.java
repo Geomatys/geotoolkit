@@ -511,7 +511,8 @@ public class WorldFileImageReader extends ImageReaderAdapter {
      * Providers for common formats. Each provider needs to be a different class because
      * {@link ServiceRegistry} allows the registration of only one instance of each class.
      */
-    private static final class TIFF extends Spi {TIFF() {super("TIFF",       "org.geotoolkit.image.io.plugin.WorldFileImageWriter$TIFF");}}
+    private static final class TIFF extends Spi {TIFF() {super("geotiff",    "org.geotoolkit.image.io.plugin.WorldFileImageWriter$TIFF");}}
+    //private static final class TIFF extends Spi {TIFF() {super("TIFF",       "org.geotoolkit.image.io.plugin.WorldFileImageWriter$TIFF");}}
     private static final class JPEG extends Spi {JPEG() {super("JPEG",       "org.geotoolkit.image.io.plugin.WorldFileImageWriter$JPEG");}}
     private static final class PNG  extends Spi { PNG() {super("PNG",        "org.geotoolkit.image.io.plugin.WorldFileImageWriter$PNG");}}
     private static final class GIF  extends Spi { GIF() {super("GIF",        "org.geotoolkit.image.io.plugin.WorldFileImageWriter$GIF");}}
