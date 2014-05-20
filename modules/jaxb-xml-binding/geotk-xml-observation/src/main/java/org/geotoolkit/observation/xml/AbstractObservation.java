@@ -31,6 +31,8 @@ public interface AbstractObservation extends Observation {
     @Override
     Process getProcedure();
     
+    String getId();
+    
     void setId(final String id);
     
     void setName(final String name);

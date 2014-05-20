@@ -17,7 +17,6 @@
 package org.geotoolkit.observation.xml;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -36,6 +35,7 @@ import org.geotoolkit.gml.xml.Point;
 import org.geotoolkit.gml.xml.Polygon;
 import org.geotoolkit.observation.AbstractObservationStore;
 import static org.geotoolkit.observation.xml.XmlObservationStoreFactory.FILE_PATH;
+import static org.geotoolkit.observation.xml.XmlObservationUtils.*;
 import org.geotoolkit.sampling.xml.SamplingFeature;
 import org.geotoolkit.sos.netcdf.ExtractionResult;
 import org.geotoolkit.sos.netcdf.ExtractionResult.ProcedureTree;
@@ -43,11 +43,9 @@ import org.geotoolkit.sos.netcdf.GeoSpatialBound;
 import org.geotoolkit.sos.xml.SOSMarshallerPool;
 import org.geotoolkit.storage.DataFileStore;
 import org.geotoolkit.swe.xml.PhenomenonProperty;
-import org.geotoolkit.swe.xml.v101.PhenomenonType;
 import org.opengis.feature.type.Name;
 import org.opengis.geometry.Geometry;
 import org.opengis.observation.AnyFeature;
-import org.opengis.observation.CompositePhenomenon;
 import org.opengis.observation.Observation;
 import org.opengis.observation.ObservationCollection;
 import org.opengis.observation.Phenomenon;
@@ -155,35 +153,6 @@ public class XmlObservationStore extends AbstractObservationStore implements Dat
             
         }
         return result;
-    }
-    
-    private List<String> getPhenomenonsFields(final PhenomenonProperty phenProp) {
-        final List<String> results = new ArrayList<>();
-        if (phenProp.getHref() != null) {
-            results.add(phenProp.getHref());
-        } else if (phenProp.getPhenomenon() instanceof CompositePhenomenon) {
-            final CompositePhenomenon comp = (CompositePhenomenon) phenProp.getPhenomenon();
-            for (Phenomenon phen : comp.getComponent()) {
-                if (phen instanceof org.geotoolkit.swe.xml.Phenomenon) {
-                    final org.geotoolkit.swe.xml.Phenomenon p = (org.geotoolkit.swe.xml.Phenomenon) phen;
-                    results.add(p.getName());
-                }
-            }
-        } else if (phenProp.getPhenomenon() instanceof org.geotoolkit.swe.xml.Phenomenon) {
-            final org.geotoolkit.swe.xml.Phenomenon p = (org.geotoolkit.swe.xml.Phenomenon) phenProp.getPhenomenon();
-            results.add(p.getName());
-        }
-        return results;
-    }
-    
-    private Phenomenon getPhenomenons(final PhenomenonProperty phenProp) {
-        if (phenProp.getHref() != null) {
-            return new PhenomenonType(phenProp.getHref(), phenProp.getHref());
-        } else if (phenProp.getPhenomenon() != null) {
-            return phenProp.getPhenomenon();
-            
-        }
-        return null;
     }
     
     private void appendTime(final TemporalObject time, final GeoSpatialBound spatialBound) {

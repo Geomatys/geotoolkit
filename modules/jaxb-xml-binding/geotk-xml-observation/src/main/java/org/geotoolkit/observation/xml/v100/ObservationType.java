@@ -756,6 +756,11 @@ public class ObservationType implements Entry, AbstractObservation {
     }
 
     @Override
+    public String getId() {
+        return name;
+    }
+    
+    @Override
     public void setId(String id) {
         // do nothing no id on v 1.0.0
     }
