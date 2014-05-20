@@ -19,6 +19,7 @@ package org.geotoolkit.sos.netcdf;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import org.geotoolkit.sampling.xml.SamplingFeature;
 import org.opengis.observation.Observation;
 import org.opengis.observation.Phenomenon;
 
@@ -32,7 +33,9 @@ public class ExtractionResult {
     
     public final List<Observation> observations = new ArrayList<>();
     
-    public final List<String> featureOfInterest = new ArrayList<>();
+    public final List<String> featureOfInterestNames = new ArrayList<>();
+    
+    public final List<SamplingFeature> featureOfInterest = new ArrayList<>();
     
     public final List<String> fields = new ArrayList<>();
     

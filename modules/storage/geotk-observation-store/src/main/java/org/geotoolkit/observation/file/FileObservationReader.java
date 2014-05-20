@@ -27,8 +27,8 @@ import javax.xml.namespace.QName;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.gml.xml.AbstractGeometry;
 import org.geotoolkit.observation.ObservationReader;
-import static org.geotoolkit.observation.xml.XmlObservationUtils.RESPONSE_FORMAT_V100;
-import static org.geotoolkit.observation.xml.XmlObservationUtils.RESPONSE_FORMAT_V200;
+import org.geotoolkit.observation.xml.AbstractObservation;
+import static org.geotoolkit.observation.xml.XmlObservationUtils.*;
 import org.geotoolkit.sos.netcdf.ExtractionResult;
 import org.geotoolkit.sos.netcdf.Field;
 import org.geotoolkit.sos.netcdf.NCFieldAnalyze;
@@ -124,30 +124,51 @@ public class FileObservationReader implements ObservationReader {
     public Collection<String> getFeatureOfInterestNames() throws DataStoreException {
         try {
             final ExtractionResult result = NetCDFExtractor.getObservationFromNetCDF(analyze, getProcedureID(), null);
-            return result.featureOfInterest;
+            return result.featureOfInterestNames;
         } catch (NetCDFParsingException ex) {
             throw new DataStoreException(ex);
         }
     }
 
     @Override
-    public SamplingFeature getFeatureOfInterest(String samplingFeatureName, String version) throws DataStoreException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public SamplingFeature getFeatureOfInterest(final String samplingFeatureName, final String version) throws DataStoreException {
+        try {
+            final ExtractionResult result = NetCDFExtractor.getObservationFromNetCDF(analyze, getProcedureID(), null);
+            for (org.geotoolkit.sampling.xml.SamplingFeature feature : result.featureOfInterest) {
+                if (feature.getId().equals(samplingFeatureName)) {
+                    return feature;
+                }
+            }
+        } catch (NetCDFParsingException ex) {
+            throw new DataStoreException(ex);
+        }
+        return null;
     }
 
     @Override
     public TemporalPrimitive getFeatureOfInterestTime(String samplingFeatureName, String version) throws DataStoreException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new DataStoreException("Not supported yet in this this implementation.");
     }
 
     @Override
-    public Observation getObservation(String identifier, QName resultModel, ResponseModeType mode, String version) throws DataStoreException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public Observation getObservation(final String identifier, final QName resultModel, final ResponseModeType mode, final String version) throws DataStoreException {
+       try {
+            final ExtractionResult result = NetCDFExtractor.getObservationFromNetCDF(analyze, getProcedureID(), null);
+            for (Observation obs : result.observations) {
+                final AbstractObservation o = (AbstractObservation) obs;
+                if (o.getId().equals(identifier)) {
+                    return o;
+                }
+            }
+        } catch (NetCDFParsingException ex) {
+            throw new DataStoreException(ex);
+        }
+        return null;
     }
 
     @Override
-    public Object getResult(String identifier, QName resultModel, String version) throws DataStoreException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public Object getResult(final String identifier, final QName resultModel, final String version) throws DataStoreException {
+        throw new DataStoreException("Not supported yet in this this implementation.");
     }
 
     @Override
@@ -157,12 +178,12 @@ public class FileObservationReader implements ObservationReader {
 
     @Override
     public String getNewObservationId() throws DataStoreException {
-        throw new DataStoreException("Not supported yet.");
+        throw new DataStoreException("Not supported in this implementation.");
     }
 
     @Override
     public List<String> getEventTime() throws DataStoreException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new DataStoreException("Not supported yet in this this implementation.");
     }
 
     @Override
@@ -177,7 +198,7 @@ public class FileObservationReader implements ObservationReader {
 
     @Override
     public AbstractGeometry getSensorLocation(String sensorID, String version) throws DataStoreException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new DataStoreException("Not supported yet in this this implementation.");
     }
 
     @Override

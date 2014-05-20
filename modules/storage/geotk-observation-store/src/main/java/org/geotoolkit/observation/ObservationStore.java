@@ -50,4 +50,11 @@ public abstract class ObservationStore extends DataStore {
     public abstract ExtractionResult getResults(final List<String> sensorIds) throws DataStoreException;
     
     public abstract ExtractionResult getResults(final String affectedSensorID, final List<String> sensorIds) throws DataStoreException;
+    
+    /**
+     * Return an Observation Reader on the data.
+     * 
+     * @return An Observation Reader.
+     */
+    public abstract ObservationReader getReader();
 }

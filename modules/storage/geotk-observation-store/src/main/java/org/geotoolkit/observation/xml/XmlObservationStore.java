@@ -17,6 +17,7 @@
 package org.geotoolkit.observation.xml;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -34,6 +35,7 @@ import org.geotoolkit.gml.xml.LineString;
 import org.geotoolkit.gml.xml.Point;
 import org.geotoolkit.gml.xml.Polygon;
 import org.geotoolkit.observation.AbstractObservationStore;
+import org.geotoolkit.observation.ObservationReader;
 import static org.geotoolkit.observation.xml.XmlObservationStoreFactory.FILE_PATH;
 import static org.geotoolkit.observation.xml.XmlObservationUtils.*;
 import org.geotoolkit.sampling.xml.SamplingFeature;
@@ -272,5 +274,14 @@ public class XmlObservationStore extends AbstractObservationStore implements Dat
     @Override
     public File[] getDataFiles() throws DataStoreException {
         return new File[]{xmlFile};
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public ObservationReader getReader() {
+        final Object obj = readFile();
+        return new XmlObservationReader(Arrays.asList(obj));
     }
 }

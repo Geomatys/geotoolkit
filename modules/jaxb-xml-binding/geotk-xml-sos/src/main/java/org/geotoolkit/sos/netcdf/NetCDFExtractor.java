@@ -366,7 +366,8 @@ public class NetCDFExtractor {
                             final DirectPosition position = SOSXmlFactory.buildDirectPosition("2.0.0", null, 2, Arrays.asList(latitude, longitude));
                             final Point geom              = SOSXmlFactory.buildPoint("2.0.0", "SamplingPoint", position);
                             final SamplingFeature sp      = SOSXmlFactory.buildSamplingPoint("2.0.0", identifier, null, null, null, geom);
-                            results.featureOfInterest.add(identifier);
+                            results.featureOfInterestNames.add(identifier);
+                            results.featureOfInterest.add((org.geotoolkit.sampling.xml.SamplingFeature) sp);
                             foi                           = SOSXmlFactory.buildFeatureProperty("2.0.0", sp);
                             gb.addXCoordinate(longitude);
                             gb.addYCoordinate(latitude);
@@ -439,7 +440,8 @@ public class NetCDFExtractor {
                                 final DirectPosition position = SOSXmlFactory.buildDirectPosition("2.0.0", null, 2, Arrays.asList(latitude, longitude));
                                 final Point geom              = SOSXmlFactory.buildPoint("2.0.0", "SamplingPoint", position);
                                 final SamplingFeature sp      = SOSXmlFactory.buildSamplingPoint("2.0.0", identifier, null, null, null, geom);
-                                results.featureOfInterest.add(identifier);
+                                results.featureOfInterestNames.add(identifier);
+                                results.featureOfInterest.add((org.geotoolkit.sampling.xml.SamplingFeature) sp);
                                 foi                           = SOSXmlFactory.buildFeatureProperty("2.0.0", sp);
                                 gb.addXCoordinate(longitude);
                                 gb.addYCoordinate(latitude);
@@ -568,8 +570,9 @@ public class NetCDFExtractor {
                             final DirectPosition position = SOSXmlFactory.buildDirectPosition("2.0.0", null, 2, Arrays.asList(latitude, longitude));
                             final Point geom              = SOSXmlFactory.buildPoint("2.0.0", "SamplingPoint", position);
                             final SamplingFeature sp      = SOSXmlFactory.buildSamplingPoint("2.0.0", identifier, null, null, null, geom);
-                            results.featureOfInterest.add(identifier);
                             foi                           = SOSXmlFactory.buildFeatureProperty("2.0.0", sp);
+                            results.featureOfInterestNames.add(identifier);
+                            results.featureOfInterest.add((org.geotoolkit.sampling.xml.SamplingFeature) sp);
                             gb.addXCoordinate(longitude);
                             gb.addYCoordinate(latitude);
                             gb.addGeometry(geom);
@@ -643,7 +646,8 @@ public class NetCDFExtractor {
                                 final DirectPosition position = SOSXmlFactory.buildDirectPosition("2.0.0", null, 2, Arrays.asList(latitude, longitude));
                                 final Point geom              = SOSXmlFactory.buildPoint("2.0.0", "SamplingPoint", position);
                                 final SamplingFeature sp      = SOSXmlFactory.buildSamplingPoint("2.0.0", identifier, null, null, null, geom);
-                                results.featureOfInterest.add(identifier);
+                                results.featureOfInterestNames.add(identifier);
+                                results.featureOfInterest.add((org.geotoolkit.sampling.xml.SamplingFeature) sp);
                                 foi                           = SOSXmlFactory.buildFeatureProperty("2.0.0", sp);
                                 gb.addXCoordinate(longitude);
                                 gb.addYCoordinate(latitude);
@@ -809,7 +813,8 @@ public class NetCDFExtractor {
 
                     final LineString geom         = SOSXmlFactory.buildLineString("2.0.0", null, "EPSG:4326", positions);
                     final SamplingFeature sp      = SOSXmlFactory.buildSamplingCurve("2.0.0", identifier, null, null, null, geom, null, null, null);
-                    results.featureOfInterest.add(identifier);
+                    results.featureOfInterestNames.add(identifier);
+                    results.featureOfInterest.add((org.geotoolkit.sampling.xml.SamplingFeature) sp);
                     final FeatureProperty foi     = SOSXmlFactory.buildFeatureProperty("2.0.0", sp);
                     gb.addGeometry(geom);
 
@@ -890,7 +895,8 @@ public class NetCDFExtractor {
                         final LineString geom          = SOSXmlFactory.buildLineString("2.0.0", null, "EPSG:4326", positions);
                         final SamplingFeature sp       = SOSXmlFactory.buildSamplingCurve("2.0.0", identifier, null, null, null, geom, null, null, null);
                         final FeatureProperty foi      = SOSXmlFactory.buildFeatureProperty("2.0.0", sp);
-                        results.featureOfInterest.add(identifier);
+                        results.featureOfInterestNames.add(identifier);
+                        results.featureOfInterest.add((org.geotoolkit.sampling.xml.SamplingFeature) sp);
                         gb.addGeometry(geom);
 
                         final DataArrayProperty result = SOSXmlFactory.buildDataArrayProperty("2.0.0", "array-1", count, "SimpleDataArray", datarecord, DEFAULT_ENCODING, sb.toString());
@@ -976,7 +982,8 @@ public class NetCDFExtractor {
                             final Point geom              = SOSXmlFactory.buildPoint("2.0.0", "SamplingPoint", position);
                             final SamplingFeature sp      = SOSXmlFactory.buildSamplingPoint("2.0.0", identifier, null, null, null, geom);
                             foi                           = SOSXmlFactory.buildFeatureProperty("2.0.0", sp);
-                            results.featureOfInterest.add(identifier);
+                            results.featureOfInterestNames.add(identifier);
+                            results.featureOfInterest.add((org.geotoolkit.sampling.xml.SamplingFeature) sp);
                             gb.addXCoordinate(longitude);
                             gb.addYCoordinate(latitude);
                         }

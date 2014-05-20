@@ -24,6 +24,7 @@ import java.util.Set;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.observation.AbstractObservationStore;
+import org.geotoolkit.observation.ObservationReader;
 import static org.geotoolkit.observation.file.FileObservationStoreFactory.FILE_PATH;
 import org.geotoolkit.sos.netcdf.ExtractionResult;
 import org.geotoolkit.sos.netcdf.Field;
@@ -140,5 +141,13 @@ public class FileObservationStore extends AbstractObservationStore implements Da
     @Override
     public File[] getDataFiles() throws DataStoreException {
         return new File[]{dataFile};
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public ObservationReader getReader() {
+        return new FileObservationReader(dataFile, analyze);
     }
 }
