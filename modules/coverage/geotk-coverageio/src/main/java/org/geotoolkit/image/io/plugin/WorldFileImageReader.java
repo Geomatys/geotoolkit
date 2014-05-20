@@ -204,7 +204,7 @@ public class WorldFileImageReader extends ImageReaderAdapter {
      */
     @Override
     protected SpatialMetadata createMetadata(final int imageIndex) throws IOException {
-        SpatialMetadata metadata = null;//super.createMetadata(imageIndex);
+        SpatialMetadata metadata = super.createMetadata(imageIndex);
         if (imageIndex >= 0) {
             AffineTransform gridToCRS = null;
             CoordinateReferenceSystem crs = null;
@@ -220,9 +220,10 @@ public class WorldFileImageReader extends ImageReaderAdapter {
              * If we have found information in TFW or PRJ files, complete metadata.
              */
             if (gridToCRS != null || crs != null) {
-                if (metadata == null) {
+// TODO:        unconditionally overwrite the metadata for now, otherwise we are at risk of adding offset vectors twice.
+//              if (metadata == null) {
                     metadata = new SpatialMetadata(false, this, null);
-                }
+//              }
                 if (gridToCRS != null) {
                     final int width  = getWidth (imageIndex);
                     final int height = getHeight(imageIndex);
