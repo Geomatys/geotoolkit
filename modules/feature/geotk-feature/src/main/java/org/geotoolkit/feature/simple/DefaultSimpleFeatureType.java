@@ -25,7 +25,7 @@ import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.type.DefaultFeatureType;
 
-import org.opengis.feature.simple.SimpleFeatureType;
+import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.AttributeType;
 import org.opengis.feature.type.GeometryDescriptor;
@@ -68,7 +68,7 @@ public class DefaultSimpleFeatureType extends DefaultFeatureType implements Simp
     }
 
     /**
-     * @see org.opengis.feature.simple.SimpleFeatureType#getAttributeDescriptors()
+     * @see org.geotoolkit.feature.simple.SimpleFeatureType#getAttributeDescriptors()
      */
     @Override
     public final List<AttributeDescriptor> getAttributeDescriptors() {

@@ -23,7 +23,7 @@ import static org.geotoolkit.filter.binding.AttributeBinding.stripPrefix;
 import org.opengis.feature.ComplexAttribute;
 import org.opengis.feature.Feature;
 import org.opengis.feature.Property;
-import org.opengis.feature.simple.SimpleFeature;
+import org.geotoolkit.feature.simple.SimpleFeature;
 
 /**
  *

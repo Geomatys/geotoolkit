@@ -50,7 +50,7 @@ import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.se.xml.v110.RuleType;
 import org.geotoolkit.se.xml.v110.SymbolizerType;
 import org.geotoolkit.sld.xml.StyleXmlIO;
-import org.opengis.feature.simple.SimpleFeatureType;
+import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.PropertyDescriptor;

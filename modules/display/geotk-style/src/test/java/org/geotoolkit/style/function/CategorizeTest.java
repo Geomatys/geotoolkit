@@ -31,7 +31,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opengis.feature.Feature;
-import org.opengis.feature.simple.SimpleFeatureType;
+import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.expression.Expression;
 import static org.junit.Assert.*;

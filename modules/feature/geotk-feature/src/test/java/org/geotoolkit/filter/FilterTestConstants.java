@@ -43,7 +43,7 @@ import org.opengis.feature.Attribute;
 import org.opengis.feature.Feature;
 import org.geotoolkit.feature.FeatureFactory;
 import org.opengis.feature.Property;
-import org.opengis.feature.simple.SimpleFeatureType;
+import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.ComplexType;
 import org.opengis.feature.type.FeatureType;

@@ -21,7 +21,7 @@ import java.util.Objects;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.geotoolkit.filter.function.AbstractFunction;
-import org.opengis.feature.simple.SimpleFeature;
+import org.geotoolkit.feature.simple.SimpleFeature;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.filter.expression.Expression;

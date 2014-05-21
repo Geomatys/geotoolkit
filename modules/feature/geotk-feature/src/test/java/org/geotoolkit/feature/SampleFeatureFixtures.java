@@ -23,8 +23,8 @@ import com.vividsolutions.jts.geom.Point;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 
-import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.feature.simple.SimpleFeatureType;
+import org.geotoolkit.feature.simple.SimpleFeature;
+import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.GeometryDescriptor;
 

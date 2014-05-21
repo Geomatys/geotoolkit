@@ -37,8 +37,8 @@ import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.test.TestData;
 
 import org.opengis.feature.type.Name;
-import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.feature.simple.SimpleFeatureType;
+import org.geotoolkit.feature.simple.SimpleFeature;
+import org.geotoolkit.feature.simple.SimpleFeatureType;
 
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;

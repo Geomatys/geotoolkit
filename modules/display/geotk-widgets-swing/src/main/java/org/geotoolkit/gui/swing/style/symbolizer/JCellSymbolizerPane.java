@@ -39,7 +39,7 @@ import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyleFactory;
-import org.opengis.feature.simple.SimpleFeatureType;
+import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.opengis.filter.Filter;
 import org.opengis.style.PointSymbolizer;
 import org.opengis.style.Symbolizer;

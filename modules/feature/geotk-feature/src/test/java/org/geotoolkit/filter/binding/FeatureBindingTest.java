@@ -18,7 +18,7 @@
 package org.geotoolkit.filter.binding;
 
 import java.util.Collection;
-import org.opengis.feature.simple.SimpleFeatureType;
+import org.geotoolkit.feature.simple.SimpleFeatureType;
 import java.util.Iterator;
 import com.vividsolutions.jts.geom.Geometry;
 import org.geotoolkit.feature.FeatureUtilities;

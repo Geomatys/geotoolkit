@@ -34,7 +34,7 @@ import org.junit.After;
 import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
-import org.opengis.feature.simple.SimpleFeature;
+import org.geotoolkit.feature.simple.SimpleFeature;
 
 public class IndexedFidReaderTest extends FIDTestCase {
     

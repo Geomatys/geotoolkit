@@ -28,8 +28,8 @@ import org.geotoolkit.feature.DefaultGeometryAttribute;
 import org.geotoolkit.filter.identity.DefaultFeatureId;
 
 import org.opengis.feature.Property;
-import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.feature.simple.SimpleFeatureType;
+import org.geotoolkit.feature.simple.SimpleFeature;
+import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.filter.identity.FeatureId;

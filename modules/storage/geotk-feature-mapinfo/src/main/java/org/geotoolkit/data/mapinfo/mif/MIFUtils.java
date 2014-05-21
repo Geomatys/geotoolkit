@@ -21,7 +21,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.mapinfo.mif.geometry.*;
 import org.opengis.feature.Feature;
 import org.opengis.feature.Property;
-import org.opengis.feature.simple.SimpleFeatureType;
+import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.GeometryDescriptor;

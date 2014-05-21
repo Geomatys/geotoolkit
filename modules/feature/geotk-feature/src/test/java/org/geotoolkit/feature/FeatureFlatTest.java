@@ -35,8 +35,8 @@ import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.geometry.DefaultBoundingBox;
 import org.geotoolkit.test.Assert;
 
-import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.feature.simple.SimpleFeatureType;
+import org.geotoolkit.feature.simple.SimpleFeature;
+import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.geotoolkit.feature.IllegalAttributeException;
 import com.vividsolutions.jts.geom.Envelope;

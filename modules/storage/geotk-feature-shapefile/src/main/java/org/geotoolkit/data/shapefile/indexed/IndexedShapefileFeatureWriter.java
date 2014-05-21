@@ -36,8 +36,8 @@ import org.geotoolkit.data.shapefile.fix.IndexedFidWriter;
 import org.apache.sis.internal.storage.IOUtilities;
 import org.geotoolkit.data.FeatureStoreContentEvent;
 
-import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.feature.simple.SimpleFeatureType;
+import org.geotoolkit.feature.simple.SimpleFeature;
+import org.geotoolkit.feature.simple.SimpleFeatureType;
 import static org.geotoolkit.data.shapefile.ShapefileFeatureStoreFactory.*;
 
 /**

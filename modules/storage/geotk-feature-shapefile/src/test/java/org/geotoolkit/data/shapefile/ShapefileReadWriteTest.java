@@ -25,8 +25,8 @@ import java.net.MalformedURLException;
 import java.nio.charset.Charset;
 
 import org.geotoolkit.data.FeatureCollection;
-import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.feature.simple.SimpleFeatureType;
+import org.geotoolkit.feature.simple.SimpleFeature;
+import org.geotoolkit.feature.simple.SimpleFeatureType;
 
 import com.vividsolutions.jts.geom.Geometry;
 import java.util.ArrayList;

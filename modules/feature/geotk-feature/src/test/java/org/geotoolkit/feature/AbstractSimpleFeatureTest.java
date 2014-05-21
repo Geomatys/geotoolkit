@@ -35,7 +35,7 @@ import java.util.*;
 import static org.junit.Assert.*;
 import org.junit.Test;
 import org.opengis.feature.*;
-import org.opengis.feature.simple.SimpleFeature;
+import org.geotoolkit.feature.simple.SimpleFeature;
 import org.opengis.feature.type.*;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.geotoolkit.feature.type.*;

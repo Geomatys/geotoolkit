@@ -72,7 +72,7 @@ import org.geotoolkit.gml.GeometrytoJTS;
 import org.geotoolkit.gml.xml.AbstractGeometry;
 import org.geotoolkit.gml.xml.GMLMarshallerPool;
 import org.opengis.feature.ComplexAttribute;
-import org.opengis.feature.simple.SimpleFeatureType;
+import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.ComplexType;
 import org.opengis.feature.type.PropertyType;
 import org.opengis.util.FactoryException;

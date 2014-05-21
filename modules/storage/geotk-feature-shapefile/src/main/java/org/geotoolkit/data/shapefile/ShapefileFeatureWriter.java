@@ -40,8 +40,8 @@ import org.geotoolkit.data.shapefile.shp.ShapefileWriter;
 import org.geotoolkit.feature.FeatureTypeUtilities;
 
 import org.geotoolkit.feature.IllegalAttributeException;
-import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.feature.simple.SimpleFeatureType;
+import org.geotoolkit.feature.simple.SimpleFeature;
+import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.GeometryDescriptor;
 
 import com.vividsolutions.jts.geom.Envelope;

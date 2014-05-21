@@ -42,7 +42,7 @@ import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.referencing.CRS;
 import org.jdesktop.swingx.JXErrorPane;
-import org.opengis.feature.simple.SimpleFeatureType;
+import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.filter.FilterFactory;
 import org.opengis.util.FactoryException;

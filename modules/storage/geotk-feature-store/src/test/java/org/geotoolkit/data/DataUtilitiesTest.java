@@ -27,7 +27,7 @@ import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-import org.opengis.feature.simple.SimpleFeatureType;
+import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.Name;
 

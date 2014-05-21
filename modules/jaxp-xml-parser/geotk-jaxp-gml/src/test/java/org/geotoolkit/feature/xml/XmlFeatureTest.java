@@ -77,9 +77,9 @@ import org.geotoolkit.xml.DomCompare;
 
 import org.junit.*;
 
-import org.opengis.feature.simple.SimpleFeature;
+import org.geotoolkit.feature.simple.SimpleFeature;
 import org.opengis.feature.type.FeatureType;
-import org.opengis.feature.simple.SimpleFeatureType;
+import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.sort.SortOrder;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;

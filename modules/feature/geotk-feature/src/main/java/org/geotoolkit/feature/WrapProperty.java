@@ -20,7 +20,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import org.geotoolkit.feature.IllegalAttributeException;
-import org.opengis.feature.simple.SimpleFeatureType;
+import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AssociationDescriptor;
 import org.opengis.feature.type.AssociationType;
 import org.opengis.feature.type.AttributeDescriptor;
@@ -262,10 +262,10 @@ abstract class WrapProperty<P extends org.opengis.feature.Property> extends Abst
 
     }
 
-    static class SimpleFeature extends Feature<org.opengis.feature.simple.SimpleFeature>
-            implements org.opengis.feature.simple.SimpleFeature{
+    static class SimpleFeature extends Feature<org.geotoolkit.feature.simple.SimpleFeature>
+            implements org.geotoolkit.feature.simple.SimpleFeature{
 
-        SimpleFeature(final org.opengis.feature.simple.SimpleFeature prop, final AttributeDescriptor desc){
+        SimpleFeature(final org.geotoolkit.feature.simple.SimpleFeature prop, final AttributeDescriptor desc){
             super(prop,desc);
         }
 

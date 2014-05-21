@@ -42,7 +42,7 @@ import org.geotoolkit.filter.sort.DefaultSortBy;
 import org.jdesktop.swingx.JXErrorPane;
 import org.jdesktop.swingx.combobox.ListComboBoxModel;
 
-import org.opengis.feature.simple.SimpleFeature;
+import org.geotoolkit.feature.simple.SimpleFeature;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.sort.SortBy;
 import org.opengis.filter.sort.SortOrder;

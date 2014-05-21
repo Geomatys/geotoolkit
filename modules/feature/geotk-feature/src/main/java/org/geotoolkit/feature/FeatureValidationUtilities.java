@@ -23,7 +23,7 @@ import org.geotoolkit.util.Converters;
 
 import org.geotoolkit.feature.IllegalAttributeException;
 import org.opengis.feature.Attribute;
-import org.opengis.feature.simple.SimpleFeatureType;
+import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.AttributeType;
 import org.opengis.feature.type.FeatureType;

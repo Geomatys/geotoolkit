@@ -19,7 +19,7 @@ package org.geotoolkit.filter.binding;
 import java.util.regex.Pattern;
 import org.opengis.feature.ComplexAttribute;
 import org.opengis.feature.Property;
-import org.opengis.feature.simple.SimpleFeature;
+import org.geotoolkit.feature.simple.SimpleFeature;
 
 /**
  *

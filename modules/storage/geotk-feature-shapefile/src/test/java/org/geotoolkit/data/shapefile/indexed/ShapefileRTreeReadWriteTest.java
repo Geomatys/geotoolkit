@@ -26,8 +26,8 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.shapefile.AbstractTestCaseSupport;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
-import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.feature.simple.SimpleFeatureType;
+import org.geotoolkit.feature.simple.SimpleFeature;
+import org.geotoolkit.feature.simple.SimpleFeatureType;
 
 import com.vividsolutions.jts.geom.Geometry;
 import java.util.ArrayList;

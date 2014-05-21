@@ -24,7 +24,7 @@ import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.util.Converters;
 import org.opengis.feature.Feature;
-import org.opengis.feature.simple.SimpleFeatureType;
+import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.GeometryDescriptor;

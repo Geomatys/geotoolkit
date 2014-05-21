@@ -40,7 +40,7 @@ import org.opengis.feature.Feature;
 import org.geotoolkit.feature.FeatureFactory;
 import org.opengis.feature.GeometryAttribute;
 import org.opengis.feature.Property;
-import org.opengis.feature.simple.SimpleFeatureType;
+import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.referencing.operation.TransformException;

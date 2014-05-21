@@ -37,8 +37,8 @@ import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.data.query.QueryBuilder;
 
-import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.feature.simple.SimpleFeatureType;
+import org.geotoolkit.feature.simple.SimpleFeature;
+import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.Id;
 import org.opengis.filter.identity.FeatureId;

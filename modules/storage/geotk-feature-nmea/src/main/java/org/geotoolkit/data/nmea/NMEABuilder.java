@@ -47,7 +47,7 @@ import net.sf.marineapi.provider.event.ProviderEvent;
 import net.sf.marineapi.provider.event.ProviderListener;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
-import org.opengis.feature.simple.SimpleFeature;
+import org.geotoolkit.feature.simple.SimpleFeature;
 
 /**
  * Create features of type {@link NMEAFeatureStore#NMEA_TYPE} from

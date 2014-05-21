@@ -20,7 +20,7 @@ import java.io.IOException;
 import org.geotoolkit.data.shapefile.FeatureIDReader;
 import org.apache.sis.storage.DataStoreException;
 
-import org.opengis.feature.simple.SimpleFeatureType;
+import org.geotoolkit.feature.simple.SimpleFeatureType;
 
 /**
  * Reader that returns FeatureIds in a quick fashion.

@@ -39,7 +39,7 @@ import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 
 import org.junit.Test;
 
-import org.opengis.feature.simple.SimpleFeatureType;
+import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.ComplexType;

@@ -18,7 +18,7 @@ package org.geotoolkit.feature.type;
 
 import java.util.Collection;
 import java.util.List;
-import org.opengis.feature.simple.SimpleFeatureType;
+import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.AttributeType;
 import org.opengis.feature.type.ComplexType;

@@ -55,7 +55,7 @@ import org.geotoolkit.data.osm.xml.OSMXMLConstants;
 import org.geotoolkit.data.query.QueryBuilder;
 
 import org.jdesktop.swingx.JXErrorPane;
-import org.opengis.feature.simple.SimpleFeature;
+import org.geotoolkit.feature.simple.SimpleFeature;
 
 /**
  *

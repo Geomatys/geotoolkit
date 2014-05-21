@@ -38,8 +38,8 @@ import org.geotoolkit.util.FileUtilities;
 import org.opengis.feature.Feature;
 import org.geotoolkit.feature.FeatureFactory;
 import org.opengis.feature.Property;
-import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.feature.simple.SimpleFeatureType;
+import org.geotoolkit.feature.simple.SimpleFeature;
+import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.opengis.referencing.operation.TransformException;
 
 import java.io.File;
@@ -57,7 +57,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Generate a {@link org.opengis.feature.simple.SimpleFeature} {@link java.util.List} from kml/kmz folder or file
+ * Generate a {@link org.geotoolkit.feature.simple.SimpleFeature} {@link java.util.List} from kml/kmz folder or file
  * @author bgarcia
  * @since 11/04/13
  */

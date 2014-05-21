@@ -25,7 +25,7 @@ import org.geotoolkit.util.converter.ObjectConverter;
 
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.util.FactoryException;
-import org.opengis.feature.simple.SimpleFeatureType;
+import org.geotoolkit.feature.simple.SimpleFeatureType;
 
 import org.junit.Test;
 import org.opengis.feature.type.FeatureType;

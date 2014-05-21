@@ -11,8 +11,8 @@ import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 
 import org.opengis.feature.Feature;
-import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.feature.simple.SimpleFeatureType;
+import org.geotoolkit.feature.simple.SimpleFeature;
+import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.FeatureType;
 
 public class FishReader implements FeatureReader<FeatureType, Feature> {

@@ -34,8 +34,8 @@ import org.apache.sis.util.Classes;
 import org.opengis.feature.Feature;
 import org.geotoolkit.feature.FeatureFactory;
 import org.opengis.feature.Property;
-import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.feature.simple.SimpleFeatureType;
+import org.geotoolkit.feature.simple.SimpleFeature;
+import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.PropertyDescriptor;
 

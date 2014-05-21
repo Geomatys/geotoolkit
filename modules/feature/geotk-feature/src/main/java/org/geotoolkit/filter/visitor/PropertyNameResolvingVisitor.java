@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.filter.visitor;
 
-import org.opengis.feature.simple.SimpleFeatureType;
+import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.filter.expression.PropertyName;
 

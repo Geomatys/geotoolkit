@@ -48,8 +48,8 @@ import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.type.BasicFeatureTypes;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 
-import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.feature.simple.SimpleFeatureType;
+import org.geotoolkit.feature.simple.SimpleFeature;
+import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.filter.Filter;
