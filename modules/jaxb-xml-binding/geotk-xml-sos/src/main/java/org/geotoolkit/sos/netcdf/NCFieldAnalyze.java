@@ -16,13 +16,16 @@
  */
 package org.geotoolkit.sos.netcdf;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import ucar.ma2.Array;
 import ucar.nc2.NetcdfFile;
 import ucar.nc2.Variable;
 
@@ -87,6 +90,20 @@ public class NCFieldAnalyze {
                 results.add(timeField);
             }
             return results; 
+        }
+        
+        public Array getArrayFromField(final Field field) throws IOException {
+            final Variable var = vars.get(field.label);
+            return file.readArrays(Arrays.asList(var)).get(0);
+        }
+        
+        public Map<String, Array> getPhenomenonArrayMap() throws IOException {
+            final Map<String, Array> phenArrays = new HashMap<>();
+            for (Field field : phenfields) {
+                final Array phenArray  = getArrayFromField(field);
+                phenArrays.put(field.label, phenArray);
+            }
+            return phenArrays;
         }
         
         @Override

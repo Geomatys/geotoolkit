@@ -24,7 +24,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -32,10 +31,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.sis.measure.Longitude;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.gml.xml.AbstractGeometry;
 import org.geotoolkit.gml.xml.FeatureProperty;
 import org.geotoolkit.gml.xml.LineString;
-import org.geotoolkit.gml.xml.Point;
 import org.geotoolkit.observation.xml.OMXmlFactory;
+import org.geotoolkit.sampling.xml.SamplingFeature;
 import org.geotoolkit.sos.netcdf.ExtractionResult.ProcedureTree;
 import static org.geotoolkit.sos.netcdf.FeatureType.*;
 import static org.geotoolkit.sos.netcdf.NetCDFUtils.*;
@@ -45,7 +45,6 @@ import org.geotoolkit.swe.xml.DataArrayProperty;
 import org.geotoolkit.swe.xml.Phenomenon;
 import static org.geotoolkit.swe.xml.v200.TextEncodingType.DEFAULT_ENCODING;
 import org.opengis.geometry.DirectPosition;
-import org.opengis.observation.sampling.SamplingFeature;
 import ucar.ma2.Array;
 import ucar.ma2.ArrayChar;
 import ucar.ma2.ArrayInt;
@@ -317,16 +316,14 @@ public class NetCDFExtractor {
 
         try {
 
-            final List<String> separators = parseSeparatorValues(analyze.file, analyze);
+            final List<String> separators = parseSeparatorValues(analyze);
             final boolean single          = separators.isEmpty();
             
             Array latArray  = null;
             Array lonArray  = null;
             if (analyze.hasSpatial()) {
-                Variable latVar = analyze.vars.get(analyze.latField.label);
-                Variable lonVar = analyze.vars.get(analyze.lonField.label);
-                latArray        = analyze.file.readArrays(Arrays.asList(latVar)).get(0);
-                lonArray        = analyze.file.readArrays(Arrays.asList(lonVar)).get(0);
+                latArray        = analyze.getArrayFromField(analyze.latField);
+                lonArray        = analyze.getArrayFromField(analyze.lonField);
             }
             
             final Variable timeVar  = analyze.vars.get(analyze.mainField.label);
@@ -336,13 +333,8 @@ public class NetCDFExtractor {
             final boolean timeFirst = analyze.mainField.mainVariableFirst;
             
             
-            final Map<String, Array> phenArrays = new HashMap<>();
-            for (Field field : analyze.phenfields) {
-                final Variable phenVar = analyze.vars.get(field.label);
-                final Array phenArray  = analyze.file.readArrays(Arrays.asList(phenVar)).get(0);
-                phenArrays.put(field.label, phenArray);
-                results.fields.add(field.label);
-            }
+            final Map<String, Array> phenArrays = analyze.getPhenomenonArrayMap();
+            results.fields.addAll(phenArrays.keySet());
             
             final AbstractDataRecord datarecord = OMUtils.getDataRecordTimeSeries("2.0.0", analyze.phenfields);
             final Phenomenon phenomenon         = OMUtils.getPhenomenon("2.0.0", analyze.phenfields);
@@ -363,15 +355,12 @@ public class NetCDFExtractor {
                         final double latitude         = getDoubleValue(latArray, analyze.latField.fillValue);
                         final double longitude        = Longitude.normalize(getDoubleValue(lonArray, analyze.lonField.fillValue));
                         if (!Double.isNaN(latitude) && !Double.isNaN(longitude)) {
-                            final DirectPosition position = SOSXmlFactory.buildDirectPosition("2.0.0", null, 2, Arrays.asList(latitude, longitude));
-                            final Point geom              = SOSXmlFactory.buildPoint("2.0.0", "SamplingPoint", position);
-                            final SamplingFeature sp      = SOSXmlFactory.buildSamplingPoint("2.0.0", identifier, null, null, null, geom);
+                            final SamplingFeature sp      = OMUtils.buildSamplingPoint(identifier, latitude, longitude);
                             results.featureOfInterestNames.add(identifier);
-                            results.featureOfInterest.add((org.geotoolkit.sampling.xml.SamplingFeature) sp);
+                            results.featureOfInterest.add(sp);
                             foi                           = SOSXmlFactory.buildFeatureProperty("2.0.0", sp);
-                            gb.addXCoordinate(longitude);
-                            gb.addYCoordinate(latitude);
-                            gb.addGeometry(geom);
+                            gb.addXYCoordinate(longitude, latitude);
+                            gb.addGeometry((AbstractGeometry)sp.getGeometry());
                         }
                     }
 
@@ -437,15 +426,12 @@ public class NetCDFExtractor {
                             final double latitude         = getDoubleValue(latArray, j, analyze.latField.fillValue);
                             final double longitude        = Longitude.normalize(getDoubleValue(lonArray, j, analyze.lonField.fillValue));
                             if (!Double.isNaN(latitude) && !Double.isNaN(longitude)) {
-                                final DirectPosition position = SOSXmlFactory.buildDirectPosition("2.0.0", null, 2, Arrays.asList(latitude, longitude));
-                                final Point geom              = SOSXmlFactory.buildPoint("2.0.0", "SamplingPoint", position);
-                                final SamplingFeature sp      = SOSXmlFactory.buildSamplingPoint("2.0.0", identifier, null, null, null, geom);
+                                final SamplingFeature sp = OMUtils.buildSamplingPoint(identifier, latitude, longitude);
                                 results.featureOfInterestNames.add(identifier);
-                                results.featureOfInterest.add((org.geotoolkit.sampling.xml.SamplingFeature) sp);
+                                results.featureOfInterest.add(sp);
                                 foi                           = SOSXmlFactory.buildFeatureProperty("2.0.0", sp);
-                                gb.addXCoordinate(longitude);
-                                gb.addYCoordinate(latitude);
-                                gb.addGeometry(geom);
+                                gb.addXYCoordinate(longitude, latitude);;
+                                gb.addGeometry((AbstractGeometry)sp.getGeometry());
                             }
                         }
 
@@ -514,24 +500,21 @@ public class NetCDFExtractor {
         LOGGER.info("parsing datablock XY");
 
         try {
-            final List<String> separators = parseSeparatorValues(analyze.file, analyze);
+            final List<String> separators = parseSeparatorValues(analyze);
             final boolean single          = separators.isEmpty();
 
             Array latArray  = null;
             Array lonArray  = null;
             if (analyze.hasSpatial()) {
-                Variable latVar = analyze.vars.get(analyze.latField.label);
-                Variable lonVar = analyze.vars.get(analyze.lonField.label);
-                latArray        = analyze.file.readArrays(Arrays.asList(latVar)).get(0);
-                lonArray        = analyze.file.readArrays(Arrays.asList(lonVar)).get(0);
+                latArray        = analyze.getArrayFromField(analyze.latField);
+                lonArray        = analyze.getArrayFromField(analyze.lonField);
             }
             
             Array timeArray  = null;
             String timeUnits = null;
             if (analyze.hasTime()) {
-                Variable timeVar = analyze.vars.get(analyze.timeField.label);
                 timeUnits        = analyze.timeField.unit;
-                timeArray        = analyze.file.readArrays(Arrays.asList(timeVar)).get(0);
+                timeArray        = analyze.getArrayFromField(analyze.timeField);
             }
             
             final Variable zVar     = analyze.vars.get(analyze.mainField.label);
@@ -539,13 +522,8 @@ public class NetCDFExtractor {
             final boolean constantZ = analyze.mainField.dimension == 1;
             final boolean Zfirst    = analyze.mainField.mainVariableFirst;
 
-            final Map<String, Array> phenArrays = new HashMap<>();
-            for (Field field : analyze.phenfields) {
-                final Variable phenVar = analyze.vars.get(field.label);
-                final Array phenArray  = analyze.file.readArrays(Arrays.asList(phenVar)).get(0);
-                phenArrays.put(field.label, phenArray);
-                results.fields.add(field.label);
-            }
+            final Map<String, Array> phenArrays = analyze.getPhenomenonArrayMap();
+            results.fields.addAll(phenArrays.keySet());
             
             final AbstractDataRecord datarecord = OMUtils.getDataRecordProfile("2.0.0", analyze.phenfields);
             final Phenomenon phenomenon         = OMUtils.getPhenomenon("2.0.0", analyze.phenfields);
@@ -567,15 +545,12 @@ public class NetCDFExtractor {
                         final double latitude         = getDoubleValue(latArray, 0, analyze.latField.fillValue);
                         final double longitude        = Longitude.normalize(getDoubleValue(lonArray, 0, analyze.lonField.fillValue));
                         if (!Double.isNaN(latitude) && !Double.isNaN(longitude)) {
-                            final DirectPosition position = SOSXmlFactory.buildDirectPosition("2.0.0", null, 2, Arrays.asList(latitude, longitude));
-                            final Point geom              = SOSXmlFactory.buildPoint("2.0.0", "SamplingPoint", position);
-                            final SamplingFeature sp      = SOSXmlFactory.buildSamplingPoint("2.0.0", identifier, null, null, null, geom);
+                            final SamplingFeature sp      = OMUtils.buildSamplingPoint(identifier, latitude, longitude);
                             foi                           = SOSXmlFactory.buildFeatureProperty("2.0.0", sp);
                             results.featureOfInterestNames.add(identifier);
-                            results.featureOfInterest.add((org.geotoolkit.sampling.xml.SamplingFeature) sp);
-                            gb.addXCoordinate(longitude);
-                            gb.addYCoordinate(latitude);
-                            gb.addGeometry(geom);
+                            results.featureOfInterest.add(sp);
+                            gb.addXYCoordinate(longitude, latitude);
+                            gb.addGeometry((AbstractGeometry) sp.getGeometry());
                         }
                     }
                     if (analyze.hasTime()) {
@@ -643,15 +618,12 @@ public class NetCDFExtractor {
                             final double latitude         = getDoubleValue(latArray, 0, analyze.latField.fillValue);
                             final double longitude        = Longitude.normalize(getDoubleValue(lonArray, 0, analyze.lonField.fillValue));
                             if (!Double.isNaN(latitude) && !Double.isNaN(longitude)) {
-                                final DirectPosition position = SOSXmlFactory.buildDirectPosition("2.0.0", null, 2, Arrays.asList(latitude, longitude));
-                                final Point geom              = SOSXmlFactory.buildPoint("2.0.0", "SamplingPoint", position);
-                                final SamplingFeature sp      = SOSXmlFactory.buildSamplingPoint("2.0.0", identifier, null, null, null, geom);
+                                final SamplingFeature sp      = OMUtils.buildSamplingPoint(identifier, latitude, longitude);
                                 results.featureOfInterestNames.add(identifier);
-                                results.featureOfInterest.add((org.geotoolkit.sampling.xml.SamplingFeature) sp);
+                                results.featureOfInterest.add(sp);
                                 foi                           = SOSXmlFactory.buildFeatureProperty("2.0.0", sp);
-                                gb.addXCoordinate(longitude);
-                                gb.addYCoordinate(latitude);
-                                gb.addGeometry(geom);
+                                gb.addXYCoordinate(longitude, latitude);
+                                gb.addGeometry((AbstractGeometry) sp.getGeometry());
                             }
                         }
                         if (analyze.hasTime()) {
@@ -724,16 +696,14 @@ public class NetCDFExtractor {
 
         try {
 
-            final List<String> separators = parseSeparatorValues(analyze.file, analyze);
+            final List<String> separators = parseSeparatorValues(analyze);
             final boolean single          = separators.isEmpty();
             
             Array latArray  = null;
             Array lonArray  = null;
             if (analyze.hasSpatial()) {
-                Variable latVar = analyze.vars.get(analyze.latField.label);
-                Variable lonVar = analyze.vars.get(analyze.lonField.label);
-                latArray        = analyze.file.readArrays(Arrays.asList(latVar)).get(0);
-                lonArray        = analyze.file.readArrays(Arrays.asList(lonVar)).get(0);
+                latArray        = analyze.getArrayFromField(analyze.latField);
+                lonArray        = analyze.getArrayFromField(analyze.lonField);
             }
             
             final Variable timeVar  = analyze.vars.get(analyze.mainField.label);
@@ -743,13 +713,8 @@ public class NetCDFExtractor {
             final boolean timeFirst = analyze.mainField.mainVariableFirst;
             
             
-            final Map<String, Array> phenArrays = new HashMap<>();
-            for (Field field : analyze.phenfields) {
-                final Variable phenVar = analyze.vars.get(field.label);
-                final Array phenArray  = analyze.file.readArrays(Arrays.asList(phenVar)).get(0);
-                phenArrays.put(field.label, phenArray);
-                results.fields.add(field.label);
-            }
+            final Map<String, Array> phenArrays = analyze.getPhenomenonArrayMap();
+            results.fields.addAll(phenArrays.keySet());
             
             final AbstractDataRecord datarecord = OMUtils.getDataRecordTrajectory("2.0.0", analyze.phenfields);
             final Phenomenon phenomenon         = OMUtils.getPhenomenon("2.0.0", analyze.phenfields);
@@ -792,8 +757,7 @@ public class NetCDFExtractor {
                                 positions.add(position);
                             }
                             previousPosition = position;
-                            gb.addXCoordinate(longitude);
-                            gb.addYCoordinate(latitude);
+                            gb.addXYCoordinate(longitude, latitude);
                         }
 
                         for (Field field : analyze.phenfields) {
@@ -814,7 +778,7 @@ public class NetCDFExtractor {
                     final LineString geom         = SOSXmlFactory.buildLineString("2.0.0", null, "EPSG:4326", positions);
                     final SamplingFeature sp      = SOSXmlFactory.buildSamplingCurve("2.0.0", identifier, null, null, null, geom, null, null, null);
                     results.featureOfInterestNames.add(identifier);
-                    results.featureOfInterest.add((org.geotoolkit.sampling.xml.SamplingFeature) sp);
+                    results.featureOfInterest.add(sp);
                     final FeatureProperty foi     = SOSXmlFactory.buildFeatureProperty("2.0.0", sp);
                     gb.addGeometry(geom);
 
@@ -872,8 +836,7 @@ public class NetCDFExtractor {
                                     positions.add(position);
                                 }
                                 previousPosition = position;
-                                gb.addXCoordinate(longitude);
-                                gb.addYCoordinate(latitude);
+                                gb.addXYCoordinate(longitude, latitude);
                             }
 
                             for (Field field : analyze.phenfields) {
@@ -896,7 +859,7 @@ public class NetCDFExtractor {
                         final SamplingFeature sp       = SOSXmlFactory.buildSamplingCurve("2.0.0", identifier, null, null, null, geom, null, null, null);
                         final FeatureProperty foi      = SOSXmlFactory.buildFeatureProperty("2.0.0", sp);
                         results.featureOfInterestNames.add(identifier);
-                        results.featureOfInterest.add((org.geotoolkit.sampling.xml.SamplingFeature) sp);
+                        results.featureOfInterest.add(sp);
                         gb.addGeometry(geom);
 
                         final DataArrayProperty result = SOSXmlFactory.buildDataArrayProperty("2.0.0", "array-1", count, "SimpleDataArray", datarecord, DEFAULT_ENCODING, sb.toString());
@@ -951,13 +914,8 @@ public class NetCDFExtractor {
                 final Array timeArray   = analyze.file.readArrays(Arrays.asList(timeVar)).get(0);
 
 
-                final Map<String, Array> phenArrays = new HashMap<>();
-                for (Field field : analyze.phenfields) {
-                    final Variable phenVar = analyze.vars.get(field.label);
-                    final Array phenArray  = analyze.file.readArrays(Arrays.asList(phenVar)).get(0);
-                    phenArrays.put(field.label, phenArray);
-                    results.fields.add(field.label);
-                }
+                final Map<String, Array> phenArrays = analyze.getPhenomenonArrayMap();
+                results.fields.addAll(phenArrays.keySet());
 
                 final AbstractDataRecord datarecord = OMUtils.getDataRecordTimeSeries("2.0.0", analyze.phenfields);
                 final Phenomenon phenomenon         = OMUtils.getPhenomenon("2.0.0", analyze.phenfields);
@@ -978,14 +936,11 @@ public class NetCDFExtractor {
                         final double latitude         = getDoubleValue(latArray, latIndex, analyze.latField.fillValue);
                         final double longitude        = Longitude.normalize(getDoubleValue(lonArray, lonIndex, analyze.lonField.fillValue));
                         if (!Double.isNaN(latitude) && !Double.isNaN(longitude)) {
-                            final DirectPosition position = SOSXmlFactory.buildDirectPosition("2.0.0", null, 2, Arrays.asList(latitude, longitude));
-                            final Point geom              = SOSXmlFactory.buildPoint("2.0.0", "SamplingPoint", position);
-                            final SamplingFeature sp      = SOSXmlFactory.buildSamplingPoint("2.0.0", identifier, null, null, null, geom);
+                            final SamplingFeature sp      = OMUtils.buildSamplingPoint(identifier, latitude, longitude);
                             foi                           = SOSXmlFactory.buildFeatureProperty("2.0.0", sp);
                             results.featureOfInterestNames.add(identifier);
-                            results.featureOfInterest.add((org.geotoolkit.sampling.xml.SamplingFeature) sp);
-                            gb.addXCoordinate(longitude);
-                            gb.addYCoordinate(latitude);
+                            results.featureOfInterest.add(sp);
+                            gb.addXYCoordinate(longitude, latitude);
                         }
 
                         for (int i = 0; i < count; i++) {
@@ -1042,13 +997,13 @@ public class NetCDFExtractor {
         return results;
     }
     
-    private static List<String> parseSeparatorValues(final NetcdfFile file, final NCFieldAnalyze analyze) throws IOException {
+    private static List<String> parseSeparatorValues(final NCFieldAnalyze analyze) throws IOException {
         final List<String> separators = new ArrayList<>();
         if (analyze.separatorField != null) {
             final Variable separatorVar = analyze.vars.get(analyze.separatorField.label);
-            final Array array = file.readArrays(Arrays.asList(separatorVar)).get(0);
+            final Array array = analyze.getArrayFromField(analyze.separatorField);
             if (array instanceof ArrayChar.D2) {
-                final ArrayChar.D2 separatorArray = (ArrayChar.D2) file.readArrays(Arrays.asList(separatorVar)).get(0);
+                final ArrayChar.D2 separatorArray = (ArrayChar.D2) array;
                 final int separatorsSize = separatorVar.getDimension(0).getLength();
                 for (int j = 0; j < separatorsSize; j++) {
                     final int size = separatorVar.getDimension(1).getLength();
@@ -1060,7 +1015,7 @@ public class NetCDFExtractor {
                     separators.add(identifier);
                 }
             } else if (array instanceof ArrayInt.D1) {
-                final ArrayInt.D1 separatorArray = (ArrayInt.D1) file.readArrays(Arrays.asList(separatorVar)).get(0);
+                final ArrayInt.D1 separatorArray = (ArrayInt.D1) array;
                 final int separatorsSize = separatorVar.getDimension(0).getLength();
                 for (int j = 0; j < separatorsSize; j++) {
                     final int id = separatorArray.get(j);
