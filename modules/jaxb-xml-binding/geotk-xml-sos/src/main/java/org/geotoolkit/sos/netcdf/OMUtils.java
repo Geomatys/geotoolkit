@@ -24,19 +24,26 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import org.geotoolkit.gml.xml.FeatureProperty;
+import org.geotoolkit.gml.xml.LineString;
 import org.geotoolkit.gml.xml.Point;
+import org.geotoolkit.observation.xml.AbstractObservation;
+import org.geotoolkit.observation.xml.OMXmlFactory;
 import org.geotoolkit.sampling.xml.SamplingFeature;
 import org.geotoolkit.sos.xml.SOSXmlFactory;
 import org.geotoolkit.swe.xml.AbstractDataComponent;
 import org.geotoolkit.swe.xml.AbstractDataRecord;
 import org.geotoolkit.swe.xml.AnyScalar;
+import org.geotoolkit.swe.xml.DataArrayProperty;
 import org.geotoolkit.swe.xml.Phenomenon;
 import org.geotoolkit.swe.xml.Quantity;
 import org.geotoolkit.swe.xml.TextBlock;
 import org.geotoolkit.swe.xml.UomProperty;
 import org.geotoolkit.swe.xml.v101.CompositePhenomenonType;
 import org.geotoolkit.swe.xml.v101.PhenomenonType;
+import static org.geotoolkit.swe.xml.v200.TextEncodingType.DEFAULT_ENCODING;
 import org.opengis.geometry.DirectPosition;
+import org.opengis.temporal.TemporalGeometricPrimitive;
 
 /**
  *
@@ -163,5 +170,27 @@ public class OMUtils {
         final Point geom              = SOSXmlFactory.buildPoint("2.0.0", "SamplingPoint", position);
         final SamplingFeature sp      = SOSXmlFactory.buildSamplingPoint("2.0.0", identifier, null, null, null, geom);
         return sp;
+    }
+    
+    public static SamplingFeature buildSamplingCurve(final String identifier, final List<DirectPosition> positions) {
+        final LineString geom         = SOSXmlFactory.buildLineString("2.0.0", null, "EPSG:4326", positions);
+        final SamplingFeature sp      = SOSXmlFactory.buildSamplingCurve("2.0.0", identifier, null, null, null, geom, null, null, null);
+        return sp;
+    }
+    
+    public static AbstractObservation buildObservation(final String obsid, final SamplingFeature sf, 
+            final Phenomenon phenomenon, final String procedure, final int count , final AbstractDataRecord datarecord, final StringBuilder sb, final TemporalGeometricPrimitive time) {
+        
+        final DataArrayProperty result = SOSXmlFactory.buildDataArrayProperty("2.0.0", "array-1", count, "SimpleDataArray", datarecord, DEFAULT_ENCODING, sb.toString());
+        final FeatureProperty foi = SOSXmlFactory.buildFeatureProperty("2.0.0", sf);
+        return OMXmlFactory.buildObservation("2.0.0",       // version
+                                             obsid,         // id
+                                             obsid,         // name
+                                             null,          // description
+                                             foi,           // foi
+                                             phenomenon,    // phenomenon
+                                             procedure,     // procedure
+                                             result,        // result
+                                             time);
     }
 }

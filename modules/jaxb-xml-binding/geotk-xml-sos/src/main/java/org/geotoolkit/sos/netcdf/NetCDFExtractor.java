@@ -32,16 +32,12 @@ import java.util.logging.Logger;
 import org.apache.sis.measure.Longitude;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.gml.xml.AbstractGeometry;
-import org.geotoolkit.gml.xml.FeatureProperty;
-import org.geotoolkit.gml.xml.LineString;
-import org.geotoolkit.observation.xml.OMXmlFactory;
 import org.geotoolkit.sampling.xml.SamplingFeature;
 import org.geotoolkit.sos.netcdf.ExtractionResult.ProcedureTree;
 import static org.geotoolkit.sos.netcdf.FeatureType.*;
 import static org.geotoolkit.sos.netcdf.NetCDFUtils.*;
 import org.geotoolkit.sos.xml.SOSXmlFactory;
 import org.geotoolkit.swe.xml.AbstractDataRecord;
-import org.geotoolkit.swe.xml.DataArrayProperty;
 import org.geotoolkit.swe.xml.Phenomenon;
 import static org.geotoolkit.swe.xml.v200.TextEncodingType.DEFAULT_ENCODING;
 import org.opengis.geometry.DirectPosition;
@@ -350,15 +346,13 @@ public class NetCDFExtractor {
                     final GeoSpatialBound gb = new GeoSpatialBound();
                     final String identifier  = UUID.randomUUID().toString();
                     //read geometry (assume point)
-                    FeatureProperty foi = null;
+                    SamplingFeature sp = null;
                     if (analyze.hasSpatial()) {
                         final double latitude         = getDoubleValue(latArray, analyze.latField.fillValue);
                         final double longitude        = Longitude.normalize(getDoubleValue(lonArray, analyze.lonField.fillValue));
                         if (!Double.isNaN(latitude) && !Double.isNaN(longitude)) {
-                            final SamplingFeature sp      = OMUtils.buildSamplingPoint(identifier, latitude, longitude);
-                            results.featureOfInterestNames.add(identifier);
-                            results.featureOfInterest.add(sp);
-                            foi                           = SOSXmlFactory.buildFeatureProperty("2.0.0", sp);
+                            sp = OMUtils.buildSamplingPoint(identifier, latitude, longitude);
+                            results.addFeatureOfInterest(sp);
                             gb.addXYCoordinate(longitude, latitude);
                             gb.addGeometry((AbstractGeometry)sp.getGeometry());
                         }
@@ -392,16 +386,14 @@ public class NetCDFExtractor {
                         sb.deleteCharAt(sb.length() - 1);
                         sb.append(DEFAULT_ENCODING.getBlockSeparator());
                     }
-                    final DataArrayProperty result = SOSXmlFactory.buildDataArrayProperty("2.0.0", "array-1", count, "SimpleDataArray", datarecord, DEFAULT_ENCODING, sb.toString());
-                    results.observations.add(OMXmlFactory.buildObservation("2.0.0",             // version
-                                                  identifier,                      // id
-                                                  identifier,                      // name
-                                                  null,                            // description
-                                                  foi,                             // foi
-                                                  phenomenon,                      // phenomenon
-                                                  procedureID,                     // procedure
-                                                  result,                          // result
-                                                  gb.getTimeObject("2.0.0")));     // time
+                    results.observations.add(OMUtils.buildObservation(identifier,                    // id
+                                                                      sp,                            // foi
+                                                                      phenomenon,                    // phenomenon
+                                                                      procedureID,                   // procedure
+                                                                      count,                         // result
+                                                                      datarecord,                    // result
+                                                                      sb,                            // result
+                                                                      gb.getTimeObject("2.0.0")));   // time
                     results.spatialBound.merge(gb);
                     compo.spatialBound.merge(gb);
                 }
@@ -421,15 +413,13 @@ public class NetCDFExtractor {
                     if (acceptedSensorID == null || acceptedSensorID.contains(currentProcID)) {
                     
                         //read geometry (assume point)
-                        FeatureProperty foi = null;
+                        SamplingFeature sp = null;
                         if (analyze.hasSpatial()) {
                             final double latitude         = getDoubleValue(latArray, j, analyze.latField.fillValue);
                             final double longitude        = Longitude.normalize(getDoubleValue(lonArray, j, analyze.lonField.fillValue));
                             if (!Double.isNaN(latitude) && !Double.isNaN(longitude)) {
-                                final SamplingFeature sp = OMUtils.buildSamplingPoint(identifier, latitude, longitude);
-                                results.featureOfInterestNames.add(identifier);
-                                results.featureOfInterest.add(sp);
-                                foi                           = SOSXmlFactory.buildFeatureProperty("2.0.0", sp);
+                                sp = OMUtils.buildSamplingPoint(identifier, latitude, longitude);
+                                results.addFeatureOfInterest(sp);
                                 gb.addXYCoordinate(longitude, latitude);;
                                 gb.addGeometry((AbstractGeometry)sp.getGeometry());
                             }
@@ -463,21 +453,19 @@ public class NetCDFExtractor {
                             sb.deleteCharAt(sb.length() - 1);
                             sb.append(DEFAULT_ENCODING.getBlockSeparator());
                         }
-                        final DataArrayProperty result = SOSXmlFactory.buildDataArrayProperty("2.0.0", "array-1", count, "SimpleDataArray", datarecord, DEFAULT_ENCODING, sb.toString());
 
                         compo.spatialBound.merge(gb);
                         system.children.add(compo);
 
                         final String obsid = UUID.randomUUID().toString();
-                        results.observations.add(OMXmlFactory.buildObservation("2.0.0",           // version
-                                                      obsid,                         // id
-                                                      obsid,                         // name
-                                                      null,                          // description
-                                                      foi,                           // foi
-                                                      phenomenon,                    // phenomenon
-                                                      currentProcID,            // procedure
-                                                      result,                        // result
-                                                      gb.getTimeObject("2.0.0")));   // time
+                        results.observations.add(OMUtils.buildObservation(obsid,                         // id
+                                                                          sp,                            // foi
+                                                                          phenomenon,                    // phenomenon
+                                                                          currentProcID,                 // procedure
+                                                                          count,                         // result
+                                                                          datarecord,                    // result
+                                                                          sb,                            // result
+                                                                          gb.getTimeObject("2.0.0")));   // time
                         results.spatialBound.merge(gb);
                     }
                 }
@@ -540,15 +528,13 @@ public class NetCDFExtractor {
                     final String identifier  = UUID.randomUUID().toString();
 
                     //read geometry (assume point)
-                    FeatureProperty foi = null;
+                    SamplingFeature sp = null;
                     if (analyze.hasSpatial()) {
                         final double latitude         = getDoubleValue(latArray, 0, analyze.latField.fillValue);
                         final double longitude        = Longitude.normalize(getDoubleValue(lonArray, 0, analyze.lonField.fillValue));
                         if (!Double.isNaN(latitude) && !Double.isNaN(longitude)) {
-                            final SamplingFeature sp      = OMUtils.buildSamplingPoint(identifier, latitude, longitude);
-                            foi                           = SOSXmlFactory.buildFeatureProperty("2.0.0", sp);
-                            results.featureOfInterestNames.add(identifier);
-                            results.featureOfInterest.add(sp);
+                            sp = OMUtils.buildSamplingPoint(identifier, latitude, longitude);
+                            results.addFeatureOfInterest(sp);
                             gb.addXYCoordinate(longitude, latitude);
                             gb.addGeometry((AbstractGeometry) sp.getGeometry());
                         }
@@ -585,16 +571,14 @@ public class NetCDFExtractor {
                         sb.deleteCharAt(sb.length() - 1);
                         sb.append(DEFAULT_ENCODING.getBlockSeparator());
                     }
-                    final DataArrayProperty result = SOSXmlFactory.buildDataArrayProperty("2.0.0", "array-1", count, "SimpleDataArray", datarecord, DEFAULT_ENCODING, sb.toString());
-                    results.observations.add(OMXmlFactory.buildObservation("2.0.0",             // version
-                                                  identifier,                      // id
-                                                  identifier,                      // name
-                                                  null,                            // description
-                                                  foi,                             // foi
-                                                  phenomenon,                      // phenomenon
-                                                  procedureID,                     // procedure
-                                                  result,                          // result
-                                                  gb.getTimeObject("2.0.0")));     // time
+                    results.observations.add(OMUtils.buildObservation(identifier,                    // id
+                                                                      sp,                            // foi
+                                                                      phenomenon,                    // phenomenon
+                                                                      procedureID,                   // procedure
+                                                                      count,                         // result
+                                                                      datarecord,                    // result
+                                                                      sb,                            // result
+                                                                      gb.getTimeObject("2.0.0")));   // time
                     results.spatialBound.merge(gb);
                     compo.spatialBound.merge(gb);
                 }
@@ -613,15 +597,13 @@ public class NetCDFExtractor {
                         
                     if (acceptedSensorID == null || acceptedSensorID.contains(currentProcID)) {
                         //read geometry (assume point)
-                        FeatureProperty foi = null;
+                        SamplingFeature sp = null;
                         if (analyze.hasSpatial()) {
                             final double latitude         = getDoubleValue(latArray, 0, analyze.latField.fillValue);
                             final double longitude        = Longitude.normalize(getDoubleValue(lonArray, 0, analyze.lonField.fillValue));
                             if (!Double.isNaN(latitude) && !Double.isNaN(longitude)) {
-                                final SamplingFeature sp      = OMUtils.buildSamplingPoint(identifier, latitude, longitude);
-                                results.featureOfInterestNames.add(identifier);
-                                results.featureOfInterest.add(sp);
-                                foi                           = SOSXmlFactory.buildFeatureProperty("2.0.0", sp);
+                                sp = OMUtils.buildSamplingPoint(identifier, latitude, longitude);
+                                results.addFeatureOfInterest(sp);
                                 gb.addXYCoordinate(longitude, latitude);
                                 gb.addGeometry((AbstractGeometry) sp.getGeometry());
                             }
@@ -659,21 +641,18 @@ public class NetCDFExtractor {
                             sb.deleteCharAt(sb.length() - 1);
                             sb.append(DEFAULT_ENCODING.getBlockSeparator());
                         }
-                        final DataArrayProperty result = SOSXmlFactory.buildDataArrayProperty("2.0.0", "array-1", count, "SimpleDataArray", datarecord, DEFAULT_ENCODING, sb.toString());
-
                         compo.spatialBound.merge(gb);
                         system.children.add(compo);
 
                         final String obsid = UUID.randomUUID().toString();
-                        results.observations.add(OMXmlFactory.buildObservation("2.0.0",           // version
-                                                      obsid,                         // id
-                                                      obsid,                         // name
-                                                      null,                          // description
-                                                      foi,                           // foi
-                                                      phenomenon,                    // phenomenon
-                                                      currentProcID,            // procedure
-                                                      result,                        // result
-                                                      gb.getTimeObject("2.0.0")));   // time
+                        results.observations.add(OMUtils.buildObservation(obsid,                         // id
+                                                                          sp,                            // foi
+                                                                          phenomenon,                    // phenomenon
+                                                                          currentProcID,                 // procedure
+                                                                          count,                         // result
+                                                                          datarecord,                    // result
+                                                                          sb,                            // result
+                                                                          gb.getTimeObject("2.0.0")));   // time
                         results.spatialBound.merge(gb);
                     }
                 }
@@ -775,23 +754,18 @@ public class NetCDFExtractor {
                         sb.append(DEFAULT_ENCODING.getBlockSeparator());
                     }
 
-                    final LineString geom         = SOSXmlFactory.buildLineString("2.0.0", null, "EPSG:4326", positions);
-                    final SamplingFeature sp      = SOSXmlFactory.buildSamplingCurve("2.0.0", identifier, null, null, null, geom, null, null, null);
-                    results.featureOfInterestNames.add(identifier);
-                    results.featureOfInterest.add(sp);
-                    final FeatureProperty foi     = SOSXmlFactory.buildFeatureProperty("2.0.0", sp);
-                    gb.addGeometry(geom);
+                    final SamplingFeature sp      = OMUtils.buildSamplingCurve(identifier, positions);
+                    results.addFeatureOfInterest(sp);
+                    gb.addGeometry((AbstractGeometry) sp.getGeometry());
 
-                    final DataArrayProperty result = SOSXmlFactory.buildDataArrayProperty("2.0.0", "array-1", count, "SimpleDataArray", datarecord, DEFAULT_ENCODING, sb.toString());
-                    results.observations.add(OMXmlFactory.buildObservation("2.0.0",             // version
-                                                  identifier,                      // id
-                                                  identifier,                      // name
-                                                  null,                            // description
-                                                  foi,                             // foi
-                                                  phenomenon,                      // phenomenon
-                                                  procedureID,                     // procedure
-                                                  result,                          // result
-                                                  gb.getTimeObject("2.0.0")));     // time
+                    results.observations.add(OMUtils.buildObservation(identifier,                    // id
+                                                                      sp,                            // foi
+                                                                      phenomenon,                    // phenomenon
+                                                                      procedureID,                   // procedure
+                                                                      count,                         // result
+                                                                      datarecord,                    // result
+                                                                      sb,                            // result
+                                                                      gb.getTimeObject("2.0.0")));   // time
                     results.spatialBound.merge(gb);
                     compo.spatialBound.merge(gb);
                 }
@@ -855,28 +829,22 @@ public class NetCDFExtractor {
                             sb.append(DEFAULT_ENCODING.getBlockSeparator());
                         }
 
-                        final LineString geom          = SOSXmlFactory.buildLineString("2.0.0", null, "EPSG:4326", positions);
-                        final SamplingFeature sp       = SOSXmlFactory.buildSamplingCurve("2.0.0", identifier, null, null, null, geom, null, null, null);
-                        final FeatureProperty foi      = SOSXmlFactory.buildFeatureProperty("2.0.0", sp);
-                        results.featureOfInterestNames.add(identifier);
-                        results.featureOfInterest.add(sp);
-                        gb.addGeometry(geom);
-
-                        final DataArrayProperty result = SOSXmlFactory.buildDataArrayProperty("2.0.0", "array-1", count, "SimpleDataArray", datarecord, DEFAULT_ENCODING, sb.toString());
+                        final SamplingFeature sp      = OMUtils.buildSamplingCurve(identifier, positions);
+                        results.addFeatureOfInterest(sp);
+                        gb.addGeometry((AbstractGeometry) sp.getGeometry());
 
                         compo.spatialBound.merge(gb);
                         system.children.add(compo);
 
                         final String obsid = UUID.randomUUID().toString();
-                        results.observations.add(OMXmlFactory.buildObservation("2.0.0",           // version
-                                                      obsid,                    // id
-                                                      obsid,                    // name
-                                                      null,                          // description
-                                                      foi,                           // foi
-                                                      phenomenon,                    // phenomenon
-                                                      currentProcID,            // procedure
-                                                      result,                        // result
-                                                      gb.getTimeObject("2.0.0")));   // time
+                        results.observations.add(OMUtils.buildObservation(obsid,                         // id
+                                                                          sp,                            // foi
+                                                                          phenomenon,                    // phenomenon
+                                                                          currentProcID,                 // procedure
+                                                                          count,                         // result
+                                                                          datarecord,                    // result
+                                                                          sb,                            // result
+                                                                          gb.getTimeObject("2.0.0")));   // time
                         results.spatialBound.merge(gb);
                     }
                 }
@@ -932,14 +900,12 @@ public class NetCDFExtractor {
                         final int count          = timeVar.getDimension(0).getLength();
                         final GeoSpatialBound gb = new GeoSpatialBound();
 
-                        FeatureProperty foi = null;
+                        SamplingFeature sp = null;
                         final double latitude         = getDoubleValue(latArray, latIndex, analyze.latField.fillValue);
                         final double longitude        = Longitude.normalize(getDoubleValue(lonArray, lonIndex, analyze.lonField.fillValue));
                         if (!Double.isNaN(latitude) && !Double.isNaN(longitude)) {
-                            final SamplingFeature sp      = OMUtils.buildSamplingPoint(identifier, latitude, longitude);
-                            foi                           = SOSXmlFactory.buildFeatureProperty("2.0.0", sp);
-                            results.featureOfInterestNames.add(identifier);
-                            results.featureOfInterest.add(sp);
+                            sp      = OMUtils.buildSamplingPoint(identifier, latitude, longitude);
+                            results.addFeatureOfInterest(sp);
                             gb.addXYCoordinate(longitude, latitude);
                         }
 
@@ -971,16 +937,14 @@ public class NetCDFExtractor {
                             sb.append(DEFAULT_ENCODING.getBlockSeparator());
                         }
 
-                        final DataArrayProperty result = SOSXmlFactory.buildDataArrayProperty("2.0.0", "array-1", count, "SimpleDataArray", datarecord, DEFAULT_ENCODING, sb.toString());
-                        results.observations.add(OMXmlFactory.buildObservation("2.0.0",           // version
-                                                      identifier,                    // id
-                                                      identifier,                    // name
-                                                      null,                          // description
-                                                      foi,                           // foi
-                                                      phenomenon,                    // phenomenon
-                                                      procedureID,                   // procedure
-                                                      result,                        // result
-                                                      gb.getTimeObject("2.0.0")));   // time
+                        results.observations.add(OMUtils.buildObservation(identifier,                    // id
+                                                                          sp,                            // foi
+                                                                          phenomenon,                    // phenomenon
+                                                                          procedureID,                   // procedure
+                                                                          count,                         // result
+                                                                          datarecord,                    // result
+                                                                          sb,                            // result
+                                                                          gb.getTimeObject("2.0.0")));   // time
                         results.spatialBound.merge(gb);
                     }
                 }

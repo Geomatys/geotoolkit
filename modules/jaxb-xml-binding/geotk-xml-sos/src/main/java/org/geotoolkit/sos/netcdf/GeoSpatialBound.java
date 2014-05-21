@@ -43,6 +43,11 @@ public class GeoSpatialBound {
 
     private final List<AbstractGeometry> geometries = new ArrayList<>();
 
+    public void addDate(final long millis) {
+        final Date d = new Date(millis);
+        addDate(d);
+    }
+    
     public void addDate(final Date date) {
         if (date == null) return;
         if (dateStart == null) {

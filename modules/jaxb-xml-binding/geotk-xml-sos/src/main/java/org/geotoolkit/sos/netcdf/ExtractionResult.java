@@ -43,6 +43,11 @@ public class ExtractionResult {
     
     public final List<ProcedureTree> procedures = new ArrayList<>();
     
+    public void addFeatureOfInterest(final SamplingFeature sf) {
+        this.featureOfInterest.add(sf);
+        this.featureOfInterestNames.add(sf.getId());
+    }
+    
     public static class ProcedureTree {
         
         public final String id;

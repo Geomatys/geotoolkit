@@ -379,7 +379,7 @@ public class OMXmlFactory {
         return null;
     }
     
-    public static Observation buildObservation(final String version, final String id, final String name, final String definition, final FeatureProperty sampledFeature, final org.opengis.observation.Phenomenon phen,
+    public static AbstractObservation buildObservation(final String version, final String id, final String name, final String definition, final FeatureProperty sampledFeature, final org.opengis.observation.Phenomenon phen,
             final String procedure, final Object result, final TemporalGeometricPrimitive time) {
         if ("1.0.0".equals(version)) {
             if (sampledFeature != null && !(sampledFeature instanceof org.geotoolkit.gml.xml.v311.FeaturePropertyType)) {
@@ -421,7 +421,7 @@ public class OMXmlFactory {
         }
     }
     
-    public static Observation buildMeasurement(final String version, final String id, final String name, final String definition, final FeatureProperty sampledFeature, final org.opengis.observation.Phenomenon phen,
+    public static AbstractObservation buildMeasurement(final String version, final String id, final String name, final String definition, final FeatureProperty sampledFeature, final org.opengis.observation.Phenomenon phen,
             final String procedure, final Object result, final TemporalGeometricPrimitive time) {
         if ("1.0.0".equals(version)) {
             if (sampledFeature != null && !(sampledFeature instanceof org.geotoolkit.gml.xml.v311.FeaturePropertyType)) {
