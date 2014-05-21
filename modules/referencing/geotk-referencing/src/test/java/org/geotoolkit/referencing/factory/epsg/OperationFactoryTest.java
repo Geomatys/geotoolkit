@@ -215,6 +215,7 @@ public final strictfp class OperationFactoryTest extends EpsgFactoryTestBase {
      * @throws FactoryException Should not happen.
      */
     @Test
+    @Ignore("Will be re-enabled after the port to Apache SIS.")
     public final void testAreaDependant() throws FactoryException {
         assumeNotNull(factory);
         final int[] codes = {
