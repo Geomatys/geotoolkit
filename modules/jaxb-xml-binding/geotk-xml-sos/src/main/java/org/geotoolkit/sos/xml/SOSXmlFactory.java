@@ -775,7 +775,7 @@ public class SOSXmlFactory {
         }
     }
     
-    public static SamplingFeature buildSamplingFeature(final String version, final String id, final String name, final String description, final FeatureProperty sampledFeature) {
+    public static  org.geotoolkit.sampling.xml.SamplingFeature buildSamplingFeature(final String version, final String id, final String name, final String description, final FeatureProperty sampledFeature) {
         if ("1.0.0".equals(version)) {
             if (sampledFeature != null && !(sampledFeature instanceof org.geotoolkit.gml.xml.v311.FeaturePropertyType)) {
                 throw new IllegalArgumentException("unexpected object version for sampled feature element");
@@ -800,7 +800,7 @@ public class SOSXmlFactory {
      * @param feature
      * @return
      */
-    public static SamplingFeature buildSamplingPoint(final String version, final String id, final String name, final String description, final FeatureProperty sampledFeature,
+    public static  org.geotoolkit.sampling.xml.SamplingFeature buildSamplingPoint(final String version, final String id, final String name, final String description, final FeatureProperty sampledFeature,
                               final Point location) {
         if ("1.0.0".equals(version)) {
             if (sampledFeature != null && !(sampledFeature instanceof org.geotoolkit.gml.xml.v311.FeaturePropertyType)) {
@@ -828,7 +828,7 @@ public class SOSXmlFactory {
         }
     }
     
-    public static SamplingFeature buildSamplingCurve(final String version, final String id, final String name, final String description, final FeatureProperty sampledFeature,
+    public static  org.geotoolkit.sampling.xml.SamplingFeature buildSamplingCurve(final String version, final String id, final String name, final String description, final FeatureProperty sampledFeature,
                               final LineString location, final Double lengthValue, final String uom, final Envelope env) {
         if ("1.0.0".equals(version)) {
             if (sampledFeature != null && !(sampledFeature instanceof org.geotoolkit.gml.xml.v311.FeaturePropertyType)) {
@@ -867,7 +867,7 @@ public class SOSXmlFactory {
         }
     }
 
-    public static SamplingFeature buildSamplingPolygon(final String version, final String id, final String name, final String description, final FeatureProperty sampledFeature,
+    public static  org.geotoolkit.sampling.xml.SamplingFeature buildSamplingPolygon(final String version, final String id, final String name, final String description, final FeatureProperty sampledFeature,
                               final Polygon location, final Double areaValue, final String uom, final Envelope env) {
         if ("1.0.0".equals(version)) {
             if (sampledFeature != null && !(sampledFeature instanceof org.geotoolkit.gml.xml.v311.FeaturePropertyType)) {

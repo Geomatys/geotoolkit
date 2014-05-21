@@ -43,6 +43,11 @@ public class GeoSpatialBound {
 
     private final List<AbstractGeometry> geometries = new ArrayList<>();
 
+    public void addDate(final long millis) {
+        final Date d = new Date(millis);
+        addDate(d);
+    }
+    
     public void addDate(final Date date) {
         if (date == null) return;
         if (dateStart == null) {
@@ -57,6 +62,11 @@ public class GeoSpatialBound {
         if (dateEnd.getTime() < date.getTime()) {
             dateEnd = date;
         }
+    }
+    
+    public void addXYCoordinate(final Double x, final Double y) {
+        addXCoordinate(x);
+        addYCoordinate(y);
     }
 
     public void addXCoordinate(final Double x) {
@@ -107,7 +117,7 @@ public class GeoSpatialBound {
             geometries.add(geometry);
         }
     }
-
+    
     public boolean hasFullSpatialCoordinates() {
         return maxx != null && minx != null &&
                maxy != null && miny != null;
@@ -175,7 +185,6 @@ public class GeoSpatialBound {
         
         positions.add(miny);
         positions.add(minx);
-        
         
         if ("1.0.0".equals(version)) {
             final org.geotoolkit.gml.xml.v311.DirectPositionListType posList = new org.geotoolkit.gml.xml.v311.DirectPositionListType(positions);

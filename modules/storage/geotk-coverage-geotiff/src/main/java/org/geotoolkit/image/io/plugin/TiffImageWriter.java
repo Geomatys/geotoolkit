@@ -388,15 +388,15 @@ public class TiffImageWriter extends SpatialImageWriter {
         
         final int imageWidth;
         final short imgWT = (short) iwObj.get(ATT_TYPE);
-        imageWidth = (imgWT == TYPE_USHORT) ? ((short[])  iwObj.get(ATT_VALUE))[0] : ((int[])  iwObj.get(ATT_VALUE))[0];
+        imageWidth = (imgWT == TYPE_USHORT) ? ((short[])  iwObj.get(ATT_VALUE))[0] & 0xFFFF : ((int[])  iwObj.get(ATT_VALUE))[0];
         
         final short imgHT = (short) iwObj.get(ATT_TYPE);
-        final int imageHeight = (imgHT == TYPE_USHORT) ? ((short[])  ihObj.get(ATT_VALUE))[0] : ((int[])  ihObj.get(ATT_VALUE))[0];
+        final int imageHeight = (imgHT == TYPE_USHORT) ? ((short[])  ihObj.get(ATT_VALUE))[0] & 0xFFFF: ((int[])  ihObj.get(ATT_VALUE))[0];
         
         final short samplPerPix     = ((short[]) isppObj.get(ATT_VALUE))[0];
         bitPerSample   = (short) ((short[]) ibpsObj.get(ATT_VALUE))[0];
         
-        isBigTIFF = (imageWidth * imageHeight * samplPerPix * bitPerSample / Byte.SIZE) >= 4E9; //-- 4Go
+        isBigTIFF = ((long) imageWidth * imageHeight * samplPerPix * bitPerSample / Byte.SIZE) >= 1E9; //-- 1Go
         
         destRegion = new Rectangle(0, 0, imageWidth, imageHeight);
 
@@ -414,16 +414,21 @@ public class TiffImageWriter extends SpatialImageWriter {
             final Map<String, Object> sbcObj   =  headProperties.get(StripByteCounts);
             
             final short rpsT = (short) rpsObj.get(ATT_TYPE);
-            rowsPerStrip = (rpsT == TYPE_USHORT) ? ((short[]) rpsObj.get(ATT_VALUE))[0] : ((int[]) rpsObj.get(ATT_VALUE))[0];
+            rowsPerStrip = (rpsT == TYPE_USHORT) ? ((short[]) rpsObj.get(ATT_VALUE))[0] & 0xFFFF : ((int[]) rpsObj.get(ATT_VALUE))[0];
             replaceOffsetArray = sOffObj.get(ATT_VALUE);
+            tileRegion = destRegion;
         } else {
             final short twT = (short) twObj.get(ATT_TYPE);
-            currentImgTW   = (twT == TYPE_USHORT) ? ((short[]) twObj.get(ATT_VALUE))[0] : ((int[]) twObj.get(ATT_VALUE))[0];
+            currentImgTW   = (twT == TYPE_USHORT) ? ((short[]) twObj.get(ATT_VALUE))[0] & 0xFFFF : ((int[]) twObj.get(ATT_VALUE))[0];
             
             final short thT = (short) thObj.get(ATT_TYPE);
-            currentImgTH  = (thT == TYPE_USHORT) ? ((short[]) thObj.get(ATT_VALUE))[0] : ((int[]) thObj.get(ATT_VALUE))[0];
+            currentImgTH  = (thT == TYPE_USHORT) ? ((short[]) thObj.get(ATT_VALUE))[0] & 0xFFFF : ((int[]) thObj.get(ATT_VALUE))[0];
             
             replaceOffsetArray = toObj.get(ATT_VALUE);
+            
+            final int numXTile = (imageWidth + currentImgTW - 1)  / currentImgTW;
+            final int numYTile = (imageHeight + currentImgTH - 1) / currentImgTH;
+            tileRegion = new Rectangle(0, 0, numXTile * currentImgTW, numYTile * currentImgTH);
         }
     }
     
@@ -624,6 +629,8 @@ public class TiffImageWriter extends SpatialImageWriter {
 
     /**
      * {@inheritDoc }
+     * 
+     * If param is {@code null} a default tiling mode 256 x 256 is choosen.
      */
     @Override
     public void prepareWriteEmpty(IIOMetadata streamMetadata, ImageTypeSpecifier imageType, int width, int height, IIOMetadata imageMetadata, List<? extends BufferedImage> thumbnails, ImageWriteParam param) throws IOException {
@@ -632,7 +639,7 @@ public class TiffImageWriter extends SpatialImageWriter {
             param = getDefaultWriteParam();
         }
         // TODO : Remove test when tiles won't be necessary.
-        if (param.getTileWidth() <= 0 || param.getTileHeight() <= 0) {
+        if (param.getTilingMode() != ImageWriteParam.MODE_EXPLICIT || param.getTileWidth() <= 0 || param.getTileHeight() <= 0) {
             //-- with prepare write empty force writing by tile 256 x 256--//
             param.setTilingMode(ImageWriteParam.MODE_EXPLICIT);
             param.setTiling(256, 256, 0, 0);
@@ -646,7 +653,7 @@ public class TiffImageWriter extends SpatialImageWriter {
         for (int i = 0; i < sampleSize.length; i++) {
             pixelSize += sampleSize[i];
         }
-        isBigTIFF = (width * height * pixelSize / Byte.SIZE) >= 4E9; //-- >= 4Go
+        isBigTIFF = (long) width * height * pixelSize / Byte.SIZE >= 1E9; //-- >= 4Go
         
         if (channel != null) {
             //-- We authorize to write none big tiff image after big tiff already writen but not the inverse --//
@@ -747,7 +754,7 @@ public class TiffImageWriter extends SpatialImageWriter {
                 byteCountArraySize = offsetArraySize = numTiles * TYPE_SIZE[TYPE_INT];
             }
 
-            final int buffPos = (int) channel.getStreamPosition();
+            final long buffPos = channel.getStreamPosition();
 
             //-- to know if bytecountArray will be written deffered
             final int datasize = (isBigTIFF) ? Long.SIZE / Byte.SIZE : Integer.SIZE / Byte.SIZE;
@@ -755,7 +762,7 @@ public class TiffImageWriter extends SpatialImageWriter {
             final long destOffsetArraySize    = (offsetArraySize    > datasize) ? offsetArraySize    : 0;
 
             //-- write current tile byte position --//
-            final int currentByteCount = currentImgTW * currentImgTH * pixelSize / Byte.SIZE;
+            final long currentByteCount = (long) currentImgTW * currentImgTH * pixelSize / Byte.SIZE;
             final long tileOffsetBeg   = buffPos + destByteCountArraySize + destOffsetArraySize;//-- position in bytes
             long currentoffset         = tileOffsetBeg;
 
@@ -1192,8 +1199,8 @@ public class TiffImageWriter extends SpatialImageWriter {
         for (int i = 0; i < sampleSize.length; i++) {
             pixelSize += sampleSize[i];
         }
-        final int imageWeight = imgWidth * imgHeight * pixelSize / Byte.SIZE;
-        return imageWeight >= 4E9;// >= 4Go
+        final long imageWeight = (long) imgWidth * imgHeight * pixelSize / Byte.SIZE;
+        return imageWeight >= 1E9;// >= 1Go
     }
 
     /**
@@ -1426,7 +1433,7 @@ public class TiffImageWriter extends SpatialImageWriter {
         
         //-- compression --//
         compression = 1; 
-        if (param.canWriteCompressed() && param.getCompressionMode() == ImageWriteParam.MODE_EXPLICIT) {
+        if (param != null && param.canWriteCompressed() && param.getCompressionMode() == ImageWriteParam.MODE_EXPLICIT) {
             final String comp = param.getCompressionType();
             if (comp != null) {
                 if (lzw.equalsIgnoreCase(comp)) {
@@ -1554,7 +1561,7 @@ public class TiffImageWriter extends SpatialImageWriter {
         final int ctMaxY = (imgInterRepMaxY - trMinY + cellHeight - 1) / cellHeight;
         //----------------------------------------------------------------//
         
-        final int destTileByteCount = cellHeight * cellWidth * imagePixelStride * sampleSize;
+//        final int destTileByteCount = cellHeight * cellWidth * imagePixelStride * sampleSize;
         
 //        channel.seek(replacePixelPos);//-- faire dans la boucle
 //        replacePixelPos = (isBigTIFF) ? Array.getLong(replaceOffsetArray, 0) : Array.getInt(replaceOffsetArray, 0);
@@ -1571,7 +1578,7 @@ public class TiffImageWriter extends SpatialImageWriter {
                     assert channel.getBitOffset() == 0;
                     
 //                    final long dstTileOffset = (cty * dstNumXT + ctx) * destTileByteCount; 
-                    final long dstTileOffset = (isBigTIFF) ? Array.getLong(replaceOffsetArray, (cty * dstNumXT + ctx)) : Array.getInt(replaceOffsetArray, (cty * dstNumXT + ctx));
+                    final long dstTileOffset = (isBigTIFF) ? Array.getLong(replaceOffsetArray, (cty * dstNumXT + ctx)) : (Array.getInt(replaceOffsetArray, (cty * dstNumXT + ctx)) & 0xFFFFFFFFL);
                     
                     //-- compute current destination tile coordinates in image space  
                     final int ctRminy = trMinY  + cty * cellHeight;
@@ -1815,7 +1822,7 @@ public class TiffImageWriter extends SpatialImageWriter {
          && compression           == 1 // no compression
          && tileRegion.equals(imageBoundary)) {
             
-            final int currentByteCount = currentImgTW * currentImgTH * bitPerSample *  imagePixelStride / Byte.SIZE;
+            final long currentByteCount = (long) currentImgTW * currentImgTH * bitPerSample *  imagePixelStride / Byte.SIZE;
             long currentoffset = buffPos + byteCountArraySize + offsetArraySize;
             
             // fill byte count array
@@ -1887,7 +1894,7 @@ public class TiffImageWriter extends SpatialImageWriter {
             return;
         }        
         
-        final int destTileByteCount = currentImgTH * currentImgTW * imagePixelStride * sampleSize;
+        final long destTileByteCount = (long) currentImgTH * currentImgTW * imagePixelStride * sampleSize;
         
         //-- initialization for packBit compression --//
         rowByte32773Pos   = 0;
@@ -1986,9 +1993,6 @@ public class TiffImageWriter extends SpatialImageWriter {
                                     assert ((endx - debx + subsampleX - 1) / subsampleX + paddingXLength / imagePixelStride) == currentImgTW : "write width = "+((endx - debx + subsampleX - 1) / subsampleX + paddingXLength / imagePixelStride);
                                     write(paddingXArray, dataType, 0, paddingXLength, bitPerSample, compression);
                                 }
-                                
-//                                System.out.println("");
-//                                System.out.println("next line");
                                 
                                 // -- next tile X coordinates
                                 cuImgTileMinX += imageTileWidth;
