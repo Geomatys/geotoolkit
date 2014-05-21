@@ -23,7 +23,6 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -33,13 +32,13 @@ import org.apache.sis.measure.Longitude;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.gml.xml.AbstractGeometry;
 import org.geotoolkit.sampling.xml.SamplingFeature;
+import org.geotoolkit.sos.MeasureStringBuilder;
 import org.geotoolkit.sos.netcdf.ExtractionResult.ProcedureTree;
 import static org.geotoolkit.sos.netcdf.FeatureType.*;
 import static org.geotoolkit.sos.netcdf.NetCDFUtils.*;
 import org.geotoolkit.sos.xml.SOSXmlFactory;
 import org.geotoolkit.swe.xml.AbstractDataRecord;
 import org.geotoolkit.swe.xml.Phenomenon;
-import static org.geotoolkit.swe.xml.v200.TextEncodingType.DEFAULT_ENCODING;
 import org.opengis.geometry.DirectPosition;
 import ucar.ma2.Array;
 import ucar.ma2.ArrayChar;
@@ -341,10 +340,10 @@ public class NetCDFExtractor {
                     final ProcedureTree compo = new ProcedureTree(procedureID, "Component");
                     results.procedures.add(compo);
 
-                    final StringBuilder sb   = new StringBuilder();
-                    final int count          = timeVar.getDimension(0).getLength();
-                    final GeoSpatialBound gb = new GeoSpatialBound();
-                    final String identifier  = UUID.randomUUID().toString();
+                    final MeasureStringBuilder sb = new MeasureStringBuilder();
+                    final int count               = timeVar.getDimension(0).getLength();
+                    final GeoSpatialBound gb      = new GeoSpatialBound();
+                    final String identifier       = UUID.randomUUID().toString();
                     //read geometry (assume point)
                     SamplingFeature sp = null;
                     if (analyze.hasSpatial()) {
@@ -361,30 +360,20 @@ public class NetCDFExtractor {
                     // iterating over time
                     for (int i = 0; i < count; i++) {
 
-                        long millis = getTimeValue(timeUnits, timeArray, i);
+                        final long millis = getTimeValue(timeUnits, timeArray, i);
 
                         if (millis == 0 || millis == ((Integer.MIN_VALUE * -1) + 1)) {
                             continue;
                         }
-                        final Date d = new Date(millis);
-                        gb.addDate(d);
-
-                        synchronized(FORMATTER) {
-                            sb.append(FORMATTER.format(d)).append(DEFAULT_ENCODING.getTokenSeparator());
-                        }
+                        gb.addDate(millis);
+                        sb.appendDate(millis);
+                        
                         for (Field field : analyze.phenfields) {
                             final Array phenArray = phenArrays.get(field.label);
                             final Double value    = getDoubleValue(phenArray, i, field.fillValue);
-
-                            //empty string for missing value
-                            if (!Double.isNaN(value)) {
-                                sb.append(value);
-                            }
-                            sb.append(DEFAULT_ENCODING.getTokenSeparator());
+                            sb.appendValue(value);
                         }
-                        // remove the last token separator
-                        sb.deleteCharAt(sb.length() - 1);
-                        sb.append(DEFAULT_ENCODING.getBlockSeparator());
+                        sb.closeBlock();
                     }
                     results.observations.add(OMUtils.buildObservation(identifier,                    // id
                                                                       sp,                            // foi
@@ -403,12 +392,12 @@ public class NetCDFExtractor {
                 results.procedures.add(system);
                 for (int j = 0; j < separators.size(); j++) {
                     
-                    final String identifier    = separators.get(j);
-                    final StringBuilder sb     = new StringBuilder();
-                    final int count            = getGoodTimeDimension(timeVar, analyze.dimensionSeparator).getLength();
-                    final GeoSpatialBound gb   = new GeoSpatialBound();
-                    final String currentProcID = procedureID + '-' + identifier;
-                    final ProcedureTree compo  = new ProcedureTree(currentProcID, "Component");
+                    final String identifier       = separators.get(j);
+                    final MeasureStringBuilder sb = new MeasureStringBuilder();
+                    final int count               = getGoodTimeDimension(timeVar, analyze.dimensionSeparator).getLength();
+                    final GeoSpatialBound gb      = new GeoSpatialBound();
+                    final String currentProcID    = procedureID + '-' + identifier;
+                    final ProcedureTree compo     = new ProcedureTree(currentProcID, "Component");
                     
                     if (acceptedSensorID == null || acceptedSensorID.contains(currentProcID)) {
                     
@@ -420,38 +409,28 @@ public class NetCDFExtractor {
                             if (!Double.isNaN(latitude) && !Double.isNaN(longitude)) {
                                 sp = OMUtils.buildSamplingPoint(identifier, latitude, longitude);
                                 results.addFeatureOfInterest(sp);
-                                gb.addXYCoordinate(longitude, latitude);;
+                                gb.addXYCoordinate(longitude, latitude);
                                 gb.addGeometry((AbstractGeometry)sp.getGeometry());
                             }
                         }
 
                         for (int i = 0; i < count; i++) {
 
-                            long millis = getTimeValue(timeUnits, timeFirst, constantT, timeArray, i, j);
+                            final long millis = getTimeValue(timeUnits, timeFirst, constantT, timeArray, i, j);
 
                             if (millis == 0 || millis == ((Integer.MIN_VALUE * -1) + 1)) {
                                 continue;
                             }
-                            final Date d = new Date(millis);
-                            gb.addDate(d);
-
-                            synchronized(FORMATTER) {
-                                sb.append(FORMATTER.format(d)).append(DEFAULT_ENCODING.getTokenSeparator());
-                            }
+                            gb.addDate(millis);
+                            sb.appendDate(millis);
                             for (Field field : analyze.phenfields) {
                                 final Array phenArray   = phenArrays.get(field.label);
                                 final boolean mainFirst = field.mainVariableFirst;
                                 final Double value      = getDoubleValue(mainFirst, phenArray, i, j, field.fillValue);
-
-                                //empty string for missing value
-                                if (!Double.isNaN(value)) {
-                                    sb.append(value);
-                                }
-                                sb.append(DEFAULT_ENCODING.getTokenSeparator());
+                                sb.appendValue(value);
                             }
                             // remove the last token separator
-                            sb.deleteCharAt(sb.length() - 1);
-                            sb.append(DEFAULT_ENCODING.getBlockSeparator());
+                            sb.closeBlock();
                         }
 
                         compo.spatialBound.merge(gb);
@@ -522,10 +501,10 @@ public class NetCDFExtractor {
                 if (acceptedSensorID == null || acceptedSensorID.contains(procedureID)) {
                     results.procedures.add(compo);
 
-                    final StringBuilder sb   = new StringBuilder();
-                    final int count          = zVar.getDimension(0).getLength();
-                    final GeoSpatialBound gb = new GeoSpatialBound();
-                    final String identifier  = UUID.randomUUID().toString();
+                    final MeasureStringBuilder sb = new MeasureStringBuilder();
+                    final int count               = zVar.getDimension(0).getLength();
+                    final GeoSpatialBound gb      = new GeoSpatialBound();
+                    final String identifier       = UUID.randomUUID().toString();
 
                     //read geometry (assume point)
                     SamplingFeature sp = null;
@@ -540,36 +519,27 @@ public class NetCDFExtractor {
                         }
                     }
                     if (analyze.hasTime()) {
-                        long millis = getTimeValue(timeUnits, timeArray, 0);
+                        final long millis = getTimeValue(timeUnits, timeArray, 0);
 
                         if (millis != 0 && millis != ((Integer.MIN_VALUE * -1) + 1)) {
-                            final Date d = new Date(millis);
-                            gb.addDate(d);
+                            gb.addDate(millis);
                         }
                     }
 
                     for (int zIndex = 0; zIndex < zVar.getDimension(0).getLength(); zIndex++) {
 
                         double zLevel = getDoubleValue(zArray, zIndex, analyze.mainField.fillValue);
-                        sb.append(zLevel).append(DEFAULT_ENCODING.getTokenSeparator());
                         if (zLevel == 0 || zLevel == FILL_VALUE) {
                             continue;
                         }
-                        sb.append(zLevel).append(DEFAULT_ENCODING.getTokenSeparator());
+                        sb.appendValue(zLevel);
 
                         for (Field field : analyze.phenfields) {
                             final Array phenArray = phenArrays.get(field.label);
                             final double value    = getDoubleValue(phenArray, zIndex, field.fillValue);
-
-                            //empty string for missing value
-                            if (!Double.isNaN(value)) {
-                                sb.append(value);
-                            }
-                            sb.append(DEFAULT_ENCODING.getTokenSeparator());
+                            sb.appendValue(value);
                         }
-                        // remove the last token separator
-                        sb.deleteCharAt(sb.length() - 1);
-                        sb.append(DEFAULT_ENCODING.getBlockSeparator());
+                        sb.closeBlock();
                     }
                     results.observations.add(OMUtils.buildObservation(identifier,                    // id
                                                                       sp,                            // foi
@@ -609,37 +579,29 @@ public class NetCDFExtractor {
                             }
                         }
                         if (analyze.hasTime()) {
-                            long millis = getTimeValue(timeUnits, timeArray, 0);
+                            final long millis = getTimeValue(timeUnits, timeArray, 0);
 
                             if (millis != 0 && millis != ((Integer.MIN_VALUE * -1) + 1)) {
-                                final Date d = new Date(millis);
-                                gb.addDate(d);
+                                gb.addDate(millis);
                             }
                         }
 
-                        final StringBuilder sb = new StringBuilder();
+                        final MeasureStringBuilder sb = new MeasureStringBuilder();
                         for (int zIndex = 0; zIndex < zVar.getDimension(0).getLength(); zIndex++) {
 
                             double zLevel = getZValue(Zfirst, constantZ, zArray, zIndex, profileIndex, analyze.mainField.fillValue);
                             if (zLevel == 0 || zLevel == FILL_VALUE) {
                                 continue;
                             }
-                            sb.append(zLevel).append(DEFAULT_ENCODING.getTokenSeparator());
+                            sb.appendValue(zLevel);
 
                             for (Field field : analyze.phenfields) {
                                 final Array phenArray   = phenArrays.get(field.label);
                                 final boolean mainFirst = field.mainVariableFirst;
                                 final double value      = getDoubleValue(mainFirst, phenArray, zIndex, profileIndex, field.fillValue);
-
-                                //empty string for missing value
-                                if (!Double.isNaN(value)) {
-                                    sb.append(value);
-                                }
-                                sb.append(DEFAULT_ENCODING.getTokenSeparator());
+                                sb.appendValue(value);
                             }
-                            // remove the last token separator
-                            sb.deleteCharAt(sb.length() - 1);
-                            sb.append(DEFAULT_ENCODING.getBlockSeparator());
+                            sb.closeBlock();
                         }
                         compo.spatialBound.merge(gb);
                         system.children.add(compo);
@@ -704,10 +666,10 @@ public class NetCDFExtractor {
                 if (acceptedSensorID == null || acceptedSensorID.contains(procedureID)) {
                     results.procedures.add(compo);
 
-                    final StringBuilder sb   = new StringBuilder();
-                    final int count          = timeVar.getDimension(0).getLength();
-                    final GeoSpatialBound gb = new GeoSpatialBound();
-                    final String identifier  = UUID.randomUUID().toString();
+                    final MeasureStringBuilder sb = new MeasureStringBuilder();
+                    final int count               = timeVar.getDimension(0).getLength();
+                    final GeoSpatialBound gb      = new GeoSpatialBound();
+                    final String identifier       = UUID.randomUUID().toString();
 
                     final List<DirectPosition> positions = new ArrayList<>();
                     DirectPosition previousPosition = null;
@@ -715,21 +677,18 @@ public class NetCDFExtractor {
                     // iterating over time
                     for (int i = 0; i < count; i++) {
 
-                        long millis = getTimeValue(timeUnits, timeArray, i);
+                        final long millis = getTimeValue(timeUnits, timeArray, i);
 
                         if (millis == 0 || millis == ((Integer.MIN_VALUE * -1) + 1)) {
                             continue;
                         }
-                        final Date d = new Date(millis);
-                        gb.addDate(d);
-                        synchronized(FORMATTER) {
-                            sb.append(FORMATTER.format(d)).append(DEFAULT_ENCODING.getTokenSeparator());
-                        }
+                        gb.addDate(millis);
+                        sb.appendDate(millis);
 
                         final double latitude         = getDoubleValue(latArray, i, analyze.latField.fillValue);
-                        sb.append(latitude).append(DEFAULT_ENCODING.getTokenSeparator());
+                        sb.appendValue(latitude);
                         final double longitude        = Longitude.normalize(getDoubleValue(lonArray, i, analyze.lonField.fillValue));
-                        sb.append(longitude).append(DEFAULT_ENCODING.getTokenSeparator());
+                        sb.appendValue(longitude);
                         if (!Double.isNaN(latitude) && !Double.isNaN(longitude)) {
                             final DirectPosition position = SOSXmlFactory.buildDirectPosition("2.0.0", null, 2, Arrays.asList(latitude, longitude));
                             if (!position.equals(previousPosition)) {
@@ -742,16 +701,9 @@ public class NetCDFExtractor {
                         for (Field field : analyze.phenfields) {
                             final Array phenArray = phenArrays.get(field.label);
                             final Double value    = getDoubleValue(phenArray, i, field.fillValue);
-
-                            //empty string for missing value
-                            if (!Double.isNaN(value)) {
-                                sb.append(value);
-                            }
-                            sb.append(DEFAULT_ENCODING.getTokenSeparator());
+                            sb.appendValue(value);
                         }
-                        // remove the last token separator
-                        sb.deleteCharAt(sb.length() - 1);
-                        sb.append(DEFAULT_ENCODING.getBlockSeparator());
+                        sb.closeBlock();
                     }
 
                     final SamplingFeature sp      = OMUtils.buildSamplingCurve(identifier, positions);
@@ -776,12 +728,12 @@ public class NetCDFExtractor {
                 
                 for (int j = 0; j < separators.size(); j++) {
                     
-                    final String identifier    = separators.get(j);
-                    final StringBuilder sb     = new StringBuilder();
-                    int count                  = timeVar.getDimension(0).getLength();
-                    final GeoSpatialBound gb   = new GeoSpatialBound();
-                    final String currentProcID = procedureID + '-' + identifier;
-                    final ProcedureTree compo  = new ProcedureTree(currentProcID, "Component");
+                    final String identifier       = separators.get(j);
+                    final MeasureStringBuilder sb = new MeasureStringBuilder();
+                    int count                     = timeVar.getDimension(0).getLength();
+                    final GeoSpatialBound gb      = new GeoSpatialBound();
+                    final String currentProcID    = procedureID + '-' + identifier;
+                    final ProcedureTree compo     = new ProcedureTree(currentProcID, "Component");
                         
                     if (acceptedSensorID == null || acceptedSensorID.contains(currentProcID)) {
                         final List<DirectPosition> positions = new ArrayList<>();
@@ -789,21 +741,18 @@ public class NetCDFExtractor {
 
                         for (int i = 0; i < count; i++) {
 
-                            long millis = getTimeValue(timeUnits, timeFirst, constantT, timeArray, i, j);
+                            final long millis = getTimeValue(timeUnits, timeFirst, constantT, timeArray, i, j);
 
                             if (millis == 0 || millis == ((Integer.MIN_VALUE * -1) + 1)) {
                                 continue;
                             }
-                            final Date d = new Date(millis);
-                            gb.addDate(d);
-                            synchronized(FORMATTER) {
-                                sb.append(FORMATTER.format(d)).append(DEFAULT_ENCODING.getTokenSeparator());
-                            }
+                            gb.addDate(millis);
+                            sb.appendDate(millis);
 
-                            final double latitude         = getDoubleValue(true, latArray, i, j, analyze.latField.fillValue);
-                            sb.append(latitude).append(DEFAULT_ENCODING.getTokenSeparator());
-                            final double longitude        = Longitude.normalize(getDoubleValue(true, lonArray, i, j, analyze.lonField.fillValue));
-                            sb.append(longitude).append(DEFAULT_ENCODING.getTokenSeparator());
+                            final double latitude  = getDoubleValue(true, latArray, i, j, analyze.latField.fillValue);
+                            final double longitude = Longitude.normalize(getDoubleValue(true, lonArray, i, j, analyze.lonField.fillValue));
+                            sb.appendValue(latitude);
+                            sb.appendValue(longitude);
                             if (!Double.isNaN(latitude) && !Double.isNaN(longitude)) {
                                 final DirectPosition position = SOSXmlFactory.buildDirectPosition("2.0.0", null, 2, Arrays.asList(latitude, longitude));
                                 if (!position.equals(previousPosition)) {
@@ -817,16 +766,9 @@ public class NetCDFExtractor {
                                 final Array phenArray   = phenArrays.get(field.label);
                                 final boolean mainFirst = field.mainVariableFirst;
                                 final Double value      = getDoubleValue(mainFirst, phenArray, i, j, field.fillValue);
-
-                                //empty string for missing value
-                                if (!Double.isNaN(value)) {
-                                    sb.append(value);
-                                }
-                                sb.append(DEFAULT_ENCODING.getTokenSeparator());
+                                sb.appendValue(value);
                             }
-                            // remove the last token separator
-                            sb.deleteCharAt(sb.length() - 1);
-                            sb.append(DEFAULT_ENCODING.getBlockSeparator());
+                            sb.closeBlock();
                         }
 
                         final SamplingFeature sp      = OMUtils.buildSamplingCurve(identifier, positions);
@@ -874,7 +816,7 @@ public class NetCDFExtractor {
 
                 final Variable latVar = analyze.vars.get(analyze.latField.label);
                 final Variable lonVar = analyze.vars.get(analyze.lonField.label);
-                final Array latArray  = analyze.file.readArrays(Arrays.asList(latVar)).get(0);;
+                final Array latArray  = analyze.file.readArrays(Arrays.asList(latVar)).get(0);
                 final Array lonArray  = analyze.file.readArrays(Arrays.asList(lonVar)).get(0);
 
                 final Variable timeVar  = analyze.vars.get(analyze.mainField.label);
@@ -895,10 +837,10 @@ public class NetCDFExtractor {
                     final int lonSize = lonVar.getDimension(0).getLength();
                     for (int lonIndex = 0; lonIndex < lonSize; lonIndex++) {
 
-                        final String identifier  = UUID.randomUUID().toString();
-                        final StringBuilder sb   = new StringBuilder();
-                        final int count          = timeVar.getDimension(0).getLength();
-                        final GeoSpatialBound gb = new GeoSpatialBound();
+                        final String identifier       = UUID.randomUUID().toString();
+                        final MeasureStringBuilder sb = new MeasureStringBuilder();
+                        final int count               = timeVar.getDimension(0).getLength();
+                        final GeoSpatialBound gb      = new GeoSpatialBound();
 
                         SamplingFeature sp = null;
                         final double latitude         = getDoubleValue(latArray, latIndex, analyze.latField.fillValue);
@@ -911,30 +853,20 @@ public class NetCDFExtractor {
 
                         for (int i = 0; i < count; i++) {
 
-                            long millis = getTimeValue(timeUnits, timeArray, i);
+                            final long millis = getTimeValue(timeUnits, timeArray, i);
 
                             if (millis == 0 || millis == ((Integer.MIN_VALUE * -1) + 1)) {
                                 continue;
                             }
-                            final Date d = new Date(millis);
-                            gb.addDate(d);
-                            synchronized(FORMATTER) {
-                                sb.append(FORMATTER.format(d)).append(DEFAULT_ENCODING.getTokenSeparator());
-                            }
+                            gb.addDate(millis);
+                            sb.appendDate(millis);
 
                             for (Field field : analyze.phenfields) {
                                 final Array phenArray   = phenArrays.get(field.label);
                                 final Double value      = getDoubleValue(phenArray, i, latIndex, lonIndex, field.fillValue);
-
-                                //empty string for missing value
-                                if (!Double.isNaN(value)) {
-                                    sb.append(value);
-                                }
-                                sb.append(DEFAULT_ENCODING.getTokenSeparator());
+                                sb.appendValue(value);
                             }
-                            // remove the last token separator
-                            sb.deleteCharAt(sb.length() - 1);
-                            sb.append(DEFAULT_ENCODING.getBlockSeparator());
+                            sb.closeBlock();
                         }
 
                         results.observations.add(OMUtils.buildObservation(identifier,                    // id

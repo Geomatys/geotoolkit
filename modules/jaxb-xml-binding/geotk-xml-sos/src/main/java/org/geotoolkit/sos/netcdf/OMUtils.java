@@ -30,6 +30,7 @@ import org.geotoolkit.gml.xml.Point;
 import org.geotoolkit.observation.xml.AbstractObservation;
 import org.geotoolkit.observation.xml.OMXmlFactory;
 import org.geotoolkit.sampling.xml.SamplingFeature;
+import org.geotoolkit.sos.MeasureStringBuilder;
 import org.geotoolkit.sos.xml.SOSXmlFactory;
 import org.geotoolkit.swe.xml.AbstractDataComponent;
 import org.geotoolkit.swe.xml.AbstractDataRecord;
@@ -179,9 +180,9 @@ public class OMUtils {
     }
     
     public static AbstractObservation buildObservation(final String obsid, final SamplingFeature sf, 
-            final Phenomenon phenomenon, final String procedure, final int count , final AbstractDataRecord datarecord, final StringBuilder sb, final TemporalGeometricPrimitive time) {
+            final Phenomenon phenomenon, final String procedure, final int count , final AbstractDataRecord datarecord, final MeasureStringBuilder sb, final TemporalGeometricPrimitive time) {
         
-        final DataArrayProperty result = SOSXmlFactory.buildDataArrayProperty("2.0.0", "array-1", count, "SimpleDataArray", datarecord, DEFAULT_ENCODING, sb.toString());
+        final DataArrayProperty result = SOSXmlFactory.buildDataArrayProperty("2.0.0", "array-1", count, "SimpleDataArray", datarecord, DEFAULT_ENCODING, sb.getString());
         final FeatureProperty foi = SOSXmlFactory.buildFeatureProperty("2.0.0", sf);
         return OMXmlFactory.buildObservation("2.0.0",       // version
                                              obsid,         // id
