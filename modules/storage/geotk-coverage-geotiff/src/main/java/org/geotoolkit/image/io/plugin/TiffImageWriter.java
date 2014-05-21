@@ -292,6 +292,8 @@ public class TiffImageWriter extends SpatialImageWriter {
      */
     private short bitPerSample;
     
+    private short samplePerPixel;
+    
     /**
      * Compression value of current image writing.
      */
@@ -393,10 +395,10 @@ public class TiffImageWriter extends SpatialImageWriter {
         final short imgHT = (short) iwObj.get(ATT_TYPE);
         final int imageHeight = (imgHT == TYPE_USHORT) ? ((short[])  ihObj.get(ATT_VALUE))[0] & 0xFFFF: ((int[])  ihObj.get(ATT_VALUE))[0];
         
-        final short samplPerPix     = ((short[]) isppObj.get(ATT_VALUE))[0];
+        samplePerPixel = ((short[]) isppObj.get(ATT_VALUE))[0];
         bitPerSample   = (short) ((short[]) ibpsObj.get(ATT_VALUE))[0];
         
-        isBigTIFF = ((long) imageWidth * imageHeight * samplPerPix * bitPerSample / Byte.SIZE) >= 1E9; //-- 1Go
+        isBigTIFF = ((long) imageWidth * imageHeight * samplePerPixel * bitPerSample / Byte.SIZE) >= 1E9; //-- 1Go
         
         destRegion = new Rectangle(0, 0, imageWidth, imageHeight);
 
@@ -830,8 +832,7 @@ public class TiffImageWriter extends SpatialImageWriter {
      */
     @Override
     public void prepareReplacePixels(int imageIndex, Rectangle region) throws IOException {
-        if (imageIndex != 0)//-- temporaire a voir plus tard avec un reader et get les properties
-            throw new IllegalStateException("Replace pixel at image index different to zero is not supported. ");
+//        if (imag w new IllegalStateException("Replace pixel at image index different to zero is not supported. ");
         selectLayer(imageIndex);
         if (headProperties.isEmpty()) {
             //-- si destrepRegion == null && le fichier n'existe pas  leve exception
@@ -1240,7 +1241,7 @@ public class TiffImageWriter extends SpatialImageWriter {
         
         final SampleModel sm     = imageType.getSampleModel();        
         //sample per pixel
-        final int samplePerPixel = sm.getNumDataElements();
+        samplePerPixel = (short) sm.getNumDataElements();
         assert samplePerPixel <= 0xFFFF : "SamplePerPixel exceed short max value"; // -- should never append
         addProperty(SamplesPerPixel, TYPE_USHORT, 1, new short[]{(short) samplePerPixel}, properties);
         
@@ -1368,7 +1369,7 @@ public class TiffImageWriter extends SpatialImageWriter {
         
         final SampleModel sm     = image.getSampleModel();        
         //sample per pixel
-        final int samplePerPixel = sm.getNumDataElements();
+        samplePerPixel = (short) sm.getNumDataElements();
         assert samplePerPixel <= 0xFFFF : "SamplePerPixel exceed short max value"; // -- should never append
         addProperty(SamplesPerPixel, TYPE_USHORT, 1, new short[]{(short) samplePerPixel}, properties);
         
@@ -1510,7 +1511,17 @@ public class TiffImageWriter extends SpatialImageWriter {
         final int imageMaxTileGridYOffset = imageTileGridYOffset + image.getNumYTiles();
         
         final SampleModel sm       = image.getSampleModel();
-        final int imagePixelStride = sm.getNumDataElements();
+        final int[] sampleSizes = sm.getSampleSize();
+        assert sampleSizes.length == sm.getNumDataElements();
+        
+        final int imagePixelStride = sampleSizes.length;
+        if (imagePixelStride != samplePerPixel) 
+            throw new IllegalArgumentException("impossible to replace pixel with different sample number by pixel. Expected : "+samplePerPixel+" found : "+imagePixelStride);
+        
+        for (int s : sampleSizes) {
+            if (s != bitPerSample)
+                throw new IllegalArgumentException("impossible to replace pixel with different sample size. Expected : "+bitPerSample+" bits by sample, found : "+s+" bits.");
+        }
         final int sampleSize = bitPerSample / Byte.SIZE;
         
         final int cellWidth, cellHeight;
@@ -1522,8 +1533,6 @@ public class TiffImageWriter extends SpatialImageWriter {
             assert rowsPerStrip > 0;
             cellHeight = rowsPerStrip;
         }
-//        assert currentImgTW != 0;
-//        assert currentImgTH != 0;
         
         assert tileRegion.width % cellWidth == 0;
         final int dstNumXT = tileRegion.width / cellWidth;
@@ -1561,10 +1570,6 @@ public class TiffImageWriter extends SpatialImageWriter {
         final int ctMaxY = (imgInterRepMaxY - trMinY + cellHeight - 1) / cellHeight;
         //----------------------------------------------------------------//
         
-//        final int destTileByteCount = cellHeight * cellWidth * imagePixelStride * sampleSize;
-        
-//        channel.seek(replacePixelPos);//-- faire dans la boucle
-//        replacePixelPos = (isBigTIFF) ? Array.getLong(replaceOffsetArray, 0) : Array.getInt(replaceOffsetArray, 0);
         //------------------- raster properties ------------------//        
         final Raster initRast         = image.getTile(imageTileGridXOffset, imageTileGridYOffset);
         final DataBuffer initRastBuff = initRast.getDataBuffer();
@@ -1577,7 +1582,6 @@ public class TiffImageWriter extends SpatialImageWriter {
                     
                     assert channel.getBitOffset() == 0;
                     
-//                    final long dstTileOffset = (cty * dstNumXT + ctx) * destTileByteCount; 
                     final long dstTileOffset = (isBigTIFF) ? Array.getLong(replaceOffsetArray, (cty * dstNumXT + ctx)) : (Array.getInt(replaceOffsetArray, (cty * dstNumXT + ctx)) & 0xFFFFFFFFL);
                     
                     //-- compute current destination tile coordinates in image space  
@@ -2280,94 +2284,6 @@ public class TiffImageWriter extends SpatialImageWriter {
     private void computeRegions(final RenderedImage image, final ImageWriteParam param) {
         computeRegions(image.getWidth(), image.getHeight(), image.getMinX(), image.getMinY(), 
                 image.getNumXTiles(), image.getNumYTiles(), image.getTileWidth(), image.getTileHeight(), param);
-//        final int imgWidth  = image.getWidth();
-//        final int imgHeight = image.getHeight();
-//        final int minx      = image.getMinX();
-//        final int miny      = image.getMinY();
-//        
-//        imageBoundary = new Rectangle(minx, miny, imgWidth, imgHeight);
-//        
-//        if (param == null) {
-//            srcRegion  = imageBoundary;
-//            destRegion = new Rectangle(srcRegion);
-//            if ((image.getNumXTiles() > 1 || image.getNumYTiles() > 1)
-//                    && image.getWidth()      % image.getTileWidth()  == 0 // to avoid padding
-//                    && image.getHeight()     % image.getTileHeight() == 0
-//                    && image.getTileWidth()  % 16 == 0                    // to verify compatibility with compression (tiff spec).
-//                    && image.getTileHeight() % 16 == 0) {
-//                tileRegion      = srcRegion;
-//                currentImgTW    = image.getTileWidth();
-//                currentImgTH    = image.getTileHeight();
-//                currentImgNumXT = srcRegion.width  / currentImgTW;
-//                currentImgNumYT = srcRegion.height / currentImgTH;
-//            } else {
-//                currentImgTW = currentImgTH = currentImgNumXT = currentImgNumYT = 0;
-//            }
-//        } else {
-//            
-//            // param not null
-//            final Rectangle paramRect = (param.getSourceRegion() == null) ? new Rectangle(imageBoundary) : param.getSourceRegion();
-//            
-//            // in case of subsampling different of 1 with an offset.
-//            paramRect.translate(param.getSubsamplingXOffset(), param.getSubsamplingYOffset());
-//            
-//            if (!imageBoundary.intersects(paramRect)) {
-//                throw new IllegalStateException("src region from ImageWriterParam must intersect image boundary.");
-//            }
-//            srcRegion = imageBoundary.intersection(paramRect);// on est en coordonnées images
-//            
-//            final int srcXsubsampling = param.getSourceXSubsampling();
-//            final int srcYsubsampling = param.getSourceYSubsampling();
-//            assert srcYsubsampling >= 1;
-//            assert srcXsubsampling >= 1;
-//            
-//            /*
-//             * Try catch is a wrong way, but ImageWriteParam interface doen't have any method 
-//             * to know if tile dimension has already been setted.
-//             */
-//            try {
-//                currentImgTW  = param.getTileWidth();
-//                currentImgTH  = param.getTileHeight();
-//            } catch (Exception ex) {
-//                currentImgTW  = currentImgTH = 0;
-//            }
-//            
-//            if (currentImgTW > 0 && currentImgTH > 0) {
-//                final int cuImgTW = currentImgTW * srcXsubsampling;
-//                final int cuImgTH = currentImgTH * srcYsubsampling;
-//                currentImgNumXT = (srcRegion.width  + cuImgTW - 1) / cuImgTW;
-//                currentImgNumYT = (srcRegion.height + cuImgTH - 1) / cuImgTH;
-//                if (currentImgTW % 16 != 0) 
-//                        throw new IllegalStateException("To be in accordance with tiff specification tile width must be multiple of 16. Current tile width = "+param.getTileWidth());
-//                if (currentImgTH % 16 != 0) 
-//                        throw new IllegalStateException("To be in accordance with tiff specification tile height must be multiple of 16. Current tile height = "+param.getTileHeight());
-//                tileRegion = new Rectangle(srcRegion.x, srcRegion.y, currentImgNumXT * cuImgTW, currentImgNumYT * cuImgTH);
-//            
-//            } else {
-//                // param not null with tile not specify
-//                tileRegion = new Rectangle(srcRegion);
-//                
-//                
-//                // on va essayer de voir si les tuiles de l'image peuvent correspondre avec la srcregion
-//                if ((image.getNumXTiles() > 1 || image.getNumYTiles() > 1)
-//                    && tileRegion.width  % image.getTileWidth()  == 0 // to avoid padding
-//                    && tileRegion.height % image.getTileHeight() == 0
-//                    && image.getTileWidth()  % 16 == 0                // to verify compatibility with compression (tiff spec).
-//                    && image.getTileHeight() % 16 == 0
-//                    && srcXsubsampling == 1
-//                    && srcYsubsampling == 1) {
-//                    currentImgTW    = image.getTileWidth();
-//                    currentImgTH    = image.getTileHeight();
-//                    currentImgNumXT = srcRegion.width  / currentImgTW;
-//                    currentImgNumYT = srcRegion.height / currentImgTH;
-//                } else {
-//                    currentImgTW = currentImgTH = currentImgNumXT = currentImgNumYT = 0;
-//                }
-//            }
-//            // vrai version : tileregion remplacer par srcregion
-//            destRegion = new Rectangle((tileRegion.width + srcXsubsampling - 1) / srcXsubsampling, (tileRegion.height + srcYsubsampling - 1) / srcYsubsampling);
-//        }
-//        assert srcRegion != null;
     }
     
     /**
@@ -2909,7 +2825,6 @@ public class TiffImageWriter extends SpatialImageWriter {
                 final byte[] key = Arrays.copyOf(wk, wkPos-1);
                 final int code   = getCodeFromLZWMap(key);
                 
-//                System.out.println("code = "+code);
                 channel.writeBits(code, currentLZWCodeLength);
                 lzwMap.put(wkStrict, currentLZWCode);
                 currentLZWCode++;
@@ -2919,7 +2834,6 @@ public class TiffImageWriter extends SpatialImageWriter {
                 //check si on clear ou pas
                 if (currentLZWCodeLength > LZW_MAX_CODE_LENGTH) {
                     
-//            System.out.println("code = "+LZW_CLEAR_CODE);
                     //-- from tiff spec write clear code on 12 bits --//
                     channel.writeBits(LZW_CLEAR_CODE, LZW_MAX_CODE_LENGTH);
                     //-- clear all --// 
