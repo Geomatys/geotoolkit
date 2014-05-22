@@ -61,7 +61,6 @@ import org.apache.sis.internal.storage.ChannelImageOutputStream;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.NullArgumentException;
-import org.geotoolkit.image.io.ImageMetadataException;
 import org.geotoolkit.image.io.SpatialImageWriteParam;
 import org.geotoolkit.image.io.SpatialImageWriter;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
@@ -206,7 +205,7 @@ public class TiffImageWriter extends SpatialImageWriter {
     /**
      * Byte array use during pack bit compression (32774) internal mechanic.
      */
-    private final byte[] packBitArray;
+    private byte[] packBitArray;
     
     /**
      * current position into {@linkplain #packBitArray}.
@@ -345,7 +344,6 @@ public class TiffImageWriter extends SpatialImageWriter {
      */
     private long[] ifdPosition;
     
-//    private long replacePixelPos = -1;
     private int rowsPerStrip;
     private Object replaceOffsetArray;
     private boolean endOfFileReached = false;
@@ -1264,7 +1262,7 @@ public class TiffImageWriter extends SpatialImageWriter {
             final int dataType = sm.getDataType();
             short sampleFormat = 0;
             switch (dataType) {
-                case DataBuffer.TYPE_SHORT  : 
+                case DataBuffer.TYPE_FLOAT  : 
                 case DataBuffer.TYPE_DOUBLE : {
                     sampleFormat = 3; //-- type floating point --//
                     break;
@@ -1274,7 +1272,7 @@ public class TiffImageWriter extends SpatialImageWriter {
                     break;
                 }
                 default : {
-                    assert bitPerSample == Long.SIZE : "Define sample format : expected bitpersample equals to Long.SIZE = 64. Found : "+bitspersample;
+                    assert bitPerSample == Long.SIZE : "Define sample format : expected bitpersample equals to Long.SIZE = 64. Found : "+Arrays.toString(bitspersample);
                     sampleFormat = 1; //-- type UInt --//
                     break;
                 }
@@ -1392,7 +1390,7 @@ public class TiffImageWriter extends SpatialImageWriter {
             final int dataType = sm.getDataType();
             short sampleFormat = 0;
             switch (dataType) {
-                case DataBuffer.TYPE_SHORT  : 
+                case DataBuffer.TYPE_FLOAT  : 
                 case DataBuffer.TYPE_DOUBLE : {
                     sampleFormat = 3; //-- type floating point --//
                     break;
@@ -1402,7 +1400,7 @@ public class TiffImageWriter extends SpatialImageWriter {
                     break;
                 }
                 default : {
-                    assert bitPerSample == Long.SIZE : "Define sample format : expected bitpersample equals to Long.SIZE = 64. Found : "+bitspersample;
+                    assert bitPerSample == Long.SIZE : "Define sample format : expected bitpersample equals to Long.SIZE = 64. Found : "+Arrays.toString(bitspersample);
                     sampleFormat = 1; //-- type UInt --//
                     break;
                 }
@@ -2824,7 +2822,7 @@ public class TiffImageWriter extends SpatialImageWriter {
                 //-- create appropriate key
                 final byte[] key = Arrays.copyOf(wk, wkPos-1);
                 final int code   = getCodeFromLZWMap(key);
-                
+                 
                 channel.writeBits(code, currentLZWCodeLength);
                 lzwMap.put(wkStrict, currentLZWCode);
                 currentLZWCode++;
@@ -3263,8 +3261,21 @@ public class TiffImageWriter extends SpatialImageWriter {
             Logger.getLogger(TiffImageWriter.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void setOutput(Object output) {
+        super.setOutput(output); //To change body of generated methods, choose Tools | Templates.
+        ifdPosition     = new long[2];
+        headProperties  = null;
+        packBitArray    = new byte[8196];
+        currentPBAPos   = 0;
+        rowByte32773Pos = 0;
+        metaHeads = new Map[4];
+        channel = null;
+    }
     
    /**
      * Service provider interface (SPI) for {@code GeoTiffImageWriter}s. This provider wraps
