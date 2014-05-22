@@ -65,6 +65,7 @@ import org.geotoolkit.image.io.SpatialImageWriteParam;
 import org.geotoolkit.image.io.SpatialImageWriter;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
+import org.geotoolkit.internal.image.ScaledColorSpace;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.Utilities;
 import static org.geotoolkit.metadata.geotiff.GeoTiffConstants.*;
@@ -3042,7 +3043,8 @@ public class TiffImageWriter extends SpatialImageWriter {
     private short getPhotometricInterpretation(final ColorModel cm) {
         final ColorSpace cs = cm.getColorSpace();
         
-        if (cs.equals(ColorSpace.getInstance(ColorSpace.CS_GRAY))) {
+        //-- to do : if we need we can also define 1 for an ScaledColorSpace --//
+        if (cs.equals(ColorSpace.getInstance(ColorSpace.CS_GRAY))/* || cs instanceof ScaledColorSpace*/) {
             // return 0 or 1
             // return 0 for min is white
             // return 1 for min is black

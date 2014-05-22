@@ -622,7 +622,7 @@ public class TiffImageReader extends SpatialImageReader {
                         throw new UnsupportedImageFormatException(error(Errors.Keys.INCONSISTENT_VALUE));
                     } 
                 }
-                
+                 
                 if (samplFormat == 3) {
                     /*
                      * Case to defferency 32 bits Float to 32 bits Integer. 
@@ -762,7 +762,28 @@ public class TiffImageReader extends SpatialImageReader {
             // Keep the buffer, since we may reuse it for the next image.
         }
     }
-    
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void setInput(Object input) {
+        super.setInput(input); 
+        countIFD       = 0;
+        bitsPerSample  = null;
+        tileOffsets    = null;
+        rawImageType   = null;
+        buffer       = ByteBuffer.allocate(8196);
+        positionIFD  = new long[4];
+        metaHeads    = new Map[4];
+        roots        = new IIOMetadataNode[4];
+        currentImage = -1;
+        
+        //-- to force open
+        channel      = null;
+        imageStream  = null;
+    }
+        
     /**
      * Selects the image at the given index.
      *
