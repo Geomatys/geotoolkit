@@ -49,12 +49,7 @@ import org.geotoolkit.data.session.Session;
 import static org.geotoolkit.db.JDBCFeatureStore.JDBC_PROPERTY_RELATION;
 import org.geotoolkit.db.dialect.SQLDialect;
 import org.geotoolkit.db.dialect.SQLQueryBuilder;
-import org.geotoolkit.db.reverse.ColumnMetaModel;
-import org.geotoolkit.db.reverse.DataBaseModel;
-import org.geotoolkit.db.reverse.InsertRelation;
-import org.geotoolkit.db.reverse.PrimaryKey;
-import org.geotoolkit.db.reverse.RelationMetaModel;
-import org.geotoolkit.db.reverse.TableMetaModel;
+import org.geotoolkit.db.reverse.*;
 import org.geotoolkit.db.session.JDBCSession;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
@@ -131,6 +126,9 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
         
         try{
             baseSchema = (String)Parameters.getOrCreate(AbstractJDBCFeatureStoreFactory.SCHEMA, params).getValue();
+            if (baseSchema != null && baseSchema.isEmpty()) {
+                baseSchema = null;
+            }
         }catch(ParameterNotFoundException ex){
             //parameter migth not exist on all database implementations
         }
@@ -307,8 +305,27 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
         if(!query.isSimple()){
             throw new DataStoreException("Query is not simple.");
         }
-        
-        final TableMetaModel tableMeta = dbmodel.getSchemaMetaModel(getDatabaseSchema()).getTable(query.getTypeName().getLocalPart());
+
+        final String dbSchemaName = getDatabaseSchema();
+        final String tableName = query.getTypeName().getLocalPart();
+        TableMetaModel tableMeta = null;
+        if (dbSchemaName == null) {
+            // Try to handle empty schema name given at configuration
+            for (final SchemaMetaModel scheme : dbmodel.getSchemaMetaModels()) {
+                final TableMetaModel tableMetaTemp = scheme.getTable(tableName);
+                if (tableMetaTemp != null) {
+                    tableMeta = tableMetaTemp;
+                    break;
+                }
+            }
+        } else {
+            tableMeta = dbmodel.getSchemaMetaModel(getDatabaseSchema()).getTable(tableName);
+        }
+
+        if (tableMeta == null) {
+            throw new DataStoreException("Unable to get table "+ tableName +" in the database.");
+        }
+
         final ComplexType tableType = tableMeta.getType(TableMetaModel.View.ALLCOMPLEX);
         final PrimaryKey pkey = dbmodel.getPrimaryKey(query.getTypeName());
                 
@@ -1131,7 +1148,7 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
      * @param groupName
      * @param filter
      * @param values
-     * @param Connection
+     * @param cnx
      * @throws DataStoreException
      */
     protected void handleUpdateWithFeatureWriter(final Name groupName, final Filter filter,
@@ -1160,7 +1177,7 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
      * 
      * @param groupName
      * @param filter
-     * @param Connection
+     * @param cnx
      * @throws DataStoreException
      */
     protected void handleRemoveWithFeatureWriter(final Name groupName, final Filter filter, Connection cnx) throws DataStoreException {
