@@ -22,18 +22,16 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBuffer;
-import java.awt.image.ImagingOpException;
 import java.awt.image.IndexColorModel;
 import java.awt.image.RenderedImage;
 import java.awt.image.WritableRaster;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
-import javax.media.jai.util.ImagingException;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
@@ -46,7 +44,6 @@ import org.geotoolkit.coverage.processing.CannotReprojectException;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.geometry.Envelopes;
-import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.image.interpolation.Interpolation;
 import org.geotoolkit.image.interpolation.InterpolationCase;
 import static org.geotoolkit.image.interpolation.InterpolationCase.BILINEAR;
@@ -56,21 +53,20 @@ import org.geotoolkit.internal.coverage.CoverageUtilities;
 import static org.geotoolkit.internal.coverage.CoverageUtilities.hasRenderingCategories;
 import org.geotoolkit.metadata.iso.spatial.PixelTranslation;
 import org.geotoolkit.parameter.Parameters;
+import org.geotoolkit.parameter.ParametersExt;
 import org.geotoolkit.process.AbstractProcess;
 import org.geotoolkit.process.ProcessException;
-import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.resources.Errors;
 
 import static org.geotoolkit.process.coverage.resample.ResampleDescriptor.*;
 import static org.geotoolkit.process.coverage.resample.ResampleProcess.preferredViewForOperation;
 import static org.geotoolkit.process.coverage.resample.ResampleProcess.reproject;
+import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.AbstractCoordinateOperationFactory;
 import org.geotoolkit.referencing.operation.MathTransforms;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.geotoolkit.referencing.operation.transform.DimensionFilter;
+import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.BufferedImageUtilities;
-
-
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.coverage.grid.GridGeometry;
@@ -103,8 +99,41 @@ public class ResampleProcess extends AbstractProcess {
     private static final PixelOrientation CORNER = PixelOrientation.UPPER_LEFT;
 
 
-    ResampleProcess(final ParameterValueGroup input) {
+    public ResampleProcess(GridCoverage2D coverage, CoordinateReferenceSystem targetCrs, double[] background) {
+        super(INSTANCE, asParameters(coverage, targetCrs,  null, null, background));
+    }
+    
+    public ResampleProcess(GridCoverage2D coverage, CoordinateReferenceSystem targetCrs, 
+            GridGeometry2D gridGeom, InterpolationCase interpolation, double[] background) {
+        super(INSTANCE, asParameters(coverage, targetCrs, gridGeom, interpolation, background));
+    }
+    
+    public ResampleProcess(final ParameterValueGroup input) {
         super(INSTANCE, input);
+    }
+
+    private static ParameterValueGroup asParameters(GridCoverage2D coverage, CoordinateReferenceSystem targetCrs, 
+            GridGeometry2D gridGeom, InterpolationCase interpolation, double[] background){
+        final ParameterValueGroup params = ResampleDescriptor.INPUT_DESC.createValue();
+        ParametersExt.getOrCreateValue(params, IN_COVERAGE.getName().getCode()).setValue(coverage);
+        if(targetCrs!=null){
+            ParametersExt.getOrCreateValue(params, IN_COORDINATE_REFERENCE_SYSTEM.getName().getCode()).setValue(targetCrs);
+        }
+        if(gridGeom!=null){
+            ParametersExt.getOrCreateValue(params, IN_GRID_GEOMETRY.getName().getCode()).setValue(gridGeom);
+        }
+        if(background!=null){
+            ParametersExt.getOrCreateValue(params, IN_BACKGROUND.getName().getCode()).setValue(background);
+        }
+        if(interpolation!=null){
+            ParametersExt.getOrCreateValue(params, IN_INTERPOLATION_TYPE.getName().getCode()).setValue(interpolation);
+        }
+        return params;
+    }
+    
+    public GridCoverage2D executeNow() throws ProcessException {
+        execute();
+        return (GridCoverage2D) outputParameters.parameter(OUT_COVERAGE.getName().getCode()).getValue();
     }
 
     /**
