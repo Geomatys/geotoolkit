@@ -17,15 +17,15 @@
  */
 package org.geotoolkit.image.io.plugin.TiffReader;
 
-import org.geotoolkit.image.io.plugin.TiffImageReaderWriterTest;
+import org.geotoolkit.image.io.plugin.TestTiffImageReaderWriter;
 
 /**
  *
  * @author rmarechal
  */
-public class TiffImageReaderTest extends TiffImageReaderWriterTest {
+public abstract strictfp class TestTiffImageReader extends TestTiffImageReaderWriter {
 
-    public TiffImageReaderTest(String compression) {
+    public TestTiffImageReader(String compression) {
         super(compression);
     }
     

@@ -21,10 +21,9 @@ package org.geotoolkit.image.io.plugin.TiffReader;
  *
  * @author rmarechal
  */
-public class UncompressedTiffReaderTest extends TiffImageReaderTest {
+public strictfp class UncompressedTiffReaderTest extends TestTiffImageReader {
 
     public UncompressedTiffReaderTest() {
         super(null); //-- if no compression is setted the default implementation works with strips
     }
-    
 }
