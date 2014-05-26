@@ -101,7 +101,7 @@ public class DefaultName extends DefaultLocalName implements Name {
 
         // WARNING: DefaultFactories.NAMES is not a public API and may change in any future SIS version.
 
-        super(DefaultFactories.NAMES.createNameSpace(
+        super(namespace == null ? null : DefaultFactories.NAMES.createNameSpace(
                 DefaultFactories.NAMES.createGenericName(null, namespace),
                 Collections.singletonMap("separator.head", separator)), local);
         this.namespace = namespace;
