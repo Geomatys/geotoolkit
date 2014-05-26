@@ -17,26 +17,29 @@
  */
 package org.geotoolkit.feature.type;
 
-import java.io.Serializable;
 import java.util.*;
-
-import org.apache.sis.util.Classes;
 
 import org.opengis.feature.type.Name;
 import org.opengis.feature.type.PropertyType;
 import org.opengis.filter.Filter;
 import org.opengis.util.InternationalString;
 
-import static org.apache.sis.util.ArgumentChecks.*;
+import org.apache.sis.util.Classes;
+import org.apache.sis.feature.AbstractIdentifiedType;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
+
+import static org.apache.sis.util.ArgumentChecks.*;
 
 /**
  * Default implementation of a property type
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
+ *
+ * @deprecated Replaced by Apache SIS {@link AbstractIdentifiedType}.
  */
-public class DefaultPropertyType<T extends PropertyType> implements PropertyType,Serializable {
+@Deprecated
+public class DefaultPropertyType<T extends PropertyType> extends AbstractIdentifiedType implements PropertyType {
 
     private static final List<Filter> NO_RESTRICTIONS = Collections.emptyList();
 
@@ -45,11 +48,12 @@ public class DefaultPropertyType<T extends PropertyType> implements PropertyType
     protected final boolean isAbstract;
     protected final T superType;
     protected final List<Filter> restrictions;
-    protected final InternationalString description;
     protected final Map<Object, Object> userData;
 
     public DefaultPropertyType(final Name name, final Class<?> binding, final boolean isAbstract,
-            final List<Filter> restrictions, final T superType, final InternationalString description){
+            final List<Filter> restrictions, final T superType, final InternationalString description)
+    {
+        super(properties(name.getLocalPart(), description));
         ensureNonNull("name", name);
 
         if (binding == null) {
@@ -71,8 +75,14 @@ public class DefaultPropertyType<T extends PropertyType> implements PropertyType
         }
 
         this.superType = superType;
-        this.description = description;
         this.userData = new HashMap<Object, Object>();
+    }
+
+    private static Map<String,Object> properties(final String name, final InternationalString description) {
+        final Map<String,Object> properties = new HashMap<>(4);
+        properties.put(NAME_KEY, name);
+        properties.put(DESCRIPTION_KEY, description);
+        return properties;
     }
 
     /**
@@ -119,14 +129,6 @@ public class DefaultPropertyType<T extends PropertyType> implements PropertyType
      * {@inheritDoc }
      */
     @Override
-    public InternationalString getDescription() {
-        return description;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
     public int hashCode() {
         return getName().hashCode() ^ getBinding().hashCode() ^ (getDescription() != null ? getDescription().hashCode() : 17);
     }
@@ -166,7 +168,7 @@ public class DefaultPropertyType<T extends PropertyType> implements PropertyType
             return false;
         }
 
-        if (!Objects.equals(description, prop.getDescription())) {
+        if (!Objects.equals(super.getDescription(), prop.getDescription())) {
             return false;
         }
 
@@ -212,9 +214,9 @@ public class DefaultPropertyType<T extends PropertyType> implements PropertyType
             sb.append(Classes.getShortName(binding));
             sb.append(">");
         }
-        if (description != null) {
+        if (super.getDescription() != null) {
             sb.append("\n\tdescription=");
-            sb.append(description);
+            sb.append(super.getDescription());
         }
         if (restrictions != null && !restrictions.isEmpty()) {
             sb.append("\nrestrictions=");

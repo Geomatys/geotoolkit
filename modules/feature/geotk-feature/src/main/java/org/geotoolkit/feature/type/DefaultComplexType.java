@@ -229,9 +229,9 @@ public class DefaultComplexType extends DefaultAttributeType<AttributeType> impl
         }
         sb.append(writer.getBuffer().toString());
 
-        if (description != null) {
+        if (super.getDescription() != null) {
             sb.append("\n\tdescription=");
-            sb.append(description);
+            sb.append(super.getDescription());
         }
         if (restrictions != null && !restrictions.isEmpty()) {
             sb.append("\nrestrictions=");

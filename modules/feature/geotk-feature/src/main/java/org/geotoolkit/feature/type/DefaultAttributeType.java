@@ -147,9 +147,9 @@ public class DefaultAttributeType<T extends AttributeType> extends DefaultProper
             sb.append(Classes.getShortName(binding));
             sb.append(">");
         }
-        if (description != null) {
+        if (super.getDescription() != null) {
             sb.append("\n\tdescription=");
-            sb.append(description);
+            sb.append(super.getDescription());
         }
         if (restrictions != null && !restrictions.isEmpty()) {
             sb.append("\nrestrictions=");
