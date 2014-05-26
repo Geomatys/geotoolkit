@@ -54,25 +54,6 @@ public class DefaultPyramidSet extends AbstractPyramidSet{
     }
 
     @Override
-    public Envelope getEnvelope() {
-        for(Pyramid pyramid : getPyramids()){
-            for(GridMosaic mosaic : pyramid.getMosaics()){
-                final DirectPosition position = mosaic.getUpperLeftCorner();
-                final double minX = position.getOrdinate(0);
-                final double maxY = position.getOrdinate(1);
-                final double spanX = mosaic.getTileSize().width * mosaic.getGridSize().width * mosaic.getScale();
-                final double spanY = mosaic.getTileSize().height* mosaic.getGridSize().height* mosaic.getScale();
-                final GeneralEnvelope envelope = new GeneralEnvelope(
-                        pyramid.getCoordinateReferenceSystem());
-                envelope.setRange(0, minX, minX + spanX);
-                envelope.setRange(1, maxY - spanY, maxY );
-                return envelope;
-            }
-        }
-        return null;
-    }
-    
-    @Override
     public String toString(){
         return Trees.toString(Classes.getShortClassName(this)+" "+getId(), getPyramids());
     }

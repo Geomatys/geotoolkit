@@ -49,17 +49,18 @@ import javax.swing.ProgressMonitor;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import net.iharder.Base64;
+import org.apache.sis.geometry.GeneralDirectPosition;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.util.ArgumentChecks;
+import org.apache.sis.util.Classes;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.AbstractGridMosaic;
 import org.geotoolkit.coverage.DefaultTileReference;
 import org.geotoolkit.coverage.GridMosaic;
 import org.geotoolkit.coverage.TileReference;
-import org.apache.sis.geometry.GeneralDirectPosition;
-import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.image.io.XImageIO;
-import org.apache.sis.util.Classes;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.util.BufferedImageUtilities;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
@@ -89,9 +90,7 @@ public class XMLMosaic implements GridMosaic{
     @XmlElement
     double scale;
     @XmlElement
-    double upperleftX;
-    @XmlElement
-    double upperleftY;
+    double[] upperLeft;
     @XmlElement
     int gridWidth;
     @XmlElement
@@ -100,29 +99,41 @@ public class XMLMosaic implements GridMosaic{
     int tileWidth;
     @XmlElement
     int tileHeight;
-    String completion;
+    String existMask;
+    String emptyMask;
 
     XMLPyramid pyramid = null;
     BitSet tileExist;
     BitSet tileEmpty;
 
 
-    void initialize(XMLPyramid pyramid){
+    void initialize(XMLPyramid pyramid) {
         this.pyramid = pyramid;
-        if(completion == null){
-            completion = "";
-        }
-        tileExist = new BitSet(gridWidth*gridHeight);
-        tileEmpty = new BitSet(gridWidth*gridHeight);
-        String packed = completion.replaceAll("\n", "");
-        packed = packed.replaceAll("\t", "");
-        packed = packed.replaceAll(" ", "");
-        for(int i=0,n=packed.length();i<n;i++){
-            final char c = packed.charAt(i);
-            tileExist.set(i, c!='0');
-            tileEmpty.set(i, c=='2');
+        if (existMask != null && !existMask.isEmpty()) {
+            try {
+                tileExist = (existMask != null)
+                        ? BitSet.valueOf(Base64.decode(existMask))
+                        : new BitSet(gridWidth * gridHeight);
+            } catch (IOException ex) {
+                LOGGER.log(Level.WARNING, ex.getMessage(), ex);
+                tileExist = new BitSet(gridWidth * gridHeight);
+            }
+        } else {
+            tileExist = new BitSet(gridWidth * gridHeight);
         }
 
+        if (emptyMask != null && !emptyMask.isEmpty()) {
+            try {
+                tileEmpty = (emptyMask != null)
+                        ? BitSet.valueOf(Base64.decode(emptyMask))
+                        : new BitSet(gridWidth * gridHeight);
+            } catch (IOException ex) {
+                LOGGER.log(Level.WARNING, ex.getMessage(), ex);
+                tileEmpty = new BitSet(gridWidth * gridHeight);
+            }
+        } else {
+            tileEmpty = new BitSet(gridWidth * gridHeight);
+        }
     }
 
     private synchronized byte[] createEmptyTile(){
@@ -151,22 +162,8 @@ public class XMLMosaic implements GridMosaic{
     }
 
     private void updateCompletionString() {
-        final StringBuilder sb = new StringBuilder();
-        int index = 0;
-        for(int y=0,l=getGridSize().height;y<l;y++){
-            sb.append('\n');
-            for(int x=0,n=getGridSize().width;x<n;x++){
-                char tc = !tileExist.get(index) ? '0':
-                          !tileEmpty.get(index) ? '1':
-                                                  '2';
-                sb.append(tc);
-                index++;
-            }
-        }
-        sb.append('\n');
-        synchronized (completion) {
-            completion = sb.toString();
-        }
+        existMask = Base64.encodeBytes(tileExist.toByteArray());
+        emptyMask = Base64.encodeBytes(tileEmpty.toByteArray());
     }
 
     /**
@@ -189,8 +186,7 @@ public class XMLMosaic implements GridMosaic{
     @Override
     public DirectPosition getUpperLeftCorner() {
         final GeneralDirectPosition ul = new GeneralDirectPosition(getPyramid().getCoordinateReferenceSystem());
-        ul.setOrdinate(0, upperleftX);
-        ul.setOrdinate(1, upperleftY);
+        for(int i=0;i<upperLeft.length;i++) ul.setOrdinate(i, upperLeft[i]);
         return ul;
     }
 
@@ -211,14 +207,13 @@ public class XMLMosaic implements GridMosaic{
 
     @Override
     public Envelope getEnvelope(){
-        final DirectPosition ul = getUpperLeftCorner();
+        final GeneralDirectPosition ul = new GeneralDirectPosition(getUpperLeftCorner());
         final double minX = ul.getOrdinate(0);
         final double maxY = ul.getOrdinate(1);
         final double spanX = getTileSize().width * getGridSize().width * scale;
         final double spanY = getTileSize().height* getGridSize().height* scale;
 
-        final GeneralEnvelope envelope = new GeneralEnvelope(
-                getPyramid().getCoordinateReferenceSystem());
+        final GeneralEnvelope envelope = new GeneralEnvelope(ul,ul);
         envelope.setRange(0, minX, minX + spanX);
         envelope.setRange(1, maxY - spanY, maxY );
 
@@ -227,14 +222,13 @@ public class XMLMosaic implements GridMosaic{
 
     @Override
     public Envelope getEnvelope(int col, int row) {
-        final DirectPosition ul = getUpperLeftCorner();
+        final GeneralDirectPosition ul = new GeneralDirectPosition(getUpperLeftCorner());
         final double minX = ul.getOrdinate(0);
         final double maxY = ul.getOrdinate(1);
         final double spanX = getTileSize().width * scale;
         final double spanY = getTileSize().height * scale;
 
-        final GeneralEnvelope envelope = new GeneralEnvelope(
-                getPyramid().getCoordinateReferenceSystem());
+        final GeneralEnvelope envelope = new GeneralEnvelope(ul,ul);
         envelope.setRange(0, minX + col*spanX, minX + (col+1)*spanX);
         envelope.setRange(1, maxY - (row+1)*spanY, maxY - row*spanY);
 
@@ -373,13 +367,23 @@ public class XMLMosaic implements GridMosaic{
     }
 
     @XmlElement
-    protected String getCompletion() {
+    protected String getExistMask() {
         updateCompletionString();
-        return completion;
+        return emptyMask;
     }
 
-    protected void setCompletion(String newValue) {
-        completion = newValue;
+    protected void setExistMask(String newValue) {
+        emptyMask = newValue;
+    }
+    
+    @XmlElement
+    protected String getEmptyMask() {
+        updateCompletionString();
+        return emptyMask;
+    }
+
+    protected void setEmptyMask(String newValue) {
+        emptyMask = newValue;
     }
 
     /**

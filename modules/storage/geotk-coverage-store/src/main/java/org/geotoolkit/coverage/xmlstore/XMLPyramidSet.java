@@ -120,17 +120,6 @@ public class XMLPyramidSet extends AbstractPyramidSet{
     }
 
     @Override
-    public Envelope getEnvelope() {
-        for(XMLPyramid pyramid : pyramids()){
-            final List<XMLMosaic> mosaics = pyramid.mosaics();
-            if(!mosaics.isEmpty()){
-                return mosaics.get(mosaics.size()-1).getEnvelope();
-            }
-        }
-        return null;
-    }
-
-    @Override
     public String toString(){
         return Trees.toString(Classes.getShortClassName(this)+" "+getId(), getPyramids());
     }

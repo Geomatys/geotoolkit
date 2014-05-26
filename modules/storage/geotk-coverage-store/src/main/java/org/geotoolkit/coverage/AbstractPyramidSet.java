@@ -16,6 +16,10 @@
  */
 package org.geotoolkit.coverage;
 
+import org.apache.sis.geometry.GeneralEnvelope;
+import org.opengis.geometry.DirectPosition;
+import org.opengis.geometry.Envelope;
+
 /**
  *
  * @author Johann Sorel (Geomatys)
@@ -42,6 +46,23 @@ public abstract class AbstractPyramidSet implements PyramidSet {
             if(m.getId().equals(mosaicId)){
                 return m;
             }
+        }
+        return null;
+    }
+    
+    @Override
+    public Envelope getEnvelope() {
+        for(Pyramid pyramid : getPyramids()){
+            //we consider the first pyramid to be in the main data crs
+            GeneralEnvelope env = null;
+            for(GridMosaic mosaic : pyramid.getMosaics()){
+                if(env==null){
+                    env = new GeneralEnvelope(mosaic.getEnvelope());
+                }else{
+                    env.add(mosaic.getEnvelope());
+                }
+            }
+            return env;
         }
         return null;
     }
