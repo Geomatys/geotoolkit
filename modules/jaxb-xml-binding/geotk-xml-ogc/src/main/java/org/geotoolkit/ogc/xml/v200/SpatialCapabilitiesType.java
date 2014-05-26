@@ -33,9 +33,9 @@ import org.opengis.filter.capability.SpatialOperators;
 
 /**
  * <p>Java class for Spatial_CapabilitiesType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="Spatial_CapabilitiesType">
  *   &lt;complexContent>
@@ -48,8 +48,8 @@ import org.opengis.filter.capability.SpatialOperators;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Spatial_CapabilitiesType", propOrder = {
@@ -67,11 +67,11 @@ public class SpatialCapabilitiesType implements SpatialCapabilities {
      * empty constructor used by JAXB
      */
     public SpatialCapabilitiesType() {
-        
+
     }
-    
+
     /**
-     * Build a new SpatialCapabilities 
+     * Build a new SpatialCapabilities
      */
     public SpatialCapabilitiesType(final GeometryOperand[] geometryOperands, final SpatialOperators spatial) {
         this.geometryOperands = new GeometryOperandsType(geometryOperands);
@@ -85,14 +85,14 @@ public class SpatialCapabilitiesType implements SpatialCapabilities {
         this.geometryOperands = geometryOperands;
         this.spatialOperators = (SpatialOperatorsType) spatial;
     }
-    
+
     /**
      * Gets the value of the geometryOperands property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link GeometryOperandsType }
-     *     
+     *
      */
     public GeometryOperandsType getGeometryOperandsType() {
         return geometryOperands;
@@ -100,37 +100,37 @@ public class SpatialCapabilitiesType implements SpatialCapabilities {
 
     /**
      * Sets the value of the geometryOperands property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link GeometryOperandsType }
-     *     
+     *
      */
     public void setGeometryOperands(GeometryOperandsType value) {
         this.geometryOperands = value;
     }
 
     /**
-     * implements SpatialCapabilities geoAPI interface 
+     * implements SpatialCapabilities geoAPI interface
      * @return
      */
     public Collection<GeometryOperand> getGeometryOperands() {
         List<GeometryOperand> result = new ArrayList<GeometryOperand>();
         if (geometryOperands != null) {
             for (GeometryOperandsType.GeometryOperand qn: geometryOperands.getGeometryOperand()) {
-                result.add(GeometryOperand.get(qn.getName().getNamespaceURI(), qn.getName().getLocalPart()));
+                result.add(GeometryOperand.valueOf(/*qn.getName().getNamespaceURI(),*/ qn.getName().getLocalPart()));
             }
         }
         return result;
     }
-    
+
     /**
      * Gets the value of the spatialOperators property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link SpatialOperatorsType }
-     *     
+     *
      */
     public SpatialOperatorsType getSpatialOperators() {
         return spatialOperators;
@@ -138,11 +138,11 @@ public class SpatialCapabilitiesType implements SpatialCapabilities {
 
     /**
      * Sets the value of the spatialOperators property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link SpatialOperatorsType }
-     *     
+     *
      */
     public void setSpatialOperators(SpatialOperatorsType value) {
         this.spatialOperators = value;

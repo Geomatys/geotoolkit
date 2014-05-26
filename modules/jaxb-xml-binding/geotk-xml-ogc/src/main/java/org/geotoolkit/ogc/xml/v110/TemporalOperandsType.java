@@ -29,9 +29,9 @@ import org.opengis.filter.capability.TemporalOperand;
 
 /**
  * <p>Java class for TemporalOperandsType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="TemporalOperandsType">
  *   &lt;complexContent>
@@ -43,8 +43,8 @@ import org.opengis.filter.capability.TemporalOperand;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -72,7 +72,7 @@ public class TemporalOperandsType {
         }
         temporalOperand = new ArrayList<QName>();
         for (TemporalOperand g: tmpOperands) {
-            temporalOperand.add(new QName(g.getNamespaceURI(), g.getLocalPart()));
+            temporalOperand.add(new QName("http://www.opengis.net/fes/2.0", g.name()));
         }
     }
 
@@ -120,7 +120,7 @@ public class TemporalOperandsType {
 
        if (object instanceof TemporalOperandsType) {
            final TemporalOperandsType that = (TemporalOperandsType) object;
-       
+
             return Objects.equals(this.temporalOperand, that.temporalOperand);
         }
         return false;

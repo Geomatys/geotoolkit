@@ -30,9 +30,9 @@ import org.opengis.filter.capability.GeometryOperand;
 
 /**
  * <p>Java class for GeometryOperandsType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="GeometryOperandsType">
  *   &lt;complexContent>
@@ -44,8 +44,8 @@ import org.opengis.filter.capability.GeometryOperand;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -61,9 +61,9 @@ public class GeometryOperandsType {
      * Empty constructor used by JAXB
      */
     public GeometryOperandsType() {
-        
+
     }
-    
+
     /**
      * build a new geometry Operands object with the specified array of GeometryOperand (from geoAPI)
      */
@@ -73,7 +73,7 @@ public class GeometryOperandsType {
         }
         geometryOperand = new ArrayList<>();
         for (GeometryOperand g: geometryOperands) {
-            geometryOperand.add(new QName("http://www.opengis.net/gml", g.getLocalPart()));
+            geometryOperand.add(new QName("http://www.opengis.net/gml", g.name()));
         }
     }
 
@@ -86,7 +86,7 @@ public class GeometryOperandsType {
         }
         this.geometryOperand = geometryOperands;
     }
-    
+
     /**
      * Gets the value of the geometryOperand property.
      * (unmodifiable)
@@ -121,7 +121,7 @@ public class GeometryOperandsType {
 
        if (object instanceof GeometryOperandsType) {
            final GeometryOperandsType that = (GeometryOperandsType) object;
-       
+
             return Objects.equals(this.geometryOperand, that.geometryOperand);
         }
         return false;

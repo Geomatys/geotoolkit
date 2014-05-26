@@ -103,7 +103,7 @@ public class SpatialOperatorType implements SpatialOperator {
         List<GeometryOperand> result = new ArrayList<GeometryOperand>();
         if (geometryOperands != null) {
             for (QName qn: geometryOperands.getGeometryOperand()) {
-                result.add(GeometryOperand.get(qn.getNamespaceURI(), qn.getLocalPart()));
+                result.add(GeometryOperand.valueOf(/*qn.getNamespaceURI(),*/ qn.getLocalPart()));
             }
         }
         return result;
@@ -116,7 +116,7 @@ public class SpatialOperatorType implements SpatialOperator {
         }
         return null;
     }
-    
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("[SpatialOperatorType]").append("\n");
@@ -140,7 +140,7 @@ public class SpatialOperatorType implements SpatialOperator {
 
        if (object instanceof SpatialOperatorType) {
            final SpatialOperatorType that = (SpatialOperatorType) object;
-       
+
             return Objects.equals(this.geometryOperands, that.geometryOperands) &&
                    Objects.equals(this.name, that.name);
         }

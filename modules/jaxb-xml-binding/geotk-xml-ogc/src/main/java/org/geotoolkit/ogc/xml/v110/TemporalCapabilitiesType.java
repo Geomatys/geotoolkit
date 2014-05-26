@@ -120,7 +120,7 @@ public class TemporalCapabilitiesType implements TemporalCapabilities {
         List<TemporalOperand> result = new ArrayList<TemporalOperand>();
         if (temporalOperands != null) {
             for (QName qn: temporalOperands.getTemporalOperand()) {
-                result.add(TemporalOperand.get(qn.getNamespaceURI(), qn.getLocalPart()));
+                result.add(TemporalOperand.valueOf(/*qn.getNamespaceURI(),*/ qn.getLocalPart()));
             }
         }
         return result;
@@ -149,7 +149,7 @@ public class TemporalCapabilitiesType implements TemporalCapabilities {
 
        if (object instanceof TemporalCapabilitiesType) {
            final TemporalCapabilitiesType that = (TemporalCapabilitiesType) object;
-       
+
             return Objects.equals(this.temporalOperands, that.temporalOperands) &&
                    Objects.equals(this.temporalOperators, that.temporalOperators);
         }

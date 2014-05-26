@@ -30,9 +30,9 @@ import javax.xml.namespace.QName;
 
 /**
  * <p>Java class for GeometryOperandsType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="GeometryOperandsType">
  *   &lt;complexContent>
@@ -52,8 +52,8 @@ import javax.xml.namespace.QName;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "GeometryOperandsType", propOrder = {
@@ -68,9 +68,9 @@ public class GeometryOperandsType {
      * Empty constructor used by JAXB
      */
     public GeometryOperandsType() {
-        
+
     }
-    
+
     /**
      * build a new geometry Operands object with the specified array of GeometryOperand (from geoAPI)
      */
@@ -80,7 +80,7 @@ public class GeometryOperandsType {
         }
         geometryOperand = new ArrayList<>();
         for (org.opengis.filter.capability.GeometryOperand g: geometryOperands) {
-            geometryOperand.add(new GeometryOperand(new QName("http://www.opengis.net/gml/3.2", g.getLocalPart())));
+            geometryOperand.add(new GeometryOperand(new QName("http://www.opengis.net/gml/3.2", g.name())));
         }
     }
 
@@ -99,7 +99,7 @@ public class GeometryOperandsType {
 
     /**
      * Gets the value of the geometryOperand property.
-     * 
+     *
      */
     public List<GeometryOperandsType.GeometryOperand> getGeometryOperand() {
         if (geometryOperand == null) {
@@ -111,9 +111,9 @@ public class GeometryOperandsType {
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -123,8 +123,8 @@ public class GeometryOperandsType {
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "")
@@ -134,19 +134,19 @@ public class GeometryOperandsType {
         private QName name;
 
         public GeometryOperand() {
-            
+
         }
-        
+
         public GeometryOperand(final QName name) {
             this.name = name;
         }
         /**
          * Gets the value of the name property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link QName }
-         *     
+         *
          */
         public QName getName() {
             return name;
@@ -154,11 +154,11 @@ public class GeometryOperandsType {
 
         /**
          * Sets the value of the name property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link QName }
-         *     
+         *
          */
         public void setName(QName value) {
             this.name = value;

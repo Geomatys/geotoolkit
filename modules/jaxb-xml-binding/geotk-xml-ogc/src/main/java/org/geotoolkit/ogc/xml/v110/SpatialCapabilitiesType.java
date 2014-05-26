@@ -110,7 +110,7 @@ public class SpatialCapabilitiesType implements SpatialCapabilities {
         List<GeometryOperand> result = new ArrayList<GeometryOperand>();
         if (geometryOperands != null) {
             for (QName qn: geometryOperands.getGeometryOperand()) {
-                result.add(GeometryOperand.get(qn.getNamespaceURI(), qn.getLocalPart()));
+                result.add(GeometryOperand.valueOf(/*qn.getNamespaceURI(),*/ qn.getLocalPart()));
             }
         }
         return result;
@@ -139,7 +139,7 @@ public class SpatialCapabilitiesType implements SpatialCapabilities {
 
        if (object instanceof SpatialCapabilitiesType) {
            final SpatialCapabilitiesType that = (SpatialCapabilitiesType) object;
-       
+
             return Objects.equals(this.geometryOperands, that.geometryOperands) &&
                    Objects.equals(this.spatialOperators, that.spatialOperators);
         }

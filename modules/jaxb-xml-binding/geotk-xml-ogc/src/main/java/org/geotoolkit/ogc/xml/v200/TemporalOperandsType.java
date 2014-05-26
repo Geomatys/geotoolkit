@@ -80,7 +80,7 @@ public class TemporalOperandsType {
         }
         temporalOperand = new ArrayList<TemporalOperandsType.TemporalOperand>();
         for (org.opengis.filter.capability.TemporalOperand g: tmpOperands) {
-            temporalOperand.add(new TemporalOperand(new QName(g.getNamespaceURI(), g.getLocalPart())));
+            temporalOperand.add(new TemporalOperand(new QName("http://www.opengis.net/fes/2.0", g.name())));
         }
     }
 

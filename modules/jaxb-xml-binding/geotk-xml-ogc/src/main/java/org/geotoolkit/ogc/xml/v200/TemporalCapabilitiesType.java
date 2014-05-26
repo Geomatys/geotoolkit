@@ -135,7 +135,7 @@ public class TemporalCapabilitiesType implements TemporalCapabilities {
         List<TemporalOperand> result = new ArrayList<TemporalOperand>();
         if (temporalOperands != null) {
             for (TemporalOperandsType.TemporalOperand qn: temporalOperands.getTemporalOperand()) {
-                result.add(TemporalOperand.get(qn.getName().getNamespaceURI(), qn.getName().getLocalPart()));
+                result.add(TemporalOperand.valueOf(/*qn.getName().getNamespaceURI(),*/ qn.getName().getLocalPart()));
             }
         }
         return result;

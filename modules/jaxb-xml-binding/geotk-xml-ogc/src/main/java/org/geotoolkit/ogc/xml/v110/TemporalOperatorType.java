@@ -63,13 +63,13 @@ public class TemporalOperatorType implements TemporalOperator {
     private TemporalOperatorNameType name;
 
     public TemporalOperatorType() {
-        
+
     }
-    
+
     public TemporalOperatorType(final TemporalOperatorNameType name) {
         this.name = name;
     }
-    
+
     /**
      * Gets the value of the temporalOperands property.
      *
@@ -95,7 +95,7 @@ public class TemporalOperatorType implements TemporalOperator {
         List<TemporalOperand> result = new ArrayList<TemporalOperand>();
         if (temporalOperands != null) {
             for (QName qn: temporalOperands.getTemporalOperand()) {
-                result.add(TemporalOperand.get(qn.getNamespaceURI(), qn.getLocalPart()));
+                result.add(TemporalOperand.valueOf(/*qn.getNamespaceURI(),*/ qn.getLocalPart()));
             }
         }
         return result;
@@ -140,7 +140,7 @@ public class TemporalOperatorType implements TemporalOperator {
 
        if (object instanceof TemporalOperatorType) {
            final TemporalOperatorType that = (TemporalOperatorType) object;
-       
+
             return Objects.equals(this.temporalOperands, that.temporalOperands) &&
                    Objects.equals(this.name, that.name);
         }
