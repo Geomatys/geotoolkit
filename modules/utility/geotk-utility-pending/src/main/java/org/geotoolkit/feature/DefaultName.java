@@ -17,10 +17,12 @@
  */
 package org.geotoolkit.feature;
 
-import java.io.Serializable;
+import java.util.Collections;
 import java.util.Objects;
 import javax.xml.namespace.QName;
 import org.opengis.feature.type.Name;
+import org.apache.sis.util.iso.DefaultLocalName;
+import org.apache.sis.internal.system.DefaultFactories;
 
 
 /**
@@ -46,8 +48,11 @@ import org.opengis.feature.type.Name;
  * @author Justin Deoliveira, The Open Planning Project, jdeolive@openplans.org
  * @author Johann Sorel, Geomatys
  * @module pending
+ *
+ * @deprecated The GeoAPI {@code Name} interface is expected to be replaced by {@link org.opengis.util.GenericName}.
  */
-public class DefaultName implements Name,Serializable {
+@Deprecated
+public class DefaultName extends DefaultLocalName implements Name {
     /**
      * Namespace / scope
      */
@@ -93,6 +98,12 @@ public class DefaultName implements Name,Serializable {
      *
      */
     public DefaultName(final String namespace, final String separator, final String local) {
+
+        // WARNING: DefaultFactories.NAMES is not a public API and may change in any future SIS version.
+
+        super(DefaultFactories.NAMES.createNameSpace(
+                DefaultFactories.NAMES.createGenericName(null, namespace),
+                Collections.singletonMap("separator.head", separator)), local);
         this.namespace = namespace;
         this.separator = separator;
         this.local = local;

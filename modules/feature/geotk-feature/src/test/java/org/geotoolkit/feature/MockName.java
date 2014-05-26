@@ -17,18 +17,21 @@
  */
 package org.geotoolkit.feature;
 
-import java.io.Serializable;
 import java.util.Objects;
+import java.util.Collections;
 import javax.xml.namespace.QName;
-import org.geotoolkit.util.Utilities;
 import org.opengis.feature.type.Name;
+import org.apache.sis.util.iso.DefaultLocalName;
+import org.apache.sis.internal.system.DefaultFactories;
 
 /**
  * A simple implementation of interface Name we need for running tests.
  * @author Alexis MANIN
+ *
+ * @deprecated The GeoAPI {@code Name} interface is expected to be replaced by {@link org.opengis.util.GenericName}.
  */
-public class MockName implements Name, Serializable {
-
+@Deprecated
+public class MockName extends DefaultLocalName implements Name {
     /**
      * Namespace / scope
      */
@@ -72,6 +75,12 @@ public class MockName implements Name, Serializable {
      *
      */
     public MockName(final String namespace, final String separator, final String local) {
+
+        // WARNING: DefaultFactories.NAMES is not a public API and may change in any future SIS version.
+
+        super(DefaultFactories.NAMES.createNameSpace(
+                DefaultFactories.NAMES.createGenericName(null, namespace),
+                Collections.singletonMap("separator.head", separator)), local);
         this.namespace = namespace;
         this.separator = separator;
         this.local = local;
