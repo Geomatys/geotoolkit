@@ -27,7 +27,7 @@ import java.util.Map.Entry;
 
 import org.opengis.feature.type.AttributeType;
 import org.opengis.feature.type.Name;
-import org.opengis.feature.type.Schema;
+import org.geotoolkit.feature.type.Schema;
 
 
 /**
@@ -233,7 +233,7 @@ public class DefaultProfile implements Schema,Serializable {
         hash = 67 * hash + (this.contents != null ? this.contents.hashCode() : 0);
         return hash;
     }
-    
-    
-    
+
+
+
 }

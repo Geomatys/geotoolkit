@@ -45,7 +45,7 @@ import org.opengis.feature.type.GeometryType;
 import org.opengis.feature.type.Name;
 import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.feature.type.PropertyType;
-import org.opengis.feature.type.Schema;
+import org.geotoolkit.feature.type.Schema;
 import org.opengis.filter.Filter;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.InternationalString;
@@ -126,7 +126,7 @@ public class FeatureTypeBuilder {
                 }
             }
         }
-        
+
         @Override
         public boolean add(PropertyDescriptor e) {
             ensureNonNull("property descriptor", e);
@@ -181,7 +181,7 @@ public class FeatureTypeBuilder {
     public FeatureTypeBuilder(final FeatureTypeFactory factory) {
         this(factory,true);
     }
-    
+
     /**
      * Constructs the builder specifying the factory for creating feature and
      * feature collection types.
@@ -210,7 +210,7 @@ public class FeatureTypeBuilder {
 
         name = type.getName();
         description = type.getDescription();
-        
+
         restrictions.clear();
         restrictions.addAll(type.getRestrictions());
 
@@ -393,7 +393,7 @@ public class FeatureTypeBuilder {
     }
 
     /**
-     * 
+     *
      * @param name
      * @param binding
      * @return the created AttributeDescriptor
@@ -403,7 +403,7 @@ public class FeatureTypeBuilder {
     }
 
     /**
-     * 
+     *
      * @param name
      * @param binding
      * @param min
@@ -417,7 +417,7 @@ public class FeatureTypeBuilder {
         return add(DefaultName.valueOf(name),binding,min,max,nillable,userData);
     }
     /**
-     * 
+     *
      * @param name
      * @param binding
      * @param crs
@@ -428,7 +428,7 @@ public class FeatureTypeBuilder {
     }
 
     /**
-     * 
+     *
      * @param name
      * @param binding
      * @param crs
@@ -463,7 +463,7 @@ public class FeatureTypeBuilder {
     }
 
     /**
-     * 
+     *
      * @param name
      * @param binding
      * @param min
@@ -523,7 +523,7 @@ public class FeatureTypeBuilder {
     }
 
     /**
-     * 
+     *
      * @param name
      * @param binding
      * @param crs
@@ -541,7 +541,7 @@ public class FeatureTypeBuilder {
     }
 
     /**
-     * 
+     *
      * @return the created AttributeDescriptor
      */
     public AttributeDescriptor add(final PropertyType at, final Name name, final CoordinateReferenceSystem crs,
@@ -811,7 +811,7 @@ public class FeatureTypeBuilder {
         }else{
             return (T) b.buildType();
         }
-        
+
     }
 
 }

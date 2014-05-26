@@ -34,7 +34,12 @@ import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.util.Converters;
 import org.apache.sis.util.logging.Logging;
 import org.opengis.coverage.grid.GridCoverage;
-import org.opengis.feature.*;
+import org.opengis.feature.Association;
+import org.opengis.feature.Attribute;
+import org.opengis.feature.ComplexAttribute;
+import org.opengis.feature.Feature;
+import org.opengis.feature.GeometryAttribute;
+import org.opengis.feature.Property;
 import org.geotoolkit.feature.simple.SimpleFeature;
 import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.*;
@@ -55,7 +60,7 @@ public final class FeatureUtilities {
      * Key used if properties to store a version manager for the object.
      */
     public static final String ATT_VERSIONING = "versioning";
-    
+
     private static final Logger LOGGER = Logging.getLogger(FeatureUtilities.class);
 
     private static final FeatureFactory FF = FactoryFinder
@@ -482,12 +487,12 @@ public final class FeatureUtilities {
 
     /**
      * Reset the property values.
-     * @param candidate 
+     * @param candidate
      */
     public static void resetProperty(final Property candidate){
         final PropertyType type = candidate.getType();
         final PropertyDescriptor desc = candidate.getDescriptor();
-        
+
         if(type instanceof ComplexType){
             final ComplexType ct = (ComplexType) type;
             final ComplexAttribute ca = (ComplexAttribute) candidate;
@@ -507,7 +512,7 @@ public final class FeatureUtilities {
         }
 
     }
-    
+
     ////////////////////////////////////////////////////////////////////////////
     // ENCAPSULATION OPERATIONS ////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
@@ -542,7 +547,7 @@ public final class FeatureUtilities {
     ////////////////////////////////////////////////////////////////////////////
     // PARAMETERS API MAPPING OPERATIONS ///////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
-    
+
     /**
      * Convert a ComplexAttribute in a parameter.
      *
@@ -569,7 +574,7 @@ public final class FeatureUtilities {
         ArgumentChecks.ensureNonNull("source", source);
         return toFeature(source,null);
     }
-    
+
     /**
      * Convert a ParameterValueGroup in a feature.
      *
@@ -587,7 +592,7 @@ public final class FeatureUtilities {
         fill(source,target);
         return target;
     }
-    
+
 
     /**
      * Convert a ComplexAttribute in a Map of values.
@@ -690,7 +695,7 @@ public final class FeatureUtilities {
 
         return parameter;
     }
-    
+
     /**
      * Build a {@link Property} from a {@link ParameterValue}.
      * @param parameter {@link ParameterValue}
@@ -699,9 +704,9 @@ public final class FeatureUtilities {
     public static Property toProperty (final ParameterValue parameter) {
         final ParameterDescriptor descriptor = parameter.getDescriptor();
         final Object value = parameter.getValue();
-        
+
         final AttributeType at = (AttributeType) FeatureTypeUtilities.toPropertyType(descriptor);
-        
+
         final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
         adb.setType(at);
         adb.setName(descriptor.getName().getCode());

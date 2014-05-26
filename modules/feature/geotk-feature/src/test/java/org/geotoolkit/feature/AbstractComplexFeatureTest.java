@@ -36,7 +36,10 @@ import java.util.Collection;
 import java.util.List;
 import static org.junit.Assert.*;
 import org.junit.Test;
-import org.opengis.feature.*;
+import org.opengis.feature.Attribute;
+import org.opengis.feature.ComplexAttribute;
+import org.opengis.feature.Feature;
+import org.opengis.feature.Property;
 import org.geotoolkit.feature.simple.SimpleFeature;
 import org.opengis.feature.type.*;
 

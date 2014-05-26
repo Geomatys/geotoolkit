@@ -61,6 +61,26 @@ public class DefaultAttributeType<T extends AttributeType> extends DefaultProper
         return identified;
     }
 
+    @Override
+    public Class getValueClass() {
+        return getBinding();
+    }
+
+    @Override
+    public int getMinimumOccurs() {
+        return 0; // Actually unspecified.
+    }
+
+    @Override
+    public int getMaximumOccurs() {
+        return Integer.MAX_VALUE; // Actually unspecified.
+    }
+
+    @Override
+    public Object getDefaultValue() {
+        return null; // Actually unspecified.
+    }
+
     /**
      * Allows this AttributeType to convert an argument to its prefered storage
      * type. If no parsing is possible, returns the original value. If a parse

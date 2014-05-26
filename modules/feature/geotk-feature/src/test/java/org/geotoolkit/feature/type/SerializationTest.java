@@ -37,7 +37,7 @@ import org.opengis.feature.type.AttributeType;
 import org.opengis.feature.type.ComplexType;
 import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.feature.type.GeometryType;
-import org.opengis.feature.type.Schema;
+import org.geotoolkit.feature.type.Schema;
 
 /**
  * Test the different feature type and attribute classes serialization.

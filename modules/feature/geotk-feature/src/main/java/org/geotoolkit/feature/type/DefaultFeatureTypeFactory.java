@@ -33,7 +33,7 @@ import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.feature.type.GeometryType;
 import org.opengis.feature.type.Name;
 import org.opengis.feature.type.PropertyDescriptor;
-import org.opengis.feature.type.Schema;
+import org.geotoolkit.feature.type.Schema;
 import org.opengis.filter.Filter;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.InternationalString;
@@ -113,7 +113,7 @@ public class DefaultFeatureTypeFactory implements FeatureTypeFactory {
     public AttributeType createAttributeType(final Name name, final Class binding,
             final boolean isIdentifiable, final boolean isAbstract, final List restrictions,
             final AttributeType superType, final InternationalString description){
-        if(Geometry.class.isAssignableFrom(binding) 
+        if(Geometry.class.isAssignableFrom(binding)
                 || org.opengis.geometry.Geometry.class.isAssignableFrom(binding)
                 || Coverage.class.isAssignableFrom(binding)){
             return createGeometryType(name, binding, null, isIdentifiable, isAbstract,

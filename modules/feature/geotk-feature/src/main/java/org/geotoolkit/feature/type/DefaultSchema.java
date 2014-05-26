@@ -25,7 +25,7 @@ import java.util.Map.Entry;
 
 import org.opengis.feature.type.AttributeType;
 import org.opengis.feature.type.Name;
-import org.opengis.feature.type.Schema;
+import org.geotoolkit.feature.type.Schema;
 
 
 /**
