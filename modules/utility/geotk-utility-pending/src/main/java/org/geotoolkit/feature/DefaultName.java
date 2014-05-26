@@ -103,7 +103,7 @@ public class DefaultName extends DefaultLocalName implements Name {
 
         super(namespace == null ? null : DefaultFactories.NAMES.createNameSpace(
                 DefaultFactories.NAMES.createGenericName(null, namespace),
-                Collections.singletonMap("separator.head", separator)), local);
+                Collections.singletonMap("separator.head", separator)), local != null ? local : "unnamed");
         this.namespace = namespace;
         this.separator = separator;
         this.local = local;
