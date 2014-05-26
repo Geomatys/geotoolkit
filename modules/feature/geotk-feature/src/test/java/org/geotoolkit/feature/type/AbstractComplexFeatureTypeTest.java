@@ -37,7 +37,7 @@ import java.util.List;
 import java.util.Map;
 import org.geotoolkit.feature.MockCRS;
 import org.geotoolkit.feature.MockDirectPosition2D;
-import org.geotoolkit.feature.MockName;
+import org.geotoolkit.feature.DefaultName;
 import static org.junit.Assert.*;
 import org.junit.Test;
 import org.opengis.feature.type.*;
@@ -58,9 +58,9 @@ public abstract class AbstractComplexFeatureTypeTest extends AbstractSimpleFeatu
      */
     @Test
     public void testCreateComplexType() {
-        final Name name = new MockName("point");
-        final Name strName = new MockName("String");
-        final Name ctName = new MockName("complexTypeName");
+        final Name name = new DefaultName("point");
+        final Name strName = new DefaultName("String");
+        final Name ctName = new DefaultName("complexTypeName");
         final Map crsInfo = new HashMap<String, String>();
         crsInfo.put("name", "myCRS");
         crsInfo.put("first", "one");
@@ -78,18 +78,18 @@ public abstract class AbstractComplexFeatureTypeTest extends AbstractSimpleFeatu
         descList.add(descriptor);
         descList.add(geoDesc);
         descList.add(desc_doublon);
-        
+
         //create object to test, should raise an exception cause we have two descriptors with the same name
         ComplexType res;
         try {
             res = FTF.createComplexType(ctName, descList, true, false, null, attrType, descriptionSample);
             fail("We can't create a complexType with multiple descriptors with the same name");
         } catch (Exception e) {
-            
+
         }
         descList.remove(desc_doublon);
         res = FTF.createComplexType(ctName, descList, true, false, null, attrType, descriptionSample);
-        
+
         //tests
         assertNotNull("Complex type is null", res);
         //Name
@@ -112,13 +112,13 @@ public abstract class AbstractComplexFeatureTypeTest extends AbstractSimpleFeatu
         //Binding
         assertNotNull("Binding has not been set for this complexType", res.getBinding());
         //assertTrue(res.getBinding().class == (Collection<Property>.class));
-        
+
         //check for access to non-existant descriptor
         try {
             res.getDescriptor("non-existant");
         } catch (Exception e) {
         }
-        Name tmpName = new MockName("non-existant");
+        Name tmpName = new DefaultName("non-existant");
         try {
             res.getDescriptor(tmpName);
         } catch (Exception e) {
@@ -131,9 +131,9 @@ public abstract class AbstractComplexFeatureTypeTest extends AbstractSimpleFeatu
      */
     @Test
     public void createFeatureType() {
-        final Name name = new MockName("point");
-        final Name strName = new MockName("String");
-        final Name fName = new MockName("featureTypeName");
+        final Name name = new DefaultName("point");
+        final Name strName = new DefaultName("String");
+        final Name fName = new DefaultName("featureTypeName");
         final FeatureTypeFactory FTF = getFeatureTypeFactory();
 
         //types and descriptors
@@ -170,12 +170,12 @@ public abstract class AbstractComplexFeatureTypeTest extends AbstractSimpleFeatu
             res.getDescriptor("non-existant");
         } catch (Exception e) {
         }
-        Name tmpName = new MockName("non-existant");
+        Name tmpName = new DefaultName("non-existant");
         try {
             res.getDescriptor(tmpName);
         } catch (Exception e) {
         }
-        
-        
+
+
     }
 }
