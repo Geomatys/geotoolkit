@@ -359,6 +359,11 @@ public class PyramidalModelReader extends GridCoverageReader{
         tileMinRow = XMath.clamp(tileMinRow, 0, gridHeight);
         tileMaxRow = XMath.clamp(tileMaxRow, 0, gridHeight);
 
+        //delay the reading, use a large rendered image
+        final boolean deferred = param.isDeferred();
+        if(deferred){
+            //TODO : update GridMosaicRenderedImage to accept tile ranges
+        }
 
         //tiles to render, coordinate in grid -> image offset
         final Collection<Point> candidates = new ArrayList<>();

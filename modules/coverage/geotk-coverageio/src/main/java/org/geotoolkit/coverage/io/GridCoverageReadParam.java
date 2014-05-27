@@ -48,6 +48,14 @@ public class GridCoverageReadParam extends GridCoverageStoreParam {
      * {@code null}, indicating that all destination bands should be written in order.
      */
     private int[] destinationBands;
+    
+    /**
+     * A flag which indicates if the coverage data reading may be deferred.
+     * Default value is false which is the expected behavior when dealing with 
+     * reading operations. 
+     */
+    private boolean deferred = false;
+    
 
     /**
      * Creates a new {@code GridCoverageReadParam} instance. All properties are
@@ -79,6 +87,7 @@ public class GridCoverageReadParam extends GridCoverageStoreParam {
     @Override
     public void clear() {
         destinationBands = null;
+        deferred = false;
         super.clear();
     }
 
@@ -115,6 +124,28 @@ public class GridCoverageReadParam extends GridCoverageStoreParam {
      */
     public void setDestinationBands(final int... bands) throws IllegalArgumentException {
         destinationBands = checkAndClone(bands);
+    }
+
+    /**
+     * This flag indicates if the coverage data reading may be deferred.
+     * Default value is false which is the expected behavior when dealing with 
+     * reading operations. 
+     * 
+     * @return true if reading may be deferred
+     */
+    public boolean isDeferred() {
+        return deferred;
+    }
+
+    /**
+     * Set deferred flag.
+     * 
+     * @see GridCoverageReadParam#isDeferred() 
+     * 
+     * @param deferred
+     */
+    public void setDeferred(boolean deferred) {
+        this.deferred = deferred;
     }
 
     /**
