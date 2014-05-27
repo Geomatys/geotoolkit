@@ -46,6 +46,9 @@ public class DefaultAttributeDescriptor<T extends AttributeType> extends Default
            throw new IllegalArgumentException("Default value doesn't match");
         }
         this.defaultValue = defaultValue;
+        if (type instanceof DefaultAttributeType) {
+            ((DefaultAttributeType) type).setDescriptor(this);
+        }
     }
 
     /**

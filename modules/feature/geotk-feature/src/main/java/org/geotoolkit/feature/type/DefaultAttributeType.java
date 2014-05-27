@@ -22,6 +22,7 @@ import java.util.List;
 import org.apache.sis.util.Classes;
 
 import org.opengis.feature.type.AttributeType;
+import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;
 import org.opengis.util.InternationalString;
@@ -36,6 +37,8 @@ import org.opengis.util.InternationalString;
 public class DefaultAttributeType<T extends AttributeType> extends DefaultPropertyType<T> implements AttributeType {
 
     protected final boolean identified;
+
+    private AttributeDescriptor descriptor;
 
     public DefaultAttributeType(final Name name, final Class<?> binding, final boolean identified,
             final boolean isAbstract, final List<Filter> restrictions, final T superType,
@@ -53,6 +56,12 @@ public class DefaultAttributeType<T extends AttributeType> extends DefaultProper
         this.identified = identified;
     }
 
+    final synchronized void setDescriptor(final AttributeDescriptor d) {
+        if (descriptor == null) {
+            descriptor = d;
+        }
+    }
+
     /**
      * {@inheritDoc }
      */
@@ -67,18 +76,18 @@ public class DefaultAttributeType<T extends AttributeType> extends DefaultProper
     }
 
     @Override
-    public int getMinimumOccurs() {
-        return 0; // Actually unspecified.
+    public synchronized int getMinimumOccurs() {
+        return (descriptor != null) ? descriptor.getMinOccurs() : 0;
     }
 
     @Override
-    public int getMaximumOccurs() {
-        return Integer.MAX_VALUE; // Actually unspecified.
+    public synchronized int getMaximumOccurs() {
+        return (descriptor != null) ? descriptor.getMaxOccurs() : Integer.MAX_VALUE;
     }
 
     @Override
-    public Object getDefaultValue() {
-        return null; // Actually unspecified.
+    public synchronized Object getDefaultValue() {
+        return (descriptor != null) ? descriptor.getDefaultValue(): null;
     }
 
     /**
