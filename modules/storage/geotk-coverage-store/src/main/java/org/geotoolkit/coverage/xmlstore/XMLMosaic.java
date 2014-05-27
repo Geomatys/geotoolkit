@@ -27,10 +27,14 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.BitSet;
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
@@ -62,6 +66,7 @@ import org.geotoolkit.coverage.GridMosaic;
 import org.geotoolkit.coverage.TileReference;
 import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.util.BufferedImageUtilities;
+import org.geotoolkit.util.StringUtilities;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 
@@ -171,7 +176,14 @@ public class XMLMosaic implements GridMosaic{
      */
     @Override
     public String getId() {
-        return String.valueOf(scale);
+        final StringBuilder sb = new StringBuilder();
+        sb.append(scale);
+        for(int i=0;i<upperLeft.length;i++){
+            sb.append('x');
+            sb.append(upperLeft[i]);
+        }
+        //avoid local system formating
+        return sb.toString().replace(DecimalFormatSymbols.getInstance().getDecimalSeparator(), 'd');
     }
 
     public File getFolder(){

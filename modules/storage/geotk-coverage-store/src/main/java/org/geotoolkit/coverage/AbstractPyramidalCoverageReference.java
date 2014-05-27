@@ -52,6 +52,7 @@ import org.opengis.feature.type.Name;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
+import org.opengis.referencing.operation.MathTransform;
 
 /**
  * Abstract pyramidal coverage reference.
@@ -253,9 +254,12 @@ public abstract class AbstractPyramidalCoverageReference extends AbstractCoverag
     
     /**
      * Get a tile as coverage.
+     * @param covRef
      * @param pyramidId
      * @param mosaicId
+     * @param tile
      * @return GridCoverage2D
+     * @throws org.apache.sis.storage.DataStoreException
      */
     public static GridCoverage2D getTileAsCoverage(PyramidalCoverageReference covRef, 
             String pyramidId, String mosaicId, TileReference tile) throws DataStoreException {
@@ -294,7 +298,7 @@ public abstract class AbstractPyramidalCoverageReference extends AbstractCoverag
         gcb.setName("tile");
 
         final CoordinateReferenceSystem tileCRS = pyramid.getCoordinateReferenceSystem();
-        final AffineTransform2D gridToCrs = AbstractGridMosaic.getTileGridToCRS(mosaic,tile.getPosition());
+        final MathTransform gridToCrs = AbstractGridMosaic.getTileGridToCRS(mosaic,tile.getPosition());
         
         final GridEnvelope2D ge = new GridEnvelope2D(0, 0, image.getWidth(), image.getHeight());
         final GridGeometry2D gridgeo = new GridGeometry2D(ge, PixelInCell.CELL_CORNER, gridToCrs, tileCRS, null);

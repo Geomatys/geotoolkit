@@ -20,8 +20,12 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import java.io.File;
+import java.awt.image.Raster;
+import java.awt.image.RenderedImage;
 import org.apache.sis.geometry.GeneralDirectPosition;
+import org.apache.sis.geometry.GeneralEnvelope;
+import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.referencing.CRS;
@@ -62,10 +66,6 @@ public abstract class PyramidalModelStoreNDTest {
         if(store != null){
             return store;
         }
-
-        final File tempFolder = File.createTempFile("mosaic", "");
-        tempFolder.delete();
-        tempFolder.mkdirs();
 
         //create a small pyramid
         store = createStore();
@@ -126,8 +126,6 @@ public abstract class PyramidalModelStoreNDTest {
             ref.writeTile(pyramid.getId(), mosaic_s1.getId(), 1, 2, createImage(colors[v][1][1][2]));
             ref.writeTile(pyramid.getId(), mosaic_s1.getId(), 2, 2, createImage(colors[v][1][2][2]));
             ref.writeTile(pyramid.getId(), mosaic_s1.getId(), 3, 2, createImage(colors[v][1][3][2]));
-            
-            color++;
         }
         
         
@@ -135,6 +133,14 @@ public abstract class PyramidalModelStoreNDTest {
         return store;
     }
 
+    private Envelope createEnvelope(double... coords){
+        final GeneralEnvelope env = new GeneralEnvelope(crs);
+        for(int i=0;i<coords.length;i+=2){
+            env.setRange(i/2, coords[i], coords[i+1]);
+        }
+        return env;
+    }
+    
     private GeneralDirectPosition createCorner(double... values) {
         final GeneralDirectPosition corner = new GeneralDirectPosition(crs);
         for (int i = 0; i < values.length; i++) {
@@ -157,7 +163,7 @@ public abstract class PyramidalModelStoreNDTest {
      * @throws Exception
      */
     @Test
-    public void noArgumentTest() throws Exception{
+    public void checkMetaTest() throws Exception{
         //load the coverage store
         getCoverageStore();
         final GridCoverageReader reader = ref.acquireReader();
@@ -181,82 +187,92 @@ public abstract class PyramidalModelStoreNDTest {
         assertEquals(corner_v[0], env.getMinimum(2), DELTA);
         assertEquals(corner_v[1], env.getMaximum(2), DELTA);
         
-        
-//        assertTrue(CRS.equalsIgnoreMetadata(crs,  env.getCoordinateReferenceSystem()));
-//
-//        //check tile aggregation
-//        final RenderedImage img = coverage.getRenderedImage();
-//        final Raster raster = img.getData();
-//
-//        assertEquals(4*10,img.getWidth());
-//        assertEquals(3*10,img.getHeight());
-//
-//        //we should have a different color each 10pixel
-//        final int[] buffer1 = new int[4];
-//        final int[] buffer2 = new int[4];
-//        for(int x=5;x<img.getWidth();x+=10){
-//            for(int y=5;y<img.getHeight();y+=10){
-//                raster.getPixel(x, y, buffer2);
-//                assertFalse(Arrays.equals(buffer1, buffer2));
-//                System.arraycopy(buffer2, 0, buffer1, 0, 4);
-//            }
-//        }
- 
+        ref.recycle(reader);
     }
-
-//    /**
-//     * Read and image subset.
-//     * @throws Exception
-//     */
-//    @Test
-//    public void reduceAreaTest() throws Exception{
-//
-//        //load the coverage store
-//        getCoverageStore();
-//        final GridCoverageReader reader = ref.acquireReader();
-//
-//        final GeneralEnvelope paramEnv = new GeneralEnvelope(crs);
-//        paramEnv.setRange(0, corner.getOrdinate(0) +(1*10)*1, corner.getOrdinate(0) +(2*10)*1);
-//        paramEnv.setRange(1, corner.getOrdinate(1) -(2*10)*1, corner.getOrdinate(1));
-//        //we should obtain tiles [1,0] and [1,1]
-//
-//        final GridCoverageReadParam param = new GridCoverageReadParam();
-//        param.setCoordinateReferenceSystem(crs);
-//        param.setResolution(1.2,1.2);
-//        param.setEnvelope(paramEnv);
-//
-//        final GridCoverage2D coverage = (GridCoverage2D) reader.read(0, param);
-//        ref.recycle(reader);
-//
-//        //check coverage informations
-//        assertTrue(CRS.equalsIgnoreMetadata(crs,  coverage.getCoordinateReferenceSystem()));
-//        final Envelope env = coverage.getEnvelope();
-//        assertEquals(corner.getOrdinate(0) +(1*10)*1, env.getMinimum(0), DELTA);
-//        assertEquals(corner.getOrdinate(1), env.getMaximum(1), DELTA);
-//        assertEquals(corner.getOrdinate(0) +(1*10)*1+(1*10)*1, env.getMaximum(0), DELTA);
-//        assertEquals(corner.getOrdinate(1) -(2*10)*1, env.getMinimum(1), DELTA);
-//        assertTrue(CRS.equalsIgnoreMetadata(crs,  env.getCoordinateReferenceSystem()));
-//
-//
-//        //check tile aggregation
-//        final RenderedImage img = coverage.getRenderedImage();
-//        final Raster raster = img.getData();
-//
-//        assertEquals(1*10,img.getWidth());
-//        assertEquals(2*10,img.getHeight());
-//
-//        //we should have a different color each 10pixel
-//        final int[] buffer1 = new int[4];
-//        final int[] buffer2 = new int[4];
-//        for(int x=5;x<img.getWidth();x+=10){
-//            for(int y=5;y<img.getHeight();y+=10){
-//                raster.getPixel(x, y, buffer2);
-//                assertFalse(Arrays.equals(buffer1, buffer2));
-//                System.arraycopy(buffer2, 0, buffer1, 0, 4);
-//            }
-//        }
-//
-//    }
-
-
+    
+    /**
+     * Read with no parameter, we should obtain the most accurate data
+     */
+    @Test
+    public void readDefaultTest() throws Exception{
+        getCoverageStore();
+        final GridCoverageReader reader = ref.acquireReader();
+        
+        final GridCoverage2D coverage = (GridCoverage2D) reader.read(ref.getImageIndex(), null);
+        checkCoverage(coverage, 40, 30, colors[0][1], -180,-160,75,90,-15.5,-14.5);          
+        ref.recycle(reader);
+        
+    }
+    
+    /**
+     * Read special scales and dimensions.
+     */
+    @Test
+    public void readSlicesTest() throws Exception{
+        getCoverageStore();
+        final GridCoverageReader reader = ref.acquireReader();
+        final GridCoverageReadParam param = new GridCoverageReadParam();
+        
+        //expecting image from mosaic with min resolution and vertical -15
+        param.setEnvelope(createEnvelope(-180,+180,-90,+90,-15,-15));
+        param.setResolution(0.5,0.5,1);
+        GridCoverage2D coverage = (GridCoverage2D) reader.read(ref.getImageIndex(), param);
+        checkCoverage(coverage, 40, 30, colors[0][1], -180,-160,75,90,-15.5,-14.5);      
+        ref.recycle(reader);
+        
+        //expecting image from mosaic with max resolution and vertical -15
+        param.setEnvelope(createEnvelope(-180,+180,-90,+90,-15,-15));
+        param.setResolution(1,1,1);
+        coverage = (GridCoverage2D) reader.read(ref.getImageIndex(), param);
+        checkCoverage(coverage, 20, 20, colors[0][0], -180,-160,70,90,-15.5,-14.5);      
+        ref.recycle(reader);
+        
+        //expecting image from mosaic with min resolution and vertical 46.58
+        param.setEnvelope(createEnvelope(-180,+180,-90,+90,46.58,46.58));
+        param.setResolution(0.5,0.5,1);
+        coverage = (GridCoverage2D) reader.read(ref.getImageIndex(), param);
+        checkCoverage(coverage, 40, 30, colors[1][1], -180,-160,75,90,46.08,47.08);      
+        ref.recycle(reader);
+        
+        //expecting image from mosaic with max resolution and vertical 46.58
+        param.setEnvelope(createEnvelope(-180,+180,-90,+90,46.58,46.58));
+        param.setResolution(1,1,1);
+        coverage = (GridCoverage2D) reader.read(ref.getImageIndex(), param);
+        checkCoverage(coverage, 20, 20, colors[1][0], -180,-160,70,90,46.08,47.08);      
+        ref.recycle(reader);
+        
+    }
+    
+    /**
+     * 
+     * @param coverage coverage to test
+     * @param width expected image width
+     * @param height expected image height
+     * @param colors colors to be found in the image
+     * @param envelope expented envelope
+     */
+    private void checkCoverage(GridCoverage2D coverage, int width, int height, int[][] colors, double... envelope){
+        Envelope env = coverage.getEnvelope();
+        assertEquals(envelope[0], env.getMinimum(0), DELTA);
+        assertEquals(envelope[1], env.getMaximum(0), DELTA);
+        assertEquals(envelope[2], env.getMinimum(1), DELTA);
+        assertEquals(envelope[3], env.getMaximum(1), DELTA);
+        assertEquals(envelope[4], env.getMinimum(2), DELTA);
+        assertEquals(envelope[5], env.getMaximum(2), DELTA);
+        
+        final RenderedImage img = coverage.getRenderedImage();
+        final Raster raster = img.getData();
+        assertEquals(width,  img.getWidth());
+        assertEquals(height, img.getHeight());
+        
+        //we should have a different color each 10pixel
+        final int[] buffer = new int[4];
+        for(int x=0;x<img.getWidth()/10;x++){
+            for(int y=0;y<img.getHeight()/10;y++){
+                raster.getPixel(x*10+5, y*10+5, buffer);
+                assertEquals(colors[x][y],buffer[0]);
+            }
+        }
+    }
+    
 }

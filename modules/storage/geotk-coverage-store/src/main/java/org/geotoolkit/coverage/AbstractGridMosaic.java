@@ -28,8 +28,11 @@ import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.apache.sis.util.Classes;
+import org.geotoolkit.referencing.operation.MathTransforms;
+import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
+import org.opengis.referencing.operation.MathTransform;
 
 /**
  * Default mosaic grid.
@@ -147,8 +150,43 @@ public abstract class AbstractGridMosaic implements GridMosaic{
         return sb.toString();
     }
 
+    /**
+     * Grid to CRS N dimension.
+     * 
+     * @param mosaic not null
+     * @param location not null
+     * @return MathTransform never null
+     */
+    public static MathTransform getTileGridToCRS(GridMosaic mosaic, Point location){
 
-    public static AffineTransform2D getTileGridToCRS(GridMosaic mosaic, Point location){
+        final AffineTransform2D trs2d = getTileGridToCRS2D(mosaic, location);
+        final DirectPosition upperleft = mosaic.getUpperLeftCorner();
+
+        if(upperleft.getDimension()==2){
+            return trs2d;
+        }else{
+            final int dim = upperleft.getDimension()+1;
+            final GeneralMatrix gm = new GeneralMatrix(dim);
+            gm.setElement(0, 0, trs2d.getScaleX());
+            gm.setElement(1, 1, trs2d.getScaleY());
+            gm.setElement(0, dim-1, trs2d.getTranslateX());
+            gm.setElement(1, dim-1, trs2d.getTranslateY());
+            for(int i=2;i<dim-1;i++){
+                gm.setElement(i, i, 1);
+                gm.setElement(i, dim-1, upperleft.getOrdinate(i));
+            }
+            return MathTransforms.linear(gm);
+        }
+    }
+    
+    /**
+     * Grid to CRS 2D part.
+     * 
+     * @param mosaic not null
+     * @param location not null
+     * @return AffineTransform2D never null.
+     */
+    public static AffineTransform2D getTileGridToCRS2D(GridMosaic mosaic, Point location){
 
         final Dimension tileSize = mosaic.getTileSize();
         final DirectPosition upperleft = mosaic.getUpperLeftCorner();
@@ -156,7 +194,6 @@ public abstract class AbstractGridMosaic implements GridMosaic{
 
         final double offsetX  = upperleft.getOrdinate(0) + location.x * (scale * tileSize.width) ;
         final double offsetY = upperleft.getOrdinate(1) - location.y * (scale * tileSize.height);
-
         return new AffineTransform2D(scale, 0, 0, -scale, offsetX, offsetY);
     }
 

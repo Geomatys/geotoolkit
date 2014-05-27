@@ -2,7 +2,7 @@
  *    Geotoolkit.org - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2012, Geomatys
+ *    (C) 2012-2014, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -20,6 +20,7 @@ import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.coverage.GridMosaic;
 import org.geotoolkit.coverage.Pyramid;
 import org.opengis.geometry.DirectPosition;
@@ -31,6 +32,7 @@ import org.opengis.util.FactoryException;
  * In attempt to replace this class by {@link strictlyCoverageFinder}.</p>
  *
  * @author Remi Marechal (Geomatys).
+ * @author Johann Sorel (Geomatys).
  */
 @Deprecated
 class DefaultCoverageFinder extends CoverageFinder {
@@ -46,6 +48,12 @@ class DefaultCoverageFinder extends CoverageFinder {
         GridMosaic result = null;
         mosaicLoop:
         for(GridMosaic candidate : mosaics){
+            //check the mosaic intersect the searched envelope
+            final GeneralEnvelope clip = new GeneralEnvelope(candidate.getEnvelope());
+            if(!clip.intersects(env)) continue;
+            //calculate the intersection, will be used to determinate the number of tiles used.
+            clip.intersect(env);
+            
             final DirectPosition ul = candidate.getUpperLeftCorner();
             final double scale = candidate.getScale();
             
@@ -57,7 +65,7 @@ class DefaultCoverageFinder extends CoverageFinder {
                 for(int i=2,n=ul.getDimension();i<n;i++){
                     final double median = env.getMedian(i);
                     final double currentDistance = Math.abs(
-                            result.getUpperLeftCorner().getOrdinate(i) - median);
+                            candidate.getUpperLeftCorner().getOrdinate(i) - median);
                     final double candidateDistance = Math.abs(
                             ul.getOrdinate(i) - median);
                     
@@ -74,8 +82,8 @@ class DefaultCoverageFinder extends CoverageFinder {
             
             //check if it will not requiere too much tiles
             final Dimension tileSize = candidate.getTileSize();
-            double nbtileX = env.getSpan(0) / (tileSize.width*scale);
-            double nbtileY = env.getSpan(1) / (tileSize.height*scale);
+            double nbtileX = clip.getSpan(0) / (tileSize.width*scale);
+            double nbtileY = clip.getSpan(1) / (tileSize.height*scale);
             
             //if the envelope has some NaN, we presume it's a square
             if(Double.isNaN(nbtileX) || Double.isInfinite(nbtileX)){
@@ -83,7 +91,7 @@ class DefaultCoverageFinder extends CoverageFinder {
             }else if(Double.isNaN(nbtileY) || Double.isInfinite(nbtileY)){
                 nbtileY = nbtileX;
             }
-            
+                        
             if(maxTileNumber > 0 && nbtileX*nbtileY > maxTileNumber){
                 //we haven't reach the best resolution, it would requiere
                 //too much tiles, we use the previous scale level

@@ -17,23 +17,38 @@
 package org.geotoolkit.coverage.xmlstore;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import org.geotoolkit.coverage.CoverageStore;
 import org.geotoolkit.coverage.PyramidalModelStoreNDTest;
+import org.geotoolkit.util.FileUtilities;
+import org.junit.After;
 
 /**
  * @author Johann Sorel (Geomatys)
  */
 public class XMLCoverageStoreNDTest extends PyramidalModelStoreNDTest {
 
+    private final List<File> folders = new ArrayList<File>();
+    
     @Override
     protected CoverageStore createStore() throws Exception{
 
         final File tempFolder = File.createTempFile("mosaic", "");
         tempFolder.delete();
         tempFolder.mkdirs();
+        folders.add(tempFolder);
         final CoverageStore store = new XMLCoverageStore(tempFolder);
 
         return store;
     }
 
+    @After
+    public void cleanup(){
+        for(File f : folders){
+            FileUtilities.deleteDirectory(f);
+        }
+        folders.clear();
+    }
+    
 }

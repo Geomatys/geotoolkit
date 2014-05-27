@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2011-2012, Geomatys
+ *    (C) 2011-2014, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -38,7 +38,6 @@ import org.geotoolkit.coverage.finder.CoverageFinderFactory;
 import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
-import org.geotoolkit.coverage.grid.GridEnvelope2D;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
@@ -50,11 +49,11 @@ import org.geotoolkit.math.XMath;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.referencing.cs.DiscreteCoordinateSystemAxis;
-import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.geotoolkit.util.BufferedImageUtilities;
 import org.geotoolkit.util.Cancellable;
 import org.geotoolkit.util.ImageIOUtilities;
 import org.opengis.coverage.grid.GridCoverage;
+import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.spatial.PixelOrientation;
@@ -149,7 +148,7 @@ public class PyramidalModelReader extends GridCoverageReader{
                 final Dimension tileSize = mosaic.getTileSize();
 
                 //we expect no rotation
-                final AffineTransform2D gridToCRS2D = AbstractGridMosaic.getTileGridToCRS(mosaic, new Point(0, 0));
+                final MathTransform gridToCRS = AbstractGridMosaic.getTileGridToCRS2D(mosaic, new Point(0, 0));
                 final List<double[]> axisValues = new ArrayList<>();
                 for(int i=2;i<nbdim;i++){
                     final CoordinateSystemAxis axis = cs.getAxis(i);
@@ -171,7 +170,7 @@ public class PyramidalModelReader extends GridCoverageReader{
                 }
 
                 final double[][] discretValues = axisValues.toArray(new double[0][0]);
-                final MathTransform gridToCRS = ReferencingUtilities.toTransform(gridToCRS2D, discretValues);
+                final MathTransform gridToCRSds = ReferencingUtilities.toTransform(gridToCRS, discretValues);
 
                 final int[] low = new int[nbdim];
                 final int[] high = new int[nbdim];
@@ -186,7 +185,7 @@ public class PyramidalModelReader extends GridCoverageReader{
                 }
                 final GeneralGridEnvelope ge = new GeneralGridEnvelope(low,high,false);
 
-                gridGeom = new GeneralGridGeometry(ge, PixelInCell.CELL_CORNER, gridToCRS, crs);
+                gridGeom = new GeneralGridGeometry(ge, PixelInCell.CELL_CORNER, gridToCRSds, crs);
             }
 
         }else{
@@ -462,9 +461,9 @@ public class PyramidalModelReader extends GridCoverageReader{
             gcb.setSampleDimensions(dimensions.toArray(new GridSampleDimension[dimensions.size()]));
         }
 
+        final GridEnvelope ge = new GeneralGridEnvelope(image, pyramidCRS.getCoordinateSystem().getDimension());
         final MathTransform gtc = AbstractGridMosaic.getTileGridToCRS(mosaic, new Point((int)tileMinCol,(int)tileMinRow));
-        final GridEnvelope2D ge = new GridEnvelope2D(0, 0, image.getWidth(), image.getHeight());
-        final GridGeometry2D gridgeo = new GridGeometry2D(ge, PixelOrientation.UPPER_LEFT, gtc, pyramidCRS2D, null);
+        final GridGeometry2D gridgeo = new GridGeometry2D(ge, PixelOrientation.UPPER_LEFT, gtc, pyramidCRS, null);
         gcb.setGridGeometry(gridgeo);
         gcb.setRenderedImage(image);
 
