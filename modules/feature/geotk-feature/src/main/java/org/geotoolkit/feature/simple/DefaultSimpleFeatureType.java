@@ -67,6 +67,11 @@ public class DefaultSimpleFeatureType extends DefaultFeatureType implements Simp
         typesList = UnmodifiableArrayList.wrap(types);
     }
 
+    @Override
+    public boolean isSimple() {
+        return true;
+    }
+
     /**
      * @see org.geotoolkit.feature.simple.SimpleFeatureType#getAttributeDescriptors()
      */

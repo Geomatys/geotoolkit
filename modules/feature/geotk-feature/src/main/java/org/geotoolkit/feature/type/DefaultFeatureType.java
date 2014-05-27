@@ -1,7 +1,7 @@
 /*
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
- * 
+ *
  *    (C) 2002-2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2009 Geomatys
  *
@@ -18,9 +18,12 @@
 package org.geotoolkit.feature.type;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
+import org.opengis.feature.PropertyType;
 import org.opengis.feature.type.AttributeType;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.GeometryDescriptor;
@@ -32,9 +35,9 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.InternationalString;
 
 /**
- * 
+ *
  * Base implementation of FeatureType.
- * 
+ *
  * @author gabriel
  * @module pending
  */
@@ -53,6 +56,26 @@ public class DefaultFeatureType extends DefaultComplexType implements FeatureTyp
             throw new IllegalArgumentException("defaultGeometry must have a GeometryType");
         }
 
+    }
+
+    @Override
+    public boolean isSimple() {
+        return false;
+    }
+
+    @Override
+    public Collection<PropertyType> getProperties(boolean includeSuperTypes) {
+        throw new UnsupportedOperationException("Not yet implemented.");
+    }
+
+    @Override
+    public Set<org.opengis.feature.FeatureType> getSuperTypes() {
+        return Collections.singleton((org.opengis.feature.FeatureType) getSuper());
+    }
+
+    @Override
+    public boolean isAssignableFrom(org.opengis.feature.FeatureType type) {
+        throw new UnsupportedOperationException("Not yet implemented.");
     }
 
     /**
@@ -85,7 +108,7 @@ public class DefaultFeatureType extends DefaultComplexType implements FeatureTyp
      public void setCoordinateReferenceSystem(final CoordinateReferenceSystem crs) {
          this.crs = crs;
      }
-     
+
     /**
      * {@inheritDoc }
      */
@@ -119,7 +142,7 @@ public class DefaultFeatureType extends DefaultComplexType implements FeatureTyp
         if (o instanceof FeatureType && super.equals(o)) {
             final FeatureType that = (FeatureType) o;
             return Objects.equals(this.defaultGeometry, that.getGeometryDescriptor());
-                
+
         }
         return false;
     }
