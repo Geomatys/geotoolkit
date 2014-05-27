@@ -3276,6 +3276,7 @@ public class TiffImageWriter extends SpatialImageWriter {
         currentPBAPos   = 0;
         rowByte32773Pos = 0;
         metaHeads = new Map[4];
+        metaIndex = 0;
         channel = null;
     }
     
