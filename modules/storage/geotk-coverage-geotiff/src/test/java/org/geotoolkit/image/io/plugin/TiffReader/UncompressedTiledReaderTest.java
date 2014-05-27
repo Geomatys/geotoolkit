@@ -24,15 +24,15 @@ import javax.imageio.ImageWriteParam;
  * @author rmarechal
  */
 public class UncompressedTiledReaderTest extends UncompressedTiffReaderTest {
-
+ 
     public UncompressedTiledReaderTest() {
-        super();
+        super(); 
         writerParam.setTilingMode(ImageWriteParam.MODE_EXPLICIT);
         final int tileWidth  = (random.nextInt(7) + 1) * 16;
         final int tileHeight = (random.nextInt(7) + 1) * 16;
-        System.out.println("tw = "+tileWidth);
-        System.out.println("th = "+tileHeight);
         
-        writerParam.setTiling(16, 112, 0, 0);
+//        System.out.println("tile : "+tileWidth+", "+tileHeight);
+        
+        writerParam.setTiling(tileWidth, tileHeight, 0, 0);
     }
 }

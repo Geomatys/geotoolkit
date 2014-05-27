@@ -17,6 +17,10 @@
  */
 package org.geotoolkit.image.io.plugin.TiffReader;
 
+import java.awt.Rectangle;
+import java.awt.image.RenderedImage;
+import java.io.File;
+import java.io.IOException;
 import org.geotoolkit.image.io.plugin.TestTiffImageReaderWriter;
 
 /**
@@ -28,5 +32,40 @@ public abstract strictfp class TestTiffImageReader extends TestTiffImageReaderWr
     public TestTiffImageReader(String compression) {
         super(compression);
     }
-    
+
+    /**
+     * {@inheritDoc }
+     * 
+     * In this implementation write image entirely and read the expected piece of image given by parameter.
+     */
+    @Override
+    protected RenderedImage effectuateTest(File fileTest, RenderedImage sourceImage, Rectangle sourceRegion, 
+                                           int sourceXSubsample, int sourceYsubsampling, int sourceXOffset, int sourceYOffset) throws IOException {
+        //-- write image completely --//
+        writer.setOutput(fileTest);
+        writer.write(sourceImage, writerParam);//-- write with param in case of tiled writing --//
+        writer.dispose();
+        
+        //-- prepare ImageReaderParam --//
+        readerParam.setSourceRegion(null);
+//        try {
+            readerParam.setSourceSubsampling(sourceXSubsample, sourceYsubsampling, sourceXOffset, sourceYOffset);
+//        } catch (Exception ex) {
+//            System.out.println("");
+//        }
+//        readerParam.setSourceSubsampling(sourceXSubsample, sourceYsubsampling, sourceXOffset, sourceYOffset);
+//        try {
+            readerParam.setSourceRegion(sourceRegion);
+//        } catch (Exception ex) {
+//            System.out.println("");
+//        }
+//        readerParam.setSourceRegion(sourceRegion);
+//        readerParam.setSourceSubsampling(sourceXSubsample, sourceYsubsampling, sourceXOffset, sourceYOffset);
+        
+        //-- read expected piece of image --//
+        reader.setInput(fileTest);
+        final RenderedImage img = reader.read(0, readerParam);
+        reader.dispose();        
+        return img;
+    }    
 }

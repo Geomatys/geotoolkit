@@ -355,7 +355,7 @@ public class TiffImageReader extends SpatialImageReader {
                 break;
             }
         }
-        
+                
         if (!isGeotiff) return null;
         
         fillRootMetadataNode(layerIndex);
@@ -1356,7 +1356,10 @@ public class TiffImageReader extends SpatialImageReader {
             super(x, y, width, height);
             this.position     = position;
             this.filePosition = filePosition;
-            assert !isEmpty() && x >= 0 && y >= 0: this;
+            if (!(!isEmpty() && x >= 0 && y >= 0)) {
+                System.out.println("");
+            }
+//            assert !isEmpty() && x >= 0 && y >= 0: this;
         }
 
         /** Compares this tile with the specified tile for order of file position. */
@@ -1364,44 +1367,100 @@ public class TiffImageReader extends SpatialImageReader {
             return Long.signum(position - other.position);
         }
     }
+    
+//    /**
+//     * Returns the tiles in the given source region. The tiles are sorted by increasing file
+//     * position, in order to perform sequential file access as much as possible.
+//     *
+//     * @param  r              The source region requested by the user.
+//     * @param  pixelStride    Number of bytes in each sample value in the source file.
+//     * @param  scanlineStride Number of bytes in each row of the tile in the source file.
+//     * @return The tiles that intersect the given region.
+//     */
+//    private TiffImageReader.Tile[] getTiles(final Rectangle r, final int xSubsampling, final int ySubsampling,
+//            final int pixelStride, final int scanlineStride)
+//    {
+//        final int minTileX  =  r.x / tileWidth;                               // Inclusive
+//        final int minTileY  =  r.y / tileHeight;                              // Inclusive
+//        final int maxTileX  = (r.x + r.width  + tileWidth  - 1) / tileWidth;  // Exclusive
+//        final int maxTileY  = (r.y + r.height + tileHeight - 1) / tileHeight; // Exclusive
+//        final int rowLength = (imageWidth + tileWidth - 1) / tileWidth;
+//        final TiffImageReader.Tile[] tiles  = new TiffImageReader.Tile[(maxTileX - minTileX) * (maxTileY - minTileY)];
+//        int count = 0;
+//        for (int tileY = minTileY; tileY<maxTileY; tileY++) {
+//            final int tminy = Math.max(tileY * tileHeight, r.y);
+//            final int tmaxy = Math.min((tileY + 1) * tileHeight, r.y+r.height);
+//            
+//            final int dstYmin = (tminy - r.y + ySubsampling - 1) / ySubsampling;
+//            final int height = (tmaxy - r.y +ySubsampling-1)/ySubsampling - dstYmin;
+//            
+////            final int ySource = tileY * tileHeight - r.y;
+////            final int y       = (Math.max(0, ySource) + ySubsampling - 1) / ySubsampling;
+//////            final int height  = (Math.min(r.height, ySource + tileHeight) - 1) / ySubsampling + 1 - y;
+////            final int height = (ySource + tileHeight + ySubsampling - 1) / ySubsampling - y;
+//            final int rowBase = (dstYmin * ySubsampling - tileY * tileHeight) * scanlineStride;
+//            for (int tileX=minTileX; tileX<maxTileX; tileX++) {
+//                final int tminx = Math.max(tileX * tileWidth, r.x);
+//                final int tmaxx = Math.min((tileX + 1 ) * tileWidth, r.x+r.width);
+//                final int dstXmin = (tminx - r.x + xSubsampling - 1) / xSubsampling;
+//                final int width = (tmaxx - r.x + xSubsampling - 1) / xSubsampling - dstXmin;
+//                
+//                
+////                final int xSource   = tileX * tileWidth  - r.x;
+////                final int x         = (Math.max(0, xSource) + xSubsampling - 1) / xSubsampling;
+//////                final int width     = (Math.min(r.width,  xSource + tileWidth)  - 1) / xSubsampling + 1 - x;
+////                final int width     = (xSource + tileWidth + xSubsampling - 1) / xSubsampling - x;
+//                final int offset    = (dstXmin * xSubsampling - tileX * tileWidth) * pixelStride + rowBase;
+//                final int tileIndex = tileY * rowLength + tileX;
+//                tiles[count++]      = new TiffImageReader.Tile(dstXmin, dstYmin, width, height, tileOffsets[tileIndex], tileOffsets[tileIndex] + offset);
+//                
+////                tiles[count++]      = new TiffImageReader.Tile(x, y, width, height, tileOffsets[tileIndex], tileOffsets[tileIndex] + offset);
+//            }
+//        }
+//        assert count == tiles.length;
+//        Arrays.sort(tiles);
+//        return tiles;
+//    }
 
-    /**
-     * Returns the tiles in the given source region. The tiles are sorted by increasing file
-     * position, in order to perform sequential file access as much as possible.
-     *
-     * @param  r              The source region requested by the user.
-     * @param  pixelStride    Number of bytes in each sample value in the source file.
-     * @param  scanlineStride Number of bytes in each row of the tile in the source file.
-     * @return The tiles that intersect the given region.
-     */
-    private TiffImageReader.Tile[] getTiles(final Rectangle r, final int xSubsampling, final int ySubsampling,
-            final int pixelStride, final int scanlineStride)
-    {
-        final int minTileX  =  r.x / tileWidth;                               // Inclusive
-        final int minTileY  =  r.y / tileHeight;                              // Inclusive
-        final int maxTileX  = (r.x + r.width  + tileWidth  - 2) / tileWidth;  // Exclusive
-        final int maxTileY  = (r.y + r.height + tileHeight - 2) / tileHeight; // Exclusive
-        final int rowLength = (imageWidth + tileWidth - 1) / tileWidth;
-        final TiffImageReader.Tile[] tiles  = new TiffImageReader.Tile[(maxTileX - minTileX) * (maxTileY - minTileY)];
-        int count = 0;
-        for (int tileY=minTileY; tileY<maxTileY; tileY++) {
-            final int ySource = tileY * tileHeight - r.y;
-            final int y       = (Math.max(0, ySource) + ySubsampling - 1) / ySubsampling;
-            final int height  = (Math.min(r.height, ySource + tileHeight) - 1) / ySubsampling + 1 - y;
-            final int rowBase = (y * ySubsampling - ySource) * scanlineStride;
-            for (int tileX=minTileX; tileX<maxTileX; tileX++) {
-                final int xSource   = tileX * tileWidth  - r.x;
-                final int x         = (Math.max(0, xSource) + xSubsampling - 1) / xSubsampling;
-                final int width     = (Math.min(r.width,  xSource + tileWidth)  - 1) / xSubsampling + 1 - x;
-                final int offset    = (x * xSubsampling - xSource) * pixelStride + rowBase;
-                final int tileIndex = tileY * rowLength + tileX;
-                tiles[count++]      = new TiffImageReader.Tile(x, y, width, height, tileOffsets[tileIndex], tileOffsets[tileIndex] + offset);
-            }
-        }
-        assert count == tiles.length;
-        Arrays.sort(tiles);
-        return tiles;
-    }
+//    /**
+//     * Returns the tiles in the given source region. The tiles are sorted by increasing file
+//     * position, in order to perform sequential file access as much as possible.
+//     *
+//     * @param  r              The source region requested by the user.
+//     * @param  pixelStride    Number of bytes in each sample value in the source file.
+//     * @param  scanlineStride Number of bytes in each row of the tile in the source file.
+//     * @return The tiles that intersect the given region.
+//     */
+//    private TiffImageReader.Tile[] getTiles(final Rectangle r, final int xSubsampling, final int ySubsampling,
+//            final int pixelStride, final int scanlineStride)
+//    {
+//        final int minTileX  =  r.x / tileWidth;                               // Inclusive
+//        final int minTileY  =  r.y / tileHeight;                              // Inclusive
+//        final int maxTileX  = (r.x + r.width  + tileWidth  - 1) / tileWidth;  // Exclusive
+//        final int maxTileY  = (r.y + r.height + tileHeight - 1) / tileHeight; // Exclusive
+//        final int rowLength = (imageWidth + tileWidth - 1) / tileWidth;
+//        final TiffImageReader.Tile[] tiles  = new TiffImageReader.Tile[(maxTileX - minTileX) * (maxTileY - minTileY)];
+//        int count = 0;
+//        for (int tileY=minTileY; tileY<maxTileY; tileY++) {
+//            final int ySource = tileY * tileHeight - r.y;
+//            final int y       = (Math.max(0, ySource) + ySubsampling - 1) / ySubsampling;
+//            final int height  = (Math.min(r.height, ySource + tileHeight) - 1) / ySubsampling + 1 - y;
+//            final int rowBase = (y * ySubsampling - ySource) * scanlineStride;
+//            for (int tileX=minTileX; tileX<maxTileX; tileX++) {
+//                final int xSource   = tileX * tileWidth  - r.x;
+//                final int x         = (Math.max(0, xSource) + xSubsampling - 1) / xSubsampling;
+//                final int width     = (Math.min(r.width,  xSource + tileWidth)  - 1) / xSubsampling + 1 - x;
+//                final int offset    = (x * xSubsampling - xSource) * pixelStride + rowBase;
+//                final int tileIndex = tileY * rowLength + tileX;
+//                tiles[count++]      = new TiffImageReader.Tile(x, y, width, height, tileOffsets[tileIndex], tileOffsets[tileIndex] + offset);
+//                
+////                tiles[count++]      = new TiffImageReader.Tile(x, y, width, height, tileOffsets[tileIndex], tileOffsets[tileIndex] + offset);
+//            }
+//        }
+//        assert count == tiles.length;
+//        Arrays.sort(tiles);
+//        return tiles;
+//    }
 
     /**
      * Convert and return color map array from tiff file to an Integer array adapted to build {@link IndexColorModel} in java.
@@ -2437,13 +2496,21 @@ public class TiffImageReader extends SpatialImageReader {
         if (sourceBands != null || destinationBands != null) {
             throw new IIOException("Source and target bands not yet supported.");
         }
-        final DataBuffer dataBuffer    = raster.getDataBuffer();
+        final DataBuffer dataBuffer    = raster.getDataBuffer(); 
         final int[] bankOffsets        = dataBuffer.getOffsets();
         final int dataType             = dataBuffer.getDataType();
-        final int sampleSize           = DataBuffer.getDataTypeSize(dataType) / Byte.SIZE;
-        final int sourcePixelStride    = sampleSize * samplesPerPixel;
-        final int sourceScanTileStride = sourcePixelStride * tileWidth;
         final int targetScanlineStride = SampleModels.getScanlineStride(raster.getSampleModel());
+        
+        //-- planar configuration --//
+        final Map<String, Object> planarConfig = headProperties.get(PlanarConfiguration);
+        short pC = 1;
+        /*
+         * If samples per pixel = 1, planar configuration has no impact.
+         */
+        if (planarConfig != null && samplesPerPixel > 1) {
+            pC = ((short[]) planarConfig.get(ATT_VALUE)) [0];
+        }
+        final int planarStep = (pC == 1) ? samplesPerPixel : 1;
         
         //-- fillOrder --//
         final Map<String, Object> fillOrder = headProperties.get(FillOrder);
@@ -2451,7 +2518,26 @@ public class TiffImageReader extends SpatialImageReader {
         if (fillOrder != null) {
             fO = (short) ((long[]) fillOrder.get(ATT_VALUE)) [0];
         }
+        //-- adapt imageStream in function of fill order value --//
         final ImageInputStream rasterReader = getImageInputStream(fO == 2);
+        
+        //-- tile index from source area --//
+        final int minTileX = srcRegion.x / tileWidth;
+        final int minTileY = srcRegion.y / tileHeight;
+        final int maxTileX = (srcRegion.x + srcRegion.width  + tileWidth  - 1) / tileWidth;
+        final int maxTileY = (srcRegion.y + srcRegion.height + tileHeight - 1) / tileHeight;
+        
+        //-- tile number from source image dimension --//
+        final int numXTile = (imageWidth + tileWidth - 1) / tileWidth;
+        final int numYTile = (imageHeight + tileHeight - 1) / tileHeight;
+        
+        //-- srcRegion max coordinates --//
+        final int srcRegionMaxX = srcRegion.x + srcRegion.width;
+        final int srcRegionMaxY = srcRegion.y + srcRegion.height;
+        
+        final long bitpersampl = bitsPerSample[0];
+        
+        final long sourceScanTileStride = tileWidth * planarStep * bitpersampl / Byte.SIZE;
         
         for (int bank = 0; bank < bankOffsets.length; bank++) {
             /*
@@ -2467,88 +2553,79 @@ public class TiffImageReader extends SpatialImageReader {
                 case DataBuffer.TYPE_DOUBLE : targetArray = ((DataBufferDouble) dataBuffer).getData(bank); break;
                 default: throw new AssertionError(dataType);
             }
-            /*
-             * Iterate over the tiles to read, in sequential file access order (which is not
-             * necessarily the same than tile indices order).  The rectangles inherited from
-             * the tiles are the coordinates where to write in the target image.
-             */
-            final int targetImageStart = bankOffsets[bank] + targetScanlineStride * dstRegion.y + numBands * dstRegion.x;
-            for (final TiffImageReader.Tile tile : getTiles(srcRegion, sourceXSubsampling, sourceYSubsampling, sourcePixelStride, sourceScanTileStride)) {
-                /*
-                 * Constants used for the iterations.
-                 */
-                final int targetTileStart = targetImageStart + targetScanlineStride * tile.y + numBands * tile.x;
-                final int numSourceBytesToRead =
-                        (tile.height - 1) * sourceScanTileStride * sourceYSubsampling +
-                        (tile.width  - 1) * sourcePixelStride    * sourceXSubsampling + sourcePixelStride;
-                
-                int numTargetPixelsPerRow = tile.width;
-                /*
-                 * If the data to read and the data to write are contiguous, read and write the
-                 * pixels in one single pass. We will do that by pretending that all the data to
-                 * read is like a single line.
-                 */
-                if (tile.width * numBands == targetScanlineStride &&
-                    tile.width * sourcePixelStride == sourceScanTileStride &&
-                    sourceYSubsampling == 1)
-                {
-                    numTargetPixelsPerRow *= tile.height;
-                }
-                
-                /*
-                 * Count the number of pixels that remain to be read for a particular row.
-                 * This values will be decremented during the iteration until it reach 0,
-                 * then reinitialized for a new row.
-                 */
-                int remainingRowPixels = numTargetPixelsPerRow;
-                /*
-                 * Initialize the position in the file from which to read data, and position in
-                 * the 'targetArray' where to write the first sample value for the current tile.
-                 */
-                int row            = 0;
-                int sourcePosition = 0;
-                int targetPosition = targetTileStart;
-                while (sourcePosition < numSourceBytesToRead) {
-                    assert (remainingRowPixels >= 0) : remainingRowPixels;
-                    if (remainingRowPixels == 0) {
-                        /*
-                         * If we finished reading all sample values for the current row, move
-                         * the position to the begining of the next row and ensure that the
-                         * source buffer contains at least one pixel.
-                         */
-                        remainingRowPixels = numTargetPixelsPerRow;
-                        sourcePosition = ++row * sourceScanTileStride * sourceYSubsampling;
-                        targetPosition =   row * targetScanlineStride + targetTileStart;
-                    } 
-                    /*
-                     * We will copy the pixel values in the target array using a fast bulk method
-                     * if possible, or a slow loop if we need to apply a subsampling on the fly.
-                     */
-                    int sourceStep, targetStep;
-                    if (sourceXSubsampling == 1) {
-                        sourceStep = targetStep = remainingRowPixels * numBands;//-- targetstep exprimate in number of sample. 
-                        sourceStep *= sampleSize;//-- sourcestep exprimate in byte length.
-                        remainingRowPixels = 1;
-                    } else {
-                        sourceStep = numBands * sourceXSubsampling * sampleSize;
-                        targetStep = numBands;
-                    }
-                    do {
-                        //-- move at correct pixel position in byte in file --//
-                            rasterReader.seek(tile.position + sourcePosition);
+            
+            final int targetRegionOffset = bankOffsets[bank] + dstRegion.y * targetScanlineStride + dstRegion.x * samplesPerPixel;
+            
+            for (int s = 0; s < samplesPerPixel; s += planarStep) { 
+                final int tileIndexOffset = s * numXTile * numYTile;
+                for (int ty = minTileY; ty < maxTileY; ty++) {
+                    
+                    final int rowTileIndexOffset = ty * numXTile;
+                    final int interMinY          = Math.max(srcRegion.y, ty * tileHeight);
+                    final int interMaxY          = Math.min(srcRegionMaxY, (ty + 1) * tileHeight);
+                    
+                    final int sourceYOffset = (((interMinY - srcRegion.y) % sourceYSubsampling) == 0) ? 0 : (sourceYSubsampling - ((interMinY - srcRegion.y)) % sourceYSubsampling);
+                    if (sourceYOffset >= tileHeight) continue;
+                    
+                    final int targetRowOffset = ((interMinY - srcRegion.y + sourceYSubsampling - 1) / sourceYSubsampling) * targetScanlineStride;
+                    
+         nextTile : for (int tx = minTileX; tx < maxTileX; tx++) {
+             
+                        //-- define first byte file position to read --//
+                        final int tileIndex = tileIndexOffset + rowTileIndexOffset + tx;
+                        assert rasterReader.getBitOffset() == 0;
+                        
+                        //-- define intersection between srcRegion and current tile --//
+                        final int interMinX       = Math.max(srcRegion.x, tx * tileWidth);
+                        final int interMaxX       = Math.min(srcRegionMaxX, (tx + 1) * tileWidth);
+                        
+                        //-- source offset in x direction --//
+                        final int sourceColOffset = (interMinX - srcRegion.x) % sourceXSubsampling == 0 ? 0 : (sourceXSubsampling - ((interMinX - srcRegion.x) % sourceXSubsampling));
+                        //-- in case where subsampling is more longer than tilewidth --//
+                        if (sourceColOffset >= tileWidth) continue nextTile;
+                        
+                        //-- target begin position --//
+                        int targetOffset = targetRegionOffset + targetRowOffset + ((interMinX - srcRegion.x + sourceXSubsampling - 1) / sourceXSubsampling) * samplesPerPixel;
+                        int targetPos    = targetOffset + s;
+                        int nextTargetPos = targetPos + dstRegion.width * samplesPerPixel;
+                        
+                        int srcXStep, targetReadLength, targetStep;
+                        if (pC == 1 && sourceXSubsampling == 1) {
+                            //-- no planar configuration specification
+                            srcXStep = interMaxX - interMinX - sourceColOffset;
+                            targetReadLength = targetStep = srcXStep * samplesPerPixel;
+                        } else {
+                            srcXStep         = sourceXSubsampling;
+                            targetReadLength = planarStep;
+                            targetStep       = samplesPerPixel;
+                        }
+                        
+                        //-- de ligne en ligne 
+                        for (int srcY = interMinY + sourceYOffset; srcY < interMaxY; srcY += sourceYSubsampling) {
+                            for (int srcX = interMinX + sourceColOffset; srcX < interMaxX; srcX += srcXStep) {
+                                
+                                rasterReader.seek(tileOffsets[tileIndex] + (srcY - ty * tileHeight) * sourceScanTileStride +(srcX - tx * tileWidth) * planarStep * (bitpersampl / Byte.SIZE));
+                                
                                 switch (dataType) {
-                                case DataBuffer.TYPE_BYTE   : rasterReader.readFully((byte[])   targetArray, targetPosition, targetStep); break;
-                                case DataBuffer.TYPE_USHORT :
-                                case DataBuffer.TYPE_SHORT  : rasterReader.readFully((short[])  targetArray, targetPosition, targetStep); break;
-                                case DataBuffer.TYPE_FLOAT  : rasterReader.readFully((float[])  targetArray, targetPosition, targetStep); break;
-                                case DataBuffer.TYPE_INT    : rasterReader.readFully((int[])    targetArray, targetPosition, targetStep); break;
-                                case DataBuffer.TYPE_DOUBLE : rasterReader.readFully((double[]) targetArray, targetPosition, targetStep); break;
-                                default: throw new AssertionError(dataType);
+                                    case DataBuffer.TYPE_BYTE   : rasterReader.readFully((byte[])   targetArray, targetPos, targetReadLength); break;
+                                    case DataBuffer.TYPE_USHORT :
+                                    case DataBuffer.TYPE_SHORT  : rasterReader.readFully((short[])  targetArray, targetPos, targetReadLength); break;
+                                    case DataBuffer.TYPE_FLOAT  : rasterReader.readFully((float[])  targetArray, targetPos, targetReadLength); break;
+                                    case DataBuffer.TYPE_INT    : rasterReader.readFully((int[])    targetArray, targetPos, targetReadLength); break;
+                                    case DataBuffer.TYPE_DOUBLE : rasterReader.readFully((double[]) targetArray, targetPos, targetReadLength); break;
+                                    default: throw new AssertionError(dataType);
+                                }
+                              
+                                //-- target --//
+                                targetPos += targetStep;
+                                
                             }
-                        sourcePosition += sourceStep;
-                        targetPosition += targetStep;
-                    } while (--remainingRowPixels != 0);
-                }
+                            //-- dest --//
+                            targetPos = nextTargetPos;
+                            nextTargetPos += dstRegion.width * samplesPerPixel;
+                        }
+                    }
+                } 
             }
         }
     }

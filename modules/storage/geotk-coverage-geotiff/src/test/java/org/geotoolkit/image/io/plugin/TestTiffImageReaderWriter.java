@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.image.io.plugin;
 
+import java.awt.Rectangle;
 import java.awt.Transparency;
 import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
@@ -33,6 +34,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Random;
+import javax.imageio.IIOException;
 import javax.imageio.IIOParam;
 import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
@@ -47,6 +49,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 import org.junit.Ignore;
+import static org.geotoolkit.image.io.plugin.ImageOrientation.*;
 
 /**
  *
@@ -138,6 +141,8 @@ public strictfp abstract class TestTiffImageReaderWriter {
         random = TestUtilities.createRandomNumberGenerator();
     }
     
+    protected abstract RenderedImage effectuateTest(final File fileTest, final RenderedImage sourceImage, final Rectangle sourceRegion, 
+            final int sourceXSubsample, final int sourceYsubsampling, final int sourceXOffset, final int sourceYOffset) throws IOException;
     
     /**
      * Test which write and read after an image with only one band and test all sample type.
@@ -145,51 +150,28 @@ public strictfp abstract class TestTiffImageReaderWriter {
      * @throws IOException if problem during reading/writing action.
      */
     @Test
-    @Ignore
     public void default1BandTest() throws IOException {
         File fileTest = File.createTempFile("default1BandTest", "tiff");
         
         //-- test : 1 band type : byte grayscale --//
-        int width  = random.nextInt(256) + 16;
-        int height = random.nextInt(256) + 16;
-        
-        System.out.println("width = "+width);
-        System.out.println("height = "+height);
-        defaultTest("default1BandTest : 1 band type : Byte grayscale : ", fileTest, 17, 25, 
+        defaultTest("default1BandTest : 1 band type : Byte grayscale : ", fileTest,
                 Byte.SIZE, 1, PHOTOMETRIC_MINISBLACK, SAMPLEFORMAT_UINT);
         
-//        //-- test : 1 band type : short grayscale --//
-//        width  = random.nextInt(256) + 16;
-//        height = random.nextInt(256) + 16;
-//        
-//        System.out.println("width = "+width);
-//        System.out.println("height = "+height);
-//        defaultTest("default1BandTest : 1 band type : Short grayscale : ", fileTest, width, height, 
-//                Short.SIZE, 1, PHOTOMETRIC_MINISBLACK, SAMPLEFORMAT_UINT);
-//        
-//        //-- test : 1 band type : int grayscale --//
-//        width  = random.nextInt(256) + 16;
-//        height = random.nextInt(256) + 16;
-//        System.out.println("width = "+width);
-//        System.out.println("height = "+height);
-//        defaultTest("default1BandTest : 1 band type : Integer grayscale : ", fileTest, width, height, 
-//                Integer.SIZE, 1, PHOTOMETRIC_MINISBLACK, SAMPLEFORMAT_UINT);
-//        
-//        //-- test : 1 band type : float grayscale --//
-//        width  = random.nextInt(16) + 16;
-//        height = random.nextInt(16) + 16;
-//        System.out.println("width = "+width);
-//        System.out.println("height = "+height);
-//        defaultTest("default1BandTest : 1 band type : Float grayscale : ", fileTest, width, height, 
-//                Float.SIZE, 1, PHOTOMETRIC_MINISBLACK, SAMPLEFORMAT_IEEEFP);
-//        
-//        //-- test : 1 band type : Double grayscale --//
-//        width  = random.nextInt(16) + 16;
-//        height = random.nextInt(16) + 16;
-//        System.out.println("width = "+width);
-//        System.out.println("height = "+height);
-//        defaultTest("default1BandTest : 1 band type : Double grayscale : ", fileTest, width, height, 
-//                Double.SIZE, 1, PHOTOMETRIC_MINISBLACK, SAMPLEFORMAT_IEEEFP);
+        //-- test : 1 band type : short grayscale --//
+        defaultTest("default1BandTest : 1 band type : Short grayscale : ", fileTest, 
+                Short.SIZE, 1, PHOTOMETRIC_MINISBLACK, SAMPLEFORMAT_UINT);
+        
+        //-- test : 1 band type : int grayscale --//
+        defaultTest("default1BandTest : 1 band type : Integer grayscale : ", fileTest, 
+                Integer.SIZE, 1, PHOTOMETRIC_MINISBLACK, SAMPLEFORMAT_UINT);
+        
+        //-- test : 1 band type : float grayscale --//
+        defaultTest("default1BandTest : 1 band type : Float grayscale : ", fileTest, 
+                Float.SIZE, 1, PHOTOMETRIC_MINISBLACK, SAMPLEFORMAT_IEEEFP);
+        
+        //-- test : 1 band type : Double grayscale --//
+        defaultTest("default1BandTest : 1 band type : Double grayscale : ", fileTest, 
+                Double.SIZE, 1, PHOTOMETRIC_MINISBLACK, SAMPLEFORMAT_IEEEFP);
     }
     
     /**
@@ -203,33 +185,23 @@ public strictfp abstract class TestTiffImageReaderWriter {
         File fileTest = File.createTempFile("default1BandTest", "tiff");
         
         //-- test : 1 band type : byte grayscale --//
-        int width  = random.nextInt(256) + 16;
-        int height = random.nextInt(256) + 16;
-        defaultTest("default1BandTest : 1 band type : Byte grayscale : ", fileTest, width, height, 
+        defaultTest("default1BandTest : 1 band type : Byte grayscale : ", fileTest, 
                 Byte.SIZE, 4, PHOTOMETRIC_MINISBLACK, SAMPLEFORMAT_UINT);
         
         //-- test : 1 band type : short grayscale --//
-        width  = random.nextInt(256) + 16;
-        height = random.nextInt(256) + 16;
-        defaultTest("default1BandTest : 1 band type : Short grayscale : ", fileTest, width, height, 
+        defaultTest("default1BandTest : 1 band type : Short grayscale : ", fileTest, 
                 Short.SIZE, 4, PHOTOMETRIC_MINISBLACK, SAMPLEFORMAT_UINT);
         
         //-- test : 1 band type : int grayscale --//
-        width  = random.nextInt(256) + 16;
-        height = random.nextInt(256) + 16;
-        defaultTest("default1BandTest : 1 band type : Integer grayscale : ", fileTest, width, height, 
+        defaultTest("default1BandTest : 1 band type : Integer grayscale : ", fileTest, 
                 Integer.SIZE, 4, PHOTOMETRIC_MINISBLACK, SAMPLEFORMAT_UINT);
         
         //-- test : 1 band type : float grayscale --//
-        width  = random.nextInt(256) + 16;
-        height = random.nextInt(256) + 16;
-        defaultTest("default1BandTest : 1 band type : Float grayscale : ", fileTest, width, height, 
+        defaultTest("default1BandTest : 1 band type : Float grayscale : ", fileTest, 
                 Float.SIZE, 4, PHOTOMETRIC_MINISBLACK, SAMPLEFORMAT_IEEEFP);
         
         //-- test : 1 band type : Double grayscale --//
-        width  = random.nextInt(256) + 16;
-        height = random.nextInt(256) + 16;
-        defaultTest("default1BandTest : 1 band type : Double grayscale : ", fileTest, width, height, 
+        defaultTest("default1BandTest : 1 band type : Double grayscale : ", fileTest, 
                 Double.SIZE, 10, PHOTOMETRIC_MINISBLACK, SAMPLEFORMAT_IEEEFP);
     }
     
@@ -239,20 +211,16 @@ public strictfp abstract class TestTiffImageReaderWriter {
      * @throws IOException if problem during reading/writing action.
      */
     @Test
-    @Ignore
+//    @Ignore
     public void defaultRGBTest() throws IOException {
         File fileTest = File.createTempFile("defaultRGBTest", "tiff");
         
         //-- test : 3 bands type : byte RGB --//
-        int width  = random.nextInt(256) + 16;
-        int height = random.nextInt(256) + 16;
-        defaultTest("defaultRGBTest : 3 bands type : Byte RGB: ", fileTest, width, height, 
+        defaultTest("defaultRGBTest : 3 bands type : Byte RGB: ", fileTest, 
                 Byte.SIZE, 3, PHOTOMETRIC_RGB, SAMPLEFORMAT_UINT);
         
         //-- test : 4 bands type : byte RGB --//
-        width  = random.nextInt(256) + 16;
-        height = random.nextInt(256) + 16;
-        defaultTest("defaultRGBTest : 4 bands type : Byte RGB: ", fileTest, width, height, 
+        defaultTest("defaultRGBTest : 4 bands type : Byte RGB: ", fileTest,
                 Byte.SIZE, 4, PHOTOMETRIC_RGB, SAMPLEFORMAT_UINT);
     }
     
@@ -262,27 +230,130 @@ public strictfp abstract class TestTiffImageReaderWriter {
      * @throws IOException if problem during reading/writing action.
      */
     @Test
-    @Ignore
+//    @Ignore
     public void defaultColorMapTest() throws IOException {
         File fileTest = File.createTempFile("defaultColorMapTest", "tiff");
         
         //-- test : 3 bands type : byte RGB --//
-        int width  = random.nextInt(256) + 16;
-        int height = random.nextInt(256) + 16;
-        defaultTest("defaultColorMapTest : 3 bands type : Byte Palette: ", fileTest, width, height, 
+        defaultTest("defaultColorMapTest : 3 bands type : Byte Palette: ", fileTest,  
                 Byte.SIZE, 3, PHOTOMETRIC_PALETTE, SAMPLEFORMAT_UINT);
         
         //-- test : 4 bands type : byte RGB --//
-        width  = random.nextInt(256) + 16;
-        height = random.nextInt(256) + 16;
-        defaultTest("defaultColorMapTest : 4 bands type : Byte RGB: ", fileTest, width, height, 
+        defaultTest("defaultColorMapTest : 4 bands type : Byte RGB: ", fileTest,
                 Byte.SIZE, 4, PHOTOMETRIC_PALETTE, SAMPLEFORMAT_UINT);
     }
     
     /**
+     * Improve Reader / Writer with random image dimension and subsampling values.
+     * Moreover source region is near source image upper left corner.
+     * 
+     * @see #regionTest(java.lang.String, org.geotoolkit.image.io.plugin.ImageOrientation) 
+     */
+    @Test
+//    @Ignore
+    public void upperLeftCornerTest() throws IOException {
+        regionTest("UpperLeftCornerTest", IMAGE_UPPER_LEFT_CORNER);
+    }
+    
+    /**
+     * Improve Reader / Writer with random image dimension and subsampling values.
+     * Moreover source region is near source image upper right corner.
+     * 
+     * @see #regionTest(java.lang.String, org.geotoolkit.image.io.plugin.ImageOrientation) 
+     */
+    @Test
+//    @Ignore
+    public void upperRightCornerTest() throws IOException {
+        regionTest("upperRightCornerTest", IMAGE_UPPER_RIGHT_CORNER);
+    }
+    
+    /**
+     * Improve Reader / Writer with random image dimension and subsampling values.
+     * Moreover source region is near source image lower left corner.
+     * 
+     * @see #regionTest(java.lang.String, org.geotoolkit.image.io.plugin.ImageOrientation) 
+     */
+    @Test
+//    @Ignore
+    public void lowerLeftCornerTest() throws IOException {
+        regionTest("lowerLeftCornerTest", IMAGE_LOWER_LEFT_CORNER);
+    }
+    
+    /**
+     * Improve Reader / Writer with random image dimension and subsampling values.
+     * Moreover source region is near source image lower right corner.
+     * 
+     * @see #regionTest(java.lang.String, org.geotoolkit.image.io.plugin.ImageOrientation) 
+     */
+    @Test
+//    @Ignore
+    public void lowerRightCornerTest() throws IOException {
+        regionTest("lowerRightCornerTest", IMAGE_LOWER_RIGHT_CORNER);
+    }
+    
+    /**
+     * Improve Reader / Writer with random image dimension and subsampling values.
+     * Moreover source region is near source image center.
+     * 
+     * @see #regionTest(java.lang.String, org.geotoolkit.image.io.plugin.ImageOrientation) 
+     */
+    @Test
+//    @Ignore
+    public void centerTest() throws IOException {
+        regionTest("centerAreaTest", IMAGE_CENTER);
+    }
+    
+    /**
+     * Effectuate some tests on the random region near the specified imageOrientation.
+     * 
+     * @param message in case of error first part of error message.
+     * @param imageOrientation an enum to stipulate witch source image region will be written or read.
+     * @see #IMAGE_LOWER_LEFT_CORNER
+     * @see #IMAGE_LOWER_RIGHT_CORNER
+     * @see #IMAGE_UPPER_LEFT_CORNER
+     * @see #IMAGE_UPPER_RIGHT_CORNER
+     * @see #IMAGE_CENTER
+     * @throws IOException if problem during reading/writing action.
+     */
+    private void regionTest(final String message, final ImageOrientation imageOrientation) throws IOException {
+        final File fileTest = File.createTempFile(message, "tiff");
+        
+        //-------------------- test : 1 band -----------------------------------// 
+        //-- type byte
+        generalTest(message+" : 1 band, type : byte.", fileTest, Byte.SIZE, 1,
+                PHOTOMETRIC_MINISBLACK, SAMPLEFORMAT_UINT, imageOrientation);
+        //-- type short
+        generalTest(message+" : 1 band, type : short.", fileTest, Short.SIZE, 1,
+                PHOTOMETRIC_MINISBLACK, SAMPLEFORMAT_UINT, imageOrientation);
+        //-- type int
+        generalTest(message+" : 1 band, type : int.", fileTest, Integer.SIZE, 1,
+                PHOTOMETRIC_MINISBLACK, SAMPLEFORMAT_UINT, imageOrientation);
+        //-- type Float
+        generalTest(message+" : 1 band, type : float.", fileTest, Float.SIZE, 1,
+                PHOTOMETRIC_MINISBLACK, SAMPLEFORMAT_IEEEFP, imageOrientation);
+        //-- type double
+        generalTest(message+" : 1 band, type : double.", fileTest, Double.SIZE, 1,
+                PHOTOMETRIC_MINISBLACK, SAMPLEFORMAT_IEEEFP, imageOrientation);
+        
+        //-- RGB --//
+        //-- type Byte RGB
+        generalTest(message+" : 3 bands RGB, type : Byte.", fileTest, Byte.SIZE, 3,
+                PHOTOMETRIC_RGB, SAMPLEFORMAT_UINT, imageOrientation);
+        generalTest(message+" : 4 bands RGB, type : Byte.", fileTest, Byte.SIZE, 4,
+                PHOTOMETRIC_RGB, SAMPLEFORMAT_UINT, imageOrientation);
+        
+        //-- color Map --//
+        //-- type Byte RGB 
+        generalTest(message+" : 3 bands ColorMap, type : Byte.", fileTest, Byte.SIZE, 3,
+                PHOTOMETRIC_PALETTE, SAMPLEFORMAT_UINT, imageOrientation);
+        //-- type double
+        generalTest(message+" : 4 bands ColorMap, type : Byte.", fileTest, Byte.SIZE, 4,
+                PHOTOMETRIC_PALETTE, SAMPLEFORMAT_UINT, imageOrientation);
+    }
+    
+    /**
      * Create an image with expected properties given by followed attributs : <br/>
-     * - width<br/>
-     * - height<br/>
+     * - random width and height<br/>
      * - sampleBitsSize<br/>
      * - numBand<br/>
      * - photometricInterpretation<br/>
@@ -293,8 +364,6 @@ public strictfp abstract class TestTiffImageReaderWriter {
      * 
      * @param message in case of assertion error.
      * @param fileTest the place to be.
-     * @param width width of generate test image.
-     * @param height height of generate test image
      * @param sampleBitsSize sample bit number.
      * @param numBand band number.
      * @param photometricInterpretation define RGB or 1 band or also color map.
@@ -306,9 +375,11 @@ public strictfp abstract class TestTiffImageReaderWriter {
      * @see #SAMPLEFORMAT_UINT
      * @throws IOException if problem during reading/writing action.
      */
-    private void defaultTest(final String message, final File fileTest, final int width, final int height, final int sampleBitsSize, 
-            final int numBand, final short photometricInterpretation, final short sampleFormat) throws IOException {
+    private void defaultTest(final String message, final File fileTest, final int sampleBitsSize, final int numBand, 
+            final short photometricInterpretation, final short sampleFormat) throws IOException {
         
+        final int width  = random.nextInt(256) + 16;
+        final int height = random.nextInt(256) + 16;
         final RenderedImage expected = createImageTest(width, height, sampleBitsSize, numBand, photometricInterpretation, sampleFormat);
         
         writer.setOutput(fileTest); //-- to initialize writer
@@ -319,7 +390,172 @@ public strictfp abstract class TestTiffImageReaderWriter {
         final RenderedImage tested = reader.read(0);
         reader.close();
         
-        compareImage(message, expected, tested);
+        checkImage(message, expected, tested);
+    }
+    
+    /**
+     * Effectuate a test in function of given parameter.
+     * Internaly, a source image is generate with width height region and subsampling random values.
+     * 
+     * @param message in case of error first part of error message.
+     * @param fileTest the place to be.
+     * @param sampleBitsSize sample bit number.
+     * @param numBand source image numband.
+     * @param photometricInterpretation define RGB or 1 band or also color map.
+     * @param sampleFormat define sample format integer or floating point.
+     * @param imageOrientation an enum to stipulate witch source image region will be written or read.
+     * @see #PHOTOMETRIC_MINISBLACK
+     * @see #PHOTOMETRIC_PALETTE
+     * @see #PHOTOMETRIC_RGB
+     * @see #SAMPLEFORMAT_IEEEFP
+     * @see #SAMPLEFORMAT_UINT
+     * @see #IMAGE_LOWER_LEFT_CORNER
+     * @see #IMAGE_LOWER_RIGHT_CORNER
+     * @see #IMAGE_UPPER_LEFT_CORNER
+     * @see #IMAGE_UPPER_RIGHT_CORNER
+     * @see #IMAGE_CENTER
+     * @throws IOException if problem during reading/writing action.
+     */
+    private void generalTest(final String message, final File fileTest, final int sampleBitsSize, final int numBand, 
+            final short photometricInterpretation, final short sampleFormat, final ImageOrientation imageOrientation) throws IOException {
+        int width  = random.nextInt(256) + 16;
+        int height = random.nextInt(256) + 16;
+//        System.out.println("width : "+width);
+//        System.out.println("height : "+height);
+//        width  =256;
+//        height = 22;
+        final RenderedImage sourceImage = createImageTest(width, height, sampleBitsSize, numBand, photometricInterpretation, sampleFormat);
+        
+        final int srcRegionX, srcRegionY;
+        switch (imageOrientation) {
+            case IMAGE_LOWER_RIGHT_CORNER : {
+                srcRegionX = width >> 1;
+                srcRegionY = 0;
+                break;
+            }
+            case IMAGE_UPPER_LEFT_CORNER : {
+                srcRegionX = 0;
+                srcRegionY = height >> 1;
+                break;
+            }
+            case IMAGE_UPPER_RIGHT_CORNER : {
+                srcRegionX = width  >> 1;
+                srcRegionY = height >> 1;
+                break;
+            }
+            case IMAGE_CENTER : {
+                srcRegionX = (width >> 2)  + random.nextInt(width  >> 2);
+                srcRegionY = (height >> 2) + random.nextInt(height >> 2);
+                break;
+            }
+            case IMAGE_LOWER_LEFT_CORNER : //-- stipulate only to better view
+            default : {
+                srcRegionX = srcRegionY = 0;
+                break;
+            }
+        }
+        
+        final Rectangle sourceRegion = new Rectangle(srcRegionX, srcRegionY, width >> 1, height >> 1);
+        
+//        final int subsapleYOffset = 5;
+        
+        final int subsampleX = random.nextInt((width >> 1) - 1) + 1;
+        final int subsampleY = random.nextInt((height >> 1) - 1) + 1;
+        
+        final int subsampleXOffset = Math.max(0, random.nextInt(subsampleX) - 1);
+        final int subsampleYOffset = Math.max(0, random.nextInt(subsampleY) - 1);
+        
+//        if (subsampleXOffset > subsampleX || subsampleYOffset > subsampleY) {
+//            System.out.println("");
+//        }
+        
+//        System.out.println("subsample ("+subsampleX+", "+subsampleY+", "+subsampleXOffset+", "+subsampleYOffset+")");
+        
+         final RenderedImage testedImage = effectuateTest(fileTest, sourceImage, sourceRegion, 
+                subsampleX, subsampleY, subsampleXOffset, subsampleYOffset);
+        
+//        final RenderedImage testedImage = effectuateTest(fileTest, sourceImage, sourceRegion, 
+//                2, 2, 0, 0);
+        
+        checkImages(message, sourceImage, sourceRegion, subsampleX, subsampleXOffset, subsampleY, subsampleYOffset, testedImage);
+    }
+    
+    /**
+     * Compare two {@link RenderedImage} and throw an assertion exception if comparison criterion are not respected.
+     * 
+     * @param message  in case of error first part of error message.
+     * @param sourceImage source image
+     * @param tested   image which will be compare than source.
+     */
+    protected void checkImage(final String message, final RenderedImage sourceImage, final RenderedImage testedImage) {
+        checkImages(message, sourceImage, null, 1, 0, 1, 0, testedImage);
+    }
+    
+    /**
+     * Compare two {@link RenderedImage} in function of given parameter 
+     * and throw an assertion exception if comparison criterion are not respected.
+     * 
+     * @param message in case of error first part of error message.
+     * @param sourceImage source image
+     * @param sourceRegion area from source image which will be written or read.
+     * @param sourceXsubsampling subsampling in X direction.
+     * @param sourceXOffset offset in X direction
+     * @param sourceYsubsampling subsample in Y direction
+     * @param sourceYOffset offset in Y direction
+     * @param testedImage I/O result which will be test.
+     */
+    protected void checkImages(final String message, final RenderedImage sourceImage, Rectangle sourceRegion, 
+            final int sourceXsubsampling, final int sourceXOffset, final int sourceYsubsampling, final int sourceYOffset,
+            final RenderedImage testedImage) {
+        
+        if (sourceRegion == null) sourceRegion = new Rectangle(0, 0, sourceImage.getWidth(), sourceImage.getHeight());
+        
+        System.out.println("srcRegion = "+sourceRegion.toString());
+        sourceRegion.translate(sourceXOffset, sourceYOffset);
+        sourceRegion.width -= sourceXOffset;
+        sourceRegion.height -= sourceYOffset;
+        
+        final int srcMinX = Math.max(sourceRegion.x, sourceImage.getMinX());
+        final int srcMinY = Math.max(sourceRegion.y, sourceImage.getMinY());
+        final int srcMaxX  = Math.min(sourceRegion.x + sourceRegion.width, sourceImage.getMinX() + sourceImage.getWidth());
+        final int srcMaxY = Math.min(sourceRegion.y + sourceRegion.height, sourceImage.getMinY() + sourceImage.getHeight());
+        
+        final int expectedWidth  = (srcMaxX - srcMinX + sourceXsubsampling - 1) / sourceXsubsampling;
+        final int expectedHeight = (srcMaxY - srcMinY + sourceYsubsampling - 1) / sourceYsubsampling;
+        
+//        final int expectedWidth  = (sourceRegion.width + sourceXsubsampling - 1) / sourceXsubsampling;
+//        final int expectedHeight = (sourceRegion.height + sourceYsubsampling - 1) / sourceYsubsampling;
+        
+        assertEquals(message+"image width ", expectedWidth, testedImage.getWidth(), DEFAULT_TOLERANCE);
+        assertEquals(message+"image height ", expectedHeight, testedImage.getHeight(), DEFAULT_TOLERANCE);
+        
+        final SampleModel expectedSm = sourceImage.getSampleModel();
+        final int expectedNumband    = expectedSm.getNumBands();
+        
+        final SampleModel testedSm   = testedImage .getSampleModel();
+        
+        assertEquals(message+"numband : ", expectedNumband, testedSm.getNumBands());
+        assertEquals(message+"numDataElement : ", expectedSm.getNumDataElements(), testedSm.getNumDataElements());
+        assertEquals(message+"datatype : ", expectedSm.getDataType(), testedSm.getDataType());
+                
+//        sourceRegion.translate(sourceXOffset, sourceYOffset);
+        
+        final PixelIterator sourcePix = PixelIteratorFactory.createRowMajorIterator(sourceImage, sourceRegion);
+        
+        final PixelIterator testedPix = PixelIteratorFactory.createRowMajorIterator(testedImage);
+        
+        for (int y = sourceRegion.y; y < sourceRegion.y + sourceRegion.height; y += sourceYsubsampling) {
+            for (int x = sourceRegion.x; x < sourceRegion.x + sourceRegion.width; x += sourceXsubsampling) {
+                sourcePix.moveTo(x, y, 0);
+                int b = 0;
+                while (b++ < expectedNumband) {
+                    testedPix.next();
+                    assertEquals(message+"pixel at coordinate : (x, y, b) : ("+sourcePix.getX()+", "+sourcePix.getY()+", "+b+") : ",  
+                    sourcePix.getSampleDouble(), testedPix.getSampleDouble(), DEFAULT_TOLERANCE);
+                    sourcePix.next();
+                }
+            }
+        }
     }
     
     /**
@@ -462,36 +698,6 @@ public strictfp abstract class TestTiffImageReaderWriter {
             case DataBuffer.TYPE_DOUBLE : while (pix.next()) pix.setSampleDouble(random.nextDouble()); break;
 
             default: throw new AssertionError(databufferType);
-        }
-    }
-    
-    /**
-     * Compare two {@link RenderedImage} and throw an assertion exception if comparison criterion are not respected.
-     * 
-     * @param message  in case of error first part of error message.
-     * @param expected expected image.
-     * @param tested   image which will be compare than expected.
-     */
-    private void compareImage(final String message, final RenderedImage expected, final RenderedImage tested) {
-        assertEquals(message+"image width ", expected.getWidth(), tested.getWidth(), DEFAULT_TOLERANCE);
-        assertEquals(message+"image height ", expected.getHeight(), tested.getHeight(), DEFAULT_TOLERANCE);
-        final SampleModel expectedSm = expected.getSampleModel();
-        final SampleModel testedSm   = tested.getSampleModel();
-        
-        assertEquals(message+"numband : ", expectedSm.getNumBands(), testedSm.getNumBands());
-        assertEquals(message+"numDataElement : ", expectedSm.getNumDataElements(), testedSm.getNumDataElements());
-        assertEquals(message+"datatype : ", expectedSm.getDataType(), testedSm.getDataType());
-        
-        final PixelIterator expectedPix = PixelIteratorFactory.createRowMajorIterator(expected);
-        final PixelIterator testedPix   = PixelIteratorFactory.createRowMajorIterator(tested);
-        
-        while (expectedPix.next()) {
-            testedPix.next();
-            if (Math.abs(expectedPix.getSampleDouble()- testedPix.getSampleDouble())> DEFAULT_TOLERANCE) {
-                System.out.println("");
-            }
-            assertEquals(message+"pixel at coordinate : (x, y) : ("+expectedPix.getX()+", "+expectedPix.getY()+") : ", 
-                    expectedPix.getSampleDouble(), testedPix.getSampleDouble(), DEFAULT_TOLERANCE);
         }
     }
 }
