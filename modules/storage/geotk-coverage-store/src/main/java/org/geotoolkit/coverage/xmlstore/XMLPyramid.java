@@ -17,7 +17,11 @@
 package org.geotoolkit.coverage.xmlstore;
 
 import java.awt.Dimension;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -25,8 +29,12 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlTransient;
+import net.iharder.Base64;
+import org.apache.sis.io.wkt.Convention;
+import org.apache.sis.io.wkt.FormattableObject;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.Classes;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.GridMosaic;
 import org.geotoolkit.coverage.Pyramid;
 import org.geotoolkit.gui.swing.tree.Trees;
@@ -48,6 +56,8 @@ public class XMLPyramid implements Pyramid{
     String id;
     @XmlElement(name="crs")
     String crs;
+    @XmlElement(name="serializedCrs")
+    String serializedCrs;
     @XmlElement(name="Mosaic")
     List<XMLMosaic> mosaics;
 
@@ -91,10 +101,18 @@ public class XMLPyramid implements Pyramid{
         }
 
         try {
-            if(crs.startsWith("EPSG")){
-                crsobj = CRS.decode(crs);
-            }else{
-                crsobj = CRS.parseWKT(crs);
+            try {
+                crsobj = (CoordinateReferenceSystem) Base64.decodeToObject(serializedCrs);
+            } catch (IOException ex) {
+                Logging.getLogger(this.getClass()).log(Level.WARNING, ex.getMessage(), ex);
+            }
+            
+            if(crsobj==null){
+                if(crs.startsWith("EPSG")){
+                    crsobj = CRS.decode(crs);
+                }else{
+                    crsobj = CRS.parseWKT(crs);
+                }
             }
         } catch (Exception ex) {
             Logger.getLogger(XMLPyramid.class.getName()).log(Level.SEVERE, null, ex);
@@ -131,6 +149,15 @@ public class XMLPyramid implements Pyramid{
         return crsobj;
     }
 
+    void setCoordinateReferenceSystem(CoordinateReferenceSystem crs){
+        this.crs = ((FormattableObject)crs).toString(Convention.WKT1);        
+        try {
+            this.serializedCrs = Base64.encodeObject((Serializable)crs);
+        } catch (IOException ex) {
+            Logging.getLogger(this.getClass()).log(Level.WARNING, ex.getMessage(), ex);
+        }
+    }
+    
     @Override
     public double[] getScales() {
         final SortedSet<Double> scaleSet = new TreeSet<Double>();
@@ -159,7 +186,6 @@ public class XMLPyramid implements Pyramid{
         }
         return candidates;
     }
-
 
     @Override
     public List<GridMosaic> getMosaics() {

@@ -22,23 +22,19 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import javax.imageio.ImageReader;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.xml.bind.annotation.*;
 
-import org.apache.sis.io.wkt.Convention;
-import org.apache.sis.io.wkt.FormattableObject;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.util.Classes;
 import org.geotoolkit.coverage.AbstractPyramidSet;
 import org.geotoolkit.coverage.Pyramid;
+import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.referencing.IdentifiedObjects;
-import org.apache.sis.util.Classes;
-import org.geotoolkit.coverage.grid.ViewType;
-import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
@@ -132,7 +128,7 @@ public class XMLPyramidSet extends AbstractPyramidSet{
      */
     Pyramid createPyramid(CoordinateReferenceSystem crs) {
         final XMLPyramid pyramid = new XMLPyramid();
-        pyramid.crs = ((FormattableObject)crs).toString(Convention.WKT1);
+        pyramid.setCoordinateReferenceSystem(crs);
         try {
             pyramid.id = URLEncoder.encode(IdentifiedObjects.getIdentifier(crs),"UTF-8");
         } catch (UnsupportedEncodingException ex) {

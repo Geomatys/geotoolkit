@@ -128,7 +128,7 @@ public abstract class PyramidalModelStoreNDTest {
             ref.writeTile(pyramid.getId(), mosaic_s1.getId(), 3, 2, createImage(colors[v][1][3][2]));
         }
         
-        
+        crs = pyramid.getCoordinateReferenceSystem();
 
         return store;
     }
@@ -252,6 +252,7 @@ public abstract class PyramidalModelStoreNDTest {
      * @param envelope expented envelope
      */
     private void checkCoverage(GridCoverage2D coverage, int width, int height, int[][] colors, double... envelope){
+        assertTrue(CRS.equalsApproximatively(crs, coverage.getCoordinateReferenceSystem()));
         Envelope env = coverage.getEnvelope();
         assertEquals(envelope[0], env.getMinimum(0), DELTA);
         assertEquals(envelope[1], env.getMaximum(0), DELTA);
