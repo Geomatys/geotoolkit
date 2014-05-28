@@ -1,0 +1,125 @@
+/*
+ *    Geotoolkit - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
+ *
+ *    (C) 2014, Geomatys
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation;
+ *    version 2.1 of the License.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
+ */
+package org.geotoolkit.data.geojson;
+
+import org.apache.sis.metadata.iso.DefaultIdentifier;
+import org.apache.sis.metadata.iso.citation.DefaultCitation;
+import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.util.iso.ResourceInternationalString;
+import org.geotoolkit.data.AbstractFileFeatureStoreFactory;
+import org.geotoolkit.data.FeatureStore;
+import org.geotoolkit.data.FileFeatureStoreFactory;
+import org.geotoolkit.parameter.DefaultParameterDescriptor;
+import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
+import org.opengis.metadata.Identifier;
+import org.opengis.metadata.identification.Identification;
+import org.opengis.parameter.ParameterDescriptor;
+import org.opengis.parameter.ParameterDescriptorGroup;
+import org.opengis.parameter.ParameterValueGroup;
+
+import java.util.Collections;
+
+/**
+ * @author Quentin Boileau (Geomatys)
+ */
+public class GeoJSONFeatureStoreFactory extends AbstractFileFeatureStoreFactory implements FileFeatureStoreFactory {
+
+    /** factory identification **/
+    public static final String NAME = "geojson";
+    public static final DefaultServiceIdentification IDENTIFICATION;
+    static {
+        IDENTIFICATION = new DefaultServiceIdentification();
+        final Identifier id = new DefaultIdentifier(NAME);
+        final DefaultCitation citation = new DefaultCitation(NAME);
+        citation.setIdentifiers(Collections.singleton(id));
+        IDENTIFICATION.setCitation(citation);
+    }
+    public static final ParameterDescriptor<String> IDENTIFIER = createFixedIdentifier(NAME);
+
+    public static final String ENCODING = "UTF-8";
+
+    /**
+     * Optional
+     */
+    public static final ParameterDescriptor<Integer> COORDINATE_ACCURACY =
+            new DefaultParameterDescriptor("coordinate_accuracy","Number of decimal (default 7).",Integer.class,7,false);
+
+
+    public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
+            new DefaultParameterDescriptorGroup("GeoJSONParameters",
+                IDENTIFIER, URLP, NAMESPACE, COORDINATE_ACCURACY);
+
+    @Override
+    public Identification getIdentification() {
+        return IDENTIFICATION;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public ParameterDescriptorGroup getParametersDescriptor() {
+        return PARAMETERS_DESCRIPTOR;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public CharSequence getDisplayName() {
+        return new ResourceInternationalString("org/geotoolkit/geojson/bundle", "datastoreTitle");
+    }
+
+    /**
+     * Describes the type of data the datastore returned by this factory works
+     * with.
+     *
+     * @return String a human readable description of the type of restore
+     *         supported by this datastore.
+     */
+    @Override
+    public CharSequence getDescription() {
+        return new ResourceInternationalString("org/geotoolkit/geojson/bundle", "datastoreDescription");
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public String[] getFileExtensions() {
+        return new String[] {".json", ".geojson", ".topojson"};
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public FeatureStore open(final ParameterValueGroup params) throws DataStoreException {
+        checkCanProcessWithError(params);
+        return new GeoJSONFeatureStore(params);
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public FeatureStore create(final ParameterValueGroup params) throws DataStoreException {
+        return open(params);
+    }
+
+}

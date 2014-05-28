@@ -43,6 +43,17 @@
                 <role>Java Developer</role>
             </roles>
         </developer>
+        <developer>
+            <name>Quentin Boileau</name>
+            <id>qboileau</id>
+            <email>quentin.boileau@geomatys.com</email>
+            <organization>Geomatys</organization>
+            <organizationUrl>http://www.geomatys.fr/</organizationUrl>
+            <timezone>+1</timezone>
+            <roles>
+                <role>Java Developer</role>
+            </roles>
+        </developer>
     </developers>
 
 
@@ -60,6 +71,21 @@
             <artifactId>geotk-utility-pending</artifactId>
             <version>${project.version}</version>
         </dependency>
+
+        <!-- Jackson dependencies -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>org.geotoolkit.project</groupId>
             <artifactId>geotk-test</artifactId>
@@ -73,15 +99,9 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.apache.derby</groupId>
-            <artifactId>derby</artifactId>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-           <groupId>net.sf.json-lib</groupId>
-           <artifactId>json-lib</artifactId>
-           <version>2.4</version>
-           <classifier>jdk15</classifier>
         </dependency>
     </dependencies>
 
