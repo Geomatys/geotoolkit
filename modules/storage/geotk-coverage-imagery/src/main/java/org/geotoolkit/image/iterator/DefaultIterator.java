@@ -223,9 +223,13 @@ class DefaultIterator extends PixelIterator {
         if (renderedImage != null) {
             final int riMinX = renderedImage.getMinX();
             final int riMinY = renderedImage.getMinY();
-            tX = (x - riMinX)/renderedImage.getTileWidth() + renderedImage.getMinTileX();
-            tY = (y - riMinY)/renderedImage.getTileHeight() + renderedImage.getMinTileY();
-            updateCurrentRaster(tX, tY);
+            final int tmpTX = (x - riMinX)/renderedImage.getTileWidth() + renderedImage.getMinTileX();
+            final int tmpTY = (y - riMinY)/renderedImage.getTileHeight() + renderedImage.getMinTileY();
+            if (tmpTX != tX || tmpTY != tY) {
+                tX = tmpTX;
+                tY = tmpTY;
+                updateCurrentRaster(tX, tY);
+            }
         }
         this.x = x;
         this.y = y;

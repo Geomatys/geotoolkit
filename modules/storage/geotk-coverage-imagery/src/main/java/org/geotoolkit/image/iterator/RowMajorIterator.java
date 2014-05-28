@@ -57,6 +57,10 @@ class RowMajorIterator extends PixelIterator{
     protected int y;
 
     /**
+     * A trigger to avoid doublon operation update when both {@linkplain #tX} and {@linkplain #tY} change.
+     */
+    protected boolean tyUpdated = false;
+    /**
      * Create row-major rendered image iterator.
      *
      * @param renderedImage image which will be follow by iterator.
@@ -84,6 +88,7 @@ class RowMajorIterator extends PixelIterator{
                     if (++y == maxY) {
                         if(++tY == tMaxY) return false;
                         //initialize from new tile(raster) after tiles Y move.
+                        tyUpdated = true;
                         updateCurrentRaster(tX, tY);
                         final int cRMinY = currentRaster.getMinY();
                         this.y    = Math.max(areaIterateMinY, cRMinY);
@@ -91,7 +96,11 @@ class RowMajorIterator extends PixelIterator{
                     }
                 }
                 //initialize from new tile(raster) after tiles X move.
-                updateCurrentRaster(tX, tY);
+                if (tyUpdated) {
+                    tyUpdated = false;
+                } else {
+                    updateCurrentRaster(tX, tY);
+                }
                 final int cRMinX = currentRaster.getMinX();
                 this.x = Math.max(areaIterateMinX, cRMinX);
                 this.maxX = Math.min(areaIterateMaxX, cRMinX + currentRaster.getWidth());
@@ -201,9 +210,13 @@ class RowMajorIterator extends PixelIterator{
         super.moveTo(x, y, b);
         final int riMinX = renderedImage.getMinX();
         final int riMinY = renderedImage.getMinY();
-        tX = (x - riMinX) / renderedImage.getTileWidth() + renderedImage.getMinTileX();
-        tY = (y - riMinY) / renderedImage.getTileHeight() + renderedImage.getMinTileY();
-        updateCurrentRaster(tX, tY);
+        final int tmpTX = (x - riMinX) / renderedImage.getTileWidth() + renderedImage.getMinTileX();
+        final int tmpTY = (y - riMinY) / renderedImage.getTileHeight() + renderedImage.getMinTileY();
+        if (tmpTX != tX || tmpTY != tY) {
+            tX = tmpTX;
+            tY = tmpTY;
+            updateCurrentRaster(tX, tY);
+        }
         final int cRMinX = currentRaster.getMinX();
         final int cRMinY = currentRaster.getMinY();
         this.maxX = Math.min(areaIterateMaxX, cRMinX + currentRaster.getWidth());
