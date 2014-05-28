@@ -51,16 +51,12 @@ public class UnitConverterTest {
         String inputString = "mm";
         Unit convertedUnit= converter.convert(inputString);
         Unit expectedUnit = SI.MILLIMETRE;
-        assertEquals(expectedUnit, convertedUnit);
+        assertEquals(inputString, expectedUnit, convertedUnit);
 
         inputString = "kg";
-        try{
-            convertedUnit = converter.convert(inputString);
-            fail("should not pass");
-        }catch(NonconvertibleObjectException ex){
-            //ok
-        }
-
+        convertedUnit = converter.convert(inputString);
+        expectedUnit  = SI.KILOGRAM;
+        assertEquals(inputString, expectedUnit, convertedUnit);
 
         inputString = "fail";
         try{
