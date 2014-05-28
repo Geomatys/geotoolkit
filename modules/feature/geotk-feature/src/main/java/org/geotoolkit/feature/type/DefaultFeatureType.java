@@ -64,7 +64,7 @@ public class DefaultFeatureType extends DefaultComplexType implements FeatureTyp
     }
 
     @Override
-    public Collection<PropertyType> getProperties(boolean includeSuperTypes) {
+    public Collection<PropertyType> getPropertyTypes(boolean includeSuperTypes) {
         throw new UnsupportedOperationException("Not yet implemented.");
     }
 
