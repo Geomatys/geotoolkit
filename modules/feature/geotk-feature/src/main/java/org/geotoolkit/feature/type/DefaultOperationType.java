@@ -23,6 +23,7 @@ import org.opengis.feature.type.AttributeType;
 import org.opengis.feature.type.Name;
 import org.opengis.feature.type.OperationType;
 import org.opengis.filter.Filter;
+import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.util.InternationalString;
 
 /**
@@ -64,8 +65,12 @@ public class DefaultOperationType extends DefaultPropertyType<OperationType> imp
     }
 
     @Override
-    public List<AttributeType> getParameters() {
+    public List<AttributeType> getParameterTypes() {
         return parameters;
     }
 
+    @Override
+    public ParameterDescriptorGroup getParameters() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }

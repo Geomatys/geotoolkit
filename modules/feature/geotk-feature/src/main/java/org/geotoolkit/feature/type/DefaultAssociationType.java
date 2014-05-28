@@ -19,6 +19,8 @@ package org.geotoolkit.feature.type;
 import java.util.List;
 import java.util.Objects;
 
+import org.opengis.feature.FeatureType;
+import org.opengis.feature.type.AssociationDescriptor;
 import org.opengis.feature.type.AssociationType;
 import org.opengis.feature.type.AttributeType;
 import org.opengis.feature.type.Name;
@@ -37,6 +39,8 @@ public class DefaultAssociationType extends DefaultPropertyType<AssociationType>
 
     protected final AttributeType relatedType;
 
+    private AssociationDescriptor descriptor;
+
     public DefaultAssociationType(final Name name, final AttributeType referenceType, final boolean isAbstract,
             final List<Filter> restrictions, final AssociationType superType, final InternationalString description){
         super(name, referenceType.getBinding(), isAbstract, restrictions, superType, description);
@@ -45,12 +49,33 @@ public class DefaultAssociationType extends DefaultPropertyType<AssociationType>
         ensureNonNull("related type", relatedType);
     }
 
+    final synchronized void setDescriptor(final AssociationDescriptor d) {
+        if (descriptor == null) {
+            descriptor = d;
+        }
+    }
+
     /**
      * {@inheritDoc }
      */
     @Override
     public AttributeType getRelatedType() {
         return relatedType;
+    }
+
+    @Override
+    public FeatureType getValueType() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public int getMinimumOccurs() {
+        return (descriptor != null) ? descriptor.getMinOccurs() : 0;
+    }
+
+    @Override
+    public int getMaximumOccurs() {
+        return (descriptor != null) ? descriptor.getMaxOccurs() : Integer.MAX_VALUE;
     }
 
     /**

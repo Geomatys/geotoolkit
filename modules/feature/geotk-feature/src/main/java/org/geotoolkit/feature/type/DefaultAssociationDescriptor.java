@@ -32,6 +32,9 @@ public class DefaultAssociationDescriptor extends DefaultPropertyDescriptor<Asso
     public DefaultAssociationDescriptor(final AssociationType type, final Name name,
             final int min, final int max, final boolean isNillable) {
         super(type, name, min, max, isNillable);
+        if (type instanceof DefaultAssociationType) {
+            ((DefaultAssociationType) type).setDescriptor(this);
+        }
     }
-    
+
 }
