@@ -45,6 +45,11 @@ public abstract class AbstractProperty implements Property,Serializable {
         final PropertyDescriptor descriptor = getDescriptor();
         if(descriptor != null){
             return descriptor.getName();
+        } else {
+            final PropertyType type = getType();
+            if (type != null) {
+                return type.getName();
+            }
         }
         return null;
     }
