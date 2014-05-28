@@ -345,6 +345,12 @@ public class TiffImageWriter extends SpatialImageWriter {
      */
     private long[] ifdPosition;
     
+    /**
+     * Current native {@link ByteOrder}.
+     * @see #writeWithCompression(java.lang.Object, int, int, int, int) 
+     */
+    ByteOrder currentBO;
+    
     private int rowsPerStrip;
     private Object replaceOffsetArray;
     private boolean endOfFileReached = false;
@@ -2745,7 +2751,7 @@ public class TiffImageWriter extends SpatialImageWriter {
                     break;
                 }
                 case DataBuffer.TYPE_FLOAT : {
-                    assert nbIter == 8 : "In DataBuffer.TYPE_FLOAT, expected nbIter = 8, found : "+nbIter;
+                    assert nbIter == 4 : "In DataBuffer.TYPE_FLOAT, expected nbIter = 4, found : "+nbIter;
                     srcVal = Float.floatToRawIntBits(Array.getFloat(sourceArray, i));
                     break;
                 }
@@ -2757,10 +2763,17 @@ public class TiffImageWriter extends SpatialImageWriter {
                 default: throw new IOException(error(Errors.Keys.UNSUPPORTED_DATA_TYPE, dataBuffertype));
             }
             
-            int bitOffset = bitPerSample - Byte.SIZE;
-            long mask = 0xFFL << bitOffset;           
-            
-            while (bitOffset >= 0) {
+            int bitOffset, bitOffsetStep;
+            if (currentBO.equals(ByteOrder.LITTLE_ENDIAN)) {
+                bitOffset = 0;
+                bitOffsetStep = Byte.SIZE;
+            } else {
+                bitOffset = bitPerSample - Byte.SIZE;
+                bitOffsetStep = - Byte.SIZE;
+            }
+              
+            for (int it = 0; it < nbIter; it++) {
+                long mask = 0xFFL << bitOffset;
                 long val = srcVal & mask;
                 val = val >>> bitOffset; 
                  //-- write current byte by expected compression --//
@@ -2771,10 +2784,8 @@ public class TiffImageWriter extends SpatialImageWriter {
                 } else {
                     throw new IllegalStateException("no compression value should never append.");
                 }
-                bitOffset -= Byte.SIZE;
-                //-- shift bit 
-                mask = mask >>> Byte.SIZE;
-            }
+                bitOffset += bitOffsetStep;
+            } 
         }
     }
     
@@ -3194,12 +3205,12 @@ public class TiffImageWriter extends SpatialImageWriter {
                 out = new FileOutputStream((File) output);
             }
             
-            final ByteOrder bo = ByteOrder.nativeOrder();
+            currentBO = ByteOrder.nativeOrder();
             final ByteBuffer buff = ByteBuffer.allocateDirect(8196);
-            buff.order(bo);
+            buff.order(currentBO);
             channel = new ChannelImageOutputStream("TiffWriter", out.getChannel(), buff);
             
-            if (bo.equals(ByteOrder.BIG_ENDIAN)) {//MM
+            if (currentBO.equals(ByteOrder.BIG_ENDIAN)) {//MM
                 channel.writeByte((byte) 'M');
                 channel.writeByte((byte) 'M');
             } else {//II
@@ -3276,7 +3287,7 @@ public class TiffImageWriter extends SpatialImageWriter {
         currentPBAPos   = 0;
         rowByte32773Pos = 0;
         metaHeads = new Map[4];
-        metaIndex = 0;
+        metaIndex = 0; 
         channel = null;
     }
     
