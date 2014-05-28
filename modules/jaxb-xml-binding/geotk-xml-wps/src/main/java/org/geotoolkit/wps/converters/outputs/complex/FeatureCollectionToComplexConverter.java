@@ -16,17 +16,15 @@
  */
 package org.geotoolkit.wps.converters.outputs.complex;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import javax.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
 import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.data.geojson.GeoJSONWriter;
+import org.geotoolkit.data.FeatureStoreUtilities;
+import org.geotoolkit.data.geojson.GeoJSONStreamWriter;
 import org.geotoolkit.feature.xml.XmlFeatureTypeWriter;
 import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeWriter;
 import org.geotoolkit.feature.xml.jaxp.ElementFeatureWriter;
@@ -88,9 +86,18 @@ public final class FeatureCollectionToComplexConverter extends AbstractComplexOu
         final Map<String, String> schemaLocation = new HashMap<String, String>();
 
         if(complex.getMimeType().equalsIgnoreCase(WPSMimeType.APP_GEOJSON.val())) {
-            complex.getContent().add(GeoJSONWriter.toGeoJSON(source));
-            complex.setSchema(null);
 
+            try {
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                GeoJSONStreamWriter writer = new GeoJSONStreamWriter(baos, ft, "UTF-8", 7);
+                FeatureStoreUtilities.write(writer, source);
+                complex.getContent().add(baos.toString("UTF-8"));
+                complex.setSchema(null);
+            } catch (DataStoreException e) {
+                throw new NonconvertibleObjectException("Can't write Feature into GeoJSON output stream.", e);
+            } catch (UnsupportedEncodingException e) {
+                throw new NonconvertibleObjectException("Can't convert output stream into String.", e);
+            }
         } else {
             try {
 

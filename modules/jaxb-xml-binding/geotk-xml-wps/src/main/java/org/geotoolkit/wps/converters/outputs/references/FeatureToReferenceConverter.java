@@ -23,7 +23,8 @@ import java.util.UUID;
 import javax.xml.bind.JAXBException;
 import javax.xml.stream.XMLStreamException;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
-import org.geotoolkit.data.geojson.GeoJSONWriter;
+import org.geotoolkit.data.geojson.GeoJSONStreamWriter;
+import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.feature.xml.XmlFeatureTypeWriter;
 import org.geotoolkit.feature.xml.XmlFeatureWriter;
 import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeWriter;
@@ -107,10 +108,19 @@ public class FeatureToReferenceConverter extends AbstractReferenceOutputConverte
             final String dataFileName = randomFileName+".json";
             final File dataFile = new File((String) params.get(TMP_DIR_PATH), dataFileName);
             try {
-                FileUtilities.stringToFile(dataFile, GeoJSONWriter.toGeoJSON(source));
-            } catch (IOException e) {
+                FileOutputStream fos = new FileOutputStream(dataFile);
+                GeoJSONStreamWriter writer = new GeoJSONStreamWriter(fos, ft, "UTF-8", 7);
+                Feature next = writer.next();
+                FeatureUtilities.copy(source, next, true);
+                writer.write();
+                writer.close();
+
+            } catch (DataStoreException e) {
+                throw new NonconvertibleObjectException("Can't write Feature into GeoJSON output stream.", e);
+            } catch (FileNotFoundException e) {
                 throw new NonconvertibleObjectException(e);
             }
+
             reference.setHref(params.get(TMP_DIR_URL) + "/" +dataFileName);
             reference.setSchema(null);
 

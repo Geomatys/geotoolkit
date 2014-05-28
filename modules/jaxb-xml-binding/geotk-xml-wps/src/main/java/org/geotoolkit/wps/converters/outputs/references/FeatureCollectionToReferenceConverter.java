@@ -18,12 +18,12 @@ package org.geotoolkit.wps.converters.outputs.references;
 
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
-import org.geotoolkit.data.geojson.GeoJSONWriter;
+import org.geotoolkit.data.FeatureStoreUtilities;
+import org.geotoolkit.data.geojson.GeoJSONStreamWriter;
 import org.geotoolkit.feature.xml.XmlFeatureTypeWriter;
 import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeWriter;
 import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureWriter;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.util.FileUtilities;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
 import org.geotoolkit.wps.io.WPSIO;
 import org.geotoolkit.wps.io.WPSMimeType;
@@ -100,11 +100,17 @@ public final class FeatureCollectionToReferenceConverter extends AbstractReferen
             //create file
             final String dataFileName = randomFileName + ".json";
             final File dataFile = new File((String) params.get(TMP_DIR_PATH), dataFileName);
+
             try {
-                FileUtilities.stringToFile(dataFile, GeoJSONWriter.toGeoJSON(source));
-            } catch (IOException e) {
+                FileOutputStream fos = new FileOutputStream(dataFile);
+                GeoJSONStreamWriter writer = new GeoJSONStreamWriter(fos, ft, "UTF-8", 7);
+                FeatureStoreUtilities.write(writer, source);
+            } catch (DataStoreException e) {
+                throw new NonconvertibleObjectException("Can't write Feature into GeoJSON output stream.", e);
+            } catch (FileNotFoundException e) {
                 throw new NonconvertibleObjectException(e);
             }
+
             reference.setHref(params.get(TMP_DIR_URL) + "/" + dataFileName);
             reference.setSchema(null);
         } else {
