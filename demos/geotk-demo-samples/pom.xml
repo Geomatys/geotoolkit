@@ -57,6 +57,11 @@
         </dependency>
         <dependency>
             <groupId>org.geotoolkit</groupId>
+            <artifactId>geotk-feature-geojson</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.geotoolkit</groupId>
             <artifactId>geotk-feature-nmea</artifactId>
             <version>${project.version}</version>
         </dependency>
