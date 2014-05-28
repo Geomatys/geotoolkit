@@ -33,6 +33,7 @@ import org.geotoolkit.util.converter.NonconvertibleObjectException;
 import org.geotoolkit.util.converter.ObjectConverter;
 import org.opengis.feature.*;
 import org.opengis.feature.type.*;
+import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.AttributeType;
 import org.opengis.feature.type.PropertyType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
