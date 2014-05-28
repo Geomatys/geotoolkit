@@ -34,7 +34,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Random;
-import javax.imageio.IIOException;
 import javax.imageio.IIOParam;
 import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
@@ -141,6 +140,20 @@ public strictfp abstract class TestTiffImageReaderWriter {
         random = TestUtilities.createRandomNumberGenerator();
     }
     
+    /**
+     * Effectuate distinct test in function of Reader or Writer implementation 
+     * and return result image from Reading writing action.
+     * 
+     * @param fileTest the place to be
+     * @param sourceImage image which will be written
+     * @param sourceRegion Reading or writing region.
+     * @param sourceXSubsample Reading or writing subsample in X direction.
+     * @param sourceYsubsampling Reading or writing subsample in Y direction.
+     * @param sourceXOffset Reading or writing offset in X direction.
+     * @param sourceYOffset Reading or writing offset in Y direction.
+     * @return Result image from reading writing action.
+     * @throws IOException if problem during reading / writing action.
+     */
     protected abstract RenderedImage effectuateTest(final File fileTest, final RenderedImage sourceImage, final Rectangle sourceRegion, 
             final int sourceXSubsample, final int sourceYsubsampling, final int sourceXOffset, final int sourceYOffset) throws IOException;
     
@@ -150,6 +163,7 @@ public strictfp abstract class TestTiffImageReaderWriter {
      * @throws IOException if problem during reading/writing action.
      */
     @Test
+//    @Ignore
     public void default1BandTest() throws IOException {
         File fileTest = File.createTempFile("default1BandTest", "tiff");
         
@@ -420,10 +434,12 @@ public strictfp abstract class TestTiffImageReaderWriter {
             final short photometricInterpretation, final short sampleFormat, final ImageOrientation imageOrientation) throws IOException {
         int width  = random.nextInt(256) + 16;
         int height = random.nextInt(256) + 16;
-//        System.out.println("width : "+width);
-//        System.out.println("height : "+height);
 //        width  =256;
 //        height = 22;
+//        width  =164;
+//        height = 138;
+//        System.out.println("width : "+width);
+//        System.out.println("height : "+height);
         final RenderedImage sourceImage = createImageTest(width, height, sampleBitsSize, numBand, photometricInterpretation, sampleFormat);
         
         final int srcRegionX, srcRegionY;
@@ -457,7 +473,15 @@ public strictfp abstract class TestTiffImageReaderWriter {
         
         final Rectangle sourceRegion = new Rectangle(srcRegionX, srcRegionY, width >> 1, height >> 1);
         
-//        final int subsapleYOffset = 5;
+//        final int subsampleX = 19;
+//        final int subsampleY = 22;
+//        final int subsampleXOffset = 8;
+//        final int subsampleYOffset = 5;
+        
+//        final int subsampleX = 42;
+//        final int subsampleY = 46;
+//        final int subsampleXOffset = 24;
+//        final int subsampleYOffset = 9;
         
         final int subsampleX = random.nextInt((width >> 1) - 1) + 1;
         final int subsampleY = random.nextInt((height >> 1) - 1) + 1;
@@ -510,7 +534,7 @@ public strictfp abstract class TestTiffImageReaderWriter {
         
         if (sourceRegion == null) sourceRegion = new Rectangle(0, 0, sourceImage.getWidth(), sourceImage.getHeight());
         
-        System.out.println("srcRegion = "+sourceRegion.toString());
+//        System.out.println("srcRegion = "+sourceRegion.toString());
         sourceRegion.translate(sourceXOffset, sourceYOffset);
         sourceRegion.width -= sourceXOffset;
         sourceRegion.height -= sourceYOffset;

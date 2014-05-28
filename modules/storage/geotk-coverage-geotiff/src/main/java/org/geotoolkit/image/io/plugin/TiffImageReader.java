@@ -2349,7 +2349,7 @@ public class TiffImageReader extends SpatialImageReader {
                     int n = rasterReader.readByte();
                     if (n >= -127 && n <= - 1) {
                         n = - n + 1; //-- we write n times the following value.
-                        final int writeValue = rasterReader.readByte() & 0xFF;
+                        final long writeValue = rasterReader.readByte() & 0xFFL;
                         for (int i = 0; i < n; i++) {
                             //-- build sample in relation with bits per samples --//
                             dataContainer = dataContainer | (writeValue << maskCount);
@@ -2406,7 +2406,7 @@ public class TiffImageReader extends SpatialImageReader {
                             xpos += n + 1;
                         } else {
                             for (int i = 0; i < n + 1; i++) {// copy the next n + 1 bytes
-                                final int val = rasterReader.readByte() & 0xFF;
+                                final long val = rasterReader.readByte() & 0xFFL;
                                 //-- build sample in relation with bits per samples --//
                                 dataContainer = dataContainer | (val << maskCount);
                                 maskCount += Byte.SIZE;
@@ -2565,7 +2565,7 @@ public class TiffImageReader extends SpatialImageReader {
                     final int interMaxY          = Math.min(srcRegionMaxY, (ty + 1) * tileHeight);
                     
                     final int sourceYOffset = (((interMinY - srcRegion.y) % sourceYSubsampling) == 0) ? 0 : (sourceYSubsampling - ((interMinY - srcRegion.y)) % sourceYSubsampling);
-                    if (sourceYOffset >= tileHeight) continue;
+                    if (sourceYOffset >= tileHeight || (interMinY + sourceYOffset >= interMaxY)) continue;
                     
                     final int targetRowOffset = ((interMinY - srcRegion.y + sourceYSubsampling - 1) / sourceYSubsampling) * targetScanlineStride;
                     
@@ -2582,7 +2582,7 @@ public class TiffImageReader extends SpatialImageReader {
                         //-- source offset in x direction --//
                         final int sourceColOffset = (interMinX - srcRegion.x) % sourceXSubsampling == 0 ? 0 : (sourceXSubsampling - ((interMinX - srcRegion.x) % sourceXSubsampling));
                         //-- in case where subsampling is more longer than tilewidth --//
-                        if (sourceColOffset >= tileWidth) continue nextTile;
+                        if (sourceColOffset >= tileWidth || (interMinX + sourceColOffset) >= interMaxX) continue nextTile;
                         
                         //-- target begin position --//
                         int targetOffset = targetRegionOffset + targetRowOffset + ((interMinX - srcRegion.x + sourceXSubsampling - 1) / sourceXSubsampling) * samplesPerPixel;
@@ -2738,9 +2738,8 @@ public class TiffImageReader extends SpatialImageReader {
                     final int interMaxY          = Math.min(srcRegionMaxY, (ty + 1) * tileHeight);
                     
                     final int yOffset = (((interMinY - srcRegion.y) % sourceYSubsampling) == 0) ? 0 : (sourceYSubsampling - ((interMinY - srcRegion.y)) % sourceYSubsampling);
-                    if (yOffset >= tileHeight) continue;
-                    
-                    final int sourceRowOffset = yOffset * sourceScanTileStride;
+                    if (yOffset >= tileHeight || (interMinY + yOffset) >= interMaxY) continue;
+                    final int rowSampleOffset = (interMinY + yOffset - ty * tileHeight) * sourceScanTileStride;
                     final int targetRowOffset = ((interMinY - srcRegion.y + sourceYSubsampling - 1) / sourceYSubsampling) * targetScanlineStride;
                     
          nextTile : for (int tx = minTileX; tx < maxTileX; tx++) {
@@ -2758,8 +2757,8 @@ public class TiffImageReader extends SpatialImageReader {
                         //-- source offset in x direction --//
                         final int sourceColOffset = (interMinX - srcRegion.x) % sourceXSubsampling == 0 ? 0 : (sourceXSubsampling - ((interMinX - srcRegion.x) % sourceXSubsampling));
                         //-- in case where subsampling is more longer than tilewidth --//
-                        if (sourceColOffset >= tileWidth) continue nextTile;
-                        
+                        if (sourceColOffset >= tileWidth || (interMinX + sourceColOffset) >= interMaxX) continue nextTile;
+                        final int maxSampleXPos = (interMaxX - tx * tileWidth) * samplesPerPixel;
                         //-- target begin position --//
                         int targetOffset = targetRegionOffset + targetRowOffset + ((interMinX - srcRegion.x + sourceXSubsampling - 1) / sourceXSubsampling) * samplesPerPixel;
                         int targetPos    = targetOffset;
@@ -2769,11 +2768,11 @@ public class TiffImageReader extends SpatialImageReader {
                         * We define to positions "posRef" and "maxRowRefPos" where "posRef" represent
                         * index of current sample which will be written in source array and "maxRowRefPos" the last exclusive written sample.
                         */
-                        int posRef = sourceRowOffset + sourceColOffset * samplesPerPixel;
+                        int posRef = rowSampleOffset + (interMinX + sourceColOffset - tx * tileWidth) * samplesPerPixel;
                         
                         int nextPosRef         = posRef + sourceYSubsampling * sourceScanTileStride;
-                        int maxRowRefPos       = sourceRowOffset + (interMaxX - tx * tileWidth) * samplesPerPixel;
-                        final int maxSamplePos = (interMaxY - ty * tileHeight) * sourceScanTileStride;
+                        int maxRowRefPos       = rowSampleOffset + maxSampleXPos;
+                        final int maxSamplePos = (interMaxY - ty * tileHeight - 1) * sourceScanTileStride + maxSampleXPos;
                         int samplePos          = 0;
                        
                         //-- initialize LZW attributs --//

@@ -17,14 +17,26 @@
  */
 package org.geotoolkit.image.io.plugin.TiffReader;
 
+import javax.imageio.ImageWriteParam;
+import org.geotoolkit.image.io.plugin.TestTiffImageReaderWriter;
+
 /**
- * Effectuate all tests from {@link TestTiffImageReaderWriter} without compression.
- * 
+ * Improve tests from {@link TestTiffImageReaderWriter} for reading action,
+ * with LZW compression and tiled writing made.
+ *
  * @author Remi Marechal (Geomatys).
  */
-public strictfp class UncompressedTiffReaderTest extends TestTiffImageReader {
+public class LZWTiledReaderTest extends LZWTiffReaderTest {
 
-    public UncompressedTiffReaderTest() {
-        super(null); //-- if no compression is setted the default implementation works with strips
+    public LZWTiledReaderTest() {
+        super();
+        writerParam.setTilingMode(ImageWriteParam.MODE_EXPLICIT);
+        final int tileWidth  = (random.nextInt(7) + 1) * 16;
+        final int tileHeight = (random.nextInt(7) + 1) * 16;
+        
+//        System.out.println("tile : "+tileWidth+", "+tileHeight);
+        
+        writerParam.setTiling(tileWidth, tileHeight, 0, 0);
     }
+    
 }

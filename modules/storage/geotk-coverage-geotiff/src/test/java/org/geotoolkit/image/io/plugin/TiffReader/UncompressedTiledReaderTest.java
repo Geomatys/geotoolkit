@@ -20,8 +20,10 @@ package org.geotoolkit.image.io.plugin.TiffReader;
 import javax.imageio.ImageWriteParam;
 
 /**
- *
- * @author rmarechal
+ * Effectuate all tests from {@link TestTiffImageReaderWriter} 
+ * without compression and with random tile dimensions.
+ * 
+ * @author Remi Marechal (Geomatys).
  */
 public class UncompressedTiledReaderTest extends UncompressedTiffReaderTest {
  

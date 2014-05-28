@@ -17,14 +17,16 @@
  */
 package org.geotoolkit.image.io.plugin.TiffReader;
 
+import org.geotoolkit.image.io.plugin.TestTiffImageReaderWriter;
+
 /**
- * Effectuate all tests from {@link TestTiffImageReaderWriter} without compression.
+ * Effectuate all tests from {@link TestTiffImageReaderWriter} with LZW compression.
  * 
  * @author Remi Marechal (Geomatys).
+ * @see TIFFImageWriteParam#compressionTypes
  */
-public strictfp class UncompressedTiffReaderTest extends TestTiffImageReader {
-
-    public UncompressedTiffReaderTest() {
-        super(null); //-- if no compression is setted the default implementation works with strips
+public strictfp class LZWTiffReaderTest extends TestTiffImageReader {
+    public LZWTiffReaderTest() {
+        super("LZW");  
     }
 }

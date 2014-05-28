@@ -17,14 +17,18 @@
  */
 package org.geotoolkit.image.io.plugin.TiffReader;
 
+import com.sun.media.imageio.plugins.tiff.TIFFImageWriteParam;
+
 /**
- * Effectuate all tests from {@link TestTiffImageReaderWriter} without compression.
+ * Improve tests from {@link TestTiffImageReaderWriter} for reading action,
+ * with PackBits compression.
  * 
  * @author Remi Marechal (Geomatys).
+ * @see TIFFImageWriteParam#compressionTypes
  */
-public strictfp class UncompressedTiffReaderTest extends TestTiffImageReader {
+public strictfp class PackBitsTiffReaderTest extends TestTiffImageReader {
 
-    public UncompressedTiffReaderTest() {
-        super(null); //-- if no compression is setted the default implementation works with strips
+    public PackBitsTiffReaderTest() {
+        super("PackBits");
     }
 }

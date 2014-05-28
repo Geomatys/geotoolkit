@@ -24,8 +24,9 @@ import java.io.IOException;
 import org.geotoolkit.image.io.plugin.TestTiffImageReaderWriter;
 
 /**
+ * Implement method to be in accordance with Reader test.
  *
- * @author rmarechal
+ * @author remi Marechal (geomatys).
  */
 public abstract strictfp class TestTiffImageReader extends TestTiffImageReaderWriter {
 
@@ -36,7 +37,7 @@ public abstract strictfp class TestTiffImageReader extends TestTiffImageReaderWr
     /**
      * {@inheritDoc }
      * 
-     * In this implementation write image entirely and read the expected piece of image given by parameter.
+     * In this implementation write image entirely and read the expected piece of image given by parameters.
      */
     @Override
     protected RenderedImage effectuateTest(File fileTest, RenderedImage sourceImage, Rectangle sourceRegion, 
