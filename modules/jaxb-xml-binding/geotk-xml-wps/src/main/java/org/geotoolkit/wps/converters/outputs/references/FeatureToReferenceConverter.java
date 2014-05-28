@@ -109,7 +109,7 @@ public class FeatureToReferenceConverter extends AbstractReferenceOutputConverte
             final File dataFile = new File((String) params.get(TMP_DIR_PATH), dataFileName);
             try {
                 FileOutputStream fos = new FileOutputStream(dataFile);
-                GeoJSONStreamWriter writer = new GeoJSONStreamWriter(fos, ft, "UTF-8", 7);
+                GeoJSONStreamWriter writer = new GeoJSONStreamWriter(fos, ft, 7);
                 Feature next = writer.next();
                 FeatureUtilities.copy(source, next, true);
                 writer.write();

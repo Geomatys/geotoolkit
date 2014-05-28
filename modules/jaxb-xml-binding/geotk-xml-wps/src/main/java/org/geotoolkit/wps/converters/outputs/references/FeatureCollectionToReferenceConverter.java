@@ -103,7 +103,7 @@ public final class FeatureCollectionToReferenceConverter extends AbstractReferen
 
             try {
                 FileOutputStream fos = new FileOutputStream(dataFile);
-                GeoJSONStreamWriter writer = new GeoJSONStreamWriter(fos, ft, "UTF-8", 7);
+                GeoJSONStreamWriter writer = new GeoJSONStreamWriter(fos, ft, 7);
                 FeatureStoreUtilities.write(writer, source);
             } catch (DataStoreException e) {
                 throw new NonconvertibleObjectException("Can't write Feature into GeoJSON output stream.", e);

@@ -89,7 +89,7 @@ public final class FeatureCollectionToComplexConverter extends AbstractComplexOu
 
             try {
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                GeoJSONStreamWriter writer = new GeoJSONStreamWriter(baos, ft, "UTF-8", 7);
+                GeoJSONStreamWriter writer = new GeoJSONStreamWriter(baos, ft, 7);
                 FeatureStoreUtilities.write(writer, source);
                 complex.getContent().add(baos.toString("UTF-8"));
                 complex.setSchema(null);

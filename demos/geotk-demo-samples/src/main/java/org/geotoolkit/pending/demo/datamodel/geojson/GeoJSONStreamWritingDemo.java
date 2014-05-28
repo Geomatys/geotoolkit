@@ -35,7 +35,7 @@ public class GeoJSONStreamWritingDemo {
         final SimpleFeatureType type = ftb.buildSimpleFeatureType();
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        final FeatureWriter writer = new GeoJSONStreamWriter(baos, type, "UTF-8", 7);
+        final FeatureWriter writer = new GeoJSONStreamWriter(baos, type, 7);
         Feature feature = writer.next();
         feature.getProperty("name").setValue("sam");
         feature.getProperty("length").setValue(30);

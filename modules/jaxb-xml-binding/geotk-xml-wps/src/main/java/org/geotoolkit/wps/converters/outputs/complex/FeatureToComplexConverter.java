@@ -90,7 +90,7 @@ public final class FeatureToComplexConverter extends AbstractComplexOutputConver
         if(complex.getMimeType().equalsIgnoreCase(WPSMimeType.APP_GEOJSON.val())) {
             try {
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                GeoJSONStreamWriter writer = new GeoJSONStreamWriter(baos, ft, "UTF-8", 7);
+                GeoJSONStreamWriter writer = new GeoJSONStreamWriter(baos, ft, 7);
                 Feature next = writer.next();
                 FeatureUtilities.copy(source, next, true);
                 writer.write();

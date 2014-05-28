@@ -24,12 +24,31 @@ public class GeoJSONStreamWriter implements FeatureWriter<FeatureType, Feature> 
     private Feature lastWritten = null;
     private int currentFeatureIdx = 0;
 
-    public GeoJSONStreamWriter(OutputStream outputStream, FeatureType featureType, final String encoding, final int doubleAccuracy)
+    /**
+     *
+     * @param outputStream stream were GeoJSON will be written
+     * @param featureType {@link FeatureType} of features to write.
+     * @param doubleAccuracy number of coordinates fraction digits
+     * @throws DataStoreException
+     */
+    public GeoJSONStreamWriter(OutputStream outputStream, FeatureType featureType, final int doubleAccuracy)
+            throws DataStoreException {
+        this(outputStream, featureType, JsonEncoding.UTF8, doubleAccuracy);
+    }
+
+    /**
+     *
+     * @param outputStream stream were GeoJSON will be written
+     * @param featureType {@link FeatureType} of features to write.
+     * @param encoding
+     * @param doubleAccuracy number of coordinates fraction digits
+     * @throws DataStoreException
+     */
+    public GeoJSONStreamWriter(OutputStream outputStream, FeatureType featureType, final JsonEncoding encoding, final int doubleAccuracy)
             throws DataStoreException {
         this.featureType= featureType;
-        JsonEncoding jsonEncoding = JsonEncoding.UTF8;
         try {
-            writer = new GeoJSONWriter(outputStream, jsonEncoding, doubleAccuracy, false);
+            writer = new GeoJSONWriter(outputStream, encoding, doubleAccuracy, false);
             //start write feature collection.
             writer.writeStartFeatureCollection(featureType.getCoordinateReferenceSystem(), null);
             writer.flush();

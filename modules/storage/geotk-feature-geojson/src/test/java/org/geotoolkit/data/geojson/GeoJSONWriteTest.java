@@ -332,7 +332,7 @@ public class GeoJSONWriteTest {
 
         Point pt = (Point)WKT_READER.read(PROPERTIES.getProperty("point"));
 
-        FeatureWriter fw = new GeoJSONStreamWriter(baos, validFeatureType, "UTF-8", 4);
+        FeatureWriter fw = new GeoJSONStreamWriter(baos, validFeatureType, 4);
         try {
             Feature feature = fw.next();
             feature.getProperty("type").setValue("feat1");
