@@ -16,8 +16,6 @@
  */
 package org.geotoolkit.process.converters;
 
-
-import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
@@ -29,8 +27,6 @@ import org.geotoolkit.util.converter.SimpleConverter;
  * @module pending
  */
 public class StringToUnitConverter extends SimpleConverter<String, Unit> {
-
-
     /*
      * Public constructor in order to regiser converter in Geotk ConverterRegisry by ServiceLoader system.
      */
@@ -46,11 +42,10 @@ public class StringToUnitConverter extends SimpleConverter<String, Unit> {
     public Class<? extends Unit> getTargetClass() {
         return Unit.class ;
     }
+
     @Override
     public Unit convert(final String s) throws NonconvertibleObjectException {
-        try{
-
-
+        try {
             if(s == null) throw new NonconvertibleObjectException("Empty Unit");
 
             final Unit unit = Unit.valueOf(s);
@@ -58,13 +53,8 @@ public class StringToUnitConverter extends SimpleConverter<String, Unit> {
             if(unit == null){
                 throw new NonconvertibleObjectException("Invalid Unit");
             }
-            //if unit is a Lenght Unit type
-            if(unit.isCompatible(SI.METRE)){
-                return unit;
-            }else{
-                throw new NonconvertibleObjectException("Invalid Unit");
-            }
-        }catch(IllegalArgumentException ex){
+            return unit;
+        } catch(IllegalArgumentException ex){
             throw new NonconvertibleObjectException(ex);
         }
     }
