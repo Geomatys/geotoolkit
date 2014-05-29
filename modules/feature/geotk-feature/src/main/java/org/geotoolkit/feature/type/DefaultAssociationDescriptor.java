@@ -25,7 +25,10 @@ import org.opengis.feature.type.Name;
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
+ *
+ * @deprecated To be replaced by {@link org.apache.sis.feature.DefaultAssociationRole}.
  */
+@Deprecated
 public class DefaultAssociationDescriptor extends DefaultPropertyDescriptor<AssociationType>
         implements AssociationDescriptor {
 

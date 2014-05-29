@@ -29,7 +29,10 @@ import org.opengis.util.InternationalString;
 /**
  *
  * @author Johann Sorel (Geomatys)
+ *
+ * @deprecated To be replaced by {@link org.apache.sis.feature.DefaultOperation}.
  */
+@Deprecated
 public class DefaultOperationType extends DefaultPropertyType<OperationType> implements OperationType{
 
     private final AttributeType targetType;

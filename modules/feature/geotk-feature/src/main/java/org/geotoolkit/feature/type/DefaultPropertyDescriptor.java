@@ -35,7 +35,10 @@ import static org.apache.sis.util.ArgumentChecks.*;
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
+ *
+ * @deprecated Replaced by Apache SIS {@link org.apache.sis.feature.AbstractIdentifiedType}.
  */
+@Deprecated
 public class DefaultPropertyDescriptor<T extends PropertyType> implements PropertyDescriptor,Serializable {
 
     protected final T type;

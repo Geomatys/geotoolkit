@@ -32,7 +32,10 @@ import org.opengis.feature.type.Name;
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
+ *
+ * @deprecated To be replaced by {@link org.apache.sis.feature.DefaultAttributeType}.
  */
+@Deprecated
 public class DefaultAttributeDescriptor<T extends AttributeType> extends DefaultPropertyDescriptor<T>
         implements AttributeDescriptor {
 

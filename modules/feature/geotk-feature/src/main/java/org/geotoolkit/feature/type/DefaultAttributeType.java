@@ -33,7 +33,10 @@ import org.opengis.util.InternationalString;
  *
  * @author Justin Deoliveira, The Open Planning Project
  * @module pending
+ *
+ * @deprecated To be replaced by {@link org.apache.sis.feature.DefaultAttributeType}.
  */
+@Deprecated
 public class DefaultAttributeType<T extends AttributeType> extends DefaultPropertyType<T> implements AttributeType {
 
     protected final boolean identified;

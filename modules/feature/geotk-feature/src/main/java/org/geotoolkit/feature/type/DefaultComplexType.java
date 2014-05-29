@@ -50,7 +50,10 @@ import static org.geotoolkit.util.StringUtilities.*;
  * @author Ben Caradoc-Davies, CSIRO Exploration and Mining
  * @author Johann Sorel (Geomatys)
  * @module pending
+ *
+ * @deprecated To be replaced by subtypes of Apache SIS {@link org.apache.sis.feature.AbstractIdentifiedType}.
  */
+@Deprecated
 public class DefaultComplexType extends DefaultAttributeType<AttributeType> implements ComplexType {
 
     /**

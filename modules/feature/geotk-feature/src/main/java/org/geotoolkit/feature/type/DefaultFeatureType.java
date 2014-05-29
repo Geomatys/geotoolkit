@@ -19,10 +19,10 @@ package org.geotoolkit.feature.type;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-
 import org.opengis.feature.PropertyType;
 import org.opengis.feature.type.AttributeType;
 import org.opengis.feature.type.FeatureType;
@@ -33,6 +33,7 @@ import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.InternationalString;
+import org.apache.sis.internal.util.UnmodifiableArrayList;
 
 /**
  *
@@ -65,22 +66,41 @@ public class DefaultFeatureType extends DefaultComplexType implements FeatureTyp
 
     @Override
     public PropertyType getProperty(String name) {
-        throw new UnsupportedOperationException("Not yet implemented.");
+        final PropertyDescriptor descriptor = getDescriptor(name);
+        if (descriptor != null) {
+            return descriptor.getType();
+        }
+        throw new IllegalArgumentException("Property not found: " + name);
     }
 
     @Override
     public Collection<PropertyType> getProperties(boolean includeSuperTypes) {
-        throw new UnsupportedOperationException("Not yet implemented.");
+        final Collection<PropertyDescriptor> descriptors = getDescriptors();
+        final PropertyType[] types = new PropertyType[descriptors.size()];
+        int i = 0;
+        for (final PropertyDescriptor d : descriptors) {
+            types[i++] = d.getType();
+        }
+        return UnmodifiableArrayList.wrap(types);
     }
 
     @Override
     public Set<org.opengis.feature.FeatureType> getSuperTypes() {
-        return Collections.singleton((org.opengis.feature.FeatureType) getSuper());
+        final AttributeType st = getSuper();
+        return (st == null) ? Collections.<org.opengis.feature.FeatureType>emptySet() :
+               Collections.singleton((org.opengis.feature.FeatureType) st);
     }
 
     @Override
     public boolean isAssignableFrom(org.opengis.feature.FeatureType type) {
-        throw new UnsupportedOperationException("Not yet implemented.");
+        while (!equals(type)) {
+            final Iterator<org.opengis.feature.FeatureType> it = getSuperTypes().iterator();
+            if (!it.hasNext()) {
+                return false;
+            }
+            type = it.next(); // Assume that we have only one super-type.
+        }
+        return true;
     }
 
     /**

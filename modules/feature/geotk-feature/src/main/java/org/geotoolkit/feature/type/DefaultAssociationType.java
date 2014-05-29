@@ -34,7 +34,10 @@ import static org.apache.sis.util.ArgumentChecks.*;
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
+ *
+ * @deprecated To be replaced by {@link org.apache.sis.feature.DefaultAssociationRole}.
  */
+@Deprecated
 public class DefaultAssociationType extends DefaultPropertyType<AssociationType> implements AssociationType {
 
     protected final AttributeType relatedType;
@@ -65,7 +68,7 @@ public class DefaultAssociationType extends DefaultPropertyType<AssociationType>
 
     @Override
     public FeatureType getValueType() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return (FeatureType) getRelatedType();
     }
 
     @Override
