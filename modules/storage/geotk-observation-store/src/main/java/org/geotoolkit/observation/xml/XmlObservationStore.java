@@ -17,6 +17,7 @@
 package org.geotoolkit.observation.xml;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -153,6 +154,43 @@ public class XmlObservationStore extends AbstractObservationStore implements Dat
                 appendGeometry(obs.getFeatureOfInterest(), procedure.spatialBound);
             }
             
+        }
+        return result;
+    }
+    
+    @Override
+    public List<ProcedureTree> getProcedures() throws DataStoreException {
+        final List<ProcedureTree> result = new ArrayList<>();
+        final Object obj = readFile();
+        if (obj instanceof ObservationCollection) {
+            final ObservationCollection collection = (ObservationCollection)obj;
+            for (Observation obs : collection.getMember()) {
+                final AbstractObservation o = (AbstractObservation)obs;
+                final ProcedureTree procedure = new ProcedureTree(o.getProcedure().getHref(), "Component");
+                
+                if (!result.contains(procedure)) {
+                    result.add(procedure);
+                }
+                final PhenomenonProperty phenProp = o.getPropertyObservedProperty();
+                final List<String> fields = getPhenomenonsFields(phenProp);
+                for (String field : fields) {
+                    if (!procedure.fields.contains(field)) {
+                        procedure.fields.add(field);
+                    }
+                }
+                appendTime(obs.getSamplingTime(), procedure.spatialBound);
+                appendGeometry(obs.getFeatureOfInterest(), procedure.spatialBound);
+            }
+            
+        } else if (obj instanceof AbstractObservation) {
+            final AbstractObservation obs = (AbstractObservation)obj;
+            final ProcedureTree procedure = new ProcedureTree(obs.getProcedure().getHref(), "Component");
+            
+            final PhenomenonProperty phenProp = obs.getPropertyObservedProperty();
+            procedure.fields.addAll(getPhenomenonsFields(phenProp));
+            result.add(procedure);
+            appendTime(obs.getSamplingTime(), procedure.spatialBound);
+            appendGeometry(obs.getFeatureOfInterest(), procedure.spatialBound);
         }
         return result;
     }

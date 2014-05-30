@@ -22,6 +22,7 @@ import java.util.Set;
 import org.apache.sis.storage.DataStore;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.sos.netcdf.ExtractionResult;
+import org.geotoolkit.sos.netcdf.ExtractionResult.ProcedureTree;
 import org.opengis.feature.type.Name;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.temporal.TemporalGeometricPrimitive;
@@ -40,6 +41,8 @@ public abstract class ObservationStore extends DataStore {
     public abstract ParameterValueGroup getConfiguration();
     
     public abstract Set<Name> getProcedureNames();
+    
+    public abstract List<ProcedureTree> getProcedures() throws DataStoreException;
     
     public abstract Set<String> getPhenomenonNames();
     

@@ -150,4 +150,14 @@ public class FileObservationStore extends AbstractObservationStore implements Da
     public ObservationReader getReader() {
         return new FileObservationReader(dataFile, analyze);
     }
+
+    @Override
+    public List<ExtractionResult.ProcedureTree> getProcedures() throws DataStoreException {
+        try {
+            return NetCDFExtractor.getProcedures(analyze, getProcedureID(), null);
+            
+        } catch (NetCDFParsingException ex) {
+            throw new DataStoreException(ex);
+        }
+    }
 }

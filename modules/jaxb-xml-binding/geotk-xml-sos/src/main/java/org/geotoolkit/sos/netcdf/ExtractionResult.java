@@ -58,6 +58,8 @@ public class ExtractionResult {
         
         public final GeoSpatialBound spatialBound = new GeoSpatialBound();
         
+        public final List<String> fields = new ArrayList<>();
+        
         public ProcedureTree(final String id, final String type) {
             this.id   = id;
             this.type = type;

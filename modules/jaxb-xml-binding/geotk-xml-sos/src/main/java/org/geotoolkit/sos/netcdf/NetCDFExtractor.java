@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -103,6 +104,20 @@ public class NetCDFExtractor {
             case GRID :
             return parseDataBlockGrid(analyze, procedureID, null);
             default : return new ExtractionResult();
+        }
+    }
+    
+    public static List<ProcedureTree> getProcedures(final NCFieldAnalyze analyze, final String procedureID, final List<String> acceptedProcedureIDs) throws NetCDFParsingException {
+        switch (analyze.featureType) {
+            case TIMESERIES :
+            return getProcedureTS(analyze, procedureID, acceptedProcedureIDs);
+            case PROFILE :
+            return getProcedureXY(analyze, procedureID, acceptedProcedureIDs);
+            case TRAJECTORY :
+            return getProcedureTraj(analyze, procedureID, acceptedProcedureIDs);
+            case GRID :
+            return getProcedureGrid(analyze, procedureID, acceptedProcedureIDs);
+            default : return null;
         }
     }
     
@@ -458,6 +473,109 @@ public class NetCDFExtractor {
         return results;
     }
     
+    private static List<ProcedureTree> getProcedureTS(final NCFieldAnalyze analyze, final String procedureID, final List<String> acceptedSensorID) throws NetCDFParsingException {
+        final List<ProcedureTree> results = new ArrayList<>();
+        if (analyze.mainField == null) {
+            LOGGER.warning("No main field found");
+            return results;
+        }
+        LOGGER.info("parsing netCDF TS");
+
+        try {
+
+            final List<String> separators = parseSeparatorValues(analyze);
+            final boolean single          = separators.isEmpty();
+            
+            Array latArray  = null;
+            Array lonArray  = null;
+            if (analyze.hasSpatial()) {
+                latArray        = analyze.getArrayFromField(analyze.latField);
+                lonArray        = analyze.getArrayFromField(analyze.lonField);
+            }
+            
+            final Variable timeVar  = analyze.vars.get(analyze.mainField.label);
+            final String timeUnits  = analyze.mainField.unit;
+            final Array timeArray   = analyze.file.readArrays(Arrays.asList(timeVar)).get(0);
+            final boolean constantT = analyze.mainField.dimension == 1;
+            final boolean timeFirst = analyze.mainField.mainVariableFirst;
+            
+            final Set<String> fields = analyze.getPhenomenonArrayMap().keySet();
+            
+            if (single) {
+                if (acceptedSensorID == null || acceptedSensorID.contains(procedureID)) {
+                    final ProcedureTree compo = new ProcedureTree(procedureID, "Component");
+                    compo.fields.addAll(fields);
+                    results.add(compo);
+
+                    final int count               = timeVar.getDimension(0).getLength();
+                    final GeoSpatialBound gb      = new GeoSpatialBound();
+
+                    if (analyze.hasSpatial()) {
+                        final double latitude         = getDoubleValue(latArray, analyze.latField.fillValue);
+                        final double longitude        = Longitude.normalize(getDoubleValue(lonArray, analyze.lonField.fillValue));
+                        if (!Double.isNaN(latitude) && !Double.isNaN(longitude)) {
+                            gb.addXYCoordinate(longitude, latitude);
+                        }
+                    }
+
+                    // iterating over time
+                    for (int i = 0; i < count; i++) {
+                        final long millis = getTimeValue(timeUnits, timeArray, i);
+                        if (millis == 0 || millis == ((Integer.MIN_VALUE * -1) + 1)) {
+                            continue;
+                        }
+                        gb.addDate(millis);
+                    }
+                    compo.spatialBound.merge(gb);
+                }
+                
+            } else {
+                final ProcedureTree system = new ProcedureTree(procedureID, "System");
+                system.fields.addAll(fields);
+                results.add(system);
+                for (int j = 0; j < separators.size(); j++) {
+                    
+                    final String identifier       = separators.get(j);
+                    final int count               = getGoodTimeDimension(timeVar, analyze.dimensionSeparator).getLength();
+                    final GeoSpatialBound gb      = new GeoSpatialBound();
+                    final String currentProcID    = procedureID + '-' + identifier;
+                    final ProcedureTree compo     = new ProcedureTree(currentProcID, "Component");
+                    compo.fields.addAll(fields);
+                    
+                    if (acceptedSensorID == null || acceptedSensorID.contains(currentProcID)) {
+                    
+                        if (analyze.hasSpatial()) {
+                            final double latitude         = getDoubleValue(latArray, j, analyze.latField.fillValue);
+                            final double longitude        = Longitude.normalize(getDoubleValue(lonArray, j, analyze.lonField.fillValue));
+                            if (!Double.isNaN(latitude) && !Double.isNaN(longitude)) {
+                                gb.addXYCoordinate(longitude, latitude);
+                            }
+                        }
+
+                        for (int i = 0; i < count; i++) {
+
+                            final long millis = getTimeValue(timeUnits, timeFirst, constantT, timeArray, i, j);
+
+                            if (millis == 0 || millis == ((Integer.MIN_VALUE * -1) + 1)) {
+                                continue;
+                            }
+                            gb.addDate(millis);
+                        }
+
+                        compo.spatialBound.merge(gb);
+                        system.children.add(compo);
+                    }
+                }
+            }
+
+        } catch (IOException | IllegalArgumentException ex) {
+            throw new NetCDFParsingException("error while parsing netcdf timeserie", ex);
+        }
+
+        LOGGER.info("datablock parsed");
+        return results;
+    }
+    
     private static ExtractionResult parseDataBlockXY(final NCFieldAnalyze analyze, final String procedureID, final List<String> acceptedSensorID) throws NetCDFParsingException {
         final ExtractionResult results = new ExtractionResult();
         if (analyze.mainField == null) {
@@ -616,6 +734,101 @@ public class NetCDFExtractor {
                                                                           sb,                            // result
                                                                           gb.getTimeObject("2.0.0")));   // time
                         results.spatialBound.merge(gb);
+                    }
+                }
+            }
+
+        } catch (IOException | IllegalArgumentException ex) {
+            throw new NetCDFParsingException("error while parsing netcdf profile", ex);
+        }
+
+        return results;
+    }
+    
+    private static List<ProcedureTree> getProcedureXY(final NCFieldAnalyze analyze, final String procedureID, final List<String> acceptedSensorID) throws NetCDFParsingException {
+        final List<ProcedureTree> results = new ArrayList<>();
+        if (analyze.mainField == null) {
+            LOGGER.warning("No main field found");
+            return results;
+        }
+        LOGGER.info("parsing datablock XY");
+
+        try {
+            final List<String> separators = parseSeparatorValues(analyze);
+            final boolean single          = separators.isEmpty();
+
+            Array latArray  = null;
+            Array lonArray  = null;
+            if (analyze.hasSpatial()) {
+                latArray        = analyze.getArrayFromField(analyze.latField);
+                lonArray        = analyze.getArrayFromField(analyze.lonField);
+            }
+            
+            Array timeArray  = null;
+            String timeUnits = null;
+            if (analyze.hasTime()) {
+                timeUnits        = analyze.timeField.unit;
+                timeArray        = analyze.getArrayFromField(analyze.timeField);
+            }
+            
+            final Set<String> fields = analyze.getPhenomenonArrayMap().keySet();
+            
+            if (single) {
+                final ProcedureTree compo = new ProcedureTree(procedureID, "Component");
+                compo.fields.addAll(fields);
+                if (acceptedSensorID == null || acceptedSensorID.contains(procedureID)) {
+                    results.add(compo);
+
+                    final GeoSpatialBound gb      = new GeoSpatialBound();
+
+                    if (analyze.hasSpatial()) {
+                        final double latitude         = getDoubleValue(latArray, 0, analyze.latField.fillValue);
+                        final double longitude        = Longitude.normalize(getDoubleValue(lonArray, 0, analyze.lonField.fillValue));
+                        if (!Double.isNaN(latitude) && !Double.isNaN(longitude)) {
+                            gb.addXYCoordinate(longitude, latitude);
+                        }
+                    }
+                    if (analyze.hasTime()) {
+                        final long millis = getTimeValue(timeUnits, timeArray, 0);
+
+                        if (millis != 0 && millis != ((Integer.MIN_VALUE * -1) + 1)) {
+                            gb.addDate(millis);
+                        }
+                    }
+                    compo.spatialBound.merge(gb);
+                }
+                
+            } else {
+                final ProcedureTree system = new ProcedureTree(procedureID, "System");
+                system.fields.addAll(fields);
+                results.add(system);
+                
+                for (int profileIndex = 0; profileIndex < separators.size(); profileIndex++) {
+                    
+                    final String identifier    = separators.get(profileIndex);
+                    final GeoSpatialBound gb   = new GeoSpatialBound();
+                    final String currentProcID = procedureID + '-' + identifier;
+                    final ProcedureTree compo  = new ProcedureTree(currentProcID, "Component");
+                    compo.fields.addAll(fields);
+                        
+                    if (acceptedSensorID == null || acceptedSensorID.contains(currentProcID)) {
+                        if (analyze.hasSpatial()) {
+                            final double latitude         = getDoubleValue(latArray, 0, analyze.latField.fillValue);
+                            final double longitude        = Longitude.normalize(getDoubleValue(lonArray, 0, analyze.lonField.fillValue));
+                            if (!Double.isNaN(latitude) && !Double.isNaN(longitude)) {
+                                gb.addXYCoordinate(longitude, latitude);
+                            }
+                        }
+                        if (analyze.hasTime()) {
+                            final long millis = getTimeValue(timeUnits, timeArray, 0);
+
+                            if (millis != 0 && millis != ((Integer.MIN_VALUE * -1) + 1)) {
+                                gb.addDate(millis);
+                            }
+                        }
+
+                        compo.spatialBound.merge(gb);
+                        system.children.add(compo);
                     }
                 }
             }
@@ -800,6 +1013,108 @@ public class NetCDFExtractor {
         return results;
     }
     
+    private static List<ProcedureTree> getProcedureTraj(final NCFieldAnalyze analyze, final String procedureID, final List<String> acceptedSensorID) throws NetCDFParsingException {
+        final List<ProcedureTree> results = new ArrayList<>();
+        if (analyze.mainField == null) {
+            LOGGER.warning("No main field found");
+            return results;
+        }
+        LOGGER.info("parsing netCDF Traj");
+
+        try {
+
+            final List<String> separators = parseSeparatorValues(analyze);
+            final boolean single          = separators.isEmpty();
+            
+            Array latArray  = null;
+            Array lonArray  = null;
+            if (analyze.hasSpatial()) {
+                latArray        = analyze.getArrayFromField(analyze.latField);
+                lonArray        = analyze.getArrayFromField(analyze.lonField);
+            }
+            
+            final Variable timeVar  = analyze.vars.get(analyze.mainField.label);
+            final String timeUnits  = analyze.mainField.unit;
+            final Array timeArray   = analyze.file.readArrays(Arrays.asList(timeVar)).get(0);
+            final boolean constantT = analyze.mainField.dimension == 1;
+            final boolean timeFirst = analyze.mainField.mainVariableFirst;
+            
+            final Set<String> fields = analyze.getPhenomenonArrayMap().keySet();
+            
+            if (single) {
+                final ProcedureTree compo = new ProcedureTree(procedureID, "Component");
+                compo.fields.addAll(fields);
+                if (acceptedSensorID == null || acceptedSensorID.contains(procedureID)) {
+                    results.add(compo);
+
+                    final int count               = timeVar.getDimension(0).getLength();
+                    final GeoSpatialBound gb      = new GeoSpatialBound();
+
+                    // iterating over time
+                    for (int i = 0; i < count; i++) {
+
+                        final long millis = getTimeValue(timeUnits, timeArray, i);
+
+                        if (millis == 0 || millis == ((Integer.MIN_VALUE * -1) + 1)) {
+                            continue;
+                        }
+                        gb.addDate(millis);
+
+                        final double latitude         = getDoubleValue(latArray, i, analyze.latField.fillValue);
+                        final double longitude        = Longitude.normalize(getDoubleValue(lonArray, i, analyze.lonField.fillValue));
+                        if (!Double.isNaN(latitude) && !Double.isNaN(longitude)) {
+                            gb.addXYCoordinate(longitude, latitude);
+                        }
+                    }
+                    compo.spatialBound.merge(gb);
+                }
+                
+            } else {
+                final ProcedureTree system = new ProcedureTree(procedureID, "System");
+                system.fields.addAll(fields);
+                results.add(system);
+                
+                for (int j = 0; j < separators.size(); j++) {
+                    
+                    final String identifier       = separators.get(j);
+                    int count                     = timeVar.getDimension(0).getLength();
+                    final GeoSpatialBound gb      = new GeoSpatialBound();
+                    final String currentProcID    = procedureID + '-' + identifier;
+                    final ProcedureTree compo     = new ProcedureTree(currentProcID, "Component");
+                    compo.fields.addAll(fields);
+                        
+                    if (acceptedSensorID == null || acceptedSensorID.contains(currentProcID)) {
+
+                        for (int i = 0; i < count; i++) {
+
+                            final long millis = getTimeValue(timeUnits, timeFirst, constantT, timeArray, i, j);
+
+                            if (millis == 0 || millis == ((Integer.MIN_VALUE * -1) + 1)) {
+                                continue;
+                            }
+                            gb.addDate(millis);
+
+                            final double latitude  = getDoubleValue(true, latArray, i, j, analyze.latField.fillValue);
+                            final double longitude = Longitude.normalize(getDoubleValue(true, lonArray, i, j, analyze.lonField.fillValue));
+                            if (!Double.isNaN(latitude) && !Double.isNaN(longitude)) {
+                                gb.addXYCoordinate(longitude, latitude);
+                            }
+                        }
+
+                        compo.spatialBound.merge(gb);
+                        system.children.add(compo);
+                    }
+                }
+            }
+
+        } catch (IOException | IllegalArgumentException ex) {
+            throw new NetCDFParsingException("error while parsing netcdf trajectory", ex);
+        }
+
+        LOGGER.info("datablock parsed");
+        return results;
+    }
+    
     private static ExtractionResult parseDataBlockGrid(final NCFieldAnalyze analyze, final String procedureID, final List<String> acceptedSensorID) throws NetCDFParsingException {
         final ExtractionResult results = new ExtractionResult();
         final ProcedureTree compo = new ProcedureTree(procedureID, "Component");
@@ -883,6 +1198,68 @@ public class NetCDFExtractor {
 
                 results.spatialBound.addGeometry(results.spatialBound.getPolyGonBounds("2.0.0"));
                 compo.spatialBound.addGeometry(results.spatialBound.getPolyGonBounds("2.0.0"));
+
+            } catch (IOException | IllegalArgumentException ex) {
+                throw new NetCDFParsingException("error while parsing netcdf grid", ex);
+            }
+        }
+
+        LOGGER.info("datablock parsed");
+        return results;
+    }
+    
+    private static List<ProcedureTree> getProcedureGrid(final NCFieldAnalyze analyze, final String procedureID, final List<String> acceptedSensorID) throws NetCDFParsingException {
+        final List<ProcedureTree> results = new ArrayList<>();
+        final ProcedureTree compo = new ProcedureTree(procedureID, "Component");
+        if (acceptedSensorID == null || acceptedSensorID.contains(procedureID)) {
+            results.add(compo);
+
+            if (analyze.mainField == null) {
+                LOGGER.warning("No main field found");
+                return results;
+            }
+            LOGGER.info("parsing netCDF GRID");
+
+            try {
+
+                final Variable latVar = analyze.vars.get(analyze.latField.label);
+                final Variable lonVar = analyze.vars.get(analyze.lonField.label);
+                final Array latArray  = analyze.file.readArrays(Arrays.asList(latVar)).get(0);
+                final Array lonArray  = analyze.file.readArrays(Arrays.asList(lonVar)).get(0);
+
+                final Variable timeVar  = analyze.vars.get(analyze.mainField.label);
+                final String timeUnits  = analyze.mainField.unit;
+                final Array timeArray   = analyze.file.readArrays(Arrays.asList(timeVar)).get(0);
+
+                compo.fields.addAll(analyze.getPhenomenonArrayMap().keySet());
+
+                final int latSize = latVar.getDimension(0).getLength();
+                for (int latIndex = 0; latIndex < latSize; latIndex++) {
+
+                    final int lonSize = lonVar.getDimension(0).getLength();
+                    for (int lonIndex = 0; lonIndex < lonSize; lonIndex++) {
+
+                        final int count               = timeVar.getDimension(0).getLength();
+                        final GeoSpatialBound gb      = new GeoSpatialBound();
+
+                        final double latitude         = getDoubleValue(latArray, latIndex, analyze.latField.fillValue);
+                        final double longitude        = Longitude.normalize(getDoubleValue(lonArray, lonIndex, analyze.lonField.fillValue));
+                        if (!Double.isNaN(latitude) && !Double.isNaN(longitude)) {
+                            gb.addXYCoordinate(longitude, latitude);
+                        }
+
+                        for (int i = 0; i < count; i++) {
+
+                            final long millis = getTimeValue(timeUnits, timeArray, i);
+
+                            if (millis == 0 || millis == ((Integer.MIN_VALUE * -1) + 1)) {
+                                continue;
+                            }
+                            gb.addDate(millis);
+                        }
+                        compo.spatialBound.merge(gb);
+                    }
+                }
 
             } catch (IOException | IllegalArgumentException ex) {
                 throw new NetCDFParsingException("error while parsing netcdf grid", ex);
