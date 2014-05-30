@@ -7,51 +7,51 @@
 <section xmlns="http://docbook.org/ns/docbook" version="5.0"
          xmlns:xlink = "http://www.w3.org/1999/xlink"
 	lang="en">
-             
+
     <title>CSW service</title>
-    
+
     <example>
         <title>Source : </title>
-        <link xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/clients/csw/CSWClientDemo.java">
-            <acronym>geotoolkit-pending/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/clients/csw/CSWClientDemo.java </acronym>
+        <link xlink:href="http://hg.geotoolkit.org/geotoolkit/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/clients/csw/CSWClientDemo.java">
+            <acronym>geotoolkit/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/clients/csw/CSWClientDemo.java </acronym>
         </link>
-        
+
     </example>
-        
+
     <para>
         <emphasis>Catalog Web Server (CSW)</emphasis> est un service de l'OGC fait pour renvoyer des métadonnées.
     </para>
     <para>
-        Standard :  
+        Standard :
         <link xlink:href="http://www.opengeospatial.org/standards/specifications/catalog">http://www.opengeospatial.org/standards/specifications/catalog</link>
-            
+
     </para>
-    
+
         <programlisting>
                 final MarshallerPool pool = CSWMarshallerPool.getInstance();
                 Unmarshaller um = null;
-  
+
                 try {
                 um = pool.acquireUnmarshaller();
-  
+
                 // build a new CSW client
                 final CatalogServicesServer cswServer = new CatalogServicesServer(new URL("http://demo.geomatys.com/mdweb-demo/WS/csw/default?"), "2.0.2");
- 
-  
+
+
                 /**
                 * make a getCapabilities request
                 */
                 final GetCapabilitiesRequest getCapa = cswServer.createGetCapabilities();
- 
+
                 InputStream is = getCapa.getResponseStream();
- 
+
                 // unmarshall the response
                 Capabilities capabilities = (Capabilities) um.unmarshal(is);
-  
+
                 // print the title of the server
                 System.out.println(capabilities.getServiceIdentification().getTitle());
-  
-  
+
+
                 /**
                 * make a getRecords request
                 */
@@ -61,70 +61,70 @@
                 getRecords.setConstraintLanguageVersion("1.1.0");
                 getRecords.setConstraint("Title like '%'");
                 is = getRecords.getResponseStream();
-  
+
                 // unmarshall the response
                 GetRecordsResponseType response = ((JAXBElement
                 &lt;GetRecordsResponseType&gt;) um.unmarshal(is)).getValue();
-  
+
                 // print the number of result matching the request
                 System.out.println(response.getSearchResults().getNumberOfRecordsMatched());
-  
-  
+
+
                 /**
                 * retrieve results in dublin core
                 */
                 getRecords.setResultType(ResultType.RESULTS);
-  
+
                 is = getRecords.getResponseStream();
-  
+
                 // unmarshall the response
                 response = ((JAXBElement
                     &lt;GetRecordsResponseType&gt;) um.unmarshal(is)).getValue();
-  
+
                 // print the first result (Dublin core)
                 AbstractRecord record = response.getSearchResults().getAbstractRecord().get(0);
                 System.out.println(record);
-  
-  
+
+
                 /**
                 * retrieve results in ISO 19139
                 */
                 getRecords.setOutputSchema("http://www.isotc211.org/2005/gmd");
-  
+
                 is = getRecords.getResponseStream();
-  
+
                 // unmarshall the response
                 response = ((JAXBElement
                         &lt;GetRecordsResponseType&gt;) um.unmarshal(is)).getValue();
-  
+
                 // print the first result (ISO 19139)
                 Metadata meta = (Metadata) response.getSearchResults().getAny().get(0);
                 System.out.println(meta);
-  
+
                 final String identifier = meta.getFileIdentifier();
-  
-  
+
+
                 /**
                 * make a getRecordById request
                 */
                 final GetRecordByIdRequest getRecordById = cswServer.createGetRecordById();
                 getRecordById.setOutputSchema("http://www.isotc211.org/2005/gmd");
                 getRecordById.setIds(identifier);
-  
+
                 is = getRecordById.getResponseStream();
-  
+
                 // unmarshall the response
                 GetRecordByIdResponse responseBi = ((JAXBElement
                             &lt;GetRecordByIdResponse&gt;) um.unmarshal(is)).getValue();
-  
+
                 // print the result (same as getRecords first result)
                 meta = (Metadata) responseBi.getAny().get(0);
                 System.out.println(meta);
-  
+
                 } finally {
                 if (um != null) {
                 pool.release(um);
                 }
         </programlisting>
-            
+
 </section>

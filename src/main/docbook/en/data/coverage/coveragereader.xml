@@ -7,9 +7,9 @@
 <section xmlns="http://docbook.org/ns/docbook" version="5.0"
          xmlns:xlink = "http://www.w3.org/1999/xlink"
         id="coveragereader" lang="en">
-             
+
     <title>CoverageReader</title>
-    
+
     <para>
         GeotoolKit processes images based on Java standard API.
 
@@ -17,19 +17,19 @@
 
         Coverage is an overlay which add georeferencing and metadata informations.
     </para>
-    
+
     <section>
         <title>
             Read a coverage
         </title>
-        
+
         <example>
             <title>Using a CoverageReader</title>
-            <link xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/coverage/CoverageReaderDemo.java">
-                <acronym>geotoolkit-pending/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/coverage/CoverageReaderDemo.java</acronym>
-            </link>        
+            <link xlink:href="http://hg.geotoolkit.org/geotoolkit/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/coverage/CoverageReaderDemo.java">
+                <acronym>geotoolkit/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/coverage/CoverageReaderDemo.java</acronym>
+            </link>
         </example>
-        
+
         To get a coverage, we use a <emphasis>CoverageReader</emphasis>. It will improve control on image reading, by limiting the area reading or resolution.
 
         For image files (netcdf, geotiff, world image, ...) we use the utility class <emphasis>CoverageIO</emphasis>.
@@ -38,17 +38,17 @@
             final File input = new File("data/clouds.jpg");
             final GridCoverageReader reader = CoverageIO.createSimpleReader(input);
         </programlisting>
-        
+
         <para>
-            When we have a CoverageReader, we can access it metadatas.  
+            When we have a CoverageReader, we can access it metadatas.
         </para>
-        
+
         <programlisting>
             //print the iso 19115 metadata
             final Metadata metadata = reader.getMetadata();
             System.out.println(metadata);
         </programlisting>
-        
+
         <para>
             <emphasis>Metadata</emphasis> object is a Java version metadata of ISO 19115-2 standard
 
@@ -59,23 +59,23 @@
             final GridCoverageReadParam param = new GridCoverageReadParam();
             param.setResolution(1,1);
             param.setEnvelope(new Rectangle2D.Double(0, 0, 100, 100), DefaultGeographicCRS.WGS84);
-  
+
             final GridCoverage2D coverage = (GridCoverage2D) reader.read(0, param);
             coverage.show();
         </programlisting>
-        
+
         <para>
             <emphasis>GridCoverageReadParam</emphasis> object is useful to specify what it's item interest for reading.
 
             Coverage (or coveragereader) can be using to make a <emphasis>CoverageMapLayer</emphasis>.
         </para>
-        
+
         <programlisting>
             //create a mapcontext
             final MapContext context = MapBuilder.createContext();
             final CoverageMapLayer cl = MapBuilder.createCoverageLayer(reader, SF.style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER), "raster");
             context.layers().add(cl);
-  
+
             //display it
             JMap2DFrame.show(context);
         </programlisting>

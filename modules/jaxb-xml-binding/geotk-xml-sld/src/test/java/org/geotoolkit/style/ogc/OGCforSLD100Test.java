@@ -19,7 +19,6 @@ package org.geotoolkit.style.ogc;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -33,7 +32,6 @@ import org.geotoolkit.ogc.xml.v100.BinaryLogicOpType;
 import org.geotoolkit.ogc.xml.v100.BinaryOperatorType;
 import org.geotoolkit.ogc.xml.v100.ComparisonOpsType;
 import org.geotoolkit.ogc.xml.v100.FilterType;
-import org.geotoolkit.ogc.xml.v100.FunctionType;
 import org.geotoolkit.ogc.xml.v100.LiteralType;
 import org.geotoolkit.ogc.xml.v100.LogicOpsType;
 import org.geotoolkit.ogc.xml.v100.PropertyIsBetweenType;
@@ -45,23 +43,20 @@ import org.geotoolkit.sld.xml.v100.ParameterValueType;
 import org.geotoolkit.sld.xml.GTtoSE100Transformer;
 import org.geotoolkit.sld.xml.JAXBSLDUtilities;
 import org.geotoolkit.sld.xml.SEJAXBStatics;
+import org.apache.sis.util.iso.Names;
 import org.apache.sis.xml.MarshallerPool;
 import org.junit.Test;
 import org.opengis.filter.And;
 import org.opengis.filter.BinaryComparisonOperator;
-import org.opengis.filter.BinaryLogicOperator;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.Not;
 import org.opengis.filter.Or;
 import org.opengis.filter.PropertyIsBetween;
-import org.opengis.filter.PropertyIsEqualTo;
 import org.opengis.filter.PropertyIsLike;
 import org.opengis.filter.PropertyIsNull;
 import org.opengis.filter.expression.Add;
 import org.opengis.filter.expression.Divide;
-import org.opengis.filter.expression.Expression;
-import org.opengis.filter.expression.Function;
 import org.opengis.filter.expression.Literal;
 import org.opengis.filter.expression.Multiply;
 import org.opengis.filter.expression.PropertyName;
@@ -348,7 +343,7 @@ public class OGCforSLD100Test extends TestCase{
         jax = (JAXBElement<BinaryOperatorType>) pvt.getContent().get(0);
         assertNotNull(jax);
 
-        assertEquals(jax.getName().toString(), SEJAXBStatics.EXPRESSION_ADD);
+        assertEquals(Names.toExpandedString(jax.getName()), SEJAXBStatics.EXPRESSION_ADD);
 
         JAXBElement<PropertyNameType> ele1 = (JAXBElement<PropertyNameType>) jax.getValue().getExpression().get(0);
         JAXBElement<LiteralType> ele2 = (JAXBElement<LiteralType>) jax.getValue().getExpression().get(1);
@@ -389,7 +384,7 @@ public class OGCforSLD100Test extends TestCase{
         jax = (JAXBElement<BinaryOperatorType>) pvt.getContent().get(0);
         assertNotNull(jax);
 
-        assertEquals(jax.getName().toString(), SEJAXBStatics.EXPRESSION_DIV);
+        assertEquals(Names.toExpandedString(jax.getName()), SEJAXBStatics.EXPRESSION_DIV);
 
         JAXBElement<PropertyNameType> ele1 = (JAXBElement<PropertyNameType>) jax.getValue().getExpression().get(0);
         JAXBElement<LiteralType> ele2 = (JAXBElement<LiteralType>) jax.getValue().getExpression().get(1);
@@ -463,7 +458,7 @@ public class OGCforSLD100Test extends TestCase{
         jax = (JAXBElement<BinaryOperatorType>) pvt.getContent().get(0);
         assertNotNull(jax);
 
-        assertEquals(jax.getName().toString(), SEJAXBStatics.EXPRESSION_MUL);
+        assertEquals(Names.toExpandedString(jax.getName()), SEJAXBStatics.EXPRESSION_MUL);
 
         JAXBElement<PropertyNameType> ele1 = (JAXBElement<PropertyNameType>) jax.getValue().getExpression().get(0);
         JAXBElement<LiteralType> ele2 = (JAXBElement<LiteralType>) jax.getValue().getExpression().get(1);
@@ -537,7 +532,7 @@ public class OGCforSLD100Test extends TestCase{
         jax = (JAXBElement<BinaryOperatorType>) pvt.getContent().get(0);
         assertNotNull(jax);
 
-        assertEquals(jax.getName().toString(), SEJAXBStatics.EXPRESSION_SUB);
+        assertEquals(Names.toExpandedString(jax.getName()), SEJAXBStatics.EXPRESSION_SUB);
 
         JAXBElement<PropertyNameType> ele1 = (JAXBElement<PropertyNameType>) jax.getValue().getExpression().get(0);
         JAXBElement<LiteralType> ele2 = (JAXBElement<LiteralType>) jax.getValue().getExpression().get(1);
@@ -980,7 +975,7 @@ public class OGCforSLD100Test extends TestCase{
         assertNotNull(ft.getLogicOps());
 
         LogicOpsType cot = ft.getLogicOps().getValue();
-        assertEquals( ft.getLogicOps().getName().toString(), SEJAXBStatics.FILTER_LOGIC_AND);
+        assertEquals(Names.toExpandedString(ft.getLogicOps().getName()), SEJAXBStatics.FILTER_LOGIC_AND);
         BinaryLogicOpType pibt = (BinaryLogicOpType) cot;
 
         BinaryComparisonOpType leftoptype = (BinaryComparisonOpType) pibt.getComparisonOpsOrSpatialOpsOrLogicOps().get(0).getValue();
@@ -1040,7 +1035,7 @@ public class OGCforSLD100Test extends TestCase{
         assertNotNull(ft.getLogicOps());
 
         LogicOpsType cot = ft.getLogicOps().getValue();
-        assertEquals( ft.getLogicOps().getName().toString(), SEJAXBStatics.FILTER_LOGIC_OR);
+        assertEquals(Names.toExpandedString(ft.getLogicOps().getName()), SEJAXBStatics.FILTER_LOGIC_OR);
         BinaryLogicOpType pibt = (BinaryLogicOpType) cot;
 
         BinaryComparisonOpType leftoptype = (BinaryComparisonOpType) pibt.getComparisonOpsOrSpatialOpsOrLogicOps().get(0).getValue();
@@ -1095,7 +1090,7 @@ public class OGCforSLD100Test extends TestCase{
         assertNotNull(ft.getLogicOps());
 
         LogicOpsType cot = ft.getLogicOps().getValue();
-        assertEquals( ft.getLogicOps().getName().toString(), SEJAXBStatics.FILTER_LOGIC_NOT);
+        assertEquals(Names.toExpandedString(ft.getLogicOps().getName()), SEJAXBStatics.FILTER_LOGIC_NOT);
         UnaryLogicOpType pibt = (UnaryLogicOpType) cot;
 
         BinaryComparisonOpType leftoptype = (BinaryComparisonOpType) pibt.getComparisonOps().getValue();

@@ -12,7 +12,7 @@
     <title>
         Ressources
     </title>
-    
+
     <para>
         Different resources are using in these tutorials. You will find common information in this chapter.
     </para>
@@ -27,7 +27,7 @@
         </para>
         <para>
             Online :
-            <link xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/file/0237bc78daa2/demos">
+            <link xlink:href="http://hg.geotoolkit.org/geotoolkit/file/0237bc78daa2/demos">
                 <acronym>GeotoolKit Mercurial repository</acronym>
             </link>
         </para>
@@ -38,7 +38,7 @@
             </title>
 
             <para>
-                The distributed revision control system used with GeotoolKit is  
+                The distributed revision control system used with GeotoolKit is
                 <link xlink:href="http://mercurial.selenic.com/">
                     <acronym>Mercurial</acronym>
                 </link>.
@@ -49,7 +49,7 @@
             </para>
 
             <programlisting>
-                hg clone http://hg.geotoolkit.org/geotoolkit-pending geotk-pending
+                hg clone http://hg.geotoolkit.org/geotoolkit geotk-pending
             </programlisting>
 
             <para>
@@ -122,7 +122,7 @@
             Compile time depends of your hardware and your Internet connection. The first compilation is longer to get differents packages missing (around thirty minutes the first time).
         </para>
         <para>
-            GeotoolKit Jars are in the subdirectory 
+            GeotoolKit Jars are in the subdirectory
             <emphasis>target</emphasis>.
         </para>
     </section>

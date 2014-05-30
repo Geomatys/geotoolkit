@@ -26,7 +26,7 @@
         </para>
         <para>
             Consulter en ligne :
-            <link xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/file/0237bc78daa2/demos">
+            <link xlink:href="http://hg.geotoolkit.org/geotoolkit/file/0237bc78daa2/demos">
                 <acronym>Dépôt mercurial de GeotoolKit</acronym>
             </link>
         </para>
@@ -48,7 +48,7 @@
             </para>
 
             <programlisting>
-                hg clone http://hg.geotoolkit.org/geotoolkit-pending geotk-pending
+                hg clone http://hg.geotoolkit.org/geotoolkit geotk-pending
             </programlisting>
 
             <para>

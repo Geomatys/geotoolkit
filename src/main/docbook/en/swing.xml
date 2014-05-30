@@ -7,32 +7,32 @@
 <chapter xmlns="http://docbook.org/ns/docbook" version="5.0"
          xmlns:xlink = "http://www.w3.org/1999/xlink"
 	 lang="en">
-          
+
     <title>
         Swing components
     </title>
-    
+
     <example>
         <title>Demo of different widgets</title>
-        <link xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/swing/WidgetsDemo.java">
-            <acronym>geotoolkit-pending/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/swing/WidgetsDemo.java</acronym>
-        </link>        
+        <link xlink:href="http://hg.geotoolkit.org/geotoolkit/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/swing/WidgetsDemo.java">
+            <acronym>geotoolkit/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/swing/WidgetsDemo.java</acronym>
+        </link>
     </example>
-    
+
     <para>
         GeotoolKit offers a lot of swing components for cartography.
     </para>
-    
+
     <section>
         <title>Map componants</title>
-        
+
         <section>
             <title>JMap2D</title>
             <para>
                 It's the first component which allow to draw maps. It uses a MapContext.
             </para>
-        
-            <figure> 
+
+            <figure>
                 <title>
                     Displaying a map using JMap2D
                 </title>
@@ -43,14 +43,14 @@
                 </mediaobject>
             </figure>
         </section>
-        
+
         <section>
             <title>JContextTree</title>
             <para>
                 Show data layers, organize them, set their opacity or hide them.
             </para>
-        
-            <figure> 
+
+            <figure>
                 <title>
                     Showing display properties using JContexTree
                 </title>
@@ -61,7 +61,7 @@
                 </mediaobject>
             </figure>
         </section>
-        
+
         <section>
             <title>JNavigationBar</title>
             <para>
@@ -72,11 +72,11 @@
                     <listitem>Zoom +</listitem>
                     <listitem>Zoom -</listitem>
                     <listitem>Pan</listitem>
-                    <listitem>Go to a point</listitem> 
+                    <listitem>Go to a point</listitem>
                 </itemizedlist>
             </para>
-        
-            <figure> 
+
+            <figure>
                 <title>
                     Navigation bar
                 </title>
@@ -87,7 +87,7 @@
                 </mediaobject>
             </figure>
         </section>
-        
+
         <section>
             <title>JInformationBar</title>
             <para>
@@ -95,11 +95,11 @@
                 <itemizedlist>
                     <listitem>Measuring distance</listitem>
                     <listitem>Measuring area</listitem>
-                    <listitem>Showing a popup with details about element that the mouse is hovered </listitem>  
+                    <listitem>Showing a popup with details about element that the mouse is hovered </listitem>
                 </itemizedlist>
             </para>
-        
-            <figure> 
+
+            <figure>
                 <title>
                     Information bar
                 </title>
@@ -110,14 +110,14 @@
                 </mediaobject>
             </figure>
         </section>
-        
+
         <section>
             <title>JSelectionBar</title>
             <para>
-                Allow selecting datas. It is possible to use differents parameters to do this (intersection testing, form of selection...). 
+                Allow selecting datas. It is possible to use differents parameters to do this (intersection testing, form of selection...).
             </para>
-        
-            <figure> 
+
+            <figure>
                 <title>
                     Selection bar
                 </title>
@@ -128,14 +128,14 @@
                 </mediaobject>
             </figure>
         </section>
-        
+
         <section>
             <title>JEditionBar</title>
             <para>
-                Allow geometry editing. 
+                Allow geometry editing.
             </para>
-        
-            <figure> 
+
+            <figure>
                 <title>
                     Edition toolbar
                 </title>
@@ -146,14 +146,14 @@
                 </mediaobject>
             </figure>
         </section>
-        
+
         <section>
             <title>JCoordinateBar</title>
             <para>
                 Show mouse coordinates, scale and allow projection change.
             </para>
-        
-            <figure> 
+
+            <figure>
                 <title>
                     Coordinates toolbar
                 </title>
@@ -163,10 +163,10 @@
                     </imageobject>
                 </mediaobject>
             </figure>
-        
+
             <para>This one can display two additional bars, for temporal navigation and elevation.</para>
-        
-            <figure> 
+
+            <figure>
                 <title>
                     Elevation toolbar
                 </title>
@@ -176,8 +176,8 @@
                     </imageobject>
                 </mediaobject>
             </figure>
-        
-            <figure> 
+
+            <figure>
                 <title>
                     Temporal toolbar
                 </title>
@@ -188,14 +188,14 @@
                 </mediaobject>
             </figure>
         </section>
-        
+
         <section>
             <title>JConfigBar</title>
             <para>
                 allows the display of decorations like the compass or the scale bar.
             </para>
-        
-            <figure> 
+
+            <figure>
                 <title>
                     Config toolbar
                 </title>
@@ -205,9 +205,9 @@
                     </imageobject>
                 </mediaobject>
             </figure>
-        
-        
-            <figure> 
+
+
+            <figure>
                 <title>
                     Compass
                 </title>
@@ -217,10 +217,10 @@
                     </imageobject>
                 </mediaobject>
             </figure>
-        
+
             <para>And an information panel with some parameters about the current display area.</para>
-        
-            <figure> 
+
+            <figure>
                 <title>
                     Information panel
                 </title>
@@ -231,14 +231,14 @@
                 </mediaobject>
             </figure>
         </section>
-        
+
         <section>
             <title>JMap2DFrame</title>
             <para>
 		This class can display a mini application GIS which regroup all widgets. This is useful for debuging.
             </para>
-        
-            <figure> 
+
+            <figure>
                 <title>
                     Displaying JMap2DFrame
                 </title>
@@ -247,17 +247,17 @@
                         <imagedata fileref="../images/swing_jmap2dframe.png" format="png"></imagedata>
                     </imageobject>
                 </mediaobject>
-            </figure>       
+            </figure>
         </section>
-        
+
     </section>
-    
+
     <section>
         <title>Others components</title>
-        
+
         <para>Various components are also available for editing attributes or properties of different data layers whose style.</para>
-    
-        <figure> 
+
+        <figure>
             <title>
                 window of attributes edition
             </title>
@@ -267,8 +267,8 @@
                 </imageobject>
             </mediaobject>
         </figure>
-        
-        <figure> 
+
+        <figure>
             <title>
                 window of style edition
             </title>
@@ -277,8 +277,8 @@
                     <imagedata fileref="../images/swing_style.png" format="png"></imagedata>
                 </imageobject>
             </mediaobject>
-        </figure>        
-        
+        </figure>
+
     </section>
-    
+
 </chapter>

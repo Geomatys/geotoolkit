@@ -432,7 +432,7 @@ public class GTtoSE110Transformer implements StyleVisitor {
      * Transform a Feature name in a QName.
      */
     public QName visitName(final Name name) {
-        return new QName(name.scope().name().toString(), name.toString());
+        return new QName(name.scope().isGlobal() ? null : name.scope().name().toString(), name.toString());
     }
 
     public JAXBElement<?> visitFilter(final Filter filter) {
@@ -971,7 +971,7 @@ public class GTtoSE110Transformer implements StyleVisitor {
 
                 if (!fts.featureTypeNames().isEmpty()) {
                     final Name name = (Name) fts.featureTypeNames().iterator().next();
-                    final String pre = name.scope().name().toString();
+                    final String pre = name.scope().isGlobal() ? null : name.scope().name().toString();
                     final String sep = name.getSeparator();
                     final String local = name.toString();
                     ftst.setFeatureTypeName(new QName(pre + sep, local));

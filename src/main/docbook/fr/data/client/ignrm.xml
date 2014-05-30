@@ -6,30 +6,30 @@
 ]>
 <section xmlns="http://docbook.org/ns/docbook" version="5.0"
          xmlns:xlink = "http://www.w3.org/1999/xlink">
-             
+
     <title>Service IGN RM</title>
-    
+
     <example>
         <title>Connexion aux services IGN</title>
-    
-        <link xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/clients/ignrm/IGNClientDemo.java">
-            <acronym>geotoolkit-pending/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/clients/ignrm/IGNClientDemo.java </acronym>
-        </link>        
+
+        <link xlink:href="http://hg.geotoolkit.org/geotoolkit/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/clients/ignrm/IGNClientDemo.java">
+            <acronym>geotoolkit/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/clients/ignrm/IGNClientDemo.java </acronym>
+        </link>
     </example>
-    
+
     <para>
-        L'Institut Géographique National (IGN) de France fournit un certain nombre de services conformément à la directive européenne 
+        L'Institut Géographique National (IGN) de France fournit un certain nombre de services conformément à la directive européenne
         <link xlink:href="http://www.inspire-geoportal.eu/">INSPIRE</link>.
     </para>
-        
+
     <para>
-        Toutefois, pour y accéder, il est nécessaire d'avoir un compte : 
+        Toutefois, pour y accéder, il est nécessaire d'avoir un compte :
         <link xlink:href="https://api.ign.fr/geoportail">obtenir un compte</link>
     </para>
 
     <para>
-        La connexion aux services IGN s'effectue en utilisant une authentification par 
-        <emphasis>Jeton</emphasis> et 
+        La connexion aux services IGN s'effectue en utilisant une authentification par
+        <emphasis>Jeton</emphasis> et
         <emphasis>Referer</emphasis>.
     </para>
 
@@ -42,35 +42,35 @@
             <listitem>OpenLS : pour les services de localisation</listitem>
         </itemizedlist>
     </para>
-            
+
     <example>
         <title>Code de connexion à un service IGN</title>
         <programlisting>
-            
+
                 //referer parameter
                 final ClientSecurity refererInfo = new RefererClientSecurity("http://localhost/");
-         
+
                 //token parameter
                 final IGNRMServer geodrmServer = new IGNRMServer(new URL("http://jeton-api.ign.fr"),refererInfo);
                 final Token token = geodrmServer.getToken(key);
                 final ClientSecurity tokenInfo = new TokenClientSecurity(token);
                 final ClientSecurity tokenAndReferer = ClientSecurityStack.wrap(refererInfo,tokenInfo);
- 
+
                 //WMSC server
                 final WebMapServerCached server = new WebMapServerCached(
                 new URL("http://wxs.ign.fr/inspire/wmsc?"), tokenAndReferer);
- 
+
                 //layer
                 final WMSCMapLayer layer = new WMSCMapLayer(server, "ORTHOIMAGERY.ORTHOPHOTOS");
                 context.layers().add(layer);
-         
-                final MapContext context = MapBuilder.createContext();       
+
+                final MapContext context = MapBuilder.createContext();
                 context.layers().add(layer);
                 JMap2DFrame.show(context);
-            
+
         </programlisting>
     </example>
-            
-            
+
+
 </section>
-            
+

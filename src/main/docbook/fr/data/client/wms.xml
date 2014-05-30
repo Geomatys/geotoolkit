@@ -6,36 +6,36 @@
 ]>
 <section xmlns="http://docbook.org/ns/docbook" version="5.0"
          xmlns:xlink = "http://www.w3.org/1999/xlink">
-             
+
     <title>Web Map Server</title>
-    
+
     <example>
         <title>Connexion à un serveur WMS</title>
-        <link xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/clients/wms/WMSClientDemo.java ">
-            <acronym>geotoolkit-pending/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/clients/wms/WMSClientDemo.java   </acronym>
-        </link>        
+        <link xlink:href="http://hg.geotoolkit.org/geotoolkit/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/clients/wms/WMSClientDemo.java ">
+            <acronym>geotoolkit/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/clients/wms/WMSClientDemo.java   </acronym>
+        </link>
     </example>
 
     <para>
         <emphasis>Web Map Server (WMS)</emphasis> est un service de l'OGC pour renvoyer des images.
     </para>
     <para>
-        Norme complète : 
+        Norme complète :
         <link xlink:href="http://www.opengeospatial.org/standards/wms">http://www.opengeospatial.org/standards/wms</link>
     </para>
 
     <example>
         <title>Connexion à un server WMS</title>
         <programlisting>
-            
+
                 final WebMapServer wmsServer = new WebMapServer(new URL("http://demo.geomatys.com/constellation/WS/wms?"), WMSVersion.v130);
- 
+
                 final WMSMapLayer layer = new WMSMapLayer(wmsServer, "BlueMarble");
- 
+
                 final MapContext context = MapBuilder.createContext();
                 context.layers().add(layer);
                 JMap2DFrame.show(context);
-            
+
         </programlisting>
     </example>
 </section>

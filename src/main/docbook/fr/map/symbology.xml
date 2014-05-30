@@ -6,30 +6,30 @@
 ]>
 <section xmlns="http://docbook.org/ns/docbook" version="5.0"
          xmlns:xlink = "http://www.w3.org/1999/xlink">
-          
+
     <title>
         Symbology
     </title>
-    
+
     <section>
         <title>Spécification</title>
         <para>
             La symbologie est une part importante dans les SIG et plusieurs tentatives ont été faites afin de normaliser la définition des styles.
         </para>
         <para>
-            Aujourd'hui, la plus aboutie est la norme 
+            Aujourd'hui, la plus aboutie est la norme
             <emphasis>OGC Symbology Encoding 1.1.0 (SE)</emphasis>.
         </para>
         <para>
-            Historiquement, SE était une partie d'une autre norme 
+            Historiquement, SE était une partie d'une autre norme
             <emphasis>OGC Styled Layer Descriptor (SLD)</emphasis> mais qui a été coupée en deux dans la version 1.1.0 pour créer Symbology Encoding.
         </para>
         <para>
-            Il existe aussi la norme 
+            Il existe aussi la norme
             <emphasis>ISO 19117 Portrayal Service</emphasis>, mais il s'agit d'une norme abstraite reprenant les grandes lignes de SE.
         </para>
         <para>
-            Google 
+            Google
             <emphasis>KML</emphasis> qui est désormais une norme OGC définit elle aussi des éléments de style, mais à l'inverse de la norme ISO aucune harmonisation n'a été faite avec SE ou GML, ce qui en fait le mouton noir de la symbologie.
         </para>
         <para>
@@ -41,8 +41,8 @@
         <para>
             Voici la structure générale :
         </para>
-        
-        <figure> 
+
+        <figure>
             <title>Classes relatives à la symbologie</title>
             <mediaobject>
                 <imageobject>
@@ -54,12 +54,12 @@
                 </textobject>
             </mediaobject>
         </figure>
-        
+
         <para>
             La norme SLD définit la relation entre les couches de données et leur style, tandis que la norme SE se charge de la définition des filtres et des paramètres de dessin. (taille du pinceau, couleur, ...etc...)
         </para>
-        
-        <figure> 
+
+        <figure>
             <title>Classes relatives aux styles</title>
             <mediaobject>
                 <imageobject>
@@ -70,13 +70,13 @@
                     </phrase>
                 </textobject>
             </mediaobject>
-        </figure>       
-        
+        </figure>
+
     </section>
-    
+
     <section>
         <title>Règles de style</title>
-        
+
         <para>
             Les règles de style (
             <emphasis>Rule</emphasis>) sont l'un des éléments les plus importants, leur objectif est de filtrer les données et les styles afin d'obtenir des cartes dynamiques en fonction des échelles et de varier les symboles utilisés selon différents critères.
@@ -87,7 +87,7 @@
         </para>
         <para>
             Si l'échelle de la carte n'est pas dans l'intervalle de la règle celle-ci est ignorée, dans le cas contraire c'est le filtre qui sera utilisé contre chaque feature pour savoir si les symboles contenus dans la règle seront appliqués.
-        
+
         </para>
         <example>
             <title>Style avec plusieurs règles</title>
@@ -98,7 +98,7 @@
             </literallayout>
         </example>
     </section>
-    
+
     <section>
         <title>Symboles</title>
         <para>
@@ -115,24 +115,24 @@
             </itemizedlist>
         </para>
     </section>
-    
+
     <section>
         <title>Création</title>
-        
+
         <example>
             <title>Divers examples de symbologie</title>
             <para>
-                <link xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/symbology/Styles.java">
-                    <acronym>geotoolkit-pending/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/symbology/Styles.java</acronym>
-                </link> 
+                <link xlink:href="http://hg.geotoolkit.org/geotoolkit/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/symbology/Styles.java">
+                    <acronym>geotoolkit/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/symbology/Styles.java</acronym>
+                </link>
             </para>
             <para>
-                <link xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/symbology/DemoFrame.java">
-                    <acronym>geotoolkit-pending/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/symbology/DemoFrame.java</acronym>
+                <link xlink:href="http://hg.geotoolkit.org/geotoolkit/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/symbology/DemoFrame.java">
+                    <acronym>geotoolkit/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/symbology/DemoFrame.java</acronym>
                 </link>
             </para>
         </example>
-        
+
         <para>
             GeotoolKit utilise des fabriques pour créer les objets de style.
         </para>
@@ -151,22 +151,22 @@
             En fait, toutes les interfaces de styles sont définies dans GeoAPI mais elles sont immutables. C'est pourquoi dans GeotoolKit on trouve ces mêmes interfaces précédées de 'Mutable' ainsi que des méthodes 'setter' sur les propriétés.
         </para>
         <para>
-            Ce ne sont pas strictement toutes les classes qui sont mutables, les filtres, expressions et symbols eux sont immutables pour des raisons de concurrence. 
+            Ce ne sont pas strictement toutes les classes qui sont mutables, les filtres, expressions et symbols eux sont immutables pour des raisons de concurrence.
         </para>
         <para>
-            Quand vous créerez des styles, par moment il est préférable d'utiliser les valeurs par défaut pour certaines propriétés, ces valeurs sont accessibles comme des constantes sur la classe : 
+            Quand vous créerez des styles, par moment il est préférable d'utiliser les valeurs par défaut pour certaines propriétés, ces valeurs sont accessibles comme des constantes sur la classe :
             <emphasis>org.geotoolkit.style.StyleConstants</emphasis>.
-        </para> 
+        </para>
     </section>
-    
+
     <section>
         <title>Cas spéciaux</title>
-        
+
         <para>
-            Les symboles possibles pour les images varient avec leur format. Certaines opérations se trouvent donc parfois inutiles ou impossibles à appliquer. 
+            Les symboles possibles pour les images varient avec leur format. Certaines opérations se trouvent donc parfois inutiles ou impossibles à appliquer.
         </para>
-        
-        <figure> 
+
+        <figure>
             <title>Pipeline image par défaut</title>
             <mediaobject>
                 <imageobject>
@@ -178,8 +178,8 @@
                 </textobject>
             </mediaobject>
         </figure>
-        
-        <figure> 
+
+        <figure>
             <title>Pipeline pour les images standard (png,jpg,tiff ... : habituellement 3 ou 4 bandes couleurs)</title>
             <mediaobject>
                 <imageobject>
@@ -191,8 +191,8 @@
                 </textobject>
             </mediaobject>
         </figure>
-        
-        <figure> 
+
+        <figure>
             <title>Pipeline pour les images type scientifique ( 1 bande )</title>
             <mediaobject>
                 <imageobject>
@@ -204,8 +204,8 @@
                 </textobject>
             </mediaobject>
         </figure>
-        
-        <figure> 
+
+        <figure>
             <title>Sélection de bande - un seul canal</title>
             <mediaobject>
                 <imageobject>
@@ -217,8 +217,8 @@
                 </textobject>
             </mediaobject>
         </figure>
-        
-        <figure> 
+
+        <figure>
             <title>Sélection de bande - Vert/bleu inversé</title>
             <mediaobject>
                 <imageobject>
@@ -230,8 +230,8 @@
                 </textobject>
             </mediaobject>
         </figure>
-        
-        <figure> 
+
+        <figure>
             <title>ColorMap - Interpolation</title>
             <mediaobject>
                 <imageobject>
@@ -243,8 +243,8 @@
                 </textobject>
             </mediaobject>
         </figure>
-        
-        <figure> 
+
+        <figure>
             <title>ColorMap - Catégorisation</title>
             <mediaobject>
                 <imageobject>
@@ -256,8 +256,8 @@
                 </textobject>
             </mediaobject>
         </figure>
-        
-        <figure> 
+
+        <figure>
             <title>Ajustement de contraste - aucun</title>
             <mediaobject>
                 <imageobject>
@@ -269,8 +269,8 @@
                 </textobject>
             </mediaobject>
         </figure>
-        
-        <figure> 
+
+        <figure>
             <title>Ajustement de contraste - Gamma</title>
             <mediaobject>
                 <imageobject>
@@ -282,8 +282,8 @@
                 </textobject>
             </mediaobject>
         </figure>
-        
-        <figure> 
+
+        <figure>
             <title>Ajustement de contraste - Histogramme</title>
             <mediaobject>
                 <imageobject>
@@ -295,8 +295,8 @@
                 </textobject>
             </mediaobject>
         </figure>
-        
-        <figure> 
+
+        <figure>
             <title>Ajustement de contraste - Normalisation</title>
             <mediaobject>
                 <imageobject>
@@ -308,8 +308,8 @@
                 </textobject>
             </mediaobject>
         </figure>
-        
-        <figure> 
+
+        <figure>
             <title>Contours</title>
             <mediaobject>
                 <imageobject>
@@ -321,8 +321,8 @@
                 </textobject>
             </mediaobject>
         </figure>
-        
-        <figure> 
+
+        <figure>
             <title>Effet de relief</title>
             <mediaobject>
                 <imageobject>
@@ -337,8 +337,8 @@
                 </textobject>
             </mediaobject>
         </figure>
-        
+
     </section>
-    
-    
+
+
 </section>

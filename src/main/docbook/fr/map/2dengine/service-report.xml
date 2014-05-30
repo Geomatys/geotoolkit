@@ -6,28 +6,28 @@
 ]>
 <section xmlns="http://docbook.org/ns/docbook" version="5.0"
          xmlns:xlink = "http://www.w3.org/1999/xlink">
-          
+
     <title>
         Service-report
     </title>
-    
+
     <para>
-        Pour générer des rapports ou des atlas, GeotoolKit utilise l'api 
+        Pour générer des rapports ou des atlas, GeotoolKit utilise l'api
         <emphasis>JasperReports</emphasis>. JasperReports est l'api Java la plus complète pour la génération de rapports et dispose d'un éditeur dédié nommé IReport. Comme nous allons devoir dessiner des éléments spéciaux pour les cartes, légendes, barre d'échelle ... il va être nécessaire de créer un rapport spécifique.
     </para>
-    
+
     <section>
         <title>Editeur IReport</title>
-        
+
         <para>
-            IReport peut être téléchargé ici : 
+            IReport peut être téléchargé ici :
             <link xlink:href="http://jasperforge.org/projects/ireport">http://jasperforge.org/projects/ireport</link>
         </para>
         <para>
             Aperçu de l'application :
         </para>
-        
-        <figure> 
+
+        <figure>
             <title>Accueil de iReport 3.7.4</title>
             <mediaobject>
                 <imageobject>
@@ -39,12 +39,12 @@
                 </textobject>
             </mediaobject>
         </figure>
-        
+
         <para>
-            Si vous n'êtes pas familier avec JasperReports ou IReport, la documentation est accessible 
+            Si vous n'êtes pas familier avec JasperReports ou IReport, la documentation est accessible
             <link xlink:href="http://jasperforge.org//website/ireportwebsite/IR%20Website/ir_documentation.html?header=project&amp;target=ireport">ici.</link>
         </para>
-        
+
         <section>
             <title>Les champs</title>
             <para>
@@ -55,8 +55,8 @@
                 </orderedlist>
                 Lorsque l'on aura fini d'établir notre rapport, les paramètres seront donnés avec un objet Map, et les champs seront transformés en FeatureType .
             </para>
-        
-            <figure> 
+
+            <figure>
                 <title>Champs source</title>
                 <mediaobject>
                     <imageobject>
@@ -68,13 +68,13 @@
                     </textobject>
                 </mediaobject>
             </figure>
-        
+
             <para>
-                seront transformés dans le FeatureType : 
+                seront transformés dans le FeatureType :
             </para>
             <para>
                 <programlisting>
-                
+
                     ╔═════════════╤══════╤══════╤═══════════╤═══════════════╤══════╤════════════╗
                     ║ name        │  min │  max │  nillable │  type         │  CRS │  UserData  ║
                     ╟─────────────┼──────┼──────┼───────────┼───────────────┼──────┼────────────╢
@@ -91,16 +91,16 @@
                 </programlisting>
             </para>
             <para>
-                Si l'on regarde les binding du FeatureType, on voit MapDef, ChartDef, LegendDef ... 
+                Si l'on regarde les binding du FeatureType, on voit MapDef, ChartDef, LegendDef ...
             </para>
             <para>
                 Ce sont des types de champ que GeotoolKit peut reconnaître.
             </para>
             <para>
-                Pour définir ces types, on doit éditer la classe du champ dans IReport : 
+                Pour définir ces types, on doit éditer la classe du champ dans IReport :
             </para>
-        
-            <figure> 
+
+            <figure>
                 <title>Champs de définition de classe</title>
                 <mediaobject>
                     <imageobject>
@@ -112,7 +112,7 @@
                     </textobject>
                 </mediaobject>
             </figure>
-        
+
             <para>
                 La liste des champs reconnus est :
                 <itemizedlist>
@@ -124,8 +124,8 @@
                 </itemizedlist>
                 Pour les types legend, scalebar et north arrow, il est nécessaire d'indiquer à quelle carte le type se rapporte. Cette information se définit dans les propriétés du champ :
             </para>
-        
-            <figure> 
+
+            <figure>
                 <title>Fenêtre de propriétés du champs</title>
                 <mediaobject>
                     <imageobject>
@@ -139,7 +139,7 @@
             </figure>
         </section>
         <section>
-        
+
             <title>Report detail</title>
             <para>
                 <literallayout>
@@ -152,8 +152,8 @@
                     Chaque champ JRRenderable doit être déclaré comme une image :
                 </literallayout>
             </para>
-        
-            <figure> 
+
+            <figure>
                 <title>Propriétés du champs</title>
                 <mediaobject>
                     <imageobject>
@@ -167,38 +167,38 @@
             </figure>
         </section>
     </section>
-    
+
     <section>
         <title>JasperReportService</title>
-        
+
         <example>
             <title>Génération de rapport avec JasperReport</title>
             <para>
-                <link xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/rendering/ReportDemo.java">
-                    <acronym>geotoolkit-pending/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/rendering/ReportDemo.java</acronym>
-                </link> 
+                <link xlink:href="http://hg.geotoolkit.org/geotoolkit/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/rendering/ReportDemo.java">
+                    <acronym>geotoolkit/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/rendering/ReportDemo.java</acronym>
+                </link>
             </para>
             <para>
-                <link xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/files/tip/demos/geotk-demo-samples/src/main/resources/data/report/simpleReport.jrxml">
-                    <acronym>geotoolkit-pending/demos/geotk-demo-samples/src/main/resources/data/report/simpleReport.jrxml</acronym>
+                <link xlink:href="http://hg.geotoolkit.org/geotoolkit/files/tip/demos/geotk-demo-samples/src/main/resources/data/report/simpleReport.jrxml">
+                    <acronym>geotoolkit/demos/geotk-demo-samples/src/main/resources/data/report/simpleReport.jrxml</acronym>
                 </link>
-            </para> 
+            </para>
             <para>
-                <link xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/files/tip/demos/geotk-demo-samples/src/main/resources/data/report/complexReport.jrxml">
-                    <acronym>geotoolkit-pending/demos/geotk-demo-samples/src/main/java/resources/data/report/complexReport.jrxml</acronym>
+                <link xlink:href="http://hg.geotoolkit.org/geotoolkit/files/tip/demos/geotk-demo-samples/src/main/resources/data/report/complexReport.jrxml">
+                    <acronym>geotoolkit/demos/geotk-demo-samples/src/main/java/resources/data/report/complexReport.jrxml</acronym>
                 </link>
             </para>
         </example>
-        
+
         <para>
             resources/data/report/complexReport.jrxml
-            
+
             <orderedlist>
                 <listitem>
                     Parser le template
-                        
+
                     <programlisting>
-                        
+
                         final File template = ...
                         final Entry&lt;JasperReport,FeatureType&gt; entry = JasperReportService.prepareTemplate(template);
                         final JasperReport report = entry.getKey();
@@ -206,12 +206,12 @@
                     </programlisting>
                     <para>
                         Cette étape va générer le FeatureType associé au template.
-                    </para>   
+                    </para>
                 </listitem>
                 <listitem>
-                    
+
                     Préparer les données
-                        
+
                     <para>
                         <para>
                             Cette partie dépend entièrement de votre template.
@@ -225,12 +225,12 @@
                         <para>
                             Dans IReport vous pouvez spécifier le comportement lors d'une valeur nulle.
                         </para>
-                    </para>  
+                    </para>
                 </listitem>
                 <listitem>
                     Générer le rapport
                     <programlisting>
-                        
+
                         final OutputDef output = new OutputDef(JasperReportService.MIME_PDF, new File("atlas.pdf"));
                         JasperReportService.generateReport(report, featureCollection, parameters, output);
                     </programlisting>

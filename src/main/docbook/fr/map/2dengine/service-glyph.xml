@@ -6,24 +6,24 @@
 ]>
 <section xmlns="http://docbook.org/ns/docbook" version="5.0"
          xmlns:xlink = "http://www.w3.org/1999/xlink">
-          
+
     <title>
         Service-glyph
     </title>
-    
+
     <example>
         <title>Génération de glyphe</title>
-        <link xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/rendering/GlyphDemo.java">
-            <acronym>geotoolkit-pending/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/rendering/GlyphDemo.java</acronym>
-        </link>        
+        <link xlink:href="http://hg.geotoolkit.org/geotoolkit/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/rendering/GlyphDemo.java">
+            <acronym>geotoolkit/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/rendering/GlyphDemo.java</acronym>
+        </link>
     </example>
-        
+
     <para>
-        Une seule classe est utilisée pour cette tâche : 
+        Une seule classe est utilisée pour cette tâche :
         <emphasis>DefaultGlyphService</emphasis> avec trois différentes méthodes :
         <itemizedlist>
             <listitem>
-                <emphasis>create</emphasis> : va générer un 
+                <emphasis>create</emphasis> : va générer un
                 <emphasis>BufferedImage</emphasis> pour le style et la taille donnée.
             </listitem>
             <listitem>
@@ -34,21 +34,21 @@
             </listitem>
         </itemizedlist>
     </para>
-    
+
     <example>
         <title>Création et affichage d'une glyphe</title>
         <programlisting>
-            
+
                 //generate a style
                 final Style style = SF.style(StyleConstants.DEFAULT_LINE_SYMBOLIZER);
- 
+
                 //grab the best glyph size, you may provide your own size, the service will
                 //do it's best to generate a nice glyph
                 final Dimension preferredSize = DefaultGlyphService.glyphPreferredSize(style, null, null);
- 
+
                 //create the glyph image
                 final BufferedImage glyph = DefaultGlyphService.create(style, preferredSize, null);
- 
+
                 //show the glyph
                 final JFrame frm = new JFrame();
                 frm.setContentPane(new JLabel(new ImageIcon(glyph)));
@@ -56,7 +56,7 @@
                 frm.setLocationRelativeTo(null);
                 frm.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                 frm.setVisible(true);
-            
+
         </programlisting>
     </example>
 </section>

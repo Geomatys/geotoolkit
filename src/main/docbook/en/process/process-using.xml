@@ -18,33 +18,33 @@
     <example>
         <title>Example 1 : Finding process.</title>
         <link
-            xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/processing/FindProcessDemo.java"
+            xlink:href="http://hg.geotoolkit.org/geotoolkit/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/processing/FindProcessDemo.java"
         >
-            geotoolkit-pending/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/processing/FindProcessDemo.java
+            geotoolkit/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/processing/FindProcessDemo.java
         </link>
     </example>
     <example>
         <title>Example 2 : Execution of a simple process.</title>
         <link
-            xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/processing/AddDemo.java"
+            xlink:href="http://hg.geotoolkit.org/geotoolkit/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/processing/AddDemo.java"
         >
-            geotoolkit-pending/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/processing/AddDemo.java
+            geotoolkit/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/processing/AddDemo.java
         </link>
     </example>
     <example>
         <title>Exemple 3 : Execution of a complex process</title>
         <link
-            xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/processing/UnionDemo.java"
+            xlink:href="http://hg.geotoolkit.org/geotoolkit/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/processing/UnionDemo.java"
         >
-            geotoolkit-pending/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/processing/UnionDemo.java
+            geotoolkit/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/processing/UnionDemo.java
         </link>
     </example>
 
     <section>
         <title>Finding process</title>
-        <para> To execute a process, you need before get its description. GeotoolKit has the utility class 
+        <para> To execute a process, you need before get its description. GeotoolKit has the utility class
             <link xlink:href="http://pending.geotoolkit.org/apidocs/org/geotoolkit/process/ProcessFinder.html"> ProcessFinder </link>
-            which contain a set of static methods. This class get all ProcessingRegistry defined in files resources/META-INF/services/org.geotoolkit.process.ProcessingRegistry. 
+            which contain a set of static methods. This class get all ProcessingRegistry defined in files resources/META-INF/services/org.geotoolkit.process.ProcessingRegistry.
             And all descriptions that each ProcessFactory contains.
         </para>
         <para>

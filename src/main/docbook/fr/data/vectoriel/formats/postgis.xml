@@ -6,31 +6,31 @@
 ]>
 <section xmlns="http://docbook.org/ns/docbook" version="5.0"
          xmlns:xlink = "http://www.w3.org/1999/xlink">
-             
+
     <title>Format PostGIS</title>
-             
+
     <example>
         <title>Connexion à une base PostGIS</title>
-        <link xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/datamodel/postgis/PostgisDemo.java">
-            <acronym>geotoolkit-pending/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/datamodel/postgis/PostgisDemo.java</acronym>
+        <link xlink:href="http://hg.geotoolkit.org/geotoolkit/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/datamodel/postgis/PostgisDemo.java">
+            <acronym>geotoolkit/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/datamodel/postgis/PostgisDemo.java</acronym>
         </link>
-        
+
     </example>
-        
+
     <para>PostGIS est l'extension spatiale de PostgreSQL.</para>
 
     <para>C'est aussi le mode de stockage SIG en base de données le plus utilisé.</para>
-        
+
         <programlisting>
-            
+
                 final ParameterValueGroup parameters = PostgisNGDataStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
                 Parameters.getOrCreate(PostgisNGDataStoreFactory.HOST, parameters).setValue("hote");
                 Parameters.getOrCreate(PostgisNGDataStoreFactory.PORT, parameters).setValue(5432);
                 Parameters.getOrCreate(PostgisNGDataStoreFactory.DATABASE, parameters).setValue("base");
                 Parameters.getOrCreate(PostgisNGDataStoreFactory.USER, parameters).setValue("user");
                 Parameters.getOrCreate(PostgisNGDataStoreFactory.PASSWD, parameters).setValue("secret");
-         
+
                 final DataStore store = DataStoreFinder.getDataStore(parameters);
-            
+
         </programlisting>
 </section>

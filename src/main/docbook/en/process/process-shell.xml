@@ -32,7 +32,7 @@
                 <title>Précompilé</title>
                 <para>
                     Dans le <link xlink:href="http://jenkins.geotoolkit.org">dépôt Jenkins</link>,
-                    aller dans le projet geotoolkit-pending et prendre l'archive
+                    aller dans le projet geotoolkit et prendre l'archive
                     <emphasis>geotk-shell.zip</emphasis>
                 </para>
             </section>

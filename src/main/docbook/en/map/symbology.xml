@@ -7,46 +7,46 @@
 <section xmlns="http://docbook.org/ns/docbook" version="5.0"
          xmlns:xlink = "http://www.w3.org/1999/xlink"
          lang="en">
-          
+
     <title>
         Symbology
     </title>
-    
+
     <section>
         <title>Specification</title>
         <para>
             Symbology is important part of GIS. Several attempts to standardize styles.
         </para>
         <para>
-            Today,   
+            Today,
             <emphasis>OGC Symbology Encoding 1.1.0 (SE)</emphasis> is the highly developed standard.
         </para>
         <para>
-	    SE was a part of an another standard, 
+	    SE was a part of an another standard,
             <emphasis>OGC Styled Layer Descriptor (SLD)</emphasis>,
 	    but it was forked from SLD 1.1.0 release to create Symbology Encoding.
         </para>
         <para>
-            Another standard, 
+            Another standard,
             <emphasis>ISO 19117 Portrayal Service</emphasis>,
 	    but it's an abstract specification which take the broad outlines of SE.
         </para>
         <para>
-	    Google 
-            <emphasis>KML</emphasis> became an international standard of the OGC. It defines style element too, but unlike the ISO standard, there is no	    harmonization between KML and SE or GML.            
+	    Google
+            <emphasis>KML</emphasis> became an international standard of the OGC. It defines style element too, but unlike the ISO standard, there is no	    harmonization between KML and SE or GML.
         </para>
         <para>
            Several other projects has proposed, especially for 3D symbology. We can notice that an OGC working group is working on the new version of OGC	    SE standard.
         </para>
         <para>
             GeotoolKit use a mixture of SE and ISO 19117
-            
+
         </para>
         <para>
             Voici la structure générale :
         </para>
-        
-        <figure> 
+
+        <figure>
             <title>Classes relatives à la symbologie</title>
             <mediaobject>
                 <imageobject>
@@ -58,12 +58,12 @@
                 </textobject>
             </mediaobject>
         </figure>
-        
+
         <para>
             La norme SLD définit la relation entre les couches de données et leur style, tandis que la norme SE se charge de la définition des filtres et des paramètres de dessin. (taille du pinceau, couleur, ...etc...)
         </para>
-        
-        <figure> 
+
+        <figure>
             <title>Classes relatives aux styles</title>
             <mediaobject>
                 <imageobject>
@@ -74,13 +74,13 @@
                     </phrase>
                 </textobject>
             </mediaobject>
-        </figure>       
-        
+        </figure>
+
     </section>
-    
+
     <section>
         <title>Règles de style</title>
-        
+
         <para>
             Les règles de style (
             <emphasis>Rule</emphasis>) sont l'un des éléments les plus importants, leur objectif est de filtrer les données et les styles afin d'obtenir des cartes dynamiques en fonction des échelles et de varier les symboles utilisés selon différents critères.
@@ -91,7 +91,7 @@
         </para>
         <para>
             Si l'échelle de la carte n'est pas dans l'intervalle de la règle celle-ci est ignorée, dans le cas contraire c'est le filtre qui sera utilisé contre chaque feature pour savoir si les symboles contenus dans la règle seront appliqués.
-        
+
         </para>
         <example>
             <title>Style avec plusieurs règles</title>
@@ -102,7 +102,7 @@
             </literallayout>
         </example>
     </section>
-    
+
     <section>
         <title>Symboles</title>
         <para>
@@ -119,24 +119,24 @@
             </itemizedlist>
         </para>
     </section>
-    
+
     <section>
         <title>Création</title>
-        
+
         <example>
             <title>Divers examples de symbologie</title>
             <para>
-                <link xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/symbology/Styles.java">
-                    <acronym>geotoolkit-pending/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/symbology/Styles.java</acronym>
-                </link> 
+                <link xlink:href="http://hg.geotoolkit.org/geotoolkit/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/symbology/Styles.java">
+                    <acronym>geotoolkit/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/symbology/Styles.java</acronym>
+                </link>
             </para>
             <para>
-                <link xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/symbology/DemoFrame.java">
-                    <acronym>geotoolkit-pending/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/symbology/DemoFrame.java</acronym>
+                <link xlink:href="http://hg.geotoolkit.org/geotoolkit/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/symbology/DemoFrame.java">
+                    <acronym>geotoolkit/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/symbology/DemoFrame.java</acronym>
                 </link>
             </para>
         </example>
-        
+
         <para>
             GeotoolKit utilise des fabriques pour créer les objets de style.
         </para>
@@ -155,22 +155,22 @@
             En fait, toutes les interfaces de styles sont définies dans GeoAPI mais elles sont immutables. C'est pourquoi dans GeotoolKit on trouve ces mêmes interfaces précédées de 'Mutable' ainsi que des méthodes 'setter' sur les propriétés.
         </para>
         <para>
-            Ce ne sont pas strictement toutes les classes qui sont mutables, les filtres, expressions et symbols eux sont immutables pour des raisons de concurrence. 
+            Ce ne sont pas strictement toutes les classes qui sont mutables, les filtres, expressions et symbols eux sont immutables pour des raisons de concurrence.
         </para>
         <para>
-            Quand vous créerez des styles, par moment il est préférable d'utiliser les valeurs par défaut pour certaines propriétés, ces valeurs sont accessibles comme des constantes sur la classe : 
+            Quand vous créerez des styles, par moment il est préférable d'utiliser les valeurs par défaut pour certaines propriétés, ces valeurs sont accessibles comme des constantes sur la classe :
             <emphasis>org.geotoolkit.style.StyleConstants</emphasis>.
-        </para> 
+        </para>
     </section>
-    
+
     <section>
         <title>Cas spéciaux</title>
-        
+
         <para>
-            Les symboles possibles pour les images varient avec leur format. Certaines opérations se trouvent donc parfois inutiles ou impossibles à appliquer. 
+            Les symboles possibles pour les images varient avec leur format. Certaines opérations se trouvent donc parfois inutiles ou impossibles à appliquer.
         </para>
-        
-        <figure> 
+
+        <figure>
             <title>Pipeline image par défaut</title>
             <mediaobject>
                 <imageobject>
@@ -182,8 +182,8 @@
                 </textobject>
             </mediaobject>
         </figure>
-        
-        <figure> 
+
+        <figure>
             <title>Pipeline pour les images standard (png,jpg,tiff ... : habituellement 3 ou 4 bandes couleurs)</title>
             <mediaobject>
                 <imageobject>
@@ -195,8 +195,8 @@
                 </textobject>
             </mediaobject>
         </figure>
-        
-        <figure> 
+
+        <figure>
             <title>Pipeline pour les images type scientifique ( 1 bande )</title>
             <mediaobject>
                 <imageobject>
@@ -208,8 +208,8 @@
                 </textobject>
             </mediaobject>
         </figure>
-        
-        <figure> 
+
+        <figure>
             <title>Sélection de bande - un seul canal</title>
             <mediaobject>
                 <imageobject>
@@ -221,8 +221,8 @@
                 </textobject>
             </mediaobject>
         </figure>
-        
-        <figure> 
+
+        <figure>
             <title>Sélection de bande - Vert/bleu inversé</title>
             <mediaobject>
                 <imageobject>
@@ -234,8 +234,8 @@
                 </textobject>
             </mediaobject>
         </figure>
-        
-        <figure> 
+
+        <figure>
             <title>ColorMap - Interpolation</title>
             <mediaobject>
                 <imageobject>
@@ -247,8 +247,8 @@
                 </textobject>
             </mediaobject>
         </figure>
-        
-        <figure> 
+
+        <figure>
             <title>ColorMap - Catégorisation</title>
             <mediaobject>
                 <imageobject>
@@ -260,8 +260,8 @@
                 </textobject>
             </mediaobject>
         </figure>
-        
-        <figure> 
+
+        <figure>
             <title>Ajustement de contraste - aucun</title>
             <mediaobject>
                 <imageobject>
@@ -273,8 +273,8 @@
                 </textobject>
             </mediaobject>
         </figure>
-        
-        <figure> 
+
+        <figure>
             <title>Ajustement de contraste - Gamma</title>
             <mediaobject>
                 <imageobject>
@@ -286,8 +286,8 @@
                 </textobject>
             </mediaobject>
         </figure>
-        
-        <figure> 
+
+        <figure>
             <title>Ajustement de contraste - Histogramme</title>
             <mediaobject>
                 <imageobject>
@@ -299,8 +299,8 @@
                 </textobject>
             </mediaobject>
         </figure>
-        
-        <figure> 
+
+        <figure>
             <title>Ajustement de contraste - Normalisation</title>
             <mediaobject>
                 <imageobject>
@@ -312,8 +312,8 @@
                 </textobject>
             </mediaobject>
         </figure>
-        
-        <figure> 
+
+        <figure>
             <title>Contours</title>
             <mediaobject>
                 <imageobject>
@@ -325,8 +325,8 @@
                 </textobject>
             </mediaobject>
         </figure>
-        
-        <figure> 
+
+        <figure>
             <title>Effet de relief</title>
             <mediaobject>
                 <imageobject>
@@ -341,8 +341,8 @@
                 </textobject>
             </mediaobject>
         </figure>
-        
+
     </section>
-    
-    
+
+
 </section>

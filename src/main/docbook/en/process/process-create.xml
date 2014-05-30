@@ -10,7 +10,7 @@
     <title>
         Create his process
     </title>
-    
+
     <para>
         To create a new treatment, you had to implement three things :
     </para>
@@ -20,7 +20,7 @@
         <listitem> The description of your Treatment.</listitem>
         <listitem> The Treatment itself.</listitem>
     </itemizedlist>
-    
+
     <section>
         <title>The registry</title>
         <para>
@@ -28,21 +28,21 @@
             only calculation process, the vector registry all process which work on vector layers.
         </para>
         <para>
-            Each registy contains an instance list describing process it contains. We can get the description of a process easily. 
+            Each registy contains an instance list describing process it contains. We can get the description of a process easily.
         </para>
         <example>
             <title>Code to create a registry</title>
-            <link xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/processing/registry/DemoProcessRegistry.java" >
-                geotoolkit-pending/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/processing/registry/DemoProcessRegistry.java
+            <link xlink:href="http://hg.geotoolkit.org/geotoolkit/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/processing/registry/DemoProcessRegistry.java" >
+                geotoolkit/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/processing/registry/DemoProcessRegistry.java
             </link>
         </example>
 
         <para>
-            To create it factory, you can extend 
+            To create it factory, you can extend
             <link xlink:href="http://pending.geotoolkit.org/apidocs/org/geotoolkit/process/AbstractProcessingRegistry.html">AbstractProcessingRegistry</link> class and redefine the method getIdentification().
             which allow to identify own our registry.
             Registy is identifying with an <link xlink:href="http://www.geoapi.org/snapshot/javadoc/org/opengis/metadata/identification/Identification.html">Identification</link> object like in the next example.
-            
+
         </para>
 
         <example>
@@ -109,11 +109,11 @@
         <para>
             To finish the creating of your registry, you have to declare your class into org.geotoolkit.process.ProcessingRegistry file in
             a resources/META-INF/service folder of module.
-            You have to do this to enable that the utility class <link xlink:href="http://pending.geotoolkit.org/apidocs/org/geotoolkit/process/ProcessFinder.html"> ProcessFinder </link> find 
+            You have to do this to enable that the utility class <link xlink:href="http://pending.geotoolkit.org/apidocs/org/geotoolkit/process/ProcessFinder.html"> ProcessFinder </link> find
             your Registry and its process.
         </para>
     </section>
-    
+
     <section>
         <title>Description</title>
 
@@ -125,13 +125,13 @@
 
         <example>
             <title>Code to create ProcessDescriptor for an Addition</title>
-            <link xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/processing/registry/AddDescriptor.java" >
-                geotoolkit-pending/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/processing/registry/AddDesciptor.java
+            <link xlink:href="http://hg.geotoolkit.org/geotoolkit/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/processing/registry/AddDescriptor.java" >
+                geotoolkit/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/processing/registry/AddDesciptor.java
             </link>
         </example>
 
         <para>
-            For input and output managing, we use in GeotoolKit the <link xlink:href="http://www.geoapi.org/snapshot/javadoc/org/opengis/parameter/GeneralParameterDescriptor.html">GeneralParameterDescriptor</link> 
+            For input and output managing, we use in GeotoolKit the <link xlink:href="http://www.geoapi.org/snapshot/javadoc/org/opengis/parameter/GeneralParameterDescriptor.html">GeneralParameterDescriptor</link>
             which was first an object of ISO_19111 standard.
         </para>
 
@@ -160,7 +160,7 @@
             </figure>
 
             <para>
-                To create ParameterDescriptor or ParameterDescriptorGroup, we use default implementation of GeotoolKit 
+                To create ParameterDescriptor or ParameterDescriptorGroup, we use default implementation of GeotoolKit
                 <link xlink:href="http://www.geotoolkit.org/apidocs/org/geotoolkit/parameter/DefaultParameterDescriptor.html">DefaultParameterDescriptor</link> and
                 <link xlink:href="http://www.geotoolkit.org/apidocs/org/geotoolkit/parameter/DefaultParameterDescriptorGroup.html">DefaultParameterDescriptorgourp</link>.
             </para>
@@ -205,7 +205,7 @@
             </para>
 
             <para>
-                We can have translate for parameters descriptions of process like in the demo. 
+                We can have translate for parameters descriptions of process like in the demo.
                 We must have too created bundles in resources folder, and create ResourceInternationalString objects with the key defines by one translation.
                 For parameters, we must build a Map of "properties" like in the next example.
             </para>
@@ -225,7 +225,7 @@
 
             <para>
                 Thereafter when you want to create the parameter values ​​to enter for giving our process, simply call the method createValue () on ParameterDescriptorGroup representing the process inputs.
-                Then this method will return ParameterValueGroup built from ParameterDescriptor.  
+                Then this method will return ParameterValueGroup built from ParameterDescriptor.
             </para>
 
             <figure>

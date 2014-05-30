@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<StyledLayerDescriptor version="1.1.0" 
-    xsi:schemaLocation="http://www.opengis.net/sld StyledLayerDescriptor.xsd" 
-    xmlns="http://www.opengis.net/sld" 
+<StyledLayerDescriptor version="1.1.0"
+    xsi:schemaLocation="http://www.opengis.net/sld StyledLayerDescriptor.xsd"
+    xmlns="http://www.opengis.net/sld"
     xmlns:ogc="http://www.opengis.net/ogc"
-    xmlns:se="http://www.opengis.net/se" 
+    xmlns:se="http://www.opengis.net/se"
     xmlns:xlink="http://www.w3.org/1999/xlink"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-        
+
     <se:Name>SLD : name</se:Name>
     <se:Description>
         <se:Title>SLD : title</se:Title>
         <se:Abstract>SLD : abstract</se:Abstract>
     </se:Description>
-    
+
     <UseSLDLibrary>
         <se:OnlineResource xlink:href="http://geomayts.fr/anSLDFile.xml"/>
     </UseSLDLibrary>
-    
+
     <!-- Named Layer ####################################################### -->
     <NamedLayer>
         <se:Name>Named layer : name</se:Name>
@@ -24,7 +24,7 @@
             <se:Title>Named layer : title</se:Title>
             <se:Abstract>Named layer : abstract</se:Abstract>
         </se:Description>
-        
+
         <LayerFeatureConstraints>
             <FeatureTypeConstraint>
                 <se:FeatureTypeName>FeatureName</se:FeatureTypeName>
@@ -39,7 +39,7 @@
                 <Extent><se:Name>Ext : Name 3</se:Name><Value>Ext : Value 3</Value></Extent>
             </FeatureTypeConstraint>
         </LayerFeatureConstraints>
-        
+
         <NamedStyle>
             <se:Name>Named style : name</se:Name>
             <se:Description>
@@ -47,9 +47,9 @@
                 <se:Abstract>Named style : abstract</se:Abstract>
             </se:Description>
         </NamedStyle>
-        
+
     </NamedLayer>
-    
+
     <!-- User Layer ######################################################## -->
     <UserLayer>
         <se:Name>User layer : name</se:Name>
@@ -57,15 +57,15 @@
             <se:Title>User layer : title</se:Title>
             <se:Abstract>User layer : abstract</se:Abstract>
         </se:Description>
-        
+
         <RemoteOWS>
            <Service>WFS</Service>
-           <se:OnlineResource 
-                xlink:type="simple" 
+           <se:OnlineResource
+                xlink:type="simple"
                 xlink:href="http://some.site.com/WFS?"/>
         </RemoteOWS>
 
-        
+
         <LayerFeatureConstraints>
             <FeatureTypeConstraint>
                 <se:FeatureTypeName>FeatureName</se:FeatureTypeName>
@@ -79,37 +79,37 @@
                 <Extent><se:Name>Ext : Name 2</se:Name><Value>Ext : Value 2</Value></Extent>
             </FeatureTypeConstraint>
         </LayerFeatureConstraints>
-        
+
         <UserStyle>
             <se:Name>User style : name</se:Name>
             <se:Description>
                 <se:Title>User style : title</se:Title>
                 <se:Abstract>User style : abstract</se:Abstract>
             </se:Description>
-            
+
             <IsDefault>true</IsDefault>
-            
-            <se:OnlineResource xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/raw-file/tip/modules/jaxb-xml-binding/geotk-xml-sld/src/test/resources/org/geotoolkit/sample/SE_fts_v110.xml"/>
-            
+
+            <se:OnlineResource xlink:href="http://hg.geotoolkit.org/geotoolkit/raw/tip/modules/jaxb-xml-binding/geotk-xml-sld/src/test/resources/org/geotoolkit/sample/SE_fts_v110.xml"/>
+
             <se:CoverageStyle>
                 <se:Name>FTS 2 name</se:Name>
                 <se:Description>
                     <se:Title>FTS 2 title</se:Title>
                     <se:Abstract>FTS 2 abstract</se:Abstract>
                 </se:Description>
-                
-                <se:OnlineResource xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/raw-file/tip/modules/jaxb-xml-binding/geotk-xml-sld/src/test/resources/org/geotoolkit/sample/SE_rule_v110.xml"/>
-                
+
+                <se:OnlineResource xlink:href="http://hg.geotoolkit.org/geotoolkit/raw/tip/modules/jaxb-xml-binding/geotk-xml-sld/src/test/resources/org/geotoolkit/sample/SE_rule_v110.xml"/>
+
                 <se:Rule>
                     <se:Name>Rule 2 name</se:Name>
                     <se:Description>
                         <se:Title>Rule 2 title</se:Title>
                         <se:Abstract>Rule 2 abstract</se:Abstract>
                     </se:Description>
-                    
+
                     <se:MinScaleDenominator>0.0</se:MinScaleDenominator>
                     <se:MaxScaleDenominator>1.7976931348623157E308</se:MaxScaleDenominator>
-                    
+
                     <!-- Point symbol ###################################### -->
                     <se:PointSymbolizer uom="http://www.opengeospatial.org/se/units/pixel">
                         <se:Name>Point symbolizer name</se:Name>
@@ -117,9 +117,9 @@
                             <se:Title>Point symbolizer title</se:Title>
                             <se:Abstract>Point symbolizer description</se:Abstract>
                         </se:Description>
-                        
+
                         <se:Geometry><ogc:PropertyName>geom</ogc:PropertyName></se:Geometry>
-                        
+
                         <se:Graphic>
                             <se:Mark>
                                 <se:WellKnownName>square</se:WellKnownName>
@@ -149,7 +149,7 @@
                             </se:Displacement>
                         </se:Graphic>
                     </se:PointSymbolizer>
-                    
+
                     <!-- Line symbol ####################################### -->
                     <se:LineSymbolizer uom="http://www.opengeospatial.org/se/units/metre">
                         <se:Name>the line symbolizer name</se:Name>
@@ -157,7 +157,7 @@
                             <se:Title>Line symbolizer title</se:Title>
                             <se:Abstract>Line symbolizer description</se:Abstract>
                         </se:Description>
-                        
+
                         <se:Geometry><ogc:PropertyName>geom</ogc:PropertyName></se:Geometry>
                         <se:Stroke>
                             <se:SvgParameter name="stroke"><ogc:Literal>#FF0000</ogc:Literal></se:SvgParameter>
@@ -170,7 +170,7 @@
                         </se:Stroke>
                         <se:PerpendicularOffset><ogc:Literal>5</ogc:Literal></se:PerpendicularOffset>
                     </se:LineSymbolizer>
-                    
+
                     <!-- Polygon symbol #################################### -->
                     <se:PolygonSymbolizer uom="http://www.opengeospatial.org/se/units/foot">
                         <se:Name>Polygon symbolizer name</se:Name>
@@ -178,7 +178,7 @@
                             <se:Title>Polygon symbolizer title</se:Title>
                             <se:Abstract>Polygon symbolizer description</se:Abstract>
                         </se:Description>
-                        
+
                         <se:Geometry><ogc:PropertyName>geom</ogc:PropertyName></se:Geometry>
                         <se:Fill>
                             <se:SvgParameter name="fill"><ogc:Literal>#0000FF</ogc:Literal></se:SvgParameter>
@@ -199,7 +199,7 @@
                         </se:Displacement>
                         <se:PerpendicularOffset><ogc:Literal>5</ogc:Literal></se:PerpendicularOffset>
                     </se:PolygonSymbolizer>
-                    
+
                     <!-- Text symbol ####################################### -->
                     <se:TextSymbolizer uom="http://www.opengeospatial.org/se/units/foot">
                         <se:Name>Text symbolizer name</se:Name>
@@ -207,16 +207,16 @@
                             <se:Title>Text symbolizer title</se:Title>
                             <se:Abstract>Text symbolizer description</se:Abstract>
                         </se:Description>
-                        
+
                         <se:Geometry><ogc:PropertyName>geom</ogc:PropertyName></se:Geometry>
                         <se:Label><ogc:Literal>the feature field name</ogc:Literal></se:Label>
-                        
+
                         <se:Font>
                             <se:SvgParameter name="font-size"><ogc:Literal>8</ogc:Literal></se:SvgParameter>
                             <se:SvgParameter name="font-style"><ogc:Literal>normal</ogc:Literal></se:SvgParameter>
                             <se:SvgParameter name="font-weight"><ogc:Literal>normal</ogc:Literal></se:SvgParameter>
                         </se:Font>
-                        
+
                         <se:LabelPlacement>
                             <se:PointPlacement>
                                 <se:AnchorPoint>
@@ -230,7 +230,7 @@
                                 <se:Rotation><ogc:Literal>0</ogc:Literal></se:Rotation>
                             </se:PointPlacement>
                         </se:LabelPlacement>
-                        
+
                         <se:Halo>
                             <se:Radius><ogc:Literal>12.0</ogc:Literal></se:Radius>
                             <se:Fill>
@@ -238,14 +238,14 @@
                                 <se:SvgParameter name="fill-opacity"><ogc:Literal>1.0</ogc:Literal></se:SvgParameter>
                             </se:Fill>
                         </se:Halo>
-                        
+
                         <se:Fill>
                             <se:SvgParameter name="fill"><ogc:Literal>#FFC800</ogc:Literal></se:SvgParameter>
                             <se:SvgParameter name="fill-opacity"><ogc:Literal>1.0</ogc:Literal></se:SvgParameter>
                         </se:Fill>
-                        
+
                     </se:TextSymbolizer>
-                    
+
                     <!-- Raster symbol ##################################### -->
                     <se:RasterSymbolizer uom="http://www.opengeospatial.org/se/units/metre">
                         <se:Name>Raster symbolizer name</se:Name>
@@ -253,24 +253,24 @@
                             <se:Title>Raster symbolizer title</se:Title>
                             <se:Abstract>Raster symbolizer description</se:Abstract>
                         </se:Description>
-                        
+
                         <se:Geometry><ogc:PropertyName>geom</ogc:PropertyName></se:Geometry>
                         <se:Opacity><ogc:Literal>0.5</ogc:Literal></se:Opacity>
-                        
+
                         <se:ChannelSelection>
                             <se:GrayChannel>
                                 <se:SourceChannelName>chanel2</se:SourceChannelName>
                                 <se:ContrastEnhancement><se:GammaValue>1.0</se:GammaValue></se:ContrastEnhancement>
                             </se:GrayChannel>
                         </se:ChannelSelection>
-                        
+
                         <se:OverlapBehavior>RANDOM</se:OverlapBehavior>
                         <se:ContrastEnhancement><se:GammaValue>1.0</se:GammaValue></se:ContrastEnhancement>
-                        
+
                         <se:ShadedRelief>
                             <se:BrightnessOnly>true</se:BrightnessOnly>
                         </se:ShadedRelief>
-                        
+
                         <se:ImageOutline>
                             <se:LineSymbolizer uom="http://www.opengeospatial.org/se/units/metre">
                                 <se:Name>the line symbolizer name</se:Name>
@@ -278,9 +278,9 @@
                                     <se:Title>Line symbolizer title</se:Title>
                                     <se:Abstract>Line symbolizer description</se:Abstract>
                                 </se:Description>
-                                
+
                                 <se:Geometry><ogc:PropertyName>geom</ogc:PropertyName></se:Geometry>
-                                
+
                                 <se:Stroke>
                                     <se:SvgParameter name="stroke"><ogc:Literal>#FF0000</ogc:Literal></se:SvgParameter>
                                     <se:SvgParameter name="stroke-dasharray">3.0 6.0</se:SvgParameter>
@@ -290,19 +290,19 @@
                                     <se:SvgParameter name="stroke-opacity"><ogc:Literal>1.0</ogc:Literal></se:SvgParameter>
                                     <se:SvgParameter name="stroke-width"><ogc:Literal>3.0</ogc:Literal></se:SvgParameter>
                                 </se:Stroke>
-                                
+
                                 <se:PerpendicularOffset><ogc:Literal>5</ogc:Literal></se:PerpendicularOffset>
-                                
+
                             </se:LineSymbolizer>
                         </se:ImageOutline>
                     </se:RasterSymbolizer>
-                    
+
                 </se:Rule>
-                
+
             </se:CoverageStyle>
-            
+
         </UserStyle>
-        
+
     </UserLayer>
-    
+
 </StyledLayerDescriptor>

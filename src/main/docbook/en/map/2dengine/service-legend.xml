@@ -7,20 +7,20 @@
 <section xmlns="http://docbook.org/ns/docbook" version="5.0"
          xmlns:xlink = "http://www.w3.org/1999/xlink"
          lang="en">
-          
+
     <title>
         Service-legend
     </title>
-    
+
     <example>
         <title>Generating captions</title>
-        <link xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/rendering/LegendDemo.java">
-            <acronym>geotoolkit-pending/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/rendering/LegendDemo.java</acronym>
-        </link>        
+        <link xlink:href="http://hg.geotoolkit.org/geotoolkit/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/rendering/LegendDemo.java">
+            <acronym>geotoolkit/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/rendering/LegendDemo.java</acronym>
+        </link>
     </example>
-        
+
     <para>
-        For this class, one class is using : 
+        For this class, one class is using :
         <emphasis>DefaultLegendService</emphasis> with two methods :
         <itemizedlist>
             <listitem>
@@ -33,14 +33,14 @@
         You need a <emphasis>LegendTemplate</emphasis> object to create a caption. This object is using to contain
         general information like spacing, colors, or font familly...
     </para>
-    
+
     <example>
         <title>Create and show a legend</title>
         <programlisting>
-            
+
                 //generate a map context
                 final MapContext context = createContext();
- 
+
                 //generate a template for the legend
                 final LegendTemplate template = new DefaultLegendTemplate(
                 new DefaultBackgroundTemplate( //legend background
@@ -56,15 +56,15 @@
                 true, // show layer names
                 new Font("Serial",Font.BOLD,12) //Font used for layer names
                 );
- 
- 
+
+
                 //grab the best legend size, you may provide your own size, the service will
                 //do it's best to generate a nice legend
                 final Dimension preferredSize = DefaultLegendService.legendPreferredSize(template, context);
- 
+
                 //create the legend image
                 final BufferedImage legend = DefaultLegendService.portray(template, context, preferredSize);
- 
+
                 //show the legend
                 final JFrame frm = new JFrame();
                 frm.setContentPane(new JScrollPane(new JLabel(new ImageIcon(legend))));
@@ -72,7 +72,7 @@
                 frm.setLocationRelativeTo(null);
                 frm.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                 frm.setVisible(true);
-            
+
         </programlisting>
     </example>
 </section>

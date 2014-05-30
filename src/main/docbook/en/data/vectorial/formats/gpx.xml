@@ -7,14 +7,14 @@
 <section xmlns="http://docbook.org/ns/docbook" version="5.0"
          xmlns:xlink = "http://www.w3.org/1999/xlink"
          id="gpx" xreflabel="GPX" lang="en">
-             
+
     <title>Format GPX</title>
     <example>
         <title>Reading GPX files</title>
-        <link xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/datamodel/gpx/GPXDemo.java">
-            <acronym>geotoolkit-pending/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/datamodel/gpx/GPXDemo.java</acronym>
+        <link xlink:href="http://hg.geotoolkit.org/geotoolkit/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/datamodel/gpx/GPXDemo.java">
+            <acronym>geotoolkit/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/datamodel/gpx/GPXDemo.java</acronym>
         </link>
-        
+
     </example>
     <para>
         GPX is using to interchange data between GPS devices.
@@ -26,7 +26,7 @@
         <listitem>
             Track
             <programlisting>
-                    
+
                 DefaultFeatureType {http://www.topografix.com}Track identified extends GPXEntity
                 ╔══════════════════════════════════════════════════╤══════╤════════════╤═══════════╤═════════════════╤════════╤═══════════╗
                 ║ name                                             │  min │        max │  nillable │            type │    CRS │  UserData ║
@@ -71,7 +71,7 @@
         <listitem>
             WayPoint
             <programlisting>
-                    
+
                 DefaultFeatureType {http://www.topografix.com}WayPoint identified extends GPXEntity
                 ╔══════════════════════════════════════════╤══════╤════════════╤═══════════╤═════════╤════════╤═══════════╗
                 ║ name                                     │ min  │ max        │ nillable  │ type    │ CRS    │ UserData  ║
@@ -103,7 +103,7 @@
         <listitem>
             Routes
             <programlisting>
-                    
+
                 DefaultFeatureType {http://www.topografix.com}Route identified extends GPXEntity
                 ╔══════════════════════════════════════════════╤══════╤════════════╤═══════════╤═════════════╤════════╤═══════════╗
                 ║ name                                         │ min  │ max        │ nillable  │ type        │ CRS    │ UserData  ║
@@ -143,14 +143,14 @@
             </programlisting>
         </listitem>
     </itemizedlist>
-    
+
     <example>
         <title>Reading GPX files</title>
         <programlisting>
-            
+
             final Map&lt;String, Serializable&gt; parameters = new HashMap&lt;String,Serializable&gt;();
             parameters.put("url", GPXDemo.class.getResource("/data/sampleGPX.gpx"));
- 
+
             final DataStore store = DataStoreFinder.getDataStore(parameters);
         </programlisting>
     </example>

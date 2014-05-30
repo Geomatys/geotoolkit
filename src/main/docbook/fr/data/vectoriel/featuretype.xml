@@ -6,37 +6,37 @@
 ]>
 <section xmlns="http://docbook.org/ns/docbook" version="5.0"
          xmlns:xlink = "http://www.w3.org/1999/xlink">
-             
+
     <title>
         FeatureType
     </title>
-             
+
     <section>
         <title>
             Spécifications
         </title>
         <para>
-            La norme à laquelle se rapporte les Feature est 
+            La norme à laquelle se rapporte les Feature est
             <emphasis>ISO 19109 "Rules for application schemas"</emphasis>.
         </para>
         <para>
-            Un 
+            Un
             <emphasis>FeatureType</emphasis> est la définition d'un modèle. Tout comme on définit une table dans une base de données ou les colonnes dans un tableur. Le feature type va donc nous fournir des métadonnées sur ce que l'on manipule, nous donnant le nombre de propriétés, leurs noms, leurs quantités et leurs contraintes.
         </para>
         <para>
-            Un 
+            Un
             <emphasis>Feature</emphasis> est un enregistrement, il est toujours associé à un FeatureType qui le définit.
         </para>
         <para>
             En comparaison, un feature dans une base de données correspond à une ligne dans une table et le FeatureType serait la définition de la table.
         </para>
         <para>
-            La norme permet d'avoir des FeatureType abstraits, par exemple on peut avoir un type 
-            <emphasis>Voiture</emphasis> abstrait et des sous-types 
-            <emphasis>Voiture de course, Utilitaire, ...</emphasis> De la même façon que pour l’héritage objet en programmation, les sous-types peuvent avoir de nouveaux "attributes". Toutefois, dans les formats actuels, les héritages sont très rares. 
+            La norme permet d'avoir des FeatureType abstraits, par exemple on peut avoir un type
+            <emphasis>Voiture</emphasis> abstrait et des sous-types
+            <emphasis>Voiture de course, Utilitaire, ...</emphasis> De la même façon que pour l’héritage objet en programmation, les sous-types peuvent avoir de nouveaux "attributes". Toutefois, dans les formats actuels, les héritages sont très rares.
         </para>
-        
-        <figure> 
+
+        <figure>
             <title>Architecture des interfaces</title>
             <mediaobject>
                 <imageobject>
@@ -48,8 +48,8 @@
                 </textobject>
             </mediaobject>
         </figure>
-        
-        <figure> 
+
+        <figure>
             <title>Classe FeatureType</title>
             <mediaobject>
                 <imageobject>
@@ -89,14 +89,14 @@
         </para>
 
     </section>
-    
+
     <section>
         <title>FeatureTypeBuilder</title>
         <example>
             <title>Création de FeatureType</title>
-            <link xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/datamodel/FeatureTypeBuilderDemo.java">
-                <acronym>geotoolkit-pending/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/datamodel/FeatureTypeBuilderDemo.java</acronym>
-            </link>        
+            <link xlink:href="http://hg.geotoolkit.org/geotoolkit/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/datamodel/FeatureTypeBuilderDemo.java">
+                <acronym>geotoolkit/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/datamodel/FeatureTypeBuilderDemo.java</acronym>
+            </link>
         </example>
         <para>
             La manière par défaut de procéder pour créer un FeatureType est d'utiliser une <emphasis>FeatureTypeFactory</emphasis> toutefois ceci est très verbeux.
@@ -107,7 +107,7 @@
             On procède par ajout, en spécifiant le nom de l'attribut que l'on souhaite, son type et éventuellement dans le cas de geometrie, la projection.
         </para>
             <programlisting>
-                
+
                     final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
                     ftb.setName("Fish");
                     ftb.add("name", String.class);
@@ -117,7 +117,7 @@
                     ftb.add("direction", Float.class);
                     ftb.setDefaultGeometry("lastPosition");
                     final SimpleFeatureType sft = ftb.buildSimpleFeatureType();
-                
+
             </programlisting>
 
         <para>
@@ -125,7 +125,7 @@
         </para>
 
             <programlisting>
-                
+
                     DefaultSimpleFeatureType Fish identified extends Feature
                     ╔══════════════════╤══════╤══════╤═══════════╤════════════╤═══════════╤═══════════╗
                     ║ name             │  min │  max │  nillable │  type      │  CRS      │  UserData ║
@@ -138,7 +138,7 @@
                     ╚══════════════════╧══════╧══════╧═══════════╧════════════╧═══════════╧═══════════╝
                     crs=EPSG:WGS 84 / World Mercator
 
-                
+
             </programlisting>
 
         <para>

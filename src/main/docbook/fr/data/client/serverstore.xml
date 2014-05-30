@@ -6,26 +6,26 @@
 ]>
 <section xmlns="http://docbook.org/ns/docbook" version="5.0"
          xmlns:xlink = "http://www.w3.org/1999/xlink">
-             
+
     <title>ServerStore</title>
     <para>
-        Il existe une grande quantité de server différents, avec des objectifs souvent différents allant de l'affichage de cartes, aux traitements ou à l'administration. Geotoolkit regroupe tout ce qui est distant dans le terme de 
+        Il existe une grande quantité de server différents, avec des objectifs souvent différents allant de l'affichage de cartes, aux traitements ou à l'administration. Geotoolkit regroupe tout ce qui est distant dans le terme de
         <emphasis>Server</emphasis>. Un object de type server seul n'a pas grand interet et n'expose aucune fonctionnalité, cela est du à la vaste étendue d'opérations qu'ils peuvent proposer. C'est pourquoi une instance de server implémente en général une autre interface plus complète.
     </para>
-    
+
     <para>
         Par exemple les implémentations :
         <itemizedlist>
-            <listitem> 
-                <emphasis>WebFeatureserver</emphasis> étend à la fois Server et DataStore car il s'agit bien d'un service distant mais aussi d'un service qui fournit le nécessaire à la manipulation des features. 
+            <listitem>
+                <emphasis>WebFeatureserver</emphasis> étend à la fois Server et DataStore car il s'agit bien d'un service distant mais aussi d'un service qui fournit le nécessaire à la manipulation des features.
             </listitem>
             <listitem>
-                <emphasis>WebMapServer</emphasis> et 
+                <emphasis>WebMapServer</emphasis> et
                 <emphasis>WebMapTileServer</emphasis> étendent à la fois Server et CoverageStore car ils fournissent des images.
             </listitem>
         </itemizedlist>
     </para>
-    
+
     <section>
         <title>
             ServerFactory
@@ -34,18 +34,18 @@
             Les fabriques sont utilsées pour créer les serveurs. Chaque fabrique dispose d'un nom qui lui est propre ainsi que la définition de l'ensemble de paramètre qui lui est nécessaire afin de créer une nouvelle instance de Server.
         </para>
         <para>
-            Les implémentations de fabrique sont enregistrées via le registre de service du java (META-INF/services), cela permet la découverte automatique de nouvelles implémentations. La classe utilitaire 
+            Les implémentations de fabrique sont enregistrées via le registre de service du java (META-INF/services), cela permet la découverte automatique de nouvelles implémentations. La classe utilitaire
             <emphasis>ServerFinder</emphasis> permet de les récupérer rapidement.
         </para>
-        
+
         <example>
             <title>Lister les différentes fabriques de connexion distante</title>
-            <link xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/clients/ListAllFactoriesDemo.java">
-                <acronym>geotoolkit-pending/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/clients/ListAllFactoriesDemo.java</acronym>
+            <link xlink:href="http://hg.geotoolkit.org/geotoolkit/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/clients/ListAllFactoriesDemo.java">
+                <acronym>geotoolkit/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/clients/ListAllFactoriesDemo.java</acronym>
             </link>
-        
+
         </example>
-        
+
     </section>
-    
+
 </section>

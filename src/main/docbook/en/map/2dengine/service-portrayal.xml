@@ -7,24 +7,24 @@
 <section xmlns="http://docbook.org/ns/docbook" version="5.0"
          xmlns:xlink = "http://www.w3.org/1999/xlink"
 	 lang="en">
-          
+
     <title>
         Service-portrayal
     </title>
-    
+
     <example>
         <title>Generating images</title>
-        <link xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/rendering/PortrayalDemo.java">
-            <acronym>geotoolkit-pending/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/rendering/PortrayalDemo.java</acronym>
-        </link>        
+        <link xlink:href="http://hg.geotoolkit.org/geotoolkit/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/rendering/PortrayalDemo.java">
+            <acronym>geotoolkit/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/rendering/PortrayalDemo.java</acronym>
+        </link>
     </example>
-        
+
     <para>
-        For this task, we use one class : 
+        For this task, we use one class :
         <emphasis>DefaultPortrayalService</emphasis> which contains two méthods :
         <itemizedlist>
             <listitem>
-                <emphasis>portray</emphasis> : will generate a 
+                <emphasis>portray</emphasis> : will generate a
                 <emphasis>BufferedImage</emphasis> or will write image inside the given flow/file.
             </listitem>
             <listitem>
@@ -49,22 +49,22 @@
             </listitem>
         </itemizedlist>
     </para>
-    
+
     <example>
         <title>Create and show an image-map </title>
         <programlisting>
-            
+
                 //generate a map context
                 final MapContext context = createContext();
- 
+
                 //prepare the rendering context
                 final CanvasDef canvasdef = new CanvasDef(new Dimension(800, 600), Color.WHITE);
                 final SceneDef scenedef = new SceneDef(context);
                 final ViewDef viewdef = new ViewDef(context.getBounds());
- 
+
                 //generate the image
                 final BufferedImage img = DefaultPortrayalService.portray(canvasdef, scenedef, viewdef);
- 
+
                 //show the image
                 final JFrame frm = new JFrame();
                 frm.setContentPane(new JLabel(new ImageIcon(img)));
@@ -72,7 +72,7 @@
                 frm.setLocationRelativeTo(null);
                 frm.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                 frm.setVisible(true);
-            
+
         </programlisting>
     </example>
 </section>

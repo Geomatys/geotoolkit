@@ -14,20 +14,20 @@
 
     <example>
         <title>Make a new symbolizer</title>
-        <link xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/rendering/customsymbolizer/CustomSymbolizerDemo.java">
-            <acronym>geotoolkit-pending/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/rendering/customsymbolizer/CustomSymbolizerDemo.java</acronym>
+        <link xlink:href="http://hg.geotoolkit.org/geotoolkit/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/rendering/customsymbolizer/CustomSymbolizerDemo.java">
+            <acronym>geotoolkit/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/rendering/customsymbolizer/CustomSymbolizerDemo.java</acronym>
         </link>
-        <link xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/rendering/customsymbolizer/CrystallizeSymbolizer.java">
-            <acronym>geotoolkit-pending/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/rendering/customsymbolizer/CrystallizeSymbolizer.java</acronym>
+        <link xlink:href="http://hg.geotoolkit.org/geotoolkit/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/rendering/customsymbolizer/CrystallizeSymbolizer.java">
+            <acronym>geotoolkit/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/rendering/customsymbolizer/CrystallizeSymbolizer.java</acronym>
         </link>
-        <link xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/rendering/customsymbolizer/CrystallizeSymbolizerRenderer.java">
-            <acronym>geotoolkit-pending/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/rendering/customsymbolizer/CrystallizeSymbolizerRenderer.java</acronym>
+        <link xlink:href="http://hg.geotoolkit.org/geotoolkit/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/rendering/customsymbolizer/CrystallizeSymbolizerRenderer.java">
+            <acronym>geotoolkit/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/rendering/customsymbolizer/CrystallizeSymbolizerRenderer.java</acronym>
         </link>
-        <link xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/rendering/customsymbolizer/CrystallizeSymbolizerRendererService.java">
-            <acronym>geotoolkit-pending/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/rendering/customsymbolizer/CrystallizeSymbolizerRendererService.java</acronym>
+        <link xlink:href="http://hg.geotoolkit.org/geotoolkit/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/rendering/customsymbolizer/CrystallizeSymbolizerRendererService.java">
+            <acronym>geotoolkit/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/rendering/customsymbolizer/CrystallizeSymbolizerRendererService.java</acronym>
         </link>
-        <link xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/rendering/customsymbolizer/CrystallizeCachedSymbolizer.java ">
-            <acronym>geotoolkit-pending/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/rendering/customsymbolizer/CrystallizeCachedSymbolizer.java </acronym>
+        <link xlink:href="http://hg.geotoolkit.org/geotoolkit/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/rendering/customsymbolizer/CrystallizeCachedSymbolizer.java ">
+            <acronym>geotoolkit/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/rendering/customsymbolizer/CrystallizeCachedSymbolizer.java </acronym>
         </link>
     </example>
 
@@ -35,12 +35,12 @@
         <title>When to use a symbolizer ?</title>
         <para>
             <emphasis>Symbology Encoding</emphasis> standard isn't perfect and will never able to support
-            all possible cases. But this standard gives a structure interesting  
-            
+            all possible cases. But this standard gives a structure interesting
+
             La norme
             <emphasis>Symbology Encoding</emphasis> n'est pas parfaite et ne sera jamais capable de supporter tous les cas
-            possibles. Mais cette norme offre une bonne structure basée sur les règles et les symboliseur. 
-            Donc si nous souhaitons réutiliser cette structure en y ajoutant de nouvelles façons de dessiner, créer de 
+            possibles. Mais cette norme offre une bonne structure basée sur les règles et les symboliseur.
+            Donc si nous souhaitons réutiliser cette structure en y ajoutant de nouvelles façons de dessiner, créer de
             nouveaux symboliseur est la solution.
         </para>
     </section>
@@ -66,7 +66,7 @@
             He does not have to contain heavy objects, but definitions and parameters only.
         </para>
         <para>
-            Our symbolisers are not standard. They must implement 
+            Our symbolisers are not standard. They must implement
             <emphasis>ExtensionSymbolizer</emphasis> interface or
             <emphasis>abstract class AbstractExtensionSymbolizer</emphasis>.
         </para>
@@ -100,7 +100,7 @@
         <para>
             This service is in charge of the CachedSymbolizers and SymbolizerRenderers creation and glyph making.
 
-            To be find by the rendering enging GO2, the new service must be registered in 
+            To be find by the rendering enging GO2, the new service must be registered in
             <emphasis>META-INF services</emphasis>.
 
             <programlisting>

@@ -6,52 +6,52 @@
 ]>
 <section xmlns="http://docbook.org/ns/docbook" version="5.0"
          xmlns:xlink = "http://www.w3.org/1999/xlink">
-          
+
     <title>Datastore</title>
-    
+
     <para>
-        Dès lors que l'on peut créer des 
-        <emphasis>FeatureTypes</emphasis> et des 
+        Dès lors que l'on peut créer des
+        <emphasis>FeatureTypes</emphasis> et des
         <emphasis>Features </emphasis>on est à même de manipuler les éléments un par un.
     </para>
     <para>
-        Pour aller plus loin et pouvoir faire des requêtes particulières pour traiter des ensembles de Features, on utilise un 
-        <emphasis>Datastore</emphasis>. 
-        Celui-ci va nous permettre de faire des requêtes ainsi que de gérer un système de session/transactions pour s'occuper d'enregistrer 
-        les changements. 
+        Pour aller plus loin et pouvoir faire des requêtes particulières pour traiter des ensembles de Features, on utilise un
+        <emphasis>Datastore</emphasis>.
+        Celui-ci va nous permettre de faire des requêtes ainsi que de gérer un système de session/transactions pour s'occuper d'enregistrer
+        les changements.
     </para>
-    
+
     <section>
         <title>Spécifications</title>
-        
+
         <para>
-            Il n'y a actuellement aucune norme OGC ou ISO qui définisse comment accéder aux données. 
-            Les normes OGC Geographic Markup Language (GML) et OGC Web Feature Service (WFS) définissent 
-            le concept de 
+            Il n'y a actuellement aucune norme OGC ou ISO qui définisse comment accéder aux données.
+            Les normes OGC Geographic Markup Language (GML) et OGC Web Feature Service (WFS) définissent
+            le concept de
             <emphasis> collection de feature (FeatureCollection) </emphasis>mais ce n'est pas suffisant.
         </para>
         <para>
-            Plutôt que de concevoir une nouvelle API, nous avons cherché un modèle déjà existant et largement utilisé. 
-            En explorant les CMS (Content Management System), nous avons trouvé une spécification Java nommée : 
+            Plutôt que de concevoir une nouvelle API, nous avons cherché un modèle déjà existant et largement utilisé.
+            En explorant les CMS (Content Management System), nous avons trouvé une spécification Java nommée :
             <emphasis> Java Content Repository</emphasis>.
             Cette JSR dispose d'un grand nombre de companies et est utilisée dans plusieurs grand projets, JackRabbit, Exoplatform ou encore
             Liferay. C'est aussi une API mature qui en est à sa seconde version. (version 1 : JSR-170 et version 2 : JSR-283)
         </para>
         <para>
-            JCR a été conçu pour l’interopérabilité entre des sources de données complétements différentes, des bases de données 
-            aux systèmes de gestion de version et aux systèmes de fichiers. Il est intéressant de noter que celle-ci dispose d'une 
-            structure équivalente aux FeatureType et Feature qui sont nommés 
-            <emphasis>Node </emphasis>et 
-            <emphasis>NodeType</emphasis>. 
+            JCR a été conçu pour l’interopérabilité entre des sources de données complétements différentes, des bases de données
+            aux systèmes de gestion de version et aux systèmes de fichiers. Il est intéressant de noter que celle-ci dispose d'une
+            structure équivalente aux FeatureType et Feature qui sont nommés
+            <emphasis>Node </emphasis>et
+            <emphasis>NodeType</emphasis>.
             (Les données SIG sont elles si différentes des autres ?)
         </para>
         <para>
-            Le modèle JCR réduit tout en type primitif dans les object Node, ce qui serait pénible en SIG avec les géométries ou 
-            les projections. Nous avons donc conçu un modèle qui copie 1 pour 1 celui de JCR mais en remplaçant les classes Node 
+            Le modèle JCR réduit tout en type primitif dans les object Node, ce qui serait pénible en SIG avec les géométries ou
+            les projections. Nous avons donc conçu un modèle qui copie 1 pour 1 celui de JCR mais en remplaçant les classes Node
             et NodeType par leurs équivalents SIG Feature et FeatureType.
         </para>
-        
-        <figure> 
+
+        <figure>
             <title>Structure des datastores</title>
             <mediaobject>
                 <imageobject>
@@ -64,103 +64,103 @@
             </mediaobject>
         </figure>
     </section>
-    
+
     <section>
         <title>DatastoreFactory</title>
-        <para> 
-            Les fabriques sont utilsées pour créer les datastores. Chaque fabrique dispose d'un nom 
+        <para>
+            Les fabriques sont utilsées pour créer les datastores. Chaque fabrique dispose d'un nom
             qui lui est propre ainsi que la définition de l'ensemble de paramètre qui lui est nécessaire
             afin de créer une nouvelle instance de Datastore.
         </para>
         <para>
             Les implémentations de fabrique sont enregistrés via le registre de service du java (META-INF/services),
-            cela permet la découverte automatique de nouvelles implémentations. La classe utilitaire 
+            cela permet la découverte automatique de nouvelles implémentations. La classe utilitaire
             <emphasis>DatastoreFinder</emphasis> permet de les récupérer rapidement.
         </para>
         <example>
             <title>Lister les différentes fabriques de DataStore</title>
-            <link xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/datamodel/ListAllFactoriesDemo.java">
-                <acronym>geotoolkit-pending/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/datamodel/ListAllFactoriesDemo.java</acronym>
+            <link xlink:href="http://hg.geotoolkit.org/geotoolkit/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/datamodel/ListAllFactoriesDemo.java">
+                <acronym>geotoolkit/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/datamodel/ListAllFactoriesDemo.java</acronym>
             </link>
-        
+
         </example>
     </section>
-    
-    <section> 
+
+    <section>
         <title>Datastore </title>
-    
-        <example> 
+
+        <example>
             <title>Création d'un Datastore en mémoire</title>
             <simplelist>
                 <member>
-                    <link xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/datamodel/MemoryDataStoreDemo.java">
-                        <acronym>geotoolkit-pending/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/datamodel/MemoryDataStoreDemo.java</acronym>
+                    <link xlink:href="http://hg.geotoolkit.org/geotoolkit/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/datamodel/MemoryDataStoreDemo.java">
+                        <acronym>geotoolkit/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/datamodel/MemoryDataStoreDemo.java</acronym>
                     </link>
-        
+
                 </member>
-            
+
                 <member>
-                    <link xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/datamodel/DataStoreReadingDemo.java">
+                    <link xlink:href="http://hg.geotoolkit.org/geotoolkit/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/datamodel/DataStoreReadingDemo.java">
                         <acronym>/geotk_pending/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/datamodel/DataStoreReadingDemo.java</acronym>
                     </link>
                 </member>
-            
+
                 <member>
-                    <link xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/datamodel/DataStoreWritingDemo.java">
+                    <link xlink:href="http://hg.geotoolkit.org/geotoolkit/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/datamodel/DataStoreWritingDemo.java">
                         <acronym>/geotk_pending/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/datamodel/DataStoreWritingDemo.java</acronym>
                     </link>
-            
+
                 </member>
             </simplelist>
         </example>
-    
+
         <para>
-            Le Datastore est l'élément de base de stockage pour les features. Il est responsable du stockage sur disque (shapefile, gpx,...), 
-            en base de données (postgis...) ou de l'utilisation des serveurs distants (WFS). Son travail peut se limiter à la lecture mais aussi permettre l'écriture. 
+            Le Datastore est l'élément de base de stockage pour les features. Il est responsable du stockage sur disque (shapefile, gpx,...),
+            en base de données (postgis...) ou de l'utilisation des serveurs distants (WFS). Son travail peut se limiter à la lecture mais aussi permettre l'écriture.
             Il est aussi responsable de répondre correctement aux requêtes impliquant la gestion des filtres et la reprojection si besoin.
         </para>
-    
-        <para> 
+
+        <para>
             Pour obtenir un datastore, on peut le créer directement ou utiliser le DataStoreFinder :
         </para>
         <programlisting>
             final Map&lt;String, Serializable&gt; parameters = new HashMap&lt;String, Serializable&lt;();
             parameters.put("url", GPXDemo.class.getResource("/data/sampleGPX.gpx"));
- 
+
             final DataStore store = DataStoreFinder.getDataStore(parameters);
         </programlisting>
         <para>
-            Il est recommandé d'utiliser le DataStoreFinder car celui ci passe par des fabriques et peut potentiellement retourner un datastore déjà existant. Les datastores sont des objets concurrents et peuvent être utilisés par plusieurs threads à la fois. 
+            Il est recommandé d'utiliser le DataStoreFinder car celui ci passe par des fabriques et peut potentiellement retourner un datastore déjà existant. Les datastores sont des objets concurrents et peuvent être utilisés par plusieurs threads à la fois.
         </para>
     </section>
-        
-    <section> 
+
+    <section>
         <title>
             Session
         </title>
         <para>
-        
-            Une 
-            <emphasis>session</emphasis> est comme une vue sur le datastore. Une session peut être 
-            <emphasis>synchrone</emphasis> ou 
+
+            Une
+            <emphasis>session</emphasis> est comme une vue sur le datastore. Une session peut être
+            <emphasis>synchrone</emphasis> ou
             <emphasis>asynchrone</emphasis>.
-            Dans le premier mode, tout changement sera poussé directement dans le datastore tandis que dans 
-            le second un 
-            <emphasis>Diff</emphasis> vivra dans la session jusqu’à un appel à 
-            <emphasis>commit</emphasis> (pour pousser les changements) 
-            ou 
-            <emphasis>rollback</emphasis> (pour effacer les changements). 
+            Dans le premier mode, tout changement sera poussé directement dans le datastore tandis que dans
+            le second un
+            <emphasis>Diff</emphasis> vivra dans la session jusqu’à un appel à
+            <emphasis>commit</emphasis> (pour pousser les changements)
+            ou
+            <emphasis>rollback</emphasis> (pour effacer les changements).
         </para>
         <para>
             Depuis une session, il est possible de faire des requêtes sur le datastore.
         </para>
         <para>
-            Une requête 
-            <emphasis>(Query)</emphasis> définit un filtre ainsi qu'un certain nombre d'autres contraintes. Les requêtes 
-            sont créées en utilisant un 
+            Une requête
+            <emphasis>(Query)</emphasis> définit un filtre ainsi qu'un certain nombre d'autres contraintes. Les requêtes
+            sont créées en utilisant un
             <emphasis>QueryBuilder</emphasis>.
         </para>
-        <figure> 
+        <figure>
             <title>Requête sur un datastore</title>
             <mediaobject>
                 <imageobject>
@@ -182,25 +182,25 @@
 <!--            -->
         </programlisting>
     </section>
-        
+
     <section>
         <title>
             FeatureCollection
         </title>
         <para>
-            Une 
-            <emphasis>FeatureCollection</emphasis> est le résultat d'une requête effectuée sur une session. Cette collection ne contient pas directement les Features, elle ne fait que se comporter comme une collection. C'est uniquement au moment d'acquérir un iterator et d'appeler le 
+            Une
+            <emphasis>FeatureCollection</emphasis> est le résultat d'une requête effectuée sur une session. Cette collection ne contient pas directement les Features, elle ne fait que se comporter comme une collection. C'est uniquement au moment d'acquérir un iterator et d'appeler le
             <emphasis>next()</emphasis> que le feature va être créé.
         </para>
         <para>
-            Toute les opérations java standard de manipulation de collection sont implémentées. Appeler un add, contain, ...etc... va marcher. En complément, d'autres méthodes sont disponibles en utilisant des filtres. Il est aussi possible d'obtenir un sous-ensemble de feature en utilisant la methode 
+            Toute les opérations java standard de manipulation de collection sont implémentées. Appeler un add, contain, ...etc... va marcher. En complément, d'autres méthodes sont disponibles en utilisant des filtres. Il est aussi possible d'obtenir un sous-ensemble de feature en utilisant la methode
             <emphasis>subCollection</emphasis>.
         </para>
     </section>
-        
-    <section> 
+
+    <section>
         <title>FeatureIterator</title>
-        
+
         <para>
             Cet iterator est retourné par les Datastores et les sessions, c'est une iterateur java standard avec l'ajout d'une methode close afin de libérer d'éventuelle ressources associées.
         </para>
@@ -211,4 +211,4 @@
         </warning>
     </section>
 </section>
-    
+

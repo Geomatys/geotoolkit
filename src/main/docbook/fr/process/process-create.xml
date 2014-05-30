@@ -32,8 +32,8 @@
         </para>
         <example>
             <title>Code complet de création d'une registry</title>
-            <link xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/processing/registry/DemoProcessRegistry.java" >
-                geotoolkit-pending/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/processing/registry/DemoProcessRegistry.java
+            <link xlink:href="http://hg.geotoolkit.org/geotoolkit/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/processing/registry/DemoProcessRegistry.java" >
+                geotoolkit/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/processing/registry/DemoProcessRegistry.java
             </link>
         </example>
 
@@ -123,8 +123,8 @@
 
         <example>
             <title>Code complet de création d'un ProcessDescriptor pour une Addition</title>
-            <link xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/processing/registry/AddDescriptor.java" >
-                geotoolkit-pending/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/processing/registry/AddDesciptor.java
+            <link xlink:href="http://hg.geotoolkit.org/geotoolkit/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/processing/registry/AddDescriptor.java" >
+                geotoolkit/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/processing/registry/AddDesciptor.java
             </link>
         </example>
 
@@ -271,8 +271,8 @@
 
         <example>
             <title>Code complet du Process Addition</title>
-            <link xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/processing/registry/AddProcess.java" >
-                geotoolkit-pending/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/processing/registry/AddProcess.java
+            <link xlink:href="http://hg.geotoolkit.org/geotoolkit/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/processing/registry/AddProcess.java" >
+                geotoolkit/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/processing/registry/AddProcess.java
             </link>
         </example>
 
