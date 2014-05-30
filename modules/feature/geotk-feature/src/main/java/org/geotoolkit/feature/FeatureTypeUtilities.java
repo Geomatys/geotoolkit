@@ -54,8 +54,6 @@ import org.opengis.filter.Filter;
 import org.opengis.filter.PropertyIsLessThan;
 import org.opengis.filter.PropertyIsLessThanOrEqualTo;
 import org.opengis.filter.expression.Literal;
-import org.geotoolkit.feature.Property;
-import org.geotoolkit.feature.IllegalAttributeException;
 import org.geotoolkit.feature.simple.SimpleFeature;
 import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.opengis.geometry.MismatchedDimensionException;

@@ -17,6 +17,8 @@
 package org.geotoolkit.feature;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import org.geotoolkit.feature.simple.SimpleFeatureType;
@@ -67,6 +69,22 @@ abstract class WrapProperty<P extends org.geotoolkit.feature.Property> extends A
     @Override
     public void setValue(Object newValue) {
         prop.setValue(newValue);
+    }
+
+    public Collection<Object> getValues() {
+        return Collections.<Object>singleton(getValue());
+    }
+
+    public void setValues(Collection<? extends Object> values) throws IllegalArgumentException {
+        Object value = null;
+        final Iterator<?> it = values.iterator();
+        if (it.hasNext()) {
+            value = it.next();
+            if (it.hasNext()) {
+                throw new IllegalArgumentException("Too many elements.");
+            }
+        }
+        setValue(value);
     }
 
     @Override
@@ -259,6 +277,20 @@ abstract class WrapProperty<P extends org.geotoolkit.feature.Property> extends A
             prop.setDefaultGeometryProperty(geometryAttribute);
         }
 
+        @Override
+        public void setProperty(org.opengis.feature.Property property) throws IllegalArgumentException {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        @Override
+        public Object getPropertyValue(String name) throws IllegalArgumentException {
+            return getProperty(name).getValue();
+        }
+
+        @Override
+        public void setPropertyValue(String name, Object value) throws IllegalArgumentException {
+            getProperty(name).setValue(value);
+        }
     }
 
     static class SimpleFeature extends Feature<org.geotoolkit.feature.simple.SimpleFeature>

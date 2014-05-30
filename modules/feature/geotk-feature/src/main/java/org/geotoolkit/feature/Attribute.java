@@ -79,7 +79,7 @@ import org.opengis.filter.identity.Identifier;
  * This interface is kept around only for the transition to the new feature model.
  */
 @Deprecated
-public interface Attribute extends Property /*, org.opengis.feature.Attribute<Object> */ {
+public interface Attribute extends Property, org.opengis.feature.Attribute<Object> {
 
     /**
      * Override of {@link Property#getDescriptor()} which type narrows to

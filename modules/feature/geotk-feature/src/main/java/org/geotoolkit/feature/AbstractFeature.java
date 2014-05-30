@@ -107,12 +107,12 @@ public abstract class AbstractFeature<C extends Collection<Property>> extends Ab
                 if(env==null || (env instanceof JTSEnvelope2D && ((JTSEnvelope2D)env).isNull()) ){
                     continue;
                 }
-                
+
                 final GeneralEnvelope genv = new GeneralEnvelope(env);
                 if(genv.isAllNaN()){
                     continue;
                 }
-                
+
                 final BoundingBox bbox = DefaultBoundingBox.castOrCopy(env);
 
                 if(bounds == null){
@@ -166,5 +166,20 @@ public abstract class AbstractFeature<C extends Collection<Property>> extends Ab
         }
 
         this.defaultGeometryName = defaultGeometry.getType().getName();
+    }
+
+    @Override
+    public void setProperty(org.opengis.feature.Property property) throws IllegalArgumentException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Object getPropertyValue(String name) throws IllegalArgumentException {
+        return getProperty(name).getValue();
+    }
+
+    @Override
+    public void setPropertyValue(String name, Object value) throws IllegalArgumentException {
+        getProperty(name).setValue(value);
     }
 }

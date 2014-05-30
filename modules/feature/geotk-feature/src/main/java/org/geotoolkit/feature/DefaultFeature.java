@@ -1,7 +1,7 @@
 /*
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
- * 
+ *
  *    (C) 2002-2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2009-2011, Geomatys
  *
@@ -20,7 +20,6 @@ package org.geotoolkit.feature;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.geotoolkit.feature.Property;
 import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.geotoolkit.feature.type.FeatureType;
 import org.opengis.filter.identity.FeatureId;
@@ -59,5 +58,4 @@ public class DefaultFeature extends AbstractFeature<Collection<Property>> {
         super(type,id);
         value = new ArrayList<Property>(properties);
     }
-
 }

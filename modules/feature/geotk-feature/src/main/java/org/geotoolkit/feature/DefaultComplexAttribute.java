@@ -1,7 +1,7 @@
 /*
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
- * 
+ *
  *    (C) 2002-2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2009-2011, Geomatys
  *
@@ -20,9 +20,6 @@ package org.geotoolkit.feature;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.geotoolkit.feature.type.DefaultAttributeDescriptor;
-
-import org.geotoolkit.feature.Property;
 import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.geotoolkit.feature.type.ComplexType;
 import org.opengis.filter.identity.Identifier;
@@ -35,7 +32,7 @@ import org.opengis.filter.identity.Identifier;
  */
 public class DefaultComplexAttribute<I extends Identifier> extends AbstractComplexAttribute<Collection<Property>,I> {
 
-    
+
     public DefaultComplexAttribute(final Collection<? extends Property> properties, final AttributeDescriptor descriptor, final I id) {
         super(descriptor, id );
         value = new ArrayList<Property>();
@@ -47,5 +44,4 @@ public class DefaultComplexAttribute<I extends Identifier> extends AbstractCompl
         value = new ArrayList<Property>();
         value.addAll(properties);
     }
-
 }

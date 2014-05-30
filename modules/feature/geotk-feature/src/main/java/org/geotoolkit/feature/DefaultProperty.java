@@ -17,11 +17,13 @@
  */
 package org.geotoolkit.feature;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
-import org.geotoolkit.feature.Property;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.geotoolkit.feature.type.PropertyType;
 
@@ -101,6 +103,22 @@ public class DefaultProperty<V extends Object, D extends PropertyDescriptor> ext
     @Override
     public void setValue(final Object value) {
         this.value = (V)value;
+    }
+
+    public Collection<Object> getValues() {
+        return Collections.<Object>singleton(getValue());
+    }
+
+    public void setValues(Collection<? extends Object> values) throws IllegalArgumentException {
+        Object value = null;
+        final Iterator<?> it = values.iterator();
+        if (it.hasNext()) {
+            value = it.next();
+            if (it.hasNext()) {
+                throw new IllegalArgumentException("Too many elements.");
+            }
+        }
+        setValue(value);
     }
 
     /**

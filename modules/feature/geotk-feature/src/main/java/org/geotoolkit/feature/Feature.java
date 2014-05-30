@@ -54,7 +54,7 @@ import org.opengis.geometry.Envelope;
  * This interface is kept around only for the transition to the new feature model.
  */
 @Deprecated
-public interface Feature extends ComplexAttribute /*, org.opengis.feature.Feature */ {
+public interface Feature extends ComplexAttribute, org.opengis.feature.Feature {
 
     /**
      * Override and type narrow to FeatureType.
