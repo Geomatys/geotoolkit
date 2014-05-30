@@ -32,12 +32,12 @@ import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.util.Converters;
 import org.apache.sis.util.CharSequences;
 
-import org.opengis.feature.ComplexAttribute;
-import org.opengis.feature.Feature;
-import org.opengis.feature.Property;
-import org.opengis.feature.type.ComplexType;
-import org.opengis.feature.type.FeatureType;
-import org.opengis.feature.type.PropertyDescriptor;
+import org.geotoolkit.feature.ComplexAttribute;
+import org.geotoolkit.feature.Feature;
+import org.geotoolkit.feature.Property;
+import org.geotoolkit.feature.type.ComplexType;
+import org.geotoolkit.feature.type.FeatureType;
+import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.expression.Expression;
 

@@ -1,6 +1,6 @@
 /*$************************************************************************************************
  **
- ** $Id: 
+ ** $Id:
  **
  ** $URL: https://geoapi.svn.sourceforge.net/svnroot/geoapi/trunk/geoapi/src/main/java/org/opengis/services/Interface.java $
  **
@@ -15,9 +15,9 @@ import static org.opengis.annotation.Obligation.*;
 import static org.opengis.annotation.Specification.*;
 
 /**
- * 
+ *
  * Role of the feature association.
- * 
+ *
  * @author Guilhem Legal
  * @module pending
  */
@@ -26,8 +26,8 @@ public interface AssociationRole extends PropertyType {
 
     /**
      * Type of association role, indicating whether this role acts as a "is part of" or 'is a member of" semantics.
-     * default value: "ordinary" 
-     * 
+     * default value: "ordinary"
+     *
      */
     //@UML(identifier="type", obligation=MANDATORY, specification=ISO_19110)
     RoleType getType();
@@ -40,7 +40,7 @@ public interface AssociationRole extends PropertyType {
      */
     //@UML(identifier="isOrdered", obligation=MANDATORY, specification=ISO_19110)
     Boolean getIsOrdered();
-    
+
     /**
      * indicates whether this role is navigable from the source feature to the target feature of the association.
      * default value: TRUE
@@ -51,16 +51,16 @@ public interface AssociationRole extends PropertyType {
 
     /**
      * relation of which this association role is a part.
-     * 
+     *
      */
     //@UML(identifier="relation", obligation=MANDATORY, specification=ISO_19110)
     FeatureAssociation getRelation();
 
     /**
-     * Type of the target value of this association    
+     * Type of the target value of this association
      */
     //@UML(identifier="valueType", obligation=MANDATORY, specification=ISO_19110)
     FeatureType getValueType();
-    
+
 
 }

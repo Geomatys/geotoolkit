@@ -21,7 +21,7 @@ import org.geotoolkit.coverage.memory.MemoryCoverageStore;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
-import org.geotoolkit.feature.DefaultName;
+import org.geotoolkit.feature.type.DefaultName;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.junit.Test;
 import static org.junit.Assert.*;

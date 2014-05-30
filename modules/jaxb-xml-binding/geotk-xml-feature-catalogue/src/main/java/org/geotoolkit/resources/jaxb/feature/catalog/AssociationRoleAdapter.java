@@ -1,7 +1,7 @@
 /*
  *    GeotoolKit - An Open Source Java GIS Toolkit
  *    http://geotoolkit.org
- * 
+ *
  *    (C) 2009, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -32,13 +32,13 @@ import org.opengis.feature.catalog.AssociationRole;
  * @author Guilhem Legal
  */
 public class AssociationRoleAdapter extends XmlAdapter<AssociationRoleAdapter, AssociationRole> {
-    
+
     private AssociationRole association;
-    
+
     @XmlIDREF
     @XmlAttribute(namespace="http://www.w3.org/1999/xlink")
     private AssociationRoleImpl href;
-    
+
     /**
      * Empty constructor for JAXB only.
      */
@@ -76,7 +76,7 @@ public class AssociationRoleAdapter extends XmlAdapter<AssociationRoleAdapter, A
      */
     @XmlElement(name = "FC_AssociationRole")
     public AssociationRoleImpl getAssociationRole() {
-        if (association == null) 
+        if (association == null)
             return null;
         return (association instanceof AssociationRoleImpl) ?
             (AssociationRoleImpl)association : new AssociationRoleImpl(association);
@@ -120,7 +120,7 @@ public class AssociationRoleAdapter extends XmlAdapter<AssociationRoleAdapter, A
         return new AssociationRoleAdapter(value);
     }
 
-    
-    
+
+
 
 }

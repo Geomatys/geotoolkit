@@ -25,9 +25,9 @@ import java.util.logging.Logger;
 import org.geotoolkit.util.Converters;
 
 import org.jaxen.JaxenException;
-import org.opengis.feature.ComplexAttribute;
-import org.opengis.feature.Property;
-import org.opengis.feature.type.ComplexType;
+import org.geotoolkit.feature.ComplexAttribute;
+import org.geotoolkit.feature.Property;
+import org.geotoolkit.feature.type.ComplexType;
 
 
 /**

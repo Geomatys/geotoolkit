@@ -21,7 +21,7 @@ import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.process.AbstractProcessDescriptor;
 
-import org.opengis.feature.Feature;
+import org.geotoolkit.feature.Feature;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 

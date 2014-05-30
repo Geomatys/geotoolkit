@@ -10,7 +10,7 @@ import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.spi.ImageWriterSpi;
 import org.geotoolkit.coverage.*;
 import org.geotoolkit.coverage.filestore.*;
-import org.geotoolkit.feature.DefaultName;
+import org.geotoolkit.feature.type.DefaultName;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.gui.swing.ProgressWindow;
 import org.geotoolkit.image.jai.Registry;
@@ -25,7 +25,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.RandomStyleBuilder;
-import org.opengis.feature.type.Name;
+import org.geotoolkit.feature.type.Name;
 import org.opengis.parameter.ParameterValueGroup;
 
 /**

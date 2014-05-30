@@ -27,11 +27,11 @@ import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.gui.swing.tree.DefaultMutableTreeNode;
 import org.geotoolkit.gui.swing.tree.MutableTreeNode;
 
-import org.opengis.feature.ComplexAttribute;
-import org.opengis.feature.Property;
-import org.opengis.feature.type.ComplexType;
-import org.opengis.feature.type.Name;
-import org.opengis.feature.type.PropertyDescriptor;
+import org.geotoolkit.feature.ComplexAttribute;
+import org.geotoolkit.feature.Property;
+import org.geotoolkit.feature.type.ComplexType;
+import org.geotoolkit.feature.type.Name;
+import org.geotoolkit.feature.type.PropertyDescriptor;
 
 /**
  * Construct a Tree model for a feature/complexAttribut/property.

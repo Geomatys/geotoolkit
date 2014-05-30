@@ -62,10 +62,10 @@ import org.opengis.style.PolygonSymbolizer;
 import org.opengis.style.Stroke;
 import org.opengis.style.LineSymbolizer;
 import org.opengis.style.Symbolizer;
-import org.opengis.feature.type.PropertyDescriptor;
-import org.opengis.feature.Feature;
-import org.opengis.feature.ComplexAttribute;
-import org.opengis.feature.Property;
+import org.geotoolkit.feature.type.PropertyDescriptor;
+import org.geotoolkit.feature.Feature;
+import org.geotoolkit.feature.ComplexAttribute;
+import org.geotoolkit.feature.Property;
 import org.opengis.filter.expression.Literal;
 import org.opengis.parameter.ParameterValueGroup;
 

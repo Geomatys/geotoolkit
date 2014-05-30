@@ -29,7 +29,7 @@ import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapLayer;
-import org.opengis.feature.type.FeatureType;
+import org.geotoolkit.feature.type.FeatureType;
 import org.opengis.style.Symbolizer;
 
 /**

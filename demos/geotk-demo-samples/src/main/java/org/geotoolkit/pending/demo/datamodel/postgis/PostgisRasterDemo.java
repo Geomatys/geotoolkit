@@ -20,8 +20,8 @@ import org.geotoolkit.map.MapContext;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.style.RandomStyleBuilder;
 import org.opengis.coverage.Coverage;
-import org.opengis.feature.Feature;
-import org.opengis.feature.type.FeatureType;
+import org.geotoolkit.feature.Feature;
+import org.geotoolkit.feature.type.FeatureType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
 

@@ -21,45 +21,45 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;
 import org.opengis.sld.Extent;
 import org.opengis.sld.FeatureTypeConstraint;
 import org.opengis.sld.SLDVisitor;
+import org.opengis.util.GenericName;
 
 /**
  * Default imumutable feature type constraint, thread safe.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
 class DefaultFeatureTypeConstraint implements FeatureTypeConstraint{
 
-    private final Name featureName;
+    private final GenericName featureName;
     private final Filter filter;
     private final List<Extent> extents;
-    
+
     /**
      * default constructor.
      */
-    DefaultFeatureTypeConstraint(final Name name, final Filter filter, final List<Extent> extents){
+    DefaultFeatureTypeConstraint(final GenericName name, final Filter filter, final List<Extent> extents){
         this.featureName = name;
         this.filter = filter;
-        
+
         if(extents != null){
             List<Extent> copy = new ArrayList<Extent>(extents);
             this.extents = Collections.unmodifiableList(copy);
         }else{
             this.extents = Collections.emptyList();
         }
-        
+
     }
-    
+
     /**
      * {@inheritDoc }
      */
     @Override
-    public Name getFeatureTypeName() {
+    public GenericName getFeatureTypeName() {
         return featureName;
     }
 
@@ -79,7 +79,7 @@ class DefaultFeatureTypeConstraint implements FeatureTypeConstraint{
     public List<Extent> getExtent() {
         return extents;
     }
-    
+
     @Override
     public Object accept(final SLDVisitor visitor, final Object extraData) {
         return visitor.visit(this, extraData);
@@ -139,5 +139,5 @@ class DefaultFeatureTypeConstraint implements FeatureTypeConstraint{
         builder.append(']');
         return builder.toString();
     }
-    
+
 }

@@ -28,7 +28,7 @@ import javax.swing.JSpinner;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import org.jdesktop.swingx.JXDatePicker;
-import org.opengis.feature.type.PropertyType;
+import org.geotoolkit.feature.type.PropertyType;
 
 /**
  *

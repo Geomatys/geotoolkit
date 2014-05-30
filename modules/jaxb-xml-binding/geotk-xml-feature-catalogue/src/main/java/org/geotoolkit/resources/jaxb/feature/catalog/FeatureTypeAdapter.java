@@ -1,7 +1,7 @@
 /*
  *    GeotoolKit - An Open Source Java GIS Toolkit
  *    http://geotoolkit.org
- * 
+ *
  *    (C) 2009, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -32,13 +32,13 @@ import org.opengis.feature.catalog.FeatureType;
  * @author Guilhem Legal
  */
 public class FeatureTypeAdapter extends XmlAdapter<FeatureTypeAdapter, FeatureType> {
-    
+
     private FeatureType feature;
-    
+
     @XmlIDREF
     @XmlAttribute(namespace="http://www.w3.org/1999/xlink")
     private FeatureTypeImpl href;
-    
+
     /**
      * Empty constructor for JAXB only.
      */
@@ -120,7 +120,7 @@ public class FeatureTypeAdapter extends XmlAdapter<FeatureTypeAdapter, FeatureTy
         return new FeatureTypeAdapter(value);
     }
 
-    
-    
+
+
 
 }

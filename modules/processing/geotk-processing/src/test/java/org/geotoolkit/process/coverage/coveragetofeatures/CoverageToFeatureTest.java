@@ -55,14 +55,14 @@ import org.geotoolkit.internal.image.io.GridDomainAccessor;
 import org.geotoolkit.process.coverage.AbstractProcessTest;
 
 import org.opengis.coverage.grid.GridCoverage;
-import org.opengis.feature.Feature;
+import org.geotoolkit.feature.Feature;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
-import org.opengis.feature.Property;
-import org.opengis.feature.type.FeatureType;
-import org.opengis.feature.type.GeometryDescriptor;
+import org.geotoolkit.feature.Property;
+import org.geotoolkit.feature.type.FeatureType;
+import org.geotoolkit.feature.type.GeometryDescriptor;
 import org.opengis.metadata.spatial.CellGeometry;
 import org.opengis.referencing.datum.PixelInCell;
 

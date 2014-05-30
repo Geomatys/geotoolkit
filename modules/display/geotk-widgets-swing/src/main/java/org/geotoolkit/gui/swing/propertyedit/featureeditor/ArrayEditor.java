@@ -36,12 +36,12 @@ import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.gui.swing.util.JOptionDialog;
 import org.geotoolkit.gui.swing.propertyedit.JFeatureOutLine;
-import org.opengis.feature.Attribute;
-import org.opengis.feature.ComplexAttribute;
-import org.opengis.feature.Property;
-import org.opengis.feature.type.AttributeDescriptor;
-import org.opengis.feature.type.ComplexType;
-import org.opengis.feature.type.PropertyType;
+import org.geotoolkit.feature.Attribute;
+import org.geotoolkit.feature.ComplexAttribute;
+import org.geotoolkit.feature.Property;
+import org.geotoolkit.feature.type.AttributeDescriptor;
+import org.geotoolkit.feature.type.ComplexType;
+import org.geotoolkit.feature.type.PropertyType;
 
 /**
  * Array Type editor.

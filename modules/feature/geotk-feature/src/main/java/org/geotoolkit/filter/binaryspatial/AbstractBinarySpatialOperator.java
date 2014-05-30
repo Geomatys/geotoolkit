@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.filter.binaryspatial;
 
-import org.opengis.feature.Feature;
+import org.geotoolkit.feature.Feature;
 import com.vividsolutions.jts.geom.Geometry;
 
 import java.io.Serializable;

@@ -33,8 +33,8 @@ import org.geotoolkit.process.AbstractProcess;
 import org.geotoolkit.process.ProcessException;
 
 import org.opengis.coverage.SampleDimensionType;
-import org.opengis.feature.Feature;
-import org.opengis.feature.type.FeatureType;
+import org.geotoolkit.feature.Feature;
+import org.geotoolkit.feature.type.FeatureType;
 import org.opengis.metadata.spatial.Georectified;
 import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.parameter.ParameterValueGroup;

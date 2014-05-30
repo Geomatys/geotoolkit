@@ -42,7 +42,7 @@ import javax.swing.ImageIcon;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 
-import org.geotoolkit.feature.DefaultName;
+import org.geotoolkit.feature.type.DefaultName;
 
 import org.geotoolkit.ogc.xml.OGC110toGTTransformer;
 
@@ -322,7 +322,7 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
         try{
             return super.visitExpression(jax);
         }catch(IllegalArgumentException ex){
-            final String expName = jax.getName().getLocalPart();
+            final String expName = jax.getName().toString();
             final Object obj = jax.getValue();
 
             if(obj instanceof MapItemType){
@@ -1074,9 +1074,9 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
                 }
             }
         }
-        
+
         final String format = externalGraphicType.getFormat();
-        
+
         //rebuild color replacements
         final Collection<ColorReplacement> replaces = new ArrayList<>();
         for(final ColorReplacementType crt : externalGraphicType.getColorReplacement()){
@@ -1236,7 +1236,7 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
      */
     public Jenks visit(final JenksType jenks) {
         if(jenks == null) return null;
-        
+
         final Literal fallback = filterFactory.literal(jenks.getFallbackValue());
         final Literal classNumber = filterFactory.literal(jenks.getClassNumber());
         final Literal palette = filterFactory.literal(jenks.getPalette());

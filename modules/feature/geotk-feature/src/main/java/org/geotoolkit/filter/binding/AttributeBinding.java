@@ -16,8 +16,8 @@
  */
 package org.geotoolkit.filter.binding;
 
-import org.opengis.feature.Attribute;
-import org.opengis.feature.Property;
+import org.geotoolkit.feature.Attribute;
+import org.geotoolkit.feature.Property;
 
 /**
  *

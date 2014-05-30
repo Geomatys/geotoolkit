@@ -32,7 +32,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
 import org.geotoolkit.wps.io.WPSMimeType;
 import org.geotoolkit.wps.xml.v100.ComplexDataType;
-import org.opengis.feature.type.FeatureType;
+import org.geotoolkit.feature.type.FeatureType;
 
 /**
  * Implementation of ObjectConverter to convert a FeatureCollection into a {@link ComplexDataType}.

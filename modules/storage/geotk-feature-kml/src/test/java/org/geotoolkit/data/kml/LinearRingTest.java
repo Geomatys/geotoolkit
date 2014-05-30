@@ -35,9 +35,6 @@ import org.geotoolkit.data.kml.model.KmlModelConstants;
 import org.geotoolkit.data.kml.model.LinearRing;
 import org.geotoolkit.data.kml.model.Polygon;
 import org.geotoolkit.data.kml.xml.KmlWriter;
-import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.factory.Hints;
-import org.geotoolkit.feature.LenientFeatureFactory;
 import org.geotoolkit.xml.DomCompare;
 
 import org.junit.After;
@@ -46,9 +43,9 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import org.opengis.feature.Feature;
+import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.FeatureFactory;
-import org.opengis.feature.Property;
+import org.geotoolkit.feature.Property;
 import static org.junit.Assert.*;
 import org.xml.sax.SAXException;
 
@@ -62,8 +59,7 @@ public class LinearRingTest {
 
     private static final double DELTA = 0.000000000001;
     private static final String pathToTestFile = "src/test/resources/org/geotoolkit/data/kml/linearRing.kml";
-    private static final FeatureFactory FF = FactoryFinder.getFeatureFactory(
-            new Hints(Hints.FEATURE_FACTORY, LenientFeatureFactory.class));
+    private static final FeatureFactory FF = FeatureFactory.LENIENT;
 
     public LinearRingTest() {
     }
@@ -146,7 +142,7 @@ public class LinearRingTest {
 
         final Boundary outerBoundaryIs = kmlFactory.createBoundary();
         outerBoundaryIs.setLinearRing(linearRing);
-        
+
         final Polygon polygon = kmlFactory.createPolygon(outerBoundaryIs, null);
 
         final Feature placemark = kmlFactory.createPlacemark();

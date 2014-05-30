@@ -30,7 +30,7 @@ import static org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureReader.READ_EMBED
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
 import org.geotoolkit.wps.converters.WPSDefaultConverter;
 import org.geotoolkit.wps.xml.v100.ComplexDataType;
-import org.opengis.feature.type.FeatureType;
+import org.geotoolkit.feature.type.FeatureType;
 
 /**
  *

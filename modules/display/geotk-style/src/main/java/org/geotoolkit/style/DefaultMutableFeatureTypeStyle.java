@@ -28,13 +28,13 @@ import org.geotoolkit.util.collection.NotifiedCheckedList;
 import org.geotoolkit.util.collection.NotifiedCheckedSet;
 import org.apache.sis.util.Classes;
 
-import org.opengis.feature.type.Name;
 import org.opengis.filter.Id;
 import org.opengis.metadata.citation.OnlineResource;
 import org.opengis.style.Description;
 import org.opengis.style.SemanticType;
 import org.opengis.style.StyleVisitor;
 import org.opengis.style.Symbolizer;
+import org.opengis.util.GenericName;
 
 import static org.apache.sis.util.ArgumentChecks.*;
 
@@ -94,7 +94,7 @@ public class DefaultMutableFeatureTypeStyle implements MutableFeatureTypeStyle, 
 
         };
 
-    private final Set<Name> names = new NotifiedCheckedSet<Name>(Name.class){
+    private final Set<GenericName> names = new NotifiedCheckedSet<GenericName>(GenericName.class){
 
         @Override
         protected Object getLock() {
@@ -102,17 +102,17 @@ public class DefaultMutableFeatureTypeStyle implements MutableFeatureTypeStyle, 
         }
 
         @Override
-        protected void notifyAdd(Name item, NumberRange<Integer> range) {
+        protected void notifyAdd(GenericName item, NumberRange<Integer> range) {
             fireNameChange(CollectionChangeEvent.ITEM_ADDED, item, range);
         }
 
         @Override
-        protected void notifyAdd(Collection<? extends Name> items, NumberRange<Integer> range) {
+        protected void notifyAdd(Collection<? extends GenericName> items, NumberRange<Integer> range) {
             fireNameChange(CollectionChangeEvent.ITEM_ADDED, items, range);
         }
 
         @Override
-        protected void notifyRemove(Name item, NumberRange<Integer> range) {
+        protected void notifyRemove(GenericName item, NumberRange<Integer> range) {
             fireNameChange(CollectionChangeEvent.ITEM_REMOVED, item, range);
         }
     };
@@ -239,10 +239,10 @@ public class DefaultMutableFeatureTypeStyle implements MutableFeatureTypeStyle, 
 
     /**
      * {@inheritDoc }
-     * @return Set<Name> : This is the "living" Set.
+     * @return The "living" Set.
      */
     @Override
-    public Set<Name> featureTypeNames() {
+    public Set<GenericName> featureTypeNames() {
         return names;
     }
 
@@ -366,10 +366,10 @@ public class DefaultMutableFeatureTypeStyle implements MutableFeatureTypeStyle, 
 
     }
 
-    protected void fireNameChange(final int type, final Name ftsName, final NumberRange<Integer> range) {
+    protected void fireNameChange(final int type, final GenericName ftsName, final NumberRange<Integer> range) {
         //TODO make fire property change thread safe, preserve fire order
 
-        final CollectionChangeEvent<Name> event = new CollectionChangeEvent<Name>(this, ftsName, type, range, null);
+        final CollectionChangeEvent<GenericName> event = new CollectionChangeEvent<GenericName>(this, ftsName, type, range, null);
         final FeatureTypeStyleListener[] lists = listeners.getListeners(FeatureTypeStyleListener.class);
 
         for (FeatureTypeStyleListener listener : lists) {
@@ -378,10 +378,10 @@ public class DefaultMutableFeatureTypeStyle implements MutableFeatureTypeStyle, 
 
     }
 
-    protected void fireNameChange(final int type, final Collection<? extends Name> ftsNames, final NumberRange<Integer> range){
+    protected void fireNameChange(final int type, final Collection<? extends GenericName> ftsNames, final NumberRange<Integer> range){
         //TODO make fire property change thread safe, preserve fire order
 
-        final CollectionChangeEvent<Name> event = new CollectionChangeEvent<Name>(this,ftsNames,type,range, null);
+        final CollectionChangeEvent<GenericName> event = new CollectionChangeEvent<GenericName>(this,ftsNames,type,range, null);
         final FeatureTypeStyleListener[] lists = listeners.getListeners(FeatureTypeStyleListener.class);
 
         for(FeatureTypeStyleListener listener : lists){

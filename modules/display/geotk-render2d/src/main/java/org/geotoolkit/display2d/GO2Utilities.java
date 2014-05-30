@@ -93,7 +93,6 @@ import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.JTSGeometry;
 import org.geotoolkit.image.jai.FloodFill;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.geotoolkit.referencing.operation.transform.LinearTransform;
 import org.geotoolkit.renderer.style.WellKnownMarkFactory;
@@ -111,15 +110,15 @@ import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.process.coverage.resample.ResampleDescriptor;
 import org.opengis.coverage.Coverage;
 import org.opengis.coverage.grid.GridCoverage;
-import org.opengis.feature.Feature;
-import org.opengis.feature.Property;
+import org.geotoolkit.feature.Feature;
+import org.geotoolkit.feature.Property;
 import org.geotoolkit.feature.simple.SimpleFeature;
-import org.opengis.feature.type.ComplexType;
-import org.opengis.feature.type.FeatureType;
-import org.opengis.feature.type.GeometryDescriptor;
-import org.opengis.feature.type.GeometryType;
-import org.opengis.feature.type.Name;
-import org.opengis.feature.type.PropertyDescriptor;
+import org.geotoolkit.feature.type.ComplexType;
+import org.geotoolkit.feature.type.FeatureType;
+import org.geotoolkit.feature.type.GeometryDescriptor;
+import org.geotoolkit.feature.type.GeometryType;
+import org.geotoolkit.feature.type.Name;
+import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.Id;
 import org.opengis.filter.expression.Expression;
@@ -146,6 +145,7 @@ import org.opengis.style.Stroke;
 import org.opengis.style.Style;
 import org.opengis.style.StyleVisitor;
 import org.opengis.style.Symbolizer;
+import org.opengis.util.GenericName;
 
 /**
  *
@@ -1125,7 +1125,7 @@ public final class GO2Utilities {
         for(final FeatureTypeStyle fts : ftss){
 
             final Id ids = fts.getFeatureInstanceIDs();
-            final Set<Name> names = fts.featureTypeNames();
+            final Set<GenericName> names = fts.featureTypeNames();
 
             //check semantic, only if we have a feature type
             if(type != null){
@@ -1200,7 +1200,7 @@ public final class GO2Utilities {
         for(final FeatureTypeStyle fts : ftss){
 
             final Id ids = fts.getFeatureInstanceIDs();
-            final Set<Name> names = fts.featureTypeNames();
+            final Set<GenericName> names = fts.featureTypeNames();
 
             //check semantic, only if we have a feature type
             if(type != null){
@@ -1267,7 +1267,7 @@ public final class GO2Utilities {
         for(final FeatureTypeStyle fts : ftss){
 
             final Id ids = fts.getFeatureInstanceIDs();
-            final Set<Name> names = fts.featureTypeNames();
+            final Set<GenericName> names = fts.featureTypeNames();
             final Collection<SemanticType> semantics = fts.semanticTypeIdentifiers();
 
             //TODO filter correctly possibilities
@@ -1411,5 +1411,5 @@ public final class GO2Utilities {
         if(Double.isNaN(env.getMinimum(1))){ env.setRange(1, Double.NEGATIVE_INFINITY, env.getMaximum(1));  }
         if(Double.isNaN(env.getMaximum(1))){ env.setRange(1, env.getMinimum(1), Double.POSITIVE_INFINITY);  }
     }
-    
+
 }

@@ -13,31 +13,24 @@ import org.geotoolkit.data.kml.model.AbstractGeometry;
 import org.geotoolkit.data.kml.model.Boundary;
 import org.geotoolkit.data.kml.model.Data;
 import org.geotoolkit.data.kml.model.DefaultExtendedData;
-import org.geotoolkit.data.kml.model.DefaultIdAttributes;
 import org.geotoolkit.data.kml.model.DefaultMultiGeometry;
 import org.geotoolkit.data.kml.model.ExtendedData;
 import org.geotoolkit.data.kml.model.IdAttributes;
 import org.geotoolkit.data.kml.model.Kml;
 import org.geotoolkit.data.kml.model.KmlModelConstants;
-import org.geotoolkit.data.kml.model.LineStyle;
 import org.geotoolkit.data.kml.model.MultiGeometry;
-import org.geotoolkit.data.kml.model.PolyStyle;
 import org.geotoolkit.data.kml.model.SchemaData;
 import org.geotoolkit.data.kml.model.SimpleData;
-import org.geotoolkit.data.kml.model.Style;
 import org.geotoolkit.data.kml.xml.KmlReader;
-import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.FeatureTypeBuilder;
-import org.geotoolkit.feature.LenientFeatureFactory;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.geotoolkit.util.FileUtilities;
-import org.opengis.feature.Feature;
+import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.FeatureFactory;
-import org.opengis.feature.Property;
+import org.geotoolkit.feature.Property;
 import org.geotoolkit.feature.simple.SimpleFeature;
 import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.opengis.referencing.operation.TransformException;
@@ -132,7 +125,7 @@ public class KmlFeatureUtilities {
     public static List<SimpleFeature> resolveFeaturesFromKml(final Kml kmlObject) {
         final List<SimpleFeature> results = new ArrayList<SimpleFeature>();
         if (kmlObject != null) {
-            final org.opengis.feature.Feature document = kmlObject.getAbstractFeature();
+            final org.geotoolkit.feature.Feature document = kmlObject.getAbstractFeature();
             final Iterator propertiesFeat = document.getProperties(KmlModelConstants.ATT_DOCUMENT_FEATURES.getName()).iterator();
 
             //increment for each features
@@ -141,8 +134,8 @@ public class KmlFeatureUtilities {
             //loop on document properties
             while (propertiesFeat.hasNext()) {
                 final Object object = propertiesFeat.next();
-                if (object instanceof org.opengis.feature.Feature) {
-                    final org.opengis.feature.Feature candidat = (org.opengis.feature.Feature) object;
+                if (object instanceof org.geotoolkit.feature.Feature) {
+                    final org.geotoolkit.feature.Feature candidat = (org.geotoolkit.feature.Feature) object;
 
                     //find geometry on tree
                     final List<Map.Entry<Object, Map<String, String>>> geometries = new ArrayList<Map.Entry<Object, Map<String, String>>>();
@@ -265,10 +258,10 @@ public class KmlFeatureUtilities {
 
     /**
      * recursive method on feature to find geometries
-     * @param feature {@link org.opengis.feature.Feature} traveled to find geometry
+     * @param feature {@link org.geotoolkit.feature.Feature} traveled to find geometry
      * @param geometries {@link List} where we add {@link Geometry}
      */
-    public static void fillGeometryListFromFeature(final org.opengis.feature.Feature feature, final List<Map.Entry<Object, Map<String, String>>> geometries) {
+    public static void fillGeometryListFromFeature(final org.geotoolkit.feature.Feature feature, final List<Map.Entry<Object, Map<String, String>>> geometries) {
 
         //If geometry is not null
         if (feature.getProperty("geometry") != null) {
@@ -309,8 +302,8 @@ public class KmlFeatureUtilities {
             final Iterator iterator = feature.getProperties(KmlModelConstants.ATT_FOLDER_FEATURES.getName()).iterator();
             while (iterator.hasNext()) {
                 final Object object = iterator.next();
-                if (object instanceof org.opengis.feature.Feature) {
-                    final org.opengis.feature.Feature candidat = (org.opengis.feature.Feature) object;
+                if (object instanceof org.geotoolkit.feature.Feature) {
+                    final org.geotoolkit.feature.Feature candidat = (org.geotoolkit.feature.Feature) object;
 
                     //recursive call
                     fillGeometryListFromFeature(candidat, geometries);
@@ -426,8 +419,7 @@ public class KmlFeatureUtilities {
      */
     public static Feature buildKMLFeature(Feature noKmlFeature, IdAttributes defaultIdStyle){
         //Transform geometry
-        final FeatureFactory FF = FactoryFinder.getFeatureFactory(
-                new Hints(Hints.FEATURE_FACTORY, LenientFeatureFactory.class));
+        final FeatureFactory FF = FeatureFactory.LENIENT;
         final KmlFactory kmlFactory = DefaultKmlFactory.getInstance();
         final Feature placemark = kmlFactory.createPlacemark();
         final Collection<Property> placemarkProperties = placemark.getProperties();
@@ -491,7 +483,7 @@ public class KmlFeatureUtilities {
             Point point = (Point)geometry;
             org.geotoolkit.data.kml.model.Point kmlPoint = kmlFactory.createPoint(point.getCoordinateSequence());
             return kmlPoint;
-            
+
         }else if(geometryClass.equals(Polygon.class)){
             final Polygon poly = (Polygon)geometry;
 
@@ -512,7 +504,7 @@ public class KmlFeatureUtilities {
             final Boundary boundary = kmlFactory.createBoundary(lr, null, null);
             final org.geotoolkit.data.kml.model.Polygon kmlPolygon = kmlFactory.createPolygon(boundary, innerBoundaries);
             return kmlPolygon;
-            
+
         }else if(GeometryCollection.class.isAssignableFrom(geometryClass)){
             final GeometryCollection geoCollec = (GeometryCollection)geometry;
             final MultiGeometry mg = kmlFactory.createMultiGeometry();

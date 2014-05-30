@@ -33,8 +33,6 @@ package org.geotoolkit.feature.type;
 
 import java.util.Map;
 import java.util.Set;
-import org.opengis.feature.type.AttributeType;
-import org.opengis.feature.type.Name;
 
 /**
  * A collection of AttributeType.

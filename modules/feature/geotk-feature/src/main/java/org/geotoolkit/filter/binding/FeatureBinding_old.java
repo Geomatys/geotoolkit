@@ -22,20 +22,20 @@ import java.util.regex.Pattern;
 
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.DefaultAssociation;
-import org.geotoolkit.feature.DefaultName;
+import org.geotoolkit.feature.type.DefaultName;
 import org.geotoolkit.util.Converters;
 import org.apache.sis.util.collection.Cache;
 import org.geotoolkit.filter.binding.AbstractBinding;
-import org.opengis.feature.Attribute;
-import org.opengis.feature.ComplexAttribute;
-import org.opengis.feature.Feature;
+import org.geotoolkit.feature.Attribute;
+import org.geotoolkit.feature.ComplexAttribute;
+import org.geotoolkit.feature.Feature;
 
-import org.opengis.feature.Property;
+import org.geotoolkit.feature.Property;
 import org.geotoolkit.feature.simple.SimpleFeature;
-import org.opengis.feature.type.ComplexType;
-import org.opengis.feature.type.FeatureType;
-import org.opengis.feature.type.Name;
-import org.opengis.feature.type.PropertyDescriptor;
+import org.geotoolkit.feature.type.ComplexType;
+import org.geotoolkit.feature.type.FeatureType;
+import org.geotoolkit.feature.type.Name;
+import org.geotoolkit.feature.type.PropertyDescriptor;
 
 /**
  * Creates a property accessor for simple features.

@@ -32,16 +32,13 @@ import org.geotoolkit.util.collection.CloseableIterator;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.Utilities;
 
-import org.opengis.feature.Association;
-import org.opengis.feature.ComplexAttribute;
-import org.opengis.feature.Feature;
-import org.opengis.feature.Property;
-import org.opengis.feature.type.AssociationType;
-import org.opengis.feature.type.AttributeDescriptor;
-import org.opengis.feature.type.ComplexType;
-import org.opengis.feature.type.Name;
-import org.opengis.feature.type.PropertyDescriptor;
-import org.opengis.feature.type.PropertyType;
+import org.geotoolkit.feature.type.AssociationType;
+import org.geotoolkit.feature.type.AttributeDescriptor;
+import org.geotoolkit.feature.type.ComplexType;
+import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.Name;
+import org.geotoolkit.feature.type.PropertyDescriptor;
+import org.geotoolkit.feature.type.PropertyType;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.filter.identity.Identifier;
 

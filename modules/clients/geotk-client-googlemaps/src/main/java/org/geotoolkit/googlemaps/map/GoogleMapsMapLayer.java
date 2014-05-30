@@ -18,7 +18,7 @@ package org.geotoolkit.googlemaps.map;
 
 import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.coverage.PyramidSet;
-import org.geotoolkit.feature.DefaultName;
+import org.geotoolkit.feature.type.DefaultName;
 import org.geotoolkit.googlemaps.GetMapRequest;
 import org.geotoolkit.googlemaps.StaticGoogleMapsClient;
 import org.geotoolkit.map.DefaultCoverageMapLayer;
@@ -26,7 +26,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.StyleConstants;
 import org.apache.sis.util.ArgumentChecks;
-import org.opengis.feature.type.Name;
+import org.geotoolkit.feature.type.Name;
 
 
 /**

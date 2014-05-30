@@ -34,13 +34,13 @@ import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.feature.AttributeDescriptorBuilder;
 import org.geotoolkit.feature.AttributeTypeBuilder;
 import org.geotoolkit.feature.DataTestCase;
-import org.geotoolkit.feature.DefaultName;
+import org.geotoolkit.feature.type.DefaultName;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.feature.FeatureValidationUtilities;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 
-import org.opengis.feature.type.AttributeDescriptor;
+import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.geotoolkit.feature.simple.SimpleFeature;
 import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.opengis.filter.FilterFactory;

@@ -24,7 +24,7 @@ import org.geotoolkit.storage.StorageListener;
 import org.geotoolkit.version.Version;
 import org.geotoolkit.version.VersionControl;
 import org.geotoolkit.version.VersioningException;
-import org.opengis.feature.type.Name;
+import org.geotoolkit.feature.type.Name;
 import org.opengis.parameter.ParameterValueGroup;
 
 /**

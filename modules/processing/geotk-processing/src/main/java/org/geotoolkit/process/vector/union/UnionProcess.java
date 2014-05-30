@@ -34,11 +34,11 @@ import org.geotoolkit.process.AbstractProcess;
 import org.geotoolkit.process.vector.VectorProcessUtils;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 
-import org.opengis.feature.Feature;
-import org.opengis.feature.Property;
-import org.opengis.feature.type.FeatureType;
-import org.opengis.feature.type.GeometryDescriptor;
-import org.opengis.feature.type.PropertyDescriptor;
+import org.geotoolkit.feature.Feature;
+import org.geotoolkit.feature.Property;
+import org.geotoolkit.feature.type.FeatureType;
+import org.geotoolkit.feature.type.GeometryDescriptor;
+import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;

@@ -30,22 +30,14 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
-import org.geotoolkit.factory.FactoryFinder;
 
 import org.geotoolkit.feature.FeatureTypeUtilities;
-import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 
 import org.junit.Test;
 
 import org.geotoolkit.feature.simple.SimpleFeatureType;
-import org.opengis.feature.type.FeatureType;
-import org.opengis.feature.type.AttributeDescriptor;
-import org.opengis.feature.type.ComplexType;
-import org.geotoolkit.feature.type.FeatureTypeFactory;
-import org.opengis.feature.type.GeometryDescriptor;
-import org.opengis.feature.type.PropertyDescriptor;
 
 import static org.junit.Assert.*;
 
@@ -61,7 +53,7 @@ public class FeatureTypeBuilderTest {
     public void testFactoryUse(){
 
         //check it correctly use the given factory
-        FeatureTypeFactory ftf = FactoryFinder.getFeatureTypeFactory(null);
+        FeatureTypeFactory ftf = FeatureTypeFactory.INSTANCE;
         FeatureTypeBuilder ftb = new FeatureTypeBuilder(ftf);
         assertEquals(ftf, ftb.getFeatureTypeFactory());
 

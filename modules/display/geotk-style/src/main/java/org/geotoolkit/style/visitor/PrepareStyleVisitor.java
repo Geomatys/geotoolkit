@@ -21,7 +21,7 @@ import javax.measure.unit.Unit;
 import org.geotoolkit.filter.visitor.PrepareFilterVisitor;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
-import org.opengis.feature.type.ComplexType;
+import org.geotoolkit.feature.type.ComplexType;
 import org.opengis.filter.expression.Expression;
 import org.opengis.style.AnchorPoint;
 import org.opengis.style.ChannelSelection;

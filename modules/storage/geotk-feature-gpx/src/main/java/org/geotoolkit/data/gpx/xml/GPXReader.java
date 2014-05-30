@@ -40,8 +40,8 @@ import org.geotoolkit.data.gpx.model.Person;
 import org.geotoolkit.temporal.object.TemporalUtilities;
 import org.geotoolkit.xml.StaxStreamReader;
 
-import org.opengis.feature.ComplexAttribute;
-import org.opengis.feature.Feature;
+import org.geotoolkit.feature.ComplexAttribute;
+import org.geotoolkit.feature.Feature;
 import org.opengis.geometry.Envelope;
 
 import static javax.xml.stream.XMLStreamReader.*;

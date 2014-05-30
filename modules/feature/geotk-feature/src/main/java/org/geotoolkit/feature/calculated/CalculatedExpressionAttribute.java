@@ -18,8 +18,8 @@ package org.geotoolkit.feature.calculated;
 
 import org.geotoolkit.feature.DefaultAttribute;
 
-import org.opengis.feature.ComplexAttribute;
-import org.opengis.feature.type.AttributeDescriptor;
+import org.geotoolkit.feature.ComplexAttribute;
+import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.identity.Identifier;
 

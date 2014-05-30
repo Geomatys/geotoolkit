@@ -23,7 +23,7 @@ import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.storage.DataNode;
 import org.geotoolkit.storage.StorageListener;
-import org.opengis.feature.type.Name;
+import org.geotoolkit.feature.type.Name;
 
 /**
  * Reference to a coverage in the coverage store.

@@ -19,7 +19,7 @@
 package org.geotoolkit.data.query;
 
 import org.geotoolkit.data.session.Session;
-import org.opengis.feature.type.Name;
+import org.geotoolkit.feature.type.Name;
 
 /**
  *

@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.data.mapinfo.mif.geometry;
 
-import org.geotoolkit.feature.DefaultName;
+import org.geotoolkit.feature.type.DefaultName;
 
 /**
  * A class to build feature from MIF ellipse object.

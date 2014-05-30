@@ -28,8 +28,8 @@ import net.sf.marineapi.nmea.sentence.SentenceValidator;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
-import org.opengis.feature.Feature;
-import org.opengis.feature.type.FeatureType;
+import org.geotoolkit.feature.Feature;
+import org.geotoolkit.feature.type.FeatureType;
 
 /**
  *

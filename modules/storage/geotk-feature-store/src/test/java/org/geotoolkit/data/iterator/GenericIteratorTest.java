@@ -50,10 +50,9 @@ import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.HintsPending;
-import org.geotoolkit.feature.DefaultName;
+import org.geotoolkit.feature.type.DefaultName;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.FeatureUtilities;
-import org.geotoolkit.feature.LenientFeatureFactory;
 import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.geometry.jts.transform.GeometryScaleTransformer;
@@ -61,15 +60,15 @@ import org.geotoolkit.geometry.jts.transform.GeometryTransformer;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.junit.Test;
-import org.opengis.feature.Feature;
+import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.FeatureFactory;
-import org.opengis.feature.Property;
+import org.geotoolkit.feature.Property;
 import org.geotoolkit.feature.simple.SimpleFeature;
 import org.geotoolkit.feature.simple.SimpleFeatureType;
-import org.opengis.feature.type.AttributeDescriptor;
-import org.opengis.feature.type.FeatureType;
-import org.opengis.feature.type.Name;
-import org.opengis.feature.type.PropertyDescriptor;
+import org.geotoolkit.feature.type.AttributeDescriptor;
+import org.geotoolkit.feature.type.FeatureType;
+import org.geotoolkit.feature.type.Name;
+import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.sort.SortBy;
@@ -85,8 +84,7 @@ import org.opengis.util.FactoryException;
  */
 public class GenericIteratorTest extends TestCase{
 
-    protected static final FeatureFactory AF = FactoryFinder
-            .getFeatureFactory(new Hints(Hints.FEATURE_FACTORY, LenientFeatureFactory.class));
+    protected static final FeatureFactory AF = FeatureFactory.LENIENT;
 
     private static final double DELTA = 0.000001d;
     private static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
@@ -103,7 +101,7 @@ public class GenericIteratorTest extends TestCase{
     private final String id3;
     private final String cid1;
     private final String cid2;
-    
+
     private final SimpleFeature sf1;
     private final SimpleFeature sf2;
     private final SimpleFeature sf3;
@@ -198,7 +196,7 @@ public class GenericIteratorTest extends TestCase{
     }
 
     @Test
-    public void testEmptyIterator(){        
+    public void testEmptyIterator(){
         final FeatureIterator iterator = GenericEmptyFeatureIterator.createIterator();
 
         assertFalse(iterator.hasNext());
@@ -267,25 +265,25 @@ public class GenericIteratorTest extends TestCase{
 
         iterator.close();
     }
-    
+
     @Test
     public void testCacheIterator(){
         FeatureIterator ite = GenericCachedFeatureIterator.wrap(collection.iterator(), 1);
         assertEquals(3, FeatureStoreUtilities.calculateCount(ite));
 
         ite = GenericCachedFeatureIterator.wrap(collection.iterator(), 1);
-        
+
         Feature s1 = ite.next();
         Feature s2 = ite.next();
         Feature s3 = ite.next();
-        
+
         assertEquals(s1.getIdentifier().getID(),id1);
         assertEquals(s2.getIdentifier().getID(),id2);
         assertEquals(s3.getIdentifier().getID(),id3);
-        
+
     }
 
-    
+
     @Test
     public void testFilterIterator(){
         FeatureIterator ite = GenericFilterFeatureIterator.wrap(collection.iterator(), Filter.INCLUDE);
@@ -412,7 +410,7 @@ public class GenericIteratorTest extends TestCase{
         FeatureReader reader = collection.getSession().getFeatureStore().getFeatureReader(query);
 
         final CoordinateReferenceSystem targetCRS = CRS.decode("EPSG:4326");
-        
+
         FeatureReader retyped = GenericReprojectFeatureIterator.wrap(reader, targetCRS, new Hints());
         assertEquals(reprojectedType,retyped.getFeatureType());
 
@@ -478,14 +476,14 @@ public class GenericIteratorTest extends TestCase{
         qb.setTypeName(originalType.getName());
         Query query = qb.buildQuery();
         FeatureReader reader = collection.getSession().getFeatureStore().getFeatureReader(query);
-        
+
         //create the decimate reader -------------------------------------------
         final Hints hints = new Hints();
         hints.put(HintsPending.FEATURE_DETACHED, Boolean.TRUE);
-        
+
         GeometryTransformer decim = new GeometryScaleTransformer(10, 10);
         FeatureReader retyped = GenericTransformFeatureIterator.wrap(reader,decim, hints);
-        
+
         assertTrue(retyped.hasNext());
 
         LineString decimated = (LineString) retyped.next().getDefaultGeometryProperty().getValue();
@@ -499,7 +497,7 @@ public class GenericIteratorTest extends TestCase{
         assertEquals(geom.getGeometryN(2).getCoordinate(), decimated.getGeometryN(2).getCoordinate());
         assertEquals(geom.getGeometryN(4).getCoordinate(), decimated.getGeometryN(3).getCoordinate());
 
-        
+
         //check the original geometry has not been modified
         reader = collection.getSession().getFeatureStore().getFeatureReader(query);
         assertTrue(reader.hasNext());
@@ -508,16 +506,16 @@ public class GenericIteratorTest extends TestCase{
         assertEquals(6, notDecimated.getNumPoints());
         assertFalse(reader.hasNext());
         reader.close();
-        
-        
-        
+
+
+
         // same test but with reuse hint ---------------------------------------
         reader = collection.getSession().getFeatureStore().getFeatureReader(query);
         hints.put(HintsPending.FEATURE_DETACHED, Boolean.FALSE);
-        
+
         decim = new GeometryScaleTransformer(10, 10);
         retyped = GenericTransformFeatureIterator.wrap(reader,decim, hints);
-        
+
         assertTrue(retyped.hasNext());
 
         decimated = (LineString) retyped.next().getDefaultGeometryProperty().getValue();
@@ -531,7 +529,7 @@ public class GenericIteratorTest extends TestCase{
         assertEquals(geom.getGeometryN(2).getCoordinate(), decimated.getGeometryN(2).getCoordinate());
         assertEquals(geom.getGeometryN(4).getCoordinate(), decimated.getGeometryN(3).getCoordinate());
 
-        
+
         //check the original geometry has not been modified
         reader = collection.getSession().getFeatureStore().getFeatureReader(query);
         assertTrue(reader.hasNext());
@@ -721,7 +719,7 @@ public class GenericIteratorTest extends TestCase{
         ite.close();
         assertTrue(checkIte.isClosed());
     }
-    
+
     @Test
     public void testWrapIterator(){
 
@@ -752,6 +750,6 @@ public class GenericIteratorTest extends TestCase{
         reader.close();
         assertTrue(checkIte.isClosed());
     }
-    
+
 
 }

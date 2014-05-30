@@ -25,10 +25,10 @@ import java.util.List;
 
 import org.geotoolkit.feature.DefaultGeometryAttribute;
 
-import org.opengis.feature.ComplexAttribute;
-import org.opengis.feature.Property;
-import org.opengis.feature.type.GeometryDescriptor;
-import org.opengis.feature.type.Name;
+import org.geotoolkit.feature.ComplexAttribute;
+import org.geotoolkit.feature.Property;
+import org.geotoolkit.feature.type.GeometryDescriptor;
+import org.geotoolkit.feature.type.Name;
 
 /**
  * A calculated attribut that define a LineString geometry calculated

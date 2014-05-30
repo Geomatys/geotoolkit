@@ -8,11 +8,9 @@ import com.fasterxml.jackson.core.JsonToken;
 import org.apache.sis.referencing.IdentifiedObjects;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.PropertyType;
-import org.opengis.feature.type.*;
-import org.opengis.filter.Filter;
+import org.geotoolkit.feature.type.*;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
-import org.opengis.util.GenericName;
 import org.opengis.util.InternationalString;
 
 import org.apache.sis.storage.DataStoreException;
@@ -20,13 +18,11 @@ import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.iso.SimpleInternationalString;
 
-import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.feature.AttributeDescriptorBuilder;
 import org.geotoolkit.feature.type.FeatureTypeFactory;
-import org.geotoolkit.feature.DefaultName;
+import org.geotoolkit.feature.type.DefaultName;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.lang.Static;
-import org.opengis.util.NameFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -47,7 +43,7 @@ import java.util.*;
  */
 public final class FeatureTypeUtils extends Static {
 
-    private static final FeatureTypeFactory FT_FACTORY = FactoryFinder.getFeatureTypeFactory(null);
+    private static final FeatureTypeFactory FT_FACTORY = FeatureTypeFactory.INSTANCE;
 
     private static final String TITLE = "title";
     private static final String TYPE = "type";
@@ -334,7 +330,7 @@ public final class FeatureTypeUtils extends Static {
 
         Name name = DefaultName.valueOf(GEOMETRY);
         PropertyType prop = FT_FACTORY.createGeometryType(name, binding, crs, false, false, null, null, description);
-        return (GeometryDescriptor) adb.create((org.opengis.feature.type.PropertyType) prop, name, crs, 1, 1, false, null);
+        return (GeometryDescriptor) adb.create((org.geotoolkit.feature.type.PropertyType) prop, name, crs, 1, 1, false, null);
     }
 
     private static List<PropertyDescriptor> readProperties(JsonParser parser, FeatureTypeBuilder ftb,
@@ -416,7 +412,7 @@ public final class FeatureTypeUtils extends Static {
                 throw new DataStoreException("Empty javatype for attribute "+attributeName);
             }
             PropertyType prop = FT_FACTORY.createAttributeType(name, binding, false, false, null, null, desc);
-            return adb.create((org.opengis.feature.type.PropertyType) prop, name, minOccurs, maxOccurs, nillable, userData);
+            return adb.create((org.geotoolkit.feature.type.PropertyType) prop, name, minOccurs, maxOccurs, nillable, userData);
 
         } else {
             //build ComplexType

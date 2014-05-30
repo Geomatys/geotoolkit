@@ -1,7 +1,7 @@
 /*
  *    GeotoolKit - An Open Source Java GIS Toolkit
  *    http://geotoolkit.org
- * 
+ *
  *    (C) 2009, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -21,7 +21,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 import org.geotoolkit.feature.catalog.BoundFeatureAttributeImpl;
-import org.geotoolkit.feature.catalog.FeatureAssociationImpl;
 import org.opengis.feature.catalog.BoundFeatureAttribute;
 
 /**
@@ -33,13 +32,13 @@ import org.opengis.feature.catalog.BoundFeatureAttribute;
  * @author Guilhem Legal
  */
 public class BoundFeatureAttributeAdapter extends XmlAdapter<BoundFeatureAttributeAdapter, BoundFeatureAttribute> {
-    
+
     private BoundFeatureAttribute feature;
-    
+
     @XmlIDREF
     @XmlAttribute(namespace="http://www.w3.org/1999/xlink")
     private BoundFeatureAttributeImpl href;
-    
+
     /**
      * Empty constructor for JAXB only.
      */
@@ -75,7 +74,7 @@ public class BoundFeatureAttributeAdapter extends XmlAdapter<BoundFeatureAttribu
      */
     @XmlElement(name = "FC_BoundFeature")
     public BoundFeatureAttributeImpl getBoundFeature() {
-        if (feature == null) 
+        if (feature == null)
             return null;
         return (feature instanceof BoundFeatureAttributeImpl) ?
             (BoundFeatureAttributeImpl)feature : new BoundFeatureAttributeImpl(feature);
@@ -119,7 +118,7 @@ public class BoundFeatureAttributeAdapter extends XmlAdapter<BoundFeatureAttribu
         return new BoundFeatureAttributeAdapter(value);
     }
 
-    
-    
+
+
 
 }

@@ -28,7 +28,7 @@ import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
-import org.opengis.feature.type.PropertyType;
+import org.geotoolkit.feature.type.PropertyType;
 
 /**
  * Throw PropertyChange event when TextField text change.

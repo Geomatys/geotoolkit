@@ -21,9 +21,9 @@ import java.util.List;
 
 import org.apache.sis.util.Classes;
 
-import org.opengis.feature.type.AttributeType;
-import org.opengis.feature.type.AttributeDescriptor;
-import org.opengis.feature.type.Name;
+import org.geotoolkit.feature.type.AttributeType;
+import org.geotoolkit.feature.type.AttributeDescriptor;
+import org.geotoolkit.feature.type.Name;
 import org.opengis.filter.Filter;
 import org.opengis.util.InternationalString;
 

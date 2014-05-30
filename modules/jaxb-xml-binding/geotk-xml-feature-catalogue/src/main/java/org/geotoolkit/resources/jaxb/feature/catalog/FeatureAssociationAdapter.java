@@ -1,7 +1,7 @@
 /*
  *    GeotoolKit - An Open Source Java GIS Toolkit
  *    http://geotoolkit.org
- * 
+ *
  *    (C) 2009, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -32,13 +32,13 @@ import org.opengis.feature.catalog.FeatureAssociation;
  * @author Guilhem Legal
  */
 public class FeatureAssociationAdapter extends XmlAdapter<FeatureAssociationAdapter, FeatureAssociation> {
-    
+
     private FeatureAssociation association;
-    
+
     @XmlIDREF
     @XmlAttribute(namespace="http://www.w3.org/1999/xlink")
     private FeatureAssociationImpl href;
-     
+
     /**
      * Empty constructor for JAXB only.
      */
@@ -74,7 +74,7 @@ public class FeatureAssociationAdapter extends XmlAdapter<FeatureAssociationAdap
      */
     @XmlElement(name = "FC_FeatureAssociation")
     public FeatureAssociationImpl getFeatureAssociation() {
-        if (association == null) 
+        if (association == null)
             return null;
         return (association instanceof FeatureAssociationImpl) ?
             (FeatureAssociationImpl)association : new FeatureAssociationImpl(association);
@@ -118,7 +118,7 @@ public class FeatureAssociationAdapter extends XmlAdapter<FeatureAssociationAdap
         return new FeatureAssociationAdapter(value);
     }
 
-    
-    
+
+
 
 }

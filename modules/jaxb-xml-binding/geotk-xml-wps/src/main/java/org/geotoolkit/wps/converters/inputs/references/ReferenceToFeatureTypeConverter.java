@@ -27,7 +27,7 @@ import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeReader;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
 import org.geotoolkit.wps.io.WPSMimeType;
 import org.geotoolkit.wps.xml.v100.ReferenceType;
-import org.opengis.feature.type.FeatureType;
+import org.geotoolkit.feature.type.FeatureType;
 
 
 /**

@@ -27,22 +27,14 @@ import java.util.*;
 import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.factory.Hints;
 import org.geotoolkit.parameter.Parameters;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.util.Converters;
 import org.apache.sis.util.logging.Logging;
 import org.opengis.coverage.grid.GridCoverage;
-import org.opengis.feature.Association;
-import org.opengis.feature.Attribute;
-import org.opengis.feature.ComplexAttribute;
-import org.opengis.feature.Feature;
-import org.opengis.feature.GeometryAttribute;
-import org.opengis.feature.Property;
 import org.geotoolkit.feature.simple.SimpleFeature;
 import org.geotoolkit.feature.simple.SimpleFeatureType;
-import org.opengis.feature.type.*;
+import org.geotoolkit.feature.type.*;
 import org.opengis.filter.identity.Identifier;
 import org.opengis.parameter.*;
 
@@ -63,8 +55,7 @@ public final class FeatureUtilities {
 
     private static final Logger LOGGER = Logging.getLogger(FeatureUtilities.class);
 
-    private static final FeatureFactory FF = FactoryFinder
-            .getFeatureFactory(new Hints(Hints.FEATURE_FACTORY, LenientFeatureFactory.class));
+    private static final FeatureFactory FF = FeatureFactory.LENIENT;
 
     private static final GeometryFactory GF = new GeometryFactory();
 

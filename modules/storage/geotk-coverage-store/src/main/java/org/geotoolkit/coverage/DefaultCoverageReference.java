@@ -26,7 +26,7 @@ import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.coverage.io.ImageCoverageReader;
 import org.geotoolkit.coverage.memory.MemoryCoverageReader;
 import org.opengis.coverage.Coverage;
-import org.opengis.feature.type.Name;
+import org.geotoolkit.feature.type.Name;
 
 /**
  * CoverageReference implementation wrapping a coverage.

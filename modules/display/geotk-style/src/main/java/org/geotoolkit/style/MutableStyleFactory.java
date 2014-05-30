@@ -32,7 +32,6 @@ import org.geotoolkit.style.function.Method;
 import org.geotoolkit.style.function.Mode;
 import org.geotoolkit.style.function.ThreshholdsBelongTo;
 
-import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;
 import org.opengis.filter.Id;
 import org.opengis.filter.expression.Expression;
@@ -71,10 +70,11 @@ import org.opengis.style.ShadedRelief;
 import org.opengis.style.Stroke;
 import org.opengis.style.Symbolizer;
 import org.opengis.style.TextSymbolizer;
+import org.opengis.util.GenericName;
 
 
 /**
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
@@ -103,7 +103,7 @@ public interface MutableStyleFactory extends org.opengis.style.StyleFactory {
     TextSymbolizer textSymbolizer(String name, String geometry,
             Description description, Unit<?> unit, Expression label, Font font,
             LabelPlacement placement, Halo halo, Fill fill);
-    
+
     /**
      * convert an awt color in to a literal expression representing the color
      *
@@ -115,11 +115,11 @@ public interface MutableStyleFactory extends org.opengis.style.StyleFactory {
     //--------------------------------------------------------------------------
     // Style creation methods --------------------------------------------------
     //--------------------------------------------------------------------------
-            
+
     MutableStyle style();
-    
+
     MutableStyle style(Symbolizer symbol);
-    
+
     MutableStyle style(Symbolizer ... symbols);
 
     //change return type
@@ -127,55 +127,55 @@ public interface MutableStyleFactory extends org.opengis.style.StyleFactory {
     MutableStyle style(String name, Description description, boolean isDefault,
             List<FeatureTypeStyle> featureTypeStyles,
             Symbolizer defaultSymbolizer);
-    
+
     MutableFeatureTypeStyle featureTypeStyle();
-    
+
     MutableFeatureTypeStyle featureTypeStyle(Symbolizer symbol);
-    
+
     MutableFeatureTypeStyle featureTypeStyle(Symbolizer ... symbol);
 
     //change return type
     @Override
     MutableFeatureTypeStyle featureTypeStyle(String name,
-            Description description, Id definedFor, Set<Name> featureTypeNames,
+            Description description, Id definedFor, Set<GenericName> featureTypeNames,
             Set<SemanticType> types, List<Rule> rules);
-    
+
     MutableRule rule();
-    
+
     MutableRule rule(Symbolizer symbol);
-    
+
     MutableRule rule(Symbolizer ... symbol);
 
     //change return type
     @Override
     MutableRule rule(String name, Description description, GraphicLegend legend,
             double min, double max, List<Symbolizer> symbolizers, Filter filter);
-    
-    
+
+
     //--------------------------------------------------------------------------
     // Symbolizer creation methods ---------------------------------------------
     //--------------------------------------------------------------------------
-        
+
     PointSymbolizer pointSymbolizer();
-    
+
     PointSymbolizer pointSymbolizer(Graphic graphic, String geometryPropertyName);
-    
+
     LineSymbolizer lineSymbolizer();
-    
+
     LineSymbolizer lineSymbolizer(Stroke stroke, String geometryPropertyName);
-    
+
     PolygonSymbolizer polygonSymbolizer();
-    
+
     PolygonSymbolizer polygonSymbolizer(Stroke stroke, Fill fill,
         String geometryPropertyName);
-    
+
     TextSymbolizer textSymbolizer();
-    
+
     TextSymbolizer textSymbolizer(Fill fill, Font font, Halo halo,
         Expression label, LabelPlacement labelPlacement, String geometryPropertyName);
-        
+
     RasterSymbolizer rasterSymbolizer();
-    
+
     RasterSymbolizer rasterSymbolizer(String geometryPropertyName, Expression opacity,
         ChannelSelection channel, OverlapBehavior overlap, ColorMap colorMap, ContrastEnhancement ce,
         ShadedRelief relief, Symbolizer outline);
@@ -186,9 +186,9 @@ public interface MutableStyleFactory extends org.opengis.style.StyleFactory {
     //--------------------------------------------------------------------------
 
     AnchorPoint     anchorPoint();
-    
+
     AnchorPoint     anchorPoint(double x, double y);
-    
+
     ColorMap colorMap();
 
     ColorMap colorMap(Function function);
@@ -200,11 +200,11 @@ public interface MutableStyleFactory extends org.opengis.style.StyleFactory {
     ContrastEnhancement contrastEnhancement(Expression gammaValue);
 
     Description     description();
-    
+
     Description     description(String title, String abs);
-        
+
     Displacement    displacement();
-    
+
     Displacement    displacement(double x, double y);
 
     ExternalGraphic externalGraphic(URL url, String format);
@@ -241,7 +241,7 @@ public interface MutableStyleFactory extends org.opengis.style.StyleFactory {
     LabelPlacement labelPlacement();
 
     LinePlacement linePlacement(Expression offset);
-    
+
     Mark mark();
 
     Mark mark(Expression wellKnownName, Stroke stroke, Fill fill);
@@ -256,11 +256,11 @@ public interface MutableStyleFactory extends org.opengis.style.StyleFactory {
      * Return {@link ShadedRelief} with expected shadow coefficient between 0 and 100 per cent.<br/>
      * 0 means no shadow.<br/>
      * 100 means maximum shadow.<br/><br/>
-     * 
+     *
      * For example : <br/>
      * {@code shadedRelief(Expression.literal(60))}.<br/>
      * In this example each samples values from pixels within shadow area, will be reduce by 60 %.
-     * 
+     *
      * @param reliefFactor shadow factor in percent apply on each pixel within shadow area.
      * @return {@link ShadedRelief} with expected shadow coefficient
      */
@@ -275,7 +275,7 @@ public interface MutableStyleFactory extends org.opengis.style.StyleFactory {
     Stroke stroke(Expression color, Expression width);
 
     Stroke stroke(Expression color, Expression width, Expression opacity);
-    
+
     Mark getCircleMark();
 
     Mark getXMark();
@@ -287,17 +287,17 @@ public interface MutableStyleFactory extends org.opengis.style.StyleFactory {
     Mark getCrossMark();
 
     Mark getTriangleMark();
-               
-        
+
+
     //Functions-----------------------------------------------------------------
     public Categorize categorizeFunction(Expression lookup, Map<Expression,Expression> values,
             ThreshholdsBelongTo belongs, Literal fallback);
 
     public Interpolate interpolateFunction(Expression lookup, List<InterpolationPoint> values,
             Method method, Mode mode, Literal fallback);
-    
+
     public InterpolationPoint interpolationPoint(Number data,Expression value);
-    
+
     public Jenks jenksFunction(Literal classNumber, Literal paletteName, Literal fallback, List<Literal> noData);
-        
+
 }

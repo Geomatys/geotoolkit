@@ -51,7 +51,7 @@ import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyle;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.map.AbstractMapItem;
-import org.opengis.feature.type.Name;
+import org.geotoolkit.feature.type.Name;
 import org.opengis.parameter.ParameterNotFoundException;
 import org.opengis.parameter.ParameterValue;
 import org.opengis.style.Description;

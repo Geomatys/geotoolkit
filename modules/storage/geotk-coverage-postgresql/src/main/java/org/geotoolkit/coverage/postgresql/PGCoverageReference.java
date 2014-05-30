@@ -72,7 +72,7 @@ import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.temporal.object.TemporalUtilities;
 import org.geotoolkit.version.Version;
 import org.opengis.coverage.SampleDimensionType;
-import org.opengis.feature.type.Name;
+import org.geotoolkit.feature.type.Name;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.cs.CoordinateSystem;

@@ -18,7 +18,7 @@ package org.geotoolkit.data.shapefile;
 
 import java.util.concurrent.atomic.AtomicLong;
 
-import org.opengis.feature.type.FeatureType;
+import org.geotoolkit.feature.type.FeatureType;
 
 import static org.apache.sis.util.ArgumentChecks.*;
 

@@ -60,7 +60,7 @@ import org.geotoolkit.process.chain.model.Parameter;
 import org.geotoolkit.process.chain.model.event.EventChain;
 import org.netbeans.api.visual.widget.Scene;
 import org.netbeans.api.visual.widget.Widget;
-import org.opengis.feature.Property;
+import org.geotoolkit.feature.Property;
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;

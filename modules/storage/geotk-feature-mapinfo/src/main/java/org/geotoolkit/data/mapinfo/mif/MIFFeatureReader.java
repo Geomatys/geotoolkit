@@ -22,12 +22,12 @@ import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.util.Converters;
 import org.apache.sis.util.CharSequences;
-import org.opengis.feature.Feature;
+import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.simple.SimpleFeature;
 import org.geotoolkit.feature.simple.SimpleFeatureType;
-import org.opengis.feature.type.AttributeType;
-import org.opengis.feature.type.FeatureType;
-import org.opengis.feature.type.Name;
+import org.geotoolkit.feature.type.AttributeType;
+import org.geotoolkit.feature.type.FeatureType;
+import org.geotoolkit.feature.type.Name;
 import org.opengis.referencing.operation.MathTransform;
 
 import java.io.IOException;

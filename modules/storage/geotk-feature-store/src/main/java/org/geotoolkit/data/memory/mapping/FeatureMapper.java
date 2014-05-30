@@ -16,8 +16,8 @@
  */
 package org.geotoolkit.data.memory.mapping;
 
-import org.opengis.feature.Feature;
-import org.opengis.feature.type.FeatureType;
+import org.geotoolkit.feature.Feature;
+import org.geotoolkit.feature.type.FeatureType;
 
 /**
  *

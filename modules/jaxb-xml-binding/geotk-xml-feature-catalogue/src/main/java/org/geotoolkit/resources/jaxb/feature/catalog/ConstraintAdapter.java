@@ -1,7 +1,7 @@
 /*
  *    GeotoolKit - An Open Source Java GIS Toolkit
  *    http://geotoolkit.org
- * 
+ *
  *    (C) 2009, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -30,9 +30,9 @@ import org.opengis.feature.catalog.Constraint;
  * @author Guilhem Legal
  */
 public class ConstraintAdapter extends XmlAdapter<ConstraintAdapter, Constraint> {
-    
+
     private Constraint feature;
-    
+
     /**
      * Empty constructor for JAXB only.
      */
@@ -64,7 +64,7 @@ public class ConstraintAdapter extends XmlAdapter<ConstraintAdapter, Constraint>
      */
     @XmlElement(name = "FC_Constraint")
     public ConstraintImpl getConstraint() {
-        if (feature == null) 
+        if (feature == null)
             return null;
         return (feature instanceof ConstraintImpl) ?
             (ConstraintImpl)feature : new ConstraintImpl(feature);
@@ -105,8 +105,8 @@ public class ConstraintAdapter extends XmlAdapter<ConstraintAdapter, Constraint>
         return new ConstraintAdapter(value);
     }
 
-    
-    
+
+
 
 }
 

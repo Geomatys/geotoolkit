@@ -19,9 +19,9 @@ package org.geotoolkit.feature.type;
 
 import java.util.Arrays;
 import java.util.List;
-import org.opengis.feature.type.AttributeType;
-import org.opengis.feature.type.Name;
-import org.opengis.feature.type.OperationType;
+import org.geotoolkit.feature.type.AttributeType;
+import org.geotoolkit.feature.type.Name;
+import org.geotoolkit.feature.type.OperationType;
 import org.opengis.filter.Filter;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.util.InternationalString;

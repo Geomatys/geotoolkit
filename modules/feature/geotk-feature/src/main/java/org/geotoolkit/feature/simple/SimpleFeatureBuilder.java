@@ -22,20 +22,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.factory.Hints;
-import org.geotoolkit.feature.DefaultName;
+import org.geotoolkit.feature.type.DefaultName;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.feature.FeatureValidationUtilities;
-import org.geotoolkit.feature.LenientFeatureFactory;
 import org.geotoolkit.filter.identity.DefaultFeatureId;
 import org.geotoolkit.util.Converters;
 
 import org.geotoolkit.feature.FeatureFactory;
-import org.geotoolkit.feature.simple.SimpleFeature;
-import org.geotoolkit.feature.simple.SimpleFeatureType;
-import org.opengis.feature.type.AttributeDescriptor;
-import org.opengis.feature.type.Name;
+import org.geotoolkit.feature.type.AttributeDescriptor;
+import org.geotoolkit.feature.type.Name;
 import org.opengis.filter.identity.FeatureId;
 
 /**
@@ -139,7 +134,7 @@ public class SimpleFeatureBuilder {
     boolean validating;
 
     public SimpleFeatureBuilder(final SimpleFeatureType featureType) {
-        this(featureType, FactoryFinder.getFeatureFactory(new Hints(Hints.FEATURE_FACTORY,LenientFeatureFactory.class)));
+        this(featureType, FeatureFactory.LENIENT);
     }
 
     public SimpleFeatureBuilder(final SimpleFeatureType featureType, final FeatureFactory factory) {

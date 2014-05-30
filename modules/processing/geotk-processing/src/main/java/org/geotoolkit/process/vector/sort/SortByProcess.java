@@ -22,7 +22,7 @@ import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.process.AbstractProcess;
 import org.geotoolkit.process.vector.VectorDescriptor;
 
-import org.opengis.feature.Feature;
+import org.geotoolkit.feature.Feature;
 import org.opengis.parameter.ParameterValueGroup;
 
 import static org.geotoolkit.process.vector.sort.SortByDescriptor.*;

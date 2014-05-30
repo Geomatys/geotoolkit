@@ -33,9 +33,9 @@ package org.geotoolkit.feature.simple;
 
 import java.util.List;
 
-import org.opengis.feature.ComplexAttribute;
-import org.opengis.feature.Feature;
-import org.opengis.feature.type.Name;
+import org.geotoolkit.feature.ComplexAttribute;
+import org.geotoolkit.feature.Feature;
+import org.geotoolkit.feature.type.Name;
 
 /**
  * An instance of {@link SimpleFeature} composed of fixed list values in a known order.

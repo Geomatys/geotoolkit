@@ -56,7 +56,7 @@ import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.feature.AttributeDescriptorBuilder;
-import org.geotoolkit.feature.DefaultName;
+import org.geotoolkit.feature.type.DefaultName;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.parameter.ParametersExt;
 import org.geotoolkit.version.VersionControl;
@@ -66,19 +66,19 @@ import org.junit.Assume;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import org.opengis.feature.ComplexAttribute;
-import org.opengis.feature.Property;
+import org.geotoolkit.feature.ComplexAttribute;
+import org.geotoolkit.feature.Property;
 import org.geotoolkit.feature.simple.SimpleFeature;
-import org.opengis.feature.type.AttributeDescriptor;
-import org.opengis.feature.type.AttributeType;
-import org.opengis.feature.type.ComplexType;
-import org.opengis.feature.type.PropertyType;
-import org.opengis.feature.type.FeatureType;
-import org.opengis.feature.type.Name;
+import org.geotoolkit.feature.type.AttributeDescriptor;
+import org.geotoolkit.feature.type.AttributeType;
+import org.geotoolkit.feature.type.ComplexType;
+import org.geotoolkit.feature.type.PropertyType;
+import org.geotoolkit.feature.type.FeatureType;
+import org.geotoolkit.feature.type.Name;
 import org.opengis.parameter.ParameterValueGroup;
-import org.opengis.feature.Feature;
-import org.opengis.feature.type.GeometryDescriptor;
-import org.opengis.feature.type.PropertyDescriptor;
+import org.geotoolkit.feature.Feature;
+import org.geotoolkit.feature.type.GeometryDescriptor;
+import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
@@ -86,7 +86,7 @@ import org.opengis.util.FactoryException;
 import static org.geotoolkit.db.mysql.MySQLFeatureStoreFactory.*;
 import static org.junit.Assert.*;
 import org.junit.Ignore;
-import org.opengis.feature.type.AssociationType;
+import org.geotoolkit.feature.type.AssociationType;
 
 /**
  *

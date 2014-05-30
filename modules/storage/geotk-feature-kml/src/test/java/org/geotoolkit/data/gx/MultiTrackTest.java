@@ -44,9 +44,6 @@ import org.geotoolkit.data.kml.model.KmlException;
 import org.geotoolkit.data.kml.model.KmlModelConstants;
 import org.geotoolkit.data.kml.xml.KmlReader;
 import org.geotoolkit.data.kml.xml.KmlWriter;
-import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.factory.Hints;
-import org.geotoolkit.feature.LenientFeatureFactory;
 import org.geotoolkit.temporal.object.ISODateParser;
 import org.geotoolkit.xml.DomCompare;
 
@@ -56,9 +53,9 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import org.opengis.feature.Feature;
+import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.FeatureFactory;
-import org.opengis.feature.Property;
+import org.geotoolkit.feature.Property;
 import org.xml.sax.SAXException;
 import static org.junit.Assert.*;
 
@@ -71,8 +68,7 @@ public class MultiTrackTest {
 
     private static final double DELTA = 0.000000000001;
     private static final String pathToTestFile = "src/test/resources/org/geotoolkit/data/gx/multiTrack.kml";
-    private static final FeatureFactory FF = FactoryFinder.getFeatureFactory(
-            new Hints(Hints.FEATURE_FACTORY, LenientFeatureFactory.class));
+    private static final FeatureFactory FF = FeatureFactory.LENIENT;
 
     public MultiTrackTest() {
     }
@@ -107,11 +103,11 @@ public class MultiTrackTest {
 
         final Feature folder = kmlObjects.getAbstractFeature();
         assertTrue(folder.getType().equals(KmlModelConstants.TYPE_FOLDER));
-       
+
         assertTrue(folder.getProperty(KmlModelConstants.ATT_FOLDER_FEATURES.getName()) instanceof Feature);
         Feature placemark = (Feature) folder.getProperty(KmlModelConstants.ATT_DOCUMENT_FEATURES.getName());
         assertTrue(placemark.getType().equals(KmlModelConstants.TYPE_PLACEMARK));
-        
+
         assertTrue(placemark.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue() instanceof MultiTrack);
 
         final MultiTrack multiTrack = (MultiTrack) placemark.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue();
@@ -129,7 +125,7 @@ public class MultiTrackTest {
         ISODateParser du = new ISODateParser();
         Calendar cal = du.getCalendar(when0);
         assertEquals(cal, track0.getWhens().get(0));
-        
+
         CoordinateSequence coordinates0 = track0.getCoord();
         Coordinate coordinate0 = coordinates0.getCoordinate(0);
 
@@ -166,7 +162,7 @@ public class MultiTrackTest {
         assertEquals(78, angles1.getRoll(), DELTA);
 
     }
-    
+
     @Test
     public void multiTrackWriteTest() throws KmlException, IOException, XMLStreamException, ParserConfigurationException, SAXException, URISyntaxException {
         final GxFactory gxFactory = DefaultGxFactory.getInstance();

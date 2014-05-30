@@ -21,7 +21,7 @@ import com.vividsolutions.jts.geom.Geometry;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.process.AbstractProcess;
 
-import org.opengis.feature.Feature;
+import org.geotoolkit.feature.Feature;
 import org.opengis.parameter.ParameterValueGroup;
 
 import static org.geotoolkit.process.vector.intersect.IntersectDescriptor.*;

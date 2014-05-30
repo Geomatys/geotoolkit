@@ -29,7 +29,7 @@ import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.coverage.io.ImageCoverageReader;
 import org.geotoolkit.coverage.io.ImageCoverageWriter;
-import org.opengis.feature.type.Name;
+import org.geotoolkit.feature.type.Name;
 
 /**
  * Reference to a coverage stored in a single file.

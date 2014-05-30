@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.db.reverse;
 
-import org.opengis.feature.ComplexAttribute;
+import org.geotoolkit.feature.ComplexAttribute;
 
 /**
  * When inserting a complex feature in base. it must be divided in smaller elements.

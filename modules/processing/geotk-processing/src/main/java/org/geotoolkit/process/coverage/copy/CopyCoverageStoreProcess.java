@@ -67,7 +67,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.temporal.object.TemporalUtilities;
 import org.geotoolkit.util.ImageIOUtilities;
-import org.opengis.feature.type.Name;
+import org.geotoolkit.feature.type.Name;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.parameter.ParameterValueGroup;

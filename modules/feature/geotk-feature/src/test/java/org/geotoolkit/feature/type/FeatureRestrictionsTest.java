@@ -16,15 +16,15 @@
  */
 package org.geotoolkit.feature.type;
 
-import org.opengis.feature.Feature;
+import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.AttributeTypeBuilder;
-import org.geotoolkit.feature.DefaultName;
+import org.geotoolkit.feature.type.DefaultName;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.filter.DefaultFilterFactory2;
 import org.junit.Test;
 
-import org.opengis.feature.type.FeatureType;
+import org.geotoolkit.feature.type.FeatureType;
 import org.opengis.filter.FilterFactory;
 import static org.junit.Assert.*;
 

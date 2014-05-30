@@ -1,7 +1,7 @@
 /*
  *    GeotoolKit - An Open Source Java GIS Toolkit
  *    http://geotoolkit.org
- * 
+ *
  *    (C) 2009, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -32,9 +32,9 @@ import org.geotoolkit.feature.catalog.Referenceable;
  */
 public class DocumentIDResolver extends IDResolver {
   Map<String, Referenceable> referenceables = new HashMap<String, Referenceable>();
-  
 
-  private Logger logger = Logger.getLogger("DocumentIdResolver"); 
+
+  private Logger logger = Logger.getLogger("DocumentIdResolver");
 
 
   void startDocument() {
@@ -42,10 +42,10 @@ public class DocumentIDResolver extends IDResolver {
   }
 
   public void bind(final String id, final Object obj) {
-    if (obj instanceof Referenceable) 
+    if (obj instanceof Referenceable)
       referenceables.put(id, (Referenceable)obj);
     else
-       logger.info("not refereanceable type: " + obj.getClass().getSimpleName()); 
+       logger.info("not refereanceable type: " + obj.getClass().getSimpleName());
   }
 
   public Callable resolve(final String id, final Class targetType) {
@@ -59,7 +59,7 @@ public class DocumentIDResolver extends IDResolver {
                 referenceable = true;
             }
         }
-                
+
         if (referenceable)
             result = referenceables.get(id);
         else {

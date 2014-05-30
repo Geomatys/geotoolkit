@@ -1,7 +1,7 @@
 /*
  *    GeotoolKit - An Open Source Java GIS Toolkit
  *    http://geotoolkit.org
- * 
+ *
  *    (C) 2009, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -19,7 +19,6 @@ package org.geotoolkit.feature.catalog;
 
 import java.util.Map;
 import java.util.Objects;
-import javax.xml.bind.Marshaller;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -53,12 +52,12 @@ public class BoundFeatureAttributeImpl implements BoundFeatureAttribute, Referen
     @XmlID
     @XmlSchemaType(name = "ID")
     private String id;
-    
+
     @XmlElement(required = true)
     private FeatureType featureType;
     @XmlElement(required = true)
     private FeatureAttribute attribute;
-    
+
     @XmlTransient
     private boolean isReference = false;
 
@@ -66,9 +65,9 @@ public class BoundFeatureAttributeImpl implements BoundFeatureAttribute, Referen
      * An empty constructor used by JAXB
      */
     public BoundFeatureAttributeImpl() {
-        
+
     }
-    
+
     /**
      * Clone a FeatureAssociation
      */
@@ -78,13 +77,13 @@ public class BoundFeatureAttributeImpl implements BoundFeatureAttribute, Referen
             this.attribute   = feature.getAttribute();
             this.featureType = feature.getFeatureType();
         }
-        
+
     }
-    
+
     public FeatureType getFeatureType() {
         return featureType;
     }
-    
+
     public void setFeatureType(final FeatureType featureType) {
         this.featureType = featureType;
     }
@@ -92,11 +91,11 @@ public class BoundFeatureAttributeImpl implements BoundFeatureAttribute, Referen
     public FeatureAttribute getAttribute() {
        return attribute;
     }
-    
+
     public void setAttribute(final FeatureAttribute attribute) {
        this.attribute = attribute;
     }
-    
+
      public String getId() {
         return id;
     }
@@ -104,32 +103,32 @@ public class BoundFeatureAttributeImpl implements BoundFeatureAttribute, Referen
     public void setId(final String id) {
         this.id = id;
     }
-     
+
     /**
      * set the feature in reference mode
      */
     public void setReference(final boolean mode) {
         this.isReference = mode;
     }
-    
+
      /**
      * get the current feature in reference mode
      */
     public boolean isReference() {
         return isReference;
     }
-    
+
     public BoundFeatureAttributeImpl getReference() {
         BoundFeatureAttributeImpl reference = new BoundFeatureAttributeImpl(this);
         reference.setReference(true);
         return reference;
     }
-    
+
     public Map<String, Referenceable> beforeMarshal(Map<String, Referenceable> alreadySee) {
         if (id != null && !id.isEmpty()) {
             alreadySee.put(id, this);
         }
-        
+
         if (featureType != null) {
             if (alreadySee.get(featureType.getId()) != null) {
                 featureType = ((FeatureTypeImpl)featureType).getReference();
@@ -137,7 +136,7 @@ public class BoundFeatureAttributeImpl implements BoundFeatureAttribute, Referen
                 alreadySee = ((FeatureTypeImpl)featureType).beforeMarshal(alreadySee);
             }
         }
-        
+
         if (attribute != null) {
             if (alreadySee.get(attribute.getId()) != null) {
                 attribute = ((FeatureAttributeImpl)attribute).getReference();
@@ -147,7 +146,7 @@ public class BoundFeatureAttributeImpl implements BoundFeatureAttribute, Referen
         }
         return alreadySee;
      }
-    
+
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder("[BoundFeatureAttribute]:").append('\n');
@@ -155,10 +154,10 @@ public class BoundFeatureAttributeImpl implements BoundFeatureAttribute, Referen
             s.append("featureType: ").append(featureType.toString()).append('\n');
         if (attribute != null)
             s.append("attribute: ").append(attribute.toString()).append('\n');
-        
+
         return s.toString();
     }
-    
+
     /**
      * Verify if this entry is identical to the specified object.
      */
@@ -169,7 +168,7 @@ public class BoundFeatureAttributeImpl implements BoundFeatureAttribute, Referen
         }
         if (object instanceof BoundFeatureAttributeImpl) {
             final BoundFeatureAttributeImpl that = (BoundFeatureAttributeImpl) object;
-            
+
             return Objects.equals(this.attribute,   that.attribute) &&
                    Objects.equals(this.featureType, that.featureType);
         }

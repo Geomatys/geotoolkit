@@ -37,10 +37,10 @@ import java.util.List;
 import java.util.Map;
 import org.geotoolkit.feature.MockCRS;
 import org.geotoolkit.feature.MockDirectPosition2D;
-import org.geotoolkit.feature.DefaultName;
+import org.geotoolkit.feature.type.DefaultName;
 import static org.junit.Assert.*;
 import org.junit.Test;
-import org.opengis.feature.type.*;
+import org.geotoolkit.feature.type.*;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**

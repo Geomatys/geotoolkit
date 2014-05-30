@@ -27,8 +27,8 @@ import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.util.Converters;
 
-import org.opengis.feature.Feature;
-import org.opengis.feature.Property;
+import org.geotoolkit.feature.Feature;
+import org.geotoolkit.feature.Property;
 
 import static org.apache.sis.util.ArgumentChecks.*;
 

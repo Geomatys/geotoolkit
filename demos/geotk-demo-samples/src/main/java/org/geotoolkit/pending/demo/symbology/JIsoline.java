@@ -31,7 +31,7 @@ import org.geotoolkit.map.MapLayer;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.style.MutableStyle;
 import org.jdesktop.swingx.JXErrorPane;
-import org.opengis.feature.Feature;
+import org.geotoolkit.feature.Feature;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.PropertyName;
 import org.opengis.style.Description;

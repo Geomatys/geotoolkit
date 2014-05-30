@@ -1,6 +1,6 @@
 /*$************************************************************************************************
  **
- ** $Id: 
+ ** $Id:
  **
  ** $URL: https://geoapi.svn.sourceforge.net/svnroot/geoapi/trunk/geoapi/src/main/java/org/opengis/services/Interface.java $
  **
@@ -17,13 +17,13 @@ import static org.opengis.annotation.Specification.*;
 /**
  * Class that is used to describe the specifics of how a property type is bound to a particular feature type;
  * used as an association class for the association MemberOf between feature type and property type.
- * 
+ *
  * @author Guilhem Legal
  * @module pending
  */
 //@UML(identifier="FC_Binding", specification=ISO_19110)
 public interface Binding {
-    
+
     /**
      * Description of how a property type is bound to a particular feature type. t
      */

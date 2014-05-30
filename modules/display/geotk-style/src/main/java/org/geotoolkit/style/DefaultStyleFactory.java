@@ -45,7 +45,6 @@ import org.geotoolkit.style.function.ThreshholdsBelongTo;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.apache.sis.util.logging.Logging;
 
-import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.Id;
@@ -89,6 +88,7 @@ import org.opengis.style.ShadedRelief;
 import org.opengis.style.Stroke;
 import org.opengis.style.Symbolizer;
 import org.opengis.style.TextSymbolizer;
+import org.opengis.util.GenericName;
 import org.opengis.util.InternationalString;
 
 import static org.geotoolkit.style.StyleConstants.*;
@@ -149,7 +149,7 @@ public class DefaultStyleFactory extends Factory implements MutableStyleFactory 
             final Expression label, final Font font, final LabelPlacement placement,
             final Halo halo, final Fill fill) {
         throw new UnsupportedOperationException("Not supported yet.");
-    }    
+    }
 
     @Override
     public Literal literal(final Color color) {
@@ -163,7 +163,7 @@ public class DefaultStyleFactory extends Factory implements MutableStyleFactory 
         if (redCode.length() == 1)      redCode = "0" + redCode;
         if (greenCode.length() == 1)    greenCode = "0" + greenCode;
         if (blueCode.length() == 1)     blueCode = "0" + blueCode;
-        
+
         final String colorCode;
         int alpha = color.getAlpha();
         if(alpha != 255){
@@ -172,7 +172,7 @@ public class DefaultStyleFactory extends Factory implements MutableStyleFactory 
             colorCode = "#" + alphaCode + redCode + greenCode + blueCode;
         }else{
             colorCode = "#" + redCode + greenCode + blueCode;
-        }        
+        }
         return FF.literal(colorCode.toUpperCase());
     }
 
@@ -180,7 +180,7 @@ public class DefaultStyleFactory extends Factory implements MutableStyleFactory 
     //--------------------------------------------------------------------------
     // Style creation methods --------------------------------------------------
     //--------------------------------------------------------------------------
-    
+
     @Override
     public MutableStyle style(){
         return new DefaultMutableStyle();
@@ -247,7 +247,7 @@ public class DefaultStyleFactory extends Factory implements MutableStyleFactory 
     @Override
     public MutableFeatureTypeStyle featureTypeStyle(final String name,
             final Description description, final Id definedFor,
-            final Set<Name> featureTypeNames, final Set<SemanticType> types,
+            final Set<GenericName> featureTypeNames, final Set<SemanticType> types,
             final List<Rule> rules) {
         final MutableFeatureTypeStyle fts = new DefaultMutableFeatureTypeStyle();
         fts.setName(name);
@@ -263,7 +263,7 @@ public class DefaultStyleFactory extends Factory implements MutableStyleFactory 
         for(Rule rule : rules){
             fts.rules().add((MutableRule)rule);
         }
-        
+
         return fts;
     }
 
@@ -275,7 +275,7 @@ public class DefaultStyleFactory extends Factory implements MutableStyleFactory 
     @Override
     public MutableRule rule(final Symbolizer symbol){
         final MutableRule rule = new DefaultMutableRule();
-        rule.symbolizers().add(symbol);  
+        rule.symbolizers().add(symbol);
         return rule;
     }
 
@@ -302,7 +302,7 @@ public class DefaultStyleFactory extends Factory implements MutableStyleFactory 
         rule.setFilter(filter);
         return rule;
     }
-    
+
     //--------------------------------------------------------------------------
     // Symbolizer creation methods ---------------------------------------------
     //--------------------------------------------------------------------------
@@ -316,10 +316,10 @@ public class DefaultStyleFactory extends Factory implements MutableStyleFactory 
     public PointSymbolizer pointSymbolizer(final Graphic graphic,
             final String geometryPropertyName){
         return new DefaultPointSymbolizer(
-                graphic, 
-                DEFAULT_UOM, 
-                geometryPropertyName, 
-                null, 
+                graphic,
+                DEFAULT_UOM,
+                geometryPropertyName,
+                null,
                 DEFAULT_DESCRIPTION);
     }
 
@@ -339,14 +339,14 @@ public class DefaultStyleFactory extends Factory implements MutableStyleFactory 
     public LineSymbolizer lineSymbolizer(final Stroke stroke,
             final String geometryPropertyName){
         return new DefaultLineSymbolizer(
-                stroke, 
+                stroke,
                 FF.literal(0),
-                DEFAULT_UOM, 
-                geometryPropertyName, 
-                null, 
+                DEFAULT_UOM,
+                geometryPropertyName,
+                null,
                 DEFAULT_DESCRIPTION);
     }
-    
+
     @Override
     public LineSymbolizer lineSymbolizer(final String name, final String geom,
             final Description desc, final Unit<?> uom,
@@ -363,13 +363,13 @@ public class DefaultStyleFactory extends Factory implements MutableStyleFactory 
     public PolygonSymbolizer polygonSymbolizer(final Stroke stroke, final Fill fill,
         final String geometryPropertyName){
         return new DefaultPolygonSymbolizer(
-                stroke, 
-                fill, 
-                DEFAULT_DISPLACEMENT, 
+                stroke,
+                fill,
+                DEFAULT_DISPLACEMENT,
                 FF.literal(0),
-                DEFAULT_UOM, 
-                geometryPropertyName, 
-                null, 
+                DEFAULT_UOM,
+                geometryPropertyName,
+                null,
                 DEFAULT_DESCRIPTION);
     }
 
@@ -389,14 +389,14 @@ public class DefaultStyleFactory extends Factory implements MutableStyleFactory 
     public TextSymbolizer textSymbolizer(final Fill fill, final Font font, final Halo halo,
         final Expression label, final LabelPlacement labelPlacement, final String geometryPropertyName){
         return new DefaultTextSymbolizer(
-                label, 
-                font, 
-                labelPlacement, 
-                halo, 
-                fill, 
-                DEFAULT_UOM, 
-                geometryPropertyName, 
-                null, 
+                label,
+                font,
+                labelPlacement,
+                halo,
+                fill,
+                DEFAULT_UOM,
+                geometryPropertyName,
+                null,
                 DEFAULT_DESCRIPTION);
     }
 
@@ -415,7 +415,7 @@ public class DefaultStyleFactory extends Factory implements MutableStyleFactory 
     }
 
     @Override
-    public RasterSymbolizer rasterSymbolizer(final String geometryPropertyName, 
+    public RasterSymbolizer rasterSymbolizer(final String geometryPropertyName,
             final Expression opacity, final ChannelSelection channel,
             final OverlapBehavior overlap, final ColorMap colorMap,
             final ContrastEnhancement ce, final ShadedRelief relief,
@@ -460,7 +460,7 @@ public class DefaultStyleFactory extends Factory implements MutableStyleFactory 
     @Override
     public AnchorPoint  anchorPoint(){
         return DEFAULT_ANCHOR_POINT;
-    }    
+    }
 
     @Override
     public AnchorPoint  anchorPoint(final double x, final double y){
@@ -485,7 +485,7 @@ public class DefaultStyleFactory extends Factory implements MutableStyleFactory 
 
     @Override
     public Description  description(final InternationalString title, final InternationalString abs){
-        return new DefaultDescription(title, abs); 
+        return new DefaultDescription(title, abs);
     }
 
     @Override
@@ -500,7 +500,7 @@ public class DefaultStyleFactory extends Factory implements MutableStyleFactory 
 
     @Override
     public Displacement displacement(final Expression x, final Expression y){
-        return new DefaultDisplacement(x, y); 
+        return new DefaultDisplacement(x, y);
     }
 
     @Override
@@ -532,22 +532,22 @@ public class DefaultStyleFactory extends Factory implements MutableStyleFactory 
     public Font font(){
         return DEFAULT_FONT;
     }
-    
+
     @Override
     public PointPlacement pointPlacement(){
         return DEFAULT_POINTPLACEMENT;
     }
-    
+
     @Override
     public ContrastEnhancement contrastEnhancement(){
         return DEFAULT_CONTRAST_ENHANCEMENT;
     }
-        
-    
+
+
     @Override
     public Fill fill(final Color color){
         return new DefaultFill(
-                null, 
+                null,
                 literal(color),
                 null);
     }
@@ -556,11 +556,11 @@ public class DefaultStyleFactory extends Factory implements MutableStyleFactory 
     public Stroke stroke(final Color color, final double width){
         return new DefaultStroke(
                 literal(color),
-                null, 
+                null,
                 FF.literal(width),
                 null,
                 null,
-                null, 
+                null,
                 null);
     }
 
@@ -568,7 +568,7 @@ public class DefaultStyleFactory extends Factory implements MutableStyleFactory 
     public Stroke stroke(final Color color, final double width, final float[] dashes){
         return new DefaultStroke(
                 literal(color),
-                null, 
+                null,
                 FF.literal(width),
                 null,
                 null,
@@ -591,32 +591,32 @@ public class DefaultStyleFactory extends Factory implements MutableStyleFactory 
     @Override
     public Font font(final int size){
        return new DefaultFont(
-                new ArrayList<Expression>(), 
-                null, 
-                null, 
+                new ArrayList<Expression>(),
+                null,
+                null,
                 FF.literal(size));
     }
 
     @Override
     public Mark getCircleMark(){
         return new DefaultMark(
-                MARK_CIRCLE, 
-                null, 
+                MARK_CIRCLE,
+                null,
                 null);
     }
 
     @Override
     public Mark getXMark(){
         return new DefaultMark(
-                MARK_X, 
-                null, 
+                MARK_X,
+                null,
                 null);
     }
 
     @Override
     public Mark getStarMark(){
         return new DefaultMark(
-                MARK_STAR, 
+                MARK_STAR,
                 null,
                 null);
     }
@@ -624,24 +624,24 @@ public class DefaultStyleFactory extends Factory implements MutableStyleFactory 
     @Override
     public Mark getSquareMark(){
         return new DefaultMark(
-                MARK_SQUARE, 
-                null, 
+                MARK_SQUARE,
+                null,
                 null);
     }
 
     @Override
     public Mark getCrossMark(){
         return new DefaultMark(
-                MARK_CROSS, 
-                null, 
+                MARK_CROSS,
+                null,
                 null);
     }
 
     @Override
     public Mark getTriangleMark(){
         return new DefaultMark(
-                MARK_TRIANGLE, 
-                null, 
+                MARK_TRIANGLE,
+                null,
                 null);
     }
 
@@ -653,11 +653,11 @@ public class DefaultStyleFactory extends Factory implements MutableStyleFactory 
     @Override
     public LinePlacement linePlacement(final Expression offset){
         return new DefaultLinePlacement(
-                offset, 
+                offset,
                 FF.literal(0),
                 FF.literal(0),
-                false, 
-                false, 
+                false,
+                false,
                 false);
     }
 
@@ -674,12 +674,12 @@ public class DefaultStyleFactory extends Factory implements MutableStyleFactory 
     @Override
     public Stroke stroke(final Expression color, final Expression width){
         return new  DefaultStroke(
-                color, 
-                null, 
-                width, 
-                null, 
-                null, 
-                null, 
+                color,
+                null,
+                width,
+                null,
+                null,
+                null,
                 null);
     }
 
@@ -687,12 +687,12 @@ public class DefaultStyleFactory extends Factory implements MutableStyleFactory 
     public Stroke stroke(final Expression color,
             final Expression width, final Expression opacity){
         return new  DefaultStroke(
-                color, 
-                opacity, 
-                width, 
-                null, 
-                null, 
-                null, 
+                color,
+                opacity,
+                width,
+                null,
+                null,
+                null,
                 null);
     }
 
@@ -804,7 +804,7 @@ public class DefaultStyleFactory extends Factory implements MutableStyleFactory 
     @Override
     public Fill fill(final GraphicFill fill, final Expression color,
             final Expression opacity){
-        return new DefaultFill(fill,color,opacity); 
+        return new DefaultFill(fill,color,opacity);
     }
 
     @Override
@@ -815,32 +815,32 @@ public class DefaultStyleFactory extends Factory implements MutableStyleFactory 
 
     @Override
     public Graphic graphic(final List<GraphicalSymbol> symbols,
-            final Expression opacity, 
-            final Expression size, 
-            final Expression rotation, 
-            final AnchorPoint anchor, 
+            final Expression opacity,
+            final Expression size,
+            final Expression rotation,
+            final AnchorPoint anchor,
             final Displacement disp){
         return new DefaultGraphic(symbols, opacity, size, rotation, anchor, disp);
     }
 
     @Override
     public GraphicFill graphicFill(final List<GraphicalSymbol> symbols,
-            final Expression opacity, 
-            final Expression size, 
-            final Expression rotation, 
-            final AnchorPoint anchor, 
+            final Expression opacity,
+            final Expression size,
+            final Expression rotation,
+            final AnchorPoint anchor,
             final Displacement disp){
         return new DefaultGraphicFill(symbols, opacity, size, rotation, anchor, disp);
     }
 
     @Override
     public GraphicStroke graphicStroke(final List<GraphicalSymbol> symbols,
-            final Expression opacity, 
-            final Expression size, 
-            final Expression rotation, 
-            final AnchorPoint anchor, 
+            final Expression opacity,
+            final Expression size,
+            final Expression rotation,
+            final AnchorPoint anchor,
             final Displacement disp,
-            final Expression initial, 
+            final Expression initial,
             final Expression gap){
         return new DefaultGraphicStroke(symbols, opacity, size, rotation, anchor, disp, initial, gap);
     }
@@ -852,10 +852,10 @@ public class DefaultStyleFactory extends Factory implements MutableStyleFactory 
 
     @Override
     public LinePlacement linePlacement(final Expression offset,
-            final Expression initial, 
-            final Expression gap, 
-            final boolean repeated, 
-            final boolean aligned, 
+            final Expression initial,
+            final Expression gap,
+            final boolean repeated,
+            final boolean aligned,
             final boolean generalize){
         return new DefaultLinePlacement(offset, initial, gap, repeated, aligned, generalize);
     }
@@ -885,64 +885,64 @@ public class DefaultStyleFactory extends Factory implements MutableStyleFactory 
     public SelectedChannelType selectedChannelType(final String name, final ContrastEnhancement enchance){
         return new DefaultSelectedChannelType(name, enchance);
     }
-    
+
     @Override
     public Stroke stroke(
-            final Expression color, 
-            final Expression opacity, 
-            final Expression width, 
-            final Expression join, 
-            final Expression cap, 
-            final float[] dashes, 
+            final Expression color,
+            final Expression opacity,
+            final Expression width,
+            final Expression join,
+            final Expression cap,
+            final float[] dashes,
             final Expression offset){
         return new DefaultStroke(color, opacity, width, join, cap, dashes, offset);
     }
 
     @Override
     public Stroke stroke(
-            final GraphicStroke stroke, 
-            final Expression color, 
-            final Expression opacity, 
-            final Expression width, 
-            final Expression join, 
-            final Expression cap, 
-            final float[] dashes, 
+            final GraphicStroke stroke,
+            final Expression color,
+            final Expression opacity,
+            final Expression width,
+            final Expression join,
+            final Expression cap,
+            final float[] dashes,
             final Expression offset){
         return new DefaultStroke(stroke, color, opacity, width, join, cap, dashes, offset);
     }
 
     @Override
     public Stroke stroke(
-            final GraphicFill fill, 
-            final Expression color, 
-            final Expression opacity, 
-            final Expression width, 
-            final Expression join, 
-            final Expression cap, 
-            final float[] dashes, 
+            final GraphicFill fill,
+            final Expression color,
+            final Expression opacity,
+            final Expression width,
+            final Expression join,
+            final Expression cap,
+            final float[] dashes,
             final Expression offset){
         return new DefaultStroke(fill, color, opacity, width, join, cap, dashes, offset);
     }
 
     @Override
     public GraphicFill graphicFill(final Graphic graphic) {
-        return new DefaultGraphicFill(graphic.graphicalSymbols(), 
-                graphic.getOpacity(), graphic.getSize(), graphic.getRotation(), 
+        return new DefaultGraphicFill(graphic.graphicalSymbols(),
+                graphic.getOpacity(), graphic.getSize(), graphic.getRotation(),
                 graphic.getAnchorPoint(),graphic.getDisplacement());
     }
 
     @Override
     public GraphicStroke graphicStroke(final Graphic graphic) {
-        return new DefaultGraphicStroke(graphic.graphicalSymbols(), 
-                graphic.getOpacity(), graphic.getSize(), graphic.getRotation(), 
+        return new DefaultGraphicStroke(graphic.graphicalSymbols(),
+                graphic.getOpacity(), graphic.getSize(), graphic.getRotation(),
                 graphic.getAnchorPoint(),graphic.getDisplacement(),
                 FF.literal(0),FF.literal(0));
     }
 
     @Override
     public GraphicStroke graphicStroke(final Graphic graphic, final Expression gap, final Expression initialGap) {
-        return new DefaultGraphicStroke(graphic.graphicalSymbols(), 
-                graphic.getOpacity(), graphic.getSize(), graphic.getRotation(), 
+        return new DefaultGraphicStroke(graphic.graphicalSymbols(),
+                graphic.getOpacity(), graphic.getSize(), graphic.getRotation(),
                 graphic.getAnchorPoint(),graphic.getDisplacement(),
                 initialGap,gap);
     }
@@ -956,11 +956,11 @@ public class DefaultStyleFactory extends Factory implements MutableStyleFactory 
                 opacity, size, rotation,
                 anchorPoint, displacement);
     }
-    
+
     @Override
     public GraphicLegend graphicLegend(final Graphic graphic) {
-        return new DefaultGraphicLegend(graphic.graphicalSymbols(), 
-                graphic.getOpacity(), graphic.getSize(), graphic.getRotation(), 
+        return new DefaultGraphicLegend(graphic.graphicalSymbols(),
+                graphic.getOpacity(), graphic.getSize(), graphic.getRotation(),
                 graphic.getAnchorPoint(),graphic.getDisplacement());
     }
 
@@ -975,7 +975,7 @@ public class DefaultStyleFactory extends Factory implements MutableStyleFactory 
         return new DefaultChannelSelection(gray);
     }
 
-    
+
     //Functions-----------------------------------------------------------------
     @Override
     public Categorize categorizeFunction(final Expression lookup, final Map<Expression,Expression> values,
@@ -1001,5 +1001,5 @@ public class DefaultStyleFactory extends Factory implements MutableStyleFactory 
     public Jenks jenksFunction(Literal classNumber, Literal paletteName, Literal fallback, List<Literal> noData) {
         return new DefaultJenks(classNumber, paletteName, fallback, noData);
     }
-   
+
 }

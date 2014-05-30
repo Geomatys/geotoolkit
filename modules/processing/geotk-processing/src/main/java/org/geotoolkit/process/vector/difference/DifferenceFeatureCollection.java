@@ -22,8 +22,8 @@ import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.memory.WrapFeatureCollection;
 import org.geotoolkit.process.vector.VectorProcessUtils;
 
-import org.opengis.feature.Feature;
-import org.opengis.feature.type.FeatureType;
+import org.geotoolkit.feature.Feature;
+import org.geotoolkit.feature.type.FeatureType;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;

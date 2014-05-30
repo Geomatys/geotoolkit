@@ -27,9 +27,9 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.DefaultAssociation;
 import org.geotoolkit.util.collection.CloseableIterator;
 import org.apache.sis.util.Classes;
-import org.opengis.feature.Feature;
-import org.opengis.feature.Property;
-import org.opengis.feature.type.AssociationDescriptor;
+import org.geotoolkit.feature.Feature;
+import org.geotoolkit.feature.Property;
+import org.geotoolkit.feature.type.AssociationDescriptor;
 
 /**
  * Supports on the fly encapsulation of features.

@@ -35,9 +35,6 @@ import javax.xml.stream.XMLStreamReader;
 
 import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.factory.Hints;
-import org.geotoolkit.feature.LenientFeatureFactory;
 import org.geotoolkit.feature.xml.Utils;
 import org.geotoolkit.feature.xml.XmlFeatureReader;
 import org.geotoolkit.feature.xml.jaxb.JAXBEventHandler;
@@ -53,28 +50,27 @@ import org.apache.sis.xml.MarshallerPool;
 import org.apache.sis.xml.Namespaces;
 import org.geotoolkit.xml.StaxStreamReader;
 
-import org.opengis.feature.Feature;
+import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.FeatureFactory;
-import org.opengis.feature.Property;
-import org.opengis.feature.type.AttributeDescriptor;
-import org.opengis.feature.type.FeatureType;
-import org.opengis.feature.type.GeometryDescriptor;
-import org.opengis.feature.type.Name;
-import org.opengis.feature.type.PropertyDescriptor;
+import org.geotoolkit.feature.Property;
+import org.geotoolkit.feature.type.AttributeDescriptor;
+import org.geotoolkit.feature.type.FeatureType;
+import org.geotoolkit.feature.type.GeometryDescriptor;
+import org.geotoolkit.feature.type.Name;
+import org.geotoolkit.feature.type.PropertyDescriptor;
 
 import static javax.xml.stream.events.XMLEvent.*;
 import net.iharder.Base64;
-import org.geotoolkit.feature.DefaultComplexAttribute;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSLineString;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.gml.GeometrytoJTS;
 import org.geotoolkit.gml.xml.AbstractGeometry;
 import org.geotoolkit.gml.xml.GMLMarshallerPool;
-import org.opengis.feature.ComplexAttribute;
+import org.geotoolkit.feature.ComplexAttribute;
 import org.geotoolkit.feature.simple.SimpleFeatureType;
-import org.opengis.feature.type.ComplexType;
-import org.opengis.feature.type.PropertyType;
+import org.geotoolkit.feature.type.ComplexType;
+import org.geotoolkit.feature.type.PropertyType;
 import org.opengis.util.FactoryException;
 
 
@@ -85,8 +81,7 @@ import org.opengis.util.FactoryException;
  */
 public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeatureReader {
 
-    private static final FeatureFactory FF = FactoryFinder.getFeatureFactory(
-            new Hints(Hints.FEATURE_FACTORY,LenientFeatureFactory.class));
+    private static final FeatureFactory FF = FeatureFactory.LENIENT;
 
     protected static final Logger LOGGER = Logger.getLogger("org.geotoolkit.feature.xml.jaxp");
 

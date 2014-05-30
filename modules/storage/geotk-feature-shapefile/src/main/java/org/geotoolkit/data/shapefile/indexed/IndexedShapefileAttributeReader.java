@@ -27,7 +27,7 @@ import org.geotoolkit.data.shapefile.indexed.IndexDataReader.ShpData;
 import org.geotoolkit.index.CloseableCollection;
 import org.apache.sis.storage.DataStoreException;
 
-import org.opengis.feature.type.PropertyDescriptor;
+import org.geotoolkit.feature.type.PropertyDescriptor;
 
 /**
  * An AttributeReader implementation for shape. Pretty straightforward. <BR/>The

@@ -25,19 +25,17 @@ import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
-import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.HintsPending;
-import org.geotoolkit.feature.LenientFeatureFactory;
 import org.geotoolkit.feature.simple.DefaultSimpleFeature;
 import org.apache.sis.util.Classes;
-import org.opengis.feature.Feature;
+import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.FeatureFactory;
-import org.opengis.feature.Property;
+import org.geotoolkit.feature.Property;
 import org.geotoolkit.feature.simple.SimpleFeature;
 import org.geotoolkit.feature.simple.SimpleFeatureType;
-import org.opengis.feature.type.FeatureType;
-import org.opengis.feature.type.PropertyDescriptor;
+import org.geotoolkit.feature.type.FeatureType;
+import org.geotoolkit.feature.type.PropertyDescriptor;
 
 /**
  * Supports on the fly retyping of  FeatureIterator contents.
@@ -50,8 +48,7 @@ import org.opengis.feature.type.PropertyDescriptor;
 public abstract class GenericRetypeFeatureIterator<F extends Feature, R extends FeatureIterator<F>>
         implements FeatureIterator<F> {
 
-    protected static final FeatureFactory FF = FactoryFinder
-            .getFeatureFactory(new Hints(Hints.FEATURE_FACTORY, LenientFeatureFactory.class));
+    protected static final FeatureFactory FF = FeatureFactory.LENIENT;
 
     protected final R iterator;
 
@@ -215,7 +212,7 @@ public abstract class GenericRetypeFeatureIterator<F extends Feature, R extends 
             for(final PropertyDescriptor prop : types){
                 properties.addAll(next.getProperties(prop.getName()));
             }
-            
+
             final F cp = (F) FF.createFeature(properties, mask, next.getIdentifier().getID());
             //copy user datas
             cp.getUserData().putAll(next.getUserData());
@@ -273,7 +270,7 @@ public abstract class GenericRetypeFeatureIterator<F extends Feature, R extends 
             }
             //copy user datas
             feature.getUserData().clear();
-            feature.getUserData().putAll(next.getUserData());            
+            feature.getUserData().putAll(next.getUserData());
             return (F) feature;
         }
 
@@ -339,7 +336,7 @@ public abstract class GenericRetypeFeatureIterator<F extends Feature, R extends 
             //reuse same feature
             return new GenericReuseRetypeFeatureReader(reader, mask);
         }
-        
+
     }
 
     /**

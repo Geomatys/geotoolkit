@@ -17,8 +17,8 @@
  */
 package org.geotoolkit.gui.swing.render2d.control.edition;
 
-import org.opengis.feature.type.FeatureType;
-import org.opengis.feature.Feature;
+import org.geotoolkit.feature.type.FeatureType;
+import org.geotoolkit.feature.Feature;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
@@ -61,7 +61,7 @@ import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.geotoolkit.util.StringUtilities;
 import org.apache.sis.util.logging.Logging;
 
-import org.opengis.feature.type.AttributeDescriptor;
+import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.expression.Expression;

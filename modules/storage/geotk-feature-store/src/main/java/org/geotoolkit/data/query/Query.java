@@ -20,7 +20,7 @@ package org.geotoolkit.data.query;
 import java.util.Date;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.version.Version;
-import org.opengis.feature.type.Name;
+import org.geotoolkit.feature.type.Name;
 import org.opengis.filter.Filter;
 import org.opengis.filter.sort.SortBy;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;

@@ -45,27 +45,25 @@ import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.query.DefaultQueryCapabilities;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryCapabilities;
-import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.feature.DefaultName;
+import org.geotoolkit.feature.type.DefaultName;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.FeatureUtilities;
-import org.geotoolkit.feature.LenientFeatureFactory;
 import org.geotoolkit.feature.type.DefaultFeatureTypeFactory;
 import org.geotoolkit.geometry.jts.SRIDGenerator;
 import org.geotoolkit.jdbc.ManageableDataSource;
 import org.geotoolkit.referencing.CRS;
-import org.opengis.feature.ComplexAttribute;
+import org.geotoolkit.feature.ComplexAttribute;
 
-import org.opengis.feature.Feature;
+import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.FeatureFactory;
-import org.opengis.feature.Property;
-import org.opengis.feature.type.AttributeDescriptor;
-import org.opengis.feature.type.ComplexType;
-import org.opengis.feature.type.FeatureType;
+import org.geotoolkit.feature.Property;
+import org.geotoolkit.feature.type.AttributeDescriptor;
+import org.geotoolkit.feature.type.ComplexType;
+import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.FeatureTypeFactory;
-import org.opengis.feature.type.Name;
-import org.opengis.feature.type.PropertyDescriptor;
+import org.geotoolkit.feature.type.Name;
+import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.parameter.ParameterValueGroup;
@@ -81,8 +79,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 public class SMLFeatureStore extends AbstractFeatureStore {
 
-    private static final FeatureFactory FF = FactoryFinder.getFeatureFactory(
-                        new Hints(Hints.FEATURE_FACTORY,LenientFeatureFactory.class));
+    private static final FeatureFactory FF = FeatureFactory.LENIENT;
     private static final FeatureTypeFactory FTF = new DefaultFeatureTypeFactory();
     private static final GeometryFactory GF = new GeometryFactory();
 
@@ -815,7 +812,7 @@ public class SMLFeatureStore extends AbstractFeatureStore {
 	@Override
 	public void refreshMetaModel() {
 		return;
-		
+
 	}
 
 }

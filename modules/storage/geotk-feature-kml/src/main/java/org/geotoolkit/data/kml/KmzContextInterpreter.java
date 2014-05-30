@@ -54,9 +54,6 @@ import org.geotoolkit.data.kml.model.PolyStyle;
 import org.geotoolkit.data.kml.model.Style;
 import org.geotoolkit.data.kml.xml.KmlWriter;
 import org.geotoolkit.display2d.GO2Utilities;
-import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.factory.Hints;
-import org.geotoolkit.feature.LenientFeatureFactory;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapContext;
@@ -67,9 +64,9 @@ import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.util.FileUtilities;
 
-import org.opengis.feature.Feature;
+import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.FeatureFactory;
-import org.opengis.feature.Property;
+import org.geotoolkit.feature.Property;
 import org.opengis.filter.expression.Expression;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.style.ExtensionSymbolizer;
@@ -88,8 +85,7 @@ import org.opengis.style.TextSymbolizer;
  */
 public class KmzContextInterpreter {
 
-    private static final FeatureFactory FF = FactoryFinder.getFeatureFactory(
-            new Hints(Hints.FEATURE_FACTORY, LenientFeatureFactory.class));
+    private static final FeatureFactory FF = FeatureFactory.LENIENT;
     private static final File FILES_DIR = new File("/tmp/files");
     private static final KmlFactory KML_FACTORY = DefaultKmlFactory.getInstance();
     private static AtomicInteger increment = new AtomicInteger();

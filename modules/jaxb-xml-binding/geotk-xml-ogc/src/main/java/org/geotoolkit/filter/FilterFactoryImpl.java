@@ -97,7 +97,6 @@ import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.ogc.xml.FilterXmlFactory;
 
 // Types dependencies
-import org.opengis.feature.type.Name;
 import org.opengis.filter.And;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory2;
@@ -170,6 +169,7 @@ import org.opengis.filter.temporal.TEquals;
 import org.opengis.filter.temporal.TOverlaps;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.Geometry;
+import org.opengis.util.GenericName;
 
 
 /**
@@ -978,7 +978,7 @@ public class FilterFactoryImpl implements FilterFactory2 {
     }
 
     @Override
-    public PropertyName property(final Name name) {
+    public PropertyName property(final GenericName name) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

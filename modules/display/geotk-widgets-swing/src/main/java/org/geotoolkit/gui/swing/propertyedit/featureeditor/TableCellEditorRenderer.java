@@ -24,7 +24,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellEditor;
 import javax.swing.tree.DefaultMutableTreeNode;
 import org.geotoolkit.gui.swing.util.EmptyCellRenderer;
-import org.opengis.feature.Property;
+import org.geotoolkit.feature.Property;
 
 /**
  *

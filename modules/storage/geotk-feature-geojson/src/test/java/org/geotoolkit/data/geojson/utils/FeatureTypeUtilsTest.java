@@ -4,11 +4,11 @@ import com.vividsolutions.jts.geom.Polygon;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.feature.AttributeDescriptorBuilder;
-import org.geotoolkit.feature.DefaultName;
+import org.geotoolkit.feature.type.DefaultName;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.referencing.CRS;
 import org.junit.Test;
-import org.opengis.feature.type.*;
+import org.geotoolkit.feature.type.*;
 import org.opengis.util.FactoryException;
 
 import javax.measure.unit.SI;

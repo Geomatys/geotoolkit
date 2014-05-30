@@ -24,7 +24,7 @@ import org.geotoolkit.client.Request;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.wms.GetMapRequest;
 import org.geotoolkit.wms.WMSCoverageReference;
-import org.opengis.feature.type.Name;
+import org.geotoolkit.feature.type.Name;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;

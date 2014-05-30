@@ -1,7 +1,7 @@
 /*
  *    GeotoolKit - An Open Source Java GIS Toolkit
  *    http://geotoolkit.org
- * 
+ *
  *    (C) 2009, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -30,9 +30,9 @@ import org.opengis.feature.catalog.Binding;
  * @author Guilhem Legal
  */
 public class BindingAdapter extends XmlAdapter<BindingAdapter, Binding> {
-    
+
     private Binding association;
-    
+
     /**
      * Empty constructor for JAXB only.
      */
@@ -64,7 +64,7 @@ public class BindingAdapter extends XmlAdapter<BindingAdapter, Binding> {
      */
     @XmlElement(name = "FC_Binding")
     public BindingImpl getBinding() {
-        if (association == null) 
+        if (association == null)
             return null;
         return (association instanceof BindingImpl) ?
             (BindingImpl)association : new BindingImpl(association);
@@ -105,7 +105,7 @@ public class BindingAdapter extends XmlAdapter<BindingAdapter, Binding> {
         return new BindingAdapter(value);
     }
 
-    
-    
+
+
 
 }

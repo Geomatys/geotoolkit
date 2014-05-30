@@ -19,7 +19,7 @@ package org.geotoolkit.coverage;
 import java.awt.Point;
 import java.util.List;
 import org.geotoolkit.storage.StorageEvent;
-import org.opengis.feature.type.Name;
+import org.geotoolkit.feature.type.Name;
 
 /**
  *

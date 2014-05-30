@@ -18,8 +18,8 @@
 package org.geotoolkit.report;
 
 import net.sf.jasperreports.engine.JRField;
-import org.opengis.feature.Feature;
-import org.opengis.feature.type.PropertyDescriptor;
+import org.geotoolkit.feature.Feature;
+import org.geotoolkit.feature.type.PropertyDescriptor;
 
 /**
  *

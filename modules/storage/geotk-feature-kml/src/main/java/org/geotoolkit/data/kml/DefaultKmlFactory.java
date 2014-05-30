@@ -156,14 +156,11 @@ import org.geotoolkit.data.kml.xsd.DefaultCdata;
 import org.geotoolkit.data.kml.xsd.DefaultSimpleTypeContainer;
 import org.geotoolkit.xal.model.AddressDetails;
 import org.geotoolkit.data.kml.xsd.SimpleTypeContainer;
-import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.FeatureUtilities;
-import org.geotoolkit.feature.LenientFeatureFactory;
 
-import org.opengis.feature.Feature;
+import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.FeatureFactory;
-import org.opengis.feature.Property;
+import org.geotoolkit.feature.Property;
 
 /**
  *
@@ -174,8 +171,7 @@ public class DefaultKmlFactory implements KmlFactory{
 
     private static final KmlFactory KMLF = new DefaultKmlFactory();
     private static final GeometryFactory GF = new GeometryFactory();
-    private static final FeatureFactory FF = FactoryFinder.getFeatureFactory(
-            new Hints(Hints.FEATURE_FACTORY, LenientFeatureFactory.class));
+    private static final FeatureFactory FF = FeatureFactory.LENIENT;
 
     private DefaultKmlFactory(){}
 
@@ -445,7 +441,7 @@ public class DefaultKmlFactory implements KmlFactory{
             List<SimpleTypeContainer> objectSimpleExtensions, IdAttributes idAttributes,
             String name, boolean visibility, boolean open,
             AtomPersonConstruct author, AtomLink link,
-            String address, AddressDetails addressDetails, 
+            String address, AddressDetails addressDetails,
             String phoneNumber, Object snippet,
             Object description, AbstractView view, AbstractTimePrimitive timePrimitive,
             URI styleUrl, List<AbstractStyleSelector> styleSelector,
@@ -560,7 +556,7 @@ public class DefaultKmlFactory implements KmlFactory{
      * @{@inheritDoc }
      */
     @Override
-    public ExtendedData createExtendedData(List<Data> datas, 
+    public ExtendedData createExtendedData(List<Data> datas,
             List<SchemaData> schemaDatas, List<Object> anyOtherElements) {
         return new DefaultExtendedData(datas, schemaDatas, anyOtherElements);
     }
@@ -583,7 +579,7 @@ public class DefaultKmlFactory implements KmlFactory{
             List<SimpleTypeContainer> objectSimpleExtensions, IdAttributes idAttributes,
             String name, boolean visibility, boolean open,
             AtomPersonConstruct author, AtomLink link,
-            String address, AddressDetails addressDetails, 
+            String address, AddressDetails addressDetails,
             String phoneNumber, Object snippet,
             Object description, AbstractView view, AbstractTimePrimitive timePrimitive,
             URI styleUrl, List<AbstractStyleSelector> styleSelector,
@@ -698,7 +694,7 @@ public class DefaultKmlFactory implements KmlFactory{
             List<SimpleTypeContainer> objectSimpleExtensions, IdAttributes idAttributes,
             String name, boolean visibility, boolean open,
             AtomPersonConstruct author, AtomLink link,
-            String address, AddressDetails addressDetails, 
+            String address, AddressDetails addressDetails,
             String phoneNumber, Object snippet,
             Object description, AbstractView view, AbstractTimePrimitive timePrimitive,
             URI styleUrl, List<AbstractStyleSelector> styleSelector,
@@ -898,13 +894,13 @@ public class DefaultKmlFactory implements KmlFactory{
     public ImagePyramid createImagePyramid(
             List<SimpleTypeContainer> objectSimpleExtensions, IdAttributes idAttributes,
             int titleSize, int maxWidth, int maxHeight, GridOrigin gridOrigin,
-            List<SimpleTypeContainer> imagePyramidSimpleExtensions, 
+            List<SimpleTypeContainer> imagePyramidSimpleExtensions,
             List<Object> imagePyramidObjectExtensions) {
         return new DefaultImagePyramid(objectSimpleExtensions, idAttributes,
                 titleSize, maxWidth, maxHeight, gridOrigin,
                 imagePyramidSimpleExtensions, imagePyramidObjectExtensions);
     }
-    
+
     /**
      *
      * @{@inheritDoc }
@@ -980,7 +976,7 @@ public class DefaultKmlFactory implements KmlFactory{
             double rotation, List<SimpleTypeContainer> latLonBoxSimpleExtensions,
             List<Object> latLonBoxObjectExtensions) {
         return new DefaultLatLonBox(objectSimpleExtensions, idAttributes,
-                north, south, east, west, 
+                north, south, east, west,
                 abstractLatLonBoxSimpleExtensions,
                 abstractLatLonBoxObjectExtensions,
                 rotation, latLonBoxSimpleExtensions, latLonBoxObjectExtensions);
@@ -1125,7 +1121,7 @@ public class DefaultKmlFactory implements KmlFactory{
     @Override
     public Link createLink(
             List<SimpleTypeContainer> objectSimpleExtensions, IdAttributes idAttributes,
-            String href, 
+            String href,
             List<SimpleTypeContainer> basicLinkSimpleExtensions,
             List<Object> basicLinkObjectExtensions,
             RefreshMode refreshMode, double refreshInterval,
@@ -1326,7 +1322,7 @@ public class DefaultKmlFactory implements KmlFactory{
     public MultiGeometry createMultiGeometry(){
         return new DefaultMultiGeometry();
     }
-    
+
     /**
      *
      * @{@inheritDoc }
@@ -1336,7 +1332,7 @@ public class DefaultKmlFactory implements KmlFactory{
             List<SimpleTypeContainer> objectSimpleExtensions, IdAttributes idAttributes,
             String name, boolean visibility, boolean open,
             AtomPersonConstruct author, AtomLink atomLink,
-            String address, AddressDetails addressDetails, String phoneNumber, 
+            String address, AddressDetails addressDetails, String phoneNumber,
             Object snippet, Object description,
             AbstractView view, AbstractTimePrimitive timePrimitive,
             URI styleUrl, List<AbstractStyleSelector> styleSelector,
@@ -1444,7 +1440,7 @@ public class DefaultKmlFactory implements KmlFactory{
      */
     @Override
     public NetworkLinkControl createNetworkLinkControl(double minRefreshPeriod,
-            double maxSessionLength, String cookie, String message, String linkName, 
+            double maxSessionLength, String cookie, String message, String linkName,
             Object linkDescription, Snippet linkSnippet, Calendar expires,
             Update update, AbstractView view,
             List<SimpleTypeContainer> networkLinkControlSimpleExtensions,
@@ -1850,7 +1846,7 @@ public class DefaultKmlFactory implements KmlFactory{
     @Override
     public Region createRegion(
             List<SimpleTypeContainer> objectSimpleExtensions, IdAttributes idAttributes,
-            LatLonAltBox latLonAltBox, Lod lod, 
+            LatLonAltBox latLonAltBox, Lod lod,
             List<SimpleTypeContainer> regionSimpleExtensions,
             List<Object> regionObjectExtentions) {
         return new DefaultRegion(objectSimpleExtensions, idAttributes,

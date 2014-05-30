@@ -18,7 +18,7 @@ package org.geotoolkit.osmtms;
 
 import org.geotoolkit.coverage.*;
 import org.apache.sis.storage.DataStoreException;
-import org.opengis.feature.type.Name;
+import org.geotoolkit.feature.type.Name;
 
 /**
  * Open Street Map Tile Map Server.

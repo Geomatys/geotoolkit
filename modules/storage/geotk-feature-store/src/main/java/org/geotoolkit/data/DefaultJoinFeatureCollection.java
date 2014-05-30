@@ -31,15 +31,14 @@ import org.geotoolkit.data.query.Source;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.AttributeDescriptorBuilder;
-import org.geotoolkit.feature.DefaultName;
+import org.geotoolkit.feature.type.DefaultName;
 import org.geotoolkit.feature.FeatureTypeBuilder;
-import org.geotoolkit.feature.LenientFeatureFactory;
-import org.opengis.feature.Feature;
+import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.FeatureFactory;
-import org.opengis.feature.Property;
-import org.opengis.feature.type.AttributeDescriptor;
-import org.opengis.feature.type.FeatureType;
-import org.opengis.feature.type.Name;
+import org.geotoolkit.feature.Property;
+import org.geotoolkit.feature.type.AttributeDescriptor;
+import org.geotoolkit.feature.type.FeatureType;
+import org.geotoolkit.feature.type.Name;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.PropertyIsEqualTo;
@@ -53,8 +52,7 @@ import org.opengis.filter.expression.PropertyName;
  */
 public class DefaultJoinFeatureCollection extends AbstractFeatureCollection<Feature>{
 
-    private static final FeatureFactory FEATURE_FACTORY = FactoryFinder.getFeatureFactory(
-            new Hints(Hints.FEATURE_FACTORY,LenientFeatureFactory.class));
+    private static final FeatureFactory FEATURE_FACTORY = FeatureFactory.LENIENT;
 
     private static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
 
@@ -419,7 +417,7 @@ public class DefaultJoinFeatureCollection extends AbstractFeatureCollection<Feat
             }else{
                 candidate = toFeature(right,left);
             }
-            
+
             if(query.getFilter().evaluate(candidate)){
                 //combine both rows
                 return candidate;

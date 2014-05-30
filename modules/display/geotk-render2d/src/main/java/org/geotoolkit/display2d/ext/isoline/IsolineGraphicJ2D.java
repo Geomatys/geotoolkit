@@ -51,7 +51,7 @@ import org.geotoolkit.process.coverage.kriging.KrigingDescriptor;
 import org.geotoolkit.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.style.MutableStyle;
-import org.opengis.feature.Feature;
+import org.geotoolkit.feature.Feature;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.parameter.ParameterValueGroup;

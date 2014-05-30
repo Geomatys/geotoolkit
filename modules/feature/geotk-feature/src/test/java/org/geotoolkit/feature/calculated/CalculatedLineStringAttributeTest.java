@@ -25,26 +25,24 @@ import com.vividsolutions.jts.geom.LineString;
 import java.util.Collection;
 import java.util.ArrayList;
 
-import org.geotoolkit.feature.DefaultName;
+import org.geotoolkit.feature.type.DefaultName;
 import org.geotoolkit.feature.AttributeDescriptorBuilder;
-import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import org.opengis.feature.ComplexAttribute;
-import org.opengis.feature.Feature;
-import org.opengis.feature.type.AttributeDescriptor;
-import org.opengis.feature.type.FeatureType;
+import org.geotoolkit.feature.ComplexAttribute;
+import org.geotoolkit.feature.Feature;
+import org.geotoolkit.feature.type.AttributeDescriptor;
+import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.FeatureFactory;
-import org.opengis.feature.Property;
-import org.opengis.feature.type.ComplexType;
-import org.opengis.feature.type.GeometryDescriptor;
+import org.geotoolkit.feature.Property;
+import org.geotoolkit.feature.type.ComplexType;
+import org.geotoolkit.feature.type.GeometryDescriptor;
 
 import static org.junit.Assert.*;
-import org.opengis.feature.type.PropertyDescriptor;
 
 /**
  * Test calculated linestring attribut.
@@ -55,7 +53,7 @@ import org.opengis.feature.type.PropertyDescriptor;
 public class CalculatedLineStringAttributeTest {
 
     private static final double DELTA = 0.00000001d;
-    private final FeatureFactory FF = FactoryFinder.getFeatureFactory(null);
+    private final FeatureFactory FF = FeatureFactory.LENIENT;
     private final GeometryFactory GF = new GeometryFactory();
 
     public CalculatedLineStringAttributeTest() {
@@ -84,7 +82,7 @@ public class CalculatedLineStringAttributeTest {
 
         final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
         final GeometryDescriptor desc = (GeometryDescriptor) adb.create(new DefaultName("calc"), LineString.class, 1, 1, false, null);
-        
+
         final CalculatedLineStringAttribute att = new CalculatedLineStringAttribute(desc, new DefaultName("points"));
 
         //test related correctly set

@@ -26,7 +26,7 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import org.geotoolkit.filter.visitor.DefaultFilterVisitor;
 import org.jdesktop.swingx.combobox.ListComboBoxModel;
-import org.opengis.feature.type.PropertyType;
+import org.geotoolkit.feature.type.PropertyType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Function;

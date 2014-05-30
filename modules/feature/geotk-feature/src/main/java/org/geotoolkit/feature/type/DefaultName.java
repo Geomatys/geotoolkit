@@ -15,12 +15,11 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.feature;
+package org.geotoolkit.feature.type;
 
 import java.util.Collections;
 import java.util.Objects;
 import javax.xml.namespace.QName;
-import org.opengis.feature.type.Name;
 import org.apache.sis.util.iso.DefaultLocalName;
 import org.apache.sis.internal.system.DefaultFactories;
 
@@ -175,14 +174,6 @@ public class DefaultName extends DefaultLocalName implements Name {
             return true;
         }
         return false;
-    }
-
-    /**
-     * Name or namespace:name
-     */
-    @Override
-    public String toString() {
-        return toJCRExtendedForm(this);
     }
 
     /**

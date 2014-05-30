@@ -20,7 +20,7 @@ package org.geotoolkit.feature.xml;
 import java.io.IOException;
 import java.util.Map;
 import javax.xml.stream.XMLStreamException;
-import org.opengis.feature.type.FeatureType;
+import org.geotoolkit.feature.type.FeatureType;
 
 /**
  * An interface for feature / feature collection XML parsing.

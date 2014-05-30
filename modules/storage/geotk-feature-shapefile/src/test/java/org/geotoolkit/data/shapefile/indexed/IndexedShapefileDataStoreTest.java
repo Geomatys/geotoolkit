@@ -54,7 +54,7 @@ import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 
 import org.geotoolkit.feature.simple.SimpleFeature;
 import org.geotoolkit.feature.simple.SimpleFeatureType;
-import org.opengis.feature.type.AttributeDescriptor;
+import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.identity.FeatureId;
@@ -77,7 +77,7 @@ import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 
 import org.geotoolkit.test.TestData;
-import org.opengis.feature.type.Name;
+import org.geotoolkit.feature.type.Name;
 
 import org.geotoolkit.geometry.DefaultBoundingBox;
 import static org.junit.Assert.*;

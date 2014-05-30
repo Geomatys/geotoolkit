@@ -73,7 +73,7 @@ import org.geotoolkit.data.kml.xsd.SimpleTypeContainer;
 import org.geotoolkit.xal.model.AddressDetails;
 import org.geotoolkit.xml.StaxStreamReader;
 
-import org.opengis.feature.Feature;
+import org.geotoolkit.feature.Feature;
 import static org.geotoolkit.data.gx.xml.GxConstants.*;
 import static org.geotoolkit.data.kml.KmlUtilities.*;
 

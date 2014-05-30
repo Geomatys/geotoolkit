@@ -20,9 +20,9 @@ package org.geotoolkit.feature;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.opengis.feature.GeometryAttribute;
-import org.opengis.feature.type.GeometryDescriptor;
-import org.opengis.feature.type.GeometryType;
+import org.geotoolkit.feature.GeometryAttribute;
+import org.geotoolkit.feature.type.GeometryDescriptor;
+import org.geotoolkit.feature.type.GeometryType;
 import org.opengis.filter.identity.Identifier;
 import org.opengis.geometry.BoundingBox;
 import org.opengis.geometry.Envelope;

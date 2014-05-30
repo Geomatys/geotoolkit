@@ -25,9 +25,9 @@ import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.geometry.jts.SRIDGenerator;
 import org.geotoolkit.process.AbstractProcess;
 
-import org.opengis.feature.Feature;
-import org.opengis.feature.Property;
-import org.opengis.feature.type.GeometryDescriptor;
+import org.geotoolkit.feature.Feature;
+import org.geotoolkit.feature.Property;
+import org.geotoolkit.feature.type.GeometryDescriptor;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 

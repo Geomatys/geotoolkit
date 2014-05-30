@@ -1,6 +1,6 @@
 /*$************************************************************************************************
  **
- ** $Id: 
+ ** $Id:
  **
  ** $URL: https://geoapi.svn.sourceforge.net/svnroot/geoapi/trunk/geoapi/src/main/java/org/opengis/services/Interface.java $
  **
@@ -18,21 +18,21 @@ import static org.opengis.annotation.Specification.*;
 /**
  * class that specifies the source of a definition.
  *
- * 
+ *
  * @author Guilhem Legal
  * @module pending
  */
 //@UML(identifier="FC_DefinitionSource", specification=ISO_19110)
 public interface DefinitionSource {
-    
+
      /**
-      * an unique identifier used in the XML instance. 
+      * an unique identifier used in the XML instance.
       */
      //@Extension
      String getId();
-     
+
      /**
-      * actual citation of the source, sufficient to identify the document and how to obtain it. 
+      * actual citation of the source, sufficient to identify the document and how to obtain it.
       */
      //@UML(identifier="source", obligation=MANDATORY, specification=ISO_19110)
      Citation getSource();

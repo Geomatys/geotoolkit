@@ -43,7 +43,7 @@ import org.geotoolkit.internal.image.ColorUtilities;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.style.StyleConstants;
 
-import org.opengis.feature.Feature;
+import org.geotoolkit.feature.Feature;
 import org.opengis.filter.capability.FunctionName;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.ExpressionVisitor;

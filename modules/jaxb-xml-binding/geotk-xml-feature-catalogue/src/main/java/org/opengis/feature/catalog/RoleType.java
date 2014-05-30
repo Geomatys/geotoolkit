@@ -11,9 +11,9 @@ import static org.opengis.annotation.Specification.*;
 
 /**
  * <p>Java class for FC_RoleType_PropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="FC_RoleType_PropertyType">
  *   &lt;complexContent>
@@ -26,8 +26,8 @@ import static org.opengis.annotation.Specification.*;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 //@UML(identifier="FC_RoleType", specification=ISO_19110)
@@ -38,7 +38,7 @@ public class RoleType extends CodeList<RoleType> {
      * Must be declared before any enum declaration.
      */
     private static final List<RoleType> VALUES = new ArrayList<RoleType>(3);
-    
+
     /**
      * indicates an ordinary association
      */
@@ -57,8 +57,8 @@ public class RoleType extends CodeList<RoleType> {
     //@UML(identifier="composition", obligation=CONDITIONAL, specification=ISO_19119)
     public static final RoleType COMPOSITION = new RoleType("COMPOSITION");
 
-    
-    
+
+
     /**
      * Constructs an enum with the given name. The new enum is
      * automatically added to the list returned by {@link #values}.
@@ -92,7 +92,7 @@ public class RoleType extends CodeList<RoleType> {
     public static RoleType valueOf(final String code) {
         return valueOf(RoleType.class, code);
     }
-   
 
-    
+
+
 }

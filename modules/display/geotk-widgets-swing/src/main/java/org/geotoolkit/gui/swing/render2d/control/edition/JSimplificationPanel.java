@@ -27,8 +27,8 @@ import org.geotoolkit.gui.swing.render2d.JMap2D;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.referencing.CRS;
 import org.apache.sis.util.logging.Logging;
-import org.opengis.feature.Feature;
-import org.opengis.feature.type.GeometryDescriptor;
+import org.geotoolkit.feature.Feature;
+import org.geotoolkit.feature.type.GeometryDescriptor;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 

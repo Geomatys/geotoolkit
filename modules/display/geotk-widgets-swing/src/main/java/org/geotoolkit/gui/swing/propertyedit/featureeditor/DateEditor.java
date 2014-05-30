@@ -21,7 +21,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Date;
 import org.jdesktop.swingx.JXDatePicker;
-import org.opengis.feature.type.PropertyType;
+import org.geotoolkit.feature.type.PropertyType;
 
 /**
  *

@@ -51,8 +51,8 @@ import org.geotoolkit.lang.Static;
 import org.geotoolkit.util.Converters;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
 
-import org.opengis.feature.type.FeatureType;
-import org.opengis.feature.type.PropertyDescriptor;
+import org.geotoolkit.feature.type.FeatureType;
+import org.geotoolkit.feature.type.PropertyDescriptor;
 
 import static org.apache.sis.util.ArgumentChecks.*;
 

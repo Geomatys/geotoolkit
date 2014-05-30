@@ -20,7 +20,7 @@ package org.geotoolkit.filter.binding;
 import java.util.Collections;
 import java.util.Iterator;
 
-import org.geotoolkit.feature.DefaultName;
+import org.geotoolkit.feature.type.DefaultName;
 
 import org.jaxen.FunctionCallException;
 import org.jaxen.JaxenConstants;
@@ -38,12 +38,12 @@ import org.jaxen.util.PrecedingAxisIterator;
 import org.jaxen.util.PrecedingSiblingAxisIterator;
 import org.jaxen.util.SelfAxisIterator;
 
-import org.opengis.feature.Attribute;
-import org.opengis.feature.ComplexAttribute;
-import org.opengis.feature.Property;
-import org.opengis.feature.type.ComplexType;
-import org.opengis.feature.type.PropertyDescriptor;
-import org.opengis.feature.type.PropertyType;
+import org.geotoolkit.feature.Attribute;
+import org.geotoolkit.feature.ComplexAttribute;
+import org.geotoolkit.feature.Property;
+import org.geotoolkit.feature.type.ComplexType;
+import org.geotoolkit.feature.type.PropertyDescriptor;
+import org.geotoolkit.feature.type.PropertyType;
 import org.opengis.filter.identity.Identifier;
 
 /**

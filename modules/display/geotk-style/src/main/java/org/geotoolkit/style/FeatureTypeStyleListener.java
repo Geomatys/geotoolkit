@@ -26,27 +26,27 @@ import org.geotoolkit.internal.ReferenceQueueConsumer;
 import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.apache.sis.util.Disposable;
 
-import org.opengis.feature.type.Name;
 import org.opengis.style.SemanticType;
+import org.opengis.util.GenericName;
 
 /**
  * Listener for FeatureTypeStyle.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
 public interface FeatureTypeStyleListener extends PropertyChangeListener{
-    
+
     /**
      * Called when a change occurs in the living rule collection.
      */
     void ruleChange(CollectionChangeEvent<MutableRule> event);
-    
+
     /**
      * Called when a change occurs in the living feature type name collection.
      */
-    void featureTypeNameChange(CollectionChangeEvent<Name> event);
-    
+    void featureTypeNameChange(CollectionChangeEvent<GenericName> event);
+
     /**
      * Called when a change occurs in the living semantic collection.
      */
@@ -106,7 +106,7 @@ public interface FeatureTypeStyleListener extends PropertyChangeListener{
         }
 
         @Override
-        public void featureTypeNameChange(final CollectionChangeEvent<Name> event) {
+        public void featureTypeNameChange(final CollectionChangeEvent<GenericName> event) {
             final FeatureTypeStyleListener listener = get();
             if (listener != null) {
                 listener.featureTypeNameChange(event);

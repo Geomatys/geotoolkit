@@ -22,12 +22,12 @@ import java.util.TreeSet;
 import org.geotoolkit.util.Converters;
 
 import org.geotoolkit.feature.IllegalAttributeException;
-import org.opengis.feature.Attribute;
+import org.geotoolkit.feature.Attribute;
 import org.geotoolkit.feature.simple.SimpleFeatureType;
-import org.opengis.feature.type.AttributeDescriptor;
-import org.opengis.feature.type.AttributeType;
-import org.opengis.feature.type.FeatureType;
-import org.opengis.feature.type.PropertyDescriptor;
+import org.geotoolkit.feature.type.AttributeDescriptor;
+import org.geotoolkit.feature.type.AttributeType;
+import org.geotoolkit.feature.type.FeatureType;
+import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
 
 import static org.apache.sis.util.ArgumentChecks.*;

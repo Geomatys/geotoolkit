@@ -23,7 +23,7 @@ import java.util.List;
 
 import org.apache.sis.util.iso.SimpleInternationalString;
 
-import org.geotoolkit.feature.DefaultName;
+import org.geotoolkit.feature.type.DefaultName;
 import org.geotoolkit.sld.xml.v100.LayerFeatureConstraints;
 import org.geotoolkit.sld.xml.v100.NamedLayer;
 import org.geotoolkit.sld.xml.v100.StyledLayerDescriptor;
@@ -40,7 +40,7 @@ import org.geotoolkit.sld.MutableSLDFactory;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
 
-import org.opengis.feature.type.Name;
+import org.geotoolkit.feature.type.Name;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.metadata.citation.OnlineResource;

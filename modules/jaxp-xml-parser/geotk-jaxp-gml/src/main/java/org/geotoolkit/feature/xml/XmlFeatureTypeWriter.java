@@ -23,7 +23,7 @@ import java.util.List;
 import javax.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
 import org.geotoolkit.xsd.xml.v2001.Schema;
-import org.opengis.feature.type.FeatureType;
+import org.geotoolkit.feature.type.FeatureType;
 import org.w3c.dom.Node;
 
 /**

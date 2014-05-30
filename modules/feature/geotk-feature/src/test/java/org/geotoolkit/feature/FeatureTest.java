@@ -27,7 +27,6 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
-import org.geotoolkit.test.Commons;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -35,12 +34,12 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import org.opengis.feature.Feature;
-import org.opengis.feature.Property;
 import org.geotoolkit.feature.simple.SimpleFeature;
 import org.geotoolkit.feature.simple.SimpleFeatureType;
-import org.opengis.feature.type.AttributeDescriptor;
-import org.opengis.feature.type.FeatureType;
+import org.geotoolkit.feature.type.AttributeDescriptor;
+import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.FeatureType;
+
 import static org.geotoolkit.test.Assert.*;
 
 /**

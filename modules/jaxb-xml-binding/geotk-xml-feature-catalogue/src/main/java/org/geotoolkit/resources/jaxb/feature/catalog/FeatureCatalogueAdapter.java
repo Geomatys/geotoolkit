@@ -1,7 +1,7 @@
 /*
  *    GeotoolKit - An Open Source Java GIS Toolkit
  *    http://geotoolkit.org
- * 
+ *
  *    (C) 2009, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -32,14 +32,14 @@ import org.opengis.feature.catalog.FeatureCatalogue;
  * @author Guilhem Legal
  */
 public class FeatureCatalogueAdapter extends XmlAdapter<FeatureCatalogueAdapter, FeatureCatalogue>  {
-    
-    
+
+
     private FeatureCatalogue feature;
-    
+
     @XmlIDREF
     @XmlAttribute(namespace="http://www.w3.org/1999/xlink")
     private FeatureCatalogueImpl href;
-    
+
     /**
      * Empty constructor for JAXB only.
      */
@@ -118,13 +118,13 @@ public class FeatureCatalogueAdapter extends XmlAdapter<FeatureCatalogueAdapter,
     public FeatureCatalogueAdapter marshal(final FeatureCatalogue value) throws Exception {
         if (value == null) {
             return null;
-        } 
+        }
         return new FeatureCatalogueAdapter(value);
     }
 
-    
+
     @Override
     public String toString() {
-        return "[FeatureCatalogueAdapter] feature ? " + (feature != null) + " href ?" + (href != null); 
+        return "[FeatureCatalogueAdapter] feature ? " + (feature != null) + " href ?" + (href != null);
     }
 }

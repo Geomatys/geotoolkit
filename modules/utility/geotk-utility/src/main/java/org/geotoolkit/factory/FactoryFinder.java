@@ -30,8 +30,6 @@ import org.opengis.util.Factory;
 import org.opengis.util.NameFactory;
 import org.opengis.style.StyleFactory;
 import org.opengis.filter.FilterFactory;
-import org.geotoolkit.feature.FeatureFactory;
-import org.geotoolkit.feature.type.FeatureTypeFactory;
 import org.opengis.referencing.cs.CSFactory;
 import org.opengis.referencing.cs.CSAuthorityFactory;
 import org.opengis.referencing.crs.CRSFactory;
@@ -180,8 +178,6 @@ public class FactoryFinder extends Static {
                     GeometryFactory.class,
                     ComplexFactory.class,
                     AggregateFactory.class,
-                    FeatureTypeFactory.class,
-                    FeatureFactory.class,
                     FilterFactory.class,
                     StyleFactory.class,
 
@@ -655,66 +651,6 @@ public class FactoryFinder extends Static {
      */
     public static Set<AggregateFactory> getAggregateFactories(final Hints hints) {
         return getFactories(AggregateFactory.class, hints, Hints.AGGREGATE_FACTORY);
-    }
-
-    /**
-     * Returns the first implementation of {@link FeatureTypeFactory} matching the specified hints.
-     *
-     * @param  hints An optional map of hints, or {@code null} for the default ones.
-     * @return The first feature type factory that matches the supplied hints.
-     * @throws FactoryRegistryException if no implementation was found or can be created for the
-     *         {@link FeatureTypeFactory} interface.
-     *
-     * @since 3.15
-     * @category Feature
-     *
-     * @see Hints#FEATURE_TYPE_FACTORY
-     */
-    public static FeatureTypeFactory getFeatureTypeFactory(final Hints hints) throws FactoryRegistryException {
-        return getFactory(FeatureTypeFactory.class, hints, Hints.FEATURE_TYPE_FACTORY);
-    }
-
-    /**
-     * Returns a set of all available implementations for the {@link FeatureTypeFactory} interface.
-     *
-     * @param  hints An optional map of hints, or {@code null} for the default ones.
-     * @return Set of available feature type factory implementations.
-     *
-     * @since 3.15
-     * @category Feature
-     */
-    public static Set<FeatureTypeFactory> getFeatureTypeFactories(final Hints hints) {
-        return getFactories(FeatureTypeFactory.class, hints, Hints.FEATURE_TYPE_FACTORY);
-    }
-
-    /**
-     * Returns the first implementation of {@link FeatureFactory} matching the specified hints.
-     *
-     * @param  hints An optional map of hints, or {@code null} for the default ones.
-     * @return The first feature factory that matches the supplied hints.
-     * @throws FactoryRegistryException if no implementation was found or can be created for the
-     *         {@link FeatureFactory} interface.
-     *
-     * @since 3.01
-     * @category Feature
-     *
-     * @see Hints#FEATURE_FACTORY
-     */
-    public static FeatureFactory getFeatureFactory(final Hints hints) throws FactoryRegistryException {
-        return getFactory(FeatureFactory.class, hints, Hints.FEATURE_FACTORY);
-    }
-
-    /**
-     * Returns a set of all available implementations for the {@link FeatureFactory} interface.
-     *
-     * @param  hints An optional map of hints, or {@code null} for the default ones.
-     * @return Set of available feature factory implementations.
-     *
-     * @since 3.01
-     * @category Feature
-     */
-    public static Set<FeatureFactory> getFeatureFactories(final Hints hints) {
-        return getFactories(FeatureFactory.class, hints, Hints.FEATURE_FACTORY);
     }
 
     /**

@@ -21,18 +21,18 @@ import com.vividsolutions.jts.geom.Geometry;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.geotoolkit.factory.FactoryFinder;
 import org.opengis.coverage.Coverage;
 
-import org.opengis.feature.type.AssociationDescriptor;
-import org.opengis.feature.type.AssociationType;
-import org.opengis.feature.type.AttributeDescriptor;
-import org.opengis.feature.type.AttributeType;
+import org.geotoolkit.feature.type.AssociationDescriptor;
+import org.geotoolkit.feature.type.AssociationType;
+import org.geotoolkit.feature.type.AttributeDescriptor;
+import org.geotoolkit.feature.type.AttributeType;
 import org.geotoolkit.feature.type.FeatureTypeFactory;
-import org.opengis.feature.type.GeometryType;
-import org.opengis.feature.type.Name;
-import org.opengis.feature.type.PropertyDescriptor;
-import org.opengis.feature.type.PropertyType;
+import org.geotoolkit.feature.type.GeometryType;
+import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.Name;
+import org.geotoolkit.feature.type.PropertyDescriptor;
+import org.geotoolkit.feature.type.PropertyType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 
@@ -103,10 +103,10 @@ public class AttributeDescriptorBuilder {
     /**
      * User data for the attribute.
      */
-    private final Map<Object,Object> userData = new HashMap<Object, Object>();
+    private final Map<Object,Object> userData = new HashMap<>();
     private Object defaultValue = null;
     private PropertyType type = null;
-    
+
     /**
      * Constructs the builder.
      *
@@ -120,7 +120,7 @@ public class AttributeDescriptorBuilder {
      */
     public AttributeDescriptorBuilder(final FeatureTypeFactory factory) {
         if(factory == null){
-            this.factory = FactoryFinder.getFeatureTypeFactory(null);
+            this.factory = FeatureTypeFactory.INSTANCE;
         }else{
             this.factory = factory;
         }
@@ -288,7 +288,7 @@ public class AttributeDescriptorBuilder {
         descriptor.getUserData().putAll(userData);
         return descriptor;
     }
-    
+
 
     public AttributeDescriptor create(final Name name, final Class binding,
             final int min, final int max, final boolean nillable, final Map<Object,Object> userData) {

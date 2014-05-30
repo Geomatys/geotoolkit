@@ -34,7 +34,7 @@ import org.geotoolkit.gui.swing.tree.MutableTreeNode;
 import org.netbeans.swing.outline.DefaultOutlineModel;
 import org.netbeans.swing.outline.Outline;
 import org.netbeans.swing.outline.RowModel;
-import org.opengis.feature.Property;
+import org.geotoolkit.feature.Property;
 
 /**
  *

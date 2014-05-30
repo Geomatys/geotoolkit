@@ -25,7 +25,7 @@ import org.geotoolkit.db.reverse.PrimaryKey;
 import org.geotoolkit.filter.visitor.SimplifyingFilterVisitor;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.version.VersioningException;
-import org.opengis.feature.type.FeatureType;
+import org.geotoolkit.feature.type.FeatureType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 

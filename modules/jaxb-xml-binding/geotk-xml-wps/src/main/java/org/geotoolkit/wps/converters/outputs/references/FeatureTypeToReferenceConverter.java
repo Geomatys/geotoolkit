@@ -27,7 +27,7 @@ import org.geotoolkit.wps.io.WPSIO;
 import org.geotoolkit.wps.xml.v100.InputReferenceType;
 import org.geotoolkit.wps.xml.v100.OutputReferenceType;
 import org.geotoolkit.wps.xml.v100.ReferenceType;
-import org.opengis.feature.type.FeatureType;
+import org.geotoolkit.feature.type.FeatureType;
 
 /**
  * Implementation of ObjectConverter to convert a {@link FeatureType feature type} into a {@link OutputReferenceType reference}.

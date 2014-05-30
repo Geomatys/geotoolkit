@@ -25,7 +25,7 @@ import org.geotoolkit.display2d.primitive.GraphicJ2D;
 import org.geotoolkit.display2d.primitive.ProjectedFeature;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.gui.swing.propertyedit.JFeatureOutLine;
-import org.opengis.feature.Property;
+import org.geotoolkit.feature.Property;
 
 /**
  * JComponent for Features and Properties.

@@ -27,7 +27,7 @@ import org.geotoolkit.feature.AttributeDescriptorBuilder;
 import org.geotoolkit.feature.AttributeTypeBuilder;
 import org.geotoolkit.feature.type.BasicFeatureTypes;
 import org.apache.sis.util.Classes;
-import org.opengis.feature.type.GeometryDescriptor;
+import org.geotoolkit.feature.type.GeometryDescriptor;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**

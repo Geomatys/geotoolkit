@@ -46,9 +46,9 @@ import org.netbeans.api.visual.border.BorderFactory;
 import org.netbeans.api.visual.layout.LayoutFactory;
 import org.netbeans.api.visual.widget.LabelWidget;
 import org.netbeans.api.visual.widget.Widget;
-import org.opengis.feature.Property;
-import org.opengis.feature.type.AttributeType;
-import org.opengis.feature.type.PropertyDescriptor;
+import org.geotoolkit.feature.Property;
+import org.geotoolkit.feature.type.AttributeType;
+import org.geotoolkit.feature.type.PropertyDescriptor;
 
 /**
  *

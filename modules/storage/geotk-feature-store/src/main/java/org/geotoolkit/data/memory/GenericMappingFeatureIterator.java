@@ -25,10 +25,10 @@ import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.memory.mapping.DefaultFeatureMapper;
 import org.geotoolkit.data.memory.mapping.FeatureMapper;
 import org.apache.sis.util.Classes;
-import org.opengis.feature.Feature;
+import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.simple.SimpleFeatureType;
-import org.opengis.feature.type.FeatureType;
-import org.opengis.feature.type.PropertyDescriptor;
+import org.geotoolkit.feature.type.FeatureType;
+import org.geotoolkit.feature.type.PropertyDescriptor;
 
 /**
  * Basic support for a FeatureIterator that moves attributs to a new type definition

@@ -41,7 +41,7 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.Converters;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
 
-import org.opengis.feature.Feature;
+import org.geotoolkit.feature.Feature;
 import org.opengis.filter.capability.FunctionName;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.ExpressionVisitor;

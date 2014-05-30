@@ -18,7 +18,7 @@ package org.geotoolkit.wmts.map;
 
 import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.coverage.PyramidSet;
-import org.geotoolkit.feature.DefaultName;
+import org.geotoolkit.feature.type.DefaultName;
 import org.geotoolkit.map.DefaultCoverageMapLayer;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.style.DefaultStyleFactory;
@@ -26,7 +26,7 @@ import org.geotoolkit.style.StyleConstants;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.wmts.WebMapTileClient;
 import org.geotoolkit.wmts.model.WMTSPyramidSet;
-import org.opengis.feature.type.Name;
+import org.geotoolkit.feature.type.Name;
 
 /**
  * Map representation of a WMTS layer.

@@ -21,7 +21,7 @@ package org.geotoolkit.feature.type;
 
 import com.vividsolutions.jts.geom.Point;
 
-import org.geotoolkit.feature.DefaultName;
+import org.geotoolkit.feature.type.DefaultName;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.referencing.CRS;
@@ -29,8 +29,8 @@ import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 
 import org.junit.Test;
 
-import org.opengis.feature.type.FeatureType;
-import org.opengis.feature.type.GeometryDescriptor;
+import org.geotoolkit.feature.type.FeatureType;
+import org.geotoolkit.feature.type.GeometryDescriptor;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import static org.junit.Assert.*;

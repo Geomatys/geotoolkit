@@ -25,12 +25,9 @@ import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.data.AbstractFeatureStore;
 import org.geotoolkit.data.query.DefaultQueryCapabilities;
 import org.geotoolkit.data.query.QueryCapabilities;
-import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.factory.Hints;
-import org.geotoolkit.feature.LenientFeatureFactory;
 import org.geotoolkit.feature.FeatureFactory;
-import org.opengis.feature.type.FeatureType;
-import org.opengis.feature.type.Name;
+import org.geotoolkit.feature.type.FeatureType;
+import org.geotoolkit.feature.type.Name;
 import org.opengis.parameter.ParameterValueGroup;
 
 /**
@@ -38,20 +35,20 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Guilhem Legal (Geomatys)
  */
 public abstract class AbstractOMFeatureStore extends AbstractFeatureStore {
- 
+
     private static final QueryCapabilities capabilities = new DefaultQueryCapabilities(false);
 
     protected final Map<Name, FeatureType> types;
- 
+
     protected static final Logger LOGGER = Logging.getLogger(AbstractOMFeatureStore.class);
-    
-    protected static final FeatureFactory FF = FactoryFinder.getFeatureFactory(new Hints(Hints.FEATURE_FACTORY,LenientFeatureFactory.class));
-    
+
+    protected static final FeatureFactory FF = FeatureFactory.LENIENT;
+
     public AbstractOMFeatureStore(final ParameterValueGroup params, final String featureTypeName) {
         super(params);
         types = OMFeatureTypes.getFeatureTypes(featureTypeName);
     }
-    
+
     /**
      * {@inheritDoc }
      */

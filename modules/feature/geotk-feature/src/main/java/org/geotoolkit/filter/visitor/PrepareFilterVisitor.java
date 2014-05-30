@@ -18,7 +18,7 @@
 package org.geotoolkit.filter.visitor;
 
 import org.geotoolkit.filter.FilterUtilities;
-import org.opengis.feature.type.ComplexType;
+import org.geotoolkit.feature.type.ComplexType;
 import org.opengis.filter.expression.PropertyName;
 
 /**

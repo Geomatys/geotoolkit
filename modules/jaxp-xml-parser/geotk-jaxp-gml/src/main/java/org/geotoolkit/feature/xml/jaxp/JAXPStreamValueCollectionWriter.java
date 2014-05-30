@@ -40,11 +40,11 @@ import org.geotoolkit.gml.xml.v321.ObjectFactory;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.xml.MarshallerPool;
 import org.apache.sis.xml.Namespaces;
-import org.opengis.feature.Attribute;
-import org.opengis.feature.ComplexAttribute;
-import org.opengis.feature.Feature;
-import org.opengis.feature.type.FeatureType;
-import org.opengis.feature.type.GeometryType;
+import org.geotoolkit.feature.Attribute;
+import org.geotoolkit.feature.ComplexAttribute;
+import org.geotoolkit.feature.Feature;
+import org.geotoolkit.feature.type.FeatureType;
+import org.geotoolkit.feature.type.GeometryType;
 import org.opengis.filter.expression.Expression;
 import org.opengis.util.FactoryException;
 

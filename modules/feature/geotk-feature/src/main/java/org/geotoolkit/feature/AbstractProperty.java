@@ -19,10 +19,10 @@ package org.geotoolkit.feature;
 import java.io.Serializable;
 import java.util.Objects;
 
-import org.opengis.feature.Property;
-import org.opengis.feature.type.Name;
-import org.opengis.feature.type.PropertyDescriptor;
-import org.opengis.feature.type.PropertyType;
+import org.geotoolkit.feature.Property;
+import org.geotoolkit.feature.type.Name;
+import org.geotoolkit.feature.type.PropertyDescriptor;
+import org.geotoolkit.feature.type.PropertyType;
 
 /**
  * Abstract implementation of Property.

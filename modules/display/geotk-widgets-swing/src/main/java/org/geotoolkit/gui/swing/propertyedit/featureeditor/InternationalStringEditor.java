@@ -21,7 +21,7 @@ import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import org.apache.sis.util.iso.SimpleInternationalString;
-import org.opengis.feature.type.PropertyType;
+import org.geotoolkit.feature.type.PropertyType;
 import org.opengis.util.InternationalString;
 
 /**

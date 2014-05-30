@@ -34,7 +34,7 @@ import javax.swing.event.DocumentListener;
 import static org.geotoolkit.gui.swing.propertyedit.featureeditor.FileEditor.getPreviousPath;
 import static org.geotoolkit.gui.swing.propertyedit.featureeditor.FileEditor.setPreviousPath;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
-import org.opengis.feature.type.PropertyType;
+import org.geotoolkit.feature.type.PropertyType;
 
 /**
  * Throw PropertyChange event when TextField text change.

@@ -30,8 +30,8 @@ import org.geotoolkit.data.query.SortByComparator;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.apache.sis.util.Classes;
-import org.opengis.feature.Feature;
-import org.opengis.feature.type.FeatureType;
+import org.geotoolkit.feature.Feature;
+import org.geotoolkit.feature.type.FeatureType;
 import org.opengis.filter.sort.SortBy;
 
 /**

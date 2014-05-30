@@ -74,7 +74,6 @@ import org.geotoolkit.filter.temporal.DefaultTOverlaps;
 import org.geotoolkit.geometry.DefaultBoundingBox;
 import org.geotoolkit.referencing.CRS;
 
-import org.opengis.feature.type.Name;
 import org.opengis.filter.And;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory2;
@@ -149,6 +148,7 @@ import org.opengis.geometry.BoundingBox;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.Geometry;
 import org.opengis.util.FactoryException;
+import org.opengis.util.GenericName;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
@@ -517,8 +517,8 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      * {@inheritDoc }
      */
     @Override
-    public PropertyName property(final Name name) {
-        return property(name.getLocalPart());
+    public PropertyName property(final GenericName name) {
+        return property(name.toString());
     }
 
     /**

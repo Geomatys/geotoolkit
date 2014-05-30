@@ -24,7 +24,7 @@ import java.util.Set;
 import javax.xml.bind.JAXBElement;
 import javax.xml.namespace.QName;
 
-import org.geotoolkit.feature.DefaultName;
+import org.geotoolkit.feature.type.DefaultName;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.gml.GeometrytoJTS;
 import org.geotoolkit.gml.xml.v321.AbstractGeometryType;
@@ -33,7 +33,7 @@ import org.geotoolkit.gml.xml.v321.EnvelopeType;
 import org.geotoolkit.ogc.xml.v200.*;
 import org.geotoolkit.referencing.CRS;
 
-import org.opengis.feature.type.Name;
+import org.geotoolkit.feature.type.Name;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.MatchAction;

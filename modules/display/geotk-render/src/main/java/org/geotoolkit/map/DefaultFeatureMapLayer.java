@@ -37,7 +37,7 @@ import static org.apache.sis.util.ArgumentChecks.*;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.measure.Range;
 import org.geotoolkit.util.collection.NotifiedCheckedList;
-import org.opengis.feature.Feature;
+import org.geotoolkit.feature.Feature;
 import org.opengis.filter.expression.Expression;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;

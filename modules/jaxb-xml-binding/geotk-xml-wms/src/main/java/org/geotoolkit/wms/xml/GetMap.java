@@ -29,7 +29,7 @@ import org.geotoolkit.ows.xml.RequestBase;
 import org.apache.sis.util.Version;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
 
-import org.opengis.feature.type.Name;
+import org.geotoolkit.feature.type.Name;
 import org.opengis.geometry.Envelope;
 import org.opengis.sld.StyledLayerDescriptor;
 

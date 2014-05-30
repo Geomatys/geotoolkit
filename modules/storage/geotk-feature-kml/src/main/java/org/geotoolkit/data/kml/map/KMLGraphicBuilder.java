@@ -98,8 +98,8 @@ import org.geotoolkit.display.canvas.Canvas;
 import org.geotoolkit.display2d.primitive.ProjectedGeometry;
 
 import org.opengis.display.primitive.Graphic;
-import org.opengis.feature.Feature;
-import org.opengis.feature.Property;
+import org.geotoolkit.feature.Feature;
+import org.geotoolkit.feature.Property;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.metadata.spatial.PixelOrientation;

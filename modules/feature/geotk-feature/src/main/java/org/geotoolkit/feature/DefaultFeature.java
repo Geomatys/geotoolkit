@@ -20,9 +20,9 @@ package org.geotoolkit.feature;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.opengis.feature.Property;
-import org.opengis.feature.type.AttributeDescriptor;
-import org.opengis.feature.type.FeatureType;
+import org.geotoolkit.feature.Property;
+import org.geotoolkit.feature.type.AttributeDescriptor;
+import org.geotoolkit.feature.type.FeatureType;
 import org.opengis.filter.identity.FeatureId;
 
 /**

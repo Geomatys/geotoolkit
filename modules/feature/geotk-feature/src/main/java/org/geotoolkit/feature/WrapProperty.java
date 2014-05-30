@@ -19,19 +19,18 @@ package org.geotoolkit.feature;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import org.geotoolkit.feature.IllegalAttributeException;
 import org.geotoolkit.feature.simple.SimpleFeatureType;
-import org.opengis.feature.type.AssociationDescriptor;
-import org.opengis.feature.type.AssociationType;
-import org.opengis.feature.type.AttributeDescriptor;
-import org.opengis.feature.type.AttributeType;
-import org.opengis.feature.type.ComplexType;
-import org.opengis.feature.type.FeatureType;
-import org.opengis.feature.type.GeometryDescriptor;
-import org.opengis.feature.type.GeometryType;
-import org.opengis.feature.type.Name;
-import org.opengis.feature.type.PropertyDescriptor;
-import org.opengis.feature.type.PropertyType;
+import org.geotoolkit.feature.type.AssociationDescriptor;
+import org.geotoolkit.feature.type.AssociationType;
+import org.geotoolkit.feature.type.AttributeDescriptor;
+import org.geotoolkit.feature.type.AttributeType;
+import org.geotoolkit.feature.type.ComplexType;
+import org.geotoolkit.feature.type.FeatureType;
+import org.geotoolkit.feature.type.GeometryDescriptor;
+import org.geotoolkit.feature.type.GeometryType;
+import org.geotoolkit.feature.type.Name;
+import org.geotoolkit.feature.type.PropertyDescriptor;
+import org.geotoolkit.feature.type.PropertyType;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.filter.identity.Identifier;
 import org.opengis.geometry.BoundingBox;
@@ -45,7 +44,7 @@ import org.geotoolkit.geometry.DefaultBoundingBox;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-abstract class WrapProperty<P extends org.opengis.feature.Property> extends AbstractProperty {
+abstract class WrapProperty<P extends org.geotoolkit.feature.Property> extends AbstractProperty {
 
     protected final P prop;
     protected final PropertyDescriptor desc;
@@ -87,14 +86,14 @@ abstract class WrapProperty<P extends org.opengis.feature.Property> extends Abst
 
     static class Property extends WrapProperty {
 
-        Property(final org.opengis.feature.Property prop, final PropertyDescriptor desc){
+        Property(final org.geotoolkit.feature.Property prop, final PropertyDescriptor desc){
             super(prop,desc);
         }
 
     }
 
-    static class Association<T extends org.opengis.feature.Association>
-            extends WrapProperty<T> implements org.opengis.feature.Association{
+    static class Association<T extends org.geotoolkit.feature.Association>
+            extends WrapProperty<T> implements org.geotoolkit.feature.Association{
 
         Association(final T prop, final AssociationDescriptor desc){
             super(prop,desc);
@@ -111,7 +110,7 @@ abstract class WrapProperty<P extends org.opengis.feature.Property> extends Abst
         }
 
         @Override
-        public org.opengis.feature.Attribute getValue() {
+        public org.geotoolkit.feature.Attribute getValue() {
             return prop.getValue();
         }
 
@@ -122,8 +121,8 @@ abstract class WrapProperty<P extends org.opengis.feature.Property> extends Abst
 
     }
 
-    static class Attribute<T extends org.opengis.feature.Attribute>
-            extends WrapProperty<T> implements org.opengis.feature.Attribute{
+    static class Attribute<T extends org.geotoolkit.feature.Attribute>
+            extends WrapProperty<T> implements org.geotoolkit.feature.Attribute{
 
         Attribute(final T prop, final AttributeDescriptor desc){
             super(prop,desc);
@@ -150,8 +149,8 @@ abstract class WrapProperty<P extends org.opengis.feature.Property> extends Abst
         }
     }
 
-    static class GeometryAttribute<T extends org.opengis.feature.GeometryAttribute>
-            extends Attribute<T> implements org.opengis.feature.GeometryAttribute{
+    static class GeometryAttribute<T extends org.geotoolkit.feature.GeometryAttribute>
+            extends Attribute<T> implements org.geotoolkit.feature.GeometryAttribute{
 
         GeometryAttribute(final T prop, final GeometryDescriptor desc){
             super(prop,desc);
@@ -179,8 +178,8 @@ abstract class WrapProperty<P extends org.opengis.feature.Property> extends Abst
 
     }
 
-    static class ComplexAttribute<T extends org.opengis.feature.ComplexAttribute>
-            extends Attribute<T> implements org.opengis.feature.ComplexAttribute{
+    static class ComplexAttribute<T extends org.geotoolkit.feature.ComplexAttribute>
+            extends Attribute<T> implements org.geotoolkit.feature.ComplexAttribute{
 
         ComplexAttribute(final T prop, final AttributeDescriptor desc){
             super(prop,desc);
@@ -192,44 +191,44 @@ abstract class WrapProperty<P extends org.opengis.feature.Property> extends Abst
         }
 
         @Override
-        public void setValue(final Collection<org.opengis.feature.Property> values) {
+        public void setValue(final Collection<org.geotoolkit.feature.Property> values) {
             prop.setValue(values);
         }
 
         @Override
-        public Collection<? extends org.opengis.feature.Property> getValue() {
+        public Collection<? extends org.geotoolkit.feature.Property> getValue() {
             return prop.getValue();
         }
 
         @Override
-        public Collection<org.opengis.feature.Property> getProperties(final Name name) {
+        public Collection<org.geotoolkit.feature.Property> getProperties(final Name name) {
             return prop.getProperties(name);
         }
 
         @Override
-        public org.opengis.feature.Property getProperty(final Name name) {
+        public org.geotoolkit.feature.Property getProperty(final Name name) {
             return prop.getProperty(name);
         }
 
         @Override
-        public Collection<org.opengis.feature.Property> getProperties(final String name) {
+        public Collection<org.geotoolkit.feature.Property> getProperties(final String name) {
             return prop.getProperties(name);
         }
 
         @Override
-        public Collection<org.opengis.feature.Property> getProperties() {
+        public Collection<org.geotoolkit.feature.Property> getProperties() {
             return prop.getProperties();
         }
 
         @Override
-        public org.opengis.feature.Property getProperty(final String name) {
+        public org.geotoolkit.feature.Property getProperty(final String name) {
             return prop.getProperty(name);
         }
 
     }
 
-    static class Feature<T extends org.opengis.feature.Feature>
-            extends ComplexAttribute<T> implements org.opengis.feature.Feature{
+    static class Feature<T extends org.geotoolkit.feature.Feature>
+            extends ComplexAttribute<T> implements org.geotoolkit.feature.Feature{
 
         Feature(final T prop, final AttributeDescriptor desc){
             super(prop,desc);
@@ -251,12 +250,12 @@ abstract class WrapProperty<P extends org.opengis.feature.Property> extends Abst
         }
 
         @Override
-        public org.opengis.feature.GeometryAttribute getDefaultGeometryProperty() {
+        public org.geotoolkit.feature.GeometryAttribute getDefaultGeometryProperty() {
             return prop.getDefaultGeometryProperty();
         }
 
         @Override
-        public void setDefaultGeometryProperty(final org.opengis.feature.GeometryAttribute geometryAttribute) {
+        public void setDefaultGeometryProperty(final org.geotoolkit.feature.GeometryAttribute geometryAttribute) {
             prop.setDefaultGeometryProperty(geometryAttribute);
         }
 

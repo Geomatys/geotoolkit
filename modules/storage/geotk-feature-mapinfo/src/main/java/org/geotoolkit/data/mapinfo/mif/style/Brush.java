@@ -17,9 +17,9 @@
 package org.geotoolkit.data.mapinfo.mif.style;
 
 import org.geotoolkit.data.mapinfo.mif.geometry.MIFLineBuilder;
-import org.geotoolkit.feature.DefaultName;
+import org.geotoolkit.feature.type.DefaultName;
 import org.geotoolkit.style.DefaultDescription;
-import org.opengis.feature.type.Name;
+import org.geotoolkit.feature.type.Name;
 import org.opengis.filter.expression.Expression;
 import org.opengis.style.*;
 

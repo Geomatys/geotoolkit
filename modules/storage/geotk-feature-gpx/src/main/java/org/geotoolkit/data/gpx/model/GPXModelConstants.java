@@ -28,26 +28,23 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
-import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.AttributeDescriptorBuilder;
-import org.geotoolkit.feature.DefaultName;
+import org.geotoolkit.feature.type.DefaultName;
 import org.geotoolkit.feature.FeatureTypeBuilder;
-import org.geotoolkit.feature.LenientFeatureFactory;
 import org.geotoolkit.feature.calculated.CalculatedLineStringAttribute;
 import org.geotoolkit.feature.calculated.CalculatedMultiLineStringAttribute;
 import org.apache.sis.geometry.ImmutableEnvelope;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 
-import org.opengis.feature.ComplexAttribute;
-import org.opengis.feature.Feature;
+import org.geotoolkit.feature.ComplexAttribute;
+import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.FeatureFactory;
-import org.opengis.feature.Property;
-import org.opengis.feature.type.AttributeDescriptor;
-import org.opengis.feature.type.ComplexType;
-import org.opengis.feature.type.FeatureType;
+import org.geotoolkit.feature.Property;
+import org.geotoolkit.feature.type.AttributeDescriptor;
+import org.geotoolkit.feature.type.ComplexType;
+import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.FeatureTypeFactory;
-import org.opengis.feature.type.GeometryDescriptor;
+import org.geotoolkit.feature.type.GeometryDescriptor;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -61,8 +58,7 @@ import static org.geotoolkit.data.gpx.xml.GPXConstants.*;
  */
 public final class GPXModelConstants {
 
-    private static final FeatureFactory FF = FactoryFinder.getFeatureFactory(
-            new Hints(Hints.FEATURE_FACTORY, LenientFeatureFactory.class));
+    private static final FeatureFactory FF = FeatureFactory.LENIENT;
 
     public static final CoordinateReferenceSystem GPX_CRS = DefaultGeographicCRS.WGS84;
     public static final String GPX_NAMESPACE = "http://www.topografix.com";

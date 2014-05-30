@@ -21,7 +21,7 @@ import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 import org.geotoolkit.filter.visitor.IsStaticExpressionVisitor;
 import org.geotoolkit.filter.visitor.PrepareFilterVisitor;
 import org.geotoolkit.lang.Static;
-import org.opengis.feature.type.ComplexType;
+import org.geotoolkit.feature.type.ComplexType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.PropertyName;

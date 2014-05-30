@@ -3,7 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2014, Geomatys
- * 
+ *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
  *    License as published by the Free Software Foundation;
@@ -34,12 +34,12 @@ import org.geotoolkit.style.RuleListener;
 import org.geotoolkit.style.StyleListener;
 import org.geotoolkit.style.StyleUtilities;
 import org.geotoolkit.util.collection.CollectionChangeEvent;
-import org.opengis.feature.type.Name;
 import org.opengis.style.FeatureTypeStyle;
 import org.opengis.style.Rule;
 import org.opengis.style.SemanticType;
 import org.opengis.style.Style;
 import org.opengis.style.Symbolizer;
+import org.opengis.util.GenericName;
 
 /**
  *
@@ -58,7 +58,7 @@ public final class StyleTreeModel implements TreeModel, StyleListener, FeatureTy
     public StyleTreeModel(Object root) {
         setRoot(root);
     }
-    
+
     /**
      * Set the model Style
      * @param style , can't be null
@@ -81,7 +81,7 @@ public final class StyleTreeModel implements TreeModel, StyleListener, FeatureTy
             fireStructureChanged(new TreeModelEvent(this, new TreePath(root)));
         }
     }
-    
+
     @Override
     public Object getRoot() {
         return root;
@@ -99,7 +99,7 @@ public final class StyleTreeModel implements TreeModel, StyleListener, FeatureTy
             return -1;
         }
     }
-    
+
     public void removeChild(Object parent, Object child) {
         if(parent instanceof Style){
             ((Style)parent).featureTypeStyles().remove(child);
@@ -132,7 +132,7 @@ public final class StyleTreeModel implements TreeModel, StyleListener, FeatureTy
         }
 
     }
-    
+
     @Override
     public int getChildCount(Object parent) {
         if(parent instanceof Style){
@@ -153,7 +153,7 @@ public final class StyleTreeModel implements TreeModel, StyleListener, FeatureTy
 
     @Override
     public void valueForPathChanged(TreePath path, Object newValue) {
-        
+
     }
 
     @Override
@@ -196,7 +196,7 @@ public final class StyleTreeModel implements TreeModel, StyleListener, FeatureTy
     }
 
     @Override
-    public void featureTypeNameChange(CollectionChangeEvent<Name> event) {
+    public void featureTypeNameChange(CollectionChangeEvent<GenericName> event) {
         fireEvent(new TreePath(root), event);
     }
 
@@ -208,37 +208,37 @@ public final class StyleTreeModel implements TreeModel, StyleListener, FeatureTy
     public void symbolizerChange(CollectionChangeEvent<Symbolizer> event) {
         fireEvent(new TreePath(root), event);
     }
-        
+
     private void fireNodesChanged(TreeModelEvent event){
         final TreeModelListener[] lsts = listeners.getListeners(TreeModelListener.class);
         for(TreeModelListener lst : lsts){
             lst.treeNodesChanged(event);
         }
     }
-    
+
     private void fireNodesInserted(TreeModelEvent event){
         final TreeModelListener[] lsts = listeners.getListeners(TreeModelListener.class);
         for(TreeModelListener lst : lsts){
             lst.treeNodesInserted(event);
         }
     }
-    
+
     private void fireNodesRemoved(TreeModelEvent event){
         final TreeModelListener[] lsts = listeners.getListeners(TreeModelListener.class);
         for(TreeModelListener lst : lsts){
             lst.treeNodesRemoved(event);
         }
     }
-    
+
     private void fireStructureChanged(TreeModelEvent event){
         final TreeModelListener[] lsts = listeners.getListeners(TreeModelListener.class);
         for(TreeModelListener lst : lsts){
             lst.treeStructureChanged(event);
         }
     }
-    
+
     private void fireEvent(TreePath path, EventObject event){
-        
+
         if(event instanceof CollectionChangeEvent){
             final CollectionChangeEvent cevent = (CollectionChangeEvent) event;
             final int type = cevent.getType();
@@ -248,12 +248,12 @@ public final class StyleTreeModel implements TreeModel, StyleListener, FeatureTy
             final Collection col = cevent.getItems();
             if(col==null || col.isEmpty()) return;
             final Object candidate = col.iterator().next();
-            if(!(candidate instanceof Rule 
-              || candidate instanceof Symbolizer 
+            if(!(candidate instanceof Rule
+              || candidate instanceof Symbolizer
               || candidate instanceof FeatureTypeStyle)){
                 return;
             }
-            
+
             if(type == CollectionChangeEvent.ITEM_ADDED){
                 final Object[] objs = cevent.getItems().toArray();
                 final int[] indices = new int[objs.length];
@@ -288,7 +288,7 @@ public final class StyleTreeModel implements TreeModel, StyleListener, FeatureTy
                     }
                     final TreeModelEvent te = new TreeModelEvent(this, path, indices, objs);
                     fireNodesRemoved(te);
-                    
+
                     //the change event contain the old element
                     final Object parent = path.getLastPathComponent();
                     if(parent instanceof Style){
@@ -317,7 +317,7 @@ public final class StyleTreeModel implements TreeModel, StyleListener, FeatureTy
                 fireNodesChanged(new TreeModelEvent(this, parentPath,indices,objs));
             }
         }
-        
+
     }
-    
+
 }

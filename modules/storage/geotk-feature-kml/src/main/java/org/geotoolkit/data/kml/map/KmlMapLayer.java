@@ -33,9 +33,9 @@ import org.geotoolkit.map.AbstractMapLayer;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.style.MutableStyle;
 
-import org.opengis.feature.Feature;
-import org.opengis.feature.Property;
-import org.opengis.feature.type.FeatureType;
+import org.geotoolkit.feature.Feature;
+import org.geotoolkit.feature.Property;
+import org.geotoolkit.feature.type.FeatureType;
 import org.opengis.geometry.Envelope;
 
 /**

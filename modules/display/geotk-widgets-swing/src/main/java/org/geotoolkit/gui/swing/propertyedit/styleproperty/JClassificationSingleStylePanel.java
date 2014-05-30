@@ -74,7 +74,6 @@ import org.jdesktop.swingx.JXTable;
 import org.jdesktop.swingx.combobox.ListComboBoxModel;
 import org.jdesktop.swingx.decorator.Highlighter;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
-import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.PropertyIsEqualTo;
@@ -84,6 +83,7 @@ import org.opengis.filter.expression.PropertyName;
 import org.opengis.style.Rule;
 import org.opengis.style.SemanticType;
 import org.opengis.style.Symbolizer;
+import org.opengis.util.GenericName;
 
 /**
  *
@@ -111,9 +111,9 @@ public class JClassificationSingleStylePanel extends AbstractPropertyPane{
     private FeatureMapLayer layer = null;
 
     public JClassificationSingleStylePanel() {
-        super(MessageBundle.getString("property_style_classification_unique"), 
-              IconBundle.getIcon("16_classification_single"), 
-              IconBundle.getIcon("preview_style_class1").getImage(), 
+        super(MessageBundle.getString("property_style_classification_unique"),
+              IconBundle.getIcon("16_classification_single"),
+              IconBundle.getIcon("preview_style_class1").getImage(),
               "");
         initComponents();
         guiTable.setModel(model);
@@ -650,7 +650,7 @@ public class JClassificationSingleStylePanel extends AbstractPropertyPane{
                 }
 
                 @Override
-                public void featureTypeNameChange(CollectionChangeEvent<Name> event) {}
+                public void featureTypeNameChange(CollectionChangeEvent<GenericName> event) {}
 
                 @Override
                 public void semanticTypeChange(CollectionChangeEvent<SemanticType> event) {}
@@ -659,7 +659,7 @@ public class JClassificationSingleStylePanel extends AbstractPropertyPane{
                 public void propertyChange(PropertyChangeEvent evt) {}
             });
         }
-        
+
         @Override
         public int getRowCount() {
             return fts.rules().size();

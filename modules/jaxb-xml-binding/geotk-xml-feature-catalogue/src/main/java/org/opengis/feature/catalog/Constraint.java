@@ -1,6 +1,6 @@
 /*$************************************************************************************************
  **
- ** $Id: 
+ ** $Id:
  **
  ** $URL: https://geoapi.svn.sourceforge.net/svnroot/geoapi/trunk/geoapi/src/main/java/org/opengis/services/Interface.java $
  **
@@ -17,15 +17,15 @@ import static org.opengis.annotation.Specification.*;
 /**
  * class for defining constraints types.
  *
- * 
+ *
  * @author Guilhem Legal
  * @module pending
  */
 //@UML(identifier="FC_Constraint", specification=ISO_19110)
 public interface Constraint {
-    
+
     /**
-     * Description of the constraint that is being applied. 
+     * Description of the constraint that is being applied.
      */
     //@UML(identifier="description", obligation=MANDATORY, specification=ISO_19110)
     String getDescription();

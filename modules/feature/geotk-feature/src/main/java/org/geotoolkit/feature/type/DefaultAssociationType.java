@@ -20,10 +20,10 @@ import java.util.List;
 import java.util.Objects;
 
 import org.opengis.feature.FeatureType;
-import org.opengis.feature.type.AssociationDescriptor;
-import org.opengis.feature.type.AssociationType;
-import org.opengis.feature.type.AttributeType;
-import org.opengis.feature.type.Name;
+import org.geotoolkit.feature.type.AssociationDescriptor;
+import org.geotoolkit.feature.type.AssociationType;
+import org.geotoolkit.feature.type.AttributeType;
+import org.geotoolkit.feature.type.Name;
 import org.opengis.filter.Filter;
 import org.opengis.util.InternationalString;
 

@@ -27,7 +27,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.display2d.primitive.GraphicJ2D;
 
 import org.opengis.display.primitive.Graphic;
-import org.opengis.feature.Feature;
+import org.geotoolkit.feature.Feature;
 import org.opengis.geometry.Envelope;
 
 

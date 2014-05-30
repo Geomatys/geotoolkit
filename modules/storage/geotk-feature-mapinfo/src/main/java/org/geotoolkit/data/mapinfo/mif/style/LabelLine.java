@@ -17,8 +17,8 @@
 package org.geotoolkit.data.mapinfo.mif.style;
 
 import com.vividsolutions.jts.geom.Coordinate;
-import org.geotoolkit.feature.DefaultName;
-import org.opengis.feature.type.Name;
+import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.Name;
 import org.opengis.style.Description;
 import org.opengis.style.StyleVisitor;
 

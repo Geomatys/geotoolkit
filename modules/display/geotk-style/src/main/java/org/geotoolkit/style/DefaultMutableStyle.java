@@ -30,11 +30,11 @@ import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.geotoolkit.util.collection.NotifiedCheckedList;
 import org.apache.sis.util.Classes;
 
-import org.opengis.feature.type.Name;
 import org.opengis.style.Description;
 import org.opengis.style.SemanticType;
 import org.opengis.style.StyleVisitor;
 import org.opengis.style.Symbolizer;
+import org.opengis.util.GenericName;
 
 import static org.apache.sis.util.ArgumentChecks.*;
 
@@ -320,7 +320,7 @@ public class DefaultMutableStyle implements MutableStyle,FeatureTypeStyleListene
     }
 
     @Override
-    public void featureTypeNameChange(final CollectionChangeEvent<Name> event) {
+    public void featureTypeNameChange(final CollectionChangeEvent<GenericName> event) {
         final int index = fts.indexOf(event.getSource());
         fireFeatureTypeStyleChange(CollectionChangeEvent.ITEM_CHANGED,
                 (MutableFeatureTypeStyle)event.getSource(), NumberRange.create(index, true, index, true), event);

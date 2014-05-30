@@ -18,16 +18,13 @@
 package org.geotoolkit.data.gx.model;
 
 import org.geotoolkit.data.gx.xml.GxConstants;
-import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.AttributeDescriptorBuilder;
-import org.geotoolkit.feature.DefaultName;
+import org.geotoolkit.feature.type.DefaultName;
 import org.geotoolkit.feature.FeatureTypeBuilder;
-import org.geotoolkit.feature.LenientFeatureFactory;
 
 import org.geotoolkit.feature.FeatureFactory;
-import org.opengis.feature.type.AttributeDescriptor;
-import org.opengis.feature.type.FeatureType;
+import org.geotoolkit.feature.type.AttributeDescriptor;
+import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.FeatureTypeFactory;
 
 import static org.geotoolkit.data.kml.model.KmlModelConstants.*;
@@ -39,8 +36,7 @@ import static org.geotoolkit.data.kml.model.KmlModelConstants.*;
  */
 public class GxModelConstants {
 
-    private static final FeatureFactory FF = FactoryFinder.getFeatureFactory(
-            new Hints(Hints.FEATURE_FACTORY, LenientFeatureFactory.class));
+    private static final FeatureFactory FF = FeatureFactory.LENIENT;
 
     public static final String GX_NAMESPACE = "http://www.google.com/kml/ext/2.2";
 

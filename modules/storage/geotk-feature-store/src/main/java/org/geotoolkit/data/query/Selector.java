@@ -18,7 +18,7 @@
 package org.geotoolkit.data.query;
 
 import org.geotoolkit.data.session.Session;
-import org.opengis.feature.type.Name;
+import org.geotoolkit.feature.type.Name;
 
 /**
  * Define the feature provider that will be use by the query.

@@ -17,9 +17,9 @@
 package org.geotoolkit.feature.type;
 
 import java.util.List;
-import org.opengis.feature.type.AttributeType;
-import org.opengis.feature.type.ComplexType;
-import org.opengis.feature.type.PropertyDescriptor;
+import org.geotoolkit.feature.type.AttributeType;
+import org.geotoolkit.feature.type.ComplexType;
+import org.geotoolkit.feature.type.PropertyDescriptor;
 
 /**
  * ComplexType giving access to a modifiable list of descriptors.

@@ -29,7 +29,7 @@ import java.util.Map;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.apache.sis.io.TableAppender;
 
-import org.opengis.feature.Property;
+import org.geotoolkit.feature.Property;
 
 import static org.geotoolkit.data.osm.model.OSMModelConstants.*;
 

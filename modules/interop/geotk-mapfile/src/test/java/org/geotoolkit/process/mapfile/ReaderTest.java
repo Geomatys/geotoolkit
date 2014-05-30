@@ -22,16 +22,16 @@ import org.geotoolkit.style.MutableStyleFactory;
 import org.opengis.filter.FilterFactory;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.style.DefaultStyleFactory;
-import org.opengis.feature.Property;
+import org.geotoolkit.feature.Property;
 import java.util.Collection;
 import java.awt.Color;
 import java.io.IOException;
-import org.opengis.feature.Feature;
+import org.geotoolkit.feature.Feature;
 import java.net.URL;
 import java.util.Iterator;
 import org.junit.Test;
 
-import org.opengis.feature.ComplexAttribute;
+import org.geotoolkit.feature.ComplexAttribute;
 import static org.geotoolkit.test.Assert.*;
 
 /**

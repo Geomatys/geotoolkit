@@ -85,7 +85,6 @@ import org.jdesktop.swingx.combobox.EnumComboBoxModel;
 import org.jdesktop.swingx.combobox.ListComboBoxModel;
 import org.jdesktop.swingx.decorator.Highlighter;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
-import org.opengis.feature.type.Name;
 import org.opengis.filter.And;
 import org.opengis.filter.BinaryComparisonOperator;
 import org.opengis.filter.Filter;
@@ -97,6 +96,7 @@ import org.opengis.filter.expression.PropertyName;
 import org.opengis.style.Rule;
 import org.opengis.style.SemanticType;
 import org.opengis.style.Symbolizer;
+import org.opengis.util.GenericName;
 
 /**
  *
@@ -135,9 +135,9 @@ public class JClassificationIntervalStylePanel extends AbstractPropertyPane{
     private FeatureMapLayer layer = null;
 
     public JClassificationIntervalStylePanel() {
-        super(MessageBundle.getString("property_style_classification_interval"), 
-              IconBundle.getIcon("16_classification_interval"), 
-              IconBundle.getIcon("preview_style_class2").getImage(), 
+        super(MessageBundle.getString("property_style_classification_interval"),
+              IconBundle.getIcon("16_classification_interval"),
+              IconBundle.getIcon("preview_style_class2").getImage(),
               "");
         initComponents();
         guiTable.setModel(model);
@@ -826,7 +826,7 @@ public class JClassificationIntervalStylePanel extends AbstractPropertyPane{
                 }
 
                 @Override
-                public void featureTypeNameChange(CollectionChangeEvent<Name> event) {}
+                public void featureTypeNameChange(CollectionChangeEvent<GenericName> event) {}
 
                 @Override
                 public void semanticTypeChange(CollectionChangeEvent<SemanticType> event) {}

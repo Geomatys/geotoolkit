@@ -21,7 +21,7 @@ import java.util.Deque;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
-import org.opengis.feature.type.Name;
+import org.geotoolkit.feature.type.Name;
 
 /**
  * Abstract coverage reference which recycle readers.

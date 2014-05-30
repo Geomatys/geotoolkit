@@ -35,8 +35,8 @@ import org.geotoolkit.index.quadtree.LazyTyleSearchIterator;
 import org.geotoolkit.index.quadtree.LazyTyleSearchIterator.Buffered;
 import org.apache.sis.storage.DataStoreException;
 
-import org.opengis.feature.type.GeometryDescriptor;
-import org.opengis.feature.type.PropertyDescriptor;
+import org.geotoolkit.feature.type.GeometryDescriptor;
+import org.geotoolkit.feature.type.PropertyDescriptor;
 
 /**
  * Attribut reader that will check the geometry bbox and resolution.

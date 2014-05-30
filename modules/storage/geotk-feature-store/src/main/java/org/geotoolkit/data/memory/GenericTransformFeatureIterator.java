@@ -26,23 +26,21 @@ import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
-import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.HintsPending;
 import org.geotoolkit.feature.AbstractFeature;
 import org.geotoolkit.feature.DefaultFeature;
 import org.geotoolkit.feature.FeatureUtilities;
-import org.geotoolkit.feature.LenientFeatureFactory;
 import org.geotoolkit.feature.simple.DefaultSimpleFeature;
 import org.geotoolkit.geometry.jts.transform.GeometryTransformer;
 import org.apache.sis.util.Classes;
-import org.opengis.feature.Feature;
+import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.FeatureFactory;
-import org.opengis.feature.GeometryAttribute;
-import org.opengis.feature.Property;
+import org.geotoolkit.feature.GeometryAttribute;
+import org.geotoolkit.feature.Property;
 import org.geotoolkit.feature.simple.SimpleFeatureType;
-import org.opengis.feature.type.FeatureType;
-import org.opengis.feature.type.GeometryDescriptor;
+import org.geotoolkit.feature.type.FeatureType;
+import org.geotoolkit.feature.type.GeometryDescriptor;
 import org.opengis.referencing.operation.TransformException;
 
 /**
@@ -54,8 +52,7 @@ import org.opengis.referencing.operation.TransformException;
 public abstract class GenericTransformFeatureIterator<F extends Feature, R extends FeatureIterator<F>>
         implements FeatureIterator<F> {
 
-    protected static final FeatureFactory FF = FactoryFinder
-            .getFeatureFactory(new Hints(Hints.FEATURE_FACTORY, LenientFeatureFactory.class));
+    protected static final FeatureFactory FF = FeatureFactory.LENIENT;
 
     protected final R iterator;
     protected final GeometryTransformer transformer;
@@ -211,7 +208,7 @@ public abstract class GenericTransformFeatureIterator<F extends Feature, R exten
                 }
                 properties.add(prop);
             }
-            
+
             feature.getUserData().clear();
             feature.getUserData().putAll(next.getUserData());
             return (F)feature;

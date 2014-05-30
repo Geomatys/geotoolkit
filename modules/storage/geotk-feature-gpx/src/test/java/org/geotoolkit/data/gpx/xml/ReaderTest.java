@@ -33,9 +33,9 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import org.opengis.feature.ComplexAttribute;
-import org.opengis.feature.Feature;
-import org.opengis.feature.Property;
+import org.geotoolkit.feature.ComplexAttribute;
+import org.geotoolkit.feature.Feature;
+import org.geotoolkit.feature.Property;
 import org.opengis.geometry.BoundingBox;
 import org.geotoolkit.geometry.DefaultBoundingBox;
 import static org.junit.Assert.*;

@@ -47,8 +47,8 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import org.opengis.feature.Feature;
-import org.opengis.feature.Property;
+import org.geotoolkit.feature.Feature;
+import org.geotoolkit.feature.Property;
 import org.xml.sax.SAXException;
 import static org.junit.Assert.*;
 

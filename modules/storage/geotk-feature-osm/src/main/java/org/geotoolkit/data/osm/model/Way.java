@@ -29,8 +29,8 @@ import java.util.Map;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.apache.sis.io.TableAppender;
 
-import org.opengis.feature.Property;
-import org.opengis.feature.type.AttributeDescriptor;
+import org.geotoolkit.feature.Property;
+import org.geotoolkit.feature.type.AttributeDescriptor;
 
 import static org.geotoolkit.data.osm.model.OSMModelConstants.*;
 

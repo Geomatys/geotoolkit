@@ -26,7 +26,7 @@ import org.geotoolkit.referencing.CRS;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.geotoolkit.feature.simple.SimpleFeatureType;
-import org.opengis.feature.type.Name;
+import org.geotoolkit.feature.type.Name;
 import org.opengis.filter.FilterFactory;
 
 /**

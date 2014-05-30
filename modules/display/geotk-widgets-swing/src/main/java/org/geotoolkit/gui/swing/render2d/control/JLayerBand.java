@@ -70,7 +70,7 @@ import org.geotoolkit.gui.swing.util.SwingEventPassThrough;
 import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.apache.sis.util.logging.Logging;
 
-import org.opengis.feature.Feature;
+import org.geotoolkit.feature.Feature;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.PropertyName;
 import org.opengis.geometry.Envelope;

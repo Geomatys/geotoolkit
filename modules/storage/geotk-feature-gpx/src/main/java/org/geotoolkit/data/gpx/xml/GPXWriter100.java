@@ -35,9 +35,9 @@ import org.geotoolkit.data.gpx.model.MetaData;
 import org.geotoolkit.data.gpx.model.Person;
 import org.geotoolkit.xml.StaxStreamWriter;
 
-import org.opengis.feature.ComplexAttribute;
-import org.opengis.feature.Feature;
-import org.opengis.feature.Property;
+import org.geotoolkit.feature.ComplexAttribute;
+import org.geotoolkit.feature.Feature;
+import org.geotoolkit.feature.Property;
 import org.opengis.geometry.Envelope;
 
 import static org.geotoolkit.data.gpx.xml.GPXConstants.*;

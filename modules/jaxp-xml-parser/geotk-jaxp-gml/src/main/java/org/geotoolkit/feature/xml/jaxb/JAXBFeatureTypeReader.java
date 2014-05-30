@@ -34,7 +34,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.namespace.QName;
 
-import org.geotoolkit.feature.DefaultName;
+import org.geotoolkit.feature.type.DefaultName;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.feature.xml.Utils;
@@ -55,7 +55,7 @@ import org.geotoolkit.xsd.xml.v2001.SimpleType;
 import org.geotoolkit.xsd.xml.v2001.TopLevelElement;
 import org.geotoolkit.xsd.xml.v2001.XSDMarshallerPool;
 
-import org.opengis.feature.type.FeatureType;
+import org.geotoolkit.feature.type.FeatureType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.w3c.dom.Node;
 
@@ -325,7 +325,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
         return null;
     }
 
-    private org.opengis.feature.type.ComplexType getComplexTypeFromSchema(final Schema schema, final String namespace, final String name) throws SchemaException {
+    private org.geotoolkit.feature.type.ComplexType getComplexTypeFromSchema(final Schema schema, final String namespace, final String name) throws SchemaException {
         final ComplexType complexType    = schema.getComplexTypeByName(name);
         final FeatureTypeBuilder builder = new FeatureTypeBuilder();
         if (complexType != null) {
@@ -396,7 +396,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
             } else {
                 cname = typeName;
             }
-            final org.opengis.feature.type.ComplexType cType = getComplexTypeFromSchema(schema, namespace, cname);
+            final org.geotoolkit.feature.type.ComplexType cType = getComplexTypeFromSchema(schema, namespace, cname);
             if (cType != null) {
                 builder.add(cType, new DefaultName(namespace, elementName), null, min, max, nillable, null);
             }

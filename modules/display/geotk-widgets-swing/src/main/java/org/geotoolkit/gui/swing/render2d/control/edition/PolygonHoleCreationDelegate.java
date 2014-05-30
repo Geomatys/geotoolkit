@@ -32,7 +32,7 @@ import java.util.List;
 import java.util.logging.Level;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
 
-import org.opengis.feature.Feature;
+import org.geotoolkit.feature.Feature;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.gui.swing.render2d.JMap2D;
 

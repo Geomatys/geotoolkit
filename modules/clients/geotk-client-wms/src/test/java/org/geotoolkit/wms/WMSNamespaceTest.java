@@ -17,12 +17,12 @@
 
 package org.geotoolkit.wms;
 
-import org.opengis.feature.type.Name;
+import org.geotoolkit.feature.type.Name;
 import java.util.Set;
 import java.net.MalformedURLException;
 import javax.xml.bind.JAXBException;
 
-import org.geotoolkit.feature.DefaultName;
+import org.geotoolkit.feature.type.DefaultName;
 import org.geotoolkit.wms.xml.WMSVersion;
 import org.apache.sis.storage.DataStoreException;
 

@@ -18,7 +18,7 @@ package org.geotoolkit.osmtms.map;
 
 import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.coverage.PyramidSet;
-import org.geotoolkit.feature.DefaultName;
+import org.geotoolkit.feature.type.DefaultName;
 import org.geotoolkit.map.DefaultCoverageMapLayer;
 import org.geotoolkit.osmtms.OSMTileMapClient;
 import org.apache.sis.storage.DataStoreException;

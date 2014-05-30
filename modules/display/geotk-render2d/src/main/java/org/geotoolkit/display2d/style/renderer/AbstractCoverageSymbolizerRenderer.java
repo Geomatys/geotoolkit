@@ -33,7 +33,7 @@ import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.opengis.coverage.Coverage;
-import org.opengis.feature.GeometryAttribute;
+import org.geotoolkit.feature.GeometryAttribute;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.style.Symbolizer;
 

@@ -64,14 +64,11 @@ import org.geotoolkit.data.kml.model.Region;
 import org.geotoolkit.data.kml.model.Update;
 import org.geotoolkit.data.kml.xml.KmlConstants;
 import org.geotoolkit.data.kml.xsd.SimpleTypeContainer;
-import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.factory.Hints;
-import org.geotoolkit.feature.LenientFeatureFactory;
 import org.geotoolkit.xal.model.AddressDetails;
 
-import org.opengis.feature.Feature;
+import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.FeatureFactory;
-import org.opengis.feature.Property;
+import org.geotoolkit.feature.Property;
 
 /**
  *
@@ -81,8 +78,7 @@ import org.opengis.feature.Property;
 public class DefaultGxFactory implements GxFactory {
 
     private static final GxFactory GXF = new DefaultGxFactory();
-    private static final FeatureFactory FF = FactoryFinder.getFeatureFactory(
-            new Hints(Hints.FEATURE_FACTORY, LenientFeatureFactory.class));
+    private static final FeatureFactory FF = FeatureFactory.LENIENT;
 
     private DefaultGxFactory(){}
 
@@ -368,7 +364,7 @@ public class DefaultGxFactory implements GxFactory {
      * @{@inheritDoc }
      */
     @Override
-    public Track createTrack(AltitudeMode altitudeMode, List<Calendar> whens, 
+    public Track createTrack(AltitudeMode altitudeMode, List<Calendar> whens,
             CoordinateSequence coord, List<Angles> angleList, Model model,
             ExtendedData extendedData) {
         return new DefaultTrack(altitudeMode, whens, coord, angleList, model, extendedData);

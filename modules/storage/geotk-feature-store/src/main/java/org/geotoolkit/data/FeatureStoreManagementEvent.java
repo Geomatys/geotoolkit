@@ -19,8 +19,8 @@ package org.geotoolkit.data;
 
 import org.geotoolkit.storage.StorageEvent;
 import static org.apache.sis.util.ArgumentChecks.*;
-import org.opengis.feature.type.FeatureType;
-import org.opengis.feature.type.Name;
+import org.geotoolkit.feature.type.FeatureType;
+import org.geotoolkit.feature.type.Name;
 
 /**
  * Storage management event.

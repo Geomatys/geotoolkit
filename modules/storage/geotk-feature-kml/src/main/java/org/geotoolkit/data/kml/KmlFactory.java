@@ -97,7 +97,7 @@ import org.geotoolkit.data.kml.xsd.Cdata;
 import org.geotoolkit.xal.model.AddressDetails;
 import org.geotoolkit.data.kml.xsd.SimpleTypeContainer;
 
-import org.opengis.feature.Feature;
+import org.geotoolkit.feature.Feature;
 
 /**
  * <p>This interface recapitulates the methods allowing

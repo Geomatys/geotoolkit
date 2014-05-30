@@ -33,20 +33,14 @@ package org.geotoolkit.feature;
 
 import java.util.Collection;
 
-import org.opengis.feature.Association;
-import org.opengis.feature.Attribute;
-import org.opengis.feature.ComplexAttribute;
-import org.opengis.feature.Feature;
-import org.opengis.feature.GeometryAttribute;
-import org.opengis.feature.Property;
 import org.geotoolkit.feature.simple.SimpleFeature;
 import org.geotoolkit.feature.simple.SimpleFeatureType;
-import org.opengis.feature.type.AssociationDescriptor;
-import org.opengis.feature.type.AttributeDescriptor;
-import org.opengis.feature.type.ComplexType;
-import org.opengis.feature.type.FeatureType;
-import org.opengis.feature.type.GeometryDescriptor;
-import org.opengis.feature.type.GeometryType;
+import org.geotoolkit.feature.type.AssociationDescriptor;
+import org.geotoolkit.feature.type.AttributeDescriptor;
+import org.geotoolkit.feature.type.ComplexType;
+import org.geotoolkit.feature.type.FeatureType;
+import org.geotoolkit.feature.type.GeometryDescriptor;
+import org.geotoolkit.feature.type.GeometryType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
@@ -65,6 +59,15 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 @Deprecated
 public interface FeatureFactory {
+    /**
+     * Lenient instance to be used by default.
+     */
+    FeatureFactory LENIENT = new LenientFeatureFactory();
+
+    /**
+     * Validating instance.
+     */
+    FeatureFactory VALIDATING = new ValidatingFeatureFactory();
 
     /**
      * Creates an association.

@@ -5,8 +5,8 @@ import java.util.Date;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.gui.swing.propertyedit.JFeatureOutLine;
-import org.opengis.feature.Feature;
-import org.opengis.feature.type.FeatureType;
+import org.geotoolkit.feature.Feature;
+import org.geotoolkit.feature.type.FeatureType;
 
 /**
  * Demo showing how to use the generic feature editor widget.

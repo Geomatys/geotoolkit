@@ -1,7 +1,7 @@
 /*
  *    GeotoolKit - An Open Source Java GIS Toolkit
  *    http://geotoolkit.org
- * 
+ *
  *    (C) 2009, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -30,9 +30,9 @@ import org.opengis.feature.catalog.DefinitionReference;
  * @author Guilhem Legal
  */
 public class DefinitionReferenceAdapter extends XmlAdapter<DefinitionReferenceAdapter, DefinitionReference> {
-    
+
     private DefinitionReference feature;
-    
+
     /**
      * Empty constructor for JAXB only.
      */
@@ -64,7 +64,7 @@ public class DefinitionReferenceAdapter extends XmlAdapter<DefinitionReferenceAd
      */
     @XmlElement(name = "FC_DefinitionReference")
     public DefinitionReferenceImpl getDefinitionReference() {
-        if (feature == null) 
+        if (feature == null)
             return null;
         return (feature instanceof DefinitionReferenceImpl) ? (DefinitionReferenceImpl)feature : new DefinitionReferenceImpl(feature);
     }
@@ -107,7 +107,7 @@ public class DefinitionReferenceAdapter extends XmlAdapter<DefinitionReferenceAd
         return new DefinitionReferenceAdapter(value);
     }
 
-    
-    
+
+
 
 }

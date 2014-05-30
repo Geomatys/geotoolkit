@@ -17,7 +17,7 @@ import org.geotoolkit.style.RandomStyleBuilder;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.wms.WMSClientFactory;
 import org.geotoolkit.wmts.WMTSClientFactory;
-import org.opengis.feature.type.Name;
+import org.geotoolkit.feature.type.Name;
 import org.opengis.parameter.ParameterValueGroup;
 
 public class IGN_INSPIRE_WMS {

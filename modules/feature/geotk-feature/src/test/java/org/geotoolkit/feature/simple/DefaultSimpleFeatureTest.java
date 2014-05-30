@@ -26,7 +26,7 @@ import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.filter.identity.DefaultFeatureId;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.junit.Test;
-import org.opengis.feature.GeometryAttribute;
+import org.geotoolkit.feature.GeometryAttribute;
 import org.geotoolkit.feature.simple.SimpleFeature;
 import org.geotoolkit.feature.simple.SimpleFeatureType;
 

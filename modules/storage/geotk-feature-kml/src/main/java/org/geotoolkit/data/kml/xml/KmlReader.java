@@ -120,7 +120,7 @@ import org.geotoolkit.data.kml.xsd.SimpleTypeContainer;
 import org.geotoolkit.temporal.object.ISODateParser;
 import org.geotoolkit.xml.StaxStreamReader;
 
-import org.opengis.feature.Feature;
+import org.geotoolkit.feature.Feature;
 
 import static org.geotoolkit.data.kml.xml.KmlConstants.*;
 import static org.geotoolkit.data.kml.KmlUtilities.*;

@@ -1,7 +1,7 @@
 /*
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
- * 
+ *
  *    (C) 2003-2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2009-2010, Geomatys
  *
@@ -37,9 +37,10 @@ import org.junit.Test;
 
 import org.geotoolkit.feature.simple.SimpleFeature;
 import org.geotoolkit.feature.simple.SimpleFeatureType;
-import org.opengis.feature.type.AttributeDescriptor;
-import org.opengis.feature.type.Name;
-import org.opengis.feature.type.PropertyDescriptor;
+import org.geotoolkit.feature.type.AttributeDescriptor;
+import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.Name;
+import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.expression.Literal;
 import org.opengis.filter.expression.PropertyName;
@@ -274,7 +275,7 @@ public class FeatureFilterTest {
          *                            AggregateGeoFeature                                            *
          *                                                                                           *
          *********************************************************************************************/
-        
+
         final Name description = new DefaultName("http://www.opengis.net/gml", "description");
         final Name name = new DefaultName("http://www.opengis.net/gml", "name");
         final Name multiPointProperty = new DefaultName("http://cite.opengeospatial.org/gmlsf", "multiPointProperty");
@@ -441,7 +442,7 @@ public class FeatureFilterTest {
         sfb.set(id, "f017");
 
         final SimpleFeature entiteGenerique3 = sfb.buildFeature("f017");
-        
+
         Literal geometry = FF.literal(factory.createMultiPoint(points));
         PropertyName property = FF.property(multiPointProperty);
         Equals filter = FF.equal(property, geometry);

@@ -14,8 +14,8 @@ import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.pending.demo.filter.customaccessor.Pojo;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 
-import org.opengis.feature.Feature;
-import org.opengis.feature.type.FeatureType;
+import org.geotoolkit.feature.Feature;
+import org.geotoolkit.feature.type.FeatureType;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.expression.Expression;
 

@@ -1,7 +1,7 @@
 /*
  *    GeotoolKit - An Open Source Java GIS Toolkit
  *    http://geotoolkit.org
- * 
+ *
  *    (C) 2009, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -30,9 +30,9 @@ import org.opengis.feature.catalog.ListedValue;
  * @author Guilhem Legal
  */
 public class ListedValueAdapter extends XmlAdapter<ListedValueAdapter, ListedValue> {
-    
+
     private ListedValue feature;
-    
+
     /**
      * Empty constructor for JAXB only.
      */
@@ -64,7 +64,7 @@ public class ListedValueAdapter extends XmlAdapter<ListedValueAdapter, ListedVal
      */
     @XmlElement(name = "FC_ListedValue")
     public ListedValueImpl getListedValue() {
-        if (feature == null) 
+        if (feature == null)
             return null;
         return (feature instanceof ListedValueImpl) ?
             (ListedValueImpl)feature : new ListedValueImpl(feature);
@@ -105,7 +105,7 @@ public class ListedValueAdapter extends XmlAdapter<ListedValueAdapter, ListedVal
         return new ListedValueAdapter(value);
     }
 
-    
-    
+
+
 
 }

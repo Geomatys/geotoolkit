@@ -22,7 +22,7 @@ import java.io.Reader;
 import java.net.URL;
 import java.util.List;
 import javax.xml.bind.JAXBException;
-import org.opengis.feature.type.FeatureType;
+import org.geotoolkit.feature.type.FeatureType;
 import org.w3c.dom.Node;
 
 /**

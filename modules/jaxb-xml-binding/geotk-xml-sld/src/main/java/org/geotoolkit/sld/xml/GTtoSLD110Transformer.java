@@ -39,7 +39,7 @@ import org.opengis.style.Style;
 
 /**
  * Transform a GT SLD in a jaxb SLD v1.1.0 object
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
@@ -52,18 +52,18 @@ public class GTtoSLD110Transformer extends GTtoSE110Transformer implements SLDVi
         this.sld_factory = new org.geotoolkit.sld.xml.v110.ObjectFactory();
         this.se_factory = new org.geotoolkit.se.xml.v110.ObjectFactory();
     }
-  
+
     @Override
     public org.geotoolkit.sld.xml.v110.StyledLayerDescriptor visit(final StyledLayerDescriptor sld, final Object data) {
         final org.geotoolkit.sld.xml.v110.StyledLayerDescriptor versionned = sld_factory.createStyledLayerDescriptor();
         versionned.setName(sld.getName());
 //        versionned.setVersion(sld.getVersion());
         versionned.setDescription( visit(sld.getDescription(), null));
-        
+
         for(final SLDLibrary lib : sld.libraries()){
             versionned.getUseSLDLibrary().add( visit(lib,null) );
         }
-        
+
         for(final Layer layer : sld.layers()){
             if(layer instanceof NamedLayer){
                 final NamedLayer named = (NamedLayer) layer;
@@ -73,7 +73,7 @@ public class GTtoSLD110Transformer extends GTtoSE110Transformer implements SLDVi
                 versionned.getNamedLayerOrUserLayer().add( visit(user,null) );
             }
         }
-        
+
         return versionned;
     }
 
@@ -81,7 +81,7 @@ public class GTtoSLD110Transformer extends GTtoSE110Transformer implements SLDVi
     public UseSLDLibrary visit(final SLDLibrary library, final Object data) {
         final UseSLDLibrary lib = sld_factory.createUseSLDLibrary();
         final OnlineResourceType online = visit(library.getOnlineResource(), null);
-        lib.setOnlineResource(online);        
+        lib.setOnlineResource(online);
         return lib;
     }
 
@@ -91,7 +91,7 @@ public class GTtoSLD110Transformer extends GTtoSE110Transformer implements SLDVi
         named.setName(layer.getName());
         named.setDescription( visit(layer.getDescription(), null));
         named.setLayerFeatureConstraints( visit(layer.getConstraints(),null) );
-        
+
         for(final LayerStyle style : layer.styles()){
             if(style instanceof NamedStyle){
                 final NamedStyle ns = (NamedStyle) style;
@@ -101,7 +101,7 @@ public class GTtoSLD110Transformer extends GTtoSE110Transformer implements SLDVi
                 named.getNamedStyleOrUserStyle().add( visit(us,null) );
             }
         }
-        
+
         return named;
     }
 
@@ -110,7 +110,7 @@ public class GTtoSLD110Transformer extends GTtoSE110Transformer implements SLDVi
         final org.geotoolkit.sld.xml.v110.UserLayer user = sld_factory.createUserLayer();
         user.setName(layer.getName());
         user.setDescription( visit(layer.getDescription(),null) );
-        
+
         if(layer.getConstraints() instanceof LayerFeatureConstraints){
             final LayerFeatureConstraints cons = (LayerFeatureConstraints) layer.getConstraints();
             user.setLayerFeatureConstraints( visit(cons,null) );
@@ -118,8 +118,8 @@ public class GTtoSLD110Transformer extends GTtoSE110Transformer implements SLDVi
             final LayerCoverageConstraints cons = (LayerCoverageConstraints) layer.getConstraints();
             user.setLayerCoverageConstraints( visit(cons,null) );
         }
-        
-        
+
+
         if(layer.getSource() instanceof RemoteOWS){
             final RemoteOWS remote = (RemoteOWS) layer.getSource();
             user.setRemoteOWS( visit(remote,null) );
@@ -127,11 +127,11 @@ public class GTtoSLD110Transformer extends GTtoSE110Transformer implements SLDVi
             final InlineFeature feature = (InlineFeature) layer.getSource();
             user.setInlineFeature( visit(feature,null) );
         }
-        
+
         for(final Style style : layer.styles()){
             user.getUserStyle().add( visit(style,null) );
         }
-        
+
         return user;
     }
 
@@ -146,53 +146,53 @@ public class GTtoSLD110Transformer extends GTtoSE110Transformer implements SLDVi
     @Override
     public org.geotoolkit.sld.xml.v110.LayerCoverageConstraints visit(final LayerCoverageConstraints constraints, final Object data) {
         final org.geotoolkit.sld.xml.v110.LayerCoverageConstraints cons = sld_factory.createLayerCoverageConstraints();
-        
+
         for(final CoverageConstraint fc : constraints.constraints() ){
             cons.getCoverageConstraint().add( visit(fc,null) );
         }
-        
+
         return cons;
     }
 
     @Override
     public org.geotoolkit.sld.xml.v110.LayerFeatureConstraints visit(final LayerFeatureConstraints constraints, final Object data) {
         final org.geotoolkit.sld.xml.v110.LayerFeatureConstraints cons = sld_factory.createLayerFeatureConstraints();
-        
+
         for(final FeatureTypeConstraint fc : constraints.constraints() ){
             cons.getFeatureTypeConstraint().add( visit(fc,null) );
         }
-        
+
         return cons;
     }
 
     @Override
     public org.geotoolkit.sld.xml.v110.CoverageConstraint visit(final CoverageConstraint constraint, final Object data) {
         final org.geotoolkit.sld.xml.v110.CoverageConstraint ftc = sld_factory.createCoverageConstraint();
-        
+
         ftc.setCoverageName(constraint.getCoverageName());
         ftc.setCoverageExtent( visit(constraint.getCoverageExtent(),null) );
-        
+
         return ftc;
     }
 
     @Override
     public org.geotoolkit.sld.xml.v110.FeatureTypeConstraint visit(final FeatureTypeConstraint constraint, final Object data) {
         final org.geotoolkit.sld.xml.v110.FeatureTypeConstraint ftc = sld_factory.createFeatureTypeConstraint();
-        
-        ftc.setFeatureTypeName( visitName(constraint.getFeatureTypeName()));
+
+        ftc.setFeatureTypeName( visitName((org.geotoolkit.feature.type.Name) constraint.getFeatureTypeName()));
         ftc.setFilter( visit(constraint.getFilter()));
-        
+
         for(final Extent ext : constraint.getExtent()){
             ftc.getExtent().add( visit(ext,null) );
         }
-        
+
         return ftc;
     }
 
     @Override
     public org.geotoolkit.sld.xml.v110.CoverageExtent visit(final CoverageExtent extent, final Object data) {
         final org.geotoolkit.sld.xml.v110.CoverageExtent ce = sld_factory.createCoverageExtent();
-        
+
         if(extent.getTimePeriod() != null){
             ce.setTimePeriod(extent.getTimePeriod());
         }else if( extent.rangeAxis() != null ){
@@ -200,7 +200,7 @@ public class GTtoSLD110Transformer extends GTtoSE110Transformer implements SLDVi
                 ce.getRangeAxis().add( visit(axe,null) );
             }
         }
-        
+
         return ce;
     }
 
@@ -233,8 +233,8 @@ public class GTtoSLD110Transformer extends GTtoSE110Transformer implements SLDVi
         //TODO handle this when GML will be ready
         return null;
     }
-    
+
 }
-        
+
 
 

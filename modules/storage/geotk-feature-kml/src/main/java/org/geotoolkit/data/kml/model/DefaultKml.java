@@ -20,7 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.geotoolkit.data.kml.xsd.SimpleTypeContainer;
-import org.opengis.feature.Feature;
+import org.geotoolkit.feature.Feature;
 import static org.geotoolkit.data.kml.xml.KmlConstants.*;
 
 /**

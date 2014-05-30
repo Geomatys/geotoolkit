@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import org.geotoolkit.gui.swing.tree.Trees;
-import org.opengis.feature.type.ComplexType;
+import org.geotoolkit.feature.type.ComplexType;
 
 /**
  * Description of a database table.

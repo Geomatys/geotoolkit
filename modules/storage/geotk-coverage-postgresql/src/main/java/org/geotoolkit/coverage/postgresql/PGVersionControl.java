@@ -34,7 +34,7 @@ import org.geotoolkit.temporal.object.ISODateParser;
 import org.geotoolkit.version.AbstractVersionControl;
 import org.geotoolkit.version.Version;
 import org.geotoolkit.version.VersioningException;
-import org.opengis.feature.type.Name;
+import org.geotoolkit.feature.type.Name;
 
 /**
  * Postgresql version control.

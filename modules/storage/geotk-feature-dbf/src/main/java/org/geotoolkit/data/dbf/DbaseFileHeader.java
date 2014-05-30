@@ -41,7 +41,7 @@ import org.geotoolkit.feature.AttributeTypeBuilder;
 import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.feature.simple.SimpleFeatureType;
-import org.opengis.feature.type.AttributeDescriptor;
+import org.geotoolkit.feature.type.AttributeDescriptor;
 
 /**
  * Class to represent the header of a Dbase III file. Creation date: (5/15/2001

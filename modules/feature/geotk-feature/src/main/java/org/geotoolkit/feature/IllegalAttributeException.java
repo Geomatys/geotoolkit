@@ -31,7 +31,7 @@
  */
 package org.geotoolkit.feature;
 
-import org.opengis.feature.type.AttributeDescriptor;
+import org.geotoolkit.feature.type.AttributeDescriptor;
 
 /**
  * Indicates a validation check has failed; the provided descriptor and value are available via this

@@ -28,19 +28,19 @@ import org.apache.sis.io.TableAppender;
 import org.apache.sis.util.Utilities;
 
 import org.geotoolkit.feature.AbstractFeature;
-import org.geotoolkit.feature.DefaultName;
+import org.geotoolkit.feature.type.DefaultName;
 import org.geotoolkit.feature.FeatureValidationUtilities;
 import org.geotoolkit.feature.SimpleIllegalAttributeException;
 
-import org.opengis.feature.GeometryAttribute;
+import org.geotoolkit.feature.GeometryAttribute;
 import org.geotoolkit.feature.IllegalAttributeException;
-import org.opengis.feature.Property;
+import org.geotoolkit.feature.Property;
 import org.geotoolkit.feature.simple.SimpleFeature;
 import org.geotoolkit.feature.simple.SimpleFeatureType;
-import org.opengis.feature.type.AttributeDescriptor;
-import org.opengis.feature.type.FeatureType;
-import org.opengis.feature.type.GeometryDescriptor;
-import org.opengis.feature.type.Name;
+import org.geotoolkit.feature.type.AttributeDescriptor;
+import org.geotoolkit.feature.type.FeatureType;
+import org.geotoolkit.feature.type.GeometryDescriptor;
+import org.geotoolkit.feature.type.Name;
 import org.opengis.filter.identity.FeatureId;
 
 /**

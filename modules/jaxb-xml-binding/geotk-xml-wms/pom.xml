@@ -79,6 +79,11 @@
       </dependency>
       <dependency>
           <groupId>org.geotoolkit</groupId>
+          <artifactId>geotk-feature</artifactId>
+          <version>${project.version}</version>
+      </dependency>
+      <dependency>
+          <groupId>org.geotoolkit</groupId>
           <artifactId>geotk-temporal</artifactId>
 	  <version>${project.version}</version>
           <scope>test</scope>

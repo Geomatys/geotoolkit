@@ -39,7 +39,7 @@ import org.apache.sis.measure.NumberRange;
 import org.geotoolkit.display2d.ext.legend.DefaultLegendService;
 import org.geotoolkit.display2d.ext.legend.DefaultLegendTemplate;
 import org.geotoolkit.display2d.ext.legend.LegendTemplate;
-import org.geotoolkit.feature.DefaultName;
+import org.geotoolkit.feature.type.DefaultName;
 import org.geotoolkit.map.MapItem;
 import org.junit.After;
 import org.junit.AfterClass;

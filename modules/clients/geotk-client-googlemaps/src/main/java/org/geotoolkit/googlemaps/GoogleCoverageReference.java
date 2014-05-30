@@ -19,7 +19,7 @@ package org.geotoolkit.googlemaps;
 import org.geotoolkit.coverage.*;
 import org.geotoolkit.googlemaps.model.GoogleMapsPyramidSet;
 import org.apache.sis.storage.DataStoreException;
-import org.opengis.feature.type.Name;
+import org.geotoolkit.feature.type.Name;
 
 /**
  * GoogleMaps coverage reference.

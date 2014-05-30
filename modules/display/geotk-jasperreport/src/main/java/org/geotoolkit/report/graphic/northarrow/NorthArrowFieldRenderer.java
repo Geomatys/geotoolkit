@@ -22,16 +22,16 @@ package org.geotoolkit.report.graphic.northarrow;
 import net.sf.jasperreports.engine.JRField;
 
 import org.geotoolkit.feature.AttributeTypeBuilder;
-import org.geotoolkit.feature.DefaultName;
+import org.geotoolkit.feature.type.DefaultName;
 import org.geotoolkit.feature.type.DefaultAttributeDescriptor;
 import org.geotoolkit.report.JRFieldRenderer;
 import org.geotoolkit.report.graphic.EmptyRenderable;
 import org.geotoolkit.report.graphic.map.MapDef;
 
-import org.opengis.feature.Feature;
-import org.opengis.feature.Property;
-import org.opengis.feature.type.AttributeType;
-import org.opengis.feature.type.PropertyDescriptor;
+import org.geotoolkit.feature.Feature;
+import org.geotoolkit.feature.Property;
+import org.geotoolkit.feature.type.AttributeType;
+import org.geotoolkit.feature.type.PropertyDescriptor;
 
 /**
  *

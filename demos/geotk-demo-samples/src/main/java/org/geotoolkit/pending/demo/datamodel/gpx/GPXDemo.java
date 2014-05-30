@@ -10,7 +10,7 @@ import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.FeatureStoreFinder;
 import org.geotoolkit.pending.demo.Demos;
 import org.apache.sis.storage.DataStoreException;
-import org.opengis.feature.type.Name;
+import org.geotoolkit.feature.type.Name;
 
 public class GPXDemo {
 

@@ -50,7 +50,7 @@ import java.util.Collection;
 import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.test.TestData;
-import org.opengis.feature.type.Name;
+import org.geotoolkit.feature.type.Name;
 
 import static org.junit.Assert.*;
 

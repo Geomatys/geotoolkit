@@ -59,7 +59,7 @@ public class GTtoSLD100Transformer extends GTtoSE100Transformer implements SLDVi
             if(sld.getDescription().getAbstract() != null)
                 versionned.setTitle(sld.getDescription().getTitle().toString());
         }
-                        
+
         for(final Layer layer : sld.layers()){
             if(layer instanceof NamedLayer){
                 final NamedLayer named = (NamedLayer) layer;
@@ -69,7 +69,7 @@ public class GTtoSLD100Transformer extends GTtoSE100Transformer implements SLDVi
                 versionned.getNamedLayerOrUserLayer().add( visit(user,null) );
             }
         }
-        
+
         return versionned;
     }
 
@@ -83,7 +83,7 @@ public class GTtoSLD100Transformer extends GTtoSE100Transformer implements SLDVi
         final org.geotoolkit.sld.xml.v100.NamedLayer named = sld_factory.createNamedLayer();
         named.setName(layer.getName());
         named.setLayerFeatureConstraints( visit(layer.getConstraints(),null) );
-        
+
         for(final LayerStyle style : layer.styles()){
             if(style instanceof NamedStyle){
                 final NamedStyle ns = (NamedStyle) style;
@@ -93,7 +93,7 @@ public class GTtoSLD100Transformer extends GTtoSE100Transformer implements SLDVi
                 named.getNamedStyleOrUserStyle().add( visit(us,null) );
             }
         }
-        
+
         return named;
     }
 
@@ -101,26 +101,26 @@ public class GTtoSLD100Transformer extends GTtoSE100Transformer implements SLDVi
     public org.geotoolkit.sld.xml.v100.UserLayer visit(final UserLayer layer, final Object data) {
         final org.geotoolkit.sld.xml.v100.UserLayer user = sld_factory.createUserLayer();
         user.setName(layer.getName());
-        
+
         if(layer.getConstraints() instanceof LayerFeatureConstraints){
             final LayerFeatureConstraints cons = (LayerFeatureConstraints) layer.getConstraints();
             user.setLayerFeatureConstraints( visit(cons,null) );
         }else if(layer.getConstraints() instanceof LayerCoverageConstraints){
            //SLD v1.0.0 doesnt handle coverage constraints
         }
-        
-        
+
+
         if(layer.getSource() instanceof RemoteOWS){
             final RemoteOWS remote = (RemoteOWS) layer.getSource();
             user.setRemoteOWS( visit(remote,null) );
         }else if(layer.getSource() instanceof InlineFeature){
             //SLD v1.0.0 doesnt handle inline feature
         }
-        
+
         for(final Style style : layer.styles()){
             user.getUserStyle().add( visit(style,null) );
         }
-        
+
         return user;
     }
 
@@ -139,11 +139,11 @@ public class GTtoSLD100Transformer extends GTtoSE100Transformer implements SLDVi
     @Override
     public org.geotoolkit.sld.xml.v100.LayerFeatureConstraints visit(final LayerFeatureConstraints constraints, final Object data) {
         final org.geotoolkit.sld.xml.v100.LayerFeatureConstraints cons = sld_factory.createLayerFeatureConstraints();
-        
+
         for(final FeatureTypeConstraint fc : constraints.constraints() ){
             cons.getFeatureTypeConstraint().add( visit(fc,null) );
         }
-        
+
         return cons;
     }
 
@@ -155,14 +155,14 @@ public class GTtoSLD100Transformer extends GTtoSE100Transformer implements SLDVi
     @Override
     public org.geotoolkit.sld.xml.v100.FeatureTypeConstraint visit(final FeatureTypeConstraint constraint, final Object data) {
         final org.geotoolkit.sld.xml.v100.FeatureTypeConstraint ftc = sld_factory.createFeatureTypeConstraint();
-        
-        ftc.setFeatureTypeName( visitName(constraint.getFeatureTypeName()).getLocalPart() );
+
+        ftc.setFeatureTypeName( visitName((org.geotoolkit.feature.type.Name) constraint.getFeatureTypeName()).toString() );
         ftc.setFilter( visit(constraint.getFilter()));
-        
+
         for(final Extent ext : constraint.getExtent()){
             ftc.getExtent().add( visit(ext,null) );
         }
-        
+
         return ftc;
     }
 
@@ -198,6 +198,6 @@ public class GTtoSLD100Transformer extends GTtoSE100Transformer implements SLDVi
         return null;
     }
 }
-        
+
 
 

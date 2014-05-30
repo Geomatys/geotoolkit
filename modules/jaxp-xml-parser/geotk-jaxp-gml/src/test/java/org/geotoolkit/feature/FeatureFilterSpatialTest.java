@@ -37,7 +37,8 @@ import org.junit.Test;
 
 import org.geotoolkit.feature.simple.SimpleFeature;
 import org.geotoolkit.feature.simple.SimpleFeatureType;
-import org.opengis.feature.type.Name;
+import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.Name;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.spatial.Equals;
 import org.opengis.filter.spatial.Intersects;
@@ -223,7 +224,7 @@ public class FeatureFilterSpatialTest {
         lineCoord[2] = new Coordinate(53.891, 6.899);
         lineCoord[3] = new Coordinate(54.382, 7.780);
         lineCoord[4] = new Coordinate(54.982, 8.879);
-       
+
 
         sfb.set(attributGeometrie, factory.createLineString(lineCoord));
         sfb.set(boolProperty, false);
@@ -253,7 +254,7 @@ public class FeatureFilterSpatialTest {
         multiPoint = new JTSMultiPoint();
         multiPoint.getElements().add(new JTSPoint(new GeneralDirectPosition(38.83, 16.22), crs));
         multiPoint.getElements().add(new JTSPoint(new GeneralDirectPosition(62.07, 2.48), crs));
-        
+
         Intersects intfilter = FF.intersects("{http://cite.opengeospatial.org/gmlsf}attribut.Géométrie", multiPoint);
         match = intfilter.evaluate(entiteGenerique1);
         assertFalse(match);

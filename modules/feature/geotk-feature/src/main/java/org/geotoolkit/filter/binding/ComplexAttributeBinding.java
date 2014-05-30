@@ -20,9 +20,9 @@ import java.util.Collection;
 import java.util.regex.Pattern;
 import org.geotoolkit.feature.DefaultAssociation;
 import static org.geotoolkit.filter.binding.AttributeBinding.stripPrefix;
-import org.opengis.feature.ComplexAttribute;
-import org.opengis.feature.Feature;
-import org.opengis.feature.Property;
+import org.geotoolkit.feature.ComplexAttribute;
+import org.geotoolkit.feature.Feature;
+import org.geotoolkit.feature.Property;
 import org.geotoolkit.feature.simple.SimpleFeature;
 
 /**

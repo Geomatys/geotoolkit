@@ -18,7 +18,7 @@ import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.wmsc.WebMapClientCached;
 import org.geotoolkit.wmsc.map.WMSCMapLayer;
-import org.opengis.feature.type.Name;
+import org.geotoolkit.feature.type.Name;
 
 public class IGNClientDemo {
  

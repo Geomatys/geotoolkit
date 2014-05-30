@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JComboBox;
 import org.jdesktop.swingx.combobox.ListComboBoxModel;
-import org.opengis.feature.type.PropertyType;
+import org.geotoolkit.feature.type.PropertyType;
 
 /**
  *

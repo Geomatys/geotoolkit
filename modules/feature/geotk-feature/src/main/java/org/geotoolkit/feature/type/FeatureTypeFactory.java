@@ -35,17 +35,6 @@ import java.util.Collection;
 import java.util.List;
 
 import org.geotoolkit.feature.simple.SimpleFeatureType;
-import org.opengis.feature.type.AssociationDescriptor;
-import org.opengis.feature.type.AssociationType;
-import org.opengis.feature.type.AttributeDescriptor;
-import org.opengis.feature.type.AttributeType;
-import org.opengis.feature.type.ComplexType;
-import org.opengis.feature.type.FeatureType;
-import org.opengis.feature.type.GeometryDescriptor;
-import org.opengis.feature.type.GeometryType;
-import org.opengis.feature.type.Name;
-import org.opengis.feature.type.PropertyDescriptor;
-import org.geotoolkit.feature.type.Schema;
 import org.opengis.filter.Filter;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.InternationalString;
@@ -64,6 +53,11 @@ import org.opengis.util.InternationalString;
  */
 @Deprecated
 public interface FeatureTypeFactory {
+    /**
+     * Default instance.
+     */
+    FeatureTypeFactory INSTANCE = new DefaultFeatureTypeFactory();
+
     /**
      * Creates a schema.
      *

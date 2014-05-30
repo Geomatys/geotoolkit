@@ -6,19 +6,15 @@ import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import java.util.Date;
 
-import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.FeatureUtilities;
-import org.geotoolkit.feature.LenientFeatureFactory;
-import org.geotoolkit.feature.ValidatingFeatureFactory;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 
 import org.geotoolkit.pending.demo.Demos;
-import org.opengis.feature.ComplexAttribute;
-import org.opengis.feature.Feature;
+import org.geotoolkit.feature.ComplexAttribute;
+import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.FeatureFactory;
 import org.geotoolkit.feature.simple.SimpleFeatureType;
-import org.opengis.feature.type.FeatureType;
+import org.geotoolkit.feature.type.FeatureType;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.util.FactoryException;
 
@@ -27,23 +23,21 @@ public class FeatureDemo {
     /**
      * This factory will produce features without validtion process.
      */
-    private static final FeatureFactory LFF = FactoryFinder.getFeatureFactory(
-                                              new Hints(Hints.FEATURE_FACTORY, LenientFeatureFactory.class));
+    private static final FeatureFactory LFF = FeatureFactory.LENIENT;
     /**
      * This factory will produce features with validate.
      * Validation may be expensive depending on the feature type and it's constraints.
      */
-    private static final FeatureFactory VFF = FactoryFinder.getFeatureFactory(
-                                              new Hints(Hints.FEATURE_FACTORY, ValidatingFeatureFactory.class));
+    private static final FeatureFactory VFF = FeatureFactory.VALIDATING;
 
     private static final GeometryFactory GF = new GeometryFactory();
 
     public static void main(String[] args) throws NoSuchAuthorityCodeException, FactoryException {
         Demos.init();
-        
+
         final SimpleFeatureType type = FeatureTypeBuilderDemo.createSimpleType();
         final FeatureType cpxtype = FeatureTypeBuilderDemo.createComplexType();
-        
+
         System.out.println(usingFeatureFactory(type));
         System.out.println(usingSimpleFeatureBuilder(type));
         System.out.println(usingFeatureUtilities(type));
@@ -84,21 +78,21 @@ public class FeatureDemo {
         feature.getProperty("direction").setValue(56.498f);
         return feature;
     }
-    
-    
+
+
     private static Feature withComplexFeatureType(FeatureType type){
-        final Feature feature = FeatureUtilities.defaultFeature(type, "id-0"); 
+        final Feature feature = FeatureUtilities.defaultFeature(type, "id-0");
         feature.getProperty("trackNumber").setValue(new Long(1));
-        
+
         final ComplexAttribute fish = (ComplexAttribute)feature.getProperty("fish");
         fish.getProperty("name").setValue("placide");
         fish.getProperty("code").setValue("01");
-        
+
         final ComplexAttribute track = (ComplexAttribute) FeatureUtilities.defaultProperty(
                 feature.getType().getDescriptor("trackpoints"));
         track.getProperty("location").setValue(GF.createPoint(new Coordinate(-10, 23)));
         track.getProperty("time").setValue(new Date());
-        
+
         feature.getProperties().add(track);
         return feature;
     }

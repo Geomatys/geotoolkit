@@ -20,8 +20,8 @@ import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.memory.GenericRetypeFeatureIterator;
 import org.geotoolkit.process.AbstractProcess;
 
-import org.opengis.feature.Feature;
-import org.opengis.feature.type.FeatureType;
+import org.geotoolkit.feature.Feature;
+import org.geotoolkit.feature.type.FeatureType;
 import org.opengis.parameter.ParameterValueGroup;
 
 import static org.geotoolkit.process.vector.retype.RetypeDescriptor.*;

@@ -55,8 +55,6 @@ xmlns = {
 })
 package org.geotoolkit.feature.catalog;
 
-import org.geotoolkit.resources.jaxb.feature.catalog.MultiplicityRangeAdapter;
-import org.geotoolkit.resources.jaxb.feature.catalog.MultiplicityAdapter;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlNs;

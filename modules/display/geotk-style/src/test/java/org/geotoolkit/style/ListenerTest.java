@@ -34,11 +34,11 @@ import org.junit.BeforeClass;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
-import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 import org.opengis.style.SemanticType;
 import org.opengis.style.Symbolizer;
+import org.opengis.util.GenericName;
 
 /**
  * Test different style object events.
@@ -212,7 +212,7 @@ public class ListenerTest {
                 events.add(event);
             }
             @Override
-            public void featureTypeNameChange(CollectionChangeEvent<Name> event) {
+            public void featureTypeNameChange(CollectionChangeEvent<GenericName> event) {
                 //todo add test on this event
             }
             @Override

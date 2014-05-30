@@ -20,7 +20,7 @@ import org.geotoolkit.client.CapabilitiesException;
 import org.geotoolkit.coverage.*;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.wmsc.model.WMSCPyramidSet;
-import org.opengis.feature.type.Name;
+import org.geotoolkit.feature.type.Name;
 
 /**
  *

@@ -81,8 +81,8 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 
 import static org.junit.Assert.*;
-import org.opengis.feature.Feature;
-import org.opengis.feature.type.FeatureType;
+import org.geotoolkit.feature.Feature;
+import org.geotoolkit.feature.type.FeatureType;
 import org.opengis.filter.expression.Expression;
 import org.opengis.style.ChannelSelection;
 import org.opengis.style.ColorMap;

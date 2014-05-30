@@ -26,14 +26,14 @@ import org.opengis.sld.SLDVisitor;
 
 /**
  * Default immutable inline feature, thread safe.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
 class DefaultInlineFeature implements InlineFeature{
 
     private final Collection<Collection<Feature>> features;
-    
+
     /**
      * Default constructor
      */
@@ -48,7 +48,7 @@ class DefaultInlineFeature implements InlineFeature{
             this.features = Collections.emptyList();
         }
     }
-    
+
     /**
      * {@inheritDoc }
      */

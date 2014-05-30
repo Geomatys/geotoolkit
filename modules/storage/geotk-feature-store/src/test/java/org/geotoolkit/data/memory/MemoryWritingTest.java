@@ -6,7 +6,7 @@ package org.geotoolkit.data.memory;
 
 import java.util.Set;
 import org.geotoolkit.data.FeatureCollection;
-import org.opengis.feature.Feature;
+import org.geotoolkit.feature.Feature;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.StorageCountListener;
 import org.geotoolkit.data.query.QueryBuilder;
@@ -19,7 +19,7 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.opengis.feature.type.FeatureType;
+import org.geotoolkit.feature.type.FeatureType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.Id;
 import static org.junit.Assert.*;

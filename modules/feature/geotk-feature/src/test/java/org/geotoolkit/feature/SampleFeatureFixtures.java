@@ -1,7 +1,7 @@
 /*
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
- * 
+ *
  *    (C) 2002-2008, Open Source Geospatial Foundation (OSGeo)
  *
  *    This library is free software; you can redistribute it and/or
@@ -25,8 +25,9 @@ import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 
 import org.geotoolkit.feature.simple.SimpleFeature;
 import org.geotoolkit.feature.simple.SimpleFeatureType;
-import org.opengis.feature.type.AttributeDescriptor;
-import org.opengis.feature.type.GeometryDescriptor;
+import org.geotoolkit.feature.type.AttributeDescriptor;
+import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.GeometryDescriptor;
 
 
 /**
@@ -114,7 +115,7 @@ public class SampleFeatureFixtures {
         adb.reset();
         adb.setName(new DefaultName("testByte"));
         adb.setType(ab.buildType());
-        
+
         choices[0] = adb.buildDescriptor();
 
         ab.reset();
@@ -130,7 +131,7 @@ public class SampleFeatureFixtures {
         adb.setName(new DefaultName("testString"));
         adb.setType(ab.buildType());
         choices[2] = adb.buildDescriptor();
-        
+
         return choices;
     }
 
@@ -152,13 +153,13 @@ public class SampleFeatureFixtures {
         adb.setName(new DefaultName("testInt"));
         adb.setType(ab.buildType());
         choices[1] = adb.buildDescriptor();
-        
+
         return createChoiceAttrType("choiceTest2", choices);
     }
 
     public static AttributeDescriptor createChoiceAttrType(final String name,
         final AttributeDescriptor[] choices) {
-        
+
         throw new RuntimeException("Figure out how to handle choice");
         //return new ChoiceAttributeType(name, choices);
     }
@@ -171,7 +172,7 @@ public class SampleFeatureFixtures {
 
     public static AttributeDescriptor getChoiceGeomType() {
         throw new RuntimeException("Figure out how to handle choice");
-        
+
 //        GeometryAttributeType[] choices = new GeometryAttributeType[2];
 //        choices[0] = (GeometryAttributeType) AttributeTypeFactory
 //            .newAttributeType("testLine", LineString.class);
@@ -183,15 +184,15 @@ public class SampleFeatureFixtures {
 
     public static SimpleFeatureType createChoiceFeatureType() {
         throw new RuntimeException("Figure out how to handle choice");
-        
+
 //        DefaultFeatureTypeBuilder tb = new DefaultFeatureTypeBuilder();
 //        tb.setName( "test" );
-//        
+//
 //        tb.add(getChoiceAttrType1());
 //        tb.add(getChoiceAttrType2());
 //        tb.add(getChoiceGeomType());
 //        tb.setDefaultGeometry(getChoiceGeomType());
-//        
+//
 //        return tb.buildSimpleFeatureType();
     }
 
@@ -204,7 +205,7 @@ public class SampleFeatureFixtures {
     public static SimpleFeatureType createTestType() throws SchemaException {
         FeatureTypeBuilder tb = new FeatureTypeBuilder();
         tb.setName(new DefaultName("test"));
-        
+
         tb.add(new DefaultName("testGeometry"), Point.class, DefaultGeographicCRS.WGS84);
         tb.add(new DefaultName("testBoolean"), Boolean.class);
         tb.add(new DefaultName("testCharacter"), Character.class);
@@ -215,9 +216,9 @@ public class SampleFeatureFixtures {
         tb.add(new DefaultName("testFloat"), Float.class);
         tb.add(new DefaultName("testDouble"), Double.class);
         tb.add(new DefaultName("testString"), String.class);
-        
+
         tb.setDefaultGeometry("testGeometry");
         return tb.buildSimpleFeatureType();
-        
+
     }
 }

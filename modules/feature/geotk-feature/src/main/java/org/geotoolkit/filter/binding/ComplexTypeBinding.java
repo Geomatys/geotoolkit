@@ -18,7 +18,7 @@ package org.geotoolkit.filter.binding;
 
 import java.util.regex.Pattern;
 import static org.geotoolkit.filter.binding.AttributeBinding.stripPrefix;
-import org.opengis.feature.type.ComplexType;
+import org.geotoolkit.feature.type.ComplexType;
 
 /**
  *

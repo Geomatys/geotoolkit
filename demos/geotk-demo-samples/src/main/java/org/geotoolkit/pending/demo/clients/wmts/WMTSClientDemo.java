@@ -16,7 +16,7 @@ import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.StyleConstants;
 import org.geotoolkit.wmts.WebMapTileClient;
 import org.geotoolkit.wmts.xml.WMTSVersion;
-import org.opengis.feature.type.Name;
+import org.geotoolkit.feature.type.Name;
 
 
 public class WMTSClientDemo {

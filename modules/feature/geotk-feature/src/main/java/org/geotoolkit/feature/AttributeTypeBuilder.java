@@ -27,12 +27,13 @@ import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.filter.function.other.OtherFunctionFactory;
 
-import org.opengis.feature.type.AssociationType;
-import org.opengis.feature.type.AttributeType;
+import org.geotoolkit.feature.type.AssociationType;
+import org.geotoolkit.feature.type.AttributeType;
+import org.geotoolkit.feature.type.DefaultName;
 import org.geotoolkit.feature.type.FeatureTypeFactory;
-import org.opengis.feature.type.GeometryType;
-import org.opengis.feature.type.Name;
-import org.opengis.feature.type.PropertyType;
+import org.geotoolkit.feature.type.GeometryType;
+import org.geotoolkit.feature.type.Name;
+import org.geotoolkit.feature.type.PropertyType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.expression.Expression;
@@ -123,12 +124,12 @@ public class AttributeTypeBuilder {
      * super type
      */
     private PropertyType superType;
-    
+
     /**
      * GeometryType CRS
      */
     private CoordinateReferenceSystem crs;
-    
+
     /**
      * If this value is set an additional restriction
      * will be added based on the length function.
@@ -136,7 +137,7 @@ public class AttributeTypeBuilder {
     private Integer length = null;
 
     private final Map<Object,Object> userData = new HashMap<Object, Object>();
-    
+
     /**
      * Constructs the builder.
      */
@@ -151,7 +152,7 @@ public class AttributeTypeBuilder {
      */
     public AttributeTypeBuilder(final FeatureTypeFactory factory) {
         if(factory == null){
-            this.factory = FactoryFinder.getFeatureTypeFactory(null);
+            this.factory = FeatureTypeFactory.INSTANCE;
         }else{
             this.factory = factory;
         }
@@ -273,7 +274,7 @@ public class AttributeTypeBuilder {
     public List<Filter> getRestrictions() {
         return restrictions;
     }
-    
+
     public void addRestriction(final Filter restriction) {
         restrictions().add(restriction);
     }
@@ -346,17 +347,17 @@ public class AttributeTypeBuilder {
             name = this.name;
         }
 
-        final AssociationType type = factory.createAssociationType(name, distType, 
+        final AssociationType type = factory.createAssociationType(name, distType,
                 isAbstract, restrictions(),(AssociationType)superType,description());
         type.getUserData().putAll(userData);
         return type;
     }
-    
+
     private InternationalString description() {
         if(description instanceof InternationalString){
             return (InternationalString) description;
         }
-        
+
         return description != null ? new SimpleInternationalString(description.toString()) : null;
     }
 
@@ -382,5 +383,5 @@ public class AttributeTypeBuilder {
         Filter cf = FF.lessOrEqual(lengthFunction, FF.literal(length));
         return (cf == null) ? Filter.EXCLUDE : cf;
     }
-    
+
 }

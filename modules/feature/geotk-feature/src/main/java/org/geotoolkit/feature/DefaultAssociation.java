@@ -17,11 +17,11 @@
  */
 package org.geotoolkit.feature;
 
-import org.opengis.feature.Association;
-import org.opengis.feature.Attribute;
-import org.opengis.feature.type.AssociationDescriptor;
-import org.opengis.feature.type.AssociationType;
-import org.opengis.feature.type.AttributeType;
+import org.geotoolkit.feature.Association;
+import org.geotoolkit.feature.Attribute;
+import org.geotoolkit.feature.type.AssociationDescriptor;
+import org.geotoolkit.feature.type.AssociationType;
+import org.geotoolkit.feature.type.AttributeType;
 
 /**
  * Default implementation of an association.

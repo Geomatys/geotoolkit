@@ -26,8 +26,8 @@ import org.jaxen.JaxenException;
 import org.jaxen.XPath;
 import org.junit.Test;
 
-import org.opengis.feature.Attribute;
-import org.opengis.feature.Property;
+import org.geotoolkit.feature.Attribute;
+import org.geotoolkit.feature.Property;
 
 import static org.junit.Assert.*;
 import static org.geotoolkit.filter.FilterTestConstants.*;

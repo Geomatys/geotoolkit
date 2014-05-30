@@ -1,7 +1,7 @@
 /*
  *    GeotoolKit - An Open Source Java GIS Toolkit
  *    http://geotoolkit.org
- * 
+ *
  *    (C) 2009, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -28,7 +28,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import org.opengis.feature.catalog.BoundFeatureAttribute;
 import org.opengis.feature.catalog.FeatureOperation;
@@ -36,11 +35,11 @@ import org.opengis.feature.catalog.FeatureOperation;
 
 /**
  * Operation that every instance of an associated feature type must implement. - [ocl] - triggeredByValuesOf realizes GF_Operation::triggeredByValuesOf; - observesValuesOf realizes GF_Operation::observesValuesOf; - affectsValuesOf realizes GF_Operation::affectsValuesOf - [/ocl]
- * 
+ *
  * <p>Java class for FC_FeatureOperation_Type complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="FC_FeatureOperation_Type">
  *   &lt;complexContent>
@@ -56,8 +55,8 @@ import org.opengis.feature.catalog.FeatureOperation;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -79,9 +78,9 @@ public class FeatureOperationImpl extends PropertyTypeImpl implements FeatureOpe
     private List<BoundFeatureAttribute> affectsValuesOf;
 
     public FeatureOperationImpl() {
-        
+
     }
-    
+
     public FeatureOperationImpl(final FeatureOperation operation) {
         super(operation);
         if (operation != null) {
@@ -91,7 +90,7 @@ public class FeatureOperationImpl extends PropertyTypeImpl implements FeatureOpe
             observesValuesOf    = operation.getObservesValuesOf();
             affectsValuesOf     = operation.getAffectsValuesOf();
          }
-        
+
     }
     /**
      * Gets the value of the signature property.
@@ -102,7 +101,7 @@ public class FeatureOperationImpl extends PropertyTypeImpl implements FeatureOpe
 
     /**
      * Sets the value of the signature property.
-     * 
+     *
      */
     public void setSignature(final String value) {
         this.signature = value;
@@ -124,8 +123,8 @@ public class FeatureOperationImpl extends PropertyTypeImpl implements FeatureOpe
 
     /**
      * Gets the value of the triggeredByValuesOf property.
-     * 
-     * 
+     *
+     *
      */
     public List<BoundFeatureAttribute> getTriggeredByValuesOf() {
         if (triggeredByValuesOf == null) {
@@ -133,21 +132,21 @@ public class FeatureOperationImpl extends PropertyTypeImpl implements FeatureOpe
         }
         return this.triggeredByValuesOf;
     }
-    
+
     public void setTriggeredByValuesOf(final BoundFeatureAttribute triggeredByValuesOf) {
         if (this.triggeredByValuesOf == null) {
             this.triggeredByValuesOf = new ArrayList<BoundFeatureAttribute>();
         }
         this.triggeredByValuesOf.add(triggeredByValuesOf);
     }
-    
+
     public void setTriggeredByValuesOf(final List<BoundFeatureAttribute> triggeredByValuesOf) {
         this.triggeredByValuesOf = triggeredByValuesOf;
     }
 
     /**
      * Gets the value of the observesValuesOf property.
-     * 
+     *
      */
     public List<BoundFeatureAttribute> getObservesValuesOf() {
         if (observesValuesOf == null) {
@@ -155,7 +154,7 @@ public class FeatureOperationImpl extends PropertyTypeImpl implements FeatureOpe
         }
         return this.observesValuesOf;
     }
-    
+
     public void setObservesValuesOf(final BoundFeatureAttribute observesValuesOf) {
         if (this.observesValuesOf == null) {
             this.observesValuesOf = new ArrayList<BoundFeatureAttribute>();
@@ -166,10 +165,10 @@ public class FeatureOperationImpl extends PropertyTypeImpl implements FeatureOpe
     public void setObservesValuesOf(final List<BoundFeatureAttribute> observesValuesOf) {
         this.observesValuesOf = observesValuesOf;
     }
-    
+
     /**
      * Gets the value of the affectsValuesOf property.
-     * 
+     *
      */
     public List<BoundFeatureAttribute> getAffectsValuesOf() {
         if (affectsValuesOf == null) {
@@ -177,77 +176,77 @@ public class FeatureOperationImpl extends PropertyTypeImpl implements FeatureOpe
         }
         return this.affectsValuesOf;
     }
-    
+
     public void setAffectsValuesOf(final BoundFeatureAttribute affectsValuesOf) {
         if (this.affectsValuesOf == null) {
             this.affectsValuesOf = new ArrayList<BoundFeatureAttribute>();
         }
         this.affectsValuesOf.add(affectsValuesOf);
     }
-    
+
     public void setAffectsValuesOf(final List<BoundFeatureAttribute> affectsValuesOf) {
         this.affectsValuesOf = affectsValuesOf;
     }
-    
+
     public FeatureOperationImpl getReference() {
         FeatureOperationImpl result = new FeatureOperationImpl(this);
         result.setReference(true);
         return result;
     }
-    
+
     private void beforeMarshal(final Marshaller marshaller) {
         if (rootElement) {
             beforeMarshal(new HashMap<String, Referenceable>());
             Logger.getAnonymousLogger().info("marshall root operation");
         }
     }
-    
-    
+
+
     @Override
     public Map<String, Referenceable> beforeMarshal(Map<String, Referenceable> alreadySee) {
         alreadySee = super.beforeMarshal(alreadySee);
-        
+
         List<BoundFeatureAttribute> triggReplacement = new ArrayList<BoundFeatureAttribute>();
         for (BoundFeatureAttribute bfa: getTriggeredByValuesOf()) {
             BoundFeatureAttributeImpl bfai = (BoundFeatureAttributeImpl) bfa;
-            
+
             if (alreadySee.get(bfai.getId()) != null) {
                 triggReplacement.add(bfai.getReference());
             } else {
                 alreadySee = bfai.beforeMarshal(alreadySee);
-                triggReplacement.add(bfai);    
+                triggReplacement.add(bfai);
             }
         }
         triggeredByValuesOf = triggReplacement;
-        
+
         List<BoundFeatureAttribute> affReplacement = new ArrayList<BoundFeatureAttribute>();
         for (BoundFeatureAttribute bfa: getAffectsValuesOf()) {
             BoundFeatureAttributeImpl bfai = (BoundFeatureAttributeImpl) bfa;
-            
+
             if (alreadySee.get(bfai.getId()) != null) {
                 affReplacement.add(bfai.getReference());
             } else {
                 alreadySee = bfai.beforeMarshal(alreadySee);
-                affReplacement.add(bfai);    
+                affReplacement.add(bfai);
             }
         }
         affectsValuesOf = affReplacement;
-        
+
         List<BoundFeatureAttribute> obsReplacement = new ArrayList<BoundFeatureAttribute>();
         for (BoundFeatureAttribute bfa: getObservesValuesOf()) {
             BoundFeatureAttributeImpl bfai = (BoundFeatureAttributeImpl) bfa;
-            
+
             if (alreadySee.get(bfai.getId()) != null) {
                 obsReplacement.add(bfai.getReference());
             } else {
                 alreadySee = bfai.beforeMarshal(alreadySee);
-                obsReplacement.add(bfai);    
+                obsReplacement.add(bfai);
             }
         }
         observesValuesOf = obsReplacement;
         return alreadySee;
     }
-    
+
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder(super.toString());
@@ -277,7 +276,7 @@ public class FeatureOperationImpl extends PropertyTypeImpl implements FeatureOpe
         }
         return s.toString();
     }
-    
+
     /**
      * Verify if this entry is identical to the specified object.
      */
@@ -288,7 +287,7 @@ public class FeatureOperationImpl extends PropertyTypeImpl implements FeatureOpe
         }
         if (super.equals(object) && object instanceof FeatureOperationImpl) {
             final FeatureOperationImpl that = (FeatureOperationImpl) object;
-            
+
             return Objects.equals(this.affectsValuesOf,     that.affectsValuesOf)   &&
                    Objects.equals(this.formalDefinition,   that.formalDefinition) &&
                    Objects.equals(this.observesValuesOf,    that.observesValuesOf)  &&

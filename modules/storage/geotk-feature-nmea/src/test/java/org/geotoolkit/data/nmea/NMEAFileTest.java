@@ -23,7 +23,7 @@ import java.util.Date;
 import java.util.TimeZone;
 import static junit.framework.Assert.*;
 import org.junit.Test;
-import org.opengis.feature.Feature;
+import org.geotoolkit.feature.Feature;
 import org.junit.BeforeClass;
 
 /**

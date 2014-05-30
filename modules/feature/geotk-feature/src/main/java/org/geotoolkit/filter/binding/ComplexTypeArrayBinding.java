@@ -16,8 +16,8 @@
  */
 package org.geotoolkit.filter.binding;
 
-import org.opengis.feature.type.ComplexType;
-import org.opengis.feature.type.PropertyDescriptor;
+import org.geotoolkit.feature.type.ComplexType;
+import org.geotoolkit.feature.type.PropertyDescriptor;
 
 /**
  *

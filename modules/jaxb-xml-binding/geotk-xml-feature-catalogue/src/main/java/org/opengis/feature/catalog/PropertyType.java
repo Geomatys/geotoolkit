@@ -1,6 +1,6 @@
 /*$************************************************************************************************
  **
- ** $Id: 
+ ** $Id:
  **
  ** $URL: https://geoapi.svn.sourceforge.net/svnroot/geoapi/trunk/geoapi/src/main/java/org/opengis/services/Interface.java $
  **
@@ -18,9 +18,9 @@ import static org.opengis.annotation.Obligation.*;
 import static org.opengis.annotation.Specification.*;
 
 /**
- * 
+ *
  * Abstract class for feature properties.
- * 
+ *
  * @author Guilhem Legal
  * @module pending
  */
@@ -28,28 +28,28 @@ import static org.opengis.annotation.Specification.*;
 public interface PropertyType {
 
      /**
-     * an unique identifier used in the XML instance. 
+     * an unique identifier used in the XML instance.
      */
      //@Extension
      String getId();
-     
+
     /**
-     * Member name that locates this member within a feature type. 
+     * Member name that locates this member within a feature type.
      */
     //@UML(identifier="memberName", obligation=MANDATORY, specification=ISO_19110)
     LocalName getMemberName();
-    
+
     /**
      * Definition of the member in a natural language. This attribute is required if the definition is not provided by
-     * FC_FeatureCalaogue::definitionSource. If not provided, 
+     * FC_FeatureCalaogue::definitionSource. If not provided,
      * the definitionReference should specify a citation where the definition may be found,
      * and any additional information as to which is to be used.
      */
     //@UML(identifier="definition", obligation=CONDITIONAL, specification=ISO_19110)
     String getDefinition();
-    
+
     /**
-     * Cardinality of the member in the feature class. 
+     * Cardinality of the member in the feature class.
      * If this is an attribute or operation, the default cardinality is 1.
      * If this is an association role, then the default cardinality is 0..*.
      * For operations, this is the number of return values possible.
@@ -57,7 +57,7 @@ public interface PropertyType {
      */
     //@UML(identifier="cardinality", obligation=MANDATORY, specification=ISO_19110)
     Multiplicity getCardinality();
-    
+
     /**
      * Role that links the operations, attributes and associations roles with feature types that contain them.
      * The association class FC_Binding describes particular information regarding the use of this poperty type within this feature type.
@@ -68,17 +68,17 @@ public interface PropertyType {
      */
     //@UML(identifier="featureType", obligation=OPTIONAL, specification=ISO_19110)
     FeatureType getFeatureType();
-    
+
      /**
-      * Role that links this property type to the constraints placed upon it. 
+      * Role that links this property type to the constraints placed upon it.
       */
     //@UML(identifier="constrainedBy", obligation=OPTIONAL, specification=ISO_19110)
     List<Constraint> getConstrainedBy();
-    
+
     /**
-     * Role that links this instance to the source of its definition. 
+     * Role that links this instance to the source of its definition.
      */
     //@UML(identifier="definitionReference", obligation=OPTIONAL, specification=ISO_19110)
     DefinitionReference getDefinitionReference();
-    
+
 }

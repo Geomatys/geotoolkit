@@ -27,9 +27,9 @@ import org.geotoolkit.feature.AbstractFeature;
 import org.geotoolkit.filter.identity.DefaultFeatureId;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
 
-import org.opengis.feature.Property;
+import org.geotoolkit.feature.Property;
 
-import org.opengis.feature.type.AttributeDescriptor;
+import org.geotoolkit.feature.type.AttributeDescriptor;
 
 /**
  * Commun abstract class for OSM main model objects : Node, Way and Relation.

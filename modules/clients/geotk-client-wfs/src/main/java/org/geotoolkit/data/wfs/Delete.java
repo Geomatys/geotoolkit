@@ -17,7 +17,7 @@
 
 package org.geotoolkit.data.wfs;
 
-import org.opengis.feature.type.Name;
+import org.geotoolkit.feature.type.Name;
 import org.opengis.filter.Filter;
 
 /**

@@ -38,7 +38,7 @@ import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessFinder;
 import org.geotoolkit.process.vector.AbstractProcessTest;
 import org.geotoolkit.referencing.CRS;
-import org.opengis.feature.Feature;
+import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
@@ -46,8 +46,8 @@ import org.opengis.util.FactoryException;
 
 
 import org.junit.Test;
-import org.opengis.feature.Property;
-import org.opengis.feature.type.GeometryDescriptor;
+import org.geotoolkit.feature.Property;
+import org.geotoolkit.feature.type.GeometryDescriptor;
 import static org.junit.Assert.*;
 
 /**

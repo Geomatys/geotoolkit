@@ -1,7 +1,7 @@
 /*
  *    GeotoolKit - An Open Source Java GIS Toolkit
  *    http://geotoolkit.org
- * 
+ *
  *    (C) 2009, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -32,13 +32,13 @@ import org.opengis.feature.catalog.DefinitionSource;
  * @author Guilhem Legal
  */
 public class DefinitionSourceAdapter extends XmlAdapter<DefinitionSourceAdapter, DefinitionSource> {
-    
+
     private DefinitionSource feature;
-    
+
     @XmlIDREF
     @XmlAttribute(namespace="http://www.w3.org/1999/xlink")
     private DefinitionSourceImpl href;
-    
+
     /**
      * Empty constructor for JAXB only.
      */
@@ -118,8 +118,8 @@ public class DefinitionSourceAdapter extends XmlAdapter<DefinitionSourceAdapter,
         return new DefinitionSourceAdapter(value);
     }
 
-    
-    
+
+
 
 }
 

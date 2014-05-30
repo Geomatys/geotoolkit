@@ -1,7 +1,7 @@
 /*
  *    GeotoolKit - An Open Source Java GIS Toolkit
  *    http://geotoolkit.org
- * 
+ *
  *    (C) 2009, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -30,9 +30,9 @@ import org.opengis.feature.catalog.FeatureAttribute;
  * @author Guilhem Legal
  */
 public class FeatureAttributeAdapter extends XmlAdapter<FeatureAttributeAdapter, FeatureAttribute> {
-    
+
     private FeatureAttribute feature;
-    
+
     /**
      * Empty constructor for JAXB only.
      */
@@ -64,7 +64,7 @@ public class FeatureAttributeAdapter extends XmlAdapter<FeatureAttributeAdapter,
      */
     @XmlElement(name = "FC_FeatureAttribute")
     public FeatureAttributeImpl getFeatureAttribute() {
-        if (feature == null) 
+        if (feature == null)
             return null;
         return (feature instanceof FeatureAttributeImpl) ?
             (FeatureAttributeImpl)feature : new FeatureAttributeImpl(feature);
@@ -105,7 +105,7 @@ public class FeatureAttributeAdapter extends XmlAdapter<FeatureAttributeAdapter,
         return new FeatureAttributeAdapter(value);
     }
 
-    
-    
+
+
 
 }

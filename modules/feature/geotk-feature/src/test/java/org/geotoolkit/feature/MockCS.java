@@ -6,7 +6,7 @@ package org.geotoolkit.feature;
 
 import java.util.Collection;
 import java.util.Set;
-import org.opengis.feature.type.Name;
+import org.geotoolkit.feature.type.Name;
 import org.opengis.referencing.ReferenceIdentifier;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.cs.CoordinateSystemAxis;

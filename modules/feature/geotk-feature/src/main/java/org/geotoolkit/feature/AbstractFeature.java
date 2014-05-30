@@ -24,10 +24,10 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.geometry.DefaultBoundingBox;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 
-import org.opengis.feature.Feature;
-import org.opengis.feature.GeometryAttribute;
-import org.opengis.feature.Property;
-import org.opengis.feature.type.*;
+import org.geotoolkit.feature.Feature;
+import org.geotoolkit.feature.GeometryAttribute;
+import org.geotoolkit.feature.Property;
+import org.geotoolkit.feature.type.*;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.geometry.BoundingBox;
 import org.opengis.geometry.Envelope;

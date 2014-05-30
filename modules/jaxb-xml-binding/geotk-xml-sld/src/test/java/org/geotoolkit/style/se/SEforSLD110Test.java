@@ -231,7 +231,7 @@ public class SEforSLD110Test extends TestCase{
         assertEquals(fts.getName(), valueName);
         assertEquals(fts.getDescription().getTitle().toString(), valueTitle);
         assertEquals(fts.getDescription().getAbstract().toString(), valueAbstract);
-        assertEquals(fts.featureTypeNames().iterator().next().getLocalPart(), valueFTN);
+        assertEquals(fts.featureTypeNames().iterator().next().toString(), valueFTN);
 
         assertEquals(fts.rules().size(), 3);
         assertEquals(fts.semanticTypeIdentifiers().size(), 6);

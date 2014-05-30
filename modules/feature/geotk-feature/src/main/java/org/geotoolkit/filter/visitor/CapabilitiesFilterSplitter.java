@@ -32,8 +32,8 @@ import org.geotoolkit.filter.capability.DefaultFilterCapabilities;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.filter.binding.Binding;
 import org.geotoolkit.filter.binding.Bindings;
-import org.opengis.feature.Feature;
-import org.opengis.feature.type.ComplexType;
+import org.geotoolkit.feature.Feature;
+import org.geotoolkit.feature.type.ComplexType;
 
 import org.opengis.filter.And;
 import org.opengis.filter.BinaryComparisonOperator;

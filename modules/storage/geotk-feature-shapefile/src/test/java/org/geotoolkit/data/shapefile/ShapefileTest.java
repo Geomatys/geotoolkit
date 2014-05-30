@@ -36,7 +36,7 @@ import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.test.TestData;
 
-import org.opengis.feature.type.Name;
+import org.geotoolkit.feature.type.Name;
 import org.geotoolkit.feature.simple.SimpleFeature;
 import org.geotoolkit.feature.simple.SimpleFeatureType;
 

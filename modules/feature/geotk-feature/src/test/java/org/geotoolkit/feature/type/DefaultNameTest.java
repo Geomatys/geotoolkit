@@ -15,12 +15,12 @@
  *    Lesser General Public License for more details.
  */
 
-package org.geotoolkit.feature;
+package org.geotoolkit.feature.type;
 
 import javax.xml.namespace.QName;
 import org.junit.Test;
 import static org.geotoolkit.test.Assert.*;
-import org.opengis.feature.type.Name;
+import org.geotoolkit.feature.type.Name;
 
 /**
  * Test Name.

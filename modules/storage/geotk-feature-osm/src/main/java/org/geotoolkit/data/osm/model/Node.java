@@ -29,7 +29,7 @@ import java.util.Map;
 
 import org.geotoolkit.io.TableWriter;
 
-import org.opengis.feature.Property;
+import org.geotoolkit.feature.Property;
 
 import static org.geotoolkit.data.osm.model.OSMModelConstants.*;
 

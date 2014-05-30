@@ -37,7 +37,7 @@ import org.geotoolkit.test.Assert;
 
 import org.geotoolkit.feature.simple.SimpleFeature;
 import org.geotoolkit.feature.simple.SimpleFeatureType;
-import org.opengis.feature.type.AttributeDescriptor;
+import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.geotoolkit.feature.IllegalAttributeException;
 import com.vividsolutions.jts.geom.Envelope;
 

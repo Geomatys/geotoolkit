@@ -21,7 +21,7 @@ import org.geotoolkit.wms.map.WMSGraphicBuilder;
 import org.geotoolkit.wms.map.WMSMapLayer;
 import org.geotoolkit.wmsc.WMSCCoverageReference;
 import org.geotoolkit.wmsc.WebMapClientCached;
-import org.opengis.feature.type.Name;
+import org.geotoolkit.feature.type.Name;
 
 /**
  *

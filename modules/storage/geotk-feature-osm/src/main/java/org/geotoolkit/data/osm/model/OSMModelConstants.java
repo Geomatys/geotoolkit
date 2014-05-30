@@ -18,20 +18,17 @@
 package org.geotoolkit.data.osm.model;
 
 import com.vividsolutions.jts.geom.Point;
-import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.factory.Hints;
 
 import org.geotoolkit.feature.AttributeDescriptorBuilder;
-import org.geotoolkit.feature.DefaultName;
+import org.geotoolkit.feature.type.DefaultName;
 import org.geotoolkit.feature.FeatureTypeBuilder;
-import org.geotoolkit.feature.LenientFeatureFactory;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.feature.FeatureFactory;
 
-import org.opengis.feature.type.AttributeDescriptor;
-import org.opengis.feature.type.ComplexType;
-import org.opengis.feature.type.FeatureType;
-import org.opengis.feature.type.GeometryDescriptor;
+import org.geotoolkit.feature.type.AttributeDescriptor;
+import org.geotoolkit.feature.type.ComplexType;
+import org.geotoolkit.feature.type.FeatureType;
+import org.geotoolkit.feature.type.GeometryDescriptor;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
@@ -42,8 +39,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 public final class OSMModelConstants {
 
-    static final FeatureFactory FF = FactoryFinder.getFeatureFactory(
-            new Hints(Hints.FEATURE_FACTORY, LenientFeatureFactory.class));
+    static final FeatureFactory FF = FeatureFactory.LENIENT;
 
     public static final CoordinateReferenceSystem OSM_CRS = DefaultGeographicCRS.WGS84;
 
@@ -68,7 +64,7 @@ public final class OSMModelConstants {
 
     public static final ComplexType TYPE_USER;
     public static final ComplexType TYPE_TAG;
-    public static final ComplexType TYPE_RELATION_MEMBER;    
+    public static final ComplexType TYPE_RELATION_MEMBER;
     public static final FeatureType TYPE_IDENTIFIED;
     public static final FeatureType TYPE_NODE;
     public static final FeatureType TYPE_WAY;
@@ -135,7 +131,7 @@ public final class OSMModelConstants {
         ftb.add(ATT_NODE_POINT);
         ftb.setDefaultGeometry(ATT_NODE_POINT.getName());
         TYPE_NODE = ftb.buildFeatureType();
-        
+
 
         //------------------- WAY TYPE -----------------------------------------
         ATT_WAY_NODES = adb.create(new DefaultName(OSM_NAMESPACE, "nodes"),Long.class,0,Integer.MAX_VALUE,true,null);

@@ -21,7 +21,7 @@ import org.geotoolkit.ows.xml.RequestBase;
 import org.geotoolkit.sld.xml.Specification.StyledLayerDescriptor;
 import org.apache.sis.util.Version;
 
-import org.opengis.feature.type.Name;
+import org.geotoolkit.feature.type.Name;
 
 
 /**

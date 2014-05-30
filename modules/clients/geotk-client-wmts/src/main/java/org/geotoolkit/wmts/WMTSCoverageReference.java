@@ -19,7 +19,7 @@ package org.geotoolkit.wmts;
 import org.geotoolkit.coverage.*;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.wmts.model.WMTSPyramidSet;
-import org.opengis.feature.type.Name;
+import org.geotoolkit.feature.type.Name;
 
 /**
  * WMTS Coverage Reference.

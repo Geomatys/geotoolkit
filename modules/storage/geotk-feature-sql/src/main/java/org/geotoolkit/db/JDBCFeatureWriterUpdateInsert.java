@@ -22,8 +22,8 @@ import java.sql.SQLException;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.factory.Hints;
-import org.opengis.feature.Feature;
-import org.opengis.feature.type.FeatureType;
+import org.geotoolkit.feature.Feature;
+import org.geotoolkit.feature.type.FeatureType;
 
 
 public class JDBCFeatureWriterUpdateInsert extends JDBCFeatureWriterUpdate {

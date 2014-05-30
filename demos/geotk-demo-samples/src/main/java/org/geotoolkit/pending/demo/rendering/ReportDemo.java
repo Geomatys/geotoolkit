@@ -39,7 +39,6 @@ import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.FeatureUtilities;
-import org.geotoolkit.feature.LenientFeatureFactory;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.pending.demo.Demos;
@@ -61,16 +60,15 @@ import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.data.general.DefaultPieDataset;
 
-import org.opengis.feature.Feature;
+import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.FeatureFactory;
-import org.opengis.feature.type.FeatureType;
-import org.opengis.feature.type.Name;
+import org.geotoolkit.feature.type.FeatureType;
+import org.geotoolkit.feature.type.Name;
 import org.opengis.filter.FilterFactory;
 
 public class ReportDemo {
 
-    private static final FeatureFactory FF = FactoryFinder.getFeatureFactory(
-                 new Hints(Hints.FEATURE_FACTORY,LenientFeatureFactory.class));
+    private static final FeatureFactory FF = FeatureFactory.LENIENT;
     private static final MutableStyleFactory SF = (MutableStyleFactory)FactoryFinder.getStyleFactory(
                  new Hints(Hints.STYLE_FACTORY,MutableStyleFactory.class));
     private static final FilterFactory FIF = FactoryFinder.getFilterFactory(null);
@@ -78,7 +76,7 @@ public class ReportDemo {
 
     public static void main(String[] args) throws Exception {
         Demos.init();
-        
+
         final InputStream template = ReportDemo.class.getResourceAsStream("/data/report/complexReport.jrxml");
 
         final Entry<JasperReport,FeatureType> entry = JasperReportService.prepareTemplate(template);
@@ -86,7 +84,7 @@ public class ReportDemo {
         final FeatureType type = entry.getValue();
         System.out.println(type);
 
-        
+
         //source to make an atlas ----------------------------------------------------
         final FeatureStore store = FeatureStoreFinder.open(
                 (Map)Collections.singletonMap("url",ReportDemo.class.getResource("/data/world/Countries.shp")));
@@ -100,7 +98,7 @@ public class ReportDemo {
 
         //We map the feature type to the report type ---------------------------------
         final GenericMappingFeatureIterator mapped = new GenericMappingFeatureIterator(ite, new FeatureMapper(){
-            
+
             @Override
             public FeatureType getSourceType() {
                 return countries.getFeatureType();
@@ -110,7 +108,7 @@ public class ReportDemo {
             public FeatureType getTargetType() {
                 return type;
             }
-            
+
             @Override
             public Feature transform(Feature feature) {
                 final Feature modified = FeatureUtilities.defaultFeature(type, "id");
@@ -121,7 +119,7 @@ public class ReportDemo {
                 final MutableStyle style = RandomStyleBuilder.createRandomVectorStyle(col.getFeatureType());
                 context.layers().add(MapBuilder.createFeatureLayer(col, style));
 
-                
+
                 try{
                     //add a custom decoration on our map.
                     final GridTemplate gridTemplate = new DefaultGridTemplate(

@@ -10,7 +10,7 @@ import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
-import org.opengis.feature.Feature;
+import org.geotoolkit.feature.Feature;
 
 import java.io.ByteArrayOutputStream;
 import java.io.UnsupportedEncodingException;

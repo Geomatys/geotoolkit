@@ -54,8 +54,8 @@ import org.geotoolkit.data.kml.xml.KmlWriter;
 import org.geotoolkit.data.kml.xsd.SimpleTypeContainer;
 import org.geotoolkit.xml.StaxStreamWriter;
 
-import org.opengis.feature.Feature;
-import org.opengis.feature.Property;
+import org.geotoolkit.feature.Feature;
+import org.geotoolkit.feature.Property;
 
 import static org.geotoolkit.data.gx.xml.GxConstants.*;
 import static java.util.Collections.*;

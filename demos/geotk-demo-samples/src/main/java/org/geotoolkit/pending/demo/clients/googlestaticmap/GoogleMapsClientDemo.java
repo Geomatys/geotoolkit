@@ -13,7 +13,7 @@ import org.geotoolkit.map.MapContext;
 import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
-import org.opengis.feature.type.Name;
+import org.geotoolkit.feature.type.Name;
 
 
 public class GoogleMapsClientDemo {

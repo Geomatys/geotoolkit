@@ -24,8 +24,8 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import org.geotoolkit.util.Converters;
-import org.opengis.feature.type.AttributeType;
-import org.opengis.feature.type.PropertyType;
+import org.geotoolkit.feature.type.AttributeType;
+import org.geotoolkit.feature.type.PropertyType;
 
 /**
  *

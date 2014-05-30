@@ -18,8 +18,8 @@
 package org.geotoolkit.data;
 
 import static org.apache.sis.util.ArgumentChecks.*;
-import org.opengis.feature.Feature;
-import org.opengis.feature.type.FeatureType;
+import org.geotoolkit.feature.Feature;
+import org.geotoolkit.feature.type.FeatureType;
 
 /**
  *

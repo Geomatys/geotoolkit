@@ -23,9 +23,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.geotoolkit.filter.DefaultFilterFactory2;
-import org.opengis.feature.type.Name;
-
-import org.opengis.filter.FilterFactory;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -35,6 +32,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 import org.opengis.style.SemanticType;
 import org.opengis.style.Symbolizer;
+import org.opengis.util.GenericName;
 
 /**
  *
@@ -81,7 +79,7 @@ public class WeakListenerTest {
             public void propertyChange(PropertyChangeEvent evt) {
                 fail("Should never had been called");
             }
-            
+
         };
 
         StyleListener.Weak weak = new StyleListener.Weak(listener);
@@ -115,7 +113,7 @@ public class WeakListenerTest {
                 fail("Should never had been called");
             }
             @Override
-            public void featureTypeNameChange(CollectionChangeEvent<Name> event) {
+            public void featureTypeNameChange(CollectionChangeEvent<GenericName> event) {
                 fail("Should never had been called");
             }
             @Override

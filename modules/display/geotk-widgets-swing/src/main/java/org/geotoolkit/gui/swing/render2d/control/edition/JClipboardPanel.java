@@ -43,7 +43,7 @@ import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.util.GeotkClipboard;
 import org.apache.sis.util.logging.Logging;
 
-import org.opengis.feature.Feature;
+import org.geotoolkit.feature.Feature;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;

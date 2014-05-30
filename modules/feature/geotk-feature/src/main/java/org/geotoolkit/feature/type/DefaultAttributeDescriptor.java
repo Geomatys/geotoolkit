@@ -23,9 +23,9 @@ import java.util.Objects;
 
 import org.apache.sis.util.Classes;
 
-import org.opengis.feature.type.AttributeDescriptor;
-import org.opengis.feature.type.AttributeType;
-import org.opengis.feature.type.Name;
+import org.geotoolkit.feature.type.AttributeDescriptor;
+import org.geotoolkit.feature.type.AttributeType;
+import org.geotoolkit.feature.type.Name;
 
 /**
  * Default implementation of a property descriptor

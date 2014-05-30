@@ -19,7 +19,7 @@ package org.geotoolkit.coverage;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
-import org.opengis.feature.type.Name;
+import org.geotoolkit.feature.type.Name;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.awt.image.Raster;

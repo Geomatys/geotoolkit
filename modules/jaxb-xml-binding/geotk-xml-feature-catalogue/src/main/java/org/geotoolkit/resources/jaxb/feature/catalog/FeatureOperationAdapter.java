@@ -1,7 +1,7 @@
 /*
  *    GeotoolKit - An Open Source Java GIS Toolkit
  *    http://geotoolkit.org
- * 
+ *
  *    (C) 2009, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -30,9 +30,9 @@ import org.opengis.feature.catalog.FeatureOperation;
  * @author Guilhem Legal
  */
 public class FeatureOperationAdapter extends XmlAdapter<FeatureOperationAdapter, FeatureOperation> {
-    
+
     private FeatureOperation feature;
-    
+
     /**
      * Empty constructor for JAXB only.
      */
@@ -64,7 +64,7 @@ public class FeatureOperationAdapter extends XmlAdapter<FeatureOperationAdapter,
      */
     @XmlElement(name = "FC_FeatureOperation")
     public FeatureOperationImpl getFeatureOperation() {
-        if (feature == null) 
+        if (feature == null)
             return null;
         return (feature instanceof FeatureOperationImpl) ?
             (FeatureOperationImpl)feature : new FeatureOperationImpl(feature);
@@ -105,7 +105,7 @@ public class FeatureOperationAdapter extends XmlAdapter<FeatureOperationAdapter,
         return new FeatureOperationAdapter(value);
     }
 
-    
-    
+
+
 
 }

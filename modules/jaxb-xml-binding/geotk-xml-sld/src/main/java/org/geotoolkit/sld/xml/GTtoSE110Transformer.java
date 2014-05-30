@@ -159,7 +159,7 @@ import org.geotoolkit.style.function.RecolorFunction;
 import org.geotoolkit.style.function.ThreshholdsBelongTo;
 import org.geotoolkit.util.Converters;
 
-import org.opengis.feature.type.Name;
+import org.geotoolkit.feature.type.Name;
 import org.opengis.filter.And;
 import org.opengis.filter.BinaryComparisonOperator;
 import org.opengis.filter.Filter;
@@ -432,7 +432,7 @@ public class GTtoSE110Transformer implements StyleVisitor {
      * Transform a Feature name in a QName.
      */
     public QName visitName(final Name name) {
-        return new QName(name.getNamespaceURI(), name.getLocalPart());
+        return new QName(name.scope().name().toString(), name.toString());
     }
 
     public JAXBElement<?> visitFilter(final Filter filter) {
@@ -970,10 +970,10 @@ public class GTtoSE110Transformer implements StyleVisitor {
                 final FeatureTypeStyleType ftst = se_factory.createFeatureTypeStyleType();
 
                 if (!fts.featureTypeNames().isEmpty()) {
-                    final Name name = fts.featureTypeNames().iterator().next();
-                    final String pre = name.getNamespaceURI();
+                    final Name name = (Name) fts.featureTypeNames().iterator().next();
+                    final String pre = name.scope().name().toString();
                     final String sep = name.getSeparator();
-                    final String local = name.getLocalPart();
+                    final String local = name.toString();
                     ftst.setFeatureTypeName(new QName(pre + sep, local));
                 }
 
@@ -1388,10 +1388,10 @@ public class GTtoSE110Transformer implements StyleVisitor {
             final ExternalMark em = mark.getExternalMark();
             if(em!=null && em.getInlineContent() != null){
                 final Icon icon = em.getInlineContent();
-                
+
                 final InlineContentType ict = new InlineContentType();
                 ict.setEncoding(em.getFormat());
-                
+
                 final Image image;
                 if(icon instanceof ImageIcon){
                     image = ((ImageIcon)icon).getImage();
@@ -1399,7 +1399,7 @@ public class GTtoSE110Transformer implements StyleVisitor {
                     image = new BufferedImage(icon.getIconWidth(), icon.getIconHeight(), BufferedImage.TYPE_INT_ARGB);
                     icon.paintIcon(null, image.getGraphics(), 0, 0);
                 }
-                
+
                 try {
                     final ByteArrayOutputStream out = new ByteArrayOutputStream();
                     ImageIO.write((RenderedImage)image, "PNG", out);
@@ -1444,13 +1444,13 @@ public class GTtoSE110Transformer implements StyleVisitor {
                 image = new BufferedImage(icon.getIconWidth(), icon.getIconHeight(), BufferedImage.TYPE_INT_ARGB);
                 icon.paintIcon(null, image.getGraphics(), 0, 0);
             }
-            
+
             if(!(image instanceof BufferedImage)){
                 final BufferedImage bi = new BufferedImage(image.getWidth(null), image.getHeight(null), BufferedImage.TYPE_INT_ARGB);
                 bi.createGraphics().drawImage(image, new AffineTransform(), null);
                 image = bi;
             }
-            
+
             try {
                 final ByteArrayOutputStream out = new ByteArrayOutputStream();
                 ImageIO.write((RenderedImage)image, "PNG", out);

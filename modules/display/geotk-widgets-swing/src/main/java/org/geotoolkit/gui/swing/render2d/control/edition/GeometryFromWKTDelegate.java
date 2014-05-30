@@ -28,7 +28,7 @@ import java.util.Collections;
 import javax.swing.JInternalFrame;
 import javax.swing.JLayeredPane;
 
-import org.opengis.feature.Feature;
+import org.geotoolkit.feature.Feature;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.gui.swing.render2d.JMap2D;
 import org.geotoolkit.gui.swing.render2d.decoration.JPanelMapDecoration;

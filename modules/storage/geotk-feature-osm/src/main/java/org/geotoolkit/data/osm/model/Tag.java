@@ -22,7 +22,7 @@ import java.util.Collection;
 
 import org.geotoolkit.feature.AbstractComplexAttribute;
 
-import org.opengis.feature.Property;
+import org.geotoolkit.feature.Property;
 import org.opengis.filter.identity.Identifier;
 
 import static org.geotoolkit.data.osm.model.OSMModelConstants.*;

@@ -36,8 +36,8 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Assume;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.opengis.feature.type.FeatureType;
-import org.opengis.feature.type.Name;
+import org.geotoolkit.feature.type.FeatureType;
+import org.geotoolkit.feature.type.Name;
 import org.opengis.geometry.Envelope;
 import org.opengis.parameter.ParameterValueGroup;
 

@@ -27,19 +27,17 @@ import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.query.Query;
-import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.AbstractFeature;
 import org.geotoolkit.feature.FeatureTypeBuilder;
-import org.geotoolkit.feature.LenientFeatureFactory;
 import org.geotoolkit.feature.type.DefaultAttributeDescriptor;
 import org.apache.sis.util.Classes;
-import org.opengis.feature.Feature;
+import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.FeatureFactory;
-import org.opengis.feature.Property;
-import org.opengis.feature.type.AttributeDescriptor;
-import org.opengis.feature.type.FeatureType;
-import org.opengis.feature.type.PropertyDescriptor;
+import org.geotoolkit.feature.Property;
+import org.geotoolkit.feature.type.AttributeDescriptor;
+import org.geotoolkit.feature.type.FeatureType;
+import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
 import org.opengis.filter.identity.FeatureId;
 
@@ -52,8 +50,7 @@ import org.opengis.filter.identity.FeatureId;
 public class GenericExtendFeatureIterator<F extends Feature, R extends FeatureIterator<F>>
         implements FeatureIterator<F> {
 
-    protected static final FeatureFactory FF = FactoryFinder
-            .getFeatureFactory(new Hints(Hints.FEATURE_FACTORY, LenientFeatureFactory.class));
+    protected static final FeatureFactory FF = FeatureFactory.LENIENT;
 
     protected final FeatureType mask;
     protected final R iterator;
@@ -124,7 +121,7 @@ public class GenericExtendFeatureIterator<F extends Feature, R extends FeatureIt
         public T getFeatureType() {
             return (T) mask;
         }
-        
+
     }
 
     /**
@@ -139,7 +136,7 @@ public class GenericExtendFeatureIterator<F extends Feature, R extends FeatureIt
             //same type mapping, no need to wrap it
             return reader;
         }
-            
+
         return new GenericSeparateExtendFeatureReader(reader, mask, extend);
     }
 

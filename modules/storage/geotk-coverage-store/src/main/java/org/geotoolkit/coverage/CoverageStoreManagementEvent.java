@@ -17,7 +17,7 @@
 package org.geotoolkit.coverage;
 
 import org.geotoolkit.storage.StorageEvent;
-import org.opengis.feature.type.Name;
+import org.geotoolkit.feature.type.Name;
 
 /**
  * Coverage store structure change event.

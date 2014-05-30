@@ -28,7 +28,7 @@ import org.opengis.util.FactoryException;
 import org.geotoolkit.feature.simple.SimpleFeatureType;
 
 import org.junit.Test;
-import org.opengis.feature.type.FeatureType;
+import org.geotoolkit.feature.type.FeatureType;
 import static org.junit.Assert.*;
 
 /**

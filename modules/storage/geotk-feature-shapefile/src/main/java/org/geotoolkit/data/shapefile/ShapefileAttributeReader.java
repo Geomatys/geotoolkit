@@ -25,7 +25,7 @@ import org.geotoolkit.data.shapefile.shp.ShapefileReader;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.util.Converters;
-import org.opengis.feature.type.PropertyDescriptor;
+import org.geotoolkit.feature.type.PropertyDescriptor;
 
 /**
  * An AttributeReader implementation for Shapefile. Pretty straightforward.

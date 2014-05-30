@@ -1,7 +1,7 @@
 /*
  *    GeotoolKit - An Open Source Java GIS Toolkit
  *    http://geotoolkit.org
- * 
+ *
  *    (C) 2009, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -30,7 +30,6 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import org.geotoolkit.util.Utilities;
 import org.opengis.feature.catalog.DefinitionSource;
 import org.opengis.metadata.citation.Citation;
 import org.opengis.metadata.citation.CitationDate;
@@ -40,11 +39,11 @@ import org.opengis.metadata.citation.ResponsibleParty;
 
 /**
  * Class that specifies the source of a definition.
- * 
+ *
  * <p>Java class for FC_DefinitionSource_Type complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="FC_DefinitionSource_Type">
  *   &lt;complexContent>
@@ -56,8 +55,8 @@ import org.opengis.metadata.citation.ResponsibleParty;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -72,10 +71,10 @@ public class DefinitionSourceImpl implements DefinitionSource, Referenceable {
     @XmlID
     @XmlSchemaType(name = "ID")
     private String id;
-    
+
     @XmlElement(required = true)
     private Citation source;
-    
+
     @XmlTransient
     private boolean isReference = false;
 
@@ -83,9 +82,9 @@ public class DefinitionSourceImpl implements DefinitionSource, Referenceable {
      * An empty constructor used by JAXB
      */
     public DefinitionSourceImpl() {
-        
+
     }
-    
+
     /**
      * Clone a DefinitionSource
      */
@@ -94,17 +93,17 @@ public class DefinitionSourceImpl implements DefinitionSource, Referenceable {
             this.source = feature.getSource();
             this.id     = feature.getId();
         }
-        
+
     }
-    
+
      /**
      * build a new definition source
      */
     public DefinitionSourceImpl(final String id, final Citation source) {
-        this.id     = id;    
+        this.id     = id;
         this.source = source;
     }
-    
+
     /**
      * Gets the value of the source property.
     */
@@ -114,20 +113,20 @@ public class DefinitionSourceImpl implements DefinitionSource, Referenceable {
 
     /**
      * Sets the value of the source property.
-     * 
+     *
      */
     public void setSource(final Citation value) {
         this.source = value;
     }
-    
+
     public void setReference(final boolean isReference) {
         this.isReference = isReference;
     }
-    
+
     public boolean isReference() {
         return isReference;
     }
-    
+
     public DefinitionSourceImpl getReference() {
         DefinitionSourceImpl result = new DefinitionSourceImpl(this);
         result.setReference(true);
@@ -141,12 +140,12 @@ public class DefinitionSourceImpl implements DefinitionSource, Referenceable {
     public void setId(final String id) {
         this.id = id;
     }
-    
+
     @Override
     public String toString() {
-        return "[DefinitionSource]: id:" + id + '\n' + "source: " + source;  
+        return "[DefinitionSource]: id:" + id + '\n' + "source: " + source;
     }
-    
+
     /**
      * Verify if this entry is identical to the specified object.
      */
@@ -157,9 +156,9 @@ public class DefinitionSourceImpl implements DefinitionSource, Referenceable {
         }
         if (object instanceof DefinitionSourceImpl) {
             final DefinitionSourceImpl that = (DefinitionSourceImpl) object;
-           
-            
-            
+
+
+
             //we redefine the Equals method of Citation
             boolean sourceb = Objects.equals(this.source.getCollectiveTitle(),         that.source.getCollectiveTitle())         &&
                               Objects.equals(this.source.getEdition(),                 that.source.getEdition())                 &&
@@ -173,7 +172,7 @@ public class DefinitionSourceImpl implements DefinitionSource, Referenceable {
             if (Objects.equals(this.source.getDates().size(), that.source.getDates().size())) {
                 Iterator<? extends CitationDate> thisIT = this.source.getDates().iterator();
                 Iterator<? extends CitationDate> thatIT = that.source.getDates().iterator();
-                
+
                 while (thisIT.hasNext() && thatIT.hasNext()) {
                     if (!Objects.equals(thisIT.next(), thatIT.next())) {
                         sourceb = false;
@@ -182,11 +181,11 @@ public class DefinitionSourceImpl implements DefinitionSource, Referenceable {
             } else {
                 sourceb = false;
             }
-            
+
             if (Objects.equals(this.source.getCitedResponsibleParties().size(), that.source.getCitedResponsibleParties().size())) {
                 Iterator<? extends ResponsibleParty> thisIT = this.source.getCitedResponsibleParties().iterator();
                 Iterator<? extends ResponsibleParty> thatIT = that.source.getCitedResponsibleParties().iterator();
-                
+
                 while (thisIT.hasNext() && thatIT.hasNext()) {
                     if (!Objects.equals(thisIT.next(), thatIT.next())) {
                         sourceb = false;
@@ -195,9 +194,9 @@ public class DefinitionSourceImpl implements DefinitionSource, Referenceable {
             } else {
                 sourceb = false;
             }
-            return Objects.equals(this.id, that.id) && 
+            return Objects.equals(this.id, that.id) &&
                    sourceb;
-            
+
         }
         return false;
     }

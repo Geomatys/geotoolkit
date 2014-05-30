@@ -24,7 +24,6 @@ import org.geotoolkit.style.DefaultMutableStyle;
 import org.geotoolkit.style.MutableStyle;
 
 import org.opengis.feature.Feature;
-import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;
 import org.opengis.metadata.citation.OnlineResource;
 import org.opengis.sld.CoverageConstraint;
@@ -35,15 +34,17 @@ import org.opengis.sld.InlineFeature;
 import org.opengis.sld.RangeAxis;
 import org.opengis.sld.RemoteOWS;
 import org.opengis.sld.SLDLibrary;
+import org.opengis.util.GenericName;
+
 
 /**
  * Default immplementation of SLD Factory.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
 public class DefaultSLDFactory extends Factory implements MutableSLDFactory{
-    
+
     @Override
     public MutableStyledLayerDescriptor createSLD() {
         return new DefaultMutableSLD();
@@ -101,7 +102,7 @@ public class DefaultSLDFactory extends Factory implements MutableSLDFactory{
     }
 
     @Override
-    public FeatureTypeConstraint createFeatureTypeConstraint(final Name name,
+    public FeatureTypeConstraint createFeatureTypeConstraint(final GenericName name,
             final Filter filter, final List<Extent> extents) {
         return new DefaultFeatureTypeConstraint(name, filter, extents);
     }

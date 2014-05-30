@@ -152,7 +152,7 @@ public class SLD100Test extends TestCase{
         assertEquals(cons.size(), 1);
 
         assertNotNull( cons.get(0).getFilter() );
-        assertEquals(cons.get(0).getFeatureTypeName().getLocalPart(),"Feature type : name");
+        assertEquals(cons.get(0).getFeatureTypeName().toString(),"Feature type : name");
         assertEquals(cons.get(0).getExtent().size(), 3);
 
         Extent ext = cons.get(0).getExtent().get(0);
@@ -185,7 +185,7 @@ public class SLD100Test extends TestCase{
         assertEquals(cons.size(), 1);
 
         assertNotNull( cons.get(0).getFilter() );
-        assertEquals(cons.get(0).getFeatureTypeName().getLocalPart(),"Feature type : name");
+        assertEquals(cons.get(0).getFeatureTypeName().toString(),"Feature type : name");
         assertEquals(cons.get(0).getExtent().size(), 2);
 
         ext = cons.get(0).getExtent().get(0);
@@ -253,7 +253,7 @@ public class SLD100Test extends TestCase{
         assertEquals(constr.size(), 1);
 
         assertNotNull(cons.get(0).getFilter());
-        assertEquals(cons.get(0).getFeatureTypeName().getLocalPart(),"Feature type : name");
+        assertEquals(cons.get(0).getFeatureTypeName().toString(),"Feature type : name");
         assertEquals(cons.get(0).getExtent().size(), 2);
 
         ext = cons.get(0).getExtent().get(0);

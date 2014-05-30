@@ -8,9 +8,9 @@ import org.geotoolkit.data.geojson.utils.GeoJSONParser;
 import org.geotoolkit.data.geojson.utils.GeoJSONUtils;
 import org.geotoolkit.data.geojson.utils.GeometryUtils;
 import org.geotoolkit.feature.IllegalAttributeException;
-import org.opengis.feature.*;
-import org.opengis.feature.type.ComplexType;
-import org.opengis.feature.type.PropertyDescriptor;
+import org.geotoolkit.feature.*;
+import org.geotoolkit.feature.type.ComplexType;
+import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 

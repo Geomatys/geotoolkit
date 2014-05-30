@@ -53,7 +53,7 @@ import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapLayer;
 import org.jdesktop.swingx.combobox.ListComboBoxModel;
-import org.opengis.feature.type.PropertyDescriptor;
+import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
 import org.opengis.filter.expression.Expression;
 import org.opengis.parameter.GeneralParameterDescriptor;
