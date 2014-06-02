@@ -118,6 +118,7 @@ import org.opengis.style.Style;
 import org.opengis.style.StyleVisitor;
 import org.opengis.style.Symbolizer;
 import org.opengis.style.TextSymbolizer;
+import org.opengis.util.GenericName;
 
 /**
  *
@@ -494,9 +495,7 @@ public class GTtoSE100Transformer implements StyleVisitor{
         ftst.setName(fts.getName());
 
         if (!fts.featureTypeNames().isEmpty()) {
-            final Name name = (Name) fts.featureTypeNames().iterator().next();
-            final String pre = name.scope().isGlobal() ? null : name.scope().name().toString();
-            final String sep = name.getSeparator();
+            final GenericName name = fts.featureTypeNames().iterator().next();
             final String local = name.toString();
             ftst.setFeatureTypeName(local);
         }

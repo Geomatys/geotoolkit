@@ -240,6 +240,7 @@ import org.opengis.style.StyleVisitor;
 import org.opengis.style.Symbolizer;
 import org.opengis.style.TextSymbolizer;
 import org.opengis.util.FactoryException;
+import org.opengis.util.GenericName;
 
 /**
  *
@@ -970,9 +971,9 @@ public class GTtoSE110Transformer implements StyleVisitor {
                 final FeatureTypeStyleType ftst = se_factory.createFeatureTypeStyleType();
 
                 if (!fts.featureTypeNames().isEmpty()) {
-                    final Name name = (Name) fts.featureTypeNames().iterator().next();
+                    final GenericName name = fts.featureTypeNames().iterator().next();
                     final String pre = name.scope().isGlobal() ? null : name.scope().name().toString();
-                    final String sep = name.getSeparator();
+                    final String sep = ((Name) name).getSeparator();
                     final String local = name.toString();
                     ftst.setFeatureTypeName(new QName(pre + sep, local));
                 }
