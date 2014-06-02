@@ -23,6 +23,9 @@ import java.awt.image.WritableRaster;
 import java.io.IOException;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.media.jai.TileCache;
@@ -31,7 +34,8 @@ import org.apache.sis.util.logging.Logging;
 /**
  * Manage {@link RenderedImage} and its {@link Raster} to don't exceed JVM memory capacity.
  *
- * @author Rémi Maréchal (Geomatys).
+ * @author Rémi Maréchal (Geomatys)
+ * @author Alexis Manin  (Geomatys)
  */
 public class LargeCache implements TileCache {
 
@@ -41,8 +45,19 @@ public class LargeCache implements TileCache {
     private static final long DEFAULT_CAPACITY = 1024l*1024l*8l*256l;
 
     private long memoryCapacity;
-    private HashMap<RenderedImage, LargeMap2D> map  = new HashMap<>();
+    private long remainingCapacity;
 
+    /**
+     * References tiles cached over time. Used when we need to free space, we browse it to remove the oldest tiles.
+     */
+    private final LinkedHashSet<Map.Entry<RenderedImage, Point>> cachedTiles = new LinkedHashSet<>();
+
+    /*
+     * Contains a tile manager for each cached rendered image. A tile manager job is to swap / cache image tiles as we ask it.
+     */
+    private final HashMap<RenderedImage, LargeMap> tileManagers = new HashMap<>();
+
+    private final ReentrantReadWriteLock cacheLock = new ReentrantReadWriteLock();
     private static LargeCache INSTANCE;
 
     private LargeCache(long memoryCapacity) {
@@ -65,30 +80,55 @@ public class LargeCache implements TileCache {
     }
 
     /**
+     * Return the cache system associated to the given rendered image. If there's no
+     * such thing, it will be created / referenced then returned.
+     * @param source The image we want data from.
+     * @return The found or creeated cache system.
+     * @throws IOException If the image did not have any cache system, and we cannot create one.
+     */
+    private LargeMap getOrCreateLargeMap(RenderedImage source) throws IOException {
+        LargeMap lL;
+        synchronized (source) {
+            cacheLock.readLock().lock();
+            try {
+                lL = tileManagers.get(source);
+            } finally {
+                cacheLock.readLock().unlock();
+            }
+            if (lL == null) {
+                // To delete when memory will be managed by tile cache directly.
+                final long mC = memoryCapacity / (tileManagers.size() + 1);
+                updateLList(mC);
+                try {
+                    lL = new LargeMap(source, mC);
+                    cacheLock.writeLock().lock();
+                    tileManagers.put(source, lL);
+
+                } catch (IOException ex) {
+                    throw new RuntimeException("impossible to create cache list", ex);
+                } finally {
+                    if (cacheLock.isWriteLockedByCurrentThread()) {
+                        cacheLock.writeLock().unlock();
+                    }
+                }
+            }
+        }
+        return lL;
+    }
+    
+    /**
      * {@inheritDoc }.
      */
     @Override
     public void add(RenderedImage ri, int i, int i1, Raster raster) {
-        if (!(raster instanceof WritableRaster))
+        // TODO : check existing tile, flush it before replacing it, or do nothing.
+        if (!(raster instanceof WritableRaster)) {
             throw new IllegalArgumentException("raster must be WritableRaster instance");
+        }
         final WritableRaster wRaster = (WritableRaster) raster;
 
-        LargeMap2D lL;
-        synchronized (ri) {
-            lL = map.get(ri);
-            if (lL == null) {
-                final long mC = memoryCapacity / (map.size() + 1);
-                updateLList(mC);
-                try {
-                    lL = new LargeMap2D(ri, mC);
-                    map.put(ri, lL);
-                } catch (IOException ex) {
-                    throw new RuntimeException("impossible to create cache list", ex);
-                }
-            }
-        }
-
         try {
+            final LargeMap lL = getOrCreateLargeMap(ri);
             lL.add(i, i1, wRaster);
         } catch (IOException ex) {
             throw new RuntimeException("impossible to add raster (write raster on disk)", ex);
@@ -100,7 +140,13 @@ public class LargeCache implements TileCache {
      */
     @Override
     public void remove(RenderedImage ri, int i, int i1) {
-        final LargeMap2D lL = map.get(ri);
+        final LargeMap lL;
+        cacheLock.readLock().lock();
+        try {
+            lL = tileManagers.get(ri);
+        } finally {
+            cacheLock.readLock().unlock();
+        }
         if (lL == null)
             throw new IllegalArgumentException("renderedImage don't exist in this "+LargeCache.class.getName());
         lL.remove(i, i1);
@@ -111,9 +157,15 @@ public class LargeCache implements TileCache {
      */
     @Override
     public Raster getTile(RenderedImage ri, int i, int i1) {
-        final LargeMap2D cache = map.get(ri);
+        final LargeMap cache;
+        cacheLock.readLock().lock();
+        try {
+            cache = tileManagers.get(ri);
+        } finally {
+            cacheLock.readLock().unlock();
+        }
         if (cache == null)
-            throw new IllegalArgumentException("renderedImage don't exist in this "+LargeCache.class.getName());
+            throw new IllegalArgumentException("renderedImage doesn't exist in this "+LargeCache.class.getName());
         try {
             return cache.getRaster(i, i1);
         } catch (IOException ex) {
@@ -126,14 +178,18 @@ public class LargeCache implements TileCache {
      */
     @Override
     public void removeTiles(RenderedImage ri) {
-        synchronized (ri) {
-            final LargeMap2D lL = map.get(ri);
-            if (lL != null) {
-                lL.removeTiles();
-                synchronized (map) {
-                    map.remove(ri);
-                }
-            }
+        final LargeMap lL;
+        // De-reference image
+        cacheLock.writeLock().lock();
+        try {
+            lL = tileManagers.remove(ri);
+        } finally {
+            cacheLock.writeLock().unlock();
+        }
+
+        // Clear cache.
+        if (lL != null) {
+            lL.removeTiles();
         }
     }
 
@@ -144,17 +200,12 @@ public class LargeCache implements TileCache {
     public void addTiles(RenderedImage ri, Point[] points, Raster[] rasters, Object o) {
         if (points.length != rasters.length)
             throw new IllegalArgumentException("point and raster tables must have same length.");
-        LargeMap2D lL;
-        synchronized (ri) {
-            lL = map.get(ri);
-            if (lL == null) {
-                try {
-                    lL = new LargeMap2D(ri, memoryCapacity / (map.size() + 1));
-                    map.put(ri, lL);
-                } catch (IOException ex) {
-                    throw new RuntimeException("impossible to create cache list", ex);
-                }
-            }
+        
+        final LargeMap lL;
+        try {
+            lL = getOrCreateLargeMap(ri);
+        } catch (IOException e) {
+            throw new RuntimeException("There is no cache system for the given image, and we cannot create any.", e);
         }
 
         for (int id = 0, l = points.length; id < l; id++) {
@@ -173,7 +224,13 @@ public class LargeCache implements TileCache {
      */
     @Override
     public Raster[] getTiles(RenderedImage ri, Point[] points) {
-        final LargeMap2D lL = map.get(ri);
+        final LargeMap lL;
+        cacheLock.readLock().lock();
+        try {
+            lL = tileManagers.get(ri);
+        } finally {
+            cacheLock.readLock().unlock();
+        }
         if (lL == null)
             throw new IllegalArgumentException("renderedImage don't exist in this "+LargeCache.class.getName());
         final int l = points.length;
@@ -193,19 +250,24 @@ public class LargeCache implements TileCache {
      */
     @Override
     public synchronized void setMemoryCapacity(long l) {
-        this.memoryCapacity = l;
-        updateLList(memoryCapacity / map.size());
+        cacheLock.writeLock().lock();
+        try {
+            this.memoryCapacity = l;
+            updateLList(memoryCapacity / tileManagers.size());
+        } finally {
+            cacheLock.writeLock().unlock();
+        }
     }
 
     /**
      * Affect a new memory capacity and update {@link Raster} list from new memory capacity set.
-     *
+     * TODO : delete this method when memory capacity will be entirely managed by {@link org.geotoolkit.image.io.large.LargeCache}.
      * @param listMemoryCapacity new memory capacity.
      */
     private void updateLList(long listMemoryCapacity) {
-        for (RenderedImage r : map.keySet()) {
+        for (RenderedImage r : tileManagers.keySet()) {
             try {
-                map.get(r).setCapacity(listMemoryCapacity);
+                tileManagers.get(r).setCapacity(listMemoryCapacity);
             } catch (IOException ex) {
                 throw new RuntimeException("Raster too large for remaining memory capacity", ex);
             }
@@ -220,16 +282,22 @@ public class LargeCache implements TileCache {
         return memoryCapacity;
     }
 
+    
+    /*
+     * UNSUPPORTED OPERATIONS
+     */
+    
+    
     /**
      * {@inheritDoc }.
      */
     @Override
     public Raster[] getTiles(RenderedImage ri) {
         throw new UnsupportedOperationException("Not supported yet.");
-//        if (!map.containsKey(ri))
+//        if (!tileManagers.containsKey(ri))
 //            throw new IllegalArgumentException("renderedImage don't exist in this "+LargeCache.class.getName());
 //        try {
-//            return map.get(ri).getTiles();
+//            return tileManagers.get(ri).getTiles();
 //        } catch (IOException ex) {
 //            Logger.getLogger(LargeCache.class.getName()).log(Level.SEVERE, null, ex);
 //        }

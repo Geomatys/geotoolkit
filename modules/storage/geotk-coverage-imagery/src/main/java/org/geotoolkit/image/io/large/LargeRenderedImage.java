@@ -24,12 +24,15 @@ import java.awt.image.*;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Vector;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
 import javax.media.jai.TileCache;
 import org.apache.sis.util.ArgumentChecks;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.image.iterator.PixelIterator;
 import org.geotoolkit.image.iterator.PixelIteratorFactory;
 
@@ -40,10 +43,16 @@ import org.geotoolkit.image.iterator.PixelIteratorFactory;
  * mechanic which store some image tiles on hard drive.
  * </p>
  * 
- * @author Remi Marechal (Geomatys).
+ * TODO : Change mecanism to get a source data as entry, not a reader ? It would allow multi-threading
+ * on tile reading, by allocating a reader on the fly.
+ * 
+ * @author Remi Marechal (Geomatys)
+ * @author Alexis Manin  (Geomatys)
  */
 public class LargeRenderedImage implements RenderedImage {
 
+    private static final Logger LOGGER = Logging.getLogger(LargeRenderedImage.class);
+    
     /**
      * Mechanic to store tile on hard drive.
      */
@@ -93,6 +102,12 @@ public class LargeRenderedImage implements RenderedImage {
     private final boolean[][] isRead;
 
     /**
+     * An array which stores a lock for each tile. The index of the tile (x, y) is retrieved as following :
+     *      y * {@linkplain #nbrTileX} + x.
+     */
+    private final ReentrantReadWriteLock[] tileLocks;
+
+    /**
      * Image attributs.
      */
     private final int imageIndex;
@@ -125,7 +140,7 @@ public class LargeRenderedImage implements RenderedImage {
      * @param tilecache cache mechanic class. if {@code null} a default {@link TileCache} 
      *                  is define with a default memory capacity of 64 Mo.
      * @param tileSize internal {@link Raster} (tile) dimension. if {@code null} 
-     *                 a default tile size is choosen of 256x256 pixels.
+     *                 a default tile size is chosen (256x256 pixels).
      * @throws IOException if an error occurs during reading.
      */
     public LargeRenderedImage(ImageReader imageReader, int imageIndex, TileCache tilecache, Dimension tileSize) throws IOException {
@@ -148,6 +163,11 @@ public class LargeRenderedImage implements RenderedImage {
         this.nbrTileY = (height + tileHeight - 1) / tileHeight;
         isRead = new boolean[nbrTileY][nbrTileX];
         for (boolean[] bool : isRead) Arrays.fill(bool, false);
+
+        tileLocks = new ReentrantReadWriteLock[nbrTileX * nbrTileY];
+        for (int i = 0; i < tileLocks.length; i++) {
+            tileLocks[i] = new ReentrantReadWriteLock();
+        }
     }
 
     /**
@@ -303,34 +323,56 @@ public class LargeRenderedImage implements RenderedImage {
      */
     @Override
     public Raster getTile(int tileX, int tileY) {
-        if (isRead[tileY][tileX]) return tilecache.getTile(this, tileX, tileY);
+        
+        final ReadWriteLock tileLock = tileLocks[tileY * nbrTileX + tileX];
+        tileLock.readLock().lock();
         try {
-            return loadTile(tileX, tileY);
+            if (isRead[tileY][tileX]) return tilecache.getTile(this, tileX, tileY);
+        } catch (Exception e) {
+            /* This block is because of possible runtime exception if there's a cache problem, 
+             * we don't throw error, just reload the tile.
+             */
+            LOGGER.log(Level.WARNING, "Cannot get tile from cache system, but it should be here !", e);
+        } finally {
+            tileLock.readLock().unlock();
+        }
+
+        // Prepare for tile loading
+        tileLock.writeLock().lock();
+        try {
+            try {
+                if (isRead[tileY][tileX]) {
+                    return tilecache.getTile(this, tileX, tileY);
+                }
+            } catch (Exception e) {
+                 // Do not log again, it must have been done above.
+            }
+            
+            // Compute tile position in source image
+            final int minRx = tileX * tileWidth;
+            final int minRy = tileY * tileHeight;
+            int wRx = Math.min(minRx + tileWidth, width) - minRx;
+            int hRy = Math.min(minRy + tileHeight, height) - minRy;
+            final ImageReadParam imgParam = imageReader.getDefaultReadParam();
+            imgParam.setSourceRegion(new Rectangle(minRx, minRy, wRx, hRy));
+
+            // Load tile and give it to cache.
+            // TODO : Modify reading mecanism to allow multi-threading ?
+            BufferedImage buff;
+            synchronized (imageReader) {
+                buff = imageReader.read(imageIndex, imgParam);
+            }
+            if (cm == null) cm = buff.getColorModel();
+            final WritableRaster wRaster = Raster.createWritableRaster(buff.getSampleModel(), buff.getRaster().getDataBuffer(), new Point(minRx, minRy));
+            tilecache.add(this, tileX, tileY, wRaster);
+            isRead[tileY][tileX] = true;
+
+            return wRaster;
         } catch (IOException e) {
             throw new IllegalStateException("Impossible to read tile from image reader.", e);
+        } finally {
+            tileLock.writeLock().unlock();
         }
-    }
-
-    private synchronized Raster loadTile(int tileX, int tileY) throws IOException {
-        // Re-check if the tile is not already loaded, because another thread could have did it.
-        if (isRead[tileY][tileX]) return tilecache.getTile(this, tileX, tileY);
-
-        // Compute tile position in source image
-        final int minRx = tileX * tileWidth;
-        final int minRy = tileY * tileHeight;
-        int wRx = Math.min(minRx + tileWidth, width) - minRx;
-        int hRy = Math.min(minRy + tileHeight, height) - minRy;
-        final ImageReadParam imgParam = imageReader.getDefaultReadParam();
-        imgParam.setSourceRegion(new Rectangle(minRx, minRy, wRx, hRy));
-
-        // Load tile and give it to cache.
-        BufferedImage buff = imageReader.read(imageIndex, imgParam);
-        if (cm == null) cm = buff.getColorModel();
-        final WritableRaster wRaster = Raster.createWritableRaster(buff.getSampleModel(), buff.getRaster().getDataBuffer(), new Point(minRx, minRy));
-        tilecache.add(this, tileX, tileY, wRaster);
-
-        isRead[tileY][tileX] = true;
-        return wRaster;
     }
     
     /**

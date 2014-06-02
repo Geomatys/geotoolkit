@@ -17,6 +17,7 @@
 package org.geotoolkit.image.io.large;
 
 import org.apache.sis.util.ArgumentChecks;
+import org.geotoolkit.util.FileUtilities;
 
 import java.io.File;
 import java.io.IOException;
@@ -37,17 +38,11 @@ public class QuadTreeDirectory {
     private static final String D10 = "/10";
     private static final String D11 = "/11";
 
-    private final StringBuilder strBuilder;
     private final int nbrElementX;
     private final int nbrElementY;
-    private final int treeRootPathLength;
+    private final String treeRootPath;
     private final String extension;
     private final boolean isDeleteOnExit;
-
-    /**
-     * Recursive necessary attributes.
-     */
-    int dx, dy, demx, demy;
 
     /**
      * Create tree directory made, starting from tree root directory, define by user.
@@ -63,20 +58,18 @@ public class QuadTreeDirectory {
         ArgumentChecks.ensureStrictlyPositive("Quad-tree X axis dimension", nbrElementX);
         ArgumentChecks.ensureStrictlyPositive("Quad-tree Y axis dimension", nbrElementY);
 
-        this.treeRootPathLength = treeRootPath.length();
-        this.strBuilder         = new StringBuilder(treeRootPath);
+        this.treeRootPath       = treeRootPath;
         this.nbrElementX        = nbrElementX;
         this.nbrElementY        = nbrElementY;
         this.extension = (extension == null) ? "" : (extension.substring(0, 1).equalsIgnoreCase(".")) ? extension : "." + extension;
         this.isDeleteOnExit = isDeleteOnExit;
         // Check if given path is valid, because if it's not, the all quad-tree is compromised.
-        createDirectory();
-        create4rchitecture(nbrElementX, nbrElementY);
-        strBuilder.setLength(treeRootPathLength);
+        createDirectory(treeRootPath);
+        create4rchitecture(new StringBuilder(treeRootPath), nbrElementX, nbrElementY);
         LOGGER.log(Level.FINE, "Quad-tree have been successfully initialized for path" + treeRootPath);
     }
 
-    private void create4rchitecture(int numXTiles, int numYTiles) throws IOException {
+    private void create4rchitecture(final StringBuilder strBuilder, int numXTiles, int numYTiles) throws IOException {
         LOGGER.log(Level.FINE, "Begin creation of an entire quadTree level");
         if (numXTiles <= 2 && numYTiles <= 2) return;
 
@@ -88,14 +81,14 @@ public class QuadTreeDirectory {
             //cut in height
             //create 2 directories
             strBuilder.append(D00);
-            createDirectory();
-            create4rchitecture(numXTiles, nyt);
+            createDirectory(strBuilder.toString());
+            create4rchitecture(strBuilder, numXTiles, nyt);
 
             strBuilder.setLength(pathLength);
 
             strBuilder.append(D01);
-            createDirectory();
-            create4rchitecture(numXTiles, numYTiles-nyt);
+            createDirectory(strBuilder.toString());
+            create4rchitecture(strBuilder, numXTiles, numYTiles-nyt);
             strBuilder.setLength(pathLength);
 
         } else if (numYTiles <= 2) {
@@ -103,14 +96,14 @@ public class QuadTreeDirectory {
             //cut in width
             //create 2 directories
             strBuilder.append(D00);
-            createDirectory();
-            create4rchitecture(nxt, numYTiles);
+            createDirectory(strBuilder.toString());
+            create4rchitecture(strBuilder, nxt, numYTiles);
 
             strBuilder.setLength(pathLength);
 
             strBuilder.append(D10);
-            createDirectory();
-            create4rchitecture(numXTiles-nxt, numYTiles);
+            createDirectory(strBuilder.toString());
+            create4rchitecture(strBuilder, numXTiles-nxt, numYTiles);
 
             strBuilder.setLength(pathLength);
 
@@ -118,26 +111,26 @@ public class QuadTreeDirectory {
 
             //create 4 directories
             strBuilder.append(D00);
-            createDirectory();
-            create4rchitecture(nxt, nyt);
+            createDirectory(strBuilder.toString());
+            create4rchitecture(strBuilder, nxt, nyt);
 
             strBuilder.setLength(pathLength);
 
             strBuilder.append(D10);
-            createDirectory();
-            create4rchitecture(numXTiles-nxt, nyt);
+            createDirectory(strBuilder.toString());
+            create4rchitecture(strBuilder, numXTiles-nxt, nyt);
 
             strBuilder.setLength(pathLength);
 
             strBuilder.append(D01);
-            createDirectory();
-            create4rchitecture(nxt, numYTiles-nyt);
+            createDirectory(strBuilder.toString());
+            create4rchitecture(strBuilder, nxt, numYTiles-nyt);
 
             strBuilder.setLength(pathLength);
 
             strBuilder.append(D11);
-            createDirectory();
-            create4rchitecture(numXTiles-nxt, numYTiles-nyt);
+            createDirectory(strBuilder.toString());
+            create4rchitecture(strBuilder, numXTiles-nxt, numYTiles-nyt);
 
             strBuilder.setLength(pathLength);
 
@@ -148,9 +141,8 @@ public class QuadTreeDirectory {
     /**
      * Create directory at place define by StringBuilder path.A verification is done to be sure that folder has been
      */
-    private void createDirectory() throws IOException {
-        File f = new File(strBuilder.toString());
-        final String path = f.getAbsolutePath();
+    private void createDirectory(final String path) throws IOException {
+        File f = new File(path);
 
         if (f.isFile()) {
             throw new IOException("Current path represents a file, but a directory is needed here : "+path);
@@ -173,14 +165,12 @@ public class QuadTreeDirectory {
      * @return appropriate path of element at X, Y position.
      */
     public String getPath(int x, int y) {
-        final String path = getPath(strBuilder, 0, 0, nbrElementX-1, nbrElementY-1, x, y);
-        strBuilder.setLength(treeRootPathLength);
-        return path;
+        return getPath(new StringBuilder(treeRootPath), 0, 0, nbrElementX-1, nbrElementY-1, x, y);
     }
 
     private String getPath(StringBuilder path, int mintx, int minty, int maxtx, int maxty, int tileX, int tileY) {
-        dx = maxtx-mintx;
-        dy = maxty-minty;
+        final int dx = maxtx-mintx;
+        final int dy = maxty-minty;
         if (dx <= 1 && dy <= 1) {
             path.append("/");
             path.append(tileX);
@@ -189,8 +179,8 @@ public class QuadTreeDirectory {
             path.append(extension);
             return (path.toString());
         }
-        demx = mintx + dx / 2 + 1;
-        demy = minty + dy / 2 + 1;
+        final int demx = mintx + dx / 2 + 1;
+        final int demy = minty + dy / 2 + 1;
 
         if (dx <= 1) {
             //2 sub-directories in height.
@@ -263,5 +253,13 @@ public class QuadTreeDirectory {
             return getExistingParent(parent);
         }
         return parent;
+    }
+
+    @Override
+    protected void finalize() throws Throwable {
+        if (isDeleteOnExit) {
+            FileUtilities.deleteDirectory(new File(treeRootPath));
+        }
+        super.finalize();
     }
 }
