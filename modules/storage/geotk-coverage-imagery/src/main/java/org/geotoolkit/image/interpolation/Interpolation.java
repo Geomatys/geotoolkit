@@ -116,6 +116,8 @@ public abstract class Interpolation {
      */
     public abstract double interpolate(double x, double y, int band);
 
+    public abstract double[] interpolate(double x, double y);
+    
     /**
      * <p>Find minimum and maximum pixels values for each band.<br/>
      * Moreover double table result has length equal to 6*band number.<br/><br/>
@@ -168,44 +170,65 @@ public abstract class Interpolation {
         /*
          * If area is null iterate on all image area.
          */
-        final Rectangle areaIter = (area == null) ? boundary : area;
-        
-        if (!getBoundary().contains(areaIter))
+        if (area == null) {
+            int band = 0;
+            double value;
+            while(pixelIterator.next()) {
+                value = pixelIterator.getSampleDouble();
+                        final int minBandOrdinate = 6 * band;
+                        if (value < minMax[minBandOrdinate]) {
+                            //min value, x, y coordinates
+                            minMax[minBandOrdinate] = value;
+                            minMax[minBandOrdinate + 1] = pixelIterator.getX();
+                            minMax[minBandOrdinate + 2] = pixelIterator.getY();
+                        }
+                        if (value > minMax[minBandOrdinate + 3]) {
+                            //max value, x, y coordinates
+                            minMax[minBandOrdinate + 3] = value;
+                            minMax[minBandOrdinate + 4] = pixelIterator.getX();
+                            minMax[minBandOrdinate + 5] = pixelIterator.getY();
+                        }
+                if (++band >= numBands) {
+                    band = 0;
+                }
+            }
+        } else if (!getBoundary().contains(area)) {
                 throw new IllegalArgumentException("impossible to define min and max in area out of Iterate object boundary");
-        
-        double value;
-        final int maxAreaX = areaIter.x + areaIter.width;
-        final int maxAreaY = areaIter.y + areaIter.height;
-        for (int y = areaIter.y; y < maxAreaY; y++) {
-            for (int x = areaIter.x; x < maxAreaX; x++) {
-                /*
-                 * Call moveTo at each pixel coordinates because we don't know Iterator implementation.
-                 * Iterate row by row or raster by raster has different comportements.
-                 */
-                pixelIterator.moveTo(x, y, 0);
-                for (int band = 0; band < numBands; band++) {
-                    value = pixelIterator.getSampleDouble();
-                    final int minBandOrdinate = 6 * band;
-                    if (value < minMax[minBandOrdinate]) {
-                        //min value, x, y coordinates
-                        minMax[minBandOrdinate]     = value;
-                        minMax[minBandOrdinate + 1] = x;
-                        minMax[minBandOrdinate + 2] = y;
+        } else {
+            double value;
+            final int maxAreaX = area.x + area.width;
+            final int maxAreaY = area.y + area.height;
+            for (int y = area.y; y < maxAreaY; y++) {
+                for (int x = area.x; x < maxAreaX; x++) {
+                    /*
+                     * Call moveTo at each pixel coordinates because we don't know Iterator implementation.
+                     * Iterate row by row or raster by raster has different comportements.
+                     */
+                    pixelIterator.moveTo(x, y, 0);
+                    for (int band = 0; band < numBands; band++) {
+                        value = pixelIterator.getSampleDouble();
+                        final int minBandOrdinate = 6 * band;
+                        if (value < minMax[minBandOrdinate]) {
+                            //min value, x, y coordinates
+                            minMax[minBandOrdinate] = value;
+                            minMax[minBandOrdinate + 1] = x;
+                            minMax[minBandOrdinate + 2] = y;
+                        }
+                        if (value > minMax[minBandOrdinate + 3]) {
+                            //max value, x, y coordinates
+                            minMax[minBandOrdinate + 3] = value;
+                            minMax[minBandOrdinate + 4] = x;
+                            minMax[minBandOrdinate + 5] = y;
+                        }
+                        pixelIterator.next();
                     }
-                    if (value > minMax[minBandOrdinate + 3]) {
-                        //max value, x, y coordinates
-                        minMax[minBandOrdinate + 3] = value;
-                        minMax[minBandOrdinate + 4] = x;
-                        minMax[minBandOrdinate + 5] = y;
-                    }
-                    pixelIterator.next();
                 }
             }
         }
-        precMinMax = areaIter;
+        precMinMax = (area == null) ? boundary : area;
         return minMax;
     }
-
+    
     /**
      * Verify coordinates are within iterate area boundary.
      *

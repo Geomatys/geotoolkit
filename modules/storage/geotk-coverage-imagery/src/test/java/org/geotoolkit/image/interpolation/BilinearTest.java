@@ -31,7 +31,6 @@ import org.junit.Test;
 public class BilinearTest extends InterpolationTest {
 
     Raster raster;
-    private static double TOLERANCE = 1E-9;
 
     public BilinearTest() {
         super();
@@ -58,6 +57,7 @@ public class BilinearTest extends InterpolationTest {
         int rw    = raster.getWidth();
         int rh    = raster.getHeight();
         double min, max, v00, v01, v10, v11, vInter, jaiInter;
+        double[] geotkInter;
         for (int mpy = minpy; mpy < minpy + rh - 1; mpy++) {
             for (int mpx = minpx; mpx < minpx +rw - 1; mpx++) {
                 v00 = raster.getSampleDouble(mpx, mpy, 0);
@@ -68,12 +68,20 @@ public class BilinearTest extends InterpolationTest {
                 max = Math.max(Math.max(v00  , v01), Math.max(v10, v11));
                 for (double y = mpy + 0.5; y < mpy + 1.5; y += 0.1) {
                     for (double x = mpx + 0.5; x < mpx + 1.5; x += 0.1) {
-                        vInter = interpol.interpolate(x, y, 0);
                         //-- shift by 0.5 to simulate pixel center --//
                         jaiInter = jaiInterpol.interpolate(v00, v01, v10, v11, (float)(x - mpx - 0.5), (float)(y - mpy - 0.5));
+
+                        // Interpolation per sample
+                        vInter = interpol.interpolate(x, y, 0);
                         assertTrue("Interpolate value : "+vInter+" should be smaller than maximum : "+max, vInter <= max + 1E-15);
                         assertTrue("Interpolate value : "+vInter+" should be greater than minimum : "+min, vInter >= (min - 1E-15));
                         assertEquals("Bilinear global test at ("+x+", "+y+") position : ", vInter, jaiInter, 1E-7);
+
+                        // Interpolation per pixel
+                        geotkInter = interpol.interpolate(x, y);
+                        assertTrue("Interpolate value : "+geotkInter[0]+" should be smaller than maximum : "+max, geotkInter[0] <= max + 1E-15);
+                        assertTrue("Interpolate value : "+geotkInter[0]+" should be greater than minimum : "+min, geotkInter[0] >= (min - 1E-15));
+                        assertEquals("Bilinear global test at ("+x+", "+y+") position : ", geotkInter[0], jaiInter, 1E-7);
                     }
                 }
             }
@@ -87,6 +95,7 @@ public class BilinearTest extends InterpolationTest {
      */
     @Test
     public void lowLCornerTest() {
+        // Interpolation per sample
         double resulTest = interpol.interpolate(-0.5, -1, 0);
         assertEquals("lowLCornerTest : at coordinate : (-0.5, -1)", -1.5, resulTest, TOLERANCE);
 
@@ -101,6 +110,22 @@ public class BilinearTest extends InterpolationTest {
 
         resulTest = interpol.interpolate(-0.5, -0.5, 0);
         assertEquals("lowLCornerTest : at coordinate : (-0.5, -0.5)", 0, resulTest, TOLERANCE);
+        
+        // Interpolation per pixel
+        resulTest = interpol.interpolate(-0.5, -1)[0];
+        assertEquals("lowLCornerTest : at coordinate : (-0.5, -1)", -1.5, resulTest, TOLERANCE);
+
+        resulTest = interpol.interpolate(0, -0.5)[0];
+        assertEquals("lowLCornerTest : at coordinate : (0, -0.5)", 0.5, resulTest, TOLERANCE);
+
+        resulTest = interpol.interpolate(-1, -0.5)[0];
+        assertEquals("lowLCornerTest : at coordinate : (-1, -0.5)", -0.5, resulTest, TOLERANCE);
+
+        resulTest = interpol.interpolate(-0.5, 0)[0];
+        assertEquals("lowLCornerTest : at coordinate : (-0.5)[0]", 1.5, resulTest, TOLERANCE);
+
+        resulTest = interpol.interpolate(-0.5, -0.5)[0];
+        assertEquals("lowLCornerTest : at coordinate : (-0.5, -0.5)", 0, resulTest, TOLERANCE);
     }
 
     /**
@@ -110,6 +135,7 @@ public class BilinearTest extends InterpolationTest {
      */
     @Test
     public void lowRCornerTest() {
+        // Interpolation per sample
         double resulTest = interpol.interpolate(0.5, -1, 0);
         assertEquals("lowRCornerTest : at coordinate : (0.5, -1)", -0.5, resulTest, TOLERANCE);
 
@@ -121,6 +147,19 @@ public class BilinearTest extends InterpolationTest {
 
         resulTest = interpol.interpolate(0.5, -0.5, 0);
         assertEquals("lowRCornerTest : at coordinate : (0.5, -0.5)", 1, resulTest, TOLERANCE);
+        
+        // Interpolation per pixel
+        resulTest = interpol.interpolate(0.5, -1)[0];
+        assertEquals("lowRCornerTest : at coordinate : (0.5, -1)", -0.5, resulTest, TOLERANCE);
+
+        resulTest = interpol.interpolate(1.5, -1)[0];
+        assertEquals("lowRCornerTest : at coordinate : (1.5, -1)", 0.5, resulTest, TOLERANCE);
+
+        resulTest = interpol.interpolate(1, 0.5)[0];
+        assertEquals("lowRCornerTest : at coordinate : (1, 0.5)", 4.5, resulTest, TOLERANCE);
+
+        resulTest = interpol.interpolate(0.5, -0.5)[0];
+        assertEquals("lowRCornerTest : at coordinate : (0.5, -0.5)", 1, resulTest, TOLERANCE);
     }
 
     /**
@@ -130,6 +169,7 @@ public class BilinearTest extends InterpolationTest {
      */
     @Test
     public void uppLCornerTest() {
+        // Interpolation per sample
         double resulTest = interpol.interpolate(-0.5, 1, 0);
         assertEquals("uppLCornerTest : at coordinate : (-0.5, 1)", 4.5, resulTest, TOLERANCE);
 
@@ -141,6 +181,19 @@ public class BilinearTest extends InterpolationTest {
 
         resulTest = interpol.interpolate(-1, 1.5, 0);
         assertEquals("uppLCornerTest : at coordinate : (-1, 1.5)", 5.5, resulTest, TOLERANCE);
+        
+        // Interpolation per pixel
+        resulTest = interpol.interpolate(-0.5, 1)[0];
+        assertEquals("uppLCornerTest : at coordinate : (-0.5, 1)", 4.5, resulTest, TOLERANCE);
+
+        resulTest = interpol.interpolate(-1, 0.5)[0];
+        assertEquals("uppLCornerTest : at coordinate : (-1, 0.5)", 2.5, resulTest, TOLERANCE);
+
+        resulTest = interpol.interpolate(0.5, 1)[0];
+        assertEquals("uppLCornerTest : at coordinate : (0.5, 1)", 5.5, resulTest, TOLERANCE);
+
+        resulTest = interpol.interpolate(-1, 1.5)[0];
+        assertEquals("uppLCornerTest : at coordinate : (-1, 1.5)", 5.5, resulTest, TOLERANCE);
     }
 
     /**
@@ -150,6 +203,7 @@ public class BilinearTest extends InterpolationTest {
      */
     @Test
     public void uppRCornerTest() {
+        // Interpolation per sample
         double resulTest = interpol.interpolate(0.5, 0, 0);
         assertEquals("uppRCornerTest : at coordinate : (0.5, 0)", 2.5, resulTest, TOLERANCE);
 
@@ -160,6 +214,19 @@ public class BilinearTest extends InterpolationTest {
         assertEquals("uppRCornerTest : at coordinate : (1.5, 1)", 6.5, resulTest, TOLERANCE);
 
         resulTest = interpol.interpolate(1, 1.5, 0);
+        assertEquals("uppRCornerTest : at coordinate : (1, 1.5)", 7.5, resulTest, TOLERANCE);
+        
+        // Interpolation per pixel
+        resulTest = interpol.interpolate(0.5, 0)[0];
+        assertEquals("uppRCornerTest : at coordinate : (0.5, 0)", 2.5, resulTest, TOLERANCE);
+
+        resulTest = interpol.interpolate(1, 0.5)[0];
+        assertEquals("uppRCornerTest : at coordinate : (1, 0.5)", 4.5, resulTest, TOLERANCE);
+
+        resulTest = interpol.interpolate(1.5, 1)[0];
+        assertEquals("uppRCornerTest : at coordinate : (1.5, 1)", 6.5, resulTest, TOLERANCE);
+
+        resulTest = interpol.interpolate(1, 1.5)[0];
         assertEquals("uppRCornerTest : at coordinate : (1, 1.5)", 7.5, resulTest, TOLERANCE);
     }
 

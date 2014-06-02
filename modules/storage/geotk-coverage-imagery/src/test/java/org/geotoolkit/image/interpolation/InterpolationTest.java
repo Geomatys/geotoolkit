@@ -29,6 +29,8 @@ import org.geotoolkit.image.iterator.PixelIteratorFactory;
  */
 public abstract class InterpolationTest {
 
+    protected static final double TOLERANCE = 1E-9;
+
     /**
      * {@code PixelIterator} Iterator use to interpolate.
      */

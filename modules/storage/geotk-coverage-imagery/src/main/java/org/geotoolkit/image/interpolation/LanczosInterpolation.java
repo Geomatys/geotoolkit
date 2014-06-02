@@ -129,11 +129,17 @@ public class LanczosInterpolation extends Interpolation {
         return interpol;
     }
 
+    
     /**
      * {@inheritDoc }.
      */
     @Override
     public double[] getMinMaxValue(Rectangle area) {
         throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public double[] interpolate(double x, double y) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

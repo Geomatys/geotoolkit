@@ -58,4 +58,18 @@ public class NeighborInterpolation extends Interpolation {
         pixelIterator.moveTo((int) Math.min(maxxId, x), (int) Math.min(maxyId, y), bands);
         return pixelIterator.getSampleDouble();
     }
+
+    @Override
+    public double[] interpolate(double x, double y) {
+        checkInterpolate(x, y);
+        if (x < 0) x = Math.round(x - 0.5);
+        if (y < 0) y = Math.round(y - 0.5);
+        pixelIterator.moveTo((int) Math.min(maxxId, x), (int) Math.min(maxyId, y), 0);
+        result[0] = pixelIterator.getSampleDouble();
+        for (int band = 1; band < numBands; band++) {
+            pixelIterator.next();
+            result[band] = pixelIterator.getSampleDouble();
+        }
+        return result;
+    }
 }

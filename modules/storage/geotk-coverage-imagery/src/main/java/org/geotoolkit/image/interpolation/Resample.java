@@ -96,6 +96,8 @@ public class Resample {
      */
     private final double[] destCoords;
 
+    private double[] pixelValue;
+
     /**
      * Iterator use to fill destination image from interpolation of source image pixel value.
      */
@@ -123,7 +125,6 @@ public class Resample {
      */
     public Resample(MathTransform mathTransform, WritableRenderedImage imageDest, Interpolation interpol, double[] fillValue) throws NoninvertibleTransformException, TransformException {
         this(mathTransform, imageDest, null, interpol, fillValue);
-        
     }
 
     /**
@@ -242,5 +243,41 @@ public class Resample {
                 }
             }
         }
+    }
+
+    public void fillImagePx() throws TransformException {
+        int band;
+        int src0;
+        int src1;
+        while (destIterator.next()) {
+            band = 0;
+            //Compute interpolation value from source image.
+            destCoords[0] = destIterator.getX();
+            destCoords[1] = destIterator.getY();
+            destToSourceMathTransform.transform(destCoords, 0, srcCoords, 0, 1);
+            src0 = (int) srcCoords[0];
+            src1 = (int) srcCoords[1];
+
+            //check out of range
+            if (src0 < minSourceX || src0 >= maxSourceX
+                    || src1 < minSourceY || src1 >= maxSourceY) {
+                destIterator.setSampleDouble(fillValue[band]);
+                while (++band != numBands) {
+                    destIterator.next();
+                    destIterator.setSampleDouble(fillValue[band]);
+                }
+            } else {
+                pixelValue = interpol.interpolate(src0, src1);
+                destIterator.setSampleDouble(pixelValue[0]);
+                while (++band < numBands) {
+                    destIterator.next();
+                    destIterator.setSampleDouble(pixelValue[band]);
+                }
+            }
+        }
+    }
+
+    public Interpolation getInterpol() {
+        return interpol;
     }
 }

@@ -35,10 +35,22 @@ abstract class SeparableInterpolation extends Interpolation {
      */
     private final double[] tabInteCol;
 
+    /** 2D Array storing row data of each band when an interpolation per pixel is performed. */
+    private final double[][] rows;
+    
+    /** 2D Array storing row interpolated data for each band when an interpolation per pixel is performed. */
+    private final double[][] cols;
+    
+    /**
+     * @param pixelIterator
+     * @param windowSide 
+     */
     public SeparableInterpolation(PixelIterator pixelIterator, int windowSide) {
         super(pixelIterator, windowSide);
         tabInteRow = new double[windowSide];
         tabInteCol = new double[windowSide];
+        rows = new double[numBands][windowSide];
+        cols = new double[numBands][windowSide];
     }
 
 
@@ -65,6 +77,34 @@ abstract class SeparableInterpolation extends Interpolation {
         return interpolate1D(minY + 0.5, y, tabInteCol);
     }
 
+    @Override
+    public double[] interpolate(double x, double y) {
+        checkInterpolate(x, y);
+        setInterpolateMin(x, y);
+        final int wX = minX + windowSide;
+        final int hY = minY + windowSide;
+
+        for (int dy = minY; dy < hY; dy++) {
+            for (int dx = minX; dx < wX; dx++) {
+                pixelIterator.moveTo(dx, dy, 0);
+                rows[0][dx - minX] = pixelIterator.getSampleDouble();
+                for (int band = 1; band < numBands; band++) {
+                    pixelIterator.next();
+                    rows[band][dx - minX] = pixelIterator.getSampleDouble();
+                }
+            }
+
+            for (int band = 0; band < numBands; band++) {
+                cols[band][dy - minY] = interpolate1D(minX+0.5, x, rows[band]);
+            }
+        }
+
+        for (int band = 0; band < numBands; band++) {
+            result[band] = interpolate1D(minY+0.5, y, cols[band]);
+        }
+        return result;
+    }
+    
     /**
      * Compute interpolation value define by interpolation type implementation.
      *

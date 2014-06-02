@@ -22,4 +22,9 @@ public class PipeLineInterpolation extends Interpolation {
         return source.interpolate(x, y, band);
     }
 
+    @Override
+    public double[] interpolate(double x, double y) {
+        return source.interpolate(x, y);
+    }
+
 }
