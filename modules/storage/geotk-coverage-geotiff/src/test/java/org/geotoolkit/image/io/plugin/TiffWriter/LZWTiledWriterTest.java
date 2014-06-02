@@ -2,8 +2,8 @@
  *    Geotoolkit.org - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2005-2008, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2010, Geomatys
+ *    (C) 2010-2012, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2010-2012, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -15,20 +15,18 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.image.io.plugin.TiffReader;
+package org.geotoolkit.image.io.plugin.TiffWriter;
 
 import javax.imageio.ImageWriteParam;
-import org.geotoolkit.image.io.plugin.TestTiffImageReaderWriter;
 
 /**
- * Improve tests from {@link TestTiffImageReaderWriter} for reading action,
- * with LZW compression and tiled writing made.
- *
+ * {@link LZWTiffWriterTest} implementation which write image by compressed tiles.
+ * 
  * @author Remi Marechal (Geomatys).
  */
-public class LZWTiledReaderTest extends LZWTiffReaderTest {
+public class LZWTiledWriterTest extends LZWTiffWriterTest {
 
-    public LZWTiledReaderTest() {
+    public LZWTiledWriterTest() {
         super();
         writerParam.setTilingMode(ImageWriteParam.MODE_EXPLICIT);
         

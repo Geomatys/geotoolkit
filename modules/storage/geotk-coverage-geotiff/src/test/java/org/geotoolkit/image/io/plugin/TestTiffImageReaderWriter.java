@@ -112,21 +112,14 @@ public strictfp abstract class TestTiffImageReaderWriter {
     protected ImageWriteParam writerParam;
     
     /**
-     * compression use during current tests suite.
-     */
-    private final String compression;
-    
-    /**
      * Random number generator used for tests.
      */
     protected final Random random;
     
     /**
-     * 
-     * @param compression 
+     * @param compression choosen compression to write image.
      */
     public TestTiffImageReaderWriter(final String compression) {
-        this.compression = compression;
         
         this.reader      = new TiffImageReader(null);
         this.readerParam = reader.getDefaultReadParam();
@@ -147,7 +140,7 @@ public strictfp abstract class TestTiffImageReaderWriter {
      * @param fileTest the place to be
      * @param sourceImage image which will be written
      * @param sourceRegion Reading or writing region.
-     * @param sourceXSubsample Reading or writing subsample in X direction.
+     * @param sourceXSubsampling Reading or writing subsample in X direction.
      * @param sourceYsubsampling Reading or writing subsample in Y direction.
      * @param sourceXOffset Reading or writing offset in X direction.
      * @param sourceYOffset Reading or writing offset in Y direction.
@@ -155,7 +148,7 @@ public strictfp abstract class TestTiffImageReaderWriter {
      * @throws IOException if problem during reading / writing action.
      */
     protected abstract RenderedImage effectuateTest(final File fileTest, final RenderedImage sourceImage, final Rectangle sourceRegion, 
-            final int sourceXSubsample, final int sourceYsubsampling, final int sourceXOffset, final int sourceYOffset) throws IOException;
+            final int sourceXSubsampling, final int sourceYsubsampling, final int sourceXOffset, final int sourceYOffset) throws IOException;
     
     /**
      * Test which write and read after an image with only one band and test all sample type.
@@ -434,12 +427,7 @@ public strictfp abstract class TestTiffImageReaderWriter {
             final short photometricInterpretation, final short sampleFormat, final ImageOrientation imageOrientation) throws IOException {
         int width  = random.nextInt(256) + 16;
         int height = random.nextInt(256) + 16;
-//        width  =256;
-//        height = 22;
-//        width  =164;
-//        height = 138;
-//        System.out.println("width : "+width);
-//        System.out.println("height : "+height);
+        
         final RenderedImage sourceImage = createImageTest(width, height, sampleBitsSize, numBand, photometricInterpretation, sampleFormat);
         
         final int srcRegionX, srcRegionY;
@@ -473,33 +461,14 @@ public strictfp abstract class TestTiffImageReaderWriter {
         
         final Rectangle sourceRegion = new Rectangle(srcRegionX, srcRegionY, width >> 1, height >> 1);
         
-//        final int subsampleX = 19;
-//        final int subsampleY = 22;
-//        final int subsampleXOffset = 8;
-//        final int subsampleYOffset = 5;
-        
-//        final int subsampleX = 42;
-//        final int subsampleY = 46;
-//        final int subsampleXOffset = 24;
-//        final int subsampleYOffset = 9;
-        
         final int subsampleX = random.nextInt((width >> 1) - 1) + 1;
         final int subsampleY = random.nextInt((height >> 1) - 1) + 1;
         
         final int subsampleXOffset = Math.max(0, random.nextInt(subsampleX) - 1);
         final int subsampleYOffset = Math.max(0, random.nextInt(subsampleY) - 1);
         
-//        if (subsampleXOffset > subsampleX || subsampleYOffset > subsampleY) {
-//            System.out.println("");
-//        }
-        
-//        System.out.println("subsample ("+subsampleX+", "+subsampleY+", "+subsampleXOffset+", "+subsampleYOffset+")");
-        
          final RenderedImage testedImage = effectuateTest(fileTest, sourceImage, sourceRegion, 
                 subsampleX, subsampleY, subsampleXOffset, subsampleYOffset);
-        
-//        final RenderedImage testedImage = effectuateTest(fileTest, sourceImage, sourceRegion, 
-//                2, 2, 0, 0);
         
         checkImages(message, sourceImage, sourceRegion, subsampleX, subsampleXOffset, subsampleY, subsampleYOffset, testedImage);
     }
@@ -534,7 +503,6 @@ public strictfp abstract class TestTiffImageReaderWriter {
         
         if (sourceRegion == null) sourceRegion = new Rectangle(0, 0, sourceImage.getWidth(), sourceImage.getHeight());
         
-//        System.out.println("srcRegion = "+sourceRegion.toString());
         sourceRegion.translate(sourceXOffset, sourceYOffset);
         sourceRegion.width -= sourceXOffset;
         sourceRegion.height -= sourceYOffset;
@@ -546,9 +514,6 @@ public strictfp abstract class TestTiffImageReaderWriter {
         
         final int expectedWidth  = (srcMaxX - srcMinX + sourceXsubsampling - 1) / sourceXsubsampling;
         final int expectedHeight = (srcMaxY - srcMinY + sourceYsubsampling - 1) / sourceYsubsampling;
-        
-//        final int expectedWidth  = (sourceRegion.width + sourceXsubsampling - 1) / sourceXsubsampling;
-//        final int expectedHeight = (sourceRegion.height + sourceYsubsampling - 1) / sourceYsubsampling;
         
         assertEquals(message+"image width ", expectedWidth, testedImage.getWidth(), DEFAULT_TOLERANCE);
         assertEquals(message+"image height ", expectedHeight, testedImage.getHeight(), DEFAULT_TOLERANCE);
@@ -562,8 +527,6 @@ public strictfp abstract class TestTiffImageReaderWriter {
         assertEquals(message+"numDataElement : ", expectedSm.getNumDataElements(), testedSm.getNumDataElements());
         assertEquals(message+"datatype : ", expectedSm.getDataType(), testedSm.getDataType());
                 
-//        sourceRegion.translate(sourceXOffset, sourceYOffset);
-        
         final PixelIterator sourcePix = PixelIteratorFactory.createRowMajorIterator(sourceImage, sourceRegion);
         
         final PixelIterator testedPix = PixelIteratorFactory.createRowMajorIterator(testedImage);

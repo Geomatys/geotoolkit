@@ -33,8 +33,6 @@ public class UncompressedTiledReaderTest extends UncompressedTiffReaderTest {
         final int tileWidth  = (random.nextInt(7) + 1) * 16;
         final int tileHeight = (random.nextInt(7) + 1) * 16;
         
-//        System.out.println("tile : "+tileWidth+", "+tileHeight);
-        
         writerParam.setTiling(tileWidth, tileHeight, 0, 0);
     }
 }

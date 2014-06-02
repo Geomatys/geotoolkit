@@ -2216,8 +2216,12 @@ public class TiffImageWriter extends SpatialImageWriter {
             // param not null
             final Rectangle paramRect = (param.getSourceRegion() == null) ? new Rectangle(imageBoundary) : param.getSourceRegion();
             
-            // in case of subsampling different of 1 with an offset.
-            paramRect.translate(param.getSubsamplingXOffset(), param.getSubsamplingYOffset());
+            //-- in case of subsampling different of 1 with an offset.
+            final int xOffset = param.getSubsamplingXOffset();
+            final int yOffset = param.getSubsamplingYOffset();
+            paramRect.translate(xOffset, yOffset);
+            paramRect.width  -= xOffset;
+            paramRect.height -= yOffset;
             
             if (!imageBoundary.intersects(paramRect)) {
                 throw new IllegalStateException("src region from ImageWriterParam must intersect image boundary.");
@@ -3266,8 +3270,8 @@ public class TiffImageWriter extends SpatialImageWriter {
     public void dispose() {
         super.dispose(); //To change body of generated methods, choose Tools | Templates.
         try {
-            channel.flush();
             if (channel != null) {
+                channel.flush();
                 channel.close();
             }
         } catch (IOException ex) {
@@ -3288,6 +3292,15 @@ public class TiffImageWriter extends SpatialImageWriter {
         rowByte32773Pos = 0;
         metaHeads = new Map[4];
         metaIndex = 0; 
+        try {
+//            channel.flush();
+            if (channel != null) {
+                channel.flush();
+                channel.close();
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(TiffImageWriter.class.getName()).log(Level.SEVERE, null, ex);
+        }
         channel = null;
     }
     
