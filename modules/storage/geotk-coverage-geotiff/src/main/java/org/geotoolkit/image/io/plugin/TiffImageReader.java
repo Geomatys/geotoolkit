@@ -2587,7 +2587,7 @@ public class TiffImageReader extends SpatialImageReader {
                         //-- target begin position --//
                         int targetOffset = targetRegionOffset + targetRowOffset + ((interMinX - srcRegion.x + sourceXSubsampling - 1) / sourceXSubsampling) * samplesPerPixel;
                         int targetPos    = targetOffset + s;
-                        int nextTargetPos = targetPos + dstRegion.width * samplesPerPixel;
+                        int nextTargetPos = targetPos + targetScanlineStride;
                         
                         int srcXStep, targetReadLength, targetStep;
                         if (pC == 1 && sourceXSubsampling == 1) {
@@ -2622,7 +2622,7 @@ public class TiffImageReader extends SpatialImageReader {
                             }
                             //-- dest --//
                             targetPos = nextTargetPos;
-                            nextTargetPos += dstRegion.width * samplesPerPixel;
+                            nextTargetPos += targetScanlineStride;
                         }
                     }
                 } 
