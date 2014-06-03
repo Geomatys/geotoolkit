@@ -75,7 +75,7 @@ import org.opengis.annotation.UML;
  * See <a href="http://jira.codehaus.org/browse/GEO-237">GEO-237</a> for details.
  */
 @Deprecated
-public interface Name extends org.opengis.util.GenericName {
+public interface Name extends org.opengis.util.TypeName {
 
     /**
      * Returns <code>true</code> if getNamespaceURI is <code>null</code>

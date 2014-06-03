@@ -20,7 +20,7 @@ package org.geotoolkit.feature.type;
 import java.util.Collections;
 import java.util.Objects;
 import javax.xml.namespace.QName;
-import org.apache.sis.util.iso.DefaultLocalName;
+import org.apache.sis.util.iso.DefaultTypeName;
 import org.apache.sis.internal.system.DefaultFactories;
 
 
@@ -51,7 +51,7 @@ import org.apache.sis.internal.system.DefaultFactories;
  * @deprecated The GeoAPI {@code Name} interface is expected to be replaced by {@link org.opengis.util.GenericName}.
  */
 @Deprecated
-public class DefaultName extends DefaultLocalName implements Name {
+public class DefaultName extends DefaultTypeName implements Name {
     /**
      * Namespace / scope
      */
