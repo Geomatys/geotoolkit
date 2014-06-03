@@ -85,6 +85,11 @@ public class LargeRenderedImage implements RenderedImage {
      * {@link ImageReader} where is read each image tile.
      */
     private final ImageReader imageReader;
+
+    /**
+     * {@link javax.imageio.ImageReadParam} which specify how to read the source image (subsampling, cropping).
+     */
+    private final ImageReadParam sourceReadParam;
     
     /**
      * Tile number in X direction.
@@ -108,7 +113,7 @@ public class LargeRenderedImage implements RenderedImage {
     private final ReentrantReadWriteLock[] tileLocks;
 
     /**
-     * Image attributs.
+     * Image attributes.
      */
     private final int imageIndex;
     private final int width;
@@ -117,8 +122,8 @@ public class LargeRenderedImage implements RenderedImage {
     private final int tileHeight;
     private final int tileGridXOffset;
     private final int tileGridYOffset;
-    private ColorModel cm  = null;
-    private SampleModel sm = null;
+    private final ColorModel cm;
+    private final SampleModel sm;
 
     /**
      * Create a {@link LargeRenderedImage} object with a default {@link TileCache} 
@@ -144,12 +149,44 @@ public class LargeRenderedImage implements RenderedImage {
      * @throws IOException if an error occurs during reading.
      */
     public LargeRenderedImage(ImageReader imageReader, int imageIndex, TileCache tilecache, Dimension tileSize) throws IOException {
+        this(imageReader, null, imageIndex, tilecache, tileSize);
+    }
+
+    public LargeRenderedImage(ImageReader imageReader, ImageReadParam readParam, int imageIndex, TileCache tilecache, Dimension tileSize) throws IOException {
         ArgumentChecks.ensureNonNull("imageReader", imageReader);
         ArgumentChecks.ensurePositive("image index", imageIndex);
         this.imageReader = imageReader;
         this.imageIndex  = imageIndex;
-        this.width       = imageReader.getWidth(imageIndex);
-        this.height      = imageReader.getHeight(imageIndex);
+
+        // To initialize the color model, we must read a little piece of the source image.
+        final ImageReadParam tmpReadParam = imageReader.getDefaultReadParam();
+        tmpReadParam.setSourceRegion(new Rectangle(0, 0, 1, 1));
+        final BufferedImage tmpImage = imageReader.read(imageIndex, tmpReadParam);
+        cm = tmpImage.getColorModel();
+        sm = tmpImage.getSampleModel();
+
+        if (readParam != null) {
+            if (readParam.getSourceRenderSize() != null) {
+                width = readParam.getSourceRenderSize().width;
+                height = readParam.getSourceRenderSize().height;
+            } else {
+                Rectangle sourceRegion = readParam.getSourceRegion();
+                if (sourceRegion == null) {
+                    sourceRegion = new Rectangle(0, 0, imageReader.getWidth(imageIndex), imageReader.getHeight(imageIndex));
+                }
+                Point destOffset = readParam.getDestinationOffset();
+                int subsampledZoneWidth = (int) Math.ceil((double)(sourceRegion.width - readParam.getSubsamplingXOffset())/readParam.getSourceXSubsampling());
+                width = destOffset.x + readParam.getSubsamplingXOffset() + subsampledZoneWidth;
+                int subsampledZoneHeight = (int) Math.ceil((double)(sourceRegion.height - readParam.getSubsamplingYOffset())/readParam.getSourceYSubsampling());
+                height = destOffset.y + readParam.getSubsamplingYOffset() + subsampledZoneHeight;
+            }
+            sourceReadParam = readParam;
+        } else {
+            this.width       = imageReader.getWidth(imageIndex);
+            this.height      = imageReader.getHeight(imageIndex);
+            sourceReadParam = null;
+        }
+
         this.tilecache = (tilecache != null) ? tilecache : LargeCache.getInstance(DEFAULT_MEMORY_CAPACITY);
         this.tileGridXOffset = 0;
         this.tileGridYOffset = 0;
@@ -209,7 +246,6 @@ public class LargeRenderedImage implements RenderedImage {
      */
     @Override
     public ColorModel getColorModel() {
-        if (cm == null) getTile(0, 0);
         return cm;
     }
 
@@ -218,7 +254,6 @@ public class LargeRenderedImage implements RenderedImage {
      */
     @Override
     public SampleModel getSampleModel() {
-        if (sm == null) sm = getColorModel().createCompatibleSampleModel(tileWidth, tileHeight);
         return sm;
     }
 
@@ -351,19 +386,54 @@ public class LargeRenderedImage implements RenderedImage {
             // Compute tile position in source image
             final int minRx = tileX * tileWidth;
             final int minRy = tileY * tileHeight;
-            int wRx = Math.min(minRx + tileWidth, width) - minRx;
-            int hRy = Math.min(minRy + tileHeight, height) - minRy;
+            int tileWidth = Math.min(minRx + this.tileWidth, width) - minRx;
+            int tileHeight = Math.min(minRy + this.tileHeight, height) - minRy;
             final ImageReadParam imgParam = imageReader.getDefaultReadParam();
-            imgParam.setSourceRegion(new Rectangle(minRx, minRy, wRx, hRy));
 
-            // Load tile and give it to cache.
-            // TODO : Modify reading mecanism to allow multi-threading ?
-            BufferedImage buff;
-            synchronized (imageReader) {
-                buff = imageReader.read(imageIndex, imgParam);
+            final BufferedImage result;
+            // no subsampling nor offset, read directly the specified region.
+            if (sourceReadParam == null) {
+                imgParam.setSourceRegion(new Rectangle(minRx, minRy, tileWidth, tileHeight));
+                // TODO : Modify reading mecanism to allow multi-threading ?
+                synchronized (imageReader) {
+                    result = imageReader.read(imageIndex, imgParam);
+                }
+            } else {
+                /* If an offset has been specified, we must fill result only from this point. First, we check if the given tile
+                 * is completely before the destination offset, in which case we just have to return a black filled image.
+                 * Otherwise, we compute the source region to read which intersects the asked tile rectangle.
+                 */
+                final Point destOffset = sourceReadParam.getDestinationOffset();
+                if (minRx + tileWidth < destOffset.x || minRy + tileHeight < destOffset.y) {
+                    result = new BufferedImage(cm, cm.createCompatibleWritableRaster(tileWidth, tileHeight), cm.isAlphaPremultiplied(), null);
+                } else {
+                    if (minRx < destOffset.x || minRy < destOffset.y) {
+                        imgParam.setDestination(new BufferedImage(cm, cm.createCompatibleWritableRaster(tileWidth, tileHeight), cm.isAlphaPremultiplied(), null));
+                        imgParam.setDestinationOffset(new Point(Math.max(0, destOffset.x - minRx), Math.max(0, destOffset.y - minRy)));
+                    }
+
+                    final Rectangle srcRegion = sourceReadParam.getSourceRegion();
+                    final int ssX = sourceReadParam.getSourceXSubsampling();
+                    final int ssY = sourceReadParam.getSourceYSubsampling();
+
+                    final int readOffsetX = minRx-destOffset.x;
+                    final int readOffsetY = minRy-destOffset.y;
+                    // Put subsampling offset only on left and upper border tiles.
+                    imgParam.setSourceRegion(new Rectangle(
+                            srcRegion.x + (readOffsetX > 0? readOffsetX * ssX : sourceReadParam.getSubsamplingXOffset()),
+                            srcRegion.y + (readOffsetY > 0? readOffsetY * ssY : sourceReadParam.getSubsamplingYOffset()),
+                            (tileWidth + Math.min(0, readOffsetX)) * ssX,
+                            (tileHeight + Math.min(0, readOffsetY)) * ssY));
+                    imgParam.setSourceSubsampling(ssX, ssY, 0, 0);
+
+                    // TODO : Modify reading mecanism to allow multi-threading ?
+                    synchronized (imageReader) {
+                        result = imageReader.read(imageIndex, imgParam);
+                    }
+                }
             }
-            if (cm == null) cm = buff.getColorModel();
-            final WritableRaster wRaster = Raster.createWritableRaster(buff.getSampleModel(), buff.getRaster().getDataBuffer(), new Point(minRx, minRy));
+
+            final WritableRaster wRaster = Raster.createWritableRaster(result.getSampleModel(), result.getRaster().getDataBuffer(), new Point(minRx, minRy));
             tilecache.add(this, tileX, tileY, wRaster);
             isRead[tileY][tileX] = true;
 
