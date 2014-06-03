@@ -65,7 +65,6 @@ import org.geotoolkit.image.io.SpatialImageWriteParam;
 import org.geotoolkit.image.io.SpatialImageWriter;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
-import org.geotoolkit.internal.image.ScaledColorSpace;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.Utilities;
 import static org.geotoolkit.metadata.geotiff.GeoTiffConstants.*;
@@ -394,14 +393,14 @@ public class TiffImageWriter extends SpatialImageWriter {
         compression = comp;
         
         final int imageWidth;
-        final short imgWT = (short) iwObj.get(ATT_TYPE);
+        final short imgWT = (short) ihObj.get(ATT_TYPE);
         imageWidth = (imgWT == TYPE_USHORT) ? ((short[])  iwObj.get(ATT_VALUE))[0] & 0xFFFF : ((int[])  iwObj.get(ATT_VALUE))[0];
         
         final short imgHT = (short) iwObj.get(ATT_TYPE);
         final int imageHeight = (imgHT == TYPE_USHORT) ? ((short[])  ihObj.get(ATT_VALUE))[0] & 0xFFFF: ((int[])  ihObj.get(ATT_VALUE))[0];
         
         samplePerPixel = ((short[]) isppObj.get(ATT_VALUE))[0];
-        bitPerSample   = (short) ((short[]) ibpsObj.get(ATT_VALUE))[0];
+        bitPerSample   = ((short[]) ibpsObj.get(ATT_VALUE))[0];
         
         isBigTIFF = ((long) imageWidth * imageHeight * samplePerPixel * bitPerSample / Byte.SIZE) >= 1E9; //-- 1Go
         
