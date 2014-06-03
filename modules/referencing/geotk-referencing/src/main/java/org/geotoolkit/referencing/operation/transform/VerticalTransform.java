@@ -22,6 +22,7 @@ import net.jcip.annotations.ThreadSafe;
 import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.TransformException;
 import org.geotoolkit.referencing.operation.matrix.Matrices;
+import org.apache.sis.referencing.operation.transform.IterationStrategy;
 
 
 /**

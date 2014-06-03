@@ -43,7 +43,10 @@ import org.apache.sis.util.ComparisonMode;
  *
  * @since 2.0
  * @module
+ *
+ * @deprecated Moved to Apache SIS as {@link org.apache.sis.referencing.operation.transform.LinearTransform}.
  */
+@Deprecated
 public interface LinearTransform extends org.apache.sis.referencing.operation.transform.LinearTransform, LenientComparable {
     /**
      * Tests whether this transform does not move any points, by using the provided

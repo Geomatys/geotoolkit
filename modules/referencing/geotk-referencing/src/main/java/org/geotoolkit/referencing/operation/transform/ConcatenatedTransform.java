@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.referencing.operation.transform;
 
+import org.apache.sis.parameter.Parameterized;
 import java.util.List;
 import java.util.ArrayList;
 import java.io.Serializable;
@@ -47,6 +48,7 @@ import org.geotoolkit.io.wkt.Formattable;
 import org.apache.sis.io.wkt.Formatter;
 import org.apache.sis.io.wkt.FormattableObject;
 import org.geotoolkit.resources.Errors;
+import org.apache.sis.referencing.operation.transform.IterationStrategy;
 
 import static org.geotoolkit.util.Utilities.hash;
 import static org.geotoolkit.referencing.operation.matrix.Matrices.*;

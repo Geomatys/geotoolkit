@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.referencing.operation.transform;
 
+import org.apache.sis.parameter.Parameterized;
 import java.util.Random;
 import java.io.Writer;
 import java.io.PrintStream;

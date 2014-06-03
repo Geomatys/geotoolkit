@@ -35,7 +35,7 @@ import org.opengis.referencing.operation.TransformException;
 
 import org.geotoolkit.referencing.operation.transform.GridType;
 import org.geotoolkit.referencing.operation.transform.GridTransform;
-import org.geotoolkit.referencing.operation.transform.IterationStrategy;
+import org.apache.sis.referencing.operation.transform.IterationStrategy;
 import org.apache.sis.util.ComparisonMode;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.resources.Errors;

@@ -32,7 +32,7 @@ import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
 
 import org.geotoolkit.referencing.operation.transform.AbstractMathTransform;
-import org.geotoolkit.referencing.operation.transform.IterationStrategy;
+import org.apache.sis.referencing.operation.transform.IterationStrategy;
 import org.geotoolkit.parameter.ParameterGroup;
 import org.geotoolkit.resources.Errors;
 

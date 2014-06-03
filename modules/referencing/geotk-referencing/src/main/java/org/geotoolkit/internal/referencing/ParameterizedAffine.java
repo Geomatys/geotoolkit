@@ -20,7 +20,7 @@ package org.geotoolkit.internal.referencing;
 import java.util.Objects;
 import java.awt.geom.AffineTransform;
 import org.opengis.referencing.operation.MathTransform;
-import org.geotoolkit.referencing.operation.transform.Parameterized;
+import org.apache.sis.parameter.Parameterized;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 
 

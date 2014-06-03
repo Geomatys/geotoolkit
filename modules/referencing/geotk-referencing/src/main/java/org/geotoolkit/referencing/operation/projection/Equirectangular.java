@@ -28,7 +28,7 @@ import org.opengis.referencing.operation.TransformException;
 
 import org.geotoolkit.internal.referencing.ParameterizedAffine;
 import org.geotoolkit.referencing.operation.matrix.Matrix2;
-import org.geotoolkit.referencing.operation.transform.Parameterized;
+import org.apache.sis.parameter.Parameterized;
 import org.geotoolkit.referencing.operation.provider.EquidistantCylindrical;
 
 import static java.lang.Math.*;

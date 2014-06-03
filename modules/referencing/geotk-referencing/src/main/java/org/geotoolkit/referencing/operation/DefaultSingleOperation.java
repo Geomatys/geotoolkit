@@ -37,7 +37,7 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.SingleOperation;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
-import org.geotoolkit.referencing.operation.transform.Parameterized;
+import org.apache.sis.parameter.Parameterized;
 import org.geotoolkit.referencing.operation.transform.PassThroughTransform;
 import org.geotoolkit.internal.referencing.ParameterizedAffine;
 import org.geotoolkit.internal.referencing.Semaphores;

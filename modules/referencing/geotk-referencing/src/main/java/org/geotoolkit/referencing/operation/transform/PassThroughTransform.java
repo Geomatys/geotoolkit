@@ -35,6 +35,7 @@ import org.apache.sis.geometry.GeneralDirectPosition;
 import org.geotoolkit.internal.referencing.DirectPositionView;
 import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
 import org.geotoolkit.referencing.operation.matrix.Matrices;
+import org.apache.sis.referencing.operation.transform.IterationStrategy;
 
 import static org.geotoolkit.util.Utilities.hash;
 import static org.apache.sis.util.ArgumentChecks.ensureDimensionMatches;

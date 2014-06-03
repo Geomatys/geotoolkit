@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.referencing.operation.transform;
 
+import org.apache.sis.parameter.Parameterized;
 import java.util.List;
 import java.util.Objects;
 import java.io.Serializable;

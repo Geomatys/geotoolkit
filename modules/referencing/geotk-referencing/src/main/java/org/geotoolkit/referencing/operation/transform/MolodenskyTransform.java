@@ -38,6 +38,7 @@ import org.geotoolkit.referencing.operation.matrix.XMatrix;
 import org.geotoolkit.referencing.operation.matrix.Matrices;
 import org.geotoolkit.referencing.operation.provider.Molodensky;
 import org.geotoolkit.referencing.operation.provider.AbridgedMolodensky;
+import org.apache.sis.referencing.operation.transform.IterationStrategy;
 
 import org.apache.sis.util.ArgumentChecks;
 import static java.lang.Math.*;

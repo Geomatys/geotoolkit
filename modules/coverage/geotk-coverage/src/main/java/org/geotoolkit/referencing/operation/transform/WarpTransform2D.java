@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.referencing.operation.transform;
 
+import org.apache.sis.referencing.operation.transform.IterationStrategy;
 import java.util.Arrays;
 import java.util.Objects;
 import java.io.Serializable;

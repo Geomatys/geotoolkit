@@ -41,7 +41,7 @@ import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.apache.sis.referencing.AbstractIdentifiedObject;
-import org.geotoolkit.referencing.operation.transform.Parameterized;
+import org.apache.sis.parameter.Parameterized;
 import org.geotoolkit.referencing.operation.transform.LinearTransform;
 import org.geotoolkit.referencing.operation.transform.ConcatenatedTransform;
 import org.geotoolkit.referencing.operation.transform.PassThroughTransform;

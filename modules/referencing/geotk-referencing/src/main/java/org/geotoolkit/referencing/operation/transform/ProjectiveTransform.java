@@ -23,7 +23,6 @@ package org.geotoolkit.referencing.operation.transform;
 import java.util.Arrays;
 import java.io.Serializable;
 import java.awt.geom.Point2D;
-import java.awt.geom.AffineTransform;
 import net.jcip.annotations.Immutable;
 
 import org.opengis.geometry.DirectPosition;
@@ -37,9 +36,9 @@ import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.parameter.MatrixParameters;
 import org.geotoolkit.referencing.operation.MathTransforms;
 import org.geotoolkit.referencing.operation.provider.Affine;
-import org.geotoolkit.referencing.operation.matrix.XMatrix;
 import org.geotoolkit.referencing.operation.matrix.Matrices;
 import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
+import org.apache.sis.referencing.operation.transform.IterationStrategy;
 
 import static org.geotoolkit.util.Utilities.hash;
 

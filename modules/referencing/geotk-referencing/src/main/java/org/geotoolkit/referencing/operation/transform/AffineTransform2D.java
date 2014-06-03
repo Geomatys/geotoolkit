@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.referencing.operation.transform;
 
+import org.apache.sis.parameter.Parameterized;
 import java.awt.Shape;
 import java.awt.geom.Point2D;
 import java.awt.geom.AffineTransform;

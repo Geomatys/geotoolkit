@@ -20,7 +20,8 @@ package org.geotoolkit.referencing.operation.transform;
 import java.util.Arrays;
 import java.util.Random;
 import org.opengis.referencing.operation.TransformException;
-import static org.geotoolkit.referencing.operation.transform.IterationStrategy.*;
+import org.apache.sis.referencing.operation.transform.IterationStrategy;
+import static org.apache.sis.referencing.operation.transform.IterationStrategy.*;
 
 import org.junit.*;
 import static org.junit.Assert.*;

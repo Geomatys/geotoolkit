@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.referencing.operation.transform;
 
+import org.apache.sis.parameter.Parameterized;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.MathTransform1D;

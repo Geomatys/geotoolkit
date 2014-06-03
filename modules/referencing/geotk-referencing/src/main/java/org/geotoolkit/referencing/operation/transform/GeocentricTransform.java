@@ -57,6 +57,7 @@ import org.geotoolkit.referencing.operation.provider.EllipsoidToGeocentric;
 import org.geotoolkit.referencing.operation.provider.GeocentricToEllipsoid;
 import org.geotoolkit.internal.referencing.DirectPositionView;
 import org.geotoolkit.resources.Errors;
+import org.apache.sis.referencing.operation.transform.IterationStrategy;
 
 import static java.lang.Math.*;
 import static org.geotoolkit.util.Utilities.hash;

@@ -37,6 +37,7 @@ import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
 import org.geotoolkit.referencing.operation.matrix.Matrices;
 import org.geotoolkit.referencing.operation.matrix.XMatrix;
 import org.apache.sis.util.ComparisonMode;
+import org.apache.sis.referencing.operation.transform.IterationStrategy;
 
 import static org.geotoolkit.util.Utilities.hash;
 
