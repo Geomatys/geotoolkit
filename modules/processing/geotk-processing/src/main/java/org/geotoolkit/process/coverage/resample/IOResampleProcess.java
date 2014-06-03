@@ -70,34 +70,40 @@ public class IOResampleProcess extends AbstractProcess {
 
     /**
      * Maximum size for image cache as bytes. To make it easier to understand (and modify), we decompose it as :
-     * tile width(px) * tile height(px) * band number * component type size (byte) * number of images
+     * tile width(px) * tile height(px) * band number * component type size (byte) * number of images.
      */
-    public final static long MAX_MEMORY_SIZE = 1024 * 1024 * 4 * 1 * 512;
+    public final static long BASE_MEMORY_SIZE = 1024l * 1024 * 1 * 1 * 64;
 
+    /**
+     * Timeout parameters for queue transactions.
+     */
     public static final int TIMEOUT = 100;
     private static final TimeUnit TIMEOUT_UNIT = TimeUnit.SECONDS;
 
+    /** A default size to use if user did not specified a tile size. */ 
     private static final Dimension DEFAULT_TILE_SIZE = new Dimension(256, 256);
 
+    /** Limit for queue capacity. */
+    private static final int QUEUE_SIZE = 20;
+    
     /**
      * A queue to store strips we want to resample.
      */
-    private final LinkedBlockingQueue<Rectangle> resamplingQueue = new LinkedBlockingQueue<>(100);
+    private final LinkedBlockingQueue<Rectangle> resamplingQueue = new LinkedBlockingQueue<>(QUEUE_SIZE);
 
     /**
      * A queue to store resampled strips we must write. We give priority to the tiles which are closer to upper-left corner of the output image.
      */
-    private final PriorityBlockingQueue<Map.Entry<Point, RenderedImage>> writingQueue = new PriorityBlockingQueue<>(100, new Comparator<Map.Entry<Point, RenderedImage>>() {
+    private final PriorityBlockingQueue<Map.Entry<Point, RenderedImage>> writingQueue = new PriorityBlockingQueue<>(QUEUE_SIZE, new Comparator<Map.Entry<Point, RenderedImage>>() {
         @Override
         public int compare(Map.Entry<Point, RenderedImage> o1, Map.Entry<Point, RenderedImage> o2) {
-            Point first = o1.getKey();
-            Point second = o2.getKey();
-
             if (o1 instanceof EndOfFile) {
                 return -1;
             } else if (o2 instanceof EndOfFile) {
                 return 1;
             } else {
+                Point first = o1.getKey();
+                Point second = o2.getKey();
                 final int linePriority = second.x - first.x;
                 // If the two point are on the same line, we must know which is the most advanced on it.
                 return (linePriority != 0) ? linePriority : second.y - first.y;
@@ -150,14 +156,14 @@ public class IOResampleProcess extends AbstractProcess {
             // Prepare the input image. We use a LargeRenderedImage, because we'll get random access to pixels, and if it's too big, we need a cache system.
             final ImageTypeSpecifier rawImageType = inImage.getRawImageType(0);
             final ColorModel colorModel = rawImageType.getColorModel();
-            final LargeRenderedImage rawImage = new LargeRenderedImage(inImage, 0, LargeCache.getInstance(MAX_MEMORY_SIZE), DEFAULT_TILE_SIZE);
+            final LargeRenderedImage rawImage = new LargeRenderedImage(inImage, 0, LargeCache.getInstance(BASE_MEMORY_SIZE), tileSize);
 
             /*
              * Prepare output image for writing. If no file location is given, we create a new TIF temporary file to
              * store result. If user did not specified size for target image, we compute one from given transformation.
              */
-            Integer width = (Integer) inputParameters.parameter("width").getValue();
-            Integer height = (Integer) inputParameters.parameter("height").getValue();
+            Integer width = Parameters.value(IOResampleDescriptor.OUT_WIDTH, inputParameters);
+            Integer height = Parameters.value(IOResampleDescriptor.OUT_HEIGHT, inputParameters);
             if (width == null || height == null || width <= 0 || height <= 0) {
                 final GeneralEnvelope transformed = Envelopes.transform(operator, new GeneralEnvelope(new double[]{0, 0}, new double[]{rawImage.getWidth(), rawImage.getHeight()}));
                 width = (int) Math.ceil(transformed.getSpan(0));
@@ -195,7 +201,7 @@ public class IOResampleProcess extends AbstractProcess {
             // We want to create a tiled image as output.
             ImageWriteParam outputParam = writer.getDefaultWriteParam();
             outputParam.setTilingMode(ImageWriteParam.MODE_EXPLICIT);
-            outputParam.setTiling(DEFAULT_TILE_SIZE.width, DEFAULT_TILE_SIZE.height, 0, 0);
+            outputParam.setTiling(tileSize.width, tileSize.height, 0, 0);
             writer.prepareWriteEmpty(null, rawImageType, width, height, null, null, outputParam);
             writer.prepareReplacePixels(0, null);
 
@@ -204,37 +210,45 @@ public class IOResampleProcess extends AbstractProcess {
             Arrays.fill(defaultPixelValue, Double.NaN);
 
             // Prepare multi-threading service. We create as many threads as user asked for resampling, plus one for strip writing.
-            final ExecutorService threadService = Executors.newFixedThreadPool(threadNumber);
-            final ArrayList<Runnable> threads = new ArrayList<>(threadNumber);
+            final ArrayList<Future> runnableResults = new ArrayList<>();
+            final ExecutorService resampleService = Executors.newFixedThreadPool(threadNumber);
             for (int threadCounter = 0; threadCounter < threadNumber; threadCounter++) {
                 // Duplicate iterators and interpolator because they're not thread-safe.
                 final PixelIterator it = PixelIteratorFactory.createDefaultIterator(rawImage);
                 final Interpolation interpol = Interpolation.create(it, toUse, LANCZOS_WINDOW);
-                threads.add(new ResampleThread(operator, interpol, defaultPixelValue, colorModel));
+                runnableResults.add(
+                        resampleService.submit(new ResampleThread(operator, interpol, defaultPixelValue, colorModel)));
             }
-            
-            Thread writingThread = new Thread(new Writer(writer));
+
+            final ExecutorService writerService = Executors.newSingleThreadExecutor();
+            runnableResults.add(
+                    writerService.submit(new Writer(writer)));
 
             LOGGER.log(Level.INFO, "We'll now start resampling. Output image dimension : width " + width + " px | height " + height + " px.");
             execTimes.add(System.currentTimeMillis());
 
-//            writingThread.setPriority(Thread.MAX_PRIORITY);
-            writingThread.start();
-            for (Runnable task : threads) {
-                threadService.submit(task);
-            }
-
-            // once we've submit all tiles to compute, we just have to wait resamplers to end their work. After that, should be full. We will add the end trigger.
+            // once we've submit all tiles to compute, we just have to wait resamplers to end their work. After that,
+            // writing queue should be full. We will add the end trigger.
             populateResamplingQueue(width, height, tileSize);
-            threadService.shutdown();
-            threadService.awaitTermination(1, TimeUnit.DAYS);
+            resampleService.shutdown();
+            resampleService.awaitTermination(1, TimeUnit.DAYS);
+
             poisonWritingQueue();
 
-            try {
-                writingThread.join(TimeUnit.DAYS.toMillis(1));
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                throw new ProcessException("Writing thread has been stopped.", this, e);
+            writerService.shutdown();
+            writerService.awaitTermination(1, TimeUnit.DAYS);
+
+            // Check possible thread errors :
+            for (Future result : runnableResults) {
+                try {
+                    result.get(TIMEOUT, TIMEOUT_UNIT);
+                } catch (ExecutionException e) {
+                    if (e.getCause() != null) {
+                        throw e.getCause();
+                    } else {
+                        throw e;
+                    }
+                }
             }
 
             writer.endReplacePixels();
@@ -368,6 +382,7 @@ public class IOResampleProcess extends AbstractProcess {
                 while (!Thread.currentThread().isInterrupted()) {
                     computeZone = resamplingQueue.take();
                     if (computeZone instanceof EmptyBox) {
+                        LOGGER.log(Level.INFO, "Resampling thread acquired end of the queue.");
                         return;
                     }
                     gridTransform = MathTransforms.concatenate(
@@ -375,15 +390,17 @@ public class IOResampleProcess extends AbstractProcess {
                     destination = new BufferedImage(outCModel,
                             outCModel.createCompatibleWritableRaster(computeZone.width, computeZone.height), false, null);
                     final Resample resampler = new Resample(gridTransform, destination, interpolator, fillValue);
-                    resampler.fillImage();
+                    resampler.fillImagePx();
                     final Map.Entry<Point, RenderedImage> output = new AbstractMap.SimpleEntry<>(computeZone.getLocation(), (RenderedImage) destination);
 
                     writingQueue.offer(output, TIMEOUT, TIMEOUT_UNIT);
                 }
+                LOGGER.log(Level.INFO, "Owner thread of the resample has been interrupted.");
             } catch (InterruptedException e) {
                 LOGGER.log(Level.INFO, "Resampling worker interrupted !");
                 Thread.currentThread().interrupt();
             } catch (Exception e) {
+                LOGGER.log(Level.WARNING, "Resampling thread error !", e);
                 // We die, but not alone
                 poisonResamplingQueue();
                 poisonWritingQueue();
@@ -421,6 +438,7 @@ public class IOResampleProcess extends AbstractProcess {
                 while (!Thread.currentThread().isInterrupted()) {
                     toWrite = writingQueue.take();
                     if (toWrite instanceof EndOfFile) {
+                        LOGGER.log(Level.INFO, "Writing thread acquired end of the queue.");
                         return;
                     }
 
@@ -431,9 +449,10 @@ public class IOResampleProcess extends AbstractProcess {
                 LOGGER.log(Level.INFO, "Writing thread interrupted !");
                 // We die, but not alone
                 poisonResamplingQueue();
-                poisonWritingQueue();
                 Thread.currentThread().interrupt();
             } catch (Exception e) {
+                LOGGER.log(Level.WARNING, "Writer thread error !", e);
+                poisonResamplingQueue();
                 throw new RuntimeException(e);
             }
         }

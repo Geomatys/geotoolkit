@@ -42,7 +42,7 @@ import java.io.File;
  */
 public class IOResampleDescriptor extends AbstractProcessDescriptor {
 
-    public static final String NAME = "GenericResample";
+    public static final String NAME = "IOResample";
 
     public static final ParameterDescriptor<ImageReader> IN_COVERAGE;
     public static final ParameterDescriptor<MathTransform> OPERATOR;
@@ -64,8 +64,8 @@ public class IOResampleDescriptor extends AbstractProcessDescriptor {
         IN_COVERAGE = builder.addName("image").setRemarks("The image to resample").setRequired(true).create(ImageReader.class, null);
         OPERATOR = builder.addName("operation").setRemarks("The transformation to apply on source coverage.").setRequired(true).create(MathTransform.class, null);
         INTERPOLATOR = builder.addName("interpolation").setRemarks("The interpolation to apply on pixel transfer.").setRequired(true).create(String.class, "bilinear");
-        OUT_WIDTH = builder.addName("width").setRemarks("The width to set for the result image.").setRequired(true).create(Integer.class, null);
-        OUT_HEIGHT = builder.addName("height").setRemarks("The height to set for the result image.").setRequired(true).create(Integer.class, null);
+        OUT_WIDTH = builder.addName("width").setRemarks("The width to set for the result image.").setRequired(false).create(Integer.class, null);
+        OUT_HEIGHT = builder.addName("height").setRemarks("The height to set for the result image.").setRequired(false).create(Integer.class, null);
         OUT_LOC = builder.addName("outputLocation").setRemarks("An absolute path to specify where target ortho-Image should be saved (future file path or its parent directory)."+
                 " If this parameter is not specified, a temporary file is created.").setRequired(false).create(String.class, null);
         THREAD_COUNT = builder.addName("threadCount").setRemarks("The number of threads to use for orthorectification computing.").setRequired(false).create(Integer.class, null);
