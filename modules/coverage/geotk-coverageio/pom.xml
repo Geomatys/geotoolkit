@@ -142,6 +142,11 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
+        <groupId>org.geotoolkit</groupId>
+        <artifactId>geotk-coverage-imagery</artifactId>
+        <version>${project.version}</version>
+    </dependency>
+    <dependency>
       <groupId>org.apache.sis.storage</groupId>
       <artifactId>sis-storage</artifactId>
       <version>${sis.version}</version>

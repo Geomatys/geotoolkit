@@ -38,6 +38,7 @@ import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.stream.ImageInputStream;
 
+import org.geotoolkit.image.io.large.LargeRenderedImage;
 import org.opengis.geometry.Envelope;
 import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.coverage.grid.GridGeometry;
@@ -889,6 +890,10 @@ public class ImageCoverageReader extends GridCoverageReader {
      * <p>
      * Finally, the image is read and wrapped in a {@link GridCoverage2D} using the
      * information provided by {@link #getGridGeometry(int)} and {@link #getSampleDimensions(int)}.
+     *
+     * /!\ If {@link org.geotoolkit.coverage.io.GridCoverageReadParam#setDeferred(boolean)} parameter is set to true, the
+     * returned coverage will rely on the current reader to cache it's data on the fly, so you CANNOT dispose of the current
+     * reader while your using the resulting coverage.
      */
     @Override
     public GridCoverage2D read(final int index, final GridCoverageReadParam param)
@@ -1057,7 +1062,11 @@ public class ImageCoverageReader extends GridCoverageReader {
                 SampleDimensionPalette.BANDS.set(bands);
                 ((SpatialImageReadParam) imageParam).setPaletteFactory(SampleDimensionPalette.FACTORY);
             }
-            image = imageReader.read(index, imageParam);
+            if (param != null && param.isDeferred()) {
+                image = new LargeRenderedImage(imageReader, imageParam, index, null, null);
+            } else {
+                image = imageReader.read(index, imageParam);
+            }
         } catch (IOException | IllegalArgumentException e) {
             throw new CoverageStoreException(formatErrorMessage(e), e);
         } finally {
