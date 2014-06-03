@@ -7,14 +7,23 @@ import org.geotoolkit.data.geojson.binding.GeoJSONGeometry;
 import org.geotoolkit.data.geojson.utils.GeoJSONParser;
 import org.geotoolkit.data.geojson.utils.GeoJSONUtils;
 import org.geotoolkit.data.geojson.utils.GeometryUtils;
+import org.geotoolkit.feature.Attribute;
+import org.geotoolkit.feature.ComplexAttribute;
+import org.geotoolkit.feature.Feature;
+import org.geotoolkit.feature.GeometryAttribute;
 import org.geotoolkit.feature.IllegalAttributeException;
 import org.geotoolkit.feature.*;
+import org.geotoolkit.feature.Property;
 import org.geotoolkit.feature.type.ComplexType;
 import org.geotoolkit.feature.type.PropertyDescriptor;
+import org.opengis.feature.*;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import java.io.*;
+import java.lang.reflect.Array;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -241,33 +250,66 @@ class GeoJSONWriter implements Closeable, Flushable {
      * @param writeFieldName
      * @throws IOException
      */
-    private void writeAttribute(Attribute property, boolean writeFieldName) throws IOException, IllegalAttributeException {
+    private void writeAttribute(org.opengis.feature.Attribute property, boolean writeFieldName) throws IOException, IllegalAttributeException {
 
         if (writeFieldName) {
-            String fieldName = property.getName().getLocalPart();
+            String fieldName = property.getName().toString();
             writer.writeFieldName(fieldName);
         }
 
         Object value = property.getValue();
+        writeValue(value);
+    }
+
+    /**
+     * Write a property value. Can handle n-level arrays.
+     * @param value (number or boolean or string or array or null)
+     * @throws IOException
+     */
+    private void writeValue(Object value) throws IOException{
 
         if (value == null) {
             writer.writeNull();
             return;
         }
 
-        Class binding = property.getDescriptor().getType().getBinding();
+        Class binding = value.getClass();
 
-        if (Double.class.isAssignableFrom(binding)) {
-            writer.writeNumber((Double)value);
-        } else if (Integer.class.isAssignableFrom(binding)) {
-            writer.writeNumber((Integer)value);
-        } else if (Boolean.class.isAssignableFrom(binding)) {
-            writer.writeBoolean((Boolean) value);
-        } else if (String.class.isAssignableFrom(binding)) {
-            writer.writeString(String.valueOf(value));
+        if (binding.isArray()) {
+            writer.writeStartArray();
+            final int size = Array.getLength(value);
+            for (int i=0; i<size; i++) {
+                writeValue(Array.get(value, i));
+            }
+
+            writer.writeEndArray();
         } else {
-            //fallback
-            writer.writeString(String.valueOf(value));
+
+            if (Double.class.isAssignableFrom(binding)) {
+                writer.writeNumber((Double) value);
+            } else if (Float.class.isAssignableFrom(binding)) {
+                writer.writeNumber((Float) value);
+            } else if (Short.class.isAssignableFrom(binding)) {
+                writer.writeNumber((Short) value);
+            } else if (Byte.class.isAssignableFrom(binding)) {
+                writer.writeNumber((Byte) value);
+            } else if (BigInteger.class.isAssignableFrom(binding)) {
+                writer.writeNumber((BigInteger) value);
+            } else if (BigDecimal.class.isAssignableFrom(binding)) {
+                writer.writeNumber((BigDecimal) value);
+            } else if (Integer.class.isAssignableFrom(binding)) {
+                writer.writeNumber((Integer) value);
+            } else if (Long.class.isAssignableFrom(binding)) {
+                writer.writeNumber((Long) value);
+
+            } else if (Boolean.class.isAssignableFrom(binding)) {
+                writer.writeBoolean((Boolean) value);
+            } else if (String.class.isAssignableFrom(binding)) {
+                writer.writeString(String.valueOf(value));
+            } else {
+                //fallback
+                writer.writeString(String.valueOf(value));
+            }
         }
     }
 
