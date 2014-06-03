@@ -72,7 +72,7 @@ import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
 import org.geotoolkit.referencing.operation.MathTransforms;
 import org.geotoolkit.referencing.operation.transform.LinearTransform;
-import org.geotoolkit.metadata.iso.extent.DefaultGeographicBoundingBox;
+import org.apache.sis.metadata.iso.extent.DefaultGeographicBoundingBox;
 import org.geotoolkit.resources.Errors;
 
 import static org.geotoolkit.util.collection.XCollections.unmodifiableOrCopy;
@@ -904,13 +904,14 @@ final class LayerEntry extends DefaultEntry implements Layer, Localized {
             if (envelope == null) {
                 return null;
             }
+            final DefaultGeographicBoundingBox db = new DefaultGeographicBoundingBox();
             try {
-                bbox = new DefaultGeographicBoundingBox(envelope);
+                db.setBounds(envelope);
             } catch (TransformException e) {
                 throw new CoverageStoreException(e);
             }
-            ((DefaultGeographicBoundingBox) bbox).freeze();
-            boundingBox = bbox;
+            db.freeze();
+            boundingBox = bbox = db;
         }
         if (Double.isInfinite(bbox.getWestBoundLongitude()) &&
             Double.isInfinite(bbox.getEastBoundLongitude()) &&

@@ -77,7 +77,7 @@ import org.geotoolkit.coverage.sql.CoverageEnvelope;
 import org.geotoolkit.coverage.sql.CoverageTableModel;
 import org.geotoolkit.coverage.sql.FutureQuery;
 import org.geotoolkit.coverage.sql.Layer;
-import org.geotoolkit.geometry.Envelope2D;
+import org.apache.sis.geometry.Envelope2D;
 import org.geotoolkit.gui.swing.Window;
 import org.geotoolkit.gui.swing.WindowCreator;
 import org.geotoolkit.gui.swing.referencing.CoordinateChooser;

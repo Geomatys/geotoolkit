@@ -45,7 +45,7 @@ import org.geotoolkit.referencing.operation.transform.ConcatenatedTransform;
 import org.geotoolkit.referencing.factory.IdentifiedObjectFinder;
 import org.geotoolkit.referencing.factory.AbstractAuthorityFactory;
 import org.geotoolkit.referencing.factory.ThreadedAuthorityFactory;
-import org.geotoolkit.metadata.iso.extent.DefaultGeographicBoundingBox;
+import org.apache.sis.metadata.iso.extent.DefaultGeographicBoundingBox;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.internal.InternalUtilities;
 import org.apache.sis.util.ComparisonMode;
@@ -495,7 +495,8 @@ public final strictfp class ThreadedEpsgFactoryTest extends EpsgFactoryTestBase 
         assertEquals( 6.548, envelope.getMaximum(1), 1E-3);
         assertNull(CRS.getEnvelope(null));
 
-        final GeographicBoundingBox rep = new DefaultGeographicBoundingBox(envelope);
+        final DefaultGeographicBoundingBox rep = new DefaultGeographicBoundingBox();
+        rep.setBounds(envelope);
         assertEquals(42.25, rep.getSouthBoundLatitude(), 1E-3);
         assertEquals(51.10, rep.getNorthBoundLatitude(), 1E-3);
         assertEquals(-5.20, rep.getWestBoundLongitude(), 1E-3);

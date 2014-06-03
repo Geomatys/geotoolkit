@@ -50,7 +50,7 @@ import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.apache.sis.referencing.crs.DefaultTemporalCRS;
 import org.geotoolkit.referencing.operation.MathTransforms;
-import org.geotoolkit.metadata.iso.extent.DefaultGeographicBoundingBox;
+import org.apache.sis.metadata.iso.extent.DefaultGeographicBoundingBox;
 import org.geotoolkit.internal.referencing.AxisDirections;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.resources.Errors;
@@ -253,7 +253,8 @@ control:    for (int p=0; p<=1; p++) {
      */
     public GeographicBoundingBox getGeographicBoundingBox() throws TransformException {
         if (boundingBox == null) {
-            final DefaultGeographicBoundingBox bbox = new DefaultGeographicBoundingBox(getEnvelope());
+            final DefaultGeographicBoundingBox bbox = new DefaultGeographicBoundingBox();
+            bbox.setBounds(getEnvelope());
             bbox.freeze();
             boundingBox = bbox;
         }

@@ -29,6 +29,7 @@ import java.awt.geom.RectangularShape;
 import static java.lang.Math.abs;
 
 import org.opengis.util.FactoryException;
+import org.opengis.geometry.Envelope;
 import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -40,10 +41,11 @@ import org.opengis.metadata.extent.GeographicBoundingBox;
 
 import org.geotoolkit.internal.sql.table.DefaultEntry;
 import org.geotoolkit.geometry.Envelopes;
+import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.geometry.AbstractEnvelope;
 import org.geotoolkit.display.shape.DoubleDimension2D;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
-import org.geotoolkit.metadata.iso.extent.DefaultGeographicBoundingBox;
+import org.apache.sis.metadata.iso.extent.DefaultGeographicBoundingBox;
 import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.geotoolkit.referencing.operation.matrix.Matrices;
@@ -354,7 +356,9 @@ final class GridGeometryEntry extends DefaultEntry {
      * @throws TransformException If the envelope can not be converted to WGS84.
      */
     public GeographicBoundingBox getGeographicBoundingBox() throws TransformException {
-        return new DefaultGeographicBoundingBox(standardEnvelope.getBounds2D(), srsEntry.getDatabaseCRS());
+        final DefaultGeographicBoundingBox bbox = new DefaultGeographicBoundingBox();
+        bbox.setBounds((Envelope) new Envelope2D(srsEntry.getDatabaseCRS(), standardEnvelope.getBounds2D()));
+        return bbox;
     }
 
     /**
