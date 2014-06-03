@@ -17,6 +17,7 @@
 package org.geotoolkit.sos.netcdf;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import org.geotoolkit.sampling.xml.SamplingFeature;
@@ -63,6 +64,12 @@ public class ExtractionResult {
         public ProcedureTree(final String id, final String type) {
             this.id   = id;
             this.type = type;
+        }
+        
+        public ProcedureTree(final String id, final String type, final Collection<String> fields) {
+            this.id   = id;
+            this.type = type;
+            this.fields.addAll(fields);
         }
 
         @Override
