@@ -2,23 +2,17 @@ package org.geotoolkit.image.io.large;
 
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.image.io.IllegalImageDimensionException;
-import org.geotoolkit.image.io.XImageIO;
 
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageWriter;
-import javax.imageio.stream.ImageInputStream;
-import javax.imageio.stream.ImageOutputStream;
 import javax.media.jai.RasterFactory;
 import java.awt.*;
 import java.awt.image.*;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -134,7 +128,7 @@ public class LargeMap {
 
     private void add(Point tileCorner, WritableRaster raster) throws IOException {
         final long rasterWeight = getRasterWeight(raster);
-        if (rasterWeight > memoryCapacity) throw new IllegalImageDimensionException("raster too large");
+        if (rasterWeight > memoryCapacity) throw new IOException("raster too large");
 
         try {
             tileLock.writeLock().lock();
@@ -197,7 +191,7 @@ public class LargeMap {
         final File getFile = new File(qTD.getPath(tileCorner.x, tileCorner.y));
         if (getFile.exists()) {
             // TODO : Use a "pool" of readers, instead of creating one each time ?
-            final ImageReader imgReader = XImageIO.getReaderByFormatName(FORMAT, null, Boolean.FALSE, Boolean.TRUE);
+            final ImageReader imgReader = getImageReader();
             imgReader.setInput(getFile);
             final BufferedImage buff = imgReader.read(0);
             imgReader.setInput(null);
@@ -246,8 +240,7 @@ public class LargeMap {
      * Affect a new memory capacity and update {@link java.awt.image.Raster} list from new memory capacity set.
      *
      * @param memoryCapacity new memory capacity.
-     * @throws org.geotoolkit.image.io.IllegalImageDimensionException if capacity is too low from raster weight.
-     * @throws java.io.IOException if impossible to write raster on disk.
+     * @throws java.io.IOException if impossible to write raster on disk, or if the raster is too big for the cache capacity.
      */
     void setCapacity(long memoryCapacity) throws IOException {
         ArgumentChecks.ensurePositive("LargeMap : memory capacity", memoryCapacity);
@@ -286,7 +279,7 @@ public class LargeMap {
             final BufferedImage toWrite = new BufferedImage(
                     cm, RasterFactory.createWritableRaster(lRaster.getRaster().getSampleModel(), lRaster.getRaster().getDataBuffer(), WPOINT), true, null);
             // TODO : Optimize using a "writer pool" instead of creating one each time ?
-            final ImageWriter imgWriter = XImageIO.getWriterByFormatName(FORMAT, null, null);
+            final ImageWriter imgWriter = getImageWriter();
             imgWriter.setOutput(tileFile);
             imgWriter.write(toWrite);
             imgWriter.setOutput(null);
@@ -327,13 +320,28 @@ public class LargeMap {
     /**
      * <p>Check that cache weight do not exceed memory capacity.<br/>
      * If memory capacity is exceeded, write as many {@link java.awt.image.Raster} objects needed to not exceed memory capacity anymore.</p>
-     *
-     * @throws org.geotoolkit.image.io.IllegalImageDimensionException if raster too large for this Tilecache.
-     * @throws java.io.IOException                                    if impossible to write raster.
      */
     private void checkMap() {
         synchronized (flushLock) {
             flushLock.notifyAll();
+        }
+    }
+
+    private static ImageReader getImageReader() throws IOException {
+        final Iterator<ImageReader> readers = ImageIO.getImageReadersByFormatName(FORMAT);
+        if (readers.hasNext()) {
+            return readers.next();
+        } else {
+            throw new IOException("No reader can be found for the following format : "+FORMAT);
+        }
+    }
+
+    private static ImageWriter getImageWriter() throws IOException {
+        final Iterator<ImageWriter> writers = ImageIO.getImageWritersByFormatName(FORMAT);
+        if (writers.hasNext()) {
+            return writers.next();
+        } else {
+            throw new IOException("No writer can be found for the following format : "+FORMAT);
         }
     }
 
