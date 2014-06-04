@@ -130,6 +130,7 @@ public class GetObservationById extends RequestBaseType implements org.geotoolki
     /**
      * Gets the value of the resultModel property.
      */
+    @Override
     public QName getResultModel() {
         return resultModel;
     }

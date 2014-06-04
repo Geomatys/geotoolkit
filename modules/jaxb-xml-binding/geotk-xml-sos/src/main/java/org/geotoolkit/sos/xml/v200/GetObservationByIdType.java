@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.namespace.QName;
 import org.geotoolkit.sos.xml.GetObservationById;
 import org.geotoolkit.swes.xml.v200.ExtensibleRequestType;
 
@@ -83,9 +84,14 @@ public class GetObservationByIdType extends ExtensibleRequestType implements Get
     @Override
     public List<String> getObservation() {
         if (observation == null) {
-            observation = new ArrayList<String>();
+            observation = new ArrayList<>();
         }
         return this.observation;
+    }
+
+    @Override
+    public QName getResultModel() {
+        return new QName("http://www.opengis.net/om/1.0", "Observation", "om");
     }
 
 }

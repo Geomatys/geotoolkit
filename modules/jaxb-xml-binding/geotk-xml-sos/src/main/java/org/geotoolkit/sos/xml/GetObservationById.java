@@ -18,6 +18,7 @@
 package org.geotoolkit.sos.xml;
 
 import java.util.List;
+import javax.xml.namespace.QName;
 import org.geotoolkit.ows.xml.RequestBase;
 
 /**
@@ -27,4 +28,6 @@ import org.geotoolkit.ows.xml.RequestBase;
 public interface GetObservationById extends RequestBase {
  
      List<String> getObservation();
+     
+     QName getResultModel();
 }

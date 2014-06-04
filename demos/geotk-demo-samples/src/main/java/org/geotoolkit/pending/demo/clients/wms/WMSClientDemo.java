@@ -20,16 +20,18 @@ public class WMSClientDemo {
     public static void main(String[] args) throws MalformedURLException {
         Demos.init();
         
-        final WebMapClient wmsServer = new WebMapClient(new URL("http://demo.geomatys.com/constellation/WS/wms?"), WMSVersion.v130);
+        final WebMapClient wmsServer = new WebMapClient(new URL("http://localhost:9090/guyamapa-cstl/WS/wms/default?"), WMSVersion.v130);
         final GetCapabilitiesRequest getCapa = wmsServer.createGetCapabilities();
         final GetMapRequest getMap = wmsServer.createGetMap();
         final GetLegendRequest getLegend = wmsServer.createGetLegend();
 
         //simplify usage for map layer
-        final WMSMapLayer layer = new WMSMapLayer(wmsServer, "BlueMarble");
+        final WMSMapLayer layer = new WMSMapLayer(wmsServer, "layerTest");
+        final WMSMapLayer layer2 = new WMSMapLayer(wmsServer, "Countries");
 
         final MapContext context = MapBuilder.createContext();        
         context.layers().add(layer);
+        context.layers().add(layer2);
         JMap2DFrame.show(context);
     }
 
