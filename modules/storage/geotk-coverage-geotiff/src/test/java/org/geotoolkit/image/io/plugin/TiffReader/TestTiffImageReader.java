@@ -2,8 +2,8 @@
  *    Geotoolkit.org - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2005-2008, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2010, Geomatys
+ *    (C) 2005-2014, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2014, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.image.io.plugin.TiffReader;
 
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.RenderedImage;
 import java.io.File;
@@ -40,8 +41,8 @@ public abstract strictfp class TestTiffImageReader extends TestTiffImageReaderWr
      * In this implementation write image entirely and read the expected piece of image given by parameters.
      */
     @Override
-    protected RenderedImage effectuateTest(File fileTest, RenderedImage sourceImage, Rectangle sourceRegion, 
-                                           int sourceXSubsample, int sourceYsubsampling, int sourceXOffset, int sourceYOffset) throws IOException {
+    protected RenderedImage effectuateTest(File fileTest, RenderedImage sourceImage, Rectangle sourceRegion,
+    int sourceXSubsample, int sourceYsubsampling, int sourceXOffset, int sourceYOffset, final Point destOffset) throws IOException {
         //-- write image completely --//
         writer.setOutput(fileTest);
         writer.write(sourceImage, writerParam);//-- write with param in case of tiled writing --//
@@ -51,6 +52,7 @@ public abstract strictfp class TestTiffImageReader extends TestTiffImageReaderWr
         readerParam.setSourceRegion(null);
         readerParam.setSourceSubsampling(sourceXSubsample, sourceYsubsampling, sourceXOffset, sourceYOffset);
         readerParam.setSourceRegion(sourceRegion);
+        readerParam.setDestinationOffset(destOffset);
             
         //-- read expected piece of image --//
         reader.setInput(fileTest);

@@ -2,8 +2,8 @@
  *    Geotoolkit.org - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2005-2008, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2010, Geomatys
+ *    (C) 2005-2014, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2014, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.image.io.plugin;
 
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Transparency;
 import java.awt.color.ColorSpace;
@@ -51,6 +52,22 @@ import org.junit.Ignore;
 import static org.geotoolkit.image.io.plugin.ImageOrientation.*;
 
 /**
+ * Primary test class to test {@link TiffImageWriter} and {@link TiffImageReader}. <br/><br/>
+ * 
+ * All tests use random image boundary and random internales datas.<br/><br/>
+ * 
+ * Proposed tests : <br/>
+ * 
+ * - Simply Reading / writing without any sub sampling or other, with 1 band, in all sample format (Byte, Short, Integer, Float, Double).<br/>
+ * - Simply Reading / writing without any sub sampling or other, with 3, 4 bands RGB.<br/>
+ * - Simply Reading / writing without any sub sampling or other, with 3, 4 bands Color Map.<br/><br/>
+ * 
+ * All following tests, test internaly all precedently tests with random sub sampling, destination offset, sub sample offsets.<br/>
+ * - Reading / Writing with a random source region situated on image lower left corner.<br/>
+ * - Reading / Writing with a random source region situated on image lower right corner.<br/>
+ * - Reading / Writing with a random source region situated on image upper left corner.<br/>
+ * - Reading / Writing with a random source region situated on image upper right corner.<br/>
+ * - Reading / Writing with a random source region situated on image center.<br/>
  *
  * @author Remi Marechal (Geomatys).
  */
@@ -148,7 +165,7 @@ public strictfp abstract class TestTiffImageReaderWriter {
      * @throws IOException if problem during reading / writing action.
      */
     protected abstract RenderedImage effectuateTest(final File fileTest, final RenderedImage sourceImage, final Rectangle sourceRegion, 
-            final int sourceXSubsampling, final int sourceYsubsampling, final int sourceXOffset, final int sourceYOffset) throws IOException;
+            final int sourceXSubsampling, final int sourceYsubsampling, final int sourceXOffset, final int sourceYOffset, final Point destOffset) throws IOException;
     
     /**
      * Test which write and read after an image with only one band and test all sample type.
@@ -353,7 +370,6 @@ public strictfp abstract class TestTiffImageReaderWriter {
         //-- type Byte RGB 
         generalTest(message+" : 3 bands ColorMap, type : Byte.", fileTest, Byte.SIZE, 3,
                 PHOTOMETRIC_PALETTE, SAMPLEFORMAT_UINT, imageOrientation);
-        //-- type double
         generalTest(message+" : 4 bands ColorMap, type : Byte.", fileTest, Byte.SIZE, 4,
                 PHOTOMETRIC_PALETTE, SAMPLEFORMAT_UINT, imageOrientation);
     }
@@ -461,16 +477,18 @@ public strictfp abstract class TestTiffImageReaderWriter {
         
         final Rectangle sourceRegion = new Rectangle(srcRegionX, srcRegionY, width >> 1, height >> 1);
         
-        final int subsampleX = random.nextInt((width >> 1) - 1) + 1;
-        final int subsampleY = random.nextInt((height >> 1) - 1) + 1;
+        final int subsampleX       = random.nextInt((width >> 1) - 1) + 1;
+        final int subsampleY       = random.nextInt((height >> 1) - 1) + 1;
         
         final int subsampleXOffset = Math.max(0, random.nextInt(subsampleX) - 1);
         final int subsampleYOffset = Math.max(0, random.nextInt(subsampleY) - 1);
         
-         final RenderedImage testedImage = effectuateTest(fileTest, sourceImage, sourceRegion, 
-                subsampleX, subsampleY, subsampleXOffset, subsampleYOffset);
+        final Point destOffset = new Point(random.nextInt(width), random.nextInt(height));
         
-        checkImages(message, sourceImage, sourceRegion, subsampleX, subsampleXOffset, subsampleY, subsampleYOffset, testedImage);
+         final RenderedImage testedImage = effectuateTest(fileTest, sourceImage, sourceRegion, 
+                subsampleX, subsampleY, subsampleXOffset, subsampleYOffset, destOffset);
+        
+        checkImages(message, sourceImage, sourceRegion, subsampleX, subsampleXOffset, subsampleY, subsampleYOffset, destOffset, testedImage);
     }
     
     /**
@@ -481,7 +499,7 @@ public strictfp abstract class TestTiffImageReaderWriter {
      * @param tested   image which will be compare than source.
      */
     protected void checkImage(final String message, final RenderedImage sourceImage, final RenderedImage testedImage) {
-        checkImages(message, sourceImage, null, 1, 0, 1, 0, testedImage);
+        checkImages(message, sourceImage, null, 1, 0, 1, 0, null, testedImage);
     }
     
     /**
@@ -499,12 +517,18 @@ public strictfp abstract class TestTiffImageReaderWriter {
      */
     protected void checkImages(final String message, final RenderedImage sourceImage, Rectangle sourceRegion, 
             final int sourceXsubsampling, final int sourceXOffset, final int sourceYsubsampling, final int sourceYOffset,
-            final RenderedImage testedImage) {
+            final Point destOffset, final RenderedImage testedImage) {
         
         if (sourceRegion == null) sourceRegion = new Rectangle(0, 0, sourceImage.getWidth(), sourceImage.getHeight());
+        int destOffsetX = 0;
+        int destOffsetY = 0;
+        if (destOffset != null) {
+            destOffsetX = destOffset.x;
+            destOffsetY = destOffset.y;
+        }
         
         sourceRegion.translate(sourceXOffset, sourceYOffset);
-        sourceRegion.width -= sourceXOffset;
+        sourceRegion.width  -= sourceXOffset;
         sourceRegion.height -= sourceYOffset;
         
         final int srcMinX = Math.max(sourceRegion.x, sourceImage.getMinX());
@@ -515,8 +539,8 @@ public strictfp abstract class TestTiffImageReaderWriter {
         final int expectedWidth  = (srcMaxX - srcMinX + sourceXsubsampling - 1) / sourceXsubsampling;
         final int expectedHeight = (srcMaxY - srcMinY + sourceYsubsampling - 1) / sourceYsubsampling;
         
-        assertEquals(message+"image width ", expectedWidth, testedImage.getWidth(), DEFAULT_TOLERANCE);
-        assertEquals(message+"image height ", expectedHeight, testedImage.getHeight(), DEFAULT_TOLERANCE);
+        assertEquals(message+"image width ", destOffsetX + expectedWidth, testedImage.getWidth(), DEFAULT_TOLERANCE);
+        assertEquals(message+"image height ", destOffsetY + expectedHeight, testedImage.getHeight(), DEFAULT_TOLERANCE);
         
         final SampleModel expectedSm = sourceImage.getSampleModel();
         final int expectedNumband    = expectedSm.getNumBands();
@@ -529,7 +553,8 @@ public strictfp abstract class TestTiffImageReaderWriter {
                 
         final PixelIterator sourcePix = PixelIteratorFactory.createRowMajorIterator(sourceImage, sourceRegion);
         
-        final PixelIterator testedPix = PixelIteratorFactory.createRowMajorIterator(testedImage);
+        final Rectangle testedRegion = new Rectangle(destOffsetX, destOffsetY, expectedWidth, expectedHeight);
+        final PixelIterator testedPix = PixelIteratorFactory.createRowMajorIterator(testedImage, testedRegion);
         
         for (int y = sourceRegion.y; y < sourceRegion.y + sourceRegion.height; y += sourceYsubsampling) {
             for (int x = sourceRegion.x; x < sourceRegion.x + sourceRegion.width; x += sourceXsubsampling) {
@@ -546,19 +571,17 @@ public strictfp abstract class TestTiffImageReaderWriter {
     }
     
     /**
-     * Create an appropriate {@link RenderedImage} adapted for test which respond from all properties parameters.
+     * Build an appropriate {@link ImageTypeSpecifier} in function of given parameter.
      * 
-     * @param width width of created image.
-     * @param height height of created image
-     * @param sampleBitsSize size in bit of a sample.
-     * @param numBand samples number for each pixel.
+     * @param sampleBitsSize bit size for each sample.
+     * @param numBand expected band number
      * @param photometricInterpretation 
      * @param sampleFormat
-     * @return created {@link RenderedImage}.
-     * @throws UnsupportedImageFormatException if sampleBitsSize has a wrong value of photometricInterpretation is not supported.
+     * @return {@link ImageTypeSpecifier}.
+     * @throws UnsupportedImageFormatException if photometricInterpretation or sampleFormat are not in accordance with other parameters.
      */
-    protected final RenderedImage createImageTest(final int width, final int height, final int sampleBitsSize, 
-            final int numBand, final short photometricInterpretation, final short sampleFormat) throws UnsupportedImageFormatException {
+    protected ImageTypeSpecifier buildImageTypeSpecifier(final int sampleBitsSize, final int numBand, 
+            final short photometricInterpretation, final short sampleFormat) throws UnsupportedImageFormatException {
         
         final int dataBufferType;
                 
@@ -612,7 +635,7 @@ public strictfp abstract class TestTiffImageReaderWriter {
                  * Create a SampleModel with size of 1x1 volontary just to know image properties.
                  * Image with correctively size will be create later with getDestination() in #read(int index, param) method.
                  */
-                return new ImageTypeSpecifier(cm, cm.createCompatibleSampleModel(1, 1)).createBufferedImage(width, height);
+                return new ImageTypeSpecifier(cm, cm.createCompatibleSampleModel(1, 1));
             }
             default : {
                 throw new UnsupportedImageFormatException( "photometricInterpretation : "+photometricInterpretation);
@@ -627,8 +650,28 @@ public strictfp abstract class TestTiffImageReaderWriter {
          * Create a SampleModel with size of 1x1 volontary just to know image properties.
          * Image with correctively size will be create later with getDestination() in #read(int index, param) method.
          */  
-        final BufferedImage buffImg = new ImageTypeSpecifier(cm, cm.createCompatibleSampleModel(1, 1)).createBufferedImage(width, height);
-        fillImage(buffImg, dataBufferType);
+        return new ImageTypeSpecifier(cm, cm.createCompatibleSampleModel(1, 1));
+    }
+    
+    /**
+     * Create an appropriate {@link RenderedImage} adapted for test which respond from all properties parameters.
+     * 
+     * @param width width of created image.
+     * @param height height of created image
+     * @param sampleBitsSize size in bit of a sample.
+     * @param numBand samples number for each pixel.
+     * @param photometricInterpretation 
+     * @param sampleFormat
+     * @return created {@link RenderedImage}.
+     * @throws UnsupportedImageFormatException if sampleBitsSize has a wrong value of photometricInterpretation is not supported.
+     */
+    protected final WritableRenderedImage createImageTest(final int width, final int height, final int sampleBitsSize, 
+            final int numBand, final short photometricInterpretation, final short sampleFormat) throws UnsupportedImageFormatException {
+        
+        final ImageTypeSpecifier imgType = buildImageTypeSpecifier(sampleBitsSize, numBand, photometricInterpretation, sampleFormat);
+        
+        final BufferedImage buffImg = imgType.createBufferedImage(width, height);
+        fillImage(buffImg, imgType.getSampleModel().getDataType());
         return buffImg;
     }
     

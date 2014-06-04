@@ -2,8 +2,8 @@
  *    Geotoolkit.org - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2010-2012, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2010-2012, Geomatys
+ *    (C) 2010-2014, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2010-2014, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -1337,131 +1337,7 @@ public class TiffImageReader extends SpatialImageReader {
             return Long.signum(o1[0] - o2[0]);
         }
     };
-
-    /**
-     * Information about a tile. The inherited {@link Rectangle} contains the coordinate of
-     * the region to write in the target image, <em>relative to the upper-left pixel to be
-     * written (i.e. the upper-left pixel in the set of tiles returned by {@link #getTiles}
-     * is located at (0,0) by definition).
-     * <p>
-     * Tiles can be sorted in ascending order of file positions, for sequential access.
-     * Note: the {@code compareTo} method is inconsistent with the {@code equals} method.
-     */
-    @SuppressWarnings("serial")
-    private static final class Tile extends Rectangle implements Comparable<TiffImageReader.Tile> {
-        /** Tile position in file.  */ final long position, filePosition;
-
-        /** Creates a new instance for the given position in file and target region. */
-        Tile(final int x, final int y, final int width, final int height, final long filePosition, final long position) {
-            super(x, y, width, height);
-            this.position     = position;
-            this.filePosition = filePosition;
-            if (!(!isEmpty() && x >= 0 && y >= 0)) {
-                System.out.println("");
-            }
-//            assert !isEmpty() && x >= 0 && y >= 0: this;
-        }
-
-        /** Compares this tile with the specified tile for order of file position. */
-        @Override public int compareTo(final TiffImageReader.Tile other) {
-            return Long.signum(position - other.position);
-        }
-    }
     
-//    /**
-//     * Returns the tiles in the given source region. The tiles are sorted by increasing file
-//     * position, in order to perform sequential file access as much as possible.
-//     *
-//     * @param  r              The source region requested by the user.
-//     * @param  pixelStride    Number of bytes in each sample value in the source file.
-//     * @param  scanlineStride Number of bytes in each row of the tile in the source file.
-//     * @return The tiles that intersect the given region.
-//     */
-//    private TiffImageReader.Tile[] getTiles(final Rectangle r, final int xSubsampling, final int ySubsampling,
-//            final int pixelStride, final int scanlineStride)
-//    {
-//        final int minTileX  =  r.x / tileWidth;                               // Inclusive
-//        final int minTileY  =  r.y / tileHeight;                              // Inclusive
-//        final int maxTileX  = (r.x + r.width  + tileWidth  - 1) / tileWidth;  // Exclusive
-//        final int maxTileY  = (r.y + r.height + tileHeight - 1) / tileHeight; // Exclusive
-//        final int rowLength = (imageWidth + tileWidth - 1) / tileWidth;
-//        final TiffImageReader.Tile[] tiles  = new TiffImageReader.Tile[(maxTileX - minTileX) * (maxTileY - minTileY)];
-//        int count = 0;
-//        for (int tileY = minTileY; tileY<maxTileY; tileY++) {
-//            final int tminy = Math.max(tileY * tileHeight, r.y);
-//            final int tmaxy = Math.min((tileY + 1) * tileHeight, r.y+r.height);
-//            
-//            final int dstYmin = (tminy - r.y + ySubsampling - 1) / ySubsampling;
-//            final int height = (tmaxy - r.y +ySubsampling-1)/ySubsampling - dstYmin;
-//            
-////            final int ySource = tileY * tileHeight - r.y;
-////            final int y       = (Math.max(0, ySource) + ySubsampling - 1) / ySubsampling;
-//////            final int height  = (Math.min(r.height, ySource + tileHeight) - 1) / ySubsampling + 1 - y;
-////            final int height = (ySource + tileHeight + ySubsampling - 1) / ySubsampling - y;
-//            final int rowBase = (dstYmin * ySubsampling - tileY * tileHeight) * scanlineStride;
-//            for (int tileX=minTileX; tileX<maxTileX; tileX++) {
-//                final int tminx = Math.max(tileX * tileWidth, r.x);
-//                final int tmaxx = Math.min((tileX + 1 ) * tileWidth, r.x+r.width);
-//                final int dstXmin = (tminx - r.x + xSubsampling - 1) / xSubsampling;
-//                final int width = (tmaxx - r.x + xSubsampling - 1) / xSubsampling - dstXmin;
-//                
-//                
-////                final int xSource   = tileX * tileWidth  - r.x;
-////                final int x         = (Math.max(0, xSource) + xSubsampling - 1) / xSubsampling;
-//////                final int width     = (Math.min(r.width,  xSource + tileWidth)  - 1) / xSubsampling + 1 - x;
-////                final int width     = (xSource + tileWidth + xSubsampling - 1) / xSubsampling - x;
-//                final int offset    = (dstXmin * xSubsampling - tileX * tileWidth) * pixelStride + rowBase;
-//                final int tileIndex = tileY * rowLength + tileX;
-//                tiles[count++]      = new TiffImageReader.Tile(dstXmin, dstYmin, width, height, tileOffsets[tileIndex], tileOffsets[tileIndex] + offset);
-//                
-////                tiles[count++]      = new TiffImageReader.Tile(x, y, width, height, tileOffsets[tileIndex], tileOffsets[tileIndex] + offset);
-//            }
-//        }
-//        assert count == tiles.length;
-//        Arrays.sort(tiles);
-//        return tiles;
-//    }
-
-//    /**
-//     * Returns the tiles in the given source region. The tiles are sorted by increasing file
-//     * position, in order to perform sequential file access as much as possible.
-//     *
-//     * @param  r              The source region requested by the user.
-//     * @param  pixelStride    Number of bytes in each sample value in the source file.
-//     * @param  scanlineStride Number of bytes in each row of the tile in the source file.
-//     * @return The tiles that intersect the given region.
-//     */
-//    private TiffImageReader.Tile[] getTiles(final Rectangle r, final int xSubsampling, final int ySubsampling,
-//            final int pixelStride, final int scanlineStride)
-//    {
-//        final int minTileX  =  r.x / tileWidth;                               // Inclusive
-//        final int minTileY  =  r.y / tileHeight;                              // Inclusive
-//        final int maxTileX  = (r.x + r.width  + tileWidth  - 1) / tileWidth;  // Exclusive
-//        final int maxTileY  = (r.y + r.height + tileHeight - 1) / tileHeight; // Exclusive
-//        final int rowLength = (imageWidth + tileWidth - 1) / tileWidth;
-//        final TiffImageReader.Tile[] tiles  = new TiffImageReader.Tile[(maxTileX - minTileX) * (maxTileY - minTileY)];
-//        int count = 0;
-//        for (int tileY=minTileY; tileY<maxTileY; tileY++) {
-//            final int ySource = tileY * tileHeight - r.y;
-//            final int y       = (Math.max(0, ySource) + ySubsampling - 1) / ySubsampling;
-//            final int height  = (Math.min(r.height, ySource + tileHeight) - 1) / ySubsampling + 1 - y;
-//            final int rowBase = (y * ySubsampling - ySource) * scanlineStride;
-//            for (int tileX=minTileX; tileX<maxTileX; tileX++) {
-//                final int xSource   = tileX * tileWidth  - r.x;
-//                final int x         = (Math.max(0, xSource) + xSubsampling - 1) / xSubsampling;
-//                final int width     = (Math.min(r.width,  xSource + tileWidth)  - 1) / xSubsampling + 1 - x;
-//                final int offset    = (x * xSubsampling - xSource) * pixelStride + rowBase;
-//                final int tileIndex = tileY * rowLength + tileX;
-//                tiles[count++]      = new TiffImageReader.Tile(x, y, width, height, tileOffsets[tileIndex], tileOffsets[tileIndex] + offset);
-//                
-////                tiles[count++]      = new TiffImageReader.Tile(x, y, width, height, tileOffsets[tileIndex], tileOffsets[tileIndex] + offset);
-//            }
-//        }
-//        assert count == tiles.length;
-//        Arrays.sort(tiles);
-//        return tiles;
-//    }
-
     /**
      * Convert and return color map array from tiff file to an Integer array adapted to build {@link IndexColorModel} in java.
      *
@@ -2885,7 +2761,8 @@ public class TiffImageReader extends SpatialImageReader {
                                             }
 
                                             //-- destination shifts --//
-                                            targetOffset += dstRegion.width * samplesPerPixel;
+//                                            targetOffset += dstRegion.width * samplesPerPixel;
+                                            targetOffset += targetScanlineStride;
                                             targetPos = targetOffset;
 
                                         }
