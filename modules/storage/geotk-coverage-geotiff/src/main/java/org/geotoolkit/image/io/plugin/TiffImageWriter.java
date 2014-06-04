@@ -2,8 +2,8 @@
  *    Geotoolkit.org - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2005-2008, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2010, Geomatys
+ *    (C) 2005-2014, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2014, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -18,6 +18,7 @@
 package org.geotoolkit.image.io.plugin;
 
 import com.sun.media.imageioimpl.plugins.tiff.TIFFImageMetadata;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
@@ -836,11 +837,9 @@ public class TiffImageWriter extends SpatialImageWriter {
      */
     @Override
     public void prepareReplacePixels(int imageIndex, Rectangle region) throws IOException {
-//        if (imag w new IllegalStateException("Replace pixel at image index different to zero is not supported. ");
         selectLayer(imageIndex);
         if (headProperties.isEmpty()) {
-            //-- si destrepRegion == null && le fichier n'existe pas  leve exception
-
+            throw new IllegalStateException("Image at image index : "+imageIndex+" does not exist.");
             //-- si le fichier vers lequel on pointe est deja remplis signifie qu'il ya deja deja une image ecrite --//
             //-- 1 : ouvrir un reader
             //-- 2 : choisir le "layer" (dans le reader approprié)
@@ -1358,7 +1357,7 @@ public class TiffImageWriter extends SpatialImageWriter {
         //imagewidth
         final int width          = destRegion.width;
         if (width > 0xFFFF) { // check if width is a short or int
-            addProperty(ImageWidth, TYPE_INT, 1, new int[]{ width}, properties);
+            addProperty(ImageWidth, TYPE_INT, 1, new int[]{width}, properties);
         } else {
             addProperty(ImageWidth, TYPE_USHORT, 1, new short[]{(short) width}, properties);
         }
@@ -1698,8 +1697,8 @@ public class TiffImageWriter extends SpatialImageWriter {
             }
         }
     }
-    
-    /**
+     
+     /**
      * Write {@link RenderedImage} by tile with all tile properties precedently setted by {@link ImageWriteParam}.
      * 
      * @param image source image which will be written.
@@ -1719,8 +1718,8 @@ public class TiffImageWriter extends SpatialImageWriter {
         }
         
         // ------------ Image properties ------------//
-        final int imageMinX = image.getMinX();
-        final int imageMinY = image.getMinY();
+        final int imageMinX = image.getMinX() + imageBoundary.x;
+        final int imageMinY = image.getMinY() + imageBoundary.y;
         
         final int imageTileWidth = image.getTileWidth();
         final int imageTileHeight = image.getTileHeight();
@@ -1750,6 +1749,8 @@ public class TiffImageWriter extends SpatialImageWriter {
         
         final int currentNumYT = tileRegion.height / subsampletileHeight;
         assert tileRegion.height % subsampletileHeight == 0;
+        
+        final int destTileStride = currentImgTW * currentImgTH * imagePixelStride;
         
         assert currentNumXT != 0;
         assert currentNumYT != 0;
@@ -1789,6 +1790,7 @@ public class TiffImageWriter extends SpatialImageWriter {
         assert tileRegion.height % subsampleY == 0;
         final Object paddingXArray;
         final Object paddingYArray;
+        final Object dstOffYArray;
         final int paddingXLength = ((maxx > srcRegionMaxX)  ?  (maxx - srcRegionMaxX) / subsampleX : 0) * imagePixelStride;
         final int paddingYLength = ((maxy > srcRegionMaxY)  ? ((maxy - srcRegionMaxY) / subsampleY) * currentImgTW : 0) * imagePixelStride;
         
@@ -1797,27 +1799,32 @@ public class TiffImageWriter extends SpatialImageWriter {
             case DataBuffer.TYPE_BYTE:   {
                 paddingXArray = new byte[paddingXLength];
                 paddingYArray = new byte[paddingYLength];
+                dstOffYArray  = new byte[destTileStride];
                 break;
             }      
             case DataBuffer.TYPE_USHORT:
             case DataBuffer.TYPE_SHORT: {
                 paddingXArray = new short[paddingXLength];
                 paddingYArray = new short[paddingYLength];
+                dstOffYArray  = new short[destTileStride];
                 break;
             }  
             case DataBuffer.TYPE_INT : {
                 paddingXArray = new int[paddingXLength];
                 paddingYArray = new int[paddingYLength];
+                dstOffYArray  = new int[destTileStride];
                 break;
             }    
             case DataBuffer.TYPE_FLOAT:  {
                 paddingXArray = new float[paddingXLength];
                 paddingYArray = new float[paddingYLength];
+                dstOffYArray  = new float[destTileStride];
                 break;
             }  
             case DataBuffer.TYPE_DOUBLE: {
                 paddingXArray = new double[paddingXLength];
                 paddingYArray = new double[paddingYLength];
+                dstOffYArray  = new double[destTileStride];
                 break;
             } 
             default: throw new IIOException(error(Errors.Keys.UNSUPPORTED_DATA_TYPE, initRastBuff.getClass()));
@@ -1925,31 +1932,90 @@ public class TiffImageWriter extends SpatialImageWriter {
                     final int ctRmaxy = ctRminy + subsampletileHeight;
                     final int ctRminx = minx + ctx * subsampletileWidth;
                     final int ctRmaxx = ctRminx + subsampletileWidth;
+                    
+                    //-- intersection on Y axis --//
+                    final int interMinY = Math.max(ctRminy, srcRegion.y);
+                    final int interMaxY = Math.min(ctRmaxy, srcRegionMaxY);
+                    
+                    //-- intersection on X axis --//
+                    final int interMinX = Math.max(ctRminx, srcRegion.x);
+                    final int interMaxX = Math.min(ctRmaxx, srcRegionMaxX);
+                    
+                    /*
+                     * No intersection.
+                     * Means destination offset greater than tile width or height.
+                     */
+                    if (interMaxX <= interMinX || interMaxY <= interMinY) {
+                        
+                        //-- ecrire tuile vierge --//
+                        write(dstOffYArray, dataType, 0, destTileStride, bitPerSample, compression);
+                        
+                        //-- Use during packBit compression --//
+                        lastByte32773     += destTileByteCount;
+                        precLastByte32773 += destTileByteCount;
 
-                    // we looking for which tiles from image will be used to fill destination tile.
-                    final int imageminTy = imageTileGridYOffset + (ctRminy - imageMinY) / imageTileHeight;
-                    int imagemaxTy = imageTileGridYOffset + (ctRmaxy - imageMinY + imageTileHeight - 1) / imageTileHeight;
+                        /*
+                         * To stipulate end of current destination tile.
+                         * Moreover in this current algorithm channel is automaticaly 
+                         * flushed when we write LZW end of file value.
+                         */
+                        if (compression == 5) writeWithLZWCompression(LZW_EOI_CODE);
+
+                        final long currentOffset = channel.getStreamPosition();
+                        final long currentTileByteCount = currentOffset - tileOffsetBeg;
+
+                        if (compression == 1)
+                            assert currentTileByteCount == currentImgTW * currentImgTH * imagePixelStride * sampleSize :"expected currentByteCount = "+(currentImgTW * currentImgTH * imagePixelStride * sampleSize)+" found = "+currentTileByteCount+" at tile ("+ctx+", "+cty+").";
+
+                        if (isBigTIFF) {
+                            Array.setLong(offsetArray, tileOffsetID, tileOffsetBeg);
+                            Array.setLong(byteCountArray, tileOffsetID++, currentTileByteCount);
+                        } else {
+                            Array.setInt(offsetArray, tileOffsetID, (int) tileOffsetBeg);
+                            Array.setInt(byteCountArray, tileOffsetID++, (int) currentTileByteCount);
+                        }
+                        tileOffsetBeg = currentOffset;
+                        continue;
+                    }
+                    
+                    //-- destination offset point in Y direction --//
+                    for (int r = ctRminy; r < interMinY; r += subsampleY) {
+                        write(dstOffYArray, dataType, 0, currentImgTW * imagePixelStride, bitPerSample, compression);
+                    }
+
+                    //-- we looking for which tiles from image will be used to fill destination tile.
+                    final int imageminTy = imageTileGridYOffset + (interMinY - imageMinY) / imageTileHeight;
+                    int imagemaxTy = imageTileGridYOffset + (interMaxY - imageMinY + imageTileHeight - 1) / imageTileHeight;
                     // -- in cause of padding imagemaxTy should exceed max tile grid offset from image.
                     imagemaxTy = Math.min(imagemaxTy, imageMaxTileGridYOffset);
 
-                    final int imageminTx = imageTileGridXOffset + (ctRminx - imageMinX) / imageTileWidth;
-                    int imagemaxTx = imageTileGridXOffset + (ctRmaxx - imageMinX + imageTileWidth - 1) / imageTileWidth;
+                    final int imageminTx = imageTileGridXOffset + (interMinX - imageMinX) / imageTileWidth;
+                    int imagemaxTx = imageTileGridXOffset + (interMaxX - imageMinX + imageTileWidth - 1) / imageTileWidth;
                     // -- in cause of padding imagemaxTx should exceed max tile grid offset from image.
                     imagemaxTx = Math.min(imagemaxTx, imageMaxTileGridXOffset);
 
                     int cuImgTileMinY = imageMinY + (imageminTy - imageTileGridYOffset) * imageTileHeight;
                     int cuImgTileMaxY = cuImgTileMinY + imageTileHeight;
                     for (int imgTy = imageminTy; imgTy < imagemaxTy; imgTy++) {
-
-                        // row intersection on y axis
-                        final int deby  = Math.max(cuImgTileMinY, ctRminy);
-                        final int tendy = Math.min(cuImgTileMaxY, ctRmaxy);
+                        
+                        final int deby  = Math.max(cuImgTileMinY, interMinY);
+                        final int tendy = Math.min(cuImgTileMaxY, interMaxY);
                         final int endy  = Math.min(srcRegionMaxY, tendy);
 
                         // offset in pixels number in source image currently tile
                         final int stepOffsetBeforeY = (deby - cuImgTileMinY) * imageTileWidth;
 
                         for (int y = deby; y < endy; y += subsampleY) {
+                            
+                            //-- destination offset in X direction --//
+                            int dstOffWriteLength = Math.min(interMinX - ctRminx, subsampletileWidth);
+                            
+                            if (dstOffWriteLength > 0) {
+                                assert dstOffWriteLength % subsampleX == 0 : "dstOffWriteLength = "+dstOffWriteLength+" , subsampleX = "+subsampleX;
+                                dstOffWriteLength /= subsampleX;
+                                dstOffWriteLength *= imagePixelStride;
+                                write(dstOffYArray, dataType, 0, dstOffWriteLength, bitPerSample, compression);
+                            }
                             
                             // -- offset in y direction
                             final int stepY = (y - deby) * imageTileWidth;
@@ -1967,25 +2033,25 @@ public class TiffImageWriter extends SpatialImageWriter {
                                 
                                 final Object sourceArray;
                                 switch (dataType) {
-                                    case DataBuffer.TYPE_BYTE:   sourceArray = ((DataBufferByte)   rasterBuffer).getData(bank); break;
-                                    case DataBuffer.TYPE_USHORT: sourceArray = ((DataBufferUShort) rasterBuffer).getData(bank); break;
-                                    case DataBuffer.TYPE_SHORT:  sourceArray = ((DataBufferShort)  rasterBuffer).getData(bank); break;
-                                    case DataBuffer.TYPE_INT:    sourceArray = ((DataBufferInt)    rasterBuffer).getData(bank); break;
-                                    case DataBuffer.TYPE_FLOAT:  sourceArray = ((DataBufferFloat)  rasterBuffer).getData(bank); break;
-                                    case DataBuffer.TYPE_DOUBLE: sourceArray = ((DataBufferDouble) rasterBuffer).getData(bank); break;
+                                    case DataBuffer.TYPE_BYTE   : sourceArray = ((DataBufferByte)   rasterBuffer).getData(bank); break;
+                                    case DataBuffer.TYPE_USHORT : sourceArray = ((DataBufferUShort) rasterBuffer).getData(bank); break;
+                                    case DataBuffer.TYPE_SHORT  : sourceArray = ((DataBufferShort)  rasterBuffer).getData(bank); break;
+                                    case DataBuffer.TYPE_INT    : sourceArray = ((DataBufferInt)    rasterBuffer).getData(bank); break;
+                                    case DataBuffer.TYPE_FLOAT  : sourceArray = ((DataBufferFloat)  rasterBuffer).getData(bank); break;
+                                    case DataBuffer.TYPE_DOUBLE : sourceArray = ((DataBufferDouble) rasterBuffer).getData(bank); break;
                                     default: throw new AssertionError(dataType);
                                 }
                                 
-                                // intersection
-                                // gerer les decalages offsets x et y dans le databuffer
-                                final int debx  = Math.max(cuImgTileMinX, ctRminx);
-                                final int tendx = Math.min(cuImgTileMaxX, ctRmaxx);
+                                //-- intersection --//
+                                final int debx  = Math.max(cuImgTileMinX, interMinX);
+                                final int tendx = Math.min(cuImgTileMaxX, interMaxX);
                                 final int endx  = Math.min(srcRegionMaxX, tendx);
+                                
                                 final int currentXSubSample;
                                 final int writeSize;
                                 if (subsampleX == 1) {
                                     currentXSubSample = endx - debx;
-                                    writeSize         = currentXSubSample * imagePixelStride; // eh !! oui on ecrit en coord tableau et pas en nbre de byte
+                                    writeSize         = currentXSubSample * imagePixelStride; 
                                 } else {
                                     currentXSubSample = subsampleX;
                                     writeSize         = imagePixelStride;
@@ -1998,7 +2064,7 @@ public class TiffImageWriter extends SpatialImageWriter {
                                 
                                 // -- padding in x direction
                                 if (ctRmaxx > srcRegionMaxX) {
-                                    assert ((endx - debx + subsampleX - 1) / subsampleX + paddingXLength / imagePixelStride) == currentImgTW : "write width = "+((endx - debx + subsampleX - 1) / subsampleX + paddingXLength / imagePixelStride);
+                                    assert ((endx - debx + subsampleX - 1) / subsampleX + paddingXLength / imagePixelStride + dstOffWriteLength / imagePixelStride) == currentImgTW : "write width = "+((endx - debx + subsampleX - 1) / subsampleX + paddingXLength / imagePixelStride + dstOffWriteLength / imagePixelStride);
                                     write(paddingXArray, dataType, 0, paddingXLength, bitPerSample, compression);
                                 }
                                 
@@ -2033,7 +2099,7 @@ public class TiffImageWriter extends SpatialImageWriter {
                     final long currentTileByteCount = currentOffset - tileOffsetBeg;
                     
                     if (compression == 1)
-                        assert currentTileByteCount == currentImgTW * currentImgTH * imagePixelStride * sampleSize :"expected currentByteCount = "+(currentImgTW * currentImgTH * imagePixelStride * sampleSize)+" found = "+currentTileByteCount;
+                        assert currentTileByteCount == currentImgTW * currentImgTH * imagePixelStride * sampleSize :"expected currentByteCount = "+(currentImgTW * currentImgTH * imagePixelStride * sampleSize)+" found = "+currentTileByteCount+" at tile ("+ctx+", "+cty+").";
                     
                     if (isBigTIFF) {
                         Array.setLong(offsetArray, tileOffsetID, tileOffsetBeg);
@@ -2232,6 +2298,22 @@ public class TiffImageWriter extends SpatialImageWriter {
             assert srcYsubsampling >= 1;
             assert srcXsubsampling >= 1;
             
+            //-- destination offsets point --//
+            final Point destOffset = param.getDestinationOffset();
+            int dstOffX = 0;
+            int dstOffY = 0;
+            int srcOffX = 0;
+            int srcOffY = 0;
+            if (destOffset != null) {
+                dstOffX = destOffset.x;
+                dstOffY = destOffset.y;
+                srcOffX = dstOffX * srcXsubsampling;
+                srcOffY = dstOffY * srcYsubsampling;
+            }
+            
+            srcRegion.translate(srcOffX, srcOffY);
+            imageBoundary.translate(srcOffX, srcOffY);
+            
             /*
              * Try catch is a wrong way, but ImageWriteParam interface doen't have any method 
              * to know if tiles dimensions have already been setted.
@@ -2246,17 +2328,19 @@ public class TiffImageWriter extends SpatialImageWriter {
             if (currentImgTW > 0 && currentImgTH > 0) {
                 final int cuImgTW = currentImgTW * srcXsubsampling;
                 final int cuImgTH = currentImgTH * srcYsubsampling;
-                currentImgNumXT = (srcRegion.width  + cuImgTW - 1) / cuImgTW;
-                currentImgNumYT = (srcRegion.height + cuImgTH - 1) / cuImgTH;
+                currentImgNumXT = (srcOffX + srcRegion.width  + cuImgTW - 1) / cuImgTW;
+                currentImgNumYT = (srcOffY + srcRegion.height + cuImgTH - 1) / cuImgTH;
                 if (currentImgTW % 16 != 0) 
                         throw new IllegalStateException("To be in accordance with tiff specification tile width must be multiple of 16. Current tile width = "+param.getTileWidth());
                 if (currentImgTH % 16 != 0) 
                         throw new IllegalStateException("To be in accordance with tiff specification tile height must be multiple of 16. Current tile height = "+param.getTileHeight());
-                tileRegion = new Rectangle(srcRegion.x, srcRegion.y, currentImgNumXT * cuImgTW, currentImgNumYT * cuImgTH);
+                tileRegion = new Rectangle(srcRegion.x - srcOffX, srcRegion.y - srcOffY, currentImgNumXT * cuImgTW, currentImgNumYT * cuImgTH);
             
             } else {
                 // param not null with tile not specify
                 tileRegion = new Rectangle(srcRegion);
+                tileRegion.width += srcOffX;
+                tileRegion.height += srcOffY;
                 
                 // on va essayer de voir si les tuiles de l'image peuvent correspondre avec la srcregion
                 if ((srcImgNumXTile > 1 || srcImgNumYTile > 1)
@@ -2274,9 +2358,7 @@ public class TiffImageWriter extends SpatialImageWriter {
                     currentImgTW = currentImgTH = currentImgNumXT = currentImgNumYT = 0;
                 }
             }
-            // vrai version : tileregion remplacer par srcregion
-            //destRegion = new Rectangle((tileRegion.width + srcXsubsampling - 1) / srcXsubsampling, (tileRegion.height + srcYsubsampling - 1) / srcYsubsampling);
-            destRegion = new Rectangle((srcRegion.width + srcXsubsampling - 1) / srcXsubsampling, (srcRegion.height + srcYsubsampling - 1) / srcYsubsampling);
+            destRegion = new Rectangle((srcOffX + srcRegion.width + srcXsubsampling - 1) / srcXsubsampling, (srcOffY + srcRegion.height + srcYsubsampling - 1) / srcYsubsampling);
 
         }
         assert srcRegion != null;
@@ -2480,8 +2562,8 @@ public class TiffImageWriter extends SpatialImageWriter {
     private void writeImageByStrips(final RenderedImage img, final ImageWriteParam param) throws IOException {
         
         // ----------------- Image boundary -------------------//
-        final int imageMinX      = img.getMinX();
-        final int imageMinY      = img.getMinY();
+        final int imageMinX      = img.getMinX() + imageBoundary.x;
+        final int imageMinY      = img.getMinY() + imageBoundary.y;
         
         // ------------------- Image Tiles --------------------//
         final int imgMinTXOffset = img.getTileGridXOffset();
@@ -2522,6 +2604,16 @@ public class TiffImageWriter extends SpatialImageWriter {
         
         final long currentByteCount = destRegion.width *  imagePixelStride * sampleSize;
         
+        //-- destination offset --//
+        final Point dstOffsets = param.getDestinationOffset();
+        int dstOffX, dstOffY;
+        if (dstOffsets != null) {
+            dstOffX = dstOffsets.x;
+            dstOffY = dstOffsets.y;
+        } else {
+            dstOffX = dstOffY = 0;
+        }
+        
         //---------- initialization strip offsets and stripbycount -----------//
         final Object byteCountArray;
         final int byteCountArraySize;
@@ -2545,7 +2637,9 @@ public class TiffImageWriter extends SpatialImageWriter {
          && srcRegion.equals(imageBoundary)
          && imgNumTileX == 1
          && imgNumTileY == 1
-         && compression == 1) { 
+         && compression == 1
+         && dstOffX == 0
+         && dstOffY == 0) { 
             
             long currentoffset = buffPos + byteCountArraySize + offsetArraySize;
             //-- fill byte count array. --//
@@ -2625,6 +2719,59 @@ public class TiffImageWriter extends SpatialImageWriter {
         final int minTY = imgMinTYOffset + (srcRegion.y - imageMinY) / imgTileHeight;
         final int maxTY = imgMinTYOffset + (srcRegionMaxY - imageMinY + imgTileHeight - 1) / imgTileHeight;
         
+        final int dstOffXStride = dstOffX * imagePixelStride;
+        
+        //-- write rows given by destination offset Y--//
+        Object destOffsetRowArray, destOffsetXArray;
+        switch (dataType) {
+            case DataBuffer.TYPE_BYTE   :  {
+                destOffsetRowArray = new byte[destRegion.width * imagePixelStride];
+                destOffsetXArray = new byte[dstOffXStride];
+            } break;
+            case DataBuffer.TYPE_USHORT : 
+            case DataBuffer.TYPE_SHORT  :  {
+                destOffsetRowArray = new short[destRegion.width * imagePixelStride];
+                destOffsetXArray = new short[dstOffXStride];
+            } break;
+            case DataBuffer.TYPE_INT    :    {
+                destOffsetRowArray = new int[destRegion.width * imagePixelStride];
+                destOffsetXArray = new int[dstOffXStride];
+            } break;
+            case DataBuffer.TYPE_FLOAT  :  {
+                destOffsetRowArray = new float[destRegion.width * imagePixelStride];
+                destOffsetXArray = new float[dstOffXStride];
+            } break;
+            case DataBuffer.TYPE_DOUBLE : {
+                destOffsetRowArray = new double[destRegion.width * imagePixelStride];
+                destOffsetXArray = new double[dstOffXStride];
+            } break;
+            default: throw new AssertionError(dataType);
+        }
+        
+        if (dstOffY > 0) {
+            for (int r = 0; r < dstOffY; r++) {
+
+                write(destOffsetRowArray, dataType, 0, destRegion.width * imagePixelStride, bitPerSample, compression);
+
+                if (compression == 5) writeWithLZWCompression(LZW_EOI_CODE);
+                lastByte32773     += currentByteCount;
+                precLastByte32773 += currentByteCount;
+                final long currentStripOffset = channel.getStreamPosition();
+
+                //-- offset in byte
+                if (isBigTIFF) {
+                    Array.setLong(offsetArray, stripArrayID, stripOffsetBeg);
+                    Array.setLong(byteCountArray, stripArrayID++, currentStripOffset - stripOffsetBeg);
+                }
+                else {
+                    Array.setInt(offsetArray, stripArrayID, (int) stripOffsetBeg);
+                    Array.setInt(byteCountArray, stripArrayID++, (int) (currentStripOffset - stripOffsetBeg));
+                }
+
+                stripOffsetBeg = currentStripOffset;
+            }
+        }
+        
         for (int bank = 0; bank < numbanks; bank++) {
            for (int ty = minTY; ty < maxTY; ty++) {
                //-- define intersection on Y axis between srcRegion and current tile from source image --//
@@ -2639,6 +2786,12 @@ public class TiffImageWriter extends SpatialImageWriter {
                    //-- count use to verify expected wrote byte number. --//
                    int assertByteCount = 0;
                    
+                   //-- pour chaque row on ecrit le tableau manquant--// 
+                   if (dstOffX > 0) {
+                       write(destOffsetXArray, dataType, 0, dstOffX * imagePixelStride, bitPerSample, compression);
+                       assertByteCount += dstOffX * imagePixelStride * sampleSize;
+                   }
+                    
                    //-- shift on each line. --//
                    final int arrayStepY = (ry - minRowY) * imgTileWidth * imagePixelStride;
                    
@@ -2649,12 +2802,12 @@ public class TiffImageWriter extends SpatialImageWriter {
 
                         final Object sourceArray;
                         switch (dataType) {
-                            case DataBuffer.TYPE_BYTE:   sourceArray = ((DataBufferByte)   rasterBuffer).getData(bank); break;
-                            case DataBuffer.TYPE_USHORT: sourceArray = ((DataBufferUShort) rasterBuffer).getData(bank); break;
-                            case DataBuffer.TYPE_SHORT:  sourceArray = ((DataBufferShort)  rasterBuffer).getData(bank); break;
-                            case DataBuffer.TYPE_INT:    sourceArray = ((DataBufferInt)    rasterBuffer).getData(bank); break;
-                            case DataBuffer.TYPE_FLOAT:  sourceArray = ((DataBufferFloat)  rasterBuffer).getData(bank); break;
-                            case DataBuffer.TYPE_DOUBLE: sourceArray = ((DataBufferDouble) rasterBuffer).getData(bank); break;
+                            case DataBuffer.TYPE_BYTE   : sourceArray = ((DataBufferByte)   rasterBuffer).getData(bank); break;
+                            case DataBuffer.TYPE_USHORT : sourceArray = ((DataBufferUShort) rasterBuffer).getData(bank); break;
+                            case DataBuffer.TYPE_SHORT  : sourceArray = ((DataBufferShort)  rasterBuffer).getData(bank); break;
+                            case DataBuffer.TYPE_INT    : sourceArray = ((DataBufferInt)    rasterBuffer).getData(bank); break;
+                            case DataBuffer.TYPE_FLOAT  : sourceArray = ((DataBufferFloat)  rasterBuffer).getData(bank); break;
+                            case DataBuffer.TYPE_DOUBLE : sourceArray = ((DataBufferDouble) rasterBuffer).getData(bank); break;
                             default: throw new AssertionError(dataType);
                         }
                        
@@ -3026,26 +3179,26 @@ public class TiffImageWriter extends SpatialImageWriter {
      */
     private void writeArray(final Object array, final short tiffType) throws IOException {
         switch (tiffType) {
-                case TYPE_ASCII     : 
-                case TYPE_BYTE      : 
-                case TYPE_UBYTE     : channel.write((byte[]) array); break;
-                    
-                case TYPE_SHORT     : 
-                case TYPE_USHORT    : channel.writeShorts((short[]) array); break;
-                    
-                case TYPE_INT       : 
-                case TYPE_UINT      : channel.writeInts((int[]) array); break;
-                    
-                case TYPE_LONG      : 
-                case TYPE_ULONG     : channel.writeLongs((long[]) array); break;
-                    
-                case TYPE_FLOAT     : 
-                case TYPE_DOUBLE    : channel.writeDoubles((double[]) array); break;
-                    
-                case TYPE_RATIONAL  : // 2 long successif
-                case TYPE_URATIONAL : 
-                default : throw new IllegalStateException("unknow type. type : "+tiffType);
-            }
+            case TYPE_ASCII     : 
+            case TYPE_BYTE      : 
+            case TYPE_UBYTE     : channel.write((byte[]) array); break;
+
+            case TYPE_SHORT     : 
+            case TYPE_USHORT    : channel.writeShorts((short[]) array); break;
+
+            case TYPE_INT       : 
+            case TYPE_UINT      : channel.writeInts((int[]) array); break;
+
+            case TYPE_LONG      : 
+            case TYPE_ULONG     : channel.writeLongs((long[]) array); break;
+
+            case TYPE_FLOAT     : 
+            case TYPE_DOUBLE    : channel.writeDoubles((double[]) array); break;
+
+            case TYPE_RATIONAL  : // 2 long successif
+            case TYPE_URATIONAL : 
+            default : throw new IllegalStateException("unknow type. type : "+tiffType);
+        }
     }
     
     /**
