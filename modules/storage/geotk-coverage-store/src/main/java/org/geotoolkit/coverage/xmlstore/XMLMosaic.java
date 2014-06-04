@@ -58,6 +58,7 @@ import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
+import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.AbstractGridMosaic;
@@ -319,16 +320,32 @@ public class XMLMosaic implements GridMosaic{
         final File f = getTileFile(col, row);
         f.getParentFile().mkdirs();
 
-        try (ImageOutputStream out = ImageIO.createImageOutputStream(f)) {
-            writer.setOutput(out);
+        ImageOutputStream out = null;
+        try {
+            final Class[] outTypes = writer.getOriginatingProvider().getOutputTypes();
+            if(ArraysExt.contains(outTypes, File.class)){
+                //writer support files directly, let him handle it
+                writer.setOutput(f);
+            }else{
+                out = ImageIO.createImageOutputStream(f);
+                writer.setOutput(out);
+            }
             writer.write(image);
-            tileExist.set(getTileIndex(col, row), true);
-            tileEmpty.set(getTileIndex(col, row), false);
+            final int ti = getTileIndex(col, row);
+            tileExist.set(ti, true);
+            tileEmpty.set(ti, false);
         } catch (IOException ex) {
             throw new DataStoreException(ex.getMessage(), ex);
         } finally {
             if (writer != null) {
                 writer.setOutput(null);
+            }
+            if(out!=null){
+                try {
+                    out.close();
+                } catch (IOException ex) {
+                    throw new DataStoreException(ex);
+                }
             }
         }
     }
@@ -468,10 +485,17 @@ public class XMLMosaic implements GridMosaic{
                     }
                     return;
                 }
-
-                out = ImageIO.createImageOutputStream(f);
+                
                 writer = ImageIO.getImageWritersByFormatName(formatName).next();
-                writer.setOutput(out);
+                
+                final Class[] outTypes = writer.getOriginatingProvider().getOutputTypes();
+                if(ArraysExt.contains(outTypes, File.class)){
+                    //writer support files directly, let him handle it
+                    writer.setOutput(f);
+                }else{
+                    out = ImageIO.createImageOutputStream(f);
+                    writer.setOutput(out);
+                }                
 
                 final boolean canWriteRaster = writer.canWriteRasters();
                 //write tile

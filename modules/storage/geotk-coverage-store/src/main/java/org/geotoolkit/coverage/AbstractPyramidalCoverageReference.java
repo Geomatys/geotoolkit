@@ -20,6 +20,7 @@ package org.geotoolkit.coverage;
 import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.Raster;
@@ -38,6 +39,7 @@ import java.util.logging.Logger;
 import javax.imageio.ImageReader;
 import javax.swing.ProgressMonitor;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.grid.GridEnvelope2D;
@@ -46,9 +48,9 @@ import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
+import org.geotoolkit.feature.type.Name;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.geotoolkit.util.ImageIOUtilities;
-import org.geotoolkit.feature.type.Name;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
@@ -300,7 +302,8 @@ public abstract class AbstractPyramidalCoverageReference extends AbstractCoverag
         final CoordinateReferenceSystem tileCRS = pyramid.getCoordinateReferenceSystem();
         final MathTransform gridToCrs = AbstractGridMosaic.getTileGridToCRS(mosaic,tile.getPosition());
         
-        final GridEnvelope2D ge = new GridEnvelope2D(0, 0, image.getWidth(), image.getHeight());
+        final GeneralGridEnvelope ge = new GeneralGridEnvelope(
+                new Rectangle(image.getWidth(), image.getHeight()),tileCRS.getCoordinateSystem().getDimension());
         final GridGeometry2D gridgeo = new GridGeometry2D(ge, PixelInCell.CELL_CORNER, gridToCrs, tileCRS, null);
         gcb.setGridGeometry(gridgeo);
         gcb.setRenderedImage(image);
