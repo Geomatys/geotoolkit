@@ -363,11 +363,64 @@ public class GeoJSONWriteTest {
         assertEquals(expected, outputJSON);
     }
 
+    @Test
+    public void writePropertyArrayTest() throws Exception {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        FeatureType validFeatureType = buildPropertyArrayFeatureType("arrayFT", Point.class);
+
+        Point pt = (Point)WKT_READER.read(PROPERTIES.getProperty("point"));
+
+        FeatureWriter fw = new GeoJSONStreamWriter(baos, validFeatureType, 4);
+        double[][] array1 = new double[5][5];
+        double[][] array2 = new double[5][5];
+        for (int i = 0; i < 5; i++) {
+            for (int j = 0; j < 5; j++) {
+                array1[i][j] = i+j;
+                array2[i][j] = i-j;
+            }
+        }
+
+        try {
+            Feature feature = fw.next();
+            feature.getProperty("array").setValue(array1);
+            feature.getDefaultGeometryProperty().setValue(pt);
+            fw.write();
+
+            feature = fw.next();
+            feature.getProperty("array").setValue(array2);
+            feature.getDefaultGeometryProperty().setValue(pt);
+            fw.write();
+
+        } finally {
+            fw.close();
+        }
+
+        String outputJSON = baos.toString("UTF-8");
+        assertNotNull(outputJSON);
+        assertFalse(outputJSON.isEmpty());
+
+        String expected = "{\n" +
+                "\"type\":\"FeatureCollection\"\n" +
+                ",\"crs\":{\"type\":\"name\",\"properties\":{\"name\":\"urn:ogc:def:crs:OGC:1.3:CRS84\"}}\n" +
+                ",\"features\":[\n" +
+                "{\"type\":\"Feature\",\"id\":\"id-0\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-105.0162,39.5742]},\"properties\":{\"array\":[[0.0,1.0,2.0,3.0,4.0],[1.0,2.0,3.0,4.0,5.0],[2.0,3.0,4.0,5.0,6.0],[3.0,4.0,5.0,6.0,7.0],[4.0,5.0,6.0,7.0,8.0]]}}\n" +
+                ",{\"type\":\"Feature\",\"id\":\"id-1\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-105.0162,39.5742]},\"properties\":{\"array\":[[0.0,-1.0,-2.0,-3.0,-4.0],[1.0,0.0,-1.0,-2.0,-3.0],[2.0,1.0,0.0,-1.0,-2.0],[3.0,2.0,1.0,0.0,-1.0],[4.0,3.0,2.0,1.0,0.0]]}}\n" +
+                "]}";
+        assertEquals(expected, outputJSON);
+    }
 
     private FeatureType buildGeometryFeatureType(String name, Class geomClass) {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName(name);
         ftb.add("type", String.class);
+        ftb.add("geometry", geomClass, DefaultGeographicCRS.WGS84);
+        return ftb.buildSimpleFeatureType();
+    }
+
+    private FeatureType buildPropertyArrayFeatureType(String name, Class geomClass) {
+        final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
+        ftb.setName(name);
+        ftb.add("array", double[][].class);
         ftb.add("geometry", geomClass, DefaultGeographicCRS.WGS84);
         return ftb.buildSimpleFeatureType();
     }
