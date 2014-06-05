@@ -48,6 +48,7 @@ import java.awt.image.DataBufferDouble;
 import java.awt.image.IndexColorModel;
 import java.lang.reflect.Array;
 import java.nio.channels.ReadableByteChannel;
+import java.nio.channels.SeekableByteChannel;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -283,6 +284,8 @@ public class TiffImageReader extends SpatialImageReader {
      * File object of current input.
      */
     private Object currentInput;
+    
+    private long portosfileChannelPositionBegin;
         
     /**
      * Creates a new reader.
@@ -290,7 +293,7 @@ public class TiffImageReader extends SpatialImageReader {
      * @param provider The provider, or {@code null} if none.
      */
     public TiffImageReader(final TiffImageReader.Spi provider) {
-        super((provider != null) ? provider : new RawTiffImageReader.Spi());
+        super((provider != null) ? provider : new TiffImageReader.Spi());
         buffer       = ByteBuffer.allocate(8196);
         positionIFD  = new long[4];
         metaHeads    = new Map[4];
@@ -1403,8 +1406,9 @@ public class TiffImageReader extends SpatialImageReader {
             } else {
                 currentInput = input;
             }
-
-            if (currentInput instanceof InputStream) {
+            if (currentInput instanceof FileInputStream) {
+                portosfileChannelPositionBegin = ((FileInputStream)currentInput).getChannel().position();
+            } else if (currentInput instanceof InputStream) {
                 InputStream stream = (InputStream) currentInput;
                 if (stream.markSupported()) {
                     try {
@@ -2829,6 +2833,7 @@ public class TiffImageReader extends SpatialImageReader {
         }
 
         channel = openChannel(currentInput);
+        if (currentInput instanceof FileInputStream) ((SeekableByteChannel)channel).position(portosfileChannelPositionBegin);
         buffer = null;
 
         final boolean containData;
@@ -2854,7 +2859,7 @@ public class TiffImageReader extends SpatialImageReader {
         if (input instanceof File) {
             return new FileInputStream((File)input).getChannel();
         } else if (input instanceof InputStream) {
-            ((InputStream) input).reset();
+            if (!(input instanceof FileInputStream)) ((InputStream) input).reset();
             return Channels.newChannel((InputStream) input);
         } else if (input instanceof ImageInputStream) {
             final ImageInputStream IIS = (ImageInputStream) input;
@@ -2983,7 +2988,7 @@ public class TiffImageReader extends SpatialImageReader {
          */
         @Override
         public boolean canDecodeInput(final Object source) throws IOException {
-            if (source instanceof InputStream) {
+            if (source instanceof InputStream && (!(source instanceof FileInputStream))) {
                 final InputStream stream = (InputStream) source;
                 if (stream.markSupported()) {
                     try {
@@ -2999,38 +3004,44 @@ public class TiffImageReader extends SpatialImageReader {
                 ((ImageInputStream) source).mark();
             }
             final ReadableByteChannel channel = openChannel(source);
+            long position = 0;
+            if (channel instanceof SeekableByteChannel) position = ((SeekableByteChannel) channel).position();
             //-- Closing the imageStream will close the input stream.
             ByteBuffer buffer = ByteBuffer.allocateDirect(16);
             buffer.clear();
             channel.read(buffer);
             buffer.position(0);
-            final byte c = buffer.get();
-            if (c != buffer.get()) {
-                return false;
-            }
-            final ByteOrder order;
-            if (c == 'M') {
-                order = ByteOrder.BIG_ENDIAN;
-            } else if (c == 'I') {
-                order = ByteOrder.LITTLE_ENDIAN;
-            } else {
-                return false;
-            }
-            final short version = buffer.order(order).getShort(); 
-            if ((version == 0x002B)) {
-                if (buffer.getShort() != 8 || buffer.getShort() != 0) {
-                    return false; //-- invalide offset size
+            try {
+                final byte c = buffer.get();
+                if (c != buffer.get()) {
+                    return false;
                 }
-            } else if (version != 0x002A) {
-                return false;//-- invalid magic number
-            }
+                final ByteOrder order;
+                if (c == 'M') {
+                    order = ByteOrder.BIG_ENDIAN;
+                } else if (c == 'I') {
+                    order = ByteOrder.LITTLE_ENDIAN;
+                } else {
+                    return false;
+                }
+                final short version = buffer.order(order).getShort(); 
+                if ((version == 0x002B)) {
+                    if (buffer.getShort() != 8 || buffer.getShort() != 0) {
+                        return false; //-- invalide offset size
+                    }
+                } else if (version != 0x002A) {
+                    return false;//-- invalid magic number
+                }
 
-            if (source instanceof InputStream) {
-                ((InputStream) source).reset();
-            } else if (source instanceof ImageInputStream) {
-                ((ImageInputStream) source).reset();
+                if (source instanceof InputStream) {
+                    ((InputStream) source).reset();
+                } else if (source instanceof ImageInputStream) {
+                    ((ImageInputStream) source).reset();
+                }
+                return true;
+            } finally {
+                if (channel instanceof SeekableByteChannel) ((SeekableByteChannel) channel).position(position);
             }
-            return true;
         }
 
         /**
