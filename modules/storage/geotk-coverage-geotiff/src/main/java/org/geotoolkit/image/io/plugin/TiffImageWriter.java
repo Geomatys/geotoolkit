@@ -42,6 +42,7 @@ import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
+import java.nio.channels.WritableByteChannel;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -3354,17 +3355,23 @@ public class TiffImageWriter extends SpatialImageWriter {
             if (output == null) {
                 throw new IllegalStateException(error(Errors.Keys.NO_IMAGE_INPUT));
             }
-            final FileOutputStream out;
+            
+            final WritableByteChannel wBC;
             if (output instanceof String) {
-                out = new FileOutputStream((String) output);
+                wBC = new FileOutputStream((String) output).getChannel();
+            } else if (output instanceof File) {
+                wBC = new FileOutputStream((File)output).getChannel();
+            } else if (output instanceof FileOutputStream) {
+                ((FileOutputStream) output).flush();
+                wBC = ((FileOutputStream) output).getChannel();
             } else {
-                out = new FileOutputStream((File) output);
+                throw new IOException("Output object is not a valid file or input stream.");
             }
             
             currentBO = ByteOrder.nativeOrder();
             final ByteBuffer buff = ByteBuffer.allocateDirect(8196);
             buff.order(currentBO);
-            channel = new ChannelImageOutputStream("TiffWriter", out.getChannel(), buff);
+            channel = new ChannelImageOutputStream("TiffWriter", wBC, buff);
             
             if (currentBO.equals(ByteOrder.BIG_ENDIAN)) {//MM
                 channel.writeByte((byte) 'M');
@@ -3424,7 +3431,7 @@ public class TiffImageWriter extends SpatialImageWriter {
         try {
             if (channel != null) {
                 channel.flush();
-                channel.close();
+                if (output instanceof File) channel.close();
             }
         } catch (IOException ex) {
             Logger.getLogger(TiffImageWriter.class.getName()).log(Level.SEVERE, null, ex);
@@ -3436,7 +3443,8 @@ public class TiffImageWriter extends SpatialImageWriter {
      */
     @Override
     public void setOutput(Object output) {
-        super.setOutput(output); //To change body of generated methods, choose Tools | Templates.
+        final Object out = (output instanceof String) ? new File((String) output) : output;
+        super.setOutput(out); 
         ifdPosition     = new long[2];
         headProperties  = null;
         packBitArray    = new byte[8196];
@@ -3444,15 +3452,7 @@ public class TiffImageWriter extends SpatialImageWriter {
         rowByte32773Pos = 0;
         metaHeads = new Map[4];
         metaIndex = 0; 
-        try {
-//            channel.flush();
-            if (channel != null) {
-                channel.flush();
-                channel.close();
-            }
-        } catch (IOException ex) {
-            Logger.getLogger(TiffImageWriter.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        dispose();
         channel = null;
     }
     
@@ -3479,9 +3479,10 @@ public class TiffImageWriter extends SpatialImageWriter {
                File.class,
                //URI.class,
                //URL.class,
-               String.class // To be interpreted as file path.
-// TODO     OutputStream.class,
-//          ImageOutputStream.class
+               String.class, // To be interpreted as file path.
+//               OutputStream.class,
+//               ImageOutputStream.class
+               FileOutputStream.class
        };
         /**
          * Creates a provider which will use the given format for writing pixel values.
@@ -3531,5 +3532,4 @@ public class TiffImageWriter extends SpatialImageWriter {
             return new TiffImageWriter(this);
         }
     }
-
 }

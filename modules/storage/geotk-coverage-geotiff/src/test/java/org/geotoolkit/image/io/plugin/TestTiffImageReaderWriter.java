@@ -32,7 +32,11 @@ import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
 import java.awt.image.WritableRenderedImage;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.Random;
 import javax.imageio.IIOParam;
@@ -41,6 +45,10 @@ import javax.imageio.ImageReader;
 import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
+import javax.imageio.stream.FileImageInputStream;
+import javax.imageio.stream.FileImageOutputStream;
+import javax.imageio.stream.ImageInputStream;
+import javax.imageio.stream.ImageOutputStream;
 import org.apache.sis.test.TestUtilities;
 import org.geotoolkit.image.io.UnsupportedImageFormatException;
 import org.geotoolkit.image.iterator.*;
@@ -383,7 +391,9 @@ public strictfp abstract class TestTiffImageReaderWriter {
      * - sampleFormat<br/>
      * and fill it by appropriate random sample values.<br/>
      * Then image is writen at "filetest" adress and read.<br/>
-     * To finish read image is compare to itself before writing.
+     * To finish read image is compare to itself before writing.<br/><br/>
+     * 
+     * Moreover, test different input / output type setted. 
      * 
      * @param message in case of assertion error.
      * @param fileTest the place to be.
@@ -405,13 +415,36 @@ public strictfp abstract class TestTiffImageReaderWriter {
         final int height = random.nextInt(256) + 16;
         final RenderedImage expected = createImageTest(width, height, sampleBitsSize, numBand, photometricInterpretation, sampleFormat);
         
-        writer.setOutput(fileTest); //-- to initialize writer
+        
+        final int outType = random.nextInt(2);
+        final Object out  = (outType == 0) ? new FileOutputStream(fileTest) : fileTest ;
+        
+        writer.setOutput(out); //-- to initialize writer
         writer.write(expected, writerParam);
         writer.dispose();
         
-        reader.setInput(fileTest); //-- to initialize reader
+        if (outType == 0) ((FileOutputStream) out).close();
+        
+        Object in;
+        final int inType = random.nextInt(3);
+        
+        switch (inType) {
+            case 0  : in = new FileImageInputStream(fileTest); break;
+            case 1  : in = new FileInputStream(fileTest);      break;
+            case 2  :
+            default : in = fileTest;
+        }
+        
+        reader.setInput(in); //-- to initialize reader
         final RenderedImage tested = reader.read(0);
         reader.close();
+        
+        switch (inType) {
+            case 0  : ((ImageInputStream)in).close(); break;
+            case 1  : ((InputStream)in).close();      break;
+            case 2  :
+            default : ;
+        }
         
         checkImage(message, expected, tested);
     }
