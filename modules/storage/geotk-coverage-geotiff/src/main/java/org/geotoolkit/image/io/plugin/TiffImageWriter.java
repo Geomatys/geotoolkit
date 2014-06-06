@@ -70,10 +70,13 @@ import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.Utilities;
 import static org.geotoolkit.metadata.geotiff.GeoTiffConstants.*;
+import static org.geotoolkit.util.DomUtilities.getNodeByLocalName;
+
 import org.geotoolkit.metadata.geotiff.GeoTiffMetaDataUtils;
 import org.geotoolkit.metadata.geotiff.GeoTiffMetaDataWriter;
 import org.geotoolkit.util.DomUtilities;
 import org.opengis.util.FactoryException;
+import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -474,13 +477,16 @@ public class TiffImageWriter extends SpatialImageWriter {
             addMetadataProperties(iioNode, headProperties);
         }
         write(img, headProperties, param, ifdPosition);
-        for (BufferedImage buff : image.getThumbnails()) {
-            assert headProperties == null;
-            //-- a new distinct map for each layer --// 
-            headProperties = new TreeMap<>();
-            //-- add thumbnails tiff tag --//
-            addProperty(NewSubfileType, TYPE_LONG, 1, new long[]{1}, headProperties);
-            write(buff, headProperties, null, ifdPosition);
+        final List<? extends BufferedImage> thumbnails = image.getThumbnails();
+        if (thumbnails != null) {
+            for (BufferedImage buff : thumbnails) {
+                assert headProperties == null;
+                //-- a new distinct map for each layer --//
+                headProperties = new TreeMap<>();
+                //-- add thumbnails tiff tag --//
+                addProperty(NewSubfileType, TYPE_LONG, 1, new long[]{1}, headProperties);
+                write(buff, headProperties, null, ifdPosition);
+            }
         }
     }
     
@@ -878,11 +884,11 @@ public class TiffImageWriter extends SpatialImageWriter {
      * @throws IOException 
      */
     private void adaptMetadatas(final IIOImage image, ImageWriteParam param) throws IOException {
-        
+
         IIOMetadata iioImgMetadata = image.getMetadata();
-        
+
         if (!(iioImgMetadata instanceof SpatialMetadata)) return;
-        
+
         final SpatialMetadata spatialMetadata = (SpatialMetadata) iioImgMetadata;
 
         Node tiffTree = null;
@@ -890,21 +896,22 @@ public class TiffImageWriter extends SpatialImageWriter {
         final String tiffFormatName = getOriginatingProvider().getNativeImageMetadataFormatName();
 
         final String[] formatNames = iioImgMetadata.getMetadataFormatNames();
-        if(ArraysExt.contains(formatNames, "geotiff")){
+        if (ArraysExt.contains(formatNames, "geotiff")) {
             //already has a geotiff metadata associated
-        }else if(ArraysExt.contains(formatNames, tiffFormatName)){
+        } else if (ArraysExt.contains(formatNames, tiffFormatName)) {
             //has a tiff metadata but no geotiff metadatas
             tiffTree = iioImgMetadata.getAsTree(tiffFormatName);
-            if(GeoTiffMetaDataUtils.isGeoTiffTree(tiffTree)){
+            if (GeoTiffMetaDataUtils.isGeoTiffTree(tiffTree)) {
                 //tiff with geotiff tags, also valid, no need to fill parameters.
                 tiffTree = null;
             }
-        }else{
+        } else {
             //no tiff metadatas, create one
             final ImageTypeSpecifier spec = ImageTypeSpecifier.createFromRenderedImage(image.getRenderedImage());
             iioImgMetadata = getDefaultImageMetadata(spec, param);
             iioImgMetadata = convertImageMetadata(iioImgMetadata, spec, param);
             tiffTree = iioImgMetadata.getAsTree(SpatialMetadataFormat.GEOTK_FORMAT_NAME);
+//            tiffTree = iioImgMetadata.getAsTree(tiffFormatName);
             image.setMetadata(iioImgMetadata);
         }
 
@@ -1074,10 +1081,12 @@ public class TiffImageWriter extends SpatialImageWriter {
      */
     final void addMetadataProperties(final Node iioRootNode, final Map properties) {
         ArgumentChecks.ensureNonNull("root metadata Node", iioRootNode);
-        if (!iioRootNode.getLocalName().equalsIgnoreCase(TAG_GEOTIFF_IFD)) 
-            throw new IllegalStateException("Tree root metadata node should have name : \""+TAG_GEOTIFF_IFD+"\"");
+        Element tmpIfd = (Element) getNodeByLocalName(iioRootNode, TAG_GEOTIFF_IFD);
+        if (tmpIfd == null) {
+            throw new IllegalStateException("Given node does not contains the Tiff root node : \""+TAG_GEOTIFF_IFD+"\"");
+        }
         
-        final NodeList iioNodeList = iioRootNode.getChildNodes();
+        final NodeList iioNodeList = tmpIfd.getChildNodes();
         final int iioLength        = iioNodeList.getLength();
         for (int i = 0; i < iioLength; i++) {
             addNodeProperties(iioNodeList.item(i), properties);
@@ -2561,7 +2570,6 @@ public class TiffImageWriter extends SpatialImageWriter {
      * @throws IOException if problem during image writing or source image raster type is not known.
      */
     private void writeImageByStrips(final RenderedImage img, final ImageWriteParam param) throws IOException {
-        
         // ----------------- Image boundary -------------------//
         final int imageMinX      = img.getMinX() + imageBoundary.x;
         final int imageMinY      = img.getMinY() + imageBoundary.y;
@@ -2606,7 +2614,7 @@ public class TiffImageWriter extends SpatialImageWriter {
         final long currentByteCount = destRegion.width *  imagePixelStride * sampleSize;
         
         //-- destination offset --//
-        final Point dstOffsets = param.getDestinationOffset();
+        final Point dstOffsets = param == null? null : param.getDestinationOffset();
         int dstOffX, dstOffY;
         if (dstOffsets != null) {
             dstOffX = dstOffsets.x;

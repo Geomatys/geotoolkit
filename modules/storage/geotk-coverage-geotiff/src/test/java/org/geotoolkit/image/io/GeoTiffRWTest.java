@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.image.io;
 
+import javax.imageio.ImageReader;
 import javax.imageio.ImageWriter;
 import javax.imageio.ImageIO;
 import javax.imageio.IIOImage;
@@ -25,7 +26,9 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import com.sun.media.imageioimpl.plugins.tiff.TIFFImageReader;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.geotoolkit.coverage.io.CoverageIO;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.ImageCoverageReader;
 import org.geotoolkit.coverage.io.ImageCoverageWriter;
@@ -34,6 +37,7 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.plugin.GeoTiffImageReader;
 import org.geotoolkit.image.io.plugin.GeoTiffImageWriter;
+import org.geotoolkit.image.io.plugin.TiffImageReader;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.geotoolkit.test.TestData;
@@ -56,16 +60,8 @@ public class GeoTiffRWTest {
     private final CRSFactory longlatFactory =  FactoryFinder.getCRSFactory(
                 new Hints(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER, Boolean.TRUE));
 
-
-    public GeoTiffRWTest() {
-        GeoTiffImageReader.Spi.registerDefaults(null);
-        GeoTiffImageWriter.Spi.registerDefaults(null);
-
-        //TODO are we sure of this, always long/lat order ?
-    }
-
     @Test
-    @Ignore
+    //@Ignore
     public void test1() throws Exception {
 
         test("002025_0100_010722_l7_01_utm2.tiff", CRS.decode("EPSG:26921",true),
@@ -73,7 +69,7 @@ public class GeoTiffRWTest {
     }
 
     @Test
-    @Ignore
+    //@Ignore
     public void test2() throws Exception {
 
         //TODO bug on this one
@@ -124,7 +120,7 @@ public class GeoTiffRWTest {
     }
 
     @Test
-    @Ignore
+    //@Ignore
     public void test3() throws Exception {
         //Origin = (440818,99902)
         //Pixel Size = (256,-256)
@@ -133,7 +129,7 @@ public class GeoTiffRWTest {
     }
 
     @Test
-    @Ignore
+    //@Ignore
     public void test4() throws Exception {
         //Origin = (577252.740264483261853,4659702.512972613796592)
         //Pixel Size = (1537.233673966386050,-1527.550597774195239)
@@ -142,7 +138,7 @@ public class GeoTiffRWTest {
     }
 
     @Test
-    @Ignore
+    //@Ignore
     public void test5() throws Exception {
 
         //Origin = (-113.116327999999996,47.564808800000002)
@@ -152,7 +148,7 @@ public class GeoTiffRWTest {
     }
 
     @Test
-    @Ignore
+    //@Ignore
     public void test6() throws Exception {
 
         //Origin = (79074.166666666671517,1439192.637681159656495)
@@ -162,7 +158,7 @@ public class GeoTiffRWTest {
     }
 
     @Test
-    @Ignore
+    //@Ignore
     public void test7() throws Exception {
 
         //Origin = (664769.191709000035189,4600950.488848333247006)
@@ -172,7 +168,7 @@ public class GeoTiffRWTest {
     }
 
     @Test
-    @Ignore
+    //@Ignore
     public void test8() throws Exception {
 
         //TODO BUG in JSR-275 units
@@ -183,7 +179,7 @@ public class GeoTiffRWTest {
         }
 
     @Test
-    @Ignore
+    //@Ignore
     public void test9() throws Exception {
 
         //Origin = (613872.879663333296776,227462.954336666676681)
@@ -193,7 +189,7 @@ public class GeoTiffRWTest {
     }
 
     @Test
-    @Ignore
+    //@Ignore
     public void test10() throws Exception {
 
         //Origin = (-2.235599743981481,2.923495299537037)
@@ -203,7 +199,7 @@ public class GeoTiffRWTest {
     }
 
     @Test
-    @Ignore
+    //@Ignore
     public void test11() throws Exception {
 
         //TODO bug in axis order
@@ -217,7 +213,7 @@ public class GeoTiffRWTest {
                 +"            AUTHORITY[\"EPSG\",\"7008\"]],"
                 +"        AUTHORITY[\"EPSG\",\"6267\"]],"
                 +"    PRIMEM[\"Greenwich\",0],"
-                +"    UNIT[,0.0174532925199433]],"
+                +"    UNIT[\"unknown\",0.0174532925199433]],"
                 +"PROJECTION[\"Lambert_Conformal_Conic_2SP\"],"
                 +"PARAMETER[\"standard_parallel_1\",40],"
                 +"PARAMETER[\"standard_parallel_2\",50],"
@@ -230,7 +226,7 @@ public class GeoTiffRWTest {
     }
 
     @Test
-    @Ignore
+    //@Ignore
     public void test12() throws Exception {
 
         //Origin = (-117.640105492592596,33.902752573232327)
@@ -240,7 +236,7 @@ public class GeoTiffRWTest {
     }
     
     @Test
-    @Ignore
+    //@Ignore
     public void test13() throws Exception {
 
 //        //Origin = (-15312.865311483006735,15349.948768731206656)
@@ -269,7 +265,7 @@ public class GeoTiffRWTest {
     }
 
     @Test
-    @Ignore
+    //@Ignore
     public void test14() throws Exception {
 
 //        //Origin = (-368113.666666666686069,92083.666666666671517)
@@ -282,7 +278,7 @@ public class GeoTiffRWTest {
                 +"            AUTHORITY[\"EPSG\",\"7019\"]],"
                 +"        AUTHORITY[\"EPSG\",\"6269\"]],"
                 +"    PRIMEM[\"Greenwich\",0],"
-                +"    UNIT[,0.0174532925199433]],"
+                +"    UNIT[\"\",0.0174532925199433]],"
                 +"PROJECTION[\"Lambert_Conformal_Conic_2SP\"],"
                 +"PARAMETER[\"standard_parallel_1\",37],"
                 +"PARAMETER[\"standard_parallel_2\",39.5],"
@@ -296,7 +292,7 @@ public class GeoTiffRWTest {
     }
 
     @Test
-    @Ignore
+    //@Ignore
     public void test15() throws Exception {
 
 //    PROJCS["Mercator_1SP",
@@ -321,7 +317,7 @@ public class GeoTiffRWTest {
     }
 
     @Test
-    @Ignore
+    //@Ignore
     public void test16() throws Exception {
 
 //    PROJCS["Oblique_Mercator",
@@ -349,7 +345,7 @@ public class GeoTiffRWTest {
     }
     
     @Test
-    @Ignore
+    //@Ignore
     public void test17() throws Exception {
 
 //    PROJCS["Mercator_1SP",
@@ -376,7 +372,7 @@ public class GeoTiffRWTest {
     }
 
     @Test
-    @Ignore
+    //@Ignore
     public void test18() throws Exception {
 
 //    Projection = Transverse Mercator",
@@ -401,7 +397,7 @@ public class GeoTiffRWTest {
     }
 
     @Test
-    @Ignore
+    //@Ignore
     public void test19() throws Exception {
 
 //    PROJCS["NTF (Paris) / Nord France",
@@ -430,7 +426,7 @@ public class GeoTiffRWTest {
     }
 
     @Test
-    @Ignore
+    //@Ignore
     public void test20() throws Exception {
 
 //    PROJCS["WGS 84 / UTM zone 17N",
@@ -459,7 +455,7 @@ public class GeoTiffRWTest {
     }
 
     @Test
-    @Ignore
+    //@Ignore
     public void test21() throws Exception {
 
 //    PROJCS["Oblique_Mercator",
@@ -489,7 +485,7 @@ public class GeoTiffRWTest {
     }
 
     @Test
-    @Ignore
+    //@Ignore
     public void test22() throws Exception {
 
 //    PROJCS["NAD27 / California zone VI",
@@ -519,7 +515,7 @@ public class GeoTiffRWTest {
     }
 
     @Test
-    @Ignore
+    //@Ignore
     public void test23() throws Exception {
 
 //    PROJCS["NAD83 / Alabama West",
@@ -548,7 +544,7 @@ public class GeoTiffRWTest {
     }
 
     @Test
-    @Ignore
+    //@Ignore
     public void test24() throws Exception {
 
 //    PROJCS["NAD83 / Alabama West",
@@ -577,7 +573,7 @@ public class GeoTiffRWTest {
     }
 
     @Test
-    @Ignore
+    //@Ignore
     public void test25() throws Exception {
 
 //    PROJCS["NAD83 / California zone 6",
@@ -607,32 +603,32 @@ public class GeoTiffRWTest {
     }
 
     @Test
-    @Ignore
+    //@Ignore
     public void test26() throws Exception {
-
-//    PROJCS["Stereographic",
-//    GEOGCS["WGS_1984",
-//        DATUM["WGS_1984",
-//            SPHEROID["WGS 84",6378137,298.257223563,
-//                AUTHORITY["EPSG","7030"]],
-//            AUTHORITY["EPSG","6326"]],
-//        PRIMEM["Greenwich",0],
-//        UNIT[,0.0174532925199433]],
-//    PROJECTION["Oblique_Stereographic"],
-//    PARAMETER["latitude_of_origin",30],
-//    PARAMETER["central_meridian",-90],
-//    PARAMETER["scale_factor",1],
-//    PARAMETER["false_easting",0],
-//    PARAMETER["false_northing",0],
-//    UNIT["unknown",1]]
+        final CoordinateReferenceSystem source = CRS.parseWKT(
+      "PROJCS[\"Stereographic\","
+    + "GEOGCS[\"WGS_1984\","
+        + "DATUM[\"WGS_1984\","
+            + "SPHEROID[\"WGS 84\",6378137,298.257223563,"
+                + "AUTHORITY[\"EPSG\",\"7030\"]],"
+            + "AUTHORITY[\"EPSG\",\"6326\"]],"
+        + "PRIMEM[\"Greenwich\",0],"
+        + " UNIT[\"\",0.0174532925199433]],"
+    + "PROJECTION[\"Oblique_Stereographic\"],"
+    + "PARAMETER[\"latitude_of_origin\",30],"
+    + "PARAMETER[\"central_meridian\",-90],"
+    + "PARAMETER[\"scale_factor\",1],"
+    + "PARAMETER[\"false_easting\",0],"
+    + "PARAMETER[\"false_northing\",0],"
+    + "UNIT[\"unknown\",1]]");
 //Origin = (613872.879663333296776,227462.954336666676681)
 //Pixel Size = (84.618316666649960,-84.618316666698476)
-        test("stere.tiff", CRS.decode("EPSG:4326"), new AffineTransform(84.618316666649960, 0, 0, -84.618316666698476, 613872.879663333296776, 227462.954336666676681));
+        test("stere.tiff", source, new AffineTransform(84.618316666649960, 0, 0, -84.618316666698476, 613872.879663333296776, 227462.954336666676681));
 
     }
 
     @Test
-    @Ignore
+    //@Ignore
     public void test27() throws Exception {
 
 //    PROJCS["Polar_Stereographic",
@@ -657,7 +653,7 @@ public class GeoTiffRWTest {
     }
 
     @Test
-    @Ignore
+    //@Ignore
     public void test28() throws Exception {
 
 //    PROJCS["Polar_Stereographic",
@@ -709,7 +705,7 @@ public class GeoTiffRWTest {
     }
 
     @Test
-    @Ignore
+    //@Ignore
     public void test30() throws Exception {
 
 //    PROJCS["Transverse_Mercator",
@@ -737,7 +733,7 @@ public class GeoTiffRWTest {
     }
 
     @Test
-    @Ignore
+    //@Ignore
     public void test31() throws Exception {
 
 //    PROJCS["Transverse_Mercator",
@@ -763,7 +759,7 @@ public class GeoTiffRWTest {
     }
 
     @Test
-    @Ignore
+    //@Ignore
     public void test32() throws Exception {
 
 //    PROJCS["Universal Transverse Mercator North American 1927 Zone Number 16N",
@@ -789,7 +785,7 @@ public class GeoTiffRWTest {
     }
 
     @Test
-    @Ignore
+    //@Ignore
     public void test33() throws Exception {
 
 //    PROJCS["NAD27 / UTM zone 11N",
@@ -847,7 +843,7 @@ public class GeoTiffRWTest {
 
 
     private void test(final String fileName, final CoordinateReferenceSystem crs, final AffineTransform gridToCRS)
-            throws FileNotFoundException, IOException, CoverageStoreException{
+            throws IOException, CoverageStoreException{
 
         File file = TestData.file(GeoTiffRWTest.class, fileName);
         ImageCoverageReader reader = new ImageCoverageReader();
@@ -855,17 +851,18 @@ public class GeoTiffRWTest {
 
         try{
             //first test
-            GridCoverage2D coverage = (GridCoverage2D) reader.read(0, null);
+            GridCoverage2D coverage = reader.read(0, null);
             compare(coverage, crs, gridToCRS);
 
             //write it and test again
             file = write(coverage,reader.getCoverageMetadata(0));
             reader.dispose();
-            reader = new ImageCoverageReader();
-            reader.setInput(file);
+            final ImageReader imgReader = new TiffImageReader(new TiffImageReader.Spi());
+            imgReader.setInput(file);
+            reader = (ImageCoverageReader) CoverageIO.createSimpleReader(imgReader);
 
             //second test
-            coverage = (GridCoverage2D) reader.read(0, null);
+            coverage = reader.read(0, null);
             compare(coverage, crs, gridToCRS);
 
         }finally{
@@ -876,7 +873,7 @@ public class GeoTiffRWTest {
     private static void compare(final GridCoverage2D coverage,
             final CoordinateReferenceSystem crs, final AffineTransform gridToCRS){
         //test coordinate reference system
-        assertEquals(crs, coverage.getCoordinateReferenceSystem());
+        assertTrue("Source and read CRS approximative equality", CRS.equalsApproximatively(crs, coverage.getCoordinateReferenceSystem()));
 
         //test transform
         final AffineTransform2D rasterTrs = (AffineTransform2D) coverage.getGridGeometry().getGridToCRS(PixelOrientation.UPPER_LEFT);
@@ -897,6 +894,7 @@ public class GeoTiffRWTest {
 
         final IIOImage iioimage = new IIOImage(coverage.getRenderedImage(), null, metadata);
         final ImageWriter writer = ImageIO.getImageWritersByFormatName("geotiff").next();
+//        final ImageWriter writer = new GeoTiffImageWriter(new GeoTiffImageWriter.Spi("TIFF"));
         writer.setOutput(tempFile);
         writer.write(null, iioimage, null);
         writer.dispose();

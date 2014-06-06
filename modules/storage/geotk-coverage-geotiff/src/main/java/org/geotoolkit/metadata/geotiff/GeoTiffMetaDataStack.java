@@ -40,7 +40,6 @@ import static org.apache.sis.util.ArgumentChecks.*;
  */
 final class GeoTiffMetaDataStack {
 
-    private final Node tiffTree;
     private final Element ifd;
 
     //what needs to be written when flush is called
@@ -53,8 +52,13 @@ final class GeoTiffMetaDataStack {
 
     GeoTiffMetaDataStack(final Node tiffTree) {
         ensureNonNull("tiffTree", tiffTree);
-        this.tiffTree = tiffTree;
-        this.ifd = (Element)getNodeByLocalName(tiffTree, TAG_GEOTIFF_IFD);
+
+        Element tmpIfd = (Element) getNodeByLocalName(tiffTree, TAG_GEOTIFF_IFD);
+        if (tmpIfd == null) {
+            ifd = (Element) tiffTree.appendChild(createNode(TAG_GEOTIFF_IFD));
+        } else {
+            ifd = tmpIfd;
+        }
 
         //remove previous tags if exists
         final Node nAscii = getNodeByNumber(ifd, getGeoAsciiParamsTag().getNumber());

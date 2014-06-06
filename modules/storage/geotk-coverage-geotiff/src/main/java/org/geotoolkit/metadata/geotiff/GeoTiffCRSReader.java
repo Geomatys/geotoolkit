@@ -889,8 +889,8 @@ final class GeoTiffCRSReader {
                 parameters = mtFactory.getDefaultParameters(code(AlbersEqualArea.PARAMETERS));
                 parameters.parameter(code(AlbersEqualArea.STANDARD_PARALLEL_1)).setValue(metadata.getAsDouble(ProjStdParallel1GeoKey));
                 parameters.parameter(code(AlbersEqualArea.STANDARD_PARALLEL_2)).setValue(metadata.getAsDouble(ProjStdParallel2GeoKey));
-                parameters.parameter("latitude_of_center").setValue(getOriginLat(metadata)); //TODO what is the correct match ?
-                parameters.parameter("longitude_of_center").setValue(getOriginLong(metadata)); //TODO what is the correct match ?
+                parameters.parameter(code(AlbersEqualArea.LATITUDE_OF_ORIGIN)).setValue(getOriginLat(metadata)); //TODO what is the correct match ?
+                parameters.parameter(code(AlbersEqualArea.CENTRAL_MERIDIAN)).setValue(getOriginLong(metadata)); //TODO what is the correct match ?
                 parameters.parameter(code(AlbersEqualArea.FALSE_EASTING)).setValue(getFalseEasting(metadata));
                 parameters.parameter(code(AlbersEqualArea.FALSE_NORTHING)).setValue(getFalseNorthing(metadata));
                 return parameters;
