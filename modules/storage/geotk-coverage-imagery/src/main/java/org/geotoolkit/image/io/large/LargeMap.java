@@ -14,8 +14,10 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -55,8 +57,7 @@ public class LargeMap {
 //    private final ImageWriter imgWriter;
     private final boolean isWritableRenderedImage;
 
-    private final Object flushLock = new Object();
-    private final ExecutorService flushService = Executors.newSingleThreadExecutor();
+    private Future<Boolean> flushState = null;
 
     final ReentrantReadWriteLock tileLock = new ReentrantReadWriteLock();
 
@@ -108,8 +109,6 @@ public class LargeMap {
             case DataBuffer.TYPE_USHORT    : dataTypeWeight = 2; break;
             default : throw new IllegalStateException("unknown raster data type");
         }
-
-        flushService.submit(new FlushWorker());
     }
 
 
@@ -226,7 +225,6 @@ public class LargeMap {
      * Remove all file and directory relevant to this cached image.
      */
     void removeTiles() {
-        flushService.shutdownNow();
         try {
             tileLock.writeLock().lock();
             remainingCapacity = memoryCapacity;
@@ -240,7 +238,8 @@ public class LargeMap {
      * Affect a new memory capacity and update {@link java.awt.image.Raster} list from new memory capacity set.
      *
      * @param memoryCapacity new memory capacity.
-     * @throws java.io.IOException if impossible to write raster on disk, or if the raster is too big for the cache capacity.
+     * @throws java.io.IOException if capacity is too low from raster weight.
+     * @throws java.io.IOException if cache capacity is too low from raster weight, or if impossible to write raster on disk.
      */
     void setCapacity(long memoryCapacity) throws IOException {
         ArgumentChecks.ensurePositive("LargeMap : memory capacity", memoryCapacity);
@@ -288,18 +287,6 @@ public class LargeMap {
     }
 
     /**
-     * Clean all subDirectory of given folder.
-     *
-     * @param parentDirectory directory which will be cleaned.
-     */
-    public static void cleanDirectory(File parentDirectory) {
-        for (File file : parentDirectory.listFiles()) {
-            if (file.isDirectory()) cleanDirectory(file);
-            file.delete();
-        }
-    }
-
-    /**
      * <p>Verify that {@link java.awt.image.Raster} coordinate is agree from {@link java.awt.image.RenderedImage} location.<br/>
      * If location is correct return {@link java.awt.image.Raster} else return new {@link java.awt.image.Raster} with correct<br/>
      * location but with same internal value from {@link java.awt.image.Raster}.</p>
@@ -321,9 +308,12 @@ public class LargeMap {
      * <p>Check that cache weight do not exceed memory capacity.<br/>
      * If memory capacity is exceeded, write as many {@link java.awt.image.Raster} objects needed to not exceed memory capacity anymore.</p>
      */
-    private void checkMap() {
-        synchronized (flushLock) {
-            flushLock.notifyAll();
+    private synchronized void checkMap() {
+        // We need to write tiles in the quad-tree, and no worker is doing it.
+        if (remainingCapacity < 0 && flushState != null && flushState.isDone()) {
+            final ExecutorService service = Executors.newSingleThreadExecutor();
+            flushState = service.submit(new FlushWorker());
+            service.shutdown();
         }
     }
 
@@ -355,65 +345,52 @@ public class LargeMap {
     /**
      * A thread which will be in charge of memory cleaning. To do so, it will flush old tiles in a temporary quad-tree on file-system.
      */
-    private class FlushWorker implements Runnable {
+    private class FlushWorker implements Callable<Boolean> {
 
         @Override
-        public void run() {
+        public Boolean call() {
+            System.out.println("ENtered flush");
             final Thread currentThread = Thread.currentThread();
             final LinkedList<LargeRaster> toFlush = new LinkedList<>();
-            
-            while (!currentThread.isInterrupted()) {
-                // If nothing to do, just wait.
-                synchronized (flushLock) {
-                    while (remainingCapacity > 0) {
-                        try {
-                            flushLock.wait();
-                        } catch (InterruptedException e) {
-                            LOGGER.log(Level.WARNING, "Flushing process has been canceled !", e);
-                            Thread.currentThread().interrupt();
-                        }
+
+            // While the cache size is exceeded, we flush tiles, beginning with the oldest one.
+            tileLock.writeLock().lock();
+            tileLock.readLock().lock();
+            try {
+                final Iterator<Point> tileIterator = tiles.keySet().iterator();
+                while (remainingCapacity < 0 && tileIterator.hasNext() && !currentThread.isInterrupted()) {
+                    final Point tileCorner = tileIterator.next();
+                    final LargeRaster largeRaster = tiles.get(tileCorner);
+                    if (largeRaster != null) {
+                        remainingCapacity += largeRaster.getWeight();
+                        tileIterator.remove();
+                        toFlush.add(largeRaster);
                     }
                 }
 
-                // While the cache size is exceeded, we flush tiles, beginning with the oldest one.
-                tileLock.writeLock().lock();
-                tileLock.readLock().lock();
-                try {
-                    final Iterator<Point> tileIterator = tiles.keySet().iterator();
-                    while (remainingCapacity < 0 && tileIterator.hasNext() && !currentThread.isInterrupted()) {
-                        final Point tileCorner = tileIterator.next();
-                        final LargeRaster largeRaster = tiles.get(tileCorner);
-                        if (largeRaster != null) {
-                                remainingCapacity += largeRaster.getWeight();
-                                tileIterator.remove();
-                                toFlush.add(largeRaster);
-                        }
+                // We've de-referenced tiles, now we can flush them without blocking other threads from reading this cache.
+                tileLock.writeLock().unlock();
+                while (!toFlush.isEmpty()) {
+                    try {
+                        writeRaster(toFlush.poll());
+                    } catch (IOException e) {
+                        // If flush operation fails, it's not a severe error, cache will miss the tile, so source image will need to reload it.
+                        LOGGER.log(Level.WARNING, "Tile cannot be flushed, it will be lost !", e);
                     }
-                    
-                    // We've de-referenced tiles, now we can flush them without blocking other threads from reading this cache.
-                    tileLock.writeLock().unlock();
-                    while (!toFlush.isEmpty()) {
-                        try {
-                            writeRaster(toFlush.poll());
-                        } catch (IOException e) {
-                            // If flush operation fails, it's not a severe error, cache will miss the tile, so source image will need to reload it.
-                            LOGGER.log(Level.WARNING, "Tile cannot be flushed, it will be lost !", e);
-                        }
-                    }
-                    toFlush.clear();
-                    
-                    if (remainingCapacity < 0) {
-                        LOGGER.log(Level.WARNING, "Error raised !");
-                        throw new IllegalStateException("No tile available for flushing, but cache size has been exceeded.");
-                    }
-                } finally {
-                    if (tileLock.isWriteLockedByCurrentThread()) {
-                        tileLock.writeLock().unlock();
-                    }
-                    tileLock.readLock().unlock();
                 }
+
+                if (remainingCapacity < 0) {
+                    LOGGER.log(Level.WARNING, "Error raised !");
+                    throw new IllegalStateException("No tile available for flushing, but cache size has been exceeded.");
+                }
+                return true;
+            } finally {
+                if (tileLock.isWriteLockedByCurrentThread()) {
+                    tileLock.writeLock().unlock();
+                }
+                tileLock.readLock().unlock();
+                System.out.println("Exit flush.");
             }
-            LOGGER.log(Level.INFO, "Flush worker finished.");
         }
     }
 }
