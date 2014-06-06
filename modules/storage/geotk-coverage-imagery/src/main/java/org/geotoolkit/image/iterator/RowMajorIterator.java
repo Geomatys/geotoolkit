@@ -44,7 +44,7 @@ import org.opengis.coverage.grid.SequenceType;
  * @author Rémi Marechal       (Geomatys).
  * @author Martin Desruisseaux (Geomatys).
  */
-class RowMajorIterator extends PixelIterator{
+public class RowMajorIterator extends PixelIterator{
 
     /**
      * Current X pixel coordinate in this current raster.

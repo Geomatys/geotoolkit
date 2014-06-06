@@ -38,7 +38,7 @@ import org.opengis.coverage.grid.SequenceType;
  * @author Rémi Marechal       (Geomatys).
  * @author Martin Desruisseaux (Geomatys).
  */
-abstract class RowMajorDirectIterator extends PixelIterator {
+public abstract class RowMajorDirectIterator extends PixelIterator {
 
     /**
      * Cursor position of current raster data.

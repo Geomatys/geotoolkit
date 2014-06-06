@@ -17,6 +17,8 @@
 package org.geotoolkit.image.interpolation;
 
 import org.geotoolkit.image.iterator.PixelIterator;
+import org.geotoolkit.image.iterator.RowMajorDirectIterator;
+import org.geotoolkit.image.iterator.RowMajorIterator;
 
 /**
  * Interpolation which interpolate in X direction and Y direction independently.
@@ -41,6 +43,8 @@ abstract class SeparableInterpolation extends Interpolation {
     /** 2D Array storing row interpolated data for each band when an interpolation per pixel is performed. */
     private final double[][] cols;
     
+    protected boolean rowMajorBrowsing;
+    
     /**
      * @param pixelIterator
      * @param windowSide 
@@ -51,6 +55,7 @@ abstract class SeparableInterpolation extends Interpolation {
         tabInteCol = new double[windowSide];
         rows = new double[numBands][windowSide];
         cols = new double[numBands][windowSide];
+        rowMajorBrowsing = (pixelIterator instanceof RowMajorIterator || pixelIterator instanceof RowMajorDirectIterator);
     }
 
 
@@ -85,8 +90,20 @@ abstract class SeparableInterpolation extends Interpolation {
         final int hY = minY + windowSide;
 
         for (int dy = minY; dy < hY; dy++) {
-            for (int dx = minX; dx < wX; dx++) {
-                pixelIterator.moveTo(dx, dy, 0);
+            // First element treatment to avoid un-necessary checks for row major browsing.
+            pixelIterator.moveTo(minX, dy, 0);
+            rows[0][0] = pixelIterator.getSampleDouble();
+            for (int band = 1; band < numBands; band++) {
+                pixelIterator.next();
+                rows[band][0] = pixelIterator.getSampleDouble();
+            }
+            
+            for (int dx = minX + 1; dx < wX; dx++) {
+                if (rowMajorBrowsing) {
+                    pixelIterator.next();
+                } else {
+                    pixelIterator.moveTo(dx, dy, 0);
+                }
                 rows[0][dx - minX] = pixelIterator.getSampleDouble();
                 for (int band = 1; band < numBands; band++) {
                     pixelIterator.next();
@@ -95,12 +112,12 @@ abstract class SeparableInterpolation extends Interpolation {
             }
 
             for (int band = 0; band < numBands; band++) {
-                cols[band][dy - minY] = interpolate1D(minX+0.5, x, rows[band]);
+                cols[band][dy - minY] = interpolate1D(minX + 0.5, x, rows[band]);
             }
         }
 
         for (int band = 0; band < numBands; band++) {
-            result[band] = interpolate1D(minY+0.5, y, cols[band]);
+            result[band] = interpolate1D(minY + 0.5, y, cols[band]);
         }
         return result;
     }
