@@ -20,7 +20,6 @@ import java.util.Iterator;
 import java.util.Properties;
 //import org.geotoolkit.image.io.plugin.GeoTiffImageReader;
 import org.apache.sis.util.ArraysExt;
-import org.geotoolkit.image.io.plugin.GeoTiffImageWriter;
 import org.geotoolkit.image.io.plugin.TiffImageReader;
 import org.geotoolkit.image.io.plugin.TiffImageWriter;
 import org.geotoolkit.internal.SetupService;

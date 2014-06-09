@@ -395,10 +395,10 @@ public class TiffImageWriter extends SpatialImageWriter {
         compression = comp;
         
         final int imageWidth;
-        final short imgWT = (short) ihObj.get(ATT_TYPE);
+        final short imgWT = (short) iwObj.get(ATT_TYPE);
         imageWidth = (imgWT == TYPE_USHORT) ? ((short[])  iwObj.get(ATT_VALUE))[0] & 0xFFFF : ((int[])  iwObj.get(ATT_VALUE))[0];
         
-        final short imgHT = (short) iwObj.get(ATT_TYPE);
+        final short imgHT = (short) ihObj.get(ATT_TYPE);
         final int imageHeight = (imgHT == TYPE_USHORT) ? ((short[])  ihObj.get(ATT_VALUE))[0] & 0xFFFF: ((int[])  ihObj.get(ATT_VALUE))[0];
         
         samplePerPixel = ((short[]) isppObj.get(ATT_VALUE))[0];
@@ -661,7 +661,7 @@ public class TiffImageWriter extends SpatialImageWriter {
         for (int i = 0; i < sampleSize.length; i++) {
             pixelSize += sampleSize[i];
         }
-        isBigTIFF = (long) width * height * pixelSize / Byte.SIZE >= 1E9; //-- >= 4Go
+        isBigTIFF = ((long) width * height * pixelSize / Byte.SIZE) >= 1E9; //-- >= 1Go
         
         if (channel != null) {
             //-- We authorize to write none big tiff image after big tiff already writen but not the inverse --//
@@ -3451,8 +3451,15 @@ public class TiffImageWriter extends SpatialImageWriter {
         currentPBAPos   = 0;
         rowByte32773Pos = 0;
         metaHeads = new Map[4];
-        metaIndex = 0; 
-        dispose();
+        metaIndex = 0;
+        try {
+            if (channel != null) {
+                channel.flush();
+                if (out instanceof File) channel.close();
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(TiffImageWriter.class.getName()).log(Level.SEVERE, null, ex);
+        }
         channel = null;
     }
     
@@ -3480,7 +3487,7 @@ public class TiffImageWriter extends SpatialImageWriter {
                //URI.class,
                //URL.class,
                String.class, // To be interpreted as file path.
-//               OutputStream.class,
+// TODO          OutputStream.class,
 //               ImageOutputStream.class
                FileOutputStream.class
        };
