@@ -125,14 +125,19 @@ public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<C
                     }
 
                 }else{
-                    final Point pt2d = geom.getCentroid();
+                    Point pt2d = geom.getCentroid();
                     if(pt2d == null || pt2d.isEmpty()){
                         //no geometry
                         return;
                     }
 
-                    final int x = (int) (-img.getWidth()*anchor[0] + pt2d.getX() + disps[0]);
-                    final int y = (int) (-img.getHeight()*anchor[1] + pt2d.getY() - disps[1]);
+                    Coordinate pcoord = pt2d.getCoordinate();
+                    if(Double.isNaN(pcoord.x)){
+                        pcoord = geom.getCoordinate();
+                    }
+
+                    final int x = (int) (-img.getWidth()*anchor[0] + pcoord.x + disps[0]);
+                    final int y = (int) (-img.getHeight()*anchor[1] + pcoord.y - disps[1]);
                     g2d.drawImage(img, x, y, null);
                 }
             }else{
@@ -159,11 +164,16 @@ public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<C
                         return;
                     }
 
+                    Coordinate pcoord = pt2d.getCoordinate();
+                    if(Double.isNaN(pcoord.x)){
+                        pcoord = geom.getCoordinate();
+                    }
+
                     final int postx = (int) (-img.getWidth()*anchor[0] + disps[0]);
                     final int posty = (int) (-img.getHeight()*anchor[1] - disps[1]);
                     final AffineTransform ptrs = new AffineTransform();
                     ptrs.rotate(-rot);
-                    ptrs.preConcatenate(new AffineTransform(1, 0, 0, 1, pt2d.getX(), pt2d.getY()));
+                    ptrs.preConcatenate(new AffineTransform(1, 0, 0, 1, pcoord.x, pcoord.y));
                     ptrs.concatenate(new AffineTransform(1, 0, 0, 1, postx, posty));
 
                     g2d.drawImage(img, ptrs, null);
@@ -267,16 +277,20 @@ public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<C
                         //no geometry
                         return;
                     }
+                    Coordinate pcoord = pt2d.getCoordinate();
+                    if(Double.isNaN(pcoord.x)){
+                        pcoord = geom.getCoordinate();
+                    }
                     if(rot==0){
                         imgTrs.setToTranslation(
-                                    -img.getWidth()*anchor[0] + pt2d.getX() + disps[0], 
-                                    -img.getHeight()*anchor[1] + pt2d.getY() - disps[1]);
+                                    -img.getWidth()*anchor[0] + pcoord.x + disps[0],
+                                    -img.getHeight()*anchor[1] + pcoord.y - disps[1]);
                         g2d.drawRenderedImage(img, imgTrs);
                     }else{
                         final int postx = (int) (-img.getWidth()*anchor[0] + disps[0]);
                         final int posty = (int) (-img.getHeight()*anchor[1] - disps[1]);
                         final AffineTransform ptrs = new AffineTransform(mapRotationTrs);
-                        ptrs.preConcatenate(new AffineTransform(1, 0, 0, 1, pt2d.getX(), pt2d.getY()));
+                        ptrs.preConcatenate(new AffineTransform(1, 0, 0, 1, pcoord.x, pcoord.y));
                         ptrs.concatenate(new AffineTransform(1, 0, 0, 1, postx, posty));
                         g2d.drawImage(img, ptrs, null);
                     }
@@ -374,9 +388,13 @@ public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<C
 
             }else{
                 Point pt2d = geom.getCentroid();
+                Coordinate pcoord = pt2d.getCoordinate();
+                if(Double.isNaN(pcoord.x)){
+                    pcoord = geom.getCoordinate();
+                }
 
-                final int x = (int) (-img.getWidth()*anchor[0] + pt2d.getX() + disps[0]);
-                final int y = (int) (-img.getHeight()*anchor[1] + pt2d.getY() - disps[1]);
+                final int x = (int) (-img.getWidth()*anchor[0] + pcoord.x + disps[0]);
+                final int y = (int) (-img.getHeight()*anchor[1] + pcoord.y - disps[1]);
 
                 switch(filter){
                     case INTERSECTS :
