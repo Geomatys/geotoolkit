@@ -91,7 +91,7 @@ public final class GeoTiffMetaDataUtils {
      * Read a TIFFShort node value.
      */
     static int readTiffShort(final Node candidate) {
-        return Integer.parseInt(getAttributeValue(candidate, ATT_VALUE));
+        return Integer.parseInt(getAttributeValue(candidate, ATT_VALUE)) & 0xFFFF;
     }
 
     /**

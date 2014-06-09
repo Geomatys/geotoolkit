@@ -1150,7 +1150,7 @@ public class TiffImageWriter extends SpatialImageWriter {
                 value = asciiValue;
                 
             } else if (iioNodeName.equalsIgnoreCase(TAG_GEOTIFF_SHORTS)) {
-                type = TYPE_SHORT;
+                type = TYPE_USHORT;
                 count = length;
                 final short[] shortValue = new short[length];
                 int shortPos = 0;
@@ -1192,7 +1192,7 @@ public class TiffImageWriter extends SpatialImageWriter {
                 //-- unknow tag do nothing
             }
         }
-        if (count != -1) { // -- to avoid unknow tag writing --//
+        if (count > 0) { // -- to avoid unknown tag writing --//
             addProperty(tagnumber, type, count, value, properties);
         }
     }
@@ -1256,7 +1256,7 @@ public class TiffImageWriter extends SpatialImageWriter {
         //sample per pixel
         samplePerPixel = (short) sm.getNumDataElements();
         assert samplePerPixel <= 0xFFFF : "SamplePerPixel exceed short max value"; // -- should never append
-        addProperty(SamplesPerPixel, TYPE_USHORT, 1, new short[]{(short) samplePerPixel}, properties);
+        addProperty(SamplesPerPixel, TYPE_USHORT, 1, new short[]{samplePerPixel}, properties);
         
         // bitpersamples
         final int[] sampleSize = sm.getSampleSize();// sample size in bits
@@ -2470,7 +2470,7 @@ public class TiffImageWriter extends SpatialImageWriter {
             
             /*
              * Write tags in destination file if its possible.
-             * Some tags needs to write image before, to have enougth informations
+             * Some tags needs to write image before, to have enough information
              * and will be write later.
              */
             if (tag == TileByteCounts || tag == StripByteCounts || tag == TileOffsets || tag == StripOffsets) {
@@ -2883,7 +2883,7 @@ public class TiffImageWriter extends SpatialImageWriter {
      * Write data in stream in function of the wanted compression.
      * 
      * @param sourceArray sample source array data.
-     * @param datatype type of data within sourceArray.
+     * @param dataBuffertype type of data within sourceArray.
      * @param arrayOffset offset in the source array of the first sample which will be writen.
      * @param arrayLength number of sample which will be writen.
      * @param bitPerSample number of bits for each pixel samples.
@@ -3294,7 +3294,7 @@ public class TiffImageWriter extends SpatialImageWriter {
                      * Fill array with the expected count number and complete 
                      * the resting datasize with byte value 0.
                      */
-                    for (int i = 0; i < dataCount; i++) {//-- ecrit le nombre count d'elts et complete la fin avec des zeros. --//
+                    for (int i = 0; i < dataCount; i++) {
                         if (i < count) {
                             final byte b = Array.getByte(value, i);
                             channel.writeByte(b);
@@ -3310,7 +3310,7 @@ public class TiffImageWriter extends SpatialImageWriter {
                     assert count <= dataCount;
                     for (int i = 0; i < dataCount; i++) {
                         if (i < count) {
-                            final short s = (short) (Array.getShort(value, i) & 0xFFFF);
+                            final short s = Array.getShort(value, i);
                             channel.writeShort(s);
                         } else {
                             channel.writeShort((short) 0);
@@ -3535,8 +3535,7 @@ public class TiffImageWriter extends SpatialImageWriter {
        }
 
        /**
-         * Creates a new <cite>World File</cite> writer. The {@code extension} argument
-         * is forwarded to the {@linkplain #main main} provider with no change.
+         * Creates a new instance of the Tiff writer.
          *
          * @param  extension A plug-in specific extension object, or {@code null}.
          * @return A new writer.
