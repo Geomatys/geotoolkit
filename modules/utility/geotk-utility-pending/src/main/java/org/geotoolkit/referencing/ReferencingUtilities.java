@@ -25,6 +25,8 @@ import java.util.List;
 import org.apache.sis.geometry.DirectPosition2D;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.util.ArgumentChecks;
+import org.geotoolkit.internal.referencing.AxisDirections;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
 import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
@@ -50,7 +52,6 @@ import org.opengis.referencing.cs.EllipsoidalCS;
 import org.opengis.referencing.cs.RangeMeaning;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform1D;
-import org.opengis.referencing.operation.OperationMethod;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 
@@ -206,7 +207,7 @@ public final class ReferencingUtilities {
         try {
             return CRS.transform(env, targetCRS);
         } catch (TransformException ex) {
-            //we tryed...
+            //we tried...
         }
 
         //lazy transform
@@ -242,7 +243,7 @@ public final class ReferencingUtilities {
                     }
                     break targetLoop;
                 } catch (FactoryException ex) {
-                    //we tryed...
+                    //we tried...
                 }
 
                 targetAxeIndex += targetPartDimension;
@@ -632,4 +633,239 @@ public final class ReferencingUtilities {
             lst.add(crs);
         }
     }
+    
+    /**
+     * For each axis value of the source envelope, we'll set corresponding one 
+     * in destination envelope, if we find a valid transform. For all the components
+     * of the destination that can't be filled, they're left as is.
+     * @param source The envelope to take values from.
+     * @param destination The envelope to set values into. Will be modified.
+     * @return The destination envelope that have been modified.
+     */
+    public static Envelope transposeEnvelope(final GeneralEnvelope source, GeneralEnvelope destination) {
+        ArgumentChecks.ensureNonNull("source envelope", source);
+        ArgumentChecks.ensureNonNull("destination envelope", destination);
+
+        final CoordinateReferenceSystem sourceCRS = source.getCoordinateReferenceSystem();
+        final CoordinateReferenceSystem destCRS = destination.getCoordinateReferenceSystem();
+
+        // If they're the same, we can return the source envelope.
+        if (CRS.equalsApproximatively(sourceCRS, destCRS)) {
+            destination = new GeneralEnvelope(source);
+        }
+
+        // Decompose source and destination CRSs
+        final List<CoordinateReferenceSystem> sourceComponents = decompose(sourceCRS);
+        final List<CoordinateReferenceSystem> destComponents = decompose(destCRS);
+        // Store sub-CRSs of destination which have already been used for range transfer.
+        final List<CoordinateReferenceSystem> usedCRS = new ArrayList<CoordinateReferenceSystem>(destComponents.size());
+
+        boolean searchHorizontal;
+        boolean searchTemporal;
+        boolean searchVertical;
+        boolean compatible;
+        int srcLowerAxis = 0;
+        int srcAxisCount = 0;
+        int destLowerAxis;
+        int destAxisCount;        
+        browseSource:
+        for (int srcCptCounter = 0; srcCptCounter < sourceComponents.size(); srcCptCounter++) {
+            // Prepare iteration.
+            searchHorizontal = false;
+            searchVertical = false;
+            searchTemporal = false;
+            srcLowerAxis += srcAxisCount;
+            destLowerAxis = 0;
+            destAxisCount = 0;
+
+            final CoordinateReferenceSystem srcCurrent = sourceComponents.get(srcCptCounter);
+            srcAxisCount = srcCurrent.getCoordinateSystem().getDimension();
+
+             // First, we must browse destination to check if we can find an equal CRS.
+            for (int destCptCounter = 0; destCptCounter < destComponents.size(); destCptCounter++) {                
+                destLowerAxis += destAxisCount;
+                final CoordinateReferenceSystem destCurrent = destComponents.get(destCptCounter);
+                destAxisCount = destCurrent.getCoordinateSystem().getDimension();
+
+                // We already bind a dimension of the source envelope for this CRS, just keep going.
+                if (usedCRS.contains(destCurrent)) {
+                    continue;
+                }
+
+                if (CRS.equalsApproximatively(srcCurrent, destCurrent)) {
+                    final GeneralEnvelope srcSubEnvelope = source.subEnvelope(srcLowerAxis, srcLowerAxis + srcAxisCount);
+                    destination.subEnvelope(destLowerAxis, destLowerAxis+ srcSubEnvelope.getDimension()).setEnvelope(srcSubEnvelope);
+                    usedCRS.add(destCurrent);
+                    continue browseSource;
+                }
+            }
+            destLowerAxis = 0;
+            destAxisCount = 0;
+
+            /*
+             * If equality failed, we'll try to get CRS whose meaning is 
+             * compatible. To do so, we try to identify the CRS type (horizontal,
+             * vertical or temporal). If it's a fail, our last chance is to
+             * compare both CRS axis. 
+             */
+            if (CRS.getHorizontalCRS(srcCurrent) != null) {
+                searchHorizontal = true;
+            } else if (CRS.getVerticalCRS(srcCurrent) != null) {
+                searchVertical = true;
+            } else if (CRS.getTemporalCRS(srcCurrent) != null) {
+                searchTemporal = true;
+            }
+
+            for (int destCptCounter = 0; destCptCounter < destComponents.size(); destCptCounter++) {
+                compatible = false;
+                destLowerAxis += destAxisCount;
+
+                final CoordinateReferenceSystem destCurrent = destComponents.get(destCptCounter);
+                destAxisCount = destCurrent.getCoordinateSystem().getDimension();
+
+                // We already bind a dimension of the source envelope for this CRS, just keep going.
+                if (usedCRS.contains(destCurrent)) {
+                    continue;
+                }
+
+                if (searchHorizontal) {
+                    if (CRS.getHorizontalCRS(destCurrent) != null) {
+                        compatible = true;
+                    }
+                } else if (searchVertical) {
+                    if (CRS.getVerticalCRS(destCurrent) != null) {
+                        compatible = true;
+                    }
+                } else if (searchTemporal) {
+                    if (CRS.getTemporalCRS(destCurrent) != null) {
+                        compatible = true;
+                    }
+                } else {
+                    // Check both CRS axis.
+                    final CoordinateSystem sourceCS = srcCurrent.getCoordinateSystem();
+                    final CoordinateSystem destCS = destCurrent.getCoordinateSystem();
+
+                    if (sourceCS.getDimension() == destCS.getDimension()) {
+                        boolean sameAxis = true;
+                        for (int axisCount = 0; axisCount < sourceCS.getDimension(); axisCount++) {
+                            if (AxisDirections.indexOf(destCS, sourceCS.getAxis(axisCount).getDirection()) < 0) {
+                                sameAxis = false;
+                                break;
+                            }
+                        }
+                        compatible = sameAxis;
+                    }
+                }
+
+                // We found matching CRS, Now we can transfer ordinates.
+                if (compatible) {
+                    final GeneralEnvelope srcSubEnvelope = source.subEnvelope(srcLowerAxis, srcLowerAxis + srcAxisCount);
+                    srcSubEnvelope.setCoordinateReferenceSystem(srcCurrent);
+                    try {
+                        final Envelope tmp = CRS.transform(srcSubEnvelope, destCurrent);
+                        destination.subEnvelope(destLowerAxis, destLowerAxis + tmp.getDimension()).setEnvelope(tmp);
+                    } catch (TransformException e) {
+                        // If we can't transform it, we just have to go to the next iteration.
+                        continue;
+                    }
+                    usedCRS.add(destCurrent);
+                    break;
+                }
+            }
+        }
+
+        return destination;
+    }
+    
+        
+    /**
+     * Build an envelope which is the intersection between both of the parameters.
+     * The CRS of the two input envelopes can be different, with different number
+     * of dimension.
+     * @param layerEnvelope The envelope of the source layer. Result envelope will
+     * keep this object CRS.
+     * @param filterEnvelope the envelope used as filter.
+     * @return An envelope which is the found intersection between the two inputs. 
+     * The CRS of the result will be the same as the first input.
+     * @throws TransformException If an incompatibility between CRSs is found.
+     */
+    public static GeneralEnvelope intersectEnvelopes(final Envelope layerEnvelope, final Envelope filterEnvelope)
+            throws TransformException {
+        ArgumentChecks.ensureNonNull("source envelope", layerEnvelope);
+        GeneralEnvelope resultEnvelope = new GeneralEnvelope(layerEnvelope);
+
+        if (filterEnvelope == null) {
+            return resultEnvelope;
+        }
+
+        final CoordinateReferenceSystem inputCRS = layerEnvelope.getCoordinateReferenceSystem();
+        final CoordinateReferenceSystem filterCRS = filterEnvelope.getCoordinateReferenceSystem();
+
+        if (resultEnvelope.getDimension() <= filterEnvelope.getDimension()) {
+            resultEnvelope.intersect(CRS.transform(filterEnvelope, inputCRS));
+        } else {
+            /* If source CRS got more dimensions than the one given as filter,
+             * we need to isolate each component of the filter to insert them
+             * into an envelope of the source CRS.
+             */
+            if (inputCRS instanceof CompoundCRS) {
+                final ArrayList<SingleCRS> toFind = new ArrayList<>(3);
+                final TemporalCRS inputTemporal = CRS.getTemporalCRS(inputCRS);
+                final TemporalCRS filterTemporal = CRS.getTemporalCRS(filterCRS);
+                final SingleCRS inputHorizontal = CRS.getHorizontalCRS(inputCRS);
+                final SingleCRS filterHorizontal = CRS.getHorizontalCRS(filterCRS);
+                final VerticalCRS inputVertical = CRS.getVerticalCRS(inputCRS);
+                final VerticalCRS filterVertical = CRS.getVerticalCRS(filterCRS);
+                if (inputHorizontal != null && filterHorizontal != null) {
+                    toFind.add(inputHorizontal);
+                }
+                if (inputTemporal != null && filterTemporal != null) {
+                    toFind.add(inputTemporal);
+                }
+                if (inputVertical != null && filterVertical != null) {
+                    toFind.add(inputVertical);
+                }
+                /* build a sub-CRS, containing all the input components which can 
+                 * be compared with current filter.
+                 */
+                final CoordinateReferenceSystem tmpCRS;
+                if (toFind.size() <= 0) {
+                    throw new TransformException("An error occured while applying filter : input layer CRS and filter CRS aren't compatible.");
+                } else if (toFind.size() == 1) {
+                    tmpCRS = toFind.get(0);
+                } else {
+                    tmpCRS = CRS.getCompoundCRS((CompoundCRS) inputCRS, toFind.toArray(new SingleCRS[toFind.size()]));
+                }
+                final GeneralEnvelope tmpFilter = new GeneralEnvelope(CRS.transform(filterEnvelope, tmpCRS));
+                final GeneralEnvelope tmpResult = new GeneralEnvelope(CRS.transform(resultEnvelope, tmpCRS));
+                tmpResult.intersect(tmpFilter);
+
+                /* Re-injection pass. For each component crs of the above computed 
+                 * intersection, we try to find the same in input envelope, to
+                 * replace its values.
+                 */
+                int tmpOffset = 0;
+                for (CoordinateReferenceSystem tmpSubCRS : toFind) {
+                    int srcOffset = 0;
+                    int tmpDimNumber = tmpSubCRS.getCoordinateSystem().getDimension();
+
+                    for (CoordinateReferenceSystem subCRS : ((CompoundCRS) inputCRS).getComponents()) {
+                        if (subCRS.equals(tmpSubCRS)) {
+                            final GeneralEnvelope subTmp = tmpResult.subEnvelope(tmpOffset, tmpOffset + tmpDimNumber);
+                            resultEnvelope.subEnvelope(srcOffset, srcOffset+tmpResult.getDimension()).setEnvelope(subTmp);
+                            break;
+                        }
+                        srcOffset += subCRS.getCoordinateSystem().getDimension();
+                    }
+
+                    tmpOffset += tmpDimNumber;
+                }
+
+            } else {
+                throw new TransformException("An error occured while applying filter : input layer CRS and filter CRS aren't compatible.");
+            }
+        }
+        return resultEnvelope;
+    }
+
 }
