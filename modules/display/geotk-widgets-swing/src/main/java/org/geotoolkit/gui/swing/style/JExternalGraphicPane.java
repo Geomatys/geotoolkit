@@ -20,7 +20,9 @@ package org.geotoolkit.gui.swing.style;
 import java.awt.Component;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.File;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
@@ -28,6 +30,9 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SwingConstants;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileNameExtensionFilter;
+
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.feature.type.DefaultName;
 import org.geotoolkit.feature.type.DefaultPropertyType;
@@ -51,6 +56,7 @@ public class JExternalGraphicPane extends StyleElementEditor<ExternalGraphic> {
 
     private static final PropertyType URLTYPE = new DefaultPropertyType(DefaultName.valueOf(""), 
             URL.class, false, null, null, new SimpleInternationalString(""));
+    private static final FileFilter IMAGES_FILTER = new FileNameExtensionFilter("Images", "jpg", "gif", "png", "ico", "bmp", "svg");
     
     private MapLayer layer = null;
     private ExternalGraphic external = null;
@@ -108,6 +114,17 @@ public class JExternalGraphicPane extends StyleElementEditor<ExternalGraphic> {
         URL url = null;
         url = (URL)guiURL.getValue();
         if(url!=null){
+            //guess mimeType
+            try {
+                File candidate = new File(url.toURI());
+                if (candidate.isFile()) {
+                    String name = candidate.getName();
+                    String ext = name.substring(name.lastIndexOf('.')+1);
+                    guiMime.setText("image/"+ext.toLowerCase());
+                }
+            } catch (URISyntaxException ex) {
+                Exceptions.printStackTrace(ex);
+            }
             external = getStyleFactory().externalGraphic(url, guiMime.getText());
         }else{
             external = null;
@@ -131,8 +148,8 @@ public class JExternalGraphicPane extends StyleElementEditor<ExternalGraphic> {
         jLabel2 = new JLabel();
         jLabel3 = new JLabel();
         guiMime = new JTextField();
-        guiPreview = new JPreview();
-        guiURL = new URLEditor();
+        guiPreview = new org.geotoolkit.gui.swing.style.JPreview();
+        guiURL = new org.geotoolkit.gui.swing.propertyedit.featureeditor.URLEditor(IMAGES_FILTER);
 
         setOpaque(false);
 
@@ -186,8 +203,8 @@ public class JExternalGraphicPane extends StyleElementEditor<ExternalGraphic> {
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private JTextField guiMime;
-    private JPreview guiPreview;
-    private URLEditor guiURL;
+    private org.geotoolkit.gui.swing.style.JPreview guiPreview;
+    private org.geotoolkit.gui.swing.propertyedit.featureeditor.URLEditor guiURL;
     private JLabel jLabel2;
     private JLabel jLabel3;
     // End of variables declaration//GEN-END:variables

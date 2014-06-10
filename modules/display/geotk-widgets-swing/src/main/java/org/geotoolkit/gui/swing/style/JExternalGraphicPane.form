@@ -83,6 +83,9 @@
       </Layout>
     </Container>
     <Component class="org.geotoolkit.gui.swing.propertyedit.featureeditor.URLEditor" name="guiURL">
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new org.geotoolkit.gui.swing.propertyedit.featureeditor.URLEditor(IMAGES_FILTER)"/>
+      </AuxValues>
     </Component>
   </SubComponents>
 </Form>
