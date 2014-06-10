@@ -281,35 +281,40 @@ class GeoJSONWriter implements Closeable, Flushable {
             for (int i=0; i<size; i++) {
                 writeValue(Array.get(value, i));
             }
-
             writer.writeEndArray();
-        } else {
 
-            if (Double.class.isAssignableFrom(binding)) {
-                writer.writeNumber((Double) value);
-            } else if (Float.class.isAssignableFrom(binding)) {
-                writer.writeNumber((Float) value);
-            } else if (Short.class.isAssignableFrom(binding)) {
-                writer.writeNumber((Short) value);
-            } else if (Byte.class.isAssignableFrom(binding)) {
-                writer.writeNumber((Byte) value);
-            } else if (BigInteger.class.isAssignableFrom(binding)) {
-                writer.writeNumber((BigInteger) value);
-            } else if (BigDecimal.class.isAssignableFrom(binding)) {
-                writer.writeNumber((BigDecimal) value);
-            } else if (Integer.class.isAssignableFrom(binding)) {
-                writer.writeNumber((Integer) value);
-            } else if (Long.class.isAssignableFrom(binding)) {
-                writer.writeNumber((Long) value);
-
-            } else if (Boolean.class.isAssignableFrom(binding)) {
-                writer.writeBoolean((Boolean) value);
-            } else if (String.class.isAssignableFrom(binding)) {
-                writer.writeString(String.valueOf(value));
-            } else {
-                //fallback
-                writer.writeString(String.valueOf(value));
+        } else if (Collection.class.isAssignableFrom(binding)) {
+            writer.writeStartArray();
+            Collection coll = (Collection) value;
+            for (Object obj : coll) {
+                writeValue(obj);
             }
+            writer.writeEndArray();
+
+        } else if (Double.class.isAssignableFrom(binding)) {
+            writer.writeNumber((Double) value);
+        } else if (Float.class.isAssignableFrom(binding)) {
+            writer.writeNumber((Float) value);
+        } else if (Short.class.isAssignableFrom(binding)) {
+            writer.writeNumber((Short) value);
+        } else if (Byte.class.isAssignableFrom(binding)) {
+            writer.writeNumber((Byte) value);
+        } else if (BigInteger.class.isAssignableFrom(binding)) {
+            writer.writeNumber((BigInteger) value);
+        } else if (BigDecimal.class.isAssignableFrom(binding)) {
+            writer.writeNumber((BigDecimal) value);
+        } else if (Integer.class.isAssignableFrom(binding)) {
+            writer.writeNumber((Integer) value);
+        } else if (Long.class.isAssignableFrom(binding)) {
+            writer.writeNumber((Long) value);
+
+        } else if (Boolean.class.isAssignableFrom(binding)) {
+            writer.writeBoolean((Boolean) value);
+        } else if (String.class.isAssignableFrom(binding)) {
+            writer.writeString(String.valueOf(value));
+        } else {
+            //fallback
+            writer.writeString(String.valueOf(value));
         }
     }
 

@@ -6,6 +6,7 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 
 import org.apache.sis.referencing.IdentifiedObjects;
+import org.apache.sis.util.logging.Logging;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.PropertyType;
 import org.geotoolkit.feature.type.*;
@@ -26,7 +27,10 @@ import org.geotoolkit.lang.Static;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * An utility class to handle read/write of FeatureType into a JSON schema file.
@@ -43,6 +47,7 @@ import java.util.*;
  */
 public final class FeatureTypeUtils extends Static {
 
+    private static final Logger LOGGER = Logging.getLogger(FeatureTypeUtils.class);
     private static final FeatureTypeFactory FT_FACTORY = FeatureTypeFactory.INSTANCE;
 
     private static final String TITLE = "title";
@@ -159,7 +164,7 @@ public final class FeatureTypeUtils extends Static {
         Class binding = att.getValueClass();
 
         writer.writeStringField(TYPE, findType(binding));
-        writer.writeStringField(JAVA_TYPE, binding.getCanonicalName());
+        writer.writeStringField(JAVA_TYPE, binding.getName());
         if (att.getDescription() != null) {
             writer.writeStringField(DESCRIPTION, att.getDescription().toString());
         }
@@ -183,7 +188,14 @@ public final class FeatureTypeUtils extends Static {
     private static void writeUserData(Map<Object, Object> userData, JsonGenerator writer) throws IOException {
         writer.writeObjectFieldStart(USER_DATA);
         for (Map.Entry<Object, Object> entry : userData.entrySet()) {
-            writer.writeStringField(entry.getKey().toString(), entry.getValue().toString());
+            Object key = entry.getKey();
+            Object value = entry.getValue();
+
+            if (!(key instanceof Serializable) || !(value instanceof Serializable)) {
+                LOGGER.log(Level.WARNING, "User map entry not serializable "+entry);
+            } else {
+                writer.writeStringField(key.toString(), value.toString());
+            }
         }
         writer.writeEndObject();
     }
@@ -214,12 +226,7 @@ public final class FeatureTypeUtils extends Static {
         }
         writer.writeStringField(JAVA_TYPE, geometryType.getBinding().getCanonicalName());
         CoordinateReferenceSystem crs = geometryType.getCoordinateReferenceSystem();
-        String crsCode;
-        if (org.geotoolkit.referencing.CRS.equalsIgnoreMetadata(crs, CommonCRS.WGS84.normalizedGeographic())) {
-            crsCode = "WGS84";
-        } else {
-            crsCode = IdentifiedObjects.getIdentifierOrName(crs);
-        }
+        String crsCode = GeoJSONUtils.toURN(crs);
         writer.writeStringField(CRS, crsCode);
         writer.writeEndObject();
         return true;

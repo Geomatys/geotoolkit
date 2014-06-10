@@ -25,6 +25,7 @@ import org.geotoolkit.data.geojson.binding.*;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Array;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -224,6 +225,33 @@ public class GeoJSONParser {
     }
 
     /**
+     * Parse a List of Objects.
+     * JsonParser location MUST be on a START_ARRAY token.
+     * @param p parser jackson parser with current token on a START_ARRAY.
+     * @return List of Objects
+     * @throws IOException
+     */
+    public static Object parseArray2(JsonParser p) throws IOException {
+        assert(p.getCurrentToken() == JsonToken.START_ARRAY);
+        List<Object> list = new ArrayList<Object>();
+        while (p.nextToken() != JsonToken.END_ARRAY) {
+            list.add(getValue(p.getCurrentToken(), p));
+        }
+
+        if (list.isEmpty()) {
+            return new Object[0];
+        }
+
+        Class binding = list.get(0).getClass();
+        Object newArray = Array.newInstance(binding, list.size());
+        for (int i = 0; i < list.size(); i++) {
+            Array.set(newArray, i, list.get(i));
+        }
+
+        return newArray;
+    }
+
+    /**
      * Convert the current token to appropriate object.
      * Supported (String, Integer, Float, Boolean, Null, Array, Map)
      *
@@ -244,7 +272,7 @@ public class GeoJSONParser {
         } else if (token == JsonToken.VALUE_NULL) {
             return null;
         } else if (token == JsonToken.START_ARRAY) {
-            return parseArray(p);
+            return parseArray2(p);
         } else if (token == JsonToken.START_OBJECT) {
             return parseMap(p);
         } else {

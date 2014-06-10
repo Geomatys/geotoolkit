@@ -40,6 +40,9 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Array;
+import java.util.AbstractMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.locks.ReadWriteLock;
@@ -53,6 +56,7 @@ public class GeoJSONReader implements FeatureReader<FeatureType, Feature> {
 
     private final static Logger LOGGER = Logging.getLogger(GeoJSONReader.class);
     private final static ConverterRegistry CONVERTER_REGISTRY = ConverterRegistry.system();
+    private final Map<Map.Entry<Class, Class>, ObjectConverter> convertersCache = new HashMap<Map.Entry<Class, Class>, ObjectConverter>();
 
     private GeoJSONParser parser = new GeoJSONParser(true);
     private GeoJSONObject jsonObj = null;
@@ -182,41 +186,48 @@ public class GeoJSONReader implements FeatureReader<FeatureType, Feature> {
             value = properties.get(attName);
 
             if (type instanceof ComplexType ) {
+                    if (value != null) {
+                        Class valueClass = value.getClass();
 
-                    if (value instanceof List) {
-                        List valueList = (List) value;
-                        if (!valueList.isEmpty()) {
-                            int listSize = valueList.size();
-                            Object firstElement = valueList.get(0);
+                        if (valueClass.isArray()) {
+                            Class base = value.getClass().getComponentType();
 
-                            //list of objects
-                            if (firstElement instanceof Map) {
-                                for (int i = 0; i < listSize; i++) {
+                            if (!Map.class.isAssignableFrom(base)) {
+                                LOGGER.log(Level.WARNING, "Invalid complex property value " + value);
+                            }
+
+                            final int size = Array.getLength(value);
+                            if (size > 0) {
+
+                                //list of objects
+                                for (int i = 0; i < size; i++) {
                                     final ComplexAttribute subComplexAttribute = FeatureUtilities.defaultProperty((ComplexType) type);
-                                    fillFeature(subComplexAttribute, (Map) valueList.get(i));
+                                    fillFeature(subComplexAttribute, (Map) Array.get(value, i));
                                     attribute.getProperties().add(subComplexAttribute);
                                 }
-                            } else {
-                                LOGGER.log(Level.WARNING, "Invalid complex property value "+value);
                             }
+                        } else if (value instanceof Map) {
+                            final ComplexAttribute subComplexAttribute = FeatureUtilities.defaultProperty((ComplexType) type);
+                            fillFeature(subComplexAttribute, (Map) value);
+                            attribute.getProperties().add(subComplexAttribute);
                         }
-                    } else if (value instanceof Map) {
-                        final ComplexAttribute subComplexAttribute = FeatureUtilities.defaultProperty((ComplexType) type);
-                        fillFeature(subComplexAttribute, (Map) value);
-                        attribute.getProperties().add(subComplexAttribute);
                     }
                     continue;
 
             } else if(type instanceof AttributeType) {
 
-                if(isSimple){
-                    attribute.getProperty(desc.getName().getLocalPart()).setValue(value);
-                }else{
-                    Property prop = FeatureUtilities.defaultProperty(desc);
-                    fillProperty(prop, value);
-                    attribute.getProperties().add(prop);
+                Property property;
+                if (isSimple) {
+                    property = attribute.getProperty(desc.getName().getLocalPart());
+                } else {
+                    property = FeatureUtilities.defaultProperty(desc);
                 }
 
+                fillProperty(property, value);
+
+                if (!isSimple) {
+                    attribute.getProperties().add(property);
+                }
             }
         }
     }
@@ -229,20 +240,76 @@ public class GeoJSONReader implements FeatureReader<FeatureType, Feature> {
     private void fillProperty(Property prop, Object value) throws FeatureStoreRuntimeException {
 
         Object convertValue = null;
-        if (value != null) {
-            AttributeType propertyType = (AttributeType)prop.getType();
-            Class binding = propertyType.getValueClass();
+        try {
+            if (value != null) {
+                PropertyType propertyType = prop.getType();
+                Class binding = propertyType.getBinding();
 
-            try {
-                ObjectConverter converter = CONVERTER_REGISTRY.converter(value.getClass(), binding);
-                convertValue = converter.convert(value);
-            } catch (NonconvertibleObjectException e) {
-                throw new FeatureStoreRuntimeException(String.format("Inconvertible property %s : %s",
-                        prop.getName().getLocalPart(), e.getMessage()), e);
+                if (value.getClass().isArray() && binding.isArray()) {
+
+                    int nbdim = 1;
+                    Class base = value.getClass().getComponentType();
+                    while (base.isArray()) {
+                        base = base.getComponentType();
+                        nbdim++;
+                    }
+
+                    convertValue = rebuildArray(value, base, nbdim);
+
+                } else {
+                    convertValue = convert(value, binding);
+                }
             }
+        } catch (NonconvertibleObjectException e1) {
+            throw new FeatureStoreRuntimeException(String.format("Inconvertible property %s : %s",
+                    prop.getName().getLocalPart(), e1.getMessage()), e1);
         }
 
         prop.setValue(convertValue);
+    }
+
+    /**
+     * Rebuild nDim arrays recursively
+     * @param candidate
+     * @param componentType
+     * @param depth
+     * @return Array object
+     * @throws NonconvertibleObjectException
+     */
+    private Object rebuildArray(Object candidate, Class componentType, int depth) throws NonconvertibleObjectException {
+        if(candidate==null) return null;
+
+        if(candidate.getClass().isArray()){
+            final int size = Array.getLength(candidate);
+            final int[] dims = new int[depth];
+            dims[0] = size;
+            final Object rarray = Array.newInstance(componentType, dims);
+            depth--;
+            for(int k=0; k<size; k++){
+                Array.set(rarray, k, rebuildArray(Array.get(candidate, k), componentType, depth));
+            }
+            return rarray;
+        }else{
+            return convert(candidate, componentType);
+        }
+    }
+
+    /**
+     * Convert value object into binding class
+     * @param value
+     * @param binding
+     * @return
+     * @throws NonconvertibleObjectException
+     */
+    private Object convert(Object value, Class binding) throws NonconvertibleObjectException {
+        AbstractMap.SimpleEntry<Class, Class> key = new AbstractMap.SimpleEntry<Class, Class>(value.getClass(), binding);
+        ObjectConverter converter = convertersCache.get(key);
+
+        if (converter == null) {
+            converter = CONVERTER_REGISTRY.converter(value.getClass(), binding);
+            convertersCache.put(key, converter);
+        }
+        return converter.convert(value);
     }
 
     /**

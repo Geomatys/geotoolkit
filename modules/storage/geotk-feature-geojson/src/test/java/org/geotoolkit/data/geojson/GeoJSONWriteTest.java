@@ -83,6 +83,7 @@ public class GeoJSONWriteTest {
         try{
             Feature feature = fw.next();
             feature.getDefaultGeometryProperty().setValue(expectedPoint);
+            feature.getProperty("type").setValue("simple");
             fw.write();
         }finally{
             fw.close();
@@ -93,6 +94,7 @@ public class GeoJSONWriteTest {
         FeatureReader reader = store.getFeatureReader(QueryBuilder.all(validFeatureType.getName()));
         assertTrue(reader.hasNext());
         Feature f = reader.next();
+        assertEquals("simple", f.getProperty("type").getValue());
         GeometryAttribute geom = f.getDefaultGeometryProperty();
         assertNotNull(geom);
         assertEquals(expectedPoint, geom.getValue());

@@ -5,6 +5,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.*;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.session.Session;
+import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.type.DefaultName;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
@@ -16,6 +17,7 @@ import org.opengis.parameter.ParameterValueGroup;
 
 import java.net.URL;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.geotoolkit.data.geojson.GeoJSONFeatureStoreFactory.*;
@@ -213,6 +215,56 @@ public class GeoJSONReadTest {
         Session session = store.createSession(false);
         FeatureCollection fcoll = session.getFeatureCollection(QueryBuilder.all(name));
         assertEquals(7, fcoll.size());
+    }
+
+    /**
+     * Test reading of Features with array as properties value
+     * @throws DataStoreException
+     */
+    @Test
+    public void readPropertyArrayTest() throws DataStoreException {
+        URL arrayFile = GeoJSONReadTest.class.getResource("/org/geotoolkit/geojson/f_prop_array.json");
+
+        ParameterValueGroup param = PARAMETERS_DESCRIPTOR.createValue();
+        param.parameter(URLP.getName().getCode()).setValue(arrayFile);
+        FeatureStore store = FeatureStoreFinder.open(param);
+        assertNotNull(store);
+
+        assertEquals(1, store.getNames().size());
+        Name name = store.getNames().iterator().next();
+        assertEquals(new DefaultName("f_prop_array"), name);
+
+        FeatureType ft = store.getFeatureType(name);
+        testFeatureTypes(buildPropertyArrayFeatureType("f_prop_array", Geometry.class), ft);
+
+        Session session = store.createSession(false);
+        FeatureCollection fcoll = session.getFeatureCollection(QueryBuilder.all(name));
+        assertEquals(2, fcoll.size());
+
+        Double[][] array1 = new Double[5][5];
+        Double[][] array2 = new Double[5][5];
+        for (int i = 0; i < 5; i++) {
+            for (int j = 0; j < 5; j++) {
+                array1[i][j] = (double) (i + j);
+                array2[i][j] = (double) (i - j);
+            }
+        }
+
+        FeatureIterator ite = fcoll.iterator();
+        Feature feat1 = ite.next();
+        assertArrayEquals(array1, (Double[][]) feat1.getProperty("array").getValue());
+
+        Feature feat2 = ite.next();
+        assertArrayEquals(array2, (Double[][])feat2.getProperty("array").getValue());
+
+    }
+
+    private FeatureType buildPropertyArrayFeatureType(String name, Class geomClass) {
+        final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
+        ftb.setName(name);
+        ftb.add("array", Double[][].class);
+        ftb.add("geometry", geomClass, DefaultGeographicCRS.WGS84);
+        return ftb.buildSimpleFeatureType();
     }
 
     private FeatureType buildGeometryFeatureType(String name, Class geomClass) {

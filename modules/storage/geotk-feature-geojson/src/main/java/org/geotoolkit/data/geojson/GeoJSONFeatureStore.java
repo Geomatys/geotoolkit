@@ -82,15 +82,23 @@ public class GeoJSONFeatureStore extends AbstractFeatureStore {
 
         final URL url = (URL) params.parameter(URLP.getName().toString()).getValue();
         this.isLocal = url.toExternalForm().toLowerCase().startsWith("file:");
+
+        File tmpFile = null;
         try {
-            this.jsonFile = new File(url.toURI());
+            tmpFile = new File(url.toURI());
         } catch (URISyntaxException ex) {
             throw new DataStoreException(ex);
         }
 
-        //search for description json file
-        String typeName = GeoJSONUtils.getNameWithoutExt(jsonFile);
-        this.descFile = new File(jsonFile.getParent(), typeName + DESC_FILE_SUFFIX);
+        if (tmpFile.getName().endsWith(DESC_FILE_SUFFIX)) {
+            this.descFile = tmpFile;
+            this.jsonFile = new File(descFile.getParentFile(), tmpFile.getName().replace(DESC_FILE_SUFFIX, ".json"));
+        } else {
+            this.jsonFile = tmpFile;
+            //search for description json file
+            String typeName = GeoJSONUtils.getNameWithoutExt(jsonFile);
+            this.descFile = new File(jsonFile.getParent(), typeName + DESC_FILE_SUFFIX);
+        }
     }
 
     private static ParameterValueGroup toParameter(final URL url, final String namespace, Integer coordAccuracy){
