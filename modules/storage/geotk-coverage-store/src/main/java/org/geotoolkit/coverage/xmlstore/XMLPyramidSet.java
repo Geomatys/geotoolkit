@@ -123,16 +123,16 @@ public class XMLPyramidSet extends AbstractPyramidSet{
     /**
      * Create and register a new pyramid in the set.
      *
-     * @param crs
-     * @return
+     * @param crs The {@link org.opengis.referencing.crs.CoordinateReferenceSystem} for the image data of the pyramid.
+     * @return The newly created pyramid.
+     * @throws org.apache.sis.storage.DataStoreException If the given CRS is null or invalid.
      */
-    Pyramid createPyramid(CoordinateReferenceSystem crs) {
-        final XMLPyramid pyramid = new XMLPyramid();
-        pyramid.setCoordinateReferenceSystem(crs);
+    Pyramid createPyramid(CoordinateReferenceSystem crs) throws DataStoreException {
+        final XMLPyramid pyramid = new XMLPyramid(crs);
         try {
             pyramid.id = URLEncoder.encode(IdentifiedObjects.getIdentifier(crs),"UTF-8");
         } catch (UnsupportedEncodingException ex) {
-            throw new RuntimeException(ex.getMessage(),ex);
+            throw new DataStoreException("No valid identifier can be created from given CRS.", ex);
         }
         pyramid.initialize(this);
         pyramids().add(pyramid);

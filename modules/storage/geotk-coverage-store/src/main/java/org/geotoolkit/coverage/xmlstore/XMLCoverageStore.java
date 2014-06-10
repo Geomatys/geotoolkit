@@ -17,6 +17,7 @@
 package org.geotoolkit.coverage.xmlstore;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -49,6 +50,8 @@ public class XMLCoverageStore extends AbstractCoverageStore{
     private final URL rootPath;
     private final DataNode rootNode = new DefaultDataNode();
 
+    final boolean cacheTileState;
+
     public XMLCoverageStore(File root) throws URISyntaxException, MalformedURLException{
         this(toParameters(root));
     }
@@ -61,6 +64,8 @@ public class XMLCoverageStore extends AbstractCoverageStore{
         super(params);
         rootPath = (URL) params.parameter(XMLCoverageStoreFactory.PATH.getName().getCode()).getValue();
         root = new File(rootPath.toURI());
+        Boolean tmpCacheState = Parameters.value(XMLCoverageStoreFactory.CACHE_TILE_STATE, params);
+        cacheTileState = (tmpCacheState == null)? false : tmpCacheState;
         explore();
     }
 
@@ -95,13 +100,14 @@ public class XMLCoverageStore extends AbstractCoverageStore{
             root.mkdirs();
         }
 
-        final File[] childs = root.listFiles();
-        if(childs != null){
-            for(File f : childs){
-                if(f.isDirectory() || !f.getName().toLowerCase().endsWith(".xml")){
-                    continue;
-                }
-
+        final File[] children = root.listFiles(new FileFilter() {
+            @Override
+            public boolean accept(File pathname) {
+                return pathname.isFile() && pathname.getName().toLowerCase().endsWith(".xml");
+            }
+        });
+        if (children != null) {
+            for (File f : children) {
                 //try to parse the file
                 try {
                     //TODO useless copy here
@@ -112,6 +118,8 @@ public class XMLCoverageStore extends AbstractCoverageStore{
                     rootNode.getChildren().add(ref);
                 } catch (JAXBException ex) {
                     getLogger().log(Level.INFO, "file is not a pyramid : {0}", f.getPath());
+                } catch (DataStoreException ex) {
+                    getLogger().log(Level.WARNING, "Pyramid descriptor contains an invalid CRS : "+f.getAbsolutePath(), ex);
                 }
             }
         }

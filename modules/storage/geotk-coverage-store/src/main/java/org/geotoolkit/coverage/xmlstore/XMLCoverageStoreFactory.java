@@ -19,6 +19,8 @@ package org.geotoolkit.coverage.xmlstore;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Collections;
+
+import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.iso.ResourceInternationalString;
 import org.geotoolkit.coverage.AbstractCoverageStoreFactory;
@@ -26,8 +28,6 @@ import org.geotoolkit.coverage.CoverageStore;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
-import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.identification.Identification;
 import org.opengis.parameter.ParameterDescriptor;
@@ -58,13 +58,23 @@ public class XMLCoverageStoreFactory extends AbstractCoverageStoreFactory{
     /**
      * Mandatory - the folder path
      */
-    public static final ParameterDescriptor<URL> PATH =
-            new DefaultParameterDescriptor<>("path","folder path",URL.class,null,true);
+    public static final ParameterDescriptor<URL> PATH;
+    /**
+     * A parameter to specify if tile states will be checked using descriptor file (default) or not.
+     */
+    public static final ParameterDescriptor<Boolean> CACHE_TILE_STATE;
 
-
-    public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
-            new DefaultParameterDescriptorGroup("XMLCoverageStoreParameters",
-                IDENTIFIER,PATH,NAMESPACE);
+    public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR;
+    static {
+        ParameterBuilder builder = new ParameterBuilder();
+        PATH = builder.addName("path")
+                .setRemarks(new ResourceInternationalString("org/geotoolkit/coverage/bundle", "coverageXMLPathRemarks"))
+                .setRequired(true).create(URL.class, null);
+        CACHE_TILE_STATE = builder.addName("cacheTileState")
+                .setRemarks(new ResourceInternationalString("org/geotoolkit/coverage/bundle", "coverageXMLTileStateRemarks"))
+                .setRequired(false).create(Boolean.class, false);
+        PARAMETERS_DESCRIPTOR = builder.addName("XMLCoverageStoreParameters").createGroup(IDENTIFIER, PATH, NAMESPACE, CACHE_TILE_STATE);
+    }
 
     @Override
     public Identification getIdentification() {

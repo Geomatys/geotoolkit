@@ -89,6 +89,8 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
     //caches
     @XmlTransient
     private List<GridSampleDimension> cacheDimensions = null;
+    @XmlTransient
+    boolean flushTileState;
 
     public XMLCoverageReference() {
         super(null, new DefaultName("test"), 0);
@@ -115,18 +117,21 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
         this.sampleDimensions   = ref.sampleDimensions;
         this.set.setRef(this);
     }
-    
-    void initialize(File mainFile){
+
+    void initialize(File mainFile) throws DataStoreException {
         this.mainfile = mainFile;
         //calculate id based on file name
         id = mainfile.getName();
         int index = id.lastIndexOf('.');
-        if(index > 0){
-            id = id.substring(0,index);
+        if (index > 0) {
+            id = id.substring(0, index);
         }
-
+        // In case we created the reference by unmarshalling a file, the pyramid set is not bound to its parent coverage reference.
         final XMLPyramidSet set = getPyramidSet();
-        for(XMLPyramid pyramid : set.pyramids()){
+        if (set.getRef() == null) {
+            set.setRef(this);
+        }
+        for (XMLPyramid pyramid : set.pyramids()) {
             pyramid.initialize(set);
         }
     }
@@ -175,9 +180,10 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
      *
      * @param file
      * @return
-     * @throws JAXBException
+     * @throws JAXBException if an error occured while reading descriptor file.
+     * @throws org.apache.sis.storage.DataStoreException if the file describe a pyramid, but it contains an invalid CRS.
      */
-    public static XMLCoverageReference read(File file) throws JAXBException{
+    public static XMLCoverageReference read(File file) throws JAXBException, DataStoreException {
         final MarshallerPool pool = getPoolInstance();
         final Unmarshaller unmarshaller = pool.acquireUnmarshaller();
         final XMLCoverageReference ref;
