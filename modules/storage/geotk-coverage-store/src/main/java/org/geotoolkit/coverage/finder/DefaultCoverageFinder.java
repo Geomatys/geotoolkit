@@ -47,32 +47,32 @@ class DefaultCoverageFinder extends CoverageFinder {
         Collections.reverse(mosaics);
         GridMosaic result = null;
         mosaicLoop:
-        for(GridMosaic candidate : mosaics){
+        for (GridMosaic candidate : mosaics) {
             //check the mosaic intersect the searched envelope
             final GeneralEnvelope clip = new GeneralEnvelope(candidate.getEnvelope());
-            if(!clip.intersects(env)) continue;
+            if (!clip.intersects(env)) continue;
             //calculate the intersection, will be used to determinate the number of tiles used.
             clip.intersect(env);
-            
+
             final DirectPosition ul = candidate.getUpperLeftCorner();
             final double scale = candidate.getScale();
-            
-            if(result == null){
+
+            if (result == null) {
                 //set the highest mosaic as base
                 result = candidate;
-            }else{
+            } else {
                 //check additional axis
-                for(int i=2,n=ul.getDimension();i<n;i++){
+                for (int i = 2, n = ul.getDimension(); i < n; i++) {
                     final double median = env.getMedian(i);
                     final double currentDistance = Math.abs(
                             candidate.getUpperLeftCorner().getOrdinate(i) - median);
                     final double candidateDistance = Math.abs(
                             ul.getOrdinate(i) - median);
-                    
-                    if(candidateDistance < currentDistance){
+
+                    if (candidateDistance < currentDistance) {
                         //better mosaic
                         break;
-                    }else if(candidateDistance > currentDistance){
+                    } else if (candidateDistance > currentDistance) {
                         //less accurate
                         continue mosaicLoop;
                     }
@@ -80,30 +80,30 @@ class DefaultCoverageFinder extends CoverageFinder {
                 }
             }
             
-            //check if it will not requiere too much tiles
+            //check if it will not require too much tiles
             final Dimension tileSize = candidate.getTileSize();
-            double nbtileX = clip.getSpan(0) / (tileSize.width*scale);
-            double nbtileY = clip.getSpan(1) / (tileSize.height*scale);
-            
+            double nbtileX = clip.getSpan(0) / (tileSize.width * scale);
+            double nbtileY = clip.getSpan(1) / (tileSize.height * scale);
+
             //if the envelope has some NaN, we presume it's a square
-            if(Double.isNaN(nbtileX) || Double.isInfinite(nbtileX)){
+            if (Double.isNaN(nbtileX) || Double.isInfinite(nbtileX)) {
                 nbtileX = nbtileY;
-            }else if(Double.isNaN(nbtileY) || Double.isInfinite(nbtileY)){
+            } else if (Double.isNaN(nbtileY) || Double.isInfinite(nbtileY)) {
                 nbtileY = nbtileX;
             }
-                        
-            if(maxTileNumber > 0 && nbtileX*nbtileY > maxTileNumber){
-                //we haven't reach the best resolution, it would requiere
+
+            if (maxTileNumber > 0 && nbtileX * nbtileY > maxTileNumber) {
+                //we haven't reach the best resolution, it would require
                 //too much tiles, we use the previous scale level
                 break;
             }
-            
+
             result = candidate;
-            
-            if( (scale * (1-tolerance)) < resolution){                      
+
+            if ((scale * (1 - tolerance)) < resolution) {
                 //we found the most accurate resolution
                 break;
-            }           
+            }
         }
         return result;
     }

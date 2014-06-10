@@ -87,10 +87,10 @@ public final class CoverageUtilities {
      * 
      * @param set : pyramid set to search in
      * @param crs searched crs
-     * @return Pyramid, never null exept if the pyramid set is empty
+     * @return Pyramid, never null except if the pyramid set is empty TODO : Is it really OK ? If we search a Lambert pyramid, and we've only got polar ones...
      */
     public static Pyramid findPyramid(final PyramidSet set, final CoordinateReferenceSystem crs) throws FactoryException {
-        final CoordinateReferenceSystem crs2D = get2Dpart(crs);
+        final CoordinateReferenceSystem crs2D = CRS.getHorizontalCRS(crs);
         final Envelope crsBound1 = CRS.getEnvelope(crs2D);
         double ratio = Double.NEGATIVE_INFINITY;
         // envelope with crs geographic.
@@ -101,7 +101,7 @@ public final class CoverageUtilities {
             noValidityDomainFound :
             for(Pyramid pyramid : set.getPyramids()) {
                 double ratioTemp = 0;
-                Envelope pyramidBound = CRS.getEnvelope(get2Dpart(pyramid.getCoordinateReferenceSystem()));
+                Envelope pyramidBound = CRS.getEnvelope(CRS.getHorizontalCRS(pyramid.getCoordinateReferenceSystem()));
                 if (pyramidBound == null) {
                     results.add(pyramid);
                     continue noValidityDomainFound;
@@ -147,7 +147,7 @@ public final class CoverageUtilities {
         if (results.size() == 1) return results.get(0);
         // if several equal ratio.
         for (Pyramid pyramid : results) {
-            final CoordinateReferenceSystem pyCrs = get2Dpart(pyramid.getCoordinateReferenceSystem());
+            final CoordinateReferenceSystem pyCrs = CRS.getHorizontalCRS(pyramid.getCoordinateReferenceSystem());
             if (CRS.findMathTransform(pyCrs, crs2D).isIdentity() 
              || CRS.equalsIgnoreMetadata(crs2D, pyCrs) 
              || CRS.equalsApproximatively(crs2D, pyCrs)) {
@@ -156,24 +156,6 @@ public final class CoverageUtilities {
         }
         // return first in list. impossible to define the most appropriate crs.
         return results.get(0);
-    }
-    
-    /**
-     * Find and return 2D part from multi-dimensional {@link CoordinateReferenceSystem}.
-     * 
-     * @param crs {@link CoordinateReferenceSystem} which is study.
-     * @return 2D part from multi-dimensional {@link CoordinateReferenceSystem}.
-     */
-    public static CoordinateReferenceSystem get2Dpart(CoordinateReferenceSystem crs) {
-        for(CoordinateReferenceSystem ccrrss : ReferencingUtilities.decompose(crs)) {
-            final CoordinateSystem cs = ccrrss.getCoordinateSystem();
-            if((cs instanceof CartesianCS) 
-            || (cs instanceof SphericalCS) 
-            || (cs instanceof EllipsoidalCS)) {
-                return ccrrss;
-            }
-        }
-        throw new IllegalArgumentException("no 2D part exist in this crs : "+crs.toString());
     }
     
     /**
