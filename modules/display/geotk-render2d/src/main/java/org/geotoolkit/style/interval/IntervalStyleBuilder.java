@@ -395,6 +395,11 @@ public class IntervalStyleBuilder extends AbstractTableModel{
                 Number classifValue = classification.evaluate(sf, Number.class);
                 double value;
 
+                if(classifValue==null){
+                    //skip null values in analyze
+                    continue;
+                }
+                
                 if(normalize == null || normalize.equals(noValue)){
                     value = classifValue.doubleValue();
                 }else{
@@ -420,7 +425,9 @@ public class IntervalStyleBuilder extends AbstractTableModel{
             allValues = values.toArray(new Double[values.size()]);
             Arrays.sort(allValues);
 
-            if (values.size() % 2 == 0) {
+            if (values.isEmpty()) {
+                median = 0;
+            } else if (values.size() % 2 == 0) {
                 median = (allValues[(allValues.length / 2) - 1] + allValues[allValues.length / 2]) / 2.0;
             } else {
                 median = allValues[allValues.length / 2];
