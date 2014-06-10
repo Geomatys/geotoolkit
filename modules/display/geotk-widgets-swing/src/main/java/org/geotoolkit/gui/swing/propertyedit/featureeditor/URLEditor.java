@@ -31,6 +31,8 @@ import javax.swing.JFileChooser;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.filechooser.FileFilter;
+
 import static org.geotoolkit.gui.swing.propertyedit.featureeditor.FileEditor.getPreviousPath;
 import static org.geotoolkit.gui.swing.propertyedit.featureeditor.FileEditor.setPreviousPath;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
@@ -45,8 +47,13 @@ public class URLEditor extends PropertyValueEditor implements ActionListener, Do
 
     private final JTextField component = new JTextField();
     private final JButton chooseButton = new JButton("...");
+    private final FileFilter filter;
 
     public URLEditor() {
+        this(null);
+    }
+
+    public URLEditor(FileFilter filter) {
         super(new BorderLayout());
         add(BorderLayout.CENTER, component);
         add(BorderLayout.EAST, chooseButton);
@@ -54,6 +61,7 @@ public class URLEditor extends PropertyValueEditor implements ActionListener, Do
         chooseButton.addActionListener(this);
         chooseButton.addFocusListener(this);
         chooseButton.setMargin(new Insets(0, 0, 0, 0));
+        this.filter = filter;
     }
 
     @Override
@@ -90,7 +98,9 @@ public class URLEditor extends PropertyValueEditor implements ActionListener, Do
         final JFileChooser chooser = new JFileChooser();
         chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
         chooser.setMultiSelectionEnabled(false);
-
+        if (filter != null) {
+            chooser.setFileFilter(filter);
+        }
         final String prevPath = getPreviousPath();
         if (prevPath != null) {
             chooser.setCurrentDirectory(new File(prevPath));
