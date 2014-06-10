@@ -33,6 +33,7 @@ import org.geotoolkit.coverage.PyramidSet;
 import org.geotoolkit.wmts.WMTSUtilities;
 import org.geotoolkit.wmts.xml.v100.TileMatrix;
 import org.geotoolkit.wmts.xml.v100.TileMatrixLimits;
+import org.opengis.coverage.PointOutsideCoverageException;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 
@@ -132,7 +133,10 @@ public class WMTSMosaic implements GridMosaic{
     }
     
     @Override
-    public boolean isMissing(int col, int row) {        
+    public boolean isMissing(int col, int row) throws PointOutsideCoverageException {
+        if (col < 0 || row < 0 || col > matrix.getMatrixHeight() || row > matrix.getMatrixWidth()) {
+            throw new PointOutsideCoverageException("Queried tile position is outside matrix dimension.", new GeneralDirectPosition(col, row));
+        }
         if(limit == null) return false;
         
         //limits are exclusive

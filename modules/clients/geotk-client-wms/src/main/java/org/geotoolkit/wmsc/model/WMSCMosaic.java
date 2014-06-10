@@ -18,7 +18,6 @@ package org.geotoolkit.wmsc.model;
 
 import java.awt.Dimension;
 import java.awt.Point;
-import java.awt.geom.Point2D;
 import java.util.Collection;
 import java.util.Map;
 import java.util.UUID;

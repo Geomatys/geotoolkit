@@ -22,6 +22,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import org.apache.sis.storage.DataStoreException;
+import org.opengis.coverage.PointOutsideCoverageException;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 
@@ -94,15 +95,16 @@ public interface GridMosaic {
      * 
      * @param col
      * @param row
-     * @return true is tile is missing
+     * @return true if tile is missing
+     * @throws org.opengis.coverage.PointOutsideCoverageException if the queried coordinate is not an allowed tile indice.
      */
-    boolean isMissing(int col, int row);
+    boolean isMissing(int col, int row) throws PointOutsideCoverageException;
     
     /**
      * Get a tile.
      * @param col : tile column index
      * @param row : row column index
-     * @param hints : additional hints
+     * @param hints : additional hints. Can be null.
      * @return TileReference , may be null if tile is missing.
      * @throws DataStoreException  
      */
