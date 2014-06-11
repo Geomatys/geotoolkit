@@ -18,12 +18,15 @@
 package org.geotoolkit.wms.map;
 
 import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,6 +41,7 @@ import javax.swing.text.html.StyleSheet;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
+import org.apache.sis.internal.system.OS;
 import org.apache.sis.util.logging.Logging;
 import org.apache.sis.xml.MarshallerPool;
 
@@ -126,12 +130,27 @@ public class WMSPresenter extends AbstractInformationPresenter{
                 try {
                     final String requestMT = guiMimeTypes.getSelectedItem().toString();
                     final Request request = getFeatureInfo(reference, context, area, requestMT, 20);
-                    try{
-                        final JXHyperlink link = new JXHyperlink();
-                        link.setURI(request.getURL().toURI());
-                        guiCenterPanel.add(BorderLayout.NORTH,link);
-                    }catch(Exception ex){
-                        //hyperlinks is not supported on all platforms
+
+                    try {
+                        final URI uri = request.getURL().toURI();
+                        final JPanel urlPanel = new JPanel(new BorderLayout());
+                        final Action action = new BrowserAction(uri);
+                        final JXHyperlink link = new JXHyperlink(action);
+                        urlPanel.add(BorderLayout.CENTER,link);
+
+                        final JButton copyToClipboardBtn = new JButton("Copy URL");
+                        copyToClipboardBtn.addActionListener(new ActionListener() {
+                            @Override
+                            public void actionPerformed(ActionEvent e) {
+                                final Clipboard clpbrd = Toolkit.getDefaultToolkit().getSystemClipboard();
+                                clpbrd.setContents(new StringSelection(uri.toString()), null);
+                            }
+                        });
+                        urlPanel.add(BorderLayout.EAST, copyToClipboardBtn);
+
+                        guiCenterPanel.add(BorderLayout.NORTH,urlPanel);
+                    } catch(Exception ex) {
+                        LOGGER.log(Level.WARNING, "Can't build request URL.");
                     }
 
                     new Thread(){
@@ -387,4 +406,92 @@ public class WMSPresenter extends AbstractInformationPresenter{
         return null;
     }
 
+    /**
+     * Custom action that open an URI in system browser
+     * using first Desktop API and try with command line
+     * if Desktop API failed.
+     */
+    private class BrowserAction extends AbstractAction {
+
+        URI uri;
+
+        public BrowserAction(URI uri) {
+            super();
+            this.uri = uri;
+            putValue(Action.NAME, uri.toString());
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+
+            if ( !browseDesktop(uri)) {
+                if (!openCommandLine(uri.toString())) {
+                    LOGGER.log(Level.WARNING, "Unable to open browser for uri : "+uri.toString());
+                }
+            }
+        }
+
+        private boolean browseDesktop(URI uri) {
+
+            try {
+                if (!Desktop.isDesktopSupported()) {
+                    return false;
+                }
+
+                if (!Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
+                    return false;
+                }
+
+                Desktop.getDesktop().browse(uri);
+
+                return true;
+            } catch (Throwable t) {
+                return false;
+            }
+        }
+
+        private boolean openCommandLine(String what) {
+
+            OS os = OS.current();
+
+            if (os.equals(OS.LINUX)) {
+                if (runCommand("gnome-open", what)) return true;
+                if (runCommand("kde-open", what)) return true;
+                if (runCommand("xdg-open", what)) return true;
+            }
+
+            if (os.equals(OS.MAC_OS)) {
+                if (runCommand("open", what)) return true;
+            }
+
+            if (os.equals(OS.WINDOWS)) {
+                if (runCommand("explorer", what)) return true;
+            }
+
+            return false;
+        }
+
+        private boolean runCommand(String command, String uri) {
+
+            String[] parts = new String[] {command, uri};
+
+            try {
+                Process p = Runtime.getRuntime().exec(parts);
+                if (p == null) return false;
+
+                try {
+                    int retval = p.exitValue();
+                    if (retval == 0) {
+                        return false;
+                    } else {
+                        return false;
+                    }
+                } catch (IllegalThreadStateException itse) {
+                    return true;
+                }
+            } catch (IOException e) {
+                return false;
+            }
+        }
+    }
 }
