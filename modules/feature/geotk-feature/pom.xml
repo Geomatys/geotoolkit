@@ -69,8 +69,8 @@
 
       <dependency>
           <groupId>org.antlr</groupId>
-          <artifactId>antlr-runtime</artifactId>
-          <version>3.4</version>
+          <artifactId>antlr4-runtime</artifactId>
+          <version>4.2.2</version>
           <scope>compile</scope>
       </dependency>
 
@@ -111,18 +111,18 @@
         <plugins>
             <plugin>
                 <groupId>org.antlr</groupId>
-                <artifactId>antlr3-maven-plugin</artifactId>
-                <version>3.4</version>
+                <artifactId>antlr4-maven-plugin</artifactId>
+                <version>4.2.2</version>
                 <executions>
                     <execution>
                         <id>run antlr</id>
                         <phase>generate-sources</phase>
                         <goals>
-                            <goal>antlr</goal>
+                            <goal>antlr4</goal>
                         </goals>
                     </execution>
                 </executions>
-            </plugin>
+            </plugin>      
         </plugins>
     </build>
 

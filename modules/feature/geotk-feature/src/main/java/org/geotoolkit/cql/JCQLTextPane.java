@@ -20,7 +20,6 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -29,8 +28,10 @@ import javax.swing.JTextPane;
 import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
-import org.antlr.runtime.CommonToken;
-import org.antlr.runtime.tree.CommonTree;
+import org.antlr.v4.runtime.ParserRuleContext;
+import org.antlr.v4.runtime.Token;
+import org.antlr.v4.runtime.tree.ParseTree;
+import org.antlr.v4.runtime.tree.TerminalNode;
 import org.opengis.filter.Filter;
 import org.opengis.filter.expression.Expression;
 
@@ -160,29 +161,48 @@ public class JCQLTextPane extends JPanel implements KeyListener{
         final StyledDocument doc = (StyledDocument) guiText.getDocument();
         final String txt = guiText.getText();
 
-        final CommonTree tree = CQL.compile(txt);
+        final ParseTree tree = CQL.compile(txt);
         doc.setCharacterAttributes(0, txt.length(), styleError, true);
         syntaxHighLight(tree, doc, new AtomicInteger());
     }
     
-    private void syntaxHighLight(CommonTree tree, StyledDocument doc, AtomicInteger position){
+    private void syntaxHighLight(ParseTree tree, StyledDocument doc, AtomicInteger position){
         
-        if(tree.token != null && tree.token.getTokenIndex() >= 0){
+        if(tree instanceof ParserRuleContext){
+            final ParserRuleContext prc = (ParserRuleContext) tree;
+            if(prc.exception!=null){
+                //error nodes
+                final Token tokenStart = prc.getStart();
+                Token tokenEnd = prc.getStop();
+                if(tokenEnd==null) tokenEnd = tokenStart;
+                final int offset = tokenStart.getStartIndex();
+                final int length = tokenEnd.getStopIndex()-tokenStart.getStartIndex() +1;
+                doc.setCharacterAttributes(offset, length, styleError, true);
+                return;
+            }
+        }
+        
+        if(tree instanceof TerminalNode){
+            final TerminalNode tn = (TerminalNode) tree;
             // if index<0 = missing token
-            final CommonToken ct = (CommonToken) tree.token;
-            final int offset = ct.getStartIndex();
-            final int length = ct.getStopIndex()-ct.getStartIndex() +1;
+            final Token token = tn.getSymbol();
+            final int offset = token.getStartIndex();
+            final int length = token.getStopIndex()-token.getStartIndex() +1;
             position.addAndGet(length);
             
-            switch(tree.token.getType()){
+            switch(token.getType()){
                 
+                case CQLLexer.COMMA : 
+                case CQLLexer.UNARY : 
+                case CQLLexer.MULT : 
+                    doc.setCharacterAttributes(offset, length, styleDefault, true);
+                    break;
+                    
                 // EXpressions -------------------------------------------------
                 case CQLLexer.TEXT : 
                 case CQLLexer.INT : 
                 case CQLLexer.FLOAT : 
-                case CQLLexer.UNARY : 
                 case CQLLexer.DATE : 
-                case CQLLexer.DURATION : 
                 case CQLLexer.DURATION_P : 
                 case CQLLexer.DURATION_T : 
                 case CQLLexer.POINT : 
@@ -191,8 +211,6 @@ public class JCQLTextPane extends JPanel implements KeyListener{
                 case CQLLexer.MPOINT : 
                 case CQLLexer.MLINESTRING : 
                 case CQLLexer.MPOLYGON : 
-                case CQLLexer.COORD : 
-                case CQLLexer.COORDS : 
                     doc.setCharacterAttributes(offset, length, styleLiteral, true);
                     break;
                 case CQLLexer.PROPERTY_NAME :
@@ -210,20 +228,13 @@ public class JCQLTextPane extends JPanel implements KeyListener{
                 case CQLLexer.RPAREN : 
                 case CQLLexer.LPAREN : 
                     doc.setCharacterAttributes(offset, length, styleParenthese, true);
-                    break;
-                    
-                case CQLLexer.EXP_ADD :
-                case CQLLexer.EXP_MUL :
-                    doc.setCharacterAttributes(offset, length, styleOperator, true);
-                    break;
-                    
+                    break;                    
                     
                 case CQLLexer.COMPARE :
                 case CQLLexer.LIKE :
                 case CQLLexer.IS :
                 case CQLLexer.BETWEEN :
                 case CQLLexer.IN :
-                case CQLLexer.FIL_LOG :
                     doc.setCharacterAttributes(offset, length, styleOperator, true);
                     break;
                 case CQLLexer.AND :
@@ -250,11 +261,9 @@ public class JCQLTextPane extends JPanel implements KeyListener{
             }
         }
         
-        final List children = tree.getChildren();        
-        if(children != null){
-            for(Object child : children){
-                syntaxHighLight((CommonTree)child, doc, position);
-            }
+        final int nbChild = tree.getChildCount();        
+        for(int i=0;i<nbChild;i++){
+            syntaxHighLight(tree.getChild(i), doc, position);
         }
     }
     
