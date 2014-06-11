@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2012, Geomatys
+ *    (C) 2012 - 2014, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -21,12 +21,15 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import org.apache.sis.internal.util.UnmodifiableArrayList;
+import org.apache.sis.util.iso.ResourceInternationalString;
+import org.geotoolkit.feature.Property;
+import org.geotoolkit.feature.type.PropertyType;
 import org.geotoolkit.gui.swing.propertyedit.featureeditor.ArrayEditor;
 import org.geotoolkit.gui.swing.propertyedit.featureeditor.BooleanEditor;
 import org.geotoolkit.gui.swing.propertyedit.featureeditor.CRSEditor;
@@ -45,9 +48,6 @@ import org.geotoolkit.gui.swing.propertyedit.featureeditor.StyleEditor;
 import org.geotoolkit.gui.swing.propertyedit.featureeditor.TimeStampEditor;
 import org.geotoolkit.gui.swing.propertyedit.featureeditor.URLEditor;
 import org.geotoolkit.gui.swing.propertyedit.featureeditor.UnitEditor;
-import org.apache.sis.util.iso.ResourceInternationalString;
-import org.geotoolkit.feature.Property;
-import org.geotoolkit.feature.type.PropertyType;
 import org.opengis.util.InternationalString;
 
 /**
@@ -57,6 +57,7 @@ import org.opengis.util.InternationalString;
  *
  * @author Johann Sorel (Geomatys)
  * @author Quentin Boileau (Geomatys)
+ * @author Cédric Briançon (Geomatys)
  */
 public class JAttributeEditor extends JPanel implements PropertyChangeListener, FocusListener {
 
@@ -69,15 +70,25 @@ public class JAttributeEditor extends JPanel implements PropertyChangeListener, 
     private static final String BUNDLE_PATH = "org/geotoolkit/gui/swing/resource/Bundle";
     private static final String NOT_SUPPORTED_KEY = "notSupported";
     private static final InternationalString NOT_SUPPORTED = new ResourceInternationalString(BUNDLE_PATH, NOT_SUPPORTED_KEY);
-    
+
+    /**
+     * Unmodifiable list of default editors.
+     */
+    private static final List<PropertyValueEditor> DEFAULT_EDITORS = UnmodifiableArrayList.wrap(
+        new PropertyValueEditor[]{
+            new ChoiceEditor(), new BooleanEditor(), new CRSEditor(), new CharsetEditor(), new CharacterEditor(),
+            new NumberEditor(), new StringEditor(), new InternationalStringEditor(), new URLEditor(),
+            new FileEditor(), new UnitEditor(), new EnumEditor(), new ArrayEditor(), new StyleEditor(),
+            new FilterEditor(), new DateEditor(), new TimeStampEditor()});
+
     private final JTextField notSupportedTF = new JTextField(NOT_SUPPORTED.toString());
-    private final List<PropertyValueEditor> editors = new CopyOnWriteArrayList<PropertyValueEditor>();
+    private final List<PropertyValueEditor> editors = new CopyOnWriteArrayList<>();
     private PropertyValueEditor editor;
     private Property property = null;
     private boolean useProvidedEditor;
 
     public JAttributeEditor(){
-      this(null);
+        this(null);
     }
 
     /**
@@ -150,34 +161,24 @@ public class JAttributeEditor extends JPanel implements PropertyChangeListener, 
         return editors;
     }
 
+    /**
+     * @return an {@linkplain UnmodifiableArrayList unmodifiable list} of default editors
+     */
     public static List<PropertyValueEditor> createDefaultEditorList(){
-        final List<PropertyValueEditor> lst = new ArrayList<PropertyValueEditor>();
-        lst.add(new ChoiceEditor());
-        lst.add(new BooleanEditor());
-        lst.add(new CRSEditor());
-        lst.add(new CharsetEditor());
-        lst.add(new CharacterEditor());
-        lst.add(new NumberEditor());
-        lst.add(new StringEditor());
-        lst.add(new InternationalStringEditor());
-        lst.add(new URLEditor());
-        lst.add(new FileEditor());
-        lst.add(new UnitEditor());
-        lst.add(new EnumEditor());
-        lst.add(new ArrayEditor());
-        lst.add(new StyleEditor());
-        lst.add(new FilterEditor());
-        lst.add(new DateEditor());
-        lst.add(new TimeStampEditor());
-        return lst;
+        return DEFAULT_EDITORS;
     }
 
 
     public static PropertyValueEditor getEditor(final Collection<? extends PropertyValueEditor> editors, PropertyType type){
         if(type != null){
             for(PropertyValueEditor edit : editors){
-                if(edit instanceof ArrayEditor){
-                    ((ArrayEditor)edit).setEditors(editors);
+                final Class clazz = type.getBinding();
+                if(edit instanceof ArrayEditor && clazz.isArray()){
+                    final PropertyValueEditor cp = edit.copy();
+                    ((ArrayEditor)cp).setEditors(editors);
+                    if(cp.canHandle(type)){
+                        return cp;
+                    }
                 }
 
                 if(edit.canHandle(type)){
