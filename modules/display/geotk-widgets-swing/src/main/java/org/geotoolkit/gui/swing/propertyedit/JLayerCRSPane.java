@@ -136,7 +136,7 @@ public class JLayerCRSPane extends AbstractPropertyPane {
      * The quote character is given by the {@code quote} argument and will be replaced by
      * the usual {@code "} character.
      */
-    private static void makeItalic(final String text, final StringBuilder buffer, final char quote) {
+    static void makeItalic(final String text, final StringBuilder buffer, final char quote) {
         boolean isQuoting = false;
         int last = 0;
         for (int i=text.indexOf(quote); i>=0; i=text.indexOf(quote, last)) {
