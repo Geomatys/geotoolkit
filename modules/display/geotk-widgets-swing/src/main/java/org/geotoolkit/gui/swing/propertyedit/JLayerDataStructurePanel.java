@@ -122,6 +122,8 @@ public class JLayerDataStructurePanel extends AbstractPropertyPane {
                 final GridEnvelope gridEnv = gridgeom.getExtent();
                 final MathTransform gridToCrs = gridgeom.getGridToCRS();
                 
+                final double[] coordGrid = new double[gridEnv.getDimension()];                
+                final double[] coordGeo = new double[gridEnv.getDimension()];                
                 
                 sb.append("<table><tbody>");
                 sb.append("<tr><td>");
@@ -136,7 +138,19 @@ public class JLayerDataStructurePanel extends AbstractPropertyPane {
                 sb.append("Geo max");
                 sb.append("</td></tr>");
                 for(int i=0;i<geoEnv.getDimension();i++){
-                    final String unit = crs.getCoordinateSystem().getAxis(i).getAbbreviation();
+                    
+                    //convert the grid coord to crs coord
+                    for(int k=0;k<coordGrid.length;k++){
+                        coordGrid[k] = gridEnv.getLow(k);
+                    }
+                    gridToCrs.transform(coordGrid, 0, coordGeo, 0, 1);
+                    final double geoMin = coordGeo[i];
+                    coordGrid[i] = gridEnv.getHigh(i);
+                    gridToCrs.transform(coordGrid, 0, coordGeo, 0, 1);
+                    final double geoMax = coordGeo[i];
+                    
+                    final Unit unit = crs.getCoordinateSystem().getAxis(i).getUnit();
+                    final String unitStr = (unit!=null) ? unit.toString() : "";
                     sb.append("<tr><td>");
                     sb.append(i);
                     sb.append("</td><td>");
@@ -144,9 +158,9 @@ public class JLayerDataStructurePanel extends AbstractPropertyPane {
                     sb.append("</td><td>");
                     sb.append(gridEnv.getHigh(i));
                     sb.append("</td><td>");
-                    sb.append(geoEnv.getMinimum(i)).append(' ').append(unit);
+                    sb.append(geoMin).append(' ').append(unitStr);
                     sb.append("</td><td>");
-                    sb.append(geoEnv.getMaximum(i)).append(' ').append(unit);
+                    sb.append(geoMax).append(' ').append(unitStr);
                     sb.append("</td></tr>");
                 }
                 sb.append("</tbody></table><br/>");
@@ -211,7 +225,7 @@ public class JLayerDataStructurePanel extends AbstractPropertyPane {
 //                sm.getTransferType();
 //                final ColorModel cm = image.getColorModel();
                 
-            } catch (CoverageStoreException ex) {
+            } catch (Exception ex) {
                 Logging.getLogger(JLayerDataStructurePanel.class).log(Level.INFO, ex.getMessage(),ex);
             }
         }
