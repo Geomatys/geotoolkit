@@ -19,7 +19,6 @@ package org.geotoolkit.filter;
 
 import java.util.List;
 import java.util.Set;
-import org.opengis.feature.type.Name;
 import org.opengis.filter.And;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory2;
@@ -92,6 +91,7 @@ import org.opengis.filter.temporal.TEquals;
 import org.opengis.filter.temporal.TOverlaps;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.Geometry;
+import org.opengis.util.GenericName;
 
 /**
  * Wrap a filter factory.
@@ -108,7 +108,7 @@ public class WrapFilterFactory2 implements FilterFactory2 {
     }
     
     @Override
-    public PropertyName property(Name name) {
+    public PropertyName property(GenericName name) {
         return factory.property(name);
     }
 
