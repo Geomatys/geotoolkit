@@ -681,11 +681,11 @@ public class TiffImageWriter extends SpatialImageWriter {
                 /*
                  * If an image has already been writen we stipulate next ifd position.
                  */
-                final int offset = (int) (channel.getStreamPosition());
+                final long offset = (channel.getStreamPosition());
                 channel.seek(ifdPosition[1]);
                 
                 if (isBigTIFF) channel.writeLong(offset);
-                else channel.writeInt(offset);
+                else channel.writeInt((int)offset);
                 
                 channel.seek(offset);
                 ifdPosition[0] = offset;
@@ -1595,7 +1595,7 @@ public class TiffImageWriter extends SpatialImageWriter {
                     
                     assert channel.getBitOffset() == 0;
                     
-                    final long dstTileOffset = (isBigTIFF) ? Array.getLong(replaceOffsetArray, (cty * dstNumXT + ctx)) : (Array.getInt(replaceOffsetArray, (cty * dstNumXT + ctx)) & 0xFFFFFFFFL);
+                    final long dstTileOffset = Array.getLong(replaceOffsetArray, (cty * dstNumXT + ctx));
                     
                     //-- compute current destination tile coordinates in image space  
                     final int ctRminy = trMinY  + cty * cellHeight;
@@ -1767,24 +1767,14 @@ public class TiffImageWriter extends SpatialImageWriter {
         assert bitPerSample != 0;
         
         final int numTiles = currentNumXT * currentNumYT;
-        final Object byteCountArray;
         final long byteCountArraySize;
-        final Object offsetArray;
         final long offsetArraySize;
-        final short arrayType;
-        if (isBigTIFF) {
-            byteCountArray = new long[numTiles];
-            offsetArray = new long[numTiles];
-            arrayType = TYPE_LONG;
-            byteCountArraySize = offsetArraySize = numTiles * TYPE_SIZE[TYPE_LONG];
-        } else {
-            byteCountArray = new int[numTiles];
-            offsetArray = new int[numTiles];
-            arrayType = TYPE_INT;
-            byteCountArraySize = offsetArraySize = numTiles * TYPE_SIZE[TYPE_INT];
-        }
+        final long[] byteCountArray = new long[numTiles];
+        final long[] offsetArray = new long[numTiles];
+        final short arrayType = TYPE_LONG;
+        byteCountArraySize = offsetArraySize = numTiles * TYPE_SIZE[TYPE_LONG];
 
-        final int buffPos = (int) channel.getStreamPosition();
+        final long buffPos = channel.getStreamPosition();
         
         //------------------- raster properties ------------------//        
         final Raster initRast         = image.getTile(imageTileGridXOffset, imageTileGridYOffset);
@@ -1851,23 +1841,15 @@ public class TiffImageWriter extends SpatialImageWriter {
             long currentoffset = buffPos + byteCountArraySize + offsetArraySize;
             
             // fill byte count array
-            if (isBigTIFF) {
-                Arrays.fill((long[]) byteCountArray, currentByteCount);
-                for (int i = 0; i < numTiles; i++) {
-                    Array.setLong(offsetArray, i, currentoffset);
-                    currentoffset += currentByteCount;
-                }
-            } else {
-                Arrays.fill((int[]) byteCountArray, (int) currentByteCount);
-                for (int i = 0; i < numTiles; i++) {
-                    Array.setInt(offsetArray, i, (int) currentoffset);
-                    currentoffset += currentByteCount;
-                }
+            Arrays.fill(byteCountArray, currentByteCount);
+            for (int i = 0; i < numTiles; i++) {
+                Array.setLong(offsetArray, i, currentoffset);
+                currentoffset += currentByteCount;
             }
             
             writeByteCountAndOffsets(byteCountTagPosition, arrayType, byteCountArray, offsetTagPosition, arrayType, offsetArray);
             //-- add current offset array in current headProperties --//
-            addProperty(TileOffsets, (isBigTIFF) ? TYPE_LONG : TYPE_INT, Array.getLength(offsetArray), offsetArray, headProperties);
+            addProperty(TileOffsets, TYPE_LONG, offsetArray.length, offsetArray, headProperties);
             
             // prendre les raster 1 a 1 et copier les buffers directements
             final int writeTileLength = currentImgTH * currentImgTW * imagePixelStride;
@@ -1919,7 +1901,7 @@ public class TiffImageWriter extends SpatialImageWriter {
             return;
         }        
         
-        final long destTileByteCount = (long) currentImgTH * currentImgTW * imagePixelStride * sampleSize;
+        final long destTileByteCount = ((long) currentImgTH) * currentImgTW * imagePixelStride * sampleSize;
         
         //-- initialization for packBit compression --//
         rowByte32773Pos   = 0;
@@ -1977,13 +1959,8 @@ public class TiffImageWriter extends SpatialImageWriter {
                         if (compression == 1)
                             assert currentTileByteCount == currentImgTW * currentImgTH * imagePixelStride * sampleSize :"expected currentByteCount = "+(currentImgTW * currentImgTH * imagePixelStride * sampleSize)+" found = "+currentTileByteCount+" at tile ("+ctx+", "+cty+").";
 
-                        if (isBigTIFF) {
-                            Array.setLong(offsetArray, tileOffsetID, tileOffsetBeg);
-                            Array.setLong(byteCountArray, tileOffsetID++, currentTileByteCount);
-                        } else {
-                            Array.setInt(offsetArray, tileOffsetID, (int) tileOffsetBeg);
-                            Array.setInt(byteCountArray, tileOffsetID++, (int) currentTileByteCount);
-                        }
+                        offsetArray[tileOffsetID] = tileOffsetBeg;
+                        byteCountArray[tileOffsetID++] = currentTileByteCount;
                         tileOffsetBeg = currentOffset;
                         continue;
                     }
@@ -2110,21 +2087,16 @@ public class TiffImageWriter extends SpatialImageWriter {
                     
                     if (compression == 1)
                         assert currentTileByteCount == currentImgTW * currentImgTH * imagePixelStride * sampleSize :"expected currentByteCount = "+(currentImgTW * currentImgTH * imagePixelStride * sampleSize)+" found = "+currentTileByteCount+" at tile ("+ctx+", "+cty+").";
-                    
-                    if (isBigTIFF) {
-                        Array.setLong(offsetArray, tileOffsetID, tileOffsetBeg);
-                        Array.setLong(byteCountArray, tileOffsetID++, currentTileByteCount);
-                    } else {
-                        Array.setInt(offsetArray, tileOffsetID, (int) tileOffsetBeg);
-                        Array.setInt(byteCountArray, tileOffsetID++, (int) currentTileByteCount);
-                    }
+
+                    offsetArray[tileOffsetID] = tileOffsetBeg;
+                    byteCountArray[tileOffsetID++] = currentTileByteCount;
                     tileOffsetBeg = currentOffset;
                 }
             }
         }
         writeByteCountAndOffsets(byteCountTagPosition, arrayType, byteCountArray, offsetTagPosition, arrayType, offsetArray);
         //-- add current offset array in current headProperties --//
-        addProperty(TileOffsets, (isBigTIFF) ? TYPE_LONG : TYPE_INT, Array.getLength(offsetArray), offsetArray, headProperties);
+        addProperty(TileOffsets, TYPE_LONG, Array.getLength(offsetArray), offsetArray, headProperties);
     }
     
     /**
@@ -2245,7 +2217,7 @@ public class TiffImageWriter extends SpatialImageWriter {
         // -------------------------------------------//
 
         final int numTiles = numXTile * numYTile;
-        final short arrayType = (isBigTIFF) ? TYPE_LONG : TYPE_INT;
+        final short arrayType = TYPE_LONG;
         addProperty(TileByteCounts, arrayType, numTiles, null, properties);
         addProperty(TileOffsets, arrayType, numTiles, null, properties);
     }
@@ -2488,17 +2460,17 @@ public class TiffImageWriter extends SpatialImageWriter {
         
         //-- write next IFD file position --//
         //-- if 0 means no next IFD. --//
-        ifdPosition[1] = (int) channel.getStreamPosition();
+        ifdPosition[1] = channel.getStreamPosition();
         
         if (isBigTIFF) channel.writeLong(0);
         else           channel.writeInt(0);
         
-        assert (int) (channel.getStreamPosition()) == endTagPos : "chanel and buffer position = "+((channel.getStreamPosition()))+" end tag position = "+endTagPos;
+        assert (channel.getStreamPosition()) == endTagPos : "chanel and buffer position = "+((channel.getStreamPosition()))+" end tag position = "+endTagPos;
         
         for (final int tag : defferedMap.keySet()) {
             final Map tagattribut = defferedMap.get(tag);
             short type      = (short) tagattribut.get(ATT_TYPE);
-            long count      = (int) tagattribut.get(ATT_COUNT);
+//            long count      = (int) tagattribut.get(ATT_COUNT);
             Object offOrVal = tagattribut.get(ATT_VALUE);
             writeArray(offOrVal, type);
         }
@@ -2639,7 +2611,7 @@ public class TiffImageWriter extends SpatialImageWriter {
             byteCountArraySize = offsetArraySize = destRegion.height * TYPE_SIZE[TYPE_INT];
         }
 
-        final int buffPos = (int) channel.getStreamPosition();
+        final long buffPos = channel.getStreamPosition();
             
         if (subsampleX == 1 
          && subsampleY == 1 
@@ -3346,7 +3318,7 @@ public class TiffImageWriter extends SpatialImageWriter {
 //                case TYPE_DOUBLE : {
 //                    break;
 //                }
-                default : throw new IllegalStateException("unknow type. type : "+type);
+                default : throw new IllegalStateException("Unknown type : "+type);
             }
     }
     
@@ -3435,7 +3407,7 @@ public class TiffImageWriter extends SpatialImageWriter {
 
     @Override
     public void dispose() {
-        super.dispose(); //To change body of generated methods, choose Tools | Templates.
+        super.dispose();
         try {
             if (channel != null) {
                 channel.flush();
