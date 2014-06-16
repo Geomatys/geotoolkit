@@ -19,6 +19,7 @@ package org.geotoolkit.process.coverage.mathcalc;
 
 import org.apache.sis.util.iso.ResourceInternationalString;
 import org.apache.sis.util.iso.SimpleInternationalString;
+import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
@@ -72,10 +73,10 @@ public class MathCalcDescriptor extends AbstractProcessDescriptor {
      * 
      * TODO this must be writable
      */
-    public static final ParameterDescriptor<GridCoverage> IN_RESULT_COVERAGE =
+    public static final ParameterDescriptor<CoverageReference> IN_RESULT_COVERAGE =
             new DefaultParameterDescriptor("inResultCoverage", 
                     new ResourceInternationalString(BUNDLE_PATH, "mathcalc.inResultCoverage"),
-                    GridCoverage.class, null, true);
+                    CoverageReference.class, null, true);
     
      /**Input parameters */
     public static final ParameterDescriptorGroup INPUT_DESC =
