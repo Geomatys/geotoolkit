@@ -308,18 +308,14 @@ public class PyramidalModelReader extends GridCoverageReader{
         }
 
         /*
-         * We will transform the input envelope to found pyramid CRS. If pyramid CRS has a validity domain, we will also
-         * intersect it with the input envelope, to get rid of possible NaN or infinity values which could cause errors.
+         * We will transform the input envelope to found pyramid CRS.
          */
         final CoordinateReferenceSystem pyramidCRS = pyramid.getCoordinateReferenceSystem();
         final Envelope maxExt = CRS.getEnvelope(pyramidCRS);
         GeneralEnvelope wantedEnv;
         try {
-            if (maxExt != null) {
-                wantedEnv = ReferencingUtilities.intersectEnvelopes(maxExt, paramEnv);
-            } else {
-                wantedEnv = new GeneralEnvelope(ReferencingUtilities.transform(paramEnv, pyramidCRS));
-            }
+            wantedEnv = new GeneralEnvelope(ReferencingUtilities.transform(paramEnv, pyramidCRS));
+            
         } catch (TransformException ex) {
             throw new CoverageStoreException(ex.getMessage(), ex);
         }
