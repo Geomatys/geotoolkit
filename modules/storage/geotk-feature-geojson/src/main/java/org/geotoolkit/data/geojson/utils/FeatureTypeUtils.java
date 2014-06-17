@@ -7,6 +7,8 @@ import com.fasterxml.jackson.core.JsonToken;
 
 import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.factory.HintsPending;
+import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.PropertyType;
 import org.geotoolkit.feature.type.*;
@@ -55,6 +57,7 @@ public final class FeatureTypeUtils extends Static {
     private static final String JAVA_TYPE = "javatype";
     private static final String DESCRIPTION = "description";
     private static final String PROPERTIES = "properties";
+    private static final String PRIMARY_KEY = "primaryKey";
     private static final String REQUIRED = "required";
     private static final String NILLABLE = "nillable";
     private static final String MIN_ITEMS = "minItems";
@@ -176,12 +179,16 @@ public final class FeatureTypeUtils extends Static {
 
     private static void writeDescriptorAttributes(PropertyDescriptor descriptor, AttributeType att, JsonGenerator writer)
             throws IOException {
+        if (FeatureTypeUtilities.isPartOfPrimaryKey(descriptor)) {
+            writer.writeBooleanField(PRIMARY_KEY, true);
+        }
+
         writer.writeBooleanField(NILLABLE, descriptor.isNillable());
         writer.writeNumberField(MIN_ITEMS, descriptor.getMinOccurs());
         writer.writeNumberField(MAX_ITEMS, descriptor.getMaxOccurs());
-
-        if (!descriptor.getUserData().isEmpty()) {
-            writeUserData(descriptor.getUserData(), writer);
+        Map<Object, Object> userData = descriptor.getUserData();
+        if (!userData.isEmpty()) {
+            writeUserData(userData, writer);
         }
     }
 
@@ -194,7 +201,8 @@ public final class FeatureTypeUtils extends Static {
             if (!(key instanceof Serializable) || !(value instanceof Serializable)) {
                 LOGGER.log(Level.WARNING, "User map entry not serializable "+entry);
             } else {
-                writer.writeStringField(key.toString(), value.toString());
+                writer.writeFieldName(key.toString());
+                GeoJSONUtils.writeValue(value, writer);
             }
         }
         writer.writeEndObject();
@@ -369,6 +377,7 @@ public final class FeatureTypeUtils extends Static {
         final String attributeName = parser.getCurrentName();
         Class binding = String.class;
         boolean nillable = true;
+        boolean primaryKey = false;
         int minOccurs = 0;
         int maxOccurs = 1;
         String description = null;
@@ -399,6 +408,9 @@ public final class FeatureTypeUtils extends Static {
                 case MAX_ITEMS:
                     maxOccurs = parser.nextIntValue(1);
                     break;
+                case PRIMARY_KEY:
+                    primaryKey = parser.nextBooleanValue();
+                    break;
                 case USER_DATA:
                     userData = parseUserDataMap(parser);
                     break;
@@ -409,6 +421,11 @@ public final class FeatureTypeUtils extends Static {
                     description = parser.nextTextValue();
                     break;
             }
+        }
+
+        if (primaryKey) {
+            if (userData == null) userData = new HashMap<>();
+            userData.put(HintsPending.PROPERTY_IS_IDENTIFIER, Boolean.TRUE);
         }
 
         Name name = DefaultName.valueOf(attributeName);

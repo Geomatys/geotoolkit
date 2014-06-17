@@ -27,6 +27,8 @@ import org.geotoolkit.data.geojson.utils.GeoJSONParser;
 import org.geotoolkit.data.geojson.utils.GeoJSONUtils;
 import org.geotoolkit.data.query.*;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.factory.HintsPending;
+import org.geotoolkit.feature.AttributeDescriptorBuilder;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.feature.Feature;
@@ -160,6 +162,7 @@ public class GeoJSONFeatureStore extends AbstractFeatureStore {
                 final String name = GeoJSONUtils.getNameWithoutExt(jsonFile);
 
                 final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
+                final AttributeDescriptorBuilder atb = new AttributeDescriptorBuilder();
                 ftb.setName(name);
 
                 // build FeatureType from the first Feature of JSON file.
@@ -184,13 +187,16 @@ public class GeoJSONFeatureStore extends AbstractFeatureStore {
                         // with the same bindings ?
 
                         GeoJSONFeature jsonFeature = jsonFeatureCollection.next();
-                        fillTypeFromFeature(ftb, crs, jsonFeature, false);
+                        fillTypeFromFeature(ftb, atb, crs, jsonFeature, false);
                     }
 
                 } else if (obj instanceof GeoJSONFeature) {
                     GeoJSONFeature jsonFeature = (GeoJSONFeature) obj;
-                    fillTypeFromFeature(ftb, crs, jsonFeature, true);
+                    fillTypeFromFeature(ftb, atb, crs, jsonFeature, true);
                 } else if (obj instanceof GeoJSONGeometry) {
+                    HashMap<Object, Object> userData = new HashMap<>();
+                    userData.put(HintsPending.PROPERTY_IS_IDENTIFIER,Boolean.TRUE);
+                    ftb.add(atb.create(new DefaultName("fid"), String.class, 1, 1, true, userData));
                     ftb.add(GEOMETRY_FIELD, findBinding((GeoJSONGeometry) obj), crs);
                 }
 
@@ -202,7 +208,8 @@ public class GeoJSONFeatureStore extends AbstractFeatureStore {
     }
 
 
-    private void fillTypeFromFeature(FeatureTypeBuilder ftb, CoordinateReferenceSystem crs, GeoJSONFeature jsonFeature,
+    private void fillTypeFromFeature(FeatureTypeBuilder ftb, AttributeDescriptorBuilder atb, CoordinateReferenceSystem crs,
+                                     GeoJSONFeature jsonFeature,
                                      boolean analyseGeometry) {
         if (analyseGeometry) {
             ftb.add(GEOMETRY_FIELD, findBinding(jsonFeature.getGeometry()), crs);
@@ -212,7 +219,17 @@ public class GeoJSONFeatureStore extends AbstractFeatureStore {
         for (Map.Entry<String, Object> property : jsonFeature.getProperties().entrySet()) {
             Object value = property.getValue();
             Class binding = value != null ? value.getClass() : String.class;
-            ftb.add(property.getKey(), binding);
+
+            Name name = new DefaultName(property.getKey());
+            HashMap<Object, Object> userData = null;
+            if ("id".equals(property.getKey()) || "fid".equals(property.getKey())) {
+                userData = new HashMap<>();
+                userData.put(HintsPending.PROPERTY_IS_IDENTIFIER,Boolean.TRUE);
+                name = new DefaultName("fid");
+            }
+
+            final PropertyDescriptor propDesc = atb.create(name, binding, 1, 1, true, userData);
+            ftb.add(propDesc);
         }
     }
 

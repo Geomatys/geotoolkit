@@ -8,6 +8,7 @@ import org.apache.sis.io.wkt.Convention;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.data.geojson.binding.GeoJSONObject;
+import org.geotoolkit.feature.IllegalAttributeException;
 import org.geotoolkit.io.wkt.WKTFormat;
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.referencing.IdentifiedObjects;
@@ -20,11 +21,15 @@ import org.opengis.util.FactoryException;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Array;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.ParseException;
+import java.util.Collection;
 import java.util.logging.Level;
 
 import static org.geotoolkit.data.geojson.utils.GeoJSONMembres.*;
@@ -205,5 +210,76 @@ public final class GeoJSONUtils extends Static {
         writer.writeEndObject();
         writer.flush();
         writer.close();
+    }
+
+    /**
+     * Useful method to help write an object into a JsonGenerator.
+     * This method can handle :
+     * <ul>
+     *     <li>Arrays</li>
+     *     <li>Collection</li>
+     *     <li>Numbers (Double, Float, Short, BigInteger, BigDecimal, integer, Long, Byte)</li>
+     *     <li>Boolean</li>
+     *     <li>String</li>
+     * </ul>
+     * @param value
+     * @param writer
+     * @throws IOException
+     * @throws IllegalAttributeException
+     */
+    public static void writeValue(Object value, JsonGenerator writer) throws IOException, IllegalAttributeException {
+
+        if (value == null) {
+            writer.writeNull();
+            return;
+        }
+
+        Class binding = value.getClass();
+
+        if (binding.isArray()) {
+            if (byte.class.isAssignableFrom(binding.getComponentType())) {
+                writer.writeBinary((byte[])value);
+            } else {
+                writer.writeStartArray();
+                final int size = Array.getLength(value);
+                for (int i = 0; i < size; i++) {
+                    writeValue(Array.get(value, i), writer);
+                }
+                writer.writeEndArray();
+            }
+
+        } else if (Collection.class.isAssignableFrom(binding)) {
+            writer.writeStartArray();
+            Collection coll = (Collection) value;
+            for (Object obj : coll) {
+                writeValue(obj, writer);
+            }
+            writer.writeEndArray();
+
+        } else if (Double.class.isAssignableFrom(binding)) {
+            writer.writeNumber((Double) value);
+        } else if (Float.class.isAssignableFrom(binding)) {
+            writer.writeNumber((Float) value);
+        } else if (Short.class.isAssignableFrom(binding)) {
+            writer.writeNumber((Short) value);
+        } else if (Byte.class.isAssignableFrom(binding)) {
+            writer.writeNumber((Byte) value);
+        } else if (BigInteger.class.isAssignableFrom(binding)) {
+            writer.writeNumber((BigInteger) value);
+        } else if (BigDecimal.class.isAssignableFrom(binding)) {
+            writer.writeNumber((BigDecimal) value);
+        } else if (Integer.class.isAssignableFrom(binding)) {
+            writer.writeNumber((Integer) value);
+        } else if (Long.class.isAssignableFrom(binding)) {
+            writer.writeNumber((Long) value);
+
+        } else if (Boolean.class.isAssignableFrom(binding)) {
+            writer.writeBoolean((Boolean) value);
+        } else if (String.class.isAssignableFrom(binding)) {
+            writer.writeString(String.valueOf(value));
+        } else {
+            //fallback
+            writer.writeString(String.valueOf(value));
+        }
     }
 }
