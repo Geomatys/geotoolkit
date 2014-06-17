@@ -238,45 +238,48 @@ public class GeoJSONWriteTest {
             feature.getProperty("integerProp").setValue(15);
             feature.getProperty("booleanProp").setValue(true);
 
-            ComplexType level1desc = (ComplexType) feature.getProperty("level1").getType();
+            ComplexType level1Type = (ComplexType) feature.getProperty("level1").getType();
+            PropertyDescriptor level1Desc = feature.getProperty("level1").getDescriptor();
             feature.getProperties().remove(feature.getProperty("level1"));
 
-            ComplexAttribute level11 = FeatureUtilities.defaultProperty(level1desc);
+            ComplexAttribute level11 = (ComplexAttribute) FeatureUtilities.defaultProperty(level1Desc);
             level11.getProperty("longProp2").setValue(66446l);
 
-            ComplexType level2desc = (ComplexType) level11.getProperty("level2").getType();
+            ComplexType level2Type = (ComplexType) level11.getProperty("level2").getType();
+            PropertyDescriptor level2desc = level11.getProperty("level2").getDescriptor();
             level11.getProperties().remove(level11.getProperty("level2"));
 
-            ComplexAttribute level211 = FeatureUtilities.defaultProperty(level2desc);
+            ComplexAttribute level211 = (ComplexAttribute) FeatureUtilities.defaultProperty(level2desc);
             level211.getProperty("level2prop").setValue("text");
             level11.getProperties().add(level211);
 
-            ComplexAttribute level212 = FeatureUtilities.defaultProperty(level2desc);
+            ComplexAttribute level212 = (ComplexAttribute) FeatureUtilities.defaultProperty(level2desc);
             level212.getProperty("level2prop").setValue("text2");
             level11.getProperties().add(level212);
 
-            ComplexAttribute level213 = FeatureUtilities.defaultProperty(level2desc);
+            ComplexAttribute level213 = (ComplexAttribute) FeatureUtilities.defaultProperty(level2desc);
             level213.getProperty("level2prop").setValue("text3");
             level11.getProperties().add(level213);
 
             feature.getProperties().add(level11);
 
 
-            ComplexAttribute level12 = FeatureUtilities.defaultProperty(level1desc);
+            ComplexAttribute level12 = (ComplexAttribute) FeatureUtilities.defaultProperty(level1Desc);
             level12.getProperty("longProp2").setValue(4444444l);
 
-            ComplexType level22desc = (ComplexType) level12.getProperty("level2").getType();
+            ComplexType level22Type = (ComplexType) level12.getProperty("level2").getType();
+            PropertyDescriptor level22desc = level11.getProperty("level2").getDescriptor();
             level12.getProperties().remove(level12.getProperty("level2"));
 
-            ComplexAttribute level221 = FeatureUtilities.defaultProperty(level22desc);
+            ComplexAttribute level221 = (ComplexAttribute) FeatureUtilities.defaultProperty(level22desc);
             level221.getProperty("level2prop").setValue("fish");
             level12.getProperties().add(level221);
 
-            ComplexAttribute level222 = FeatureUtilities.defaultProperty(level22desc);
+            ComplexAttribute level222 = (ComplexAttribute) FeatureUtilities.defaultProperty(level22desc);
             level222.getProperty("level2prop").setValue("cat");
             level12.getProperties().add(level222);
 
-            ComplexAttribute level223 = FeatureUtilities.defaultProperty(level22desc);
+            ComplexAttribute level223 = (ComplexAttribute) FeatureUtilities.defaultProperty(level22desc);
             level223.getProperty("level2prop").setValue("dog");
             level12.getProperties().add(level223);
 

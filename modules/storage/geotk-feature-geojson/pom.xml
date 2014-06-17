@@ -76,6 +76,11 @@
             <artifactId>geotk-utility-pending</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.geotoolkit</groupId>
+            <artifactId>geotk-filter-cql</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
         <!-- Jackson dependencies -->
         <dependency>

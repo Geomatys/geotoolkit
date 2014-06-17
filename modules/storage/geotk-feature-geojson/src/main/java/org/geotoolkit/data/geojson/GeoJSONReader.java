@@ -201,13 +201,13 @@ public class GeoJSONReader implements FeatureReader<FeatureType, Feature> {
 
                                 //list of objects
                                 for (int i = 0; i < size; i++) {
-                                    final ComplexAttribute subComplexAttribute = FeatureUtilities.defaultProperty((ComplexType) type);
+                                    final ComplexAttribute subComplexAttribute = (ComplexAttribute) FeatureUtilities.defaultProperty(desc);
                                     fillFeature(subComplexAttribute, (Map) Array.get(value, i));
                                     attribute.getProperties().add(subComplexAttribute);
                                 }
                             }
                         } else if (value instanceof Map) {
-                            final ComplexAttribute subComplexAttribute = FeatureUtilities.defaultProperty((ComplexType) type);
+                            final ComplexAttribute subComplexAttribute = (ComplexAttribute) FeatureUtilities.defaultProperty(desc);
                             fillFeature(subComplexAttribute, (Map) value);
                             attribute.getProperties().add(subComplexAttribute);
                         }

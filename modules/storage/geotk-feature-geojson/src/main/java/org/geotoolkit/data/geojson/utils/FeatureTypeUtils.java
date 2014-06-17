@@ -7,11 +7,17 @@ import com.fasterxml.jackson.core.JsonToken;
 
 import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.cql.CQL;
+import org.geotoolkit.cql.CQLException;
+import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.HintsPending;
 import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.PropertyType;
 import org.geotoolkit.feature.type.*;
+import org.opengis.filter.Filter;
+import org.opengis.filter.FilterFactory2;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
 import org.opengis.util.InternationalString;
@@ -51,6 +57,8 @@ public final class FeatureTypeUtils extends Static {
 
     private static final Logger LOGGER = Logging.getLogger(FeatureTypeUtils.class);
     private static final FeatureTypeFactory FT_FACTORY = FeatureTypeFactory.INSTANCE;
+    private static final FilterFactory2 FF = (FilterFactory2) FactoryFinder.getFilterFactory(
+            new Hints(Hints.FILTER_FACTORY, FilterFactory2.class));
 
     private static final String TITLE = "title";
     private static final String TYPE = "type";
@@ -58,6 +66,7 @@ public final class FeatureTypeUtils extends Static {
     private static final String DESCRIPTION = "description";
     private static final String PROPERTIES = "properties";
     private static final String PRIMARY_KEY = "primaryKey";
+    private static final String RESTRICTION = "restriction";
     private static final String REQUIRED = "required";
     private static final String NILLABLE = "nillable";
     private static final String MIN_ITEMS = "minItems";
@@ -119,12 +128,12 @@ public final class FeatureTypeUtils extends Static {
 
             if (type instanceof ComplexType) {
                 isRequired = writeComplexType(descriptor, (ComplexType)type, writer);
-            } else if (type instanceof AttributeType) {
+            } else if (type instanceof org.geotoolkit.feature.type.AttributeType) {
                 if (type instanceof GeometryType) {
 //                    GeometryType geometryType = (GeometryType) type;
 //                    isRequired = writeGeometryType(descriptor, geometryType, writer);
                 } else {
-                    AttributeType att = (AttributeType) type;
+                    org.geotoolkit.feature.type.AttributeType att = (org.geotoolkit.feature.type.AttributeType) type;
                     isRequired = writeAttributeType(descriptor, att, writer);
                 }
             }
@@ -160,7 +169,8 @@ public final class FeatureTypeUtils extends Static {
         return complex.getMinimumOccurs() > 0;
     }
 
-    private static boolean writeAttributeType(PropertyDescriptor descriptor, AttributeType att, JsonGenerator writer)
+    private static boolean writeAttributeType(PropertyDescriptor descriptor, org.geotoolkit.feature.type.AttributeType att,
+                                              JsonGenerator writer)
             throws IOException {
 
         writer.writeObjectFieldStart(att.getName().tip().toString());
@@ -172,6 +182,11 @@ public final class FeatureTypeUtils extends Static {
             writer.writeStringField(DESCRIPTION, att.getDescription().toString());
         }
         writeDescriptorAttributes(descriptor, att, writer);
+        List<Filter> restrictions = att.getRestrictions();
+        if (restrictions != null && !restrictions.isEmpty()) {
+            final Filter merged = FF.and(restrictions);
+            writer.writeStringField(RESTRICTION, CQL.write(merged));
+        }
         writer.writeEndObject();
 
         return att.getMinimumOccurs() > 0;
@@ -286,14 +301,12 @@ public final class FeatureTypeUtils extends Static {
         }
 
         if (ftName != null && geometryDescriptor != null) {
+            propertyDescriptors.add(geometryDescriptor);
             ftb.reset();
             ftb.setName(ftName);
             ftb.setDescription(description);
-            ftb.add(geometryDescriptor);
+            ftb.setProperties(propertyDescriptors);
             ftb.setDefaultGeometry(geometryDescriptor.getName());
-            for (PropertyDescriptor property : propertyDescriptors) {
-                ftb.add(property);
-            }
         } else {
             throw new DataStoreException("FeatureType name or default geometry not found in JSON schema");
         }
@@ -381,6 +394,7 @@ public final class FeatureTypeUtils extends Static {
         int minOccurs = 0;
         int maxOccurs = 1;
         String description = null;
+        String restrictionCQL = null;
         Map<Object, Object> userData = null;
         List<PropertyDescriptor> descs = new ArrayList<>();
 
@@ -411,6 +425,9 @@ public final class FeatureTypeUtils extends Static {
                 case PRIMARY_KEY:
                     primaryKey = parser.nextBooleanValue();
                     break;
+                case RESTRICTION:
+                    restrictionCQL = parser.nextTextValue();
+                    break;
                 case USER_DATA:
                     userData = parseUserDataMap(parser);
                     break;
@@ -435,13 +452,24 @@ public final class FeatureTypeUtils extends Static {
             if (binding == null) {
                 throw new DataStoreException("Empty javatype for attribute "+attributeName);
             }
-            PropertyType prop = FT_FACTORY.createAttributeType(name, binding, false, false, null, null, desc);
+
+            List<Filter> restrictions = null;
+            if (restrictionCQL != null) {
+                try {
+                   restrictions = new ArrayList<>();
+                   restrictions.add(CQL.parseFilter(restrictionCQL, FF));
+                } catch (CQLException e) {
+                    LOGGER.log(Level.WARNING, "Can't parse restriction filter : "+restrictionCQL, e);
+                }
+            }
+
+            PropertyType prop = FT_FACTORY.createAttributeType(name, binding, false, false, restrictions, null, desc);
             return adb.create((org.geotoolkit.feature.type.PropertyType) prop, name, minOccurs, maxOccurs, nillable, userData);
 
         } else {
             //build ComplexType
             ftb.reset();
-            ftb.setName(attributeName);
+            ftb.setName(name);
             for (PropertyDescriptor property : descs) {
                 ftb.add(property);
             }
