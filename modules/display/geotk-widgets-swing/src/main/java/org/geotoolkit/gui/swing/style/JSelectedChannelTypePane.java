@@ -28,7 +28,6 @@ import javax.swing.JTextField;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.MapLayer;
-import org.jdesktop.swingx.JXTitledSeparator;
 import org.opengis.style.SelectedChannelType;
 
 /**
@@ -50,7 +49,6 @@ public class JSelectedChannelTypePane extends StyleElementEditor<SelectedChannel
         initComponents();
         
         //those are not used by geotk engine, hide them to avoid confusing the user
-        guiSeparator.setVisible(false);
         guiContrast.setVisible(false);
     }
 
@@ -94,7 +92,6 @@ public class JSelectedChannelTypePane extends StyleElementEditor<SelectedChannel
     private void initComponents() {
 
         guiContrast = new JContrastEnhancement();
-        guiSeparator = new JXTitledSeparator();
         guiLabelName = new JLabel();
         guiName = new JTextField();
 
@@ -106,13 +103,8 @@ public class JSelectedChannelTypePane extends StyleElementEditor<SelectedChannel
             }
         });
 
-        guiSeparator.setAlpha(0.5F);
-        guiSeparator.setHorizontalAlignment(0);
-        guiSeparator.setTitle(MessageBundle.getString("contrast")); // NOI18N
-
         guiLabelName.setText(MessageBundle.getString("name")); // NOI18N
 
-        guiName.setOpaque(false);
         guiName.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 guiNameActionPerformed(evt);
@@ -123,15 +115,11 @@ public class JSelectedChannelTypePane extends StyleElementEditor<SelectedChannel
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(Alignment.LEADING)
-            .addComponent(guiSeparator, GroupLayout.DEFAULT_SIZE, 253, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(guiLabelName)
-                        .addPreferredGap(ComponentPlacement.RELATED)
-                        .addComponent(guiName, GroupLayout.PREFERRED_SIZE, 142, GroupLayout.PREFERRED_SIZE))
-                    .addComponent(guiContrast, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(52, Short.MAX_VALUE))
+                .addComponent(guiLabelName)
+                .addPreferredGap(ComponentPlacement.RELATED)
+                .addComponent(guiName))
+            .addComponent(guiContrast, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(Alignment.LEADING)
@@ -140,9 +128,8 @@ public class JSelectedChannelTypePane extends StyleElementEditor<SelectedChannel
                     .addComponent(guiLabelName)
                     .addComponent(guiName, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(ComponentPlacement.RELATED)
-                .addComponent(guiSeparator, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(ComponentPlacement.RELATED)
-                .addComponent(guiContrast, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                .addComponent(guiContrast, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -160,6 +147,5 @@ public class JSelectedChannelTypePane extends StyleElementEditor<SelectedChannel
     private JContrastEnhancement guiContrast;
     private JLabel guiLabelName;
     private JTextField guiName;
-    private JXTitledSeparator guiSeparator;
     // End of variables declaration//GEN-END:variables
 }

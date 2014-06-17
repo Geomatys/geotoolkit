@@ -18,6 +18,7 @@
 package org.geotoolkit.gui.swing.propertyedit;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import javax.swing.JEditorPane;
 import javax.swing.JScrollPane;
 import org.geotoolkit.coverage.CoverageReference;
@@ -49,6 +50,7 @@ public class JLayerCRSPane extends AbstractPropertyPane {
         setLayout( new BorderLayout());
         wktArea.setEditable(false);
         wktArea.setContentType("text/html");
+        wktArea.setBackground(Color.WHITE);
         add(BorderLayout.CENTER, new JScrollPane(wktArea));
     }
     

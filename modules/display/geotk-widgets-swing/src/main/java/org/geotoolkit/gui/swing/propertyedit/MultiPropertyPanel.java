@@ -20,6 +20,7 @@ package org.geotoolkit.gui.swing.propertyedit;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.ComponentOrientation;
 import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
@@ -36,6 +37,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
 import org.geotoolkit.gui.swing.util.JImagePane;
 import org.jdesktop.swingx.JXTaskPane;
@@ -70,6 +72,7 @@ public abstract class MultiPropertyPanel extends JPanel implements PropertyPane 
         guiMenus.setBorder(BorderFactory.createEmptyBorder(6, 6, 6, 6));
         guiTypesPane.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
         guiTypesPane.add(guiMenus, BorderLayout.CENTER);
+        typeScroll.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
 
     }
 
@@ -143,18 +146,20 @@ public abstract class MultiPropertyPanel extends JPanel implements PropertyPane 
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jScrollPane1 = new JScrollPane();
+        typeScroll = new JScrollPane();
         guiTypesPane = new JPanel();
 
         setLayout(new BorderLayout());
 
-        jScrollPane1.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        typeScroll.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        typeScroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        typeScroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 
         guiTypesPane.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
         guiTypesPane.setLayout(new BorderLayout());
-        jScrollPane1.setViewportView(guiTypesPane);
+        typeScroll.setViewportView(guiTypesPane);
 
-        add(jScrollPane1, BorderLayout.WEST);
+        add(typeScroll, BorderLayout.WEST);
     }// </editor-fold>//GEN-END:initComponents
 
     @Override
@@ -275,7 +280,7 @@ public abstract class MultiPropertyPanel extends JPanel implements PropertyPane 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private JPanel guiTypesPane;
-    private JScrollPane jScrollPane1;
+    private JScrollPane typeScroll;
     // End of variables declaration//GEN-END:variables
 
 }

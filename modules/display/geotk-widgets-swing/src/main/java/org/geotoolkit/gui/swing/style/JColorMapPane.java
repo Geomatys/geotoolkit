@@ -983,37 +983,11 @@ public class JColorMapPane extends StyleElementEditor<ColorMap> implements Prope
         }
         if(layer instanceof CoverageMapLayer){
             final CoverageMapLayer cml = (CoverageMapLayer)layer;
-            final CoverageReference ref = cml.getCoverageReference();
             try {
-
-
                 if(mustInterpolation){
-                    final GridCoverageReader reader = ref.acquireReader();
-                    final int imageIndex = ref.getImageIndex();
-
-                    final List<MeasurementRange<?>> ranges = reader.getSampleValueRanges(imageIndex);
-                    
                     double min = (Double)guiMinSpinner.getValue();
                     double max = (Double)guiMaxSpinner.getValue();
-                    
-                    if (ranges != null && !ranges.isEmpty()) {
-                        final Integer index = (Integer) guiBand.getValue();
-                        final MeasurementRange r = ranges.get(index);
-
-                        min = Math.max(r.getMinDouble(), min);
-                        max = Math.min(r.getMaxDouble(), max);
-
-                        // search min/max
-                        if (Double.isInfinite(min) || Double.isInfinite(max)) {
-                            Map<String,Object> an = StatisticOp.analyze(reader,cml.getCoverageReference().getImageIndex());
-                            final double[] minArray = (double[])an.get(StatisticOp.MINIMUM);
-                            final double[] maxArray = (double[])an.get(StatisticOp.MAXIMUM);
-                            min = findExtremum(minArray, true);
-                            max = findExtremum(maxArray, false);
-                        }
-                    }
-                    getInterpolationPoints(min, max, steps);                    
-                    ref.recycle(reader);
+                    getInterpolationPoints(min, max, steps);
                 }else{
                     for(int s=0,l=steps.size();s<l;s++){
                         final Entry<Double, Color> step = steps.get(s);

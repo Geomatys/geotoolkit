@@ -38,15 +38,17 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.service.DefaultGlyphService;
-import org.geotoolkit.gui.swing.util.ActionCell;
-import org.geotoolkit.gui.swing.util.JOptionDialog;
 import org.geotoolkit.gui.swing.resource.FontAwesomeIcons;
 import org.geotoolkit.gui.swing.resource.IconBuilder;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
+import org.geotoolkit.gui.swing.util.ActionCell;
+import org.geotoolkit.gui.swing.util.JOptionDialog;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.StyleConstants;
 import org.jdesktop.swingx.JXTable;
@@ -160,6 +162,12 @@ public class JGraphicSymbolTable <T> extends StyleElementEditor<List> {
         tabGraphics.setShowHorizontalLines(true);
         tabGraphics.setShowVerticalLines(false);
 
+         model.addTableModelListener(new TableModelListener() {
+            public void tableChanged(TableModelEvent e) {
+                firePropertyChange(PROPERTY_UPDATED, null, create());
+            }
+        });
+        
     }
 
     @Override
@@ -310,6 +318,10 @@ public class JGraphicSymbolTable <T> extends StyleElementEditor<List> {
         }
 
         public void setGraphics(final List<GraphicalSymbol> marks) {
+            if(this.graphics.equals(marks)){
+                //nothing changed
+                return;
+            }
             this.graphics.clear();
             this.graphics.addAll(marks);
             fireTableDataChanged();

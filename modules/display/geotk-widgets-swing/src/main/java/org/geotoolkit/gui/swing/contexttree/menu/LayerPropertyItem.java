@@ -79,8 +79,14 @@ public class LayerPropertyItem extends AbstractTreePopupItem {
                 MapLayer layer = layerRef.get();
                 if(layer == null) return;
 
-
-                JPropertyPane.showDialog(LayerPropertyItem.this, lst, layer, false);
+                //filter elements, only select those which are compatible
+                final List<PropertyPane> valids = new ArrayList<>();
+                for(PropertyPane p : lst){
+                    if(p.canHandle(layer)){
+                        valids.add(p);
+                    }
+                }
+                JPropertyPane.showDialog(LayerPropertyItem.this, valids, layer, false);
 
             }
         });

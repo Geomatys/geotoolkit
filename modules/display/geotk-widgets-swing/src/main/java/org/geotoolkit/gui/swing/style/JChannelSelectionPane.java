@@ -19,20 +19,18 @@ package org.geotoolkit.gui.swing.style;
 
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Font;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.ButtonGroup;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
-import javax.swing.JSeparator;
 import javax.swing.LayoutStyle.ComponentPlacement;
-import javax.swing.SwingConstants;
 import org.geotoolkit.map.MapLayer;
-import org.jdesktop.swingx.JXTitledSeparator;
 import org.opengis.style.ChannelSelection;
 import org.opengis.style.SelectedChannelType;
 
@@ -164,38 +162,21 @@ public class JChannelSelectionPane extends StyleElementEditor<ChannelSelection>{
     private void initComponents() {
 
         group = new ButtonGroup();
-        guiGray = new JSelectedChannelTypePane();
-        guiRed = new JSelectedChannelTypePane();
-        guiLblGray = new JXTitledSeparator();
-        guiLblRed = new JXTitledSeparator();
-        guiGreen = new JSelectedChannelTypePane();
-        guiLblGreen = new JXTitledSeparator();
-        guiLblBlue = new JXTitledSeparator();
-        guiBlue = new JSelectedChannelTypePane();
-        jSeparator1 = new JSeparator();
         jPanel1 = new JPanel();
         guiCheckNative = new JRadioButton();
         guiChkRGB = new JRadioButton();
         guiChkGray = new JRadioButton();
-        jSeparator2 = new JSeparator();
-
-        guiLblGray.setForeground(new Color(102, 102, 102));
-        guiLblGray.setFont(guiLblGray.getFont().deriveFont(guiLblGray.getFont().getStyle() | Font.BOLD));
-        guiLblGray.setTitle(MessageBundle.getString("style.channelSelection.graychannel")); // NOI18N
-
-        guiLblRed.setForeground(new Color(204, 0, 0));
-        guiLblRed.setFont(guiLblRed.getFont().deriveFont(guiLblRed.getFont().getStyle() | Font.BOLD));
-        guiLblRed.setTitle(MessageBundle.getString("style.channelSelection.redchannel")); // NOI18N
-
-        guiLblGreen.setForeground(new Color(0, 204, 0));
-        guiLblGreen.setFont(guiLblGreen.getFont().deriveFont(guiLblGreen.getFont().getStyle() | Font.BOLD));
-        guiLblGreen.setTitle(MessageBundle.getString("style.channelSelection.greenchannel")); // NOI18N
-
-        guiLblBlue.setForeground(new Color(0, 0, 204));
-        guiLblBlue.setFont(guiLblBlue.getFont().deriveFont(guiLblBlue.getFont().getStyle() | Font.BOLD));
-        guiLblBlue.setTitle(MessageBundle.getString("style.channelSelection.bluechannel")); // NOI18N
-
-        jSeparator1.setOrientation(SwingConstants.VERTICAL);
+        jPanel2 = new JPanel();
+        jPanel4 = new JPanel();
+        guiRed = new JSelectedChannelTypePane();
+        guiGreen = new JSelectedChannelTypePane();
+        guiBlue = new JSelectedChannelTypePane();
+        guiLblRed = new JLabel();
+        guiLblGreen = new JLabel();
+        guiLblBlue = new JLabel();
+        jPanel3 = new JPanel();
+        guiGray = new JSelectedChannelTypePane();
+        guiLblGray = new JLabel();
 
         group.add(guiCheckNative);
         guiCheckNative.setSelected(true);
@@ -225,57 +206,97 @@ public class JChannelSelectionPane extends StyleElementEditor<ChannelSelection>{
         });
         jPanel1.add(guiChkGray);
 
+        jPanel2.setLayout(new GridLayout());
+
+        guiLblRed.setFont(guiLblRed.getFont().deriveFont(guiLblRed.getFont().getStyle() | Font.BOLD));
+        guiLblRed.setForeground(new Color(255, 0, 51));
+        guiLblRed.setText(MessageBundle.getString("style.channelSelection.redchannel")); // NOI18N
+
+        guiLblGreen.setFont(guiLblGreen.getFont().deriveFont(guiLblGreen.getFont().getStyle() | Font.BOLD));
+        guiLblGreen.setForeground(new Color(0, 204, 0));
+        guiLblGreen.setText(MessageBundle.getString("style.channelSelection.greenchannel")); // NOI18N
+
+        guiLblBlue.setFont(guiLblBlue.getFont().deriveFont(guiLblBlue.getFont().getStyle() | Font.BOLD));
+        guiLblBlue.setForeground(new Color(51, 51, 255));
+        guiLblBlue.setText(MessageBundle.getString("style.channelSelection.bluechannel")); // NOI18N
+
+        GroupLayout jPanel4Layout = new GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+            jPanel4Layout.createParallelGroup(Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel4Layout.createParallelGroup(Alignment.LEADING)
+                    .addComponent(guiRed, GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .addComponent(guiLblRed, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(guiLblGreen, GroupLayout.DEFAULT_SIZE, 199, Short.MAX_VALUE)
+                    .addComponent(guiGreen, GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .addComponent(guiLblBlue, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(guiBlue, GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+        jPanel4Layout.setVerticalGroup(
+            jPanel4Layout.createParallelGroup(Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(guiLblRed)
+                .addPreferredGap(ComponentPlacement.RELATED)
+                .addComponent(guiRed, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(ComponentPlacement.RELATED)
+                .addComponent(guiLblGreen)
+                .addPreferredGap(ComponentPlacement.RELATED)
+                .addComponent(guiGreen, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(ComponentPlacement.RELATED)
+                .addComponent(guiLblBlue)
+                .addPreferredGap(ComponentPlacement.RELATED)
+                .addComponent(guiBlue, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        jPanel2.add(jPanel4);
+
+        guiLblGray.setFont(guiLblGray.getFont().deriveFont(guiLblGray.getFont().getStyle() | Font.BOLD));
+        guiLblGray.setForeground(new Color(153, 153, 153));
+        guiLblGray.setText(MessageBundle.getString("style.channelSelection.graychannel")); // NOI18N
+
+        GroupLayout jPanel3Layout = new GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel3Layout.createParallelGroup(Alignment.LEADING)
+                    .addComponent(guiLblGray, GroupLayout.DEFAULT_SIZE, 211, Short.MAX_VALUE)
+                    .addComponent(guiGray, GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)))
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(guiLblGray)
+                .addPreferredGap(ComponentPlacement.RELATED)
+                .addComponent(guiGray, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        jPanel2.add(jPanel3);
+
         GroupLayout layout = new GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(Alignment.LEADING)
-            .addComponent(jPanel1, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(Alignment.LEADING)
-                    .addGroup(layout.createParallelGroup(Alignment.TRAILING, false)
-                        .addComponent(guiLblRed, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(guiRed, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(guiLblGreen, Alignment.LEADING, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                    .addComponent(guiLblBlue, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(guiGreen, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                    .addComponent(guiBlue, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(ComponentPlacement.RELATED)
-                .addComponent(jSeparator1, GroupLayout.PREFERRED_SIZE, 7, GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(Alignment.LEADING)
-                    .addComponent(guiLblGray, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(guiGray, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
-            .addComponent(jSeparator2)
+                    .addComponent(jPanel2, GroupLayout.PREFERRED_SIZE, 490, GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jPanel1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(220, Short.MAX_VALUE))
         );
-
-        layout.linkSize(SwingConstants.HORIZONTAL, new Component[] {guiBlue, guiGray, guiGreen, guiLblBlue, guiLblGray, guiLblGreen, guiLblRed, guiRed});
-
         layout.setVerticalGroup(
             layout.createParallelGroup(Alignment.LEADING)
-            .addGroup(Alignment.TRAILING, layout.createSequentialGroup()
+            .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(ComponentPlacement.RELATED)
-                .addComponent(jSeparator2, GroupLayout.PREFERRED_SIZE, 10, GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(Alignment.TRAILING, false)
-                    .addComponent(jSeparator1, Alignment.LEADING)
-                    .addGroup(Alignment.LEADING, layout.createSequentialGroup()
-                        .addComponent(guiLblRed, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(ComponentPlacement.RELATED)
-                        .addComponent(guiRed, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(ComponentPlacement.RELATED)
-                        .addComponent(guiLblGreen, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(ComponentPlacement.RELATED)
-                        .addComponent(guiGreen, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(ComponentPlacement.RELATED)
-                        .addComponent(guiLblBlue, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(ComponentPlacement.RELATED)
-                        .addComponent(guiBlue, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                    .addGroup(Alignment.LEADING, layout.createSequentialGroup()
-                        .addComponent(guiLblGray, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(ComponentPlacement.RELATED)
-                        .addComponent(guiGray, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(0, 0, 0)
+                .addComponent(jPanel2, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -299,13 +320,14 @@ private void guiChkRGBActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_
     private JRadioButton guiChkRGB;
     private JSelectedChannelTypePane guiGray;
     private JSelectedChannelTypePane guiGreen;
-    private JXTitledSeparator guiLblBlue;
-    private JXTitledSeparator guiLblGray;
-    private JXTitledSeparator guiLblGreen;
-    private JXTitledSeparator guiLblRed;
+    private JLabel guiLblBlue;
+    private JLabel guiLblGray;
+    private JLabel guiLblGreen;
+    private JLabel guiLblRed;
     private JSelectedChannelTypePane guiRed;
     private JPanel jPanel1;
-    private JSeparator jSeparator1;
-    private JSeparator jSeparator2;
+    private JPanel jPanel2;
+    private JPanel jPanel3;
+    private JPanel jPanel4;
     // End of variables declaration//GEN-END:variables
 }
