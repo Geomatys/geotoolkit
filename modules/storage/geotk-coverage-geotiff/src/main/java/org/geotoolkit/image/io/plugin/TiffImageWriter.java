@@ -670,16 +670,16 @@ public class TiffImageWriter extends SpatialImageWriter {
         isBigTIFF = ((long) width * height * pixelSize / Byte.SIZE) >= 1E9; //-- >= 1Go
         
         if (channel != null) {
-            //-- We authorize to write none big tiff image after big tiff already writen but not the inverse --//
+            //-- We authorize to write none big tiff image after big tiff already written but not the inverse --//
 //            if (isBigTIFF != isBigTiff(image)) {
 //                if (!isBigTIFF) 
-//                throw new IllegalArgumentException("You can't write a bigtiff image when you have already writen none bigtiff image.");
+//                throw new IllegalArgumentException("You can't write a bigtiff image when you have already written none bigtiff image.");
 //            }
 //            
-            //-- define if nextPositionIFD has already been setted --//
+            //-- define if nextPositionIFD has already been set --//
             if (ifdPosition[1] > 0) {
                 /*
-                 * If an image has already been writen we stipulate next ifd position.
+                 * If an image has already been written we stipulate next ifd position.
                  */
                 final long offset = (channel.getStreamPosition());
                 channel.seek(ifdPosition[1]);
@@ -751,22 +751,12 @@ public class TiffImageWriter extends SpatialImageWriter {
             assert bitPerSample != 0;
 
             final int numTiles = dstNumXT * dstNumYT;//-- voir pour strip
-            final Object byteCountArray;
+            final long[] byteCountArray = new long[numTiles];;
             final long byteCountArraySize;
-            final Object offsetArray;
+            final long[] offsetArray = new long[numTiles];
             final long offsetArraySize;
-            final short arrayType;
-            if (isBigTIFF) {
-                byteCountArray = new long[numTiles];
-                offsetArray = new long[numTiles];
-                arrayType = TYPE_LONG;
-                byteCountArraySize = offsetArraySize = numTiles * TYPE_SIZE[TYPE_LONG];
-            } else {
-                byteCountArray = new int[numTiles];
-                offsetArray = new int[numTiles];
-                arrayType = TYPE_INT;
-                byteCountArraySize = offsetArraySize = numTiles * TYPE_SIZE[TYPE_INT];
-            }
+            final short arrayType = TYPE_LONG;
+            byteCountArraySize = offsetArraySize = numTiles * TYPE_SIZE[TYPE_LONG];
 
             final long buffPos = channel.getStreamPosition();
 
@@ -781,24 +771,17 @@ public class TiffImageWriter extends SpatialImageWriter {
             long currentoffset         = tileOffsetBeg;
 
             // fill byte count array
-            if (isBigTIFF) {
-                Arrays.fill((long[]) byteCountArray, currentByteCount);
-                for (int i = 0; i < numTiles; i++) {
-                    Array.setLong(offsetArray, i, currentoffset);
-                    currentoffset += currentByteCount;
-                }
-            } else {
-                Arrays.fill((int[]) byteCountArray, (int) currentByteCount);
-                for (int i = 0; i < numTiles; i++) {
-                    Array.setInt(offsetArray, i, (int) currentoffset);
-                    currentoffset += currentByteCount;
-                }
+            Arrays.fill(byteCountArray, currentByteCount);
+            for (int i = 0; i < numTiles; i++) {
+                offsetArray[i] = currentoffset;
+                currentoffset += currentByteCount;
             }
+
             endOfFile = currentoffset;
             assert endOfFile == tileOffsetBeg + numTiles * currentByteCount;
             writeByteCountAndOffsets(byteCountTagPosition, arrayType, byteCountArray, offsetTagPosition, arrayType, offsetArray);
-            //-- add current offset array in current headProperties --//
-            addProperty(TileOffsets, (isBigTIFF) ? TYPE_LONG : TYPE_INT, Array.getLength(offsetArray), offsetArray, headProperties);
+            //-- add current offset array in current headProperties. We must use long type here, because it's the only valid type for tile offsets. --//
+            addProperty(TileOffsets, TYPE_LONG, offsetArray.length, offsetArray, headProperties);
             assert tileOffsetBeg == channel.getStreamPosition();
             if (metaIndex == metaHeads.length) {
                 metaHeads = Arrays.copyOf(metaHeads, metaHeads.length << 1);
@@ -1843,7 +1826,7 @@ public class TiffImageWriter extends SpatialImageWriter {
             // fill byte count array
             Arrays.fill(byteCountArray, currentByteCount);
             for (int i = 0; i < numTiles; i++) {
-                Array.setLong(offsetArray, i, currentoffset);
+                offsetArray[i] = currentoffset;
                 currentoffset += currentByteCount;
             }
             
@@ -2096,19 +2079,19 @@ public class TiffImageWriter extends SpatialImageWriter {
         }
         writeByteCountAndOffsets(byteCountTagPosition, arrayType, byteCountArray, offsetTagPosition, arrayType, offsetArray);
         //-- add current offset array in current headProperties --//
-        addProperty(TileOffsets, TYPE_LONG, Array.getLength(offsetArray), offsetArray, headProperties);
+        addProperty(TileOffsets, TYPE_LONG, offsetArray.length, offsetArray, headProperties);
     }
     
     /**
-     * Write directly datas from sourceArray, which is an array of datatype type, 
+     * Write directly data from sourceArray, which is an array of datatype type,
      * in writebuffer at arrayOffset position with a length of arrayLength.<br/>
      * 
-     * Choose appropriate sub writing method in fonction of compression value.
+     * Choose appropriate sub writing method in function of compression value.
      * 
      * @param sourceArray sample source array data.
      * @param datatype type of data within sourceArray.
-     * @param arrayOffset offset in the source array of the first sample which will be writen.
-     * @param arrayLength number of sample which will be writen.
+     * @param arrayOffset offset in the source array of the first sample which will be written.
+     * @param arrayLength number of sample which will be written.
      * @param bitPerSample number of bits for each pixel samples.
      * @param compression compression value.
      * @throws IOException if problem during buffer writing action or unsupported ata type.
@@ -2354,7 +2337,7 @@ public class TiffImageWriter extends SpatialImageWriter {
      * @return {@link Rectangle} which represent writing area iteration on image.
      */
     private void computeRegions(final RenderedImage image, final ImageWriteParam param) {
-        computeRegions(image.getWidth(), image.getHeight(), image.getMinX(), image.getMinY(), 
+        computeRegions(image.getWidth(), image.getHeight(), image.getMinX(), image.getMinY(),
                 image.getNumXTiles(), image.getNumYTiles(), image.getTileWidth(), image.getTileHeight(), param);
     }
     
@@ -2443,7 +2426,7 @@ public class TiffImageWriter extends SpatialImageWriter {
             /*
              * Write tags in destination file if its possible.
              * Some tags needs to write image before, to have enough information
-             * and will be write later.
+             * and will be written later.
              */
             if (tag == TileByteCounts || tag == StripByteCounts || tag == TileOffsets || tag == StripOffsets) {
                 writeDefferedTag((short)tag, type, count, 0);
@@ -3218,7 +3201,7 @@ public class TiffImageWriter extends SpatialImageWriter {
     private void writeDefferedTag(short tag, short type, long count, long offset) throws IOException {
         channel.writeShort(tag);
         channel.writeShort(type);
-        
+
         if (isBigTIFF) channel.writeLong(count);
         else           channel.writeInt((int) count);
         
@@ -3306,7 +3289,6 @@ public class TiffImageWriter extends SpatialImageWriter {
                 }
                 case TYPE_LONG  : 
                 case TYPE_ULONG : {
-                    assert isBigTIFF;
                     assert count == 1;
                     final long l = Array.getLong(value, 0);
                     channel.writeLong(l);
