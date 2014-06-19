@@ -125,6 +125,7 @@ private void guiSpecialPropertyChange(final PropertyChangeEvent evt) {//GEN-FIRS
     }
     if(evt.getPropertyName().equals(JSpecialExpressionButton.EXPRESSION_PROPERTY)) {
         parse(guiSpecial.get());
+        firePropertyChange(PROPERTY_UPDATED, null, create());
     }
 }//GEN-LAST:event_guiSpecialPropertyChange
 

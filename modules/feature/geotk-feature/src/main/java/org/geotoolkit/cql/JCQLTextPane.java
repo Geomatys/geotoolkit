@@ -25,6 +25,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
+import javax.swing.border.EmptyBorder;
 import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
@@ -56,11 +57,18 @@ public class JCQLTextPane extends JPanel implements KeyListener{
     final Style styleError;
     
     public JCQLTextPane() {
-        super(new BorderLayout());
+        super(new BorderLayout(0,0));
         
         guiText.setBackground(Color.WHITE);
         
-        add(BorderLayout.CENTER,new JScrollPane(guiText));
+        final JScrollPane scroll = new JScrollPane(guiText);
+        scroll.setBorder(new EmptyBorder(0, 0, 0, 0));
+        guiText.setBorder(new EmptyBorder(0, 0, 0, 0));
+        scroll.getInsets().set(0,0,0,0);
+        scroll.setViewportBorder(new EmptyBorder(0, 0, 0, 0));
+        scroll.getViewport().getInsets().set(0,0,0,0);
+        
+        add(BorderLayout.CENTER,scroll);
         add(BorderLayout.SOUTH,guiError);
         guiText.addKeyListener(this);
         
@@ -77,7 +85,7 @@ public class JCQLTextPane extends JPanel implements KeyListener{
         StyleConstants.setForeground(styleFunction, Color.MAGENTA);
         
         styleParenthese = guiText.addStyle("parenthese", null);
-        StyleConstants.setForeground(styleParenthese, new Color(0, 100, 0));
+        StyleConstants.setForeground(styleParenthese, new Color(0, 0, 0));
         
         styleOperator = guiText.addStyle("operator", null);
         StyleConstants.setForeground(styleOperator, Color.BLACK);
@@ -164,6 +172,7 @@ public class JCQLTextPane extends JPanel implements KeyListener{
         final ParseTree tree = CQL.compile(txt);
         doc.setCharacterAttributes(0, txt.length(), styleError, true);
         syntaxHighLight(tree, doc, new AtomicInteger());
+        firePropertyChange("content", null, txt);
     }
     
     private void syntaxHighLight(ParseTree tree, StyledDocument doc, AtomicInteger position){
@@ -180,6 +189,30 @@ public class JCQLTextPane extends JPanel implements KeyListener{
                 doc.setCharacterAttributes(offset, length, styleError, true);
                 return;
             }
+            
+            //special case for functions
+            if(prc instanceof CQLParser.ExpressionTermContext){
+                final CQLParser.ExpressionTermContext ctx = (CQLParser.ExpressionTermContext) prc;
+                if(ctx.NAME()!=null && ctx.LPAREN()!=null){
+                    final int nbChild = tree.getChildCount();        
+                    for(int i=0;i<nbChild;i++){
+                        final ParseTree pt = tree.getChild(i);
+                        if(pt instanceof TerminalNode && ((TerminalNode)pt).getSymbol().getType() == CQLLexer.NAME){
+                            final TerminalNode tn = (TerminalNode) pt;
+                            // if index<0 = missing token
+                            final Token token = tn.getSymbol();
+                            final int offset = token.getStartIndex();
+                            final int length = token.getStopIndex()-token.getStartIndex() +1;
+                            position.addAndGet(length);
+                            doc.setCharacterAttributes(offset, length, styleFunction, true);
+                        }else{
+                            syntaxHighLight(pt, doc, position);
+                        }
+                    }
+                    return;
+                }
+            }
+            
         }
         
         if(tree instanceof TerminalNode){

@@ -21,6 +21,9 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -198,6 +201,22 @@ public class JCQLEditor extends javax.swing.JPanel{
         
         guiSimple.setSelected(DEFAULT_SIMPLE);
         updateSimpleAdvanced();
+        
+        guiCQL.addPropertyChangeListener("content", new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent evt) {
+                try {
+                    final Expression exp = guiCQL.getExpression();
+                    final BufferedImage img = MathMLVisitor.toImage(MathMLVisitor.toMathML(exp));
+                    lblFormula.setIcon(new ImageIcon(img));
+                    
+                } catch (Exception ex) {
+                    //happens very often
+                    lblFormula.setIcon(null);
+                }
+            }
+        });
+        
     }
 
     private void updateSimpleAdvanced(){
@@ -241,9 +260,6 @@ public class JCQLEditor extends javax.swing.JPanel{
 
         setLayout(new java.awt.BorderLayout());
 
-        jSplitPane1.setDividerLocation(300);
-        jSplitPane1.setDividerSize(2);
-
         guiTextPropertySplit.setDividerSize(2);
         guiTextPropertySplit.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
 
@@ -259,7 +275,7 @@ public class JCQLEditor extends javax.swing.JPanel{
             .addGroup(guiPropertiesPaneLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jXTitledSeparator6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addComponent(guiScroll, javax.swing.GroupLayout.DEFAULT_SIZE, 451, Short.MAX_VALUE)
+            .addComponent(guiScroll, javax.swing.GroupLayout.DEFAULT_SIZE, 462, Short.MAX_VALUE)
         );
         guiPropertiesPaneLayout.setVerticalGroup(
             guiPropertiesPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -267,13 +283,23 @@ public class JCQLEditor extends javax.swing.JPanel{
                 .addContainerGap()
                 .addComponent(jXTitledSeparator6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(guiScroll))
+                .addComponent(guiScroll, javax.swing.GroupLayout.DEFAULT_SIZE, 121, Short.MAX_VALUE))
         );
 
         guiTextPropertySplit.setLeftComponent(guiPropertiesPane);
-        guiTextPropertySplit.setRightComponent(guiCQL);
 
-        jSplitPane1.setRightComponent(guiTextPropertySplit);
+        jPanel7.setLayout(new java.awt.BorderLayout());
+        jPanel7.add(guiCQL, java.awt.BorderLayout.CENTER);
+
+        lblFormula.setBackground(new java.awt.Color(255, 255, 255));
+        lblFormula.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblFormula.setBorder(javax.swing.BorderFactory.createEmptyBorder(4, 4, 4, 4));
+        lblFormula.setOpaque(true);
+        jPanel7.add(lblFormula, java.awt.BorderLayout.PAGE_END);
+
+        guiTextPropertySplit.setBottomComponent(jPanel7);
+
+        add(guiTextPropertySplit, java.awt.BorderLayout.CENTER);
 
         jScrollPane1.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
@@ -283,26 +309,31 @@ public class JCQLEditor extends javax.swing.JPanel{
 
         jButton1.setText(" + ");
         jButton1.setBorderPainted(false);
+        jButton1.setMargin(new java.awt.Insets(0, 0, 0, 0));
         jButton1.setName(" +"); // NOI18N
         jPanel3.add(jButton1);
 
         jButton2.setText(" - ");
         jButton2.setBorderPainted(false);
+        jButton2.setMargin(new java.awt.Insets(0, 0, 0, 0));
         jButton2.setName(" -"); // NOI18N
         jPanel3.add(jButton2);
 
         jButton6.setText(" / ");
         jButton6.setBorderPainted(false);
+        jButton6.setMargin(new java.awt.Insets(0, 0, 0, 0));
         jButton6.setName(" /"); // NOI18N
         jPanel3.add(jButton6);
 
         jButton7.setText(" * ");
         jButton7.setBorderPainted(false);
+        jButton7.setMargin(new java.awt.Insets(0, 0, 0, 0));
         jButton7.setName(" *"); // NOI18N
         jPanel3.add(jButton7);
 
         jButton8.setText(" ( ) ");
         jButton8.setBorderPainted(false);
+        jButton8.setMargin(new java.awt.Insets(0, 0, 0, 0));
         jButton8.setName("( )"); // NOI18N
         jPanel3.add(jButton8);
 
@@ -312,81 +343,94 @@ public class JCQLEditor extends javax.swing.JPanel{
 
         jPanel4.setLayout(new java.awt.GridLayout(0, 4));
 
-        jButton3.setFont(jButton3.getFont().deriveFont(jButton3.getFont().getStyle() & ~java.awt.Font.BOLD, jButton3.getFont().getSize()-4));
+        jButton3.setFont(jButton3.getFont().deriveFont(jButton3.getFont().getSize()-3f));
         jButton3.setText(" = ");
         jButton3.setBorderPainted(false);
+        jButton3.setMargin(new java.awt.Insets(0, 0, 0, 0));
         jButton3.setName(" ="); // NOI18N
         jPanel4.add(jButton3);
 
-        jButton9.setFont(jButton9.getFont().deriveFont(jButton9.getFont().getStyle() & ~java.awt.Font.BOLD, jButton9.getFont().getSize()-4));
+        jButton9.setFont(jButton9.getFont().deriveFont(jButton9.getFont().getSize()-3f));
         jButton9.setText(" <> ");
         jButton9.setBorderPainted(false);
+        jButton9.setMargin(new java.awt.Insets(0, 0, 0, 0));
         jButton9.setName(" <>"); // NOI18N
         jPanel4.add(jButton9);
 
-        jButton10.setFont(jButton10.getFont().deriveFont(jButton10.getFont().getStyle() & ~java.awt.Font.BOLD, jButton10.getFont().getSize()-4));
+        jButton10.setFont(jButton10.getFont().deriveFont(jButton10.getFont().getSize()-3f));
         jButton10.setText(" > ");
         jButton10.setBorderPainted(false);
+        jButton10.setMargin(new java.awt.Insets(0, 0, 0, 0));
         jButton10.setName(" >"); // NOI18N
         jPanel4.add(jButton10);
 
-        jButton11.setFont(jButton11.getFont().deriveFont(jButton11.getFont().getStyle() & ~java.awt.Font.BOLD, jButton11.getFont().getSize()-4));
+        jButton11.setFont(jButton11.getFont().deriveFont(jButton11.getFont().getSize()-3f));
         jButton11.setText(" >= ");
         jButton11.setBorderPainted(false);
+        jButton11.setMargin(new java.awt.Insets(0, 0, 0, 0));
         jButton11.setName(" >="); // NOI18N
         jPanel4.add(jButton11);
 
-        jButton12.setFont(jButton12.getFont().deriveFont(jButton12.getFont().getStyle() & ~java.awt.Font.BOLD, jButton12.getFont().getSize()-4));
+        jButton12.setFont(jButton12.getFont().deriveFont(jButton12.getFont().getSize()-3f));
         jButton12.setText(" < ");
         jButton12.setBorderPainted(false);
+        jButton12.setMargin(new java.awt.Insets(0, 0, 0, 0));
         jButton12.setName(" <"); // NOI18N
         jPanel4.add(jButton12);
 
-        jButton13.setFont(jButton13.getFont().deriveFont(jButton13.getFont().getStyle() & ~java.awt.Font.BOLD, jButton13.getFont().getSize()-4));
+        jButton13.setFont(jButton13.getFont().deriveFont(jButton13.getFont().getSize()-3f));
         jButton13.setText(" <= ");
         jButton13.setBorderPainted(false);
+        jButton13.setMargin(new java.awt.Insets(0, 0, 0, 0));
         jButton13.setName(" <="); // NOI18N
         jPanel4.add(jButton13);
 
-        jButton14.setFont(jButton14.getFont().deriveFont(jButton14.getFont().getStyle() & ~java.awt.Font.BOLD, jButton14.getFont().getSize()-4));
+        jButton14.setFont(jButton14.getFont().deriveFont(jButton14.getFont().getSize()-3f));
         jButton14.setText("LIKE");
         jButton14.setBorderPainted(false);
+        jButton14.setMargin(new java.awt.Insets(0, 0, 0, 0));
         jButton14.setName(" LIKE"); // NOI18N
         jPanel4.add(jButton14);
 
-        jButton15.setFont(jButton15.getFont().deriveFont(jButton15.getFont().getStyle() & ~java.awt.Font.BOLD, jButton15.getFont().getSize()-4));
+        jButton15.setFont(jButton15.getFont().deriveFont(jButton15.getFont().getSize()-3f));
         jButton15.setText(" IS ");
         jButton15.setBorderPainted(false);
+        jButton15.setMargin(new java.awt.Insets(0, 0, 0, 0));
         jButton15.setName(" IS"); // NOI18N
         jPanel4.add(jButton15);
 
-        jButton16.setFont(jButton16.getFont().deriveFont(jButton16.getFont().getStyle() & ~java.awt.Font.BOLD, jButton16.getFont().getSize()-4));
+        jButton16.setFont(jButton16.getFont().deriveFont(jButton16.getFont().getSize()-3f));
         jButton16.setText(" IN ");
         jButton16.setBorderPainted(false);
+        jButton16.setMargin(new java.awt.Insets(0, 0, 0, 0));
         jButton16.setName(" IN"); // NOI18N
         jPanel4.add(jButton16);
 
-        jButton18.setFont(jButton18.getFont().deriveFont(jButton18.getFont().getStyle() & ~java.awt.Font.BOLD, jButton18.getFont().getSize()-4));
+        jButton18.setFont(jButton18.getFont().deriveFont(jButton18.getFont().getSize()-3f));
         jButton18.setText("BETWEEN");
         jButton18.setBorderPainted(false);
+        jButton18.setMargin(new java.awt.Insets(0, 0, 0, 0));
         jButton18.setName(" BETWEEN"); // NOI18N
         jPanel4.add(jButton18);
 
-        jButton19.setFont(jButton19.getFont().deriveFont(jButton19.getFont().getStyle() & ~java.awt.Font.BOLD, jButton19.getFont().getSize()-4));
+        jButton19.setFont(jButton19.getFont().deriveFont(jButton19.getFont().getSize()-3f));
         jButton19.setText("AND");
         jButton19.setBorderPainted(false);
+        jButton19.setMargin(new java.awt.Insets(0, 0, 0, 0));
         jButton19.setName(" AND"); // NOI18N
         jPanel4.add(jButton19);
 
-        jButton20.setFont(jButton20.getFont().deriveFont(jButton20.getFont().getStyle() & ~java.awt.Font.BOLD, jButton20.getFont().getSize()-4));
+        jButton20.setFont(jButton20.getFont().deriveFont(jButton20.getFont().getSize()-3f));
         jButton20.setText("OR");
         jButton20.setBorderPainted(false);
+        jButton20.setMargin(new java.awt.Insets(0, 0, 0, 0));
         jButton20.setName(" OR"); // NOI18N
         jPanel4.add(jButton20);
 
-        jButton17.setFont(jButton17.getFont().deriveFont(jButton17.getFont().getStyle() & ~java.awt.Font.BOLD, jButton17.getFont().getSize()-4));
+        jButton17.setFont(jButton17.getFont().deriveFont(jButton17.getFont().getSize()-3f));
         jButton17.setText("NOT");
         jButton17.setBorderPainted(false);
+        jButton17.setMargin(new java.awt.Insets(0, 0, 0, 0));
         jButton17.setName(" NOT"); // NOI18N
         jPanel4.add(jButton17);
 
@@ -394,69 +438,80 @@ public class JCQLEditor extends javax.swing.JPanel{
 
         jPanel5.setLayout(new java.awt.GridLayout(0, 3));
 
-        jButton4.setFont(jButton4.getFont().deriveFont(jButton4.getFont().getStyle() & ~java.awt.Font.BOLD, jButton4.getFont().getSize()-4));
+        jButton4.setFont(jButton4.getFont().deriveFont(jButton4.getFont().getSize()-3f));
         jButton4.setText("BBOX");
         jButton4.setBorderPainted(false);
+        jButton4.setMargin(new java.awt.Insets(0, 0, 0, 0));
         jButton4.setName(" BBOX(att,minx,miny,maxx,maxy,'crs')"); // NOI18N
         jPanel5.add(jButton4);
 
-        jButton21.setFont(jButton21.getFont().deriveFont(jButton21.getFont().getStyle() & ~java.awt.Font.BOLD, jButton21.getFont().getSize()-4));
+        jButton21.setFont(jButton21.getFont().deriveFont(jButton21.getFont().getSize()-3f));
         jButton21.setText("BEYOND");
         jButton21.setBorderPainted(false);
+        jButton21.setMargin(new java.awt.Insets(0, 0, 0, 0));
         jButton21.setName(" BEYOND(exp1,exp2)"); // NOI18N
         jPanel5.add(jButton21);
 
-        jButton22.setFont(jButton22.getFont().deriveFont(jButton22.getFont().getStyle() & ~java.awt.Font.BOLD, jButton22.getFont().getSize()-4));
+        jButton22.setFont(jButton22.getFont().deriveFont(jButton22.getFont().getSize()-3f));
         jButton22.setText("CONTAINS");
         jButton22.setBorderPainted(false);
+        jButton22.setMargin(new java.awt.Insets(0, 0, 0, 0));
         jButton22.setName(" CONTAINs(exp1,exp2)"); // NOI18N
         jPanel5.add(jButton22);
 
-        jButton23.setFont(jButton23.getFont().deriveFont(jButton23.getFont().getStyle() & ~java.awt.Font.BOLD, jButton23.getFont().getSize()-4));
+        jButton23.setFont(jButton23.getFont().deriveFont(jButton23.getFont().getSize()-3f));
         jButton23.setText("CROSS");
         jButton23.setBorderPainted(false);
+        jButton23.setMargin(new java.awt.Insets(0, 0, 0, 0));
         jButton23.setName(" CROSS(exp1,exp2)"); // NOI18N
         jPanel5.add(jButton23);
 
-        jButton24.setFont(jButton24.getFont().deriveFont(jButton24.getFont().getStyle() & ~java.awt.Font.BOLD, jButton24.getFont().getSize()-4));
+        jButton24.setFont(jButton24.getFont().deriveFont(jButton24.getFont().getSize()-3f));
         jButton24.setText("DISJOINT");
         jButton24.setBorderPainted(false);
+        jButton24.setMargin(new java.awt.Insets(0, 0, 0, 0));
         jButton24.setName(" DISJOINT(exp1,exp2)"); // NOI18N
         jPanel5.add(jButton24);
 
-        jButton25.setFont(jButton25.getFont().deriveFont(jButton25.getFont().getStyle() & ~java.awt.Font.BOLD, jButton25.getFont().getSize()-4));
+        jButton25.setFont(jButton25.getFont().deriveFont(jButton25.getFont().getSize()-3f));
         jButton25.setText("DWITHIN");
         jButton25.setBorderPainted(false);
+        jButton25.setMargin(new java.awt.Insets(0, 0, 0, 0));
         jButton25.setName(" DWITHIN(exp1,exp2)"); // NOI18N
         jPanel5.add(jButton25);
 
-        jButton26.setFont(jButton26.getFont().deriveFont(jButton26.getFont().getStyle() & ~java.awt.Font.BOLD, jButton26.getFont().getSize()-4));
+        jButton26.setFont(jButton26.getFont().deriveFont(jButton26.getFont().getSize()-3f));
         jButton26.setText("EQUALS");
         jButton26.setBorderPainted(false);
+        jButton26.setMargin(new java.awt.Insets(0, 0, 0, 0));
         jButton26.setName(" EQUALS(exp1,exp2)"); // NOI18N
         jPanel5.add(jButton26);
 
-        jButton27.setFont(jButton27.getFont().deriveFont(jButton27.getFont().getStyle() & ~java.awt.Font.BOLD, jButton27.getFont().getSize()-4));
+        jButton27.setFont(jButton27.getFont().deriveFont(jButton27.getFont().getSize()-3f));
         jButton27.setText("INTERSECT");
         jButton27.setBorderPainted(false);
+        jButton27.setMargin(new java.awt.Insets(0, 0, 0, 0));
         jButton27.setName(" INTERSECT(exp1,exp2)"); // NOI18N
         jPanel5.add(jButton27);
 
-        jButton28.setFont(jButton28.getFont().deriveFont(jButton28.getFont().getStyle() & ~java.awt.Font.BOLD, jButton28.getFont().getSize()-4));
+        jButton28.setFont(jButton28.getFont().deriveFont(jButton28.getFont().getSize()-3f));
         jButton28.setText("OVERLAP");
         jButton28.setBorderPainted(false);
+        jButton28.setMargin(new java.awt.Insets(0, 0, 0, 0));
         jButton28.setName(" OVERLAP(exp1,exp2)"); // NOI18N
         jPanel5.add(jButton28);
 
-        jButton30.setFont(jButton30.getFont().deriveFont(jButton30.getFont().getStyle() & ~java.awt.Font.BOLD, jButton30.getFont().getSize()-4));
+        jButton30.setFont(jButton30.getFont().deriveFont(jButton30.getFont().getSize()-3f));
         jButton30.setText("TOUCH");
         jButton30.setBorderPainted(false);
+        jButton30.setMargin(new java.awt.Insets(0, 0, 0, 0));
         jButton30.setName(" TOUCH(exp1,exp2)"); // NOI18N
         jPanel5.add(jButton30);
 
-        jButton29.setFont(jButton29.getFont().deriveFont(jButton29.getFont().getStyle() & ~java.awt.Font.BOLD, jButton29.getFont().getSize()-4));
+        jButton29.setFont(jButton29.getFont().deriveFont(jButton29.getFont().getSize()-3f));
         jButton29.setText("WITHIN");
         jButton29.setBorderPainted(false);
+        jButton29.setMargin(new java.awt.Insets(0, 0, 0, 0));
         jButton29.setName(" WITHIN(exp1,exp2)"); // NOI18N
         jPanel5.add(jButton29);
 
@@ -464,87 +519,101 @@ public class JCQLEditor extends javax.swing.JPanel{
 
         jPanel6.setLayout(new java.awt.GridLayout(0, 3));
 
-        jButton5.setFont(jButton5.getFont().deriveFont(jButton5.getFont().getStyle() & ~java.awt.Font.BOLD, jButton5.getFont().getSize()-4));
+        jButton5.setFont(jButton5.getFont().deriveFont(jButton5.getFont().getSize()-3f));
         jButton5.setText("AFTER");
         jButton5.setBorderPainted(false);
+        jButton5.setMargin(new java.awt.Insets(0, 0, 0, 0));
         jButton5.setName(" att AFTER exp"); // NOI18N
         jPanel6.add(jButton5);
 
-        jButton31.setFont(jButton31.getFont().deriveFont(jButton31.getFont().getStyle() & ~java.awt.Font.BOLD, jButton31.getFont().getSize()-4));
+        jButton31.setFont(jButton31.getFont().deriveFont(jButton31.getFont().getSize()-3f));
         jButton31.setText("ANYINTERACTS");
         jButton31.setBorderPainted(false);
+        jButton31.setMargin(new java.awt.Insets(0, 0, 0, 0));
         jButton31.setName(" att ANYINTERACTS exp"); // NOI18N
         jPanel6.add(jButton31);
 
-        jButton32.setFont(jButton32.getFont().deriveFont(jButton32.getFont().getStyle() & ~java.awt.Font.BOLD, jButton32.getFont().getSize()-4));
+        jButton32.setFont(jButton32.getFont().deriveFont(jButton32.getFont().getSize()-3f));
         jButton32.setText("BEFORE");
         jButton32.setBorderPainted(false);
+        jButton32.setMargin(new java.awt.Insets(0, 0, 0, 0));
         jButton32.setName(" att BEFORE exp"); // NOI18N
         jPanel6.add(jButton32);
 
-        jButton33.setFont(jButton33.getFont().deriveFont(jButton33.getFont().getStyle() & ~java.awt.Font.BOLD, jButton33.getFont().getSize()-4));
+        jButton33.setFont(jButton33.getFont().deriveFont(jButton33.getFont().getSize()-3f));
         jButton33.setText("BEGINS");
         jButton33.setBorderPainted(false);
+        jButton33.setMargin(new java.awt.Insets(0, 0, 0, 0));
         jButton33.setName(" att BEGINS exp"); // NOI18N
         jPanel6.add(jButton33);
 
-        jButton34.setFont(jButton34.getFont().deriveFont(jButton34.getFont().getStyle() & ~java.awt.Font.BOLD, jButton34.getFont().getSize()-4));
+        jButton34.setFont(jButton34.getFont().deriveFont(jButton34.getFont().getSize()-3f));
         jButton34.setText("BEGUNBY");
         jButton34.setBorderPainted(false);
+        jButton34.setMargin(new java.awt.Insets(0, 0, 0, 0));
         jButton34.setName(" att BEGUNBY exp"); // NOI18N
         jPanel6.add(jButton34);
 
-        jButton43.setFont(jButton43.getFont().deriveFont(jButton43.getFont().getStyle() & ~java.awt.Font.BOLD, jButton43.getFont().getSize()-4));
+        jButton43.setFont(jButton43.getFont().deriveFont(jButton43.getFont().getSize()-3f));
         jButton43.setText("DURING");
         jButton43.setBorderPainted(false);
+        jButton43.setMargin(new java.awt.Insets(0, 0, 0, 0));
         jButton43.setName(" att DURING exp"); // NOI18N
         jPanel6.add(jButton43);
 
-        jButton42.setFont(jButton42.getFont().deriveFont(jButton42.getFont().getStyle() & ~java.awt.Font.BOLD, jButton42.getFont().getSize()-4));
+        jButton42.setFont(jButton42.getFont().deriveFont(jButton42.getFont().getSize()-3f));
         jButton42.setText("ENDEDBY");
         jButton42.setBorderPainted(false);
+        jButton42.setMargin(new java.awt.Insets(0, 0, 0, 0));
         jButton42.setName(" att ENDEDBY exp"); // NOI18N
         jPanel6.add(jButton42);
 
-        jButton41.setFont(jButton41.getFont().deriveFont(jButton41.getFont().getStyle() & ~java.awt.Font.BOLD, jButton41.getFont().getSize()-4));
+        jButton41.setFont(jButton41.getFont().deriveFont(jButton41.getFont().getSize()-3f));
         jButton41.setText("ENDS");
         jButton41.setBorderPainted(false);
+        jButton41.setMargin(new java.awt.Insets(0, 0, 0, 0));
         jButton41.setName(" att ENDS exp"); // NOI18N
         jPanel6.add(jButton41);
 
-        jButton40.setFont(jButton40.getFont().deriveFont(jButton40.getFont().getStyle() & ~java.awt.Font.BOLD, jButton40.getFont().getSize()-4));
+        jButton40.setFont(jButton40.getFont().deriveFont(jButton40.getFont().getSize()-3f));
         jButton40.setText("MEETS");
         jButton40.setBorderPainted(false);
+        jButton40.setMargin(new java.awt.Insets(0, 0, 0, 0));
         jButton40.setName(" att MEETS exp"); // NOI18N
         jPanel6.add(jButton40);
 
-        jButton39.setFont(jButton39.getFont().deriveFont(jButton39.getFont().getStyle() & ~java.awt.Font.BOLD, jButton39.getFont().getSize()-4));
+        jButton39.setFont(jButton39.getFont().deriveFont(jButton39.getFont().getSize()-3f));
         jButton39.setText("METBY");
         jButton39.setBorderPainted(false);
+        jButton39.setMargin(new java.awt.Insets(0, 0, 0, 0));
         jButton39.setName(" att METBY exp"); // NOI18N
         jPanel6.add(jButton39);
 
-        jButton38.setFont(jButton38.getFont().deriveFont(jButton38.getFont().getStyle() & ~java.awt.Font.BOLD, jButton38.getFont().getSize()-4));
+        jButton38.setFont(jButton38.getFont().deriveFont(jButton38.getFont().getSize()-3f));
         jButton38.setText("OVERLAPPEDBY");
         jButton38.setBorderPainted(false);
+        jButton38.setMargin(new java.awt.Insets(0, 0, 0, 0));
         jButton38.setName(" att OVERLAPPEDBY exp"); // NOI18N
         jPanel6.add(jButton38);
 
-        jButton35.setFont(jButton35.getFont().deriveFont(jButton35.getFont().getStyle() & ~java.awt.Font.BOLD, jButton35.getFont().getSize()-4));
+        jButton35.setFont(jButton35.getFont().deriveFont(jButton35.getFont().getSize()-3f));
         jButton35.setText("TCONTAINS");
         jButton35.setBorderPainted(false);
+        jButton35.setMargin(new java.awt.Insets(0, 0, 0, 0));
         jButton35.setName(" att TCONTAINS exp"); // NOI18N
         jPanel6.add(jButton35);
 
-        jButton37.setFont(jButton37.getFont().deriveFont(jButton37.getFont().getStyle() & ~java.awt.Font.BOLD, jButton37.getFont().getSize()-4));
+        jButton37.setFont(jButton37.getFont().deriveFont(jButton37.getFont().getSize()-3f));
         jButton37.setText("TEQUALS");
         jButton37.setBorderPainted(false);
+        jButton37.setMargin(new java.awt.Insets(0, 0, 0, 0));
         jButton37.setName(" att TEQUALS exp"); // NOI18N
         jPanel6.add(jButton37);
 
-        jButton36.setFont(jButton36.getFont().deriveFont(jButton36.getFont().getStyle() & ~java.awt.Font.BOLD, jButton36.getFont().getSize()-4));
+        jButton36.setFont(jButton36.getFont().deriveFont(jButton36.getFont().getSize()-3f));
         jButton36.setText("TOVERLAPS");
         jButton36.setBorderPainted(false);
+        jButton36.setMargin(new java.awt.Insets(0, 0, 0, 0));
         jButton36.setName(" att TOVERLAPS exp"); // NOI18N
         jPanel6.add(jButton36);
 
@@ -604,7 +673,7 @@ public class JCQLEditor extends javax.swing.JPanel{
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, 296, Short.MAX_VALUE)
+            .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(guiFilterOps, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(jScrollPane3)
             .addGroup(jPanel2Layout.createSequentialGroup()
@@ -627,14 +696,12 @@ public class JCQLEditor extends javax.swing.JPanel{
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jXTitledSeparator5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 69, Short.MAX_VALUE))
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 192, Short.MAX_VALUE))
         );
 
         jScrollPane1.setViewportView(jPanel2);
 
-        jSplitPane1.setLeftComponent(jScrollPane1);
-
-        add(jSplitPane1, java.awt.BorderLayout.CENTER);
+        add(jScrollPane1, java.awt.BorderLayout.WEST);
     }// </editor-fold>//GEN-END:initComponents
 
     private void guiToggleAction(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guiToggleAction
@@ -702,15 +769,16 @@ public class JCQLEditor extends javax.swing.JPanel{
     private final javax.swing.JPanel jPanel4 = new javax.swing.JPanel();
     private final javax.swing.JPanel jPanel5 = new javax.swing.JPanel();
     private final javax.swing.JPanel jPanel6 = new javax.swing.JPanel();
+    private final javax.swing.JPanel jPanel7 = new javax.swing.JPanel();
     private final javax.swing.JScrollPane jScrollPane1 = new javax.swing.JScrollPane();
     private final javax.swing.JScrollPane jScrollPane3 = new javax.swing.JScrollPane();
-    private final javax.swing.JSplitPane jSplitPane1 = new javax.swing.JSplitPane();
     private final org.jdesktop.swingx.JXTitledSeparator jXTitledSeparator1 = new org.jdesktop.swingx.JXTitledSeparator();
     private final org.jdesktop.swingx.JXTitledSeparator jXTitledSeparator2 = new org.jdesktop.swingx.JXTitledSeparator();
     private final org.jdesktop.swingx.JXTitledSeparator jXTitledSeparator3 = new org.jdesktop.swingx.JXTitledSeparator();
     private final org.jdesktop.swingx.JXTitledSeparator jXTitledSeparator4 = new org.jdesktop.swingx.JXTitledSeparator();
     private final org.jdesktop.swingx.JXTitledSeparator jXTitledSeparator5 = new org.jdesktop.swingx.JXTitledSeparator();
     private final org.jdesktop.swingx.JXTitledSeparator jXTitledSeparator6 = new org.jdesktop.swingx.JXTitledSeparator();
+    private final javax.swing.JLabel lblFormula = new javax.swing.JLabel();
     // End of variables declaration//GEN-END:variables
 
     public void setExpression(final Expression exp){

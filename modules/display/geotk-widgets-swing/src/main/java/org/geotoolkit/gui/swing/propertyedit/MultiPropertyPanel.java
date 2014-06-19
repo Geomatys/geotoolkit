@@ -84,7 +84,7 @@ public abstract class MultiPropertyPanel extends JPanel implements PropertyPane 
         }
         lst.add(panel);
     }
-
+        
     public void addAction(final String groupName, final Action action) {
         List<Object> lst = panels.get(groupName);
         if(lst==null){
@@ -132,8 +132,6 @@ public abstract class MultiPropertyPanel extends JPanel implements PropertyPane 
 
             return true;
         }
-
-
 
         return false;
     }

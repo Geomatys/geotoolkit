@@ -152,6 +152,20 @@ public class JTwoStateEditor<T> extends StyleElementEditor<T> implements Propert
     }
 
     @Override
+    public Dimension getMinimumSize() {
+        final Dimension dim1 = simple.getMinimumSize();
+        final Dimension dim2 = advanced.getMinimumSize();
+        return new Dimension(Math.max(dim1.width, dim2.width), Math.max(dim1.height, dim2.height));
+    }
+
+    @Override
+    public Dimension getMaximumSize() {
+        final Dimension dim1 = simple.getMaximumSize();
+        final Dimension dim2 = advanced.getMaximumSize();
+        return new Dimension(Math.max(dim1.width, dim2.width), Math.max(dim1.height, dim2.height));
+    }
+    
+    @Override
     public void setLayer(MapLayer layer) {
         super.setLayer(layer);
         simple.setLayer(layer);
