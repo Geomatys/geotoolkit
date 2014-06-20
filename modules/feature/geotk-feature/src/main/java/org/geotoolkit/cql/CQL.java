@@ -43,6 +43,7 @@ import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.Or;
 import org.opengis.filter.expression.Expression;
 import static org.geotoolkit.cql.CQLParser.*;
+import org.opengis.filter.expression.PropertyName;
 
 /**
  *
@@ -503,8 +504,13 @@ public final class CQL {
             if(exp.getChildCount()==1){
                 return convertFilter(tree.getChild(0), ff);
             }else if(exp.NOT()!=null){
-                //| NOT filterTerm
-                return ff.not(convertFilter(exp.filterTerm(), ff));
+                //| NOT (filterTerm | ( LPAREN filter RPAREN ))
+                if(exp.filterTerm()!=null){
+                    return ff.not(convertFilter(exp.filterTerm(), ff));
+                }else{
+                    return ff.not(convertFilter(exp.filter(0), ff));
+                }
+                
             }else if(!exp.AND().isEmpty()){
                 //: filter (AND filter)+
                 final List<Filter> subs = new ArrayList<Filter>();
@@ -562,7 +568,6 @@ public final class CQL {
             final FilterTermContext exp = (FilterTermContext) tree;
             final List<ExpressionContext> exps = exp.expression();
                         
-            
             if(exp.COMPARE()!=null){
                 // expression COMPARE expression
                 final String text = exp.COMPARE().getText();
@@ -759,7 +764,10 @@ public final class CQL {
                 final Expression exp1 = convertExpression(exps.get(0),ff);
                 final Expression exp2 = convertExpression(exps.get(1),ff);
                 final double distance = convertExpression(exps.get(2),ff).evaluate(null, Double.class);
-                final String unit     = convertExpression(exps.get(3),ff).evaluate(null, String.class);
+                final Expression unitExp = convertExpression(exps.get(3),ff);
+                final String unit     = (unitExp instanceof PropertyName) ? 
+                                            ((PropertyName)unitExp).getPropertyName() : 
+                                            unitExp.evaluate(null, String.class);
                 return ff.beyond(exp1,exp2,distance,unit);
             }else if(exp.CONTAINS()!=null){
                 final Expression exp1 = convertExpression(exps.get(0),ff);
@@ -777,7 +785,10 @@ public final class CQL {
                 final Expression exp1 = convertExpression(exps.get(0),ff);
                 final Expression exp2 = convertExpression(exps.get(1),ff);
                 final double distance = convertExpression(exps.get(2),ff).evaluate(null, Double.class);
-                final String unit     = convertExpression(exps.get(3),ff).evaluate(null, String.class);
+                final Expression unitExp = convertExpression(exps.get(3),ff);
+                final String unit     = (unitExp instanceof PropertyName) ? 
+                                            ((PropertyName)unitExp).getPropertyName() : 
+                                            unitExp.evaluate(null, String.class);
                 return ff.dwithin(exp1,exp2,distance,unit);
             }else if(exp.EQUALS()!=null){
                 final Expression exp1 = convertExpression(exps.get(0),ff);

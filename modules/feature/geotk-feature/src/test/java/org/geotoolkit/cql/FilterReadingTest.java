@@ -76,6 +76,7 @@ import org.opengis.filter.temporal.TOverlaps;
  */
 public class FilterReadingTest {
 
+    private static final double DELTA = 0.00000001;
     private final FilterFactory2 FF = new DefaultFilterFactory2();
     private final GeometryFactory GF = new GeometryFactory();
     private final Geometry baseGeometry = GF.createPolygon(
@@ -88,6 +89,8 @@ public class FilterReadingTest {
                     }),
                 new LinearRing[0]
                 );
+    private final Geometry baseGeometryPoint = GF.createPoint(
+                new Coordinate(12.1, 28.9));
 
 
     @Test
@@ -134,6 +137,55 @@ public class FilterReadingTest {
                 filter);
     }
 
+    @Test
+    public void testOrAnd1() throws CQLException {
+        final String cql = "Title = 'VMAI' OR (Title LIKE 'LO?Li' AND DWITHIN(BoundingBox, POINT(12.1 28.9), 10, meters))";
+        final Object obj = CQL.parseFilter(cql);
+        assertTrue(obj instanceof Filter);
+        final Filter filter = (Filter) obj;
+        assertEquals(
+                FF.or(
+                    FF.equals(FF.property("Title"), FF.literal("VMAI")),
+                    FF.and(
+                        FF.like(FF.property("Title"), "LO?Li","%","_","\\",false),
+                        FF.dwithin(FF.property("BoundingBox"), FF.literal(baseGeometryPoint), 10, "meters")
+                        )
+                ),
+                filter);
+    }
+    
+    @Test
+    public void testOrAnd2() throws CQLException {
+        final Geometry geom =  GF.createPolygon(
+                GF.createLinearRing(
+                    new Coordinate[]{
+                        new Coordinate(10, 40),
+                        new Coordinate(20, 40),
+                        new Coordinate(20, 30),
+                        new Coordinate(10, 30),
+                        new Coordinate(10, 40)
+                    }),
+                new LinearRing[0]
+                );
+        
+        
+        final String cql = "NOT (INTERSECTS(BoundingBox, ENVELOPE(10, 20, 40, 30)) OR CONTAINS(BoundingBox, POINT(12.1 28.9))) AND BBOX(BoundingBox, 10,20,30,40)";
+        final Object obj = CQL.parseFilter(cql);
+        assertTrue(obj instanceof Filter);
+        final Filter filter = (Filter) obj;
+        assertEquals(
+                FF.and(
+                    FF.not(
+                        FF.or(
+                            FF.intersects(FF.property("BoundingBox"), FF.literal(geom)),
+                            FF.contains(FF.property("BoundingBox"), FF.literal(baseGeometryPoint))
+                            )
+                    ),
+                    FF.bbox("BoundingBox",10,20,30,40,"")
+                ),
+                filter);
+    }
+    
     @Test
     public void testNot() throws CQLException {
         final String cql = "NOT att = 15";
@@ -378,18 +430,39 @@ public class FilterReadingTest {
 
     @Test
     public void testDWithin() throws CQLException {
-        final String cql = "DWITHIN(\"att\" ,POLYGON((10 20, 30 40, 50 60, 10 20)), 10, meters)";
+        final String cql = "DWITHIN(\"att\" ,POLYGON((10 20, 30 40, 50 60, 10 20)), 10, 'meters')";
         final Object obj = CQL.parseFilter(cql);
         assertTrue(obj instanceof DWithin);
         final DWithin filter = (DWithin) obj;
 
         assertEquals(FF.property("att"), filter.getExpression1());
+        assertEquals(10.0, filter.getDistance(), DELTA);
+        assertEquals("meters", filter.getDistanceUnits());
         assertTrue(filter.getExpression2() instanceof Literal);
         assertTrue( ((Literal)filter.getExpression2()).getValue() instanceof Geometry);
         final Geometry filtergeo = (Geometry) ((Literal)filter.getExpression2()).getValue();
         assertTrue(baseGeometry.equalsExact(filtergeo));
     }
 
+    @Test
+    public void testDWithin2() throws CQLException {
+        //there is an error in this syntax, meters is a literal so it should be writen 'meters"
+        //but this writing is commun so we tolerate it
+        final String cql = "DWITHIN(BoundingBox, POINT(12.1 28.9), 10, meters)";
+        final Object obj = CQL.parseFilter(cql);
+        assertTrue(obj instanceof DWithin);
+        final DWithin filter = (DWithin) obj;
+
+        assertEquals(FF.property("BoundingBox"), filter.getExpression1());
+        assertEquals(10.0, filter.getDistance(), DELTA);
+        assertEquals("meters", filter.getDistanceUnits());
+        assertTrue(filter.getExpression2() instanceof Literal);
+        assertTrue( ((Literal)filter.getExpression2()).getValue() instanceof Geometry);
+        final Geometry filtergeo = (Geometry) ((Literal)filter.getExpression2()).getValue();
+        assertTrue(baseGeometryPoint.equalsExact(filtergeo));
+        
+    }
+    
     @Test
     public void testEquals() throws CQLException {
         final String cql = "EQUALS(\"att\" ,POLYGON((10 20, 30 40, 50 60, 10 20)))";

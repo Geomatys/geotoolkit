@@ -269,7 +269,7 @@ filterTerm 	: expression
 filter : filter (AND filter)+
        | filter (OR filter )+
        | LPAREN filter RPAREN
-       | NOT filterTerm
+       | NOT (filterTerm | (LPAREN filter RPAREN) )
        | filterTerm
        ;
 
