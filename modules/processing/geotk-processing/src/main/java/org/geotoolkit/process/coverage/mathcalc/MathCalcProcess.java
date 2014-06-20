@@ -17,47 +17,31 @@
 
 package org.geotoolkit.process.coverage.mathcalc;
 
-import java.awt.image.BufferedImage;
-import java.awt.image.DataBuffer;
-import java.awt.image.WritableRaster;
 import java.util.AbstractMap;
-import java.util.Arrays;
 import java.util.Set;
-import java.util.concurrent.CancellationException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
-import org.geotoolkit.coverage.io.GridCoverageWriteParam;
-import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.cql.CQL;
 import org.geotoolkit.cql.CQLException;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.filter.WrapFilterFactory2;
-import org.geotoolkit.geometry.HyperCubeIterator;
 import static org.geotoolkit.parameter.Parameters.value;
 import org.geotoolkit.parameter.ParametersExt;
 import org.geotoolkit.process.AbstractProcess;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
-import org.geotoolkit.referencing.operation.transform.ConcatenatedTransform;
-import org.geotoolkit.util.BufferedImageUtilities;
 import org.opengis.coverage.Coverage;
-import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Function;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.operation.MathTransform;
-import org.opengis.referencing.operation.MathTransformFactory;
-import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 
 /**
@@ -91,11 +75,9 @@ public class MathCalcProcess extends AbstractProcess {
         final CoverageReference outRef = value(MathCalcDescriptor.IN_RESULT_COVERAGE, inputParameters);
         
         final GeneralGridGeometry gg;
-        final GridCoverageWriter outWriter;
         final GridCoverageReader outReader;
         try {
             outReader = outRef.acquireReader();
-            outWriter = outRef.acquireWriter();
             gg = outReader.getGridGeometry(outRef.getImageIndex());
             outRef.recycle(outReader);
         } catch (CoverageStoreException ex) {
@@ -112,10 +94,7 @@ public class MathCalcProcess extends AbstractProcess {
         }
         
         // prepare dynamic pick object
-        final GridEnvelope ge = gg.getExtent();
-        final int nbDim = ge.getDimension();
-        final DirectPosition positionGrid = new GeneralDirectPosition(gg.getCoordinateReferenceSystem());
-        final DirectPosition positionGeo = new GeneralDirectPosition(gg.getCoordinateReferenceSystem());
+        final GeneralDirectPosition positionGeo = new GeneralDirectPosition(gg.getCoordinateReferenceSystem());
         final DynamicPick pick;
         try {
             pick = new DynamicPick(inCoverages, inMapping, positionGeo);
@@ -123,80 +102,25 @@ public class MathCalcProcess extends AbstractProcess {
             throw new ProcessException(ex.getMessage(), this, ex);
         }
         
-        //create iterator
-        final int[] maxSize = new int[nbDim];
-        Arrays.fill(maxSize, 1);
-        maxSize[0] = 256;
-        maxSize[1] = 256;        
-        final HyperCubeIterator ite = HyperCubeIterator.create(ge, maxSize);
+        final FillCoverage.SampleEvaluator evaluator = new FillCoverage.SampleEvaluator() {
+            @Override
+            public void evaluate(DirectPosition position, double[] sampleBuffer) {
+                //update pick object position before evaluation
+                positionGeo.setLocation(position);
+                sampleBuffer[0] = exp.evaluate(pick, Double.class);
+            }
+        };
         
-        //loop on all slices pieces
-        final MathTransformFactory mathFactory = FactoryFinder.getMathTransformFactory(null);
-        final MathTransform gridToCrs = gg.getGridToCRS();
-        
-        while(ite.hasNext()){
-            final HyperCubeIterator.HyperCube cube = ite.next();
-            final int[] zoneLower = cube.getLower();
-            final int[] zoneUpper = cube.getUpper();
-            for(int i=2;i<nbDim;i++){
-                positionGrid.setOrdinate(i, zoneLower[i]);
-            }
-            
-            //create the slice coverage
-            final BufferedImage zoneImage = BufferedImageUtilities.createImage(
-                    zoneUpper[0]-zoneLower[0], 
-                    zoneUpper[1]-zoneLower[1], 
-                    1, DataBuffer.TYPE_DOUBLE);
-            final WritableRaster raster = zoneImage.getRaster();
-            
-            
-            //loop on all pixels
-            final double[] sampleData = new double[1];
-            try{
-                for(int x=zoneLower[0],xn=zoneUpper[0];x<xn;x++){
-                    for(int y=zoneLower[1],yn=zoneUpper[1];y<yn;y++){
-                        positionGrid.setOrdinate(0, x);
-                        positionGrid.setOrdinate(1, y);
-                        gridToCrs.transform(positionGrid, positionGeo);
-                        sampleData[0] = exp.evaluate(pick,Double.class);
-                        raster.setSample(x-zoneLower[0], y-zoneLower[1], 0, sampleData[0]);
-                    }
-                }
-            }catch(TransformException ex){
-                throw new ProcessException(ex.getMessage(), this, ex);
-            }
-            
-            //Calculate grid to crsof this zone
-            final GeneralMatrix matrix = new GeneralMatrix(nbDim+1);
-            matrix.setIdentity();
-            for(int i=0;i<nbDim;i++){
-                matrix.setElement(i, nbDim, zoneLower[i]);
-            }
-            final MathTransform cornerToGrid;
-            try {
-                cornerToGrid = mathFactory.createAffineTransform(matrix);
-            } catch (FactoryException ex) {
-                throw new ProcessException(ex.getMessage(), this, ex);
-            }
-            final MathTransform concat = ConcatenatedTransform.create(cornerToGrid, gridToCrs);
-            
-            final GridCoverageBuilder gcb = new GridCoverageBuilder();
-            gcb.setCoordinateReferenceSystem(gg.getCoordinateReferenceSystem());
-            gcb.setRenderedImage(zoneImage);
-            gcb.setGridToCRS(concat);
-            final GridCoverage2D zoneCoverage = gcb.getGridCoverage2D();
-            final GridCoverageWriteParam param = new GridCoverageWriteParam();
-            try {
-                outWriter.write(zoneCoverage, param);
-            } catch (CoverageStoreException ex) {
-                throw new ProcessException(ex.getMessage(), this, ex);
-            } catch (CancellationException ex) {
-                throw new ProcessException(ex.getMessage(), this, ex);
-            }
+        final FillCoverage filler = new FillCoverage(outRef);
+        try {
+            filler.fill(evaluator, null);
+        } catch (CoverageStoreException ex) {
+            throw new ProcessException(ex.getMessage(), this, ex);
         }
         
     }
     
+    //TODO, for later, handle offsets on axis with syntax U(x,y+10,z) and U(gx-20,gy,gz)
     private static class ExtFilterFactory extends WrapFilterFactory2{
 
         public ExtFilterFactory() {
