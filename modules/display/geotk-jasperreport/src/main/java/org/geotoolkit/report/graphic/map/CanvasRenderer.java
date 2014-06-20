@@ -33,6 +33,7 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.display.canvas.control.NeverFailMonitor;
 import org.geotoolkit.display.container.GraphicContainer;
 
 import org.opengis.geometry.Envelope;
@@ -54,6 +55,7 @@ public class CanvasRenderer extends J2DCanvas implements JRRenderable{
 
     public CanvasRenderer(final MapContext context){
         super(context.getCoordinateReferenceSystem(),null);
+        monitor = new NeverFailMonitor();
     }
 
     private CanvasRenderer( final Hints hints){

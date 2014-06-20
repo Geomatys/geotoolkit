@@ -359,7 +359,10 @@ public class PDFFixGraphics2D extends Graphics2D {
 
     @Override
     public synchronized void drawRenderedImage(RenderedImage img, AffineTransform xform) {
-        wrapped.drawRenderedImage(img, xform);
+        final BufferedImage cp = new BufferedImage(img.getWidth(), img.getHeight(), BufferedImage.TYPE_INT_ARGB);
+        final Graphics2D g2d = cp.createGraphics();
+        g2d.drawRenderedImage(img, new AffineTransform());
+        drawImage(cp, xform, null);
     }
 
     @Override
