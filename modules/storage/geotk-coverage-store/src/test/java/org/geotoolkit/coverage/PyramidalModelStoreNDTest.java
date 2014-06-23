@@ -25,6 +25,7 @@ import java.awt.image.RenderedImage;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.geotoolkit.coverage.io.CoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.feature.type.DefaultName;
@@ -166,7 +167,7 @@ public abstract class PyramidalModelStoreNDTest {
     public void checkMetaTest() throws Exception{
         //load the coverage store
         getCoverageStore();
-        final GridCoverageReader reader = ref.acquireReader();
+        final GridCoverageReader reader = (GridCoverageReader) ref.acquireReader();
         
         //check the image size
         final GridGeometry gridGeom = reader.getGridGeometry(ref.getImageIndex());
@@ -196,7 +197,7 @@ public abstract class PyramidalModelStoreNDTest {
     @Test
     public void readDefaultTest() throws Exception{
         getCoverageStore();
-        final GridCoverageReader reader = ref.acquireReader();
+        final CoverageReader reader = ref.acquireReader();
         
         final GridCoverage2D coverage = (GridCoverage2D) reader.read(ref.getImageIndex(), null);
         checkCoverage(coverage, 40, 30, colors[0][1], -180,-160,75,90,-15.5,-14.5);          
@@ -210,7 +211,7 @@ public abstract class PyramidalModelStoreNDTest {
     @Test
     public void readSlicesTest() throws Exception{
         getCoverageStore();
-        final GridCoverageReader reader = ref.acquireReader();
+        final CoverageReader reader = ref.acquireReader();
         final GridCoverageReadParam param = new GridCoverageReadParam();
         
         //expecting image from mosaic with min resolution and vertical -15

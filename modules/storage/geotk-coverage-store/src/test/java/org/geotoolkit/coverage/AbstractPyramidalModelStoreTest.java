@@ -28,21 +28,22 @@ import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.awt.image.WritableRaster;
 import java.util.Arrays;
+import org.apache.sis.geometry.GeneralDirectPosition;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.geotoolkit.coverage.grid.ViewType;
+import org.geotoolkit.coverage.io.CoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.feature.type.DefaultName;
-import org.apache.sis.geometry.GeneralDirectPosition;
-import org.apache.sis.geometry.GeneralEnvelope;
-import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.util.BufferedImageUtilities;
+
+import static org.junit.Assert.*;
 import org.junit.Test;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-
-import static org.junit.Assert.*;
 
 /**
  * Pyramid store read and write tests.
@@ -199,7 +200,7 @@ public abstract class AbstractPyramidalModelStoreTest {
     public void readRGBANoArgumentTest() throws Exception{
         //load the coverage store
         getCoverageStore();
-        final GridCoverageReader reader = rgbaCoverageRef.acquireReader();
+        final CoverageReader reader = rgbaCoverageRef.acquireReader();
         final GridCoverage2D coverage = (GridCoverage2D) reader.read(0, null);
         rgbaCoverageRef.recycle(reader);
 
@@ -247,7 +248,7 @@ public abstract class AbstractPyramidalModelStoreTest {
     public void readFloat1BNoArgumentTest() throws Exception{
         //load the coverage store
         getCoverageStore();
-        final GridCoverageReader reader = float1bCoverageRef.acquireReader();
+        final CoverageReader reader = float1bCoverageRef.acquireReader();
         final GridCoverage2D coverage = (GridCoverage2D) reader.read(0, null);
         float1bCoverageRef.recycle(reader);
 
@@ -297,7 +298,7 @@ public abstract class AbstractPyramidalModelStoreTest {
 
         //load the coverage store
         getCoverageStore();
-        final GridCoverageReader reader = rgbaCoverageRef.acquireReader();
+        final CoverageReader reader = rgbaCoverageRef.acquireReader();
 
         final GeneralEnvelope paramEnv = new GeneralEnvelope(crs);
         paramEnv.setRange(0, corner.getOrdinate(0) +(1*10)*1, corner.getOrdinate(0) +(2*10)*1);

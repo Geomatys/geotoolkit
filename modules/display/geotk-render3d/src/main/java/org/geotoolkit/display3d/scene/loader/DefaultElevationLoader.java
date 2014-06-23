@@ -27,32 +27,29 @@ import java.awt.image.WritableRaster;
 import java.util.Arrays;
 import java.util.List;
 import javax.measure.converter.ConversionException;
-
 import org.apache.sis.storage.DataStoreException;
-
+import org.geotoolkit.coverage.CoverageReference;
+import org.geotoolkit.coverage.GridSampleDimension;
+import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.geotoolkit.coverage.io.CoverageReader;
+import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
+import org.geotoolkit.coverage.io.GridCoverageReadParam;
+import org.geotoolkit.coverage.io.GridCoverageReader;
+import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.image.interpolation.Interpolation;
 import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.image.interpolation.Resample;
 import org.geotoolkit.image.iterator.PixelIterator;
 import org.geotoolkit.image.iterator.PixelIteratorFactory;
+import org.geotoolkit.internal.image.ImageUtilities;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.MathTransforms;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
-import org.geotoolkit.coverage.CoverageReference;
-import org.geotoolkit.coverage.GridSampleDimension;
-import org.geotoolkit.coverage.grid.GeneralGridGeometry;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
-import org.geotoolkit.coverage.io.GridCoverageReadParam;
-import org.geotoolkit.coverage.io.GridCoverageReader;
-import org.geotoolkit.display.PortrayalException;
-import org.geotoolkit.internal.image.ImageUtilities;
 import org.geotoolkit.util.BufferedImageUtilities;
-
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
 import org.opengis.referencing.operation.TransformException;
@@ -149,7 +146,7 @@ public class DefaultElevationLoader extends AbstractElevationLoader {
         }
 
         try{
-            final GridCoverageReader reader = coverageRef.acquireReader();
+            final CoverageReader reader = coverageRef.acquireReader();
             final GridCoverageReadParam params = new GridCoverageReadParam();
             params.setEnvelope(outputEnv);
             try{

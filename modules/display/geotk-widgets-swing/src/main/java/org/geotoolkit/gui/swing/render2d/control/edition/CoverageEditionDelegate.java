@@ -238,7 +238,7 @@ public class CoverageEditionDelegate extends AbstractEditionDelegate {
                 gcrp.clear();
                 gcrp.setEnvelope(visibleArea);
                 final CoverageReference ref = layer.getCoverageReference();
-                final GridCoverageReader reader = ref.acquireReader();
+                final CoverageReader reader = ref.acquireReader();
                 final GridCoverage2D cov = (GridCoverage2D) reader.read(ref.getImageIndex(), gcrp);
                 ref.recycle(reader);
                 setCoverage(cov,selectRectangle);

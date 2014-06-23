@@ -22,7 +22,6 @@ import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Polygon;
-
 import java.awt.Color;
 import java.io.File;
 import java.net.URI;
@@ -36,9 +35,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.zip.ZipOutputStream;
 import javax.imageio.ImageIO;
 import org.geotoolkit.coverage.CoverageReference;
-
 import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.io.GridCoverageReader;
+import org.geotoolkit.coverage.io.CoverageReader;
 import org.geotoolkit.coverage.processing.Operations;
 import org.geotoolkit.data.kml.model.AbstractGeometry;
 import org.geotoolkit.data.kml.model.AbstractStyleSelector;
@@ -54,6 +52,9 @@ import org.geotoolkit.data.kml.model.PolyStyle;
 import org.geotoolkit.data.kml.model.Style;
 import org.geotoolkit.data.kml.xml.KmlWriter;
 import org.geotoolkit.display2d.GO2Utilities;
+import org.geotoolkit.feature.Feature;
+import org.geotoolkit.feature.FeatureFactory;
+import org.geotoolkit.feature.Property;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapContext;
@@ -63,10 +64,6 @@ import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.util.FileUtilities;
-
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.FeatureFactory;
-import org.geotoolkit.feature.Property;
 import org.opengis.filter.expression.Expression;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.style.ExtensionSymbolizer;
@@ -452,7 +449,7 @@ public class KmzContextInterpreter {
         final CoordinateReferenceSystem targetCrs = DefaultGeographicCRS.WGS84;
 
         final CoverageReference ref = coverageMapLayer.getCoverageReference();
-        final GridCoverageReader reader = ref.acquireReader();
+        final CoverageReader reader = ref.acquireReader();
         final GridCoverage2D coverage = (GridCoverage2D) reader.read(ref.getImageIndex(), null);
         ref.recycle(reader);
 

@@ -22,11 +22,12 @@ import java.util.logging.Level;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.collection.TableColumn;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.coverage.io.CoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
-import org.geotoolkit.storage.DefaultDataNode;
 import org.geotoolkit.feature.type.Name;
+import org.geotoolkit.storage.DefaultDataNode;
 
 /**
  *
@@ -66,7 +67,7 @@ public abstract class AbstractCoverageReference extends DefaultDataNode implemen
      * @param reader
      */
     @Override
-    public void recycle(GridCoverageReader reader) {
+    public void recycle(CoverageReader reader) {
         dispose(reader);
     }
 
@@ -151,7 +152,7 @@ public abstract class AbstractCoverageReference extends DefaultDataNode implemen
      *
      * @param reader
      */
-    protected void dispose(GridCoverageReader reader) {
+    protected void dispose(CoverageReader reader) {
         try {
 //            //try to close sub stream
 //            Object input = reader.getInput();

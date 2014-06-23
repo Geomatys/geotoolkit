@@ -28,8 +28,8 @@ import javax.media.jai.RasterFactory;
 import javax.swing.event.EventListenerList;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.coverage.xmlstore.XMLSampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.geotoolkit.coverage.io.CoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
@@ -274,7 +274,7 @@ public class CoverageReferenceRenderedImage implements RenderedImage{
         tenv = ReferencingUtilities.transform(genv, dataEnv.getCoordinateReferenceSystem());
         rparam.setEnvelope(tenv);
 
-        final GridCoverageReader reader = ref.acquireReader();
+        final CoverageReader reader = ref.acquireReader();
         final GridCoverage2D coverage = (GridCoverage2D) reader.read(0, rparam);
         ref.recycle(reader);
         return coverage;

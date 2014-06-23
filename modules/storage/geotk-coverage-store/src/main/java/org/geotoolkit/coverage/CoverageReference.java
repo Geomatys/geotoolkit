@@ -18,12 +18,13 @@ package org.geotoolkit.coverage;
 
 import java.awt.Image;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.coverage.io.CoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
+import org.geotoolkit.feature.type.Name;
 import org.geotoolkit.storage.DataNode;
 import org.geotoolkit.storage.StorageListener;
-import org.geotoolkit.feature.type.Name;
 
 /**
  * Reference to a coverage in the coverage store.
@@ -84,7 +85,7 @@ public interface CoverageReference extends DataNode {
      *
      * @param reader
      */
-    void recycle(GridCoverageReader reader);
+    void recycle(CoverageReader reader);
 
     /**
      * Return the used writer, they can be reused later.

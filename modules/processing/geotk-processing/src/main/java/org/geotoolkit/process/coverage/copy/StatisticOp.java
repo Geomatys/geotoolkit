@@ -22,8 +22,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.geotoolkit.coverage.io.CoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
-import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.image.iterator.PixelIterator;
 import org.geotoolkit.image.iterator.PixelIteratorFactory;
 
@@ -51,7 +51,7 @@ public class StatisticOp{
      * Each Entry have a name ("min", "max") and values are an double[] for each bands.
      * @throws CoverageStoreException 
      */
-    public static Map<String,Object> analyze(GridCoverageReader reader, int imageIndex) throws CoverageStoreException {
+    public static Map<String,Object> analyze(CoverageReader reader, int imageIndex) throws CoverageStoreException {
         return analyze( ((GridCoverage2D)reader.read(imageIndex, null)).getRenderedImage() );
     }
     

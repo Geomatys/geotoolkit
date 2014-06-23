@@ -19,6 +19,7 @@ package org.geotoolkit.coverage;
 
 import java.util.Deque;
 import java.util.concurrent.ConcurrentLinkedDeque;
+import org.geotoolkit.coverage.io.CoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.feature.type.Name;
@@ -46,7 +47,7 @@ public abstract class RecyclingCoverageReference extends AbstractCoverageReferen
      * @see #acquireReader()
      * @see #recycle(GridCoverageReader)
      */
-    private final ConcurrentLinkedDeque<GridCoverageReader> readers = new ConcurrentLinkedDeque<>();
+    private final ConcurrentLinkedDeque<CoverageReader> readers = new ConcurrentLinkedDeque<>();
 
     public RecyclingCoverageReference(CoverageStore store, Name name) {
         super(store, name);
@@ -54,7 +55,7 @@ public abstract class RecyclingCoverageReference extends AbstractCoverageReferen
 
     @Override
     public final GridCoverageReader acquireReader() throws CoverageStoreException {
-        GridCoverageReader reader = readers.poll();
+        GridCoverageReader reader = (GridCoverageReader) readers.poll();
         if (reader == null) {
             reader = createReader();
         }
@@ -62,7 +63,7 @@ public abstract class RecyclingCoverageReference extends AbstractCoverageReferen
     }
 
     @Override
-    public final void recycle(GridCoverageReader reader) {
+    public final void recycle(CoverageReader reader) {
         resetReader(reader);
         readers.push(reader);
         removeExpired(readers);
@@ -77,7 +78,7 @@ public abstract class RecyclingCoverageReference extends AbstractCoverageReferen
      * Reset given reader.
      * Does not by default, override to do specific operations.
      */
-    protected void resetReader(GridCoverageReader reader){
+    protected void resetReader(CoverageReader reader){
 
     }
 
@@ -89,9 +90,9 @@ public abstract class RecyclingCoverageReference extends AbstractCoverageReferen
      * @param  now   Current value of {@link System#nanoTime()}.
      * @return {@code true} if the queue became empty as a result of this method call.
      */
-    private boolean removeExpired(final Deque<GridCoverageReader> queue) {
+    private boolean removeExpired(final Deque<CoverageReader> queue) {
         while(queue.size()>MAX_ELEMENTS){
-            final GridCoverageReader next = queue.pollLast();
+            final CoverageReader next = queue.pollLast();
             if(next==null)continue;
             dispose(next);
         }
@@ -107,7 +108,7 @@ public abstract class RecyclingCoverageReference extends AbstractCoverageReferen
     @Override
     protected void finalize() throws Throwable {
         while(!readers.isEmpty()){
-            final GridCoverageReader next = readers.pollLast();
+            final CoverageReader next = readers.pollLast();
             if(next==null)continue;
             dispose(next);
         }

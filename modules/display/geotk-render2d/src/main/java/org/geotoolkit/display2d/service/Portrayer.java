@@ -29,15 +29,15 @@ import java.util.logging.Logger;
 import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
+import org.geotoolkit.coverage.io.CoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
-import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriteParam;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.coverage.io.ImageCoverageWriter;
 import org.geotoolkit.coverage.processing.Operations;
-import org.geotoolkit.display.canvas.control.CanvasMonitor;
 import org.geotoolkit.display.PortrayalException;
+import org.geotoolkit.display.canvas.control.CanvasMonitor;
 import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.GO2Utilities;
 import static org.geotoolkit.display2d.GO2Utilities.*;
@@ -243,7 +243,7 @@ public final class Portrayer {
 
         try{
             final CoverageReference ref = cml.getCoverageReference();
-            final GridCoverageReader reader = ref.acquireReader();
+            final CoverageReader reader = ref.acquireReader();
             final String mime = outputDef.getMime();
             final Envelope env = viewDef.getEnvelope();
             final Dimension dim = canvasDef.getDimension();

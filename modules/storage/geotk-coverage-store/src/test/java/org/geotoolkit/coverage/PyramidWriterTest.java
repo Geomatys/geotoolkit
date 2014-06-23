@@ -29,16 +29,17 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
+import org.geotoolkit.coverage.io.CoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriteParam;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.coverage.memory.MPCoverageStore;
 import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.Name;
 import org.geotoolkit.referencing.CRS;
 import static org.geotoolkit.referencing.crs.DefaultGeographicCRS.*;
-import org.junit.Test;
 import static org.junit.Assert.*;
-import org.geotoolkit.feature.type.Name;
+import org.junit.Test;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
@@ -85,7 +86,7 @@ public class PyramidWriterTest {
         ref.writeTile(pyramid.getId(), mosaic.getId(), 0, 0, createImage(360, 180, Color.BLACK));
 
         //sanity check
-        GridCoverageReader reader = ref.acquireReader();
+        CoverageReader reader = ref.acquireReader();
         RenderedImage candidate = ((GridCoverage2D)reader.read(0, null)).getRenderedImage();
         ref.recycle(reader);
         testImage(candidate, 360, 180, Color.BLACK);
@@ -128,7 +129,7 @@ public class PyramidWriterTest {
         }
 
         //sanity check
-        GridCoverageReader reader = ref.acquireReader();
+        CoverageReader reader = ref.acquireReader();
         RenderedImage candidate = ((GridCoverage2D)reader.read(0, null)).getRenderedImage();
         ref.recycle(reader);
         testImage(candidate, 36, 18, Color.BLACK);
@@ -171,7 +172,7 @@ public class PyramidWriterTest {
         }
 
         //sanity check
-        GridCoverageReader reader = ref.acquireReader();
+        CoverageReader reader = ref.acquireReader();
         RenderedImage candidate = ((GridCoverage2D)reader.read(0, null)).getRenderedImage();
         ref.recycle(reader);
         testImage(candidate, 36, 18, Color.BLACK);
@@ -235,7 +236,7 @@ public class PyramidWriterTest {
         }
 
         //sanity check
-        GridCoverageReader reader = ref.acquireReader();
+        CoverageReader reader = ref.acquireReader();
         RenderedImage candidate = ((GridCoverage2D)reader.read(0, null)).getRenderedImage();
         ref.recycle(reader);
         testImage(candidate, 36, 18, Color.BLACK);
@@ -329,7 +330,7 @@ public class PyramidWriterTest {
         }
 
         //sanity check
-        GridCoverageReader reader = ref.acquireReader();
+        CoverageReader reader = ref.acquireReader();
         RenderedImage candidate = ((GridCoverage2D)reader.read(0, null)).getRenderedImage();
         ref.recycle(reader);
         testImage(candidate, 18, 36, Color.BLACK);
@@ -423,7 +424,7 @@ public class PyramidWriterTest {
         }
 
         //sanity check
-        GridCoverageReader reader = ref.acquireReader();
+        CoverageReader reader = ref.acquireReader();
         RenderedImage candidate = ((GridCoverage2D)reader.read(0, null)).getRenderedImage();
         ref.recycle(reader);
         testImage(candidate, 36, 18, Color.BLACK);

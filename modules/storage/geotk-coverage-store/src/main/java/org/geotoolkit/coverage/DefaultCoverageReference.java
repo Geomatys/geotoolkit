@@ -20,12 +20,12 @@ import java.awt.Image;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.collection.TableColumn;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.geotoolkit.coverage.io.CoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.coverage.io.ImageCoverageReader;
 import org.geotoolkit.coverage.memory.MemoryCoverageReader;
-import org.opengis.coverage.Coverage;
 import org.geotoolkit.feature.type.Name;
 
 /**
@@ -94,7 +94,7 @@ public class DefaultCoverageReference extends AbstractCoverageReference{
     }
 
     @Override
-    public void recycle(GridCoverageReader reader) {
+    public void recycle(CoverageReader reader) {
         if(input instanceof GridCoverageReader){
             //do not dispose it, it will be reused
         }else{

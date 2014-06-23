@@ -99,7 +99,7 @@ import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.ISO_FORMAT_
  * @since 3.09 (derived from 2.4)
  * @module
  */
-public abstract class GridCoverageReader extends GridCoverageStore {
+public abstract class GridCoverageReader extends GridCoverageStore implements CoverageReader {
     /**
      * The input (typically a {@link java.io.File}, {@link java.net.URL} or {@link String}),
      * or {@code null} if input is not set.

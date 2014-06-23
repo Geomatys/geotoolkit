@@ -52,6 +52,7 @@ import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.grid.GridEnvelope2D;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.grid.ViewType;
+import org.geotoolkit.coverage.io.CoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
@@ -376,7 +377,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
 
                         try{
                             final CoverageReference ref = projectedCoverage.getLayer().getCoverageReference();
-                            final GridCoverageReader reader = ref.acquireReader();
+                            final CoverageReader reader = ref.acquireReader();
                             final Map<String,Object> analyze = StatisticOp.analyze(reader,ref.getImageIndex());
                             ref.recycle(reader);
                             final double[] minArray = (double[])analyze.get(StatisticOp.MINIMUM);

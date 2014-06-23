@@ -40,24 +40,24 @@ import org.geotoolkit.coverage.GridMosaic;
 import org.geotoolkit.coverage.Pyramid;
 import org.geotoolkit.coverage.PyramidalCoverageReference;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.io.GridCoverageReader;
-import org.geotoolkit.referencing.CRS;
-import org.junit.Test;
-import org.geotoolkit.feature.type.Name;
-import org.opengis.parameter.ParameterValueGroup;
-import org.opengis.referencing.NoSuchAuthorityCodeException;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.util.FactoryException;
+import org.geotoolkit.coverage.io.CoverageReader;
 
 import static org.geotoolkit.coverage.postgresql.PGCoverageStoreFactory.*;
-import org.geotoolkit.feature.type.DefaultName;
 import org.geotoolkit.feature.FeatureUtilities;
+import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.Name;
+import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.version.Version;
 import org.geotoolkit.version.VersionControl;
 import org.geotoolkit.version.VersioningException;
 import static org.junit.Assert.*;
 import org.junit.Assume;
 import org.junit.BeforeClass;
+import org.junit.Test;
+import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.referencing.NoSuchAuthorityCodeException;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.util.FactoryException;
 
 /**
  *
@@ -156,7 +156,7 @@ public class PGCVersioningTest {
         assertEquals(versions.get(0).getDate().getTime(),0);
         assertEquals(date1.getTime(),versions.get(0).getDate().getTime());
 
-        GridCoverageReader reader = cref.acquireReader();
+        CoverageReader reader = cref.acquireReader();
         coverage = (GridCoverage2D)reader.read(cref.getImageIndex(), null);
         cref.recycle(reader);
         assertImageColor(coverage.getRenderedImage(), Color.RED);

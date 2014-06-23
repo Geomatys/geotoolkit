@@ -65,14 +65,16 @@ import javax.swing.SwingConstants;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellEditor;
-import org.apache.sis.measure.MeasurementRange;
 import org.geotoolkit.coverage.CoverageReference;
+import org.geotoolkit.coverage.io.CoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.FeatureUtilities;
+import org.geotoolkit.feature.Property;
+import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.geotoolkit.filter.DefaultLiteral;
 import org.geotoolkit.gui.swing.propertyedit.PropertyPane;
 import org.geotoolkit.gui.swing.propertyedit.featureeditor.ArrayEditor;
@@ -111,8 +113,6 @@ import org.geotoolkit.style.interval.Palette;
 import org.geotoolkit.util.Converters;
 import org.jdesktop.swingx.JXTable;
 import org.jdesktop.swingx.combobox.ListComboBoxModel;
-import org.geotoolkit.feature.Property;
-import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Function;
@@ -497,7 +497,7 @@ public class JColorMapPane extends StyleElementEditor<ColorMap> implements Prope
         if(layer != null && layer instanceof CoverageMapLayer){
             final CoverageMapLayer cml = (CoverageMapLayer)layer;
             final CoverageReference cref = cml.getCoverageReference();
-            GridCoverageReader reader = null;
+            CoverageReader reader = null;
             try {
                 reader = cref.acquireReader();
                 final Map<String,Object> an = StatisticOp.analyze(reader,cref.getImageIndex());
