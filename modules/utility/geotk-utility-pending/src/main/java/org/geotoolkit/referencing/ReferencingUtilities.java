@@ -22,6 +22,8 @@ import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import javax.measure.unit.SI;
+import javax.measure.unit.Unit;
 import org.apache.sis.geometry.DirectPosition2D;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
@@ -33,6 +35,7 @@ import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
 import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
 import org.geotoolkit.referencing.operation.projection.Mercator;
 import org.geotoolkit.referencing.operation.transform.ConcatenatedTransform;
+import org.geotoolkit.referencing.operation.transform.LinearInterpolator1D;
 import org.geotoolkit.referencing.operation.transform.LinearTransform;
 import org.geotoolkit.referencing.operation.transform.LinearTransform1D;
 import org.geotoolkit.referencing.operation.transform.PassThroughTransform;
@@ -54,9 +57,6 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
-
-import javax.measure.unit.SI;
-import javax.measure.unit.Unit;
 
 /**
  * Complementary utility methods for CRS manipulation.
@@ -602,7 +602,7 @@ public final class ReferencingUtilities {
             }else if(array.length == 1){
                 axistrs = LinearTransform1D.create(1, array[0]);
             }else{
-                axistrs = SequenceValueTransform1D.create(array);
+                axistrs = LinearInterpolator1D.create(array);
             }
             final MathTransform mask = PassThroughTransform.create(baseDim+i, axistrs, values.length-i-1);
             result = ConcatenatedTransform.create(result, mask);

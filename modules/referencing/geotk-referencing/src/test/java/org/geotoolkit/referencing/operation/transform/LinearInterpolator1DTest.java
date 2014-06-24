@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2012, Geomatys
+ *    (C) 2012-2014, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.referencing;
+package org.geotoolkit.referencing.operation.transform;
 
 import org.junit.Assert;
 import static org.junit.Assert.assertTrue;
@@ -24,15 +24,15 @@ import org.opengis.referencing.operation.NoninvertibleTransformException;
 import org.opengis.referencing.operation.TransformException;
 
 /**
- * Test {@link SequenceValueTransform1D} class.
+ * Test {@link LinearInterpolator1D} class.
  *
  * @author Remi Marechal (Geomatys).
  */
-public class SequenceValueTransform1DTest {
+public class LinearInterpolator1DTest {
 
     private double[] antecedent, values;
 
-    public SequenceValueTransform1DTest() {
+    public LinearInterpolator1DTest() {
     }
 
     /**
@@ -127,7 +127,7 @@ public class SequenceValueTransform1DTest {
         antecedent = new double[]{-43,7,-19,105};
         values     = new double[]{1017,525,24,12};
         try {
-            MathTransform1D mt = SequenceValueTransform1D.create(antecedent, values);
+            MathTransform1D mt = LinearInterpolator1D.create(antecedent, values);
             Assert.fail("test should had failed");
         } catch (Exception e) {
             //ok
@@ -135,7 +135,7 @@ public class SequenceValueTransform1DTest {
 
         antecedent = new double[]{1017,525,24,12};
         values     = new double[]{-43,7,-19,105};
-        MathTransform1D mt = SequenceValueTransform1D.create(antecedent, values);
+        MathTransform1D mt = LinearInterpolator1D.create(antecedent, values);
         try {
             mt.inverse();
             Assert.fail("test should had failed");
@@ -145,7 +145,7 @@ public class SequenceValueTransform1DTest {
         antecedent = new double[]{1017,525,24,12,45};
         values     = new double[]{-43,7,-19,105};
         try {
-            mt = SequenceValueTransform1D.create(antecedent, values);
+            mt = LinearInterpolator1D.create(antecedent, values);
             Assert.fail("test should had failed");
         } catch (Exception e) {
             //ok
@@ -160,7 +160,7 @@ public class SequenceValueTransform1DTest {
      * @throws TransformException
      */
     private void testMath (boolean testInvert) throws NoninvertibleTransformException, TransformException {
-        final MathTransform1D math1 = SequenceValueTransform1D.create(antecedent, values);
+        final MathTransform1D math1 = LinearInterpolator1D.create(antecedent, values);
         MathTransform1D mathInvert = null;
         if (testInvert) mathInvert = math1.inverse();
         int step = 10;

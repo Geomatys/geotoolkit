@@ -14,10 +14,9 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.referencing;
+package org.geotoolkit.referencing.operation.transform;
 
 import java.util.Arrays;
-import org.geotoolkit.referencing.operation.transform.AbstractMathTransform1D;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.ArraysExt;
 import org.opengis.referencing.operation.MathTransform1D;
@@ -30,7 +29,7 @@ import org.opengis.referencing.operation.TransformException;
  * @author Johann Sorel (Geomatys)
  * @author Remi Marechal (Geomatys).
  */
-public final class SequenceValueTransform1D extends AbstractMathTransform1D {
+public final class LinearInterpolator1D extends AbstractMathTransform1D {
     private final double[] antecedent;
     private final double[] values;
     private boolean isIncreaseOrder = true;
@@ -43,7 +42,7 @@ public final class SequenceValueTransform1D extends AbstractMathTransform1D {
      *
      * @param values image from antecedents table values.
      */
-    private SequenceValueTransform1D(double[] values) {
+    private LinearInterpolator1D(double[] values) {
         ArgumentChecks.ensureNonNull("values", values);
         this.l          = values.length;
         if (l < 2)
@@ -59,7 +58,7 @@ public final class SequenceValueTransform1D extends AbstractMathTransform1D {
      * @param antecedents "abscissa" table values.
      * @param values image from antecedents table values.
      */
-    private SequenceValueTransform1D(double[] antecedents, double[] values) {
+    private LinearInterpolator1D(double[] antecedents, double[] values) {
         ArgumentChecks.ensureNonNull("values", values);
         ArgumentChecks.ensureNonNull("antecedents", antecedents);
         this.l = antecedents.length;
@@ -139,7 +138,7 @@ public final class SequenceValueTransform1D extends AbstractMathTransform1D {
             if (!ArraysExt.isSorted(values2, true))
                 throw new NoninvertibleTransformException("non inversible");
         }
-        return new SequenceValueTransform1D(values, antecedent);
+        return new LinearInterpolator1D(values, antecedent);
     }
 
     @Override
@@ -147,12 +146,12 @@ public final class SequenceValueTransform1D extends AbstractMathTransform1D {
         return Arrays.equals(antecedent, values);
     }
 
-    public static SequenceValueTransform1D create(double[] values){
-        return new SequenceValueTransform1D(values);
+    public static LinearInterpolator1D create(double[] values){
+        return new LinearInterpolator1D(values);
     }
 
-    public static SequenceValueTransform1D create(double[] antecedents, double[] values) {
-        return new SequenceValueTransform1D(antecedents, values);
+    public static LinearInterpolator1D create(double[] antecedents, double[] values) {
+        return new LinearInterpolator1D(antecedents, values);
     }
 
 }
