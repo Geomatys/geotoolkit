@@ -26,7 +26,6 @@ import org.geotoolkit.coverage.Pyramid;
 import org.geotoolkit.coverage.PyramidSet;
 import org.geotoolkit.coverage.PyramidalCoverageReference;
 import org.geotoolkit.coverage.finder.CoverageFinder;
-import org.geotoolkit.coverage.finder.CoverageFinderFactory;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
 import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.GO2Utilities;
@@ -55,6 +54,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.logging.Level;
+import org.geotoolkit.coverage.finder.DefaultCoverageFinder;
 
 /**
  * Graphic for pyramidal coverage layers.
@@ -93,7 +93,7 @@ public class StatefullPyramidalCoverageLayerJ2D extends StatefullMapLayerJ2D<Cov
 
     public StatefullPyramidalCoverageLayerJ2D(final J2DCanvas canvas, final CoverageMapLayer layer) {
         super(canvas, layer, true);
-        this.coverageFinder = CoverageFinderFactory.createDefaultCoverageFinder();
+        this.coverageFinder = new DefaultCoverageFinder();
         model = (PyramidalCoverageReference)layer.getCoverageReference();
         tolerance = 0.1; // in % , TODO use a flag to allow change value
         weakStoreListener.registerSource(layer.getCoverageReference());

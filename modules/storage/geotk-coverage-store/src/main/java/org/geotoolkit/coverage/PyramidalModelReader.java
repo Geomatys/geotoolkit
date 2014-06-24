@@ -30,7 +30,7 @@ import javax.imageio.ImageReader;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.finder.CoverageFinder;
-import org.geotoolkit.coverage.finder.CoverageFinderFactory;
+import org.geotoolkit.coverage.finder.DefaultCoverageFinder;
 import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
@@ -76,8 +76,7 @@ public class PyramidalModelReader extends GridCoverageReader{
 
     @Deprecated
     public PyramidalModelReader() {
-        this.coverageFinder = CoverageFinderFactory.createDefaultCoverageFinder();
-//        this.coverageFinder = CoverageFinderFactory.createStrictlyCoverageFinder();
+        this.coverageFinder = new DefaultCoverageFinder();
     }
 
     public PyramidalModelReader(CoverageFinder coverageFinder) {

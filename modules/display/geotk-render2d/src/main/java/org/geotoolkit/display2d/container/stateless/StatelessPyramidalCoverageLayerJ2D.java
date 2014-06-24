@@ -30,7 +30,6 @@ import org.geotoolkit.coverage.PyramidSet;
 import org.geotoolkit.coverage.PyramidalCoverageReference;
 import org.geotoolkit.coverage.TileReference;
 import org.geotoolkit.coverage.finder.CoverageFinder;
-import org.geotoolkit.coverage.finder.CoverageFinderFactory;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display.SearchArea;
@@ -74,6 +73,7 @@ import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
+import org.geotoolkit.coverage.finder.DefaultCoverageFinder;
 
 /**
  * Graphic for pyramidal coverage layers.
@@ -91,7 +91,7 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
 
     public StatelessPyramidalCoverageLayerJ2D(final J2DCanvas canvas, final CoverageMapLayer layer){
         super(canvas, layer, false);
-        this.coverageFinder = CoverageFinderFactory.createDefaultCoverageFinder();
+        this.coverageFinder = new DefaultCoverageFinder();
         model = (PyramidalCoverageReference)layer.getCoverageReference();
         tolerance = 0.1; // in % , TODO use a flag to allow change value
         this.weakStoreListener.registerSource(layer.getCoverageReference());

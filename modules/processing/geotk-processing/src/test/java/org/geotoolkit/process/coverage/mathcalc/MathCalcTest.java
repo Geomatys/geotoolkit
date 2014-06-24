@@ -199,6 +199,15 @@ public class MathCalcTest {
     }
     
     /**
+     * 4D calc test
+     * @throws Exception 
+     */
+    //@Test
+    public void coverage4DTest() throws Exception{
+        //TODO
+    }
+    
+    /**
      * 
      * @param env
      * @param width

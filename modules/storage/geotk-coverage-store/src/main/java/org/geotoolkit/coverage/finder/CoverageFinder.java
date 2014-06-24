@@ -16,7 +16,11 @@
  */
 package org.geotoolkit.coverage.finder;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.coverage.CoverageUtilities;
 import org.geotoolkit.coverage.GridMosaic;
 import org.geotoolkit.coverage.Pyramid;
@@ -50,6 +54,55 @@ public abstract class CoverageFinder {
      */
     public abstract GridMosaic findMosaic(final Pyramid pyramid, final double resolution, 
             final double tolerance, final Envelope env, int maxTileNumber) throws FactoryException;
+    
+    /**
+     * Find all mosaics in the pyramid which match given resolution and envelope.
+     * 
+     * @param pyramid
+     * @param resolution
+     * @param tolerance
+     * @param env
+     * @return List<GridMosaic>
+     */
+    public List<GridMosaic> findMosaics(final Pyramid pyramid, final double resolution, 
+            final double tolerance, final Envelope env, int maxTileNumber) throws FactoryException{
+        final List<GridMosaic> mosaics = new ArrayList<>(pyramid.getMosaics());
+        Collections.sort(mosaics, SCALE_COMPARATOR);
+        Collections.reverse(mosaics);
+        final List<GridMosaic> result = new ArrayList<>();
+        
+        //find the most accurate resolution
+        final double[] scales = pyramid.getScales();
+        if(scales.length==0) return result;
+        double bestScale = scales[0];
+        for(double d : pyramid.getScales()){
+            if(d>resolution){
+                //scale is greater but closer to wanted resolution
+                bestScale = d<bestScale ? d : bestScale;
+            } else if ( d > bestScale ) {
+                //found a better resolution
+                bestScale = d;
+            }
+        }
+        
+        //search mosaics
+        mosaicLoop:
+        for (GridMosaic candidate : mosaics) {
+            //check the mosaic intersect the searched envelope
+            final GeneralEnvelope clip = new GeneralEnvelope(candidate.getEnvelope());
+            if (!clip.intersects(env)) continue;
+            //calculate the intersection, will be used to determinate the number of tiles used.
+            clip.intersect(env);
+
+            final DirectPosition ul = candidate.getUpperLeftCorner();
+            final double scale = candidate.getScale();
+            if(scale!=bestScale) continue;
+
+            result.add(candidate);
+        }
+        
+        return result;
+    }
         
     /**
      * Find the most appropriate pyramid in given pyramid set and given crs.

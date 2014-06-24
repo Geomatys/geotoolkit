@@ -34,7 +34,7 @@ import org.opengis.util.FactoryException;
  *
  * @author Remi Marechal (Geomatys).
  */
-class StrictlyCoverageFinder extends CoverageFinder {
+public class StrictlyCoverageFinder extends CoverageFinder {
 
     /**
      * {@inheritDoc }.
