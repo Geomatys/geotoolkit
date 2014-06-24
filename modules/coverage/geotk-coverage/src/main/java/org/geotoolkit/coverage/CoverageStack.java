@@ -895,6 +895,14 @@ public class CoverageStack extends AbstractCoverage {
     }
 
     /**
+     * Used only by GridCoverageStack sub class to rebuild the grid geometry.
+     * @return Element[] stack elements
+     */
+    Element[] getElements() {
+        return elements;
+    }
+
+    /**
      * Returns the bounding box for the coverage domain in coordinate system coordinates.
      */
     @Override
