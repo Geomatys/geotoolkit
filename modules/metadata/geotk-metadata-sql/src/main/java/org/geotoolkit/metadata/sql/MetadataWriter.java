@@ -599,6 +599,7 @@ public class MetadataWriter extends MetadataSource {
     {
         if (columns.isEmpty()) {
             StringBuilder inherits = null;
+            if (type != org.opengis.metadata.citation.ResponsibleParty.class) // Temporary patch.
             for (final Class<?> candidate : type.getInterfaces()) {
                 if (standard.isMetadata(candidate)) {
                     final String parent = getTableName(candidate);
