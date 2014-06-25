@@ -18,6 +18,7 @@ package org.geotoolkit.coverage;
 
 import java.awt.Dimension;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.io.IOException;
@@ -323,15 +324,14 @@ public class PyramidalModelReader extends GridCoverageReader{
         final double wantedResolution = resolution[0];
         final double tolerance = 0.1d;
 
-        GridMosaic mosaic;
+        List<GridMosaic> mosaics;
         try {
-//            mosaic = CoverageUtilities.findMosaic(pyramid, wantedResolution, tolerance, wantedEnv,100);
-            mosaic = coverageFinder.findMosaic(pyramid, wantedResolution, tolerance, wantedEnv, 100);
+            mosaics = coverageFinder.findMosaics(pyramid, wantedResolution, tolerance, wantedEnv, 100);
         } catch (FactoryException ex) {
             throw new CoverageStoreException(ex.getMessage(),ex);
         }
 
-        if(mosaic == null){
+        if(mosaics == null ||mosaics.isEmpty()){
             //no reliable mosaic
             throw new CoverageStoreException("No mosaic can be found with given parameters.");
         }
@@ -349,6 +349,35 @@ public class PyramidalModelReader extends GridCoverageReader{
         }
         int yAxis = xAxis +1;
 
+        //read the data
+        final boolean deferred = param.isDeferred();
+//        if(mosaics.size()==1){
+            //read a single slice
+            return readSlice(mosaics.get(0), paramEnv, deferred);
+//        }else{
+//            //read a data cube of multiple slices
+//            if(deferred){
+//                //TODO : update GridMosaicRenderedImage to accept tile ranges
+//                return readCubeDeferred(mosaics.get(0), paramEnv);
+//            }else{
+//                return readCubeNow(mosaics.get(0), paramEnv);
+//            }
+//        }
+        
+    }
+
+    private GridCoverage readSlice(GridMosaic mosaic, Envelope wantedEnv, boolean deferred) throws CoverageStoreException{
+        
+        final CoordinateReferenceSystem pyramidCRS = mosaic.getPyramid().getCoordinateReferenceSystem();
+        
+        int xAxis = CoverageUtilities.getMinOrdinate(pyramidCRS);
+        // Well... If the pyramid is not defined on an horizontal CRS, all we can do for now is supposing that the first two axis are the grid axis.
+        if (xAxis < 0) {
+            xAxis = 0;
+        }
+        int yAxis = xAxis +1;
+        
+        
         final DirectPosition ul = mosaic.getUpperLeftCorner();
         final double tileMatrixMinX = ul.getOrdinate(xAxis);
         final double tileMatrixMaxY = ul.getOrdinate(yAxis);
@@ -377,102 +406,100 @@ public class PyramidalModelReader extends GridCoverageReader{
         tileMinRow = XMath.clamp(tileMinRow, 0, gridHeight);
         tileMaxRow = XMath.clamp(tileMaxRow, 0, gridHeight);
 
-        //delay the reading, use a large rendered image
-        final boolean deferred = param.isDeferred();
+        RenderedImage image = null;
         if(deferred){
-            //TODO : update GridMosaicRenderedImage to accept tile ranges
-        }
+            //delay reading tiles
+            image = new GridMosaicRenderedImage(mosaic, new Rectangle(
+                    (int)tileMinCol, (int)tileMinRow, (int)(tileMaxCol-tileMinCol), (int)(tileMaxRow-tileMinRow)));
+        }else{
+            //tiles to render, coordinate in grid -> image offset
+            final Collection<Point> candidates = new ArrayList<>();
 
-        //tiles to render, coordinate in grid -> image offset
-        final Collection<Point> candidates = new ArrayList<>();
-
-        for(int tileCol=(int)tileMinCol; tileCol<tileMaxCol; tileCol++){
-            for(int tileRow=(int)tileMinRow; tileRow<tileMaxRow; tileRow++){
-                if(mosaic.isMissing(tileCol, tileRow)){
-                    //tile not available
-                    continue;
-                }candidates.add(new Point(tileCol, tileRow));
+            for(int tileCol=(int)tileMinCol; tileCol<tileMaxCol; tileCol++){
+                for(int tileRow=(int)tileMinRow; tileRow<tileMaxRow; tileRow++){
+                    if(mosaic.isMissing(tileCol, tileRow)){
+                        //tile not available
+                        continue;
+                    }candidates.add(new Point(tileCol, tileRow));
+                }
             }
-        }
 
-        if(candidates.isEmpty()){
-            //no tiles intersect
-            throw new DisjointCoverageDomainException("Requested envelope do not intersect tiles.");
-        }
+            if(candidates.isEmpty()){
+                //no tiles intersect
+                throw new DisjointCoverageDomainException("Requested envelope do not intersect tiles.");
+            }
 
-        //aggregation ----------------------------------------------------------
-        final Map hints = Collections.EMPTY_MAP;
+            //aggregation ----------------------------------------------------------
+            final Map hints = Collections.EMPTY_MAP;
 
-        //image in which all tiles will be aggregated
-        BufferedImage image = null;
 
-        
-        final BlockingQueue<Object> queue;
-        try {
-            queue = mosaic.getTiles(candidates, hints);
-        } catch (DataStoreException ex) {
-            throw new CoverageStoreException(ex.getMessage(),ex);
-        }
-
-        while(true){
-            Object obj = null;
+            final BlockingQueue<Object> queue;
             try {
-                obj = queue.poll(100, TimeUnit.MILLISECONDS);
-            } catch (InterruptedException ex) {
-                //not important
+                queue = mosaic.getTiles(candidates, hints);
+            } catch (DataStoreException ex) {
+                throw new CoverageStoreException(ex.getMessage(),ex);
             }
 
-            if(abortRequested){
-                if(queue instanceof Cancellable){
-                    ((Cancellable)queue).cancel();
+            while(true){
+                Object obj = null;
+                try {
+                    obj = queue.poll(100, TimeUnit.MILLISECONDS);
+                } catch (InterruptedException ex) {
+                    //not important
                 }
-                break;
-            }
 
-            if(obj == GridMosaic.END_OF_QUEUE){
-                break;
-            }
-
-            if(obj instanceof TileReference){
-                final TileReference tile = (TileReference)obj;
-                final Point position = tile.getPosition();
-                final Point offset = new Point(
-                        (int)(position.x-tileMinCol)*tileSize.width,
-                        (int)(position.y-tileMinRow)*tileSize.height);
-
-                final Object input = tile.getInput();
-                RenderedImage tileImage = null;
-                if(input instanceof RenderedImage){
-                    tileImage = (RenderedImage) input;
-                }else{
-                    ImageReader reader = null;
-                    try {
-                        reader = tile.getImageReader();
-                        tileImage = reader.read(tile.getImageIndex());
-                    } catch (IOException ex) {
-                        throw new CoverageStoreException(ex.getMessage(),ex);
-                    }finally{
-                        ImageIOUtilities.releaseReader(reader);
+                if(abortRequested){
+                    if(queue instanceof Cancellable){
+                        ((Cancellable)queue).cancel();
                     }
+                    break;
                 }
 
-                if(image == null){
-                    image = BufferedImageUtilities.createImage(
-                            (int)(tileMaxCol-tileMinCol)*tileSize.width, 
-                            (int)(tileMaxRow-tileMinRow)*tileSize.height, tileImage);
+                if(obj == GridMosaic.END_OF_QUEUE){
+                    break;
                 }
 
-                image.getRaster().setDataElements(offset.x, offset.y, tileImage.getData());
-                //we consider all images have the same data model
-                //g2d.drawRenderedImage(tileImage, new AffineTransform(1, 0, 0, 1, offset.x, offset.y));
+                if(obj instanceof TileReference){
+                    final TileReference tile = (TileReference)obj;
+                    final Point position = tile.getPosition();
+                    final Point offset = new Point(
+                            (int)(position.x-tileMinCol)*tileSize.width,
+                            (int)(position.y-tileMinRow)*tileSize.height);
+
+                    final Object input = tile.getInput();
+                    RenderedImage tileImage = null;
+                    if(input instanceof RenderedImage){
+                        tileImage = (RenderedImage) input;
+                    }else{
+                        ImageReader reader = null;
+                        try {
+                            reader = tile.getImageReader();
+                            tileImage = reader.read(tile.getImageIndex());
+                        } catch (IOException ex) {
+                            throw new CoverageStoreException(ex.getMessage(),ex);
+                        }finally{
+                            ImageIOUtilities.releaseReader(reader);
+                        }
+                    }
+
+                    if(image == null){
+                        image = BufferedImageUtilities.createImage(
+                                (int)(tileMaxCol-tileMinCol)*tileSize.width, 
+                                (int)(tileMaxRow-tileMinRow)*tileSize.height, tileImage);
+                    }
+
+                    ((BufferedImage)image).getRaster().setDataElements(offset.x, offset.y, tileImage.getData());
+                    //we consider all images have the same data model
+                    //g2d.drawRenderedImage(tileImage, new AffineTransform(1, 0, 0, 1, offset.x, offset.y));
+                }
             }
-        }
 
-        if(image == null){
-            image = new BufferedImage(
-                (int)(tileMaxCol-tileMinCol)*tileSize.width,
-                (int)(tileMaxRow-tileMinRow)*tileSize.height,
-                BufferedImage.TYPE_INT_ARGB);
+            if(image == null){
+                image = new BufferedImage(
+                    (int)(tileMaxCol-tileMinCol)*tileSize.width,
+                    (int)(tileMaxRow-tileMinRow)*tileSize.height,
+                    BufferedImage.TYPE_INT_ARGB);
+            }
         }
 
 
@@ -492,5 +519,13 @@ public class PyramidalModelReader extends GridCoverageReader{
 
         return gcb.build();
     }
-
+        
+    private GridCoverage readCubeNow(GridMosaic mosaic, Envelope wantedEnv) throws CoverageStoreException{
+        throw new CoverageStoreException("Not supported yet.");
+    }
+    
+    private GridCoverage readCubeDeferred(GridMosaic mosaic, Envelope wantedEnv) throws CoverageStoreException{
+        throw new CoverageStoreException("Not supported yet.");
+    }
+    
 }

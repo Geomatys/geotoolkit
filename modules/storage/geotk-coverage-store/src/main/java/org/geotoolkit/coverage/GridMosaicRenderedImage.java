@@ -26,6 +26,7 @@ import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.collection.Cache;
 import org.geotoolkit.math.XMath;
 
@@ -35,6 +36,7 @@ import org.geotoolkit.math.XMath;
  *
  * @author Thomas Rouby (Geomatys)
  * @author Quentin Boileau (Geomatys)
+ * @author Johann Sorel (Geomatys)
  * @module pending
  */
 public class GridMosaicRenderedImage implements RenderedImage {
@@ -51,6 +53,11 @@ public class GridMosaicRenderedImage implements RenderedImage {
      */
     private final GridMosaic mosaic;
 
+    /**
+     * Tile range to map as a rendered image in the mosaic
+     */
+    private final Rectangle gridRange;
+    
     /**
      * The first tile read as an image to initialize RenderedImage parameter
      */
@@ -71,11 +78,24 @@ public class GridMosaicRenderedImage implements RenderedImage {
      * @param mosaic the mosaic to read as a rendered image
      */
     public GridMosaicRenderedImage(final GridMosaic mosaic){
+        this(mosaic,new Rectangle(mosaic.getGridSize()));
+    }
+    
+    /**
+     * Constructor
+     * @param mosaic the mosaic to read as a rendered image
+     * @param gridRange the tile to include in the rendered image.
+     *        rectangle max max values are exclusive.
+     */
+    public GridMosaicRenderedImage(final GridMosaic mosaic, Rectangle gridRange){
+        ArgumentChecks.ensureNonNull("mosaic", mosaic);
+        ArgumentChecks.ensureNonNull("range", gridRange);
+        
         if(mosaic.getGridSize().width == 0 || mosaic.getGridSize().height == 0){
             throw new IllegalArgumentException("Mosaic grid can not be empty.");
         }
-
         this.mosaic = mosaic;
+        this.gridRange = gridRange;
 
         try {
             //search the first non missing tile of the Mosaic
@@ -113,6 +133,7 @@ public class GridMosaicRenderedImage implements RenderedImage {
             throw new IllegalArgumentException("Input mosaic doesn't have any tile.", e);
         }
     }
+    
 
     /**
      * Return intern GridMosaic
@@ -120,6 +141,14 @@ public class GridMosaicRenderedImage implements RenderedImage {
      */
     public GridMosaic getGridMosaic(){
         return this.mosaic;
+    }
+
+    /**
+     * 
+     * @return 
+     */
+    public Rectangle getGridRange() {
+        return (Rectangle) gridRange.clone();
     }
 
     @Override
@@ -158,12 +187,12 @@ public class GridMosaicRenderedImage implements RenderedImage {
 
     @Override
     public int getWidth() {
-        return this.mosaic.getGridSize().width * this.mosaic.getTileSize().width;
+        return gridRange.width * this.mosaic.getTileSize().width;
     }
 
     @Override
     public int getHeight() {
-        return this.mosaic.getGridSize().height * this.mosaic.getTileSize().height;
+        return gridRange.height * this.mosaic.getTileSize().height;
     }
 
     @Override
@@ -178,12 +207,12 @@ public class GridMosaicRenderedImage implements RenderedImage {
 
     @Override
     public int getNumXTiles() {
-        return  this.mosaic.getGridSize().width;
+        return  gridRange.width;
     }
 
     @Override
     public int getNumYTiles() {
-        return  this.mosaic.getGridSize().height;
+        return  gridRange.height;
     }
 
     @Override
@@ -218,6 +247,8 @@ public class GridMosaicRenderedImage implements RenderedImage {
 
     @Override
     public Raster getTile(int tileX, int tileY) {
+        tileX += gridRange.x;
+        tileY += gridRange.y;
 
         Raster raster;
         try {
@@ -265,6 +296,14 @@ public class GridMosaicRenderedImage implements RenderedImage {
         return raster;
     }
 
+    private boolean isTileMissing(int x, int y) throws DataStoreException{
+        return mosaic.isMissing(x+gridRange.x, y+gridRange.y);
+    }
+    
+    private TileReference getTileReference(int x, int y) throws DataStoreException{
+        return mosaic.getTile(x+gridRange.x,y+gridRange.y,null);
+    }
+    
     @Override
     public Raster getData() {
         final Raster rasterOut = firstTileImage.getTile(0, 0).createCompatibleWritableRaster(getWidth(), getHeight());
@@ -280,8 +319,8 @@ public class GridMosaicRenderedImage implements RenderedImage {
 
             for (int y=0; y<this.getNumYTiles(); y++){
                 for (int x=0; x<this.getNumYTiles(); x++){
-                    if (!mosaic.isMissing(x, y)){
-                        final TileReference tile = mosaic.getTile(x,y,null);
+                    if (!isTileMissing(x, y)){
+                        final TileReference tile = getTileReference(x, y);
                         final RenderedImage sourceImg;
 
                         if (tile.getInput() instanceof RenderedImage) {
@@ -323,8 +362,8 @@ public class GridMosaicRenderedImage implements RenderedImage {
 
             for (int y=Math.max(upperLeftPosition.y,0); y<Math.min(lowerRightPosition.y+1,this.getNumYTiles()); y++){
                 for (int x=Math.max(upperLeftPosition.x,0); x<Math.min(lowerRightPosition.x+1, this.getNumXTiles()); x++){
-                    if (!mosaic.isMissing(x, y)){
-                        final TileReference tile = mosaic.getTile(x, y, null);
+                    if (!isTileMissing(x, y)){
+                        final TileReference tile = getTileReference(x, y);
                         final Rectangle tileRect = new Rectangle(x*this.getTileWidth(), y*this.getTileHeight(), this.getTileWidth(), this.getTileHeight());
 
                         final int minX, maxX, minY, maxY;
