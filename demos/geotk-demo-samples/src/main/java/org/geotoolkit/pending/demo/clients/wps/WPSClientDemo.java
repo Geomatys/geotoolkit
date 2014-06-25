@@ -112,13 +112,13 @@ public class WPSClientDemo {
         geometry.setUserData(CRS.decode("EPSG:4326"));
         final double bufDistance = 0.5;
 
-        // Instanciate inputs. Those objects get the same behaviour that the descriptors. If we cannot find a specific
+        // Instantiate inputs. Those objects get the same behaviour that the descriptors. If we cannot find a specific
         // parameter, an exception is thrown.
         ParameterValueGroup input = inputDesc.createValue();
         input.parameter(INPUT.geom.name).setValue(geometry);
         input.parameter(INPUT.distance.name).setValue(bufDistance);
 
-        // If queried WPS supports storage, we ask output as reference. It should cause asynchronized processing server-side.
+        // If queried WPS supports storage, we ask output as reference. It should cause asynchronous processing server-side.
         if (wpsClient.supportStorage(PROCESS_ID)) {
             wpsClient.setOutputsAsReference(PROCESS_ID, true);
         }
@@ -135,7 +135,6 @@ public class WPSClientDemo {
         for(OUTPUT out : OUTPUT.values()) {
             LOGGER.log(Level.INFO, String.format("%s parameter value : %s", out.name(), output.parameter(out.name).getValue()));
         }
-
     }
 
 }

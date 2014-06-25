@@ -104,18 +104,18 @@ public final class WPSIO {
         FORMATSUPPORTS.add(new FormatSupport(FeatureType.class, IOType.BOTH, WPSMimeType.TEXT_XML.val(), WPSEncoding.UTF8.getValue(), WPSSchema.OGC_FEATURE_3_1_1.getValue(), true));
 
         //Coverage support
-        FORMATSUPPORTS.add(new FormatSupport(GridCoverage2D.class, IOType.BOTH, WPSMimeType.IMG_GEOTIFF_BIS.val(), null, null, true));
-        FORMATSUPPORTS.add(new FormatSupport(GridCoverage2D.class, IOType.BOTH, WPSMimeType.IMG_GEOTIFF_BIS.val(), WPSEncoding.BASE64.getValue(), null, false));
-        FORMATSUPPORTS.add(new FormatSupport(GridCoverage2D.class, IOType.BOTH, WPSMimeType.IMG_GEOTIFF.val(), null, null, false));
-        FORMATSUPPORTS.add(new FormatSupport(GridCoverage2D.class, IOType.BOTH, WPSMimeType.IMG_GEOTIFF.val(), WPSEncoding.BASE64.getValue(), null, false));
+        FORMATSUPPORTS.add(new FormatSupport(Coverage.class, IOType.BOTH, WPSMimeType.IMG_GEOTIFF_BIS.val(), null, null, true));
+        FORMATSUPPORTS.add(new FormatSupport(Coverage.class, IOType.BOTH, WPSMimeType.IMG_GEOTIFF_BIS.val(), WPSEncoding.BASE64.getValue(), null, false));
+        FORMATSUPPORTS.add(new FormatSupport(Coverage.class, IOType.BOTH, WPSMimeType.IMG_GEOTIFF.val(), null, null, false));
+        FORMATSUPPORTS.add(new FormatSupport(Coverage.class, IOType.BOTH, WPSMimeType.IMG_GEOTIFF.val(), WPSEncoding.BASE64.getValue(), null, false));
 
         FORMATSUPPORTS.add(new FormatSupport(Coverage.class, IOType.OUTPUT, WPSMimeType.OGC_WMS.val(), WPSEncoding.UTF8.getValue(), null, false));
 
         //TODO test NetCDF & GRIB in base64
-        FORMATSUPPORTS.add(new FormatSupport(GridCoverage2D.class, IOType.INPUT, WPSMimeType.APP_NETCDF.val(), null, null, false));
-        FORMATSUPPORTS.add(new FormatSupport(GridCoverage2D.class, IOType.INPUT, WPSMimeType.APP_NETCDF.val(), WPSEncoding.BASE64.getValue(), null, false));
-        FORMATSUPPORTS.add(new FormatSupport(GridCoverage2D.class, IOType.INPUT, WPSMimeType.APP_GRIB.val(), null, null, false));
-        FORMATSUPPORTS.add(new FormatSupport(GridCoverage2D.class, IOType.INPUT, WPSMimeType.APP_GRIB.val(), WPSEncoding.BASE64.getValue(), null, false));
+        FORMATSUPPORTS.add(new FormatSupport(Coverage.class, IOType.INPUT, WPSMimeType.APP_NETCDF.val(), null, null, false));
+        FORMATSUPPORTS.add(new FormatSupport(Coverage.class, IOType.INPUT, WPSMimeType.APP_NETCDF.val(), WPSEncoding.BASE64.getValue(), null, false));
+        FORMATSUPPORTS.add(new FormatSupport(Coverage.class, IOType.INPUT, WPSMimeType.APP_GRIB.val(), null, null, false));
+        FORMATSUPPORTS.add(new FormatSupport(Coverage.class, IOType.INPUT, WPSMimeType.APP_GRIB.val(), WPSEncoding.BASE64.getValue(), null, false));
 
         // Images support
         for (final String readerMime : ImageIO.getReaderMIMETypes()) {
@@ -308,7 +308,7 @@ public final class WPSIO {
         final List<FormatSupport> supports = new ArrayList<FormatSupport>();
 
         for (final FormatSupport formatSupport : FORMATSUPPORTS) {
-            if (clazz != null && formatSupport.getClazz().equals(clazz) || clazz.isAssignableFrom(formatSupport.getClazz())) {
+            if (clazz != null && formatSupport.getClazz().equals(clazz) || formatSupport.getClazz().isAssignableFrom(clazz)) {
                 if (formatSupport.getIOType().equals(IOType.BOTH) || formatSupport.getIOType().equals(ioType)) {
                     supports.add(formatSupport);
                 }
