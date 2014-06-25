@@ -23,12 +23,13 @@ import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.io.IOException;
 import java.util.*;
+import java.util.Map.Entry;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.TimeUnit;
 import javax.imageio.ImageReader;
-
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.measure.NumberRange;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.finder.CoverageFinder;
 import org.geotoolkit.coverage.finder.DefaultCoverageFinder;
@@ -351,26 +352,30 @@ public class PyramidalModelReader extends GridCoverageReader{
 
         //read the data
         final boolean deferred = param.isDeferred();
-//        if(mosaics.size()==1){
+        if(mosaics.size()==1){
             //read a single slice
             return readSlice(mosaics.get(0), paramEnv, deferred);
-//        }else{
-//            //read a data cube of multiple slices
-//            if(deferred){
-//                //TODO : update GridMosaicRenderedImage to accept tile ranges
-//                return readCubeDeferred(mosaics.get(0), paramEnv);
-//            }else{
-//                return readCubeNow(mosaics.get(0), paramEnv);
-//            }
-//        }
+        }else{
+            //read a data cube of multiple slices
+            return readCube(mosaics, paramEnv, deferred);
+        }
         
     }
 
+    /**
+     * Build a coverage from a Grid mosaic definition.
+     * 
+     * @param mosaic original data grid mosaic
+     * @param wantedEnv area to read : must be in mosaic CRS, of a subset of it
+     * @param deferred true to delay tile reading, set to true to use a LargeRenderedImage
+     * @return GridCoverage
+     * @throws CoverageStoreException 
+     */
     private GridCoverage readSlice(GridMosaic mosaic, Envelope wantedEnv, boolean deferred) throws CoverageStoreException{
         
-        final CoordinateReferenceSystem pyramidCRS = mosaic.getPyramid().getCoordinateReferenceSystem();
+        final CoordinateReferenceSystem wantedCRS = wantedEnv.getCoordinateReferenceSystem();
         
-        int xAxis = CoverageUtilities.getMinOrdinate(pyramidCRS);
+        int xAxis = CoverageUtilities.getMinOrdinate(wantedCRS);
         // Well... If the pyramid is not defined on an horizontal CRS, all we can do for now is supposing that the first two axis are the grid axis.
         if (xAxis < 0) {
             xAxis = 0;
@@ -511,21 +516,98 @@ public class PyramidalModelReader extends GridCoverageReader{
             gcb.setSampleDimensions(dimensions.toArray(new GridSampleDimension[dimensions.size()]));
         }
 
-        final GridEnvelope ge = new GeneralGridEnvelope(image, pyramidCRS.getCoordinateSystem().getDimension());
-        final MathTransform gtc = AbstractGridMosaic.getTileGridToCRS(mosaic, new Point((int)tileMinCol,(int)tileMinRow));
-        final GridGeometry2D gridgeo = new GridGeometry2D(ge, PixelOrientation.UPPER_LEFT, gtc, pyramidCRS, null);
+        final GridEnvelope ge = new GeneralGridEnvelope(image, wantedCRS.getCoordinateSystem().getDimension());
+        final MathTransform gtc = AbstractGridMosaic.getTileGridToCRSND(mosaic, 
+                new Point((int)tileMinCol,(int)tileMinRow),wantedCRS.getCoordinateSystem().getDimension());
+        final GridGeometry2D gridgeo = new GridGeometry2D(ge, PixelOrientation.UPPER_LEFT, gtc, wantedCRS, null);
         gcb.setGridGeometry(gridgeo);
         gcb.setRenderedImage(image);
 
         return gcb.build();
     }
         
-    private GridCoverage readCubeNow(GridMosaic mosaic, Envelope wantedEnv) throws CoverageStoreException{
-        throw new CoverageStoreException("Not supported yet.");
+    private GridCoverage readCube(List<GridMosaic> mosaics, Envelope wantedEnv, boolean deferred) throws CoverageStoreException{
+        //regroup mosaic by hierarchy cubes
+        final TreeMap groups = new TreeMap();
+        for(GridMosaic mosaic : mosaics){
+            appendSlice(groups, mosaic);
+        }
+        
+        //rebuild coverage
+        return rebuildCoverage(groups, wantedEnv, deferred);
     }
     
-    private GridCoverage readCubeDeferred(GridMosaic mosaic, Envelope wantedEnv) throws CoverageStoreException{
-        throw new CoverageStoreException("Not supported yet.");
+    /**
+     * Organize mosaics in groups which are on the same dimension slice.
+     * 
+     * @param rootGroup
+     * @param mosaic
+     * @throws CoverageStoreException 
+     */
+    private void appendSlice(final TreeMap<Double,Object> rootGroup, GridMosaic mosaic) throws CoverageStoreException{
+        final DirectPosition upperLeft = mosaic.getUpperLeftCorner();
+        TreeMap<Double,Object> groups = rootGroup;
+        
+        //regroup them by inverse axis order so we can rebuild stacks always adding dimensions at the end
+        for(int i=upperLeft.getDimension()-1; i>=2; i--){
+            final double d = upperLeft.getOrdinate(i);
+            final Object obj = groups.get(d);
+            if(obj==null){
+                groups.put(d, mosaic);
+                break;
+            }else if(obj instanceof GridMosaic){
+                //already another mosaic for the dimension slice
+                //replace the coverage by a map and re-add them.
+                groups.put(d, new TreeMap());
+                appendSlice(rootGroup, (GridMosaic)obj);
+                appendSlice(rootGroup, mosaic);
+                break;
+            }else if(obj instanceof TreeMap){
+                groups = (TreeMap) obj;
+            }else{
+                throw new CoverageStoreException("Found an object which is not a Coverage or a Map group, should not happen : "+obj);
+            }
+        }
     }
+    
+    /**
+     * 
+     * @param groups
+     * @param wantedEnv
+     * @param deferred
+     * @return GridCoverage
+     * @throws CoverageStoreException 
+     */
+    private GridCoverage rebuildCoverage(TreeMap<Double,Object> groups, Envelope wantedEnv, boolean deferred) throws CoverageStoreException{
+        final CoordinateReferenceSystem crs = wantedEnv.getCoordinateReferenceSystem();
+        final List<GridCoverageStack.Element> elements = new ArrayList<>();
+        for(Entry<Double,Object> entry : groups.entrySet()){
+            final Double d = entry.getKey();
+            final Object obj = entry.getValue();
+            
+            final GridCoverage subCoverage;
+            if(obj instanceof GridMosaic){
+                subCoverage = readSlice((GridMosaic)obj, wantedEnv, deferred);
+            }else if(obj instanceof TreeMap){
+                //remove a dimension and aggregate sub coverage cube
+                final CoordinateReferenceSystem subCrs = CRS.getSubCRS(crs, 0, crs.getCoordinateSystem().getDimension()-1);
+                final GeneralEnvelope subEnv = new GeneralEnvelope(subCrs);
+                for(int i=0,n=subEnv.getDimension();i<n;i++){
+                    subEnv.setRange(i, wantedEnv.getMinimum(i), wantedEnv.getMaximum(i));
+                }
+                subCoverage = rebuildCoverage(groups, subEnv, deferred);
+            }else{
+                throw new CoverageStoreException("Found an object which is not a Coverage or a Map group, should not happen : "+obj);
+            }
+            elements.add(new CoverageStack.Adapter(subCoverage, NumberRange.create(d, true, d, true)));
+        }
+        
+        try {
+            return new GridCoverageStack("HyperCube"+crs.getCoordinateSystem().getDimension()+"D", crs, elements);
+        } catch (IOException | TransformException | FactoryException ex) {
+            throw new CoverageStoreException(ex);
+        }
+    }
+    
     
 }

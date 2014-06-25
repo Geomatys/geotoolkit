@@ -158,6 +158,20 @@ public abstract class AbstractGridMosaic implements GridMosaic{
      * @return MathTransform never null
      */
     public static MathTransform getTileGridToCRS(GridMosaic mosaic, Point location){
+        final DirectPosition upperleft = mosaic.getUpperLeftCorner();
+        return getTileGridToCRSND(mosaic, location, upperleft.getDimension());
+    }
+    
+    /**
+     * Grid to CRS N dimension.
+     * This allows to create a transform ignoring last axis transform.
+     * 
+     * @param mosaic not null
+     * @param location not null
+     * @param nbDim : number of dimension wanted. value must be in range [2...crsNbDim]
+     * @return MathTransform never null
+     */
+    public static MathTransform getTileGridToCRSND(GridMosaic mosaic, Point location, int nbDim){
 
         final AffineTransform2D trs2d = getTileGridToCRS2D(mosaic, location);
         final DirectPosition upperleft = mosaic.getUpperLeftCorner();
@@ -165,7 +179,7 @@ public abstract class AbstractGridMosaic implements GridMosaic{
         if(upperleft.getDimension()==2){
             return trs2d;
         }else{
-            final int dim = upperleft.getDimension()+1;
+            final int dim = nbDim+1;
             final GeneralMatrix gm = new GeneralMatrix(dim);
             gm.setElement(0, 0, trs2d.getScaleX());
             gm.setElement(1, 1, trs2d.getScaleY());

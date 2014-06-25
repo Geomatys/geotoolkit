@@ -22,6 +22,7 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
+import java.util.List;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
@@ -35,13 +36,16 @@ import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
 
 import static org.junit.Assert.*;
 import org.junit.Test;
+import org.opengis.coverage.Coverage;
+import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.coverage.grid.GridGeometry;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
- *
+ * Abstract pyramide store test.
+ * 
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
@@ -199,8 +203,32 @@ public abstract class PyramidalModelStoreNDTest {
         getCoverageStore();
         final CoverageReader reader = ref.acquireReader();
         
-        final GridCoverage2D coverage = (GridCoverage2D) reader.read(ref.getImageIndex(), null);
-        checkCoverage(coverage, 40, 30, colors[0][1], -180,-160,75,90,-15.5,-14.5);          
+        //we expect a 3D coverage, with all slices
+        final GridCoverage coverage = (GridCoverage) reader.read(ref.getImageIndex(), null);
+        final Envelope env = coverage.getEnvelope();
+        assertTrue(CRS.equalsIgnoreMetadata(crs, env.getCoordinateReferenceSystem()));
+        assertEquals(-180,   env.getMinimum(0), DELTA);
+        assertEquals(  75,   env.getMinimum(1), DELTA);
+        assertEquals( -15.5, env.getMinimum(2), DELTA);
+        assertEquals(-160,   env.getMaximum(0), DELTA);
+        assertEquals(  90,   env.getMaximum(1), DELTA);
+        assertEquals( 47.08, env.getMaximum(2), DELTA);
+        
+        
+        assertTrue(coverage instanceof GridCoverageStack);
+        final GridCoverageStack stack = (GridCoverageStack) coverage;
+        final List<Coverage> lowerCovs = stack.coveragesAt(-15);
+        final List<Coverage> upperCovs = stack.coveragesAt(46.58);
+        assertNotNull(lowerCovs);
+        assertNotNull(upperCovs);
+        assertEquals(1, lowerCovs.size());
+        assertEquals(1, upperCovs.size());
+        
+        //expecting image from mosaic with min resolution and vertical -15
+        checkCoverage((GridCoverage2D)lowerCovs.get(0), 40, 30, colors[0][1], -180,-160,75,90,-15.5,-14.5);
+        //expecting image from mosaic with min resolution and vertical 46.58
+        checkCoverage((GridCoverage2D)upperCovs.get(0), 40, 30, colors[1][1], -180,-160,75,90,46.08,47.08);
+         
         ref.recycle(reader);
         
     }
