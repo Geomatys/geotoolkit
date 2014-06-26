@@ -852,6 +852,7 @@ public class SpatialMetadataFormatBuilder extends Builder<SpatialMetadataFormat>
         substitutions.put(Citation.class,       String.class);   // MD_ImageDescription.xxxCode
         substitutions.put(RecordType.class,     null);           // MD_CoverageDescription.attributeDescription
         substitutions.put(RangeDimension.class, Band.class);     // MD_CoverageDescription.dimension
+        substitutions.put(AttributeGroup.class, null);           // MD_CoverageDescription.attributeGroup
         /*
          * Adds the "ImageDescription" node derived from ISO 19115.
          * The 'fillSampleValues' attribute is a Geotk extension.
