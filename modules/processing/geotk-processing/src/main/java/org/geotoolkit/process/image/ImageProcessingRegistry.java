@@ -24,6 +24,7 @@ import org.geotoolkit.process.AbstractProcessingRegistry;
 import org.geotoolkit.process.image.bandcombine.BandCombineDescriptor;
 import org.geotoolkit.process.image.bandselect.BandSelectDescriptor;
 import org.geotoolkit.process.image.reformat.ReformatDescriptor;
+import org.geotoolkit.process.image.replace.ReplaceDescriptor;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.identification.Identification;
 
@@ -48,7 +49,8 @@ public class ImageProcessingRegistry extends AbstractProcessingRegistry{
     public ImageProcessingRegistry(){
         super(BandSelectDescriptor.INSTANCE,
               BandCombineDescriptor.INSTANCE,
-              ReformatDescriptor.INSTANCE);
+              ReformatDescriptor.INSTANCE,
+              ReplaceDescriptor.INSTANCE);
     }
 
     @Override
