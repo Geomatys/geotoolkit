@@ -73,6 +73,30 @@
 
 
   <!-- ===========================================================
+           JAR packaging
+       =========================================================== -->
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+          <archive>
+            <manifest>
+              <mainClass>org.geotoolkit.internal.wizard.frame.Main</mainClass>
+            </manifest>
+            <manifestEntries>
+              <SplashScreen-Image>splash.jpg</SplashScreen-Image>
+              <!-- Image imported from geotk-setup -->
+            </manifestEntries>
+          </archive>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+
+  <!-- ===========================================================
            Dependencies
        =========================================================== -->
   <dependencies>
@@ -216,7 +240,7 @@
     <dependency>
       <groupId>net.sourceforge.jeuclid</groupId>
       <artifactId>jeuclid-core</artifactId>
-      <!-- we don't use latest 3.1.9 version because it include batik 
+      <!-- we don't use latest 3.1.9 version because it include batik
            which is a nuisance in terme of dependencies -->
       <version>3.1.0</version>
       <exclusions>
