@@ -366,7 +366,7 @@ public final strictfp class SpatialMetadataFormatTest {
     @Test
     public void testImageDescriptions() {
         final IIOMetadataFormat format = SpatialMetadataFormat.getImageInstance(GEOTK_FORMAT_NAME);
-        assertEquals("Image distributor's code that identifies the level of radiometric and geometric processing that has been applied.",
+        assertEquals("Identifier for the level of processing that has been applied to the resource.",
                 format.getElementDescription("ProcessingLevelCode", Locale.ENGLISH));
         assertEquals("Area of the dataset obscured by clouds, expressed as a percentage of the spatial extent.",
                 format.getAttributeDescription("ImageDescription", "cloudCoverPercentage", Locale.ENGLISH));

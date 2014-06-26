@@ -858,6 +858,9 @@ public class SpatialMetadataFormatBuilder extends Builder<SpatialMetadataFormat>
          */
         MetadataStandard standard = MetadataStandard.ISO_19115;
         addTree(standard, ImageDescription.class, "ImageDescription", addToElement, false);
+        metadata.addEnumeration("ImageDescription", "contentType", false, "image", "thematicClassification", "physicalMeasurement");
+        metadata.addElement(standard, Band.class, "Dimensions", "ImageDescription", CHILD_POLICY_REPEAT, 0, Integer.MAX_VALUE);
+        addTree(standard, Band.class, "Dimension", "Dimensions", false);
         metadata.addAttribute("Dimension", "validSampleValues", DATATYPE_STRING, 0, 1, null);
         metadata.addAttribute("Dimension", "fillSampleValues",  DATATYPE_DOUBLE, 0, Integer.MAX_VALUE, null);
         metadata.addObjectValue("Dimension", SampleDimension.class); // Replace Band.class.
