@@ -6,13 +6,10 @@ import org.geotoolkit.data.*;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.*;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.junit.Test;
-import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.Name;
-import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.opengis.parameter.ParameterValueGroup;
 
 import java.net.URL;
@@ -263,21 +260,21 @@ public class GeoJSONReadTest {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName(name);
         ftb.add("array", Double[][].class);
-        ftb.add("geometry", geomClass, DefaultGeographicCRS.WGS84);
+        ftb.add(BasicFeatureTypes.GEOMETRY_ATTRIBUTE_NAME, geomClass, DefaultGeographicCRS.WGS84);
         return ftb.buildSimpleFeatureType();
     }
 
     private FeatureType buildGeometryFeatureType(String name, Class geomClass) {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName(name);
-        ftb.add("geometry", geomClass, DefaultGeographicCRS.WGS84);
+        ftb.add(BasicFeatureTypes.GEOMETRY_ATTRIBUTE_NAME, geomClass, DefaultGeographicCRS.WGS84);
         return ftb.buildSimpleFeatureType();
     }
 
     private FeatureType buildSimpleFeatureType(String name) {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName(name);
-        ftb.add("geometry", Polygon.class, DefaultGeographicCRS.WGS84);
+        ftb.add(BasicFeatureTypes.GEOMETRY_ATTRIBUTE_NAME, Polygon.class, DefaultGeographicCRS.WGS84);
         ftb.add("name", String.class);
         return ftb.buildSimpleFeatureType();
     }
@@ -285,7 +282,7 @@ public class GeoJSONReadTest {
     private FeatureType buildFCFeatureType(String name) {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName(name);
-        ftb.add("geometry", Geometry.class, DefaultGeographicCRS.WGS84);
+        ftb.add(BasicFeatureTypes.GEOMETRY_ATTRIBUTE_NAME, Geometry.class, DefaultGeographicCRS.WGS84);
         ftb.add("name", String.class);
         ftb.add("address", String.class);
         return ftb.buildSimpleFeatureType();

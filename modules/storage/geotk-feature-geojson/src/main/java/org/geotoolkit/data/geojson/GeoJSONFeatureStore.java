@@ -60,7 +60,6 @@ public class GeoJSONFeatureStore extends AbstractFeatureStore {
 
     private static final Logger LOGGER = Logging.getLogger(GeoJSONFeatureStore.class);
     private static final String DESC_FILE_SUFFIX = "_Type.json";
-    private static final String GEOMETRY_FIELD = "geometry";
 
     private final ReadWriteLock rwLock = new ReentrantReadWriteLock();
     private final ReadWriteLock tmpLock = new ReentrantReadWriteLock();
@@ -197,7 +196,7 @@ public class GeoJSONFeatureStore extends AbstractFeatureStore {
                     HashMap<Object, Object> userData = new HashMap<>();
                     userData.put(HintsPending.PROPERTY_IS_IDENTIFIER,Boolean.TRUE);
                     ftb.add(atb.create(new DefaultName("fid"), String.class, 1, 1, true, userData));
-                    ftb.add(GEOMETRY_FIELD, findBinding((GeoJSONGeometry) obj), crs);
+                    ftb.add(BasicFeatureTypes.GEOMETRY_ATTRIBUTE_NAME, findBinding((GeoJSONGeometry) obj), crs);
                 }
 
                 return ftb.buildFeatureType();
@@ -212,9 +211,9 @@ public class GeoJSONFeatureStore extends AbstractFeatureStore {
                                      GeoJSONFeature jsonFeature,
                                      boolean analyseGeometry) {
         if (analyseGeometry) {
-            ftb.add(GEOMETRY_FIELD, findBinding(jsonFeature.getGeometry()), crs);
+            ftb.add(BasicFeatureTypes.GEOMETRY_ATTRIBUTE_NAME, findBinding(jsonFeature.getGeometry()), crs);
         } else {
-            ftb.add(GEOMETRY_FIELD, Geometry.class, crs);
+            ftb.add(BasicFeatureTypes.GEOMETRY_ATTRIBUTE_NAME, Geometry.class, crs);
         }
         for (Map.Entry<String, Object> property : jsonFeature.getProperties().entrySet()) {
             Object value = property.getValue();

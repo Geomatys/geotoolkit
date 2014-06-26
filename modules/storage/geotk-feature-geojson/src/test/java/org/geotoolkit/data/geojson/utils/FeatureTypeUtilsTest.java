@@ -129,7 +129,7 @@ public class FeatureTypeUtilsTest {
         AttributeDescriptor complexAtt2Desc = adb.create(complexAtt2, DefaultName.valueOf("complexAtt2"),0,Integer.MAX_VALUE,false,userMap);
         ftb.add(complexAtt1Desc);
         ftb.add(complexAtt2Desc);
-        ftb.add("geom", Polygon.class, CommonCRS.WGS84.geographic());
+        ftb.add(BasicFeatureTypes.GEOMETRY_ATTRIBUTE_NAME, Polygon.class, CommonCRS.WGS84.geographic());
         ftb.setDescription(new SimpleInternationalString("Description"));
         return ftb.buildFeatureType();
     }

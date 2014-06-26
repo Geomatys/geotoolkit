@@ -356,7 +356,7 @@ public final class FeatureTypeUtils extends Static {
             throw new DataStoreException("Geometry crs or binding not found.");
         }
 
-        Name name = DefaultName.valueOf(GEOMETRY);
+        Name name = DefaultName.valueOf(BasicFeatureTypes.GEOMETRY_ATTRIBUTE_NAME);
         PropertyType prop = FT_FACTORY.createGeometryType(name, binding, crs, false, false, null, null, description);
         return (GeometryDescriptor) adb.create((org.geotoolkit.feature.type.PropertyType) prop, name, crs, 1, 1, false, null);
     }

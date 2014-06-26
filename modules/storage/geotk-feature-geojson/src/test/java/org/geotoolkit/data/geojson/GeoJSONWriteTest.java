@@ -418,7 +418,7 @@ public class GeoJSONWriteTest {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName(name);
         ftb.add("type", String.class);
-        ftb.add("geometry", geomClass, DefaultGeographicCRS.WGS84);
+        ftb.add(BasicFeatureTypes.GEOMETRY_ATTRIBUTE_NAME, geomClass, DefaultGeographicCRS.WGS84);
         return ftb.buildSimpleFeatureType();
     }
 
@@ -426,7 +426,7 @@ public class GeoJSONWriteTest {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName(name);
         ftb.add("array", double[][].class);
-        ftb.add("geometry", geomClass, DefaultGeographicCRS.WGS84);
+        ftb.add(BasicFeatureTypes.GEOMETRY_ATTRIBUTE_NAME, geomClass, DefaultGeographicCRS.WGS84);
         return ftb.buildSimpleFeatureType();
     }
 
@@ -457,7 +457,7 @@ public class GeoJSONWriteTest {
 
         AttributeDescriptor level1Desc = adb.create(level1, DefaultName.valueOf("level1"),1,3,false,null);
         ftb.add(level1Desc);
-        ftb.add("geometry", Point.class, DefaultGeographicCRS.WGS84);
+        ftb.add(BasicFeatureTypes.GEOMETRY_ATTRIBUTE_NAME, Point.class, DefaultGeographicCRS.WGS84);
         ftb.setDescription(new SimpleInternationalString("Description"));
         return ftb.buildFeatureType();
     }
