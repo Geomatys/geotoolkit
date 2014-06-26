@@ -72,12 +72,15 @@ import org.geotoolkit.image.io.SpatialImageReader;
 import org.geotoolkit.image.io.UnsupportedImageFormatException;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.internal.image.ScaledColorSpace;
+import org.geotoolkit.internal.image.io.DimensionAccessor;
 import org.geotoolkit.lang.SystemOverride;
 import org.geotoolkit.metadata.geotiff.GeoTiffMetaDataReader;
 import org.geotoolkit.resources.Errors;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.util.FactoryException;
 import static org.geotoolkit.metadata.geotiff.GeoTiffConstants.*;
+import org.geotoolkit.process.ProcessException;
+import org.geotoolkit.process.image.replace.ReplaceProcess;
 
 
 /**
@@ -731,7 +734,35 @@ public class TiffImageReader extends SpatialImageReader {
     @Override
     public BufferedImage read(final int imageIndex, final ImageReadParam param) throws IOException {
         checkLayers();
-        return readLayer(getLayerIndex(imageIndex), param);
+        final BufferedImage image = readLayer(getLayerIndex(imageIndex), param);
+                
+        //if the image contains floats or double, datas are already in geophysic type
+        //we must replace noData values by NaN.
+        final int dataType = image.getSampleModel().getDataType();
+        if(DataBuffer.TYPE_FLOAT==dataType || DataBuffer.TYPE_DOUBLE==dataType){
+            final SpatialMetadata metadata = getImageMetadata(imageIndex);
+            if(metadata!=null){
+                final DimensionAccessor accessor = new DimensionAccessor(metadata);
+                if(accessor.childCount()==1){
+                    accessor.selectChild(0);
+                    Double noDatas = accessor.getAttributeAsDouble("realFillValue");
+                    if(noDatas!=null && noDatas!= null){
+                        final double[][][] nodatas = new double[1][2][1];
+                        nodatas[0][0][0] = noDatas;
+                        Arrays.fill(nodatas[0][1], Double.NaN);
+                        final ReplaceProcess process = new ReplaceProcess(image, nodatas);
+                        try {
+                            process.call();
+                        } catch (ProcessException ex) {
+                            throw new IOException(ex.getMessage(),ex);
+                        }
+                    }
+                }
+            }
+        }
+        
+        return image;
+        
     }
     
     /**

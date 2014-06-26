@@ -99,12 +99,13 @@ public final class GeoTiffMetaDataReader {
 
     }
 
+    private final IIOMetadata imageMetadata;
     private final Node root;
     private final Node imgFileDir;
     private final Node geoKeyDir;
 
     public GeoTiffMetaDataReader(final IIOMetadata imageMetadata) throws IOException{
-
+        this.imageMetadata = imageMetadata;
         root = imageMetadata.getAsTree(imageMetadata.getNativeMetadataFormatName());
         if(root == null) throw new IOException("No image metadatas");
 
@@ -160,6 +161,11 @@ public final class GeoTiffMetaDataReader {
 
         final GeoTiffCRSReader crsReader = new GeoTiffCRSReader(null);
         crsReader.fillCRSMetaDatas(spatialMetadata, entries);
+        
+        //looks for additional informations
+        final ThirdPartyMetaDataReader thirdReader = new ThirdPartyMetaDataReader(imageMetadata);
+        thirdReader.fillSpatialMetaData(spatialMetadata);
+        
         return spatialMetadata;
     }
 
