@@ -224,7 +224,7 @@ public final strictfp class SpatialMetadataFormatTest {
         assertEquals(DATATYPE_STRING,                 f.getAttributeDataType     ("Dimension", "units"));
         assertEquals(VALUE_ARBITRARY,                 f.getAttributeValueType    ("Dimension", "units"));
         assertEquals(DATATYPE_DOUBLE,                 f.getAttributeDataType     ("Dimension", "peakResponse"));
-        assertEquals(VALUE_ARBITRARY,                 f.getAttributeValueType    ("Dimension", "peakResponse"));
+        assertEquals(VALUE_RANGE_MIN_INCLUSIVE,       f.getAttributeValueType    ("Dimension", "peakResponse"));
         assertEquals(DATATYPE_INTEGER,                f.getAttributeDataType     ("Dimension", "bitsPerValue"));
         assertEquals(VALUE_RANGE_MIN_INCLUSIVE,       f.getAttributeValueType    ("Dimension", "bitsPerValue"));
         assertEquals("1",                             f.getAttributeMinValue     ("Dimension", "bitsPerValue"));

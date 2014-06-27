@@ -29,6 +29,7 @@ import javax.imageio.metadata.IIOMetadataFormatImpl;
 
 import org.opengis.util.CodeList;
 import org.opengis.util.RecordType;
+import org.opengis.util.Record;
 
 // We use a lot of different metadata interfaces in this class.
 // It is a bit too tedious to declare all of them.
@@ -861,9 +862,18 @@ public class SpatialMetadataFormatBuilder extends Builder<SpatialMetadataFormat>
         addTree(standard, ImageDescription.class, "ImageDescription", addToElement, false);
         metadata.addEnumeration("ImageDescription", "contentType", false, "image", "thematicClassification", "physicalMeasurement");
         metadata.addElement(standard, Band.class, "Dimensions", "ImageDescription", CHILD_POLICY_REPEAT, 0, Integer.MAX_VALUE);
+
+        substitutions.put(Record.class,              null); // MD_SampleDimension.otherProperty
+        substitutions.put(Identifier.class,          null); // MD_RangeDimension.names
+        substitutions.put(InternationalString.class, null); // MD_RangeDimension.description
         addTree(standard, Band.class, "Dimension", "Dimensions", false);
+        substitutions.remove(InternationalString.class);
+        substitutions.remove(Identifier.class);
+        substitutions.remove(Record.class);
+
         metadata.addAttribute("Dimension", "validSampleValues", DATATYPE_STRING, 0, 1, null);
         metadata.addAttribute("Dimension", "fillSampleValues",  DATATYPE_DOUBLE, 0, Integer.MAX_VALUE, null);
+        metadata.addAttribute("Dimension", "descriptor",        DATATYPE_STRING, 0, 1, null);
         metadata.addObjectValue("Dimension", SampleDimension.class); // Replace Band.class.
         /*
          * Adds the "SpatialRepresentation" node derived from ISO 19115.
