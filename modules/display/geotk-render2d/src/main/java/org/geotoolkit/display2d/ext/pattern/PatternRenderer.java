@@ -41,7 +41,7 @@ import org.geotoolkit.geometry.jts.transform.CoordinateSequenceMathTransformer;
 import org.geotoolkit.geometry.jts.transform.GeometryCSTransformer;
 import org.geotoolkit.geometry.jts.transform.GeometryTransformer;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
+import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.simple.SimpleFeature;
 import org.opengis.geometry.Envelope;

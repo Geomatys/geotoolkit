@@ -46,7 +46,7 @@ import org.geotoolkit.referencing.cs.DefaultCartesianCS;
 import org.geotoolkit.referencing.cs.DiscreteCoordinateSystemAxis;
 import org.geotoolkit.referencing.operation.DefiningConversion;
 import org.geotoolkit.referencing.operation.MathTransforms;
-import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
+import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import ucar.ma2.Array;
 import ucar.nc2.Dimension;
 import ucar.ma2.Index2D;

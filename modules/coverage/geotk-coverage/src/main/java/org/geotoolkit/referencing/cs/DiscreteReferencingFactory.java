@@ -44,10 +44,11 @@ import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.metadata.iso.spatial.PixelTranslation;
 import org.apache.sis.util.NullArgumentException;
 import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.referencing.crs.DefaultTemporalCRS;
 import org.geotoolkit.referencing.operation.matrix.XMatrix;
 import org.geotoolkit.referencing.operation.matrix.Matrices;
-import org.geotoolkit.referencing.operation.transform.LinearTransform;
+import org.apache.sis.referencing.operation.transform.LinearTransform;
 
 
 /**
@@ -344,7 +345,7 @@ scan:   for (final CoordinateReferenceSystem component : crs.getComponents()) {
     public static Matrix getAffineTransform(final CoordinateReferenceSystem crs) {
         ensureNonNull("crs", crs);
         if (crs instanceof GridGeometry) {
-            final Matrix matrix = Matrices.getMatrix(((GridGeometry) crs).getGridToCRS());
+            final Matrix matrix = MathTransforms.getMatrix(((GridGeometry) crs).getGridToCRS());
             if (matrix != null) {
                 return matrix;
             }
@@ -552,7 +553,7 @@ scan:   for (final CoordinateReferenceSystem component : crs.getComponents()) {
         } else {
             tr = geometry.getGridToCRS();
         }
-        Matrix gridToCRS = Matrices.getMatrix(tr);
+        Matrix gridToCRS = MathTransforms.getMatrix(tr);
         /*
          * If the grid geometry does not define "grid to CRS" transform, or if that
          * transform is not linear, compute a transform from the discrete axes.

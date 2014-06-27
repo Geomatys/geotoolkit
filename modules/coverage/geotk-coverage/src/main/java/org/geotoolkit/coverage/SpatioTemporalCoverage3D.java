@@ -51,7 +51,7 @@ import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.apache.sis.referencing.crs.DefaultTemporalCRS;
 import org.geotoolkit.referencing.operation.MathTransforms;
 import org.apache.sis.metadata.iso.extent.DefaultGeographicBoundingBox;
-import org.geotoolkit.internal.referencing.AxisDirections;
+import org.apache.sis.internal.referencing.AxisDirections;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.resources.Errors;
 

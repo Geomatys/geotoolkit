@@ -57,6 +57,7 @@ import org.opengis.coverage.SampleDimensionType;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.coverage.grid.GridGeometry;
 import org.opengis.coverage.grid.GridEnvelope;
+import org.opengis.metadata.content.TransferFunctionType;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -78,15 +79,14 @@ import org.geotoolkit.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.geometry.ImmutableEnvelope;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.operation.MathTransforms;
-import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
-import org.geotoolkit.referencing.operation.transform.LinearTransform1D;
-import org.geotoolkit.referencing.operation.transform.LogarithmicTransform1D;
+import org.apache.sis.referencing.operation.transform.MathTransforms;
+import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.geotoolkit.metadata.iso.spatial.PixelTranslation;
 import org.geotoolkit.internal.image.ImageUtilities;
 import org.geotoolkit.image.io.PaletteFactory;
 import org.geotoolkit.resources.Errors;
 
+import org.apache.sis.referencing.operation.transform.TransferFunction;
 import static java.awt.image.DataBuffer.*;
 import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
 
@@ -1200,7 +1200,7 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      * @since 3.20
      */
     public void setGridToCRS(final AffineTransform gridToCRS) throws MismatchedDimensionException {
-        setGridToCRS(gridToCRS != null ? MathTransforms.linear(gridToCRS) : null);
+        setGridToCRS(gridToCRS != null ? org.geotoolkit.referencing.operation.MathTransforms.linear(gridToCRS) : null);
     }
 
     /**
@@ -2817,7 +2817,7 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
          * @param offset The {@code offset} term in the linear equation.
          */
         public void setLinearTransform(final double scale, final double offset) {
-            setSampleToUnit(LinearTransform1D.create(scale, offset));
+            setSampleToUnit((MathTransform1D) MathTransforms.linear(scale, offset));
         }
 
         /**
@@ -2832,7 +2832,11 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
          * @param offset The offset to add to the logarithm.
          */
         public void setLogarithmicTransform(final double base, final double offset) {
-            setSampleToUnit(LogarithmicTransform1D.create(base, offset));
+            final TransferFunction f = new TransferFunction();
+            f.setType(TransferFunctionType.LOGARITHMIC);
+            f.setBase(base);
+            f.setOffset(offset);
+            setSampleToUnit(f.getTransform());
         }
 
         /**
@@ -2966,7 +2970,7 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
                         if (sampleToUnit == null) {
                             final NumberRange<?> target = getGeophysicsRange();
                             if (target == null) {
-                                sampleToUnit = LinearTransform1D.IDENTITY;
+                                sampleToUnit = (MathTransform1D) MathTransforms.identity(1);
                             } else {
                                 // Let the Category constructor create a "sample to unit" transform.
                                 categories[count] = new Category(bandName, colors, range, target);

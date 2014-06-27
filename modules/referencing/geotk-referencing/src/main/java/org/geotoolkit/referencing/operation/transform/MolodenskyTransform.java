@@ -39,8 +39,9 @@ import org.geotoolkit.referencing.operation.matrix.Matrices;
 import org.geotoolkit.referencing.operation.provider.Molodensky;
 import org.geotoolkit.referencing.operation.provider.AbridgedMolodensky;
 import org.apache.sis.referencing.operation.transform.IterationStrategy;
-
+import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.util.ArgumentChecks;
+
 import static java.lang.Math.*;
 import static org.geotoolkit.util.Utilities.hash;
 
@@ -338,13 +339,13 @@ public class MolodenskyTransform extends AbstractMathTransform implements Ellips
         if (dx == 0 && dy == 0 && dz == 0 && a == ta && b == tb) {
             // Special case for identity transform.
             if (source3D == target3D) {
-                transform = ProjectiveTransform.identity(target3D ? 3 : 2);
+                transform = MathTransforms.identity(target3D ? 3 : 2);
             } else {
                 final XMatrix matrix = Matrices.createDimensionFilter(3, new int[] {0,1});
                 if (target3D) {
                     matrix.transpose();
                 }
-                transform = ProjectiveTransform.create(matrix);
+                transform = MathTransforms.linear(matrix);
             }
         } else if (!source3D && !target3D) {
             transform = new MolodenskyTransform2D(abridged, a, b, ta, tb, dx, dy, dz);

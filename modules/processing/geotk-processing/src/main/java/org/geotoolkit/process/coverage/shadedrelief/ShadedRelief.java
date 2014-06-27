@@ -37,8 +37,7 @@ import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
 import static org.geotoolkit.process.coverage.shadedrelief.ShadedReliefDescriptor.*;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.operation.transform.ConcatenatedTransform;
-import org.geotoolkit.referencing.operation.transform.LinearTransform1D;
+import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -61,11 +60,11 @@ public class ShadedRelief extends AbstractProcess {
             Logger.getLogger(ShadedRelief.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     public ShadedRelief(GridCoverage2D coverage, GridCoverage2D elevation, MathTransform1D eleConv){
         this(ShadedReliefDescriptor.INSTANCE,toParameters(coverage, elevation, eleConv));
     }
-    
+
     public ShadedRelief(ProcessDescriptor desc, ParameterValueGroup input) {
         super(desc, input);
     }
@@ -77,7 +76,7 @@ public class ShadedRelief extends AbstractProcess {
         ParametersExt.getOrCreateValue(params,ShadedReliefDescriptor.IN_ELECONV_PARAM_NAME).setValue(eleConv);
         return params;
     }
-    
+
     @Override
     protected void execute() throws ProcessException {
         GridCoverage2D coverage = value(COVERAGE, inputParameters);
@@ -86,21 +85,21 @@ public class ShadedRelief extends AbstractProcess {
         //prepare coverage for the expected work
         coverage = coverage.view(ViewType.RENDERED);
         elevation = elevation.view(ViewType.GEOPHYSICS);
-        
+
         //light informations
         final Vector3f lightDirection = new Vector3f(1, 1, 1);
         final Vector3f fragToEye = new Vector3f(0, 0, 1);
         lightDirection.normalize();
-        
+
         final RenderedImage baseImage = coverage.getRenderedImage();
         final ColorModel cm = baseImage.getColorModel();
         final Raster baseRaster = getData(baseImage);
-        
+
         final Raster eleImage = getData(elevation.getRenderedImage());
         final int width = baseImage.getWidth();
         final int height = baseImage.getHeight();
         final BufferedImage resImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-        
+
         //list all coordinates
         //we need 1 extract point for the last row and col triangles
         final float[] coords = new float[(width+1)*(height+1)*2];
@@ -111,13 +110,13 @@ public class ShadedRelief extends AbstractProcess {
                 coords[++k]=y;
             }
         }
-        
+
         //we convert everything to meters
         final MathTransform gridToData = coverage.getGridGeometry().getGridToCRS2D(PixelOrientation.UPPER_LEFT);
         final MathTransform dataToMercator;
         try {
             dataToMercator = CRS.findMathTransform(coverage.getCoordinateReferenceSystem2D(), MERCATOR);
-            final MathTransform gridToMercator = ConcatenatedTransform.create(gridToData, dataToMercator);
+            final MathTransform gridToMercator = MathTransforms.concatenate(gridToData, dataToMercator);
             gridToMercator.transform(coords, 0, coords, 0, coords.length/2);
 
 
@@ -143,12 +142,12 @@ public class ShadedRelief extends AbstractProcess {
                     fa[0]=coords[offset1+0]; fa[1]=coords[offset1+1]; fa[2]=(float)eleConv.transform(eleImage.getSampleFloat(x,  y,  0));
                     fb[0]=coords[offset1+2]; fb[1]=coords[offset1+3]; fb[2]=(float)eleConv.transform(eleImage.getSampleFloat(ex, y,  0));
                     fc[0]=coords[offset2+0]; fc[1]=coords[offset2+1]; fc[2]=(float)eleConv.transform(eleImage.getSampleFloat(x,  ey, 0));
-                    fd[0]=coords[offset2+2]; fd[1]=coords[offset2+3]; fd[2]=(float)eleConv.transform(eleImage.getSampleFloat(ex, ey, 0));                    
-                    
+                    fd[0]=coords[offset2+2]; fd[1]=coords[offset2+3]; fd[2]=(float)eleConv.transform(eleImage.getSampleFloat(ex, ey, 0));
+
                     boolean flipx = (fa[0] > fb[0]);
                     boolean flipy = (fa[1] < fc[1]);
                     boolean invert = (flipx || flipy) && !(flipx && flipy);
-                    
+
                     //calculate average normal of the triangles
                     v1.set(fa[0], fa[1], fa[2]);
                     v2.set(fb[0], fb[1], fb[2]);
@@ -161,32 +160,32 @@ public class ShadedRelief extends AbstractProcess {
                     n.set(n1);
                     n.add(n2);
                     n.normalize();
-                                     
+
                     if(invert){
                         n.scale(-1f);
                     }
-                    
+
                     int argb = cm.getRGB(baseRaster.getDataElements(x, y, null));
                     float cr = (float)((argb>>16) & 0xFF) / 255f;
                     float cg = (float)((argb>>8) & 0xFF) / 255f;
                     float cb = (float)((argb>>0) & 0xFF) / 255f;
                     float ca = (float)((argb>>24) & 0xFF) / 255f;
                     float ratio = 1f;
-                            
+
                     //if we have an NaN in the normal we skip shading for this cell
                     //the elevation model has a hole in the grid
                     if(!Float.isNaN(n.x) && !Float.isNaN(n.y) && !Float.isNaN(n.z)){
                         //calculate shaded color
-                        ratio = Math.max(lightDirection.dot(n),0.0f);                    
+                        ratio = Math.max(lightDirection.dot(n),0.0f);
                         //next line is to indensify average colors, lights darken flat areas so we compensate a little
                         ratio = ratio + (float) (Math.sin(ratio*Math.PI)*0.20);
                     }
-                    
+
                     argb = toARGB(cr*ratio, cg*ratio, cb*ratio, ca);
-                    
+
 //                    float r = XMath.clamp( (fa[2] * 0.0001f), 0f, 1f);
 //                    argb = toARGB(r, r, r, 1f);
-                    
+
                     resImage.setRGB(x, y, argb);
 
                 }
@@ -196,7 +195,7 @@ public class ShadedRelief extends AbstractProcess {
         } catch (TransformException ex) {
             throw new ProcessException(ex.getMessage(), this, ex);
         }
-        
+
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
         gcb.setName("Shaded-"+coverage.getName());
         gcb.setGridGeometry(coverage.getGridGeometry());
@@ -204,7 +203,7 @@ public class ShadedRelief extends AbstractProcess {
         final GridCoverage2D result = gcb.getGridCoverage2D();
         Parameters.getOrCreate(OUTCOVERAGE, outputParameters).setValue(result);
     }
-    
+
     private final Vector3f ab = new Vector3f();
     private final Vector3f ac = new Vector3f();
     private final Vector3f cross = new Vector3f();
@@ -215,7 +214,7 @@ public class ShadedRelief extends AbstractProcess {
         //cross.normalize();
         return cross;
     }
-            
+
     private static int toARGB(int a, int r, int g, int b) {
         return a << 24 | r << 16 | g << 8 | b ;
     }
@@ -223,17 +222,17 @@ public class ShadedRelief extends AbstractProcess {
     private static int toARGB(float r, float g, float b, float a) {
         return toARGB((int)(a*255), (int)(r*255), (int)(g*255), (int)(b*255));
     }
-    
+
     private static Raster getData(RenderedImage ri){
         if(ri instanceof BufferedImage){
             return ((BufferedImage)ri).getRaster();
         }
-        
+
         if(ri.getNumXTiles()==1 && ri.getNumYTiles()==1){
             return ri.getTile(0, 0);
         }
-        
+
         return ri.getData();
     }
-    
+
 }

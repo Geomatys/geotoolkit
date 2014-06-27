@@ -23,7 +23,7 @@ import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.geometry.jts.transform.CoordinateSequenceMathTransformer;
 import org.geotoolkit.geometry.jts.transform.GeometryCSTransformer;
 import org.geotoolkit.map.MapLayer;
-import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
+import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.util.Classes;
 import org.geotoolkit.display.canvas.AbstractCanvas2D;
 import org.geotoolkit.geometry.jts.JTS;

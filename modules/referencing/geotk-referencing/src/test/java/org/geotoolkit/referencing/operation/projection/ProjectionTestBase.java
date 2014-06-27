@@ -32,10 +32,8 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.referencing.datum.DefaultEllipsoid;
 import org.geotoolkit.referencing.operation.transform.CoordinateDomain;
 import org.geotoolkit.referencing.operation.transform.TransformTestBase;
-import org.geotoolkit.referencing.operation.transform.ConcatenatedTransform;
-import org.geotoolkit.referencing.operation.transform.ProjectiveTransformTest;
-import org.geotoolkit.referencing.operation.transform.ConcatenatedTransformTest;
 
+import org.apache.sis.referencing.operation.transform.MathTransforms;
 import static java.lang.StrictMath.*;
 import static org.opengis.test.Assert.*;
 
@@ -48,7 +46,7 @@ import static org.opengis.test.Assert.*;
  *
  * @since 3.00
  */
-@DependsOn({ProjectiveTransformTest.class, ConcatenatedTransformTest.class})
+//@DependsOn({ProjectiveTransformTest.class, ConcatenatedTransformTest.class})
 public abstract strictfp class ProjectionTestBase extends TransformTestBase {
     /**
      * The radius of the sphere used in sphere test cases.
@@ -205,18 +203,9 @@ public abstract strictfp class ProjectionTestBase extends TransformTestBase {
      * Returns the unitary projection.
      */
     private static UnitaryProjection unitary(final MathTransform transform) {
-        if (transform instanceof UnitaryProjection) {
-            return (UnitaryProjection) transform;
-        }
-        if (transform instanceof ConcatenatedTransform) {
-            final ConcatenatedTransform c = (ConcatenatedTransform) transform;
-            UnitaryProjection candidate = unitary(c.transform1);
-            if (candidate != null) {
-                return candidate;
-            }
-            candidate = unitary(c.transform2);
-            if (candidate != null) {
-                return candidate;
+        for (final MathTransform step : MathTransforms.getSteps(transform)) {
+            if (step instanceof UnitaryProjection) {
+                return (UnitaryProjection) step;
             }
         }
         return null;

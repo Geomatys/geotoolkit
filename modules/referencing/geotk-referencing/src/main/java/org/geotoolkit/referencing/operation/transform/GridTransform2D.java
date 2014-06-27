@@ -31,7 +31,7 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
 
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.internal.referencing.DirectPositionView;
+import org.apache.sis.internal.referencing.DirectPositionView;
 
 
 /**

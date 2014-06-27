@@ -24,8 +24,8 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.coverage.grid.GridEnvelope2D;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
-import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 
+import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import static org.opengis.referencing.datum.PixelInCell.CELL_CORNER;
 import static org.geotoolkit.referencing.crs.DefaultEngineeringCRS.CARTESIAN_2D;
 import static org.junit.Assert.*;

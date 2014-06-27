@@ -44,7 +44,7 @@ import org.geotoolkit.process.AbstractProcess;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.referencing.operation.MathTransforms;
-import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
+import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.operation.MathTransform;
 

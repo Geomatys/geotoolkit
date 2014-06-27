@@ -31,6 +31,10 @@ import org.geotoolkit.referencing.operation.matrix.Matrices;
 import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
 import org.geotoolkit.internal.referencing.SeparableTransform;
 import org.geotoolkit.resources.Errors;
+
+import org.apache.sis.referencing.operation.transform.LinearTransform;
+import org.apache.sis.referencing.operation.transform.PassThroughTransform;
+import org.apache.sis.referencing.operation.transform.Accessor;
 import org.apache.sis.util.ArraysExt;
 
 
@@ -407,12 +411,11 @@ public class DimensionFilter {
             targetDimensions = sourceDimensions;
             return factory.createAffineTransform(Matrices.create(dimInput+1));
         }
-        if (transform instanceof ConcatenatedTransform) {
-            final ConcatenatedTransform ctr = (ConcatenatedTransform) transform;
+        if (Accessor.isConcatenatedTransform(transform)) {
             final int[] original = sourceDimensions;
             final MathTransform step1, step2;
-            step1 = separateInput(ctr.transform1); sourceDimensions = targetDimensions;
-            step2 = separateInput(ctr.transform2); sourceDimensions = original;
+            step1 = separateInput(Accessor.transform1(transform)); sourceDimensions = targetDimensions;
+            step2 = separateInput(Accessor.transform2(transform)); sourceDimensions = original;
             return factory.createConcatenatedTransform(step1, step2);
         }
         /*
@@ -422,9 +425,9 @@ public class DimensionFilter {
          */
         if (transform instanceof PassThroughTransform) {
             final PassThroughTransform passThrough = (PassThroughTransform) transform;
-            final int dimPass  = passThrough.subTransform.getSourceDimensions();
-            final int dimDiff  = passThrough.subTransform.getTargetDimensions() - dimPass;
-            final int subLower = passThrough.firstAffectedOrdinate;
+            final int dimPass  = passThrough.getSubTransform().getSourceDimensions();
+            final int dimDiff  = passThrough.getSubTransform().getTargetDimensions() - dimPass;
+            final int subLower = Accessor.firstAffectedOrdinate(passThrough);
             final int subUpper = subLower + dimPass;
             final DimensionFilter subFilter = new DimensionFilter(factory);
             for (int i=0; i<sourceDimensions.length; i++) {
@@ -456,7 +459,7 @@ public class DimensionFilter {
              * order to translate from the sub-transform's dimension numbering to the transform's
              * numbering.
              */
-            final MathTransform subTransform = subFilter.separateInput(passThrough.subTransform);
+            final MathTransform subTransform = subFilter.separateInput(passThrough.getSubTransform());
             for (int i=0; i<subFilter.targetDimensions.length; i++) {
                 subFilter.targetDimensions[i] += subLower;
             }
@@ -575,13 +578,13 @@ reduce:     for (int j=0; j<rows.length; j++) {
         int dimStep = dimTarget;
         if (transform instanceof PassThroughTransform) {
             final PassThroughTransform passThrough = (PassThroughTransform) transform;
-            final int subLower = passThrough.firstAffectedOrdinate;
-            final int subUpper = subLower + passThrough.subTransform.getTargetDimensions();
+            final int subLower = Accessor.firstAffectedOrdinate(passThrough);
+            final int subUpper = subLower + passThrough.getSubTransform().getTargetDimensions();
             if (!containsAny(targetDimensions, subLower, subUpper)) {
                 transform = null;
                 dimStep = dimSource;
                 dimPass = subLower;
-                dimDiff = (subLower + passThrough.subTransform.getSourceDimensions()) - subUpper;
+                dimDiff = (subLower + passThrough.getSubTransform().getSourceDimensions()) - subUpper;
             }
         }
         /*                                                  ┌  ┐     ┌          ┐ ┌ ┐

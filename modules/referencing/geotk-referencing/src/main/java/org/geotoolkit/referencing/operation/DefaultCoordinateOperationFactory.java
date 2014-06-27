@@ -56,7 +56,7 @@ import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
 import org.geotoolkit.referencing.operation.matrix.XMatrix;
 import org.geotoolkit.referencing.operation.matrix.Matrix4;
 import org.geotoolkit.referencing.operation.matrix.Matrices;
-import org.geotoolkit.internal.referencing.AxisDirections;
+import org.apache.sis.internal.referencing.AxisDirections;
 import org.geotoolkit.internal.referencing.OperationContext;
 import org.geotoolkit.internal.referencing.VerticalDatumTypes;
 

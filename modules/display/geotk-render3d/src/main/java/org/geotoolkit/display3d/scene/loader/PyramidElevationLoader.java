@@ -38,7 +38,7 @@ import org.geotoolkit.image.iterator.PixelIterator;
 import org.geotoolkit.image.iterator.PixelIteratorFactory;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.MathTransforms;
-import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
+import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display3d.utils.TextureUtils;
 import org.geotoolkit.internal.image.ImageUtilities;

@@ -569,7 +569,7 @@ public final class NewGridCoverageReference {
                             c = new Category(c.getName(), c.getColors(), PACKED_RANGE, c.getRange());
                             bands[i] = packSampleDimension(band, c).geophysics(true);
                             packMode = ViewType.GEOPHYSICS;
-                        } else if (tf.minimum < 0 && TransferFunctionType.LINEAR.equals(tf.type)) {
+                        } else if (tf.minimum < 0 && TransferFunctionType.LINEAR.equals(tf.getType())) {
                             /*
                              * In the signed integer values case, the offset applied here must
                              * be consistent with the sample conversion applied by the image
@@ -578,8 +578,8 @@ public final class NewGridCoverageReference {
                             // Upper sample value: Add 1 because value 0 is reserved for
                             // "no data", and add 1 again because 'upper' is exclusive.
                             final int upper = (tf.maximum - tf.minimum) + 2;
-                            double offset = fixRoundingError(tf.offset - tf.scale * (1 - tf.minimum));
-                            c = new Category(c.getName(), c.getColors(), 1, upper, tf.scale, offset);
+                            double offset = fixRoundingError(tf.getOffset() - tf.getScale() * (1 - tf.minimum));
+                            c = new Category(c.getName(), c.getColors(), 1, upper, tf.getScale(), offset);
                             bands[i] = packSampleDimension(band, c);
                             packMode = ViewType.PACKED;
                         }

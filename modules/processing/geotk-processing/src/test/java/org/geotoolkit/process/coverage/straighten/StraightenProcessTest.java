@@ -26,7 +26,7 @@ import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.process.coverage.AbstractProcessTest;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
-import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
+import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.opengis.coverage.grid.GridEnvelope;

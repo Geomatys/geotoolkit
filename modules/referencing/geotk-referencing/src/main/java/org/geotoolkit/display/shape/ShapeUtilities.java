@@ -24,8 +24,6 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.QuadCurve2D;
-import java.awt.geom.CubicCurve2D;
-import java.awt.geom.PathIterator;
 import static java.lang.Math.*;
 import org.geotoolkit.lang.Static;
 
@@ -402,53 +400,7 @@ public final class ShapeUtilities extends Static {
     public static Point2D.Double parabolicControlPoint(final double x0, final double y0,
             double x1, double y1, double x2, double y2, final boolean horizontal)
     {
-        /*
-         * Applique une translation de façon à ce que (x0,y0)
-         * devienne l'origine du système d'axes. Il ne faudra
-         * plus utiliser (x0,y0) avant la fin de ce code.
-         */
-        x1 -= x0;
-        y1 -= y0;
-        x2 -= x0;
-        y2 -= y0;
-        if (horizontal) {
-            final double a = (y2 - y1*x2/x1) / (x2-x1); // Actually "a*x2"
-            final double check = abs(a);
-            if (!(check <= 1/EPS)) return null; // Deux points ont les mêmes coordonnées.
-            if (!(check >=   EPS)) return null; // Les trois points sont colinéaires.
-            final double b = y2/x2 - a;
-            x1 = (1 + b/(2*a))*x2 - y2/(2*a);
-            y1 = y0 + b*x1;
-            x1 += x0;
-        } else {
-            /*
-             * Applique une rotation de façon à ce que (x2,y2)
-             * tombe sur l'axe des x, c'est-à-dire que y2=0.
-             */
-            final double rx2 = x2;
-            final double ry2 = y2;
-            x2 = hypot(x2,y2);
-            y2 = (x1*rx2 + y1*ry2) / x2; // use 'y2' as a temporary variable for 'x1'
-            y1 = (y1*rx2 - x1*ry2) / x2;
-            x1 = y2;
-            y2 = 0;
-            /*
-             * Calcule maintenant les coordonnées du point
-             * de contrôle selon le nouveau système d'axes.
-             */
-            final double x = 0.5;                       // Actually "x/x2"
-            final double y = (y1*x*x2) / (x1*(x2-x1));  // Actually "y/y2"
-            final double check = abs(y);
-            if (!(check <= 1/EPS)) return null; // Deux points ont les mêmes coordonnées.
-            if (!(check >=   EPS)) return null; // Les trois points sont colinéaires.
-            /*
-             * Applique une rotation inverse puis une translation pour
-             * ramener le système d'axe dans sa position d'origine.
-             */
-            x1 = (x*rx2 - y*ry2) + x0;
-            y1 = (y*rx2 + x*ry2) + y0;
-        }
-        return new Point2D.Double(x1,y1);
+        return org.apache.sis.internal.referencing.j2d.ShapeUtilities.parabolicControlPoint(x0, y0, x1, y1, x2, y2, horizontal);
     }
 
     /**
@@ -591,21 +543,7 @@ public final class ShapeUtilities extends Static {
      * @return A simpler Java construct, or {@code path} if no better construct is proposed.
      */
     public static Shape toPrimitive(final Shape path) {
-        final double[] buffer = new double[6];
-        final PathIterator it = path.getPathIterator(null);
-        if (!it.isDone() && it.currentSegment(buffer) == PathIterator.SEG_MOVETO && !it.isDone()) {
-            final double x1 = buffer[0];
-            final double y1 = buffer[1];
-            final int code = it.currentSegment(buffer);
-            if (it.isDone()) {
-                switch (code) {
-                    case PathIterator.SEG_LINETO:  return new       Line2D.Double(x1,y1, buffer[0], buffer[1]);
-                    case PathIterator.SEG_QUADTO:  return new  QuadCurve2D.Double(x1,y1, buffer[0], buffer[1], buffer[2], buffer[3]);
-                    case PathIterator.SEG_CUBICTO: return new CubicCurve2D.Double(x1,y1, buffer[0], buffer[1], buffer[2], buffer[3], buffer[4], buffer[5]);
-                }
-            }
-        }
-        return path;
+        return org.apache.sis.internal.referencing.j2d.ShapeUtilities.toPrimitive(path);
     }
 
     /**

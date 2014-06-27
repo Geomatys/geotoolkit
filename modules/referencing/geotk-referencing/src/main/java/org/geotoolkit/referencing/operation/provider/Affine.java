@@ -35,7 +35,6 @@ import org.geotoolkit.parameter.MatrixParameterDescriptors;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.geotoolkit.referencing.operation.MathTransforms;
 import org.geotoolkit.referencing.operation.MathTransformProvider;
-import org.geotoolkit.referencing.operation.transform.ProjectiveTransform;
 import org.geotoolkit.internal.referencing.MathTransformDecorator;
 
 import static org.geotoolkit.parameter.MatrixParameterDescriptors.DEFAULT_MATRIX_SIZE;
@@ -71,8 +70,8 @@ import static org.geotoolkit.parameter.MatrixParameterDescriptors.DEFAULT_MATRIX
  * @version 3.20
  *
  * @see ProjectiveTransform
- * @see org.geotoolkit.referencing.operation.transform.AffineTransform2D
- * @see org.geotoolkit.referencing.operation.transform.LinearTransform1D
+ * @see org.apache.sis.internal.referencing.j2d.AffineTransform2D
+ * @see org.apache.sis.referencing.operation.transform.LinearTransform1D
  * @see <a href="{@docRoot}/../modules/referencing/operation-parameters.html">Geotk coordinate operations matrix</a>
  *
  * @since 2.0

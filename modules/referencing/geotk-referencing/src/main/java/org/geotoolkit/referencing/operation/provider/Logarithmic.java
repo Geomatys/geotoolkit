@@ -26,11 +26,12 @@ import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterNotFoundException;
 import org.opengis.referencing.operation.Conversion;
 import org.opengis.referencing.operation.MathTransform1D;
+import org.opengis.metadata.content.TransferFunctionType;
 
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.geotoolkit.referencing.operation.MathTransformProvider;
-import org.geotoolkit.referencing.operation.transform.LogarithmicTransform1D;
+import org.apache.sis.referencing.operation.transform.TransferFunction;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.resources.Vocabulary;
 
@@ -160,7 +161,10 @@ public class Logarithmic extends MathTransformProvider {
     protected MathTransform1D createMathTransform(final ParameterValueGroup values)
             throws ParameterNotFoundException
     {
-        return LogarithmicTransform1D.create(doubleValue(BASE,   values),
-                                             doubleValue(OFFSET, values));
+        final TransferFunction f = new TransferFunction();
+        f.setType(TransferFunctionType.LOGARITHMIC);
+        f.setBase(doubleValue(BASE,  values));
+        f.setOffset(doubleValue(OFFSET, values));
+        return f.getTransform();
     }
 }

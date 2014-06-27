@@ -17,19 +17,15 @@
  */
 package org.geotoolkit.referencing.operation.transform;
 
-import org.apache.sis.parameter.Parameterized;
 import java.util.List;
 import java.util.Objects;
 import java.io.Serializable;
-import java.awt.geom.Point2D;
 import java.awt.geom.AffineTransform;
 import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.operation.MathTransform2D;
-import org.opengis.referencing.operation.TransformException;
-import org.opengis.referencing.operation.NoninvertibleTransformException;
 
 import org.apache.sis.io.wkt.Formatter;
 import org.apache.sis.io.wkt.FormattableObject;
@@ -39,126 +35,27 @@ import org.apache.sis.util.collection.WeakHashSet;
 import org.apache.sis.internal.referencing.WKTUtilities;
 import org.geotoolkit.referencing.operation.MathTransforms;
 import org.geotoolkit.io.wkt.Formattable;
+import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
+import org.apache.sis.parameter.Parameterized;
 
+import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 import static org.geotoolkit.internal.InternalUtilities.adjustForRoundingError;
-import static org.geotoolkit.referencing.operation.transform.ConcatenatedTransform.IDENTITY_TOLERANCE;
 
 
 /**
- * Base class for math transforms that are known to be two-dimensional in all cases.
- * Two-dimensional math transforms are <strong>not</strong> required to extend this
- * class, however doing so may simplify their implementation.
- *
- * @author Martin Desruisseaux (Geomatys)
- * @version 3.20
- *
- * @since 2.0
- * @module
+ * @deprecated Moved to Apache SIS as {@link org.apache.sis.referencing.operation.transform.AbstractMathTransform}.
  */
 @ThreadSafe
-public abstract class AbstractMathTransform2D extends AbstractMathTransform implements MathTransform2D {
+@Deprecated
+public abstract class AbstractMathTransform2D extends org.apache.sis.referencing.operation.transform.AbstractMathTransform2D_tmp
+        implements org.geotoolkit.io.wkt.Formattable, Serializable
+{
+    static final double IDENTITY_TOLERANCE = 1E-9;
+
     /**
      * Constructs a default math transform.
      */
     protected AbstractMathTransform2D() {
-    }
-
-    /**
-     * Returns the dimension of input points, which is always 2.
-     */
-    @Override
-    public final int getSourceDimensions() {
-        return 2;
-    }
-
-    /**
-     * Returns the dimension of output points, which is always 2.
-     */
-    @Override
-    public final int getTargetDimensions() {
-        return 2;
-    }
-
-    /**
-     * Transforms the specified {@code ptSrc} and stores the result in {@code ptDst}.
-     * The default implementation invokes {@link #transform(double[],int,double[],int,boolean)}
-     * using a temporary array of doubles.
-     *
-     * {@note This method performs the same work than the method in the parent class, but
-     *        without the check for math transform dimensions since those dimensions are
-     *        fixed to 2.}
-     *
-     * @param  ptSrc The coordinate point to be transformed.
-     * @param  ptDst The coordinate point that stores the result of transforming {@code ptSrc},
-     *               or {@code null} if a new point should be created.
-     * @return The coordinate point after transforming {@code ptSrc} and storing the result in
-     *         {@code ptDst}, or in a new point if {@code ptDst} was null.
-     * @throws TransformException If the point can't be transformed.
-     *
-     * @see MathTransform2D#transform(Point2D,Point2D)
-     */
-    @Override
-    public Point2D transform(final Point2D ptSrc, final Point2D ptDst) throws TransformException {
-        final double[] ord = new double[] {ptSrc.getX(), ptSrc.getY()};
-        transform(ord, 0, ord, 0, false);
-        if (ptDst != null) {
-            ptDst.setLocation(ord[0], ord[1]);
-            return ptDst;
-        } else {
-            return new Point2D.Double(ord[0], ord[1]);
-        }
-    }
-
-    /**
-     * Returns the inverse transform of this object. The default implementation
-     * returns {@code this} if this transform is an identity transform, and throws
-     * a {@link NoninvertibleTransformException} otherwise. Subclasses should override
-     * this method.
-     */
-    @Override
-    public MathTransform2D inverse() throws NoninvertibleTransformException {
-        return (MathTransform2D) super.inverse();
-    }
-
-    /**
-     * Default implementation for inverse math transform. This inner class is the inverse
-     * of the enclosing {@link AbstractMathTransform2D}.
-     *
-     * @author Martin Desruisseaux (Geomatys)
-     * @version 3.00
-     *
-     * @since 3.00
-     * @module
-     */
-    protected abstract class Inverse extends AbstractMathTransform.Inverse implements MathTransform2D {
-        /**
-         * Serial number for inter-operability with different versions.
-         */
-        private static final long serialVersionUID = 5751908928042026412L;
-
-        /**
-         * Constructs an inverse math transform.
-         */
-        protected Inverse() {
-            AbstractMathTransform2D.this.super();
-        }
-
-        /**
-         * Returns the enclosing math transform.
-         */
-        @Override
-        public MathTransform2D inverse() {
-            return (MathTransform2D) super.inverse();
-        }
-
-        /**
-         * Same work than {@link AbstractMathTransform2D#beforeFormat(List,int)}
-         * but with the knowledge that this transform is an inverse transform.
-         */
-        @Override
-        final int beforeFormat(final List<Object> transforms, final int index, final boolean inverse) {
-            return AbstractMathTransform2D.this.beforeFormat(transforms, index, !inverse);
-        }
     }
 
     /**
@@ -468,8 +365,8 @@ public abstract class AbstractMathTransform2D extends AbstractMathTransform impl
      * @return Index of the last transform processed. Iteration should continue at that index + 1.
      */
     @Override
-    final int beforeFormat(final List<Object> transforms, int index, final boolean inverse) {
-        assert unwrap(transforms.get(index), inverse) == this : getName();
+    protected final int beforeFormat(final List<Object> transforms, int index, final boolean inverse) {
+        assert unwrap(transforms.get(index), inverse) == this;
         final Parameters parameters = getUnmarshalledParameters();
         if (parameters == null) {
             return index;
@@ -503,8 +400,7 @@ public abstract class AbstractMathTransform2D extends AbstractMathTransform impl
          * in order to apply a change of axis order). We need to separate the "user-defined"
          * part from the "normalize" part.
          */
-        AffineTransform2D userDefined = new AffineTransform2D(parameters.normalize(!inverse));
-        userDefined.mutable = true;
+        AffineTransform2D userDefined = new AffineTransform2D(parameters.normalize(!inverse), true);
         if (!inverse) try {
             userDefined.invert();
         } catch (java.awt.geom.NoninvertibleTransformException e) {
@@ -524,16 +420,15 @@ public abstract class AbstractMathTransform2D extends AbstractMathTransform impl
          * the coefficients are often either 0 or 1 since the transform is often for changing
          * axis order, so it is worth to attempt rounding coefficents.
          */
-        if (userDefined.isIdentity(IDENTITY_TOLERANCE)) {
+        if (isIdentity(userDefined)) {
             before = null;
             userDefined.setTransform(parameters.normalize(inverse));
         } else {
             roundIfAlmostInteger(userDefined, false);
             userDefined.forcePositiveZeros();
-            userDefined.mutable = false;
+            userDefined.freeze();
             before = userDefined;
-            userDefined = new AffineTransform2D(parameters.normalize(inverse));
-            userDefined.mutable = true;
+            userDefined = new AffineTransform2D(parameters.normalize(inverse), true);
         }
         /*
          * The above code assigned a new value to "userDefined" in an opportunist way. The new
@@ -550,12 +445,12 @@ public abstract class AbstractMathTransform2D extends AbstractMathTransform impl
         if (hasAfter) {
             userDefined.preConcatenate(after);
         }
-        if (userDefined.isIdentity(IDENTITY_TOLERANCE)) {
+        if (isIdentity(userDefined)) {
             after = null;
         } else {
             roundIfAlmostInteger(userDefined, true);
             userDefined.forcePositiveZeros();
-            userDefined.mutable = false;
+            userDefined.freeze();
             after = userDefined;
         }
         /*
@@ -597,6 +492,13 @@ public abstract class AbstractMathTransform2D extends AbstractMathTransform impl
             }
         }
         return index;
+    }
+
+    /**
+     * To be removed after the port to Apache SIS.
+     */
+    private static boolean isIdentity(final AffineTransform2D tr) {
+        return org.apache.sis.referencing.operation.matrix.Matrices.isIdentity(tr.getMatrix(), IDENTITY_TOLERANCE);
     }
 
     /**
@@ -647,6 +549,11 @@ public abstract class AbstractMathTransform2D extends AbstractMathTransform impl
      * error and getting the WKT can help to debug.
      */
     private static void unexpectedException(final java.awt.geom.NoninvertibleTransformException e) {
-        Logging.recoverableException(ConcatenatedTransform.class, "formatWKT", e);
+        Logging.recoverableException(AbstractMathTransform2D.class /*ConcatenatedTransform.class*/, "formatWKT", e);
+    }
+
+    @Deprecated
+    protected static double rollLongitude(double x, final double bound) {
+        return AbstractMathTransform.rollLongitude(x, bound);
     }
 }

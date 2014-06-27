@@ -26,18 +26,19 @@ import java.awt.image.WritableRaster;
 import javax.media.jai.RasterFactory;
 import java.io.IOException;
 
+import org.opengis.metadata.content.TransferFunctionType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
+import org.opengis.referencing.operation.MathTransform1D;
 import org.geotoolkit.image.SampleImage;
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.CoverageFactoryFinder;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.apache.sis.geometry.Envelope2D;
 import org.geotoolkit.geometry.GeneralEnvelope;
-import org.geotoolkit.referencing.operation.MathTransforms;
-import org.geotoolkit.referencing.operation.transform.LinearTransform1D;
-import org.geotoolkit.referencing.operation.transform.ExponentialTransform1D;
+import org.apache.sis.referencing.operation.transform.MathTransforms;
 
+import org.apache.sis.referencing.operation.transform.TransferFunction;
 import static java.awt.Color.decode;
 import static javax.measure.unit.SI.*;
 import static org.apache.sis.measure.NumberRange.create;
@@ -102,8 +103,8 @@ public strictfp enum SampleCoverage {
                 new Category("No data", decode("#FFFFFF"), create(  0, true,   0, true)),
                 new Category("Chl-a",   null,              create(  1, true, 254, true),
                         MathTransforms.concatenate(
-                        LinearTransform1D.create(0.015, -1.985),
-                        ExponentialTransform1D.create(10)))
+                        (MathTransform1D) MathTransforms.linear(0.015, -1.985),
+                        exp()))
         }, MetricPrefix.MILLI(GRAM).divide(CUBIC_METRE))),
 
     /**
@@ -134,6 +135,12 @@ public strictfp enum SampleCoverage {
                     null, null, null, new Color[][] {colors}, null);
         }
     };
+
+    private static MathTransform1D exp() {
+        final TransferFunction f = new TransferFunction();
+        f.setType(TransferFunctionType.EXPONENTIAL);
+        return f.getTransform();
+    }
 
     /**
      * The enum for the image to load, or {@code null} if the image is computed rather

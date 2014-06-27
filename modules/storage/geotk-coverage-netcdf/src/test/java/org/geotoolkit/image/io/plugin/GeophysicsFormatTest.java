@@ -35,7 +35,7 @@ import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.ImageCoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
-import org.geotoolkit.referencing.operation.transform.LinearTransform;
+import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.geotoolkit.referencing.operation.transform.DimensionFilter;
 
 import org.junit.*;

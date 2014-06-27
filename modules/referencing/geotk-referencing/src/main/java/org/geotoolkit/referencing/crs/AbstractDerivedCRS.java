@@ -38,7 +38,7 @@ import org.geotoolkit.referencing.operation.DefaultSingleOperation;
 import org.geotoolkit.referencing.operation.DefaultOperationMethod;
 import org.geotoolkit.referencing.operation.transform.AbstractMathTransform;
 import org.geotoolkit.internal.referencing.CRSUtilities;
-import org.geotoolkit.internal.referencing.Semaphores;
+import org.apache.sis.internal.referencing.Semaphores;
 import org.apache.sis.internal.referencing.WKTUtilities;
 import org.apache.sis.util.ComparisonMode;
 import org.apache.sis.io.wkt.Formatter;

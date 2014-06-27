@@ -27,8 +27,8 @@ import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.factory.FactoryNotFoundException;
 import org.geotoolkit.referencing.factory.epsg.ThreadedEpsgFactory;
 import org.geotoolkit.referencing.operation.projection.UnitaryProjection;
-import org.geotoolkit.referencing.operation.transform.ConcatenatedTransform;
 
+import org.apache.sis.referencing.operation.transform.MathTransforms;
 import static org.junit.Assert.*;
 
 
@@ -98,18 +98,9 @@ public strictfp final class Commons extends org.geotoolkit.test.Commons {
      * This method invokes itself recursively down the concatenated transforms tree.
      */
     private static Class<? extends UnitaryProjection> getProjectionClass(final MathTransform transform) {
-        if (transform instanceof UnitaryProjection) {
-            return ((UnitaryProjection) transform).getClass();
-        }
-        if (transform instanceof ConcatenatedTransform) {
-            Class<? extends UnitaryProjection> candidate;
-            candidate = getProjectionClass(((ConcatenatedTransform) transform).transform1);
-            if (candidate != null) {
-                return candidate;
-            }
-            candidate = getProjectionClass(((ConcatenatedTransform) transform).transform2);
-            if (candidate != null) {
-                return candidate;
+        for (final MathTransform step : MathTransforms.getSteps(transform)) {
+            if (step instanceof UnitaryProjection) {
+                return ((UnitaryProjection) step).getClass();
             }
         }
         return null;

@@ -19,8 +19,8 @@ package org.geotoolkit.referencing.operation.projection;
 
 import org.junit.*;
 import org.apache.sis.test.DependsOn;
-import org.geotoolkit.referencing.operation.transform.AbstractMathTransform1D;
 
+import org.apache.sis.referencing.operation.transform.AbstractMathTransform1D;
 import static java.lang.StrictMath.*;
 import static java.lang.Double.*;
 import static org.junit.Assert.*;

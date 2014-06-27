@@ -26,7 +26,7 @@ import org.geotoolkit.image.io.ImageMetadataException;
 import org.geotoolkit.image.io.metadata.MetadataHelper;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.metadata.iso.spatial.PixelTranslation;
-import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
+import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 
 import org.opengis.coverage.grid.GridEnvelope;

@@ -21,7 +21,7 @@ import java.awt.image.*;
 import javax.media.jai.*;
 import javax.media.jai.operator.AffineDescriptor;
 import org.geotoolkit.image.iterator.PixelIteratorConform;
-import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
+import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import static org.junit.Assert.*;
 import org.junit.Test;
 import org.opengis.referencing.operation.MathTransform;
@@ -67,7 +67,7 @@ public class ResampleTest {
 
         final SampleModel sourceSampleM = new PixelInterleavedSampleModel(DataBuffer.TYPE_DOUBLE, 4, 4, 3, 12,new int[]{0, 1, 2});
         sourceImg = new TiledImage(0, 0, 4, 4, 0, 0, sourceSampleM, null);
-        
+
         final WritableRaster raster = sourceImg.getWritableTile(0, 0);
         final int minx   = raster.getMinX();
         final int miny   = raster.getMinY();
@@ -149,7 +149,7 @@ public class ResampleTest {
         Resample resample = new Resample(mathTransform.inverse(), targetImage, null, interpolation, new double[]{0, 0, 0}, ResampleBorderComportement.FILL_VALUE);
         resample.fillImage();
         Raster coverageRaster = targetImage.getTile(0, 0);
-        
+
         for (int b = 0; b < tINB; b++) {
             for (int y = tIminy; y < tIminy + tIH; y++) {
                 for (int x = tIminx; x < tIminx + tIW; x++) {
@@ -184,14 +184,14 @@ public class ResampleTest {
         setTargetImage(tIminx, tIminy, tIW, tIH, tIminx, tIminy, tIW, tIH, DataBuffer.TYPE_DOUBLE, tINB, -1000);
         setInterpolation(sourceImg, InterpolationCase.BILINEAR);
         setAffineMathTransform(2, 0, 0, 2, 0,0);
-        
+
         /*
          * Resampling
          */
         final Resample resample = new Resample(mathTransform.inverse(), targetImage, null, interpolation, new double[]{0, 0, 0}, ResampleBorderComportement.FILL_VALUE);
         resample.fillImage();
         final Raster coverageRaster = targetImage.getTile(0, 0);
-        
+
         /*
          * Compare JAI and Interpolation results.
          */
@@ -235,7 +235,7 @@ public class ResampleTest {
         final Resample resample = new Resample(mathTransform.inverse(), targetImage, null, interpolation, new double[]{0, 0, 0}, ResampleBorderComportement.FILL_VALUE);
         resample.fillImage();
         final Raster coverageRaster = targetImage.getTile(0, 0);
-        
+
         /*
          * Compare JAI and Interpolation results.
          * min + 3 and max - 3 to exclude destination image border volontary.

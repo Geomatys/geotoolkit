@@ -31,15 +31,16 @@ import net.jcip.annotations.Immutable;
 
 import org.opengis.coverage.SampleDimensionType;
 import org.opengis.coverage.ColorInterpretation;
+import org.opengis.referencing.operation.MathTransform1D;
 
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.coverage.TypeMap;
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.GridSampleDimension;
-import org.geotoolkit.referencing.operation.transform.LinearTransform1D;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
 import org.apache.sis.measure.NumberRange;
+import org.apache.sis.referencing.operation.transform.MathTransforms;
 
 
 /**
@@ -398,7 +399,7 @@ final class RenderedSampleDimension extends GridSampleDimension {
                 sourceRange = range.castTo(sourceRange.getElementType());
                 categories[0] = new Category(name, c, targetRange, sourceRange);
             } else {
-                categories[0] = new Category(name, c, targetRange, LinearTransform1D.IDENTITY);
+                categories[0] = new Category(name, c, targetRange, (MathTransform1D) MathTransforms.identity(1));
             }
             dst[b] = new GridSampleDimension(name, categories, (units != null) ? units[b] : null).geophysics(true);
         }

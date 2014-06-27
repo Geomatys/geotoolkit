@@ -35,7 +35,7 @@ import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.geometry.HyperCubeIterator;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
-import org.geotoolkit.referencing.operation.transform.ConcatenatedTransform;
+import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.geotoolkit.util.BufferedImageUtilities;
 import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.geometry.DirectPosition;
@@ -49,32 +49,32 @@ import org.opengis.util.FactoryException;
  * TODO : This should be part of the CoverageWriter interface.
  * The current CoverageWriter interface is limited to slice writing as renderedImage,
  * this implies the callers know exactly the internal structure of the coverage.
- * 
+ *
  * This class is a preview of a possible future design of the coverage writer,
  * unlike the writer approach where the user provide an image of the datas, here
  * the writer calls an evaluator on each coordinate. This allows to manipulate
  * N dimension writing and coverages which are not grids.
- * 
- * 
+ *
+ *
  * @author Johann Sorel (Geomatys)
  */
 public class FillCoverage {
-    
+
     private final CoverageReference outRef;
 
     public FillCoverage(CoverageReference ref) {
         this.outRef = ref;
     }
-    
+
     /**
      * Fill coverage values on given envelope.
-     * 
+     *
      * @param evaluator , used to generate the new sample values.
      * @param env , envelope where new values will be evaluated.
      * @throws org.geotoolkit.coverage.io.CoverageStoreException
      */
     public void fill(SampleEvaluator evaluator, Envelope env) throws CoverageStoreException {
-        
+
         final GeneralGridGeometry gg;
         final GridCoverageWriter outWriter;
         final GridCoverageReader outReader;
@@ -82,14 +82,14 @@ public class FillCoverage {
         outWriter = outRef.acquireWriter();
         gg = outReader.getGridGeometry(outRef.getImageIndex());
         outRef.recycle(outReader);
-        
-        
+
+
         // prepare dynamic pick object
         final GridEnvelope ge = gg.getExtent();
         final int nbDim = ge.getDimension();
         final DirectPosition positionGrid = new GeneralDirectPosition(gg.getCoordinateReferenceSystem());
         final DirectPosition positionGeo = new GeneralDirectPosition(gg.getCoordinateReferenceSystem());
-        
+
         //calculate the hyper-cube where we will need to recalculate values
         final MathTransform gridToCrs = gg.getGridToCRS();
         final int[] mins = new int[nbDim];
@@ -111,19 +111,19 @@ public class FillCoverage {
                     mins[i] = Math.max(mins[i], (int)gridEnv.getMinimum(i));
                     maxs[i] = Math.min(maxs[i], (int)gridEnv.getMaximum(i));
                 }
-                
+
             } catch (TransformException ex) {
                 throw new CoverageStoreException(ex.getMessage(), ex);
             }
         }
-        
+
         //create iterator
         final int[] maxSize = new int[nbDim];
         Arrays.fill(maxSize, 1);
         maxSize[0] = 256;
-        maxSize[1] = 256;        
+        maxSize[1] = 256;
         final HyperCubeIterator ite = new HyperCubeIterator(mins, maxs, maxSize);
-        
+
         //loop on all slices pieces
         final MathTransformFactory mathFactory = FactoryFinder.getMathTransformFactory(null);
         while(ite.hasNext()){
@@ -133,15 +133,15 @@ public class FillCoverage {
             for(int i=2;i<nbDim;i++){
                 positionGrid.setOrdinate(i, hcubeLower[i]);
             }
-            
+
             //create the slice coverage
             final BufferedImage zoneImage = BufferedImageUtilities.createImage(
-                    hcubeUpper[0]-hcubeLower[0], 
-                    hcubeUpper[1]-hcubeLower[1], 
+                    hcubeUpper[0]-hcubeLower[0],
+                    hcubeUpper[1]-hcubeLower[1],
                     1, DataBuffer.TYPE_DOUBLE);
             final WritableRaster raster = zoneImage.getRaster();
-            
-            
+
+
             //loop on all pixels
             final double[] sampleData = new double[1];
             try{
@@ -157,7 +157,7 @@ public class FillCoverage {
             }catch(TransformException ex){
                 throw new CoverageStoreException(ex.getMessage(), ex);
             }
-            
+
             //Calculate grid to crs of this zone
             final GeneralMatrix matrix = new GeneralMatrix(nbDim+1);
             matrix.setIdentity();
@@ -170,8 +170,8 @@ public class FillCoverage {
             } catch (FactoryException ex) {
                 throw new CoverageStoreException(ex.getMessage(), ex);
             }
-            final MathTransform concat = ConcatenatedTransform.create(cornerToGrid, gridToCrs);
-            
+            final MathTransform concat = MathTransforms.concatenate(cornerToGrid, gridToCrs);
+
             final GridCoverageBuilder gcb = new GridCoverageBuilder();
             gcb.setCoordinateReferenceSystem(gg.getCoordinateReferenceSystem());
             gcb.setRenderedImage(zoneImage);
@@ -180,22 +180,22 @@ public class FillCoverage {
             final GridCoverageWriteParam param = new GridCoverageWriteParam();
             outWriter.write(zoneCoverage, param);
         }
-        
+
     }
-    
+
     /**
-     * 
+     *
      */
     public static interface SampleEvaluator {
-        
+
         /**
          * Evaluate the new sample values at given geographic coordinate.
-         * 
+         *
          * @param position , coordinate where to evaluate the sample.
          * @param sampleBuffer , new samples must be set in this buffer
          */
         void evaluate(DirectPosition position, double[] sampleBuffer);
-        
+
     }
-    
+
 }

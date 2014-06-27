@@ -25,7 +25,7 @@ import org.apache.sis.io.wkt.Formatter;
  * This interface provides a {@link #formatWKT(Formatter)} method, which is invoked
  * at WKT formatting time.
  * <p>
- * Except for {@link org.geotoolkit.referencing.operation.transform.AffineTransform2D},
+ * Except for {@link org.apache.sis.internal.referencing.j2d.AffineTransform2D},
  * most Geotk implementations extend {@link FormattableObject} rather than implementing
  * directly this interface.
  *

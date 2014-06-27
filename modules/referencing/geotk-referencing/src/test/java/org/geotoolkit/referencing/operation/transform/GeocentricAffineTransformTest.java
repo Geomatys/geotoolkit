@@ -39,7 +39,7 @@ import org.junit.*;
  *
  * @since 2.0
  */
-@DependsOn({ProjectiveTransformTest.class, GeocentricTransformTest.class, ConcatenatedTransformTest.class})
+//@DependsOn({ProjectiveTransformTest.class, GeocentricTransformTest.class, ConcatenatedTransformTest.class})
 public final strictfp class GeocentricAffineTransformTest extends TransformTestBase {
     /**
      * Creates a new test suite.

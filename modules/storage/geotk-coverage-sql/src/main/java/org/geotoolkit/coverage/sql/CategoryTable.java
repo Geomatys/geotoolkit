@@ -324,10 +324,10 @@ final class CategoryTable extends Table {
                         statement.setInt(lowerIndex, tf.minimum);
                         statement.setInt(upperIndex, tf.maximum);
                         if (tf.isQuantitative) {
-                            statement.setDouble(c0Index, tf.offset);
-                            statement.setDouble(c1Index, tf.scale);
-                            if (tf.type != null) {
-                                statement.setString(functionIndex, org.apache.sis.util.iso.Types.getCodeName(tf.type));
+                            statement.setDouble(c0Index, tf.getOffset());
+                            statement.setDouble(c1Index, tf.getScale());
+                            if (tf.getType() != null) {
+                                statement.setString(functionIndex, org.apache.sis.util.iso.Types.getCodeName(tf.getType()));
                             } else {
                                 statement.setNull(functionIndex, Types.VARCHAR);
                             }

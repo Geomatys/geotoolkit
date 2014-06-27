@@ -21,8 +21,8 @@ import java.awt.geom.Point2D;
 
 import org.junit.*;
 import org.apache.sis.test.DependsOn;
-import org.geotoolkit.referencing.operation.transform.AbstractMathTransform1D;
 
+import org.apache.sis.referencing.operation.transform.AbstractMathTransform1D;
 import static java.lang.StrictMath.*;
 import static org.junit.Assert.*;
 import org.opengis.referencing.operation.TransformException;

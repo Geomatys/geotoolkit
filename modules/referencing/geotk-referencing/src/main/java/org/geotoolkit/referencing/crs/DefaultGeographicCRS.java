@@ -46,7 +46,7 @@ import org.geotoolkit.referencing.cs.AxisRangeType;
 import org.geotoolkit.referencing.cs.DefaultEllipsoidalCS;
 import org.geotoolkit.referencing.datum.DefaultEllipsoid;
 import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
-import org.geotoolkit.internal.referencing.AxisDirections;
+import org.apache.sis.internal.referencing.AxisDirections;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.cs.AbstractCS;
 import org.apache.sis.util.UnsupportedImplementationException;

@@ -31,6 +31,7 @@ import org.apache.sis.referencing.datum.BursaWolfParameters;
 import org.geotoolkit.referencing.operation.provider.CoordinateFrameRotation;
 import org.geotoolkit.referencing.operation.provider.GeocentricTranslation;
 import org.geotoolkit.referencing.operation.provider.PositionVector7Param;
+import org.apache.sis.referencing.operation.transform.ProjectiveTransform_tmp;
 import org.apache.sis.util.ComparisonMode;
 
 import static org.geotoolkit.util.Utilities.hash;
@@ -75,7 +76,7 @@ import static org.geotoolkit.util.Utilities.hash;
  * @module
  */
 @Immutable
-public class GeocentricAffineTransform extends ProjectiveTransform {
+public class GeocentricAffineTransform extends ProjectiveTransform_tmp {
     /**
      * Serial number for inter-operability with different versions.
      */
@@ -194,9 +195,11 @@ public class GeocentricAffineTransform extends ProjectiveTransform {
 
     /**
      * Creates an inverse transform using the specified matrix.
+     *
+     * @deprecated To be removed from public API after the port to Apache SIS.
      */
     @Override
-    final GeocentricAffineTransform createInverse(final Matrix matrix) {
+    protected final GeocentricAffineTransform createInverse(final Matrix matrix) {
         return new GeocentricAffineTransform(matrix, type);
     }
 
@@ -217,7 +220,7 @@ public class GeocentricAffineTransform extends ProjectiveTransform {
             return true;
         }
         if (mode != ComparisonMode.STRICT) {
-            return equals(this, object, mode);
+            return equals2(this, object, mode);
         }
         if (super.equals(object, mode)) {
             final GeocentricAffineTransform that = (GeocentricAffineTransform) object;

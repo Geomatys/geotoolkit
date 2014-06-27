@@ -54,7 +54,7 @@ import org.apache.sis.measure.Units;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.geometry.TransformedDirectPosition;
-import org.geotoolkit.internal.referencing.AxisDirections;
+import org.apache.sis.internal.referencing.AxisDirections;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.resources.Errors;
 

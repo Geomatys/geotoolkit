@@ -32,6 +32,7 @@ import org.opengis.geometry.Envelope;
 
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.metadata.ReferencingUtilities;
+import org.apache.sis.internal.referencing.AxisDirections;
 
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.lang.Workaround;
@@ -43,9 +44,6 @@ import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
 import org.geotoolkit.measure.Measure;
 import org.geotoolkit.resources.Errors;
-
-import static java.lang.Math.*;
-import static org.apache.sis.math.MathFunctions.atanh;
 
 
 /**
@@ -109,27 +107,6 @@ public final class CRSUtilities extends Static {
     }
 
     /**
-     * Returns the radius of a hypothetical sphere having the same surface than the ellipsoid
-     * specified by the given axis length.
-     *
-     * @param  a The semi-major axis length.
-     * @param  b The semi-minor axis length.
-     * @return The radius of a sphere having the same surface than the specified ellipsoid.
-     *
-     * @see org.geotoolkit.referencing.datum.DefaultEllipsoid#getAuthalicRadius()
-     *
-     * @since 3.20
-     */
-    public static double getAuthalicRadius(final double a, final double b) {
-        if (a == b) {
-            return a;
-        }
-        final double f = 1 - b/a;
-        final double e = sqrt(2*f - f*f);
-        return sqrt(0.5 * (a*a + b*b*atanh(e)/e));
-    }
-
-    /**
      * Returns the index of the first dimension in {@code fullCS} where axes colinear with
      * the {@code subCS} axes are found. If no such dimension is found, returns -1.
      *
@@ -141,7 +118,7 @@ public final class CRSUtilities extends Static {
      * @since 3.10
      */
     public static int dimensionColinearWith(final CoordinateSystem fullCS, final CoordinateSystem subCS) {
-        final int dim = AxisDirections.indexOf(fullCS, subCS.getAxis(0).getDirection());
+        final int dim = AxisDirections.indexOfColinear(fullCS, subCS.getAxis(0).getDirection());
         if (dim >= 0) {
             int i = subCS.getDimension();
             if (dim + i <= fullCS.getDimension()) {

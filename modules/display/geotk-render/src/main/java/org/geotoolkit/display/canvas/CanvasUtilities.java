@@ -27,7 +27,7 @@ import javax.measure.unit.Unit;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.geotoolkit.referencing.GeodeticCalculator;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
-import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
+import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.GeographicCRS;

@@ -47,8 +47,9 @@ import org.geotoolkit.display.shape.DoubleDimension2D;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.apache.sis.metadata.iso.extent.DefaultGeographicBoundingBox;
 import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
-import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
+import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.geotoolkit.referencing.operation.matrix.Matrices;
+import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 import org.geotoolkit.referencing.operation.matrix.XMatrix;
 
 
@@ -370,7 +371,7 @@ final class GridGeometryEntry extends DefaultEntry {
         Shape shape = new Rectangle2D.Double(
                 extent.getLow (0), extent.getLow (1),
                 extent.getSpan(0), extent.getSpan(1));
-        shape = AffineTransform2D.transform(gridToCRS, shape, true);
+        shape = XAffineTransform.transform(gridToCRS, shape, true);
         return shape;
     }
 

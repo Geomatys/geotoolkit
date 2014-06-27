@@ -18,9 +18,10 @@
 package org.geotoolkit.referencing.operation.transform;
 
 import java.awt.Rectangle;
-
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform2D;
+import org.apache.sis.referencing.operation.transform.LinearTransform;
+import org.apache.sis.referencing.operation.transform.MathTransforms;
 
 
 /**
@@ -83,11 +84,9 @@ final class WarpKey extends Rectangle {
      * This is used only for information purpose in the {@link #toString()} method.
      */
     private static MathTransform nonLinear(MathTransform transform) {
-        if (transform instanceof ConcatenatedTransform) {
-            final ConcatenatedTransform ct = (ConcatenatedTransform) transform;
-            transform = nonLinear(ct.transform1);
-            if (transform instanceof LinearTransform) {
-                transform = nonLinear(ct.transform2);
+        for (final MathTransform step : MathTransforms.getSteps(transform)) {
+            if (!(step instanceof LinearTransform)) {
+                return step;
             }
         }
         return transform;

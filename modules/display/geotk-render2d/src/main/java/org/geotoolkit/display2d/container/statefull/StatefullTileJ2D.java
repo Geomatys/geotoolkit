@@ -46,7 +46,7 @@ import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.MapItem;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
+import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.geotoolkit.util.ImageIOUtilities;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.map.ElevationModel;

@@ -48,6 +48,7 @@ import static java.lang.Math.*;
  * @since 1.2
  * @module
  */
+@Deprecated
 public class XAffineTransform extends AffineTransform {
     /**
      * Serial number for inter-operability with different versions.

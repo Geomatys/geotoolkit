@@ -41,7 +41,7 @@ import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;
 import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
-import org.geotoolkit.referencing.operation.transform.LinearTransform;
+import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.geotoolkit.referencing.factory.epsg.LongitudeFirstEpsgFactory;
 import org.geotoolkit.referencing.factory.epsg.PropertyEpsgFactory;
 

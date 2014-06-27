@@ -18,6 +18,7 @@
 package org.geotoolkit.coverage.xmlstore;
 
 import java.awt.Color;
+import org.opengis.metadata.content.TransferFunctionType;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -25,10 +26,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import org.apache.sis.measure.NumberRange;
 import org.geotoolkit.coverage.Category;
-import org.geotoolkit.referencing.operation.transform.ExponentialTransform1D;
-import org.geotoolkit.referencing.operation.transform.LinearTransform1D;
 import org.geotoolkit.util.Converters;
 import org.opengis.referencing.operation.MathTransform1D;
+import org.apache.sis.referencing.operation.transform.TransferFunction;
 
 /**
  *
@@ -37,12 +37,12 @@ import org.opengis.referencing.operation.MathTransform1D;
 @XmlRootElement(name="Category")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class XMLCategory {
-    
+
     /** y=C0+C1*x */
     public static final String FUNCTION_LINEAR = "linear";
     /** y=10^(C0+C1*x) */
     public static final String FUNCTION_EXPONENTIAL = "exponential";
-    
+
     @XmlElement(name="name")
     public String name;
     @XmlElement(name="lower")
@@ -57,8 +57,8 @@ public class XMLCategory {
     public String function;
     @XmlElement(name="colors")
     public String[] colors;
-    
-    
+
+
     public String getName() {
         return name;
     }
@@ -106,29 +106,31 @@ public class XMLCategory {
     public void setFunction(String function) {
         this.function = function;
     }
-    
+
     public Category buildCategory(){
-        final MathTransform1D sampleToGeophysics;
+        final TransferFunction f = new TransferFunction();
         if(FUNCTION_LINEAR.equals(function)){
-            sampleToGeophysics = LinearTransform1D.create(c1, c0);
+            f.setType(TransferFunctionType.LINEAR);
         }else if(FUNCTION_EXPONENTIAL.equals(function)){
-            sampleToGeophysics = ExponentialTransform1D.create(c0, c1);
+            f.setType(TransferFunctionType.EXPONENTIAL);
         }else{
             throw new IllegalArgumentException("Unsupported transform : "+function);
         }
-        
+        f.setScale(c1);
+        f.setOffset(c0);
+        final MathTransform1D sampleToGeophysics = f.getTransform();
         final NumberRange range = NumberRange.create(lower, true, upper, true);
-        
+
         final Color[] cols = new Color[colors.length];
         for(int i=0;i<cols.length;i++){
             cols[i] = Converters.convert(colors[i], Color.class);
         }
         return new Category(name, cols, range, sampleToGeophysics);
     }
-    
+
     /**
      * Copy informations from given category.
-     * @param category 
+     * @param category
      */
     public void fill(final Category category){
         final Color[] cols = category.getColors();
@@ -140,26 +142,28 @@ public class XMLCategory {
         final NumberRange range = category.getRange();
         lower = range.getMinDouble();
         upper = range.getMaxDouble();
-        
+
         final MathTransform1D trs = category.getSampleToGeophysics();
-        if(trs instanceof LinearTransform1D){
+        final TransferFunction f = new TransferFunction();
+        f.setTransform(trs);
+        if (TransferFunctionType.LINEAR.equals(f.getType())) {
             function = FUNCTION_LINEAR;
-            c0 = ((LinearTransform1D)trs).offset;
-            c1 = ((LinearTransform1D)trs).scale;
-        }else if(trs instanceof ExponentialTransform1D){
+            c0 = f.getOffset();
+            c1 = f.getScale();
+        }if (TransferFunctionType.EXPONENTIAL.equals(f.getType())) {
             function = FUNCTION_EXPONENTIAL;
-            c0 = ((ExponentialTransform1D)trs).base;
-            c1 = ((ExponentialTransform1D)trs).scale;
+            c0 = f.getOffset();
+            c1 = f.getScale();
         }else{
             throw new IllegalArgumentException("Unsupported 1D transform : "+trs);
         }
-        
+
         category.getRange();
     }
 
     /**
      * Color to hexadecimal.
-     * 
+     *
      * @param color
      * @return color in hexadecimal form
      */
@@ -174,7 +178,7 @@ public class XMLCategory {
         if (redCode.length() == 1)      redCode = "0" + redCode;
         if (greenCode.length() == 1)    greenCode = "0" + greenCode;
         if (blueCode.length() == 1)     blueCode = "0" + blueCode;
-        
+
         final String colorCode;
         int alpha = color.getAlpha();
         if(alpha != 255){
@@ -183,8 +187,8 @@ public class XMLCategory {
             colorCode = "#" + alphaCode + redCode + greenCode + blueCode;
         }else{
             colorCode = "#" + redCode + greenCode + blueCode;
-        }        
+        }
         return colorCode.toUpperCase();
     }
-    
+
 }

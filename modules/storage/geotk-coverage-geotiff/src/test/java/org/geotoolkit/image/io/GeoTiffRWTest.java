@@ -34,7 +34,7 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.plugin.TiffImageReader;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
+import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.geotoolkit.test.TestData;
 
 import org.junit.Ignore;

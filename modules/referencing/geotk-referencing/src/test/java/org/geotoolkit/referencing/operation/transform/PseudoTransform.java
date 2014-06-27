@@ -19,7 +19,7 @@ package org.geotoolkit.referencing.operation.transform;
 
 import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.TransformException;
-import org.geotoolkit.internal.referencing.DirectPositionView;
+import org.apache.sis.internal.referencing.DirectPositionView;
 import static java.lang.StrictMath.*;
 
 

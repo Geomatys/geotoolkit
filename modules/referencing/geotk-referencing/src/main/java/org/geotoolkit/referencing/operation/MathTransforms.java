@@ -26,15 +26,10 @@ import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
 
 import org.geotoolkit.lang.Static;
-import org.geotoolkit.internal.referencing.DirectPositionView;
 import org.geotoolkit.referencing.operation.matrix.Matrices;
-import org.geotoolkit.referencing.operation.transform.AbstractMathTransform;
-import org.geotoolkit.referencing.operation.transform.ConcatenatedTransform;
-import org.geotoolkit.referencing.operation.transform.LinearTransform;
-import org.geotoolkit.referencing.operation.transform.LinearTransform1D;
-import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
-import org.geotoolkit.referencing.operation.transform.ProjectiveTransform;
+import org.apache.sis.referencing.operation.transform.LinearTransform;
 
+import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import static org.apache.sis.util.ArgumentChecks.*;
 
 
@@ -76,10 +71,12 @@ public final class MathTransforms extends Static {
      *
      * @param dimension The dimension of the transform to be returned.
      * @return An identity transform of the specified dimension.
+     *
+     * @deprecate Moved to Apache SIS {@link org.apache.sis.referencing.operation.transform.MathTransforms}.
      */
+    @Deprecated
     public static LinearTransform identity(final int dimension) {
-        ensureStrictlyPositive("dimension", dimension);
-        return ProjectiveTransform.identity(dimension);
+        return org.apache.sis.referencing.operation.transform.MathTransforms.identity(dimension);
     }
 
     /**
@@ -93,14 +90,17 @@ public final class MathTransforms extends Static {
      * @param scale  The {@code scale}  term in the linear equation.
      * @param offset The {@code offset} term in the linear equation.
      * @return The linear transform for the given scale and offset.
+     *
+     * @deprecate Moved to Apache SIS {@link org.apache.sis.referencing.operation.transform.MathTransforms}.
      */
+    @Deprecated
     public static LinearTransform linear(final int dimension, final double scale, final double offset) {
         ensureStrictlyPositive("dimension", dimension);
         if (offset == 0 && scale == 1) {
             return identity(dimension);
         }
         if (dimension == 1) {
-            return LinearTransform1D.create(scale, offset);
+            return org.apache.sis.referencing.operation.transform.MathTransforms.linear(scale, offset);
         }
         final Matrix matrix = Matrices.create(dimension + 1);
         for (int i=0; i<dimension; i++) {
@@ -124,15 +124,16 @@ public final class MathTransforms extends Static {
      * @return The linear transform.
      *
      * @see org.opengis.referencing.operation.MathTransformFactory#createAffineTransform(Matrix)
+     *
+     * @deprecate Moved to Apache SIS {@link org.apache.sis.referencing.operation.transform.MathTransforms}.
      */
+    @Deprecated
     public static LinearTransform linear(final Matrix matrix) {
-        ensureNonNull("matrix", matrix);
-        return ProjectiveTransform.create(matrix);
+        return org.apache.sis.referencing.operation.transform.MathTransforms.linear(matrix);
     }
 
     /**
-     * Creates an affine transform from the specified
-     * <A HREF="http://java.sun.com/products/java-media/2D/index.jsp">Java2D</A> object.
+     * Creates an affine transform from the specified Java2D object.
      * The matrix coefficients are used in the same way than {@link #linear(Matrix)}.
      *
      * @param matrix The matrix used to define the affine transform.
@@ -140,8 +141,8 @@ public final class MathTransforms extends Static {
      */
     public static LinearTransform linear(final AffineTransform matrix) {
         ensureNonNull("matrix", matrix);
-        if (matrix instanceof AffineTransform2D) {
-            return (AffineTransform2D) matrix;
+        if (matrix instanceof LinearTransform) {
+            return (LinearTransform) matrix;
         }
         return matrix.isIdentity() ? identity(2) : new AffineTransform2D(matrix);
     }
@@ -173,11 +174,12 @@ public final class MathTransforms extends Static {
      * @return    The concatenated transform.
      *
      * @see org.opengis.referencing.operation.MathTransformFactory#createConcatenatedTransform(MathTransform, MathTransform)
+     *
+     * @deprecate Moved to Apache SIS {@link org.apache.sis.referencing.operation.transform.MathTransforms}.
      */
+    @Deprecated
     public static MathTransform concatenate(MathTransform tr1, MathTransform tr2) {
-        ensureNonNull("tr1", tr1);
-        ensureNonNull("tr2", tr2);
-        return ConcatenatedTransform.create(tr1, tr2);
+        return org.apache.sis.referencing.operation.transform.MathTransforms.concatenate(tr1, tr2);
     }
 
     /**
@@ -188,9 +190,12 @@ public final class MathTransforms extends Static {
      * @param tr1 The first math transform.
      * @param tr2 The second math transform.
      * @return    The concatenated transform.
+     *
+     * @deprecate Moved to Apache SIS {@link org.apache.sis.referencing.operation.transform.MathTransforms}.
      */
+    @Deprecated
     public static MathTransform2D concatenate(MathTransform2D tr1, MathTransform2D tr2) {
-        return (MathTransform2D) concatenate((MathTransform) tr1, (MathTransform) tr2);
+        return org.apache.sis.referencing.operation.transform.MathTransforms.concatenate(tr1, tr2);
     }
 
     /**
@@ -201,9 +206,12 @@ public final class MathTransforms extends Static {
      * @param tr1 The first math transform.
      * @param tr2 The second math transform.
      * @return    The concatenated transform.
+     *
+     * @deprecate Moved to Apache SIS {@link org.apache.sis.referencing.operation.transform.MathTransforms}.
      */
+    @Deprecated
     public static MathTransform1D concatenate(MathTransform1D tr1, MathTransform1D tr2) {
-        return (MathTransform1D) concatenate((MathTransform) tr1, (MathTransform) tr2);
+        return org.apache.sis.referencing.operation.transform.MathTransforms.concatenate(tr1, tr2);
     }
 
     /**
@@ -214,12 +222,12 @@ public final class MathTransforms extends Static {
      * @param tr2 The second math transform.
      * @param tr3 The third math transform.
      * @return    The concatenated transform.
+     *
+     * @deprecate Moved to Apache SIS {@link org.apache.sis.referencing.operation.transform.MathTransforms}.
      */
+    @Deprecated
     public static MathTransform concatenate(MathTransform tr1, MathTransform tr2, MathTransform tr3) {
-        ensureNonNull("tr1", tr1);
-        ensureNonNull("tr2", tr2);
-        ensureNonNull("tr3", tr3);
-        return concatenate(concatenate(tr1, tr2), tr3);
+        return org.apache.sis.referencing.operation.transform.MathTransforms.concatenate(tr1, tr2, tr3);
     }
 
     /**
@@ -231,9 +239,12 @@ public final class MathTransforms extends Static {
      * @param tr2 The second math transform.
      * @param tr3 The third math transform.
      * @return    The concatenated transform.
+     *
+     * @deprecate Moved to Apache SIS {@link org.apache.sis.referencing.operation.transform.MathTransforms}.
      */
+    @Deprecated
     public static MathTransform2D concatenate(MathTransform2D tr1, MathTransform2D tr2, MathTransform2D tr3) {
-        return (MathTransform2D) concatenate((MathTransform) tr1, (MathTransform) tr2, (MathTransform) tr3);
+        return org.apache.sis.referencing.operation.transform.MathTransforms.concatenate(tr1, tr2, tr3);
     }
 
     /**
@@ -245,9 +256,12 @@ public final class MathTransforms extends Static {
      * @param tr2 The second math transform.
      * @param tr3 The third math transform.
      * @return    The concatenated transform.
+     *
+     * @deprecate Moved to Apache SIS {@link org.apache.sis.referencing.operation.transform.MathTransforms}.
      */
+    @Deprecated
     public static MathTransform1D concatenate(MathTransform1D tr1, MathTransform1D tr2, MathTransform1D tr3) {
-        return (MathTransform1D) concatenate((MathTransform) tr1, (MathTransform) tr2, (MathTransform) tr3);
+        return org.apache.sis.referencing.operation.transform.MathTransforms.concatenate(tr1, tr2, tr3);
     }
 
     /**
@@ -272,20 +286,15 @@ public final class MathTransforms extends Static {
      * @return The matrix of the transform derivative at the given source position.
      * @throws TransformException If the point can't be transformed or if a problem occurred while
      *         calculating the derivative.
+     *
+     * @deprecate Moved to Apache SIS {@link org.apache.sis.referencing.operation.transform.MathTransforms}.
      */
+    @Deprecated
     public static Matrix derivativeAndTransform(final MathTransform transform,
                                                 final double[] srcPts, final int srcOff,
                                                 final double[] dstPts, final int dstOff)
             throws TransformException
     {
-        if (transform instanceof AbstractMathTransform) {
-            return ((AbstractMathTransform) transform).transform(srcPts, srcOff, dstPts, dstOff, true);
-        }
-        // Must be calculated before to transform the coordinate.
-        final Matrix derivative = transform.derivative(new DirectPositionView(srcPts, srcOff, transform.getSourceDimensions()));
-        if (dstPts != null) {
-            transform.transform(srcPts, srcOff, dstPts, dstOff, 1);
-        }
-        return derivative;
+        return org.apache.sis.referencing.operation.transform.MathTransforms.derivativeAndTransform(transform, srcPts, srcOff, dstPts, dstOff);
     }
 }

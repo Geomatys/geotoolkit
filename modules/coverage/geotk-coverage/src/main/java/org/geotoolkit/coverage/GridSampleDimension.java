@@ -47,8 +47,8 @@ import org.apache.sis.util.Numbers;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.internal.image.ColorUtilities;
-import org.geotoolkit.referencing.operation.transform.LinearTransform1D;
 
+import org.apache.sis.referencing.operation.transform.MathTransforms;
 import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
 
 
@@ -1206,7 +1206,7 @@ public class GridSampleDimension implements SampleDimension, Serializable {
     @Override
     public MathTransform1D getSampleToGeophysics() {
         if (isGeophysics) {
-            return LinearTransform1D.IDENTITY;
+            return (MathTransform1D) MathTransforms.identity(1);
         }
         if (!hasQualitative && sampleToGeophysics!=null) {
             // If there is only quantitative categories and they all use the same transform,

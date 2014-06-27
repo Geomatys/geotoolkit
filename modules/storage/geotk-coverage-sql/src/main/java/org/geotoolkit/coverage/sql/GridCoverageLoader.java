@@ -374,8 +374,8 @@ final class GridCoverageLoader extends ImageCoverageReader {
                  * Add the transfer function.
                  */
                 if (tf != null) {
-                    accessor.setTransfertFunction(fixRoundingError(tf.scale),
-                                                  fixRoundingError(tf.offset), tf.type);
+                    accessor.setTransfertFunction(fixRoundingError(tf.getScale()),
+                                                  fixRoundingError(tf.getOffset()), tf.getType());
                 }
             }
         }

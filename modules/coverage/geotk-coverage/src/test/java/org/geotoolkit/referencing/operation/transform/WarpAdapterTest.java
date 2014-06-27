@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.referencing.operation.transform;
 
+import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import java.util.Random;
 import java.awt.geom.Point2D;
 import java.awt.geom.AffineTransform;

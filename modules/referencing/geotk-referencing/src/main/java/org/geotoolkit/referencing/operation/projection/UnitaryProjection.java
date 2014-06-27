@@ -64,6 +64,7 @@ import static java.lang.Math.*;
 import static java.lang.Double.*;
 import static org.apache.sis.math.MathFunctions.atanh;
 import static org.apache.sis.math.MathFunctions.xorSign;
+import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 import static org.geotoolkit.util.Utilities.hash;
 import static org.geotoolkit.internal.InternalUtilities.epsilonEqual;
 import static org.geotoolkit.parameter.Parameters.getOrCreate;

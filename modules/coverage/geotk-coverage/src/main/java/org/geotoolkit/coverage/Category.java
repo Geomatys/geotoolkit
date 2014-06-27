@@ -34,8 +34,8 @@ import org.apache.sis.util.Numbers;
 import org.apache.sis.util.iso.Types;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
-import org.geotoolkit.referencing.operation.transform.LinearTransform1D;
 
+import org.apache.sis.referencing.operation.transform.MathTransforms;
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 
 
@@ -214,7 +214,7 @@ public class Category implements Serializable {
      */
     public Category(final CharSequence name, final Color color, final boolean sample) {
         this(name, new int[] {color != null ? color.getRGB() : sample ? 0xFFFFFFFF : 0xFF000000},
-                sample ? BYTE_0 : BYTE_1, LinearTransform1D.IDENTITY);
+                sample ? BYTE_0 : BYTE_1, (MathTransform1D) MathTransforms.identity(1));
     }
 
     /**
@@ -460,7 +460,7 @@ public class Category implements Serializable {
             Double.doubleToRawLongBits(minimum) == Double.doubleToRawLongBits(maximum))
         {
             inverse   = this;
-            transform = LinearTransform1D.create(0, minimum);
+            transform = (MathTransform1D) MathTransforms.linear(0, minimum);
             return;
         }
         /*
@@ -478,7 +478,7 @@ public class Category implements Serializable {
         try {
             if (sampleToGeophysics == null) {
                 inverse = new GeophysicsCategory(this, false);
-                transform = LinearTransform1D.create(0, inverse.minimum); // sample to geophysics
+                transform = (MathTransform1D) MathTransforms.linear(0, inverse.minimum); // sample to geophysics
                 return;
             }
             transform = sampleToGeophysics; // Must be set before GeophysicsCategory construction!
@@ -520,7 +520,7 @@ public class Category implements Serializable {
         this.ARGB    = inverse.ARGB;
         if (!isQuantitative) {
             minimum = maximum = MathFunctions.toNanFloat(((int) Math.round((inverse.minimum + inverse.maximum)/2)) % 0x200000);
-            transform = LinearTransform1D.create(0, inverse.minimum); // geophysics to sample
+            transform = (MathTransform1D) MathTransforms.linear(0, inverse.minimum); // geophysics to sample
             return;
         }
         /*
@@ -560,7 +560,7 @@ public class Category implements Serializable {
         if (Double.isNaN(offset) || Double.isInfinite(offset)) {
             throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_2, "offset", offset));
         }
-        return LinearTransform1D.create(scale, offset);
+        return (MathTransform1D) MathTransforms.linear(scale, offset);
     }
 
     /**

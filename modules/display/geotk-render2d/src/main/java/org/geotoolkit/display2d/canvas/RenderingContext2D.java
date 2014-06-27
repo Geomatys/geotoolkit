@@ -54,7 +54,7 @@ import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.ReferencingUtilities;
-import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
+import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.geotoolkit.resources.Errors;
 import org.opengis.geometry.BoundingBox;
 import org.opengis.geometry.DirectPosition;

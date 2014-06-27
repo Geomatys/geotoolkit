@@ -57,7 +57,7 @@ import org.geotoolkit.gui.swing.render2d.JMap2D;
 import org.geotoolkit.gui.swing.propertyedit.JFeatureOutLine;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
+import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.geotoolkit.util.StringUtilities;
 import org.apache.sis.util.logging.Logging;
 

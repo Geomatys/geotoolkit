@@ -20,16 +20,12 @@
  */
 package org.geotoolkit.referencing.operation.transform;
 
-import java.util.List;
 import java.io.Serializable;
 import java.awt.Shape;
 import java.awt.geom.Path2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.QuadCurve2D;
-import java.awt.geom.PathIterator;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.IllegalPathStateException;
 import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.metadata.Identifier;
@@ -45,15 +41,15 @@ import org.opengis.parameter.ParameterValueGroup;
 
 import org.apache.sis.io.wkt.Formatter;
 import org.apache.sis.io.wkt.FormattableObject;
-import org.geotoolkit.display.shape.ShapeUtilities;
 import org.geotoolkit.referencing.operation.matrix.Matrices;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
+import org.apache.sis.internal.referencing.WKTUtilities;
+import org.apache.sis.referencing.operation.transform.Accessor;
 
 import static org.geotoolkit.util.Utilities.hash;
-import org.apache.sis.internal.referencing.WKTUtilities;
 
 
 /**
@@ -70,16 +66,6 @@ import org.apache.sis.internal.referencing.WKTUtilities;
 public abstract class AbstractMathTransform extends org.apache.sis.referencing.operation.transform.AbstractMathTransform
         implements org.geotoolkit.io.wkt.Formattable
 {
-    /**
-     * Copy of SIS constant.
-     */
-    static final int MAXIMUM_BUFFER_SIZE = 512;
-
-    /**
-     * Copy of SIS constant.
-     */
-    static final int MAXIMUM_FAILURES = 32;
-
     /**
      * Constructs a math transform.
      */
@@ -177,161 +163,11 @@ public abstract class AbstractMathTransform extends org.apache.sis.referencing.o
      * @see MathTransform2D#createTransformedShape(Shape)
      */
     public Shape createTransformedShape(final Shape shape) throws TransformException {
-        return isIdentity() ? shape : createTransformedShape(shape, null, null, false);
-    }
-
-    /**
-     * Transforms a geometric shape. This method always copy transformed coordinates in a new
-     * object. The new object is often a {@link Path2D}, but may also be a {@link Line2D} or a
-     * {@link QuadCurve2D} if such simplification is possible.
-     *
-     * @param  shape         The geometric shape to transform.
-     * @param  preTransform  An optional affine transform to apply <em>before</em> the
-     *                       transformation using {@code this}, or {@code null} if none.
-     * @param  postTransform An optional affine transform to apply <em>after</em> the transformation
-     *                       using {@code this}, or {@code null} if none.
-     * @param  horizontal    {@code true} for forcing parabolic equation.
-     *
-     * @return The transformed geometric shape.
-     * @throws MismatchedDimensionException if this transform doesn't is not two-dimensional.
-     * @throws TransformException If a transformation failed.
-     */
-    final Shape createTransformedShape(final Shape           shape,
-                                       final AffineTransform preTransform,
-                                       final AffineTransform postTransform,
-                                       final boolean         horizontal)
-            throws TransformException
-    {
         int dim;
         if ((dim = getSourceDimensions()) != 2 || (dim = getTargetDimensions()) != 2) {
             throw new MismatchedDimensionException(mismatchedDimension("shape", 2, dim));
         }
-        final PathIterator     it = shape.getPathIterator(preTransform);
-        final Path2D.Double  path = new Path2D.Double(it.getWindingRule());
-        final double[]     buffer = new double[6];
-
-        double ax=0, ay=0;  // Coordinate of the last point before transform.
-        double px=0, py=0;  // Coordinate of the last point after  transform.
-        for (; !it.isDone(); it.next()) {
-            switch (it.currentSegment(buffer)) {
-                default: {
-                    throw new IllegalPathStateException();
-                }
-                case PathIterator.SEG_CLOSE: {
-                    /*
-                     * Closes the geometric shape and continues the loop. We use the 'continue'
-                     * instruction here instead of 'break' because we don't want to execute the
-                     * code after the switch (addition of transformed points into the path - there
-                     * is no such point in a SEG_CLOSE).
-                     */
-                    path.closePath();
-                    continue;
-                }
-                case PathIterator.SEG_MOVETO: {
-                    /*
-                     * Transforms the single point and adds it to the path. We use the 'continue'
-                     * instruction here instead of 'break' because we don't want to execute the
-                     * code after the switch (addition of a line or a curve - there is no such
-                     * curve to add here; we are just moving the cursor).
-                     */
-                    ax = buffer[0];
-                    ay = buffer[1];
-                    transform(buffer, 0, buffer, 0, 1);
-                    px = buffer[0];
-                    py = buffer[1];
-                    path.moveTo(px, py);
-                    continue;
-                }
-                case PathIterator.SEG_LINETO: {
-                    /*
-                     * Inserts a new control point at 'buffer[0,1]'. This control point will
-                     * be initialised with coordinates in the middle of the straight line:
-                     *
-                     *  x = 0.5*(x1+x2)
-                     *  y = 0.5*(y1+y2)
-                     *
-                     * This point will be transformed after the 'switch', which is why we use
-                     * the 'break' statement here instead of 'continue' as in previous case.
-                     */
-                    buffer[0] = 0.5*(ax + (ax=buffer[0]));
-                    buffer[1] = 0.5*(ay + (ay=buffer[1]));
-                    buffer[2] = ax;
-                    buffer[3] = ay;
-                    break;
-                }
-                case PathIterator.SEG_QUADTO: {
-                    /*
-                     * Replaces the control point in 'buffer[0,1]' by a new control point lying
-                     * on the quadratic curve. Coordinates for a point in the middle of the curve
-                     * can be computed with:
-                     *
-                     *  x = 0.5*(ctrlx + 0.5*(x1+x2))
-                     *  y = 0.5*(ctrly + 0.5*(y1+y2))
-                     *
-                     * There is no need to keep the old control point because it was not lying
-                     * on the curve.
-                     */
-                    buffer[0] = 0.5*(buffer[0] + 0.5*(ax + (ax=buffer[2])));
-                    buffer[1] = 0.5*(buffer[1] + 0.5*(ay + (ay=buffer[3])));
-                    break;
-                }
-                case PathIterator.SEG_CUBICTO: {
-                    /*
-                     * Replaces the control point in 'buffer[0,1]' by a new control point lying
-                     * on the cubic curve. Coordinates for a point in the middle of the curve
-                     * can be computed with:
-                     *
-                     *  x = 0.25*(1.5*(ctrlx1+ctrlx2) + 0.5*(x1+x2));
-                     *  y = 0.25*(1.5*(ctrly1+ctrly2) + 0.5*(y1+y2));
-                     *
-                     * There is no need to keep the old control point because it was not lying
-                     * on the curve.
-                     *
-                     * NOTE: Le point calculé est bien sur la courbe, mais n'est pas
-                     *       nécessairement représentatif. Cet algorithme remplace les
-                     *       deux points de contrôles par un seul, ce qui se traduit par
-                     *       une perte de souplesse qui peut donner de mauvais résultats
-                     *       si la courbe cubique était bien tordue. Projeter une courbe
-                     *       cubique ne me semble pas être un problème simple, mais ce
-                     *       cas devrait être assez rare. Il se produira le plus souvent
-                     *       si on essaye de projeter un cercle ou une ellipse, auxquels
-                     *       cas l'algorithme actuel donnera quand même des résultats
-                     *       tolérables.
-                     */
-                    buffer[0] = 0.25*(1.5*(buffer[0]+buffer[2]) + 0.5*(ax + (ax=buffer[4])));
-                    buffer[1] = 0.25*(1.5*(buffer[1]+buffer[3]) + 0.5*(ay + (ay=buffer[5])));
-                    buffer[2] = ax;
-                    buffer[3] = ay;
-                    break;
-                }
-            }
-            /*
-             * Applies the transform on the point in the buffer, and append the transformed points
-             * to the general path. Try to add them as a quadratic line, or as a straight line if
-             * the computed control point is colinear with the starting and ending points.
-             */
-            transform(buffer, 0, buffer, 0, 2);
-            final Point2D ctrlPoint = ShapeUtilities.parabolicControlPoint(px, py,
-                                                     buffer[0], buffer[1],
-                                                     buffer[2], buffer[3],
-                                                     horizontal);
-            px = buffer[2];
-            py = buffer[3];
-            if (ctrlPoint != null) {
-                path.quadTo(ctrlPoint.getX(), ctrlPoint.getY(), px, py);
-            } else {
-                path.lineTo(px, py);
-            }
-        }
-        /*
-         * La projection de la forme géométrique est terminée. Applique
-         * une transformation affine si c'était demandée, puis retourne
-         * une version si possible simplifiée de la forme géométrique.
-         */
-        if (postTransform != null) {
-            path.transform(postTransform);
-        }
-        return ShapeUtilities.toPrimitive(path);
+        return isIdentity() ? shape : Accessor.createTransformedShape((MathTransform2D) this, shape, null, null, false);
     }
 
     /**
@@ -368,37 +204,6 @@ public abstract class AbstractMathTransform extends org.apache.sis.referencing.o
             throw new TransformException(Errors.format(Errors.Keys.CANT_COMPUTE_DERIVATIVE));
         }
         return derivative;
-    }
-
-    /**
-     * Copy of Apache SIS method. See super-class.
-     */
-    MathTransform concatenate(final MathTransform other, final boolean applyOtherFirst) {
-        return null;
-    }
-
-    /**
-     * Copy of Apache SIS method. See super-class.
-     */
-    static boolean equals(final LinearTransform t1, final Object t2, final ComparisonMode mode) {
-        if (t2 instanceof LinearTransform) {
-            final Matrix m1 = t1.getMatrix();
-            if (m1 != null) {
-                final Matrix m2 = ((LinearTransform) t2).getMatrix();
-                if (m1 instanceof org.apache.sis.util.LenientComparable) {
-                    return ((org.apache.sis.util.LenientComparable) m1).equals(m2, mode);
-                }
-                return Matrices.equals(m1, m2, mode);
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Copy of Apache SIS method. See super-class.
-     */
-    int beforeFormat(List<Object> transforms, int index, boolean inverse) {
-        return index;
     }
 
     /**

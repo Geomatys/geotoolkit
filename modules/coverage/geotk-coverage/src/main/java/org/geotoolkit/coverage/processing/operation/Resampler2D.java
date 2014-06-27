@@ -73,7 +73,7 @@ import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.AbstractCoordinateOperationFactory;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 import org.geotoolkit.referencing.operation.transform.DimensionFilter;
-import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
+import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.geotoolkit.referencing.operation.transform.WarpFactory;
 import org.geotoolkit.referencing.operation.MathTransforms;
 import org.geotoolkit.resources.Errors;

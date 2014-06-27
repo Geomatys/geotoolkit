@@ -61,7 +61,7 @@ import org.geotoolkit.image.io.MultidimensionalImageStore;
 import org.geotoolkit.image.io.mosaic.MosaicImageWriter;
 import org.geotoolkit.image.io.metadata.ReferencingBuilder;
 import org.geotoolkit.referencing.operation.transform.WarpFactory;
-import org.geotoolkit.referencing.operation.transform.LinearTransform;
+import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.AbstractCoverage;
 import org.geotoolkit.internal.coverage.CoverageUtilities;

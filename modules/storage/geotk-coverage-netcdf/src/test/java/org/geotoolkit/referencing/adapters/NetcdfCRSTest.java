@@ -44,7 +44,7 @@ import org.apache.sis.referencing.crs.DefaultTemporalCRS;
 import org.geotoolkit.referencing.cs.DiscreteReferencingFactory;
 import org.geotoolkit.referencing.cs.DiscreteCoordinateSystemAxis;
 import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
-import org.geotoolkit.referencing.operation.transform.LinearTransform;
+import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.geotoolkit.internal.image.io.IrregularAxesConverterTest;
 import org.geotoolkit.referencing.operation.matrix.Matrices;
 

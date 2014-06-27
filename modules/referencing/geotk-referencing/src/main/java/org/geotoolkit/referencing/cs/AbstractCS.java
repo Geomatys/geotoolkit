@@ -33,7 +33,7 @@ import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.util.InternationalString;
 import org.geotoolkit.measure.Measure;
 import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
-import org.geotoolkit.internal.referencing.AxisDirections;
+import org.apache.sis.internal.referencing.AxisDirections;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
 import org.apache.sis.referencing.cs.CoordinateSystems;

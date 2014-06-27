@@ -31,7 +31,7 @@ import org.geotoolkit.parameter.Parameter;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.parameter.ParameterGroup;
 import org.geotoolkit.parameter.FloatParameter;
-import org.geotoolkit.internal.referencing.CRSUtilities;
+import org.apache.sis.internal.referencing.Formulas;
 
 import org.geotoolkit.parameter.AbstractParameterValue;
 import static org.geotoolkit.referencing.operation.provider.UniversalParameters.*;
@@ -90,7 +90,7 @@ final class MapProjectionParameters extends ParameterGroup {
          */
         @Override
         public double doubleValue() {
-            return CRSUtilities.getAuthalicRadius(get(SEMI_MAJOR), get(SEMI_MINOR));
+            return Formulas.getAuthalicRadius(get(SEMI_MAJOR), get(SEMI_MINOR));
         }
 
         /**

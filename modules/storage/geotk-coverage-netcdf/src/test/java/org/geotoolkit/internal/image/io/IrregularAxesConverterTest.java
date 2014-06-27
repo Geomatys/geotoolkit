@@ -24,7 +24,7 @@ import org.opengis.referencing.crs.ProjectedCRS;
 import org.apache.sis.measure.Range;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.cs.DiscreteCoordinateSystemAxis;
-import org.geotoolkit.referencing.operation.transform.LinearTransform;
+import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.geotoolkit.referencing.operation.matrix.Matrix3;
 
 import org.junit.*;

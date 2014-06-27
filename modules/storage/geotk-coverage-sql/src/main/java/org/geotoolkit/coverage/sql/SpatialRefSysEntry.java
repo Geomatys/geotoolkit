@@ -44,7 +44,7 @@ import org.geotoolkit.util.Utilities;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
-import org.geotoolkit.internal.referencing.AxisDirections;
+import org.apache.sis.internal.referencing.AxisDirections;
 import org.geotoolkit.internal.sql.table.SpatialDatabase;
 import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
 import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
@@ -304,7 +304,7 @@ final class SpatialRefSysEntry {
          */
         if (horizontalCRS instanceof GeographicCRS) {
             final EllipsoidalCS cs = ((GeographicCRS) horizontalCRS).getCoordinateSystem();
-            final int i = AxisDirections.indexOf(cs, AxisDirection.EAST);
+            final int i = AxisDirections.indexOfColinear(cs, AxisDirection.EAST);
             if (i >= 0) {
                 final DefaultEllipsoidalCS geotk = DefaultEllipsoidalCS.castOrCopy(cs);
                 shiftedCS = geotk.shiftAxisRange(AxisRangeType.POSITIVE_LONGITUDE);

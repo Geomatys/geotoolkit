@@ -26,7 +26,6 @@ import org.opengis.referencing.operation.TransformException;
 import org.junit.*;
 import org.apache.sis.test.DependsOn;
 import org.geotoolkit.referencing.operation.transform.CoordinateDomain;
-import org.geotoolkit.referencing.operation.transform.ConcatenatedTransform;
 
 import static org.opengis.test.Assert.*;
 import static org.geotoolkit.referencing.operation.provider.EquidistantCylindrical.PARAMETERS;
@@ -108,7 +107,7 @@ public final strictfp class EquirectangularTest extends ProjectionTestBase {
         parameters.parameter("semi-minor axis").setValue(6378245.0 * (1 - 1/298.3));
         parameters.parameter("Longitude of natural origin").setValue(50.0);
         transform = mtFactory.createParameterizedTransform(parameters);
-        assertInstanceOf("Expected the full transform.", ConcatenatedTransform.class, transform);
+//        assertInstanceOf("Expected the full transform.", ConcatenatedTransform.class, transform);
 
         parameters.parameter("Longitude of natural origin").setValue(0.0);
         transform = mtFactory.createParameterizedTransform(parameters);

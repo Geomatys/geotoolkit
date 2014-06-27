@@ -24,7 +24,7 @@ import static org.geotoolkit.parameter.Parameters.*;
 import org.geotoolkit.process.AbstractProcess;
 import org.geotoolkit.process.ProcessException;
 import static org.geotoolkit.process.coverage.straighten.StraightenDescriptor.*;
-import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
+import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.parameter.ParameterValueGroup;

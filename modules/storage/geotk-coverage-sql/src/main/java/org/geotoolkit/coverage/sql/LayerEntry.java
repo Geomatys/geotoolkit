@@ -55,7 +55,6 @@ import org.geotoolkit.util.DateRange;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.measure.MeasurementRange;
 import org.apache.sis.util.logging.Logging;
-import org.apache.sis.internal.util.CollectionsExt;
 import org.geotoolkit.util.collection.FrequencySortedSet;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.geotoolkit.internal.sql.table.DefaultEntry;
@@ -69,9 +68,10 @@ import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.geotoolkit.internal.EmptySortedSet;
 import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
 import org.geotoolkit.referencing.operation.MathTransforms;
-import org.geotoolkit.referencing.operation.transform.LinearTransform;
+import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.apache.sis.metadata.iso.extent.DefaultGeographicBoundingBox;
 import org.geotoolkit.resources.Errors;
 
@@ -529,7 +529,7 @@ final class LayerEntry extends DefaultEntry implements Layer, Localized {
             } catch (SQLException e) {
                 throw new CoverageStoreException(e);
             }
-            available = CollectionsExt.emptySortedSet();
+            available = EmptySortedSet.INSTANCE;
             if (count != null) {
                 final Set<Double> all = new HashSet<>();
                 for (final GridGeometryEntry entry : count) {
@@ -817,7 +817,7 @@ final class LayerEntry extends DefaultEntry implements Layer, Localized {
                 throw new CoverageStoreException(e);
             }
             if (extents == null) {
-                return CollectionsExt.emptySortedSet();
+                return EmptySortedSet.INSTANCE;
             }
             final int[] count = extents.frequencies();
             final FrequencySortedSet<GeneralGridGeometry> geometries = new FrequencySortedSet<>(true);

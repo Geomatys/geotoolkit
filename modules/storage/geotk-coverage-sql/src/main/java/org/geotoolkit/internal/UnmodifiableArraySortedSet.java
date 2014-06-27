@@ -63,7 +63,7 @@ public abstract class UnmodifiableArraySortedSet<E> extends AbstractSet<E> imple
     }
 
     /**
-     * Returns a new instance backed by the same array but using differnet lower and upper
+     * Returns a new instance backed by the same array but using different lower and upper
      * array bounds.
      *
      * @param  lower The index of the first valid element in the backing array.

@@ -31,8 +31,8 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import org.apache.sis.io.wkt.Formatter;
 import org.apache.sis.util.UnsupportedImplementationException;
-import org.geotoolkit.referencing.operation.transform.PassThroughTransform;
 
+import org.apache.sis.referencing.operation.transform.PassThroughTransform;
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 
 
@@ -148,11 +148,10 @@ public class DefaultPassThroughOperation extends DefaultSingleOperation implemen
     }
 
     /**
-     * Ordered sequence of positive integers defining the positions in a coordinate
-     * tuple of the coordinates affected by this pass-through operation. The returned
-     * index are for source coordinates.
+     * Returns the ordered sequence of positive integers defining the positions in a source
+     * coordinate tuple of the coordinates affected by this pass-through operation.
      *
-     * @return The modified coordinates.
+     * @return Indices of the modified source coordinates.
      *
      * @todo Current version works only with Geotk implementation.
      */

@@ -26,7 +26,7 @@ import java.util.concurrent.BlockingQueue;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
+import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.util.Classes;
 import org.geotoolkit.referencing.operation.MathTransforms;
 import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;

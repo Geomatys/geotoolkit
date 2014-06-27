@@ -45,7 +45,7 @@ import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.referencing.operation.MathTransforms;
-import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
+import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.util.BufferedImageUtilities;
 import org.opengis.coverage.grid.GridCoverage;

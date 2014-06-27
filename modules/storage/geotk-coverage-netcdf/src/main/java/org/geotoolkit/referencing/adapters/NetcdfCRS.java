@@ -354,7 +354,7 @@ public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateRefer
      * <ul>
      *   <li>If the underlying NetCDF coordinate system {@linkplain CoordinateSystem#isRegular()
      *       is regular}, then the returned transform implements the
-     *       {@link org.geotoolkit.referencing.operation.transform.LinearTransform} interface.</li>
+     *       {@link org.apache.sis.referencing.operation.transform.LinearTransform} interface.</li>
      *   <li>If this CRS is regular and two-dimensional, then the returned transform is also an
      *       instance of Java2D {@link java.awt.geom.AffineTransform}.</li>
      * </ul>

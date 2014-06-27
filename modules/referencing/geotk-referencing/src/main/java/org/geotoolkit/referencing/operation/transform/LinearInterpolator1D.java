@@ -22,6 +22,7 @@ import org.apache.sis.util.ArraysExt;
 import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
 import org.opengis.referencing.operation.TransformException;
+import org.apache.sis.referencing.operation.transform.AbstractMathTransform1D;
 
 /**
  * {@link MathTransform1D} with linear interpolation between values.

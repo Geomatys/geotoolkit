@@ -42,14 +42,14 @@ import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.apache.sis.referencing.AbstractIdentifiedObject;
 import org.apache.sis.parameter.Parameterized;
-import org.geotoolkit.referencing.operation.transform.LinearTransform;
-import org.geotoolkit.referencing.operation.transform.ConcatenatedTransform;
-import org.geotoolkit.referencing.operation.transform.PassThroughTransform;
+import org.apache.sis.referencing.operation.transform.LinearTransform;
+import org.apache.sis.referencing.operation.transform.PassThroughTransform;
 import org.geotoolkit.io.wkt.Formattable;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.io.wkt.Formatter;
 
+import org.apache.sis.referencing.operation.transform.Accessor;
 import static org.apache.sis.util.ArgumentChecks.*;
 
 
@@ -429,13 +429,12 @@ public class DefaultOperationMethod extends AbstractIdentifiedObject implements 
         }
         int actual;
         while ((actual = transform.getSourceDimensions()) > expected.intValue()) {
-            if (transform instanceof ConcatenatedTransform) {
+            if (Accessor.isConcatenatedTransform(transform)) {
                 // Ignore axis switch and unit conversions.
-                final ConcatenatedTransform c = (ConcatenatedTransform) transform;
-                if (isTrivial(c.transform1)) {
-                    transform = c.transform2;
-                } else if (isTrivial(c.transform2)) {
-                    transform = c.transform1;
+                if (isTrivial(Accessor.transform1(transform))) {
+                    transform = Accessor.transform2(transform);
+                } else if (isTrivial(Accessor.transform2(transform))) {
+                    transform = Accessor.transform1(transform);
                 } else {
                     // The transform is something more complex than an axis switch.
                     // Stop the loop with the current illegal transform and let the

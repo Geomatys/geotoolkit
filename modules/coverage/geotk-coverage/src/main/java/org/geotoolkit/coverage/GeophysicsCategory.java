@@ -24,8 +24,7 @@ import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.InternationalString;
 
-import org.geotoolkit.referencing.operation.MathTransforms;
-import org.geotoolkit.referencing.operation.transform.LinearTransform1D;
+import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.measure.NumberRange;
 
@@ -124,7 +123,7 @@ final class GeophysicsCategory extends Category {
      */
     @Override
     public MathTransform1D getSampleToGeophysics() {
-        return isQuantitative() ? LinearTransform1D.IDENTITY : null;
+        return isQuantitative() ? (MathTransform1D) MathTransforms.identity(1) : null;
     }
 
     /**

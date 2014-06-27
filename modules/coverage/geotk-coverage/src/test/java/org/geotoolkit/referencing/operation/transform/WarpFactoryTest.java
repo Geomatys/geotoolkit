@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.referencing.operation.transform;
 
+import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import java.util.Arrays;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;

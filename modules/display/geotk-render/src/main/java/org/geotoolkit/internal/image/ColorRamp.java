@@ -57,8 +57,7 @@ import org.geotoolkit.display.axis.TickIterator;
 import org.geotoolkit.display.axis.NumberGraduation;
 import org.geotoolkit.display.axis.AbstractGraduation;
 import org.geotoolkit.display.axis.LogarithmicNumberGraduation;
-import org.geotoolkit.referencing.operation.transform.LinearTransform;
-import org.geotoolkit.referencing.operation.transform.ExponentialTransform1D;
+import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Errors;
@@ -737,7 +736,7 @@ public class ColorRamp implements Serializable {
             if (graduation == null || graduation.getClass() != NumberGraduation.class) {
                 graduation = new NumberGraduation(units);
             }
-        } else if (tr instanceof ExponentialTransform1D) { // The *inverse* of 'tr' is logarithmic.
+        } else if (tr.getClass().getSimpleName().equals("ExponentialTransform1D")) { // The *inverse* of 'tr' is logarithmic (TODO).
             if (graduation == null || graduation.getClass() != LogarithmicNumberGraduation.class) {
                 graduation = new LogarithmicNumberGraduation(units);
             }

@@ -21,7 +21,7 @@ import java.util.Objects;
 import java.awt.geom.AffineTransform;
 import org.opengis.referencing.operation.MathTransform;
 import org.apache.sis.parameter.Parameterized;
-import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
+import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 
 
 /**

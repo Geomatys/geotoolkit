@@ -25,11 +25,10 @@ import java.util.List;
 import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
-import org.geotoolkit.referencing.operation.transform.ConcatenatedTransform;
-import org.geotoolkit.referencing.operation.transform.LinearTransform;
-import org.geotoolkit.referencing.operation.transform.PassThroughTransform;
+import org.apache.sis.referencing.operation.transform.MathTransforms;
+import org.apache.sis.referencing.operation.transform.LinearTransform;
+import org.apache.sis.referencing.operation.transform.PassThroughTransform;
 import org.geotoolkit.referencing.operation.transform.LinearInterpolator1D;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.coverage.grid.GridEnvelope;
@@ -48,34 +47,34 @@ import org.opengis.util.FactoryException;
 
 /**
  * Subclass of CoverageStack for regular grid ND coverage.
- * 
- * 
+ *
+ *
  * @author Johann Sorel (Geomatys)
  */
 public class GridCoverageStack extends CoverageStack implements GridCoverage {
 
     private GridGeometry gridGeometry = null;
-    
+
     public GridCoverageStack(CharSequence name, final Collection<? extends GridCoverage> coverages) throws IOException, TransformException, FactoryException {
         super(name, coverages);
         buildGridGeometry();
     }
-    
+
     public GridCoverageStack(CharSequence name, final CoordinateReferenceSystem crs, final Collection<? extends Element> elements) throws IOException, TransformException, FactoryException {
         super(name, crs, elements);
         buildGridGeometry();
     }
 
     private void buildGridGeometry() throws IOException, TransformException, FactoryException{
-        
+
         final Element[] elements = getElements();
         final CoordinateReferenceSystem crs = getCoordinateReferenceSystem();
         final int nbDim = crs.getCoordinateSystem().getDimension();
-        
+
         if(elements.length==0){
             throw new IOException("Coverages list is empty");
         }
-        
+
         //build the grid geometry
         final int[] gridLower = new int[nbDim];
         final int[] gridUpper = new int[nbDim];
@@ -88,13 +87,13 @@ public class GridCoverageStack extends CoverageStack implements GridCoverage {
             final GridGeometry gg = coverage.getGridGeometry();
             final GridEnvelope ext = gg.getExtent();
             final MathTransform trs = gg.getGridToCRS();
-            
+
             if(baseGridToCrs==null){
                 for(int i=0;i<gridLower.length-1;i++){
                     gridLower[i] = ext.getLow(i);
                     gridUpper[i] = ext.getHigh(i);
                 }
-                                
+
                 if(trs.getSourceDimensions()==nbDim){
                     //extract the gridToCrs transform without the last column
                     if(trs instanceof LinearTransform){
@@ -130,15 +129,15 @@ public class GridCoverageStack extends CoverageStack implements GridCoverage {
                 }else{
                     throw new IOException("Coverage GridToCRS can not be used, was expecting "+nbDim+" or "+(nbDim-1)+" dimensions but found : " + trs.getSourceDimensions());
                 }
-                
+
             }
-            
+
             if(trs.getSourceDimensions()==nbDim){
                 //we expect the last dimension to be a slice, low == high
                 if(ext.getLow(gridLower.length-1) != ext.getHigh(gridUpper.length-1)){
                     throw new IOException("Last dimension of the coverage is not a slice.");
                 }
-                
+
                 //find the real value
                 final double[] coord = new double[gridUpper.length];
                 for(int i=0;i<gridUpper.length;i++) coord[i] = ext.getLow(i);
@@ -148,25 +147,25 @@ public class GridCoverageStack extends CoverageStack implements GridCoverage {
             }else{
                 lastAxisSteps[k] = element.getZRange().getMinDouble();
             }
-            
-            //increment number of slices 
+
+            //increment number of slices
             gridUpper[gridUpper.length-1]++;
-            
+
             k++;
         }
-        
+
         // reduce by one, values are inclusives
         gridUpper[gridUpper.length-1]--;
-            
+
         //build the grid geometry
         final MathTransform1D lastAxisTrs = LinearInterpolator1D.create(lastAxisSteps);
         final MathTransform mask = PassThroughTransform.create(nbDim-1, lastAxisTrs, 0);
-        final MathTransform gridToCRS = ConcatenatedTransform.create(baseGridToCrs, mask);
+        final MathTransform gridToCRS = MathTransforms.concatenate(baseGridToCrs, mask);
         final PixelInCell pixelInCell = PixelInCell.CELL_CENTER;
         final GeneralGridEnvelope gridEnv = new GeneralGridEnvelope(gridLower, gridUpper, true);
         gridGeometry = new GeneralGridGeometry(gridEnv, pixelInCell, gridToCRS, crs);
     }
-    
+
     @Override
     public boolean isDataEditable() {
         return false;
@@ -271,7 +270,7 @@ public class GridCoverageStack extends CoverageStack implements GridCoverage {
     public void setDataBlock(GridRange range, double[] values) throws InvalidRangeException, GridNotEditableException, ArrayIndexOutOfBoundsException {
         throw new UnsupportedOperationException("Not yet implemented");
     }
-    
-    
-    
+
+
+
 }

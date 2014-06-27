@@ -39,7 +39,7 @@ import static org.geotoolkit.coverage.wkb.WKBRasterConstants.*;
 import org.geotoolkit.internal.image.ScaledColorSpace;
 import org.geotoolkit.io.LEDataInputStream;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
+import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CRSAuthorityFactory;
 import org.opengis.referencing.operation.MathTransform;
@@ -247,7 +247,7 @@ public class WKBRasterReader {
         final WritableRaster raster;
         double min = Double.MAX_VALUE;
         double max = Double.MIN_VALUE;
-        
+
         if(dataBufferType == DataBuffer.TYPE_BYTE){
             //more efficient but only works for byte type bands
             //check all band have the same sample model and rebuild data buffer
@@ -269,7 +269,7 @@ public class WKBRasterReader {
 
             min = -100.0;
             max = 100.0;
-            
+
             //rebuild data buffer
             final DataBuffer db = new DataBufferByte(dataArray, dataArray[0].length);
             final int scanlineStride = width;

@@ -22,7 +22,7 @@ import org.geotoolkit.display.SearchArea;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.map.FeatureMapLayer;
-import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
+import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.display2d.primitive.GraphicJ2D;
 

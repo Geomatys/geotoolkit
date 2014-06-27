@@ -47,7 +47,7 @@ import org.geotoolkit.display.shape.ShapeUtilities;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 import org.geotoolkit.referencing.operation.transform.AbstractMathTransform;
-import org.geotoolkit.internal.referencing.DirectPositionView;
+import org.apache.sis.internal.referencing.DirectPositionView;
 import org.geotoolkit.resources.Errors;
 
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;

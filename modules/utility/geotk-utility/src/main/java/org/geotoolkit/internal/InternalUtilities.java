@@ -52,8 +52,8 @@ public final class InternalUtilities extends Static {
      * Historically, this was the relative tolerance threshold for considering two matrixes
      * as {@linkplain org.geotoolkit.referencing.operation.matrix.XMatrix#equals(Object,
      * ComparisonMode) equal}. This value has been determined empirically in order to allow
-     * {@link org.geotoolkit.referencing.operation.transform.ConcatenatedTransform} to detect the
-     * cases where two {@link org.geotoolkit.referencing.operation.transform.LinearTransform}
+     * {@link org.apache.sis.referencing.operation.transform.MathTransforms} to detect the
+     * cases where two {@link org.apache.sis.referencing.operation.transform.LinearTransform}
      * are equal for practical purpose. This threshold can be used as below:
      *
      * {@preformat java

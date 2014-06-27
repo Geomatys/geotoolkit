@@ -88,12 +88,10 @@ import org.geotoolkit.process.coverage.shadedrelief.ShadedReliefDescriptor;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
-import org.geotoolkit.referencing.operation.MathTransforms;
-import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
-import org.geotoolkit.referencing.operation.transform.ConcatenatedTransform;
+import org.apache.sis.referencing.operation.transform.MathTransforms;
+import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.geotoolkit.referencing.operation.transform.EarthGravitationalModel;
-import org.geotoolkit.referencing.operation.transform.LinearTransform;
-import org.geotoolkit.referencing.operation.transform.LinearTransform1D;
+import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.geotoolkit.style.StyleConstants;
 import org.geotoolkit.style.function.Categorize;
 import org.geotoolkit.style.function.CompatibleColorModel;
@@ -148,7 +146,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
     public void portray(final ProjectedCoverage projectedCoverage) throws PortrayalException{
 
         try {
-            
+
             ////////////////////////////////////////////////////////////////////
             // 1 - Get data and elevation coverage                            //
             ////////////////////////////////////////////////////////////////////
@@ -176,7 +174,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
                 elevationCoverage = projectedCoverage.getElevationCoverage(param);
             } catch (DisjointCoverageDomainException ex) {
                 //LOGGER.log(Level.INFO, ex.getMessage());
-                
+
                 //since the visible enveloppe can be much larger, we may obtain NaN when transforming the envelope
                 //which causes the disjoint domain exception
                 final GeneralEnvelope objCovEnv = new GeneralEnvelope(CRS.transform(layerBounds, bounds.getCoordinateReferenceSystem()));
@@ -197,11 +195,11 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
                 //LOGGER.log(Level.WARNING, "Requested an area where no coverage where found.");
                 return;
             }
-            
+
             ////////////////////////////////////////////////////////////////////
             // 2 - Reproject datas                                            //
             ////////////////////////////////////////////////////////////////////
-            
+
             boolean isReprojected = false;
             final CoordinateReferenceSystem coverageCRS = dataCoverage.getCoordinateReferenceSystem();
             try{
@@ -214,11 +212,11 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
                     final GeneralEnvelope env = new  GeneralEnvelope(2);
                     env.setRange(0, ge.x, ge.x+ge.width);
                     env.setRange(1, ge.y, ge.y+ge.height);
-                    
+
                     final MathTransform cogtc = dataCoverage.getGridGeometry().getGridToCRS(PixelInCell.CELL_CORNER);
                     final GeneralEnvelope covEnv = CRS.transform(cogtc, env);
                     covEnv.setCoordinateReferenceSystem(dataCoverage.getCoordinateReferenceSystem2D());
-                    
+
                     //final Envelope2D covEnv2 = dataCoverage.getGridGeometry().getEnvelope2D();
                     final GeneralEnvelope tmp = new GeneralEnvelope(renderingContext.getPaintingObjectiveBounds2D());
                     tmp.intersect(CRS.transform(covEnv, targetCRS));
@@ -226,7 +224,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
                     if(tmp.isEmpty()){
                         dataCoverage = null;
                     }else{
-                        
+
                         //force alpha if image is RGB
                         final GridSampleDimension[] dims = dataCoverage.getSampleDimensions();
                         if(dims==null || dims.length==0){
@@ -235,7 +233,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
 //                            final BufferedImage bi = new BufferedImage(img.getWidth(), img.getHeight(), BufferedImage.TYPE_INT_ARGB);
 //                            bi.createGraphics().drawRenderedImage(img, new AffineTransform());
 //                            img = bi;
-                            
+
                             if(imga!=img){
                                 final GridCoverageBuilder gcb = new GridCoverageBuilder();
                                 gcb.setName("temp");
@@ -244,10 +242,10 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
                                 dataCoverage = gcb.getGridCoverage2D();
                             }
                         }
-                        
+
                         //calculate gridgeometry
                         final AffineTransform2D trs = renderingContext.getObjectiveToDisplay();
-                        final GeneralEnvelope dispEnv = CRS.transform(trs, tmp);                        
+                        final GeneralEnvelope dispEnv = CRS.transform(trs, tmp);
                         final int width = (int)Math.ceil(dispEnv.getSpan(0));
                         final int height = (int)Math.ceil(dispEnv.getSpan(1));
                         final int minx = (int)dispEnv.getMinimum(0);
@@ -257,16 +255,16 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
                             dataCoverage = null;
                         }else{
                             isReprojected = true;
-                            
+
                             //final Rectangle rect = renderingContext.getCanvasDisplayBounds();
                             final GridEnvelope2D ext = new GridEnvelope2D(0,0,width,height);
                             AffineTransform2D dispToObj = renderingContext.getDisplayToObjective();
                             final AffineTransform gridToCrs = new AffineTransform();
                             gridToCrs.translate(minx, miny);
                             gridToCrs.preConcatenate(dispToObj);
-                            
+
                             final GridGeometry2D gg = new GridGeometry2D(ext, PixelOrientation.UPPER_LEFT,new AffineTransform2D(gridToCrs), targetCRS, null);
-                            
+
                             final ProcessDescriptor desc = ResampleDescriptor.INSTANCE;
                             final ParameterValueGroup params = desc.getInputDescriptor().createValue();
                             ParametersExt.getOrCreateValue(params, ResampleDescriptor.IN_COVERAGE.getName().getCode()).setValue(dataCoverage);
@@ -276,7 +274,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
                             final org.geotoolkit.process.Process process = desc.createProcess(params);
                             final ParameterValueGroup result = process.call();
                             dataCoverage = (GridCoverage2D) result.parameter("result").getValue();
-                            
+
                         }
                     }
                 }
@@ -307,32 +305,32 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             RenderedImage dataImage = applyStyle(dataCoverage, elevationCoverage, coverageLayer.getElevationModel(), symbol.getSource(), hints, isReprojected);
             final MathTransform2D trs2D = dataCoverage.getGridGeometry().getGridToCRS2D(PixelOrientation.UPPER_LEFT);
 
-            
+
             if(renderingContext.wraps == null){
                 //single rendering
                 renderCoverage(projectedCoverage, dataImage, trs2D);
             }else{
-                
+
                 //check if the geometry overlaps the meridian
                 int nbIncRep = renderingContext.wraps.wrapIncNb;
                 int nbDecRep = renderingContext.wraps.wrapDecNb;
                 final Geometry objBounds = JTS.toGeometry(dataCoverage.getEnvelope());
-                
-                // geometry cross the far east meridian, geometry is like : 
+
+                // geometry cross the far east meridian, geometry is like :
                 // POLYGON(-179,10,  181,10,  181,-10,  179,-10)
                 if(objBounds.intersects(renderingContext.wraps.wrapIncLine)){
                     //duplicate geometry on the other warp line
                     nbDecRep++;
                 }
-                // geometry cross the far west meridian, geometry is like : 
+                // geometry cross the far west meridian, geometry is like :
                 // POLYGON(-179,10, -181,10, -181,-10,  -179,-10)
                 else if(objBounds.intersects(renderingContext.wraps.wrapDecLine)){
                     //duplicate geometry on the other warp line
                     nbIncRep++;
                 }
-                
+
                 renderCoverage(projectedCoverage, dataImage, trs2D);
-                
+
                 //repetition of incresing and decreasing sides.
                 for(int i=0;i<nbDecRep;i++){
                     g2d.setTransform(renderingContext.wraps.wrapDecObjToDisp[i]);
@@ -359,10 +357,10 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             case DataBuffer.TYPE_FLOAT  : return new double[]{DataBuffer.TYPE_FLOAT,Float.NaN};
             case DataBuffer.TYPE_DOUBLE : return new double[]{DataBuffer.TYPE_DOUBLE,Double.NaN};
             default : throw new IllegalArgumentException("");
-                
+
         }
     }
-    
+
     private void renderCoverage(final ProjectedCoverage projectedCoverage, RenderedImage img, MathTransform2D trs2D) throws PortrayalException{
         if (trs2D instanceof AffineTransform) {
             g2d.setComposite(symbol.getJ2DComposite());
@@ -632,20 +630,20 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
      * @return
      * @throws IllegalArgumentException
      * @throws FactoryException
-     * @throws TransformException 
+     * @throws TransformException
      */
     public static GridCoverage2D getGeoideCoverage(final GridCoverage2D coverage) throws IllegalArgumentException, FactoryException, TransformException{
-        
+
         final RenderedImage base = coverage.getRenderedImage();
         final float[][] matrix = new float[base.getHeight()][base.getWidth()];
-        
+
         final EarthGravitationalModel trs = EarthGravitationalModel.create(DefaultGeodeticDatum.WGS84, 180);
         final MathTransform dataToLongLat = CRS.findMathTransform(coverage.getCoordinateReferenceSystem2D(), DefaultGeographicCRS.WGS84);
         final MathTransform2D gridToCRS = coverage.getGridGeometry().getGridToCRS2D();
-        final MathTransform gridToLonLat = ConcatenatedTransform.create(gridToCRS, dataToLongLat);
-        
+        final MathTransform gridToLonLat = MathTransforms.concatenate(gridToCRS, dataToLongLat);
+
         final float[] buffer = new float[6];
-        
+
         for(int y=0;y<matrix.length;y++){
             for(int x=0;x<matrix[0].length;x++){
                 buffer[0]=x;buffer[1]=y;buffer[2]=0;
@@ -654,7 +652,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
                 matrix[y][x] = buffer[2];
             }
         }
-        
+
         GridCoverageBuilder gcb = new GridCoverageBuilder();
         gcb.setName("geoide");
         gcb.setRenderedImage(matrix);
@@ -662,7 +660,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
         gcb.setGridToCRS(gridToCRS);
         return gcb.getGridCoverage2D();
     }
-    
+
 
     ////////////////////////////////////////////////////////////////////////////
     // Renderedmage JAI image operations ///////////////////////////////////////
@@ -741,14 +739,14 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
         if(shadedRel!=null && shadedRel.getReliefFactor()!= null) {
             final double factor = shadedRel.getReliefFactor().evaluate(null, Double.class);
             if(factor== 0.0) break shadingCase;
-            
+
             //BUG ? When using the grid coverage builder the color model is changed
             if(image.getColorModel() instanceof CompatibleColorModel){
                 final BufferedImage bi = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
                 bi.createGraphics().drawRenderedImage(image, new AffineTransform());
                 image = bi;
             }
-            
+
             //ReliefShadow creating
             final GridCoverage2D mntCoverage;
             if(elevationCoverage!=null){
@@ -759,14 +757,14 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
                 //but is really slow to calculate, disabled for now.
                 //mntCoverage = getGeoideCoverage(coverage);
             }
-            
+
             final GridCoverageBuilder gcb = new GridCoverageBuilder();
             gcb.setGridGeometry(coverage.getGridGeometry());
             gcb.setRenderedImage(image);
             gcb.setName("tempimg");
             final GridCoverage2D ti = gcb.getGridCoverage2D();
-            
-            final MathTransform1D trs = LinearTransform1D.create(factor, 0);
+
+            final MathTransform1D trs = (MathTransform1D) MathTransforms.linear(factor, 0);
             final org.geotoolkit.process.coverage.shadedrelief.ShadedRelief proc = new org.geotoolkit.process.coverage.shadedrelief.ShadedRelief(
                     ti, mntCoverage, trs);
             final ParameterValueGroup res = proc.call();

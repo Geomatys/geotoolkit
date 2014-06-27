@@ -36,7 +36,7 @@ import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.display2d.style.labeling.LabelRenderer;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
-import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
+import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import static org.apache.sis.util.ArgumentChecks.*;
 import org.geotoolkit.display.canvas.AbstractCanvas2D;
 import org.geotoolkit.display.container.GraphicContainer;

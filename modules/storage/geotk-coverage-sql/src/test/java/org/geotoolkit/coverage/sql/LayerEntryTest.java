@@ -32,7 +32,7 @@ import org.apache.sis.measure.MeasurementRange;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.internal.sql.table.CatalogTestBase;
-import org.geotoolkit.referencing.operation.transform.LinearTransform;
+import org.apache.sis.referencing.operation.transform.LinearTransform;
 
 import org.junit.*;
 import static org.junit.Assert.*;

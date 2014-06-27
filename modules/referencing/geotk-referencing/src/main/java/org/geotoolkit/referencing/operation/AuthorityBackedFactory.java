@@ -40,6 +40,7 @@ import org.opengis.referencing.operation.*;
 
 import org.apache.sis.util.Deprecable;
 import org.apache.sis.metadata.iso.extent.Extents;
+import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.Factory;
 import org.geotoolkit.factory.FactoryRegistryException;
@@ -48,7 +49,6 @@ import org.geotoolkit.internal.referencing.OperationContext;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.operation.matrix.Matrices;
 import org.geotoolkit.referencing.operation.transform.EllipsoidalTransform;
-import org.geotoolkit.referencing.operation.transform.ConcatenatedTransform;
 import org.geotoolkit.referencing.factory.NoSuchIdentifiedResource;
 import org.apache.sis.util.collection.BackingStoreException;
 import org.geotoolkit.resources.Loggings;
@@ -588,14 +588,8 @@ public class AuthorityBackedFactory extends DefaultCoordinateOperationFactory {
         /*
          * Get the list of all single (non-concatenated) transformation steps.
          */
-        final MathTransform[] steps;
         MathTransform transform = operation.getMathTransform();
-        if (transform instanceof ConcatenatedTransform) {
-            final List<MathTransform> list = ((ConcatenatedTransform) transform).getSteps();
-            steps = list.toArray(new MathTransform[list.size()]);
-        } else {
-            steps = new MathTransform[] {transform};
-        }
+        final MathTransform[] steps = MathTransforms.getSteps(transform).toArray(new MathTransform[0]);
         /*
          * Find the first and the last EllipsoidalTransform. In the case of MolodenskyTransform,
          * the first and last occurences are typically the same instance. In the Geocentric datum
@@ -686,7 +680,7 @@ public class AuthorityBackedFactory extends DefaultCoordinateOperationFactory {
                                 tgtDim = srcDim;
                             }
                         }
-                        Matrix matrix = Matrices.getMatrix(step);
+                        Matrix matrix = MathTransforms.getMatrix(step);
                         if (matrix == null || !Matrices.isAffine(matrix)) {
                             continue; // Non affine step: do not update the transform steps.
                         }

@@ -46,7 +46,7 @@ import org.geotoolkit.referencing.CRS;
 import org.apache.sis.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.apache.sis.referencing.crs.DefaultTemporalCRS;
-import org.apache.sis.referencing.operation.transform.LinearTransform;
+import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.geotoolkit.referencing.operation.TransformPathNotFoundException;
 import org.apache.sis.metadata.iso.extent.DefaultExtent;
 import org.apache.sis.metadata.iso.extent.DefaultVerticalExtent;
@@ -121,7 +121,7 @@ public final class ServicesForMetadata extends ReferencingServices implements Ch
      */
     @Override
     public Matrix getMatrix(final MathTransform tr) {
-        return (tr instanceof LinearTransform) ? ((LinearTransform) tr).getMatrix() : null;
+        return MathTransforms.getMatrix(tr);
     }
 
     /**

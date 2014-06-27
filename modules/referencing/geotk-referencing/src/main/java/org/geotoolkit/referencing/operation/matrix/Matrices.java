@@ -30,7 +30,6 @@ import org.apache.sis.math.MathFunctions;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.referencing.operation.transform.LinearTransform;
 
 
 /**
@@ -168,33 +167,6 @@ public class Matrices extends Static {
             }
         }
         return new GeneralMatrix(matrix);
-    }
-
-    /**
-     * If the given transform is linear, returns its coefficients as a matrix.
-     * More specifically:
-     * <p>
-     * <ul>
-     *   <li>If the given transform is an instance of {@link LinearTransform}, returns
-     *       {@link LinearTransform#getMatrix()}.</li>
-     *   <li>Otherwise if the given transform is an instance of {@link AffineTransform},
-     *       returns its coefficients in a {@link Matrix3} instance.</li>
-     *   <li>Otherwise returns {@code null}.</li>
-     * </ul>
-     *
-     * @param  transform The transform, or {@code null}.
-     * @return The matrix of the given transform, or {@code null} if none.
-     *
-     * @since 3.16 (derived from 3.15)
-     */
-    public static Matrix getMatrix(final MathTransform transform) {
-        if (transform instanceof LinearTransform) {
-            return ((LinearTransform) transform).getMatrix();
-        }
-        if (transform instanceof AffineTransform) {
-            return new Matrix3((AffineTransform) transform);
-        }
-        return null;
     }
 
     /**

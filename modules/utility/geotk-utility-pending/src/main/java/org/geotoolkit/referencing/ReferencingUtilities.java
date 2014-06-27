@@ -28,17 +28,15 @@ import org.apache.sis.geometry.DirectPosition2D;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.internal.referencing.AxisDirections;
+import org.apache.sis.internal.referencing.AxisDirections;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
 import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
 import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
 import org.geotoolkit.referencing.operation.projection.Mercator;
-import org.geotoolkit.referencing.operation.transform.ConcatenatedTransform;
 import org.geotoolkit.referencing.operation.transform.LinearInterpolator1D;
-import org.geotoolkit.referencing.operation.transform.LinearTransform;
-import org.geotoolkit.referencing.operation.transform.LinearTransform1D;
-import org.geotoolkit.referencing.operation.transform.PassThroughTransform;
+import org.apache.sis.referencing.operation.transform.LinearTransform;
+import org.apache.sis.referencing.operation.transform.PassThroughTransform;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CompoundCRS;
@@ -57,6 +55,7 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
+import org.apache.sis.referencing.operation.transform.MathTransforms;
 
 /**
  * Complementary utility methods for CRS manipulation.
@@ -121,15 +120,13 @@ public final class ReferencingUtilities {
         return null;
     }
 
-    private static boolean isWrapAroundCompatible(MathTransform trs){
-        if(trs instanceof ConcatenatedTransform){
-            final ConcatenatedTransform ct = (ConcatenatedTransform) trs;
-            for(MathTransform step : ct.getSteps()){
-                if(!isWrapAroundCompatible(step)) return false;
+    private static boolean isWrapAroundCompatible(MathTransform trs) {
+        for (final MathTransform step : MathTransforms.getSteps(trs)) {
+            if (!(trs instanceof LinearTransform || trs instanceof Mercator)) {
+                return false;
             }
-            return true;
         }
-        return trs instanceof LinearTransform || trs instanceof Mercator;
+        return true;
     }
 
     public static Envelope wrapNormalize(Envelope env, DirectPosition[] warp) {
@@ -598,14 +595,14 @@ public final class ReferencingUtilities {
             final double[] array = values[i];
             final MathTransform1D axistrs;
             if(array.length == 0){
-                axistrs = LinearTransform1D.create(1, 0);
+                axistrs = (MathTransform1D) MathTransforms.linear(1, 0);
             }else if(array.length == 1){
-                axistrs = LinearTransform1D.create(1, array[0]);
+                axistrs = (MathTransform1D) MathTransforms.linear(1, array[0]);
             }else{
                 axistrs = LinearInterpolator1D.create(array);
             }
             final MathTransform mask = PassThroughTransform.create(baseDim+i, axistrs, values.length-i-1);
-            result = ConcatenatedTransform.create(result, mask);
+            result = MathTransforms.concatenate(result, mask);
         }
 
         return result;
@@ -633,9 +630,9 @@ public final class ReferencingUtilities {
             lst.add(crs);
         }
     }
-    
+
     /**
-     * For each axis value of the source envelope, we'll set corresponding one 
+     * For each axis value of the source envelope, we'll set corresponding one
      * in destination envelope, if we find a valid transform. For all the components
      * of the destination that can't be filled, they're left as is.
      * @param source The envelope to take values from.
@@ -667,7 +664,7 @@ public final class ReferencingUtilities {
         int srcLowerAxis = 0;
         int srcAxisCount = 0;
         int destLowerAxis;
-        int destAxisCount;        
+        int destAxisCount;
         browseSource:
         for (int srcCptCounter = 0; srcCptCounter < sourceComponents.size(); srcCptCounter++) {
             // Prepare iteration.
@@ -682,7 +679,7 @@ public final class ReferencingUtilities {
             srcAxisCount = srcCurrent.getCoordinateSystem().getDimension();
 
              // First, we must browse destination to check if we can find an equal CRS.
-            for (int destCptCounter = 0; destCptCounter < destComponents.size(); destCptCounter++) {                
+            for (int destCptCounter = 0; destCptCounter < destComponents.size(); destCptCounter++) {
                 destLowerAxis += destAxisCount;
                 final CoordinateReferenceSystem destCurrent = destComponents.get(destCptCounter);
                 destAxisCount = destCurrent.getCoordinateSystem().getDimension();
@@ -703,10 +700,10 @@ public final class ReferencingUtilities {
             destAxisCount = 0;
 
             /*
-             * If equality failed, we'll try to get CRS whose meaning is 
+             * If equality failed, we'll try to get CRS whose meaning is
              * compatible. To do so, we try to identify the CRS type (horizontal,
              * vertical or temporal). If it's a fail, our last chance is to
-             * compare both CRS axis. 
+             * compare both CRS axis.
              */
             if (CRS.getHorizontalCRS(srcCurrent) != null) {
                 searchHorizontal = true;
@@ -748,7 +745,7 @@ public final class ReferencingUtilities {
                     if (sourceCS.getDimension() == destCS.getDimension()) {
                         boolean sameAxis = true;
                         for (int axisCount = 0; axisCount < sourceCS.getDimension(); axisCount++) {
-                            if (AxisDirections.indexOf(destCS, sourceCS.getAxis(axisCount).getDirection()) < 0) {
+                            if (AxisDirections.indexOfColinear(destCS, sourceCS.getAxis(axisCount).getDirection()) < 0) {
                                 sameAxis = false;
                                 break;
                             }
@@ -776,8 +773,8 @@ public final class ReferencingUtilities {
 
         return destination;
     }
-    
-        
+
+
     /**
      * Build an envelope which is the intersection between both of the parameters.
      * The CRS of the two input envelopes can be different, with different number
@@ -785,7 +782,7 @@ public final class ReferencingUtilities {
      * @param layerEnvelope The envelope of the source layer. Result envelope will
      * keep this object CRS.
      * @param filterEnvelope the envelope used as filter.
-     * @return An envelope which is the found intersection between the two inputs. 
+     * @return An envelope which is the found intersection between the two inputs.
      * The CRS of the result will be the same as the first input.
      * @throws TransformException If an incompatibility between CRSs is found.
      */
@@ -825,7 +822,7 @@ public final class ReferencingUtilities {
                 if (inputVertical != null && filterVertical != null) {
                     toFind.add(inputVertical);
                 }
-                /* build a sub-CRS, containing all the input components which can 
+                /* build a sub-CRS, containing all the input components which can
                  * be compared with current filter.
                  */
                 final CoordinateReferenceSystem tmpCRS;
@@ -840,7 +837,7 @@ public final class ReferencingUtilities {
                 final GeneralEnvelope tmpResult = new GeneralEnvelope(CRS.transform(resultEnvelope, tmpCRS));
                 tmpResult.intersect(tmpFilter);
 
-                /* Re-injection pass. For each component crs of the above computed 
+                /* Re-injection pass. For each component crs of the above computed
                  * intersection, we try to find the same in input envelope, to
                  * replace its values.
                  */

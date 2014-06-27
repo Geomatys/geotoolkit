@@ -53,6 +53,7 @@ import org.apache.sis.math.Statistics;
 import org.geotoolkit.io.TableWriter;
 import org.geotoolkit.io.wkt.Convention;
 import org.apache.sis.io.wkt.FormattableObject;
+import org.apache.sis.referencing.operation.transform.Accessor;
 
 import static java.lang.StrictMath.*;
 import static org.geotoolkit.test.Assert.*;
@@ -82,7 +83,7 @@ public abstract strictfp class TransformTestBase extends TransformTestCase imple
      * encompass at least 2 time the default buffer size in order to test the code that use
      * the buffer. We add an arbitrary number just for making the transform job harder.
      */
-    static final int ORDINATE_COUNT = AbstractMathTransform.MAXIMUM_BUFFER_SIZE * 2 + 137;
+    static final int ORDINATE_COUNT = Accessor.MAXIMUM_BUFFER_SIZE * 2 + 137;
 
     /**
      * The dimension of longitude, or {@code null} if none. If non-null, then the comparison of
@@ -186,7 +187,7 @@ public abstract strictfp class TransformTestBase extends TransformTestCase imple
         final PrintStream out = System.out;
         out.println("Factory classes");
         out.print  ("├─ Datum                : "); out.println(getShortClassName(datumFactory));
-        out.print  ("├─ CRS                  : "); out.println(getShortClassName(datumFactory));
+        out.print  ("├─ CRS                  : "); out.println(getShortClassName(crsFactory));
         out.print  ("├─ Math Transform       : "); out.println(getShortClassName(mtFactory));
         out.print  ("└─ Coordinate Operation : "); out.println(getShortClassName(opFactory));
         out.println();

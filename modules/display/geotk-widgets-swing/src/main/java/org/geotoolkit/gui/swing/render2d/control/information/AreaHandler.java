@@ -39,7 +39,7 @@ import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.gui.swing.render2d.CanvasHandler;
 import org.geotoolkit.gui.swing.render2d.JMap2D;
 import org.geotoolkit.gui.swing.render2d.control.navigation.MouseNavigatonListener;
-import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
+import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.util.logging.Logging;
 
 /**

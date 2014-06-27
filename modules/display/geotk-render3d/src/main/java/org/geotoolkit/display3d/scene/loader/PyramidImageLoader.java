@@ -35,7 +35,7 @@ import org.geotoolkit.image.iterator.PixelIterator;
 import org.geotoolkit.image.iterator.PixelIteratorFactory;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.MathTransforms;
-import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
+import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.geotoolkit.coverage.AbstractGridMosaic;
 import org.geotoolkit.coverage.GridMosaic;
 import org.geotoolkit.coverage.GridMosaicRenderedImage;

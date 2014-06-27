@@ -42,10 +42,10 @@ import org.opengis.test.TestSuite;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.factory.epsg.ThreadedEpsgFactory;
 import org.geotoolkit.referencing.operation.transform.AbstractMathTransform;
-import org.geotoolkit.referencing.operation.transform.ConcatenatedTransform;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.factory.FactoryNotFoundException;
 import org.geotoolkit.factory.Hints;
+import org.apache.sis.referencing.operation.transform.Accessor;
 import org.apache.sis.util.logging.Logging;
 
 import static org.opengis.test.CalculationType.*;
@@ -193,13 +193,12 @@ public final strictfp class GeoapiTest extends TestSuite implements Implementati
                     }
                 }
             }
-            if (transform instanceof ConcatenatedTransform) {
-                final ConcatenatedTransform ct = (ConcatenatedTransform) transform;
-                final ToleranceModifier candidate = tolerance(ct.transform1, false);
+            if (Accessor.isConcatenatedTransform(transform)) {
+                final ToleranceModifier candidate = tolerance(Accessor.transform1(transform), false);
                 if (candidate != null) {
                     return candidate;
                 }
-                transform = ct.transform2;
+                transform = Accessor.transform2(transform);
                 isAlone = false;
                 continue; // Check again the above transform.
             }

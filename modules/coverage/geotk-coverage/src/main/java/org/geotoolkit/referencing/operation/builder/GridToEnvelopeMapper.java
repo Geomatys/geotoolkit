@@ -38,8 +38,8 @@ import org.apache.sis.geometry.Envelope2D;
 import org.geotoolkit.coverage.grid.GridEnvelope2D;
 import org.geotoolkit.referencing.operation.matrix.Matrices;
 import org.geotoolkit.referencing.operation.MathTransforms;
-import org.geotoolkit.referencing.operation.transform.LinearTransform;
-import org.geotoolkit.internal.referencing.AxisDirections;
+import org.apache.sis.referencing.operation.transform.LinearTransform;
+import org.apache.sis.internal.referencing.AxisDirections;
 import org.geotoolkit.resources.Errors;
 
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;

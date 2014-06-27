@@ -44,7 +44,7 @@ import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.geotoolkit.geometry.jts.transform.CoordinateSequenceMathTransformer;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.GraphicBuilder;
-import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
+import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.opengis.display.primitive.Graphic;
 import org.geotoolkit.feature.type.Name;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;

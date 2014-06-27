@@ -58,7 +58,7 @@ import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.apache.sis.referencing.crs.DefaultTemporalCRS;
 import org.geotoolkit.referencing.cs.DiscreteCoordinateSystemAxis;
-import org.geotoolkit.internal.referencing.AxisDirections;
+import org.apache.sis.internal.referencing.AxisDirections;
 import org.geotoolkit.internal.image.io.IIOImageHelper;
 import org.geotoolkit.image.io.DimensionSlice.API;
 import org.geotoolkit.image.io.ImageMetadataException;

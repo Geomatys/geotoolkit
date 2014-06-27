@@ -25,7 +25,7 @@ import org.geotoolkit.feature.type.DefaultAttributeDescriptor;
 import org.geotoolkit.feature.type.DefaultAttributeType;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
-import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
+import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.geotoolkit.feature.type.*;

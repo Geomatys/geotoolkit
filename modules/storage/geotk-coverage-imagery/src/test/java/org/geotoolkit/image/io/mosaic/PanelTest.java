@@ -20,7 +20,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.RenderedImage;
 import javax.swing.JPanel;
-import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
+import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 
 /**
  *

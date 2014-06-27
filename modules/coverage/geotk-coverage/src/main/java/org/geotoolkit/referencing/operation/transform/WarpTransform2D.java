@@ -37,16 +37,17 @@ import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
+import org.opengis.referencing.operation.TransformException;
 
 import org.geotoolkit.lang.Workaround;
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.ComparisonMode;
+import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.parameter.Parameter;
 import org.geotoolkit.parameter.ParameterGroup;
 
 import static org.geotoolkit.util.Utilities.hash;
 import static org.geotoolkit.referencing.operation.provider.WarpPolynomial.*;
-import org.opengis.referencing.operation.TransformException;
 
 
 /**
@@ -274,7 +275,7 @@ public class WarpTransform2D extends AbstractMathTransform2D implements Serializ
      * @see #create
      */
     protected WarpTransform2D(final Warp warp, final Warp inverse) {
-        ensureNonNull("warp", warp);
+        ArgumentChecks.ensureNonNull("warp", warp);
         this.warp    = warp;
         this.inverse = (inverse != null) ? new WarpTransform2D(inverse, this) : null;
     }

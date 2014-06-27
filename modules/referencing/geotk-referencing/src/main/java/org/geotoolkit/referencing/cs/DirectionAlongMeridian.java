@@ -25,7 +25,7 @@ import net.jcip.annotations.Immutable;
 import org.opengis.referencing.cs.AxisDirection;
 
 import org.apache.sis.util.iso.Types;
-import org.geotoolkit.internal.referencing.AxisDirections;
+import org.apache.sis.internal.referencing.AxisDirections;
 
 
 /**

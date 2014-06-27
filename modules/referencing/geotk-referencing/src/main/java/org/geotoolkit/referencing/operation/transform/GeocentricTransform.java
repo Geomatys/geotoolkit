@@ -55,7 +55,7 @@ import org.geotoolkit.referencing.operation.matrix.Matrices;
 import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
 import org.geotoolkit.referencing.operation.provider.EllipsoidToGeocentric;
 import org.geotoolkit.referencing.operation.provider.GeocentricToEllipsoid;
-import org.geotoolkit.internal.referencing.DirectPositionView;
+import org.apache.sis.internal.referencing.DirectPositionView;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.referencing.operation.transform.IterationStrategy;
 

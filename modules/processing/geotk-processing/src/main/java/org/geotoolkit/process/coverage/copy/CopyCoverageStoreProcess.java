@@ -62,7 +62,7 @@ import static org.geotoolkit.process.coverage.copy.CopyCoverageStoreDescriptor.*
 import org.geotoolkit.process.coverage.reducetodomain.ReduceToDomainDescriptor;
 import org.geotoolkit.process.coverage.straighten.StraightenDescriptor;
 import org.geotoolkit.referencing.cs.DiscreteCoordinateSystemAxis;
-import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
+import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.temporal.object.TemporalUtilities;

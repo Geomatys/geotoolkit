@@ -43,10 +43,7 @@ import org.geotoolkit.image.io.PaletteFactory;
 import org.geotoolkit.internal.InternalUtilities;
 import org.geotoolkit.internal.coverage.ColorPalette;
 import org.geotoolkit.internal.coverage.TransferFunction;
-import org.geotoolkit.referencing.operation.MathTransforms;
-import org.geotoolkit.referencing.operation.transform.LinearTransform1D;
-import org.geotoolkit.referencing.operation.transform.LogarithmicTransform1D;
-import org.geotoolkit.referencing.operation.transform.ExponentialTransform1D;
+import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.geotoolkit.resources.Errors;
 
 
@@ -176,13 +173,13 @@ public class CategoryRecord implements Cloneable, Serializable {
         final TransferFunction tf = new TransferFunction(category, locale);
         sampleMin = tf.minimum;
         sampleMax = tf.maximum;
-        scale     = tf.scale;
-        offset    = tf.offset;
+        scale     = tf.getScale();
+        offset    = tf.getOffset();
         if (tf.isQuantitative) {
             fractionDigits = -1;
         }
-        if (tf.type != null) {
-            setTransferFunctionType(tf.type);
+        if (tf.getType() != null) {
+            setTransferFunctionType(tf.getType());
         }
         if (tf.warning != null) {
             warning("<init>", tf.warning);
@@ -238,16 +235,22 @@ public class CategoryRecord implements Cloneable, Serializable {
             }
             MathTransform1D sampleToGeophysics = null;
             if (functionType != NONE) {
-                sampleToGeophysics = LinearTransform1D.create(scale, offset);
+                sampleToGeophysics = (MathTransform1D) MathTransforms.linear(scale, offset);
                 switch (functionType) {
                     case LOGARITHMIC: {
+                        org.apache.sis.referencing.operation.transform.TransferFunction f =
+                                new org.apache.sis.referencing.operation.transform.TransferFunction();
+                        f.setType(TransferFunctionType.LOGARITHMIC);
                         sampleToGeophysics = MathTransforms.concatenate(
-                                LogarithmicTransform1D.create(10), sampleToGeophysics);
+                                f.getTransform(), sampleToGeophysics);
                         break;
                     }
                     case EXPONENTIAL: {
+                        org.apache.sis.referencing.operation.transform.TransferFunction f =
+                                new org.apache.sis.referencing.operation.transform.TransferFunction();
+                        f.setType(TransferFunctionType.EXPONENTIAL);
                         sampleToGeophysics = MathTransforms.concatenate(
-                                sampleToGeophysics, ExponentialTransform1D.create(10));
+                                sampleToGeophysics, f.getTransform());
                         break;
                     }
                 }

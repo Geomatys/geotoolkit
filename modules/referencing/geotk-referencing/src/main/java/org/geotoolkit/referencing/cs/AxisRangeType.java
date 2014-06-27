@@ -24,7 +24,7 @@ import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.cs.EllipsoidalCS;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
-import org.geotoolkit.internal.referencing.AxisDirections;
+import org.apache.sis.internal.referencing.AxisDirections;
 
 
 /**
@@ -83,7 +83,7 @@ public enum AxisRangeType {
             }
         }
         if (cs instanceof EllipsoidalCS) {
-            final int i = AxisDirections.indexOf(cs, AxisDirection.EAST);
+            final int i = AxisDirections.indexOfColinear(cs, AxisDirection.EAST);
             if (i >= 0) {
                 final CoordinateSystemAxis axis = cs.getAxis(i);
                 final boolean positive = axis.getMinimumValue() >= 0;
