@@ -40,6 +40,7 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.geometry.DirectPosition;
+import org.opengis.metadata.Identifier;
 import org.opengis.test.Validators;
 import org.opengis.test.CalculationType;
 import org.opengis.test.ToleranceModifier;
@@ -54,7 +55,9 @@ import org.geotoolkit.io.TableWriter;
 import org.geotoolkit.io.wkt.Convention;
 import org.apache.sis.io.wkt.FormattableObject;
 import org.apache.sis.referencing.operation.transform.Accessor;
+import org.apache.sis.referencing.operation.transform.AbstractMathTransform;
 
+import org.apache.sis.util.Classes;
 import static java.lang.StrictMath.*;
 import static org.geotoolkit.test.Assert.*;
 import static org.apache.sis.util.Classes.*;
@@ -287,6 +290,27 @@ public abstract strictfp class TransformTestBase extends TransformTestCase imple
     }
 
     /**
+     * Returns a name for this math transform (never {@code null}). This convenience methods
+     * returns the name of the {@linkplain #getParameterDescriptors parameter descriptors} if
+     * any, or the short class name otherwise.
+     *
+     * @return A name for this math transform (never {@code null}).
+     */
+    private static String getName(final AbstractMathTransform tr) {
+        final ParameterDescriptorGroup descriptor = tr.getParameterDescriptors();
+        if (descriptor != null) {
+            final Identifier identifier = descriptor.getName();
+            if (identifier != null) {
+                final String code = identifier.getCode();
+                if (code != null) {
+                    return code;
+                }
+            }
+        }
+        return Classes.getShortClassName(tr);
+    }
+
+    /**
      * Prints the current {@linkplain #transform transform} as internal WKT. This method is for
      * debugging purpose only.
      */
@@ -301,7 +325,7 @@ public abstract strictfp class TransformTestBase extends TransformTestCase imple
         final String name;
         final MathTransform transform = this.transform;
         if (transform instanceof AbstractMathTransform) {
-            name = ((AbstractMathTransform) transform).getName();
+            name = getName((AbstractMathTransform) transform);
         } else {
             name = getShortClassName(transform);
         }
@@ -380,7 +404,7 @@ public abstract strictfp class TransformTestBase extends TransformTestCase imple
         expected = Commons.decodeQuotes(expected);
         final String actual = transform.toWKT();
         final String name = (transform instanceof AbstractMathTransform) ?
-                ((AbstractMathTransform) transform).getName() : null;
+                getName((AbstractMathTransform) transform) : null;
         assertMultilinesEquals(complete(name), expected, actual);
         return actual;
     }
