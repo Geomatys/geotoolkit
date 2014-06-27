@@ -725,6 +725,8 @@ public class SpatialMetadataFormatBuilder extends Builder<SpatialMetadataFormat>
         // TODO: need to rename the nodes below.
         substitutions.put(ProcessStepReport.class, null); // "Reports" name clash with quality.Element
         substitutions.put(Source.class, null); // "Sources" name clash with ResponsibleParty.
+        substitutions.put(Responsibility.class, null);
+        substitutions.put(Party.class, null);
         addTree(MetadataStandard.ISO_19115, Metadata.class, "Metadata", addToElement, false);
     }
 

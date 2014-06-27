@@ -56,6 +56,7 @@ import org.junit.*;
 
 import static org.junit.Assert.*;
 import static javax.imageio.metadata.IIOMetadataFormat.*;
+import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.ISO_FORMAT_NAME;
 import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMAT_NAME;
 
 
@@ -490,5 +491,10 @@ public final strictfp class SpatialMetadataFormatTest {
                 out.write(image);
             }
         }
+    }
+
+    @Test
+    public void testISO() {
+        SpatialMetadataFormat.getStreamInstance(ISO_FORMAT_NAME);
     }
 }
