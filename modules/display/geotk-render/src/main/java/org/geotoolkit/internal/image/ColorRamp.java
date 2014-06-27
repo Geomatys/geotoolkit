@@ -45,6 +45,7 @@ import javax.measure.unit.UnitFormat;
 
 import org.opengis.coverage.SampleDimension;
 import org.opengis.coverage.PaletteInterpretation;
+import org.opengis.metadata.content.TransferFunctionType;
 import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.referencing.operation.TransformException;
 
@@ -61,6 +62,7 @@ import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Errors;
+import org.apache.sis.referencing.operation.transform.TransferFunction;
 
 
 /**
@@ -736,17 +738,21 @@ public class ColorRamp implements Serializable {
             if (graduation == null || graduation.getClass() != NumberGraduation.class) {
                 graduation = new NumberGraduation(units);
             }
-        } else if (tr.getClass().getSimpleName().equals("ExponentialTransform1D")) { // The *inverse* of 'tr' is logarithmic (TODO).
-            if (graduation == null || graduation.getClass() != LogarithmicNumberGraduation.class) {
-                graduation = new LogarithmicNumberGraduation(units);
-            }
         } else {
-            final Logger logger = Logging.getLogger("org.geotoolkit.image");
-            final LogRecord record = Loggings.getResources(locale).getLogRecord(Level.WARNING,
-                    Loggings.Keys.UNRECOGNIZED_SCALE_TYPE_1, Classes.getShortClassName(tr));
-            record.setLoggerName(logger.getName());
-            logger.log(record);
-            graduation = new NumberGraduation(units);
+            final TransferFunction f = new TransferFunction();
+            f.setTransform(tr);
+            if (TransferFunctionType.EXPONENTIAL.equals(f.getType())) { // The *inverse* of 'tr' is logarithmic.
+                if (graduation == null || graduation.getClass() != LogarithmicNumberGraduation.class) {
+                    graduation = new LogarithmicNumberGraduation(units);
+                }
+            } else {
+                final Logger logger = Logging.getLogger("org.geotoolkit.image");
+                final LogRecord record = Loggings.getResources(locale).getLogRecord(Level.WARNING,
+                        Loggings.Keys.UNRECOGNIZED_SCALE_TYPE_1, Classes.getShortClassName(tr));
+                record.setLoggerName(logger.getName());
+                logger.log(record);
+                graduation = new NumberGraduation(units);
+            }
         }
         if (locale != null) {
             graduation.setLocale(locale);
