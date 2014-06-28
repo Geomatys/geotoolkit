@@ -17,7 +17,6 @@
 package org.apache.sis.referencing.operation.transform;
 
 import org.opengis.referencing.operation.Matrix;
-import org.apache.sis.util.ComparisonMode;
 
 
 /**
@@ -32,9 +31,5 @@ public class ProjectiveTransform_tmp extends ProjectiveTransform {
     @Override
     protected ProjectiveTransform createInverse(final Matrix matrix) {
         return super.createInverse(matrix);
-    }
-
-    protected static boolean equals2(final LinearTransform t1, final Object t2, final ComparisonMode mode) {
-        return equals(t1, t2, mode);
     }
 }

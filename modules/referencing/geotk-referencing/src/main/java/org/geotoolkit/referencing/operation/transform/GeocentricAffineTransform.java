@@ -31,6 +31,8 @@ import org.apache.sis.referencing.datum.BursaWolfParameters;
 import org.geotoolkit.referencing.operation.provider.CoordinateFrameRotation;
 import org.geotoolkit.referencing.operation.provider.GeocentricTranslation;
 import org.geotoolkit.referencing.operation.provider.PositionVector7Param;
+import org.apache.sis.referencing.operation.matrix.Matrices;
+import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.apache.sis.referencing.operation.transform.ProjectiveTransform_tmp;
 import org.apache.sis.util.ComparisonMode;
 
@@ -220,11 +222,11 @@ public class GeocentricAffineTransform extends ProjectiveTransform_tmp {
             return true;
         }
         if (mode != ComparisonMode.STRICT) {
-            return equals2(this, object, mode);
-        }
-        if (super.equals(object, mode)) {
-            final GeocentricAffineTransform that = (GeocentricAffineTransform) object;
-            return this.type == that.type;
+            if (object instanceof LinearTransform) {
+                return Matrices.equals(this, ((LinearTransform) object).getMatrix(), mode);
+            }
+        } else if (super.equals(object, mode)) {
+            return ((GeocentricAffineTransform) object).type == type;
         }
         return false;
     }

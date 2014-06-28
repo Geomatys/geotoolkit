@@ -27,6 +27,7 @@ import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.operation.MathTransform2D;
 
+import org.opengis.referencing.operation.Matrix;
 import org.apache.sis.io.wkt.Formatter;
 import org.apache.sis.io.wkt.FormattableObject;
 import org.geotoolkit.util.Utilities;
@@ -38,6 +39,7 @@ import org.geotoolkit.io.wkt.Formattable;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.parameter.Parameterized;
 
+import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 import static org.geotoolkit.internal.InternalUtilities.adjustForRoundingError;
 
@@ -498,7 +500,11 @@ public abstract class AbstractMathTransform2D extends org.apache.sis.referencing
      * To be removed after the port to Apache SIS.
      */
     private static boolean isIdentity(final AffineTransform2D tr) {
-        return org.apache.sis.referencing.operation.matrix.Matrices.isIdentity(tr.getMatrix(), IDENTITY_TOLERANCE);
+        Matrix m = tr.getMatrix();
+        if (m == null) {
+            m = AffineTransforms2D.toMatrix(tr);
+        }
+        return org.apache.sis.referencing.operation.matrix.Matrices.isIdentity(m, IDENTITY_TOLERANCE);
     }
 
     /**
