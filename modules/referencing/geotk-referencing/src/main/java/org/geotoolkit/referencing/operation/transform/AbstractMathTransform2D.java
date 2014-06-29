@@ -122,8 +122,10 @@ public abstract class AbstractMathTransform2D extends org.apache.sis.referencing
      * @since 3.00
      * @level advanced
      * @module
+     *
+     * @todo Rename as DeclaredParameters?
      */
-    protected abstract static class Parameters implements Parameterized, Serializable {
+    protected abstract static class Parameters extends FormattableObject implements Parameterized, Serializable {
         /**
          * For cross-version compatibility.
          */
@@ -274,42 +276,34 @@ public abstract class AbstractMathTransform2D extends org.apache.sis.referencing
         }
 
         /**
-         * Returns a string representation of the parameters. The default implementation
-         * formats the {@linkplain #getParameterValues parameters values} as a table.
+         * Process to the WKT formatting of the forward transform. The content is inferred
+         * from the parameter values returned by the {@link #getParameterValues()} method.
+         *
+         * <p>The referencing framework may invoke this class instead than the one declared in the enclosing
+         * {@link AbstractMathTransform2D} class when the later is an element of a concatenated transforms chain.
+         * This is because in such case, the transforms immediately before and after the enclosing transform are
+         * expected to be derived from the {@link #normalize(boolean) normalize/denormalize} transforms respectively.
+         * The tuple of those 3 transforms makes the full transform described by this {@code Parameters} object.</p>
+         *
+         * @return {@code "PARAM_MT"}.
          */
         @Override
-        public String toString() {
-            return getParameterValues().toString();
+        public String formatTo(final Formatter formatter) {
+            final ParameterValueGroup parameters = getParameterValues();
+            WKTUtilities.appendName(parameters.getDescriptor(), formatter, null);
+            WKTUtilities.append(parameters, formatter);
+            return "PARAM_MT";
         }
 
         /**
-         * Formats the <cite>Well Known Text</cite> for the math transform that would be built
-         * from the enclosing tuple. The content is inferred from the parameter values returned
-         * by the {@link Parameters#getParameterValues} method.
-         * <p>
-         * The referencing framework may format this class instead than the one declared in
-         * the enclosing {@link AbstractMathTransform2D} class when the later is an element
-         * of a {@linkplain ConcatenatedTransform concatenated transforms} chain. This is because
-         * in such case, the transforms immediately before and after the enclosing (kernel)
-         * transform are expected to be derived from the {@link #normalize(boolean)
-         * normalize/denormalize} transforms respectively. The tuple of those 3 transforms
-         * makes the full transform described by this {@code Parameters} object.
+         * Formats the <cite>Well Known Text</cite> for the inverse of the transform that would be built
+         * from the enclosing {@code Parameters}.
          */
-        final class WKT extends FormattableObject implements Parameterized, Formattable {
-            /**
-             * {@code true} for formatting the inverse transform. If {@code true}, will
-             * be set to {@code false} temporarily for formatting the forward transform
-             * and reset to {@code true} when done.
-             */
-            private boolean inverse;
-
+        final class InverseWKT extends FormattableObject implements Parameterized, Formattable {
             /**
              * Creates a new object to be formatted instead than the enclosing transform.
-             *
-             * @param inverse {@code true} for formatting the inverse transform.
              */
-            WKT(final boolean inverse) {
-                this.inverse = inverse;
+            InverseWKT() {
             }
 
             /**
@@ -329,24 +323,11 @@ public abstract class AbstractMathTransform2D extends org.apache.sis.referencing
             }
 
             /**
-             * Process to the WKT formatting of the forward or inverse transform. This method is
-             * synchronized in case the user provided some custom formatter doing some stuff with
-             * threads, but should not be needed with Geotk implementation.
+             * Process to the WKT formatting of the inverse transform.
              */
             @Override
-            public synchronized String formatTo(final Formatter formatter) {
-                if (!inverse) {
-                    final ParameterValueGroup parameters = getParameterValues();
-                    WKTUtilities.appendName(parameters.getDescriptor(), formatter, null);
-                    WKTUtilities.append(parameters, formatter);
-                    return "PARAM_MT";
-                }
-                inverse = false;
-                try {
-                    formatter.append(this);
-                } finally {
-                    inverse = true;
-                }
+            public String formatTo(final Formatter formatter) {
+                formatter.append(Parameters.this);
                 return "INVERSE_MT";
             }
         }
@@ -476,7 +457,7 @@ public abstract class AbstractMathTransform2D extends org.apache.sis.referencing
             }
         }
         if (true) { // This condition is just for isolating the local variables in this block.
-            final Object old = transforms.set(index, parameters.new WKT(inverse));
+            final Object old = transforms.set(index, inverse ? parameters.new InverseWKT() : parameters);
             assert unwrap(old, inverse) == this : old.getClass();
         }
         if (after == null) {
