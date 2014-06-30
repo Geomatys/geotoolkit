@@ -36,8 +36,8 @@ import org.opengis.referencing.operation.MathTransform;
 
 import org.apache.sis.geometry.Envelope2D;
 import org.geotoolkit.coverage.grid.GridEnvelope2D;
-import org.geotoolkit.referencing.operation.matrix.Matrices;
-import org.geotoolkit.referencing.operation.MathTransforms;
+import org.apache.sis.referencing.operation.matrix.Matrices;
+import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.apache.sis.internal.referencing.AxisDirections;
 import org.geotoolkit.resources.Errors;
@@ -604,7 +604,7 @@ public class GridToEnvelopeMapper {
                 throw new IllegalStateException(Errors.format(
                         Errors.Keys.ILLEGAL_ARGUMENT_2, "gridType", gridType));
             }
-            final Matrix matrix = Matrices.create(dimension + 1);
+            final Matrix matrix = Matrices.createIdentity(dimension + 1);
             for (int i=0; i<dimension; i++) {
                 // NOTE: i is a dimension in the 'gridEnvelope' space (source coordinates).
                 //       j is a dimension in the 'userEnvelope' space (target coordinates).

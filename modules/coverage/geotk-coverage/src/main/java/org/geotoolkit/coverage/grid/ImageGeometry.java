@@ -30,7 +30,7 @@ import org.opengis.metadata.spatial.PixelOrientation;
 
 import org.apache.sis.util.Classes;
 import org.geotoolkit.metadata.iso.spatial.PixelTranslation;
-import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
+import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 
 
@@ -144,7 +144,7 @@ public class ImageGeometry implements GridGeometry, Serializable {
         final Rectangle gr = extent;
         final Rectangle2D.Double envelope = new Rectangle2D.Double(
                 gr.x - (pt.dx + 0.5), gr.y - (pt.dy + 0.5), gr.width, gr.height);
-        return XAffineTransform.transform(gridToCRS, envelope, envelope);
+        return AffineTransforms2D.transform(gridToCRS, envelope, envelope);
     }
 
     /**

@@ -37,7 +37,7 @@ import org.geotoolkit.image.interpolation.Resample;
 import org.geotoolkit.image.iterator.PixelIterator;
 import org.geotoolkit.image.iterator.PixelIteratorFactory;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.operation.MathTransforms;
+import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display3d.utils.TextureUtils;
@@ -50,7 +50,7 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 
 /**
- * 
+ *
  * @author Thomas Rouby (Geomatys))
  */
 public class PyramidElevationLoader extends AbstractElevationLoader {

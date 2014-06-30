@@ -40,7 +40,7 @@ import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.util.InternationalString;
 
 import org.apache.sis.geometry.GeneralDirectPosition;
-import org.geotoolkit.referencing.operation.matrix.Matrix1;
+import org.apache.sis.referencing.operation.matrix.Matrix1;
 import org.geotoolkit.io.wkt.UnformattableObjectException;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;

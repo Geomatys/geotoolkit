@@ -29,7 +29,7 @@ import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.Matrix;
 
 import org.geotoolkit.display.shape.DoubleDimension2D;
-import org.geotoolkit.referencing.operation.matrix.Matrix2;
+import org.apache.sis.referencing.operation.matrix.Matrix2;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 import org.geotoolkit.resources.Errors;
 
@@ -484,7 +484,9 @@ final class TransformGrid {
             throws TransformException
     {
         final Matrix matrix = transform.derivative(point);
-        return (matrix instanceof Matrix2) ? (Matrix2) matrix : new Matrix2(matrix);
+        return (matrix instanceof Matrix2) ? (Matrix2) matrix : new Matrix2(
+                matrix.getElement(0, 0), matrix.getElement(0, 1),
+                matrix.getElement(1, 0), matrix.getElement(1, 1));
     }
 
     /**

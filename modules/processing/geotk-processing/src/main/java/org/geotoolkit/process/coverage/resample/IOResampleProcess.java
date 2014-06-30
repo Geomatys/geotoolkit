@@ -43,18 +43,18 @@ import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.process.AbstractProcess;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
-import org.geotoolkit.referencing.operation.MathTransforms;
+import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.operation.MathTransform;
 
 /**
  * A resample operation using a provided MathTransform to convert a source coverage.
- * 
+ *
  * The process is designed to use multi-threading capacity, and not overload in memory.
  * To do such things, we need an {@link ImageWriter} supporting {@link ImageWriter#canReplacePixels(int) } operation.
- * 
- * Here is how it works : 
+ *
+ * Here is how it works :
  * 1 - Using specified parameter {@link IOResampleDescriptor#TILE_SIZE}, we prepare tiles from output image, and put them in a queue, waiting for resampling.
  * 2 - We create a fix number of threads (as specified by {@link IOResampleDescriptor#THREAD_COUNT}), which will poll data from above queue, and resample it.
  * 3 - Each computed tile is put into another queue, waiting to be written.
@@ -80,12 +80,12 @@ public class IOResampleProcess extends AbstractProcess {
     public static final int TIMEOUT = 100;
     private static final TimeUnit TIMEOUT_UNIT = TimeUnit.SECONDS;
 
-    /** A default size to use if user did not specified a tile size. */ 
+    /** A default size to use if user did not specified a tile size. */
     private static final Dimension DEFAULT_TILE_SIZE = new Dimension(256, 256);
 
     /** Limit for queue capacity. */
     private static final int QUEUE_SIZE = 20;
-    
+
     /**
      * A queue to store strips we want to resample.
      */

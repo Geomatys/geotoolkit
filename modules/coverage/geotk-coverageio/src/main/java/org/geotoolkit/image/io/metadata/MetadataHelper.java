@@ -37,6 +37,7 @@ import org.opengis.util.InternationalString;
 import org.opengis.coverage.grid.RectifiedGrid;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.cs.CoordinateSystem;
+import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.referencing.operation.MathTransformFactory;
@@ -55,10 +56,8 @@ import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.display.shape.DoubleDimension2D;
 import org.geotoolkit.image.io.ImageMetadataException;
-import org.geotoolkit.referencing.operation.matrix.XMatrix;
-import org.geotoolkit.referencing.operation.matrix.Matrix2;
-import org.geotoolkit.referencing.operation.matrix.Matrices;
-import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
+import org.apache.sis.referencing.operation.matrix.Matrix2;
+import org.apache.sis.referencing.operation.matrix.Matrices;
 
 import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
 
@@ -343,7 +342,7 @@ public class MetadataHelper implements Localized {
         ensureVectorsExist(vectors);
         final int dimSource = vectors.size();        // Number of dimensions in the grid.
         final int dimTarget = origin.getDimension(); // Number of dimensions in the CRS.
-        final XMatrix matrix = Matrices.create(dimTarget + 1, dimSource + 1);
+        final Matrix matrix = Matrices.createDiagonal(dimTarget + 1, dimSource + 1);
         if (dimTarget < dimSource) {
             matrix.setElement(dimTarget, dimTarget, 0);
         }

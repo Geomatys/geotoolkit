@@ -51,7 +51,7 @@ import org.geotoolkit.referencing.crs.DefaultDerivedCRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
 import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
-import org.geotoolkit.referencing.operation.MathTransforms;
+import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.geotoolkit.resources.Errors;
@@ -68,6 +68,7 @@ import org.opengis.referencing.operation.CoordinateOperationFactory;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
+import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
 
 /**
  *
@@ -82,7 +83,7 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
         public AxisFinder(CoordinateSystemAxis crs) {
             this.crs = crs;
         }
-        
+
         @Override
         public int compare(CoordinateSystemAxis o1, CoordinateSystemAxis o2) {
             if(o1.getName().getCode().equals(crs.getName().getCode())){
@@ -90,9 +91,9 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
             }
             return -1;
         }
-        
+
     }
-        
+
     /**
      * The name of the {@linkplain PropertyChangeEvent property change event} fired when the
      * {@linkplain AbstractCanvas2D#getObjectiveCRS canvas crs} changed.
@@ -375,7 +376,7 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
             //same values
             return;
         }
-        
+
         final GeneralEnvelope old = new GeneralEnvelope(envelope);
         envelope.setRange(ordinate, min, max);
         final GeneralEnvelope nw = new GeneralEnvelope(envelope);
@@ -473,7 +474,7 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
         canvasBounds.x = 0;
         canvasBounds.y = 0;
 
-        final double rotation = -XAffineTransform.getRotation(objToDisp);
+        final double rotation = -AffineTransforms2D.getRotation(objToDisp);
 
         if (yAxisUpward) {
             objToDisp.setToScale(+1, -1);
@@ -566,7 +567,7 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
          * Converts the destination into logical coordinates.  We can then perform
          * a zoom and a translation which would put {@code source} in {@code dest}.
          */
-        dest = XAffineTransform.inverseTransform(objToDisp, dest, null);
+        dest = AffineTransforms2D.inverseTransform(objToDisp, dest, null);
 
         final double sourceWidth  = source.getWidth ();
         final double sourceHeight = source.getHeight();
@@ -858,7 +859,7 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
     }
 
     public double getRotation() {
-        return -XAffineTransform.getRotation(getObjectiveToDisplay());
+        return -AffineTransforms2D.getRotation(getObjectiveToDisplay());
     }
 
     public void setScale(final double newScale) throws NoninvertibleTransformException {
@@ -938,7 +939,7 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
         Rectangle2D rect2D = new Rectangle2D.Double(env2D.getMinimum(0), env2D.getMinimum(1), env2D.getSpan(0), env2D.getSpan(1));
         resetTransform(rect2D, true,false);
 
-        
+
         final CoordinateSystem cs = envCRS.getCoordinateSystem();
 
         //set the extra xis if some exist
@@ -955,7 +956,7 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
             }
             index += dcrs.getCoordinateSystem().getDimension();
         }
-        
+
 //        for(int i=0, n= cs.getDimension(); i<n;i++){
 //            final CoordinateSystemAxis axis = cs.getAxis(i);
 //            final AxisDirection ad = axis.getDirection();

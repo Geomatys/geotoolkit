@@ -30,11 +30,10 @@ import org.opengis.referencing.operation.MathTransform2D;
 
 import org.geotoolkit.resources.Errors;
 import org.opengis.parameter.ParameterNotFoundException;
-import org.geotoolkit.referencing.operation.matrix.Matrix2;
+import org.apache.sis.referencing.operation.matrix.Matrix2;
 
 import static java.lang.Math.*;
 import static org.apache.sis.math.MathFunctions.atanh;
-import static org.geotoolkit.referencing.operation.provider.TransverseMercator.*;
 
 
 /**

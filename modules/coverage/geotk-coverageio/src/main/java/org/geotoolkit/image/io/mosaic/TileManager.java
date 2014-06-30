@@ -40,7 +40,7 @@ import org.opengis.metadata.spatial.PixelOrientation;
 
 import org.geotoolkit.coverage.grid.ImageGeometry;
 import org.geotoolkit.util.collection.FrequencySortedSet;
-import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
+import org.apache.sis.internal.referencing.j2d.ImmutableAffineTransform;
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.resources.Errors;
 
@@ -154,7 +154,7 @@ public abstract class TileManager implements Serializable {
             throw new IllegalStateException();
         }
         final Map<Dimension,AffineTransform> shared = new HashMap<>();
-        AffineTransform at = new XAffineTransform(gridToCRS);
+        AffineTransform at = new ImmutableAffineTransform(gridToCRS);
         shared.put(new Dimension(1,1), at);
         geometry = new ImageGeometry(getRegion(), at);
         for (final Tile tile : getInternalTiles()) {
@@ -163,7 +163,7 @@ public abstract class TileManager implements Serializable {
             if (at == null) {
                 at = new AffineTransform(gridToCRS);
                 at.scale(subsampling.width, subsampling.height);
-                at = new XAffineTransform(at);
+                at = new ImmutableAffineTransform(at);
                 shared.put(subsampling, at);
             }
             tile.setGridToCRS(at);

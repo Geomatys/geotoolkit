@@ -29,7 +29,7 @@ import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.operation.MathTransform2D;
 
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.referencing.operation.matrix.Matrix2;
+import org.apache.sis.referencing.operation.matrix.Matrix2;
 
 import static java.lang.Math.*;
 

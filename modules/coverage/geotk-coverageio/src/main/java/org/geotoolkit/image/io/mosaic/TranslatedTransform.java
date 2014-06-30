@@ -19,7 +19,7 @@ package org.geotoolkit.image.io.mosaic;
 
 import java.awt.Dimension;
 import java.awt.geom.AffineTransform;
-import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
+import org.apache.sis.internal.referencing.j2d.ImmutableAffineTransform;
 
 
 /**
@@ -62,7 +62,7 @@ final class TranslatedTransform {
         reference = new AffineTransform(reference);
         reference.scale(subsampling.width, subsampling.height);
         reference.translate(dx, dy); // Correction for non-integer division of (dx,dy).
-        gridToCRS = new XAffineTransform(reference);
+        gridToCRS = new ImmutableAffineTransform(reference);
     }
 
     /**

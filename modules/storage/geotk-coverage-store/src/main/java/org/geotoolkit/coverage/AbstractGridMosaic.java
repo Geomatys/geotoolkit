@@ -28,7 +28,7 @@ import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.util.Classes;
-import org.geotoolkit.referencing.operation.MathTransforms;
+import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
@@ -152,7 +152,7 @@ public abstract class AbstractGridMosaic implements GridMosaic{
 
     /**
      * Grid to CRS N dimension.
-     * 
+     *
      * @param mosaic not null
      * @param location not null
      * @return MathTransform never null
@@ -161,11 +161,11 @@ public abstract class AbstractGridMosaic implements GridMosaic{
         final DirectPosition upperleft = mosaic.getUpperLeftCorner();
         return getTileGridToCRSND(mosaic, location, upperleft.getDimension());
     }
-    
+
     /**
      * Grid to CRS N dimension.
      * This allows to create a transform ignoring last axis transform.
-     * 
+     *
      * @param mosaic not null
      * @param location not null
      * @param nbDim : number of dimension wanted. value must be in range [2...crsNbDim]
@@ -192,10 +192,10 @@ public abstract class AbstractGridMosaic implements GridMosaic{
             return MathTransforms.linear(gm);
         }
     }
-    
+
     /**
      * Grid to CRS 2D part.
-     * 
+     *
      * @param mosaic not null
      * @param location not null
      * @return AffineTransform2D never null.

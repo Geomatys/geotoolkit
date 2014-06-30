@@ -41,12 +41,12 @@ import org.opengis.parameter.ParameterValueGroup;
 
 import org.apache.sis.io.wkt.Formatter;
 import org.apache.sis.io.wkt.FormattableObject;
-import org.geotoolkit.referencing.operation.matrix.Matrices;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
 import org.apache.sis.internal.referencing.WKTUtilities;
+import org.apache.sis.referencing.operation.matrix.MatrixSIS;
 import org.apache.sis.referencing.operation.transform.Accessor;
 
 import static org.geotoolkit.util.Utilities.hash;
@@ -340,7 +340,7 @@ public abstract class AbstractMathTransform extends org.apache.sis.referencing.o
          */
         @Override
         public Matrix derivative(final Point2D point) throws TransformException {
-            return Matrices.invert(AbstractMathTransform.this.derivative(this.transform(point, null)));
+            return MatrixSIS.castOrCopy(AbstractMathTransform.this.derivative(this.transform(point, null))).inverse();
         }
 
         /**
@@ -350,7 +350,7 @@ public abstract class AbstractMathTransform extends org.apache.sis.referencing.o
          */
         @Override
         public Matrix derivative(final DirectPosition point) throws TransformException {
-            return Matrices.invert(AbstractMathTransform.this.derivative(this.transform(point, null)));
+            return MatrixSIS.castOrCopy(AbstractMathTransform.this.derivative(this.transform(point, null))).inverse();
         }
 
         /**

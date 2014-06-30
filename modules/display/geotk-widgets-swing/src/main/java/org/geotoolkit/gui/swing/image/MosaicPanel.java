@@ -36,7 +36,7 @@ import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.image.io.mosaic.Tile;
 import org.geotoolkit.image.io.mosaic.TileManager;
 import org.geotoolkit.coverage.grid.ImageGeometry;
-import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
+import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
 
 
 /**
@@ -260,7 +260,7 @@ final class MosaicPanel extends ZoomPane {
                     imageToDisplay.concatenate(tr);
                     lastTr = tr;
                 }
-                XAffineTransform.transform(imageToDisplay, bounds, bounds);
+                AffineTransforms2D.transform(imageToDisplay, bounds, bounds);
                 if (bounds.width >= 5 && bounds.height >= 5) {
                     bounds.x++; bounds.width  -= 2;
                     bounds.y++; bounds.height -= 2;

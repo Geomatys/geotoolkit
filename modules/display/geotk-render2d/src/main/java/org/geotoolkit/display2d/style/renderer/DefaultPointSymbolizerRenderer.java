@@ -35,6 +35,7 @@ import org.geotoolkit.display2d.primitive.ProjectedObject;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.display2d.style.CachedPointSymbolizer;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
+import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
 import org.opengis.referencing.operation.TransformException;
 
 /**
@@ -108,9 +109,9 @@ public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<C
             //no geometry
             return;
         }
-        
-        final double rot = XAffineTransform.getRotation(renderingContext.getObjectiveToDisplay());
-        
+
+        final double rot = AffineTransforms2D.getRotation(renderingContext.getObjectiveToDisplay());
+
         for(Geometry geom : geoms){
             if(rot==0){
                 if(geom instanceof Point || geom instanceof MultiPoint){
@@ -211,7 +212,7 @@ public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<C
         final float[] anchor = new float[2];
         final AffineTransform imgTrs = new AffineTransform();
 
-        final double rot = XAffineTransform.getRotation(renderingContext.getObjectiveToDisplay());
+        final double rot = AffineTransforms2D.getRotation(renderingContext.getObjectiveToDisplay());
         final AffineTransform mapRotationTrs = new AffineTransform();
         mapRotationTrs.rotate(-rot);
 
@@ -257,7 +258,7 @@ public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<C
                         final Coordinate coord = coords[i];
                         if(rot==0){
                             imgTrs.setToTranslation(
-                                    -img.getWidth()*anchor[0] + coord.x + disps[0], 
+                                    -img.getWidth()*anchor[0] + coord.x + disps[0],
                                     -img.getHeight()*anchor[1] + coord.y - disps[1]);
                             g2d.drawRenderedImage(img, imgTrs);
                         }else{

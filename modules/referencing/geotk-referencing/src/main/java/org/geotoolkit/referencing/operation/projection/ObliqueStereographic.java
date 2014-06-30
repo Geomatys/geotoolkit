@@ -24,7 +24,7 @@ package org.geotoolkit.referencing.operation.projection;
 import net.jcip.annotations.Immutable;
 
 import org.opengis.referencing.operation.Matrix;
-import org.geotoolkit.referencing.operation.matrix.Matrix2;
+import org.apache.sis.referencing.operation.matrix.Matrix2;
 import org.geotoolkit.resources.Errors;
 
 import static java.lang.Math.*;

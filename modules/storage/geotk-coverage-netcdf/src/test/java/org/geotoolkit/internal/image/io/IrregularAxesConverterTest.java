@@ -26,7 +26,7 @@ import org.apache.sis.measure.Range;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.cs.DiscreteCoordinateSystemAxis;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
-import org.geotoolkit.referencing.operation.matrix.Matrix3;
+import org.apache.sis.referencing.operation.matrix.Matrix3;
 import org.apache.sis.referencing.operation.matrix.Matrices;
 
 import org.junit.*;

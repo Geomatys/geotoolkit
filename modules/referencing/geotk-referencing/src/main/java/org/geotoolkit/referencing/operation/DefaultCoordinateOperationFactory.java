@@ -53,13 +53,13 @@ import org.geotoolkit.referencing.cs.DefaultCartesianCS;
 import org.geotoolkit.referencing.cs.DefaultEllipsoidalCS;
 import org.apache.sis.referencing.datum.BursaWolfParameters;
 import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
-import org.geotoolkit.referencing.operation.matrix.XMatrix;
-import org.geotoolkit.referencing.operation.matrix.Matrix4;
-import org.geotoolkit.referencing.operation.matrix.Matrices;
+import org.apache.sis.referencing.operation.matrix.Matrix4;
+import org.apache.sis.referencing.operation.matrix.Matrices;
 import org.apache.sis.internal.referencing.AxisDirections;
 import org.geotoolkit.internal.referencing.OperationContext;
 import org.geotoolkit.internal.referencing.VerticalDatumTypes;
 
+import org.apache.sis.referencing.operation.matrix.MatrixSIS;
 import static java.util.Collections.singletonList;
 import static org.apache.sis.measure.Units.MILLISECOND;
 import static org.geotoolkit.referencing.CRS.equalsIgnoreMetadata;
@@ -218,7 +218,7 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
         if (equalsIgnoreMetadata(sourceCRS, targetCRS)) {
             final int dim  = getDimension(sourceCRS);
             assert    dim == getDimension(targetCRS) : dim;
-            return createFromAffineTransform(IDENTITY, sourceCRS, targetCRS, Matrices.create(dim+1));
+            return createFromAffineTransform(IDENTITY, sourceCRS, targetCRS, Matrices.createIdentity(dim+1));
         } else {
             // Query the database (if any) before to try to find the operation by ourself.
             final CoordinateOperation candidate = createFromDatabase(sourceCRS, targetCRS);
@@ -369,7 +369,7 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
             final int dimSource = getDimension(sourceCRS);
             final int dimTarget = getDimension(targetCRS);
             if (dimTarget == dimSource) {
-                final Matrix matrix = Matrices.create(dimTarget+1, dimSource+1);
+                final Matrix matrix = Matrices.createDiagonal(dimTarget+1, dimSource+1);
                 return createFromAffineTransform(IDENTITY, sourceCRS, targetCRS, matrix);
             }
         }
@@ -591,7 +591,7 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
                     final EllipsoidalCS step = new DefaultEllipsoidalCS("Step", axis0, axis1);
                     final Matrix reduced = swapAndScaleAxis(sourceCS, step);
                     assert reduced.getNumRow() == 3 && reduced.getNumCol() == 3 : reduced;
-                    matrix = Matrices.create(4, 3);
+                    matrix = Matrices.createDiagonal(4, 3);
                     matrix.setElement(3, 2, 1);
                     for (int jm=0,j=0; j<3; j++) {
                         if (j == k) {
@@ -1040,7 +1040,7 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
          *     target CRS
          */
         final CartesianCS STANDARD = DefaultCartesianCS.GEOCENTRIC;
-        final XMatrix matrix;
+        final MatrixSIS matrix;
         ReferenceIdentifier identifier = DATUM_SHIFT;
         try {
             Matrix datumShift = DefaultGeodeticDatum.getAffineTransform(
@@ -1065,7 +1065,7 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
              *
              * We compute: matrix = normalizeTarget * datumShift * normalizeSource
              */
-            matrix = new Matrix4(normalizeTarget);
+            matrix = MatrixSIS.castOrCopy(normalizeTarget);
             matrix.multiply(datumShift);
             matrix.multiply(normalizeSource);
         } catch (SingularMatrixException cause) {
@@ -1355,7 +1355,7 @@ search: for (int j=0; j<targets.size(); j++) {
          * affine transform. This transform also drop source dimensions not used
          * for any target coordinates.
          */
-        final XMatrix select = Matrices.create(orderedSourceDim + 1, sourceDim + 1);
+        final Matrix select = Matrices.createDiagonal(orderedSourceDim + 1, sourceDim + 1);
         for (int j=0; j<orderedSourceDim; j++) {
             select.setElement(j, j, 0); // Safe since orderedSourceDim <= sourceDim.
             select.setElement(j, srcToOrderedSrc[j], 1);

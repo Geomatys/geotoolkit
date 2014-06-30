@@ -37,7 +37,7 @@ import org.apache.sis.math.Statistics;
 import org.geotoolkit.geometry.Envelopes;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.referencing.datum.DefaultEllipsoid;
-import org.geotoolkit.referencing.operation.MathTransforms;
+import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.geotoolkit.referencing.operation.builder.GridToEnvelopeMapper;
 import org.geotoolkit.test.referencing.ReferencingTestBase;
 
@@ -127,10 +127,10 @@ public final strictfp class WarpFactoryTest extends ReferencingTestBase {
         mapper.setGridExtent(imageBounds);
         mapper.setEnvelope(domain);
         final MathTransform2D pre = (MathTransform2D)
-                MathTransforms.linear(mapper.createAffineTransform());
+                org.geotoolkit.referencing.operation.MathTransforms.linear(mapper.createAffineTransform());
         mapper.setEnvelope(Envelopes.transform(projection, domain, null));
         final MathTransform2D post = (MathTransform2D)
-                MathTransforms.linear(mapper.createAffineTransform()).inverse();
+                org.geotoolkit.referencing.operation.MathTransforms.linear(mapper.createAffineTransform()).inverse();
         return MathTransforms.concatenate(pre, projection, post);
     }
 

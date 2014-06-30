@@ -30,7 +30,7 @@ import java.io.ObjectInputStream;
 import net.jcip.annotations.NotThreadSafe;
 
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
+import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
 
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 
@@ -285,7 +285,7 @@ public final class TransformedShape extends AffineTransform implements Shape {
     @Override
     public boolean contains(final Rectangle2D r) {
         try {
-            return shape.contains(XAffineTransform.inverseTransform(this, r, rectangle));
+            return shape.contains(AffineTransforms2D.inverseTransform(this, r, rectangle));
         } catch (NoninvertibleTransformException exception) {
             Logging.recoverableException(TransformedShape.class, "contains", exception);
             return false; // Consistent with the Shape interface contract.
@@ -326,7 +326,7 @@ public final class TransformedShape extends AffineTransform implements Shape {
     @Override
     public boolean intersects(final Rectangle2D r) {
         try {
-            return shape.intersects(XAffineTransform.inverseTransform(this, r, rectangle));
+            return shape.intersects(AffineTransforms2D.inverseTransform(this, r, rectangle));
         } catch (NoninvertibleTransformException exception) {
             Logging.recoverableException(TransformedShape.class, "intersects", exception);
             return true; // Consistent with the Shape interface contract.
@@ -340,7 +340,7 @@ public final class TransformedShape extends AffineTransform implements Shape {
     public Rectangle getBounds() {
         // Delegates to getBounds2D(), not getBounds(), because a scale greater than 1
         // will use the fraction digits of a number that would be otherwise rounded.
-        return (Rectangle) XAffineTransform.transform(this, shape.getBounds2D(), new Rectangle());
+        return (Rectangle) AffineTransforms2D.transform(this, shape.getBounds2D(), new Rectangle());
     }
 
     /**
@@ -349,7 +349,7 @@ public final class TransformedShape extends AffineTransform implements Shape {
      */
     @Override
     public Rectangle2D getBounds2D() {
-        return XAffineTransform.transform(this, shape.getBounds2D(), null);
+        return AffineTransforms2D.transform(this, shape.getBounds2D(), null);
     }
 
     /**

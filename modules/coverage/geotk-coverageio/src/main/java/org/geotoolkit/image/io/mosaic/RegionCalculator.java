@@ -29,6 +29,7 @@ import java.io.IOException;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.grid.ImageGeometry;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
+import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
 
 import static org.geotoolkit.image.io.mosaic.Tile.LOGGER;
 
@@ -223,7 +224,7 @@ final class RegionCalculator {
                         Logging.unexpectedException(LOGGER, RegionCalculator.class, "tiles", exception);
                     }
                     if (bounds != null) {
-                        XAffineTransform.transform(tr, bounds, envelope);
+                        AffineTransforms2D.transform(tr, bounds, envelope);
                         bounds.x      = (int) Math.round(envelope.x);
                         bounds.y      = (int) Math.round(envelope.y);
                         bounds.width  = (int) Math.round(envelope.width);
@@ -280,7 +281,7 @@ final class RegionCalculator {
      */
     private static final Comparator<AffineTransform> X_COMPARATOR = new Comparator<AffineTransform>() {
         @Override public int compare(final AffineTransform tr1, final AffineTransform tr2) {
-            return Double.compare(XAffineTransform.getScaleX0(tr1), XAffineTransform.getScaleX0(tr2));
+            return Double.compare(AffineTransforms2D.getScaleX0(tr1), AffineTransforms2D.getScaleX0(tr2));
         }
     };
 
@@ -290,7 +291,7 @@ final class RegionCalculator {
      */
     private static final Comparator<AffineTransform> Y_COMPARATOR = new Comparator<AffineTransform>() {
         @Override public int compare(final AffineTransform tr1, final AffineTransform tr2) {
-            return Double.compare(XAffineTransform.getScaleY0(tr1), XAffineTransform.getScaleY0(tr2));
+            return Double.compare(AffineTransforms2D.getScaleY0(tr1), AffineTransforms2D.getScaleY0(tr2));
         }
     };
 

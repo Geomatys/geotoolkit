@@ -26,8 +26,7 @@ import org.opengis.referencing.operation.MathTransformFactory;
 
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.referencing.operation.matrix.XMatrix;
-import org.geotoolkit.referencing.operation.matrix.Matrices;
+import org.apache.sis.referencing.operation.matrix.Matrices;
 import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
 import org.geotoolkit.internal.referencing.SeparableTransform;
 import org.geotoolkit.resources.Errors;
@@ -409,7 +408,7 @@ public class DimensionFilter {
         }
         if (transform.isIdentity()) {
             targetDimensions = sourceDimensions;
-            return factory.createAffineTransform(Matrices.create(dimInput+1));
+            return factory.createAffineTransform(Matrices.createIdentity(dimInput + 1));
         }
         if (Accessor.isConcatenatedTransform(transform)) {
             final int[] original = sourceDimensions;
@@ -450,7 +449,7 @@ public class DimensionFilter {
                  * sources are heading and trailing dimensions. A passthrough transform
                  * without its sub-transform is an identity transform...
                  */
-                return factory.createAffineTransform(Matrices.create(dimInput+1));
+                return factory.createAffineTransform(Matrices.createIdentity(dimInput + 1));
             }
             /*
              * There is at least one dimension to separate in the sub-transform. Performs this
@@ -594,8 +593,7 @@ reduce:     for (int j=0; j<rows.length; j++) {
          * dimension to keep, as in the following example:  └  ┘     └          ┘ │1│
          *                                                                        └ ┘
          */
-        final XMatrix matrix = Matrices.create(dimOutput+1, dimStep+1);
-        matrix.setZero();
+        final Matrix matrix = Matrices.createZero(dimOutput+1, dimStep+1);
         for (int j=0; j<dimOutput; j++) {
             int i = targetDimensions[j];
             if (i >= dimPass) {

@@ -30,8 +30,8 @@ import static org.opengis.metadata.spatial.PixelOrientation.*;
 
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.referencing.operation.matrix.Matrices;
-import org.geotoolkit.referencing.operation.MathTransforms;
+import org.apache.sis.referencing.operation.matrix.Matrices;
+import org.apache.sis.referencing.operation.transform.MathTransforms;
 
 
 /**
@@ -271,11 +271,11 @@ public final class PixelTranslation extends Static implements Serializable {
         }
         MathTransform mt;
         if (index >= translations.length) {
-            mt = MathTransforms.linear(dimension, 1, offset);
+            mt = org.geotoolkit.referencing.operation.MathTransforms.linear(dimension, 1, offset);
         } else synchronized (translations) {
             mt = translations[index];
             if (mt == null) {
-                mt = MathTransforms.linear(dimension, 1, offset);
+                mt = org.geotoolkit.referencing.operation.MathTransforms.linear(dimension, 1, offset);
                 translations[index] = mt;
             }
         }
@@ -324,12 +324,12 @@ public final class PixelTranslation extends Static implements Serializable {
             synchronized (translations) {
                 mt = translations[index];
                 if (mt == null) {
-                    mt = MathTransforms.linear(dimension, 1, dx);
+                    mt = org.geotoolkit.referencing.operation.MathTransforms.linear(dimension, 1, dx);
                     translations[index] = mt;
                 }
             }
         } else {
-            final Matrix matrix = Matrices.create(dimension + 1);
+            final Matrix matrix = Matrices.createIdentity(dimension + 1);
             matrix.setElement(xDimension, dimension, dx);
             matrix.setElement(yDimension, dimension, dy);
             mt = MathTransforms.linear(matrix);

@@ -46,7 +46,7 @@ import org.geotoolkit.referencing.cs.DiscreteCoordinateSystemAxis;
 import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.geotoolkit.internal.image.io.IrregularAxesConverterTest;
-import org.geotoolkit.referencing.operation.matrix.Matrices;
+import org.apache.sis.referencing.operation.matrix.Matrices;
 
 import org.junit.*;
 import static org.opengis.test.Assert.*;

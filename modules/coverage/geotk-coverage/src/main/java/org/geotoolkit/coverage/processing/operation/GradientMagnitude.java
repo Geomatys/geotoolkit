@@ -33,7 +33,7 @@ import org.apache.sis.measure.NumberRange;
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.processing.OperationJAI;
-import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
+import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
 
 
 /**
@@ -319,8 +319,8 @@ public class GradientMagnitude extends OperationJAI {
                 mtr = sources[0].getGridGeometry().getGridToCRS2D();
                 if (mtr instanceof AffineTransform) {
                     final AffineTransform tr = (AffineTransform) mtr;
-                    final double scaleX = XAffineTransform.getScaleX0(tr);
-                    final double scaleY = XAffineTransform.getScaleY0(tr);
+                    final double scaleX = AffineTransforms2D.getScaleX0(tr);
+                    final double scaleY = AffineTransforms2D.getScaleY0(tr);
                     scaleMask1 = getScaleFactor(mask1, scaleX, scaleY);
                     scaleMask2 = getScaleFactor(mask2, scaleX, scaleY);
                     if (!(scaleMask1>0 && scaleMask2>0)) {

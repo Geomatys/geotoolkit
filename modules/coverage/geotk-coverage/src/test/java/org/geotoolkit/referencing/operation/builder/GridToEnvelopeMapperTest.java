@@ -29,7 +29,7 @@ import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;
 import org.geotoolkit.referencing.cs.DefaultEllipsoidalCS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
-import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
+import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
 import org.apache.sis.geometry.GeneralEnvelope;
 
 import org.junit.*;
@@ -189,8 +189,8 @@ public final strictfp class GridToEnvelopeMapperTest {
         assertEquals( 0.0,  tr3.getScaleY(), EPS);
         assertEquals(-0.05, tr3.getShearX(), EPS);
         assertEquals( 0.4,  tr3.getShearY(), EPS);
-        assertEquals( 0.05, XAffineTransform.getScaleX0(tr3), EPS);
-        assertEquals( 0.4,  XAffineTransform.getScaleY0(tr3), EPS);
+        assertEquals( 0.05, AffineTransforms2D.getScaleX0(tr3), EPS);
+        assertEquals( 0.4,  AffineTransforms2D.getScaleY0(tr3), EPS);
         assertSame("Transform should be cached", tr3, mapper.createAffineTransform());
 
         // Tests a coordinate transformation.
@@ -208,8 +208,8 @@ public final strictfp class GridToEnvelopeMapperTest {
         assertEquals(  0.0, tr3i.getScaleY(), EPS);
         assertEquals(  2.5, tr3i.getShearX(), EPS);
         assertEquals(-20,   tr3i.getShearY(), EPS);
-        assertEquals(  2.5, XAffineTransform.getScaleX0(tr3i), EPS);
-        assertEquals( 20,   XAffineTransform.getScaleY0(tr3i), EPS);
+        assertEquals(  2.5, AffineTransforms2D.getScaleX0(tr3i), EPS);
+        assertEquals( 20,   AffineTransforms2D.getScaleY0(tr3i), EPS);
 
 
         ///////////////////////////////////////////////////////////////

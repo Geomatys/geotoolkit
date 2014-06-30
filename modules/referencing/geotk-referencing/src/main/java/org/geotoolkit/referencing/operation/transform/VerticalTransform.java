@@ -21,7 +21,7 @@ import java.util.Arrays;
 import net.jcip.annotations.ThreadSafe;
 import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.TransformException;
-import org.geotoolkit.referencing.operation.matrix.Matrices;
+import org.apache.sis.referencing.operation.matrix.Matrices;
 import org.apache.sis.referencing.operation.transform.IterationStrategy;
 
 
@@ -100,7 +100,7 @@ public abstract class VerticalTransform extends AbstractMathTransform {
             dstPts[dstOff+1] = y;
             dstPts[dstOff+2] = z + heightOffset(x,y,z);
         }
-        return derivate ? Matrices.create(getTargetDimensions(), getSourceDimensions()) : null;
+        return derivate ? Matrices.createDiagonal(getTargetDimensions(), getSourceDimensions()) : null;
     }
 
     /**

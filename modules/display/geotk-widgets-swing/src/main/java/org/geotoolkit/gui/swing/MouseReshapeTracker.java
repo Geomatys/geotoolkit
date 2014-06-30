@@ -56,7 +56,7 @@ import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.logging.Logging;
 import org.apache.sis.util.Classes;
 import org.geotoolkit.internal.swing.ExceptionMonitor;
-import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
+import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
 
 
 /**
@@ -371,7 +371,7 @@ class MouseReshapeTracker extends MouseInputAdapter implements Shape {
             if (Math.abs(tmp.x) < MIN_WIDTH ) tmp.x = (tmp.x < 0) ? -MIN_WIDTH  : MIN_WIDTH;
             if (Math.abs(tmp.y) < MIN_HEIGHT) tmp.y = (tmp.y < 0) ? -MIN_HEIGHT : MIN_HEIGHT;
             try {
-                XAffineTransform.inverseDeltaTransform(transform, tmp, tmp);
+                AffineTransforms2D.inverseDeltaTransform(transform, tmp, tmp);
                 double x = logicalShape.getX();
                 double y = logicalShape.getY();
                 if ((adjustingLogicalSides & WEST) != 0) {
@@ -441,7 +441,7 @@ class MouseReshapeTracker extends MouseInputAdapter implements Shape {
             default   : tmp.y= 0; break;
         }
         try {
-            XAffineTransform.inverseDeltaTransform(transform, tmp, tmp);
+            AffineTransforms2D.inverseDeltaTransform(transform, tmp, tmp);
             final double normalize = 0.25 * Math.hypot(tmp.x, tmp.y);
             tmp.x /= normalize;
             tmp.y /= normalize;

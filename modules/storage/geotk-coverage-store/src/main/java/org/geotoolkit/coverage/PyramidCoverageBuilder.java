@@ -28,7 +28,6 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
-import org.geotoolkit.coverage.io.CoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.feature.type.Name;
@@ -45,7 +44,7 @@ import org.geotoolkit.process.ProcessEvent;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.process.ProcessListener;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.operation.MathTransforms;
+import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.geotoolkit.util.BufferedImageUtilities;
 import org.opengis.coverage.grid.GridCoverage;
@@ -268,7 +267,7 @@ public class PyramidCoverageBuilder {
         }
         final PyramidalCoverageReference pm = (PyramidalCoverageReference) cv;
 
-        
+
         for (Envelope outEnv : resolution_Per_Envelope.keySet()) {
             final CoordinateReferenceSystem crs = outEnv.getCoordinateReferenceSystem();
             final int minOrdi0 = CoverageUtilities.getMinOrdinate(crs);
@@ -305,10 +304,10 @@ public class PyramidCoverageBuilder {
                 resample(pm, pyram.getId(), gridCoverage2D, resolution_Per_Envelope.get(outEnv), upperLeft, envDest, minOrdi0, minOrdi1, fillValue, processListener);
             }
         }
-        if (processListener != null)  processListener.completed(new ProcessEvent(fakeProcess, "Pyramid coverage builder successfully submitted.", 100));        
-        
+        if (processListener != null)  processListener.completed(new ProcessEvent(fakeProcess, "Pyramid coverage builder successfully submitted.", 100));
+
     }
-    
+
     /**
      * <p>Effectuate resampling, re-projection, tile cutting and insertion in datastore on {@link GridCoverage}.<br/><br/>
      *
@@ -659,8 +658,8 @@ public class PyramidCoverageBuilder {
 
         return pyramid;
     }
-    
-    public static synchronized GridMosaic getOrCreateMosaic(final PyramidalCoverageReference pm, 
+
+    public static synchronized GridMosaic getOrCreateMosaic(final PyramidalCoverageReference pm,
             String pyramidID, Dimension gridsize, Dimension tileSize, DirectPosition upperLeft, double pixelScal) throws DataStoreException {
         final Pyramid pyramid = pm.getPyramidSet().getPyramid(pyramidID);
         for(GridMosaic gm : pyramid.getMosaics()){
@@ -670,5 +669,5 @@ public class PyramidCoverageBuilder {
         }
         return pm.createMosaic(pyramidID, tileSize, tileSize, upperLeft, pixelScal);
     }
-    
+
 }

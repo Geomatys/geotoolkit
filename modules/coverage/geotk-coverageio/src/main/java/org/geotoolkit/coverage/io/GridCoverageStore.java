@@ -55,10 +55,11 @@ import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.apache.sis.internal.referencing.AxisDirections;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.cs.AxisRangeType;
-import org.geotoolkit.referencing.operation.matrix.Matrices;
+import org.apache.sis.referencing.operation.matrix.Matrices;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
+import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
-import org.geotoolkit.referencing.operation.MathTransforms;
+import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.grid.InvalidGridGeometryException;
 import org.geotoolkit.display.shape.XRectangle2D;
@@ -525,7 +526,7 @@ public abstract class GridCoverageStore implements LogProducer, Localized {
          * give a smaller envelope when the transform contains rotation terms.
          */
         if (crsToGrid instanceof AffineTransform) {
-            shapeToRead = XAffineTransform.transform((AffineTransform) crsToGrid, shapeToRead,
+            shapeToRead = AffineTransforms2D.transform((AffineTransform) crsToGrid, shapeToRead,
                     shapeToRead != geodeticBounds); // boolean telling whatever we can overwrite.
         } else {
             shapeToRead = crsToGrid.createTransformedShape(shapeToRead);
@@ -699,7 +700,7 @@ public abstract class GridCoverageStore implements LogProducer, Localized {
             flipY = true ^ isNetcdfHack;
         }
         final int requestDimension = requestEnvelope.getDimension();
-        final Matrix m = Matrices.create(requestDimension + 1, 3);
+        final Matrix m = Matrices.createDiagonal(requestDimension + 1, 3);
         m.setElement(requestDimension, 2, 1);
         /*
          * Set the translation terms for all known dimensions. In the case of axes having reversed
@@ -751,7 +752,7 @@ public abstract class GridCoverageStore implements LogProducer, Localized {
         if (requestToDataCRS == null) {
             final int sourceDim = destToExtractedGrid.getTargetDimensions();
             if (sourceDim != 2) {
-                requestToDataCRS = MathTransforms.dimensionFilter(sourceDim, new int[] {X_DIMENSION, Y_DIMENSION});
+                requestToDataCRS = org.geotoolkit.referencing.operation.MathTransforms.dimensionFilter(sourceDim, new int[] {X_DIMENSION, Y_DIMENSION});
             }
         }
         if (requestToDataCRS != null) {

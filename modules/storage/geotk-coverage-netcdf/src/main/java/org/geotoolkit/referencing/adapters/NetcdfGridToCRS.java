@@ -30,9 +30,8 @@ import org.opengis.referencing.operation.NoninvertibleTransformException;
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.internal.referencing.SeparableTransform;
-import org.geotoolkit.referencing.operation.MathTransforms;
-import org.geotoolkit.referencing.operation.matrix.Matrices;
-import org.geotoolkit.referencing.operation.matrix.XMatrix;
+import org.apache.sis.referencing.operation.transform.MathTransforms;
+import org.apache.sis.referencing.operation.matrix.Matrices;
 import org.geotoolkit.referencing.operation.transform.AbstractMathTransform;
 import org.geotoolkit.resources.Errors;
 
@@ -296,7 +295,7 @@ class NetcdfGridToCRS extends AbstractMathTransform implements SeparableTransfor
      * @return The transform from grid to the CRS.
      */
     static MathTransform create(final Dimension[] domain, final NetcdfAxis[] axes) {
-        XMatrix matrix = null; // Created when first needed.
+        Matrix matrix = null; // Created when first needed.
         final int sourceDim = domain.length;
         final int targetDim = axes.length;
         for (int j=0; j<targetDim; j++) {
@@ -312,8 +311,7 @@ class NetcdfGridToCRS extends AbstractMathTransform implements SeparableTransfor
                 break;
             }
             if (matrix == null) {
-                matrix = Matrices.create(targetDim+1, sourceDim+1);
-                matrix.setZero();
+                matrix = Matrices.createZero(targetDim+1, sourceDim+1);
                 matrix.setElement(targetDim, sourceDim, 1);
             }
             final Dimension dim = netcdfAxis.getDimension(0);

@@ -26,7 +26,7 @@ import org.opengis.referencing.operation.Matrix;
 
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.util.ComparisonMode;
-import org.geotoolkit.referencing.operation.matrix.Matrix2;
+import org.apache.sis.referencing.operation.matrix.Matrix2;
 import org.geotoolkit.referencing.operation.provider.UniversalParameters;
 
 import static java.lang.Math.*;

@@ -47,7 +47,7 @@ import org.geotoolkit.util.Cloneable;
 import org.apache.sis.util.Classes;
 import org.geotoolkit.display.shape.DoubleDimension2D;
 import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;
-import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
+import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
 
 
 /**
@@ -555,7 +555,7 @@ public class Axis2D extends Line2D implements Cloneable, Serializable {
                         graphics.setTransform(currentTr);
                     }
                 }
-                legendBounds = XAffineTransform.transform(rotatedTr, bounds, bounds);
+                legendBounds = AffineTransforms2D.transform(rotatedTr, bounds, bounds);
             }
         }
         lastContext = iterator.getFontRenderContext();

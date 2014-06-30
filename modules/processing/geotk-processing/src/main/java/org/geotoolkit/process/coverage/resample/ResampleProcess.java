@@ -62,7 +62,7 @@ import static org.geotoolkit.process.coverage.resample.ResampleProcess.preferred
 import static org.geotoolkit.process.coverage.resample.ResampleProcess.reproject;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.AbstractCoordinateOperationFactory;
-import org.geotoolkit.referencing.operation.MathTransforms;
+import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.geotoolkit.referencing.operation.transform.DimensionFilter;
 import org.geotoolkit.resources.Errors;
@@ -102,17 +102,17 @@ public class ResampleProcess extends AbstractProcess {
     public ResampleProcess(GridCoverage2D coverage, CoordinateReferenceSystem targetCrs, double[] background) {
         super(INSTANCE, asParameters(coverage, targetCrs,  null, null, background));
     }
-    
-    public ResampleProcess(GridCoverage2D coverage, CoordinateReferenceSystem targetCrs, 
+
+    public ResampleProcess(GridCoverage2D coverage, CoordinateReferenceSystem targetCrs,
             GridGeometry2D gridGeom, InterpolationCase interpolation, double[] background) {
         super(INSTANCE, asParameters(coverage, targetCrs, gridGeom, interpolation, background));
     }
-    
+
     public ResampleProcess(final ParameterValueGroup input) {
         super(INSTANCE, input);
     }
 
-    private static ParameterValueGroup asParameters(GridCoverage2D coverage, CoordinateReferenceSystem targetCrs, 
+    private static ParameterValueGroup asParameters(GridCoverage2D coverage, CoordinateReferenceSystem targetCrs,
             GridGeometry2D gridGeom, InterpolationCase interpolation, double[] background){
         final ParameterValueGroup params = ResampleDescriptor.INPUT_DESC.createValue();
         ParametersExt.getOrCreateValue(params, IN_COVERAGE.getName().getCode()).setValue(coverage);
@@ -130,7 +130,7 @@ public class ResampleProcess extends AbstractProcess {
         }
         return params;
     }
-    
+
     public GridCoverage2D executeNow() throws ProcessException {
         execute();
         return (GridCoverage2D) outputParameters.parameter(OUT_COVERAGE.getName().getCode()).getValue();

@@ -43,6 +43,7 @@ import org.geotoolkit.gui.swing.event.ZoomChangeEvent;
 import org.geotoolkit.gui.swing.event.ZoomChangeListener;
 import org.geotoolkit.display.shape.DoubleDimension2D;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
+import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
 
 import static java.awt.GridBagConstraints.*;
 
@@ -889,7 +890,7 @@ public abstract class ZoomPane extends JComponent implements DeformableViewer {
         }
         Rectangle2D visible;
         try {
-            visible = XAffineTransform.inverseTransform(zoom, zoomableBounds, null);
+            visible = AffineTransforms2D.inverseTransform(zoom, zoomableBounds, null);
         } catch (NoninvertibleTransformException exception) {
             unexpectedException("getVisibleArea", exception);
             visible = new Rectangle2D.Double(zoomableBounds.getCenterX(),
@@ -944,7 +945,7 @@ public abstract class ZoomPane extends JComponent implements DeformableViewer {
          * a zoom and a translation which would put {@code source} in {@code dest}.
          */
         try {
-            dest = XAffineTransform.inverseTransform(zoom, dest, null);
+            dest = AffineTransforms2D.inverseTransform(zoom, dest, null);
         } catch (NoninvertibleTransformException exception) {
             unexpectedException("setVisibleArea", exception);
             return new AffineTransform();
@@ -1301,8 +1302,8 @@ public abstract class ZoomPane extends JComponent implements DeformableViewer {
                     throw new UnsupportedOperationException();
                 }
                 final Dimension2D size = getPreferredPixelSize();
-                double sx = 1 / (size.getWidth()  * XAffineTransform.getScaleX0(zoom));
-                double sy = 1 / (size.getHeight() * XAffineTransform.getScaleY0(zoom));
+                double sx = 1 / (size.getWidth()  * AffineTransforms2D.getScaleX0(zoom));
+                double sy = 1 / (size.getHeight() * AffineTransforms2D.getScaleY0(zoom));
                 if ((allowedActions & UNIFORM_SCALE) == UNIFORM_SCALE) {
                     if (sx > sy) sx = sy;
                     if (sy > sx) sy = sx;
@@ -2108,7 +2109,7 @@ public abstract class ZoomPane extends JComponent implements DeformableViewer {
                      */
                     Rectangle2D area = getArea();
                     if (isValid(area)) {
-                        area = XAffineTransform.transform(zoom, area, null);
+                        area = AffineTransforms2D.transform(zoom, area, null);
                         double x = area.getX();
                         double y = area.getY();
                         double width, height;
@@ -2127,7 +2128,7 @@ public abstract class ZoomPane extends JComponent implements DeformableViewer {
                         area.setRect(x, y, width, height);
                         bounds = getBounds(bounds);
                         try {
-                            area = XAffineTransform.inverseTransform(zoom, area, area);
+                            area = AffineTransforms2D.inverseTransform(zoom, area, area);
                             try {
                                 isAdjusting = true;
                                 transform(setVisibleArea(area, bounds=getBounds(bounds), 0));
@@ -2155,7 +2156,7 @@ public abstract class ZoomPane extends JComponent implements DeformableViewer {
             if (!isAdjusting) {
                 Rectangle2D area = getArea();
                 if (isValid(area)) {
-                    area = XAffineTransform.transform(zoom, area, null);
+                    area = AffineTransforms2D.transform(zoom, area, null);
                     try {
                         isAdjusting = true;
                         setRangeProperties(xm, area.getX(), getWidth(),  area.getWidth());
@@ -2202,11 +2203,11 @@ public abstract class ZoomPane extends JComponent implements DeformableViewer {
     public void scrollRectToVisible(final Rectangle rect) {
         Rectangle2D area = getArea();
         if (isValid(area)) {
-            area = XAffineTransform.transform(zoom, area, null);
+            area = AffineTransforms2D.transform(zoom, area, null);
             area.setRect(area.getX() + rect.getX(), area.getY() + rect.getY(),
                          rect.getWidth(), rect.getHeight());
             try {
-                setVisibleArea(XAffineTransform.inverseTransform(zoom, area, area));
+                setVisibleArea(AffineTransforms2D.inverseTransform(zoom, area, area));
             } catch (NoninvertibleTransformException exception) {
                 unexpectedException("scrollRectToVisible", exception);
             }
@@ -2363,7 +2364,7 @@ public abstract class ZoomPane extends JComponent implements DeformableViewer {
         if (!visibleArea.isEmpty()) {
             Rectangle2D area = getArea();
             if (isValid(area)) {
-                area = XAffineTransform.transform(zoom, area, null);
+                area = AffineTransforms2D.transform(zoom, area, null);
                 return new Dimension((int) Math.rint(area.getWidth()),
                                      (int) Math.rint(area.getHeight()));
             }

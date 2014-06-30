@@ -26,7 +26,7 @@ import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
 
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.referencing.operation.MathTransforms;
+import org.apache.sis.referencing.operation.transform.MathTransforms;
 
 import static java.lang.Math.*;
 import static org.apache.sis.math.MathFunctions.SQRT_2;

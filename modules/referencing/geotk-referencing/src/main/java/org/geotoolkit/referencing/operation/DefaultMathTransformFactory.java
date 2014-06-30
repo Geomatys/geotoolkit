@@ -57,7 +57,8 @@ import org.geotoolkit.io.wkt.MathTransformParser;
 import org.geotoolkit.referencing.cs.AbstractCS;
 import org.apache.sis.metadata.iso.ImmutableIdentifier;
 import org.geotoolkit.referencing.factory.ReferencingFactory;
-import org.geotoolkit.referencing.operation.matrix.Matrices;
+import org.apache.sis.referencing.operation.matrix.Matrices;
+import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.referencing.operation.transform.PassThroughTransform;
 import org.geotoolkit.internal.referencing.MathTransformDecorator;
 import org.geotoolkit.internal.referencing.ParameterizedAffine;
@@ -494,7 +495,7 @@ public class DefaultMathTransformFactory extends ReferencingFactory implements M
         final int sourceDim = step1.getTargetDimensions();
         final int targetDim = step2.getSourceDimensions();
         if (sourceDim > targetDim) {
-            final Matrix drop = Matrices.create(targetDim+1, sourceDim+1);
+            final Matrix drop = Matrices.createDiagonal(targetDim+1, sourceDim+1);
             drop.setElement(targetDim, sourceDim, 1);
             step1 = createConcatenatedTransform(createAffineTransform(drop), step1);
         }

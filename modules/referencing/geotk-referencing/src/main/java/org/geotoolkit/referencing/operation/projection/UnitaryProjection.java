@@ -56,10 +56,10 @@ import org.apache.sis.util.collection.WeakHashSet;
 import org.geotoolkit.referencing.operation.provider.UniversalParameters;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.IdentifiedObjects;
-import org.geotoolkit.referencing.operation.matrix.Matrices;
 import org.geotoolkit.referencing.operation.provider.MapProjection;
 import org.geotoolkit.referencing.operation.transform.AbstractMathTransform2D;
 
+import org.apache.sis.referencing.operation.matrix.MatrixSIS;
 import static java.lang.Math.*;
 import static java.lang.Double.*;
 import static org.apache.sis.math.MathFunctions.atanh;
@@ -486,7 +486,7 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
                     dstOff = 0;
                 }
                 inverseTransform(srcPts, srcOff, dstPts, dstOff);
-                return Matrices.invert(UnitaryProjection.this.transform(dstPts, dstOff, null, 0, true));
+                return MatrixSIS.castOrCopy(UnitaryProjection.this.transform(dstPts, dstOff, null, 0, true)).inverse();
             }
         }
     }

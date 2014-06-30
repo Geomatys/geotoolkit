@@ -33,6 +33,7 @@ import org.opengis.geometry.Envelope;
 import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.operation.MathTransformFactory;
 import org.opengis.referencing.operation.MathTransform1D;
@@ -48,9 +49,8 @@ import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.apache.sis.metadata.iso.extent.DefaultGeographicBoundingBox;
 import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
-import org.geotoolkit.referencing.operation.matrix.Matrices;
-import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
-import org.geotoolkit.referencing.operation.matrix.XMatrix;
+import org.apache.sis.referencing.operation.matrix.Matrices;
+import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
 
 
 /**
@@ -265,8 +265,8 @@ final class GridGeometryEntry extends DefaultEntry {
      * @param dimension  The number of dimensions for the source and target CRS.
      * @param zIndex     The 1-based index of the <var>z</var> value, or 0 if none.
      */
-    final XMatrix getGridToCRS(final int dimension, int zIndex) {
-        final XMatrix matrix = Matrices.create(dimension + 1);
+    final Matrix getGridToCRS(final int dimension, int zIndex) {
+        final Matrix matrix = Matrices.createIdentity(dimension + 1);
         SpatialRefSysEntry.copy(gridToCRS, matrix);
         if (verticalOrdinates != null) {
             final int imax = verticalOrdinates.length - 1;
@@ -371,7 +371,7 @@ final class GridGeometryEntry extends DefaultEntry {
         Shape shape = new Rectangle2D.Double(
                 extent.getLow (0), extent.getLow (1),
                 extent.getSpan(0), extent.getSpan(1));
-        shape = XAffineTransform.transform(gridToCRS, shape, true);
+        shape = AffineTransforms2D.transform(gridToCRS, shape, true);
         return shape;
     }
 

@@ -31,7 +31,7 @@ import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
 
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.operation.MathTransforms;
+import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.geotoolkit.test.gui.ShapeTestBase;
 import org.geotoolkit.test.referencing.WKT;
 
@@ -65,7 +65,7 @@ public final strictfp class ProjectedShapeTest extends ShapeTestBase {
         adjust.scale(2*SHAPE_WIDTH / bounds.getWidth(), 2*SHAPE_HEIGHT / bounds.getHeight());
         adjust.translate(-bounds.getX(), -bounds.getY());
         path.transform(adjust);
-        tr = MathTransforms.concatenate(tr, (MathTransform2D) MathTransforms.linear(adjust));
+        tr = MathTransforms.concatenate(tr, (MathTransform2D) org.geotoolkit.referencing.operation.MathTransforms.linear(adjust));
         projection = tr;
         return path;
     }

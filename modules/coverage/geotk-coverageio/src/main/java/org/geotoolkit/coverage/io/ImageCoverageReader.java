@@ -46,6 +46,7 @@ import org.opengis.coverage.grid.RectifiedGrid;
 import org.opengis.metadata.spatial.Georectified;
 import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.referencing.crs.CompoundCRS;
+import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
@@ -83,9 +84,8 @@ import org.geotoolkit.util.collection.XCollections;
 import org.apache.sis.util.collection.BackingStoreException;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultImageCRS;
-import org.geotoolkit.referencing.operation.matrix.XMatrix;
-import org.geotoolkit.referencing.operation.matrix.Matrices;
-import org.geotoolkit.referencing.operation.MathTransforms;
+import org.apache.sis.referencing.operation.matrix.Matrices;
+import org.apache.sis.referencing.operation.transform.MathTransforms;
 
 import static org.geotoolkit.image.io.MultidimensionalImageStore.*;
 import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMAT_NAME;
@@ -1092,7 +1092,7 @@ public class ImageCoverageReader extends GridCoverageReader {
             MathTransform newGridToCRS = gridToCRS;
             if (!change.isIdentity()) {
                 final int gridDimension = gridToCRS.getSourceDimensions();
-                final XMatrix matrix = Matrices.create(gridDimension + 1);
+                final Matrix matrix = Matrices.createIdentity(gridDimension + 1);
                 matrix.setElement(xi, xi, change.getScaleX());
                 matrix.setElement(yi, yi, change.getScaleY());
                 matrix.setElement(xi, gridDimension, change.getTranslateX() - xmin);

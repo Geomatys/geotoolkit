@@ -46,8 +46,7 @@ import org.apache.sis.util.NullArgumentException;
 import org.geotoolkit.referencing.CRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.referencing.crs.DefaultTemporalCRS;
-import org.geotoolkit.referencing.operation.matrix.XMatrix;
-import org.geotoolkit.referencing.operation.matrix.Matrices;
+import org.apache.sis.referencing.operation.matrix.Matrices;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
 
 
@@ -311,7 +310,7 @@ scan:   for (final CoordinateReferenceSystem component : crs.getComponents()) {
      * @return The <cite>grid to CRS</cite> transform mapping cell centers for the given axes
      *         as a matrix, or {@code null} if such matrix can not be computed.
      */
-    public static XMatrix getAffineTransform(final DiscreteCoordinateSystemAxis<?>... axes) {
+    public static Matrix getAffineTransform(final DiscreteCoordinateSystemAxis<?>... axes) {
         ensureNonNull("axes", axes);
         return getAffineTransform(null, axes);
     }
@@ -385,9 +384,9 @@ scan:   for (final CoordinateReferenceSystem component : crs.getComponents()) {
      * @return The <cite>grid to CRS</cite> transform mapping cell centers for the given axes
      *         as a matrix, or {@code null} if such matrix can not be computed.
      */
-    static XMatrix getAffineTransform(final CoordinateReferenceSystem crs, final DiscreteCoordinateSystemAxis<?>[] axes) {
+    static Matrix getAffineTransform(final CoordinateReferenceSystem crs, final DiscreteCoordinateSystemAxis<?>[] axes) {
         final int dimension = axes.length;
-        final XMatrix matrix = Matrices.create(dimension + 1);
+        final Matrix matrix = Matrices.createIdentity(dimension + 1);
         for (int i=0; i<dimension; i++) {
             final DiscreteCoordinateSystemAxis<?> axis = axes[i];
             final int n;
@@ -453,8 +452,8 @@ scan:   for (final CoordinateReferenceSystem component : crs.getComponents()) {
      *
      * @since 3.16
      */
-    static XMatrix getAffineTransform(final CompoundCRS crs, final DiscreteCoordinateSystemAxis<?>[] axes) {
-        final XMatrix matrix = getAffineTransform((CoordinateReferenceSystem) crs, axes);
+    static Matrix getAffineTransform(final CompoundCRS crs, final DiscreteCoordinateSystemAxis<?>[] axes) {
+        final Matrix matrix = getAffineTransform((CoordinateReferenceSystem) crs, axes);
         if (matrix != null) {
             final int lastColumn = matrix.getNumCol() - 1;
             int rowOffset = 0;

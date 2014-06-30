@@ -27,7 +27,6 @@ import org.geotoolkit.image.io.metadata.MetadataHelper;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.metadata.iso.spatial.PixelTranslation;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
-import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 
 import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.coverage.grid.RectifiedGrid;
@@ -37,12 +36,13 @@ import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
 
+import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
 import org.w3c.dom.Node;
 
 import static org.geotoolkit.metadata.geotiff.GeoTiffConstants.*;
 
 /**
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
@@ -87,7 +87,7 @@ public class GeoTiffMetaDataWriter {
 
         if(CellGeometry.POINT.equals(cell)){
             stack.addShort(GTRasterTypeGeoKey, RasterPixelIsPoint);
-            
+
             if(!orientation.equals(PixelOrientation.CENTER)){
                 AffineTransform2D trs = new AffineTransform2D(gridToCrs);
                 gridToCrs = (AffineTransform)PixelTranslation.translate(trs, orientation, PixelOrientation.CENTER,0,1);
@@ -140,14 +140,14 @@ public class GeoTiffMetaDataWriter {
         // Note that here wew assume that in case of a Flip the flip is on the Y
         // axis.
         // /////////////////////////////////////////////////////////////////////
-        final boolean lonFirst = XAffineTransform.getSwapXY(modifiedRasterToModel) != -1;
+        final boolean lonFirst = AffineTransforms2D.getSwapXY(modifiedRasterToModel) != -1;
 
         // /////////////////////////////////////////////////////////////////////
         // ROTATION
         // If fthere is not rotation or shearing or flipping we have a simple
         // scale and translate hence we can simply set the tie points.
         // /////////////////////////////////////////////////////////////////////
-        final double rotation = XAffineTransform.getRotation(modifiedRasterToModel);
+        final double rotation = AffineTransforms2D.getRotation(modifiedRasterToModel);
 
         // /////////////////////////////////////////////////////////////////////
         // Deciding how to save the georef with respect to the CRS.
@@ -169,9 +169,9 @@ public class GeoTiffMetaDataWriter {
 			/*
              * final AffineTransform coordToGrid = gridToCoord.createInverse();
              * final double scaleModelToRasterLongitude = 1 /
-             * XAffineTransform.getScaleX0(coordToGrid); final double
+             * AffineTransforms2D.getScaleX0(coordToGrid); final double
              * scaleModelToRasterLatitude = 1 /
-             * XAffineTransform.getScaleY0(coordToGrid);
+             * AffineTransforms2D.getScaleY0(coordToGrid);
              */
         } else {
             stack.setModelTransformation(modifiedRasterToModel);

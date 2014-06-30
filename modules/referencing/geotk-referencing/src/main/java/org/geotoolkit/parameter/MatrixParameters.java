@@ -39,7 +39,7 @@ import org.opengis.parameter.ParameterNotFoundException;
 import org.geotoolkit.io.TableWriter;
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
-import org.geotoolkit.referencing.operation.matrix.Matrices;
+import org.apache.sis.referencing.operation.matrix.Matrices;
 
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 
@@ -339,7 +339,7 @@ public class MatrixParameters extends ParameterGroup implements ParameterDescrip
     public Matrix getMatrix() {
         final int numRow = this.numRow.intValue();
         final int numCol = this.numCol.intValue();
-        final Matrix matrix = Matrices.create(numRow, numCol);
+        final Matrix matrix = Matrices.createDiagonal(numRow, numCol);
         if (matrixValues != null) {
             for (int j=0; j<numRow; j++) {
                 final ParameterValue<?>[] row = matrixValues[j];

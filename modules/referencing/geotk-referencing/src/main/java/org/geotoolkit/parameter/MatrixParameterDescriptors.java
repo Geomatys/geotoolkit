@@ -37,7 +37,7 @@ import org.opengis.referencing.operation.Matrix;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.referencing.AbstractIdentifiedObject;
-import org.geotoolkit.referencing.operation.matrix.Matrices;
+import org.apache.sis.referencing.operation.matrix.Matrices;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.resources.Errors;
@@ -409,7 +409,7 @@ public class MatrixParameterDescriptors extends DefaultParameterDescriptorGroup 
         final ParameterValue<?> numColParam = Parameters.getOrCreate(numCol, parameters);
         final int numRow = numRowParam.intValue();
         final int numCol = numColParam.intValue();
-        final Matrix matrix = Matrices.create(numRow, numCol);
+        final Matrix matrix = Matrices.createDiagonal(numRow, numCol);
         final List<GeneralParameterValue> params = parameters.values();
         if (params != null) {
             for (final GeneralParameterValue param : params) {

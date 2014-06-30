@@ -34,10 +34,10 @@ import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.parameter.Parameter;
 import org.geotoolkit.parameter.ParameterGroup;
 import org.geotoolkit.parameter.FloatParameter;
-import org.geotoolkit.referencing.operation.matrix.XMatrix;
-import org.geotoolkit.referencing.operation.matrix.Matrices;
+import org.apache.sis.referencing.operation.matrix.Matrices;
 import org.geotoolkit.referencing.operation.provider.Molodensky;
 import org.geotoolkit.referencing.operation.provider.AbridgedMolodensky;
+import org.apache.sis.referencing.operation.matrix.MatrixSIS;
 import org.apache.sis.referencing.operation.transform.IterationStrategy;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.util.ArgumentChecks;
@@ -341,7 +341,7 @@ public class MolodenskyTransform extends AbstractMathTransform implements Ellips
             if (source3D == target3D) {
                 transform = MathTransforms.identity(target3D ? 3 : 2);
             } else {
-                final XMatrix matrix = Matrices.createDimensionFilter(3, new int[] {0,1});
+                final MatrixSIS matrix = MatrixSIS.castOrCopy(org.geotoolkit.referencing.operation.matrix.Matrices.createDimensionFilter(3, new int[] {0,1}));
                 if (target3D) {
                     matrix.transpose();
                 }
@@ -678,7 +678,7 @@ public class MolodenskyTransform extends AbstractMathTransform implements Ellips
 
         final int srcDim = getSourceDimensions();
         final int tgtDim = getTargetDimensions();
-        final XMatrix matrix = Matrices.create(tgtDim, srcDim);
+        final Matrix matrix = Matrices.createDiagonal(tgtDim, srcDim);
 
         // The following are "almost" the derivatives to be returned.
         // Some final operation commons to both kind of formulas will

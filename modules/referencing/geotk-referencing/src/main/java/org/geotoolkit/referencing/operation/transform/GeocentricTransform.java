@@ -50,13 +50,13 @@ import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.parameter.Parameter;
 import org.geotoolkit.parameter.FloatParameter;
 import org.geotoolkit.parameter.ParameterGroup;
-import org.geotoolkit.referencing.operation.matrix.Matrix3;
-import org.geotoolkit.referencing.operation.matrix.Matrices;
+import org.apache.sis.referencing.operation.matrix.Matrix3;
 import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
 import org.geotoolkit.referencing.operation.provider.EllipsoidToGeocentric;
 import org.geotoolkit.referencing.operation.provider.GeocentricToEllipsoid;
 import org.apache.sis.internal.referencing.DirectPositionView;
 import org.geotoolkit.resources.Errors;
+import org.apache.sis.referencing.operation.matrix.MatrixSIS;
 import org.apache.sis.referencing.operation.transform.IterationStrategy;
 
 import static java.lang.Math.*;
@@ -894,17 +894,17 @@ public class GeocentricTransform extends AbstractMathTransform implements Ellips
                 throw new MismatchedDimensionException(mismatchedDimension("point", ordinates.length, 3));
             }
             inverseTransform(null, ordinates, 0, null, ordinates, 0, 1, true, false);
-            Matrix m = Matrices.invert(GeocentricTransform.this.derivative(
+            MatrixSIS m = MatrixSIS.castOrCopy(GeocentricTransform.this.derivative(
                     toRadians(ordinates[0]),
                     toRadians(ordinates[1]),
                               ordinates[2], true));
+            m = m.inverse();
             assert m.getNumCol() == 3 && m.getNumRow() == 3;
             final double[] elements = new double[6];
             for (int i=0; i<elements.length; i++) {
                 elements[i] = m.getElement(i / 3, i % 3);
             }
-            m = new GeneralMatrix(2, 3, elements);
-            return m;
+            return new GeneralMatrix(2, 3, elements);
         }
 
         /**

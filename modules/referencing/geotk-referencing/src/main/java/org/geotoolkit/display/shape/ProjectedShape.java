@@ -34,7 +34,7 @@ import org.opengis.referencing.operation.NoninvertibleTransformException;
 import org.geotoolkit.geometry.Envelopes;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.referencing.operation.MathTransforms;
+import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 
 

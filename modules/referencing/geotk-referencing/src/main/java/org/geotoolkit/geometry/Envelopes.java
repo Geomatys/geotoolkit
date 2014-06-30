@@ -45,7 +45,7 @@ import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.display.shape.XRectangle2D;
 import org.geotoolkit.display.shape.ShapeUtilities;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
+import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
 import org.apache.sis.referencing.operation.transform.AbstractMathTransform;
 import org.apache.sis.internal.referencing.DirectPositionView;
 import org.geotoolkit.resources.Errors;
@@ -69,19 +69,6 @@ import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
  * @module
  */
 public final class Envelopes extends Static {
-    /**
-     * Enumeration of the 4 corners in an envelope, with repetition of the first point.
-     * The values are (x,y) pairs with {@code false} meaning "minimal value" and {@code true}
-     * meaning "maximal value". This is used by {@link #toPolygonWKT(Envelope)} only.
-     */
-    private static final boolean[] CORNERS = {
-        false, false,
-        false, true,
-        true,  true,
-        true,  false,
-        false, false
-    };
-
     /**
      * Do not allow instantiation of this class.
      */
@@ -758,7 +745,7 @@ public final class Envelopes extends Static {
         ensureNonNull("transform", transform);
         if (transform instanceof AffineTransform) {
             // Common case implemented in a more efficient way (less points to transform).
-            return XAffineTransform.transform((AffineTransform) transform, envelope, destination);
+            return AffineTransforms2D.transform((AffineTransform) transform, envelope, destination);
         }
         return transform(transform, envelope, destination, new double[2]);
     }

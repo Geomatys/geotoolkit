@@ -74,7 +74,6 @@ import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
-import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 import org.apache.sis.util.logging.Logging;
 import org.apache.sis.util.iso.SimpleInternationalString;
 
@@ -85,6 +84,7 @@ import org.geotoolkit.internal.image.ImageUtilities;
 import org.apache.sis.internal.referencing.AxisDirections;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.lang.Debug;
+import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
 import org.apache.sis.util.iso.Types;
 
 
@@ -896,7 +896,7 @@ public abstract class AbstractCoverage extends PropertySourceImpl implements Cov
                  * computing a box which contains fully the Rectangle2D. But in our particular
                  * case, we really want to round toward the nearest integer.
                  */
-                final Rectangle2D bounds = XAffineTransform.transform(crsToGrid,
+                final Rectangle2D bounds = AffineTransforms2D.transform(crsToGrid,
                         (area != null) ? area.getBounds2D() : this.bounds, null);
                 final int xmin = (int) Math.round(bounds.getMinX());
                 final int ymin = (int) Math.round(bounds.getMinY());
@@ -1035,7 +1035,7 @@ public abstract class AbstractCoverage extends PropertySourceImpl implements Cov
             } else {
                 matrix = new GeneralMatrix(srcEnvelope, dstEnvelope);
             }
-            return new RenderContext(matrix.toAffineTransform2D(), hints);
+            return new RenderContext(AffineTransforms2D.castOrCopy(matrix), hints);
         }
 
         /**

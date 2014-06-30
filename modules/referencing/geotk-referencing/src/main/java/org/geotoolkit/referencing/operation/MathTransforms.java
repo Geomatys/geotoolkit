@@ -21,15 +21,11 @@ import java.awt.geom.AffineTransform;
 
 import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.MathTransform;
-import org.opengis.referencing.operation.MathTransform1D;
-import org.opengis.referencing.operation.MathTransform2D;
-import org.opengis.referencing.operation.TransformException;
-
 import org.geotoolkit.lang.Static;
-import org.geotoolkit.referencing.operation.matrix.Matrices;
+import org.apache.sis.referencing.operation.matrix.Matrices;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
-
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
+
 import static org.apache.sis.util.ArgumentChecks.*;
 
 
@@ -65,21 +61,6 @@ public final class MathTransforms extends Static {
     }
 
     /**
-     * Returns an identity transform of the specified dimension. In the special case of
-     * dimension 1 and 2, this method returns instances of {@link LinearTransform1D} or
-     * {@link AffineTransform2D} respectively.
-     *
-     * @param dimension The dimension of the transform to be returned.
-     * @return An identity transform of the specified dimension.
-     *
-     * @deprecate Moved to Apache SIS {@link org.apache.sis.referencing.operation.transform.MathTransforms}.
-     */
-    @Deprecated
-    public static LinearTransform identity(final int dimension) {
-        return org.apache.sis.referencing.operation.transform.MathTransforms.identity(dimension);
-    }
-
-    /**
      * Creates an affine transform that apply the same linear conversion for all dimensions.
      * For each dimension, input values <var>x</var> are converted into output values
      * <var>y</var> using the following equation:
@@ -97,38 +78,16 @@ public final class MathTransforms extends Static {
     public static LinearTransform linear(final int dimension, final double scale, final double offset) {
         ensureStrictlyPositive("dimension", dimension);
         if (offset == 0 && scale == 1) {
-            return identity(dimension);
+            return org.apache.sis.referencing.operation.transform.MathTransforms.identity(dimension);
         }
         if (dimension == 1) {
             return org.apache.sis.referencing.operation.transform.MathTransforms.linear(scale, offset);
         }
-        final Matrix matrix = Matrices.create(dimension + 1);
+        final Matrix matrix = Matrices.createIdentity(dimension + 1);
         for (int i=0; i<dimension; i++) {
             matrix.setElement(i, i, scale);
             matrix.setElement(i, dimension, offset);
         }
-        return linear(matrix);
-    }
-
-    /**
-     * Creates an arbitrary linear transform from the specified matrix.
-     * If the transform input dimension is {@code M}, and output dimension is {@code N}, then the
-     * given matrix shall have size {@code [N+1][M+1]}. The +1 in the matrix dimensions allows the
-     * matrix to do a shift, as well as a rotation. The {@code [M][j]} element of the matrix will
-     * be the <var>j</var>'th ordinate of the moved origin.
-     * <p>
-     * The matrix is usually square and affine, but this is not mandatory. Non-affine transforms
-     * are allowed.
-     *
-     * @param matrix The matrix used to define the linear transform.
-     * @return The linear transform.
-     *
-     * @see org.opengis.referencing.operation.MathTransformFactory#createAffineTransform(Matrix)
-     *
-     * @deprecate Moved to Apache SIS {@link org.apache.sis.referencing.operation.transform.MathTransforms}.
-     */
-    @Deprecated
-    public static LinearTransform linear(final Matrix matrix) {
         return org.apache.sis.referencing.operation.transform.MathTransforms.linear(matrix);
     }
 
@@ -144,7 +103,7 @@ public final class MathTransforms extends Static {
         if (matrix instanceof LinearTransform) {
             return (LinearTransform) matrix;
         }
-        return matrix.isIdentity() ? identity(2) : new AffineTransform2D(matrix);
+        return matrix.isIdentity() ? org.apache.sis.referencing.operation.transform.MathTransforms.identity(2) : new AffineTransform2D(matrix);
     }
 
     /**
@@ -161,140 +120,7 @@ public final class MathTransforms extends Static {
      * @see Matrices#createDimensionFilter(int, int[])
      */
     public static LinearTransform dimensionFilter(final int sourceDim, final int[] toKeep) throws IndexOutOfBoundsException {
-        return linear(Matrices.createDimensionFilter(sourceDim, toKeep));
-    }
-
-    /**
-     * Concatenates the two given transforms. The returned transform will implement
-     * {@link MathTransform1D} or {@link MathTransform2D} if the dimensions of the
-     * concatenated transform are equal to 1 or 2 respectively.
-     *
-     * @param tr1 The first math transform.
-     * @param tr2 The second math transform.
-     * @return    The concatenated transform.
-     *
-     * @see org.opengis.referencing.operation.MathTransformFactory#createConcatenatedTransform(MathTransform, MathTransform)
-     *
-     * @deprecate Moved to Apache SIS {@link org.apache.sis.referencing.operation.transform.MathTransforms}.
-     */
-    @Deprecated
-    public static MathTransform concatenate(MathTransform tr1, MathTransform tr2) {
-        return org.apache.sis.referencing.operation.transform.MathTransforms.concatenate(tr1, tr2);
-    }
-
-    /**
-     * Concatenates the given two-dimensional transforms. This is a convenience methods
-     * delegating to {@link #concatenate(MathTransform, MathTransform)} and casting the
-     * result to a {@link MathTransform2D} instance.
-     *
-     * @param tr1 The first math transform.
-     * @param tr2 The second math transform.
-     * @return    The concatenated transform.
-     *
-     * @deprecate Moved to Apache SIS {@link org.apache.sis.referencing.operation.transform.MathTransforms}.
-     */
-    @Deprecated
-    public static MathTransform2D concatenate(MathTransform2D tr1, MathTransform2D tr2) {
-        return org.apache.sis.referencing.operation.transform.MathTransforms.concatenate(tr1, tr2);
-    }
-
-    /**
-     * Concatenates the given one-dimensional transforms. This is a convenience methods
-     * delegating to {@link #concatenate(MathTransform, MathTransform)} and casting the
-     * result to a {@link MathTransform1D} instance.
-     *
-     * @param tr1 The first math transform.
-     * @param tr2 The second math transform.
-     * @return    The concatenated transform.
-     *
-     * @deprecate Moved to Apache SIS {@link org.apache.sis.referencing.operation.transform.MathTransforms}.
-     */
-    @Deprecated
-    public static MathTransform1D concatenate(MathTransform1D tr1, MathTransform1D tr2) {
-        return org.apache.sis.referencing.operation.transform.MathTransforms.concatenate(tr1, tr2);
-    }
-
-    /**
-     * Concatenates the three given transforms. This is a convenience methods doing its job
-     * as two consecutive concatenations.
-     *
-     * @param tr1 The first math transform.
-     * @param tr2 The second math transform.
-     * @param tr3 The third math transform.
-     * @return    The concatenated transform.
-     *
-     * @deprecate Moved to Apache SIS {@link org.apache.sis.referencing.operation.transform.MathTransforms}.
-     */
-    @Deprecated
-    public static MathTransform concatenate(MathTransform tr1, MathTransform tr2, MathTransform tr3) {
-        return org.apache.sis.referencing.operation.transform.MathTransforms.concatenate(tr1, tr2, tr3);
-    }
-
-    /**
-     * Concatenates the three given two-dimensional transforms. This is a convenience methods
-     * delegating to {@link #concatenate(MathTransform, MathTransform, MathTransform)} and
-     * casting the result to a {@link MathTransform2D} instance.
-     *
-     * @param tr1 The first math transform.
-     * @param tr2 The second math transform.
-     * @param tr3 The third math transform.
-     * @return    The concatenated transform.
-     *
-     * @deprecate Moved to Apache SIS {@link org.apache.sis.referencing.operation.transform.MathTransforms}.
-     */
-    @Deprecated
-    public static MathTransform2D concatenate(MathTransform2D tr1, MathTransform2D tr2, MathTransform2D tr3) {
-        return org.apache.sis.referencing.operation.transform.MathTransforms.concatenate(tr1, tr2, tr3);
-    }
-
-    /**
-     * Concatenates the three given one-dimensional transforms. This is a convenience methods
-     * delegating to {@link #concatenate(MathTransform, MathTransform, MathTransform)} and
-     * casting the result to a {@link MathTransform1D} instance.
-     *
-     * @param tr1 The first math transform.
-     * @param tr2 The second math transform.
-     * @param tr3 The third math transform.
-     * @return    The concatenated transform.
-     *
-     * @deprecate Moved to Apache SIS {@link org.apache.sis.referencing.operation.transform.MathTransforms}.
-     */
-    @Deprecated
-    public static MathTransform1D concatenate(MathTransform1D tr1, MathTransform1D tr2, MathTransform1D tr3) {
-        return org.apache.sis.referencing.operation.transform.MathTransforms.concatenate(tr1, tr2, tr3);
-    }
-
-    /**
-     * A buckle method for calculating derivative and coordinate transformation in a single step.
-     * The transform result is stored in the given destination array, and the derivative matrix
-     * is returned. Invoking this method is equivalent to the following code, except that it may
-     * execute faster with some {@code MathTransform} implementations:
-     *
-     * {@preformat java
-     *     DirectPosition ptSrc = ...;
-     *     DirectPosition ptDst = ...;
-     *     Matrix matrixDst = derivative(ptSrc);
-     *     ptDst = transform(ptSrc, ptDst);
-     * }
-     *
-     * @param transform The transform to use.
-     * @param srcPts The array containing the source coordinate.
-     * @param srcOff The offset to the point to be transformed in the source array.
-     * @param dstPts the array into which the transformed coordinate is returned.
-     * @param dstOff The offset to the location of the transformed point that is
-     *               stored in the destination array.
-     * @return The matrix of the transform derivative at the given source position.
-     * @throws TransformException If the point can't be transformed or if a problem occurred while
-     *         calculating the derivative.
-     *
-     * @deprecate Moved to Apache SIS {@link org.apache.sis.referencing.operation.transform.MathTransforms}.
-     */
-    @Deprecated
-    public static Matrix derivativeAndTransform(final MathTransform transform,
-                                                final double[] srcPts, final int srcOff,
-                                                final double[] dstPts, final int dstOff)
-            throws TransformException
-    {
-        return org.apache.sis.referencing.operation.transform.MathTransforms.derivativeAndTransform(transform, srcPts, srcOff, dstPts, dstOff);
+        return org.apache.sis.referencing.operation.transform.MathTransforms.linear(
+                org.geotoolkit.referencing.operation.matrix.Matrices.createDimensionFilter(sourceDim, toKeep));
     }
 }

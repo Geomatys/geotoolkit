@@ -49,8 +49,8 @@ import org.geotoolkit.internal.sql.table.SpatialDatabase;
 import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
 import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
-import org.geotoolkit.referencing.operation.matrix.Matrices;
-import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
+import org.apache.sis.referencing.operation.matrix.Matrices;
+import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
 import org.geotoolkit.referencing.cs.AbstractCS;
 import org.geotoolkit.referencing.cs.AxisRangeType;
 import org.geotoolkit.referencing.CRS;
@@ -391,7 +391,7 @@ final class SpatialRefSysEntry {
         final CoordinateSystem shiftedCS = this.shiftedCS; // Protect from changes.
         if (shiftedCS != null) {
             Rectangle2D bounds = new Rectangle2D.Double(0, 0, size.width, size.height);
-            bounds = XAffineTransform.transform(gridToCRS, bounds, bounds);
+            bounds = AffineTransforms2D.transform(gridToCRS, bounds, bounds);
             final CoordinateSystem standardCS = horizontalCRS.getCoordinateSystem();
             for (int i=0; i<=1; i++) {
                 final CoordinateSystemAxis standardAxis = standardCS.getAxis(i);
@@ -444,7 +444,7 @@ final class SpatialRefSysEntry {
         final int dim = crs.getCoordinateSystem().getDimension();
         final int[] lower = new int[dim];
         final int[] upper = new int[dim];
-        final Matrix matrix = Matrices.create(dim + 1);
+        final Matrix matrix = Matrices.createIdentity(dim + 1);
         int verticalDim = 0;
         if (horizontalCRS != null) {
             copy(gridToCRS, matrix);

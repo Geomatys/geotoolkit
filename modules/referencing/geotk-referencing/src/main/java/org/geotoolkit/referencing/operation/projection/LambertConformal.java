@@ -32,7 +32,7 @@ import org.opengis.referencing.operation.MathTransform2D;
 import org.apache.sis.measure.Latitude;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.util.ComparisonMode;
-import org.geotoolkit.referencing.operation.matrix.Matrix2;
+import org.apache.sis.referencing.operation.matrix.Matrix2;
 import org.geotoolkit.referencing.operation.provider.LambertConformal1SP;
 import org.geotoolkit.referencing.operation.provider.LambertConformal2SP;
 

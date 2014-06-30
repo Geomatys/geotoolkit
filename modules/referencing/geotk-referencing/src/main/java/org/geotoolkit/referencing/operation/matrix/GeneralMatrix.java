@@ -18,15 +18,8 @@
 package org.geotoolkit.referencing.operation.matrix;
 
 import java.awt.geom.AffineTransform;
-import java.text.ParseException;
 import java.text.FieldPosition;
 import java.text.NumberFormat;
-import java.util.Locale;
-import java.util.Arrays;
-import java.io.File;
-import java.io.FileReader;
-import java.io.BufferedReader;
-import java.io.IOException;
 import javax.vecmath.GMatrix;
 
 import org.opengis.referencing.cs.AxisDirection;
@@ -34,15 +27,11 @@ import org.opengis.referencing.operation.Matrix;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.MismatchedDimensionException;
 
-import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.CharSequences;
-import org.apache.sis.util.ComparisonMode;
-import org.apache.sis.math.MathFunctions;
 import org.apache.sis.math.Statistics;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.io.ContentFormatException;
-import org.geotoolkit.io.LineFormat;
 import org.apache.sis.internal.referencing.AxisDirections;
+import org.apache.sis.referencing.operation.matrix.Matrices;
 
 
 /**
@@ -65,7 +54,7 @@ import org.apache.sis.internal.referencing.AxisDirections;
  * @deprecated Moved to Apache SIS as {@link org.apache.sis.referencing.operation.matrix.Matrices#createDiagonal(int, int)}.
  */
 @Deprecated
-public class GeneralMatrix extends GMatrix implements XMatrix {
+public class GeneralMatrix extends GMatrix implements Matrix {
     /**
      * Serial number for inter-operability with different versions.
      */
@@ -146,29 +135,6 @@ public class GeneralMatrix extends GMatrix implements XMatrix {
     }
 
     /**
-     * Constructs a new matrix and copies the initial values from the parameter matrix.
-     *
-     * @param matrix The matrix to copy.
-     */
-    public GeneralMatrix(final GMatrix matrix) {
-        super(matrix);
-    }
-
-    /**
-     * Constructs a 3&times;3 matrix from the specified affine transform.
-     *
-     * @param transform The matrix to copy.
-     */
-    public GeneralMatrix(final AffineTransform transform) {
-        super(3,3, new double[] {
-            transform.getScaleX(), transform.getShearX(), transform.getTranslateX(),
-            transform.getShearY(), transform.getScaleY(), transform.getTranslateY(),
-            0,                     0,                     1
-        });
-        assert isAffine() : this;
-    }
-
-    /**
      * Constructs a transform that maps a source region to a destination region.
      * Axis order and direction are left unchanged.
      * <p>
@@ -201,33 +167,6 @@ public class GeneralMatrix extends GMatrix implements XMatrix {
         }
         setElement(dstDim, srcDim, 1);
         assert (srcDim != dstDim) || isAffine() : this;
-    }
-
-    /**
-     * Constructs a transform changing axis order and/or direction.
-     * For example, the transform may converts (NORTH,WEST) coordinates
-     * into (EAST,NORTH). Axis direction can be inverted only. For example,
-     * it is illegal to transform (NORTH,WEST) coordinates into (NORTH,DOWN).
-     * <p>
-     * If the source dimension is equal to the destination dimension,
-     * then the transform is affine. However, the following special cases
-     * are also handled:
-     * <p>
-     * <ul>
-     *   <li>If the target dimension is smaller than the source dimension,
-     *       extra axis are dropped. An exception is thrown if the target
-     *       contains some axis not found in the source.</li>
-     * </ul>
-     *
-     * @param  srcAxis The set of axis direction for source coordinate system.
-     * @param  dstAxis The set of axis direction for destination coordinate system.
-     * @throws IllegalArgumentException If {@code dstAxis} contains some axis
-     *         not found in {@code srcAxis}, or if some colinear axis were found.
-     */
-    public GeneralMatrix(final AxisDirection[] srcAxis,
-                         final AxisDirection[] dstAxis)
-    {
-        this(null, srcAxis, null, dstAxis, false);
     }
 
     /**
@@ -346,53 +285,8 @@ public class GeneralMatrix extends GMatrix implements XMatrix {
     }
 
     /**
-     * Retrieves the specifiable values in the transformation matrix into a
-     * 2-dimensional array of double precision values. The values are stored
-     * into the 2-dimensional array using the row index as the first subscript
-     * and the column index as the second. Values are copied; changes to the
-     * returned array will not change this matrix.
-     *
-     * @param matrix The matrix to extract elements from.
-     * @return The matrix elements.
-     */
-    public static double[][] getElements(final Matrix matrix) {
-        if (matrix instanceof GeneralMatrix) {
-            return ((GeneralMatrix) matrix).getElements();
-        }
-        final int numCol = matrix.getNumCol();
-        final double[][] rows = new double[matrix.getNumRow()][];
-        for (int j=0; j<rows.length; j++) {
-            final double[] row;
-            rows[j] = row = new double[numCol];
-            for (int i=0; i<row.length; i++) {
-                row[i] = matrix.getElement(j, i);
-            }
-        }
-        return rows;
-    }
-
-    /**
-     * Retrieves the specifiable values in the transformation matrix into a
-     * 2-dimensional array of double precision values. The values are stored
-     * into the 2-dimensional array using the row index as the first subscript
-     * and the column index as the second. Values are copied; changes to the
-     * returned array will not change this matrix.
-     *
-     * @return The matrix elements.
-     */
-    public final double[][] getElements() {
-        final int numCol = getNumCol();
-        final double[][] rows = new double[getNumRow()][];
-        for (int j=0; j<rows.length; j++) {
-            getRow(j, rows[j]=new double[numCol]);
-        }
-        return rows;
-    }
-
-    /**
      * {@inheritDoc}
      */
-    @Override
     public final boolean isAffine() {
         int dimension  = getNumRow();
         if (dimension != getNumCol()) {
@@ -425,175 +319,14 @@ public class GeneralMatrix extends GMatrix implements XMatrix {
             }
         }
         assert isAffine() : this;
-        assert isIdentity(0) : this;
-        return true;
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @since 2.3.1
-     */
-    @Override
-    public final boolean isIdentity(double tolerance) {
-        return isIdentity(this, tolerance);
-    }
-
-    /**
-     * Returns {@code true} if the matrix is an identity matrix using the provided tolerance.
-     */
-    static boolean isIdentity(final Matrix matrix, double tolerance) {
-        tolerance = Math.abs(tolerance);
-        final int numRow = matrix.getNumRow();
-        final int numCol = matrix.getNumCol();
-        if (numRow != numCol) {
-            return false;
-        }
-        for (int j=0; j<numRow; j++) {
-            for (int i=0; i<numCol; i++) {
-                double e = matrix.getElement(j,i);
-                if (i == j) {
-                    e--;
-                }
-                if (!(Math.abs(e) <= tolerance)) {  // Uses '!' in order to catch NaN values.
-                    return false;
-                }
-            }
-        }
-        // Note: we can't assert matrix.isAffine().
         return true;
     }
 
     /**
      * {@inheritDoc}
      */
-    @Override
-    public final void multiply(final Matrix matrix) {
-        final GMatrix m;
-        if (matrix instanceof GMatrix) {
-            m = (GMatrix) matrix;
-        } else {
-            m = new GeneralMatrix(matrix);
-        }
-        mul(m);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void normalizeColumns() {
-        final double[] column = new double[getNumRow()];
-        for (int i=getNumCol(); --i>=0;) {
-            getColumn(i, column);
-            final double m = MathFunctions.magnitude(column);
-            for (int j=0; j<column.length; j++) {
-                column[j] /= m;
-            }
-            setColumn(i, column);
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public boolean equals(final Matrix matrix, final double tolerance) {
         return Matrices.equals(this, matrix, tolerance, false);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean equals(final Object object, final ComparisonMode mode) {
-        return (object instanceof Matrix) && Matrices.equals(this, (Matrix) object, mode);
-    }
-
-    /**
-     * Returns an affine transform for this matrix.
-     * This is a convenience method for inter-operability with Java2D.
-     *
-     * @return The affine transform for this matrix.
-     * @throws IllegalStateException if this matrix is not 3&times;3,
-     *         or if the last row is not {@code [0 0 1]}.
-     */
-    public final AffineTransform toAffineTransform2D() throws IllegalStateException {
-        int check;
-        if ((check=getNumRow()) != 3 || (check=getNumCol()) != 3) {
-            throw new IllegalStateException(Errors.format(
-                    Errors.Keys.NOT_TWO_DIMENSIONAL_1, check-1));
-        }
-        if (isAffine()) {
-            return new AffineMatrix3(getElement(0,0), getElement(1,0),
-                                     getElement(0,1), getElement(1,1),
-                                     getElement(0,2), getElement(1,2));
-        }
-        throw new IllegalStateException(Errors.format(Errors.Keys.NOT_AN_AFFINE_TRANSFORM));
-    }
-
-    /**
-     * Loads data from the specified file until the first blank line or end of file. The
-     * encoding is assumed to be the platform default and the locale is {@link Locale#US US}.
-     *
-     * @param  file The file to read.
-     * @return The matrix parsed from the file.
-     * @throws IOException if an error occurred while reading the file.
-     *
-     * @since 2.2
-     */
-    public static GeneralMatrix load(final File file) throws IOException {
-        try (BufferedReader in = new BufferedReader(new FileReader(file))) {
-            return load(in, Locale.US);
-        }
-    }
-
-    /**
-     * Loads data from the specified stream until the first blank line or end of stream.
-     *
-     * @param  in The stream to read.
-     * @param  locale The locale for the numbers to be parsed.
-     * @return The matrix parsed from the stream.
-     * @throws IOException if an error occurred while reading the stream.
-     *
-     * @since 2.2
-     */
-    public static GeneralMatrix load(final BufferedReader in, final Locale locale) throws IOException {
-        final LineFormat parser = new LineFormat(locale);
-        double[] data = null;
-        double[] row  = null;
-        int   numRow  = 0;
-        int   numData = 0;
-        String line;
-        while ((line = in.readLine()) != null) {
-            if ((line=line.trim()).isEmpty()) {
-                if (numRow == 0) {
-                    continue;
-                } else {
-                    break;
-                }
-            }
-            try {
-                parser.setLine(line);
-                row = parser.getValues(row);
-            } catch (ParseException exception) {
-                throw new ContentFormatException(exception.getLocalizedMessage(), exception);
-            }
-            final int upper = numData + row.length;
-            if (data == null) {
-                // Assumes a square matrix.
-                data = new double[numData * numData];
-            }
-            if (upper > data.length) {
-                data = Arrays.copyOf(data, upper*2);
-            }
-            System.arraycopy(row, 0, data, numData, row.length);
-            numData = upper;
-            numRow++;
-            assert numData % numRow == 0 : numData;
-        }
-        data = (data != null) ? ArraysExt.resize(data, numData) : ArraysExt.EMPTY_DOUBLE;
-        return new GeneralMatrix(numRow, numData/numRow, data);
     }
 
     /**
