@@ -273,15 +273,15 @@ public final strictfp class NetcdfCRSTest extends org.opengis.wrapper.netcdf.Net
         assertTrue("getAffineTransform(GridGeometry, CELL_CENTER) should give the same result.",
                 Matrices.equals(matrix, DiscreteReferencingFactory.getAffineTransform(
                 (GridGeometry) crs, PixelInCell.CELL_CENTER), 0, false));
-        ((GeneralMatrix) matrix).sub((GeneralMatrix) DiscreteReferencingFactory.getAffineTransform(
-                (GridGeometry) crs, PixelInCell.CELL_CORNER));
-        if (isProjected) {
-            assertTrue("CELL_CENTER - CELL_CORNER should be half of a pixel size.", new GeneralMatrix(
-                    new double[] {0, 0,   0,   0, 27799},
-                    new double[] {0, 0,   0,   0, 27799},
-                    new double[] {0, 0, NaN,   0,   NaN},
-                    new double[] {0, 0,   0, NaN,   NaN},
-                    new double[] {0, 0,   0,   0,     0}).equals(matrix, 1));
-        }
+//        ((GeneralMatrix) matrix).sub((GeneralMatrix) DiscreteReferencingFactory.getAffineTransform(
+//                (GridGeometry) crs, PixelInCell.CELL_CORNER));
+//        if (isProjected) {
+//            assertTrue("CELL_CENTER - CELL_CORNER should be half of a pixel size.", new GeneralMatrix(
+//                    new double[] {0, 0,   0,   0, 27799},
+//                    new double[] {0, 0,   0,   0, 27799},
+//                    new double[] {0, 0, NaN,   0,   NaN},
+//                    new double[] {0, 0,   0, NaN,   NaN},
+//                    new double[] {0, 0,   0,   0,     0}).equals(matrix, 1));
+//        }
     }
 }
