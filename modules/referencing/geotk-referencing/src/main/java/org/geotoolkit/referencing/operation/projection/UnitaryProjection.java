@@ -474,14 +474,20 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
          */
         @Override
         public Matrix transform(final double[] srcPts, final int srcOff,
-                                final double[] dstPts, final int dstOff,
+                                      double[] dstPts,       int dstOff,
                                 final boolean derivate) throws TransformException
         {
-            inverseTransform(srcPts, srcOff, dstPts, dstOff);
-            if (derivate) {
+            if (!derivate) {
+                inverseTransform(srcPts, srcOff, dstPts, dstOff);
+                return null;
+            } else {
+                if (dstPts == null) {
+                    dstPts = new double[2];
+                    dstOff = 0;
+                }
+                inverseTransform(srcPts, srcOff, dstPts, dstOff);
                 return Matrices.invert(UnitaryProjection.this.transform(dstPts, dstOff, null, 0, true));
             }
-            return null;
         }
     }
 
