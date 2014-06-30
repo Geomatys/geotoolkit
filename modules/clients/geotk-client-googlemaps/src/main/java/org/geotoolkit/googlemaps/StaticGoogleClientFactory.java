@@ -30,6 +30,8 @@ import org.geotoolkit.client.map.CachedPyramidSet;
 import org.geotoolkit.coverage.CoverageStore;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
+import org.geotoolkit.storage.DataType;
+import org.geotoolkit.storage.FactoryMetadata;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.identification.Identification;
 import org.opengis.parameter.*;
@@ -113,4 +115,13 @@ public class StaticGoogleClientFactory extends AbstractClientFactory implements 
         throw new DataStoreException("Can not create new Google Static coverage store.");
     }
 
+    @Override
+    public FactoryMetadata getMetadata() {
+        return new FactoryMetadata() {
+            @Override
+            public DataType getDataType() {
+                return DataType.GRID;
+            }
+        };
+    }
 }

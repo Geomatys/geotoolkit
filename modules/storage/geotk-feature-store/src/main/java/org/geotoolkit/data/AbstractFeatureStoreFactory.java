@@ -26,6 +26,8 @@ import org.geotoolkit.feature.FeatureUtilities;
 import org.apache.sis.metadata.iso.quality.DefaultConformanceResult;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.Parameters;
+import org.geotoolkit.storage.DataType;
+import org.geotoolkit.storage.FactoryMetadata;
 import org.geotoolkit.util.collection.MapUtilities;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.iso.ResourceInternationalString;
@@ -269,7 +271,7 @@ public abstract class AbstractFeatureStoreFactory extends Factory implements Fea
     }
 
     /**
-     * Convinient method to open a parameter descriptor with an additional alias.
+     * Convenient method to open a parameter descriptor with an additional alias.
      */
     protected static <T> ParameterDescriptor<T> createDescriptor(final String name,
             final CharSequence alias, final CharSequence remarks, final Class<T> clazz,
@@ -283,4 +285,13 @@ public abstract class AbstractFeatureStoreFactory extends Factory implements Fea
                 possibleValues, defaultValue, min, max, unit, requiered);
     }
 
+    @Override
+    public FactoryMetadata getMetadata() {
+        return new FactoryMetadata() {
+            @Override
+            public DataType getDataType() {
+                return DataType.VECTOR;
+            }
+        };
+    }
 }

@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.Map;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.storage.DataStoreFactory;
 import org.opengis.metadata.identification.Identification;
 import org.opengis.metadata.quality.ConformanceResult;
 import org.opengis.parameter.ParameterDescriptorGroup;
@@ -57,97 +58,10 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public interface CoverageStoreFactory {
-
-
-    /**
-     * General information about this factory.
-     * If a given ParameterValueGroup has an identifier parameter set, it's value must
-     * be {@linkplain Identifier#getAuthority() identifier authority}, otherwise this
-     * factory will not support this ParameterValueGroup.
-     *
-     * @return The identification of this factory.
-     */
-    Identification getIdentification();
+public interface CoverageStoreFactory extends DataStoreFactory {
 
     /**
-     * Test to see if the implementation is available for use.
-     * This method ensures all the appropriate libraries to construct
-     * the DataAccess are available.
-     * <p>
-     * Most factories will simply return <code>true</code> as GeoToolkit will
-     * distribute the appropriate libraries. Though it's not a bad idea for
-     * CoverageStoreFactories to check to make sure that the  libraries are there.
-     * <p>
-     * One may ask how this is different than canProcess, and basically available
-     * is used by the CoverageStoreFinder getAvailableCoverageStore method, so that
-     * CoverageStores that can not even be used do not show up as options in gui
-     * applications.
-     *
-     * @return <tt>true</tt> if and only if this factory has all the
-     *         appropriate jars on the classpath to create CoverageStores.
-     */
-    ConformanceResult availability();
-
-    /**
-     * Name suitable for display to end user.
-     *
-     * <p>
-     * A display name for this data store type with severals traductions.
-     * </p>
-     *
-     * @return A short name suitable for display in a user interface. Must be an International string.
-     */
-    CharSequence getDisplayName();
-
-    /**
-     * Describe the nature of the datasource constructed by this factory.
-     *
-     * <p>
-     * A description of this data store type with severals translations.
-     * </p>
-     *
-     * @return A human readable description that is suitable for inclusion in a
-     *         list of available datasources.
-     */
-    CharSequence getDescription();
-
-    /**
-     * Metadata about the required Parameters (for createCoverageStore).
-     *
-     * @return ParameterDescriptorGroup describing the parameters for createCoverageStore
-     */
-    ParameterDescriptorGroup getParametersDescriptor();
-
-    /**
-     * Test to see if this factory is suitable for processing the data pointed
-     * to by the params map.
-     *
-     * <p>
-     * If this datasource requires a number of parameters then this method
-     * should check that they are all present and that they are all valid. If
-     * the datasource is a file reading data source then the extentions or
-     * mime types of any files specified should be checked. For example, a
-     * Shapefile datasource should check that the url param ends with shp,
-     * such tests should be case insensitive.
-     * </p>
-     *
-     * @param params The full set of information needed to construct a live
-     *        data source.
-     *
-     * @return boolean true if and only if this factory can process the resource
-     *         indicated by the param set and all the required params are
-     *         present.
-     */
-    boolean canProcess(Map<String, ? extends Serializable> params);
-
-    /**
-     * @see CoverageFactory#canProcess(org.opengis.parameter.ParameterValueGroup)
-     */
-    boolean canProcess(ParameterValueGroup params);
-
-    /**
-     * @see CoverageStoreFactory#createCoverage(org.opengis.parameter.ParameterValueGroup)
+     * @see CoverageStoreFactory#create(org.opengis.parameter.ParameterValueGroup)
      */
     CoverageStore open(Map<String, ? extends Serializable> params) throws DataStoreException;
 

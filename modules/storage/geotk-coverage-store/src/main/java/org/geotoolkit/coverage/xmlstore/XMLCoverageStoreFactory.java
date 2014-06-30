@@ -28,6 +28,8 @@ import org.geotoolkit.coverage.CoverageStore;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
+import org.geotoolkit.storage.DataType;
+import org.geotoolkit.storage.FactoryMetadata;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.identification.Identification;
 import org.opengis.parameter.ParameterDescriptor;
@@ -40,7 +42,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class XMLCoverageStoreFactory extends AbstractCoverageStoreFactory{
+public class XMLCoverageStoreFactory extends AbstractCoverageStoreFactory {
 
     /** factory identification **/
     public static final String NAME = "coverage-xml-pyramid";
@@ -112,5 +114,14 @@ public class XMLCoverageStoreFactory extends AbstractCoverageStoreFactory{
     public CoverageStore create(ParameterValueGroup params) throws DataStoreException {
         return open(params);
     }
-    
+
+    @Override
+    public FactoryMetadata getMetadata() {
+        return new FactoryMetadata() {
+            @Override
+            public DataType getDataType() {
+                return DataType.PYRAMID;
+            }
+        };
+    }
 }

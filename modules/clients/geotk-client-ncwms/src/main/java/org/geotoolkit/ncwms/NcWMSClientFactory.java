@@ -35,6 +35,8 @@ import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.security.ClientSecurity;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.iso.ResourceInternationalString;
+import org.geotoolkit.storage.DataType;
+import org.geotoolkit.storage.FactoryMetadata;
 import org.geotoolkit.wms.xml.WMSVersion;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.identification.Identification;
@@ -123,6 +125,16 @@ public class NcWMSClientFactory extends AbstractClientFactory implements Coverag
     @Override
     public CoverageStore create(ParameterValueGroup params) throws DataStoreException {
         throw new DataStoreException("Can not create new ncWMS coverage store.");
+    }
+
+    @Override
+    public FactoryMetadata getMetadata() {
+        return new FactoryMetadata() {
+            @Override
+            public DataType getDataType() {
+                return DataType.GRID;
+            }
+        };
     }
 
 }

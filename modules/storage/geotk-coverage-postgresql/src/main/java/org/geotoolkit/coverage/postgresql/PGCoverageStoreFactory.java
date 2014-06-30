@@ -35,6 +35,8 @@ import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.referencing.factory.epsg.EpsgInstaller;
+import org.geotoolkit.storage.DataType;
+import org.geotoolkit.storage.FactoryMetadata;
 import org.geotoolkit.util.FileUtilities;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.identification.Identification;
@@ -320,4 +322,13 @@ public class PGCoverageStoreFactory extends AbstractCoverageStoreFactory{
         return new DBCPDataSource(dataSource);
     }
 
+    @Override
+    public FactoryMetadata getMetadata() {
+        return new FactoryMetadata() {
+            @Override
+            public DataType getDataType() {
+                return DataType.PYRAMID;
+            }
+        };
+    }
 }

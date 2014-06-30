@@ -31,6 +31,8 @@ import org.geotoolkit.client.map.CachedPyramidSet;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.security.ClientSecurity;
+import org.geotoolkit.storage.DataType;
+import org.geotoolkit.storage.FactoryMetadata;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.identification.Identification;
 import org.opengis.parameter.ParameterDescriptor;
@@ -45,7 +47,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Johann Sorel (Puzzle-GIS)
  * @module pending
  */
-public class WMSCClientFactory extends AbstractClientFactory implements CoverageClientFactory{
+public class WMSCClientFactory extends AbstractClientFactory implements CoverageClientFactory {
 
     /** factory identification **/
     public static final String NAME = "wmsc";
@@ -125,4 +127,13 @@ public class WMSCClientFactory extends AbstractClientFactory implements Coverage
         throw new DataStoreException("Can not create new WMSC coverage store.");
     }
 
+    @Override
+    public FactoryMetadata getMetadata() {
+        return new FactoryMetadata() {
+            @Override
+            public DataType getDataType() {
+                return DataType.GRID;
+            }
+        };
+    }
 }

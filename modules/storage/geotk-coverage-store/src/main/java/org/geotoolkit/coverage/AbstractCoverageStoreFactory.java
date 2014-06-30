@@ -25,6 +25,8 @@ import org.geotoolkit.feature.FeatureUtilities;
 import org.apache.sis.metadata.iso.quality.DefaultConformanceResult;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.Parameters;
+import org.geotoolkit.storage.DataType;
+import org.geotoolkit.storage.FactoryMetadata;
 import org.geotoolkit.util.collection.MapUtilities;
 import org.opengis.metadata.quality.ConformanceResult;
 import org.opengis.parameter.GeneralParameterValue;
@@ -231,6 +233,16 @@ public abstract class AbstractCoverageStoreFactory extends Factory implements Co
         if(!valid){
             throw new DataStoreException("Parameter values not supported by this factory.");
         }
+    }
+
+    @Override
+    public FactoryMetadata getMetadata() {
+        return new FactoryMetadata() {
+            @Override
+            public DataType getDataType() {
+                return DataType.GRID;
+            }
+        };
     }
 
 }

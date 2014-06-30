@@ -19,6 +19,7 @@ package org.geotoolkit.data;
 import java.io.Serializable;
 import java.util.Map;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.storage.DataStoreFactory;
 import org.opengis.metadata.identification.Identification;
 import org.opengis.metadata.quality.ConformanceResult;
 import org.opengis.parameter.ParameterDescriptorGroup;
@@ -39,61 +40,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public interface FeatureStoreFactory {
-
-    /**
-     * General information about this factory. 
-     * If a given ParameterValueGroup has an identifier parameter set, it's value must
-     * be {@linkplain Identifier#getAuthority() identifier authority}, otherwise this
-     * factory will not support this ParameterValueGroup.
-     *
-     * @return The identification of this factory.
-     */
-    Identification getIdentification();
-    
-    /**
-     * Check if the factory has all requieres resources.
-     * Some implementation may requiere some native library or jar file
-     * available only at runtime.
-     * 
-     * @return ConformanceResult
-     */
-    ConformanceResult availability();
-
-    /**
-     * Name suitable for display to end user.
-     *
-     * <p>
-     * A multilingual display name for this data store type.
-     * </p>
-     *
-     * @return A short name suitable for display in a user interface.
-     */
-    CharSequence getDisplayName();
-
-    /**
-     * Description of the factory, suitable for user interface.
-     *
-     * <p>
-     * A multilingual description of this factory.
-     * </p>
-     *
-     * @return A description suitable for display in the user interface.
-     */
-    CharSequence getDescription();
-
-    /**
-     * Description of the requiered parameters to open or open a new instance
-     * of feature store.
-     * 
-     * @return ParameterDescriptorGroup
-     */
-    ParameterDescriptorGroup getParametersDescriptor();
-
-    /**
-     * @see FeatureStoreFactory#canProcess(org.opengis.parameter.ParameterValueGroup) 
-     */
-    boolean canProcess(Map<String, ? extends Serializable> params);
+public interface FeatureStoreFactory extends DataStoreFactory {
 
     /**
      * Check if this factory can process the given set of parameters.

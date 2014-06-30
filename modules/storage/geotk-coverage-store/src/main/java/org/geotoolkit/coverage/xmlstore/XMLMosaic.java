@@ -137,7 +137,7 @@ public class XMLMosaic implements GridMosaic {
                 tileExist = new BitSet(gridWidth * gridHeight);
             }
         } else {
-            tileExist = new BitSet(gridWidth * gridHeight);
+            tileExist = cacheTileState? null : new BitSet(gridWidth * gridHeight);
         }
 
         if (emptyMask != null && !emptyMask.isEmpty()) {
@@ -148,7 +148,7 @@ public class XMLMosaic implements GridMosaic {
                 tileEmpty = new BitSet(gridWidth * gridHeight);
             }
         } else {
-            tileEmpty = new BitSet(gridWidth * gridHeight);
+            tileEmpty = cacheTileState? null : new BitSet(gridWidth * gridHeight);
         }
 
         /* Here is an handy check, mainly for retro-compatibility purpose. We should only get an empty bit set if the
@@ -156,7 +156,7 @@ public class XMLMosaic implements GridMosaic {
          * that we've got an old version of pyramid descriptor, or it is corrupted. In such cases, we must cache tile
          * state in order to retrieve existing ones.
          */
-        if (tileExist.isEmpty() && getFolder().isDirectory()) {
+        if (tileExist != null && tileExist.isEmpty() && getFolder().isDirectory()) {
             try (DirectoryStream dStream = Files.newDirectoryStream(folder.toPath())) {
                 if (dStream.iterator().hasNext()) {
                     cacheTileState = true;
@@ -541,7 +541,7 @@ public class XMLMosaic implements GridMosaic {
                 Raster raster = image.getTile(idx, idy);
 
                 //check if image is empty
-                if(raster == null || isEmpty(raster)){
+                if(tileEmpty != null && (raster == null || isEmpty(raster))) {
                     synchronized(tileExist){
                         tileExist.set(tileIndex, true);
                     }
@@ -574,11 +574,13 @@ public class XMLMosaic implements GridMosaic {
                     writer.write(buffer);
                 }
 
-                synchronized(tileExist){
-                    tileExist.set(tileIndex, true);
-                }
-                synchronized(tileEmpty){
-                    tileEmpty.set(tileIndex, false);
+                if (tileExist != null) {
+                    synchronized(tileExist){
+                        tileExist.set(tileIndex, true);
+                    }
+                    synchronized(tileEmpty){
+                        tileEmpty.set(tileIndex, false);
+                    }
                 }
 
             }catch(Exception ex){

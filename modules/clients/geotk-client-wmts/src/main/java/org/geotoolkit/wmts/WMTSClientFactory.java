@@ -34,6 +34,8 @@ import org.geotoolkit.coverage.CoverageStore;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
+import org.geotoolkit.storage.DataType;
+import org.geotoolkit.storage.FactoryMetadata;
 import org.geotoolkit.wmts.xml.WMTSVersion;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.identification.Identification;
@@ -138,4 +140,13 @@ public class WMTSClientFactory extends AbstractClientFactory implements Coverage
         throw new DataStoreException("Can not create new WMTS coverage store.");
     }
 
+    @Override
+    public FactoryMetadata getMetadata() {
+        return new FactoryMetadata() {
+            @Override
+            public DataType getDataType() {
+                return DataType.PYRAMID;
+            }
+        };
+    }
 }
