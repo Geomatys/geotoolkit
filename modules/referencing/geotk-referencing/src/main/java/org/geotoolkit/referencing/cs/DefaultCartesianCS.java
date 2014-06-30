@@ -35,7 +35,6 @@ import org.apache.sis.measure.Units;
 import org.geotoolkit.measure.Measure;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
-import org.geotoolkit.referencing.IdentifiedObjects;
 
 import static java.util.Collections.singletonMap;
 import static org.geotoolkit.referencing.cs.AbstractCS.name;
@@ -331,6 +330,6 @@ public class DefaultCartesianCS extends org.apache.sis.referencing.cs.DefaultCar
         if (axes == null) {
             return this;
         }
-        return create(IdentifiedObjects.getProperties(this, null), axes);
+        return create(org.geotoolkit.referencing.IdentifiedObjects.getProperties(this, null), axes);
     }
 }

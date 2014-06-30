@@ -327,7 +327,8 @@ public class DefaultGeographicCRS extends org.apache.sis.referencing.crs.Default
                 if (oldCS == newCS) {
                     crs = this;
                 } else {
-                    crs = new DefaultGeographicCRS(IdentifiedObjects.getProperties(this, null), getDatum(), newCS);
+                    crs = new DefaultGeographicCRS(
+                            org.geotoolkit.referencing.IdentifiedObjects.getProperties(this, null), getDatum(), newCS);
                     crs.shifted = shifted;
                     shifted[ordinal ^ CRSUtilities.AXIS_RANGE_RECIPROCAL_MASK] = this;
                 }

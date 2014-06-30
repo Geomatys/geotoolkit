@@ -30,7 +30,6 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.OperationMethod;
 
 import org.apache.sis.io.wkt.Formatter;
-import org.geotoolkit.referencing.IdentifiedObjects;
 
 import org.apache.sis.internal.referencing.WKTUtilities;
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
@@ -77,7 +76,8 @@ public class DefiningConversion extends DefaultConversion {
     private static OperationMethod getOperationMethod(final ParameterValueGroup parameters) {
         ensureNonNull("parameters", parameters);
         final ParameterDescriptorGroup descriptor = parameters.getDescriptor();
-        return new DefaultOperationMethod(IdentifiedObjects.getProperties(descriptor, null), 2, 2, descriptor);
+        return new DefaultOperationMethod(
+                org.geotoolkit.referencing.IdentifiedObjects.getProperties(descriptor, null), 2, 2, descriptor);
     }
 
     /**

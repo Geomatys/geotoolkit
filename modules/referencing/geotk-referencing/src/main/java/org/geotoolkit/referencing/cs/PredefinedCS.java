@@ -29,7 +29,6 @@ import org.opengis.referencing.cs.*;
 
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.referencing.IdentifiedObjects;
 import org.apache.sis.referencing.cs.DefaultAffineCS;
 
 
@@ -210,7 +209,7 @@ final class PredefinedCS extends Static implements Comparator<CoordinateSystem> 
         if (!changed) {
             return cs;
         }
-        final Map<String,?> properties = IdentifiedObjects.getProperties(cs, null);
+        final Map<String,?> properties = org.geotoolkit.referencing.IdentifiedObjects.getProperties(cs, null);
         if (cs instanceof CartesianCS) {
             return DefaultCartesianCS.create(properties, axis);
         }

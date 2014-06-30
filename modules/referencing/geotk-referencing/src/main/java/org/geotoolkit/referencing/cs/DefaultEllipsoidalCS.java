@@ -383,7 +383,7 @@ public class DefaultEllipsoidalCS extends org.apache.sis.referencing.cs.DefaultE
                 for (int i=axes.length; --i>=0;) {
                     axes[i] = (i != longitudeAxis) ? getAxis(i) : newAxis;
                 }
-                shifted = create(IdentifiedObjects.getProperties(this, null), axes);
+                shifted = create(org.geotoolkit.referencing.IdentifiedObjects.getProperties(this, null), axes);
                 shifted.shifted = this;
             }
         }
@@ -411,6 +411,6 @@ public class DefaultEllipsoidalCS extends org.apache.sis.referencing.cs.DefaultE
         if (axes == null) {
             return this;
         }
-        return create(IdentifiedObjects.getProperties(this, null), axes);
+        return create(org.geotoolkit.referencing.IdentifiedObjects.getProperties(this, null), axes);
     }
 }

@@ -33,7 +33,6 @@ import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.referencing.datum.Datum;
 
-import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.cs.AxisRangeType;
 import org.apache.sis.referencing.AbstractReferenceSystem;
 import org.geotoolkit.internal.referencing.CRSUtilities;
@@ -192,7 +191,7 @@ public class DefaultCompoundCRS extends org.apache.sis.referencing.crs.DefaultCo
                     }
                 }
                 if (modified) {
-                    crs = new DefaultCompoundCRS(IdentifiedObjects.getProperties(this, null), cmp);
+                    crs = new DefaultCompoundCRS(org.geotoolkit.referencing.IdentifiedObjects.getProperties(this, null), cmp);
                     crs.shifted = shifted;
                     shifted[ordinal ^ CRSUtilities.AXIS_RANGE_RECIPROCAL_MASK] = this;
                 } else {

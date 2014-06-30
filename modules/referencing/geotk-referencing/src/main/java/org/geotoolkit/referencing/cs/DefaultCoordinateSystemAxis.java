@@ -955,7 +955,7 @@ public class DefaultCoordinateSystemAxis extends org.apache.sis.referencing.cs.D
             return this;
         }
         final UnitConverter converter = unit.getConverterToAny(newUnit);
-        return new DefaultCoordinateSystemAxis(IdentifiedObjects.getProperties(this),
+        return new DefaultCoordinateSystemAxis(org.geotoolkit.referencing.IdentifiedObjects.getProperties(this, null),
                     getAbbreviation(), getDirection(), newUnit,
                     converter.convert(getMinimumValue()), converter.convert(getMaximumValue()), getRangeMeaning());
     }
