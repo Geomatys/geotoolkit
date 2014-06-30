@@ -28,7 +28,6 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.referencing.operation.MathTransforms;
-import org.geotoolkit.referencing.operation.matrix.XMatrix;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
 
 
@@ -79,7 +78,7 @@ public class RequestGenerator {
     /**
      * The domain <cite>grid to CRS</cite> transform, represented as a matrix.
      */
-    private final XMatrix gridToCRS;
+    private final Matrix gridToCRS;
 
     /**
      * The resolution of the domain.
@@ -109,7 +108,7 @@ public class RequestGenerator {
     public RequestGenerator(final GeneralGridGeometry domain, final int minSize, final int maxSize) {
         this.random    = new Random();
         this.domain    = domain;
-        this.gridToCRS = (XMatrix) ((LinearTransform) domain.getGridToCRS(PixelInCell.CELL_CORNER)).getMatrix();
+        this.gridToCRS = ((LinearTransform) domain.getGridToCRS(PixelInCell.CELL_CORNER)).getMatrix();
         this.domainResolution = getResolution(domain);
         final GridEnvelope gridExtent = domain.getExtent();
         final int dimension = gridExtent.getDimension();
@@ -265,7 +264,7 @@ public class RequestGenerator {
         final int dimension = gridExtent.getDimension();
         final int[] lower = new int[dimension];
         final int[] upper = new int[dimension];
-        final XMatrix mx  = gridToCRS.clone();
+        final Matrix mx  = gridToCRS.clone();
         for (int i=0; i<dimension; i++) {
             /*
              * Select a scale between 1 and maximumScale,
