@@ -20,12 +20,14 @@ package org.geotoolkit.internal.image.io;
 import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.coverage.grid.GridGeometry;
 import org.opengis.referencing.crs.ProjectedCRS;
+import org.opengis.referencing.operation.Matrix;
 
 import org.apache.sis.measure.Range;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.cs.DiscreteCoordinateSystemAxis;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.geotoolkit.referencing.operation.matrix.Matrix3;
+import org.apache.sis.referencing.operation.matrix.Matrices;
 
 import org.junit.*;
 
@@ -266,7 +268,7 @@ public final strictfp class IrregularAxesConverterTest {
         final GridEnvelope range = geometry.getExtent();
         assertArrayEquals("GridEnvelope low",  new int[] {  0,   0}, range.getLow ().getCoordinateValues());
         assertArrayEquals("GridEnvelope high", new int[] {719, 498}, range.getHigh().getCoordinateValues());
-        final Matrix3 gridToCRS = (Matrix3) ((LinearTransform) geometry.getGridToCRS()).getMatrix();
-        assertTrue(gridToCRS.epsilonEquals(new Matrix3(55597, 0, -19959489, 0, 55597, -13843771, 0, 0, 1), 1));
+        final Matrix gridToCRS = ((LinearTransform) geometry.getGridToCRS()).getMatrix();
+        assertTrue(Matrices.equals(gridToCRS, new Matrix3(55597, 0, -19959489, 0, 55597, -13843771, 0, 0, 1), 1, false));
     }
 }
