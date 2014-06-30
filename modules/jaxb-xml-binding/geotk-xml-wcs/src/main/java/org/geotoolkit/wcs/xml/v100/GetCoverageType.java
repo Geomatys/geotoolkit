@@ -35,7 +35,7 @@ import org.geotoolkit.wcs.xml.GetCoverage;
 
 import org.geotoolkit.wcs.xml.StringUtilities;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
 import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
 
@@ -50,9 +50,9 @@ import org.opengis.referencing.crs.VerticalCRS;
 
 /**
  * <p>An xml binding class for a getCoverage request.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -70,7 +70,7 @@ import org.opengis.referencing.crs.VerticalCRS;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
+ *
  * @author Guilhem Legal
  * @author Cédric Briançon (Geomatys)
  * @module pending
@@ -106,14 +106,14 @@ public class GetCoverageType implements GetCoverage {
      */
     GetCoverageType() {
     }
-    
+
     /**
      * Build a new GetCoverage request (1.0.0)
      */
     public GetCoverageType(final String sourceCoverage, final DomainSubsetType domainSubset,
             final RangeSubsetType rangeSubset, final String interpolationMethod,
             final OutputType output) {
-        
+
         this.domainSubset        = domainSubset;
         this.interpolationMethod = interpolationMethod;
         this.output              = output;
@@ -121,7 +121,7 @@ public class GetCoverageType implements GetCoverage {
         this.service             = "WCS";
         this.sourceCoverage      = sourceCoverage;
         this.version             = "1.0.0";
-        
+
     }
     /**
      * Gets the value of the sourceCoverage property.
@@ -148,7 +148,7 @@ public class GetCoverageType implements GetCoverage {
 
     /**
      * Spatial interpolation method to be used in resampling data from its original
-     * form to the requested CRS and/or grid size. 
+     * form to the requested CRS and/or grid size.
      * Method shall be among those listed for the requested coverage in the DescribeCoverage response.
      */
     @Override
@@ -182,7 +182,7 @@ public class GetCoverageType implements GetCoverage {
     public void setService(final String value) {
         this.service = value;
     }
-    
+
     /**
      * Gets the value of the version property.
      */
@@ -198,7 +198,7 @@ public class GetCoverageType implements GetCoverage {
     public void setVersion(final String value) {
         this.version = value;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -209,7 +209,8 @@ public class GetCoverageType implements GetCoverage {
         {
             return null;
         }
-        final CoordinateReferenceSystem objCrs = CRS.decode(domainSubset.getSpatialSubSet().getEnvelope().getSrsName(), true);
+        final CoordinateReferenceSystem objCrs = org.geotoolkit.referencing.CRS.decode(
+                domainSubset.getSpatialSubSet().getEnvelope().getSrsName(), true);
         final List<DirectPositionType> positions = domainSubset.getSpatialSubSet().getEnvelope().getPos();
 
         /*
@@ -256,7 +257,7 @@ public class GetCoverageType implements GetCoverage {
         objEnv.setRange(1, lows.getValue().get(1), highs.getValue().get(1));
 
         // If the CRS has a vertical part, then the envelope to return should be a 3D one.
-        if (CRS.getVerticalCRS(crs) != null) {
+        if (CRS.getVerticalComponent(crs, true) != null) {
             objEnv.setRange(2, lows.getValue().get(2), highs.getValue().get(2));
         }
         return objEnv;
@@ -292,7 +293,7 @@ public class GetCoverageType implements GetCoverage {
         if (output == null || output.getCrs() == null || output.getCrs().getValue() == null) {
             return null;
         }
-        final CoordinateReferenceSystem objCrs = CRS.decode(output.getCrs().getValue());
+        final CoordinateReferenceSystem objCrs = org.geotoolkit.referencing.CRS.decode(output.getCrs().getValue());
         final List<DirectPositionType> positions = domainSubset.getSpatialSubSet().getEnvelope().getPos();
 
         /*

@@ -30,7 +30,7 @@ import org.opengis.parameter.InvalidParameterNameException;
 import org.opengis.parameter.InvalidParameterCardinalityException;
 
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.referencing.IdentifiedObjects;
+import org.apache.sis.referencing.IdentifiedObjects;
 
 
 /**
@@ -124,7 +124,7 @@ final class ParameterValueList extends AbstractList<GeneralParameterValue>
              * the parameter name was not found, or the parameter descriptor doesn't matches.
              */
             for (final GeneralParameterDescriptor descriptor : descriptors) {
-                if (IdentifiedObjects.nameMatches(descriptor, name)) {
+                if (IdentifiedObjects.isHeuristicMatchForName(descriptor, name)) {
                     /*
                      * Found a matching name. Consequently, the operation failed because
                      * the descriptor was illegal.
@@ -155,7 +155,7 @@ final class ParameterValueList extends AbstractList<GeneralParameterValue>
                 final GeneralParameterValue oldValue = values.get(i);
                 final GeneralParameterDescriptor oldDescriptor = oldValue.getDescriptor();
                 if (type.equals(oldDescriptor)) {
-                    assert IdentifiedObjects.nameMatches(oldDescriptor, name) : parameter;
+                    assert IdentifiedObjects.isHeuristicMatchForName(oldDescriptor, name) : parameter;
                     final boolean same = parameter.equals(oldValue);
                     values.set(i, parameter);
                     return !same;
@@ -168,7 +168,7 @@ final class ParameterValueList extends AbstractList<GeneralParameterValue>
              */
             int count = 0;
             for (final GeneralParameterValue value : values) {
-                if (IdentifiedObjects.nameMatches(value.getDescriptor(), name)) {
+                if (IdentifiedObjects.isHeuristicMatchForName(value.getDescriptor(), name)) {
                     count++;
                 }
             }
@@ -202,7 +202,7 @@ final class ParameterValueList extends AbstractList<GeneralParameterValue>
         int count = 0;
         final String name = type.getName().getCode();
         for (final GeneralParameterValue value : values) {
-            if (IdentifiedObjects.nameMatches(value.getDescriptor(), name)) {
+            if (IdentifiedObjects.isHeuristicMatchForName(value.getDescriptor(), name)) {
                 count++;
             }
         }

@@ -43,7 +43,7 @@ import org.geotoolkit.display.shape.DoubleDimension2D;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.internal.sql.table.SpatialDatabase;
 import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.Utilities;
 
@@ -311,17 +311,17 @@ public class CoverageEnvelope extends AbstractEnvelope implements Cloneable {
         }
         CoordinateReferenceSystem sourceCRS = envelope.getCoordinateReferenceSystem();
         CoordinateReferenceSystem targetCRS = getCoordinateReferenceSystem(
-                CRS.getHorizontalCRS(sourceCRS) != null,
-                CRS.getVerticalCRS  (sourceCRS) != null,
-                CRS.getTemporalCRS  (sourceCRS) != null);
+                CRS.getHorizontalComponent(sourceCRS)       != null,
+                CRS.getVerticalComponent  (sourceCRS, true) != null,
+                CRS.getTemporalComponent  (sourceCRS)       != null);
         if (targetCRS == null) {
             return false;
         }
-        final CoordinateOperationFactory factory = CRS.getCoordinateOperationFactory(true);
+        final CoordinateOperationFactory factory = org.geotoolkit.referencing.CRS.getCoordinateOperationFactory(true);
         try {
             final CoordinateOperation userToStandard = factory.createOperation(sourceCRS, targetCRS);
             if (!userToStandard.getMathTransform().isIdentity()) {
-                envelope = CRS.transform(userToStandard, envelope);
+                envelope = org.geotoolkit.referencing.CRS.transform(userToStandard, envelope);
             }
         } catch (FactoryException e) {
             throw new TransformException(Errors.format(Errors.Keys.CANT_TRANSFORM_ENVELOPE), e);

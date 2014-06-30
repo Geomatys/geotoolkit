@@ -36,7 +36,7 @@ import org.apache.sis.internal.referencing.AxisDirections;
 
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.lang.Workaround;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.geotoolkit.referencing.cs.AxisRangeType;
 import org.geotoolkit.referencing.cs.DefaultEllipsoidalCS;
 import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
@@ -136,23 +136,6 @@ public final class CRSUtilities extends Static {
     }
 
     /**
-     * Returns the unit used for all axis in the specified coordinate system.
-     * If not all axis uses the same unit, then this method returns {@code null}.
-     * This convenience method is often used for Well Know Text (WKT) formatting.
-     *
-     * @param cs The coordinate system for which to get the unit.
-     * @return The unit for all axis in the given coordinate system, or {@code null}.
-     *
-     * @since 2.2
-     *
-     * @deprecated Moved to {@link ReferencingUtilities}.
-     */
-    @Deprecated
-    public static Unit<?> getUnit(final CoordinateSystem cs) {
-        return ReferencingUtilities.getUnit(cs);
-    }
-
-    /**
      * Returns the dimension of the first coordinate reference system of the given type. The
      * {@code type} argument must be a sub-interface of {@link CoordinateReferenceSystem}.
      * If no such dimension is found, then this method returns {@code -1}.
@@ -205,7 +188,7 @@ public final class CRSUtilities extends Static {
                     crs = ((CompoundCRS) crs).getComponents().get(0);
                     // Continue the loop, examining only the first component.
                 } else {
-                    crs = CRS.getHorizontalCRS(crs);
+                    crs = CRS.getHorizontalComponent(crs);
                     if (crs == null) {
                         throw new TransformException(Errors.format(
                                 Errors.Keys.CANT_REDUCE_TO_TWO_DIMENSIONS_1, crs.getName()));
@@ -366,7 +349,7 @@ public final class CRSUtilities extends Static {
         if (geoDatum.getPrimeMeridian().getGreenwichLongitude() != 0) {
             geoDatum = new DefaultGeodeticDatum(geoDatum.getName().getCode(), geoDatum.getEllipsoid());
         } else if (crs instanceof GeographicCRS) {
-            if (CRS.equalsIgnoreMetadata(DefaultEllipsoidalCS.GEODETIC_2D, crs.getCoordinateSystem())) {
+            if (org.geotoolkit.referencing.CRS.equalsIgnoreMetadata(DefaultEllipsoidalCS.GEODETIC_2D, crs.getCoordinateSystem())) {
                 return (GeographicCRS) crs;
             }
         }
@@ -386,10 +369,10 @@ public final class CRSUtilities extends Static {
      */
     public static Measure getHorizontalResolution(final CoordinateReferenceSystem crs, double... resolution) {
         if (resolution != null) {
-            final SingleCRS horizontalCRS = CRS.getHorizontalCRS(crs);
+            final SingleCRS horizontalCRS = CRS.getHorizontalComponent(crs);
             if (horizontalCRS != null) {
                 final CoordinateSystem hcs = horizontalCRS.getCoordinateSystem();
-                final Unit<?> unit = getUnit(hcs);
+                final Unit<?> unit = ReferencingUtilities.getUnit(hcs);
                 if (unit != null) {
                     final int s = dimensionColinearWith(crs.getCoordinateSystem(), hcs);
                     if (s >= 0) {

@@ -27,7 +27,7 @@ import org.apache.sis.util.StringBuilders;
  * @version 3.12
  *
  * @see <a href="http://en.wikipedia.org/wiki/ANSI_escape_code">ANSI escape codes</a>
- * @see org.geotoolkit.io.wkt.Colors
+ * @see org.apache.sis.io.wkt.Colors
  *
  * @since 2.4
  * @module

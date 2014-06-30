@@ -34,8 +34,8 @@ import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.geometry.Envelope;
 
 import org.geotoolkit.test.referencing.WKT;
-import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.IdentifiedObjects;
+import org.apache.sis.referencing.CRS;
+import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.referencing.crs.AbstractCRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
@@ -487,12 +487,12 @@ public final strictfp class ThreadedEpsgFactoryTest extends EpsgFactoryTestBase 
         assertEquals(-5.20, bbox.getWestBoundLongitude(), EPS);
         assertEquals( 8.23, bbox.getEastBoundLongitude(), EPS);
 
-        final Envelope envelope = CRS.getEnvelope(crs);
+        final Envelope envelope = org.geotoolkit.referencing.CRS.getEnvelope(crs);
         assertEquals(46.944, envelope.getMinimum(0), 1E-3);
         assertEquals(56.777, envelope.getMaximum(0), 1E-3);
         assertEquals(-8.375, envelope.getMinimum(1), 1E-3);
         assertEquals( 6.548, envelope.getMaximum(1), 1E-3);
-        assertNull(CRS.getEnvelope(null));
+        assertNull(org.geotoolkit.referencing.CRS.getEnvelope(null));
 
         final DefaultGeographicBoundingBox rep = new DefaultGeographicBoundingBox();
         rep.setBounds(envelope);
@@ -788,8 +788,8 @@ public final strictfp class ThreadedEpsgFactoryTest extends EpsgFactoryTestBase 
     @Ignore
     public final void testEqualsApproximatively() throws FactoryException {
         assumeNotNull(factory);
-        final CoordinateReferenceSystem crs1 = CRS.parseWKT(WKT.PROJCS_LAMBERT_CONIC_NAD83);
-        final CoordinateReferenceSystem crs2 = CRS.decode("EPSG:26986");
+        final CoordinateReferenceSystem crs1 = org.geotoolkit.referencing.CRS.parseWKT(WKT.PROJCS_LAMBERT_CONIC_NAD83);
+        final CoordinateReferenceSystem crs2 = org.geotoolkit.referencing.CRS.decode("EPSG:26986");
         assertEqualsApproximatively(crs1, crs2, true);
     }
 
@@ -811,7 +811,7 @@ public final strictfp class ThreadedEpsgFactoryTest extends EpsgFactoryTestBase 
         /*
          * Tests that the cache is empty.
          */
-        final CoordinateReferenceSystem crs = CRS.parseWKT(WKT.GEOGCS_WGS84_YX);
+        final CoordinateReferenceSystem crs = org.geotoolkit.referencing.CRS.parseWKT(WKT.GEOGCS_WGS84_YX);
         finder.setFullScanAllowed(false);
         assertNull("Should not find without a full scan, because the WKT contains no identifier " +
                    "and the CRS name is ambiguous (more than one EPSG object have this name).",
@@ -865,7 +865,7 @@ public final strictfp class ThreadedEpsgFactoryTest extends EpsgFactoryTestBase 
                 "   UNIT[“m”, 1.0],\n" +
                 "   AXIS[“Northing”, NORTH],\n" +
                 "   AXIS[“Easting”, EAST]]");
-        final CoordinateReferenceSystem crs = CRS.parseWKT(wkt);
+        final CoordinateReferenceSystem crs = org.geotoolkit.referencing.CRS.parseWKT(wkt);
 
         finder.setFullScanAllowed(false);
         assertNull("Should not find the CRS without a full scan.", finder.find(crs));
@@ -922,7 +922,7 @@ public final strictfp class ThreadedEpsgFactoryTest extends EpsgFactoryTestBase 
                 "   UNIT[“m”, 1.0],\n" +
                 "   AXIS[“Northing”, NORTH],\n" +
                 "   AXIS[“Easting”, EAST]]");
-        final CoordinateReferenceSystem crs = CRS.parseWKT(wkt);
+        final CoordinateReferenceSystem crs = org.geotoolkit.referencing.CRS.parseWKT(wkt);
         final IdentifiedObjectFinder finder = factory.getIdentifiedObjectFinder(CoordinateReferenceSystem.class);
         IdentifiedObject find = finder.find(crs);
         assertNull("Should not find the CRS without approximative mode.", find);
@@ -949,9 +949,9 @@ public final strictfp class ThreadedEpsgFactoryTest extends EpsgFactoryTestBase 
     public final void testUnique() throws FactoryException {
         assumeNotNull(factory);
 
-        final AbstractCRS epsgCrs = (AbstractCRS) CRS.decode("EPSG:4326");
+        final AbstractCRS epsgCrs = (AbstractCRS) org.geotoolkit.referencing.CRS.decode("EPSG:4326");
         final String      wkt     = epsgCrs.toWKT();
-        final AbstractCRS wktCrs  = (AbstractCRS) CRS.parseWKT(wkt);
+        final AbstractCRS wktCrs  = (AbstractCRS) org.geotoolkit.referencing.CRS.parseWKT(wkt);
 
         assertTrue   ("equals ignore metadata",  epsgCrs.equals(wktCrs, ComparisonMode.APPROXIMATIVE));
         assertTrue   ("equals ignore metadata",  epsgCrs.equals(wktCrs, ComparisonMode.IGNORE_METADATA));
@@ -961,7 +961,7 @@ public final strictfp class ThreadedEpsgFactoryTest extends EpsgFactoryTestBase 
         assertNotSame("identity", epsgCrs, wktCrs);
 
         // Parsing the same thing twice?
-        final AbstractCRS wktCrs2 = (AbstractCRS) CRS.parseWKT(wkt);
+        final AbstractCRS wktCrs2 = (AbstractCRS) org.geotoolkit.referencing.CRS.parseWKT(wkt);
         assertTrue  ("equals ignore metadata",  wktCrs.equals(wktCrs2, ComparisonMode.APPROXIMATIVE));
         assertTrue  ("equals ignore metadata",  wktCrs.equals(wktCrs2, ComparisonMode.IGNORE_METADATA));
         assertTrue  ("equals compare metadata", wktCrs.equals(wktCrs2, ComparisonMode.BY_CONTRACT));

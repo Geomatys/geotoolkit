@@ -51,11 +51,11 @@ import org.apache.sis.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.metadata.iso.quality.AbstractPositionalAccuracy;
 import org.apache.sis.internal.referencing.Semaphores;
 import org.apache.sis.measure.Units;
+import org.apache.sis.internal.referencing.WKTUtilities;
 
 import static org.apache.sis.util.Utilities.deepEquals;
-import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
+import static org.apache.sis.util.ArgumentChecks.*;
 import static org.geotoolkit.internal.InternalUtilities.nonEmptySet;
-import org.apache.sis.internal.referencing.WKTUtilities;
 import static org.apache.sis.util.collection.Containers.property;
 
 
@@ -214,7 +214,7 @@ public class AbstractCoordinateOperation extends AbstractIdentifiedObject implem
         if (positionalAccuracy instanceof PositionalAccuracy[]) {
             final PositionalAccuracy[] accuracies = ((PositionalAccuracy[]) positionalAccuracy).clone();
             for (int i=0; i<accuracies.length; i++) {
-                ensureNonNull(COORDINATE_OPERATION_ACCURACY_KEY, i, accuracies);
+                ensureNonNullElement(COORDINATE_OPERATION_ACCURACY_KEY, i, accuracies);
             }
             coordinateOperationAccuracy = nonEmptySet(accuracies);
         } else {

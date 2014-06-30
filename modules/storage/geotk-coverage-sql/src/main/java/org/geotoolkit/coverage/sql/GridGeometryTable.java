@@ -43,7 +43,7 @@ import org.geotoolkit.internal.sql.table.SingletonTable;
 import org.geotoolkit.internal.sql.table.IllegalRecordException;
 import org.geotoolkit.internal.sql.table.SpatialDatabase;
 import org.geotoolkit.metadata.iso.citation.Citations;
-import org.geotoolkit.referencing.IdentifiedObjects;
+import org.apache.sis.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.factory.AbstractAuthorityFactory;
 import org.geotoolkit.referencing.factory.IdentifiedObjectFinder;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;

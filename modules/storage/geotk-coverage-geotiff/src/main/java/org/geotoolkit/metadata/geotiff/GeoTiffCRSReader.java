@@ -61,7 +61,7 @@ import org.geotoolkit.referencing.datum.DefaultEllipsoid;
 import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
 import org.geotoolkit.referencing.datum.DefaultPrimeMeridian;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.IdentifiedObjects;
+import org.apache.sis.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.factory.AllAuthoritiesFactory;
 import org.geotoolkit.referencing.operation.DefiningConversion;
 import org.geotoolkit.referencing.operation.provider.AlbersEqualArea;
@@ -635,13 +635,13 @@ final class GeoTiffCRSReader {
      * Geotiff tags are often badly defined, this ensure we skip "0.0" tags in the
      * hope another tag will define a proper value.
      * In the worst case if no valid tags are found the 0.0 value will be used anyway.
-     * 
+     *
      * @param code
      * @return true if value is zero
      */
     private static boolean isZero(String code){
         if(code==null ||code.isEmpty()) return true;
-        
+
         try{
             final double d = Double.parseDouble(code);
             return d==0.0;

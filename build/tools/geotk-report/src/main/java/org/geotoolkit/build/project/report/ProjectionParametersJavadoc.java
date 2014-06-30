@@ -44,7 +44,7 @@ import org.apache.sis.measure.Latitude;
 import org.apache.sis.measure.Longitude;
 import org.apache.sis.metadata.iso.extent.DefaultGeographicBoundingBox;
 import org.geotoolkit.referencing.operation.provider.*;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 
 
 /**
@@ -177,7 +177,7 @@ public final class ProjectionParametersJavadoc extends JavadocUpdater {
     private ProjectionParametersJavadoc() throws IOException, FactoryException {
         super("<!-- GENERATED PARAMETERS", "*/");
         domainOfValidity = new HashMap<>();
-        final CRSAuthorityFactory factory = CRS.getAuthorityFactory(Boolean.FALSE);
+        final CRSAuthorityFactory factory = org.geotoolkit.referencing.CRS.getAuthorityFactory(Boolean.FALSE);
         for (final String code : factory.getAuthorityCodes(GeneralDerivedCRS.class)) {
             final CoordinateReferenceSystem crs;
             try {

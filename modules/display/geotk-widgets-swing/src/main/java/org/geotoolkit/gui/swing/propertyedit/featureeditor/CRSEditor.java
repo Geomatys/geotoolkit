@@ -20,7 +20,7 @@ import java.awt.BorderLayout;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import org.geotoolkit.gui.swing.referencing.AuthorityCodesComboBox;
-import org.geotoolkit.referencing.IdentifiedObjects;
+import org.apache.sis.referencing.IdentifiedObjects;
 import org.geotoolkit.feature.type.PropertyType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
@@ -48,7 +48,7 @@ public class CRSEditor extends PropertyValueEditor implements PropertyChangeList
     @Override
     public void setValue(PropertyType type, Object value) {
         if (value instanceof CoordinateReferenceSystem) {
-            String code = IdentifiedObjects.getIdentifier(((CoordinateReferenceSystem) value));
+            String code = IdentifiedObjects.getIdentifierOrName(((CoordinateReferenceSystem) value));
             component.setSelectedCode(code);
             try {
                 if (component.getSelectedItem() == null) {

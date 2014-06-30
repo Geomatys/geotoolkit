@@ -59,7 +59,7 @@ import org.geotoolkit.index.CloseableCollection;
 import org.geotoolkit.index.Data;
 import org.geotoolkit.index.TreeException;
 import org.geotoolkit.index.quadtree.*;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.util.NullProgressListener;
 import org.geotoolkit.feature.simple.SimpleFeature;
@@ -203,7 +203,7 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
 
         //check if we must read the 3d values
         final CoordinateReferenceSystem reproject = query.getCoordinateSystemReproject();
-        final boolean read3D = (reproject==null || (reproject != null && CRS.getVerticalCRS(reproject)!=null));
+        final boolean read3D = (reproject==null || CRS.getVerticalComponent(reproject, true) != null);
 
         if (queryFilter == Filter.EXCLUDE){
             return GenericEmptyFeatureIterator.createReader(originalSchema);
@@ -410,7 +410,7 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
         final PropertyDescriptor[] atts = properties.toArray(new PropertyDescriptor[properties.size()]);
         try {
             return new IndexedBBoxShapefileAttributeReader(locker,atts,
-                    read3D, useMemoryMappedBuffer,res,readDBF, dbfCharset, 
+                    read3D, useMemoryMappedBuffer,res,readDBF, dbfCharset,
                     minRes,col, ite, bbox,loose,minRes);
         } catch (IOException ex) {
             throw new DataStoreException(ex);

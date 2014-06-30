@@ -49,7 +49,7 @@ import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapItem;
 import org.geotoolkit.map.MapLayer;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.geotoolkit.style.RandomStyleBuilder;
 import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -150,7 +150,7 @@ public class JLayerBandMenu extends JMenu implements ContextListener{
                     crs = fml.getCollection().getFeatureType().getCoordinateReferenceSystem();
                 }
                 if(crs != null){
-                    final TemporalCRS tc = CRS.getTemporalCRS(ml.getBounds().getCoordinateReferenceSystem());
+                    final TemporalCRS tc = CRS.getTemporalComponent(ml.getBounds().getCoordinateReferenceSystem());
                     if(tc != null){
                         //add it in the bands
                         final JLayerBand band = new JLayerBand(ml);

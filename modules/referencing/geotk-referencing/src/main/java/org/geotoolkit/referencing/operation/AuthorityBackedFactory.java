@@ -46,7 +46,7 @@ import org.geotoolkit.factory.Factory;
 import org.geotoolkit.factory.FactoryRegistryException;
 import org.geotoolkit.internal.referencing.Identifier3D;
 import org.geotoolkit.internal.referencing.OperationContext;
-import org.geotoolkit.referencing.IdentifiedObjects;
+import org.apache.sis.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.operation.matrix.Matrices;
 import org.geotoolkit.referencing.operation.transform.EllipsoidalTransform;
 import org.geotoolkit.referencing.factory.NoSuchIdentifiedResource;
@@ -762,7 +762,7 @@ public class AuthorityBackedFactory extends DefaultCoordinateOperationFactory {
                 type = SingleOperation.class;
                 final StringBuilder buffer = new StringBuilder();
                 for (final SingleOperation step : ((ConcatenatedOperation) operation).getOperations()) {
-                    final String id = IdentifiedObjects.getIdentifier(step);
+                    final String id = IdentifiedObjects.getIdentifierOrName(step);
                     if (id != null) {
                         if (buffer.length() != 0) {
                             buffer.append(" + ");

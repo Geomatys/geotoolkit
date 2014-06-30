@@ -52,7 +52,7 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.FactoryFinder;
 import org.apache.sis.math.Statistics;
 import org.geotoolkit.io.TableWriter;
-import org.geotoolkit.io.wkt.Convention;
+import org.apache.sis.io.wkt.Convention;
 import org.apache.sis.io.wkt.FormattableObject;
 import org.apache.sis.referencing.operation.transform.Accessor;
 import org.apache.sis.referencing.operation.transform.AbstractMathTransform;

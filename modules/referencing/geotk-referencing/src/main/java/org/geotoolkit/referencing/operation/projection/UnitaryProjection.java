@@ -55,11 +55,11 @@ import org.apache.sis.util.logging.Logging;
 import org.apache.sis.util.collection.WeakHashSet;
 import org.geotoolkit.referencing.operation.provider.UniversalParameters;
 import org.geotoolkit.metadata.iso.citation.Citations;
-import org.geotoolkit.referencing.IdentifiedObjects;
+import org.apache.sis.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.operation.provider.MapProjection;
 import org.geotoolkit.referencing.operation.transform.AbstractMathTransform2D;
-
 import org.apache.sis.referencing.operation.matrix.MatrixSIS;
+
 import static java.lang.Math.*;
 import static java.lang.Double.*;
 import static org.apache.sis.math.MathFunctions.atanh;
@@ -925,7 +925,7 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
                 if (name instanceof Identifier) {
                     final Identifier identifier = (Identifier) name;
                     if (!ArraysExt.containsIdentity(AMBIGUOUS, identifier.getAuthority()) &&
-                            IdentifiedObjects.nameMatches(descriptor, identifier.getCode()))
+                            IdentifiedObjects.isHeuristicMatchForName(descriptor, identifier.getCode()))
                     {
                         if (identifier instanceof Deprecable && ((Deprecable) identifier).isDeprecated()) {
                             /*

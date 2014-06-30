@@ -44,7 +44,7 @@ import org.geotoolkit.referencing.cs.DefaultCartesianCS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.operation.DefiningConversion;
 import org.apache.sis.referencing.operation.transform.AbstractMathTransform;
-import org.geotoolkit.referencing.IdentifiedObjects;
+import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.metadata.iso.ImmutableIdentifier;
 
 import org.geotoolkit.test.referencing.ReferencingTestBase;
@@ -302,9 +302,9 @@ public final strictfp class ReferencingObjectFactoryTest extends ReferencingTest
         assertTrue("Non existing datum should have no alias.", datum.getAlias().isEmpty());
 
         datum = factory.createGeodeticDatum(Collections.singletonMap("name", "WGS 84"), ellipsoid, meridian);
-        assertTrue (IdentifiedObjects.nameMatches(datum, "WGS 84"));
-        assertTrue (IdentifiedObjects.nameMatches(datum, "WGS_1984"));
-        assertTrue (IdentifiedObjects.nameMatches(datum, "World Geodetic System 1984"));
-        assertFalse(IdentifiedObjects.nameMatches(datum, "WGS 72"));
+        assertTrue (IdentifiedObjects.isHeuristicMatchForName(datum, "WGS 84"));
+        assertTrue (IdentifiedObjects.isHeuristicMatchForName(datum, "WGS_1984"));
+        assertTrue (IdentifiedObjects.isHeuristicMatchForName(datum, "World Geodetic System 1984"));
+        assertFalse(IdentifiedObjects.isHeuristicMatchForName(datum, "WGS 72"));
     }
 }

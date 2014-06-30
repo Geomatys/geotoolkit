@@ -12,7 +12,6 @@ import org.geotoolkit.feature.IllegalAttributeException;
 import org.geotoolkit.io.wkt.WKTFormat;
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.referencing.IdentifiedObjects;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.util.FileUtilities;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;

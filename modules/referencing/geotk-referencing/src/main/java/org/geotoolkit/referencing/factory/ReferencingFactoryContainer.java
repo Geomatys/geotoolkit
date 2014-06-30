@@ -41,7 +41,7 @@ import org.geotoolkit.factory.FactoryRegistry;
 import org.geotoolkit.factory.DynamicFactoryRegistry;
 import org.geotoolkit.internal.referencing.Identifier3D;
 import org.geotoolkit.internal.referencing.VerticalDatumTypes;
-import org.geotoolkit.referencing.IdentifiedObjects;
+import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.metadata.iso.ImmutableIdentifier;
 import org.geotoolkit.referencing.operation.DefiningConversion;
 import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
@@ -51,6 +51,7 @@ import org.geotoolkit.referencing.cs.AbstractCS;
 import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.resources.Errors;
+import org.apache.sis.referencing.cs.CoordinateSystems;
 
 import static org.geotoolkit.internal.FactoryUtilities.addImplementationHints;
 
@@ -514,9 +515,9 @@ public class ReferencingFactoryContainer extends ReferencingFactory {
             final CoordinateSystem sourceCS = crs.getCoordinateSystem();
             final CoordinateSystem targetCS = AbstractCS.standard(sourceCS);
             if (inverse) {
-                return AbstractCS.swapAndScaleAxis(targetCS, sourceCS);
+                return CoordinateSystems.swapAndScaleAxes(targetCS, sourceCS);
             } else {
-                return AbstractCS.swapAndScaleAxis(sourceCS, targetCS);
+                return CoordinateSystems.swapAndScaleAxes(sourceCS, targetCS);
             }
         } catch (IllegalArgumentException | ConversionException e) {
             failure = e;

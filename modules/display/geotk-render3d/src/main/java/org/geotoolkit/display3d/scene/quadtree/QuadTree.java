@@ -21,7 +21,7 @@ import java.awt.Point;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.math.XMath;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.geotoolkit.referencing.cs.DefaultCartesianCS;
 import org.geotoolkit.referencing.factory.ReferencingObjectFactory;
 import org.opengis.geometry.Envelope;
@@ -84,7 +84,8 @@ public class QuadTree {
 
     private Envelope transformToPlateCarre(Envelope env){
         try{
-            final Envelope tmpEnv = CRS.transform(env, CRS.getHorizontalCRS(env.getCoordinateReferenceSystem()));
+            final Envelope tmpEnv = org.geotoolkit.referencing.CRS.transform(env,
+                    CRS.getHorizontalComponent(env.getCoordinateReferenceSystem()));
 
             if (tmpEnv.getCoordinateReferenceSystem() instanceof GeographicCRS){
 
@@ -93,7 +94,7 @@ public class QuadTree {
                 final MathTransformFactory mathTransformFactory = FactoryFinder.getMathTransformFactory(null);
                 final ParameterValueGroup plate_carree = mathTransformFactory.getDefaultParameters("Plate_Carree");
 
-                final CoordinateOperationFactory coordinateOperationFactory = CRS.getCoordinateOperationFactory(true);
+                final CoordinateOperationFactory coordinateOperationFactory = org.geotoolkit.referencing.CRS.getCoordinateOperationFactory(true);
                 final OperationMethod operationMethod = coordinateOperationFactory.getOperationMethod("Plate_Carree");
 
                 final Map<String, Object> params = new HashMap<String, Object>();
@@ -103,7 +104,7 @@ public class QuadTree {
                 final CRSFactory crsFactory = new ReferencingObjectFactory();
                 final ProjectedCRS createProjectedCRS = crsFactory.createProjectedCRS(params, geoCrs, createDefiningConversion, DefaultCartesianCS.PROJECTED);
 
-                return CRS.transform(tmpEnv, createProjectedCRS);
+                return org.geotoolkit.referencing.CRS.transform(tmpEnv, createProjectedCRS);
             }
         } catch (Exception ex) {
             Map3D.LOGGER.log(Level.WARNING, "", ex);

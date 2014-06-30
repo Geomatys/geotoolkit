@@ -39,7 +39,7 @@ import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.internal.image.io.Formats;
 import org.geotoolkit.coverage.AbstractCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.referencing.IdentifiedObjects;
+import org.apache.sis.referencing.IdentifiedObjects;
 
 import static org.geotoolkit.image.io.MultidimensionalImageStore.*;
 import static org.geotoolkit.coverage.io.GridCoverageStore.LOGGER;
@@ -209,7 +209,7 @@ final class ImageCoverageStore extends Static {
             if (t != null) {
                 buffer.append(t);
             }
-            final String id = IdentifiedObjects.getIdentifier(crs);
+            final String id = IdentifiedObjects.getIdentifierOrName(crs);
             if (id != null) {
                 buffer.append(" (").append(id).append(')');
             }

@@ -33,7 +33,7 @@ import org.opengis.referencing.operation.OperationMethod;
 import org.apache.sis.io.wkt.Symbols;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.referencing.IdentifiedObjects;
+import org.apache.sis.referencing.IdentifiedObjects;
 
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 
@@ -292,7 +292,7 @@ public class MathTransformParser extends Parser {
              */
             if (classification != null) {
                 for (final OperationMethod method : mtFactory.getAvailableMethods(SingleOperation.class)) {
-                    if (IdentifiedObjects.nameMatches(method, classification)) {
+                    if (IdentifiedObjects.isHeuristicMatchForName(method, classification)) {
                         lastMethod = method;
                         break;
                     }

@@ -42,7 +42,7 @@ import org.geotoolkit.factory.Factories;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.FactoryNotFoundException;
 import org.geotoolkit.geometry.Envelopes;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.apache.sis.referencing.crs.DefaultTemporalCRS;
@@ -195,7 +195,8 @@ public final class ServicesForMetadata extends ReferencingServices implements Ch
     {
         final int dimension = head.getCoordinateSystem().getDimension();
         return crs.getCoordinateSystem().getDimension() >= dimension &&
-               CRS.equalsIgnoreMetadata(CRS.getSubCRS(crs, 0, dimension), head);
+               org.geotoolkit.referencing.CRS.equalsIgnoreMetadata(
+                       org.geotoolkit.referencing.CRS.getSubCRS(crs, 0, dimension), head);
     }
 
     /**
@@ -209,7 +210,7 @@ public final class ServicesForMetadata extends ReferencingServices implements Ch
     @Override
     public void setBounds(final Envelope envelope, final DefaultVerticalExtent target) throws TransformException {
         final CoordinateReferenceSystem crs = envelope.getCoordinateReferenceSystem();
-        final VerticalCRS verticalCRS = CRS.getVerticalCRS(crs);
+        final VerticalCRS verticalCRS = CRS.getVerticalComponent(crs, true);
         if (verticalCRS == null && envelope.getDimension() != 1) {
             throw new TransformPathNotFoundException(Errors.format(
                     Errors.Keys.ILLEGAL_COORDINATE_REFERENCE_SYSTEM));
@@ -228,7 +229,7 @@ public final class ServicesForMetadata extends ReferencingServices implements Ch
     @Override
     public void setBounds(final Envelope envelope, final DefaultTemporalExtent target) throws TransformException {
         final CoordinateReferenceSystem crs = envelope.getCoordinateReferenceSystem();
-        final TemporalCRS temporalCRS = CRS.getTemporalCRS(crs);
+        final TemporalCRS temporalCRS = CRS.getTemporalComponent(crs);
         if (temporalCRS == null) {
             throw new TransformPathNotFoundException(Errors.format(
                     Errors.Keys.ILLEGAL_COORDINATE_REFERENCE_SYSTEM));
@@ -302,19 +303,19 @@ public final class ServicesForMetadata extends ReferencingServices implements Ch
     @Override
     public void addElements(final Envelope envelope, final DefaultExtent target) throws TransformException {
         final CoordinateReferenceSystem crs = envelope.getCoordinateReferenceSystem();
-        if (CRS.getHorizontalCRS(crs) != null) {
+        if (CRS.getHorizontalComponent(crs) != null) {
             final DefaultGeographicBoundingBox extent = new DefaultGeographicBoundingBox();
             extent.setInclusion(Boolean.TRUE);
             setBounds(envelope, extent);
             target.getGeographicElements().add(extent);
         }
-        final VerticalCRS verticalCRS = CRS.getVerticalCRS(crs);
+        final VerticalCRS verticalCRS = CRS.getVerticalComponent(crs, true);
         if (verticalCRS != null) {
             final DefaultVerticalExtent extent = new DefaultVerticalExtent();
             setBounds(envelope, extent, crs, verticalCRS);
             target.getVerticalElements().add(extent);
         }
-        final TemporalCRS temporalCRS = CRS.getTemporalCRS(crs);
+        final TemporalCRS temporalCRS = CRS.getTemporalComponent(crs);
         if (temporalCRS != null) {
             final DefaultTemporalExtent extent = new DefaultTemporalExtent();
             setBounds(envelope, extent, crs, temporalCRS);

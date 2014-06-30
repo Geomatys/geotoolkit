@@ -37,7 +37,7 @@ import org.geotoolkit.coverage.GridMosaic;
 import org.geotoolkit.coverage.Pyramid;
 import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.IdentifiedObjects;
+import org.apache.sis.referencing.IdentifiedObjects;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -152,15 +152,15 @@ public class XMLPyramid implements Pyramid {
             Logging.getLogger(this.getClass()).log(Level.WARNING, ex.getMessage(), ex);
         }
     }
-    
+
     @Override
     public double[] getScales() {
         final SortedSet<Double> scaleSet = new TreeSet<Double>();
-        
+
         for(GridMosaic m : mosaics()){
             scaleSet.add(m.getScale());
         }
-        
+
         final double[] scales = new double[scaleSet.size()];
         int i=0;
         for(Double d : scaleSet){
@@ -191,7 +191,7 @@ public class XMLPyramid implements Pyramid {
     public String toString(){
         return Trees.toString(
                 Classes.getShortClassName(this)
-                +" "+IdentifiedObjects.getIdentifier(getCoordinateReferenceSystem())
+                +" "+IdentifiedObjects.getIdentifierOrName(getCoordinateReferenceSystem())
                 +" "+getId(),
                 mosaics());
     }

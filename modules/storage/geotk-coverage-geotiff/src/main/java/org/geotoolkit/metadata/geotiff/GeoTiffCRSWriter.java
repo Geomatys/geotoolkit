@@ -24,9 +24,8 @@ import javax.measure.unit.Unit;
 import java.io.IOException;
 
 import org.geotoolkit.factory.AuthorityFactoryFinder;
-import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.metadata.iso.citation.Citations;
-import org.geotoolkit.referencing.IdentifiedObjects;
+import org.apache.sis.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.factory.AbstractAuthorityFactory;
 import org.geotoolkit.referencing.factory.IdentifiedObjectFinder;
 import org.geotoolkit.referencing.operation.provider.Orthographic;
@@ -40,12 +39,12 @@ import org.geotoolkit.referencing.operation.provider.LambertConformal1SP;
 import org.geotoolkit.referencing.operation.provider.Mercator2SP;
 import org.geotoolkit.referencing.operation.provider.TransverseMercator;
 import org.apache.sis.referencing.operation.transform.AbstractMathTransform;
+import org.apache.sis.internal.metadata.ReferencingUtilities;
 import org.geotoolkit.resources.Errors;
 
 import org.opengis.metadata.citation.Citation;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterValueGroup;
-import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.OperationMethod;
 import org.opengis.referencing.operation.Projection;
@@ -65,7 +64,6 @@ import org.opengis.referencing.operation.CoordinateOperationAuthorityFactory;
 import org.opengis.util.FactoryException;
 
 import static org.geotoolkit.metadata.geotiff.GeoTiffConstants.*;
-import static org.apache.sis.referencing.AbstractIdentifiedObject.*;
 import static org.apache.sis.util.ArgumentChecks.*;
 
 /**
@@ -345,12 +343,12 @@ final class GeoTiffCRSWriter {
      */
     private static void fillCoordinateProjectionTransform(final GeoTiffMetaDataStack stack,
             final ParameterValueGroup parameters, final String name) throws IOException{
-        final ParameterDescriptorGroup desc = parameters.getDescriptor();
+        final String desc = parameters.getDescriptor().getName().getCode();
 
         // /////////////////////////////////////////////////////////////////////
         // Transverse Mercator
         // /////////////////////////////////////////////////////////////////////
-        if (IdentifiedObjects.nameMatches(TransverseMercator.PARAMETERS, desc)) {
+        if (IdentifiedObjects.isHeuristicMatchForName(TransverseMercator.PARAMETERS, desc)) {
             // key 3075
             stack.addShort(ProjCoordTransGeoKey, CT_TransverseMercator);
             stack.addAscii(PCSCitationGeoKey, name);
@@ -368,7 +366,9 @@ final class GeoTiffCRSWriter {
         // Mercator_1SP
         // Mercator_2SP
         // /////////////////////////////////////////////////////////////////////
-        if (IdentifiedObjects.nameMatches(Mercator2SP.PARAMETERS, desc) || IdentifiedObjects.nameMatches(Mercator1SP.PARAMETERS, desc)) {
+        if (IdentifiedObjects.isHeuristicMatchForName(Mercator2SP.PARAMETERS, desc) ||
+            IdentifiedObjects.isHeuristicMatchForName(Mercator1SP.PARAMETERS, desc))
+        {
             // key 3075
             stack.addShort(ProjCoordTransGeoKey, CT_Mercator);
             stack.addAscii(PCSCitationGeoKey, name);
@@ -385,7 +385,7 @@ final class GeoTiffCRSWriter {
         // /////////////////////////////////////////////////////////////////////
         // Lamber conformal 1sp
         // /////////////////////////////////////////////////////////////////////
-        if (IdentifiedObjects.nameMatches(LambertConformal1SP.PARAMETERS, desc)) {
+        if (IdentifiedObjects.isHeuristicMatchForName(LambertConformal1SP.PARAMETERS, desc)) {
             // key 3075
             stack.addShort(ProjCoordTransGeoKey, CT_LambertConfConic_Helmert);
             stack.addAscii(PCSCitationGeoKey, name);
@@ -403,7 +403,7 @@ final class GeoTiffCRSWriter {
         // LAMBERT_CONFORMAL_CONIC_2SP
         // lambert_conformal_conic_2SP_Belgium
         // /////////////////////////////////////////////////////////////////////
-        if (IdentifiedObjects.nameMatches(LambertConformal2SP.PARAMETERS, desc)) {
+        if (IdentifiedObjects.isHeuristicMatchForName(LambertConformal2SP.PARAMETERS, desc)) {
             // key 3075
             stack.addShort(ProjCoordTransGeoKey, CT_LambertConfConic_2SP);
             stack.addAscii(PCSCitationGeoKey, name);
@@ -421,7 +421,7 @@ final class GeoTiffCRSWriter {
         // /////////////////////////////////////////////////////////////////////
         // stereographic
         // /////////////////////////////////////////////////////////////////////
-        if (IdentifiedObjects.nameMatches(Stereographic.PARAMETERS, desc)) {
+        if (IdentifiedObjects.isHeuristicMatchForName(Stereographic.PARAMETERS, desc)) {
             // key 3075
             stack.addShort(ProjCoordTransGeoKey, CT_Stereographic);
             stack.addAscii(PCSCitationGeoKey, name);
@@ -438,7 +438,7 @@ final class GeoTiffCRSWriter {
         // /////////////////////////////////////////////////////////////////////
         // polar_stereographic
         // /////////////////////////////////////////////////////////////////////
-        if (IdentifiedObjects.nameMatches(PolarStereographic.PARAMETERS, desc)) {
+        if (IdentifiedObjects.isHeuristicMatchForName(PolarStereographic.PARAMETERS, desc)) {
             // key 3075
             stack.addShort(ProjCoordTransGeoKey, CT_PolarStereographic);
             stack.addAscii(PCSCitationGeoKey, name);
@@ -455,7 +455,7 @@ final class GeoTiffCRSWriter {
         // /////////////////////////////////////////////////////////////////////
         // Oblique Mercator
         // /////////////////////////////////////////////////////////////////////
-        if (IdentifiedObjects.nameMatches(ObliqueMercator.PARAMETERS, desc)) {
+        if (IdentifiedObjects.isHeuristicMatchForName(ObliqueMercator.PARAMETERS, desc)) {
             // key 3075
             stack.addShort(ProjCoordTransGeoKey, CT_ObliqueMercator);
             stack.addAscii(PCSCitationGeoKey, name);
@@ -474,7 +474,7 @@ final class GeoTiffCRSWriter {
         // /////////////////////////////////////////////////////////////////////
         // albers_Conic_Equal_Area
         // /////////////////////////////////////////////////////////////////////
-        if (IdentifiedObjects.nameMatches(AlbersEqualArea.PARAMETERS, desc)) {
+        if (IdentifiedObjects.isHeuristicMatchForName(AlbersEqualArea.PARAMETERS, desc)) {
             // key 3075
             stack.addShort(ProjCoordTransGeoKey, CT_AlbersEqualArea);
             stack.addAscii(PCSCitationGeoKey, name);
@@ -493,7 +493,7 @@ final class GeoTiffCRSWriter {
         // /////////////////////////////////////////////////////////////////////
         // Orthographic
         // /////////////////////////////////////////////////////////////////////
-        if (IdentifiedObjects.nameMatches(Orthographic.PARAMETERS, desc)) {
+        if (IdentifiedObjects.isHeuristicMatchForName(Orthographic.PARAMETERS, desc)) {
             // key 3075
             stack.addShort(ProjCoordTransGeoKey, CT_Orthographic);
             stack.addAscii(PCSCitationGeoKey, name);
@@ -520,7 +520,7 @@ final class GeoTiffCRSWriter {
     private static void fillLinearUnit(final GeoTiffMetaDataStack stack, final ProjectedCRS projectedCRS) {
 
         // getting the linear unit
-        final Unit linearUnit = CRSUtilities.getUnit(projectedCRS.getCoordinateSystem());
+        final Unit linearUnit = ReferencingUtilities.getUnit(projectedCRS.getCoordinateSystem());
         if (linearUnit != null && !SI.METRE.isCompatible(linearUnit)) {
             throw new IllegalArgumentException(Errors.format(
                     Errors.Keys.NON_LINEAR_UNIT_1, linearUnit));
@@ -608,7 +608,7 @@ final class GeoTiffCRSWriter {
 
         //search for an IdentifiedObject with the same definition
         if(candidate instanceof CoordinateReferenceSystem){
-            return IdentifiedObjects.lookupEpsgCode((CoordinateReferenceSystem) candidate, true);
+            return org.geotoolkit.referencing.IdentifiedObjects.lookupEpsgCode((CoordinateReferenceSystem) candidate, true);
         }else if(candidate instanceof Datum){
             final DatumAuthorityFactory factory = AuthorityFactoryFinder.getDatumAuthorityFactory("EPSG", null);
             if(factory instanceof AbstractAuthorityFactory){

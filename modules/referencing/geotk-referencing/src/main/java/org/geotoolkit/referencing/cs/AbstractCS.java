@@ -28,15 +28,12 @@ import javax.measure.converter.ConversionException;
 import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
-import org.opengis.referencing.operation.Matrix;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.util.InternationalString;
 import org.geotoolkit.measure.Measure;
-import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
 import org.apache.sis.internal.referencing.AxisDirections;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
-import org.apache.sis.referencing.cs.CoordinateSystems;
 
 import static org.opengis.referencing.IdentifiedObject.*;
 
@@ -67,43 +64,6 @@ public final class AbstractCS {
         properties.put(NAME_KEY,  name.toString());
         properties.put(ALIAS_KEY, name);
         return properties;
-    }
-
-    /**
-     * Returns an affine transform between two coordinate systems. Only units and
-     * axis order (e.g. transforming from
-     * ({@linkplain AxisDirection#NORTH NORTH},{@linkplain AxisDirection#WEST WEST}) to
-     * ({@linkplain AxisDirection#EAST EAST},{@linkplain AxisDirection#NORTH NORTH})
-     * are taken in account.
-     * <p>
-     * <b>Example:</b> If coordinates in {@code sourceCS} are (<var>x</var>,<var>y</var>) pairs
-     * in metres and coordinates in {@code targetCS} are (-<var>y</var>,<var>x</var>) pairs in
-     * centimetres, then the transformation can be performed as below:
-     *
-     * {@preformat text
-     *     ┌      ┐   ┌                ┐ ┌     ┐
-     *     │-y(cm)│   │   0  -100    0 │ │ x(m)│
-     *     │ x(cm)│ = │ 100     0    0 │ │ y(m)│
-     *     │ 1    │   │   0     0    1 │ │ 1   │
-     *     └      ┘   └                ┘ └     ┘
-     * }
-     *
-     * @param  sourceCS The source coordinate system.
-     * @param  targetCS The target coordinate system.
-     * @return The conversion from {@code sourceCS} to {@code targetCS} as
-     *         an affine transform. Only axis direction and units are taken in account.
-     * @throws IllegalArgumentException if axis doesn't matches, or the CS doesn't have the
-     *         same geometry.
-     * @throws ConversionException if the units are not compatible, or the conversion is non-linear.
-     *
-     * @deprecated Moved to Apache SIS as {@link CoordinateSystems#swapAndScaleAxes(CoordinateSystem, CoordinateSystem)}.
-     */
-    @Deprecated
-    public static Matrix swapAndScaleAxis(final CoordinateSystem sourceCS,
-                                          final CoordinateSystem targetCS)
-            throws IllegalArgumentException, ConversionException
-    {
-        return new GeneralMatrix(CoordinateSystems.swapAndScaleAxes(sourceCS, targetCS));
     }
 
     /**

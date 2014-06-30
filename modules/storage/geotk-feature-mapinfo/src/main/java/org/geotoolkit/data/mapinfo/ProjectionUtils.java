@@ -24,14 +24,13 @@ import org.apache.sis.metadata.iso.extent.DefaultExtent;
 import org.apache.sis.metadata.iso.extent.DefaultGeographicBoundingBox;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.IdentifiedObjects;
+import org.apache.sis.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;
 import org.geotoolkit.referencing.cs.DefaultEllipsoidalCS;
 import org.geotoolkit.referencing.operation.DefaultMathTransformFactory;
 import org.geotoolkit.referencing.operation.provider.UniversalParameters;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
-import org.opengis.metadata.extent.GeographicExtent;
 import org.opengis.parameter.*;
 import org.opengis.referencing.ReferenceSystem;
 import org.opengis.referencing.crs.*;
@@ -406,10 +405,11 @@ public class ProjectionUtils {
         } else if (crs instanceof ProjectedCRS) {
             final ProjectedCRS pCRS = (ProjectedCRS) crs;
             Conversion proj = pCRS.getConversionFromBase();
-            String projCode = IdentifiedObjects.lookupIdentifier(Citations.MAP_INFO, proj.getMethod(), false);
+            String projCode = org.geotoolkit.referencing.IdentifiedObjects.lookupIdentifier(
+                    Citations.MAP_INFO, proj.getMethod(), false);
             if(projCode == null) {
                 // If we get a lambert conformal 1SP, we must convert it into 2P to use it.
-                if(IdentifiedObjects.lookupEpsgCode(proj.getMethod(), true).equals(9801)) {
+                if(org.geotoolkit.referencing.IdentifiedObjects.lookupEpsgCode(proj.getMethod(), true).equals(9801)) {
                     projCode = "3";
                     OperationMethod method = PROJ_FACTORY.getOperationMethod(MAP_INFO_NAMESPACE+NAMESPACE_SEPARATOR+projCode);
                     Map<String, Object> properties = new HashMap<String, Object>();
@@ -433,7 +433,7 @@ public class ProjectionUtils {
 
                 } else {
                     OperationMethod method = PROJ_FACTORY.getOperationMethod(proj.getMethod().getName().getCode());
-                    projCode = IdentifiedObjects.lookupIdentifier(Citations.MAP_INFO, method, false);
+                    projCode = org.geotoolkit.referencing.IdentifiedObjects.lookupIdentifier(Citations.MAP_INFO, method, false);
                 }
                 if (projCode == null) {
                     throw new DataStoreException("Projection of the given CRS does not get any equivalent in mapInfo.");

@@ -23,7 +23,6 @@ import java.awt.Font;
 import java.util.List;
 import java.util.logging.Level;
 import javax.measure.unit.Unit;
-import javax.swing.JEditorPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 import javax.swing.text.html.HTMLDocument;
@@ -34,12 +33,11 @@ import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
-import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.io.X364;
-import org.geotoolkit.io.wkt.Colors;
+import org.apache.sis.io.wkt.Colors;
 import org.geotoolkit.io.wkt.WKTFormat;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.FeatureMapLayer;
@@ -59,10 +57,10 @@ import org.opengis.util.InternationalString;
  * @author Johann Sorel (Geomatys)
  */
 public class JLayerDataStructurePanel extends AbstractPropertyPane {
-    
+
     private final JTextPane textPane = new JTextPane();
     private MapLayer layer;
-    
+
     public JLayerDataStructurePanel() {
         super(MessageBundle.getString("dataStructure"), null, null, null);
         setLayout(new BorderLayout());
@@ -70,7 +68,7 @@ public class JLayerDataStructurePanel extends AbstractPropertyPane {
         textPane.setContentType("text/html");
         textPane.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 11));
         textPane.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        
+
         //CSS
         final StyleSheet styles = new StyleSheet();
         styles.addRule("body {padding:10px; width:250px; background-color:#ffffff; font-family:Monospaced;}");
@@ -81,7 +79,7 @@ public class JLayerDataStructurePanel extends AbstractPropertyPane {
         styles.addRule(".data {text-align:right;}");
         styles.addRule("#error {color:red;}");
         textPane.setStyledDocument(new HTMLDocument(styles));
-        
+
         add(BorderLayout.CENTER,new JScrollPane(textPane));
     }
 
@@ -92,19 +90,19 @@ public class JLayerDataStructurePanel extends AbstractPropertyPane {
     public void setTarget(Object target) {
         this.layer = (MapLayer) target;
         textPane.setText("");
-        
+
         final StringBuilder sb = new StringBuilder();
         sb.append("<html><body>");
         if(layer instanceof FeatureMapLayer){
             final FeatureMapLayer fml = (FeatureMapLayer) layer;
             final FeatureType type = fml.getCollection().getFeatureType();
-                        
+
             String str = type.toString().replace("\n", "<br>");
             str = str.replaceAll(" ", "&nbsp;");
-            
+
             sb.append(str);
-            
-            
+
+
         }else if(layer instanceof CoverageMapLayer){
             final CoverageMapLayer cml = (CoverageMapLayer) layer;
             final CoverageReference ref = cml.getCoverageReference();
@@ -113,18 +111,18 @@ public class JLayerDataStructurePanel extends AbstractPropertyPane {
                 final GeneralGridGeometry gridgeom = reader.getGridGeometry(0);
                 final List<GridSampleDimension> dimensions = reader.getSampleDimensions(0);
                 ref.recycle(reader);
-                
+
                 // GRID GEOMETRY PART //////////////////////////////////////////
                 sb.append("<h1>").append("Grid geometry").append("</h1><br/>");
-                
+
                 final CoordinateReferenceSystem crs = gridgeom.getCoordinateReferenceSystem();
                 final Envelope geoEnv = gridgeom.getEnvelope();
                 final GridEnvelope gridEnv = gridgeom.getExtent();
                 final MathTransform gridToCrs = gridgeom.getGridToCRS();
-                
-                final double[] coordGrid = new double[gridEnv.getDimension()];                
-                final double[] coordGeo = new double[gridEnv.getDimension()];                
-                
+
+                final double[] coordGrid = new double[gridEnv.getDimension()];
+                final double[] coordGeo = new double[gridEnv.getDimension()];
+
                 sb.append("<table><tbody>");
                 sb.append("<tr><td>");
                 sb.append("Axis");
@@ -138,7 +136,7 @@ public class JLayerDataStructurePanel extends AbstractPropertyPane {
                 sb.append("Geo max");
                 sb.append("</td></tr>");
                 for(int i=0;i<geoEnv.getDimension();i++){
-                    
+
                     //convert the grid coord to crs coord
                     for(int k=0;k<coordGrid.length;k++){
                         coordGrid[k] = gridEnv.getLow(k);
@@ -148,7 +146,7 @@ public class JLayerDataStructurePanel extends AbstractPropertyPane {
                     coordGrid[i] = gridEnv.getHigh(i);
                     gridToCrs.transform(coordGrid, 0, coordGeo, 0, 1);
                     final double geoMax = coordGeo[i];
-                    
+
                     final Unit unit = crs.getCoordinateSystem().getAxis(i).getUnit();
                     final String unitStr = (unit!=null) ? unit.toString() : "";
                     sb.append("<tr><td>");
@@ -167,13 +165,13 @@ public class JLayerDataStructurePanel extends AbstractPropertyPane {
                 sb.append("<b>Grid to CRS transform : <b><br/>");
                 sb.append(formatWKT(gridToCrs));
                 sb.append("<br/>");
-                
-                
-                // SAMPLE DIMENSIONS PART //////////////////////////////////////                
+
+
+                // SAMPLE DIMENSIONS PART //////////////////////////////////////
                 sb.append("<h1>").append("Sample dimensions").append("</h1><br/>");
-                
-                
-                
+
+
+
                 if(dimensions!=null){
                     for(GridSampleDimension dim : dimensions){
                         final SampleDimensionType st = dim.getSampleDimensionType();
@@ -186,7 +184,7 @@ public class JLayerDataStructurePanel extends AbstractPropertyPane {
                         sb.append("Sample to geophysic transform :<br/>");
                         sb.append(formatWKT(sampletoGeo));
                         sb.append("<br/>");
-                        
+
                         final List<Category> categories = dim.getCategories();
                         if(categories!=null && !categories.isEmpty()){
                             sb.append("<br/><table><tbody>");
@@ -215,7 +213,7 @@ public class JLayerDataStructurePanel extends AbstractPropertyPane {
                         }
                     }
                 }
-                
+
                 //this imply ready the file, may be long, we have to calculate a reduced area
 //                final GridCoverage coverage = reader.read(0, null);
 //                final RenderedImage image = (RenderedImage) coverage.getRenderableImage(0, 0);
@@ -224,13 +222,13 @@ public class JLayerDataStructurePanel extends AbstractPropertyPane {
 //                sm.getDataType();
 //                sm.getTransferType();
 //                final ColorModel cm = image.getColorModel();
-                
+
             } catch (Exception ex) {
                 Logging.getLogger(JLayerDataStructurePanel.class).log(Level.INFO, ex.getMessage(),ex);
             }
         }
-        
-        sb.append("</body></html>");            
+
+        sb.append("</body></html>");
         textPane.setText(sb.toString());
     }
 
@@ -265,7 +263,7 @@ public class JLayerDataStructurePanel extends AbstractPropertyPane {
         JLayerCRSPane.makeItalic(X364.toHTML(text.replace('"', '\u001A')), buffer, '\u001A');
         return buffer.append("</pre>").toString();
     }
-    
+
     public void apply() {
         //nothing to apply
     }
@@ -273,7 +271,7 @@ public class JLayerDataStructurePanel extends AbstractPropertyPane {
     public void reset() {
         //nothing to reset
     }
-    
-    
-    
+
+
+
 }

@@ -28,7 +28,6 @@ import org.geotoolkit.data.query.Query;
 import org.geotoolkit.db.DefaultJDBCFeatureStore;
 import org.geotoolkit.db.JDBCFeatureStore;
 import org.geotoolkit.db.reverse.ColumnMetaModel;
-import org.geotoolkit.db.reverse.DataBaseModel;
 import org.geotoolkit.db.reverse.PrimaryKey;
 import org.geotoolkit.db.reverse.RelationMetaModel;
 import org.geotoolkit.factory.Hints;
@@ -38,8 +37,6 @@ import org.geotoolkit.referencing.IdentifiedObjects;
 import org.apache.sis.storage.DataStoreException;
 import org.opengis.coverage.Coverage;
 import org.geotoolkit.feature.ComplexAttribute;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.type.AssociationDescriptor;
 import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.geotoolkit.feature.type.ComplexType;
 import org.geotoolkit.feature.type.FeatureType;
@@ -57,11 +54,11 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  * SQL query builder, rely on dialect to build conform SQL queries.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public class SQLQueryBuilder {
-    
+
     protected final DefaultJDBCFeatureStore store;
     protected final String databaseSchema;
     protected final SQLDialect dialect;
@@ -71,7 +68,7 @@ public class SQLQueryBuilder {
         this.databaseSchema = store.getDatabaseSchema();
         this.dialect = store.getDialect();
     }
-    
+
     ////////////////////////////////////////////////////////////////////////////
     // STATEMENT QURIES ////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
@@ -118,7 +115,7 @@ public class SQLQueryBuilder {
     protected void encodeSelectColumnNames(StringBuilder sql, FeatureType featureType, Hints hints){
         for (PropertyDescriptor att : featureType.getDescriptors()) {
             final RelationMetaModel relation = (RelationMetaModel)att.getUserData().get(JDBCFeatureStore.JDBC_PROPERTY_RELATION);
-            
+
             if (relation != null) {
                 final String str = att.getName().getLocalPart();
                 if(relation.isImported()){
@@ -127,7 +124,7 @@ public class SQLQueryBuilder {
                     //key is exported, it means the database field is in the other table.
                     continue;
                 }
-                
+
             }else if (att instanceof GeometryDescriptor) {
                 //encode as geometry
                 encodeGeometryColumn((GeometryDescriptor) att, sql, hints);
@@ -140,8 +137,8 @@ public class SQLQueryBuilder {
         }
         sql.setLength(sql.length() - 1);
     }
-    
-    
+
+
     /**
      * Generates a 'INSERT INFO' sql statement.
      * @throws IOException
@@ -446,7 +443,7 @@ public class SQLQueryBuilder {
                 if (length == null || length < 0) {
                     length = 255;
                 }
-                
+
                 dialect.encodeColumnType(sql, sqlTypeNames[i],length);
             } else {
                 dialect.encodeColumnType(sql, sqlTypeNames[i], null);
@@ -511,15 +508,15 @@ public class SQLQueryBuilder {
 
         return sql.toString();
     }
-    
+
     /**
      * Generates a 'ALTER TABLE - ADD FOREIGN KEY (-) REFERENCES -(-)' sql query.
      */
-    public String alterTableAddForeignKey(final ComplexType sourceType, final String sourceProperty, 
+    public String alterTableAddForeignKey(final ComplexType sourceType, final String sourceProperty,
             final Name targetType, final String targetProperty, boolean cascade) throws SQLException{
         final String sourceName = sourceType.getName().getLocalPart();
         final String targetName = targetType.getLocalPart();
-        
+
         final StringBuilder sql = new StringBuilder();
         sql.append("ALTER TABLE ");
         dialect.encodeSchemaAndTableName(sql, databaseSchema, sourceName);
@@ -533,7 +530,7 @@ public class SQLQueryBuilder {
         if(cascade){
             sql.append(" ON DELETE CASCADE");
         }
-        
+
         return sql.toString();
     }
 
@@ -542,7 +539,7 @@ public class SQLQueryBuilder {
      */
     public String alterTableAddIndex(final ComplexType type, final String property){
         final String sourceName = type.getName().getLocalPart();
-        
+
         final StringBuilder sql = new StringBuilder();
         sql.append("CREATE UNIQUE INDEX \"");
         sql.append(sourceName).append(property);
@@ -553,7 +550,7 @@ public class SQLQueryBuilder {
         sql.append(')');
         return sql.toString();
     }
-    
+
     /**
      * Generates a 'ALTER TABLE . DROP COLUMN ' sql statement.
      */
@@ -577,7 +574,7 @@ public class SQLQueryBuilder {
         sql.append(";");
         return sql.toString();
     }
-    
+
     ////////////////////////////////////////////////////////////////////////////
     // OTHER UTILS /////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
@@ -600,7 +597,7 @@ public class SQLQueryBuilder {
 
         return null;
     }
-    
+
     private String[] getSQLTypeNames(final Class[] classes, final Connection cx) throws SQLException {
         //figure out what the sql types are corresponding to the feature type
         // attributes
@@ -614,7 +611,7 @@ public class SQLQueryBuilder {
         }
         return sqlTypeNames;
     }
-        
+
     /**
      * Encodes the sort-by portion of an sql query.
      * @param featureType
@@ -737,5 +734,5 @@ public class SQLQueryBuilder {
 
         return propertyName.getPropertyName();
     }
-    
+
 }

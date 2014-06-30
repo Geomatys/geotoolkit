@@ -39,7 +39,7 @@ import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 
 import org.junit.*;
 import static org.junit.Assert.*;
-import static org.geotoolkit.referencing.CRS.getHorizontalCRS;
+import static org.apache.sis.referencing.CRS.getHorizontalComponent;
 
 
 /**
@@ -128,7 +128,7 @@ public final strictfp class GridCoverageTableTest extends CatalogTestBase {
          * Test the envelope.
          */
         final Envelope envelope = entry.getEnvelope();
-        assertTrue(getHorizontalCRS(envelope.getCoordinateReferenceSystem()) instanceof GeographicCRS);
+        assertTrue(getHorizontalComponent(envelope.getCoordinateReferenceSystem()) instanceof GeographicCRS);
         assertEquals(-180, envelope.getMinimum(0), 0.0);
         assertEquals(+180, envelope.getMaximum(0), 0.0);
         assertEquals( -90, envelope.getMinimum(1), 0.0);
@@ -188,7 +188,7 @@ public final strictfp class GridCoverageTableTest extends CatalogTestBase {
          * Tests the envelope, which may be projected.
          */
         final Envelope envelope = entry.getEnvelope();
-        assertTrue(getHorizontalCRS(envelope.getCoordinateReferenceSystem()) instanceof ProjectedCRS);
+        assertTrue(getHorizontalComponent(envelope.getCoordinateReferenceSystem()) instanceof ProjectedCRS);
         assertEquals(-2.00375E7, envelope.getMinimum(0), 100.0);
         assertEquals( 2.00375E7, envelope.getMaximum(0), 100.0);
         assertEquals(-1.38176E7, envelope.getMinimum(1), 100.0);

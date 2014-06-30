@@ -5,7 +5,7 @@ import java.util.logging.Level;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.IdentifiedObjects;
+import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.util.collection.Cache;
 import org.apache.sis.util.logging.Logging;
 import org.opengis.util.FactoryException;
@@ -38,9 +38,9 @@ public class CoordinateReferenceSystemAdapter  extends XmlAdapter<String, Coordi
             try {
                 srsName = CoordinateReferenceSystemAdapter.cachedIdentifier.get(crs);
                 if (srsName == null && !CoordinateReferenceSystemAdapter.cachedIdentifier.containsKey(crs)) {
-                    srsName = IdentifiedObjects.lookupIdentifier(Citations.URN_OGC, crs, false);
+                    srsName = org.geotoolkit.referencing.IdentifiedObjects.lookupIdentifier(Citations.URN_OGC, crs, false);
                     if (srsName == null) {
-                        srsName = IdentifiedObjects.getIdentifier(crs);
+                        srsName = IdentifiedObjects.getIdentifierOrName(crs);
                     }
                     CoordinateReferenceSystemAdapter.cachedIdentifier.put(crs, srsName);
 

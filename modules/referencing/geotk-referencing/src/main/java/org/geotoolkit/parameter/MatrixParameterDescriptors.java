@@ -183,8 +183,8 @@ public class MatrixParameterDescriptors extends DefaultParameterDescriptorGroup 
             // TODO: provide a localized message
             throw new IllegalArgumentException();
         }
-        numRow = Parameters.cast(parameters[0], Integer.class);
-        numCol = Parameters.cast(parameters[1], Integer.class);
+        numRow = org.apache.sis.parameter.Parameters.cast(parameters[0], Integer.class);
+        numCol = org.apache.sis.parameter.Parameters.cast(parameters[1], Integer.class);
         ensureNonNull("prefix", prefix);
         this.prefix    = prefix;
         this.separator = separator;

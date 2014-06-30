@@ -554,7 +554,7 @@ public final class CRS extends Static {
          * the previous block because the later selected only envelopes in the right CRS.
          */
         if (envelope == null) {
-            final GeographicBoundingBox bounds = getGeographicBoundingBox(crs);
+            final GeographicBoundingBox bounds = org.apache.sis.referencing.CRS.getGeographicBoundingBox(crs);
             if (bounds != null && !Boolean.FALSE.equals(bounds.getInclusion())) {
                 envelope = merged = new GeneralEnvelope(
                         new double[] {bounds.getWestBoundLongitude(), bounds.getSouthBoundLatitude()},
@@ -565,7 +565,7 @@ public final class CRS extends Static {
                  * We try to get the GeographicCRS from the user-supplied CRS and fallback on WGS
                  * 84 only if we found none.
                  */
-                final SingleCRS     targetCRS = getHorizontalCRS(crs);
+                final SingleCRS     targetCRS = org.apache.sis.referencing.CRS.getHorizontalComponent(crs);
                 final GeographicCRS sourceCRS = CRSUtilities.getStandardGeographicCRS2D(targetCRS);
                 merged.setCoordinateReferenceSystem(sourceCRS);
                 try {
@@ -590,30 +590,6 @@ public final class CRS extends Static {
             }
         }
         return envelope;
-    }
-
-    /**
-     * Returns the valid geographic area for the specified coordinate reference system,
-     * or {@code null} if unknown.
-     *
-     * This method fetches the {@linkplain CoordinateReferenceSystem#getDomainOfValidity domain
-     * of validity} associated with the given CRS. Only {@linkplain GeographicExtent geographic
-     * extents} of kind {@linkplain GeographicBoundingBox geographic bounding box} are taken in
-     * account.
-     *
-     * @param  crs The coordinate reference system, or {@code null}.
-     * @return The geographic area, or {@code null} if none.
-     *
-     * @see #getEnvelope(CoordinateReferenceSystem)
-     *
-     * @category information
-     * @since 2.3
-     *
-     * @deprecated Moved to Apache SIS {@link org.apache.sis.referencing.CRS} class.
-     */
-    @Deprecated
-    public static GeographicBoundingBox getGeographicBoundingBox(final CoordinateReferenceSystem crs) {
-        return org.apache.sis.referencing.CRS.getGeographicBoundingBox(crs);
     }
 
     /**
@@ -651,8 +627,6 @@ public final class CRS extends Static {
      * @return {@code true} if the given CRS is non-null and comply with one of the above
      *         conditions, or {@code false} otherwise.
      *
-     * @see #getHorizontalCRS(CoordinateReferenceSystem)
-     *
      * @category information
      * @since 3.05
      *
@@ -674,89 +648,6 @@ public final class CRS extends Static {
             }
         }
         return false;
-    }
-
-    /**
-     * Returns the first horizontal coordinate reference system found in the given CRS,
-     * or {@code null} if there is none. A horizontal CRS is usually a two-dimensional
-     * {@linkplain GeographicCRS geographic} or {@linkplain ProjectedCRS projected} CRS.
-     * See the {@link #isHorizontalCRS(CoordinateReferenceSystem) isHorizontalCRS} method for
-     * a more accurate description about the conditions for a CRS to be considered horizontal.
-     *
-     * @param  crs The coordinate reference system, or {@code null}.
-     * @return The horizontal CRS, or {@code null} if none.
-     *
-     * @category information
-     * @since 2.4
-     *
-     * @deprecated Moved to Apache SIS {@link org.apache.sis.referencing.CRS} class.
-     */
-    @Deprecated
-    public static SingleCRS getHorizontalCRS(final CoordinateReferenceSystem crs) {
-        return org.apache.sis.referencing.CRS.getHorizontalComponent(crs);
-    }
-
-    /**
-     * Returns the first projected coordinate reference system found in a the given CRS,
-     * or {@code null} if there is none.
-     *
-     * @param  crs The coordinate reference system, or {@code null}.
-     * @return The projected CRS, or {@code null} if none.
-     *
-     * @category information
-     * @since 2.4
-     *
-     * @deprecated Generalized by {@link #getHorizontalCRS(CoordinateReferenceSystem)}.
-     */
-    @Deprecated
-    public static ProjectedCRS getProjectedCRS(final CoordinateReferenceSystem crs) {
-        if (crs instanceof ProjectedCRS) {
-            return (ProjectedCRS) crs;
-        }
-        if (crs instanceof CompoundCRS) {
-            final CompoundCRS cp = (CompoundCRS) crs;
-            for (final CoordinateReferenceSystem c : cp.getComponents()) {
-                final ProjectedCRS candidate = getProjectedCRS(c);
-                if (candidate != null) {
-                    return candidate;
-                }
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Returns the first vertical coordinate reference system found in a the given CRS,
-     * or {@code null} if there is none.
-     *
-     * @param  crs The coordinate reference system, or {@code null}.
-     * @return The vertical CRS, or {@code null} if none.
-     *
-     * @category information
-     * @since 2.4
-     *
-     * @deprecated Moved to Apache SIS {@link org.apache.sis.referencing.CRS} class.
-     */
-    @Deprecated
-    public static VerticalCRS getVerticalCRS(final CoordinateReferenceSystem crs) {
-        return org.apache.sis.referencing.CRS.getVerticalComponent(crs, true);
-    }
-
-    /**
-     * Returns the first temporal coordinate reference system found in the given CRS,
-     * or {@code null} if there is none.
-     *
-     * @param  crs The coordinate reference system, or {@code null}.
-     * @return The temporal CRS, or {@code null} if none.
-     *
-     * @category information
-     * @since 2.4
-     *
-     * @deprecated Moved to Apache SIS {@link org.apache.sis.referencing.CRS} class.
-     */
-    @Deprecated
-    public static TemporalCRS getTemporalCRS(final CoordinateReferenceSystem crs) {
-        return org.apache.sis.referencing.CRS.getTemporalComponent(crs);
     }
 
     /**

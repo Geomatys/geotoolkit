@@ -194,52 +194,6 @@ public final class Parameters extends Static {
     }
 
     /**
-     * Casts the given parameter descriptor to the given type. An exception is thrown
-     * immediately if the parameter does not have the expected value class. This
-     * is a helper method for type safety when using Java 5 parameterized types.
-     *
-     * @param  <T> The expected value class.
-     * @param  descriptor The descriptor to cast, or {@code null}.
-     * @param  type The expected value class.
-     * @return The descriptor casted to the given type, or {@code null} if the given descriptor was null.
-     * @throws ClassCastException if the given descriptor doesn't have the expected value class.
-     *
-     * @category verification
-     * @since 2.5
-     *
-     * @deprecated Moved to Apache SIS {@link org.apache.sis.parameter.Parameters}.
-     */
-    @Deprecated
-    public static <T> ParameterDescriptor<T> cast(final ParameterDescriptor<?> descriptor, final Class<T> type)
-            throws ClassCastException
-    {
-        return org.apache.sis.parameter.Parameters.cast(descriptor, type);
-    }
-
-    /**
-     * Casts the given parameter value to the given type. An exception is thrown
-     * immediately if the parameter does not have the expected value class. This
-     * is a helper method for type safety when using Java 5 parameterized types.
-     *
-     * @param  <T> The expected value class.
-     * @param  value The value to cast, or {@code null}.
-     * @param  type The expected value class.
-     * @return The value casted to the given type, or {@code null} if the given value was null.
-     * @throws ClassCastException if the given value doesn't have the expected value class.
-     *
-     * @category verification
-     * @since 2.5
-     *
-     * @deprecated Moved to Apache SIS {@link org.apache.sis.parameter.Parameters}.
-     */
-    @Deprecated
-    public static <T> ParameterValue<T> cast(final ParameterValue<?> value, final Class<T> type)
-            throws ClassCastException
-    {
-        return org.apache.sis.parameter.Parameters.cast(value, type);
-    }
-
-    /**
      * Checks a parameter value against its {@linkplain ParameterDescriptor parameter descriptor}.
      * This method compares the {@linkplain ParameterValue#getValue() value} against the expected
      *  {@linkplain ParameterDescriptor#getValueClass value class}, the

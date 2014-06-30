@@ -24,7 +24,7 @@ import java.util.List;
 
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.GeneralParameterDescriptor;
-import org.geotoolkit.referencing.IdentifiedObjects;
+import org.apache.sis.referencing.IdentifiedObjects;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -136,7 +136,7 @@ public final strictfp class ParametersTest {
                 final boolean hasStandardParallel2 = UniversalParameters.STANDARD_PARALLEL_2.find(descriptors) != null;
                 boolean hasStandardParallel = false;
                 for (final GeneralParameterDescriptor param : descriptors) {
-                    if (IdentifiedObjects.nameMatches(group, MapProjectionDescriptor.STANDARD_PARALLEL)) {
+                    if (IdentifiedObjects.isHeuristicMatchForName(group, MapProjectionDescriptor.STANDARD_PARALLEL)) {
                         assertFalse(name, hasStandardParallel);
                         hasStandardParallel = true;
                     }

@@ -32,7 +32,6 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ows.xml.BoundingBox;
 import org.geotoolkit.referencing.IdentifiedObjects;
-import org.geotoolkit.util.Utilities;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
@@ -164,7 +163,7 @@ public class BoundingBoxType implements BoundingBox {
     public Integer getDimensions() {
         return dimensions;
     }
-    
+
      /**
      * Verify if this entry is identical to the specified object.
      */
@@ -191,7 +190,7 @@ public class BoundingBoxType implements BoundingBox {
         hash = 43 * hash + (this.crs != null ? this.crs.hashCode() : 0);
         return hash;
     }
-    
+
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder("[").append(this.getClass().getSimpleName()).append("]:").append('\n');

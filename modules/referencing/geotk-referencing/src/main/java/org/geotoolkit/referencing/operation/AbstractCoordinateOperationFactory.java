@@ -43,7 +43,7 @@ import org.geotoolkit.factory.Hints;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.collection.WeakHashSet;
 import org.apache.sis.referencing.NamedIdentifier;
-import org.geotoolkit.referencing.IdentifiedObjects;
+import org.apache.sis.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.factory.ReferencingFactory;
 import org.geotoolkit.referencing.factory.ReferencingFactoryContainer;
 import org.geotoolkit.referencing.operation.provider.Affine;
@@ -51,6 +51,7 @@ import org.apache.sis.referencing.datum.BursaWolfParameters;
 import org.geotoolkit.referencing.cs.AbstractCS;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.resources.Errors;
+import org.apache.sis.referencing.cs.CoordinateSystems;
 
 import static java.util.Collections.singletonMap;
 import static org.opengis.referencing.IdentifiedObject.NAME_KEY;
@@ -238,7 +239,7 @@ public abstract class AbstractCoordinateOperationFactory extends ReferencingFact
             return ((DefaultMathTransformFactory) mtFactory).getOperationMethod(name);
         }
         for (final OperationMethod method : mtFactory.getAvailableMethods(SingleOperation.class)) {
-            if (IdentifiedObjects.nameMatches(method, name)) {
+            if (IdentifiedObjects.isHeuristicMatchForName(method, name)) {
                 return method;
             }
         }
@@ -292,7 +293,7 @@ public abstract class AbstractCoordinateOperationFactory extends ReferencingFact
             throws OperationNotFoundException
     {
         try {
-            return AbstractCS.swapAndScaleAxis(sourceCS,targetCS);
+            return CoordinateSystems.swapAndScaleAxes(sourceCS,targetCS);
         } catch (IllegalArgumentException | ConversionException exception) {
             throw new OperationNotFoundException(getErrorMessage(sourceCS, targetCS), exception);
         }
@@ -622,7 +623,7 @@ public abstract class AbstractCoordinateOperationFactory extends ReferencingFact
     {
         final CoordinateReferenceSystem sourceCRS = operation.getSourceCRS();
         final CoordinateReferenceSystem targetCRS = operation.getTargetCRS();
-        final Map<String,Object> properties = IdentifiedObjects.getProperties(operation, null);
+        final Map<String,Object> properties = org.geotoolkit.referencing.IdentifiedObjects.getProperties(operation, null);
         properties.putAll(getTemporaryName(targetCRS, sourceCRS));
         if (operation instanceof ConcatenatedOperation) {
             final LinkedList<CoordinateOperation> inverted = new LinkedList<>();

@@ -39,7 +39,7 @@ import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.ReferenceIdentifier;
 
 import org.geotoolkit.io.X364;
-import org.geotoolkit.io.wkt.Colors;
+import org.apache.sis.io.wkt.Colors;
 import org.geotoolkit.io.wkt.WKTFormat;
 import org.geotoolkit.resources.Vocabulary;
 import org.apache.sis.util.CharSequences;

@@ -23,20 +23,14 @@ import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.cs.CoordinateSystemAxis;
-import org.opengis.referencing.cs.CoordinateSystem;
-import org.opengis.referencing.cs.AxisDirection;
-import org.opengis.referencing.cs.RangeMeaning;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.MismatchedDimensionException;
-import org.opengis.metadata.extent.GeographicBoundingBox;
 import org.opengis.metadata.spatial.PixelOrientation;
 import org.apache.sis.util.ComparisonMode;
 import org.apache.sis.util.Utilities;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.Cloneable;
 import org.geotoolkit.internal.InternalUtilities;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.metadata.iso.spatial.PixelTranslation;
 import org.geotoolkit.display.shape.XRectangle2D;
 
@@ -90,23 +84,6 @@ public class GeneralEnvelope extends org.apache.sis.geometry.GeneralEnvelope imp
      */
     public GeneralEnvelope(final Envelope envelope) {
         super(envelope);
-    }
-
-    /**
-     * Constructs a new envelope with the same data than the specified
-     * geographic bounding box. The coordinate reference system is set
-     * to {@linkplain DefaultGeographicCRS#WGS84 WGS84}.
-     *
-     * @param box The bounding box to copy.
-     *
-     * @see Envelope2D#Envelope2D(GeographicBoundingBox)
-     *
-     * @since 2.4
-     */
-    public GeneralEnvelope(final GeographicBoundingBox box) {
-        super(DefaultGeographicCRS.WGS84);
-        super.setRange(0, box.getWestBoundLongitude(), box.getEastBoundLongitude());
-        super.setRange(1, box.getSouthBoundLatitude(), box.getNorthBoundLatitude());
     }
 
     /**
@@ -226,154 +203,6 @@ public class GeneralEnvelope extends org.apache.sis.geometry.GeneralEnvelope imp
         for (int i=0; i<dimension; i++) {
             super.setRange(i, ordinates[i], ordinates[i + dimension]);
         }
-    }
-
-    /**
-     * Restricts this envelope to the CS or CRS
-     * {@linkplain CoordinateReferenceSystem#getDomainOfValidity() domain of validity}.
-     * This method performs two steps:
-     *
-     * <ol>
-     *   <li><p>First, ensure that the envelope is contained in the {@linkplain CoordinateSystem
-     *   coordinate system} domain. If some ordinates are out of range, then there is a choice
-     *   depending on the {@linkplain CoordinateSystemAxis#getRangeMeaning() range meaning}:</p>
-     *   <ul>
-     *     <li><p>If {@link RangeMeaning#EXACT} (typically <em>latitudes</em> ordinates), then values
-     *       greater than the {@linkplain CoordinateSystemAxis#getMaximumValue() maximum value} are
-     *       replaced by the maximum, and values smaller than the
-     *       {@linkplain CoordinateSystemAxis#getMinimumValue() minimum value} are replaced by the minimum.</p></li>
-     *
-     *     <li><p>If {@link RangeMeaning#WRAPAROUND} (typically <em>longitudes</em> ordinates),
-     *       then a multiple of the range (e.g. 360° for longitudes) is added or subtracted.
-     *       Example:
-     *       <ul>
-     *         <li>the [190 … 200]° longitude range is converted to [-170 … -160]°,</li>
-     *         <li>the [170 … 200]° longitude range is converted to [+170 … -160]°.</li>
-     *       </ul>
-     *       See <cite>Spanning the anti-meridian of a Geographic CRS</cite> in the
-     *       class javadoc for more information about the meaning of such range.</p></li>
-     *   </ul></li>
-     *   <li><p>If {@code crsDomain} is {@code true}, then the envelope from the previous step
-     *   is intersected with the CRS {@linkplain CoordinateReferenceSystem#getDomainOfValidity()
-     *   domain of validity}, if any.</p></li>
-     * </ol>
-     *
-     * {@section Spanning the anti-meridian of a Geographic CRS}
-     * Note that if the envelope is spanning the anti-meridian, then some {@linkplain #getLower(int)
-     * lower} ordinate values may become greater than the {@linkplain #getUpper(int) upper} ordinate
-     * values even if it was not the case before this method call. If this is not acceptable, consider
-     * invoking {@link #reorderCorners()} after this method call.
-     *
-     * {@section Choosing the range of longitude values}
-     * Geographic CRS typically have longitude values in the [-180 … +180]° range,
-     * but the [0 … 360]° range is also occasionally used. Callers need to ensure
-     * that this envelope CRS is associated to axes having the desired
-     * {@linkplain CoordinateSystemAxis#getMinimumValue() minimum} and
-     * {@linkplain CoordinateSystemAxis#getMaximumValue() maximum value}.
-     * The {@link org.geotoolkit.referencing.cs.AxisRangeType} enumeration can be used
-     * for shifting a geographic CRS to the desired range.
-     *
-     * {@section Usage}
-     * This method is sometime useful before to compute the {@linkplain #add(Envelope) union}
-     * or {@linkplain #intersect(Envelope) intersection} of envelopes, in order to ensure that
-     * both envelopes are defined in the same domain. This method may also be invoked before
-     * to project an envelope, since some projections produce {@link Double#NaN} numbers when
-     * given an ordinate value out of bounds.
-     *
-     * @param  useDomainOfCRS {@code true} if the envelope should be restricted to
-     *         the CRS <cite>domain of validity</cite> in addition to the CS domain.
-     * @return {@code true} if this envelope has been modified as a result of this method call,
-     *         or {@code false} if no change was done.
-     *
-     * @see CoordinateReferenceSystem#getDomainOfValidity()
-     * @see org.geotoolkit.referencing.cs.AxisRangeType
-     *
-     * @since 3.11 (derived from 2.5)
-     */
-    public boolean reduceToDomain(final boolean useDomainOfCRS) {
-        final CoordinateReferenceSystem crs = super.getCoordinateReferenceSystem();
-        boolean changed = false;
-        if (crs != null) {
-            final double[] ordinates = ordinates();
-            final int dimension = ordinates.length >>> 1;
-            final CoordinateSystem cs = crs.getCoordinateSystem();
-            for (int i=0; i<dimension; i++) {
-                final int j = i + dimension;
-                final CoordinateSystemAxis axis = cs.getAxis(i);
-                final double  minimum = axis.getMinimumValue();
-                final double  maximum = axis.getMaximumValue();
-                final RangeMeaning rm = axis.getRangeMeaning();
-                if (RangeMeaning.EXACT.equals(rm)) {
-                    if (ordinates[i] < minimum) {ordinates[i] = minimum; changed = true;}
-                    if (ordinates[j] > maximum) {ordinates[j] = maximum; changed = true;}
-                } else if (RangeMeaning.WRAPAROUND.equals(rm)) {
-                    final double csSpan = maximum - minimum;
-                    if (csSpan > 0 && csSpan < Double.POSITIVE_INFINITY) {
-                        double o1 = ordinates[i];
-                        double o2 = ordinates[j];
-                        if (Math.abs(o2-o1) >= csSpan) {
-                            /*
-                             * If the range exceed the CS span, then we have to replace it by the
-                             * full span, otherwise the range computed by the "else" block is too
-                             * small. The full range will typically be [-180 … 180]°.  However we
-                             * make a special case if the two bounds are multiple of the CS span,
-                             * typically [0 … 360]°. In this case the [0 … -0]° range matches the
-                             * original values and is understood by GeneralEnvelope as a range
-                             * spanning all the world.
-                             */
-                            if (o1 != minimum || o2 != maximum) {
-                                if ((o1 % csSpan) == 0 && (o2 % csSpan) == 0) {
-                                    ordinates[i] = +0.0;
-                                    ordinates[j] = -0.0;
-                                } else {
-                                    ordinates[i] = minimum;
-                                    ordinates[j] = maximum;
-                                }
-                                changed = true;
-                            }
-                        } else {
-                            o1 = Math.floor((o1 - minimum) / csSpan) * csSpan;
-                            o2 = Math.floor((o2 - minimum) / csSpan) * csSpan;
-                            if (o1 != 0) {ordinates[i] -= o1; changed = true;}
-                            if (o2 != 0) {ordinates[j] -= o2; changed = true;}
-                        }
-                    }
-                }
-            }
-            if (useDomainOfCRS) {
-                Envelope domain = Envelopes.getDomainOfValidity(crs);
-                if (domain != null) {
-                    final org.apache.sis.geometry.GeneralEnvelope original = new org.apache.sis.geometry.GeneralEnvelope(this);
-                    final CoordinateReferenceSystem domainCRS = domain.getCoordinateReferenceSystem();
-                    if (!equalsIgnoreMetadata(crs, domainCRS, false)) {
-                        /*
-                         * The domain may have fewer dimensions than this envelope (typically only
-                         * the ones relative to horizontal dimensions).  We can rely on directions
-                         * for matching axis since CRS.getEnvelope(crs) should have transformed the
-                         * domain to this envelope CRS.
-                         */
-                        final CoordinateSystem domainCS = domainCRS.getCoordinateSystem();
-                        final int domainDimension = domainCS.getDimension();
-                        for (int i=0; i<domainDimension; i++) {
-                            final AxisDirection direction = domainCS.getAxis(i).getDirection();
-                            for (int j=0; j<dimension; j++) {
-                                if (direction.equals(cs.getAxis(j).getDirection())) {
-                                    ordinates[j]           = domain.getMinimum(i);
-                                    ordinates[j+dimension] = domain.getMaximum(i);
-                                }
-                            }
-                        }
-                        domain = original;
-                    }
-                    intersect(domain);
-                    if (!changed) {
-                        changed = !equals(original, 0, false);
-                    }
-                }
-            }
-            ordinates(ordinates);
-        }
-        return changed;
     }
 
     /**

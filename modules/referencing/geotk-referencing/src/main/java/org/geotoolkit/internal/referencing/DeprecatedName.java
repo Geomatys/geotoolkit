@@ -20,7 +20,7 @@ package org.geotoolkit.internal.referencing;
 import net.jcip.annotations.Immutable;
 import org.opengis.metadata.citation.Citation;
 import org.opengis.referencing.ReferenceIdentifier;
-import org.geotoolkit.referencing.NamedIdentifier;
+import org.apache.sis.referencing.NamedIdentifier;
 
 
 /**

@@ -45,8 +45,8 @@ import org.apache.sis.util.ComparisonMode;
 import org.apache.sis.util.logging.Logging;
 import org.apache.sis.util.Classes;
 import org.apache.sis.metadata.iso.extent.Extents;
-import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.IdentifiedObjects;
+import org.apache.sis.referencing.CRS;
+import org.apache.sis.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
 import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;
 import org.geotoolkit.referencing.cs.DefaultCartesianCS;
@@ -58,13 +58,13 @@ import org.apache.sis.referencing.operation.matrix.Matrices;
 import org.apache.sis.internal.referencing.AxisDirections;
 import org.geotoolkit.internal.referencing.OperationContext;
 import org.geotoolkit.internal.referencing.VerticalDatumTypes;
-
 import org.apache.sis.referencing.operation.matrix.MatrixSIS;
+
 import static java.util.Collections.singletonList;
 import static org.apache.sis.measure.Units.MILLISECOND;
 import static org.geotoolkit.referencing.CRS.equalsIgnoreMetadata;
 import static org.geotoolkit.referencing.CRS.equalsApproximatively;
-import static org.geotoolkit.referencing.IdentifiedObjects.nameMatches;
+import static org.apache.sis.referencing.IdentifiedObjects.isHeuristicMatchForName;
 import static org.geotoolkit.internal.referencing.CRSUtilities.getGreenwichLongitude;
 
 
@@ -1613,8 +1613,8 @@ search: for (int j=0; j<targets.size(); j++) {
         object1 = TemporaryDatum.unwrap(object1);
         object2 = TemporaryDatum.unwrap(object2);
         if (equalsApproximatively(object1.getEllipsoid(), object2.getEllipsoid())) {
-            return nameMatches(object1, object2.getName().getCode()) ||
-                   nameMatches(object2, object1.getName().getCode());
+            return isHeuristicMatchForName(object1, object2.getName().getCode()) ||
+                   isHeuristicMatchForName(object2, object1.getName().getCode());
         }
         return false;
     }

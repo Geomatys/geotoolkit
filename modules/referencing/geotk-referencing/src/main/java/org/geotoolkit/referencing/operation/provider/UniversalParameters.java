@@ -39,7 +39,7 @@ import org.opengis.referencing.ReferenceIdentifier;
 import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.referencing.NamedIdentifier;
-import org.geotoolkit.referencing.IdentifiedObjects;
+import org.apache.sis.referencing.IdentifiedObjects;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;

@@ -42,7 +42,7 @@ import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.primitive.ProjectedFeature;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.map.CoverageMapLayer;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
 import org.opengis.coverage.CannotEvaluateException;
 import org.opengis.display.primitive.Graphic;
@@ -115,7 +115,7 @@ public abstract class AbstractGraphicVisitor implements GraphicVisitor {
         final CoverageMapLayer layer = gra.getLayer();
         Envelope objBounds = context.getCanvasObjectiveBounds();
         CoordinateReferenceSystem objCRS = objBounds.getCoordinateReferenceSystem();
-        TemporalCRS temporalCRS = CRS.getTemporalCRS(objCRS);
+        TemporalCRS temporalCRS = CRS.getTemporalComponent(objCRS);
         if (temporalCRS == null) {
             /*
              * If there is no temporal range, arbitrarily select the latest date.
@@ -124,10 +124,10 @@ public abstract class AbstractGraphicVisitor implements GraphicVisitor {
              */
             Envelope timeRange = layer.getBounds();
             if (timeRange != null) {
-                temporalCRS = CRS.getTemporalCRS(timeRange.getCoordinateReferenceSystem());
+                temporalCRS = CRS.getTemporalComponent(timeRange.getCoordinateReferenceSystem());
                 if (temporalCRS != null) {
                     try {
-                        timeRange = CRS.transform(timeRange, temporalCRS);
+                        timeRange = org.geotoolkit.referencing.CRS.transform(timeRange, temporalCRS);
                     } catch (TransformException e) {
                         // Should never happen since temporalCRS is a component of layer CRS.
                         Logging.unexpectedException(AbstractGraphicVisitor.class, "getCoverageValues", e);

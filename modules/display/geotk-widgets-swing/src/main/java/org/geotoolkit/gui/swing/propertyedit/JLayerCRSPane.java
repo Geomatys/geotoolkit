@@ -25,7 +25,7 @@ import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.io.X364;
-import org.geotoolkit.io.wkt.Colors;
+import org.apache.sis.io.wkt.Colors;
 import org.geotoolkit.io.wkt.WKTFormat;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.FeatureMapLayer;
@@ -36,7 +36,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  * Display a WKT of the layer coordinate reference system.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public class JLayerCRSPane extends AbstractPropertyPane {
@@ -44,7 +44,7 @@ public class JLayerCRSPane extends AbstractPropertyPane {
     private MapLayer layer = null;
     private CoordinateReferenceSystem crs = null;
     private final JEditorPane wktArea = new JEditorPane();
-    
+
     public JLayerCRSPane(){
         super("CRS", null, null, "CRS");
         setLayout( new BorderLayout());
@@ -53,7 +53,7 @@ public class JLayerCRSPane extends AbstractPropertyPane {
         wktArea.setBackground(Color.WHITE);
         add(BorderLayout.CENTER, new JScrollPane(wktArea));
     }
-    
+
     @Override
     public void setTarget(final Object target) {
         layer = (MapLayer) target;
@@ -84,12 +84,12 @@ public class JLayerCRSPane extends AbstractPropertyPane {
                 //we tryed
             }
         }
-        
+
         // last chance, try using bounding box envelope
         if(crs == null && layer!=null){
             crs = layer.getBounds().getCoordinateReferenceSystem();
         }
-        
+
         setIdentifiedObject(crs);
     }
 
@@ -98,7 +98,7 @@ public class JLayerCRSPane extends AbstractPropertyPane {
         init();
     }
 
-    
+
     private void setIdentifiedObject(final IdentifiedObject item) {
         final WKTFormat formatter = new WKTFormat();
         formatter.setColors(Colors.DEFAULT);
@@ -148,5 +148,5 @@ public class JLayerCRSPane extends AbstractPropertyPane {
         }
         buffer.append(text.substring(last));
     }
-    
+
 }

@@ -37,7 +37,7 @@ import org.apache.sis.xml.NilObject;
 import org.geotoolkit.referencing.datum.DefaultEllipsoid;
 import org.geotoolkit.referencing.datum.DefaultPrimeMeridian;
 import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;
-import org.geotoolkit.io.wkt.UnformattableObjectException;
+import org.apache.sis.io.wkt.UnformattableObjectException;
 
 
 /**
@@ -206,7 +206,7 @@ public final class NilReferencingObject implements GeocentricCRS, GeographicCRS,
      */
     @Override
     public String toWKT() throws UnformattableObjectException {
-        throw new UnformattableObjectException(NilReferencingObject.class);
+        throw new UnformattableObjectException();
     }
 
     /**

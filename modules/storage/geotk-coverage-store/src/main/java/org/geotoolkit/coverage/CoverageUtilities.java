@@ -28,7 +28,7 @@ import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.util.ImageIOUtilities;
@@ -46,7 +46,7 @@ import org.opengis.util.FactoryException;
 
 /**
  * Utility functions for coverage and mosaic.
- * 
+ *
  * @author Johann Sorel  (Geomatys)
  * @author Rémi Marechal (Geomatys).
  * @module pending
@@ -78,20 +78,20 @@ public final class CoverageUtilities {
             }
         }
     };
-    
+
     private CoverageUtilities(){}
-    
+
     /**
      * Find the most appropriate pyramid in given pyramid set and given crs.
      * Returned Pyramid may not have the given crs.
-     * 
+     *
      * @param set : pyramid set to search in
      * @param crs searched crs
      * @return Pyramid, never null except if the pyramid set is empty TODO : Is it really OK ? If we search a Lambert pyramid, and we've only got polar ones...
      */
     public static Pyramid findPyramid(final PyramidSet set, final CoordinateReferenceSystem crs) throws FactoryException {
-        final CoordinateReferenceSystem crs2D = CRS.getHorizontalCRS(crs);
-        final Envelope crsBound1 = CRS.getEnvelope(crs2D);
+        final CoordinateReferenceSystem crs2D = CRS.getHorizontalComponent(crs);
+        final Envelope crsBound1 = org.geotoolkit.referencing.CRS.getEnvelope(crs2D);
         double ratio = Double.NEGATIVE_INFINITY;
         // envelope with crs geographic.
         final GeneralEnvelope intersection = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
@@ -101,15 +101,16 @@ public final class CoverageUtilities {
             noValidityDomainFound :
             for(Pyramid pyramid : set.getPyramids()) {
                 double ratioTemp = 0;
-                Envelope pyramidBound = CRS.getEnvelope(CRS.getHorizontalCRS(pyramid.getCoordinateReferenceSystem()));
+                Envelope pyramidBound = org.geotoolkit.referencing.CRS.getEnvelope(
+                        CRS.getHorizontalComponent(pyramid.getCoordinateReferenceSystem()));
                 if (pyramidBound == null) {
                     results.add(pyramid);
                     continue noValidityDomainFound;
                 }
-                // compute sum of recovery ratio 
+                // compute sum of recovery ratio
                 // from crs validity domain area on pyramid crs validity domain area
                 try {
-                    pyramidBound = CRS.transform(pyramidBound, crs2D);
+                    pyramidBound = org.geotoolkit.referencing.CRS.transform(pyramidBound, crs2D);
                 } catch (TransformException ex) {
                     Logger.getLogger(CoverageUtilities.class.getName()).log(Level.WARNING, ex.getMessage(), ex);
                 }
@@ -134,7 +135,7 @@ public final class CoverageUtilities {
         } else {
             results.addAll(set.getPyramids());
         }
-            
+
         //paranoiac test
         if (results.isEmpty()){
             //could not find any proper candidates
@@ -147,37 +148,38 @@ public final class CoverageUtilities {
         if (results.size() == 1) return results.get(0);
         // if several equal ratio.
         for (Pyramid pyramid : results) {
-            final CoordinateReferenceSystem pyCrs = CRS.getHorizontalCRS(pyramid.getCoordinateReferenceSystem());
-            if (CRS.findMathTransform(pyCrs, crs2D).isIdentity() 
-             || CRS.equalsIgnoreMetadata(crs2D, pyCrs) 
-             || CRS.equalsApproximatively(crs2D, pyCrs)) {
+            final CoordinateReferenceSystem pyCrs = CRS.getHorizontalComponent(pyramid.getCoordinateReferenceSystem());
+            if (org.geotoolkit.referencing.CRS.findMathTransform(pyCrs, crs2D).isIdentity()
+             || org.geotoolkit.referencing.CRS.equalsIgnoreMetadata(crs2D, pyCrs)
+             || org.geotoolkit.referencing.CRS.equalsApproximatively(crs2D, pyCrs)) {
                 return pyramid;
             }
         }
         // return first in list. impossible to define the most appropriate crs.
         return results.get(0);
     }
-    
+
     /**
      * Find the most appropriate mosaic in the pyramid with the given informations.
-     * 
+     *
      * @param pyramid
      * @param resolution
      * @param tolerance
      * @param env
      * @return GridMosaic
      */
-    public static GridMosaic findMosaic(final Pyramid pyramid, final double resolution, 
+    public static GridMosaic findMosaic(final Pyramid pyramid, final double resolution,
             final double tolerance, final Envelope env, int maxTileNumber) throws FactoryException{
-             
-        final MathTransform mt = CRS.findMathTransform(pyramid.getCoordinateReferenceSystem(), env.getCoordinateReferenceSystem());
+
+        final MathTransform mt = org.geotoolkit.referencing.CRS.findMathTransform(
+                pyramid.getCoordinateReferenceSystem(), env.getCoordinateReferenceSystem());
         if (!mt.isIdentity()) throw new IllegalArgumentException("findMosaic : not same CoordinateReferenceSystem");
         final List<GridMosaic> mosaics = new ArrayList<GridMosaic>(pyramid.getMosaics());
         final List<GridMosaic> goodMosaics;
         final double epsilon = 1E-12;
-        
+
         final GeneralEnvelope findEnvelope = new GeneralEnvelope(env);
-        
+
         // if crs is compound
         if (env.getDimension() > 2) {
             double bestRatio = Double.NEGATIVE_INFINITY;
@@ -195,25 +197,25 @@ public final class CoverageUtilities {
                     } else if ((Math.abs(ratioTemp - bestRatio)) <= epsilon) { // =
                         goodMosaics.add(gridMosaic);
                     }
-                } 
+                }
             }
         } else {
             goodMosaics = mosaics;
         }
         // if no coverage intersect search envelope.
         if (goodMosaics.isEmpty()) return null;
-        
+
         if (goodMosaics.size() == 1) return goodMosaics.get(0);
-        
+
         // find mosaic with the most scale value.
         Collections.sort(goodMosaics, SCALE_COMPARATOR);
         Collections.reverse(goodMosaics);
-                
-        GridMosaic result = null;   
-        
-        for(GridMosaic candidate : goodMosaics){// recup meilleur scale 
+
+        GridMosaic result = null;
+
+        for(GridMosaic candidate : goodMosaics){// recup meilleur scale
             final double scale = candidate.getScale();
-            
+
             if(result == null){
                 //set the highest mosaic as base
                 result = candidate;
@@ -222,36 +224,36 @@ public final class CoverageUtilities {
             final Dimension tileSize = candidate.getTileSize();
             double nbtileX = env.getSpan(0) / (tileSize.width*scale);
             double nbtileY = env.getSpan(1) / (tileSize.height*scale);
-            
+
             //if the envelope has some NaN, we presume it's a square
             if(Double.isNaN(nbtileX) || Double.isInfinite(nbtileX)){
                 nbtileX = nbtileY;
             }else if(Double.isNaN(nbtileY) || Double.isInfinite(nbtileY)){
                 nbtileY = nbtileX;
             }
-            
+
             if(maxTileNumber > 0 && nbtileX*nbtileY > maxTileNumber){
                 //we haven't reach the best resolution, it would requiere
                 //too much tiles, we use the previous scale level
                 break;
             }
-            
+
             result = candidate;
-            
-            if( (scale * (1-tolerance)) < resolution){                      
+
+            if( (scale * (1-tolerance)) < resolution){
                 //we found the most accurate resolution
                 break;
-            }           
+            }
         }
         return result;
     }
-    
+
     /**
      * Serach in the given pyramid all of the mosaics which fit the given. 2 modes
-     * are possible : 
-     * - Contains only : Suitable mosaics must be CONTAINED (or equal) into given filter. 
-     * - Intersection  : Suitable mosaics must INTERSECT given filter. 
-     * 
+     * are possible :
+     * - Contains only : Suitable mosaics must be CONTAINED (or equal) into given filter.
+     * - Intersection  : Suitable mosaics must INTERSECT given filter.
+     *
      * @param toSearchIn The pyramid to get mosaics from.
      * @param filter The {@link Envelope} to use to  specify spatial position of wanted mosaics.
      * @param containOnly True if you want 'Contains only' mode, false if you want 'Intersection' mode.
@@ -273,15 +275,15 @@ public final class CoverageUtilities {
                 result.add(source);
             }
         }
-        
+
         return result;
     }
-    
+
     /**
      * <p>Compute ratio on each ordinate, not within 2D part of {@link CoordinateReferenceSystem},
      * which represent recovery from each ordinate of searchEnvelope on gridEnvelope.</p>
-     * 
-     * @param searchEnvelope user coverage area search. 
+     *
+     * @param searchEnvelope user coverage area search.
      * @param gridEnvelope mosaic envelope.
      * @return computed ratio.
      */
@@ -294,8 +296,8 @@ public final class CoverageUtilities {
         boolean find = false;
         for(CoordinateReferenceSystem ccrrss : ReferencingUtilities.decompose(crs)) {
             final CoordinateSystem cs = ccrrss.getCoordinateSystem();
-            if((cs instanceof CartesianCS) 
-            || (cs instanceof SphericalCS) 
+            if((cs instanceof CartesianCS)
+            || (cs instanceof SphericalCS)
             || (cs instanceof EllipsoidalCS)) {
                 find = true;
                 break;
@@ -320,7 +322,7 @@ public final class CoverageUtilities {
         }
         return sumRatio;
     }
-    
+
     /**
      * Return min geographic index ordinate from {@link CoordinateReferenceSystem} 2d part.
      *
@@ -338,7 +340,7 @@ public final class CoverageUtilities {
         }
         throw new IllegalArgumentException("crs doesn't have any geoghaphic crs");
     }
-    
+
     /**
      * Copy a set of pyramid pointed by source coverage reference into destination
      * reference.
@@ -418,25 +420,25 @@ public final class CoverageUtilities {
             throw new IllegalArgumentException("Unexprected data type : "+sdt);
         }
     }
-    
+
     /**
      * Get or create a pyramid and it's mosaic for the given envelope and scales.
-     * 
+     *
      * @param container
      * @param envelope
      * @param tileSize
      * @param scales
      * @return
-     * @throws DataStoreException 
+     * @throws DataStoreException
      */
-    public static Pyramid getOrCreatePyramid(PyramidalCoverageReference container, 
+    public static Pyramid getOrCreatePyramid(PyramidalCoverageReference container,
             Envelope envelope, Dimension tileSize, double[] scales) throws DataStoreException{
 
         //find if we already have a pyramid in the given CRS
         Pyramid pyramid = null;
         final CoordinateReferenceSystem crs = envelope.getCoordinateReferenceSystem();
         for (Pyramid candidate : container.getPyramidSet().getPyramids()) {
-            if (CRS.equalsApproximatively(crs, candidate.getCoordinateReferenceSystem())) {
+            if (org.geotoolkit.referencing.CRS.equalsApproximatively(crs, candidate.getCoordinateReferenceSystem())) {
                 pyramid = candidate;
                 break;
             }
@@ -478,8 +480,8 @@ public final class CoverageUtilities {
                 mosaic = container.createMosaic(pyramid.getId(),gridSize, tileDim, upperleft, scale);
             }
         }
-        
+
         return pyramid;
     }
-    
+
 }

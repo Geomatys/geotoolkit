@@ -34,7 +34,7 @@ import org.geotoolkit.wcs.xml.GetCoverage;
 
 import org.geotoolkit.wcs.xml.StringUtilities;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
 import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
 
@@ -49,9 +49,9 @@ import org.opengis.referencing.crs.VerticalCRS;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -66,7 +66,7 @@ import org.opengis.referencing.crs.VerticalCRS;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
+ *
  * @author Cédric Briançon (Geomatys)
  * @module pending
  */
@@ -100,24 +100,24 @@ public class GetCoverageType implements GetCoverage {
      */
     GetCoverageType() {
     }
-    
+
     /**
      * Build a new GetCoverage request (1.1.1)
      */
     public GetCoverageType(final CodeType identifier, final DomainSubsetType domainSubset,
             final RangeSubsetType rangeSubset, final OutputType output) {
-        
+
         this.domainSubset        = domainSubset;
         this.output              = output;
         this.rangeSubset         = rangeSubset;
         this.service             = "WCS";
         this.identifier          = identifier;
         this.version             = "1.1.1";
-        
+
     }
-    
+
     /**
-     * Identifier of the coverage that this GetCoverage operation request shall draw from. 
+     * Identifier of the coverage that this GetCoverage operation request shall draw from.
      */
     public CodeType getIdentifier() {
         return identifier;
@@ -161,7 +161,7 @@ public class GetCoverageType implements GetCoverage {
     public void setVersion(final String value) {
         this.version = value;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -171,7 +171,7 @@ public class GetCoverageType implements GetCoverage {
             return null;
         }
         final BoundingBoxType boundingBox = domainSubset.getBoundingBox().getValue();
-        final CoordinateReferenceSystem objCrs = CRS.decode(boundingBox.getCrs(), true);
+        final CoordinateReferenceSystem objCrs = org.geotoolkit.referencing.CRS.decode(boundingBox.getCrs(), true);
 
         //final List<DirectPositionType> positions = domainSubset.getSpatialSubSet().getEnvelope().getPos();
 
@@ -216,7 +216,7 @@ public class GetCoverageType implements GetCoverage {
         objEnv.setRange(1, lowerCorner.get(1), upperCorner.get(1));
 
         // If the CRS has a vertical part, then the envelope to return should be a 3D one.
-        if (CRS.getVerticalCRS(crs) != null) {
+        if (CRS.getVerticalComponent(crs, true) != null) {
             objEnv.setRange(2, lowerCorner.get(2), upperCorner.get(2));
         }
         return objEnv;
@@ -243,7 +243,8 @@ public class GetCoverageType implements GetCoverage {
         {
             return null;
         }
-        final CoordinateReferenceSystem objCrs = CRS.decode(output.getGridCRS().getSrsName().getValue());
+        final CoordinateReferenceSystem objCrs = org.geotoolkit.referencing.CRS.decode(
+                output.getGridCRS().getSrsName().getValue());
         final BoundingBoxType boundingBox = domainSubset.getBoundingBox().getValue();
 
         /*
@@ -275,7 +276,7 @@ public class GetCoverageType implements GetCoverage {
     public void setService(final String value) {
         this.service = value;
     }
-    
+
     /**
      * {@inheritDoc}
      */

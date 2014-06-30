@@ -38,6 +38,7 @@ import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
 import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.apache.sis.referencing.operation.transform.AbstractMathTransform;
+import org.apache.sis.referencing.IdentifiedObjects;
 
 import org.junit.*;
 import static org.geotoolkit.referencing.Assert.*;
@@ -99,7 +100,7 @@ public final strictfp class CRS_Test extends ReferencingTestBase {
                 + "PRIMEM[\"Greenwich\",0],UNIT[\"Degree\",0.0174532925199433]]");
         assertTrue(crs instanceof DefaultGeographicCRS);
         assertEquals("GCS_WGS_1984", crs.getName().getCode());
-        assertEquals("GCS_WGS_1984", IdentifiedObjects.getIdentifier(crs));
+        assertEquals("GCS_WGS_1984", IdentifiedObjects.getIdentifierOrName(crs));
         assertNull(IdentifiedObjects.getIdentifier(crs, Citations.EPSG));
     }
 
@@ -244,7 +245,7 @@ public final strictfp class CRS_Test extends ReferencingTestBase {
                 "  AXIS[“x”, EAST], \n" +
                 "  AXIS[“y”, NORTH]]"));
 
-        assertEquals("NAD_1983_StatePlane_Massachusetts_Mainland_FIPS_2001", IdentifiedObjects.getIdentifier(crs1));
+        assertEquals("NAD_1983_StatePlane_Massachusetts_Mainland_FIPS_2001", IdentifiedObjects.getIdentifierOrName(crs1));
 
         final CoordinateReferenceSystem crs2 = CRS.parseWKT(decodeQuotes(
                 "PROJCS[“NAD83 / Massachusetts Mainland”, \n" +
@@ -270,7 +271,7 @@ public final strictfp class CRS_Test extends ReferencingTestBase {
                 "  AXIS[“Northing”, NORTH], \n" +
                 "  AUTHORITY[“EPSG”,“26986”]]"));
 
-        assertEquals("EPSG:26986", IdentifiedObjects.getIdentifier(crs2));
+        assertEquals("EPSG:26986", IdentifiedObjects.getIdentifierOrName(crs2));
         assertEqualsApproximatively(crs1, crs2, false);
     }
 
@@ -289,15 +290,15 @@ public final strictfp class CRS_Test extends ReferencingTestBase {
         assertTrue (CRS.isHorizontalCRS(crs2D));
         assertFalse(CRS.isHorizontalCRS(crs3D));
         assertFalse(CRS.isHorizontalCRS(crs4D));
-        assertSame(crs2D, CRS.getHorizontalCRS(crs2D));
-        assertSame(crs2D, CRS.getHorizontalCRS(crs3D));
-        assertSame(crs2D, CRS.getHorizontalCRS(crs4D));
-        assertNull("No vertical component expected.",     CRS.getVerticalCRS(crs2D));
-        assertSame(DefaultVerticalCRS.ELLIPSOIDAL_HEIGHT, CRS.getVerticalCRS(crs3D));
-        assertSame(DefaultVerticalCRS.ELLIPSOIDAL_HEIGHT, CRS.getVerticalCRS(crs4D));
-        assertNull("No temporal component expected.",     CRS.getTemporalCRS(crs2D));
-        assertNull("No temporal component expected.",     CRS.getTemporalCRS(crs3D));
-        assertSame(DefaultTemporalCRS.MODIFIED_JULIAN,    CRS.getTemporalCRS(crs4D));
+        assertSame(crs2D, org.apache.sis.referencing.CRS.getHorizontalComponent(crs2D));
+        assertSame(crs2D, org.apache.sis.referencing.CRS.getHorizontalComponent(crs3D));
+        assertSame(crs2D, org.apache.sis.referencing.CRS.getHorizontalComponent(crs4D));
+        assertNull("No vertical component expected.",     org.apache.sis.referencing.CRS.getVerticalComponent(crs2D, true));
+        assertSame(DefaultVerticalCRS.ELLIPSOIDAL_HEIGHT, org.apache.sis.referencing.CRS.getVerticalComponent(crs3D, true));
+        assertSame(DefaultVerticalCRS.ELLIPSOIDAL_HEIGHT, org.apache.sis.referencing.CRS.getVerticalComponent(crs4D, true));
+        assertNull("No temporal component expected.",     org.apache.sis.referencing.CRS.getTemporalComponent(crs2D));
+        assertNull("No temporal component expected.",     org.apache.sis.referencing.CRS.getTemporalComponent(crs3D));
+        assertSame(DefaultTemporalCRS.MODIFIED_JULIAN,    org.apache.sis.referencing.CRS.getTemporalComponent(crs4D));
         assertSame(crs3D, CRS.getCompoundCRS(crs3D, crs2D, DefaultVerticalCRS.ELLIPSOIDAL_HEIGHT));
         assertSame(crs3D, CRS.getCompoundCRS(crs4D, crs2D, DefaultVerticalCRS.ELLIPSOIDAL_HEIGHT));
         assertNull(       CRS.getCompoundCRS(crs3D, crs2D, DefaultTemporalCRS.MODIFIED_JULIAN));

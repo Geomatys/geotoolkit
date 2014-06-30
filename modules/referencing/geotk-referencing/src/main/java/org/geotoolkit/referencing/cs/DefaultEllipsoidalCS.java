@@ -36,7 +36,7 @@ import org.opengis.geometry.MismatchedDimensionException;
 import org.apache.sis.measure.Units;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
-import org.geotoolkit.referencing.IdentifiedObjects;
+import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.internal.referencing.AxisDirections;
 import org.apache.sis.util.ComparisonMode;
 

@@ -34,7 +34,7 @@ import org.geotoolkit.coverage.Pyramid;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.image.io.XImageIO;
-import org.geotoolkit.referencing.IdentifiedObjects;
+import org.apache.sis.referencing.IdentifiedObjects;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
@@ -47,7 +47,7 @@ public class XMLPyramidSet extends AbstractPyramidSet{
 
     public static final String GEOPHYSICS = "geophysics";
     public static final String NATIVE = "native";
-    
+
 
     @XmlElement(name="Pyramid")
     private List<XMLPyramid> pyramids;
@@ -130,7 +130,7 @@ public class XMLPyramidSet extends AbstractPyramidSet{
     Pyramid createPyramid(CoordinateReferenceSystem crs) throws DataStoreException {
         final XMLPyramid pyramid = new XMLPyramid(crs);
         try {
-            pyramid.id = URLEncoder.encode(IdentifiedObjects.getIdentifier(crs),"UTF-8");
+            pyramid.id = URLEncoder.encode(IdentifiedObjects.getIdentifierOrName(crs),"UTF-8");
         } catch (UnsupportedEncodingException ex) {
             throw new DataStoreException("No valid identifier can be created from given CRS.", ex);
         }

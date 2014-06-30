@@ -26,7 +26,7 @@ import net.jcip.annotations.Immutable;
 import org.opengis.referencing.cs.VerticalCS;
 import org.opengis.referencing.crs.VerticalCRS;
 import org.opengis.referencing.datum.VerticalDatum;
-import org.geotoolkit.referencing.IdentifiedObjects;
+import org.apache.sis.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.cs.DefaultVerticalCS;
 import org.apache.sis.referencing.AbstractReferenceSystem;
 import org.geotoolkit.referencing.datum.DefaultVerticalDatum;

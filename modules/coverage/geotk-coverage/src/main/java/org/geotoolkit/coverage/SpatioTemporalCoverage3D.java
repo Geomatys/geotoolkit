@@ -46,7 +46,7 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageFactory;
 import org.apache.sis.geometry.GeneralDirectPosition;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.apache.sis.referencing.crs.DefaultTemporalCRS;
 import org.geotoolkit.referencing.operation.MathTransforms;
@@ -172,7 +172,7 @@ public class SpatioTemporalCoverage3D extends AbstractCoverage {
             this.boundingBox       = source.boundingBox;
         } else {
             this.coverage = coverage;
-            temporalCRS = DefaultTemporalCRS.castOrCopy(CRS.getTemporalCRS(crs));
+            temporalCRS = DefaultTemporalCRS.castOrCopy(CRS.getTemporalComponent(crs));
             if (temporalCRS == null) {
                 throw new IllegalArgumentException(Errors.format(
                         Errors.Keys.ILLEGAL_COORDINATE_REFERENCE_SYSTEM));
@@ -547,7 +547,7 @@ control:    for (int p=0; p<=1; p++) {
      */
     public GridCoverage2D getGridCoverage2D(final Date time) throws CannotEvaluateException {
         final InternationalString name = getName();
-        final CoordinateReferenceSystem crs = CRS.getHorizontalCRS(this.crs);
+        final CoordinateReferenceSystem crs = CRS.getHorizontalComponent(this.crs);
         if (crs == null) {
             throw new CannotEvaluateException(
                     Errors.format(Errors.Keys.CANT_SEPARATE_CRS_1, this.crs.getName()));

@@ -54,7 +54,7 @@ import org.geotoolkit.gui.swing.render2d.control.navigation.PanHandler;
 
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.io.X364;
-import org.geotoolkit.io.wkt.Colors;
+import org.apache.sis.io.wkt.Colors;
 import org.geotoolkit.io.wkt.WKTFormat;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;

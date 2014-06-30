@@ -22,17 +22,12 @@ package org.geotoolkit.referencing;
 
 import java.util.Map;
 import java.util.HashMap;
-import java.util.Set;
 import java.util.Iterator;
 import java.util.Comparator;
 import java.util.Collection;
 
-import org.opengis.util.NameSpace;
-import org.opengis.util.LocalName;
-import org.opengis.util.ScopedName;
 import org.opengis.util.GenericName;
 import org.opengis.util.FactoryException;
-import org.opengis.metadata.Identifier;
 import org.opengis.metadata.citation.Citation;
 import org.opengis.referencing.AuthorityFactory;
 import org.opengis.referencing.IdentifiedObject;
@@ -43,7 +38,6 @@ import org.geotoolkit.lang.Static;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.util.ComparisonMode;
 import org.apache.sis.util.iso.DefaultNameSpace;
-import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.factory.IdentifiedObjectFinder;
 import org.geotoolkit.referencing.factory.AbstractAuthorityFactory;
@@ -52,7 +46,6 @@ import org.apache.sis.referencing.NamedIdentifier;
 import static org.opengis.referencing.IdentifiedObject.NAME_KEY;
 import static org.opengis.referencing.IdentifiedObject.IDENTIFIERS_KEY;
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
-import static org.apache.sis.internal.util.Citations.identifierMatches;
 
 
 /**
@@ -161,23 +154,6 @@ public final class IdentifiedObjects extends Static {
     }
 
     /**
-     * Returns the informations provided in the specified identified object as a map of
-     * properties. The returned map contains keys declared in the {@link IdentifiedObject}
-     * interface, for example {@link IdentifiedObject#NAME_KEY NAME_KEY}. The values are
-     * obtained by calls to the methods associated to each key, for example
-     * {@link IdentifiedObject#getName()} for the {@code NAME_KEY}.
-     *
-     * @param  info The identified object to view as a properties map.
-     * @return An view of the identified object as an immutable map.
-     *
-     * @deprecated Moved to Apache SIS.
-     */
-    @Deprecated
-    public static Map<String,?> getProperties(final IdentifiedObject info) {
-        return org.apache.sis.referencing.IdentifiedObjects.getProperties(info);
-    }
-
-    /**
      * Returns the properties to be given to an identified object derived from the specified one.
      * This method returns the same properties than the supplied argument (as of
      * <code>{@linkplain #getProperties(IdentifiedObject) getProperties}(info)</code>), except for
@@ -195,241 +171,13 @@ public final class IdentifiedObjects extends Static {
      * @param  info The identified object to view as a properties map.
      * @param  authority The new authority for the object to be created, or {@code null} if it
      *         is not going to have any declared authority.
-     * @return A view of the identified object as a mutable map.
+     * @return The identified object properties in a mutable map.
      */
     public static Map<String,Object> getProperties(final IdentifiedObject info, final Citation authority) {
-        final Map<String,Object> properties = new HashMap<>(getProperties(info));
+        final Map<String,Object> properties = new HashMap<>(org.apache.sis.referencing.IdentifiedObjects.getProperties(info));
         properties.put(NAME_KEY, new NamedIdentifier(authority, info.getName().getCode()));
         properties.remove(IDENTIFIERS_KEY);
         return properties;
-    }
-
-    /**
-     * Returns an object name according the given authority. This method checks first the
-     * {@linkplain IdentifiedObject#getName() primary name}, then all
-     * {@linkplain IdentifiedObject#getAlias() alias} in their iteration order.
-     *
-     * <ul>
-     *   <li><p>If the name or alias implements the {@link ReferenceIdentifier} interface,
-     *       then this method compares the {@linkplain ReferenceIdentifier#getAuthority()
-     *       identifier authority} against the specified citation using the
-     *       {@link Citations#identifierMatches(Citation,Citation) identifierMatches} method.
-     *       If a matching is found, then this method returns the
-     *       {@linkplain ReferenceIdentifier#getCode identifier code} of this object.</p></li>
-     *
-     *   <li><p>Otherwise, if the alias implements the {@link GenericName} interface, then this method
-     *       compares the {@linkplain GenericName#scope name scope} against the specified citation using the
-     *       {@linkplain Citations#identifierMatches(Citation,String) identifierMatches} method.
-     *       If a matching is found, then this method returns the
-     *       {@linkplain GenericName#tip name tip} of this object.</p></li>
-     * </ul>
-     *
-     * Note that alias may implement both the {@link ReferenceIdentifier} and {@link GenericName}
-     * interfaces (for example {@link NamedIdentifier}). In such cases, the identifier view has
-     * precedence.
-     *
-     * @param  info The object to get the name from, or {@code null}.
-     * @param  authority The authority for the name to return, or {@code null} for any authority.
-     * @return The object name (either a {@linkplain ReferenceIdentifier#getCode code} or a
-     *         {@linkplain GenericName#tip name tip}), or {@code null} if no name matching the
-     *         specified authority was found.
-     *
-     * @see AbstractIdentifiedObject#getName(Citation)
-     *
-     * @deprecated Moved to Apache SIS.
-     */
-    @Deprecated
-    public static String getName(final IdentifiedObject info, final Citation authority) {
-        return org.apache.sis.referencing.IdentifiedObjects.getName(info, authority);
-    }
-
-    /**
-     * Returns every object names and aliases according the given authority. This method performs
-     * the same work than {@link #getName(IdentifiedObject, Citation)}, except that it doesn't
-     * stop at the first match. This method is useful in the rare cases where the same authority
-     * declare more than one name, and all those names are of interest.
-     *
-     * @param  info The object to get the names and aliases from, or {@code null}.
-     * @param  authority The authority for the names to return, or {@code null} for any authority.
-     * @return The object names and aliases, or an empty set if no name or alias matching the
-     *         specified authority was found.
-     *
-     * @since 3.20
-     *
-     * @deprecated Moved to Apache SIS.
-     */
-    @Deprecated
-    public static Set<String> getNames(final IdentifiedObject info, final Citation authority) {
-        return org.apache.sis.referencing.IdentifiedObjects.getNames(info, authority);
-    }
-
-    /**
-     * Returns an object name according the given authority. This method is {@code null}-safe:
-     * every properties are checked for null values, even the properties that are supposed to
-     * be mandatory (not all implementation defines all mandatory values).
-     *
-     * @param  info The object to get the name from, or {@code null}.
-     * @param  authority The authority for the name to return, or {@code null} for any authority.
-     * @param  addTo If non-null, the collection where to add all names found.
-     * @return The object's name (either a {@linkplain ReferenceIdentifier#getCode code} or a
-     *         {@linkplain GenericName#tip name tip}), or {@code null} if no name matching the
-     *         specified authority was found.
-     *
-     * @deprecated Moved to Apache SIS.
-     */
-    @Deprecated
-    static String name(final IdentifiedObject info, final Citation authority, final Collection<String> addTo) {
-        if (info != null) {
-            Identifier identifier = info.getName();
-            if (authority == null) {
-                if (identifier != null) {
-                    final String name = identifier.getCode();
-                    if (name != null) {
-                        if (addTo == null) {
-                            return name;
-                        }
-                        addTo.add(name);
-                    }
-                }
-                final Iterator<GenericName> it = iterator(info.getAlias());
-                if (it != null) while (it.hasNext()) {
-                    final GenericName alias = it.next();
-                    if (alias != null) {
-                        final String name = (alias instanceof Identifier) ?
-                                ((Identifier) alias).getCode() : alias.toString();
-                        if (name != null) {
-                            if (addTo == null) {
-                                return name;
-                            }
-                            addTo.add(name);
-                        }
-                    }
-                }
-            } else {
-                if (identifier != null) {
-                    if (identifierMatches(authority, identifier.getAuthority())) {
-                        final String name = identifier.getCode();
-                        if (name != null) {
-                            if (addTo == null) {
-                                return name;
-                            }
-                            addTo.add(name);
-                        }
-                    }
-                }
-                final Iterator<GenericName> it = iterator(info.getAlias());
-                if (it != null) while (it.hasNext()) {
-                    final GenericName alias = it.next();
-                    if (alias != null) {
-                        if (alias instanceof Identifier) {
-                            identifier = (Identifier) alias;
-                            if (identifierMatches(authority, identifier.getAuthority())) {
-                                final String name = identifier.getCode();
-                                if (name != null) {
-                                    if (addTo == null) {
-                                        return name;
-                                    }
-                                    addTo.add(name);
-                                }
-                            }
-                        } else {
-                            final NameSpace ns = alias.scope();
-                            if (ns != null) {
-                                final GenericName scope = ns.name();
-                                if (scope != null) {
-                                    if (identifierMatches(authority, scope.toString())) {
-                                        final String name = alias.toString();
-                                        if (name != null) {
-                                            if (addTo == null) {
-                                                return name;
-                                            }
-                                            addTo.add(name);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Returns an identifier for the given object according the given authority. This method checks
-     * all {@linkplain IdentifiedObject#getIdentifiers() identifiers} in their iteration order. It
-     * returns the first identifier with an {@linkplain ReferenceIdentifier#getAuthority authority}
-     * citation {@linkplain org.geotoolkit.metadata.iso.citation.Citations#identifierMatches(Citation,
-     * Citation) matching} the specified authority.
-     *
-     * @param  object The object to get the identifier from, or {@code null}.
-     * @param  authority The authority for the identifier to return, or {@code null} for
-     *         the first identifier regardless its authority.
-     * @return The object's identifier, or {@code null} if no identifier matching the specified
-     *         authority was found.
-     *
-     * @see AbstractIdentifiedObject#getIdentifier(Citation)
-     *
-     * @deprecated Moved to Apache SIS.
-     */
-    @Deprecated
-    public static ReferenceIdentifier getIdentifier(final IdentifiedObject object, final Citation authority) {
-        return org.apache.sis.referencing.IdentifiedObjects.getIdentifier(object, authority);
-    }
-
-    /**
-     * Returns an identifier according the given authority.
-     *
-     * @param  object The object to get the identifier from, or {@code null}.
-     * @param  authority The authority for the identifier to return, or {@code null}.
-     * @return The object's identifier, or {@code null} if none.
-     */
-    static ReferenceIdentifier identifier(final IdentifiedObject object, final Citation authority) {
-        if (object != null) {
-            final Iterator<ReferenceIdentifier> it = iterator(object.getIdentifiers());
-            if (it != null) while (it.hasNext()) {
-                final ReferenceIdentifier identifier = it.next();
-                if (identifier != null) { // Paranoiac check.
-                    if (authority == null || identifierMatches(authority, identifier.getAuthority())) {
-                        return identifier;
-                    }
-                }
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Returns the declared identifier, or {@code null} if none. This method searches for the first
-     * identifier (which is usually the main one) explicitly declared in the {@link IdentifiedObject}.
-     * At the opposite of {@link #lookupIdentifier(IdentifiedObject, boolean) lookupIdentifier},
-     * <em>this method does not verify the identifier validity</em>.
-     * <p>
-     * More specifically, this method uses the first non-null element found in
-     * <code>object.{@linkplain IdentifiedObject#getIdentifiers() getIdentifiers()}</code>. If there
-     * is none, then it uses <code>object.{@linkplain IdentifiedObject#getName() getName()}</code> -
-     * which is not guaranteed to be a valid identifier.
-     *
-     * {@section Recommanded alternatives}
-     * <ul>
-     *   <li>If the code of a specific authority is wanted (typically EPSG), then consider
-     *       using {@link #getIdentifier(IdentifiedObject, Citation)} instead.</li>
-     *   <li>In many cases, the identifier is not specified. For an exhaustive scan of the EPSG
-     *       database looking for a match, use one of the lookup methods defined below.</li>
-     * </ul>
-     *
-     * @param  object The identified object, or {@code null}.
-     * @return Identifier represented as a string for communication between systems, or {@code null}.
-     *
-     * @see #getIdentifier(IdentifiedObject, Citation)
-     * @see #lookupIdentifier(IdentifiedObject, boolean)
-     *
-     * @deprecated Moved to Apache SIS.
-     */
-    @Deprecated
-    public static String getIdentifier(final IdentifiedObject object) {
-        return org.apache.sis.referencing.IdentifiedObjects.getIdentifierOrName(object);
     }
 
     /**
@@ -508,7 +256,7 @@ public final class IdentifiedObjects extends Static {
         if (object == null) {
             return null;
         }
-        ReferenceIdentifier id = IdentifiedObjects.getIdentifier(object, authority);
+        ReferenceIdentifier id = org.apache.sis.referencing.IdentifiedObjects.getIdentifier(object, authority);
         if (id != null) {
             return id.getCode();
         }
@@ -564,118 +312,5 @@ public final class IdentifiedObjects extends Static {
             }
         }
         return null;
-    }
-
-    /**
-     * Returns {@code true} if either the {@linkplain IdentifiedObject#getName() primary name} or
-     * at least one {@linkplain IdentifiedObject#getAlias() alias} matches the specified string.
-     * This method performs the search in the following order, regardless of any authority:
-     * <p>
-     * <ul>
-     *   <li>The {@linkplain IdentifiedObject#getName() primary name} of the object</li>
-     *   <li>The {@linkplain ScopedName fully qualified name} of an alias</li>
-     *   <li>The {@linkplain LocalName local name} of an alias</li>
-     * </ul>
-     *
-     * @param  object The object to check.
-     * @param  name The name.
-     * @return {@code true} if the primary name of at least one alias
-     *         matches the specified {@code name}.
-     *
-     * @see AbstractIdentifiedObject#nameMatches(String)
-     *
-     * @deprecated Moved to Apache SIS.
-     */
-    @Deprecated
-    public static boolean nameMatches(final IdentifiedObject object, final String name) {
-        return org.apache.sis.referencing.IdentifiedObjects.isHeuristicMatchForName(object, name);
-    }
-
-    /**
-     * Returns {@code true} if the {@linkplain IdentifiedObject#getName() primary name} of an
-     * object matches the primary name or one {@linkplain IdentifiedObject#getAlias() alias}
-     * of the other object.
-     *
-     * @param o1 The first object to compare by name.
-     * @param o2 The second object to compare by name.
-     * @return {@code true} if both objects have a common name.
-     *
-     * @deprecated No replacement.
-     */
-    @Deprecated
-    public static boolean nameMatches(final IdentifiedObject o1, final IdentifiedObject o2) {
-        ensureNonNull("o1", o1);
-        ensureNonNull("o2", o2);
-        return nameMatches(o1, o2.getName().getCode()) ||
-               nameMatches(o2, o1.getName().getCode());
-    }
-
-    /**
-     * Returns {@code true} if the {@linkplain #getName() primary name} of the given object
-     * or one of the given alias matches the given name.
-     *
-     * @param  object The object to check.
-     * @param  alias  The list of alias in {@code object} (may be {@code null}).
-     *                This method will never modify this list. Consequently, it
-     *                may be a direct reference to an internal array.
-     * @param  name   The name for which to check for equality.
-     * @return {@code true} if the primary name or at least one alias matches the given {@code name}.
-     */
-    static boolean nameMatches(final IdentifiedObject object, final Collection<GenericName> alias, String name) {
-        name = name.trim();
-        if (name.equalsIgnoreCase(object.getName().getCode().trim())) {
-            return true;
-        }
-        if (alias != null) {
-            for (GenericName asName : alias) {
-                if (asName != null) { // Paranoiac check.
-                    asName = asName.toFullyQualifiedName();
-                    while (asName != null) {
-                        if (name.equalsIgnoreCase(asName.toString().trim())) {
-                            return true;
-                        }
-                        if (!(asName instanceof ScopedName)) {
-                            break;
-                        }
-                        asName = ((ScopedName) asName).tail();
-                    }
-                }
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Returns a string representation of the given identifier.
-     * This method applies the following rules:
-     * <p>
-     * <ul>
-     *   <li>If the given identifier implements the {@link GenericName} interface, then
-     *       this method delegates to the {@link GenericName#toString()} method.</li>
-     *   <li>Otherwise if the given identifier has a {@linkplain ReferenceIdentifier#getCodeSpace()
-     *       code space}, then formats the identifier as "{@code codespace:code}".</li>
-     *   <li>Otherwise if the given identifier has an {@linkplain Identifier#getAuthority()
-     *       authority}, then formats the identifier as "{@code authority:code}".</li>
-     *   <li>Otherwise returns the {@linkplain Identifier#getCode() code}.</li>
-     * </ul>
-     * <p>
-     * This method is provided because the {@link GenericName#toString()} behavior is specified
-     * by its javadoc, while {@link ReferenceIdentifier} has no such contract. For example the
-     * {@link DefaultIdentifier} implementation provides a WKT-like string representation. This
-     * static method can be used when a "name-like" representation is needed for any implementation.
-     *
-     * @param  identifier The identifier, or {@code null}.
-     * @return A string representation of the given identifier, or {@code null}.
-     *
-     * @see DefaultIdentifier#toString()
-     * @see NamedIdentifier#toString()
-     *
-     * @since 3.20
-     *
-     * @deprecated Moved to Apache SIS.
-     */
-    @Deprecated
-    public static String toString(final Identifier identifier) {
-        return org.apache.sis.referencing.IdentifiedObjects.toString(identifier);
     }
 }

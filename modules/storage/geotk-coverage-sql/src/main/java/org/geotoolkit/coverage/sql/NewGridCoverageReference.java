@@ -63,8 +63,8 @@ import org.geotoolkit.internal.sql.table.SpatialDatabase;
 import org.geotoolkit.internal.sql.table.NoSuchRecordException;
 import org.geotoolkit.internal.coverage.TransferFunction;
 import org.geotoolkit.metadata.iso.citation.Citations;
-import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.IdentifiedObjects;
+import org.apache.sis.referencing.CRS;
+import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.referencing.crs.DefaultTemporalCRS;
 import org.geotoolkit.referencing.factory.AbstractAuthorityFactory;
 import org.geotoolkit.referencing.cs.DiscreteCoordinateSystemAxis;
@@ -463,7 +463,7 @@ public final class NewGridCoverageReference {
              * Horizontal CRS.
              */
             final CRSAuthorityFactory crsFactory = database.getCRSAuthorityFactory();
-            final CoordinateReferenceSystem horizontalCRS = CRS.getHorizontalCRS(crs);
+            final CoordinateReferenceSystem horizontalCRS = CRS.getHorizontalComponent(crs);
             if (horizontalCRS != null) {
                 final Integer id = getIdentifier(horizontalCRS, crsFactory);
                 if (id != null) {
@@ -473,7 +473,7 @@ public final class NewGridCoverageReference {
             /*
              * Vertical CRS. Extract also the vertical ordinates, if any.
              */
-            final VerticalCRS verticalCRS = CRS.getVerticalCRS(crs);
+            final VerticalCRS verticalCRS = CRS.getVerticalComponent(crs, true);
             if (verticalCRS != null) {
                 final Integer id = getIdentifier(verticalCRS, crsFactory);
                 if (id != null) {
@@ -498,7 +498,7 @@ public final class NewGridCoverageReference {
             /*
              * Temporal CRS. Extract also the time ordinate range, if any.
              */
-            final TemporalCRS temporalCRS = CRS.getTemporalCRS(crs);
+            final TemporalCRS temporalCRS = CRS.getTemporalComponent(crs);
             if (temporalCRS != null) {
                 final CoordinateSystemAxis axis = temporalCRS.getCoordinateSystem().getAxis(0);
                 if (axis instanceof DiscreteCoordinateSystemAxis<?>) {
@@ -695,7 +695,7 @@ public final class NewGridCoverageReference {
                 }
             }
         }
-        return IdentifiedObjects.lookupEpsgCode(crs, true);
+        return org.geotoolkit.referencing.IdentifiedObjects.lookupEpsgCode(crs, true);
     }
 
     /**

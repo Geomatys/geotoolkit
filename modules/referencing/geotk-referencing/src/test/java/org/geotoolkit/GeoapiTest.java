@@ -50,7 +50,7 @@ import org.apache.sis.util.logging.Logging;
 
 import static org.opengis.test.CalculationType.*;
 import static org.opengis.test.ToleranceModifiers.*;
-import static org.geotoolkit.referencing.IdentifiedObjects.*;
+import static org.apache.sis.referencing.IdentifiedObjects.*;
 import static org.geotoolkit.factory.AuthorityFactoryFinder.*;
 
 
@@ -174,15 +174,15 @@ public final strictfp class GeoapiTest extends TestSuite implements Implementati
         while (transform instanceof AbstractMathTransform) {
             final IdentifiedObject id = ((AbstractMathTransform) transform).getParameterDescriptors();
             if (id != null) {
-                if (nameMatches(id, "Abridged_Molodenski")) {
+                if (isHeuristicMatchForName(id, "Abridged_Molodenski")) {
                     // Increase to 2 cm the tolerance factor for datum shift.
                     return scale(EnumSet.of(DIRECT_TRANSFORM, INVERSE_TRANSFORM), 2, 2, 2);
                 }
-                if (nameMatches(id, "Lambert_Azimuthal_Equal_Area")) {
+                if (isHeuristicMatchForName(id, "Lambert_Azimuthal_Equal_Area")) {
                     // Increase to 5 cm the tolerance factor in latitude for inverse projections.
                     return scale(EnumSet.of(INVERSE_TRANSFORM), isAlone ? 1 : 5, 5);
                 }
-                if (nameMatches(id, "Cassini_Soldner")) {
+                if (isHeuristicMatchForName(id, "Cassini_Soldner")) {
                     // Increase to 5 cm the tolerance factor in latitude for direct projections,
                     // and to 1 metres the tolerance factor in latitude for inverse projections.
                     if (isAlone) {

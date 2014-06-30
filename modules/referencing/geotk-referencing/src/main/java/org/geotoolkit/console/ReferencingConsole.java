@@ -45,7 +45,7 @@ import org.geotoolkit.referencing.operation.transform.AbstractMathTransform;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.geotoolkit.io.ContentFormatException;
-import org.geotoolkit.io.wkt.Colors;
+import org.apache.sis.io.wkt.Colors;
 import org.geotoolkit.io.X364;
 
 

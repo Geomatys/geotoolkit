@@ -57,6 +57,11 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 
+import static org.apache.sis.referencing.CRS.getHorizontalComponent;
+import static org.apache.sis.referencing.CRS.getVerticalComponent;
+import static org.apache.sis.referencing.CRS.getTemporalComponent;
+
+
 /**
  * Complementary utility methods for CRS manipulation.
  *
@@ -330,7 +335,7 @@ public final class ReferencingUtilities {
         VerticalCRS verticalDim = null;
 
         if(temporal != null && (temporal[0] != null || temporal[1] != null)){
-            temporalDim = CRS.getTemporalCRS(crs);
+            temporalDim = getTemporalComponent(crs);
 
             if(temporalDim == null){
                 temporalDim = DefaultTemporalCRS.JAVA;
@@ -338,7 +343,7 @@ public final class ReferencingUtilities {
         }
 
         if(elevation != null && (elevation[0] != null || elevation[1] != null)){
-            verticalDim = CRS.getVerticalCRS(crs);
+            verticalDim = getVerticalComponent(crs, true);
 
             if(verticalDim == null){
                 verticalDim = DefaultVerticalCRS.ELLIPSOIDAL_HEIGHT;
@@ -705,11 +710,11 @@ public final class ReferencingUtilities {
              * vertical or temporal). If it's a fail, our last chance is to
              * compare both CRS axis.
              */
-            if (CRS.getHorizontalCRS(srcCurrent) != null) {
+            if (getHorizontalComponent(srcCurrent) != null) {
                 searchHorizontal = true;
-            } else if (CRS.getVerticalCRS(srcCurrent) != null) {
+            } else if (getVerticalComponent(srcCurrent, true) != null) {
                 searchVertical = true;
-            } else if (CRS.getTemporalCRS(srcCurrent) != null) {
+            } else if (getTemporalComponent(srcCurrent) != null) {
                 searchTemporal = true;
             }
 
@@ -726,15 +731,15 @@ public final class ReferencingUtilities {
                 }
 
                 if (searchHorizontal) {
-                    if (CRS.getHorizontalCRS(destCurrent) != null) {
+                    if (getHorizontalComponent(destCurrent) != null) {
                         compatible = true;
                     }
                 } else if (searchVertical) {
-                    if (CRS.getVerticalCRS(destCurrent) != null) {
+                    if (getVerticalComponent(destCurrent, true) != null) {
                         compatible = true;
                     }
                 } else if (searchTemporal) {
-                    if (CRS.getTemporalCRS(destCurrent) != null) {
+                    if (getTemporalComponent(destCurrent) != null) {
                         compatible = true;
                     }
                 } else {
@@ -807,12 +812,12 @@ public final class ReferencingUtilities {
              */
             if (inputCRS instanceof CompoundCRS) {
                 final ArrayList<SingleCRS> toFind = new ArrayList<>(3);
-                final TemporalCRS inputTemporal = CRS.getTemporalCRS(inputCRS);
-                final TemporalCRS filterTemporal = CRS.getTemporalCRS(filterCRS);
-                final SingleCRS inputHorizontal = CRS.getHorizontalCRS(inputCRS);
-                final SingleCRS filterHorizontal = CRS.getHorizontalCRS(filterCRS);
-                final VerticalCRS inputVertical = CRS.getVerticalCRS(inputCRS);
-                final VerticalCRS filterVertical = CRS.getVerticalCRS(filterCRS);
+                final TemporalCRS inputTemporal = getTemporalComponent(inputCRS);
+                final TemporalCRS filterTemporal = getTemporalComponent(filterCRS);
+                final SingleCRS inputHorizontal = getHorizontalComponent(inputCRS);
+                final SingleCRS filterHorizontal = getHorizontalComponent(filterCRS);
+                final VerticalCRS inputVertical = getVerticalComponent(inputCRS, true);
+                final VerticalCRS filterVertical = getVerticalComponent(filterCRS, true);
                 if (inputHorizontal != null && filterHorizontal != null) {
                     toFind.add(inputHorizontal);
                 }

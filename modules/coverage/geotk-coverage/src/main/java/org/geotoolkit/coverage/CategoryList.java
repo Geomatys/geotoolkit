@@ -41,7 +41,7 @@ import org.opengis.util.InternationalString;
 
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.referencing.operation.matrix.Matrix1;
-import org.geotoolkit.io.wkt.UnformattableObjectException;
+import org.apache.sis.io.wkt.UnformattableObjectException;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
 import org.apache.sis.util.Classes;
@@ -1229,6 +1229,6 @@ class CategoryList extends AbstractList<Category> implements MathTransform1D, Co
      */
     @Override
     public String toWKT() throws UnsupportedOperationException {
-        throw new UnformattableObjectException("Not yet implemented.", getClass());
+        throw new UnformattableObjectException("Not yet implemented.");
     }
 }

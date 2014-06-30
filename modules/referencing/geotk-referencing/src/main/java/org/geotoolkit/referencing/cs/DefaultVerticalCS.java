@@ -24,7 +24,7 @@ import java.util.Map;
 import javax.xml.bind.annotation.XmlTransient;
 import org.opengis.referencing.cs.VerticalCS;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
-import org.geotoolkit.referencing.IdentifiedObjects;
+import org.apache.sis.referencing.IdentifiedObjects;
 
 import static java.util.Collections.singletonMap;
 

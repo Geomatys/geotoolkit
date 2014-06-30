@@ -42,9 +42,9 @@ import org.opengis.parameter.InvalidParameterTypeException;
 import org.opengis.parameter.InvalidParameterCardinalityException;
 
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.referencing.IdentifiedObjects;
+import org.apache.sis.referencing.IdentifiedObjects;
 
-import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
+import static org.apache.sis.util.ArgumentChecks.*;
 import static org.apache.sis.util.collection.Containers.hashMapCapacity;
 
 
@@ -166,7 +166,7 @@ public class ParameterGroup extends AbstractParameter implements ParameterValueG
         final Map<GeneralParameterDescriptor,Integer> occurrences =
                 new LinkedHashMap<>(hashMapCapacity(values.length));
         for (int i=0; i<values.length; i++) {
-            ensureNonNull("values", i, values);
+            ensureNonNullElement("values", i, values);
             occurrences.put(values[i].getDescriptor(), 0);
         }
         ensureValidOccurs(values, occurrences);
@@ -192,7 +192,7 @@ public class ParameterGroup extends AbstractParameter implements ParameterValueG
          * Count the parameters occurrences.
          */
         for (int i=0; i<values.length; i++) {
-            ensureNonNull("values", i, values);
+            ensureNonNullElement("values", i, values);
             final GeneralParameterDescriptor descriptor = values[i].getDescriptor();
             final Integer count = occurrences.put(descriptor, 1);
             if (count == null) {
@@ -286,7 +286,7 @@ public class ParameterGroup extends AbstractParameter implements ParameterValueG
         name = name.trim();
         for (final GeneralParameterValue value : values) {
             if (value instanceof ParameterValue<?>) {
-                if (IdentifiedObjects.nameMatches(value.getDescriptor(), name)) {
+                if (IdentifiedObjects.isHeuristicMatchForName(value.getDescriptor(), name)) {
                     return (ParameterValue<?>) value;
                 }
             }
@@ -298,7 +298,7 @@ public class ParameterGroup extends AbstractParameter implements ParameterValueG
          */
         for (final GeneralParameterDescriptor descriptor : getDescriptor().descriptors()) {
             if (descriptor instanceof ParameterDescriptor<?>) {
-                if (IdentifiedObjects.nameMatches(descriptor, name)) {
+                if (IdentifiedObjects.isHeuristicMatchForName(descriptor, name)) {
                     final ParameterValue<?> value = ((ParameterDescriptor<?>) descriptor).createValue();
                     values.add(value);
                     return value;
@@ -327,7 +327,7 @@ public class ParameterGroup extends AbstractParameter implements ParameterValueG
         final List<ParameterValueGroup> groups = new ArrayList<>(Math.min(values.size(), 10));
         for (final GeneralParameterValue value : values) {
             if (value instanceof ParameterValueGroup) {
-                if (IdentifiedObjects.nameMatches(value.getDescriptor(), name)) {
+                if (IdentifiedObjects.isHeuristicMatchForName(value.getDescriptor(), name)) {
                     groups.add((ParameterValueGroup) value);
                 }
             }
@@ -374,7 +374,7 @@ public class ParameterGroup extends AbstractParameter implements ParameterValueG
         }
         int count = 0;
         for (final GeneralParameterValue value : values) {
-            if (IdentifiedObjects.nameMatches(value.getDescriptor(), name)) {
+            if (IdentifiedObjects.isHeuristicMatchForName(value.getDescriptor(), name)) {
                 count++;
             }
         }

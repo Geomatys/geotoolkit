@@ -44,7 +44,7 @@ import org.postgresql.ds.PGSimpleDataSource;
 
 import static org.junit.Assume.*;
 import static org.geotoolkit.referencing.Assert.*;
-import static org.geotoolkit.referencing.IdentifiedObjects.getIdentifier;
+import static org.apache.sis.referencing.IdentifiedObjects.getIdentifier;
 
 
 /**

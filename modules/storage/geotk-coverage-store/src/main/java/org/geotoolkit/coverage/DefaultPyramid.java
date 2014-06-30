@@ -24,13 +24,13 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.UUID;
 import org.geotoolkit.gui.swing.tree.Trees;
-import org.geotoolkit.referencing.IdentifiedObjects;
+import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.util.Classes;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  * Default pyramid
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
@@ -44,7 +44,7 @@ public class DefaultPyramid implements Pyramid{
     public DefaultPyramid(PyramidSet set, CoordinateReferenceSystem crs) {
         this(null,set,crs);
     }
-    
+
     public DefaultPyramid(String id, PyramidSet set, CoordinateReferenceSystem crs) {
         this.set = set;
         this.crs = crs;
@@ -59,14 +59,14 @@ public class DefaultPyramid implements Pyramid{
     public String getId() {
         return id;
     }
-    
+
     /**
      * Internal list of pyramids, modify with causion.
      */
     public List<GridMosaic> getMosaicsInternal() {
         return mosaics;
     }
-    
+
     @Override
     public PyramidSet getPyramidSet() {
         return set;
@@ -80,19 +80,19 @@ public class DefaultPyramid implements Pyramid{
     @Override
     public double[] getScales() {
         final SortedSet<Double> scaleSet = new TreeSet<Double>();
-        
+
         for(GridMosaic m : mosaics){
             scaleSet.add(m.getScale());
         }
-        
+
         final double[] scales = new double[scaleSet.size()];
-        
+
         int i=0;
         for(Double d : scaleSet){
             scales[i] = d;
             i++;
         }
-        
+
         return scales;
     }
 
@@ -112,14 +112,14 @@ public class DefaultPyramid implements Pyramid{
     public List<GridMosaic> getMosaics() {
         return Collections.unmodifiableList(mosaics);
     }
-    
+
     @Override
     public String toString(){
         return Trees.toString(
                 Classes.getShortClassName(this)
-                +" "+IdentifiedObjects.getIdentifier(getCoordinateReferenceSystem()) 
-                +" "+getId(), 
+                +" "+IdentifiedObjects.getIdentifierOrName(getCoordinateReferenceSystem())
+                +" "+getId(),
                 getMosaicsInternal());
     }
-    
+
 }

@@ -93,8 +93,8 @@ public class MatrixParameters extends ParameterGroup implements ParameterDescrip
      */
     public MatrixParameters(final MatrixParameterDescriptors descriptor) {
         super(descriptor);
-        numRow = Parameters.cast((ParameterValue<?>) parameter(0), Integer.class);
-        numCol = Parameters.cast((ParameterValue<?>) parameter(1), Integer.class);
+        numRow = org.apache.sis.parameter.Parameters.cast((ParameterValue<?>) parameter(0), Integer.class);
+        numCol = org.apache.sis.parameter.Parameters.cast((ParameterValue<?>) parameter(1), Integer.class);
     }
 
     /**

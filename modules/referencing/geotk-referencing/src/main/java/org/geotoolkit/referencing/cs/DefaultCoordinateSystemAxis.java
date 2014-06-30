@@ -39,7 +39,7 @@ import org.apache.sis.measure.Angle;
 import org.apache.sis.io.wkt.Formatter;
 import org.apache.sis.referencing.cs.CoordinateSystems;
 import org.apache.sis.referencing.AbstractIdentifiedObject;
-import org.geotoolkit.referencing.IdentifiedObjects;
+import org.apache.sis.referencing.IdentifiedObjects;
 import org.geotoolkit.resources.Vocabulary;
 
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
@@ -955,7 +955,7 @@ public class DefaultCoordinateSystemAxis extends org.apache.sis.referencing.cs.D
             return this;
         }
         final UnitConverter converter = unit.getConverterToAny(newUnit);
-        return new DefaultCoordinateSystemAxis(IdentifiedObjects.getProperties(this, null),
+        return new DefaultCoordinateSystemAxis(IdentifiedObjects.getProperties(this),
                     getAbbreviation(), getDirection(), newUnit,
                     converter.convert(getMinimumValue()), converter.convert(getMaximumValue()), getRangeMeaning());
     }
@@ -967,7 +967,7 @@ public class DefaultCoordinateSystemAxis extends org.apache.sis.referencing.cs.D
         final String thatName = that.getName().getCode();
         if (!isHeuristicMatchForName(thatName)) {
             final String thisName = getName().getCode();
-            if (!IdentifiedObjects.nameMatches(that, thisName)) {
+            if (!IdentifiedObjects.isHeuristicMatchForName(that, thisName)) {
                 return false;
             }
         }

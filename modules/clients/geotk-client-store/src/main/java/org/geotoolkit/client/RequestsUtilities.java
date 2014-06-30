@@ -29,7 +29,7 @@ import java.util.Set;
 import java.util.StringTokenizer;
 import javax.imageio.ImageIO;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
@@ -119,7 +119,7 @@ public final class RequestsUtilities {
      * @param envelope The envelope to return the CRS code.
      */
     public static String toCrsCode(final Envelope envelope) {
-        if (CRS.equalsIgnoreMetadata(envelope.getCoordinateReferenceSystem(), DefaultGeographicCRS.WGS84)) {
+        if (org.geotoolkit.referencing.CRS.equalsIgnoreMetadata(envelope.getCoordinateReferenceSystem(), DefaultGeographicCRS.WGS84)) {
             return "EPSG:4326";
         }
         final Set<ReferenceIdentifier> identifiers = envelope.getCoordinateReferenceSystem().getIdentifiers();
@@ -233,7 +233,7 @@ public final class RequestsUtilities {
                     final String strElevation, final String strTime)
                     throws IllegalArgumentException, ParseException {
 
-        final CoordinateReferenceSystem horizontalCRS = CRS.getHorizontalCRS(crs);
+        final CoordinateReferenceSystem horizontalCRS = CRS.getHorizontalComponent(crs);
         final VerticalCRS               verticalCRS;
         final TemporalCRS               temporalCRS;
         final double[] dimX = new double[]{Double.NaN,Double.NaN};
@@ -274,7 +274,7 @@ public final class RequestsUtilities {
             final double elevation = toDouble(strElevation);
             dimZ[0] = dimZ[1] = elevation;
 
-            final VerticalCRS zCRS = CRS.getVerticalCRS(crs);
+            final VerticalCRS zCRS = CRS.getVerticalComponent(crs, true);
             verticalCRS = (zCRS != null) ? zCRS : DefaultVerticalCRS.GEOIDAL_HEIGHT;
 
         } else {
@@ -284,7 +284,7 @@ public final class RequestsUtilities {
         //parse temporal -------------------------------------------------------
         if (strTime != null) {
             final Date date = TemporalUtilities.parseDateSafe(strTime,true);
-            final TemporalCRS tCRS = CRS.getTemporalCRS(crs);
+            final TemporalCRS tCRS = CRS.getTemporalComponent(crs);
             temporalCRS = (tCRS != null) ? tCRS : DefaultTemporalCRS.MODIFIED_JULIAN;
 
             dimT[0] = dimT[1] = ((DefaultTemporalCRS)temporalCRS).toValue(date);

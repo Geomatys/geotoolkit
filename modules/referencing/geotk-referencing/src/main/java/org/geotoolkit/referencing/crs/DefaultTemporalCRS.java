@@ -27,7 +27,7 @@ import org.opengis.referencing.cs.TimeCS;
 import org.opengis.referencing.crs.TemporalCRS;
 import org.opengis.referencing.datum.TemporalDatum;
 import org.geotoolkit.referencing.cs.DefaultTimeCS;
-import org.geotoolkit.referencing.IdentifiedObjects;
+import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.referencing.AbstractReferenceSystem;
 import org.geotoolkit.referencing.datum.DefaultTemporalDatum;
 import javax.xml.bind.annotation.XmlTransient;

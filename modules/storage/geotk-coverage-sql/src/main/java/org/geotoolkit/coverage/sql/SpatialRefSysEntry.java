@@ -51,12 +51,12 @@ import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.apache.sis.referencing.operation.matrix.Matrices;
 import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
-import org.geotoolkit.referencing.cs.AbstractCS;
 import org.geotoolkit.referencing.cs.AxisRangeType;
-import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.IdentifiedObjects;
+import org.apache.sis.referencing.CRS;
+import org.apache.sis.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.cs.DefaultEllipsoidalCS;
 import org.geotoolkit.resources.Errors;
+import org.apache.sis.referencing.cs.CoordinateSystems;
 
 
 /**
@@ -262,27 +262,27 @@ final class SpatialRefSysEntry {
                 }
             }
         }
-        assert CRS.getHorizontalCRS(spatioTemporalCRS) == CRS.getHorizontalCRS(spatialCRS);
-        assert CRS.getVerticalCRS  (spatioTemporalCRS) == CRS.getVerticalCRS  (spatialCRS);
+        assert CRS.getHorizontalComponent(spatioTemporalCRS)        == CRS.getHorizontalComponent(spatialCRS);
+        assert CRS.getVerticalComponent  (spatioTemporalCRS, false) == CRS.getVerticalComponent  (spatialCRS, false);
         /*
          * Get the MathTransforms from coverage CRS to database CRS.
          */
         SingleCRS sourceCRS = horizontalCRS;
         SingleCRS targetCRS = database.horizontalCRS;
         if (sourceCRS != null && targetCRS != null) {
-            toDatabaseHorizontalCRS = (MathTransform2D) CRS.findMathTransform(sourceCRS, targetCRS, true);
+            toDatabaseHorizontalCRS = (MathTransform2D) org.geotoolkit.referencing.CRS.findMathTransform(sourceCRS, targetCRS, true);
         }
         sourceCRS = verticalCRS;
         targetCRS = database.verticalCRS;
         if (sourceCRS != null && targetCRS != null) {
             MathTransform tr;
             try {
-                tr = CRS.findMathTransform(sourceCRS, targetCRS, true);
+                tr = org.geotoolkit.referencing.CRS.findMathTransform(sourceCRS, targetCRS, true);
             } catch (OperationNotFoundException e) {
                 final Matrix matrix;
                 try {
-                    matrix = AbstractCS.swapAndScaleAxis(sourceCRS.getCoordinateSystem(),
-                                                         targetCRS.getCoordinateSystem());
+                    matrix = CoordinateSystems.swapAndScaleAxes(sourceCRS.getCoordinateSystem(),
+                                                                targetCRS.getCoordinateSystem());
                 } catch (ConversionException | IllegalArgumentException ignore) {
                     throw e;
                 }

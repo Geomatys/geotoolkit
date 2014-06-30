@@ -40,7 +40,7 @@ import org.opengis.util.FactoryException;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.factory.FactoryRegistryException;
-import org.geotoolkit.referencing.IdentifiedObjects;
+import org.apache.sis.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.operation.DefiningConversion;
 import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;
 import org.apache.sis.util.collection.BackingStoreException;
@@ -504,7 +504,7 @@ public class TransformedAuthorityFactory extends AuthorityFactoryAdapter {
     private Map<String,?> getProperties(final IdentifiedObject object) {
         final Citation authority = getAuthority();
         if (!Objects.equals(authority, object.getName().getAuthority())) {
-            return IdentifiedObjects.getProperties(object, authority);
+            return org.geotoolkit.referencing.IdentifiedObjects.getProperties(object, authority);
         } else {
             return IdentifiedObjects.getProperties(object);
         }

@@ -48,9 +48,9 @@ import org.opengis.openoffice.XReferencing;
 
 import org.geotoolkit.parameter.ParameterGroup;
 import org.apache.sis.io.wkt.FormattableObject;
-import org.geotoolkit.io.wkt.Convention;
+import org.apache.sis.io.wkt.Convention;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.IdentifiedObjects;
+import org.apache.sis.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.operation.AbstractCoordinateOperation;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.geotoolkit.openoffice.MethodInfo;
@@ -234,9 +234,9 @@ public final class Referencing extends Formulas implements XReferencing {
         if (logger.isLoggable(Level.FINER)) {
             final LogRecord record = Loggings.format(Level.FINER,
                     Loggings.Keys.CREATED_COORDINATE_OPERATION_3,
-                    IdentifiedObjects.getIdentifier(operation),
-                    IdentifiedObjects.getIdentifier(sourceCRS),
-                    IdentifiedObjects.getIdentifier(targetCRS));
+                    IdentifiedObjects.getIdentifierOrName(operation),
+                    IdentifiedObjects.getIdentifierOrName(sourceCRS),
+                    IdentifiedObjects.getIdentifierOrName(targetCRS));
             record.setSourceClassName(Referencing.class.getName());
             record.setSourceMethodName(method);
             logger.log(record);
@@ -269,7 +269,7 @@ public final class Referencing extends Formulas implements XReferencing {
             authorityString = AnyConverter.toString(authority);
         }
         if (object instanceof FormattableObject) {
-            return ((FormattableObject) object).toString(Convention.OGC);
+            return ((FormattableObject) object).toString(Convention.WKT1);
         }
         if (object instanceof MathTransform) {
             return ((MathTransform) object).toWKT();

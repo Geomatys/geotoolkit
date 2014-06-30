@@ -76,7 +76,7 @@ import org.geotoolkit.filter.visitor.FilterAttributeExtractor;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.io.wkt.PrjFiles;
 import org.geotoolkit.parameter.Parameters;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 
 import org.geotoolkit.storage.DataFileStore;
@@ -316,7 +316,7 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
 
         //check if we must read the 3d values
         final CoordinateReferenceSystem reproject = query.getCoordinateSystemReproject();
-        final boolean read3D = (reproject==null || (reproject != null && CRS.getVerticalCRS(reproject)!=null));
+        final boolean read3D = (reproject == null || CRS.getVerticalComponent(reproject, true) != null);
 
         // gather attributes needed by the query tool, they will be used by the
         // query filter
@@ -477,7 +477,7 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
             final ShapefileWriter writer = new ShapefileWriter(shpChannel, shxChannel);
             try {
                 // try to get the domain first
-                final org.opengis.geometry.Envelope domain = CRS.getEnvelope(crs);
+                final org.opengis.geometry.Envelope domain = org.geotoolkit.referencing.CRS.getEnvelope(crs);
                 if (domain != null) {
                     writer.writeHeaders(new JTSEnvelope2D(domain), shapeType, 0, 100);
                 } else {

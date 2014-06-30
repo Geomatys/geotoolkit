@@ -18,7 +18,7 @@ package org.geotoolkit.parameter;
 
 import java.util.*;
 
-import org.geotoolkit.referencing.IdentifiedObjects;
+import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.util.ArgumentChecks;
 import org.opengis.parameter.*;
 import org.opengis.referencing.IdentifiedObject;
@@ -32,9 +32,9 @@ import javax.measure.unit.Unit;
  * @author QuentinBoileau (Geomatys)
  */
 public final class ParametersExt {
-    
+
     private ParametersExt(){}
-    
+
     /**
      * List of all parameters, ParameterValue AND ParameterGroups.
      * Live list modifiable.
@@ -42,7 +42,7 @@ public final class ParametersExt {
     public static List<GeneralParameterValue> getParameters(ParameterValueGroup group){
         return group.values();
     }
-        
+
     /**
      * Get the first parameter for this name, do not create parameter if missing.
      */
@@ -81,7 +81,7 @@ public final class ParametersExt {
             }
         }
     }
-    
+
     /**
      * List of all parameters, ParameterValue OR ParameterGroups of this name.
      */
@@ -95,7 +95,7 @@ public final class ParametersExt {
         }
         return result;
     }
-    
+
     /**
      * Get the first parameter for this name, create parameter if missing.
      */
@@ -107,7 +107,7 @@ public final class ParametersExt {
         getParameters(group).add(param);
         return param;
     }
-    
+
     /**
      * Get parameter value, do not create parameter if missing.
      */
@@ -120,7 +120,7 @@ public final class ParametersExt {
         }
         return null;
     }
-    
+
     /**
      * Get parameter value, create parameter if missing.
      */
@@ -132,7 +132,7 @@ public final class ParametersExt {
         getParameters(group).add(param);
         return param;
     }
-    
+
     /**
      * Get parameter group, do not create parameter if missing.
      */
@@ -145,7 +145,7 @@ public final class ParametersExt {
         }
         return null;
     }
-    
+
     /**
      * Get parameter group list, do not create parameter if missing.
      */
@@ -159,7 +159,7 @@ public final class ParametersExt {
         }
         return result;
     }
-    
+
     /**
      * Get parameter group, create if missing, return first one otherwise !
      */
@@ -171,7 +171,7 @@ public final class ParametersExt {
         getParameters(group).add(param);
         return param;
     }
-    
+
     /**
      * create and return a parameter group.
      */
@@ -204,7 +204,7 @@ public final class ParametersExt {
                                final int maxDepth, final Collection<GeneralParameterDescriptor> list)
     {
         if (maxDepth >= 0) {
-            if (IdentifiedObjects.nameMatches(parameter, name)) {
+            if (IdentifiedObjects.isHeuristicMatchForName(parameter, name)) {
                 list.add(parameter);
             }
             if ((maxDepth != 0) && (parameter instanceof ParameterDescriptorGroup)) {
@@ -216,11 +216,11 @@ public final class ParametersExt {
     }
 
     /**
-     * Search a GeneralParameterDescriptor in a path. 
+     * Search a GeneralParameterDescriptor in a path.
      * Exemple : if separator is ':' and path is "input:group1:parameter"
      * the methode will search the GeneralParameterDescriptor named "parameter"
      * in ParameterDescriptorGroup "input" -> "group1".
-     * 
+     *
      * @param parameter root ParameterDescriptorGroup
      * @param path path to GeneralParameterDescriptor
      * @param separator string used to separate groups and parameter names.
@@ -229,30 +229,30 @@ public final class ParametersExt {
     public static GeneralParameterDescriptor searchPath(final ParameterDescriptorGroup parameter,
                                                           final String path, final String separator) {
         final String[] pathParts = path.split(separator);
-        
+
         //only one part, the parameter must be at first depth level.
         if (pathParts.length == 1) {
             return search(parameter, path, 1).get(0);
         }
-        
+
         return searchPath(parameter, pathParts, 0);
     }
-    
+
     /**
-     * 
+     *
      * @param parameter
      * @param codes
      * @param index
-     * @return 
+     * @return
      */
-    private static GeneralParameterDescriptor searchPath(final ParameterDescriptorGroup parameter, 
+    private static GeneralParameterDescriptor searchPath(final ParameterDescriptorGroup parameter,
                                                             final String[] codes, int index) {
         GeneralParameterDescriptor result = null;
         final String codePart = codes[index];
 
         for (GeneralParameterDescriptor param : parameter.descriptors()) {
             if (result != null) break;
-            if (IdentifiedObjects.nameMatches(param, codePart)) {
+            if (IdentifiedObjects.isHeuristicMatchForName(param, codePart)) {
                 if (index == codes.length-1) {
                     result = param;
                 } else {
@@ -263,12 +263,12 @@ public final class ParametersExt {
             }
         }
         return result;
-        
+
     }
-     
+
     /**
      * Add a GeneralParameterDescriptor to a ParameterDescriptorGroup.
-     * 
+     *
      * @param root ParameterDescriptorGroup. Will not be modified.
      * @param newParam GeneralParameterDescriptor to add
      * @return the new ParameterDescriptorGroup
@@ -353,35 +353,35 @@ public final class ParametersExt {
 
         return new DefaultParameterDescriptorGroup(paramMap, min, max, parameters.toArray(new GeneralParameterDescriptor[parameters.size()]));
     }
-    
+
     /**
      * Deep copy from a ParameterValueGroup source to a target ParameterValueGroup.
-     * 
+     *
      * @param source
-     * @param target 
+     * @param target
      */
     public static void deepCopy(ParameterValueGroup source, ParameterValueGroup target) {
-        
+
         for (GeneralParameterDescriptor paramDesc : source.getDescriptor().descriptors()) {
             final String paramCode = paramDesc.getName().getCode();
-            
+
             if (paramDesc instanceof ParameterDescriptor) {
                 final ParameterValue paramValue = source.parameter(paramCode);
                 target.parameter(paramCode).setValue(paramValue.getValue());
             } else {
-                
+
                 final List<ParameterValueGroup> sourceValues = source.groups(paramCode);
                 int targetValuesSize = target.groups(paramCode).size();
-                
+
                 if (targetValuesSize < sourceValues.size()) {
                     int toAdd = sourceValues.size() - targetValuesSize;
                     for (int i = 0; i < toAdd; i++) {
                         target.addGroup(paramCode);
                     }
                 }
-                
-                final List<ParameterValueGroup> targetValues = target.groups(paramCode); 
-                
+
+                final List<ParameterValueGroup> targetValues = target.groups(paramCode);
+
                 for (int i = 0; i < targetValues.size(); i++) {
                     deepCopy(sourceValues.get(i), targetValues.get(i));
                 }

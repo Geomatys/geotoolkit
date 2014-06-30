@@ -31,7 +31,7 @@ import org.apache.sis.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.jts.transform.CoordinateSequenceMathTransformer;
 import org.geotoolkit.geometry.jts.transform.GeometryCSTransformer;
 import org.geotoolkit.geometry.jts.transform.CoordinateSequenceTransformer;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.geotoolkit.referencing.GeodeticCalculator;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.operation.TransformPathNotFoundException;
@@ -64,7 +64,7 @@ import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.algorithm.CGAlgorithms;
 import java.awt.Rectangle;
 import javax.vecmath.Vector3d;
-import org.geotoolkit.geometry.GeometricUtilities;
+
 
 /**
  * JTS Geometry utility methods, bringing GeotoolKit to JTS. <p> Offers
@@ -291,14 +291,14 @@ public final class JTS {
      */
     public static Envelope toGeographic(final Envelope envelope, final CoordinateReferenceSystem crs)
             throws TransformException {
-        if (CRS.equalsIgnoreMetadata(crs, DefaultGeographicCRS.WGS84)) {
+        if (org.geotoolkit.referencing.CRS.equalsIgnoreMetadata(crs, DefaultGeographicCRS.WGS84)) {
             return envelope;
         }
 
         final MathTransform transform;
 
         try {
-            transform = CRS.findMathTransform(crs, DefaultGeographicCRS.WGS84, true);
+            transform = org.geotoolkit.referencing.CRS.findMathTransform(crs, DefaultGeographicCRS.WGS84, true);
         } catch (FactoryException exception) {
             throw new TransformPathNotFoundException(Errors.format(
                     Errors.Keys.CANT_TRANSFORM_ENVELOPE, exception));
@@ -548,7 +548,7 @@ public final class JTS {
 
 
         // Ensure the CRS is 2D and retrieve the new envelope
-        final CoordinateReferenceSystem crs2D = CRS.getHorizontalCRS(crs);
+        final CoordinateReferenceSystem crs2D = CRS.getHorizontalComponent(crs);
         if (crs2D == null) {
             throw new MismatchedDimensionException(
                     Errors.format(
@@ -572,7 +572,7 @@ public final class JTS {
                     new Coordinate(envelope.getMinX(), envelope.getMinY())
                 }), null);
     }
-    
+
     /**
      * Converts an envelope to a polygon. <p> The resulting polygon contains an
      * outer ring with verticies: (x1,y1),(x2,y1),(x2,y2),(x1,y2),(x1,y1)
@@ -597,7 +597,7 @@ public final class JTS {
 
     /**
      * This method is not correct when dealing with antemeridian.
-     * 
+     *
      * @param env
      * @return
      * @deprecated Use GeometricUtilities.toGeometryJTS(Envelope, WrapResolution.NONE) for exact same behavior
@@ -615,7 +615,7 @@ public final class JTS {
         final LinearRing ring = gf.createLinearRing(coordinates);
         return gf.createPolygon(ring, new LinearRing[0]);
     }
-    
+
     /**
      * Create a ReferencedEnvelope from the provided geometry, we will do our
      * best to guess the CoordinateReferenceSystem making use of getUserData()
@@ -641,7 +641,7 @@ public final class JTS {
             crs = (CoordinateReferenceSystem) userData;
         } else if (srsName != null) {
             try {
-                crs = CRS.decode(srsName);
+                crs = org.geotoolkit.referencing.CRS.decode(srsName);
             } catch (NoSuchAuthorityCodeException e) {
                 // e.printStackTrace();
             } catch (FactoryException e) {
@@ -777,7 +777,7 @@ public final class JTS {
             final int srid = geom.getSRID();
             if (srid != 0 && srid != -1) {
                 final String srs = SRIDGenerator.toSRS(srid, SRIDGenerator.Version.V1);
-                crs = CRS.decode(srs);
+                crs = org.geotoolkit.referencing.CRS.decode(srs);
             }
         }
         return crs;
@@ -1213,7 +1213,7 @@ public final class JTS {
         }
 
         //convert geometry
-        final MathTransform mt = CRS.findMathTransform(crsGeom, crsTarget);
+        final MathTransform mt = org.geotoolkit.referencing.CRS.findMathTransform(crsGeom, crsTarget);
         final Geometry result = transform(geom, mt);
         setCRS(result, crsTarget);
 

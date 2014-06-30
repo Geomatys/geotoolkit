@@ -31,7 +31,7 @@ import org.opengis.referencing.datum.PrimeMeridian;
 import org.apache.sis.test.DependsOn;
 import org.geotoolkit.test.TestBase;
 import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.referencing.IdentifiedObjects;
+import org.apache.sis.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.datum.DefaultEllipsoid;
 import org.geotoolkit.referencing.datum.DefaultPrimeMeridian;
 
@@ -139,9 +139,9 @@ public final strictfp class DatumAliasesTest extends TestBase {
         assertTrue("Non existing datum should have no alias.", datum.getAlias().isEmpty());
 
         datum = factory.createGeodeticDatum(Collections.singletonMap("name", "WGS 84"), ellipsoid, meridian);
-        assertTrue (IdentifiedObjects.nameMatches(datum, "WGS 84"));
-        assertTrue (IdentifiedObjects.nameMatches(datum, "WGS_1984"));
-        assertTrue (IdentifiedObjects.nameMatches(datum, "World Geodetic System 1984"));
-        assertFalse(IdentifiedObjects.nameMatches(datum, "WGS 72"));
+        assertTrue (IdentifiedObjects.isHeuristicMatchForName(datum, "WGS 84"));
+        assertTrue (IdentifiedObjects.isHeuristicMatchForName(datum, "WGS_1984"));
+        assertTrue (IdentifiedObjects.isHeuristicMatchForName(datum, "World Geodetic System 1984"));
+        assertFalse(IdentifiedObjects.isHeuristicMatchForName(datum, "WGS 72"));
     }
 }

@@ -26,7 +26,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.IdentifiedObjects;
+import org.apache.sis.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.factory.IdentifiedObjectFinder;
 import org.geotoolkit.referencing.factory.AbstractAuthorityFactory;
@@ -183,7 +183,7 @@ public final strictfp class URN_AuthorityFactoryTest extends ReferencingTestBase
                 .getIdentifiedObjectFinder(CoordinateReferenceSystem.class);
         final CoordinateReferenceSystem crs =
                 factory.createCoordinateReferenceSystem("URN:X-OGC:DEF:CRS:CRS:84");
-        assertEquals("CRS:84", IdentifiedObjects.getIdentifier(crs));
+        assertEquals("CRS:84", IdentifiedObjects.getIdentifierOrName(crs));
         assertEquals("urn:ogc:def:crs:crs:84", finder.findIdentifier(crs));
     }
 

@@ -67,7 +67,7 @@ import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.GraphicBuilder;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.StyleUtilities;
@@ -335,12 +335,12 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
 
         //layer crs may be null if it define an abstract collection
         //or if the crs is defined only on the feature geometry
-        if(layerCRS != null && !CRS.equalsIgnoreMetadata(layerCRS,bboxCRS)){
+        if(layerCRS != null && !org.geotoolkit.referencing.CRS.equalsIgnoreMetadata(layerCRS,bboxCRS)){
             //BBox and layer bounds have different CRS. reproject bbox bounds
             Envelope env;
 
             try{
-                env = CRS.transform(bbox, layerCRS);
+                env = org.geotoolkit.referencing.CRS.transform(bbox, layerCRS);
             }catch(TransformException ex){
                 //TODO is fixed in geotidy, the result envelope will have infinte values where needed
                 //TODO should do something about this, since canvas bounds may be over the crs bounds
@@ -409,7 +409,7 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
             final Envelope canvasEnv = renderingContext.getCanvasObjectiveBounds();
             final Envelope dimEnv;
             try {
-                dimEnv = CRS.transform(canvasEnv, crs);
+                dimEnv = org.geotoolkit.referencing.CRS.transform(canvasEnv, crs);
             } catch (TransformException ex) {
                 continue;
             }

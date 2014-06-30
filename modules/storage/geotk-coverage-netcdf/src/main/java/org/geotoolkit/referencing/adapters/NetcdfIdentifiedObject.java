@@ -31,7 +31,7 @@ import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.ReferenceIdentifier;
 
 import org.geotoolkit.metadata.iso.citation.Citations;
-import org.geotoolkit.io.wkt.UnformattableObjectException;
+import org.apache.sis.io.wkt.UnformattableObjectException;
 
 
 /**
@@ -193,6 +193,6 @@ public abstract class NetcdfIdentifiedObject implements IdentifiedObject, Refere
      */
     @Override
     public String toWKT() throws UnsupportedOperationException {
-        throw new UnformattableObjectException(getClass());
+        throw new UnformattableObjectException();
     }
 }

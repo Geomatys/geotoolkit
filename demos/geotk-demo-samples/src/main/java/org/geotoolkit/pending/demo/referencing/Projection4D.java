@@ -2,7 +2,7 @@
 package org.geotoolkit.pending.demo.referencing;
 
 import org.geotoolkit.pending.demo.Demos;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
 import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
 import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
@@ -23,8 +23,8 @@ public class Projection4D {
      */
     public static void main(String[] args) throws Exception{
         Demos.init();
-        
-        final CoordinateReferenceSystem crs2D = CRS.decode("EPSG:27582");
+
+        final CoordinateReferenceSystem crs2D = org.geotoolkit.referencing.CRS.decode("EPSG:27582");
         TemporalCRS temporalAxis = DefaultTemporalCRS.JULIAN;
         VerticalCRS verticalAxis = DefaultVerticalCRS.GEOIDAL_HEIGHT;
 
@@ -33,8 +33,8 @@ public class Projection4D {
 
 
         //convinient methods to extract vertical and temporal axis from a CRS.
-        verticalAxis = CRS.getVerticalCRS(crs4D);
-        temporalAxis = CRS.getTemporalCRS(crs4D);
+        verticalAxis = CRS.getVerticalComponent(crs4D, false);
+        temporalAxis = CRS.getTemporalComponent(crs4D);
         System.out.println(verticalAxis);
         System.out.println(temporalAxis);
 

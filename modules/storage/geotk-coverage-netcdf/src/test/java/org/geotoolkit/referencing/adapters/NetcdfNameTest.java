@@ -37,7 +37,7 @@ import org.opengis.wrapper.netcdf.NetcdfTransformFactory;
 
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.referencing.IdentifiedObjects;
+import org.apache.sis.referencing.IdentifiedObjects;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.operation.DefaultMathTransformFactory;
 

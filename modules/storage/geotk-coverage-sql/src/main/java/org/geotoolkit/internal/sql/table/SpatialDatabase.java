@@ -42,7 +42,7 @@ import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
 import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.factory.wkt.DirectPostgisFactory;
 import org.geotoolkit.referencing.factory.wkt.AuthorityFactoryProvider;
@@ -227,8 +227,8 @@ public class SpatialDatabase extends Database {
     {
         super(datasource, properties);
         ensureNonNull("spatialCRS", spatialCRS);
-        this.horizontalCRS = CRS.getHorizontalCRS(spatialCRS);
-        this.verticalCRS   = CRS.getVerticalCRS(spatialCRS);
+        this.horizontalCRS = CRS.getHorizontalComponent(spatialCRS);
+        this.verticalCRS   = CRS.getVerticalComponent(spatialCRS, true);
         this.temporalCRS   = (DefaultTemporalCRS) temporalCRS; // TODO DefaultTemporalCRS.castOrCopy(temporalCRS);
         this.spatialCRS    = spatialCRS;
         this.pixelInCell   = PixelInCell.CELL_CORNER;

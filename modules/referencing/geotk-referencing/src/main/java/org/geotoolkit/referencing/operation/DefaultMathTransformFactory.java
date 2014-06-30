@@ -66,6 +66,7 @@ import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.apache.sis.util.collection.WeakHashSet;
 import org.geotoolkit.resources.Errors;
+import org.apache.sis.referencing.cs.CoordinateSystems;
 import org.apache.sis.util.ArraysExt;
 
 import static org.apache.sis.util.iso.DefaultNameSpace.DEFAULT_SEPARATOR;
@@ -465,8 +466,8 @@ public class DefaultMathTransformFactory extends ReferencingFactory implements M
         final CoordinateSystem sourceCS = baseCRS.getCoordinateSystem();
         final Matrix swap1, swap3;
         try {
-            swap1 = AbstractCS.swapAndScaleAxis(sourceCS, AbstractCS.standard(sourceCS));
-            swap3 = AbstractCS.swapAndScaleAxis(AbstractCS.standard(derivedCS), derivedCS);
+            swap1 = CoordinateSystems.swapAndScaleAxes(sourceCS, AbstractCS.standard(sourceCS));
+            swap3 = CoordinateSystems.swapAndScaleAxes(AbstractCS.standard(derivedCS), derivedCS);
         } catch (IllegalArgumentException | ConversionException cause) {
             throw new FactoryException(cause);
         }

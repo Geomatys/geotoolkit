@@ -42,7 +42,7 @@ import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.image.interpolation.Resample;
 import org.geotoolkit.image.iterator.PixelIteratorFactory;
 import org.geotoolkit.internal.referencing.CRSUtilities;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
@@ -112,7 +112,7 @@ public class PyramidalModelWriter extends GridCoverageWriter {
             throw new CoverageStoreException(ex);
         }
 
-        if (!CRS.equalsIgnoreMetadata(crsCoverage2D, envelopeCrs)) {
+        if (!org.geotoolkit.referencing.CRS.equalsIgnoreMetadata(crsCoverage2D, envelopeCrs)) {
             try {
                 requestedEnvelope = ReferencingUtilities.transform2DCRS(requestedEnvelope, crsCoverage2D);
             } catch (TransformException ex) {
@@ -339,10 +339,10 @@ public class PyramidalModelWriter extends GridCoverageWriter {
                             mosaics = CoverageUtilities.findMosaics(currentPyramid, tmpFilter, false).iterator();
 
                             //define CRS and mathTransform from current pyramid to source coverage.
-                            destCrs2D = CRS.getHorizontalCRS(currentPyramid.getCoordinateReferenceSystem());
-                            crsDestToCrsCoverage = CRS.findMathTransform(destCrs2D, crsCoverage2D);
+                            destCrs2D = CRS.getHorizontalComponent(currentPyramid.getCoordinateReferenceSystem());
+                            crsDestToCrsCoverage = org.geotoolkit.referencing.CRS.findMathTransform(destCrs2D, crsCoverage2D);
                             //geographic
-                            pyramidEnvelope = CRS.transform(requestedEnvelope, destCrs2D);
+                            pyramidEnvelope = org.geotoolkit.referencing.CRS.transform(requestedEnvelope, destCrs2D);
                         } catch (Exception ex) {
                             throw new RuntimeException(ex);
                         }

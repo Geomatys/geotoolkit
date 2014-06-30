@@ -31,14 +31,14 @@ import org.geotoolkit.lang.Decorator;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.io.wkt.Formatter;
 import org.geotoolkit.io.wkt.Formattable;
-import org.geotoolkit.io.wkt.UnformattableObjectException;
+import org.apache.sis.io.wkt.UnformattableObjectException;
 
 
 /**
  * The base class of math transform wrappers. Despite being a concrete class, there is no
  * point to instantiate directly this base class. Instantiate one of the subclasses instead.
  * <p>
- * <strong>Do not implement {@code MathTransform2D} in this base class<strong>. This wrapper is
+ * <strong>Do not implement {@code MathTransform2D} in this base class</strong>. This wrapper is
  * sometime used for hiding the fact that a transform implements the {@code MathTransform2D}
  * interface, typically for testing a different code path in a JUnit test.
  *
@@ -221,6 +221,6 @@ public class MathTransformWrapper implements MathTransform, Formattable, Seriali
         if (transform instanceof Formattable) {
             return ((Formattable) transform).formatTo(formatter);
         }
-        throw new UnformattableObjectException(getClass());
+        throw new UnformattableObjectException();
     }
 }

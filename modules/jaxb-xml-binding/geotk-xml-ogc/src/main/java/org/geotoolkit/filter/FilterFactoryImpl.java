@@ -92,7 +92,7 @@ import org.geotoolkit.ogc.xml.v110.TimeOverlapsType;
 import org.geotoolkit.ogc.xml.v110.TouchesType;
 import org.geotoolkit.ogc.xml.v110.UpperBoundaryType;
 import org.geotoolkit.ogc.xml.v110.WithinType;
-import org.geotoolkit.referencing.IdentifiedObjects;
+import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.ogc.xml.FilterXmlFactory;
 
@@ -570,7 +570,7 @@ public class FilterFactoryImpl implements FilterFactory2 {
             propertyName = ((PropertyNameType)geometry).getPropertyName();
         }
         if (bounds.getCoordinateReferenceSystem() != null) {
-            CRSName = IdentifiedObjects.getIdentifier(bounds.getCoordinateReferenceSystem());
+            CRSName = IdentifiedObjects.getIdentifierOrName(bounds.getCoordinateReferenceSystem());
         } else {
             CRSName = "CRS:84";
         }

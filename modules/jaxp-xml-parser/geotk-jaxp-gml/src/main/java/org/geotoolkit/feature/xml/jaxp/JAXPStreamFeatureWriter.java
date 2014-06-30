@@ -46,7 +46,6 @@ import org.geotoolkit.internal.jaxb.ObjectFactory;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.apache.sis.xml.MarshallerPool;
-import org.apache.sis.xml.Namespaces;
 import org.geotoolkit.xml.StaxStreamWriter;
 import org.geotoolkit.feature.ComplexAttribute;
 

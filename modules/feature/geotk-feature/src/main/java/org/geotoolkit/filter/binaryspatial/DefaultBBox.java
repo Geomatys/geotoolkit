@@ -33,7 +33,7 @@ import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.geometry.jts.SRIDGenerator;
 import org.geotoolkit.geometry.jts.SRIDGenerator.Version;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.IdentifiedObjects;
+import org.apache.sis.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.util.StringUtilities;
 
@@ -141,7 +141,7 @@ public class DefaultBBox extends AbstractBinarySpatialOperator<PropertyName,Defa
      */
     @Override
     public String getSRS() {
-        return IdentifiedObjects.getIdentifier(right.getValue().getCoordinateReferenceSystem());
+        return IdentifiedObjects.getIdentifierOrName(right.getValue().getCoordinateReferenceSystem());
     }
 
     /**

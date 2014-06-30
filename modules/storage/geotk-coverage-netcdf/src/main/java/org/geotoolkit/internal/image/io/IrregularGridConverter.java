@@ -40,7 +40,7 @@ import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.cs.DefaultCartesianCS;
 import org.geotoolkit.referencing.cs.DiscreteCoordinateSystemAxis;
@@ -271,7 +271,7 @@ public final class IrregularGridConverter {
                     final double start, end;
                     if (Date.class.isAssignableFrom(axis.getElementType())) {
                         // TODO: there is no guarantee that we get the right CRS here.
-                        final DefaultTemporalCRS c = DefaultTemporalCRS.castOrCopy(CRS.getTemporalCRS(toReplace));
+                        final DefaultTemporalCRS c = DefaultTemporalCRS.castOrCopy(CRS.getTemporalComponent(toReplace));
                         start = c.toValue((Date) axis.getOrdinateAt(0));
                         end   = c.toValue((Date) axis.getOrdinateAt(n));
                     } else {

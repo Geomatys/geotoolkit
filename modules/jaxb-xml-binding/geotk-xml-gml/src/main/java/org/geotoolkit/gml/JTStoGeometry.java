@@ -37,7 +37,7 @@ import org.geotoolkit.gml.xml.AbstractGeometricAggregate;
 import org.geotoolkit.gml.xml.AbstractGeometry;
 import org.geotoolkit.gml.xml.AbstractRing;
 import org.geotoolkit.metadata.iso.citation.Citations;
-import org.geotoolkit.referencing.IdentifiedObjects;
+import org.apache.sis.referencing.IdentifiedObjects;
 import static org.geotoolkit.gml.xml.GMLXmlFactory.*;
 
 import org.opengis.geometry.DirectPosition;
@@ -47,12 +47,12 @@ import org.opengis.util.FactoryException;
 
 /**
  * Set of converters from JTS Geometry to GML Geometry.
- * 
+ *
  * @author Quentin Boileau (Geomatys).
  * @module pending
  */
 public final class JTStoGeometry {
-    
+
     /**
      * Private constructor.
      */
@@ -65,18 +65,18 @@ public final class JTStoGeometry {
      * @param jts The JTS geometry to convert.
      *
      * @return AbstractGeometry gml geometry.
-     * 
-     * @throws org.opengis.referencing.NoSuchAuthorityCodeException - if {@link CoordinateReferenceSystem crs} 
+     *
+     * @throws org.opengis.referencing.NoSuchAuthorityCodeException - if {@link CoordinateReferenceSystem crs}
      * can't be extracted from JTS geometry or can't be injected into the {@link AbstractGeometry}.
-     * @throws org.opengis.util.FactoryException - if {@link CoordinateReferenceSystem crs} can't be extracted from JTS 
+     * @throws org.opengis.util.FactoryException - if {@link CoordinateReferenceSystem crs} can't be extracted from JTS
      * geometry or can't be injected into the {@link AbstractGeometry}.
      */
      public static AbstractGeometry toGML(final String gmlVersion, final Geometry jts) throws NoSuchAuthorityCodeException, FactoryException {
         final CoordinateReferenceSystem crs = JTS.findCoordinateReferenceSystem(jts);
         return toGML(gmlVersion, jts, crs);
-        
+
      }
-     
+
     /**
      * Transform A JTS geometry into GML geometry
      *
@@ -85,10 +85,10 @@ public final class JTStoGeometry {
      * @param crs
      *
      * @return AbstractGeometry gml geometry.
-     * 
-     * @throws org.opengis.referencing.NoSuchAuthorityCodeException - if {@link CoordinateReferenceSystem crs} 
+     *
+     * @throws org.opengis.referencing.NoSuchAuthorityCodeException - if {@link CoordinateReferenceSystem crs}
      * can't be extracted from JTS geometry or can't be injected into the {@link AbstractGeometry}.
-     * @throws org.opengis.util.FactoryException - if {@link CoordinateReferenceSystem crs} can't be extracted from JTS 
+     * @throws org.opengis.util.FactoryException - if {@link CoordinateReferenceSystem crs} can't be extracted from JTS
      * geometry or can't be injected into the {@link AbstractGeometry}.
      */
      public static AbstractGeometry toGML(final String gmlVersion, final Geometry jts, CoordinateReferenceSystem crs) throws NoSuchAuthorityCodeException, FactoryException {
@@ -98,13 +98,13 @@ public final class JTStoGeometry {
          }
         if (jts instanceof Point) {
             return toGML(gmlVersion, (Point) jts, crs);
-            
+
         } else if (jts instanceof LineString) {
             return toGML(gmlVersion,(LineString) jts, crs);
-            
+
         } else if (jts instanceof Polygon) {
             return toGML(gmlVersion,(Polygon) jts, crs);
-            
+
         } else if (jts instanceof LinearRing) {
             return toGML(gmlVersion,(LinearRing) jts, crs);
 
@@ -205,10 +205,10 @@ public final class JTStoGeometry {
      * @param jtsGeom
      * @param crs Coordinate Reference System
      * @return MultiPointType
-     * 
-     * @throws org.opengis.referencing.NoSuchAuthorityCodeException - if {@link CoordinateReferenceSystem crs} 
+     *
+     * @throws org.opengis.referencing.NoSuchAuthorityCodeException - if {@link CoordinateReferenceSystem crs}
      * can't be injected into the {@link AbstractGeometry}.
-     * @throws org.opengis.util.FactoryException - if {@link CoordinateReferenceSystem crs} can't be injected into the 
+     * @throws org.opengis.util.FactoryException - if {@link CoordinateReferenceSystem crs} can't be injected into the
      * {@link AbstractGeometry}.
      */
     public static org.geotoolkit.gml.xml.MultiPoint toGML(final String gmlVersion, final MultiPoint jtsGeom, final CoordinateReferenceSystem crs)
@@ -231,10 +231,10 @@ public final class JTStoGeometry {
      * @param jtsGeom
      * @param crs Coordinate Reference System
      * @return MultiLineStringType
-     * 
-     * @throws org.opengis.referencing.NoSuchAuthorityCodeException - if {@link CoordinateReferenceSystem crs} 
+     *
+     * @throws org.opengis.referencing.NoSuchAuthorityCodeException - if {@link CoordinateReferenceSystem crs}
      * can't be injected into the {@link AbstractGeometry}.
-     * @throws org.opengis.util.FactoryException - if {@link CoordinateReferenceSystem crs} can't be injected into the 
+     * @throws org.opengis.util.FactoryException - if {@link CoordinateReferenceSystem crs} can't be injected into the
      * {@link AbstractGeometry}.
      */
     public static org.geotoolkit.gml.xml.AbstractGeometricAggregate toGML(final String gmlVersion, final MultiLineString jtsGeom, final CoordinateReferenceSystem crs)
@@ -258,10 +258,10 @@ public final class JTStoGeometry {
      * @param jtsGeom
      * @param crs Coordinate Reference System
      * @return MultiPolygonType
-     * 
-     * @throws org.opengis.referencing.NoSuchAuthorityCodeException - if {@link CoordinateReferenceSystem crs} 
+     *
+     * @throws org.opengis.referencing.NoSuchAuthorityCodeException - if {@link CoordinateReferenceSystem crs}
      * can't be injected into the {@link AbstractGeometry}.
-     * @throws org.opengis.util.FactoryException - if {@link CoordinateReferenceSystem crs} can't be injected into the 
+     * @throws org.opengis.util.FactoryException - if {@link CoordinateReferenceSystem crs} can't be injected into the
      * {@link AbstractGeometry}.
      */
     public static org.geotoolkit.gml.xml.AbstractGeometricAggregate toGML(final String gmlVersion, final MultiPolygon jtsGeom, final CoordinateReferenceSystem crs)
@@ -284,10 +284,10 @@ public final class JTStoGeometry {
      * @param jtsGeom
      * @param crs Coordinate Reference System
      * @return PolygonType
-     * 
-     * @throws org.opengis.referencing.NoSuchAuthorityCodeException - if {@link CoordinateReferenceSystem crs} 
+     *
+     * @throws org.opengis.referencing.NoSuchAuthorityCodeException - if {@link CoordinateReferenceSystem crs}
      * can't be injected into the {@link AbstractGeometry}.
-     * @throws org.opengis.util.FactoryException - if {@link CoordinateReferenceSystem crs} can't be injected into the 
+     * @throws org.opengis.util.FactoryException - if {@link CoordinateReferenceSystem crs} can't be injected into the
      * {@link AbstractGeometry}.
      */
     public static org.geotoolkit.gml.xml.Polygon toGML(final String gmlVersion, final Polygon jtsGeom, final CoordinateReferenceSystem crs)
@@ -311,10 +311,10 @@ public final class JTStoGeometry {
      * @param jtsGeom
      * @param crs Coordinate Reference System
      * @return LineStringType
-     * 
-     * @throws org.opengis.referencing.NoSuchAuthorityCodeException - if {@link CoordinateReferenceSystem crs} 
+     *
+     * @throws org.opengis.referencing.NoSuchAuthorityCodeException - if {@link CoordinateReferenceSystem crs}
      * can't be injected into the {@link AbstractGeometry}.
-     * @throws org.opengis.util.FactoryException - if {@link CoordinateReferenceSystem crs} can't be injected into the 
+     * @throws org.opengis.util.FactoryException - if {@link CoordinateReferenceSystem crs} can't be injected into the
      * {@link AbstractGeometry}.
      */
     public static org.geotoolkit.gml.xml.LineString toGML(final String gmlVersion, final LineString jtsGeom, final CoordinateReferenceSystem crs)
@@ -341,10 +341,10 @@ public final class JTStoGeometry {
      * @param jtsGeom
      * @param crs Coordinate Reference System
      * @return LinearRingType
-     * 
-     * @throws org.opengis.referencing.NoSuchAuthorityCodeException - if {@link CoordinateReferenceSystem crs} 
+     *
+     * @throws org.opengis.referencing.NoSuchAuthorityCodeException - if {@link CoordinateReferenceSystem crs}
      * can't be injected into the {@link AbstractGeometry}.
-     * @throws org.opengis.util.FactoryException - if {@link CoordinateReferenceSystem crs} can't be injected into the 
+     * @throws org.opengis.util.FactoryException - if {@link CoordinateReferenceSystem crs} can't be injected into the
      * {@link AbstractGeometry}.
      */
     public static org.geotoolkit.gml.xml.LinearRing toGML(final String gmlVersion, final LinearRing jtsGeom, final CoordinateReferenceSystem crs)
@@ -369,10 +369,10 @@ public final class JTStoGeometry {
      * @param jtsPoint
      * @param crs Coordinate Reference System
      * @return PointType
-     * 
-     * @throws org.opengis.referencing.NoSuchAuthorityCodeException - if {@link CoordinateReferenceSystem crs} 
+     *
+     * @throws org.opengis.referencing.NoSuchAuthorityCodeException - if {@link CoordinateReferenceSystem crs}
      * can't be injected into the {@link AbstractGeometry}.
-     * @throws org.opengis.util.FactoryException - if {@link CoordinateReferenceSystem crs} can't be injected into the 
+     * @throws org.opengis.util.FactoryException - if {@link CoordinateReferenceSystem crs} can't be injected into the
      * {@link AbstractGeometry}.
      */
     public static org.geotoolkit.gml.xml.Point toGML(final String gmlVersion, final Point jtsPoint, final CoordinateReferenceSystem crs)
@@ -442,13 +442,13 @@ public final class JTStoGeometry {
      */
     private static String getSRS(final CoordinateReferenceSystem crs) throws FactoryException {
         String srs = null;
-        final String method1 = IdentifiedObjects.lookupIdentifier(Citations.URN_OGC, crs, false);
+        final String method1 = org.geotoolkit.referencing.IdentifiedObjects.lookupIdentifier(Citations.URN_OGC, crs, false);
 
         if (method1 != null) {
             srs = method1;
         } else {
             //Try to use the deprecated methode
-            final String method2 = IdentifiedObjects.getIdentifier(crs);
+            final String method2 = IdentifiedObjects.getIdentifierOrName(crs);
             if (method2 != null) {
                 srs = method2;
             } else {
