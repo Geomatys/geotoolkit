@@ -26,6 +26,7 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.AffineTransform;
 import java.awt.RenderingHints;
+import java.util.ArrayList;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -885,33 +886,82 @@ compare:    for (final SingleCRS component : actualComponents) {
      * @since 3.16
      */
     public static CoordinateReferenceSystem getSubCRS(CoordinateReferenceSystem crs, int lower, int upper) {
-        if (crs != null) {
-            int dimension = crs.getCoordinateSystem().getDimension();
-            if (lower < 0 || lower > upper || upper > dimension) {
-                throw new IndexOutOfBoundsException(Errors.format(
-                        Errors.Keys.INDEX_OUT_OF_BOUNDS_1, lower < 0 ? lower : upper));
-            }
-check:      while (lower != 0 || upper != dimension) {
-                if (crs instanceof CompoundCRS) {
-                    final List<CoordinateReferenceSystem> components=((CompoundCRS) crs).getComponents();
-                    final int size = components.size();
-                    for (int i=0; i<size; i++) {
-                        crs = components.get(i);
-                        dimension = crs.getCoordinateSystem().getDimension();
-                        if (lower < dimension) {
-                            // The requested dimensions may intersect the dimension of this CRS.
-                            // The outer loop will perform the verification, and eventually go
-                            // down again in the tree of sub-components.
-                            continue check;
-                        }
-                        lower -= dimension;
-                        upper -= dimension;
-                    }
-                }
-                return null;
-            }
+        if(crs==null) return crs;
+        
+        int dimension = crs.getCoordinateSystem().getDimension();
+        if (lower < 0 || lower > upper || upper > dimension) {
+            throw new IndexOutOfBoundsException(Errors.format(
+                    Errors.Keys.INDEX_OUT_OF_BOUNDS_1, lower < 0 ? lower : upper));
         }
-        return crs;
+        
+        //dimension exactly match, no need to decompse the crs
+        if(lower==0 && dimension==upper) return crs;
+        
+        //crs can not be decomposed
+        if(!(crs instanceof CompoundCRS)) return null;
+                
+        final List<CoordinateReferenceSystem> parts = new ArrayList<>(1);
+        final int res = decomposeCRS(crs, lower, upper, parts);
+        if(res==-1){
+            //crs could not be divided
+            return null;
+        }
+        
+        final int size = parts.size();
+        if(size==1){
+            return parts.get(0);
+        }else{
+            //aggregate crs parts name
+            final CoordinateReferenceSystem[] array = parts.toArray(new CoordinateReferenceSystem[size]);
+            final StringBuilder sb = new StringBuilder(array[0].getName().toString());
+            for(int i=1;i<size;i++){
+                sb.append(" with ").append(array[i].getName().toString());
+            }
+            return new DefaultCompoundCRS(sb.toString(), array);
+        }
+    }
+    
+    /**
+     * Internal use only.
+     * Fill a list of CoordinateReferenceSystem with CRS parts in the given lower/upper range.
+     * 
+     * @param crs CoordinateReferenceSystem to decompose
+     * @param lower dimension start range
+     * @param upper dimension start range
+     * @param buffer used to stack CoordinateReferenceSystem when decomposing CRS.
+     * @return number of dimensions used, -1 if the current crs could not be decomposed to match lower/upper bounds
+     */
+    private static int decomposeCRS(CoordinateReferenceSystem crs, int lower, int upper, List<CoordinateReferenceSystem> buffer){
+        final int dimension = crs.getCoordinateSystem().getDimension();
+        
+        if(lower==0 && dimension<=upper){
+            //dimension is smaller or exactly match, no need to decompse the crs
+            if(buffer==null) buffer = new ArrayList<>();
+            buffer.add(crs);
+            return dimension;
+        }else if(lower>=dimension){
+            //skip this crs
+            return dimension;
+        }
+        
+        //crs can not be decomposed
+        if(!(crs instanceof CompoundCRS)) return -1;
+        
+        int nbDimRead = 0;
+        final List<CoordinateReferenceSystem> components = ((CompoundCRS)crs).getComponents();
+        for(CoordinateReferenceSystem component : components){
+            int res = decomposeCRS(component, lower, upper, buffer);
+            if(res==-1){
+                //sub element could not be decomposed
+                return -1;
+            }
+            nbDimRead += res;
+            lower = Math.max(0, lower-res);
+            upper = Math.max(0, upper-res);
+            if(upper==0) break;
+        }
+        
+        return nbDimRead;
     }
 
     /**

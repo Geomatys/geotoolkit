@@ -47,6 +47,7 @@ import org.geotoolkit.referencing.ReferencingUtilities;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.util.ArgumentChecks;
+import org.geotoolkit.referencing.operation.transform.DimensionFilter;
 import org.geotoolkit.util.BufferedImageUtilities;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.geometry.DirectPosition;
@@ -56,6 +57,7 @@ import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
 import org.opengis.referencing.operation.TransformException;
+import org.opengis.util.FactoryException;
 
 
 /**
@@ -142,8 +144,13 @@ public class PyramidalModelWriter extends GridCoverageWriter {
 
         final BlockingQueue<Runnable> tileQueue;
         try {
-            tileQueue = new ByTileQueue(pm, requestedEnvelope, crsCoverage2D, image, nbBand, srcCRSToGrid);
+            //extract the 2D part of the gridtocrs transform
+            final DimensionFilter filter = new DimensionFilter();
+            filter.addSourceDimensionRange(0, 2);
+            tileQueue = new ByTileQueue(pm, requestedEnvelope, crsCoverage2D, image, nbBand, filter.separate(srcCRSToGrid));
         } catch (DataStoreException ex) {
+            throw new CoverageStoreException(ex);
+        } catch (FactoryException ex) {
             throw new CoverageStoreException(ex);
         }
         final ThreadPoolExecutor service = new ThreadPoolExecutor(
@@ -278,7 +285,10 @@ public class PyramidalModelWriter extends GridCoverageWriter {
             final DirectPosition moUpperLeft = mosaic.getUpperLeftCorner();
 
             // define geographic intersection
-            final GeneralEnvelope intersection = new GeneralEnvelope(mosaic.getEnvelope());
+            final Envelope mosaicEnv = mosaic.getEnvelope();
+            final GeneralEnvelope intersection = new GeneralEnvelope(pyramidEnvelope.getCoordinateReferenceSystem());
+            intersection.setRange(0, mosaicEnv.getMinimum(0), mosaicEnv.getMaximum(0));
+            intersection.setRange(1, mosaicEnv.getMinimum(1), mosaicEnv.getMaximum(1));
             final int minOrdinate = CoverageUtilities.getMinOrdinate(intersection.getCoordinateReferenceSystem());
             if (!intersection.intersects(pyramidEnvelope, true)) {
                 return false;

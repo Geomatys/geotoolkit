@@ -595,7 +595,7 @@ public class PyramidalModelReader extends GridCoverageReader{
                 for(int i=0,n=subEnv.getDimension();i<n;i++){
                     subEnv.setRange(i, wantedEnv.getMinimum(i), wantedEnv.getMaximum(i));
                 }
-                subCoverage = rebuildCoverage(groups, subEnv, deferred);
+                subCoverage = rebuildCoverage((TreeMap)obj, subEnv, deferred);
             }else{
                 throw new CoverageStoreException("Found an object which is not a Coverage or a Map group, should not happen : "+obj);
             }
