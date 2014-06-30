@@ -41,7 +41,7 @@ import org.opengis.test.TestSuite;
 
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.factory.epsg.ThreadedEpsgFactory;
-import org.geotoolkit.referencing.operation.transform.AbstractMathTransform;
+import org.apache.sis.referencing.operation.transform.AbstractMathTransform;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.factory.FactoryNotFoundException;
 import org.geotoolkit.factory.Hints;

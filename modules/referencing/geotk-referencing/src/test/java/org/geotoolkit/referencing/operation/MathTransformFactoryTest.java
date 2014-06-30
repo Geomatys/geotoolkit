@@ -33,7 +33,7 @@ import org.geotoolkit.parameter.ParameterWriter;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.test.referencing.ReferencingTestBase;
 import org.geotoolkit.referencing.IdentifiedObjects;
-import org.geotoolkit.referencing.operation.transform.AbstractMathTransform;
+import org.apache.sis.referencing.operation.transform.AbstractMathTransform;
 
 import org.junit.*;
 import static org.junit.Assert.*;

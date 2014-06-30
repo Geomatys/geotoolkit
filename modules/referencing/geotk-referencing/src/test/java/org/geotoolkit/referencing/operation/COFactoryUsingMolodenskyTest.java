@@ -597,23 +597,23 @@ public strictfp class COFactoryUsingMolodenskyTest extends TransformTestBase {
         assertTrue(transform instanceof LinearTransform);
         assertEquals(3, transform.getSourceDimensions());
         assertEquals(2, transform.getTargetDimensions());
-        assertEquals(Matrices.create(3, 4, new double[] {
+        assertTrue(Matrices.equals(Matrices.create(3, 4, new double[] {
             1, 0, 0, 0,
             0, 1, 0, 0,
             0, 0, 0, 1
-        }), ((LinearTransform) transform).getMatrix());
+        }), ((LinearTransform) transform).getMatrix(), 0, false));
 
         transform = opFactory.createOperation(WGS84, WGS84_3D).getMathTransform();
         validate();
         assertTrue(transform instanceof LinearTransform);
         assertEquals(2, transform.getSourceDimensions());
         assertEquals(3, transform.getTargetDimensions());
-        assertEquals(Matrices.create(4, 3, new double[] {
+        assertTrue(Matrices.equals(Matrices.create(4, 3, new double[] {
             1, 0, 0,
             0, 1, 0,
             0, 0, 0,
             0, 0, 1
-        }), ((LinearTransform) transform).getMatrix());
+        }), ((LinearTransform) transform).getMatrix(), 0, false));
     }
 
     /**

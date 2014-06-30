@@ -44,6 +44,7 @@ import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.geotoolkit.referencing.factory.epsg.LongitudeFirstEpsgFactory;
 import org.geotoolkit.referencing.factory.epsg.PropertyEpsgFactory;
+import org.apache.sis.referencing.operation.matrix.Matrices;
 
 import org.apache.sis.util.Classes;
 import org.apache.sis.test.DependsOn;
@@ -377,10 +378,10 @@ public final strictfp class OrderedAxisAuthorityFactoryTest extends ReferencingT
         final MathTransform transform = CRS.findMathTransform(standard, modified);
         assertTrue(transform instanceof LinearTransform);
         final Matrix matrix = ((LinearTransform) transform).getMatrix();
-        assertEquals(new GeneralMatrix(new double[][] {
+        assertTrue(Matrices.equals(new GeneralMatrix(new double[][] {
             { 0,  1,  0},
             { 1,  0,  0},
-            { 0,  0,  1}}), new GeneralMatrix(matrix));
+            { 0,  0,  1}}), matrix, 1E-9, false)); // TODO: comparison should be strict.
     }
 
     /**
