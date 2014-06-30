@@ -311,24 +311,24 @@ public final strictfp class CRS_Test extends ReferencingTestBase {
         assertSame(crs4D, CRS.getSubCRS(crs4D, 0, 4));
         assertSame(DefaultVerticalCRS.ELLIPSOIDAL_HEIGHT, CRS.getSubCRS(crs4D, 2, 3));
         assertSame(DefaultTemporalCRS.MODIFIED_JULIAN,    CRS.getSubCRS(crs4D, 3, 4));
-        
+
         //test separation of components in a compound crs
-        final DefaultCompoundCRS crs0_3part = new DefaultCompoundCRS(crs2D.getName()+" with "+DefaultVerticalCRS.ELLIPSOIDAL_HEIGHT.getName(), 
+        final DefaultCompoundCRS crs0_3part = new DefaultCompoundCRS(crs2D.getName()+" with "+DefaultVerticalCRS.ELLIPSOIDAL_HEIGHT.getName(),
                 crs2D, DefaultVerticalCRS.ELLIPSOIDAL_HEIGHT);
-        final DefaultCompoundCRS crs2_4part = new DefaultCompoundCRS(DefaultVerticalCRS.ELLIPSOIDAL_HEIGHT.getName()+" with "+DefaultTemporalCRS.MODIFIED_JULIAN.getName(), 
+        final DefaultCompoundCRS crs2_4part = new DefaultCompoundCRS(DefaultVerticalCRS.ELLIPSOIDAL_HEIGHT.getName()+" with "+DefaultTemporalCRS.MODIFIED_JULIAN.getName(),
                 DefaultVerticalCRS.ELLIPSOIDAL_HEIGHT,DefaultTemporalCRS.MODIFIED_JULIAN);
         final DefaultCompoundCRS crs4D2 = new DefaultCompoundCRS("NTF 4D2", crs2D, DefaultVerticalCRS.ELLIPSOIDAL_HEIGHT, DefaultTemporalCRS.MODIFIED_JULIAN);
         assertNull(         CRS.getSubCRS(crs4D2, 0, 1));
         assertEquals(crs2D, CRS.getSubCRS(crs4D2, 0, 2));
-        assertEquals(crs0_3part, CRS.getSubCRS(crs4D2, 0, 3));
+        assertEquals(crs0_3part, CRS.getOrCreateSubCRS(crs4D2, 0, 3));
         assertSame(crs4D2, CRS.getSubCRS(crs4D2, 0, 4));
         assertNull(         CRS.getSubCRS(crs4D2, 0, 1));
         assertNull(         CRS.getSubCRS(crs4D2, 1, 2));
         assertSame(DefaultVerticalCRS.ELLIPSOIDAL_HEIGHT, CRS.getSubCRS(crs4D2, 2, 3));
         assertSame(DefaultTemporalCRS.MODIFIED_JULIAN,   CRS.getSubCRS(crs4D2, 3, 4));
-        assertEquals(crs2_4part,   CRS.getSubCRS(crs4D2, 2, 4));
-        
-        
+        assertEquals(crs2_4part,   CRS.getOrCreateSubCRS(crs4D2, 2, 4));
+
+
     }
 
     /**

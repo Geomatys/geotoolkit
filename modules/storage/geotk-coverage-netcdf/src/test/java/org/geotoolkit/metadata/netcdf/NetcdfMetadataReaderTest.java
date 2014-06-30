@@ -34,11 +34,10 @@ import org.opengis.wrapper.netcdf.NetcdfMetadataTest;
 
 import org.geotoolkit.coverage.io.ImageCoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
-
 import org.geotoolkit.image.io.plugin.NetcdfImageReader;
 import org.junit.*;
+
 import static org.opengis.test.Assert.*;
-import static org.geotoolkit.test.Commons.getSingleton;
 
 
 /**
