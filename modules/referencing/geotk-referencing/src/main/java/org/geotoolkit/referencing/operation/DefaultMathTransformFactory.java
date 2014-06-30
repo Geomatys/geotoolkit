@@ -370,7 +370,7 @@ public class DefaultMathTransformFactory extends ReferencingFactory implements M
      *
      * @see #getAvailableMethods
      * @see #createParameterizedTransform
-     * @see org.geotoolkit.referencing.operation.transform.AbstractMathTransform#getParameterValues
+     * @see org.apache.sis.referencing.operation.transform.AbstractMathTransform#getParameterValues()
      */
     @Override
     public ParameterValueGroup getDefaultParameters(final String method)

@@ -37,7 +37,7 @@ import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
 import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
 import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
-import org.geotoolkit.referencing.operation.transform.AbstractMathTransform;
+import org.apache.sis.referencing.operation.transform.AbstractMathTransform;
 
 import org.junit.*;
 import static org.geotoolkit.referencing.Assert.*;

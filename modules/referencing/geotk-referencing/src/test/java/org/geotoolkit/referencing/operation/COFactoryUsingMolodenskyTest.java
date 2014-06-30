@@ -51,7 +51,7 @@ import org.geotoolkit.referencing.factory.FactoryDependencies;
 import org.geotoolkit.referencing.operation.matrix.Matrices;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.geotoolkit.referencing.operation.transform.TransformTestBase;
-import org.geotoolkit.referencing.operation.transform.AbstractMathTransform;
+import org.apache.sis.referencing.operation.transform.AbstractMathTransform;
 
 import static org.geotoolkit.referencing.crs.DefaultGeographicCRS.WGS84;
 import static org.geotoolkit.referencing.crs.DefaultGeographicCRS.WGS84_3D;

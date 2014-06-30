@@ -36,7 +36,6 @@ import org.geotoolkit.referencing.operation.DefaultConversion;
 import org.geotoolkit.referencing.operation.DefiningConversion;
 import org.geotoolkit.referencing.operation.DefaultSingleOperation;
 import org.geotoolkit.referencing.operation.DefaultOperationMethod;
-import org.geotoolkit.referencing.operation.transform.AbstractMathTransform;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.apache.sis.internal.referencing.Semaphores;
 import org.apache.sis.internal.referencing.WKTUtilities;

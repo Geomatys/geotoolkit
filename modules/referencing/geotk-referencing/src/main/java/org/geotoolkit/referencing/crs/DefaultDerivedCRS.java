@@ -34,7 +34,6 @@ import org.opengis.geometry.MismatchedDimensionException;
 import org.geotoolkit.referencing.operation.DefaultConversion;
 import org.geotoolkit.referencing.operation.DefiningConversion;
 import org.geotoolkit.referencing.operation.DefaultOperationMethod;
-import org.geotoolkit.referencing.operation.transform.AbstractMathTransform;
 
 
 /**

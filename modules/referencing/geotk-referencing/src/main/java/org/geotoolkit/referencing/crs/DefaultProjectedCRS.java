@@ -48,7 +48,6 @@ import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.operation.DefaultProjection;
 import org.geotoolkit.referencing.operation.DefiningConversion;
 import org.geotoolkit.referencing.operation.DefaultOperationMethod;
-import org.geotoolkit.referencing.operation.transform.AbstractMathTransform;
 import org.apache.sis.internal.metadata.ReferencingUtilities;
 import org.apache.sis.internal.referencing.WKTUtilities;
 import org.apache.sis.io.wkt.Formatter;

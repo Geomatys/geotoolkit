@@ -39,7 +39,7 @@ import org.geotoolkit.referencing.operation.provider.Mercator1SP;
 import org.geotoolkit.referencing.operation.provider.LambertConformal1SP;
 import org.geotoolkit.referencing.operation.provider.Mercator2SP;
 import org.geotoolkit.referencing.operation.provider.TransverseMercator;
-import org.geotoolkit.referencing.operation.transform.AbstractMathTransform;
+import org.apache.sis.referencing.operation.transform.AbstractMathTransform;
 import org.geotoolkit.resources.Errors;
 
 import org.opengis.metadata.citation.Citation;
