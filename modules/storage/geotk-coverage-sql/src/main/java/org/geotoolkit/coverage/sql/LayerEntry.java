@@ -44,7 +44,6 @@ import org.opengis.metadata.extent.GeographicBoundingBox;
 import org.opengis.geometry.MismatchedReferenceSystemException;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.datum.PixelInCell;
-import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -70,7 +69,8 @@ import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.internal.EmptySortedSet;
 import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
-import org.geotoolkit.referencing.operation.MathTransforms;
+import org.apache.sis.referencing.operation.matrix.MatrixSIS;
+import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.apache.sis.metadata.iso.extent.DefaultGeographicBoundingBox;
 import org.geotoolkit.resources.Errors;
@@ -857,7 +857,7 @@ final class LayerEntry extends DefaultEntry implements Layer, Localized {
                          * computed above.
                          */
                         final PixelInCell anchor = entry.getPixelInCell();
-                        final Matrix gridToCRS = ((LinearTransform) gg.getGridToCRS(anchor)).getMatrix();
+                        final MatrixSIS gridToCRS = MatrixSIS.castOrCopy(((LinearTransform) gg.getGridToCRS(anchor)).getMatrix());
                         final CoordinateReferenceSystem crs = gg.getCoordinateReferenceSystem();
                         final CoordinateSystem cs = crs.getCoordinateSystem();
                         final int dimension = cs.getDimension();
