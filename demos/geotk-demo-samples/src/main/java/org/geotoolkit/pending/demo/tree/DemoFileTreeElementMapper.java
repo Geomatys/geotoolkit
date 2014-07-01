@@ -46,14 +46,14 @@ final class DemoFileTreeElementMapper extends FileTreeElementMapper<Envelope>{
         }
         /*
          * In our case Envelope is just define by its coordinates and its crs but
-         * user may want store other informations as he need.
+         * user may want store other information as he need.
          */
     }
 
     @Override
     protected Envelope readObject() throws IOException {
         /*
-         * Same operation as writing action in reverse sens.
+         * Same operation as writing action in reversed order.
          */
         GeneralEnvelope resultEnvelop = new GeneralEnvelope(crs);
         for (int d = 0; d < dimension; d++) {
@@ -67,7 +67,7 @@ final class DemoFileTreeElementMapper extends FileTreeElementMapper<Envelope>{
     @Override
     protected boolean areEquals(Envelope objectA, Envelope objectB) {
         /*
-         * In some case equals method is not in accordance with equality pertinency ask by user.
+         * In some case equals method is not in accordance with equality pertinence asked by user.
          * User may redefine equal made.
          */
         return objectA.equals(objectB);

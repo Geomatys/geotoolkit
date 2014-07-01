@@ -105,7 +105,7 @@ public abstract class AbstractTree<E> implements Tree<E> {
     public int[] searchID(final Envelope regionSearch) throws StoreIndexException {
         ArgumentChecks.ensureNonNull("Envelope regionSearch", regionSearch);
         final Node root = getRoot();
-        final double[] regSearch = TreeUtilities.getCoords(regionSearch);
+         final double[] regSearch = TreeUtilities.getCoords(regionSearch);
         if (root != null && !root.isEmpty()) {
             try {
                 return treeAccess.search(root.getNodeId(), regSearch);
@@ -596,6 +596,7 @@ public abstract class AbstractTree<E> implements Tree<E> {
             treeAccess.setTreeIdentifier(treeIdentifier);
             treeAccess.setEltNumber(eltCompteur);
             treeAccess.close();
+            treeEltMap.close();
         } catch (IOException ex) {
             throw new StoreIndexException("FileBasicRTree : close(). Impossible to close TreeAccessFile.", ex);
         }
@@ -610,6 +611,7 @@ public abstract class AbstractTree<E> implements Tree<E> {
             treeAccess.setTreeIdentifier(treeIdentifier);
             treeAccess.setEltNumber(eltCompteur);
             treeAccess.flush();
+            treeEltMap.flush();
         } catch (IOException ex) {
             throw new StoreIndexException("FileBasicRTree : close(). Impossible to close TreeAccessFile.", ex);
         }

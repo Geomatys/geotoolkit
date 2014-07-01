@@ -191,7 +191,7 @@ public class FileSystemIndexStore implements IndexStore {
     }
 
     /**
-     * Loads a quadrtee stored in a '.qix' file. <b>WARNING:</b> The resulting
+     * Loads a quadtree stored in a '.qix' file. <b>WARNING:</b> The resulting
      * quadtree will be immutable; if you perform an insert, an
      * <code>UnsupportedOperationException</code> will be thrown.
      * 

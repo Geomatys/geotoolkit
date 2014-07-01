@@ -64,7 +64,7 @@ public class SQLRtreeManager extends AbstractRtreeManager {
             TREE_OWNERS.put(directory, owners);
             CACHED_TREES.put(directory, tree);
         } else {
-            //look if the owner is already registred
+            //look if the owner is already registered
             final List<Object> owners = TREE_OWNERS.get(directory);
             if (!owners.contains(owner)) {
                 owners.add(owner);
