@@ -41,7 +41,7 @@ import org.geotoolkit.process.chain.model.Parameter;
 import org.apache.sis.measure.NumberRange;
 import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.geotoolkit.util.collection.NotifiedCheckedList;
-import org.geotoolkit.util.converter.ObjectConverter;
+import org.apache.sis.util.ObjectConverter;
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.util.NoSuchIdentifierException;

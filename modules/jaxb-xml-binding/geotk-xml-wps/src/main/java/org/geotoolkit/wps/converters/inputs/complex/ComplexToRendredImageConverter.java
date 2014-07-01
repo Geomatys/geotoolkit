@@ -25,13 +25,13 @@ import java.util.List;
 import java.util.Map;
 import javax.imageio.ImageIO;
 import net.iharder.Base64;
-import org.geotoolkit.util.converter.NonconvertibleObjectException;
+import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.io.WPSEncoding;
 import org.geotoolkit.wps.xml.v100.ComplexDataType;
 
 /**
  * Convert an base64 encoded coverage into a RenderedImage.
- * 
+ *
  * @author Quentin Boileau (Geomatys)
  */
 public class ComplexToRendredImageConverter extends AbstractComplexInputConverter<RenderedImage> {
@@ -47,20 +47,20 @@ public class ComplexToRendredImageConverter extends AbstractComplexInputConverte
         }
         return INSTANCE;
     }
-    
+
     @Override
-    public Class<? extends RenderedImage> getTargetClass() {
+    public Class<RenderedImage> getTargetClass() {
         return RenderedImage.class;
     }
 
     @Override
-    public RenderedImage convert(ComplexDataType source, Map<String, Object> params) throws NonconvertibleObjectException {
-        
+    public RenderedImage convert(ComplexDataType source, Map<String, Object> params) throws UnconvertibleObjectException {
+
         try {
             if (params.get(ENCODING).equals(WPSEncoding.BASE64.getValue())) {
                 final List<Object> data = source.getContent();
                 if (data.size() != 1) {
-                    throw new NonconvertibleObjectException("Only one object in Complex content.");
+                    throw new UnconvertibleObjectException("Only one object in Complex content.");
                 }
                 final String encodedImage = (String) data.get(0);
                 final byte[] byteData = Base64.decode(encodedImage.trim());
@@ -71,12 +71,12 @@ public class ComplexToRendredImageConverter extends AbstractComplexInputConverte
                         return outImg;
                     }
                 }
-                throw new NonconvertibleObjectException("Error during base64 decoding.");
+                throw new UnconvertibleObjectException("Error during base64 decoding.");
             } else {
-                throw new NonconvertibleObjectException("Encoding should be in \"base64\"");
+                throw new UnconvertibleObjectException("Encoding should be in \"base64\"");
             }
         } catch (IOException ex) {
-            throw new NonconvertibleObjectException(ex.getMessage(), ex);
+            throw new UnconvertibleObjectException(ex.getMessage(), ex);
         }
     }
 }

@@ -25,7 +25,7 @@ import javax.xml.bind.Unmarshaller;
 import org.geotoolkit.mathml.xml.Mtable;
 import org.geotoolkit.mathml.xml.Mtr;
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.util.converter.NonconvertibleObjectException;
+import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.converters.WPSConvertersUtils;
 import org.geotoolkit.wps.io.WPSMimeType;
 import org.geotoolkit.wps.xml.WPSMarshallerPool;
@@ -50,12 +50,12 @@ public class ReferenceToAffineTransformConverter extends AbstractReferenceInputC
     }
 
     @Override
-    public Class<? extends AffineTransform> getTargetClass() {
+    public Class<AffineTransform> getTargetClass() {
         return AffineTransform.class;
     }
 
     @Override
-    public AffineTransform convert(final ReferenceType source, final Map<String, Object> params) throws NonconvertibleObjectException {
+    public AffineTransform convert(final ReferenceType source, final Map<String, Object> params) throws UnconvertibleObjectException {
 
         final String mime = source.getMimeType() != null ? source.getMimeType() : WPSMimeType.TEXT_XML.val();
         final InputStream stream = getInputStreamFromReference(source);
@@ -71,14 +71,14 @@ public class ReferenceToAffineTransformConverter extends AbstractReferenceInputC
                 return bindToAffineTransform(value);
 
             } catch (JAXBException ex) {
-                throw new NonconvertibleObjectException("Reference geometry invalid input : Unmarshallable geometry", ex);
+                throw new UnconvertibleObjectException("Reference geometry invalid input : Unmarshallable geometry", ex);
             }
         } else {
-            throw new NonconvertibleObjectException("Reference data mime is not supported");
+            throw new UnconvertibleObjectException("Reference data mime is not supported");
         }
     }
 
-    private AffineTransform bindToAffineTransform(final Object object) throws NonconvertibleObjectException {
+    private AffineTransform bindToAffineTransform(final Object object) throws UnconvertibleObjectException {
 
         ArgumentChecks.ensureNonNull("object", object);
 
@@ -90,7 +90,7 @@ public class ReferenceToAffineTransformConverter extends AbstractReferenceInputC
                 final Mtable mtable = WPSConvertersUtils.findMtable(mathExp);
 
                 if (mtable == null) {
-                    throw new NonconvertibleObjectException("No mtable element found.");
+                    throw new UnconvertibleObjectException("No mtable element found.");
                 }
 
                 final List<Mtr> rows = WPSConvertersUtils.getRows(mtable);
@@ -98,14 +98,14 @@ public class ReferenceToAffineTransformConverter extends AbstractReferenceInputC
                 final int nbRows = rows.size();
                 final int nbCells = WPSConvertersUtils.getCells(rows.get(0)).length;
                 if (nbRows != 2 || (nbCells != 2 && nbCells != 3)) {
-                    throw new NonconvertibleObjectException("The matrix need to be a 2x2 or a 3x3 matrix .");
+                    throw new UnconvertibleObjectException("The matrix need to be a 2x2 or a 3x3 matrix .");
                 }
 
                 final double[][] matrix =  new double[nbRows][nbCells];
                 for (int i = 0; i < nbRows; i++) {
                     final double[] cells = WPSConvertersUtils.getCells(rows.get(i));
                     if (cells.length != nbCells) {
-                        throw new NonconvertibleObjectException("The matrix need to be a 2x2 or a 3x3 matrix .");
+                        throw new UnconvertibleObjectException("The matrix need to be a 2x2 or a 3x3 matrix .");
                     }
 
                     System.arraycopy(cells, 0, matrix[i], 0, nbCells);

@@ -26,7 +26,7 @@ import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlMixed;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ogc.xml.XMLLiteral;
-import org.geotoolkit.util.Converters;
+import org.apache.sis.util.ObjectConverters;
 import org.opengis.filter.expression.ExpressionVisitor;
 
 
@@ -164,7 +164,7 @@ public class LiteralType implements XMLLiteral {
        if (content != null && !content.isEmpty()) {
             literal = content.get(0);
        } 
-       return Converters.convert(literal, context);
+       return ObjectConverters.convert(literal, context);
     }
 
     @Override

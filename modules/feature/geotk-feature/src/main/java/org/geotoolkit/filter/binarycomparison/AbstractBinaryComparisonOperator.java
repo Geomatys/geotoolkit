@@ -21,7 +21,7 @@ import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
 import static org.apache.sis.util.ArgumentChecks.*;
-import org.geotoolkit.util.Converters;
+import org.apache.sis.util.ObjectConverters;
 import org.opengis.filter.BinaryComparisonOperator;
 import org.opengis.filter.MatchAction;
 import org.opengis.filter.expression.Expression;
@@ -94,7 +94,7 @@ public abstract class AbstractBinaryComparisonOperator<E extends Expression,F ex
             if(objright instanceof Date){
                 //object right class is more appropriate
 
-                Object cdLeft = Converters.convert(objleft, Date.class);
+                Object cdLeft = ObjectConverters.convert(objleft, Date.class);
                 if(cdLeft != null){
                     return ((Comparable)cdLeft).compareTo(objright);
                 }

@@ -29,7 +29,7 @@ import javax.xml.bind.Marshaller;
 import javax.xml.parsers.ParserConfigurationException;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.util.converter.NonconvertibleObjectException;
+import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.v100.Execute100;
 import org.geotoolkit.wps.xml.WPSMarshallerPool;
 import org.geotoolkit.wps.xml.v100.Execute;
@@ -94,7 +94,7 @@ public class ExecuteTest {
             WPSMarshallerPool.getInstance().recycle(marshaller);
         } catch (FactoryException ex) {
             fail(ex.getLocalizedMessage());
-        } catch (NonconvertibleObjectException ex) {
+        } catch (UnconvertibleObjectException ex) {
             fail(ex.getLocalizedMessage());
         } catch (JAXBException ex) {
             fail(ex.getLocalizedMessage());

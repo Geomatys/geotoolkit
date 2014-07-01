@@ -30,6 +30,8 @@ import org.apache.sis.measure.NumberRange;
 import org.apache.sis.util.logging.Logging;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.Numbers;
+import org.apache.sis.util.ObjectConverters;
+import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.metadata.ValueRestriction;
 import org.geotoolkit.gui.swing.tree.NamedTreeNode;
 import org.geotoolkit.gui.swing.tree.TreeTableNode;
@@ -515,11 +517,16 @@ public final class MetadataTreeNode extends NamedTreeNode implements TreeTableNo
      * Converts the given object to the type expected by this node.
      * Returns the object unchanged if no converter is found.
      */
+    @SuppressWarnings("unchecked")
     private Object convert(Object value) {
         if (value != null) {
             final Class<?> target = getValueType();
             if (target != null) {
-                value = tree.converters.tryConvert(value, target);
+                try {
+                    value = ObjectConverters.convert(value, target);
+                } catch (UnconvertibleObjectException e) {
+                    Logging.recoverableException(MetadataTreeNode.class, "getValue", e);
+                }
             }
         }
         return value;

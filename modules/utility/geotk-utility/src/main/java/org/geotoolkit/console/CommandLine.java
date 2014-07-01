@@ -38,8 +38,8 @@ import org.apache.sis.util.logging.Logging;
 import org.apache.sis.util.logging.MonolineFormatter;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.Numbers;
-import org.geotoolkit.util.converter.ConverterRegistry;
-import org.geotoolkit.util.converter.NonconvertibleObjectException;
+import org.apache.sis.util.ObjectConverters;
+import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.resources.Descriptions;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.resources.Errors;
@@ -252,12 +252,12 @@ public abstract class CommandLine implements Runnable {
      * @param  value The string value to convert.
      * @param  type  The destination type.
      * @return The converted value.
-     * @throws NonconvertibleObjectException if the value can't be converted.
+     * @throws UnconvertibleObjectException if the value can't be converted.
      *
      * @since 3.00
      */
-    protected <T> T convert(final String value, final Class<T> type) throws NonconvertibleObjectException {
-        return ConverterRegistry.system().converter(String.class, type).convert(value);
+    protected <T> T convert(final String value, final Class<T> type) throws UnconvertibleObjectException {
+        return ObjectConverters.convert(value, type);
     }
 
     /**
@@ -442,7 +442,7 @@ public abstract class CommandLine implements Runnable {
                     value = text;
                 } else try {
                     value = convert(text, type);
-                } catch (NonconvertibleObjectException exception) {
+                } catch (UnconvertibleObjectException exception) {
                     if (status == null) {
                         status = exception;
                     }

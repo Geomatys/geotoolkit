@@ -74,7 +74,7 @@ import org.geotoolkit.filter.capability.DefaultTemporalCapabilities;
 import org.geotoolkit.filter.capability.DefaultTemporalOperators;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.IdentifiedObjects;
-import org.geotoolkit.util.Converters;
+import org.apache.sis.util.ObjectConverters;
 import org.opengis.coverage.Coverage;
 import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.geotoolkit.feature.type.ComplexType;
@@ -1141,7 +1141,7 @@ final class PostgresDialect extends AbstractSQLDialect{
             }
             return rarray;
         }else{
-            return Converters.convert(candidate, componentType);
+            return ObjectConverters.convert(candidate, componentType);
         }
     }
     

@@ -16,42 +16,27 @@
  */
 package org.geotoolkit.wps.converters.outputs.literal;
 
-import org.geotoolkit.util.converter.NonconvertibleObjectException;
-import org.geotoolkit.util.converter.ObjectConverter;
+import org.geotoolkit.util.converter.SimpleConverter;
+import org.apache.sis.util.UnconvertibleObjectException;
 
 /**
  *
  * @author Quentin Boileau (Geomatys)
  */
-public class FloatWArrayToStringConverter implements ObjectConverter<Float[], String> {
+public class FloatWArrayToStringConverter extends SimpleConverter<Float[], String> {
 
     @Override
-    public Class<? super Float[]> getSourceClass() {
+    public Class<Float[]> getSourceClass() {
         return Float[].class;
     }
 
     @Override
-    public Class<? extends String> getTargetClass() {
+    public Class<String> getTargetClass() {
         return String.class;
     }
 
     @Override
-    public boolean hasRestrictions() {
-        return false;
-    }
-
-    @Override
-    public boolean isOrderPreserving() {
-        return true;
-    }
-
-    @Override
-    public boolean isOrderReversing() {
-        return false;
-    }
-
-    @Override
-    public String convert(final Float[] source) throws NonconvertibleObjectException {
+    public String apply(final Float[] source) throws UnconvertibleObjectException {
         final StringBuilder sb = new StringBuilder();
         for (int i = 0; i < source.length; i++) {
             sb.append(source[i].toString());
@@ -61,5 +46,5 @@ public class FloatWArrayToStringConverter implements ObjectConverter<Float[], St
         }
         return sb.toString();
     }
-    
+
 }

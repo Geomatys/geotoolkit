@@ -20,7 +20,7 @@ package org.geotoolkit.filter;
 import java.io.Serializable;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.geotoolkit.util.Converters;
+import org.apache.sis.util.ObjectConverters;
 
 import org.opengis.filter.expression.Expression;
 
@@ -40,7 +40,11 @@ public abstract class AbstractExpression implements Expression,Serializable {
      */
     @Override
     public <T> T evaluate(final Object candidate, final Class<T> target) {
-        return Converters.convert(evaluate(candidate), target);
+        final Object value = evaluate(candidate);
+        if (target == null) {
+            return (T) value; // TODO - unsage cast!!!!
+        }
+        return ObjectConverters.convert(value, target);
     }
 
 }

@@ -32,17 +32,17 @@ import org.apache.sis.internal.util.X364;
 
 import org.geotoolkit.util.StringUtilities;
 import org.geotoolkit.lang.Setup;
-import org.geotoolkit.util.converter.NonconvertibleObjectException;
-import org.geotoolkit.process.converters.StringToAffineTransformConverter;
-import org.geotoolkit.process.converters.StringToFeatureCollectionConverter;
-import org.geotoolkit.process.converters.StringToFeatureTypeConverter;
-import org.geotoolkit.process.converters.StringToGeometryConverter;
-import org.geotoolkit.process.converters.StringToSortByConverter;
-import org.geotoolkit.process.converters.StringToMapConverter;
+import org.apache.sis.util.UnconvertibleObjectException;
+import org.geotoolkit.util.converter.StringToAffineTransformConverter;
+import org.geotoolkit.util.converter.StringToFeatureCollectionConverter;
+import org.geotoolkit.util.converter.StringToFeatureTypeConverter;
+import org.geotoolkit.util.converter.StringToGeometryConverter;
+import org.geotoolkit.util.converter.StringToSortByConverter;
+import org.geotoolkit.util.converter.StringToMapConverter;
 import org.apache.sis.util.collection.Containers;
 import org.apache.sis.util.Classes;
-import org.geotoolkit.util.converter.ConverterRegistry;
-import org.geotoolkit.util.converter.ObjectConverter;
+import org.apache.sis.util.ObjectConverters;
+import org.apache.sis.util.ObjectConverter;
 
 import static org.apache.sis.internal.util.X364.*;
 
@@ -338,7 +338,7 @@ public final class ProcessConsole {
      * Parse, convert and set parameter values from the command line arguments.
      */
     private static ParameterValueGroup parseParameters(final String[] args, final ParameterDescriptorGroup desc)
-            throws NonconvertibleObjectException, IllegalArgumentException{
+            throws UnconvertibleObjectException, IllegalArgumentException{
         final ParameterValueGroup group = desc.createValue();
 
         //regroup value for each parameter
@@ -381,13 +381,13 @@ public final class ProcessConsole {
      * Convert a List of string values in the appropriate Class.
      * Possibly an Array or a single value.
      */
-    private static <T> Object toValue(final List<String> values, final Class<T> binding) throws NonconvertibleObjectException{
+    private static <T> Object toValue(final List<String> values, final Class<T> binding) throws UnconvertibleObjectException{
         final int size = values.size();
 
-        ObjectConverter<String,T> converter = null;
+        ObjectConverter<? super String, ? extends T> converter = null;
         try{
-            converter = ConverterRegistry.system().converter(String.class, binding);
-        }catch(NonconvertibleObjectException ex){
+            converter = ObjectConverters.find(String.class, binding);
+        }catch(UnconvertibleObjectException ex){
             for(ObjectConverter conv : (List<ObjectConverter>)LIST_CONVERTERS){
                 if(conv.getTargetClass().equals(binding)){
                     converter = conv;
@@ -406,12 +406,12 @@ public final class ProcessConsole {
             return null;
         }else if(size == 1){
             //return a single value converted
-            return converter.convert(values.get(0));
+            return converter.apply(values.get(0));
         }else{
             //convert to array of binding class
             final T[] array = (T[])Array.newInstance(binding,size);
             for(int i=0;i<size;i++){
-                array[i] = converter.convert(values.get(i));
+                array[i] = converter.apply(values.get(i));
             }
             return array;
         }

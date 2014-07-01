@@ -157,7 +157,7 @@ import org.geotoolkit.style.function.Method;
 import org.geotoolkit.style.function.Mode;
 import org.geotoolkit.style.function.RecolorFunction;
 import org.geotoolkit.style.function.ThreshholdsBelongTo;
-import org.geotoolkit.util.Converters;
+import org.apache.sis.util.ObjectConverters;
 
 import org.geotoolkit.feature.type.Name;
 import org.opengis.filter.And;

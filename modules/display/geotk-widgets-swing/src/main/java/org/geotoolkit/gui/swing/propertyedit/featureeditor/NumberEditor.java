@@ -23,7 +23,7 @@ import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import org.geotoolkit.util.Converters;
+import org.apache.sis.util.ObjectConverters;
 import org.geotoolkit.feature.type.AttributeType;
 import org.geotoolkit.feature.type.PropertyType;
 
@@ -107,7 +107,7 @@ public class NumberEditor extends PropertyValueEditor implements ChangeListener 
         }
         Object val = component.getValue();
         if(expected != null){
-            return Converters.convert(val, expected);
+            return ObjectConverters.convert(val, expected);
         }
         return val;
     }

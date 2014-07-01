@@ -41,7 +41,7 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 
 import static org.apache.sis.util.ArgumentChecks.*;
-import org.geotoolkit.util.Converters;
+import org.apache.sis.util.ObjectConverters;
 import org.opengis.coverage.Coverage;
 
 /**
@@ -118,7 +118,7 @@ public abstract class AbstractBinarySpatialOperator<E extends Expression,F exten
                 candidate = null;
             }
         }else{
-            candidate = Converters.convert(value, Geometry.class);
+            candidate = ObjectConverters.convert(value, Geometry.class);
         }
         
         return candidate;

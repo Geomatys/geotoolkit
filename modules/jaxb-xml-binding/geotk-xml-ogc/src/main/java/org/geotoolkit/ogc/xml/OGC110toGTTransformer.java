@@ -44,7 +44,7 @@ import org.geotoolkit.ogc.xml.v110.SortByType;
 import org.geotoolkit.ogc.xml.v110.SortPropertyType;
 import org.geotoolkit.ogc.xml.v110.SpatialOpsType;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.util.Converters;
+import org.apache.sis.util.ObjectConverters;
 
 import org.geotoolkit.feature.type.Name;
 import org.opengis.filter.Filter;
@@ -56,6 +56,8 @@ import org.opengis.filter.identity.Identifier;
 import org.opengis.filter.sort.SortBy;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
+import org.apache.sis.util.UnconvertibleObjectException;
+import org.apache.sis.util.logging.Logging;
 
 /**
  * Transform OGC jaxb xml in GT classes.
@@ -517,8 +519,13 @@ public class OGC110toGTTransformer {
                 if(!str.isEmpty()){
                     if(str.charAt(0) == '#'){
                         //try to convert it to a color
-                        Color c = Converters.convert(str, Color.class);
-                        if(c!=null) obj = c;
+                        try {
+                            Color c = ObjectConverters.convert(str, Color.class);
+                            if(c!=null) obj = c;
+                        } catch (UnconvertibleObjectException e) {
+                            Logging.recoverableException(OGC110toGTTransformer.class, "visitExpression", e);
+                            // TODO - do we really want to ignore?
+                        }
                     }else{
                         //try to convert it to a number
                         try{

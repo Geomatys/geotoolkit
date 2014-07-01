@@ -63,10 +63,11 @@ import org.geotoolkit.display2d.ext.text.TextTemplate;
 import org.geotoolkit.display2d.service.PortrayalExtension;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.IdentifiedObjects;
-import org.geotoolkit.util.Converters;
+import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.logging.Logging;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
+import org.apache.sis.util.UnconvertibleObjectException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -434,7 +435,14 @@ public final class DecorationXMLParser {
             return fallback;
         }
 
-        Color color = Converters.convert(strColor, Color.class);
+        Color color;
+        try {
+            color = ObjectConverters.convert(strColor, Color.class);
+        } catch (UnconvertibleObjectException e) {
+            Logging.recoverableException(DecorationXMLParser.class, "parseColor", e);
+            return null;
+            // TODO - do we really want to ignore?
+        }
 
         if (color == null) {
             return fallback;

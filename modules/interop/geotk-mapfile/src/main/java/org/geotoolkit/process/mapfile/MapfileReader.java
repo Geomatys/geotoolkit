@@ -29,7 +29,7 @@ import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
-import org.geotoolkit.util.Converters;
+import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.CharSequences;
 
 import org.geotoolkit.feature.ComplexAttribute;
@@ -189,7 +189,7 @@ public class MapfileReader {
         }else if(clazz == Color.class){
             if(value.startsWith("#")){
                 //normal conversion
-                return Converters.convert(value, clazz);
+                return ObjectConverters.convert(value, clazz);
             }
             final String[] colors = value.split(" ");
             return new Color(Integer.valueOf(colors[0]), Integer.valueOf(colors[1]), Integer.valueOf(colors[2]));
@@ -250,7 +250,7 @@ public class MapfileReader {
             return dashes;
         }
 
-        return Converters.convert(value, clazz);
+        return ObjectConverters.convert(value, clazz);
     }
 
     private static PropertyDescriptor getDescriptorIgnoreCase(final ComplexType parent, final String name){

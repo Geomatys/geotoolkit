@@ -23,7 +23,7 @@ import java.util.regex.Pattern;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.DefaultAssociation;
 import org.geotoolkit.feature.type.DefaultName;
-import org.geotoolkit.util.Converters;
+import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.collection.Cache;
 import org.geotoolkit.filter.binding.AbstractBinding;
 import org.geotoolkit.feature.Attribute;
@@ -414,7 +414,7 @@ public final class FeatureBinding_old  {
 //                    return (T) ((Attribute)candidate).getValue();
 //                }
 //            }
-//            return Converters.convert(candidate, target);
+//            return ObjectConverters.convert(candidate, target);
 //        }
 //
 //        @Override

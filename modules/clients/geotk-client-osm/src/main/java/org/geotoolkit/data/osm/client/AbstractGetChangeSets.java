@@ -21,7 +21,7 @@ import java.util.Date;
 import org.geotoolkit.client.AbstractRequest;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
-import org.geotoolkit.util.Converters;
+import org.apache.sis.util.ObjectConverters;
 import org.geotoolkit.util.DateRange;
 
 import org.opengis.geometry.Envelope;
@@ -185,10 +185,10 @@ public abstract class AbstractGetChangeSets extends AbstractRequest implements G
                 throw new IllegalArgumentException("Date range is not valid, contain no starting date.");
             }
             final StringBuilder sb = new StringBuilder();
-                sb.append(Converters.convert(min, String.class));
+                sb.append(ObjectConverters.convert(min, String.class));
             if(max != null){
                 sb.append(',');
-                sb.append(Converters.convert(max, String.class));
+                sb.append(ObjectConverters.convert(max, String.class));
             }
             requestParameters.put("time",sb.toString());
         }

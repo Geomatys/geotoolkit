@@ -26,12 +26,14 @@ import org.geotoolkit.feature.type.DefaultName;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.feature.FeatureValidationUtilities;
 import org.geotoolkit.filter.identity.DefaultFeatureId;
-import org.geotoolkit.util.Converters;
+import org.apache.sis.util.ObjectConverters;
 
 import org.geotoolkit.feature.FeatureFactory;
 import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.geotoolkit.feature.type.Name;
 import org.opengis.filter.identity.FeatureId;
+import org.apache.sis.util.UnconvertibleObjectException;
+import org.apache.sis.util.logging.Logging;
 
 /**
  * A builder for features.
@@ -274,9 +276,14 @@ public class SimpleFeatureBuilder {
         if (value != null) {
 
             final Class target = descriptor.getType().getBinding();
-            final Object converted = Converters.convert(value, target);
-            if (converted != null) {
-                value = converted;
+            try {
+                final Object converted = ObjectConverters.convert(value, target);
+                if (converted != null) {
+                    value = converted;
+                }
+            } catch (UnconvertibleObjectException e) {
+                Logging.recoverableException(SimpleFeatureBuilder.class, "convert", e);
+                // TODO - do we really want to ignore?
             }
         } else {
             //if the content is null and the descriptor says isNillable is false,

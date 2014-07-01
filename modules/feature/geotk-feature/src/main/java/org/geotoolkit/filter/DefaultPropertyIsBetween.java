@@ -18,7 +18,7 @@
 package org.geotoolkit.filter;
 
 import java.io.Serializable;
-import org.geotoolkit.util.Converters;
+import org.apache.sis.util.ObjectConverters;
 import org.geotoolkit.util.StringUtilities;
 
 import org.opengis.filter.FilterVisitor;
@@ -94,7 +94,7 @@ public class DefaultPropertyIsBetween implements PropertyIsBetween,Serializable{
             valueClass = Double.class;
         }
 
-        final Comparable test = (Comparable) Converters.convert(value, valueClass);
+        final Comparable test = (Comparable) ObjectConverters.convert(value, valueClass);
         final Comparable down = (Comparable) lower.evaluate(feature,valueClass);
         final Comparable up = (Comparable) upper.evaluate(feature,valueClass);
 

@@ -17,37 +17,7 @@
  */
 
 /**
- * Performs conversions between instances of different classes. For example it is sometime
- * convenient to consider {@link java.util.Date} objects as if they were {@link java.lang.Long}
- * objects for computational purpose in generic algorithms. This particular conversion is
- * straightforward when the type are known at compile-time, but more tedious when they must
- * be determined dynamically at run-time. This package allow that in a two-steps process:
- * <p>
- * <ul>
- *   <li>Get a converter from {@link org.geotoolkit.util.converter.ConverterRegistry} from
- *       a given <var>source</var> to a given <var>target</var> class.</li>
- *   <li>Use the obtained {@link org.geotoolkit.util.converter.ObjectConverter} instance
- *       for performing the conversions.</li>
- * </ul>
- * <p>
- * A system-wide set of conversions is pre-defined and available by the
- * {@link org.geotoolkit.util.converter.ConverterRegistry#system()} method.
- *
- * {@section Example}
- * The following code convert instances in a collection from type {@code S} to type {@code T},
- * where the types are unknown at compile-time. Note that the converter is obtained only once
- * before to be applied to every elements in the loop.
- *
- * {@preformat java
- *     Class<S> sourceType = ...
- *     Class<T> targetType = ...
- *     Collection<S> sources = ...;
- *     Collection<T> targets = ...;
- *     ObjectConverter<S,T> converter = ConverterRegistry.system().converter(sourceType, targetType);
- *     for (S source : sources) {
- *         targets.add(converter.convert(source));
- *     }
- * }
+ * Geotk {@link org.apache.sis.util.ObjectConverter} implementations.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @author Justin Deoliveira (TOPP)

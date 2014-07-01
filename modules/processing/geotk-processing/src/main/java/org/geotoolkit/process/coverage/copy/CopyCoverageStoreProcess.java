@@ -64,7 +64,6 @@ import org.geotoolkit.process.coverage.straighten.StraightenDescriptor;
 import org.geotoolkit.referencing.cs.DiscreteCoordinateSystemAxis;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.temporal.object.TemporalUtilities;
 import org.geotoolkit.util.ImageIOUtilities;
 import org.geotoolkit.feature.type.Name;

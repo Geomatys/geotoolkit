@@ -26,7 +26,7 @@ import java.util.UUID;
 import javax.imageio.ImageIO;
 import net.iharder.Base64;
 import org.geotoolkit.util.FileUtilities;
-import org.geotoolkit.util.converter.NonconvertibleObjectException;
+import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.io.WPSEncoding;
 import org.geotoolkit.wps.io.WPSIO;
 import org.geotoolkit.wps.xml.v100.InputReferenceType;
@@ -35,7 +35,7 @@ import org.geotoolkit.wps.xml.v100.ReferenceType;
 
 /**
  * Implementation of ObjectConverter to convert a {@link RenderedImage image} into a {@link OutputReferenceType reference}.
- * 
+ *
  * @author Quentin Boileau (Geomatys).
  */
 public class RenderedImageToReferenceConverter extends AbstractReferenceOutputConverter<RenderedImage> {
@@ -51,9 +51,9 @@ public class RenderedImageToReferenceConverter extends AbstractReferenceOutputCo
         }
         return INSTANCE;
     }
-    
+
     @Override
-    public Class<? super RenderedImage> getSourceClass() {
+    public Class<RenderedImage> getSourceClass() {
         return RenderedImage.class;
     }
 
@@ -61,30 +61,30 @@ public class RenderedImageToReferenceConverter extends AbstractReferenceOutputCo
      * {@inheritDoc}
      */
     @Override
-    public ReferenceType convert(final RenderedImage source, final Map<String, Object> params) throws NonconvertibleObjectException {
-        
+    public ReferenceType convert(final RenderedImage source, final Map<String, Object> params) throws UnconvertibleObjectException {
+
         if (params.get(TMP_DIR_PATH) == null) {
-            throw new NonconvertibleObjectException("The output directory should be defined.");
+            throw new UnconvertibleObjectException("The output directory should be defined.");
         }
-        
+
         if (source == null) {
-            throw new NonconvertibleObjectException("The output data should be defined.");
+            throw new UnconvertibleObjectException("The output data should be defined.");
         }
         if (!(source instanceof BufferedImage) && !(source instanceof RenderedImage)) {
-            throw new NonconvertibleObjectException("The output data is not an instance of RenderedImage.");
+            throw new UnconvertibleObjectException("The output data is not an instance of RenderedImage.");
         }
-        
+
         final WPSIO.IOType ioType = WPSIO.IOType.valueOf((String) params.get(IOTYPE));
         ReferenceType reference = null;
-        
+
         if (ioType.equals(WPSIO.IOType.INPUT)) {
             reference = new InputReferenceType();
         } else {
             reference = new OutputReferenceType();
         }
-        
+
         final String encoding = (String) params.get(ENCODING);
-        
+
         final String mime = (String) params.get(MIME) != null ? (String) params.get(MIME) : "image/png";
         final String formatName = mime.substring(mime.indexOf("/")+1).toUpperCase();
 
@@ -94,26 +94,26 @@ public class RenderedImageToReferenceConverter extends AbstractReferenceOutputCo
 
         final String randomFileName = UUID.randomUUID().toString();
         try {
-            
+
             final File imageFile = new File((String) params.get(TMP_DIR_PATH), randomFileName);
-            
+
             if (encoding != null && encoding.equals(WPSEncoding.BASE64.getValue())) {
                 final ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 ImageIO.write(source, formatName, baos);
                 baos.flush();
                 byte[] bytesOut = baos.toByteArray();
                 FileUtilities.stringToFile(imageFile, Base64.encodeBytes(bytesOut));
-                
+
             } else {
                 ImageIO.write(source, formatName, imageFile);
             }
-            
+
             reference.setHref((String) params.get(TMP_DIR_URL) + "/" + randomFileName);
-            
+
         } catch (IOException ex) {
-            throw new NonconvertibleObjectException("Error occured during image writing.", ex);
+            throw new UnconvertibleObjectException("Error occured during image writing.", ex);
         }
-        
+
         return reference;
     }
 

@@ -42,7 +42,7 @@
  * <ul>
  *   <li><p>Fields annotated by {@link org.geotoolkit.console.Option}. They are the options to be
  *   assigned before the action is executed. The fields can be of any type convertible by {@link
- *   org.geotoolkit.util.converter.ConverterRegistry} from a {@link java.lang.String} to the field
+ *   org.apache.sis.util.ObjectConverters} from a {@link java.lang.String} to the field
  *   type. This include (but is not limited to) {@code boolean}, {@code int}, {@code double},
  *   {@link java.lang.String}, {@link java.io.File} and {@link java.net.URL}.</p></li>
  *

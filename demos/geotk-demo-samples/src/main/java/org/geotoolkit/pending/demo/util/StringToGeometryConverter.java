@@ -1,12 +1,15 @@
 
 package org.geotoolkit.pending.demo.util;
 
+import java.util.Collections;
+import java.util.Set;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.WKTReader;
-import org.geotoolkit.util.converter.NonconvertibleObjectException;
-import org.geotoolkit.util.converter.ObjectConverter;
+import org.apache.sis.math.FunctionProperty;
+import org.apache.sis.util.ObjectConverter;
+import org.apache.sis.util.UnconvertibleObjectException;
 
 public class StringToGeometryConverter implements ObjectConverter<String, Geometry> {
 
@@ -14,33 +17,22 @@ public class StringToGeometryConverter implements ObjectConverter<String, Geomet
     }
 
     @Override
-    public Class<? super String> getSourceClass() {
+    public Class<String> getSourceClass() {
         return String.class;
     }
 
     @Override
-    public Class<? extends Geometry> getTargetClass() {
+    public Class<Geometry> getTargetClass() {
         return Geometry.class;
     }
 
     @Override
-    public boolean hasRestrictions() {
-        return true; //String should be formated in WKT
+    public Set<FunctionProperty> properties() {
+        return Collections.emptySet();
     }
 
     @Override
-    public boolean isOrderPreserving() {
-        return true;
-    }
-
-    @Override
-    public boolean isOrderReversing() {
-        return false;
-    }
-
-
-    @Override
-    public Geometry convert(String source) throws NonconvertibleObjectException {
+    public Geometry apply(String source) throws UnconvertibleObjectException {
 
         if (source != null && !source.isEmpty()) {
 
@@ -53,12 +45,15 @@ public class StringToGeometryConverter implements ObjectConverter<String, Geomet
                 return reader.read(source);
 
             } catch (ParseException ex) {
-                throw new NonconvertibleObjectException(ex);
+                throw new UnconvertibleObjectException(ex);
             }
         } else {
-            throw new NonconvertibleObjectException("Source string can't be null or empty and should be formated in WKT.");
+            throw new UnconvertibleObjectException("Source string can't be null or empty and should be formated in WKT.");
         }
     }
 
+    @Override
+    public ObjectConverter<Geometry, String> inverse() throws UnsupportedOperationException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }
-

@@ -22,7 +22,7 @@ import java.util.Date;
 
 import org.opengis.filter.expression.Literal;
 
-import org.geotoolkit.util.Converters;
+import org.apache.sis.util.ObjectConverters;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -62,7 +62,7 @@ public class ColorTest {
     public void testColor(){
 
         final String str = "#D2787034";
-        final Color result = Converters.convert(str, Color.class);
+        final Color result = ObjectConverters.convert(str, Color.class);
         assertNotNull(result);
         
         final Color c = new Color(120,112,52,210);

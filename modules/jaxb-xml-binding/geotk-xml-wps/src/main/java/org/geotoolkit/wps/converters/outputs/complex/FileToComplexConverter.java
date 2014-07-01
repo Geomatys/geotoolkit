@@ -2,14 +2,13 @@ package org.geotoolkit.wps.converters.outputs.complex;
 
 import net.iharder.Base64;
 import org.geotoolkit.util.FileUtilities;
-import org.geotoolkit.util.converter.NonconvertibleObjectException;
+import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.io.WPSEncoding;
 import org.geotoolkit.wps.io.WPSMimeType;
 import org.geotoolkit.wps.xml.v100.ComplexDataType;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Map;
 import java.util.logging.Level;
@@ -34,7 +33,7 @@ public class FileToComplexConverter extends AbstractComplexOutputConverter<File>
     }
 
     @Override
-    public Class<? super File> getSourceClass() {
+    public Class<File> getSourceClass() {
         return File.class;
     }
 
@@ -44,19 +43,19 @@ public class FileToComplexConverter extends AbstractComplexOutputConverter<File>
      * @param source The file to convert.
      * @param params The parameters used for conversion (Mime-Type/encoding). If null, mime is set to application/octet-stream, and encoding to base64
      * @return
-     * @throws NonconvertibleObjectException
+     * @throws UnconvertibleObjectException
      */
     @Override
-    public ComplexDataType convert(File source, Map<String, Object> params) throws NonconvertibleObjectException {
+    public ComplexDataType convert(File source, Map<String, Object> params) throws UnconvertibleObjectException {
 
         if (source == null) {
-            throw new NonconvertibleObjectException("The output data should be defined.");
+            throw new UnconvertibleObjectException("The output data should be defined.");
         }
         if (!(source instanceof File)) {
-            throw new NonconvertibleObjectException("The requested output data is not an instance of File.");
+            throw new UnconvertibleObjectException("The requested output data is not an instance of File.");
         }
         if (params == null) {
-            throw new NonconvertibleObjectException("Mandatory parameters are missing.");
+            throw new UnconvertibleObjectException("Mandatory parameters are missing.");
         }
 
         final ComplexDataType complex = new ComplexDataType();
@@ -80,7 +79,7 @@ public class FileToComplexConverter extends AbstractComplexOutputConverter<File>
                     String tmpDir = (String) params.get(TMP_DIR_PATH);
                     String tmpURL = (String) params.get(TMP_DIR_URL);
                     if (tmpDir == null || tmpURL == null) {
-                        throw new NonconvertibleObjectException("Mandatory parameters are missing.");
+                        throw new UnconvertibleObjectException("Mandatory parameters are missing.");
                     }
                     if (!schemaLocation.contains(tmpDir)) {
                         String schemaName = source.getName().replace("\\.[a-z]ml", "").concat(".xsd");
@@ -89,7 +88,7 @@ public class FileToComplexConverter extends AbstractComplexOutputConverter<File>
                             FileUtilities.copy(source, schemaDest);
                             schemaLocation = schemaDest.getAbsolutePath();
                         } catch (IOException e) {
-                            throw new NonconvertibleObjectException("Unexpected error on schema copy.", e);
+                            throw new UnconvertibleObjectException("Unexpected error on schema copy.", e);
                         }
                     }
                     complex.setSchema(schemaLocation.replace(tmpDir, tmpURL));
@@ -102,7 +101,7 @@ public class FileToComplexConverter extends AbstractComplexOutputConverter<File>
         } else {
             //If no text format, We'll put it as a base64 object.
             if (!encoding.equals(WPSEncoding.BASE64.getValue())) {
-                throw new NonconvertibleObjectException("Encoding should be in Base64 for complex request.");
+                throw new UnconvertibleObjectException("Encoding should be in Base64 for complex request.");
             }
 
             FileInputStream stream = null;
@@ -112,7 +111,7 @@ public class FileToComplexConverter extends AbstractComplexOutputConverter<File>
                 stream.read(barray);
                 complex.getContent().add(Base64.encodeBytes(barray));
             } catch (Exception ex) {
-                throw new NonconvertibleObjectException(ex.getMessage(), ex);
+                throw new UnconvertibleObjectException(ex.getMessage(), ex);
             } finally {
                 if (stream != null) {
                     try {

@@ -38,9 +38,9 @@ import org.geotoolkit.process.chain.model.Constant;
 import org.geotoolkit.process.chain.model.DataLink;
 import org.geotoolkit.process.chain.model.Element;
 import org.geotoolkit.process.chain.model.ElementCondition;
-import org.geotoolkit.util.converter.ConverterRegistry;
-import org.geotoolkit.util.converter.NonconvertibleObjectException;
-import org.geotoolkit.util.converter.ObjectConverter;
+import org.apache.sis.util.ObjectConverters;
+import org.apache.sis.util.UnconvertibleObjectException;
+import org.apache.sis.util.ObjectConverter;
 import org.apache.sis.util.logging.Logging;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
@@ -57,8 +57,6 @@ import org.opengis.util.NoSuchIdentifierException;
  */
 public class ChainProcess extends AbstractProcess{
 
-    public static final ConverterRegistry CONVERTERS = ConverterRegistry.system();
-    
     protected static final Logger LOGGER = Logging.getLogger(ChainProcess.class);
 
     private Process currentProcess;
@@ -215,13 +213,13 @@ public class ChainProcess extends AbstractProcess{
         final FilterFactory ff = FactoryFinder.getFilterFactory(null);
         final String statement = condition.getExpression();
         final String syntax = condition.getSyntax();
-        
+
         Filter filter = null;
         if("CQL".equalsIgnoreCase(syntax)){
             try{
                 filter = CQL.parseFilter(statement);
             }catch(Exception ex){
-                //maybe it's just an expression                
+                //maybe it's just an expression
             }
             if(filter == null){
                 try{
@@ -231,7 +229,7 @@ public class ChainProcess extends AbstractProcess{
                     throw new ProcessException("Unvalid CQL : "+statement, this, null);
                 }
             }
-            
+
         }else if("JAVASCRIPT".equalsIgnoreCase(syntax)){
             final Expression exp = ff.function(JavaScriptFunctionFactory.JAVASCRIPT, ff.literal(statement));
             filter = ff.equals(exp, ff.literal(true));
@@ -241,10 +239,10 @@ public class ChainProcess extends AbstractProcess{
         }else{
             throw new ProcessException("Unknwoned syntax : "+syntax+" supported sysntaxes are : CQL,Javascript,Groovy", this, null);
         }
-        
-        return filter.evaluate(inputs);        
+
+        return filter.evaluate(inputs);
     }
-    
+
     private ProcessDescriptor getProcessDescriptor(final ElementProcess desc) throws NoSuchIdentifierException{
         return ProcessFinder.getProcessDescriptor(getDescriptor().getFactories().iterator(),
                 desc.getAuthority(), desc.getCode());
@@ -273,11 +271,11 @@ public class ChainProcess extends AbstractProcess{
             return (T) candidate;
         }
 
-        final ObjectConverter<S,T> converter;
+        final ObjectConverter<? super S, ? extends T> converter;
         try {
-            converter = CONVERTERS.converter(source, target);
-            return converter.convert(candidate);
-        } catch (NonconvertibleObjectException ex) {
+            converter = ObjectConverters.find(source, target);
+            return converter.apply(candidate);
+        } catch (UnconvertibleObjectException ex) {
             LOGGER.log(Level.INFO, "convert", ex);
             return null;
         }

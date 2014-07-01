@@ -27,7 +27,10 @@ package org.geotoolkit.util.converter;
  *
  * @since 3.00
  * @module
+ *
+ * @deprecated To be replaced by {@link java.util.function.Predicate} in Java 8.
  */
+@Deprecated
 public interface ClassFilter {
     /**
      * Returns a filter accepting only classes {@linkplain Class#isAssignableFrom assignable to}

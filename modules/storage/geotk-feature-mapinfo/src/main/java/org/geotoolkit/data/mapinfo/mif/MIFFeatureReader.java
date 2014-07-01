@@ -20,7 +20,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.feature.FeatureUtilities;
-import org.geotoolkit.util.Converters;
+import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.CharSequences;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.simple.SimpleFeature;
@@ -39,6 +39,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import org.apache.sis.util.ArgumentChecks;
+import org.apache.sis.util.UnconvertibleObjectException;
+import org.apache.sis.util.logging.Logging;
 
 /**
  * MIF reader which is designed to browse data AND ONLY data, it's to say geometry data from MIF file, and all data from
@@ -177,8 +179,12 @@ public class MIFFeatureReader implements FeatureReader<FeatureType, Feature> {
                                  format.applyPattern("yyyyMMdd");
                             }
                             value = format.parse(split[i].toString());
-                        } else {
-                            value = Converters.convert(split[i], att.getBinding());
+                        } else try {
+                            value = ObjectConverters.convert(split[i], att.getBinding());
+                        } catch (UnconvertibleObjectException e) {
+                            Logging.recoverableException(MIFFeatureReader.class, "next", e);
+                            value = null;
+                            // TODO - do we really want to ignore the problem?
                         }
                     }
                     resFeature.getProperty(att.getName()).setValue(value);

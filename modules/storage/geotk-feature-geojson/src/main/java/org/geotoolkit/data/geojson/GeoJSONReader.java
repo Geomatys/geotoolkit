@@ -28,9 +28,9 @@ import org.geotoolkit.data.geojson.utils.GeoJSONParser;
 import org.geotoolkit.data.geojson.utils.GeometryUtils;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.feature.simple.SimpleFeatureType;
-import org.geotoolkit.util.converter.ConverterRegistry;
-import org.geotoolkit.util.converter.NonconvertibleObjectException;
-import org.geotoolkit.util.converter.ObjectConverter;
+import org.apache.sis.util.ObjectConverters;
+import org.apache.sis.util.UnconvertibleObjectException;
+import org.apache.sis.util.ObjectConverter;
 import org.geotoolkit.feature.*;
 import org.geotoolkit.feature.type.*;
 import org.geotoolkit.feature.type.FeatureType;
@@ -55,7 +55,6 @@ import java.util.logging.Logger;
 public class GeoJSONReader implements FeatureReader<FeatureType, Feature> {
 
     private final static Logger LOGGER = Logging.getLogger(GeoJSONReader.class);
-    private final static ConverterRegistry CONVERTER_REGISTRY = ConverterRegistry.system();
     private final Map<Map.Entry<Class, Class>, ObjectConverter> convertersCache = new HashMap<Map.Entry<Class, Class>, ObjectConverter>();
 
     private GeoJSONParser parser = new GeoJSONParser(true);
@@ -260,7 +259,7 @@ public class GeoJSONReader implements FeatureReader<FeatureType, Feature> {
                     convertValue = convert(value, binding);
                 }
             }
-        } catch (NonconvertibleObjectException e1) {
+        } catch (UnconvertibleObjectException e1) {
             throw new FeatureStoreRuntimeException(String.format("Inconvertible property %s : %s",
                     prop.getName().getLocalPart(), e1.getMessage()), e1);
         }
@@ -274,9 +273,9 @@ public class GeoJSONReader implements FeatureReader<FeatureType, Feature> {
      * @param componentType
      * @param depth
      * @return Array object
-     * @throws NonconvertibleObjectException
+     * @throws UnconvertibleObjectException
      */
-    private Object rebuildArray(Object candidate, Class componentType, int depth) throws NonconvertibleObjectException {
+    private Object rebuildArray(Object candidate, Class componentType, int depth) throws UnconvertibleObjectException {
         if(candidate==null) return null;
 
         if(candidate.getClass().isArray()){
@@ -299,17 +298,17 @@ public class GeoJSONReader implements FeatureReader<FeatureType, Feature> {
      * @param value
      * @param binding
      * @return
-     * @throws NonconvertibleObjectException
+     * @throws UnconvertibleObjectException
      */
-    private Object convert(Object value, Class binding) throws NonconvertibleObjectException {
+    private Object convert(Object value, Class binding) throws UnconvertibleObjectException {
         AbstractMap.SimpleEntry<Class, Class> key = new AbstractMap.SimpleEntry<Class, Class>(value.getClass(), binding);
         ObjectConverter converter = convertersCache.get(key);
 
         if (converter == null) {
-            converter = CONVERTER_REGISTRY.converter(value.getClass(), binding);
+            converter = ObjectConverters.find(value.getClass(), binding);
             convertersCache.put(key, converter);
         }
-        return converter.convert(value);
+        return converter.apply(value);
     }
 
     /**

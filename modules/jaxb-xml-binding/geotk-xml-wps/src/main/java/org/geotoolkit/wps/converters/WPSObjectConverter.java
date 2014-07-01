@@ -17,8 +17,8 @@
 package org.geotoolkit.wps.converters;
 
 import java.util.Map;
-import org.geotoolkit.util.converter.NonconvertibleObjectException;
-import org.geotoolkit.util.converter.ObjectConverter;
+import org.apache.sis.util.UnconvertibleObjectException;
+import org.apache.sis.util.ObjectConverter;
 
 /**
  * Interface that extend ObjectConverter interface for add a convert method with a Map of parameters used for the conversion.
@@ -44,7 +44,7 @@ public interface WPSObjectConverter<S, T> extends ObjectConverter<S, T> {
      * @param  source The original object, or {@code null}.
      * @param params A Map with parameters used for conversion.
      * @return An instance of target, or {@code null} if the source was null.
-     * @throws NonconvertibleObjectException If the conversion can not take place.
+     * @throws UnconvertibleObjectException If the conversion can not take place.
      */
-    T convert(S source, Map<String, Object> params) throws NonconvertibleObjectException;
+    T convert(S source, Map<String, Object> params) throws UnconvertibleObjectException;
 }

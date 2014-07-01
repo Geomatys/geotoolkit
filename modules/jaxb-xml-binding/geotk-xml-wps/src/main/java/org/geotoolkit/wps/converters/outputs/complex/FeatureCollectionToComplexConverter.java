@@ -29,7 +29,7 @@ import org.geotoolkit.feature.xml.XmlFeatureTypeWriter;
 import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeWriter;
 import org.geotoolkit.feature.xml.jaxp.ElementFeatureWriter;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.util.converter.NonconvertibleObjectException;
+import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.io.WPSMimeType;
 import org.geotoolkit.wps.xml.v100.ComplexDataType;
 import org.geotoolkit.feature.type.FeatureType;
@@ -54,28 +54,28 @@ public final class FeatureCollectionToComplexConverter extends AbstractComplexOu
     }
 
     @Override
-    public Class<? super FeatureCollection> getSourceClass() {
+    public Class<FeatureCollection> getSourceClass() {
         return FeatureCollection.class;
     }
-    
+
     /**
      * {@inheritDoc}
      */
     @Override
-    public ComplexDataType convert(final FeatureCollection source, final Map<String, Object> params) throws NonconvertibleObjectException {
+    public ComplexDataType convert(final FeatureCollection source, final Map<String, Object> params) throws UnconvertibleObjectException {
 
         if (params.get(TMP_DIR_PATH) == null) {
-            throw new NonconvertibleObjectException("The output directory should be defined.");
+            throw new UnconvertibleObjectException("The output directory should be defined.");
         }
-        
-        
+
+
         if (source == null) {
-            throw new NonconvertibleObjectException("The output data should be defined.");
+            throw new UnconvertibleObjectException("The output data should be defined.");
         }
         if (!(source instanceof FeatureCollection)) {
-            throw new NonconvertibleObjectException("The requested output data is not an instance of FeatureCollection.");
+            throw new UnconvertibleObjectException("The requested output data is not an instance of FeatureCollection.");
         }
-        
+
         final ComplexDataType complex = new ComplexDataType();
 
         complex.setMimeType((String) params.get(MIME));
@@ -94,9 +94,9 @@ public final class FeatureCollectionToComplexConverter extends AbstractComplexOu
                 complex.getContent().add(baos.toString("UTF-8"));
                 complex.setSchema(null);
             } catch (DataStoreException e) {
-                throw new NonconvertibleObjectException("Can't write Feature into GeoJSON output stream.", e);
+                throw new UnconvertibleObjectException("Can't write Feature into GeoJSON output stream.", e);
             } catch (UnsupportedEncodingException e) {
-                throw new NonconvertibleObjectException("Can't convert output stream into String.", e);
+                throw new UnconvertibleObjectException("Can't convert output stream into String.", e);
             }
         } else {
             try {
@@ -113,9 +113,9 @@ public final class FeatureCollectionToComplexConverter extends AbstractComplexOu
                 schemaLocation.put(namespace, complex.getSchema());
 
             } catch (JAXBException ex) {
-                throw new NonconvertibleObjectException("Can't write FeatureType into xsd schema.", ex);
+                throw new UnconvertibleObjectException("Can't write FeatureType into xsd schema.", ex);
             } catch (FileNotFoundException ex) {
-                throw new NonconvertibleObjectException("Can't create xsd schema file.", ex);
+                throw new UnconvertibleObjectException("Can't create xsd schema file.", ex);
             }
 
             try {
@@ -124,9 +124,9 @@ public final class FeatureCollectionToComplexConverter extends AbstractComplexOu
                 complex.getContent().add(efw.writeFeatureCollection(source, true, false, null));
 
             } catch (DataStoreException ex) {
-                throw new NonconvertibleObjectException("Can't write FeatureCollection into ResponseDocument.", ex);
+                throw new UnconvertibleObjectException("Can't write FeatureCollection into ResponseDocument.", ex);
             } catch (ParserConfigurationException ex) {
-                throw new NonconvertibleObjectException("Can't write FeatureCollection into ResponseDocument.", ex);
+                throw new UnconvertibleObjectException("Can't write FeatureCollection into ResponseDocument.", ex);
             }
         }
         return complex;

@@ -4,58 +4,25 @@
  */
 package org.geotoolkit.wps.converters;
 
-import java.util.Map;
 import java.util.logging.Logger;
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.util.converter.SimpleConverter;
 import org.apache.sis.util.Classes;
-import org.geotoolkit.util.converter.NonconvertibleObjectException;
+import org.apache.sis.util.UnconvertibleObjectException;
 import org.apache.sis.util.logging.Logging;
 
 /**
  * Default abstract class for {@link WPSObjectConverter}.
  * @author Quentin Boileau (Geomatys).
  */
-public abstract class WPSDefaultConverter<S, T> implements WPSObjectConverter<S, T> {
+public abstract class WPSDefaultConverter<S, T> extends SimpleConverter<S, T> implements WPSObjectConverter<S, T> {
 
     protected static final Logger LOGGER = Logging.getLogger(WPSObjectConverter.class);
-    
+
     /**
      * Default constructor.
      */
     protected WPSDefaultConverter() {
-    }
-    
-   /**
-     * Returns {@code false} by default, assuming that this converter does not have any
-     * restriction. Subclasses may override.
-     *
-     * @return {@code true} if this converter accepts only a subset of source values.
-     */
-    @Override
-    public boolean hasRestrictions() {
-        return false;
-    }
-
-    /**
-     * Returns {@code true} by default, assuming this converter preserves order.
-     * Subclasses may override.
-     *
-     * @return {@code true} if this converter preserve order.
-     */
-    @Override
-    public boolean isOrderPreserving() {
-        return true;
-    }
-
-    /**
-     * Returns {@code false} by default, assuming this converter preserves order.
-     * Subclasses may override.
-     *
-     * @return {@code true} if this converter reverse order.
-     */
-    @Override
-    public boolean isOrderReversing() {
-        return false;
     }
 
     /**
@@ -85,17 +52,17 @@ public abstract class WPSDefaultConverter<S, T> implements WPSObjectConverter<S,
         return Classes.getShortClassName(this) + '[' + getSourceClass().getSimpleName() +
                 "\u00A0\u21E8\u00A0" + getTargetClass().getSimpleName() + ']';
     }
-    
+
     /**
-     * No used for wps converters. 
+     * No used for wps converters.
      * Use {@link WPSObjectConverter#convert(java.lang.Object, java.util.Map) } instead.
-     * 
+     *
      * @param source
      * @return
-     * @throws NonconvertibleObjectException 
+     * @throws UnconvertibleObjectException
      */
     @Override
-    public final T convert(S source) throws NonconvertibleObjectException {
+    public final T apply(S source) throws UnconvertibleObjectException {
         throw new UnsupportedOperationException("Operation not allowed. Use ObjectConverter.convert(source, parameters) instead.");
     }
 }

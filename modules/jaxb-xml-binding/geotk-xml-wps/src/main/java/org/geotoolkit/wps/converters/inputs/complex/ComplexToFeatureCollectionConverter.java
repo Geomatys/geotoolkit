@@ -24,13 +24,13 @@ import javax.xml.bind.JAXBException;
 import javax.xml.stream.XMLStreamException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.feature.xml.XmlFeatureReader;
-import org.geotoolkit.util.converter.NonconvertibleObjectException;
+import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.converters.WPSConvertersUtils;
 import org.geotoolkit.wps.xml.v100.ComplexDataType;
 import org.opengis.util.FactoryException;
 
 /**
- * Implementation of ObjectConverter to convert a complex input into a FeatureCollection. 
+ * Implementation of ObjectConverter to convert a complex input into a FeatureCollection.
  *
  * @author Quentin Boileau (Geomatys).
  */
@@ -49,43 +49,43 @@ public final class ComplexToFeatureCollectionConverter extends AbstractComplexIn
     }
 
     @Override
-    public Class<? extends FeatureCollection> getTargetClass() {
+    public Class<FeatureCollection> getTargetClass() {
         return FeatureCollection.class;
     }
-    
+
     /**
      * {@inheritDoc}
      * @return FeatureCollection
      */
     @Override
-    public FeatureCollection convert(final ComplexDataType source, final Map<String, Object> params) throws NonconvertibleObjectException {
+    public FeatureCollection convert(final ComplexDataType source, final Map<String, Object> params) throws UnconvertibleObjectException {
 
         final List<Object> data = source.getContent();
 
         if (data.size() > 1) {
-            throw new NonconvertibleObjectException("Invalid data input : Only one FeatureCollection expected.");
+            throw new UnconvertibleObjectException("Invalid data input : Only one FeatureCollection expected.");
         }
 
         //Read featureCollection
         XmlFeatureReader fcollReader = null;
         try {
-            
+
             fcollReader = getFeatureReader(source);
             FeatureCollection extractData = (FeatureCollection) fcollReader.read(data.get(0));
             return (FeatureCollection) WPSConvertersUtils.fixFeature( extractData);
 
         } catch (MalformedURLException ex) {
-            throw new NonconvertibleObjectException("Unable to reach the schema url.", ex);
+            throw new UnconvertibleObjectException("Unable to reach the schema url.", ex);
         } catch (IllegalArgumentException ex) {
-            throw new NonconvertibleObjectException("Unable to read the feature with the specified schema.", ex);
+            throw new UnconvertibleObjectException("Unable to read the feature with the specified schema.", ex);
         } catch (JAXBException ex) {
-            throw new NonconvertibleObjectException("Unable to read the feature schema.", ex);
+            throw new UnconvertibleObjectException("Unable to read the feature schema.", ex);
         } catch (FactoryException ex) {
-            throw new NonconvertibleObjectException("Unable to spread the CRS in feature.", ex);
+            throw new UnconvertibleObjectException("Unable to spread the CRS in feature.", ex);
         } catch (IOException ex) {
-            throw new NonconvertibleObjectException("Unable to read feature from nodes.", ex);
+            throw new UnconvertibleObjectException("Unable to read feature from nodes.", ex);
         } catch (XMLStreamException ex) {
-            throw new NonconvertibleObjectException("Unable to read feature from nodes.", ex);
+            throw new UnconvertibleObjectException("Unable to read feature from nodes.", ex);
         } finally {
             if (fcollReader != null) {
                 fcollReader.dispose();

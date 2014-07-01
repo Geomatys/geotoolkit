@@ -24,7 +24,7 @@ import java.util.List;
 import org.geotoolkit.db.DefaultJDBCFeatureStore;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.util.Converters;
+import org.apache.sis.util.ObjectConverters;
 
 /**
  * Describe a table primary key.
@@ -104,7 +104,7 @@ public class PrimaryKey {
         
         //ignore the first part which is the featuretype name
         for(int i=1;i<parts.length;i++){
-            values[i-1] = Converters.convert(parts[i], columns.get(i-1).getJavaType());
+            values[i-1] = ObjectConverters.convert(parts[i], columns.get(i-1).getJavaType());
         }
         
         return values;

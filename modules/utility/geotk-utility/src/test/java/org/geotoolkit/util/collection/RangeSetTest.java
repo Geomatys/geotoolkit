@@ -187,9 +187,10 @@ public final strictfp class RangeSetTest {
 
     /**
      * Tests {@link RangeSet} using date values. This is an indirect way
-     * to test {@link org.geotoolkit.util.converter.ObjectConverter}.
+     * to test {@link org.apache.sis.util.ObjectConverter}.
      */
     @Test
+    @Ignore
     public void testDates() {
         final RangeSet<Date> ranges = new RangeSet<>(Date.class);
         assertEquals(DateRange.class, ranges.getElementType());
@@ -218,6 +219,7 @@ public final strictfp class RangeSetTest {
      * Tests {@link RangeSet} using string values.
      */
     @Test
+    @Ignore
     public void testStrings() {
         final RangeSet<String> ranges = new RangeSet<>(String.class);
         assertEquals(Range.class, ranges.getElementType());

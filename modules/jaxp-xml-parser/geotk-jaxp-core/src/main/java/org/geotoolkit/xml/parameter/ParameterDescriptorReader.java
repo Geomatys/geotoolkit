@@ -27,7 +27,7 @@ import org.apache.sis.util.iso.DefaultInternationalString;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.apache.sis.referencing.NamedIdentifier;
-import org.geotoolkit.util.Converters;
+import org.apache.sis.util.ObjectConverters;
 import org.geotoolkit.xml.StaxStreamReader;
 import static org.geotoolkit.xml.parameter.ParameterConstants.*;
 import org.geotoolkit.xml.parameter.ParameterConstants.ValueType;
@@ -232,7 +232,7 @@ public class ParameterDescriptorReader extends StaxStreamReader {
 
         // DEFAULT value
         if (defaultValue != null) {
-            defaultValue = Converters.convert(defaultValue, c);
+            defaultValue = ObjectConverters.convert(defaultValue, c);
         }
 
         // Are values in INTERVAL or DISCRETE range ?
@@ -376,19 +376,19 @@ public class ParameterDescriptorReader extends StaxStreamReader {
                         // INTERVAL TOPOLOGY
                         if (TAG_XSD_MAX_INCLUSIVE.equals(eName)) {
                             ValueType tv = ValueType.MAX;
-                            Object ov = Converters.convert(
+                            Object ov = ObjectConverters.convert(
                                     reader.getAttributeValue(null, ATT_XSD_VALUE), c);
                             values.add(new SimpleEntry<Object, ValueType>(ov, tv));
                         } else if (TAG_XSD_MIN_INCLUSIVE.equals(eName)) {
                             ValueType tv = ValueType.MIN;
-                            Object ov = Converters.convert(
+                            Object ov = ObjectConverters.convert(
                                     reader.getAttributeValue(null, ATT_XSD_VALUE), c);
                             values.add(new SimpleEntry<Object, ValueType>(ov, tv));
                         } else if (TAG_XSD_PATTERN.equals(eName)) {
 
                             if (Boolean.class.equals(c)) {
                                 ValueType tv = null;
-                                Boolean ov = (Boolean) Converters.convert(
+                                Boolean ov = (Boolean) ObjectConverters.convert(
                                         reader.getAttributeValue(null, ATT_XSD_VALUE), c);
                                 tv = (ov) ? ValueType.MAX : ValueType.MIN;
                                 values.add(new SimpleEntry<Object, ValueType>(ov, tv));
@@ -419,7 +419,7 @@ public class ParameterDescriptorReader extends StaxStreamReader {
                         else if (TAG_XSD_ENUMERATION.equals(eName)) {
                             topology = ValuesTopology.DISCRETE;
                             ValueType tv = null;
-                            Object ov = Converters.convert(
+                            Object ov = ObjectConverters.convert(
                                     reader.getAttributeValue(null, ATT_XSD_VALUE), c);
                             values.add(new SimpleEntry<Object, ValueType>(ov, tv));
                         }
@@ -439,10 +439,10 @@ public class ParameterDescriptorReader extends StaxStreamReader {
         // If String interval
         if (minString != null) {
             values.add(new SimpleEntry<Object, ValueType>(
-                    Converters.convert(minString, c),
+                    ObjectConverters.convert(minString, c),
                     ValueType.MIN));
             values.add(new SimpleEntry<Object, ValueType>(
-                    Converters.convert(maxString, c),
+                    ObjectConverters.convert(maxString, c),
                     ValueType.MAX));
         }
 

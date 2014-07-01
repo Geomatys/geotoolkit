@@ -63,7 +63,7 @@ import org.geotoolkit.referencing.cs.DiscreteCoordinateSystemAxis;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.style.RandomStyleBuilder;
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.util.Converters;
+import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.measure.Range;
 import org.geotoolkit.gui.swing.util.SwingEventPassThrough;
@@ -291,7 +291,7 @@ public class JLayerBand extends JNavigatorBand implements LayerListener {
         } else if (candidate instanceof Number) {
             return ((Number) candidate).doubleValue();
         }
-        return Converters.convert(candidate, Double.class);
+        return ObjectConverters.convert(candidate, Double.class);
 
     }
 

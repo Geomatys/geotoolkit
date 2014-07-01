@@ -23,7 +23,7 @@ import java.util.Map;
 import javax.xml.bind.JAXBException;
 import javax.xml.stream.XMLStreamException;
 import org.geotoolkit.feature.xml.XmlFeatureReader;
-import org.geotoolkit.util.converter.NonconvertibleObjectException;
+import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.converters.WPSConvertersUtils;
 import org.geotoolkit.wps.xml.v100.ComplexDataType;
 import org.geotoolkit.feature.Feature;
@@ -49,22 +49,22 @@ public final class ComplexToFeatureConverter extends AbstractComplexInputConvert
     }
 
     @Override
-    public Class<? extends Feature> getTargetClass() {
+    public Class<Feature> getTargetClass() {
         return Feature.class;
     }
-    
+
     /**
      * {@inheritDoc}
      * @return Feature
      */
     @Override
-    public Feature convert(final ComplexDataType source, final Map<String, Object> params) throws NonconvertibleObjectException {
+    public Feature convert(final ComplexDataType source, final Map<String, Object> params) throws UnconvertibleObjectException {
 
 
         final List<Object> data = source.getContent();
 
         if (data != null && data.size() > 1) {
-            throw new NonconvertibleObjectException("Invalid data input : Only one Feature expected.");
+            throw new UnconvertibleObjectException("Invalid data input : Only one Feature expected.");
         }
 
         //Read featureCollection
@@ -76,17 +76,17 @@ public final class ComplexToFeatureConverter extends AbstractComplexInputConvert
             return (Feature) WPSConvertersUtils.fixFeature(extractData);
 
         } catch (MalformedURLException ex) {
-            throw new NonconvertibleObjectException("Unable to reach the schema url.", ex);
+            throw new UnconvertibleObjectException("Unable to reach the schema url.", ex);
         } catch (IllegalArgumentException ex) {
-            throw new NonconvertibleObjectException("Unable to read the feature with the specified schema.", ex);
+            throw new UnconvertibleObjectException("Unable to read the feature with the specified schema.", ex);
         } catch (JAXBException ex) {
-            throw new NonconvertibleObjectException("Unable to read the feature schema.", ex);
+            throw new UnconvertibleObjectException("Unable to read the feature schema.", ex);
         } catch (FactoryException ex) {
-            throw new NonconvertibleObjectException("Unable to spread the CRS in feature.", ex);
+            throw new UnconvertibleObjectException("Unable to spread the CRS in feature.", ex);
         } catch (IOException ex) {
-            throw new NonconvertibleObjectException("Unable to read feature from nodes.", ex);
+            throw new UnconvertibleObjectException("Unable to read feature from nodes.", ex);
         } catch (XMLStreamException ex) {
-            throw new NonconvertibleObjectException("Unable to read feature from nodes.", ex);
+            throw new UnconvertibleObjectException("Unable to read feature from nodes.", ex);
         } finally {
             if (fcollReader != null) {
                 fcollReader.dispose();

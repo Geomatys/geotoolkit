@@ -19,7 +19,7 @@ package org.geotoolkit.filter.binding;
 
 import java.io.Serializable;
 import org.geotoolkit.parameter.ParametersExt;
-import org.geotoolkit.util.Converters;
+import org.apache.sis.util.ObjectConverters;
 import org.opengis.parameter.GeneralParameterValue;
 import org.opengis.parameter.ParameterNotFoundException;
 import org.opengis.parameter.ParameterValue;
@@ -27,7 +27,7 @@ import org.opengis.parameter.ParameterValueGroup;
 
 /**
  * Binding for Parameters.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public final class ParameterBinding extends AbstractBinding<ParameterValueGroup> implements Serializable{
@@ -54,7 +54,10 @@ public final class ParameterBinding extends AbstractBinding<ParameterValueGroup>
         }catch(ParameterNotFoundException ex){
             //we are laxiste, we don't consider
         }
-        return Converters.convert(value,target);
+        if (target == null) {
+            return (T) value; // TODO - unsafe cast!!!
+        }
+        return ObjectConverters.convert(value, target);
     }
 
     @Override
@@ -65,7 +68,7 @@ public final class ParameterBinding extends AbstractBinding<ParameterValueGroup>
             GeneralParameterValue param = ParametersExt.getParameter(candidate, xpath);
             if(param instanceof ParameterValue){
                 final ParameterValue pm = (ParameterValue) param;
-                pm.setValue(Converters.convert(value, pm.getDescriptor().getValueClass()));
+                pm.setValue(ObjectConverters.convert(value, pm.getDescriptor().getValueClass()));
             }else if(param instanceof ParameterValueGroup){
                 //how to map this ?
             }
@@ -73,5 +76,5 @@ public final class ParameterBinding extends AbstractBinding<ParameterValueGroup>
             //we are laxiste, we don't consider
         }
     }
-    
+
 }

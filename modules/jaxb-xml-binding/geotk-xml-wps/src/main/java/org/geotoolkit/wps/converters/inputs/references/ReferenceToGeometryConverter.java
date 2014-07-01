@@ -24,7 +24,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import org.geotoolkit.gml.GeometrytoJTS;
 import org.geotoolkit.gml.xml.v311.AbstractGeometryType;
-import org.geotoolkit.util.converter.NonconvertibleObjectException;
+import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.io.WPSMimeType;
 import org.geotoolkit.wps.xml.WPSMarshallerPool;
 import org.geotoolkit.wps.xml.v100.ReferenceType;
@@ -51,7 +51,7 @@ public final class ReferenceToGeometryConverter extends AbstractReferenceInputCo
     }
 
     @Override
-    public Class<? extends Geometry> getTargetClass() {
+    public Class<Geometry> getTargetClass() {
         return Geometry.class;
     }
 
@@ -61,7 +61,7 @@ public final class ReferenceToGeometryConverter extends AbstractReferenceInputCo
      * @return Geometry.
      */
     @Override
-    public Geometry convert(final ReferenceType source, final Map<String, Object> params) throws NonconvertibleObjectException {
+    public Geometry convert(final ReferenceType source, final Map<String, Object> params) throws UnconvertibleObjectException {
 
         final String mime = source.getMimeType() != null ? source.getMimeType() : WPSMimeType.TEXT_XML.val();
         final InputStream stream = getInputStreamFromReference(source);
@@ -80,14 +80,14 @@ public final class ReferenceToGeometryConverter extends AbstractReferenceInputCo
                 return GeometrytoJTS.toJTS((AbstractGeometryType) value);
 
             } catch (NoSuchAuthorityCodeException ex) {
-                throw new NonconvertibleObjectException("Reference geometry invalid input", ex);
+                throw new UnconvertibleObjectException("Reference geometry invalid input", ex);
             } catch (FactoryException ex) {
-                throw new NonconvertibleObjectException("Reference geometry invalid input", ex);
+                throw new UnconvertibleObjectException("Reference geometry invalid input", ex);
             } catch (JAXBException ex) {
-                throw new NonconvertibleObjectException("Reference geometry invalid input : Unmarshallable geometry", ex);
+                throw new UnconvertibleObjectException("Reference geometry invalid input : Unmarshallable geometry", ex);
             }
         } else {
-            throw new NonconvertibleObjectException("Reference data mime is not supported");
+            throw new UnconvertibleObjectException("Reference data mime is not supported");
         }
     }
 }

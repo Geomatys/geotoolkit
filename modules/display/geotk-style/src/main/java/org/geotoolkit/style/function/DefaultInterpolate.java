@@ -38,7 +38,7 @@ import org.geotoolkit.filter.DefaultLiteral;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.internal.image.ColorUtilities;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.Converters;
+import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
 
 import org.geotoolkit.feature.Feature;
@@ -263,7 +263,7 @@ public class DefaultInterpolate extends AbstractExpression implements Interpolat
         if(before == null && after == null){
             //no value associated, surely an NaN value
             //return a translucent color
-            return Converters.convert( new Color(0,0,0,0) , c);
+            return ObjectConverters.convert( new Color(0,0,0,0) , c);
 
         }else if(before == null){
             //only have an over value
@@ -284,11 +284,11 @@ public class DefaultInterpolate extends AbstractExpression implements Interpolat
                 final Color c1 = before.getValue().evaluate(object,Color.class);
                 final Color c2 = after.getValue().evaluate(object,Color.class);
                 final Color in = interpolate(c1, c2, pourcent);
-                return Converters.convert( in , c);
+                return ObjectConverters.convert( in , c);
             }else{
                 final Double n1 = before.getValue().evaluate(object,Double.class);
                 final Double n2 = after.getValue().evaluate(object,Double.class);
-                return Converters.convert( (n1 + pourcent*(n2-n1)) , c);
+                return ObjectConverters.convert( (n1 + pourcent*(n2-n1)) , c);
             }
 
         }

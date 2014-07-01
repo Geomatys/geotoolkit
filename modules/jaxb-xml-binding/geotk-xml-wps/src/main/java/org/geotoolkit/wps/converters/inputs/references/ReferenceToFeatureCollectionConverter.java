@@ -24,7 +24,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.stream.XMLStreamException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.feature.xml.XmlFeatureReader;
-import org.geotoolkit.util.converter.NonconvertibleObjectException;
+import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.converters.WPSConvertersUtils;
 import org.geotoolkit.wps.io.WPSMimeType;
 import org.geotoolkit.wps.xml.v100.ReferenceType;
@@ -50,7 +50,7 @@ public final class ReferenceToFeatureCollectionConverter extends AbstractReferen
     }
 
     @Override
-    public Class<? extends FeatureCollection> getTargetClass() {
+    public Class<FeatureCollection> getTargetClass() {
         return FeatureCollection.class;
     }
 
@@ -60,7 +60,7 @@ public final class ReferenceToFeatureCollectionConverter extends AbstractReferen
      * @return FeatureCollection.
      */
     @Override
-    public FeatureCollection convert(final ReferenceType source, final Map<String, Object> params) throws NonconvertibleObjectException {
+    public FeatureCollection convert(final ReferenceType source, final Map<String, Object> params) throws UnconvertibleObjectException {
 
         final String mime = source.getMimeType() != null ? source.getMimeType() : WPSMimeType.TEXT_XML.val();
         final InputStream stream = getInputStreamFromReference(source);
@@ -77,17 +77,17 @@ public final class ReferenceToFeatureCollectionConverter extends AbstractReferen
                 return (FeatureCollection) WPSConvertersUtils.fixFeature(fcoll);
 
             } catch (FactoryException ex) {
-                throw new NonconvertibleObjectException("Invalid reference input : can't spread CRS.", ex);
+                throw new UnconvertibleObjectException("Invalid reference input : can't spread CRS.", ex);
             } catch (IllegalArgumentException ex) {
-                throw new NonconvertibleObjectException("Unable to read the feature with the specified schema.", ex);
+                throw new UnconvertibleObjectException("Unable to read the feature with the specified schema.", ex);
             } catch (JAXBException ex) {
-                throw new NonconvertibleObjectException("Invalid reference input : can't read reference schema.", ex);
+                throw new UnconvertibleObjectException("Invalid reference input : can't read reference schema.", ex);
             } catch (MalformedURLException ex) {
-                throw new NonconvertibleObjectException("Invalid reference input : Malformed schema or resource.", ex);
+                throw new UnconvertibleObjectException("Invalid reference input : Malformed schema or resource.", ex);
             } catch (IOException ex) {
-                throw new NonconvertibleObjectException("Invalid reference input : IO.", ex);
+                throw new UnconvertibleObjectException("Invalid reference input : IO.", ex);
             } catch (XMLStreamException ex) {
-                throw new NonconvertibleObjectException("Invalid reference input.", ex);
+                throw new UnconvertibleObjectException("Invalid reference input.", ex);
             } finally {
                 if (fcollReader != null) {
                     fcollReader.dispose();
@@ -105,28 +105,28 @@ public final class ReferenceToFeatureCollectionConverter extends AbstractReferen
 //                final FeatureStore store = DataStoreFinder.get(parameters);
 //
 //                if (store == null) {
-//                    throw new NonconvertibleObjectException("Invalid URL");
+//                    throw new UnconvertibleObjectException("Invalid URL");
 //                }
 //
 //                if (store.getNames().size() != 1) {
-//                    throw new NonconvertibleObjectException("More than one FeatureCollection in the file");
+//                    throw new UnconvertibleObjectException("More than one FeatureCollection in the file");
 //                }
 //
 //                final FeatureCollection collection = store.createSession(true).getFeatureCollection(QueryBuilder.all(store.getNames().iterator().next()));
 //                if (collection != null) {
 //                    return collection;
 //                } else {
-//                    throw new NonconvertibleObjectException("Collection not found");
+//                    throw new UnconvertibleObjectException("Collection not found");
 //                }
 //
 //            } catch (DataStoreException ex) {
-//                throw new NonconvertibleObjectException("Invalid reference input : Malformed schema or resource.", ex);
+//                throw new UnconvertibleObjectException("Invalid reference input : Malformed schema or resource.", ex);
 //            } catch (MalformedURLException ex) {
-//                throw new NonconvertibleObjectException("Invalid reference input : Malformed schema or resource.", ex);
+//                throw new UnconvertibleObjectException("Invalid reference input : Malformed schema or resource.", ex);
 //            }
 
         } else {
-            throw new NonconvertibleObjectException("Reference data mime is not supported");
+            throw new UnconvertibleObjectException("Reference data mime is not supported");
         }
     }
 }

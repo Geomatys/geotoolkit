@@ -39,9 +39,9 @@ import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.DateRange;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.util.NullArgumentException;
-import org.geotoolkit.util.converter.ObjectConverter;
-import org.geotoolkit.util.converter.ConverterRegistry;
-import org.geotoolkit.util.converter.NonconvertibleObjectException;
+import org.apache.sis.util.ObjectConverter;
+import org.apache.sis.util.ObjectConverters;
+import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.resources.Errors;
 
 import static org.apache.sis.util.Numbers.*;
@@ -148,7 +148,7 @@ public class RangeSet<T extends Comparable<? super T>> extends AbstractSet<Range
      * This field should be considered as final. It is not because it needs to be restaured
      * on deserialization.
      */
-    private transient ObjectConverter<T,Number> converter;
+    private transient ObjectConverter<? super T, ? extends Number> converter;
 
     /**
      * The converter to use for converting numbers to comparable objects,
@@ -157,7 +157,7 @@ public class RangeSet<T extends Comparable<? super T>> extends AbstractSet<Range
      * This field should be considered as final. It is not because it needs to be restaured
      * on deserialization.
      */
-    private transient ObjectConverter<? extends Number,T> inverseConverter;
+    private transient ObjectConverter<? super Number, ? extends T> inverseConverter;
 
     /**
      * The array of intervals. It may be either an array of Java primitive type like {@code int[]}
@@ -199,19 +199,18 @@ public class RangeSet<T extends Comparable<? super T>> extends AbstractSet<Range
         isDate = Date.class.isAssignableFrom(transferClass);
         isNumeric = Number.class.isAssignableFrom(transferClass);
         if (!isNumeric) try {
-            final ObjectConverter<T,Number> direct;
-            final ObjectConverter<? extends Number,T> inverse;
-            final ConverterRegistry registry = ConverterRegistry.system();
-            direct = registry.converter(elementClass, Number.class);
+            final ObjectConverter<? super T, ? extends Number> direct;
+            final ObjectConverter<? super Number, ? extends T> inverse;
+            direct = ObjectConverters.find(elementClass, Number.class);
             if (isAcceptable(direct)) {
-                inverse = registry.converter(direct.getTargetClass(), elementClass);
+                inverse = ObjectConverters.find(Number.class, elementClass);
                 if (isAcceptable(inverse)) {
                     converter = direct;
                     inverseConverter = inverse;
                     transferClass = direct.getTargetClass();
                 }
             }
-        } catch (NonconvertibleObjectException e) {
+        } catch (UnconvertibleObjectException e) {
             // Ignore - it is perfectly legal if there is no converter to numbers.
         }
         arrayElementClass = wrapperToPrimitive(transferClass);
@@ -223,8 +222,9 @@ public class RangeSet<T extends Comparable<? super T>> extends AbstractSet<Range
      * of {@link RangeSet}.
      */
     private static boolean isAcceptable(final ObjectConverter<?,?> converter) {
-        return !converter.hasRestrictions() &&
-                (converter.isOrderPreserving() || converter.isOrderReversing());
+        return true; // TODO
+//        return !converter.hasRestrictions() &&
+//                (converter.isOrderPreserving() || converter.isOrderReversing());
     }
 
     /**
@@ -269,12 +269,12 @@ public class RangeSet<T extends Comparable<? super T>> extends AbstractSet<Range
         }
         try {
             @SuppressWarnings({"unchecked","rawtypes"})
-            final Comparable<?> result = (Comparable<?>) ((ObjectConverter) converter).convert(value);
+            final Comparable<?> result = (Comparable<?>) ((ObjectConverter) converter).apply(value);
             return result;
         } catch (ClassCastException cause) {
             throw new IllegalArgumentException(Errors.format(
                     Errors.Keys.ILLEGAL_CLASS_2, value.getClass(), elementClass), cause);
-        } catch (NonconvertibleObjectException cause) {
+        } catch (UnconvertibleObjectException cause) {
             throw new IllegalArgumentException(Errors.format(
                     Errors.Keys.ILLEGAL_ARGUMENT_2, name, value), cause);
         }
@@ -888,8 +888,8 @@ public class RangeSet<T extends Comparable<? super T>> extends AbstractSet<Range
         if (inverseConverter != null) {
             assert inverseConverter.getSourceClass().isInstance(value) : value;
             try {
-                return inverseConverter.convert(value);
-            } catch (NonconvertibleObjectException exception) {
+                return inverseConverter.apply(value);
+            } catch (UnconvertibleObjectException exception) {
                 // Should not happen, since class type should
                 // have been checked by all 'add(...)' methods
                 throw new IllegalStateException(exception);

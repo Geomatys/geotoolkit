@@ -45,7 +45,7 @@ import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.internal.jaxb.JTSWrapperMarshallerPool;
 import org.geotoolkit.internal.jaxb.LineStringPosListType;
 import org.geotoolkit.internal.jaxb.PolygonType;
-import org.geotoolkit.util.Converters;
+import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.xml.MarshallerPool;
 import org.apache.sis.xml.Namespaces;
 import org.geotoolkit.xml.StaxStreamReader;
@@ -472,7 +472,7 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                 LOGGER.log(Level.INFO, "Failed to parser binary64 : "+ex.getMessage(),ex);
             }
         }else{
-            value = Converters.convert(value, type.getBinding());
+            value = ObjectConverters.convert(value, type.getBinding());
         }
         return value;
     }

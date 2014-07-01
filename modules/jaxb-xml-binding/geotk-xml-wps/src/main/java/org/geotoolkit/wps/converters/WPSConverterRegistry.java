@@ -18,12 +18,13 @@ package org.geotoolkit.wps.converters;
 
 import java.util.*;
 import java.util.logging.Logger;
+import javax.measure.unit.Unit;
 
 import org.geotoolkit.gml.xml.v311.BoundingShapeType;
 import org.geotoolkit.ows.xml.v110.BoundingBoxType;
-import org.geotoolkit.process.converters.*;
+import org.geotoolkit.util.converter.*;
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.util.converter.NonconvertibleObjectException;
+import org.apache.sis.util.UnconvertibleObjectException;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.wps.converters.inputs.complex.*;
 import org.geotoolkit.wps.converters.inputs.literal.*;
@@ -33,6 +34,7 @@ import org.geotoolkit.wps.converters.outputs.literal.*;
 import org.geotoolkit.wps.converters.outputs.references.*;
 import org.geotoolkit.wps.xml.v100.ComplexDataType;
 import org.geotoolkit.wps.xml.v100.ReferenceType;
+import org.apache.sis.util.ObjectConverters;
 
 /**
  * Registry that register all WPS converters used.
@@ -98,19 +100,19 @@ public class WPSConverterRegistry {
         register(FileToReferenceConverter                   .getInstance());
 
         //String -> Object converters
-        register(new WPSObjectConverterAdapter(new StringToUnitConverter()));
+        register(new WPSObjectConverterAdapter(ObjectConverters.find(String.class, Unit.class)));
         register(new WPSObjectConverterAdapter(new StringToCRSConverter()));
         register(new WPSObjectConverterAdapter(new StringToFilterConverter()));
         register(new WPSObjectConverterAdapter(StringToSortByConverter.getInstance()));
         register(new WPSObjectConverterAdapter(StringToNumberRangeConverter.getInstance()));
-        register(new WPSObjectConverterAdapter(StringToDate.getInstance()));
+        register(new WPSObjectConverterAdapter(new StringToDateConverter()));
         register(new WPSObjectConverterAdapter(new StringToDoubleArrayConverter()));
         register(new WPSObjectConverterAdapter(new StringToFloatArrayConverter()));
         register(new WPSObjectConverterAdapter(new StringToIntegerArrayConverter()));
         register(new WPSObjectConverterAdapter(new StringToDoubleWArrayConverter()));
         register(new WPSObjectConverterAdapter(new StringToFloatWArrayConverter()));
         register(new WPSObjectConverterAdapter(new StringToIntegerWArrayConverter()));
-        
+
         // Object -> String converters
         register(new WPSObjectConverterAdapter(new DoubleArrayToStringConverter()));
         register(new WPSObjectConverterAdapter(new IntegerArrayToStringConverter()));
@@ -140,9 +142,9 @@ public class WPSConverterRegistry {
      * @param source
      * @param target
      * @return
-     * @throws NonconvertibleObjectException in case of no converter found.
+     * @throws UnconvertibleObjectException in case of no converter found.
      */
-    public WPSObjectConverter getConverter(final Class source, final Class target) throws NonconvertibleObjectException {
+    public WPSObjectConverter getConverter(final Class source, final Class target) throws UnconvertibleObjectException {
 
         ArgumentChecks.ensureNonNull("source", source);
         ArgumentChecks.ensureNonNull("target", target);
@@ -152,7 +154,7 @@ public class WPSConverterRegistry {
                 return converter;
             }
         }
-        throw new NonconvertibleObjectException("No converter found.");
+        throw new UnconvertibleObjectException("No converter found.");
     }
 
     /**

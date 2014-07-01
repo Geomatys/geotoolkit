@@ -22,14 +22,14 @@ import java.util.List;
 import java.util.Map;
 import org.geotoolkit.gml.GeometrytoJTS;
 import org.geotoolkit.gml.xml.v311.AbstractGeometryType;
-import org.geotoolkit.util.converter.NonconvertibleObjectException;
+import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.xml.v100.ComplexDataType;
 import org.opengis.util.FactoryException;
 
 
 /**
  * Implementation of ObjectConverter to convert a complex input into a JTS Geometry.
- * 
+ *
  * @author Quentin Boileau (Geomatys).
  */
 public final class ComplexToGeometryConverter extends AbstractComplexInputConverter<Geometry> {
@@ -45,30 +45,30 @@ public final class ComplexToGeometryConverter extends AbstractComplexInputConver
         }
         return INSTANCE;
     }
- 
+
     @Override
-    public Class<? extends Geometry> getTargetClass() {
+    public Class<Geometry> getTargetClass() {
         return Geometry.class;
     }
-    
+
     /**
      * {@inheritDoc}
      * @return Geometry.
      */
     @Override
-    public Geometry convert(final ComplexDataType source, final Map<String, Object> params) throws NonconvertibleObjectException {
+    public Geometry convert(final ComplexDataType source, final Map<String, Object> params) throws UnconvertibleObjectException {
 
-        try {                
+        try {
             final List<Object> data = source.getContent();
             if(data.size() == 1){
                 return GeometrytoJTS.toJTS((AbstractGeometryType) data.get(0));
             }else{
-                throw new NonconvertibleObjectException("Invalid data input : Only one geometry expected.");
+                throw new UnconvertibleObjectException("Invalid data input : Only one geometry expected.");
             }
         }catch(ClassCastException ex){
-            throw new NonconvertibleObjectException("Invalid data input : empty GML geometry.",ex);
+            throw new UnconvertibleObjectException("Invalid data input : empty GML geometry.",ex);
         }catch (FactoryException ex) {
-            throw new NonconvertibleObjectException("Invalid data input : Cannot convert GML geometry.",ex);
+            throw new UnconvertibleObjectException("Invalid data input : Cannot convert GML geometry.",ex);
         }
     }
 }

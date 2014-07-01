@@ -35,8 +35,8 @@ import org.geotoolkit.ows.xml.v110.BoundingBoxType;
 import org.apache.sis.measure.NumberRange;
 import org.geotoolkit.ows.xml.v110.DomainMetadataType;
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.util.converter.ConverterRegistry;
-import org.geotoolkit.util.converter.NonconvertibleObjectException;
+import org.apache.sis.util.ObjectConverters;
+import org.apache.sis.util.UnconvertibleObjectException;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.wps.converters.WPSConverterRegistry;
 import org.geotoolkit.wps.converters.WPSConvertersUtils;
@@ -253,7 +253,7 @@ public final class WPSIO {
                             break;
                         }
 
-                    } catch (NonconvertibleObjectException ex) {
+                    } catch (UnconvertibleObjectException ex) {
 
                         loop++;
                         if (loop == testClass.length) {
@@ -453,10 +453,10 @@ public final class WPSIO {
      * @param mimeType
      * @param encoding
      * @param schema
-     * @throws NonconvertibleObjectException if not supported.
+     * @throws UnconvertibleObjectException if not supported.
      */
     public static void checkSupportedFormat(final Class clazz, final IOType ioType, String mimeType, String encoding, String schema)
-            throws NonconvertibleObjectException {
+            throws UnconvertibleObjectException {
 
         boolean formatOK = false;
         final List<FormatSupport> candidates = getFormats(clazz, ioType);
@@ -533,7 +533,7 @@ public final class WPSIO {
                     final String bestEncoding = bestMatch.getEncoding() != null ? bestMatch.getEncoding() : null;
                     errorMsg.append(". You can try with this tuple : ").append(WPSConvertersUtils.dataFormatToString(bestMime, bestEncoding, bestSchema));
                 }
-                throw new NonconvertibleObjectException(errorMsg.toString());
+                throw new UnconvertibleObjectException(errorMsg.toString());
             }
         }
     }
@@ -545,15 +545,15 @@ public final class WPSIO {
      * @param ioType the {@link IOType}
      * @param dataType the {@link FormChoice}
      * @return a WPSObjectConverter
-     * @throws NonconvertibleObjectException if no converter found
+     * @throws UnconvertibleObjectException if no converter found
      */
-    public static WPSObjectConverter getConverter(final Class clazz, final IOType ioType, final FormChoice dataType) throws NonconvertibleObjectException {
+    public static WPSObjectConverter getConverter(final Class clazz, final IOType ioType, final FormChoice dataType) throws UnconvertibleObjectException {
 
         WPSObjectConverter converter = null;
         if (dataType.equals(FormChoice.LITERAL)) {
             try {
-                converter = new WPSObjectConverterAdapter(ConverterRegistry.system().converter(String.class, clazz));
-            } catch (NonconvertibleObjectException ex) {
+                converter = new WPSObjectConverterAdapter(ObjectConverters.find(String.class, clazz));
+            } catch (UnconvertibleObjectException ex) {
                 //Do nothing. In this case no simple converter where found
             }
         }
@@ -577,7 +577,7 @@ public final class WPSIO {
                 }
 
                 if (candidates.isEmpty() || converter == null) {
-                    throw new NonconvertibleObjectException("No converter found.");
+                    throw new UnconvertibleObjectException("No converter found.");
                 }
 
             } else if (ioType.equals(IOType.OUTPUT)) {
@@ -596,7 +596,7 @@ public final class WPSIO {
                 }
 
                 if (candidates.isEmpty() || converter == null) {
-                    throw new NonconvertibleObjectException("No converter found.");
+                    throw new UnconvertibleObjectException("No converter found.");
                 }
             }
         }

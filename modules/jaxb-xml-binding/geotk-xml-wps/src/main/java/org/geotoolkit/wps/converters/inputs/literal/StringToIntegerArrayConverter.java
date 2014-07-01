@@ -18,52 +18,37 @@ package org.geotoolkit.wps.converters.inputs.literal;
 
 import java.util.LinkedList;
 import java.util.List;
-import org.geotoolkit.util.converter.NonconvertibleObjectException;
-import org.geotoolkit.util.converter.ObjectConverter;
+import org.geotoolkit.util.converter.SimpleConverter;
+import org.apache.sis.util.UnconvertibleObjectException;
 
 /**
- * Convert a String to an array of int. 
+ * Convert a String to an array of int.
  * Double in String should be separated by a coma like this : "13, 5, 182, 88".
  * Return an empty array if source is null or empty.
- * 
+ *
  * @author Quentin Boileau
  */
-public class StringToIntegerArrayConverter implements ObjectConverter<String, int[]> {
+public class StringToIntegerArrayConverter extends SimpleConverter<String, int[]> {
 
     @Override
-    public Class<? super String> getSourceClass() {
+    public Class<String> getSourceClass() {
         return String.class;
     }
 
     @Override
-    public Class<? extends int[]> getTargetClass() {
+    public Class<int[]> getTargetClass() {
         return int[].class;
     }
 
     @Override
-    public boolean hasRestrictions() {
-        return false;
-    }
+    public int[] apply(final String source) throws UnconvertibleObjectException {
 
-    @Override
-    public boolean isOrderPreserving() {
-        return true;
-    }
-
-    @Override
-    public boolean isOrderReversing() {
-        return false;
-    }
-
-    @Override
-    public int[] convert(final String source) throws NonconvertibleObjectException {
-        
         if (source != null && !source.trim().isEmpty()) {
-            
+
             final List<Integer> integerList = new LinkedList<Integer>();
             if (source.contains(",")) {
                 final String[] sourceSplit = source.split(",");
-                
+
                 for (final String str : sourceSplit) {
                     try {
                         final Integer i = Integer.valueOf(str.trim());
@@ -71,7 +56,7 @@ public class StringToIntegerArrayConverter implements ObjectConverter<String, in
                             integerList.add(i);
                         }
                     } catch (NumberFormatException ex) {
-                        throw new NonconvertibleObjectException(ex.getMessage(), ex);
+                        throw new UnconvertibleObjectException(ex.getMessage(), ex);
                     }
                 }
             } else {
@@ -81,10 +66,10 @@ public class StringToIntegerArrayConverter implements ObjectConverter<String, in
                         integerList.add(i);
                     }
                 } catch (NumberFormatException ex) {
-                    throw new NonconvertibleObjectException(ex.getMessage(), ex);
+                    throw new UnconvertibleObjectException(ex.getMessage(), ex);
                 }
             }
-            
+
             if (!integerList.isEmpty()) {
                 final int[] outArray = new int[integerList.size()];
                 for (int i = 0; i < integerList.size(); i++) {
@@ -92,11 +77,11 @@ public class StringToIntegerArrayConverter implements ObjectConverter<String, in
                 }
                 return outArray;
             } else {
-                throw new NonconvertibleObjectException("Invalid source String : "+source);
+                throw new UnconvertibleObjectException("Invalid source String : "+source);
             }
         }
-        
+
         return new int[0];
     }
-    
+
 }

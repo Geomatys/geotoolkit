@@ -24,8 +24,8 @@ import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.memory.WrapFeatureCollection;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.util.converter.NonconvertibleObjectException;
-import org.geotoolkit.util.converter.ObjectConverter;
+import org.apache.sis.util.UnconvertibleObjectException;
+import org.apache.sis.util.ObjectConverter;
 
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.type.FeatureType;
@@ -79,7 +79,7 @@ public class MergeFeatureCollection extends WrapFeatureCollection {
     protected Feature modify2(final Feature feature, final Map<Name,ObjectConverter> map) {
         try {
             return MergeProcess.mergeFeature(feature, newFeatureType, map);
-        } catch (NonconvertibleObjectException ex) {
+        } catch (UnconvertibleObjectException ex) {
             throw new FeatureStoreRuntimeException(ex);
         }
     }
@@ -88,7 +88,7 @@ public class MergeFeatureCollection extends WrapFeatureCollection {
     public FeatureIterator<Feature> iterator(final Hints hints) throws FeatureStoreRuntimeException {
         try {
             return new MergeFeatureIterator(fcList);
-        } catch (NonconvertibleObjectException ex) {
+        } catch (UnconvertibleObjectException ex) {
            throw new FeatureStoreRuntimeException(ex);
         }
     }
@@ -115,7 +115,7 @@ public class MergeFeatureCollection extends WrapFeatureCollection {
          * Connect to the original FeatureIterator
          * @param originalFI FeatureIterator
          */
-        public MergeFeatureIterator(final FeatureCollection[] fcListIter) throws NonconvertibleObjectException {
+        public MergeFeatureIterator(final FeatureCollection[] fcListIter) throws UnconvertibleObjectException {
 
             this.fcList = fcListIter;
             this.fcIter = 0;
@@ -200,7 +200,7 @@ public class MergeFeatureCollection extends WrapFeatureCollection {
                             conversionMap = MergeProcess.createConversionMap(newFeatureType, nextFC.getFeatureType());
 
                             
-                        } catch (NonconvertibleObjectException ex) {
+                        } catch (UnconvertibleObjectException ex) {
                            throw new FeatureStoreRuntimeException(ex);
                         }
                     } else {

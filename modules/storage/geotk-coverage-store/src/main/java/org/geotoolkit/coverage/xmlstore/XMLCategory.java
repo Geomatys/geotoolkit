@@ -26,7 +26,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import org.apache.sis.measure.NumberRange;
 import org.geotoolkit.coverage.Category;
-import org.geotoolkit.util.Converters;
+import org.apache.sis.util.ObjectConverters;
 import org.opengis.referencing.operation.MathTransform1D;
 import org.apache.sis.referencing.operation.transform.TransferFunction;
 
@@ -123,7 +123,7 @@ public class XMLCategory {
 
         final Color[] cols = new Color[colors.length];
         for(int i=0;i<cols.length;i++){
-            cols[i] = Converters.convert(colors[i], Color.class);
+            cols[i] = ObjectConverters.convert(colors[i], Color.class);
         }
         return new Category(name, cols, range, sampleToGeophysics);
     }

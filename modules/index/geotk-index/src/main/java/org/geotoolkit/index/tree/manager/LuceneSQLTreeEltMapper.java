@@ -179,7 +179,7 @@ public class LuceneSQLTreeEltMapper implements TreeElementMapper<NamedEnvelope> 
 
     @Override
     public void close() throws IOException {
-        try {
+        if (conRO != null) try {
             conRO.close();
             conT.close();
             conRO = null;

@@ -21,7 +21,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Map;
 import java.util.UUID;
-import org.geotoolkit.util.converter.NonconvertibleObjectException;
+import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.io.WPSIO;
 import org.geotoolkit.wps.xml.v100.InputReferenceType;
 import org.geotoolkit.wps.xml.v100.OutputReferenceType;
@@ -29,7 +29,7 @@ import org.geotoolkit.wps.xml.v100.ReferenceType;
 
 /**
  * Implementation of ObjectConverter to convert a {@code Number} into a {@link OutputReferenceType reference}.
- * 
+ *
  * @author Quentin Boileau (Geomatys).
  */
 public class NumberToReferenceConverter extends AbstractReferenceOutputConverter<Number> {
@@ -47,24 +47,24 @@ public class NumberToReferenceConverter extends AbstractReferenceOutputConverter
     }
 
     @Override
-    public Class<? super Number> getSourceClass() {
+    public Class<Number> getSourceClass() {
         return Number.class;
     }
-    
+
     @Override
-    public ReferenceType convert(final Number source, final Map<String, Object> params) throws NonconvertibleObjectException {
-        
+    public ReferenceType convert(final Number source, final Map<String, Object> params) throws UnconvertibleObjectException {
+
         if (params.get(TMP_DIR_PATH) == null) {
-            throw new NonconvertibleObjectException("The output directory should be defined.");
+            throw new UnconvertibleObjectException("The output directory should be defined.");
         }
-        
+
         if (source == null) {
-            throw new NonconvertibleObjectException("The output data should be defined.");
+            throw new UnconvertibleObjectException("The output data should be defined.");
         }
-        
+
         final WPSIO.IOType ioType = WPSIO.IOType.valueOf((String) params.get(IOTYPE));
         ReferenceType reference = null ;
-        
+
         if (ioType.equals(WPSIO.IOType.INPUT)) {
             reference = new InputReferenceType();
         } else {
@@ -78,7 +78,7 @@ public class NumberToReferenceConverter extends AbstractReferenceOutputConverter
         reference.setMimeType("text/plain");
         reference.setEncoding("UTF-8");
         reference.setSchema(null);
-        
+
         final String randomFileName = UUID.randomUUID().toString();
         FileWriter writer = null;
         try {
@@ -88,15 +88,15 @@ public class NumberToReferenceConverter extends AbstractReferenceOutputConverter
             writer.write(String.valueOf(source));
             writer.flush();
             reference.setHref((String) params.get(TMP_DIR_URL) + "/" + randomFileName);
-            
+
         } catch (IOException ex) {
-            throw new NonconvertibleObjectException("Error occure during image writing.", ex);
+            throw new UnconvertibleObjectException("Error occure during image writing.", ex);
         } finally {
             if (writer != null) {
                 try {
                     writer.close();
                 } catch (IOException ex) {
-                    throw new NonconvertibleObjectException("Can't close the writer.", ex);
+                    throw new UnconvertibleObjectException("Can't close the writer.", ex);
                 }
             }
         }

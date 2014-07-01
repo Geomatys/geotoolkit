@@ -23,7 +23,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import org.geotoolkit.parameter.Parameter;
 import org.geotoolkit.parameter.ParameterGroup;
-import org.geotoolkit.util.Converters;
+import org.apache.sis.util.ObjectConverters;
 import org.geotoolkit.xml.StaxStreamReader;
 
 import org.opengis.parameter.GeneralParameterDescriptor;
@@ -45,15 +45,15 @@ public class ParameterValueReader extends StaxStreamReader {
 
     private final GeneralParameterDescriptor rootDesc ;
     private final Deque<GeneralParameterDescriptor> stack = new ArrayDeque<GeneralParameterDescriptor>();
-    
+
     /**
      * <p>Constructs the value reader with a descriptor reader.</p>
      *
      * @param descriptorReader
      */
-    public ParameterValueReader(final ParameterDescriptorReader descriptorReader) 
+    public ParameterValueReader(final ParameterDescriptorReader descriptorReader)
             throws IOException, XMLStreamException, ClassNotFoundException{
-        
+
         descriptorReader.read();
         rootDesc = descriptorReader.getDescriptorsRoot();
         descriptorReader.dispose();
@@ -79,20 +79,20 @@ public class ParameterValueReader extends StaxStreamReader {
         while (reader.hasNext()) {
 
             switch (reader.next()) {
-            
+
                 case XMLStreamConstants.START_ELEMENT:
                 final String eName = reader.getLocalName();
                 final String eUri = reader.getNamespaceURI();
 
                 if (URI_PARAMETER.equals(eUri)) {
-                    return this.readValue(eName);                    
+                    return this.readValue(eName);
                 }
                     break;
                 }
             }
         return null;
     }
-    
+
     /**
      * <p>This method reads a general value.</p>
      *
@@ -100,26 +100,26 @@ public class ParameterValueReader extends StaxStreamReader {
      * @return
      * @throws XMLStreamException
      */
-    private GeneralParameterValue readValue(final String eName) 
+    private GeneralParameterValue readValue(final String eName)
             throws XMLStreamException{
 
         GeneralParameterDescriptor desc = stack.peekFirst();
         desc = getDescriptor(desc, eName);
         stack.addFirst(desc); //push
-        
+
         final GeneralParameterValue result;
 
         if(desc instanceof ParameterDescriptor){
             result = new Parameter(
                     (ParameterDescriptor) desc,
-                    Converters.convert(
+                    ObjectConverters.convert(
                     reader.getElementText(),((ParameterDescriptor) desc).getValueClass()));
         } else if(desc instanceof ParameterDescriptorGroup){
             result = this.readValueGroup();
         } else {
             result = null;
         }
-        
+
         stack.removeFirst(); //pop
         return result;
     }
@@ -135,7 +135,7 @@ public class ParameterValueReader extends StaxStreamReader {
             throws XMLStreamException{
 
         final ParameterDescriptorGroup desc = (ParameterDescriptorGroup) stack.peekFirst();
-        
+
         final List<GeneralParameterValue> values = new ArrayList<GeneralParameterValue>();
 
         boucle:
@@ -178,21 +178,21 @@ public class ParameterValueReader extends StaxStreamReader {
                 desc, values.toArray(new GeneralParameterValue[values.size()]));
         }
 
-    private GeneralParameterDescriptor getDescriptor(GeneralParameterDescriptor desc, 
+    private GeneralParameterDescriptor getDescriptor(GeneralParameterDescriptor desc,
             String name) throws XMLStreamException{
-        
+
         if(desc == null){
             if(!rootDesc.getName().getCode().equals(name) &&
                !rootDesc.getName().getCode().equals(name.replace('_', ' '))){
                 throw new XMLStreamException("Descriptor for name : "+name+" not found.");
             }
             return rootDesc;
-            
+
         }else{
             if(!(desc instanceof ParameterDescriptorGroup)){
                 throw new XMLStreamException("Was expecting a descriptor group for name : " + name);
             }
-            
+
             ParameterDescriptorGroup pdg = (ParameterDescriptorGroup) desc;
             GeneralParameterDescriptor candidate = null;
             try{
@@ -201,15 +201,15 @@ public class ParameterValueReader extends StaxStreamReader {
                 //second try
                 name = name.replace('_', ' ');
             }
-            
+
             try{
                 return pdg.descriptor(name);
             }catch(ParameterNotFoundException ex){
                 throw new XMLStreamException("Descriptor for name : "+name+" not found.");
             }
-            
+
         }
-        
+
     }
-    
+
 }

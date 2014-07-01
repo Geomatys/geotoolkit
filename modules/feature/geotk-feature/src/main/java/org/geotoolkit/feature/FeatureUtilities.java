@@ -29,7 +29,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.geotoolkit.parameter.Parameters;
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.util.Converters;
+import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.logging.Logging;
 import org.opengis.coverage.grid.GridCoverage;
 import org.geotoolkit.feature.simple.SimpleFeature;
@@ -37,6 +37,7 @@ import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.geotoolkit.feature.type.*;
 import org.opengis.filter.identity.Identifier;
 import org.opengis.parameter.*;
+import org.apache.sis.util.UnconvertibleObjectException;
 
 /**
  *
@@ -680,8 +681,13 @@ public final class FeatureUtilities {
             }
 
             Object val = entry.getValue();
-            val = Converters.convert(val, pd.getValueClass());
-            param.setValue(val);
+            try {
+                val = ObjectConverters.convert(val, pd.getValueClass());
+                param.setValue(val);
+            } catch (UnconvertibleObjectException e) {
+                Logging.recoverableException(FeatureUtilities.class, "toParameter", e);
+                // TODO - do we really want to ignore?
+            }
         }
 
         return parameter;

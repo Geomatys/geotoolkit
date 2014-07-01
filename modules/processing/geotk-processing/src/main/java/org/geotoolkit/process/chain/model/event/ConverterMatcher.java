@@ -25,8 +25,8 @@ import java.util.Map.Entry;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.ObjectConverters;
 import org.geotoolkit.process.chain.model.ClassFull;
-import org.geotoolkit.util.Converters;
-import org.geotoolkit.util.converter.ObjectConverter;
+import org.apache.sis.util.ObjectConverters;
+import org.apache.sis.util.ObjectConverter;
 
 /**
  * Used to find convertion possibilities from two objects.

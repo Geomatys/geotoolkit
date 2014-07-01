@@ -23,7 +23,7 @@ import java.beans.PropertyDescriptor;
 import java.io.Serializable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.geotoolkit.util.Converters;
+import org.apache.sis.util.ObjectConverters;
 
 /**
  * Binding for Beans.
@@ -58,7 +58,7 @@ public final class BeanBinding extends AbstractBinding<Object> implements Serial
             for(PropertyDescriptor d : descs){
                 if(d.getName().equalsIgnoreCase(xpath)){
                     Object o = d.getReadMethod().invoke(candidate);
-                    return Converters.convert(o, target);
+                    return ObjectConverters.convert(o, target);
                 }
             }
         } catch (Exception ex) {

@@ -31,7 +31,7 @@ import net.jcip.annotations.Immutable;
  * @since 3.00
  * @module
  */
-public class BaseClassFilter implements ClassFilter, Serializable {
+class BaseClassFilter implements ClassFilter, Serializable {
     /**
      * For cross-version compatibility.
      */

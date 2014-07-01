@@ -17,12 +17,14 @@
 package org.geotoolkit.wps.converters;
 
 import java.util.Map;
-import org.geotoolkit.util.converter.NonconvertibleObjectException;
-import org.geotoolkit.util.converter.ObjectConverter;
+import java.util.Set;
+import org.apache.sis.math.FunctionProperty;
+import org.apache.sis.util.UnconvertibleObjectException;
+import org.apache.sis.util.ObjectConverter;
 
 /**
  * Convenient adapter to use an standard {@link ObjectConverter} like a {@link WPSObjectConverter}.
- * 
+ *
  * @see ObjectConverter
  * @see WPSObjectConverter
  * @author Quentin Boileau (Geomatys).
@@ -39,7 +41,7 @@ public class WPSObjectConverterAdapter<S, T> implements WPSObjectConverter<S, T>
      * {@inheritDoc }
      */
     @Override
-    public Class<? super S> getSourceClass() {
+    public Class<S> getSourceClass() {
         return converter.getSourceClass();
     }
 
@@ -47,32 +49,18 @@ public class WPSObjectConverterAdapter<S, T> implements WPSObjectConverter<S, T>
      * {@inheritDoc }
      */
     @Override
-    public Class<? extends T> getTargetClass() {
+    public Class<T> getTargetClass() {
         return converter.getTargetClass();
     }
 
-    /**
-     * {@inheritDoc }
-     */
     @Override
-    public boolean hasRestrictions() {
-        return converter.hasRestrictions();
+    public Set<FunctionProperty> properties() {
+        return converter.properties();
     }
 
-    /**
-     * {@inheritDoc }
-     */
     @Override
-    public boolean isOrderPreserving() {
-        return converter.isOrderPreserving();
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public boolean isOrderReversing() {
-        return converter.isOrderReversing();
+    public ObjectConverter<T, S> inverse() throws UnsupportedOperationException {
+        return converter.inverse();
     }
 
     /**
@@ -80,10 +68,10 @@ public class WPSObjectConverterAdapter<S, T> implements WPSObjectConverter<S, T>
      *
      * @param source
      * @return
-     * @throws NonconvertibleObjectException
+     * @throws UnconvertibleObjectException
      */
     @Override
-    public T convert(S source) throws NonconvertibleObjectException {
+    public T apply(S source) throws UnconvertibleObjectException {
         return this.convert(source, null);
     }
 
@@ -91,7 +79,7 @@ public class WPSObjectConverterAdapter<S, T> implements WPSObjectConverter<S, T>
      * {@inheritDoc }
      */
     @Override
-    public T convert(S source, Map<String, Object> params) throws NonconvertibleObjectException {
-        return converter.convert(source);
+    public T convert(S source, Map<String, Object> params) throws UnconvertibleObjectException {
+        return converter.apply(source);
     }
 }

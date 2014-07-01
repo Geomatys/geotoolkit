@@ -23,7 +23,7 @@ import java.util.Map;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.referencing.CRS;
 import static org.geotoolkit.test.Assert.*;
-import org.geotoolkit.util.converter.NonconvertibleObjectException;
+import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.converters.AbstractWPSConverterTest;
 import org.geotoolkit.wps.converters.ConvertersTestUtils;
 import org.geotoolkit.wps.converters.WPSConverterRegistry;
@@ -46,7 +46,7 @@ public class ReferenceToGridCoverage2DConverterTest extends AbstractWPSConverter
 
     @Test
     @org.junit.Ignore("Fails randomly because of GeoTIFF reader not found.")
-    public void testConversion() throws NonconvertibleObjectException, IOException  {
+    public void testConversion() throws UnconvertibleObjectException, IOException  {
         final WPSObjectConverter<ReferenceType, GridCoverage2D> converter = WPSConverterRegistry.getInstance().getConverter(ReferenceType.class, GridCoverage2D.class);
 
         final URL coverage = ReferenceToRenderedImageConverterTest.class.getResource("/inputs/coverage.tiff");
@@ -78,7 +78,7 @@ public class ReferenceToGridCoverage2DConverterTest extends AbstractWPSConverter
 
     @Test
     @org.junit.Ignore("Fails randomly because of GeoTIFF reader not found.")
-    public void testConversionBase64() throws NonconvertibleObjectException, IOException  {
+    public void testConversionBase64() throws UnconvertibleObjectException, IOException  {
 
         final WPSObjectConverter<ReferenceType, GridCoverage2D> converter = WPSConverterRegistry.getInstance().getConverter(ReferenceType.class, GridCoverage2D.class);
 

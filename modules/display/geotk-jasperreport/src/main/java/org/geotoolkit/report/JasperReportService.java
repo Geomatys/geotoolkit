@@ -48,7 +48,7 @@ import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.display2d.service.OutputDef;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.lang.Static;
-import org.geotoolkit.util.Converters;
+import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
 
 import org.geotoolkit.feature.type.FeatureType;
@@ -107,7 +107,7 @@ public final class JasperReportService extends Static {
             jasperDesign = JRXmlLoader.load((String)jrxml);
         }else{
             //last chance : try to convert the source to a file
-            final File candidate = Converters.convert(jrxml, File.class);
+            final File candidate = ObjectConverters.convert(jrxml, File.class);
             if(candidate instanceof File){
                 jasperDesign = JRXmlLoader.load(candidate);
             }else{
@@ -171,7 +171,7 @@ public final class JasperReportService extends Static {
         //we adjust the output target to a knowned type
         if(!(target instanceof OutputStream)){
             //we try to convert it to a file
-            target = Converters.convert(target, File.class);
+            target = ObjectConverters.convert(target, File.class);
         }
 
         if(mime.equalsIgnoreCase(MIME_PDF)){

@@ -110,7 +110,7 @@ import org.geotoolkit.style.function.ThreshholdsBelongTo;
 import org.geotoolkit.style.interval.DefaultIntervalPalette;
 import org.geotoolkit.style.interval.DefaultRandomPalette;
 import org.geotoolkit.style.interval.Palette;
-import org.geotoolkit.util.Converters;
+import org.apache.sis.util.ObjectConverters;
 import org.jdesktop.swingx.JXTable;
 import org.jdesktop.swingx.combobox.ListComboBoxModel;
 import org.opengis.filter.FilterFactory;
@@ -1240,7 +1240,7 @@ public class JColorMapPane extends StyleElementEditor<ColorMap> implements Prope
             InterpolationPoint pt = points.get(rowIndex);
             switch(columnIndex){
                 case 0:
-                    Number n = Converters.convert(aValue, Number.class);
+                    Number n = ObjectConverters.convert(aValue, Number.class);
                     if(n == null){
                         n = Float.NaN;
                     }
@@ -1383,7 +1383,7 @@ public class JColorMapPane extends StyleElementEditor<ColorMap> implements Prope
             Entry<Expression,Expression> th = ths.get(rowIndex);
             switch(columnIndex){
                 case 0:
-                    Number n = Converters.convert(aValue, Number.class);
+                    Number n = ObjectConverters.convert(aValue, Number.class);
                     if(n == null){
                         n = Float.NaN;
                     }

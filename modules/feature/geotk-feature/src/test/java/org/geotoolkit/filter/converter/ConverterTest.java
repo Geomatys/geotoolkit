@@ -6,7 +6,7 @@
 package org.geotoolkit.filter.converter;
 
 import java.util.Date;
-import org.geotoolkit.util.Converters;
+import org.apache.sis.util.ObjectConverters;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -44,7 +44,7 @@ public class ConverterTest {
 
         final String date1 = "2006-10-01";
 
-        Date d = Converters.convert(date1, Date.class);
+        Date d = ObjectConverters.convert(date1, Date.class);
         System.out.println(d);
 
 

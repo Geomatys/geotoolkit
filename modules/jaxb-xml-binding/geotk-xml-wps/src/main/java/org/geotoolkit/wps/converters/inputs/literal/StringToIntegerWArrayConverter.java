@@ -18,52 +18,37 @@ package org.geotoolkit.wps.converters.inputs.literal;
 
 import java.util.LinkedList;
 import java.util.List;
-import org.geotoolkit.util.converter.NonconvertibleObjectException;
-import org.geotoolkit.util.converter.ObjectConverter;
+import org.geotoolkit.util.converter.SimpleConverter;
+import org.apache.sis.util.UnconvertibleObjectException;
 
 /**
- * Convert a String to an array of int. 
+ * Convert a String to an array of int.
  * Double in String should be separated by a coma like this : "13, 5, 182, 88".
  * Return an empty array if source is null or empty.
- * 
+ *
  * @author Quentin Boileau
  */
-public class StringToIntegerWArrayConverter implements ObjectConverter<String, Integer[]> {
+public class StringToIntegerWArrayConverter extends SimpleConverter<String, Integer[]> {
 
     @Override
-    public Class<? super String> getSourceClass() {
+    public Class<String> getSourceClass() {
         return String.class;
     }
 
     @Override
-    public Class<? extends Integer[]> getTargetClass() {
+    public Class<Integer[]> getTargetClass() {
         return Integer[].class;
     }
 
     @Override
-    public boolean hasRestrictions() {
-        return false;
-    }
+    public Integer[] apply(final String source) throws UnconvertibleObjectException {
 
-    @Override
-    public boolean isOrderPreserving() {
-        return true;
-    }
-
-    @Override
-    public boolean isOrderReversing() {
-        return false;
-    }
-
-    @Override
-    public Integer[] convert(final String source) throws NonconvertibleObjectException {
-        
         if (source != null && !source.trim().isEmpty()) {
-            
+
             final List<Integer> integerList = new LinkedList<Integer>();
             if (source.contains(",")) {
                 final String[] sourceSplit = source.split(",");
-                
+
                 for (final String str : sourceSplit) {
                     try {
                         final Integer i = Integer.valueOf(str.trim());
@@ -71,7 +56,7 @@ public class StringToIntegerWArrayConverter implements ObjectConverter<String, I
                             integerList.add(i);
                         }
                     } catch (NumberFormatException ex) {
-                        throw new NonconvertibleObjectException(ex.getMessage(), ex);
+                        throw new UnconvertibleObjectException(ex.getMessage(), ex);
                     }
                 }
             } else {
@@ -81,18 +66,18 @@ public class StringToIntegerWArrayConverter implements ObjectConverter<String, I
                         integerList.add(i);
                     }
                 } catch (NumberFormatException ex) {
-                    throw new NonconvertibleObjectException(ex.getMessage(), ex);
+                    throw new UnconvertibleObjectException(ex.getMessage(), ex);
                 }
             }
-            
+
             if (!integerList.isEmpty()) {
                 return integerList.toArray(new Integer[integerList.size()]);
             } else {
-                throw new NonconvertibleObjectException("Invalid source String : "+source);
+                throw new UnconvertibleObjectException("Invalid source String : "+source);
             }
         }
-        
+
         return new Integer[0];
     }
-    
+
 }

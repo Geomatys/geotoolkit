@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Map;
 import javax.xml.bind.JAXBException;
 import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeReader;
-import org.geotoolkit.util.converter.NonconvertibleObjectException;
+import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.xml.v100.ComplexDataType;
 import org.geotoolkit.feature.type.FeatureType;
 import org.w3c.dom.Node;
@@ -29,7 +29,7 @@ import org.w3c.dom.Node;
 
 /**
  * Implementation of ObjectConverter to convert a complex input into a FeatureType.
- * 
+ *
  * @author Quentin Boileau (Geomatys).
  */
 public final class ComplexToFeatureTypeConverter extends AbstractComplexInputConverter<FeatureType> {
@@ -47,20 +47,20 @@ public final class ComplexToFeatureTypeConverter extends AbstractComplexInputCon
     }
 
     @Override
-    public Class<? extends FeatureType> getTargetClass() {
+    public Class<FeatureType> getTargetClass() {
         return FeatureType.class;
     }
-    
+
     /**
      * {@inheritDoc}
      * @return FeatureType
      */
     @Override
-    public FeatureType convert(final ComplexDataType source, final Map<String, Object> params) throws NonconvertibleObjectException {
-        
+    public FeatureType convert(final ComplexDataType source, final Map<String, Object> params) throws UnconvertibleObjectException {
+
         final List<Object> data = source.getContent();
         if(data.size() > 1){
-           throw new NonconvertibleObjectException("Invalid data input : Only one FeatureType expected.");
+           throw new UnconvertibleObjectException("Invalid data input : Only one FeatureType expected.");
         }
 
         try {
@@ -69,7 +69,7 @@ public final class ComplexToFeatureTypeConverter extends AbstractComplexInputCon
             return ft.get(0);
 
         } catch (JAXBException ex) {
-            throw new NonconvertibleObjectException("Unable to read feature type from xsd.", ex); 
+            throw new UnconvertibleObjectException("Unable to read feature type from xsd.", ex);
         }
     }
 }

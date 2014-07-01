@@ -36,7 +36,7 @@ import org.geotoolkit.factory.HintsPending;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapLayer;
-import org.geotoolkit.util.Converters;
+import org.apache.sis.util.ObjectConverters;
 import org.geotoolkit.version.Versioned;
 
 import org.geotoolkit.feature.Feature;
@@ -206,7 +206,7 @@ public class FeatureCollectionModel extends DefaultTableModel {
             final Filter filter = ff.id(Collections.singleton(features.get(rowIndex).getIdentifier()));
             final AttributeDescriptor NAME = (AttributeDescriptor) columns.get(columnIndex-2);
 
-            aValue = Converters.convert(aValue, getColumnClass(columnIndex));
+            aValue = ObjectConverters.convert(aValue, getColumnClass(columnIndex));
             
             try {
                 featureCollection.update(filter, NAME, aValue);

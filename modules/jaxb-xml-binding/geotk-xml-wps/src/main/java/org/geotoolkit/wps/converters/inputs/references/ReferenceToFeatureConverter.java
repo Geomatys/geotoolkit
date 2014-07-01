@@ -25,7 +25,7 @@ import javax.xml.stream.XMLStreamException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.feature.xml.XmlFeatureReader;
-import org.geotoolkit.util.converter.NonconvertibleObjectException;
+import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.converters.WPSConvertersUtils;
 import org.geotoolkit.wps.io.WPSMimeType;
 import org.geotoolkit.wps.xml.v100.ReferenceType;
@@ -52,13 +52,13 @@ public final class ReferenceToFeatureConverter extends AbstractReferenceInputCon
     }
 
     @Override
-    public Class<? extends Feature> getTargetClass() {
+    public Class<Feature> getTargetClass() {
         return Feature.class;
     }
-    
+
     @Override
-    public Feature convert(ReferenceType source, final Map<String, Object> params) throws NonconvertibleObjectException {
-        
+    public Feature convert(ReferenceType source, final Map<String, Object> params) throws UnconvertibleObjectException {
+
         final String mime = source.getMimeType() != null ? source.getMimeType() : WPSMimeType.TEXT_XML.val();
         final InputStream stream = getInputStreamFromReference(source);
 
@@ -82,21 +82,21 @@ public final class ReferenceToFeatureConverter extends AbstractReferenceInputCon
                     }
                     return feat;
                 } else {
-                    throw new NonconvertibleObjectException("Stream contain more than one Feature.");
+                    throw new UnconvertibleObjectException("Stream contain more than one Feature.");
                 }
 
             } catch (FactoryException ex) {
-                throw new NonconvertibleObjectException("Invalid reference input : can't spread CRS.", ex);
+                throw new UnconvertibleObjectException("Invalid reference input : can't spread CRS.", ex);
             } catch (IllegalArgumentException ex) {
-                throw new NonconvertibleObjectException("Unable to read the feature with the specified schema.", ex);
+                throw new UnconvertibleObjectException("Unable to read the feature with the specified schema.", ex);
             } catch (JAXBException ex) {
-                throw new NonconvertibleObjectException("Invalid reference input : can't read reference schema.", ex);
+                throw new UnconvertibleObjectException("Invalid reference input : can't read reference schema.", ex);
             } catch (MalformedURLException ex) {
-                throw new NonconvertibleObjectException("Invalid reference input : Malformed schema or resource.", ex);
+                throw new UnconvertibleObjectException("Invalid reference input : Malformed schema or resource.", ex);
             } catch (IOException ex) {
-                throw new NonconvertibleObjectException("Invalid reference input : IO.", ex);
+                throw new UnconvertibleObjectException("Invalid reference input : IO.", ex);
             } catch (XMLStreamException ex) {
-                throw new NonconvertibleObjectException("Invalid reference input.", ex);
+                throw new UnconvertibleObjectException("Invalid reference input.", ex);
             } finally {
                 if (fcollReader != null) {
                     fcollReader.dispose();
@@ -104,7 +104,7 @@ public final class ReferenceToFeatureConverter extends AbstractReferenceInputCon
             }
 
         } else {
-            throw new NonconvertibleObjectException("Reference data mime is not supported");
+            throw new UnconvertibleObjectException("Reference data mime is not supported");
         }
     }
 }

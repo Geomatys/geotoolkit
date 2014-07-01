@@ -16,15 +16,13 @@
  */
 package org.geotoolkit.wps.converters.inputs.references;
 
-
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 import javax.xml.bind.JAXBException;
 import org.geotoolkit.feature.xml.XmlFeatureTypeReader;
 import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeReader;
-import org.geotoolkit.util.converter.NonconvertibleObjectException;
+import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.io.WPSMimeType;
 import org.geotoolkit.wps.xml.v100.ReferenceType;
 import org.geotoolkit.feature.type.FeatureType;
@@ -48,22 +46,22 @@ public final class ReferenceToFeatureTypeConverter extends AbstractReferenceInpu
         }
         return INSTANCE;
     }
- 
+
     @Override
-    public Class<? extends FeatureType> getTargetClass() {
+    public Class<FeatureType> getTargetClass() {
         return FeatureType.class;
     }
-    
+
     /**
      * {@inheritDoc}
      * @return FeatureType.
      */
     @Override
-    public FeatureType convert(final ReferenceType source, final Map<String, Object> params) throws NonconvertibleObjectException {
+    public FeatureType convert(final ReferenceType source, final Map<String, Object> params) throws UnconvertibleObjectException {
 
         final String mime = source.getMimeType() != null ? source.getMimeType() : WPSMimeType.TEXT_XML.val();
         final InputStream stream = getInputStreamFromReference(source);
-        
+
         //XML
         if (mime.equalsIgnoreCase(WPSMimeType.TEXT_XML.val()) || mime.equalsIgnoreCase(WPSMimeType.APP_GML.val()) ||
                 mime.equalsIgnoreCase(WPSMimeType.TEXT_GML.val())) {
@@ -72,14 +70,14 @@ public final class ReferenceToFeatureTypeConverter extends AbstractReferenceInpu
                 final List<FeatureType> ft = xsdReader.read(stream);
 
                 if(ft.size() != 1){
-                    throw new NonconvertibleObjectException("Invalid reference input : More than one FeatureType in schema.");
+                    throw new UnconvertibleObjectException("Invalid reference input : More than one FeatureType in schema.");
                 }
                 return ft.get(0);
             } catch (JAXBException ex) {
-                throw new NonconvertibleObjectException("Invalid reference input : can't read reference schema.",ex);
+                throw new UnconvertibleObjectException("Invalid reference input : can't read reference schema.",ex);
             }
         }else {
-             throw new NonconvertibleObjectException("Reference data mime is not supported");
+             throw new UnconvertibleObjectException("Reference data mime is not supported");
         }
     }
 }

@@ -18,7 +18,7 @@
 package org.geotoolkit.filter;
 
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.AbstractJTSGeometry;
-import org.geotoolkit.util.Converters;
+import org.apache.sis.util.ObjectConverters;
 import org.opengis.filter.expression.ExpressionVisitor;
 import org.opengis.filter.expression.Literal;
 import org.opengis.geometry.Geometry;
@@ -52,7 +52,7 @@ public class DefaultLiteral<T> extends AbstractExpression implements Literal{
             final Geometry geo = (Geometry) value;
             if(geo instanceof AbstractJTSGeometry) {
                 com.vividsolutions.jts.geom.Geometry jts = ((AbstractJTSGeometry)geo).getJTSGeometry();
-                return Converters.convert(jts, target);
+                return ObjectConverters.convert(jts, target);
             }
         }
         return super.evaluate(candidate, target);
@@ -107,11 +107,8 @@ public class DefaultLiteral<T> extends AbstractExpression implements Literal{
             return false;
         }
 
-        final Object otherVal = Converters.convert(other.value, this.value.getClass());
-        if (!this.value.equals(otherVal)) {
-            return false;
-        }
-        return true;
+        final Object otherVal = ObjectConverters.convert(other.value, this.value.getClass());
+        return this.value.equals(otherVal);
     }
 
     /**

@@ -21,7 +21,7 @@ import com.vividsolutions.jts.geom.Geometry;
 import java.util.Map;
 import org.geotoolkit.gml.JTStoGeometry;
 import org.geotoolkit.gml.xml.AbstractGeometry;
-import org.geotoolkit.util.converter.NonconvertibleObjectException;
+import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.xml.v100.ComplexDataType;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.util.FactoryException;
@@ -29,7 +29,7 @@ import org.opengis.util.FactoryException;
 
 /**
  * Implementation of ObjectConverter to convert a JTS Geometry array into a {@link ComplexDataType}.
- * 
+ *
  * @author Quentin Boileau (Geomatys).
  */
 public final class GeometryArrayToComplexConverter extends AbstractComplexOutputConverter<Geometry[]> {
@@ -45,28 +45,28 @@ public final class GeometryArrayToComplexConverter extends AbstractComplexOutput
         }
         return INSTANCE;
     }
-    
+
     @Override
-    public Class<? super Geometry[]> getSourceClass() {
+    public Class<Geometry[]> getSourceClass() {
         return Geometry[].class;
     }
-    
+
     /**
      * {@inheritDoc}
      */
     @Override
-    public ComplexDataType convert(final Geometry[] source, final Map<String, Object> params) throws NonconvertibleObjectException {
-        
-        
+    public ComplexDataType convert(final Geometry[] source, final Map<String, Object> params) throws UnconvertibleObjectException {
+
+
         if (source == null) {
-            throw new NonconvertibleObjectException("The output data should be defined.");
+            throw new UnconvertibleObjectException("The output data should be defined.");
         }
         if (!(source instanceof Geometry[])) {
-            throw new NonconvertibleObjectException("The requested output data is not an instance of Geometry array.");
+            throw new UnconvertibleObjectException("The requested output data is not an instance of Geometry array.");
         }
-        
+
         final ComplexDataType complex = new ComplexDataType();
-        
+
         complex.setMimeType((String) params.get(MIME));
         complex.setSchema((String) params.get(SCHEMA));
         complex.setEncoding((String) params.get(ENCODING));
@@ -74,18 +74,18 @@ public final class GeometryArrayToComplexConverter extends AbstractComplexOutput
         if (gmlVersion == null) {
             gmlVersion = "3.1.1";
         }
-        
+
         try {
             for(final Geometry jtsGeom : source){
                 final AbstractGeometry gmlGeom = JTStoGeometry.toGML(gmlVersion, jtsGeom);
                 complex.getContent().add(gmlGeom);
             }
         } catch (NoSuchAuthorityCodeException ex) {
-           throw new NonconvertibleObjectException(ex);
+           throw new UnconvertibleObjectException(ex);
         } catch (FactoryException ex) {
-            throw new NonconvertibleObjectException(ex);
+            throw new UnconvertibleObjectException(ex);
         }
-      
+
         return complex;
     }
 }

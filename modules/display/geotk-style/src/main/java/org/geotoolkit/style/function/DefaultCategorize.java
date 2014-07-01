@@ -51,7 +51,7 @@ import org.opengis.filter.expression.Literal;
 
 import static org.geotoolkit.style.StyleConstants.*;
 import org.apache.sis.util.Classes;
-import org.geotoolkit.util.Converters;
+import org.apache.sis.util.ObjectConverters;
 import static org.opengis.filter.expression.Expression.*;
 
 /**

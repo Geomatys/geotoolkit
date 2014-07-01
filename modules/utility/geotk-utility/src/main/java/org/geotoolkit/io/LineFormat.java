@@ -32,9 +32,9 @@ import java.io.IOException;
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.Classes;
 import org.geotoolkit.util.converter.ClassFilter;
-import org.geotoolkit.util.converter.ObjectConverter;
-import org.geotoolkit.util.converter.ConverterRegistry;
-import org.geotoolkit.util.converter.NonconvertibleObjectException;
+import org.apache.sis.util.ObjectConverter;
+import org.apache.sis.util.ObjectConverters;
+import org.apache.sis.util.UnconvertibleObjectException;
 import org.apache.sis.util.NullArgumentException;
 import org.geotoolkit.resources.Errors;
 
@@ -83,7 +83,7 @@ import org.geotoolkit.resources.Errors;
  * implementations are not guaranteed to be thread-safe neither.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @version 4.00
  *
  * @since 1.2
  * @module
@@ -136,7 +136,7 @@ public class LineFormat extends Format {
      * A converter from arbitrary objects to numbers. Will be fetch only when first needed.
      * The source type will be inferred from {@code format.parse(String)} return types.
      */
-    private transient ObjectConverter<?,Number> toNumber;
+    private transient ObjectConverter<?, ? extends Number> toNumber;
 
     /**
      * Constructs a new line parser for numbers in the default locale.
@@ -401,12 +401,12 @@ load:   while (true) {
         try {
             if (toNumber == null) {
                 final Class<?> type = getElementType(ClassFilter.NUMBER.negate());
-                toNumber = ConverterRegistry.system().converter(type, Number.class);
+                toNumber = ObjectConverters.find(type, Number.class);
             }
             @SuppressWarnings({"unchecked","rawtypes"})
-            final Number n = (Number) ((ObjectConverter) toNumber).convert(candidate);
+            final Number n = (Number) ((ObjectConverter) toNumber).apply(candidate);
             return n;
-        } catch (NonconvertibleObjectException cause) {
+        } catch (UnconvertibleObjectException cause) {
             ParseException exception = new ParseException(Errors.format(
                     Errors.Keys.UNPARSABLE_NUMBER_1, data[index]), limits[index]);
             exception.initCause(cause);

@@ -27,7 +27,7 @@ import org.geotoolkit.feature.xml.XmlFeatureTypeReader;
 import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeReader;
 import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureReader;
 import static org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureReader.READ_EMBEDDED_FEATURE_TYPE;
-import org.geotoolkit.util.converter.NonconvertibleObjectException;
+import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.converters.WPSDefaultConverter;
 import org.geotoolkit.wps.xml.v100.ComplexDataType;
 import org.geotoolkit.feature.type.FeatureType;
@@ -39,22 +39,22 @@ import org.geotoolkit.feature.type.FeatureType;
 public abstract class AbstractComplexInputConverter<T> extends WPSDefaultConverter<ComplexDataType, T> {
 
     @Override
-    public Class<? super ComplexDataType> getSourceClass() {
+    public Class<ComplexDataType> getSourceClass() {
         return ComplexDataType.class;
     }
 
     @Override
-    public abstract Class<? extends T> getTargetClass();
+    public abstract Class<T> getTargetClass();
 
     /**
-     * Convert a {@link ComplexDataType complex} into the requested {@code Object}. 
-     * @param source ReferenceType 
+     * Convert a {@link ComplexDataType complex} into the requested {@code Object}.
+     * @param source ReferenceType
      * @return Object
-     * @throws NonconvertibleObjectException 
+     * @throws UnconvertibleObjectException
      */
     @Override
-    public abstract T convert(final ComplexDataType source, Map<String, Object> params) throws NonconvertibleObjectException;
-    
+    public abstract T convert(final ComplexDataType source, Map<String, Object> params) throws UnconvertibleObjectException;
+
     /**
      * Get the JAXPStreamFeatureReader to read feature. If there is a schema defined, the JAXPStreamFeatureReader will
      * use it otherwise it will use the embedded.
@@ -66,7 +66,7 @@ public abstract class AbstractComplexInputConverter<T> extends WPSDefaultConvert
      * @throws IOException
      */
     protected XmlFeatureReader getFeatureReader(final ComplexDataType source) throws MalformedURLException, JAXBException, IOException {
-        
+
         JAXPStreamFeatureReader featureReader = new JAXPStreamFeatureReader();
         try {
             final XmlFeatureTypeReader xsdReader = new JAXBFeatureTypeReader();

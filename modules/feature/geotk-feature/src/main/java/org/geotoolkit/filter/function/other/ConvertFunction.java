@@ -17,7 +17,7 @@
 package org.geotoolkit.filter.function.other;
 
 import org.geotoolkit.filter.function.AbstractFunction;
-import org.geotoolkit.util.Converters;
+import org.apache.sis.util.ObjectConverters;
 import org.opengis.filter.expression.Expression;
 
 
@@ -32,7 +32,7 @@ public class ConvertFunction extends AbstractFunction {
         try {
             Object arg = parameters.get(0).evaluate(feature);
             Class target = parameters.get(1).evaluate(feature, Class.class);
-            return Converters.convert(arg, target);
+            return ObjectConverters.convert(arg, target);
         } catch (Exception e) {
             throw new IllegalArgumentException(
                     "Filter Function problem for function convert argument #1 - expected type Class");

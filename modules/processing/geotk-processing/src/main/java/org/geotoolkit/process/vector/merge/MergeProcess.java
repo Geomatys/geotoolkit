@@ -26,9 +26,9 @@ import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.memory.mapping.MappingUtils;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.process.AbstractProcess;
-import org.geotoolkit.util.converter.ConverterRegistry;
-import org.geotoolkit.util.converter.NonconvertibleObjectException;
-import org.geotoolkit.util.converter.ObjectConverter;
+import org.apache.sis.util.ObjectConverters;
+import org.apache.sis.util.UnconvertibleObjectException;
+import org.apache.sis.util.ObjectConverter;
 
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.type.FeatureType;
@@ -37,6 +37,7 @@ import org.geotoolkit.feature.type.Name;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.opengis.parameter.ParameterValueGroup;
 
+import org.geotoolkit.util.converter.SimpleConverter;
 import static org.geotoolkit.process.vector.merge.MergeDescriptor.*;
 import static org.geotoolkit.parameter.Parameters.*;
 
@@ -74,10 +75,10 @@ public class MergeProcess extends AbstractProcess {
     * @param newFeatureType
     * @param conversionMap
     * @return a feature
-    * @throws NonconvertibleObjectException
+    * @throws UnconvertibleObjectException
     */
     static Feature mergeFeature(final Feature feature,final FeatureType newFeatureType, final Map<Name, ObjectConverter> conversionMap)
-            throws NonconvertibleObjectException {
+            throws UnconvertibleObjectException {
 
         if(conversionMap == null) {
             return feature;
@@ -89,7 +90,7 @@ public class MergeProcess extends AbstractProcess {
             if(entry.getValue() == null) {
                 mergedFeature.getProperty(entry.getKey()).setValue(feature.getProperty(entry.getKey()).getValue());
             }else{
-                mergedFeature.getProperty(entry.getKey()).setValue(entry.getValue().convert(feature.getProperty(entry.getKey()).getValue()));
+                mergedFeature.getProperty(entry.getKey()).setValue(entry.getValue().apply(feature.getProperty(entry.getKey()).getValue()));
             }
 
         }
@@ -104,9 +105,9 @@ public class MergeProcess extends AbstractProcess {
     * @param input
     * @param toConvert
     * @return map<Name, ObjectConverter>. Return null if input FeatureType are equals
-    * @throws NonconvertibleObjectException
+    * @throws UnconvertibleObjectException
     */
-    static Map<Name, ObjectConverter> createConversionMap (final FeatureType input, final FeatureType toConvert) throws NonconvertibleObjectException{
+    static Map<Name, ObjectConverter> createConversionMap (final FeatureType input, final FeatureType toConvert) throws UnconvertibleObjectException{
 
         if(input.equals(toConvert)) {
             return null;
@@ -129,7 +130,7 @@ public class MergeProcess extends AbstractProcess {
                         if(toConvertDesc instanceof GeometryDescriptor) {
                            map.put(toConvertDesc.getName(), new GeomConverter(toConvertClass, inputClass));
                         }else{
-                            map.put(toConvertDesc.getName(), ConverterRegistry.system().converter(toConvertClass, inputClass));
+                            map.put(toConvertDesc.getName(), ObjectConverters.find(toConvertClass, inputClass));
                         }
                     }
                 }
@@ -145,7 +146,7 @@ public class MergeProcess extends AbstractProcess {
     * @author Quentin Boileau
     * @module pending
     */
-    private static class GeomConverter implements ObjectConverter<Object, Object> {
+    private static class GeomConverter extends SimpleConverter {
 
         private final Class sourceClass;
         private final Class targetClass;
@@ -161,34 +162,18 @@ public class MergeProcess extends AbstractProcess {
         }
 
         @Override
-        public Class<? super Object> getSourceClass() {
+        public Class getSourceClass() {
             return sourceClass;
         }
 
         @Override
-        public Class<? extends Object> getTargetClass() {
+        public Class getTargetClass() {
             return targetClass;
         }
 
         @Override
-        public boolean hasRestrictions() {
-           return true;
-        }
-
-        @Override
-        public boolean isOrderPreserving() {
-            return true;
-        }
-
-        @Override
-        public boolean isOrderReversing() {
-            return false;
-        }
-
-        @Override
-        public Object convert(final Object s) throws NonconvertibleObjectException {
+        public Object apply(final Object s) throws UnconvertibleObjectException {
             return MappingUtils.convertType((Geometry)s, getTargetClass());
         }
     }
-
 }

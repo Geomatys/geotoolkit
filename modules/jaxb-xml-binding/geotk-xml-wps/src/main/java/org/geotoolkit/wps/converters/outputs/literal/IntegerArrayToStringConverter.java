@@ -16,42 +16,27 @@
  */
 package org.geotoolkit.wps.converters.outputs.literal;
 
-import org.geotoolkit.util.converter.NonconvertibleObjectException;
-import org.geotoolkit.util.converter.ObjectConverter;
+import org.geotoolkit.util.converter.SimpleConverter;
+import org.apache.sis.util.UnconvertibleObjectException;
 
 /**
  *
  * @author Quentin Boileau (Geomatys)
  */
-public class IntegerArrayToStringConverter implements ObjectConverter<int[], String> {
+public class IntegerArrayToStringConverter extends SimpleConverter<int[], String> {
 
     @Override
-    public Class<? super int[]> getSourceClass() {
+    public Class<int[]> getSourceClass() {
         return int[].class;
     }
 
     @Override
-    public Class<? extends String> getTargetClass() {
+    public Class<String> getTargetClass() {
         return String.class;
     }
 
     @Override
-    public boolean hasRestrictions() {
-        return false;
-    }
-
-    @Override
-    public boolean isOrderPreserving() {
-        return true;
-    }
-
-    @Override
-    public boolean isOrderReversing() {
-        return false;
-    }
-
-    @Override
-    public String convert(final int[] source) throws NonconvertibleObjectException {
+    public String apply(final int[] source) throws UnconvertibleObjectException {
         final StringBuilder sb = new StringBuilder();
         for (int i = 0; i < source.length; i++) {
             sb.append(Integer.valueOf(source[i]).toString());
@@ -61,5 +46,5 @@ public class IntegerArrayToStringConverter implements ObjectConverter<int[], Str
         }
         return sb.toString();
     }
-    
+
 }

@@ -18,52 +18,37 @@ package org.geotoolkit.wps.converters.inputs.literal;
 
 import java.util.LinkedList;
 import java.util.List;
-import org.geotoolkit.util.converter.NonconvertibleObjectException;
-import org.geotoolkit.util.converter.ObjectConverter;
+import org.geotoolkit.util.converter.SimpleConverter;
+import org.apache.sis.util.UnconvertibleObjectException;
 
 /**
- * Convert a String to an array of float. 
+ * Convert a String to an array of float.
  * Double in String should be separated by a coma like this : "13.6, 5.4, 182.1, 88.0".
  * Return an empty array if source is null or empty.
- * 
+ *
  * @author Quentin Boileau
  */
-public class StringToFloatArrayConverter implements ObjectConverter<String, float[]> {
+public class StringToFloatArrayConverter extends SimpleConverter<String, float[]> {
 
     @Override
-    public Class<? super String> getSourceClass() {
+    public Class<String> getSourceClass() {
         return String.class;
     }
 
     @Override
-    public Class<? extends float[]> getTargetClass() {
+    public Class<float[]> getTargetClass() {
         return float[].class;
     }
 
     @Override
-    public boolean hasRestrictions() {
-        return false;
-    }
+    public float[] apply(final String source) throws UnconvertibleObjectException {
 
-    @Override
-    public boolean isOrderPreserving() {
-        return true;
-    }
-
-    @Override
-    public boolean isOrderReversing() {
-        return false;
-    }
-
-    @Override
-    public float[] convert(final String source) throws NonconvertibleObjectException {
-        
         if (source != null && !source.trim().isEmpty()) {
-            
+
             final List<Float> integerList = new LinkedList<Float>();
             if (source.contains(",")) {
                 final String[] sourceSplit = source.split(",");
-                
+
                 for (final String str : sourceSplit) {
                     try {
                         final Float f = Float.valueOf(str.trim());
@@ -71,7 +56,7 @@ public class StringToFloatArrayConverter implements ObjectConverter<String, floa
                             integerList.add(f);
                         }
                     } catch (NumberFormatException ex) {
-                        throw new NonconvertibleObjectException(ex.getMessage(), ex);
+                        throw new UnconvertibleObjectException(ex.getMessage(), ex);
                     }
                 }
             } else {
@@ -81,10 +66,10 @@ public class StringToFloatArrayConverter implements ObjectConverter<String, floa
                         integerList.add(f);
                     }
                 } catch (NumberFormatException ex) {
-                    throw new NonconvertibleObjectException(ex.getMessage(), ex);
+                    throw new UnconvertibleObjectException(ex.getMessage(), ex);
                 }
             }
-            
+
             if (!integerList.isEmpty()) {
                 final float[] outArray = new float[integerList.size()];
                 for (int i = 0; i < integerList.size(); i++) {
@@ -92,11 +77,11 @@ public class StringToFloatArrayConverter implements ObjectConverter<String, floa
                 }
                 return outArray;
             } else {
-                throw new NonconvertibleObjectException("Invalid source String : "+source);
+                throw new UnconvertibleObjectException("Invalid source String : "+source);
             }
         }
-        
+
         return new float[0];
     }
-    
+
 }

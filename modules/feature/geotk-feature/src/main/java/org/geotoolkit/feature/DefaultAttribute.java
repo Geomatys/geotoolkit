@@ -18,12 +18,14 @@
 package org.geotoolkit.feature;
 
 import java.util.Objects;
-import org.geotoolkit.util.Converters;
+import org.apache.sis.util.ObjectConverters;
 
 import org.geotoolkit.feature.Attribute;
 import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.geotoolkit.feature.type.AttributeType;
 import org.opengis.filter.identity.Identifier;
+import org.apache.sis.util.UnconvertibleObjectException;
+import org.apache.sis.util.logging.Logging;
 
 /**
  * Default Attribut implementation.
@@ -38,7 +40,7 @@ import org.opengis.filter.identity.Identifier;
  */
 public class DefaultAttribute<V extends Object, D extends AttributeDescriptor, I extends Identifier>
         extends DefaultProperty<V,D> implements Attribute {
-    
+
     /**
      * id of the attribute.
      */
@@ -52,7 +54,7 @@ public class DefaultAttribute<V extends Object, D extends AttributeDescriptor, I
     /**
      * Protected constructor, used by subclass which initialize the content after some
      * processing.
-     * 
+     *
      * @param descriptor
      * @param id
      */
@@ -197,13 +199,17 @@ public class DefaultAttribute<V extends Object, D extends AttributeDescriptor, I
             final Class<?> target = getType().getBinding();
             if (!target.isAssignableFrom(value.getClass())) {
                 // attempt to convert
-                final Object converted = Converters.convert(value, target);
-                if (converted != null) {
-                    value = converted;
+                try {
+                    final Object converted = ObjectConverters.convert(value, target);
+                    if (converted != null) {
+                        value = converted;
+                    }
+                } catch (UnconvertibleObjectException e) {
+                    Logging.recoverableException(DefaultAttribute.class, "checkType", e);
+                    // TODO - do we really want to ignore?
                 }
             }
         }
-
         return value;
     }
 }

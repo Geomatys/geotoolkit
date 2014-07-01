@@ -22,7 +22,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.geotoolkit.util.FileUtilities;
-import org.geotoolkit.util.converter.NonconvertibleObjectException;
+import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.io.WPSIO;
 import org.geotoolkit.wps.xml.v100.InputReferenceType;
 import org.geotoolkit.wps.xml.v100.OutputReferenceType;
@@ -47,19 +47,19 @@ public class FileToReferenceConverter extends AbstractReferenceOutputConverter<F
     }
 
     @Override
-    public Class<? super File> getSourceClass() {
+    public Class<File> getSourceClass() {
         return File.class;
     }
 
     @Override
-    public ReferenceType convert(File source, Map<String, Object> params) throws NonconvertibleObjectException {
+    public ReferenceType convert(File source, Map<String, Object> params) throws UnconvertibleObjectException {
 
         if (params.get(TMP_DIR_PATH) == null) {
-            throw new NonconvertibleObjectException("The output directory should be defined.");
+            throw new UnconvertibleObjectException("The output directory should be defined.");
         }
 
         if (source == null) {
-            throw new NonconvertibleObjectException("The output data should be defined.");
+            throw new UnconvertibleObjectException("The output data should be defined.");
         }
 
         final WPSIO.IOType ioType = WPSIO.IOType.valueOf((String) params.get(IOTYPE));
@@ -84,7 +84,7 @@ public class FileToReferenceConverter extends AbstractReferenceOutputConverter<F
                 reference.setHref((String) params.get(TMP_DIR_URL) + "/" +source.getName());
             }
         } catch (IOException ex) {
-            throw new NonconvertibleObjectException("Error during moving file to output directory.", ex);
+            throw new UnconvertibleObjectException("Error during moving file to output directory.", ex);
         }
 
         return reference;

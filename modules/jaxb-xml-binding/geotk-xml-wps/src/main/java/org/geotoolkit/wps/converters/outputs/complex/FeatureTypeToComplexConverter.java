@@ -22,7 +22,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
 import org.geotoolkit.feature.xml.XmlFeatureTypeWriter;
 import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeWriter;
-import org.geotoolkit.util.converter.NonconvertibleObjectException;
+import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.xml.v100.ComplexDataType;
 import org.geotoolkit.feature.type.FeatureType;
 
@@ -30,7 +30,7 @@ import org.geotoolkit.feature.type.FeatureType;
 
 /**
  * Implementation of ObjectConverter to convert a FeatureType into a {@link ComplexDataType}.
- * 
+ *
  * @author Quentin Boileau (Geomatys).
  */
 public final class FeatureTypeToComplexConverter extends AbstractComplexOutputConverter<FeatureType> {
@@ -45,44 +45,44 @@ public final class FeatureTypeToComplexConverter extends AbstractComplexOutputCo
             INSTANCE = new FeatureTypeToComplexConverter();
         }
         return INSTANCE;
-    } 
-    
+    }
+
     @Override
-    public Class<? super FeatureType> getSourceClass() {
+    public Class<FeatureType> getSourceClass() {
         return FeatureType.class;
     }
-    
+
     /**
      * {@inheritDoc}
      */
     @Override
-    public ComplexDataType convert(final FeatureType source, final Map<String, Object> params) throws NonconvertibleObjectException {
-        
-        
+    public ComplexDataType convert(final FeatureType source, final Map<String, Object> params) throws UnconvertibleObjectException {
+
+
         if (source == null) {
-            throw new NonconvertibleObjectException("The output data should be defined.");
+            throw new UnconvertibleObjectException("The output data should be defined.");
         }
         if (!(source instanceof FeatureType)) {
-            throw new NonconvertibleObjectException("The requested output data is not an instance of FeatureType.");
+            throw new UnconvertibleObjectException("The requested output data is not an instance of FeatureType.");
         }
         final ComplexDataType complex = new ComplexDataType();
-        
+
         complex.setMimeType((String) params.get(MIME));
         complex.setEncoding((String) params.get(ENCODING));
-        
+
         try {
-            
+
             final XmlFeatureTypeWriter xmlWriter = new JAXBFeatureTypeWriter();
             complex.getContent().add(xmlWriter.writeToElement(source));
-            
+
         } catch (JAXBException ex) {
-            throw new NonconvertibleObjectException("Can't write FeatureType into ResponseDocument.",ex);
+            throw new UnconvertibleObjectException("Can't write FeatureType into ResponseDocument.",ex);
         } catch (ParserConfigurationException ex) {
-            throw new NonconvertibleObjectException("Can't write FeatureType into ResponseDocument.",ex);
+            throw new UnconvertibleObjectException("Can't write FeatureType into ResponseDocument.",ex);
         }
 
        return  complex;
-       
+
     }
 }
 

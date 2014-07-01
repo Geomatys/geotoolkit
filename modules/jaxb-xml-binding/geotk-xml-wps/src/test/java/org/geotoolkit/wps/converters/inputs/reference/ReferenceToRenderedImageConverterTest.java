@@ -22,7 +22,7 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import static org.geotoolkit.test.Assert.*;
-import org.geotoolkit.util.converter.NonconvertibleObjectException;
+import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.converters.AbstractWPSConverterTest;
 import org.geotoolkit.wps.converters.ConvertersTestUtils;
 import org.geotoolkit.wps.converters.WPSConverterRegistry;
@@ -42,7 +42,7 @@ public class ReferenceToRenderedImageConverterTest extends AbstractWPSConverterT
 
     
     @Test
-    public void testConversion() throws NonconvertibleObjectException, IOException  {
+    public void testConversion() throws UnconvertibleObjectException, IOException  {
         final WPSObjectConverter<ReferenceType, RenderedImage> converter = WPSConverterRegistry.getInstance().getConverter(ReferenceType.class, RenderedImage.class);
         
         final URL image = ReferenceToRenderedImageConverterTest.class.getResource("/inputs/image.tiff");
@@ -64,7 +64,7 @@ public class ReferenceToRenderedImageConverterTest extends AbstractWPSConverterT
     }
     
     @Test
-    public void testConversionBase64() throws NonconvertibleObjectException, IOException  {
+    public void testConversionBase64() throws UnconvertibleObjectException, IOException  {
         final WPSObjectConverter<ReferenceType, RenderedImage> converter = WPSConverterRegistry.getInstance().getConverter(ReferenceType.class, RenderedImage.class);
         
         final URL imageBase64 = ReferenceToRenderedImageConverterTest.class.getResource("/inputs/image_tiff_base64");

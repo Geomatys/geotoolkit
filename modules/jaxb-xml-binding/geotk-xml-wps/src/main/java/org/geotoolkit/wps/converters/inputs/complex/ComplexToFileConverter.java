@@ -2,7 +2,7 @@ package org.geotoolkit.wps.converters.inputs.complex;
 
 import net.iharder.Base64;
 import org.geotoolkit.util.FileUtilities;
-import org.geotoolkit.util.converter.NonconvertibleObjectException;
+import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.io.WPSEncoding;
 import org.geotoolkit.wps.xml.v100.ComplexDataType;
 
@@ -32,15 +32,15 @@ public class ComplexToFileConverter extends AbstractComplexInputConverter<File> 
     }
 
     @Override
-    public Class<? extends File> getTargetClass() {
+    public Class<File> getTargetClass() {
         return File.class;
     }
 
     @Override
-    public File convert(ComplexDataType source, Map<String, Object> params) throws NonconvertibleObjectException {
+    public File convert(ComplexDataType source, Map<String, Object> params) throws UnconvertibleObjectException {
 
         if(source == null || source.getContent() == null) {
-            throw new NonconvertibleObjectException("Mandatory parameter is missing.");
+            throw new UnconvertibleObjectException("Mandatory parameter is missing.");
         }
 
         File result = null;
@@ -52,7 +52,7 @@ public class ComplexToFileConverter extends AbstractComplexInputConverter<File> 
 
             final List<Object> data = source.getContent();
             if (data.size() < 1) {
-                throw new NonconvertibleObjectException("There's no available data in this complex content.");
+                throw new UnconvertibleObjectException("There's no available data in this complex content.");
             }
             String rawData = (String) data.get(0);
             if (params != null && params.get(ENCODING).equals(WPSEncoding.BASE64.getValue())) {
@@ -72,7 +72,7 @@ public class ComplexToFileConverter extends AbstractComplexInputConverter<File> 
                 FileUtilities.stringToFile(result, rawData);
             }
         } catch (Exception ex) {
-            throw new NonconvertibleObjectException(ex);
+            throw new UnconvertibleObjectException(ex);
         }
         return result;
     }

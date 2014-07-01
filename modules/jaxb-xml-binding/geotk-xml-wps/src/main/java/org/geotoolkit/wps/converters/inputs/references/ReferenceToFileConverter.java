@@ -23,7 +23,7 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.util.Map;
 import java.util.UUID;
-import org.geotoolkit.util.converter.NonconvertibleObjectException;
+import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.xml.v100.ReferenceType;
 
 /**
@@ -46,7 +46,7 @@ public final class ReferenceToFileConverter extends AbstractReferenceInputConver
     }
 
     @Override
-    public Class<? extends File> getTargetClass() {
+    public Class<File> getTargetClass() {
         return File.class;
     }
 
@@ -56,7 +56,7 @@ public final class ReferenceToFileConverter extends AbstractReferenceInputConver
      * @return File.
      */
     @Override
-    public File convert(final ReferenceType source, final Map<String, Object> params) throws NonconvertibleObjectException {
+    public File convert(final ReferenceType source, final Map<String, Object> params) throws UnconvertibleObjectException {
 
         File file;
         InputStream in = null;
@@ -81,9 +81,9 @@ public final class ReferenceToFileConverter extends AbstractReferenceInputConver
             out.flush();
 
         } catch (MalformedURLException ex) {
-            throw new NonconvertibleObjectException("Reference file invalid input : Malformed url", ex);
+            throw new UnconvertibleObjectException("Reference file invalid input : Malformed url", ex);
         } catch (IOException ex) {
-            throw new NonconvertibleObjectException("Reference file invalid input : IO", ex);
+            throw new UnconvertibleObjectException("Reference file invalid input : IO", ex);
         } finally {
             try {
                 if (in != null) {
@@ -94,7 +94,7 @@ public final class ReferenceToFileConverter extends AbstractReferenceInputConver
                     out.close();
                 }
             } catch (IOException ex) {
-                throw new NonconvertibleObjectException("Reference file invalid input : IO", ex);
+                throw new UnconvertibleObjectException("Reference file invalid input : IO", ex);
             }
         }
         return file;

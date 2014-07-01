@@ -30,7 +30,7 @@ import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.feature.xml.XmlFeatureTypeWriter;
 import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeWriter;
 import org.geotoolkit.feature.xml.jaxp.ElementFeatureWriter;
-import org.geotoolkit.util.converter.NonconvertibleObjectException;
+import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.io.WPSMimeType;
 import org.geotoolkit.wps.xml.v100.ComplexDataType;
 import org.geotoolkit.feature.Feature;
@@ -39,7 +39,7 @@ import org.geotoolkit.feature.type.FeatureType;
 
 /**
  * Implementation of ObjectConverter to convert a Feature into a {@link ComplexDataType}.
- * 
+ *
  * @author Quentin Boileau (Geoamtys).
  */
 public final class FeatureToComplexConverter extends AbstractComplexOutputConverter<Feature> {
@@ -54,35 +54,35 @@ public final class FeatureToComplexConverter extends AbstractComplexOutputConver
             INSTANCE = new FeatureToComplexConverter();
         }
         return INSTANCE;
-    } 
-    
+    }
+
     @Override
-    public Class<? super Feature> getSourceClass() {
+    public Class<Feature> getSourceClass() {
         return Feature.class;
     }
-    
+
     /**
      * {@inheritDoc}
      */
     @Override
-    public ComplexDataType convert(Feature source, Map<String, Object> params) throws NonconvertibleObjectException {
-        
+    public ComplexDataType convert(Feature source, Map<String, Object> params) throws UnconvertibleObjectException {
+
         if (params.get(TMP_DIR_PATH) == null) {
-            throw new NonconvertibleObjectException("The output directory should be defined.");
+            throw new UnconvertibleObjectException("The output directory should be defined.");
         }
-                
+
         if (source == null) {
-            throw new NonconvertibleObjectException("The output data should be defined.");
+            throw new UnconvertibleObjectException("The output data should be defined.");
         }
         if (!(source instanceof Feature)) {
-            throw new NonconvertibleObjectException("The requested output data is not an instance of Feature.");
+            throw new UnconvertibleObjectException("The requested output data is not an instance of Feature.");
         }
-        
+
         final ComplexDataType complex = new ComplexDataType();
-        
+
         complex.setMimeType((String) params.get(MIME));
         complex.setEncoding((String) params.get(ENCODING));
-        
+
         final FeatureType ft = source.getType();
         final String namespace = ft.getName().getURI();
         final Map<String, String> schemaLocation = new HashMap<String, String>();
@@ -99,9 +99,9 @@ public final class FeatureToComplexConverter extends AbstractComplexOutputConver
                 complex.getContent().add(baos.toString("UTF-8"));
                 complex.setSchema(null);
             } catch (DataStoreException e) {
-                throw new NonconvertibleObjectException("Can't write Feature into GeoJSON output stream.", e);
+                throw new UnconvertibleObjectException("Can't write Feature into GeoJSON output stream.", e);
             } catch (UnsupportedEncodingException e) {
-                throw new NonconvertibleObjectException("Can't convert output stream into String.", e);
+                throw new UnconvertibleObjectException("Can't convert output stream into String.", e);
             }
 
         } else {
@@ -118,21 +118,21 @@ public final class FeatureToComplexConverter extends AbstractComplexOutputConver
                 complex.setSchema((String) params.get(TMP_DIR_URL) + "/" + schemaFileName);
                 schemaLocation.put(namespace, complex.getSchema());
             } catch (JAXBException ex) {
-                throw new NonconvertibleObjectException("Can't write FeatureType into xsd schema.", ex);
+                throw new UnconvertibleObjectException("Can't write FeatureType into xsd schema.", ex);
             } catch (FileNotFoundException ex) {
-                throw new NonconvertibleObjectException("Can't create xsd schema file.", ex);
+                throw new UnconvertibleObjectException("Can't create xsd schema file.", ex);
             }
 
             try {
                 final ElementFeatureWriter efw = new ElementFeatureWriter(schemaLocation);
                 complex.getContent().add(efw.writeFeature(source, null, true));
             } catch (ParserConfigurationException ex) {
-                throw new NonconvertibleObjectException("Can't write FeatureCollection into ResponseDocument.", ex);
+                throw new UnconvertibleObjectException("Can't write FeatureCollection into ResponseDocument.", ex);
             }
         }
 
        return  complex;
-       
+
     }
 }
 

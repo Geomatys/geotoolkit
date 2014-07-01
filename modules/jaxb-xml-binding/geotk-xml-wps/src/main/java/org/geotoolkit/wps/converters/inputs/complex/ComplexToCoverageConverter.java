@@ -29,13 +29,13 @@ import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageIO;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.image.io.XImageIO;
-import org.geotoolkit.util.converter.NonconvertibleObjectException;
+import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.io.WPSEncoding;
 import org.geotoolkit.wps.xml.v100.ComplexDataType;
 
 /**
  * Convert an base64 encoded coverage into a GridCoverage2D.
- * 
+ *
  * @author Quentin Boileau (Geomatys).
  */
 public class ComplexToCoverageConverter extends AbstractComplexInputConverter<GridCoverage2D> {
@@ -53,18 +53,18 @@ public class ComplexToCoverageConverter extends AbstractComplexInputConverter<Gr
     }
 
     @Override
-    public Class<? extends GridCoverage2D> getTargetClass() {
+    public Class<GridCoverage2D> getTargetClass() {
         return GridCoverage2D.class;
     }
 
     @Override
-    public GridCoverage2D convert(ComplexDataType source, Map<String, Object> params) throws NonconvertibleObjectException {
-        
+    public GridCoverage2D convert(ComplexDataType source, Map<String, Object> params) throws UnconvertibleObjectException {
+
         try {
             if (params.get(ENCODING).equals(WPSEncoding.BASE64.getValue())) {
                 final List<Object> data = source.getContent();
                 if (data.size() != 1) {
-                    throw new NonconvertibleObjectException("Only one object in Complex content.");
+                    throw new UnconvertibleObjectException("Only one object in Complex content.");
                 }
                 final String encodedImage = (String) data.get(0);
                 final byte[] byteData = Base64.decode(encodedImage);
@@ -81,14 +81,14 @@ public class ComplexToCoverageConverter extends AbstractComplexInputConverter<Gr
                         return (GridCoverage2D) CoverageIO.read(reader);
                     }
                 }
-                throw new NonconvertibleObjectException("Error during base64 decoding.");
+                throw new UnconvertibleObjectException("Error during base64 decoding.");
             } else {
-                throw new NonconvertibleObjectException("Encoding should be in \"base64\"");
+                throw new UnconvertibleObjectException("Encoding should be in \"base64\"");
             }
         } catch (CoverageStoreException ex) {
-            throw new NonconvertibleObjectException(ex.getMessage(), ex);
+            throw new UnconvertibleObjectException(ex.getMessage(), ex);
         } catch (IOException ex) {
-            throw new NonconvertibleObjectException(ex.getMessage(), ex);
+            throw new UnconvertibleObjectException(ex.getMessage(), ex);
         }
     }
 }

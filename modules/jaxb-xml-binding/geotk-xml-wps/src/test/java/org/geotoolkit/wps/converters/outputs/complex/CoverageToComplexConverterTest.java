@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Map;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.util.FileUtilities;
-import org.geotoolkit.util.converter.NonconvertibleObjectException;
+import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.converters.AbstractWPSConverterTest;
 import org.geotoolkit.wps.converters.ConvertersTestUtils;
 import org.geotoolkit.wps.converters.WPSConverterRegistry;
@@ -42,7 +42,7 @@ public class CoverageToComplexConverterTest extends AbstractWPSConverterTest {
 
     @Test
     @org.junit.Ignore("Fails randomly because of GeoTIFF reader not found.")
-    public void testConversion() throws NonconvertibleObjectException, IOException  {
+    public void testConversion() throws UnconvertibleObjectException, IOException  {
 
         final WPSObjectConverter<GridCoverage2D, ComplexDataType> converter = WPSConverterRegistry.getInstance().getConverter(GridCoverage2D.class, ComplexDataType.class);
 

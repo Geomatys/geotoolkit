@@ -17,7 +17,7 @@
 package org.geotoolkit.wps.converters.inputs.references;
 
 import org.geotoolkit.util.FileUtilities;
-import org.geotoolkit.util.converter.NonconvertibleObjectException;
+import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.xml.v100.ReferenceType;
 
 import java.io.IOException;
@@ -45,7 +45,7 @@ public final class ReferenceToStringConverter extends AbstractReferenceInputConv
     }
 
     @Override
-    public Class<? extends String> getTargetClass() {
+    public Class<String> getTargetClass() {
         return String.class;
     }
 
@@ -55,7 +55,7 @@ public final class ReferenceToStringConverter extends AbstractReferenceInputConv
      * @return File.
      */
     @Override
-    public String convert(final ReferenceType source, final Map<String, Object> params) throws NonconvertibleObjectException {
+    public String convert(final ReferenceType source, final Map<String, Object> params) throws UnconvertibleObjectException {
 
         String result = null;
         InputStream in = null;
@@ -65,14 +65,14 @@ public final class ReferenceToStringConverter extends AbstractReferenceInputConv
             result = FileUtilities.getStringFromStream(in);
 
         } catch (IOException ex) {
-            throw new NonconvertibleObjectException("Reference file invalid input : IO", ex);
+            throw new UnconvertibleObjectException("Reference file invalid input : IO", ex);
         } finally {
             try {
                 if (in != null) {
                     in.close();
                 }
             } catch (IOException ex) {
-                throw new NonconvertibleObjectException("Reference file invalid input : IO", ex);
+                throw new UnconvertibleObjectException("Reference file invalid input : IO", ex);
             }
         }
         return result;

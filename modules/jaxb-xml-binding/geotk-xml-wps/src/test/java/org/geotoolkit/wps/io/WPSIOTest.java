@@ -18,7 +18,7 @@ package org.geotoolkit.wps.io;
 
 import java.awt.image.RenderedImage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.util.converter.NonconvertibleObjectException;
+import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.converters.WPSObjectConverter;
 import org.geotoolkit.wps.xml.v100.ComplexDataType;
 import org.geotoolkit.wps.xml.v100.ReferenceType;
@@ -33,7 +33,7 @@ import org.opengis.coverage.Coverage;
 public class WPSIOTest {
 
     @Test
-    public void isSupportedClass() throws NonconvertibleObjectException {
+    public void isSupportedClass() throws UnconvertibleObjectException {
 
         //RenderedImage
         assertFalse(WPSIO.isSupportedLiteralInputClass(RenderedImage.class));       //IN - Literal
@@ -60,7 +60,7 @@ public class WPSIOTest {
     }
 
     @Test
-    public void checkSupportedFormat() throws NonconvertibleObjectException {
+    public void checkSupportedFormat() throws UnconvertibleObjectException {
         /*
          * RenderedImage
          */
@@ -70,12 +70,12 @@ public class WPSIOTest {
         try {
              WPSIO.checkSupportedFormat(RenderedImage.class, WPSIO.IOType.INPUT, WPSMimeType.IMG_PNG.val(), WPSEncoding.UTF8.getValue(), null);
              fail();
-        } catch (NonconvertibleObjectException ex) { /*do nothing*/ }
+        } catch (UnconvertibleObjectException ex) { /*do nothing*/ }
 
         try {
              WPSIO.checkSupportedFormat(RenderedImage.class, WPSIO.IOType.INPUT, WPSMimeType.IMG_PNG.val(), WPSEncoding.BASE64.getValue(), "something");
              fail();
-        } catch (NonconvertibleObjectException ex) { /*do nothing*/ }
+        } catch (UnconvertibleObjectException ex) { /*do nothing*/ }
 
         //RenderedImage OUTPUT
         WPSIO.checkSupportedFormat(RenderedImage.class, WPSIO.IOType.OUTPUT, WPSMimeType.IMG_PNG.val(), null, null);
@@ -83,12 +83,12 @@ public class WPSIOTest {
         try {
              WPSIO.checkSupportedFormat(RenderedImage.class, WPSIO.IOType.OUTPUT, WPSMimeType.IMG_PNG.val(), WPSEncoding.UTF8.getValue(), null);
              fail();
-        } catch (NonconvertibleObjectException ex) { /*do nothing*/ }
+        } catch (UnconvertibleObjectException ex) { /*do nothing*/ }
 
         try {
              WPSIO.checkSupportedFormat(RenderedImage.class, WPSIO.IOType.OUTPUT, WPSMimeType.IMG_PNG.val(), WPSEncoding.BASE64.getValue(), "something");
              fail();
-        } catch (NonconvertibleObjectException ex) { /*do nothing*/ }
+        } catch (UnconvertibleObjectException ex) { /*do nothing*/ }
 
         /*
          * GridCoverage2D
@@ -99,12 +99,12 @@ public class WPSIOTest {
         try {
              WPSIO.checkSupportedFormat(Coverage.class, WPSIO.IOType.INPUT, WPSMimeType.IMG_GEOTIFF.val(), WPSEncoding.UTF8.getValue(), null);
              fail();
-        } catch (NonconvertibleObjectException ex) { /*do nothing*/ }
+        } catch (UnconvertibleObjectException ex) { /*do nothing*/ }
 
         try {
              WPSIO.checkSupportedFormat(Coverage.class, WPSIO.IOType.INPUT, WPSMimeType.IMG_GEOTIFF.val(), null, "something");
              fail();
-        } catch (NonconvertibleObjectException ex) { /*do nothing*/ }
+        } catch (UnconvertibleObjectException ex) { /*do nothing*/ }
 
         //RenderedImage OUTPUT
         WPSIO.checkSupportedFormat(Coverage.class, WPSIO.IOType.OUTPUT, WPSMimeType.IMG_GEOTIFF.val(), null, null);
@@ -112,18 +112,18 @@ public class WPSIOTest {
         try {
              WPSIO.checkSupportedFormat(Coverage.class, WPSIO.IOType.OUTPUT, WPSMimeType.IMG_GEOTIFF.val(), WPSEncoding.UTF8.getValue(), null);
              fail();
-        } catch (NonconvertibleObjectException ex) { /*do nothing*/ }
+        } catch (UnconvertibleObjectException ex) { /*do nothing*/ }
 
         try {
              WPSIO.checkSupportedFormat(Coverage.class, WPSIO.IOType.OUTPUT, WPSMimeType.IMG_GEOTIFF.val(), null, "something");
              fail();
-        } catch (NonconvertibleObjectException ex) { /*do nothing*/ }
+        } catch (UnconvertibleObjectException ex) { /*do nothing*/ }
 
     }
 
 
     @Test
-    public void findConverter() throws NonconvertibleObjectException {
+    public void findConverter() throws UnconvertibleObjectException {
         WPSObjectConverter converter = null ;
 
         /*

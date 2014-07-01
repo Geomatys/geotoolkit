@@ -18,10 +18,12 @@
 package org.geotoolkit.filter.binarycomparison;
 
 import java.util.Calendar;
-import org.geotoolkit.util.Converters;
+import org.apache.sis.util.ObjectConverters;
 import org.geotoolkit.util.StringUtilities;
 import org.opengis.filter.MatchAction;
 import org.opengis.filter.expression.Expression;
+import org.apache.sis.util.UnconvertibleObjectException;
+import org.apache.sis.util.logging.Logging;
 
 /**
  * Abstract "property equal" filter, used by isEqual and isNotEqual subclass to avoid
@@ -59,14 +61,14 @@ public abstract class AbstractPropertyEqual extends AbstractBinaryComparisonOper
         //quick resolving to avoid using converters-----------------------------
         if(value1.getClass() == value2.getClass()){
             //same class, return the equal value directly.
-            
+
             if(!match && value1 instanceof String ){
                 //special case if we are in case insensitive
                 return ((String)value1).equalsIgnoreCase((String)value2);
             }else{
                 return value1.equals(value2);
             }
-            
+
         }else if(value1 instanceof Number && value2 instanceof Number){
             //test number case
             return numberEqual((Number)value1, (Number)value2);
@@ -76,39 +78,49 @@ public abstract class AbstractPropertyEqual extends AbstractBinaryComparisonOper
             //to ensure a proper compare
             return true;
         }
-        
+
         //we rely on converters to ensure proper compare oparations
-        Object converted1 = Converters.convert(value1, value2.getClass());
-        if(converted1 != null){
-            if(equalOrNumberEqual(value2, converted1)){
-                return true;
+        try {
+            Object converted1 = ObjectConverters.convert(value1, value2.getClass());
+            if(converted1 != null){
+                if(equalOrNumberEqual(value2, converted1)){
+                    return true;
+                }
             }
+        } catch (UnconvertibleObjectException e) {
+            Logging.recoverableException(AbstractPropertyEqual.class, "evaluate", e);
+            // TODO - do we really want to ignore?
         }
 
-        Object converted2 = Converters.convert(value2, value1.getClass());
-        if (value1 instanceof java.sql.Date && converted2 != null) {
-            Calendar cal1 = Calendar.getInstance();
-            cal1.setTime((java.sql.Date)value1);
-            int expYear  = cal1.get(Calendar.YEAR);
-            int expMonth = cal1.get(Calendar.MONTH);
-            int expDay   = cal1.get(Calendar.DAY_OF_MONTH);
+        try {
+            Object converted2 = ObjectConverters.convert(value2, value1.getClass());
+            if (value1 instanceof java.sql.Date && converted2 != null) {
+                Calendar cal1 = Calendar.getInstance();
+                cal1.setTime((java.sql.Date)value1);
+                int expYear  = cal1.get(Calendar.YEAR);
+                int expMonth = cal1.get(Calendar.MONTH);
+                int expDay   = cal1.get(Calendar.DAY_OF_MONTH);
 
-            cal1.setTime((java.sql.Date)converted2);
-            return cal1.get(Calendar.YEAR) == expYear &&
-                   cal1.get(Calendar.MONTH) == expMonth &&
-                   cal1.get(Calendar.DAY_OF_MONTH) == expDay;
-        }
-
-        if(converted2 != null){
-            if(equalOrNumberEqual(value1, converted2)){
-                return true;
+                cal1.setTime((java.sql.Date)converted2);
+                return cal1.get(Calendar.YEAR) == expYear &&
+                       cal1.get(Calendar.MONTH) == expMonth &&
+                       cal1.get(Calendar.DAY_OF_MONTH) == expDay;
             }
+
+            if(converted2 != null){
+                if(equalOrNumberEqual(value1, converted2)){
+                    return true;
+                }
+            }
+        } catch (UnconvertibleObjectException e) {
+            Logging.recoverableException(AbstractPropertyEqual.class, "evaluate", e);
+            // TODO - do we really want to ignore?
         }
 
         //no comparison matches
         return false;
     }
-    
+
     private boolean equalOrNumberEqual(final Object value1, final Object value2){
 
         //test general equal case
@@ -129,12 +141,12 @@ public abstract class AbstractPropertyEqual extends AbstractBinaryComparisonOper
 
         return false;
     }
-    
+
     private static boolean numberEqual(final Number value1, final Number value2){
         final Number n1 = (Number) value1;
         final Number n2 = (Number) value2;
 
-        if( (n1 instanceof Float) || (n1 instanceof Double) 
+        if( (n1 instanceof Float) || (n1 instanceof Double)
          || (n2 instanceof Float) || (n2 instanceof Double)){
             final double d1 = n1.doubleValue();
             final double d2 = n2.doubleValue();

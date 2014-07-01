@@ -22,13 +22,13 @@ import java.io.IOException;
 import java.util.Map;
 import javax.imageio.ImageIO;
 import net.iharder.Base64;
-import org.geotoolkit.util.converter.NonconvertibleObjectException;
+import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.io.WPSEncoding;
 import org.geotoolkit.wps.xml.v100.ComplexDataType;
 
 /**
  * Convert an RenderedImage to ComplexDataType using Base64 encoding.
- * 
+ *
  * @author Quentin Boileau (Geomatys)
  */
 public class RenderedImageToComplexConverter extends AbstractComplexOutputConverter<RenderedImage>  {
@@ -44,37 +44,37 @@ public class RenderedImageToComplexConverter extends AbstractComplexOutputConver
         }
         return INSTANCE;
     }
-    
+
     @Override
-    public Class<? super RenderedImage> getSourceClass() {
+    public Class<RenderedImage> getSourceClass() {
         return RenderedImage.class;
     }
 
     @Override
-    public ComplexDataType convert(RenderedImage source, Map<String, Object> params) throws NonconvertibleObjectException {
-        
+    public ComplexDataType convert(RenderedImage source, Map<String, Object> params) throws UnconvertibleObjectException {
+
         if (source == null) {
-            throw new NonconvertibleObjectException("The output data should be defined.");
+            throw new UnconvertibleObjectException("The output data should be defined.");
         }
         if (!(source instanceof RenderedImage)) {
-            throw new NonconvertibleObjectException("The requested output data is not an instance of RenderedImage.");
+            throw new UnconvertibleObjectException("The requested output data is not an instance of RenderedImage.");
         }
-        
+
         final ComplexDataType complex = new ComplexDataType();
         final String mime = (String) params.get(MIME);
         final String encoding = (String) params.get(ENCODING);
-        
+
         if (mime == null) {
-            throw new NonconvertibleObjectException("MimeType should be defined to encode image in right format in Base64.");
+            throw new UnconvertibleObjectException("MimeType should be defined to encode image in right format in Base64.");
         }
-        
+
         if (!encoding.equals(WPSEncoding.BASE64.getValue())) {
-            throw new NonconvertibleObjectException("Encoding should be in Base64 for complex request.");
+            throw new UnconvertibleObjectException("Encoding should be in Base64 for complex request.");
         }
-        
+
         complex.setMimeType((String) params.get(MIME));
         complex.setEncoding(encoding);
-        
+
         final String formatName = mime.substring(mime.indexOf("/")+1).toUpperCase();
         try {
             final ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -84,7 +84,7 @@ public class RenderedImageToComplexConverter extends AbstractComplexOutputConver
             complex.getContent().add(Base64.encodeBytes(bytesOut));
             baos.close();
         } catch (IOException ex) {
-            throw new NonconvertibleObjectException(ex.getMessage(), ex);
+            throw new UnconvertibleObjectException(ex.getMessage(), ex);
         }
         return complex;
     }

@@ -23,7 +23,7 @@ import java.util.UUID;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import org.geotoolkit.gml.JTStoGeometry;
-import org.geotoolkit.util.converter.NonconvertibleObjectException;
+import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.io.WPSIO;
 import org.geotoolkit.wps.xml.WPSMarshallerPool;
 import org.geotoolkit.wps.xml.v100.InputReferenceType;
@@ -51,7 +51,7 @@ public class GeometryToReferenceConverter extends AbstractReferenceOutputConvert
     }
 
     @Override
-    public Class<? super Geometry> getSourceClass() {
+    public Class<Geometry> getSourceClass() {
         return Geometry.class;
     }
 
@@ -59,17 +59,17 @@ public class GeometryToReferenceConverter extends AbstractReferenceOutputConvert
      * {@inheritDoc}
      */
     @Override
-    public ReferenceType convert(final Geometry source, final Map<String,Object> params) throws NonconvertibleObjectException {
+    public ReferenceType convert(final Geometry source, final Map<String,Object> params) throws UnconvertibleObjectException {
 
         if (params.get(TMP_DIR_PATH) == null) {
-            throw new NonconvertibleObjectException("The output directory should be defined.");
+            throw new UnconvertibleObjectException("The output directory should be defined.");
         }
 
         if (source == null) {
-            throw new NonconvertibleObjectException("The output data should be defined.");
+            throw new UnconvertibleObjectException("The output data should be defined.");
         }
         if ( !(source instanceof Geometry)) {
-            throw new NonconvertibleObjectException("The geometry is not an JTS geometry.");
+            throw new UnconvertibleObjectException("The geometry is not an JTS geometry.");
         }
 
         final WPSIO.IOType ioType = WPSIO.IOType.valueOf((String) params.get(IOTYPE));
@@ -102,16 +102,16 @@ public class GeometryToReferenceConverter extends AbstractReferenceOutputConvert
             WPSMarshallerPool.getInstance().recycle(m);
 
         } catch (FactoryException ex) {
-            throw new NonconvertibleObjectException("Can't convert the JTS geometry to OpenGIS.", ex);
+            throw new UnconvertibleObjectException("Can't convert the JTS geometry to OpenGIS.", ex);
         } catch (FileNotFoundException ex) {
-            throw new NonconvertibleObjectException("Can't create output reference file.", ex);
+            throw new UnconvertibleObjectException("Can't create output reference file.", ex);
         } catch (JAXBException ex) {
-             throw new NonconvertibleObjectException("JAXB exception while writing the geometry", ex);
+             throw new UnconvertibleObjectException("JAXB exception while writing the geometry", ex);
         } finally {
             try {
                 geometryStream.close();
             } catch (IOException ex) {
-                throw new NonconvertibleObjectException("Can't close the output reference file stream.", ex);
+                throw new UnconvertibleObjectException("Can't close the output reference file stream.", ex);
             }
         }
         return reference;

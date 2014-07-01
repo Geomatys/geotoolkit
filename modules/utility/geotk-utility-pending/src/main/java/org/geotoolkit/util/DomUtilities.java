@@ -44,8 +44,8 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import org.geotoolkit.lang.Static;
-import org.geotoolkit.util.converter.ConverterRegistry;
-import org.geotoolkit.util.converter.NonconvertibleObjectException;
+import org.apache.sis.util.ObjectConverters;
+import org.apache.sis.util.UnconvertibleObjectException;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -144,7 +144,7 @@ public final class DomUtilities extends Static {
         }
         return null;
     }
-    
+
     /**
      * Search and return the list node with a given tag name.
      *
@@ -157,7 +157,7 @@ public final class DomUtilities extends Static {
 
 
             final NodeList lst = parent.getElementsByTagName(tagName);
-            
+
             List<Element> result = new ArrayList<Element>();
             for(int i=0,n=lst.getLength();i<n;i++){
                 final Node child = lst.item(i);
@@ -166,7 +166,7 @@ public final class DomUtilities extends Static {
                 }
             }
             return result;
-        
+
     }
 
 
@@ -199,14 +199,14 @@ public final class DomUtilities extends Static {
      * @param clazz : wished value class
      * @return T or null if no node with tagname was found or convertion to given class failed.
      */
-    public static <T> T textValue(final Element parent, final String tagName, final Class<T> clazz) throws NonconvertibleObjectException{
+    public static <T> T textValue(final Element parent, final String tagName, final Class<T> clazz) throws UnconvertibleObjectException{
         final Element ele = firstElement(parent, tagName, true);
         if(ele == null) return null;
         final String text = ele.getTextContent();
         if(text == null) return null;
-        return ConverterRegistry.system().converter(String.class, clazz).convert(text);
+        return ObjectConverters.convert(text, clazz);
     }
-    
+
     /**
      * Search a child node with the given tag name and return it's text attribute
      * converted to the given clazz.
@@ -219,12 +219,12 @@ public final class DomUtilities extends Static {
      * @param clazz : wished value class
      * @return T or null if no node with tagname was found or convertion to given class failed.
      */
-    public static <T> T textAttributeValue(final Element parent, final String tagName,final String attributeName, final Class<T> clazz) throws NonconvertibleObjectException{
+    public static <T> T textAttributeValue(final Element parent, final String tagName,final String attributeName, final Class<T> clazz) throws UnconvertibleObjectException{
         final Element ele = firstElement(parent, tagName, true);
         if(ele == null) return null;
         final String text = ele.getAttribute(attributeName);
         if(text == null) return null;
-        return ConverterRegistry.system().converter(String.class, clazz).convert(text);
+        return ObjectConverters.convert(text, clazz);
     }
 
     /**
@@ -234,12 +234,12 @@ public final class DomUtilities extends Static {
     public static <T> T textValueSafe(final Element parent, final String tagName, final Class<T> clazz) {
         try {
             return textValue(parent, tagName, clazz);
-        } catch (NonconvertibleObjectException ex) {
+        } catch (UnconvertibleObjectException ex) {
             Logger.getLogger(DomUtilities.class.getName()).log(Level.WARNING, null, ex);
             return null;
         }
     }
-    
+
     /**
      * Same as {@link DomUtilities#textAttributeValue(org.w3c.dom.Element, java.lang.String, java.lang.String, java.lang.Class) }
      * but dont throw any exception.
@@ -247,7 +247,7 @@ public final class DomUtilities extends Static {
     public static <T> T textAttributeValueSafe(final Element parent, final String tagName, final String attributeName, final Class<T> clazz) {
         try {
             return textAttributeValue(parent, tagName,attributeName,  clazz);
-        } catch (NonconvertibleObjectException ex) {
+        } catch (UnconvertibleObjectException ex) {
             Logger.getLogger(DomUtilities.class.getName()).log(Level.WARNING, null, ex);
             return null;
         }

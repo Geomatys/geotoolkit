@@ -27,12 +27,12 @@ import javax.imageio.ImageIO;
 import javax.imageio.stream.ImageInputStream;
 import net.iharder.Base64;
 import org.geotoolkit.util.FileUtilities;
-import org.geotoolkit.util.converter.NonconvertibleObjectException;
+import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.io.WPSEncoding;
 import org.geotoolkit.wps.xml.v100.ReferenceType;
 
 /**
- * 
+ *
  * @author Quentin Boileau (Geomatys).
  */
 public class ReferenceToRenderedImageConverter extends AbstractReferenceInputConverter<RenderedImage> {
@@ -50,7 +50,7 @@ public class ReferenceToRenderedImageConverter extends AbstractReferenceInputCon
     }
 
     @Override
-    public Class<? extends RenderedImage> getTargetClass() {
+    public Class<RenderedImage> getTargetClass() {
         return RenderedImage.class;
     }
 
@@ -60,15 +60,15 @@ public class ReferenceToRenderedImageConverter extends AbstractReferenceInputCon
      * @return RenderedImage.
      */
     @Override
-    public RenderedImage convert(final ReferenceType source, final Map<String, Object> params) throws NonconvertibleObjectException {
+    public RenderedImage convert(final ReferenceType source, final Map<String, Object> params) throws UnconvertibleObjectException {
 
         final InputStream stream = getInputStreamFromReference(source);
 
         final String encoding = (String)params.get(ENCODING);
-        
+
         ImageInputStream imageStream = null;
         try {
-            
+
             //decode form base64 stream
             if (encoding != null && encoding.equals(WPSEncoding.BASE64.getValue())) {
                 final String encodedImage = FileUtilities.getStringFromStream(stream);
@@ -79,21 +79,21 @@ public class ReferenceToRenderedImageConverter extends AbstractReferenceInputCon
                         imageStream = ImageIO.createImageInputStream(is);
                     }
                 }
-                
+
             } else {
                 imageStream = ImageIO.createImageInputStream(stream);
             }
-            
+
             if (imageStream != null) {
                  return ImageIO.read(imageStream);
             } else {
-                throw new NonconvertibleObjectException("Error during image stream acquisition.");
+                throw new UnconvertibleObjectException("Error during image stream acquisition.");
             }
-            
+
         } catch (MalformedURLException ex) {
-            throw new NonconvertibleObjectException("Reference image invalid URL : Malformed url", ex);
+            throw new UnconvertibleObjectException("Reference image invalid URL : Malformed url", ex);
         } catch (IOException ex) {
-            throw new NonconvertibleObjectException("Reference image invalid input : IO", ex);
+            throw new UnconvertibleObjectException("Reference image invalid input : IO", ex);
         } finally {
             if (imageStream != null) {
                 try {

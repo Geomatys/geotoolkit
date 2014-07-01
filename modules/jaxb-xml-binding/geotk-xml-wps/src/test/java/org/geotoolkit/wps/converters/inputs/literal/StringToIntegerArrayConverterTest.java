@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.wps.converters.inputs.literal;
 
-import org.geotoolkit.util.converter.NonconvertibleObjectException;
+import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.converters.WPSConverterRegistry;
 import org.geotoolkit.wps.converters.WPSObjectConverter;
 import static org.junit.Assert.*;
@@ -29,7 +29,7 @@ import org.junit.Test;
 public class StringToIntegerArrayConverterTest {
 
     @Test
-    public void testConversion() throws NonconvertibleObjectException  {
+    public void testConversion() throws UnconvertibleObjectException  {
         
         final WPSObjectConverter converter = WPSConverterRegistry.getInstance().getConverter(String.class, int[].class);
         
@@ -43,7 +43,7 @@ public class StringToIntegerArrayConverterTest {
         boolean fail = false;
         try {
             output = (int[])converter.convert("Some random text", null);
-        } catch (NonconvertibleObjectException ex) {
+        } catch (UnconvertibleObjectException ex) {
             fail = true;
         }
         assertTrue(fail);
@@ -51,7 +51,7 @@ public class StringToIntegerArrayConverterTest {
         fail = false;
         try {
             output = (int[])converter.convert("10.0, 5.6, 90, 6, 70", null);
-        } catch (NonconvertibleObjectException ex) {
+        } catch (UnconvertibleObjectException ex) {
             fail = true;
         }
         assertTrue(fail);

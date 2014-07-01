@@ -29,7 +29,7 @@ import org.geotoolkit.client.AbstractRequest;
 import org.geotoolkit.ows.xml.v110.BoundingBoxType;
 import org.geotoolkit.ows.xml.v110.CodeType;
 import org.geotoolkit.security.ClientSecurity;
-import org.geotoolkit.util.converter.NonconvertibleObjectException;
+import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.converters.WPSConvertersUtils;
 import org.geotoolkit.wps.xml.WPSMarshallerPool;
 import org.geotoolkit.wps.xml.v100.ComplexDataType;
@@ -222,7 +222,7 @@ public abstract class AbstractExecute extends AbstractRequest implements Execute
         final Execute request;
         try {
             request = makeRequest();
-        } catch (NonconvertibleObjectException ex) {
+        } catch (UnconvertibleObjectException ex) {
            throw new IOException("Error during inputs/outputs conversion.", ex);
         }
 
@@ -251,9 +251,9 @@ public abstract class AbstractExecute extends AbstractRequest implements Execute
     /**
      * Create the {@link Execute execute} request object for a process.
      * @return execute request
-     * @throws NonconvertibleObjectException if an error occurs during inputs conversion.
+     * @throws UnconvertibleObjectException if an error occurs during inputs conversion.
      */
-    public Execute makeRequest() throws NonconvertibleObjectException {
+    public Execute makeRequest() throws UnconvertibleObjectException {
         final Execute request = new Execute();
         request.setService("WPS");
         request.setVersion(version);
@@ -346,7 +346,7 @@ public abstract class AbstractExecute extends AbstractRequest implements Execute
      * @param in
      * @return
      */
-    private DataInputsType getDataInputs() throws NonconvertibleObjectException {
+    private DataInputsType getDataInputs() throws UnconvertibleObjectException {
 
         final DataInputsType input = new DataInputsType();
 
@@ -391,7 +391,7 @@ public abstract class AbstractExecute extends AbstractRequest implements Execute
      * @param in
      * @return
      */
-    private InputType getInputComplex(final WPSInputComplex in) throws NonconvertibleObjectException {
+    private InputType getInputComplex(final WPSInputComplex in) throws UnconvertibleObjectException {
 
         final InputType inputType = new InputType();
 

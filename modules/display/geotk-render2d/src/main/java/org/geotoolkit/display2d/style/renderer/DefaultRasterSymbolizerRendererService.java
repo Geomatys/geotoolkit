@@ -44,13 +44,15 @@ import org.geotoolkit.style.function.Categorize;
 import org.geotoolkit.style.function.Interpolate;
 import org.geotoolkit.style.function.InterpolationPoint;
 import org.geotoolkit.style.function.Jenks;
-import org.geotoolkit.util.Converters;
+import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.measure.Range;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Function;
 import org.opengis.style.ColorMap;
 import org.opengis.style.RasterSymbolizer;
+import org.apache.sis.util.UnconvertibleObjectException;
+import org.apache.sis.util.logging.Logging;
 
 /**
  * @author Johann Sorel (Geomatys)
@@ -257,8 +259,11 @@ public class DefaultRasterSymbolizerRendererService extends AbstractSymbolizerRe
                 for(int i=0;i<size;i++){
                     final InterpolationPoint pt = points.get(i);
                     Color color = pt.getValue().evaluate(null, Color.class);
-                    if(color == null){
-                        color = Converters.convert(pt.getValue().toString(), Color.class);
+                    if(color == null) try {
+                        color = ObjectConverters.convert(pt.getValue().toString(), Color.class);
+                    } catch (UnconvertibleObjectException e) {
+                        Logging.recoverableException(DefaultRasterSymbolizerRendererService.class, "getMapColor", e);
+                        // TODO - do we really want to ignore?
                     }
                     colorMap.put(pt.getData().toString(), color);
                 }

@@ -19,11 +19,11 @@ package org.geotoolkit.filter.binding;
 
 import java.io.Serializable;
 import java.util.Map;
-import org.geotoolkit.util.Converters;
+import org.apache.sis.util.ObjectConverters;
 
 /**
  * Binding for Maps.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public final class MapBinding extends AbstractBinding<Map> implements Serializable{
@@ -39,12 +39,16 @@ public final class MapBinding extends AbstractBinding<Map> implements Serializab
 
     @Override
     public <T> T get(Map candidate, String xpath, Class<T> target) throws IllegalArgumentException {
-        return Converters.convert(candidate.get(xpath),target);
+        final Object value = candidate.get(xpath);
+        if (target == null) {
+            return (T) value; // TODO - unsafe!!!
+        }
+        return ObjectConverters.convert(value, target);
     }
 
     @Override
     public void set(Map candidate, String xpath, Object value) throws IllegalArgumentException {
         candidate.put(xpath, value);
     }
-    
+
 }

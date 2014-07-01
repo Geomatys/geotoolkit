@@ -49,8 +49,8 @@ import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.util.FileUtilities;
-import org.geotoolkit.util.converter.ConverterRegistry;
-import org.geotoolkit.util.converter.NonconvertibleObjectException;
+import org.apache.sis.util.ObjectConverters;
+import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.io.WPSIO;
 import org.geotoolkit.wps.xml.v100.ComplexDataType;
 import org.geotoolkit.wps.xml.v100.InputReferenceType;
@@ -98,7 +98,7 @@ public class WPSConvertersUtils {
      *
      * @param dataValue a Feature or a FeatureCollection
      * @return the sale Feature/FeatureCollection fixed
-     * @throws NonconvertibleObjectException
+     * @throws UnconvertibleObjectException
      */
     public static Object fixFeature(final Object dataValue) throws FactoryException {
 
@@ -132,7 +132,7 @@ public class WPSConvertersUtils {
      *
      * @param featureIN feature with geometry used to fix the geometry descriptor
      * @param type the featureType to fix
-     * @throws NonconvertibleObjectException
+     * @throws UnconvertibleObjectException
      */
     private static void fixFeatureType(final Feature featureIN, DefaultFeatureType type) throws FactoryException {
 
@@ -168,22 +168,22 @@ public class WPSConvertersUtils {
      * @param data string to convert
      * @param binding wanted class
      * @return converted object
-     * @throws NonconvertibleObjectException if there is no match found
+     * @throws UnconvertibleObjectException if there is no match found
      */
-    public static <T> Object convertFromString(final String data, final Class binding) throws NonconvertibleObjectException {
+    public static <T> Object convertFromString(final String data, final Class binding) throws UnconvertibleObjectException {
 
         Object convertedData = null; //resulting Object
 
-        WPSObjectConverter<String, T> converter;//converter
+        WPSObjectConverter<? super String, ? extends T> converter;//converter
         try {
             //try to convert into a primitive type
-            converter = new WPSObjectConverterAdapter(ConverterRegistry.system().converter(String.class, binding));
-        } catch (NonconvertibleObjectException ex) {
+            converter = new WPSObjectConverterAdapter(ObjectConverters.find(String.class, binding));
+        } catch (UnconvertibleObjectException ex) {
             //try to convert with some specified converter
             converter = WPSIO.getConverter(binding, WPSIO.IOType.INPUT, WPSIO.FormChoice.LITERAL);
 
             if (converter == null) {
-                throw new NonconvertibleObjectException("Converter can't be found.");
+                throw new UnconvertibleObjectException("Converter can't be found.");
             }
         }
         convertedData = converter.convert(data, null);
@@ -203,7 +203,7 @@ public class WPSConvertersUtils {
             try {
                 WPSObjectConverter converter = WPSConverterRegistry.getInstance().getConverter(data.getClass(), String.class);
                 out = (String) converter.convert(data, null);
-            } catch (NonconvertibleObjectException ex) {
+            } catch (UnconvertibleObjectException ex) {
                 if (data instanceof CoordinateReferenceSystem) {
                     out = IdentifiedObjects.getIdentifierOrName((CoordinateReferenceSystem) data);
                 } else {
@@ -220,9 +220,9 @@ public class WPSConvertersUtils {
      * @param expectedClass
      * @param complex
      * @return
-     * @throws NonconvertibleObjectException
+     * @throws UnconvertibleObjectException
      */
-    public static Object convertFromComplex(final ComplexDataType complex, final Class expectedClass) throws NonconvertibleObjectException {
+    public static Object convertFromComplex(final ComplexDataType complex, final Class expectedClass) throws UnconvertibleObjectException {
 
         final String mime = complex.getMimeType();
         final String encoding = complex.getEncoding();
@@ -251,7 +251,7 @@ public class WPSConvertersUtils {
         final WPSObjectConverter converter = WPSIO.getConverter(expectedClass, WPSIO.IOType.INPUT, WPSIO.FormChoice.COMPLEX);
 
         if (converter == null) {
-            throw new NonconvertibleObjectException("Input complex not supported, no converter found.");
+            throw new UnconvertibleObjectException("Input complex not supported, no converter found.");
         }
 
         return converter.convert(complex, parameters);
@@ -266,10 +266,10 @@ public class WPSConvertersUtils {
      * @param schema
      * @param params
      * @return
-     * @throws NonconvertibleObjectException
+     * @throws UnconvertibleObjectException
      */
     public static ComplexDataType convertToComplex(final Object object, final String mime, final String encoding, final String schema,
-            final Map<String, Object> params) throws NonconvertibleObjectException {
+            final Map<String, Object> params) throws UnconvertibleObjectException {
 
         ArgumentChecks.ensureNonNull("Object", object);
 
@@ -285,7 +285,7 @@ public class WPSConvertersUtils {
 
         final WPSObjectConverter converter = WPSIO.getConverter(object.getClass(), WPSIO.IOType.OUTPUT, WPSIO.FormChoice.COMPLEX);
         if (converter == null) {
-            throw new NonconvertibleObjectException("Output complex not supported, no converter found.");
+            throw new UnconvertibleObjectException("Output complex not supported, no converter found.");
         }
 
         return (ComplexDataType) converter.convert(object, parameters);
@@ -293,7 +293,7 @@ public class WPSConvertersUtils {
 
 
     public static ComplexDataType convertToWMSComplex(Object object, String mimeType, String encoding, String schema, Map<String, Object> params)
-            throws NonconvertibleObjectException {
+            throws UnconvertibleObjectException {
 
         ArgumentChecks.ensureNonNull("Object", object);
 
@@ -373,9 +373,9 @@ public class WPSConvertersUtils {
             jsonMap.put("srs", "EPSG:" + crsCode);
 
         } catch (TransformException e) {
-            throw new NonconvertibleObjectException("The geographic envelope of the layer can't be retrieved", e);
+            throw new UnconvertibleObjectException("The geographic envelope of the layer can't be retrieved", e);
         } catch (Exception e) {
-            throw new NonconvertibleObjectException(e.getMessage(), e);
+            throw new UnconvertibleObjectException(e.getMessage(), e);
         }
 
         final String json = JSONObject.fromObject(jsonMap).toString();
@@ -390,9 +390,9 @@ public class WPSConvertersUtils {
      * @param reference
      * @param expectedClass
      * @return an object
-     * @throws NonconvertibleObjectException if something went wrong
+     * @throws UnconvertibleObjectException if something went wrong
      */
-    public static Object convertFromReference(final ReferenceType reference, final Class expectedClass) throws NonconvertibleObjectException {
+    public static Object convertFromReference(final ReferenceType reference, final Class expectedClass) throws UnconvertibleObjectException {
 
         final String mime = reference.getMimeType();
         final String encoding = reference.getEncoding();
@@ -407,7 +407,7 @@ public class WPSConvertersUtils {
         final WPSObjectConverter converter = WPSIO.getConverter(expectedClass, WPSIO.IOType.INPUT, WPSIO.FormChoice.REFERENCE);
 
         if (converter == null) {
-            throw new NonconvertibleObjectException("Input reference not supported, no converter found.");
+            throw new UnconvertibleObjectException("Input reference not supported, no converter found.");
         }
 
         return converter.convert(reference, parameters);
@@ -423,10 +423,10 @@ public class WPSConvertersUtils {
      * @param params
      * @param iotype the io type requested (INPUT/OUTPUT)
      * @return an {@link InputReferenceType input reference} if ioType is set to INPUT, or an {@link OutputReferenceType output reference} otherwise.
-     * @throws NonconvertibleObjectException
+     * @throws UnconvertibleObjectException
      */
     public static ReferenceType convertToReference(final Object object, final String mime, final String encoding, final String schema,
-            final Map<String, Object> params, final WPSIO.IOType iotype) throws NonconvertibleObjectException {
+            final Map<String, Object> params, final WPSIO.IOType iotype) throws UnconvertibleObjectException {
 
         ArgumentChecks.ensureNonNull("Object", object);
 
@@ -442,7 +442,7 @@ public class WPSConvertersUtils {
 
         final WPSObjectConverter converter = WPSIO.getConverter(object.getClass(), WPSIO.IOType.OUTPUT, WPSIO.FormChoice.REFERENCE);
         if (converter == null) {
-            throw new NonconvertibleObjectException("Output complex not supported, no converter found.");
+            throw new UnconvertibleObjectException("Output complex not supported, no converter found.");
         }
 
         return (ReferenceType) converter.convert(object, parameters);
@@ -453,7 +453,7 @@ public class WPSConvertersUtils {
      *
      * @param clazz
      * @return
-     * @throws NonconvertibleObjectException
+     * @throws UnconvertibleObjectException
      */
     public static DomainMetadataType createDataType(final Class clazz) {
 
@@ -642,7 +642,7 @@ public class WPSConvertersUtils {
      * @param toFill The descriptor of the ParameterValueGroup which will be created.
      * @return A ParameterValueGroup which contains data of the feature in parameter.
      */
-    public static void featureToParameterGroup(ComplexAttribute toConvert, ParameterValueGroup toFill) throws NonconvertibleObjectException {
+    public static void featureToParameterGroup(ComplexAttribute toConvert, ParameterValueGroup toFill) throws UnconvertibleObjectException {
         ArgumentChecks.ensureNonNull("feature", toConvert);
         ArgumentChecks.ensureNonNull("ParameterGroup", toFill);
 
@@ -652,7 +652,7 @@ public class WPSConvertersUtils {
             if (gpd instanceof ParameterDescriptor) {
                 final Property prop = toConvert.getProperty(gpd.getName().getCode());
                 if (prop == null && gpd.getMinimumOccurs() > 0) {
-                    throw new NonconvertibleObjectException("A mandatory attribute can't be found");
+                    throw new UnconvertibleObjectException("A mandatory attribute can't be found");
                 }
                 final ParameterDescriptor desc = (ParameterDescriptor) gpd;
                 if (prop.getValue().getClass().isAssignableFrom(desc.getValueClass()) || desc.getValueClass().isAssignableFrom(prop.getValue().getClass())) {
@@ -675,10 +675,10 @@ public class WPSConvertersUtils {
                     }
                 }
                 if(filledGroups < gpd.getMinimumOccurs()) {
-                    throw new NonconvertibleObjectException("Not enough attributes have been found.");
+                    throw new UnconvertibleObjectException("Not enough attributes have been found.");
                 }
             } else {
-                throw new NonconvertibleObjectException("Parameter type is not managed.");
+                throw new UnconvertibleObjectException("Parameter type is not managed.");
             }
         }
     }

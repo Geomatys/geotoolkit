@@ -44,9 +44,9 @@ import org.apache.sis.metadata.KeyNamePolicy;
 import org.apache.sis.metadata.MetadataStandard;
 import org.apache.sis.util.collection.WeakValueHashMap;
 import org.apache.sis.util.Classes;
-import org.geotoolkit.util.converter.ObjectConverter;
-import org.geotoolkit.util.converter.ConverterRegistry;
-import org.geotoolkit.util.converter.NonconvertibleObjectException;
+import org.apache.sis.util.ObjectConverter;
+import org.apache.sis.util.ObjectConverters;
+import org.apache.sis.util.UnconvertibleObjectException;
 import org.apache.sis.util.logging.Logging;
 
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
@@ -138,11 +138,6 @@ public class MetadataSource implements AutoCloseable {
     final SQLBuilder buffer;
 
     /**
-     * The factory to use for fetching converters.
-     */
-    private final ConverterRegistry converters;
-
-    /**
      * The last converter used.
      */
     private transient volatile ObjectConverter<?,?> lastConverter;
@@ -186,7 +181,6 @@ public class MetadataSource implements AutoCloseable {
         statements  = new StatementPool<>(10, dataSource);
         tables      = new HashMap<>();
         cache       = new WeakValueHashMap<>(CacheKey.class);
-        converters  = ConverterRegistry.system();
         loader      = getClass().getClassLoader();
         synchronized (statements) {
             buffer = new SQLBuilder(statements.connection().getMetaData());
@@ -204,7 +198,6 @@ public class MetadataSource implements AutoCloseable {
         ensureNonNull("source", source);
         standard   = source.standard;
         schema     = source.schema;
-        converters = source.converters;
         loader     = source.loader;
         buffer     = new SQLBuilder(source.buffer);
         tables     = new HashMap<>();
@@ -552,7 +545,7 @@ public class MetadataSource implements AutoCloseable {
                         element = getEntry(elementType, element.toString());
                     } else try {
                         element = convert(elementType, element);
-                    } catch (NonconvertibleObjectException e) {
+                    } catch (UnconvertibleObjectException e) {
                         throw new MetadataException(Errors.format(Errors.Keys.ILLEGAL_PARAMETER_VALUE_2,
                                 columnName + '[' + i + ']', value), e);
                     }
@@ -586,7 +579,7 @@ public class MetadataSource implements AutoCloseable {
                 value = getEntry(elementType, value.toString());
             } else try {
                 value = convert(elementType, value);
-            } catch (NonconvertibleObjectException e) {
+            } catch (UnconvertibleObjectException e) {
                 throw new MetadataException(Errors.format(Errors.Keys.ILLEGAL_PARAMETER_VALUE_2, columnName, value), e);
             }
             if (isCollection) {
@@ -604,19 +597,19 @@ public class MetadataSource implements AutoCloseable {
      * The expected value is an instance of a class outside the metadata package, for
      * example {@link String}, {@link InternationalString}, {@link URI}, <i>etc.</i>
      *
-     * @throws NonconvertibleObjectException If the value can not be converter.
+     * @throws UnconvertibleObjectException If the value can not be converter.
      */
     @SuppressWarnings({"unchecked","rawtypes"})
-    private Object convert(final Class<?> targetType, Object value) throws NonconvertibleObjectException {
+    private Object convert(final Class<?> targetType, Object value) throws UnconvertibleObjectException {
         final Class<?> sourceType = value.getClass();
         if (!targetType.isAssignableFrom(sourceType)) {
             ObjectConverter converter = lastConverter;
-            if (converter == null || !converter.getSourceClass().isAssignableFrom(sourceType) ||
-                    !targetType.isAssignableFrom(converter.getTargetClass()))
+            if (converter == null || !converter.getSourceClass().equals(sourceType) ||
+                    !targetType.equals(converter.getTargetClass()))
             {
-                lastConverter = converter = converters.converter(sourceType, targetType);
+                lastConverter = converter = ObjectConverters.find(sourceType, targetType);
             }
-            value = converter.convert(value);
+            value = converter.apply(value);
         }
         return value;
     }

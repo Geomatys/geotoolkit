@@ -25,11 +25,13 @@ import net.sf.jasperreports.engine.JRField;
 
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
-import org.geotoolkit.util.Converters;
+import org.apache.sis.util.ObjectConverters;
 
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.Property;
 
+import org.apache.sis.util.UnconvertibleObjectException;
+import org.apache.sis.util.logging.Logging;
 import static org.apache.sis.util.ArgumentChecks.*;
 
 /**
@@ -72,7 +74,7 @@ public class FeatureCollectionDataSource implements JRDataSource {
 
     @Override
     public Object getFieldValue(final JRField jrf) throws JRException {
-        
+
         //search for special fields
         final Collection<JRFieldRenderer> renderers = JasperReportService.getFieldRenderers();
         for(JRFieldRenderer r : renderers){
@@ -87,7 +89,12 @@ public class FeatureCollectionDataSource implements JRDataSource {
         if(prop != null){
             //just in case the type is not rigourously the same.
             final Class clazz = jrf.getValueClass();
-            return Converters.convert(prop.getValue(), clazz);
+            try {
+                return ObjectConverters.convert(prop.getValue(), clazz);
+            } catch (UnconvertibleObjectException e) {
+                Logging.recoverableException(FeatureCollectionDataSource.class, "getFieldValue", e);
+                // TODO - do we really want to ignore?
+            }
         }
 
         //No field that match this name, looks like the feature type

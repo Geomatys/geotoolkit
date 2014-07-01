@@ -22,7 +22,7 @@ import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.geotoolkit.util.Converters;
+import org.apache.sis.util.ObjectConverters;
 
 import org.jaxen.JaxenException;
 import org.geotoolkit.feature.ComplexAttribute;
@@ -108,7 +108,7 @@ public class XPathBinding<C> extends AbstractBinding<C> {
             if(target == null){
                 return (T) v;
             }else{
-                return Converters.convert(v, target);
+                return ObjectConverters.convert(v, target);
             }
 
         } catch (JaxenException ex) {

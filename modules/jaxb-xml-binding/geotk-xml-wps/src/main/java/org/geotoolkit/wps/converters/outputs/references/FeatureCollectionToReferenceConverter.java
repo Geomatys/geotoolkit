@@ -24,7 +24,7 @@ import org.geotoolkit.feature.xml.XmlFeatureTypeWriter;
 import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeWriter;
 import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureWriter;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.util.converter.NonconvertibleObjectException;
+import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.io.WPSIO;
 import org.geotoolkit.wps.io.WPSMimeType;
 import org.geotoolkit.wps.xml.v100.InputReferenceType;
@@ -59,7 +59,7 @@ public final class FeatureCollectionToReferenceConverter extends AbstractReferen
     }
 
     @Override
-    public Class<? super FeatureCollection> getSourceClass() {
+    public Class<FeatureCollection> getSourceClass() {
         return FeatureCollection.class;
     }
 
@@ -67,17 +67,17 @@ public final class FeatureCollectionToReferenceConverter extends AbstractReferen
      * {@inheritDoc}
      */
     @Override
-    public ReferenceType convert(final FeatureCollection source, final Map<String, Object> params) throws NonconvertibleObjectException {
+    public ReferenceType convert(final FeatureCollection source, final Map<String, Object> params) throws UnconvertibleObjectException {
 
         if (params.get(TMP_DIR_PATH) == null) {
-            throw new NonconvertibleObjectException("The output directory should be defined.");
+            throw new UnconvertibleObjectException("The output directory should be defined.");
         }
 
         if (source == null) {
-            throw new NonconvertibleObjectException("The output data should be defined.");
+            throw new UnconvertibleObjectException("The output data should be defined.");
         }
         if (!(source instanceof FeatureCollection)) {
-            throw new NonconvertibleObjectException("The requested output data is not an instance of FeatureCollection.");
+            throw new UnconvertibleObjectException("The requested output data is not an instance of FeatureCollection.");
         }
         final WPSIO.IOType ioType = WPSIO.IOType.valueOf((String) params.get(IOTYPE));
         ReferenceType reference = null;
@@ -106,9 +106,9 @@ public final class FeatureCollectionToReferenceConverter extends AbstractReferen
                 GeoJSONStreamWriter writer = new GeoJSONStreamWriter(fos, ft, 7);
                 FeatureStoreUtilities.write(writer, source);
             } catch (DataStoreException e) {
-                throw new NonconvertibleObjectException("Can't write Feature into GeoJSON output stream.", e);
+                throw new UnconvertibleObjectException("Can't write Feature into GeoJSON output stream.", e);
             } catch (FileNotFoundException e) {
-                throw new NonconvertibleObjectException(e);
+                throw new UnconvertibleObjectException(e);
             }
 
             reference.setHref(params.get(TMP_DIR_URL) + "/" + dataFileName);
@@ -127,9 +127,9 @@ public final class FeatureCollectionToReferenceConverter extends AbstractReferen
                 schemaLocation.put(namespace, reference.getSchema());
 
             } catch (JAXBException ex) {
-                throw new NonconvertibleObjectException("Can't write FeatureType into xsd schema.", ex);
+                throw new UnconvertibleObjectException("Can't write FeatureType into xsd schema.", ex);
             } catch (FileNotFoundException ex) {
-                throw new NonconvertibleObjectException("Can't create xsd schema file.", ex);
+                throw new UnconvertibleObjectException("Can't create xsd schema file.", ex);
             }
 
             JAXPStreamFeatureWriter featureWriter = null;
@@ -149,22 +149,22 @@ public final class FeatureCollectionToReferenceConverter extends AbstractReferen
                 reference.setHref((String) params.get(TMP_DIR_URL) + "/" + dataFileName);
 
             } catch (IOException ex) {
-                throw new NonconvertibleObjectException(ex);
+                throw new UnconvertibleObjectException(ex);
             } catch (XMLStreamException ex) {
-                throw new NonconvertibleObjectException("Stax exception while writing the feature collection", ex);
+                throw new UnconvertibleObjectException("Stax exception while writing the feature collection", ex);
             } catch (DataStoreException ex) {
-                throw new NonconvertibleObjectException("FeatureStore exception while writing the feature collection", ex);
+                throw new UnconvertibleObjectException("FeatureStore exception while writing the feature collection", ex);
             } catch (FeatureStoreRuntimeException ex) {
-                throw new NonconvertibleObjectException("FeatureStoreRuntimeException exception while writing the feature collection", ex);
+                throw new UnconvertibleObjectException("FeatureStoreRuntimeException exception while writing the feature collection", ex);
             } finally {
                 try {
                     if (featureWriter != null) {
                         featureWriter.dispose();
                     }
                 } catch (IOException ex) {
-                    throw new NonconvertibleObjectException(ex);
+                    throw new UnconvertibleObjectException(ex);
                 } catch (XMLStreamException ex) {
-                    throw new NonconvertibleObjectException(ex);
+                    throw new UnconvertibleObjectException(ex);
                 }
             }
         }

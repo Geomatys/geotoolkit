@@ -34,7 +34,7 @@ import org.geotoolkit.db.reverse.PrimaryKey;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.feature.type.DefaultName;
 import org.geotoolkit.filter.DefaultPropertyIsLike;
-import org.geotoolkit.util.Converters;
+import org.apache.sis.util.ObjectConverters;
 import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.geotoolkit.feature.type.ComplexType;
 import org.geotoolkit.feature.type.GeometryDescriptor;
@@ -94,14 +94,16 @@ import org.opengis.filter.temporal.TContains;
 import org.opengis.filter.temporal.TEquals;
 import org.opengis.filter.temporal.TOverlaps;
 import org.opengis.geometry.Envelope;
+import org.apache.sis.util.UnconvertibleObjectException;
+import org.apache.sis.util.logging.Logging;
 
 /**
  * Convert filters and expressions in SQL.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public class PostgresFilterToSQL implements FilterToSQL {
-    
+
     private final Version pgVersion;
     private final ComplexType featureType;
     private final PrimaryKey pkey;
@@ -112,11 +114,11 @@ public class PostgresFilterToSQL implements FilterToSQL {
         this.pkey = pkey;
         this.pgVersion = pgVersion;
     }
-        
+
     ////////////////////////////////////////////////////////////////////////////
     // EXPRESSION EXPRESSION ///////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
-    
+
     @Override
     public StringBuilder visit(NilExpression candidate, Object o) {
         final StringBuilder sb = toStringBuilder(o);
@@ -160,20 +162,20 @@ public class PostgresFilterToSQL implements FilterToSQL {
         writeValue(sb, value, currentsrid);
         return sb;
     }
-    
+
     public void writeValue(final StringBuilder sb, Object candidate, int srid){
-        
+
         if(candidate instanceof Date){
             //convert it to a timestamp, string representation won't be ambiguious like dates toString()
-            candidate = new Timestamp(((Date)candidate).getTime());           
+            candidate = new Timestamp(((Date)candidate).getTime());
         }
-        
+
         if(candidate == null){
           sb.append("NULL");
-          
+
         }else if(candidate instanceof Boolean){
             sb.append(String.valueOf(candidate));
-           
+
         }else if(candidate instanceof Double){
             if(((Double)candidate).isNaN()){
                 sb.append("'NaN'");
@@ -202,7 +204,7 @@ public class PostgresFilterToSQL implements FilterToSQL {
                 //this breaks the column geometry type constraint so we replace those by null
                 sb.append("NULL");
             }else{
-                
+
                 if(geom instanceof LinearRing){
                     //postgis does not handle linear rings, convert to just a line string
                     geom = geom.getFactory().createLineString(((LinearRing) geom).getCoordinateSequence());
@@ -215,7 +217,7 @@ public class PostgresFilterToSQL implements FilterToSQL {
                     sb.append("')");
                 }
             }
-            
+
         }else if(candidate.getClass().isArray()){
             final int size = Array.getLength(candidate);
             sb.append("'{");
@@ -234,7 +236,12 @@ public class PostgresFilterToSQL implements FilterToSQL {
                     }
                 }else if(!(o instanceof Number || o instanceof Boolean) && o != null){
                     // we don't know what this is, let's convert back to a string
-                    String encoding = Converters.convert(o, String.class);
+                    String encoding = null;
+                    try {
+                        encoding = ObjectConverters.convert(o, String.class);
+                    } catch (UnconvertibleObjectException e) {
+                        Logging.recoverableException(PostgresFilterToSQL.class, "writeValue", e);
+                    }
                     if (encoding == null) {
                         // could not convert back to string, use original value
                         encoding = o.toString();
@@ -250,7 +257,12 @@ public class PostgresFilterToSQL implements FilterToSQL {
             sb.append("}'");
         }else{
             // we don't know what this is, let's convert back to a string
-            String encoded = Converters.convert(candidate, String.class);
+            String encoded = null;
+            try {
+                encoded = ObjectConverters.convert(candidate, String.class);
+            } catch (UnconvertibleObjectException e) {
+                Logging.recoverableException(PostgresFilterToSQL.class, "writeValue", e);
+            }
             if (encoded == null) {
                 // could not convert back to string, use original value
                 encoded = candidate.toString();
@@ -277,11 +289,11 @@ public class PostgresFilterToSQL implements FilterToSQL {
 
     @Override
     public StringBuilder visit(PropertyName candidate, Object o) {
-        final StringBuilder sb = toStringBuilder(o);        
+        final StringBuilder sb = toStringBuilder(o);
         final Name name = DefaultName.valueOf(candidate.getPropertyName());
         sb.append('"');
         sb.append(name.getLocalPart());
-        sb.append('"');        
+        sb.append('"');
         return sb;
     }
 
@@ -295,11 +307,11 @@ public class PostgresFilterToSQL implements FilterToSQL {
         sb.append(')');
         return sb;
     }
-    
+
     ////////////////////////////////////////////////////////////////////////////
     // FILTER EXPRESSION ///////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
-    
+
     @Override
     public StringBuilder visitNullFilter(Object o) {
         final StringBuilder sb = toStringBuilder(o);
@@ -342,7 +354,7 @@ public class PostgresFilterToSQL implements FilterToSQL {
         sb.append('(');
         final FilterFactory ff = FactoryFinder.getFilterFactory(null);
         final List<ColumnMetaModel> columns = pkey.getColumns();
-        
+
         //we must split this in a serie of OR
         final Identifier[] ids = candidate.getIdentifiers().toArray(new Identifier[0]);
         final List<Filter> idFilters = new ArrayList<Filter>(ids.length);
@@ -356,7 +368,7 @@ public class PostgresFilterToSQL implements FilterToSQL {
             final Filter and = ff.and(idPartFilters);
             idFilters.add(and);
         }
-        Filter filter = ff.or(idFilters);   
+        Filter filter = ff.or(idFilters);
         filter.accept(this, o);
         sb.append(')');
         return sb;
@@ -398,7 +410,7 @@ public class PostgresFilterToSQL implements FilterToSQL {
         lower.accept(this, o);
         sb.append(" AND ");
         upper.accept(this, o);
-        
+
         return sb;
     }
 
@@ -467,16 +479,16 @@ public class PostgresFilterToSQL implements FilterToSQL {
     @Override
     public StringBuilder visit(PropertyIsLike candidate, Object o) {
         final StringBuilder sb = toStringBuilder(o);
-        
+
         final char escape = candidate.getEscape().charAt(0);
         final char wildCard = candidate.getWildCard().charAt(0);
         final char single = candidate.getSingleChar().charAt(0);
         final boolean matchingCase = candidate.isMatchingCase();
         final Expression expression = candidate.getExpression();
-        
+
         final String literal = candidate.getLiteral();
         String pattern = DefaultPropertyIsLike.convertToSQL92(escape, wildCard, single, literal);
-        
+
         if(!matchingCase){
             pattern = pattern.toUpperCase();
             sb.append(" UPPER(");
@@ -486,7 +498,7 @@ public class PostgresFilterToSQL implements FilterToSQL {
         sb.append(" CAST( ");
         expression.accept(this, sb);
         sb.append(" AS VARCHAR)");
-        
+
         if(!matchingCase){
             sb.append(")");
         }
@@ -529,7 +541,7 @@ public class PostgresFilterToSQL implements FilterToSQL {
     public StringBuilder visit(Beyond candidate, Object o) {
         final StringBuilder sb = toStringBuilder(o);
         final PreparedSpatialFilter prepared = new PreparedSpatialFilter(candidate);
-        
+
         if(prepared.swap){
             sb.append("st_dwithin(");
             prepared.property.accept(this, o);
@@ -546,7 +558,7 @@ public class PostgresFilterToSQL implements FilterToSQL {
             sb.append(") > ");
             sb.append(candidate.getDistance());
         }
-        
+
         return sb;
     }
 
@@ -594,7 +606,7 @@ public class PostgresFilterToSQL implements FilterToSQL {
     public StringBuilder visit(DWithin candidate, Object o) {
         final StringBuilder sb = toStringBuilder(o);
         final PreparedSpatialFilter prepared = new PreparedSpatialFilter(candidate);
-        
+
         if(prepared.swap){
             sb.append("st_distance(");
             prepared.property.accept(this, o);
@@ -611,7 +623,7 @@ public class PostgresFilterToSQL implements FilterToSQL {
             sb.append(") > ");
             sb.append(candidate.getDistance());
         }
-        
+
         return sb;
     }
 
@@ -679,11 +691,11 @@ public class PostgresFilterToSQL implements FilterToSQL {
         return sb;
     }
 
-    
+
     ////////////////////////////////////////////////////////////////////////////
     // TEMPORAL filters are not supported //////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
-    
+
     @Override
     public StringBuilder visit(After candidate, Object o) {
         throw new UnsupportedOperationException("Temporal filters not supported.");
@@ -757,8 +769,8 @@ public class PostgresFilterToSQL implements FilterToSQL {
     ////////////////////////////////////////////////////////////////////////////
     // UTILITY METHODS /////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
-    
-    
+
+
     private static StringBuilder toStringBuilder(Object candidate){
         if(candidate instanceof StringBuilder){
             return (StringBuilder) candidate;
@@ -766,7 +778,7 @@ public class PostgresFilterToSQL implements FilterToSQL {
             throw new RuntimeException("Expected a StringBuilder argument");
         }
     }
-    
+
     /**
      * Ensure the given double is not an infinite, doesn't work well with SQL and postgres.
      * @param candidate
@@ -781,13 +793,13 @@ public class PostgresFilterToSQL implements FilterToSQL {
             return candidate;
         }
     }
-    
+
     /**
      * prepare a spatial filter, isolate the field and geometry parts.
      * Enventually converting it in a geometry.
      */
     private class PreparedSpatialFilter{
-        
+
         public PropertyName property;
         public Literal geometry;
         public boolean swap;
@@ -795,7 +807,7 @@ public class PostgresFilterToSQL implements FilterToSQL {
         public PreparedSpatialFilter(final BinarySpatialOperator filter){
             final Expression exp1 = filter.getExpression1();
             final Expression exp2 = filter.getExpression2();
-            
+
             if(exp1 instanceof PropertyName){
                 swap = false;
                 property = (PropertyName)exp1;
@@ -805,7 +817,7 @@ public class PostgresFilterToSQL implements FilterToSQL {
                 property = (PropertyName)exp2;
                 geometry = (Literal)exp1;
             }
-            
+
             //change Envelope in polygon
             final Object obj = geometry.getValue();
             if (obj instanceof Envelope) {
@@ -827,7 +839,7 @@ public class PostgresFilterToSQL implements FilterToSQL {
                 final Geometry geom = gf.createPolygon(ring, new LinearRing[0]);
                 geometry = ff.literal(geom);
             }
-            
+
             //set the current srid, extract it from feature type
             //requiered when encoding geometry
             currentsrid = -1;
@@ -840,9 +852,9 @@ public class PostgresFilterToSQL implements FilterToSQL {
                     }
                 }
             }
-            
+
         }
-        
+
     }
-    
+
 }

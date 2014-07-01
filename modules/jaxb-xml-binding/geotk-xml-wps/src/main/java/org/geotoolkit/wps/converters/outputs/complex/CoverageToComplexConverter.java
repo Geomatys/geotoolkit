@@ -23,14 +23,14 @@ import net.iharder.Base64;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageIO;
 import org.geotoolkit.coverage.io.CoverageStoreException;
-import org.geotoolkit.util.converter.NonconvertibleObjectException;
+import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.io.WPSMimeType;
 import org.geotoolkit.wps.xml.v100.ComplexDataType;
 import org.opengis.coverage.Coverage;
 
 /**
  * Convert an GridCoverage2D to ComplexDataType using Base64 encoding.
- * 
+ *
  * @author Quentin Boileau (Geomatys)
  */
 public class CoverageToComplexConverter extends AbstractComplexOutputConverter<GridCoverage2D> {
@@ -46,30 +46,30 @@ public class CoverageToComplexConverter extends AbstractComplexOutputConverter<G
         }
         return INSTANCE;
     }
-    
+
     @Override
-    public Class<? super GridCoverage2D> getSourceClass() {
+    public Class<GridCoverage2D> getSourceClass() {
         return GridCoverage2D.class;
     }
 
     @Override
-    public ComplexDataType convert(GridCoverage2D source, Map<String, Object> params) throws NonconvertibleObjectException {
-        
+    public ComplexDataType convert(GridCoverage2D source, Map<String, Object> params) throws UnconvertibleObjectException {
+
         if (source == null) {
-            throw new NonconvertibleObjectException("The output data should be defined.");
+            throw new UnconvertibleObjectException("The output data should be defined.");
         }
         if (!(source instanceof GridCoverage2D) || !(source instanceof Coverage)) {
-            throw new NonconvertibleObjectException("The requested output data is not an instance of GridCoverage2D.");
+            throw new UnconvertibleObjectException("The requested output data is not an instance of GridCoverage2D.");
         }
         final WPSMimeType wpsMime = WPSMimeType.customValueOf((String) params.get(MIME));
         if (!wpsMime.equals(WPSMimeType.IMG_GEOTIFF) && !wpsMime.equals(WPSMimeType.IMG_GEOTIFF_BIS)) {
-            throw new NonconvertibleObjectException("Only support GeoTiff Base64 encoding.");
+            throw new UnconvertibleObjectException("Only support GeoTiff Base64 encoding.");
         }
-        
+
         final ComplexDataType complex = new ComplexDataType();
         complex.setMimeType(WPSMimeType.IMG_GEOTIFF.val());
         complex.setEncoding("base64");
-        
+
         try {
             final ByteArrayOutputStream baos = new ByteArrayOutputStream();
             CoverageIO.write(source, "GEOTIFF", baos);
@@ -78,11 +78,11 @@ public class CoverageToComplexConverter extends AbstractComplexOutputConverter<G
             complex.getContent().add(Base64.encodeBytes(bytesOut));
             baos.close();
         } catch (CoverageStoreException ex) {
-            throw new NonconvertibleObjectException(ex.getMessage(), ex);
+            throw new UnconvertibleObjectException(ex.getMessage(), ex);
         } catch (IOException ex) {
-            throw new NonconvertibleObjectException(ex.getMessage(), ex);
+            throw new UnconvertibleObjectException(ex.getMessage(), ex);
         }
         return complex;
     }
-    
+
 }

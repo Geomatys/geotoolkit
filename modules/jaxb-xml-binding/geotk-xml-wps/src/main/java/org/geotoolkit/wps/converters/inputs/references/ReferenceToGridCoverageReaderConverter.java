@@ -26,13 +26,12 @@ import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
 import net.iharder.Base64;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageIO;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.util.FileUtilities;
-import org.geotoolkit.util.converter.NonconvertibleObjectException;
+import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.io.WPSEncoding;
 import org.geotoolkit.wps.xml.v100.ReferenceType;
 
@@ -56,7 +55,7 @@ public final class ReferenceToGridCoverageReaderConverter extends AbstractRefere
     }
 
     @Override
-    public Class<? extends GridCoverageReader> getTargetClass() {
+    public Class<GridCoverageReader> getTargetClass() {
         return GridCoverageReader.class;
     }
 
@@ -66,10 +65,10 @@ public final class ReferenceToGridCoverageReaderConverter extends AbstractRefere
      * @return GridCoverageReader.
      */
     @Override
-    public GridCoverageReader convert(final ReferenceType source, final Map<String, Object> params) throws NonconvertibleObjectException {
+    public GridCoverageReader convert(final ReferenceType source, final Map<String, Object> params) throws UnconvertibleObjectException {
 
         final InputStream stream = getInputStreamFromReference(source);
-        
+
         String encoding = null;
         if(params != null && params.get(ENCODING) != null) {
             encoding = (String) params.get(ENCODING);
@@ -87,11 +86,11 @@ public final class ReferenceToGridCoverageReaderConverter extends AbstractRefere
                         imageStream = ImageIO.createImageInputStream(is);
                     }
                 }
-                
+
             } else {
                 imageStream = ImageIO.createImageInputStream(stream);
             }
-            
+
             if (imageStream != null) {
                 final ImageReader reader;
                 if (source.getMimeType() != null) {
@@ -101,15 +100,15 @@ public final class ReferenceToGridCoverageReaderConverter extends AbstractRefere
                 }
                 return CoverageIO.createSimpleReader(reader);
             } else {
-                throw new NonconvertibleObjectException("Error during image stream acquisition.");
+                throw new UnconvertibleObjectException("Error during image stream acquisition.");
             }
-            
+
         } catch (MalformedURLException ex) {
-            throw new NonconvertibleObjectException("Reference grid coverage invalid input : Malformed url", ex);
+            throw new UnconvertibleObjectException("Reference grid coverage invalid input : Malformed url", ex);
         } catch (CoverageStoreException ex) {
-            throw new NonconvertibleObjectException("Reference grid coverage invalid input : Can't read coverage", ex);
+            throw new UnconvertibleObjectException("Reference grid coverage invalid input : Can't read coverage", ex);
         } catch (IOException ex) {
-            throw new NonconvertibleObjectException("Reference grid coverage invalid input : IO", ex);
+            throw new UnconvertibleObjectException("Reference grid coverage invalid input : IO", ex);
         } finally {
             if (imageStream != null) {
                 try {

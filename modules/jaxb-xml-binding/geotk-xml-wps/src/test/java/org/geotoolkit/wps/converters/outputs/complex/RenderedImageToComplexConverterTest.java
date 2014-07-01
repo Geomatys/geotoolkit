@@ -22,7 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.geotoolkit.util.FileUtilities;
-import org.geotoolkit.util.converter.NonconvertibleObjectException;
+import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.converters.AbstractWPSConverterTest;
 import org.geotoolkit.wps.converters.ConvertersTestUtils;
 import org.geotoolkit.wps.converters.WPSConverterRegistry;
@@ -40,7 +40,7 @@ public class RenderedImageToComplexConverterTest extends AbstractWPSConverterTes
 
     
     @Test
-    public void testConversion() throws NonconvertibleObjectException, IOException  {
+    public void testConversion() throws UnconvertibleObjectException, IOException  {
         final WPSObjectConverter<RenderedImage, ComplexDataType> converter = WPSConverterRegistry.getInstance().getConverter(RenderedImage.class, ComplexDataType.class);
         
         final RenderedImage img = ConvertersTestUtils.makeRendredImage();

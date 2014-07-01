@@ -27,9 +27,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import org.apache.sis.util.Localized;
-import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.util.converter.AnyConverter;
-import org.geotoolkit.util.converter.NonconvertibleObjectException;
 import org.geotoolkit.gui.swing.tree.Trees;
 
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
@@ -107,11 +104,6 @@ public class MetadataTreeTable implements Localized {
     private boolean simplificationAllowed;
 
     /**
-     * The converter from {@link String} to values.
-     */
-    final AnyConverter converters;
-
-    /**
      * The root of the tree table. This is the result of {@link #getRootNode()}, which use all
      * the above fields. It will be created only when first needed and reset to {@code null} if
      * one of the above field change, in order to force the creation of a new tree.
@@ -127,12 +119,6 @@ public class MetadataTreeTable implements Localized {
         ensureNonNull("format", format);
         this.format = format;
         locale = Locale.getDefault(Locale.Category.DISPLAY);
-        converters = new AnyConverter() {
-            @Override
-            protected void conversionFailed(final NonconvertibleObjectException exception) {
-                Logging.recoverableException(MetadataTreeNode.class, "getValue", exception);
-            }
-        };
     }
 
     /**

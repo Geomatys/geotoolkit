@@ -50,9 +50,9 @@ import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.security.ClientSecurity;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.iso.DefaultInternationalString;
-import org.geotoolkit.util.converter.ConverterRegistry;
-import org.geotoolkit.util.converter.NonconvertibleObjectException;
-import org.geotoolkit.util.converter.ObjectConverter;
+import org.apache.sis.util.ObjectConverters;
+import org.apache.sis.util.UnconvertibleObjectException;
+import org.apache.sis.util.ObjectConverter;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.wps.converters.WPSConvertersUtils;
 import org.geotoolkit.wps.converters.WPSObjectConverter;
@@ -533,7 +533,7 @@ scan:   for (final ProcessBriefType processBriefType : processBrief) {
                                 LOGGER.log(Level.WARNING, "Can't find the converter for the default literal input value.");
                                 continue scan;
                             }
-                        } catch (NonconvertibleObjectException ex) {
+                        } catch (UnconvertibleObjectException ex) {
                             LOGGER.log(Level.WARNING, "Can't find the converter for the default literal input value.", ex);
                             continue scan;
                         }
@@ -542,7 +542,7 @@ scan:   for (final ProcessBriefType processBriefType : processBrief) {
                         try {
                             inputDescriptors.add(new DefaultParameterDescriptor(properties, clazz, null, converter.convert(defaultValue, null), null, null, unit, min != 0));
                             inputTypes.put(inputName, "literal");
-                        } catch (NonconvertibleObjectException ex2) {
+                        } catch (UnconvertibleObjectException ex2) {
                             LOGGER.log(Level.WARNING, "Can't convert the default literal input value.", ex2);
                             continue scan;
                         }
@@ -855,7 +855,7 @@ scan:   for (final ProcessBriefType processBriefType : processBrief) {
 
             return exec100.makeRequest();
 
-        } catch (NonconvertibleObjectException ex) {
+        } catch (UnconvertibleObjectException ex) {
             throw new ProcessException("Error during conversion step.", null, ex);
         }
     }
@@ -1087,7 +1087,7 @@ scan:   for (final ProcessBriefType processBriefType : processBrief) {
 
                     try {
                         outputs.parameter(output.getIdentifier().getValue()).setValue(WPSConvertersUtils.convertFromReference(output.getReference(), clazz));
-                    } catch (NonconvertibleObjectException ex) {
+                    } catch (UnconvertibleObjectException ex) {
                         throw new ProcessException(ex.getMessage(), null, ex);
                     }
 
@@ -1122,7 +1122,7 @@ scan:   for (final ProcessBriefType processBriefType : processBrief) {
 
                         try {
                             outputs.parameter(output.getIdentifier().getValue()).setValue(WPSConvertersUtils.convertFromComplex(outputType.getComplexData(), clazz));
-                        } catch (NonconvertibleObjectException ex) {
+                        } catch (UnconvertibleObjectException ex) {
                             throw new ProcessException(ex.getMessage(), null, ex);
                         }
 
@@ -1132,9 +1132,9 @@ scan:   for (final ProcessBriefType processBriefType : processBrief) {
                     } else if (outputType.getLiteralData() != null) {
                         try {
                             final LiteralDataType outputLiteral = outputType.getLiteralData();
-                            final ObjectConverter converter = ConverterRegistry.system().converter(String.class, clazz);
-                            outputs.parameter(output.getIdentifier().getValue()).setValue(converter.convert(outputLiteral.getValue()));
-                        } catch (NonconvertibleObjectException ex) {
+                            final ObjectConverter converter = ObjectConverters.find(String.class, clazz);
+                            outputs.parameter(output.getIdentifier().getValue()).setValue(converter.apply(outputLiteral.getValue()));
+                        } catch (UnconvertibleObjectException ex) {
                             throw new ProcessException("Error during literal output conversion.", null, ex);
                         }
                     }

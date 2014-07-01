@@ -68,7 +68,7 @@ import org.geotoolkit.referencing.IdentifiedObjects;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.storage.DataFileStore;
 import org.geotoolkit.temporal.object.TemporalUtilities;
-import org.geotoolkit.util.Converters;
+import org.apache.sis.util.ObjectConverters;
 import org.geotoolkit.util.StringUtilities;
 
 import org.geotoolkit.feature.Feature;
@@ -538,7 +538,7 @@ public class CSVFeatureStore extends AbstractFeatureStore implements DataFileSto
                             }
                         }
                     }else{
-                        value = Converters.convert(fields.get(i), att.getType().getBinding());
+                        value = ObjectConverters.convert(fields.get(i), att.getType().getBinding());
                     }
 
                     if(reuse == null){
@@ -638,7 +638,7 @@ public class CSVFeatureStore extends AbstractFeatureStore implements DataFileSto
                         }else if(value instanceof Boolean){
                             str = ((Boolean)value).toString();
                         }else{
-                            str = Converters.convert(value, String.class);
+                            str = ObjectConverters.convert(value, String.class);
                         }
                     }
                     writer.append(str);

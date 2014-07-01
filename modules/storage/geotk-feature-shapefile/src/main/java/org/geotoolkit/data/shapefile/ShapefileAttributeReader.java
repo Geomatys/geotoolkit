@@ -24,7 +24,7 @@ import org.geotoolkit.data.shapefile.lock.AccessManager;
 import org.geotoolkit.data.shapefile.shp.ShapefileReader;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.util.Converters;
+import org.apache.sis.util.ObjectConverters;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 
 /**
@@ -205,7 +205,7 @@ public class ShapefileAttributeReader {
         }else if(row != null) {
             if(narrowing[param]){
                 //must procede to a retype
-                return Converters.convert(row.read(index), metaData[param].getType().getBinding());
+                return ObjectConverters.convert(row.read(index), metaData[param].getType().getBinding());
             }else{
                 return row.read(index);
             }

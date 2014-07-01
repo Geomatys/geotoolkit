@@ -22,7 +22,7 @@ import java.util.Map;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.util.Converters;
+import org.apache.sis.util.ObjectConverters;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.geotoolkit.feature.type.AttributeDescriptor;
@@ -65,7 +65,7 @@ public class DefaultFeatureMapper implements FeatureMapper {
     public FeatureType getTargetType() {
         return typeTarget;
     }
-    
+
     @Override
     public Feature transform(final Feature feature) {
         builder.reset();
@@ -77,7 +77,7 @@ public class DefaultFeatureMapper implements FeatureMapper {
                 val = ((AttributeDescriptor) desc).getDefaultValue();
             }
             try {
-                builder.set(desc.getName(), Converters.convert(val, desc.getType().getBinding()));
+                builder.set(desc.getName(), ObjectConverters.convert(val, desc.getType().getBinding()));
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -144,7 +144,7 @@ public class DefaultFeatureMapper implements FeatureMapper {
 
         //normal attributs type, string, numbers, dates ...
         try{
-            return Converters.convert(value, target.getType().getBinding());
+            return ObjectConverters.convert(value, target.getType().getBinding());
         }catch(Exception ex){
             ex.printStackTrace();
             //could not convert between types

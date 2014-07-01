@@ -19,10 +19,8 @@ package org.geotoolkit.feature;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.geotoolkit.util.Converters;
+import org.apache.sis.util.ObjectConverters;
 
-import org.geotoolkit.feature.IllegalAttributeException;
-import org.geotoolkit.feature.Attribute;
 import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.geotoolkit.feature.type.AttributeType;
@@ -30,6 +28,8 @@ import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
 
+import org.apache.sis.util.UnconvertibleObjectException;
+import org.apache.sis.util.logging.Logging;
 import static org.apache.sis.util.ArgumentChecks.*;
 
 
@@ -185,13 +185,18 @@ public final class FeatureValidationUtilities {
             final Class target = descriptor.getType().getBinding();
             if (!target.isAssignableFrom(value.getClass())) {
                 // attempt to convert
-                Object converted = Converters.convert(value, target);
-                if (converted != null) {
-                    return converted;
+                try {
+                    Object converted = ObjectConverters.convert(value, target);
+                    if (converted != null) {
+                        return converted;
+                    }
+//                    else {
+//                        throw new IllegalArgumentException( descriptor.getLocalName()+ " could not convert "+value+" into "+target);
+//                    }
+                } catch (UnconvertibleObjectException e) {
+                    Logging.recoverableException(FeatureValidationUtilities.class, "parse", e);
+                    // TODO - do we really want to ignore?
                 }
-//                else {
-//                    throw new IllegalArgumentException( descriptor.getLocalName()+ " could not convert "+value+" into "+target);
-//                }
             }
         }
         return value;
@@ -329,5 +334,5 @@ public final class FeatureValidationUtilities {
             }
         }
     }
-    
+
 }

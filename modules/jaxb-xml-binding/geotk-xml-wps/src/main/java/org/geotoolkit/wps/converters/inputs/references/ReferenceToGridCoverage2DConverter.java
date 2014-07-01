@@ -30,7 +30,7 @@ import org.geotoolkit.coverage.io.CoverageIO;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.util.FileUtilities;
-import org.geotoolkit.util.converter.NonconvertibleObjectException;
+import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.io.WPSEncoding;
 import org.geotoolkit.wps.xml.v100.ReferenceType;
 
@@ -54,7 +54,7 @@ public final class ReferenceToGridCoverage2DConverter extends AbstractReferenceI
     }
 
     @Override
-    public Class<? extends GridCoverage2D> getTargetClass() {
+    public Class<GridCoverage2D> getTargetClass() {
         return GridCoverage2D.class;
     }
 
@@ -64,10 +64,10 @@ public final class ReferenceToGridCoverage2DConverter extends AbstractReferenceI
      * @return GridCoverage2D.
      */
     @Override
-    public GridCoverage2D convert(final ReferenceType source, final Map<String, Object> params) throws NonconvertibleObjectException {
+    public GridCoverage2D convert(final ReferenceType source, final Map<String, Object> params) throws UnconvertibleObjectException {
 
         final InputStream stream = getInputStreamFromReference(source);
-                
+
         String encoding = null;
         if(params != null && params.get(ENCODING) != null) {
             encoding = (String) params.get(ENCODING);
@@ -84,11 +84,11 @@ public final class ReferenceToGridCoverage2DConverter extends AbstractReferenceI
                         imageStream = ImageIO.createImageInputStream(is);
                     }
                 }
-                
+
             } else {
                 imageStream = ImageIO.createImageInputStream(stream);
             }
-            
+
             if (imageStream != null) {
                 final ImageReader reader;
                 if (source.getMimeType() != null) {
@@ -98,13 +98,13 @@ public final class ReferenceToGridCoverage2DConverter extends AbstractReferenceI
                 }
                 return (GridCoverage2D) CoverageIO.read(reader);
             } else {
-                throw new NonconvertibleObjectException("Error during image stream acquisition.");
+                throw new UnconvertibleObjectException("Error during image stream acquisition.");
             }
 
         } catch (IOException ex) {
-            throw new NonconvertibleObjectException("Reference coverage invalid input : IO", ex);
+            throw new UnconvertibleObjectException("Reference coverage invalid input : IO", ex);
         } catch (CoverageStoreException ex) {
-            throw new NonconvertibleObjectException("Reference coverage invalid input : Can't read coverage", ex);
+            throw new UnconvertibleObjectException("Reference coverage invalid input : Can't read coverage", ex);
         } finally {
             if (imageStream != null) {
                 try {
