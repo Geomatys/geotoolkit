@@ -344,7 +344,7 @@ public class ImageCoverageReader extends GridCoverageReader {
     public void setInput(final Object input) throws CoverageStoreException {
         final ImageReader oldReader = imageReader;
         try {
-            close();
+            reset();
             assert (oldReader == null) || (oldReader.getInput() == null) : oldReader;
             if (input != null) {
                 ImageReader newReader = null;
