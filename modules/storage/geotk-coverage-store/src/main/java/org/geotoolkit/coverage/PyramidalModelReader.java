@@ -29,6 +29,7 @@ import java.util.concurrent.CancellationException;
 import java.util.concurrent.TimeUnit;
 import javax.imageio.ImageReader;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.finder.CoverageFinder;
@@ -43,9 +44,11 @@ import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.math.XMath;
+import org.geotoolkit.metadata.iso.spatial.PixelTranslation;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.referencing.cs.DiscreteCoordinateSystemAxis;
+import org.geotoolkit.referencing.factory.ReferencingFactoryContainer;
 import org.geotoolkit.util.BufferedImageUtilities;
 import org.geotoolkit.util.Cancellable;
 import org.geotoolkit.util.ImageIOUtilities;
@@ -143,7 +146,8 @@ public class PyramidalModelReader extends GridCoverageReader{
                 final Dimension tileSize = mosaic.getTileSize();
 
                 //we expect no rotation
-                final MathTransform gridToCRS = AbstractGridMosaic.getTileGridToCRS2D(mosaic, new Point(0, 0));
+                MathTransform gridToCRS = AbstractGridMosaic.getTileGridToCRS2D(mosaic, new Point(0, 0));
+                gridToCRS = PixelTranslation.translate(gridToCRS, PixelInCell.CELL_CORNER,PixelInCell.CELL_CENTER);
 
                 /* Check for additional axis. If we've got a discrete CRS, we will be able to get the axis envelope by
                  * just analysing the axis from one mosaic. Otherwise, we'll have to get upper-left points of each mosaic
@@ -225,7 +229,7 @@ public class PyramidalModelReader extends GridCoverageReader{
                 }
                 final GeneralGridEnvelope ge = new GeneralGridEnvelope(low,high,false);
 
-                gridGeom = new GeneralGridGeometry(ge, PixelInCell.CELL_CORNER, gridToCRSds, crs);
+                gridGeom = new GeneralGridGeometry(ge, PixelInCell.CELL_CENTER, gridToCRSds, crs);
             }
 
         }else{
@@ -581,7 +585,9 @@ public class PyramidalModelReader extends GridCoverageReader{
     private GridCoverage rebuildCoverage(TreeMap<Double,Object> groups, Envelope wantedEnv, boolean deferred) throws CoverageStoreException{
         final CoordinateReferenceSystem crs = wantedEnv.getCoordinateReferenceSystem();
         final List<GridCoverageStack.Element> elements = new ArrayList<>();
-        for(Entry<Double,Object> entry : groups.entrySet()){
+        final List<Entry<Double,Object>> entries = new ArrayList<>(groups.entrySet());
+        for(int k=0,kn=entries.size();k<kn;k++){
+            final Entry<Double,Object> entry = entries.get(k);
             final Double d = entry.getKey();
             final Object obj = entry.getValue();
             
@@ -590,7 +596,7 @@ public class PyramidalModelReader extends GridCoverageReader{
                 subCoverage = readSlice((GridMosaic)obj, wantedEnv, deferred);
             }else if(obj instanceof TreeMap){
                 //remove a dimension and aggregate sub coverage cube
-                final CoordinateReferenceSystem subCrs = CRS.getSubCRS(crs, 0, crs.getCoordinateSystem().getDimension()-1);
+                final CoordinateReferenceSystem subCrs = CRS.getOrCreateSubCRS(crs, 0, crs.getCoordinateSystem().getDimension()-1);
                 final GeneralEnvelope subEnv = new GeneralEnvelope(subCrs);
                 for(int i=0,n=subEnv.getDimension();i<n;i++){
                     subEnv.setRange(i, wantedEnv.getMinimum(i), wantedEnv.getMaximum(i));
@@ -599,7 +605,34 @@ public class PyramidalModelReader extends GridCoverageReader{
             }else{
                 throw new CoverageStoreException("Found an object which is not a Coverage or a Map group, should not happen : "+obj);
             }
-            elements.add(new CoverageStack.Adapter(subCoverage, NumberRange.create(d, true, d, true)));
+            
+            //calculate the range
+            double min;
+            double max;
+            if(k==0){
+                if(kn==1){
+                    //a single element, use a range of 1
+                    min = d - 0.5;
+                    max = d + 0.5;
+                }else{
+                    final double nextD = entries.get(k+1).getKey();
+                    final double diff = (nextD - d) / 2.0;
+                    min = d-diff;
+                    max = d+diff;
+                }
+            }else if(k==kn-1){
+                final double previousD = entries.get(k-1).getKey();
+                final double diff = (d - previousD) / 2.0;
+                min = d-diff;
+                max = d+diff;
+            }else{
+                final double prevD = entries.get(k-1).getKey();
+                final double nextD = entries.get(k+1).getKey();
+                min = d - (d - prevD) / 2.0;
+                max = d + (nextD - d) / 2.0;
+            }
+            
+            elements.add(new CoverageStack.Adapter(subCoverage, NumberRange.create(min, true, max, false), d));
         }
         
         try {

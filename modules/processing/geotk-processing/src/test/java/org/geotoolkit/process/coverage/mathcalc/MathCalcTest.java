@@ -216,7 +216,6 @@ public class MathCalcTest {
      * @throws Exception 
      */
     @Test
-    @Ignore
     public void coverage4DTest() throws Exception{
         
         //create a small pyramid

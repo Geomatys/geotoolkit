@@ -194,7 +194,8 @@ public abstract class AbstractGridMosaic implements GridMosaic{
     }
 
     /**
-     * Grid to CRS 2D part.
+     * Grid to CRS 2D part. 
+     * Transform correspond to the CORNER.
      *
      * @param mosaic not null
      * @param location not null

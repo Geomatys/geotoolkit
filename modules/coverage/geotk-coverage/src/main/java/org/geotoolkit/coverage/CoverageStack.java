@@ -122,6 +122,7 @@ import static org.geotoolkit.internal.InternalUtilities.debugEquals;
  * <var>z</var> values.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
+ * @author Johann Sorel (Geomatys)
  * @version 3.16
  *
  * @since 2.1
@@ -170,6 +171,19 @@ public class CoverageStack extends AbstractCoverage {
          */
         String getName() throws IOException;
 
+        /**
+         * Returns the <var>z</var> center for the coverage.
+         * This information is mandatory.
+         *
+         * The Z center may not necessarily be at the center of the Z range.
+         * It is common to have coverage with non linear values for additional 
+         * dimensions like time or elevation.
+         *
+         * @return The Z range center
+         * @throws IOException if an I/O operation was required but failed.
+         */
+        Number getZCenter() throws IOException;
+        
         /**
          * Returns the minimum and maximum <var>z</var> values for the coverage.
          * This information is mandatory.
@@ -268,6 +282,12 @@ public class CoverageStack extends AbstractCoverage {
          * determined. If {@code null}, the range must be computed by the {@link #getZRange} method.
          */
         protected NumberRange<?> range;
+        
+        /**
+         * Center <var>z</var> value for this element, or {@code null} if not yet
+         * determined. If {@code null}, the center must will computed as the center of the Z range.
+         */
+        protected Number center;
 
         /**
          * Constructs a new adapter for the specified coverage and <var>z</var> values.
@@ -279,8 +299,23 @@ public class CoverageStack extends AbstractCoverage {
          *                 envelope.
          */
         public Adapter(final Coverage coverage, final NumberRange<?> range) {
+            this(coverage,range,null);
+        }
+        
+        /**
+         * Constructs a new adapter for the specified coverage and <var>z</var> values.
+         *
+         * @param coverage The coverage to wrap. Can be {@code null} only if this constructor
+         *                 is invoked from a sub-class constructor.
+         * @param range    The minimum and maximum <var>z</var> values for this element, or
+         *                 {@code null} to infers it from the last dimension in the coverage
+         *                 envelope.
+         * @param center The center of the Z range or {@code null} for range middle.
+         */
+        public Adapter(final Coverage coverage, final NumberRange<?> range, Number center) {
             this.coverage = coverage;
             this.range    = range;
+            this.center   = center;
             if (getClass() == Adapter.class) {
                 if (coverage == null) {
                     throw new IllegalArgumentException(
@@ -301,6 +336,31 @@ public class CoverageStack extends AbstractCoverage {
                 coverage = ((AbstractCoverage) coverage).getName();
             }
             return coverage.toString();
+        }
+
+        @Override
+        public Number getZCenter() throws IOException {
+            if(center==null){
+                final NumberRange<?> range = getZRange();
+                if (range != null) {
+                    final Number lower = range.getMinValue();
+                    final Number upper = range.getMaxValue();
+                    if (lower != null) {
+                        if (upper != null) {
+                            center = 0.5 * (lower.doubleValue() + upper.doubleValue());
+                        } else {
+                            center = lower.doubleValue();
+                        }
+                    } else if (upper != null) {
+                        center = upper.doubleValue();
+                    }else{
+                        center = NaN;
+                    }
+                }else{
+                    center = NaN;
+                }
+            }
+            return center;
         }
 
         /**
@@ -622,7 +682,7 @@ public class CoverageStack extends AbstractCoverage {
         }
         this.numSampleDimensions = (sampleDimensions != null) ? sampleDimensions.length : 0;
         this.sampleDimensions = sampleDimensionMismatch ? null : sampleDimensions;
-        zCRS = CRS.getSubCRS(crs, zDimension, zDimension+1);
+        zCRS = CRS.getOrCreateSubCRS(crs, zDimension, zDimension+1);
     }
 
     /**
@@ -752,7 +812,7 @@ public class CoverageStack extends AbstractCoverage {
          * specified in the javadoc). A coordinate operation is cached during the loop for
          * transforming envelopes, if needed.
          */
-        final CoordinateReferenceSystem reducedCRS = CRS.getSubCRS(crs, 0, zDimension);
+        final CoordinateReferenceSystem reducedCRS = CRS.getOrCreateSubCRS(crs, 0, zDimension);
         CoordinateOperation operation = null;
         for (int j=0; j<elements.length; j++) {
             final Element element = elements[j];
@@ -863,28 +923,7 @@ public class CoverageStack extends AbstractCoverage {
      * over the time), then this method returns {@link Double#NaN}.
      */
     private static double getZ(final Element entry) throws IOException {
-        return getZ(entry.getZRange());
-    }
-
-    /**
-     * Returns the <var>z</var> value in the middle of the specified range.
-     * If the range is null, then this method returns {@link Double#NaN}.
-     */
-    private static double getZ(final NumberRange<?> range) {
-        if (range != null) {
-            final Number lower = range.getMinValue();
-            final Number upper = range.getMaxValue();
-            if (lower != null) {
-                if (upper != null) {
-                    return 0.5 * (lower.doubleValue() + upper.doubleValue());
-                } else {
-                    return lower.doubleValue();
-                }
-            } else if (upper != null) {
-                return upper.doubleValue();
-            }
-        }
-        return NaN;
+        return entry.getZCenter().doubleValue();
     }
 
     /**
@@ -1059,7 +1098,7 @@ public class CoverageStack extends AbstractCoverage {
          */
         final CoordinateReferenceSystem sourceCRS;
         assert debugEquals((sourceCRS = coverage.getCoordinateReferenceSystem()),
-                CRS.getSubCRS(crs, 0, sourceCRS.getCoordinateSystem().getDimension())) : sourceCRS;
+                CRS.getOrCreateSubCRS(crs, 0, sourceCRS.getCoordinateSystem().getDimension())) : sourceCRS;
         assert coverage.getNumSampleDimensions() == numSampleDimensions : coverage;
         return coverage;
     }
@@ -1075,7 +1114,7 @@ public class CoverageStack extends AbstractCoverage {
         final NumberRange<?> zRange = element.getZRange();
         logLoading(Vocabulary.Keys.LOADING_IMAGE_1, new String[] {element.getName()});
         lower      = upper      = load(element);
-        lowerZ     = upperZ     = getZ(zRange);
+        lowerZ     = upperZ     = getZ(element);
         lowerRange = upperRange = zRange;
     }
 
@@ -1096,8 +1135,8 @@ public class CoverageStack extends AbstractCoverage {
 
         this.lower      = lower; // Set only when BOTH images are OK.
         this.upper      = upper;
-        this.lowerZ     = getZ(lowerRange);
-        this.upperZ     = getZ(upperRange);
+        this.lowerZ     = getZ(lowerElement);
+        this.upperZ     = getZ(upperElement);
         this.lowerRange = lowerRange;
         this.upperRange = upperRange;
     }
@@ -1182,7 +1221,7 @@ public class CoverageStack extends AbstractCoverage {
                     if (interpolationEnabled) {
                         load(lowerElement, upperElement);
                     } else {
-                        if (Math.abs(getZ(upperRange)-z) > Math.abs(z-getZ(lowerRange))) {
+                        if (Math.abs(getZ(upperElement)-z) > Math.abs(z-getZ(lowerElement))) {
                             index--;
                         }
                         load(index);

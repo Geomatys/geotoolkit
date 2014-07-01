@@ -23,6 +23,7 @@ import java.awt.geom.Rectangle2D;
 import javax.imageio.IIOException;
 import java.io.File;
 import java.io.IOException;
+import static java.lang.Double.NaN;
 import java.net.URL;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -251,6 +252,28 @@ final class GridCoverageEntry extends DefaultEntry implements GridCoverageRefere
         return getIdentifier().geometry.standardEnvelope.getBounds2D();
     }
 
+    @Override
+    public Number getZCenter() throws IOException {
+        final NumberRange<?> range = getZRange();
+        if (range != null) {
+            final Number lower = range.getMinValue();
+            final Number upper = range.getMaxValue();
+            if (lower != null) {
+                if (upper != null) {
+                    return 0.5 * (lower.doubleValue() + upper.doubleValue());
+                } else {
+                    return lower.doubleValue();
+                }
+            } else if (upper != null) {
+                return upper.doubleValue();
+            }else{
+                return NaN;
+            }
+        }else{
+            return NaN;
+        }
+    }
+    
     /**
      * Returns the range of values in the third dimension, which may be vertical or temporal.
      * This method returns the range in units of the database vertical or temporal CRS, which

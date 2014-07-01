@@ -83,7 +83,6 @@ public class GridCoverageStack extends CoverageStack implements GridCoverage {
         int k=0;
         for(Element element : elements){
             final GridCoverage coverage = (GridCoverage) element.getCoverage(null);
-            final CoordinateReferenceSystem covcrs = coverage.getCoordinateReferenceSystem();
             final GridGeometry gg = coverage.getGridGeometry();
             final GridEnvelope ext = gg.getExtent();
             final MathTransform trs = gg.getGridToCRS();
@@ -145,7 +144,7 @@ public class GridCoverageStack extends CoverageStack implements GridCoverage {
 
                 lastAxisSteps[k] = coord[gridUpper.length-1];
             }else{
-                lastAxisSteps[k] = element.getZRange().getMinDouble();
+                lastAxisSteps[k] = element.getZCenter().doubleValue();
             }
 
             //increment number of slices

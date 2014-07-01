@@ -20,6 +20,7 @@ package org.geotoolkit.coverage.sql;
 import java.io.IOException;
 import java.io.Serializable;
 import java.awt.geom.Rectangle2D;
+import static java.lang.Double.NaN;
 import java.util.concurrent.CancellationException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 
@@ -123,6 +124,28 @@ class GridCoverageDecorator implements GridCoverageReference, Serializable {
         return reference.getXYRange();
     }
 
+    @Override
+    public Number getZCenter() throws IOException {
+        final NumberRange<?> range = getZRange();
+        if (range != null) {
+            final Number lower = range.getMinValue();
+            final Number upper = range.getMaxValue();
+            if (lower != null) {
+                if (upper != null) {
+                    return 0.5 * (lower.doubleValue() + upper.doubleValue());
+                } else {
+                    return lower.doubleValue();
+                }
+            } else if (upper != null) {
+                return upper.doubleValue();
+            }else{
+                return NaN;
+            }
+        }else{
+            return NaN;
+        }
+    }
+    
     /**
      * Forwards the call to the wrapped {@linkplain #reference}.
      */
