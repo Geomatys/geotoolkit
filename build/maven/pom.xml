@@ -18,8 +18,9 @@
   </parent>
 
 
-	<!-- =========================================================== Module 
-		Description =========================================================== -->
+	<!-- ===========================================================
+         Module	Description
+         =========================================================== -->
   <groupId>org.geotoolkit.project</groupId>
   <artifactId>maven</artifactId>
   <packaging>pom</packaging>
@@ -29,8 +30,9 @@
   </description>
 
 
-	<!-- =========================================================== Developers 
-		and Contributors =========================================================== -->
+	<!-- =========================================================== 
+         Developers and Contributors
+         =========================================================== -->
   <developers>
     <developer>
       <name>Martin Desruisseaux</name>
@@ -65,7 +67,7 @@
   <build>
     <pluginManagement>
       <plugins>
-				<!--This plugin's configuration is used to store Eclipse m2e settings 
+      <!--This plugin's configuration is used to store Eclipse m2e settings 
 					only. It has no influence on the Maven build itself. -->
         <plugin>
           <groupId>org.eclipse.m2e</groupId>
@@ -96,8 +98,9 @@
     </pluginManagement>
 
   </build>
-	<!-- =========================================================== Modules 
-		included in the build =========================================================== -->
+	<!-- ===========================================================
+          Modules included in the build
+         =========================================================== -->
   <modules>
     <module>geotk-resource-compiler</module>
     <module>geotk-unopkg</module>
