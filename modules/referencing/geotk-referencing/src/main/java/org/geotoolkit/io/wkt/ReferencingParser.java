@@ -58,7 +58,9 @@ import org.geotoolkit.referencing.operation.DefiningConversion;
 import org.geotoolkit.referencing.factory.ReferencingFactoryContainer;
 import org.apache.sis.measure.Units;
 import org.geotoolkit.resources.Errors;
+import org.apache.sis.internal.referencing.VerticalDatumTypes;
 
+import org.apache.sis.referencing.CommonCRS;
 import static java.util.Collections.singletonMap;
 import static javax.measure.unit.SI.METRE;
 import static javax.measure.unit.SI.RADIAN;
@@ -66,10 +68,7 @@ import static javax.measure.unit.NonSI.DEGREE_ANGLE;
 
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 import static org.apache.sis.util.collection.Containers.hashMapCapacity;
-import static org.geotoolkit.referencing.datum.DefaultGeodeticDatum.WGS84;
-import static org.geotoolkit.referencing.datum.DefaultPrimeMeridian.GREENWICH;
-import static org.geotoolkit.referencing.datum.DefaultGeodeticDatum.BURSA_WOLF_KEY;
-import static org.geotoolkit.referencing.datum.DefaultVerticalDatum.getVerticalDatumTypeFromLegacyCode;
+import static org.apache.sis.referencing.datum.DefaultGeodeticDatum.BURSA_WOLF_KEY;
 
 
 /**
@@ -420,7 +419,7 @@ public class ReferencingParser extends MathTransformParser {
                 case "SPHEROID":    return parseSpheroid  (element);
                 case "VERT_DATUM":  return parseVertDatum (element);
                 case "LOCAL_DATUM": return parseLocalDatum(element);
-                case "DATUM":       return parseDatum     (element, GREENWICH);
+                case "DATUM":       return parseDatum     (element, CommonCRS.WGS84.primeMeridian());
                 /*
                  * Note: the following cases are copied from parseCoordinateReferenceSystem(Element)
                  * method in order to take advantage of a single switch statement. If new cases are
@@ -668,7 +667,7 @@ public class ReferencingParser extends MathTransformParser {
         if (element == null) {
             return null;
         }
-        final BursaWolfParameters info = new BursaWolfParameters(WGS84, null);
+        final BursaWolfParameters info = new BursaWolfParameters(CommonCRS.WGS84.datum(), null);
         info.tX = element.pullDouble("dx");
         info.tY = element.pullDouble("dy");
         info.tZ = element.pullDouble("dz");
@@ -822,7 +821,7 @@ public class ReferencingParser extends MathTransformParser {
         BursaWolfParameters toWGS84    = parseToWGS84(element); // Optional; may be null.
         Map<String,Object>  properties = parseAuthority(element, name);
         if (ALLOW_ORACLE_SYNTAX && (toWGS84 == null) && (element.peek() instanceof Number)) {
-            toWGS84    = new BursaWolfParameters(WGS84, null);
+            toWGS84    = new BursaWolfParameters(CommonCRS.WGS84.datum(), null);
             toWGS84.tX = element.pullDouble("dx");
             toWGS84.tY = element.pullDouble("dy");
             toWGS84.tZ = element.pullDouble("dz");
@@ -862,7 +861,7 @@ public class ReferencingParser extends MathTransformParser {
         final int       datum = element.pullInteger("datum");
         final Map<String,?> properties = parseAuthority(element, name);
         element.close();
-        final VerticalDatumType type = getVerticalDatumTypeFromLegacyCode(datum);
+        final VerticalDatumType type = VerticalDatumTypes.fromLegacy(datum);
         if (type == null) {
             throw element.parseFailed(null, Errors.format(Errors.Keys.UNKNOWN_TYPE_1, datum));
         }

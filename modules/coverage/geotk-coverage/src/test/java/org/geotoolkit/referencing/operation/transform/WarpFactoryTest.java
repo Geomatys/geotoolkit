@@ -36,11 +36,11 @@ import org.geotoolkit.io.TableWriter;
 import org.apache.sis.math.Statistics;
 import org.geotoolkit.geometry.Envelopes;
 import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.referencing.datum.DefaultEllipsoid;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.geotoolkit.referencing.operation.builder.GridToEnvelopeMapper;
 import org.geotoolkit.test.referencing.ReferencingTestBase;
 
+import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.test.DependsOn;
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -106,8 +106,8 @@ public final strictfp class WarpFactoryTest extends ReferencingTestBase {
     private static MathTransform2D createProjection(final String name) throws FactoryException {
         final MathTransformFactory factory = FactoryFinder.getMathTransformFactory(null);
         final ParameterValueGroup param = factory.getDefaultParameters(name);
-        param.parameter("semi_major").setValue(DefaultEllipsoid.WGS84.getSemiMajorAxis());
-        param.parameter("semi_minor").setValue(DefaultEllipsoid.WGS84.getSemiMinorAxis());
+        param.parameter("semi_major").setValue(CommonCRS.WGS84.ellipsoid().getSemiMajorAxis());
+        param.parameter("semi_minor").setValue(CommonCRS.WGS84.ellipsoid().getSemiMinorAxis());
         param.parameter("latitude_of_origin").setValue(20);
         return (MathTransform2D) factory.createParameterizedTransform(param);
     }

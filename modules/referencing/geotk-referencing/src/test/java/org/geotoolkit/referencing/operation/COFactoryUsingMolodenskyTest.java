@@ -56,9 +56,9 @@ import org.apache.sis.referencing.operation.transform.AbstractMathTransform;
 
 import static org.geotoolkit.referencing.crs.DefaultGeographicCRS.WGS84;
 import static org.geotoolkit.referencing.crs.DefaultGeographicCRS.WGS84_3D;
-import static org.geotoolkit.referencing.crs.DefaultEngineeringCRS.GENERIC_2D;
-import static org.geotoolkit.referencing.crs.DefaultEngineeringCRS.CARTESIAN_2D;
-import static org.geotoolkit.referencing.crs.DefaultEngineeringCRS.CARTESIAN_3D;
+import static org.geotoolkit.referencing.crs.PredefinedCRS.GENERIC_2D;
+import static org.geotoolkit.referencing.crs.PredefinedCRS.CARTESIAN_2D;
+import static org.geotoolkit.referencing.crs.PredefinedCRS.CARTESIAN_3D;
 import static org.geotoolkit.referencing.Commons.isEpsgFactoryAvailable;
 import static org.geotoolkit.metadata.iso.quality.AbstractPositionalAccuracy.*;
 

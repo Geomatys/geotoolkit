@@ -18,26 +18,25 @@ package org.geotoolkit.index.tree.hilbert;
 
 import java.io.IOException;
 import org.geotoolkit.index.tree.StoreIndexException;
-import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;
+import org.geotoolkit.referencing.crs.PredefinedCRS;
 
 /**
  * Create a generic HilbertRTree Test suite where Tree is store on hard drive in 2D Cartesian space.<br/>
  * Test is effectuate with file already filled by tree architecture.
  *
  * @author Remi Marechal (Geomatys).
- * @see DefaultEngineeringCRS#CARTESIAN_2D
+ * @see PredefinedCRS#CARTESIAN_2D
  */
 public final class ReadeableHilbert2DTest extends ReadeableHilbertRTreeTest {
 
     /**
      * Create a generic HilbertRTree Test suite with file already filled by tree architecture in 2D cartesian space.
-     * 
-     * @param crs
+     *
      * @throws IOException if problem during head reading from already filled file.
      * @throws StoreIndexException if file isn't already filled by {@link HilbertRTree} implementation.
      * @throws ClassNotFoundException if there is a problem during {@link CoordinateReferenceSystem} invert serialization.
      */
     public ReadeableHilbert2DTest() throws StoreIndexException, IOException, ClassNotFoundException {
-        super(DefaultEngineeringCRS.CARTESIAN_2D);
+        super(PredefinedCRS.CARTESIAN_2D);
     }
 }

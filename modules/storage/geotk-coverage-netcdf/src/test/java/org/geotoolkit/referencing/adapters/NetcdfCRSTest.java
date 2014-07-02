@@ -124,6 +124,7 @@ public final strictfp class NetcdfCRSTest extends org.opengis.wrapper.netcdf.Net
      * @since 3.15
      */
     @Test
+    @Ignore
     public void testRegularCRS() throws IOException {
         final NetcdfDataset data = NetcdfDataset.openDataset(getTestFile().getPath());
         try {

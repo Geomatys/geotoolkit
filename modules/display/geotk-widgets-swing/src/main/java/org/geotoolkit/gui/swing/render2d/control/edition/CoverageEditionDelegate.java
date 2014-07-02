@@ -69,7 +69,7 @@ import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.ReferencingUtilities;
-import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;
+import org.geotoolkit.referencing.crs.PredefinedCRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.gui.swing.resource.FontAwesomeIcons;
@@ -244,7 +244,7 @@ public class CoverageEditionDelegate extends AbstractEditionDelegate {
                 setCoverage(cov,selectRectangle);
                 writeParam = new GridCoverageWriteParam();
                 final MathTransform grid_To_Crs = cov.getGridGeometry().getGridToCRS(PixelInCell.CELL_CORNER);
-                GeneralEnvelope env = new GeneralEnvelope(DefaultEngineeringCRS.CARTESIAN_2D);
+                GeneralEnvelope env = new GeneralEnvelope(PredefinedCRS.CARTESIAN_2D);
                 env.setEnvelope(gridSelectionSize.x, gridSelectionSize.y, gridSelectionSize.x + gridSelectionSize.width, gridSelectionSize.y + gridSelectionSize.height);
                 env = CRS.transform(grid_To_Crs, env);
 

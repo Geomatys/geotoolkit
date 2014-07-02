@@ -37,13 +37,17 @@ import org.apache.sis.internal.referencing.AxisDirections;
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.lang.Workaround;
 import org.apache.sis.referencing.CRS;
+import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.referencing.cs.AxisRangeType;
 import org.geotoolkit.referencing.cs.DefaultEllipsoidalCS;
 import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
-import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
+import org.apache.sis.referencing.datum.DefaultGeodeticDatum;
 import org.geotoolkit.measure.Measure;
 import org.geotoolkit.resources.Errors;
+
+import static java.util.Collections.singletonMap;
+import static org.opengis.referencing.IdentifiedObject.NAME_KEY;
 
 
 /**
@@ -347,7 +351,8 @@ public final class CRSUtilities extends Static {
         }
         GeodeticDatum geoDatum = (GeodeticDatum) datum;
         if (geoDatum.getPrimeMeridian().getGreenwichLongitude() != 0) {
-            geoDatum = new DefaultGeodeticDatum(geoDatum.getName().getCode(), geoDatum.getEllipsoid());
+            geoDatum = new DefaultGeodeticDatum(singletonMap(NAME_KEY, geoDatum.getName().getCode()),
+                    geoDatum.getEllipsoid(), CommonCRS.WGS84.primeMeridian());
         } else if (crs instanceof GeographicCRS) {
             if (org.geotoolkit.referencing.CRS.equalsIgnoreMetadata(DefaultEllipsoidalCS.GEODETIC_2D, crs.getCoordinateSystem())) {
                 return (GeographicCRS) crs;

@@ -140,7 +140,7 @@ final class PredefinedCS extends Static implements Comparator<CoordinateSystem> 
         if (cs instanceof VerticalCS) {
             switch (dimension) {
                 case 1: {
-                    return DefaultVerticalCS.ELLIPSOIDAL_HEIGHT;
+                    return CommonCRS.Vertical.ELLIPSOIDAL.crs().getCoordinateSystem();
                 }
             }
         }

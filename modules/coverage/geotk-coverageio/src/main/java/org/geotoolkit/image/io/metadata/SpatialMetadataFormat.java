@@ -62,11 +62,11 @@ import org.apache.sis.metadata.KeyNamePolicy;
 import org.apache.sis.metadata.MetadataStandard;
 import org.geotoolkit.referencing.cs.*;
 import org.geotoolkit.referencing.crs.*;
-import org.geotoolkit.referencing.datum.*;
 import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.gui.swing.tree.TreeTableNode;
 import org.geotoolkit.internal.image.io.DataTypes;
 import org.geotoolkit.resources.Errors;
+import org.apache.sis.referencing.CommonCRS;
 
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 
@@ -992,15 +992,15 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
     public <T> T getDefaultValue(final Class<T> type) {
         final IdentifiedObject object;
         if (PrimeMeridian.class.isAssignableFrom(type)) {
-            object = DefaultPrimeMeridian.GREENWICH;
+            object = CommonCRS.WGS84.primeMeridian();
         } else if (Ellipsoid.class.isAssignableFrom(type)) {
-            object = DefaultEllipsoid.WGS84;
+            object = CommonCRS.WGS84.ellipsoid();
         } else if (GeodeticDatum.class.isAssignableFrom(type)) {
-            object = DefaultGeodeticDatum.WGS84;
+            object = CommonCRS.WGS84.datum();
         } else if (VerticalDatum.class.isAssignableFrom(type)) {
-            object = DefaultVerticalDatum.GEOIDAL;
+            object = CommonCRS.Vertical.MEAN_SEA_LEVEL.datum();
         } else if (EngineeringDatum.class.isAssignableFrom(type)) {
-            object = DefaultEngineeringDatum.UNKNOWN;
+            object = PredefinedCRS.CARTESIAN_2D.getDatum(); // Unknown datum.
         } else if (EllipsoidalCS.class.isAssignableFrom(type)) {
             object = DefaultEllipsoidalCS.GEODETIC_2D;
         } else if (CartesianCS.class.isAssignableFrom(type)) {

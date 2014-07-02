@@ -43,21 +43,23 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.util.ComparisonMode;
 import org.apache.sis.util.logging.Logging;
+import org.apache.sis.util.Utilities;
 import org.apache.sis.util.Classes;
 import org.apache.sis.metadata.iso.extent.Extents;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
-import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;
+import org.geotoolkit.referencing.crs.PredefinedCRS;
 import org.geotoolkit.referencing.cs.DefaultCartesianCS;
 import org.geotoolkit.referencing.cs.DefaultEllipsoidalCS;
 import org.apache.sis.referencing.datum.BursaWolfParameters;
-import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
+import org.apache.sis.referencing.datum.DefaultGeodeticDatum;
 import org.apache.sis.referencing.operation.matrix.Matrix4;
 import org.apache.sis.referencing.operation.matrix.Matrices;
 import org.apache.sis.internal.referencing.AxisDirections;
 import org.geotoolkit.internal.referencing.OperationContext;
 import org.geotoolkit.internal.referencing.VerticalDatumTypes;
+import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.operation.matrix.MatrixSIS;
 
 import static java.util.Collections.singletonList;
@@ -361,10 +363,10 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
         ////     Various CS --> Generic      ////
         ////                                 ////
         /////////////////////////////////////////
-        if (sourceCRS == DefaultEngineeringCRS.GENERIC_2D ||
-            targetCRS == DefaultEngineeringCRS.GENERIC_2D ||
-            sourceCRS == DefaultEngineeringCRS.GENERIC_3D ||
-            targetCRS == DefaultEngineeringCRS.GENERIC_3D)
+        if (sourceCRS == PredefinedCRS.GENERIC_2D ||
+            targetCRS == PredefinedCRS.GENERIC_2D ||
+            sourceCRS == PredefinedCRS.GENERIC_3D ||
+            targetCRS == PredefinedCRS.GENERIC_3D)
         {
             final int dimSource = getDimension(sourceCRS);
             final int dimTarget = getDimension(targetCRS);
@@ -488,7 +490,7 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
 
         /** Wrap the specified datum. */
         public TemporaryDatum(final GeodeticDatum datum) {
-            super(getTemporaryName(datum), datum.getEllipsoid());
+            super(getTemporaryName(datum), datum.getEllipsoid(), CommonCRS.WGS84.primeMeridian());
             this.datum = datum;
         }
 
@@ -794,35 +796,40 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
          */
         if (molodenskyMethod != null) {
             ReferenceIdentifier identifier = DATUM_SHIFT;
-            BursaWolfParameters bursaWolf  = null;
+            BursaWolfParameters bursaWolf = null;
             if (sourceDatum instanceof DefaultGeodeticDatum) {
-                bursaWolf = ((DefaultGeodeticDatum) sourceDatum).getBursaWolfParameters(targetDatum);
-            }
-            if (bursaWolf == null) {
-                /*
-                 * No direct path found. Try the more expensive matrix calculation, and
-                 * see if we can retrofit the result in a BursaWolfParameters object.
-                 */
-                final Matrix shift = DefaultGeodeticDatum.getAffineTransform(sourceDatum, targetDatum);
-                if (shift != null) try {
-                    bursaWolf = new BursaWolfParameters(targetDatum, null);
-                    bursaWolf.setPositionVectorTransformation(shift, 1E-4);
-                } catch (IllegalArgumentException ignore) {
+                for (final BursaWolfParameters param : ((DefaultGeodeticDatum) sourceDatum).getBursaWolfParameters()) {
+                    if (Utilities.deepEquals(targetDatum, param.getTargetDatum(), ComparisonMode.IGNORE_METADATA)) {
+                        bursaWolf = param;
+                        break;
+                    }
+                }
+                if (bursaWolf == null) {
                     /*
-                     * A matrix exists, but we are unable to retrofit it as a set of Bursa-Wolf
-                     * parameters. Do NOT set the 'bursaWolf' variable: it must stay null, which
-                     * means to perform the datum shift using geocentric coordinates.
+                     * No direct path found. Try the more expensive matrix calculation, and
+                     * see if we can retrofit the result in a BursaWolfParameters object.
                      */
-                } else if (lenientDatumShift) {
-                    /*
-                     * No BursaWolf parameters available. No affine transform to be applied in
-                     * geocentric coordinates are available neither (the "shift" matrix above),
-                     * so performing a geocentric transformation will not help. But the user wants
-                     * us to perform the datum shift anyway. We will notify the user through
-                     * positional accuracy, which is set indirectly through ELLIPSOID_SHIFT.
-                     */
-                    bursaWolf  = new BursaWolfParameters(targetDatum, null);
-                    identifier = ELLIPSOID_SHIFT;
+                    final Matrix shift = ((DefaultGeodeticDatum) sourceDatum).getPositionVectorTransformation(targetDatum, null);
+                    if (shift != null) try {
+                        bursaWolf = new BursaWolfParameters(targetDatum, null);
+                        bursaWolf.setPositionVectorTransformation(shift, 1E-4);
+                    } catch (IllegalArgumentException ignore) {
+                        /*
+                         * A matrix exists, but we are unable to retrofit it as a set of Bursa-Wolf
+                         * parameters. Do NOT set the 'bursaWolf' variable: it must stay null, which
+                         * means to perform the datum shift using geocentric coordinates.
+                         */
+                    } else if (lenientDatumShift) {
+                        /*
+                         * No BursaWolf parameters available. No affine transform to be applied in
+                         * geocentric coordinates are available neither (the "shift" matrix above),
+                         * so performing a geocentric transformation will not help. But the user wants
+                         * us to perform the datum shift anyway. We will notify the user through
+                         * positional accuracy, which is set indirectly through ELLIPSOID_SHIFT.
+                         */
+                        bursaWolf  = new BursaWolfParameters(targetDatum, null);
+                        identifier = ELLIPSOID_SHIFT;
+                    }
                 }
             }
             /*
@@ -1043,9 +1050,12 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
         final MatrixSIS matrix;
         ReferenceIdentifier identifier = DATUM_SHIFT;
         try {
-            Matrix datumShift = DefaultGeodeticDatum.getAffineTransform(
-                                    TemporaryDatum.unwrap(sourceDatum),
-                                    TemporaryDatum.unwrap(targetDatum));
+            Matrix datumShift = null;
+            final GeodeticDatum datum = TemporaryDatum.unwrap(sourceDatum);
+            if (datum instanceof DefaultGeodeticDatum) {
+                datumShift = ((DefaultGeodeticDatum) datum).getPositionVectorTransformation(
+                        TemporaryDatum.unwrap(targetDatum), null);
+            }
             if (datumShift == null) {
                 if (lenientDatumShift) {
                     datumShift = new Matrix4(); // Identity transform.
@@ -1583,15 +1593,21 @@ search: for (int j=0; j<targets.size(); j++) {
             return false;
         }
         if (source instanceof DefaultGeodeticDatum) {
-            final BursaWolfParameters param = ((DefaultGeodeticDatum) source).getBursaWolfParameters(target);
-            if (param != null && param.isIdentity()) {
-                return false;
+            for (final BursaWolfParameters param : ((DefaultGeodeticDatum) source).getBursaWolfParameters()) {
+                if (Utilities.deepEquals(target, param.getTargetDatum(), ComparisonMode.IGNORE_METADATA)) {
+                    if (param.isIdentity()) {
+                        return false;
+                    }
+                }
             }
         }
         if (target instanceof DefaultGeodeticDatum) {
-            final BursaWolfParameters param = ((DefaultGeodeticDatum) target).getBursaWolfParameters(source);
-            if (param != null && param.isIdentity()) {
-                return false;
+            for (final BursaWolfParameters param : ((DefaultGeodeticDatum) target).getBursaWolfParameters()) {
+                if (Utilities.deepEquals(source, param.getTargetDatum(), ComparisonMode.IGNORE_METADATA)) {
+                    if (param.isIdentity()) {
+                        return false;
+                    }
+                }
             }
         }
         return true;

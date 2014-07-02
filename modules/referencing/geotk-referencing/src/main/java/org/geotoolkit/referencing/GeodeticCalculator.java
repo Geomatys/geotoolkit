@@ -22,6 +22,8 @@
  */
 package org.geotoolkit.referencing;
 
+import java.util.Collections;
+import java.util.Map;
 import java.awt.Shape;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
@@ -49,13 +51,14 @@ import org.apache.sis.measure.Longitude;
 import org.geotoolkit.measure.CoordinateFormat;
 import org.apache.sis.geometry.DirectPosition2D;
 import org.geotoolkit.geometry.TransformedDirectPosition;
-import org.geotoolkit.referencing.datum.DefaultEllipsoid;
-import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.datum.DefaultEllipsoid;
+import org.apache.sis.referencing.datum.DefaultGeodeticDatum;
+import org.apache.sis.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.cs.DefaultEllipsoidalCS;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.io.TableWriter;
+import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.util.logging.Logging;
 import org.apache.sis.util.NullArgumentException;
 
@@ -217,7 +220,7 @@ public class GeodeticCalculator {
      * Constructs a new geodetic calculator associated with the WGS84 ellipsoid.
      */
     public GeodeticCalculator() {
-        this(DefaultEllipsoid.WGS84);
+        this(CommonCRS.WGS84.ellipsoid());
     }
 
     /**
@@ -333,8 +336,8 @@ public class GeodeticCalculator {
         }
         final Datum datum = CRS.getDatum(crs);
         if (datum instanceof GeodeticDatum) {
-            return new DefaultGeographicCRS("Geodetic", (GeodeticDatum) datum,
-                    DefaultEllipsoidalCS.GEODETIC_2D);
+            return new DefaultGeographicCRS(Collections.singletonMap(GeographicCRS.NAME_KEY, "Geodetic"),
+                    (GeodeticDatum) datum, DefaultEllipsoidalCS.GEODETIC_2D);
         }
         if (crs instanceof CompoundCRS) {
             for (final CoordinateReferenceSystem component : ((CompoundCRS) crs).getComponents()) {
@@ -504,9 +507,10 @@ public class GeodeticCalculator {
      */
     public GeographicCRS getGeographicCRS() {
         if (geographicCRS == null) {
-            final String name = Vocabulary.format(Vocabulary.Keys.GEODETIC_2D);
+            final Map<String,?> name = Collections.singletonMap(
+                    GeographicCRS.NAME_KEY, Vocabulary.format(Vocabulary.Keys.GEODETIC_2D));
             geographicCRS = new DefaultGeographicCRS(name, new DefaultGeodeticDatum(
-                    name, getEllipsoid()), DefaultEllipsoidalCS.GEODETIC_2D);
+                    name, getEllipsoid(), CommonCRS.WGS84.primeMeridian()), DefaultEllipsoidalCS.GEODETIC_2D);
         }
         return geographicCRS;
     }

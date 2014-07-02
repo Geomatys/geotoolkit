@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.io.wkt;
 
+import java.util.Collections;
 import java.text.ParseException;
 import javax.measure.unit.NonSI;
 
@@ -29,7 +30,6 @@ import org.opengis.referencing.crs.GeographicCRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 
-import org.geotoolkit.factory.Hints;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.cs.DefaultCartesianCS;
 import org.geotoolkit.referencing.crs.DefaultProjectedCRS;
@@ -37,9 +37,8 @@ import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.crs.DefaultGeocentricCRS;
 import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;
 import org.geotoolkit.referencing.cs.DefaultEllipsoidalCS;
-import org.geotoolkit.referencing.datum.DefaultEllipsoid;
-import org.geotoolkit.referencing.datum.DefaultPrimeMeridian;
-import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
+import org.apache.sis.referencing.datum.DefaultPrimeMeridian;
+import org.apache.sis.referencing.datum.DefaultGeodeticDatum;
 import org.geotoolkit.referencing.operation.DefaultMathTransformFactory;
 import org.geotoolkit.referencing.factory.DatumAliasesTest;
 
@@ -47,6 +46,7 @@ import org.apache.sis.io.wkt.Symbols;
 import org.apache.sis.test.DependsOn;
 import org.apache.sis.io.wkt.Convention;
 
+import org.apache.sis.referencing.CommonCRS;
 import org.junit.*;
 
 import static org.geotoolkit.test.Commons.*;
@@ -536,9 +536,9 @@ public final strictfp class WKTFormatTest {
     @Ignore
     public void formatParisMeridian() {
         final DefaultGeographicCRS crs = new DefaultGeographicCRS("NTF (Paris)",
-            new DefaultGeodeticDatum("Nouvelle Triangulation Francaise (Paris)",
-                DefaultEllipsoid.CLARKE_1866, // Actually Clark 1880, but we don't care for this test.
-                new DefaultPrimeMeridian("Paris", 2.5969213, NonSI.GRADE)),
+            new DefaultGeodeticDatum(Collections.singletonMap(DefaultGeodeticDatum.NAME_KEY, "Nouvelle Triangulation Francaise (Paris)"),
+                CommonCRS.NAD27.ellipsoid(), // Actually Clark 1880, but we don't care for this test.
+                new DefaultPrimeMeridian(Collections.singletonMap(DefaultPrimeMeridian.NAME_KEY, "Paris"), 2.5969213, NonSI.GRADE)),
             new DefaultEllipsoidalCS("Using grade",
                 new DefaultCoordinateSystemAxis("λ", AxisDirection.EAST,  NonSI.GRADE),
                 new DefaultCoordinateSystemAxis("φ", AxisDirection.NORTH, NonSI.GRADE)));

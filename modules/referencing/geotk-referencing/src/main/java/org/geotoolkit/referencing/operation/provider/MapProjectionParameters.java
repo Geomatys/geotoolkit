@@ -66,7 +66,7 @@ final class MapProjectionParameters extends ParameterGroup {
      * {@code "semi_major"} and {@code "semi_minor"}. When explicitely set, this parameter
      * value is also assigned to the {@code "semi_major"} and {@code "semi_minor"} axis lengths.
      *
-     * @see org.geotoolkit.referencing.datum.DefaultEllipsoid#getAuthalicRadius()
+     * @see org.apache.sis.referencing.datum.DefaultEllipsoid#getAuthalicRadius()
      */
     private final class EarthRadius extends FloatParameter {
         /**
@@ -110,7 +110,7 @@ final class MapProjectionParameters extends ParameterGroup {
      * {@code "semi_major"} and {@code "semi_minor"}. When explicitly set, this parameter
      * value is used for computing the semi-minor axis length.
      *
-     * @see org.geotoolkit.referencing.datum.DefaultEllipsoid#getInverseFlattening()
+     * @see org.apache.sis.referencing.datum.DefaultEllipsoid#getInverseFlattening()
      */
     private final class InverseFlattening extends FloatParameter implements ChangeListener {
         /**

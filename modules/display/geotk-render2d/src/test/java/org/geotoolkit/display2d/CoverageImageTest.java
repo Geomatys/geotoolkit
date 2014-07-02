@@ -49,7 +49,7 @@ import org.geotoolkit.lang.Setup;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
-import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;
+import org.geotoolkit.referencing.crs.PredefinedCRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
@@ -229,7 +229,7 @@ public class CoverageImageTest {
     @Test
     public void coverage2DTest() throws PortrayalException {
         final BufferedImage img = createImage(180, 90);
-        final CoordinateReferenceSystem crs = DefaultEngineeringCRS.CARTESIAN_2D;
+        final CoordinateReferenceSystem crs = PredefinedCRS.CARTESIAN_2D;
         final double[] envelope = new double[]{-180, -90, 180, 90};
         final GridCoverage2D gc2D = createCoverage(img, crs, envelope);
 

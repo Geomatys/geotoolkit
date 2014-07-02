@@ -37,7 +37,6 @@ import org.geotoolkit.wcs.xml.StringUtilities;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
-import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
 
 import org.apache.sis.util.Version;
 import org.apache.sis.util.logging.Logging;
@@ -46,6 +45,7 @@ import org.opengis.geometry.Envelope;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.VerticalCRS;
+import org.apache.sis.referencing.CommonCRS;
 
 
 /**
@@ -219,7 +219,7 @@ public class GetCoverageType implements GetCoverage {
          * Otherwise the CRS decoded is already fine, and we just return it.
          */
         if (positions.get(0).getDimension() > 2 && objCrs.getCoordinateSystem().getDimension() < 3) {
-            final VerticalCRS verticalCRS = DefaultVerticalCRS.ELLIPSOIDAL_HEIGHT;
+            final VerticalCRS verticalCRS = CommonCRS.Vertical.ELLIPSOIDAL.crs();
             return new DefaultCompoundCRS(objCrs.getName().getCode() + " (3D)", objCrs, verticalCRS);
         } else {
             return objCrs;
@@ -302,7 +302,7 @@ public class GetCoverageType implements GetCoverage {
          * Otherwise the CRS decoded is already fine, and we just return it.
          */
         if (positions.get(0).getDimension() > 2 && objCrs.getCoordinateSystem().getDimension() < 3) {
-            final VerticalCRS verticalCRS = DefaultVerticalCRS.ELLIPSOIDAL_HEIGHT;
+            final VerticalCRS verticalCRS = CommonCRS.Vertical.ELLIPSOIDAL.crs();
             return new DefaultCompoundCRS(objCrs.getName().getCode() + " (3D)", objCrs, verticalCRS);
         } else {
             return objCrs;

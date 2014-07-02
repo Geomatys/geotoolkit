@@ -29,13 +29,14 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.Transformation;
 
 import org.apache.sis.referencing.NamedIdentifier;
-import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
+import org.opengis.referencing.datum.GeodeticDatum;
 import org.geotoolkit.referencing.operation.MathTransformProvider;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.resources.Errors;
 
+import org.apache.sis.referencing.CommonCRS;
 import static org.geotoolkit.parameter.Parameters.*;
 import static org.geotoolkit.referencing.operation.provider.UniversalParameters.createDescriptorGroup;
 import static org.geotoolkit.referencing.operation.transform.EarthGravitationalModel.*;
@@ -158,12 +159,12 @@ public class EllipsoidToGeoid extends MathTransformProvider {
     protected MathTransform createMathTransform(final ParameterValueGroup values)
             throws ParameterNotFoundException, FactoryException
     {
-        final DefaultGeodeticDatum datum;
+        final GeodeticDatum datum;
         final String name = stringValue(DATUM, values);
         if ("WGS84".equalsIgnoreCase(name)) {
-            datum = DefaultGeodeticDatum.WGS84;
+            datum = CommonCRS.WGS84.datum();
         } else if ("WGS72".equalsIgnoreCase(name)) {
-            datum = DefaultGeodeticDatum.WGS72;
+            datum = CommonCRS.WGS72.datum();
         } else {
             throw new IllegalArgumentException(Errors.format(Errors.Keys.UNSUPPORTED_DATUM_1, name));
         }

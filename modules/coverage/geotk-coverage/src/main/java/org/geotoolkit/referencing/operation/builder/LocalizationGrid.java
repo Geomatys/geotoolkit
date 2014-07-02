@@ -28,7 +28,7 @@ import net.jcip.annotations.ThreadSafe;
 import org.opengis.coverage.grid.GridGeometry;
 import org.opengis.referencing.operation.MathTransform2D;
 
-import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
+import org.apache.sis.referencing.datum.DefaultGeodeticDatum;
 import org.geotoolkit.referencing.operation.transform.WarpTransform2D;
 import org.geotoolkit.referencing.operation.MathTransforms;
 

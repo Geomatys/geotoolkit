@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.referencing.operation.transform;
 
+import java.util.Collections;
 import java.util.Random;
 import javax.measure.unit.SI;
 import javax.vecmath.Point3d;
@@ -33,12 +34,13 @@ import org.apache.sis.geometry.GeneralDirectPosition;
 import org.geotoolkit.referencing.crs.DefaultGeocentricCRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.apache.sis.referencing.datum.BursaWolfParameters;
-import org.geotoolkit.referencing.datum.DefaultEllipsoid;
+import org.apache.sis.referencing.datum.DefaultEllipsoid;
 
 import org.apache.sis.test.DependsOn;
 import org.junit.*;
 import org.opengis.referencing.datum.Ellipsoid;
 
+import org.apache.sis.referencing.CommonCRS;
 import static org.junit.Assert.*;
 import static java.lang.StrictMath.*;
 
@@ -115,7 +117,7 @@ public final strictfp class GeocentricTransformTest extends TransformTestBase {
             5124304.35
         };
         tolerance = 1E-2;
-        transform = GeocentricTransform.create(DefaultEllipsoid.WGS84, true);
+        transform = GeocentricTransform.create(CommonCRS.WGS84.ellipsoid(), true);
         validate();
         verifyTransform(source, target);
         stress(CoordinateDomain.GEOGRAPHIC, 306954540);
@@ -147,7 +149,7 @@ public final strictfp class GeocentricTransformTest extends TransformTestBase {
             28.02                      // Height
         };
         tolerance = 1.5E-2;
-        transform = GeocentricTransform.create(DefaultEllipsoid.INTERNATIONAL_1924, true).inverse();
+        transform = GeocentricTransform.create(CommonCRS.ED50.ellipsoid(), true).inverse();
         validate();
         verifyTransform(source, target);
         stress(CoordinateDomain.GEOCENTRIC, 831342815);
@@ -165,7 +167,7 @@ public final strictfp class GeocentricTransformTest extends TransformTestBase {
         /*
          * Gets the math transform from WGS84 to a geocentric transform.
          */
-        final DefaultEllipsoid          ellipsoid = DefaultEllipsoid.WGS84;
+        final Ellipsoid                 ellipsoid = CommonCRS.WGS84.ellipsoid();
         final CoordinateReferenceSystem sourceCRS = DefaultGeographicCRS.WGS84_3D;
         final CoordinateReferenceSystem targetCRS = DefaultGeocentricCRS.CARTESIAN;
         final CoordinateOperation       operation = opFactory.createOperation(sourceCRS, targetCRS);
@@ -245,10 +247,11 @@ public final strictfp class GeocentricTransformTest extends TransformTestBase {
              */
             try {
                 final double altitude = max(array0[base+2], array0[base+5]);
-                final DefaultEllipsoid ellip = DefaultEllipsoid.createFlattenedSphere("Temporary",
-                                               ellipsoid.getSemiMajorAxis()+altitude,
-                                               ellipsoid.getInverseFlattening(),
-                                               ellipsoid.getAxisUnit());
+                final DefaultEllipsoid ellip = DefaultEllipsoid.createFlattenedSphere(
+                        Collections.singletonMap(Ellipsoid.NAME_KEY, "Temporary"),
+                        ellipsoid.getSemiMajorAxis() + altitude,
+                        ellipsoid.getInverseFlattening(),
+                        ellipsoid.getAxisUnit());
                 double orthodromic = ellip.orthodromicDistance(array0[base+0], array0[base+1],
                                                                array0[base+3], array0[base+4]);
                 orthodromic = hypot(orthodromic, array0[base+2] - array0[base+5]);
@@ -300,8 +303,8 @@ public final strictfp class GeocentricTransformTest extends TransformTestBase {
      */
     @Test
     public void testDerivativeSphere() throws TransformException {
-        testDerivative(DefaultEllipsoid.SPHERE, true);
-        testDerivative(DefaultEllipsoid.SPHERE, false);
+        testDerivative(CommonCRS.SPHERE.ellipsoid(), true);
+        testDerivative(CommonCRS.SPHERE.ellipsoid(), false);
     }
 
     /**
@@ -313,7 +316,7 @@ public final strictfp class GeocentricTransformTest extends TransformTestBase {
      */
     @Test
     public void testDerivative() throws TransformException {
-        testDerivative(DefaultEllipsoid.WGS84, true);
-        testDerivative(DefaultEllipsoid.WGS84, false);
+        testDerivative(CommonCRS.WGS84.ellipsoid(), true);
+        testDerivative(CommonCRS.WGS84.ellipsoid(), false);
     }
 }

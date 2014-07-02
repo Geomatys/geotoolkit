@@ -34,10 +34,9 @@ import org.opengis.metadata.extent.Extent;
 
 import org.apache.sis.xml.NilReason;
 import org.apache.sis.xml.NilObject;
-import org.geotoolkit.referencing.datum.DefaultEllipsoid;
-import org.geotoolkit.referencing.datum.DefaultPrimeMeridian;
 import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;
 import org.apache.sis.io.wkt.UnformattableObjectException;
+import org.apache.sis.referencing.CommonCRS;
 
 
 /**
@@ -127,16 +126,16 @@ public final class NilReferencingObject implements GeocentricCRS, GeographicCRS,
         return VerticalDatumTypes.ELLIPSOIDAL;
     }
 
-    /** Returns {@link DefaultEllipsoid#WGS84} in all cases. */
+    /** Returns WGS84 in all cases. */
     @Override
     public Ellipsoid getEllipsoid() {
-        return DefaultEllipsoid.WGS84;
+        return CommonCRS.WGS84.ellipsoid();
     }
 
-    /** Returns {@link DefaultPrimeMeridian#GREENWICH} in all cases. */
+    /** Returns Greenwich in all cases. */
     @Override
     public PrimeMeridian getPrimeMeridian() {
-        return DefaultPrimeMeridian.GREENWICH;
+        return CommonCRS.WGS84.primeMeridian();
     }
 
     /** Returns {@code null} in all cases. */

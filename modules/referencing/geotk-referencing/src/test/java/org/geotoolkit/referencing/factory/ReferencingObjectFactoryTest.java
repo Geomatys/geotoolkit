@@ -38,8 +38,6 @@ import org.opengis.util.GenericName;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 
-import org.geotoolkit.referencing.datum.DefaultEllipsoid;
-import org.geotoolkit.referencing.datum.DefaultPrimeMeridian;
 import org.geotoolkit.referencing.cs.DefaultCartesianCS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.operation.DefiningConversion;
@@ -49,6 +47,7 @@ import org.apache.sis.metadata.iso.ImmutableIdentifier;
 
 import org.geotoolkit.test.referencing.ReferencingTestBase;
 
+import org.apache.sis.referencing.CommonCRS;
 import org.junit.*;
 import static org.geotoolkit.referencing.Assert.*;
 
@@ -260,8 +259,8 @@ public final strictfp class ReferencingObjectFactoryTest extends ReferencingTest
         final String           name0 = "Nouvelle Triangulation Francaise (Paris)";
         final String           name1 = "Nouvelle_Triangulation_Francaise_Paris";
         final String           name2 = "NTF (Paris meridian)";
-        final Ellipsoid    ellipsoid = DefaultEllipsoid.WGS84;
-        final PrimeMeridian meridian = DefaultPrimeMeridian.GREENWICH;
+        final Ellipsoid    ellipsoid = CommonCRS.WGS84.ellipsoid();
+        final PrimeMeridian meridian = CommonCRS.WGS84.primeMeridian();
         DatumFactory         factory = new ReferencingObjectFactory();
         final Map<String,?> properties = Collections.singletonMap("name", name1);
         GeodeticDatum datum = factory.createGeodeticDatum(properties, ellipsoid, meridian);

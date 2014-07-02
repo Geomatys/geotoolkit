@@ -40,9 +40,8 @@ import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.geotoolkit.referencing.cs.DefaultEllipsoidalCS;
-import org.geotoolkit.referencing.datum.DefaultEllipsoid;
-import org.geotoolkit.referencing.datum.DefaultPrimeMeridian;
 import org.geotoolkit.referencing.factory.DirectAuthorityFactory;
+import org.apache.sis.referencing.CommonCRS;
 
 
 /**
@@ -106,9 +105,9 @@ public class WebCRSFactory extends DirectAuthorityFactory implements CRSAuthorit
      */
     private synchronized void ensureInitialized() throws FactoryException {
         if (crsMap.isEmpty()) {
-            add(84, "WGS84", DefaultEllipsoid.WGS84);
-            add(83, "NAD83", DefaultEllipsoid.GRS80);
-            add(27, "NAD27", DefaultEllipsoid.CLARKE_1866);
+            add(84, "WGS84", CommonCRS.WGS84.ellipsoid());
+            add(83, "NAD83", CommonCRS.NAD83.ellipsoid());
+            add(27, "NAD27", CommonCRS.NAD27.ellipsoid());
         }
     }
 
@@ -129,7 +128,7 @@ public class WebCRSFactory extends DirectAuthorityFactory implements CRSAuthorit
         properties.put(IdentifiedObject.NAME_KEY, name);
         properties.put(Identifier.AUTHORITY_KEY, authority);
         final GeodeticDatum datum = factories.getDatumFactory().createGeodeticDatum(
-                properties, ellipsoid, DefaultPrimeMeridian.GREENWICH);
+                properties, ellipsoid, CommonCRS.WGS84.primeMeridian());
         properties.put(IdentifiedObject.IDENTIFIERS_KEY, new NamedIdentifier[] {
                 new NamedIdentifier(authority, text),
                 new NamedIdentifier(authority, PREFIX + text)

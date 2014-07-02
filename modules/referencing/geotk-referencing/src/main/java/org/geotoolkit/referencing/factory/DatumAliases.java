@@ -51,13 +51,13 @@ import org.apache.sis.util.ArraysExt;
 
 /**
  * A datum factory that add {@linkplain IdentifiedObject#getAlias aliases} to a datum name before to
- * delegates the {@linkplain org.geotoolkit.referencing.datum.AbstractDatum#AbstractDatum(Map) datum
+ * delegates the {@linkplain org.apache.sis.referencing.datum.AbstractDatum#AbstractDatum(Map) datum
  * creation} to an other factory. Aliases are especially important for {@linkplain Datum datum}
  * since their {@linkplain IdentifiedObject#getName name} are often the only way to differentiate
  * them.
  * <p>
  * Two datum with different names are considered incompatible, unless some datum shift method
- * are specified (e.g. {@linkplain org.geotoolkit.referencing.datum.BursaWolfParameters Bursa-Wolf
+ * are specified (e.g. {@linkplain org.apache.sis.referencing.datum.BursaWolfParameters Bursa-Wolf
  * parameters}). Unfortunately, different softwares often use different names for the same datum,
  * which result in {@link org.opengis.referencing.operation.OperationNotFoundException} when
  * attempting to convert coordinates from one

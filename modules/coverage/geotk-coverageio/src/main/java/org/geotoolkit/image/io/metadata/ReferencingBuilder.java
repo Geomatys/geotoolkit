@@ -629,9 +629,7 @@ public class ReferencingBuilder extends Builder<CoordinateReferenceSystem> {
     /**
      * Gets the datum. If no datum is explicitly defined, then a
      * {@linkplain MetadataNodeParser#warningOccurred warning is logged} and a
-     * {@linkplain #getDefault(Class) default datum} is returned,
-     * which is {@link org.geotoolkit.referencing.datum.DefaultGeodeticDatum#WGS84}
-     * in the default implementation.
+     * {@linkplain #getDefault(Class) default datum} is returned.
      *
      * @param  <T> The compile-time type of {@code baseType}.
      * @param  baseType The expected datum type.
@@ -704,9 +702,7 @@ public class ReferencingBuilder extends Builder<CoordinateReferenceSystem> {
     /**
      * Gets the ellipsoid. If no ellipsoid is explicitly defined, then a
      * {@linkplain MetadataNodeParser#warningOccurred warning is logged} and a
-     * {@linkplain #getDefault(Class) default ellipsoid} is returned,
-     * which is {@link org.geotoolkit.referencing.datum.DefaultEllipsoid#WGS84}
-     * in the default implementation.
+     * {@linkplain #getDefault(Class) default ellipsoid} is returned.
      *
      * @param  datumAccessor The accessor of the datum enclosing the ellipsoid.
      * @return The ellipsoid, or {@code null} if the ellipsoid can not be parsed
@@ -741,9 +737,7 @@ public class ReferencingBuilder extends Builder<CoordinateReferenceSystem> {
     /**
      * Gets the prime meridian. If no prime meridian is explicitly defined, then a
      * {@linkplain MetadataNodeParser#warningOccurred warning is logged} and a
-     * {@linkplain #getDefault(Class) default prime meridian} is returned,
-     * which is {@link org.geotoolkit.referencing.datum.DefaultPrimeMeridian#GREENWICH}
-     * in the default implementation.
+     * {@linkplain #getDefault(Class) default prime meridian} is returned.
      *
      * @param  datumAccessor The accessor of the datum enclosing the prime meridian.
      * @return The prime meridian, or {@code null} if the prime meridian can not be

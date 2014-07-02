@@ -31,7 +31,7 @@ import org.opengis.test.referencing.TransformTestCase;
 
 import org.geotoolkit.factory.FactoryFinder;
 import org.apache.sis.geometry.GeneralDirectPosition;
-import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
+import org.apache.sis.referencing.CommonCRS;
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -63,7 +63,7 @@ public final strictfp class EarthGravitationalModelTest extends TransformTestCas
         final Compiler compiler = new Compiler();
         compiler.load("EGM180.nor");
         final EarthGravitationalModel model = new EarthGravitationalModel(
-                DefaultGeodeticDatum.WGS84, EarthGravitationalModel.DEFAULT_ORDER, false);
+                CommonCRS.WGS84.datum(), EarthGravitationalModel.DEFAULT_ORDER, false);
         model.load("EGM180.bnor");
         assertTrue(Arrays.equals(compiler.cnmGeopCoef, model.cnmGeopCoef));
         assertTrue(Arrays.equals(compiler.snmGeopCoef, model.snmGeopCoef));
@@ -92,7 +92,7 @@ public final strictfp class EarthGravitationalModelTest extends TransformTestCas
     @Test
     public void testHeightOffsetWGS72() throws FactoryException, TransformException {
         final EarthGravitationalModel gh =
-                new EarthGravitationalModel(DefaultGeodeticDatum.WGS72, EarthGravitationalModel.DEFAULT_ORDER);
+                new EarthGravitationalModel(CommonCRS.WGS72.datum(), EarthGravitationalModel.DEFAULT_ORDER);
         assertEquals( 1.475, gh.heightOffset(45, 45,    0), 0.001);
         assertEquals(46.879, gh.heightOffset( 0, 45,    0), 0.001);
         assertEquals(23.324, gh.heightOffset( 3, 10,   10), 0.001);

@@ -20,11 +20,12 @@ package org.geotoolkit.referencing.operation.projection;
 import org.junit.*;
 import org.opengis.util.FactoryException;
 import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.referencing.datum.Ellipsoid;
 import org.opengis.referencing.operation.TransformException;
 
 import org.apache.sis.test.DependsOn;
-import org.geotoolkit.referencing.datum.DefaultEllipsoid;
 
+import org.apache.sis.referencing.CommonCRS;
 import static java.lang.StrictMath.*;
 import static org.geotoolkit.referencing.operation.provider.ObliqueMercator.PARAMETERS;
 
@@ -57,7 +58,7 @@ public final strictfp class ObliqueMercatorTest extends ProjectionTestBase {
      */
     private static ObliqueMercator create(final double cx, final double cy, final double azimuth) {
         final ParameterValueGroup values = PARAMETERS.createValue();
-        final DefaultEllipsoid ellipsoid = DefaultEllipsoid.WGS84;
+        final Ellipsoid ellipsoid = CommonCRS.WGS84.ellipsoid();
         values.parameter("semi_major").setValue(ellipsoid.getSemiMajorAxis());
         values.parameter("semi_minor").setValue(ellipsoid.getSemiMinorAxis());
         values.parameter("azimuth").setValue(azimuth); // Given here because mandatory parameter.

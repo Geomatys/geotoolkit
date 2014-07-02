@@ -33,9 +33,9 @@ import org.opengis.referencing.datum.GeodeticDatum;
 import org.apache.sis.referencing.AbstractReferenceSystem;
 import org.geotoolkit.referencing.cs.DefaultCartesianCS;
 import org.geotoolkit.referencing.cs.DefaultSphericalCS;
-import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
 import org.geotoolkit.resources.Vocabulary;
 
+import org.apache.sis.referencing.CommonCRS;
 import static org.geotoolkit.referencing.crs.UnprefixedMap.name;
 
 
@@ -73,7 +73,7 @@ public class DefaultGeocentricCRS extends org.apache.sis.referencing.crs.Default
      */
     public static final DefaultGeocentricCRS CARTESIAN = new DefaultGeocentricCRS(
                         name(Vocabulary.Keys.CARTESIAN),
-                        DefaultGeodeticDatum.WGS84, DefaultCartesianCS.GEOCENTRIC);
+                        CommonCRS.WGS84.datum(), DefaultCartesianCS.GEOCENTRIC);
 
     /**
      * The default geocentric CRS with a
@@ -82,7 +82,7 @@ public class DefaultGeocentricCRS extends org.apache.sis.referencing.crs.Default
      */
     public static final DefaultGeocentricCRS SPHERICAL = new DefaultGeocentricCRS(
                         name(Vocabulary.Keys.SPHERICAL),
-                        DefaultGeodeticDatum.WGS84, DefaultSphericalCS.GEOCENTRIC);
+                        CommonCRS.WGS84.datum(), DefaultSphericalCS.GEOCENTRIC);
 
     /**
      * Constructs a new geocentric CRS with the same values than the specified one.

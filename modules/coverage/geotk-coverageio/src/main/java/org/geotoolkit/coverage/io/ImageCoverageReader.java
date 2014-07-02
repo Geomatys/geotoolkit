@@ -83,7 +83,7 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.collection.XCollections;
 import org.apache.sis.util.collection.BackingStoreException;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.crs.DefaultImageCRS;
+import org.geotoolkit.referencing.crs.PredefinedCRS;
 import org.apache.sis.referencing.operation.matrix.Matrices;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 
@@ -616,7 +616,7 @@ public class ImageCoverageReader extends GridCoverageReader {
              * equivalent to performing no shift at all in the "grid to CRS" conversion.
              */
             if (crs == null) {
-                crs = DefaultImageCRS.GRID_2D;
+                crs = PredefinedCRS.GRID_2D;
             }
             final int dimension = crs.getCoordinateSystem().getDimension();
             if (gridToCRS == null) {

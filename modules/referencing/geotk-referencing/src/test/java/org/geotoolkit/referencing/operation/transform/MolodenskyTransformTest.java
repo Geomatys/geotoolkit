@@ -20,6 +20,7 @@ package org.geotoolkit.referencing.operation.transform;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.opengis.util.FactoryException;
 import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.referencing.datum.Ellipsoid;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.operation.MathTransformFactory;
@@ -28,9 +29,7 @@ import org.opengis.test.referencing.ParameterizedTransformTest;
 
 import org.apache.sis.test.DependsOn;
 import org.geotoolkit.factory.FactoryFinder;
-import org.apache.sis.referencing.operation.transform.LinearTransform;
-
-import static org.geotoolkit.referencing.datum.DefaultEllipsoid.*;
+import org.apache.sis.referencing.CommonCRS;
 
 import org.junit.*;
 import static java.lang.StrictMath.*;
@@ -213,10 +212,12 @@ public final strictfp class MolodenskyTransformTest extends TransformTestBase {
             53 + (48 + 36.565/60)/60,  // Latitude
             28.02                      // Height
         };
-        final double  a = WGS84.getSemiMajorAxis();
-        final double  b = WGS84.getSemiMinorAxis();
-        final double ta = INTERNATIONAL_1924.getSemiMajorAxis();
-        final double tb = INTERNATIONAL_1924.getSemiMinorAxis();
+        final Ellipsoid se = CommonCRS.WGS84.ellipsoid();
+        final Ellipsoid te = CommonCRS.ED50.ellipsoid();
+        final double  a = se.getSemiMajorAxis();
+        final double  b = se.getSemiMinorAxis();
+        final double ta = te.getSemiMajorAxis();
+        final double tb = te.getSemiMinorAxis();
         final double dx =  84.87;
         final double dy =  96.49;
         final double dz = 116.95;
@@ -264,10 +265,12 @@ public final strictfp class MolodenskyTransformTest extends TransformTestBase {
      */
     @Test
     public void testDerivative() throws TransformException {
-        final double  a = WGS84.getSemiMajorAxis();
-        final double  b = WGS84.getSemiMinorAxis();
-        final double ta = INTERNATIONAL_1924.getSemiMajorAxis();
-        final double tb = INTERNATIONAL_1924.getSemiMinorAxis();
+        final Ellipsoid se = CommonCRS.WGS84.ellipsoid();
+        final Ellipsoid te = CommonCRS.ED50.ellipsoid();
+        final double  a = se.getSemiMajorAxis();
+        final double  b = se.getSemiMinorAxis();
+        final double ta = te.getSemiMajorAxis();
+        final double tb = te.getSemiMinorAxis();
         final double dx =  84.87;
         final double dy =  96.49;
         final double dz = 116.95;

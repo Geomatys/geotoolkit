@@ -26,13 +26,13 @@ import org.opengis.referencing.crs.VerticalCRS;
 import org.opengis.util.FactoryException;
 
 import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
+import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.referencing.crs.DefaultVerticalCRS;
 
 import org.junit.*;
 import static org.junit.Assert.*;
-import static org.geotoolkit.referencing.datum.DefaultVerticalDatum.GEOIDAL;
-import static org.geotoolkit.referencing.cs.DefaultVerticalCS.GRAVITY_RELATED_HEIGHT;
-
+import static java.util.Collections.singletonMap;
+import static org.opengis.referencing.IdentifiedObject.NAME_KEY;
 
 
 /**
@@ -71,12 +71,15 @@ public final strictfp class FactoryMethodTest {
         final Object[] crsFactory = FactoryFinder.getCRSFactories(null).toArray();
         final FactoryMethod fm = FactoryMethod.find(VerticalCRS.class, crsFactory);
         final Map<String,Object> properties = new HashMap<>();
-        assertNull(properties.put("datum", GEOIDAL));
-        assertNull(properties.put("cs",    GRAVITY_RELATED_HEIGHT));
+        assertNull(properties.put("datum", CommonCRS.Vertical.MEAN_SEA_LEVEL.datum()));
+        assertNull(properties.put("cs",    CommonCRS.Vertical.MEAN_SEA_LEVEL.crs().getCoordinateSystem()));
         assertNull(properties.put("name", "Geoidal height"));
 
         final Object crs = fm.create(properties);
         assertTrue(crs instanceof VerticalCRS);
-        assertEquals(new DefaultVerticalCRS("Geoidal height", GEOIDAL, GRAVITY_RELATED_HEIGHT), crs);
+        assertEquals(new DefaultVerticalCRS(singletonMap(NAME_KEY, "Geoidal height"),
+                CommonCRS.Vertical.MEAN_SEA_LEVEL.datum(),
+                CommonCRS.Vertical.MEAN_SEA_LEVEL.crs().getCoordinateSystem()),
+                crs);
     }
 }

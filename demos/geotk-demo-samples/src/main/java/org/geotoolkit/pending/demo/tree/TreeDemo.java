@@ -5,26 +5,19 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.geotoolkit.index.tree.FileTreeElementMapper;
 import org.geotoolkit.index.tree.StoreIndexException;
 import org.geotoolkit.index.tree.Tree;
 import org.geotoolkit.index.tree.TreeElementMapper;
 import org.geotoolkit.index.tree.TreeIdentifierIterator;
 import org.geotoolkit.index.tree.star.FileStarRTree;
 import org.geotoolkit.index.tree.star.MemoryStarRTree;
-import org.geotoolkit.pending.demo.Demos;
-import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;
-import org.geotoolkit.referencing.crs.DefaultGeocentricCRS;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
-
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.TransformException;
+import org.apache.sis.referencing.CommonCRS;
+
 
 /**
  * R-tree uses.
@@ -39,32 +32,32 @@ import org.opengis.referencing.operation.TransformException;
  */
 public class TreeDemo {
     /*
-     * CoordinateReferenceSystem used in this demo. 
+     * CoordinateReferenceSystem used in this demo.
      */
-    private static CoordinateReferenceSystem DEMO_CRS = DefaultGeographicCRS.WGS84;
-    
+    private static CoordinateReferenceSystem DEMO_CRS = CommonCRS.WGS84.normalizedGeographic();
+
     public static void main(String[] args) throws StoreIndexException, IOException, ClassNotFoundException {
-        
+
         /*
          * In these examples we'll show how to build and create a RTree according to our use case.
-         * 2 RTree storage are made, the first where RTree is stored in computer memory 
+         * 2 RTree storage are made, the first where RTree is stored in computer memory
          * and the second where RTree is stored in file on hard drive at a path stipulated by the user.
-         * 
+         *
          * RTree which is stored in computer memory :
          *      - advantages    : all RTree action are faster than the others because do not require hard drive access.
          *      - inconvenients : computer RAM memory limits data number which should be inserted.
-         * 
-         * RTree which is stored on hard drive : 
+         *
+         * RTree which is stored on hard drive :
          *      - advantages    : there is no data number limit of insertions.
          *      - inconvenients : all RTree action are slower than the others because require hard drive access.
          */
-        
+
         /*
          * First example RTree stored in our computer memory.
          * In this example user has to know he can't insert too many elements, to not overflow memory.
          * For this example we choose StarRTree.
          */
-        
+
         /*
          * In each RTree we need another object called TreeElementMapper.
          * This Object allows to link Integer identifier stored in RTree and datas.
@@ -73,13 +66,13 @@ public class TreeDemo {
          * In the present example we are working with Envelope type object. Moreover to store Envelope object we use an Envelope table.
          * User can choose List or Map or other object according to his needs.
          */
-        
+
         final TreeElementMapper<Envelope> demoMemoryTreeEltMapper = new TreeElementMapper<Envelope>() {
-            
+
             private int currentSize      = 100;
             private Envelope[] envelopes = new Envelope[currentSize];
             private boolean isClose = false;
-            
+
             /**
              * {@inheritDoc }
              */
@@ -120,7 +113,7 @@ public class TreeDemo {
             @Override
             public Envelope getObjectFromTreeIdentifier(final int treeIdentifier) throws IOException {
                 final int envID = treeIdentifier - 1;
-                if (envID >= currentSize) 
+                if (envID >= currentSize)
                     throw new IllegalStateException("getObjectFromTreeIdentifier : impossible to find object from identifier.");
                 return envelopes[envID];
             }
@@ -156,40 +149,40 @@ public class TreeDemo {
                 //do nothing
             }
         };
-        
+
         /*
          * After creating TreeElementMapper object we create RTree.
          */
         final Tree demoMemoryRTree = new MemoryStarRTree<Envelope>(5, DEMO_CRS, demoMemoryTreeEltMapper);
-        
+
         /*
          * get datas.
          */
         Envelope[] insertedEnvelope = createData(20);
-        
+
         /*
          * Now insert data in RTree.
          */
         for (Envelope data : insertedEnvelope) {
             demoMemoryRTree.insert(data);
         }
-        
+
         System.out.println("Tree Demo : "+demoMemoryRTree.toString());
-        
+
         /*
          * Now we should search.
          */
         final GeneralEnvelope envelopeSearch = new GeneralEnvelope(DEMO_CRS);
         envelopeSearch.setEnvelope(-45, -50, 110, 75);
-        
+
         /*
          * There is two way to search.
          * First, we can get a table of data identifiers which matches with the search area.
          */
         int[] treeIdentifierResult = demoMemoryRTree.searchID(envelopeSearch);
-        
+
         System.out.println("identifiers which match : "+Arrays.toString(treeIdentifierResult));
-        
+
         /*
          * To obtain data you have to ask data from TreeElementMapper as below.
          */
@@ -197,7 +190,7 @@ public class TreeDemo {
         for (int id = 0; id < treeIdentifierResult.length; id++) {
             resultData[id] = demoMemoryTreeEltMapper.getObjectFromTreeIdentifier(treeIdentifierResult[id]);
         }
-        
+
         /*
          * Secondly, we can get an iterator which iterates on each treeIdentifier search result.
          */
@@ -209,7 +202,7 @@ public class TreeDemo {
         while (treeIterator.hasNext()) {
             listDataResult.add(demoMemoryTreeEltMapper.getObjectFromTreeIdentifier(treeIterator.nextInt()));
         }
-        
+
         /*
          * Moreover we can also remove some elements in index RTree.
          */
@@ -221,12 +214,12 @@ public class TreeDemo {
             }
             idEnv++;
         }
-        
+
                         /***********************************/
         /*
          * Second example: RTree stored on user computer hard disk.
-         * If the user doesn't know if there is enought memory on his computer or 
-         * if he knows that all the data overflow memory, he may choose to store RTree 
+         * If the user doesn't know if there is enought memory on his computer or
+         * if he knows that all the data overflow memory, he may choose to store RTree
          * on his computer hard drive.
          */
         /*
@@ -239,7 +232,7 @@ public class TreeDemo {
         /*
          * First, like previously, we have to begin creating an appropriate
          * TreeElementMapper to link treeIdentifier and stored object.
-         * In our case we would store elements on hard drive, then we would override 
+         * In our case we would store elements on hard drive, then we would override
          * a TreeElementMapper implementation called FileTreeElementMapper.
          * See DemoFileTreeElementMapper class.
          */
@@ -247,14 +240,14 @@ public class TreeDemo {
         /*
          * Be carefull it exists 2 ways to open a FileRTree.
          * If tree has never been built previously, the user should open RTree in writing action.(see Javadoc)
-         * Unlike if a tree has already been saved on a filled file, 
-         * the user should open RTree in reading/writing and use constructor in accordance with it. 
+         * Unlike if a tree has already been saved on a filled file,
+         * the user should open RTree in reading/writing and use constructor in accordance with it.
          */
         /*
-         * First, we make an RTree as if it has never been created before.  
+         * First, we make an RTree as if it has never been created before.
          */
         Tree<Envelope> demoFileRTree = new FileStarRTree<Envelope>(treeFile, 4, DEMO_CRS, demoFileTreeEltMapper);
-        
+
         /*
          * At this step the RTree is empty and we can fill it like previously.
          */
@@ -262,26 +255,26 @@ public class TreeDemo {
          * get datas.
          */
         insertedEnvelope = createData(20);
-        
+
         /*
          * Now insert data in RTree.
          */
         for (Envelope data : insertedEnvelope) {
             demoFileRTree.insert(data);
         }
-        
+
         /*
          * At this step we can use search or remove action freely.
          * But if we want to save the RTree to re-open it later we MUST call close method
          * on RTree and TreeElementMapper to finish to write Tree informations.
-         * 
+         *
          * Be carefull not to open an RTree in reading if it has not been closed before.
-         * 
+         *
          * In this example we close RTree and TreeElementMapper to re-open it after.
          */
         demoFileRTree.close();
         demoFileTreeEltMapper.close();
-        
+
         /*
          * Re-open RTree.
          */
@@ -293,7 +286,7 @@ public class TreeDemo {
          * Then RTree.
          */
         demoFileRTree = new FileStarRTree<Envelope>(treeFile, demoFileTreeEltMapper);
-        
+
         /*
          * At this step we can use search or remove action freely.
          * Moreover we can also add some data as below.
@@ -306,19 +299,19 @@ public class TreeDemo {
         for (Envelope data : insertedEnvelope) {
             demoFileRTree.insert(data);
         }
-        
+
         System.out.println("RTree : after re-inserting datas : "+demoFileRTree.toString());
-        
+
         /*
          * Like previously if we want to save changes and re-open RTree afterwards we call close() methods.
          */
         demoFileRTree.close();
         demoFileTreeEltMapper.close();
    }
-    
+
     /**
      * Build some data to insert in RTree.
-     * 
+     *
      * @param dataNumber data number ask by user.
      * @return data table.
      */

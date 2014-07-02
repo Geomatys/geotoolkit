@@ -20,7 +20,6 @@ package org.geotoolkit.referencing.factory.epsg;
 import java.io.*;
 import java.util.*;
 import java.sql.SQLException;
-import java.awt.geom.AffineTransform;
 import javax.measure.unit.Unit;
 
 import org.opengis.referencing.*;
@@ -38,9 +37,8 @@ import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.referencing.crs.AbstractCRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
-import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
+import org.apache.sis.referencing.datum.DefaultGeodeticDatum;
 import org.geotoolkit.referencing.operation.AbstractCoordinateOperation;
-import org.apache.sis.referencing.operation.transform.AbstractMathTransform;
 import org.geotoolkit.referencing.factory.IdentifiedObjectFinder;
 import org.geotoolkit.referencing.factory.AbstractAuthorityFactory;
 import org.geotoolkit.referencing.factory.ThreadedAuthorityFactory;

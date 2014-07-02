@@ -18,23 +18,23 @@ package org.geotoolkit.index.tree.hilbert;
 
 import java.io.IOException;
 import org.geotoolkit.index.tree.StoreIndexException;
-import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;
+import org.geotoolkit.referencing.crs.PredefinedCRS;
 
 /**
  * Create a HilbertRTree Test suite in computer memory in a Cartesian 3D space.
  *
  * @author Remi Marechal (Geomatys).
- * @see DefaultEngineeringCRS#CARTESIAN_3D
+ * @see PredefinedCRS#CARTESIAN_3D
  */
 public final class MemoryHilbert3DTest extends MemoryHilbertRTreeTest {
 
     /**
      * Create a memory HilbertRTree Test suite in a Cartesian 3D space.
-     * 
+     *
      * @throws StoreIndexException should never thrown.
      * @throws IOException should never thrown.
      */
     public MemoryHilbert3DTest() throws StoreIndexException, IOException {
-        super(DefaultEngineeringCRS.CARTESIAN_3D);
+        super(PredefinedCRS.CARTESIAN_3D);
     }
 }

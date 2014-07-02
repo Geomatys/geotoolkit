@@ -22,11 +22,11 @@ import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.datum.Ellipsoid;
 import org.opengis.referencing.operation.TransformException;
 
-import org.geotoolkit.referencing.datum.DefaultEllipsoid;
 import org.geotoolkit.referencing.operation.provider.PositionVector7Param;
 import org.geotoolkit.referencing.operation.provider.GeocentricTranslation;
 import org.geotoolkit.referencing.operation.provider.CoordinateFrameRotation;
 
+import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.test.DependsOn;
 import org.junit.*;
 
@@ -152,8 +152,8 @@ public final strictfp class GeocentricAffineTransformTest extends TransformTestB
     public void testGeotoolkitExtensions() throws FactoryException, TransformException {
         final String classification = "Coordinate Frame rotation";
         final ParameterValueGroup param = mtFactory.getDefaultParameters(classification);
-        final Ellipsoid sourceEllipsoid = DefaultEllipsoid.INTERNATIONAL_1924;
-        final Ellipsoid targetEllipsoid = DefaultEllipsoid.WGS84;
+        final Ellipsoid sourceEllipsoid = CommonCRS.ED50.ellipsoid();
+        final Ellipsoid targetEllipsoid = CommonCRS.WGS84.ellipsoid();
 
         param.parameter("dx") .setValue( 0.000);
         param.parameter("dy") .setValue( 0.000);

@@ -18,23 +18,23 @@ package org.geotoolkit.index.tree.star;
 
 import java.io.IOException;
 import org.geotoolkit.index.tree.StoreIndexException;
-import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;
+import org.geotoolkit.referencing.crs.PredefinedCRS;
 
 /**
  * Create a StarRTree Test suite in computer memory in a Cartesian 2D space.
  *
  * @author Remi Marechal (Geomatys).
- * @see DefaultEngineeringCRS#CARTESIAN_2D
+ * @see PredefinedCRS#CARTESIAN_2D
  */
 public final class MemoryStar2DTest extends MemoryStarRTreeTest {
 
     /**
      * Create a memory StarRTree Test suite in a Cartesian 2D space.
-     * 
+     *
      * @throws StoreIndexException should never thrown.
      * @throws IOException should never thrown.
      */
     public MemoryStar2DTest() throws StoreIndexException, IOException {
-        super(DefaultEngineeringCRS.CARTESIAN_2D);
+        super(PredefinedCRS.CARTESIAN_2D);
     }
 }

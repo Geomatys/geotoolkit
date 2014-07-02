@@ -47,7 +47,7 @@ import org.geotoolkit.parameter.ParameterWriter;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.factory.AbstractAuthorityFactory;
 import org.geotoolkit.referencing.factory.epsg.PropertyEpsgFactory;
-import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
+import org.apache.sis.referencing.datum.DefaultGeodeticDatum;
 import org.apache.sis.referencing.datum.BursaWolfParameters;
 import org.geotoolkit.metadata.iso.citation.Citations;
 

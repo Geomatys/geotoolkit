@@ -23,7 +23,7 @@ import java.util.List;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.filter.SpatialFilterType;
 import org.geotoolkit.index.tree.star.FileStarRTree;
-import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;
+import org.geotoolkit.referencing.crs.PredefinedCRS;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.opengis.geometry.Envelope;
@@ -31,7 +31,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  * Test static TreeX methods.<br/><br/>
- * 
+ *
  * Intersect test is already effectuate by tree test suite.
  *
  * @author Rémi Maréchal (Geomatys).
@@ -40,8 +40,8 @@ public class TreeXTest extends TreeTest {
 
     Tree tree ;
     private TreeXElementMapperTest tXEM ;
-    
-    private static final CoordinateReferenceSystem CRS_TEST = DefaultEngineeringCRS.CARTESIAN_3D;
+
+    private static final CoordinateReferenceSystem CRS_TEST = PredefinedCRS.CARTESIAN_3D;
 
     public TreeXTest() throws StoreIndexException, IOException {
         tXEM = new TreeXElementMapperTest();
@@ -56,10 +56,10 @@ public class TreeXTest extends TreeTest {
             }
         }
     }
-    
+
     /**
      * Find and return objects which match with them tree identifiers.
-     * 
+     *
      * @param tabID integer table which contain tree identifier return by seach action.
      * @return objects which match with them tree identifiers.
      */
@@ -73,7 +73,7 @@ public class TreeXTest extends TreeTest {
 
     /**
      * Test result {@link Envelope} which contain specified search Envelope.
-     * 
+     *
      * @throws StoreIndexException
      */
     @Test
@@ -92,8 +92,8 @@ public class TreeXTest extends TreeTest {
 
     /**
      * Test result {@link Envelope} not within specified search Envelope.
-     * 
-     * @throws StoreIndexException 
+     *
+     * @throws StoreIndexException
      */
     @Test
     public void testDisjoin() throws StoreIndexException {
@@ -117,8 +117,8 @@ public class TreeXTest extends TreeTest {
 
     /**
      * Test result {@link Envelope} within specified search Envelope.
-     * 
-     * @throws StoreIndexException 
+     *
+     * @throws StoreIndexException
      */
     @Test
     public void testWithin() throws StoreIndexException {
@@ -140,8 +140,8 @@ public class TreeXTest extends TreeTest {
 
     /**
      * Test result {@link Envelope} which touch specified search Envelope.
-     * 
-     * @throws StoreIndexException 
+     *
+     * @throws StoreIndexException
      */
     @Test
     public void testTouches() throws StoreIndexException {
@@ -165,8 +165,8 @@ public class TreeXTest extends TreeTest {
 
     /**
      * Test result {@link Envelope} which are equals to search Envelope.
-     * 
-     * @throws StoreIndexException 
+     *
+     * @throws StoreIndexException
      */
     @Test
     public void testEquals() throws StoreIndexException {
@@ -184,8 +184,8 @@ public class TreeXTest extends TreeTest {
 
     /**
      * Test result {@link Envelope} which overlaps specified search Envelope.
-     * 
-     * @throws StoreIndexException 
+     *
+     * @throws StoreIndexException
      */
     @Test
     public void testOverlaps() throws StoreIndexException {
@@ -213,8 +213,8 @@ public class TreeXTest extends TreeTest {
 }
 
 /**
- * Do link between datas inserted for this test and Tree identifier. 
- * 
+ * Do link between datas inserted for this test and Tree identifier.
+ *
  * @author Remi Marechal (Geomatys).
  * @see TreeElementMapper
  */
@@ -229,7 +229,7 @@ class TreeXElementMapperTest implements TreeElementMapper<Envelope> {
         this.lID      = new ArrayList<Integer>();
         this.isClosed = false;
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -271,7 +271,7 @@ class TreeXElementMapperTest implements TreeElementMapper<Envelope> {
             }
         }
         throw new IllegalStateException("impossible to found Data.");
-    }    
+    }
 
     /**
      * {@inheritDoc }

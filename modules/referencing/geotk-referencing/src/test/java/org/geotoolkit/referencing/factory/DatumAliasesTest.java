@@ -32,9 +32,8 @@ import org.apache.sis.test.DependsOn;
 import org.geotoolkit.test.TestBase;
 import org.geotoolkit.factory.FactoryFinder;
 import org.apache.sis.referencing.IdentifiedObjects;
-import org.geotoolkit.referencing.datum.DefaultEllipsoid;
-import org.geotoolkit.referencing.datum.DefaultPrimeMeridian;
 
+import org.apache.sis.referencing.CommonCRS;
 import org.geotools.referencing.datum.GeotoolsFactory; // A dummy factory for testing purpose.
 
 import org.junit.*;
@@ -96,8 +95,8 @@ public final strictfp class DatumAliasesTest extends TestBase {
         final String           name0 = "Nouvelle Triangulation Francaise (Paris)";
         final String           name1 = "Nouvelle_Triangulation_Francaise_Paris";
         final String           name2 = "NTF (Paris meridian)";
-        final Ellipsoid    ellipsoid = DefaultEllipsoid.WGS84;
-        final PrimeMeridian meridian = DefaultPrimeMeridian.GREENWICH;
+        final Ellipsoid    ellipsoid = CommonCRS.WGS84.ellipsoid();
+        final PrimeMeridian meridian = CommonCRS.WGS84.primeMeridian();
         DatumFactory         factory = new ReferencingObjectFactory();
         final Map<String,?> properties = Collections.singletonMap("name", name1);
         GeodeticDatum datum = factory.createGeodeticDatum(properties, ellipsoid, meridian);

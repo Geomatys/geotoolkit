@@ -28,7 +28,7 @@ import org.opengis.util.FactoryException;
 import org.apache.sis.test.DependsOn;
 import org.geotoolkit.referencing.crs.*;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
-import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
+import org.apache.sis.referencing.datum.DefaultGeodeticDatum;
 import org.geotoolkit.referencing.factory.web.WebCRSFactoryTest;
 import org.geotoolkit.referencing.factory.web.AutoCRSFactoryTest;
 

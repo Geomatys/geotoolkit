@@ -39,7 +39,7 @@ import org.geotoolkit.display2d.ext.BackgroundUtilities;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.apache.sis.math.MathFunctions;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.datum.DefaultEllipsoid;
+import org.apache.sis.referencing.datum.DefaultEllipsoid;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.ProjectedCRS;
 import org.opengis.referencing.datum.Ellipsoid;
@@ -181,7 +181,7 @@ public class J2DScaleBarUtilities {
                 final UnitConverter yConverter = mapUnitY.getConverterToAny(NonSI.DEGREE_ANGLE);
                 P1.setLocation(xConverter.convert(P1.getX()), yConverter.convert(P1.getY()));
                 P2.setLocation(xConverter.convert(P2.getX()), yConverter.convert(P2.getY()));
-                logicalLength = ((DefaultEllipsoid)ellipsoid).orthodromicDistance(P1, P2);
+                logicalLength = ((DefaultEllipsoid)ellipsoid).orthodromicDistance(P1.getX(), P1.getY(), P2.getX(), P2.getY());
                 logicalLength = ellipsoid.getAxisUnit().getConverterToAny(scaleUnit).convert(logicalLength);
             } else {
                 final UnitConverter xConverter = mapUnitX.getConverterToAny(scaleUnit);

@@ -48,8 +48,8 @@ public final strictfp class ProjectionParametersTest extends Assert {
     public void testSphere() {
         UnitaryProjection.Parameters parameters = parameters(Mercator1SP.PARAMETERS, false);
         assertTrue(parameters.isSpherical());
-        assertEquals(6371000.0, parameters.semiMajor,  0.0);
-        assertEquals(6371000.0, parameters.semiMinor,  0.0);
+        assertEquals(6371007.0, parameters.semiMajor,  0.0);
+        assertEquals(6371007.0, parameters.semiMinor,  0.0);
         assertEquals(0.0, parameters.latitudeOfOrigin, 0.0);
         assertEquals(0.0, parameters.centralMeridian,  0.0);
         assertEquals(1.0, parameters.scaleFactor,      0.0);

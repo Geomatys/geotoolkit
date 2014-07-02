@@ -18,7 +18,7 @@
 package org.geotoolkit.internal.referencing;
 
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
-import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
+import org.apache.sis.referencing.CommonCRS;
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -40,10 +40,10 @@ public final strictfp class CRSUtilitiesTest {
     public void testDimensionColinearWith() {
         assertEquals(0, CRSUtilities.dimensionColinearWith(
                 DefaultGeographicCRS.WGS84_3D.getCoordinateSystem(),
-                DefaultGeographicCRS.WGS84.getCoordinateSystem()));
+                CommonCRS.WGS84.normalizedGeographic().getCoordinateSystem()));
 
         assertEquals(2, CRSUtilities.dimensionColinearWith(
                 DefaultGeographicCRS.WGS84_3D.getCoordinateSystem(),
-                DefaultVerticalCRS.ELLIPSOIDAL_HEIGHT.getCoordinateSystem()));
+                CommonCRS.Vertical.ELLIPSOIDAL.crs().getCoordinateSystem()));
     }
 }

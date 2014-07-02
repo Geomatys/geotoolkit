@@ -20,61 +20,55 @@
  */
 package org.geotoolkit.referencing.crs;
 
-import java.util.Collections;
 import java.util.Map;
+import java.util.HashMap;
 import java.util.Objects;
+import java.util.Locale;
 import javax.measure.unit.SI;
-import javax.xml.bind.annotation.XmlTransient;
-import net.jcip.annotations.Immutable;
 
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.crs.EngineeringCRS;
-import org.opengis.referencing.datum.EngineeringDatum;
-
-import org.apache.sis.referencing.AbstractReferenceSystem;
-import org.geotoolkit.referencing.datum.DefaultEngineeringDatum;
+import org.opengis.referencing.datum.PixelInCell;
+import org.opengis.util.InternationalString;
+import org.apache.sis.referencing.crs.DefaultImageCRS;
+import org.apache.sis.referencing.crs.DefaultEngineeringCRS;
+import org.apache.sis.referencing.datum.DefaultImageDatum;
+import org.apache.sis.referencing.datum.DefaultEngineeringDatum;
 import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;
 import org.geotoolkit.referencing.cs.DefaultCartesianCS;
 import org.geotoolkit.resources.Vocabulary;
 import org.apache.sis.util.ComparisonMode;
 
-import static org.geotoolkit.referencing.crs.UnprefixedMap.name;
+import static org.opengis.referencing.IdentifiedObject.ALIAS_KEY;
+import static org.opengis.referencing.IdentifiedObject.NAME_KEY;
 
 
 /**
- * A contextually local coordinate reference system. It can be divided into two broad categories:
- * <p>
- * <ul>
- *   <li>earth-fixed systems applied to engineering activities on or near the surface of the
- *       earth;</li>
- *   <li>CRSs on moving platforms such as road vehicles, vessels, aircraft, or spacecraft.</li>
- * </ul>
- *
- * <TABLE CELLPADDING='6' BORDER='1'>
- * <TR BGCOLOR="#EEEEFF"><TH NOWRAP>Used with CS type(s)</TH></TR>
- * <TR><TD>
- *   {@link org.opengis.referencing.cs.CartesianCS    Cartesian},
- *   {@link org.opengis.referencing.cs.AffineCS       Affine},
- *   {@link org.opengis.referencing.cs.EllipsoidalCS  Ellipsoidal},
- *   {@link org.opengis.referencing.cs.SphericalCS    Spherical},
- *   {@link org.opengis.referencing.cs.CylindricalCS  Cylindrical},
- *   {@link org.opengis.referencing.cs.PolarCS        Polar},
- *   {@link org.opengis.referencing.cs.VerticalCS     Vertical},
- *   {@link org.opengis.referencing.cs.LinearCS       Linear}
- * </TD></TR></TABLE>
+ * Predefined CRS constants. <strong>This class is temporary</strong> - its content may
+ * move to Apache SIS in future version.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.19
- *
- * @since 1.2
  * @module
- *
- * @deprecated Moved to Apache SIS.
  */
-@Deprecated
-@Immutable
-@XmlTransient
-public class DefaultEngineeringCRS extends org.apache.sis.referencing.crs.DefaultEngineeringCRS {
+public final class PredefinedCRS {
+    /**
+     * Do not allow instantiation of this class.
+     */
+    private PredefinedCRS() {
+    }
+
+    /**
+     * Use the unlocalized name (usually in English locale), because the name is part of the elements
+     * compared by the {@link #equals} method.
+     */
+    static Map<String,Object> name(final int key) {
+        final Map<String,Object> properties = new HashMap<>(4);
+        final InternationalString name = Vocabulary.formatInternational(key);
+        properties.put(NAME_KEY,  name.toString(Locale.ROOT));
+        properties.put(ALIAS_KEY, name);
+        return properties;
+    }
+
     /**
      * A Cartesian local coordinate system.
      */
@@ -82,9 +76,16 @@ public class DefaultEngineeringCRS extends org.apache.sis.referencing.crs.Defaul
         /** Serial number for inter-operability with different versions. */
         private static final long serialVersionUID = -1773381554353809683L;
 
+        /**
+         * An engineering datum for unknown coordinate reference system. Such CRS are usually
+         * assumed Cartesian, but will not have any transformation path to other CRS.
+         */
+        public static final DefaultEngineeringDatum UNKNOWN =
+                new DefaultEngineeringDatum(name(Vocabulary.Keys.UNKNOWN));
+
         /** Constructs a coordinate system with the given name. */
         public Cartesian(final int key, final CoordinateSystem cs) {
-            super(name(key), DefaultEngineeringDatum.UNKNOWN, cs);
+            super(name(key), UNKNOWN, cs);
         }
 
         /**
@@ -166,46 +167,22 @@ public class DefaultEngineeringCRS extends org.apache.sis.referencing.crs.Defaul
             new Cartesian(Vocabulary.Keys.GENERIC_CARTESIAN_3D, DefaultCartesianCS.GENERIC_3D);
 
     /**
-     * Constructs a new enginnering CRS with the same values than the specified one.
-     * This copy constructor provides a way to convert an arbitrary implementation into a
-     * Geotk one or a user-defined one (as a subclass), usually in order to leverage
-     * some implementation-specific API. This constructor performs a shallow copy,
-     * i.e. the properties are not cloned.
+     * A two-dimensional Cartesian coordinate reference system with
+     * {@linkplain org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis#COLUMN column},
+     * {@linkplain org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis#ROW row} axes.
+     * By default, this CRS has no transformation path to any other CRS (i.e. a map using this
+     * CS can't be reprojected to a {@linkplain DefaultGeographicCRS geographic coordinate
+     * reference system} for example).
+     * <p>
+     * The {@link PixelInCell} attribute of the associated {@link ImageDatum}
+     * is set to {@link PixelInCell#CELL_CENTER CELL_CENTER}.
      *
-     * @param crs The CRS to copy.
-     *
-     * @since 2.2
+     * @since 3.09
      */
-    public DefaultEngineeringCRS(final EngineeringCRS crs) {
-        super(crs);
-    }
-
-    /**
-     * Constructs an engineering CRS from a name.
-     *
-     * @param name The name.
-     * @param datum The datum.
-     * @param cs The coordinate system.
-     */
-    public DefaultEngineeringCRS(final String            name,
-                                 final EngineeringDatum datum,
-                                 final CoordinateSystem    cs)
-    {
-        this(Collections.singletonMap(NAME_KEY, name), datum, cs);
-    }
-
-    /**
-     * Constructs an engineering CRS from a set of properties. The properties are given unchanged to
-     * the {@linkplain AbstractReferenceSystem#AbstractReferenceSystem(Map) super-class constructor}.
-     *
-     * @param properties Set of properties. Should contains at least {@code "name"}.
-     * @param datum The datum.
-     * @param cs The coordinate system.
-     */
-    public DefaultEngineeringCRS(final Map<String,?> properties,
-                                 final EngineeringDatum   datum,
-                                 final CoordinateSystem      cs)
-    {
-        super(properties, datum, cs);
+    public static final DefaultImageCRS GRID_2D;
+    static {
+        final Map<String,?> properties = name(Vocabulary.Keys.GRID);
+        GRID_2D = new DefaultImageCRS(properties, new DefaultImageDatum(properties,
+                PixelInCell.CELL_CENTER), DefaultCartesianCS.GRID);
     }
 }

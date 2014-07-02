@@ -18,7 +18,7 @@
 package org.geotoolkit.referencing.operation.transform;
 
 import java.util.Random;
-import org.geotoolkit.referencing.datum.DefaultEllipsoid;
+import org.apache.sis.referencing.CommonCRS;
 import static java.lang.StrictMath.*;
 
 
@@ -40,7 +40,7 @@ public strictfp enum CoordinateDomain {
             if (dimension != 3) {
                 throw new IllegalArgumentException();
             }
-            final double axis = DefaultEllipsoid.SPHERE.getSemiMajorAxis();
+            final double axis = CommonCRS.SPHERE.ellipsoid().getSemiMajorAxis();
             final double[] ordinates = GEOGRAPHIC.generateRandomInput(random, dimension, numPts);
             for (int i=0; i<ordinates.length;) {
                 final double phi    = toRadians(ordinates[i  ]);

@@ -38,7 +38,7 @@ public final strictfp class PrjFilesTest {
      * The {@code WGS84} CRS as WKT on a single line.
      */
     private static final String WKT = "GEOGCS[\"WGS84(DD)\", " +
-            "DATUM[\"WGS84\", SPHEROID[\"WGS84\", 6378137.0, 298.257223563]], " +
+            "DATUM[\"World Geodetic System 1984\", SPHEROID[\"WGS 84\", 6378137.0, 298.257223563]], " +
             "PRIMEM[\"Greenwich\", 0.0], UNIT[\"degree\", 0.017453292519943295], " +
             "AXIS[\"Longitude\", EAST], AXIS[\"Latitude\", NORTH]]\n";
 

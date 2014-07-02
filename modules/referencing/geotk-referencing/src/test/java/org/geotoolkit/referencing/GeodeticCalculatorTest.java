@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.referencing;
 
+import java.util.Collections;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.IllegalPathStateException;
@@ -33,9 +34,9 @@ import org.apache.sis.geometry.DirectPosition2D;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.cs.DefaultEllipsoidalCS;
 import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;
-import org.geotoolkit.referencing.datum.DefaultEllipsoid;
-import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
+import org.apache.sis.referencing.datum.DefaultEllipsoid;
 import org.geotoolkit.test.referencing.ReferencingTestBase;
+import org.apache.sis.referencing.CommonCRS;
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -127,7 +128,9 @@ public final strictfp class GeodeticCalculatorTest extends ReferencingTestBase {
             180.00, 10000,  14142
         };
         final double R = 20000 / PI;
-        final DefaultEllipsoid   ellipsoid  = DefaultEllipsoid.createEllipsoid("Test",R,R, SI.KILOMETRE);
+        final DefaultEllipsoid ellipsoid  = DefaultEllipsoid.createEllipsoid(
+                Collections.singletonMap(DefaultEllipsoid.NAME_KEY, "Test"),
+                R,R, SI.KILOMETRE);
         final GeodeticCalculator calculator = new GeodeticCalculator(ellipsoid);
         calculator.setStartingGeographicPoint(0, 45);
         for (int i=0; i<DATA.length; i+=3) {
@@ -177,7 +180,7 @@ public final strictfp class GeodeticCalculatorTest extends ReferencingTestBase {
      */
     @Test
     public void testUsingTransform() throws FactoryException, TransformException {
-        final GeographicCRS crs = new DefaultGeographicCRS("Test", DefaultGeodeticDatum.WGS84,
+        final GeographicCRS crs = new DefaultGeographicCRS("Test", CommonCRS.WGS84.datum(),
                 new DefaultEllipsoidalCS("Test", DefaultCoordinateSystemAxis.LATITUDE,
                                                  DefaultCoordinateSystemAxis.LONGITUDE));
         final GeodeticCalculator calculator = new GeodeticCalculator(crs);
@@ -228,7 +231,7 @@ public final strictfp class GeodeticCalculatorTest extends ReferencingTestBase {
     @Test
     public void testGEOT1535() {
         final GeodeticCalculator calculator = new GeodeticCalculator();
-        final DefaultEllipsoid reference = DefaultEllipsoid.WGS84;
+        final DefaultEllipsoid reference = DefaultEllipsoid.castOrCopy(CommonCRS.WGS84.ellipsoid());
 
         calculator.setStartingGeographicPoint(10, 40);
         calculator.setDestinationGeographicPoint(-175, -30);

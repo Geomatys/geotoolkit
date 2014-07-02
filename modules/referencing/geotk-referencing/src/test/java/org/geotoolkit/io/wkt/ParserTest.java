@@ -37,7 +37,7 @@ import org.apache.sis.io.wkt.Convention;
 import org.apache.sis.io.wkt.FormattableObject;
 import org.apache.sis.test.DependsOn;
 import org.geotoolkit.test.TestData;
-import org.geotoolkit.referencing.datum.DefaultPrimeMeridian;
+import org.apache.sis.referencing.datum.DefaultPrimeMeridian;
 import org.geotoolkit.referencing.operation.projection.FormattingTest;
 
 import org.junit.*;

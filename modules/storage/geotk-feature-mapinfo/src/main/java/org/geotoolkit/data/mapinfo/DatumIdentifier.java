@@ -21,8 +21,8 @@ import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.internal.InternalUtilities;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.apache.sis.referencing.datum.BursaWolfParameters;
-import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
-import org.geotoolkit.referencing.datum.DefaultPrimeMeridian;
+import org.apache.sis.referencing.datum.DefaultGeodeticDatum;
+import org.apache.sis.referencing.datum.DefaultPrimeMeridian;
 import org.opengis.referencing.datum.DatumAuthorityFactory;
 import org.opengis.referencing.datum.Ellipsoid;
 import org.opengis.referencing.datum.GeodeticDatum;
@@ -31,9 +31,14 @@ import org.opengis.util.FactoryException;
 
 import java.util.AbstractMap;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import javax.measure.unit.NonSI;
+import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.util.ArgumentChecks;
+import org.apache.sis.util.ComparisonMode;
+import org.apache.sis.util.Utilities;
 
 /**
  * A class which binds mapinfo datum codes with equivalent epsg code.
@@ -119,7 +124,7 @@ public final class DatumIdentifier {
 
             double primeShift = 0;
             int customCode = 999;
-            if(source.getPrimeMeridian() != DefaultPrimeMeridian.GREENWICH) {
+            if(source.getPrimeMeridian() != CommonCRS.WGS84.primeMeridian()) {
                 customCode = 9999;
                 primeShift = source.getPrimeMeridian().getGreenwichLongitude();
             }
@@ -127,9 +132,16 @@ public final class DatumIdentifier {
             if(ellipsoidCode < 0) {
                 throw new DataStoreException("We're unable to find an ellipsoid for source datum.");
             }
-            BursaWolfParameters bwParams = ((DefaultGeodeticDatum) source).getBursaWolfParameters(DefaultGeodeticDatum.WGS84);
+            BursaWolfParameters bwParams = null;
+            final GeodeticDatum targetDatum = CommonCRS.WGS84.datum();
+            for (BursaWolfParameters param : ((DefaultGeodeticDatum) source).getBursaWolfParameters()) {
+                if (Utilities.deepEquals(targetDatum, param.getTargetDatum(), ComparisonMode.IGNORE_METADATA)) {
+                    bwParams = param;
+                    break;
+                }
+            }
             if(bwParams == null) {
-                bwParams = new BursaWolfParameters(DefaultGeodeticDatum.WGS84, null);
+                bwParams = new BursaWolfParameters(targetDatum, null);
             }
 
             // search in the handed-built list
@@ -213,7 +225,7 @@ public final class DatumIdentifier {
      * @throws FactoryException If we've got a problem while ellipsoid building.
      */
     public static GeodeticDatum buildCustomDatum(String name, double[] parameters) throws DataStoreException, FactoryException {
-        BursaWolfParameters bwParams = new BursaWolfParameters(DefaultGeodeticDatum.WGS84, null);
+        BursaWolfParameters bwParams = new BursaWolfParameters(CommonCRS.WGS84.datum(), null);
         if(parameters.length < 1) {
             throw new DataStoreException("There's not enough parameters to build a valid datum. An ellipsoid code is required.");
         }
@@ -236,9 +248,10 @@ public final class DatumIdentifier {
         }
 
         // If we've got 9 parameters, the datum is not based on Greenwich meridian.
-        PrimeMeridian pMeridian = DefaultPrimeMeridian.GREENWICH;
+        PrimeMeridian pMeridian = CommonCRS.WGS84.primeMeridian();
         if(parameters.length > 8 && !InternalUtilities.epsilonEqual(parameters[8], 0)) {
-            pMeridian = new DefaultPrimeMeridian("Greenwich"+((parameters[8] > 0)? "+"+parameters[8] : parameters[8]), parameters[8]);
+            pMeridian = new DefaultPrimeMeridian(Collections.singletonMap(PrimeMeridian.NAME_KEY,
+                    "Greenwich" + ((parameters[8] > 0) ? "+" + parameters[8] : parameters[8])), parameters[8], NonSI.DEGREE_ANGLE);
         }
 
         final Map<String, Object> properties = new HashMap<String, Object>();

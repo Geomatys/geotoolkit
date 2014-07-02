@@ -57,9 +57,8 @@ import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;
 import org.geotoolkit.referencing.cs.DefaultEllipsoidalCS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.crs.DefaultProjectedCRS;
-import org.geotoolkit.referencing.datum.DefaultEllipsoid;
-import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
-import org.geotoolkit.referencing.datum.DefaultPrimeMeridian;
+import org.apache.sis.referencing.datum.DefaultEllipsoid;
+import org.apache.sis.referencing.datum.DefaultGeodeticDatum;
 import org.geotoolkit.referencing.CRS;
 import org.apache.sis.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.factory.AllAuthoritiesFactory;
@@ -97,6 +96,7 @@ import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.operation.Conversion;
 import org.opengis.referencing.crs.ProjectedCRS;
 
+import org.apache.sis.referencing.CommonCRS;
 import static org.geotoolkit.metadata.geotiff.GeoTiffConstants.*;
 import static org.geotoolkit.metadata.geotiff.GeoTiffMetaDataReader.*;
 
@@ -1078,7 +1078,7 @@ final class GeoTiffCRSReader {
                         final double pmNumeric = Double.parseDouble(pmValue);
                         // is it Greenwich?
                         if (pmNumeric == 0) {
-                            return DefaultPrimeMeridian.GREENWICH;
+                            return CommonCRS.WGS84.primeMeridian();
                         }
                         final Map props = new HashMap();
                         props.put("name", (name != null) ? name
@@ -1092,7 +1092,7 @@ final class GeoTiffCRSReader {
                     pm = allAuthoritiesFactory.createPrimeMeridian("EPSG:"+ pmCode);
                 }
             } else {
-                pm = DefaultPrimeMeridian.GREENWICH;
+                pm = CommonCRS.WGS84.primeMeridian();
             }
         } catch (FactoryException fe) {
             throw new IOException(fe);
@@ -1135,7 +1135,7 @@ final class GeoTiffCRSReader {
 
             // is it WGS84?
             if (datumName.trim().equalsIgnoreCase("WGS84")) {
-                return DefaultGeodeticDatum.WGS84;
+                return CommonCRS.WGS84.datum();
             }
 
             // ELLIPSOID
@@ -1147,7 +1147,7 @@ final class GeoTiffCRSReader {
                     unit);
 
             // DATUM
-            datum = new DefaultGeodeticDatum(datumName, ellipsoid,
+            datum = new DefaultGeodeticDatum(Collections.singletonMap(GeodeticDatum.NAME_KEY, datumName), ellipsoid,
                     primeMeridian);
         } else {
             /**
@@ -1193,7 +1193,7 @@ final class GeoTiffCRSReader {
             }
             // is it the default for WGS84?
             if (nameEllipsoid.trim().equalsIgnoreCase("WGS84")) {
-                return DefaultEllipsoid.WGS84;
+                return CommonCRS.WGS84.ellipsoid();
             }
 
             // //
@@ -1219,7 +1219,8 @@ final class GeoTiffCRSReader {
 
             }
             // look for the Ellipsoid first then build the datum
-            return DefaultEllipsoid.createFlattenedSphere(nameEllipsoid,
+            return DefaultEllipsoid.createFlattenedSphere(
+                    Collections.singletonMap(DefaultEllipsoid.NAME_KEY, nameEllipsoid),
                     semiMajorAxis, inverseFlattening, unit);
         }
 

@@ -86,8 +86,6 @@ import org.geotoolkit.process.coverage.copy.StatisticOp;
 import org.geotoolkit.process.coverage.resample.ResampleDescriptor;
 import org.geotoolkit.process.coverage.shadedrelief.ShadedReliefDescriptor;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
-import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.geotoolkit.referencing.operation.transform.EarthGravitationalModel;
@@ -126,6 +124,7 @@ import org.opengis.style.RasterSymbolizer;
 import org.opengis.style.SelectedChannelType;
 import org.opengis.style.ShadedRelief;
 import org.opengis.util.FactoryException;
+import org.apache.sis.referencing.CommonCRS;
 
 /**
  * @author Johann Sorel (Geomatys)
@@ -637,8 +636,8 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
         final RenderedImage base = coverage.getRenderedImage();
         final float[][] matrix = new float[base.getHeight()][base.getWidth()];
 
-        final EarthGravitationalModel trs = EarthGravitationalModel.create(DefaultGeodeticDatum.WGS84, 180);
-        final MathTransform dataToLongLat = CRS.findMathTransform(coverage.getCoordinateReferenceSystem2D(), DefaultGeographicCRS.WGS84);
+        final EarthGravitationalModel trs = EarthGravitationalModel.create(CommonCRS.WGS84.datum(), 180);
+        final MathTransform dataToLongLat = CRS.findMathTransform(coverage.getCoordinateReferenceSystem2D(), CommonCRS.WGS84.normalizedGeographic());
         final MathTransform2D gridToCRS = coverage.getGridGeometry().getGridToCRS2D();
         final MathTransform gridToLonLat = MathTransforms.concatenate(gridToCRS, dataToLongLat);
 

@@ -51,7 +51,7 @@ public class AbstractPositionalAccuracy extends org.apache.sis.metadata.iso.qual
     /**
      * Indicates that a {@linkplain org.opengis.referencing.operation.Transformation transformation}
      * requires a datum shift and some method has been applied. Datum shift methods often use
-     * {@linkplain org.geotoolkit.referencing.datum.BursaWolfParameters Bursa Wolf parameters},
+     * {@linkplain org.apache.sis.referencing.datum.BursaWolfParameters Bursa Wolf parameters},
      * but other kind of method may have been applied as well.
      *
      * @see org.opengis.referencing.operation.Transformation#getCoordinateOperationAccuracy
@@ -62,7 +62,7 @@ public class AbstractPositionalAccuracy extends org.apache.sis.metadata.iso.qual
     /**
      * Indicates that a {@linkplain org.opengis.referencing.operation.Transformation transformation}
      * requires a datum shift, but no method has been found applicable. This usually means that no
-     * {@linkplain org.geotoolkit.referencing.datum.BursaWolfParameters Bursa Wolf parameters} have
+     * {@linkplain org.apache.sis.referencing.datum.BursaWolfParameters Bursa Wolf parameters} have
      * been found. Such datum shifts are approximative and may have 1 kilometer error. This
      * pseudo-transformation is allowed by
      * {@linkplain org.geotoolkit.referencing.operation.DefaultCoordinateOperationFactory coordinate

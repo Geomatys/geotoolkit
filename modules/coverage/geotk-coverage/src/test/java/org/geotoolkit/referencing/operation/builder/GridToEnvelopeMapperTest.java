@@ -28,10 +28,10 @@ import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
 import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;
 import org.geotoolkit.referencing.cs.DefaultEllipsoidalCS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
-import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
 import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
 import org.apache.sis.geometry.GeneralEnvelope;
 
+import org.apache.sis.referencing.CommonCRS;
 import org.junit.*;
 import static org.junit.Assert.*;
 
@@ -174,7 +174,7 @@ public final strictfp class GridToEnvelopeMapperTest {
         ///
         envelope = envelope.clone();
         envelope.setCoordinateReferenceSystem(new DefaultGeographicCRS("WGS84",
-                DefaultGeodeticDatum.WGS84, new DefaultEllipsoidalCS("WGS84",
+                CommonCRS.WGS84.datum(), new DefaultEllipsoidalCS("WGS84",
                 DefaultCoordinateSystemAxis.LATITUDE,
                 DefaultCoordinateSystemAxis.LONGITUDE)));
         mapper.setEnvelope(envelope);

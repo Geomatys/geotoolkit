@@ -29,11 +29,11 @@ import org.opengis.test.CalculationType;
 
 import org.apache.sis.test.DependsOn;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.referencing.datum.DefaultEllipsoid;
 import org.geotoolkit.referencing.operation.transform.CoordinateDomain;
 import org.geotoolkit.referencing.operation.transform.TransformTestBase;
-
+import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
+
 import static java.lang.StrictMath.*;
 import static org.opengis.test.Assert.*;
 
@@ -51,7 +51,7 @@ public abstract strictfp class ProjectionTestBase extends TransformTestBase {
     /**
      * The radius of the sphere used in sphere test cases.
      */
-    static final double SPHERE_RADIUS = DefaultEllipsoid.SPHERE.getSemiMajorAxis();
+    static final double SPHERE_RADIUS = CommonCRS.SPHERE.ellipsoid().getSemiMajorAxis();
 
     /**
      * Creates a new test case using the given hints for fetching the factories.
@@ -87,7 +87,7 @@ public abstract strictfp class ProjectionTestBase extends TransformTestBase {
             final boolean ellipse, final int numStandardParallels, final Class<T> type)
     {
         final ParameterValueGroup values = descriptor.createValue();
-        final Ellipsoid ellipsoid = ellipse ? DefaultEllipsoid.WGS84 : DefaultEllipsoid.SPHERE;
+        final Ellipsoid ellipsoid = (ellipse ? CommonCRS.WGS84 : CommonCRS.SPHERE).ellipsoid();
         values.parameter("semi_major").setValue(ellipsoid.getSemiMajorAxis());
         values.parameter("semi_minor").setValue(ellipsoid.getSemiMinorAxis());
         switch (numStandardParallels) {

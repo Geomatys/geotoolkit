@@ -44,13 +44,13 @@ import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.referencing.AbstractReferenceSystem;
 import org.geotoolkit.referencing.cs.AxisRangeType;
 import org.geotoolkit.referencing.cs.DefaultEllipsoidalCS;
-import org.geotoolkit.referencing.datum.DefaultEllipsoid;
-import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
+import org.apache.sis.referencing.datum.DefaultEllipsoid;
 import org.apache.sis.internal.referencing.AxisDirections;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.cs.AbstractCS;
 import org.apache.sis.util.UnsupportedImplementationException;
 import org.apache.sis.measure.Units;
+import org.apache.sis.referencing.CommonCRS;
 
 
 /**
@@ -119,10 +119,10 @@ public class DefaultGeographicCRS extends org.apache.sis.referencing.crs.Default
         properties.put(ALIAS_KEY, alias);
         properties.put(DOMAIN_OF_VALIDITY_KEY, Extents.WORLD);
         // Do not declare EPSG identifiers, because axis order are not the same.
-        WGS84    = new DefaultGeographicCRS(properties, DefaultGeodeticDatum.WGS84,
-                                            DefaultEllipsoidalCS.GEODETIC_2D);
+        WGS84    = new DefaultGeographicCRS(properties, CommonCRS.WGS84.datum(),
+                                            CommonCRS.WGS84.normalizedGeographic().getCoordinateSystem());
         alias[1] = "WGS 84 (geographic 3D)"; // Replaces the EPSG name.
-        WGS84_3D = new DefaultGeographicCRS(properties, DefaultGeodeticDatum.WGS84,
+        WGS84_3D = new DefaultGeographicCRS(properties, CommonCRS.WGS84.datum(),
                                             DefaultEllipsoidalCS.GEODETIC_3D);
     }
 
@@ -141,8 +141,8 @@ public class DefaultGeographicCRS extends org.apache.sis.referencing.crs.Default
      * @since 3.15
      */
     public static final DefaultGeographicCRS SPHERE = new DefaultGeographicCRS(
-            IdentifiedObjects.getProperties(DefaultGeodeticDatum.SPHERE),
-            DefaultGeodeticDatum.SPHERE, DefaultEllipsoidalCS.GEODETIC_2D);
+            IdentifiedObjects.getProperties(CommonCRS.SPHERE.normalizedGeographic()),
+            CommonCRS.SPHERE.datum(), CommonCRS.SPHERE.normalizedGeographic().getCoordinateSystem());
 
     /**
      * Coordinate reference systems equivalent to this one, except for a shift in the range of

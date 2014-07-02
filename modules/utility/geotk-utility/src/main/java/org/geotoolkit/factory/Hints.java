@@ -269,7 +269,7 @@ public class Hints extends RenderingHints {
     /**
      * Tells if {@linkplain CoordinateOperation coordinate operations} should be allowed even when
      * a datum shift is required while no method is found applicable. It may be for example that no
-     * {@linkplain org.geotoolkit.referencing.datum.BursaWolfParameters Bursa Wolf parameters} were
+     * {@linkplain org.apache.sis.referencing.datum.BursaWolfParameters Bursa Wolf parameters} were
      * found for a datum shift. The default value is {@link Boolean#FALSE FALSE}, which means
      * that {@linkplain org.geotoolkit.referencing.operation.DefaultCoordinateOperationFactory
      * coordinate operation factory} throws an exception if such a case occurs.

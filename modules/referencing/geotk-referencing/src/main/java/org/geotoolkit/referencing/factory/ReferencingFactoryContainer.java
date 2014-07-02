@@ -45,12 +45,12 @@ import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.metadata.iso.ImmutableIdentifier;
 import org.geotoolkit.referencing.operation.DefiningConversion;
 import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
-import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.cs.AbstractCS;
 import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.resources.Errors;
+import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.cs.CoordinateSystems;
 
 import static org.geotoolkit.internal.FactoryUtilities.addImplementationHints;
@@ -613,7 +613,7 @@ search:     for (final CoordinateReferenceSystem source : sources) {
                 }
                 case 1: {
                     if (dimensions[0] == 2) {
-                        return DefaultVerticalCRS.ELLIPSOIDAL_HEIGHT;
+                        return CommonCRS.Vertical.ELLIPSOIDAL.crs();
                     }
                     break;
                 }

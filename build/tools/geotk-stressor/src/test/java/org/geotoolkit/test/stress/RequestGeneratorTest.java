@@ -27,7 +27,7 @@ import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import static org.opengis.referencing.datum.PixelInCell.CELL_CORNER;
-import static org.geotoolkit.referencing.crs.DefaultEngineeringCRS.CARTESIAN_2D;
+import static org.geotoolkit.referencing.crs.PredefinedCRS.CARTESIAN_2D;
 import static org.junit.Assert.*;
 
 import org.junit.*;
