@@ -19,15 +19,13 @@ package org.geotoolkit.referencing;
 import java.awt.geom.AffineTransform;
 import java.util.List;
 import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
-import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
-import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.junit.Test;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import static org.geotoolkit.test.Assert.*;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
+import org.apache.sis.referencing.CommonCRS;
 
 /**
  * Referencing utilities tests.
@@ -42,16 +40,16 @@ public class ReferencingUtilitiesTest {
     public void testDecompose(){
 
         final CoordinateReferenceSystem crs = new DefaultCompoundCRS("group",
-                DefaultGeographicCRS.WGS84,
+                CommonCRS.WGS84.normalizedGeographic(),
                 new DefaultCompoundCRS("group2",
-                    DefaultVerticalCRS.GEOIDAL_HEIGHT,
-                    DefaultTemporalCRS.JULIAN));
+                    CommonCRS.Vertical.MEAN_SEA_LEVEL.crs(),
+                    CommonCRS.Temporal.JULIAN.crs()));
 
         final List<CoordinateReferenceSystem> parts = ReferencingUtilities.decompose(crs);
         assertEquals(3, parts.size());
-        assertEquals(DefaultGeographicCRS.WGS84, parts.get(0));
-        assertEquals(DefaultVerticalCRS.GEOIDAL_HEIGHT, parts.get(1));
-        assertEquals(DefaultTemporalCRS.JULIAN, parts.get(2));
+        assertEquals(CommonCRS.WGS84.normalizedGeographic(), parts.get(0));
+        assertEquals(CommonCRS.Vertical.MEAN_SEA_LEVEL.crs(), parts.get(1));
+        assertEquals(CommonCRS.Temporal.JULIAN.crs(), parts.get(2));
     }
 
     @Test

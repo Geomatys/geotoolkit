@@ -19,50 +19,6 @@
 /**
  * {@linkplain org.geotoolkit.referencing.crs.AbstractCRS Coordinate reference system} implementations.
  * An explanation for this package is provided in the {@linkplain org.opengis.referencing.crs OpenGIS&reg; javadoc}.
- * The remaining discussion on this page is specific to the Geotk implementation.
- * <p>
- * {@link org.geotoolkit.referencing.crs.AbstractCRS} is the base class for all coordinate reference
- * systems (CRS). CRS can have an arbitrary number of dimensions. Some are two-dimensional (e.g.
- * {@link org.geotoolkit.referencing.crs.DefaultGeographicCRS GeographicCRS} and
- * {@link org.geotoolkit.referencing.crs.DefaultProjectedCRS ProjectedCRS}), while some others are
- * one-dimensional (e.g. {@link org.geotoolkit.referencing.crs.DefaultVerticalCRS VerticalCRS} and
- * {@link org.geotoolkit.referencing.crs.DefaultTemporalCRS TemporalCRS}). Those simple coordinate
- * reference systems can be used as building blocks for more complex coordinate reference systems.
- * For example, it is possible to construct a three-dimensional CRS with (<var>latitude</var>,
- * <var>longitude</var>, <var>time</var>) with an aggregation of
- * {@link org.geotoolkit.referencing.crs.DefaultGeographicCRS GeographicCRS} and
- * {@link org.geotoolkit.referencing.crs.DefaultTemporalCRS TemporalCRS}. Such aggregations
- * are built with {@link org.geotoolkit.referencing.crs.DefaultCompoundCRS CompoundCRS}.
- *
- * <p>Some useful constants defined in this package are:</p>
- *
- * <blockquote><table>
- *   <tr><td nowrap>Geographic CRS:&nbsp;</td><td>
- *     {@link org.geotoolkit.referencing.crs.DefaultGeographicCRS#WGS84            WGS84},
- *     {@link org.geotoolkit.referencing.crs.DefaultGeographicCRS#WGS84_3D         WGS84_3D}
- *     {@link org.geotoolkit.referencing.crs.DefaultGeographicCRS#SPHERE           SPHERE}
- *   </td></tr>
- *   <tr><td nowrap>Geocentric CRS:&nbsp;</td><td>
- *     {@link org.geotoolkit.referencing.crs.DefaultGeocentricCRS#CARTESIAN        CARTESIAN},
- *     {@link org.geotoolkit.referencing.crs.DefaultGeocentricCRS#SPHERICAL        SPHERICAL}
- *   </td></tr>
- *   <tr><td nowrap>Engineering CRS:&nbsp;</td><td>
- *     {@link org.geotoolkit.referencing.crs.DefaultEngineeringCRS#CARTESIAN_2D    CARTESIAN_2D},
- *     {@link org.geotoolkit.referencing.crs.DefaultEngineeringCRS#CARTESIAN_3D    CARTESIAN_3D}
- *   </td></tr>
- *   <tr><td nowrap>Vertical CRS:&nbsp;</td><td>
- *     {@link org.geotoolkit.referencing.crs.DefaultVerticalCRS#ELLIPSOIDAL_HEIGHT ELLIPSOIDAL_HEIGHT},
- *     {@link org.geotoolkit.referencing.crs.DefaultVerticalCRS#GEOIDAL_HEIGHT     GEOIDAL_HEIGHT}
- *   </td></tr>
- *   <tr><td nowrap>Temporal CRS:&nbsp;</td><td>
- *     {@link org.geotoolkit.referencing.crs.DefaultTemporalCRS#JULIAN             JULIAN},
- *     {@link org.geotoolkit.referencing.crs.DefaultTemporalCRS#MODIFIED_JULIAN    MODIFIED_JULIAN},
- *     {@link org.geotoolkit.referencing.crs.DefaultTemporalCRS#TRUNCATED_JULIAN   TRUNCATED_JULIAN},
- *     {@link org.geotoolkit.referencing.crs.DefaultTemporalCRS#DUBLIN_JULIAN      DUBLIN_JULIAN},
- *     {@link org.geotoolkit.referencing.crs.DefaultTemporalCRS#UNIX               UNIX},
- *     {@link org.geotoolkit.referencing.crs.DefaultTemporalCRS#JAVA               JAVA}
- *   </td></tr>
- * </table></blockquote>
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Cédric Briançon (Geomatys)

@@ -51,6 +51,9 @@ import org.geotoolkit.referencing.operation.MathTransformProvider;
 import org.geotoolkit.referencing.operation.DefaultMathTransformFactory;
 import org.apache.sis.referencing.cs.DefaultAffineCS;
 import org.apache.sis.util.collection.WeakHashSet;
+import org.apache.sis.referencing.cs.DefaultTimeCS;
+import org.apache.sis.referencing.crs.DefaultTemporalCRS;
+import org.apache.sis.referencing.datum.DefaultTemporalDatum;
 
 import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
 

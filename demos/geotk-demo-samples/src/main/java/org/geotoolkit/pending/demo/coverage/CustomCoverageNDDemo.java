@@ -11,26 +11,25 @@ import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
-import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
-import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.RandomStyleBuilder;
 import org.opengis.coverage.Coverage;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.apache.sis.referencing.CommonCRS;
 
 
 public class CustomCoverageNDDemo {
-    
+
     private static final MutableStyleFactory SF = new DefaultStyleFactory();
-    
+
     public static void main(String[] args) throws Exception {
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
-        
+
         CoordinateReferenceSystem crs = new DefaultCompoundCRS("4D crs",
                     CRS.decode("EPSG:4326"),
-                    DefaultVerticalCRS.ELLIPSOIDAL_HEIGHT,
-                    DefaultTemporalCRS.JAVA);
+                    CommonCRS.Vertical.ELLIPSOIDAL.crs(),
+                    CommonCRS.Temporal.JAVA.crs());
 
         List<Coverage> temps = new ArrayList<>();
         for(int i=0; i<10; i++){
@@ -53,9 +52,9 @@ public class CustomCoverageNDDemo {
             temps.add(new CoverageStack("3D", eles));
         }
         CoverageStack coverage4D = new CoverageStack("4D", temps);
-        
+
         System.out.println(coverage4D.getEnvelope());
-                
+
     }
-    
+
 }

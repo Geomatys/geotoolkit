@@ -24,16 +24,16 @@ import java.util.TimeZone;
 import org.opengis.geometry.MismatchedDimensionException;
 
 import org.apache.sis.geometry.GeneralDirectPosition;
-import org.geotoolkit.referencing.cs.DefaultTimeCS;
 import org.apache.sis.referencing.crs.AbstractCRS;
-import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
-import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
-import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
-import org.geotoolkit.referencing.datum.DefaultTemporalDatum;
-
+import org.apache.sis.referencing.crs.DefaultCompoundCRS;
+import org.apache.sis.referencing.crs.DefaultTemporalCRS;
+import org.apache.sis.referencing.datum.DefaultTemporalDatum;
+import org.apache.sis.referencing.CommonCRS;
 import org.junit.*;
+
 import static org.junit.Assert.*;
+import static java.util.Collections.singletonMap;
+import static org.opengis.referencing.IdentifiedObject.NAME_KEY;
 
 
 /**
@@ -56,10 +56,11 @@ public final strictfp class CoordinateFormatTest {
          * Configures a fixed timezone and date pattern for portability.
          */
         final Date epoch = new Date(1041375600000L); // January 1st, 2003
-        final DefaultTemporalDatum datum = new DefaultTemporalDatum("Time", epoch);
-        final AbstractCRS crs = new DefaultCompoundCRS("WGS84 3D + time",
-                    DefaultGeographicCRS.WGS84, DefaultVerticalCRS.ELLIPSOIDAL_HEIGHT,
-                    new DefaultTemporalCRS("Time", datum, DefaultTimeCS.DAYS));
+        final DefaultTemporalDatum datum = new DefaultTemporalDatum(singletonMap(NAME_KEY, "Time"), epoch);
+        final AbstractCRS crs = new DefaultCompoundCRS(singletonMap(NAME_KEY, "WGS84 3D + time"),
+                    CommonCRS.WGS84.normalizedGeographic(), CommonCRS.Vertical.ELLIPSOIDAL.crs(),
+                    new DefaultTemporalCRS(singletonMap(NAME_KEY, "Time"),
+                            datum, CommonCRS.Temporal.JULIAN.crs().getCoordinateSystem()));
         final CoordinateFormat format = new CoordinateFormat(Locale.FRANCE, crs);
         final String datePattern = "dd-MM-yyyy HH:mm";
         format.setDatePattern(datePattern);

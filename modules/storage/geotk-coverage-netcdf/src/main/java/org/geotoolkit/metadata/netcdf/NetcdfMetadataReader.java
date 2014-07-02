@@ -99,10 +99,9 @@ import org.apache.sis.metadata.iso.extent.DefaultTemporalExtent;
 import org.apache.sis.metadata.iso.quality.DefaultDataQuality;
 import org.apache.sis.metadata.iso.lineage.DefaultLineage;
 import org.geotoolkit.referencing.adapters.NetcdfCRSBuilder;
-import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
-import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
 import org.geotoolkit.resources.Errors;
 
+import org.apache.sis.referencing.CommonCRS;
 import static org.apache.sis.util.iso.Types.toInternationalString;
 
 
@@ -887,7 +886,7 @@ public class NetcdfMetadataReader extends NetcdfMetadata {
                 min = -max;
                 max = -tmp;
             }
-            extent.getVerticalElements().add(new DefaultVerticalExtent(min, max, DefaultVerticalCRS.GEOIDAL_HEIGHT));
+            extent.getVerticalElements().add(new DefaultVerticalExtent(min, max, CommonCRS.Vertical.MEAN_SEA_LEVEL.crs()));
         }
         /*
          * Temporal extent.
@@ -915,7 +914,7 @@ public class NetcdfMetadataReader extends NetcdfMetadata {
             if (extent == null) {
                 extent = new DefaultExtent();
             }
-            final GeneralEnvelope env = new GeneralEnvelope(DefaultTemporalCRS.JAVA);
+            final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.Temporal.JAVA.crs());
             env.setRange(0, (startTime != null) ? startTime.getTime() : Double.NaN,
                               (endTime != null) ?   endTime.getTime() : Double.NaN);
             final DefaultTemporalExtent e = new DefaultTemporalExtent();

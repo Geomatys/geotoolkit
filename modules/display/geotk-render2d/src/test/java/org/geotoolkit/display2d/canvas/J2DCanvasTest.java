@@ -28,9 +28,6 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
-import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
-import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 
 import org.junit.AfterClass;
@@ -41,6 +38,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import static org.junit.Assert.*;
 import org.opengis.referencing.operation.TransformException;
+import org.apache.sis.referencing.CommonCRS;
 
 /**
  * Test envelope configuration on J2DCanvas.
@@ -63,7 +61,7 @@ public class J2DCanvasTest {
 
      @Test
      public void test4DEnvelope() throws Exception {
-         final J2DCanvas canvas = new J2DCanvasBuffered(DefaultGeographicCRS.WGS84, new Dimension(800,600));
+         final J2DCanvas canvas = new J2DCanvasBuffered(CommonCRS.WGS84.normalizedGeographic(), new Dimension(800,600));
 
          //check size
          assertTrue( canvas.getDisplayBounds().getBounds().width == 800 );
@@ -77,9 +75,9 @@ public class J2DCanvasTest {
 
          CoordinateReferenceSystem crs = new DefaultCompoundCRS(
                "WGS84-4D",
-               DefaultGeographicCRS.WGS84,
-               DefaultVerticalCRS.ELLIPSOIDAL_HEIGHT,
-               DefaultTemporalCRS.JAVA);
+               CommonCRS.WGS84.normalizedGeographic(),
+               CommonCRS.Vertical.ELLIPSOIDAL.crs(),
+               CommonCRS.Temporal.JAVA.crs());
 
          final GeneralEnvelope env = new GeneralEnvelope(crs);
          env.setRange(0, -170, 170);
@@ -108,9 +106,9 @@ public class J2DCanvasTest {
 
          CoordinateReferenceSystem crs = new DefaultCompoundCRS(
                "WGS84-4D",
-               DefaultGeographicCRS.WGS84,
-               DefaultVerticalCRS.ELLIPSOIDAL_HEIGHT,
-               DefaultTemporalCRS.JAVA);
+               CommonCRS.WGS84.normalizedGeographic(),
+               CommonCRS.Vertical.ELLIPSOIDAL.crs(),
+               CommonCRS.Temporal.JAVA.crs());
 
          final GeneralEnvelope env = new GeneralEnvelope(crs);
          env.setRange(0, -170, 170);
@@ -118,7 +116,7 @@ public class J2DCanvasTest {
          env.setRange(2, -50, 150);
          env.setRange(3, 3000, 6000);
 
-         MapContext context = MapBuilder.createContext(DefaultGeographicCRS.WGS84);
+         MapContext context = MapBuilder.createContext(CommonCRS.WGS84.normalizedGeographic());
 
          //was raising an error since we asked a 4D envelope with a 2D context
          //the canvas should change the crs to 2D to pass this test
@@ -128,8 +126,8 @@ public class J2DCanvasTest {
 
      @Test
      public void testObjectToDisplayTrs() throws Exception{
-         final J2DCanvas canvas = new J2DCanvasBuffered(DefaultGeographicCRS.WGS84, new Dimension(360,180));
-         final GeneralEnvelope env = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
+         final J2DCanvas canvas = new J2DCanvasBuffered(CommonCRS.WGS84.normalizedGeographic(), new Dimension(360,180));
+         final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
          env.setRange(0, -180, +180);
          env.setRange(1, -90, +90);
          canvas.setVisibleArea(env);
@@ -140,8 +138,8 @@ public class J2DCanvasTest {
 
      @Test
      public void testCenterTransform() throws NoninvertibleTransformException, TransformException{
-         final J2DCanvas canvas = new J2DCanvasBuffered(DefaultGeographicCRS.WGS84, new Dimension(360,180));
-         final GeneralEnvelope env = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
+         final J2DCanvas canvas = new J2DCanvasBuffered(CommonCRS.WGS84.normalizedGeographic(), new Dimension(360,180));
+         final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
          env.setRange(0, -180, +180);
          env.setRange(1, -90, +90);
          canvas.setVisibleArea(env);

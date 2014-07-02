@@ -69,7 +69,7 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
+import org.apache.sis.referencing.crs.DefaultTemporalCRS;
 
 import static java.lang.Double.NaN;
 import static java.lang.Double.isNaN;
@@ -176,14 +176,14 @@ public class CoverageStack extends AbstractCoverage {
          * This information is mandatory.
          *
          * The Z center may not necessarily be at the center of the Z range.
-         * It is common to have coverage with non linear values for additional 
+         * It is common to have coverage with non linear values for additional
          * dimensions like time or elevation.
          *
          * @return The Z range center
          * @throws IOException if an I/O operation was required but failed.
          */
         Number getZCenter() throws IOException;
-        
+
         /**
          * Returns the minimum and maximum <var>z</var> values for the coverage.
          * This information is mandatory.
@@ -282,7 +282,7 @@ public class CoverageStack extends AbstractCoverage {
          * determined. If {@code null}, the range must be computed by the {@link #getZRange} method.
          */
         protected NumberRange<?> range;
-        
+
         /**
          * Center <var>z</var> value for this element, or {@code null} if not yet
          * determined. If {@code null}, the center must will computed as the center of the Z range.
@@ -301,7 +301,7 @@ public class CoverageStack extends AbstractCoverage {
         public Adapter(final Coverage coverage, final NumberRange<?> range) {
             this(coverage,range,null);
         }
-        
+
         /**
          * Constructs a new adapter for the specified coverage and <var>z</var> values.
          *

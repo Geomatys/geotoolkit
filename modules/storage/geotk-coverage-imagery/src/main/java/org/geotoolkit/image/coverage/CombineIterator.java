@@ -22,7 +22,6 @@ import java.util.Iterator;
 import java.util.List;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
 import org.geotoolkit.referencing.cs.DiscreteCoordinateSystemAxis;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CompoundCRS;
@@ -30,9 +29,10 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.referencing.operation.MathTransform;
+import org.apache.sis.referencing.CommonCRS;
 
 /**
- * Iterator on {@link Envelope} which find all possible dimension combinations upper to 2 dimensions. 
+ * Iterator on {@link Envelope} which find all possible dimension combinations upper to 2 dimensions.
  *
  * @author Cédric Briançon (Geomatys).
  * @author Johann Sorel    (Geomatys).
@@ -46,7 +46,7 @@ public class CombineIterator implements Iterator<Envelope> {
         private boolean finish = false;
 
         public CombineIterator(final GeneralEnvelope baseEnvelope) {
-            
+
             final CoordinateReferenceSystem crs = baseEnvelope.getCoordinateReferenceSystem();
             final CoordinateSystem cs = crs.getCoordinateSystem();
             // Stores additional coordinate system axes, to know how many pyramids should be created
@@ -70,7 +70,7 @@ public class CombineIterator implements Iterator<Envelope> {
             this.positions    = new int[possibilities.size()];
             this.baseEnvelope = baseEnvelope;
         }
-        
+
         /**
          * Defines an iterator on given values with the given base envelope.
          *
@@ -100,7 +100,7 @@ public class CombineIterator implements Iterator<Envelope> {
                 }else if(c instanceof Date){
                     n = ((Date)c).getTime();
                     //transform correctly value, unit type might have changed.
-                    final CoordinateReferenceSystem baseCRS = DefaultTemporalCRS.JAVA;
+                    final CoordinateReferenceSystem baseCRS = CommonCRS.Temporal.JAVA.crs();
                     final CoordinateReferenceSystem targetCRS = ((CompoundCRS)baseEnvelope.getCoordinateReferenceSystem()).getComponents().get(1+i);
 
                     //try to convert from one axis to the other

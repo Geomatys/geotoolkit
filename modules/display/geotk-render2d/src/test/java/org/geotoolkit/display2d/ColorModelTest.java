@@ -65,9 +65,6 @@ import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
-import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
-import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableStyle;
@@ -89,6 +86,7 @@ import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.style.GraphicalSymbol;
 
+import org.apache.sis.referencing.CommonCRS;
 import static org.junit.Assert.*;
 import static org.geotoolkit.style.StyleConstants.*;
 
@@ -113,11 +111,11 @@ public class ColorModelTest {
     public ColorModelTest() throws Exception {
 
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
-        
+
         // create the feature collection for tests -----------------------------
         final FeatureTypeBuilder sftb = new FeatureTypeBuilder();
         sftb.setName("test");
-        sftb.add("geom", Point.class, DefaultGeographicCRS.WGS84);
+        sftb.add("geom", Point.class, CommonCRS.WGS84.normalizedGeographic());
         sftb.add("att1", String.class);
         sftb.add("att2", Double.class);
         final SimpleFeatureType sft = sftb.buildSimpleFeatureType();
@@ -160,11 +158,11 @@ public class ColorModelTest {
         env.setRange(0, -12, 31);
         env.setRange(1, -5, 46);
         envelopes.add(env);
-        env = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
+        env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
         env.setRange(0, -180, 180);
         env.setRange(1, -90, 90);
         envelopes.add(env);
-        env = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
+        env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
         env.setRange(0, -5, 46);
         env.setRange(1, -12, 31);
         envelopes.add(env);
@@ -217,8 +215,8 @@ public class ColorModelTest {
         //create some ND coverages ---------------------------------------------
         CoordinateReferenceSystem crs = new DefaultCompoundCRS("4D crs",
                     CRS.decode("EPSG:4326"),
-                    DefaultVerticalCRS.ELLIPSOIDAL_HEIGHT,
-                    DefaultTemporalCRS.JAVA);
+                    CommonCRS.Vertical.ELLIPSOIDAL.crs(),
+                    CommonCRS.Temporal.JAVA.crs());
 
         List<Coverage> temps = new ArrayList<Coverage>();
         for(int i=0; i<10; i++){
@@ -454,27 +452,27 @@ public class ColorModelTest {
 
     @Test
     public void testReprojectionCoverageARGB() throws TransformException, PortrayalException, NoSuchAuthorityCodeException, FactoryException{
-        
-         //create a test coverage  
-        final BufferedImage img = new BufferedImage(500, 500, BufferedImage.TYPE_INT_ARGB);        
+
+         //create a test coverage
+        final BufferedImage img = new BufferedImage(500, 500, BufferedImage.TYPE_INT_ARGB);
         final Graphics2D g2d = img.createGraphics();
         g2d.setColor(Color.GREEN);
         g2d.fillRect(0, 0, 500, 500);
-        final GeneralEnvelope env = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
+        final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
         env.setRange(0, 0, 20);
         env.setRange(1, 0, 20);
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
         gcb.setEnvelope(env);
         gcb.setRenderedImage(img);
         final GridCoverage2D coverage = gcb.getGridCoverage2D();
-                        
+
         //display it
         final MapContext context = MapBuilder.createContext();
         final CoverageMapLayer cl = MapBuilder.createCoverageLayer(coverage, SF.style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER), "coverage");
         context.layers().add(cl);
-        
+
         final Envelope envelope = CRS.transform(env, CRS.decode("EPSG:3031"));
-        
+
         final BufferedImage result = DefaultPortrayalService.portray(
                 new CanvasDef(new Dimension(800, 600), Color.WHITE),
                 new SceneDef(context),
@@ -486,7 +484,7 @@ public class ColorModelTest {
         assertEquals(ColorSpace.TYPE_RGB, result.getColorModel().getColorSpace().getType());
         assertEquals(3, result.getColorModel().getNumComponents());
         assertEquals(3, result.getColorModel().getNumColorComponents());
-        
+
         //check we don't have any black reprojection pixels
         int[] buffer = new int[4];
         final Raster raster = result.getData();
@@ -498,33 +496,33 @@ public class ColorModelTest {
                     fail("reprojection should not have generated black pixels.");
                 }
             }
-        }        
-        
+        }
+
     }
-    
+
     @Test
     public void testReprojectionCoverageRGB() throws TransformException, PortrayalException, NoSuchAuthorityCodeException, FactoryException{
-        
-         //create a test coverage  
-        final BufferedImage img = new BufferedImage(500, 500, BufferedImage.TYPE_INT_RGB);        
+
+         //create a test coverage
+        final BufferedImage img = new BufferedImage(500, 500, BufferedImage.TYPE_INT_RGB);
         final Graphics2D g2d = img.createGraphics();
         g2d.setColor(Color.GREEN);
         g2d.fillRect(0, 0, 500, 500);
-        final GeneralEnvelope env = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
+        final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
         env.setRange(0, 0, 20);
         env.setRange(1, 0, 20);
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
         gcb.setEnvelope(env);
         gcb.setRenderedImage(img);
         final GridCoverage2D coverage = gcb.getGridCoverage2D();
-                        
+
         //display it
         final MapContext context = MapBuilder.createContext();
         final CoverageMapLayer cl = MapBuilder.createCoverageLayer(coverage, SF.style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER), "coverage");
         context.layers().add(cl);
-        
+
         final Envelope envelope = CRS.transform(env, CRS.decode("EPSG:3031"));
-        
+
         final BufferedImage result = DefaultPortrayalService.portray(
                 new CanvasDef(new Dimension(800, 600), Color.WHITE),
                 new SceneDef(context),
@@ -536,7 +534,7 @@ public class ColorModelTest {
         assertEquals(ColorSpace.TYPE_RGB, result.getColorModel().getColorSpace().getType());
         assertEquals(3, result.getColorModel().getNumComponents());
         assertEquals(3, result.getColorModel().getNumColorComponents());
-        
+
         //check we don't have any black reprojection pixels
         int[] buffer = new int[4];
         final Raster raster = result.getData();
@@ -548,10 +546,10 @@ public class ColorModelTest {
                     fail("reprojection should not have generated black pixels.");
                 }
             }
-        }        
-        
+        }
+
     }
-    
+
     private MapLayer createLayer(final Color ... colors){
         return MapBuilder.createFeatureLayer(featureColls.get(0), createStyle(colors));
     }

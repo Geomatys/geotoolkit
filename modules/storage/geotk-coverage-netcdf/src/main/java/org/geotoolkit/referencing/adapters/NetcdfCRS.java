@@ -63,19 +63,21 @@ import org.geotoolkit.internal.image.io.Warnings;
 import org.geotoolkit.internal.image.io.IrregularAxesConverter;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.apache.sis.util.ArraysExt;
-import org.geotoolkit.referencing.datum.DefaultTemporalDatum;
-import org.geotoolkit.referencing.datum.DefaultVerticalDatum;
-import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
+import org.apache.sis.referencing.datum.DefaultTemporalDatum;
+import org.apache.sis.referencing.datum.DefaultGeodeticDatum;
 import org.geotoolkit.referencing.cs.DiscreteReferencingFactory;
 import org.geotoolkit.referencing.cs.DiscreteCoordinateSystemAxis;
-import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
-import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.crs.DefaultVerticalCRS;
+import org.apache.sis.referencing.crs.DefaultTemporalCRS;
+import org.apache.sis.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.crs.DefaultProjectedCRS;
-import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
+import org.apache.sis.referencing.crs.DefaultCompoundCRS;
 import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
 import org.geotoolkit.io.wkt.Formattable;
+import org.apache.sis.referencing.CommonCRS;
 
+import static java.util.Collections.singletonMap;
+import static org.opengis.referencing.IdentifiedObject.NAME_KEY;
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 
 
@@ -499,7 +501,7 @@ public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateRefer
             } catch (Exception e) {
                 throw new IIOException(Errors.format(Errors.Keys.UNKNOWN_UNIT_1, unitSymbol), e);
             }
-            datum = new DefaultTemporalDatum(unitSymbol, unit.getDateOrigin());
+            datum = new DefaultTemporalDatum(singletonMap(NAME_KEY, unitSymbol), unit.getDateOrigin());
             getAxis(0).unit = Units.multiply(SI.SECOND, unit.getTimeUnit().getValueInSeconds());
         }
 
@@ -583,10 +585,10 @@ public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateRefer
         Vertical(final CoordinateSystem cs, final Dimension[] domain, final CoordinateAxis netcdfAxis) throws IIOException {
             super(cs, domain, Collections.singletonList(netcdfAxis));
             switch (netcdfAxis.getAxisType()) {
-                case Pressure: datum = DefaultVerticalDatum.BAROMETRIC;    break;
-                case Height:   datum = DefaultVerticalDatum.GEOIDAL;       break;
-                case GeoZ:     datum = DefaultVerticalDatum.ELLIPSOIDAL;   break;
-                default:       datum = DefaultVerticalDatum.OTHER_SURFACE; break;
+                case Pressure: datum = CommonCRS.Vertical.BAROMETRIC    .datum(); break;
+                case Height:   datum = CommonCRS.Vertical.MEAN_SEA_LEVEL.datum(); break;
+                case GeoZ:     datum = CommonCRS.Vertical.ELLIPSOIDAL   .datum(); break;
+                default:       datum = CommonCRS.Vertical.OTHER_SURFACE .datum(); break;
             }
         }
 
@@ -696,7 +698,7 @@ public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateRefer
          */
         @Override
         public GeodeticDatum getDatum() {
-            return DefaultGeodeticDatum.WGS84;
+            return CommonCRS.WGS84.datum();
         }
 
         /**
@@ -758,7 +760,7 @@ public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateRefer
          */
         @Override
         public GeodeticDatum getDatum() {
-            return DefaultGeodeticDatum.WGS84;
+            return CommonCRS.WGS84.datum();
         }
 
         /**
@@ -768,7 +770,7 @@ public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateRefer
          */
         @Override
         public GeographicCRS getBaseCRS() {
-            return DefaultGeographicCRS.SPHERE;
+            return CommonCRS.SPHERE.normalizedGeographic();
         }
 
         /**

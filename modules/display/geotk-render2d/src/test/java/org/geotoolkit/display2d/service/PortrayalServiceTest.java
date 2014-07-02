@@ -58,10 +58,6 @@ import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
-import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
-import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
-import org.geotoolkit.style.DefaultSelectedChannelType;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
@@ -95,6 +91,7 @@ import org.opengis.style.Symbolizer;
 
 import static org.geotoolkit.style.StyleConstants.*;
 import org.opengis.style.SelectedChannelType;
+import org.apache.sis.referencing.CommonCRS;
 
 /**
  * Testing portrayal service.
@@ -122,7 +119,7 @@ public class PortrayalServiceTest {
         // create the feature collection for tests -----------------------------
         final FeatureTypeBuilder sftb = new FeatureTypeBuilder();
         sftb.setName("test");
-        sftb.add("geom", Point.class, DefaultGeographicCRS.WGS84);
+        sftb.add("geom", Point.class, CommonCRS.WGS84.normalizedGeographic());
         sftb.add("att1", String.class);
         sftb.add("att2", Double.class);
         final SimpleFeatureType sft = sftb.buildSimpleFeatureType();
@@ -165,11 +162,11 @@ public class PortrayalServiceTest {
         env.setRange(0, -12, 31);
         env.setRange(1, -5, 46);
         envelopes.add(env);
-        env = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
+        env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
         env.setRange(0, -180, 180);
         env.setRange(1, -90, 90);
         envelopes.add(env);
-        env = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
+        env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
         env.setRange(0, -5, 46);
         env.setRange(1, -12, 31);
         envelopes.add(env);
@@ -222,8 +219,8 @@ public class PortrayalServiceTest {
         //create some ND coverages ---------------------------------------------
         CoordinateReferenceSystem crs = new DefaultCompoundCRS("4D crs",
                     CRS.decode("EPSG:4326"),
-                    DefaultVerticalCRS.ELLIPSOIDAL_HEIGHT,
-                    DefaultTemporalCRS.JAVA);
+                    CommonCRS.Vertical.ELLIPSOIDAL.crs(),
+                    CommonCRS.Temporal.JAVA.crs());
 
         List<Coverage> temps = new ArrayList<Coverage>();
         for(int i=0; i<10; i++){
@@ -297,26 +294,26 @@ public class PortrayalServiceTest {
     public void testCoveragePropertyRendering() throws Exception{
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("test");
-        ftb.add("coverage", GridCoverage2D.class, DefaultGeographicCRS.WGS84);
+        ftb.add("coverage", GridCoverage2D.class, CommonCRS.WGS84.normalizedGeographic());
         final FeatureType ft = ftb.buildFeatureType();
-        
+
         final BufferedImage img = new BufferedImage(90, 90, BufferedImage.TYPE_INT_ARGB);
         final Graphics2D g = img.createGraphics();
         g.setColor(Color.GREEN);
         g.fillRect(0, 0, 90, 90);
         g.dispose();
-        
+
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
         gcb.setName("propcov");
-        gcb.setCoordinateReferenceSystem(DefaultGeographicCRS.WGS84);
+        gcb.setCoordinateReferenceSystem(CommonCRS.WGS84.normalizedGeographic());
         gcb.setGridToCRS(1, 0, 0, 1, 0, 0);
         gcb.setRenderedImage(img);
-        
-        final Feature f = FeatureUtilities.defaultFeature(ft, "id0");                
+
+        final Feature f = FeatureUtilities.defaultFeature(ft, "id0");
         f.getProperty("coverage").setValue(gcb.getGridCoverage2D());
         final FeatureCollection collection = FeatureStoreUtilities.collection(f);
-        
-                
+
+
         final String name = "mySymbol";
         final Description desc = DEFAULT_DESCRIPTION;
         final String geometry = "coverage";
@@ -333,18 +330,18 @@ public class PortrayalServiceTest {
                 name,geometry,desc,unit,opacity,
                 channels,overlap,colormap,enhance,relief,outline);
         final MutableStyle style = SF.style(symbol);
-        
+
         final MapLayer layer = MapBuilder.createFeatureLayer(collection, style);
         final MapContext context = MapBuilder.createContext();
         context.layers().add(layer);
-        
+
         final CanvasDef cdef = new CanvasDef(new Dimension(360, 180), null);
         final SceneDef sdef = new SceneDef(context);
-        final GeneralEnvelope env = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
+        final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
         env.setRange(0, -180, +180);
         env.setRange(1, -90, +90);
         final ViewDef vdef = new ViewDef(env);
-        
+
         final BufferedImage result = DefaultPortrayalService.portray(cdef, sdef, vdef);
         final Raster raster = result.getData();
         final int[] pixel = new int[4];
@@ -354,9 +351,9 @@ public class PortrayalServiceTest {
         raster.getPixel(0, 0, pixel);       assertArrayEquals(trans, pixel);
         raster.getPixel(178, 45, pixel);       assertArrayEquals(trans, pixel);
         raster.getPixel(181, 45, pixel);       assertArrayEquals(green, pixel);
-        
+
     }
-    
+
     @Test
     public void testCoverageRendering() throws Exception{
         for(GridCoverage2D col : coverages){
@@ -384,7 +381,7 @@ public class PortrayalServiceTest {
 
 
         //create a map context with a layer that will cover the entire area we will ask for
-        final GeneralEnvelope covenv = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
+        final GeneralEnvelope covenv = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
         covenv.setRange(0, -180, 180);
         covenv.setRange(1, -90, 90);
         final BufferedImage img = new BufferedImage(360, 180, BufferedImage.TYPE_INT_ARGB);
@@ -460,7 +457,7 @@ public class PortrayalServiceTest {
         final Graphics2D g2d = img.createGraphics();
         g2d.setColor(Color.GREEN);
         g2d.fillRect(0, 0, 360, 180);
-        final GeneralEnvelope env = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
+        final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
         env.setRange(0, -180, 180);
         env.setRange(1, -90, 90);
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
@@ -491,7 +488,7 @@ public class PortrayalServiceTest {
     private void testRendering(final MapLayer layer) throws TransformException, PortrayalException{
         final StopOnErrorMonitor monitor = new StopOnErrorMonitor();
 
-        final MapContext context = MapBuilder.createContext(DefaultGeographicCRS.WGS84);
+        final MapContext context = MapBuilder.createContext(CommonCRS.WGS84.normalizedGeographic());
         context.layers().add(layer);
         assertEquals(1, context.layers().size());
 

@@ -42,7 +42,7 @@ import org.geotoolkit.display.shape.FloatDimension2D;
 import org.geotoolkit.display.shape.DoubleDimension2D;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.internal.sql.table.SpatialDatabase;
-import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
+import org.apache.sis.referencing.crs.DefaultTemporalCRS;
 import org.apache.sis.referencing.CRS;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.Utilities;

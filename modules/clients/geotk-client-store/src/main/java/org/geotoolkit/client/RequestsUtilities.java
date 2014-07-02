@@ -32,8 +32,8 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
-import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
-import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
+import org.apache.sis.referencing.crs.DefaultTemporalCRS;
+import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.temporal.object.TemporalUtilities;
 import org.opengis.geometry.Envelope;
@@ -275,7 +275,7 @@ public final class RequestsUtilities {
             dimZ[0] = dimZ[1] = elevation;
 
             final VerticalCRS zCRS = CRS.getVerticalComponent(crs, true);
-            verticalCRS = (zCRS != null) ? zCRS : DefaultVerticalCRS.GEOIDAL_HEIGHT;
+            verticalCRS = (zCRS != null) ? zCRS : CommonCRS.Vertical.MEAN_SEA_LEVEL.crs();
 
         } else {
             verticalCRS = null;
@@ -285,7 +285,7 @@ public final class RequestsUtilities {
         if (strTime != null) {
             final Date date = TemporalUtilities.parseDateSafe(strTime,true);
             final TemporalCRS tCRS = CRS.getTemporalComponent(crs);
-            temporalCRS = (tCRS != null) ? tCRS : DefaultTemporalCRS.MODIFIED_JULIAN;
+            temporalCRS = (tCRS != null) ? tCRS : CommonCRS.Temporal.MODIFIED_JULIAN.crs();
 
             dimT[0] = dimT[1] = ((DefaultTemporalCRS)temporalCRS).toValue(date);
 

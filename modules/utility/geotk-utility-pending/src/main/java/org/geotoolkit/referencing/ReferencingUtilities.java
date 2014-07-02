@@ -31,8 +31,6 @@ import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.internal.referencing.AxisDirections;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
-import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
-import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
 import org.geotoolkit.referencing.operation.projection.Mercator;
 import org.geotoolkit.referencing.operation.transform.LinearInterpolator1D;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
@@ -55,6 +53,7 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
+import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 
 import static org.apache.sis.referencing.CRS.getHorizontalComponent;
@@ -338,7 +337,7 @@ public final class ReferencingUtilities {
             temporalDim = getTemporalComponent(crs);
 
             if(temporalDim == null){
-                temporalDim = DefaultTemporalCRS.JAVA;
+                temporalDim = CommonCRS.Temporal.JAVA.crs();
             }
         }
 
@@ -346,7 +345,7 @@ public final class ReferencingUtilities {
             verticalDim = getVerticalComponent(crs, true);
 
             if(verticalDim == null){
-                verticalDim = DefaultVerticalCRS.ELLIPSOIDAL_HEIGHT;
+                verticalDim = CommonCRS.Vertical.ELLIPSOIDAL.crs();
             }
         }
 
@@ -361,7 +360,7 @@ public final class ReferencingUtilities {
             env.setRange(indexes[1], bounds.getMinY(), bounds.getMaxY());
 
             try {
-                final CoordinateReferenceSystem realTemporal = DefaultTemporalCRS.JAVA;
+                final CoordinateReferenceSystem realTemporal = CommonCRS.Temporal.JAVA.crs();
                 final MathTransform trs = CRS.findMathTransform(realTemporal, temporalDim);
                 final double[] coords = new double[2];
                 coords[0] = (temporal[0] != null) ? temporal[0].getTime() : Double.NEGATIVE_INFINITY;
@@ -372,7 +371,7 @@ public final class ReferencingUtilities {
                 throw new TransformException(ex.getMessage(),ex);
             }
             try {
-                final CoordinateReferenceSystem realElevation = DefaultVerticalCRS.ELLIPSOIDAL_HEIGHT;
+                final CoordinateReferenceSystem realElevation = CommonCRS.Vertical.ELLIPSOIDAL.crs();
                 final MathTransform trs = CRS.findMathTransform(realElevation, verticalDim);
                 final double[] coords = new double[2];
                 coords[0] = (elevation[0] != null) ? elevation[0] : Double.NEGATIVE_INFINITY;
@@ -392,7 +391,7 @@ public final class ReferencingUtilities {
             env.setRange(indexes[1], bounds.getMinY(), bounds.getMaxY());
 
             try {
-                final CoordinateReferenceSystem realTemporal = DefaultTemporalCRS.JAVA;
+                final CoordinateReferenceSystem realTemporal = CommonCRS.Temporal.JAVA.crs();
                 final MathTransform trs = CRS.findMathTransform(realTemporal, temporalDim);
                 final double[] coords = new double[2];
                 coords[0] = (temporal[0] != null) ? temporal[0].getTime() : Double.NEGATIVE_INFINITY;
@@ -414,7 +413,7 @@ public final class ReferencingUtilities {
             env.setRange(indexes[1], bounds.getMinY(), bounds.getMaxY());
 
             try {
-                final CoordinateReferenceSystem realElevation = DefaultVerticalCRS.ELLIPSOIDAL_HEIGHT;
+                final CoordinateReferenceSystem realElevation = CommonCRS.Vertical.ELLIPSOIDAL.crs();
                 final MathTransform trs = CRS.findMathTransform(realElevation, verticalDim);
                 final double[] coords = new double[2];
                 coords[0] = (elevation[0] != null) ? elevation[0] : Double.NEGATIVE_INFINITY;

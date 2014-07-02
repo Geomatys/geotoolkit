@@ -53,7 +53,7 @@ import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageStorePool;
 import org.geotoolkit.coverage.io.CoverageStoreException;
-import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
+import org.apache.sis.referencing.crs.DefaultTemporalCRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.geotoolkit.util.DateRange;
 import org.apache.sis.measure.NumberRange;
@@ -273,7 +273,7 @@ final class GridCoverageEntry extends DefaultEntry implements GridCoverageRefere
             return NaN;
         }
     }
-    
+
     /**
      * Returns the range of values in the third dimension, which may be vertical or temporal.
      * This method returns the range in units of the database vertical or temporal CRS, which

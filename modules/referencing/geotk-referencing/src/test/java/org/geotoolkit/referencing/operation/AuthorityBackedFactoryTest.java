@@ -22,14 +22,15 @@ import org.opengis.referencing.operation.CoordinateOperation;
 import org.opengis.referencing.operation.CoordinateOperationFactory;
 
 import org.geotoolkit.test.referencing.WKT;
-import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
+import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.referencing.crs.DefaultCompoundCRS;
 
 import org.junit.*;
 
 import static org.junit.Assume.*;
 import static org.junit.Assert.*;
-import static org.geotoolkit.referencing.crs.DefaultTemporalCRS.MODIFIED_JULIAN;
-import static org.geotoolkit.referencing.crs.DefaultVerticalCRS.ELLIPSOIDAL_HEIGHT;
+import static java.util.Collections.singletonMap;
+import static org.opengis.referencing.IdentifiedObject.NAME_KEY;
 
 
 /**
@@ -138,8 +139,8 @@ public final strictfp class AuthorityBackedFactoryTest extends COFactoryUsingMol
     public void testProjected4D_to2D_withMeridianShift() throws Exception {
         final CoordinateReferenceSystem targetCRS = crsFactory.createFromWKT(WKT.PROJCS_MERCATOR);
         CoordinateReferenceSystem sourceCRS = crsFactory.createFromWKT(WKT.PROJCS_LAMBERT_CONIC_NTF);
-        sourceCRS = new DefaultCompoundCRS("NTF 3D", sourceCRS, ELLIPSOIDAL_HEIGHT);
-        sourceCRS = new DefaultCompoundCRS("NTF 4D", sourceCRS, MODIFIED_JULIAN);
+        sourceCRS = new DefaultCompoundCRS(singletonMap(NAME_KEY, "NTF 3D"), sourceCRS, CommonCRS.Vertical.ELLIPSOIDAL.crs());
+        sourceCRS = new DefaultCompoundCRS(singletonMap(NAME_KEY, "NTF 4D"), sourceCRS, CommonCRS.Temporal.MODIFIED_JULIAN.crs());
         final CoordinateOperation op = opFactory.createOperation(sourceCRS, targetCRS);
         transform = op.getMathTransform();
         validate();

@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.wms;
 
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -34,8 +33,6 @@ import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.apache.sis.referencing.crs.DefaultEngineeringCRS;
 import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
-import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
-import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
 import org.apache.sis.referencing.cs.AbstractCS;
 import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;
 import org.geotoolkit.referencing.cs.DiscreteReferencingFactory;
@@ -54,6 +51,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.util.FactoryException;
+import org.apache.sis.referencing.CommonCRS;
 
 /**
  * Convinient WMS methods.
@@ -248,9 +246,9 @@ public final class WMSUtilities {
 
                 //create CRS
                 if ("time".equals(dimName)) {
-                    dimCRS = DefaultTemporalCRS.JAVA;
+                    dimCRS = CommonCRS.Temporal.JAVA.crs();
                 } else if ("elevation".equals(dimName)) {
-                    dimCRS = DefaultVerticalCRS.ELLIPSOIDAL_HEIGHT;
+                    dimCRS = CommonCRS.Vertical.ELLIPSOIDAL.crs();
                 } else {
                     final DefaultEngineeringDatum dimDatum = new DefaultEngineeringDatum(Collections.singletonMap("name", dimName));
                     final CoordinateSystemAxis csAxis = new DefaultCoordinateSystemAxis(dimName, dimName.substring(0, 1), AxisDirection.OTHER, unit);
@@ -264,7 +262,7 @@ public final class WMSUtilities {
                 //extract discret values
                 final String dimValues = dim.getValue();
                 if(dimValues != null){
-                    if (!DefaultTemporalCRS.JAVA.equals(dimCRS)) {
+                    if (!CommonCRS.Temporal.JAVA.crs().equals(dimCRS)) {
                         //serie of values
                         final String[] dimStrArray = dimValues.split(",");
                         final double[] dblValues = new double[dimStrArray.length];

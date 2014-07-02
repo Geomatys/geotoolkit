@@ -32,7 +32,7 @@ import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.display.shape.XRectangle2D;
 import org.geotoolkit.coverage.sql.CoverageEnvelope;
-import org.geotoolkit.referencing.datum.DefaultTemporalDatum;
+import org.apache.sis.referencing.CommonCRS;
 
 
 /**
@@ -224,7 +224,7 @@ public abstract class BoundedSingletonTable<E extends Entry> extends SingletonTa
                  * TODO: Revisit if we find some way to specify 'infinity' with future JDBC drivers.
                  */
                 if (tMin == null) {
-                    tMin = DefaultTemporalDatum.JULIAN.getOrigin();
+                    tMin = CommonCRS.Temporal.JULIAN.datum().getOrigin();
                 }
                 if (tMax == null) {
                     tMax = new Date();

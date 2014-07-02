@@ -34,13 +34,11 @@ import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.operation.TransformException;
 
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
-import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
-import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
 
+import org.apache.sis.referencing.CommonCRS;
 import static org.junit.Assert.*;
 
 /**
@@ -73,7 +71,7 @@ public class Go2UtilitiesTest {
 
     @Test
     public void ensureCompoundCRSHaveName() throws TransformException{
-        GeneralEnvelope env = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
+        GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
         env.setRange(0, -180, 180);
         env.setRange(1, -90, 90);
 
@@ -88,7 +86,7 @@ public class Go2UtilitiesTest {
     @Test
     public void testAffine() throws NoninvertibleTransformException{
 
-        GeneralEnvelope env = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
+        GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
         env.setRange(0, -180, 180);
         env.setRange(1, -90, 90);
         Dimension dim = new Dimension(100, 50);
@@ -150,8 +148,8 @@ public class Go2UtilitiesTest {
         //test on a compoundCRS
         CoordinateReferenceSystem comp = new DefaultCompoundCRS("4D crs",
                     epsg4326,
-                    DefaultVerticalCRS.ELLIPSOIDAL_HEIGHT,
-                    DefaultTemporalCRS.JAVA);
+                    CommonCRS.Vertical.ELLIPSOIDAL.crs(),
+                    CommonCRS.Temporal.JAVA.crs());
 
         env = new GeneralEnvelope(comp);
         env.setRange(0, -90, 90);

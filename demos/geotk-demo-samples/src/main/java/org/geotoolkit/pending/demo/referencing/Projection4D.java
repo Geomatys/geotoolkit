@@ -4,12 +4,11 @@ package org.geotoolkit.pending.demo.referencing;
 import org.geotoolkit.pending.demo.Demos;
 import org.apache.sis.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
-import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
-import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
 import org.opengis.referencing.crs.CompoundCRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.TemporalCRS;
 import org.opengis.referencing.crs.VerticalCRS;
+import org.apache.sis.referencing.CommonCRS;
 
 /**
  * @author Johann Sorel
@@ -25,8 +24,8 @@ public class Projection4D {
         Demos.init();
 
         final CoordinateReferenceSystem crs2D = org.geotoolkit.referencing.CRS.decode("EPSG:27582");
-        TemporalCRS temporalAxis = DefaultTemporalCRS.JULIAN;
-        VerticalCRS verticalAxis = DefaultVerticalCRS.GEOIDAL_HEIGHT;
+        TemporalCRS temporalAxis = CommonCRS.Temporal.JULIAN.crs();
+        VerticalCRS verticalAxis = CommonCRS.Vertical.MEAN_SEA_LEVEL.crs();
 
         final CompoundCRS crs4D = new DefaultCompoundCRS("MyCRS4D", crs2D, temporalAxis, verticalAxis);
         System.out.println(crs4D);

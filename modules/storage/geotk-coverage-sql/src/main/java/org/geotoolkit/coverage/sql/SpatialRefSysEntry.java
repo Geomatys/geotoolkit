@@ -47,7 +47,7 @@ import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.apache.sis.internal.referencing.AxisDirections;
 import org.geotoolkit.internal.sql.table.SpatialDatabase;
 import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
-import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
+import org.apache.sis.referencing.crs.DefaultTemporalCRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.apache.sis.referencing.operation.matrix.Matrices;
 import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;

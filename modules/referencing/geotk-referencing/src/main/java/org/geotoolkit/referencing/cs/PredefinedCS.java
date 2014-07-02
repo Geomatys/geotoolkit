@@ -29,6 +29,7 @@ import org.opengis.referencing.cs.*;
 
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.resources.Errors;
+import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.cs.DefaultAffineCS;
 
 
@@ -145,7 +146,7 @@ final class PredefinedCS extends Static implements Comparator<CoordinateSystem> 
         }
         if (cs instanceof TimeCS) {
             switch (dimension) {
-                case 1: return DefaultTimeCS.DAYS;
+                case 1: return CommonCRS.Temporal.JULIAN.crs().getCoordinateSystem();
             }
         }
         if (cs instanceof DefaultCompoundCS) {

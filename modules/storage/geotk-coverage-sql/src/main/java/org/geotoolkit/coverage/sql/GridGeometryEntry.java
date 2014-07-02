@@ -47,7 +47,7 @@ import org.apache.sis.geometry.AbstractEnvelope;
 import org.geotoolkit.display.shape.DoubleDimension2D;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.apache.sis.metadata.iso.extent.DefaultGeographicBoundingBox;
-import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
+import org.apache.sis.referencing.crs.DefaultTemporalCRS;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.referencing.operation.matrix.Matrices;
 import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;

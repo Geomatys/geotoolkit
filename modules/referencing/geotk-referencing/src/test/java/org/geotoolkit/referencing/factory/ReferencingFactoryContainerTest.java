@@ -32,10 +32,8 @@ import org.apache.sis.test.DependsOn;
 import org.geotoolkit.test.Commons;
 import org.geotoolkit.test.referencing.WKT;
 import org.geotoolkit.internal.referencing.Identifier3D;
-import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
-import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 
+import org.apache.sis.referencing.CommonCRS;
 import org.junit.*;
 import static org.geotoolkit.test.Assert.*;
 
@@ -63,9 +61,9 @@ public final strictfp class ReferencingFactoryContainerTest {
         final ProjectedCRS horizontalCRS = (ProjectedCRS)
                 crsFactory.createFromWKT(WKT.PROJCS_LAMBERT_CONIC_NTF);
         final CompoundCRS spatialCRS =
-                crsFactory.createCompoundCRS(name("NTF 3D"), horizontalCRS, DefaultVerticalCRS.ELLIPSOIDAL_HEIGHT);
+                crsFactory.createCompoundCRS(name("NTF 3D"), horizontalCRS, CommonCRS.Vertical.ELLIPSOIDAL.crs());
         final CompoundCRS crs =
-                crsFactory.createCompoundCRS(name("NTF 4D"), spatialCRS, DefaultTemporalCRS.MODIFIED_JULIAN);
+                crsFactory.createCompoundCRS(name("NTF 4D"), spatialCRS, CommonCRS.Temporal.MODIFIED_JULIAN.crs());
         final CoordinateReferenceSystem result = factories.toGeodetic3D(crs);
         assertNotSame("Expected a new CRS.", crs, result);
         /*
@@ -128,11 +126,11 @@ public final strictfp class ReferencingFactoryContainerTest {
     public void testSeparate() throws FactoryException {
         final ReferencingFactoryContainer factories = ReferencingFactoryContainer.instance(null);
         final CRSFactory crsFactory = factories.getCRSFactory();
-        CoordinateReferenceSystem crs = DefaultGeographicCRS.WGS84;
-        crs = crsFactory.createCompoundCRS(name("WGS84 3D"), crs, DefaultVerticalCRS.ELLIPSOIDAL_HEIGHT);
+        CoordinateReferenceSystem crs = CommonCRS.WGS84.normalizedGeographic();
+        crs = crsFactory.createCompoundCRS(name("WGS84 3D"), crs, CommonCRS.Vertical.ELLIPSOIDAL.crs());
         assertSame(crs, factories.separate(crs, 0, 1, 2));
-        assertSame(DefaultGeographicCRS.WGS84, factories.separate(crs, 0, 1));
-        assertSame(DefaultVerticalCRS.ELLIPSOIDAL_HEIGHT, factories.separate(crs, 2));
+        assertSame(CommonCRS.WGS84.normalizedGeographic(), factories.separate(crs, 0, 1));
+        assertSame(CommonCRS.Vertical.ELLIPSOIDAL.crs(), factories.separate(crs, 2));
     }
 
     /**

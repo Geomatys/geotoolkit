@@ -45,11 +45,10 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.internal.sql.DefaultDataSource;
 import org.geotoolkit.metadata.iso.citation.Citations;
-import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
-import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
-import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
+import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.referencing.crs.DefaultCompoundCRS;
 import org.apache.sis.referencing.datum.BursaWolfParameters;
-import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
+import org.apache.sis.referencing.datum.DefaultGeodeticDatum;
 import org.geotoolkit.referencing.factory.epsg.PropertyEpsgFactory;
 import org.geotoolkit.referencing.factory.epsg.ThreadedEpsgFactory;
 import org.geotoolkit.referencing.factory.FallbackAuthorityFactory;
@@ -64,6 +63,8 @@ import org.junit.*;
 import static org.junit.Assume.assumeTrue;
 import static org.geotoolkit.referencing.Assert.*;
 import static org.geotoolkit.referencing.Commons.*;
+import static org.opengis.referencing.IdentifiedObject.NAME_KEY;
+import static java.util.Collections.singletonMap;
 
 
 /**
@@ -576,8 +577,8 @@ public final strictfp class CRS_WithEpsgTest extends ReferencingTestBase {
     public void testProjected4D() throws FactoryException {
         CoordinateReferenceSystem targetCRS = CRS.decode("EPSG:3395");
         CoordinateReferenceSystem sourceCRS = CRS.decode("EPSG:27572");
-        sourceCRS = new DefaultCompoundCRS("3D", sourceCRS, DefaultVerticalCRS.ELLIPSOIDAL_HEIGHT);
-        sourceCRS = new DefaultCompoundCRS("4D", sourceCRS, DefaultTemporalCRS.JULIAN);
+        sourceCRS = new DefaultCompoundCRS(singletonMap(NAME_KEY, "3D"), sourceCRS, CommonCRS.Vertical.ELLIPSOIDAL.crs());
+        sourceCRS = new DefaultCompoundCRS(singletonMap(NAME_KEY, "4D"), sourceCRS, CommonCRS.Temporal.JULIAN.crs());
         final MathTransform tr = CRS.findMathTransform(sourceCRS, targetCRS, true);
         assertEquals(4, tr.getSourceDimensions());
         assertEquals(2, tr.getTargetDimensions());
@@ -629,13 +630,14 @@ public final strictfp class CRS_WithEpsgTest extends ReferencingTestBase {
         CoordinateReferenceSystem sourceCRS = CRS.decode("EPSG:3035");
         GeodeticDatum targetDatum = ((GeographicCRS) targetCRS).getDatum();
         GeodeticDatum sourceDatum =  ((ProjectedCRS) sourceCRS).getDatum();
-        final BursaWolfParameters param = ((DefaultGeodeticDatum) sourceDatum).getBursaWolfParameters(targetDatum);
-        assertNotNull("This test requires that an explicit BursaWolf parameter exists.", param);
-        assertTrue("This test requires that the BursaWolf parameter is set to identity.", param.isIdentity());
+        final BursaWolfParameters[] params = ((DefaultGeodeticDatum) sourceDatum).getBursaWolfParameters();
+        assertEquals("This test requires that an explicit BursaWolf parameter exists.", 1, params.length);
+        assertEquals("targetDatum", targetDatum, params[0].getTargetDatum());
+        assertTrue("This test requires that the BursaWolf parameter is set to identity.", params[0].isIdentity());
 
         CoordinateReferenceSystem vertCRS = CRS.parseWKT(
                 "VERT_CS[\"Sigma Level\",VERT_DATUM[\"Sigma Level\",2000],UNIT[\"level\",1.0],AXIS[\"Sigma Level\",DOWN]]");
-        sourceCRS = new DefaultCompoundCRS("ETRS89 + Sigma level", sourceCRS, vertCRS);
+        sourceCRS = new DefaultCompoundCRS(singletonMap(NAME_KEY, "ETRS89 + Sigma level"), sourceCRS, vertCRS);
         final MathTransform tr = CRS.findMathTransform(sourceCRS, targetCRS);
         assertSame(tr, CRS.findMathTransform(sourceCRS, targetCRS, false));
         assertSame(tr, CRS.findMathTransform(sourceCRS, targetCRS, true));

@@ -45,20 +45,17 @@ import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.cs.DefaultCartesianCS;
 import org.geotoolkit.referencing.crs.DefaultDerivedCRS;
-import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
-import org.geotoolkit.referencing.datum.DefaultTemporalDatum;
+import org.apache.sis.referencing.crs.DefaultCompoundCRS;
 import org.geotoolkit.referencing.factory.FactoryDependencies;
 import org.apache.sis.referencing.operation.matrix.Matrices;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.geotoolkit.referencing.operation.transform.TransformTestBase;
+import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.operation.transform.AbstractMathTransform;
 
 import static org.geotoolkit.referencing.crs.DefaultGeographicCRS.WGS84;
 import static org.geotoolkit.referencing.crs.DefaultGeographicCRS.WGS84_3D;
-import static org.geotoolkit.referencing.crs.DefaultVerticalCRS.ELLIPSOIDAL_HEIGHT;
-import static org.geotoolkit.referencing.crs.DefaultTemporalCRS.MODIFIED_JULIAN;
-import static org.geotoolkit.referencing.crs.DefaultTemporalCRS.UNIX;
 import static org.geotoolkit.referencing.crs.DefaultEngineeringCRS.GENERIC_2D;
 import static org.geotoolkit.referencing.crs.DefaultEngineeringCRS.CARTESIAN_2D;
 import static org.geotoolkit.referencing.crs.DefaultEngineeringCRS.CARTESIAN_3D;
@@ -67,6 +64,8 @@ import static org.geotoolkit.metadata.iso.quality.AbstractPositionalAccuracy.*;
 
 import org.junit.*;
 import static org.junit.Assume.*;
+import static java.util.Collections.singletonMap;
+import static org.opengis.referencing.IdentifiedObject.NAME_KEY;
 import static org.geotoolkit.referencing.Assert.*;
 import static org.geotoolkit.referencing.operation.SamplePoints.MOLODENSKY_TOLERANCE;
 
@@ -578,9 +577,11 @@ public strictfp class COFactoryUsingMolodenskyTest extends TransformTestBase {
      */
     @Test
     public void testTemporalConversion() throws Exception {
-        transform = opFactory.createOperation(UNIX, MODIFIED_JULIAN).getMathTransform();
+        transform = opFactory.createOperation(
+                CommonCRS.Temporal.UNIX.crs(),
+                CommonCRS.Temporal.MODIFIED_JULIAN.crs()).getMathTransform();
         validate();
-        final long time = DefaultTemporalDatum.DUBLIN_JULIAN.getOrigin().getTime(); // December 31, 1899 at 12:00 UTC
+        final long time = CommonCRS.Temporal.DUBLIN_JULIAN.datum().getOrigin().getTime(); // December 31, 1899 at 12:00 UTC
         assertEquals(15019.5, ((MathTransform1D) transform).transform(time / 1000.0), 1E-12);
     }
 
@@ -625,8 +626,8 @@ public strictfp class COFactoryUsingMolodenskyTest extends TransformTestBase {
      */
     @Test
     public void testGeographic3D_to_4D() throws Exception {
-        final CoordinateReferenceSystem sourceCRS = new DefaultCompoundCRS("Test3D", WGS84, UNIX);
-        final CoordinateReferenceSystem targetCRS = new DefaultCompoundCRS("Test4D", WGS84_3D, MODIFIED_JULIAN);
+        final CoordinateReferenceSystem sourceCRS = new DefaultCompoundCRS(singletonMap(NAME_KEY, "Test3D"), WGS84,    CommonCRS.Temporal.UNIX.crs());
+        final CoordinateReferenceSystem targetCRS = new DefaultCompoundCRS(singletonMap(NAME_KEY, "Test4D"), WGS84_3D, CommonCRS.Temporal.MODIFIED_JULIAN.crs());
         transform = opFactory.createOperation(sourceCRS, targetCRS).getMathTransform();
         validate();
         assertTrue(transform instanceof LinearTransform);
@@ -762,8 +763,8 @@ public strictfp class COFactoryUsingMolodenskyTest extends TransformTestBase {
      */
     @Test
     public void testGeoTemporal_to_Display() throws Exception {
-        final CoordinateReferenceSystem sourceCRS = new DefaultCompoundCRS("Test3D", WGS84, UNIX);
-        final CoordinateReferenceSystem targetCRS = new DefaultDerivedCRS("Display", WGS84,
+        final CoordinateReferenceSystem sourceCRS = new DefaultCompoundCRS(singletonMap(NAME_KEY, "Test3D"), WGS84, CommonCRS.Temporal.UNIX.crs());
+        final CoordinateReferenceSystem targetCRS = new DefaultDerivedCRS(singletonMap(NAME_KEY, "Display"), WGS84,
                 MathTransforms.linear(Matrices.create(3, 3, new double[]
         {
             12.889604810996564, 0, 482.74226804123714,
@@ -940,8 +941,8 @@ public strictfp class COFactoryUsingMolodenskyTest extends TransformTestBase {
     public void testProjected4D_to_2D() throws Exception {
         final CoordinateReferenceSystem targetCRS = crsFactory.createFromWKT(WKT.PROJCS_MERCATOR);
         CoordinateReferenceSystem sourceCRS = targetCRS;
-        sourceCRS = new DefaultCompoundCRS("Mercator 3D", sourceCRS, ELLIPSOIDAL_HEIGHT);
-        sourceCRS = new DefaultCompoundCRS("Mercator 4D", sourceCRS, MODIFIED_JULIAN);
+        sourceCRS = new DefaultCompoundCRS(singletonMap(NAME_KEY, "Mercator 3D"), sourceCRS, CommonCRS.Vertical.ELLIPSOIDAL.crs());
+        sourceCRS = new DefaultCompoundCRS(singletonMap(NAME_KEY, "Mercator 4D"), sourceCRS, CommonCRS.Temporal.MODIFIED_JULIAN.crs());
         final CoordinateOperation op = opFactory.createOperation(sourceCRS, targetCRS);
         transform = op.getMathTransform();
         validate();

@@ -37,12 +37,11 @@ import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.CRS_Test;
 import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
-import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
-import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.operation.DefaultConversion;
 import org.geotoolkit.referencing.operation.transform.MathTransformNo2D;
 
+import org.apache.sis.referencing.CommonCRS;
 import org.junit.*;
 import static org.geotoolkit.test.Assert.*;
 
@@ -202,8 +201,8 @@ public final strictfp class EnvelopesTest extends ReferencingTestBase {
     public void testTransformation4to2D() throws TransformException {
         final CoordinateReferenceSystem crs = new DefaultCompoundCRS("4D CRS",
                 DefaultGeographicCRS.WGS84,
-                DefaultVerticalCRS.ELLIPSOIDAL_HEIGHT,
-                DefaultTemporalCRS.JAVA);
+                CommonCRS.Vertical.ELLIPSOIDAL.crs(),
+                CommonCRS.Temporal.JAVA.crs());
 
         final GeneralEnvelope env = new GeneralEnvelope(crs);
         env.setRange(0, -170, 170);

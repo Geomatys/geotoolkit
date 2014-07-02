@@ -49,8 +49,6 @@ import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
 import org.geotoolkit.referencing.crs.DefaultDerivedCRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
-import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
-import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
@@ -68,6 +66,7 @@ import org.opengis.referencing.operation.CoordinateOperationFactory;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
+import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
 
 /**
@@ -1022,7 +1021,7 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
         if(index < 0 && (startDate!=null || endDate!=null) ){
             //no temporal axis, add one
             CoordinateReferenceSystem crs = getObjectiveCRS();
-            crs = appendCRS(crs, DefaultTemporalCRS.JAVA);
+            crs = appendCRS(crs, CommonCRS.Temporal.JAVA.crs());
             setObjectiveCRS(crs);
             index = getTemporalAxisIndex();
         }
@@ -1036,7 +1035,7 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
             }else{
                 //remove this dimension
                 CoordinateReferenceSystem crs = getObjectiveCRS();
-                crs = removeCRS(crs, DefaultTemporalCRS.JAVA);
+                crs = removeCRS(crs, CommonCRS.Temporal.JAVA.crs());
                 setObjectiveCRS(crs);
             }
 
@@ -1062,7 +1061,7 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
         if(index < 0 && (min!=null || max!=null)){
             //no elevation axis, add one
             CoordinateReferenceSystem crs = getObjectiveCRS();
-            crs = appendCRS(crs, DefaultVerticalCRS.ELLIPSOIDAL_HEIGHT);
+            crs = appendCRS(crs, CommonCRS.Vertical.ELLIPSOIDAL.crs());
             setObjectiveCRS(crs);
             index = getElevationAxisIndex();
         }
@@ -1075,7 +1074,7 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
             }else{
                 //remove this dimension
                 CoordinateReferenceSystem crs = getObjectiveCRS();
-                crs = removeCRS(crs, DefaultVerticalCRS.ELLIPSOIDAL_HEIGHT);
+                crs = removeCRS(crs, CommonCRS.Vertical.ELLIPSOIDAL.crs());
                 setObjectiveCRS(crs);
             }
         }

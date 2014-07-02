@@ -38,10 +38,9 @@ import org.opengis.referencing.operation.MathTransformFactory;
 
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.apache.sis.metadata.iso.extent.Extents;
-import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
+import org.apache.sis.referencing.crs.DefaultCompoundCRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
-import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
-import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
+import org.apache.sis.referencing.crs.DefaultTemporalCRS;
 import org.apache.sis.referencing.CRS;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.factory.wkt.DirectPostgisFactory;
@@ -51,6 +50,7 @@ import org.geotoolkit.factory.Factory;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.resources.Errors;
 
+import org.apache.sis.referencing.CommonCRS;
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 
 
@@ -156,7 +156,7 @@ public class SpatialDatabase extends Database {
      * @param  properties The configuration properties, or {@code null} if none.
      */
     public SpatialDatabase(final DataSource datasource, final Properties properties) {
-        this(datasource, properties, DefaultTemporalCRS.TRUNCATED_JULIAN);
+        this(datasource, properties, CommonCRS.Temporal.TRUNCATED_JULIAN.crs());
     }
 
     /**
@@ -174,9 +174,9 @@ public class SpatialDatabase extends Database {
     public SpatialDatabase(final DataSource datasource, final Properties properties, final TemporalCRS temporalCRS) {
         super(datasource, properties);
         this.horizontalSRID = 4326;
-        this.horizontalCRS  = DefaultGeographicCRS.WGS84;
-        this.verticalCRS    = DefaultVerticalCRS.ELLIPSOIDAL_HEIGHT;
-        this.temporalCRS    = (DefaultTemporalCRS) temporalCRS; // TODO DefaultTemporalCRS.castOrCopy(temporalCRS);
+        this.horizontalCRS  = CommonCRS.WGS84.normalizedGeographic();
+        this.verticalCRS    = CommonCRS.Vertical.ELLIPSOIDAL.crs();
+        this.temporalCRS    = DefaultTemporalCRS.castOrCopy(temporalCRS);
         this.spatialCRS     = DefaultGeographicCRS.WGS84_3D;
         spatioTemporalCRS   = createSpatioTemporalCRS(spatialCRS,    temporalCRS, true);
         horizTemporalCRS    = createSpatioTemporalCRS(horizontalCRS, temporalCRS, true);

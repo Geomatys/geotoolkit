@@ -44,10 +44,10 @@ import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
-import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
 
+import org.apache.sis.referencing.CommonCRS;
 import ucar.nc2.NCdumpW;
 
 import org.junit.*;
@@ -195,7 +195,7 @@ public class NetcdfCoverageWriterTest extends ImageTestBase {
     public void testXYZT() throws Exception {
         final CoordinateReferenceSystem crs = new DefaultCompoundCRS("WGS84 + z + t",
                 DefaultGeographicCRS.WGS84_3D,
-                DefaultTemporalCRS.JAVA);
+                CommonCRS.Temporal.JAVA.crs());
 
         final GeneralEnvelope env = new GeneralEnvelope(crs);
         env.setRange(0, -180, 180);
