@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- =======================================================================
-        Maven Project Configuration File
-
-        The Geotoolkit.org Project
-            http://www.geotoolkit.org/
-     ======================================================================= -->
-<project xmlns="http://maven.apache.org/POM/4.0.0"
+<!-- ======================================================================= 
+	    Maven Project Configuration File
+      
+	    The Geotoolkit.org Project
+	       http://www.geotoolkit.org/ 
+	======================================================================= -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" 
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
                              http://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -18,9 +18,8 @@
   </parent>
 
 
-  <!-- ===========================================================
-           Module Description
-       =========================================================== -->
+	<!-- =========================================================== Module 
+		Description =========================================================== -->
   <groupId>org.geotoolkit.project</groupId>
   <artifactId>maven</artifactId>
   <packaging>pom</packaging>
@@ -30,9 +29,8 @@
   </description>
 
 
-  <!-- ===========================================================
-           Developers and Contributors
-       =========================================================== -->
+	<!-- =========================================================== Developers 
+		and Contributors =========================================================== -->
   <developers>
     <developer>
       <name>Martin Desruisseaux</name>
@@ -48,9 +46,10 @@
   </developers>
 
 
-  <!-- ===========================================================
-           Dependency Management
-       =========================================================== -->
+	<!-- ===========================================================
+	             Dependency Management
+	     =========================================================== -->
+
   <dependencies>
     <dependency>
       <groupId>org.apache.maven</groupId>
@@ -59,10 +58,46 @@
     </dependency>
   </dependencies>
 
+	<!-- ===========================================================
+	             Build
+	     =========================================================== -->
 
-  <!-- ===========================================================
-           Modules included in the build
-       =========================================================== -->
+  <build>
+    <pluginManagement>
+      <plugins>
+				<!--This plugin's configuration is used to store Eclipse m2e settings 
+					only. It has no influence on the Maven build itself. -->
+        <plugin>
+          <groupId>org.eclipse.m2e</groupId>
+          <artifactId>lifecycle-mapping</artifactId>
+          <version>1.0.0</version>
+          <configuration>
+            <lifecycleMappingMetadata>
+              <pluginExecutions>
+                <pluginExecution>
+                  <pluginExecutionFilter>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-plugin-plugin</artifactId>
+                    <versionRange>[3.2,)</versionRange>
+                    <goals>
+                      <goal>descriptor</goal>
+                      <goal>helpmojo</goal>
+                    </goals>
+                  </pluginExecutionFilter>
+                  <action>
+                    <ignore></ignore>
+                  </action>
+                </pluginExecution>
+              </pluginExecutions>
+            </lifecycleMappingMetadata>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+
+  </build>
+	<!-- =========================================================== Modules 
+		included in the build =========================================================== -->
   <modules>
     <module>geotk-resource-compiler</module>
     <module>geotk-unopkg</module>
