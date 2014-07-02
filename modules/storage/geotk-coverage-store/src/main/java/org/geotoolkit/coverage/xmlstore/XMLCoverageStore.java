@@ -44,32 +44,31 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class XMLCoverageStore extends AbstractCoverageStore{
+public class XMLCoverageStore extends AbstractCoverageStore {
 
     private final File root;
-    private final URL rootPath;
     private final DataNode rootNode = new DefaultDataNode();
 
     final boolean cacheTileState;
 
-    public XMLCoverageStore(File root) throws URISyntaxException, MalformedURLException{
+    public XMLCoverageStore(File root) throws URISyntaxException, MalformedURLException {
         this(toParameters(root));
     }
     
-    public XMLCoverageStore(URL rootPath) throws URISyntaxException{
+    public XMLCoverageStore(URL rootPath) throws URISyntaxException {
         this(toParameters(rootPath));
     }
         
-    public XMLCoverageStore(ParameterValueGroup params) throws URISyntaxException{
+    public XMLCoverageStore(ParameterValueGroup params) throws URISyntaxException {
         super(params);
-        rootPath = (URL) params.parameter(XMLCoverageStoreFactory.PATH.getName().getCode()).getValue();
+        final URL rootPath = Parameters.value(XMLCoverageStoreFactory.PATH, params);
         root = new File(rootPath.toURI());
         Boolean tmpCacheState = Parameters.value(XMLCoverageStoreFactory.CACHE_TILE_STATE, params);
         cacheTileState = (tmpCacheState == null)? false : tmpCacheState;
         explore();
     }
 
-    private static ParameterValueGroup toParameters(File root) throws MalformedURLException{
+    private static ParameterValueGroup toParameters(File root) throws MalformedURLException {
         final ParameterValueGroup params = XMLCoverageStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
         Parameters.getOrCreate(XMLCoverageStoreFactory.PATH, params).setValue(root.toURI().toURL());
         return params;
@@ -94,34 +93,42 @@ public class XMLCoverageStore extends AbstractCoverageStore{
     /**
      * Search all xml files in the folder which define a pyramid model.
      */
-    private void explore(){
+    private void explore() {
 
-        if(!root.exists()){
+        if (!root.exists()) {
             root.mkdirs();
         }
 
-        final File[] children = root.listFiles(new FileFilter() {
-            @Override
-            public boolean accept(File pathname) {
-                return pathname.isFile() && pathname.getName().toLowerCase().endsWith(".xml");
-            }
-        });
-        if (children != null) {
-            for (File f : children) {
-                //try to parse the file
-                try {
-                    //TODO useless copy here
-                    final XMLCoverageReference set = XMLCoverageReference.read(f);
-                    final Name name = new DefaultName(getDefaultNamespace(), set.getId());
-                    final XMLCoverageReference ref = new XMLCoverageReference(this,name,set.getPyramidSet());
-                    ref.copy(set);
-                    rootNode.getChildren().add(ref);
-                } catch (JAXBException ex) {
-                    getLogger().log(Level.INFO, "file is not a pyramid : {0}", f.getPath());
-                } catch (DataStoreException ex) {
-                    getLogger().log(Level.WARNING, "Pyramid descriptor contains an invalid CRS : "+f.getAbsolutePath(), ex);
+        if (root.isFile()) {
+            createReference(root);
+        } else {
+            final File[] children = root.listFiles(new FileFilter() {
+                @Override
+                public boolean accept(File pathname) {
+                    return pathname.isFile() && pathname.getName().toLowerCase().endsWith(".xml");
+                }
+            });
+            if (children != null) {
+                for (File f : children) {
+                    //try to parse the file
+                    createReference(f);
                 }
             }
+        }
+    }
+
+    private void createReference(File refDescriptor) {
+        try {
+            //TODO useless copy here
+            final XMLCoverageReference set = XMLCoverageReference.read(refDescriptor);
+            final Name name = new DefaultName(getDefaultNamespace(), set.getId());
+            final XMLCoverageReference ref = new XMLCoverageReference(this,name,set.getPyramidSet());
+            ref.copy(set);
+            rootNode.getChildren().add(ref);
+        } catch (JAXBException ex) {
+            getLogger().log(Level.INFO, "file is not a pyramid : {0}", refDescriptor.getPath());
+        } catch (DataStoreException ex) {
+            getLogger().log(Level.WARNING, "Pyramid descriptor contains an invalid CRS : "+refDescriptor.getAbsolutePath(), ex);
         }
     }
 
@@ -131,6 +138,9 @@ public class XMLCoverageStore extends AbstractCoverageStore{
 
     @Override
     public CoverageReference create(Name name) throws DataStoreException {
+        if (root.isFile()) {
+            throw new DataStoreException("Store root is a file, not a directory, no reference creation allowed.");
+        }
         name = new DefaultName(getDefaultNamespace(), name.getLocalPart());
         final Set<Name> names = getNames();
         if(names.contains(name)){
