@@ -32,6 +32,7 @@ import java.nio.file.Files;
 import java.text.DecimalFormatSymbols;
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.IIOImage;
@@ -80,7 +81,7 @@ public class XMLMosaic implements GridMosaic {
     /*
      * Used only if we use the tile state cache mecanism, which means we don't use XML document to read / write tile states.
      */
-    private Cache<Point, Boolean> tileExistCache = new Cache<>(1000, 1000, true);
+    private final Cache<Point, Boolean> isMissingCache = new Cache<>(1000, 1000, true);
 
     //empty tile informations
     private byte[] emptyTileEncoded = null;
@@ -110,8 +111,15 @@ public class XMLMosaic implements GridMosaic {
     Boolean cacheTileState;
 
     File folder;
+    
+    final ReentrantReadWriteLock bitsetLock = new ReentrantReadWriteLock();
 
+    /**
+     * Mosaic initialization. Should ALWAYS be called at mosaic instantiation, before doing anything else.
+     * @param pyramid The owner pyramid of this mosaic. Cannot be null.
+     */
     void initialize(XMLPyramid pyramid) {
+        ArgumentChecks.ensureNonNull("Owner pyramid", pyramid);
         this.pyramid = pyramid;
 
         // If we create a new mosaic, behavior for tile state management has not been determined yet, we try to get it from store parameters.
@@ -124,31 +132,36 @@ public class XMLMosaic implements GridMosaic {
             }
         }
 
-        if (existMask != null && !existMask.isEmpty()) {
-            try {
-                tileExist = BitSet.valueOf(Base64.decode(existMask));
-                /*
-                 * Caching tile state can only be determined at pyramid creation, because a switch of behavior after
-                 * that seems a little bit tricky.
-                 */
-                cacheTileState = false;
-            } catch (IOException ex) {
-                LOGGER.log(Level.WARNING, ex.getMessage(), ex);
-                tileExist = new BitSet(gridWidth * gridHeight);
+        bitsetLock.writeLock().lock();
+        try {
+            if (existMask != null && !existMask.isEmpty()) {
+                try {
+                    tileExist = BitSet.valueOf(Base64.decode(existMask));
+                    /*
+                     * Caching tile state can only be determined at pyramid creation, because a switch of behavior after
+                     * that seems a little bit tricky.
+                     */
+                    cacheTileState = false;
+                } catch (IOException ex) {
+                    LOGGER.log(Level.WARNING, ex.getMessage(), ex);
+                    tileExist = new BitSet(gridWidth * gridHeight);
+                }
+            } else {
+                tileExist = cacheTileState ? null : new BitSet(gridWidth * gridHeight);
             }
-        } else {
-            tileExist = cacheTileState? null : new BitSet(gridWidth * gridHeight);
-        }
 
-        if (emptyMask != null && !emptyMask.isEmpty()) {
-            try {
-                tileEmpty = BitSet.valueOf(Base64.decode(emptyMask));
-            } catch (IOException ex) {
-                LOGGER.log(Level.WARNING, ex.getMessage(), ex);
-                tileEmpty = new BitSet(gridWidth * gridHeight);
+            if (emptyMask != null && !emptyMask.isEmpty()) {
+                try {
+                    tileEmpty = BitSet.valueOf(Base64.decode(emptyMask));
+                } catch (IOException ex) {
+                    LOGGER.log(Level.WARNING, ex.getMessage(), ex);
+                    tileEmpty = new BitSet(gridWidth * gridHeight);
+                }
+            } else {
+                tileEmpty = cacheTileState ? null : new BitSet(gridWidth * gridHeight);
             }
-        } else {
-            tileEmpty = cacheTileState? null : new BitSet(gridWidth * gridHeight);
+        } finally {
+            bitsetLock.writeLock().unlock();
         }
 
         /* Here is an handy check, mainly for retro-compatibility purpose. We should only get an empty bit set if the
@@ -285,33 +298,44 @@ public class XMLMosaic implements GridMosaic {
 
     @Override
     public boolean isMissing(int col, int row) throws PointOutsideCoverageException {
-        if (tileExist == null || tileExist.isEmpty()) {
-            try {
-                final Point key = new Point(col, row);
-                return tileExistCache.getOrCreate(key, new Callable<Boolean>() {
-                    @Override
-                    public Boolean call() throws Exception {
-                        return !getTileFile(key.x, key.y).isFile();
-                    }
-                });
-            } catch (PointOutsideCoverageException e) {
-                throw e;
-            } catch (Exception e) {
-                return true;
+        bitsetLock.readLock().lock();
+        try {
+            if (tileExist == null || tileExist.isEmpty()) {
+                try {
+                    final Point key = new Point(col, row);
+                    return isMissingCache.getOrCreate(key, new Callable<Boolean>() {
+                        @Override
+                        public Boolean call() throws Exception {
+                            return !getTileFile(key.x, key.y).isFile();
+                        }
+                    });
+                } catch (PointOutsideCoverageException e) {
+                    throw e;
+                } catch (Exception e) {
+                    LOGGER.log(Level.FINE, e.getLocalizedMessage(), e);
+                    return true;
+                }
+            } else {
+                return !tileExist.get(getTileIndex(col, row));
             }
-        } else {
-            return !tileExist.get(getTileIndex(col, row));
+        } finally {
+            bitsetLock.readLock().unlock();
         }
     }
 
     private boolean isEmpty(int col, int row){
-        if (tileEmpty == null || tileEmpty.isEmpty()) {
-            /* For now, if we keep tile state in cache, we consider empty tiles as non-existing. Because without the
-             * appropriate bitset, we would need to scan the tile file to know if it's empty.
-             */
-            return false;
-        } else {
-            return tileEmpty.get(getTileIndex(col, row));
+        bitsetLock.readLock().lock();
+        try {
+            if (tileEmpty == null || tileEmpty.isEmpty()) {
+                /* For now, if we keep tile state in cache, we consider empty tiles as non-existing. Because without the
+                 * appropriate bitset, we would need to scan the tile file to know if it's empty.
+                 */
+                return false;
+            } else {
+                return tileEmpty.get(getTileIndex(col, row));
+            }
+        } finally {
+            bitsetLock.readLock().unlock();
         }
     }
 
@@ -319,14 +343,14 @@ public class XMLMosaic implements GridMosaic {
     public TileReference getTile(int col, int row, Map hints) throws DataStoreException {
 
         final TileReference tile;
-        if(isEmpty(col, row)){
+        if (isEmpty(col, row)) {
             try {
                 tile = new DefaultTileReference(getPyramid().getPyramidSet().getReaderSpi(),
                         ImageIO.createImageInputStream(new ByteArrayInputStream(createEmptyTile())), 0, new Point(col, row));
             } catch (IOException ex) {
                 throw new DataStoreException(ex);
             }
-        }else{
+        } else {
             tile = new DefaultTileReference(getPyramid().getPyramidSet().getReaderSpi(),
                     getTileFile(col, row), 0, new Point(col, row));
         }
@@ -370,8 +394,13 @@ public class XMLMosaic implements GridMosaic {
     void createTile(final int col, final int row, final RenderedImage image, final ImageWriter writer) throws DataStoreException {
         if (isEmpty(image.getData())) {
             if (tileExist != null) {
-                tileExist.set(getTileIndex(col, row), true);
-                tileEmpty.set(getTileIndex(col, row), true);
+                bitsetLock.writeLock().lock();
+                try {
+                    tileExist.set(getTileIndex(col, row), true);
+                    tileEmpty.set(getTileIndex(col, row), true);
+                } finally {
+                    bitsetLock.writeLock().unlock();
+                }
             }
             return;
         }
@@ -393,8 +422,13 @@ public class XMLMosaic implements GridMosaic {
             writer.write(image);
             if (tileExist != null) {
                 final int ti = getTileIndex(col, row);
-                tileExist.set(ti, true);
-                tileEmpty.set(ti, false);
+                bitsetLock.writeLock().lock();
+                try {
+                    tileExist.set(ti, true);
+                    tileEmpty.set(ti, false);
+                } finally {
+                    bitsetLock.writeLock().unlock();
+                }
             }
         } catch (IOException ex) {
             throw new DataStoreException(ex.getMessage(), ex);
@@ -436,7 +470,7 @@ public class XMLMosaic implements GridMosaic {
         }
 
         //wait for all writing tobe done
-        for(Future f : futurs){
+        for (Future f : futurs) {
             try {
                 f.get();
             } catch (InterruptedException | ExecutionException ex) {
@@ -461,8 +495,15 @@ public class XMLMosaic implements GridMosaic {
     @XmlElement
     protected String getExistMask() {
         // Flush only if user did not specify to cache tile states.
-        if (tileExist == null || cacheTileState) return null;
-        return existMask = updateCompletionString(tileExist);
+        bitsetLock.readLock().lock();
+        try {
+            if (tileExist == null || cacheTileState) {
+                return null;
+            }
+            return existMask = updateCompletionString(tileExist);
+        } finally {
+            bitsetLock.readLock().unlock();
+        }
     }
 
     protected void setExistMask(String newValue) {
@@ -471,9 +512,16 @@ public class XMLMosaic implements GridMosaic {
     
     @XmlElement
     protected String getEmptyMask() {
-        // Flush only if user did not specify to cache tile states.
-        if (tileEmpty == null || cacheTileState) return null;
-        return emptyMask = updateCompletionString(tileEmpty);
+        // Flush only if user did not specify to cache tile states.     
+        bitsetLock.readLock().lock();
+        try {
+            if (tileEmpty == null || cacheTileState) {
+                return null;
+            }
+            return emptyMask = updateCompletionString(tileEmpty);
+        } finally {
+            bitsetLock.readLock().unlock();
+        }
     }
 
     protected void setEmptyMask(String newValue) {
@@ -515,7 +563,7 @@ public class XMLMosaic implements GridMosaic {
         private final String formatName;
         private final ProgressMonitor monitor;
 
-        public TileWriter(File f,RenderedImage image, int idx, int idy, int tileIndex, ColorModel cm, String formatName, ProgressMonitor monitor) {
+        public TileWriter(File f, RenderedImage image, int idx, int idy, int tileIndex, ColorModel cm, String formatName, ProgressMonitor monitor) {
             ArgumentChecks.ensureNonNull("file", f);
             ArgumentChecks.ensureNonNull("image", image);
             this.f = f;
@@ -537,59 +585,61 @@ public class XMLMosaic implements GridMosaic {
 
             ImageWriter writer = null;
             ImageOutputStream out = null;
-            try{
+            try {
                 Raster raster = image.getTile(idx, idy);
 
                 //check if image is empty
-                if(tileEmpty != null && (raster == null || isEmpty(raster))) {
-                    synchronized(tileExist){
+                if (tileEmpty != null && (raster == null || isEmpty(raster))) {
+                    bitsetLock.writeLock().lock();
+                    try {
                         tileExist.set(tileIndex, true);
-                    }
-                    synchronized(tileEmpty){
                         tileEmpty.set(tileIndex, true);
+                    } finally {
+                        bitsetLock.writeLock().unlock();
                     }
                     return;
                 }
-                
+
                 writer = ImageIO.getImageWritersByFormatName(formatName).next();
-                
+
                 final Class[] outTypes = writer.getOriginatingProvider().getOutputTypes();
-                if(ArraysExt.contains(outTypes, File.class)){
+                if (ArraysExt.contains(outTypes, File.class)) {
                     //writer support files directly, let him handle it
                     writer.setOutput(f);
-                }else{
+                } else {
                     out = ImageIO.createImageOutputStream(f);
                     writer.setOutput(out);
-                }                
+                }
 
                 final boolean canWriteRaster = writer.canWriteRasters();
                 //write tile
-                if(canWriteRaster){
+                if (canWriteRaster) {
                     final IIOImage buffer = new IIOImage(raster, null, null);
                     writer.write(buffer);
-                }else{
+                } else {
                     //encapsulate image in a buffered image with parent color model
                     final BufferedImage buffer = new BufferedImage(
-                            cm, (WritableRaster)raster, true, null);
+                            cm, (WritableRaster) raster, true, null);
                     writer.write(buffer);
                 }
 
                 if (tileExist != null) {
-                    synchronized(tileExist){
+                    bitsetLock.writeLock().lock();
+                    try {
                         tileExist.set(tileIndex, true);
-                    }
-                    synchronized(tileEmpty){
                         tileEmpty.set(tileIndex, false);
+                    } finally {
+                        bitsetLock.writeLock().unlock();
                     }
                 }
 
-            }catch(Exception ex){
+            } catch (Exception ex) {
                 LOGGER.log(Level.WARNING, ex.getMessage(), ex);
-                throw new RuntimeException(ex.getMessage(),ex);
-            }finally{
-                if(writer != null){
+                throw new RuntimeException(ex.getMessage(), ex);
+            } finally {
+                if (writer != null) {
                     writer.dispose();
-                    if(out != null){
+                    if (out != null) {
                         try {
                             out.close();
                         } catch (IOException ex) {

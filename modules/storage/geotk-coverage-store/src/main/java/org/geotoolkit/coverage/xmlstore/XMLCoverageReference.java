@@ -89,8 +89,6 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
     //caches
     @XmlTransient
     private List<GridSampleDimension> cacheDimensions = null;
-    @XmlTransient
-    boolean flushTileState;
 
     public XMLCoverageReference() {
         super(null, new DefaultName("test"), 0);
@@ -311,7 +309,9 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
         final XMLPyramid pyramid = (XMLPyramid) set.getPyramid(pyramidId);
         final XMLMosaic mosaic = pyramid.getMosaic(mosaicId);
         mosaic.createTile(col,row,image);
-        save();
+        if (!mosaic.cacheTileState && mosaic.tileExist != null) {
+            save();
+        }
     }
     
     @Override
@@ -320,7 +320,9 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
         final XMLPyramid pyramid = (XMLPyramid) set.getPyramid(pyramidId);
         final XMLMosaic mosaic = pyramid.getMosaic(mosaicId);
         mosaic.writeTiles(image,onlyMissing, monitor);
-        save();
+        if (!mosaic.cacheTileState && mosaic.tileExist != null) {
+            save();
+        }
     }
 
     @Override
