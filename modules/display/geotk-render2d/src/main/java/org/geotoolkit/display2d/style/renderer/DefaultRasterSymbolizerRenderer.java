@@ -142,7 +142,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
      * {@inheritDoc }
      */
     @Override
-    public void portray(final ProjectedCoverage projectedCoverage) throws PortrayalException{
+    public void portray(final ProjectedCoverage projectedCoverage) throws PortrayalException {
 
         try {
 
@@ -342,7 +342,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             }
 
             renderingContext.switchToDisplayCRS();
-        }catch (Exception e) {
+        } catch (Exception e) {
             LOGGER.warning(e.getMessage());
         }
     }

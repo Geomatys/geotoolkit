@@ -50,7 +50,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public abstract class AbstractCoverageStore extends CoverageStore{
+public abstract class AbstractCoverageStore extends CoverageStore {
 
 
     protected static final String NO_NAMESPACE = "no namespace";

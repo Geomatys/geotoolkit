@@ -591,15 +591,11 @@ public abstract class AbstractTree<E> implements Tree<E> {
      * {@inheritDoc }.
      */
     @Override
-    public void close() throws StoreIndexException {
-        try {
-            treeAccess.setTreeIdentifier(treeIdentifier);
-            treeAccess.setEltNumber(eltCompteur);
-            treeAccess.close();
-            treeEltMap.close();
-        } catch (IOException ex) {
-            throw new StoreIndexException("FileBasicRTree : close(). Impossible to close TreeAccessFile.", ex);
-        }
+    public void close() throws IOException {
+        treeAccess.setTreeIdentifier(treeIdentifier);
+        treeAccess.setEltNumber(eltCompteur);
+        treeAccess.close();
+        treeEltMap.close();
     }
 
     /**

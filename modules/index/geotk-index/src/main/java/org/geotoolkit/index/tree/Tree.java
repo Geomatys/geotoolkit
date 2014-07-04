@@ -19,13 +19,16 @@ package org.geotoolkit.index.tree;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
+import java.io.Closeable;
+import java.io.IOException;
+
 /**
  * Define a generic Tree.
  *
  * @author Rémi Maréchal       (Geomatys).
  * @author Martin Desruisseaux (Geomatys).
  */
-public interface Tree<E> {
+public interface Tree<E> extends Closeable {
 
     /**
      * Find all {@code Integer} tree identifiers, from each stored datas which intersect {@code regionSearch} parameter.
@@ -140,7 +143,7 @@ public interface Tree<E> {
      * 
      * @throws StoreIndexException if problem during close stream.
      */
-    void close() throws StoreIndexException;
+    void close() throws IOException;
    
     /**
      * Return true if {@link Tree} has already been closed else false.

@@ -75,13 +75,13 @@ public class DefaultCoverageReference extends AbstractCoverageReference{
 
     @Override
     public GridCoverageReader acquireReader() throws CoverageStoreException {
-        if(coverage != null){
+        if (coverage != null) {
             return new MemoryCoverageReader(coverage);
-        }else if(input instanceof GridCoverage2D){
-            return new MemoryCoverageReader((GridCoverage2D)input);
-        }else if(input instanceof GridCoverageReader){
-            return (GridCoverageReader)input;
-        }else{
+        } else if (input instanceof GridCoverage2D) {
+            return new MemoryCoverageReader((GridCoverage2D) input);
+        } else if (input instanceof GridCoverageReader) {
+            return (GridCoverageReader) input;
+        } else {
             ImageCoverageReader reader = new ImageCoverageReader();
             reader.setInput(input);
             return reader;

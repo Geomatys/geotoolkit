@@ -49,7 +49,7 @@ import org.opengis.referencing.operation.TransformException;
  */
 public class ProjectedCoverage implements ProjectedObject<CoverageMapLayer> {
 
-    private final Cache<GridCoverageReadParam,GridCoverage2D> cache = new Cache<>(1,0,false);
+    private final Cache<GridCoverageReadParam, GridCoverage2D> cache = new Cache<>(1, 0, false);
 
     private final StatelessContextParams params;
     private final CoverageMapLayer layer;
@@ -97,11 +97,10 @@ public class ProjectedCoverage implements ProjectedObject<CoverageMapLayer> {
                     final GridCoverageReader reader = ref.acquireReader();
                     try{
                         value = (GridCoverage2D) reader.read(layer.getCoverageReference().getImageIndex(),param);
-                        ref.recycle(reader);
                     }catch(DisjointCoverageDomainException ex){
-                        //wrong read parameters, we can recycle it anyway
-                        ref.recycle(reader);
                         throw ex;
+                    } finally {
+                        ref.recycle(reader);                        
                     }
                 }
             } finally {

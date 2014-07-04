@@ -78,7 +78,7 @@ public abstract class RecyclingCoverageReference extends AbstractCoverageReferen
      * Reset given reader.
      * Does not by default, override to do specific operations.
      */
-    protected void resetReader(CoverageReader reader){
+    protected void resetReader(CoverageReader reader) {
 
     }
 
@@ -91,7 +91,7 @@ public abstract class RecyclingCoverageReference extends AbstractCoverageReferen
      * @return {@code true} if the queue became empty as a result of this method call.
      */
     private boolean removeExpired(final Deque<CoverageReader> queue) {
-        while(queue.size()>MAX_ELEMENTS){
+        while (queue.size()>MAX_ELEMENTS) {
             final CoverageReader next = queue.pollLast();
             if(next==null)continue;
             dispose(next);
