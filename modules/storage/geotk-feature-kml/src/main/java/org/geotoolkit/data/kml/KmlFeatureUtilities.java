@@ -25,7 +25,7 @@ import org.geotoolkit.data.kml.xml.KmlReader;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.geometry.jts.JTS;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.geotoolkit.util.FileUtilities;
 import org.geotoolkit.feature.Feature;
@@ -228,7 +228,7 @@ public class KmlFeatureUtilities {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         final String name = "Geometry";
         ftb.setName(name);
-        ftb.add("geometry", Geometry.class, DefaultGeographicCRS.WGS84);
+        ftb.add("geometry", Geometry.class, CommonCRS.WGS84.normalizedGeographic());
 
         //loop on values to find data names
         for (String valName : values.keySet()) {

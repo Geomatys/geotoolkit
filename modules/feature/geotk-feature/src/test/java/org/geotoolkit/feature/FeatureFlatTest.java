@@ -31,7 +31,7 @@ import junit.framework.TestSuite;
 import static org.apache.sis.test.Assert.assertSerializedEquals;
 
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.geometry.DefaultBoundingBox;
 import org.geotoolkit.test.Assert;
 
@@ -145,10 +145,10 @@ public class FeatureFlatTest extends TestCase {
         FeatureTypeBuilder tb = new FeatureTypeBuilder();
         tb.setName( "bounds" );
 
-        tb.add("p1", Point.class, DefaultGeographicCRS.WGS84);
-        tb.add("p2", Point.class, DefaultGeographicCRS.WGS84);
-        tb.add("p3", Point.class, DefaultGeographicCRS.WGS84);
-        tb.add("p4", Point.class, DefaultGeographicCRS.WGS84);
+        tb.add("p1", Point.class, CommonCRS.WGS84.normalizedGeographic());
+        tb.add("p2", Point.class, CommonCRS.WGS84.normalizedGeographic());
+        tb.add("p3", Point.class, CommonCRS.WGS84.normalizedGeographic());
+        tb.add("p4", Point.class, CommonCRS.WGS84.normalizedGeographic());
         SimpleFeatureType t = tb.buildSimpleFeatureType();
 
         SimpleFeature f = SimpleFeatureBuilder.build(t, g, null);

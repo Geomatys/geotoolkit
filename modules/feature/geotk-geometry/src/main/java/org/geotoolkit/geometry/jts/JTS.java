@@ -33,7 +33,7 @@ import org.geotoolkit.geometry.jts.transform.GeometryCSTransformer;
 import org.geotoolkit.geometry.jts.transform.CoordinateSequenceTransformer;
 import org.apache.sis.referencing.CRS;
 import org.geotoolkit.referencing.GeodeticCalculator;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.referencing.operation.TransformPathNotFoundException;
 import org.geotoolkit.referencing.operation.projection.ProjectionException;
 import org.apache.sis.util.Classes;
@@ -291,14 +291,14 @@ public final class JTS {
      */
     public static Envelope toGeographic(final Envelope envelope, final CoordinateReferenceSystem crs)
             throws TransformException {
-        if (org.geotoolkit.referencing.CRS.equalsIgnoreMetadata(crs, DefaultGeographicCRS.WGS84)) {
+        if (org.geotoolkit.referencing.CRS.equalsIgnoreMetadata(crs, CommonCRS.WGS84.normalizedGeographic())) {
             return envelope;
         }
 
         final MathTransform transform;
 
         try {
-            transform = org.geotoolkit.referencing.CRS.findMathTransform(crs, DefaultGeographicCRS.WGS84, true);
+            transform = org.geotoolkit.referencing.CRS.findMathTransform(crs, CommonCRS.WGS84.normalizedGeographic(), true);
         } catch (FactoryException exception) {
             throw new TransformPathNotFoundException(Errors.format(
                     Errors.Keys.CANT_TRANSFORM_ENVELOPE, exception));

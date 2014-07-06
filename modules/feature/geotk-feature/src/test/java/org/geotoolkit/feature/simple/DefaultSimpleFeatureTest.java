@@ -24,7 +24,7 @@ import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.filter.identity.DefaultFeatureId;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.CommonCRS;
 import org.junit.Test;
 import org.geotoolkit.feature.GeometryAttribute;
 import org.geotoolkit.feature.simple.SimpleFeature;
@@ -82,7 +82,7 @@ public class DefaultSimpleFeatureTest {
 
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("test");
-        ftb.add("point", Point.class,DefaultGeographicCRS.WGS84);
+        ftb.add("point", Point.class,CommonCRS.WGS84.normalizedGeographic());
         final SimpleFeatureType type = ftb.buildSimpleFeatureType();
 
         final Object[] properties = new Object[]{

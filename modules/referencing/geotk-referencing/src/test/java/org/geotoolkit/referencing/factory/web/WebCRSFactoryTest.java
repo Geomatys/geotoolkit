@@ -26,13 +26,13 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.GeographicCRS;
 
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.factory.AbstractAuthorityFactory;
 import org.geotoolkit.referencing.factory.CachingAuthorityFactory;
 import org.geotoolkit.referencing.factory.IdentifiedObjectFinder;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 
+import org.apache.sis.referencing.CommonCRS;
 import org.junit.*;
 import static org.geotoolkit.test.Commons.*;
 import static org.geotoolkit.referencing.Assert.*;
@@ -99,7 +99,7 @@ public final strictfp class WebCRSFactoryTest {
         assertSame   (crs,  factory.createGeographicCRS("CRS:CRS84"));
         assertSame   (crs,  factory.createGeographicCRS("crs : crs84"));
         assertNotSame(crs,  factory.createGeographicCRS("CRS:83"));
-        assertEqualsIgnoreMetadata(DefaultGeographicCRS.WGS84, crs, true);
+        assertEqualsIgnoreMetadata(CommonCRS.WGS84.normalizedGeographic(), crs, true);
     }
 
     /**
@@ -114,7 +114,7 @@ public final strictfp class WebCRSFactoryTest {
         assertSame   (crs,  factory.createGeographicCRS("CRS83"));
         assertSame   (crs,  factory.createGeographicCRS("CRS:CRS83"));
         assertNotSame(crs,  factory.createGeographicCRS("CRS:84"));
-        assertNotDeepEquals(DefaultGeographicCRS.WGS84, crs);
+        assertNotDeepEquals(CommonCRS.WGS84.normalizedGeographic(), crs);
     }
 
     /**
@@ -171,19 +171,19 @@ public final strictfp class WebCRSFactoryTest {
         assertSame("Allowing scanning should not make any difference for this CRS84 instance.",
                    CRS84, finder.find(CRS84));
 
-        assertEqualsIgnoreMetadata(CRS84, DefaultGeographicCRS.WGS84, true); // Required condition for next test.
+        assertEqualsIgnoreMetadata(CRS84, CommonCRS.WGS84.normalizedGeographic(), true); // Required condition for next test.
 
         finder.setFullScanAllowed(false);
         assertNull("Should not find WGS84 without a full scan, since it doesn't contains the CRS:84 identifier.",
-                   finder.find(DefaultGeographicCRS.WGS84));
+                   finder.find(CommonCRS.WGS84.normalizedGeographic()));
 
         finder.setFullScanAllowed(true);
         assertSame("A full scan should allow us to find WGS84, since it is equals ignoring metadata to CRS:84.",
-                   CRS84, finder.find(DefaultGeographicCRS.WGS84));
+                   CRS84, finder.find(CommonCRS.WGS84.normalizedGeographic()));
 
         finder.setFullScanAllowed(false);
         assertNull("The scan result should not be cached.",
-                   finder.find(DefaultGeographicCRS.WGS84));
+                   finder.find(CommonCRS.WGS84.normalizedGeographic()));
 
         // --------------------------------------------------
         // Same test than above, using a CRS created from WKT
@@ -226,17 +226,17 @@ public final strictfp class WebCRSFactoryTest {
 
         finder.setFullScanAllowed(false);
         assertNull("Should not find WGS84 without a full scan, since it doesn't contains the CRS:84 identifier.",
-                   finder.find(DefaultGeographicCRS.WGS84));
+                   finder.find(CommonCRS.WGS84.normalizedGeographic()));
 
         finder.setFullScanAllowed(true);
         assertSame("A full scan should allow us to find WGS84, since it is equals ignoring metadata to CRS:84.",
-                   CRS84, finder.find(DefaultGeographicCRS.WGS84));
+                   CRS84, finder.find(CommonCRS.WGS84.normalizedGeographic()));
 
         finder.setFullScanAllowed(false);
         assertSame("At the contrary of testFind(), the scan result should be cached.",
-                   CRS84, finder.find(DefaultGeographicCRS.WGS84));
+                   CRS84, finder.find(CommonCRS.WGS84.normalizedGeographic()));
 
-        assertEquals("CRS:84", finder.findIdentifier(DefaultGeographicCRS.WGS84));
+        assertEquals("CRS:84", finder.findIdentifier(CommonCRS.WGS84.normalizedGeographic()));
     }
 
     /**

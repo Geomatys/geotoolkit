@@ -36,7 +36,6 @@ import org.geotoolkit.test.referencing.WKT;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.referencing.crs.AbstractCRS;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.apache.sis.referencing.datum.DefaultGeodeticDatum;
 import org.geotoolkit.referencing.operation.AbstractCoordinateOperation;
 import org.geotoolkit.referencing.factory.IdentifiedObjectFinder;
@@ -45,6 +44,7 @@ import org.geotoolkit.referencing.factory.ThreadedAuthorityFactory;
 import org.apache.sis.metadata.iso.extent.DefaultGeographicBoundingBox;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.internal.InternalUtilities;
+import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.util.ComparisonMode;
 
 import org.junit.*;
@@ -805,7 +805,7 @@ public final strictfp class ThreadedEpsgFactoryTest extends EpsgFactoryTestBase 
         final IdentifiedObjectFinder finder = factory.getIdentifiedObjectFinder(CoordinateReferenceSystem.class);
         assertTrue("Full scan should be enabled by default.", finder.isFullScanAllowed());
         assertNull("Should not find WGS84 because the axis order is not the same.",
-                   finder.find(DefaultGeographicCRS.WGS84));
+                   finder.find(CommonCRS.WGS84.normalizedGeographic()));
         /*
          * Tests that the cache is empty.
          */

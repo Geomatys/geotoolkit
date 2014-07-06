@@ -38,13 +38,14 @@ import org.geotoolkit.lang.Static;
 import org.geotoolkit.lang.Workaround;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
-import org.geotoolkit.referencing.cs.AxisRangeType;
-import org.geotoolkit.referencing.cs.DefaultEllipsoidalCS;
-import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.cs.AxesConvention;
+import org.geotoolkit.referencing.cs.PredefinedCS;
+import org.apache.sis.referencing.crs.DefaultCompoundCRS;
+import org.apache.sis.referencing.crs.DefaultGeographicCRS;
 import org.apache.sis.referencing.datum.DefaultGeodeticDatum;
 import org.geotoolkit.measure.Measure;
 import org.geotoolkit.resources.Errors;
+import org.apache.sis.measure.Units;
 
 import static java.util.Collections.singletonMap;
 import static org.opengis.referencing.IdentifiedObject.NAME_KEY;
@@ -218,7 +219,7 @@ public final class CRSUtilities extends Static {
         final List<CoordinateReferenceSystem> toAdd = new ArrayList<>(4);
         final CoordinateReferenceSystem currentCRS = envelope.getCoordinateReferenceSystem();
         final CoordinateSystem currentCS = currentCRS.getCoordinateSystem();
-        for (final SingleCRS subCRS : DefaultCompoundCRS.getSingleCRS(crs)) {
+        for (final SingleCRS subCRS : CRS.getSingleComponents(crs)) {
             final CoordinateSystem subCS = subCRS.getCoordinateSystem();
             if (subCS.getDimension() == 1 && dimensionColinearWith(currentCS, subCS) < 0) {
                 toAdd.add(subCRS);
@@ -228,11 +229,31 @@ public final class CRSUtilities extends Static {
             return envelope;
         }
         toAdd.add(0, currentCRS);
-        final GeneralEnvelope expanded = new GeneralEnvelope(new DefaultCompoundCRS("Temporarily expanded",
+        final GeneralEnvelope expanded = new GeneralEnvelope(new DefaultCompoundCRS(
+                singletonMap(DefaultCompoundCRS.NAME_KEY, "Temporarily expanded"),
                 toAdd.toArray(new CoordinateReferenceSystem[toAdd.size()])));
         expanded.setToNaN();
         expanded.subEnvelope(0, envelope.getDimension()).setEnvelope(envelope);
         return expanded;
+    }
+
+    /**
+     * Returns the angular unit of the specified coordinate system.
+     * The preference will be given to the longitude axis, if found.
+     */
+    public static Unit<Angle> getAngularUnit(final CoordinateSystem coordinateSystem) {
+        Unit<Angle> unit = NonSI.DEGREE_ANGLE;
+        for (int i=coordinateSystem.getDimension(); --i>=0;) {
+            final CoordinateSystemAxis axis = coordinateSystem.getAxis(i);
+            final Unit<?> candidate = axis.getUnit();
+            if (Units.isAngular(candidate)) {
+                unit = candidate.asType(Angle.class);
+                if (AxisDirection.EAST.equals(AxisDirections.absolute(axis.getDirection()))) {
+                    break; // Found the longitude axis.
+                }
+            }
+        }
+        return unit;
     }
 
     /**
@@ -343,22 +364,23 @@ public final class CRSUtilities extends Static {
             crs = ((GeneralDerivedCRS) crs).getBaseCRS();
         }
         if (!(crs instanceof SingleCRS)) {
-            return DefaultGeographicCRS.WGS84;
+            return CommonCRS.WGS84.normalizedGeographic();
         }
         final Datum datum = ((SingleCRS) crs).getDatum();
         if (!(datum instanceof GeodeticDatum)) {
-            return DefaultGeographicCRS.WGS84;
+            return CommonCRS.WGS84.normalizedGeographic();
         }
         GeodeticDatum geoDatum = (GeodeticDatum) datum;
         if (geoDatum.getPrimeMeridian().getGreenwichLongitude() != 0) {
             geoDatum = new DefaultGeodeticDatum(singletonMap(NAME_KEY, geoDatum.getName().getCode()),
                     geoDatum.getEllipsoid(), CommonCRS.WGS84.primeMeridian());
         } else if (crs instanceof GeographicCRS) {
-            if (org.geotoolkit.referencing.CRS.equalsIgnoreMetadata(DefaultEllipsoidalCS.GEODETIC_2D, crs.getCoordinateSystem())) {
+            if (org.geotoolkit.referencing.CRS.equalsIgnoreMetadata(PredefinedCS.GEODETIC_2D, crs.getCoordinateSystem())) {
                 return (GeographicCRS) crs;
             }
         }
-        return new DefaultGeographicCRS(crs.getName().getCode(), geoDatum, DefaultEllipsoidalCS.GEODETIC_2D);
+        return new DefaultGeographicCRS(singletonMap(DefaultGeographicCRS.NAME_KEY, crs.getName().getCode()),
+                geoDatum, PredefinedCS.GEODETIC_2D);
     }
 
     /**
@@ -410,14 +432,14 @@ public final class CRSUtilities extends Static {
      *
      * @since 3.20
      */
-    public static CoordinateReferenceSystem shiftAxisRange(final CoordinateReferenceSystem crs, final AxisRangeType type) {
+    public static CoordinateReferenceSystem shiftAxisRange(final CoordinateReferenceSystem crs, final AxesConvention type) {
         if (crs instanceof GeographicCRS) {
             final DefaultGeographicCRS impl = DefaultGeographicCRS.castOrCopy((GeographicCRS) crs);
-            final DefaultGeographicCRS shifted = impl.shiftAxisRange(type);
+            final DefaultGeographicCRS shifted = impl.forConvention(type);
             if (shifted != impl) return shifted;
         } else if (crs instanceof CompoundCRS) {
             final DefaultCompoundCRS impl = DefaultCompoundCRS.castOrCopy((CompoundCRS) crs);
-            final DefaultCompoundCRS shifted = impl.shiftAxisRange(type);
+            final DefaultCompoundCRS shifted = impl.forConvention(type);
             if (shifted != impl) return shifted;
         }
         return crs;

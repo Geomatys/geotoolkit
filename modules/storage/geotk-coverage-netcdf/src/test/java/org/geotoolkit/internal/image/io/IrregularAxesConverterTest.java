@@ -23,8 +23,8 @@ import org.opengis.referencing.crs.ProjectedCRS;
 import org.opengis.referencing.operation.Matrix;
 
 import org.apache.sis.measure.Range;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.cs.DiscreteCoordinateSystemAxis;
+import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.apache.sis.referencing.operation.matrix.Matrix3;
 import org.apache.sis.referencing.operation.matrix.Matrices;
@@ -249,8 +249,8 @@ public final strictfp class IrregularAxesConverterTest {
          * library, where the thresholds for the CoordinateAxis1D.isRegular() method is 5E-3.
          */
         final IrregularAxesConverter converter = new IrregularAxesConverter(1E-4, null);
-        assertNull(converter.canConvert(DefaultGeographicCRS.WGS84, longitudes, latitudes));
-        final ProjectedCRS result = converter.canConvert(DefaultGeographicCRS.SPHERE, longitudes, latitudes);
+        assertNull(converter.canConvert(CommonCRS.WGS84.normalizedGeographic(), longitudes, latitudes));
+        final ProjectedCRS result = converter.canConvert(CommonCRS.SPHERE.normalizedGeographic(), longitudes, latitudes);
         assertNotNull("When using the sphere CRS, a regular grid should have been found.", result);
         assertEquals("Mercator_1SP", result.getConversionFromBase().getParameterValues().getDescriptor().getName().getCode());
         /*

@@ -39,7 +39,7 @@ import org.opengis.geometry.coordinate.GeometryFactory;
 import org.opengis.geometry.primitive.PrimitiveFactory;
 import org.opengis.geometry.Geometry;
 import org.opengis.geometry.PositionFactory;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.util.logging.Logging;
 
 
@@ -68,8 +68,8 @@ public class GeometryTestParser {
             throw new RuntimeException("", e);
         }
 
-        GeometryFactory geomFact = new JTSGeometryFactory(DefaultGeographicCRS.WGS84);
-        PrimitiveFactory primFact = new JTSPrimitiveFactory(DefaultGeographicCRS.WGS84);
+        GeometryFactory geomFact = new JTSGeometryFactory(CommonCRS.WGS84.normalizedGeographic());
+        PrimitiveFactory primFact = new JTSPrimitiveFactory(CommonCRS.WGS84.normalizedGeographic());
         PositionFactory posFact = null;
         wktFactory = new GeometryParser(geomFact, primFact, posFact, null );
     }

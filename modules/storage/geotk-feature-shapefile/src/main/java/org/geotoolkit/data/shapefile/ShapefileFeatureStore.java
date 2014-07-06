@@ -77,7 +77,7 @@ import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.io.wkt.PrjFiles;
 import org.geotoolkit.parameter.Parameters;
 import org.apache.sis.referencing.CRS;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.CommonCRS;
 
 import org.geotoolkit.storage.DataFileStore;
 import org.geotoolkit.feature.Feature;
@@ -482,7 +482,7 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
                     writer.writeHeaders(new JTSEnvelope2D(domain), shapeType, 0, 100);
                 } else {
                     // try to reproject the single overall envelope keeping poles out of the way
-                    final JTSEnvelope2D env = new JTSEnvelope2D(-179, 179, -89, 89, DefaultGeographicCRS.WGS84);
+                    final JTSEnvelope2D env = new JTSEnvelope2D(-179, 179, -89, 89, CommonCRS.WGS84.normalizedGeographic());
                     JTSEnvelope2D transformedBounds;
                     if (crs != null) {
                         try {

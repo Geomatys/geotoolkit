@@ -64,7 +64,7 @@ import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
+import org.apache.sis.referencing.crs.DefaultCompoundCRS;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableStyle;
@@ -213,7 +213,8 @@ public class ColorModelTest {
         coverages.add(coverage);
 
         //create some ND coverages ---------------------------------------------
-        CoordinateReferenceSystem crs = new DefaultCompoundCRS("4D crs",
+        CoordinateReferenceSystem crs = new DefaultCompoundCRS(
+                    Collections.singletonMap(DefaultCompoundCRS.NAME_KEY, "4D crs"),
                     CRS.decode("EPSG:4326"),
                     CommonCRS.Vertical.ELLIPSOIDAL.crs(),
                     CommonCRS.Temporal.JAVA.crs());

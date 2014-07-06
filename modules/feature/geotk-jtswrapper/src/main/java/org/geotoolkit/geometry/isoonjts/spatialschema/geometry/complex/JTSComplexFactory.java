@@ -19,7 +19,7 @@ package org.geotoolkit.geometry.isoonjts.spatialschema.geometry.complex;
 import java.util.List;
 
 import org.geotoolkit.factory.Factory;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.CommonCRS;
 
 import org.opengis.geometry.complex.ComplexFactory;
 import org.opengis.geometry.complex.CompositeCurve;
@@ -38,7 +38,7 @@ public class JTSComplexFactory extends Factory implements ComplexFactory {
     private final CoordinateReferenceSystem crs;
 
     public JTSComplexFactory(){
-        this( DefaultGeographicCRS.WGS84);
+        this( CommonCRS.WGS84.normalizedGeographic());
     }
 
     public JTSComplexFactory( final CoordinateReferenceSystem crs ) {

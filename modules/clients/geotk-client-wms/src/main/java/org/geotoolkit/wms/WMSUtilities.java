@@ -32,9 +32,9 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.apache.sis.referencing.crs.DefaultEngineeringCRS;
-import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
+import org.apache.sis.referencing.crs.DefaultCompoundCRS;
 import org.apache.sis.referencing.cs.AbstractCS;
-import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;
+import org.apache.sis.referencing.cs.DefaultCoordinateSystemAxis;
 import org.geotoolkit.referencing.cs.DiscreteReferencingFactory;
 import org.apache.sis.referencing.datum.DefaultEngineeringDatum;
 import org.geotoolkit.temporal.object.ISODateParser;
@@ -251,7 +251,8 @@ public final class WMSUtilities {
                     dimCRS = CommonCRS.Vertical.ELLIPSOIDAL.crs();
                 } else {
                     final DefaultEngineeringDatum dimDatum = new DefaultEngineeringDatum(Collections.singletonMap("name", dimName));
-                    final CoordinateSystemAxis csAxis = new DefaultCoordinateSystemAxis(dimName, dimName.substring(0, 1), AxisDirection.OTHER, unit);
+                    final CoordinateSystemAxis csAxis = new DefaultCoordinateSystemAxis(
+                            Collections.singletonMap("name", dimName), dimName.substring(0, 1), AxisDirection.OTHER, unit);
                     final AbstractCS dimCs = new AbstractCS(Collections.singletonMap("name", dimName), csAxis);
                     dimCRS = new DefaultEngineeringCRS(Collections.singletonMap("name", dimName), dimDatum, dimCs);
                 }
@@ -325,7 +326,9 @@ public final class WMSUtilities {
 
             // build new envelope with all dimension CRSs and lower/upper ordinates.
             if (!dimensionsCRS.isEmpty()) {
-                final CoordinateReferenceSystem outCRS = new DefaultCompoundCRS(layer.getName(), dimensionsCRS.toArray(new CoordinateReferenceSystem[dimensionsCRS.size()]));
+                final CoordinateReferenceSystem outCRS = new DefaultCompoundCRS(
+                        Collections.singletonMap(DefaultCompoundCRS.NAME_KEY, layer.getName()),
+                        dimensionsCRS.toArray(new CoordinateReferenceSystem[dimensionsCRS.size()]));
                 layerEnvelope = new GeneralEnvelope(outCRS);
 
                 //build ordinate list like (xmin, ymin, zmin, xmax, ymax, zmax)

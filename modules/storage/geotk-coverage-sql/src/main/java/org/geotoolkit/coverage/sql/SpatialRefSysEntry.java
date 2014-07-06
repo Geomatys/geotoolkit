@@ -46,15 +46,15 @@ import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.apache.sis.internal.referencing.AxisDirections;
 import org.geotoolkit.internal.sql.table.SpatialDatabase;
-import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
+import org.apache.sis.referencing.crs.DefaultCompoundCRS;
 import org.apache.sis.referencing.crs.DefaultTemporalCRS;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.crs.DefaultGeographicCRS;
 import org.apache.sis.referencing.operation.matrix.Matrices;
 import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
-import org.geotoolkit.referencing.cs.AxisRangeType;
+import org.apache.sis.referencing.cs.AxesConvention;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.IdentifiedObjects;
-import org.geotoolkit.referencing.cs.DefaultEllipsoidalCS;
+import org.apache.sis.referencing.cs.DefaultEllipsoidalCS;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.referencing.cs.CoordinateSystems;
 
@@ -307,7 +307,7 @@ final class SpatialRefSysEntry {
             final int i = AxisDirections.indexOfColinear(cs, AxisDirection.EAST);
             if (i >= 0) {
                 final DefaultEllipsoidalCS geotk = DefaultEllipsoidalCS.castOrCopy(cs);
-                shiftedCS = geotk.shiftAxisRange(AxisRangeType.POSITIVE_LONGITUDE);
+                shiftedCS = geotk.forConvention(AxesConvention.POSITIVE_RANGE);
                 if (shiftedCS == geotk) {
                     shiftedCS = null;
                 }
@@ -332,12 +332,12 @@ final class SpatialRefSysEntry {
         if (needsLongitudeShift) {
             if (crs instanceof GeographicCRS) {
                 final DefaultGeographicCRS geotk = DefaultGeographicCRS.castOrCopy((GeographicCRS) crs);
-                crs = geotk.shiftAxisRange(AxisRangeType.POSITIVE_LONGITUDE);
+                crs = geotk.forConvention(AxesConvention.POSITIVE_RANGE);
                 if (!includeTime) spatialCRS = geotk;
                 else       spatioTemporalCRS = geotk;
             } else if (crs instanceof CompoundCRS) {
                 final DefaultCompoundCRS geotk = DefaultCompoundCRS.castOrCopy((CompoundCRS) crs);
-                crs = geotk.shiftAxisRange(AxisRangeType.POSITIVE_LONGITUDE);
+                crs = geotk.forConvention(AxesConvention.POSITIVE_RANGE);
                 if (!includeTime) spatialCRS = geotk;
                 else       spatioTemporalCRS = geotk;
             }

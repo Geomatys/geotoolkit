@@ -12,7 +12,7 @@ import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.pending.demo.filter.customaccessor.Pojo;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.CommonCRS;
 
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.type.FeatureType;
@@ -53,7 +53,7 @@ public class IMRFunctionDemo {
         ftb.setName("marine-life");
         ftb.add("family", String.class);
         ftb.add("depth", Integer.class);
-        ftb.add("localisation", Point.class, DefaultGeographicCRS.WGS84);
+        ftb.add("localisation", Point.class, CommonCRS.WGS84.normalizedGeographic());
         final FeatureType type = ftb.buildFeatureType();
 
         final Feature feature1 = FeatureUtilities.defaultFeature(type, "id-1");

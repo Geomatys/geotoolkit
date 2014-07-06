@@ -34,13 +34,13 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 
 import org.geotoolkit.geometry.Envelopes;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.ImageCoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.image.io.DimensionSlice;
 import org.geotoolkit.image.io.SpatialImageReadParam;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
+import org.apache.sis.referencing.CommonCRS;
 
 import org.junit.*;
 import static org.geotoolkit.test.Assert.*;
@@ -467,7 +467,7 @@ public final strictfp class CoriolisFormatTest extends NetcdfImageReaderTestBase
         Envelope envelope = coverage.getEnvelope();
         assertEquals(-19987288, envelope.getMinimum(0), 1);
         assertEquals(-13871567, envelope.getMinimum(1), 1);
-        envelope = Envelopes.transform(envelope, DefaultGeographicCRS.SPHERE);
+        envelope = Envelopes.transform(envelope, CommonCRS.SPHERE.normalizedGeographic());
         /*
          * Note: Coriolis data have a 0.25° offset in longitude. This is a known
          * problem of the tested data, not a problem of the Geotk library.

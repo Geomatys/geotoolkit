@@ -30,7 +30,8 @@ import org.opengis.metadata.citation.Citation;
 import org.opengis.referencing.IdentifiedObject;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.metadata.iso.citation.Citations;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.CommonCRS;
 
 import static org.junit.Assert.*;
 
@@ -143,6 +144,6 @@ final strictfp class DummyFactory extends AbstractAuthorityFactory {
         if (disposed) {
             throw new FactoryException("Factory has been disposed.");
         }
-        return DefaultGeographicCRS.WGS84;
+        return CommonCRS.WGS84.normalizedGeographic();
     }
 }

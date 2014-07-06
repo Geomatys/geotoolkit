@@ -26,6 +26,7 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.beans.PropertyChangeEvent;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
@@ -46,9 +47,8 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.ReferencingUtilities;
-import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
+import org.apache.sis.referencing.crs.DefaultCompoundCRS;
 import org.geotoolkit.referencing.crs.DefaultDerivedCRS;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
@@ -56,6 +56,7 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
+import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.crs.CompoundCRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.GeneralDerivedCRS;
@@ -147,7 +148,7 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
     }
 
     public AbstractCanvas2D(Hints hints) {
-        this(DefaultGeographicCRS.WGS84,hints);
+        this(CommonCRS.WGS84.normalizedGeographic(),hints);
     }
 
     public AbstractCanvas2D(CoordinateReferenceSystem crs, Hints hints) {
@@ -1187,9 +1188,9 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
             final CompoundCRS orig = (CompoundCRS) crs;
             final List<CoordinateReferenceSystem> lst = new ArrayList<>(orig.getComponents());
             lst.add(toAdd);
-            return new DefaultCompoundCRS(orig.getName().getCode(), lst.toArray(new CoordinateReferenceSystem[lst.size()]));
+            return new DefaultCompoundCRS(name(orig.getName().getCode()), lst.toArray(new CoordinateReferenceSystem[lst.size()]));
         }else{
-            return new DefaultCompoundCRS(crs.getName().getCode()+" "+toAdd.getName().getCode(),crs, toAdd);
+            return new DefaultCompoundCRS(name(crs.getName().getCode() + ' ' + toAdd.getName().getCode()), crs, toAdd);
         }
 
     }
@@ -1202,11 +1203,15 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
             if(lst.size() == 1){
                 return lst.get(0);
             }
-            return new DefaultCompoundCRS(orig.getName().getCode(), lst.toArray(new CoordinateReferenceSystem[lst.size()]));
+            return new DefaultCompoundCRS(name(orig.getName().getCode()), lst.toArray(new CoordinateReferenceSystem[lst.size()]));
         }else{
             return crs;
         }
 
+    }
+
+    private static Map<String,String> name(final String name) {
+        return Collections.singletonMap(IdentifiedObject.NAME_KEY, name);
     }
 
 

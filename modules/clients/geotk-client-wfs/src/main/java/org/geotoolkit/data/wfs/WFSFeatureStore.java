@@ -65,7 +65,7 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.ows.xml.BoundingBox;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.wfs.xml.FeatureTypeList;
 import org.geotoolkit.wfs.xml.TransactionResponse;
 import org.geotoolkit.wfs.xml.WFSCapabilities;
@@ -183,7 +183,7 @@ public class WFSFeatureStore extends AbstractFeatureStore{
                 final BoundingBox bbox = ftt.getBoundingBox().get(0);
                 try {
                     final String crsVal = bbox.getCrs();
-                    crs = crsVal != null ? CRS.decode(crsVal) : DefaultGeographicCRS.WGS84;
+                    crs = crsVal != null ? CRS.decode(crsVal) : CommonCRS.WGS84.normalizedGeographic();
                     final GeneralEnvelope env = new GeneralEnvelope(crs);
                     final Integer dims        = bbox.getDimensions();
                     final List<Double> upper  = bbox.getUpperCorner();

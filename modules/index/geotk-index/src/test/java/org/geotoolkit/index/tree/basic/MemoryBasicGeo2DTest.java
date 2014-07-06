@@ -18,7 +18,7 @@ package org.geotoolkit.index.tree.basic;
 
 import java.io.IOException;
 import org.geotoolkit.index.tree.StoreIndexException;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.CommonCRS;
 
 /**
  * Create a BasicRTree Test suite in computer memory in a Geographic 2D space.
@@ -35,6 +35,6 @@ public final class MemoryBasicGeo2DTest extends MemoryBasicRTreeTest {
      * @throws IOException should never thrown.
      */
     public MemoryBasicGeo2DTest() throws StoreIndexException, IOException {
-        super(DefaultGeographicCRS.WGS84);
+        super(CommonCRS.WGS84.normalizedGeographic());
     }    
 }

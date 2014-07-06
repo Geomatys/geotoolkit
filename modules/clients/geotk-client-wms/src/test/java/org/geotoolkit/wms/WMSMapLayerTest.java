@@ -31,7 +31,7 @@ import javax.xml.bind.JAXBException;
 
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.wms.map.WMSMapLayer;
 import org.geotoolkit.wms.xml.WMSVersion;
 import org.geotoolkit.wms.v111.GetFeatureInfo111;
@@ -68,7 +68,7 @@ public class WMSMapLayerTest {
     public void test_v111_GetMap_CRS84() throws TransformException, MalformedURLException, FactoryException{
         final WMSMapLayer layer = new WMSMapLayer(SERVER_111, "BlueMarble");
 
-        final GeneralEnvelope env = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
+        final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
         env.setRange(0, -180, 180);
         env.setRange(1, -90, 90);
 

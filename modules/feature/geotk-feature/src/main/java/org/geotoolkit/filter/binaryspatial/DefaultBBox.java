@@ -34,7 +34,7 @@ import org.geotoolkit.geometry.jts.SRIDGenerator;
 import org.geotoolkit.geometry.jts.SRIDGenerator.Version;
 import org.geotoolkit.referencing.CRS;
 import org.apache.sis.referencing.IdentifiedObjects;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.util.StringUtilities;
 
 import org.geotoolkit.feature.Feature;
@@ -79,7 +79,7 @@ public class DefaultBBox extends AbstractBinarySpatialOperator<PropertyName,Defa
             this.srid = SRIDGenerator.toSRID(crs, Version.V1);
         }else{
             // In CQL if crs is not specified, it is EPSG:4326
-            this.crs = DefaultGeographicCRS.WGS84;
+            this.crs = CommonCRS.WGS84.normalizedGeographic();
             this.srid = 4326;
         }
     }

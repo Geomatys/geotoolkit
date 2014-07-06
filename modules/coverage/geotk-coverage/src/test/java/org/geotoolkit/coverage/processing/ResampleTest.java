@@ -37,7 +37,7 @@ import org.opengis.referencing.operation.OperationNotFoundException;
 
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.cs.DefaultCartesianCS;
+import org.geotoolkit.referencing.cs.PredefinedCS;
 import org.geotoolkit.referencing.crs.DefaultProjectedCRS;
 import org.geotoolkit.referencing.operation.DefaultMathTransformFactory;
 import org.geotoolkit.referencing.operation.MathTransforms;
@@ -91,7 +91,7 @@ public final strictfp class ResampleTest extends GridProcessingTestBase {
                 fail(exception.getLocalizedMessage());
                 return null;
             }
-            return new DefaultProjectedCRS("Stereographic", base, mt, DefaultCartesianCS.PROJECTED);
+            return new DefaultProjectedCRS("Stereographic", base, mt, PredefinedCS.PROJECTED);
         } catch (NoSuchIdentifierException exception) {
             fail(exception.getLocalizedMessage());
             return null;

@@ -39,7 +39,7 @@ import org.geotoolkit.factory.Hints;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.apache.sis.referencing.NamedIdentifier;
-import org.geotoolkit.referencing.cs.DefaultEllipsoidalCS;
+import org.geotoolkit.referencing.cs.PredefinedCS;
 import org.geotoolkit.referencing.factory.DirectAuthorityFactory;
 import org.apache.sis.referencing.CommonCRS;
 
@@ -134,7 +134,7 @@ public class WebCRSFactory extends DirectAuthorityFactory implements CRSAuthorit
                 new NamedIdentifier(authority, PREFIX + text)
         });
         final CoordinateReferenceSystem crs = factories.getCRSFactory().createGeographicCRS(
-                properties, datum, DefaultEllipsoidalCS.GEODETIC_2D);
+                properties, datum, PredefinedCS.GEODETIC_2D);
         if (crsMap.put(code, crs) != null) {
             throw new IllegalArgumentException(text);
         }

@@ -30,7 +30,7 @@ import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.query.QueryUtilities;
 import org.geotoolkit.feature.type.DefaultName;
 import org.geotoolkit.feature.FeatureTypeBuilder;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyle;
 
@@ -81,7 +81,7 @@ public class MapLayerTest extends TestCase{
             //ok
         }
 
-        MapContext context = MapBuilder.createContext(DefaultGeographicCRS.WGS84);
+        MapContext context = MapBuilder.createContext(CommonCRS.WGS84.normalizedGeographic());
         assertNotNull(context);
         assertNotNull(context.getCoordinateReferenceSystem());
     }

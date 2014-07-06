@@ -36,7 +36,7 @@ import org.geotoolkit.feature.type.FeatureType;
 
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.map.MapBuilder;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.style.StyleConstants;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.DefaultStyleFactory;
@@ -151,7 +151,7 @@ public class JasperReportServiceTest {
     private static MapContext createContext(){
 
         //create a coverage for the test
-        final GeneralEnvelope env = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
+        final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
         env.setRange(0,  -10,  10);
         env.setRange(1, -10, 10);
         final BufferedImage img = new BufferedImage(1000, 1000, BufferedImage.TYPE_INT_ARGB);

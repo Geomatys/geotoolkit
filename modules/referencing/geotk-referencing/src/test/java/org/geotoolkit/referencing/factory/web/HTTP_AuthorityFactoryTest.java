@@ -26,7 +26,6 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import org.geotoolkit.referencing.CRS;
 import org.apache.sis.referencing.IdentifiedObjects;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.factory.AllAuthoritiesFactory;
 import org.geotoolkit.referencing.factory.AllAuthoritiesFactoryTest;
 import org.geotoolkit.referencing.factory.IdentifiedObjectFinder;
@@ -36,6 +35,7 @@ import org.geotoolkit.metadata.iso.citation.Citations;
 
 import org.apache.sis.test.DependsOn;
 import org.geotoolkit.test.referencing.ReferencingTestBase;
+import org.apache.sis.referencing.CommonCRS;
 
 import org.junit.*;
 import static org.junit.Assume.*;
@@ -173,13 +173,13 @@ public final strictfp class HTTP_AuthorityFactoryTest extends ReferencingTestBas
         crs = factory.createGeographicCRS("http://www.opengis.net/gml/srs/crs.xml#84");
         assertSame(crs, CRS.decode("http://www.opengis.net/gml/srs/crs.xml#84"));
         assertSame(crs, CRS.decode("CRS:84"));
-        assertNotSame(crs, DefaultGeographicCRS.WGS84);
-        assertEqualsIgnoreMetadata(DefaultGeographicCRS.WGS84, crs, true);
+        assertNotSame(crs, CommonCRS.WGS84.normalizedGeographic());
+        assertEqualsIgnoreMetadata(CommonCRS.WGS84.normalizedGeographic(), crs, true);
 
         // Test CRS:83
         crs = factory.createGeographicCRS("http://www.opengis.net/gml/srs/crs.xml#83");
         assertSame(crs, CRS.decode("CRS:83"));
-        assertNotDeepEquals(DefaultGeographicCRS.WGS84, crs);
+        assertNotDeepEquals(CommonCRS.WGS84.normalizedGeographic(), crs);
     }
 
     /**

@@ -45,7 +45,7 @@ import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.StyleConstants;
@@ -91,7 +91,7 @@ public class MeridianTest {
         final MapContext context = createFeatureLayer(poly, Polygon.class);
         final SceneDef sceneDef = new SceneDef(context);
         
-        final GeneralEnvelope env = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
+        final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
         env.setRange(0, -180, +180);
         env.setRange(1, -90, +90);
         final ViewDef viewDef = new ViewDef(env);
@@ -118,7 +118,7 @@ public class MeridianTest {
         final MapContext context = createFeatureLayer(poly, Polygon.class);
         final SceneDef sceneDef = new SceneDef(context);
         
-        final GeneralEnvelope env = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
+        final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
         env.setRange(0, -180, +180);
         env.setRange(1, -90, +90);
         final ViewDef viewDef = new ViewDef(env);
@@ -146,7 +146,7 @@ public class MeridianTest {
         final MapContext context = createFeatureLayer(poly, Polygon.class);
         final SceneDef sceneDef = new SceneDef(context);
         
-        final GeneralEnvelope env = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
+        final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
         env.setRange(0, -180, +180);
         env.setRange(1, -90, +90);
         final ViewDef viewDef = new ViewDef(env);
@@ -174,7 +174,7 @@ public class MeridianTest {
         final MapContext context = createFeatureLayer(poly, Polygon.class);
         final SceneDef sceneDef = new SceneDef(context);
         
-        final GeneralEnvelope env = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
+        final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
         env.setRange(0, -180, +180);
         env.setRange(1, -90, +90);
         final ViewDef viewDef = new ViewDef(env);
@@ -202,7 +202,7 @@ public class MeridianTest {
         final MapContext context = createFeatureLayer(poly, Polygon.class);
         final SceneDef sceneDef = new SceneDef(context);
         
-        final GeneralEnvelope env = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
+        final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
         env.setRange(0, -180, +180);
         env.setRange(1, -90, +90);
         final ViewDef viewDef = new ViewDef(env);
@@ -232,7 +232,7 @@ public class MeridianTest {
         final MapContext context = createFeatureLayer(poly, Polygon.class);
         final SceneDef sceneDef = new SceneDef(context);
         
-        final GeneralEnvelope env = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
+        final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
         env.setRange(0, -180, +180);
         env.setRange(1, -90, +90);
         final ViewDef viewDef = new ViewDef(env);
@@ -259,7 +259,7 @@ public class MeridianTest {
         final MapContext context = createFeatureLayer(poly, Polygon.class);
         final SceneDef sceneDef = new SceneDef(context);
         
-        final GeneralEnvelope env = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
+        final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
         env.setRange(0, -540, +900); //1 on the left, 2 on the right
         env.setRange(1, -90, +90);
         final ViewDef viewDef = new ViewDef(env);
@@ -289,7 +289,7 @@ public class MeridianTest {
         final MapContext context = createFeatureLayer(poly, Polygon.class);
         final SceneDef sceneDef = new SceneDef(context);
         
-        final GeneralEnvelope env = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
+        final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
         env.setRange(0, -355, +725); //-175 on the left, +545 on the right
         env.setRange(1, -90, +90);
         final ViewDef viewDef = new ViewDef(env);
@@ -315,7 +315,7 @@ public class MeridianTest {
         final MapContext context = createFeatureLayer(points);
         final SceneDef sceneDef = new SceneDef(context);
         
-        final GeneralEnvelope env = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
+        final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
         env.setRange(0, -180, +180);
         env.setRange(1, -90, +90);
         final ViewDef viewDef = new ViewDef(env);
@@ -345,7 +345,7 @@ public class MeridianTest {
         final MapContext context = createFeatureLayer(points);
         final SceneDef sceneDef = new SceneDef(context);
         
-        final GeneralEnvelope env = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
+        final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
         env.setRange(0, -180, +180);
         env.setRange(1, -90, +90);
         final ViewDef viewDef = new ViewDef(env);
@@ -365,7 +365,7 @@ public class MeridianTest {
     @Test
     public void testEnvelopeP170toP190() throws Exception{
         
-        final GeneralEnvelope genv = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
+        final GeneralEnvelope genv = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
         genv.setRange(0, +170, +190);
         genv.setRange(1, -10, +10);
         
@@ -374,7 +374,7 @@ public class MeridianTest {
         final MapContext context = createFeatureLayer(poly, Geometry.class);
         final SceneDef sceneDef = new SceneDef(context);
         
-        final GeneralEnvelope env = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
+        final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
         env.setRange(0, -180, +180);
         env.setRange(1, -90, +90);
         final ViewDef viewDef = new ViewDef(env);
@@ -389,7 +389,7 @@ public class MeridianTest {
     @Test
     public void testEnvelopeN190toN170() throws Exception{
         
-        final GeneralEnvelope genv = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
+        final GeneralEnvelope genv = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
         genv.setRange(0, -190, -170);
         genv.setRange(1, -10, +10);
         
@@ -398,7 +398,7 @@ public class MeridianTest {
         final MapContext context = createFeatureLayer(poly, Geometry.class);
         final SceneDef sceneDef = new SceneDef(context);
         
-        final GeneralEnvelope env = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
+        final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
         env.setRange(0, -180, +180);
         env.setRange(1, -90, +90);
         final ViewDef viewDef = new ViewDef(env);
@@ -412,7 +412,7 @@ public class MeridianTest {
     @Test
     public void testEnvelopeP170toN170() throws Exception{
         
-        final GeneralEnvelope genv = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
+        final GeneralEnvelope genv = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
         genv.setRange(0, +170, -170);
         genv.setRange(1, -10, +10);
         
@@ -421,7 +421,7 @@ public class MeridianTest {
         final MapContext context = createFeatureLayer(poly, Geometry.class);
         final SceneDef sceneDef = new SceneDef(context);
         
-        final GeneralEnvelope env = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
+        final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
         env.setRange(0, -180, +180);
         env.setRange(1, -90, +90);
         final ViewDef viewDef = new ViewDef(env);
@@ -435,7 +435,7 @@ public class MeridianTest {
     @Test
     public void testEnvelopeLarge() throws Exception{
         
-        final GeneralEnvelope genv = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
+        final GeneralEnvelope genv = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
         genv.setRange(0, -120, +140);
         genv.setRange(1, -70, +40);
         
@@ -444,7 +444,7 @@ public class MeridianTest {
         final MapContext context = createFeatureLayer(poly, Geometry.class);
         final SceneDef sceneDef = new SceneDef(context);
         
-        final GeneralEnvelope env = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
+        final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
         env.setRange(0, -180, +180);
         env.setRange(1, -90, +90);
         final ViewDef viewDef = new ViewDef(env);
@@ -457,7 +457,7 @@ public class MeridianTest {
     @Test
     public void testEnvelopeWorld() throws Exception{
         
-        final GeneralEnvelope genv = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
+        final GeneralEnvelope genv = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
         genv.setRange(0, -180, +180);
         genv.setRange(1, -90, +90);
         
@@ -466,7 +466,7 @@ public class MeridianTest {
         final MapContext context = createFeatureLayer(poly, Geometry.class);
         final SceneDef sceneDef = new SceneDef(context);
         
-        final GeneralEnvelope env = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
+        final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
         env.setRange(0, -180, +180);
         env.setRange(1, -90, +90);
         final ViewDef viewDef = new ViewDef(env);
@@ -483,14 +483,14 @@ public class MeridianTest {
     @Test
     public void testImageCrossP170toP190() throws Exception{
         
-        final GeneralEnvelope covEnv = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
+        final GeneralEnvelope covEnv = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
         covEnv.setRange(0, +170, +190);
         covEnv.setRange(1, -10, +10);
         
         final MapContext context = createCoverageLayer(covEnv);
         final SceneDef sceneDef = new SceneDef(context);
         
-        final GeneralEnvelope env = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
+        final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
         env.setRange(0, -180, +180);
         env.setRange(1, -90, +90);
         final ViewDef viewDef = new ViewDef(env);
@@ -508,14 +508,14 @@ public class MeridianTest {
     @Test
     public void testImageCrossN190toN170() throws Exception{
         
-        final GeneralEnvelope covEnv = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
+        final GeneralEnvelope covEnv = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
         covEnv.setRange(0, -190, -170);
         covEnv.setRange(1, -10, +10);
         
         final MapContext context = createCoverageLayer(covEnv);
         final SceneDef sceneDef = new SceneDef(context);
         
-        final GeneralEnvelope env = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
+        final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
         env.setRange(0, -180, +180);
         env.setRange(1, -90, +90);
         final ViewDef viewDef = new ViewDef(env);
@@ -564,11 +564,11 @@ public class MeridianTest {
         
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("test");
-        ftb.add("geom", geomClass, DefaultGeographicCRS.WGS84);
+        ftb.add("geom", geomClass, CommonCRS.WGS84.normalizedGeographic());
         final FeatureType type = ftb.buildFeatureType();
         
         final Feature feature = FeatureUtilities.defaultFeature(type, "0");
-        JTS.setCRS(geometry, DefaultGeographicCRS.WGS84);
+        JTS.setCRS(geometry, CommonCRS.WGS84.normalizedGeographic());
         feature.getProperty("geom").setValue(geometry);
         final FeatureCollection col = FeatureStoreUtilities.collection(feature);
         
@@ -585,11 +585,11 @@ public class MeridianTest {
         
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("test");
-        ftb.add("geom", MultiPoint.class, DefaultGeographicCRS.WGS84);
+        ftb.add("geom", MultiPoint.class, CommonCRS.WGS84.normalizedGeographic());
         final FeatureType type = ftb.buildFeatureType();
         
         final Feature feature = FeatureUtilities.defaultFeature(type, "0");
-        JTS.setCRS(geometry, DefaultGeographicCRS.WGS84);
+        JTS.setCRS(geometry, CommonCRS.WGS84.normalizedGeographic());
         feature.getProperty("geom").setValue(geometry);
         final FeatureCollection col = FeatureStoreUtilities.collection(feature);
         

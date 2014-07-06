@@ -19,7 +19,7 @@ package org.geotoolkit.io.wkt;
 import java.util.List;
 import java.util.Set;
 
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.CommonCRS;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.Geometry;
@@ -86,7 +86,7 @@ public class MockGeometryFactory implements GeometryFactory, PrimitiveFactory, P
     public Precision precision;
 
     public MockGeometryFactory() {
-        this(DefaultGeographicCRS.WGS84);
+        this(CommonCRS.WGS84.normalizedGeographic());
     }
 
     public MockGeometryFactory( final CoordinateReferenceSystem crs ) {

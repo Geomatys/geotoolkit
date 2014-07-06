@@ -66,7 +66,7 @@ import com.vividsolutions.jts.geom.Polygon;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.test.TestData;
 
 import static org.junit.Assert.*;
@@ -669,7 +669,7 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
     private SimpleFeatureType createExampleSchema() {
         FeatureTypeBuilder build = new FeatureTypeBuilder();
         build.setName("junk");
-        build.add("a", Point.class, DefaultGeographicCRS.WGS84);
+        build.add("a", Point.class, CommonCRS.WGS84.normalizedGeographic());
         build.add("b", Byte.class);
         build.add("c", Short.class);
         build.add("d", Double.class);
@@ -715,7 +715,7 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
 
         FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("Junk");
-        ftb.add("a", geom.getClass(), DefaultGeographicCRS.WGS84);
+        ftb.add("a", geom.getClass(), CommonCRS.WGS84.normalizedGeographic());
         SimpleFeatureType type = ftb.buildSimpleFeatureType();
 
         Collection<SimpleFeature> features = new ArrayList<SimpleFeature>();

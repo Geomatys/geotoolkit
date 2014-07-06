@@ -18,6 +18,8 @@
 package org.geotoolkit.image.io.plugin;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Map;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -27,6 +29,7 @@ import java.awt.image.WritableRaster;
 import javax.media.jai.RasterFactory;
 
 import org.opengis.geometry.Envelope;
+import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
@@ -43,8 +46,8 @@ import org.geotoolkit.coverage.io.ImageCoverageWriter;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.crs.DefaultCompoundCRS;
+import org.geotoolkit.referencing.crs.PredefinedCRS;
 import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
 
 import org.apache.sis.referencing.CommonCRS;
@@ -86,6 +89,10 @@ public class NetcdfCoverageWriterTest extends ImageTestBase {
         super(NetcdfImageWriter.class);
     }
 
+    private static Map<String,String> name(final String name) {
+        return Collections.singletonMap(IdentifiedObject.NAME_KEY, name);
+    }
+
     /**
      * Tests the creation of a NetCDF file using {@code "CRS:84"} on the whole world.
      *
@@ -94,7 +101,7 @@ public class NetcdfCoverageWriterTest extends ImageTestBase {
     @Test
     @Ignore("CDL has changed while upgrading NetCDF dependency to 4.3.21")
     public void testCRS84() throws Exception {
-        final GeneralEnvelope env = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
+        final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
         env.setRange(0, -180, 180);
         env.setRange(1,  -90,  90);
         testWriteRead(env, "CRS84.cdl");
@@ -155,7 +162,7 @@ public class NetcdfCoverageWriterTest extends ImageTestBase {
     @Test
     @Ignore("CDL has changed while upgrading NetCDF dependency to 4.3.21")
     public void testSequence() throws Exception {
-        final GeneralEnvelope env = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
+        final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
         env.setRange(0, -180, 180);
         env.setRange(1,  -90,  90);
         final GridCoverage2D coverage = writeAndRead("sequence.cdl",
@@ -175,7 +182,7 @@ public class NetcdfCoverageWriterTest extends ImageTestBase {
     @Test
     @Ignore("Not yet implemented")
     public void testXYZ() throws Exception {
-        final GeneralEnvelope env = new GeneralEnvelope(DefaultGeographicCRS.WGS84_3D);
+        final GeneralEnvelope env = new GeneralEnvelope(PredefinedCRS.WGS84_3D);
         env.setRange(0, -180, 180);
         env.setRange(1,  -90,  90);
         env.setRange(2,   10,  12); final GridCoverage2D coverage1 = createGridCoverage(env, "data", 100);
@@ -193,8 +200,8 @@ public class NetcdfCoverageWriterTest extends ImageTestBase {
     @Test
     @Ignore("Not yet implemented")
     public void testXYZT() throws Exception {
-        final CoordinateReferenceSystem crs = new DefaultCompoundCRS("WGS84 + z + t",
-                DefaultGeographicCRS.WGS84_3D,
+        final CoordinateReferenceSystem crs = new DefaultCompoundCRS(name("WGS84 + z + t"),
+                PredefinedCRS.WGS84_3D,
                 CommonCRS.Temporal.JAVA.crs());
 
         final GeneralEnvelope env = new GeneralEnvelope(crs);

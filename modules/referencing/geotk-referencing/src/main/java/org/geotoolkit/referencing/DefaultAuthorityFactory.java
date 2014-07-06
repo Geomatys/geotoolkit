@@ -36,7 +36,6 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.factory.FactoryRegistryException;
 import org.apache.sis.internal.util.Citations;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.factory.AllAuthoritiesFactory;
 import org.geotoolkit.referencing.factory.MultiAuthoritiesFactory;
 import org.geotoolkit.referencing.factory.CachingAuthorityFactory;
@@ -45,6 +44,7 @@ import org.geotoolkit.internal.referencing.factory.ImplementationHints;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.resources.Loggings;
+import org.apache.sis.referencing.CommonCRS;
 
 
 /**
@@ -282,7 +282,7 @@ final class DefaultAuthorityFactory extends CachingAuthorityFactory implements C
         if (code != null) {
             code = code.trim();
             if (code.equalsIgnoreCase("WGS84(DD)")) {
-                return DefaultGeographicCRS.WGS84;
+                return CommonCRS.WGS84.normalizedGeographic();
             }
         }
         assert !AUTHORITY_LESS.contains(code) : code;

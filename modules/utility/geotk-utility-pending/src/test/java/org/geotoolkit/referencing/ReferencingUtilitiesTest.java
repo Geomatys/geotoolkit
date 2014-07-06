@@ -16,9 +16,12 @@
  */
 package org.geotoolkit.referencing;
 
+import java.util.Collections;
 import java.awt.geom.AffineTransform;
 import java.util.List;
-import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
+import java.util.Map;
+import org.opengis.referencing.IdentifiedObject;
+import org.apache.sis.referencing.crs.DefaultCompoundCRS;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.junit.Test;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -36,12 +39,16 @@ public class ReferencingUtilitiesTest {
 
     private static final double DELTA = 0.0000001;
 
+    private static Map<String,String> name(final String name) {
+        return Collections.singletonMap(IdentifiedObject.NAME_KEY, name);
+    }
+
     @Test
     public void testDecompose(){
 
-        final CoordinateReferenceSystem crs = new DefaultCompoundCRS("group",
+        final CoordinateReferenceSystem crs = new DefaultCompoundCRS(name("group"),
                 CommonCRS.WGS84.normalizedGeographic(),
-                new DefaultCompoundCRS("group2",
+                new DefaultCompoundCRS(name("group2"),
                     CommonCRS.Vertical.MEAN_SEA_LEVEL.crs(),
                     CommonCRS.Temporal.JULIAN.crs()));
 

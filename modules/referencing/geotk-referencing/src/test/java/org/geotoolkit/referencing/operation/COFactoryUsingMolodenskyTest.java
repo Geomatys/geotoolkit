@@ -43,7 +43,7 @@ import org.geotoolkit.factory.Factory;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.cs.DefaultCartesianCS;
+import org.geotoolkit.referencing.cs.PredefinedCS;
 import org.geotoolkit.referencing.crs.DefaultDerivedCRS;
 import org.apache.sis.referencing.crs.DefaultCompoundCRS;
 import org.geotoolkit.referencing.factory.FactoryDependencies;
@@ -54,8 +54,7 @@ import org.geotoolkit.referencing.operation.transform.TransformTestBase;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.operation.transform.AbstractMathTransform;
 
-import static org.geotoolkit.referencing.crs.DefaultGeographicCRS.WGS84;
-import static org.geotoolkit.referencing.crs.DefaultGeographicCRS.WGS84_3D;
+import static org.geotoolkit.referencing.crs.PredefinedCRS.WGS84_3D;
 import static org.geotoolkit.referencing.crs.PredefinedCRS.GENERIC_2D;
 import static org.geotoolkit.referencing.crs.PredefinedCRS.CARTESIAN_2D;
 import static org.geotoolkit.referencing.crs.PredefinedCRS.CARTESIAN_3D;
@@ -257,6 +256,7 @@ public strictfp class COFactoryUsingMolodenskyTest extends TransformTestBase {
      */
     @Test
     public void testGenericTransform() throws FactoryException {
+        final GeographicCRS WGS84 = CommonCRS.WGS84.normalizedGeographic();
         assertTrue(opFactory.createOperation(WGS84,        WGS84       ).getMathTransform().isIdentity());
         assertTrue(opFactory.createOperation(CARTESIAN_2D, CARTESIAN_2D).getMathTransform().isIdentity());
         assertTrue(opFactory.createOperation(CARTESIAN_3D, CARTESIAN_3D).getMathTransform().isIdentity());
@@ -449,6 +449,7 @@ public strictfp class COFactoryUsingMolodenskyTest extends TransformTestBase {
     @Test
     @Ignore("Numerical values changed, no external source for verifying correctness.")
     public void testDatumShift7Param() throws Exception {
+        final GeographicCRS WGS84 = CommonCRS.WGS84.normalizedGeographic();
         final CoordinateReferenceSystem sourceCRS = WGS84;
         final CoordinateReferenceSystem targetCRS = crsFactory.createFromWKT(WKT.PROJCS_UTM_58S);
         CoordinateOperation operation = opFactory.createOperation(sourceCRS, targetCRS);
@@ -595,6 +596,7 @@ public strictfp class COFactoryUsingMolodenskyTest extends TransformTestBase {
      */
     @Test
     public void testGeographic2D_to_3D() throws Exception {
+        final GeographicCRS WGS84 = CommonCRS.WGS84.normalizedGeographic();
         transform = opFactory.createOperation(WGS84_3D, WGS84).getMathTransform();
         validate();
         assertTrue(transform instanceof LinearTransform);
@@ -626,6 +628,7 @@ public strictfp class COFactoryUsingMolodenskyTest extends TransformTestBase {
      */
     @Test
     public void testGeographic3D_to_4D() throws Exception {
+        final GeographicCRS WGS84 = CommonCRS.WGS84.normalizedGeographic();
         final CoordinateReferenceSystem sourceCRS = new DefaultCompoundCRS(singletonMap(NAME_KEY, "Test3D"), WGS84,    CommonCRS.Temporal.UNIX.crs());
         final CoordinateReferenceSystem targetCRS = new DefaultCompoundCRS(singletonMap(NAME_KEY, "Test4D"), WGS84_3D, CommonCRS.Temporal.MODIFIED_JULIAN.crs());
         transform = opFactory.createOperation(sourceCRS, targetCRS).getMathTransform();
@@ -763,6 +766,7 @@ public strictfp class COFactoryUsingMolodenskyTest extends TransformTestBase {
      */
     @Test
     public void testGeoTemporal_to_Display() throws Exception {
+        final GeographicCRS WGS84 = CommonCRS.WGS84.normalizedGeographic();
         final CoordinateReferenceSystem sourceCRS = new DefaultCompoundCRS(singletonMap(NAME_KEY, "Test3D"), WGS84, CommonCRS.Temporal.UNIX.crs());
         final CoordinateReferenceSystem targetCRS = new DefaultDerivedCRS(singletonMap(NAME_KEY, "Display"), WGS84,
                 MathTransforms.linear(Matrices.create(3, 3, new double[]
@@ -770,7 +774,7 @@ public strictfp class COFactoryUsingMolodenskyTest extends TransformTestBase {
             12.889604810996564, 0, 482.74226804123714,
             0, -12.889604810996564, 792.4484536082475,
             0, 0, 1
-        })), DefaultCartesianCS.DISPLAY);
+        })), PredefinedCS.DISPLAY);
         final CoordinateOperation op = opFactory.createOperation(sourceCRS, targetCRS);
         transform = op.getMathTransform();
         validate();
@@ -847,6 +851,7 @@ public strictfp class COFactoryUsingMolodenskyTest extends TransformTestBase {
      */
     @Test
     public void testGeographic2D_to_Projected3D() throws Exception {
+        final GeographicCRS WGS84 = CommonCRS.WGS84.normalizedGeographic();
         final CoordinateReferenceSystem sourceCRS = WGS84;
         final CoordinateReferenceSystem targetCRS = crsFactory.createFromWKT(MERCATOR_Z);
         final CoordinateOperation op = opFactory.createOperation(sourceCRS, targetCRS);

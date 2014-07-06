@@ -16,7 +16,7 @@ import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.filter.identity.DefaultFeatureId;
 import org.geotoolkit.pending.demo.Demos;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.CommonCRS;
 
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.type.FeatureType;
@@ -98,7 +98,7 @@ public class FilterDemo {
         ftb.add("name", String.class);
         ftb.add("age", Integer.class);
         ftb.add("job", String.class);
-        ftb.add("localisation", Point.class, DefaultGeographicCRS.WGS84);
+        ftb.add("localisation", Point.class, CommonCRS.WGS84.normalizedGeographic());
         final FeatureType type = ftb.buildFeatureType();
 
         final Feature feature1 = FeatureUtilities.defaultFeature(type, "id-1");

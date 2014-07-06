@@ -31,7 +31,7 @@ import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.map.MapContext;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.display.canvas.control.NeverFailMonitor;
 import org.geotoolkit.display.container.GraphicContainer;
@@ -59,7 +59,7 @@ public class CanvasRenderer extends J2DCanvas implements JRRenderable{
     }
 
     private CanvasRenderer( final Hints hints){
-        super(DefaultGeographicCRS.WGS84,hints);
+        super(CommonCRS.WGS84.normalizedGeographic(),hints);
     }
 
     @Override

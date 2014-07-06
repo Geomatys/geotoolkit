@@ -35,13 +35,13 @@ import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.lang.Debug;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.cs.DefaultCartesianCS;
+import org.geotoolkit.referencing.cs.PredefinedCS;
 import org.geotoolkit.referencing.cs.DiscreteCoordinateSystemAxis;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.cs.DiscreteReferencingFactory;
 import org.geotoolkit.referencing.operation.DefaultConversion;
 import org.geotoolkit.referencing.operation.DefiningConversion;
-import org.geotoolkit.referencing.operation.transform.AbstractMathTransform;
+import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.referencing.operation.transform.AbstractMathTransform;
 
 
 /**
@@ -76,8 +76,8 @@ public final class IrregularAxesConverter {
      * A collection of source geographic CRS to try, in preference order.
      */
     private static final GeographicCRS[] SOURCES = {
-        DefaultGeographicCRS.WGS84,
-        DefaultGeographicCRS.SPHERE
+        CommonCRS.WGS84.normalizedGeographic(),
+        CommonCRS.SPHERE.normalizedGeographic()
     };
 
     /**
@@ -150,7 +150,7 @@ public final class IrregularAxesConverter {
         return crsFactory.createProjectedCRS(Collections.singletonMap(ProjectedCRS.NAME_KEY,
                 method + " (" + baseCRS.getName().getCode() + ')'), baseCRS,
                 new DefiningConversion(Collections.singletonMap(ProjectedCRS.NAME_KEY, method),
-                mtFactory.getLastMethodUsed(), projection), DefaultCartesianCS.PROJECTED);
+                mtFactory.getLastMethodUsed(), projection), PredefinedCS.PROJECTED);
     }
 
     /**

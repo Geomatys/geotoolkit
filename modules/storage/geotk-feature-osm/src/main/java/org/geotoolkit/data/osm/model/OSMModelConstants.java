@@ -22,7 +22,7 @@ import com.vividsolutions.jts.geom.Point;
 import org.geotoolkit.feature.AttributeDescriptorBuilder;
 import org.geotoolkit.feature.type.DefaultName;
 import org.geotoolkit.feature.FeatureTypeBuilder;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.feature.FeatureFactory;
 
 import org.geotoolkit.feature.type.AttributeDescriptor;
@@ -41,7 +41,7 @@ public final class OSMModelConstants {
 
     static final FeatureFactory FF = FeatureFactory.LENIENT;
 
-    public static final CoordinateReferenceSystem OSM_CRS = DefaultGeographicCRS.WGS84;
+    public static final CoordinateReferenceSystem OSM_CRS = CommonCRS.WGS84.normalizedGeographic();
 
     public static final String OSM_NAMESPACE = "http://openstreetmap.org";
 

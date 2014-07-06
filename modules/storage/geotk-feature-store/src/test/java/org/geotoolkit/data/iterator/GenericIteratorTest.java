@@ -58,7 +58,7 @@ import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.geometry.jts.transform.GeometryScaleTransformer;
 import org.geotoolkit.geometry.jts.transform.GeometryTransformer;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.CommonCRS;
 import org.junit.Test;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.FeatureFactory;
@@ -111,7 +111,7 @@ public class GenericIteratorTest extends TestCase{
         name = new DefaultName("http://test.com", "TestSchema");
         builder.reset();
         builder.setName(name);
-        builder.add("att_geom", Point.class, DefaultGeographicCRS.WGS84);
+        builder.add("att_geom", Point.class, CommonCRS.WGS84.normalizedGeographic());
         builder.add("att_string", String.class);
         builder.add("att_double", Double.class);
         originalType = builder.buildSimpleFeatureType();
@@ -453,7 +453,7 @@ public class GenericIteratorTest extends TestCase{
         final DefaultName name = new DefaultName("http://test.com", "TestSchema");
         builder.reset();
         builder.setName(name);
-        builder.add("att_geom", LineString.class, DefaultGeographicCRS.WGS84);
+        builder.add("att_geom", LineString.class, CommonCRS.WGS84.normalizedGeographic());
         final SimpleFeatureType type = builder.buildSimpleFeatureType();
 
         final LineString geom = GF.createLineString(

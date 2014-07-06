@@ -31,7 +31,7 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.geometry.Envelope2D;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.cs.AxisRangeType;
+import org.apache.sis.referencing.cs.AxesConvention;
 import org.geotoolkit.util.Cloneable;
 import org.apache.sis.util.Classes;
 import org.geotoolkit.internal.referencing.CRSUtilities;
@@ -247,7 +247,7 @@ public abstract class GridCoverageStoreParam implements Serializable {
         }
         if (needsLongitudeShift) {
             ge.setCoordinateReferenceSystem(CRSUtilities.shiftAxisRange(
-                    ge.getCoordinateReferenceSystem(), AxisRangeType.POSITIVE_LONGITUDE));
+                    ge.getCoordinateReferenceSystem(), AxesConvention.POSITIVE_RANGE));
         }
         if (ge.normalize()) {
             ge.simplify();

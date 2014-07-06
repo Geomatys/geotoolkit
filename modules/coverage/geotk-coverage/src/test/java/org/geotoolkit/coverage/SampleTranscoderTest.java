@@ -37,7 +37,7 @@ import org.apache.sis.test.DependsOn;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageFactory;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 
 import org.junit.*;
@@ -170,7 +170,7 @@ public final strictfp class SampleTranscoderTest {
     private static GridCoverage2D createGridCoverage2D(RenderedImage image, GridSampleDimension band) {
         final MathTransform identity = MathTransforms.identity(2);
         final GridCoverageFactory factory = CoverageFactoryFinder.getGridCoverageFactory(null);
-        return factory.create("Test", image, DefaultGeographicCRS.WGS84,
+        return factory.create("Test", image, CommonCRS.WGS84.normalizedGeographic(),
                     identity, new GridSampleDimension[] {band}, null, null);
     }
 

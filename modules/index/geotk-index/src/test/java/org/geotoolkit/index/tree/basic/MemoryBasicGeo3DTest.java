@@ -18,7 +18,7 @@ package org.geotoolkit.index.tree.basic;
 
 import java.io.IOException;
 import org.geotoolkit.index.tree.StoreIndexException;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.geotoolkit.referencing.crs.PredefinedCRS;
 
 /**
  * Create a BasicRTree Test suite in computer memory in a Geographic 3D space.
@@ -30,12 +30,12 @@ public final class MemoryBasicGeo3DTest extends MemoryBasicRTreeTest {
 
     /**
      * Create a memory BasicRTree Test suite in a Geographic 3D space.
-     * 
+     *
      * @throws StoreIndexException should never thrown.
      * @throws IOException should never thrown.
      */
     public MemoryBasicGeo3DTest() throws StoreIndexException, IOException {
-        super(DefaultGeographicCRS.WGS84_3D);
+        super(PredefinedCRS.WGS84_3D);
     }
-    
+
 }

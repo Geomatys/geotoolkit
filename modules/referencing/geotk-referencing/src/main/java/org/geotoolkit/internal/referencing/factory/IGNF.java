@@ -36,13 +36,13 @@ import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.apache.sis.metadata.iso.ImmutableIdentifier;
 import org.apache.sis.referencing.NamedIdentifier;
-import org.geotoolkit.referencing.cs.DefaultCartesianCS;
-import org.geotoolkit.referencing.cs.DefaultEllipsoidalCS;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.geotoolkit.referencing.cs.PredefinedCS;
+import org.apache.sis.referencing.crs.DefaultGeographicCRS;
 import org.apache.sis.referencing.datum.DefaultGeodeticDatum;
 import org.geotoolkit.referencing.operation.DefiningConversion;
 import org.geotoolkit.referencing.factory.DirectAuthorityFactory;
 import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.referencing.IdentifiedObjects;
 
 
 /**
@@ -150,8 +150,8 @@ public final class IGNF extends DirectAuthorityFactory implements CRSAuthorityFa
         properties.put(ProjectedCRS.NAME_KEY, identifiers[0]);
         properties.put(ProjectedCRS.IDENTIFIERS_KEY, identifiers);
         final ProjectedCRS crs = factories.getCRSFactory().createProjectedCRS(properties,
-                new DefaultGeographicCRS(datum, DefaultEllipsoidalCS.GEODETIC_2D),
-                new DefiningConversion("Miller", param), DefaultCartesianCS.PROJECTED);
+                new DefaultGeographicCRS(IdentifiedObjects.getProperties(datum), datum, PredefinedCS.GEODETIC_2D),
+                new DefiningConversion("Miller", param), PredefinedCS.PROJECTED);
         crsMap.put(key, crs);
         return crs;
     }

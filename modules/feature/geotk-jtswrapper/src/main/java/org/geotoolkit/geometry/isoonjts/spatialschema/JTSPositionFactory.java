@@ -20,7 +20,7 @@ import java.util.List;
 
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSPointArray;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.CommonCRS;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.geometry.PositionFactory;
@@ -37,7 +37,7 @@ public class JTSPositionFactory implements PositionFactory {
 	 * No argument constructor for the plugin system.
 	 */
 	public JTSPositionFactory(){
-	    this( DefaultGeographicCRS.WGS84);
+	    this( CommonCRS.WGS84.normalizedGeographic());
 	}
 	public JTSPositionFactory( final CoordinateReferenceSystem crs ){
 		this.crs = crs;

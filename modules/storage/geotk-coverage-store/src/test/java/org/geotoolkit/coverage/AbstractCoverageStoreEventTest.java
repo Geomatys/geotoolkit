@@ -22,7 +22,7 @@ import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.feature.type.DefaultName;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.CommonCRS;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -61,7 +61,7 @@ public abstract class AbstractCoverageStoreEventTest {
 
         final float[][] data = new float[][]{{1}};
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
-        gcb.setCoordinateReferenceSystem(DefaultGeographicCRS.WGS84);
+        gcb.setCoordinateReferenceSystem(CommonCRS.WGS84.normalizedGeographic());
         gcb.setRenderedImage(data);
         gcb.setEnvelope(-180,-90,180,90);
         final GridCoverage2D coverage = gcb.getGridCoverage2D();

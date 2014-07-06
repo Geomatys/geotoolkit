@@ -22,57 +22,34 @@ package org.geotoolkit.referencing.cs;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.NoSuchElementException;
+import org.opengis.referencing.IdentifiedObject;
 import javax.measure.converter.UnitConverter;
 import javax.measure.converter.ConversionException;
 import javax.measure.unit.NonSI;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
-import javax.xml.bind.annotation.XmlTransient;
-
 import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
-import org.opengis.referencing.cs.RangeMeaning;
 import org.opengis.util.InternationalString;
-
-import org.apache.sis.measure.Angle;
-import org.apache.sis.io.wkt.Formatter;
-import org.apache.sis.referencing.cs.CoordinateSystems;
-import org.apache.sis.referencing.AbstractIdentifiedObject;
+import org.apache.sis.referencing.cs.DefaultCoordinateSystemAxis;
 import org.apache.sis.referencing.IdentifiedObjects;
 import org.geotoolkit.resources.Vocabulary;
 
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
-import static java.util.Collections.singletonMap;
 
 
 /**
- * Definition of a coordinate system axis. This is used to label axes, and indicate the orientation.
- * See {@linkplain org.opengis.referencing.cs#AxisNames axis name constraints}.
- * <p>
- * In some case, the axis name is constrained by ISO 19111 depending on the
- * {@linkplain org.opengis.referencing.crs.CoordinateReferenceSystem coordinate reference system}
- * type. These constraints are identified in the javadoc by "<cite>ISO 19111 name is...</cite>"
- * sentences. This constraint works in two directions; for example the names
- * "<cite>geodetic latitude</cite>" and "<cite>geodetic longitude</cite>" shall be used to
- * designate the coordinate axis names associated with a
- * {@linkplain org.opengis.referencing.crs.GeographicCRS geographic coordinate reference system}.
- * Conversely, these names shall not be used in any other context.
+ * Predefined axes.
+ * <strong>Warning:</strong> this is a temporary class which may disappear in future Geotk version,
+ * after we migrated functionality to Apache SIS.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.19
- *
- * @see AbstractCS
- * @see Unit
- *
- * @since 2.0
  * @module
- *
- * @deprecated Moved to Apache SIS.
  */
-@Deprecated
-@XmlTransient
-public class DefaultCoordinateSystemAxis extends org.apache.sis.referencing.cs.DefaultCoordinateSystemAxis {
+public final class Axes {
+    private Axes() {
+    }
+
     /**
      * Number of directions from "North", "North-North-East", "North-East", etc.
      * This is verified by {@code DefaultCoordinateSystemAxisTest.testCompass}.
@@ -84,6 +61,8 @@ public class DefaultCoordinateSystemAxis extends org.apache.sis.referencing.cs.D
      * as a constant after the class initialization is completed.
      */
     private static int PREDEFINED_COUNT = 0;
+
+    private static final Map<DefaultCoordinateSystemAxis,DefaultCoordinateSystemAxis> OPPOSITES = new HashMap<>();
 
     /**
      * The list of predefined constants declared in this class,
@@ -108,7 +87,7 @@ public class DefaultCoordinateSystemAxis extends org.apache.sis.referencing.cs.D
      * @see #SPHERICAL_LONGITUDE
      * @see #GEODETIC_LATITUDE
      */
-    public static final DefaultCoordinateSystemAxis GEODETIC_LONGITUDE = new DefaultCoordinateSystemAxis(
+    public static final DefaultCoordinateSystemAxis GEODETIC_LONGITUDE = create(
             Vocabulary.Keys.GEODETIC_LONGITUDE, "\u03BB", AxisDirection.EAST, NonSI.DEGREE_ANGLE);
 
     /**
@@ -127,7 +106,7 @@ public class DefaultCoordinateSystemAxis extends org.apache.sis.referencing.cs.D
      * @see #SPHERICAL_LATITUDE
      * @see #GEODETIC_LONGITUDE
      */
-    public static final DefaultCoordinateSystemAxis GEODETIC_LATITUDE = new DefaultCoordinateSystemAxis(
+    public static final DefaultCoordinateSystemAxis GEODETIC_LATITUDE = create(
             Vocabulary.Keys.GEODETIC_LATITUDE, "\u03C6", AxisDirection.NORTH, NonSI.DEGREE_ANGLE);
 
     /**
@@ -144,7 +123,7 @@ public class DefaultCoordinateSystemAxis extends org.apache.sis.referencing.cs.D
      * @see #SPHERICAL_LONGITUDE
      * @see #LATITUDE
      */
-    public static final DefaultCoordinateSystemAxis LONGITUDE = new DefaultCoordinateSystemAxis(
+    public static final DefaultCoordinateSystemAxis LONGITUDE = create(
             Vocabulary.Keys.LONGITUDE, "\u03BB", AxisDirection.EAST, NonSI.DEGREE_ANGLE);
 
     /**
@@ -161,7 +140,7 @@ public class DefaultCoordinateSystemAxis extends org.apache.sis.referencing.cs.D
      * @see #SPHERICAL_LATITUDE
      * @see #LONGITUDE
      */
-    public static final DefaultCoordinateSystemAxis LATITUDE = new DefaultCoordinateSystemAxis(
+    public static final DefaultCoordinateSystemAxis LATITUDE = create(
             Vocabulary.Keys.LATITUDE, "\u03C6", AxisDirection.NORTH, NonSI.DEGREE_ANGLE);
 
     /**
@@ -182,7 +161,7 @@ public class DefaultCoordinateSystemAxis extends org.apache.sis.referencing.cs.D
      * @see #GRAVITY_RELATED_HEIGHT
      * @see #DEPTH
      */
-    public static final DefaultCoordinateSystemAxis ELLIPSOIDAL_HEIGHT = new DefaultCoordinateSystemAxis(
+    public static final DefaultCoordinateSystemAxis ELLIPSOIDAL_HEIGHT = create(
             Vocabulary.Keys.ELLIPSOIDAL_HEIGHT, "h", AxisDirection.UP, SI.METRE);
 
     /**
@@ -199,7 +178,7 @@ public class DefaultCoordinateSystemAxis extends org.apache.sis.referencing.cs.D
      * @see #GEOCENTRIC_RADIUS
      * @see #DEPTH
      */
-    public static final DefaultCoordinateSystemAxis GRAVITY_RELATED_HEIGHT = new DefaultCoordinateSystemAxis(
+    public static final DefaultCoordinateSystemAxis GRAVITY_RELATED_HEIGHT = create(
             Vocabulary.Keys.GRAVITY_RELATED_HEIGHT, "H", AxisDirection.UP, SI.METRE);
 
     /**
@@ -217,7 +196,7 @@ public class DefaultCoordinateSystemAxis extends org.apache.sis.referencing.cs.D
      * @see #GRAVITY_RELATED_HEIGHT
      * @see #DEPTH
      */
-    public static final DefaultCoordinateSystemAxis ALTITUDE = new DefaultCoordinateSystemAxis(
+    public static final DefaultCoordinateSystemAxis ALTITUDE = create(
             Vocabulary.Keys.ALTITUDE, "h", AxisDirection.UP, SI.METRE);
 
     /**
@@ -233,11 +212,11 @@ public class DefaultCoordinateSystemAxis extends org.apache.sis.referencing.cs.D
      * @see #GEOCENTRIC_RADIUS
      * @see #GRAVITY_RELATED_HEIGHT
      */
-    public static final DefaultCoordinateSystemAxis DEPTH = new DefaultCoordinateSystemAxis(
+    public static final DefaultCoordinateSystemAxis DEPTH = create(
             Vocabulary.Keys.DEPTH, "d", AxisDirection.DOWN, SI.METRE);
     static {
-        ALTITUDE.opposite = DEPTH;
-        DEPTH.opposite = ALTITUDE;
+        OPPOSITES.put(ALTITUDE, DEPTH);
+        OPPOSITES.put(DEPTH, ALTITUDE);
     }
 
     /**
@@ -259,7 +238,7 @@ public class DefaultCoordinateSystemAxis extends org.apache.sis.referencing.cs.D
      * @see #GRAVITY_RELATED_HEIGHT
      * @see #DEPTH
      */
-    public static final DefaultCoordinateSystemAxis GEOCENTRIC_RADIUS = new DefaultCoordinateSystemAxis(
+    public static final DefaultCoordinateSystemAxis GEOCENTRIC_RADIUS = create(
             Vocabulary.Keys.GEOCENTRIC_RADIUS, "r", AxisDirection.UP, SI.METRE);
 
     /**
@@ -280,7 +259,7 @@ public class DefaultCoordinateSystemAxis extends org.apache.sis.referencing.cs.D
      * @see #GEODETIC_LONGITUDE
      * @see #SPHERICAL_LATITUDE
      */
-    public static final DefaultCoordinateSystemAxis SPHERICAL_LONGITUDE = new DefaultCoordinateSystemAxis(
+    public static final DefaultCoordinateSystemAxis SPHERICAL_LONGITUDE = create(
             Vocabulary.Keys.SPHERICAL_LONGITUDE, "\u03A9", AxisDirection.EAST, NonSI.DEGREE_ANGLE);
 
     /**
@@ -301,7 +280,7 @@ public class DefaultCoordinateSystemAxis extends org.apache.sis.referencing.cs.D
      * @see #GEODETIC_LATITUDE
      * @see #SPHERICAL_LONGITUDE
      */
-    public static final DefaultCoordinateSystemAxis SPHERICAL_LATITUDE = new DefaultCoordinateSystemAxis(
+    public static final DefaultCoordinateSystemAxis SPHERICAL_LATITUDE = create(
             Vocabulary.Keys.SPHERICAL_LATITUDE, "\u03B8", AxisDirection.NORTH, NonSI.DEGREE_ANGLE);
 
     /**
@@ -321,7 +300,7 @@ public class DefaultCoordinateSystemAxis extends org.apache.sis.referencing.cs.D
      * @see #DISPLAY_X
      * @see #COLUMN
      */
-    public static final DefaultCoordinateSystemAxis X = new DefaultCoordinateSystemAxis(
+    public static final DefaultCoordinateSystemAxis X = create(
             -1, "x", AxisDirection.EAST, SI.METRE);
 
     /**
@@ -341,7 +320,7 @@ public class DefaultCoordinateSystemAxis extends org.apache.sis.referencing.cs.D
      * @see #DISPLAY_Y
      * @see #ROW
      */
-    public static final DefaultCoordinateSystemAxis Y = new DefaultCoordinateSystemAxis(
+    public static final DefaultCoordinateSystemAxis Y = create(
             -1, "y", AxisDirection.NORTH, SI.METRE);
 
     /**
@@ -355,7 +334,7 @@ public class DefaultCoordinateSystemAxis extends org.apache.sis.referencing.cs.D
      * <p>
      * This axis is usually part of a {@link #X}, {@link #Y}, {@link #Z} set.
      */
-    public static final DefaultCoordinateSystemAxis Z = new DefaultCoordinateSystemAxis(
+    public static final DefaultCoordinateSystemAxis Z = create(
             -1, "z", AxisDirection.UP, SI.METRE);
 
     /**
@@ -374,7 +353,7 @@ public class DefaultCoordinateSystemAxis extends org.apache.sis.referencing.cs.D
      * This axis is usually part of a {@link #GEOCENTRIC_X}, {@link #GEOCENTRIC_Y},
      * {@link #GEOCENTRIC_Z} set.
      */
-    public static final DefaultCoordinateSystemAxis GEOCENTRIC_X = new DefaultCoordinateSystemAxis(
+    public static final DefaultCoordinateSystemAxis GEOCENTRIC_X = create(
             Vocabulary.Keys.GEOCENTRIC_X, "X", AxisDirection.GEOCENTRIC_X, SI.METRE);
 
     /**
@@ -393,7 +372,7 @@ public class DefaultCoordinateSystemAxis extends org.apache.sis.referencing.cs.D
      * This axis is usually part of a {@link #GEOCENTRIC_X}, {@link #GEOCENTRIC_Y},
      * {@link #GEOCENTRIC_Z} set.
      */
-    public static final DefaultCoordinateSystemAxis GEOCENTRIC_Y = new DefaultCoordinateSystemAxis(
+    public static final DefaultCoordinateSystemAxis GEOCENTRIC_Y = create(
             Vocabulary.Keys.GEOCENTRIC_Y, "Y", AxisDirection.GEOCENTRIC_Y, SI.METRE);
 
     /**
@@ -412,7 +391,7 @@ public class DefaultCoordinateSystemAxis extends org.apache.sis.referencing.cs.D
      * This axis is usually part of a {@link #GEOCENTRIC_X}, {@link #GEOCENTRIC_Y},
      * {@link #GEOCENTRIC_Z} set.
      */
-    public static final DefaultCoordinateSystemAxis GEOCENTRIC_Z = new DefaultCoordinateSystemAxis(
+    public static final DefaultCoordinateSystemAxis GEOCENTRIC_Z = create(
             Vocabulary.Keys.GEOCENTRIC_Z, "Z", AxisDirection.GEOCENTRIC_Z, SI.METRE);
 
     /**
@@ -431,7 +410,7 @@ public class DefaultCoordinateSystemAxis extends org.apache.sis.referencing.cs.D
      * @see #EASTING
      * @see #WESTING
      */
-    public static final DefaultCoordinateSystemAxis EASTING = new DefaultCoordinateSystemAxis(
+    public static final DefaultCoordinateSystemAxis EASTING = create(
             Vocabulary.Keys.EASTING, "E", AxisDirection.EAST, SI.METRE);
 
     /**
@@ -448,11 +427,11 @@ public class DefaultCoordinateSystemAxis extends org.apache.sis.referencing.cs.D
      * @see #EASTING
      * @see #WESTING
      */
-    public static final DefaultCoordinateSystemAxis WESTING = new DefaultCoordinateSystemAxis(
+    public static final DefaultCoordinateSystemAxis WESTING = create(
             Vocabulary.Keys.WESTING, "W", AxisDirection.WEST, SI.METRE);
     static {
-        EASTING.opposite = WESTING;
-        WESTING.opposite = EASTING;
+        OPPOSITES.put(EASTING, WESTING);
+        OPPOSITES.put(WESTING, EASTING);
     }
 
     /**
@@ -471,7 +450,7 @@ public class DefaultCoordinateSystemAxis extends org.apache.sis.referencing.cs.D
      * @see #NORTHING
      * @see #SOUTHING
      */
-    public static final DefaultCoordinateSystemAxis NORTHING = new DefaultCoordinateSystemAxis(
+    public static final DefaultCoordinateSystemAxis NORTHING = create(
             Vocabulary.Keys.NORTHING, "N", AxisDirection.NORTH, SI.METRE);
 
     /**
@@ -488,11 +467,11 @@ public class DefaultCoordinateSystemAxis extends org.apache.sis.referencing.cs.D
      * @see #NORTHING
      * @see #SOUTHING
      */
-    public static final DefaultCoordinateSystemAxis SOUTHING = new DefaultCoordinateSystemAxis(
+    public static final DefaultCoordinateSystemAxis SOUTHING = create(
             Vocabulary.Keys.SOUTHING, "S", AxisDirection.SOUTH, SI.METRE);
     static {
-        NORTHING.opposite = SOUTHING;
-        SOUTHING.opposite = NORTHING;
+        OPPOSITES.put(NORTHING, SOUTHING);
+        OPPOSITES.put(SOUTHING, NORTHING);
     }
 
     /**
@@ -503,7 +482,7 @@ public class DefaultCoordinateSystemAxis extends org.apache.sis.referencing.cs.D
      *
      * The abbreviation is lower case "<var>t</var>".
      */
-    public static final DefaultCoordinateSystemAxis TIME = new DefaultCoordinateSystemAxis(
+    public static final DefaultCoordinateSystemAxis TIME = create(
             Vocabulary.Keys.TIME, "t", AxisDirection.FUTURE, NonSI.DAY);
 
     /**
@@ -513,7 +492,7 @@ public class DefaultCoordinateSystemAxis extends org.apache.sis.referencing.cs.D
      *
      * The abbreviation is lower case "<var>i</var>".
      */
-    public static final DefaultCoordinateSystemAxis COLUMN = new DefaultCoordinateSystemAxis(
+    public static final DefaultCoordinateSystemAxis COLUMN = create(
             Vocabulary.Keys.COLUMN, "i", AxisDirection.COLUMN_POSITIVE, Unit.ONE);
 
     /**
@@ -523,7 +502,7 @@ public class DefaultCoordinateSystemAxis extends org.apache.sis.referencing.cs.D
      *
      * The abbreviation is lower case "<var>j</var>".
      */
-    public static final DefaultCoordinateSystemAxis ROW = new DefaultCoordinateSystemAxis(
+    public static final DefaultCoordinateSystemAxis ROW = create(
             Vocabulary.Keys.ROW, "j", AxisDirection.ROW_POSITIVE, Unit.ONE);
 
     /**
@@ -534,7 +513,7 @@ public class DefaultCoordinateSystemAxis extends org.apache.sis.referencing.cs.D
      *
      * @since 2.2
      */
-    public static final DefaultCoordinateSystemAxis DISPLAY_X = new DefaultCoordinateSystemAxis(
+    public static final DefaultCoordinateSystemAxis DISPLAY_X = create(
             -1, "x", AxisDirection.DISPLAY_RIGHT, Unit.ONE);
 
     /**
@@ -545,7 +524,7 @@ public class DefaultCoordinateSystemAxis extends org.apache.sis.referencing.cs.D
      *
      * @since 2.2
      */
-    public static final DefaultCoordinateSystemAxis DISPLAY_Y = new DefaultCoordinateSystemAxis(
+    public static final DefaultCoordinateSystemAxis DISPLAY_Y = create(
             -1, "y", AxisDirection.DISPLAY_DOWN, Unit.ONE);
 
     /**
@@ -555,157 +534,8 @@ public class DefaultCoordinateSystemAxis extends org.apache.sis.referencing.cs.D
      *
      * @since 3.00
      */
-    public static final DefaultCoordinateSystemAxis UNDEFINED = new DefaultCoordinateSystemAxis(
+    public static final DefaultCoordinateSystemAxis UNDEFINED = create(
             Vocabulary.Keys.UNDEFINED, "?", AxisDirection.OTHER, Unit.ONE);
-
-    /**
-     * The axis with opposite direction, or {@code null} if unknown.
-     * Not serialized because only used for the predefined constants.
-     */
-    private transient DefaultCoordinateSystemAxis opposite;
-
-    /**
-     * Constructs a new coordinate system axis with the same values than the specified one.
-     * This copy constructor provides a way to convert an arbitrary implementation into a
-     * Geotk one or a user-defined one (as a subclass), usually in order to leverage
-     * some implementation-specific API. This constructor performs a shallow copy,
-     * i.e. the properties are not cloned.
-     *
-     * @param axis The coordinate system axis to copy.
-     *
-     * @since 2.2
-     */
-    public DefaultCoordinateSystemAxis(final CoordinateSystemAxis axis) {
-        super(axis);
-    }
-
-    /**
-     * Constructs an axis from a set of properties. The properties map is given unchanged to the
-     * {@linkplain AbstractIdentifiedObject#AbstractIdentifiedObject(Map) super-class constructor}.
-     *
-     * @param properties   Set of properties. Should contains at least {@code "name"}.
-     * @param abbreviation The {@linkplain #getAbbreviation abbreviation} used for this
-     *                     coordinate system axes.
-     * @param direction    The {@linkplain #getDirection direction} of this coordinate system axis.
-     * @param unit         The {@linkplain #getUnit unit of measure} used for this coordinate
-     *                     system axis.
-     * @param minimum      The minimum value normally allowed for this axis.
-     * @param maximum      The maximum value normally allowed for this axis.
-     * @param rangeMeaning The meaning of axis value range specified by the minimum and
-     *                     maximum values.
-     *
-     * @since 2.3
-     */
-    public DefaultCoordinateSystemAxis(final Map<String,?> properties,
-                                       final String        abbreviation,
-                                       final AxisDirection direction,
-                                       final Unit<?>       unit,
-                                       final double        minimum,
-                                       final double        maximum,
-                                       final RangeMeaning  rangeMeaning)
-    {
-        super(complete(properties, minimum, maximum, rangeMeaning), abbreviation, direction, unit);
-    }
-
-    /**
-     * Work around for RFE #4093999 in Sun's bug database
-     * ("Relax constraint on placement of this()/super() call in constructors").
-     */
-    private static Map<String,?> complete(Map<String,?> properties,
-            final double minimum, final double maximum, final RangeMeaning reangeMeaning)
-    {
-        final Map<String,Object> copy = new HashMap<>(properties);
-        copy.put(RANGE_MEANING_KEY, reangeMeaning);
-        copy.put(MINIMUM_VALUE_KEY, minimum);
-        copy.put(MAXIMUM_VALUE_KEY, maximum);
-        return copy;
-    }
-
-    /**
-     * Constructs an unbounded axis from a set of properties. The properties map is given
-     * unchanged to the {@linkplain AbstractIdentifiedObject#AbstractIdentifiedObject(Map)
-     * super-class constructor}. The {@linkplain #getMinimumValue minimum} and
-     * {@linkplain #getMaximumValue maximum} values are inferred from the axis unit and
-     * direction.
-     *
-     * @param properties   Set of properties. Should contains at least {@code "name"}.
-     * @param abbreviation The {@linkplain #getAbbreviation abbreviation} used for this
-     *                     coordinate system axes.
-     * @param direction    The {@linkplain #getDirection direction} of this coordinate system axis.
-     * @param unit         The {@linkplain #getUnit unit of measure} used for this coordinate
-     *                     system axis.
-     */
-    public DefaultCoordinateSystemAxis(final Map<String,?> properties,
-                                       final String        abbreviation,
-                                       final AxisDirection direction,
-                                       final Unit<?>       unit)
-    {
-        super(properties, abbreviation, direction, unit);
-    }
-
-    /**
-     * Constructs an axis with the same {@linkplain #getName name} as the abbreviation.
-     *
-     * @param abbreviation The {@linkplain #getAbbreviation abbreviation} used for this
-     *                     coordinate system axes.
-     * @param direction    The {@linkplain #getDirection direction} of this coordinate system axis.
-     * @param unit         The {@linkplain #getUnit unit of measure} used for this coordinate
-     *                     system axis.
-     */
-    public DefaultCoordinateSystemAxis(final String        abbreviation,
-                                       final AxisDirection direction,
-                                       final Unit<?>       unit)
-    {
-        this(singletonMap(NAME_KEY, abbreviation), abbreviation, direction, unit);
-    }
-
-    /**
-     * Constructs an axis with the given name and abbreviation. Special case:
-     *
-     * <ul>
-     *   <li><p>If the given name is an {@linkplain InternationalString international string},
-     *   then the {@linkplain #getName name of this identified object} is set to the unlocalized
-     *   version of the {@code name} argument, as given by
-     *   <code>name.{@linkplain InternationalString#toString(java.util.Locale) toString}(null)</code>.
-     *   The same {@code name} argument is also stored as an {@linkplain #getAlias alias},
-     *   which allows fetching localized versions of the name.</p></li>
-     *
-     *   <li><p>Otherwise, <code>name.toString()</code> is used as the primary name and
-     *   no alias is defined.</p></li>
-     * </ul>
-     *
-     * @param name         The name of this axis. Also stored as an alias for localization purpose.
-     * @param abbreviation The {@linkplain #getAbbreviation abbreviation} used for this
-     *                     coordinate system axis.
-     * @param direction    The {@linkplain #getDirection direction} of this coordinate system axis.
-     * @param unit         The {@linkplain #getUnit unit of measure} used for this coordinate
-     *                     system axis.
-     */
-    public DefaultCoordinateSystemAxis(final CharSequence  name,
-                                       final String        abbreviation,
-                                       final AxisDirection direction,
-                                       final Unit<?>       unit)
-    {
-        this(toMap(name), abbreviation, direction, unit);
-    }
-
-    /**
-     * Work around for RFE #4093999 in Sun's bug database
-     * ("Relax constraint on placement of this()/super() call in constructors").
-     */
-    private static Map<String,Object> toMap(final CharSequence name) {
-        final Map<String,Object> properties = new HashMap<>(4);
-        if (name != null) {
-            if (name instanceof InternationalString) {
-                // The "null" locale argument is required for getting the unlocalized version.
-                properties.put(NAME_KEY, ((InternationalString) name).toString(null));
-                properties.put(ALIAS_KEY, name);
-            } else {
-                properties.put(NAME_KEY, name.toString());
-            }
-        }
-        return properties;
-    }
 
     /**
      * Constructs an axis with a name and an abbreviation as a resource bundle key.
@@ -718,31 +548,22 @@ public class DefaultCoordinateSystemAxis extends org.apache.sis.referencing.cs.D
      * @param unit         The {@linkplain #getUnit unit of measure} used for this coordinate
      *                     system axis.
      */
-    private DefaultCoordinateSystemAxis(final int           name,
-                                        final String        abbreviation,
-                                        final AxisDirection direction,
-                                        final Unit<?>       unit)
+    private static DefaultCoordinateSystemAxis create(final int           name,
+                                                      final String        abbreviation,
+                                                      final AxisDirection direction,
+                                                      final Unit<?>       unit)
     {
-        this(name >= 0 ? Vocabulary.formatInternational(name) : abbreviation, abbreviation, direction, unit);
-        PREDEFINED[PREDEFINED_COUNT++] = this;
-    }
-
-    /**
-     * Returns a Geotk axis implementation with the same values than the given arbitrary
-     * implementation. If the given object is {@code null}, then this method returns {@code null}.
-     * Otherwise if the given object is already a Geotk implementation, then the given object is
-     * returned unchanged. Otherwise a new Geotk implementation is created and initialized to the
-     * attribute values of the given object.
-     *
-     * @param  object The object to get as a Geotk implementation, or {@code null} if none.
-     * @return A Geotk implementation containing the values of the given object (may be the
-     *         given object itself), or {@code null} if the argument was null.
-     *
-     * @since 3.18
-     */
-    public static DefaultCoordinateSystemAxis castOrCopy(final CoordinateSystemAxis object) {
-        return (object == null) || (object instanceof DefaultCoordinateSystemAxis)
-                ? (DefaultCoordinateSystemAxis) object : new DefaultCoordinateSystemAxis(object);
+        final Map<String,Object> properties = new HashMap<>(4);
+        if (name >= 0) {
+            final InternationalString n = Vocabulary.formatInternational(name);
+            properties.put(IdentifiedObject.NAME_KEY, n.toString(null));
+            properties.put(IdentifiedObject.ALIAS_KEY, n);
+        } else {
+            properties.put(IdentifiedObject.NAME_KEY, abbreviation);
+        }
+        final DefaultCoordinateSystemAxis axis = new DefaultCoordinateSystemAxis(properties, abbreviation, direction, unit);
+        PREDEFINED[PREDEFINED_COUNT++] = axis;
+        return axis;
     }
 
     /**
@@ -825,86 +646,11 @@ public class DefaultCoordinateSystemAxis extends org.apache.sis.referencing.cs.D
     }
 
     /**
-     * Returns the list of all predefined constants.
-     * Currently used for testing purpose only.
-     */
-    static DefaultCoordinateSystemAxis[] values() {
-        return PREDEFINED.clone();
-    }
-
-    /**
-     * Returns an axis direction constants from its name.
-     *
-     * @param  direction The direction name (e.g. "north", "east", etc.).
-     * @return The axis direction for the given name.
-     * @throws NoSuchElementException if the given name is not a know axis direction.
-     *
-     * @deprecated Moved to Apache SIS {@link CoordinateSystems#parseAxisDirection(String)}.
-     */
-    @Deprecated
-    public static AxisDirection getDirection(String direction) throws NoSuchElementException {
-        try {
-            return CoordinateSystems.parseAxisDirection(direction);
-        } catch (IllegalArgumentException e) {
-            throw new NoSuchElementException(e.getMessage());
-        }
-    }
-
-    /**
      * Returns an axis with the opposite direction of this one, or {@code null} if unknown.
      * This method is not public because only a few predefined constants have this information.
      */
-    final DefaultCoordinateSystemAxis getOpposite() {
-        return opposite;
-    }
-
-    /**
-     * Returns {@code true} if the specified direction is a compass direction.
-     * Compass directions include "<cite>North</cite>", "<cite>North-North-East</cite>",
-     * "<cite>North-East</cite>", <i>etc.</i>
-     *
-     * @param direction The axis direction to test.
-     * @return {@code true} if the given direction is a compass direction.
-     *
-     * @since 2.4
-     */
-    public static boolean isCompassDirection(final AxisDirection direction) {
-        ensureNonNull("direction", direction);
-        final int n = direction.ordinal() - AxisDirection.NORTH.ordinal();
-        return n >= 0 && n < COMPASS_DIRECTION_COUNT;
-    }
-
-    /**
-     * Returns the arithmetic (counterclockwise) angle from the first direction to the second
-     * direction, in decimal <strong>degrees</strong>. This method returns a value between
-     * -180° and +180°, or {@link Double#NaN NaN} if no angle can be computed.
-     * <p>
-     * A positive angle denotes a right-handed system, while a negative angle denotes
-     * a left-handed system. Example:
-     * <p>
-     * <ul>
-     *   <li>The angle from {@linkplain AxisDirection#EAST EAST} to
-     *       {@linkplain AxisDirection#NORTH NORTH} is 90°</li>
-     *   <li>The angle from {@linkplain AxisDirection#SOUTH SOUTH} to
-     *       {@linkplain AxisDirection#WEST WEST} is -90°</li>
-     *   <li>The angle from "<cite>North along 90 deg East</cite>" to
-     *       "<cite>North along 0 deg</cite>" is 90°.</li>
-     * </ul>
-     *
-     * @param  source The source axis direction.
-     * @param  target The target axis direction.
-     * @return The arithmetic angle (in degrees) of the rotation to apply on a line pointing toward
-     *         the source direction in order to make it point toward the target direction, or
-     *         {@link Double#NaN} if this value can't be computed.
-     *
-     * @since 2.4
-     *
-     * @deprecated Moved to Apache SIS as {@link CoordinateSystems#angle(AxisDirection, AxisDirection)}
-     */
-    @Deprecated
-    public static double getAngle(final AxisDirection source, final AxisDirection target) {
-        final Angle angle = CoordinateSystems.angle(source, target);
-        return (angle != null) ? angle.degrees() : Double.NaN;
+    static DefaultCoordinateSystemAxis getOpposite(final CoordinateSystemAxis axis) {
+        return OPPOSITES.get(axis);
     }
 
     /**
@@ -930,58 +676,38 @@ public class DefaultCoordinateSystemAxis extends org.apache.sis.referencing.cs.D
     }
 
     /**
-     * Returns {@code true} if the specified directions are perpendicular.
-     *
-     * @param first The first axis direction to test.
-     * @param second The second axis direction to test.
-     * @return {@code true} if the given axis direction are perpendicular.
-     *
-     * @since 2.4
-     */
-    public static boolean perpendicular(final AxisDirection first, final AxisDirection second) {
-        return Math.abs(Math.abs(getAngle(first, second)) - 90) <= 1E-10;
-    }
-
-    /**
      * Returns a new axis with the same properties than current axis except for the units.
      *
      * @param  newUnit The unit for the new axis.
      * @return An axis using the specified unit.
      * @throws ConversionException If the specified unit is incompatible with the expected one.
      */
-    final DefaultCoordinateSystemAxis usingUnit(final Unit<?> newUnit) throws ConversionException {
-        final Unit<?> unit = getUnit();
+    static CoordinateSystemAxis usingUnit(final CoordinateSystemAxis a, final Unit<?> newUnit)
+            throws ConversionException
+    {
+        final Unit<?> unit = a.getUnit();
         if (unit.equals(newUnit)) {
-            return this;
+            return a;
         }
         final UnitConverter converter = unit.getConverterToAny(newUnit);
-        return new DefaultCoordinateSystemAxis(org.geotoolkit.referencing.IdentifiedObjects.getProperties(this, null),
-                    getAbbreviation(), getDirection(), newUnit,
-                    converter.convert(getMinimumValue()), converter.convert(getMaximumValue()), getRangeMeaning());
+        final Map<String,Object> properties = new HashMap<>(org.geotoolkit.referencing.IdentifiedObjects.getProperties(a, null));
+        properties.put(DefaultCoordinateSystemAxis.MINIMUM_VALUE_KEY, converter.convert(a.getMinimumValue()));
+        properties.put(DefaultCoordinateSystemAxis.MAXIMUM_VALUE_KEY, converter.convert(a.getMaximumValue()));
+        properties.put(DefaultCoordinateSystemAxis.RANGE_MEANING_KEY, a.getRangeMeaning()); // TODO: should be provided by getProperties
+        return new DefaultCoordinateSystemAxis(properties, a.getAbbreviation(), a.getDirection(), newUnit);
     }
 
     /**
-     * Equivalent to {@code super.equals(that, false, false)}.
+     * Equivalent to {@code DefaultCoordinateSystemAxis.equals(that, false, false)}.
      */
-    final boolean equalsMetadata(final DefaultCoordinateSystemAxis that) {
-        final String thatName = that.getName().getCode();
-        if (!isHeuristicMatchForName(thatName)) {
-            final String thisName = getName().getCode();
-            if (!IdentifiedObjects.isHeuristicMatchForName(that, thisName)) {
+    static boolean equalsMetadata(final CoordinateSystemAxis a1, final CoordinateSystemAxis a2) {
+        final String n2 = a2.getName().getCode();
+        if (!IdentifiedObjects.isHeuristicMatchForName(a1, n2)) {
+            final String n1 = a1.getName().getCode();
+            if (!IdentifiedObjects.isHeuristicMatchForName(a2, n1)) {
                 return false;
             }
         }
-        return getDirection().equals(that.getDirection());
-    }
-
-    /**
-     * Formats the inner part of a <cite>Well Known Text</cite> (WKT) element.
-     *
-     * @param  formatter The formatter to use.
-     * @return The WKT element name, which is {@code "AXIS"}.
-     */
-    @Override
-    public String formatTo(final Formatter formatter) {
-        return super.formatTo(formatter);
+        return a1.getDirection().equals(a2.getDirection());
     }
 }

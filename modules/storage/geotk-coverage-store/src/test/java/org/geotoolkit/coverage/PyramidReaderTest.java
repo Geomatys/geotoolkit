@@ -1,6 +1,7 @@
 
 package org.geotoolkit.coverage;
 
+import java.util.Collections;
 import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBuffer;
@@ -14,7 +15,7 @@ import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.memory.MPCoverageStore;
 import org.geotoolkit.feature.type.DefaultName;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
+import org.apache.sis.referencing.crs.DefaultCompoundCRS;
 import org.geotoolkit.util.BufferedImageUtilities;
 import org.junit.Assert;
 import org.junit.Test;
@@ -46,7 +47,8 @@ public class PyramidReaderTest {
         final CoordinateReferenceSystem horizontal = CRS.decode("EPSG:4326",true);
         final CoordinateReferenceSystem vertical = CommonCRS.Vertical.ELLIPSOIDAL.crs();
         final CoordinateReferenceSystem temporal = CommonCRS.Temporal.JAVA.crs();
-        final CoordinateReferenceSystem crs = new DefaultCompoundCRS("4dcrs", horizontal,vertical,temporal);
+        final CoordinateReferenceSystem crs = new DefaultCompoundCRS(
+                Collections.singletonMap(DefaultCompoundCRS.NAME_KEY, "4dcrs"), horizontal,vertical,temporal);
         final int width = 28;
         final int height = 13;
 

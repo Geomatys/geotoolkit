@@ -23,7 +23,7 @@ import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.FeatureTypeBuilder;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
 
 import org.geotoolkit.feature.Feature;
@@ -55,7 +55,7 @@ public class FishFeatureStore extends AbstractFeatureStore{
         ftb.setName(getDefaultNamespace(),"Fish");
         ftb.add("name", String.class);
         ftb.add("length", Integer.class);
-        ftb.add("position", Point.class, DefaultGeographicCRS.WGS84);
+        ftb.add("position", Point.class, CommonCRS.WGS84.normalizedGeographic());
         ftb.setDefaultGeometry("position");
         type = ftb.buildSimpleFeatureType();
     }

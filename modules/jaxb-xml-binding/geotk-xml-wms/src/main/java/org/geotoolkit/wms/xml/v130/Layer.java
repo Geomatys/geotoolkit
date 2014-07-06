@@ -29,7 +29,7 @@ import javax.xml.bind.annotation.XmlType;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.wms.xml.AbstractDimension;
 import org.geotoolkit.wms.xml.AbstractGeographicBoundingBox;
 import org.geotoolkit.wms.xml.AbstractLayer;
@@ -501,7 +501,7 @@ public class Layer implements AbstractLayer {
         if(getBoundingBox().isEmpty()){
             final AbstractGeographicBoundingBox bbox = getEXGeographicBoundingBox();
             if(bbox != null){
-                GeneralEnvelope env = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
+                GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
                 env.setRange(0, bbox.getWestBoundLongitude(), bbox.getEastBoundLongitude());
                 env.setRange(1, bbox.getSouthBoundLatitude(), bbox.getNorthBoundLatitude());
                 return env;

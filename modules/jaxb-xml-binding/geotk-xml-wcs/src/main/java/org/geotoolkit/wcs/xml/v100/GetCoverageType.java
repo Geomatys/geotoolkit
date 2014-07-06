@@ -16,8 +16,10 @@
  */
 package org.geotoolkit.wcs.xml.v100;
 
+import java.util.Collections;
 import java.awt.Dimension;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -36,12 +38,13 @@ import org.geotoolkit.wcs.xml.GetCoverage;
 import org.geotoolkit.wcs.xml.StringUtilities;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.CRS;
-import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
+import org.apache.sis.referencing.crs.DefaultCompoundCRS;
 
 import org.apache.sis.util.Version;
 import org.apache.sis.util.logging.Logging;
 import org.opengis.coverage.grid.GridCoordinates;
 import org.opengis.geometry.Envelope;
+import org.opengis.referencing.IdentifiedObject;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.VerticalCRS;
@@ -220,7 +223,7 @@ public class GetCoverageType implements GetCoverage {
          */
         if (positions.get(0).getDimension() > 2 && objCrs.getCoordinateSystem().getDimension() < 3) {
             final VerticalCRS verticalCRS = CommonCRS.Vertical.ELLIPSOIDAL.crs();
-            return new DefaultCompoundCRS(objCrs.getName().getCode() + " (3D)", objCrs, verticalCRS);
+            return new DefaultCompoundCRS(name(objCrs.getName().getCode() + " (3D)"), objCrs, verticalCRS);
         } else {
             return objCrs;
         }
@@ -303,7 +306,7 @@ public class GetCoverageType implements GetCoverage {
          */
         if (positions.get(0).getDimension() > 2 && objCrs.getCoordinateSystem().getDimension() < 3) {
             final VerticalCRS verticalCRS = CommonCRS.Vertical.ELLIPSOIDAL.crs();
-            return new DefaultCompoundCRS(objCrs.getName().getCode() + " (3D)", objCrs, verticalCRS);
+            return new DefaultCompoundCRS(name(objCrs.getName().getCode() + " (3D)"), objCrs, verticalCRS);
         } else {
             return objCrs;
         }
@@ -370,5 +373,9 @@ public class GetCoverageType implements GetCoverage {
             return null;
         }
         return kvp;
+    }
+
+    private static Map<String,String> name(final String name) {
+        return Collections.singletonMap(IdentifiedObject.NAME_KEY, name);
     }
 }

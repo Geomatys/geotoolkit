@@ -48,7 +48,6 @@ import org.geotoolkit.referencing.factory.ReferencingFactory;
 import org.geotoolkit.referencing.factory.ReferencingFactoryContainer;
 import org.geotoolkit.referencing.operation.provider.Affine;
 import org.apache.sis.referencing.datum.BursaWolfParameters;
-import org.geotoolkit.referencing.cs.AbstractCS;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.referencing.cs.CoordinateSystems;

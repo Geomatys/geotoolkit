@@ -34,7 +34,7 @@ import org.opengis.metadata.extent.Extent;
 
 import org.apache.sis.xml.NilReason;
 import org.apache.sis.xml.NilObject;
-import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;
+import org.geotoolkit.referencing.cs.Axes;
 import org.apache.sis.io.wkt.UnformattableObjectException;
 import org.apache.sis.referencing.CommonCRS;
 
@@ -87,7 +87,7 @@ public final class NilReferencingObject implements GeocentricCRS, GeographicCRS,
     /** Returns {@code DefaultCoordinateSystemAxis#UNDEFINED} in all cases. */
     @Override
     public CoordinateSystemAxis getAxis(int dimension) {
-        return DefaultCoordinateSystemAxis.UNDEFINED;
+        return Axes.UNDEFINED;
     }
 
     /** Returns {@code this} in all cases. */

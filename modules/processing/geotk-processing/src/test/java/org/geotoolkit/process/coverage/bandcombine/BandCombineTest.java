@@ -28,7 +28,7 @@ import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessFinder;
 import org.geotoolkit.process.Process;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.CommonCRS;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.opengis.coverage.Coverage;
@@ -59,7 +59,7 @@ public class BandCombineTest {
         
         //check result coverage
         final GridCoverage2D outCoverage = (GridCoverage2D) result.parameter("result").getValue();
-        assertEquals(DefaultGeographicCRS.WGS84, outCoverage.getCoordinateReferenceSystem());
+        assertEquals(CommonCRS.WGS84.normalizedGeographic(), outCoverage.getCoordinateReferenceSystem());
         
         final RenderedImage outImage = outCoverage.getRenderedImage();
         final SampleModel outSampleModel = outImage.getSampleModel();
@@ -96,7 +96,7 @@ public class BandCombineTest {
         
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
         gcb.setRenderedImage(inputImage);
-        gcb.setCoordinateReferenceSystem(DefaultGeographicCRS.WGS84);
+        gcb.setCoordinateReferenceSystem(CommonCRS.WGS84.normalizedGeographic());
         gcb.setEnvelope(0,0,500,30);
         final GridCoverage2D inCoverage = (GridCoverage2D) gcb.build();
         return inCoverage;

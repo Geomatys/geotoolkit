@@ -39,7 +39,7 @@ import org.geotoolkit.factory.Hints;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.CommonCRS;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -64,7 +64,7 @@ public class MokSymbolizerTest {
 
     public MokSymbolizerTest() throws Exception {
 
-        env = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
+        env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
         env.setRange(0, -180, 180);
         env.setRange(1, -90, 90);
 
@@ -73,7 +73,7 @@ public class MokSymbolizerTest {
         // create the feature collection for tests -----------------------------
         final FeatureTypeBuilder sftb = new FeatureTypeBuilder();
         sftb.setName("test");
-        sftb.add("geom", Point.class, DefaultGeographicCRS.WGS84);
+        sftb.add("geom", Point.class, CommonCRS.WGS84.normalizedGeographic());
         sftb.add("att1", String.class);
         sftb.add("att2", Double.class);
         final SimpleFeatureType sft = sftb.buildSimpleFeatureType();

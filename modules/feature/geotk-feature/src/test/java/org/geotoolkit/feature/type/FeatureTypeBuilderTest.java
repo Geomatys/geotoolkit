@@ -33,7 +33,7 @@ import org.apache.sis.internal.util.UnmodifiableArrayList;
 
 import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.feature.FeatureTypeBuilder;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.CommonCRS;
 
 import org.junit.Test;
 
@@ -250,7 +250,7 @@ public class FeatureTypeBuilderTest {
         ftb.add("{http://test.com}att_Integer", Integer.class);
         ftb.add("{http://test.com}att_Double", Double.class);
         ftb.add("{http://test.com}att_Date", Date.class);
-        ftb.add("{http://test.com}att_Geom", Geometry.class, DefaultGeographicCRS.WGS84);
+        ftb.add("{http://test.com}att_Geom", Geometry.class, CommonCRS.WGS84.normalizedGeographic());
         final SimpleFeatureType sft = ftb.buildSimpleFeatureType();
 
         assertEquals(DefaultName.valueOf("{http://test.com}att_String"), sft.getAttributeDescriptors().get(0).getName());
@@ -302,7 +302,7 @@ public class FeatureTypeBuilderTest {
 
         //geometry attribut
         assertEquals(DefaultName.valueOf("{http://test.com}att_Geom"), sft.getGeometryDescriptor().getName());
-        assertEquals(DefaultGeographicCRS.WGS84, sft.getCoordinateReferenceSystem());
+        assertEquals(CommonCRS.WGS84.normalizedGeographic(), sft.getCoordinateReferenceSystem());
 
 
         ////////////////////////////////////////////////////////////////////////
@@ -316,7 +316,7 @@ public class FeatureTypeBuilderTest {
         ftb.add("{http://test.com}att_Integer", Integer.class,0,12,true,null);
         ftb.add("{http://test.com}att_Double", Double.class,0,12,true,null);
         ftb.add("{http://test.com}att_Date", Date.class,0,12,true,null);
-        ftb.add("{http://test.com}att_Geom", Geometry.class, DefaultGeographicCRS.WGS84,0,12,true,null);
+        ftb.add("{http://test.com}att_Geom", Geometry.class, CommonCRS.WGS84.normalizedGeographic(),0,12,true,null);
         FeatureType ft = ftb.buildFeatureType();
         assertFalse(ft instanceof SimpleFeatureType);
 
@@ -351,7 +351,7 @@ public class FeatureTypeBuilderTest {
 
         //geometry attribut
         assertEquals(DefaultName.valueOf("{http://test.com}att_Geom"), ft.getGeometryDescriptor().getName());
-        assertEquals(DefaultGeographicCRS.WGS84, ft.getCoordinateReferenceSystem());
+        assertEquals(CommonCRS.WGS84.normalizedGeographic(), ft.getCoordinateReferenceSystem());
 
     }
 
@@ -364,7 +364,7 @@ public class FeatureTypeBuilderTest {
         ftb.add("att3", String.class,0,23,true,null);
         ftb.add("att4", String.class,0,23,false,null);
         ftb.add(DefaultName.valueOf("geom1"), Point.class,null,0,13,false,null);
-        ftb.add(DefaultName.valueOf("geom2"), Point.class,DefaultGeographicCRS.WGS84,1,21,true,null);
+        ftb.add(DefaultName.valueOf("geom2"), Point.class,CommonCRS.WGS84.normalizedGeographic(),1,21,true,null);
         final FeatureType ft = ftb.buildFeatureType();
 
         final List<PropertyDescriptor> properties = new ArrayList(ft.getDescriptors());
@@ -434,7 +434,7 @@ public class FeatureTypeBuilderTest {
         assertEquals(21, geoDesc.getMaxOccurs());
         assertTrue(geoDesc.isNillable());
         assertEquals(Point.class, geoDesc.getType().getBinding());
-        assertEquals(DefaultGeographicCRS.WGS84, geoDesc.getCoordinateReferenceSystem());
+        assertEquals(CommonCRS.WGS84.normalizedGeographic(), geoDesc.getCoordinateReferenceSystem());
         assertEquals(0,geoDesc.getUserData().size());
 
     }

@@ -25,7 +25,7 @@ import com.vividsolutions.jts.geom.Geometry;
 import org.apache.sis.util.iso.SimpleInternationalString;
 
 import org.geotoolkit.feature.type.DefaultName;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.CommonCRS;
 import static org.geotoolkit.test.Assert.*;
 
 import org.junit.Test;
@@ -76,7 +76,7 @@ public class SerializationTest {
 
         //test geometry type
         GeometryType geomtype = new DefaultGeometryType(DefaultName.valueOf("geomType"),
-                Geometry.class, DefaultGeographicCRS.WGS84, true, true, null,
+                Geometry.class, CommonCRS.WGS84.normalizedGeographic(), true, true, null,
                 attType, new SimpleInternationalString("i18n"));
         assertSerializedEquals(geomtype);
 

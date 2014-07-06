@@ -19,7 +19,7 @@ import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.pending.demo.Demos;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.StyleConstants;
@@ -86,7 +86,7 @@ public class CoverageReaderDemo {
 //        //read a piece of coverage
 //        final GridCoverageReadParam param = new GridCoverageReadParam();
 //        param.setResolution(1,1);
-//        param.setEnvelope(new Rectangle2D.Double(0, 0, 100, 100), DefaultGeographicCRS.WGS84);
+//        param.setEnvelope(new Rectangle2D.Double(0, 0, 100, 100), CommonCRS.WGS84.normalizedGeographic());
 //
 //        final GridCoverage2D coverage = (GridCoverage2D) reader.read(0, param);
 //        coverage.show();

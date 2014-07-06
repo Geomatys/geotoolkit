@@ -30,7 +30,7 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.FactoryRegistryException;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.CommonCRS;
 
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 
@@ -130,7 +130,7 @@ public class TransformedDirectPosition extends GeneralDirectPosition {
      * @since 2.3
      */
     public TransformedDirectPosition() {
-        this(null, DefaultGeographicCRS.WGS84, null);
+        this(null, CommonCRS.WGS84.normalizedGeographic(), null);
     }
 
     /**

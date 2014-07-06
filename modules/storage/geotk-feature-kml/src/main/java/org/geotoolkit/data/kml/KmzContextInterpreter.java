@@ -59,7 +59,7 @@ import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyle;
@@ -446,7 +446,7 @@ public class KmzContextInterpreter {
 
         final Feature groundOverlay = KML_FACTORY.createGroundOverlay();
         final Collection<Property> groundOverlayProperties = groundOverlay.getProperties();
-        final CoordinateReferenceSystem targetCrs = DefaultGeographicCRS.WGS84;
+        final CoordinateReferenceSystem targetCrs = CommonCRS.WGS84.normalizedGeographic();
 
         final CoverageReference ref = coverageMapLayer.getCoverageReference();
         final CoverageReader reader = ref.acquireReader();

@@ -19,7 +19,7 @@ package org.geotoolkit.display2d.style;
 import org.geotoolkit.style.StyleConstants;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.CommonCRS;
 import java.awt.Graphics2D;
 import java.awt.image.Raster;
 import java.io.File;
@@ -73,7 +73,7 @@ public class RasterSymbolizerTest {
         g2d.fillRect(0, 0, 120, 90);
         
          //set it's envelope
-        final GeneralEnvelope gridEnv = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
+        final GeneralEnvelope gridEnv = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
         gridEnv.setRange(0, 0, 120);
         gridEnv.setRange(1, 0, 90);
         

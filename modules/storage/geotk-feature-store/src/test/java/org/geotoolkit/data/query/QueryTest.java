@@ -28,7 +28,7 @@ import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.feature.type.DefaultName;
 import org.geotoolkit.feature.FeatureTypeBuilder;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.CommonCRS;
 
 import org.junit.Test;
 import org.geotoolkit.feature.ComplexAttribute;
@@ -274,7 +274,7 @@ public class QueryTest extends TestCase{
 
         //test all parameters---------------------------------------------------
         qb.setTypeName(name);
-        qb.setCRS(DefaultGeographicCRS.WGS84);
+        qb.setCRS(CommonCRS.WGS84.normalizedGeographic());
         qb.setResolution(new double[]{45,31});
         qb.setFilter(Filter.EXCLUDE);
         qb.setMaxFeatures(10);
@@ -284,7 +284,7 @@ public class QueryTest extends TestCase{
         query = qb.buildQuery();
 
         assertEquals(query.getTypeName(), name);
-        assertEquals(query.getCoordinateSystemReproject(), DefaultGeographicCRS.WGS84);
+        assertEquals(query.getCoordinateSystemReproject(), CommonCRS.WGS84.normalizedGeographic());
         assertEquals(query.getResolution()[0], 45d);
         assertEquals(query.getResolution()[1], 31d);
         assertEquals(query.getFilter(), Filter.EXCLUDE);
@@ -315,7 +315,7 @@ public class QueryTest extends TestCase{
         query = qb.buildQuery();
 
         assertEquals(query.getTypeName(), name);
-        assertEquals(query.getCoordinateSystemReproject(), DefaultGeographicCRS.WGS84);
+        assertEquals(query.getCoordinateSystemReproject(), CommonCRS.WGS84.normalizedGeographic());
         assertEquals(query.getResolution()[0], 45d);
         assertEquals(query.getResolution()[1], 31d);
         assertEquals(query.getFilter(), Filter.EXCLUDE);
@@ -330,7 +330,7 @@ public class QueryTest extends TestCase{
         query = qb.buildQuery();
 
         assertEquals(query.getTypeName(), name);
-        assertEquals(query.getCoordinateSystemReproject(), DefaultGeographicCRS.WGS84);
+        assertEquals(query.getCoordinateSystemReproject(), CommonCRS.WGS84.normalizedGeographic());
         assertEquals(query.getResolution()[0], 45d);
         assertEquals(query.getResolution()[1], 31d);
         assertEquals(query.getFilter(), Filter.EXCLUDE);

@@ -386,7 +386,7 @@ public class OperationJAI extends Operation2D {
      *
      * {@preformat java
      *     protected void resampleToCommonGeometry(...) {
-     *        crs2D = DefaultGeographicCRS.WGS84;
+     *        crs2D = CommonCRS.WGS84.normalizedGeographic();
      *        super.resampleToCommonGeometry(sources, crs2D, gridToCrs2D, hints);
      *     }
      * }

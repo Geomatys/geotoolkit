@@ -27,6 +27,7 @@ import java.awt.geom.Rectangle2D;
 import java.awt.geom.AffineTransform;
 import java.awt.RenderingHints;
 import java.util.ArrayList;
+import java.util.Collections;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -53,11 +54,11 @@ import org.geotoolkit.factory.FactoryNotFoundException;
 import org.geotoolkit.factory.FactoryRegistryException;
 import org.geotoolkit.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.internal.referencing.OperationContext;
 import org.geotoolkit.resources.Errors;
+import org.apache.sis.referencing.crs.DefaultCompoundCRS;
 
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 
@@ -695,7 +696,7 @@ public final class CRS extends Static {
      * @since 3.16
      */
     public static CompoundCRS getCompoundCRS(final CompoundCRS crs, final SingleCRS... components) {
-        final List<SingleCRS> actualComponents = DefaultCompoundCRS.getSingleCRS(crs);
+        final List<SingleCRS> actualComponents = org.apache.sis.referencing.CRS.getSingleComponents(crs);
         if (actualComponents.size() == components.length) {
             int firstValid = 0;
             final SingleCRS[] toSearch = components.clone();
@@ -841,7 +842,7 @@ check:      while (lower != 0 || upper != dimension) {
             for (int i=1; i<size; i++) {
                 sb.append(" with ").append(array[i].getName().toString());
             }
-            return new DefaultCompoundCRS(sb.toString(), array);
+            return new DefaultCompoundCRS(Collections.singletonMap(DefaultCompoundCRS.NAME_KEY, sb.toString()), array);
         }
     }
 

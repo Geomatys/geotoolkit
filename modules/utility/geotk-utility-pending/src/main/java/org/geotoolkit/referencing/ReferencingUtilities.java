@@ -20,8 +20,10 @@ import java.awt.Dimension;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 import org.apache.sis.geometry.DirectPosition2D;
@@ -30,13 +32,14 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.internal.referencing.AxisDirections;
 import org.geotoolkit.internal.referencing.CRSUtilities;
-import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
+import org.apache.sis.referencing.crs.DefaultCompoundCRS;
 import org.geotoolkit.referencing.operation.projection.Mercator;
 import org.geotoolkit.referencing.operation.transform.LinearInterpolator1D;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.apache.sis.referencing.operation.transform.PassThroughTransform;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
+import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.crs.CompoundCRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.GeographicCRS;
@@ -351,7 +354,7 @@ public final class ReferencingUtilities {
 
         final GeneralEnvelope env;
         if(temporalDim != null && verticalDim != null){
-            crs = new DefaultCompoundCRS(crs2D.getName().getCode()+"/"+verticalDim.getName().getCode()+"/"+temporalDim.getName().getCode(),
+            crs = new DefaultCompoundCRS(name(crs2D.getName().getCode() + "/" + verticalDim.getName().getCode() + "/" + temporalDim.getName().getCode()),
                     crs2D, verticalDim, temporalDim);
             env = new GeneralEnvelope(crs);
 
@@ -382,7 +385,7 @@ public final class ReferencingUtilities {
                 throw new TransformException(ex.getMessage(),ex);
             }
         }else if(temporalDim != null){
-            crs = new DefaultCompoundCRS(crs2D.getName().getCode()+"/"+temporalDim.getName().getCode(),
+            crs = new DefaultCompoundCRS(name(crs2D.getName().getCode() + "/" + temporalDim.getName().getCode()),
                     crs2D,  temporalDim);
             env = new GeneralEnvelope(crs);
 
@@ -404,7 +407,7 @@ public final class ReferencingUtilities {
 
 
         }else if(verticalDim != null){
-            crs = new DefaultCompoundCRS(crs2D.getName().getCode()+"/"+verticalDim.getName().getCode(),
+            crs = new DefaultCompoundCRS(name(crs2D.getName().getCode() + "/" + verticalDim.getName().getCode()),
                     crs2D, verticalDim);
             env = new GeneralEnvelope(crs);
 
@@ -466,7 +469,7 @@ public final class ReferencingUtilities {
                     sb.append(c.getName().toString()).append(' ');
                 }
             }
-            targetCRS = new DefaultCompoundCRS(sb.toString(), lst.toArray(new CoordinateReferenceSystem[lst.size()]));
+            targetCRS = new DefaultCompoundCRS(name(sb.toString()), lst.toArray(new CoordinateReferenceSystem[lst.size()]));
 
         }else if(originalCRS.getCoordinateSystem().getDimension() == 2){
             //no other axis, just reproject normally
@@ -566,7 +569,7 @@ public final class ReferencingUtilities {
             }
 
             if(changed){
-                return new DefaultCompoundCRS(compoundcrs.getName().getCode(), parts);
+                return new DefaultCompoundCRS(name(compoundcrs.getName().getCode()), parts);
             }else{
                 return crs;
             }
@@ -869,4 +872,7 @@ public final class ReferencingUtilities {
         return resultEnvelope;
     }
 
+    private static Map<String,String> name(final String name) {
+        return Collections.singletonMap(IdentifiedObject.NAME_KEY, name);
+    }
 }

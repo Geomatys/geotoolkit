@@ -23,7 +23,7 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Polygon;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.geometry.GeometricUtilities;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.CommonCRS;
 import static org.junit.Assert.*;
 import org.junit.Test;
 
@@ -42,7 +42,7 @@ public class GeometricUtilitiesTest {
         Geometry result;
         
         //we should have the same result whatever method used
-        env = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
+        env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
         env.setRange(0, -30, 50);
         env.setRange(1, -5, 20);
         expected = GF.createPolygon(GF.createLinearRing(new Coordinate[]{
@@ -69,7 +69,7 @@ public class GeometricUtilitiesTest {
         Geometry result;
         
         //we should have the same result whatever method used
-        env = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
+        env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
         env.setRange(0, -160, 170);
         env.setRange(1, -70, 80);
         
@@ -106,7 +106,7 @@ public class GeometricUtilitiesTest {
         Geometry result;
         
         //we should have the same result whatever method used
-        env = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
+        env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
         env.setRange(0, -180, +180);
         env.setRange(1, -90, +90);
         
@@ -144,7 +144,7 @@ public class GeometricUtilitiesTest {
         Geometry expected;
         Geometry result;
         
-        env = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
+        env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
         env.setRange(0, 170, 190);
         env.setRange(1, 30, 40);
         
@@ -204,7 +204,7 @@ public class GeometricUtilitiesTest {
         Geometry expected;
         Geometry result;
         
-        env = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
+        env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
         env.setRange(0, 170, -170);
         env.setRange(1, 30, 40);
         

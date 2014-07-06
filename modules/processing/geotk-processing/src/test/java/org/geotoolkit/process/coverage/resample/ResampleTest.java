@@ -27,7 +27,7 @@ import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.process.ProcessFinder;
 import org.geotoolkit.process.coverage.AbstractProcessTest;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.CommonCRS;
 import static org.junit.Assert.*;
 import org.junit.*;
 import org.opengis.parameter.ParameterValueGroup;
@@ -57,7 +57,7 @@ public class ResampleTest extends AbstractProcessTest {
             {4,5,6,7}
         };
 
-        final GeneralEnvelope env = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
+        final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
         env.setRange(0, -180, +180);
         env.setRange(1, -90, +90);
         final GridCoverageBuilder gcb = new GridCoverageBuilder();

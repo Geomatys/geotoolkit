@@ -50,7 +50,7 @@ import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.referencing.crs.PredefinedCRS;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.StyleConstants;
@@ -197,7 +197,7 @@ public class CoverageImageTest {
         final PyramidCoverageBuilder pcb = new PyramidCoverageBuilder(new Dimension(25, 25), InterpolationCase.NEIGHBOR, 2);
         final double[] fillValue = new double[3];
 
-        final GeneralEnvelope env = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
+        final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
         env.setEnvelope(-180, -90, 180, 90);
         final double[] scales = new double[]{1.40625, 2.8125};
         final Map<Envelope, double[]> map = new HashMap<>();

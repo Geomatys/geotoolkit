@@ -29,10 +29,10 @@ import org.opengis.referencing.crs.ProjectedCRS;
 
 import org.apache.sis.math.Statistics;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.factory.AbstractAuthorityFactory;
 import org.apache.sis.geometry.DirectPosition2D;
 
+import org.apache.sis.referencing.CommonCRS;
 import static org.junit.Assert.*;
 import static java.lang.StrictMath.*;
 import static org.apache.sis.util.collection.Containers.hashMapCapacity;
@@ -133,7 +133,7 @@ final strictfp class ClientThread extends Thread {
      */
     @Override
     public void run() {
-        final CoordinateReferenceSystem sourceCRS = DefaultGeographicCRS.WGS84;
+        final CoordinateReferenceSystem sourceCRS = CommonCRS.WGS84.normalizedGeographic();
         final DirectPosition2D sourcePt = new DirectPosition2D(104800, 273914); // Random coordinate
         final DirectPosition2D targetPt = new DirectPosition2D();
         final DirectPosition2D coordUTM = new DirectPosition2D();

@@ -32,7 +32,7 @@ import org.geotoolkit.data.FeatureStore;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.gpx.model.GPXModelConstants;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.CommonCRS;
 
 import org.geotoolkit.feature.type.Name;
 import org.opengis.util.FactoryException;
@@ -95,7 +95,7 @@ public class GPXReading {//extends AbstractReadingTests{
 //            writer.close();
 //        }
 //
-//        GeneralEnvelope env = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
+//        GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
 //        env.setRange(0, -5, 10);
 //        env.setRange(1, -1, 11);
 //

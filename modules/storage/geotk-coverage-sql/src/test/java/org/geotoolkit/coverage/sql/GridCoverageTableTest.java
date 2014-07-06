@@ -35,7 +35,7 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.image.io.mosaic.TileManager;
 import org.geotoolkit.internal.sql.table.CatalogTestBase;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.CommonCRS;
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -358,7 +358,7 @@ public final strictfp class GridCoverageTableTest extends CatalogTestBase {
          * expected three-dimensional spatio-temporal envelope. The time ordinates should be
          * left unchanged.
          */
-        search = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
+        search = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
         search.setRange(0, -100, 120);
         search.setRange(1,  -80,  60);
         table.envelope.setEnvelope(search);

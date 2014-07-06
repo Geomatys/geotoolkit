@@ -24,7 +24,7 @@ import org.geotoolkit.feature.simple.DefaultSimpleFeatureType;
 import org.geotoolkit.feature.type.DefaultAttributeDescriptor;
 import org.geotoolkit.feature.type.DefaultAttributeType;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.simple.SimpleFeatureType;
@@ -84,7 +84,7 @@ public class MIFManager {
     public char mifDelimiter = '\t';
     private ArrayList<Short> mifUnique = new ArrayList<Short>();
     private ArrayList<Short> mifIndex = new ArrayList<Short>();
-    private CoordinateReferenceSystem mifCRS = DefaultGeographicCRS.WGS84;
+    private CoordinateReferenceSystem mifCRS = CommonCRS.WGS84.normalizedGeographic();
     private MathTransform mifTransform = null;
     private int mifColumnsCount = -1;
 
@@ -283,7 +283,7 @@ public class MIFManager {
              * We check if mif conversion will modify the defined CRS. If it is the case, we store the modified CRS.
              * This CRS will serve us as file writing, as we will have to reproject our features to fit the final system.
              */
-            if (!CRS.equalsIgnoreMetadata(mifCRS, DefaultGeographicCRS.WGS84)) {
+            if (!CRS.equalsIgnoreMetadata(mifCRS, CommonCRS.WGS84.normalizedGeographic())) {
                 try {
                     final String mifCRSDefinition = ProjectionUtils.crsToMIFSyntax(mifCRS);
                     if (mifCRSDefinition != null && !mifCRSDefinition.isEmpty()) {
@@ -677,7 +677,7 @@ public class MIFManager {
             headBuilder.append(MIFUtils.HeaderCategory.CHARSET).append(' ').append(mifCharset).append('\n');
             headBuilder.append(MIFUtils.HeaderCategory.DELIMITER).append(' ').append('\"').append(mifDelimiter).append('\"').append('\n');
 
-            if (mifCRS != null && mifCRS != DefaultGeographicCRS.WGS84) {
+            if (mifCRS != null && mifCRS != CommonCRS.WGS84.normalizedGeographic()) {
                 String strCRS = ProjectionUtils.crsToMIFSyntax(mifCRS);
                 if(!strCRS.isEmpty()) {
                     headBuilder.append(strCRS).append('\n');

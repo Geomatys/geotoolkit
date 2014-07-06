@@ -27,7 +27,7 @@ import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.factory.Hints;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.lang.Setup;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.CommonCRS;
 
 /**
  *
@@ -61,7 +61,7 @@ public final class ConvertersTestUtils {
         
         
         //set it's envelope
-        final GeneralEnvelope env = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
+        final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
         env.setRange(0, 0, 100);
         env.setRange(1, 0, 100);
         

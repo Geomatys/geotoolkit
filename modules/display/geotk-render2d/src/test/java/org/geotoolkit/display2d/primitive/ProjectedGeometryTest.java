@@ -44,7 +44,7 @@ import org.geotoolkit.filter.DefaultFilterFactory2;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapLayer;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.StyleConstants;
@@ -242,11 +242,11 @@ public class ProjectedGeometryTest {
         //build a maplayer
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("test");
-        ftb.add("geom", Geometry.class, DefaultGeographicCRS.WGS84);
+        ftb.add("geom", Geometry.class, CommonCRS.WGS84.normalizedGeographic());
         final FeatureType type = ftb.buildFeatureType();
         
         final Feature feature = FeatureUtilities.defaultFeature(type, "0");
-        JTS.setCRS(geometry, DefaultGeographicCRS.WGS84);
+        JTS.setCRS(geometry, CommonCRS.WGS84.normalizedGeographic());
         feature.getProperty("geom").setValue(geometry);
         final FeatureCollection col = FeatureStoreUtilities.collection(feature);
         
@@ -259,7 +259,7 @@ public class ProjectedGeometryTest {
         final MapLayer layer = MapBuilder.createFeatureLayer(col, style);
         
         //build a rendering canvas
-        final J2DCanvasBuffered canvas = new J2DCanvasBuffered(DefaultGeographicCRS.WGS84, new Dimension(canvasWidth, canvasHeight));
+        final J2DCanvasBuffered canvas = new J2DCanvasBuffered(CommonCRS.WGS84.normalizedGeographic(), new Dimension(canvasWidth, canvasHeight));
         canvas.applyTransform(objToDisp);
         
         final StatelessContextParams params = new StatelessContextParams(canvas, layer);
@@ -269,7 +269,7 @@ public class ProjectedGeometryTest {
         params.update(context);
         
         final ProjectedGeometry pg = new ProjectedGeometry(params);
-        pg.setDataGeometry(geometry, DefaultGeographicCRS.WGS84);
+        pg.setDataGeometry(geometry, CommonCRS.WGS84.normalizedGeographic());
                 
         Envelope env = canvas.getVisibleEnvelope();
         System.out.println(env.getMinimum(0)+" "+env.getMaximum(0));

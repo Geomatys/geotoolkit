@@ -51,7 +51,7 @@ import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
 import org.opengis.coverage.grid.GridCoverage;
@@ -75,7 +75,7 @@ public final class Portrayer {
      */
     private GridCoverageWriter coverageWriter = null;
 
-    private final J2DCanvasBuffered canvas = new J2DCanvasBuffered(DefaultGeographicCRS.WGS84, new Dimension(1, 1));
+    private final J2DCanvasBuffered canvas = new J2DCanvasBuffered(CommonCRS.WGS84.normalizedGeographic(), new Dimension(1, 1));
     private final ContextContainer2D container = new ContextContainer2D(canvas, false);
 
     public Portrayer(){

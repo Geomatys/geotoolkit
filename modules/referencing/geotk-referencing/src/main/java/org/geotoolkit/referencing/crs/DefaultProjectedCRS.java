@@ -44,6 +44,7 @@ import org.opengis.referencing.operation.Projection;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.geometry.MismatchedDimensionException;
 
+import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.apache.sis.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.operation.DefaultProjection;
 import org.geotoolkit.referencing.operation.DefiningConversion;
@@ -310,7 +311,7 @@ public class DefaultProjectedCRS extends AbstractDerivedCRS implements Projected
         final Ellipsoid ellipsoid = getDatum().getEllipsoid();
         @SuppressWarnings({"unchecked","rawtypes"}) // Formatter.setLinearUnit(...) will do the check for us.
         final Unit<Length> unit        = (Unit) ReferencingUtilities.getUnit(super.getCoordinateSystem());
-        final Unit<Angle>  geoUnit     = DefaultGeographicCRS.getAngularUnit(baseCRS.getCoordinateSystem());
+        final Unit<Angle>  geoUnit     = CRSUtilities.getAngularUnit(baseCRS.getCoordinateSystem());
         final Unit<Length> linearUnit  = formatter.addContextualUnit(unit);
         final Unit<Angle>  angularUnit = formatter.addContextualUnit(geoUnit);
         final Unit<Length> axisUnit    = ellipsoid.getAxisUnit();

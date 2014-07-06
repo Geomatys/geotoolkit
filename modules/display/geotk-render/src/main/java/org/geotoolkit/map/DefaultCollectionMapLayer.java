@@ -19,7 +19,7 @@ package org.geotoolkit.map;
 import java.util.Collection;
 import java.util.Objects;
 import org.apache.sis.geometry.Envelope2D;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.style.MutableStyle;
 import static org.apache.sis.util.ArgumentChecks.*;
 import org.opengis.filter.Filter;
@@ -84,7 +84,7 @@ class DefaultCollectionMapLayer extends AbstractMapLayer implements CollectionMa
      */
     @Override
     public Envelope getBounds() {
-        return new Envelope2D(DefaultGeographicCRS.WGS84,-180,-90,360,180);
+        return new Envelope2D(CommonCRS.WGS84.normalizedGeographic(),-180,-90,360,180);
     }
    
 }

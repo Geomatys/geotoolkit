@@ -28,7 +28,6 @@ import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CRSAuthorityFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.factory.web.AutoCRSFactoryTest;
 import org.geotoolkit.referencing.factory.web.WebCRSFactoryTest;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
@@ -38,6 +37,7 @@ import org.geotoolkit.factory.Hints;
 import org.apache.sis.test.DependsOn;
 import org.geotoolkit.test.referencing.ReferencingTestBase;
 
+import org.apache.sis.referencing.CommonCRS;
 import org.junit.*;
 import static org.junit.Assume.*;
 import static org.geotoolkit.referencing.Assert.*;
@@ -160,14 +160,14 @@ public final strictfp class AllAuthoritiesFactoryTest extends ReferencingTestBas
         final AbstractAuthorityFactory all = AllAuthoritiesFactory.getInstance(null);
         final IdentifiedObjectFinder finder = all.getIdentifiedObjectFinder(CoordinateReferenceSystem.class);
         finder.setFullScanAllowed(false);
-        assertNull("Should not find the CRS without a scan.", finder.find(DefaultGeographicCRS.WGS84));
+        assertNull("Should not find the CRS without a scan.", finder.find(CommonCRS.WGS84.normalizedGeographic()));
 
         finder.setFullScanAllowed(true);
-        final IdentifiedObject find = finder.find(DefaultGeographicCRS.WGS84);
+        final IdentifiedObject find = finder.find(CommonCRS.WGS84.normalizedGeographic());
         assertNotNull("With scan allowed, should find the CRS.", find);
-        assertEqualsIgnoreMetadata(find, DefaultGeographicCRS.WGS84, false);
+        assertEqualsIgnoreMetadata(find, CommonCRS.WGS84.normalizedGeographic(), false);
         assertSame(all.createCoordinateReferenceSystem("CRS:84"), find);
-        assertEquals("CRS:84", finder.findIdentifier(DefaultGeographicCRS.WGS84));
+        assertEquals("CRS:84", finder.findIdentifier(CommonCRS.WGS84.normalizedGeographic()));
     }
 
     /**

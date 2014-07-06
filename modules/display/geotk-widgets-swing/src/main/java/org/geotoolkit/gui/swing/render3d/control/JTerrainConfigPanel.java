@@ -62,7 +62,7 @@ import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapItem;
 import org.geotoolkit.map.MapLayer;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.jdesktop.swingx.combobox.ListComboBoxModel;
 import org.opengis.referencing.operation.TransformException;
@@ -222,7 +222,7 @@ public class JTerrainConfigPanel extends javax.swing.JPanel {
             }
 
             if(envelope == null) {
-                GeneralEnvelope env = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
+                GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
                 env.setRange(0, -180.0, 180.0);
                 env.setRange(1, -90.0, 90.0);
 

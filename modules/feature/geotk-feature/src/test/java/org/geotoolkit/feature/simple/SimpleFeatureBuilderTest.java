@@ -38,7 +38,7 @@ import org.geotoolkit.feature.type.DefaultName;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.feature.FeatureValidationUtilities;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.CommonCRS;
 
 import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.geotoolkit.feature.simple.SimpleFeature;
@@ -77,7 +77,7 @@ public class SimpleFeatureBuilderTest extends DataTestCase {
         super.setUp();
         FeatureTypeBuilder typeBuilder = new FeatureTypeBuilder();
         typeBuilder.setName("test");
-        typeBuilder.add("point", Point.class, DefaultGeographicCRS.WGS84);
+        typeBuilder.add("point", Point.class, CommonCRS.WGS84.normalizedGeographic());
         typeBuilder.add("integer", Integer.class);
         typeBuilder.add("float", Float.class);
 

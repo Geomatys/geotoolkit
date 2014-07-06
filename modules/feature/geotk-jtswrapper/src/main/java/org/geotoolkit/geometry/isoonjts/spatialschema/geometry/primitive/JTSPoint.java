@@ -24,7 +24,7 @@ import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.AbstractJTSGeomet
 import org.geotoolkit.geometry.jts.SRIDGenerator;
 import org.geotoolkit.geometry.jts.SRIDGenerator.Version;
 import org.geotoolkit.internal.jaxb.DirectPositionAdapter;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.CommonCRS;
 
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -64,7 +64,7 @@ public class JTSPoint extends AbstractJTSGeometry implements Point {
      * Creates a new {@code PointImpl}.
      */
     public JTSPoint() {
-    	this( null, DefaultGeographicCRS.WGS84 );
+    	this( null, CommonCRS.WGS84.normalizedGeographic() );
     }
 
     /**

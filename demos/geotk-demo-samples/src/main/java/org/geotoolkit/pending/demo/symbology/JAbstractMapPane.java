@@ -48,7 +48,7 @@ import org.geotoolkit.gui.swing.propertyedit.styleproperty.JSLDImportExportPanel
 import org.geotoolkit.gui.swing.propertyedit.styleproperty.JSimpleStylePanel;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.MapContext;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.opengis.filter.FilterFactory;
@@ -109,7 +109,7 @@ public abstract class JAbstractMapPane extends javax.swing.JPanel {
 
 
         GridTemplate gridTemplate = new DefaultGridTemplate(
-                        DefaultGeographicCRS.WGS84,
+                        CommonCRS.WGS84.normalizedGeographic(),
                         new BasicStroke(1.5f),
                         new Color(120,120,120,200),
 

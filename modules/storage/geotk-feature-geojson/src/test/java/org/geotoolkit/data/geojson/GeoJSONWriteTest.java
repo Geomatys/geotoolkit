@@ -11,7 +11,7 @@ import org.geotoolkit.feature.AttributeDescriptorBuilder;
 import org.geotoolkit.feature.type.DefaultName;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.FeatureUtilities;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.CommonCRS;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.geotoolkit.feature.ComplexAttribute;
@@ -418,7 +418,7 @@ public class GeoJSONWriteTest {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName(name);
         ftb.add("type", String.class);
-        ftb.add(BasicFeatureTypes.GEOMETRY_ATTRIBUTE_NAME, geomClass, DefaultGeographicCRS.WGS84);
+        ftb.add(BasicFeatureTypes.GEOMETRY_ATTRIBUTE_NAME, geomClass, CommonCRS.WGS84.normalizedGeographic());
         return ftb.buildSimpleFeatureType();
     }
 
@@ -426,7 +426,7 @@ public class GeoJSONWriteTest {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName(name);
         ftb.add("array", double[][].class);
-        ftb.add(BasicFeatureTypes.GEOMETRY_ATTRIBUTE_NAME, geomClass, DefaultGeographicCRS.WGS84);
+        ftb.add(BasicFeatureTypes.GEOMETRY_ATTRIBUTE_NAME, geomClass, CommonCRS.WGS84.normalizedGeographic());
         return ftb.buildSimpleFeatureType();
     }
 
@@ -457,7 +457,7 @@ public class GeoJSONWriteTest {
 
         AttributeDescriptor level1Desc = adb.create(level1, DefaultName.valueOf("level1"),1,3,false,null);
         ftb.add(level1Desc);
-        ftb.add(BasicFeatureTypes.GEOMETRY_ATTRIBUTE_NAME, Point.class, DefaultGeographicCRS.WGS84);
+        ftb.add(BasicFeatureTypes.GEOMETRY_ATTRIBUTE_NAME, Point.class, CommonCRS.WGS84.normalizedGeographic());
         ftb.setDescription(new SimpleInternationalString("Description"));
         return ftb.buildFeatureType();
     }

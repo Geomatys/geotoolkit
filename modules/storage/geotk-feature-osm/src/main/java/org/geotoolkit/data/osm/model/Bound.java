@@ -18,7 +18,7 @@
 package org.geotoolkit.data.osm.model;
 
 import org.apache.sis.geometry.ImmutableEnvelope;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.CommonCRS;
 import org.opengis.geometry.Envelope;
 
 /**
@@ -39,7 +39,7 @@ public class Bound {
      * @return Immutable envelope in WGS84 with the given extents.
      */
     public static Envelope create(final double xmin, final double xmax, final double ymin, final double ymax){
-        return new ImmutableEnvelope(new double[] {xmin, ymin}, new double[] {xmax, ymax}, DefaultGeographicCRS.WGS84);
+        return new ImmutableEnvelope(new double[] {xmin, ymin}, new double[] {xmax, ymax}, CommonCRS.WGS84.normalizedGeographic());
     }
 
 }

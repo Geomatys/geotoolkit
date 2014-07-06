@@ -29,10 +29,9 @@ import org.opengis.util.FactoryException;
 import org.apache.sis.test.DependsOn;
 import org.geotoolkit.test.referencing.WKT;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.crs.DefaultProjectedCRS;
-import org.geotoolkit.referencing.cs.DefaultCartesianCS;
-import org.geotoolkit.referencing.cs.DefaultEllipsoidalCS;
+import org.geotoolkit.referencing.cs.PredefinedCS;
 import org.geotoolkit.test.LocaleDependantTestBase;
 import org.apache.sis.referencing.CommonCRS;
 import org.junit.*;
@@ -59,11 +58,11 @@ public final strictfp class ReferencingBuilderTest extends LocaleDependantTestBa
     public void testFormatGeographicCRS() {
         final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(GEOTK_FORMAT_NAME));
         final ReferencingBuilder builder = new ReferencingBuilder(metadata);
-        builder.setCoordinateReferenceSystem(DefaultGeographicCRS.WGS84);
+        builder.setCoordinateReferenceSystem(CommonCRS.WGS84.normalizedGeographic());
         String expected = GEOTK_FORMAT_NAME + '\n' +
             "└───RectifiedGridDomain\n" +
             "    └───CoordinateReferenceSystem\n" +
-            "        ├───name=“WGS84(DD)”\n" +
+            "        ├───name=“EPSG:WGS 84”\n" +
             "        ├───type=“geographic”\n" +
             "        ├───Datum\n" +
             "        │   ├───name=“EPSG:World Geodetic System 1984”\n" +
@@ -104,7 +103,7 @@ public final strictfp class ReferencingBuilderTest extends LocaleDependantTestBa
          * which has been initialized to the current locale and is not refreshed after the call
          * to Locale.setDefault(Locale.FRANCE).
          */
-        final String localizedName = DefaultEllipsoidalCS.GEODETIC_2D.getName().getCode();
+        final String localizedName = PredefinedCS.GEODETIC_2D.getName().getCode();
         expected = expected.replace("“Géodésique 2D”", '"' + localizedName + '"');
         assertMultilinesEquals(decodeQuotes(expected), metadata.toString());
     }
@@ -238,7 +237,7 @@ public final strictfp class ReferencingBuilderTest extends LocaleDependantTestBa
          */
         final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(GEOTK_FORMAT_NAME));
         final ReferencingBuilder builder = new ReferencingBuilder(metadata);
-        builder.setCoordinateReferenceSystem(DefaultGeographicCRS.WGS84);
+        builder.setCoordinateReferenceSystem(CommonCRS.WGS84.normalizedGeographic());
         /*
          * Following is the purpose of this test suite.
          */
@@ -246,7 +245,7 @@ public final strictfp class ReferencingBuilderTest extends LocaleDependantTestBa
         assertEquals(DefaultGeographicCRS.class, crs.getClass());
         GeodeticDatum datum = ((GeographicCRS) crs).getDatum();
 
-        assertSame(DefaultGeographicCRS.WGS84,       crs);
+        assertSame(CommonCRS.WGS84.normalizedGeographic(), crs);
         assertSame(CommonCRS.WGS84.datum(),          datum);
 //      assertSame(DefaultEllipsoidalCS.GEODETIC_2D, builder.getCoordinateSystem(CoordinateSystem.class));
         assertSame(CommonCRS.WGS84.datum(),          builder.getDatum(Datum.class));
@@ -256,15 +255,15 @@ public final strictfp class ReferencingBuilderTest extends LocaleDependantTestBa
 //      assertEquals(DefaultGeographicCRS.class, crs.getClass());
         datum = ((GeographicCRS) crs).getDatum();
 
-        assertNotSame(DefaultGeographicCRS.WGS84,       crs);
-        assertNotSame(DefaultEllipsoidalCS.GEODETIC_2D, builder.getCoordinateSystem(CoordinateSystem.class));
+        assertNotSame(CommonCRS.WGS84.normalizedGeographic(), crs);
+        assertNotSame(PredefinedCS.GEODETIC_2D, builder.getCoordinateSystem(CoordinateSystem.class));
         assertNotSame(CommonCRS.WGS84.datum(),          builder.getDatum(Datum.class));
 
         assertEqualsIgnoreMetadata("PrimeMeridian", CommonCRS.WGS84.primeMeridian(),  datum.getPrimeMeridian());
         assertEqualsIgnoreMetadata("Ellipsoid",     CommonCRS.WGS84.ellipsoid(),      datum.getEllipsoid());
         assertEqualsIgnoreMetadata("Datum",         CommonCRS.WGS84.datum(),          datum);
-        assertEqualsIgnoreMetadata("CS",            DefaultEllipsoidalCS.GEODETIC_2D, crs.getCoordinateSystem());
-        assertEqualsIgnoreMetadata("CRS",           DefaultGeographicCRS.WGS84,       crs);
+        assertEqualsIgnoreMetadata("CS",            PredefinedCS.GEODETIC_2D,         crs.getCoordinateSystem());
+        assertEqualsIgnoreMetadata("CRS",           CommonCRS.WGS84.normalizedGeographic(), crs);
     }
 
     /**
@@ -305,6 +304,6 @@ public final strictfp class ReferencingBuilderTest extends LocaleDependantTestBa
         assertEqualsIgnoreMetadata("PrimeMeridian", CommonCRS.WGS84.primeMeridian(), datum.getPrimeMeridian());
         assertEqualsIgnoreMetadata("Ellipsoid",     CommonCRS.WGS84.ellipsoid(),     datum.getEllipsoid());
         assertEqualsIgnoreMetadata("Datum",         CommonCRS.WGS84.datum(),         datum);
-        assertEqualsIgnoreMetadata("CS",            DefaultCartesianCS  .PROJECTED,  crs.getCoordinateSystem());
+        assertEqualsIgnoreMetadata("CS",            PredefinedCS.PROJECTED, crs.getCoordinateSystem());
     }
 }

@@ -25,15 +25,16 @@ import net.jcip.annotations.Immutable;
 import org.opengis.util.FactoryException;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.IdentifiedObject;
+import org.opengis.referencing.cs.CartesianCS;
 import org.opengis.referencing.crs.ProjectedCRS;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 
 import org.apache.sis.measure.Units;
-import org.geotoolkit.referencing.cs.DefaultCartesianCS;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.geotoolkit.referencing.cs.PredefinedCS;
 import org.geotoolkit.referencing.operation.DefiningConversion;
 import org.geotoolkit.referencing.factory.ReferencingFactoryContainer;
 import org.geotoolkit.resources.Errors;
+import org.apache.sis.referencing.CommonCRS;
 
 
 /**
@@ -74,7 +75,7 @@ abstract class Factlet {
     public final ProjectedCRS create(final Code code, final ReferencingFactoryContainer factories)
             throws FactoryException
     {
-        DefaultCartesianCS cs = DefaultCartesianCS.PROJECTED;
+        CartesianCS cs = PredefinedCS.PROJECTED;
         final Unit<?> unit = code.unit;
         if (!SI.METRE.equals(unit)) {
             if (!Units.isLinear(unit)) {
@@ -82,7 +83,7 @@ abstract class Factlet {
                         Errors.Keys.NON_LINEAR_UNIT_1, unit), code.authority,
                         String.valueOf(code.code), code.toString());
             }
-            cs = cs.usingUnit(unit);
+            cs = PredefinedCS.usingUnit(cs, unit);
         }
         final String classification = getClassification();
         final ParameterValueGroup parameters;
@@ -92,7 +93,7 @@ abstract class Factlet {
         final DefiningConversion conversion = new DefiningConversion(name, parameters);
         return factories.getCRSFactory().createProjectedCRS(
                 Collections.singletonMap(IdentifiedObject.NAME_KEY, name),
-                DefaultGeographicCRS.WGS84, conversion, cs);
+                CommonCRS.WGS84.normalizedGeographic(), conversion, cs);
     }
 
     /**

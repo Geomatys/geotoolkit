@@ -43,6 +43,8 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.cs.AxisDirection;
 
+import org.opengis.referencing.cs.CoordinateSystemAxis;
+import org.opengis.referencing.cs.EllipsoidalCS;
 import org.geotoolkit.lang.Debug;
 import org.geotoolkit.factory.Hints;
 import org.apache.sis.util.Localized;
@@ -54,7 +56,7 @@ import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.apache.sis.internal.referencing.AxisDirections;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.cs.AxisRangeType;
+import org.apache.sis.referencing.cs.DefaultCompoundCS;
 import org.apache.sis.referencing.operation.matrix.Matrices;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
@@ -412,8 +414,8 @@ public abstract class GridCoverageStore implements LogProducer, Localized {
             final boolean isNetcdfHack) // TODO: DEPRECATED: to be removed in Apache SIS.
             throws CoverageStoreException
     {
-        final boolean needsLongitudeShift = AxisRangeType.POSITIVE_LONGITUDE.indexIn(
-                gridGeometry.getCoordinateReferenceSystem().getCoordinateSystem()) >= 0;
+        final boolean needsLongitudeShift = needsLongitudeShift(
+                gridGeometry.getCoordinateReferenceSystem().getCoordinateSystem());
         final MathTransform2D destToExtractedGrid;
         try {
             destToExtractedGrid = geodeticToPixelCoordinates(gridGeometry,
@@ -427,6 +429,33 @@ public abstract class GridCoverageStore implements LogProducer, Localized {
             throw new CoverageStoreException(formatErrorMessage(e), e);
         }
         return destToExtractedGrid;
+    }
+
+    /**
+     * Finds the dimension of the first axis having a range of values described by this type.
+     * If no axis uses this type, returns -1.
+     *
+     * @param  cs The coordinate system in which to search for an axis having this type of range.
+     * @return Dimension of the first axis having this type of range, of -1 if none.
+     */
+    private static boolean needsLongitudeShift(final CoordinateSystem cs) {
+        if (cs instanceof DefaultCompoundCS) {
+            for (final CoordinateSystem component : ((DefaultCompoundCS) cs).getComponents()) {
+                final boolean i = needsLongitudeShift(component);
+                if (i) return true;
+            }
+        }
+        if (cs instanceof EllipsoidalCS) {
+            final int i = AxisDirections.indexOfColinear(cs, AxisDirection.EAST);
+            if (i >= 0) {
+                final CoordinateSystemAxis axis = cs.getAxis(i);
+                final boolean positive = axis.getMinimumValue() >= 0;
+                if (positive) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /**

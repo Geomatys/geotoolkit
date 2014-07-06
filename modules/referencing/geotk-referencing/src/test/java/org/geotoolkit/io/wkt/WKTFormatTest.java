@@ -18,11 +18,13 @@
 package org.geotoolkit.io.wkt;
 
 import java.util.Collections;
+import java.util.Map;
 import java.text.ParseException;
 import javax.measure.unit.NonSI;
 
 import org.opengis.util.FactoryException;
 import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.cs.CartesianCS;
 import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.crs.ProjectedCRS;
@@ -31,12 +33,13 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.cs.DefaultCartesianCS;
+import org.geotoolkit.referencing.cs.PredefinedCS;
 import org.geotoolkit.referencing.crs.DefaultProjectedCRS;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
-import org.geotoolkit.referencing.crs.DefaultGeocentricCRS;
-import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;
-import org.geotoolkit.referencing.cs.DefaultEllipsoidalCS;
+import org.apache.sis.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.crs.DefaultGeocentricCRS;
+import org.geotoolkit.referencing.crs.PredefinedCRS;
+import org.apache.sis.referencing.cs.DefaultCoordinateSystemAxis;
+import org.apache.sis.referencing.cs.DefaultEllipsoidalCS;
 import org.apache.sis.referencing.datum.DefaultPrimeMeridian;
 import org.apache.sis.referencing.datum.DefaultGeodeticDatum;
 import org.geotoolkit.referencing.operation.DefaultMathTransformFactory;
@@ -65,6 +68,10 @@ import static org.geotoolkit.referencing.Assert.*;
  */
 @DependsOn({ParserTest.class, DatumAliasesTest.class})
 public final strictfp class WKTFormatTest {
+    private static Map<String,String> name(final String name) {
+        return Collections.singletonMap(IdentifiedObject.NAME_KEY, name);
+    }
+
     /**
      * Test a hard coded version of a WKT. This is more convenient for debugging.
      *
@@ -289,9 +296,9 @@ public final strictfp class WKTFormatTest {
         parameters.parameter("false_easting").setValue(0.0);
         parameters.parameter("false_northing").setValue(0.0);
 
-        GeographicCRS base = DefaultGeographicCRS.WGS84;
+        GeographicCRS base = CommonCRS.WGS84.normalizedGeographic();
         MathTransform mt   = factory.createParameterizedTransform(parameters);
-        CartesianCS   cs   = DefaultCartesianCS.PROJECTED;
+        CartesianCS   cs   = PredefinedCS.PROJECTED;
         CoordinateReferenceSystem crs = new DefaultProjectedCRS("Lambert", base, mt, cs);
 
         final String wkt = crs.toWKT();
@@ -316,8 +323,8 @@ public final strictfp class WKTFormatTest {
          * First try the formatting as internal WKT. Geotk
          * uses internally the ISO 19111 axis directions.
          */
-        final String name = DefaultGeocentricCRS.CARTESIAN.getName().getCode();
-        final DefaultGeocentricCRS crs = DefaultGeocentricCRS.CARTESIAN;
+        final String name = PredefinedCRS.GEOCENTRIC.getName().getCode();
+        final DefaultGeocentricCRS crs = PredefinedCRS.GEOCENTRIC;
         String wkt = decodeQuotes(
                 "GEOCCS[“" + name + "”,\n" +
                 "  DATUM[“World Geodetic System 1984”,\n" +
@@ -535,13 +542,13 @@ public final strictfp class WKTFormatTest {
     @Test
     @Ignore
     public void formatParisMeridian() {
-        final DefaultGeographicCRS crs = new DefaultGeographicCRS("NTF (Paris)",
+        final DefaultGeographicCRS crs = new DefaultGeographicCRS(name("NTF (Paris)"),
             new DefaultGeodeticDatum(Collections.singletonMap(DefaultGeodeticDatum.NAME_KEY, "Nouvelle Triangulation Francaise (Paris)"),
                 CommonCRS.NAD27.ellipsoid(), // Actually Clark 1880, but we don't care for this test.
                 new DefaultPrimeMeridian(Collections.singletonMap(DefaultPrimeMeridian.NAME_KEY, "Paris"), 2.5969213, NonSI.GRADE)),
-            new DefaultEllipsoidalCS("Using grade",
-                new DefaultCoordinateSystemAxis("λ", AxisDirection.EAST,  NonSI.GRADE),
-                new DefaultCoordinateSystemAxis("φ", AxisDirection.NORTH, NonSI.GRADE)));
+            new DefaultEllipsoidalCS(name("Using grade"),
+                new DefaultCoordinateSystemAxis(Collections.singletonMap(DefaultCoordinateSystemAxis.NAME_KEY, "λ"), "λ", AxisDirection.EAST,  NonSI.GRADE),
+                new DefaultCoordinateSystemAxis(Collections.singletonMap(DefaultCoordinateSystemAxis.NAME_KEY, "φ"), "φ", AxisDirection.NORTH, NonSI.GRADE)));
 
         // Standard formating
         assertMultilinesEquals(decodeQuotes(

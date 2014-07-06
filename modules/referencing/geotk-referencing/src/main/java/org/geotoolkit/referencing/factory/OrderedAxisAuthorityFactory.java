@@ -32,8 +32,10 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.factory.FactoryRegistryException;
 import org.apache.sis.internal.referencing.AxisDirections;
-import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;
+import org.geotoolkit.referencing.cs.Axes;
 import org.geotoolkit.resources.Errors;
+import org.apache.sis.measure.Angle;
+import org.apache.sis.referencing.cs.CoordinateSystems;
 
 
 /**
@@ -246,7 +248,7 @@ public class OrderedAxisAuthorityFactory extends TransformedAuthorityFactory
         hints.put(Hints.FORCE_STANDARD_AXIS_DIRECTIONS, Boolean.valueOf(forceStandardDirections));
         // The following hint has no effect on this class behaviour,
         // but tells to the user what this factory do about axis order.
-        if (compare(DefaultCoordinateSystemAxis.EASTING, DefaultCoordinateSystemAxis.NORTHING) < 0) {
+        if (compare(Axes.EASTING, Axes.NORTHING) < 0) {
             hints.put(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER, Boolean.TRUE);
         }
     }
@@ -341,10 +343,13 @@ public class OrderedAxisAuthorityFactory extends TransformedAuthorityFactory
         if (c == 0 && rank == directionRanks.length) {
             // Both axes are not in the list of known directions.
             // We may have a more complex direction like "South along 90°E".
-            final double angle = DefaultCoordinateSystemAxis.getAngle(dir1, dir2);
-            if (angle > 0) return -1; // Right handed coordinate system
-            if (angle < 0) return +1; // Left handed coordinate system
-            // Otherwise leave unchanged.
+            final Angle angle = CoordinateSystems.angle(dir1, dir2);
+            if (angle != null) {
+                final double θ = angle.degrees();
+                if (θ > 0) return -1; // Right handed coordinate system
+                if (θ < 0) return +1; // Left handed coordinate system
+                // Otherwise leave unchanged.
+            }
         }
         return c;
     }

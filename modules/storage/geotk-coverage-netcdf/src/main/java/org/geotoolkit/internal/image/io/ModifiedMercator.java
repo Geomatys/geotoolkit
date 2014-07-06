@@ -20,7 +20,7 @@ import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
 import org.opengis.referencing.operation.TransformException;
-import org.geotoolkit.referencing.operation.transform.AbstractMathTransform;
+import org.apache.sis.referencing.operation.transform.AbstractMathTransform;
 
 
 /**

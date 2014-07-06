@@ -30,7 +30,7 @@ import org.geotoolkit.data.kml.model.MultiGeometry;
 import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.map.AbstractMapLayer;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.style.MutableStyle;
 
 import org.geotoolkit.feature.Feature;
@@ -71,7 +71,7 @@ public class KmlMapLayer extends AbstractMapLayer {
     @Override
     public Envelope getBounds() {
 
-        final JTSEnvelope2D envelope = new JTSEnvelope2D(DefaultGeographicCRS.WGS84);
+        final JTSEnvelope2D envelope = new JTSEnvelope2D(CommonCRS.WGS84.normalizedGeographic());
         return this.getFeatureEnvelope(this.kml.getAbstractFeature(), envelope);
     }
 
@@ -115,7 +115,7 @@ public class KmlMapLayer extends AbstractMapLayer {
                             new JTSEnvelope2D(
                             latLonBox.getWest(), latLonBox.getEast(),
                             latLonBox.getSouth(), latLonBox.getNorth(),
-                            DefaultGeographicCRS.WGS84));
+                            CommonCRS.WGS84.normalizedGeographic()));
                 }
             }
         }
@@ -133,7 +133,7 @@ public class KmlMapLayer extends AbstractMapLayer {
 
         if (geometry instanceof Geometry) {
             envelope.expandToInclude(new JTSEnvelope2D(((Geometry) geometry).getEnvelopeInternal(),
-                    DefaultGeographicCRS.WGS84));
+                    CommonCRS.WGS84.normalizedGeographic()));
         } else if (geometry instanceof MultiGeometry) {
             for (AbstractGeometry geom : ((MultiGeometry) geometry).getGeometries()) {
                 envelope = this.getAbstractGeometryEnvelope(geom, envelope);

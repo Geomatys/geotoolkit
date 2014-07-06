@@ -52,11 +52,12 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.image.io.metadata.ReferencingBuilder;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
-import org.geotoolkit.referencing.cs.DefaultCartesianCS;
-import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;
-import org.geotoolkit.referencing.cs.DefaultEllipsoidalCS;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.referencing.cs.DefaultCoordinateSystemAxis;
+import org.apache.sis.referencing.cs.DefaultCartesianCS;
+import org.geotoolkit.referencing.cs.PredefinedCS;
 import org.geotoolkit.referencing.crs.DefaultProjectedCRS;
+import org.apache.sis.referencing.crs.DefaultGeographicCRS;
 import org.apache.sis.referencing.datum.DefaultEllipsoid;
 import org.apache.sis.referencing.datum.DefaultGeodeticDatum;
 import org.geotoolkit.referencing.CRS;
@@ -93,10 +94,11 @@ import org.opengis.util.NoSuchIdentifierException;
 import org.opengis.referencing.operation.MathTransformFactory;
 import org.opengis.referencing.cs.CSFactory;
 import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.operation.Conversion;
 import org.opengis.referencing.crs.ProjectedCRS;
 
-import org.apache.sis.referencing.CommonCRS;
+import org.opengis.referencing.cs.CartesianCS;
 import static org.geotoolkit.metadata.geotiff.GeoTiffConstants.*;
 import static org.geotoolkit.metadata.geotiff.GeoTiffMetaDataReader.*;
 
@@ -317,9 +319,9 @@ final class GeoTiffCRSReader {
                     // Create a user-defined GCRS using the provided angular
                     // unit.
                     // //
-                    gcs = new DefaultGeographicCRS(IdentifiedObjects.getName(gcs, new DefaultCitation("EPSG")),
+                    gcs = new DefaultGeographicCRS(name(IdentifiedObjects.getName(gcs, new DefaultCitation("EPSG"))),
                             (GeodeticDatum) gcs.getDatum(),
-                            DefaultEllipsoidalCS.GEODETIC_2D.usingUnit(angularUnit));
+                            PredefinedCS.usingUnit(PredefinedCS.GEODETIC_2D, angularUnit));
                 }
             } catch (FactoryException ex) {
                 throw new IOException(ex);
@@ -376,7 +378,7 @@ final class GeoTiffCRSReader {
         // make the user defined GCS from all the components...
         props.put("name", name);
         return crsFactory.createGeographicCRS(props, datum,
-                DefaultEllipsoidalCS.GEODETIC_2D.usingUnit(angularUnit));
+                PredefinedCS.usingUnit(PredefinedCS.GEODETIC_2D, angularUnit));
     }
 
     /**
@@ -494,9 +496,9 @@ final class GeoTiffCRSReader {
         //
         // ///
         if (projUserDefined) {
-            DefaultCartesianCS cs = DefaultCartesianCS.PROJECTED;
+            CartesianCS cs = PredefinedCS.PROJECTED;
             if(linearUnit != null && !linearUnit.equals(SI.METRE)){
-                cs = cs.usingUnit(linearUnit);
+                cs = PredefinedCS.usingUnit(cs, linearUnit);
             }
 
             return this.factories.getCRSFactory().createProjectedCRS(
@@ -507,11 +509,11 @@ final class GeoTiffCRSReader {
         if (linearUnit != null && !linearUnit.equals(SI.METRE)) {
             return factories.getCRSFactory().createProjectedCRS(Collections.singletonMap(
                     "name", projectedCrsName), gcs, projection,
-                    DefaultCartesianCS.PROJECTED.usingUnit(linearUnit));
+                    PredefinedCS.usingUnit(PredefinedCS.PROJECTED, linearUnit));
         }
         return factories.getCRSFactory().createProjectedCRS(Collections.singletonMap("name",
                 projectedCrsName), gcs, projection,
-                DefaultCartesianCS.PROJECTED);
+                PredefinedCS.PROJECTED);
     }
 
 
@@ -1009,9 +1011,9 @@ final class GeoTiffCRSReader {
                     // Create a user-defined GCRS using the provided angular
                     // unit.
                     // //
-                    gcs = new DefaultGeographicCRS(IdentifiedObjects.getName(gcs, new DefaultCitation("EPSG")),
+                    gcs = new DefaultGeographicCRS(name(IdentifiedObjects.getName(gcs, new DefaultCitation("EPSG"))),
                             (GeodeticDatum) gcs.getDatum(),
-                            DefaultEllipsoidalCS.GEODETIC_2D.usingUnit(angularUnit));
+                            PredefinedCS.usingUnit(PredefinedCS.GEODETIC_2D, angularUnit));
                 }
             } catch (FactoryException fe) {
                 throw new IOException(fe);
@@ -1041,11 +1043,10 @@ final class GeoTiffCRSReader {
                     "Error when trying to create a PCS using this linear UoM "
                     + linearUnit.toString());
         }
-        return new DefaultCartesianCS(Vocabulary.formatInternational(
-                Vocabulary.Keys.PROJECTED).toString(),
-                new DefaultCoordinateSystemAxis(Vocabulary.formatInternational(Vocabulary.Keys.EASTING), "E",
+        return new DefaultCartesianCS(name(Vocabulary.formatInternational(Vocabulary.Keys.PROJECTED).toString()),
+                new DefaultCoordinateSystemAxis(name(Vocabulary.formatInternational(Vocabulary.Keys.EASTING)), "E",
                 AxisDirection.EAST, linearUnit),
-                new DefaultCoordinateSystemAxis(Vocabulary.formatInternational(Vocabulary.Keys.NORTHING), "N",
+                new DefaultCoordinateSystemAxis(name(Vocabulary.formatInternational(Vocabulary.Keys.NORTHING)), "N",
                 AxisDirection.NORTH, linearUnit));
     }
 
@@ -1292,4 +1293,7 @@ final class GeoTiffCRSReader {
         return desc.getName().getCode();
     }
 
+    private static Map<String,?> name(final CharSequence name) {
+        return Collections.singletonMap(IdentifiedObject.NAME_KEY, name);
+    }
 }

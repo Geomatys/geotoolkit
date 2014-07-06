@@ -44,7 +44,7 @@ import org.geotoolkit.factory.FactoryNotFoundException;
 import org.geotoolkit.geometry.Envelopes;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.AbstractIdentifiedObject;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.geotoolkit.referencing.crs.PredefinedCRS;
 import org.apache.sis.referencing.crs.DefaultTemporalCRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.geotoolkit.referencing.operation.TransformPathNotFoundException;
@@ -58,6 +58,7 @@ import org.geotoolkit.internal.TemporalUtilities;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.io.wkt.FormattableObject;
+import org.apache.sis.referencing.CommonCRS;
 
 import static org.geotoolkit.internal.InternalUtilities.isPoleToPole;
 import static org.apache.sis.metadata.iso.ISOMetadata.LOGGER;
@@ -152,8 +153,8 @@ public final class ServicesForMetadata extends ReferencingServices implements Ch
         if (crs != null) {
             final GeographicCRS standardCRS = CRSUtilities.getStandardGeographicCRS2D(crs);
             if (!startsWith(crs, standardCRS) &&
-                !startsWith(crs, DefaultGeographicCRS.WGS84) &&
-                !startsWith(crs, DefaultGeographicCRS.WGS84_3D))
+                !startsWith(crs, CommonCRS.WGS84.normalizedGeographic()) &&
+                !startsWith(crs, PredefinedCRS.WGS84_3D))
             {
                 final CoordinateOperationFactory factory = getFactory();
                 final CoordinateOperation operation;

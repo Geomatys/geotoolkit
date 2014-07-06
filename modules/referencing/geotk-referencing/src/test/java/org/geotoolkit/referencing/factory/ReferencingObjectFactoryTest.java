@@ -38,8 +38,7 @@ import org.opengis.util.GenericName;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 
-import org.geotoolkit.referencing.cs.DefaultCartesianCS;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.geotoolkit.referencing.cs.PredefinedCS;
 import org.geotoolkit.referencing.operation.DefiningConversion;
 import org.apache.sis.referencing.operation.transform.AbstractMathTransform;
 import org.apache.sis.referencing.IdentifiedObjects;
@@ -238,9 +237,9 @@ public final strictfp class ReferencingObjectFactoryTest extends ReferencingTest
              * Creates a ProjectedCRS from the map projection.
              */
             final ProjectedCRS projCRS = crsFactory.createProjectedCRS(dummyName,
-                    DefaultGeographicCRS.WGS84,
+                    CommonCRS.WGS84.normalizedGeographic(),
                     new DefiningConversion(dummyName, method, mt),
-                    DefaultCartesianCS.PROJECTED);
+                    PredefinedCS.PROJECTED);
             final Conversion conversion = projCRS.getConversionFromBase();
             assertSame(classification, mt, conversion.getMathTransform());
             final OperationMethod projMethod = conversion.getMethod();

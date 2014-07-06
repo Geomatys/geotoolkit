@@ -34,7 +34,7 @@ import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.calculated.CalculatedLineStringAttribute;
 import org.geotoolkit.feature.calculated.CalculatedMultiLineStringAttribute;
 import org.apache.sis.geometry.ImmutableEnvelope;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.CommonCRS;
 
 import org.geotoolkit.feature.ComplexAttribute;
 import org.geotoolkit.feature.Feature;
@@ -60,7 +60,7 @@ public final class GPXModelConstants {
 
     private static final FeatureFactory FF = FeatureFactory.LENIENT;
 
-    public static final CoordinateReferenceSystem GPX_CRS = DefaultGeographicCRS.WGS84;
+    public static final CoordinateReferenceSystem GPX_CRS = CommonCRS.WGS84.normalizedGeographic();
     public static final String GPX_NAMESPACE = "http://www.topografix.com";
     public static final String GPX_NAMESPACE_V11 = "http://www.topografix.com/GPX/1/1";
     public static final String GPX_NAMESPACE_V10 = "http://www.topografix.com/GPX/1/0";
@@ -288,7 +288,7 @@ public final class GPXModelConstants {
      * @return Immutable envelope in WGS84 with the given extents.
      */
     public static Envelope createEnvelope(final double xmin, final double xmax, final double ymin, final double ymax){
-        return new ImmutableEnvelope(new double[] {xmin, ymin}, new double[] {xmax, ymax}, DefaultGeographicCRS.WGS84);
+        return new ImmutableEnvelope(new double[] {xmin, ymin}, new double[] {xmax, ymax}, CommonCRS.WGS84.normalizedGeographic());
     }
 
     public static Feature createWayPoint(final int index, final Point geometry, final Double ele, final Date time,

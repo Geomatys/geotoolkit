@@ -41,12 +41,12 @@ import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.apache.sis.referencing.CRS;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
-import org.geotoolkit.referencing.cs.DefaultCartesianCS;
+import org.geotoolkit.referencing.cs.PredefinedCS;
 import org.geotoolkit.referencing.cs.DiscreteCoordinateSystemAxis;
 import org.geotoolkit.referencing.operation.DefiningConversion;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
+import org.apache.sis.referencing.CommonCRS;
 import ucar.ma2.Array;
 import ucar.nc2.Dimension;
 import ucar.ma2.Index2D;
@@ -167,8 +167,8 @@ public final class IrregularGridConverter {
                         // Use WGS84 ellipsoid even if the projection use spherical formulas.
                         // This is the same than what Google do, but this is not right...
                         return replace(crsFactory.createProjectedCRS(singletonMap(NAME_KEY, "ROM"),
-                                DefaultGeographicCRS.WGS84, new DefiningConversion("ROM", p),
-                                DefaultCartesianCS.PROJECTED));
+                                CommonCRS.WGS84.normalizedGeographic(), new DefiningConversion("ROM", p),
+                                PredefinedCS.PROJECTED));
                     }
                 }
             }

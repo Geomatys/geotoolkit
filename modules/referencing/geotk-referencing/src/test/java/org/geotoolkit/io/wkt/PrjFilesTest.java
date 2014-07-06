@@ -20,9 +20,9 @@ package org.geotoolkit.io.wkt;
 import java.io.*;
 import org.junit.*;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.apache.sis.referencing.CommonCRS;
 
 import static org.geotoolkit.referencing.Assert.*;
-import static org.geotoolkit.referencing.crs.DefaultGeographicCRS.WGS84;
 
 
 /**
@@ -37,7 +37,7 @@ public final strictfp class PrjFilesTest {
     /**
      * The {@code WGS84} CRS as WKT on a single line.
      */
-    private static final String WKT = "GEOGCS[\"WGS84(DD)\", " +
+    private static final String WKT = "GEOGCS[\"WGS 84\", " +
             "DATUM[\"World Geodetic System 1984\", SPHEROID[\"WGS 84\", 6378137.0, 298.257223563]], " +
             "PRIMEM[\"Greenwich\", 0.0], UNIT[\"degree\", 0.017453292519943295], " +
             "AXIS[\"Longitude\", EAST], AXIS[\"Latitude\", NORTH]]\n";
@@ -51,7 +51,7 @@ public final strictfp class PrjFilesTest {
     public void testRead() throws IOException {
         final StringReader in = new StringReader(WKT);
         final CoordinateReferenceSystem crs = PrjFiles.read(new BufferedReader(in), true);
-        assertEqualsIgnoreMetadata(WGS84, crs, false);
+        assertEqualsIgnoreMetadata(CommonCRS.WGS84.normalizedGeographic(), crs, false);
     }
 
     /**
@@ -62,7 +62,7 @@ public final strictfp class PrjFilesTest {
     @Test
     public void testWrite() throws IOException {
         final StringWriter out = new StringWriter();
-        PrjFiles.write(WGS84, out);
+        PrjFiles.write(CommonCRS.WGS84.normalizedGeographic(), out);
         out.close();
         assertEquals(WKT, out.toString());
     }

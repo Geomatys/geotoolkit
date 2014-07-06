@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive;
 
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.CommonCRS;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.PositionFactory;
 import org.opengis.geometry.primitive.Point;
@@ -24,10 +24,11 @@ import org.opengis.geometry.primitive.Point;
 import junit.framework.TestCase;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.isoonjts.spatialschema.JTSPositionFactory;
+import org.geotoolkit.referencing.crs.PredefinedCRS;
 
 /**
  * @author gdavis
- * 
+ *
  * @module pending
  */
 public class PointImplTest extends TestCase {
@@ -40,7 +41,7 @@ public class PointImplTest extends TestCase {
 	}
 
 	public void testNewPointHere() {
-		DirectPosition here = new GeneralDirectPosition(DefaultGeographicCRS.WGS84);
+		DirectPosition here = new GeneralDirectPosition(CommonCRS.WGS84.normalizedGeographic());
 		here.setOrdinate(0, 48.44);
 		here.setOrdinate(1, -123.37); // 48.44,-123.37
 
@@ -54,7 +55,7 @@ public class PointImplTest extends TestCase {
 
 	public void testNewFactoryPointHere() {
 		PositionFactory gFact = new JTSPositionFactory(
-				DefaultGeographicCRS.WGS84);
+				CommonCRS.WGS84.normalizedGeographic());
 		double[] ords = { 48.44, -123.37 };
 		DirectPosition here = gFact.createDirectPosition(ords);
 
@@ -85,14 +86,14 @@ public class PointImplTest extends TestCase {
 //		} catch (Exception expected) {
 //		}
 //		// let's provide a CRS now and confirm everything works
-//		container.registerComponentInstance(DefaultGeographicCRS.WGS84_3D);
+//		container.registerComponentInstance(PredefinedCRS.WGS84_3D);
 //
 //		PositionFactory positionFactory =
 //			(PositionFactory) container.getComponentInstanceOfType(PositionFactory.class);
 //
-//		assertSame(DefaultGeographicCRS.WGS84_3D, positionFactory.getCoordinateReferenceSystem());
+//		assertSame(PredefinedCRS.WGS84_3D, positionFactory.getCoordinateReferenceSystem());
 	}
-	
+
 //	/**
 //	 * Now that we understand containers let's start testing stuff ...
 //	 * @param crs
@@ -108,9 +109,9 @@ public class PointImplTest extends TestCase {
 //
 //		return container;
 //	}
-	
+
 //	public void testWSG84Point(){
-//		PicoContainer c = container( DefaultGeographicCRS.WGS84 );
+//		PicoContainer c = container( CommonCRS.WGS84.normalizedGeographic() );
 //
 //		// Do actually test stuff
 //
@@ -126,13 +127,13 @@ public class PointImplTest extends TestCase {
 //		assertEquals(here, point.getPosition());
 //		assertEquals(here.hashCode(), point.getPosition().hashCode());
 //	}
-	
+
 	public void testWSG843DPoint(){
-        
-		// Do actually test stuff		
+
+		// Do actually test stuff
 		double[] ords = { 48.44, -123.37, 0.0 };
-		PositionFactory factory = new JTSPositionFactory(DefaultGeographicCRS.WGS84_3D);
-		
+		PositionFactory factory = new JTSPositionFactory(PredefinedCRS.WGS84_3D);
+
 		assertNotNull(factory);
 		DirectPosition here = factory.createDirectPosition(ords);
 		Point point = new JTSPoint(here);
@@ -142,5 +143,5 @@ public class PointImplTest extends TestCase {
 		assertEquals(here, point.getDirectPosition());
 		assertEquals(here.hashCode(), point.getDirectPosition().hashCode());
 	}
-	
+
 }

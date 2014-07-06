@@ -10,7 +10,7 @@ import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.osmtms.OSMTileMapClient;
 import org.geotoolkit.pending.demo.Demos;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.StyleConstants;
@@ -33,7 +33,7 @@ public class WMTSClientDemo {
     }
 
     public static MapContext createContext() throws Exception{
-        final MapContext context = MapBuilder.createContext(DefaultGeographicCRS.WGS84);
+        final MapContext context = MapBuilder.createContext(CommonCRS.WGS84.normalizedGeographic());
 
         final WebMapTileClient server = new WebMapTileClient(
                 new URL("http://localhost:8080/constellation/WS/wmts/test"),

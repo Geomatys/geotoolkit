@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.coverage;
 
+import java.util.Collections;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
@@ -31,7 +32,7 @@ import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.feature.type.DefaultName;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
+import org.apache.sis.referencing.crs.DefaultCompoundCRS;
 
 import static org.junit.Assert.*;
 import org.junit.Test;
@@ -76,7 +77,7 @@ public abstract class PyramidalModelStoreNDTest {
         store = createStore();
         final CoordinateReferenceSystem horizontal = CRS.decode("EPSG:4326",true);
         final CoordinateReferenceSystem vertical = CommonCRS.Vertical.ELLIPSOIDAL.crs();
-        crs = new DefaultCompoundCRS("3dcrs", horizontal,vertical);
+        crs = new DefaultCompoundCRS(Collections.singletonMap(DefaultCompoundCRS.NAME_KEY, "3dcrs"), horizontal,vertical);
 
         final DefaultName name = new DefaultName("test");
         ref = (PyramidalCoverageReference) store.create(name);

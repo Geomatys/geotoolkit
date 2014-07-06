@@ -32,7 +32,7 @@ import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.process.AbstractProcess;
 import org.geotoolkit.process.vector.VectorProcessUtils;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.CommonCRS;
 
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.Property;
@@ -276,7 +276,7 @@ public class UnionProcess extends AbstractProcess {
 
         //use WGS84 CRS if geometryCRS is null
         if (geometryCRS == null) {
-            geometryCRS = DefaultGeographicCRS.WGS84;
+            geometryCRS = CommonCRS.WGS84.normalizedGeographic();
         }
 
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();

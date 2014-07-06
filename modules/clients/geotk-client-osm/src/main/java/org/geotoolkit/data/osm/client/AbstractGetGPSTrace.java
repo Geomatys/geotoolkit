@@ -18,7 +18,7 @@ package org.geotoolkit.data.osm.client;
 
 import org.geotoolkit.client.AbstractRequest;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.CommonCRS;
 
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.operation.TransformException;
@@ -85,7 +85,7 @@ public abstract class AbstractGetGPSTrace extends AbstractRequest implements Get
 
         final Envelope geoEnv;
         try {
-            geoEnv = CRS.transform(envelope, DefaultGeographicCRS.WGS84);
+            geoEnv = CRS.transform(envelope, CommonCRS.WGS84.normalizedGeographic());
         } catch (TransformException ex) {
             throw new IllegalArgumentException("Could not reproject given envelope to OSM projection", ex);
         }

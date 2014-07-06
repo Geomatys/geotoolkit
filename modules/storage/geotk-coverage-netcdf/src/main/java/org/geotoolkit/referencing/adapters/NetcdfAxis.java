@@ -48,7 +48,7 @@ import org.apache.sis.io.wkt.Formatter;
 import org.geotoolkit.io.wkt.Formattable;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.apache.sis.referencing.NamedIdentifier;
-import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;
+import org.apache.sis.referencing.cs.DefaultCoordinateSystemAxis;
 import org.geotoolkit.resources.Errors;
 
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
@@ -454,6 +454,11 @@ public class NetcdfAxis extends NetcdfIdentifiedObject implements CoordinateSyst
      */
     @Override
     public String formatTo(final Formatter formatter) {
-        return new DefaultCoordinateSystemAxis(this).formatTo(formatter);
+        return new DefaultCoordinateSystemAxis(this) {
+            @Override
+            public String formatTo(final Formatter f) {
+                return super.formatTo(f);
+            }
+        }.formatTo(formatter);
     }
 }

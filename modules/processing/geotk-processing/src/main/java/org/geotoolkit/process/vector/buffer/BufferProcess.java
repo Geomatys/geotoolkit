@@ -27,7 +27,7 @@ import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.process.AbstractProcess;
 import org.geotoolkit.process.vector.VectorProcessUtils;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.CommonCRS;
 
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.Property;
@@ -105,7 +105,7 @@ public class BufferProcess extends AbstractProcess {
             originalCRS = JTS.findCoordinateReferenceSystem(geom);
         }
 
-        final GeographicCRS longLatCRS = DefaultGeographicCRS.WGS84;
+        final GeographicCRS longLatCRS = CommonCRS.WGS84.normalizedGeographic();
         final MathTransform mtToLongLatCRS = CRS.findMathTransform(originalCRS, longLatCRS, lenient);
 
         final Feature resultFeature = FeatureUtilities.defaultFeature(newType, oldFeature.getIdentifier().getID());

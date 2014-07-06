@@ -25,7 +25,7 @@ import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.internal.sql.table.CatalogTestBase;
 import org.geotoolkit.internal.sql.table.ConfigurationKey;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.CommonCRS;
 
 import org.apache.sis.test.DependsOn;
 import org.junit.*;
@@ -82,7 +82,7 @@ public final strictfp class LayerCoverageWriterTest extends CatalogTestBase {
     private static GridCoverage2D createCoverage() {
         final GridCoverageBuilder builder = new GridCoverageBuilder();
         builder.setRenderedImage(new BufferedImage(12, 8, BufferedImage.BITMASK));
-        builder.setCoordinateReferenceSystem(DefaultGeographicCRS.WGS84);
+        builder.setCoordinateReferenceSystem(CommonCRS.WGS84.normalizedGeographic());
         builder.setEnvelope(-18, -6, 18, 6);
         return builder.getGridCoverage2D();
     }

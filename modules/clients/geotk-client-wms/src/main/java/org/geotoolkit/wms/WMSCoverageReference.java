@@ -37,7 +37,6 @@ import org.geotoolkit.coverage.AbstractCoverageReference;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
-import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.feature.type.DefaultName;
 import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.geometry.GeneralDirectPosition;
@@ -46,8 +45,8 @@ import org.apache.sis.internal.referencing.AxisDirections;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.ReferencingUtilities;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
-import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;
+import org.apache.sis.referencing.CommonCRS;
+import org.geotoolkit.referencing.cs.Axes;
 import org.apache.sis.storage.DataStoreException;
 import static org.apache.sis.util.ArgumentChecks.*;
 import org.geotoolkit.util.StringUtilities;
@@ -102,7 +101,7 @@ public class WMSCoverageReference extends AbstractCoverageReference{
     private static final CoordinateReferenceSystem EPSG_4326;
     //TODO : we should use the envelope provided by the wms capabilities
     private static final Envelope MAXEXTEND_ENV = new Envelope2D(
-            DefaultGeographicCRS.WGS84, -180, -90, 360, 180);
+            CommonCRS.WGS84.normalizedGeographic(), -180, -90, 360, 180);
     static {
         CoordinateReferenceSystem crs = null;
         try {
@@ -526,10 +525,10 @@ public class WMSCoverageReference extends AbstractCoverageReference{
                 crs2D = EPSG_4326;
             }
 
-            if ((server.getVersion() == WMSVersion.v111) && (CRS.equalsIgnoreMetadata(crs2D, DefaultGeographicCRS.WGS84))) {
+            if ((server.getVersion() == WMSVersion.v111) && (CRS.equalsIgnoreMetadata(crs2D, CommonCRS.WGS84.normalizedGeographic()))) {
                 //in case we are asking for a WMS in 1.1.0 and CRS:84
                 //we must change the crs to 4326 but with CRS:84 coordinate
-                final GeneralEnvelope trsEnv = new GeneralEnvelope(ReferencingUtilities.transform2DCRS(env, DefaultGeographicCRS.WGS84));
+                final GeneralEnvelope trsEnv = new GeneralEnvelope(ReferencingUtilities.transform2DCRS(env, CommonCRS.WGS84.normalizedGeographic()));
                 env.setEnvelope(trsEnv);
                 final CoordinateReferenceSystem fakeCrs = ReferencingUtilities.change2DComponent(crs, EPSG_4326);
                 trsEnv.setCoordinateReferenceSystem(fakeCrs);
@@ -550,7 +549,7 @@ public class WMSCoverageReference extends AbstractCoverageReference{
 
         }else{
 
-            if ((server.getVersion() == WMSVersion.v111) && (CRS.equalsIgnoreMetadata(crs2D, DefaultGeographicCRS.WGS84))) {
+            if ((server.getVersion() == WMSVersion.v111) && (CRS.equalsIgnoreMetadata(crs2D, CommonCRS.WGS84.normalizedGeographic()))) {
                 //in case we are asking for a WMS in 1.1.0 and CRS:84
                 //we must change the crs to 4326 but with CRS:84 coordinate
                 final GeneralEnvelope trsEnv = new GeneralEnvelope(env);
@@ -619,7 +618,7 @@ public class WMSCoverageReference extends AbstractCoverageReference{
         //we loose the vertical and temporale crs in the process, must be fixed
         //check CRS84 politic---------------------------------------------------
         if (crs84Politic != CRS84Politic.STRICT) {
-            if (CRS.equalsIgnoreMetadata(crs2D, DefaultGeographicCRS.WGS84)) {
+            if (CRS.equalsIgnoreMetadata(crs2D, CommonCRS.WGS84.normalizedGeographic())) {
 
                 switch (crs84Politic) {
                     case CONVERT_TO_EPSG4326:
@@ -638,7 +637,7 @@ public class WMSCoverageReference extends AbstractCoverageReference{
                     case CONVERT_TO_CRS84:
                         env = CRS.transform(env, crs2D);
                         env = new GeneralEnvelope(env);
-                        ((GeneralEnvelope) env).setCoordinateReferenceSystem(DefaultGeographicCRS.WGS84);
+                        ((GeneralEnvelope) env).setCoordinateReferenceSystem(CommonCRS.WGS84.normalizedGeographic());
                         break;
                 }
             }
@@ -646,8 +645,7 @@ public class WMSCoverageReference extends AbstractCoverageReference{
 
         if(matchCapabilitiesDates){
             final CoordinateReferenceSystem crs = env.getCoordinateReferenceSystem();
-            final int index = dimensionColinearWith(crs.getCoordinateSystem(),
-                    DefaultCoordinateSystemAxis.TIME);
+            final int index = dimensionColinearWith(crs.getCoordinateSystem(), Axes.TIME);
             if(index >= 0){
                 //there is a temporal axis
                 final double median = env.getMedian(index);

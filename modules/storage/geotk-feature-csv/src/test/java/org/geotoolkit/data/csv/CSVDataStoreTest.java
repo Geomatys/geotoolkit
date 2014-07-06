@@ -30,7 +30,7 @@ import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.HintsPending;
 import org.geotoolkit.feature.FeatureTypeBuilder;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.CommonCRS;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -85,7 +85,7 @@ public class CSVDataStoreTest {
         ftb.add("integerProp", Integer.class);
         ftb.add("doubleProp", Double.class);
         ftb.add("stringProp", String.class);
-        ftb.add("geometryProp", Geometry.class, DefaultGeographicCRS.WGS84);
+        ftb.add("geometryProp", Geometry.class, CommonCRS.WGS84.normalizedGeographic());
         SimpleFeatureType sft = ftb.buildSimpleFeatureType();
         ds.createFeatureType(sft.getName(), sft);
         Name name = ds.getNames().iterator().next();

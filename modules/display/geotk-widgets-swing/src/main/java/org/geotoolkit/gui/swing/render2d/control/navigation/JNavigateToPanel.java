@@ -31,7 +31,7 @@ import org.geotoolkit.gui.swing.render2d.JMap2D;
 import org.geotoolkit.gui.swing.render2d.decoration.AbstractMapDecoration;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.gui.swing.util.SwingUtilities;
 
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -46,7 +46,7 @@ import org.openide.util.Exceptions;
  */
 public class JNavigateToPanel extends javax.swing.JPanel {
 
-    private CoordinateReferenceSystem navCRS = DefaultGeographicCRS.WGS84;
+    private CoordinateReferenceSystem navCRS = CommonCRS.WGS84.normalizedGeographic();
     private JMap2D map = null;
 
     public JNavigateToPanel() {

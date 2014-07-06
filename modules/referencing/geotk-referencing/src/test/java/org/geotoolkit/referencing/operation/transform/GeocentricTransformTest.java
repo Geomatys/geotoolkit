@@ -31,8 +31,7 @@ import org.opengis.referencing.operation.NoninvertibleTransformException;
 
 import org.apache.sis.geometry.DirectPosition2D;
 import org.apache.sis.geometry.GeneralDirectPosition;
-import org.geotoolkit.referencing.crs.DefaultGeocentricCRS;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.geotoolkit.referencing.crs.PredefinedCRS;
 import org.apache.sis.referencing.datum.BursaWolfParameters;
 import org.apache.sis.referencing.datum.DefaultEllipsoid;
 
@@ -168,8 +167,8 @@ public final strictfp class GeocentricTransformTest extends TransformTestBase {
          * Gets the math transform from WGS84 to a geocentric transform.
          */
         final Ellipsoid                 ellipsoid = CommonCRS.WGS84.ellipsoid();
-        final CoordinateReferenceSystem sourceCRS = DefaultGeographicCRS.WGS84_3D;
-        final CoordinateReferenceSystem targetCRS = DefaultGeocentricCRS.CARTESIAN;
+        final CoordinateReferenceSystem sourceCRS = PredefinedCRS.WGS84_3D;
+        final CoordinateReferenceSystem targetCRS = PredefinedCRS.GEOCENTRIC;
         final CoordinateOperation       operation = opFactory.createOperation(sourceCRS, targetCRS);
         transform = operation.getMathTransform();
         final int dimension = transform.getSourceDimensions();

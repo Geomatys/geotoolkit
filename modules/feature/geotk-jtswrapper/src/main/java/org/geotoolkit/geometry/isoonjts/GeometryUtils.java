@@ -30,7 +30,7 @@ import javax.measure.unit.Unit;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSGeometryFactory;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.JTSPrimitiveFactory;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.util.logging.Logging;
 
 import org.opengis.util.FactoryException;
@@ -109,7 +109,7 @@ public final class GeometryUtils {
 
         if (unit.equals(NonSI.DEGREE_ANGLE)) {
             try {
-                envelope = CRS.transform(envelope, DefaultGeographicCRS.WGS84);
+                envelope = CRS.transform(envelope, CommonCRS.WGS84.normalizedGeographic());
             } catch (TransformException ex) {
                 LOGGER.severe("unable to reproject the envelope:" + ex.getMessage());
             }

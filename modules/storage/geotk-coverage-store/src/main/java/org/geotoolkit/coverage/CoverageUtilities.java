@@ -30,7 +30,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.referencing.CRS;
 import org.geotoolkit.referencing.ReferencingUtilities;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.util.ImageIOUtilities;
 import org.opengis.coverage.SampleDimensionType;
 import org.opengis.geometry.DirectPosition;
@@ -94,7 +94,7 @@ public final class CoverageUtilities {
         final Envelope crsBound1 = org.geotoolkit.referencing.CRS.getEnvelope(crs2D);
         double ratio = Double.NEGATIVE_INFINITY;
         // envelope with crs geographic.
-        final GeneralEnvelope intersection = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
+        final GeneralEnvelope intersection = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
         final List<Pyramid> results = new ArrayList<Pyramid>();
         if (crsBound1 != null) {
             final GeneralEnvelope crsBound = new GeneralEnvelope(crsBound1);

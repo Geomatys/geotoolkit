@@ -46,7 +46,7 @@ import org.geotoolkit.data.shapefile.ShapefileFeatureStoreFactory;
 import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.gui.swing.crschooser.JCRSChooser;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.gui.swing.util.SwingUtilities;
 
 import org.jdesktop.swingx.JXTable;
@@ -65,7 +65,7 @@ public class ShapeCreationTool extends JPanel {
 
     private final ShapeAttModel model = new ShapeAttModel();
     private String geotype = "Point";
-    private CoordinateReferenceSystem crs = DefaultGeographicCRS.WGS84;
+    private CoordinateReferenceSystem crs = CommonCRS.WGS84.normalizedGeographic();
     private File file = new File("default.shp");
 
     /**

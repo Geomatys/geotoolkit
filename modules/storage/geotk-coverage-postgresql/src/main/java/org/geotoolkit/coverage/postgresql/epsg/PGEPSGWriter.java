@@ -22,13 +22,14 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
 import java.util.TimeZone;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 import javax.sql.DataSource;
 import org.geotoolkit.coverage.postgresql.PGCoverageStore;
-import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
+import org.apache.sis.referencing.crs.DefaultCompoundCRS;
 import org.geotoolkit.referencing.factory.epsg.ThreadedEpsgFactory;
 import org.opengis.referencing.crs.CompoundCRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -152,7 +153,8 @@ public class PGEPSGWriter implements EPSGWriter {
                 for(int i=1;i<parts.size();i++){
                     toSplit[i-1] = parts.get(i);
                 }
-                final CompoundCRS secondPart = new DefaultCompoundCRS("Split-"+candidate.getName().getCode(), toSplit);
+                final CompoundCRS secondPart = new DefaultCompoundCRS(
+                        Collections.singletonMap(CompoundCRS.NAME_KEY, "Split-" + candidate.getName().getCode()), toSplit);
                 cmpd_vertcrs_code = getOrCreateCoordinateReferenceSystem(secondPart);
             }
 

@@ -18,7 +18,7 @@ package org.geotoolkit.map;
 
 import org.geotoolkit.display.shape.XRectangle2D;
 import org.apache.sis.geometry.Envelope2D;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.style.MutableStyle;
 import org.opengis.geometry.Envelope;
 
@@ -37,7 +37,7 @@ public class EmptyMapLayer extends AbstractMapLayer{
 
     @Override
     public Envelope getBounds() {
-        return new Envelope2D(DefaultGeographicCRS.WGS84, XRectangle2D.INFINITY);
+        return new Envelope2D(CommonCRS.WGS84.normalizedGeographic(), XRectangle2D.INFINITY);
     }
 
 }

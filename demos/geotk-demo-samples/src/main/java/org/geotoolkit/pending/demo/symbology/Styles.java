@@ -28,7 +28,7 @@ import org.geotoolkit.map.ElevationModel;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.sld.DefaultSLDFactory;
 import org.geotoolkit.sld.MutableSLDFactory;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
@@ -679,7 +679,7 @@ public class Styles {
     //////////////////////////////////////////////////////////////////////
 
     public static MapContext createWorldContext(MutableStyle style) throws DataStoreException{
-        MapContext context = MapBuilder.createContext(DefaultGeographicCRS.WGS84);
+        MapContext context = MapBuilder.createContext(CommonCRS.WGS84.normalizedGeographic());
         context.setName("demo context");
         context.setDescription(SF.description("demo context", ""));
 
@@ -705,7 +705,7 @@ public class Styles {
     }
 
     public static MapContext createPolygonContext(MutableStyle style) throws DataStoreException{
-        MapContext context = MapBuilder.createContext(DefaultGeographicCRS.WGS84);
+        MapContext context = MapBuilder.createContext(CommonCRS.WGS84.normalizedGeographic());
         context.setName("demo context");
         context.setDescription(SF.description("demo context", ""));
 
@@ -731,7 +731,7 @@ public class Styles {
     }
 
     public static MapContext createRasterContext(MutableStyle style) throws CoverageStoreException{
-        MapContext context = MapBuilder.createContext(DefaultGeographicCRS.WGS84);
+        MapContext context = MapBuilder.createContext(CommonCRS.WGS84.normalizedGeographic());
         context.setName("demo context");
         context.setDescription(SF.description("demo context", ""));
 

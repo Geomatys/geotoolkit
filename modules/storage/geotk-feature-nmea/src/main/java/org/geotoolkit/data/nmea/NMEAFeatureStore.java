@@ -39,7 +39,7 @@ import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.type.DefaultName;
 import org.geotoolkit.feature.FeatureTypeBuilder;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.geotoolkit.feature.type.FeatureType;
@@ -71,7 +71,7 @@ public class NMEAFeatureStore extends AbstractFeatureStore {
     static {
         final FeatureTypeBuilder builder = new FeatureTypeBuilder();
         builder.setName(TYPE_NAME);
-        builder.add(GEOM_NAME, Point.class, DefaultGeographicCRS.WGS84);
+        builder.add(GEOM_NAME, Point.class, CommonCRS.WGS84.normalizedGeographic());
         builder.setDefaultGeometry(GEOM_NAME);
         builder.add(ALT_NAME, Double.class);
         builder.add(DEPTH_NAME, Double.class);

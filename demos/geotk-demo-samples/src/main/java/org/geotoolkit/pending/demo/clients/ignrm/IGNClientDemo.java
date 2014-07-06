@@ -10,7 +10,7 @@ import org.geotoolkit.ignrm.TokenClientSecurity;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.pending.demo.Demos;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.security.ClientSecurityStack;
 import org.geotoolkit.security.RefererClientSecurity;
@@ -48,7 +48,7 @@ public class IGNClientDemo {
     }
  
     public static MapContext createIGNContext(final String key) throws Exception{
-        final MapContext context = MapBuilder.createContext(DefaultGeographicCRS.WGS84);
+        final MapContext context = MapBuilder.createContext(CommonCRS.WGS84.normalizedGeographic());
 
         final ClientSecurity refererInfo = new RefererClientSecurity("http://localhost/");
         

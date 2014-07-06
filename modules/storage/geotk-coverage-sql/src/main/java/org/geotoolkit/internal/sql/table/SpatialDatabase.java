@@ -39,7 +39,7 @@ import org.opengis.referencing.operation.MathTransformFactory;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.apache.sis.metadata.iso.extent.Extents;
 import org.apache.sis.referencing.crs.DefaultCompoundCRS;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.geotoolkit.referencing.crs.PredefinedCRS;
 import org.apache.sis.referencing.crs.DefaultTemporalCRS;
 import org.apache.sis.referencing.CRS;
 import org.geotoolkit.referencing.IdentifiedObjects;
@@ -177,7 +177,7 @@ public class SpatialDatabase extends Database {
         this.horizontalCRS  = CommonCRS.WGS84.normalizedGeographic();
         this.verticalCRS    = CommonCRS.Vertical.ELLIPSOIDAL.crs();
         this.temporalCRS    = DefaultTemporalCRS.castOrCopy(temporalCRS);
-        this.spatialCRS     = DefaultGeographicCRS.WGS84_3D;
+        this.spatialCRS     = PredefinedCRS.WGS84_3D;
         spatioTemporalCRS   = createSpatioTemporalCRS(spatialCRS,    temporalCRS, true);
         horizTemporalCRS    = createSpatioTemporalCRS(horizontalCRS, temporalCRS, true);
         vertTemporalCRS     = createSpatioTemporalCRS(verticalCRS,   temporalCRS, true);

@@ -35,7 +35,7 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.HintsPending;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.parameter.ParametersExt;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.CommonCRS;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -102,7 +102,7 @@ public class MIFFeatureStoreTest {
         ftb.add("integerProp", Integer.class);
         ftb.add("doubleProp", Double.class);
         ftb.add("stringProp", String.class);
-        ftb.add("geometryProp", Point.class, DefaultGeographicCRS.WGS84);
+        ftb.add("geometryProp", Point.class, CommonCRS.WGS84.normalizedGeographic());
         final SimpleFeatureType featureType = ftb.buildSimpleFeatureType();
         
         ds.createFeatureType(featureType.getName(), featureType);

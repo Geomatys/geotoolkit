@@ -20,7 +20,7 @@ import java.awt.Dimension;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.geometry.Envelope2D;
 import org.geotoolkit.map.AbstractMapLayer;
 import org.geotoolkit.style.DefaultStyleFactory;
@@ -39,7 +39,7 @@ import org.opengis.geometry.Envelope;
 public class WCSMapLayer extends AbstractMapLayer {
 
     //TODO : we should use the envelope provided by the wms capabilities
-    private static final Envelope MAXEXTEND_ENV = new Envelope2D(DefaultGeographicCRS.WGS84, -180, -90, 360, 180);
+    private static final Envelope MAXEXTEND_ENV = new Envelope2D(CommonCRS.WGS84.normalizedGeographic(), -180, -90, 360, 180);
 
     /**
      * The web coverage server to request.

@@ -20,7 +20,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import javax.imageio.ImageIO;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.CommonCRS;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.ReferenceIdentifier;
 
@@ -64,7 +64,7 @@ public class StringUtilities {
      * @param envelope The envelope to return the CRS code.
      */
     public static String toCrsCode(final Envelope envelope) {
-        if (envelope.getCoordinateReferenceSystem().equals(DefaultGeographicCRS.WGS84)) {
+        if (envelope.getCoordinateReferenceSystem().equals(CommonCRS.WGS84.normalizedGeographic())) {
             return "EPSG:4326";
         }
         final Set<ReferenceIdentifier> identifiers = envelope.getCoordinateReferenceSystem().getIdentifiers();

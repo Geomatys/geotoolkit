@@ -43,7 +43,7 @@ import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.report.FeatureCollectionDataSource;
 import org.geotoolkit.report.JasperReportService;
 import org.geotoolkit.report.graphic.chart.ChartDef;
@@ -123,7 +123,7 @@ public class ReportDemo {
                 try{
                     //add a custom decoration on our map.
                     final GridTemplate gridTemplate = new DefaultGridTemplate(
-                        DefaultGeographicCRS.WGS84,
+                        CommonCRS.WGS84.normalizedGeographic(),
                         new BasicStroke(1.5f),
                         new Color(120,120,120,200),
 

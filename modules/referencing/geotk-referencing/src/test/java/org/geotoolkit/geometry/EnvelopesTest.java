@@ -17,9 +17,12 @@
  */
 package org.geotoolkit.geometry;
 
+import java.util.Collections;
+import java.util.Map;
 import java.awt.geom.Rectangle2D;
 
 import org.opengis.geometry.Envelope;
+import org.opengis.referencing.IdentifiedObject;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.crs.GeographicCRS;
 import org.opengis.referencing.crs.ProjectedCRS;
@@ -36,13 +39,12 @@ import org.geotoolkit.display.shape.XRectangle2D;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.CRS_Test;
-import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.crs.DefaultCompoundCRS;
 import org.geotoolkit.referencing.operation.DefaultConversion;
 import org.geotoolkit.referencing.operation.transform.MathTransformNo2D;
-
 import org.apache.sis.referencing.CommonCRS;
 import org.junit.*;
+
 import static org.geotoolkit.test.Assert.*;
 
 
@@ -62,6 +64,10 @@ public final strictfp class EnvelopesTest extends ReferencingTestBase {
      * to be almost identical.
      */
     private static final double EPS = 1E-10;
+
+    private static Map<String,String> name(final String name) {
+        return Collections.singletonMap(IdentifiedObject.NAME_KEY, name);
+    }
 
     /**
      * Temporary workaround to be removed in Apache SIS.
@@ -199,8 +205,8 @@ public final strictfp class EnvelopesTest extends ReferencingTestBase {
      */
     @Test
     public void testTransformation4to2D() throws TransformException {
-        final CoordinateReferenceSystem crs = new DefaultCompoundCRS("4D CRS",
-                DefaultGeographicCRS.WGS84,
+        final CoordinateReferenceSystem crs = new DefaultCompoundCRS(name("4D CRS"),
+                CommonCRS.WGS84.normalizedGeographic(),
                 CommonCRS.Vertical.ELLIPSOIDAL.crs(),
                 CommonCRS.Temporal.JAVA.crs());
 
@@ -212,7 +218,7 @@ public final strictfp class EnvelopesTest extends ReferencingTestBase {
         assertFalse(env.isAllNaN());
         assertTrue(env.isEmpty());
         final CoordinateReferenceSystem crs2D = CRSUtilities.getCRS2D(crs);
-        assertSame(DefaultGeographicCRS.WGS84, crs2D);
+        assertSame(CommonCRS.WGS84.normalizedGeographic(), crs2D);
         final Envelope env2D = Envelopes.transform(env, crs2D);
         /*
          * If the referencing framework has selected the CopyTransform implementation
@@ -236,7 +242,7 @@ public final strictfp class EnvelopesTest extends ReferencingTestBase {
     @Test
     public void testDatumShift() throws FactoryException, TransformException {
         CoordinateReferenceSystem sourceCRS = CRS.parseWKT(WKT.PROJCS_LAMBERT_CONIC_NTF);
-        CoordinateReferenceSystem targetCRS = DefaultGeographicCRS.WGS84;
+        CoordinateReferenceSystem targetCRS = CommonCRS.WGS84.normalizedGeographic();
         final GeneralEnvelope env = new GeneralEnvelope(sourceCRS);
         env.setRange(0, -3980814, -3113802);
         env.setRange(1,    83461,  1166891);

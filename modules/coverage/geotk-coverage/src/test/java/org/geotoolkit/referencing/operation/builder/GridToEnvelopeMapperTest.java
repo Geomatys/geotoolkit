@@ -18,16 +18,19 @@
 package org.geotoolkit.referencing.operation.builder;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Map;
 import java.awt.geom.Point2D;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
 
 import org.opengis.geometry.MismatchedDimensionException;
 
+import org.opengis.referencing.IdentifiedObject;
 import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
-import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;
-import org.geotoolkit.referencing.cs.DefaultEllipsoidalCS;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.geotoolkit.referencing.cs.Axes;
+import org.apache.sis.referencing.cs.DefaultEllipsoidalCS;
+import org.apache.sis.referencing.crs.DefaultGeographicCRS;
 import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
 import org.apache.sis.geometry.GeneralEnvelope;
 
@@ -49,6 +52,10 @@ public final strictfp class GridToEnvelopeMapperTest {
      * Tolerance factor for the comparison of floating point numbers.
      */
     private static final double EPS = 1E-10;
+
+    private static Map<String,String> name(final String name) {
+        return Collections.singletonMap(IdentifiedObject.NAME_KEY, name);
+    }
 
     /**
      * Various tests.
@@ -148,7 +155,7 @@ public final strictfp class GridToEnvelopeMapperTest {
         ///  Tests the creation when a CRS is available.
         ///
         envelope = envelope.clone();
-        envelope.setCoordinateReferenceSystem(DefaultGeographicCRS.WGS84);
+        envelope.setCoordinateReferenceSystem(CommonCRS.WGS84.normalizedGeographic());
         mapper.setEnvelope(envelope);
         assertFalse(mapper.getSwapXY());
         assertTrue (Arrays.equals(new boolean[] {false, true}, mapper.getReverseAxis()));
@@ -173,10 +180,10 @@ public final strictfp class GridToEnvelopeMapperTest {
         ///  Tests the creation with a (latitude, longitude) CRS.
         ///
         envelope = envelope.clone();
-        envelope.setCoordinateReferenceSystem(new DefaultGeographicCRS("WGS84",
-                CommonCRS.WGS84.datum(), new DefaultEllipsoidalCS("WGS84",
-                DefaultCoordinateSystemAxis.LATITUDE,
-                DefaultCoordinateSystemAxis.LONGITUDE)));
+        envelope.setCoordinateReferenceSystem(new DefaultGeographicCRS(name("WGS84"),
+                CommonCRS.WGS84.datum(), new DefaultEllipsoidalCS(name("WGS84"),
+                Axes.LATITUDE,
+                Axes.LONGITUDE)));
         mapper.setEnvelope(envelope);
         assertTrue (mapper.getSwapXY());
         assertTrue (Arrays.equals(new boolean[] {true, false}, mapper.getReverseAxis()));

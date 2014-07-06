@@ -21,7 +21,7 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.CommonCRS;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.coordinate.LineSegment;
 import org.opengis.geometry.coordinate.PointArray;
@@ -42,9 +42,9 @@ public class SurfaceImplTest extends TestCase {
     
     @Override
     protected void setUp() throws Exception {
-        postitionFactory = new JTSPositionFactory( DefaultGeographicCRS.WGS84 );
-        primitiveFactory = new JTSPrimitiveFactory( DefaultGeographicCRS.WGS84 );
-        geometryFactory = new JTSGeometryFactory( DefaultGeographicCRS.WGS84 );
+        postitionFactory = new JTSPositionFactory( CommonCRS.WGS84.normalizedGeographic() );
+        primitiveFactory = new JTSPrimitiveFactory( CommonCRS.WGS84.normalizedGeographic() );
+        geometryFactory = new JTSGeometryFactory( CommonCRS.WGS84.normalizedGeographic() );
         // TODO Auto-generated method stub
         super.setUp();
     }

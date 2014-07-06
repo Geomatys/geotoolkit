@@ -77,7 +77,6 @@ import org.geotoolkit.referencing.factory.DirectAuthorityFactory;
 import org.geotoolkit.referencing.factory.AbstractAuthorityFactory;
 import org.apache.sis.referencing.datum.BursaWolfParameters;
 import org.apache.sis.referencing.datum.DefaultGeodeticDatum;
-import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;
 import org.geotoolkit.referencing.operation.DefaultSingleOperation;
 import org.geotoolkit.referencing.operation.DefiningConversion;
 import org.geotoolkit.referencing.operation.DefaultOperationMethod;
@@ -89,6 +88,7 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.io.TableWriter;
+import org.apache.sis.referencing.cs.CoordinateSystems;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.apache.sis.util.logging.Logging;
 import org.apache.sis.util.CharSequences;
@@ -1802,8 +1802,8 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                     final String unit         = getString(result, 5, code);
                     AxisDirection direction;
                     try {
-                        direction = DefaultCoordinateSystemAxis.getDirection(orientation);
-                    } catch (NoSuchElementException exception) {
+                        direction = CoordinateSystems.parseAxisDirection(orientation);
+                    } catch (IllegalArgumentException exception) {
                         throw new FactoryException(exception.getLocalizedMessage(), exception);
                     }
                     final AxisName an = getAxisName(nameCode);

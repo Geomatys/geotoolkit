@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.CommonCRS;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -76,7 +76,7 @@ public class FeatureTest {
     public void testSimpleFeatureCreation(){
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("test");
-        ftb.add("geom", Point.class, DefaultGeographicCRS.WGS84);
+        ftb.add("geom", Point.class, CommonCRS.WGS84.normalizedGeographic());
         ftb.add("string", String.class);
         ftb.setDefaultGeometry("geom");
         final FeatureType type = ftb.buildFeatureType();
@@ -110,7 +110,7 @@ public class FeatureTest {
     public void testComplexFeatureCreation(){
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("test");
-        ftb.add("geom", Point.class, DefaultGeographicCRS.WGS84);
+        ftb.add("geom", Point.class, CommonCRS.WGS84.normalizedGeographic());
         ftb.add("string", String.class, 0,Integer.MAX_VALUE,false,null);
         ftb.setDefaultGeometry("geom");
         final FeatureType type = ftb.buildFeatureType();
@@ -145,7 +145,7 @@ public class FeatureTest {
     public void testSimpleFeatureAccess(){
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("{http://test.com}test");
-        ftb.add("{http://test.com}geom", Point.class, DefaultGeographicCRS.WGS84);
+        ftb.add("{http://test.com}geom", Point.class, CommonCRS.WGS84.normalizedGeographic());
         ftb.add("{http://test.com}att_String", String.class);
         ftb.setDefaultGeometry("geom");
         final SimpleFeatureType type = ftb.buildSimpleFeatureType();
@@ -292,7 +292,7 @@ public class FeatureTest {
     public void testComplexFeatureAccess(){
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("{http://test.com}test");
-        ftb.add("{http://test.com}geom", Point.class, DefaultGeographicCRS.WGS84);
+        ftb.add("{http://test.com}geom", Point.class, CommonCRS.WGS84.normalizedGeographic());
         ftb.add("{http://test.com}att_String", String.class, 0,Integer.MAX_VALUE,false,null);
         ftb.setDefaultGeometry("geom");
         final FeatureType type = ftb.buildFeatureType();

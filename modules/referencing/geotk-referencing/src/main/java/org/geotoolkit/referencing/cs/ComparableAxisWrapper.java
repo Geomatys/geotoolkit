@@ -60,7 +60,7 @@ final class ComparableAxisWrapper implements Comparable<ComparableAxisWrapper> {
      * Returns {@code true} if the specified direction is a compass direction.
      */
     private static boolean isCompassDirection(final AxisDirection direction) {
-        int compass = DefaultCoordinateSystemAxis.getCompassAngle(direction, AxisDirection.NORTH);
+        int compass = Axes.getCompassAngle(direction, AxisDirection.NORTH);
         return compass != Integer.MIN_VALUE;
     }
 
@@ -72,7 +72,7 @@ final class ComparableAxisWrapper implements Comparable<ComparableAxisWrapper> {
     public int compareTo(final ComparableAxisWrapper that) {
         final AxisDirection d1 = this.axis.getDirection();
         final AxisDirection d2 = that.axis.getDirection();
-        final int compass = DefaultCoordinateSystemAxis.getCompassAngle(d2, d1);
+        final int compass = Axes.getCompassAngle(d2, d1);
         if (compass != Integer.MIN_VALUE) {
             return compass;
         }

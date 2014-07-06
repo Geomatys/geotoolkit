@@ -17,6 +17,7 @@
 
 package org.geotoolkit.display2d.canvas;
 
+import java.util.Collections;
 import java.awt.Dimension;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
@@ -27,7 +28,7 @@ import org.geotoolkit.display2d.service.DefaultPortrayalService;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
-import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
+import org.apache.sis.referencing.crs.DefaultCompoundCRS;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 
 import org.junit.AfterClass;
@@ -74,7 +75,7 @@ public class J2DCanvasTest {
          assertTrue(elev == null);
 
          CoordinateReferenceSystem crs = new DefaultCompoundCRS(
-               "WGS84-4D",
+               Collections.singletonMap(DefaultCompoundCRS.NAME_KEY, "WGS84-4D"),
                CommonCRS.WGS84.normalizedGeographic(),
                CommonCRS.Vertical.ELLIPSOIDAL.crs(),
                CommonCRS.Temporal.JAVA.crs());
@@ -105,7 +106,7 @@ public class J2DCanvasTest {
      public void testCreationWith4Denvelope() throws PortrayalException{
 
          CoordinateReferenceSystem crs = new DefaultCompoundCRS(
-               "WGS84-4D",
+               Collections.singletonMap(DefaultCompoundCRS.NAME_KEY, "WGS84-4D"),
                CommonCRS.WGS84.normalizedGeographic(),
                CommonCRS.Vertical.ELLIPSOIDAL.crs(),
                CommonCRS.Temporal.JAVA.crs());

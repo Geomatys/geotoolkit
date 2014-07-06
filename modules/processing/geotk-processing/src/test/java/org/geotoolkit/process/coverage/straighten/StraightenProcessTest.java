@@ -25,7 +25,7 @@ import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.process.coverage.AbstractProcessTest;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -58,7 +58,7 @@ public class StraightenProcessTest extends AbstractProcessTest {
         gcb.setRenderedImage(matrix);
         final AffineTransform2D gridToCrs = new AffineTransform2D(1,0,0,-1,20,30);
         final GridEnvelope gridEnv = new GridEnvelope2D(0, 0, 60, 40);
-        final GridGeometry2D gridGeom = new GridGeometry2D(gridEnv, PixelOrientation.UPPER_LEFT, gridToCrs, DefaultGeographicCRS.WGS84, null);
+        final GridGeometry2D gridGeom = new GridGeometry2D(gridEnv, PixelOrientation.UPPER_LEFT, gridToCrs, CommonCRS.WGS84.normalizedGeographic(), null);
         gcb.setGridGeometry(gridGeom);
         final GridCoverage2D coverage = gcb.getGridCoverage2D();
         
@@ -96,7 +96,7 @@ public class StraightenProcessTest extends AbstractProcessTest {
         gcb.setRenderedImage(matrix);
         final AffineTransform2D gridToCrs = new AffineTransform2D(1,0,0,1,20,30);
         final GridEnvelope gridEnv = new GridEnvelope2D(0, 0, 60, 40);
-        final GridGeometry2D gridGeom = new GridGeometry2D(gridEnv, PixelOrientation.UPPER_LEFT, gridToCrs, DefaultGeographicCRS.WGS84, null);
+        final GridGeometry2D gridGeom = new GridGeometry2D(gridEnv, PixelOrientation.UPPER_LEFT, gridToCrs, CommonCRS.WGS84.normalizedGeographic(), null);
         gcb.setGridGeometry(gridGeom);
         final GridCoverage2D coverage = gcb.getGridCoverage2D();
         

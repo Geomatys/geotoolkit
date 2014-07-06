@@ -38,8 +38,6 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.Factory;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
-import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;
 import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.geotoolkit.referencing.factory.epsg.LongitudeFirstEpsgFactory;
@@ -49,6 +47,9 @@ import org.apache.sis.referencing.operation.matrix.Matrices;
 import org.apache.sis.util.Classes;
 import org.apache.sis.test.DependsOn;
 import org.geotoolkit.test.referencing.ReferencingTestBase;
+import org.apache.sis.measure.Angle;
+import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.referencing.cs.CoordinateSystems;
 
 import org.junit.*;
 import static org.junit.Assume.assumeTrue;
@@ -108,9 +109,10 @@ public final strictfp class OrderedAxisAuthorityFactoryTest extends ReferencingT
     private static double getAngle(final CoordinateReferenceSystem crs) {
         final CoordinateSystem cs = crs.getCoordinateSystem();
         assertEquals(2, cs.getDimension());
-        return DefaultCoordinateSystemAxis.getAngle(
+        final Angle angle = CoordinateSystems.angle(
                 cs.getAxis(0).getDirection(),
                 cs.getAxis(1).getDirection());
+        return (angle != null) ? angle.degrees() : Double.NaN;
     }
 
     /**
@@ -407,12 +409,12 @@ public final strictfp class OrderedAxisAuthorityFactoryTest extends ReferencingT
          */
         finder.setFullScanAllowed(false);
         assertNull("Should not find the CRS without a scan.",
-                   finder.find(DefaultGeographicCRS.WGS84));
+                   finder.find(CommonCRS.WGS84.normalizedGeographic()));
 
         finder.setFullScanAllowed(true);
-        IdentifiedObject find = finder.find(DefaultGeographicCRS.WGS84);
+        IdentifiedObject find = finder.find(CommonCRS.WGS84.normalizedGeographic());
         assertNotNull("With scan allowed, should find the CRS.", find);
-        assertEqualsIgnoreMetadata(DefaultGeographicCRS.WGS84, find, false);
+        assertEqualsIgnoreMetadata(CommonCRS.WGS84.normalizedGeographic(), find, false);
         assertEquals("Expected a right-handed CS.", +90, getAngle((CoordinateReferenceSystem) find), EPS);
         /*
          * Search a CRS using (latitude,longitude) axis order. The IdentifiedObjectFinder
@@ -440,7 +442,7 @@ public final strictfp class OrderedAxisAuthorityFactoryTest extends ReferencingT
         final CoordinateReferenceSystem crs = (CoordinateReferenceSystem) find;
         assertNotNull("Should find the CRS despite the different axis order.", find);
         assertEquals("Expected a left-handed CS.", -90, getAngle(crs), EPS);
-        assertNotDeepEquals(find, DefaultGeographicCRS.WGS84);
+        assertNotDeepEquals(find, CommonCRS.WGS84.normalizedGeographic());
         assertEqualsIgnoreMetadata(find, search,   false);
         assertEqualsIgnoreMetadata(find, standard, false);
         assertSame("Expected caching to work.", standard, find);

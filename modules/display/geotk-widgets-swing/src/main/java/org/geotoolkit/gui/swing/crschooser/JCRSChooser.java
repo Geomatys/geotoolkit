@@ -61,7 +61,7 @@ import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.ReferencingUtilities;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.util.Classes;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.style.MutableStyle;
@@ -198,7 +198,7 @@ public class JCRSChooser extends javax.swing.JDialog {
         guiMap.setHandler(new PanHandler(guiMap,false));
 
         GridTemplate gridTemplate = new DefaultGridTemplate(
-                        DefaultGeographicCRS.WGS84,
+                        CommonCRS.WGS84.normalizedGeographic(),
                         new BasicStroke(1.2f),
                         new Color(120,120,120,200),
                         new BasicStroke(1,BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 3, new float[]{5,5}, 0),

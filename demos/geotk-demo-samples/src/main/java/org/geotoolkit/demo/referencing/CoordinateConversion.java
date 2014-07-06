@@ -14,8 +14,7 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.crs.DefaultGeocentricCRS;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.geotoolkit.referencing.crs.PredefinedCRS;
 import org.apache.sis.geometry.GeneralDirectPosition;
 
 
@@ -49,8 +48,8 @@ public class CoordinateConversion {
      * @throws TransformException If an error occurred while performing the conversion.
      */
     public static void geocentricToGeographic() throws FactoryException, TransformException {
-        CoordinateReferenceSystem sourceCRS = DefaultGeocentricCRS.CARTESIAN;
-        CoordinateReferenceSystem targetCRS = DefaultGeographicCRS.WGS84_3D;
+        CoordinateReferenceSystem sourceCRS = PredefinedCRS.GEOCENTRIC;
+        CoordinateReferenceSystem targetCRS = PredefinedCRS.WGS84_3D;
         MathTransform tr = CRS.findMathTransform(sourceCRS, targetCRS);
         /*
          * From this point we can convert an arbitrary amount of coordinates using the

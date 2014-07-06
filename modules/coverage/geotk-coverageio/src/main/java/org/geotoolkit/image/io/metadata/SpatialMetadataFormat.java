@@ -1002,13 +1002,13 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
         } else if (EngineeringDatum.class.isAssignableFrom(type)) {
             object = PredefinedCRS.CARTESIAN_2D.getDatum(); // Unknown datum.
         } else if (EllipsoidalCS.class.isAssignableFrom(type)) {
-            object = DefaultEllipsoidalCS.GEODETIC_2D;
+            object = PredefinedCS.GEODETIC_2D;
         } else if (CartesianCS.class.isAssignableFrom(type)) {
-            object = DefaultCartesianCS.GENERIC_2D;
+            object = PredefinedCS.CARTESIAN_2D;
         } else if (GeographicCRS.class.isAssignableFrom(type)) {
-            object = DefaultGeographicCRS.WGS84;
+            object = CommonCRS.WGS84.normalizedGeographic();
         } else if (GeocentricCRS.class.isAssignableFrom(type)) {
-            object = DefaultGeocentricCRS.CARTESIAN;
+            object = PredefinedCRS.GEOCENTRIC;
         } else {
             object = null;
         }

@@ -89,7 +89,7 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.map.GraphicBuilder;
 import org.geotoolkit.map.MapLayer;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.display.SearchArea;
@@ -878,7 +878,7 @@ final class KMLGraphicBuilder implements GraphicBuilder<GraphicJ2D> {
             final double south = latLonBox.getSouth();
             final double west = latLonBox.getWest();
 
-            final GeneralEnvelope envelope = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
+            final GeneralEnvelope envelope = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
             envelope.setRange(0, west, east);
             envelope.setRange(1, south, north);
             final GridCoverageBuilder gcb = new GridCoverageBuilder();
@@ -974,7 +974,7 @@ final class KMLGraphicBuilder implements GraphicBuilder<GraphicJ2D> {
             com.vividsolutions.jts.geom.Geometry ls = null;
 
             try {
-                transform = context2d.getMathTransform(DefaultGeographicCRS.WGS84, context2d.getDisplayCRS());
+                transform = context2d.getMathTransform(CommonCRS.WGS84.normalizedGeographic(), context2d.getDisplayCRS());
                 ls = JTS.transform((com.vividsolutions.jts.geom.LineString) lineString, transform);
             } catch (MismatchedDimensionException ex) {
                 context2d.getMonitor().exceptionOccured(ex, Level.WARNING);
@@ -1025,7 +1025,7 @@ final class KMLGraphicBuilder implements GraphicBuilder<GraphicJ2D> {
             com.vividsolutions.jts.geom.Geometry pol = null;
 
             try {
-                transform = context2d.getMathTransform(DefaultGeographicCRS.WGS84, context2d.getDisplayCRS());
+                transform = context2d.getMathTransform(CommonCRS.WGS84.normalizedGeographic(), context2d.getDisplayCRS());
                 pol = JTS.transform((com.vividsolutions.jts.geom.Polygon) polygon, transform);
             } catch (MismatchedDimensionException ex) {
                 context2d.getMonitor().exceptionOccured(ex, Level.WARNING);
@@ -1070,7 +1070,7 @@ final class KMLGraphicBuilder implements GraphicBuilder<GraphicJ2D> {
             // MathTransform
             MathTransform transform;
             try {
-                transform = context2d.getMathTransform(DefaultGeographicCRS.WGS84, context2d.getDisplayCRS());
+                transform = context2d.getMathTransform(CommonCRS.WGS84.normalizedGeographic(), context2d.getDisplayCRS());
             } catch (FactoryException ex) {
                 context2d.getMonitor().exceptionOccured(ex, Level.WARNING);
                 return;
@@ -1114,7 +1114,7 @@ final class KMLGraphicBuilder implements GraphicBuilder<GraphicJ2D> {
             com.vividsolutions.jts.geom.Geometry lr = null;
 
             try {
-                transform = context2d.getMathTransform(DefaultGeographicCRS.WGS84, context2d.getDisplayCRS());
+                transform = context2d.getMathTransform(CommonCRS.WGS84.normalizedGeographic(), context2d.getDisplayCRS());
                 lr = JTS.transform((com.vividsolutions.jts.geom.LinearRing) linearRing, transform);
             } catch (MismatchedDimensionException ex) {
                 context2d.getMonitor().exceptionOccured(ex, Level.WARNING);
@@ -1158,7 +1158,7 @@ final class KMLGraphicBuilder implements GraphicBuilder<GraphicJ2D> {
             if (!fixedToScreen) {
                 try {
                     transform = context2d.getMathTransform(
-                            DefaultGeographicCRS.WGS84, context2d.getDisplayCRS());
+                            CommonCRS.WGS84.normalizedGeographic(), context2d.getDisplayCRS());
                 } catch (FactoryException ex) {
                     context2d.getMonitor().exceptionOccured(ex, Level.WARNING);
                     return;
@@ -1310,7 +1310,7 @@ final class KMLGraphicBuilder implements GraphicBuilder<GraphicJ2D> {
             MathTransform transform;
 
             try {
-                transform = context2d.getMathTransform(DefaultGeographicCRS.WGS84, context2d.getDisplayCRS());
+                transform = context2d.getMathTransform(CommonCRS.WGS84.normalizedGeographic(), context2d.getDisplayCRS());
             } catch (FactoryException ex) {
                 context2d.getMonitor().exceptionOccured(ex, Level.WARNING);
                 return;
@@ -1366,7 +1366,7 @@ final class KMLGraphicBuilder implements GraphicBuilder<GraphicJ2D> {
             final Graphics2D graphic = context2d.getGraphics();
 
             try {
-                transform = context2d.getMathTransform(DefaultGeographicCRS.WGS84, context2d.getDisplayCRS());
+                transform = context2d.getMathTransform(CommonCRS.WGS84.normalizedGeographic(), context2d.getDisplayCRS());
             } catch (FactoryException ex) {
                 context2d.getMonitor().exceptionOccured(ex, Level.WARNING);
                 return;

@@ -9,7 +9,7 @@
  *************************************************************************************************/
 package org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry;
 
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.CommonCRS;
 
 import java.util.Collections;
 import java.util.Iterator;
@@ -67,7 +67,7 @@ public class JTSGeometryFactory extends Factory implements GeometryFactory {
      * No argument constructor for FactorySPI
      */
     public JTSGeometryFactory(){
-        this( DefaultGeographicCRS.WGS84);
+        this( CommonCRS.WGS84.normalizedGeographic());
     }
 
     /**

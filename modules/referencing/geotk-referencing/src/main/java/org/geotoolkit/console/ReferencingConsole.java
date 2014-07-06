@@ -27,6 +27,7 @@ import org.opengis.referencing.cs.RangeMeaning;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.crs.GeodeticCRS;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.operation.CoordinateOperationFactory;
@@ -35,18 +36,17 @@ import org.opengis.referencing.operation.NoninvertibleTransformException;
 import org.geotoolkit.io.TableWriter;
 import org.apache.sis.io.wkt.Symbols;
 import org.geotoolkit.io.wkt.WKTFormat;
-import org.geotoolkit.measure.Measure;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
-import org.geotoolkit.referencing.cs.DefaultEllipsoidalCS;
-import org.geotoolkit.referencing.operation.transform.AbstractMathTransform;
+import org.geotoolkit.referencing.cs.PredefinedCS;
+import org.apache.sis.referencing.operation.transform.AbstractMathTransform;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.geotoolkit.io.ContentFormatException;
 import org.apache.sis.io.wkt.Colors;
 import org.geotoolkit.io.X364;
+import org.geotoolkit.referencing.GeodeticCalculator;
 
 
 /**
@@ -545,18 +545,19 @@ public class ReferencingConsole extends InteractiveConsole {
             table.nextColumn();
         }
         if (position2 != null) {
-            if (crs instanceof DefaultGeographicCRS) try {
-                final Measure distance;
-                distance = ((DefaultGeographicCRS) crs).distance(position1.getCoordinate(),
-                                                        position2.getCoordinate());
+            if (crs instanceof GeodeticCRS) try {
+                final GeodeticCalculator c = new GeodeticCalculator(crs);
+                c.setStartingPosition(position1);
+                c.setDestinationPosition(position2);
+                double distance = c.getOrthodromicDistance();
                 table.setAlignment(TableWriter.ALIGN_RIGHT);
-                table.write(numberFormat.format(distance.doubleValue()));
+                table.write(numberFormat.format(distance));
                 table.write("  ");
                 table.nextColumn();
-                table.write(String.valueOf(distance.getUnit()));
+                table.write(String.valueOf(((GeodeticCRS) crs).getDatum().getEllipsoid().getAxisUnit()));
                 table.setAlignment(TableWriter.ALIGN_LEFT);
                 return;
-            } catch (UnsupportedOperationException ignore) {
+            } catch (Exception ignore) {
                 /*
                  * Underlying CRS do not supports distance computation.
                  * Left the column blank.
@@ -602,9 +603,9 @@ public class ReferencingConsole extends InteractiveConsole {
                  */
                 CoordinateSystem cs = (crs != null) ? crs.getCoordinateSystem() : null;
                 if (cs == null && transform instanceof AbstractMathTransform) {
-                    final String name = ((AbstractMathTransform) transform).getName();
+                    final String name = ((AbstractMathTransform) transform).getClass().getSimpleName();
                     if (name != null && (name.contains("Molodensky") || name.contains("Molodenski"))) {
-                        cs = DefaultEllipsoidalCS.GEODETIC_3D;
+                        cs = PredefinedCS.GEODETIC_3D;
                     }
                 }
                 /*

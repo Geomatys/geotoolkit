@@ -42,7 +42,8 @@ import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.factory.FactoryRegistryException;
 import org.apache.sis.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.operation.DefiningConversion;
-import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;
+import org.geotoolkit.referencing.cs.Axes;
+import org.apache.sis.referencing.cs.DefaultCoordinateSystemAxis;
 import org.apache.sis.util.collection.BackingStoreException;
 import org.apache.sis.util.collection.WeakHashSet;
 import org.apache.sis.util.Classes;
@@ -81,8 +82,8 @@ public class TransformedAuthorityFactory extends AuthorityFactoryAdapter {
      * Axis that need to be renamed if their direction changes.
      */
     private static final DefaultCoordinateSystemAxis[] RENAMEABLE = {
-        DefaultCoordinateSystemAxis.NORTHING,   DefaultCoordinateSystemAxis.SOUTHING,
-        DefaultCoordinateSystemAxis.EASTING,    DefaultCoordinateSystemAxis.WESTING
+        Axes.NORTHING,   Axes.SOUTHING,
+        Axes.EASTING,    Axes.WESTING
     };
 
     /**

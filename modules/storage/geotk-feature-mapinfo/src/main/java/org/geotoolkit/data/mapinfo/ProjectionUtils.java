@@ -25,8 +25,8 @@ import org.apache.sis.metadata.iso.extent.DefaultGeographicBoundingBox;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.referencing.CRS;
 import org.apache.sis.referencing.IdentifiedObjects;
-import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;
-import org.geotoolkit.referencing.cs.DefaultEllipsoidalCS;
+import org.apache.sis.referencing.cs.DefaultCoordinateSystemAxis;
+import org.geotoolkit.referencing.cs.PredefinedCS;
 import org.geotoolkit.referencing.operation.DefaultMathTransformFactory;
 import org.geotoolkit.referencing.operation.provider.UniversalParameters;
 import org.opengis.geometry.DirectPosition;
@@ -284,7 +284,7 @@ public class ProjectionUtils {
         crsIdentifiers.put("authority", Citations.MAP_INFO);
 
         try {
-            baseCRS = CRS_FACTORY.createGeographicCRS(crsIdentifiers, datum, DefaultEllipsoidalCS.GEODETIC_2D);
+            baseCRS = CRS_FACTORY.createGeographicCRS(crsIdentifiers, datum, PredefinedCS.GEODETIC_2D);
         } catch (FactoryException e) {
             throw new DataStoreException("A problem has been encountered while creating base geographic CRS.", e);
         }
@@ -347,10 +347,10 @@ public class ProjectionUtils {
             properties.put("name", "MapInfoProjection");
             properties.put("authority", Citations.MAP_INFO);
 
-            DefaultCoordinateSystemAxis east =
-                    new DefaultCoordinateSystemAxis("East", "E", AxisDirection.EAST, unit);
-            DefaultCoordinateSystemAxis north =
-                    new DefaultCoordinateSystemAxis("North", "N", AxisDirection.NORTH, unit);
+            DefaultCoordinateSystemAxis east = new DefaultCoordinateSystemAxis(
+                    Collections.singletonMap(DefaultCoordinateSystemAxis.NAME_KEY, "East"), "E", AxisDirection.EAST, unit);
+            DefaultCoordinateSystemAxis north = new DefaultCoordinateSystemAxis(
+                    Collections.singletonMap(DefaultCoordinateSystemAxis.NAME_KEY, "North"), "N", AxisDirection.NORTH, unit);
             CartesianCS cs = CS_FACTORY.createCartesianCS(properties, east, north);
 
             Conversion conversion = PROJ_FACTORY.createDefiningConversion(properties, method, projParams);

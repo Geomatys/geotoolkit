@@ -48,10 +48,10 @@ import org.apache.sis.util.Classes;
 import org.apache.sis.metadata.iso.extent.Extents;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.IdentifiedObjects;
-import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
 import org.geotoolkit.referencing.crs.PredefinedCRS;
-import org.geotoolkit.referencing.cs.DefaultCartesianCS;
-import org.geotoolkit.referencing.cs.DefaultEllipsoidalCS;
+import org.geotoolkit.referencing.cs.PredefinedCS;
+import org.apache.sis.referencing.cs.DefaultCartesianCS;
+import org.apache.sis.referencing.cs.DefaultEllipsoidalCS;
 import org.apache.sis.referencing.datum.BursaWolfParameters;
 import org.apache.sis.referencing.datum.DefaultGeodeticDatum;
 import org.apache.sis.referencing.operation.matrix.Matrix4;
@@ -62,6 +62,7 @@ import org.geotoolkit.internal.referencing.VerticalDatumTypes;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.operation.matrix.MatrixSIS;
 
+import static java.util.Collections.singletonMap;
 import static java.util.Collections.singletonList;
 import static org.apache.sis.measure.Units.MILLISECOND;
 import static org.geotoolkit.referencing.CRS.equalsIgnoreMetadata;
@@ -429,7 +430,7 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
     private GeocentricCRS normalize(final GeocentricCRS crs, final GeodeticDatum datum)
             throws FactoryException
     {
-        final CartesianCS   STANDARD  = DefaultCartesianCS.GEOCENTRIC;
+        final CartesianCS   STANDARD  = PredefinedCS.GEOCENTRIC;
         final GeodeticDatum candidate = crs.getDatum();
         if (equalsIgnorePrimeMeridian(candidate, datum)) {
             if (getGreenwichLongitude(candidate.getPrimeMeridian()) ==
@@ -462,8 +463,8 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
         GeodeticDatum datum = crs.getDatum();
         final EllipsoidalCS cs = crs.getCoordinateSystem();
         final EllipsoidalCS STANDARD = (cs.getDimension() <= 2) ?
-                DefaultEllipsoidalCS.GEODETIC_2D :
-                DefaultEllipsoidalCS.GEODETIC_3D;
+                PredefinedCS.GEODETIC_2D :
+                PredefinedCS.GEODETIC_3D;
         if (forceGreenwich && getGreenwichLongitude(datum.getPrimeMeridian()) != 0) {
             datum = new TemporaryDatum(datum);
         } else if (hasStandardAxis(cs, STANDARD)) {
@@ -590,7 +591,7 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
                 if (AxisDirection.UP.equals(AxisDirections.absolute(targetCS.getAxis(k).getDirection()))) {
                     final CoordinateSystemAxis axis0 = targetCS.getAxis(k != 0 ? 0 : 1);
                     final CoordinateSystemAxis axis1 = targetCS.getAxis(k != 2 ? 2 : 1);
-                    final EllipsoidalCS step = new DefaultEllipsoidalCS("Step", axis0, axis1);
+                    final EllipsoidalCS step = new DefaultEllipsoidalCS(singletonMap(EllipsoidalCS.NAME_KEY, "Step"), axis0, axis1);
                     final Matrix reduced = swapAndScaleAxis(sourceCS, step);
                     assert reduced.getNumRow() == 3 && reduced.getNumCol() == 3 : reduced;
                     matrix = Matrices.createDiagonal(4, 3);
@@ -886,7 +887,7 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
          *     geocentric CRS with a preference for datum using Greenwich meridian -->
          *     target geographic CRS
          */
-        final CartesianCS STANDARD = DefaultCartesianCS.GEOCENTRIC;
+        final CartesianCS STANDARD = PredefinedCS.GEOCENTRIC;
         final GeocentricCRS stepCRS;
         final CRSFactory crsFactory = factories.getCRSFactory();
         if (getGreenwichLongitude(targetPM) == 0) {
@@ -1046,7 +1047,7 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
          *     standard CRS with target datum  -->
          *     target CRS
          */
-        final CartesianCS STANDARD = DefaultCartesianCS.GEOCENTRIC;
+        final CartesianCS STANDARD = PredefinedCS.GEOCENTRIC;
         final MatrixSIS matrix;
         ReferenceIdentifier identifier = DATUM_SHIFT;
         try {
@@ -1183,7 +1184,7 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
                                                       final SingleCRS   targetCRS)
             throws FactoryException
     {
-        final List<SingleCRS> sources = DefaultCompoundCRS.getSingleCRS(sourceCRS);
+        final List<SingleCRS> sources = CRS.getSingleComponents(sourceCRS);
         if (sources.size() == 1) {
             return createOperation(sources.get(0), targetCRS);
         }
@@ -1223,7 +1224,7 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
                                                       final CompoundCRS targetCRS)
             throws FactoryException
     {
-        final List<SingleCRS> targets = DefaultCompoundCRS.getSingleCRS(targetCRS);
+        final List<SingleCRS> targets = CRS.getSingleComponents(targetCRS);
         if (targets.size() == 1) {
             return createOperation(sourceCRS, targets.get(0));
         }
@@ -1252,8 +1253,8 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
                                                       final CompoundCRS targetCRS)
             throws FactoryException
     {
-        final List<SingleCRS> sources = DefaultCompoundCRS.getSingleCRS(sourceCRS);
-        final List<SingleCRS> targets = DefaultCompoundCRS.getSingleCRS(targetCRS);
+        final List<SingleCRS> sources = CRS.getSingleComponents(sourceCRS);
+        final List<SingleCRS> targets = CRS.getSingleComponents(targetCRS);
         if (targets.size() == 1) {
             return createOperation(sourceCRS, targets.get(0));
         }

@@ -43,7 +43,7 @@ import org.geotoolkit.image.io.ImageMetadataException;
 import org.geotoolkit.image.io.metadata.MetadataHelper;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.metadata.iso.spatial.PixelTranslation;
-import org.geotoolkit.referencing.cs.DefaultCartesianCS;
+import org.geotoolkit.referencing.cs.PredefinedCS;
 import org.geotoolkit.resources.Errors;
 
 import static org.geotoolkit.image.io.MultidimensionalImageStore.*;
@@ -306,7 +306,7 @@ public class IIOImageHelper {
                 cs = crs.getCoordinateSystem();
             }
             if (cs == null) {
-                cs = DefaultCartesianCS.GRID;
+                cs = PredefinedCS.GRID;
             } else {
                 final int dim = cs.getDimension();
                 if (dim < 2) {

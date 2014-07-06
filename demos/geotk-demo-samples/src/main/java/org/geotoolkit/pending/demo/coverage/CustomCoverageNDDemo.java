@@ -4,13 +4,14 @@ package org.geotoolkit.pending.demo.coverage;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import org.geotoolkit.coverage.CoverageStack;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
+import org.apache.sis.referencing.crs.DefaultCompoundCRS;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.RandomStyleBuilder;
@@ -26,7 +27,8 @@ public class CustomCoverageNDDemo {
     public static void main(String[] args) throws Exception {
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
 
-        CoordinateReferenceSystem crs = new DefaultCompoundCRS("4D crs",
+        CoordinateReferenceSystem crs = new DefaultCompoundCRS(
+                    Collections.singletonMap(DefaultCompoundCRS.NAME_KEY, "4D crs"),
                     CRS.decode("EPSG:4326"),
                     CommonCRS.Vertical.ELLIPSOIDAL.crs(),
                     CommonCRS.Temporal.JAVA.crs());

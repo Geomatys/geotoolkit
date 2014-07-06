@@ -568,7 +568,7 @@ public class CoverageStack extends AbstractCoverage {
      *     CoordinateReferenceSystem crs3D = new CompoundCRS(crs3D, timeCRS);
      *
      *     List<Coverage> coverages = new ArrayList<Coverage>();
-     *     GeneralEnvelope envelope = new GeneralEnvelope(DefaultGeographicCRS.WGS84_3D);
+     *     GeneralEnvelope envelope = new GeneralEnvelope(PredefinedCRS.WGS84_3D);
      *     envelope.setRange(0, westLongitudeBound, eastLongitudeBound);
      *     envelope.setRange(1, southLatitudeBound, northLatitudeBound);
      *     for (int i=0; i<...; i++) {

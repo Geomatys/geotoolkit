@@ -20,7 +20,7 @@ import java.awt.Dimension;
 import java.net.MalformedURLException;
 import java.net.URL;
 import org.apache.sis.geometry.GeneralDirectPosition;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
 import org.junit.Test;
 import org.opengis.referencing.operation.TransformException;
@@ -49,7 +49,7 @@ public class GetMapTest {
 
         final GetMapRequest request = ref.createGetMap();
 
-        final GeneralDirectPosition pos = new GeneralDirectPosition(DefaultGeographicCRS.WGS84);
+        final GeneralDirectPosition pos = new GeneralDirectPosition(CommonCRS.WGS84.normalizedGeographic());
         pos.setOrdinate(0, 45);
         pos.setOrdinate(1, 31);
 

@@ -36,13 +36,13 @@ import org.geotoolkit.coverage.CoverageFactoryFinder;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.apache.sis.geometry.Envelope2D;
 import org.geotoolkit.geometry.GeneralEnvelope;
+import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 
 import org.apache.sis.referencing.operation.transform.TransferFunction;
 import static java.awt.Color.decode;
 import static javax.measure.unit.SI.*;
 import static org.apache.sis.measure.NumberRange.create;
-import static org.geotoolkit.referencing.crs.DefaultGeographicCRS.WGS84;
 import static org.junit.Assert.*;
 
 
@@ -71,7 +71,7 @@ public strictfp enum SampleCoverage {
      *   Image size         :  (450 x 460) pixels
      * }
      */
-    SST(SampleImage.INDEXED, WGS84, new Rectangle(35, -41, 45, 46),
+    SST(SampleImage.INDEXED, CommonCRS.WGS84.normalizedGeographic(), new Rectangle(35, -41, 45, 46),
             new GridSampleDimension("Measure", new Category[] {
                 new Category("Coast line", decode("#000000"), create(  0, true,   0, true)),
                 new Category("Cloud",      decode("#C3C3C3"), create(  1, true,   9, true)),
@@ -97,7 +97,7 @@ public strictfp enum SampleCoverage {
      *   Image size         :  (300 x 175) pixels
      * }
      */
-    CHL(SampleImage.INDEXED_LOGARITHMIC, WGS84, new Rectangle(-7, 34, 19, 11),
+    CHL(SampleImage.INDEXED_LOGARITHMIC, CommonCRS.WGS84.normalizedGeographic(), new Rectangle(-7, 34, 19, 11),
             new GridSampleDimension("Measure", new Category[] {
                 new Category("Land",    decode("#000000"), create(255, true, 255, true)),
                 new Category("No data", decode("#FFFFFF"), create(  0, true,   0, true)),
@@ -112,7 +112,7 @@ public strictfp enum SampleCoverage {
      * is pretty similar to the code we would have if we were just setting the values
      * in a matrix.
      */
-    FLOAT(null, WGS84, new Rectangle(35, -41, 45, 46)) {
+    FLOAT(null, CommonCRS.WGS84.normalizedGeographic(), new Rectangle(35, -41, 45, 46)) {
         @Override final WritableRaster raster() {
             final int width  = 500;
             final int height = 500;

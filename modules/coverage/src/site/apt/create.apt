@@ -77,7 +77,7 @@ double westmost  =  2.0; //Degrees
 double soutmost  = 51.0;
 double eastmost  =  3.0;
 double northmost = 52.0;
-Envelope env = new Envelope2D(DefaultGeographicCRS.WGS84,
+Envelope env = new Envelope2D(CommonCRS.WGS84.normalizedGeographic(),
                               westmost,
                               soutmost,
                               eastmost-westmost,

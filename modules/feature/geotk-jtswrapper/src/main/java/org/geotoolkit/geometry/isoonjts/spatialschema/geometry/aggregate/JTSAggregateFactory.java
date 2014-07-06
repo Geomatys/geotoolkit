@@ -19,7 +19,7 @@ package org.geotoolkit.geometry.isoonjts.spatialschema.geometry.aggregate;
 import java.util.Set;
 
 import org.geotoolkit.factory.Factory;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.CommonCRS;
 
 import org.opengis.geometry.aggregate.AggregateFactory;
 import org.opengis.geometry.aggregate.MultiCurve;
@@ -40,7 +40,7 @@ public class JTSAggregateFactory extends Factory implements AggregateFactory {
     private final CoordinateReferenceSystem crs;
 
     public JTSAggregateFactory(){
-        this( DefaultGeographicCRS.WGS84);
+        this( CommonCRS.WGS84.normalizedGeographic());
     }
 
     public JTSAggregateFactory( final CoordinateReferenceSystem crs ) {

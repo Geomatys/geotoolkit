@@ -8,7 +8,7 @@ import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.pending.demo.Demos;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.feature.type.FeatureType;
 
@@ -25,7 +25,7 @@ public class MemoryFeatureStoreDemo {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("http://geomatys.com", "test");
         ftb.add("type", String.class);
-        ftb.add("the_geom", Point.class, DefaultGeographicCRS.WGS84);
+        ftb.add("the_geom", Point.class, CommonCRS.WGS84.normalizedGeographic());
         final FeatureType type = ftb.buildFeatureType();
         store.createFeatureType(type.getName(), type);
 

@@ -12,7 +12,7 @@ import org.geotoolkit.map.MapContext;
 import org.geotoolkit.osmtms.OSMTMSClientFactory;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.pending.demo.Demos;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.style.DefaultDescription;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
@@ -35,7 +35,7 @@ public class OSMTMSClientDemo {
     }
 
     public static MapContext createOSMTMSContext() throws Exception{
-        final MapContext context = MapBuilder.createContext(DefaultGeographicCRS.WGS84);
+        final MapContext context = MapBuilder.createContext(CommonCRS.WGS84.normalizedGeographic());
 
         final ParameterValueGroup params = OSMTMSClientFactory.PARAMETERS.createValue();
         Parameters.getOrCreate(OSMTMSClientFactory.URL, params).setValue(new URL("http://tile.openstreetmap.org"));

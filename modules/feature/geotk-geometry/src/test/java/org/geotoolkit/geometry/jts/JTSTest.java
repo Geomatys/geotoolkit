@@ -27,7 +27,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.geotoolkit.factory.HintsPending;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.CommonCRS;
 import org.junit.Test;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -47,7 +47,7 @@ public class JTSTest {
 
         //empty user data test
         final Point geom = GF.createPoint(new Coordinate(50, 27));
-        final CoordinateReferenceSystem crs = DefaultGeographicCRS.WGS84;
+        final CoordinateReferenceSystem crs = CommonCRS.WGS84.normalizedGeographic();
 
         JTS.setCRS(geom, crs);
         final Object userData = geom.getUserData();
@@ -56,7 +56,7 @@ public class JTSTest {
 
         //user data contained another CRS
         final Point geom2 = GF.createPoint(new Coordinate(50, 27));
-        geom2.setUserData(DefaultGeographicCRS.SPHERE);
+        geom2.setUserData(CommonCRS.SPHERE.normalizedGeographic());
 
         JTS.setCRS(geom2, crs);
         final Object userData2 = geom2.getUserData();
@@ -66,7 +66,7 @@ public class JTSTest {
         //user data contained a Map with another CRS
         final Point geom3 = GF.createPoint(new Coordinate(50, 27));
         Map<String,CoordinateReferenceSystem> dataMap = new HashMap<String,CoordinateReferenceSystem>();
-        dataMap.put(HintsPending.JTS_GEOMETRY_CRS, DefaultGeographicCRS.SPHERE);
+        dataMap.put(HintsPending.JTS_GEOMETRY_CRS, CommonCRS.SPHERE.normalizedGeographic());
         geom3.setUserData(dataMap);
 
         JTS.setCRS(geom3, crs);

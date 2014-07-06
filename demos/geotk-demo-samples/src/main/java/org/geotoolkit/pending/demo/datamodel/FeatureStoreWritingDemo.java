@@ -19,7 +19,7 @@ import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.filter.identity.DefaultFeatureId;
 import org.geotoolkit.pending.demo.Demos;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.simple.SimpleFeatureType;
@@ -42,7 +42,7 @@ public class FeatureStoreWritingDemo {
         ftb.setName("Fish");
         ftb.add("name", String.class);
         ftb.add("length", Integer.class);
-        ftb.add("position", Point.class, DefaultGeographicCRS.WGS84);
+        ftb.add("position", Point.class, CommonCRS.WGS84.normalizedGeographic());
         ftb.setDefaultGeometry("position");
         final SimpleFeatureType type = ftb.buildSimpleFeatureType();
 

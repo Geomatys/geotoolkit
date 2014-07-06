@@ -28,13 +28,13 @@ import java.awt.image.IndexColorModel;
 import org.opengis.referencing.crs.ProjectedCRS;
 
 import org.apache.sis.test.DependsOn;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.internal.image.ScaledColorSpace;
 import org.geotoolkit.internal.sql.table.CatalogTestBase;
+import org.apache.sis.referencing.CommonCRS;
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -94,7 +94,7 @@ public final strictfp class GridCoverageLoaderTest extends CatalogTestBase {
      * at the {@value LayerTableTest#SAMPLE_TIME} date.
      */
     static void checkTemperatureCoverage(final GridCoverage2D coverage) {
-        assertEqualsApproximatively(DefaultGeographicCRS.WGS84, coverage.getCoordinateReferenceSystem2D());
+        assertEqualsApproximatively(CommonCRS.WGS84.normalizedGeographic(), coverage.getCoordinateReferenceSystem2D());
         /*
          * Check the SampleDimensions.
          */
@@ -248,7 +248,7 @@ public final strictfp class GridCoverageLoaderTest extends CatalogTestBase {
      * Doesn't check the image size, since it depends on the requested envelope.
      */
     static void checkBluemarbleCoverage(final GridCoverage2D coverage) {
-        assertEqualsApproximatively(DefaultGeographicCRS.WGS84, coverage.getCoordinateReferenceSystem2D());
+        assertEqualsApproximatively(CommonCRS.WGS84.normalizedGeographic(), coverage.getCoordinateReferenceSystem2D());
         /*
          * Check the SampleDimensions.
          */
@@ -285,7 +285,7 @@ public final strictfp class GridCoverageLoaderTest extends CatalogTestBase {
      * Doesn't check the image size, since it depends on the requested envelope.
      */
     static void checkMars2DCoverage(final GridCoverage2D coverage) {
-        assertEqualsApproximatively(DefaultGeographicCRS.WGS84, coverage.getCoordinateReferenceSystem2D());
+        assertEqualsApproximatively(CommonCRS.WGS84.normalizedGeographic(), coverage.getCoordinateReferenceSystem2D());
         /*
          * Check the SampleDimensions.
          */

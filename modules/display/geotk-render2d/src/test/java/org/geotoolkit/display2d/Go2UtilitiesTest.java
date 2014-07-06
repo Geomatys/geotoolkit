@@ -17,6 +17,7 @@
 
 package org.geotoolkit.display2d;
 
+import java.util.Collections;
 import java.awt.Dimension;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
@@ -36,7 +37,7 @@ import org.opengis.referencing.operation.TransformException;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.ReferencingUtilities;
-import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
+import org.apache.sis.referencing.crs.DefaultCompoundCRS;
 
 import org.apache.sis.referencing.CommonCRS;
 import static org.junit.Assert.*;
@@ -146,7 +147,8 @@ public class Go2UtilitiesTest {
 
 
         //test on a compoundCRS
-        CoordinateReferenceSystem comp = new DefaultCompoundCRS("4D crs",
+        CoordinateReferenceSystem comp = new DefaultCompoundCRS(
+                    Collections.singletonMap(DefaultCompoundCRS.NAME_KEY, "4D crs"),
                     epsg4326,
                     CommonCRS.Vertical.ELLIPSOIDAL.crs(),
                     CommonCRS.Temporal.JAVA.crs());

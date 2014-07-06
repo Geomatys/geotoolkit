@@ -40,7 +40,7 @@ import org.geotoolkit.gui.swing.render2d.decoration.ColorDecoration;
 import org.geotoolkit.gui.swing.render2d.decoration.DefaultInformationDecoration;
 import org.geotoolkit.gui.swing.render2d.decoration.InformationDecoration;
 import org.geotoolkit.gui.swing.render2d.decoration.MapDecoration;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.CommonCRS;
 import static org.apache.sis.util.ArgumentChecks.*;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.display.canvas.AbstractCanvas;
@@ -97,10 +97,10 @@ public class JMap2D extends JPanel{
         setOpaque(true);
 
         if(statefull){
-            canvas = new J2DCanvasSwing(DefaultGeographicCRS.WGS84);
+            canvas = new J2DCanvasSwing(CommonCRS.WGS84.normalizedGeographic());
             geoComponent = ((J2DCanvasSwing)canvas).getComponent();
         }else{
-            geoComponent = new SwingVolatileGeoComponent(DefaultGeographicCRS.WGS84);
+            geoComponent = new SwingVolatileGeoComponent(CommonCRS.WGS84.normalizedGeographic());
             canvas = ((SwingVolatileGeoComponent)geoComponent).getCanvas();
         }
         canvas.setMonitor(new NeverFailMonitor());
@@ -138,7 +138,7 @@ public class JMap2D extends JPanel{
         });
 
         try {
-            canvas.setObjectiveCRS(DefaultGeographicCRS.WGS84);
+            canvas.setObjectiveCRS(CommonCRS.WGS84.normalizedGeographic());
         } catch (TransformException ex) {
             LOGGER.log(Level.WARNING, null, ex);
         }

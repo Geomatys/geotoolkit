@@ -52,11 +52,12 @@ import org.apache.sis.measure.Latitude;
 import org.apache.sis.measure.Longitude;
 import org.apache.sis.measure.Units;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.geometry.TransformedDirectPosition;
 import org.apache.sis.internal.referencing.AxisDirections;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.resources.Errors;
+import org.apache.sis.referencing.CommonCRS;
 
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 
@@ -197,7 +198,7 @@ public class CoordinateFormat extends Format {
      * @param locale The locale for formatting coordinates and numbers.
      */
     public CoordinateFormat(final Locale locale) {
-        this(locale, DefaultGeographicCRS.WGS84);
+        this(locale, CommonCRS.WGS84.normalizedGeographic());
     }
 
     /**

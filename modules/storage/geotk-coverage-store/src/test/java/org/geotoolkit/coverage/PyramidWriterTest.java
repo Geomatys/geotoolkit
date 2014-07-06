@@ -30,20 +30,19 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.io.CoverageReader;
-import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriteParam;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.coverage.memory.MPCoverageStore;
 import org.geotoolkit.feature.type.DefaultName;
 import org.geotoolkit.feature.type.Name;
 import org.geotoolkit.referencing.CRS;
-import static org.geotoolkit.referencing.crs.DefaultGeographicCRS.*;
 import static org.junit.Assert.*;
 import org.junit.Test;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.util.FactoryException;
+import org.apache.sis.referencing.CommonCRS;
 
 /**
  * Test pyramid coverage writer.
@@ -53,7 +52,7 @@ import org.opengis.util.FactoryException;
 public class PyramidWriterTest {
 
     private static final Name NAME = new DefaultName("test");
-    private static final CoordinateReferenceSystem CRS84 = WGS84;
+    private static final CoordinateReferenceSystem CRS84 = CommonCRS.WGS84.normalizedGeographic();
     private static final CoordinateReferenceSystem EPSG4326;
     private static final GeneralDirectPosition UL84;
     private static final GeneralDirectPosition UL4326;

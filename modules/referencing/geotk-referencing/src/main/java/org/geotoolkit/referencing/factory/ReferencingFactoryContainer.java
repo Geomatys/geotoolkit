@@ -44,10 +44,9 @@ import org.geotoolkit.internal.referencing.VerticalDatumTypes;
 import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.metadata.iso.ImmutableIdentifier;
 import org.geotoolkit.referencing.operation.DefiningConversion;
-import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
-import org.geotoolkit.referencing.cs.AbstractCS;
-import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;
+import org.geotoolkit.referencing.crs.PredefinedCRS;
+import org.geotoolkit.referencing.cs.PredefinedCS;
+import org.geotoolkit.referencing.cs.Axes;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.referencing.CommonCRS;
@@ -325,7 +324,7 @@ public class ReferencingFactoryContainer extends ReferencingFactory {
         if (crs instanceof GeographicCRS || crs instanceof ProjectedCRS) {
             switch (crs.getCoordinateSystem().getDimension()) {
                 case 2: {
-                    CoordinateSystemAxis vertical = DefaultCoordinateSystemAxis.ELLIPSOIDAL_HEIGHT;
+                    CoordinateSystemAxis vertical = Axes.ELLIPSOIDAL_HEIGHT;
                     final Unit<Length> units = ((GeodeticDatum) crs.getDatum()).getEllipsoid().getAxisUnit();
                     if (!SI.METRE.equals(units)) {
                         vertical = getCSFactory().createCoordinateSystemAxis(
@@ -376,7 +375,7 @@ public class ReferencingFactoryContainer extends ReferencingFactory {
          * Get a copy of the components list and iterate in reverse order,
          * because we may remove elements from that list while iterating.
          */
-        final List<SingleCRS> components = new ArrayList<>(DefaultCompoundCRS.getSingleCRS(crs));
+        final List<SingleCRS> components = new ArrayList<>(org.apache.sis.referencing.CRS.getSingleComponents(crs));
         final int count = components.size();
         for (int i=count; --i>=0;) {
             final SingleCRS component = components.get(i);
@@ -513,7 +512,7 @@ public class ReferencingFactoryContainer extends ReferencingFactory {
         Exception failure;
         try {
             final CoordinateSystem sourceCS = crs.getCoordinateSystem();
-            final CoordinateSystem targetCS = AbstractCS.standard(sourceCS);
+            final CoordinateSystem targetCS = PredefinedCS.standard(sourceCS);
             if (inverse) {
                 return CoordinateSystems.swapAndScaleAxes(targetCS, sourceCS);
             } else {
@@ -603,11 +602,11 @@ search:     for (final CoordinateReferenceSystem source : sources) {
         /*
          * Special case for common hard-coded constants.
          */
-        if (CRS.equalsIgnoreMetadata(crs, DefaultGeographicCRS.WGS84_3D)) {
+        if (CRS.equalsIgnoreMetadata(crs, PredefinedCRS.WGS84_3D)) {
             switch (dimensions.length) {
                 case 2: {
                     if (dimensions[0] == 0 && dimensions[1] == 1) {
-                        return DefaultGeographicCRS.WGS84;
+                        return CommonCRS.WGS84.normalizedGeographic();
                     }
                     break;
                 }

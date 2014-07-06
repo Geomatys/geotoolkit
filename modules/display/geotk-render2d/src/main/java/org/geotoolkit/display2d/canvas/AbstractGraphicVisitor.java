@@ -20,6 +20,7 @@ import java.awt.geom.Rectangle2D;
 import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.logging.Level;
@@ -43,7 +44,7 @@ import org.geotoolkit.display2d.primitive.ProjectedFeature;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.apache.sis.referencing.CRS;
-import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
+import org.apache.sis.referencing.crs.DefaultCompoundCRS;
 import org.opengis.coverage.CannotEvaluateException;
 import org.opengis.display.primitive.Graphic;
 import org.opengis.geometry.Envelope;
@@ -144,7 +145,8 @@ public abstract class AbstractGraphicVisitor implements GraphicVisitor {
                         Logging.unexpectedException(AbstractGraphicVisitor.class, "getCoverageValues", e);
                         day = 1;
                     }
-                    objCRS = new DefaultCompoundCRS(objCRS.getName().getCode() + " + time", objCRS, temporalCRS);
+                    objCRS = new DefaultCompoundCRS(Collections.singletonMap(
+                            DefaultCompoundCRS.NAME_KEY, objCRS.getName().getCode() + " + time"), objCRS, temporalCRS);
                     final GeneralEnvelope merged = new GeneralEnvelope(objCRS);
                     merged.subEnvelope(0, objBounds.getDimension()).setEnvelope(objBounds);
                     merged.setRange(objBounds.getDimension(), lastTime - day, lastTime);

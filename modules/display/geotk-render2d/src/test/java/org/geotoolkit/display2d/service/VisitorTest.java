@@ -44,7 +44,7 @@ import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
 
@@ -85,7 +85,7 @@ public class VisitorTest {
 
         final FeatureTypeBuilder sftb = new FeatureTypeBuilder();
         sftb.setName("testingIntersect");
-        sftb.add("geom", Polygon.class, DefaultGeographicCRS.WGS84);
+        sftb.add("geom", Polygon.class, CommonCRS.WGS84.normalizedGeographic());
         sftb.setDefaultGeometry("geom");
         final SimpleFeatureType sft = sftb.buildSimpleFeatureType();
 
@@ -110,10 +110,10 @@ public class VisitorTest {
         MapLayer layer = MapBuilder.createFeatureLayer(collection, sf.style(sf.polygonSymbolizer()));
         layer.setSelectable(true);
         layer.setVisible(true);
-        MapContext context = MapBuilder.createContext(DefaultGeographicCRS.WGS84);
+        MapContext context = MapBuilder.createContext(CommonCRS.WGS84.normalizedGeographic());
         context.layers().add(layer);
 
-        final GeneralEnvelope env = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
+        final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
         env.setRange(0, -180, 180);
         env.setRange(1, -90, 90);
         final Dimension dim = new Dimension(360, 180);
@@ -150,17 +150,17 @@ public class VisitorTest {
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
         gcb.setName("coverage");
         gcb.setRenderedImage(data);
-        gcb.setCoordinateReferenceSystem(DefaultGeographicCRS.WGS84);
+        gcb.setCoordinateReferenceSystem(CommonCRS.WGS84.normalizedGeographic());
         final AffineTransform trs = new AffineTransform(1,0,0,-1,-180,90);
         gcb.setGridToCRS(trs);
 
 
         final CoverageMapLayer cml = MapBuilder.createCoverageLayer(gcb.build());
         cml.setSelectable(true);
-        MapContext context = MapBuilder.createContext(DefaultGeographicCRS.WGS84);
+        MapContext context = MapBuilder.createContext(CommonCRS.WGS84.normalizedGeographic());
         context.layers().add(cml);
 
-        final GeneralEnvelope env = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
+        final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
         env.setRange(0, -180, 180);
         env.setRange(1, -90, 90);
         final Dimension dim = new Dimension(360, 180);

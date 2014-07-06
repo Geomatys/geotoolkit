@@ -17,13 +17,6 @@
  */
 
 /**
- * {@linkplain org.geotoolkit.referencing.cs.AbstractCS Coordinate system} implementations.
- * An explanation for this package is provided in the {@linkplain org.opengis.referencing.cs OpenGIS&reg; javadoc}.
- *
- * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.20
- *
- * @since 2.0
- * @module
+ * Complement to Apache SIS Coordinate Systems.
  */
 package org.geotoolkit.referencing.cs;

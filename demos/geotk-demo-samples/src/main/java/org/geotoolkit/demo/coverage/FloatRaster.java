@@ -21,7 +21,7 @@ import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageFactory;
 import org.geotoolkit.coverage.CoverageFactoryFinder;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.CommonCRS;
 
 
 /**
@@ -54,7 +54,7 @@ public class FloatRaster {
          * The display may be slow, since the translation from floating-point values to some
          * color (or grayscale) is performed on the fly everytime the image is rendered.
          */
-        CoordinateReferenceSystem crs = DefaultGeographicCRS.WGS84;
+        CoordinateReferenceSystem crs = CommonCRS.WGS84.normalizedGeographic();
         Envelope envelope = new Envelope2D(crs, 0, 0, 30, 30);
         GridCoverageFactory factory = CoverageFactoryFinder.getGridCoverageFactory(null);
         GridCoverage gc = factory.create("My grayscale coverage", raster, envelope);

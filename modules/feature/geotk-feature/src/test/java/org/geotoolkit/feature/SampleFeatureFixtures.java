@@ -21,7 +21,7 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
 
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.CommonCRS;
 
 import org.geotoolkit.feature.simple.SimpleFeature;
 import org.geotoolkit.feature.simple.SimpleFeatureType;
@@ -206,7 +206,7 @@ public class SampleFeatureFixtures {
         FeatureTypeBuilder tb = new FeatureTypeBuilder();
         tb.setName(new DefaultName("test"));
 
-        tb.add(new DefaultName("testGeometry"), Point.class, DefaultGeographicCRS.WGS84);
+        tb.add(new DefaultName("testGeometry"), Point.class, CommonCRS.WGS84.normalizedGeographic());
         tb.add(new DefaultName("testBoolean"), Boolean.class);
         tb.add(new DefaultName("testCharacter"), Character.class);
         tb.add(new DefaultName("testByte"), Byte.class);

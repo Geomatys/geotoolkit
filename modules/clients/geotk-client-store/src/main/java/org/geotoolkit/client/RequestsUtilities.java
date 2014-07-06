@@ -25,18 +25,19 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 import javax.imageio.ImageIO;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.CRS;
-import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.crs.DefaultCompoundCRS;
 import org.apache.sis.referencing.crs.DefaultTemporalCRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.temporal.object.TemporalUtilities;
 import org.opengis.geometry.Envelope;
+import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.ReferenceIdentifier;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.TemporalCRS;
@@ -119,7 +120,7 @@ public final class RequestsUtilities {
      * @param envelope The envelope to return the CRS code.
      */
     public static String toCrsCode(final Envelope envelope) {
-        if (org.geotoolkit.referencing.CRS.equalsIgnoreMetadata(envelope.getCoordinateReferenceSystem(), DefaultGeographicCRS.WGS84)) {
+        if (org.geotoolkit.referencing.CRS.equalsIgnoreMetadata(envelope.getCoordinateReferenceSystem(), CommonCRS.WGS84.normalizedGeographic())) {
             return "EPSG:4326";
         }
         final Set<ReferenceIdentifier> identifiers = envelope.getCoordinateReferenceSystem().getIdentifiers();
@@ -294,7 +295,7 @@ public final class RequestsUtilities {
         }
 
         //create the 2/3/4 D BBox ----------------------------------------------
-        final String name = "rendering bbox";
+        final Map<String,?> name = Collections.singletonMap(IdentifiedObject.NAME_KEY, "rendering bbox");
         if (verticalCRS != null && temporalCRS != null) {
             final CoordinateReferenceSystem finalCRS = new DefaultCompoundCRS(name,
                     new CoordinateReferenceSystem[]{ horizontalCRS,

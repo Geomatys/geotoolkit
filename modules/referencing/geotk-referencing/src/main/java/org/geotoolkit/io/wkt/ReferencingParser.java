@@ -53,7 +53,7 @@ import org.apache.sis.internal.referencing.Legacy;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.referencing.datum.BursaWolfParameters;
 import org.apache.sis.referencing.cs.AbstractCS;
-import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;
+import org.geotoolkit.referencing.cs.Axes;
 import org.geotoolkit.referencing.operation.DefiningConversion;
 import org.geotoolkit.referencing.factory.ReferencingFactoryContainer;
 import org.apache.sis.measure.Units;
@@ -606,8 +606,7 @@ public class ReferencingParser extends MathTransformParser {
                                       final Unit<?>       unit)
             throws FactoryException
     {
-        final CoordinateSystemAxis candidate =
-                DefaultCoordinateSystemAxis.getPredefined(abbreviation, direction);
+        final CoordinateSystemAxis candidate = Axes.getPredefined(abbreviation, direction);
         if (candidate != null && unit.equals(candidate.getUnit())) {
             return candidate;
         }

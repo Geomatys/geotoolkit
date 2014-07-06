@@ -25,7 +25,7 @@ import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.type.DefaultName;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.DefaultStyleFactory;
@@ -53,7 +53,7 @@ public final class MapBuilder {
      * @return MapContext
      */
     public static MapContext createContext(){
-        return createContext(DefaultGeographicCRS.WGS84);
+        return createContext(CommonCRS.WGS84.normalizedGeographic());
     }
 
     /**

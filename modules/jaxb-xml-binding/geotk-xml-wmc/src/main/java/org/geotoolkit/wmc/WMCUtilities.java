@@ -44,7 +44,7 @@ import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.style.DefaultDescription;
 import org.geotoolkit.style.MutableStyle;
@@ -127,7 +127,7 @@ public class WMCUtilities {
      */
     public static MapContext getMapContext(ViewContextType root) {
         ArgumentChecks.ensureNonNull("ViewContextType", root);
-        CoordinateReferenceSystem srs = DefaultGeographicCRS.WGS84;
+        CoordinateReferenceSystem srs = CommonCRS.WGS84.normalizedGeographic();
         final MapContext context = MapBuilder.createContext();
 
         //Get needed markups

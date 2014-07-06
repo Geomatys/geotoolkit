@@ -27,7 +27,7 @@ import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessFinder;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.CommonCRS;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.opengis.parameter.ParameterValueGroup;
@@ -51,7 +51,7 @@ public class BandSelectTest {
         final SampleModel inSampleModel = inputImage.getSampleModel();
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
         gcb.setRenderedImage(inputImage);
-        gcb.setCoordinateReferenceSystem(DefaultGeographicCRS.WGS84);
+        gcb.setCoordinateReferenceSystem(CommonCRS.WGS84.normalizedGeographic());
         gcb.setEnvelope(0,0,500,30);
         final GridCoverage2D inCoverage = (GridCoverage2D) gcb.build();
         

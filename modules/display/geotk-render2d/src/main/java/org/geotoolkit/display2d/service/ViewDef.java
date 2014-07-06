@@ -21,7 +21,7 @@ import org.geotoolkit.display.canvas.control.CanvasMonitor;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.referencing.ReferencingUtilities;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.CommonCRS;
 
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.operation.TransformException;
@@ -36,7 +36,7 @@ import org.opengis.util.FactoryException;
  */
 public class ViewDef {
 
-    private Envelope envelope = new JTSEnvelope2D(DefaultGeographicCRS.WGS84);
+    private Envelope envelope = new JTSEnvelope2D(CommonCRS.WGS84.normalizedGeographic());
     private double azimuth = 0;
     private CanvasMonitor monitor = null;
 

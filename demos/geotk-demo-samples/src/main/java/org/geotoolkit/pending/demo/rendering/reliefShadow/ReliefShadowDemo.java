@@ -19,7 +19,7 @@ import org.geotoolkit.map.ElevationModel;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.pending.demo.Demos;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
@@ -90,7 +90,7 @@ public class ReliefShadowDemo {
         
         MutableStyle style = customRaster();
         cl.setStyle(style);
-        final GeneralEnvelope env = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
+        final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
         env.setEnvelope(-180, -90, 180, 90);
         context.setAreaOfInterest(env);
         context.layers().add(cl);

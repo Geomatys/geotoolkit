@@ -18,6 +18,7 @@
 package org.geotoolkit.referencing;
 
 import java.util.Collections;
+import java.util.Map;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.IllegalPathStateException;
@@ -30,10 +31,11 @@ import org.opengis.referencing.crs.GeographicCRS;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.geometry.DirectPosition;
 
+import org.opengis.referencing.IdentifiedObject;
 import org.apache.sis.geometry.DirectPosition2D;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
-import org.geotoolkit.referencing.cs.DefaultEllipsoidalCS;
-import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;
+import org.apache.sis.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.cs.DefaultEllipsoidalCS;
+import org.geotoolkit.referencing.cs.Axes;
 import org.apache.sis.referencing.datum.DefaultEllipsoid;
 import org.geotoolkit.test.referencing.ReferencingTestBase;
 import org.apache.sis.referencing.CommonCRS;
@@ -58,6 +60,10 @@ public final strictfp class GeodeticCalculatorTest extends ReferencingTestBase {
      * Small tolerance value for floating point comparisons.
      */
     private static final double EPS = 1E-6;
+
+    private static Map<String,String> name(final String name) {
+        return Collections.singletonMap(IdentifiedObject.NAME_KEY, name);
+    }
 
     /**
      * Tests some trivial azimuth directions.
@@ -180,9 +186,8 @@ public final strictfp class GeodeticCalculatorTest extends ReferencingTestBase {
      */
     @Test
     public void testUsingTransform() throws FactoryException, TransformException {
-        final GeographicCRS crs = new DefaultGeographicCRS("Test", CommonCRS.WGS84.datum(),
-                new DefaultEllipsoidalCS("Test", DefaultCoordinateSystemAxis.LATITUDE,
-                                                 DefaultCoordinateSystemAxis.LONGITUDE));
+        final GeographicCRS crs = new DefaultGeographicCRS(name("Test"), CommonCRS.WGS84.datum(),
+                new DefaultEllipsoidalCS(name("Test"), Axes.LATITUDE, Axes.LONGITUDE));
         final GeodeticCalculator calculator = new GeodeticCalculator(crs);
         assertSame(crs, calculator.getCoordinateReferenceSystem());
 

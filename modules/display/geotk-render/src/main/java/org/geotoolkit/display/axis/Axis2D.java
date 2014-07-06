@@ -46,7 +46,7 @@ import org.opengis.referencing.cs.AxisDirection;
 import org.geotoolkit.util.Cloneable;
 import org.apache.sis.util.Classes;
 import org.geotoolkit.display.shape.DoubleDimension2D;
-import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;
+import org.apache.sis.referencing.cs.DefaultCoordinateSystemAxis;
 import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
 
 

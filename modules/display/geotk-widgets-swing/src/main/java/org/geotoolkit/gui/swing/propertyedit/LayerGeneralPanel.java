@@ -20,7 +20,6 @@ package org.geotoolkit.gui.swing.propertyedit;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
-import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -51,7 +50,7 @@ import org.geotoolkit.map.FeatureMapLayer.DimensionDef;
 import org.geotoolkit.map.MapLayer;
 import org.apache.sis.referencing.crs.DefaultEngineeringCRS;
 import org.apache.sis.referencing.cs.AbstractCS;
-import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;
+import org.apache.sis.referencing.cs.DefaultCoordinateSystemAxis;
 import org.apache.sis.referencing.datum.DefaultEngineeringDatum;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.gui.swing.resource.FontAwesomeIcons;
@@ -270,7 +269,7 @@ public class LayerGeneralPanel extends AbstractPropertyPane {
 
     private CoordinateReferenceSystem buildCrs1DFromName(final String crsName) {
         final EngineeringDatum customDatum = new DefaultEngineeringDatum(Collections.singletonMap("name", crsName));
-        final CoordinateSystemAxis csAxis = new DefaultCoordinateSystemAxis(crsName, "u", AxisDirection.valueOf(crsName), Unit.ONE);
+        final CoordinateSystemAxis csAxis = new DefaultCoordinateSystemAxis(Collections.singletonMap("name", crsName), "u", AxisDirection.valueOf(crsName), Unit.ONE);
         final AbstractCS customCs = new AbstractCS(Collections.singletonMap("name", crsName), csAxis);
         return new DefaultEngineeringCRS(Collections.singletonMap("name", crsName), customDatum, customCs);
     }

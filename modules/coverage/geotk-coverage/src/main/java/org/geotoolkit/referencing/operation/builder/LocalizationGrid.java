@@ -79,7 +79,7 @@ import static org.apache.sis.util.ArgumentChecks.ensureBetween;
  *     // invoke getMathTransform() instead, or use the special value of 0 for the degree argument.
  *     //
  *     MathTransform2D        realToGrid = grid.getPolynomialTransform(degree).inverse();
- *     CoordinateReferenceSystem realCRS = DefaultGeographicCRS.WGS84;
+ *     CoordinateReferenceSystem realCRS = CommonCRS.WGS84.normalizedGeographic();
  *     CoordinateReferenceSystem gridCRS = new DefaultDerivedCRS("The grid CRS",
  *             new DefaultOperationMethod(realToGrid),
  *             realCRS,     // The target ("real world") CRS

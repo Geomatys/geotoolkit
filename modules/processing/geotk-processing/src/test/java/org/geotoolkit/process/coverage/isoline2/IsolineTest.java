@@ -24,7 +24,7 @@ import org.geotoolkit.data.FeatureCollection;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessFinder;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.CommonCRS;
 import org.junit.Test;
 import org.geotoolkit.feature.Feature;
 import org.opengis.parameter.ParameterValueGroup;
@@ -38,7 +38,7 @@ public class IsolineTest {
     @Test
     public void test() throws Exception{
         
-        final GeneralEnvelope env = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
+        final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
         env.setRange(0, 0, 3);
         env.setRange(1, 0, 3);
         
@@ -72,7 +72,7 @@ public class IsolineTest {
     @Test
     public void test2() throws Exception{
         
-        final GeneralEnvelope env = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
+        final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
         env.setRange(0, 0, 3);
         env.setRange(1, 0, 3);
         
@@ -105,7 +105,7 @@ public class IsolineTest {
     @Test
     public void test3() throws Exception{
         
-        final GeneralEnvelope env = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
+        final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
         env.setRange(0, 0, 3);
         env.setRange(1, 0, 3);
         

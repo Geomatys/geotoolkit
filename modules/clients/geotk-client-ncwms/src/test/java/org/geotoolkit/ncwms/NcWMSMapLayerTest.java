@@ -23,7 +23,7 @@ import java.net.MalformedURLException;
 import javax.xml.bind.JAXBException;
 
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.ncwms.map.NcWMSMapLayer;
 import org.geotoolkit.wms.xml.WMSVersion;
 
@@ -58,7 +58,7 @@ public class NcWMSMapLayerTest {
     public void test_GetMapWithNullValues() throws TransformException,
             MalformedURLException, FactoryException{
 
-        final GeneralEnvelope env = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
+        final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
         env.setRange(0, -180, 180);
         env.setRange(1, -90, 90);
 
@@ -78,7 +78,7 @@ public class NcWMSMapLayerTest {
     public void test_GetMap() throws TransformException, MalformedURLException,
             FactoryException{
 
-        final GeneralEnvelope env = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
+        final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
         env.setRange(0, -180, 180);
         env.setRange(1, -90, 90);
 
@@ -103,7 +103,7 @@ public class NcWMSMapLayerTest {
     public void test_GetFeatureInfoWithNullValues() throws TransformException,
             MalformedURLException, FactoryException{
 
-        final GeneralEnvelope env = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
+        final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
         env.setRange(0, -180, 180);
         env.setRange(1, -90, 90);
 
@@ -130,7 +130,7 @@ public class NcWMSMapLayerTest {
             FactoryException, MalformedURLException, TransformException,
             NoninvertibleTransformException {
 
-        final GeneralEnvelope env = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
+        final GeneralEnvelope env = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
         env.setRange(0, -180, 180);
         env.setRange(1, -90, 90);
 

@@ -86,7 +86,7 @@ public final strictfp class CRS_Test extends ReferencingTestBase {
      */
     @Test
     public void testDecode() throws FactoryException {
-        assertSame(org.geotoolkit.referencing.crs.DefaultGeographicCRS.WGS84, CRS.decode("WGS84(DD)"));
+        assertSame(CommonCRS.WGS84.normalizedGeographic(), CRS.decode("WGS84(DD)"));
     }
 
     /**

@@ -31,7 +31,7 @@ import org.geotoolkit.process.ProcessFinder;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.CommonCRS;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import org.junit.Test;
@@ -60,7 +60,7 @@ public class MergeTest {
         g.fillRect(720, 0, 720, 720);
         final GridCoverageBuilder gcb1 = new GridCoverageBuilder();
         gcb1.setRenderedImage(inputImage1);
-        gcb1.setCoordinateReferenceSystem(DefaultGeographicCRS.WGS84);
+        gcb1.setCoordinateReferenceSystem(CommonCRS.WGS84.normalizedGeographic());
         gcb1.setEnvelope(-180,-90,+180,+90);
         final GridCoverage2D inCoverage1 = (GridCoverage2D) gcb1.build();
         
@@ -82,7 +82,7 @@ public class MergeTest {
         final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("coverage", "merge");
         assertNotNull(desc);
         
-        final GeneralEnvelope penv = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
+        final GeneralEnvelope penv = new GeneralEnvelope(CommonCRS.WGS84.normalizedGeographic());
         penv.setRange(0, -45, 45);
         penv.setRange(1, -45, 45);
         
@@ -96,7 +96,7 @@ public class MergeTest {
         
         //check result coverage
         final GridCoverage2D outCoverage = (GridCoverage2D) result.parameter("result").getValue();
-        assertEquals(DefaultGeographicCRS.WGS84, outCoverage.getCoordinateReferenceSystem());
+        assertEquals(CommonCRS.WGS84.normalizedGeographic(), outCoverage.getCoordinateReferenceSystem());
         assertEquals(penv.getMinimum(0), outCoverage.getEnvelope().getMinimum(0), DELTA);
         assertEquals(penv.getMinimum(1), outCoverage.getEnvelope().getMinimum(1), DELTA);
         assertEquals(penv.getMaximum(0), outCoverage.getEnvelope().getMaximum(0), DELTA);

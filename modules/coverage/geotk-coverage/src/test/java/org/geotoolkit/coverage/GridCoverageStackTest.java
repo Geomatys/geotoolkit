@@ -20,23 +20,27 @@ package org.geotoolkit.coverage;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Map;
 import org.apache.sis.measure.NumberRange;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
+import org.apache.sis.referencing.crs.DefaultCompoundCRS;
 import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
-import static org.junit.Assert.*;
 import org.junit.Test;
 import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.coverage.grid.GridGeometry;
+import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransformFactory;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 import org.apache.sis.referencing.CommonCRS;
+
+import static org.junit.Assert.*;
 
 /**
  * Test GridCoverageStack class.
@@ -47,6 +51,10 @@ public class GridCoverageStackTest {
 
     private static final double DELTA = 0.00000001;
 
+    private static Map<String,String> name(final String name) {
+        return Collections.singletonMap(IdentifiedObject.NAME_KEY, name);
+    }
+
     /**
      * Verify 3D grid coverage stack creation and correct grid geometry.
      */
@@ -55,7 +63,7 @@ public class GridCoverageStackTest {
 
         final CoordinateReferenceSystem horizontal = CommonCRS.WGS84.normalizedGeographic();
         final CoordinateReferenceSystem vertical = CommonCRS.Vertical.ELLIPSOIDAL.crs();
-        final CoordinateReferenceSystem crs = new DefaultCompoundCRS("wgs84+ele", horizontal,vertical);
+        final CoordinateReferenceSystem crs = new DefaultCompoundCRS(name("wgs84+ele"), horizontal, vertical);
 
         final GridCoverageStack stack = createCube3D(100, 100, crs);
         assertTrue(CRS.equalsIgnoreMetadata(crs, stack.getCoordinateReferenceSystem()));
@@ -101,8 +109,8 @@ public class GridCoverageStackTest {
         final CoordinateReferenceSystem horizontal = CommonCRS.WGS84.normalizedGeographic();
         final CoordinateReferenceSystem vertical = CommonCRS.Vertical.ELLIPSOIDAL.crs();
         final CoordinateReferenceSystem temporal = CommonCRS.Temporal.JAVA.crs();
-        final CoordinateReferenceSystem crs3d = new DefaultCompoundCRS("wgs84+ele", horizontal,vertical);
-        final CoordinateReferenceSystem crs4d = new DefaultCompoundCRS("wgs84+ele+time", crs3d,temporal);
+        final CoordinateReferenceSystem crs3d = new DefaultCompoundCRS(name("wgs84+ele"), horizontal,vertical);
+        final CoordinateReferenceSystem crs4d = new DefaultCompoundCRS(name("wgs84+ele+time"), crs3d,temporal);
 
         GridCoverageStack.Element[] cubes = new GridCoverageStack.Element[8];
         for(int t=0;t<cubes.length;t++){

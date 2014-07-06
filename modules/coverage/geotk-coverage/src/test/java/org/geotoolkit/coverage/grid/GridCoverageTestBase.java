@@ -35,8 +35,9 @@ import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.CoverageFactoryFinder;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.test.image.ImageTestBase;
+import org.apache.sis.referencing.CommonCRS;
 
 import static javax.measure.unit.SI.*;
 import static org.junit.Assert.*;
@@ -91,7 +92,7 @@ public abstract strictfp class GridCoverageTestBase extends ImageTestBase {
      * reference system default to {@link DefaultGeographicCRS#WGS84}.
      */
     protected final void createRandomCoverage() {
-        createRandomCoverage(DefaultGeographicCRS.WGS84);
+        createRandomCoverage(CommonCRS.WGS84.normalizedGeographic());
     }
 
     /**

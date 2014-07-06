@@ -28,9 +28,9 @@
 //import org.geotoolkit.index.tree.io.StoreIndexException;
 //import org.geotoolkit.index.tree.io.TreeVisitor;
 //import org.geotoolkit.index.tree.star.StarRTree;
-//import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
+//import org.apache.sis.referencing.crs.DefaultCompoundCRS;
 //import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;
-//import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+//import org.apache.sis.referencing.CommonCRS;
 //import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
 //import static org.junit.Assert.assertTrue;
 //import org.junit.Test;
@@ -45,8 +45,8 @@
 //    private static final NodeFactory NODEFACTORY = DefaultNodeFactory.INSTANCE;
 //    private static final CoordinateReferenceSystem CARTESIAN_2DCRS = DefaultEngineeringCRS.CARTESIAN_2D;
 //    private static final CoordinateReferenceSystem CARTESIAN_3DCRS = DefaultEngineeringCRS.CARTESIAN_3D;
-//    private static final CoordinateReferenceSystem GEOCENTRIC_2DCRS = DefaultGeographicCRS.WGS84;
-//    private static final CoordinateReferenceSystem GEOCENTRIC_3DCRS = DefaultGeographicCRS.WGS84_3D;
+//    private static final CoordinateReferenceSystem GEOCENTRIC_2DCRS = CommonCRS.WGS84.normalizedGeographic();
+//    private static final CoordinateReferenceSystem GEOCENTRIC_3DCRS = PredefinedCRS.WGS84_3D;
 //    private static final CoordinateReferenceSystem TEMPORALCRS = DefaultTemporalCRS.JAVA;
 //    Tree tree;
 //    CoordinateReferenceSystem crs;

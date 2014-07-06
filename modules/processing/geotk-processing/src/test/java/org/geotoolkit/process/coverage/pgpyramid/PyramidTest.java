@@ -44,7 +44,7 @@ import org.geotoolkit.feature.type.DefaultName;
 import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessFinder;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.util.BufferedImageUtilities;
 import org.junit.Test;
 import org.geotoolkit.feature.type.Name;
@@ -65,7 +65,7 @@ public class PyramidTest {
     @Test
     public void testPyramid() throws Exception{
 
-        final CoordinateReferenceSystem crs = DefaultGeographicCRS.WGS84;
+        final CoordinateReferenceSystem crs = CommonCRS.WGS84.normalizedGeographic();
         final int tileSize = 256;
         final GeneralDirectPosition upperLeft = new GeneralDirectPosition(crs);
         upperLeft.setCoordinate(-180,90);

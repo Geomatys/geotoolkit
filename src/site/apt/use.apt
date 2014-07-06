@@ -57,11 +57,11 @@ unpack200 geotk-referencing-SNAPSHOT.pack.gz geotk-referencing-bundle.jar
  * that anyone may desire but without warranty of any kind, neither expressed nor implied,
  * and no expression of merchantibility or fitness for any particular purpose.
  */
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.CommonCRS;
 
 public class FirstGeotk {
     public static void main(String[] args){
-        System.out.println(DefaultGeographicCRS.WGS84);
+        System.out.println(CommonCRS.WGS84.normalizedGeographic());
     }
 }
 -----------------------------------------------------------------------------------
@@ -120,7 +120,7 @@ import org.geotoolkit.referencing.crs.*;
 public class SecondGeotk {
     public static void main(String[] args) throws FactoryException, TransformException {
         CoordinateReferenceSystem sourceCRS = DefaultGeocentricCRS.CARTESIAN;
-        CoordinateReferenceSystem targetCRS = DefaultGeographicCRS.WGS84_3D;
+        CoordinateReferenceSystem targetCRS = PredefinedCRS.WGS84_3D;
         MathTransform tr = CRS.findMathTransform(sourceCRS, targetCRS);
         /*
          * From this point we can convert an arbitrary amount of coordinates using the

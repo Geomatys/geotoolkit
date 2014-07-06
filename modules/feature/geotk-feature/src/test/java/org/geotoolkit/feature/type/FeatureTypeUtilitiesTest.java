@@ -25,7 +25,7 @@ import org.geotoolkit.feature.type.DefaultName;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.CommonCRS;
 
 import org.junit.Test;
 
@@ -48,7 +48,7 @@ public class FeatureTypeUtilitiesTest {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("test");
         ftb.add("attGeom1", Point.class, 0,1,false,null);
-        ftb.add(DefaultName.valueOf("attGeom2"), Point.class, DefaultGeographicCRS.WGS84,0,1,false,null);
+        ftb.add(DefaultName.valueOf("attGeom2"), Point.class, CommonCRS.WGS84.normalizedGeographic(),0,1,false,null);
         final FeatureType ft = ftb.buildFeatureType();
 
         final CoordinateReferenceSystem crs = CRS.decode("EPSG:27582");

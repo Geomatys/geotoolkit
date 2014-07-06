@@ -39,7 +39,7 @@ import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.geometry.DefaultBoundingBox;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.CommonCRS;
 
 import org.junit.After;
 import org.junit.Before;
@@ -86,7 +86,7 @@ public class SessionTest{
         final Name name = new DefaultName("http://test.com", "TestSchema1");
         builder.reset();
         builder.setName(name);
-        builder.add("geom", Point.class, DefaultGeographicCRS.WGS84);
+        builder.add("geom", Point.class, CommonCRS.WGS84.normalizedGeographic());
         builder.add("string", String.class);
         builder.add("double", Double.class);
         builder.add("date", Date.class);
@@ -540,7 +540,7 @@ public class SessionTest{
         session.updateFeatures(name, FF.equals(FF.property("double"), FF.literal(2d)), values);
 
         //check we have a modification in data crs -----------------------------
-        DefaultBoundingBox bbox = new DefaultBoundingBox(DefaultGeographicCRS.WGS84);
+        DefaultBoundingBox bbox = new DefaultBoundingBox(CommonCRS.WGS84.normalizedGeographic());
         bbox.setRange(0, 49, 51);
         bbox.setRange(1, 0, 2);
         qb.reset();
