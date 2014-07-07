@@ -53,9 +53,17 @@ public final class IconBuilder {
         return createIcon(text,size,iconColor,null);
     }
     
+    public static BufferedImage createImage(String text, float size, Color iconColor){
+        return createImage(text, null, iconColor, FONT.deriveFont(size), null);
+    }
+    
     public static ImageIcon createIcon(String text, float size, Color iconColor, Color bgColor){
         final BufferedImage image = createImage(text, null, iconColor, FONT.deriveFont(size), bgColor);
         return new ImageIcon(image);
+    }
+    
+    public static BufferedImage createImage(String text, float size, Color iconColor, Color bgColor){
+        return createImage(text, null, iconColor, FONT.deriveFont(size), bgColor);
     }
     
     public static BufferedImage createImage(String text, ImageIcon icon, Color textColor, Font font, Color bgColor){
