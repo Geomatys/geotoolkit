@@ -17,6 +17,7 @@
 package org.geotoolkit.image.interpolation;
 
 import java.awt.Rectangle;
+import java.awt.image.DataBuffer;
 import java.awt.image.WritableRenderedImage;
 import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.geometry.GeneralEnvelope;
@@ -102,6 +103,11 @@ public class Resample {
      * Iterator use to fill destination image from interpolation of source image pixel value.
      */
     final PixelIterator destIterator;
+
+    /**
+     * Minimum and maximum values authorized for pixels. All interpolated value outside this interval will be clamped.
+     */
+    protected final double[] clamk = new double[2];
     
     /**
      * On the border of the destination image, projection of destination border 
@@ -194,6 +200,34 @@ public class Resample {
         srcCoords  = new double[2];
         destCoords = new double[2];
         this.rbc   = rbc;
+        final int datatype = imageDest.getSampleModel().getDataType();
+        switch (datatype) {
+            case DataBuffer.TYPE_BYTE : {
+                clamk[0] = 0;
+                clamk[1] = 255;
+                break;
+            }
+            case DataBuffer.TYPE_SHORT :
+            case DataBuffer.TYPE_USHORT : {
+                clamk[0] = 0;
+                clamk[1] = 65535;
+                break;
+            }
+            case DataBuffer.TYPE_FLOAT : {
+                clamk[0] = Float.MIN_VALUE;
+                clamk[1] = Float.MAX_VALUE;
+                break;
+            }
+            case DataBuffer.TYPE_INT: {
+                clamk[0] = Integer.MIN_VALUE;
+                clamk[1] = Integer.MAX_VALUE;
+                break;
+            }
+            default : {
+                clamk[0] = Double.MIN_VALUE;
+                clamk[0] = Double.MAX_VALUE;
+            }
+        }
     }
 
     /**
@@ -235,10 +269,12 @@ public class Resample {
                 } else {
                     srcCoords[0] = XMath.clamp(srcCoords[0], minSourceX, maxSourceX);
                     srcCoords[1] = XMath.clamp(srcCoords[1], minSourceY, maxSourceY);
-                    destIterator.setSampleDouble(interpol.interpolate(srcCoords[0], srcCoords[1], band));
+                    destIterator.setSampleDouble(
+                            XMath.clamp(interpol.interpolate(srcCoords[0], srcCoords[1], band), clamk[0], clamk[1]));
                     while (++band != numBands) {
                         destIterator.next();
-                        destIterator.setSampleDouble(interpol.interpolate(srcCoords[0], srcCoords[1], band));
+                        destIterator.setSampleDouble(
+                                XMath.clamp(interpol.interpolate(srcCoords[0], srcCoords[1], band), clamk[0], clamk[1]));
                     }
                 }
             }
@@ -252,8 +288,8 @@ public class Resample {
         while (destIterator.next()) {
             band = 0;
             //Compute interpolation value from source image.
-            destCoords[0] = destIterator.getX();
-            destCoords[1] = destIterator.getY();
+            destCoords[0] = destIterator.getX() + 0.5;
+            destCoords[1] = destIterator.getY() + 0.5;
             destToSourceMathTransform.transform(destCoords, 0, srcCoords, 0, 1);
             src0 = (int) srcCoords[0];
             src1 = (int) srcCoords[1];
@@ -267,11 +303,13 @@ public class Resample {
                     destIterator.setSampleDouble(fillValue[band]);
                 }
             } else {
-                pixelValue = interpol.interpolate(src0, src1);
-                destIterator.setSampleDouble(pixelValue[0]);
+                srcCoords[0] = XMath.clamp(srcCoords[0], minSourceX, maxSourceX);
+                srcCoords[1] = XMath.clamp(srcCoords[1], minSourceY, maxSourceY);
+                pixelValue = interpol.interpolate(srcCoords[0], srcCoords[1]);
+                destIterator.setSampleDouble(XMath.clamp(pixelValue[band], clamk[0], clamk[1]));
                 while (++band < numBands) {
                     destIterator.next();
-                    destIterator.setSampleDouble(pixelValue[band]);
+                    destIterator.setSampleDouble(XMath.clamp(pixelValue[band], clamk[0], clamk[1]));
                 }
             }
         }
