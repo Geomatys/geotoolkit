@@ -110,10 +110,15 @@ public class ParameterValueReader extends StaxStreamReader {
         final GeneralParameterValue result;
 
         if(desc instanceof ParameterDescriptor){
-            result = new Parameter(
-                    (ParameterDescriptor) desc,
-                    ObjectConverters.convert(
-                    reader.getElementText(),((ParameterDescriptor) desc).getValueClass()));
+            final String text = reader.getElementText();
+            if (!text.isEmpty()) {
+                result = new Parameter(
+                        (ParameterDescriptor) desc,
+                        ObjectConverters.convert(
+                        text,((ParameterDescriptor) desc).getValueClass()));
+            } else {
+                result = null;
+            }
         } else if(desc instanceof ParameterDescriptorGroup){
             result = this.readValueGroup();
         } else {
@@ -143,7 +148,10 @@ public class ParameterValueReader extends StaxStreamReader {
 
             switch (reader.next()) {
                 case XMLStreamConstants.START_ELEMENT:
-                    values.add(this.readValue(reader.getLocalName()));
+                    final GeneralParameterValue value = this.readValue(reader.getLocalName());
+                    if (value != null) {
+                        values.add(value);
+                    }
                     break;
 
                 case XMLStreamConstants.END_ELEMENT:
