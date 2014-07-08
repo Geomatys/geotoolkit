@@ -11,6 +11,8 @@ import java.awt.*;
 import java.awt.image.*;
 import java.io.File;
 import java.io.IOException;
+import java.lang.ref.PhantomReference;
+import java.lang.ref.ReferenceQueue;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -23,14 +25,14 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Stock all {@link java.awt.image.Raster} contained from define {@link java.awt.image.RenderedImage}.
- * It's a map whose key is tile location, and value is the value the tile data. We use a {@link java.util.LinkedHashMap},
- * so when we need to remove an element, we will take the oldest one.
+ * Stock all {@link java.awt.image.Raster} contained from define {@link java.awt.image.RenderedImage}. It's a map whose key
+ * is tile location, and value is the value the tile data. We use a {@link java.util.LinkedHashMap}, so when we need to
+ * remove an element, we will take the oldest one.
  *
  * @author Rémi Maréchal (Geomatys).
  * @author Alexis Manin  (Geomatys).
  */
-public class LargeMap {
+public class LargeMap extends PhantomReference<RenderedImage> {
 
     private static final Logger LOGGER = Logging.getLogger(LargeMap.class);
 
@@ -46,7 +48,6 @@ public class LargeMap {
     private final int numTilesY;
     private final QuadTreeDirectory qTD;
     private final String dirPath;
-    private final ColorModel cm;
     private final int riMinX;
     private final int riMinY;
     private final int riTileWidth;
@@ -74,12 +75,12 @@ public class LargeMap {
      * @param memoryCapacity storage capacity in Byte.
      * @throws java.io.IOException if impossible to create {@link javax.imageio.ImageReader} or {@link javax.imageio.ImageWriter}.
      */
-    LargeMap(RenderedImage ri, long memoryCapacity) throws IOException {
+    LargeMap(RenderedImage ri, ReferenceQueue<RenderedImage> queue, long memoryCapacity) throws IOException {
+        super(ri, queue);
         //cache properties.
         this.memoryCapacity = memoryCapacity;
         isWritableRenderedImage = ri instanceof WritableRenderedImage;
         //image owner properties.
-        this.cm                = ri.getColorModel();
         this.remainingCapacity = memoryCapacity;
         this.numTilesX         = ri.getNumXTiles();
         this.numTilesY         = ri.getNumYTiles();
@@ -98,7 +99,7 @@ public class LargeMap {
 //        this.imgReader = XImageIO.getReaderByFormatName(FORMAT, null, Boolean.FALSE, Boolean.TRUE);
 //        this.imgWriter = XImageIO.getWriterByFormatName(FORMAT, null, null);
 
-        final int datatype = cm.createCompatibleSampleModel(riTileWidth, riTileHeight).getDataType();
+        final int datatype = ri.getColorModel().createCompatibleSampleModel(riTileWidth, riTileHeight).getDataType();
         switch (datatype) {
             case DataBuffer.TYPE_BYTE      : dataTypeWeight = 1; break;
             case DataBuffer.TYPE_DOUBLE    : dataTypeWeight = 8; break;
@@ -127,7 +128,7 @@ public class LargeMap {
 
     private void add(Point tileCorner, WritableRaster raster) throws IOException {
         final long rasterWeight = getRasterWeight(raster);
-        if (rasterWeight > memoryCapacity) throw new IOException("raster too large");
+        if (rasterWeight > memoryCapacity) throw new IOException("Raster too large : " + rasterWeight + " bytes, but maximum cache capacity is "+ memoryCapacity +" bytes");
 
         try {
             tileLock.writeLock().lock();
@@ -273,10 +274,14 @@ public class LargeMap {
      * @throws java.io.IOException if impossible to write raster on disk.
      */
     private void writeRaster(LargeRaster lRaster) throws IOException {
+        final RenderedImage img = get();
+        if (img == null) {
+            throw new IOException("Source data not available anymore !");
+        }
         final File tileFile = new File(qTD.getPath(lRaster.getGridX(), lRaster.getGridY()));
         if (!tileFile.exists() || isWritableRenderedImage) {
             final BufferedImage toWrite = new BufferedImage(
-                    cm, RasterFactory.createWritableRaster(lRaster.getRaster().getSampleModel(), lRaster.getRaster().getDataBuffer(), WPOINT), true, null);
+                    img.getColorModel(), RasterFactory.createWritableRaster(lRaster.getRaster().getSampleModel(), lRaster.getRaster().getDataBuffer(), WPOINT), true, null);
             // TODO : Optimize using a "writer pool" instead of creating one each time ?
             final ImageWriter imgWriter = getImageWriter();
             imgWriter.setOutput(tileFile);
@@ -335,12 +340,6 @@ public class LargeMap {
         }
     }
 
-    @Override
-    protected void finalize() throws Throwable {
-        removeTiles();
-        super.finalize();
-    }
-
 
     /**
      * A thread which will be in charge of memory cleaning. To do so, it will flush old tiles in a temporary quad-tree on file-system.
@@ -349,7 +348,7 @@ public class LargeMap {
 
         @Override
         public Boolean call() {
-            System.out.println("ENtered flush");
+            System.out.println("Entered flush");
             final Thread currentThread = Thread.currentThread();
             final LinkedList<LargeRaster> toFlush = new LinkedList<>();
 

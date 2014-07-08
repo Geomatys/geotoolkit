@@ -21,18 +21,23 @@ import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.awt.image.WritableRaster;
 import java.io.IOException;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.Map;
+import java.lang.ref.PhantomReference;
+import java.lang.ref.ReferenceQueue;
+import java.util.*;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.media.jai.TileCache;
+
+import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.logging.Logging;
 
 /**
  * Manage {@link RenderedImage} and its {@link Raster} to don't exceed JVM memory capacity.
+ *
+ * TODO : make memory be entirely managed by the cache, instead of allow a portion of memory to each {@link org.geotoolkit.image.io.large.LargeMap}.
+ * The aim is to just delegate tile manipulation to them, and get the total control over memory here.
+ * Maybe a priority system would be useful to determine which tile to release first (based on the number of times a tile has been queried ?)
  *
  * @author Rémi Maréchal (Geomatys)
  * @author Alexis Manin  (Geomatys)
@@ -43,6 +48,8 @@ public class LargeCache implements TileCache {
 
     /** Default cache capacity. 256 grayscale raster of 1024px width by 1024 px height. */
     private static final long DEFAULT_CAPACITY = 1024l*1024l*8l*256l;
+
+    private final ReferenceQueue<RenderedImage> phantomQueue = new ReferenceQueue<RenderedImage>();
 
     private long memoryCapacity;
     private long remainingCapacity;
@@ -55,13 +62,34 @@ public class LargeCache implements TileCache {
     /*
      * Contains a tile manager for each cached rendered image. A tile manager job is to swap / cache image tiles as we ask it.
      */
-    private final HashMap<RenderedImage, LargeMap> tileManagers = new HashMap<>();
+    private final WeakHashMap<RenderedImage, LargeMap> tileManagers = new WeakHashMap<>();
 
     private final ReentrantReadWriteLock cacheLock = new ReentrantReadWriteLock();
     private static LargeCache INSTANCE;
 
     private LargeCache(long memoryCapacity) {
         this.memoryCapacity = memoryCapacity;
+        final Thread phantomCleaner = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (true) {
+                    try {
+                        final LargeMap removed = (LargeMap) phantomQueue.remove();
+                        removed.removeTiles();
+                        // Re-distribute freed memory amount between remaining caches.
+                        final long mC = LargeCache.this.memoryCapacity / (tileManagers.size());
+                        updateLList(mC);
+                    } catch (InterruptedException e) {
+                        LOGGER.log(Level.WARNING, "Reference cleaner has been interrupted ! It could cause severe memory leaks.");
+                        return;
+                    } catch (Throwable t) {
+                        LOGGER.log(Level.WARNING, "An image reference cannot be released. It's likely to cause memory leaks !");
+                    }
+                }
+            }
+        });
+        phantomCleaner.setDaemon(true);
+        phantomCleaner.start();
     }
 
     /**<p>Construct tile cache mechanic.<br/>
@@ -100,7 +128,7 @@ public class LargeCache implements TileCache {
                 final long mC = memoryCapacity / (tileManagers.size() + 1);
                 updateLList(mC);
                 try {
-                    lL = new LargeMap(source, mC);
+                    lL = new LargeMap(source, phantomQueue, mC);
                     cacheLock.writeLock().lock();
                     tileManagers.put(source, lL);
 
@@ -183,6 +211,8 @@ public class LargeCache implements TileCache {
         cacheLock.writeLock().lock();
         try {
             lL = tileManagers.remove(ri);
+            final long mC = memoryCapacity / (tileManagers.size());
+            updateLList(mC);
         } finally {
             cacheLock.writeLock().unlock();
         }
@@ -376,5 +406,29 @@ public class LargeCache implements TileCache {
     @Override
     public void add(RenderedImage ri, int i, int i1, Raster raster, Object o) {
         throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    private static class ImageReference extends PhantomReference<RenderedImage> {
+
+        /** Manage tiles of the input image. */
+        private final LargeMap largeMap;
+
+        /**
+         * Creates a new phantom reference that refers to the given object and
+         * is registered with the given queue.
+         * <p/>
+         * <p> It is possible to create a phantom reference with a <tt>null</tt>
+         * queue, but such a reference is completely useless: Its <tt>get</tt>
+         * method will always return null and, since it does not have a queue, it
+         * will never be enqueued.
+         *
+         * @param referent the object the new phantom reference will refer to
+         * @param q        the queue with which the reference is to be registered,
+         */
+        public ImageReference(RenderedImage referent, ReferenceQueue<? super RenderedImage> q, final LargeMap imageManager) {
+            super(referent, q);
+            ArgumentChecks.ensureNonNull("image manager", imageManager);
+            largeMap = imageManager;
+        }
     }
 }

@@ -533,9 +533,9 @@ public class LargeRenderedImage implements RenderedImage {
     /**
      * {@inheritDoc }.
      */
-    @Override
-    protected void finalize() throws Throwable {
-        tilecache.removeTiles(this);
-        super.finalize();
-    }
+//    @Override
+//    protected void finalize() throws Throwable {
+//        tilecache.removeTiles(this);
+//        super.finalize();
+//    }
 }
