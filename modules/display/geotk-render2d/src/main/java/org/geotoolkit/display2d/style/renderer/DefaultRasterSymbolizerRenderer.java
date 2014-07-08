@@ -21,12 +21,7 @@ import java.awt.Color;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
-import java.awt.image.BufferedImage;
-import java.awt.image.ColorModel;
-import java.awt.image.ComponentColorModel;
-import java.awt.image.DataBuffer;
-import java.awt.image.IndexColorModel;
-import java.awt.image.RenderedImage;
+import java.awt.image.*;
 import java.awt.image.renderable.ParameterBlock;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -72,6 +67,7 @@ import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.image.interpolation.Interpolation;
 import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.image.interpolation.Resample;
+import org.geotoolkit.image.interpolation.Rescaler;
 import org.geotoolkit.image.iterator.PixelIterator;
 import org.geotoolkit.image.iterator.PixelIteratorFactory;
 import org.geotoolkit.image.jai.FloodFill;
@@ -174,7 +170,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             } catch (DisjointCoverageDomainException ex) {
                 //LOGGER.log(Level.INFO, ex.getMessage());
 
-                //since the visible enveloppe can be much larger, we may obtain NaN when transforming the envelope
+                //since the visible envelope can be much larger, we may obtain NaN when transforming the envelope
                 //which causes the disjoint domain exception
                 final GeneralEnvelope objCovEnv = new GeneralEnvelope(CRS.transform(layerBounds, bounds.getCoordinateReferenceSystem()));
                 objCovEnv.intersect(bounds);
@@ -196,7 +192,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             }
 
             ////////////////////////////////////////////////////////////////////
-            // 2 - Reproject datas                                            //
+            // 2 - Reproject data                                            //
             ////////////////////////////////////////////////////////////////////
 
             boolean isReprojected = false;
@@ -520,7 +516,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
      * Return a Digital Elevation Model from source {@link ElevationModel} parameter in function of coverage parameter properties.
      *
      * @param coverage
-     * @param dem
+     * @param elevationModel
      * @return a Digital Elevation Model from source {@link ElevationModel} parameter in function of coverage parameter properties.
      * @throws FactoryException
      * @throws TransformException
@@ -662,7 +658,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
 
 
     ////////////////////////////////////////////////////////////////////////////
-    // Renderedmage JAI image operations ///////////////////////////////////////
+    // RenderedImage JAI image operations ///////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
 
     /**
@@ -681,29 +677,29 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
         //band select ----------------------------------------------------------
         //works as a JAI operation
         final int nbDim = coverage.getNumSampleDimensions();
-        if(nbDim > 1){
+        if (nbDim > 1) {
             //we can change sample dimension only if we have more then one available.
             final ChannelSelection selections = styleElement.getChannelSelection();
-            if(selections!=null){
+            if (selections != null) {
                 final SelectedChannelType channel = selections.getGrayChannel();
                 final SelectedChannelType[] channels = selections.getRGBChannels();
-                if(channel!= null){
+                if (channel != null) {
                     //single band selection
                     final int[] indices = new int[]{
-                        Integer.valueOf(channel.getChannelName())
+                            Integer.valueOf(channel.getChannelName())
                     };
-                    coverage = (GridCoverage2D)selectBand(coverage, indices);
-                }else{
+                    coverage = (GridCoverage2D) selectBand(coverage, indices);
+                } else {
                     final int[] selected = new int[]{
-                        Integer.valueOf(channels[0].getChannelName()),
-                        Integer.valueOf(channels[1].getChannelName()),
-                        Integer.valueOf(channels[2].getChannelName())
-                        };
+                            Integer.valueOf(channels[0].getChannelName()),
+                            Integer.valueOf(channels[1].getChannelName()),
+                            Integer.valueOf(channels[2].getChannelName())
+                    };
                     //@Workaround(library="JAI",version="1.0.x")
                     //TODO when JAI has been rewritten, this test might not be necessary anymore
                     //check if selection actually does something
-                    if(!(selected[0] == 0 && selected[1] == 1 && selected[2] == 2) || nbDim!=3){
-                        coverage = (GridCoverage2D)selectBand(coverage, selected);
+                    if (!(selected[0] == 0 && selected[1] == 1 && selected[2] == 2) || nbDim != 3) {
+                        coverage = (GridCoverage2D) selectBand(coverage, selected);
                         coverage = coverage.view(ViewType.RENDERED);
                     }
                 }
@@ -715,20 +711,20 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
 
         //Recolor coverage -----------------------------------------------------
         final ColorMap recolor = styleElement.getColorMap();
-        if(recolor != null && recolor.getFunction() != null){
+        if (recolor != null && recolor.getFunction() != null) {
             //colormap is applyed on geophysic view
             coverage = coverage.view(ViewType.GEOPHYSICS);
             image = coverage.getRenderedImage();
 
             final Function fct = recolor.getFunction();
-            image = recolor(image,fct);
-        }else{
+            image = recolor(image, fct);
+        } else {
             //no colormap, used the default image rendered view
             coverage = coverage.view(ViewType.RENDERED);
             image = coverage.getRenderedImage();
-            if(isReprojected){
+            if (isReprojected) {
                 //remove potential black borders
-                image = forceAlpha(image,true);
+                image = forceAlpha(image, true);
             }
         }
 
@@ -878,26 +874,72 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
 
     }
 
+    /**
+     * Rescale image colors between datatype bounds (0, 255 for bytes or 0 655535 for short data). This solution will work
+     * well only for byte or (u)short data models.
+     * TODO : change for a less brut-force solution.
+     * @param source The image to process.
+     * @return The rescaled image.
+     */
     private static RenderedImage equalize(final RenderedImage source) {
-        int sum = 0;
-        byte[] cumulative = new byte[256];
-        int array[] = getHistogram(source);
+        final ColorModel srcModel = source.getColorModel();
 
-        float scale = 255.0F / (float) (source.getWidth() *
-                                        source.getHeight());
+        // Store min and max value for each band, along with the pixel where we've found the position.
+        final double[] minMax = new Rescaler(
+                Interpolation.create(PixelIteratorFactory.createRowMajorIterator(source), InterpolationCase.NEIGHBOR, 2), 0, 255).getMinMaxValue(null);
 
-        for ( int i = 0; i < 256; i++ ) {
-            sum += array[i];
-            cumulative[i] = (byte)((sum * scale) + .5F);
+        // Compute transformation to apply on pixel values. We want to scale the pixel range in [0..255]
+        final int numBands = srcModel.getNumComponents();
+        double[] translation = new double[numBands];
+        final double[] scale = new double[numBands];
+        // Java 2D manage color scaling until ushort size. After that, current approach is totally wrong.
+        for (int i = 0, j = 0; i < numBands; i++, j += 6) {
+            final double min = 0, max;
+            if (srcModel.getComponentSize(i) > 8) {
+                max = 65532;
+            } else {
+                max = 255;
+            }
+            scale[i] = max / (minMax[j + 3] - minMax[j]);
+            translation[i] = (min - minMax[j]) * scale[i];
         }
 
-        LookupTableJAI lookup = new LookupTableJAI(cumulative);
+        /**
+         * If just one of the bands is already scaled right, it might means that the entire image is right scaled, we
+         * won't perform any operation.
+         */
+        boolean noOperationNeeded = false;
+        final double scaleEpsilon = 0.05; // 5 % tolerence.
+        final double translationTolerence = 1.0;
+        for (int i = 0; i < scale.length; i++) {
+            if ((scale[i] < 1.00 + scaleEpsilon && scale[i] > 1.00 - scaleEpsilon)
+                    && (translation[i] < translationTolerence && translation[i] > -translationTolerence)) {
+                noOperationNeeded = true;
+                break;
+            }
+        }
 
-        ParameterBlock pb = new ParameterBlock();
-        pb.addSource(source);
-        pb.add(lookup);
+        if (noOperationNeeded) {
+            return source;
+        } else {
 
-        return JAI.create("lookup", pb, null);
+            final WritableRenderedImage destination;
+            if (source instanceof WritableRenderedImage) {
+                destination = (WritableRenderedImage) source;
+            } else {
+                destination = new BufferedImage(srcModel, srcModel.createCompatibleWritableRaster(source.getWidth(), source.getHeight()), srcModel.isAlphaPremultiplied(), null);
+            }
+
+            final PixelIterator pxIt = PixelIteratorFactory.createRowMajorWriteableIterator(source, destination);
+            int band = 0;
+            while (pxIt.next()) {
+                pxIt.setSampleDouble(pxIt.getSampleDouble() * scale[band] + translation[band]);
+                if (++band >= numBands) {
+                    band = 0;
+                }
+            }
+            return destination;
+        }
     }
 
     private static RenderedImage normalize(final RenderedImage source) {
