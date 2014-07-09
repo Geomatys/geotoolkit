@@ -225,7 +225,7 @@ public class Resample {
             }
             default : {
                 clamk[0] = Double.MIN_VALUE;
-                clamk[0] = Double.MAX_VALUE;
+                clamk[1] = Double.MAX_VALUE;
             }
         }
     }
