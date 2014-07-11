@@ -73,6 +73,7 @@ public final class FeatureTypeUtils extends Static {
     private static final String MAX_ITEMS = "maxItems";
     private static final String USER_DATA = "userdata";
     private static final String GEOMETRY = "geometry";
+    private static final String GEOMETRY_ATT_NAME = "geometryName";
     private static final String CRS = "crs";
 
     private static final String OBJECT = "object";
@@ -251,6 +252,7 @@ public final class FeatureTypeUtils extends Static {
         CoordinateReferenceSystem crs = geometryType.getCoordinateReferenceSystem();
         String crsCode = GeoJSONUtils.toURN(crs);
         writer.writeStringField(CRS, crsCode);
+        writer.writeStringField(GEOMETRY_ATT_NAME, descriptor.getLocalName());
         writer.writeEndObject();
         return true;
     }
@@ -321,12 +323,13 @@ public final class FeatureTypeUtils extends Static {
         Class binding = null;
         CoordinateReferenceSystem crs = null;
         InternationalString description = null;
+        String geometryName = null;
 
         parser.nextToken(); // {
         while (parser.nextToken() != JsonToken.END_OBJECT) { // -> }
             final String currName = parser.getCurrentName();
             switch (currName) {
-                case JAVA_TYPE: {
+                case JAVA_TYPE:
                     String javaTypeValue = parser.nextTextValue();
                     if (!"ComplexType".equals(javaTypeValue)) {
                         try {
@@ -336,19 +339,21 @@ public final class FeatureTypeUtils extends Static {
                         }
                     }
                     break;
-                }
-                case CRS: {
-                    String javaTypeValue = parser.nextTextValue();
+
+                case CRS:
+                    String crsCode = parser.nextTextValue();
                     try {
-                        crs = org.geotoolkit.referencing.CRS.decode(javaTypeValue);
+                        crs = org.geotoolkit.referencing.CRS.decode(crsCode);
                     } catch (FactoryException e) {
-                        throw new DataStoreException("Geometry crs " + javaTypeValue + " invalid : " + e.getMessage(), e);
+                        throw new DataStoreException("Geometry crs " + crsCode + " invalid : " + e.getMessage(), e);
                     }
                     break;
-                }
+
                 case DESCRIPTION:
                     description = new SimpleInternationalString(parser.nextTextValue());
                     break;
+                case GEOMETRY_ATT_NAME:
+                    geometryName = parser.nextTextValue();
             }
         }
 
@@ -356,7 +361,7 @@ public final class FeatureTypeUtils extends Static {
             throw new DataStoreException("Geometry crs or binding not found.");
         }
 
-        Name name = DefaultName.valueOf(BasicFeatureTypes.GEOMETRY_ATTRIBUTE_NAME);
+        Name name = geometryName != null ? new DefaultName(geometryName) : new DefaultName(BasicFeatureTypes.GEOMETRY_ATTRIBUTE_NAME);
         PropertyType prop = FT_FACTORY.createGeometryType(name, binding, crs, false, false, null, null, description);
         return (GeometryDescriptor) adb.create((org.geotoolkit.feature.type.PropertyType) prop, name, crs, 1, 1, false, null);
     }
