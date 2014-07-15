@@ -96,44 +96,47 @@ public class GridMosaicRenderedImage implements RenderedImage {
         }
         this.mosaic = mosaic;
         this.gridRange = gridRange;
+    }
 
-        try {
-            //search the first non missing tile of the Mosaic
-            TileReference tile = null;
+    private void readFirstTile() {
+        if (firstTileImage == null && emptyBuffer == null) {
+            try {
+                //search the first non missing tile of the Mosaic
+                TileReference tile = null;
 
-            exitLoop :
-            if (tile == null) {
-                final Dimension gridSize = this.mosaic.getGridSize();
-                for (int y=0; y<gridSize.height; y++){
-                    for (int x=0; x<gridSize.width; x++){
-                        if (mosaic.isMissing(x,y)) {
-                            continue;
-                        } else {
-                            tile = mosaic.getTile(x,y, null);
-                            break exitLoop;
+                exitLoop:
+                if (tile == null) {
+                    final Dimension gridSize = this.mosaic.getGridSize();
+                    for (int y = 0; y < gridSize.height; y++) {
+                        for (int x = 0; x < gridSize.width; x++) {
+                            if (mosaic.isMissing(x, y)) {
+                                continue;
+                            } else {
+                                tile = mosaic.getTile(x, y, null);
+                                break exitLoop;
+                            }
                         }
                     }
                 }
-            }
 
-            if (tile != null) {
-                if (tile.getInput() instanceof RenderedImage) {
-                    firstTileImage = (RenderedImage)tile.getInput();
-                } else {
-                    final ImageReader reader = tile.getImageReader();
-                    firstTileImage = reader.read(0);
-                    reader.dispose();
+                if (tile != null) {
+                    if (tile.getInput() instanceof RenderedImage) {
+                        firstTileImage = (RenderedImage) tile.getInput();
+                    } else {
+                        final ImageReader reader = tile.getImageReader();
+                        firstTileImage = reader.read(0);
+                        reader.dispose();
+                    }
+
+                    emptyBuffer = firstTileImage.getSampleModel().createDataBuffer();
                 }
-
-                emptyBuffer = firstTileImage.getSampleModel().createDataBuffer();
+            } catch (IOException e) {
+                throw new IllegalArgumentException("First tile can't be read.", e);
+            } catch (DataStoreException e) {
+                throw new IllegalArgumentException("Input mosaic doesn't have any tile.", e);
             }
-        } catch (IOException e) {
-            throw new IllegalArgumentException("First tile can't be read.", e);
-        } catch (DataStoreException e) {
-            throw new IllegalArgumentException("Input mosaic doesn't have any tile.", e);
         }
     }
-    
 
     /**
      * Return intern GridMosaic
@@ -168,6 +171,7 @@ public class GridMosaicRenderedImage implements RenderedImage {
 
     @Override
     public ColorModel getColorModel() {
+        readFirstTile();
         if (firstTileImage != null) {
             return firstTileImage.getColorModel();
         }
@@ -177,6 +181,7 @@ public class GridMosaicRenderedImage implements RenderedImage {
 
     @Override
     public SampleModel getSampleModel() {
+        readFirstTile();
         if (sampleModel == null && firstTileImage != null) {
             //sample model is for ONE tile, not the full image.
             //javadoc is unclear on this, but in the code it works this way.
@@ -247,6 +252,7 @@ public class GridMosaicRenderedImage implements RenderedImage {
 
     @Override
     public Raster getTile(int tileX, int tileY) {
+        readFirstTile();
         tileX += gridRange.x;
         tileY += gridRange.y;
 
@@ -306,6 +312,7 @@ public class GridMosaicRenderedImage implements RenderedImage {
     
     @Override
     public Raster getData() {
+        readFirstTile();
         final Raster rasterOut = firstTileImage.getTile(0, 0).createCompatibleWritableRaster(getWidth(), getHeight());
 
         // Clear dataBuffer to 0 value for all bank
@@ -347,6 +354,7 @@ public class GridMosaicRenderedImage implements RenderedImage {
 
     @Override
     public Raster getData(Rectangle rect) {
+        readFirstTile();
         final Raster rasterOut = firstTileImage.getTile(0, 0).createCompatibleWritableRaster(rect.width, rect.height);
 
         // Clear dataBuffer to 0 value for all bank
