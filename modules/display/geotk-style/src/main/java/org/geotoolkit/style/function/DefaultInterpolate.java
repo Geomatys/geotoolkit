@@ -290,9 +290,7 @@ public class DefaultInterpolate extends AbstractExpression implements Interpolat
                 final Double n2 = after.getValue().evaluate(object,Double.class);
                 return ObjectConverters.convert( (n1 + pourcent*(n2-n1)) , c);
             }
-
         }
-
     }
 
     /**
@@ -302,97 +300,102 @@ public class DefaultInterpolate extends AbstractExpression implements Interpolat
      */
     private RenderedImage evaluateImage (final RenderedImage image) {
         final int visibleBand = CoverageUtilities.getVisibleBand(image);
-            final ColorModel candidate = image.getColorModel();
+        final ColorModel candidate = image.getColorModel();
 
-            //TODO : this should be used when the index color model can not handle signed values
-            //
-            //final SampleModel sm = image.getSampleModel();
-            //final int datatype = sm.getDataType();
-            //if(datatype == DataBuffer.TYPE_SHORT){
-            //    final ColorModel model = new CompatibleColorModel(16, function);
-            //    final ImageLayout layout = new ImageLayout().setColorModel(model);
-            //    return new NullOpImage(image, layout, null, OpImage.OP_COMPUTE_BOUND);
-            //}
+        //TODO : this should be used when the index color model can not handle signed values
+        //
+        //final SampleModel sm = image.getSampleModel();
+        //final int datatype = sm.getDataType();
+        //if(datatype == DataBuffer.TYPE_SHORT){
+        //    final ColorModel model = new CompatibleColorModel(16, function);
+        //    final ImageLayout layout = new ImageLayout().setColorModel(model);
+        //    return new NullOpImage(image, layout, null, OpImage.OP_COMPUTE_BOUND);
+        //}
 
 
             /*
              * Extracts the ARGB codes from the ColorModel and invokes the
              * transformColormap(...) method.
              */
-            final int[] ARGB;
-            final ColorModel model;
-            if(candidate instanceof IndexColorModel) {
-                final IndexColorModel colors = (IndexColorModel) candidate;
-                final int mapSize = colors.getMapSize();
+        final int[] ARGB;
+        final ColorModel model;
+
+        // As index color model cannot manage negative values, we must use our own in this case.
+        if (points[0].getData().doubleValue() < 0) {
+            model = new CompatibleColorModel(candidate.getPixelSize(), this);
+
+        } else if (candidate instanceof IndexColorModel) {
+            final IndexColorModel colors = (IndexColorModel) candidate;
+            final int mapSize = colors.getMapSize();
+            ARGB = new int[mapSize];
+            colors.getRGBs(ARGB);
+
+            transformColormap(ARGB);
+            model = ColorUtilities.getIndexColorModel(ARGB, 1, visibleBand, -1);
+
+        } else if (candidate instanceof ComponentColorModel) {
+            final ComponentColorModel colors = (ComponentColorModel) candidate;
+            final int nbbit = colors.getPixelSize();
+            final int type = image.getSampleModel().getDataType();
+
+            if (type == DataBuffer.TYPE_BYTE || type == DataBuffer.TYPE_USHORT) {
+                final int mapSize = 1 << nbbit;
                 ARGB = new int[mapSize];
-                colors.getRGBs(ARGB);
+
+                for (int j = 0; j < mapSize; j++) {
+                    int v = j * 255 / mapSize;
+                    int a = 255 << 24;
+                    int r = v << 16;
+                    int g = v << 8;
+                    int b = v << 0;
+                    ARGB[j] = a | r | g | b;
+                }
 
                 transformColormap(ARGB);
                 model = ColorUtilities.getIndexColorModel(ARGB, 1, visibleBand, -1);
 
-            } else if(candidate instanceof ComponentColorModel) {
-                final ComponentColorModel colors = (ComponentColorModel) candidate;
-                final int nbbit = colors.getPixelSize();
-                final int type = image.getSampleModel().getDataType();
+            } else {
+                //we can't handle a index color model when values exceed int max value
+                model = new CompatibleColorModel(nbbit, this);
+            }
 
-                if(type == DataBuffer.TYPE_BYTE || type == DataBuffer.TYPE_USHORT){
-                    final int mapSize = 1 << nbbit;
-                    ARGB = new int[mapSize];
+        } else if (candidate instanceof DirectColorModel) {
+            final DirectColorModel colors = (DirectColorModel) candidate;
+            final int nbbit = colors.getPixelSize();
+            final int type = image.getSampleModel().getDataType();
 
-                    for(int j=0; j<mapSize;j++){
-                        int v = j*255/mapSize;
-                        int a = 255 << 24;
-                        int r = v << 16;
-                        int g = v <<  8;
-                        int b = v <<  0;
-                        ARGB[j] = a|r|g|b;
-                    }
+            if (type == DataBuffer.TYPE_BYTE || type == DataBuffer.TYPE_USHORT) {
+                final int mapSize = 1 << nbbit;
+                ARGB = new int[mapSize];
 
-                    transformColormap(ARGB);
-                    model = ColorUtilities.getIndexColorModel(ARGB, 1, visibleBand, -1);
-
-                } else {
-                    //we can't handle a index color model when values exceed int max value
-                    model = new CompatibleColorModel(nbbit, this);
+                for (int j = 0; j < mapSize; j++) {
+                    int v = j * 255 / mapSize;
+                    int a = 255 << 24;
+                    int r = v << 16;
+                    int g = v << 8;
+                    int b = v << 0;
+                    ARGB[j] = a | r | g | b;
                 }
 
-            }else if(candidate instanceof DirectColorModel) {
-                final DirectColorModel colors = (DirectColorModel) candidate;
-                final int nbbit = colors.getPixelSize();
-                final int type = image.getSampleModel().getDataType();
-
-                if(type == DataBuffer.TYPE_BYTE || type == DataBuffer.TYPE_USHORT){
-                    final int mapSize = 1 << nbbit;
-                    ARGB = new int[mapSize];
-
-                    for(int j=0; j<mapSize;j++){
-                        int v = j*255/mapSize;
-                        int a = 255 << 24;
-                        int r = v << 16;
-                        int g = v <<  8;
-                        int b = v <<  0;
-                        ARGB[j] = a|r|g|b;
-                    }
-
-                    transformColormap(ARGB);
-                    model = ColorUtilities.getIndexColorModel(ARGB, 1, visibleBand, -1);
-
-                } else {
-                    //we can't handle a index color model when values exceed int max value
-                    model = new CompatibleColorModel(nbbit, this);
-                }
+                transformColormap(ARGB);
+                model = ColorUtilities.getIndexColorModel(ARGB, 1, visibleBand, -1);
 
             } else {
-                model = new CompatibleColorModel(candidate.getPixelSize(), this);
+                //we can't handle a index color model when values exceed int max value
+                model = new CompatibleColorModel(nbbit, this);
             }
+
+        } else {
+            model = new CompatibleColorModel(candidate.getPixelSize(), this);
+        }
 
             /*
             * Gives the color model to the image layout and creates a new image using the Null
             * operation, which merely propagates its first source along the operation chain
             * unmodified (except for the ColorModel given in the layout in this case).
             */
-           final ImageLayout layout = new ImageLayout().setColorModel(model);
-           return new NullOpImage(image, layout, null, OpImage.OP_COMPUTE_BOUND);
+        final ImageLayout layout = new ImageLayout().setColorModel(model);
+        return new NullOpImage(image, layout, null, OpImage.OP_COMPUTE_BOUND);
     }
 
     private int[] transformColormap(final int[] ARGB) {
