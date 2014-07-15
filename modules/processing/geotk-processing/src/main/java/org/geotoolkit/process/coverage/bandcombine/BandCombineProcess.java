@@ -20,13 +20,17 @@ import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.RenderedImage;
 import java.util.Hashtable;
+
+import org.geotoolkit.coverage.CoverageUtilities;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
+import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.process.AbstractProcess;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessException;
+import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.parameter.ParameterValueGroup;
 import static org.geotoolkit.process.coverage.bandcombine.BandCombineDescriptor.*;
 import org.apache.sis.util.ArgumentChecks;
@@ -38,6 +42,7 @@ import org.opengis.coverage.grid.GridGeometry;
 /**
  *
  * @author Johann Sorel (Geomatys)
+ * @author Quentin Boileau (Geomatys)
  */
 public class BandCombineProcess extends AbstractProcess {
 
@@ -59,39 +64,49 @@ public class BandCombineProcess extends AbstractProcess {
             return;
         }
 
+        try {
+            // CALL IMAGE BAND COMBINE /////////////////////////////////////////////
+            final StringBuilder sb = new StringBuilder();
+            final RenderedImage[] images = new RenderedImage[inputCoverage.length];
 
-        // CALL IMAGE BAND COMBINE /////////////////////////////////////////////
-        final RenderedImage[] images = new RenderedImage[inputCoverage.length];
-        for(int i=0;i<inputCoverage.length;i++){
-            images[i] = ((GridCoverage2D) inputCoverage[i]).getRenderedImage();
+            for (int i = 0; i < inputCoverage.length; i++) {
+                final GridCoverage2D gridCoverage2D = CoverageUtilities.firstSlice((GridCoverage) inputCoverage[i]);
+                images[i] = gridCoverage2D.getRenderedImage();
+                sb.append(String.valueOf(gridCoverage2D.getName()));
+            }
+
+            final ProcessDescriptor imageCombineDesc = org.geotoolkit.process.image.bandcombine.BandCombineDescriptor.INSTANCE;
+            final ParameterValueGroup params = imageCombineDesc.getInputDescriptor().createValue();
+            params.parameter("images").setValue(images);
+            final Process process = imageCombineDesc.createProcess(params);
+            BufferedImage resultImage = (BufferedImage)process.call().parameter("result").getValue();
+
+
+            // BUILD A BETTER COLOR MODEL //////////////////////////////////////////
+            //TODO try to reuse java colormodel if possible
+            //extract grayscale min/max from sample dimension
+            final GridCoverage2D firstCoverage = CoverageUtilities.firstSlice((GridCoverage) inputCoverage[0]);
+            final SampleDimension gridSample = firstCoverage.getSampleDimension(0);
+            final GridGeometry gridGeometry = firstCoverage.getGridGeometry();
+            final ColorModel graycm = BufferedImageUtilities.createGrayScaleColorModel(
+                    resultImage.getSampleModel().getDataType(),
+                    resultImage.getSampleModel().getNumBands(),0,
+                    gridSample.getMinimumValue(), gridSample.getMaximumValue());
+            resultImage = new BufferedImage(graycm, resultImage.getRaster(), false, new Hashtable<>());
+
+
+            // REBUILD COVERAGE ////////////////////////////////////////////////////
+            final GridCoverageBuilder gcb = new GridCoverageBuilder();
+            gcb.setName(sb.toString());
+            gcb.setRenderedImage(resultImage);
+            gcb.setGridGeometry(gridGeometry);
+            final GridCoverage2D resultCoverage = gcb.getGridCoverage2D();
+
+
+            Parameters.getOrCreate(OUT_COVERAGE, outputParameters).setValue(resultCoverage);
+        } catch (CoverageStoreException e) {
+            throw new ProcessException(e.getMessage(),this, e);
         }
-        final ProcessDescriptor imageCombineDesc = org.geotoolkit.process.image.bandcombine.BandCombineDescriptor.INSTANCE;
-        final ParameterValueGroup params = imageCombineDesc.getInputDescriptor().createValue();
-        params.parameter("images").setValue(images);
-        final Process process = imageCombineDesc.createProcess(params);
-        BufferedImage resultImage = (BufferedImage)process.call().parameter("result").getValue();
-
-
-        // BUILD A BETTER COLOR MODEL //////////////////////////////////////////
-        //TODO try to reuse java colormodel if possible
-        //extract grayscale min/max from sample dimension
-        SampleDimension gridSample = inputCoverage[0].getSampleDimension(0);
-        GridGeometry gridGeometry = ((GridCoverage2D)inputCoverage[0]).getGridGeometry();
-        final ColorModel graycm = BufferedImageUtilities.createGrayScaleColorModel(
-                resultImage.getSampleModel().getDataType(),
-                resultImage.getSampleModel().getNumBands(),0,
-                gridSample.getMinimumValue(), gridSample.getMaximumValue());
-        resultImage = new BufferedImage(graycm, resultImage.getRaster(), false, new Hashtable<Object, Object>());
-
-
-        // REBUILD COVERAGE ////////////////////////////////////////////////////
-        final GridCoverageBuilder gcb = new GridCoverageBuilder();
-        gcb.setRenderedImage(resultImage);
-        gcb.setGridGeometry(gridGeometry);
-        final GridCoverage2D resultCoverage = gcb.getGridCoverage2D();
-
-
-        Parameters.getOrCreate(OUT_COVERAGE, outputParameters).setValue(resultCoverage);
     }
 
 }
