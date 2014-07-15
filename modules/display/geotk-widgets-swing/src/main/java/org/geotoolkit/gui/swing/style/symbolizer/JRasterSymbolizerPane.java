@@ -451,7 +451,7 @@ public class JRasterSymbolizerPane extends StyleElementEditor<RasterSymbolizer> 
         }
         guiOutlinePane.revalidate();
         guiOutlinePane.repaint();
-        
+        firePropertyChange(PROPERTY_UPDATED, null, create());
     }//GEN-LAST:event_guinoneActionPerformed
 
     private void propertyChange(PropertyChangeEvent evt) {//GEN-FIRST:event_propertyChange
