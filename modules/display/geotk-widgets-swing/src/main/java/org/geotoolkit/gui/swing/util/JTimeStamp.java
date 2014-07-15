@@ -16,18 +16,26 @@
  */
 package org.geotoolkit.gui.swing.util;
 
+import org.apache.sis.util.logging.Logging;
+
+import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Handles a full date, with time stamp. By default, do not display seconds.
  *
  * @author Guilhem Legal (Geomatys)
  * @author Cédric Briançon (Geomatys)
+ * @author Quentin Boileau (Geomatys)
  */
 public class JTimeStamp extends javax.swing.JComponent {
+
+    private static final Logger LOGGER = Logging.getLogger(JTimeStamp.class);
     private boolean displaySeconds = false;
     private TimeZone timeZone;
 
@@ -112,8 +120,14 @@ public class JTimeStamp extends javax.swing.JComponent {
     public void setValue(final Date t) {
         if (t != null) {
             datePicker.setDate(t);
-            final Calendar calendar = GregorianCalendar.getInstance(); 
-            calendar.setTime(t);   
+
+            Calendar calendar;
+            if (timeZone != null) {
+                calendar = new GregorianCalendar(timeZone);
+            } else {
+                calendar = GregorianCalendar.getInstance();
+            }
+            calendar.setTime(t);
             final int hour = calendar.get(Calendar.HOUR_OF_DAY);
             final int minute = calendar.get(Calendar.MINUTE);
             hours.setValue(hour);
@@ -131,21 +145,35 @@ public class JTimeStamp extends javax.swing.JComponent {
     }
 
     public Date getValue() {
-        final Calendar calendar = GregorianCalendar.getInstance(); 
+        Calendar calendar;
+        if (timeZone != null) {
+            calendar = new GregorianCalendar(timeZone);
+        } else {
+            calendar = GregorianCalendar.getInstance();
+        }
+
         final Date d = datePicker.getDate();
         if (d != null) {
-            calendar.setTime(datePicker.getDate());   
-            calendar.set(Calendar.HOUR_OF_DAY, (Integer)hours.getValue());
-            calendar.set(Calendar.MINUTE, (Integer)minutes.getValue());
-            if (displaySeconds) {
-                calendar.set(Calendar.SECOND, (Integer)seconds.getValue());
-            }
+            //update models
+            try {
+                hours.commitEdit();
+                minutes.commitEdit();
+                if (displaySeconds) {
+                    seconds.commitEdit();
+                }
 
-            if (timeZone != null) {
-                return new Date(calendar.getTimeInMillis() + 
-                        (timeZone.getOffset(calendar.getTimeInMillis()) - TimeZone.getDefault().getOffset(calendar.getTimeInMillis())));
+                calendar.setTime(datePicker.getDate());
+                calendar.set(Calendar.HOUR_OF_DAY, (Integer) hours.getValue());
+                calendar.set(Calendar.MINUTE, (Integer) minutes.getValue());
+                if (displaySeconds) {
+                    calendar.set(Calendar.SECOND, (Integer) seconds.getValue());
+                }
+
+                return new Date(calendar.getTimeInMillis());
+            } catch (ParseException pe) {
+                LOGGER.log(Level.INFO, "Error during spinners parsing : "+pe.getMessage());
+                return d;
             }
-            return new Date(calendar.getTimeInMillis());
         }
         return null;
     }
