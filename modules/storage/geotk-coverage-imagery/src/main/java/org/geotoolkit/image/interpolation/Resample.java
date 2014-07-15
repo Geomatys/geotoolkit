@@ -181,14 +181,14 @@ public class Resample {
              * If a user give a destination image he should hope that his image boundary stay unchanged.
              */
             if (rbc == ResampleBorderComportement.CROP) 
-                throw new IllegalArgumentException("It is impossible to define appropriate border comportement with a given image and crop request.");
+                throw new IllegalArgumentException("It is impossible to define appropriate border comportment with a given image and crop request.");
             this.imageDest = imageDest;
         }
         this.numBands = interpol.getNumBands();
         if (fillValue.length != numBands)
             throw new IllegalArgumentException("fillValue table length and numbands are different : "+fillValue.length+" numbands = "+this.numBands);
         assert(numBands == imageDest.getWritableTile(imageDest.getMinTileX(), imageDest.getMinTileY()).getNumBands())
-                : "destination image numbands different from source image numbands";
+                : "destination band number different from source band number";
         this.destIterator        = PixelIteratorFactory.createDefaultWriteableIterator(this.imageDest, this.imageDest, resampleArea);
         this.fillValue           = fillValue;
         this.destToSourceMathTransform = mathTransform;
@@ -207,7 +207,10 @@ public class Resample {
                 clamk[1] = 255;
                 break;
             }
-            case DataBuffer.TYPE_SHORT :
+            case DataBuffer.TYPE_SHORT : {
+                clamk[0] = Short.MIN_VALUE;
+                clamk[1] = Short.MAX_VALUE;
+            }
             case DataBuffer.TYPE_USHORT : {
                 clamk[0] = 0;
                 clamk[1] = 65535;
