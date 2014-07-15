@@ -1,7 +1,7 @@
 /*
  *    GeotoolKit - An Open Source Java GIS Toolkit
  *    http://geotoolkit.org
- * 
+ *
  *    (C) 2009, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -21,9 +21,6 @@ package org.geotoolkit.service;
 import org.opengis.service.OperationModel;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
@@ -35,9 +32,9 @@ import org.opengis.service.ServiceSpecification;
 
 /**
  * <p>Java class for SV_ServiceSpecification_Type complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="SV_ServiceSpecification_Type">
  *   &lt;complexContent>
@@ -52,8 +49,8 @@ import org.opengis.service.ServiceSpecification;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlType(name = "SV_ServiceSpecification_Type", propOrder = {
@@ -77,9 +74,9 @@ public class ServiceSpecificationImpl implements ServiceSpecification {
     private Collection<Interface> theSVInterface;
 
     public ServiceSpecificationImpl() {
-        
+
     }
-    
+
     /**
      * Gets the name of the service.
     */
@@ -135,11 +132,11 @@ public class ServiceSpecificationImpl implements ServiceSpecification {
         }
         return this.theSVInterface;
     }
-    
+
     public void setTheSVInterface(final Collection<Interface> theSVInterface) {
          this.theSVInterface = theSVInterface;
     }
-    
+
     public void setTheSVInterface(final Interface theSVInterface) {
         if (this.theSVInterface == null) {
             this.theSVInterface = new ArrayList<Interface>();

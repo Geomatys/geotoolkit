@@ -1,7 +1,7 @@
 /*
  *    GeotoolKit - An Open Source Java GIS Toolkit
  *    http://geotoolkit.org
- * 
+ *
  *    (C) 2009, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -19,7 +19,6 @@ package org.geotoolkit.service;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
@@ -44,24 +43,24 @@ public class ServiceProviderImpl implements ServiceProvider {
     private Collection<ResponsibleParty> serviceContact;
     private String providerName;
     private Collection<ServiceIdentification> services;
-    
+
     /**
-     * An empty constrcutor used by JAXB 
+     * An empty constrcutor used by JAXB
      */
     public ServiceProviderImpl() {
-        
+
     }
-    
+
     /**
-     * Clone a ServiceProvider. 
+     * Clone a ServiceProvider.
      */
     public ServiceProviderImpl(final ServiceProvider provider) {
         this.providerName   = provider.getProviderName();
         this.serviceContact = provider.getServiceContact();
         this.services       = provider.getServices();
-        
+
     }
-    
+
     @XmlElement(required = true)
     public Collection<ResponsibleParty> getServiceContact() {
         if (serviceContact == null) {
@@ -69,11 +68,11 @@ public class ServiceProviderImpl implements ServiceProvider {
         }
         return serviceContact;
     }
-    
+
     public void setServiceContact(final Collection<ResponsibleParty> serviceContact) {
          this.serviceContact = serviceContact;
     }
-    
+
     public void setServiceContact(final ResponsibleParty serviceContact) {
         if (this.serviceContact == null) {
             this.serviceContact = new ArrayList<ResponsibleParty>();
@@ -81,7 +80,7 @@ public class ServiceProviderImpl implements ServiceProvider {
         this.serviceContact.add(serviceContact);
     }
 
-    @XmlElement(required = true) 
+    @XmlElement(required = true)
     public String getProviderName() {
        return providerName;
     }
@@ -93,11 +92,11 @@ public class ServiceProviderImpl implements ServiceProvider {
         }
         return services;
     }
-    
+
     public void setServices(final Collection<ServiceIdentification> services) {
          this.services = services;
     }
-    
+
     public void setServices(final ServiceIdentification services) {
         if (this.services == null) {
             this.services = new ArrayList<ServiceIdentification>();

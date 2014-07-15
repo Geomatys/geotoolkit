@@ -1,7 +1,7 @@
 /*
  *    GeotoolKit - An Open Source Java GIS Toolkit
  *    http://geotoolkit.org
- * 
+ *
  *    (C) 2009, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -20,7 +20,6 @@ package org.geotoolkit.service;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
@@ -31,9 +30,9 @@ import org.opengis.service.Service;
 
 /**
  * <p>Java class for SV_Service_Type complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="SV_Service_Type">
  *   &lt;complexContent>
@@ -46,8 +45,8 @@ import org.opengis.service.Service;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlType(propOrder = {
@@ -64,9 +63,9 @@ public class ServiceImpl implements Service {
      * An empty constructor used by JAXB
      */
     public ServiceImpl() {
-        
+
     }
-    
+
     /**
      * Clone an interface
      */
@@ -74,10 +73,10 @@ public class ServiceImpl implements Service {
       this.specification = service.getSpecification();
       this.theSVPort     = service.getTheSVPort();
     }
-    
+
     /**
      * Gets the value of the specification property.
-     * 
+     *
     */
     @XmlElement(required = true)
     public Collection<PlatformSpecificServiceSpecification> getSpecification() {
@@ -86,11 +85,11 @@ public class ServiceImpl implements Service {
         }
         return this.specification;
     }
-    
+
     public void setSpecification(final Collection<PlatformSpecificServiceSpecification> specification) {
          this.specification = specification;
     }
-    
+
     public void setSpecification(final PlatformSpecificServiceSpecification specification) {
         if (this.specification == null) {
             this.specification = new ArrayList<PlatformSpecificServiceSpecification>();
@@ -100,7 +99,7 @@ public class ServiceImpl implements Service {
 
     /**
      * Gets the value of the theSVPort property.
-     * 
+     *
      */
     @XmlElement(name = "theSV_Port")
     public Collection<Port> getTheSVPort() {
@@ -109,17 +108,17 @@ public class ServiceImpl implements Service {
         }
         return this.theSVPort;
     }
-    
+
     public void setTheSVPort(final Collection<Port> theSVPort) {
          this.theSVPort = theSVPort;
     }
-    
+
     public void setTheSVPort(final Port theSVPort) {
         if (this.theSVPort == null) {
             this.theSVPort = new ArrayList<Port>();
         }
         this.theSVPort.add(theSVPort);
      }
-    
+
 
 }

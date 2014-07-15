@@ -1,7 +1,7 @@
 /*
  *    GeotoolKit - An Open Source Java GIS Toolkit
  *    http://geotoolkit.org
- * 
+ *
  *    (C) 2009, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -26,9 +26,9 @@ import org.opengis.util.ScopedName;
 
 /**
  * <p>Java class for SV_CoupledResource_Type complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="SV_CoupledResource_Type">
  *   &lt;complexContent>
@@ -42,11 +42,11 @@ import org.opengis.util.ScopedName;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
-@XmlType(name = "SV_CoupledResource_Type", propOrder = {
+@XmlType(/*name = "SV_CoupledResource_Type",*/ propOrder = {
     "operationName",
     "identifier",
     "scopedName"
@@ -62,9 +62,9 @@ public class CoupledResourceImpl implements CoupledResource {
      * An empty constructor used by JAXB
      */
     public CoupledResourceImpl() {
-        
+
     }
-    
+
     /**
      * Clone an coupled resource.
      */
@@ -73,10 +73,10 @@ public class CoupledResourceImpl implements CoupledResource {
         this.operationName = resource.getOperationName();
         this.scopedName    = resource.getScopedName();
     }
-    
+
     /**
      * Gets the value of the operationName property.
-     * 
+     *
      */
     @XmlElement(name = "operationName", required = true)
     public String getOperationName() {
@@ -85,7 +85,7 @@ public class CoupledResourceImpl implements CoupledResource {
 
     /**
      * Sets the value of the operationName property.
-     * 
+     *
     */
     public void setOperationName(final String value) {
         this.operationName = value;
@@ -93,7 +93,7 @@ public class CoupledResourceImpl implements CoupledResource {
 
     /**
      * Gets the value of the identifier property.
-     * 
+     *
     */
     @XmlElement(name = "identifier", required = true)
     public String getIdentifier() {
@@ -102,7 +102,7 @@ public class CoupledResourceImpl implements CoupledResource {
 
     /**
      * Sets the value of the identifier property.
-     * 
+     *
      */
     public void setIdentifier(final String value) {
         this.identifier = value;
@@ -110,7 +110,7 @@ public class CoupledResourceImpl implements CoupledResource {
 
     /**
      * Gets the value of the scopedName property.
-     * 
+     *
     */
     @XmlElement(name = "scopedName", namespace = "http://www.isotc211.org/2005/gco")
     public ScopedName getScopedName() {
@@ -119,7 +119,7 @@ public class CoupledResourceImpl implements CoupledResource {
 
     /**
      * Sets the value of the scopedName property.
-     * 
+     *
     */
     public void setScopedName(final ScopedName value) {
         this.scopedName = value;

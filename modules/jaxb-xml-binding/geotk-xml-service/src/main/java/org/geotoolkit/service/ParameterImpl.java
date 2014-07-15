@@ -1,7 +1,7 @@
 /*
  *    GeotoolKit - An Open Source Java GIS Toolkit
  *    http://geotoolkit.org
- * 
+ *
  *    (C) 2009, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -31,9 +31,9 @@ import org.opengis.util.TypeName;
 
 /**
  * <p>Java class for SV_Parameter_Type complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="SV_Parameter_Type">
  *   &lt;complexContent>
@@ -50,11 +50,11 @@ import org.opengis.util.TypeName;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
-@XmlType(name = "SV_Parameter_Type", propOrder = {
+@XmlType(/*name = "SV_Parameter_Type",*/ propOrder = {
     "name",
     "direction",
     "description",
@@ -65,7 +65,7 @@ import org.opengis.util.TypeName;
 @XmlRootElement(name="SV_Parameter")
 public class ParameterImpl implements Parameter {
 
-    
+
     private MemberName name;
     private ParameterDirection direction;
     private String description;
@@ -77,11 +77,11 @@ public class ParameterImpl implements Parameter {
      * An empty constructor used by JAXB
      */
     public ParameterImpl() {
-        
+
     }
-    
+
     /**
-     * Clone a parameter. 
+     * Clone a parameter.
      */
     public ParameterImpl(final Parameter parameter) {
         this.description   = parameter.getDescription();
@@ -90,12 +90,12 @@ public class ParameterImpl implements Parameter {
         this.optionality   = parameter.getOptionality();
         this.repeatability = parameter.getRepeatability();
         this.valueType     = parameter.getValueType();
-        
+
     }
-    
+
     /**
      * Gets the value of the name property.
-     * 
+     *
      */
     @XmlJavaTypeAdapter(MemberNameAdapter.class)
     @XmlElement(required = true)
@@ -105,7 +105,7 @@ public class ParameterImpl implements Parameter {
 
     /**
      * Sets the value of the name property.
-     * 
+     *
      */
     public void setName(final MemberName value) {
         this.name = value;
@@ -113,7 +113,7 @@ public class ParameterImpl implements Parameter {
 
     /**
      * Gets the value of the direction property.
-     * 
+     *
      */
     @XmlElement
     public ParameterDirection getDirection() {
@@ -122,7 +122,7 @@ public class ParameterImpl implements Parameter {
 
     /**
      * Sets the value of the direction property.
-     * 
+     *
      */
     public void setDirection(final ParameterDirection value) {
         this.direction = value;
@@ -130,7 +130,7 @@ public class ParameterImpl implements Parameter {
 
     /**
      * Gets the value of the description property.
-     * 
+     *
     */
     @XmlElement
     public String getDescription() {
@@ -139,7 +139,7 @@ public class ParameterImpl implements Parameter {
 
     /**
      * Sets the value of the description property.
-     * 
+     *
      */
     public void setDescription(final String value) {
         this.description = value;
@@ -147,7 +147,7 @@ public class ParameterImpl implements Parameter {
 
     /**
      * Gets the value of the optionality property.
-     * 
+     *
      */
     @XmlElement(required = true)
     public String getOptionality() {
@@ -156,7 +156,7 @@ public class ParameterImpl implements Parameter {
 
     /**
      * Sets the value of the optionality property.
-     * 
+     *
      */
     public void setOptionality(final String value) {
         this.optionality = value;
@@ -164,7 +164,7 @@ public class ParameterImpl implements Parameter {
 
     /**
      * Gets the value of the repeatability property.
-     * 
+     *
      */
     @XmlElement(required = true)
     public Boolean getRepeatability() {
@@ -173,7 +173,7 @@ public class ParameterImpl implements Parameter {
 
     /**
      * Sets the value of the repeatability property.
-     * 
+     *
      */
     public void setRepeatability(final Boolean value) {
         this.repeatability = value;
@@ -181,7 +181,7 @@ public class ParameterImpl implements Parameter {
 
     /**
      * Gets the value of the valueType property.
-     * 
+     *
      */
     @XmlElement
     public TypeName getValueType() {
@@ -190,7 +190,7 @@ public class ParameterImpl implements Parameter {
 
     /**
      * Sets the value of the valueType property.
-     * 
+     *
      */
     public void setValueType(final TypeName value) {
         this.valueType = value;
@@ -231,7 +231,7 @@ public class ParameterImpl implements Parameter {
         hash = 17 * hash + (this.valueType != null ? this.valueType.hashCode() : 0);
         return hash;
     }
-    
+
     @Override
     public boolean equals(final Object obj) {
         if (this == obj) {

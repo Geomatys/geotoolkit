@@ -7,6 +7,7 @@ syntax: regexp
 \.settings$
 \.DS_Store$
 \.git$
+\.gitignore$
 \.tmp$
 ^tmp$
 \.log$

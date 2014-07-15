@@ -1,7 +1,7 @@
 /*
  *    GeotoolKit - An Open Source Java GIS Toolkit
  *    http://geotoolkit.org
- * 
+ *
  *    (C) 2009, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -29,9 +29,9 @@ import org.opengis.service.ServiceType;
 
 /**
  * <p>Java class for SV_PlatformNeutralServiceSpecification_Type complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="SV_PlatformNeutralServiceSpecification_Type">
  *   &lt;complexContent>
@@ -44,8 +44,8 @@ import org.opengis.service.ServiceType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlType(name = "SV_PlatformNeutralServiceSpecification_Type", propOrder = {
@@ -65,9 +65,9 @@ public class PlatformNeutralServiceSpecificationImpl extends ServiceSpecificatio
      * An empty constructor used by JAXB
      */
     public PlatformNeutralServiceSpecificationImpl() {
-        
+
     }
-    
+
     /**
      * Clone a PlatformSpecificServiceSpecification
      */
@@ -75,7 +75,7 @@ public class PlatformNeutralServiceSpecificationImpl extends ServiceSpecificatio
         this.implSpec    = platform.getImplSpec();
         this.serviceType = platform.getServiceType();
     }
-    
+
     /**
      * Gets the value of the serviceType property.
      */
@@ -93,7 +93,7 @@ public class PlatformNeutralServiceSpecificationImpl extends ServiceSpecificatio
 
     /**
      * Gets the value of the implSpec property.
-     * 
+     *
      */
     @XmlElement(required = true)
     public PlatformSpecificServiceSpecification getImplSpec() {
@@ -102,7 +102,7 @@ public class PlatformNeutralServiceSpecificationImpl extends ServiceSpecificatio
 
     /**
      * Sets the value of the implSpec property.
-     * 
+     *
      */
     public void setImplSpec(final PlatformSpecificServiceSpecification value) {
         this.implSpec = value;

@@ -1,7 +1,7 @@
 /*
  *    GeotoolKit - An Open Source Java GIS Toolkit
  *    http://geotoolkit.org
- * 
+ *
  *    (C) 2009, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -21,8 +21,6 @@ package org.geotoolkit.service;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
@@ -32,9 +30,9 @@ import org.opengis.service.OperationChain;
 
 /**
  * <p>Java class for SV_OperationChain_Type complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="SV_OperationChain_Type">
  *   &lt;complexContent>
@@ -48,8 +46,8 @@ import org.opengis.service.OperationChain;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlType(name = "SV_OperationChain_Type", propOrder = {
@@ -65,9 +63,9 @@ public class OperationChainImpl implements OperationChain {
     private Collection<Operation> operation;
 
     public OperationChainImpl() {
-        
+
     }
-    
+
     public OperationChainImpl(final String name, final String description, final List<Operation> operation) {
         this.name        = name;
         this.description = description;
@@ -75,7 +73,7 @@ public class OperationChainImpl implements OperationChain {
     }
     /**
      * Gets the value of the name property.
-     * 
+     *
      */
     @XmlElement(required = true)
     public String getName() {
@@ -84,7 +82,7 @@ public class OperationChainImpl implements OperationChain {
 
     /**
      * Sets the value of the name property.
-     * 
+     *
      */
     public void setName(final String value) {
         this.name = value;
@@ -92,7 +90,7 @@ public class OperationChainImpl implements OperationChain {
 
     /**
      * Gets the value of the description property.
-     * 
+     *
      */
     @XmlElement
     public String getDescription() {
@@ -101,7 +99,7 @@ public class OperationChainImpl implements OperationChain {
 
     /**
      * Sets the value of the description property.
-     * 
+     *
     */
     public void setDescription(final String value) {
         this.description = value;
@@ -109,7 +107,7 @@ public class OperationChainImpl implements OperationChain {
 
     /**
      * Gets the value of the operation property.
-     * 
+     *
      */
     @XmlElement(required = true)
     public Collection<Operation> getOperation() {
@@ -118,11 +116,11 @@ public class OperationChainImpl implements OperationChain {
         }
         return this.operation;
     }
-    
+
     public void setOperation(final Collection<Operation> operation) {
          this.operation = operation;
     }
-    
+
      public void setOperation(final Operation operation) {
         if (this.operation == null) {
             this.operation = new ArrayList<Operation>();

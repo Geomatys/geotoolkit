@@ -17,7 +17,6 @@
 
 package org.geotoolkit.service;
 
-import org.opengis.service.CouplingType;
 import java.util.Collection;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -25,12 +24,13 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.apache.sis.metadata.MetadataStandard;
 import org.apache.sis.metadata.iso.identification.AbstractIdentification;
-import org.geotoolkit.resources.jaxb.service.code.CouplingTypeAdapter;
+import org.apache.sis.internal.jaxb.code.SV_CouplingType;
 import org.apache.sis.internal.jaxb.gco.StringAdapter;
 import org.opengis.metadata.constraint.Constraints;
 import org.opengis.metadata.distribution.StandardOrderProcess;
 import org.opengis.metadata.extent.Extent;
 import org.opengis.metadata.identification.DataIdentification;
+import org.opengis.metadata.service.CouplingType;
 import org.opengis.service.CoupledResource;
 import org.opengis.service.OperationMetadata;
 import org.opengis.service.ServiceIdentification;
@@ -218,7 +218,7 @@ public class ServiceIdentificationImpl extends AbstractIdentification implements
      * Gets the value of the couplingType property.
      *
      */
-    @XmlJavaTypeAdapter(CouplingTypeAdapter.class)
+    @XmlJavaTypeAdapter(SV_CouplingType.class)
     @XmlElement(required = true)
     public synchronized CouplingType getCouplingType() {
         return couplingType;

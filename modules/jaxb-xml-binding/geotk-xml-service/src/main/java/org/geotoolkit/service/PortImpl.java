@@ -1,7 +1,7 @@
 /*
  *    GeotoolKit - An Open Source Java GIS Toolkit
  *    http://geotoolkit.org
- * 
+ *
  *    (C) 2009, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -30,9 +30,9 @@ import org.opengis.service.Port;
 
 /**
  * <p>Java class for SV_Port_Type complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="SV_Port_Type">
  *   &lt;complexContent>
@@ -44,8 +44,8 @@ import org.opengis.service.Port;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -62,20 +62,20 @@ public class PortImpl implements Port {
      * An empty constructor used by JAXB
      */
     public PortImpl() {
-        
+
     }
-    
+
     /**
      * Clone a Port.
      */
     public PortImpl(final Port port) {
-        
+
         this.theSVInterface = port.getTheSVInterface();
     }
-    
+
     /**
      * Gets the value of the theSVInterface property.
-     * 
+     *
      */
     public Collection<Interface> getTheSVInterface() {
         if (theSVInterface == null) {
@@ -83,11 +83,11 @@ public class PortImpl implements Port {
         }
         return this.theSVInterface;
     }
-    
+
     public void setTheSVInterface(final Collection<Interface> theSVInterface) {
          this.theSVInterface = theSVInterface;
     }
-    
+
     public void setTheSVInterface(final Interface theSVInterface) {
         if (this.theSVInterface == null) {
             this.theSVInterface = new ArrayList<Interface>();

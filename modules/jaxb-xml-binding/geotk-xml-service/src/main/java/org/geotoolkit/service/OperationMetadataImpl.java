@@ -1,7 +1,7 @@
 /*
  *    GeotoolKit - An Open Source Java GIS Toolkit
  *    http://geotoolkit.org
- * 
+ *
  *    (C) 2009, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -18,7 +18,6 @@
 
 package org.geotoolkit.service;
 
-import org.opengis.service.DCPList;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
@@ -28,15 +27,16 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.apache.sis.internal.jaxb.gco.StringAdapter;
 import org.opengis.metadata.citation.OnlineResource;
+import org.opengis.metadata.service.DistributedComputingPlatform;
 import org.opengis.service.OperationMetadata;
 import org.opengis.service.Parameter;
 
 
 /**
  * <p>Java class for SV_OperationMetadata_Type complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="SV_OperationMetadata_Type">
  *   &lt;complexContent>
@@ -54,8 +54,8 @@ import org.opengis.service.Parameter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlType(propOrder = {
@@ -70,9 +70,9 @@ import org.opengis.service.Parameter;
 @XmlRootElement(name="SV_OperationMetadata")
 public class OperationMetadataImpl implements OperationMetadata {
 
-   
+
     private String operationName;
-    private Collection<DCPList> dcp;
+    private Collection<DistributedComputingPlatform> dcp;
     private String operationDescription;
     private String invocationName;
     private Collection<Parameter> parameters;
@@ -80,13 +80,13 @@ public class OperationMetadataImpl implements OperationMetadata {
     private Collection<OperationMetadata> dependsOn;
 
     private boolean isUuidref;
-    
+
     /**
      * An empty constrcutor used by JAXB
      */
     public OperationMetadataImpl() {
     }
-    
+
     /**
      * Clone a OperationMetadata
      */
@@ -99,17 +99,17 @@ public class OperationMetadataImpl implements OperationMetadata {
         this.operationName        = operation.getOperationName();
         this.parameters           = operation.getParameters();
     }
-    
+
     /**
      * Build a new Operation metadata
      */
     public OperationMetadataImpl(final String operationName) {
         this.operationName = operationName;
     }
-    
+
     /**
      * Gets the value of the operationName property.
-     * 
+     *
      */
     @XmlJavaTypeAdapter(StringAdapter.class)
     @XmlElement(required = true)
@@ -119,7 +119,7 @@ public class OperationMetadataImpl implements OperationMetadata {
 
     /**
      * Sets the value of the operationName property.
-     * 
+     *
      */
     public void setOperationName(final String value) {
         this.operationName = value;
@@ -127,31 +127,31 @@ public class OperationMetadataImpl implements OperationMetadata {
 
     /**
      * Gets the value of the dcp property.
-     * 
-     * 
+     *
+     *
      */
     @XmlElement(name = "DCP", required = true)
-    public Collection<DCPList> getDCP() {
+    public Collection<DistributedComputingPlatform> getDCP() {
         if (dcp == null) {
-            dcp = new ArrayList<DCPList>();
+            dcp = new ArrayList<DistributedComputingPlatform>();
         }
         return this.dcp;
     }
-    
-    public void setDCP(final Collection<DCPList> dcp) {
+
+    public void setDCP(final Collection<DistributedComputingPlatform> dcp) {
          this.dcp = dcp;
     }
-    
-    public void setDCP(final DCPList dcp) {
+
+    public void setDCP(final DistributedComputingPlatform dcp) {
         if (this.dcp == null) {
-            this.dcp = new ArrayList<DCPList>();
-        } 
+            this.dcp = new ArrayList<DistributedComputingPlatform>();
+        }
         this.dcp.add(dcp);
      }
 
     /**
      * Gets the value of the operationDescription property.
-     * 
+     *
      */
     @XmlElement
     public String getOperationDescription() {
@@ -160,7 +160,7 @@ public class OperationMetadataImpl implements OperationMetadata {
 
     /**
      * Sets the value of the operationDescription property.
-     * 
+     *
      */
     public void setOperationDescription(final String value) {
         this.operationDescription = value;
@@ -168,7 +168,7 @@ public class OperationMetadataImpl implements OperationMetadata {
 
     /**
      * Gets the value of the invocationName property.
-     * 
+     *
      */
     @XmlElement
     public String getInvocationName() {
@@ -177,7 +177,7 @@ public class OperationMetadataImpl implements OperationMetadata {
 
     /**
      * Sets the value of the invocationName property.
-     * 
+     *
      */
     public void setInvocationName(final String value) {
         this.invocationName = value;
@@ -185,7 +185,7 @@ public class OperationMetadataImpl implements OperationMetadata {
 
     /**
      * Gets the value of the parameters property.
-     * 
+     *
      */
     @XmlElement
     public Collection<Parameter> getParameters() {
@@ -194,11 +194,11 @@ public class OperationMetadataImpl implements OperationMetadata {
         }
         return this.parameters;
     }
-    
+
     public void setParameters(final Collection<Parameter> parameters) {
          this.parameters = parameters;
     }
-    
+
     public void setParameters(final Parameter parameter) {
         if (parameters == null) {
             parameters = new ArrayList<Parameter>();
@@ -208,7 +208,7 @@ public class OperationMetadataImpl implements OperationMetadata {
 
     /**
      * Gets the value of the connectPoint property.
-     * 
+     *
      */
     @XmlElement(required = true)
     public Collection<OnlineResource> getConnectPoint() {
@@ -217,11 +217,11 @@ public class OperationMetadataImpl implements OperationMetadata {
         }
         return this.connectPoint;
     }
-    
+
     public void setConnectPoint(final Collection<OnlineResource> connectPoint) {
          this.connectPoint = connectPoint;
     }
-    
+
     public void setConnectPoint(final OnlineResource connectPoint) {
         if (this.connectPoint == null) {
             this.connectPoint = new ArrayList<OnlineResource>();
@@ -239,11 +239,11 @@ public class OperationMetadataImpl implements OperationMetadata {
         }
         return this.dependsOn;
     }
-    
+
     public void setDependsOn(final Collection<OperationMetadata> dependsOn) {
          this.dependsOn = dependsOn;
     }
-    
+
     public void setDependsOn(final OperationMetadata dependsOn) {
         if (this.dependsOn == null) {
             this.dependsOn = new ArrayList<OperationMetadata>();
@@ -264,7 +264,7 @@ public class OperationMetadataImpl implements OperationMetadata {
     public void setIsUuidref(final boolean isUuidref) {
         this.isUuidref = isUuidref;
     }
-    
+
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder("[OperationMetadata]").append('\n');
@@ -275,7 +275,7 @@ public class OperationMetadataImpl implements OperationMetadata {
             s.append("invocationName: ").append(invocationName).append('\n');
         if (dcp != null) {
             s.append("DCP:").append('\n');
-            for (DCPList d:dcp) {
+            for (DistributedComputingPlatform d : dcp) {
                 s.append('\t').append(d).append('\n');
             }
         }
@@ -283,19 +283,19 @@ public class OperationMetadataImpl implements OperationMetadata {
             s.append("dependsOn:").append('\n');
             for (OperationMetadata d:dependsOn) {
                 s.append('\t').append(d).append('\n');
-            } 
+            }
         }
         if (connectPoint != null) {
             s.append("connectPoint:").append('\n');
             for (OnlineResource d:connectPoint) {
                 s.append('\t').append(d).append('\n');
-            } 
+            }
         }
         if (parameters != null) {
             s.append("parameters:").append('\n');
             for (Parameter d:parameters) {
                 s.append('\t').append(d).append('\n');
-            } 
+            }
         }
         return s.toString();
     }

@@ -44,7 +44,7 @@ public class XmlBindingTest {
 
     @Before
     public void setUp() throws JAXBException {
-        pool =   new MarshallerPool(JAXBContext.newInstance(DefaultMetadata.class, org.geotoolkit.service.ServiceIdentificationImpl.class), null);
+        pool = new MarshallerPool(JAXBContext.newInstance(DefaultMetadata.class, org.geotoolkit.service.ServiceIdentificationImpl.class), null);
         unmarshaller = pool.acquireUnmarshaller();
         marshaller   = pool.acquireMarshaller();
     }

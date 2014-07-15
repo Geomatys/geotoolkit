@@ -38,8 +38,8 @@ xmlns = {
     @XmlJavaTypeAdapter(ServiceProviderAdapter.class),
     @XmlJavaTypeAdapter(ServiceIdentificationAdapter.class),
     //CodeList handling
-    @XmlJavaTypeAdapter(DCPListAdapter.class),
-    @XmlJavaTypeAdapter(CouplingTypeAdapter.class),
+    @XmlJavaTypeAdapter(DCPList.class),
+    @XmlJavaTypeAdapter(SV_CouplingType.class),
     // Primitive type handling
     @XmlJavaTypeAdapter(StringAdapter.class),
     @XmlJavaTypeAdapter(InternationalStringAdapter.class),
@@ -65,6 +65,6 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapters;
 import org.apache.sis.internal.jaxb.metadata.*;
 import org.apache.sis.internal.jaxb.gco.*;
-import org.geotoolkit.resources.jaxb.service.code.*;
+import org.apache.sis.internal.jaxb.code.*;
 import org.geotoolkit.resources.jaxb.service.*;
 

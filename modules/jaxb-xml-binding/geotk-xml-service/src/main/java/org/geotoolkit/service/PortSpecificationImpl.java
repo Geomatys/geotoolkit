@@ -1,7 +1,7 @@
 /*
  *    GeotoolKit - An Open Source Java GIS Toolkit
  *    http://geotoolkit.org
- * 
+ *
  *    (C) 2009, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -17,8 +17,8 @@
 
 package org.geotoolkit.service;
 
-import org.opengis.service.DCPList;
 import java.net.URL;
+import org.opengis.metadata.service.DistributedComputingPlatform;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -29,9 +29,9 @@ import org.opengis.service.PortSpecification;
 
 /**
  * <p>Java class for SV_PortSpecification_Type complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="SV_PortSpecification_Type">
  *   &lt;complexContent>
@@ -44,8 +44,8 @@ import org.opengis.service.PortSpecification;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -57,39 +57,39 @@ import org.opengis.service.PortSpecification;
 public class PortSpecificationImpl implements PortSpecification {
 
     @XmlElement(required = true)
-    private DCPList binding;
+    private DistributedComputingPlatform binding;
     @XmlElement(required = true)
     private URL address;
 
     public PortSpecificationImpl() {
-        
+
     }
-    
-    public PortSpecificationImpl(final DCPList binding, final URL address) {
+
+    public PortSpecificationImpl(final DistributedComputingPlatform binding, final URL address) {
         this.address = address;
         this.binding = binding;
     }
-    
+
     /**
      * Gets the value of the binding property.
-     * 
+     *
      */
-    public DCPList getBinding() {
+    public DistributedComputingPlatform getBinding() {
         return binding;
     }
 
     /**
      * Sets the value of the binding property.
-     * 
-     *     
+     *
+     *
      */
-    public void setBinding(final DCPList value) {
+    public void setBinding(final DistributedComputingPlatform value) {
         this.binding = value;
     }
 
     /**
      * Gets the value of the address property.
-     * 
+     *
      */
     public URL getAddress() {
         return address;
@@ -97,7 +97,7 @@ public class PortSpecificationImpl implements PortSpecification {
 
     /**
      * Sets the value of the address property.
-     * 
+     *
      */
     public void setAddress(final URL value) {
         this.address = value;

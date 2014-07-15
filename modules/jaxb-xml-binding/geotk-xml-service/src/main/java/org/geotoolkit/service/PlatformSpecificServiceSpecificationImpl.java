@@ -1,7 +1,7 @@
 /*
  *    GeotoolKit - An Open Source Java GIS Toolkit
  *    http://geotoolkit.org
- * 
+ *
  *    (C) 2009, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -18,10 +18,9 @@
 
 package org.geotoolkit.service;
 
-import org.opengis.service.DCPList;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
+import org.opengis.metadata.service.DistributedComputingPlatform;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
@@ -32,9 +31,9 @@ import org.opengis.service.Service;
 
 /**
  * <p>Java class for SV_PlatformSpecificServiceSpecification_Type complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="SV_PlatformSpecificServiceSpecification_Type">
  *   &lt;complexContent>
@@ -47,8 +46,8 @@ import org.opengis.service.Service;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlType(name = "SV_PlatformSpecificServiceSpecification_Type", propOrder = {
@@ -58,17 +57,17 @@ import org.opengis.service.Service;
 @XmlRootElement(name="SV_PlatformSpecificServiceSpecification")
 public class PlatformSpecificServiceSpecificationImpl extends PlatformNeutralServiceSpecificationImpl implements PlatformSpecificServiceSpecification {
 
-   
-    private DCPList dcp;
+
+    private DistributedComputingPlatform dcp;
     private Collection<Service> implementation;
 
     /**
      * An empty constructor used by JAXB
      */
     public PlatformSpecificServiceSpecificationImpl() {
-        
+
     }
-    
+
     /**
      * Clone a PlatformSpecificServiceSpecification
      */
@@ -77,26 +76,26 @@ public class PlatformSpecificServiceSpecificationImpl extends PlatformNeutralSer
         this.implementation = platform.getImplementation();
         this.dcp            = platform.getDCP();
     }
-    
+
     /**
      * Gets the value of the dcp property.
      */
     @XmlElement(name = "DCP", required = true)
-    public DCPList getDCP() {
+    public DistributedComputingPlatform getDCP() {
         return dcp;
     }
 
     /**
      * Sets the value of the dcp property.
-     * 
+     *
      */
-    public void setDCP(final DCPList value) {
+    public void setDCP(final DistributedComputingPlatform value) {
         this.dcp = value;
     }
 
     /**
      * Gets the value of the implementation property.
-     * 
+     *
      */
     @XmlElement(required = true)
     public Collection<Service> getImplementation() {
@@ -105,11 +104,11 @@ public class PlatformSpecificServiceSpecificationImpl extends PlatformNeutralSer
         }
         return this.implementation;
     }
-    
+
     public void setImplementation(final Collection<Service> implementation) {
          this.implementation = implementation;
     }
-    
+
     public void setImplementation(final Service implementation) {
         if (this.implementation == null) {
             this.implementation = new ArrayList<Service>();

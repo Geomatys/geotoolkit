@@ -1,7 +1,7 @@
 /*
  *    GeotoolKit - An Open Source Java GIS Toolkit
  *    http://geotoolkit.org
- * 
+ *
  *    (C) 2009, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -32,9 +32,9 @@ import org.opengis.service.OperationMetadata;
 
 /**
  * <p>Java class for SV_OperationChainMetadata_Type complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="SV_OperationChainMetadata_Type">
  *   &lt;complexContent>
@@ -48,12 +48,12 @@ import org.opengis.service.OperationMetadata;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "SV_OperationChainMetadata_Type", propOrder = {
+@XmlType(/*name = "SV_OperationChainMetadata_Type",*/ propOrder = {
     "name",
     "description",
     "operation"
@@ -68,19 +68,19 @@ public class OperationChainMetadataImpl implements OperationChainMetadata {
     private Collection<OperationMetadata> operation;
 
     public OperationChainMetadataImpl() {
-        
+
     }
-    
+
     public OperationChainMetadataImpl(final String name, final String description, final List<OperationMetadata> operation) {
         this.name        = name;
         this.description = description;
         this.operation   = operation;
-        
+
     }
-    
+
     /**
      * Gets the value of the name property.
-     * 
+     *
       */
     public String getName() {
         return name;
@@ -88,7 +88,7 @@ public class OperationChainMetadataImpl implements OperationChainMetadata {
 
     /**
      * Sets the value of the name property.
-     * 
+     *
      */
     public void setName(final String value) {
         this.name = value;
@@ -96,7 +96,7 @@ public class OperationChainMetadataImpl implements OperationChainMetadata {
 
     /**
      * Gets the value of the description property.
-     * 
+     *
      */
     public String getDescription() {
         return description;
@@ -104,7 +104,7 @@ public class OperationChainMetadataImpl implements OperationChainMetadata {
 
     /**
      * Sets the value of the description property.
-     * 
+     *
      */
     public void setDescription(final String value) {
         this.description = value;
@@ -112,7 +112,7 @@ public class OperationChainMetadataImpl implements OperationChainMetadata {
 
     /**
      * Gets the value of the operation property.
-     * 
+     *
      */
     public Collection<OperationMetadata> getOperation() {
         if (operation == null) {
@@ -120,11 +120,11 @@ public class OperationChainMetadataImpl implements OperationChainMetadata {
         }
         return this.operation;
     }
-    
+
     public void setOperation(final Collection<OperationMetadata> operation) {
          this.operation = operation;
     }
-    
+
     public void setOperation(final OperationMetadata operation) {
         if (this.operation == null) {
             this.operation = new ArrayList<OperationMetadata>();
