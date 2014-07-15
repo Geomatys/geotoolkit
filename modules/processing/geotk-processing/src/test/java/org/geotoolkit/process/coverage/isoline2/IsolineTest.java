@@ -26,6 +26,7 @@ import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessFinder;
 import org.apache.sis.referencing.CommonCRS;
 import org.junit.Test;
+import static org.junit.Assert.*;
 import org.geotoolkit.feature.Feature;
 import org.opengis.parameter.ParameterValueGroup;
 
@@ -61,7 +62,7 @@ public class IsolineTest {
         final org.geotoolkit.process.Process process = desc.createProcess(procparams);
         final ParameterValueGroup result = process.call();
         FeatureCollection<Feature> col = (FeatureCollection) result.parameter("outFeatureCollection").getValue();
-        
+        assertEquals(1, col.size());
         for(Feature f : col){
             System.out.println(f);
         }
@@ -95,7 +96,7 @@ public class IsolineTest {
         final org.geotoolkit.process.Process process = desc.createProcess(procparams);
         final ParameterValueGroup result = process.call();
         FeatureCollection<Feature> col = (FeatureCollection) result.parameter("outFeatureCollection").getValue();
-        
+        assertEquals(2, col.size());
         for(Feature f : col){
             System.out.println(f);
         }
@@ -129,7 +130,7 @@ public class IsolineTest {
         final org.geotoolkit.process.Process process = desc.createProcess(procparams);
         final ParameterValueGroup result = process.call();
         FeatureCollection<Feature> col = (FeatureCollection) result.parameter("outFeatureCollection").getValue();
-        
+        assertEquals(4, col.size());
         for(Feature f : col){
             System.out.println(f);
         }

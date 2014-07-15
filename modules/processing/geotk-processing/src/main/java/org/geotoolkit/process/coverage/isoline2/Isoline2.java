@@ -20,14 +20,12 @@ import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
+
 import java.awt.Point;
 import java.awt.image.RenderedImage;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -48,6 +46,7 @@ import org.geotoolkit.data.memory.MemoryFeatureStore;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.FeatureUtilities;
+import org.geotoolkit.feature.type.BasicFeatureTypes;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.image.iterator.PixelIterator;
@@ -60,6 +59,7 @@ import static org.geotoolkit.parameter.Parameters.*;
 import static org.geotoolkit.process.coverage.isoline2.IsolineDescriptor2.*;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.type.FeatureType;
+import org.geotoolkit.referencing.CRS;
 import org.opengis.geometry.MismatchedDimensionException;
 
 import org.opengis.parameter.ParameterValueGroup;
@@ -67,6 +67,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
+import org.opengis.util.FactoryException;
 
 /**
  *
@@ -224,14 +225,8 @@ public class Isoline2 extends AbstractProcess {
     }
 
     private static FeatureType getOrCreateIsoType(FeatureStore featureStore, String featureTypeName, CoordinateReferenceSystem crs) throws DataStoreException {
-        //FeatureType with scale
-        final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
-        ftb.setName(featureTypeName != null ? featureTypeName : "isolines");
-        ftb.add("geometry", LineString.class, crs);
-        ftb.add("scale", Double.class);
-        ftb.add("value", Double.class);
-        ftb.setDefaultGeometry("geometry");
-        FeatureType type = ftb.buildFeatureType();
+
+        FeatureType type = buildIsolineFeatureType(featureTypeName);
 
         //create FeatureType in FeatureStore if not exist
         boolean createSchema = false;
@@ -252,6 +247,26 @@ public class Isoline2 extends AbstractProcess {
         return type;
     }
 
+    /**
+     * Build isoline FeatureType
+     * @param featureTypeName
+     * @return
+     * @throws DataStoreException
+     */
+    public static FeatureType buildIsolineFeatureType(String featureTypeName) throws DataStoreException {
+        //FeatureType with scale
+        final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
+        ftb.setName(featureTypeName != null ? featureTypeName : "isolines");
+        try {
+            ftb.add(BasicFeatureTypes.GEOMETRY_ATTRIBUTE_NAME, LineString.class, CRS.decode("EPSG:4326", true));
+        } catch (FactoryException ex) {
+            throw new DataStoreException(ex);
+        }
+        ftb.add("scale", Double.class);
+        ftb.add("value", Double.class);
+        ftb.setDefaultGeometry(BasicFeatureTypes.GEOMETRY_ATTRIBUTE_NAME);
+        return ftb.buildFeatureType();
+    }
 
     private class BlockRunnable implements Runnable {
 
@@ -960,7 +975,7 @@ public class Isoline2 extends AbstractProcess {
             final Feature f = FeatureUtilities.defaultFeature(type, "0");
             geom = JTS.transform(geom, gridtoCRS);
             JTS.setCRS(geom, crs);
-            f.getProperty("geometry").setValue(geom);
+            f.getProperty(BasicFeatureTypes.GEOMETRY_ATTRIBUTE_NAME).setValue(geom);
             f.getProperty("scale").setValue(scale);
             f.getProperty("value").setValue(level);
             col.add(f);
