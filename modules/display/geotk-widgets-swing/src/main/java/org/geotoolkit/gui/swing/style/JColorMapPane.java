@@ -497,7 +497,7 @@ public class JColorMapPane extends StyleElementEditor<ColorMap> implements Prope
         if(layer != null && layer instanceof CoverageMapLayer){
             final CoverageMapLayer cml = (CoverageMapLayer)layer;
             final CoverageReference cref = cml.getCoverageReference();
-            CoverageReader reader = null;
+            GridCoverageReader reader = null;
             try {
                 reader = cref.acquireReader();
                 final Map<String,Object> an = StatisticOp.analyze(reader,cref.getImageIndex());

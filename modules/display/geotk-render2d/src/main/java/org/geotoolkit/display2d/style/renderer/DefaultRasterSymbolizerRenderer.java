@@ -370,7 +370,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
 
                         try{
                             final CoverageReference ref = projectedCoverage.getLayer().getCoverageReference();
-                            final CoverageReader reader = ref.acquireReader();
+                            final GridCoverageReader reader = ref.acquireReader();
                             final Map<String,Object> analyze = StatisticOp.analyze(reader,ref.getImageIndex());
                             ref.recycle(reader);
                             final double[] minArray = (double[])analyze.get(StatisticOp.MINIMUM);
