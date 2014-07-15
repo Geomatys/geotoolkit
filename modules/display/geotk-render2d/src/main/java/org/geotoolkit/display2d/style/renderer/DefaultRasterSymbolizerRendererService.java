@@ -36,6 +36,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.style.CachedRasterSymbolizer;
 import org.geotoolkit.map.MapLayer;
@@ -59,6 +62,8 @@ import org.apache.sis.util.logging.Logging;
  * @module pending
  */
 public class DefaultRasterSymbolizerRendererService extends AbstractSymbolizerRendererService<RasterSymbolizer, CachedRasterSymbolizer>{
+
+    private static final Logger LOGGER = Logging.getLogger(DefaultRasterSymbolizerRendererService.class);
 
     private static final int LEGEND_PALETTE_WIDTH = 30;
     private static final Font LEGEND_FONT = new Font(Font.SERIF, Font.BOLD, 12);
@@ -306,11 +311,14 @@ public class DefaultRasterSymbolizerRendererService extends AbstractSymbolizerRe
                     final Color currentColor = entry.getValue().evaluate(null, Color.class);
                     Double currentValue = Double.NEGATIVE_INFINITY;
 
-                    if(!entry.getKey().equals(StyleConstants.CATEGORIZE_LESS_INFINITY)) {
-                        Double value = (Double) entry.getKey().evaluate(null, Double.class);
+                    try {
+                        Double value = entry.getKey().evaluate(null, Double.class);
                         if (value != null) {
                             currentValue = value;
                         }
+                    } catch (Exception e) {
+                        // Cannot read value, it's not a number. Should be something like "categorize less infinity".
+                        LOGGER.log(Level.INFO, "A color map value cannot be evaluated.\nCause : "+e.getLocalizedMessage());
                     }
 
                     if (currentColor != null) {
