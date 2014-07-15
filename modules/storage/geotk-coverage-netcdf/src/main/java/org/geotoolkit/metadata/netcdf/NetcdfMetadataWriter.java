@@ -56,7 +56,6 @@ import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.image.io.WarningProducer;
 import org.apache.sis.util.iso.Types;
 import org.geotoolkit.internal.image.io.Warnings;
-import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.internal.metadata.ReferencingUtilities;
 import org.apache.sis.util.ArraysExt;
@@ -605,17 +604,17 @@ public class NetcdfMetadataWriter extends NetcdfMetadata {
             if (!isDefined(REFERENCES)) {
                 setAttribute(citation.getOtherCitationDetails());
             }
-            final Collection<? extends ResponsibleParty> authors = nonNull(citation.getCitedResponsibleParties());
+            final Collection<? extends Responsibility> authors = nonNull(citation.getCitedResponsibleParties());
             if (!authors.isEmpty()) {
                 boolean foundCreator = false;
                 final List<ResponsibleParty> deferred = new ArrayList<>(authors.size());
-                for (final ResponsibleParty author : authors) {
+                for (final Responsibility author : authors) {
                     if (author != null) {
                         if (Role.ORIGINATOR.equals(author.getRole())) {
-                            write(author, CREATOR);
+                            write((ResponsibleParty) author, CREATOR);
                             foundCreator = true;
                         } else {
-                            deferred.add(author);
+                            deferred.add((ResponsibleParty) author);
                         }
                     }
                 }

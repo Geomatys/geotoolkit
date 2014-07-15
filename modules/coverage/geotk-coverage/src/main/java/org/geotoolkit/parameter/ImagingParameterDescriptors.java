@@ -50,6 +50,7 @@ import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.InvalidParameterNameException;
 import org.opengis.referencing.ReferenceIdentifier;
 import org.opengis.coverage.grid.GridCoverage;
+import org.opengis.metadata.citation.Responsibility;
 import org.opengis.util.InternationalString;
 import org.opengis.util.GenericName;
 import org.opengis.util.NameFactory;
@@ -67,7 +68,7 @@ import org.geotoolkit.metadata.iso.citation.Citations;
 import org.apache.sis.metadata.iso.citation.DefaultContact;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.citation.DefaultOnlineResource;
-import org.apache.sis.metadata.iso.citation.DefaultResponsibleParty;
+import org.apache.sis.metadata.iso.citation.DefaultResponsibility;
 
 import static javax.media.jai.registry.RenderedRegistryMode.MODE_NAME;
 
@@ -331,10 +332,10 @@ public class ImagingParameterDescriptors extends DefaultParameterDescriptorGroup
                 resource.setFunction(OnLineFunction.INFORMATION);
                 resource.setDescription(description);
                 final DefaultCitation citation = new DefaultCitation(authority);
-                final Collection<ResponsibleParty> parties = citation.getCitedResponsibleParties();
-                final ResponsibleParty oldParty;
+                final Collection<Responsibility> parties = citation.getCitedResponsibleParties();
+                final Responsibility oldParty;
                 if (true) {
-                    final Iterator<ResponsibleParty> it = parties.iterator();
+                    final Iterator<Responsibility> it = parties.iterator();
                     if (it.hasNext()) {
                         oldParty = it.next();
                         it.remove(); // This party will be re-injected with a new URI below.
@@ -343,9 +344,9 @@ public class ImagingParameterDescriptors extends DefaultParameterDescriptorGroup
                         oldParty = null;
                     }
                 }
-                final DefaultResponsibleParty party = new DefaultResponsibleParty(oldParty);
+                final DefaultResponsibility party = new DefaultResponsibility(oldParty);
                 party.setRole(Role.RESOURCE_PROVIDER);
-                party.setContactInfo(new DefaultContact(resource));
+//              party.setContactInfo(new DefaultContact(resource));
                 parties.add(party);
                 citation.freeze();
                 authority = citation;

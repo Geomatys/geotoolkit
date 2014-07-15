@@ -31,6 +31,7 @@ import org.geotoolkit.resources.Vocabulary;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
+import org.apache.sis.metadata.iso.citation.DefaultOnlineResource;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.xml.IdentifierSpace;
 
@@ -303,6 +304,7 @@ public final class Citations extends Static {
      * @category Specification
      */
     public static final Citation WMS;
+    private static DefaultOnlineResource WMS_URL;
     static {
         final DefaultCitation c = create("Web Map Service", "WMS", "WMS");
         c.setAlternateTitles(asList(
@@ -310,9 +312,14 @@ public final class Citations extends Static {
                 new SimpleInternationalString("OGC 04-024"),
                 new SimpleInternationalString("ISO 19128")));
 
+        final DefaultOnlineResource r = DefaultContact.resource("http://portal.opengis.org/files/?artifact_id=5316");
+        r.setFunction(OnLineFunction.DOWNLOAD);
+        r.freeze();
+        WMS_URL = r;
+
         c.setCitedResponsibleParties(asList(
                 DefaultResponsibleParty.OGC,
-                DefaultResponsibleParty.OGC(Role.PUBLISHER, DefaultOnlineResource.WMS)));
+                DefaultResponsibleParty.OGC(Role.PUBLISHER, r)));
         /*
          * The WMS specification is a model in a programming point of view, but this is not
          * the purpose of ISO 19115 PresentationForm.MODEL_DIGITAL in my understanding. The
@@ -541,7 +548,7 @@ public final class Citations extends Static {
          */
         c.setCitedResponsibleParties(asList(
                 DefaultResponsibleParty.OGC,
-                DefaultResponsibleParty.OGC(Role.PUBLISHER, DefaultOnlineResource.WMS)));
+                DefaultResponsibleParty.OGC(Role.PUBLISHER, WMS_URL)));
         setPresentationForm(c, PresentationForm.DOCUMENT_DIGITAL); // See comment in WMS.
         c.freeze();
         AUTO2 = c;
@@ -700,8 +707,7 @@ public final class Citations extends Static {
         if (title == null || ((title = title.trim()).isEmpty())) {
             return null;
         }
-        for (int i=0; i<AUTHORITIES.length; i++) {
-            final Citation citation = AUTHORITIES[i];
+        for (final Citation citation : AUTHORITIES) {
             if (titleMatches(citation, title)) {
                 return citation;
             }

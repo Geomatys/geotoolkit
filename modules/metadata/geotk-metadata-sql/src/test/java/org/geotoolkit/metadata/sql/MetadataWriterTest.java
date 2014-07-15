@@ -24,6 +24,7 @@ import org.postgresql.ds.PGSimpleDataSource;
 import org.opengis.metadata.citation.Citation;
 import org.opengis.metadata.citation.PresentationForm;
 
+import org.opengis.metadata.citation.ResponsibleParty;
 import org.apache.sis.metadata.MetadataStandard;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.metadata.iso.quality.AbstractPositionalAccuracy;
@@ -54,6 +55,7 @@ public final strictfp class MetadataWriterTest {
      * @throws SQLException If an error occurred while writing or reading the database.
      */
     @Test
+    @Ignore("Need to be revisited because of change in ISO standard.")
     public void testDerby() throws SQLException {
         final DefaultDataSource ds = new DefaultDataSource("jdbc:derby:memory:Test;create=true");
         source = new MetadataWriter(MetadataStandard.ISO_19115, ds, null);
@@ -146,7 +148,7 @@ public final strictfp class MetadataWriterTest {
         /*
          * Try an indirect dependency.
          */
-        assertEquals("http://www.epsg.org", extract(c.getCitedResponsibleParties())
+        assertEquals("http://www.epsg.org", ((ResponsibleParty) extract(c.getCitedResponsibleParties()))
                 .getContactInfo().getOnlineResource().getLinkage().toString());
         /*
          * Ask columns that are known to not exist.

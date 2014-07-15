@@ -33,6 +33,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.opengis.feature.catalog.DefinitionSource;
 import org.opengis.metadata.citation.Citation;
 import org.opengis.metadata.citation.CitationDate;
+import org.opengis.metadata.citation.Responsibility;
 import org.opengis.metadata.citation.ResponsibleParty;
 
 
@@ -183,8 +184,8 @@ public class DefinitionSourceImpl implements DefinitionSource, Referenceable {
             }
 
             if (Objects.equals(this.source.getCitedResponsibleParties().size(), that.source.getCitedResponsibleParties().size())) {
-                Iterator<? extends ResponsibleParty> thisIT = this.source.getCitedResponsibleParties().iterator();
-                Iterator<? extends ResponsibleParty> thatIT = that.source.getCitedResponsibleParties().iterator();
+                Iterator<? extends Responsibility> thisIT = this.source.getCitedResponsibleParties().iterator();
+                Iterator<? extends Responsibility> thatIT = that.source.getCitedResponsibleParties().iterator();
 
                 while (thisIT.hasNext() && thatIT.hasNext()) {
                     if (!Objects.equals(thisIT.next(), thatIT.next())) {

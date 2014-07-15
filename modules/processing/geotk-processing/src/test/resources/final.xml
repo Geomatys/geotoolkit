@@ -14,12 +14,12 @@
   </gmd:hierarchyLevel>
   <gmd:contact>
     <gmd:CI_ResponsibleParty>
-      <gmd:individualName>
-        <gco:CharacterString>Benjamin Garcia</gco:CharacterString>
-      </gmd:individualName>
       <gmd:organisationName>
         <gco:CharacterString>Geomatys</gco:CharacterString>
       </gmd:organisationName>
+      <gmd:individualName>
+        <gco:CharacterString>Benjamin Garcia</gco:CharacterString>
+      </gmd:individualName>
       <gmd:role>
         <gmd:CI_RoleCode codeListValue="pointOfContact" codeList="http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/gmxCodelists.xml#CI_RoleCode">Point of contact</gmd:CI_RoleCode>
       </gmd:role>

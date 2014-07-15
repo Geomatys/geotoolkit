@@ -24,6 +24,7 @@ import java.util.Locale;
 import javax.xml.bind.JAXBException;
 
 import org.opengis.metadata.citation.DateType;
+import org.opengis.metadata.citation.ResponsibleParty;
 import org.opengis.metadata.maintenance.ScopeCode;
 import org.opengis.metadata.identification.CharacterSet;
 import org.opengis.metadata.quality.EvaluationMethodType;
@@ -112,8 +113,8 @@ public final strictfp class MetadataMarshallingTest extends LocaleDependantTestB
         metadata.setCharacterSet(CharacterSet.UTF_8);
         metadata.setDateStamp(new Date(1260961229580L));
         metadata.setContacts(Arrays.asList(
-            getSingleton(Citations.GEOTOOLKIT.getCitedResponsibleParties()),
-            getSingleton(Citations.OPEN_GIS.getCitedResponsibleParties())
+            (ResponsibleParty) getSingleton(Citations.GEOTOOLKIT.getCitedResponsibleParties()),
+            (ResponsibleParty) getSingleton(Citations.OPEN_GIS.getCitedResponsibleParties())
         ));
         metadata.setMetadataStandardVersion("ISO-19115");
         /*
@@ -182,7 +183,7 @@ public final strictfp class MetadataMarshallingTest extends LocaleDependantTestB
          */
         final DefaultDistribution distribution = new DefaultDistribution();
         distribution.setDistributors(Arrays.asList(
-            new DefaultDistributor(getSingleton(Citations.GEOTOOLKIT.getCitedResponsibleParties()))
+            new DefaultDistributor((ResponsibleParty) getSingleton(Citations.GEOTOOLKIT.getCitedResponsibleParties()))
         ));
         metadata.setDistributionInfo(distribution);
         /*

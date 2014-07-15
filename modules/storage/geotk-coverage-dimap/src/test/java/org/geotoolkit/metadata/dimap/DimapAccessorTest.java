@@ -22,15 +22,12 @@ import org.opengis.metadata.lineage.Processing;
 import java.text.ParseException;
 import org.opengis.metadata.citation.Citation;
 import java.util.Collection;
-import org.geotoolkit.gui.swing.tree.Trees;
 import java.awt.geom.AffineTransform;
 import java.io.IOException;
-import javax.swing.tree.TreeModel;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.temporal.object.TemporalUtilities;
 import org.geotoolkit.util.DomUtilities;
 
 import org.opengis.referencing.NoSuchAuthorityCodeException;
@@ -47,6 +44,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opengis.metadata.acquisition.AcquisitionInformation;
 import org.opengis.metadata.acquisition.Operation;
+import org.opengis.metadata.citation.Responsibility;
 import org.opengis.metadata.citation.ResponsibleParty;
 import org.opengis.metadata.constraint.Constraints;
 import org.opengis.metadata.constraint.LegalConstraints;
@@ -231,10 +229,10 @@ public class DimapAccessorTest {
         assertEquals("CAP_T", software.getTitle().toString());
         assertEquals("SPOT5_V07_03", software.getEdition().toString());
 
-        final Collection<? extends ResponsibleParty> citeds = software.getCitedResponsibleParties();
+        final Collection<? extends Responsibility> citeds = software.getCitedResponsibleParties();
         assertNotNull(citeds);
         assertFalse(citeds.isEmpty());
-        final ResponsibleParty cited = citeds.iterator().next();
+        final ResponsibleParty cited = (ResponsibleParty) citeds.iterator().next();
         assertEquals("SLS_TOULOUSE", cited.getOrganisationName().toString());
 
         //<xsd:element minOccurs="0" ref="Dataset_Components"/> ----------------
