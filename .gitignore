@@ -1,16 +1,12 @@
-
 *.log
 .classpath
 
-# Maven files
-target/
-<<<<<<< HEAD
 .DS_Store
 .hg
 .hgtags
 
-||||||| merged common ancestors
-=======
+# Maven files
+target/
 
 # Netbeans files
 nbactions.xml$
@@ -19,4 +15,3 @@ nbproject/
 # IntelliJ files
 .idea/
 *.iml
->>>>>>> Update .gitignore.
