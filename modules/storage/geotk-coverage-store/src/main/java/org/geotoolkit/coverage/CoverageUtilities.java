@@ -29,10 +29,16 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.referencing.CRS;
+import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.util.ImageIOUtilities;
+import org.opengis.coverage.Coverage;
 import org.opengis.coverage.SampleDimensionType;
+import org.opengis.coverage.grid.GridCoverage;
+import org.opengis.coverage.grid.GridEnvelope;
+import org.opengis.coverage.grid.GridGeometry;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -48,7 +54,8 @@ import org.opengis.util.FactoryException;
  * Utility functions for coverage and mosaic.
  *
  * @author Johann Sorel  (Geomatys)
- * @author Rémi Marechal (Geomatys).
+ * @author Rémi Marechal (Geomatys)
+ * @author Quentin Boileau (Geomatys)
  * @module pending
  */
 public final class CoverageUtilities {
@@ -482,6 +489,39 @@ public final class CoverageUtilities {
         }
 
         return pyramid;
+    }
+
+    /**
+     * Extract recursively the first GridCoverage2D from a GridCoverage object.
+     * @param coverage a GridCoverage2D or GridCoverageStack
+     * @return first GridCoverage2D. Can't be null.
+     * @throws org.geotoolkit.coverage.io.CoverageStoreException if GridCoverage2D not found or a empty GridCoverageStack
+     */
+    public static GridCoverage2D firstSlice(final GridCoverage coverage) throws CoverageStoreException {
+
+        if (coverage instanceof GridCoverage2D) {
+            return (GridCoverage2D) coverage;
+        } else if (coverage instanceof GridCoverageStack) {
+            GridCoverageStack coverageStack = (GridCoverageStack) coverage;
+            GridGeometry gridGeometry = coverageStack.getGridGeometry();
+            GridEnvelope extent = gridGeometry.getExtent();
+            MathTransform gridToCRS = gridGeometry.getGridToCRS();
+
+            double[] coords = new double[extent.getDimension()];
+            try {
+                gridToCRS.transform(coords, 0, coords, 0, 1);
+            } catch (TransformException e) {
+                throw new CoverageStoreException(e.getMessage(), e);
+            }
+
+            List<Coverage> coverageList = coverageStack.coveragesAt(coords[coords.length - 1]);
+            if (!coverageList.isEmpty()) {
+                return firstSlice((GridCoverage)coverageList.get(0));
+            } else {
+                throw new CoverageStoreException("Empty coverage list");
+            }
+        }
+        throw new CoverageStoreException("Unknown GridCoverage");
     }
 
 }
