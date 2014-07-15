@@ -28,10 +28,11 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.TimeUnit;
 import javax.imageio.ImageReader;
+
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.storage.DataStoreException;
+
 import org.geotoolkit.coverage.finder.CoverageFinder;
 import org.geotoolkit.coverage.finder.DefaultCoverageFinder;
 import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
@@ -48,10 +49,11 @@ import org.geotoolkit.metadata.iso.spatial.PixelTranslation;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.referencing.cs.DiscreteCoordinateSystemAxis;
-import org.geotoolkit.referencing.factory.ReferencingFactoryContainer;
 import org.geotoolkit.util.BufferedImageUtilities;
 import org.geotoolkit.util.Cancellable;
 import org.geotoolkit.util.ImageIOUtilities;
+
+import org.opengis.coverage.SampleDimension;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.geometry.DirectPosition;
@@ -526,6 +528,17 @@ public class PyramidalModelReader extends GridCoverageReader{
         final GridGeometry2D gridgeo = new GridGeometry2D(ge, PixelOrientation.UPPER_LEFT, gtc, wantedCRS, null);
         gcb.setGridGeometry(gridgeo);
         gcb.setRenderedImage(image);
+
+        try {
+            //extract sample dimension from pyramid
+            final PyramidalCoverageReference model = getPyramidalModel();
+            final List<GridSampleDimension> sampleDimensions = model.getSampleDimensions();
+            if (sampleDimensions != null) {
+                gcb.setSampleDimensions(sampleDimensions.toArray(new SampleDimension[sampleDimensions.size()]));
+            }
+        } catch (DataStoreException e) {
+            throw new CoverageStoreException(e.getMessage(), e);
+        }
 
         return gcb.build();
     }
