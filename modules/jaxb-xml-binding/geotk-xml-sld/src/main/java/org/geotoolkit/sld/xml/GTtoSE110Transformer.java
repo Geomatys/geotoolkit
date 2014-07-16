@@ -349,7 +349,7 @@ public class GTtoSE110Transformer implements StyleVisitor {
         return jax;
     }
 
-    private static String colorToString(Color color){
+    static String colorToString(Color color){
         String redCode = Integer.toHexString(color.getRed());
         String greenCode = Integer.toHexString(color.getGreen());
         String blueCode = Integer.toHexString(color.getBlue());

@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.sld.xml;
 
+import java.awt.*;
 import java.net.MalformedURLException;
 import java.util.List;
 import java.util.logging.Level;
@@ -166,7 +167,11 @@ public class GTtoSE100Transformer implements StyleVisitor{
             jax = ogc_factory.createMul(bot);
         }else if(exp instanceof Literal){
             final LiteralType literal = ogc_factory.createLiteralType();
-            literal.getContent().add(exp.toString());
+            Object value = ((Literal) exp).getValue();
+            if(value instanceof Color){
+                value = GTtoSE110Transformer.colorToString((Color)value);
+            }
+            literal.setContent(value.toString());
             jax = ogc_factory.createLiteral(literal);
         }else if(exp instanceof Add){
             final Add add = (Add)exp;
@@ -366,7 +371,7 @@ public class GTtoSE100Transformer implements StyleVisitor{
                 bot.setPropertyName((PropertyNameType) obj);
             }else{
                 //should not be possible
-                throw new IllegalArgumentException("Invalide expression element : " + obj);
+                throw new IllegalArgumentException("Invalid expression element : " + obj);
             }
             return ogc_factory.createPropertyIsNull(bot);
         }else if(filter instanceof And){
@@ -396,7 +401,7 @@ public class GTtoSE100Transformer implements StyleVisitor{
                 lot.setSpatialOps((JAXBElement<? extends SpatialOpsType>) sf);
             }else{
                 //should not happen
-                throw new IllegalArgumentException("invalide filter element : " + sf);
+                throw new IllegalArgumentException("invalid filter element : " + sf);
             }
             return ogc_factory.createNot(lot);
         }else if(filter instanceof BBOX){
