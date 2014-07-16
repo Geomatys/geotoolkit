@@ -317,11 +317,16 @@ public class DefaultRasterSymbolizerRendererService extends AbstractSymbolizerRe
                             currentValue = value;
                         }
                     } catch (Exception e) {
-                        // Cannot read value, it's not a number. Should be something like "categorize less infinity".
-                        LOGGER.log(Level.INFO, "A color map value cannot be evaluated.\nCause : "+e.getLocalizedMessage());
+                        if (StyleConstants.CATEGORIZE_LESS_INFINITY.equals(entry.getKey())) {
+                            currentValue = Double.NEGATIVE_INFINITY;
+                        } else {
+                            // Cannot read value, it's not a number, neither a "categorize less infinity".
+                            LOGGER.log(Level.INFO, "A color map value cannot be evaluated. it will be ignored.\nCause : "+ e.getLocalizedMessage());
+                            currentValue = null;
+                        }
                     }
 
-                    if (currentColor != null) {
+                    if (currentColor != null && currentValue != null) {
                         if (colorValuesMap.containsKey(currentColor)) {
                             final LinkedList<Double> values = (LinkedList<Double>)colorValuesMap.get(currentColor);
                             values.add(currentValue);

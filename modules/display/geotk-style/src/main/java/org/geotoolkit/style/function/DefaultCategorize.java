@@ -428,7 +428,12 @@ public class DefaultCategorize extends AbstractExpression implements Categorize 
                 SE_VALUES[0] = Double.NEGATIVE_INFINITY;
                 SE_ARGB[0] = entry.getValue().evaluate(null, Color.class).getRGB();
             }else{
-                SE_VALUES[l] = entry.getKey().evaluate(null, Double.class);
+                // CATEGORIZE LESS INFINITY CASE
+                try {
+                    SE_VALUES[l] = entry.getKey().evaluate(null, Double.class);
+                } catch (Exception e) {
+                    SE_VALUES[l] = Double.NEGATIVE_INFINITY;
+                }
                 SE_ARGB[l] = entry.getValue().evaluate(null, Color.class).getRGB();
             }
             l++;

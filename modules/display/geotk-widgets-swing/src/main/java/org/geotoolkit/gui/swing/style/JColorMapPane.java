@@ -433,7 +433,18 @@ public class JColorMapPane extends StyleElementEditor<ColorMap> implements Prope
             double max = Double.NaN;
             for(int i=0,n=ccm.ths.size();i<n;i++){
                 final Entry<Expression,Expression> exps = ccm.ths.get(i);
-                Object val = exps.getKey().evaluate(n, Number.class);
+                // CATEGORIZE LESS INFINITY case
+                Object val;
+                try {
+                    val = exps.getKey().evaluate(n, Number.class);
+                } catch (Exception e) {
+                    if (exps.getKey().equals(CATEGORIZE_LESS_INFINITY)) {
+                        val = Double.NEGATIVE_INFINITY;
+                    } else {
+                        val = null;
+                    }
+
+                }
                 if(val instanceof Number){
                     final double v = ((Number)val).doubleValue();
                     if(!Double.isNaN(v)){
@@ -1295,10 +1306,22 @@ public class JColorMapPane extends StyleElementEditor<ColorMap> implements Prope
 
             @Override
             public int compare(Entry<Expression, Expression> o1, Entry<Expression, Expression> o2) {
-                final Double d0 = o1.getKey().evaluate(null, Double.class);
-                final Double d1 = o2.getKey().evaluate(null, Double.class);
-                if(d0==null) return -1;
-                if(d1==null) return +1;
+                // Converters will not be able to convert "CATEGORIZE LESS INFINITY" into double, so we catch the thrown
+                // exception to manually put negative infinity value.
+                Double d0;
+                try {
+                    d0 = o1.getKey().evaluate(null, Double.class);
+                } catch (Exception e) {
+                    d0 = Double.NEGATIVE_INFINITY;
+                }
+                Double d1;
+                try {
+                    d1 = o2.getKey().evaluate(null, Double.class);
+                } catch (Exception e) {
+                    d1 = Double.NEGATIVE_INFINITY;
+                }
+                if (d0 == null) return -1;
+                if (d1 == null) return +1;
                 return d0.compareTo(d1);
             }
         };
@@ -1362,7 +1385,12 @@ public class JColorMapPane extends StyleElementEditor<ColorMap> implements Prope
             }else{
                 //thresdhold value
                 final Entry<Expression, Expression> entry = ths.get(rowIndex);
-                Number n = entry.getKey().evaluate(null, Number.class);
+                Number n;
+                try {
+                    n = entry.getKey().evaluate(null, Number.class);
+                } catch (Exception e) {
+                    n = null;
+                }
                 if(n==null) n = Double.NEGATIVE_INFINITY;
                 return n;
             }

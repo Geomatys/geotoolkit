@@ -927,7 +927,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             if (source instanceof WritableRenderedImage) {
                 destination = (WritableRenderedImage) source;
             } else {
-                destination = new BufferedImage(srcModel, srcModel.createCompatibleWritableRaster(source.getWidth(), source.getHeight()), srcModel.isAlphaPremultiplied(), null);
+                destination = BufferedImageUtilities.createImage(source.getWidth(), source.getHeight(), source);
             }
 
             final PixelIterator pxIt = PixelIteratorFactory.createRowMajorWriteableIterator(source, destination);
