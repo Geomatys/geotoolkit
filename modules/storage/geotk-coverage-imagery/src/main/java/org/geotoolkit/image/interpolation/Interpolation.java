@@ -158,12 +158,12 @@ public abstract class Interpolation {
         //compute minMax values
         minMax = new double[6 * numBands];
         
-        //-- initialize min and max value for each band --//
+        //-- initialize min and max value for each band 
         for (int band = 0;band<numBands; band++) {
             final int minBandOrdinate = 6 * band;
-            //min value, x, y coordinates
+            //-- min value, x, y coordinates
             minMax[minBandOrdinate]     = Double.POSITIVE_INFINITY;
-            //max value, x, y coordinates
+            //-- max value, x, y coordinates
             minMax[minBandOrdinate + 3] = Double.NEGATIVE_INFINITY;
         }
         
@@ -177,13 +177,13 @@ public abstract class Interpolation {
                 value = pixelIterator.getSampleDouble();
                         final int minBandOrdinate = 6 * band;
                         if (value < minMax[minBandOrdinate]) {
-                            //min value, x, y coordinates
+                            //-- min value, x, y coordinates
                             minMax[minBandOrdinate] = value;
                             minMax[minBandOrdinate + 1] = pixelIterator.getX();
                             minMax[minBandOrdinate + 2] = pixelIterator.getY();
                         }
                         if (value > minMax[minBandOrdinate + 3]) {
-                            //max value, x, y coordinates
+                            //-- max value, x, y coordinates
                             minMax[minBandOrdinate + 3] = value;
                             minMax[minBandOrdinate + 4] = pixelIterator.getX();
                             minMax[minBandOrdinate + 5] = pixelIterator.getY();
@@ -209,13 +209,13 @@ public abstract class Interpolation {
                         value = pixelIterator.getSampleDouble();
                         final int minBandOrdinate = 6 * band;
                         if (value < minMax[minBandOrdinate]) {
-                            //min value, x, y coordinates
+                            //-- min value, x, y coordinates
                             minMax[minBandOrdinate] = value;
                             minMax[minBandOrdinate + 1] = x;
                             minMax[minBandOrdinate + 2] = y;
                         }
                         if (value > minMax[minBandOrdinate + 3]) {
-                            //max value, x, y coordinates
+                            //-- max value, x, y coordinates
                             minMax[minBandOrdinate + 3] = value;
                             minMax[minBandOrdinate + 4] = x;
                             minMax[minBandOrdinate + 5] = y;
@@ -257,8 +257,8 @@ public abstract class Interpolation {
         final int boundH = boundary.height;
         final int bx     = boundary.x;
         final int by     = boundary.y;
-        minX  = (int) (x - 0.5);
-        minY  = (int) (y - 0.5);
+        minX  = (int) x;
+        minY  = (int) y;
 
         //-- Adjust truncation.
         if (x < minX) minX--;

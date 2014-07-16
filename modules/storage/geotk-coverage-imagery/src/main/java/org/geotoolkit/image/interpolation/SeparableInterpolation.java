@@ -77,9 +77,9 @@ abstract class SeparableInterpolation extends Interpolation {
                 pixelIterator.moveTo(dx, dy, b);
                 tabInteRow[dx - minX] = pixelIterator.getSampleDouble();
             }
-            tabInteCol[dy-minY] = interpolate1D(minX + 0.5, x, tabInteRow);
+            tabInteCol[dy-minY] = interpolate1D(minX, x, tabInteRow);
         }
-        return interpolate1D(minY + 0.5, y, tabInteCol);
+        return interpolate1D(minY, y, tabInteCol);
     }
 
     @Override
@@ -90,7 +90,7 @@ abstract class SeparableInterpolation extends Interpolation {
         final int hY = minY + windowSide;
 
         for (int dy = minY; dy < hY; dy++) {
-            // First element treatment to avoid un-necessary checks for row major browsing.
+            //-- First element treatment to avoid un-necessary checks for row major browsing.
             pixelIterator.moveTo(minX, dy, 0);
             rows[0][0] = pixelIterator.getSampleDouble();
             for (int band = 1; band < numBands; band++) {
@@ -112,12 +112,12 @@ abstract class SeparableInterpolation extends Interpolation {
             }
 
             for (int band = 0; band < numBands; band++) {
-                cols[band][dy - minY] = interpolate1D(minX + 0.5, x, rows[band]);
+                cols[band][dy - minY] = interpolate1D(minX, x, rows[band]);
             }
         }
 
         for (int band = 0; band < numBands; band++) {
-            result[band] = interpolate1D(minY + 0.5, y, cols[band]);
+            result[band] = interpolate1D(minY, y, cols[band]);
         }
         return result;
     }

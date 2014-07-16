@@ -27,6 +27,7 @@ import org.geotoolkit.image.io.large.WritableLargeRenderedImage;
 import org.geotoolkit.image.iterator.PixelIterator;
 import org.geotoolkit.image.iterator.PixelIteratorFactory;
 import org.geotoolkit.math.XMath;
+import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
 import org.opengis.referencing.operation.TransformException;
@@ -120,8 +121,12 @@ public class Resample {
 
     /**
      * <p>Fill destination image from interpolation of source pixels.<br/>
-     * Source pixel coordinate is obtained from invert transformation of destination pixel coordinates.</p>
-     * The default border comportement is {@link ResampleBorderComportement#EXTRAPOLATION}.
+     * Source pixel coordinate is obtained from invert transformation of destination pixel coordinates.<br/>
+     * The default border comportement is {@link ResampleBorderComportement#EXTRAPOLATION}.<br/><br/>
+     * 
+     * <strong>
+     * Moreover : the specified MathTransform should be from CENTER of target image point to CENTER of source image point.<br/>
+     * The used MathTransform is consider with {@link PixelInCell#CELL_CENTER} configuration.</strong></p>
      *
      * @param mathTransform Transformation use to transform target point to source point.
      * @param imageDest image will be fill by image source pixel interpolation.
@@ -135,8 +140,12 @@ public class Resample {
 
     /**
      * <p>Fill destination image area from interpolation of source pixels.<br/>
-     * Source pixel coordinate is obtained from invert transformation of destination pixel coordinates.</p>
-     * The default border comportement is {@link ResampleBorderComportement#EXTRAPOLATION}.
+     * Source pixel coordinate is obtained from invert transformation of destination pixel coordinates.<br/>
+     * The default border comportement is {@link ResampleBorderComportement#EXTRAPOLATION}.<br/><br/>
+     * 
+     * <strong>
+     * Moreover : the specified MathTransform should be from CENTER of target image point to CENTER of source image point.<br/>
+     * The used MathTransform is consider with {@link PixelInCell#CELL_CENTER} configuration.</strong></p>
      * 
      * @param mathTransform Transformation use to transform target point to source point.
      * @param imageDest image will be fill by image source pixel interpolation.
@@ -151,7 +160,10 @@ public class Resample {
     
     /**
      * <p>Fill destination image area from interpolation of source pixels.<br/>
-     * Source pixel coordinate is obtained from invert transformation of destination pixel coordinates.</p>
+     * Source pixel coordinate is obtained from invert transformation of destination pixel coordinates.<br/><br/>
+     * <strong>
+     * Moreover : the specified MathTransform should be from CENTER of target image point to CENTER of source image point.<br/>
+     * The used MathTransform is consider with {@link PixelInCell#CELL_CENTER} configuration.</strong></p>
      *
      * @param mathTransform Transformation use to transform target point to source point.
      * @param imageDest image will be fill by image source pixel interpolation.
@@ -181,14 +193,14 @@ public class Resample {
              * If a user give a destination image he should hope that his image boundary stay unchanged.
              */
             if (rbc == ResampleBorderComportement.CROP) 
-                throw new IllegalArgumentException("It is impossible to define appropriate border comportment with a given image and crop request.");
+                throw new IllegalArgumentException("It is impossible to define appropriate border comportement with a given image and crop request.");
             this.imageDest = imageDest;
         }
         this.numBands = interpol.getNumBands();
         if (fillValue.length != numBands)
             throw new IllegalArgumentException("fillValue table length and numbands are different : "+fillValue.length+" numbands = "+this.numBands);
         assert(numBands == imageDest.getWritableTile(imageDest.getMinTileX(), imageDest.getMinTileY()).getNumBands())
-                : "destination band number different from source band number";
+                : "destination image numbands different from source image numbands";
         this.destIterator        = PixelIteratorFactory.createDefaultWriteableIterator(this.imageDest, this.imageDest, resampleArea);
         this.fillValue           = fillValue;
         this.destToSourceMathTransform = mathTransform;
@@ -207,10 +219,7 @@ public class Resample {
                 clamk[1] = 255;
                 break;
             }
-            case DataBuffer.TYPE_SHORT : {
-                clamk[0] = Short.MIN_VALUE;
-                clamk[1] = Short.MAX_VALUE;
-            }
+            case DataBuffer.TYPE_SHORT :
             case DataBuffer.TYPE_USHORT : {
                 clamk[0] = 0;
                 clamk[1] = 65535;
@@ -238,22 +247,17 @@ public class Resample {
      */
     public void fillImage() throws TransformException {
         int band;
-        int src0;
-        int src1;
         
         while (destIterator.next()) {
             band = 0;
             
             //Compute interpolation value from source image.
-            destCoords[0] = destIterator.getX() + 0.5;
-            destCoords[1] = destIterator.getY() + 0.5;
+            destCoords[0] = destIterator.getX();
+            destCoords[1] = destIterator.getY();
             destToSourceMathTransform.transform(destCoords, 0, srcCoords, 0, 1);
-            src0 = (int) srcCoords[0];
-            src1 = (int) srcCoords[1];
-            
             //check out of range
-            if (src0 < minSourceX || src0 >= maxSourceX
-             || src1 < minSourceY || src1 >= maxSourceY) {
+            if (srcCoords[0] < minSourceX || srcCoords[0] >= maxSourceX
+             || srcCoords[1] < minSourceY || srcCoords[1] >= maxSourceY) {
                 destIterator.setSampleDouble(fillValue[band]);
                 while (++band != numBands) {
                     destIterator.next();
@@ -261,9 +265,9 @@ public class Resample {
                 }
             } else {
                 //-- check border comportement --//
-                if (rbc == ResampleBorderComportement.FILL_VALUE && interpol instanceof SeparableInterpolation &&
-                        (srcCoords[0] < minSourceX + 0.5 || srcCoords[0] > maxSourceX - 0.5
-                      || srcCoords[1] < minSourceY + 0.5 || srcCoords[1] > maxSourceY - 0.5)) {
+                if (rbc == ResampleBorderComportement.FILL_VALUE && 
+                        (srcCoords[0] < minSourceX  || srcCoords[0] > maxSourceX - 1
+                      || srcCoords[1] < minSourceY  || srcCoords[1] > maxSourceY - 1)) {
                     destIterator.setSampleDouble(fillValue[band]);
                     while (++band != numBands) {
                         destIterator.next();
@@ -290,14 +294,14 @@ public class Resample {
         int src1;
         while (destIterator.next()) {
             band = 0;
-            //Compute interpolation value from source image.
-            destCoords[0] = destIterator.getX() + 0.5;
-            destCoords[1] = destIterator.getY() + 0.5;
+            //-- Compute interpolation value from source image.
+            destCoords[0] = destIterator.getX();
+            destCoords[1] = destIterator.getY();
             destToSourceMathTransform.transform(destCoords, 0, srcCoords, 0, 1);
             src0 = (int) srcCoords[0];
             src1 = (int) srcCoords[1];
 
-            //check out of range
+            //-- check out of range 
             if (src0 < minSourceX || src0 >= maxSourceX
                     || src1 < minSourceY || src1 >= maxSourceY) {
                 destIterator.setSampleDouble(fillValue[band]);
