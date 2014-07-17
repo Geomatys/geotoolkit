@@ -90,7 +90,7 @@ public final class StyleConstants {
     public static final String  STROKE_JOIN_BEVEL_STRING = "bevel";
     public static final String  STROKE_CAP_BUTT_STRING = "butt";
     public static final String  STROKE_CAP_ROUND_STRING = "round";
-    public static final String  STROKE_CAP_SQUARE_STRING = " square";
+    public static final String  STROKE_CAP_SQUARE_STRING = "square";
     public static final Literal STROKE_JOIN_MITRE;
     public static final Literal STROKE_JOIN_ROUND;
     public static final Literal STROKE_JOIN_BEVEL;
