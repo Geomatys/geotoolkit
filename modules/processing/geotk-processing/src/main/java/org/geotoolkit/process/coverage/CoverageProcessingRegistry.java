@@ -17,7 +17,6 @@
 
 package org.geotoolkit.process.coverage;
 
-import java.util.Collections;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
@@ -39,12 +38,15 @@ import org.geotoolkit.process.coverage.reformat.ReformatDescriptor;
 import org.geotoolkit.process.coverage.resample.IOResampleDescriptor;
 import org.geotoolkit.process.coverage.resample.ResampleDescriptor;
 import org.geotoolkit.process.coverage.shadedrelief.ShadedReliefDescriptor;
+import org.geotoolkit.process.coverage.statistics.StatisticsDescriptor;
 import org.geotoolkit.process.coverage.straighten.StraightenDescriptor;
 import org.geotoolkit.process.coverage.tiling.TilingDescriptor;
 import org.geotoolkit.process.coverage.volume.ComputeVolumeDescriptor;
 import org.geotoolkit.process.image.statistics.ImageStatisticsDescriptor;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.identification.Identification;
+
+import java.util.Collections;
 
 /**
  * Declare loading of coverage processes.
@@ -87,7 +89,8 @@ public class CoverageProcessingRegistry extends AbstractProcessingRegistry{
               ComputeVolumeDescriptor.INSTANCE,
               IOResampleDescriptor.INSTANCE,
               ShadedReliefDescriptor.INSTANCE,
-              MathCalcDescriptor.INSTANCE);
+              MathCalcDescriptor.INSTANCE,
+              StatisticsDescriptor.INSTANCE);
     }
 
     @Override
