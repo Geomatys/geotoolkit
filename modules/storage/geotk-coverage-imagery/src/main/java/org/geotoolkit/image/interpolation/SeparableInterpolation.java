@@ -46,11 +46,14 @@ abstract class SeparableInterpolation extends Interpolation {
     protected boolean rowMajorBrowsing;
     
     /**
+     * 
      * @param pixelIterator
-     * @param windowSide 
+     * @param windowSide
+     * @param rbc
+     * @param fillValue 
      */
-    public SeparableInterpolation(PixelIterator pixelIterator, int windowSide) {
-        super(pixelIterator, windowSide);
+    public SeparableInterpolation(PixelIterator pixelIterator, int windowSide, ResampleBorderComportement rbc, double[] fillValue) {
+        super(pixelIterator, windowSide, rbc, fillValue);
         tabInteRow = new double[windowSide];
         tabInteCol = new double[windowSide];
         rows = new double[numBands][windowSide];
@@ -68,7 +71,7 @@ abstract class SeparableInterpolation extends Interpolation {
      */
     @Override
     public double interpolate(double x, double y, int b) {
-        checkInterpolate(x, y);
+        if (!checkInterpolate(x, y)) return fillValue[b];
         setInterpolateMin(x, y);
         final int wX = minX + windowSide;
         final int hY = minY + windowSide;
@@ -84,7 +87,7 @@ abstract class SeparableInterpolation extends Interpolation {
 
     @Override
     public double[] interpolate(double x, double y) {
-        checkInterpolate(x, y);
+        if (!checkInterpolate(x, y)) return fillValue;
         setInterpolateMin(x, y);
         final int wX = minX + windowSide;
         final int hY = minY + windowSide;

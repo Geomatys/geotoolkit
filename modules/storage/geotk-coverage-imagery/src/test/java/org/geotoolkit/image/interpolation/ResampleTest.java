@@ -23,7 +23,6 @@ import javax.imageio.ImageTypeSpecifier;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.geotoolkit.image.iterator.PixelIterator;
-import org.geotoolkit.image.iterator.PixelIteratorConform;
 import org.geotoolkit.image.iterator.PixelIteratorFactory;
 import static org.junit.Assert.*;
 import org.junit.Test;
@@ -42,15 +41,15 @@ public class ResampleTest {
     /**
      * Expected result about neighbor interpolation.
      */
-    private static double[] NEIGHBOR_RESULT = new double[]{0,0,0,0,0,0,0,0,0,
-                                                           0,1,1,1,1,1,1,1,0,
-                                                           0,1,1,1,1,1,1,1,0,
-                                                           0,1,1,2,2,2,1,1,0,
-                                                           0,1,1,2,2,2,1,1,0,
-                                                           0,1,1,2,2,2,1,1,0,
-                                                           0,1,1,1,1,1,1,1,0,
-                                                           0,1,1,1,1,1,1,1,0,
-                                                           0,0,0,0,0,0,0,0,0};
+    private static double[] NEIGHBOR_RESULT = new double[]{1,1,1,1,1,1,1,1,1,
+                                                           1,1,1,1,1,1,1,1,1,
+                                                           1,1,1,1,1,1,1,1,1,
+                                                           1,1,1,2,2,2,1,1,1,
+                                                           1,1,1,2,2,2,1,1,1,
+                                                           1,1,1,2,2,2,1,1,1,
+                                                           1,1,1,1,1,1,1,1,1,
+                                                           1,1,1,1,1,1,1,1,1,
+                                                           1,1,1,1,1,1,1,1,1};
     
     /**
      * Expected result about bilinear interpolation.
@@ -91,11 +90,6 @@ public class ResampleTest {
      * Transformation applicate on source image for resampling.
      */
     private MathTransform mathTransform;
-
-    /**
-     * Interpolation applicate during resampling.
-     */
-    private Interpolation interpolation;
 
     /**
      * Destination image.
@@ -141,13 +135,13 @@ public class ResampleTest {
     public void jaiNeighBorTest() throws NoninvertibleTransformException, FactoryException, TransformException {
 
         setTargetImage(9, 9, DataBuffer.TYPE_DOUBLE, -1000);
-        setInterpolation(sourceImg, InterpolationCase.NEIGHBOR);
         setAffineMathTransform(MathTransforms.concatenate(pixelInCellCenter, new AffineTransform2D(3, 0, 0, 3, 0, 0), pixelInCellCenter.inverse()));
 
         /*
          * Resampling
          */
-        Resample resample = new Resample(mathTransform.inverse(), targetImage, null, interpolation, new double[]{0}, ResampleBorderComportement.FILL_VALUE);
+        Resample resample = new Resample(mathTransform.inverse(), targetImage, sourceImg, 
+                InterpolationCase.NEIGHBOR, ResampleBorderComportement.FILL_VALUE, new double[]{0});
         resample.fillImage();
         Raster coverageRaster = targetImage.getTile(0, 0);
         
@@ -166,13 +160,13 @@ public class ResampleTest {
     public void jaiBiLinearTest() throws NoninvertibleTransformException, FactoryException, TransformException {
 
         setTargetImage(9, 9, DataBuffer.TYPE_DOUBLE,  -1000);
-        setInterpolation(sourceImg, InterpolationCase.BILINEAR);
         setAffineMathTransform(MathTransforms.concatenate(pixelInCellCenter, new AffineTransform2D(3, 0, 0, 3, 0, 0), pixelInCellCenter.inverse()));
 
         /*
          * Resampling
          */
-        final Resample resample = new Resample(mathTransform.inverse(), targetImage, null, interpolation, new double[]{0}, ResampleBorderComportement.FILL_VALUE);
+        final Resample resample = new Resample(mathTransform.inverse(), targetImage, sourceImg,
+                InterpolationCase.BILINEAR, ResampleBorderComportement.FILL_VALUE, new double[]{0});
         resample.fillImage();
         final Raster coverageRaster = targetImage.getTile(0, 0);
         java.awt.image.DataBufferDouble datadouble = (java.awt.image.DataBufferDouble) coverageRaster.getDataBuffer();
@@ -215,14 +209,14 @@ public class ResampleTest {
         raster.setSample(3, 3, 0, 1);
 
         setTargetImage(12, 12, DataBuffer.TYPE_DOUBLE, -1000);
-        setInterpolation(sourceImg, InterpolationCase.BICUBIC);
          
         setAffineMathTransform(MathTransforms.concatenate(pixelInCellCenter, new AffineTransform2D(3, 0, 0, 3, 0, 0), pixelInCellCenter.inverse()));
 
         /*
          * Resampling
          */
-        final Resample resample = new Resample(mathTransform.inverse(), targetImage, null, interpolation, new double[]{0}, ResampleBorderComportement.FILL_VALUE);
+        final Resample resample = new Resample(mathTransform.inverse(), targetImage, sourceImg,
+                InterpolationCase.BICUBIC, ResampleBorderComportement.FILL_VALUE, new double[]{0});
         resample.fillImage();
         final Raster coverageRaster = targetImage.getTile(0, 0);
 
@@ -252,16 +246,6 @@ public class ResampleTest {
         }
     }
 
-    /**
-     * Affect appropriate interpolation about test.
-     *
-     * @param sourceImage image which will be iterate for tests.
-     * @param interpolCase chosen interpolator.
-     */
-    private void setInterpolation(WritableRenderedImage sourceImage, InterpolationCase interpolCase) {
-        interpolation = Interpolation.create(new PixelIteratorConform(sourceImage), interpolCase, 0);
-    }
-    
     /**
      * Affect MathTransform with appropriate test values.
      * 

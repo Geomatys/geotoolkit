@@ -36,8 +36,8 @@ public class NeighborInterpolation extends Interpolation {
      *
      * @param pixelIterator Iterator used to interpolation.
      */
-    public NeighborInterpolation(PixelIterator pixelIterator) {
-        super(pixelIterator, 0);
+    public NeighborInterpolation(PixelIterator pixelIterator, double[] fillValue) {
+        super(pixelIterator, 0, ResampleBorderComportement.EXTRAPOLATION, fillValue);
         Rectangle rect = pixelIterator.getBoundary(false);
         maxxId = rect.x + rect.width  - 1;
         maxyId = rect.y + rect.height - 1;
@@ -52,7 +52,7 @@ public class NeighborInterpolation extends Interpolation {
      */
     @Override
     public double interpolate(double x, double y, int bands) {
-        checkInterpolate(x, y);
+        if (x < bminX || x > bmaxX || y < bminY || y > bmaxY) return fillValue[bands];//-- no interpolation available 
         x = Math.round(x);
         y = Math.round(y);
         pixelIterator.moveTo((int) Math.min(maxxId, x), (int) Math.min(maxyId, y), bands);
@@ -61,7 +61,7 @@ public class NeighborInterpolation extends Interpolation {
 
     @Override
     public double[] interpolate(double x, double y) {
-        checkInterpolate(x, y);
+        if (x < bminX || x > bmaxX || y < bminY || y > bmaxY) return fillValue;//-- no interpolation available 
         x = Math.round(x);
         y = Math.round(y);
         pixelIterator.moveTo((int) Math.min(maxxId, x), (int) Math.min(maxyId, y), 0);

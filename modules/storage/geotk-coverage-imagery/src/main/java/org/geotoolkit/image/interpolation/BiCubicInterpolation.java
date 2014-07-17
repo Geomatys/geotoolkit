@@ -44,9 +44,11 @@ abstract class BiCubicInterpolation extends SeparableInterpolation {
      * This definition is also sometimes known as "cubic convolution".<br/><br/>
      *
      * @param pixelIterator Iterator used to interpolation.
+     * @param borderChoice define comportement of the destination image border. 
+     * @param fillValue contains value use when pixel transformation is out of source image boundary.
      */
-    public BiCubicInterpolation(PixelIterator pixelIterator) {
-        super(pixelIterator, 4);
+    public BiCubicInterpolation(PixelIterator pixelIterator, ResampleBorderComportement borderChoice, double[] fillValue) {
+        super(pixelIterator, 4, borderChoice, fillValue);
         switch (pixelIterator.getSourceDatatype()) {
             case DataBuffer.TYPE_BYTE : {
                 minValue = 0;
@@ -75,6 +77,18 @@ abstract class BiCubicInterpolation extends SeparableInterpolation {
             throw new IllegalArgumentException("iterate object height too smaller" + boundary.height);
     }
 
+    /**
+     * Create a bicubic interpolation.<br/><br/>
+     * 
+     * Define border comportement at {@link ResampleBorderComportement#FILL_VALUE} 
+     * and fillValue is an arrays of the same length than band number from source image and filled by {@link Double#NaN} value.
+     * 
+     * @param pixelIterator Iterator to iterate on source image.
+     */
+    public BiCubicInterpolation(PixelIterator pixelIterator) {
+        this(pixelIterator, ResampleBorderComportement.FILL_VALUE, null);
+    }
+    
     /**
      * <p>Verify value is in [{@link #minValue}; {@link #maxValue}] interval.<br/><br/>
      *

@@ -55,9 +55,11 @@ public class LanczosInterpolation extends Interpolation {
      *
      * @param pixelIterator Iterator used to interpolation.
      * @param lanczosWindow define pixel number use to interpolate.
+     * @param rbc border comportement.
+     * @param fillValue value(s) which will be filled when coordinate out of source boundary.
      */
-    public LanczosInterpolation(PixelIterator pixelIterator, int lanczosWindow) {
-        super(pixelIterator, 2*lanczosWindow);
+    public LanczosInterpolation(PixelIterator pixelIterator, int lanczosWindow, ResampleBorderComportement rbc, double[] fillValue) {
+        super(pixelIterator, lanczosWindow << 1, rbc, fillValue);
         if (lanczosWindow > boundary.width || lanczosWindow > boundary.height)
             throw new IllegalArgumentException("lanczosWindow more longer");
         this.lanczosWindow = lanczosWindow;
@@ -84,7 +86,24 @@ public class LanczosInterpolation extends Interpolation {
             }
         }
     }
-
+    
+    /**
+     * Create a Lanczos interpolation.<br/><br/>
+     * 
+     * Define border comportement at {@link ResampleBorderComportement#FILL_VALUE} 
+     * and fillValue is an arrays of the same length than band number from source image and filled by {@link Double#NaN} value.<br/><br/>
+     * 
+     * The Lanczos window is the central lobe of a horizontally-stretched sinc,<br/>
+     * sinc(x/a) for |x| ≤ lanczos window.<br/>
+     * The normalized sinc function is commonly defined by sinc(x) = sin(PIx)/(PIx).<br/>
+     * Lanczos window define interpolate area boundary defined by square of side length 2*lanczos window.
+     *
+     * @param pixelIterator Iterator used to interpolation.
+     * @param lanczosWindow define pixel number use to interpolate.
+     */
+    public LanczosInterpolation(PixelIterator pixelIterator, int lanczosWindow) {
+        this(pixelIterator, lanczosWindow, ResampleBorderComportement.FILL_VALUE, null);
+    }
 
     /**
      * Return Lanczos kernel filter value.
@@ -109,7 +128,7 @@ public class LanczosInterpolation extends Interpolation {
      */
     @Override
     public double interpolate(double x, double y, int b) {
-        checkInterpolate(x, y);
+        if (!checkInterpolate(x, y)) return fillValue[b];
         setInterpolateMin(x, y);
         final int hY = minY + windowSide;
         final int wX = minX + windowSide;

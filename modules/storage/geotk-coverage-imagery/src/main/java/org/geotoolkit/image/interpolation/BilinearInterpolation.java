@@ -29,11 +29,25 @@ public class BilinearInterpolation extends SeparableInterpolation {
 
     /**
      * Create a Bilinear Interpolator.
+     * 
+     * @param pixelIterator Iterator used to interpolation.
+     * @param borderChoice define comportement of the destination image border. 
+     * @param fillValue contains value use when pixel transformation is out of source image boundary.
+     */
+    public BilinearInterpolation(PixelIterator pixelIterator, ResampleBorderComportement rbc, double[] fillValue) {
+        super(pixelIterator, 2, rbc, fillValue);
+    }
+    
+    /**
+     * Create a Bilinear Interpolator.<br/><br/>
+     * 
+     * Define border comportement at {@link ResampleBorderComportement#FILL_VALUE} 
+     * and fillValue is an arrays of the same length than band number from source image and filled by {@link Double#NaN} value.
      *
      * @param pixelIterator Iterator used to interpolation.
      */
     public BilinearInterpolation(PixelIterator pixelIterator) {
-        super(pixelIterator, 2);
+        this(pixelIterator, ResampleBorderComportement.FILL_VALUE, null);
     }
 
     /**

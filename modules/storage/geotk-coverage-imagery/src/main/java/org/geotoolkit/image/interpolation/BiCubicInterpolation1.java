@@ -28,10 +28,17 @@ public class BiCubicInterpolation1 extends BiCubicInterpolation {
     /**
      * {@inheritDoc }.
      */
+    public BiCubicInterpolation1(PixelIterator pixelIterator, ResampleBorderComportement rbc, double[] fillValue) {
+        super(pixelIterator, rbc, fillValue);
+    }
+
+    /**
+     * {@inheritDoc }.
+     */
     public BiCubicInterpolation1(PixelIterator pixelIterator) {
         super(pixelIterator);
     }
-
+    
     /**
      * {@inheritDoc }
      *

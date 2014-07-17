@@ -79,20 +79,20 @@ public class BiCubicTest extends InterpolationTest {
         double interpolVal;
         for (int y = miny+1; y < miny + height-2; y++) {
             for (int x = minx+1; x < minx + width-2; x++) {
-                // interpolation verification at center pixel position.
-                interpolVal = interpol.interpolate(x + 0.5, y + 0.5,0);
+                //-- interpolation verification at center pixel position.
+                interpolVal = interpol.interpolate(x, y,0);
                 assertTrue(Math.abs(rastertest.getSampleDouble(x, y, 0) - interpolVal) <= 1E-12);
-                interpolVal = interpol.interpolate(x + 0.5, y + 0.5)[0];
+                interpolVal = interpol.interpolate(x, y)[0];
                 assertTrue(Math.abs(rastertest.getSampleDouble(x, y, 0) - interpolVal) <= 1E-12);
             }
         }
         interpol = new BiCubicInterpolation2(pixIterator);
         for (int y = miny+1; y < miny + height-2; y++) {
             for (int x = minx+1; x < minx + width-2; x++) {
-                // interpolation verification at center pixel position.
-                interpolVal = interpol.interpolate(x + 0.5, y + 0.5, 0);
+                //-- interpolation verification at center pixel position.
+                interpolVal = interpol.interpolate(x, y, 0);
                 assertTrue(Math.abs(rastertest.getSampleDouble(x, y, 0) - interpolVal) <= 1E-12);
-                interpolVal = interpol.interpolate(x + 0.5, y + 0.5)[0];
+                interpolVal = interpol.interpolate(x, y)[0];
                 assertTrue(Math.abs(rastertest.getSampleDouble(x, y, 0) - interpolVal) <= 1E-12);
             }
         }
@@ -211,7 +211,7 @@ public class BiCubicTest extends InterpolationTest {
         final int minY    = raster.getMinY();
         final int rW      = raster.getWidth();
         final int rH      = raster.getHeight();
-        double[] jaiInter, geotkInter;
+        double[] jaiInter;
 
         javax.media.jai.Interpolation jaiInterpol = (keys) ? new InterpolationBicubic2(8) : new InterpolationBicubic(8);
         PixelIterator pixelIterator = PixelIteratorFactory.createDefaultIterator(raster);
@@ -225,11 +225,9 @@ public class BiCubicTest extends InterpolationTest {
                     y = minY + 1 + ny * 0.01;
                     
                     jaiInter = getJAIInterpolate(jaiInterpol, raster, x, y, rW, rH, numBand);
-                    geotkInter = interpol.interpolate(x+0.5, y+0.5);
-//                    assertArrayEquals(jaiInter, geotkInter, TOLERANCE);
                     for (int b2 = 0; b2 <numBand; b2++) {
                         //-- to simulate pixel center
-                        double inter = interpol.interpolate(x+0.5, y+0.5, b2);
+                        double inter = interpol.interpolate(x, y, b2);
                         tolerance = ((inter + jaiInter[b2]) / 2) * 1E-2;//1%
                         assertEquals("checkBicubicInterpolation at position : ("+x+", "+y+", "+b2+") : ", jaiInter[b2], inter, tolerance);
                     }
