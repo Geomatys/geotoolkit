@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.process.coverage.statistics;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.TreeMap;
@@ -25,7 +26,7 @@ import java.util.TreeMap;
  * Image statistic from an image :
  * Get min, max and repartition array by bands
  */
-public class ImageStatistics {
+public class ImageStatistics implements Serializable{
 
 
     /**
@@ -63,7 +64,7 @@ public class ImageStatistics {
     /**
      * Band Inner class
      */
-    public class Band {
+    public class Band implements Serializable{
 
         /**
          * data repartition map
