@@ -52,6 +52,7 @@ import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.image.iterator.PixelIterator;
 import org.geotoolkit.image.iterator.PixelIteratorFactory;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.metadata.iso.spatial.PixelTranslation;
 import org.geotoolkit.process.AbstractProcess;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
@@ -72,6 +73,7 @@ import org.opengis.util.FactoryException;
 /**
  *
  * @author Johann Sorel (Geomatys)
+ * @author Quentin Boileau (Geomatys)
  * @module pending
  */
 public class Isoline2 extends AbstractProcess {
@@ -114,7 +116,7 @@ public class Isoline2 extends AbstractProcess {
                 computeIsolineFromPM(pm);
 
             } else {
-                final MathTransform gridtoCRS = gridgeom.getGridToCRS(PixelInCell.CELL_CORNER);
+                final MathTransform gridtoCRS = gridgeom.getGridToCRS(PixelInCell.CELL_CENTER);
 
                 final Object obj = reader.getInput();
                 final RenderedImage image;
@@ -172,7 +174,8 @@ public class Isoline2 extends AbstractProcess {
                         if (!mosaic.isMissing(x,y)) {
                             try{
                                 final TileReference ref = mosaic.getTile(x, y, null);
-                                final MathTransform gridtoCRS = AbstractGridMosaic.getTileGridToCRS(mosaic, new Point(x, y));
+                                MathTransform gridtoCRS = AbstractGridMosaic.getTileGridToCRS(mosaic, new Point(x, y));
+                                gridtoCRS = PixelTranslation.translate(gridtoCRS, PixelInCell.CELL_CORNER, PixelInCell.CELL_CENTER);
                                 final Object obj = ref.getInput();
                                 final RenderedImage image;
                                 if(obj instanceof RenderedImage){
@@ -917,6 +920,17 @@ public class Isoline2 extends AbstractProcess {
                     //propage bottom limit
                     newBoundary.HLeft = SBottom;
                 }
+            } else if (crossBt != null && Double.isNaN(UR.z)) {
+                // special case when upper value is NaN
+                Construction cst = new Construction(level);
+                newBoundary.HMiddle = cst.getEdge1();
+                newBoundary.HMiddle.add(crossBt);
+
+            } else if (crossRi != null && Double.isNaN(BL.z)) {
+                // special case when left value is NaN
+                Construction cst = new Construction(level);
+                newBoundary.VMiddle = cst.getEdge1();
+                newBoundary.VMiddle.add(crossRi);
             }
 
             if(newBoundary.VMiddle==null && newBoundary.HMiddle==null){

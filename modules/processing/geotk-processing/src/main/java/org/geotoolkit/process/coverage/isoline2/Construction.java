@@ -24,7 +24,7 @@ import java.util.LinkedList;
 
 /**
  * A construction is a 2 edge line string.
- * Each eadge append coordinates at opposite ends.
+ * Each edge append coordinates at opposite ends.
  * 
  * @author Johann Sorel (Geomatys)
  */
