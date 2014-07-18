@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.metadata.IIOMetadataNode;
 import javax.xml.parsers.DocumentBuilder;
@@ -54,7 +55,9 @@ import org.xml.sax.SAXException;
  * @author Johann Sorel (Geomatys)
  */
 public class ThirdPartyMetaDataReader {
-    
+
+    private static final Logger LOGGER = Logging.getLogger(ThirdPartyMetaDataReader.class);
+
     private final Node root;
     
     public ThirdPartyMetaDataReader(final IIOMetadata imageMetadata) throws IOException{
@@ -99,7 +102,7 @@ public class ThirdPartyMetaDataReader {
                             }
                         }
                     } catch (ParserConfigurationException | SAXException | NumberFormatException ex) {
-                        Logging.getLogger(ThirdPartyMetaDataReader.class).log(Level.WARNING, ex.getMessage(), ex);
+                        LOGGER.log(Level.WARNING, ex.getMessage(), ex);
                     }
                     
                     if(min!=null && max!=null){
@@ -111,8 +114,12 @@ public class ThirdPartyMetaDataReader {
                 case 42113 : {// no data value as ascii text
                     final Node valueNode = child.getChildNodes().item(0);
                     final String str = GeoTiffMetaDataUtils.readTiffAsciis(valueNode);
-                    realFillValue = Double.valueOf(str);
-                    categories.add(Category.NODATA);
+                    try {
+                        realFillValue = Double.valueOf(str);
+                        categories.add(Category.NODATA);
+                    } catch (NumberFormatException e) {
+                        LOGGER.log(Level.INFO, "No data value cannot be read.", e);
+                    }
                     //categories.add(new Category(Vocabulary.formatInternational(Vocabulary.Keys.NODATA), new Color(0,0,0,0), noData));
                     }break;
             }
