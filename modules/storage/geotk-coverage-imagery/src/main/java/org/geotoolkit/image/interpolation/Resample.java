@@ -268,14 +268,21 @@ public class Resample {
         final int datatype = imageDest.getSampleModel().getDataType();
         switch (datatype) {
             case DataBuffer.TYPE_BYTE : {
+                /*
+                 * Because DataBuffer.TYPE_BYTE is define as UByte.
+                 */
                 clamk[0] = 0;
                 clamk[1] = 255;
                 break;
             }
-            case DataBuffer.TYPE_SHORT :
+            case DataBuffer.TYPE_SHORT : {
+                clamk[0] = Short.MIN_VALUE;
+                clamk[1] = Short.MAX_VALUE;
+                break;
+            }
             case DataBuffer.TYPE_USHORT : {
                 clamk[0] = 0;
-                clamk[1] = 65535;
+                clamk[1] = 0xFFFF;
                 break;
             }
             case DataBuffer.TYPE_FLOAT : {
@@ -348,14 +355,21 @@ public class Resample {
         final int datatype = imageDest.getSampleModel().getDataType();
         switch (datatype) {
             case DataBuffer.TYPE_BYTE : {
+                /*
+                 * Because DataBuffer.TYPE_BYTE is define as UByte.
+                 */
                 clamk[0] = 0;
                 clamk[1] = 255;
                 break;
             }
-            case DataBuffer.TYPE_SHORT :
+            case DataBuffer.TYPE_SHORT : {
+                clamk[0] = Short.MIN_VALUE;
+                clamk[1] = Short.MAX_VALUE;
+                break;
+            }
             case DataBuffer.TYPE_USHORT : {
                 clamk[0] = 0;
-                clamk[1] = 65535;
+                clamk[1] = 0xFFFF;
                 break;
             }
             case DataBuffer.TYPE_FLOAT : {
