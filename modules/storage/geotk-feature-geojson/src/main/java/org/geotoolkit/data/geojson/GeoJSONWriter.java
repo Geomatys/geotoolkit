@@ -96,8 +96,10 @@ class GeoJSONWriter implements Closeable, Flushable {
         writer.writeStringField(TYPE, FEATURE_COLLECTION);
         writeNewLine();
 
-        writeCRS(crs);
-        writeNewLine();
+        if (crs != null) {
+            writeCRS(crs);
+            writeNewLine();
+        }
 
         if (envelope != null) {
             //TODO write bbox
