@@ -366,7 +366,7 @@ public class TiffImageReader extends SpatialImageReader {
         
         fillRootMetadataNode(layerIndex);
         final IIOMetadata metadata = new IIOTiffMetadata(roots[layerIndex]);
-            final GeoTiffMetaDataReader metareader = new GeoTiffMetaDataReader(metadata);
+        final GeoTiffMetaDataReader metareader = new GeoTiffMetaDataReader(metadata);
         try {
             return metareader.readSpatialMetaData();
         } catch (NoSuchAuthorityCodeException ex) {
@@ -1181,7 +1181,8 @@ public class TiffImageReader extends SpatialImageReader {
                     final Object nameCompress;
                     switch (compression) {
                         case 6:  nameCompress = "JPEG";      break;
-                        case 7:  nameCompress = "LZW";       break;
+                        case 7:  nameCompress = "JPEG";      break;
+                        case 8:  nameCompress = "Deflate";   break;
                         default: nameCompress = compression; break;
                     }
                     throw new UnsupportedImageFormatException(error(Errors.Keys.ILLEGAL_PARAMETER_VALUE_2,
@@ -1594,6 +1595,11 @@ public class TiffImageReader extends SpatialImageReader {
                 selectLayer(idCuLayer);
                 if (isThumbnail()) {
                     //-- add in thumbnail list at the correct image key --//
+                    final List<Integer> currentThumb = imgAndThumbs.get(idCuImg);
+                    // If we found thumbnail before the actual image, we must create image indice.
+                    if (idCuImg < 0 || currentThumb == null) {
+                        imgAndThumbs.put(++idCuImg, new ArrayList<Integer>());
+                    }
                     assert idCuImg >= 0;
                     imgAndThumbs.get(idCuImg).add(idCuLayer++);
                 } else {
