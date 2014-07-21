@@ -68,7 +68,7 @@ RPAREN : ')';
 
 //LITERALS  ----------------------------------------------
 
-TEXT :   '\'' ( ESC_SEQ | ~('\\'|'\'') )* '\'' ;   
+TEXT :   '\'' ( ESC_SEQ | ~('\'') )* '\'' ;   
 INT : DIGIT+ ;
 
 FLOAT
@@ -180,8 +180,8 @@ fragment
 UNICODE_ESC
     :   '\\' 'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT
     ;
+        
     
- 
     
     
 //-----------------------------------------------------------------//

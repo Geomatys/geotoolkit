@@ -230,8 +230,14 @@ public final class CQL {
             }else{
                 return convertExpression(tree.getChild(0), ff);
             }
-        }else if(tree instanceof ExpressionTermContext){
-            //: TEXT
+        }
+//        else if(tree instanceof ExpressionStringContext){
+//            //strip start and end '
+//            final String text = tree.getText();
+//            return ff.literal(text.substring(1, text.length()-1));
+//        }
+        else if(tree instanceof ExpressionTermContext){
+            //: expressionString
             //| expressionUnary
             //| PROPERTY_NAME
             //| DATE
@@ -305,7 +311,8 @@ public final class CQL {
                 return ff.literal(TemporalUtilities.getTimeInMillis(tree.getText()));
             }else if(TEXT == type){
                 //strip start and end '
-                final String text = tree.getText();
+                String text = tree.getText();
+                text = text.replaceAll("\\\\'", "'");
                 return ff.literal(text.substring(1, text.length()-1));
             }
         }else if(tree instanceof ExpressionGeometryContext){

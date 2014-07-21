@@ -134,6 +134,25 @@ public class ExpressionReadingTest {
     }
     
     @Test
+    public void testText2() throws CQLException{
+        final String cql = "'Valle d\\'Aosta'";
+        final Object obj = CQL.parseExpression(cql);       
+        assertTrue(obj instanceof Literal);
+        final Literal expression = (Literal) obj;
+        assertEquals("Valle d'Aosta", expression.getValue());               
+    }
+    
+    @Test
+    public void testText3() throws CQLException{
+        final String cql = "'Valle d\\'Aosta/Vallée d\\'Aoste'";
+        final Object obj = CQL.parseExpression(cql);       
+        assertTrue(obj instanceof Literal);
+        final Literal expression = (Literal) obj;
+        assertEquals("Valle d'Aosta/Vallée d'Aoste", expression.getValue());               
+    }
+    
+    
+    @Test
     public void testDate() throws CQLException, ParseException{
         //dates are expected to be formated in ISO 8601 : yyyy-MM-dd'T'HH:mm:ss'Z'
         final String cql = "2012-03-21T05:42:36Z";
