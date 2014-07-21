@@ -248,7 +248,7 @@ public class FilterToCQLVisitor implements FilterVisitor, ExpressionVisitor {
         if(matchingCase){
             filter.getExpression().accept(this,sb);
         }else{
-            sb.append("upper(");
+            sb.append("strToUpperCase(");
             filter.getExpression().accept(this,sb);
             sb.append(')');
         }
