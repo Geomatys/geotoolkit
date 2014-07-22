@@ -32,16 +32,16 @@ import org.w3c.dom.Element;
 
 
 /**
- *  The purpose of an observation process is to generate an observation
- * 				result. An instance is often an instrument or sensor, but may be a human observer, a
- * 				simulator, or a process or algorithm applied to more primitive results used as
- * 				inputs. The model for OM_Process is abstract, and has no attributes, operations, or
- * 				associations. NOTE ISO 19115-2:2008 provides MI_Instrument, LE_Processing and
- * 				LE_Algorithm, which could all be modelled as specializations of OM_Process. Any
- * 				suitable XML may be used to describe the observation process in line, provided that
- * 				it is contained in a single XML element. If reference to a schema is provided it
- * 				must also be valid. OGC SensorML provides a model which is suitable for many
- * 				observation procedures.
+ *  The purpose of an observation process is to generate an observation result. 
+ * An instance is often an instrument or sensor, but may be a human observer, a simulator, 
+ * or a process or algorithm applied to more primitive results used as inputs. 
+ * The model for OM_Process is abstract, and has no attributes, operations, or associations. 
+ * NOTE ISO 19115-2:2008 provides MI_Instrument, LE_Processing and LE_Algorithm, 
+ * which could all be modelled as specializations of OM_Process. 
+ * Any suitable XML may be used to describe the observation process in line,
+ * provided that it is contained in a single XML element. 
+ * If reference to a schema is provided it must also be valid. 
+ * OGC SensorML provides a model which is suitable for many observation procedures.
  *
  * <p>Java class for OM_ProcessPropertyType complex type.
  *
@@ -133,7 +133,7 @@ public class OMProcessPropertyType implements org.geotoolkit.observation.xml.Pro
      */
     public List<String> getNilReason() {
         if (nilReason == null) {
-            nilReason = new ArrayList<String>();
+            nilReason = new ArrayList<>();
         }
         return this.nilReason;
     }
@@ -335,6 +335,36 @@ public class OMProcessPropertyType implements org.geotoolkit.observation.xml.Pro
         this.actuate = value;
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder s = new StringBuilder("[OMProcessPropertyType]");
+        if (any != null)
+            s.append("any").append(any).append('\n');
+
+        if(actuate != null) {
+            s.append("actuate=").append(actuate).append('\n');
+        }
+        if(arcrole != null) {
+            s.append("arcrole=").append(arcrole).append('\n');
+        }
+        if(href != null) {
+            s.append("href=").append(href).append('\n');
+        }
+        if(role != null) {
+            s.append("role=").append(role).append('\n');
+        }
+        if(show != null) {
+            s.append("show=").append(show).append('\n');
+        }
+        if(title != null) {
+            s.append("title=").append(title).append('\n');
+        }
+        if(title != null) {
+            s.append("type=").append(type).append('\n');
+        }
+        return s.toString();
+    }
+    
     @Override
     public boolean equals(final Object object) {
         if (object == this) {

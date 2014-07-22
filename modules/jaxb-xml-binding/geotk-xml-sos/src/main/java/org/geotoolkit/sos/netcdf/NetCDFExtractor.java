@@ -738,7 +738,7 @@ public class NetCDFExtractor {
         } catch (IOException | IllegalArgumentException ex) {
             throw new NetCDFParsingException("error while parsing netcdf profile", ex);
         }
-
+        LOGGER.info("datablock parsed");
         return results;
     }
     
@@ -830,7 +830,7 @@ public class NetCDFExtractor {
         } catch (IOException | IllegalArgumentException ex) {
             throw new NetCDFParsingException("error while parsing netcdf profile", ex);
         }
-
+        LOGGER.info("datablock parsed");
         return results;
     }
     
