@@ -1,0 +1,17 @@
+*.log
+.classpath
+
+.DS_Store
+.hg
+.hgtags
+
+# Maven files
+target/
+
+# Netbeans files
+nbactions.xml$
+nbproject/
+
+# IntelliJ files
+.idea/
+*.iml
