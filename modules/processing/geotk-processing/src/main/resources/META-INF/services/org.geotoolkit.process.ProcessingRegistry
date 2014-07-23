@@ -8,3 +8,4 @@ org.geotoolkit.process.groovy.GroovyProcessingRegistry
 org.geotoolkit.process.jts.JTSProcessingRegistry
 org.geotoolkit.process.referencing.ReferencingProcessingRegistry
 org.geotoolkit.process.metadata.MetadataProcessingRegistry
+org.geotoolkit.process.string.StringProcessingRegistry

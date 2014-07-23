@@ -1,2 +1,3 @@
 org.geotoolkit.util.converter.StringToCRSConverter
 org.geotoolkit.util.converter.StringToFilterConverter
+org.geotoolkit.util.converter.FileToArrayConverter
