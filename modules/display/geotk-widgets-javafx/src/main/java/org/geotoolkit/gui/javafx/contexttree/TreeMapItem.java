@@ -30,7 +30,7 @@ import org.geotoolkit.util.collection.CollectionChangeEvent;
  *
  * @author Johann Sorel (Geomatys)
  */
-class TreeMapItem extends TreeItem<MapItem> implements ItemListener {
+public class TreeMapItem extends TreeItem<MapItem> implements ItemListener {
 
     public TreeMapItem(MapItem item) {
         super(item);
@@ -58,7 +58,7 @@ class TreeMapItem extends TreeItem<MapItem> implements ItemListener {
                 idx++;
             }
         } else if (type == CollectionChangeEvent.ITEM_REMOVED) {
-            for (double i = range.getMaxDouble() - 1; i >= range.getMinDouble(); i--) {
+            for (double i = range.getMaxDouble(); i >= range.getMinDouble(); i--) {
                 getChildren().remove((int) i);
             }
         }
