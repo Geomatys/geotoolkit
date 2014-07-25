@@ -52,6 +52,21 @@ public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<C
      * {@inheritDoc }
      */
     @Override
+    public void portray(final ProjectedCoverage projectedCoverage) throws PortrayalException{
+        //portray the border of the coverage
+        final ProjectedGeometry projectedGeometry = projectedCoverage.getEnvelopeGeometry();
+
+        //could not find the border geometry
+        if(projectedGeometry == null) return;
+
+        portray(projectedGeometry, null);
+
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public void portray(final ProjectedObject projectedFeature) throws PortrayalException{
 
         final Object candidate = projectedFeature.getCandidate();
@@ -60,6 +75,12 @@ public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<C
         if(!symbol.isVisible(candidate)) return;
 
         final ProjectedGeometry projectedGeometry = projectedFeature.getGeometry(geomPropertyName);
+
+        portray(projectedGeometry, candidate);
+
+    }
+
+    private void portray(final ProjectedGeometry projectedGeometry, Object candidate) throws PortrayalException{
 
         //symbolizer doesnt match the featuretype, no geometry found with this name.
         if(projectedGeometry == null) return;
@@ -298,14 +319,6 @@ public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<C
                 }
             }
         }
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public void portray(final ProjectedCoverage graphic) throws PortrayalException{
-        //nothing to portray
     }
 
     /**
