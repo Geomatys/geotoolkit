@@ -121,12 +121,16 @@ public class SQLRtreeManager extends AbstractRtreeManager {
             close(directory, tree, owner);
         }
         final File treeFile   = new File(directory, "tree.bin");
-        final File mapperDir  = new File(directory, "treemap-db");
         if (treeFile.exists()) {
             treeFile.delete();
         }
+        final File mapperDir  = new File(directory, "treemap-db");
         if (mapperDir.exists()) {
-            FileUtilities.deleteDirectory(mapperDir);
+            final String dbUrl = "jdbc:derby:" + directory.getPath() + "/treemap-db;create=true;";
+            final DefaultDataSource source = new DefaultDataSource(dbUrl);
+            final LuceneSQLTreeEltMapper mapper = new LuceneSQLTreeEltMapper(DEFAULT_CRS, source);
+            mapper.clear();
+            mapper.close();
         }
         return get(directory, owner);
     }
