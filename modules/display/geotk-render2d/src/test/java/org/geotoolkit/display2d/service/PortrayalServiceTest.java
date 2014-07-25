@@ -32,10 +32,12 @@ import java.awt.image.ColorModel;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.awt.image.WritableRaster;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import javax.imageio.ImageIO;
 import javax.measure.unit.NonSI;
 import javax.measure.unit.Unit;
 import org.apache.sis.geometry.GeneralEnvelope;
@@ -308,7 +310,7 @@ public class PortrayalServiceTest {
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
         gcb.setName("propcov");
         gcb.setCoordinateReferenceSystem(CommonCRS.WGS84.normalizedGeographic());
-        gcb.setGridToCRS(1, 0, 0, 1, 0, 0);
+        gcb.setGridToCRS(1, 0, 0, 1, 0.5, 0.5);
         gcb.setRenderedImage(img);
 
         final Feature f = FeatureUtilities.defaultFeature(ft, "id0");
@@ -350,10 +352,12 @@ public class PortrayalServiceTest {
         final int[] trans = new int[]{0,0,0,0};
         final int[] green = new int[]{0,255,0,255};
         assertNotNull(result);
-        raster.getPixel(0, 0, pixel);       assertArrayEquals(trans, pixel);
-        raster.getPixel(178, 45, pixel);       assertArrayEquals(trans, pixel);
-        raster.getPixel(181, 45, pixel);       assertArrayEquals(green, pixel);
-
+        raster.getPixel(0, 0, pixel);
+        assertArrayEquals(trans, pixel);
+        raster.getPixel(179, 45, pixel);
+        assertArrayEquals(trans, pixel);
+        raster.getPixel(181, 45, pixel);
+        assertArrayEquals(green, pixel);
     }
 
     @Test

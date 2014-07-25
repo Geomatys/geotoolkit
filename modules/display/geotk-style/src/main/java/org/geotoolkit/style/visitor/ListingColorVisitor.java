@@ -17,6 +17,7 @@
 
 package org.geotoolkit.style.visitor;
 
+import java.awt.*;
 import java.util.HashSet;
 import java.util.Set;
 import org.opengis.filter.expression.Expression;
@@ -135,11 +136,15 @@ public class ListingColorVisitor extends DefaultStyleVisitor{
         }else if(exp instanceof Literal){
             final Literal l = (Literal) exp;
             final Object value = l.getValue();
-            try{
-                colors.add(Integer.decode(value.toString()) | 0xFF000000);
-            }catch(NumberFormatException ex){
-                //not a color ? this style is invalid
-                unpredictable = true;
+            if (value instanceof Color) {
+                colors.add(((Color)value).getRGB());
+            } else {
+                try {
+                    colors.add(Integer.decode(value.toString()) | 0xFF000000);
+                } catch (NumberFormatException ex) {
+                    //not a color ? this style is invalid
+                    unpredictable = true;
+                }
             }
         }else{
             unpredictable = true;

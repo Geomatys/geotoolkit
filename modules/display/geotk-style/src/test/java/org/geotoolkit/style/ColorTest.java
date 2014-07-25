@@ -69,9 +69,7 @@ public class ColorTest {
         final MutableStyleFactory SF = new DefaultStyleFactory();
         final Literal l = SF.literal(c);
         
-        assertTrue(l.getValue() instanceof String);
-        assertTrue(l.getValue().toString().startsWith("#"));
-        
+        assertTrue(l.getValue() instanceof Color);
         final Color res = l.evaluate(null, Color.class);
         assertEquals(c, res);
 
