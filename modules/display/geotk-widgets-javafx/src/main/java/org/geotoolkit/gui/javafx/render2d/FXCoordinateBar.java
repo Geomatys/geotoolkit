@@ -21,6 +21,7 @@ import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
 import java.text.NumberFormat;
 import javafx.event.EventHandler;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToolBar;
 import javafx.scene.input.MouseEvent;
@@ -42,7 +43,7 @@ public class FXCoordinateBar extends BorderPane {
     private final ToolBar barCenter = new ToolBar();
     private final ToolBar barRight = new ToolBar();
     
-    private final TextField coordText = new TextField("");
+    private final Label coordText = new Label("");
 
     public FXCoordinateBar(FXMap map) {
         this.map = map;

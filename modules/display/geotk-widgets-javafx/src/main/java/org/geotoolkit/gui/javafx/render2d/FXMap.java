@@ -20,7 +20,6 @@ package org.geotoolkit.gui.javafx.render2d;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.geom.NoninvertibleTransformException;
 import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -32,7 +31,8 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.embed.swing.SwingFXUtils;
-import javafx.scene.image.ImageView;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
@@ -45,7 +45,6 @@ import org.geotoolkit.display.canvas.control.NeverFailMonitor;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.J2DCanvasVolatile;
 import org.geotoolkit.display2d.container.ContextContainer2D;
-import org.opengis.referencing.operation.TransformException;
 import org.openide.util.Exceptions;
 
 /**
@@ -67,7 +66,7 @@ public class FXMap extends BorderPane {
     private boolean statefull = false;
 
     private WritableImage image = null;
-    private final ImageView view = new ImageView();
+    private final Canvas view = new ResizableCanvas();
     //used to repaint the buffer at regular interval until it is finished
     private final Timer progressTimer = new Timer(150, new ActionListener() {
         public void actionPerformed(ActionEvent e) {
@@ -89,6 +88,9 @@ public class FXMap extends BorderPane {
     }
 
     public FXMap(final boolean statefull){
+        view.heightProperty().bind(mapDecorationPane.heightProperty());
+        view.widthProperty().bind(mapDecorationPane.widthProperty());
+        
         mapDecorationPane.getChildren().add(0,view);
         mainDecorationPane.getChildren().add(0,backDecoration.getComponent());
         mainDecorationPane.getChildren().add(1,mapDecorationPane);
@@ -96,7 +98,7 @@ public class FXMap extends BorderPane {
         mainDecorationPane.getChildren().add(3,informationDecoration.getComponent());
         informationDecoration.setMap2D(this);
         setCenter(mainDecorationPane);
-
+        
         
         canvas = new J2DCanvasVolatile(CommonCRS.WGS84.normalizedGeographic(), new Dimension(100, 100));
         canvas.setMonitor(new NeverFailMonitor());
@@ -155,9 +157,12 @@ public class FXMap extends BorderPane {
                 final BufferedImage snapshot = (BufferedImage) canvas.getSnapShot();
                 if (snapshot != null) {
                     image = SwingFXUtils.toFXImage(snapshot, image);
-                    view.setImage(image);
+                    final GraphicsContext g = view.getGraphicsContext2D();
+                    g.clearRect(0, 0, view.getWidth(), view.getHeight());
+                    g.drawImage(image, 0, 0);
                 } else {
-                    view.setImage(null);
+                    final GraphicsContext g = view.getGraphicsContext2D();
+                    g.clearRect(0, 0, view.getWidth(), view.getHeight());
                 }
             }
         };
@@ -347,6 +352,27 @@ public class FXMap extends BorderPane {
     protected void addMapDecoration(final FXMapDecoration deco) {
         mapDecorationPane.getChildren().add(nextMapDecorationIndex, deco.getComponent());
         nextMapDecorationIndex++;
+    }
+    
+    private class ResizableCanvas extends Canvas{
+        
+        public ResizableCanvas() {}
+  
+        @Override
+        public boolean isResizable() {
+            return true;
+        }
+ 
+        @Override
+        public double prefWidth(double height) {
+            return 10;
+        }
+ 
+        @Override
+        public double prefHeight(double width) {
+            return 10;
+        }
+        
     }
     
 }

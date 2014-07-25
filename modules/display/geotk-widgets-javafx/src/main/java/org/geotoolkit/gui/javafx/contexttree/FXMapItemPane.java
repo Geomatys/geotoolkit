@@ -1,4 +1,19 @@
-
+/*
+ *    Geotoolkit - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
+ *
+ *    (C) 2014, Geomatys
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation;
+ *    version 2.1 of the License.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
+ */
 
 package org.geotoolkit.gui.javafx.contexttree;
 
@@ -8,7 +23,7 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
@@ -36,7 +51,7 @@ public class FXMapItemPane extends BorderPane{
     
     private final MapItem item;
     private final FlowPane flow = new FlowPane();
-    private final Label label = new Label();
+    private final TextField uiName = new TextField();
     private final Button viewButton = new Button();
     private final Button filterButton = new Button("",new ImageView(ICON_FILTER));
     private final Button legendButton = new Button("",new ImageView(ICON_LEGEND_UP));
@@ -50,12 +65,12 @@ public class FXMapItemPane extends BorderPane{
         filterButton.setStyle("-fx-background-color: transparent;");
         legendButton.setStyle("-fx-background-color: transparent;");
         
-        flow.getChildren().add(label);
+        flow.getChildren().add(uiName);
         flow.getChildren().add(viewButton);
         viewButton.setGraphic(new ImageView(item.isVisible() ? ICON_VISIBLE : ICON_UNVISIBLE));
         
         
-        label.setText(item.getName());        
+        uiName.setText(item.getName());        
         
         
         //build sub elements
