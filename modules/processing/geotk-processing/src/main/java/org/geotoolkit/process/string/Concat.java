@@ -18,6 +18,7 @@
 package org.geotoolkit.process.string;
 
 import static org.geotoolkit.parameter.Parameters.getOrCreate;
+import org.geotoolkit.parameter.ParametersExt;
 import org.geotoolkit.process.AbstractProcess;
 import org.geotoolkit.process.ProcessException;
 import static org.geotoolkit.process.string.ConcatDescriptor.INSTANCE;
@@ -25,6 +26,7 @@ import static org.geotoolkit.process.string.ConcatDescriptor.PREFIX;
 import static org.geotoolkit.process.string.ConcatDescriptor.RESULT_OUT;
 import static org.geotoolkit.process.string.ConcatDescriptor.SUFFIX;
 import static org.geotoolkit.process.string.ConcatDescriptor.VALUE;
+import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.ParameterValueGroup;
 
 /**
@@ -43,8 +45,16 @@ public class Concat extends AbstractProcess {
     @Override
     protected void execute() throws ProcessException {
         fireProcessStarted("Start concat");
-        final String prefix = getOrCreate(PREFIX, inputParameters).stringValue();
-        final String suffix = getOrCreate(SUFFIX, inputParameters).stringValue();
+        final ParameterValue prefixVal = ParametersExt.getValue(inputParameters, PREFIX.getName().getCode());
+        String prefix = null;
+        if (prefixVal != null) {
+            prefix = prefixVal.stringValue();
+        }
+        final ParameterValue suffixVal = ParametersExt.getValue(inputParameters, SUFFIX.getName().getCode());
+        String suffix = null;
+        if (suffixVal != null) {
+            suffix = suffixVal.stringValue();
+        }
         final String value  = getOrCreate(VALUE, inputParameters).stringValue();
         
         String result = value;
