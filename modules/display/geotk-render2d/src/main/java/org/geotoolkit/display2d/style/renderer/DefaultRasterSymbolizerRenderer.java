@@ -99,6 +99,7 @@ import org.geotoolkit.util.BufferedImageUtilities;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterVisitor;
 import org.opengis.filter.PropertyIsEqualTo;
+import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Function;
 import org.opengis.filter.expression.Literal;
 import org.opengis.filter.expression.PropertyName;
@@ -710,7 +711,24 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
         RenderedImage image = null;
 
         //Recolor coverage -----------------------------------------------------
-        final ColorMap recolor = styleElement.getColorMap();
+        ColorMap recolor = styleElement.getColorMap();
+        //cheat on the colormap if we have only one band and no colormap
+        if(recolor==null || recolor.getFunction()==null && nbDim==1){
+            final Map res = StatisticOp.analyze(coverage.getRenderedImage());
+            final double[] mins = (double[])res.get("min");
+            final double[] maxs = (double[])res.get("max");
+            final GridSampleDimension dim = coverage.getSampleDimension(0);
+            final List<InterpolationPoint> values = new ArrayList<InterpolationPoint>();
+            values.add( GO2Utilities.STYLE_FACTORY.interpolationPoint(Float.NaN, GO2Utilities.STYLE_FACTORY.literal(new Color(0,0,0,0))));
+            values.add( GO2Utilities.STYLE_FACTORY.interpolationPoint(mins[0], GO2Utilities.STYLE_FACTORY.literal(Color.BLACK)));
+            values.add( GO2Utilities.STYLE_FACTORY.interpolationPoint(maxs[0], GO2Utilities.STYLE_FACTORY.literal(Color.WHITE)));
+            final Expression lookup = StyleConstants.DEFAULT_CATEGORIZE_LOOKUP;
+            final Literal fallback = StyleConstants.DEFAULT_FALLBACK;
+            final Function function = GO2Utilities.STYLE_FACTORY.interpolateFunction(
+                    lookup, values, Method.COLOR, Mode.LINEAR, fallback);
+
+            recolor = GO2Utilities.STYLE_FACTORY.colorMap(function);
+        }
         if (recolor != null && recolor.getFunction() != null) {
             //colormap is applyed on geophysic view
             coverage = coverage.view(ViewType.GEOPHYSICS);
