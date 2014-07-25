@@ -28,6 +28,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.TimeUnit;
 import javax.imageio.ImageReader;
+import javax.media.jai.PlanarImage;
 
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.measure.NumberRange;
@@ -35,10 +36,7 @@ import org.apache.sis.storage.DataStoreException;
 
 import org.geotoolkit.coverage.finder.CoverageFinder;
 import org.geotoolkit.coverage.finder.DefaultCoverageFinder;
-import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
-import org.geotoolkit.coverage.grid.GeneralGridGeometry;
-import org.geotoolkit.coverage.grid.GridCoverageBuilder;
-import org.geotoolkit.coverage.grid.GridGeometry2D;
+import org.geotoolkit.coverage.grid.*;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
@@ -286,6 +284,10 @@ public class PyramidalModelReader extends GridCoverageReader{
             }
         }
 
+        if (crs == null) {
+            throw new CoverageStoreException("CRS not defined in parameters or input envelope.");
+        }
+
         //estimate resolution if not given
         if(resolution == null){
             //set resolution to infinite, will select the last mosaic level
@@ -513,34 +515,26 @@ public class PyramidalModelReader extends GridCoverageReader{
             }
         }
 
-
         //build the coverage ---------------------------------------------------
-        final GridCoverageBuilder gcb = new GridCoverageBuilder();
-        gcb.setName(ref.getName().getLocalPart());
+        GridSampleDimension[] bands = new GridSampleDimension[0];
         final List<GridSampleDimension> dimensions = getSampleDimensions(ref.getImageIndex());
         if (dimensions != null) {
-            gcb.setSampleDimensions(dimensions.toArray(new GridSampleDimension[dimensions.size()]));
+            bands = dimensions.toArray(new GridSampleDimension[dimensions.size()]);
         }
 
         final GridEnvelope ge = new GeneralGridEnvelope(image, wantedCRS.getCoordinateSystem().getDimension());
-        final MathTransform gtc = AbstractGridMosaic.getTileGridToCRSND(mosaic, 
+        final MathTransform gtc = AbstractGridMosaic.getTileGridToCRSND(mosaic,
                 new Point((int)tileMinCol,(int)tileMinRow),wantedCRS.getCoordinateSystem().getDimension());
         final GridGeometry2D gridgeo = new GridGeometry2D(ge, PixelOrientation.UPPER_LEFT, gtc, wantedCRS, null);
-        gcb.setGridGeometry(gridgeo);
-        gcb.setRenderedImage(image);
 
-        try {
-            //extract sample dimension from pyramid
-            final PyramidalCoverageReference model = getPyramidalModel();
-            final List<GridSampleDimension> sampleDimensions = model.getSampleDimensions();
-            if (sampleDimensions != null) {
-                gcb.setSampleDimensions(sampleDimensions.toArray(new SampleDimension[sampleDimensions.size()]));
-            }
-        } catch (DataStoreException e) {
-            throw new CoverageStoreException(e.getMessage(), e);
-        }
-
-        return gcb.build();
+        return new GridCoverage2D(
+                ref.getName().getLocalPart(),
+                PlanarImage.wrapRenderedImage(image),
+                gridgeo,
+                bands,
+                null,
+                null,
+                null);
     }
         
     private GridCoverage readCube(List<GridMosaic> mosaics, Envelope wantedEnv, boolean deferred) throws CoverageStoreException{
