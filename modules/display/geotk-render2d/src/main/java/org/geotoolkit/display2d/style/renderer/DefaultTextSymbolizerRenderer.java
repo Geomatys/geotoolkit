@@ -66,9 +66,32 @@ public class DefaultTextSymbolizerRenderer extends AbstractSymbolizerRenderer<Ca
      * {@inheritDoc }
      */
     @Override
+    public void portray(final ProjectedCoverage projectedCoverage) throws PortrayalException{
+        //portray the border of the coverage
+        final ProjectedGeometry projectedGeometry = projectedCoverage.getEnvelopeGeometry();
+
+        //could not find the border geometry
+        if(projectedGeometry == null) return;
+
+        portray(projectedGeometry, null, projectedCoverage);
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public void portray(final ProjectedObject projectedFeature) throws PortrayalException{
 
         final Object candidate = projectedFeature.getCandidate();
+
+        //test if the symbol is visible on this feature
+        if(symbol.isVisible(candidate)){
+            ProjectedGeometry projectedGeometry = projectedFeature.getGeometry(symbol.getSource().getGeometryPropertyName());
+            portray(projectedGeometry, candidate, projectedFeature);
+        }
+    }
+
+    public void portray(ProjectedGeometry projectedGeometry, Object candidate, final ProjectedObject projectedFeature) throws PortrayalException{
 
         //test if the symbol is visible on this feature
         if(symbol.isVisible(candidate)){
@@ -110,8 +133,6 @@ public class DefaultTextSymbolizerRenderer extends AbstractSymbolizerRenderer<Ca
             final Paint fontPaint = symbol.getFontPaint(candidate, 0,0, coeff, hints);
             final Font j2dFont = symbol.getJ2dFont(candidate, coeff);
 
-            ProjectedGeometry projectedGeometry = projectedFeature.getGeometry(symbol.getSource().getGeometryPropertyName());
-
             //symbolizer doesnt match the featuretype, no geometry found with this name.
             if(projectedGeometry == null) return;
 
@@ -119,7 +140,6 @@ public class DefaultTextSymbolizerRenderer extends AbstractSymbolizerRenderer<Ca
 
             portray(projectedGeometry, renderingContext, projectedFeature, placement, haloWidth, haloPaint, fontPaint, j2dFont, label);
         }
-
     }
 
     private void portray(final ProjectedGeometry projectedGeometry, final RenderingContext2D context,
@@ -176,14 +196,6 @@ public class DefaultTextSymbolizerRenderer extends AbstractSymbolizerRenderer<Ca
             throw new PortrayalException("Text symbolizer has no label placement, this should not be possible.");
         }
 
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public void portray(final ProjectedCoverage graphic) throws PortrayalException{
-        //nothing to portray
     }
 
     /**
