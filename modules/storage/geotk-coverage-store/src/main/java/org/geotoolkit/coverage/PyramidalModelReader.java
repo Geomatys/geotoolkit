@@ -516,25 +516,21 @@ public class PyramidalModelReader extends GridCoverageReader{
         }
 
         //build the coverage ---------------------------------------------------
-        GridSampleDimension[] bands = new GridSampleDimension[0];
+        final GridCoverageBuilder gcb = new GridCoverageBuilder();
+        gcb.setName(ref.getName().getLocalPart());
         final List<GridSampleDimension> dimensions = getSampleDimensions(ref.getImageIndex());
         if (dimensions != null) {
-            bands = dimensions.toArray(new GridSampleDimension[dimensions.size()]);
+            gcb.setSampleDimensions(dimensions.toArray(new GridSampleDimension[dimensions.size()]));
         }
 
         final GridEnvelope ge = new GeneralGridEnvelope(image, wantedCRS.getCoordinateSystem().getDimension());
         final MathTransform gtc = AbstractGridMosaic.getTileGridToCRSND(mosaic,
                 new Point((int)tileMinCol,(int)tileMinRow),wantedCRS.getCoordinateSystem().getDimension());
         final GridGeometry2D gridgeo = new GridGeometry2D(ge, PixelOrientation.UPPER_LEFT, gtc, wantedCRS, null);
+        gcb.setGridGeometry(gridgeo);
+        gcb.setRenderedImage(image);
 
-        return new GridCoverage2D(
-                ref.getName().getLocalPart(),
-                PlanarImage.wrapRenderedImage(image),
-                gridgeo,
-                bands,
-                null,
-                null,
-                null);
+        return gcb.build();
     }
         
     private GridCoverage readCube(List<GridMosaic> mosaics, Envelope wantedEnv, boolean deferred) throws CoverageStoreException{
