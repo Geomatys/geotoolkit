@@ -27,12 +27,15 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.image.RenderedImage;
+import java.beans.PropertyChangeEvent;
 import java.io.IOException;
 import java.util.AbstractMap;
 import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.EventObject;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -62,20 +65,28 @@ import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellEditor;
+
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.util.ObjectConverters;
 import org.geotoolkit.coverage.CoverageReference;
-import org.geotoolkit.coverage.io.CoverageReader;
+import org.geotoolkit.coverage.CoverageUtilities;
+import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageStoreException;
+import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.FeatureUtilities;
-import org.geotoolkit.feature.Property;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.geotoolkit.filter.DefaultLiteral;
+import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.gui.swing.propertyedit.PropertyPane;
 import org.geotoolkit.gui.swing.propertyedit.featureeditor.ArrayEditor;
 import org.geotoolkit.gui.swing.propertyedit.featureeditor.PropertyValueEditor;
@@ -90,8 +101,11 @@ import org.geotoolkit.gui.swing.util.NumberAlignRenderer;
 import org.geotoolkit.image.io.PaletteFactory;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.FeatureMapLayer;
+import org.geotoolkit.map.LayerListener;
+import org.geotoolkit.map.MapItem;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.process.coverage.copy.StatisticOp;
+import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyleFactory;
@@ -110,13 +124,18 @@ import org.geotoolkit.style.function.ThreshholdsBelongTo;
 import org.geotoolkit.style.interval.DefaultIntervalPalette;
 import org.geotoolkit.style.interval.DefaultRandomPalette;
 import org.geotoolkit.style.interval.Palette;
-import org.apache.sis.util.ObjectConverters;
+import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.jdesktop.swingx.JXTable;
 import org.jdesktop.swingx.combobox.ListComboBoxModel;
+import org.opengis.coverage.grid.GridCoverage;
+import org.opengis.coverage.grid.GridEnvelope;
+import org.opengis.feature.Property;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Function;
 import org.opengis.filter.expression.Literal;
+import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.TransformException;
 import org.opengis.style.ChannelSelection;
 import org.opengis.style.ColorMap;
 import org.opengis.style.ContrastEnhancement;
@@ -134,11 +153,11 @@ import org.opengis.style.Symbolizer;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class JColorMapPane extends StyleElementEditor<ColorMap> implements PropertyPane{
+public class JColorMapPane extends StyleElementEditor<ColorMap> implements PropertyPane, LayerListener{
 
     private static final PaletteFactory PF = PaletteFactory.getDefault();
-    private static final List<Object> PALETTES = new ArrayList<>();
-    private static final List<Object> PALETTES_NAMED = new ArrayList<>();
+    private static final List<Object> PALETTES = new ArrayList<Object>();
+    private static final List<Object> PALETTES_NAMED = new ArrayList<Object>();
 
     static{
         PALETTES.add(new DefaultRandomPalette());
@@ -150,26 +169,26 @@ public class JColorMapPane extends StyleElementEditor<ColorMap> implements Prope
         }
 
         double[] fractions = new double[]{
-            -3000,
-            -1500,
-            -0.1,
-            +0,
-            556,
-            1100,
-            1600,
-            2200,
-            3000};
+                -3000,
+                -1500,
+                -0.1,
+                +0,
+                556,
+                1100,
+                1600,
+                2200,
+                3000};
         Color[] colors = new Color[]{
-            new Color(9, 9, 145, 255),
-            new Color(31, 131, 224, 255),
-            new Color(182, 240, 240, 255),
-            new Color(5, 90, 5, 255),
-            new Color(150, 200, 150, 255),
-            new Color(190, 150, 20, 255),
-            new Color(100, 100, 50, 255),
-            new Color(200, 210, 220, 255),
-            new Color(255, 255, 255, 255),
-            };
+                new Color(9, 9, 145, 255),
+                new Color(31, 131, 224, 255),
+                new Color(182, 240, 240, 255),
+                new Color(5, 90, 5, 255),
+                new Color(150, 200, 150, 255),
+                new Color(190, 150, 20, 255),
+                new Color(100, 100, 50, 255),
+                new Color(200, 210, 220, 255),
+                new Color(255, 255, 255, 255),
+        };
         PALETTES.add(new DefaultIntervalPalette(fractions,colors));
 
     }
@@ -182,49 +201,50 @@ public class JColorMapPane extends StyleElementEditor<ColorMap> implements Prope
     private final ImageIcon icon;
     private final Image preview;
     private final String tooltip;
-    
+
     private final PropertyValueEditor noDataEditor = new ArrayEditor();
     private final PropertyDescriptor nodataDesc;
     private final Property noDataProp;
-    
+
     private ColorMapModel model = new InterpolateColorModel(Collections.EMPTY_LIST);
     private MapLayer layer = null;
+    //listen to layer style change
+    private final LayerListener.Weak layerListener = new LayerListener.Weak(this);
     //keep track of where the symbolizer was to avoid rewriting the complete style
     private MutableRule parentRule = null;
     private int parentIndex = 0;
-    
+
     private String name = "";
     private String desc = "";
     private List<Object> currentPaletteList = null;
 
     public JColorMapPane() {
         super(ColorMap.class);
-        title = MessageBundle.getString("property_style_colormap"); 
+        title = MessageBundle.getString("property_style_colormap");
         icon = IconBundle.getIcon("16_classification_single");
         preview = null;
         tooltip = "";
         initComponents();
-        
-        
+
         //for noData
         nodataDesc = new FeatureTypeBuilder().add("noData", double[].class);
         noDataProp = FeatureUtilities.defaultProperty(nodataDesc);
-        noDataEditor.setValue(noDataProp.getType(), new double[0]);
+        noDataEditor.setValue(nodataDesc.getType(), new double[0]);
         noDataContainer.add(noDataEditor, BorderLayout.CENTER);
-        
+
         setPalettes(PALETTES);
         guiPalette.setRenderer(new PaletteCellRenderer());
         guiPalette.setSelectedIndex(0);
         guiTable.setShowGrid(false, false);
-        
-        final List<Class> methods = new ArrayList<>();
+
+        final List<Class> methods = new ArrayList<Class>();
         methods.add(Interpolate.class);
         methods.add(Categorize.class);
         methods.add(Jenks.class);
         guiMethod.setModel(new ListComboBoxModel(methods));
         guiMethod.setRenderer(new DefaultListCellRenderer(){
             @Override
-            public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+            public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
                 final JLabel lbl = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
                 if(value instanceof Class){
                     lbl.setText(((Class)value).getSimpleName());
@@ -264,30 +284,39 @@ public class JColorMapPane extends StyleElementEditor<ColorMap> implements Prope
     public void setLayer(MapLayer layer) {
         this.layer = layer;
         postParse();
+
+
+        if(this.layer!=null){
+            layerListener.unregisterSource(this.layer);
+        }
+        this.layer = layer;
+        if(this.layer!=null){
+            layerListener.registerSource(this.layer);
+        }
     }
 
     @Override
     public MapLayer getLayer() {
         return layer;
     }
-    
+
     public String getSelectedBand(){
         return String.valueOf(guiBand.getValue());
     }
-    
+
     public void setSelectedBand(String name){
         try{
             final int n = Integer.parseInt(name);
             guiBand.setValue(n);
         }catch(Exception ex){/*not important*/}
     }
-    
+
     private void setPalettes(List<Object> palettes){
         if(currentPaletteList == palettes) return;
         this.currentPaletteList = palettes;
         guiPalette.setModel(new ListComboBoxModel(palettes));
     }
-    
+
     private void parse(){
         guiTable.revalidate();
         guiTable.repaint();
@@ -342,12 +371,12 @@ public class JColorMapPane extends StyleElementEditor<ColorMap> implements Prope
             desc = rs.getDescription()== null ? "" : ((rs.getDescription().getTitle()==null) ? "" : rs.getDescription().getTitle().toString());
 
             parse(rs.getColorMap());
-            
+
         }else{
             //create an empty interpolate colormodel
             model = new InterpolateColorModel(Collections.EMPTY_LIST);
         }
-        
+
         postParse();
     }
 
@@ -375,7 +404,7 @@ public class JColorMapPane extends StyleElementEditor<ColorMap> implements Prope
             //create an empty interpolate colormodel
             model = new InterpolateColorModel(Collections.EMPTY_LIST);
         }
-        
+
         postParse();
     }
 
@@ -391,7 +420,7 @@ public class JColorMapPane extends StyleElementEditor<ColorMap> implements Prope
             guiTable.getColumnModel().getColumn(2).setCellRenderer(new DeleteRenderer());
             guiTable.getColumnModel().getColumn(2).setCellEditor(new DeleteEditor());
             guiTable.getColumnExt(2).setMaxWidth(20);
-            
+
             final InterpolateColorModel icm = (InterpolateColorModel) model;
             //restore NaN and min/max values
             boolean hasNaN = false;
@@ -412,7 +441,7 @@ public class JColorMapPane extends StyleElementEditor<ColorMap> implements Prope
             }
             guiNbStep.setValue(icm.points.size()-(hasNaN?1:0));
             guiNaN.setSelected(hasNaN);
-            
+
         }else if(model instanceof CategorizeColorModel){
             guiMethod.setSelectedItem(Categorize.class);
             setPalettes(PALETTES);
@@ -425,7 +454,7 @@ public class JColorMapPane extends StyleElementEditor<ColorMap> implements Prope
             guiTable.getColumnModel().getColumn(3).setCellRenderer(new DeleteRenderer());
             guiTable.getColumnModel().getColumn(3).setCellEditor(new DeleteEditor());
             guiTable.getColumnExt(3).setMaxWidth(20);
-            
+
             final CategorizeColorModel ccm = (CategorizeColorModel) model;
             //restore NaN and min/max values
             boolean hasNaN = false;
@@ -433,18 +462,7 @@ public class JColorMapPane extends StyleElementEditor<ColorMap> implements Prope
             double max = Double.NaN;
             for(int i=0,n=ccm.ths.size();i<n;i++){
                 final Entry<Expression,Expression> exps = ccm.ths.get(i);
-                // CATEGORIZE LESS INFINITY case
-                Object val;
-                try {
-                    val = exps.getKey().evaluate(n, Number.class);
-                } catch (Exception e) {
-                    if (exps.getKey().equals(CATEGORIZE_LESS_INFINITY)) {
-                        val = Double.NEGATIVE_INFINITY;
-                    } else {
-                        val = null;
-                    }
-
-                }
+                Object val = exps.getKey().evaluate(n, Number.class);
                 if(val instanceof Number){
                     final double v = ((Number)val).doubleValue();
                     if(!Double.isNaN(v)){
@@ -463,7 +481,7 @@ public class JColorMapPane extends StyleElementEditor<ColorMap> implements Prope
             }
             guiNbStep.setValue(ccm.ths.size()-(hasNaN?2:1));
             guiNaN.setSelected(hasNaN);
-            
+
         }else if(model instanceof JenksColorModel){
             guiMethod.setSelectedItem(Jenks.class);
             setPalettes(PALETTES_NAMED);
@@ -502,6 +520,15 @@ public class JColorMapPane extends StyleElementEditor<ColorMap> implements Prope
 
         revalidate();
         repaint();
+
+        //add a listener on the model to propage even
+        model.addTableModelListener(new TableModelListener() {
+            @Override
+            public void tableChanged(TableModelEvent e) {
+                firePropertyChange(PROPERTY_UPDATED, null, create());
+            }
+        });
+
     }
 
     private void initializeSpinners() {
@@ -509,23 +536,55 @@ public class JColorMapPane extends StyleElementEditor<ColorMap> implements Prope
             final CoverageMapLayer cml = (CoverageMapLayer)layer;
             final CoverageReference cref = cml.getCoverageReference();
             GridCoverageReader reader = null;
+            GeneralGridGeometry gridGeometry = null;
+            GridCoverageReadParam readParam = null;
+            GridCoverage coverage = null;
+            GridCoverage2D coverage2D = null;
+            RenderedImage image = null;
             try {
                 reader = cref.acquireReader();
-                final Map<String,Object> an = StatisticOp.analyze(reader,cref.getImageIndex());
+                gridGeometry = reader.getGridGeometry(cref.getImageIndex());
+
+                MathTransform gridToCRS = gridGeometry.getGridToCRS();
+                GridEnvelope extent = gridGeometry.getExtent();
+                int dim = extent.getDimension();
+                double[] low = new double[dim];
+                double[] high = new double[dim];
+                low[0] = extent.getLow(0);
+                high[0] = extent.getHigh(0);
+                low[1] = extent.getLow(1);
+                high[1] = extent.getHigh(1);
+                GeneralEnvelope sliceExtent = new GeneralEnvelope(gridGeometry.getCoordinateReferenceSystem());
+                for (int i = 0; i < dim; i++) {
+                    sliceExtent.setRange(i, low[i], high[i]);
+                }
+
+                readParam = new GridCoverageReadParam();
+                readParam.setEnvelope(CRS.transform(gridToCRS, sliceExtent));
+                readParam.setCoordinateReferenceSystem(gridGeometry.getCoordinateReferenceSystem());
+
+                coverage = reader.read(cref.getImageIndex(), readParam);
+                coverage2D = CoverageUtilities.firstSlice(coverage);
+                image = coverage2D.getRenderedImage();
+                final Map<String,Object> an = StatisticOp.analyze(image);
                 final double[] minArray = (double[])an.get(StatisticOp.MINIMUM);
                 final double[] maxArray = (double[])an.get(StatisticOp.MAXIMUM);
                 final double min = findExtremum(minArray, true);
                 final double max = findExtremum(maxArray, false);
 
-                final SpinnerModel minModel = 
+                final SpinnerModel minModel =
                         new SpinnerNumberModel(min, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, 0.1d);
-                final SpinnerModel maxModel = 
+                final SpinnerModel maxModel =
                         new SpinnerNumberModel(max, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, 0.1d);
                 guiMinSpinner.setModel(minModel);
                 guiMaxSpinner.setModel(maxModel);
                 cref.recycle(reader);
             } catch (CoverageStoreException ex) {
                 LOGGER.log(Level.WARNING, ex.getMessage(),ex);
+            } catch (DataStoreException ex) {
+                LOGGER.log(Level.WARNING, ex.getMessage(),ex);
+            } catch (TransformException ex) {
+                LOGGER.log(Level.WARNING, ex.getMessage(), ex);
             }
         }
     }
@@ -639,46 +698,46 @@ public class JColorMapPane extends StyleElementEditor<ColorMap> implements Prope
         GroupLayout jPanel1Layout = new GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(guiLblPalette)
-                        .addPreferredGap(ComponentPlacement.RELATED)
-                        .addComponent(guiPalette, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(guiFitToData)
-                        .addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(guiGenerate))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(minLabel)
-                        .addPreferredGap(ComponentPlacement.RELATED)
-                        .addComponent(guiMinSpinner, GroupLayout.PREFERRED_SIZE, 75, GroupLayout.PREFERRED_SIZE)
-                        .addGap(12, 12, 12)
-                        .addComponent(maxLabel)
-                        .addPreferredGap(ComponentPlacement.RELATED)
-                        .addComponent(guiMaxSpinner, GroupLayout.PREFERRED_SIZE, 75, GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(guiLblStep)
-                        .addPreferredGap(ComponentPlacement.RELATED)
-                        .addComponent(guiNbStep, GroupLayout.PREFERRED_SIZE, 62, GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(ComponentPlacement.RELATED)
-                        .addComponent(guiLblBand)
-                        .addPreferredGap(ComponentPlacement.RELATED)
-                        .addComponent(guiBand, GroupLayout.PREFERRED_SIZE, 51, GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addPreferredGap(ComponentPlacement.RELATED)
-                        .addComponent(guiMethod, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(ComponentPlacement.UNRELATED)
-                        .addComponent(guiNaN)
-                        .addPreferredGap(ComponentPlacement.RELATED)
-                        .addComponent(guiInvert))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(guiNoDataLabel)
-                        .addPreferredGap(ComponentPlacement.RELATED)
-                        .addComponent(noDataContainer, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                jPanel1Layout.createParallelGroup(Alignment.LEADING)
+                        .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(jPanel1Layout.createParallelGroup(Alignment.LEADING)
+                                        .addGroup(jPanel1Layout.createSequentialGroup()
+                                                .addComponent(guiLblPalette)
+                                                .addPreferredGap(ComponentPlacement.RELATED)
+                                                .addComponent(guiPalette, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                        .addGroup(jPanel1Layout.createSequentialGroup()
+                                                .addComponent(guiFitToData)
+                                                .addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                .addComponent(guiGenerate))
+                                        .addGroup(jPanel1Layout.createSequentialGroup()
+                                                .addComponent(minLabel)
+                                                .addPreferredGap(ComponentPlacement.RELATED)
+                                                .addComponent(guiMinSpinner, GroupLayout.PREFERRED_SIZE, 75, GroupLayout.PREFERRED_SIZE)
+                                                .addGap(12, 12, 12)
+                                                .addComponent(maxLabel)
+                                                .addPreferredGap(ComponentPlacement.RELATED)
+                                                .addComponent(guiMaxSpinner, GroupLayout.PREFERRED_SIZE, 75, GroupLayout.PREFERRED_SIZE))
+                                        .addGroup(jPanel1Layout.createSequentialGroup()
+                                                .addComponent(guiLblStep)
+                                                .addPreferredGap(ComponentPlacement.RELATED)
+                                                .addComponent(guiNbStep, GroupLayout.PREFERRED_SIZE, 62, GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(ComponentPlacement.RELATED)
+                                                .addComponent(guiLblBand)
+                                                .addPreferredGap(ComponentPlacement.RELATED)
+                                                .addComponent(guiBand, GroupLayout.PREFERRED_SIZE, 51, GroupLayout.PREFERRED_SIZE))
+                                        .addGroup(jPanel1Layout.createSequentialGroup()
+                                                .addComponent(jLabel1)
+                                                .addPreferredGap(ComponentPlacement.RELATED)
+                                                .addComponent(guiMethod, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(ComponentPlacement.UNRELATED)
+                                                .addComponent(guiNaN)
+                                                .addPreferredGap(ComponentPlacement.RELATED)
+                                                .addComponent(guiInvert))
+                                        .addGroup(jPanel1Layout.createSequentialGroup()
+                                                .addComponent(guiNoDataLabel)
+                                                .addPreferredGap(ComponentPlacement.RELATED)
+                                                .addComponent(noDataContainer, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
 
         jPanel1Layout.linkSize(SwingConstants.HORIZONTAL, new Component[] {guiBand, guiMaxSpinner, guiMinSpinner, guiNbStep});
@@ -688,38 +747,38 @@ public class JColorMapPane extends StyleElementEditor<ColorMap> implements Prope
         jPanel1Layout.linkSize(SwingConstants.HORIZONTAL, new Component[] {guiFitToData, guiGenerate});
 
         jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(Alignment.LEADING)
-            .addGroup(Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addGap(0, 0, 0)
-                .addGroup(jPanel1Layout.createParallelGroup(Alignment.BASELINE)
-                    .addComponent(guiPalette, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                    .addComponent(guiLblPalette, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(guiMethod, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                    .addComponent(guiNaN)
-                    .addComponent(guiInvert))
-                .addPreferredGap(ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(Alignment.TRAILING)
-                    .addComponent(guiNoDataLabel)
-                    .addComponent(noDataContainer, GroupLayout.PREFERRED_SIZE, 14, GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(Alignment.BASELINE)
-                    .addComponent(guiLblBand)
-                    .addComponent(guiBand, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                    .addComponent(guiLblStep)
-                    .addComponent(guiNbStep, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(Alignment.BASELINE)
-                    .addComponent(minLabel)
-                    .addComponent(guiMinSpinner, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                    .addComponent(maxLabel)
-                    .addComponent(guiMaxSpinner, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(jPanel1Layout.createParallelGroup(Alignment.BASELINE)
-                    .addComponent(guiGenerate)
-                    .addComponent(guiFitToData)))
+                jPanel1Layout.createParallelGroup(Alignment.LEADING)
+                        .addGroup(Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                .addGap(0, 0, 0)
+                                .addGroup(jPanel1Layout.createParallelGroup(Alignment.BASELINE)
+                                        .addComponent(guiPalette, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(guiLblPalette, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(ComponentPlacement.RELATED)
+                                .addGroup(jPanel1Layout.createParallelGroup(Alignment.BASELINE)
+                                        .addComponent(jLabel1)
+                                        .addComponent(guiMethod, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(guiNaN)
+                                        .addComponent(guiInvert))
+                                .addPreferredGap(ComponentPlacement.RELATED)
+                                .addGroup(jPanel1Layout.createParallelGroup(Alignment.TRAILING)
+                                        .addComponent(guiNoDataLabel)
+                                        .addComponent(noDataContainer, GroupLayout.PREFERRED_SIZE, 14, GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(ComponentPlacement.RELATED)
+                                .addGroup(jPanel1Layout.createParallelGroup(Alignment.BASELINE)
+                                        .addComponent(guiLblBand)
+                                        .addComponent(guiBand, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(guiLblStep)
+                                        .addComponent(guiNbStep, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(ComponentPlacement.RELATED)
+                                .addGroup(jPanel1Layout.createParallelGroup(Alignment.BASELINE)
+                                        .addComponent(minLabel)
+                                        .addComponent(guiMinSpinner, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(maxLabel)
+                                        .addComponent(guiMaxSpinner, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGroup(jPanel1Layout.createParallelGroup(Alignment.BASELINE)
+                                        .addComponent(guiGenerate)
+                                        .addComponent(guiFitToData)))
         );
 
         jPanel1Layout.linkSize(SwingConstants.VERTICAL, new Component[] {guiNaN, guiNoDataLabel, noDataContainer});
@@ -733,45 +792,45 @@ public class JColorMapPane extends StyleElementEditor<ColorMap> implements Prope
         GroupLayout layout = new GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(guiAddOne)
-                .addPreferredGap(ComponentPlacement.RELATED)
-                .addComponent(guiRemoveAll)
-                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addComponent(jPanel1, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(guiJenksMessage, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(guiTableScroll, Alignment.TRAILING)
+                layout.createParallelGroup(Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                                .addComponent(guiAddOne)
+                                .addPreferredGap(ComponentPlacement.RELATED)
+                                .addComponent(guiRemoveAll)
+                                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(jPanel1, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(guiJenksMessage, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(guiTableScroll, Alignment.TRAILING)
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(ComponentPlacement.RELATED)
-                .addComponent(guiJenksMessage)
-                .addPreferredGap(ComponentPlacement.RELATED)
-                .addComponent(guiTableScroll, GroupLayout.DEFAULT_SIZE, 192, Short.MAX_VALUE)
-                .addPreferredGap(ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(Alignment.BASELINE)
-                    .addComponent(guiAddOne)
-                    .addComponent(guiRemoveAll)))
+                layout.createParallelGroup(Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                                .addComponent(jPanel1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(ComponentPlacement.RELATED)
+                                .addComponent(guiJenksMessage)
+                                .addPreferredGap(ComponentPlacement.RELATED)
+                                .addComponent(guiTableScroll, GroupLayout.DEFAULT_SIZE, 192, Short.MAX_VALUE)
+                                .addPreferredGap(ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(Alignment.BASELINE)
+                                        .addComponent(guiAddOne)
+                                        .addComponent(guiRemoveAll)))
         );
     }// </editor-fold>//GEN-END:initComponents
 
     /**
      * And or Remove NaN value in the model
-     * @param evt 
+     * @param evt
      */
     private void guiNaNActionPerformed(ActionEvent evt) {//GEN-FIRST:event_guiNaNActionPerformed
-        
+
         final boolean withNaN = guiNaN.isSelected();
-        
+
         if(model instanceof CategorizeColorModel){
-            final Map<Expression,Expression> values = new HashMap<>();
+            final Map<Expression,Expression> values = new HashMap<Expression,Expression>();
             final List<Entry<Expression, Expression>> ths = ((CategorizeColorModel)model).ths;
             for(int i=0,n=ths.size();i<n;i++){
                 final Entry<Expression, Expression> entry = ths.get(i);
-                
+
                 final Object num = ((Literal)entry.getKey()).getValue();
                 if(num instanceof Number && (Double.isNaN(((Number)num).doubleValue()) || Float.isNaN(((Number)num).floatValue()))){
                     if(withNaN){
@@ -784,18 +843,18 @@ public class JColorMapPane extends StyleElementEditor<ColorMap> implements Prope
                     values.put(entry.getKey(), entry.getValue());
                 }
             }
-            
+
             if(withNaN){
                 //add NaN entry
                 values.put(new DefaultLiteral<Number>(Float.NaN), TRS);
             }
-            
+
             model = new CategorizeColorModel(values);
             postParse();
-            
+
         }else if(model instanceof InterpolateColorModel){
             //we need to convert from interpolate to categorize
-            final List<InterpolationPoint> newPoints = new ArrayList<>();
+            final List<InterpolationPoint> newPoints = new ArrayList<InterpolationPoint>();
             final List<InterpolationPoint> points = ((InterpolateColorModel)model).points;
             for(InterpolationPoint pt : points){
                 final Number num = pt.getData();
@@ -810,29 +869,29 @@ public class JColorMapPane extends StyleElementEditor<ColorMap> implements Prope
                     newPoints.add(pt);
                 }
             }
-            
+
             if(withNaN){
                 //add NaN entry
                 newPoints.add(SF.interpolationPoint(Float.NaN, TRS));
             }
-            
+
             model = new InterpolateColorModel(newPoints);
             postParse();
         }
-        
-        
+
+
     }//GEN-LAST:event_guiNaNActionPerformed
 
     private void guiMethodItemStateChanged(ItemEvent evt) {//GEN-FIRST:event_guiMethodItemStateChanged
         final Object method = guiMethod.getSelectedItem();
-        
+
         if(Interpolate.class.equals(method)){
             if(model instanceof InterpolateColorModel){
                 //nothing to do
                 return;
             }else if(model instanceof CategorizeColorModel){
                 //we need to convert from categorize thredholds to interpolation points.
-                final List<InterpolationPoint> points = new ArrayList<>();
+                final List<InterpolationPoint> points = new ArrayList<InterpolationPoint>();
                 final List<Entry<Expression, Expression>> ths = ((CategorizeColorModel)model).ths;
                 for(int i=1,n=ths.size();i<n;i++){
                     final Entry<Expression, Expression> entry = ths.get(i);
@@ -850,7 +909,7 @@ public class JColorMapPane extends StyleElementEditor<ColorMap> implements Prope
                 return;
             }else if(model instanceof InterpolateColorModel){
                 //we need to convert from interpolate to categorize
-                final Map<Expression, Expression> values = new HashMap<>();
+                final Map<Expression, Expression> values = new HashMap<Expression, Expression>();
                 values.put( StyleConstants.CATEGORIZE_LESS_INFINITY, TRS);
                 final List<InterpolationPoint> points = ((InterpolateColorModel)model).points;
                 for(InterpolationPoint pt : points){
@@ -859,7 +918,7 @@ public class JColorMapPane extends StyleElementEditor<ColorMap> implements Prope
                 model = new CategorizeColorModel(values);
                 postParse();
             }else{
-                final Map<Expression, Expression> values = new HashMap<>();
+                final Map<Expression, Expression> values = new HashMap<Expression, Expression>();
                 values.put(StyleConstants.CATEGORIZE_LESS_INFINITY, TRS);
                 values.put(new DefaultLiteral<Number>(0), TRS);
                 model = new CategorizeColorModel(values);
@@ -874,7 +933,7 @@ public class JColorMapPane extends StyleElementEditor<ColorMap> implements Prope
                 postParse();
             }
         }
-        
+
         //ensure the NaN is set as defined
         guiNaNActionPerformed(null);
     }//GEN-LAST:event_guiMethodItemStateChanged
@@ -935,7 +994,7 @@ public class JColorMapPane extends StyleElementEditor<ColorMap> implements Prope
 
         boolean mustInterpolation = true;
         final Object paletteValue = (Object) guiPalette.getSelectedItem();
-        List<Entry<Double, Color>> steps = new ArrayList<>();
+        List<Entry<Double, Color>> steps = new ArrayList<Entry<Double, Color>>();
 
         if (paletteValue instanceof Palette) {
             final Palette palette = (Palette) paletteValue;
@@ -946,7 +1005,7 @@ public class JColorMapPane extends StyleElementEditor<ColorMap> implements Prope
                 final double stepValue = 1.0f/(paletteColors.length-1);
                 for (int i = 0; i < paletteColors.length; i++) {
                     final double fragment = i * stepValue;
-                    steps.add(new AbstractMap.SimpleEntry<>(fragment, paletteColors[i]));
+                    steps.add(new AbstractMap.SimpleEntry(fragment, paletteColors[i]));
                 }
             } catch (IOException ex) {
                 LOGGER.log(Level.WARNING, ex.getMessage(), ex);
@@ -966,28 +1025,28 @@ public class JColorMapPane extends StyleElementEditor<ColorMap> implements Prope
             //recalculate steps
             double min = steps.get(0).getKey();
             double max = min;
-            final List<InterpolationPoint> points = new ArrayList<>();
+            final List<InterpolationPoint> points = new ArrayList<InterpolationPoint>();
             for(int i=0;i<steps.size();i++){
                 points.add(new DefaultInterpolationPoint(steps.get(i).getKey(), SF.literal(steps.get(i).getValue())));
                 min = Math.min(min, steps.get(i).getKey());
                 max = Math.max(max, steps.get(i).getKey());
             }
             Interpolate inter = SF.interpolateFunction(DEFAULT_CATEGORIZE_LOOKUP, points,Method.COLOR, Mode.LINEAR, DEFAULT_FALLBACK);
-            
+
             //rebuild steps
             steps.clear();
             for(int i=0;i<nbStep;i++){
                 final double val = min + ( (max-min)/(nbStep-1) * i );
                 final Color color = inter.evaluate(val, Color.class);
-                steps.add(new AbstractMap.SimpleEntry<>(val,color));
+                steps.add(new AbstractMap.SimpleEntry(val,color));
             }
         }
-        
+
         if(guiInvert.isSelected()){
-            final List<Entry<Double, Color>> inverted = new ArrayList<>();
+            final List<Entry<Double, Color>> inverted = new ArrayList<Entry<Double, Color>>();
             for(int i=0,n=steps.size();i<n;i++){
                 final double k = steps.get(i).getKey();
-                inverted.add(new SimpleImmutableEntry<>(
+                inverted.add(new SimpleImmutableEntry(
                         k, steps.get(n-1-i).getValue()));
             }
             steps = inverted;
@@ -1062,11 +1121,11 @@ public class JColorMapPane extends StyleElementEditor<ColorMap> implements Prope
 
         final ColorMap colorMap = create();
         final ContrastEnhancement enchance = SF.contrastEnhancement(LITERAL_ONE_FLOAT,ContrastMethod.NONE);
-        final ShadedRelief relief = SF.shadedRelief(LITERAL_ONE_FLOAT);        
+        final ShadedRelief relief = SF.shadedRelief(LITERAL_ONE_FLOAT);
         final Description desc = SF.description(this.desc, this.desc);
 
         final RasterSymbolizer symbol = SF.rasterSymbolizer(
-                name,DEFAULT_GEOM,desc,NonSI.PIXEL,LITERAL_ONE_FLOAT, 
+                name,DEFAULT_GEOM,desc,NonSI.PIXEL,LITERAL_ONE_FLOAT,
                 selection, OverlapBehavior.LATEST_ON_TOP, colorMap, enchance, relief, null);
 
         if(parentRule!=null){
@@ -1097,24 +1156,28 @@ public class JColorMapPane extends StyleElementEditor<ColorMap> implements Prope
     protected Object[] getFirstColumnComponents() {
         return new Object[]{};
     }
-    
+
     private void getInterpolationPoints(final double min, final double max, List<Entry<Double, Color>> steps) throws CoverageStoreException {
         for(int s=0,l=steps.size();s<l;s++){
             final Entry<Double, Color> step = steps.get(s);
             model.addValue(min + (step.getKey()*(max-min)), step.getValue());
         }
     }
-    
-    private void getInterpolationPoints(final GridCoverageReader reader, final CoverageMapLayer cml, List<Entry<Double, Color>> steps) throws CoverageStoreException {
-        //we explore the image and try to find the min and max
-        Map<String,Object> an = StatisticOp.analyze(reader,cml.getCoverageReference().getImageIndex());
-        final double[] minArray = (double[])an.get(StatisticOp.MINIMUM);
-        final double[] maxArray = (double[])an.get(StatisticOp.MAXIMUM);
-        final double min = findExtremum(minArray, true);
-        final double max = findExtremum(maxArray, false);
-        getInterpolationPoints(min, max, steps);
+
+    @Override
+    public void styleChange(MapLayer source, EventObject event) {
     }
 
+    @Override
+    public void itemChange(CollectionChangeEvent<MapItem> event) {
+    }
+
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+        if(MapLayer.STYLE_PROPERTY.equals(evt.getPropertyName()) && evt.getOldValue()!=evt.getNewValue()){
+            parse();
+        }
+    }
 
     private class DeleteRenderer extends DefaultTableCellRenderer{
 
@@ -1182,7 +1245,7 @@ public class JColorMapPane extends StyleElementEditor<ColorMap> implements Prope
             }
         };
 
-        private final List<InterpolationPoint> points = new ArrayList<>();
+        private final List<InterpolationPoint> points = new ArrayList<InterpolationPoint>();
 
         public InterpolateColorModel(List<InterpolationPoint> points) {
             this.points.addAll(points);
@@ -1215,7 +1278,7 @@ public class JColorMapPane extends StyleElementEditor<ColorMap> implements Prope
                     final boolean isNaN = Double.isNaN(pt.getData().doubleValue());
                     Color cprevious = c;
                     Color cnext = c;
-                    
+
                     if(!isNaN && rowIndex!=0){
                         final InterpolationPoint ptprevious = points.get(rowIndex-1);
                         if(!Double.isNaN(ptprevious.getData().doubleValue())){
@@ -1223,7 +1286,7 @@ public class JColorMapPane extends StyleElementEditor<ColorMap> implements Prope
                             cprevious = DefaultInterpolate.interpolate(c, cprevious, 0.5);
                         }
                     }
-                    
+
                     if(!isNaN && rowIndex<points.size()-1){
                         final InterpolationPoint ptnext = points.get(rowIndex+1);
                         if(!Double.isNaN(ptnext.getData().doubleValue())){
@@ -1231,7 +1294,7 @@ public class JColorMapPane extends StyleElementEditor<ColorMap> implements Prope
                             cnext = DefaultInterpolate.interpolate(c, cnext, 0.5);
                         }
                     }
-                                       
+
                     return new Color[]{cprevious,c,cnext};
             }
             return "";
@@ -1294,7 +1357,7 @@ public class JColorMapPane extends StyleElementEditor<ColorMap> implements Prope
 
         @Override
         public Function createFunction() {
-            return SF.interpolateFunction(DEFAULT_CATEGORIZE_LOOKUP, new ArrayList<>(points),
+            return SF.interpolateFunction(DEFAULT_CATEGORIZE_LOOKUP, new ArrayList(points),
                     Method.COLOR, Mode.LINEAR, DEFAULT_FALLBACK);
         }
 
@@ -1306,27 +1369,15 @@ public class JColorMapPane extends StyleElementEditor<ColorMap> implements Prope
 
             @Override
             public int compare(Entry<Expression, Expression> o1, Entry<Expression, Expression> o2) {
-                // Converters will not be able to convert "CATEGORIZE LESS INFINITY" into double, so we catch the thrown
-                // exception to manually put negative infinity value.
-                Double d0;
-                try {
-                    d0 = o1.getKey().evaluate(null, Double.class);
-                } catch (Exception e) {
-                    d0 = Double.NEGATIVE_INFINITY;
-                }
-                Double d1;
-                try {
-                    d1 = o2.getKey().evaluate(null, Double.class);
-                } catch (Exception e) {
-                    d1 = Double.NEGATIVE_INFINITY;
-                }
-                if (d0 == null) return -1;
-                if (d1 == null) return +1;
+                final Double d0 = o1.getKey().evaluate(null, Double.class);
+                final Double d1 = o2.getKey().evaluate(null, Double.class);
+                if(d0==null) return -1;
+                if(d1==null) return +1;
                 return d0.compareTo(d1);
             }
         };
 
-        private final List<Entry<Expression,Expression>> ths = new ArrayList<>();
+        private final List<Entry<Expression,Expression>> ths = new ArrayList<Entry<Expression,Expression>>();
 
         public CategorizeColorModel(List<Entry<Expression,Expression>> map) {
             ths.addAll(map);
@@ -1385,12 +1436,7 @@ public class JColorMapPane extends StyleElementEditor<ColorMap> implements Prope
             }else{
                 //thresdhold value
                 final Entry<Expression, Expression> entry = ths.get(rowIndex);
-                Number n;
-                try {
-                    n = entry.getKey().evaluate(null, Number.class);
-                } catch (Exception e) {
-                    n = null;
-                }
+                Number n = entry.getKey().evaluate(null, Number.class);
                 if(n==null) n = Double.NEGATIVE_INFINITY;
                 return n;
             }
@@ -1415,14 +1461,14 @@ public class JColorMapPane extends StyleElementEditor<ColorMap> implements Prope
                     if(n == null){
                         n = Float.NaN;
                     }
-                    th = new AbstractMap.SimpleEntry<>((Expression)FF.literal(n),th.getValue());
+                    th = new AbstractMap.SimpleEntry((Expression)FF.literal(n),th.getValue());
                     break;
                 case 1:
                     Color c = (Color) aValue;
                     if(c == null){
                         c = new Color(0, 0, 0, 0);
                     }
-                    th = new AbstractMap.SimpleEntry<>(th.getKey(),(Expression)SF.literal(c));
+                    th = new AbstractMap.SimpleEntry(th.getKey(),(Expression)SF.literal(c));
                     break;
             }
 
@@ -1433,7 +1479,7 @@ public class JColorMapPane extends StyleElementEditor<ColorMap> implements Prope
 
         @Override
         public void addValue(Number value, Color color) {
-            Entry<Expression,Expression> th = new AbstractMap.SimpleEntry<>(
+            Entry<Expression,Expression> th = new AbstractMap.SimpleEntry(
                     (Expression)FF.literal(value),(Expression)SF.literal(color));
             ths.add(th);
             Collections.sort(ths,COMP);
@@ -1443,7 +1489,7 @@ public class JColorMapPane extends StyleElementEditor<ColorMap> implements Prope
         @Override
         public void removeAll() {
             ths.clear();
-            Entry<Expression,Expression> th1 = new AbstractMap.SimpleEntry<>(
+            Entry<Expression,Expression> th1 = new AbstractMap.SimpleEntry(
                     (Expression)StyleConstants.CATEGORIZE_LESS_INFINITY,(Expression)TRS);
 //            Entry<Expression,Expression> th2 = new AbstractMap.SimpleEntry<>(
 //                    (Expression)FF.literal(0d),(Expression)SF.literal(new Color(0f,0f,0f,0f)));
@@ -1463,7 +1509,7 @@ public class JColorMapPane extends StyleElementEditor<ColorMap> implements Prope
             final Expression lookup = DEFAULT_CATEGORIZE_LOOKUP;
             final Literal fallback = DEFAULT_FALLBACK;
 
-            final Map<Expression,Expression> map = new HashMap<>();
+            final Map<Expression,Expression> map = new HashMap<Expression,Expression>();
             for(Entry<Expression,Expression> exp : ths){
                 map.put(exp.getKey(), exp.getValue());
             }
@@ -1523,7 +1569,7 @@ public class JColorMapPane extends StyleElementEditor<ColorMap> implements Prope
         public Object getValueAt(int rowIndex, int columnIndex) {
             return null;
         }
-        
+
     }
 
 }
