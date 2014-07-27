@@ -61,6 +61,7 @@ import org.opengis.coverage.grid.RectifiedGrid;
 import org.opengis.coverage.grid.GridCoordinates;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.primitive.Point;
+import org.opengis.temporal.Duration;
 import org.opengis.util.InternationalString;
 import org.opengis.util.GenericName;
 
@@ -761,21 +762,24 @@ public class SpatialMetadataFormatBuilder extends Builder<SpatialMetadataFormat>
          * may revisit some of those exclusion in a future version, when we get more
          * experience about what are needed.
          */
-        substitutions.put(Usage.class,                  null);  // MD_DataIdentification.resourceSpecificUsage
-        substitutions.put(ResponsibleParty.class,       null);  // MD_DataIdentification.pointOfContact
-        substitutions.put(Constraints.class,            null);  // MD_DataIdentification.resourceConstraints
-        substitutions.put(MaintenanceInformation.class, null);  // MD_DataIdentification.resourceMaintenance
-        substitutions.put(AggregateInformation.class,   null);  // MD_DataIdentification.aggregationInfo
-        substitutions.put(Plan.class,                   null);  // MI_AcquisitionInformation.acquisitionPlan
-        substitutions.put(Objective.class,              null);  // MI_AcquisitionInformation.objective
-        substitutions.put(Operation.class,              null);  // MI_AcquisitionInformation.operation
-        substitutions.put(Requirement.class,            null);  // MI_AcquisitionInformation.acquisitionRequirement
-        substitutions.put(Scope.class,                  null);  // DQ_DataQuality.scope
-        substitutions.put(Lineage.class,                null);  // DQ_DataQuality.lineage
-        substitutions.put(Result.class,                 null);  // DQ_DataQuality.report.result
+        substitutions.put(Usage.class,                     null);  // MD_DataIdentification.resourceSpecificUsage
+        substitutions.put(Responsibility.class,            null);  // MD_DataIdentification.pointOfContact
+        substitutions.put(ResponsibleParty.class,          null);
+        substitutions.put(Constraints.class,               null);  // MD_DataIdentification.resourceConstraints
+        substitutions.put(MaintenanceInformation.class,    null);  // MD_DataIdentification.resourceMaintenance
+        substitutions.put(AssociatedResource.class,        null);  // MD_DataIdentification.associatedResource
+        substitutions.put(AggregateInformation.class,      null);  // MD_DataIdentification.aggregationInfo
+        substitutions.put(Plan.class,                      null);  // MI_AcquisitionInformation.acquisitionPlan
+        substitutions.put(Objective.class,                 null);  // MI_AcquisitionInformation.objective
+        substitutions.put(Operation.class,                 null);  // MI_AcquisitionInformation.operation
+        substitutions.put(Requirement.class,               null);  // MI_AcquisitionInformation.acquisitionRequirement
+        substitutions.put(Scope.class,                     null);  // DQ_DataQuality.scope
+        substitutions.put(Lineage.class,                   null);  // DQ_DataQuality.lineage
+        substitutions.put(Result.class,                    null);  // DQ_DataQuality.report.result
         /*
          * Metadata excluded because not yet implemented.
          */
+        substitutions.put(Duration.class,       null);  // MD_DataIdentification.temporalResolution
         substitutions.put(TemporalExtent.class, null);
         /*
          * Metadata simplification, where elements are replaced by attributes. The simplification
