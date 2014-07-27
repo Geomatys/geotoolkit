@@ -78,13 +78,6 @@ public interface ServiceIdentification extends Identification {
     Collection<DataIdentification> getOperatesOn();
 
     /**
-     * The geographic/temporal region where the service is valid including the bounding box,
-     * bounding polygon, vertical or temporal extent of the service.
-     */
-    //@UML(identifier="extent", obligation=CONDITIONAL, specification=ISO_19119)
-    Collection<Extent> getExtent();
-
-    /**
      * further description of the data coupling in the case of tightly coupled services.
      */
     //@UML(identifier="coupledResource", obligation=OPTIONAL, specification=ISO_19119)

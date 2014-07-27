@@ -72,7 +72,7 @@ import org.opengis.util.GenericName;
     "serviceTypeVersion",
     "accessProperties",
     "restrictions",
-    "extent",
+    "extents",
     "coupledResource",
     "couplingType",
     "containsOperations",
@@ -86,7 +86,6 @@ public class ServiceIdentificationImpl extends AbstractIdentification implements
     private Collection<String> serviceTypeVersion;
     private StandardOrderProcess accessProperties;
     private Constraints restrictions;
-    private Collection<Extent> extent;
     private Collection<CoupledResource> coupledResource;
     private CouplingType couplingType;
     private Collection<OperationMetadata> containsOperations;
@@ -109,7 +108,6 @@ public class ServiceIdentificationImpl extends AbstractIdentification implements
         this.accessProperties   = service.getAccessProperties();
         this.coupledResource    = service.getCoupledResource();
         this.couplingType       = service.getCouplingType();
-        this.extent             = service.getExtent();
         this.operatesOn         = service.getOperatesOn();
         this.provider           = service.getProvider();
         this.restrictions       = service.getRestrictions();
@@ -192,13 +190,13 @@ public class ServiceIdentificationImpl extends AbstractIdentification implements
      * Gets the value of the extent property.
      *
      */
-    @XmlElement
-    public synchronized Collection<Extent> getExtent() {
-        return extent = nonNullCollection(extent, Extent.class);
+    @XmlElement(name = "extent")
+    public synchronized Collection<Extent> getExtents() {
+        return super.getExtents();
     }
 
-    public synchronized void setExtent(Collection<? extends Extent> extent) {
-        extent = writeCollection(extent, this.extent, Extent.class);
+    public synchronized void setExtents(Collection<? extends Extent> extent) {
+        super.setExtents(extent);
     }
 
     /**
@@ -297,6 +295,7 @@ public class ServiceIdentificationImpl extends AbstractIdentification implements
         if (restrictions != null) {
             s.append(tab).append("restrictions: ").append(restrictions).append('\n');
         }
+        final Collection<Extent> extent = super.getExtents();
         if (extent != null) {
             s.append(tab).append("extent: ").append('\n').append(extent).append('\n');
         }
