@@ -713,8 +713,14 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
         //Recolor coverage -----------------------------------------------------
         ColorMap recolor = styleElement.getColorMap();
         //cheat on the colormap if we have only one band and no colormap
+        recolorCase:
         if((recolor==null || recolor.getFunction()==null) && nbDim==1){
-            final Map res = StatisticOp.analyze(coverage.getRenderedImage());
+            final RenderedImage ri = coverage.getRenderedImage();
+            if( (ri.getColorModel() instanceof IndexColorModel) && (recolor==null || recolor.getFunction()==null)){
+                //image has it's own color model
+                break recolorCase;
+            }
+            final Map res = StatisticOp.analyze(ri);
             final double[] mins = (double[])res.get("min");
             final double[] maxs = (double[])res.get("max");
             final GridSampleDimension dim = coverage.getSampleDimension(0);
