@@ -48,6 +48,7 @@ import static org.geotoolkit.parameter.Parameters.*;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.GeodeticCalculator;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
+import org.geotoolkit.image.interpolation.ResampleBorderComportement;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.GeographicCRS;
 import org.opengis.referencing.cs.CartesianCS;
@@ -98,11 +99,11 @@ public class ComputeVolumeProcess extends AbstractProcess {
         final Geometry jtsGeom            = value(IN_JTSGEOMETRY          , inputParameters);
         CoordinateReferenceSystem geomCRS = value(IN_GEOMETRY_CRS         , inputParameters);
         final Integer bIndex              = value(IN_INDEX_BAND           , inputParameters);
-        final Double zMinCeil             = value(IN_GEOMETRY_ALTITUDE       , inputParameters);
+        final Double zMinCeil             = value(IN_GEOMETRY_ALTITUDE    , inputParameters);
         final double zMaxCeiling          = value(IN_MAX_ALTITUDE_CEILING , inputParameters);
 
         final int bandIndex               = (bIndex   == null) ? 0 : (int) bIndex;
-        final double zGroundCeiling          = (zMinCeil == null) ? 0 : (double) zMinCeil;
+        final double zGroundCeiling       = (zMinCeil == null) ? 0 : (double) zMinCeil;
         final boolean positiveSens        = zGroundCeiling < zMaxCeiling;
 
         if (zGroundCeiling == zMaxCeiling) {
@@ -111,7 +112,7 @@ public class ComputeVolumeProcess extends AbstractProcess {
         }
 
         try {
-
+            
             /*
              * geomCRS attribut should be null, we looking for find another way to define geometry CoordinateReferenceSystem.
              * It may be already stipulate in JTS geometry.
@@ -132,7 +133,7 @@ public class ComputeVolumeProcess extends AbstractProcess {
 
             final MathTransform covToGeomCRS = CRS.findMathTransform(covCrs, geomCRS);
 
-            // next read only interest area.
+            //-- next read only interest area.
             final Envelope envGeom     = jtsGeom.getEnvelopeInternal();
             final Envelope2D envGeom2D = new Envelope2D(geomCRS, envGeom.getMinX(), envGeom.getMinY(), envGeom.getWidth(), envGeom.getHeight());
 
@@ -151,7 +152,7 @@ public class ComputeVolumeProcess extends AbstractProcess {
             final GridGeometry2D gg2d = dem.getGridGeometry();
 
             InterpolationCase interpolationChoice;
-            // adapt interpolation in function of grid extend
+            //-- adapt interpolation in function of grid extend
             final GridEnvelope2D gridEnv2D = gg2d.getExtent2D();
             final int gWidth               = gridEnv2D.getSpan(0);
             final int gHeight              = gridEnv2D.getSpan(1);
@@ -164,16 +165,16 @@ public class ComputeVolumeProcess extends AbstractProcess {
             } else if (gWidth < 4 || gHeight < 4) {
                 interpolationChoice = InterpolationCase.BILINEAR;
             } else {
-                assert gWidth >= 4 && gHeight >= 4; // paranoiac assert
+                assert gWidth >= 4 && gHeight >= 4; //-- paranoiac assert
                 interpolationChoice = InterpolationCase.BICUBIC;
             }
 
-            final MathTransform gridToCrs  = gg2d.getGridToCRS(PixelInCell.CELL_CORNER);
+            final MathTransform gridToCrs  = gg2d.getGridToCRS(PixelInCell.CELL_CENTER);
             final CoordinateSystem destCS  = covCrs.getCoordinateSystem();
             final RenderedImage mnt        = dem.getRenderedImage();
-
-            final Interpolation interpol   = Interpolation.create(PixelIteratorFactory.createRowMajorIterator(mnt), interpolationChoice, 0);
-
+            
+            final Interpolation interpol   = Interpolation.create(PixelIteratorFactory.createRowMajorIterator(mnt), interpolationChoice, 0, ResampleBorderComportement.EXTRAPOLATION, null);
+            
             final MathTransform gridToGeom = MathTransforms.concatenate(gridToCrs, covToGeomCRS);
             final StepPixelAreaCalculator stePixCalculator;
 
@@ -182,7 +183,7 @@ public class ComputeVolumeProcess extends AbstractProcess {
             } else {
                 if (destCS instanceof CartesianCS) {
 
-                    // resolution
+                    //-- resolution
                     final double[] resolution = gg2d.getResolution();
 
                     final int dimDestCS                  = destCS.getDimension();
@@ -193,7 +194,7 @@ public class ComputeVolumeProcess extends AbstractProcess {
                         unitConverters[d]                = csA.getUnit().getConverterToAny(METER);
                     }
 
-                    // pixel step computing in m²
+                    //-- pixel step computing in m²
                     stePixCalculator          = new CartesianStepPixelAreaCalculator(PIXELSTEP, unitConverters, resolution);
 
                 } else {
@@ -201,17 +202,17 @@ public class ComputeVolumeProcess extends AbstractProcess {
                 }
             }
 
-            //geometry factory to create point at n step to test if it is within geometry
+            //-- geometry factory to create point at n step to test if it is within geometry
             final GeometryFactory gf = new GeometryFactory();
 
-            // coordinate to test if point is within geom
+            //-- coordinate to test if point is within geom
             final Coordinate coords = new Coordinate();
 
-            // image attributs
-            final int minx           = mnt.getMinX();
-            final int miny           = mnt.getMinY();
-            final int maxx           = minx + mnt.getWidth();
-            final int maxy           = miny + mnt.getHeight();
+            //-- image attributs
+            final double minx        = mnt.getMinX() - 0.5;
+            final double miny        = mnt.getMinY() - 0.5;
+            final double maxx        = minx + mnt.getWidth();
+            final double maxy        = miny + mnt.getHeight();
             final double debx        = minx + PIXELSTEP / 2.0;
             final double[] pixPoint  = new double[]{debx, miny + PIXELSTEP / 2.0};
             final double[] geomPoint = new double[2];
@@ -220,38 +221,38 @@ public class ComputeVolumeProcess extends AbstractProcess {
 
             final UnitConverter hconverter;
             if(gsd.getUnits() == null || Unit.ONE.equals(gsd.getUnits())){
-                //unit unknowed, assume it's meters already
+                //-- unit unknowed, assume it's meters already
                 hconverter = METER.getConverterTo(METER);
             }else{
                 hconverter = gsd.getUnits().getConverterToAny(METER);
             }
-
+            
             while (pixPoint[1] < maxy) {
                 if(isCanceled()) break;
                 pixPoint[0] = debx;
                 while (pixPoint[0] < maxx) {
                     if(isCanceled()) break;
-                    // project point in geomtry CRS
+                    //-- project point in geomtry CRS
                     gridToGeom.transform(pixPoint, 0, geomPoint, 0, 1);
 
-                    // test if point is within geometry.
+                    //-- test if point is within geometry.
                     coords.setOrdinate(0, geomPoint[0]);
                     coords.setOrdinate(1, geomPoint[1]);
 
                     if (jtsGeom.contains(gf.createPoint(coords))) {
 
-                        // get interpolate value
+                        //-- get interpolate value
                         double h = interpol.interpolate(pixPoint[0], pixPoint[1], bandIndex);
-
-                        // projet h in geophysic value
+                        
+                        //-- projet h in geophysic value
                         h = zmt.transform(h);
 
-                        // convert in meter
+                        //-- convert in meter
                         h = hconverter.convert(h);
 
-                        // Verify that h value found is in appropriate interval.
+                        //-- Verify that h value found is in appropriate interval.
                         if ((positiveSens && h > zGroundCeiling) || (!positiveSens && h < zGroundCeiling)) {
-                            // add in volum
+                            //-- add in volum
                             volume += (Math.min(Math.abs(h - zGroundCeiling), Math.abs(zMaxCeiling - zGroundCeiling))) * stePixCalculator.computeStepPixelArea(pixPoint);
                         }
                     }

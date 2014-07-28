@@ -42,10 +42,10 @@ import org.opengis.referencing.operation.TransformException;
  */
 public class Resample {
    
-    private static final double[] CLAMP_BYTE = new double[]{0,255};
-    private static final double[] CLAMP_SHORT = new double[]{Short.MIN_VALUE,Short.MAX_VALUE};
-    private static final double[] CLAMP_USHORT = new double[]{0,0xFFFF};
-    private static final double[] CLAMP_INT = new double[]{Integer.MIN_VALUE,Integer.MAX_VALUE};
+    private static final double[] CLAMP_BYTE   = new double[]{0,                 255};
+    private static final double[] CLAMP_SHORT  = new double[]{Short.MIN_VALUE,   Short.MAX_VALUE};
+    private static final double[] CLAMP_USHORT = new double[]{0,                 0xFFFF};
+    private static final double[] CLAMP_INT    = new double[]{Integer.MIN_VALUE, Integer.MAX_VALUE};
             
     /**
      * Transform multi-dimensional point (in our case pixel coordinate) from target image
