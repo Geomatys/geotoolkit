@@ -101,7 +101,7 @@ public class MathCalcTest {
         for(int x=0;x<width;x++){
             for(int y=0;y<height;y++){
                 float v = resultRaster.getSampleFloat(x, y, 0);
-                Assert.assertEquals( (y<height/2) ? 15.5f : -3.0f, v, DELTA);
+                Assert.assertEquals("at x="+x+" ,y="+y, (y<height/2) ? 15.5f : -3.0f, v, DELTA);
             }
         }
 
@@ -150,7 +150,7 @@ public class MathCalcTest {
         for(int x=0;x<width;x++){
             for(int y=0;y<height;y++){
                 float v = resultRaster.getSampleFloat(x, y, 0);
-                Assert.assertEquals( (y<height/2) ? 25.5f : 8.0f, v, DELTA);
+                Assert.assertEquals("at  x="+x+" ,y="+y, (y<height/2) ? 25.5f : 8.0f, v, DELTA);
             }
         }
 
@@ -200,7 +200,7 @@ public class MathCalcTest {
         for(int x=0;x<width;x++){
             for(int y=0;y<height;y++){
                 float v = resultRaster.getSampleFloat(x, y, 0);
-                Assert.assertEquals( (y<height/2) ? 32.5f : 115.0f, v, DELTA);
+                Assert.assertEquals("at  x="+x+" ,y="+y, (y<height/2) ? 32.5f : 115.0f, v, DELTA);
             }
         }
 
@@ -353,7 +353,7 @@ public class MathCalcTest {
         for(int x=0;x<width;x++){
             for(int y=0;y<height;y++){
                 float v = resultRaster.getSampleFloat(x, y, 0);
-                Assert.assertEquals( (y<height/2) ? value1 : value2, v, DELTA);
+                Assert.assertEquals("at  x="+x+" ,y="+y, (y<height/2) ? value1 : value2, v, DELTA);
             }
         }
     }

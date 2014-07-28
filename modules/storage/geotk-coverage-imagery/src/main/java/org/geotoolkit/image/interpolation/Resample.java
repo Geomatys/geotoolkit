@@ -41,7 +41,12 @@ import org.opengis.referencing.operation.TransformException;
  * @author Martin Desruisseaux (Geomatys).
  */
 public class Resample {
-    
+   
+    private static final double[] CLAMP_BYTE = new double[]{0,255};
+    private static final double[] CLAMP_SHORT = new double[]{Short.MIN_VALUE,Short.MAX_VALUE};
+    private static final double[] CLAMP_USHORT = new double[]{0,0xFFFF};
+    private static final double[] CLAMP_INT = new double[]{Integer.MIN_VALUE,Integer.MAX_VALUE};
+            
     /**
      * Transform multi-dimensional point (in our case pixel coordinate) from target image
      * {@code CoordinateReferenceSystem} to source image {@code CoordinateReferenceSystem}.
@@ -87,7 +92,7 @@ public class Resample {
     /**
      * Minimum and maximum values authorized for pixels. All interpolated value outside this interval will be clamped.
      */
-    protected final double[] clamk = new double[2];
+    protected final double[] clamp;
     
     /**
      * On the border of the destination image, projection of destination border 
@@ -265,41 +270,7 @@ public class Resample {
         interpol          = Interpolation.create(pix, interpolation, lanczosWindow, rbc, fillValue);
         
         this.rbc   = rbc;
-        final int datatype = imageDest.getSampleModel().getDataType();
-        switch (datatype) {
-            case DataBuffer.TYPE_BYTE : {
-                /*
-                 * Because DataBuffer.TYPE_BYTE is define as UByte.
-                 */
-                clamk[0] = 0;
-                clamk[1] = 255;
-                break;
-            }
-            case DataBuffer.TYPE_SHORT : {
-                clamk[0] = Short.MIN_VALUE;
-                clamk[1] = Short.MAX_VALUE;
-                break;
-            }
-            case DataBuffer.TYPE_USHORT : {
-                clamk[0] = 0;
-                clamk[1] = 0xFFFF;
-                break;
-            }
-            case DataBuffer.TYPE_FLOAT : {
-                clamk[0] = Float.MIN_VALUE;
-                clamk[1] = Float.MAX_VALUE;
-                break;
-            }
-            case DataBuffer.TYPE_INT: {
-                clamk[0] = Integer.MIN_VALUE;
-                clamk[1] = Integer.MAX_VALUE;
-                break;
-            }
-            default : {
-                clamk[0] = Double.MIN_VALUE;
-                clamk[1] = Double.MAX_VALUE;
-            }
-        }
+        this.clamp = getClamp(imageDest.getSampleModel().getDataType());
     }
         
     /**
@@ -352,40 +323,17 @@ public class Resample {
         srcCoords  = new double[2];
         destCoords = new double[2];
         this.rbc   = rbc;
-        final int datatype = imageDest.getSampleModel().getDataType();
-        switch (datatype) {
-            case DataBuffer.TYPE_BYTE : {
-                /*
-                 * Because DataBuffer.TYPE_BYTE is define as UByte.
-                 */
-                clamk[0] = 0;
-                clamk[1] = 255;
-                break;
-            }
-            case DataBuffer.TYPE_SHORT : {
-                clamk[0] = Short.MIN_VALUE;
-                clamk[1] = Short.MAX_VALUE;
-                break;
-            }
-            case DataBuffer.TYPE_USHORT : {
-                clamk[0] = 0;
-                clamk[1] = 0xFFFF;
-                break;
-            }
-            case DataBuffer.TYPE_FLOAT : {
-                clamk[0] = Float.MIN_VALUE;
-                clamk[1] = Float.MAX_VALUE;
-                break;
-            }
-            case DataBuffer.TYPE_INT: {
-                clamk[0] = Integer.MIN_VALUE;
-                clamk[1] = Integer.MAX_VALUE;
-                break;
-            }
-            default : {
-                clamk[0] = Double.MIN_VALUE;
-                clamk[1] = Double.MAX_VALUE;
-            }
+        this.clamp = getClamp(imageDest.getSampleModel().getDataType());
+    }
+    
+    private static double[] getClamp(int dataType){
+        switch (dataType) {
+            /* Because DataBuffer.TYPE_BYTE is define as UByte. */
+            case DataBuffer.TYPE_BYTE : return CLAMP_BYTE;
+            case DataBuffer.TYPE_SHORT : return CLAMP_SHORT;
+            case DataBuffer.TYPE_USHORT : return CLAMP_USHORT;
+            case DataBuffer.TYPE_INT: return CLAMP_INT;
+            default : return null;
         }
     }
 
@@ -403,12 +351,14 @@ public class Resample {
             destToSourceMathTransform.transform(destCoords, 0, srcCoords, 0, 1);
             
             //-- Compute interpolation from source image pixel value and computed source coordinates.
-            destIterator.setSampleDouble(
-                    XMath.clamp(interpol.interpolate(srcCoords[0], srcCoords[1], band), clamk[0], clamk[1]));
+            double sample = interpol.interpolate(srcCoords[0], srcCoords[1], band);
+            if(clamp!=null) sample = XMath.clamp(sample, clamp[0], clamp[1]);
+            destIterator.setSampleDouble(sample);
             while (++band != numBands) {
                 destIterator.next();
-                destIterator.setSampleDouble(
-                        XMath.clamp(interpol.interpolate(srcCoords[0], srcCoords[1], band), clamk[0], clamk[1]));
+                sample = interpol.interpolate(srcCoords[0], srcCoords[1], band);
+                if(clamp!=null) sample = XMath.clamp(sample, clamp[0], clamp[1]);
+                destIterator.setSampleDouble(sample);
             }
         }
     }
@@ -424,10 +374,12 @@ public class Resample {
             
             //-- Compute interpolation from source image pixel value and computed source coordinates.
             pixelValue = interpol.interpolate(srcCoords[0], srcCoords[1]);
-            destIterator.setSampleDouble(XMath.clamp(pixelValue[band], clamk[0], clamk[1]));
+            if(clamp!=null) pixelValue[band] = XMath.clamp(pixelValue[band], clamp[0], clamp[1]);
+            destIterator.setSampleDouble(pixelValue[band]);
             while (++band < numBands) {
                 destIterator.next();
-                destIterator.setSampleDouble(XMath.clamp(pixelValue[band], clamk[0], clamk[1]));
+                if(clamp!=null) pixelValue[band] = XMath.clamp(pixelValue[band], clamp[0], clamp[1]);
+                destIterator.setSampleDouble(pixelValue[band]);
             }
         }
     }
