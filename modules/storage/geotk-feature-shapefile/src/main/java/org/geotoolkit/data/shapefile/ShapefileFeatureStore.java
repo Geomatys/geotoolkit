@@ -48,6 +48,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
+import org.apache.sis.io.wkt.Convention;
+import org.apache.sis.io.wkt.FormattableObject;
 
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.AbstractFeatureStore;
@@ -519,7 +521,7 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
             if (crs != null) {
                 // .prj files should have no carriage returns in them, this messes up
                 // ESRI's ArcXXX software, so we'll be compatible
-                final String s = crs.toWKT().replaceAll("\n", "").replaceAll("  ", "");
+                final String s = ((FormattableObject)crs).toString(Convention.WKT1).replaceAll("\n", "").replaceAll("  ", "");
                 final FileWriter prjWriter = new FileWriter(prjStoragefile.getFile());
                 try {
                     prjWriter.write(s);
