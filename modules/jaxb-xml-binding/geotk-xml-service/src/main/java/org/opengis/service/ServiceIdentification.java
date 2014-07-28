@@ -15,10 +15,10 @@ import java.util.Collection;
 import org.opengis.annotation.UML;
 import org.opengis.metadata.constraint.Constraints;
 import org.opengis.metadata.distribution.StandardOrderProcess;
-import org.opengis.metadata.extent.Extent;
 import org.opengis.metadata.identification.DataIdentification;
 import org.opengis.metadata.identification.Identification;
 import org.opengis.metadata.service.CouplingType;
+import org.opengis.metadata.service.OperationMetadata;
 import org.opengis.util.GenericName;
 import static org.opengis.annotation.Obligation.*;
 import static org.opengis.annotation.Specification.*;
@@ -96,8 +96,4 @@ public interface ServiceIdentification extends Identification {
     @Deprecated
     //@UML(identifier="provider", obligation=OPTIONAL, specification=ISO_19119)
     Collection<ServiceProvider> getProvider();
-
-
-
-
 }

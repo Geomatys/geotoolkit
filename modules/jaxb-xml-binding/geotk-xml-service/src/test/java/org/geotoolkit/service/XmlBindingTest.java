@@ -18,7 +18,6 @@ package org.geotoolkit.service;
 
 import java.io.StringWriter;
 import java.io.StringReader;
-import java.util.Arrays;
 import org.opengis.util.LocalName;
 import org.opengis.util.TypeName;
 import org.opengis.util.MemberName;
@@ -27,11 +26,16 @@ import org.apache.sis.metadata.iso.DefaultMetadata;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
+import org.apache.sis.metadata.iso.service.DefaultOperationMetadata;
 import org.apache.sis.util.iso.DefaultNameFactory;
+import org.apache.sis.metadata.iso.service.DefaultParameter;
 import org.apache.sis.xml.MarshallerPool;
 
 import org.junit.*;
+import static java.util.Collections.singleton;
 import static org.apache.sis.test.Assert.*;
+
+
 /**
  *
  * @author guilhem
@@ -100,23 +104,23 @@ public class XmlBindingTest {
 
         ServiceIdentificationImpl expResult = new ServiceIdentificationImpl();
 
-        ParameterImpl params = new ParameterImpl();
+        DefaultParameter params = new DefaultParameter();
         DefaultNameFactory factory = new DefaultNameFactory();
         TypeName tname = factory.createTypeName(null, "CharacterString");
         MemberName name = factory.createMemberName(null, "VERSION", tname);
         params.setName(name);
 
-        OperationMetadataImpl meta = new OperationMetadataImpl();
-        meta.setParameters(params);
-        expResult.setContainsOperations(Arrays.asList(meta));
+        DefaultOperationMetadata meta = new DefaultOperationMetadata();
+        meta.setParameters(singleton(params));
+        expResult.setContainsOperations(singleton(meta));
 
 
         LocalName loc = factory.createLocalName(null, "test service Type");
         expResult.setServiceType(loc);
 
         assertEquals(expResult.getContainsOperations().iterator().next().getParameters(), result.getContainsOperations().iterator().next().getParameters());
-        assertEquals(expResult.getContainsOperations().iterator().next().getConnectPoint(), result.getContainsOperations().iterator().next().getConnectPoint());
-        assertEquals(expResult.getContainsOperations().iterator().next().getDCP(), result.getContainsOperations().iterator().next().getDCP());
+        assertEquals(expResult.getContainsOperations().iterator().next().getConnectPoints(), result.getContainsOperations().iterator().next().getConnectPoints());
+        assertEquals(expResult.getContainsOperations().iterator().next().getDistributedComputingPlatforms(), result.getContainsOperations().iterator().next().getDistributedComputingPlatforms());
         assertEquals(expResult.getContainsOperations().iterator().next().getDependsOn(), result.getContainsOperations().iterator().next().getDependsOn());
         assertEquals(expResult.getContainsOperations().iterator().next(), result.getContainsOperations().iterator().next());
         assertEquals(expResult.getContainsOperations(), result.getContainsOperations());
@@ -132,15 +136,15 @@ public class XmlBindingTest {
     public void marshallingTest() throws Exception {
         ServiceIdentificationImpl servIdent = new ServiceIdentificationImpl();
 
-        ParameterImpl params = new ParameterImpl();
+        DefaultParameter params = new DefaultParameter();
         DefaultNameFactory factory = new DefaultNameFactory();
         TypeName tname = factory.createTypeName(null, "CharacterString");
         MemberName name = factory.createMemberName(null, "VERSION", tname);
         params.setName(name);
 
-        OperationMetadataImpl meta = new OperationMetadataImpl();
-        meta.setParameters(params);
-        servIdent.setContainsOperations(Arrays.asList(meta));
+        DefaultOperationMetadata meta = new DefaultOperationMetadata();
+        meta.setParameters(singleton(params));
+        servIdent.setContainsOperations(singleton(meta));
 
 
         LocalName loc = factory.createLocalName(null, "test service Type");
@@ -170,6 +174,16 @@ public class XmlBindingTest {
         "                            </gco:TypeName>" + '\n' +
         "                        </gco:attributeType>" + '\n' +
         "                    </srv:name>" + '\n' +
+        "                    <srv:repeatability>" + '\n' +
+        "                        <gco:Boolean>false</gco:Boolean>" + '\n' +
+        "                    </srv:repeatability>" + '\n' +
+        "                    <srv:valueType>" + '\n' +
+        "                        <gco:TypeName>" + '\n' +
+        "                            <gco:aName>" + '\n' +
+        "                                <gco:CharacterString>CharacterString</gco:CharacterString>" + '\n' +
+        "                            </gco:aName>" + '\n' +
+        "                        </gco:TypeName>" + '\n' +
+        "                    </srv:valueType>" + '\n' +
         "                </srv:SV_Parameter>" + '\n' +
         "            </srv:parameters>" + '\n' +
         "        </srv:SV_OperationMetadata>" + '\n' +
