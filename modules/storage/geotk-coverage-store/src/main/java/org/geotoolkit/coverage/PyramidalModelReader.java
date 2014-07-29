@@ -532,16 +532,17 @@ public class PyramidalModelReader extends GridCoverageReader{
 
         return gcb.build();
     }
-        
+
     private GridCoverage readCube(List<GridMosaic> mosaics, Envelope wantedEnv, boolean deferred) throws CoverageStoreException{
         //regroup mosaic by hierarchy cubes
         final TreeMap groups = new TreeMap();
         for(GridMosaic mosaic : mosaics){
             appendSlice(groups, mosaic);
         }
-        
+
+        int dim = wantedEnv.getDimension();
         //rebuild coverage
-        return rebuildCoverage(groups, wantedEnv, deferred);
+        return rebuildCoverage(groups, wantedEnv, deferred, dim-1);
     }
     
     /**
@@ -576,71 +577,86 @@ public class PyramidalModelReader extends GridCoverageReader{
             }
         }
     }
-    
+
     /**
-     * 
+     *
      * @param groups
      * @param wantedEnv
      * @param deferred
+     * @param axisIndex
      * @return GridCoverage
-     * @throws CoverageStoreException 
+     * @throws CoverageStoreException
      */
-    private GridCoverage rebuildCoverage(TreeMap<Double,Object> groups, Envelope wantedEnv, boolean deferred) throws CoverageStoreException{
+    private GridCoverage rebuildCoverage(TreeMap<Double,Object> groups, Envelope wantedEnv, boolean deferred, int axisIndex)
+            throws CoverageStoreException {
+
         final CoordinateReferenceSystem crs = wantedEnv.getCoordinateReferenceSystem();
+        final CoordinateSystem cs = crs.getCoordinateSystem();
+        int nbDim = cs.getDimension();
+
         final List<GridCoverageStack.Element> elements = new ArrayList<>();
         final List<Entry<Double,Object>> entries = new ArrayList<>(groups.entrySet());
+
         for(int k=0,kn=entries.size();k<kn;k++){
             final Entry<Double,Object> entry = entries.get(k);
-            final Double d = entry.getKey();
+
+            final Double z = entry.getKey();
             final Object obj = entry.getValue();
-            
+
+            final org.geotoolkit.geometry.GeneralEnvelope sliceEnvelop = new org.geotoolkit.geometry.GeneralEnvelope(crs);
+            for (int i = 0; i < nbDim; i++) {
+                if (i == axisIndex) {
+                    sliceEnvelop.setRange(i, z, z);
+                } else {
+                    sliceEnvelop.setRange(i, wantedEnv.getMinimum(i), wantedEnv.getMaximum(i));
+                }
+            }
+
             final GridCoverage subCoverage;
             if(obj instanceof GridMosaic){
-                subCoverage = readSlice((GridMosaic)obj, wantedEnv, deferred);
+                subCoverage = readSlice((GridMosaic)obj, sliceEnvelop, deferred);
             }else if(obj instanceof TreeMap){
-                //remove a dimension and aggregate sub coverage cube
-                final CoordinateReferenceSystem subCrs = CRS.getOrCreateSubCRS(crs, 0, crs.getCoordinateSystem().getDimension()-1);
-                final GeneralEnvelope subEnv = new GeneralEnvelope(subCrs);
-                for(int i=0,n=subEnv.getDimension();i<n;i++){
-                    subEnv.setRange(i, wantedEnv.getMinimum(i), wantedEnv.getMaximum(i));
-                }
-                subCoverage = rebuildCoverage((TreeMap)obj, subEnv, deferred);
+                subCoverage = rebuildCoverage((TreeMap)obj, sliceEnvelop, deferred, axisIndex-1);
             }else{
                 throw new CoverageStoreException("Found an object which is not a Coverage or a Map group, should not happen : "+obj);
             }
-            
+
             //calculate the range
             double min;
             double max;
             if(k==0){
                 if(kn==1){
                     //a single element, use a range of 1
-                    min = d - 0.5;
-                    max = d + 0.5;
+                    min = z - 0.5;
+                    max = z + 0.5;
                 }else{
                     final double nextD = entries.get(k+1).getKey();
-                    final double diff = (nextD - d) / 2.0;
-                    min = d-diff;
-                    max = d+diff;
+                    final double diff = (nextD - z) / 2.0;
+                    min = z-diff;
+                    max = z+diff;
                 }
             }else if(k==kn-1){
                 final double previousD = entries.get(k-1).getKey();
-                final double diff = (d - previousD) / 2.0;
-                min = d-diff;
-                max = d+diff;
+                final double diff = (z - previousD) / 2.0;
+                min = z-diff;
+                max = z+diff;
             }else{
                 final double prevD = entries.get(k-1).getKey();
                 final double nextD = entries.get(k+1).getKey();
-                min = d - (d - prevD) / 2.0;
-                max = d + (nextD - d) / 2.0;
+                min = z - (z - prevD) / 2.0;
+                max = z + (nextD - z) / 2.0;
             }
-            
-            elements.add(new CoverageStack.Adapter(subCoverage, NumberRange.create(min, true, max, false), d));
+
+            elements.add(new CoverageStack.Adapter(subCoverage, NumberRange.create(min, true, max, false), z));
         }
-        
+
         try {
-            return new GridCoverageStack("HyperCube"+crs.getCoordinateSystem().getDimension()+"D", crs, elements);
-        } catch (IOException | TransformException | FactoryException ex) {
+            return new GridCoverageStack("HyperCube"+ nbDim +"D", crs, elements, axisIndex);
+        } catch (IOException ex) {
+            throw new CoverageStoreException(ex);
+        } catch (TransformException ex) {
+            throw new CoverageStoreException(ex);
+        } catch (FactoryException ex) {
             throw new CoverageStoreException(ex);
         }
     }

@@ -589,7 +589,20 @@ public class CoverageStack extends AbstractCoverage {
     public CoverageStack(final CharSequence name, final Collection<? extends Coverage> coverages)
             throws IOException
     {
-        this(name, (CoordinateReferenceSystem) null, toElements(coverages));
+        this(name, (CoordinateReferenceSystem) null, toElements(coverages), null);
+    }
+
+    /**
+     * Same as {@link #CoverageStack(CharSequence, java.util.Collection)} with specified zDimension.
+     * @param name      The name for this coverage.
+     * @param coverages All {@link Coverage} elements for this stack.
+     * @param zDimension Dimension index in CRS where Z varies. If null, use the last dimension
+     * @throws IOException if an I/O operation was required and failed.
+     */
+    public CoverageStack(final CharSequence name, final Collection<? extends Coverage> coverages, final Integer zDimension)
+            throws IOException
+    {
+        this(name, (CoordinateReferenceSystem) null, toElements(coverages), zDimension);
     }
 
     /**
@@ -623,7 +636,30 @@ public class CoverageStack extends AbstractCoverage {
                          final CoordinateReferenceSystem crs,
                          final Collection<? extends Element> elements) throws IOException
     {
-        this(name, crs, elements.toArray(new Element[elements.size()]));
+        this(name, crs, elements.toArray(new Element[elements.size()]), null);
+    }
+
+    /**
+     * Constructs a new coverage stack with all the supplied elements. Each element can specify
+     * its <var>z</var> range either in the last dimension of its {@linkplain Element#getEnvelope
+     * envelope}, or as a separated {@linkplain Element#getZRange range}.
+     * <p>
+     * If {@code crs} is {@code null}, this constructor will try to infer the CRS from the
+     * {@linkplain Element#getEnvelope element envelope} but at least one of those must be
+     * associated with a full CRS (including the <var>z</var> dimension).
+     *
+     * @param  name     The name for this coverage.
+     * @param  crs      The coordinate reference system for this coverage, or {@code null}.
+     * @param  elements All coverage {@link Element Element}s for this stack.
+     * @param zDimension Dimension index in CRS where Z varies. If null, use the last dimension
+     * @throws IOException if an I/O operation was required and failed.
+     */
+    public CoverageStack(final CharSequence name,
+                         final CoordinateReferenceSystem crs,
+                         final Collection<? extends Element> elements,
+                         final Integer zDimension) throws IOException
+    {
+        this(name, crs, elements.toArray(new Element[elements.size()]), zDimension);
     }
 
     /**
@@ -634,13 +670,15 @@ public class CoverageStack extends AbstractCoverage {
      * @param  name     The name for this coverage.
      * @param  crs      The coordinate reference system for this coverage.
      * @param  elements All coverage {@link Element Element}s for this stack.
+     * @param zDimension Dimension index in CRS where Z varies. If null, use the last dimension
      * @throws IOException if an I/O operation was required and failed.
      */
     private CoverageStack(final CharSequence name,
                           final CoordinateReferenceSystem crs,
-                          final Element[] elements) throws IOException
+                          final Element[] elements,
+                          final Integer zDimension) throws IOException
     {
-        this(name, getEnvelope(crs, elements), elements); // 'elements' must be after 'getEnvelope'
+        this(name, getEnvelope(crs, elements), elements, zDimension); // 'elements' must be after 'getEnvelope'
     }
 
     /**
@@ -649,13 +687,14 @@ public class CoverageStack extends AbstractCoverage {
      */
     private CoverageStack(final CharSequence name,
                           final GeneralEnvelope envelope,
-                          final Element[] elements) throws IOException
+                          final Element[] elements,
+                          final Integer zDimension) throws IOException
     {
         super(name, envelope.getCoordinateReferenceSystem(), null, null);
         assert ArraysExt.isSorted(elements, COMPARATOR, false);
         this.elements = elements;
         this.envelope = envelope;
-        zDimension = envelope.getDimension() - 1;
+        this.zDimension = zDimension != null ? zDimension  : envelope.getDimension() - 1;
         boolean sampleDimensionMismatch = false;
         SampleDimension[] sampleDimensions = null;
         for (final Element element : elements) {
@@ -682,7 +721,7 @@ public class CoverageStack extends AbstractCoverage {
         }
         this.numSampleDimensions = (sampleDimensions != null) ? sampleDimensions.length : 0;
         this.sampleDimensions = sampleDimensionMismatch ? null : sampleDimensions;
-        zCRS = CRS.getOrCreateSubCRS(crs, zDimension, zDimension+1);
+        zCRS = CRS.getOrCreateSubCRS(crs, this.zDimension, this.zDimension+1);
     }
 
     /**
@@ -1527,6 +1566,42 @@ public class CoverageStack extends AbstractCoverage {
             return Collections.singletonList(lower);
         }
         return Arrays.asList(new Coverage[] {lower, upper});
+    }
+
+    /**
+     * Returns the crs dimension index from where the <var>z</var> varies.
+     * This information is mandatory.
+     *
+     * @return z dimension index
+     */
+    protected int getZDimension() {
+        return zDimension;
+    }
+
+    /**
+     * Return the number of elements.
+     * @return element size
+     */
+    public int getStackSize() {
+        return elements.length;
+    }
+
+    /**
+     * Return coverage at specified index. Index must be between 0 and {@link #getStackSize()} - 1.
+     * @param index Index in {@link #elements} for the image to load.
+     * @return Coverage in specified index.
+     */
+    public synchronized Coverage coverageAtIndex(int index) {
+        try {
+            load(index);
+            return lower;
+        } catch (IOException exception) {
+            String message = exception.getLocalizedMessage();
+            if (message == null) {
+                message = Classes.getShortClassName(exception);
+            }
+            throw new CannotEvaluateException(message, exception);
+        }
     }
 
     /**
