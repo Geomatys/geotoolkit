@@ -34,7 +34,7 @@ xmlns = {
     @XmlJavaTypeAdapter(PlatformSpecificServiceSpecificationAdapter.class),
     @XmlJavaTypeAdapter(PlatformNeutralServiceSpecificationAdapter.class),
     @XmlJavaTypeAdapter(ServiceAdapter.class),
-    @XmlJavaTypeAdapter(CoupledResourceAdapter.class),
+    @XmlJavaTypeAdapter(SV_CoupledResource.class),
     @XmlJavaTypeAdapter(ServiceProviderAdapter.class),
     @XmlJavaTypeAdapter(ServiceIdentificationAdapter.class),
     //CodeList handling

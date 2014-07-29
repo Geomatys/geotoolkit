@@ -17,6 +17,7 @@ import org.opengis.metadata.constraint.Constraints;
 import org.opengis.metadata.distribution.StandardOrderProcess;
 import org.opengis.metadata.identification.DataIdentification;
 import org.opengis.metadata.identification.Identification;
+import org.opengis.metadata.service.CoupledResource;
 import org.opengis.metadata.service.CouplingType;
 import org.opengis.metadata.service.OperationMetadata;
 import org.opengis.util.GenericName;

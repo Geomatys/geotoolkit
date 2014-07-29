@@ -32,7 +32,7 @@ import org.opengis.metadata.extent.Extent;
 import org.opengis.metadata.identification.DataIdentification;
 import org.opengis.metadata.service.CouplingType;
 import org.opengis.metadata.service.OperationMetadata;
-import org.opengis.service.CoupledResource;
+import org.opengis.metadata.service.CoupledResource;
 import org.opengis.service.ServiceIdentification;
 import org.opengis.service.ServiceProvider;
 import org.opengis.util.GenericName;

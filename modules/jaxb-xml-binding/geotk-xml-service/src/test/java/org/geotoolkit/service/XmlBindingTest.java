@@ -174,9 +174,6 @@ public class XmlBindingTest {
         "                            </gco:TypeName>" + '\n' +
         "                        </gco:attributeType>" + '\n' +
         "                    </srv:name>" + '\n' +
-        "                    <srv:repeatability>" + '\n' +
-        "                        <gco:Boolean>false</gco:Boolean>" + '\n' +
-        "                    </srv:repeatability>" + '\n' +
         "                    <srv:valueType>" + '\n' +
         "                        <gco:TypeName>" + '\n' +
         "                            <gco:aName>" + '\n' +
