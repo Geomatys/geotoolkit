@@ -32,8 +32,8 @@ import org.geotoolkit.display2d.primitive.GraphicProbe;
 import org.geotoolkit.gui.swing.render2d.JMap2D;
 import org.geotoolkit.gui.swing.render2d.decoration.AbstractMapDecoration;
 import org.geotoolkit.gui.swing.render2d.decoration.MapDecoration;
-import org.geotoolkit.gui.swing.resource.FontAwesomeIcons;
-import org.geotoolkit.gui.swing.resource.IconBuilder;
+import org.geotoolkit.font.FontAwesomeIcons;
+import org.geotoolkit.font.IconBuilder;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.util.StringUtilities;
 

@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.gui.swing.resource;
 
+import org.geotoolkit.font.IconBuilder;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;

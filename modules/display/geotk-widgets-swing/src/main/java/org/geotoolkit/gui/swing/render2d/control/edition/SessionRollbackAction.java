@@ -25,8 +25,8 @@ import javax.swing.ImageIcon;
 import org.geotoolkit.data.FeatureStoreContentEvent;
 import org.geotoolkit.data.FeatureStoreListener;
 import org.geotoolkit.data.FeatureStoreManagementEvent;
-import org.geotoolkit.gui.swing.resource.FontAwesomeIcons;
-import org.geotoolkit.gui.swing.resource.IconBuilder;
+import org.geotoolkit.font.FontAwesomeIcons;
+import org.geotoolkit.font.IconBuilder;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.FeatureMapLayer;
 

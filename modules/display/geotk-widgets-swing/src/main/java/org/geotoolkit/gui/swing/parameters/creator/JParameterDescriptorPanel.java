@@ -21,7 +21,7 @@ import java.awt.Cursor;
 import java.beans.PropertyChangeEvent;
 
 import org.apache.sis.util.iso.SimpleInternationalString;
-import org.geotoolkit.gui.swing.resource.FontAwesomeIcons;
+import org.geotoolkit.font.FontAwesomeIcons;
 import org.geotoolkit.gui.swing.resource.FontIconJButton;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.parameter.ParametersExt;

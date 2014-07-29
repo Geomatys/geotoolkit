@@ -88,8 +88,8 @@ import org.opengis.style.FeatureTypeStyle;
 import org.opengis.style.Rule;
 
 import static org.apache.sis.util.ArgumentChecks.*;
-import org.geotoolkit.gui.swing.resource.FontAwesomeIcons;
-import org.geotoolkit.gui.swing.resource.IconBuilder;
+import org.geotoolkit.font.FontAwesomeIcons;
+import org.geotoolkit.font.IconBuilder;
 import org.geotoolkit.gui.swing.style.JStyleTree;
 
 public class JContextTree extends JScrollPane {

@@ -28,8 +28,8 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
 import org.geotoolkit.gui.swing.contexttree.AbstractTreePopupItem;
-import org.geotoolkit.gui.swing.resource.FontAwesomeIcons;
-import org.geotoolkit.gui.swing.resource.IconBuilder;
+import org.geotoolkit.font.FontAwesomeIcons;
+import org.geotoolkit.font.IconBuilder;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.MapItem;
 

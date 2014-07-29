@@ -24,8 +24,8 @@ import javax.swing.ImageIcon;
 import org.geotoolkit.gui.swing.render2d.control.AbstractMapAction;
 import org.geotoolkit.gui.swing.render2d.control.navigation.JNavigateToPanel.NavigateToMapDecoration;
 import org.geotoolkit.gui.swing.render2d.decoration.MapDecoration;
-import org.geotoolkit.gui.swing.resource.FontAwesomeIcons;
-import org.geotoolkit.gui.swing.resource.IconBuilder;
+import org.geotoolkit.font.FontAwesomeIcons;
+import org.geotoolkit.font.IconBuilder;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 
 /**

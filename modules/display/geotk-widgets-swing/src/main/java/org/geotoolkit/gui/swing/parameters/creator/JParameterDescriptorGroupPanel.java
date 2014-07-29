@@ -30,9 +30,9 @@ import javax.swing.ImageIcon;
 import javax.swing.border.EmptyBorder;
 
 import org.apache.sis.util.iso.SimpleInternationalString;
-import org.geotoolkit.gui.swing.resource.FontAwesomeIcons;
+import org.geotoolkit.font.FontAwesomeIcons;
 import org.geotoolkit.gui.swing.resource.FontIconJButton;
-import org.geotoolkit.gui.swing.resource.IconBuilder;
+import org.geotoolkit.font.IconBuilder;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;

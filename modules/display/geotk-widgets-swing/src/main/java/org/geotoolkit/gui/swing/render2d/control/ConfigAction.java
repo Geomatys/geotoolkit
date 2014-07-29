@@ -20,8 +20,8 @@ package org.geotoolkit.gui.swing.render2d.control;
 import java.awt.event.ActionEvent;
 import javax.swing.ImageIcon;
 import org.geotoolkit.gui.swing.render2d.JMap2D;
-import org.geotoolkit.gui.swing.resource.FontAwesomeIcons;
-import org.geotoolkit.gui.swing.resource.IconBuilder;
+import org.geotoolkit.font.FontAwesomeIcons;
+import org.geotoolkit.font.IconBuilder;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 
 /**

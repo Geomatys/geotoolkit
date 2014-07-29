@@ -26,8 +26,8 @@ import javax.swing.JPanel;
 import org.geotoolkit.cql.CQL;
 import org.geotoolkit.cql.CQLException;
 import org.geotoolkit.gui.swing.filter.JCQLEditor;
-import org.geotoolkit.gui.swing.resource.FontAwesomeIcons;
-import org.geotoolkit.gui.swing.resource.IconBuilder;
+import org.geotoolkit.font.FontAwesomeIcons;
+import org.geotoolkit.font.IconBuilder;
 import org.geotoolkit.map.MapLayer;
 import org.opengis.filter.expression.Expression;
 

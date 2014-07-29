@@ -22,8 +22,8 @@ import java.awt.Color;
 
 import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
-import org.geotoolkit.gui.swing.resource.FontAwesomeIcons;
-import org.geotoolkit.gui.swing.resource.IconBuilder;
+import org.geotoolkit.font.FontAwesomeIcons;
+import org.geotoolkit.font.IconBuilder;
 
 
 /**

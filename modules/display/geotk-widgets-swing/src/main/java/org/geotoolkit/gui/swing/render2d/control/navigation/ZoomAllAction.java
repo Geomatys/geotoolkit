@@ -24,8 +24,8 @@ import org.geotoolkit.display.container.GraphicContainer;
 import org.geotoolkit.display2d.container.ContextContainer2D;
 
 import org.geotoolkit.gui.swing.render2d.control.AbstractMapAction;
-import org.geotoolkit.gui.swing.resource.FontAwesomeIcons;
-import org.geotoolkit.gui.swing.resource.IconBuilder;
+import org.geotoolkit.font.FontAwesomeIcons;
+import org.geotoolkit.font.IconBuilder;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 
 import org.opengis.geometry.Envelope;

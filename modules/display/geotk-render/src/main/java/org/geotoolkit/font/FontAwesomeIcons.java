@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.gui.swing.resource;
+package org.geotoolkit.font;
 
 import java.awt.Color;
 import javax.swing.UIManager;

@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.gui.swing.resource;
+package org.geotoolkit.font;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -38,7 +38,7 @@ public final class IconBuilder {
 
     static{
       try {
-        InputStream is = IconBuilder.class.getResourceAsStream("/org/geotoolkit/gui/swing/resource/fonticon/fontawesome-webfont.ttf");
+        InputStream is = IconBuilder.class.getResourceAsStream("/org/geotoolkit/font/fontawesome-webfont.ttf");
         FONT = Font.createFont(Font.TRUETYPE_FONT, is);
       } catch (Exception ex) {
         ex.printStackTrace();

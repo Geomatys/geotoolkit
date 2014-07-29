@@ -91,8 +91,8 @@ import org.geotoolkit.gui.swing.render2d.control.navigation.PanHandler;
 import org.geotoolkit.gui.swing.util.JOptionDialog;
 import org.geotoolkit.gui.swing.render3d.JMap3D;
 import org.geotoolkit.gui.swing.render3d.control.JMap3dConfigPanel;
-import org.geotoolkit.gui.swing.resource.FontAwesomeIcons;
-import org.geotoolkit.gui.swing.resource.IconBuilder;
+import org.geotoolkit.font.FontAwesomeIcons;
+import org.geotoolkit.font.IconBuilder;
 import org.opengis.geometry.Envelope;
 
 /**
