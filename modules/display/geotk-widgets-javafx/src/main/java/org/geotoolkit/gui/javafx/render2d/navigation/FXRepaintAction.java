@@ -36,11 +36,11 @@ import org.opengis.referencing.operation.TransformException;
  *
  * @author Johann Sorel (Geomatys)
  */
-public final class FXZoomAllAction extends FXMapAction {
-    public static final Image ICON = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_GLOBE, 16, FontAwesomeIcons.DEFAULT_COLOR), null);
+public final class FXRepaintAction extends FXMapAction {
+    public static final Image ICON = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_REFRESH, 16, FontAwesomeIcons.DEFAULT_COLOR), null);
     
-    public FXZoomAllAction(FXMap map) {
-        super(map,GeotkFXBundle.getString(FXZoomAllAction.class,"zoom_all"),GeotkFXBundle.getString(FXZoomAllAction.class,"zoom_all"),ICON);
+    public FXRepaintAction(FXMap map) {
+        super(map,GeotkFXBundle.getString(FXRepaintAction.class,"refresh"),GeotkFXBundle.getString(FXRepaintAction.class,"refresh"),ICON);
     }
 
     @Override

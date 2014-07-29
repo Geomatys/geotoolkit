@@ -25,6 +25,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
@@ -45,7 +46,7 @@ import org.geotoolkit.display.canvas.control.NeverFailMonitor;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.J2DCanvasVolatile;
 import org.geotoolkit.display2d.container.ContextContainer2D;
-import org.openide.util.Exceptions;
+import org.geotoolkit.internal.Loggers;
 
 /**
  *
@@ -145,7 +146,7 @@ public class FXMap extends BorderPane {
             try {
                 getCanvas().setVisibleArea(getContainer().getContext().getAreaOfInterest());
             } catch (Exception ex) {
-                Exceptions.printStackTrace(ex);
+                Loggers.JAVAFX.log(Level.WARNING, ex.getMessage(),ex);
             }
         }
     }

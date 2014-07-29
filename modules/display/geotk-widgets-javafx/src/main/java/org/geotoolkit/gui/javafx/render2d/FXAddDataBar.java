@@ -23,7 +23,7 @@ import javafx.scene.layout.HBox;
 import org.controlsfx.control.action.ActionUtils;
 import org.geotoolkit.gui.javafx.render2d.data.FXAddCoverageStoreAction;
 import org.geotoolkit.gui.javafx.render2d.data.FXAddFeatureStoreAction;
-import org.geotoolkit.gui.javafx.render2d.data.FXAddServerAction;
+import org.geotoolkit.gui.javafx.render2d.data.FXAddServerStoreAction;
 
 /**
  *
@@ -40,7 +40,7 @@ public class FXAddDataBar extends ToolBar {
         
         final Button butFeatureStore = new FXAddFeatureStoreAction(map).createButton(ActionUtils.ActionTextBehavior.HIDE);
         final Button butCoverageStore = new FXAddCoverageStoreAction(map).createButton(ActionUtils.ActionTextBehavior.HIDE);
-        final Button butServerStore = new FXAddServerAction(map).createButton(ActionUtils.ActionTextBehavior.HIDE);
+        final Button butServerStore = new FXAddServerStoreAction(map).createButton(ActionUtils.ActionTextBehavior.HIDE);
         butFeatureStore.getStyleClass().add(LEFT);
         butCoverageStore.getStyleClass().add(CENTER);
         butServerStore.getStyleClass().add(RIGHT);

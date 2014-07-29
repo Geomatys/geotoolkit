@@ -52,7 +52,7 @@
         
         <dependency>
             <groupId>org.geotoolkit</groupId>
-            <artifactId>geotk-widgets-swing</artifactId>
+            <artifactId>geotk-render2d</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

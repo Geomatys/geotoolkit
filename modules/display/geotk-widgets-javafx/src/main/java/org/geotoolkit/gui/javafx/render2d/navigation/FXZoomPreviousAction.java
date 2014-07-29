@@ -17,16 +17,16 @@
 
 package org.geotoolkit.gui.javafx.render2d.navigation;
 
-import org.geotoolkit.gui.javafx.render2d.FXMapAction;
-import org.geotoolkit.gui.javafx.render2d.FXMap;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.scene.image.Image;
-import org.geotoolkit.gui.swing.resource.FontAwesomeIcons;
-import org.geotoolkit.gui.swing.resource.IconBuilder;
-import org.geotoolkit.gui.swing.resource.MessageBundle;
+import org.geotoolkit.font.FontAwesomeIcons;
+import org.geotoolkit.font.IconBuilder;
+import org.geotoolkit.gui.javafx.render2d.FXMap;
+import org.geotoolkit.gui.javafx.render2d.FXMapAction;
+import org.geotoolkit.internal.GeotkFXBundle;
 
 /**
  *
@@ -36,7 +36,7 @@ public final class FXZoomPreviousAction extends FXMapAction {
     public static final Image ICON = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_CHEVRON_LEFT, 16, FontAwesomeIcons.DEFAULT_COLOR), null);
     
     public FXZoomPreviousAction(FXMap map) {
-        super(map,MessageBundle.getString("map_zoom_previous"),MessageBundle.getString("map_zoom_previous"),ICON);
+        super(map,GeotkFXBundle.getString(FXZoomPreviousAction.class,"zoom_previous"),GeotkFXBundle.getString(FXZoomPreviousAction.class,"zoom_previous"),ICON);
         
         map.getCanvas().addPropertyChangeListener(new PropertyChangeListener() {
             @Override

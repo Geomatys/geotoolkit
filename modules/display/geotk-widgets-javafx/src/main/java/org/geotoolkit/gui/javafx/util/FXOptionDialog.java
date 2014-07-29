@@ -22,7 +22,7 @@ import javafx.event.ActionEvent;
 import javafx.scene.Node;
 import org.controlsfx.control.action.AbstractAction;
 import org.controlsfx.dialog.Dialog;
-import org.geotoolkit.gui.swing.resource.MessageBundle;
+import org.geotoolkit.internal.GeotkFXBundle;
 
 /**
  *
@@ -47,7 +47,7 @@ public class FXOptionDialog {
         private final AtomicBoolean state;
 
         public OkAction(Dialog dialog, AtomicBoolean state) {
-            super(MessageBundle.getString("ok"));
+            super(GeotkFXBundle.getString(FXOptionDialog.class,"ok"));
             this.dialog = dialog;
             this.state = state;
         }
@@ -64,7 +64,7 @@ public class FXOptionDialog {
         private final AtomicBoolean state;
 
         public CancelAction(Dialog dialog, AtomicBoolean state) {
-            super(MessageBundle.getString("cancel"));
+            super(GeotkFXBundle.getString(FXOptionDialog.class,"cancel"));
             this.dialog = dialog;
             this.state = state;
         }

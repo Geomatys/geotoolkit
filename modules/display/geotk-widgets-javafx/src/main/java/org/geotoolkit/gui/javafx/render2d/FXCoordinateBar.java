@@ -23,7 +23,6 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.NumberFormat;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
@@ -37,7 +36,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.RowConstraints;
 import javafx.util.converter.LongStringConverter;
 import org.apache.sis.geometry.DirectPosition2D;
-import org.geotoolkit.gui.swing.render2d.control.JScaleCombo;
+import org.geotoolkit.internal.Loggers;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 
@@ -60,7 +59,7 @@ public class FXCoordinateBar extends GridPane {
                 cbox.setValue((long)scale);
                 cbox.valueProperty().addListener(action);
             } catch (TransformException ex) {
-                Logger.getLogger(JScaleCombo.class.getName()).log(Level.WARNING, null, ex);
+                Loggers.JAVAFX.log(Level.WARNING, null, ex);
             }
         }
     };
@@ -72,7 +71,7 @@ public class FXCoordinateBar extends GridPane {
                 try {
                     map.getCanvas().setGeographicScale((Long)newValue);
                 } catch (TransformException ex) {
-                    Logger.getLogger(JScaleCombo.class.getName()).log(Level.WARNING, null, ex);
+                    Loggers.JAVAFX.log(Level.WARNING, null, ex);
                 }
             }
         }

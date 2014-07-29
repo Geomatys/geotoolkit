@@ -23,12 +23,12 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.scene.image.Image;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.font.FontAwesomeIcons;
+import org.geotoolkit.font.IconBuilder;
 import org.geotoolkit.gui.javafx.chooser.FXFeatureStoreChooser;
 import org.geotoolkit.gui.javafx.render2d.FXMap;
 import org.geotoolkit.gui.javafx.render2d.FXMapAction;
-import org.geotoolkit.gui.swing.resource.FontAwesomeIcons;
-import org.geotoolkit.gui.swing.resource.IconBuilder;
-import org.geotoolkit.gui.swing.resource.MessageBundle;
+import org.geotoolkit.internal.GeotkFXBundle;
 import org.geotoolkit.internal.Loggers;
 import org.geotoolkit.map.MapLayer;
 
@@ -36,14 +36,15 @@ import org.geotoolkit.map.MapLayer;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class FXAddServerAction extends FXMapAction {
+public class FXAddServerStoreAction extends FXMapAction {
     public static final Image ICON = SwingFXUtils.toFXImage(IconBuilder.createImage(
             FontAwesomeIcons.ICON_PLUS_SQUARE_O, 16, FontAwesomeIcons.DEFAULT_COLOR), null);
     
     private final FXMap map;
 
-    public FXAddServerAction(FXMap map) {
-        super(map,MessageBundle.getString("chooserserver.label"),MessageBundle.getString("chooserserver.label"),ICON);
+    public FXAddServerStoreAction(FXMap map) {
+        super(map,GeotkFXBundle.getString(FXAddServerStoreAction.class,"label"),
+                GeotkFXBundle.getString(FXAddServerStoreAction.class,"label"),ICON);
         this.map = map;
     }
     

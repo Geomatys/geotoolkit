@@ -17,17 +17,17 @@
 
 package org.geotoolkit.gui.javafx.render2d.navigation;
 
-import org.geotoolkit.gui.javafx.render2d.FXMapAction;
-import org.geotoolkit.gui.javafx.render2d.FXCanvasHandler;
-import org.geotoolkit.gui.javafx.render2d.FXMap;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.scene.image.Image;
-import org.geotoolkit.gui.swing.resource.FontAwesomeIcons;
-import org.geotoolkit.gui.swing.resource.IconBuilder;
-import org.geotoolkit.gui.swing.resource.MessageBundle;
+import org.geotoolkit.font.FontAwesomeIcons;
+import org.geotoolkit.font.IconBuilder;
+import org.geotoolkit.gui.javafx.render2d.FXCanvasHandler;
+import org.geotoolkit.gui.javafx.render2d.FXMap;
+import org.geotoolkit.gui.javafx.render2d.FXMapAction;
+import org.geotoolkit.internal.GeotkFXBundle;
 
 /**
  *
@@ -38,7 +38,7 @@ public final class FXPanAction extends FXMapAction {
     public static final Image ICON = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_ARROWS, 16, FontAwesomeIcons.DEFAULT_COLOR), null);
     
     public FXPanAction(FXMap map, boolean infoOnClick) {
-        super(map,MessageBundle.getString("map_pan"),MessageBundle.getString("map_pan"),ICON);
+        super(map,GeotkFXBundle.getString(FXPanAction.class,"pan"),GeotkFXBundle.getString(FXPanAction.class,"pan"),ICON);
         this.infoOnClick = infoOnClick;
         
         map.getHandlerProperty().addListener(new ChangeListener<FXCanvasHandler>() {

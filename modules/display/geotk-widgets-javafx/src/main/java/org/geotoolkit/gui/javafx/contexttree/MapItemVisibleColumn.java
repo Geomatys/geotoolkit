@@ -25,9 +25,9 @@ import javafx.scene.control.TreeTableColumn;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.Border;
 import javafx.util.Callback;
+import org.geotoolkit.font.FontAwesomeIcons;
 import org.geotoolkit.gui.javafx.util.FXUtilities;
 import org.geotoolkit.gui.javafx.util.ToggleButtonTreeTableCell;
-import org.geotoolkit.gui.swing.resource.FontAwesomeIcons;
 
 /**
  *

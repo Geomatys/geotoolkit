@@ -35,7 +35,7 @@ public final class FXUtilities {
     public static final Font FONTAWESOME;
     
     static {
-        FONTAWESOME = Font.loadFont(FXUtilities.class.getResource("/org/geotoolkit/gui/swing/resource/fonticon/fontawesome-webfont.ttf").toExternalForm(), 16);
+        FONTAWESOME = Font.loadFont(FXUtilities.class.getResource("/org/geotoolkit/font/fontawesome-webfont.ttf").toExternalForm(), 16);
     }
     
     private FXUtilities() {}
