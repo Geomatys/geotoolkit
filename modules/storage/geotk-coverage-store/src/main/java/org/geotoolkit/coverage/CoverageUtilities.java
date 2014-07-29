@@ -469,7 +469,7 @@ public final class CoverageUtilities {
             Dimension gridSize = new Dimension( (int)(Math.ceil(gridWidth)), (int)(Math.ceil(gridHeight)));
 
             //check if we already have a mosaic at this scale
-            GridMosaic mosaic = null;
+            boolean mosaicFound = false;
             int index = 0;
             for (GridMosaic m : pyramid.getMosaics()) {
                 if (m.getScale() == scale) {
@@ -477,14 +477,15 @@ public final class CoverageUtilities {
                     upperleft = m.getUpperLeftCorner();
                     tileDim = m.getTileSize();
                     gridSize = m.getGridSize();
+                    mosaicFound = true;
                     break;
                 }
                 index++;
             }
 
-            if (mosaic == null) {
+            if (!mosaicFound) {
                 //create a new mosaic
-                mosaic = container.createMosaic(pyramid.getId(),gridSize, tileDim, upperleft, scale);
+                container.createMosaic(pyramid.getId(),gridSize, tileDim, upperleft, scale);
             }
         }
 
@@ -495,28 +496,16 @@ public final class CoverageUtilities {
      * Extract recursively the first GridCoverage2D from a GridCoverage object.
      * @param coverage a GridCoverage2D or GridCoverageStack
      * @return first GridCoverage2D. Can't be null.
-     * @throws org.geotoolkit.coverage.io.CoverageStoreException if GridCoverage2D not found or a empty GridCoverageStack
+     * @throws CoverageStoreException if GridCoverage2D not found or a empty GridCoverageStack
      */
-    public static GridCoverage2D firstSlice(final GridCoverage coverage) throws CoverageStoreException {
+    public static GridCoverage2D firstSlice(GridCoverage coverage) throws CoverageStoreException {
 
         if (coverage instanceof GridCoverage2D) {
             return (GridCoverage2D) coverage;
         } else if (coverage instanceof GridCoverageStack) {
             GridCoverageStack coverageStack = (GridCoverageStack) coverage;
-            GridGeometry gridGeometry = coverageStack.getGridGeometry();
-            GridEnvelope extent = gridGeometry.getExtent();
-            MathTransform gridToCRS = gridGeometry.getGridToCRS();
-
-            double[] coords = new double[extent.getDimension()];
-            try {
-                gridToCRS.transform(coords, 0, coords, 0, 1);
-            } catch (TransformException e) {
-                throw new CoverageStoreException(e.getMessage(), e);
-            }
-
-            List<Coverage> coverageList = coverageStack.coveragesAt(coords[coords.length - 1]);
-            if (!coverageList.isEmpty()) {
-                return firstSlice((GridCoverage)coverageList.get(0));
+            if (coverageStack.getStackSize() > 0) {
+                return firstSlice((GridCoverage) coverageStack.coverageAtIndex(0));
             } else {
                 throw new CoverageStoreException("Empty coverage list");
             }
