@@ -137,6 +137,7 @@ public class FXLayerChooser extends BorderPane{
                     final FeatureCollection collection = session.getFeatureCollection(QueryBuilder.all(name));
                     final MutableStyle style = RandomStyleBuilder.createRandomVectorStyle(collection.getFeatureType());
                     final FeatureMapLayer layer = MapBuilder.createFeatureLayer(collection, style);
+                    layer.setName(name.getLocalPart());
                     layer.setDescription(styleFactory.description(name.getLocalPart(), name.toString()));
                     layers.add(layer);
 
@@ -145,6 +146,7 @@ public class FXLayerChooser extends BorderPane{
                     final CoverageReference ref = store.getCoverageReference(name);
                     final MutableStyle style = styleFactory.style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER);
                     final CoverageMapLayer layer = MapBuilder.createCoverageLayer(ref, style);
+                    layer.setName(name.getLocalPart());
                     layer.setDescription(styleFactory.description(name.getLocalPart(), name.toString()));
                     layers.add(layer);
                 }

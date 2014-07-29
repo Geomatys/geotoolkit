@@ -16,21 +16,14 @@
  */
 package org.geotoolkit.gui.javafx.render2d.navigation;
 
-import java.awt.geom.NoninvertibleTransformException;
-import java.util.logging.Level;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.scene.image.Image;
-import org.geotoolkit.display.container.GraphicContainer;
-import org.geotoolkit.display2d.container.ContextContainer2D;
 import org.geotoolkit.font.FontAwesomeIcons;
 import org.geotoolkit.font.IconBuilder;
 import org.geotoolkit.gui.javafx.render2d.FXMap;
 import org.geotoolkit.gui.javafx.render2d.FXMapAction;
 import org.geotoolkit.internal.GeotkFXBundle;
-import org.geotoolkit.internal.Loggers;
-import org.opengis.geometry.Envelope;
-import org.opengis.referencing.operation.TransformException;
 
 /**
  *
@@ -46,15 +39,7 @@ public final class FXRepaintAction extends FXMapAction {
     @Override
     public void handle(ActionEvent event) {
         if (map != null) {
-            final GraphicContainer container = map.getCanvas().getContainer();
-            if (container instanceof ContextContainer2D) {
-                final Envelope rect = ((ContextContainer2D) container).getGraphicsEnvelope();
-                try {
-                    map.getCanvas().setVisibleArea(rect);
-                } catch (TransformException | IllegalArgumentException | NoninvertibleTransformException ex) {
-                    Loggers.JAVAFX.log(Level.WARNING, null, ex);
-                }
-            }
+            map.getCanvas().repaint();
         }
     }
     

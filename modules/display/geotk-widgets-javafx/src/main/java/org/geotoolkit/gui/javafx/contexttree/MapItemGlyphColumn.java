@@ -17,7 +17,7 @@
 
 package org.geotoolkit.gui.javafx.contexttree;
 
-import java.awt.Dimension;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.control.TreeTableColumn;
@@ -55,7 +55,11 @@ public class MapItemGlyphColumn extends TreeTableColumn<MapItem, MapItem>{
             super.updateItem(item, empty);
             
             if(item instanceof MapLayer){
-                final BufferedImage img = DefaultGlyphService.create(((MapLayer)item).getStyle(), new Dimension(24, 22), null);
+                final BufferedImage img = new BufferedImage(24, 22, BufferedImage.TYPE_INT_ARGB);
+                DefaultGlyphService.render(
+                        ((MapLayer)item).getStyle(), 
+                        new Rectangle(24, 22), 
+                        img.createGraphics(), (MapLayer)item);
                 button.setGraphic(new ImageView(SwingFXUtils.toFXImage(img,null)));
             }
             
