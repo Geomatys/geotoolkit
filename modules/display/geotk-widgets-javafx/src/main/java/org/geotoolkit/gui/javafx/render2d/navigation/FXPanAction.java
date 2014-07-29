@@ -17,6 +17,7 @@
 
 package org.geotoolkit.gui.javafx.render2d.navigation;
 
+import org.geotoolkit.gui.javafx.render2d.FXMapAction;
 import org.geotoolkit.gui.javafx.render2d.FXCanvasHandler;
 import org.geotoolkit.gui.javafx.render2d.FXMap;
 import javafx.beans.value.ChangeListener;

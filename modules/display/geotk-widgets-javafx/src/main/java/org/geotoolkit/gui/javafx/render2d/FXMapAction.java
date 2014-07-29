@@ -15,9 +15,8 @@
  *    Lesser General Public License for more details.
  */
 
-package org.geotoolkit.gui.javafx.render2d.navigation;
+package org.geotoolkit.gui.javafx.render2d;
 
-import org.geotoolkit.gui.javafx.render2d.FXMap;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;

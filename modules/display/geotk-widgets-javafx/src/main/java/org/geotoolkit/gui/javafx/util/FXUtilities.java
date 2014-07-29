@@ -60,6 +60,14 @@ public final class FXUtilities {
         }
     }
     
-    
+//    public ObservableValue create(){
+//        return new ObservableValueBase() {
+//
+//            @Override
+//            public Object getValue() {
+//                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+//            }
+//        };
+//    }
     
 }

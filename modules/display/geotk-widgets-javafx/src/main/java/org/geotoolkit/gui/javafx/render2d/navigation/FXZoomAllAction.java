@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.gui.javafx.render2d.navigation;
 
+import org.geotoolkit.gui.javafx.render2d.FXMapAction;
 import org.geotoolkit.gui.javafx.render2d.FXMap;
 import java.awt.geom.NoninvertibleTransformException;
 import java.util.logging.Level;
