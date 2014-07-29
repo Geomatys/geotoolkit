@@ -43,11 +43,11 @@ Performing a Geotoolkit.org release
   since it will contain information needed for the next release.
 
   Before to execute the following commands, set the <<<$GEOTK_HOME>>> environment variable to
-  your Geotk working directory (a clone of <<<http://hg.geotoolkit.org/geotoolkit>>>).
+  your Geotk working directory (a clone of <<<http://github.com/Geomatys/geotoolkit.git>>>).
 
---------------------------------------------------------------------------------------------------
-export GEOTK_HOME=(... insert the path to your http://hg.geotoolkit.org/geotoolkit clone here ...)
---------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------
+export GEOTK_HOME=(... insert the path to your http://github.com/Geomatys/geotoolkit.git clone here ...)
+--------------------------------------------------------------------------------------------------------
 
   Then execute:
 

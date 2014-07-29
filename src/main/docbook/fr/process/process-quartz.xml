@@ -31,7 +31,7 @@
 
         <example>
             <title>Utilisation de processus dans Quartz</title>
-            <link xlink:href="http://hg.geotoolkit.org/geotoolkit/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/processing/QuartzDemo.java">
+            <link xlink:href="https://raw.githubusercontent.com/Geomatys/geotoolkit/master/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/processing/QuartzDemo.java">
                 <acronym>geotoolkit/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/processing/QuartzDemo.java</acronym>
             </link>
         </example>

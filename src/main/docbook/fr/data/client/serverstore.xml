@@ -40,7 +40,7 @@
 
         <example>
             <title>Lister les différentes fabriques de connexion distante</title>
-            <link xlink:href="http://hg.geotoolkit.org/geotoolkit/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/clients/ListAllFactoriesDemo.java">
+            <link xlink:href="https://raw.githubusercontent.com/Geomatys/geotoolkit/master/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/clients/ListAllFactoriesDemo.java">
                 <acronym>geotoolkit/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/clients/ListAllFactoriesDemo.java</acronym>
             </link>
 

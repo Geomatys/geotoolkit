@@ -174,17 +174,17 @@
         <example>
             <title>Génération de rapport avec JasperReport</title>
             <para>
-                <link xlink:href="http://hg.geotoolkit.org/geotoolkit/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/rendering/ReportDemo.java">
+                <link xlink:href="https://raw.githubusercontent.com/Geomatys/geotoolkit/master/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/rendering/ReportDemo.java">
                     <acronym>geotoolkit/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/rendering/ReportDemo.java</acronym>
                 </link>
             </para>
             <para>
-                <link xlink:href="http://hg.geotoolkit.org/geotoolkit/files/tip/demos/geotk-demo-samples/src/main/resources/data/report/simpleReport.jrxml">
+                <link xlink:href="https://raw.githubusercontent.com/Geomatys/geotoolkit/master/demos/geotk-demo-samples/src/main/resources/data/report/simpleReport.jrxml">
                     <acronym>geotoolkit/demos/geotk-demo-samples/src/main/resources/data/report/simpleReport.jrxml</acronym>
                 </link>
             </para>
             <para>
-                <link xlink:href="http://hg.geotoolkit.org/geotoolkit/files/tip/demos/geotk-demo-samples/src/main/resources/data/report/complexReport.jrxml">
+                <link xlink:href="https://raw.githubusercontent.com/Geomatys/geotoolkit/master/demos/geotk-demo-samples/src/main/resources/data/report/complexReport.jrxml">
                     <acronym>geotoolkit/demos/geotk-demo-samples/src/main/java/resources/data/report/complexReport.jrxml</acronym>
                 </link>
             </para>

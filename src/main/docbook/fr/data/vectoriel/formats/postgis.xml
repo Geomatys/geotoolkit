@@ -11,7 +11,7 @@
 
     <example>
         <title>Connexion à une base PostGIS</title>
-        <link xlink:href="http://hg.geotoolkit.org/geotoolkit/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/datamodel/postgis/PostgisDemo.java">
+        <link xlink:href="https://raw.githubusercontent.com/Geomatys/geotoolkit/master/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/datamodel/postgis/PostgisDemo.java">
             <acronym>geotoolkit/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/datamodel/postgis/PostgisDemo.java</acronym>
         </link>
 

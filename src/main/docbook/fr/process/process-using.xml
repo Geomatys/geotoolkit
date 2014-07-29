@@ -17,7 +17,7 @@
     <example>
         <title>Exemple 1 : Trouver un processus.</title>
         <link
-            xlink:href="http://hg.geotoolkit.org/geotoolkit/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/processing/FindProcessDemo.java"
+            xlink:href="https://raw.githubusercontent.com/Geomatys/geotoolkit/master/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/processing/FindProcessDemo.java"
         >
             geotoolkit/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/processing/FindProcessDemo.java
         </link>
@@ -25,7 +25,7 @@
     <example>
         <title>Exemple 2 : Exécution d'un processus simple.</title>
         <link
-            xlink:href="http://hg.geotoolkit.org/geotoolkit/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/processing/AddDemo.java"
+            xlink:href="https://raw.githubusercontent.com/Geomatys/geotoolkit/master/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/processing/AddDemo.java"
         >
             geotoolkit/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/processing/AddDemo.java
         </link>
@@ -33,7 +33,7 @@
     <example>
         <title>Exemple 3 : Exécution d'un processus complex</title>
         <link
-            xlink:href="http://hg.geotoolkit.org/geotoolkit/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/processing/UnionDemo.java"
+            xlink:href="https://raw.githubusercontent.com/Geomatys/geotoolkit/master/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/processing/UnionDemo.java"
         >
             geotoolkit/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/processing/UnionDemo.java
         </link>

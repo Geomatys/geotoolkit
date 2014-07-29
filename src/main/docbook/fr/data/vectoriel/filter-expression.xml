@@ -69,12 +69,12 @@
            <title>Création de filtre standard et Javascript</title>
             <simplelist>
                 <member>
-                    <link xlink:href="http://hg.geotoolkit.org/geotoolkit/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/filter/FilterDemo.java">
+                    <link xlink:href="https://raw.githubusercontent.com/Geomatys/geotoolkit/master/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/filter/FilterDemo.java">
                         <acronym>geotoolkit/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/filter/FilterDemo.java</acronym>
                     </link>
                 </member>
                 <member>
-                    <link xlink:href="http://hg.geotoolkit.org/geotoolkit/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/filter/JavascriptFunctionDemo.java">
+                    <link xlink:href="https://raw.githubusercontent.com/Geomatys/geotoolkit/master/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/filter/JavascriptFunctionDemo.java">
                         <acronym>geotoolkit/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/filter/JavascriptFunctionDemo.java</acronym>
                     </link>
                 </member>

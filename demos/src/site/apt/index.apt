@@ -50,17 +50,17 @@ Geotoolkit.org demos
 
   * Metadata demonstration
 
-    * <<<{{{http://hg.geotoolkit.org/geotoolkit/files/tip/demos/geotk-simples/src/main/java/org/geotoolkit/demo/metadata/HelloWorld.java}HelloWorld}}>>>
+    * <<<{{{https://raw.githubusercontent.com/Geomatys/geotoolkit/master/demos/geotk-demo-samples/src/main/java/org/geotoolkit/demo/metadata/HelloWorld.java}HelloWorld}}>>>
       shows how to create a simple metadata object and marshal it to ISO 19139 compliant XML.
 
   * Referencing demonstration
 
-    * <<<{{{http://hg.geotoolkit.org/geotoolkit/files/tip/demos/geotk-simples/src/main/java/org/geotoolkit/demo/referencing/CoordinateConversion.java}CoordinateConversion}}>>>
+    * <<<{{{https://raw.githubusercontent.com/Geomatys/geotoolkit/master/demos/geotk-demo-samples/src/main/java/org/geotoolkit/demo/referencing/CoordinateConversion.java}CoordinateConversion}}>>>
       shows how to convert a coordinate from a <Geocentric> CRS to a <Projected> CRS (a World Mercator projection).
 
   * Coverage demonstration
 
-    * <<<{{{http://hg.geotoolkit.org/geotoolkit/files/tip/demos/geotk-simples/src/main/java/org/geotoolkit/demo/coverage/FloatRaster.java}FloatRaster}}>>>
+    * <<<{{{https://raw.githubusercontent.com/Geomatys/geotoolkit/master/demos/geotk-demo-samples/src/main/java/org/geotoolkit/demo/coverage/FloatRaster.java}FloatRaster}}>>>
       shows how to create an image from a matrix of floating point values.
 
 
@@ -88,5 +88,5 @@ Geotoolkit.org demos
 
   * Referencing demonstration
 
-    * <<<{{{http://hg.geotoolkit.org/geotoolkit/files/tip/demos/geotk-simples/src/main/groovy/org/geotoolkit/demo/referencing/geo2utm.groovy}geo2utm}}>>>
+    * <<<{{{https://raw.githubusercontent.com/Geomatys/geotoolkit/master/demos/geotk-demo-samples/src/main/groovy/org/geotoolkit/demo/referencing/geo2utm.groovy}geo2utm}}>>>
       shows how to convert the coordinates in a CSV file from a <Geocentric> CRS to a <UTM zone 10N> CRS.

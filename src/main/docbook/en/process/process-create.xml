@@ -32,7 +32,7 @@
         </para>
         <example>
             <title>Code to create a registry</title>
-            <link xlink:href="http://hg.geotoolkit.org/geotoolkit/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/processing/registry/DemoProcessRegistry.java" >
+            <link xlink:href="https://raw.githubusercontent.com/Geomatys/geotoolkit/master/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/processing/registry/DemoProcessRegistry.java" >
                 geotoolkit/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/processing/registry/DemoProcessRegistry.java
             </link>
         </example>
@@ -125,7 +125,7 @@
 
         <example>
             <title>Code to create ProcessDescriptor for an Addition</title>
-            <link xlink:href="http://hg.geotoolkit.org/geotoolkit/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/processing/registry/AddDescriptor.java" >
+            <link xlink:href="https://raw.githubusercontent.com/Geomatys/geotoolkit/master/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/processing/registry/AddDescriptor.java" >
                 geotoolkit/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/processing/registry/AddDesciptor.java
             </link>
         </example>

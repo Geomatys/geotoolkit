@@ -25,7 +25,7 @@
 
         <example>
             <title>Using a CoverageReader</title>
-            <link xlink:href="http://hg.geotoolkit.org/geotoolkit/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/coverage/CoverageReaderDemo.java">
+            <link xlink:href="https://raw.githubusercontent.com/Geomatys/geotoolkit/master/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/coverage/CoverageReaderDemo.java">
                 <acronym>geotoolkit/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/coverage/CoverageReaderDemo.java</acronym>
             </link>
         </example>

@@ -12,7 +12,7 @@
 
     <example>
         <title>Connecting to WMS server</title>
-        <link xlink:href="http://hg.geotoolkit.org/geotoolkit/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/clients/wms/WMSClientDemo.java ">
+        <link xlink:href="https://raw.githubusercontent.com/Geomatys/geotoolkit/master/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/clients/wms/WMSClientDemo.java ">
             <acronym>geotoolkit/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/clients/wms/WMSClientDemo.java   </acronym>
         </link>
     </example>

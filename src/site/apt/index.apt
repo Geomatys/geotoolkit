@@ -83,12 +83,12 @@ The Geotoolkit.org library
 
 * Geotoolkit.org Source
 
-  Geotk is hosted on its own mercurial source code repository,
-  {{{http://hg.geotoolkit.org}http://hg.geotoolkit.org/}}. A complete copy of the repository can be
-  'cloned' using the command:
+  Geotk is hosted on a GitHub source code repository,
+  {{{http://github.com/Geomatys/geotoolkit.git}http://github.com/Geomatys/geotoolkit.git}}.
+  A complete copy of the repository can be 'cloned' using the command:
 
 -----------------------------------------------------------------------------------
-hg clone http://hg.geotoolkit.org/geotoolkit
+git clone http://github.com/Geomatys/geotoolkit.git
 -----------------------------------------------------------------------------------
 
   The mercurial clone will contain both the <repository> with the fully history (in the hidden

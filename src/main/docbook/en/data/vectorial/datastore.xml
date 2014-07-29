@@ -63,7 +63,7 @@
         </para>
         <example>
             <title>List the different factories datastore</title>
-            <link xlink:href="http://hg.geotoolkit.org/geotoolkit/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/datamodel/ListAllFactoriesDemo.java">
+            <link xlink:href="https://raw.githubusercontent.com/Geomatys/geotoolkit/master/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/datamodel/ListAllFactoriesDemo.java">
                 <acronym>geotoolkit/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/datamodel/ListAllFactoriesDemo.java</acronym>
             </link>
 
@@ -77,20 +77,20 @@
             <title>Creating datastore in memory</title>
             <simplelist>
                 <member>
-                    <link xlink:href="http://hg.geotoolkit.org/geotoolkit/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/datamodel/MemoryDataStoreDemo.java">
+                    <link xlink:href="https://raw.githubusercontent.com/Geomatys/geotoolkit/master/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/datamodel/MemoryDataStoreDemo.java">
                         <acronym>geotoolkit/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/datamodel/MemoryDataStoreDemo.java</acronym>
                     </link>
 
                 </member>
 
                 <member>
-                    <link xlink:href="http://hg.geotoolkit.org/geotoolkit/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/datamodel/DataStoreReadingDemo.java">
+                    <link xlink:href="https://raw.githubusercontent.com/Geomatys/geotoolkit/master/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/datamodel/DataStoreReadingDemo.java">
                         <acronym>/geotk_pending/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/datamodel/DataStoreReadingDemo.java</acronym>
                     </link>
                 </member>
 
                 <member>
-                    <link xlink:href="http://hg.geotoolkit.org/geotoolkit/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/datamodel/DataStoreWritingDemo.java">
+                    <link xlink:href="https://raw.githubusercontent.com/Geomatys/geotoolkit/master/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/datamodel/DataStoreWritingDemo.java">
                         <acronym>/geotk_pending/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/datamodel/DataStoreWritingDemo.java</acronym>
                     </link>
 

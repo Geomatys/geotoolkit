@@ -55,7 +55,7 @@
         </title>
         <example>
             <title>Création de géometrie JTS </title>
-            <link xlink:href="http://hg.geotoolkit.org/geotoolkit/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/geometry/JTSDemo.java">
+            <link xlink:href="https://raw.githubusercontent.com/Geomatys/geotoolkit/master/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/geometry/JTSDemo.java">
                 <acronym>geotoolkit/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/geometry/JTSDemo.java</acronym>
             </link>
         </example>
@@ -169,7 +169,7 @@
         <title>SRID</title>
         <example>
             <title>Associer un SRID à une geometrie : </title>
-            <link xlink:href="http://hg.geotoolkit.org/geotoolkit/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/geometry/SRIDDemo.java">
+            <link xlink:href="https://raw.githubusercontent.com/Geomatys/geotoolkit/master/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/geometry/SRIDDemo.java">
                 <acronym>geotoolkit/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/geometry/SRIDDemo.java</acronym>
             </link>
         </example>

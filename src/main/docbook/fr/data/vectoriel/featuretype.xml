@@ -94,7 +94,7 @@
         <title>FeatureTypeBuilder</title>
         <example>
             <title>Création de FeatureType</title>
-            <link xlink:href="http://hg.geotoolkit.org/geotoolkit/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/datamodel/FeatureTypeBuilderDemo.java">
+            <link xlink:href="https://raw.githubusercontent.com/Geomatys/geotoolkit/master/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/datamodel/FeatureTypeBuilderDemo.java">
                 <acronym>geotoolkit/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/datamodel/FeatureTypeBuilderDemo.java</acronym>
             </link>
         </example>

@@ -98,7 +98,7 @@ GEOGCS["WGS84(DD)",
   The first example application in this introduction will be quite simple. This simple example uses
   the <<<org.geotoolkit.referencing.CRS>>> utility class to convert a coordinate from the values for
   one Coordinate Reference System into another. The Java class given below, which can be downloaded
-  {{{http://hg.geotoolkit.org/geotoolkit/files/tip/demos/geotk-simples/src/main/java/org/geotoolkit/demo/referencing/CoordinateConversion.java}here}},
+  {{{https://raw.githubusercontent.com/Geomatys/geotoolkit/master/demos/geotk-simples/src/main/java/org/geotoolkit/demo/referencing/CoordinateConversion.java}here}},
   describes a location on the surface of the earth using a <<<DirectPosition>>> and then converts
   that description of the location into a different description of the same location but using a
   differnent coordinate system.
