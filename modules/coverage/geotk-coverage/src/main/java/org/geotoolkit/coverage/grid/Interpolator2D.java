@@ -308,7 +308,7 @@ public final class Interpolator2D extends Calculator2D {
             final double x = pixel.getX();
             final double y = pixel.getY();
             if (!Double.isNaN(x) && !Double.isNaN(y)) {
-                dest = interpolate(x, y, dest, 0, image.getNumBands());
+                dest = interpolate(x, y, dest, 0, image.getSampleModel().getNumBands());
                 if (dest != null) {
                     return dest;
                 }
@@ -339,7 +339,7 @@ public final class Interpolator2D extends Calculator2D {
             final double x = pixel.getX();
             final double y = pixel.getY();
             if (!Double.isNaN(x) && !Double.isNaN(y)) {
-                dest = interpolate(x, y, dest, 0, image.getNumBands());
+                dest = interpolate(x, y, dest, 0, image.getSampleModel().getNumBands());
                 if (dest != null) {
                     return dest;
                 }
@@ -370,7 +370,7 @@ public final class Interpolator2D extends Calculator2D {
             final double x = pixel.getX();
             final double y = pixel.getY();
             if (!Double.isNaN(x) && !Double.isNaN(y)) {
-                dest = interpolate(x, y, dest, 0, image.getNumBands());
+                dest = interpolate(x, y, dest, 0, image.getSampleModel().getNumBands());
                 if (dest != null) {
                     return dest;
                 }

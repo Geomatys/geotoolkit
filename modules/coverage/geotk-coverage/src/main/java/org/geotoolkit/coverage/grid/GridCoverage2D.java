@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.coverage.grid;
 
-import java.awt.Point;
+import java.awt.*;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.Raster;
@@ -67,7 +67,6 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.lang.Debug;
 
-import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
 import static org.geotoolkit.util.collection.XCollections.unmodifiableOrCopy;
 
 
@@ -125,7 +124,7 @@ public class GridCoverage2D extends AbstractGridCoverage implements RenderedCove
     /**
      * The raster data.
      */
-    protected final transient PlanarImage image;
+    protected final transient RenderedImage image;
 
     /**
      * The serialized image, as an instance of {@link SerializableRenderedImage}.
@@ -240,22 +239,7 @@ public class GridCoverage2D extends AbstractGridCoverage implements RenderedCove
                           final Hints                   hints)
             throws IllegalArgumentException
     {
-        this(name, PlanarImage.wrapRenderedImage(image), gridGeometry, bands, sources, properties, hints);
-    }
-
-    /**
-     * Implementation of the public constructor, with the image type forced to {@code PlanarImage}.
-     */
-    private GridCoverage2D(final CharSequence             name,
-                           final PlanarImage             image,
-                                 GridGeometry2D   gridGeometry,
-                           final GridSampleDimension[]   bands,
-                           final GridCoverage[]        sources,
-                           final Map<?,?>           properties,
-                           final Hints                   hints)
-            throws IllegalArgumentException
-    {
-        super(name, gridGeometry.getCoordinateReferenceSystem(), sources, image, properties);
+        super(name, gridGeometry.getCoordinateReferenceSystem(), sources, null, properties);
         this.image = image;
         /*
          * Wraps the user-supplied sample dimensions into instances of RenderedSampleDimension. This
@@ -264,7 +248,7 @@ public class GridCoverage2D extends AbstractGridCoverage implements RenderedCove
          * an inconsistency is found in user-supplied sample dimensions, an IllegalArgumentException
          * is thrown.
          */
-        sampleDimensions = new GridSampleDimension[image.getNumBands()];
+        sampleDimensions = new GridSampleDimension[image.getSampleModel().getNumBands()];
         RenderedSampleDimension.create(name, image, bands, sampleDimensions);
         /*
          * Computes the grid envelope if it was not explicitly provided. The range will be inferred
@@ -614,8 +598,8 @@ public class GridCoverage2D extends AbstractGridCoverage implements RenderedCove
         if (!Double.isNaN(fx) && !Double.isNaN(fy)) {
             final int x = (int) Math.round(fx);
             final int y = (int) Math.round(fy);
-            if (image.getBounds().contains(x,y)) { // getBounds() returns a cached instance.
-                return image.getTile(image.XToTileX(x), image.YToTileY(y)).getPixel(x, y, dest);
+            if (getBounds().contains(x,y)) { // getBounds() returns a cached instance.
+                return image.getTile(XToTileX(x), YToTileY(y)).getPixel(x, y, dest);
             }
         }
         throw new PointOutsideCoverageException(formatEvaluateError(coord, true));
@@ -640,8 +624,8 @@ public class GridCoverage2D extends AbstractGridCoverage implements RenderedCove
         if (!Double.isNaN(fx) && !Double.isNaN(fy)) {
             final int x = (int) Math.round(fx);
             final int y = (int) Math.round(fy);
-            if (image.getBounds().contains(x,y)) { // getBounds() returns a cached instance.
-                return image.getTile(image.XToTileX(x), image.YToTileY(y)).getPixel(x, y, dest);
+            if (getBounds().contains(x,y)) { // getBounds() returns a cached instance.
+                return image.getTile(XToTileX(x), YToTileY(y)).getPixel(x, y, dest);
             }
         }
         throw new PointOutsideCoverageException(formatEvaluateError(coord, true));
@@ -666,8 +650,8 @@ public class GridCoverage2D extends AbstractGridCoverage implements RenderedCove
         if (!Double.isNaN(fx) && !Double.isNaN(fy)) {
             final int x = (int) Math.round(fx);
             final int y = (int) Math.round(fy);
-            if (image.getBounds().contains(x,y)) { // getBounds() returns a cached instance.
-                return image.getTile(image.XToTileX(x), image.YToTileY(y)).getPixel(x, y, dest);
+            if (getBounds().contains(x,y)) { // getBounds() returns a cached instance.
+                return image.getTile(XToTileX(x), YToTileY(y)).getPixel(x, y, dest);
             }
         }
         throw new PointOutsideCoverageException(formatEvaluateError(coord, true));
@@ -692,9 +676,9 @@ public class GridCoverage2D extends AbstractGridCoverage implements RenderedCove
         pixel         = gridGeometry.inverseTransform(pixel);
         final int   x = (int) Math.round(pixel.getX());
         final int   y = (int) Math.round(pixel.getY());
-        if (image.getBounds().contains(x,y)) { // getBounds() returns a cached instance.
-            final int  numBands = image.getNumBands();
-            final Raster raster = image.getTile(image.XToTileX(x), image.YToTileY(y));
+        if (getBounds().contains(x,y)) { // getBounds() returns a cached instance.
+            final int  numBands = image.getSampleModel().getNumBands();
+            final Raster raster = image.getTile(XToTileX(x), YToTileY(y));
             final int  datatype = image.getSampleModel().getDataType();
             final StringBuilder buffer = new StringBuilder();
             buffer.append('(').append(x).append(',').append(y).append(")=[");
@@ -756,6 +740,42 @@ public class GridCoverage2D extends AbstractGridCoverage implements RenderedCove
         } else {
             return super.getRenderableImage(xAxis, yAxis);
         }
+    }
+
+    /**
+     * Utility method to convert image bounds as {@link java.awt.Rectangle}.
+     * @return {@link java.awt.Rectangle} bounds.
+     */
+    private Rectangle getBounds() {
+        return new Rectangle(image.getMinX(), image.getMinY(), image.getWidth(), image.getHeight());
+    }
+
+    /**
+     * Converts a pixel's X coordinate into a horizontal tile index.
+     * @param x pixel x coordinate
+     * @return tile x coordinate
+     */
+    private int XToTileX(int x) {
+        int tileWidth = image.getTileWidth();
+        x -= image.getTileGridXOffset();
+        if (x < 0) {
+            x += 1 - tileWidth;
+        }
+        return x/tileWidth;
+    }
+
+    /**
+     * Converts a pixel's Y coordinate into a vertical tile index.
+     * @param y pixel x coordinate
+     * @return tile y coordinate
+     */
+    private int YToTileY(int y) {
+        int tileHeight = image.getTileHeight();
+        y -= image.getTileGridYOffset();
+        if (y < 0) {
+            y += 1 - tileHeight;
+        }
+        return y/tileHeight;
     }
 
     /**
@@ -838,17 +858,14 @@ public class GridCoverage2D extends AbstractGridCoverage implements RenderedCove
     /**
      * Hints that the given area may be needed in the near future. Some implementations
      * may spawn a thread or threads to compute the tiles while others may ignore the hint.
-     *
+     * TODO implement it
      * @param area A rectangle indicating which geographic area to prefetch.
      *             This area's coordinates must be expressed according the
      *             grid coverage's coordinate reference system, as given by
      *             {@link #getCoordinateReferenceSystem}.
+     * @deprecated do not use anymore
      */
     public void prefetch(final Rectangle2D area) {
-        final Point[] tileIndices = image.getTileIndices(gridGeometry.inverseTransform(area));
-        if (tileIndices != null) {
-            image.prefetchTiles(tileIndices);
-        }
     }
 
     /**
@@ -1093,12 +1110,9 @@ public class GridCoverage2D extends AbstractGridCoverage implements RenderedCove
      * Disposes only the {@linkplain #image}, not the views. This method is invoked by
      * {@link ViewsManager#dispose}. This method checks the set of every sinks,
      * which may or may not be {@link RenderedImage}s. If there is no sinks, we can process.
+     * @deprecated do not use anymore
      */
     final synchronized boolean disposeImage(final boolean force) {
-        if (!force && !isNullOrEmpty(image.getSinks())) {
-            return false;
-        }
-        image.dispose();
         return true;
     }
 
