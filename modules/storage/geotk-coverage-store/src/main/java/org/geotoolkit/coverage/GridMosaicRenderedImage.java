@@ -59,14 +59,9 @@ public class GridMosaicRenderedImage implements RenderedImage {
     private final Rectangle gridRange;
     
     /**
-     * The first tile read as an image to initialize RenderedImage parameter
+     * The color model of the mosaic rendered image
      */
-    private RenderedImage firstTileImage = null;
-
-    /**
-     * The empty buffer use for missing tile
-     */
-    private DataBuffer emptyBuffer = null;
+    private ColorModel colorModel = null;
 
     /**
      * The sample model of the mosaic rendered image
@@ -96,10 +91,17 @@ public class GridMosaicRenderedImage implements RenderedImage {
         }
         this.mosaic = mosaic;
         this.gridRange = gridRange;
+
+        RenderedImage firstTile = getFirstTile();
+        if (firstTile != null) {
+            this.sampleModel = firstTile.getSampleModel();
+            this.colorModel = firstTile.getColorModel();
+        }
     }
 
-    private void readFirstTile() {
-        if (firstTileImage == null && emptyBuffer == null) {
+    private RenderedImage getFirstTile() {
+        RenderedImage firstTile = null;
+        if (colorModel == null && sampleModel == null) {
             try {
                 //search the first non missing tile of the Mosaic
                 TileReference tile = null;
@@ -120,15 +122,14 @@ public class GridMosaicRenderedImage implements RenderedImage {
                 }
 
                 if (tile != null) {
+
                     if (tile.getInput() instanceof RenderedImage) {
-                        firstTileImage = (RenderedImage) tile.getInput();
+                        firstTile = (RenderedImage) tile.getInput();
                     } else {
                         final ImageReader reader = tile.getImageReader();
-                        firstTileImage = reader.read(0);
+                        firstTile = reader.read(0);
                         reader.dispose();
                     }
-
-                    emptyBuffer = firstTileImage.getSampleModel().createDataBuffer();
                 }
             } catch (IOException e) {
                 throw new IllegalArgumentException("First tile can't be read.", e);
@@ -136,6 +137,7 @@ public class GridMosaicRenderedImage implements RenderedImage {
                 throw new IllegalArgumentException("Input mosaic doesn't have any tile.", e);
             }
         }
+        return firstTile;
     }
 
     /**
@@ -154,105 +156,162 @@ public class GridMosaicRenderedImage implements RenderedImage {
         return (Rectangle) gridRange.clone();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Vector<RenderedImage> getSources() {
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Object getProperty(String name) {
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String[] getPropertyNames() {
         return new String[0];
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ColorModel getColorModel() {
-        readFirstTile();
-        if (firstTileImage != null) {
-            return firstTileImage.getColorModel();
+        if (colorModel == null) {
+            RenderedImage firstTile = getFirstTile();
+            if (firstTile != null) {
+                this.colorModel = firstTile.getColorModel();
+            }
         }
 
-        return null;
+        return this.colorModel;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public SampleModel getSampleModel() {
-        readFirstTile();
-        if (sampleModel == null && firstTileImage != null) {
-            //sample model is for ONE tile, not the full image.
-            //javadoc is unclear on this, but in the code it works this way.
-            sampleModel = firstTileImage.getSampleModel();
+
+        if (sampleModel == null) {
+            RenderedImage firstTile = getFirstTile();
+            if (firstTile != null) {
+                this.sampleModel = firstTile.getSampleModel();
+            }
         }
-        return sampleModel;
+
+        return this.sampleModel;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getWidth() {
         return gridRange.width * this.mosaic.getTileSize().width;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getHeight() {
         return gridRange.height * this.mosaic.getTileSize().height;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getMinX() {
         return 0;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getMinY() {
         return 0;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getNumXTiles() {
         return  gridRange.width;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getNumYTiles() {
         return  gridRange.height;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getMinTileX() {
         return 0;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getMinTileY() {
         return 0;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getTileWidth() {
         return this.mosaic.getTileSize().width;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getTileHeight() {
         return this.mosaic.getTileSize().width;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getTileGridXOffset() {
         return 0;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getTileGridYOffset() {
         return 0;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Raster getTile(int tileX, int tileY) {
-        readFirstTile();
         tileX += gridRange.x;
         tileY += gridRange.y;
 
@@ -282,7 +341,7 @@ public class GridMosaicRenderedImage implements RenderedImage {
 
                 if(buffer==null){
                     //create an empty buffer
-                    buffer = emptyBuffer;
+                    buffer = getSampleModel().createDataBuffer();
                 }
 
                 //create a raster from tile image with tile position offset.
@@ -309,105 +368,117 @@ public class GridMosaicRenderedImage implements RenderedImage {
     private TileReference getTileReference(int x, int y) throws DataStoreException{
         return mosaic.getTile(x+gridRange.x,y+gridRange.y,null);
     }
-    
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Raster getData() {
-        readFirstTile();
-        final Raster rasterOut = firstTileImage.getTile(0, 0).createCompatibleWritableRaster(getWidth(), getHeight());
+        final RenderedImage firstTile = getFirstTile();
+        Raster rasterOut = null;
+        if (firstTile != null) {
+            rasterOut = firstTile.getTile(0, 0).createCompatibleWritableRaster(getWidth(), getHeight());
 
-        // Clear dataBuffer to 0 value for all bank
-        for (int s=0; s<rasterOut.getDataBuffer().getSize(); s++){
-            for (int b=0; b<rasterOut.getDataBuffer().getNumBanks(); b++){
-                rasterOut.getDataBuffer().setElem(b, s, 0);
-            }
-        }
-
-        try {
-
-            for (int y=0; y<this.getNumYTiles(); y++){
-                for (int x=0; x<this.getNumYTiles(); x++){
-                    if (!isTileMissing(x, y)){
-                        final TileReference tile = getTileReference(x, y);
-                        final RenderedImage sourceImg;
-
-                        if (tile.getInput() instanceof RenderedImage) {
-                            sourceImg = (RenderedImage) tile.getInput();
-                        } else {
-                            sourceImg = tile.getImageReader().read(tile.getImageIndex());
-                        }
-
-                        final Raster rasterIn = sourceImg.getData();
-
-                        rasterOut.getSampleModel().setDataElements(x*this.getTileWidth(), y*this.getTileHeight(), this.getTileWidth(), this.getTileHeight(),
-                                rasterIn.getSampleModel().getDataElements(0, 0, this.getTileWidth(), this.getTileHeight(), null, rasterIn.getDataBuffer()),
-                                rasterOut.getDataBuffer());
-
-                    }
+            // Clear dataBuffer to 0 value for all bank
+            for (int s = 0; s < rasterOut.getDataBuffer().getSize(); s++) {
+                for (int b = 0; b < rasterOut.getDataBuffer().getNumBanks(); b++) {
+                    rasterOut.getDataBuffer().setElem(b, s, 0);
                 }
             }
 
-        } catch (Exception ex) {
-            LOGGER.log(Level.WARNING, "", ex);
+            try {
+
+                for (int y = 0; y < this.getNumYTiles(); y++) {
+                    for (int x = 0; x < this.getNumYTiles(); x++) {
+                        if (!isTileMissing(x, y)) {
+                            final TileReference tile = getTileReference(x, y);
+                            final RenderedImage sourceImg;
+
+                            if (tile.getInput() instanceof RenderedImage) {
+                                sourceImg = (RenderedImage) tile.getInput();
+                            } else {
+                                sourceImg = tile.getImageReader().read(tile.getImageIndex());
+                            }
+
+                            final Raster rasterIn = sourceImg.getData();
+
+                            rasterOut.getSampleModel().setDataElements(x * this.getTileWidth(), y * this.getTileHeight(), this.getTileWidth(), this.getTileHeight(),
+                                    rasterIn.getSampleModel().getDataElements(0, 0, this.getTileWidth(), this.getTileHeight(), null, rasterIn.getDataBuffer()),
+                                    rasterOut.getDataBuffer());
+
+                        }
+                    }
+                }
+
+            } catch (Exception ex) {
+                LOGGER.log(Level.WARNING, "", ex);
+            }
         }
         return rasterOut;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Raster getData(Rectangle rect) {
-        readFirstTile();
-        final Raster rasterOut = firstTileImage.getTile(0, 0).createCompatibleWritableRaster(rect.width, rect.height);
+        final RenderedImage firstTile = getFirstTile();
+        Raster rasterOut = null;
+        if (firstTile != null) {
+            rasterOut = firstTile.getTile(0, 0).createCompatibleWritableRaster(rect.width, rect.height);
 
-        // Clear dataBuffer to 0 value for all bank
-        for (int s=0; s<rasterOut.getDataBuffer().getSize(); s++){
-            for (int b=0; b<rasterOut.getDataBuffer().getNumBanks(); b++){
-                rasterOut.getDataBuffer().setElem(b, s, 0);
-            }
-        }
-
-        try {
-            final Point upperLeftPosition = this.getPositionOf(rect.x, rect.y);
-            final Point lowerRightPosition = this.getPositionOf(rect.x+rect.width-1, rect.y+rect.height-1);
-
-            for (int y=Math.max(upperLeftPosition.y,0); y<Math.min(lowerRightPosition.y+1,this.getNumYTiles()); y++){
-                for (int x=Math.max(upperLeftPosition.x,0); x<Math.min(lowerRightPosition.x+1, this.getNumXTiles()); x++){
-                    if (!isTileMissing(x, y)){
-                        final TileReference tile = getTileReference(x, y);
-                        final Rectangle tileRect = new Rectangle(x*this.getTileWidth(), y*this.getTileHeight(), this.getTileWidth(), this.getTileHeight());
-
-                        final int minX, maxX, minY, maxY;
-                        minX = XMath.clamp(rect.x, tileRect.x, tileRect.x + tileRect.width);
-                        maxX = XMath.clamp(rect.x+rect.width, tileRect.x, tileRect.x+tileRect.width);
-                        minY = XMath.clamp(rect.y,            tileRect.y, tileRect.y+tileRect.height);
-                        maxY = XMath.clamp(rect.y+rect.height,tileRect.y, tileRect.y+tileRect.height);
-
-                        final Rectangle rectIn = new Rectangle(minX, minY, maxX-minX, maxY-minY);
-                        rectIn.translate(-tileRect.x, -tileRect.y);
-                        final Rectangle rectOut = new Rectangle(minX, minY, maxX-minX, maxY-minY);
-                        rectOut.translate(-rect.x, -rect.y);
-
-                        if (rectIn.width <= 0 || rectIn.height <= 0 || rectOut.width <= 0 || rectOut.height <= 0){
-                            continue;
-                        }
-
-                        final RenderedImage sourceImg;
-                        if (tile.getInput() instanceof RenderedImage) {
-                            sourceImg = (RenderedImage) tile.getInput();
-                        } else {
-                            sourceImg = tile.getImageReader().read(tile.getImageIndex());
-                        }
-
-                        final Raster rasterIn = sourceImg.getData();
-
-                        rasterOut.getSampleModel().setDataElements(rectOut.x, rectOut.y, rectOut.width, rectOut.height,
-                                rasterIn.getSampleModel().getDataElements(rectIn.x, rectIn.y, rectIn.width, rectIn.height, null, rasterIn.getDataBuffer()),
-                                rasterOut.getDataBuffer());
-
-                    }
+            // Clear dataBuffer to 0 value for all bank
+            for (int s = 0; s < rasterOut.getDataBuffer().getSize(); s++) {
+                for (int b = 0; b < rasterOut.getDataBuffer().getNumBanks(); b++) {
+                    rasterOut.getDataBuffer().setElem(b, s, 0);
                 }
             }
 
-        } catch (Exception ex) {
-            LOGGER.log(Level.WARNING, "", ex);
+            try {
+                final Point upperLeftPosition = this.getPositionOf(rect.x, rect.y);
+                final Point lowerRightPosition = this.getPositionOf(rect.x + rect.width - 1, rect.y + rect.height - 1);
+
+                for (int y = Math.max(upperLeftPosition.y, 0); y < Math.min(lowerRightPosition.y + 1, this.getNumYTiles()); y++) {
+                    for (int x = Math.max(upperLeftPosition.x, 0); x < Math.min(lowerRightPosition.x + 1, this.getNumXTiles()); x++) {
+                        if (!isTileMissing(x, y)) {
+                            final TileReference tile = getTileReference(x, y);
+                            final Rectangle tileRect = new Rectangle(x * this.getTileWidth(), y * this.getTileHeight(), this.getTileWidth(), this.getTileHeight());
+
+                            final int minX, maxX, minY, maxY;
+                            minX = XMath.clamp(rect.x, tileRect.x, tileRect.x + tileRect.width);
+                            maxX = XMath.clamp(rect.x + rect.width, tileRect.x, tileRect.x + tileRect.width);
+                            minY = XMath.clamp(rect.y, tileRect.y, tileRect.y + tileRect.height);
+                            maxY = XMath.clamp(rect.y + rect.height, tileRect.y, tileRect.y + tileRect.height);
+
+                            final Rectangle rectIn = new Rectangle(minX, minY, maxX - minX, maxY - minY);
+                            rectIn.translate(-tileRect.x, -tileRect.y);
+                            final Rectangle rectOut = new Rectangle(minX, minY, maxX - minX, maxY - minY);
+                            rectOut.translate(-rect.x, -rect.y);
+
+                            if (rectIn.width <= 0 || rectIn.height <= 0 || rectOut.width <= 0 || rectOut.height <= 0) {
+                                continue;
+                            }
+
+                            final RenderedImage sourceImg;
+                            if (tile.getInput() instanceof RenderedImage) {
+                                sourceImg = (RenderedImage) tile.getInput();
+                            } else {
+                                sourceImg = tile.getImageReader().read(tile.getImageIndex());
+                            }
+
+                            final Raster rasterIn = sourceImg.getData();
+
+                            rasterOut.getSampleModel().setDataElements(rectOut.x, rectOut.y, rectOut.width, rectOut.height,
+                                    rasterIn.getSampleModel().getDataElements(rectIn.x, rectIn.y, rectIn.width, rectIn.height, null, rasterIn.getDataBuffer()),
+                                    rasterOut.getDataBuffer());
+
+                        }
+                    }
+                }
+
+            } catch (Exception ex) {
+                LOGGER.log(Level.WARNING, "", ex);
+            }
         }
         return rasterOut;
     }
@@ -427,6 +498,9 @@ public class GridMosaicRenderedImage implements RenderedImage {
         return new Point(posX, posY);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public WritableRaster copyData(WritableRaster raster) {
         return null;
