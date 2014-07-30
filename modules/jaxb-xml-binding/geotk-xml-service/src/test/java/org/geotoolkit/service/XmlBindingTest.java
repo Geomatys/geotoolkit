@@ -29,6 +29,7 @@ import javax.xml.bind.Unmarshaller;
 import org.apache.sis.metadata.iso.service.DefaultOperationMetadata;
 import org.apache.sis.util.iso.DefaultNameFactory;
 import org.apache.sis.metadata.iso.service.DefaultParameter;
+import org.apache.sis.metadata.iso.service.DefaultServiceIdentification;
 import org.apache.sis.xml.MarshallerPool;
 
 import org.junit.*;
@@ -48,7 +49,7 @@ public class XmlBindingTest {
 
     @Before
     public void setUp() throws JAXBException {
-        pool = new MarshallerPool(JAXBContext.newInstance(DefaultMetadata.class, org.geotoolkit.service.ServiceIdentificationImpl.class), null);
+        pool = new MarshallerPool(JAXBContext.newInstance(DefaultMetadata.class), null);
         unmarshaller = pool.acquireUnmarshaller();
         marshaller   = pool.acquireMarshaller();
     }
@@ -99,10 +100,10 @@ public class XmlBindingTest {
         "</srv:SV_ServiceIdentification>" + '\n';
 
         Object obj = unmarshaller.unmarshal(new StringReader(xml));
-        assertTrue(obj instanceof ServiceIdentificationImpl);
-        ServiceIdentificationImpl result = (ServiceIdentificationImpl) obj;
+        assertTrue(obj instanceof DefaultServiceIdentification);
+        DefaultServiceIdentification result = (DefaultServiceIdentification) obj;
 
-        ServiceIdentificationImpl expResult = new ServiceIdentificationImpl();
+        DefaultServiceIdentification expResult = new DefaultServiceIdentification();
 
         DefaultParameter params = new DefaultParameter();
         DefaultNameFactory factory = new DefaultNameFactory();
@@ -134,7 +135,7 @@ public class XmlBindingTest {
      */
     @Test
     public void marshallingTest() throws Exception {
-        ServiceIdentificationImpl servIdent = new ServiceIdentificationImpl();
+        DefaultServiceIdentification servIdent = new DefaultServiceIdentification();
 
         DefaultParameter params = new DefaultParameter();
         DefaultNameFactory factory = new DefaultNameFactory();

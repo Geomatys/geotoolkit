@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.opengis.metadata.citation.ResponsibleParty;
-import org.opengis.service.ServiceIdentification;
+import org.opengis.metadata.service.ServiceIdentification;
 import org.opengis.service.ServiceProvider;
 
 /**

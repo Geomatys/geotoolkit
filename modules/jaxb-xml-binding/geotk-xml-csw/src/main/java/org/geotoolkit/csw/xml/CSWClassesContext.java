@@ -93,7 +93,7 @@ public class CSWClassesContext {
         } catch (ClassNotFoundException ex) {}
 
         // we add the extensions classes
-        classeList.add(org.geotoolkit.service.ServiceIdentificationImpl.class);
+        classeList.add(org.apache.sis.metadata.iso.service.DefaultServiceIdentification.class);
         classeList.addAll(Arrays.asList(org.geotoolkit.feature.catalog.AssociationRoleImpl.class,
                                         org.geotoolkit.feature.catalog.BindingImpl.class,
                                         org.geotoolkit.feature.catalog.BoundFeatureAttributeImpl.class,

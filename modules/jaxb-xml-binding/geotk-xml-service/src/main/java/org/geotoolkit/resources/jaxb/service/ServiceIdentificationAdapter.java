@@ -1,7 +1,7 @@
 /*
  *    GeotoolKit - An Open Source Java GIS Toolkit
  *    http://geotoolkit.org
- * 
+ *
  *    (C) 2009, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -18,8 +18,8 @@ package org.geotoolkit.resources.jaxb.service;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
-import org.geotoolkit.service.ServiceIdentificationImpl;
-import org.opengis.service.ServiceIdentification;
+import org.apache.sis.metadata.iso.service.DefaultServiceIdentification;
+import org.opengis.metadata.service.ServiceIdentification;
 
 /**
  * JAXB adapter in order to map implementing class with the Types interface. See
@@ -30,9 +30,9 @@ import org.opengis.service.ServiceIdentification;
  * @author Guilhem Legal
  */
 public class ServiceIdentificationAdapter extends XmlAdapter<ServiceIdentificationAdapter, ServiceIdentification> {
-    
+
     private ServiceIdentification service;
-    
+
     /**
      * Empty constructor for JAXB only.
      */
@@ -59,20 +59,20 @@ public class ServiceIdentificationAdapter extends XmlAdapter<ServiceIdentificati
     }
 
     /**
-     * Returns the {@link ServiceIdentificationImpl} generated from the service value.
+     * Returns the {@link DefaultServiceIdentification} generated from the service value.
      * This method is systematically called at marshalling-time by JAXB.
-     */  
+     */
     @XmlElement(name = "SV_ServiceIdentification")
-    public ServiceIdentificationImpl getServiceIdentification() {
-        return (service instanceof ServiceIdentificationImpl) ?
-            (ServiceIdentificationImpl)service : new ServiceIdentificationImpl(service);
+    public DefaultServiceIdentification getServiceIdentification() {
+        return (service instanceof DefaultServiceIdentification) ?
+            (DefaultServiceIdentification)service : new DefaultServiceIdentification(service);
     }
 
     /**
-     * Sets the value for the {@link ServiceIdentificationImpl}. This method is systematically
+     * Sets the value for the {@link DefaultServiceIdentification}. This method is systematically
      * called at unmarshalling-time by JAXB.
      */
-    public void setServiceIdentification(final ServiceIdentificationImpl ServiceIdentification) {
+    public void setServiceIdentification(final DefaultServiceIdentification ServiceIdentification) {
         this.service = ServiceIdentification;
     }
 
@@ -103,6 +103,6 @@ public class ServiceIdentificationAdapter extends XmlAdapter<ServiceIdentificati
         return wrap(value);
     }
 
-    
-    
+
+
 }

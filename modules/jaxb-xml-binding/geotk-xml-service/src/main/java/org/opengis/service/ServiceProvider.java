@@ -1,6 +1,6 @@
 /*$************************************************************************************************
  **
- ** $Id: 
+ ** $Id:
  **
  ** $URL: https://geoapi.svn.sourceforge.net/svnroot/geoapi/trunk/geoapi/src/main/java/org/opengis/services/Service.java $
  **
@@ -15,40 +15,41 @@ import java.util.Collection;
 import java.util.List;
 import org.opengis.annotation.UML;
 import org.opengis.metadata.citation.ResponsibleParty;
+import org.opengis.metadata.service.ServiceIdentification;
 import static org.opengis.annotation.Obligation.*;
 import static org.opengis.annotation.Specification.*;
 
 /**
- * 
- * 
+ *
+ *
  * @author <A HREF="http://www.opengeospatial.org/standards/as# 02-112">ISO 19119</A>
  * @author Guilhem Legal
- * 
+ *
  * @module pending
  * @since Types 2.1
- * @Deprecated deleted in amd.1:2008  
+ * @Deprecated deleted in amd.1:2008
  */
 @UML(identifier="SV_ServiceProvider", specification=UNSPECIFIED)
 @Deprecated
 public interface ServiceProvider {
 
     /**
-     * 
+     *
      */
     //@UML(identifier="serviceContact", obligation=MANDATORY, specification=ISO_19119)
     Collection<ResponsibleParty> getServiceContact();
-    
+
     /**
      * A unique identifier for the service provider organization.
      */
     //@UML(identifier="providerName", obligation=MANDATORY, specification=ISO_19119)
     String getProviderName();
-    
+
     /**
-     * 
+     *
      */
     //@UML(identifier="services", obligation=MANDATORY, specification=ISO_19119)
     Collection<ServiceIdentification> getServices();
-    
-    
+
+
 }
