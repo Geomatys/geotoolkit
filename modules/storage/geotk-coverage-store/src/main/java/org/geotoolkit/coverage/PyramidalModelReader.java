@@ -362,10 +362,10 @@ public class PyramidalModelReader extends GridCoverageReader{
         final boolean deferred = param.isDeferred();
         if(mosaics.size()==1){
             //read a single slice
-            return readSlice(mosaics.get(0), paramEnv, deferred);
+            return readSlice(mosaics.get(0), wantedEnv, deferred);
         }else{
             //read a data cube of multiple slices
-            return readCube(mosaics, paramEnv, deferred);
+            return readCube(mosaics, wantedEnv, deferred);
         }
         
     }
