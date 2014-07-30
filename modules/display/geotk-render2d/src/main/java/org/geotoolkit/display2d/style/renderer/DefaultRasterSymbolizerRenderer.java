@@ -223,7 +223,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
 
                         //force alpha if image is RGB
                         final GridSampleDimension[] dims = dataCoverage.getSampleDimensions();
-                        if(dims==null || dims.length==0){
+                        if(dims==null || dims.length==0 || dataCoverage.getViewTypes().contains(ViewType.RENDERED)){
                             RenderedImage img = dataCoverage.getRenderedImage();
                             RenderedImage imga = forceAlpha(img, false);
 //                            final BufferedImage bi = new BufferedImage(img.getWidth(), img.getHeight(), BufferedImage.TYPE_INT_ARGB);
@@ -234,7 +234,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
                                 final GridCoverageBuilder gcb = new GridCoverageBuilder();
                                 gcb.setName("temp");
                                 gcb.setGridGeometry(dataCoverage.getGridGeometry());
-                                gcb.setRenderedImage(img);
+                                gcb.setRenderedImage(imga);
                                 dataCoverage = gcb.getGridCoverage2D();
                             }
                         }

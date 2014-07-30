@@ -528,7 +528,7 @@ public class ColorModelTest {
                 new CanvasDef(new Dimension(800, 600), Color.WHITE),
                 new SceneDef(context),
                 new ViewDef(envelope));
-
+        
         //background is opaque we should obtain an RGB color model since raster styles
         //are unpredictable
         assertTrue(!(result.getColorModel() instanceof IndexColorModel));
