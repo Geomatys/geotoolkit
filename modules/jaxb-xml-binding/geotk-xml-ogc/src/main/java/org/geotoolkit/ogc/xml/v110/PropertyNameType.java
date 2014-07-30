@@ -111,12 +111,12 @@ public class PropertyNameType implements PropertyName {
 
     @Override
     public Object evaluate(final Object object) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        throw new UnsupportedOperationException("Property name in the right part is not allowed.");
     }
 
     @Override
     public <T> T evaluate(final Object object, final Class<T> context) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        throw new UnsupportedOperationException("Property name in the right part is not allowed.");
     }
 
     @Override
