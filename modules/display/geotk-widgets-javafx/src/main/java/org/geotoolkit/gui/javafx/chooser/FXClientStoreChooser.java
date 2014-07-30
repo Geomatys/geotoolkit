@@ -17,9 +17,7 @@
 
 package org.geotoolkit.gui.javafx.chooser;
 
-import java.awt.image.BufferedImage;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.logging.Level;
 import javafx.beans.value.ChangeListener;
@@ -27,7 +25,6 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -41,77 +38,48 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TitledPane;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.util.Callback;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.client.Client;
 import org.geotoolkit.client.ClientFactory;
-import org.geotoolkit.coverage.CoverageStoreFactory;
-import org.geotoolkit.data.AbstractFolderFeatureStoreFactory;
-import org.geotoolkit.data.FeatureStore;
-import org.geotoolkit.data.FeatureStoreFactory;
-import org.geotoolkit.data.FeatureStoreFinder;
-import org.geotoolkit.data.FileFeatureStoreFactory;
-import org.geotoolkit.db.AbstractJDBCFeatureStoreFactory;
-import org.geotoolkit.font.FontAwesomeIcons;
-import org.geotoolkit.font.IconBuilder;
+import org.geotoolkit.client.ClientFinder;
 import org.geotoolkit.gui.javafx.parameter.FXParameterEditor;
 import org.geotoolkit.gui.javafx.parameter.FXValueEditor;
 import org.geotoolkit.gui.javafx.util.FXOptionDialog;
 import org.geotoolkit.internal.GeotkFXBundle;
 import org.geotoolkit.internal.Loggers;
 import org.geotoolkit.map.MapLayer;
-import org.geotoolkit.storage.DataStoreFactory;
 import org.opengis.parameter.ParameterValueGroup;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
-public class FXFeatureStoreChooser extends SplitPane {
-
-    static final Comparator<Object> SORTER = new Comparator<Object>() {
-        @Override
-        public int compare(Object o1, Object o2) {
-            final String o1Name = getText(o1);
-            final String o2Name = getText(o1);
-            return o1Name.compareTo(o2Name);
-        }
-        
-        private String getText(Object candidate){
-            if(candidate instanceof DataStoreFactory){
-                return ((DataStoreFactory)candidate).getDisplayName().toString();
-            }else if(candidate instanceof ClientFactory){
-                return ((ClientFactory)candidate).getDisplayName().toString();
-            }else{
-                return "";
-            }
-        }
-    };
+public class FXClientStoreChooser extends SplitPane {
     
     private final Accordion accordion = new Accordion();
-    private final ListView<FeatureStoreFactory> factoryView = new ListView<>();
+    private final ListView<ClientFactory> factoryView = new ListView<>();
     private final FXLayerChooser layerChooser = new FXLayerChooser();
     private final FXParameterEditor paramEditor = new FXParameterEditor();
     private final ScrollPane listScroll = new ScrollPane(factoryView);
     private final Button connectButton = new Button(GeotkFXBundle.getString(FXFeatureStoreChooser.class,"apply"));
     private final Label infoLabel = new Label();
         
-    public FXFeatureStoreChooser() {
+    public FXClientStoreChooser() {
         
-        final ObservableList<FeatureStoreFactory> factories = FXCollections.observableArrayList(FeatureStoreFinder.getAvailableFactories(null));
-        Collections.sort(factories, SORTER);
+        final ObservableList<ClientFactory> factories = FXCollections.observableArrayList(ClientFinder.getAvailableFactories(null));
+        Collections.sort(factories, FXFeatureStoreChooser.SORTER);
 
         factoryView.setItems(factories);
-        factoryView.setCellFactory(new Callback<ListView<FeatureStoreFactory>, ListCell<FeatureStoreFactory>>() {
+        factoryView.setCellFactory(new Callback<ListView<ClientFactory>, ListCell<ClientFactory>>() {
 
             @Override
-            public ListCell<FeatureStoreFactory> call(ListView<FeatureStoreFactory> param) {
-                return new FactoryCell();
+            public ListCell<ClientFactory> call(ListView<ClientFactory> param) {
+                return new FXFeatureStoreChooser.FactoryCell();
             }
         });
         
@@ -151,11 +119,11 @@ public class FXFeatureStoreChooser extends SplitPane {
         getItems().add(layerChooser);
         
         factoryView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
-        factoryView.getSelectionModel().getSelectedItems().addListener(new ListChangeListener<FeatureStoreFactory>() {
+        factoryView.getSelectionModel().getSelectedItems().addListener(new ListChangeListener<ClientFactory>() {
 
             @Override
-            public void onChanged(ListChangeListener.Change<? extends FeatureStoreFactory> c) {
-                final FeatureStoreFactory factory = factoryView.getSelectionModel().getSelectedItem();
+            public void onChanged(ListChangeListener.Change<? extends ClientFactory> c) {
+                final ClientFactory factory = factoryView.getSelectionModel().getSelectedItem();
                 if(factory==null) return;
                 final ParameterValueGroup param = factory.getParametersDescriptor().createValue();
                 paramEditor.setParameter(param);        
@@ -168,7 +136,7 @@ public class FXFeatureStoreChooser extends SplitPane {
 
             @Override
             public void handle(ActionEvent event) {
-                FeatureStore store = null;
+                Client store = null;
                 try {
                     layerChooser.setSource(null);
                     store = getStore();
@@ -187,8 +155,8 @@ public class FXFeatureStoreChooser extends SplitPane {
     }
     
     
-    private FeatureStore getStore() throws DataStoreException {
-        final FeatureStoreFactory factory = factoryView.getSelectionModel().getSelectedItem();
+    private Client getStore() throws DataStoreException {
+        final ClientFactory factory = factoryView.getSelectionModel().getSelectedItem();
 
         if(factory == null){
             return null;
@@ -209,25 +177,25 @@ public class FXFeatureStoreChooser extends SplitPane {
      * @return
      * @throws DataStoreException
      */
-    public static List<FeatureStore> showDialog(Node parent) throws DataStoreException{
+    public static List<Client> showDialog(Node parent) throws DataStoreException{
         return showDialog(parent,Collections.EMPTY_LIST);
     }
 
     /**
      * Display a modal dialog.
      *
-     * @param editors : additional FeatureOutline editors
+     * @param editors : additional parameter editors
      * @return
      * @throws DataStoreException
      */
-    public static List<FeatureStore> showDialog(Node parent, List<FXValueEditor> editors) throws DataStoreException{
+    public static List<Client> showDialog(Node parent, List<FXValueEditor> editors) throws DataStoreException{
         return showDialog(parent,editors, false);
     }
 
     /**
      * Display a modal dialog choosing layers.
      *
-     * @param editors : additional FeatureOutline editors
+     * @param editors : additional parameter editors
      * @return
      * @throws DataStoreException
      */
@@ -236,7 +204,7 @@ public class FXFeatureStoreChooser extends SplitPane {
     }
 
     private static List showDialog(Node parent, List<FXValueEditor> editors, boolean layerVisible) throws DataStoreException{
-        final FXFeatureStoreChooser chooser = new FXFeatureStoreChooser();
+        final FXClientStoreChooser chooser = new FXClientStoreChooser();
         if(editors != null){
             chooser.paramEditor.setAvailableEditors(editors);
         }
@@ -249,7 +217,7 @@ public class FXFeatureStoreChooser extends SplitPane {
             if(layerVisible){
                 return chooser.getSelectedLayers();
             }else{
-                final FeatureStore store = chooser.getStore();
+                final Client store = chooser.getStore();
                 if(store == null){
                     return Collections.EMPTY_LIST;
                 }else{
@@ -260,55 +228,6 @@ public class FXFeatureStoreChooser extends SplitPane {
             return Collections.EMPTY_LIST;
         }
 
-    }
-
-    
-    static class FactoryCell extends ListCell{
-        
-        @Override
-        protected void updateItem(Object item, boolean empty) {
-            super.updateItem(item, empty);
-
-            setText(null);
-            setGraphic(null);
-            if(!empty && item!=null){
-                if(item instanceof DataStoreFactory){
-                    setText(((DataStoreFactory)item).getDisplayName().toString());
-                }else if(item instanceof ClientFactory){
-                    setText(((ClientFactory)item).getDisplayName().toString());
-                }
-                setGraphic(new ImageView(findIcon(item)));
-            }
-        }
-
-    }
-
-    private static final Image EMPTY_24 = SwingFXUtils.toFXImage(new BufferedImage(24, 24, BufferedImage.TYPE_INT_ARGB),null);
-    private static final Image ICON_SERVER = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_DATABASE, 24, FontAwesomeIcons.DISABLE_COLOR),null);
-    private static final Image ICON_DATABASE = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_DATABASE, 24, FontAwesomeIcons.DISABLE_COLOR),null);
-    private static final Image ICON_VECTOR = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_DATABASE, 24, FontAwesomeIcons.DISABLE_COLOR),null);
-    private static final Image ICON_COVERAGE = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_PICTURE_O, 24, FontAwesomeIcons.DISABLE_COLOR),null);
-    private static final Image ICON_FOLDER = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_FOLDER, 24, FontAwesomeIcons.DISABLE_COLOR),null);
-    private static final Image ICON_FILE = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_FILE, 24, FontAwesomeIcons.DISABLE_COLOR),null);
-
-    private static Image findIcon(Object candidate){
-
-        Image icon = EMPTY_24;
-        if(candidate instanceof AbstractFolderFeatureStoreFactory){
-            icon = ICON_FOLDER;
-        }else if(candidate instanceof FileFeatureStoreFactory){
-            icon = ICON_FILE;
-        }else if(candidate instanceof ClientFactory){
-            icon = ICON_SERVER;
-        }else if(candidate instanceof AbstractJDBCFeatureStoreFactory){
-            icon = ICON_DATABASE;
-        }else if(candidate instanceof CoverageStoreFactory){
-            icon = ICON_COVERAGE;
-        }else if(candidate instanceof FeatureStoreFactory){
-            icon = ICON_VECTOR;
-        }
-
-        return icon;
     }
     
 }

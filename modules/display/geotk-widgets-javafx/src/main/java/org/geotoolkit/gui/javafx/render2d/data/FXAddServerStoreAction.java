@@ -24,9 +24,7 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.scene.image.Image;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.font.FontAwesomeIcons;
-import org.geotoolkit.font.IconBuilder;
-import org.geotoolkit.gui.javafx.chooser.FXFeatureStoreChooser;
+import org.geotoolkit.gui.javafx.chooser.FXClientStoreChooser;
 import org.geotoolkit.gui.javafx.render2d.FXMap;
 import org.geotoolkit.gui.javafx.render2d.FXMapAction;
 import org.geotoolkit.internal.GeotkFXBundle;
@@ -53,7 +51,7 @@ public class FXAddServerStoreAction extends FXMapAction {
     public void handle(ActionEvent event) {
         
         try {
-            final List<MapLayer> layers = FXFeatureStoreChooser.showLayerDialog(null,null);
+            final List<MapLayer> layers = FXClientStoreChooser.showLayerDialog(null,null);
 
             for(MapLayer layer : layers){
                 if(layer == null) continue;
