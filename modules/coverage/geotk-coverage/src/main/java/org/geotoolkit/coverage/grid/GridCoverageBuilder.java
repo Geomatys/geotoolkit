@@ -41,12 +41,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
 import java.io.IOException;
 import javax.measure.unit.Unit;
-import javax.media.jai.TiledImage;
-import javax.media.jai.PlanarImage;
-import javax.media.jai.ImageFunction;
-import javax.media.jai.RasterFactory;
-import javax.media.jai.RenderedImageAdapter;
-import javax.media.jai.PropertySource;
+import javax.media.jai.*;
 import javax.media.jai.operator.ImageFunctionDescriptor;
 
 import org.opengis.geometry.Envelope;
@@ -2153,7 +2148,7 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
             }
             coverage = new GridCoverage2D(
                     getName(),
-                    PlanarImage.wrapRenderedImage(getRenderedImage()),
+                    getRenderedImage(),
                     GridGeometry2D.castOrCopy(getGridGeometry()),
                     bands,
                     getSources(),

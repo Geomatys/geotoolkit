@@ -89,7 +89,7 @@ public final strictfp class SampleTranscoderTest {
     @Test
     public void testOneBand() throws TransformException {
         final GridSampleDimension band1 = createTemperatureBand();
-        assertTrue(testOneBand(1,  0) instanceof RenderedImageAdapter);
+        assertFalse(testOneBand(1,  0) instanceof RenderedOp);
         assertTrue(testOneBand(.8, 2) instanceof RenderedOp);
         assertTrue(testOneBand(band1) instanceof RenderedOp);
     }
@@ -132,7 +132,6 @@ public final strictfp class SampleTranscoderTest {
          * integers into real-world values. Check if the result use floating-points.
          */
         final RenderedImage target = coverage.view(ViewType.GEOPHYSICS).getRenderedImage();
-        assertSame(target, PlanarImage.wrapRenderedImage(target));
         assertEquals(DataBuffer.TYPE_BYTE, source.getSampleModel().getDataType());
         if (coverage.getRenderedImage() != target) {
             assertEquals(DataBuffer.TYPE_FLOAT, target.getSampleModel().getDataType());
