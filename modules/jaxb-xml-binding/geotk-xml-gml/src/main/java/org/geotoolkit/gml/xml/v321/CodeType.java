@@ -50,7 +50,7 @@ import org.geotoolkit.gml.xml.Code;
  *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = {
+@XmlType(name = "CodeType_", propOrder = { // Need to avoid name clash with Apache SIS.
     "value"
 })
 @XmlSeeAlso({
