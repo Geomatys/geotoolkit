@@ -88,7 +88,7 @@ public class GridCoverageStack extends CoverageStack implements GridCoverage {
         //build the grid geometry
         final int[] gridLower = new int[nbDim];
         final int[] gridUpper = new int[nbDim];
-        final double[] lastAxisSteps = new double[elements.length];
+        final double[] zAxisSteps = new double[elements.length];
         MathTransform baseGridToCRS = null;
         int k=0;
         for(Element element : elements){
@@ -117,7 +117,7 @@ public class GridCoverageStack extends CoverageStack implements GridCoverage {
                 coord[i] = ext.getLow(i);
             }
             trs.transform(coord,0,coord,0,1);
-            lastAxisSteps[k] = coord[zDimension];
+            zAxisSteps[k] = coord[zDimension];
 
             //increment number of slices
             gridUpper[zDimension]++;
@@ -146,7 +146,12 @@ public class GridCoverageStack extends CoverageStack implements GridCoverage {
         firstMT = PassThroughTransform.create(0, firstMT, nbDim - zDimension);
 
         //create dimension pass through transform with linear
-        final MathTransform1D lastAxisTrs = LinearInterpolator1D.create(lastAxisSteps);
+        final MathTransform lastAxisTrs;
+        if(zAxisSteps.length==1){
+            lastAxisTrs = MathTransforms.linear(1, zAxisSteps[0]);
+        }else{
+            lastAxisTrs = LinearInterpolator1D.create(zAxisSteps);
+        }
         final MathTransform dimLinear = PassThroughTransform.create(zDimension, lastAxisTrs, remainingDimensions);
 
         //extract MT [zDim+1, nbDim[
