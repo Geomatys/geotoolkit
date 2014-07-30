@@ -36,6 +36,7 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.SelectionMode;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
@@ -108,6 +109,7 @@ public class FXLayerChooser extends BorderPane{
         scroll.setFitToWidth(true);
         setCenter(scroll);
         
+        layerNames.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         layerNames.setCellFactory((ListView<Object> param) -> new LayerCell());
         
     }
@@ -210,47 +212,43 @@ public class FXLayerChooser extends BorderPane{
                 if(desc != null){
                     BufferedImage icon;
                     final Class binding = desc.getType().getBinding();
-                    try{
-                        if(Point.class.isAssignableFrom(binding)){
-                            icon = GeotkFXIconBundle.getBufferedImage("edit_single_point");
-                        }else if(MultiPoint.class.isAssignableFrom(binding)){
-                            icon = GeotkFXIconBundle.getBufferedImage("edit_multi_point");
-                        }else if(LineString.class.isAssignableFrom(binding)){
-                            icon = GeotkFXIconBundle.getBufferedImage("edit_single_line");
-                        }else if(MultiLineString.class.isAssignableFrom(binding)){
-                            icon = GeotkFXIconBundle.getBufferedImage("edit_multi_line");
-                        }else if(Polygon.class.isAssignableFrom(binding)){
-                            icon = GeotkFXIconBundle.getBufferedImage("edit_single_polygon");
-                        }else if(MultiPolygon.class.isAssignableFrom(binding)){
-                            icon = GeotkFXIconBundle.getBufferedImage("edit_multi_polygon");
-                        }else{
-                            icon = (BufferedImage) GeotkFXIconBundle.EMPTY_ICON_16;
-                        }
-                        
-                         boolean editable = false;
-                        try {
-                            if(store.isWritable(ft.getName())){
-                                editable = true;
-                            }
-                        } catch (DataStoreException ex) {}
-
-                        if(!editable){
-                            final BufferedImage img = new BufferedImage(
-                                                            icon.getWidth(),
-                                                            icon.getHeight(),
-                                                            BufferedImage.TYPE_INT_ARGB);
-                            final Graphics2D g = img.createGraphics();
-                            g.drawImage(icon, 0, 0, null);
-                            final BufferedImage lock = GeotkFXIconBundle.getBufferedImage("lock");
-                            g.drawImage(lock, 0, 0, null);
-                            icon = img;
-                        }
-
-                        setGraphic(new ImageView(SwingFXUtils.toFXImage(icon, null)));
-                        
-                    }catch(IOException ex){
-                        Loggers.JAVAFX.log(Level.WARNING,ex.getMessage(),ex);
+                    if(Point.class.isAssignableFrom(binding)){
+                        icon = GeotkFXIconBundle.getBufferedImage("edit_single_point");
+                    }else if(MultiPoint.class.isAssignableFrom(binding)){
+                        icon = GeotkFXIconBundle.getBufferedImage("edit_multi_point");
+                    }else if(LineString.class.isAssignableFrom(binding)){
+                        icon = GeotkFXIconBundle.getBufferedImage("edit_single_line");
+                    }else if(MultiLineString.class.isAssignableFrom(binding)){
+                        icon = GeotkFXIconBundle.getBufferedImage("edit_multi_line");
+                    }else if(Polygon.class.isAssignableFrom(binding)){
+                        icon = GeotkFXIconBundle.getBufferedImage("edit_single_polygon");
+                    }else if(MultiPolygon.class.isAssignableFrom(binding)){
+                        icon = GeotkFXIconBundle.getBufferedImage("edit_multi_polygon");
+                    }else{
+                        icon = (BufferedImage) GeotkFXIconBundle.EMPTY_ICON_16;
                     }
+
+                     boolean editable = false;
+                    try {
+                        if(store.isWritable(ft.getName())){
+                            editable = true;
+                        }
+                    } catch (DataStoreException ex) {}
+
+                    if(!editable){
+                        final BufferedImage img = new BufferedImage(
+                                                        icon.getWidth(),
+                                                        icon.getHeight(),
+                                                        BufferedImage.TYPE_INT_ARGB);
+                        final Graphics2D g = img.createGraphics();
+                        g.drawImage(icon, 0, 0, null);
+                        final BufferedImage lock = GeotkFXIconBundle.getBufferedImage("lock");
+                        g.drawImage(lock, 0, 0, null);
+                        icon = img;
+                    }
+
+                    setGraphic(new ImageView(SwingFXUtils.toFXImage(icon, null)));
+                        
                 }
 
                 value = ft.getName();

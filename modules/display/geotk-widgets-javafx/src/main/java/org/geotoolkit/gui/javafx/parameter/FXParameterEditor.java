@@ -69,6 +69,10 @@ public class FXParameterEditor extends BorderPane {
         setMinSize(250, 250);
     }
 
+    public TreeTableView getTreetable() {
+        return treetable;
+    }
+
     public void setParameter(ParameterValueGroup parameter) {
         this.parameter = parameter;
         treetable.setRoot(toTree(null, parameter.getDescriptor(), parameter));
@@ -90,9 +94,9 @@ public class FXParameterEditor extends BorderPane {
             
             for(GeneralParameterDescriptor childDesc : descGroup.descriptors()){
                 //TODO , handle multiplicity
-                if(desc.getMaximumOccurs()>1) continue;
+                if(childDesc.getMaximumOccurs()>1) continue;
                 GeneralParameterValue childVal = ParametersExt.getParameter(group, childDesc.getName().getCode());
-                if(childVal==null && desc.getMinimumOccurs()>0){
+                if(childVal==null && childDesc.getMinimumOccurs()>0){
                     childVal = ParametersExt.getOrCreateParameter(group, childDesc.getName().getCode());
                 }
                 
@@ -210,6 +214,7 @@ public class FXParameterEditor extends BorderPane {
         private final CheckBox cb = new CheckBox();
 
         public ParamEnableCell() {
+            cb.setSelected(false);
             cb.setOnAction(new EventHandler<ActionEvent>() {
 
                 @Override

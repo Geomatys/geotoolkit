@@ -17,18 +17,23 @@
 
 package org.geotoolkit.gui.javafx.chooser;
 
+import java.awt.image.BufferedImage;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
+import javafx.scene.control.Accordion;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
@@ -36,20 +41,32 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.SplitPane;
-import javafx.scene.control.cell.TextFieldListCell;
+import javafx.scene.control.TitledPane;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Pane;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.util.Callback;
-import javafx.util.StringConverter;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.client.ClientFactory;
+import org.geotoolkit.coverage.CoverageStoreFactory;
+import org.geotoolkit.data.AbstractFolderFeatureStoreFactory;
 import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.FeatureStoreFactory;
 import org.geotoolkit.data.FeatureStoreFinder;
+import org.geotoolkit.data.FileFeatureStoreFactory;
+import org.geotoolkit.db.AbstractJDBCFeatureStoreFactory;
+import org.geotoolkit.font.FontAwesomeIcons;
+import org.geotoolkit.font.IconBuilder;
 import org.geotoolkit.gui.javafx.parameter.FXParameterEditor;
 import org.geotoolkit.gui.javafx.parameter.FXValueEditor;
 import org.geotoolkit.gui.javafx.util.FXOptionDialog;
 import org.geotoolkit.internal.GeotkFXBundle;
 import org.geotoolkit.map.MapLayer;
+import org.geotoolkit.storage.DataStoreFactory;
 import org.opengis.parameter.ParameterValueGroup;
 
 /**
@@ -67,11 +84,12 @@ public class FXFeatureStoreChooser extends SplitPane {
         }
     };
     
+    private final Accordion accordion = new Accordion();
     private final ListView<FeatureStoreFactory> factoryView = new ListView<>();
     private final FXLayerChooser layerChooser = new FXLayerChooser();
     private final FXParameterEditor paramEditor = new FXParameterEditor();
     private final ScrollPane listScroll = new ScrollPane(factoryView);
-    private final Button connectButton = new Button(GeotkFXBundle.getString(FXFeatureStoreChooser.class,"connect"));
+    private final Button connectButton = new Button(GeotkFXBundle.getString(FXFeatureStoreChooser.class,"apply"));
     private final Label infoLabel = new Label();
         
     public FXFeatureStoreChooser() {
@@ -81,33 +99,46 @@ public class FXFeatureStoreChooser extends SplitPane {
 
         factoryView.setItems(factories);
         factoryView.setCellFactory(new Callback<ListView<FeatureStoreFactory>, ListCell<FeatureStoreFactory>>() {
+
             @Override
             public ListCell<FeatureStoreFactory> call(ListView<FeatureStoreFactory> param) {
-                final ListCell<FeatureStoreFactory> cell = new TextFieldListCell<>(new StringConverter<FeatureStoreFactory>() {
-
-                    @Override
-                    public String toString(FeatureStoreFactory object) {
-                        return object.getDisplayName().toString();
-                    }
-
-                    @Override
-                    public FeatureStoreFactory fromString(String string) {
-                        throw new UnsupportedOperationException("Not supported.");
-                    }
-                });
-                return cell;
+                return new FactoryCell();
             }
         });
         
         listScroll.setFitToHeight(true);
         listScroll.setFitToWidth(true);        
         
-        final BorderPane hpane = new BorderPane(infoLabel, null, connectButton, null, null);        
-        hpane.setPadding(new Insets(8, 8, 8, 8));
-        final BorderPane vpane = new BorderPane(paramEditor, null, null, hpane, null);
+        //hide the tree table header
+        paramEditor.getTreetable().widthProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
+                Pane header = (Pane)paramEditor.getTreetable().lookup("TableHeaderRow");
+                if(header!=null && header.isVisible()) {
+                  header.setMaxHeight(0);
+                  header.setMinHeight(0);
+                  header.setPrefHeight(0);
+                  header.setVisible(false);
+                  header.setManaged(false);
+                }
+            }
+        });
         
-        getItems().add(listScroll);
-        getItems().add(vpane);
+        final BorderPane hpane = new BorderPane(infoLabel, null, connectButton, null, null);        
+        hpane.setPadding(new Insets(6, 6, 6, 6));
+        final BorderPane vpane = new BorderPane(paramEditor, null, null, hpane, null);
+        vpane.setPadding(Insets.EMPTY);
+        
+        final TitledPane paneFactory = new TitledPane(GeotkFXBundle.getString(FXFeatureStoreChooser.class,"factory"), listScroll);
+        paneFactory.setFont(Font.font(paneFactory.getFont().getFamily(), FontWeight.BOLD, paneFactory.getFont().getSize()));
+        final TitledPane paneConfig = new TitledPane(GeotkFXBundle.getString(FXFeatureStoreChooser.class,"config"), vpane);
+        
+        accordion.getPanes().add(paneFactory);
+        accordion.getPanes().add(paneConfig);
+        accordion.setPrefSize(400, 400);        
+        accordion.setExpandedPane(paneFactory);
+        
+        getItems().add(accordion);
         getItems().add(layerChooser);
         
         factoryView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
@@ -118,7 +149,8 @@ public class FXFeatureStoreChooser extends SplitPane {
                 final FeatureStoreFactory factory = factoryView.getSelectionModel().getSelectedItem();
                 if(factory==null) return;
                 final ParameterValueGroup param = factory.getParametersDescriptor().createValue();
-                paramEditor.setParameter(param);
+                paramEditor.setParameter(param);        
+                accordion.setExpandedPane(paneConfig);
             }
         });
         
@@ -132,9 +164,8 @@ public class FXFeatureStoreChooser extends SplitPane {
                     layerChooser.setSource(null);
                     store = getFeatureStore();
                     layerChooser.setSource(store);
-                    infoLabel.setText(GeotkFXBundle.getString(FXFeatureStoreChooser.class,"ok"));
                 } catch (DataStoreException ex) {
-                    infoLabel.setText(""+ex.getMessage());
+                    infoLabel.setText("Error "+ex.getMessage());
                     LOGGER.log(Level.WARNING, ex.getMessage(),ex);
                 }
             }
@@ -222,4 +253,53 @@ public class FXFeatureStoreChooser extends SplitPane {
 
     }
 
+    
+    static class FactoryCell extends ListCell{
+        
+        @Override
+        protected void updateItem(Object item, boolean empty) {
+            super.updateItem(item, empty);
+
+            setText(null);
+            setGraphic(null);
+            if(!empty && item!=null){
+                if(item instanceof DataStoreFactory){
+                    setText(((DataStoreFactory)item).getDisplayName().toString());
+                }else if(item instanceof ClientFactory){
+                    setText(((ClientFactory)item).getDisplayName().toString());
+                }
+                setGraphic(new ImageView(findIcon(item)));
+            }
+        }
+
+    }
+
+    private static final Image EMPTY_24 = SwingFXUtils.toFXImage(new BufferedImage(24, 24, BufferedImage.TYPE_INT_ARGB),null);
+    private static final Image ICON_SERVER = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_DATABASE, 24, FontAwesomeIcons.DISABLE_COLOR),null);
+    private static final Image ICON_DATABASE = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_DATABASE, 24, FontAwesomeIcons.DISABLE_COLOR),null);
+    private static final Image ICON_VECTOR = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_DATABASE, 24, FontAwesomeIcons.DISABLE_COLOR),null);
+    private static final Image ICON_COVERAGE = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_PICTURE_O, 24, FontAwesomeIcons.DISABLE_COLOR),null);
+    private static final Image ICON_FOLDER = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_FOLDER, 24, FontAwesomeIcons.DISABLE_COLOR),null);
+    private static final Image ICON_FILE = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_FILE, 24, FontAwesomeIcons.DISABLE_COLOR),null);
+
+    private static Image findIcon(Object candidate){
+
+        Image icon = EMPTY_24;
+        if(candidate instanceof AbstractFolderFeatureStoreFactory){
+            icon = ICON_FOLDER;
+        }else if(candidate instanceof FileFeatureStoreFactory){
+            icon = ICON_FILE;
+        }else if(candidate instanceof ClientFactory){
+            icon = ICON_SERVER;
+        }else if(candidate instanceof AbstractJDBCFeatureStoreFactory){
+            icon = ICON_DATABASE;
+        }else if(candidate instanceof CoverageStoreFactory){
+            icon = ICON_COVERAGE;
+        }else if(candidate instanceof FeatureStoreFactory){
+            icon = ICON_VECTOR;
+        }
+
+        return icon;
+    }
+    
 }

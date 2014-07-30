@@ -16,8 +16,12 @@
  */
 package org.geotoolkit.internal;
 
+import java.awt.Dimension;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.logging.Level;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import javax.imageio.ImageIO;
@@ -40,8 +44,31 @@ public final class GeotkFXIconBundle {
 
     private GeotkFXIconBundle() {}
 
-    public static BufferedImage getBufferedImage(final String key) throws IOException{
-       return ImageIO.read(GeotkFXIconBundle.class.getResourceAsStream("/org/geotoolkit/gui/javafx/icon/"+key+".png"));
+    public static BufferedImage getBufferedImage(final String key) {
+        try {
+            return ImageIO.read(GeotkFXIconBundle.class.getResourceAsStream("/org/geotoolkit/gui/javafx/icon/"+key+".png"));
+        } catch (IOException ex) {
+            Loggers.JAVAFX.log(Level.WARNING, ex.getMessage(), ex);
+            return null;
+        }
+    }
+    
+    public static BufferedImage getBufferedImage(final String key, Dimension resize) {
+        try {
+            final BufferedImage img = ImageIO.read(GeotkFXIconBundle.class.getResourceAsStream("/org/geotoolkit/gui/javafx/icon/"+key+".png"));
+            
+            final BufferedImage resized = new BufferedImage(resize.width, resize.height, BufferedImage.TYPE_INT_ARGB);
+            final Graphics2D g = resized.createGraphics();
+            g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+            g.drawImage(img, 0, 0, resize.width, resize.height, null);
+            g.dispose();
+            
+            return resized;
+            
+        } catch (IOException ex) {
+            Loggers.JAVAFX.log(Level.WARNING, ex.getMessage(), ex);
+            return null;
+        }
     }
     
     public static Image getImage(final String key) throws IOException{

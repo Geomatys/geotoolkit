@@ -17,6 +17,7 @@
 
 package org.geotoolkit.gui.javafx.render2d.data;
 
+import java.awt.Dimension;
 import java.util.List;
 import java.util.logging.Level;
 import javafx.embed.swing.SwingFXUtils;
@@ -29,6 +30,7 @@ import org.geotoolkit.gui.javafx.chooser.FXFeatureStoreChooser;
 import org.geotoolkit.gui.javafx.render2d.FXMap;
 import org.geotoolkit.gui.javafx.render2d.FXMapAction;
 import org.geotoolkit.internal.GeotkFXBundle;
+import org.geotoolkit.internal.GeotkFXIconBundle;
 import org.geotoolkit.internal.Loggers;
 import org.geotoolkit.map.MapLayer;
 
@@ -37,8 +39,7 @@ import org.geotoolkit.map.MapLayer;
  * @author Johann Sorel (Geomatys)
  */
 public class FXAddCoverageStoreAction extends FXMapAction {
-    public static final Image ICON = SwingFXUtils.toFXImage(IconBuilder.createImage(
-            FontAwesomeIcons.ICON_PLUS_CIRCLE, 16, FontAwesomeIcons.DEFAULT_COLOR), null);
+    public static final Image ICON = SwingFXUtils.toFXImage(GeotkFXIconBundle.getBufferedImage("add-raster", new Dimension(16, 16)), null);
     
     private final FXMap map;
 

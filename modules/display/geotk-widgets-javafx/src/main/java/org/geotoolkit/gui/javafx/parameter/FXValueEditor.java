@@ -33,6 +33,7 @@ public abstract class FXValueEditor {
     private static final List<FXValueEditor> DEFAULTS;
     static {
         DEFAULTS = UnmodifiableArrayList.wrap(new FXValueEditor[]{
+            new FXChoiceEditor(),
             new FXBooleanEditor(),
             new FXStringEditor(),
             new FXNumberEditor(),

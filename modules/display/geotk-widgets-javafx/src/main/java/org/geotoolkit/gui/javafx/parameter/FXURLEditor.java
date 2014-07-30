@@ -63,7 +63,9 @@ public class FXURLEditor extends FXValueEditor{
         chooserButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                final FileChooser chooser = new FileChooser();
+                //JAVAFX limitation 1 : we can not make a chooser to open both files or directories
+                //JAVAFX limitation 2 : we can not embed a chooser in a pane
+                final FileChooser chooser = new FileChooser();                
                 
                 final String prevPath = getPreviousPath();
                 if (prevPath != null) {

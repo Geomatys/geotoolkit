@@ -17,18 +17,18 @@
 
 package org.geotoolkit.gui.javafx.render2d.data;
 
+import java.awt.Dimension;
 import java.util.List;
 import java.util.logging.Level;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.scene.image.Image;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.font.FontAwesomeIcons;
-import org.geotoolkit.font.IconBuilder;
 import org.geotoolkit.gui.javafx.chooser.FXFeatureStoreChooser;
 import org.geotoolkit.gui.javafx.render2d.FXMap;
 import org.geotoolkit.gui.javafx.render2d.FXMapAction;
 import org.geotoolkit.internal.GeotkFXBundle;
+import org.geotoolkit.internal.GeotkFXIconBundle;
 import org.geotoolkit.internal.Loggers;
 import org.geotoolkit.map.MapLayer;
 
@@ -37,8 +37,7 @@ import org.geotoolkit.map.MapLayer;
  * @author Johann Sorel (Geomatys)
  */
 public class FXAddFeatureStoreAction extends FXMapAction {
-    public static final Image ICON = SwingFXUtils.toFXImage(IconBuilder.createImage(
-            FontAwesomeIcons.ICON_PLUS_SQUARE, 16, FontAwesomeIcons.DEFAULT_COLOR), null);
+    public static final Image ICON = SwingFXUtils.toFXImage(GeotkFXIconBundle.getBufferedImage("add-vector", new Dimension(16, 16)), null);
     
     private final FXMap map;
 
