@@ -80,6 +80,9 @@ public abstract class AbstractFeatureStoreFactory extends Factory implements Fea
         if(displayName.endsWith("Factory")){
             displayName = displayName.substring(0, displayName.length() - 7);
         }
+        if(displayName.endsWith("FeatureStore")){
+            displayName = displayName.substring(0, displayName.length() - 12);
+        }
         return displayName;
     }
 
