@@ -178,8 +178,8 @@ public class ZipUtilitiesTest {
         file1.deleteOnExit();
         archive.deleteOnExit();
 
-        URL url1 = new URL("file://" + file1.getAbsolutePath());
-        URL urlArchive = new URL("file://" + archive.getAbsolutePath());
+        URL url1 = file1.toURI().toURL();
+        URL urlArchive = archive.toURI().toURL();
 
         FileUtilities.zip(archive, ZipOutputStream.DEFLATED, 9, CHECKSUM, url1);
         FileUtilities.unzip(urlArchive, CHECKSUM);
@@ -196,8 +196,8 @@ public class ZipUtilitiesTest {
         file1.deleteOnExit();
         archive.deleteOnExit();
 
-        URI uri1 = URI.create("file://" + file1.getAbsolutePath());
-        URI uriArchive = URI.create("file://" + archive.getAbsolutePath());
+        URI uri1 = file1.toURI();
+        URI uriArchive = archive.toURI();
 
         FileUtilities.zip(archive, ZipOutputStream.DEFLATED, 9, CHECKSUM, uri1);
         FileUtilities.unzip(uriArchive, CHECKSUM);
