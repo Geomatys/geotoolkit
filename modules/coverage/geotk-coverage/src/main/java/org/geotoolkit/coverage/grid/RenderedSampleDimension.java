@@ -123,7 +123,7 @@ final class RenderedSampleDimension extends GridSampleDimension {
                           final GridSampleDimension[] dst)
     {
         final int numBands = model.getNumBands();
-        if (src!=null && src.length != numBands) {
+        if (src != null && src.length != numBands) {
             throw new IllegalArgumentException(Errors.format(Errors.Keys.MISMATCHED_NUMBER_OF_BANDS_3,
                     numBands, src.length, "SampleDimension"));
         }
@@ -156,7 +156,7 @@ final class RenderedSampleDimension extends GridSampleDimension {
                         Arrays.fill(names, name);
                     }
                     create(names, (image != null) ? RectIterFactory.create(image,  null)
-                                                 : RectIterFactory.create(raster, null),
+                                                  : RectIterFactory.create(raster, null),
                             model, null, null, null, null, defaultSD, null);
                 }
                 sd = defaultSD[i];
@@ -398,10 +398,9 @@ final class RenderedSampleDimension extends GridSampleDimension {
                 final NumberRange<Double> range = NumberRange.create(min[b], true, max[b], true);
                 sourceRange = range.castTo(sourceRange.getElementType());
                 categories[0] = new Category(name, c, targetRange, sourceRange);
-            } else {
-                categories[0] = new Category(name, c, targetRange, (MathTransform1D) MathTransforms.identity(1));
             }
-            dst[b] = new GridSampleDimension(name, categories, (units != null) ? units[b] : null).geophysics(true);
+            dst[b] = new GridSampleDimension(name, needScaling ? categories : null,
+                    (units != null) ? units[b] : null).geophysics(true);
         }
     }
 

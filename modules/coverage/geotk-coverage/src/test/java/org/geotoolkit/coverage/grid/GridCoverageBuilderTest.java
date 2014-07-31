@@ -20,6 +20,7 @@ package org.geotoolkit.coverage.grid;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.io.IOException;
+import java.awt.image.BufferedImage;
 import org.apache.sis.geometry.Envelope2D;
 import org.geotoolkit.referencing.crs.PredefinedCRS;
 import org.junit.*;
@@ -41,6 +42,19 @@ public final strictfp class GridCoverageBuilderTest extends GridCoverageTestBase
      */
     public GridCoverageBuilderTest() {
         super(GridCoverageBuilder.class);
+    }
+
+    /**
+     * Tests creating a grid coverage with a plain RGB image.
+     */
+    @Test
+    public void testRGB() {
+        final GridCoverageBuilder builder = new GridCoverageBuilder();
+        builder.setRenderedImage(new BufferedImage(2, 2, BufferedImage.TYPE_INT_RGB));
+        builder.setEnvelope(new Envelope2D(null, 0, 0, 2, 2));
+        builder.setCoordinateReferenceSystem(PredefinedCRS.GRID_2D);
+        coverage = builder.getGridCoverage2D();
+        assertTrue(coverage.getViewTypes().contains(ViewType.PHOTOGRAPHIC));
     }
 
     /**

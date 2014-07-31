@@ -318,12 +318,16 @@ public final class TypeMap extends Static {
         if (band < 0 || band >= model.getNumBands()) {
             throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_BAND_NUMBER_1, band));
         }
+        /*
+         * TODO: we have a bug with some types like BufferedImage.TYPE_RGB: the model use DataBuffer.TYPE_INT
+         *       but the sample size are 8 bits. We are probably mixing two info that should not be mixed.
+         */
         boolean signed = true;
         switch (model.getDataType()) {
             case DataBuffer.TYPE_DOUBLE: return REAL_64BITS;
             case DataBuffer.TYPE_FLOAT:  return REAL_32BITS;
             case DataBuffer.TYPE_USHORT: // Fall through
-            case DataBuffer.TYPE_BYTE:   signed=false; // Fall through
+            case DataBuffer.TYPE_BYTE:   signed = false; // Fall through
             case DataBuffer.TYPE_INT:
             case DataBuffer.TYPE_SHORT: {
                 switch (model.getSampleSize(band)) {

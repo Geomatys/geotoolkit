@@ -1534,13 +1534,14 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
         }
         final double[] minimum = getArrayProperty("minimum");
         final double[] maximum = getArrayProperty("maximum");
-        if (raster != null) {
-            return RenderedSampleDimension.create(names, raster, minimum, maximum, units, colors, hints);
-        } else if (image != null) {
-            return RenderedSampleDimension.create(names, image, minimum, maximum, units, colors, hints);
-        } else {
-            return null;
+        if (names != null || minimum != null || maximum != null || units != null || colors != null) {
+            if (raster != null) {
+                return RenderedSampleDimension.create(names, raster, minimum, maximum, units, colors, hints);
+            } else if (image != null) {
+                return RenderedSampleDimension.create(names, image, minimum, maximum, units, colors, hints);
+            }
         }
+        return null;
     }
 
     /**
