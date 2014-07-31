@@ -51,7 +51,7 @@ import org.apache.sis.metadata.iso.extent.DefaultTemporalExtent;
 import org.apache.sis.metadata.iso.identification.DefaultKeywords;
 import org.apache.sis.metadata.iso.quality.DefaultConformanceResult;
 import org.apache.sis.util.iso.DefaultNameFactory;
-import org.geotoolkit.service.ServiceTypeImpl;
+import org.geotoolkit.service.ServiceType;
 import org.geotoolkit.temporal.object.DefaultPeriod;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.wms.xml.v111.BoundingBox;
@@ -74,8 +74,6 @@ import org.apache.sis.internal.jaxb.LegacyNamespaces;
 import static org.apache.sis.test.TestUtilities.getSingleton;
 
 import static org.apache.sis.test.Assert.*;
-import org.apache.sis.test.XMLComparator;
-import org.apache.sis.xml.XML;
 
 
 /**
@@ -260,7 +258,7 @@ public class WmsXmlBindingTest {
 
         ext.setResourceType(ScopeCode.SERVICE);
 
-        ext.setSpatialDataService(new ServiceTypeImpl(nameFactory.createLocalName(null, "view")));
+        ext.setSpatialDataService(new ServiceType(nameFactory.createLocalName(null, "view")));
 
         ext.setResourcelocator(new DefaultOnlineResource(URI.create("http://javacestpasdlamenthealeau.com")));
 
@@ -587,7 +585,7 @@ public class WmsXmlBindingTest {
 
         ext.setResourceType(ScopeCode.SERVICE);
 
-        ext.setSpatialDataService(new ServiceTypeImpl(nameFactory.createLocalName(null, "view")));
+        ext.setSpatialDataService(new ServiceType(nameFactory.createLocalName(null, "view")));
 
         ext.setResourcelocator(new DefaultOnlineResource(URI.create("http://javacestpasdlamenthealeau.com")));
 

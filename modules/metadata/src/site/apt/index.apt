@@ -31,7 +31,7 @@ Metadata
   interfaces defined in the <<<org.opengis.metadata>>> package and sub-packages. That standard is
   identified in Geotk by the <<<MetadataStandard.ISO_19115>>> constant. Other standards are defined
   as well, for example the <<<MetadataStandard.ISO_19119>>> constant stands for the standards defined
-  by the interfaces in the <<<org.opengis.service>>> package and sub-packages.
+  by the interfaces in the <<<org.opengis.metadata.service>>> package.
 
   For each interface, the collection of declared getter methods defines its <properties> (or <attributes>).
   If a <<<@UML>>> annotation is attached to the getter method, the identifier declared in that annotation

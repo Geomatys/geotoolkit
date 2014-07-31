@@ -1,8 +1,3 @@
-/**
- * An explanation
- * for this package is provided in the {@linkplain org.opengis.service OpenGIS&reg; javadoc}.
- * The remaining discussion on this page is specific to the GeotoolKit implementation.
- */
 @XmlSchema(elementFormDefault= XmlNsForm.QUALIFIED,
 namespace="http://www.isotc211.org/2005/gco",
 xmlns = {
@@ -35,7 +30,4 @@ import javax.xml.bind.annotation.XmlNsForm;
 import javax.xml.bind.annotation.XmlSchema;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapters;
-import org.apache.sis.internal.jaxb.metadata.*;
-import org.geotoolkit.resources.jaxb.feature.catalog.*;
-import org.geotoolkit.resources.jaxb.feature.catalog.code.*;
 import org.apache.sis.internal.jaxb.gco.*;

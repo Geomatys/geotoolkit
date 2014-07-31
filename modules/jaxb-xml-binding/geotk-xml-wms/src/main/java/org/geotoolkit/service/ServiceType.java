@@ -25,7 +25,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.apache.sis.internal.jaxb.gco.GO_GenericName;
-import org.opengis.service.ServiceType;
 import org.opengis.util.LocalName;
 
 
@@ -51,17 +50,16 @@ import org.opengis.util.LocalName;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "SV_ServiceType_Type")
 @XmlRootElement(name = "SV_ServiceType")
-public class ServiceTypeImpl implements ServiceType {
+public class ServiceType {
 
     @XmlJavaTypeAdapter(GO_GenericName.class)
     @XmlElement
     private LocalName serviceType;
 
-    public ServiceTypeImpl() {
-
+    public ServiceType() {
     }
 
-    public ServiceTypeImpl(final LocalName serviceType) {
+    public ServiceType(final LocalName serviceType) {
         this.serviceType = serviceType;
     }
 
@@ -81,8 +79,8 @@ public class ServiceTypeImpl implements ServiceType {
         if (object == this) {
             return true;
         }
-        if (object instanceof ServiceTypeImpl) {
-            final ServiceTypeImpl that = (ServiceTypeImpl) object;
+        if (object instanceof ServiceType) {
+            final ServiceType that = (ServiceType) object;
             return Objects.equals(this.serviceType, that.serviceType);
         }
         return false;
@@ -95,8 +93,6 @@ public class ServiceTypeImpl implements ServiceType {
         return hash;
     }
 
-
-
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("[ServiceType]\n");
@@ -105,5 +101,4 @@ public class ServiceTypeImpl implements ServiceType {
         }
         return sb.toString();
     }
-
 }

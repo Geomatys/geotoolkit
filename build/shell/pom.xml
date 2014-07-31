@@ -91,7 +91,6 @@
         <dependency><groupId>org.geotoolkit</groupId><artifactId>geotk-xml-ows</artifactId>             <version>${project.version}</version></dependency>
         <dependency><groupId>org.geotoolkit</groupId><artifactId>geotk-xml-se</artifactId>              <version>${project.version}</version></dependency>
         <dependency><groupId>org.geotoolkit</groupId><artifactId>geotk-xml-sensorML</artifactId>        <version>${project.version}</version></dependency>
-        <dependency><groupId>org.geotoolkit</groupId><artifactId>geotk-xml-service</artifactId>         <version>${project.version}</version></dependency>
         <dependency><groupId>org.geotoolkit</groupId><artifactId>geotk-xml-skos</artifactId>            <version>${project.version}</version></dependency>
         <dependency><groupId>org.geotoolkit</groupId><artifactId>geotk-xml-sld</artifactId>             <version>${project.version}</version></dependency>
         <dependency><groupId>org.geotoolkit</groupId><artifactId>geotk-xml-sos</artifactId>             <version>${project.version}</version></dependency>

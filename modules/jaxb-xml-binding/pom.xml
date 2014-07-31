@@ -81,7 +81,6 @@
   <modules>
     <module>geotk-xml-xsd</module>
     <module>geotk-xml-feature-catalogue</module>
-    <module>geotk-xml-service</module>
     <!--module>geotk-xml-metadata-imagery</module-->
     <module>geotk-xml-gml</module>
     <module>geotk-xml-citygml</module>

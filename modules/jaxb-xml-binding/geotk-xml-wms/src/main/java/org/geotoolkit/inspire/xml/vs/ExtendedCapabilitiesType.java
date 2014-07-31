@@ -29,7 +29,7 @@ import org.opengis.metadata.extent.Extent;
 import org.opengis.metadata.identification.Keywords;
 import org.opengis.metadata.maintenance.ScopeCode;
 import org.opengis.metadata.quality.ConformanceResult;
-import org.opengis.service.ServiceType;
+import org.geotoolkit.service.ServiceType;
 
 /**
  *
@@ -80,7 +80,7 @@ public class ExtendedCapabilitiesType {
 
     @XmlElement(name="Languages", namespace="http://inspira.europa.eu/networkservice/view/1.0")
     private LanguagesType languages;
-    
+
     @XmlElement(name="currentLanguage", namespace="http://inspira.europa.eu/networkservice/view/1.0")
     private String currentLanguage;
 

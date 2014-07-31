@@ -35,7 +35,6 @@
     @XmlJavaTypeAdapter(EX_Extent.class),
     @XmlJavaTypeAdapter(DQ_Result.class),
     @XmlJavaTypeAdapter(CI_OnlineResource.class),
-    @XmlJavaTypeAdapter(ServiceTypeAdapter.class),
     @XmlJavaTypeAdapter(MD_Keywords.class),
     @XmlJavaTypeAdapter(CI_ResponsibleParty.class)
 })
@@ -58,5 +57,3 @@ import org.apache.sis.internal.jaxb.metadata.DQ_Result;
 
 import org.apache.sis.xml.Namespaces;
 import org.apache.sis.internal.jaxb.gco.GO_DateTime;
-import org.geotoolkit.resources.jaxb.service.ServiceTypeAdapter;
-

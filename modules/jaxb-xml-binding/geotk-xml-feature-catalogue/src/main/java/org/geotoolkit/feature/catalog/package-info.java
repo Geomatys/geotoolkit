@@ -1,8 +1,3 @@
-/**
- * An explanation
- * for this package is provided in the {@linkplain org.opengis.service OpenGIS&reg; javadoc}.
- * The remaining discussion on this page is specific to the GeotoolKit implementation.
- */
 @XmlSchema(elementFormDefault= XmlNsForm.QUALIFIED,
 namespace="http://www.isotc211.org/2005/gfc",
 xmlns = {
