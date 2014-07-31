@@ -853,7 +853,7 @@
           <quiet>true</quiet>              <!-- Shuts off non-error and non-warning messages.              -->
           <keywords>true</keywords>        <!-- Adds HTML meta keyword tags to the generated files.        -->
           <breakiterator>true</breakiterator>
-          <excludePackageNames>org.geotoolkit.build:org.geotoolkit.test:org.geotoolkit.maven:org.geotoolkit.openoffice:org.geotoolkit.internal:org.geotoolkit.resources:org.geotoolkit.legacy:org.opengis:com</excludePackageNames>
+          <excludePackageNames>org.geotoolkit.build:org.geotoolkit.test:org.geotoolkit.maven:org.geotoolkit.openoffice:org.geotoolkit.internal:org.geotoolkit.resources:org.geotoolkit.legacy:org.apache:org.opengis:com</excludePackageNames>
           <!-- stylesheetfile>src/main/javadoc/stylesheet.css</stylesheetfile -->
 
           <!-- Custom taglets implemented in Java. -->
@@ -881,74 +881,6 @@
             <link>http://javadoc.geotoolkit.org/external/swingx</link>
             <link>http://jscience.org/api</link>
           </links>
-
-          <!-- Separates packages on the overview page into the groups specified. -->
-          <groups>
-            <group>
-              <title>Feature</title>
-              <packages>org.geotoolkit.feature*</packages>
-            </group>
-            <group>
-              <title>Feature stores</title>
-              <packages>org.geotoolkit.storage:org.geotoolkit.data*</packages>
-            </group>
-            <group>
-              <title>Filter and Expression</title>
-              <packages>org.geotoolkit.filter*</packages>
-            </group>
-            <group>
-              <title>Geometry</title>
-              <packages>org.geotoolkit.geometry*:org.geotoolkit.topology*</packages>
-            </group>
-            <group>
-              <title>Coverage and Raster</title>
-              <packages>org.geotoolkit.coverage*:org.geotoolkit.image*</packages>
-            </group>
-            <group>
-              <title>Referencing</title>
-              <packages>org.geotoolkit.referencing*:org.geotoolkit.parameter*</packages>
-            </group>
-            <group>
-              <title>Metadata</title>
-              <packages>org.geotoolkit.metadata*:org.geotoolkit.naming*</packages>
-            </group>
-            <group>
-              <title>Numerical calculation and processing</title>
-              <packages>org.geotoolkit.math*:org.geotoolkit.measure*:org.geotoolkit.nature*:org.geotoolkit.process*</packages>
-            </group>
-            <group>
-              <title>Indexing and Searching</title>
-              <packages>org.geotoolkit.index*:org.geotoolkit.lucene*</packages>
-            </group>
-            <group>
-              <title>Rendering</title>
-              <packages>org.geotoolkit.display*:org.geotoolkit.map*:org.geotoolkit.renderer*</packages>
-            </group>
-            <group>
-              <title>Rendering 2D</title>
-              <packages>org.geotoolkit.display2d*</packages>
-            </group>
-            <group>
-              <title>Rendering 3D</title>
-              <packages>org.geotoolkit.display3d*</packages>
-            </group>
-            <group>
-              <title>Styling</title>
-              <packages>org.geotoolkit.style*:org.geotoolkit.sld*:org.geotoolkit.se.*</packages>
-            </group>
-            <group>
-              <title>Reporting : JasperReport</title>
-              <packages>org.geotoolkit.report*</packages>
-            </group>
-            <group>
-              <title>User Interface</title>
-              <packages>org.geotoolkit.gui*</packages>
-            </group>
-            <group>
-              <title>Utilities</title>
-              <packages>org.geotoolkit.console*:org.geotoolkit.io*:org.geotoolkit.factory*:org.geotoolkit.lang*:org.geotoolkit.util*:org.geotoolkit.sql*:org.geotoolkit.xml*</packages>
-            </group>
-          </groups>
 
           <!-- Enables the Javadoc tool to interpret a simple, one-argument
                custom block tag tagname in doc comments. Note: <placement/>
