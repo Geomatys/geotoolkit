@@ -169,7 +169,9 @@ public class StatisticOp{
         final Map<String,Object> analyze = new HashMap<>();
         if(noData !=null){
             noData = noData.clone();
-            Arrays.sort(noData);
+            for (double[] d : noData) {
+                Arrays.sort(d);
+            }
         }
 
         final SampleModel sm = image.getSampleModel();
