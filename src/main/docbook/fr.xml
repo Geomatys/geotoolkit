@@ -11,8 +11,8 @@
     <title>Introduction à Geotoolkit.org</title>
     <orgname class="informal">Geotoolkit.org</orgname>
     <author><personname>
-      <firstname>Martin</firstname>
-      <surname>Desruisseaux</surname>
+      <firstname>Johann</firstname>
+      <surname>Sorel</surname>
     </personname></author>
     <abstract><para>
       Cette page a déménagée. Son contenu se trouve maintenant à la page
@@ -24,7 +24,7 @@
     </keywordset>
   </info>
 
-<figure> <title>GeoToolkit</title>
+<figure> <title>GeoToolkit.org</title>
   <mediaobject>
     <imageobject>
       <imagedata fileref="../images/Troll.jpg" format="jpg"></imagedata>
@@ -32,13 +32,13 @@
   </mediaobject>
 </figure>
 
-<figure> <title>Architecture de GeoToolkit</title>
+<figure> <title>Architecture de GeoToolkit.org</title>
   <mediaobject>
     <imageobject>
       <imagedata fileref="../images/schema_complet.png" format="png"></imagedata>
     </imageobject>
     <textobject>
-      <phrase> Architecture de Geotoolkit
+      <phrase> Architecture de Geotoolkit.org
       </phrase>
     </textobject>
   </mediaobject>
@@ -53,7 +53,7 @@
   <xi:include href="fr/map.xml"/>
 
   <xi:include href="fr/process.xml"/>
-  
+
   <xi:include href="fr/converter.xml"/>
 
   <xi:include href="fr/swing.xml"/>
