@@ -19,10 +19,13 @@ package org.geotoolkit.gui.javafx.contexttree;
 
 import java.util.ArrayList;
 import java.util.List;
+import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableView;
 import javafx.scene.layout.BorderPane;
@@ -34,7 +37,7 @@ import org.geotoolkit.map.MapItem;
  */
 public class FXMapContextTree extends BorderPane{
 
-    private final List<TreeMenuItem> menuItems = new ArrayList<>();
+    private final ObservableList<Object> menuItems = FXCollections.observableArrayList();
     private final TreeTableView treetable = new TreeTableView();
     private final ScrollPane scroll = new ScrollPane(treetable);
     private MapItem mapItem;
@@ -67,12 +70,43 @@ public class FXMapContextTree extends BorderPane{
         treetable.getSelectionModel().getSelectedItems().addListener(new ListChangeListener() {
             @Override
             public void onChanged(ListChangeListener.Change c) {
-                menu.getItems().clear();
+                final ObservableList items = menu.getItems();
+                items.clear();
                 final List<? extends TreeItem> selection = treetable.getSelectionModel().getSelectedItems();
-                for(TreeMenuItem mi : menuItems){
-                    final MenuItem candidate = mi.init(selection);
-                    if(candidate!=null) menu.getItems().add(candidate);
+                for(int i=0,n=menuItems.size();i<n;i++){
+                    final Object candidate = menuItems.get(i);
+                    if(candidate instanceof TreeMenuItem){
+                        final MenuItem mc = ((TreeMenuItem)candidate).init(selection);
+                        if(mc!=null) items.add(mc);
+                    }else if(candidate instanceof SeparatorMenuItem){
+                        //special case, we don't want any separator at the start or end
+                        //or 2 succesive separators
+                        if(i==0 || i==n-1 || items.isEmpty()) continue;
+                        
+                        if(items.get(items.size()-1) instanceof SeparatorMenuItem){
+                            continue;
+                        }
+                        items.add((SeparatorMenuItem)candidate);
+                        
+                    }else if(candidate instanceof MenuItem){
+                        items.add((MenuItem)candidate);
+                    }
                 }
+                
+                //special case, we don't want any separator at the start or end
+                if(!items.isEmpty()){
+                    if(items.get(0) instanceof SeparatorMenuItem){
+                        items.remove(0);
+                    }
+                    if(!items.isEmpty()){
+                        final int idx = items.size()-1;
+                        if(items.get(idx) instanceof SeparatorMenuItem){
+                            items.remove(idx);
+                        }
+                    }
+                }
+                
+                
             }
         });
                 
@@ -83,7 +117,12 @@ public class FXMapContextTree extends BorderPane{
         return treetable;
     }
 
-    public List<TreeMenuItem> getMenuItems() {
+    /**
+     * This list can contain MenuItem of TreeMenuItem.
+     * 
+     * @return ObservableList of contextual menu items.
+     */
+    public ObservableList<Object> getMenuItems() {
         return menuItems;
     }
     

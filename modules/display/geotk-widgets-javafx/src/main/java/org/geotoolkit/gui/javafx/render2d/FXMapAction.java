@@ -72,8 +72,7 @@ public abstract class FXMapAction extends AbstractAction {
     }
     
     public Button createButton(ActionUtils.ActionTextBehavior behavior){
-        final Button tb = ActionUtils.createButton(this, behavior);
-        return tb;
+        return ActionUtils.createButton(this, behavior);
     }
     
     public ToggleButton createToggleButton(ActionUtils.ActionTextBehavior behavior){

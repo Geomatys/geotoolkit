@@ -28,11 +28,6 @@ import org.opengis.style.Stroke;
 public class FXStrokePane extends FXStyleElementController<FXStrokePane,Stroke> {
 
     @FXML
-    public Button uiButton;
-    
-    @Override
-    public void initialize() {
-        super.initialize();
-    }
-    
+    protected Button uiButton;
+        
 }

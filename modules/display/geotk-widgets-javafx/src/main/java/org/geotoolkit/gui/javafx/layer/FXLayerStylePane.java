@@ -15,22 +15,16 @@
  *    Lesser General Public License for more details.
  */
 
-package org.geotoolkit.gui.javafx.style;
-
-import javafx.fxml.FXML;
-import javafx.scene.control.TextField;
-import org.opengis.style.Stroke;
+package org.geotoolkit.gui.javafx.layer;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
-public class FXLineSymbolizerPane extends FXStyleElementController<FXLineSymbolizerPane,Stroke> {
+public class FXLayerStylePane extends FXPropertyPane{
     
-    @FXML
-    protected TextField test123;
-
-    @FXML
-    protected FXStrokePane strokeEditor;
-            
+    public String getCategory(){
+        return "";
+    }
+    
 }

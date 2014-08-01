@@ -15,22 +15,32 @@
  *    Lesser General Public License for more details.
  */
 
-package org.geotoolkit.gui.javafx.style;
+package org.geotoolkit.gui.javafx.layer;
 
-import javafx.fxml.FXML;
-import javafx.scene.control.TextField;
-import org.opengis.style.Stroke;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
+import javafx.scene.layout.BorderPane;
+import org.geotoolkit.map.MapItem;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
-public class FXLineSymbolizerPane extends FXStyleElementController<FXLineSymbolizerPane,Stroke> {
+public class FXPropertiesPane extends BorderPane{
     
-    @FXML
-    protected TextField test123;
+    private final TabPane tabPane = new TabPane();
 
-    @FXML
-    protected FXStrokePane strokeEditor;
-            
+    public FXPropertiesPane(MapItem item, FXPropertyPane ... propertyPanes) {
+        setCenter(tabPane);
+        
+        for(FXPropertyPane pane : propertyPanes){
+            if(pane.init(item)){
+                final Tab tab = new Tab(pane.getTitle());
+                tab.setContent(pane);
+                tabPane.getTabs().add(tab);
+            }
+        }
+        
+    }
+    
 }

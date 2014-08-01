@@ -59,7 +59,7 @@ public final class FXUtilities {
             throw new IllegalArgumentException(ex.getMessage(),ex);
         }
     }
-    
+        
 //    public ObservableValue create(){
 //        return new ObservableValueBase() {
 //
