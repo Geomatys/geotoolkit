@@ -21,12 +21,12 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Locale;
+import java.nio.charset.StandardCharsets;
 import javax.xml.bind.JAXBException;
 
 import org.opengis.metadata.citation.DateType;
 import org.opengis.metadata.citation.ResponsibleParty;
 import org.opengis.metadata.maintenance.ScopeCode;
-import org.opengis.metadata.identification.CharacterSet;
 import org.opengis.metadata.quality.EvaluationMethodType;
 import org.opengis.metadata.spatial.DimensionNameType;
 import org.opengis.metadata.spatial.CellGeometry;
@@ -110,7 +110,7 @@ public final strictfp class MetadataMarshallingTest extends LocaleDependantTestB
         final DefaultMetadata metadata = new DefaultMetadata();
         metadata.setLocales(Arrays.asList(Locale.CANADA_FRENCH, Locale.UK));
         metadata.setLanguage(Locale.FRENCH);
-        metadata.setCharacterSet(CharacterSet.UTF_8);
+        metadata.setCharacterSet(StandardCharsets.UTF_8);
         metadata.setDateStamp(new Date(1260961229580L));
         metadata.setContacts(Arrays.asList(
             (ResponsibleParty) getSingleton(Citations.GEOTOOLKIT.getCitedResponsibleParties()),

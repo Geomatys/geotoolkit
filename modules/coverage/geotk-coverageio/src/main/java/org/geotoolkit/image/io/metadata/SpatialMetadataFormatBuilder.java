@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Collection;
 import java.util.Collections;
+import java.nio.charset.Charset;
 import javax.imageio.metadata.IIOMetadataFormatImpl;
 
 import org.opengis.util.CodeList;
@@ -753,7 +754,7 @@ public class SpatialMetadataFormatBuilder extends Builder<SpatialMetadataFormat>
          */
         substitutions.put(Format.class,                    null);  // Redundant with ImageReaderWriterSpi.
         substitutions.put(Locale.class,                    null);  // Specified in ImageReader.getLocale().
-        substitutions.put(CharacterSet.class,              null);  // Fixed to Unicode in java.lang.String.
+        substitutions.put(Charset.class,                   null);  // Fixed to Unicode in java.lang.String.
         substitutions.put(BrowseGraphic.class,             null);  // Redundant with Image I/O Thumbnails.
         substitutions.put(SpatialRepresentationType.class, null);  // Fixed to "grid" for Image I/O.
         /*
