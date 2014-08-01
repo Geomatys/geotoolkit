@@ -106,7 +106,7 @@ public final class WMTSUtilities {
 
         //in case axis in not in a meter compatible unit
         if(!SI.METRE.isCompatible(axi0Unit)){
-            if(axi0Unit == NonSI.DEGREE_ANGLE){
+            if(NonSI.DEGREE_ANGLE.equals(axi0Unit)){
                 //axis is in degree, likely a geographic crs
                 return EARTH_PERIMETER / 360d ;
             }else{
