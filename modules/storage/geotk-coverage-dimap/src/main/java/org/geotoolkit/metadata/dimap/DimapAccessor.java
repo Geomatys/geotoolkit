@@ -137,6 +137,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.nio.charset.StandardCharsets;
 
 import javax.measure.unit.Unit;
 import javax.media.jai.Warp;
@@ -196,7 +197,6 @@ import org.opengis.metadata.constraint.Restriction;
 import org.opengis.metadata.content.ContentInformation;
 import org.opengis.metadata.content.RangeDimension;
 import org.opengis.metadata.extent.Extent;
-import org.opengis.metadata.identification.CharacterSet;
 import org.opengis.metadata.identification.Identification;
 import org.opengis.metadata.lineage.Lineage;
 import org.opengis.metadata.lineage.ProcessStep;
@@ -628,7 +628,7 @@ public final class DimapAccessor extends Static {
         //<Data_Strip/>                     - Mandatory
 
         //Default values
-        metadata.setCharacterSet(CharacterSet.UTF_8);
+        metadata.setCharacterSet(StandardCharsets.UTF_8);
         metadata.setLanguage(Locale.ENGLISH);
         metadata.setDateStamp(new Date());
 
