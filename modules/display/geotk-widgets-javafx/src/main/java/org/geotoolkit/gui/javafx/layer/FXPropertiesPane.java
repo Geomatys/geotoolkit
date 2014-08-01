@@ -36,6 +36,7 @@ public class FXPropertiesPane extends BorderPane{
         for(FXPropertyPane pane : propertyPanes){
             if(pane.init(item)){
                 final Tab tab = new Tab(pane.getTitle());
+                tab.setClosable(false);
                 tab.setContent(pane);
                 tabPane.getTabs().add(tab);
             }

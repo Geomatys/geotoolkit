@@ -47,7 +47,7 @@ public class FXDialog {
     
     public FXDialog(){        
         south.setRight(buttonBox);        
-        south.setPadding(new Insets(4, 4, 4, 4));
+        south.setPadding(new Insets(8, 8, 8, 8));
         allPane.setBottom(south);  
     }
 
@@ -91,6 +91,8 @@ public class FXDialog {
             stage.setTitle(title);
             stage.setScene(new Scene(allPane));
             stage.initModality(modal?Modality.APPLICATION_MODAL:Modality.NONE);
+            stage.setWidth(800);
+            stage.setHeight(600);
             stage.centerOnScreen();
             stage.show();
             stage.toFront();

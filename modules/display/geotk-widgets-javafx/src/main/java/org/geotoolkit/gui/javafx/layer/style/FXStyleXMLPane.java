@@ -18,7 +18,6 @@
 package org.geotoolkit.gui.javafx.layer.style;
 
 import org.geotoolkit.gui.javafx.layer.FXLayerStylePane;
-import org.geotoolkit.gui.javafx.style.FXUserStylePane;
 import org.geotoolkit.internal.GeotkFXBundle;
 import org.geotoolkit.map.MapLayer;
 
@@ -26,19 +25,16 @@ import org.geotoolkit.map.MapLayer;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class FXStyleAdvancedPane extends FXLayerStylePane {
+public class FXStyleXMLPane extends FXLayerStylePane {
     
-    private final FXUserStylePane pane = new FXUserStylePane().build();
-
-    public FXStyleAdvancedPane() {
-        setCenter(pane);
+    public FXStyleXMLPane() {
     }
 
     @Override
     public String getTitle() {
         return GeotkFXBundle.getString(this,"title");
     }
-    
+
     @Override
     public String getCategory() {
         return GeotkFXBundle.getString(this,"category");
@@ -46,12 +42,7 @@ public class FXStyleAdvancedPane extends FXLayerStylePane {
     
     @Override
     public boolean init(Object candidate) {
-        if(!(candidate instanceof MapLayer)) return false;
-        
-        final MapLayer layer = (MapLayer) candidate;
-        pane.valueProperty().set(layer.getStyle());
-        pane.setLayer(layer);
-        
+        if(!(candidate instanceof MapLayer)) return false;        
         return true;
     }
     
