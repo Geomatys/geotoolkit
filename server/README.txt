@@ -1,6 +1,6 @@
 This directory is not part of Maven build. Its content is of interest
 only to Unix servers publishing reports of Geotk project on the web.
-The server should host a clone of the Mercurial repository to be pulled
+The server should host a clone of the GitHub repository to be pulled
 and updated on a regular basis, for example by a Jenkins server. The server's
 web space can contains symbolic links to some files in this directory:
 

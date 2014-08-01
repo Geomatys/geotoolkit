@@ -29,9 +29,6 @@
  * The current implementation requires the PostgreSQL database with the PostGIS extension.
  * The easiest way to install the database is to run the
  * <a href="{@docRoot}/../modules/display/geotk-wizards-swing/CoverageDatabaseInstaller.html">graphical wizard</a>.
- * The database can also be created manually by running the SQL scripts available on the
- * <a href="http://hg.geotoolkit.org/geotoolkit/file/tip/modules/coverage/geotk-coverage-sql/src/main/resources/org/geotoolkit/coverage/sql">Mercurial
- * repository</a>.
  *
  * {@section Connection}
  * The connection to the database is specified by a JDBC {@link javax.sql.DataSource}

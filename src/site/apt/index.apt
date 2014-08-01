@@ -91,10 +91,9 @@ The Geotoolkit.org library
 git clone http://github.com/Geomatys/geotoolkit.git
 -----------------------------------------------------------------------------------
 
-  The mercurial clone will contain both the <repository> with the fully history (in the hidden
-  <<<.hg/>>> directory) and the <working copy> comprised of all the code files visible in the root
-  directory. The {{{http://www.selenic.com/mercurial/wiki/}Mercurial wiki}} explains how to use the
-  tool for local version control and distributed collaboration.
+  The Git clone will contain both the <repository> with the fully history (in the hidden
+  <<<.git/>>> directory) and the <working copy> comprised of all the code files visible in the root
+  directory.
 
   Geotk is built using the Maven\ 2 software project management tool using the command:
 

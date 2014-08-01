@@ -28,7 +28,7 @@ Building Geotoolkit.org
 
     * {{{http://maven.apache.org}Maven 3.0.4}} or later.
 
-    * {{{http://mercurial.selenic.com}Mercurial}} (if Geotk is going to be fetched from the source code repository).
+    * Git (if Geotk is going to be fetched from the source code repository).
 
 
   The following free softwares are optional. They are included in the Geotk dependencies for
@@ -40,23 +40,8 @@ Building Geotoolkit.org
 * Preparing source code
 
   Gets the source code from the above-cited download area (if releases are sufficient)
-  or from the Mercurial repository if the development version (snapshot) is wanted. In the later
+  or from the GitHub repository if the development version (snapshot) is wanted. In the later
   case, see the {{{../source-repository.html}Source Repository}} page for more information.
-
-  The following branches are available on the Mercurial source code repository:
-
-    * <<<default>>>
-
-    * <<<GeoAPI-3.0>>>
-
-    * <<<JDK7>>>
-
-  If the GeoAPI branch is wanted instead than the default one, execute the following command
-  (available only if the source code was obtained from the Mercurial repository):
-
---------------------
-hg update GeoAPI-3.0
---------------------
 
 
 * Building the JAR files
@@ -102,7 +87,7 @@ mvn site
 
 Updating the source code
 
-  This work only if the source code was obtained from the Mercurial repository.
+  This work only if the source code was obtained from the GitHub repository.
   The recommend steps are as below, in that order (note that the clean is performed
   before the update):
 

@@ -26,9 +26,7 @@
         </para>
         <para>
             Consulter en ligne :
-            <link xlink:href="http://hg.geotoolkit.org/geotoolkit/file/0237bc78daa2/demos">
-                <acronym>Dépôt mercurial de GeotoolKit</acronym>
-            </link>
+            Dépôt Git de Geotoolkit.org
         </para>
 
         <section>
@@ -37,26 +35,8 @@
             </title>
 
             <para>
-                GeotoolKit utilise le gestionnaire de version décentralisée
-                <link xlink:href="http://mercurial.selenic.com/">
-                    <acronym>Mercurial</acronym>
-                </link>.
+                GeotoolKit utilise le gestionnaire de version décentralisée Git.
             </para>
-
-            <para>
-                Une fois celui-ci installé, les sources peuvent être récupérées avec la commande suivante :
-            </para>
-
-            <programlisting>
-                hg clone http://hg.geotoolkit.org/geotoolkit geotk-pending
-            </programlisting>
-
-            <para>
-                La mise à jour se fait avec la commande :
-            </para>
-            <programlisting>
-                hg pull -u
-            </programlisting>
 
         </section>
 

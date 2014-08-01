@@ -23,13 +23,11 @@
         </title>
 
         <para>
-            A collection of source code examples are available in Geotoolkit official project
+            A collection of source code examples are available in Geotoolkit.org project
         </para>
         <para>
             Online :
-            <link xlink:href="http://hg.geotoolkit.org/geotoolkit/file/0237bc78daa2/demos">
-                <acronym>GeotoolKit Mercurial repository</acronym>
-            </link>
+            GitHub repository
         </para>
 
         <section>
@@ -38,26 +36,8 @@
             </title>
 
             <para>
-                The distributed revision control system used with GeotoolKit is
-                <link xlink:href="http://mercurial.selenic.com/">
-                    <acronym>Mercurial</acronym>
-                </link>.
+                The distributed revision control system used with Geotoolkit.org is Git.
             </para>
-
-            <para>
-                When Mercurial installed, you can copy sources with the command :
-            </para>
-
-            <programlisting>
-                hg clone http://hg.geotoolkit.org/geotoolkit geotk-pending
-            </programlisting>
-
-            <para>
-                To get the last version (update) :
-            </para>
-            <programlisting>
-                hg pull -u
-            </programlisting>
 
         </section>
 
