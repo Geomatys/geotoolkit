@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.sis.util.ObjectConverters;
 
+import org.apache.sis.util.UnconvertibleObjectException;
 import org.opengis.filter.expression.Expression;
 
 /**
@@ -42,9 +43,13 @@ public abstract class AbstractExpression implements Expression,Serializable {
     public <T> T evaluate(final Object candidate, final Class<T> target) {
         final Object value = evaluate(candidate);
         if (target == null) {
-            return (T) value; // TODO - unsage cast!!!!
+            return (T) value; // TODO - unsafe cast!!!!
         }
-        return ObjectConverters.convert(value, target);
+        try{
+            return ObjectConverters.convert(value, target);
+        }catch (UnconvertibleObjectException ex){
+            return null;
+        }
     }
 
 }
