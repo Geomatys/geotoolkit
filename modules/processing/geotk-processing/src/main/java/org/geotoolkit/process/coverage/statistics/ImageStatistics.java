@@ -96,7 +96,7 @@ public class ImageStatistics implements Serializable{
          * Increment or create new value on {@link org.geotoolkit.process.coverage.statistics.ImageStatistics.Band#repartition}
          * @param data data which need to be add on {@link org.geotoolkit.process.coverage.statistics.ImageStatistics.Band#repartition}
          */
-        public void addValue(Double data){
+        public void addValue(double data){
             final Long aLong = repartition.get(data);
             if(aLong==null){
                 repartition.put(data, 1L);
