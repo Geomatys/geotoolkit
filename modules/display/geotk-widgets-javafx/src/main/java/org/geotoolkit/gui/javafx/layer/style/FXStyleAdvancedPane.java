@@ -18,7 +18,7 @@
 package org.geotoolkit.gui.javafx.layer.style;
 
 import org.geotoolkit.gui.javafx.layer.FXLayerStylePane;
-import org.geotoolkit.gui.javafx.style.FXUserStylePane;
+import org.geotoolkit.gui.javafx.style.FXUserStyle;
 import org.geotoolkit.internal.GeotkFXBundle;
 import org.geotoolkit.map.MapLayer;
 
@@ -28,7 +28,7 @@ import org.geotoolkit.map.MapLayer;
  */
 public class FXStyleAdvancedPane extends FXLayerStylePane {
     
-    private final FXUserStylePane pane = new FXUserStylePane().build();
+    private final FXUserStyle pane = new FXUserStyle();
 
     public FXStyleAdvancedPane() {
         setCenter(pane);

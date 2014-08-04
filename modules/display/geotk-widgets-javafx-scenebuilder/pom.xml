@@ -57,11 +57,15 @@
                                 <filter>
                                     <artifact>*:*</artifact>
                                     <includes>
+                                        <include>org/apache/sis/util/**</include>
                                         <include>org/geotoolkit/sld/**</include>
                                         <include>org/geotoolkit/style/**</include>
                                         <include>org/geotoolkit/gui/**</include>
                                         <include>org/geotoolkit/font/**</include>
+                                        <include>org/geotoolkit/map/**</include>
+                                        <include>org/geotoolkit/cql/**</include>
                                         <include>org/opengis/**</include>
+                                        <include>jfxtras/**</include>
                                     </includes>
                                 </filter>
                             </filters>

@@ -25,12 +25,12 @@ import org.opengis.style.Stroke;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class FXLineSymbolizerPane extends FXStyleElementController<FXLineSymbolizerPane,Stroke> {
+public class FXLineSymbolizer extends FXStyleElementController<FXLineSymbolizer,Stroke> {
     
     @FXML
     protected TextField test123;
 
     @FXML
-    protected FXStrokePane strokeEditor;
+    protected FXStroke strokeEditor;
             
 }

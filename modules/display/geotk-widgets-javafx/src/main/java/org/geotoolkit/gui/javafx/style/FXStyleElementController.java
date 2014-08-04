@@ -23,38 +23,48 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.fxml.JavaFXBuilderFactory;
-import javafx.scene.Node;
 import javafx.scene.layout.BorderPane;
-import javafx.util.Builder;
+import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.map.MapLayer;
+import org.geotoolkit.style.MutableStyleFactory;
+import org.opengis.filter.FilterFactory2;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
-public class FXStyleElementController<E extends FXStyleElementController<E,T>,T> extends BorderPane implements Builder<E> {
+public class FXStyleElementController<E extends FXStyleElementController<E,T>,T> extends BorderPane {
         
     private static final String PATH = "org/geotoolkit/gui/javafx/internal/Bundle";
     private static final ResourceBundle BUNDLE = ResourceBundle.getBundle(PATH);
-    
-    @FXML
-    protected Node fxmlRoot;
-    
+    private static FilterFactory2 FF;
+    private static MutableStyleFactory SF;
+        
     protected final SimpleObjectProperty<T> value = new SimpleObjectProperty<>();
     protected MapLayer layer = null;
+
+    public FXStyleElementController() {
+        final Class thisClass = this.getClass();
+        final String fxmlpath = "/"+thisClass.getName().replace('.', '/')+".fxml";
+        final FXMLLoader loader = new FXMLLoader(thisClass.getResource(fxmlpath));
+        loader.setResources(BUNDLE);
+        loader.setController(this);
+        loader.setRoot(this);
+        //in special environement like osgi or other, we must use the proper class loaders
+        //not necessarly the one who loaded the FXMLLoader class
+        loader.setClassLoader(thisClass.getClassLoader());
+        try {
+            loader.load();
+        } catch (IOException ex) {
+            throw new IllegalArgumentException(ex.getMessage(), ex);
+        }
+    }
     
     /**
      * Called by FXMLLoader after creating controller.
      */
-    public void initialize(){
-        if(fxmlRoot==null){
-            throw new IllegalArgumentException("Root node is not set, fix "+getClass().getName()+".fxml , root pane must have id : fxmlRoot");
-        }
-        this.setCenter(fxmlRoot);
-        
+    public void initialize(){        
         value.addListener(new ChangeListener<T>() {
             @Override
             public void changed(ObservableValue observable, Object oldValue, Object newValue) {
@@ -82,34 +92,15 @@ public class FXStyleElementController<E extends FXStyleElementController<E,T>,T>
     protected void updateEditor(T styleElement){
         
     }
-    
-    /**
-     * Call after construction, to attach the visual nodes from FXML.
-     * 
-     * @return this
-     */
-    @Override
-    public final E build() {
-        try{
-            final Class thisClass = this.getClass();
-            final String fxmlpath = "/"+thisClass.getName().replace('.', '/')+".fxml";
-            final FXMLLoader loader = new FXMLLoader(
-                    thisClass.getResource(fxmlpath), 
-                    BUNDLE, new JavaFXBuilderFactory(this.getClass().getClassLoader(),true),
-                    (Class<?> param) -> this);
-            //in special environement like osgi or other, we must use the proper class loaders
-            //not necessarly the one who loaded the FXMLLoader class
-            loader.setClassLoader(thisClass.getClassLoader());
-            try {
-                loader.load();
-            } catch (IOException ex) {
-                throw new IllegalArgumentException(ex.getMessage(), ex);
-            }
-        }catch(Throwable e){
-            e.printStackTrace();
-        }
-        return (E)this;
-    }
         
+    protected synchronized static FilterFactory2 getFilterFactory(){
+        if(FF==null)FF = (FilterFactory2) FactoryFinder.getFilterFactory(null);
+        return FF;
+    }
+    
+    protected synchronized static MutableStyleFactory getStyleFactory(){
+        if(SF==null)SF = (MutableStyleFactory) FactoryFinder.getStyleFactory(null);
+        return SF;
+    }
     
 }

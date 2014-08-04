@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import org.geotoolkit.gui.javafx.style.*?>
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<fx:root maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" type="BorderPane" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <center>
+      <GridPane BorderPane.alignment="CENTER">
+        <columnConstraints>
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="-Infinity" />
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="-Infinity" />
+        </columnConstraints>
+        <rowConstraints>
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+         <children>
+            <Label text="%org.geotoolkit.gui.javafx.style.FXStroke.width" />
+            <Label text="%org.geotoolkit.gui.javafx.style.FXStroke.opacity" GridPane.rowIndex="1" />
+            <Label text="%org.geotoolkit.gui.javafx.style.FXStroke.color" GridPane.rowIndex="2" />
+            <Label text="%org.geotoolkit.gui.javafx.style.FXStroke.dashes" GridPane.rowIndex="3" />
+            <Label text="%org.geotoolkit.gui.javafx.style.FXStroke.linecap" GridPane.rowIndex="4" />
+            <Label text="%org.geotoolkit.gui.javafx.style.FXStroke.linejoin" GridPane.rowIndex="5" />
+            <FXNumberExpression fx:id="uiWidth" GridPane.columnIndex="1" />
+            <FXNumberExpression fx:id="uiOpacity" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+         </children>
+      </GridPane>
+   </center>
+</fx:root>

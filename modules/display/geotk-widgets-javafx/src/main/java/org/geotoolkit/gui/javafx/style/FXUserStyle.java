@@ -30,7 +30,6 @@ import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeTableCell;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.TreeTableView;
 import javafx.scene.control.cell.TextFieldTreeTableCell;
@@ -57,18 +56,13 @@ import org.opengis.util.GenericName;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class FXUserStylePane extends FXStyleElementController<FXUserStylePane, MutableStyle>{
+public class FXUserStyle extends FXStyleElementController<FXUserStyle, MutableStyle>{
     
     @FXML
     protected TreeTableView tree;
 
     @FXML
     protected BorderPane contentPane;
-
-    @Override
-    public void initialize() {
-        super.initialize();
-    }
 
     @Override
     protected void updateEditor(MutableStyle styleElement) {
