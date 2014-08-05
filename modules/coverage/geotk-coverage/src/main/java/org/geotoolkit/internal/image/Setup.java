@@ -47,6 +47,8 @@ public final class Setup implements SetupService {
      */
     public static final String PRODUCT_NAME = "org.geotoolkit";
 
+    private boolean initialized;
+
     /**
      * Set the ordering of image reader and writers.
      */
@@ -55,6 +57,7 @@ public final class Setup implements SetupService {
         Registry.setDefaultCodecPreferences();
         if (reinit) {
             Registry.registerGeotoolkitServices(JAI.getDefaultInstance().getOperationRegistry());
+            initialized = true;
         }
     }
 
@@ -63,19 +66,21 @@ public final class Setup implements SetupService {
      */
     @Override
     public void shutdown() {
-        final OperationRegistry registry = JAI.getDefaultInstance().getOperationRegistry();
-        for (final String mode : registry.getRegistryModes()) {
-            @SuppressWarnings("unchecked")
-            final List<RegistryElementDescriptor> descriptors = registry.getDescriptors(mode);
-            for (final RegistryElementDescriptor descriptor : descriptors) {
-                final String operationName = descriptor.getName();
-                if (operationName.startsWith("org.geotoolkit.")) {
-                    @SuppressWarnings("unchecked")
-                    final Iterator<RenderedImageFactory> rif = RIFRegistry.getIterator(registry, operationName);
-                    while (rif.hasNext()) {
-                        RIFRegistry.unregister(registry, operationName, PRODUCT_NAME, rif.next());
+        if (initialized) {
+            final OperationRegistry registry = JAI.getDefaultInstance().getOperationRegistry();
+            for (final String mode : registry.getRegistryModes()) {
+                @SuppressWarnings("unchecked")
+                final List<RegistryElementDescriptor> descriptors = registry.getDescriptors(mode);
+                for (final RegistryElementDescriptor descriptor : descriptors) {
+                    final String operationName = descriptor.getName();
+                    if (operationName.startsWith("org.geotoolkit.")) {
+                        @SuppressWarnings("unchecked")
+                        final Iterator<RenderedImageFactory> rif = RIFRegistry.getIterator(registry, operationName);
+                        while (rif.hasNext()) {
+                            RIFRegistry.unregister(registry, operationName, PRODUCT_NAME, rif.next());
+                        }
+                        registry.unregisterDescriptor(descriptor);
                     }
-                    registry.unregisterDescriptor(descriptor);
                 }
             }
         }
