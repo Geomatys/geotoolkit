@@ -74,40 +74,42 @@ public final class AuthorityFactoryFinder extends FactoryFinder {
      *
      * @return The set of all currently registered authorities.
      */
-    public static synchronized Set<String> getAuthorityNames() {
-        /*
-         * IMPORTANT: Return the same Set instance (unmodifiable) as long as there is no change
-         * in the list of registered factories, and create a new instance in case of changes.
-         * 'add/removeAuthorityFactory(...)' and 'scanForPlugins()' methods reset 'authorityNames'
-         * to null, which will cause the creation of a new Set instance. Some implementations like
-         * AllAuthoritiesFactory rely on this behavior as a way to be notified of registration
-         * changes for clearing their cache.
-         */
-        if (authorityNames == null) {
-            authorityNames = new LinkedHashSet<>();
-            final Hints hints = org.geotoolkit.factory.Factory.EMPTY_HINTS;
-loop:       for (int i=0; ; i++) {
-                final Set<? extends AuthorityFactory> factories;
-                switch (i) {
-                    case 0:  factories = getCRSAuthorityFactories(hints);                 break;
-                    case 1:  factories = getCSAuthorityFactories(hints);                  break;
-                    case 2:  factories = getDatumAuthorityFactories(hints);               break;
-                    case 3:  factories = getCoordinateOperationAuthorityFactories(hints); break;
-                    default: break loop;
-                }
-                for (final AuthorityFactory factory : factories) {
-                    final Citation authority = factory.getAuthority();
-                    if (authority != null) {
-                        authorityNames.add(Citations.getIdentifier(authority));
-                        for (final Identifier id : authority.getIdentifiers()) {
-                            authorityNames.add(id.getCode());
+    public static Set<String> getAuthorityNames() {
+        synchronized (FactoryFinder.class) {
+            /*
+             * IMPORTANT: Return the same Set instance (unmodifiable) as long as there is no change
+             * in the list of registered factories, and create a new instance in case of changes.
+             * 'add/removeAuthorityFactory(...)' and 'scanForPlugins()' methods reset 'authorityNames'
+             * to null, which will cause the creation of a new Set instance. Some implementations like
+             * AllAuthoritiesFactory rely on this behavior as a way to be notified of registration
+             * changes for clearing their cache.
+             */
+            if (authorityNames == null) {
+                authorityNames = new LinkedHashSet<>();
+                final Hints hints = org.geotoolkit.factory.Factory.EMPTY_HINTS;
+loop:           for (int i=0; ; i++) {
+                    final Set<? extends AuthorityFactory> factories;
+                    switch (i) {
+                        case 0:  factories = getCRSAuthorityFactories(hints);                 break;
+                        case 1:  factories = getCSAuthorityFactories(hints);                  break;
+                        case 2:  factories = getDatumAuthorityFactories(hints);               break;
+                        case 3:  factories = getCoordinateOperationAuthorityFactories(hints); break;
+                        default: break loop;
+                    }
+                    for (final AuthorityFactory factory : factories) {
+                        final Citation authority = factory.getAuthority();
+                        if (authority != null) {
+                            authorityNames.add(Citations.getIdentifier(authority));
+                            for (final Identifier id : authority.getIdentifiers()) {
+                                authorityNames.add(id.getCode());
+                            }
                         }
                     }
                 }
+                authorityNames = unmodifiableOrCopy(authorityNames);
             }
-            authorityNames = unmodifiableOrCopy(authorityNames);
+            return authorityNames;
         }
-        return authorityNames;
     }
 
     /**
@@ -407,16 +409,14 @@ loop:       for (int i=0; ; i++) {
      */
     @Configuration
     public static void addAuthorityFactory(final AuthorityFactory authority) {
-        synchronized (AuthorityFactoryFinder.class) {
+        synchronized (FactoryFinder.class) {
             authorityNames = null;
-            synchronized (FactoryFinder.class) {
-                final boolean needScan = (registry == null);
-                final FactoryRegistry registry = getServiceRegistry();
-                if (needScan) {
-                    registry.scanForPlugins();
-                }
-                registry.registerServiceProvider(authority);
+            final boolean needScan = (registry == null);
+            final FactoryRegistry registry = getServiceRegistry();
+            if (needScan) {
+                registry.scanForPlugins();
             }
+            registry.registerServiceProvider(authority);
         }
         Factories.fireConfigurationChanged(AuthorityFactoryFinder.class);
     }
@@ -430,11 +430,9 @@ loop:       for (int i=0; ; i++) {
      */
     @Configuration
     public static void removeAuthorityFactory(final AuthorityFactory authority) {
-        synchronized (AuthorityFactoryFinder.class) {
+        synchronized (FactoryFinder.class) {
             authorityNames = null;
-            synchronized (FactoryFinder.class) {
-                getServiceRegistry().deregisterServiceProvider(authority);
-            }
+            getServiceRegistry().deregisterServiceProvider(authority);
         }
         Factories.fireConfigurationChanged(AuthorityFactoryFinder.class);
     }
