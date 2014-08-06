@@ -103,7 +103,9 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
      */
     @Override
     public void portray(Iterator<? extends ProjectedObject> graphics) throws PortrayalException {
-
+        if(symbol.getCachedRule() == null){
+            return;
+        }
         //calculate the cells
         final int cellSize = symbol.getSource().getCellSize();
         final AffineTransform trs = renderingContext.getDisplayToObjective();
@@ -255,6 +257,10 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
 
     @Override
     public void portray(final ProjectedCoverage projectedCoverage) throws PortrayalException {
+
+        if(symbol.getCachedRule() == null){
+            return;
+        }
 
         final GridCoverage2D coverage = toObjective(projectedCoverage);
         if(coverage == null){

@@ -54,15 +54,17 @@ public class CachedCellSymbolizer extends CachedSymbolizer<CellSymbolizer>{
         if(!isNotEvaluated) return;
         
         final Rule r = styleElement.getRule();
-        cr = new CachedRule(r, null);
-        
-        //the cached rules refer to cell properties name
-        final Set<String> properties = new HashSet<>();
-        cr.getRequieredAttributsName(properties);
-        for(String s : properties){
-            s = CellSymbolizer.cellToBasePropertyName(s);
-            if(s!=null){
-                requieredAttributs.add(s);
+        if(r != null){
+            cr = new CachedRule(r, null);
+
+            //the cached rules refer to cell properties name
+            final Set<String> properties = new HashSet<>();
+            cr.getRequieredAttributsName(properties);
+            for(String s : properties){
+                s = CellSymbolizer.cellToBasePropertyName(s);
+                if(s!=null){
+                    requieredAttributs.add(s);
+                }
             }
         }
         
