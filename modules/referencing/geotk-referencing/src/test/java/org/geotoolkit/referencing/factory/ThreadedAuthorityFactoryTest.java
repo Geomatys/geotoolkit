@@ -113,7 +113,7 @@ public final strictfp class ThreadedAuthorityFactoryTest {
         sleepUntilAfterTimeout(3*TIMEOUT_RESOLUTION, threaded);
         assertEquals("Expected no new worker.",     factories, threaded.factories());
         assertEquals("Worker should be disposed.",  0, threaded.countBackingStores());
-        assertTrue  ("Worker should be disposed.",  factories.get(1).isDisposed());
+        assertTrue  ("Worker should be disposed.",  factories.get(1).isDisposed()); // TODO: sometime not yet disposed.
         assertTrue  ("Worker should be disposed.",  factories.get(0).isDisposed());
     }
 

@@ -183,7 +183,7 @@ public final strictfp class MetadataMarshallingTest extends LocaleDependantTestB
          */
         final DefaultDistribution distribution = new DefaultDistribution();
         distribution.setDistributors(Arrays.asList(
-            new DefaultDistributor((ResponsibleParty) getSingleton(Citations.GEOTOOLKIT.getCitedResponsibleParties()))
+            new DefaultDistributor(getSingleton(Citations.GEOTOOLKIT.getCitedResponsibleParties()))
         ));
         metadata.setDistributionInfo(distribution);
         /*

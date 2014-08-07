@@ -44,6 +44,7 @@ public final strictfp class SetupTest {
      * again after this test in order to allow other tests to run correctly.
      */
     @Test
+    @Ignore("Setup class will be removed.")
     public void testInteral() {
         /*
          * In current Geotk implementation, the "SampleTranscoder" operation is registered
@@ -66,6 +67,7 @@ public final strictfp class SetupTest {
      * Same test than above, but using the public API.
      */
     @Test
+    @Ignore("Setup class will be removed.")
     public void testPublic() {
         assertFalse(new GridSampleDimension("Dummy").toString().isEmpty());
         org.geotoolkit.lang.Setup.initialize(null);

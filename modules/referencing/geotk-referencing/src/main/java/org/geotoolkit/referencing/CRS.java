@@ -1115,12 +1115,12 @@ check:      while (lower != 0 || upper != dimension) {
                                                   boolean lenient) // LGPL
             throws FactoryException
     {
+        ensureNonNull("sourceCRS", sourceCRS);
+        ensureNonNull("targetCRS", targetCRS);
         if (equalsIgnoreMetadata(sourceCRS, targetCRS)) {
             // Slight optimization in order to avoid the overhead of loading the full referencing engine.
             return MathTransforms.identity(sourceCRS.getCoordinateSystem().getDimension());
         }
-        ensureNonNull("sourceCRS", sourceCRS);
-        ensureNonNull("targetCRS", targetCRS);
         return getCoordinateOperationFactory(lenient).createOperation(sourceCRS, targetCRS).getMathTransform();
     }
 
