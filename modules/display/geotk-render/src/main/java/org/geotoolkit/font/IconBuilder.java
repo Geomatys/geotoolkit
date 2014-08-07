@@ -34,7 +34,7 @@ import javax.swing.ImageIcon;
  */
 public final class IconBuilder {
     
-    private static Font FONT;
+    public static Font FONT;
 
     static{
       try {

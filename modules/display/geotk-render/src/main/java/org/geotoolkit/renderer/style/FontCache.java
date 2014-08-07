@@ -17,6 +17,8 @@
  */
 package org.geotoolkit.renderer.style;
 
+import org.geotoolkit.font.IconBuilder;
+
 import java.awt.Font;
 import java.awt.FontFormatException;
 import java.awt.GraphicsEnvironment;
@@ -61,6 +63,7 @@ public class FontCache {
     public static FontCache getDefaultInsance() {
         if (defaultInstance == null) {
             defaultInstance = new FontCache();
+            defaultInstance.loadedFonts.put(IconBuilder.FONT.getFamily(),IconBuilder.FONT);
         }
         return defaultInstance;
     }

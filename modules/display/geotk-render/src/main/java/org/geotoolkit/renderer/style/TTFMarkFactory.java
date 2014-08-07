@@ -17,14 +17,11 @@
  */
 package org.geotoolkit.renderer.style;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
-import java.awt.Shape;
+import java.awt.*;
 import java.awt.font.FontRenderContext;
 import java.awt.font.GlyphVector;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
 import javax.swing.ImageIcon;
@@ -99,7 +96,16 @@ public class TTFMarkFactory implements MarkFactory {
         Font unitSizeFont = font.deriveFont(1.0f);
         GlyphVector textGlyphVector = unitSizeFont.createGlyphVector(FONT_RENDER_CONTEXT,
                 new char[] { (char) character });
-        return textGlyphVector.getOutline();
+        final Shape shape = textGlyphVector.getOutline();
+        final Rectangle2D rect = shape.getBounds2D();
+        final AffineTransform atrs = new AffineTransform(
+                (1.0/rect.getWidth())*0.9,
+                0.0,
+                0.0,
+                (1.0/rect.getHeight()) *0.9,
+                -rect.getCenterX(),
+                -rect.getCenterY());
+        return atrs.createTransformedShape(shape);
     }
 
     public static void main(final String[] args) {

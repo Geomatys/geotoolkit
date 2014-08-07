@@ -24,6 +24,7 @@ import java.util.logging.Level;
 import javax.swing.Icon;
 import org.geotoolkit.display.shape.TransformedShape;
 import org.geotoolkit.display2d.GO2Utilities;
+import org.geotoolkit.renderer.style.TTFMarkFactory;
 import org.geotoolkit.renderer.style.WellKnownMarkFactory;
 import org.opengis.filter.expression.Expression;
 import org.opengis.metadata.citation.OnlineResource;
@@ -39,6 +40,7 @@ import org.opengis.style.Mark;
 public class CachedMark extends Cache<Mark>{
 
     private static final WellKnownMarkFactory WKMF = new WellKnownMarkFactory();
+    private static final TTFMarkFactory TTFMF = new TTFMarkFactory();
 
     //IDS for cache map
     private Shape cachedWKN = null;
@@ -101,6 +103,14 @@ public class CachedMark extends Cache<Mark>{
                 LOGGER.log(Level.WARNING, ex.getLocalizedMessage(),ex);
             }
 
+            if(cachedWKN == null){
+                try {
+                    cachedWKN = TTFMF.getShape(null, expWKN, null);
+                } catch (Exception ex) {
+                    LOGGER.log(Level.WARNING, ex.getLocalizedMessage(),ex);
+                }
+            }
+
             //we return false, invalid marker
             if(cachedWKN == null){
                 isStaticVisible = VisibilityState.UNVISIBLE;
@@ -157,6 +167,14 @@ public class CachedMark extends Cache<Mark>{
         if(candidateWKN == null){
             try {
                 candidateWKN = WKMF.getShape(null, wkn, candidate);
+            } catch (Exception ex) {
+                LOGGER.log(Level.WARNING, ex.getLocalizedMessage(),ex);
+            }
+        }
+
+        if(candidateWKN == null){
+            try {
+                candidateWKN = TTFMF.getShape(null, wkn, candidate);
             } catch (Exception ex) {
                 LOGGER.log(Level.WARNING, ex.getLocalizedMessage(),ex);
             }
