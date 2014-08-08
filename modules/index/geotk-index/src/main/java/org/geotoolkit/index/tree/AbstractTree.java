@@ -428,19 +428,26 @@ public abstract class AbstractTree<E> implements Tree<E> {
     @Override
     public boolean remove(final E object) throws StoreIndexException {
         try {
-            ArgumentChecks.ensureNonNull("insert : object", object);
+            ArgumentChecks.ensureNonNull("Object to remove", object);
             final Envelope env = treeEltMap.getEnvelope(object);
-            if (!CRS.equalsIgnoreMetadata(crs, env.getCoordinateReferenceSystem()))
-                throw new IllegalArgumentException("During insertion element should have same CoordinateReferenceSystem as Tree.");
-            final double[] coordinates = TreeUtilities.getCoords(env);
-            for (double d : coordinates)
-                if (Double.isNaN(d))
-                    throw new IllegalArgumentException("coordinates contain at least one NAN value");
-            final int treeID = treeEltMap.getTreeIdentifier(object);
-            return remove(treeID, coordinates);
+            final int entry = treeEltMap.getTreeIdentifier(object);
+
+            return remove(entry, env);
+
         } catch (IOException ex) {
             throw new StoreIndexException(ex);
         }
+    }
+
+    public boolean remove(final int entry, Envelope entryEnvelope) throws StoreIndexException {
+            ArgumentChecks.ensureNonNull("Envelope for the entry to remove", entryEnvelope);
+            if (!CRS.equalsIgnoreMetadata(crs, entryEnvelope.getCoordinateReferenceSystem()))
+                throw new IllegalArgumentException("During insertion element should have same CoordinateReferenceSystem as Tree.");
+            final double[] coordinates = TreeUtilities.getCoords(entryEnvelope);
+            for (double d : coordinates)
+                if (Double.isNaN(d))
+                    throw new IllegalArgumentException("coordinates contain at least one NAN value");
+            return remove(entry, coordinates);
     }
     
     /**

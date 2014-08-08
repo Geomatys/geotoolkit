@@ -72,6 +72,8 @@ public interface Tree<E> extends Closeable {
      */
     boolean remove(final E object) throws StoreIndexException;
 
+    boolean remove(final int entry, Envelope entryEnvelope) throws StoreIndexException;
+
     /**
      * flush all streams use to store RTree on hard drive.
      * 
