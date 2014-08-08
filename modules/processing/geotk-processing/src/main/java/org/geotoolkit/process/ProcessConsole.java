@@ -193,13 +193,19 @@ public final class ProcessConsole {
             return;
         }
 
-        if(displayHelp){
+        if(displayHelp) {
             printHelp(desc);
             return;
         }
 
         //parse parameters
         args = Arrays.copyOfRange(args, 1, args.length); //remove the tool name parameter
+
+        if (args.length > 0 && ("-help".equalsIgnoreCase(args[0]) || "-h".equalsIgnoreCase(args[0]))) {
+            printHelp(desc);
+            return;
+        }
+
         final ParameterValueGroup params;
         try {
             params = parseParameters(args, desc.getInputDescriptor());
@@ -237,7 +243,7 @@ public final class ProcessConsole {
     /**
      * Print a list of all tools available.
      */
-    private static void printList(){
+    private static void printList() {
         final Iterator<ProcessingRegistry> ite = ProcessFinder.getProcessFactories();
         while(ite.hasNext()){
             final ProcessingRegistry registry = ite.next();
