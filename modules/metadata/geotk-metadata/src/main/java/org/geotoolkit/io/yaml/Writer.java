@@ -40,6 +40,11 @@ import org.apache.sis.util.CharSequences;
  */
 final class Writer {
     /**
+     * The length of an escaped Unicode character.
+     */
+    static final int UNICODE_LENGTH = 4;
+
+    /**
      * Number of spaces to use for the indentation.
      */
     private static final int INDENTATION = 4;
@@ -131,7 +136,9 @@ final class Writer {
             final Map.Entry<String,Object> entry = it.next();
             hasNext = it.hasNext();
             indent();
-            out.append('"').append(entry.getKey()).append("\": ");
+            out.append('"');
+            escape(entry.getKey());
+            out.append("\": ");
             final Object value = entry.getValue();
             if (value == null) {
                 out.append(null);
@@ -196,8 +203,47 @@ final class Writer {
                 quote = !(value instanceof Number || value instanceof Boolean);
             }
             if (quote) out.append('"');
-            out.append(CharSequences.replace(text, "\"", "\\\""));
+            escape(text);
             if (quote) out.append('"');
         }
+    }
+
+    /**
+     * Appends the given text, escaping characters if needed.
+     */
+    private void escape(final String text) throws IOException {
+        int previous = 0;
+        final int length = text.length();
+        for (int i=0; i<length; i++) {
+            final char c = text.charAt(i); // No need for codepoint API in this method.
+            final char r;
+            switch (c) {
+                case '"' : // Fallthrough
+                case '\\': r =  c;  break;
+                case '\b': r = 'b'; break;
+                case '\f': r = 'f'; break;
+                case '\n': r = 'n'; break;
+                case '\r': r = 'r'; break;
+                case '\t': r = 't'; break;
+                default: {
+                    if (!Character.isISOControl(c)) {
+                        continue; // Nothing to escape.
+                    }
+                    r = 'u';
+                    break;
+                }
+            }
+            out.append(text, previous, i);
+            out.append('\\').append(r);
+            if (r == 'u') {
+                final String h = Integer.toHexString(c);
+                for (int p=h.length(); p<UNICODE_LENGTH; p++) {
+                    out.append('0');
+                }
+                out.append(h);
+            }
+            previous = i+1;
+        }
+        out.append(text, previous, length);
     }
 }

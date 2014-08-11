@@ -195,7 +195,7 @@ public class MetadataFactory extends Factory {
          * At this point, we have not found any suitable factory method.
          * Try to instantiate the implementation class directly.
          */
-        Exception failure = null;
+        ReflectiveOperationException failure = null;
         for (final MetadataStandard standard : standards) {
             if (standard.isMetadata(type)) {
                 Class<?> impl = standard.getImplementation(type);
@@ -205,17 +205,17 @@ public class MetadataFactory extends Factory {
                 final Object metadata;
                 try {
                     metadata = impl.newInstance();
-                } catch (RuntimeException e) {
-                    throw e;
-                } catch (Exception e) {
-                    /*
-                     * We catch all Exceptions because Class.newInstance() propagates all of them,
-                     * including the checked ones (it bypass the compile-time exception checking).
-                     */
-                    if (failure == null || failure instanceof InstantiationException) {
+                } catch (ReflectiveOperationException e) {
+                    if (failure == null) {
                         failure = e;
                     }
                     continue;
+                } catch (Exception e) {
+                    /*
+                     * We catch all Exceptions because Class.newInstance() propagates all of them,
+                     * including the checked ones (it bypasses the compile-time exception checking).
+                     */
+                    throw new FactoryException(e.getLocalizedMessage(), e);
                 }
                 final Map<String,Object> asMap = standard.asValueMap(metadata,
                         KeyNamePolicy.JAVABEANS_PROPERTY, ValueExistencePolicy.NON_EMPTY);

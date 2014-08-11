@@ -28,9 +28,9 @@ import org.apache.sis.metadata.iso.distribution.DefaultDistributor;
 import org.apache.sis.metadata.iso.extent.DefaultExtent;
 import org.apache.sis.metadata.iso.extent.DefaultGeographicBoundingBox;
 import org.apache.sis.metadata.iso.identification.DefaultDataIdentification;
-import org.apache.sis.test.Assert;
 import org.junit.Test;
 
+import static org.apache.sis.test.Assert.*;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singleton;
 
@@ -50,7 +50,7 @@ public strictfp final class WriterTest {
     @Test
     public void testMetadata() throws IOException {
         final DefaultDataIdentification identification = new DefaultDataIdentification();
-        identification.setCitation(new DefaultCitation("The archived data extent"));
+        identification.setCitation(new DefaultCitation("Data \"title\""));
         identification.setExtents(singleton(new DefaultExtent(null,
                 new DefaultGeographicBoundingBox(-11.4865013, -4.615912, 43.165467, 49.9990223), null, null)));
 
@@ -71,7 +71,7 @@ public strictfp final class WriterTest {
         final StringBuilder buffer = new StringBuilder();
         Writer writer = new Writer(buffer);
         writer.format(metadata);
-        Assert.assertMultilinesEquals("JSON format",
+        assertMultilinesEquals("JSON format",
                 "{\n" +
                 "    \"fileIdentifier\": \"An archive\",\n" +
                 "    \"language\": \"en\",\n" +
@@ -80,7 +80,7 @@ public strictfp final class WriterTest {
                 "    \"metadataStandardVersion\": \"2003/Cor.1:2006\",\n" +
                 "    \"identificationInfo\": [{\n" +
                 "        \"citation\": {\n" +
-                "            \"title\": \"The archived data extent\"\n" +
+                "            \"title\": \"Data \\\"title\\\"\"\n" +
                 "        },\n" +
                 "        \"extent\": [{\n" +
                 "            \"geographicElement\": [{\n" +
