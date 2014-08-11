@@ -60,11 +60,8 @@ public class DirectoryWatcher implements Closeable {
     protected final HashSet<Path> unregistered = new HashSet<>();
 
     /**
-     * Filters used to determine which files must be ignored and which must be used.
+     * Filter used to determine which files must be ignored and which must be used.
      */
-    protected PathMatcher dirFilter = null;
-    private final Object dirFilterLock = new Object();
-
     protected PathMatcher fileFilter = null;
     private final Object fileFilterLock = new Object();
 
@@ -100,19 +97,7 @@ public class DirectoryWatcher implements Closeable {
     }
 
     /**
-     * Provide a filter which determines which directories must be watched and which must not.
-     *
-     * @param filter A PathMatcher whose {@link java.nio.file.PathMatcher#matches(java.nio.file.Path)} method return
-     *               true if we must watch the path in parameter. If null, no filtering will be applied.
-     */
-    public void setDirectoryFilter(final PathMatcher filter) {
-        synchronized (dirFilterLock) {
-            dirFilter = filter;
-        }
-    }
-
-    /**
-     * Provide a filter to specify if a file (NOT folder) must processed or ignored at change.
+     * Provide a filter to specify if a file must processed or ignored at change.
      *
      * @param filter A PathMatcher whose {@link java.nio.file.PathMatcher#matches(java.nio.file.Path)} method return
      *               true if we must process the path in parameter. If null, all changed files are processed.
@@ -120,15 +105,6 @@ public class DirectoryWatcher implements Closeable {
     public void setFileFilter(final PathMatcher filter) {
         synchronized (fileFilterLock) {
             fileFilter = filter;
-        }
-    }
-
-    /**
-     * @return the filter used to know if we must watch or not a folder. Null if no filtering applied.
-     */
-    public PathMatcher getDirFilter() {
-        synchronized (dirFilterLock) {
-            return dirFilter;
         }
     }
 
@@ -236,14 +212,6 @@ public class DirectoryWatcher implements Closeable {
                     continue;
                 }
 
-                // Do not dereference it. If filter is changed, we want to keep survey over the folder.
-                synchronized (dirFilterLock) {
-                    if (dirFilter != null && !dirFilter.matches(watchedPath)) {
-                        key.pollEvents(); // delete events to not get them back later.
-                        continue;
-                    }
-                }
-
                 for (WatchEvent event : key.pollEvents()) {
 
                     WatchEvent.Kind kind = event.kind();
@@ -279,23 +247,12 @@ public class DirectoryWatcher implements Closeable {
                             }
                         }
 
-                        if (isDirectory) {
-                            final boolean matchDirFilter;
-                            synchronized (dirFilterLock) {
-                                matchDirFilter = (dirFilter == null || dirFilter.matches(target));
-                            }
-                            if (matchDirFilter) {
-                                firePathChanged(target, kind, isDirectory, event.count());
-                            }
-
-                        } else {
-                            final boolean matchFileFilter;
-                            synchronized (fileFilterLock) {
-                                matchFileFilter = (fileFilter == null || fileFilter.matches(target));
-                            }
-                            if (matchFileFilter) {
-                                firePathChanged(target, kind, isDirectory, event.count());
-                            }
+                        final boolean matchFileFilter;
+                        synchronized (fileFilterLock) {
+                            matchFileFilter = (fileFilter == null || fileFilter.matches(target));
+                        }
+                        if (matchFileFilter) {
+                            firePathChanged(target, kind, isDirectory, event.count());
                         }
 
                     } catch (Exception e) {

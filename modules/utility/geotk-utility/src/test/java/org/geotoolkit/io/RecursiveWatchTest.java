@@ -9,13 +9,10 @@ import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.UUID;
 
-import static org.apache.sis.test.Assert.assertFalse;
 import static org.apache.sis.test.Assert.assertTrue;
-import static org.junit.Assert.assertEquals;
 
 /**
- * Date: 08/08/14
- * Time: 10:12
+ * A test class to ensure recursive survey mechanism of {@link org.geotoolkit.io.DirectoryWatcher} is working properly.
  *
  * @author Alexis Manin (Geomatys)
  */
@@ -103,60 +100,6 @@ public class RecursiveWatchTest extends DirectoryWatcherTest {
     }
 
     /**
-     * Add a filter on directory names. 4 things must be checked here :
-     * - Behavior for directories matching filter should not change.
-     * - Roots which do not match the filter should not be watched.
-     * - Changed sub-directories must be seen only if they match the filter.
-     * - When removing the filter, the two last rules above must be cancelled.
-     * @throws IOException
-     */
-    @Test(timeout=15000)
-    public void directoryFilterTest() throws IOException, InterruptedException {
-        watcher.setDirectoryFilter(FileSystems.getDefault().getPathMatcher("regex:.*"+ROOT_PREFIX+".*"));
-        Path childDir = rootDir.resolve(ROOT_PREFIX);
-        assertDirectoryCreated(childDir);
-
-        // Test recursive creation
-        Path previousDir = childDir;
-        Path newFile;
-        for (int i = 0 ; i < 10 ; i++) {
-            // filter should not be applied on files, so we must see it.
-            newFile = previousDir.resolve(UUID.randomUUID().toString()+".tmp");
-            assertFileCreated(newFile);
-
-            previousDir = previousDir.resolve(ROOT_PREFIX);
-            assertDirectoryCreated(previousDir);
-        }
-
-        // All created folders match input pattern, we should be aware of each deletion.
-        assertDeleteFileTree(childDir);
-
-        // We should not see any of the following creation/deletion, as the filter has been set to match no given name.
-        watcher.setDirectoryFilter(FileSystems.getDefault().getPathMatcher("glob:omitting"));
-        Files.createDirectory(childDir);
-        Thread.sleep(500);
-        assertTrue("Creation event should not be propagated because of the directory filter.", results.isEmpty());
-
-        previousDir = childDir;
-        for (int i = 0 ; i < 2 ; i++) {
-            // We won't see files as their parent directories do not match the filter.
-            newFile = previousDir.resolve(UUID.randomUUID().toString()+".tmp");
-            Files.createFile(newFile);
-            Thread.sleep(500);
-            assertTrue("Creation event should not be propagated because of the directory filter.", results.isEmpty());
-
-            previousDir = previousDir.resolve(ROOT_PREFIX);
-            Files.createDirectory(previousDir);
-            Thread.sleep(500);
-            assertTrue("Deletion event should not be propagated because of the directory filter.", results.isEmpty());
-        }
-
-        // Remove the directory filter. We should see all modification over the watched file-tree.
-        watcher.setDirectoryFilter(null);
-        assertDeleteFileTree(childDir);
-    }
-
-    /**
      * Add a filter on file names. We check :
      * - Changed files which don't match the filter should not be seen.
      * - Changed files matching filter should be seen.
@@ -177,35 +120,41 @@ public class RecursiveWatchTest extends DirectoryWatcherTest {
         Thread.sleep(500);
         assertTrue("File deletion event should not be propagated cause of the file filter.", results.isEmpty());
 
-        child = rootDir.resolve("0");
+        child = rootDir.resolve("testDir.tif");
         assertDirectoryCreated(child);
-
 
         // Test recursive creation
         Path previousDir = child;
         Path matchingFile, ignoredFile;
-        for (int i = 0 ; i < 10 ; i++) {
+        for (int i = 0 ; i < 5 ; i++) {
+
             // filter should not be applied on files, so we must see it.
-            matchingFile = previousDir.resolve(UUID.randomUUID().toString()+".tif");
+            matchingFile = previousDir.resolve(""+i+".tif");
             assertFileCreated(matchingFile);
 
-            ignoredFile = previousDir.resolve(UUID.randomUUID().toString()+".tmp");
+            ignoredFile = previousDir.resolve(""+i+".tmp");
             Files.createFile(ignoredFile);
             Thread.sleep(500);
             assertTrue("File deletion event should not be propagated cause of the file filter.", results.isEmpty());
 
-            previousDir = previousDir.resolve(ROOT_PREFIX);
-            assertDirectoryCreated(previousDir);
+            // check that a directory matching filter is seen
+            assertDirectoryCreated(previousDir.resolve("temp.tif"));
+
+            // Check a directory which doesn't match filter.
+            previousDir = previousDir.resolve(""+i);
+            Files.createDirectory(previousDir);
+            Thread.sleep(500);
+            assertTrue("File deletion event should not be propagated cause of the file filter.", results.isEmpty());
         }
 
         // Remove the file filter. All deleted file/folder should be seen by our listener.
         watcher.setFileFilter(null);
         assertDeleteFileTree(child);
-
     }
 
     /**
      * Delete a directory and all its content. For each deleted file / folder, we check event propagation.
+     *
      * @param root The folder to delete.
      * @throws IOException If input path does not represent a directory, or if an unexpected error happened while removal.
      */

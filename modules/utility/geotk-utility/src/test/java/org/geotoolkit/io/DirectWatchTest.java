@@ -8,11 +8,8 @@ import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardWatchEventKinds;
 
-import static org.apache.sis.test.Assert.assertFalse;
 import static org.apache.sis.test.Assert.assertTrue;
-import static org.junit.Assert.assertEquals;
 
 /**
  * Test the {@link org.geotoolkit.io.DirectoryWatcher} component in NON-recursive mode.
@@ -127,26 +124,25 @@ public class DirectWatchTest extends DirectoryWatcherTest {
     }
 
     /**
-     * Add a filter on directory names. 4 things must be checked here :
+     * Add a filter on directory names. 2 things must be checked here :
      * - Behavior for directories matching filter should not change.
-     * - Roots which do not match the filter should not be watched.
      * - Changed sub-directories must be seen only if they match the filter.
-     * - When removing the filter, the two last rules above must be cancelled.
+     * - When removing the filter, the two rules above must be cancelled.
      * @throws IOException
      */
     @Test(timeout=5000)
     public void directoryFilterTest() throws IOException, InterruptedException {
-        watcher.setDirectoryFilter(FileSystems.getDefault().getPathMatcher("regex:.*"+ROOT_PREFIX+".*"));
+        watcher.setFileFilter(FileSystems.getDefault().getPathMatcher("regex:.*" + ROOT_PREFIX + ".*"));
         Path childDir = rootDir.resolve(ROOT_PREFIX);
         assertDirectoryCreated(childDir);
 
-        watcher.setDirectoryFilter(FileSystems.getDefault().getPathMatcher("glob:omitting"));
+        watcher.setFileFilter(FileSystems.getDefault().getPathMatcher("glob:omitting"));
         Files.delete(childDir);
         Thread.sleep(1000);
         assertTrue("Deletion event should not be propagated cause of the directory filter.", results.isEmpty());
 
         // Remove the directory filter
-        watcher.setDirectoryFilter(null);
+        watcher.setFileFilter(null);
         assertDirectoryCreated(childDir);
         assertDirectoryDeleted(childDir);
     }
