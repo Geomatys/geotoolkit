@@ -62,7 +62,7 @@ public class DirectoryWatcher implements Closeable {
     /**
      * Filter used to determine which files must be ignored and which must be used.
      */
-    protected PathMatcher fileFilter = null;
+    protected DirectoryStream.Filter<Path> fileFilter = null;
     private final Object fileFilterLock = new Object();
 
     EventListenerList listeners = new EventListenerList();
@@ -102,7 +102,7 @@ public class DirectoryWatcher implements Closeable {
      * @param filter A PathMatcher whose {@link java.nio.file.PathMatcher#matches(java.nio.file.Path)} method return
      *               true if we must process the path in parameter. If null, all changed files are processed.
      */
-    public void setFileFilter(final PathMatcher filter) {
+    public void setFileFilter(final DirectoryStream.Filter<Path> filter) {
         synchronized (fileFilterLock) {
             fileFilter = filter;
         }
@@ -111,7 +111,7 @@ public class DirectoryWatcher implements Closeable {
     /**
      * @return the filter used to know if we must process or not a file. Null if no filtering applied.
      */
-    public PathMatcher getFileFilter() {
+    public DirectoryStream.Filter<Path> getFileFilter() {
         synchronized (fileFilterLock) {
             return fileFilter;
         }
@@ -249,7 +249,7 @@ public class DirectoryWatcher implements Closeable {
 
                         final boolean matchFileFilter;
                         synchronized (fileFilterLock) {
-                            matchFileFilter = (fileFilter == null || fileFilter.matches(target));
+                            matchFileFilter = (fileFilter == null || fileFilter.accept(target));
                         }
                         if (matchFileFilter) {
                             firePathChanged(target, kind, isDirectory, event.count());

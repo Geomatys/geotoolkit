@@ -109,7 +109,13 @@ public class RecursiveWatchTest extends DirectoryWatcherTest {
     @Test(timeout=10000)
     public void fileFilterTest() throws Exception {
         // Add a file filter
-        watcher.setFileFilter(FileSystems.getDefault().getPathMatcher("regex:(?i).*\\.tif"));
+        watcher.setFileFilter(new DirectoryStream.Filter<Path>() {
+            final PathMatcher matcher = FileSystems.getDefault().getPathMatcher("regex:(?i).*\\.tif");
+            @Override
+            public boolean accept(Path entry) throws IOException {
+                return matcher.matches(entry);
+            }
+        });
 
         Path child = rootDir.resolve("file.tmp");
         Files.createFile(child);

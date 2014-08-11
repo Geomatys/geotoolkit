@@ -5,9 +5,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.nio.file.*;
 
 import static org.apache.sis.test.Assert.assertTrue;
 
@@ -132,11 +130,24 @@ public class DirectWatchTest extends DirectoryWatcherTest {
      */
     @Test(timeout=5000)
     public void directoryFilterTest() throws IOException, InterruptedException {
-        watcher.setFileFilter(FileSystems.getDefault().getPathMatcher("regex:.*" + ROOT_PREFIX + ".*"));
+        watcher.setFileFilter(new DirectoryStream.Filter<Path>() {
+            final PathMatcher matcher = FileSystems.getDefault().getPathMatcher("regex:.*" + ROOT_PREFIX + ".*");
+            @Override
+            public boolean accept(Path entry) throws IOException {
+                return matcher.matches(entry);
+            }
+        });
         Path childDir = rootDir.resolve(ROOT_PREFIX);
         assertDirectoryCreated(childDir);
 
-        watcher.setFileFilter(FileSystems.getDefault().getPathMatcher("glob:omitting"));
+        // Set a filter which matches nothing.
+        watcher.setFileFilter(new DirectoryStream.Filter<Path>() {
+            @Override
+            public boolean accept(Path entry) throws IOException {
+                return false;
+            }
+        });
+
         Files.delete(childDir);
         Thread.sleep(1000);
         assertTrue("Deletion event should not be propagated cause of the directory filter.", results.isEmpty());
@@ -157,7 +168,14 @@ public class DirectWatchTest extends DirectoryWatcherTest {
     @Test(timeout=5000)
     public void fileFilterTest() throws Exception {
         // Add a file filter
-        watcher.setFileFilter(FileSystems.getDefault().getPathMatcher("regex:(?i).*\\.tif"));
+        watcher.setFileFilter(new DirectoryStream.Filter<Path>() {
+            final PathMatcher matcher = FileSystems.getDefault().getPathMatcher("regex:(?i).*\\.tif");
+            @Override
+            public boolean accept(Path entry) throws IOException {
+                return matcher.matches(entry);
+            }
+        });
+
         Path child = rootDir.resolve("file.tmp");
         Files.createFile(child);
         Thread.sleep(500);
