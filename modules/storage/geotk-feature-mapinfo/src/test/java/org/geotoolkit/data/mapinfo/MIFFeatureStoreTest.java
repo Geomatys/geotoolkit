@@ -18,6 +18,13 @@
 package org.geotoolkit.data.mapinfo;
 
 import com.vividsolutions.jts.geom.Coordinate;
+
+import java.io.IOException;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Map;
 import java.util.Collections;
 import com.vividsolutions.jts.geom.Geometry;
@@ -57,7 +64,10 @@ import org.opengis.parameter.ParameterValueGroup;
  */
 public class MIFFeatureStoreTest {
 
-    public MIFFeatureStoreTest() {
+    private final File tempDir;
+
+    public MIFFeatureStoreTest() throws IOException {
+        tempDir = Files.createTempDirectory("mifMidTests").toFile();
     }
 
     @BeforeClass
@@ -73,7 +83,20 @@ public class MIFFeatureStoreTest {
     }
 
     @After
-    public void tearDown() {
+    public void tearDown() throws IOException {
+        Files.walkFileTree(tempDir.toPath(), new SimpleFileVisitor<Path>() {
+            @Override
+            public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+                Files.delete(dir);
+                return super.postVisitDirectory(dir, exc);
+            }
+
+            @Override
+            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                Files.delete(file);
+                return super.visitFile(file, attrs);
+            }
+        });
     }
 
     /**
@@ -85,8 +108,7 @@ public class MIFFeatureStoreTest {
     public void testCreate() throws Exception{
 
         final GeometryFactory GF = new GeometryFactory();
-        final File f = File.createTempFile("test", ".mif");
-        f.deleteOnExit();
+        final File f = File.createTempFile("test", ".mif", tempDir);
 
         final FeatureStoreFactory ff = FeatureStoreFinder.getFactoryById("MIF-MID");
         final ParameterValueGroup params = ff.getParametersDescriptor().createValue();
@@ -150,7 +172,6 @@ public class MIFFeatureStoreTest {
         }
 
         assertEquals(2, number);
-
 
         //test with hint
         QueryBuilder qb = new QueryBuilder(name);
