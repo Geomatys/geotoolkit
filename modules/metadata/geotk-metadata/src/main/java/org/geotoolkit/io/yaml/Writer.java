@@ -30,6 +30,7 @@ import org.apache.sis.metadata.KeyNamePolicy;
 import org.apache.sis.metadata.MetadataStandard;
 import org.apache.sis.metadata.ValueExistencePolicy;
 import org.apache.sis.util.CharSequences;
+import org.apache.sis.util.iso.Types;
 
 
 /**
@@ -190,7 +191,7 @@ final class Writer {
             final String text;
             final boolean quote;
             if (value instanceof Enumerated) {
-                text  = ((Enumerated) value).identifier();
+                text  = Types.getCodeName((Enumerated) value);
                 quote = true;
             } else if (value instanceof Date) {
                 text  = Long.toString(((Date) value).getTime());
