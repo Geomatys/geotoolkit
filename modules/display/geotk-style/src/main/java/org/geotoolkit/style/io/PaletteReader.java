@@ -74,6 +74,7 @@ public class PaletteReader {
         @Override
         public int compareTo(Row other) {
             if(v1==null) return -1;
+            else if (other.v1 == null) return 1;
             return v1.compareTo(other.v1);
         }
 

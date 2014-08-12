@@ -65,7 +65,7 @@ public class DirectoryWatcher implements Closeable {
     protected DirectoryStream.Filter<Path> fileFilter = null;
     private final Object fileFilterLock = new Object();
 
-    EventListenerList listeners = new EventListenerList();
+    protected final EventListenerList listeners = new EventListenerList();
 
     /**
      * Prepare watcher for NON-recursive survey.
@@ -325,7 +325,7 @@ public class DirectoryWatcher implements Closeable {
      * @param count       Number of times the same event occurred.
      */
     protected void firePathChanged(Path target, WatchEvent.Kind kind, boolean isDirectory, int count) throws Exception {
-        final PathChangedEvent evt = new PathChangedEvent(target, kind, isDirectory, count);
+        final PathChangedEvent evt = new PathChangedEvent(this, target, kind, isDirectory, count);
         for (PathChangeListener l : listeners.getListeners(PathChangeListener.class)) {
             l.pathChanged(evt);
         }

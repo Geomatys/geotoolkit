@@ -2,6 +2,7 @@ package org.geotoolkit.io;
 
 import java.nio.file.Path;
 import java.nio.file.WatchEvent;
+import java.util.EventObject;
 
 /**
  * An event raised by {@link org.geotoolkit.io.DirectoryWatcher} when a path has changed in a followed folder.
@@ -9,7 +10,7 @@ import java.nio.file.WatchEvent;
  * @author Alexis Manin (Geomatys)
  */
 
-public class PathChangedEvent {
+public class PathChangedEvent extends EventObject {
 
     /**
      * The path which denotes the changed file.
@@ -31,7 +32,8 @@ public class PathChangedEvent {
      */
     public final int count;
 
-    public PathChangedEvent(Path target, WatchEvent.Kind kind, boolean isDirectory, int count) {
+    public PathChangedEvent(Object source, Path target, WatchEvent.Kind kind, boolean isDirectory, int count) {
+        super(source);
         this.target = target;
         this.kind = kind;
         this.isDirectory = isDirectory;
