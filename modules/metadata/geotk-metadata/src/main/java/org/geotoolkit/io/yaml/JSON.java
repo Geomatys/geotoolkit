@@ -17,12 +17,13 @@
 package org.geotoolkit.io.yaml;
 
 import java.io.IOException;
+import java.text.ParseException;
 import org.geotoolkit.lang.Static;
 import org.apache.sis.util.ArgumentChecks;
 
 
 /**
- * Read and write objects using the <cite>JavaScript Object Notation</cite> (JSON).
+ * Reads and writes objects using the <cite>JavaScript Object Notation</cite> (JSON).
  * In this library, JSON is considered as a subset of YAML.
  *
  * @author Martin Desruisseaux (Geomatys)
@@ -33,6 +34,19 @@ public final class JSON extends Static {
      * Do not allow instantiation of this class.
      */
     private JSON() {
+    }
+
+    /**
+     * Parses the given JSON string as an ISO 19115 metadata object.
+     *
+     * @param  json The string to parse.
+     * @param  type The type of the object to parse (typically <code>{@linkplain org.opengis.metadata.Metadata}.class</code>).
+     * @return The parsed object, usually as an instance of {@code type} but not always. For example this method may return a
+     *         {@link java.util.List} of instances of {@code type} if the given {@code json} string defines an array.
+     * @throws ParseException If the parsing failed.
+     */
+    public static Object parse(final CharSequence json, final Class<?> type) throws ParseException {
+        return new Reader(json).parse(type);
     }
 
     /**

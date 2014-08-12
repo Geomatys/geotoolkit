@@ -27,7 +27,7 @@ import org.apache.sis.metadata.iso.distribution.DefaultDistribution;
 import org.apache.sis.metadata.iso.distribution.DefaultDistributor;
 import org.apache.sis.metadata.iso.extent.DefaultExtent;
 import org.apache.sis.metadata.iso.extent.DefaultGeographicBoundingBox;
-import org.apache.sis.metadata.iso.identification.DefaultDataIdentification;
+import org.apache.sis.metadata.iso.identification.AbstractIdentification;
 import org.junit.Test;
 
 import static org.apache.sis.test.Assert.*;
@@ -43,13 +43,47 @@ import static java.util.Collections.singleton;
  */
 public strictfp final class WriterTest {
     /**
-     * Tests formatting of a metadata object.
-     *
-     * @throws IOException Should never happen.
+     * The JSON string of the metadata object to be used in this test.
      */
-    @Test
-    public void testMetadata() throws IOException {
-        final DefaultDataIdentification identification = new DefaultDataIdentification();
+    static final String JSON =
+            "{\n" +
+            "    \"fileIdentifier\": \"An archive\",\n" +
+            "    \"language\": \"en\",\n" +
+            "    \"characterSet\": \"UTF-8\",\n" +
+            "    \"metadataStandardName\": \"ISO19115\",\n" +
+            "    \"metadataStandardVersion\": \"2003/Cor.1:2006\",\n" +
+            "    \"identificationInfo\": [{\n" +
+            "        \"citation\": {\n" +
+            "            \"title\": \"Data \\\"title\\\"\"\n" +
+            "        },\n" +
+            "        \"extent\": [{\n" +
+            "            \"geographicElement\": [{\n" +
+            "                \"westBoundLongitude\": -11.4865013,\n" +
+            "                \"eastBoundLongitude\": -4.615912,\n" +
+            "                \"southBoundLatitude\": 43.165467,\n" +
+            "                \"northBoundLatitude\": 49.9990223,\n" +
+            "                \"extentTypeCode\": true\n" +
+            "            }]\n" +
+            "        }]\n" +
+            "    }],\n" +
+            "    \"distributionInfo\": {\n" +
+            "        \"distributor\": [{\n" +
+            "            \"distributorContact\": {\n" +
+            "                \"role\": \"author\"\n" +
+            "            }\n" +
+            "        },{\n" +
+            "            \"distributorContact\": {\n" +
+            "                \"role\": \"collaborator\"\n" +
+            "            }\n" +
+            "        }]\n" +
+            "    }\n" +
+            "}";
+
+    /**
+     * Creates the metadata object corresponding to the {@link #JSON} string.
+     */
+    static DefaultMetadata createMetadata() {
+        final AbstractIdentification identification = new AbstractIdentification();
         identification.setCitation(new DefaultCitation("Data \"title\""));
         identification.setExtents(singleton(new DefaultExtent(null,
                 new DefaultGeographicBoundingBox(-11.4865013, -4.615912, 43.165467, 49.9990223), null, null)));
@@ -67,42 +101,20 @@ public strictfp final class WriterTest {
         metadata.setMetadataStandardVersion("2003/Cor.1:2006");
         metadata.setIdentificationInfo(singleton(identification));
         metadata.setDistributionInfo(distribution);
+        return metadata;
+    }
+
+    /**
+     * Tests formatting of a metadata object.
+     *
+     * @throws IOException Should never happen.
+     */
+    @Test
+    public void testFormat() throws IOException {
 
         final StringBuilder buffer = new StringBuilder();
         Writer writer = new Writer(buffer);
-        writer.format(metadata);
-        assertMultilinesEquals("JSON format",
-                "{\n" +
-                "    \"fileIdentifier\": \"An archive\",\n" +
-                "    \"language\": \"en\",\n" +
-                "    \"characterSet\": \"UTF-8\",\n" +
-                "    \"metadataStandardName\": \"ISO19115\",\n" +
-                "    \"metadataStandardVersion\": \"2003/Cor.1:2006\",\n" +
-                "    \"identificationInfo\": [{\n" +
-                "        \"citation\": {\n" +
-                "            \"title\": \"Data \\\"title\\\"\"\n" +
-                "        },\n" +
-                "        \"extent\": [{\n" +
-                "            \"geographicElement\": [{\n" +
-                "                \"westBoundLongitude\": -11.4865013,\n" +
-                "                \"eastBoundLongitude\": -4.615912,\n" +
-                "                \"southBoundLatitude\": 43.165467,\n" +
-                "                \"northBoundLatitude\": 49.9990223,\n" +
-                "                \"extentTypeCode\": true\n" +
-                "            }]\n" +
-                "        }]\n" +
-                "    }],\n" +
-                "    \"distributionInfo\": {\n" +
-                "        \"distributor\": [{\n" +
-                "            \"distributorContact\": {\n" +
-                "                \"role\": \"author\"\n" +
-                "            }\n" +
-                "        },{\n" +
-                "            \"distributorContact\": {\n" +
-                "                \"role\": \"collaborator\"\n" +
-                "            }\n" +
-                "        }]\n" +
-                "    }\n" +
-                "}", buffer.toString());
+        writer.format(createMetadata());
+        assertMultilinesEquals("JSON format", JSON, buffer.toString());
     }
 }
