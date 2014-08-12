@@ -20,6 +20,8 @@ package org.geotoolkit.image.io.plugin.TiffReader;
 import javax.imageio.ImageWriteParam;
 import org.geotoolkit.image.io.plugin.TestTiffImageReaderWriter;
 
+import java.io.IOException;
+
 /**
  * Improve tests from {@link TestTiffImageReaderWriter} for reading action,
  * with LZW compression and tiled writing made.
@@ -28,7 +30,7 @@ import org.geotoolkit.image.io.plugin.TestTiffImageReaderWriter;
  */
 public class LZWTiledReaderTest extends LZWTiffReaderTest {
 
-    public LZWTiledReaderTest() {
+    public LZWTiledReaderTest() throws IOException {
         super();
         writerParam.setTilingMode(ImageWriteParam.MODE_EXPLICIT);
         

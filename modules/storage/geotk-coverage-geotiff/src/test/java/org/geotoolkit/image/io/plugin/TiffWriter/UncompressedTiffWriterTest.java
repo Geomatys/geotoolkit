@@ -36,7 +36,7 @@ import org.junit.Test;
  */
 public strictfp class UncompressedTiffWriterTest extends TestTiffImageWriter {
 
-    public UncompressedTiffWriterTest() {
+    public UncompressedTiffWriterTest() throws IOException {
         super(null);
     }
     
@@ -87,7 +87,7 @@ public strictfp class UncompressedTiffWriterTest extends TestTiffImageWriter {
     private void TestWriteEmpty(final String message, final int sampleBitsSize, final int numBand, 
             final short photometricInterpretation, final short sampleFormat) throws IOException {
         
-        final File fileTest = File.createTempFile(message, "tiff");
+        final File fileTest = File.createTempFile(message, "tiff", tempDir);
         writer.setOutput(fileTest); //-- to initialize writer
         
         final ImageTypeSpecifier sourceImgSpec = buildImageTypeSpecifier(sampleBitsSize, numBand, photometricInterpretation, sampleFormat);
@@ -236,7 +236,7 @@ public strictfp class UncompressedTiffWriterTest extends TestTiffImageWriter {
     private void TestReplacePixel (final String message, final int sampleBitsSize, final int numBand, 
             final short photometricInterpretation, final short sampleFormat) throws IOException {
         
-        final File fileTest = File.createTempFile(message, "tiff");
+        final File fileTest = File.createTempFile(message, "tiff", tempDir);
         
         final int width  = random.nextInt(256) + 16;
         final int height = random.nextInt(256) + 16;

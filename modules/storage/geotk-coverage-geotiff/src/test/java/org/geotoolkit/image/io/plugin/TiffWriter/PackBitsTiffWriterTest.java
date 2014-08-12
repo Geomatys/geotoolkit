@@ -19,6 +19,8 @@ package org.geotoolkit.image.io.plugin.TiffWriter;
 
 import org.geotoolkit.image.io.plugin.TiffImageWriteParam;
 
+import java.io.IOException;
+
 /**
  * {@link TestTiffImageWriter} implementation adapted to 
  * test Packbit compression writing action.
@@ -28,7 +30,7 @@ import org.geotoolkit.image.io.plugin.TiffImageWriteParam;
  */
 public strictfp class PackBitsTiffWriterTest extends TestTiffImageWriter {
 
-    public PackBitsTiffWriterTest() {
+    public PackBitsTiffWriterTest() throws IOException {
         super("PackBits");
     }
 }

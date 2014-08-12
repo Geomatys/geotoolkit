@@ -31,7 +31,7 @@ import org.geotoolkit.image.io.plugin.TestTiffImageReaderWriter;
  */
 public abstract class TestTiffImageWriter extends TestTiffImageReaderWriter {
 
-    public TestTiffImageWriter(String compression) {
+    public TestTiffImageWriter(String compression) throws IOException {
         super(compression);
     }
 

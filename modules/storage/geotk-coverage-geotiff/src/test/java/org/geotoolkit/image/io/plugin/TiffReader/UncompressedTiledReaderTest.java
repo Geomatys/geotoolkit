@@ -18,6 +18,7 @@
 package org.geotoolkit.image.io.plugin.TiffReader;
 
 import javax.imageio.ImageWriteParam;
+import java.io.IOException;
 
 /**
  * Effectuate all tests from {@link TestTiffImageReaderWriter} 
@@ -27,7 +28,7 @@ import javax.imageio.ImageWriteParam;
  */
 public class UncompressedTiledReaderTest extends UncompressedTiffReaderTest {
  
-    public UncompressedTiledReaderTest() {
+    public UncompressedTiledReaderTest() throws IOException {
         super(); 
         writerParam.setTilingMode(ImageWriteParam.MODE_EXPLICIT);
         final int tileWidth  = (random.nextInt(7) + 1) * 16;

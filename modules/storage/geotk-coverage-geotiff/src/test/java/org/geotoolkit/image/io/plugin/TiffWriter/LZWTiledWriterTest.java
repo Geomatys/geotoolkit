@@ -18,6 +18,7 @@
 package org.geotoolkit.image.io.plugin.TiffWriter;
 
 import javax.imageio.ImageWriteParam;
+import java.io.IOException;
 
 /**
  * {@link LZWTiffWriterTest} implementation which write image by compressed tiles.
@@ -26,7 +27,7 @@ import javax.imageio.ImageWriteParam;
  */
 public class LZWTiledWriterTest extends LZWTiffWriterTest {
 
-    public LZWTiledWriterTest() {
+    public LZWTiledWriterTest() throws IOException {
         super();
         writerParam.setTilingMode(ImageWriteParam.MODE_EXPLICIT);
         

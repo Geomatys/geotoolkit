@@ -19,6 +19,8 @@ package org.geotoolkit.image.io.plugin.TiffReader;
 
 import com.sun.media.imageio.plugins.tiff.TIFFImageWriteParam;
 
+import java.io.IOException;
+
 /**
  * Improve tests from {@link TestTiffImageReaderWriter} for reading action,
  * with PackBits compression.
@@ -28,7 +30,7 @@ import com.sun.media.imageio.plugins.tiff.TIFFImageWriteParam;
  */
 public strictfp class PackBitsTiffReaderTest extends TestTiffImageReader {
 
-    public PackBitsTiffReaderTest() {
+    public PackBitsTiffReaderTest() throws IOException {
         super("PackBits");
     }
 }

@@ -17,6 +17,8 @@
  */
 package org.geotoolkit.image.io.plugin.TiffReader;
 
+import java.io.IOException;
+
 /**
  * Effectuate all tests from {@link TestTiffImageReaderWriter} without compression.
  * 
@@ -24,7 +26,7 @@ package org.geotoolkit.image.io.plugin.TiffReader;
  */
 public strictfp class UncompressedTiffReaderTest extends TestTiffImageReader {
 
-    public UncompressedTiffReaderTest() {
+    public UncompressedTiffReaderTest() throws IOException {
         super(null); //-- if no compression is setted the default implementation works with strips
     }
 }

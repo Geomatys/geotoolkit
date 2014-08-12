@@ -24,6 +24,11 @@ import java.awt.geom.AffineTransform;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageIO;
@@ -37,6 +42,7 @@ import org.geotoolkit.referencing.CRS;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.geotoolkit.test.TestData;
 
+import org.junit.After;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -56,6 +62,28 @@ import static org.junit.Assert.*;
  */
 public class GeoTiffRWTest {
 
+    private final File tempDir;
+
+    public GeoTiffRWTest() throws IOException {
+        tempDir = Files.createTempDirectory("GTiffRWTest").toFile();
+    }
+
+    @After
+    public void deleteTempFiles() throws IOException {
+        Files.walkFileTree(tempDir.toPath(), new SimpleFileVisitor<Path>() {
+            @Override
+            public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+                Files.delete(dir);
+                return super.postVisitDirectory(dir, exc);
+            }
+
+            @Override
+            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                Files.delete(file);
+                return super.visitFile(file, attrs);
+            }
+        });
+    }
 
     private final CRSFactory longlatFactory =  FactoryFinder.getCRSFactory(
                 new Hints(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER, Boolean.TRUE));
@@ -783,7 +811,7 @@ final CoordinateReferenceSystem sourceCRS = CRS.parseWKT("PROJCS[\"NAD83 / Calif
             //first test
             GridCoverage2D coverage = (GridCoverage2D) reader.read(0, null);
 
-            final File tempFile = File.createTempFile("coverage", ".tiff");
+            final File tempFile = File.createTempFile("coverage", ".tiff", tempDir);
             tempFile.deleteOnExit();
             final FileOutputStream stream = new FileOutputStream(tempFile);
 
@@ -846,8 +874,8 @@ final CoordinateReferenceSystem sourceCRS = CRS.parseWKT("PROJCS[\"NAD83 / Calif
     /**
      * Copy coverage, in new file and retest it later.
      */
-    private static File write(final GridCoverage2D coverage, final SpatialMetadata metadata) throws IOException, CoverageStoreException{
-        final File tempFile = File.createTempFile("coverage", ".tiff");
+    private File write(final GridCoverage2D coverage, final SpatialMetadata metadata) throws IOException, CoverageStoreException{
+        final File tempFile = File.createTempFile("coverage", ".tiff", tempDir);
         tempFile.deleteOnExit();
 
         final IIOImage iioimage = new IIOImage(coverage.getRenderedImage(), null, metadata);

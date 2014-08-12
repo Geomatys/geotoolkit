@@ -19,6 +19,8 @@ package org.geotoolkit.image.io.plugin.TiffReader;
 
 import org.geotoolkit.image.io.plugin.TestTiffImageReaderWriter;
 
+import java.io.IOException;
+
 /**
  * Effectuate all tests from {@link TestTiffImageReaderWriter} with LZW compression.
  * 
@@ -26,7 +28,7 @@ import org.geotoolkit.image.io.plugin.TestTiffImageReaderWriter;
  * @see TIFFImageWriteParam#compressionTypes
  */
 public strictfp class LZWTiffReaderTest extends TestTiffImageReader {
-    public LZWTiffReaderTest() {
+    public LZWTiffReaderTest() throws IOException {
         super("LZW");  
     }
 }

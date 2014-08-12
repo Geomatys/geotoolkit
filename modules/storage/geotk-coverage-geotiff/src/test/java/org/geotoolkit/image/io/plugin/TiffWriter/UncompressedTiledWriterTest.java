@@ -18,6 +18,7 @@
 package org.geotoolkit.image.io.plugin.TiffWriter;
 
 import javax.imageio.ImageWriteParam;
+import java.io.IOException;
 
 /**
  * {@link UncompressedTiffWriterTest} implementation which write image by tiles.
@@ -26,7 +27,7 @@ import javax.imageio.ImageWriteParam;
  */
 public class UncompressedTiledWriterTest extends UncompressedTiffWriterTest {
 
-    public UncompressedTiledWriterTest() {
+    public UncompressedTiledWriterTest() throws IOException {
         super();
         writerParam.setTilingMode(ImageWriteParam.MODE_EXPLICIT);
         

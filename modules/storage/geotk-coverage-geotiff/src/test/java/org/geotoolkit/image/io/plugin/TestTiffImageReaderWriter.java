@@ -37,6 +37,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Arrays;
 import java.util.Random;
 import javax.imageio.IIOParam;
@@ -53,6 +58,7 @@ import org.apache.sis.test.TestUtilities;
 import org.geotoolkit.image.io.UnsupportedImageFormatException;
 import org.geotoolkit.image.iterator.*;
 import org.geotoolkit.internal.image.ScaledColorSpace;
+import org.junit.After;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -140,12 +146,14 @@ public strictfp abstract class TestTiffImageReaderWriter {
      * Random number generator used for tests.
      */
     protected final Random random;
-    
+
+    protected final File tempDir;
     /**
      * @param compression choosen compression to write image.
      */
-    public TestTiffImageReaderWriter(final String compression) {
-        
+    public TestTiffImageReaderWriter(final String compression) throws IOException {
+        tempDir = Files.createTempDirectory("tiffTests").toFile();
+
         this.reader      = new TiffImageReader(null);
         this.readerParam = reader.getDefaultReadParam();
         
@@ -156,6 +164,23 @@ public strictfp abstract class TestTiffImageReaderWriter {
             writerParam.setCompressionType(compression);
         }
         random = TestUtilities.createRandomNumberGenerator();
+    }
+
+    @After
+    public void deleteTempFiles() throws IOException {
+        Files.walkFileTree(tempDir.toPath(), new SimpleFileVisitor<Path>() {
+            @Override
+            public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+                Files.delete(dir);
+                return super.postVisitDirectory(dir, exc);
+            }
+
+            @Override
+            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                Files.delete(file);
+                return super.visitFile(file, attrs);
+            }
+        });
     }
     
     /**
@@ -183,7 +208,7 @@ public strictfp abstract class TestTiffImageReaderWriter {
     @Test
 //    @Ignore
     public void default1BandTest() throws IOException {
-        File fileTest = File.createTempFile("default1BandTest", "tiff");
+        File fileTest = File.createTempFile("default1BandTest", "tiff", tempDir);
         
         //-- test : 1 band type : byte grayscale --//
         defaultTest("default1BandTest : 1 band type : Byte grayscale : ", fileTest,
@@ -214,7 +239,7 @@ public strictfp abstract class TestTiffImageReaderWriter {
     @Test
     @Ignore
     public void default4BandTest() throws IOException {
-        File fileTest = File.createTempFile("default1BandTest", "tiff");
+        File fileTest = File.createTempFile("default1BandTest", "tiff", tempDir);
         
         //-- test : 1 band type : byte grayscale --//
         defaultTest("default1BandTest : 1 band type : Byte grayscale : ", fileTest, 
@@ -245,7 +270,7 @@ public strictfp abstract class TestTiffImageReaderWriter {
     @Test
 //    @Ignore
     public void defaultRGBTest() throws IOException {
-        File fileTest = File.createTempFile("defaultRGBTest", "tiff");
+        File fileTest = File.createTempFile("defaultRGBTest", "tiff", tempDir);
         
         //-- test : 3 bands type : byte RGB --//
         defaultTest("defaultRGBTest : 3 bands type : Byte RGB: ", fileTest, 
@@ -264,7 +289,7 @@ public strictfp abstract class TestTiffImageReaderWriter {
     @Test
 //    @Ignore
     public void defaultColorMapTest() throws IOException {
-        File fileTest = File.createTempFile("defaultColorMapTest", "tiff");
+        File fileTest = File.createTempFile("defaultColorMapTest", "tiff", tempDir);
         
         //-- test : 3 bands type : byte RGB --//
         defaultTest("defaultColorMapTest : 3 bands type : Byte Palette: ", fileTest,  
@@ -348,7 +373,7 @@ public strictfp abstract class TestTiffImageReaderWriter {
      * @throws IOException if problem during reading/writing action.
      */
     private void regionTest(final String message, final ImageOrientation imageOrientation) throws IOException {
-        final File fileTest = File.createTempFile(message, "tiff");
+        final File fileTest = File.createTempFile(message, "tiff", tempDir);
         
         //-------------------- test : 1 band -----------------------------------// 
         //-- type byte

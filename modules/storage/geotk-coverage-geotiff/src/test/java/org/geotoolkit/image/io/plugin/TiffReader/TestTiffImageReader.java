@@ -31,7 +31,7 @@ import org.geotoolkit.image.io.plugin.TestTiffImageReaderWriter;
  */
 public abstract strictfp class TestTiffImageReader extends TestTiffImageReaderWriter {
 
-    public TestTiffImageReader(String compression) {
+    public TestTiffImageReader(String compression) throws IOException {
         super(compression);
     }
 

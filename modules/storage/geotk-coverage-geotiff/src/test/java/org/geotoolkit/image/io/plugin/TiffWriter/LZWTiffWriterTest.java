@@ -19,6 +19,8 @@ package org.geotoolkit.image.io.plugin.TiffWriter;
 
 import org.geotoolkit.image.io.plugin.TiffImageWriteParam;
 
+import java.io.IOException;
+
 /**
  * {@link TestTiffImageWriter} implementation which write image with LZW compression.
  *
@@ -27,7 +29,7 @@ import org.geotoolkit.image.io.plugin.TiffImageWriteParam;
  */
 public strictfp class LZWTiffWriterTest extends TestTiffImageWriter {
 
-    public LZWTiffWriterTest() {
+    public LZWTiffWriterTest() throws IOException {
         super("LZW");
     }
 }
