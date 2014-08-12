@@ -154,7 +154,7 @@ public class SEforSLD110Test extends TestCase{
         }
 
         //switch to false to avoid temp files to be deleted
-        if(false){
+        if(true){
             TEST_FILE_SE_SYMBOL_POINT.deleteOnExit();
             TEST_FILE_SE_SYMBOL_LINE.deleteOnExit();
             TEST_FILE_SE_SYMBOL_POLYGON.deleteOnExit();

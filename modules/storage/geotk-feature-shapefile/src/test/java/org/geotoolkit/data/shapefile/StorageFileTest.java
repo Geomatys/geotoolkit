@@ -33,6 +33,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 import static org.geotoolkit.data.shapefile.lock.ShpFileType.*;
+import org.junit.After;
 
 public class StorageFileTest {
 
@@ -50,6 +51,16 @@ public class StorageFileTest {
         shpFiles2 = new ShpFiles(files2.get(SHP));
     }
 
+    @After
+    public void shutdown() throws Exception {
+        if(shpFiles1!=null){
+            shpFiles1.delete();
+        }
+        if(shpFiles2!=null){
+            shpFiles2.delete();
+        }
+    }
+    
     @Test
     public void testReplaceOriginal() throws Exception {
         final ShpFiles files1 = shpFiles1;
@@ -148,6 +159,9 @@ public class StorageFileTest {
         assertFalse(array[0].compareTo(array[1]) == 0);
         assertFalse(array[2].compareTo(array[3]) == 0);
         assertFalse(array[1].compareTo(array[2]) == 0);
+        
+        locker1.replaceStorageFiles();
+        locker2.replaceStorageFiles();
     }
 
     public String id() {

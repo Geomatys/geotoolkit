@@ -296,7 +296,7 @@ public class OGCforSLD110Test extends TestCase{
             TEST_FILE_FIL_SPA_EQUALS = File.createTempFile("test_fil_spa_equals_v110", ".xml");
             TEST_FILE_FIL_SPA_INTERSECTS = File.createTempFile("test_fil_spa_intersects_v110", ".xml");
             TEST_FILE_FIL_SPA_OVERLAPS = File.createTempFile("test_fil_spa_overlaps_v110", ".xml");
-            TEST_FILE_FIL_SPA_OVERLAPS = File.createTempFile("test_fil_spa_overlaps2_v110", ".xml");
+            TEST_FILE_FIL_SPA_OVERLAPS2 = File.createTempFile("test_fil_spa_overlaps2_v110", ".xml");
             TEST_FILE_FIL_SPA_TOUCHES = File.createTempFile("test_fil_spa_touches_v110", ".xml");
             TEST_FILE_FIL_SPA_WITHIN = File.createTempFile("test_fil_spa_within_v110", ".xml");
         }catch(IOException ex){
@@ -304,7 +304,7 @@ public class OGCforSLD110Test extends TestCase{
         }
 
         //switch to false to avoid temp files to be deleted
-        if(false){
+        if(true){
             TEST_FILE_EXP_ADD.deleteOnExit();
             TEST_FILE_EXP_SUB.deleteOnExit();
             TEST_FILE_EXP_MUL.deleteOnExit();
@@ -335,6 +335,7 @@ public class OGCforSLD110Test extends TestCase{
             TEST_FILE_FIL_SPA_EQUALS.deleteOnExit();
             TEST_FILE_FIL_SPA_INTERSECTS.deleteOnExit();
             TEST_FILE_FIL_SPA_OVERLAPS.deleteOnExit();
+            TEST_FILE_FIL_SPA_OVERLAPS2.deleteOnExit();
             TEST_FILE_FIL_SPA_TOUCHES.deleteOnExit();
             TEST_FILE_FIL_SPA_WITHIN.deleteOnExit();
         }
