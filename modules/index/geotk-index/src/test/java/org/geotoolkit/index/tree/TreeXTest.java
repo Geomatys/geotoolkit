@@ -16,18 +16,20 @@
  */
 package org.geotoolkit.index.tree;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.filter.SpatialFilterType;
 import org.geotoolkit.index.tree.star.FileStarRTree;
 import org.geotoolkit.referencing.crs.PredefinedCRS;
-import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.Assert.assertTrue;
 
 /**
  * Test static TreeX methods.<br/><br/>
@@ -38,14 +40,15 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 public class TreeXTest extends TreeTest {
 
-    Tree tree ;
+    private final Tree tree ;
     private TreeXElementMapperTest tXEM ;
 
     private static final CoordinateReferenceSystem CRS_TEST = PredefinedCRS.CARTESIAN_3D;
 
     public TreeXTest() throws StoreIndexException, IOException {
+        final File treeFile = File.createTempFile("TreeX", "test", tempDir);
         tXEM = new TreeXElementMapperTest();
-        tree = new FileStarRTree(File.createTempFile("TreeX", "test"), 4, CRS_TEST, tXEM);
+        tree = new FileStarRTree(treeFile, 4, CRS_TEST, tXEM);
         final GeneralEnvelope geTemp = new GeneralEnvelope(CRS_TEST);
         for(int z = 0; z <= 200; z += 20) {
             for(int y = 0; y <= 200; y += 20) {

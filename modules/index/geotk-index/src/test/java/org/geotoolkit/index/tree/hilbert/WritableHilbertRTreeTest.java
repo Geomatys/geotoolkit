@@ -37,7 +37,11 @@ abstract class WritableHilbertRTreeTest extends HilbertTest {
      * @throws IOException if problem during TreeElementMapper or Tree head writing.
      */
     protected WritableHilbertRTreeTest(final CoordinateReferenceSystem crs) throws StoreIndexException, IOException {
-        super(new FileHilbertRTree(File.createTempFile("hilbertTree", "test"), 4, 2, crs, 
-                new FileTreeElementMapperTest(crs, File.createTempFile("mapper", "test"))));
+        super(crs);
+        final File inOutFile = File.createTempFile("hilbertTree", "test", tempDir);
+        final File treeMapperFile = File.createTempFile("mapper", "test", tempDir);
+
+        tEM = new FileTreeElementMapperTest(crs, treeMapperFile);
+        tree = new FileHilbertRTree(inOutFile, 4, 2, crs, tEM);
     }
 }

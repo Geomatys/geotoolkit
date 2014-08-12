@@ -18,6 +18,8 @@ package org.geotoolkit.index.tree.basic;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
+
 import org.geotoolkit.index.tree.AbstractTreeTest;
 import org.geotoolkit.index.tree.FileTreeElementMapperTest;
 import org.geotoolkit.index.tree.StoreIndexException;
@@ -43,8 +45,8 @@ abstract class ReadeableBasicRTreeTest extends AbstractTreeTest {
      */
     protected ReadeableBasicRTreeTest(final CoordinateReferenceSystem crs) throws StoreIndexException, IOException, ClassNotFoundException {
         super(crs);
-        final File inOutFile = File.createTempFile("test", "tree");
-        final File treeMapperFile = File.createTempFile("test", "mapper");
+        final File inOutFile = File.createTempFile("test", "tree", tempDir);
+        final File treeMapperFile = File.createTempFile("test", "mapper", tempDir);
         tEM  = new FileTreeElementMapperTest(crs, treeMapperFile);
         tree = new FileBasicRTree(inOutFile, 3, crs, SplitCase.LINEAR, tEM);
         

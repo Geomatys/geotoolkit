@@ -16,12 +16,23 @@
  */
 package org.geotoolkit.index.tree;
 
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.internal.tree.TreeUtilities;
+
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Logger;
+
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.util.ArgumentChecks;
+import org.junit.After;
 import org.opengis.geometry.Envelope;
 
 /**
@@ -30,6 +41,35 @@ import org.opengis.geometry.Envelope;
  * @author Rémi Maréchal (Géomatys).
  */
 public abstract class TreeTest {
+
+    protected Logger LOGGER = Logging.getLogger(TreeTest.class);
+
+    /**
+     * A temporary directory which will contains all files needed for Tree testing. Directory is deleted after each test
+     * using {@linkplain #deleteTempFiles()} method.
+     */
+    protected final File tempDir;
+
+    protected TreeTest() throws IOException {
+        tempDir = Files.createTempDirectory("treetest").toFile();
+    }
+
+    @After
+    public void deleteTempFiles() throws IOException {
+        Files.walkFileTree(tempDir.toPath(), new SimpleFileVisitor<Path>() {
+            @Override
+            public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+                Files.delete(dir);
+                return super.postVisitDirectory(dir, exc);
+            }
+
+            @Override
+            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                Files.delete(file);
+                return super.visitFile(file, attrs);
+            }
+        });
+    }
 
     /**
      * Compare 2 lists elements.

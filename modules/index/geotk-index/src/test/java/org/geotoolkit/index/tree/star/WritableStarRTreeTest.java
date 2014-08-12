@@ -38,7 +38,10 @@ abstract class WritableStarRTreeTest extends AbstractTreeTest {
      * @throws IOException if problem during TreeElementMapper or Tree head writing.
      */
     protected WritableStarRTreeTest(final CoordinateReferenceSystem crs) throws StoreIndexException, IOException {
-        super(new FileStarRTree(File.createTempFile("starRTree", "tree"), 4, crs, 
-                new FileTreeElementMapperTest(crs, File.createTempFile("mapper", "test"))));
+        super(crs);
+        final File inOutFile      = File.createTempFile("starRTree", "tree", tempDir);
+        final File treeMapperFile = File.createTempFile("mapper", "test", tempDir);
+        tEM = new FileTreeElementMapperTest(crs, treeMapperFile);
+        tree = new FileStarRTree(inOutFile, 4, crs, tEM);
     }
 }

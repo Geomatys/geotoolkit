@@ -43,8 +43,8 @@ abstract class ReadeableStarRTreeTest extends AbstractTreeTest {
      */
     protected ReadeableStarRTreeTest(final CoordinateReferenceSystem crs) throws StoreIndexException, IOException, ClassNotFoundException {
         super(crs);
-        final File inOutFile      = File.createTempFile("test", "tree");
-        final File treeMapperFile = File.createTempFile("test", "mapper");
+        final File inOutFile      = File.createTempFile("test", "tree", tempDir);
+        final File treeMapperFile = File.createTempFile("test", "mapper", tempDir);
         
         // data insertion
         tEM  = new FileTreeElementMapperTest(crs, treeMapperFile);

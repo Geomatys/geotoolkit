@@ -40,6 +40,7 @@ import org.opengis.referencing.cs.CoordinateSystemAxis;
  * @author Remi Marechal (Geomatys).
  */
 public abstract class AbstractTreeTest extends TreeTest {
+
     /**
      * data number inserted in Tree.
      */
@@ -85,7 +86,8 @@ public abstract class AbstractTreeTest extends TreeTest {
      * 
      * @param crs 
      */
-    protected AbstractTreeTest(final CoordinateReferenceSystem crs) {
+    protected AbstractTreeTest(final CoordinateReferenceSystem crs) throws IOException {
+        super();
         this.crs = crs;
         this.dimension = crs.getCoordinateSystem().getDimension();
         ArgumentChecks.ensurePositive("dimension", this.dimension);
@@ -113,7 +115,7 @@ public abstract class AbstractTreeTest extends TreeTest {
      * 
      * @param tree Tree which will be test.
      */
-    protected AbstractTreeTest(final Tree tree) {
+    protected AbstractTreeTest(final Tree tree) throws IOException {
         this(tree.getCrs());
         this.tree = tree;
         this.tEM  = tree.getTreeElementMapper();

@@ -38,7 +38,7 @@ abstract class HilbertTest extends AbstractTreeTest {
      * 
      * @param crs
      */
-    protected HilbertTest(final CoordinateReferenceSystem crs) {
+    protected HilbertTest(final CoordinateReferenceSystem crs) throws IOException {
         super(crs);
     }
     
@@ -47,7 +47,7 @@ abstract class HilbertTest extends AbstractTreeTest {
      * 
      * @param tree HilbertRTree which will be test.
      */
-    protected HilbertTest(final HilbertRTree tree) {
+    protected HilbertTest(final HilbertRTree tree) throws IOException {
         super(tree);
     }
 

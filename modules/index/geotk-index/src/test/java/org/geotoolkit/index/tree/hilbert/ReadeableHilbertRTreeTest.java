@@ -42,8 +42,8 @@ abstract class ReadeableHilbertRTreeTest extends HilbertTest {
      */
     protected ReadeableHilbertRTreeTest(final CoordinateReferenceSystem crs) throws IOException, StoreIndexException, ClassNotFoundException {
         super(crs);
-        final File inOutFile = File.createTempFile("test", "tree");
-        final File treeMapperFile = File.createTempFile("test", "mapper");
+        final File inOutFile = File.createTempFile("test", "tree", tempDir);
+        final File treeMapperFile = File.createTempFile("test", "mapper", tempDir);
         tEM = new FileTreeElementMapperTest(crs, treeMapperFile);
         tree = new FileHilbertRTree(inOutFile, 4, 2, crs, tEM);
         
