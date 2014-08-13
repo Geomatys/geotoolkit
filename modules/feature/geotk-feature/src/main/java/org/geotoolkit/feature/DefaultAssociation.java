@@ -17,8 +17,6 @@
  */
 package org.geotoolkit.feature;
 
-import org.geotoolkit.feature.Association;
-import org.geotoolkit.feature.Attribute;
 import org.geotoolkit.feature.type.AssociationDescriptor;
 import org.geotoolkit.feature.type.AssociationType;
 import org.geotoolkit.feature.type.AttributeType;

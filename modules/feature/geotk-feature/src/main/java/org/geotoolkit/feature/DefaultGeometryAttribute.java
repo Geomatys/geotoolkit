@@ -20,7 +20,6 @@ package org.geotoolkit.feature;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.geotoolkit.feature.GeometryAttribute;
 import org.geotoolkit.feature.type.GeometryDescriptor;
 import org.geotoolkit.feature.type.GeometryType;
 import org.opengis.filter.identity.Identifier;

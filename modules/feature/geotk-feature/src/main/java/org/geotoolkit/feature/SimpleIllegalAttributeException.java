@@ -18,7 +18,6 @@ package org.geotoolkit.feature;
 
 import java.util.Map;
 import org.geotoolkit.util.Exceptions;
-import org.geotoolkit.feature.IllegalAttributeException;
 import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.geotoolkit.feature.type.AttributeType;
 import org.geotoolkit.feature.type.Name;

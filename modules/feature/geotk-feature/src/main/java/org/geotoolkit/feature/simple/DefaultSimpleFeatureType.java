@@ -25,7 +25,6 @@ import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.geotoolkit.feature.type.DefaultName;
 import org.geotoolkit.feature.type.DefaultFeatureType;
 
-import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.geotoolkit.feature.type.AttributeType;
 import org.geotoolkit.feature.type.GeometryDescriptor;

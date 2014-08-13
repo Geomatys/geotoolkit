@@ -19,7 +19,6 @@ package org.geotoolkit.feature;
 import java.io.Serializable;
 import java.util.Objects;
 
-import org.geotoolkit.feature.Property;
 import org.geotoolkit.feature.type.Name;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.geotoolkit.feature.type.PropertyType;

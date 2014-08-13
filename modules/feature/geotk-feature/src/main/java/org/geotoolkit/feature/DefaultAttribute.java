@@ -20,7 +20,6 @@ package org.geotoolkit.feature;
 import java.util.Objects;
 import org.apache.sis.util.ObjectConverters;
 
-import org.geotoolkit.feature.Attribute;
 import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.geotoolkit.feature.type.AttributeType;
 import org.opengis.filter.identity.Identifier;

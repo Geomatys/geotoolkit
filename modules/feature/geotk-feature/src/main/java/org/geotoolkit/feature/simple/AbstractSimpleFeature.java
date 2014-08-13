@@ -35,8 +35,6 @@ import org.geotoolkit.feature.SimpleIllegalAttributeException;
 import org.geotoolkit.feature.GeometryAttribute;
 import org.geotoolkit.feature.IllegalAttributeException;
 import org.geotoolkit.feature.Property;
-import org.geotoolkit.feature.simple.SimpleFeature;
-import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.GeometryDescriptor;
