@@ -602,7 +602,9 @@ public class NetcdfMetadataWriter extends NetcdfMetadata {
          */
         if (citation != null) {
             if (!isDefined(REFERENCES)) {
-                setAttribute(citation.getOtherCitationDetails());
+                for (final InternationalString details : nonNull(citation.getOtherCitationDetails())) {
+                    if (setAttribute(details)) break; // Write only the first citation details.
+                }
             }
             final Collection<? extends Responsibility> authors = nonNull(citation.getCitedResponsibleParties());
             if (!authors.isEmpty()) {

@@ -25,28 +25,28 @@ import org.opengis.util.InternationalString;
 
 /**
  * Immutable implementation of Types Online Resource.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
 public class DefaultOnlineResource implements OnlineResource{
-    
+
     private final URI href;
-    
+
     private final String protocol;
-    
+
     private final String profil;
-    
+
     private final String title;
-    
+
     private final InternationalString desc;
-    
+
     private final OnLineFunction function;
-        
-    
+
+
     /**
      * Create a default immutable OnlineResource.
-     * 
+     *
      * @param uri
      */
     public DefaultOnlineResource(final URI uri, final String protocol, final String profil, final String name,
@@ -58,7 +58,7 @@ public class DefaultOnlineResource implements OnlineResource{
         this.profil = profil;
         this.protocol = protocol;
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -73,6 +73,14 @@ public class DefaultOnlineResource implements OnlineResource{
     @Override
     public String getProtocol() {
         return protocol;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public String getProtocolRequest() {
+        return null;
     }
 
     /**

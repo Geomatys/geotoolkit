@@ -17,6 +17,7 @@
 package org.geotoolkit.test;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
@@ -159,7 +160,7 @@ public class Test_FC {
             rp.setRole(Role.PUBLISHER);
             rps.add(rp);
             source.setCitedResponsibleParties(rps);
-            source.setOtherCitationDetails(new SimpleInternationalString("Special publication n°32"));
+            source.setOtherCitationDetails(Collections.singleton(new SimpleInternationalString("Special publication n°32")));
             DefinitionSource defSource = new DefinitionSourceImpl("ds-IHO", source);
             defSources.add(defSource);
 

@@ -100,8 +100,9 @@ import org.apache.sis.metadata.iso.quality.DefaultDataQuality;
 import org.apache.sis.metadata.iso.lineage.DefaultLineage;
 import org.geotoolkit.referencing.adapters.NetcdfCRSBuilder;
 import org.geotoolkit.resources.Errors;
-
 import org.apache.sis.referencing.CommonCRS;
+
+import static java.util.Collections.singleton;
 import static org.apache.sis.util.iso.Types.toInternationalString;
 
 
@@ -659,7 +660,9 @@ public class NetcdfMetadataReader extends NetcdfMetadata {
                 addIfAbsent(citation.getCitedResponsibleParties(), contributor);
             }
         }
-        citation.setOtherCitationDetails(toInternationalString(references));
+        if (references != null) {
+            citation.setOtherCitationDetails(singleton(toInternationalString(references)));
+        }
         return citation.isEmpty() ? null : citation;
     }
 
