@@ -62,7 +62,16 @@ public final class TemporaryFile extends PhantomReference<File> implements Dispo
      */
     static {
         try {
-            Class.forName("org.geotoolkit.factory.ShutdownHook", true, TemporaryFile.class.getClassLoader());
+            Class.forName("org.geotoolkit.factory.ShutdownHook", true, TemporaryFile.class.getClassLoader())
+                    .getMethod("registerFileDeletor", Runnable.class).invoke(null, new Runnable() {
+                        @Override public void run() {
+                            while (TemporaryFile.deleteAll()) {
+                                Thread.yield();
+                                // The loop exists as a paranoiac action in case TemporaryFile.deleteOnExit(...)
+                                // is being invoked concurrently, but it should never happen.
+                            }
+                        }
+                    });
         } catch (Exception e) {
             Logging.unexpectedException(TemporaryFile.class, "<init>", e);
         }

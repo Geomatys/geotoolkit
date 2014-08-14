@@ -23,7 +23,6 @@ import net.jcip.annotations.ThreadSafe;
 
 import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.internal.Threads;
-import org.geotoolkit.internal.io.TemporaryFile;
 
 
 /**
@@ -40,21 +39,28 @@ import org.geotoolkit.internal.io.TemporaryFile;
  */
 @ThreadSafe
 public final class ShutdownHook extends Thread {
-
     /**
-     * Hook static reference.
+     * The shutdown hook registered to the JVM, stored for allowing unregistration.
      */
-    private static final ShutdownHook SHUTDOWN_HOOK;
-
+    private static ShutdownHook SHUTDOWN_HOOK = new ShutdownHook();
     static {
-        SHUTDOWN_HOOK = new ShutdownHook();
         Runtime.getRuntime().addShutdownHook(SHUTDOWN_HOOK);
     }
 
     /**
      * The registries on which to dispose the factories on shutdown.
      */
-    private static ServiceRegistry[] registries;
+    private ServiceRegistry[] registries;
+
+    /**
+     * A hook for deleting temporary files.
+     *
+     * Rational: we do not invoke {@code TemporaryFile.deleteAll()} directly because we do not want
+     * to trig class loading at shutdown time if the application did not created any temporary file.
+     * This is important for avoiding NoClassDefError in environments like Tomcat which may not give
+     * access to the classloader able to load TemporaryFile at this point.
+     */
+    private Runnable deleteTemporaryFiles;
 
     /**
      * Creates the singleton instance.
@@ -67,8 +73,9 @@ public final class ShutdownHook extends Thread {
      * Run hook and remove it from JVM shutdown.
      */
     public synchronized static void runAndremove() {
-        if(Runtime.getRuntime().removeShutdownHook(SHUTDOWN_HOOK)) {
+        if (Runtime.getRuntime().removeShutdownHook(SHUTDOWN_HOOK)) {
             SHUTDOWN_HOOK.run();
+            SHUTDOWN_HOOK = null;
         }
     }
 
@@ -76,13 +83,29 @@ public final class ShutdownHook extends Thread {
      * Adds the given registry to the list of registry to dispose on shutdown.
      */
     static synchronized void register(final ServiceRegistry registry) {
-        ServiceRegistry[] registries = ShutdownHook.registries;
-        if (registries == null) {
-            registries = new ServiceRegistry[] {registry};
-        } else {
-            registries = ArraysExt.append(registries, registry);
+        final ShutdownHook hook = SHUTDOWN_HOOK;
+        if (hook != null) {
+            ServiceRegistry[] registries = hook.registries;
+            if (registries == null) {
+                registries = new ServiceRegistry[] {registry};
+            } else {
+                registries = ArraysExt.append(registries, registry);
+            }
+            hook.registries = registries;
         }
-        ShutdownHook.registries = registries;
+    }
+
+    /**
+     * Register a runnable to execute for deleting temporary files.
+     * This is used by {@link org.geotoolkit.internal.io.TemporaryFile} only.
+     *
+     * @param runnable Executable to run for deleting temporary files.
+     */
+    public static synchronized void registerFileDeletor(final Runnable runnable) {
+        final ShutdownHook hook = SHUTDOWN_HOOK;
+        if (hook != null) {
+            hook.deleteTemporaryFiles = runnable;
+        }
     }
 
     /**
@@ -91,10 +114,16 @@ public final class ShutdownHook extends Thread {
      * to requested the disposal of every factories.
      */
     @Override
-    public synchronized void run() {
-        final ServiceRegistry[] registries = ShutdownHook.registries;
+    public void run() {
+        final ServiceRegistry[] registries;
+        final Runnable deleteTemporaryFiles;
+        synchronized (ShutdownHook.class) {
+            registries = this.registries;
+            deleteTemporaryFiles = this.deleteTemporaryFiles;
+            this.registries = null;
+            this.deleteTemporaryFiles = deleteTemporaryFiles;
+        }
         if (registries != null) {
-            ShutdownHook.registries = null;
             for (final ServiceRegistry registry : registries) {
                 for (final Iterator<Class<?>> it=registry.getCategories(); it.hasNext();) {
                     final Class<?> category = it.next();
@@ -116,10 +145,8 @@ public final class ShutdownHook extends Thread {
         /*
          * Delete the temporary file after there is presumably no running service.
          */
-        while (TemporaryFile.deleteAll()) {
-            Thread.yield();
-            // The loop exists as a paranoiac action in case TemporaryFile.deleteOnExit(...)
-            // is being invoked concurrently, but it should never happen.
+        if (deleteTemporaryFiles != null) {
+            deleteTemporaryFiles.run();
         }
     }
 }
