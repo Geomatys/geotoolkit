@@ -81,7 +81,7 @@ public class XMLMosaic implements GridMosaic {
     /*
      * Used only if we use the tile state cache mecanism, which means we don't use XML document to read / write tile states.
      */
-    private final Cache<Point, Boolean> isMissingCache = new Cache<>(1000, 1000, true);
+    private final Cache<Point, Boolean> isMissingCache = new Cache<>(1000, 1000, false);
 
     //empty tile informations
     private byte[] emptyTileEncoded = null;
@@ -392,15 +392,14 @@ public class XMLMosaic implements GridMosaic {
     }
 
     void createTile(final int col, final int row, final RenderedImage image, final ImageWriter writer) throws DataStoreException {
-        if (isEmpty(image.getData())) {
-            if (tileExist != null) {
-                bitsetLock.writeLock().lock();
-                try {
-                    tileExist.set(getTileIndex(col, row), true);
-                    tileEmpty.set(getTileIndex(col, row), true);
-                } finally {
-                    bitsetLock.writeLock().unlock();
-                }
+        // No empty tile with cached tile state.
+        if (tileExist != null && isEmpty(image.getData())) {
+            bitsetLock.writeLock().lock();
+            try {
+                tileExist.set(getTileIndex(col, row), true);
+                tileEmpty.set(getTileIndex(col, row), true);
+            } finally {
+                bitsetLock.writeLock().unlock();
             }
             return;
         }
