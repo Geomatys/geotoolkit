@@ -28,6 +28,11 @@ import org.apache.sis.util.ArgumentChecks;
  *
  * @author Martin Desruisseaux (Geomatys)
  * @module
+ *
+ * @todo We have an ambiguity when writing {@code Party.name}: nothing distinguish an individual name
+ *       from an organization name, since the {@code Party} type is lost at JSON writing time.
+ *       We propose to format as {@code "individual.name"} and {@code "organisation.name"} in those
+ *       particular cases.
  */
 public final class JSON extends Static {
     /**
