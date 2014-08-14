@@ -58,7 +58,7 @@ import org.opengis.parameter.ParameterValueGroup;
 public class DefaultFolderFeatureStore extends AbstractFeatureStore implements DataFileStore {
 
     /**
-     * Listen to changes in sub stores and propage them.
+     * Listen to changes in sub stores and propagate them.
      */
     private final FeatureStoreListener subListener = new FeatureStoreListener() {
 

@@ -122,7 +122,7 @@ public class CSVFeatureStore extends AbstractFeatureStore implements DataFileSto
         }
     }
 
-    public CSVFeatureStore(final ParameterValueGroup params) throws DataStoreException{
+    public CSVFeatureStore(final ParameterValueGroup params) throws DataStoreException {
         super(params);
 
         final URL url = (URL) params.parameter(CSVFeatureStoreFactory.URLP.getName().toString()).getValue();

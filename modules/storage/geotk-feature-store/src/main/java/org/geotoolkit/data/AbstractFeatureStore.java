@@ -110,7 +110,7 @@ public abstract class AbstractFeatureStore extends FeatureStore {
             try{
                 namespace = (String)Parameters.getOrCreate(AbstractFeatureStoreFactory.NAMESPACE, params).getValue();
             }catch(ParameterNotFoundException ex){
-                //ignore this error, factory might not necesarly have a namespace parameter
+                //ignore this error, factory might not necessarily have a namespace parameter
                 //example : gpx
             }
         }
@@ -199,7 +199,7 @@ public abstract class AbstractFeatureStore extends FeatureStore {
                 return getFeatureType(n);
             }
         }
-        throw new DataStoreException("Schema : " + typeName + "doesnt exist in this feature store.");
+        throw new DataStoreException("Schema : " + typeName + "doesn't exist in this feature store.");
     }
 
     @Override
@@ -240,7 +240,7 @@ public abstract class AbstractFeatureStore extends FeatureStore {
             return true;
         }catch(Exception ex){
             //catch anything, log it
-            getLogger().log(Level.WARNING, "Type not writeable : {0}", ex.getMessage());
+            getLogger().log(Level.WARNING, "Type not writable : {0}", ex.getMessage());
             return false;
         }finally{
             if(writer != null){
@@ -277,7 +277,7 @@ public abstract class AbstractFeatureStore extends FeatureStore {
         // TODO query = addSeparateFeatureHint(query);
         
         if(query.retrieveAllProperties()){
-            //we simplify it, get only geometry attributs + sort attribute
+            //we simplify it, get only geometry attributes + sort attribute
             final FeatureType ft = getFeatureType(query.getTypeName());
             final List<Name> names = new ArrayList<Name>();
             for(PropertyDescriptor desc : ft.getDescriptors()){

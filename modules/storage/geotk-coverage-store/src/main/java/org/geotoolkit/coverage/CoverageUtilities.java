@@ -167,7 +167,7 @@ public final class CoverageUtilities {
     }
 
     /**
-     * Find the most appropriate mosaic in the pyramid with the given informations.
+     * Find the most appropriate mosaic in the pyramid with the given information.
      *
      * @param pyramid
      * @param resolution
@@ -256,15 +256,15 @@ public final class CoverageUtilities {
     }
 
     /**
-     * Serach in the given pyramid all of the mosaics which fit the given. 2 modes
+     * Search in the given pyramid all of the mosaics which fit the given parameters. 2 modes
      * are possible :
-     * - Contains only : Suitable mosaics must be CONTAINED (or equal) into given filter.
+     * - Contains only : Suitable mosaics must be CONTAINED (or equal) to given spatial filter.
      * - Intersection  : Suitable mosaics must INTERSECT given filter.
      *
      * @param toSearchIn The pyramid to get mosaics from.
      * @param filter The {@link Envelope} to use to  specify spatial position of wanted mosaics.
      * @param containOnly True if you want 'Contains only' mode, false if you want 'Intersection' mode.
-     * @return A list containing all the mosaics which fit the given envelope. Never nulll, but can be empty.
+     * @return A list containing all the mosaics which fit the given envelope. Never null, but can be empty.
      * @throws TransformException If input filter {@link CoordinateReferenceSystem} is not compatible with
      * input mosaics one.
      */
