@@ -19,6 +19,7 @@ package org.geotoolkit.index.tree;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.filter.SpatialFilterType;
 import org.geotoolkit.index.tree.star.FileStarRTree;
+import org.geotoolkit.internal.tree.TreeAccessFile;
 import org.geotoolkit.referencing.crs.PredefinedCRS;
 import org.junit.Test;
 import org.opengis.geometry.Envelope;
@@ -29,6 +30,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -42,11 +44,12 @@ public class TreeXTest extends TreeTest {
 
     private final Tree tree ;
     private TreeXElementMapperTest tXEM ;
+    private final File treeFile;
 
     private static final CoordinateReferenceSystem CRS_TEST = PredefinedCRS.CARTESIAN_3D;
 
     public TreeXTest() throws StoreIndexException, IOException {
-        final File treeFile = File.createTempFile("TreeX", "test", tempDir);
+        treeFile = File.createTempFile("TreeX", "test", tempDir);
         tXEM = new TreeXElementMapperTest();
         tree = new FileStarRTree(treeFile, 4, CRS_TEST, tXEM);
         final GeneralEnvelope geTemp = new GeneralEnvelope(CRS_TEST);
@@ -72,6 +75,12 @@ public class TreeXTest extends TreeTest {
             lResult.add(tXEM.getObjectFromTreeIdentifier(tabID[i]));
         }
         return lResult;
+    }
+
+
+    @Test
+    public void readCRSTest() throws IOException, ClassNotFoundException {
+        assertEquals("Read CRS must be the same as the tree one.", CRS_TEST, TreeAccessFile.getTreeCRS(treeFile));
     }
 
     /**

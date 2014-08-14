@@ -27,6 +27,8 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
 import java.util.Arrays;
+
+import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.index.tree.Node;
 import org.geotoolkit.index.tree.StoreIndexException;
 import static org.geotoolkit.internal.tree.TreeUtilities.intersects;
@@ -40,7 +42,12 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @author Rémi Maréchal (Geomatys).
  */
 public class TreeAccessFile extends TreeAccess {
-    
+
+    /**
+     * Position in the tree file where CRS description should begin.
+     */
+    private static final int CRS_POSITION = 34;
+
     /**
      * Number of Integer per Node.<br/><br/>
      * parent ID<br/>
@@ -50,7 +57,7 @@ public class TreeAccessFile extends TreeAccess {
      * 
      * @see HilbertTreeAccessFile#INT_NUMBER
      */
-    private static int INT_NUMBER = 4;
+    private static final int INT_NUMBER = 4;
     
     /**
      * boundary table value length of each Node.
@@ -154,13 +161,13 @@ public class TreeAccessFile extends TreeAccess {
                 case TreeUtilities.BASIC_NUMBER   : createTreeType = " BasicRTree ";break;
                 case TreeUtilities.STAR_NUMBER    : createTreeType = " StarRTree ";break;
                 case TreeUtilities.HILBERT_NUMBER : createTreeType = " hilbertRTree ";break;
-                default : throw new IllegalArgumentException("the specified tree type is not knowed.");
+                default : throw new IllegalArgumentException("Unknown tree type for magic number : "+magicNumber);
             };
             switch (mgNumber) {
                 case TreeUtilities.BASIC_NUMBER   : redTreeType = " BasicRTree ";break;
                 case TreeUtilities.STAR_NUMBER    : redTreeType = " StarRTree ";break;
                 case TreeUtilities.HILBERT_NUMBER : redTreeType = " hilbertRTree ";break;
-                default : throw new IllegalArgumentException("the red tree type from file is not knowed.");
+                default : throw new IllegalArgumentException("Unknown tree type for magic number : "+mgNumber);
             };
             final String messageError = "You try to create a "+createTreeType
                     +"RTree from a file which has been filled by a "+redTreeType
@@ -194,9 +201,10 @@ public class TreeAccessFile extends TreeAccess {
         final int byteTabLength   = inOutStream.readInt();
         final byte[] crsByteArray = new byte[byteTabLength];
         inOutStream.read(crsByteArray, 0, byteTabLength);
-        final ObjectInputStream crsInputS = new ObjectInputStream(new ByteArrayInputStream(crsByteArray));
-        crs = (CoordinateReferenceSystem) crsInputS.readObject();
-        crsInputS.close();
+        try (final ObjectInputStream crsInputS =
+                     new ObjectInputStream(new ByteArrayInputStream(crsByteArray))) {
+            crs = (CoordinateReferenceSystem) crsInputS.readObject();
+        }
         /*****************************  end head ******************************/
         
         this.boundLength = crs.getCoordinateSystem().getDimension() << 1;
@@ -332,9 +340,9 @@ public class TreeAccessFile extends TreeAccess {
         Arrays.fill(nanBound, Double.NaN);
         
         /**
-         * Node size : boundary weigth + Byte properties + n Integers.<br/><br/>
+         * Node size : boundary weight + Byte properties + n Integers.<br/><br/>
          * 
-         * see this.INT_NUMBER attribut.
+         * see this.INT_NUMBER attribute.
          */
         nodeSize = (boundLength * Double.SIZE + Integer.SIZE * integerNumberPerNode) / 8 + 1;
         
@@ -350,33 +358,33 @@ public class TreeAccessFile extends TreeAccess {
         inOutChannel = inOutStream.getChannel();
         
         /***************************  write head ******************************/
-        final ByteArrayOutputStream temp   = new ByteArrayOutputStream();
-        final ObjectOutputStream objOutput = new ObjectOutputStream(temp);
-        // write magicNumber
-        inOutStream.writeInt(magicNumber);
-        // write bytebuffer order
-        inOutStream.writeBoolean(bO == ByteOrder.LITTLE_ENDIAN);
-        // write version number
-        inOutStream.writeDouble(versionNumber);
-        // write element number per Node
-        inOutStream.writeInt(maxElements);
-        // write hilbert order
-        inOutStream.writeInt(hilbertOrder);
-        // write splitCase
-        inOutStream.writeByte((byte) ((splitMade == null || splitMade == SplitCase.LINEAR) ? 0 : 1));
-        // write nodeID
-        inOutStream.writeInt(0);
-        // write treeIdentifier
-        inOutStream.writeInt(0);
-        // write element number within tree
-        inOutStream.writeInt(0);
-        // write CRS
-        objOutput.writeObject(crs);
-        objOutput.flush();
-        final byte[] crsByteArray = temp.toByteArray();
-        inOutStream.writeInt(crsByteArray.length);
-        inOutStream.write(crsByteArray);
-        objOutput.close();
+        final ByteArrayOutputStream temp = new ByteArrayOutputStream();
+        try (final ObjectOutputStream objOutput = new ObjectOutputStream(temp)) {
+            // write magicNumber
+            inOutStream.writeInt(magicNumber);
+            // write bytebuffer order
+            inOutStream.writeBoolean(bO == ByteOrder.LITTLE_ENDIAN);
+            // write version number
+            inOutStream.writeDouble(versionNumber);
+            // write element number per Node
+            inOutStream.writeInt(maxElements);
+            // write hilbert order
+            inOutStream.writeInt(hilbertOrder);
+            // write splitCase
+            inOutStream.writeByte((byte) ((splitMade == null || splitMade == SplitCase.LINEAR) ? 0 : 1));
+            // write nodeID
+            inOutStream.writeInt(0);
+            // write treeIdentifier
+            inOutStream.writeInt(0);
+            // write element number within tree
+            inOutStream.writeInt(0);
+            // write CRS
+            objOutput.writeObject(crs);
+            objOutput.flush();
+            final byte[] crsByteArray = temp.toByteArray();
+            inOutStream.writeInt(crsByteArray.length);
+            inOutStream.write(crsByteArray);
+        }
         /*****************************  end head ******************************/
         
         beginPosition         = (int) inOutChannel.position();
@@ -562,5 +570,31 @@ public class TreeAccessFile extends TreeAccess {
     @Override
     public boolean isClose() {
         return !inOutChannel.isOpen();
+    }
+
+    /**
+     * Retrieve the CRS of the input tree.
+     * @param treeFile The file containing the tree.
+     * @return The {@link org.opengis.referencing.crs.CoordinateReferenceSystem} in which teh tree is expressed.
+     * @throws java.lang.IllegalArgumentException if input file is null.
+     * @throws java.io.IOException if input file does not exists, or is a directory, or a problem happens at reading.
+     * @throws java.lang.ClassNotFoundException If the read object is corrupted,
+     */
+    public static CoordinateReferenceSystem getTreeCRS(final File treeFile) throws IOException, ClassNotFoundException {
+        ArgumentChecks.ensureNonNull("Input tree file", treeFile);
+        if (!treeFile.isFile()) {
+            throw new IOException("Input file is not a regular file : "+treeFile);
+        }
+        final RandomAccessFile raf = new RandomAccessFile(treeFile, "r");
+        raf.seek(34);
+        final int byteTabLength   = raf.readInt();
+        final byte[] crsByteArray = new byte[byteTabLength];
+        raf.read(crsByteArray, 0, byteTabLength);
+
+        try (final ObjectInputStream crsInputS =
+                     new ObjectInputStream(new ByteArrayInputStream(crsByteArray))) {
+
+            return (CoordinateReferenceSystem) crsInputS.readObject();
+        }
     }
 }
