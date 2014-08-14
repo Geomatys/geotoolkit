@@ -97,6 +97,8 @@ public class CSVFeatureStore extends AbstractFeatureStore implements DataFileSto
 
     static final String BUNDLE_PATH = "org/geotoolkit/csv/bundle";
 
+    public static final String COMMENT_STRING = "#";
+
     private final ReadWriteLock RWLock = new ReentrantReadWriteLock();
     private final ReadWriteLock TempLock = new ReentrantReadWriteLock();
 
@@ -183,65 +185,64 @@ public class CSVFeatureStore extends AbstractFeatureStore implements DataFileSto
         }
 
         try {
-          //first use a Scanner to get each line
-          if(scanner.hasNextLine()){
-              final String line = scanner.nextLine();
-              final String[] fields = line.split(""+separator);
-              final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
-              ftb.setName(getDefaultNamespace(), name);
-              for(String field : fields){
-                  final int dep = field.indexOf('(');
-                  final int fin = field.lastIndexOf(')');
+            //first use a Scanner to get each line
+            final String line = getNextLine(scanner);
+            if (line != null) {
+                final String[] fields = line.split("" + separator);
+                final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
+                ftb.setName(getDefaultNamespace(), name);
+                for (String field : fields) {
+                    final int dep = field.indexOf('(');
+                    final int fin = field.lastIndexOf(')');
 
-                  final Name fieldName;
-                  Class type = String.class;
-                  CoordinateReferenceSystem crs = null;
-                  if(dep >0 && fin>dep){
-                      fieldName = new DefaultName(getDefaultNamespace(), field.substring(0, dep));
-                      //there is a defined type
-                      final String name = field.substring(dep + 1, fin).toLowerCase();
-                      if ("integer".equalsIgnoreCase(name)) {
-                          type = Integer.class;
-                      } else if ("double".equalsIgnoreCase(name)) {
-                          type = Double.class;
-                      } else if ("string".equalsIgnoreCase(name)) {
-                          type = String.class;
-                      } else if ("date".equalsIgnoreCase(name)) {
-                          type = Date.class;
-                      } else if ("boolean".equalsIgnoreCase(name)) {
-                          type = Boolean.class;
-                      }else{
-                          try {
-                              //check if it's a geometry type
-                              crs = CRS.decode(name);
-                              type = Geometry.class;
-                          } catch (NoSuchAuthorityCodeException ex) {
-                              java.util.logging.Logger.getLogger(CSVFeatureStore.class.getName()).log(Level.SEVERE, null, ex);
-                          } catch (FactoryException ex) {
-                              java.util.logging.Logger.getLogger(CSVFeatureStore.class.getName()).log(Level.SEVERE, null, ex);
-                          }
-                      }
-                  }
-                  else{
-                    fieldName = new DefaultName(getDefaultNamespace(), field);
-                    type = String.class;
-                  }
+                    final Name fieldName;
+                    Class type = String.class;
+                    CoordinateReferenceSystem crs = null;
+                    if (dep > 0 && fin > dep) {
+                        fieldName = new DefaultName(getDefaultNamespace(), field.substring(0, dep));
+                        //there is a defined type
+                        final String name = field.substring(dep + 1, fin).toLowerCase();
+                        if ("integer".equalsIgnoreCase(name)) {
+                            type = Integer.class;
+                        } else if ("double".equalsIgnoreCase(name)) {
+                            type = Double.class;
+                        } else if ("string".equalsIgnoreCase(name)) {
+                            type = String.class;
+                        } else if ("date".equalsIgnoreCase(name)) {
+                            type = Date.class;
+                        } else if ("boolean".equalsIgnoreCase(name)) {
+                            type = Boolean.class;
+                        } else {
+                            try {
+                                //check if it's a geometry type
+                                crs = CRS.decode(name);
+                                type = Geometry.class;
+                            } catch (NoSuchAuthorityCodeException ex) {
+                                java.util.logging.Logger.getLogger(CSVFeatureStore.class.getName()).log(Level.SEVERE, null, ex);
+                            } catch (FactoryException ex) {
+                                java.util.logging.Logger.getLogger(CSVFeatureStore.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+                        }
+                    } else {
+                        fieldName = new DefaultName(getDefaultNamespace(), field);
+                        type = String.class;
+                    }
 
-                  if(crs == null){
-                      //normal field
-                      ftb.add(fieldName, type);
-                  }else{
-                      //geometry field
-                      ftb.add(fieldName, type,crs);
-                  }
-              }
-              return ftb.buildSimpleFeatureType();
+                    if (crs == null) {
+                        //normal field
+                        ftb.add(fieldName, type);
+                    } else {
+                        //geometry field
+                        ftb.add(fieldName, type, crs);
+                    }
+                }
+                return ftb.buildSimpleFeatureType();
 
-          }else{
-              return null;
-          }
-        }finally {
-          scanner.close();
+            } else {
+                return null;
+            }
+        } finally {
+            scanner.close();
         }
     }
 
@@ -322,7 +323,7 @@ public class CSVFeatureStore extends AbstractFeatureStore implements DataFileSto
                 long cnt = -1; //avoid counting the header line
                 String line;
                 while ((line = reader.readLine()) != null) {
-                    if(!line.isEmpty()){
+                    if(!line.isEmpty() && !line.startsWith(COMMENT_STRING)){
                         //avoid potential last empty lines
                         cnt++;
                     }
@@ -513,44 +514,48 @@ public class CSVFeatureStore extends AbstractFeatureStore implements DataFileSto
             return current != null;
         }
 
-        private void read() throws FeatureStoreRuntimeException{
-            if(current != null) return;
-            if(scanner.hasNextLine()){
-                final String line = scanner.nextLine();
+        private void read() throws FeatureStoreRuntimeException {
+            if (current != null) return;
+
+            final String line = getNextLine(scanner);
+            if (line != null) {
                 final List<String> fields = StringUtilities.toStringList(line, separator);
 
-                if(reuse == null){
+                if (reuse == null) {
                     sfb.reset();
                 }
 
                 final List<AttributeDescriptor> atts = featureType.getAttributeDescriptors();
-                for(int i=0,n=atts.size() ; i<n; i++){
+                final int fieldSize = fields.size();
+                for (int i = 0, n = atts.size(); i < n; i++) {
                     final AttributeDescriptor att = atts.get(i);
                     final Object value;
-                    if(att instanceof GeometryDescriptor){
-                        if(fields.get(i).trim().isEmpty()){
+                    if (i >= fieldSize) {
+                        value = null;
+                    } else if (att instanceof GeometryDescriptor) {
+                        if (fields.get(i).trim().isEmpty()) {
                             value = null;
-                        }else{
+                        } else {
                             try {
                                 value = reader.read(fields.get(i));
                             } catch (ParseException ex) {
                                 throw new FeatureStoreRuntimeException(ex);
                             }
                         }
-                    }else{
+                    } else {
                         value = ObjectConverters.convert(fields.get(i), att.getType().getBinding());
                     }
 
-                    if(reuse == null){
+                    if (reuse == null) {
                         sfb.set(att.getName(), value);
-                    }else{
+                    } else {
                         reuse.setAttribute(att.getName(), value);
                     }
                 }
 
-                if(reuse == null){
+                if (reuse == null) {
                     current = sfb.buildFeature(Integer.toString(inc++));
-                }else{
+                } else {
                     reuse.setId(Integer.toString(inc++));
                     current = reuse;
                 }
@@ -682,5 +687,28 @@ public class CSVFeatureStore extends AbstractFeatureStore implements DataFileSto
 		featureType=null;
 
 	}
+
+    /**
+     * Read lines from input {@link java.util.Scanner} until it finds a non-commented line, then send it back.
+     * @param source The scanner to read lines from.
+     * @return The first non-commented line found, or null if scanner is empty or contains only comments.
+     */
+    private static String getNextLine(final Scanner source) {
+        String line;
+        while (source.hasNextLine()) {
+            line = source.nextLine();
+            if (line.startsWith(COMMENT_STRING)) {
+                continue;
+            } else {
+                final int commentIndex = line.indexOf(COMMENT_STRING);
+                if (commentIndex < 0) {
+                    return line;
+                } else {
+                    return line.substring(0, commentIndex);
+                }
+            }
+        }
+        return null;
+    }
 
 }
