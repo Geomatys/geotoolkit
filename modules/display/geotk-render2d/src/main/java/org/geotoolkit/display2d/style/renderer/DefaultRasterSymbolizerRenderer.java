@@ -204,18 +204,8 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
                 if(!CRS.equalsIgnoreMetadata(candidate2D,targetCRS) ){
 
                     //calculate best intersection area
-                    final GridEnvelope2D ge = dataCoverage.getGridGeometry().getExtent2D();
-                    final GeneralEnvelope env = new  GeneralEnvelope(2);
-                    env.setRange(0, ge.x, ge.x+ge.width);
-                    env.setRange(1, ge.y, ge.y+ge.height);
-
-                    final MathTransform cogtc = dataCoverage.getGridGeometry().getGridToCRS(PixelInCell.CELL_CORNER);
-                    final GeneralEnvelope covEnv = CRS.transform(cogtc, env);
-                    covEnv.setCoordinateReferenceSystem(dataCoverage.getCoordinateReferenceSystem2D());
-
-                    //final Envelope2D covEnv2 = dataCoverage.getGridGeometry().getEnvelope2D();
                     final GeneralEnvelope tmp = new GeneralEnvelope(renderingContext.getPaintingObjectiveBounds2D());
-                    tmp.intersect(CRS.transform(covEnv, targetCRS));
+                    tmp.intersect(CRS.transform(dataCoverage.getEnvelope(), targetCRS));
 
                     if(tmp.isEmpty()){
                         dataCoverage = null;
@@ -232,8 +222,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
 
                             if(imga!=img){
                                 final GridCoverageBuilder gcb = new GridCoverageBuilder();
-                                gcb.setName("temp");
-                                gcb.setGridGeometry(dataCoverage.getGridGeometry());
+                                gcb.setGridCoverage(dataCoverage);
                                 gcb.setRenderedImage(imga);
                                 dataCoverage = gcb.getGridCoverage2D();
                             }
@@ -242,10 +231,11 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
                         //calculate gridgeometry
                         final AffineTransform2D trs = renderingContext.getObjectiveToDisplay();
                         final GeneralEnvelope dispEnv = CRS.transform(trs, tmp);
-                        final int width = (int)Math.ceil(dispEnv.getSpan(0));
-                        final int height = (int)Math.ceil(dispEnv.getSpan(1));
-                        final int minx = (int)dispEnv.getMinimum(0);
-                        final int miny = (int)dispEnv.getMinimum(1);
+                        // HACK : ENLARGE ENVELOPE TO AVOID UNDEFINED BORDERS.
+                        final int width = (int)Math.ceil(dispEnv.getSpan(0))+2;
+                        final int height = (int)Math.ceil(dispEnv.getSpan(1))+2;
+                        final int minx = (int)Math.floor(dispEnv.getMinimum(0))-1;
+                        final int miny = (int)Math.floor(dispEnv.getMinimum(1))-1;
 
                         if(width<=0 || height<=0){
                             dataCoverage = null;
@@ -253,8 +243,8 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
                             isReprojected = true;
 
                             //final Rectangle rect = renderingContext.getCanvasDisplayBounds();
-                            final GridEnvelope2D ext = new GridEnvelope2D(0,0,width,height);
-                            AffineTransform2D dispToObj = renderingContext.getDisplayToObjective();
+                            final GridEnvelope2D ext = new GridEnvelope2D(0, 0, width, height);
+                            AffineTransform2D dispToObj = (AffineTransform2D)trs.inverse();
                             final AffineTransform gridToCrs = new AffineTransform();
                             gridToCrs.translate(minx, miny);
                             gridToCrs.preConcatenate(dispToObj);

@@ -144,7 +144,7 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
         Integer maxTiles = (Integer)context2D.getRenderingHints().get(GO2Hints.KEY_MAX_TILES);
         if(maxTiles==null) maxTiles = 500;
         if( queries.size() > maxTiles) {
-            LOGGER.log(Level.INFO, "Too much tiles requiered to render layer at this scale.");
+            LOGGER.log(Level.INFO, "Too much tiles required to render layer at this scale.");
             return;
         }
 
@@ -179,7 +179,11 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
 
             if(obj instanceof TileReference){
                 final TileReference tile = (TileReference)obj;
-                paintTile(context2D, params, result.rules, result.pyramid.getId(), result.mosaic.getId(), tile);
+                try {
+                    paintTile(context2D, params, result.rules, result.pyramid.getId(), result.mosaic.getId(), tile);
+                } catch (Exception e) {
+                    LOGGER.log(Level.WARNING, "Error on tile : "+tile.getPosition()+". Input is : "+tile.getInput(), e);
+                }
             }
         }
 
