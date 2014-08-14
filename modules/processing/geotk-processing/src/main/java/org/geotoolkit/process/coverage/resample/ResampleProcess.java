@@ -214,7 +214,7 @@ public class ResampleProcess extends AbstractProcess {
      * @param targetCRS      Coordinate reference system for the new grid coverage, or {@code null}.
      * @param targetGG       The target grid geometry, or {@code null} for default.
      * @param background     The background values, or {@code null} for default.
-     * @param interpolation  The interpolation to use, or {@code null} if none.
+     * @param interpolationType  The interpolation to use, or {@code null} if none.
      * @param hints
      *          The rendering hints. This is usually provided by {@link AbstractCoverageProcessor}.
      *          This method will looks for {@link Hints#COORDINATE_OPERATION_FACTORY} and

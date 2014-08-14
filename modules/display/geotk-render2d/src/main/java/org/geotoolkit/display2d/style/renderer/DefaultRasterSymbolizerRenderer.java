@@ -41,13 +41,7 @@ import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.coverage.GridSampleDimension;
-import org.geotoolkit.coverage.grid.GeneralGridGeometry;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.grid.GridCoverageBuilder;
-import org.geotoolkit.coverage.grid.GridEnvelope2D;
-import org.geotoolkit.coverage.grid.GridGeometry2D;
-import org.geotoolkit.coverage.grid.ViewType;
-import org.geotoolkit.coverage.io.CoverageReader;
+import org.geotoolkit.coverage.grid.*;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
@@ -142,7 +136,6 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
     public void portray(final ProjectedCoverage projectedCoverage) throws PortrayalException {
 
         try {
-
             ////////////////////////////////////////////////////////////////////
             // 1 - Get data and elevation coverage                            //
             ////////////////////////////////////////////////////////////////////
@@ -180,7 +173,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
                     dataCoverage = projectedCoverage.getCoverage(param);
                     elevationCoverage = projectedCoverage.getElevationCoverage(param);
                 } catch (DisjointCoverageDomainException exd) {
-                    //we tryed
+                    //we tried
                     return;
                 }
             } catch (CoverageStoreException ex) {
@@ -231,25 +224,15 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
                         //calculate gridgeometry
                         final AffineTransform2D trs = renderingContext.getObjectiveToDisplay();
                         final GeneralEnvelope dispEnv = CRS.transform(trs, tmp);
-                        // HACK : ENLARGE ENVELOPE TO AVOID UNDEFINED BORDERS.
-                        final int width = (int)Math.ceil(dispEnv.getSpan(0))+2;
-                        final int height = (int)Math.ceil(dispEnv.getSpan(1))+2;
-                        final int minx = (int)Math.floor(dispEnv.getMinimum(0))-1;
-                        final int miny = (int)Math.floor(dispEnv.getMinimum(1))-1;
+                        final int width = (int)Math.ceil(dispEnv.getSpan(0));
+                        final int height = (int)Math.ceil(dispEnv.getSpan(1));
 
                         if(width<=0 || height<=0){
                             dataCoverage = null;
                         }else{
                             isReprojected = true;
 
-                            //final Rectangle rect = renderingContext.getCanvasDisplayBounds();
-                            final GridEnvelope2D ext = new GridEnvelope2D(0, 0, width, height);
-                            AffineTransform2D dispToObj = (AffineTransform2D)trs.inverse();
-                            final AffineTransform gridToCrs = new AffineTransform();
-                            gridToCrs.translate(minx, miny);
-                            gridToCrs.preConcatenate(dispToObj);
-
-                            final GridGeometry2D gg = new GridGeometry2D(ext, PixelOrientation.UPPER_LEFT,new AffineTransform2D(gridToCrs), targetCRS, null);
+                            final GridGeometry2D gg = new GridGeometry2D(new GridEnvelope2D(0, 0, width, height), tmp);
 
                             final ProcessDescriptor desc = ResampleDescriptor.INSTANCE;
                             final ParameterValueGroup params = desc.getInputDescriptor().createValue();
