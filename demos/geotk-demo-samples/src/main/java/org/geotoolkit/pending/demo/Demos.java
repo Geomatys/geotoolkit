@@ -17,12 +17,11 @@ public final class Demos {
         //allow reprojection even if grid or bursawolf parameters are missing
         Hints.putSystemDefault(Hints.LENIENT_DATUM_SHIFT, Boolean.TRUE);
 
-        //global initialization
-        Setup.initialize(null);
-
         //force loading all image readers/writers
         ImageIO.scanForPlugins();
 
+        //global initialization
+        Setup.initialize(null);
     }
 
 }
