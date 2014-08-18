@@ -23,9 +23,14 @@ import java.awt.image.DataBuffer;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.awt.image.WritableRaster;
-import java.util.Collections;
+import java.util.*;
+
 import org.apache.sis.geometry.GeneralDirectPosition;
-import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.referencing.crs.DefaultCompoundCRS;
+import org.apache.sis.referencing.crs.DefaultGeographicCRS;
+import org.apache.sis.referencing.crs.DefaultTemporalCRS;
+import org.apache.sis.referencing.crs.DefaultVerticalCRS;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.CoverageStore;
 import org.geotoolkit.coverage.GridCoverageStack;
@@ -36,19 +41,20 @@ import org.geotoolkit.coverage.PyramidalCoverageReference;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.grid.ViewType;
+import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.memory.MPCoverageStore;
 import org.geotoolkit.feature.type.DefaultName;
 import org.geotoolkit.feature.type.Name;
+import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.referencing.CRS;
-import org.apache.sis.referencing.crs.DefaultCompoundCRS;
 import org.geotoolkit.util.BufferedImageUtilities;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.opengis.coverage.Coverage;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.apache.sis.referencing.CommonCRS;
 
 /**
  *
@@ -66,7 +72,7 @@ public class MathCalcTest {
         final int width = 512;
         final int height = 300;
 
-        final CoordinateReferenceSystem crs = CommonCRS.WGS84.normalizedGeographic();
+        final CoordinateReferenceSystem crs = CommonCRS.WGS84.defaultGeographic();
         final GeneralEnvelope env = new GeneralEnvelope(crs);
         env.setRange(0, 0, 51.2);
         env.setRange(1, 0, 30.0);
@@ -82,6 +88,7 @@ public class MathCalcTest {
         outRef.setPackMode(ViewType.GEOPHYSICS);
         outRef.setSampleDimensions(Collections.singletonList(new GridSampleDimension("data")));
         outRef.setSampleModel(baseCoverage.getRenderedImage().getSampleModel());
+        outRef.setColorModel(baseCoverage.getRenderedImage().getColorModel());
         final Pyramid pyramid = outRef.createPyramid(crs);
         final GeneralDirectPosition corner = new GeneralDirectPosition(crs);
         corner.setCoordinate(env.getMinimum(0), env.getMaximum(1));
@@ -96,12 +103,14 @@ public class MathCalcTest {
                 outRef);
         process.call();
 
-        final GridCoverage2D result = (GridCoverage2D) outRef.acquireReader().read(0, null);
+        final GridCoverageReader reader = outRef.acquireReader();
+        final GridCoverage2D result = (GridCoverage2D)reader.read(0, null);
+        outRef.recycle(reader);
         final Raster resultRaster = result.getRenderedImage().getData();
         for(int x=0;x<width;x++){
             for(int y=0;y<height;y++){
                 float v = resultRaster.getSampleFloat(x, y, 0);
-                Assert.assertEquals("at x="+x+" ,y="+y, (y<height/2) ? 15.5f : -3.0f, v, DELTA);
+                Assert.assertEquals("at ("+x+" "+y+")", (y<height/2) ? 15.5f : -3.0f, v, DELTA);
             }
         }
 
@@ -115,7 +124,7 @@ public class MathCalcTest {
         final int width = 512;
         final int height = 300;
 
-        final CoordinateReferenceSystem crs = CommonCRS.WGS84.normalizedGeographic();
+        final CoordinateReferenceSystem crs = CommonCRS.WGS84.defaultGeographic();
         final GeneralEnvelope env = new GeneralEnvelope(crs);
         env.setRange(0, 0, 51.2);
         env.setRange(1, 0, 30.0);
@@ -131,6 +140,7 @@ public class MathCalcTest {
         outRef.setPackMode(ViewType.GEOPHYSICS);
         outRef.setSampleDimensions(Collections.singletonList(new GridSampleDimension("data")));
         outRef.setSampleModel(baseCoverage.getRenderedImage().getSampleModel());
+        outRef.setColorModel(baseCoverage.getRenderedImage().getColorModel());
         final Pyramid pyramid = outRef.createPyramid(crs);
         final GeneralDirectPosition corner = new GeneralDirectPosition(crs);
         corner.setCoordinate(env.getMinimum(0), env.getMaximum(1));
@@ -145,12 +155,14 @@ public class MathCalcTest {
                 outRef);
         process.call();
 
-        final GridCoverage2D result = (GridCoverage2D) outRef.acquireReader().read(0, null);
+        final GridCoverageReader reader = outRef.acquireReader();
+        final GridCoverage2D result = (GridCoverage2D)reader.read(0, null);
+        outRef.recycle(reader);
         final Raster resultRaster = result.getRenderedImage().getData();
         for(int x=0;x<width;x++){
             for(int y=0;y<height;y++){
                 float v = resultRaster.getSampleFloat(x, y, 0);
-                Assert.assertEquals("at  x="+x+" ,y="+y, (y<height/2) ? 25.5f : 8.0f, v, DELTA);
+                Assert.assertEquals( (y<height/2) ? 25.5f : 8.0f, v, DELTA);
             }
         }
 
@@ -164,7 +176,7 @@ public class MathCalcTest {
         final int width = 512;
         final int height = 300;
 
-        final CoordinateReferenceSystem crs = CommonCRS.WGS84.normalizedGeographic();
+        final CoordinateReferenceSystem crs = CommonCRS.WGS84.defaultGeographic();
         final GeneralEnvelope env = new GeneralEnvelope(crs);
         env.setRange(0, 0, 51.2);
         env.setRange(1, 0, 30.0);
@@ -181,6 +193,7 @@ public class MathCalcTest {
         outRef.setPackMode(ViewType.GEOPHYSICS);
         outRef.setSampleDimensions(Collections.singletonList(new GridSampleDimension("data")));
         outRef.setSampleModel(baseCoverage1.getRenderedImage().getSampleModel());
+        outRef.setColorModel(baseCoverage1.getRenderedImage().getColorModel());
         final Pyramid pyramid = outRef.createPyramid(crs);
         final GeneralDirectPosition corner = new GeneralDirectPosition(crs);
         corner.setCoordinate(env.getMinimum(0), env.getMaximum(1));
@@ -195,12 +208,14 @@ public class MathCalcTest {
                 outRef);
         process.call();
 
-        final GridCoverage2D result = (GridCoverage2D) outRef.acquireReader().read(0, null);
+        final GridCoverageReader reader = outRef.acquireReader();
+        final GridCoverage2D result = (GridCoverage2D)reader.read(0, null);
+        outRef.recycle(reader);
         final Raster resultRaster = result.getRenderedImage().getData();
         for(int x=0;x<width;x++){
             for(int y=0;y<height;y++){
                 float v = resultRaster.getSampleFloat(x, y, 0);
-                Assert.assertEquals("at  x="+x+" ,y="+y, (y<height/2) ? 32.5f : 115.0f, v, DELTA);
+                Assert.assertEquals( (y<height/2) ? 32.5f : 115.0f, v, DELTA);
             }
         }
 
@@ -218,45 +233,53 @@ public class MathCalcTest {
         final CoordinateReferenceSystem horizontal = CRS.decode("EPSG:4326",true);
         final CoordinateReferenceSystem vertical = CommonCRS.Vertical.ELLIPSOIDAL.crs();
         final CoordinateReferenceSystem temporal = CommonCRS.Temporal.JAVA.crs();
-        final CoordinateReferenceSystem crs = new DefaultCompoundCRS(
-                Collections.singletonMap(DefaultCompoundCRS.NAME_KEY, "4dcrs"), horizontal,vertical,temporal);
+        Map<String, Object> props = new HashMap<>();
+        props.put("name", "4dcrs");
+        final CoordinateReferenceSystem crs = new DefaultCompoundCRS(props, horizontal,vertical,temporal);
         final int width = 28;
         final int height = 13;
 
         final PyramidalCoverageReference ref1 = (PyramidalCoverageReference) store.create(new DefaultName("test1"));
         create4DPyramid(ref1, crs, width, height, new double[][]{
-            {-5,-9,  12},
-            {-5, 0,  -7},
-            {-5,21,  51},
-            {62,-9,  -3},
-            {62, 0,   5},
-            {62,21,  17},
+                {-5,-9,  12},
+                {-5, 0,  -7},
+                {-5,21,  51},
+                {62,-9,  -3},
+                {62, 0,   5},
+                {62,21,  17},
         });
 
         final PyramidalCoverageReference ref2 = (PyramidalCoverageReference) store.create(new DefaultName("test2"));
         create4DPyramid(ref2, crs, width, height, new double[][]{
-            {-5,-9,  -4},
-            {-5, 0,  32},
-            {-5,21,  90},
-            {62,-9, -87},
-            {62, 0,  -6},
-            {62,21,  41},
+                {-5,-9,  -4},
+                {-5, 0,  32},
+                {-5,21,  90},
+                {62,-9, -87},
+                {62, 0,  -6},
+                {62,21,  41},
         });
 
         final PyramidalCoverageReference outRef = (PyramidalCoverageReference) store.create(new DefaultName("result"));
         create4DPyramid(outRef, crs, width, height, new double[][]{
-            {-5,-9,   0},
-            {-5, 0,   0},
-            {-5,21,   0},
-            {62,-9,   0},
-            {62, 0,   0},
-            {62,21,   0},
+                {-5,-9,   0},
+                {-5, 0,   0},
+                {-5,21,   0},
+                {62,-9,   0},
+                {62, 0,   0},
+                {62,21,   0},
         });
 
 
         //create base coverage
-        final GridCoverage baseCoverage1 = ref1.acquireReader().read(0, null);
-        final GridCoverage baseCoverage2 = ref2.acquireReader().read(0, null);
+        final GridCoverageReader reader1 = ref1.acquireReader();
+        final GridCoverageReader reader2 = ref2.acquireReader();
+        final GridCoverage baseCoverage1 = reader1.read(0, null);
+        final GridCoverage baseCoverage2 = reader2.read(0, null);
+        ref1.recycle(reader1);
+        ref2.recycle(reader2);
+
+        outRef.setSampleModel(createRenderedImage(1,1,0,0).getSampleModel());
+        outRef.setColorModel(createRenderedImage(1,1,0,0).getColorModel());
 
         //run math calc process
         final MathCalcProcess process = new MathCalcProcess(
@@ -266,7 +289,9 @@ public class MathCalcTest {
                 outRef);
         process.call();
 
-        final GridCoverage result = outRef.acquireReader().read(0, null);
+        final GridCoverageReader outReader = outRef.acquireReader();
+        final GridCoverage result = outReader.read(0, null);
+        outRef.recycle(outReader);
         Assert.assertTrue(result instanceof GridCoverageStack);
         final GridCoverageStack stackT = (GridCoverageStack) result;
         final GridCoverageStack stackT0 = (GridCoverageStack) stackT.coveragesAt(-9).get(0);
@@ -296,16 +321,21 @@ public class MathCalcTest {
      * @param geovalues [0...n slices][Z coord, T coord, sample value]
      */
     private static void create4DPyramid(PyramidalCoverageReference ref, CoordinateReferenceSystem crs,
-            int width, int height, double[][] geovalues) throws DataStoreException{
+                                        int width, int height, double[][] geovalues) throws DataStoreException {
+
+        final List<GridSampleDimension> dimensions = new ArrayList<GridSampleDimension>();
+        final GridSampleDimension dim = new GridSampleDimension("samples");
+        dimensions.add(dim);
 
         final Pyramid pyramid = ref.createPyramid(crs);
+        ref.setSampleDimensions(dimensions);
 
         final Dimension gridSize = new Dimension(4, 3);
         final Dimension tilePixelSize = new Dimension(width, height);
 
         for(double[] slice : geovalues){
             final GeneralDirectPosition upperLeft = new GeneralDirectPosition(crs);
-            upperLeft.setCoordinate(-50,60,slice[0],slice[1]);
+            upperLeft.setCoordinate(-50, 60, slice[0], slice[1]);
             final GridMosaic mosaic = ref.createMosaic(pyramid.getId(), gridSize, tilePixelSize, upperLeft, 1);
 
             final float sample = (float)slice[2];
@@ -353,7 +383,7 @@ public class MathCalcTest {
         for(int x=0;x<width;x++){
             for(int y=0;y<height;y++){
                 float v = resultRaster.getSampleFloat(x, y, 0);
-                Assert.assertEquals("at  x="+x+" ,y="+y, (y<height/2) ? value1 : value2, v, DELTA);
+                Assert.assertEquals( (y<height/2) ? value1 : value2, v, DELTA);
             }
         }
     }

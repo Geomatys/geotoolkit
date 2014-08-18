@@ -23,15 +23,18 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+
+import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.util.Classes;
-import org.apache.sis.referencing.operation.transform.MathTransforms;
+import org.geotoolkit.metadata.iso.spatial.PixelTranslation;
 import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
+import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 
 /**
@@ -151,15 +154,40 @@ public abstract class AbstractGridMosaic implements GridMosaic{
     }
 
     /**
-     * Grid to CRS N dimension.
+     * Grid to CRS N dimension. CORNER transform
      *
      * @param mosaic not null
      * @param location not null
      * @return MathTransform never null
      */
     public static MathTransform getTileGridToCRS(GridMosaic mosaic, Point location){
+        return getTileGridToCRS(mosaic, location, PixelInCell.CELL_CORNER);
+    }
+
+    /**
+     * Grid to CRS N dimension. CORNER transform
+     *
+     * @param mosaic not null
+     * @param location not null
+     * @param orientation pixel orientation
+     * @return MathTransform never null
+     */
+    public static MathTransform getTileGridToCRS(GridMosaic mosaic, Point location, PixelInCell orientation){
         final DirectPosition upperleft = mosaic.getUpperLeftCorner();
-        return getTileGridToCRSND(mosaic, location, upperleft.getDimension());
+        return getTileGridToCRSND(mosaic, location, upperleft.getDimension(), orientation);
+    }
+
+    /**
+     * Grid to CRS N dimension. CORNER Transform.
+     * This allows to create a transform ignoring last axis transform.
+     *
+     * @param mosaic not null
+     * @param location not null
+     * @param nbDim : number of dimension wanted. value must be in range [2...crsNbDim]
+     * @return MathTransform never null
+     */
+    public static MathTransform getTileGridToCRSND(GridMosaic mosaic, Point location, int nbDim){
+        return getTileGridToCRSND(mosaic, location, nbDim, PixelInCell.CELL_CORNER);
     }
 
     /**
@@ -169,11 +197,12 @@ public abstract class AbstractGridMosaic implements GridMosaic{
      * @param mosaic not null
      * @param location not null
      * @param nbDim : number of dimension wanted. value must be in range [2...crsNbDim]
+     * @param orientation pixel orientation
      * @return MathTransform never null
      */
-    public static MathTransform getTileGridToCRSND(GridMosaic mosaic, Point location, int nbDim){
+    public static MathTransform getTileGridToCRSND(GridMosaic mosaic, Point location, int nbDim, PixelInCell orientation){
 
-        final AffineTransform2D trs2d = getTileGridToCRS2D(mosaic, location);
+        final AffineTransform2D trs2d = getTileGridToCRS2D(mosaic, location, orientation);
         final DirectPosition upperleft = mosaic.getUpperLeftCorner();
 
         if(upperleft.getDimension()==2){
@@ -194,7 +223,7 @@ public abstract class AbstractGridMosaic implements GridMosaic{
     }
 
     /**
-     * Grid to CRS 2D part. 
+     * Grid to CRS 2D part.
      * Transform correspond to the CORNER.
      *
      * @param mosaic not null
@@ -202,6 +231,18 @@ public abstract class AbstractGridMosaic implements GridMosaic{
      * @return AffineTransform2D never null.
      */
     public static AffineTransform2D getTileGridToCRS2D(GridMosaic mosaic, Point location){
+        return getTileGridToCRS2D(mosaic, location, PixelInCell.CELL_CORNER);
+    }
+
+    /**
+     * Grid to CRS 2D part.
+     *
+     * @param mosaic not null
+     * @param location not null
+     * @param orientation pixel orientation
+     * @return AffineTransform2D never null.
+     */
+    public static AffineTransform2D getTileGridToCRS2D(GridMosaic mosaic, Point location, PixelInCell orientation){
 
         final Dimension tileSize = mosaic.getTileSize();
         final DirectPosition upperleft = mosaic.getUpperLeftCorner();
@@ -209,7 +250,11 @@ public abstract class AbstractGridMosaic implements GridMosaic{
 
         final double offsetX  = upperleft.getOrdinate(0) + location.x * (scale * tileSize.width) ;
         final double offsetY = upperleft.getOrdinate(1) - location.y * (scale * tileSize.height);
-        return new AffineTransform2D(scale, 0, 0, -scale, offsetX, offsetY);
+        AffineTransform2D transform2D = new AffineTransform2D(scale, 0, 0, -scale, offsetX, offsetY);
+        if (orientation.equals(PixelInCell.CELL_CENTER)) {
+            return (AffineTransform2D) PixelTranslation.translate(transform2D, PixelInCell.CELL_CORNER, PixelInCell.CELL_CENTER);
+        }
+        return transform2D;
     }
 
     public static BlockingQueue<Object> getTiles(GridMosaic mosaic, Collection<? extends Point> positions, Map hints) throws DataStoreException{

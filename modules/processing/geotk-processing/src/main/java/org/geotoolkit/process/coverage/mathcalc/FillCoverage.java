@@ -17,13 +17,20 @@
 
 package org.geotoolkit.process.coverage.mathcalc;
 
+import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
 import java.awt.image.DataBuffer;
+import java.awt.image.SampleModel;
 import java.awt.image.WritableRaster;
 import java.util.Arrays;
+
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.geotoolkit.coverage.CoverageReference;
+import org.apache.sis.referencing.operation.transform.MathTransforms;
+import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.coverage.*;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
@@ -35,11 +42,11 @@ import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.geometry.HyperCubeIterator;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
-import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.geotoolkit.util.BufferedImageUtilities;
 import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
+import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransformFactory;
 import org.opengis.referencing.operation.TransformException;
@@ -60,12 +67,6 @@ import org.opengis.util.FactoryException;
  */
 public class FillCoverage {
 
-    private final CoverageReference outRef;
-
-    public FillCoverage(CoverageReference ref) {
-        this.outRef = ref;
-    }
-
     /**
      * Fill coverage values on given envelope.
      *
@@ -73,7 +74,7 @@ public class FillCoverage {
      * @param env , envelope where new values will be evaluated.
      * @throws org.geotoolkit.coverage.io.CoverageStoreException
      */
-    public void fill(SampleEvaluator evaluator, Envelope env) throws CoverageStoreException {
+    public void fill(CoverageReference outRef, SampleEvaluator evaluator, Envelope env) throws DataStoreException {
 
         final GeneralGridGeometry gg;
         final GridCoverageWriter outWriter;
@@ -182,6 +183,40 @@ public class FillCoverage {
         }
 
     }
+    
+    /**
+     * Fill given coverage reference, providing it with processed images.
+     * 
+     * @param evaluator
+     * @param outRef 
+     */
+    public static void fill(PyramidalCoverageReference outRef, SampleEvaluator evaluator)
+            throws DataStoreException, TransformException, FactoryException {
+        
+        final ColorModel cm = outRef.getColorModel();
+        final SampleModel sm = outRef.getSampleModel();
+        
+        for(Pyramid pyramid : outRef.getPyramidSet().getPyramids()){
+            for(GridMosaic mosaic : pyramid.getMosaics()){
+                final Dimension tileSize = mosaic.getTileSize();
+                final double[] upperLeftGeo = mosaic.getUpperLeftCorner().getCoordinate();
+                
+                final Dimension gridSize = mosaic.getGridSize();
+                for(int y=0;y<gridSize.height;y++){
+                    for(int x=0;x<gridSize.width;x++){
+                        final MathTransform gridToCRS = AbstractGridMosaic.getTileGridToCRS(mosaic, new Point(x, y), PixelInCell.CELL_CENTER);
+                        final MathTransform crsToGrid = gridToCRS.inverse();
+                        final double[] baseCoord = new double[upperLeftGeo.length];
+                        crsToGrid.transform(upperLeftGeo, 0, baseCoord, 0, 1);
+                        final MathCalcImageEvaluator eval = new MathCalcImageEvaluator(baseCoord, gridToCRS, evaluator.copy());
+                        final ProcessedRenderedImage image = new ProcessedRenderedImage(sm, cm, eval, tileSize.width, tileSize.height);
+                        outRef.writeTile(pyramid.getId(), mosaic.getId(), x, y, image);
+                    }
+                }
+            }
+        }
+    }
+    
 
     /**
      *
@@ -195,6 +230,8 @@ public class FillCoverage {
          * @param sampleBuffer , new samples must be set in this buffer
          */
         void evaluate(DirectPosition position, double[] sampleBuffer);
+
+        SampleEvaluator copy() throws FactoryException;
 
     }
 

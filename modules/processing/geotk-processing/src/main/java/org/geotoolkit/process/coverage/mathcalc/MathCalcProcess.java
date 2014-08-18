@@ -17,14 +17,10 @@
 
 package org.geotoolkit.process.coverage.mathcalc;
 
-import java.util.AbstractMap;
-import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.apache.sis.geometry.GeneralDirectPosition;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.CoverageReference;
+import org.geotoolkit.coverage.PyramidalCoverageReference;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
-import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.cql.CQL;
 import org.geotoolkit.cql.CQLException;
@@ -39,9 +35,9 @@ import org.opengis.coverage.Coverage;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Function;
-import org.opengis.geometry.DirectPosition;
 import org.opengis.parameter.ParameterValueGroup;
-import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 
 /**
@@ -80,7 +76,7 @@ public class MathCalcProcess extends AbstractProcess {
             outReader = outRef.acquireReader();
             gg = outReader.getGridGeometry(outRef.getImageIndex());
             outRef.recycle(outReader);
-        } catch (CoverageStoreException ex) {
+        } catch (DataStoreException ex) {
             throw new ProcessException(ex.getMessage(), this, ex);
         }
         
@@ -94,30 +90,28 @@ public class MathCalcProcess extends AbstractProcess {
         }
         
         // prepare dynamic pick object
-        final GeneralDirectPosition positionGeo = new GeneralDirectPosition(gg.getCoordinateReferenceSystem());
-        final DynamicPick pick;
+        final MathCalcCoverageEvaluator evaluator;
         try {
-            pick = new DynamicPick(inCoverages, inMapping, positionGeo);
+            evaluator = new MathCalcCoverageEvaluator(inCoverages,inMapping,exp,gg.getCoordinateReferenceSystem());
         } catch (FactoryException ex) {
             throw new ProcessException(ex.getMessage(), this, ex);
         }
         
-        final FillCoverage.SampleEvaluator evaluator = new FillCoverage.SampleEvaluator() {
-            @Override
-            public void evaluate(DirectPosition position, double[] sampleBuffer) {
-                //update pick object position before evaluation
-                positionGeo.setLocation(position);
-                sampleBuffer[0] = exp.evaluate(pick, Double.class);
-            }
-        };
-        
-        final FillCoverage filler = new FillCoverage(outRef);
+        final FillCoverage filler = new FillCoverage();
         try {
-            filler.fill(evaluator, null);
-        } catch (CoverageStoreException ex) {
+            if(outRef instanceof PyramidalCoverageReference){
+                filler.fill((PyramidalCoverageReference)outRef, evaluator);
+            }else{
+                filler.fill(outRef, evaluator, null);
+            }
+        } catch (DataStoreException ex) {
+            throw new ProcessException(ex.getMessage(), this, ex);
+        } catch (TransformException ex) {
+            throw new ProcessException(ex.getMessage(), this, ex);
+        } catch (FactoryException ex) {
             throw new ProcessException(ex.getMessage(), this, ex);
         }
-        
+
     }
     
     //TODO, for later, handle offsets on axis with syntax U(x,y+10,z) and U(gx-20,gy,gz)
@@ -133,60 +127,35 @@ public class MathCalcProcess extends AbstractProcess {
         }
     }
     
-    private static class DynamicPick extends AbstractMap{
-
-        private final Coverage[] coverages;
-        private final String[] mapping;
-        private final MathTransform[] baseToCoverage;
-        private final GeneralDirectPosition[] coverageCoord;
-        private final DirectPosition coord;
-        private final double[] sampleBuffer;
         
-        private DynamicPick(Coverage[] coverages, String[] mapping, DirectPosition coord) throws FactoryException{
-            this.coverages = coverages;
-            this.mapping = mapping;
-            this.coord = coord;
-            this.sampleBuffer = new double[coverages[0].getNumSampleDimensions()];
-            baseToCoverage = new MathTransform[coverages.length];
-            coverageCoord = new GeneralDirectPosition[coverages.length];
-            for(int i=0;i<coverages.length;i++){
-                baseToCoverage[i] = CRS.findMathTransform(coord.getCoordinateReferenceSystem(), coverages[i].getCoordinateReferenceSystem());
-                coverageCoord[i] = new GeneralDirectPosition(coverages[i].getCoordinateReferenceSystem());
-            }
-        }
+    /**
+     * Find common crs which can be used for mathcalc process.
+     * 
+     * @param crss
+     * @return
+     * @throws IllegalArgumentException 
+     */
+    public static CoordinateReferenceSystem findCommunCrs(CoordinateReferenceSystem ... crss) throws IllegalArgumentException{
         
-        @Override
-        public Object get(Object key) {
-            //search the coverage for given name
-            final String name = String.valueOf(key);
-            int index = -1;
-            for(int i=0;i<mapping.length;i++){
-                if(mapping[i].equals(name)){
-                    index = i;
-                    try {
-                        baseToCoverage[i].transform(coord, coverageCoord[i]);
-                    } catch (Exception ex) {
-                        Logger.getLogger(MathCalcProcess.class.getName()).log(Level.WARNING, ex.getMessage(), ex);
-                        return Double.NaN;
-                    }
-                    break;
+        CoordinateReferenceSystem result = null;
+        
+        for(CoordinateReferenceSystem crs : crss){
+            if(result==null){
+                result = crs;
+            }else{
+                final int nbr = result.getCoordinateSystem().getDimension();
+                final int nbc = crs.getCoordinateSystem().getDimension();
+                
+                if(nbr==nbc && CRS.equalsIgnoreMetadata(nbr, nbc)){
+                    //same number of dimensions and equal, OK
+                }else{
+                    throw new IllegalArgumentException("CRS have different number of dimensions");
                 }
             }
-            
-            if(index<0){
-                // no coverage for this name
-                return Double.NaN;
-            }
-            
-            //find value at given coordinate
-            coverages[index].evaluate(coverageCoord[index],sampleBuffer);
-            return sampleBuffer[0];
         }
-
-        @Override
-        public Set entrySet() {
-            throw new UnsupportedOperationException("Not supported.");
-        }
-    }
         
+        return result;
+    }
+    
+    
 }

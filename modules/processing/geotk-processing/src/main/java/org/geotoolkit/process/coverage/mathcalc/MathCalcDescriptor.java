@@ -86,7 +86,7 @@ public class MathCalcDescriptor extends AbstractProcessDescriptor {
     
     public MathCalcDescriptor() {
         super(NAME, CoverageProcessingRegistry.IDENTIFICATION, 
-                new SimpleInternationalString("Perform a mathematic equation on input datas."), 
+                new SimpleInternationalString("Perform a mathematic equation on input datas."),
                 INPUT_DESC, OUTPUT_DESC);
     }
 
