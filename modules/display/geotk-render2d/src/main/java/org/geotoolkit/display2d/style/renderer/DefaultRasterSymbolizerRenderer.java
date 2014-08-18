@@ -190,32 +190,37 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             ////////////////////////////////////////////////////////////////////
 
             boolean isReprojected = false;
+            final MathTransform coverageToObjective;
             final CoordinateReferenceSystem coverageCRS = dataCoverage.getCoordinateReferenceSystem();
             try{
                 final CoordinateReferenceSystem targetCRS = renderingContext.getObjectiveCRS2D();
                 final CoordinateReferenceSystem candidate2D = CRSUtilities.getCRS2D(coverageCRS);
-                if(!CRS.equalsIgnoreMetadata(candidate2D,targetCRS) ){
+                /* It appears EqualsIgnoreMetadata can return false sometimes, even if the two CRS are equivalent.
+                 * But mathematics don't lie, so if they really describe the same transformation, conversion from
+                 * one to another will give us an identity matrix.
+                 */
+                coverageToObjective = CRS.findMathTransform(candidate2D, targetCRS);
+                isReprojected = !coverageToObjective.isIdentity();
 
+                if (isReprojected) {
                     //calculate best intersection area
                     final GeneralEnvelope tmp = new GeneralEnvelope(renderingContext.getPaintingObjectiveBounds2D());
-                    tmp.intersect(CRS.transform(dataCoverage.getEnvelope(), targetCRS));
+                    tmp.intersect(CRS.transform(coverageToObjective, dataCoverage.getEnvelope()));
 
-                    if(tmp.isEmpty()){
+                    if (tmp.isEmpty()) {
                         dataCoverage = null;
-                    }else{
 
+                    } else {
                         //force alpha if image is RGB
                         final GridSampleDimension[] dims = dataCoverage.getSampleDimensions();
                         if(dims==null || dims.length==0 || dataCoverage.getViewTypes().contains(ViewType.RENDERED)){
                             RenderedImage img = dataCoverage.getRenderedImage();
                             RenderedImage imga = forceAlpha(img, false);
-//                            final BufferedImage bi = new BufferedImage(img.getWidth(), img.getHeight(), BufferedImage.TYPE_INT_ARGB);
-//                            bi.createGraphics().drawRenderedImage(img, new AffineTransform());
-//                            img = bi;
 
-                            if(imga!=img){
+                            if (imga != img) {
                                 final GridCoverageBuilder gcb = new GridCoverageBuilder();
-                                gcb.setGridCoverage(dataCoverage);
+                                gcb.setName("temp");
+                                gcb.setGridGeometry(dataCoverage.getGridGeometry());
                                 gcb.setRenderedImage(imga);
                                 dataCoverage = gcb.getGridCoverage2D();
                             }
@@ -227,11 +232,10 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
                         final int width = (int)Math.ceil(dispEnv.getSpan(0));
                         final int height = (int)Math.ceil(dispEnv.getSpan(1));
 
-                        if(width<=0 || height<=0){
+                        if (width <= 0 || height <= 0) {
                             dataCoverage = null;
-                        }else{
-                            isReprojected = true;
 
+                        } else {
                             final GridGeometry2D gg = new GridGeometry2D(new GridEnvelope2D(0, 0, width, height), tmp);
 
                             final ProcessDescriptor desc = ResampleDescriptor.INSTANCE;
@@ -243,14 +247,13 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
                             final org.geotoolkit.process.Process process = desc.createProcess(params);
                             final ParameterValueGroup result = process.call();
                             dataCoverage = (GridCoverage2D) result.parameter("result").getValue();
-
                         }
                     }
                 }
             } catch (CoverageProcessingException ex) {
                 monitor.exceptionOccured(ex, Level.WARNING);
                 return;
-            } catch(Exception ex){
+            } catch(Exception ex) {
                 //several kind of errors can happen here, we catch anything to avoid blocking the map component.
                 monitor.exceptionOccured(
                     new IllegalStateException("Coverage is not in the requested CRS, found : \n" +
@@ -261,7 +264,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
                 return;
             }
 
-            if(dataCoverage == null){
+            if (dataCoverage == null) {
                 //LOGGER.log(Level.WARNING, "RasterSymbolizer : Reprojected coverage is null.");
                 return;
             }
@@ -269,16 +272,14 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             //we must switch to objectiveCRS for grid coverage
             renderingContext.switchToObjectiveCRS();
 
-
             // 3 - Apply style
             RenderedImage dataImage = applyStyle(dataCoverage, elevationCoverage, coverageLayer.getElevationModel(), symbol.getSource(), hints, isReprojected);
             final MathTransform2D trs2D = dataCoverage.getGridGeometry().getGridToCRS2D(PixelOrientation.UPPER_LEFT);
 
-
-            if(renderingContext.wraps == null){
+            if (renderingContext.wraps == null) {
                 //single rendering
                 renderCoverage(projectedCoverage, dataImage, trs2D);
-            }else{
+            } else {
 
                 //check if the geometry overlaps the meridian
                 int nbIncRep = renderingContext.wraps.wrapIncNb;
@@ -680,8 +681,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             }
         }
 
-
-        RenderedImage image = null;
+        RenderedImage image;
 
         //Recolor coverage -----------------------------------------------------
         ColorMap recolor = styleElement.getColorMap();
@@ -709,14 +709,14 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             recolor = GO2Utilities.STYLE_FACTORY.colorMap(function);
         }
         if (recolor != null && recolor.getFunction() != null) {
-            //colormap is applyed on geophysic view
+            //color map is applied on geophysics view
             coverage = coverage.view(ViewType.GEOPHYSICS);
             image = coverage.getRenderedImage();
 
             final Function fct = recolor.getFunction();
             image = recolor(image, fct);
         } else {
-            //no colormap, used the default image rendered view
+            //no color map, used the default image rendered view
             coverage = coverage.view(ViewType.RENDERED);
             image = coverage.getRenderedImage();
             if (isReprojected) {
@@ -764,15 +764,6 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             image = shaded.getRenderedImage();
         }
 
-        //contrast enhancement -------------------------------------------------
-        if (image == null) {
-            image = coverage.getRenderedImage();
-            if(isReprojected){
-                //remove potential black borders
-                image = forceAlpha(image,true);
-            }
-        }
-
         final ContrastEnhancement ce = styleElement.getContrastEnhancement();
         if(ce != null && image.getColorModel() instanceof ComponentColorModel){
 
@@ -796,30 +787,25 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
     }
 
     /**
-     * Add an alpha band to the image and remove any black border.
+     * Add an alpha band to the image and remove any black border if asked.
      *
      * TODO, this could be done more efficiently by adding an ImageLayout hints
      * when doing the coverage reprojection. but hints can not be passed currently.
      */
     private static RenderedImage forceAlpha(RenderedImage img, boolean removeBlackBorder){
-        if(!img.getColorModel().hasAlpha()){
-            //ensure we have a bufferedImage for floodfill operation
-            final BufferedImage buffer;
-            if(img instanceof BufferedImage){
-                buffer = (BufferedImage) img;
-            }else{
-                buffer = new BufferedImage(img.getWidth(), img.getHeight(), BufferedImage.TYPE_INT_ARGB);
-                buffer.createGraphics().drawRenderedImage(img, new AffineTransform());
-            }
+        if (!img.getColorModel().hasAlpha()) {
+            //Add alpha channel
+            final BufferedImage buffer = new BufferedImage(img.getWidth(), img.getHeight(), BufferedImage.TYPE_INT_ARGB);
+            buffer.createGraphics().drawRenderedImage(img, new AffineTransform());
 
-            if(removeBlackBorder){
+            if (removeBlackBorder) {
                 //remove black borders+
-                FloodFill.fill(buffer, new Color[]{Color.BLACK}, new Color(0f,0f,0f,0f),
-                        new java.awt.Point(0,0),
-                        new java.awt.Point(buffer.getWidth()-1,0),
-                        new java.awt.Point(buffer.getWidth()-1,buffer.getHeight()-1),
-                        new java.awt.Point(0,buffer.getHeight()-1)
-                        );
+                FloodFill.fill(buffer, new Color[]{Color.BLACK}, new Color(0f, 0f, 0f, 0f),
+                        new java.awt.Point(0, 0),
+                        new java.awt.Point(buffer.getWidth() - 1, 0),
+                        new java.awt.Point(buffer.getWidth() - 1, buffer.getHeight() - 1),
+                        new java.awt.Point(0, buffer.getHeight() - 1)
+                );
             }
             img = buffer;
         }
