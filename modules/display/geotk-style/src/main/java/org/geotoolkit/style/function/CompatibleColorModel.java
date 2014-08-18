@@ -60,14 +60,27 @@ public class CompatibleColorModel extends ColorModel{
     
     @Override
     public int getRGB(Object inData) {
-        final Number value;
-        if(inData instanceof Number){
-            value = (Number) inData;
-        }else if(inData.getClass().isArray()){
-            value = (Number) Array.get(inData, 0);
-        }else{
-            throw new UnsupportedOperationException("Can not extract value from type : " + inData.getClass());
-        }        
+        Object value;
+        // Most used cases. Compatible color model is designed for cases where indexColorModel cannot do the job (float or int samples).
+        if (inData instanceof float[]) {
+            value = ((float[]) inData)[0];
+        } else if (inData instanceof int[]) {
+            value = ((int[]) inData)[0];
+        } else if (inData instanceof double[]) {
+            value = ((double[]) inData)[0];
+        } else if (inData instanceof byte[]) {
+            value = ((byte[]) inData)[0];
+        } else if (inData instanceof short[]) {
+            value = ((short[]) inData)[0];
+        } else if (inData instanceof long[]) {
+            value = ((long[]) inData)[0];
+        } else if (inData instanceof Number[]) {
+            value = ((Number[]) inData)[0];
+        } else if (inData instanceof Byte[]) {
+            value = ((Byte[]) inData)[0];
+        } else {
+            value = inData;
+        }
         final Color c = fct.evaluate(value, Color.class);
         if(c==null){
             return TRANSLUCENT;
