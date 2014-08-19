@@ -479,13 +479,14 @@ public final class TemporalUtilities {
                     "The period descritpion is malformed, should not respect ISO8601 : "
                             + periodDuration);
         }
-        return new DefaultPeriodDuration(new SimpleInternationalString(nbYear),
-                new SimpleInternationalString(nbMonth),
-                new SimpleInternationalString(nbWeek),
-                new SimpleInternationalString(nbDay),
-                new SimpleInternationalString(nbHour),
-                new SimpleInternationalString(nbMin),
-                new SimpleInternationalString(nbSec));
+        return new DefaultPeriodDuration(
+                nbYear!=null?new SimpleInternationalString(nbYear):null,
+                nbMonth!=null?new SimpleInternationalString(nbMonth):null,
+                nbWeek!=null?new SimpleInternationalString(nbWeek):null,
+                nbDay!=null?new SimpleInternationalString(nbDay):null,
+                nbHour!=null?new SimpleInternationalString(nbHour):null,
+                nbMin!=null?new SimpleInternationalString(nbMin):null,
+                nbSec!=null?new SimpleInternationalString(nbSec):null);
     }
 
     /**
