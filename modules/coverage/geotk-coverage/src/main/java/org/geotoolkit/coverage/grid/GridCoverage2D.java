@@ -155,12 +155,6 @@ public class GridCoverage2D extends AbstractGridCoverage implements RenderedCove
     private transient ViewsManager views;
 
     /**
-     * The set of views that this coverage represents. Will be created
-     * by {@link #getViewTypes} only when first needed.
-     */
-    private transient Set<ViewType> viewTypes;
-
-    /**
      * Used for transforming a direct position from arbitrary to internal CRS.
      * Will be created only when first needed. Note that the target CRS should
      * be two-dimensional, not the {@link #crs} value.
@@ -1006,18 +1000,12 @@ public class GridCoverage2D extends AbstractGridCoverage implements RenderedCove
      * @since 2.5
      */
     public synchronized Set<ViewType> getViewTypes() {
-        if (viewTypes == null) {
-            final Set<ViewType> viewTypes = EnumSet.allOf(ViewType.class);
-            viewTypes.remove(ViewType.SAME); // Removes trivial view.
-            for (final Iterator<ViewType> it=viewTypes.iterator(); it.hasNext();) {
-                if (view(it.next()) != this) {
-                    it.remove();
-                }
+        synchronized (this) {
+            if (views == null) {
+                views = ViewsManager.create(this);
             }
-            // Assign only in successful.
-            this.viewTypes = unmodifiableOrCopy(viewTypes);
         }
-        return viewTypes;
+        return views.viewTypes;
     }
 
     /**

@@ -21,15 +21,7 @@ import java.awt.RenderingHints;
 import java.awt.color.ColorSpace;
 import java.awt.image.*; // Numerous imports here.
 import java.awt.image.renderable.ParameterBlock;
-import java.util.Map;
-import java.util.List;
-import java.util.Arrays;
-import java.util.Objects;
-import java.util.Locale;
-import java.util.EnumMap;
-import java.util.Iterator;
-import java.util.Collection;
-import java.util.LinkedHashSet;
+import java.util.*;
 import java.util.logging.Logger;
 import java.util.logging.LogRecord;
 import javax.media.jai.JAI;
@@ -41,6 +33,7 @@ import javax.media.jai.PlanarImage;
 import javax.media.jai.LookupTableJAI;
 import javax.media.jai.operator.FormatDescriptor;
 import javax.media.jai.operator.LookupDescriptor;
+import javax.swing.text.View;
 
 import org.opengis.util.InternationalString;
 import org.opengis.coverage.grid.GridCoverage;
@@ -90,8 +83,17 @@ final class ViewsManager {
     /**
      * The views. The coverage that created this {@code ViewsManager} must be stored under
      * the {@link ViewType#NATIVE} key.
+     *
+     * /!\ Valid views for the coverage are determined at built, and identified using image properties. If user asks for
+     * a non-managed type of view, an attempt will be done to satisfy him, but in ABSOLUTELY no case queried view type
+     * will be added to the managed types. It would violate immutability and coherence of underlying data.
      */
     private final Map<ViewType,GridCoverage2D> views;
+
+    /**
+     * List of coherent view which can be extracted from source data.
+     */
+    final Set<ViewType> viewTypes;
 
     /**
      * Constructs a map of views.
@@ -102,6 +104,7 @@ final class ViewsManager {
         views = new EnumMap<>(ViewType.class);
         boolean geophysics   = true; // 'true' only if all bands are geophysics.
         boolean photographic = true; // 'true' only if no band have category.
+        boolean rendered     = true; // 'true' only if all bands are on unsigned samples, and we are not in geophysics mode.
         final int numBands = coverage.getNumSampleDimensions();
 scan:   for (int i=0; i<numBands; i++) {
             final GridSampleDimension band = coverage.getSampleDimension(i);
@@ -122,6 +125,9 @@ scan:   for (int i=0; i<numBands; i++) {
                     }
                 }
                 geophysics = false;
+                if (band.isRangeSigned()) {
+                    rendered = false;
+                }
             }
         }
         final ViewType type;
@@ -130,11 +136,16 @@ scan:   for (int i=0; i<numBands; i++) {
             type = ViewType.PHOTOGRAPHIC;
         } else if (geophysics) {
             type = ViewType.GEOPHYSICS;
+            rendered = false;
         } else {
             type = ViewType.PACKED;
         }
         views.put(type, coverage);
+        if (rendered) {
+            views.put(ViewType.RENDERED, coverage);
+        }
         views.put(ViewType.NATIVE, coverage.getNativeView());
+        viewTypes = Collections.unmodifiableSet(views.keySet());
     }
 
     /**
@@ -637,7 +648,7 @@ testLinear: for (int i=0; i<numBands; i++) {
      * not produce zero value. In case of doubt, this method conservatively returns {@code false}.
      * <p>
      * <b>Why this method exists</b><br>
-     * When a {@link SampleDimension} describes exactly one linear relationship with one NaN value
+     * When a {@link org.opengis.coverage.SampleDimension} describes exactly one linear relationship with one NaN value
      * mapping exactly to the index value 0, then the "<cite>geophysics to native</cite>" transform
      * can be optimized to the {@code "Rescale"} operation because {@link Float#NaN} casted to the
      * {@code int} primitive type equals 0. This case is very common, which make this optimization

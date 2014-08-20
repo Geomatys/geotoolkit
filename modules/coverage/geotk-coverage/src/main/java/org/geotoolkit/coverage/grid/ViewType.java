@@ -93,7 +93,7 @@ public enum ViewType {
     /**
      * Coverage data are compatible with common Java2D {@linkplain ColorModel color models}.
      * This usually imply that values are restricted to unsigned integers. This view is often
-     * identical to the {@linkplain #NATIVE native} view if the values on the originating
+     * identical to the {@linkplain #PACKED packed} view if the values on the originating
      * device were already unsigned.
      * <p>
      * Conversions to the RGB color space are not allowed, because the data are often related
