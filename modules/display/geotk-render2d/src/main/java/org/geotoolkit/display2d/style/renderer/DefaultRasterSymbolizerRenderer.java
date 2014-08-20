@@ -185,11 +185,49 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
                 return;
             }
 
+
             ////////////////////////////////////////////////////////////////////
-            // 2 - Reproject data                                            //
+            // 2 - Select bands to style / display                            //
             ////////////////////////////////////////////////////////////////////
 
-            boolean isReprojected = false;
+            //band select ----------------------------------------------------------
+            //works as a JAI operation
+            final int nbDim = dataCoverage.getNumSampleDimensions();
+            final RasterSymbolizer sourceSymbol = symbol.getSource();
+            if (nbDim > 1) {
+                //we can change sample dimension only if we have more then one available.
+                final ChannelSelection selections = sourceSymbol.getChannelSelection();
+                if (selections != null) {
+                    final SelectedChannelType channel = selections.getGrayChannel();
+                    if (channel != null) {
+                        //single band selection
+                        final int[] indices = new int[]{
+                                Integer.valueOf(channel.getChannelName())
+                        };
+                        dataCoverage = selectBand(dataCoverage, indices);
+                    } else {
+                        final SelectedChannelType[] channels = selections.getRGBChannels();
+                        final int[] selected = new int[]{
+                                Integer.valueOf(channels[0].getChannelName()),
+                                Integer.valueOf(channels[1].getChannelName()),
+                                Integer.valueOf(channels[2].getChannelName())
+                        };
+                        //@Workaround(library="JAI",version="1.0.x")
+                        //TODO when JAI has been rewritten, this test might not be necessary anymore
+                        //check if selection actually does something
+                        if (!(selected[0] == 0 && selected[1] == 1 && selected[2] == 2) || nbDim != 3) {
+                            dataCoverage = selectBand(dataCoverage, selected);
+                            //dataCoverage = dataCoverage.view(ViewType.RENDERED);
+                        }
+                    }
+                }
+            }
+
+            ////////////////////////////////////////////////////////////////////
+            // 3 - Reproject data                                             //
+            ////////////////////////////////////////////////////////////////////
+
+            boolean isReprojected;
             final MathTransform coverageToObjective;
             final CoordinateReferenceSystem coverageCRS = dataCoverage.getCoordinateReferenceSystem();
             try{
@@ -211,21 +249,6 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
                         dataCoverage = null;
 
                     } else {
-                        //force alpha if image is RGB
-                        final GridSampleDimension[] dims = dataCoverage.getSampleDimensions();
-                        if(dims==null || dims.length==0 || dataCoverage.getViewTypes().contains(ViewType.RENDERED)){
-                            RenderedImage img = dataCoverage.getRenderedImage();
-                            RenderedImage imga = forceAlpha(img, false);
-
-                            if (imga != img) {
-                                final GridCoverageBuilder gcb = new GridCoverageBuilder();
-                                gcb.setName("temp");
-                                gcb.setGridGeometry(dataCoverage.getGridGeometry());
-                                gcb.setRenderedImage(imga);
-                                dataCoverage = gcb.getGridCoverage2D();
-                            }
-                        }
-
                         //calculate gridgeometry
                         final AffineTransform2D trs = renderingContext.getObjectiveToDisplay();
                         final GeneralEnvelope dispEnv = CRS.transform(trs, tmp);
@@ -234,8 +257,10 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
 
                         if (width <= 0 || height <= 0) {
                             dataCoverage = null;
-
                         } else {
+                            //force alpha if image do not get any "invalid data" rule (Ex : No-data in image or color map).
+                            dataCoverage = getReadyToResampleCoverage(dataCoverage, sourceSymbol);
+
                             final GridGeometry2D gg = new GridGeometry2D(new GridEnvelope2D(0, 0, width, height), tmp);
 
                             final ProcessDescriptor desc = ResampleDescriptor.INSTANCE;
@@ -272,15 +297,22 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             //we must switch to objectiveCRS for grid coverage
             renderingContext.switchToObjectiveCRS();
 
-            // 3 - Apply style
-            RenderedImage dataImage = applyStyle(dataCoverage, elevationCoverage, coverageLayer.getElevationModel(), symbol.getSource(), hints, isReprojected);
+            ////////////////////////////////////////////////////////////////////
+            // 4 - Apply style                                                //
+            ////////////////////////////////////////////////////////////////////
+
+            RenderedImage dataImage = applyStyle(dataCoverage, elevationCoverage, coverageLayer.getElevationModel(), sourceSymbol, hints, isReprojected);
             final MathTransform2D trs2D = dataCoverage.getGridGeometry().getGridToCRS2D(PixelOrientation.UPPER_LEFT);
+
+            ////////////////////////////////////////////////////////////////////
+            // 5 - Correct cross meridian problems / render                   //
+            ////////////////////////////////////////////////////////////////////
 
             if (renderingContext.wraps == null) {
                 //single rendering
                 renderCoverage(projectedCoverage, dataImage, trs2D);
-            } else {
 
+            } else {
                 //check if the geometry overlaps the meridian
                 int nbIncRep = renderingContext.wraps.wrapIncNb;
                 int nbDecRep = renderingContext.wraps.wrapDecNb;
@@ -301,7 +333,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
 
                 renderCoverage(projectedCoverage, dataImage, trs2D);
 
-                //repetition of incresing and decreasing sides.
+                //repetition of increasing and decreasing sides.
                 for(int i=0;i<nbDecRep;i++){
                     g2d.setTransform(renderingContext.wraps.wrapDecObjToDisp[i]);
                     renderCoverage(projectedCoverage, dataImage, trs2D);
@@ -652,34 +684,6 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
         //band select ----------------------------------------------------------
         //works as a JAI operation
         final int nbDim = coverage.getNumSampleDimensions();
-        if (nbDim > 1) {
-            //we can change sample dimension only if we have more then one available.
-            final ChannelSelection selections = styleElement.getChannelSelection();
-            if (selections != null) {
-                final SelectedChannelType channel = selections.getGrayChannel();
-                final SelectedChannelType[] channels = selections.getRGBChannels();
-                if (channel != null) {
-                    //single band selection
-                    final int[] indices = new int[]{
-                            Integer.valueOf(channel.getChannelName())
-                    };
-                    coverage = (GridCoverage2D) selectBand(coverage, indices);
-                } else {
-                    final int[] selected = new int[]{
-                            Integer.valueOf(channels[0].getChannelName()),
-                            Integer.valueOf(channels[1].getChannelName()),
-                            Integer.valueOf(channels[2].getChannelName())
-                    };
-                    //@Workaround(library="JAI",version="1.0.x")
-                    //TODO when JAI has been rewritten, this test might not be necessary anymore
-                    //check if selection actually does something
-                    if (!(selected[0] == 0 && selected[1] == 1 && selected[2] == 2) || nbDim != 3) {
-                        coverage = (GridCoverage2D) selectBand(coverage, selected);
-                        coverage = coverage.view(ViewType.RENDERED);
-                    }
-                }
-            }
-        }
 
         RenderedImage image;
 
@@ -717,7 +721,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             image = recolor(image, fct);
         } else {
             //no color map, used the default image rendered view
-            coverage = coverage.view(ViewType.RENDERED);
+            // coverage = coverage.view(ViewType.RENDERED);
             image = coverage.getRenderedImage();
             if (isReprojected) {
                 //remove potential black borders
@@ -784,6 +788,40 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             }
         }
         return image;
+    }
+
+    /**
+     * Analyse input coverage to know if we need to add an alpha channel. Alpha channel is required in photographic
+     * coverage case, in order for the resample to deliver a ready to style image.
+     *
+     * @param source The coverage to analyse.
+     * @param style Style to apply on coverage data.
+     * @return The same coverage as input if style do not require an ARGB data to properly render, or a new ARGB coverage
+     * computed from source data.
+     */
+    private static GridCoverage2D getReadyToResampleCoverage(final GridCoverage2D source, final RasterSymbolizer style) {
+        final GridSampleDimension[] dims = source.getSampleDimensions();
+        final ColorMap cMap = style.getColorMap();
+        if ((cMap != null && cMap.getFunction() != null) ||
+            (dims != null && dims.length != 0 && dims[0].getNoDataValues() != null) ||
+            !source.getViewTypes().contains(ViewType.PHOTOGRAPHIC)) {
+            return source;
+
+        } else {
+            final GridCoverage2D photoCvg = source.view(ViewType.PHOTOGRAPHIC);
+            RenderedImage img = photoCvg.getRenderedImage();
+            RenderedImage imga = forceAlpha(img, false);
+
+            if (imga != img) {
+                final GridCoverageBuilder gcb = new GridCoverageBuilder();
+                gcb.setName("temp");
+                gcb.setGridGeometry(source.getGridGeometry());
+                gcb.setRenderedImage(imga);
+                return gcb.getGridCoverage2D();
+            } else {
+                return source;
+            }
+        }
     }
 
     /**
