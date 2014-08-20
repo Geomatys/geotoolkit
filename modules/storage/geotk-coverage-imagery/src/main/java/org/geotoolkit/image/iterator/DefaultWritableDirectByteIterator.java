@@ -20,7 +20,7 @@ import java.awt.Rectangle;
 import java.awt.image.*;
 
 /**
- * An Iterator for traversing anyone rendered Image.
+ * An Iterator for traversing any rendered Image.
  * <p>
  * Iteration transverse each tiles(raster) from rendered image or raster source one by one in order.
  * Rendered Image or raster source must contains Byte type data.
@@ -43,7 +43,7 @@ import java.awt.image.*;
  * @author Rémi Marechal       (Geomatys).
  * @author Martin Desruisseaux (Geomatys).
  */
-class DefaultWritableDirectByteIterator extends DefaultDirectByteIterator{
+class DefaultWritableDirectByteIterator extends DefaultDirectByteIterator {
 
     /**
      * Raster which is followed by iterator and wherein caller write.

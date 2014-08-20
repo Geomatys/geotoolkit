@@ -29,6 +29,8 @@ import org.opengis.coverage.grid.SequenceType;
  *
  * Moreover comportment not specify if iterator exceed image limits.
  *
+ * TODO : Move setSample* methods in a separate WritablePixelIterator interface.
+ *
  * @author Rémi Marechal       (Geomatys).
  * @author Martin Desruisseaux (Geomatys).
  */
@@ -213,7 +215,7 @@ public abstract class PixelIterator {
     }
 
     /**
-     * Returns true if the iteration has more pixel(in other words if {@link PixelIterator#nextSample() } is possible)
+     * Returns true if the iteration has more pixel(in other words if {@linkplain #next()} is possible)
      * and move forward iterator.
      *
      * @return true if next value exist else false.
@@ -367,9 +369,9 @@ public abstract class PixelIterator {
     }
 
     /**
-     * Verify raster conformity.
+     * Check that the two input rasters are compatible for coupling in a {@link WritablePixelIterator}
      */
-    protected void checkRasters(final Raster readableRaster, final WritableRaster writableRaster){
+    public static void checkRasters(final Raster readableRaster, final WritableRaster writableRaster){
         //raster dimension
         if (readableRaster.getMinX()     != writableRaster.getMinX()
          || readableRaster.getMinY()     != writableRaster.getMinY()
@@ -385,7 +387,7 @@ public abstract class PixelIterator {
     /**
      * Verify Rendered image conformity.
      */
-    protected void checkRenderedImage(final RenderedImage renderedImage, final WritableRenderedImage writableRI) {
+    public static void checkRenderedImage(final RenderedImage renderedImage, final WritableRenderedImage writableRI) {
         //image dimensions
         if (renderedImage.getMinX()   != writableRI.getMinX()
          || renderedImage.getMinY()   != writableRI.getMinY()
@@ -408,8 +410,10 @@ public abstract class PixelIterator {
          || renderedImage.getTileWidth()  != writableRI.getTileWidth())
             throw new IllegalArgumentException("rendered image and writable rendered image tiles configuration are not conform"+renderedImage+writableRI);
         //data type
+        // TODO : Should be required only for Direct iterators (working directly with data buffers)
         if (renderedImage.getTile(rimtx, rimty).getDataBuffer().getDataType() != writableRI.getTile(wrimtx, wrimty).getDataBuffer().getDataType())
             throw new IllegalArgumentException("rendered image and writable rendered image haven't got same datas type");
+
     }
 
     /**

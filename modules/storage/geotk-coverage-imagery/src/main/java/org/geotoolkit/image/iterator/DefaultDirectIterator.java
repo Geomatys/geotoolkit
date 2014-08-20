@@ -44,7 +44,7 @@ abstract class DefaultDirectIterator extends PixelIterator{
     /**
      * Current raster width.
      */
-    private final int rasterWidth;
+    protected final int rasterWidth;
 
     /**
      * Step value to move forward in iteration.
@@ -59,29 +59,34 @@ abstract class DefaultDirectIterator extends PixelIterator{
     private int baseCursor;
 
     /**
-     * Cursor position of current raster data.
+     * Cursor position in current raster {@link java.awt.image.DataBuffer}.
      */
     protected int dataCursor;
 
     /**
      * Maximum iteration value from current raster.
      */
-    private int maxBanks;
+    protected int maxBanks;
 
     /**
      * Tile scanLineStride from Raster or RenderedImage Sample model.
      */
-    private int scanLineStride;
+    protected int scanLineStride;
+
+    /**
+     * Number of steps to move to get to next sample.
+     */
+    protected int sampleStride;
 
     /**
      * Current raster lower corner X coordinate;
      */
-    private int crMinX;
+    protected int crMinX;
 
     /**
      * Current raster lower corner Y coordinate;
      */
-    private int crMinY;
+    protected int crMinY;
 
     /**
      * Create raster iterator to follow from minX, minY raster and rectangle intersection coordinate.
@@ -94,7 +99,9 @@ abstract class DefaultDirectIterator extends PixelIterator{
         super(raster, subArea);
         final SampleModel sampleM = raster.getSampleModel();
         if (sampleM instanceof ComponentSampleModel) {
-            this.scanLineStride = ((ComponentSampleModel)sampleM).getScanlineStride();
+            ComponentSampleModel sModel = (ComponentSampleModel) sampleM;
+            this.sampleStride = sModel.getPixelStride();
+            this.scanLineStride = sModel.getScanlineStride();
         } else {
             throw new IllegalArgumentException("DefaultDirectIterator constructor : sample model not conform");
         }
@@ -103,13 +110,13 @@ abstract class DefaultDirectIterator extends PixelIterator{
         this.crMinY = raster.getMinY();
 
         if (subArea != null) {
-            this.maxBanks  = (areaIterateMaxX - crMinX)*rasterNumBand + (areaIterateMaxY-crMinY-1) * scanLineStride;
-            this.cursorStep = scanLineStride - (areaIterateMaxX - areaIterateMinX)*rasterNumBand;
-            this.dataCursor = baseCursor = (areaIterateMinX - crMinX) * rasterNumBand + (areaIterateMinY-crMinY) * scanLineStride - 1;
-            this.maxX = (areaIterateMaxX-crMinX) * rasterNumBand + (areaIterateMinY-crMinY) * scanLineStride;
+            this.maxBanks  = (areaIterateMaxX - crMinX)*rasterNumBand* sampleStride + (areaIterateMaxY-crMinY-1) * scanLineStride;
+            this.cursorStep = scanLineStride - (areaIterateMaxX - areaIterateMinX)*rasterNumBand* sampleStride;
+            this.dataCursor = baseCursor = (areaIterateMinX - crMinX) * rasterNumBand* sampleStride + (areaIterateMinY-crMinY) * scanLineStride - 1;
+            //this.maxX = (areaIterateMaxX-crMinX) * rasterNumBand + (areaIterateMinY-crMinY) * scanLineStride;
         } else {
             this.maxX = rasterWidth * rasterNumBand;
-            this.maxBanks   = rasterWidth * rasterNumBand + (raster.getHeight()-1) * scanLineStride;
+            this.maxBanks   = rasterWidth * rasterNumBand* sampleStride + (raster.getHeight()-1) * scanLineStride;
             this.dataCursor = baseCursor = -1;
             this.cursorStep = 0;
             this.band       = -1;
@@ -127,7 +134,10 @@ abstract class DefaultDirectIterator extends PixelIterator{
         super(renderedImage, subArea);
         final SampleModel sampleM = renderedImage.getSampleModel();
         if (sampleM instanceof ComponentSampleModel) {
-            this.scanLineStride = ((ComponentSampleModel)sampleM).getScanlineStride();
+            ComponentSampleModel sModel = (ComponentSampleModel) sampleM;
+            this.sampleStride = sModel.getPixelStride();
+            this.scanLineStride = sModel.getScanlineStride();
+
         } else {
             throw new IllegalArgumentException("DefaultDirectIterator constructor : sample model not conform");
         }
@@ -144,8 +154,8 @@ abstract class DefaultDirectIterator extends PixelIterator{
      */
     @Override
     public boolean next() {
-        if (++dataCursor == maxX) {
-            if (dataCursor == maxBanks) {
+        //if ((dataCursor+=sampleStride) == maxX) {
+            if ((dataCursor+= sampleStride) >= maxBanks) {
                 if (++tX == tMaxX) {
                     tX = tMinX;
                     if(++tY == tMaxY) return false;
@@ -153,9 +163,9 @@ abstract class DefaultDirectIterator extends PixelIterator{
                 updateCurrentRaster(tX, tY);
             } else {
                 dataCursor += cursorStep;
-                maxX += scanLineStride;
+                //maxX += scanLineStride;
             }
-        }
+        //}
         return true;
     }
 
@@ -170,19 +180,21 @@ abstract class DefaultDirectIterator extends PixelIterator{
         this.currentRaster = renderedImage.getTile(tileX, tileY);
         this.crMinX = currentRaster.getMinX();
         this.crMinY = currentRaster.getMinY();
-        this.scanLineStride = ((ComponentSampleModel)currentRaster.getSampleModel()).getScanlineStride();
+        final ComponentSampleModel sModel = (ComponentSampleModel) currentRaster.getSampleModel();
+        this.scanLineStride = sModel.getScanlineStride();
+        this.sampleStride = sModel.getPixelStride();
 
         //update min max from subArea and raster boundary
         final int minx  = Math.max(areaIterateMinX, crMinX) - crMinX;
         final int miny  = Math.max(areaIterateMinY, crMinY) - crMinY;
         final int maxx  = Math.min(areaIterateMaxX, crMinX + rasterWidth) - crMinX;
         final int maxy  = Math.min(areaIterateMaxY, crMinY + currentRaster.getHeight()) - crMinY;
-        this.maxBanks   = maxx*rasterNumBand + (maxy-1) * scanLineStride;
+        this.maxBanks   = maxx*rasterNumBand* sampleStride + (maxy-1) * scanLineStride;
 
         //step
-        this.cursorStep = scanLineStride - (maxx - minx) * rasterNumBand;
-        this.dataCursor = baseCursor = minx * rasterNumBand + miny * scanLineStride;
-        this.maxX       = baseCursor + (maxx - minx) * rasterNumBand;
+        this.cursorStep = scanLineStride - (maxx - minx) * rasterNumBand * sampleStride;
+        this.dataCursor = baseCursor = minx * rasterNumBand* sampleStride + miny * scanLineStride;
+        //this.maxX       = baseCursor + (maxx - minx) * rasterNumBand;
     }
 
     /**
@@ -190,7 +202,7 @@ abstract class DefaultDirectIterator extends PixelIterator{
      */
     @Override
     public int getX() {
-        return crMinX + dataCursor % scanLineStride / rasterNumBand;
+        return crMinX + dataCursor % scanLineStride / (rasterNumBand* sampleStride);
     }
 
     /**
@@ -240,8 +252,8 @@ abstract class DefaultDirectIterator extends PixelIterator{
                 updateCurrentRaster(tX, tY);
             }
         }
-        this.dataCursor = (x - crMinX) * rasterNumBand        + (y - crMinY) * scanLineStride + b;// - 1;
-        this.maxX       = (y - crMinY) * scanLineStride + (Math.min(areaIterateMaxX, crMinX + rasterWidth) - crMinX)*rasterNumBand;
+        this.dataCursor = (x - crMinX) * rasterNumBand * sampleStride + (y - crMinY) * scanLineStride + b;// - 1;
+        //this.maxX       = (y - crMinY) * scanLineStride + (Math.min(areaIterateMaxX, crMinX + rasterWidth) - crMinX)*rasterNumBand;
     }
 
     /**

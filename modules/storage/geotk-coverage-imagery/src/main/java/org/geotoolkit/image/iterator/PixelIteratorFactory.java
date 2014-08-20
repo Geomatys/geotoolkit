@@ -120,12 +120,20 @@ public final class PixelIteratorFactory {
      * @return adapted        {@link PixelIterator}.
      */
     public static PixelIterator createDefaultWriteableIterator(final Raster raster, final WritableRaster writeableRaster, final Rectangle subArea) {
-        final SampleModel sampleM = raster.getSampleModel();
-        if (sampleM instanceof ComponentSampleModel) {
-            if (sampleM.getNumDataElements() == sampleM.getNumBands()
-             && ((ComponentSampleModel)sampleM).getBankIndices().length == 1
-             && checkBandOffset(((ComponentSampleModel)sampleM).getBandOffsets())) {
-                switch (sampleM.getDataType()) {
+        final SampleModel srcSampleM = raster.getSampleModel();
+        final SampleModel destSampleM = raster.getSampleModel();
+        PixelIterator.checkRasters(raster, writeableRaster);
+
+        if (srcSampleM instanceof ComponentSampleModel && destSampleM instanceof ComponentSampleModel) {
+            ComponentSampleModel srcCSModel = (ComponentSampleModel) srcSampleM;
+            ComponentSampleModel destCSModel = (ComponentSampleModel) destSampleM;
+
+            if (srcSampleM.getNumDataElements() == srcSampleM.getNumBands()
+             && srcCSModel.getBankIndices().length == 1 && checkBandOffset(srcCSModel.getBandOffsets())
+             && srcCSModel.getPixelStride() == destCSModel.getPixelStride()
+             && srcCSModel.getScanlineStride() == destCSModel.getScanlineStride()) {
+
+                switch (srcSampleM.getDataType()) {
                     case DataBuffer.TYPE_BYTE  : return new DefaultWritableDirectByteIterator(raster, writeableRaster, subArea);
                     case DataBuffer.TYPE_FLOAT : return new DefaultWritableDirectFloatIterator(raster, writeableRaster, subArea);
                     default : return new DefaultWritableIterator(raster, writeableRaster, subArea);
@@ -155,12 +163,19 @@ public final class PixelIteratorFactory {
      * @return adapted              {@link PixelIterator}.
      */
     public static PixelIterator createDefaultWriteableIterator(final RenderedImage renderedImage, final WritableRenderedImage writableRenderedImage, final Rectangle subArea) {
-        final SampleModel sampleM = renderedImage.getSampleModel();
-        if (sampleM instanceof ComponentSampleModel ) {
-            if (sampleM.getNumDataElements() == sampleM.getNumBands()
-             && ((ComponentSampleModel)sampleM).getBankIndices().length == 1
-             && checkBandOffset(((ComponentSampleModel)sampleM).getBandOffsets())) {
-                switch (sampleM.getDataType()) {
+        final SampleModel srcSampleM = renderedImage.getSampleModel();
+        final SampleModel destSampleM = renderedImage.getSampleModel();
+
+        if (srcSampleM instanceof ComponentSampleModel && destSampleM instanceof ComponentSampleModel) {
+            ComponentSampleModel srcCSModel = (ComponentSampleModel) srcSampleM;
+            ComponentSampleModel destCSModel = (ComponentSampleModel) destSampleM;
+
+            if (srcSampleM.getNumDataElements() == srcSampleM.getNumBands()
+                    && srcCSModel.getBankIndices().length == 1 && checkBandOffset(srcCSModel.getBandOffsets())
+                    && srcCSModel.getPixelStride() == destCSModel.getPixelStride()
+                    && srcCSModel.getScanlineStride() == destCSModel.getScanlineStride()) {
+
+                switch (srcSampleM.getDataType()) {
                     case DataBuffer.TYPE_BYTE  : return new DefaultWritableDirectByteIterator(renderedImage, writableRenderedImage, subArea);
                     case DataBuffer.TYPE_FLOAT : return new DefaultWritableDirectFloatIterator(renderedImage, writableRenderedImage, subArea);
                     default : return new DefaultWritableIterator(renderedImage, writableRenderedImage, subArea);
@@ -169,7 +184,6 @@ public final class PixelIteratorFactory {
         }
         return new DefaultWritableIterator(renderedImage, writableRenderedImage, subArea);
     }
-
 
     ////////////////////////////// Row Major Iterator ////////////////////////////
 
@@ -230,12 +244,19 @@ public final class PixelIteratorFactory {
      * @return adapted              {@link PixelIterator}.
      */
     public static PixelIterator createRowMajorWriteableIterator(final RenderedImage renderedImage, final WritableRenderedImage writableRenderedImage, final Rectangle subArea) {
-        final SampleModel sampleM = renderedImage.getSampleModel();
-        if (sampleM instanceof ComponentSampleModel) {
-            if (sampleM.getNumDataElements() == sampleM.getNumBands()
-             && ((ComponentSampleModel)sampleM).getBankIndices().length == 1
-             && checkBandOffset(((ComponentSampleModel)sampleM).getBandOffsets())) {
-                switch (sampleM.getDataType()) {
+        final SampleModel srcSampleM = renderedImage.getSampleModel();
+        final SampleModel destSampleM = renderedImage.getSampleModel();
+
+        if (srcSampleM instanceof ComponentSampleModel && destSampleM instanceof ComponentSampleModel) {
+            ComponentSampleModel srcCSModel = (ComponentSampleModel) srcSampleM;
+            ComponentSampleModel destCSModel = (ComponentSampleModel) destSampleM;
+
+            if (srcSampleM.getNumDataElements() == srcSampleM.getNumBands()
+                    && srcCSModel.getBankIndices().length == 1 && checkBandOffset(srcCSModel.getBandOffsets())
+                    && srcCSModel.getPixelStride() == destCSModel.getPixelStride()
+                    && srcCSModel.getScanlineStride() == destCSModel.getScanlineStride()) {
+
+                switch (srcSampleM.getDataType()) {
                     case DataBuffer.TYPE_BYTE  : return new RowMajorWritableDirectByteIterator(renderedImage, writableRenderedImage, subArea);
                     case DataBuffer.TYPE_FLOAT : return new RowMajorWritableDirectFloatIterator(renderedImage, writableRenderedImage, subArea);
                     default : return new RowMajorWritableIterator(renderedImage, writableRenderedImage, subArea);

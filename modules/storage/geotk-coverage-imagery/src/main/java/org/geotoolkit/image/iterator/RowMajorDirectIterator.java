@@ -35,6 +35,9 @@ import org.opengis.coverage.grid.SequenceType;
  *
  * Furthermore iterator directly read in data table within raster {@code DataBuffer}.
  *
+ * /!\ WARNING : We do not use {@linkplain #maxX} value to get X indice of the current pixel, but to get current sample
+ * position in source {@link java.awt.image.DataBuffer}.
+ *
  * @author Rémi Marechal       (Geomatys).
  * @author Martin Desruisseaux (Geomatys).
  */
@@ -48,7 +51,7 @@ public abstract class RowMajorDirectIterator extends PixelIterator {
     /**
      * Current raster width.
      */
-    protected int rasterWidth;
+    protected final int rasterWidth;
 
     /**
      * Abstract row index;
@@ -71,6 +74,11 @@ public abstract class RowMajorDirectIterator extends PixelIterator {
     protected int scanLineStride;
 
     /**
+     * Step for samples
+     */
+    protected int sampleStride;
+
+    /**
      * Create default rendered image iterator.
      *
      * @param renderedImage image which will be follow by iterator.
@@ -81,13 +89,14 @@ public abstract class RowMajorDirectIterator extends PixelIterator {
         super(renderedImage, subArea);
         final SampleModel sampleM = renderedImage.getSampleModel();
         if (sampleM instanceof ComponentSampleModel) {
-            this.scanLineStride = ((ComponentSampleModel)sampleM).getScanlineStride();
+            ComponentSampleModel sModel = (ComponentSampleModel) sampleM;
+            this.sampleStride = sModel.getPixelStride();
+            this.scanLineStride = sModel.getScanlineStride();
         } else {
             throw new IllegalArgumentException("RowMajorDirectIterator constructor : sample model not conform");
         }
         this.rasterWidth = renderedImage.getTileWidth();
-        this.rasterNumBand = sampleM.getNumBands();
-        //initialize attributs to first iteration
+        //initialize attributes to first iteration
         this.row     = this.areaIterateMinY - 1;
         this.maxY    = this.row + 1;
         this.maxX = 1;
@@ -100,7 +109,7 @@ public abstract class RowMajorDirectIterator extends PixelIterator {
      */
     @Override
     public boolean next() {
-        if (++dataCursor == maxX) {
+        if ((dataCursor+=sampleStride) >= maxX) {
             if (++tX == tMaxX) {
                 tX = tMinX;
                 if (++row == maxY) {
@@ -115,10 +124,10 @@ public abstract class RowMajorDirectIterator extends PixelIterator {
                 updateCurrentRaster(tX, tY);
             }
             this.cRMinX    = currentRaster.getMinX();
-            this.maxX      = (Math.min(areaIterateMaxX, cRMinX + rasterWidth) - cRMinX)*rasterNumBand;
+            this.maxX      = (Math.min(areaIterateMaxX, cRMinX + rasterWidth) - cRMinX)*rasterNumBand*sampleStride;
             final int step = (row - cRMinY) * scanLineStride;
             this.maxX     +=  step;
-            dataCursor     = (Math.max(areaIterateMinX, cRMinX) - cRMinX)*rasterNumBand + step;
+            dataCursor     = (Math.max(areaIterateMinX, cRMinX) - cRMinX)*rasterNumBand*sampleStride + step;
         }
         return true;
     }
@@ -131,7 +140,9 @@ public abstract class RowMajorDirectIterator extends PixelIterator {
      */
     protected void updateCurrentRaster(int tileX, int tileY) {
         this.currentRaster = renderedImage.getTile(tileX, tileY);
-        this.scanLineStride = ((ComponentSampleModel)currentRaster.getSampleModel()).getScanlineStride();
+        final ComponentSampleModel sModel = (ComponentSampleModel) currentRaster.getSampleModel();
+        this.scanLineStride = sModel.getScanlineStride();
+        this.sampleStride = sModel.getPixelStride();
     }
 
     /**
@@ -139,7 +150,7 @@ public abstract class RowMajorDirectIterator extends PixelIterator {
      */
     @Override
     public int getX() {
-        return cRMinX + dataCursor % scanLineStride/rasterNumBand;
+        return cRMinX + dataCursor % scanLineStride/ (rasterNumBand*sampleStride);
     }
 
     /**
@@ -169,7 +180,7 @@ public abstract class RowMajorDirectIterator extends PixelIterator {
     @Override
     public void moveTo(int x, int y, int b) {
         super.moveTo(x, y, b);
-        final int tTempX = (x - renderedImage.getMinX())/renderedImage.getTileWidth() + renderedImage.getMinTileX();
+        final int tTempX = (x - renderedImage.getMinX())/rasterWidth + renderedImage.getMinTileX();
         final int tTempY = (y - renderedImage.getMinY())/renderedImage.getTileHeight() + renderedImage.getMinTileY();
         if (tTempX != tX || tTempY != tY) {
             tX = tTempX;
@@ -178,15 +189,15 @@ public abstract class RowMajorDirectIterator extends PixelIterator {
             this.cRMinX = currentRaster.getMinX();
             this.cRMinY = currentRaster.getMinY();
         }
-        
+
         this.row = y;
         final int step = (row - cRMinY) * scanLineStride;
-        this.maxX = (Math.min(areaIterateMaxX, cRMinX + rasterWidth) - cRMinX) * rasterNumBand;
+        this.maxX = (Math.min(areaIterateMaxX, cRMinX + rasterWidth) - cRMinX) * rasterNumBand * sampleStride;
         this.maxX += step;
 
         //initialize row
         this.maxY = Math.min(areaIterateMaxY, cRMinY + currentRaster.getHeight());
-        this.dataCursor = (x - cRMinX) * rasterNumBand + step + b;// - 1;
+        this.dataCursor = (x - cRMinX) * rasterNumBand*sampleStride + step + b;// - 1;
     }
 
     /**
