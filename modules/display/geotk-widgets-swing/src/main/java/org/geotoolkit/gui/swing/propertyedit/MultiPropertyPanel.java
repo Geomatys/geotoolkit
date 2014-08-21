@@ -24,6 +24,8 @@ import java.awt.ComponentOrientation;
 import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -46,19 +48,20 @@ import org.jdesktop.swingx.JXTaskPaneContainer;
 /**
  * Multiproperty panel.
  *
- * @author Johann Sorel
+ * @author Johann Sorel (Geomatys)
+ * @author Quentin Boileau (Geomatys)
  * @module pending
  */
-public abstract class MultiPropertyPanel extends JPanel implements PropertyPane {
+public abstract class MultiPropertyPanel extends JPanel implements PropertyPane, PropertyChangeListener {
 
     private final Map<String,List<Object>> panels = new LinkedHashMap<>();
     private final JXTaskPaneContainer guiMenus = new JXTaskPaneContainer();
     private final Map<String,JXTaskPane> guiGroups = new HashMap<>();
     private final JImagePane guiPreview = new JImagePane();
-    private PropertyPane active = null;
-
     private final JXTaskPane preview = new JXTaskPane();
 
+    private PropertyPane active = null;
+    private Object currentTarget = null;
 
     /**
      * Creates new form MultiPropertyPanel
@@ -97,6 +100,9 @@ public abstract class MultiPropertyPanel extends JPanel implements PropertyPane 
     public boolean setSelectedPropertyPanel(final PropertyPane panel) {
 
         if(active!=null){
+            if (active instanceof Component) {
+                ((Component)active).removePropertyChangeListener(this);
+            }
             remove(active.getComponent());
             active = null;
             revalidate();
@@ -104,7 +110,11 @@ public abstract class MultiPropertyPanel extends JPanel implements PropertyPane 
         }
 
         if (panel != null) {
+            if (active instanceof Component) {
+                ((Component)active).addPropertyChangeListener(this);
+            }
             active = panel;
+            active.setTarget(currentTarget);
             SwingUtilities.invokeLater(new Runnable() {
                 @Override
                         public void run() {
@@ -163,6 +173,7 @@ public abstract class MultiPropertyPanel extends JPanel implements PropertyPane 
     @Override
     public void setTarget(final Object target) {
 
+        this.currentTarget = target;
         //select only panels which handle this target
         for(JXTaskPane tp : guiGroups.values()){
             guiMenus.remove(tp);
@@ -199,7 +210,6 @@ public abstract class MultiPropertyPanel extends JPanel implements PropertyPane 
                     if(selected==null){
                         selected = panel;
                     }
-                    panel.setTarget(target);
 
                     act = new AbstractAction() {
                         {
@@ -274,6 +284,13 @@ public abstract class MultiPropertyPanel extends JPanel implements PropertyPane 
     @Override
     public Component getComponent() {
         return this;
+    }
+
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+        if (PropertyPane.RELOAD.equals(evt.getPropertyName())) {
+            reset();
+        }
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

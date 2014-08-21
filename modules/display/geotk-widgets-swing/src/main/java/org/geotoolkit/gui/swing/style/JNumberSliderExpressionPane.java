@@ -27,11 +27,15 @@ import static org.geotoolkit.gui.swing.style.StyleElementEditor.getFilterFactory
 import org.geotoolkit.map.MapLayer;
 import org.opengis.filter.expression.Expression;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+
 /**
  * Slider and spinner component.
  *
  * @author Fabien Rétif (Geomatys)
  * @author Johann Sorel (Geomatys)
+ * @author Quentin Boileau (Geomatys)
  * @module pending
  */
 public class JNumberSliderExpressionPane extends StyleElementEditor<Expression> {
@@ -39,6 +43,20 @@ public class JNumberSliderExpressionPane extends StyleElementEditor<Expression> 
     public JNumberSliderExpressionPane() {
         super(Expression.class);
         initComponents();
+
+        guiNumber.addPropertyChangeListener(new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent evt) {
+                if (StyleElementEditor.PROPERTY_UPDATED.equals(evt.getPropertyName())) {
+                    Expression newValue = (Expression) evt.getNewValue();
+                    if(FilterUtilities.isStatic(newValue)) {
+                        final Number value = newValue.evaluate(null, Number.class);
+                        guiSlider.setValue(value.intValue());
+                    }
+                    firePropertyChange(PROPERTY_UPDATED, null, create());
+                }
+            }
+        });
     }
 
     public void setModel(final int value, final int min, final int max, final int step) {
@@ -105,7 +123,9 @@ public class JNumberSliderExpressionPane extends StyleElementEditor<Expression> 
             if (FilterUtilities.isStatic(target)) {
                 final Number value = target.evaluate(null, Number.class);
                 if (value != null) {
-                    guiNumber.parse(getFilterFactory().literal(value.intValue()));
+                    int intValue = value.intValue();
+                    guiNumber.parse(getFilterFactory().literal(intValue));
+                    guiSlider.setValue(intValue);
                 }
             }
         }

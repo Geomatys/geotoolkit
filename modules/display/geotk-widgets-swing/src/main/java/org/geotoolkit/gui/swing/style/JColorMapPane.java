@@ -284,7 +284,7 @@ public class JColorMapPane extends StyleElementEditor<ColorMap> implements Prope
     public void setLayer(MapLayer layer) {
         this.layer = layer;
         postParse();
-
+        initBandSpinner();
 
         if(this.layer!=null){
             layerListener.unregisterSource(this.layer);
@@ -392,10 +392,13 @@ public class JColorMapPane extends StyleElementEditor<ColorMap> implements Prope
                 model = new CategorizeColorModel(th);
             }else if(fct instanceof Jenks){
                 final Jenks jenks = (Jenks) fct;
-                double[] vals = jenks.getNoData();
-                if(vals==null) vals = new double[0];
-                model = new JenksColorModel();
+                double[] vals = (jenks.getNoData() != null) ? jenks.getNoData() : new double[0];
                 noDataEditor.setValue(nodataDesc.getType(), vals);
+                Literal palette = jenks.getPalette();
+                Literal classNumber = jenks.getClassNumber();
+                String paletteName = palette.evaluate(null, String.class);
+                Integer nbSteps = classNumber.evaluate(null, Integer.class);
+                model = new JenksColorModel(paletteName, nbSteps);
             }else{
                 model = new InterpolateColorModel(Collections.EMPTY_LIST);
                 LOGGER.log(Level.WARNING, "Unknowned colormap function : {0}", fct);
@@ -410,6 +413,10 @@ public class JColorMapPane extends StyleElementEditor<ColorMap> implements Prope
 
     private void postParse(){
         guiTable.setModel(model);
+        guiInvert.setEnabled(true);
+        guiMinSpinner.setEnabled(true);
+        guiMaxSpinner.setEnabled(true);
+
         if(model instanceof InterpolateColorModel){
             guiMethod.setSelectedItem(Interpolate.class);
             setPalettes(PALETTES);
@@ -484,7 +491,19 @@ public class JColorMapPane extends StyleElementEditor<ColorMap> implements Prope
 
         }else if(model instanceof JenksColorModel){
             guiMethod.setSelectedItem(Jenks.class);
+            final JenksColorModel jcm = (JenksColorModel) model;
+
             setPalettes(PALETTES_NAMED);
+            if (jcm.getPaletteName() != null) {
+                guiPalette.setSelectedItem(jcm.getPaletteName());
+            } else {
+                guiPalette.setSelectedItem(0);
+            }
+            guiNbStep.setValue(jcm.getNbSteps());
+
+            guiInvert.setEnabled(false);
+            guiMinSpinner.setEnabled(false);
+            guiMaxSpinner.setEnabled(false);
         }
 
         //disable and hide value table for jenks method
@@ -531,6 +550,49 @@ public class JColorMapPane extends StyleElementEditor<ColorMap> implements Prope
 
     }
 
+    private void initBandSpinner() {
+        //update nbBands spinner
+        try {
+            if (layer instanceof CoverageMapLayer) {
+                final CoverageReference covRef = ((CoverageMapLayer) layer).getCoverageReference();
+                final GridCoverageReader reader = covRef.acquireReader();
+                final GeneralGridGeometry gridGeometry = reader.getGridGeometry(covRef.getImageIndex());
+
+                if (gridGeometry.isDefined(GeneralGridGeometry.GRID_TO_CRS)
+                        && gridGeometry.isDefined(GeneralGridGeometry.EXTENT)) {
+                    MathTransform gridToCRS = gridGeometry.getGridToCRS();
+                    GridEnvelope extent = gridGeometry.getExtent();
+                    int dim = extent.getDimension();
+                    double[] low = new double[dim];
+                    double[] high = new double[dim];
+                    low[0] = extent.getLow(0);
+                    high[0] = extent.getHigh(0);
+                    low[1] = extent.getLow(1);
+                    high[1] = extent.getHigh(1);
+                    GeneralEnvelope sliceExtent = new GeneralEnvelope(gridGeometry.getCoordinateReferenceSystem());
+                    for (int i = 0; i < dim; i++) {
+                        sliceExtent.setRange(i, low[i], high[i]);
+                    }
+
+                    GridCoverageReadParam readParam = new GridCoverageReadParam();
+                    readParam.setEnvelope(CRS.transform(gridToCRS, sliceExtent));
+                    readParam.setCoordinateReferenceSystem(gridGeometry.getCoordinateReferenceSystem());
+
+                    final GridCoverage coverage = reader.read(covRef.getImageIndex(), readParam);
+                    int nbBands = coverage.getNumSampleDimensions() - 1;
+                    guiBand.setModel(new SpinnerNumberModel(0, 0, nbBands, 1));
+                }
+                covRef.recycle(reader);
+            }
+        } catch (CoverageStoreException ex) {
+            LOGGER.log(Level.WARNING, ex.getMessage(), ex);
+        } catch (DataStoreException ex) {
+            LOGGER.log(Level.WARNING, ex.getMessage(), ex);
+        } catch (TransformException ex) {
+            LOGGER.log(Level.WARNING, ex.getMessage(), ex);
+        }
+    }
+
     private void initializeSpinners() {
         if(layer != null && layer instanceof CoverageMapLayer){
             final CoverageMapLayer cml = (CoverageMapLayer)layer;
@@ -545,39 +607,44 @@ public class JColorMapPane extends StyleElementEditor<ColorMap> implements Prope
                 reader = cref.acquireReader();
                 gridGeometry = reader.getGridGeometry(cref.getImageIndex());
 
-                MathTransform gridToCRS = gridGeometry.getGridToCRS();
-                GridEnvelope extent = gridGeometry.getExtent();
-                int dim = extent.getDimension();
-                double[] low = new double[dim];
-                double[] high = new double[dim];
-                low[0] = extent.getLow(0);
-                high[0] = extent.getHigh(0);
-                low[1] = extent.getLow(1);
-                high[1] = extent.getHigh(1);
-                GeneralEnvelope sliceExtent = new GeneralEnvelope(gridGeometry.getCoordinateReferenceSystem());
-                for (int i = 0; i < dim; i++) {
-                    sliceExtent.setRange(i, low[i], high[i]);
+                if (gridGeometry.isDefined(GeneralGridGeometry.GRID_TO_CRS)
+                        && gridGeometry.isDefined(GeneralGridGeometry.EXTENT)) {
+                    MathTransform gridToCRS = gridGeometry.getGridToCRS();
+                    GridEnvelope extent = gridGeometry.getExtent();
+                    int dim = extent.getDimension();
+                    double[] low = new double[dim];
+                    double[] high = new double[dim];
+                    low[0] = extent.getLow(0);
+                    high[0] = extent.getHigh(0);
+                    low[1] = extent.getLow(1);
+                    high[1] = extent.getHigh(1);
+                    GeneralEnvelope sliceExtent = new GeneralEnvelope(gridGeometry.getCoordinateReferenceSystem());
+                    for (int i = 0; i < dim; i++) {
+                        sliceExtent.setRange(i, low[i], high[i]);
+                    }
+
+                    readParam = new GridCoverageReadParam();
+                    readParam.setEnvelope(CRS.transform(gridToCRS, sliceExtent));
+                    readParam.setCoordinateReferenceSystem(gridGeometry.getCoordinateReferenceSystem());
+
+                    coverage = reader.read(cref.getImageIndex(), readParam);
+                    coverage2D = CoverageUtilities.firstSlice(coverage);
+                    image = coverage2D.getRenderedImage();
+                    final Map<String, Object> an = StatisticOp.analyze(image);
+                    final double[] minArray = (double[]) an.get(StatisticOp.MINIMUM);
+                    final double[] maxArray = (double[]) an.get(StatisticOp.MAXIMUM);
+
+                    final Integer index = (Integer) guiBand.getValue();
+                    double min = minArray[index];
+                    double max = maxArray[index];
+
+                    final SpinnerModel minModel =
+                            new SpinnerNumberModel(min, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, 0.1d);
+                    final SpinnerModel maxModel =
+                            new SpinnerNumberModel(max, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, 0.1d);
+                    guiMinSpinner.setModel(minModel);
+                    guiMaxSpinner.setModel(maxModel);
                 }
-
-                readParam = new GridCoverageReadParam();
-                readParam.setEnvelope(CRS.transform(gridToCRS, sliceExtent));
-                readParam.setCoordinateReferenceSystem(gridGeometry.getCoordinateReferenceSystem());
-
-                coverage = reader.read(cref.getImageIndex(), readParam);
-                coverage2D = CoverageUtilities.firstSlice(coverage);
-                image = coverage2D.getRenderedImage();
-                final Map<String,Object> an = StatisticOp.analyze(image);
-                final double[] minArray = (double[])an.get(StatisticOp.MINIMUM);
-                final double[] maxArray = (double[])an.get(StatisticOp.MAXIMUM);
-                final double min = findExtremum(minArray, true);
-                final double max = findExtremum(maxArray, false);
-
-                final SpinnerModel minModel =
-                        new SpinnerNumberModel(min, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, 0.1d);
-                final SpinnerModel maxModel =
-                        new SpinnerNumberModel(max, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, 0.1d);
-                guiMinSpinner.setModel(minModel);
-                guiMaxSpinner.setModel(maxModel);
                 cref.recycle(reader);
             } catch (CoverageStoreException ex) {
                 LOGGER.log(Level.WARNING, ex.getMessage(),ex);
@@ -900,8 +967,15 @@ public class JColorMapPane extends StyleElementEditor<ColorMap> implements Prope
                 model = new InterpolateColorModel(points);
                 postParse();
             }else{
+                final JenksColorModel jcm = (JenksColorModel) model;
+                String paletteName = jcm.getPaletteName();
+                int steps = jcm.getNbSteps();
+
                 model = new InterpolateColorModel(Collections.EMPTY_LIST);
                 postParse();
+
+                guiPalette.setSelectedItem(paletteName);
+                guiNbStep.setValue(steps);
             }
         }else if(Categorize.class.equals(method)){
             if(model instanceof CategorizeColorModel){
@@ -918,18 +992,33 @@ public class JColorMapPane extends StyleElementEditor<ColorMap> implements Prope
                 model = new CategorizeColorModel(values);
                 postParse();
             }else{
+                final JenksColorModel jcm = (JenksColorModel) model;
+                String paletteName = jcm.getPaletteName();
+                int steps = jcm.getNbSteps();
+
                 final Map<Expression, Expression> values = new HashMap<Expression, Expression>();
                 values.put(StyleConstants.CATEGORIZE_LESS_INFINITY, TRS);
                 values.put(new DefaultLiteral<Number>(0), TRS);
                 model = new CategorizeColorModel(values);
                 postParse();
+
+                guiPalette.setSelectedItem(paletteName);
+                guiNbStep.setValue(steps);
             }
         }else{
             if(model instanceof JenksColorModel){
                 //nothing to do
                 return;
             }else{
-                model = new JenksColorModel();
+                Object selectedItem = guiPalette.getSelectedItem();
+                Integer steps = (Integer) guiNbStep.getValue();
+
+                String paletteName = null;
+                if (selectedItem instanceof String) {
+                    paletteName = (String)selectedItem;
+                }
+
+                model = new JenksColorModel(paletteName, steps);
                 postParse();
             }
         }
@@ -1520,6 +1609,22 @@ public class JColorMapPane extends StyleElementEditor<ColorMap> implements Prope
     }
 
     private class JenksColorModel extends ColorMapModel{
+
+        private String paletteName;
+        private Integer nbSteps = 0;
+
+        private JenksColorModel(String paletteName, Integer nbSteps) {
+            this.paletteName = paletteName;
+            this.nbSteps = nbSteps;
+        }
+
+        public String getPaletteName() {
+            return paletteName;
+        }
+
+        public Integer getNbSteps() {
+            return nbSteps;
+        }
 
         @Override
         public void addValue(Number value, Color color) {

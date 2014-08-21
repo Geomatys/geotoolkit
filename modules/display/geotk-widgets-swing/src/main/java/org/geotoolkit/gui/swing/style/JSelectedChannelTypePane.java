@@ -26,6 +26,9 @@ import javax.swing.GroupLayout.Alignment;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.MapLayer;
 import org.opengis.style.SelectedChannelType;
@@ -36,7 +39,7 @@ import org.opengis.style.SelectedChannelType;
  * @author  Johann Sorel
  * @module pending
  */
-public class JSelectedChannelTypePane extends StyleElementEditor<SelectedChannelType>{
+public class JSelectedChannelTypePane extends StyleElementEditor<SelectedChannelType> implements DocumentListener {
 
     private MapLayer layer = null;
     private SelectedChannelType channel = null;
@@ -79,10 +82,36 @@ public class JSelectedChannelTypePane extends StyleElementEditor<SelectedChannel
     }
 
     @Override
+    public void setEnabled(boolean enabled) {
+        super.setEnabled(enabled);
+        guiName.setEnabled(enabled);
+        if (enabled) {
+            guiName.getDocument().addDocumentListener(this);
+        } else {
+            guiName.getDocument().removeDocumentListener(this);
+        }
+    }
+
+    @Override
     protected Object[] getFirstColumnComponents() {
         return new Object[]{guiLabelName,guiContrast};
     }
-    
+
+    @Override
+    public void insertUpdate(DocumentEvent e) {
+        firePropertyChange(PROPERTY_UPDATED, null, create());
+    }
+
+    @Override
+    public void removeUpdate(DocumentEvent e) {
+        firePropertyChange(PROPERTY_UPDATED, null, create());
+    }
+
+    @Override
+    public void changedUpdate(DocumentEvent e) {
+        firePropertyChange(PROPERTY_UPDATED, null, create());
+    }
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is

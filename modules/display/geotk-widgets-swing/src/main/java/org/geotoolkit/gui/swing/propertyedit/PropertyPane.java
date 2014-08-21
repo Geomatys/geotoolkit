@@ -29,7 +29,12 @@ import javax.swing.ImageIcon;
  * @module pending
  */
 public interface PropertyPane {
-    
+
+    /**
+     * PropertyChange event name used to ask a reset call.
+     */
+    public static final String RELOAD = "reload";
+
     public boolean canHandle(Object target);
     
     public void setTarget(Object target);

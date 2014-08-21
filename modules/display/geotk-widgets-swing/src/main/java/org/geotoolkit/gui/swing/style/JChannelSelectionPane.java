@@ -23,6 +23,8 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import javax.swing.ButtonGroup;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
@@ -40,7 +42,7 @@ import org.opengis.style.SelectedChannelType;
  * @author Johann Sorel
  * @module pending
  */
-public class JChannelSelectionPane extends StyleElementEditor<ChannelSelection>{
+public class JChannelSelectionPane extends StyleElementEditor<ChannelSelection> implements PropertyChangeListener {
 
     private MapLayer layer = null;
 
@@ -51,6 +53,10 @@ public class JChannelSelectionPane extends StyleElementEditor<ChannelSelection>{
         super(ChannelSelection.class);
         initComponents();
         lock();
+        guiGray.addPropertyChangeListener(this);
+        guiRed.addPropertyChangeListener(this);
+        guiGreen.addPropertyChangeListener(this);
+        guiBlue.addPropertyChangeListener(this);
     }
 
     @Override
@@ -145,9 +151,13 @@ public class JChannelSelectionPane extends StyleElementEditor<ChannelSelection>{
             guiLblBlue.setEnabled(false);
             guiLblGray.setEnabled(true);
         }
-        
     }
-    
+
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+        firePropertyChange(PROPERTY_UPDATED, null, create());
+    }
+
     @Override
     protected Object[] getFirstColumnComponents() {
         return new Object[]{guiRed,guiGreen,guiBlue,guiGray};
