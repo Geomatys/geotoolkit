@@ -119,8 +119,12 @@ public class DefaultRasterSymbolizerRendererService extends AbstractSymbolizerRe
             final BufferedImage img = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
             final FontMetrics fm = img.createGraphics().getFontMetrics(LEGEND_FONT);
 
-            for (Object key : colorMap.keySet()) {
-                int lineWidth = LEGEND_PALETTE_WIDTH + fm.stringWidth("< "+key.toString());
+            Object[] keys = colorMap.keySet().toArray(new Object[colorMap.size()]);
+            for (int i = 0; i < keys.length; i++) {
+                final Object current = keys[i];
+                final Object next = (i<keys.length - 1) ? keys[i+1] : null;
+                final StringBuilder text = getLineText(current, next);
+                int lineWidth = LEGEND_PALETTE_WIDTH + fm.stringWidth(text.toString());
                 maxX = Math.max(maxX, lineWidth);
             }
 
@@ -234,13 +238,37 @@ public class DefaultRasterSymbolizerRendererService extends AbstractSymbolizerRe
             float shift = doInterpolation ? 0.6f : 0.7f;
 
             g.setColor(Color.BLACK);
-            for (Map.Entry<Object, Color> elem : colorMap.entrySet()) {
-                final String text = "< "+elem.getKey().toString();
-                g.drawString(text, LEGEND_PALETTE_WIDTH + 1f , Y + intervalHeight * shift );
+            Object[] keys = colorMap.keySet().toArray(new Object[colorMap.size()]);
+            for (int i = 0; i < keys.length; i++) {
+                final Object current = keys[i];
+                final Object next = (i<keys.length - 1) ? keys[i+1] : null;
+                final StringBuilder text = getLineText(current, next);
+                g.drawString(text.toString(), LEGEND_PALETTE_WIDTH + 1f , Y + intervalHeight * shift );
 
                 Y += intervalHeight;
             }
         }
+    }
+
+    private static StringBuilder getLineText(Object currentElem, Object nextElement) {
+        final StringBuilder text = new StringBuilder("< ");
+        if (currentElem instanceof NumberRange) {
+            double min = ((NumberRange) currentElem).getMaxDouble();
+            double max = Double.POSITIVE_INFINITY;
+            if (nextElement instanceof NumberRange) {
+                max = ((NumberRange) nextElement).getMinDouble();
+            }
+
+            text.append('[');
+            text.append(String.format("%.3f", min));
+            text.append(" ... ");
+
+            text.append(String.format("%.3f", max));
+            text.append(']');
+        } else {
+            text.append(currentElem.toString());
+        }
+        return text;
     }
 
     /**
@@ -251,7 +279,7 @@ public class DefaultRasterSymbolizerRendererService extends AbstractSymbolizerRe
      * @return a Map containing Object like Range or String for key and Color as value.
      */
     private Map<Object, Color> getMapColor(final CachedRasterSymbolizer symbol) {
-        Map<Object, Color> colorMap = new LinkedHashMap<Object, Color>();
+        Map<Object, Color> colorMap = new LinkedHashMap<>();
 
         final ColorMap cm = symbol.getSource().getColorMap();
 
@@ -276,12 +304,12 @@ public class DefaultRasterSymbolizerRendererService extends AbstractSymbolizerRe
             } else if(fct instanceof Jenks) {
                 final Jenks jenks = (Jenks) fct;
                 final Map<Double, Color> jenksColorMap = jenks.getColorMap();
-                final Map<Color, List<Double>> rangeJenksMap = new HashMap<Color, List<Double>>();
+                final Map<Color, List<Double>> rangeJenksMap = new HashMap<>();
 
                 for (Map.Entry<Double, Color> elem : jenksColorMap.entrySet()) {
 
                     if (rangeJenksMap.containsKey(elem.getValue())) {
-                        final List<Double> values = (List<Double>)rangeJenksMap.get(elem.getValue());
+                        final List<Double> values = rangeJenksMap.get(elem.getValue());
                         values.add(elem.getKey());
                         Collections.sort(values);
                         rangeJenksMap.put(elem.getValue(), values);
@@ -297,14 +325,14 @@ public class DefaultRasterSymbolizerRendererService extends AbstractSymbolizerRe
                 for (Map.Entry<Color, List<Double>> elem : rangeJenksMap.entrySet()) {
                     final List<Double> values = elem.getValue();
                     Collections.sort(values);
-                    colorMap.put(new NumberRange<Double>(Double.class, values.get(0), true, values.get(values.size()-1), true), elem.getKey());
+                    colorMap.put(new NumberRange<>(Double.class, values.get(0), true, values.get(values.size()-1), true), elem.getKey());
                 }
 
             } else if(fct instanceof Categorize) {
                 final Categorize categorize = (Categorize) fct;
                 final Map<Expression, Expression> thresholds = categorize.getThresholds();
 
-                final Map<Color, List<Double>> colorValuesMap = new HashMap<Color, List<Double>>();
+                final Map<Color, List<Double>> colorValuesMap = new HashMap<>();
 
                 for (Map.Entry<Expression, Expression> entry : thresholds.entrySet()) {
 
@@ -344,7 +372,7 @@ public class DefaultRasterSymbolizerRendererService extends AbstractSymbolizerRe
                 for (Map.Entry<Color, List<Double>> elem : colorValuesMap.entrySet()) {
                     final List<Double> values = elem.getValue();
                     Collections.sort(values);
-                    colorMap.put(new NumberRange<Double>(Double.class, values.get(0), true, values.get(values.size()-1), true), elem.getKey());
+                    colorMap.put(new NumberRange<>(Double.class, values.get(0), true, values.get(values.size()-1), true), elem.getKey());
                 }
             }
         }
