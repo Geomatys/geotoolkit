@@ -30,6 +30,7 @@ import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.coverage.CoverageExtractor;
 import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
@@ -192,11 +193,58 @@ public abstract class AbstractGraphicVisitor implements GraphicVisitor {
             Arrays.fill(values, Float.NaN);
         }
 
-        final List<Entry<GridSampleDimension,Object>> results = new ArrayList<Entry<GridSampleDimension, Object>>();
+        final List<Entry<GridSampleDimension,Object>> results = new ArrayList<>();
         for (int i=0; i<values.length; i++){
             final GridSampleDimension sample = coverage.getSampleDimension(i);
             results.add(new SimpleImmutableEntry<GridSampleDimension, Object>(sample, values[i]));
         }
         return results;
+    }
+
+
+    /**
+     *
+     * @param projectedCoverage
+     * @param context
+     * @param area
+     * @return
+     * @throws CoverageStoreException
+     * @throws TransformException
+     */
+    protected static CoverageExtractor.Ray rayExtraction(ProjectedCoverage projectedCoverage, RenderingContext2D context, SearchAreaJ2D area)
+            throws CoverageStoreException, TransformException {
+
+        //point in objective CRS
+        final GeneralDirectPosition dp = new GeneralDirectPosition(context.getObjectiveCRS2D());
+        final Rectangle2D bounds2D = area.getObjectiveShape().getBounds2D();
+        dp.setOrdinate(0, bounds2D.getCenterX());
+        dp.setOrdinate(1, bounds2D.getCenterY());
+
+        final CoverageMapLayer layer = projectedCoverage.getLayer();
+        final CoverageReference covRef = layer.getCoverageReference();
+        GridCoverageReader reader = null;
+        try {
+            reader = covRef.acquireReader();
+            final Envelope canvasObjective = context.getCanvasObjectiveBounds();
+            final int canvasNbDim = canvasObjective.getDimension();
+
+            //fix resolution array
+            double[] resolution = new double[canvasNbDim];
+            resolution[0] = context.getResolution()[0];
+            resolution[1] = context.getResolution()[1];
+            for (int i = 2; i < canvasNbDim; i++) {
+                resolution[i] = 1.0;
+            }
+
+            final GridCoverageReadParam param = new GridCoverageReadParam();
+            param.setDeferred(true);
+            param.setEnvelope(canvasObjective);
+            param.setResolution(resolution);
+            return CoverageExtractor.rayExtraction(dp, reader, covRef.getImageIndex(), param);
+        } finally {
+            if (reader != null) {
+                covRef.recycle(reader);
+            }
+        }
     }
 }

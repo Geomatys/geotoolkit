@@ -23,6 +23,8 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.geom.Point2D;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.AbstractAction;
@@ -42,7 +44,7 @@ import org.geotoolkit.gui.swing.util.SwingUtilities;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class JInformationDialog extends JDialog {
+public class JInformationDialog extends JDialog implements PropertyChangeListener {
 
     private final AbstractAction nextAction;
     private final AbstractAction previousAction;
@@ -52,6 +54,7 @@ public class JInformationDialog extends JDialog {
     private List<? extends Object> selecteds = new ArrayList<Object>();
     private InformationPresenter presenter = null;
     private JComponent currentComponent = null;
+    private JToolBar toolbar = null;
     private RenderingContext2D context = null;
     private SearchAreaJ2D area = null;
     private int selected = 0;
@@ -78,7 +81,7 @@ public class JInformationDialog extends JDialog {
         };
 
         final GridBagConstraints cst = new GridBagConstraints();
-        final JToolBar toolbar = new JToolBar();
+        toolbar = new JToolBar();
         toolbar.setLayout(new GridBagLayout());
         toolbar.setFloatable(false);
         cst.gridx = 0;
@@ -103,6 +106,7 @@ public class JInformationDialog extends JDialog {
 
         final Object candidate = selecteds.get(index);
         currentComponent = presenter.createComponent(candidate,context,area);
+        currentComponent.addPropertyChangeListener(this);
         if(currentComponent!=null){
             contentPane.add(BorderLayout.CENTER,currentComponent);
         }
@@ -127,6 +131,7 @@ public class JInformationDialog extends JDialog {
         if(selecteds == null || where == null){
             return;
         }
+        toolbar.setVisible(selecteds.size() > 1);
 
         setSelectedInfo(0);
         this.pack();
@@ -139,4 +144,10 @@ public class JInformationDialog extends JDialog {
         this.setVisible(true);
     }
 
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+        if ("update".equals(evt.getPropertyName())) {
+            this.pack();
+        }
+    }
 }

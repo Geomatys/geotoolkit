@@ -1,2 +1,3 @@
 org.geotoolkit.gui.swing.render2d.control.information.presenter.PropertyPresenter
 org.geotoolkit.gui.swing.render2d.control.information.presenter.CoveragePresenter
+org.geotoolkit.gui.swing.render2d.control.information.presenter.CoverageDrillingPresenter
