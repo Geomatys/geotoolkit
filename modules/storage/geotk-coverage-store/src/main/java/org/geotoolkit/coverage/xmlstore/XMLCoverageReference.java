@@ -24,6 +24,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ProgressMonitor;
@@ -56,7 +57,6 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @module pending
  */
 @XmlRootElement(name="CoverageReference")
-@XmlAccessorType(XmlAccessType.FIELD)
 public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
 
     @XmlTransient
@@ -67,7 +67,9 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
         }
         return POOL;
     }
-    
+
+    private static final Name DEFAULT_NAME = new DefaultName("default");
+
     @XmlElement(name="PyramidSet")
     private XMLPyramidSet set;
     /** One of geophysics/native */
@@ -82,16 +84,13 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
     @XmlElement(name="PreferredFormat")
     private String preferredFormat;
     
-    @XmlTransient
     private String id;
-    @XmlTransient
     private File mainfile;
     //caches
-    @XmlTransient
     private List<GridSampleDimension> cacheDimensions = null;
 
     public XMLCoverageReference() {
-        super(null, new DefaultName("test"), 0);
+        super(null, DEFAULT_NAME, 0);
     }
 
     public XMLCoverageReference(XMLCoverageStore store, Name name, XMLPyramidSet set) {
@@ -207,7 +206,7 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
     public synchronized List<GridSampleDimension> getSampleDimensions() throws DataStoreException {
         if(cacheDimensions==null){
             if(sampleDimensions==null || sampleDimensions.isEmpty()) return null;
-            cacheDimensions = new ArrayList<>();
+            cacheDimensions = new CopyOnWriteArrayList<>();
             for(XMLSampleDimension xsd : sampleDimensions){
                 cacheDimensions.add(xsd.buildSampleDimension());
             }
@@ -221,7 +220,7 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
         if(dimensions==null) return;
         this.cacheDimensions = null; //clear cache
 
-        if(sampleDimensions==null) sampleDimensions = new ArrayList<>();
+        if(sampleDimensions==null) sampleDimensions = new CopyOnWriteArrayList<>();
         sampleDimensions.clear();
         for(GridSampleDimension dimension : dimensions){
             final SampleDimensionType sdt = dimension.getSampleDimensionType();
@@ -240,7 +239,6 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
 
     @Override
     public void setColorModel(ColorModel colorModel) throws DataStoreException {
-        save();
     }
 
     @Override

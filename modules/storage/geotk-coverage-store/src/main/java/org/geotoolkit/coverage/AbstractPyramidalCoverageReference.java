@@ -38,6 +38,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageReader;
 import javax.swing.ProgressMonitor;
+import javax.xml.bind.annotation.XmlTransient;
+
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
@@ -62,6 +64,7 @@ import org.opengis.referencing.operation.MathTransform;
  * 
  * @author Johann Sorel (Geomatys)
  */
+@XmlTransient
 public abstract class AbstractPyramidalCoverageReference extends AbstractCoverageReference implements PyramidalCoverageReference {
 
     protected final int imageIndex;

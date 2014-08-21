@@ -29,6 +29,7 @@ import org.geotoolkit.coverage.Category;
 import org.apache.sis.util.ObjectConverters;
 import org.opengis.referencing.operation.MathTransform1D;
 import org.apache.sis.referencing.operation.transform.TransferFunction;
+import sun.io.Converters;
 
 /**
  *
@@ -125,7 +126,13 @@ public class XMLCategory {
         for(int i=0;i<cols.length;i++){
             cols[i] = ObjectConverters.convert(colors[i], Color.class);
         }
-        return new Category(name, cols, range, sampleToGeophysics);
+        final Category cat;
+        if(Double.isNaN(lower) || lower==upper){
+            cat = new Category(name, cols[0], lower);
+        }else{
+            cat = new Category(name, cols, range, sampleToGeophysics);
+        }
+        return cat;
     }
 
     /**

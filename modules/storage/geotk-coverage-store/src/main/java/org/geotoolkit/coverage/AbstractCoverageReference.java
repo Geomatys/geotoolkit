@@ -29,10 +29,13 @@ import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.feature.type.Name;
 import org.geotoolkit.storage.DefaultDataNode;
 
+import javax.xml.bind.annotation.XmlTransient;
+
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
+@XmlTransient
 public abstract class AbstractCoverageReference extends DefaultDataNode implements CoverageReference {
 
     protected final CoverageStore store;

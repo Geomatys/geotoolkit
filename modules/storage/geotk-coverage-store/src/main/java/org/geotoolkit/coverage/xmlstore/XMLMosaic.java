@@ -507,6 +507,13 @@ public class XMLMosaic implements GridMosaic {
 
     protected void setExistMask(String newValue) {
         existMask = newValue;
+        if (existMask != null && !existMask.isEmpty()) {
+            try {
+                tileExist = BitSet.valueOf(Base64.decode(existMask));
+            } catch (IOException ex) {
+                LOGGER.log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
     }
     
     @XmlElement
@@ -525,6 +532,13 @@ public class XMLMosaic implements GridMosaic {
 
     protected void setEmptyMask(String newValue) {
         emptyMask = newValue;
+        if (emptyMask != null && !emptyMask.isEmpty()) {
+            try {
+                tileEmpty = BitSet.valueOf(Base64.decode(emptyMask));
+            } catch (IOException ex) {
+                LOGGER.log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
     }
 
     /**

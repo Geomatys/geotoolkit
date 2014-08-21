@@ -24,10 +24,13 @@ import org.apache.sis.util.collection.DefaultTreeTable;
 import org.apache.sis.util.collection.TableColumn;
 import org.geotoolkit.gui.swing.tree.Trees;
 
+import javax.xml.bind.annotation.XmlTransient;
+
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
+@XmlTransient
 public class DefaultDataNode extends DefaultTreeTable.Node implements DataNode {
 
     protected final Set<StorageListener> listeners = new HashSet<>();

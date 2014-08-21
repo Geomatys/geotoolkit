@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -34,6 +35,7 @@ import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.GridMosaic;
+import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.Pyramid;
 import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.referencing.CRS;
@@ -56,7 +58,7 @@ public class XMLPyramid implements Pyramid {
     @XmlElement(name="serializedCrs")
     String serializedCrs;
     @XmlElement(name="Mosaic")
-    List<XMLMosaic> mosaics;
+    List<XMLMosaic> mosaics = new CopyOnWriteArrayList<>();
 
     @XmlTransient
     private XMLPyramidSet set;
@@ -93,7 +95,7 @@ public class XMLPyramid implements Pyramid {
 
     public List<XMLMosaic> mosaics() {
         if(mosaics == null){
-            mosaics = new ArrayList<>();
+            mosaics = new CopyOnWriteArrayList<>();
         }
         return mosaics;
     }
