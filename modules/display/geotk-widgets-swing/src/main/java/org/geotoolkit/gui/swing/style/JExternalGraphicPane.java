@@ -20,9 +20,8 @@ package org.geotoolkit.gui.swing.style;
 import java.awt.Component;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.io.File;
+import java.io.IOException;
 import java.net.MalformedURLException;
-import java.net.URISyntaxException;
 import java.net.URL;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
@@ -33,15 +32,16 @@ import javax.swing.SwingConstants;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import org.apache.sis.internal.storage.IOUtilities;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.feature.type.DefaultName;
 import org.geotoolkit.feature.type.DefaultPropertyType;
 import org.geotoolkit.gui.swing.propertyedit.featureeditor.PropertyValueEditor;
-import org.geotoolkit.gui.swing.propertyedit.featureeditor.URLEditor;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
-import static org.geotoolkit.gui.swing.style.StyleElementEditor.getStyleFactory;
+
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.feature.type.PropertyType;
+import org.geotoolkit.util.ImageIOUtilities;
 import org.opengis.metadata.citation.OnlineResource;
 import org.opengis.style.ExternalGraphic;
 import org.openide.util.Exceptions;
@@ -50,6 +50,7 @@ import org.openide.util.Exceptions;
  * External graphic panel
  *
  * @author Johann Sorel
+ * @author Quentin Boileau (Geomatys)
  * @module pending
  */
 public class JExternalGraphicPane extends StyleElementEditor<ExternalGraphic> {
@@ -70,6 +71,7 @@ public class JExternalGraphicPane extends StyleElementEditor<ExternalGraphic> {
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
                 if(PropertyValueEditor.PROP_VALUE.equals(evt.getPropertyName())){
+                    guessMimeType();
                     guiPreview.parse(create());
                 }
             }
@@ -111,25 +113,32 @@ public class JExternalGraphicPane extends StyleElementEditor<ExternalGraphic> {
 
     @Override
     public ExternalGraphic create() {
-        URL url = null;
-        url = (URL)guiURL.getValue();
-        if(url!=null){
-            //guess mimeType
-            try {
-                File candidate = new File(url.toURI());
-                if (candidate.isFile()) {
-                    String name = candidate.getName();
-                    String ext = name.substring(name.lastIndexOf('.')+1);
-                    guiMime.setText("image/"+ext.toLowerCase());
-                }
-            } catch (URISyntaxException ex) {
-                Exceptions.printStackTrace(ex);
-            }
+        final URL url = (URL) guiURL.getValue();
+        if (url != null) {
             external = getStyleFactory().externalGraphic(url, guiMime.getText());
-        }else{
+        } else {
             external = null;
         }
         return external;
+    }
+
+    private void guessMimeType() {
+        final URL url = (URL) guiURL.getValue();
+
+        String mimeType = null;
+        if (url != null) {
+            try {
+                String ext = IOUtilities.extension(url);
+                if ("svg".equalsIgnoreCase(ext)) {
+                    mimeType = "image/svg";
+                } else {
+                    mimeType = ImageIOUtilities.fileExtensionToMimeType(ext);
+                }
+            } catch (IOException ex) {
+                Exceptions.printStackTrace(ex);
+            }
+        }
+        guiMime.setText(mimeType);
     }
     
     @Override

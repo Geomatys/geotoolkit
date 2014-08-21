@@ -33,6 +33,7 @@ import org.opengis.style.Mark;
  *
  * @author Fabien Rétif (Geomatys)
  * @author Johann Sorel (Geomatys)
+ * @author Quentin Boileau (Geomatys)
  */
 public class JGraphicalSymbolPane extends StyleElementEditor<GraphicalSymbol> {
 
@@ -41,6 +42,8 @@ public class JGraphicalSymbolPane extends StyleElementEditor<GraphicalSymbol> {
     private final JTabbedPane guiTabs = new JTabbedPane();
     
     private MapLayer layer = null;
+    private Mark currentMark = null;
+    private ExternalGraphic currentExtGraphic = null;
 
     /**
      * Creates new form JGraphicalSymbolPane
@@ -54,8 +57,8 @@ public class JGraphicalSymbolPane extends StyleElementEditor<GraphicalSymbol> {
         guiTabs.addTab(MessageBundle.getString("external"), guiExternalGraphicPane);
         guiTabs.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
-                guiMarkPane.parse(null);
-                guiExternalGraphicPane.parse(null);
+                guiMarkPane.parse(currentMark);
+                guiExternalGraphicPane.parse(currentExtGraphic);
             }
         });
 
@@ -88,11 +91,15 @@ public class JGraphicalSymbolPane extends StyleElementEditor<GraphicalSymbol> {
      */
     @Override
     public void parse(final GraphicalSymbol graphicalSymbol) {
+        this.currentMark = null;
+        this.currentExtGraphic = null;
 
         if (graphicalSymbol instanceof Mark) {
+            this.currentMark = (Mark) graphicalSymbol;
             guiTabs.setSelectedComponent(guiMarkPane);
             guiMarkPane.parse((Mark) graphicalSymbol);
         } else if (graphicalSymbol instanceof ExternalGraphic) {
+            this.currentExtGraphic = (ExternalGraphic) graphicalSymbol;
             guiTabs.setSelectedComponent(guiExternalGraphicPane);
             guiExternalGraphicPane.parse((ExternalGraphic) graphicalSymbol);
         } else {
@@ -107,10 +114,19 @@ public class JGraphicalSymbolPane extends StyleElementEditor<GraphicalSymbol> {
      */
     @Override
     public GraphicalSymbol create() {
-        GraphicalSymbol symbol = guiExternalGraphicPane.create();
-        if (symbol == null) {
-            symbol = guiMarkPane.create();
+        int tabIdx = guiTabs.getSelectedIndex();
+
+        GraphicalSymbol symbol = null;
+        switch (tabIdx) {
+            case 0 : symbol = guiMarkPane.create(); break;
+            case 1 : symbol = guiExternalGraphicPane.create(); break;
         }
+
+        if (symbol == null) {
+            //use default mark
+            symbol = getStyleFactory().mark();
+        }
+
         return symbol;
     }
     
