@@ -19,11 +19,7 @@ package org.geotoolkit.referencing;
 import java.awt.Dimension;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 import org.apache.sis.geometry.DirectPosition2D;
@@ -636,6 +632,26 @@ public final class ReferencingUtilities {
         }else{
             lst.add(crs);
         }
+    }
+
+    /**
+     * Decompose CRS and return each sub-crs with dimension index.
+     * @param crs
+     * @return Map of index and sub-crs
+     */
+    public static Map<Integer, CoordinateReferenceSystem> indexedDecompose(CoordinateReferenceSystem crs) {
+        final TreeMap<Integer, CoordinateReferenceSystem> result = new TreeMap<>();
+        int index = 0;
+        CoordinateReferenceSystem crsPart;
+        CoordinateSystem csPart;
+        final List<CoordinateReferenceSystem> crsParts = ReferencingUtilities.decompose(crs);
+        for (int j = 0; j < crsParts.size(); j++) {
+            crsPart = crsParts.get(j);
+            csPart = crsPart.getCoordinateSystem();
+            result.put(index, crsPart);
+            index += csPart.getDimension();
+        }
+        return result;
     }
 
     /**
