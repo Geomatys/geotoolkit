@@ -17,6 +17,7 @@
 package org.geotoolkit.process.coverage.isoline2;
 
 import org.geotoolkit.coverage.CoverageReference;
+import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
@@ -74,10 +75,17 @@ public class IsolineDescriptor2 extends AbstractProcessDescriptor {
     public static final ParameterDescriptor<double[]> INTERVALS =
             new DefaultParameterDescriptor("inIntervals", IN_INTERVAL_PARAM_REMARKS, double[].class, null, true);
 
+    /**
+     * Optional - reader parameter to read just a part of coverage
+     */
+    public static final ParameterDescriptor<GridCoverageReadParam> READ_PARAM =
+            new DefaultParameterDescriptor("readParam", "Coverage reading parameters.",
+                    GridCoverageReadParam.class, null, false);
+
      /**Input parameters */
     public static final ParameterDescriptorGroup INPUT_DESC =
             new DefaultParameterDescriptorGroup("InputParameters",
-            new GeneralParameterDescriptor[]{COVERAGE_REF, FEATURE_STORE, FEATURE_NAME, INTERVALS});
+            new GeneralParameterDescriptor[]{COVERAGE_REF, READ_PARAM, FEATURE_STORE, FEATURE_NAME, INTERVALS});
 
     /*
      * FeatureCollection of isoline

@@ -39,6 +39,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.*;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureStore;
@@ -95,6 +96,7 @@ public class Isoline2 extends AbstractProcess {
     @Override
     protected void execute() throws ProcessException {
         final CoverageReference coverageRef = value(COVERAGE_REF, inputParameters);
+        final GridCoverageReadParam readParam = value(READ_PARAM, inputParameters);
         FeatureStore featureStore = value(FEATURE_STORE, inputParameters);
         final String featureTypeName = value(FEATURE_NAME, inputParameters);
         intervals = value(INTERVALS, inputParameters);
@@ -118,17 +120,21 @@ public class Isoline2 extends AbstractProcess {
             } else {
                 final MathTransform gridtoCRS = gridgeom.getGridToCRS(PixelInCell.CELL_CENTER);
 
-                final Object obj = reader.getInput();
-                final RenderedImage image;
-                if(obj instanceof RenderedImage){
-                    image = (RenderedImage)obj;
-                }else if(obj instanceof ImageReader){
-                    image = ((ImageReader)obj).read(imgIndex);
-                } else if (obj instanceof ImageInputStream) {
-                    final ImageReader imgReader = XImageIO.getReader(obj, false, false);
-                    image = imgReader.read(imgIndex);
-                } else{
-                    final GridCoverage2D coverage = (GridCoverage2D) reader.read(coverageRef.getImageIndex(), null);
+                RenderedImage image = null;
+                if (readParam == null) {
+                    final Object obj = reader.getInput();
+                    if (obj instanceof RenderedImage) {
+                        image = (RenderedImage) obj;
+                    } else if (obj instanceof ImageReader) {
+                        image = ((ImageReader) obj).read(imgIndex);
+                    } else if (obj instanceof ImageInputStream) {
+                        final ImageReader imgReader = XImageIO.getReader(obj, false, false);
+                        image = imgReader.read(imgIndex);
+                    }
+                }
+
+                if (image == null) {
+                    final GridCoverage2D coverage = (GridCoverage2D) reader.read(coverageRef.getImageIndex(), readParam);
                     image = coverage.getRenderedImage();
                 }
 
