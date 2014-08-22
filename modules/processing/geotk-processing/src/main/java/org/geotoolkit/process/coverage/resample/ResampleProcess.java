@@ -104,7 +104,7 @@ public class ResampleProcess extends AbstractProcess {
     }
 
     public ResampleProcess(GridCoverage2D coverage, CoordinateReferenceSystem targetCrs,
-            GridGeometry2D gridGeom, InterpolationCase interpolation, double[] background) {
+                           GridGeometry gridGeom, InterpolationCase interpolation, double[] background) {
         super(INSTANCE, asParameters(coverage, targetCrs, gridGeom, interpolation, background));
     }
 
@@ -113,7 +113,7 @@ public class ResampleProcess extends AbstractProcess {
     }
 
     private static ParameterValueGroup asParameters(GridCoverage2D coverage, CoordinateReferenceSystem targetCrs,
-            GridGeometry2D gridGeom, InterpolationCase interpolation, double[] background){
+            GridGeometry gridGeom, InterpolationCase interpolation, double[] background){
         final ParameterValueGroup params = ResampleDescriptor.INPUT_DESC.createValue();
         ParametersExt.getOrCreateValue(params, IN_COVERAGE.getName().getCode()).setValue(coverage);
         if(targetCrs!=null){
