@@ -15,7 +15,7 @@
  *    Lesser General Public License for more details.
  */
 
-package org.geotoolkit.display2d.ext.isoline;
+package org.geotoolkit.display2d.ext.isoline.graphic;
 
 import java.awt.Image;
 import java.util.ArrayList;
