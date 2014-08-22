@@ -64,7 +64,7 @@ public class CachedRasterSymbolizer extends CachedSymbolizer<RasterSymbolizer>{
      * {@inheritDoc }
      */
     @Override
-    protected void evaluate() {
+    public void evaluate() {
         if(!isNotEvaluated) return;
 
         if(!evaluateComposite()){
