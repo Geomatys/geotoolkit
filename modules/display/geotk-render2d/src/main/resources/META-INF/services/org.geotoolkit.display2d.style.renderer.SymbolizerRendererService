@@ -6,3 +6,4 @@ org.geotoolkit.display2d.style.renderer.DefaultRasterSymbolizerRendererService
 org.geotoolkit.display2d.ext.cellular.CellRendererService
 org.geotoolkit.display2d.ext.dimrange.DimRangeRendererService
 org.geotoolkit.display2d.ext.pattern.PatternRendererService
+org.geotoolkit.display2d.ext.isoline.symbolizer.IsolineSymbolizerRendererService

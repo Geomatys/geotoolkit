@@ -13,3 +13,4 @@ org.geotoolkit.gui.swing.style.symbolizer.JRasterSymbolizerPane
 
 # extension editors
 org.geotoolkit.gui.swing.style.symbolizer.JCellSymbolizerPane
+org.geotoolkit.gui.swing.style.symbolizer.JIsolineSymbolizerPane
