@@ -18,10 +18,8 @@ package org.geotoolkit.coverage.postgresql;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Image;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
-import java.awt.image.ColorModel;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.awt.image.WritableRaster;
@@ -32,11 +30,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.TimeZone;
+import java.util.*;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.RejectedExecutionHandler;
@@ -48,8 +42,9 @@ import javax.measure.unit.Unit;
 import javax.swing.ProgressMonitor;
 import net.iharder.Base64;
 import org.apache.sis.measure.NumberRange;
+import org.apache.sis.referencing.operation.transform.TransferFunction;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.coverage.AbstractCoverageReference;
+import org.apache.sis.util.ObjectConverters;
 import org.geotoolkit.coverage.AbstractPyramidalCoverageReference;
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.CoverageStoreContentEvent;
@@ -58,25 +53,29 @@ import org.geotoolkit.coverage.GridMosaic;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.Pyramid;
 import org.geotoolkit.coverage.PyramidSet;
-import org.geotoolkit.coverage.PyramidalCoverageReference;
-import org.geotoolkit.coverage.PyramidalModelReader;
 import org.geotoolkit.coverage.PyramidalModelWriter;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.CoverageStoreException;
-import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.coverage.postgresql.epsg.PGEPSGWriter;
 import org.geotoolkit.coverage.wkb.WKBRasterConstants;
 import org.geotoolkit.coverage.wkb.WKBRasterWriter;
+import org.geotoolkit.internal.InternalUtilities;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.temporal.object.TemporalUtilities;
+import org.geotoolkit.util.StringUtilities;
 import org.geotoolkit.version.Version;
 import org.opengis.coverage.SampleDimensionType;
 import org.geotoolkit.feature.type.Name;
 import org.opengis.geometry.DirectPosition;
+import org.opengis.metadata.content.TransferFunctionType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.cs.CoordinateSystem;
+import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.util.FactoryException;
+
+import static org.geotoolkit.coverage.xmlstore.XMLCategory.FUNCTION_EXPONENTIAL;
+import static org.geotoolkit.coverage.xmlstore.XMLCategory.FUNCTION_LINEAR;
 
 /**
  *
@@ -436,7 +435,7 @@ public class PGCoverageReference extends AbstractPyramidalCoverageReference {
 
     @Override
     public List<GridSampleDimension> getSampleDimensions() throws DataStoreException{
-        final List<GridSampleDimension> dimensions = new LinkedList<GridSampleDimension>();
+        final List<GridSampleDimension> dimensions = new LinkedList<>();
 
         boolean versionSupport = isVersionColumnExist();
 
@@ -458,14 +457,14 @@ public class PGCoverageReference extends AbstractPyramidalCoverageReference {
 
             final StringBuilder query = new StringBuilder();
             if(versionSupport) {
-                query.append("SELECT \"id\",\"version\",\"indice\",\"description\",\"dataType\",\"unit\",\"noData\",\"min\",\"max\" ");
+                query.append("SELECT \"id\",\"version\",\"indice\",\"description\",\"dataType\",\"unit\"");
                 query.append("FROM ").append(pgstore.encodeTableName("Band"));
                 query.append(" WHERE ");
                 query.append("\"layerId\"=").append(Integer.valueOf(layerId));
                 query.append(" AND \"version\" LIKE \'").append(versionStr).append("\' ");
                 query.append("ORDER BY \"indice\" ASC");
             } else {
-                query.append("SELECT \"id\",\"indice\",\"description\",\"dataType\",\"unit\",\"noData\",\"min\",\"max\" ");
+                query.append("SELECT \"id\",\"indice\",\"description\",\"dataType\",\"unit\"");
                 query.append("FROM ").append(pgstore.encodeTableName("Band"));
                 query.append(" WHERE ");
                 query.append("\"layerId\"=").append(Integer.valueOf(layerId));
@@ -476,39 +475,62 @@ public class PGCoverageReference extends AbstractPyramidalCoverageReference {
             rs = stmt.executeQuery(query.toString());
 
             while (rs.next()) {
+                final int sid = rs.getInt("id");
                 final int indice = rs.getInt("indice");
                 final String description = rs.getString("description");
                 final SampleDimensionType type = WKBRasterConstants.getDimensionType(rs.getInt("dataType"));
-                final double min = rs.getDouble("min");
-                final double max = rs.getDouble("max");
                 final String unitStr = rs.getString("unit");
                 Unit unit = null;
                 if(unitStr != null && !unitStr.isEmpty()) {
                     unit = Unit.valueOf(unitStr);
                 }
-                Array noDataArray = rs.getArray("noData");
-                final Float[] noData = (Float[])noDataArray.getArray();
-                double[] pNoData = null;
-                if (noData != null && noData.length > 0) {
-                    pNoData = new double[noData.length];
-                    for (int j = 0; j < noData.length; j++) {
-                        pNoData[j] = noData[j].doubleValue();
+
+                //read categories
+                final List<Category> categories = new ArrayList<Category>();
+                final StringBuilder catQuery = new StringBuilder();
+                catQuery.append("SELECT \"id\",\"band\",\"name\",\"lower\",\"upper\",\"c0\",\"c1\",\"function\",\"colors\" ");
+                catQuery.append("FROM ").append(pgstore.encodeTableName("Category"));
+                catQuery.append(" WHERE ");
+                catQuery.append("\"band\"=").append(Integer.valueOf(sid));
+                stmt = cnx.createStatement();
+                final ResultSet catrs = stmt.executeQuery(catQuery.toString());
+                while(catrs.next()){
+                    final String name = catrs.getString("name");
+                    final double lower = catrs.getDouble("lower");
+                    final double upper = catrs.getDouble("upper");
+                    final double c0 = catrs.getDouble("c0");
+                    final double c1 = catrs.getDouble("c1");
+                    final String function = catrs.getString("function");
+                    final String[] colors = catrs.getString("colors").split(",");
+
+                    final TransferFunction f = new TransferFunction();
+                    TransferFunctionType functionType = TransferFunctionType.valueOf(function);
+                    if (functionType != null) {
+                        f.setType(functionType);
+                    } else{
+                        throw new IllegalArgumentException("Unsupported transform : "+function);
                     }
+                    f.setScale(c1);
+                    f.setOffset(c0);
+
+                    final MathTransform1D sampleToGeophysics = f.getTransform();
+
+                    final Color[] cols = new Color[colors.length];
+                    for(int i=0;i<cols.length;i++){
+                        cols[i] = new java.awt.Color(InternalUtilities.parseColor(colors[i]), true);
+                    }
+
+                    final Category cat;
+                    if(Double.isNaN(lower) || lower == upper){
+                        cat = new Category(name, cols[0], lower);
+                    }else{
+                        final NumberRange range = NumberRange.create(lower, true, upper, false);
+                        cat = new Category(name, cols, range, sampleToGeophysics);
+                    }
+                    categories.add(cat);
                 }
 
-                final int categoriesSize = (pNoData != null && pNoData.length > 0) ? (pNoData.length + 1) : 2;
-
-                final Category[] categories = new Category[categoriesSize];
-                categories[0] = new Category("data", Color.BLACK, NumberRange.create(min, true, max, true));
-                if (pNoData != null && pNoData.length > 0) {
-                    for (int i = 0; i < pNoData.length; i++) {
-                        categories[i+1] = new Category(Vocabulary.formatInternational(Vocabulary.Keys.NODATA) + String.valueOf(i), new Color(0,0,0,0), pNoData[i]);
-                    }
-                } else {
-                    categories[1] = new Category(Vocabulary.formatInternational(Vocabulary.Keys.NODATA), new Color(0,0,0,0), Double.NaN);
-                }
-
-                final GridSampleDimension dim = new GridSampleDimension(description, categories, unit);
+                final GridSampleDimension dim = new GridSampleDimension(description, categories.toArray(new Category[categories.size()]), unit);
                 dimensions.add(indice, dim);
             }
 
@@ -529,8 +551,9 @@ public class PGCoverageReference extends AbstractPyramidalCoverageReference {
             cnx.setReadOnly(false);
 
             final StringBuilder query = new StringBuilder();
-            query.append("SELECT \"version\" ");
-            query.append("FROM ").append(pgstore.encodeTableName("Band"));
+            query.append( "SELECT count(column_name) FROM INFORMATION_SCHEMA.COLUMNS WHERE table_schema = ");
+            query.append("'"+pgstore.getDatabaseSchema()+"'");
+            query.append("AND table_name = 'Band' AND column_name = 'version'");
 
             stmt = cnx.createStatement();
             rs = stmt.executeQuery(query.toString());
@@ -541,21 +564,6 @@ public class PGCoverageReference extends AbstractPyramidalCoverageReference {
         } finally {
             pgstore.closeSafe(cnx, stmt, rs);
         }
-    }
-
-    /**
-     * Postgres do not like this value.
-     * Caused by : ERROR: "4.9E-324" is out of range for type double precision
-     * org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2103)
-     *
-     * @param d
-     * @return
-     */
-    private static double fixCloseToZero(double d){
-        if(d == 4.9E-324){
-            return 0.0;
-        }
-        return d;
     }
 
     @Override
@@ -601,78 +609,121 @@ public class PGCoverageReference extends AbstractPyramidalCoverageReference {
                     } else {
                         versionStr = PGVersionControl.UNSET;
                     }
+
                     final String description = dim.getDescription() != null ? dim.getDescription().toString() : "";
                     final String unit = dim.getUnits() != null ? dim.getUnits().toString() : "";
-                    double min = Double.isInfinite(dim.getMinimumValue()) ? minDimValues[i] : dim.getMinimumValue();
-                    double max = Double.isInfinite(dim.getMaximumValue()) ? maxDimValues[i] : dim.getMaximumValue();
-
-                    /*
-                     * Hack to find real min/max based on categories
-                     */
-                    final List<Category> categories = dim.getCategories();
-                    if (categories != null && !categories.isEmpty()) {
-                        for (Category category : categories) {
-                            if (description.equals(category.getName().toString())) {
-                                //hack if category has same name as sampleDimension this is a data category
-                                min = category.getRange().getMinDouble();
-                                max = category.getRange().getMaxDouble();
-                            }
-                        }
-                    }
-
-                    min = fixCloseToZero(min);
-                    max = fixCloseToZero(max);
-
-                    final double[] pNoData = dim.getNoDataValues();
-                    Double[] noData = new Double[0];
-                    if (pNoData != null) {
-                        noData = new Double[pNoData.length];
-                        for (int j = 0; j < noData.length; j++) {
-                            noData[j] = Double.valueOf(pNoData[j]);
-                        }
-                    }
 
                     final StringBuilder query = new StringBuilder();
                     if (versionSupport) {
                         query.append("INSERT INTO ");
                         query.append(pgstore.encodeTableName("Band"));
-                        query.append(" (\"layerId\",\"version\",\"indice\",\"description\",\"dataType\",\"unit\",\"noData\", \"min\", \"max\") ");
-                        query.append("VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                        query.append(" (\"layerId\",\"version\",\"indice\",\"description\",\"dataType\",\"unit\") ");
+                        query.append("VALUES (?, ?, ?, ?, ?, ?)");
 
-                        pstmt = cnx.prepareStatement(query.toString());
+                        pstmt = cnx.prepareStatement(query.toString(), Statement.RETURN_GENERATED_KEYS);
 
-                        pstmt.setInt(   1, layerId);
+                        pstmt.setInt(1, layerId);
                         pstmt.setString(2, versionStr);
-                        pstmt.setInt(   3, i);
+                        pstmt.setInt(3, i);
                         pstmt.setString(4, description);
-                        pstmt.setInt(   5, (WKBRasterConstants.getPixelType(dim.getSampleDimensionType())) );
+                        pstmt.setInt(5, (WKBRasterConstants.getPixelType(dim.getSampleDimensionType())));
                         pstmt.setString(6, unit);
-                        pstmt.setArray( 7, cnx.createArrayOf("float8", noData));
-                        pstmt.setDouble(8, min);
-                        pstmt.setDouble(9, max);
 
                     } else {
                         query.append("INSERT INTO ");
                         query.append(pgstore.encodeTableName("Band"));
-                        query.append(" (\"layerId\",\"indice\",\"description\",\"dataType\",\"unit\",\"noData\", \"min\", \"max\") ");
-                        query.append("VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+                        query.append(" (\"layerId\",\"indice\",\"description\",\"dataType\",\"unit\") ");
+                        query.append("VALUES (?, ?, ?, ?, ?)");
 
-                        pstmt = cnx.prepareStatement(query.toString());
+                        pstmt = cnx.prepareStatement(query.toString(), Statement.RETURN_GENERATED_KEYS);
 
-                        pstmt.setInt(   1, layerId);
-                        pstmt.setInt(   2, i);
+                        pstmt.setInt(1, layerId);
+                        pstmt.setInt(2, i);
                         pstmt.setString(3, description);
-                        pstmt.setInt(   4, (WKBRasterConstants.getPixelType(dim.getSampleDimensionType())) );
+                        pstmt.setInt(4, (WKBRasterConstants.getPixelType(dim.getSampleDimensionType())));
                         pstmt.setString(5, unit);
-                        pstmt.setArray( 6, cnx.createArrayOf("float8", noData));
-                        pstmt.setDouble(7, min);
-                        pstmt.setDouble(8, max);
+                    }
+                    pstmt.executeUpdate();
+
+                    int sid = 0;
+                    final ResultSet keyrs = pstmt.getGeneratedKeys();
+                    if (keyrs.next()) {
+                        sid = keyrs.getInt(1);
+                    }
+
+                    //create the categories
+                    List<Category> categories = dim.getCategories();
+                    if (categories == null || categories.isEmpty()) {
+                        //use the statistic analyze to build categories.
+                        categories = new ArrayList<>();
+                        final double[] pNoData = dim.getNoDataValues();
+                        Double[] noData;
+                        if (pNoData != null) {
+                            noData = new Double[pNoData.length];
+                            for (int j = 0; j < noData.length; j++) {
+                                noData[j] = pNoData[j];
+                            }
+                        }
+
+                        double min = Double.isInfinite(dim.getMinimumValue()) ? minDimValues[i] : dim.getMinimumValue();
+                        double max = Double.isInfinite(dim.getMaximumValue()) ? maxDimValues[i] : dim.getMaximumValue();
+
+                        categories.add(new Category("data", Color.BLACK, NumberRange.create(min, true, max, true)));
+                        if (pNoData != null && pNoData.length > 0) {
+                            for (int k = 0; k < pNoData.length; k++) {
+                                categories.add(new Category(Vocabulary.formatInternational(Vocabulary.Keys.NODATA) + String.valueOf(k), new Color(0,0,0,0), pNoData[k]));
+                            }
+                        }
                     }
 
 
+                    for (Category category : categories) {
+
+                        final double c0;
+                        final double c1;
+                        final String function;
+                        final String[] colors;
+                        double min = category.getRange().getMinDouble();
+                        double max = category.getRange().getMaxDouble();
+                        min = fixCloseToZero(min);
+                        max = fixCloseToZero(max);
+
+                        final Color[] cols = category.getColors();
+                        colors = new String[cols.length];
+                        for(int k=0;k<cols.length;k++){
+                            colors[k] = colorToString(cols[k]);
+                        }
+
+                        final MathTransform1D trs = category.getSampleToGeophysics();
+                        if (trs == null) {
+                            function = TransferFunctionType.LINEAR.name();
+                            c0 = 0;
+                            c1 = 1;
+                        } else {
+                            final TransferFunction transfertFunction = new TransferFunction();
+                            transfertFunction.setTransform(trs);
+                            function = transfertFunction.getType().name();
+                            c0 = transfertFunction.getOffset();
+                            c1 = transfertFunction.getScale();
+                        }
+
+                        final StringBuilder catQuery = new StringBuilder("INSERT INTO ");
+                        catQuery.append(pgstore.encodeTableName("Category"));
+                        catQuery.append(" (\"band\",\"name\",\"lower\",\"upper\",\"c0\",\"c1\",\"function\",\"colors\") ");
+                        catQuery.append("VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
 
 
-                    pstmt.executeUpdate();
+                        PreparedStatement catstmt = cnx.prepareStatement(catQuery.toString());
+                        catstmt.setInt(   1, sid);
+                        catstmt.setString(2, String.valueOf(category.getName()));
+                        catstmt.setDouble(3, min);
+                        catstmt.setDouble(4, max);
+                        catstmt.setDouble(5, c0);
+                        catstmt.setDouble(6, c1);
+                        catstmt.setString(7, function);
+                        catstmt.setString(8, StringUtilities.toCommaSeparatedValues((Object[]) colors));
+                        catstmt.executeUpdate();
+                    }
                 }
 
             }catch(SQLException ex){
@@ -681,6 +732,51 @@ public class PGCoverageReference extends AbstractPyramidalCoverageReference {
                 pgstore.closeSafe(cnx, pstmt, rs);
             }
         }
+    }
+
+    /**
+     * Postgres do not like this value.
+     * Caused by : ERROR: "4.9E-324" is out of range for type double precision
+     * org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2103)
+     *
+     * @param d
+     * @return
+     */
+    private static double fixCloseToZero(double d){
+        if(d == 4.9E-324){
+            return 0.0;
+        }
+        return d;
+    }
+
+    /**
+     * Color to hexadecimal.
+     *
+     * @param color
+     * @return color in hexadecimal form
+     */
+    private static String colorToString(final Color color) {
+        if (color == null) {
+            return null;
+        }
+
+        String redCode = Integer.toHexString(color.getRed());
+        String greenCode = Integer.toHexString(color.getGreen());
+        String blueCode = Integer.toHexString(color.getBlue());
+        if (redCode.length() == 1)      redCode = "0" + redCode;
+        if (greenCode.length() == 1)    greenCode = "0" + greenCode;
+        if (blueCode.length() == 1)     blueCode = "0" + blueCode;
+
+        final String colorCode;
+        int alpha = color.getAlpha();
+        if(alpha != 255){
+            String alphaCode = Integer.toHexString(alpha);
+            if (alphaCode.length() == 1) alphaCode = "0" + alphaCode;
+            colorCode = "#" + alphaCode + redCode + greenCode + blueCode;
+        }else{
+            colorCode = "#" + redCode + greenCode + blueCode;
+        }
+        return colorCode.toUpperCase();
     }
 
 }

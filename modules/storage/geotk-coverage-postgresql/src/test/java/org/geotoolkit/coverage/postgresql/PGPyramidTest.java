@@ -25,23 +25,20 @@ import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.Map;
-import java.util.Properties;
-import java.util.TimeZone;
+import java.util.*;
+
 import org.apache.sis.geometry.GeneralDirectPosition;
+import org.apache.sis.measure.NumberRange;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.coverage.CoverageStore;
-import org.geotoolkit.coverage.CoverageStoreFactory;
-import org.geotoolkit.coverage.CoverageStoreFinder;
-import org.geotoolkit.coverage.GridMosaic;
-import org.geotoolkit.coverage.Pyramid;
-import org.geotoolkit.coverage.PyramidalCoverageReference;
+import org.geotoolkit.coverage.*;
 import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.resources.Vocabulary;
 import org.junit.Test;
 import org.geotoolkit.feature.type.Name;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 
 import static org.geotoolkit.coverage.postgresql.PGCoverageStoreFactory.*;
@@ -50,8 +47,13 @@ import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.version.VersionControl;
 import org.geotoolkit.version.VersioningException;
 import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import org.junit.Assume;
 import org.junit.BeforeClass;
+
+import javax.measure.unit.SI;
 
 /**
  *
@@ -176,8 +178,95 @@ public class PGPyramidTest {
         assertTrue(cref.getPyramidSet().getPyramids().isEmpty());
         
     }
-        
-    
+
+    @Test
+    public void testSampleDimensions() throws DataStoreException, VersioningException, IOException, TransformException {
+        reload();
+
+        final GeneralDirectPosition upperLeft = new GeneralDirectPosition(CRS_4326);
+        final Dimension dimension = new Dimension(20, 20);
+        upperLeft.setOrdinate(0, -90);
+        upperLeft.setOrdinate(1, +180);
+        PyramidalCoverageReference cref;
+        Pyramid pyramid;
+        GridMosaic mosaic;
+        BufferedImage image;
+
+        final Name name = new DefaultName(null, "sampleTestLayer");
+        store.create(name);
+
+        //create version 1 -----------------------------------------------------
+        cref = (PyramidalCoverageReference) store.getCoverageReference(name);
+        assertNotNull(cref);
+
+        //test create pyramid
+        pyramid = cref.createPyramid(CRS_4326);
+        assertEquals(1,cref.getPyramidSet().getPyramids().size());
+
+        final List<GridSampleDimension> dimensions = new LinkedList<>();
+        // dim 1
+        final Category dataCat = new Category("data", new Color[]{Color.WHITE, Color.BLACK},
+                NumberRange.create(1, true, 100, true), NumberRange.create(-50.0, true, 45.6, true));
+        final Category nodataCat = new Category(
+                Vocabulary.formatInternational(Vocabulary.Keys.NODATA), new Color(0,0,0,0), Double.NaN);
+        final GridSampleDimension dim1 = new GridSampleDimension("dim0",new Category[]{dataCat,nodataCat}, SI.CELSIUS);
+        dimensions.add(0, dim1);
+
+        // dim 2
+        final Category dataCat2 = new Category("data", new Color[]{Color.WHITE, Color.BLACK}, 1, 55, 2.0, 0.0);
+        final Category nodataCat2 = Category.NODATA;
+        final GridSampleDimension dim2 = new GridSampleDimension("dim1",new Category[]{dataCat2,nodataCat2}, SI.METRE);
+        dimensions.add(1, dim2);
+
+        //test create SampleDimensions
+        cref.setSampleDimensions(dimensions);
+
+        List<GridSampleDimension> resultSamples = cref.getSampleDimensions();
+        assertNotNull(resultSamples);
+        assertEquals(2, resultSamples.size());
+
+        GridSampleDimension resultDim1 = resultSamples.get(0);
+        GridSampleDimension resultDim2 = resultSamples.get(1);
+        assertNotNull(resultDim1);
+        assertNotNull(resultDim2);
+
+        assertEquals("dim0", resultDim1.getDescription().toString());
+        assertEquals("dim1", resultDim2.getDescription().toString());
+        assertEquals(SI.CELSIUS, resultDim1.getUnits());
+        assertEquals(SI.METRE, resultDim2.getUnits());
+
+
+        List<Category> resultCat1 = resultDim1.getCategories();
+        List<Category> resultCat2 = resultDim2.getCategories();
+        assertEquals(2, resultCat1.size());
+        assertEquals(2, resultCat2.size());
+        assertCategoryEquals(dataCat, resultCat1);
+        assertCategoryEquals(nodataCat, resultCat1);
+        assertCategoryEquals(dataCat2, resultCat2);
+        assertCategoryEquals(nodataCat2, resultCat2);
+    }
+
+    private void assertCategoryEquals(Category expected, List<Category> result) {
+        boolean found = false;
+        for (Category resultCategory : result) {
+            if (resultCategory.getName().toString().equals(expected.getName().toString())) {
+                assertArrayEquals(expected.getColors(), resultCategory.getColors());
+                assertEquals(expected.getSampleToGeophysics(), resultCategory.getSampleToGeophysics());
+
+                NumberRange<?> expectedRange = expected.getRange();
+                NumberRange<?> resultRange = resultCategory.getRange();
+
+                assertEquals(expectedRange.getMinDouble(), resultRange.getMinDouble(), 0.00000001);
+                assertEquals(expectedRange.getMaxDouble(), resultRange.getMaxDouble(), 0.00000001);
+                found = true;
+            }
+        }
+
+        if (!found) {
+            fail("Category "+expected.getName().toString()+" not found.");
+        }
+    }
+
     private static BufferedImage createImage(Dimension tileSize, Color color){
         final BufferedImage image = new BufferedImage(tileSize.width, tileSize.height, BufferedImage.TYPE_INT_ARGB);
         final Graphics2D g = image.createGraphics();

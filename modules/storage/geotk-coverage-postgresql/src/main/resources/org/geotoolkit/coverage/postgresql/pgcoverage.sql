@@ -6,20 +6,37 @@ CREATE TABLE "Layer"(
 );
 
 CREATE TABLE "Band"(
-  "id" serial NOT NULL,
-  "version" character varying(100),
-  "layerId" integer NOT NULL,
-  "indice" integer NOT NULL,
-  "description" character varying(500) NOT NULL,
-  "dataType" integer NOT NULL,
-  "unit" character varying(30) NOT NULL,
-  "noData" real[],
-  "min" double precision NOT NULL,
-  "max" double precision NOT NULL,
-  CONSTRAINT band_pk PRIMARY KEY (id , version ),
+  "id"          serial                  NOT NULL,
+  "version"     character varying(100),
+  "layerId"     integer                 NOT NULL,
+  "indice"      integer                 NOT NULL,
+  "description" character varying(500)  NOT NULL,
+  "dataType"    integer                 NOT NULL,
+  "unit"        character varying(30)   NOT NULL,
+  CONSTRAINT band_pk PRIMARY KEY (id),
   CONSTRAINT band_fk_layer FOREIGN KEY ("layerId")
       REFERENCES "Layer" (id) MATCH SIMPLE
       ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+CREATE TABLE "Category"(
+  "id"          serial            NOT NULL,
+  "band"        integer           NOT NULL,
+  "name"        character varying NOT NULL,
+  "lower"       double precision  NOT NULL,
+  "upper"       double precision  NOT NULL,
+  "c0"          double precision,
+  "c1"          double precision,
+  "function"    character varying NOT NULL,
+  "colors"      character varying,
+  CONSTRAINT category_pk PRIMARY KEY (id),
+  CONSTRAINT category_fk_band FOREIGN KEY ("band")
+      REFERENCES "Band" (id) MATCH SIMPLE
+      ON UPDATE CASCADE ON DELETE CASCADE,
+  CONSTRAINT "Categories_range" CHECK ("lower" <= "upper"),
+  CONSTRAINT "Categories_coefficients" CHECK
+                  ((("c0" IS     NULL) AND ("c1" IS     NULL)) OR
+                   (("c0" IS NOT NULL) AND ("c1" IS NOT NULL) AND ("c1" <> 0)))
 );
 
 CREATE TABLE "Pyramid"(
