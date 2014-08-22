@@ -42,6 +42,7 @@ public class JGraphicalSymbolPane extends StyleElementEditor<GraphicalSymbol> {
     private final JTabbedPane guiTabs = new JTabbedPane();
     
     private MapLayer layer = null;
+    private GraphicalSymbol oldGraphicalSymbol = null;
     private Mark currentMark = null;
     private ExternalGraphic currentExtGraphic = null;
 
@@ -91,6 +92,7 @@ public class JGraphicalSymbolPane extends StyleElementEditor<GraphicalSymbol> {
      */
     @Override
     public void parse(final GraphicalSymbol graphicalSymbol) {
+        this.oldGraphicalSymbol = graphicalSymbol;
         this.currentMark = null;
         this.currentExtGraphic = null;
 
@@ -123,8 +125,8 @@ public class JGraphicalSymbolPane extends StyleElementEditor<GraphicalSymbol> {
         }
 
         if (symbol == null) {
-            //use default mark
-            symbol = getStyleFactory().mark();
+            //use old graphic symbol
+            symbol = oldGraphicalSymbol;
         }
 
         return symbol;
