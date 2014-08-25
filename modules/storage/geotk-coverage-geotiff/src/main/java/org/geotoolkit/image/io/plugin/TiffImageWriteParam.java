@@ -24,6 +24,8 @@ import org.geotoolkit.image.io.SpatialImageWriteParam;
  * A specific implementation of {@link SpatialImageWriteParam} adapted with 
  * {@link TiffImageWriter} image writer use.
  *
+ * /!\ {@linkplain #setSourceBands(int[])} method will have no impact on image writing for now.
+ *
  * @author Remi Marechal (Geomatys).
  */
 public class TiffImageWriteParam extends SpatialImageWriteParam {
@@ -35,13 +37,5 @@ public class TiffImageWriteParam extends SpatialImageWriteParam {
         canWriteProgressive = false;
         canWriteTiles       = true;
         compressionTypes    = new String[]{"LZW", "PackBits"};
-    }
-
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
-    public void setSourceBands(final int[] sourceBands) {
-        throw new UnsupportedOperationException("Not implemented yet.");
     }
 }

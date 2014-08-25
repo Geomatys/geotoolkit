@@ -452,7 +452,11 @@ public class TiffImageWriter extends SpatialImageWriter {
     @Override
     public void write(final IIOMetadata streamMetadata, final IIOImage image, final ImageWriteParam param) throws IOException {
         ArgumentChecks.ensureNonNull("IIOImage image", image);
-        
+
+        if (param != null && param.getSourceBands() != null) {
+            LOGGER.log(Level.WARNING, "Tiff Image writer does not manage source band selection. ImageWriteParam.sourceBands parameter will be ignored.");
+        }
+
         assert headProperties == null;
         //-- a new distinct map for each layer --// 
         headProperties = new TreeMap<>();
