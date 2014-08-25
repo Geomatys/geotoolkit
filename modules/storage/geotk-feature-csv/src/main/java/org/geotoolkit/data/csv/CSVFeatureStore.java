@@ -33,27 +33,19 @@ import java.io.Writer;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
-import java.util.Set;
-import java.util.Date;
+import java.util.*;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
-import org.geotoolkit.data.AbstractFeatureStore;
-import org.geotoolkit.data.FeatureStoreFactory;
-import org.geotoolkit.data.FeatureStoreFinder;
-import org.geotoolkit.data.FeatureStoreRuntimeException;
-import org.geotoolkit.data.FeatureReader;
-import org.geotoolkit.data.FeatureWriter;
+import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.data.*;
 import org.geotoolkit.data.query.DefaultQueryCapabilities;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.data.query.QueryUtilities;
+import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.HintsPending;
 import org.geotoolkit.feature.type.DefaultName;
@@ -81,7 +73,9 @@ import org.geotoolkit.feature.type.GeometryDescriptor;
 import org.geotoolkit.feature.type.Name;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
+import org.opengis.filter.FilterFactory;
 import org.opengis.filter.identity.FeatureId;
+import org.opengis.filter.identity.Identifier;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
@@ -91,22 +85,29 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * CSV DataStore, holds a single feature type which name match the file name.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @author Alexis Manin (Geomatys)
  */
 public class CSVFeatureStore extends AbstractFeatureStore implements DataFileStore {
+
+    private static final Logger LOGGER = Logging.getLogger(CSVFeatureStore.class);
+
+    protected final FilterFactory FF = FactoryFinder.getFilterFactory(null);
 
     static final String BUNDLE_PATH = "org/geotoolkit/csv/bundle";
 
     public static final String COMMENT_STRING = "#";
 
-    private final ReadWriteLock RWLock = new ReentrantReadWriteLock();
-    private final ReadWriteLock TempLock = new ReentrantReadWriteLock();
+    private final ReadWriteLock fileLock = new ReentrantReadWriteLock();
 
     private final File file;
     private String name;
     private final char separator;
 
     private SimpleFeatureType featureType;
+
+    protected final Set<Identifier> deletedIds = new HashSet<>();
+    protected final Set<Identifier> updatedIds = new HashSet<>();
+    protected final Set<Identifier> addedIds   = new HashSet<>();
 
     public CSVFeatureStore(final File f, final String namespace, final char separator) throws MalformedURLException, DataStoreException{
         this(f,namespace,separator,null);
@@ -160,90 +161,87 @@ public class CSVFeatureStore extends AbstractFeatureStore implements DataFileSto
     }
 
     private synchronized void checkExist() throws DataStoreException{
-        if(featureType != null) return;
-
-        try{
-            RWLock.readLock().lock();
-            if(file.exists()){
-                featureType = readType();
-            }
-        }finally{
-            RWLock.readLock().unlock();
-        }
+        if(featureType == null) featureType = readType();
     }
 
     private File createWriteFile() throws MalformedURLException{
         return (File) IOUtilities.changeExtension(file, "wcsv");
     }
 
-    private SimpleFeatureType readType() throws DataStoreException{
-        final Scanner scanner;
-        try {
-            scanner = new Scanner(file);
+    private SimpleFeatureType readType() throws DataStoreException {
+        final String line;
+        fileLock.readLock().lock();
+        try (final Scanner scanner = new Scanner(file)) {
+            line = getNextLine(scanner);
         } catch (FileNotFoundException ex) {
-            throw new DataStoreException(ex);
+            LOGGER.log(Level.INFO, ex.getLocalizedMessage());
+            // File does not exists.
+            return null;
+        } finally {
+            fileLock.readLock().unlock();
         }
 
-        try {
-            //first use a Scanner to get each line
-            final String line = getNextLine(scanner);
-            if (line != null) {
-                final String[] fields = line.split("" + separator);
-                final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
-                ftb.setName(getDefaultNamespace(), name);
-                for (String field : fields) {
-                    final int dep = field.indexOf('(');
-                    final int fin = field.lastIndexOf(')');
+        if (line == null) {
+            return null;
+        }
 
-                    final Name fieldName;
-                    Class type = String.class;
-                    CoordinateReferenceSystem crs = null;
-                    if (dep > 0 && fin > dep) {
-                        fieldName = new DefaultName(getDefaultNamespace(), field.substring(0, dep));
-                        //there is a defined type
-                        final String name = field.substring(dep + 1, fin).toLowerCase();
-                        if ("integer".equalsIgnoreCase(name)) {
-                            type = Integer.class;
-                        } else if ("double".equalsIgnoreCase(name)) {
-                            type = Double.class;
-                        } else if ("string".equalsIgnoreCase(name)) {
-                            type = String.class;
-                        } else if ("date".equalsIgnoreCase(name)) {
-                            type = Date.class;
-                        } else if ("boolean".equalsIgnoreCase(name)) {
-                            type = Boolean.class;
-                        } else {
-                            try {
-                                //check if it's a geometry type
-                                crs = CRS.decode(name);
-                                type = Geometry.class;
-                            } catch (NoSuchAuthorityCodeException ex) {
-                                java.util.logging.Logger.getLogger(CSVFeatureStore.class.getName()).log(Level.SEVERE, null, ex);
-                            } catch (FactoryException ex) {
-                                java.util.logging.Logger.getLogger(CSVFeatureStore.class.getName()).log(Level.SEVERE, null, ex);
-                            }
-                        }
-                    } else {
-                        fieldName = new DefaultName(getDefaultNamespace(), field);
+        final String[] fields = line.split("" + separator);
+        final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
+        ftb.setName(getDefaultNamespace(), name);
+        for (String field : fields) {
+            final int dep = field.indexOf('(');
+            final int fin = field.lastIndexOf(')');
+
+            final Name fieldName;
+            Class type = String.class;
+            CoordinateReferenceSystem crs = null;
+            // Check non-empty parenthesis
+            if (dep > 0 && fin > dep + 1) {
+                fieldName = new DefaultName(getDefaultNamespace(), field.substring(0, dep));
+                //there is a defined type
+                final String name = field.substring(dep + 1, fin);
+                /* Check if it's a java lang class (number, string, etc.). If it's a fail, maybe it's just
+                 * because of the case, so we'll try to identify object manually.
+                 */
+                try {
+                    type = Class.forName("java.lang." + name);
+                } catch (Exception e) {
+                    if ("integer".equalsIgnoreCase(name)) {
+                        type = Integer.class;
+                    } else if ("double".equalsIgnoreCase(name)) {
+                        type = Double.class;
+                    } else if ("string".equalsIgnoreCase(name)) {
                         type = String.class;
-                    }
-
-                    if (crs == null) {
-                        //normal field
-                        ftb.add(fieldName, type);
+                    } else if ("date".equalsIgnoreCase(name)) {
+                        type = Date.class;
+                    } else if ("boolean".equalsIgnoreCase(name)) {
+                        type = Boolean.class;
                     } else {
-                        //geometry field
-                        ftb.add(fieldName, type, crs);
+                        try {
+                            //check if it's a geometry type
+                            crs = CRS.decode(name);
+                            type = Geometry.class;
+                        } catch (NoSuchAuthorityCodeException ex) {
+                            LOGGER.log(Level.SEVERE, null, ex);
+                        } catch (FactoryException ex) {
+                            LOGGER.log(Level.SEVERE, null, ex);
+                        }
                     }
                 }
-                return ftb.buildSimpleFeatureType();
-
             } else {
-                return null;
+                fieldName = new DefaultName(getDefaultNamespace(), field);
+                type = String.class;
             }
-        } finally {
-            scanner.close();
+
+            if (crs == null) {
+                //normal field
+                ftb.add(fieldName, type);
+            } else {
+                //geometry field
+                ftb.add(fieldName, type, crs);
+            }
         }
+        return ftb.buildSimpleFeatureType();
     }
 
     private String createHeader(final SimpleFeatureType type) throws DataStoreException{
@@ -259,10 +257,8 @@ public class CSVFeatureStore extends AbstractFeatureStore implements DataFileSto
             sb.append(desc.getName().getLocalPart());
             sb.append('(');
             final Class clazz = desc.getType().getBinding();
-            if(clazz.equals(Integer.class)){
-                sb.append("Integer");
-            }else if(clazz.equals(Double.class)){
-                sb.append("Double");
+            if(Number.class.isAssignableFrom(clazz)) {
+                sb.append(clazz.getSimpleName());
             }else if(clazz.equals(String.class)){
                 sb.append("String");
             }else if(clazz.equals(Date.class)){
@@ -286,45 +282,33 @@ public class CSVFeatureStore extends AbstractFeatureStore implements DataFileSto
     }
 
     private void writeType(final SimpleFeatureType type) throws DataStoreException {
+        defaultNamespace = type.getName().getNamespaceURI();
+        Parameters.getOrCreate(CSVFeatureStoreFactory.NAMESPACE, parameters).setValue(defaultNamespace);
+        name = type.getName().getLocalPart();
 
-        Writer output = null;
-        try {
-            if(!file.exists()){
-                file.createNewFile();
-            }
-            output = new BufferedWriter(new FileWriter(file));
-            defaultNamespace = type.getName().getNamespaceURI();
-            Parameters.getOrCreate(CSVFeatureStoreFactory.NAMESPACE, parameters).setValue(defaultNamespace);
-            name = type.getName().getLocalPart();
+        fileLock.writeLock().lock();
+        try (final Writer output = new BufferedWriter(new FileWriter(file))) {
+
             output.write(createHeader(type));
+
         } catch (IOException ex) {
             throw new DataStoreException(ex);
-        }finally{
-            if(output != null){
-                try{
-                    output.flush();
-                    output.close();
-                }catch (IOException ex) {
-                    throw new DataStoreException(ex);
-                }
-            }
+        } finally {
+            fileLock.writeLock().unlock();
         }
     }
 
     @Override
     public long getCount(final Query query) throws DataStoreException {
         if(QueryUtilities.queryAll(query)) {
-            //ni filter or start index, just count number of line avoid reading features.
-            RWLock.readLock().lock();
-
-            BufferedReader reader = null;
-            try {
-                reader = new BufferedReader(new FileReader(file));
+            //Neither filter nor start index, just count number of lines to avoid reading features.
+            fileLock.readLock().lock();
+            try (final BufferedReader reader = new BufferedReader(new FileReader(file))) {
                 long cnt = -1; //avoid counting the header line
                 String line;
                 while ((line = reader.readLine()) != null) {
-                    if(!line.isEmpty() && !line.startsWith(COMMENT_STRING)){
-                        //avoid potential last empty lines
+                    if (!line.isEmpty() && !line.startsWith(COMMENT_STRING)) {
+                        //avoid potential empty or commented lines
                         cnt++;
                     }
                 }
@@ -332,14 +316,7 @@ public class CSVFeatureStore extends AbstractFeatureStore implements DataFileSto
             } catch (IOException ex) {
                 throw new DataStoreException(ex);
             } finally {
-                RWLock.readLock().unlock();
-                if(reader != null){
-                    try {
-                        reader.close();
-                    } catch (IOException ex) {
-                        java.util.logging.Logger.getLogger(CSVFeatureStore.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                }
+                fileLock.readLock().unlock();
             }
         }
 
@@ -359,21 +336,21 @@ public class CSVFeatureStore extends AbstractFeatureStore implements DataFileSto
     @Override
     public void createFeatureType(final Name typeName, final FeatureType featureType) throws DataStoreException {
         checkExist();
-        if(this.featureType != null){
+        if (this.featureType != null) {
             throw new DataStoreException("Can only have one feature type in CSV dataStore.");
         }
 
-        if(!(featureType instanceof SimpleFeatureType)){
+        if (!(featureType instanceof SimpleFeatureType)) {
             throw new DataStoreException("Feature type must be simple.");
         }
 
         final SimpleFeatureType sft = (SimpleFeatureType) featureType;
 
-        try{
-            RWLock.writeLock().lock();
+        try {
+            fileLock.writeLock().lock();
             writeType(sft);
-        }finally{
-            RWLock.writeLock().unlock();
+        } finally {
+            fileLock.writeLock().unlock();
         }
 
         checkExist();
@@ -386,21 +363,21 @@ public class CSVFeatureStore extends AbstractFeatureStore implements DataFileSto
 
         final SimpleFeatureType oldSchema = featureType;
 
-        try{
-            RWLock.writeLock().lock();
-            if(file.exists()){
+        try {
+            fileLock.writeLock().lock();
+            if (file.exists()) {
                 file.delete();
                 featureType = null;
             }
-        }finally{
-            RWLock.writeLock().unlock();
+        } finally {
+            fileLock.writeLock().unlock();
         }
         fireSchemaDeleted(typeName, oldSchema);
     }
 
     @Override
     public void updateFeatureType(final Name typeName, final FeatureType featureType) throws DataStoreException {
-        typeCheck(typeName); //raise error is type doesnt exist
+        typeCheck(typeName); //raise error if type doesn't exist
         deleteFeatureType(typeName);
         createFeatureType(typeName, featureType);
     }
@@ -475,7 +452,7 @@ public class CSVFeatureStore extends AbstractFeatureStore implements DataFileSto
         protected int inc = 0;
 
         private CSVFeatureReader(final boolean reuseFeature) throws DataStoreException{
-            RWLock.readLock().lock();
+            fileLock.readLock().lock();
             sfb = new SimpleFeatureBuilder(featureType);
             if(reuseFeature){
                 reuse = new DefaultSimpleFeature(featureType, null, new Object[featureType.getAttributeCount()], false);
@@ -564,7 +541,7 @@ public class CSVFeatureStore extends AbstractFeatureStore implements DataFileSto
 
         @Override
         public void close() {
-            RWLock.readLock().unlock();
+            fileLock.readLock().unlock();
             scanner.close();
         }
 
@@ -575,18 +552,21 @@ public class CSVFeatureStore extends AbstractFeatureStore implements DataFileSto
 
     }
 
-    private class CSVFeatureWriter extends CSVFeatureReader implements FeatureWriter<FeatureType, Feature>{
+    private class CSVFeatureWriter extends CSVFeatureReader implements FeatureWriter<FeatureType, Feature> {
 
         private final WKTWriter wktWriter = new WKTWriter(2);
         private final Writer writer;
         private final File writeFile;
         private SimpleFeature edited = null;
         private SimpleFeature lastWritten = null;
+        private boolean appendMode = false;
+
+        private final ReadWriteLock tempLock = new ReentrantReadWriteLock();
 
         private CSVFeatureWriter() throws DataStoreException{
             super(false);
-            TempLock.writeLock().lock();
 
+            tempLock.writeLock().lock();
             try{
                 writeFile = createWriteFile();
                 if (!writeFile.exists()) {
@@ -599,25 +579,42 @@ public class CSVFeatureStore extends AbstractFeatureStore implements DataFileSto
                 writer.flush();
             }catch(IOException ex){
                 throw new DataStoreException(ex);
+            } finally {
+                tempLock.writeLock().unlock();
             }
         }
 
         @Override
         public SimpleFeature next() throws FeatureStoreRuntimeException {
-            try{
+            try {
                 write();
                 edited = super.next();
-            }catch(FeatureStoreRuntimeException ex){
+                appendMode = false;
+            } catch (FeatureStoreRuntimeException ex) {
                 //we reach append mode
+                appendMode = true;
                 sfb.reset();
                 edited = sfb.buildFeature(Integer.toString(inc++));
-                for(Property prop : edited.getProperties()){
-                    try{prop.setValue(FeatureUtilities.defaultValue(prop.getType().getBinding()));
-                    }catch(IllegalArgumentException e){ /*ignore this error*/}
+                for (Property prop : edited.getProperties()) {
+                    try {
+                        prop.setValue(FeatureUtilities.defaultValue(prop.getType().getBinding()));
+                    } catch (IllegalArgumentException e) { /*ignore this error*/}
                 }
 
             }
             return edited;
+        }
+
+        @Override
+        public void remove() {
+            if (edited == null) {
+                throw new FeatureStoreRuntimeException("No feature selected.");
+            }
+
+            deletedIds.add(edited.getIdentifier());
+            // mark the current feature as null, this will result in it not
+            // being rewritten to the stream
+            edited = null;
         }
 
         @Override
@@ -626,8 +623,9 @@ public class CSVFeatureStore extends AbstractFeatureStore implements DataFileSto
             lastWritten = edited;
 
             final List<AttributeDescriptor> atts = featureType.getAttributeDescriptors();
+            tempLock.writeLock().lock();
             try {
-                for(int i=0,n=atts.size() ; i<n; i++){
+                for (int i=0,n=atts.size() ; i<n; i++) {
                     final AttributeDescriptor att = atts.get(i);
                     final Object value = edited.getAttribute(att.getName());
 
@@ -637,11 +635,10 @@ public class CSVFeatureStore extends AbstractFeatureStore implements DataFileSto
                     }else if(att instanceof GeometryDescriptor){
                         str = wktWriter.write((Geometry) value);
                     }else{
-
                         if(value instanceof Date){
                             str = TemporalUtilities.toISO8601((Date)value);
                         }else if(value instanceof Boolean){
-                            str = ((Boolean)value).toString();
+                            str = value.toString();
                         }else{
                             str = ObjectConverters.convert(value, String.class);
                         }
@@ -653,14 +650,21 @@ public class CSVFeatureStore extends AbstractFeatureStore implements DataFileSto
                 }
                 writer.append('\n');
                 writer.flush();
+
+                if (appendMode) {
+                    addedIds.add(edited.getIdentifier());
+                } else {
+                    updatedIds.add(edited.getIdentifier());
+                }
             } catch (IOException ex) {
                 throw new FeatureStoreRuntimeException(ex);
+            } finally {
+                tempLock.writeLock().unlock();
             }
         }
 
         @Override
         public void close() {
-
             try {
                 writer.flush();
                 writer.close();
@@ -672,20 +676,40 @@ public class CSVFeatureStore extends AbstractFeatureStore implements DataFileSto
             super.close();
 
             //flip files
-            RWLock.writeLock().lock();
-            file.delete();
-            writeFile.renameTo(file);
-            RWLock.writeLock().unlock();
+            fileLock.writeLock().lock();
+            tempLock.writeLock().lock();
+            try {
+                file.delete();
+                writeFile.renameTo(file);
+            } finally {
+                fileLock.writeLock().unlock();
+                tempLock.writeLock().unlock();
+            }
+            // Fire content change events only if we succeed replacing original file.
+            fireDataChangeEvents();
+        }
+    }
 
-            TempLock.writeLock().unlock();
+    private void fireDataChangeEvents() {
+        if (!addedIds.isEmpty()) {
+            final FeatureStoreContentEvent event = new FeatureStoreContentEvent(this, FeatureStoreContentEvent.Type.ADD, featureType.getName(), FF.id(addedIds));
+            forwardContentEvent(event);
         }
 
+        if (!updatedIds.isEmpty()) {
+            final FeatureStoreContentEvent event = new FeatureStoreContentEvent(this, FeatureStoreContentEvent.Type.UPDATE, featureType.getName(), FF.id(updatedIds));
+            forwardContentEvent(event);
+        }
+
+        if (!deletedIds.isEmpty()) {
+            final FeatureStoreContentEvent event = new FeatureStoreContentEvent(this, FeatureStoreContentEvent.Type.DELETE, featureType.getName(), FF.id(deletedIds));
+            forwardContentEvent(event);
+        }
     }
 
 	@Override
 	public void refreshMetaModel() {
 		featureType=null;
-
 	}
 
     /**
