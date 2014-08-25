@@ -48,10 +48,9 @@ public final class PixelIteratorFactory {
      */
     public static PixelIterator createDefaultIterator(final Raster raster, final Rectangle subReadArea) {
         final SampleModel sampleM = raster.getSampleModel();
+
         if (sampleM instanceof ComponentSampleModel) {
-            if (sampleM.getNumDataElements() == sampleM.getNumBands()
-             && ((ComponentSampleModel)sampleM).getBankIndices().length == 1
-             && checkBandOffset(((ComponentSampleModel)sampleM).getBandOffsets())) {
+            if (checkBankIndices(((ComponentSampleModel)sampleM).getBankIndices())) {
                 switch (sampleM.getDataType()) {
                     case DataBuffer.TYPE_BYTE  : return new DefaultDirectByteIterator(raster, subReadArea);
                     case DataBuffer.TYPE_FLOAT : return new DefaultDirectFloatIterator(raster, subReadArea);
@@ -86,9 +85,7 @@ public final class PixelIteratorFactory {
         
         final SampleModel sampleM = renderedImage.getSampleModel();
         if (sampleM instanceof ComponentSampleModel ) {
-            if (sampleM.getNumDataElements() == sampleM.getNumBands()
-             && ((ComponentSampleModel)sampleM).getBankIndices().length == 1
-             && checkBandOffset(((ComponentSampleModel)sampleM).getBandOffsets())) {
+            if (checkBankIndices(((ComponentSampleModel)sampleM).getBankIndices())) {
                 switch (sampleM.getDataType()) {
                     case DataBuffer.TYPE_BYTE  : return new DefaultDirectByteIterator(renderedImage, subReadArea);
                     case DataBuffer.TYPE_FLOAT : return new DefaultDirectFloatIterator(renderedImage, subReadArea);
@@ -277,8 +274,20 @@ public final class PixelIteratorFactory {
         return true;
     }
 
+    /**
+     * Verify bandOffset table conformity.
+     *
+     * @param bandOffset band offset table.
+     * @return true if bandOffset table is conform else false.
+     */
+    private static boolean checkBankIndices(int[] bankIndices) {
+        if (bankIndices.length == 1) return true;
+        for (int i = 1, l = bankIndices.length; i<l; i++) if (bankIndices[i] != bankIndices[i-1]) return false;
+        return true;
+    }
+
     private static boolean isSingleRaster(final RenderedImage renderedImage){
         return renderedImage.getNumXTiles()==1 && renderedImage.getNumYTiles()==1;
     }
-    
+
 }

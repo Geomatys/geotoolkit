@@ -503,4 +503,20 @@ public abstract class PixelIterator implements Closeable {
     public int getSourceDatatype() {
         return (renderedImage == null) ? currentRaster.getSampleModel().getDataType() : renderedImage.getSampleModel().getDataType();
     }
+
+    /**
+     * Compute an array which give the number of data elements until the next sample in the pixel. Note that the first
+     * element gives number of elements between the last sample of the previous pixel and the first sample of current one.
+     * @param bandOffsets The bandOffsets table given by {@link java.awt.image.ComponentSampleModel#getBandOffsets()}.
+     * @param pixelStride The pixel stride value given by {@link java.awt.image.ComponentSampleModel#getPixelStride()}
+     * @return An array whose components are the number of elements to skip until the next sample.
+     */
+    public static int[] getBandSteps(final int[] bandOffsets, final int pixelStride) {
+        final int[] bandSteps = new int[bandOffsets.length];
+        bandSteps[0] = pixelStride - bandOffsets[bandOffsets.length-1];
+        for (int i = 1 ; i < bandSteps.length ; i++) {
+            bandSteps[i] = bandOffsets[i] - bandOffsets[i-1];
+        }
+        return bandSteps;
+    }
 }
