@@ -23,13 +23,11 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 import org.apache.sis.measure.NumberRange;
 import org.geotoolkit.coverage.Category;
 import org.apache.sis.util.ObjectConverters;
 import org.opengis.referencing.operation.MathTransform1D;
 import org.apache.sis.referencing.operation.transform.TransferFunction;
-import sun.io.Converters;
 
 /**
  *
