@@ -178,7 +178,6 @@ public final strictfp class ResampleTest extends GridProcessingTestBase {
      */
     @Test
     public void testAffine() {
-        viewEnabled = true;
         final Hints photo = new Hints(Hints.COVERAGE_PROCESSING_VIEW, ViewType.PHOTOGRAPHIC);
         loadSampleCoverage(SampleCoverage.SST);
         showTranslated(null, true,  "Lookup", "Affine");
