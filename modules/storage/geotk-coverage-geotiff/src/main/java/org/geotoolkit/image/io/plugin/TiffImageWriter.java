@@ -57,8 +57,7 @@ import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 import javax.imageio.metadata.IIOMetadata;
-import javax.imageio.spi.IIORegistry;
-import javax.imageio.spi.ServiceRegistry;
+
 import org.apache.sis.internal.storage.ChannelImageOutputStream;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.ArraysExt;
@@ -158,7 +157,7 @@ public class TiffImageWriter extends SpatialImageWriter {
     }
     
     /**
-     * The channel to the TIFF file. Will be created from the {@linkplain #input} when first needed.
+     * The channel to the TIFF file. Will be created from the {@linkplain #output} when first needed.
      */
     private ChannelImageOutputStream channel;
     
@@ -457,18 +456,28 @@ public class TiffImageWriter extends SpatialImageWriter {
         assert headProperties == null;
         //-- a new distinct map for each layer --// 
         headProperties = new TreeMap<>();
-        
+
+        /*
+         * Global (stream) metadata. We will try to write it, but if we fail at decoding, we just ignore because it's not
+         * vital information.
+         */
         if (streamMetadata != null) {
-            final IIOMetadata strMetadata = convertMetadata(streamMetadata);
-            //-- add streamMetadatas properties --//
-            addMetadataProperties(strMetadata.getAsTree(strMetadata.getNativeMetadataFormatName()), headProperties);
+            IIOMetadata strMetadata = null;
+            try {
+                strMetadata = toGTiffFormat(streamMetadata);
+            } catch (Exception e) {
+                LOGGER.log(Level.INFO, "Global metadata unreadable. Ignored.");
+            }
+            if (strMetadata != null) {
+                addMetadataProperties(strMetadata.getAsTree(strMetadata.getNativeMetadataFormatName()), headProperties);
+            }
         }
             
         //-- get image --//
         final RenderedImage img   = image.getRenderedImage();
         
         //-- get metadata from IIOImage --//
-        adaptMetadatas(image, param);
+        adaptMetadata(image, param);
         final IIOMetadata iioMeth = image.getMetadata();
         if (iioMeth != null) {
             final Node iioNode    = iioMeth.getAsTree(iioMeth.getNativeMetadataFormatName());
@@ -509,7 +518,7 @@ public class TiffImageWriter extends SpatialImageWriter {
         final RenderedImage img   = image.getRenderedImage();
         
         //-- get metadata from IIOImage --//
-        adaptMetadatas(image, null);
+        adaptMetadata(image, null);
         final IIOMetadata iioMeth = image.getMetadata();
         if (iioMeth != null) {
             final Node iioNode    = iioMeth.getAsTree(iioMeth.getNativeMetadataFormatName());
@@ -544,7 +553,7 @@ public class TiffImageWriter extends SpatialImageWriter {
         final RenderedImage img   = image.getRenderedImage();
         
         //-- get metadata from IIOImage --//
-        adaptMetadatas(image, param);
+        adaptMetadata(image, param);
         final IIOMetadata iioMeth = image.getMetadata();
         if (iioMeth != null) {
             final Node iioNode    = iioMeth.getAsTree(iioMeth.getNativeMetadataFormatName());
@@ -710,14 +719,14 @@ public class TiffImageWriter extends SpatialImageWriter {
         //-- metadatas study --//
         //-- get metadata from stream --//
         if (streamMetadata != null) {
-            final IIOMetadata strMetadata = convertMetadata(streamMetadata);
+            final IIOMetadata strMetadata = toGTiffFormat(streamMetadata);
             final Node iioNode    = strMetadata.getAsTree(strMetadata.getNativeMetadataFormatName());
             addMetadataProperties(iioNode, headProperties);
         }
         
         //-- get metadata from image --//
         if (imageMetadata != null) {
-            final IIOMetadata imgMetadata = convertMetadata(streamMetadata);
+            final IIOMetadata imgMetadata = toGTiffFormat(streamMetadata);
             final Node iioNode    = imgMetadata.getAsTree(imgMetadata.getNativeMetadataFormatName());
             addMetadataProperties(iioNode, headProperties);
         }
@@ -877,52 +886,25 @@ public class TiffImageWriter extends SpatialImageWriter {
      * @param param
      * @throws IOException 
      */
-    private void adaptMetadatas(final IIOImage image, ImageWriteParam param) throws IOException {
+    private void adaptMetadata(final IIOImage image, ImageWriteParam param) throws IOException {
 
         IIOMetadata iioImgMetadata = image.getMetadata();
 
         if (!(iioImgMetadata instanceof SpatialMetadata)) return;
 
-        final SpatialMetadata spatialMetadata = (SpatialMetadata) iioImgMetadata;
-
-        Node tiffTree = null;
-
         final String tiffFormatName = getOriginatingProvider().getNativeImageMetadataFormatName();
 
         final String[] formatNames = iioImgMetadata.getMetadataFormatNames();
-        if (ArraysExt.contains(formatNames, "geotiff")) {
-            //already has a geotiff metadata associated
-        } else if (ArraysExt.contains(formatNames, tiffFormatName)) {
-            //has a tiff metadata but no geotiff metadata
-            tiffTree = iioImgMetadata.getAsTree(tiffFormatName);
-            if (GeoTiffMetaDataUtils.isGeoTiffTree(tiffTree)) {
-                //tiff with geotiff tags, also valid, no need to fill parameters.
-                tiffTree = null;
-            }
-        } else {
+        if (!ArraysExt.contains(formatNames, tiffFormatName) &&
+                !ArraysExt.contains(formatNames, SpatialMetadataFormat.GEOTK_FORMAT_NAME)) {
             //no tiff metadata, create one
             final ImageTypeSpecifier spec = ImageTypeSpecifier.createFromRenderedImage(image.getRenderedImage());
             iioImgMetadata = getDefaultImageMetadata(spec, param);
             iioImgMetadata = convertImageMetadata(iioImgMetadata, spec, param);
-            tiffTree = iioImgMetadata.getAsTree(SpatialMetadataFormat.GEOTK_FORMAT_NAME);
-//            tiffTree = iioImgMetadata.getAsTree(tiffFormatName);
             image.setMetadata(iioImgMetadata);
         }
 
-        if (tiffTree != null) {
-            final GeoTiffMetaDataWriter writer = new GeoTiffMetaDataWriter();
-            try {
-                writer.fillMetadata(tiffTree, spatialMetadata);
-            } catch (FactoryException ex) {
-                throw new IOException(ex);
-            }
-
-            //the tree changes are not stored in the model, imageio bug ?
-            //I didn't found a way to update the tree so I recreate the iiometadata.
-            iioImgMetadata = new TIFFImageMetadata(
-                    TIFFImageMetadata.parseIFD(DomUtilities.getNodeByLocalName(tiffTree, TAG_GEOTIFF_IFD)));
-            image.setMetadata(iioImgMetadata);
-        }
+        image.setMetadata(toGTiffFormat(iioImgMetadata));
     }
     
     /**
@@ -930,35 +912,25 @@ public class TiffImageWriter extends SpatialImageWriter {
      * Temporary method in attempt to refactor metadata using.
      *
      * @param metadata
-     * @return converted metadata
-     * @throws IOException 
+     * @return converted metadata (native GeoTiff metadata format).
+     * @throws IOException If we cannot retrieve and convert Geo-spatial information from source metadata.
      */
-    private IIOMetadata convertMetadata(IIOMetadata metadata) throws IOException {
-        
+    private IIOMetadata toGTiffFormat(IIOMetadata metadata) throws IOException {
+        // Not a Geotk MD. It must be in tiff format already.
         if (!(metadata instanceof SpatialMetadata)) return metadata;
-        
-        final SpatialMetadata spatialMetadata = (SpatialMetadata) metadata;
-
-        Node tiffTree = null;
 
         final String tiffFormatName = getOriginatingProvider().getNativeImageMetadataFormatName();
-
         final String[] formatNames = metadata.getMetadataFormatNames();
-        if(ArraysExt.contains(formatNames, "geotiff")){
-            //already has a geotiff metadata associated
-        }else if(ArraysExt.contains(formatNames, tiffFormatName)){
-            //has a tiff metadata but no geotiff metadata
-            tiffTree = metadata.getAsTree(tiffFormatName);
-            if(GeoTiffMetaDataUtils.isGeoTiffTree(tiffTree)){
-                //tiff with geotiff tags, also valid, no need to fill parameters.
-                tiffTree = null;
-            }
+        Node tiffTree = null;
+
+        if (ArraysExt.contains(formatNames, SpatialMetadataFormat.GEOTK_FORMAT_NAME)) {
+            tiffTree = metadata.getAsTree(SpatialMetadataFormat.GEOTK_FORMAT_NAME);
         }
 
         if (tiffTree != null) {
             final GeoTiffMetaDataWriter writer = new GeoTiffMetaDataWriter();
             try {
-                writer.fillMetadata(tiffTree, spatialMetadata);
+                writer.fillMetadata(tiffTree, (SpatialMetadata) metadata);
             } catch (FactoryException ex) {
                 throw new IOException(ex);
             }
@@ -968,6 +940,7 @@ public class TiffImageWriter extends SpatialImageWriter {
             metadata = new TIFFImageMetadata(
                     TIFFImageMetadata.parseIFD(DomUtilities.getNodeByLocalName(tiffTree, TAG_GEOTIFF_IFD)));
         }
+
         return metadata;
     }
     
