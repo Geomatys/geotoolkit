@@ -18,6 +18,8 @@ package org.geotoolkit.image.iterator;
 
 import java.awt.Rectangle;
 import java.awt.image.*;
+import java.io.Closeable;
+
 import org.apache.sis.util.ArgumentChecks;
 import org.opengis.coverage.grid.SequenceType;
 
@@ -34,7 +36,7 @@ import org.opengis.coverage.grid.SequenceType;
  * @author Rémi Marechal       (Geomatys).
  * @author Martin Desruisseaux (Geomatys).
  */
-public abstract class PixelIterator {
+public abstract class PixelIterator implements Closeable {
 
     /**
      * The X coordinate of the upper-left pixel of iteration area.
@@ -394,7 +396,8 @@ public abstract class PixelIterator {
          || renderedImage.getWidth()  != writableRI.getWidth()
          || renderedImage.getHeight() != writableRI.getHeight()
          || renderedImage.getSampleModel().getNumBands() != writableRI.getSampleModel().getNumBands())
-         throw new IllegalArgumentException("rendered image and writable rendered image dimensions are not conform"+renderedImage+writableRI);
+         throw new IllegalArgumentException("rendered image and writable rendered image dimensions are not conform.\n" +
+                 "First : "+renderedImage+"\nSecond : "+writableRI);
         final int wrimtx = writableRI.getMinTileX();
         final int wrimty = writableRI.getMinTileY();
         final int rimtx  = writableRI.getMinTileX();
@@ -408,7 +411,8 @@ public abstract class PixelIterator {
          || renderedImage.getTileGridYOffset() != writableRI.getTileGridYOffset()
          || renderedImage.getTileHeight() != writableRI.getTileHeight()
          || renderedImage.getTileWidth()  != writableRI.getTileWidth())
-            throw new IllegalArgumentException("rendered image and writable rendered image tiles configuration are not conform"+renderedImage+writableRI);
+            throw new IllegalArgumentException("rendered image and writable rendered image tiles configuration are not conform.\n" +
+                    "First : "+renderedImage+"\nSecond : "+writableRI);
         //data type
         // TODO : Should be required only for Direct iterators (working directly with data buffers)
         if (renderedImage.getTile(rimtx, rimty).getDataBuffer().getDataType() != writableRI.getTile(wrimtx, wrimty).getDataBuffer().getDataType())
