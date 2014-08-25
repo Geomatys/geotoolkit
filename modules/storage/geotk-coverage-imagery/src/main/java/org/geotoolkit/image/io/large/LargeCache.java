@@ -407,28 +407,4 @@ public class LargeCache implements TileCache {
     public void add(RenderedImage ri, int i, int i1, Raster raster, Object o) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-
-    private static class ImageReference extends PhantomReference<RenderedImage> {
-
-        /** Manage tiles of the input image. */
-        private final LargeMap largeMap;
-
-        /**
-         * Creates a new phantom reference that refers to the given object and
-         * is registered with the given queue.
-         * <p/>
-         * <p> It is possible to create a phantom reference with a <tt>null</tt>
-         * queue, but such a reference is completely useless: Its <tt>get</tt>
-         * method will always return null and, since it does not have a queue, it
-         * will never be enqueued.
-         *
-         * @param referent the object the new phantom reference will refer to
-         * @param q        the queue with which the reference is to be registered,
-         */
-        public ImageReference(RenderedImage referent, ReferenceQueue<? super RenderedImage> q, final LargeMap imageManager) {
-            super(referent, q);
-            ArgumentChecks.ensureNonNull("image manager", imageManager);
-            largeMap = imageManager;
-        }
-    }
 }
