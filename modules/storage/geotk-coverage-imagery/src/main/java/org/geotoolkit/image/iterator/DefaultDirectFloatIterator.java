@@ -142,6 +142,6 @@ class DefaultDirectFloatIterator extends DefaultDirectIterator {
      */
     @Override
     public void close() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        currentDataArray = null;
     }
 }

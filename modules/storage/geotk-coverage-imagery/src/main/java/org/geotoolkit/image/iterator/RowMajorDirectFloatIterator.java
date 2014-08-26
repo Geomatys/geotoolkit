@@ -124,6 +124,6 @@ class RowMajorDirectFloatIterator extends RowMajorDirectIterator {
      */
     @Override
     public void close() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        currentDataArray = null;
     }
 }

@@ -132,5 +132,6 @@ class RowMajorWritableIterator extends RowMajorIterator {
     @Override
     public void close() {
          writableRenderedImage.releaseWritableTile(prectX, prectY);
+        super.close();
     }
 }

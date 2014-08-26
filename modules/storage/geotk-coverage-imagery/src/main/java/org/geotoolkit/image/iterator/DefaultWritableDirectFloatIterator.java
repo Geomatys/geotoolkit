@@ -120,6 +120,7 @@ class DefaultWritableDirectFloatIterator extends DefaultDirectFloatIterator {
     @Override
     public void close() {
         writableRenderedImage.releaseWritableTile(prectX, prectY);
+        super.close();
     }
 
     /**

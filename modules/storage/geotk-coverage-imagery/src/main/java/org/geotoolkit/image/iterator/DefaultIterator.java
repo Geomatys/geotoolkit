@@ -214,8 +214,7 @@ class DefaultIterator extends PixelIterator {
      * {@inheritDoc }.
      */
     @Override
-    public void close() {
-    }
+    public void close() {}
 
     @Override
     public void moveTo(final int x, final int y, final int b) {

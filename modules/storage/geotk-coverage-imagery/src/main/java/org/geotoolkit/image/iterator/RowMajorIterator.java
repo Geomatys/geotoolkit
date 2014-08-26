@@ -199,8 +199,7 @@ public class RowMajorIterator extends PixelIterator{
      * {@inheritDoc }.
      */
     @Override
-    public void close() {
-    }
+    public void close() {}
 
     /**
      * {@inheritDoc }.

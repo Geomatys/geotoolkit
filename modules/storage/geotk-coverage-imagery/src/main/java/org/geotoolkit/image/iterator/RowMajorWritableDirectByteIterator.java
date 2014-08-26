@@ -134,5 +134,6 @@ class RowMajorWritableDirectByteIterator extends RowMajorDirectByteIterator{
     @Override
     public void close() {
          writableRenderedImage.releaseWritableTile(prectX, prectY);
+        super.close();
     }
 }

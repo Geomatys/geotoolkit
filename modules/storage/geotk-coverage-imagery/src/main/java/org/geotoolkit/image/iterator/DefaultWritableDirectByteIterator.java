@@ -135,6 +135,7 @@ class DefaultWritableDirectByteIterator extends DefaultDirectByteIterator {
     @Override
     public void setSampleDouble(double value) {
         currentWritableDataArray[dataCursor] = (byte) Math.round(value);
+        super.close();
     }
 
     /**

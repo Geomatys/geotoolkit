@@ -134,5 +134,6 @@ class RowMajorWritableDirectFloatIterator extends RowMajorDirectFloatIterator {
     @Override
     public void close() {
          writableRenderedImage.releaseWritableTile(prectX, prectY);
+        super.close();
     }
 }

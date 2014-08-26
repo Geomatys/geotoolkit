@@ -147,5 +147,6 @@ class DefaultWritableIterator extends DefaultIterator {
     @Override
     public void close() {
          writableRenderedImage.releaseWritableTile(prectX, prectY);
+        super.close();
     }
 }
