@@ -48,9 +48,9 @@ abstract class DefaultDirectIterator extends PixelIterator {
     protected int currentX;
 
     /**
-     * Minimum X coordinate allowed for iteration in current raster.
+     * Minimum coordinate allowed for iteration in current raster.
      */
-    protected int minX;
+    protected int minX, minY;
 
     /**
      * Current raster width.
@@ -140,6 +140,8 @@ abstract class DefaultDirectIterator extends PixelIterator {
 
         minX = areaIterateMinX;
         maxX = areaIterateMaxX;
+        minY = areaIterateMinY;
+        maxY = areaIterateMaxY;
         currentX = minX -1;
         band = -1;
     }
@@ -220,14 +222,16 @@ abstract class DefaultDirectIterator extends PixelIterator {
         //update min max from subArea and raster boundary
         this.minX = Math.max(areaIterateMinX, crMinX);
         this.maxX = Math.min(areaIterateMaxX, crMinX + rasterWidth);
+        this.minY = Math.max(areaIterateMinY, crMinY);
+        this.maxY = Math.min(areaIterateMaxY, crMinY + currentRaster.getHeight());
         final int minx  = this.minX - crMinX;
-        final int miny  = Math.max(areaIterateMinY, crMinY) - crMinY;
+        final int miny  = this.minY - crMinY;
         final int maxx  = this.maxX - crMinX;
-        final int maxy  = Math.min(areaIterateMaxY, crMinY + currentRaster.getHeight()) - crMinY;
+        final int maxy  = this.maxY - crMinY;
         this.maxBanks   = maxx * pixelStride + (maxy-1) * scanLineStride + bandOffsets[0];
 
         this.cursorStep = scanLineStride - ((maxx - minx) * pixelStride + bandOffsets[0]) + bandSteps[0];
-        this.dataCursor = baseCursor = minx * pixelStride + miny * scanLineStride + bandOffsets[0];
+        this.dataCursor = minx * pixelStride + miny * scanLineStride + bandOffsets[0];
         currentX = minX;
         band = 0;
     }
@@ -259,6 +263,8 @@ abstract class DefaultDirectIterator extends PixelIterator {
             tMaxX = tMaxY = 1;
             minX = areaIterateMinX;
             maxX = areaIterateMaxX;
+            minY = areaIterateMinY;
+            maxY = areaIterateMaxY;
             currentX = minX -1;
             dataCursor = baseCursor;
         } else {

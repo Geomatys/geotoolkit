@@ -18,6 +18,7 @@ package org.geotoolkit.image.iterator;
 
 import java.awt.Rectangle;
 import java.awt.image.*;
+import java.util.Arrays;
 
 /**
  * Create an appropriate iterator.
@@ -125,8 +126,9 @@ public final class PixelIteratorFactory {
             ComponentSampleModel srcCSModel = (ComponentSampleModel) srcSampleM;
             ComponentSampleModel destCSModel = (ComponentSampleModel) destSampleM;
 
-            if (srcSampleM.getNumDataElements() == srcSampleM.getNumBands()
-             && srcCSModel.getBankIndices().length == 1 && checkBandOffset(srcCSModel.getBandOffsets())
+            // Source and destination image must have identical structure in order to allow a single iterator to move through them.
+            if (checkBankIndices(srcCSModel.getBankIndices()) && checkBankIndices(destCSModel.getBankIndices())
+             && Arrays.equals(srcCSModel.getBandOffsets(), destCSModel.getBandOffsets())
              && srcCSModel.getPixelStride() == destCSModel.getPixelStride()
              && srcCSModel.getScanlineStride() == destCSModel.getScanlineStride()) {
 
@@ -167,8 +169,9 @@ public final class PixelIteratorFactory {
             ComponentSampleModel srcCSModel = (ComponentSampleModel) srcSampleM;
             ComponentSampleModel destCSModel = (ComponentSampleModel) destSampleM;
 
-            if (srcSampleM.getNumDataElements() == srcSampleM.getNumBands()
-                    && srcCSModel.getBankIndices().length == 1 && checkBandOffset(srcCSModel.getBandOffsets())
+            // Source and destination image must have identical structure in order to allow a single iterator to move through them.
+            if (checkBankIndices(srcCSModel.getBankIndices()) && checkBankIndices(destCSModel.getBankIndices())
+                    && Arrays.equals(srcCSModel.getBandOffsets(), destCSModel.getBandOffsets())
                     && srcCSModel.getPixelStride() == destCSModel.getPixelStride()
                     && srcCSModel.getScanlineStride() == destCSModel.getScanlineStride()) {
 
@@ -206,9 +209,7 @@ public final class PixelIteratorFactory {
     public static PixelIterator createRowMajorIterator(final RenderedImage renderedImage, final Rectangle subReadArea) {
         final SampleModel sampleM = renderedImage.getSampleModel();
         if (sampleM instanceof ComponentSampleModel) {
-            if (sampleM.getNumDataElements() == sampleM.getNumBands()
-             && ((ComponentSampleModel)sampleM).getBankIndices().length == 1
-             && checkBandOffset(((ComponentSampleModel)sampleM).getBandOffsets())) {
+            if (checkBankIndices(((ComponentSampleModel)sampleM).getBankIndices())) {
                 switch (sampleM.getDataType()) {
                     case DataBuffer.TYPE_BYTE  : return new RowMajorDirectByteIterator(renderedImage, subReadArea);
                     case DataBuffer.TYPE_FLOAT : return new RowMajorDirectFloatIterator(renderedImage, subReadArea);
@@ -223,6 +224,9 @@ public final class PixelIteratorFactory {
      * Create and return an adapted Row Major read and write rendered image iterator.
      * RowMajor : iterator move forward line per line one by one in downward order.
      *
+     * No build is allowed for single {@link java.awt.image.Raster} browsing, because {@link org.geotoolkit.image.iterator.DefaultDirectIterator}
+     * will do the job as fast as it, and with the same behavior.
+     *
      * @param renderedImage         {@link RenderedImage} will be traveled by iterator.
      * @param writableRenderedImage {@link WritableRenderedImage}  rendered image wherein value is set (write).
      * @return adapted              {@link PixelIterator}.
@@ -234,6 +238,9 @@ public final class PixelIteratorFactory {
     /**
      * Create and return an adapted Row Major read and write rendered image iterator from it's sub-area.
      * RowMajor : iterator move forward line per line one by one in downward order.
+     *
+     * No build is allowed for single {@link java.awt.image.Raster} browsing, because {@link org.geotoolkit.image.iterator.DefaultDirectIterator}
+     * will do the job as fast as it, and with the same behavior.
      *
      * @param renderedImage         {@link RenderedImage} will be traveled by iterator from it's sub-area.
      * @param writableRenderedImage {@link WritableRenderedImage}  rendered image wherein value is set (write).
@@ -248,8 +255,9 @@ public final class PixelIteratorFactory {
             ComponentSampleModel srcCSModel = (ComponentSampleModel) srcSampleM;
             ComponentSampleModel destCSModel = (ComponentSampleModel) destSampleM;
 
-            if (srcSampleM.getNumDataElements() == srcSampleM.getNumBands()
-                    && srcCSModel.getBankIndices().length == 1 && checkBandOffset(srcCSModel.getBandOffsets())
+            // Source and destination image must have identical structure in order to allow a single iterator to move through them.
+            if (checkBankIndices(srcCSModel.getBankIndices()) && checkBankIndices(destCSModel.getBankIndices())
+                    && Arrays.equals(srcCSModel.getBandOffsets(), destCSModel.getBandOffsets())
                     && srcCSModel.getPixelStride() == destCSModel.getPixelStride()
                     && srcCSModel.getScanlineStride() == destCSModel.getScanlineStride()) {
 
@@ -275,10 +283,10 @@ public final class PixelIteratorFactory {
     }
 
     /**
-     * Verify bandOffset table conformity.
+     * Check image samples are stored in a single bank. It's a needed condition for {@link org.geotoolkit.image.iterator.DefaultDirectIterator}
      *
-     * @param bandOffset band offset table.
-     * @return true if bandOffset table is conform else false.
+     * @param bankIndices bank indice table retrieved from input image (see {@link java.awt.image.ComponentSampleModel#getBankIndices()}.
+     * @return true if input image use a single bank. false otherwise.
      */
     private static boolean checkBankIndices(int[] bankIndices) {
         if (bankIndices.length == 1) return true;

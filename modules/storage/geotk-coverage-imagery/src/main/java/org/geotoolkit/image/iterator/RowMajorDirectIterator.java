@@ -18,6 +18,7 @@ package org.geotoolkit.image.iterator;
 
 import java.awt.Rectangle;
 import java.awt.image.ComponentSampleModel;
+import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
 import org.opengis.coverage.grid.SequenceType;
@@ -35,48 +36,19 @@ import org.opengis.coverage.grid.SequenceType;
  *
  * Furthermore iterator directly read in data table within raster {@code DataBuffer}.
  *
- * /!\ WARNING : We do not use {@linkplain #maxX} value to get X indice of the current pixel, but to get current sample
- * position in source {@link java.awt.image.DataBuffer}.
+ * No build is allowed for single {@link java.awt.image.Raster} browsing, because {@link org.geotoolkit.image.iterator.DefaultDirectIterator}
+ * will do the job as fast as it, and with the same behavior.
  *
  * @author Rémi Marechal       (Geomatys).
+ * @author Alexis Manin        (Geomatys).
  * @author Martin Desruisseaux (Geomatys).
  */
-public abstract class RowMajorDirectIterator extends PixelIterator {
+public abstract class RowMajorDirectIterator extends DefaultDirectIterator {
 
     /**
-     * Cursor position of current raster data.
+     * Current position in Y axis of the parsed image.
      */
-    protected int dataCursor;
-
-    /**
-     * Current raster width.
-     */
-    protected final int rasterWidth;
-
-    /**
-     * Abstract row index;
-     */
-    private int row;
-
-    /**
-     * Current raster lower X value.
-     */
-    private int cRMinX;
-
-    /**
-     * Current raster lower Y value.
-     */
-    private int cRMinY;
-
-    /**
-     * Tile scanLineStride from Raster or RenderedImage Sample model.
-     */
-    protected int scanLineStride;
-
-    /**
-     * Step for samples
-     */
-    protected int sampleStride;
+    protected int currentY;
 
     /**
      * Create default rendered image iterator.
@@ -87,117 +59,60 @@ public abstract class RowMajorDirectIterator extends PixelIterator {
      */
     RowMajorDirectIterator(final RenderedImage renderedImage, final Rectangle subArea) {
         super(renderedImage, subArea);
-        final SampleModel sampleM = renderedImage.getSampleModel();
-        if (sampleM instanceof ComponentSampleModel) {
-            ComponentSampleModel sModel = (ComponentSampleModel) sampleM;
-            this.sampleStride = sModel.getPixelStride();
-            this.scanLineStride = sModel.getScanlineStride();
-        } else {
-            throw new IllegalArgumentException("RowMajorDirectIterator constructor : sample model not conform");
-        }
-        this.rasterWidth = renderedImage.getTileWidth();
-        //initialize attributes to first iteration
-        this.row     = this.areaIterateMinY - 1;
-        this.maxY    = this.row + 1;
-        this.maxX = 1;
-        this.tY      = tMinY - 1;
-        this.tX      = tMaxX - 1;
+        currentY = areaIterateMinY;
     }
-    
+
     /**
      * {@inheritDoc }.
      */
     @Override
     public boolean next() {
-        if ((dataCursor+=sampleStride) >= maxX) {
-            if (++tX == tMaxX) {
+        band = ++band % rasterNumBand;
+        // We reach current raster line end.
+        if (band == 0 && ++currentX >= maxX) {
+            // We check if there's more tiles in the same row. If not, we go to the next one.
+            if (++tX >= tMaxX) {
                 tX = tMinX;
-                if (++row == maxY) {
-                    if (++tY == tMaxY) return false;
-                    updateCurrentRaster(tX, tY);
-                    this.cRMinY = this.currentRaster.getMinY();
-                    this.maxY   = Math.min(areaIterateMaxY, cRMinY + currentRaster.getHeight());
-                } else {
-                    updateCurrentRaster(tX, tY);
+                // If we reach raster limit in y axis, we must take next raster below. We also check if we reached end
+                // of iteration area.
+                if (++currentY >= maxY && ++tY >= tMaxY) {
+                    return false;
                 }
-            } else {
-                updateCurrentRaster(tX, tY);
             }
-            this.cRMinX    = currentRaster.getMinX();
-            this.maxX      = (Math.min(areaIterateMaxX, cRMinX + rasterWidth) - cRMinX)*rasterNumBand*sampleStride;
-            final int step = (row - cRMinY) * scanLineStride;
-            this.maxX     +=  step;
-            dataCursor     = (Math.max(areaIterateMinX, cRMinX) - cRMinX)*rasterNumBand*sampleStride + step;
+            updateCurrentRaster(tX, tY);
+
+        } else {
+            dataCursor += bandSteps[band];
         }
+
         return true;
     }
 
-    /**
-     * Update current data array and current raster from tiles array coordinates.
-     *
-     * @param tileX current X coordinate from rendered image tiles array.
-     * @param tileY current Y coordinate from rendered image tiles array.
-     */
-    protected void updateCurrentRaster(int tileX, int tileY) {
-        this.currentRaster = renderedImage.getTile(tileX, tileY);
-        final ComponentSampleModel sModel = (ComponentSampleModel) currentRaster.getSampleModel();
-        this.scanLineStride = sModel.getScanlineStride();
-        this.sampleStride = sModel.getPixelStride();
-    }
-
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
-    public int getX() {
-        return cRMinX + dataCursor % scanLineStride/ (rasterNumBand*sampleStride);
-    }
-
-    /**
-     * {@inheritDoc }.
-     */
     @Override
     public int getY() {
-        return cRMinY + dataCursor / scanLineStride;
+        return currentY;
     }
 
-    /**
-     * {@inheritDoc }.
-     */
     @Override
     public void rewind() {
-        this.maxY       = this.areaIterateMinY;
-        this.maxX       = 1;
-        this.dataCursor = this.band = 0;
-        this.tY         = this.tMinY - 1;
-        this.tX         = this.tMaxX - 1;
-        this.row        = this.maxY - 1;
+        super.rewind();
+        currentY = areaIterateMinY;
     }
 
-    /**
-     * {@inheritDoc }.
-     */
+    @Override
+    protected void updateCurrentRaster(int tileX, int tileY) {
+        super.updateCurrentRaster(tileX, tileY);
+        // Row major iterator can update raster to position NOT at the first line or iteration minimum row.We must
+        // ensure we don't have to get on a specific line.
+        if (currentY > minY) {
+            dataCursor += (currentY - minY) * scanLineStride;
+        }
+    }
+
     @Override
     public void moveTo(int x, int y, int b) {
         super.moveTo(x, y, b);
-        final int tTempX = (x - renderedImage.getMinX())/rasterWidth + renderedImage.getMinTileX();
-        final int tTempY = (y - renderedImage.getMinY())/renderedImage.getTileHeight() + renderedImage.getMinTileY();
-        if (tTempX != tX || tTempY != tY) {
-            tX = tTempX;
-            tY = tTempY;
-            updateCurrentRaster(tX, tY);
-            this.cRMinX = currentRaster.getMinX();
-            this.cRMinY = currentRaster.getMinY();
-        }
-
-        this.row = y;
-        final int step = (row - cRMinY) * scanLineStride;
-        this.maxX = (Math.min(areaIterateMaxX, cRMinX + rasterWidth) - cRMinX) * rasterNumBand * sampleStride;
-        this.maxX += step;
-
-        //initialize row
-        this.maxY = Math.min(areaIterateMaxY, cRMinY + currentRaster.getHeight());
-        this.dataCursor = (x - cRMinX) * rasterNumBand*sampleStride + step + b;// - 1;
+        currentY = y;
     }
 
     /**
