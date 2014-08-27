@@ -264,9 +264,6 @@ public class DirectoryWatcher implements Closeable {
             } finally {
             /* Finished work with key, reset it. If we cannot, it means the bound directory is not watched anymore, we can
                remove it from our list of surveyed folders.
-
-               N.B : On linux, a folder is watched until it's FULLY suppressed, which means if a folder is put in trashes,
-               the watch service won't see it, and will still manage it.
              */
                 if (!key.reset()) {
                     synchronized (roots) {
