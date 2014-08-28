@@ -513,7 +513,7 @@ public abstract class PixelIterator implements Closeable {
      */
     public static int[] getBandSteps(final int[] bandOffsets, final int pixelStride) {
         final int[] bandSteps = new int[bandOffsets.length];
-        bandSteps[0] = pixelStride - bandOffsets[bandOffsets.length-1];
+        bandSteps[0] = bandOffsets[0] + pixelStride - bandOffsets[bandOffsets.length-1];
         for (int i = 1 ; i < bandSteps.length ; i++) {
             bandSteps[i] = bandOffsets[i] - bandOffsets[i-1];
         }

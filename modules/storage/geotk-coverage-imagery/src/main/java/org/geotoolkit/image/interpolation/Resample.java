@@ -354,8 +354,7 @@ public class Resample {
             double sample = interpol.interpolate(srcCoords[0], srcCoords[1], band);
             if(clamp!=null) sample = XMath.clamp(sample, clamp[0], clamp[1]);
             destIterator.setSampleDouble(sample);
-            while (++band != numBands) {
-                destIterator.next();
+            while (++band != numBands && destIterator.next()) {
                 sample = interpol.interpolate(srcCoords[0], srcCoords[1], band);
                 if(clamp!=null) sample = XMath.clamp(sample, clamp[0], clamp[1]);
                 destIterator.setSampleDouble(sample);

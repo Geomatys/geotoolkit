@@ -134,9 +134,9 @@ abstract class DefaultDirectIterator extends PixelIterator {
         /* Initialize iteration attributes to be at a virtual position before the first pixel. Doing so, the first call
          * to next() will give us first sample of the first pixel.
          */
-        maxBanks  = (areaIterateMaxX - crMinX)* pixelStride + (areaIterateMaxY-crMinY-1) * scanLineStride + bandOffsets[0];
-        cursorStep = scanLineStride - ((areaIterateMaxX - areaIterateMinX)* pixelStride + bandOffsets[0]) + bandSteps[0];
-        dataCursor = baseCursor = ((areaIterateMinX - crMinX) * pixelStride + (areaIterateMinY-crMinY) * scanLineStride + bandOffsets[0]) - bandSteps[0];
+        maxBanks  = (areaIterateMaxX - crMinX)* pixelStride + (areaIterateMaxY-crMinY-1) * scanLineStride;
+        cursorStep = scanLineStride - ((areaIterateMaxX - areaIterateMinX)* pixelStride) + bandSteps[0];
+        dataCursor = baseCursor = ((areaIterateMinX - crMinX) * pixelStride + (areaIterateMinY-crMinY) * scanLineStride) - bandSteps[0];
 
         minX = areaIterateMinX;
         maxX = areaIterateMaxX;
@@ -228,9 +228,9 @@ abstract class DefaultDirectIterator extends PixelIterator {
         final int miny  = this.minY - crMinY;
         final int maxx  = this.maxX - crMinX;
         final int maxy  = this.maxY - crMinY;
-        this.maxBanks   = maxx * pixelStride + (maxy-1) * scanLineStride + bandOffsets[0];
+        this.maxBanks   = maxx * pixelStride + (maxy-1) * scanLineStride;
 
-        this.cursorStep = scanLineStride - ((maxx - minx) * pixelStride + bandOffsets[0]) + bandSteps[0];
+        this.cursorStep = scanLineStride - ((maxx - minx) * pixelStride) + bandSteps[0];
         this.dataCursor = minx * pixelStride + miny * scanLineStride + bandOffsets[0];
         currentX = minX;
         band = 0;
@@ -297,7 +297,7 @@ abstract class DefaultDirectIterator extends PixelIterator {
         }
 
         // We are on the right tile, but not on the right pixel.
-        this.dataCursor = (x - crMinX) * pixelStride + (y - crMinY) * scanLineStride + bandOffsets[0];// - 1;
+        this.dataCursor = (x - crMinX) * pixelStride + (y - crMinY) * scanLineStride + bandOffsets[0];
         currentX = x;
         // Do not perform first sample step, the move above already put cursor on it.
         band = 0;
