@@ -58,7 +58,7 @@ public final class SupportFiles extends Static {
     private static final String[][] SPECIAL_CASES = {
         new String[] {"jpg",  "jpw", "jpegw"},  // No need to declare "jgw" and "jpgw".
         new String[] {"jpeg", "jpw", "jpgw"},   // No need to declare "jgw" and "jpegw".
-        new String[] {"tif",  "tiffw"},
+        new String[] {"tif",  "tiffw", "twfx"},
         new String[] {"bmp",  "bmw"}
     };
 
