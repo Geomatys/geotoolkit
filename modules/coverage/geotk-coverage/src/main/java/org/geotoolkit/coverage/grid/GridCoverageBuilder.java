@@ -2532,6 +2532,7 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
          */
         protected Variable(final int band) {
             this.band = band;
+            this.name = ""+band;
         }
 
         /**
