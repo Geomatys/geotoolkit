@@ -124,6 +124,11 @@ import org.apache.sis.referencing.CommonCRS;
  */
 public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<CachedRasterSymbolizer>{
 
+    /**
+     * A tolerence value for black color. Used in {@linkplain #removeBlackBorder(java.awt.image.WritableRenderedImage)}
+     * to define an applet of black colors to replace with alpha data.
+     */
+    private static final int COLOR_TOLERANCE = 13;
 
     public DefaultRasterSymbolizerRenderer(final SymbolizerRendererService service, final CachedRasterSymbolizer symbol, final RenderingContext2D context){
         super(service,symbol,context);
@@ -217,7 +222,6 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
                         //check if selection actually does something
                         if (!(selected[0] == 0 && selected[1] == 1 && selected[2] == 2) || nbDim != 3) {
                             dataCoverage = selectBand(dataCoverage, selected);
-                            //dataCoverage = dataCoverage.view(ViewType.RENDERED);
                         }
                     }
                 }
@@ -722,10 +726,14 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
         } else {
             //no color map, used the default image rendered view
             // coverage = coverage.view(ViewType.RENDERED);
-            image = coverage.getRenderedImage();
-            if (isReprojected) {
-                //remove potential black borders
-                image = forceAlpha(image, true);
+            if (coverage.getViewTypes().contains(ViewType.PHOTOGRAPHIC)) {
+                image = coverage.view(ViewType.PHOTOGRAPHIC).getRenderedImage();
+                image = forceAlpha(image);
+                if (image instanceof WritableRenderedImage) {
+                    removeBlackBorder((WritableRenderedImage)image);
+                }
+            } else {
+                image = coverage.view(ViewType.RENDERED).getRenderedImage();
             }
         }
 
@@ -810,7 +818,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
         } else {
             final GridCoverage2D photoCvg = source.view(ViewType.PHOTOGRAPHIC);
             RenderedImage img = photoCvg.getRenderedImage();
-            RenderedImage imga = forceAlpha(img, false);
+            RenderedImage imga = forceAlpha(img);
 
             if (imga != img) {
                 final GridCoverageBuilder gcb = new GridCoverageBuilder();
@@ -830,24 +838,45 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
      * TODO, this could be done more efficiently by adding an ImageLayout hints
      * when doing the coverage reprojection. but hints can not be passed currently.
      */
-    private static RenderedImage forceAlpha(RenderedImage img, boolean removeBlackBorder){
+    private static RenderedImage forceAlpha(RenderedImage img){
         if (!img.getColorModel().hasAlpha()) {
             //Add alpha channel
             final BufferedImage buffer = new BufferedImage(img.getWidth(), img.getHeight(), BufferedImage.TYPE_INT_ARGB);
             buffer.createGraphics().drawRenderedImage(img, new AffineTransform());
-
-            if (removeBlackBorder) {
-                //remove black borders+
-                FloodFill.fill(buffer, new Color[]{Color.BLACK}, new Color(0f, 0f, 0f, 0f),
-                        new java.awt.Point(0, 0),
-                        new java.awt.Point(buffer.getWidth() - 1, 0),
-                        new java.awt.Point(buffer.getWidth() - 1, buffer.getHeight() - 1),
-                        new java.awt.Point(0, buffer.getHeight() - 1)
-                );
-            }
             img = buffer;
         }
         return img;
+    }
+
+    /**
+     * Remove black border of an ARGB image to replace them with transparent pixels.
+     * @param toFilter Image to ermove black border from.
+     */
+    private static void removeBlackBorder(final WritableRenderedImage toFilter) {
+        final ArrayList<double[]> blackColors = new ArrayList<>();
+        fillColorToleranceTable(0, 2, blackColors, new double[]{0, 0, 0, 255}, COLOR_TOLERANCE);
+        final double[][] oldColors = blackColors.toArray(new double[0][]);
+                FloodFill.fill(toFilter, oldColors, new double[]{0d, 0d, 0d, 0d},
+                new java.awt.Point(0, 0),
+                new java.awt.Point(toFilter.getWidth() - 1, 0),
+                new java.awt.Point(toFilter.getWidth() - 1, toFilter.getHeight() - 1),
+                new java.awt.Point(0, toFilter.getHeight() - 1)
+        );
+    }
+
+    private static void fillColorToleranceTable(int index, int maxIndex, List<double[]> container, double[] baseColor, int tolerance) {
+        for (int j = 0 ; j < tolerance; j++) {
+            final double[] color = new double[baseColor.length];
+            System.arraycopy(baseColor, 0, color, 0, baseColor.length);
+            color[index] += j;
+            if (index >= maxIndex) {
+                container.add(color);
+            } else {
+                for (int i = index +1 ; i <= maxIndex ; i++) {
+                    fillColorToleranceTable(i, maxIndex, container, color, tolerance);
+                }
+            }
+        }
     }
 
     private static RenderedImage shadowed(final RenderedImage img){

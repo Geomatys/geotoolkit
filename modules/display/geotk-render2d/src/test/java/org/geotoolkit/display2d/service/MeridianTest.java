@@ -31,6 +31,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import javax.imageio.ImageIO;
+import javax.measure.unit.Unit;
+
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
@@ -537,7 +539,7 @@ public class MeridianTest {
         
         final int white = Color.WHITE.getRGB();
         final int black = Color.BLACK.getRGB();
-        
+
         final int width = image.getWidth();
         final int height = image.getHeight();
         
@@ -552,7 +554,7 @@ public class MeridianTest {
                         break;
                     }
                 }
-                
+
                 Assert.assertEquals("Wrong value at ("+x+","+y+")", inside?black:white, rgb);
             }
         }
@@ -618,6 +620,7 @@ public class MeridianTest {
         gcb.setRenderedImage(image);
         gcb.setGridToCRS(new AffineTransform(1, 0, 0, -1, env.getMinimum(0), env.getMaximum(1)));
         gcb.setPixelAnchor(PixelInCell.CELL_CORNER);
+        gcb.setSampleDimensions(new double[]{0, 0, 0}, new double[]{255, 255, 255}, Unit.ONE, null);
         final GridCoverage2D coverage = (GridCoverage2D) gcb.build();
         
         final RasterSymbolizer symbol = SF.rasterSymbolizer();
