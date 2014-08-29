@@ -593,6 +593,9 @@ public class ImageCoverageReader extends GridCoverageReader {
                 final SpatialMetadata metadata = getImageMetadata(imageReader, index);
                 if (metadata != null) {
                     crs = metadata.getInstanceForType(CoordinateReferenceSystem.class);
+                    if (crs == null || crs == PredefinedCRS.GRID_2D) {
+                        crs = coverageBuilder.getCoordinateReferenceSystem();
+                    }
                     if (crs instanceof GridGeometry) { // Some formats (e.g. NetCDF) do that.
                         gridToCRS = ((GridGeometry) crs).getGridToCRS();
                     } else {
