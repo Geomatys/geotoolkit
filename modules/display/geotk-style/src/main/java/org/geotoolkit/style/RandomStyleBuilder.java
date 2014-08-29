@@ -152,7 +152,31 @@ public class RandomStyleBuilder extends Factory {
         } else if (cla.equals(Point.class) || cla.equals(MultiPoint.class)) {
             ps =  SF.pointSymbolizer();
         } else{
-            ps =  SF.polygonSymbolizer();
+            //multiple types, create rules
+            final MutableStyle style = SF.style();
+            final MutableFeatureTypeStyle fts = SF.featureTypeStyle();
+
+            final MutableRule rulePoint = SF.rule(StyleConstants.DEFAULT_POINT_SYMBOLIZER);
+            rulePoint.setFilter(FF.or(
+                                    FF.equals(FF.function("geometryType", FF.property("geometry")), FF.literal("Point")),
+                                    FF.equals(FF.function("geometryType", FF.property("geometry")), FF.literal("MultiPoint"))
+                                ));
+            final MutableRule ruleLine = SF.rule(StyleConstants.DEFAULT_LINE_SYMBOLIZER);
+            ruleLine.setFilter(FF.or(
+                                    FF.equals(FF.function("geometryType", FF.property("geometry")), FF.literal("LineString")),
+                                    FF.equals(FF.function("geometryType", FF.property("geometry")), FF.literal("MultiLineString"))
+                                ));
+            final MutableRule rulePolygon = SF.rule(StyleConstants.DEFAULT_POLYGON_SYMBOLIZER);
+            rulePolygon.setFilter(FF.or(
+                                    FF.equals(FF.function("geometryType", FF.property("geometry")), FF.literal("Polygon")),
+                                    FF.equals(FF.function("geometryType", FF.property("geometry")), FF.literal("MultiPolygon"))
+                                ));
+
+            fts.rules().add(rulePoint);
+            fts.rules().add(ruleLine);
+            fts.rules().add(rulePolygon);
+            style.featureTypeStyles().add(fts);
+            return style;
         }
 
         final MutableStyle style =  SF.style();
@@ -178,7 +202,31 @@ public class RandomStyleBuilder extends Factory {
         } else if (cla.equals(Point.class) || cla.equals(MultiPoint.class)) {
             ps = createRandomPointSymbolizer();
         } else{
-            ps =  SF.polygonSymbolizer();
+            //multiple types, create rules
+            final MutableStyle style = SF.style();
+            final MutableFeatureTypeStyle fts = SF.featureTypeStyle();
+
+            final MutableRule rulePoint = SF.rule(createRandomPointSymbolizer());
+            rulePoint.setFilter(FF.or(
+                                    FF.equals(FF.function("geometryType", FF.property("geometry")), FF.literal("Point")),
+                                    FF.equals(FF.function("geometryType", FF.property("geometry")), FF.literal("MultiPoint"))
+                                ));
+            final MutableRule ruleLine = SF.rule(createRandomLineSymbolizer());
+            ruleLine.setFilter(FF.or(
+                                    FF.equals(FF.function("geometryType", FF.property("geometry")), FF.literal("LineString")),
+                                    FF.equals(FF.function("geometryType", FF.property("geometry")), FF.literal("MultiLineString"))
+                                ));
+            final MutableRule rulePolygon = SF.rule(createRandomPolygonSymbolizer());
+            rulePolygon.setFilter(FF.or(
+                                    FF.equals(FF.function("geometryType", FF.property("geometry")), FF.literal("Polygon")),
+                                    FF.equals(FF.function("geometryType", FF.property("geometry")), FF.literal("MultiPolygon"))
+                                ));
+
+            fts.rules().add(rulePoint);
+            fts.rules().add(ruleLine);
+            fts.rules().add(rulePolygon);
+            style.featureTypeStyles().add(fts);
+            return style;
         }
 
         final MutableStyle style =  SF.style();
