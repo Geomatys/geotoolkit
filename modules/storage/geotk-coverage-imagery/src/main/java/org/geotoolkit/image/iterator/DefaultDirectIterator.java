@@ -136,7 +136,8 @@ abstract class DefaultDirectIterator extends PixelIterator {
          */
         maxBanks  = (areaIterateMaxX - crMinX)* pixelStride + (areaIterateMaxY-crMinY-1) * scanLineStride;
         cursorStep = scanLineStride - ((areaIterateMaxX - areaIterateMinX)* pixelStride) + bandSteps[0];
-        dataCursor = baseCursor = ((areaIterateMinX - crMinX) * pixelStride + (areaIterateMinY-crMinY) * scanLineStride) - bandSteps[0];
+        // Virtual position : last sample of px[-1]
+        dataCursor = baseCursor = (areaIterateMinX - crMinX -1) * pixelStride + (areaIterateMinY-crMinY) * scanLineStride + bandOffsets[rasterNumBand-1];
 
         minX = areaIterateMinX;
         maxX = areaIterateMaxX;
