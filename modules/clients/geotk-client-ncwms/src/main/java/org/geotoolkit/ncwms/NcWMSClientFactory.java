@@ -17,7 +17,6 @@
 package org.geotoolkit.ncwms;
 
 import java.io.Serializable;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -31,11 +30,10 @@ import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
-import org.geotoolkit.parameter.Parameters;
-import org.geotoolkit.security.ClientSecurity;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.iso.ResourceInternationalString;
 import org.geotoolkit.storage.DataType;
+import org.geotoolkit.storage.DefaultFactoryMetadata;
 import org.geotoolkit.storage.FactoryMetadata;
 import org.geotoolkit.wms.xml.WMSVersion;
 import org.opengis.metadata.Identifier;
@@ -129,12 +127,7 @@ public class NcWMSClientFactory extends AbstractClientFactory implements Coverag
 
     @Override
     public FactoryMetadata getMetadata() {
-        return new FactoryMetadata() {
-            @Override
-            public DataType getDataType() {
-                return DataType.GRID;
-            }
-        };
+        return new DefaultFactoryMetadata(DataType.GRID, false);
     }
 
 }

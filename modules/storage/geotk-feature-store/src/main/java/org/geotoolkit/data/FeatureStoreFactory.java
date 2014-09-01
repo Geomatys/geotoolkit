@@ -20,9 +20,6 @@ import java.io.Serializable;
 import java.util.Map;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.storage.DataStoreFactory;
-import org.opengis.metadata.identification.Identification;
-import org.opengis.metadata.quality.ConformanceResult;
-import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
 
 /**

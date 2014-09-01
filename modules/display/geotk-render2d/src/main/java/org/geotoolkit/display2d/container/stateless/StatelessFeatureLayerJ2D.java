@@ -24,23 +24,28 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.geotoolkit.data.FeatureStoreRuntimeException;
+import org.apache.sis.geometry.Envelope2D;
+import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.referencing.CRS;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.FeatureStoreContentEvent;
 import org.geotoolkit.data.FeatureStoreListener;
 import org.geotoolkit.data.FeatureStoreManagementEvent;
+import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.memory.GenericCachedFeatureIterator;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.session.Session;
-import org.geotoolkit.display.canvas.RenderingContext;
-import org.geotoolkit.display.VisitFilter;
-import org.geotoolkit.display.canvas.control.CanvasMonitor;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display.SearchArea;
+import org.geotoolkit.display.VisitFilter;
+import org.geotoolkit.display.canvas.RenderingContext;
+import org.geotoolkit.display.canvas.control.CanvasMonitor;
 import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.GO2Utilities;
 import static org.geotoolkit.display2d.GO2Utilities.*;
@@ -50,32 +55,32 @@ import org.geotoolkit.display2d.container.stateless.StatelessCollectionLayerJ2D.
 import org.geotoolkit.display2d.primitive.DefaultSearchAreaJ2D;
 import org.geotoolkit.display2d.primitive.GraphicJ2D;
 import org.geotoolkit.display2d.primitive.ProjectedFeature;
+import org.geotoolkit.display2d.primitive.ProjectedObject;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.display2d.style.CachedRule;
+import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRenderer;
+import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.HintsPending;
+import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.feature.SchemaException;
+import org.geotoolkit.feature.type.FeatureType;
+import org.geotoolkit.feature.type.GeometryDescriptor;
+import org.geotoolkit.feature.type.Name;
 import org.geotoolkit.filter.DefaultLiteral;
 import org.geotoolkit.filter.DefaultPropertyName;
 import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.filter.binaryspatial.LooseBBox;
 import org.geotoolkit.filter.binaryspatial.UnreprojectedLooseBBox;
 import org.geotoolkit.geometry.DefaultBoundingBox;
-import org.apache.sis.geometry.Envelope2D;
-import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.GraphicBuilder;
-import org.apache.sis.referencing.CRS;
-import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.StyleUtilities;
 import org.opengis.display.primitive.Graphic;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.GeometryDescriptor;
-import org.geotoolkit.feature.type.Name;
 import org.opengis.filter.Filter;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.geometry.BoundingBox;
@@ -84,6 +89,7 @@ import org.opengis.metadata.extent.GeographicBoundingBox;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.style.Rule;
+import org.opengis.style.Symbolizer;
 
 /**
  * Single object to represent a complete feature map layer.
@@ -137,6 +143,12 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
             return;
         }
 
+        if(Boolean.TRUE.equals(item.getUserProperty(MapLayer.USERKEY_STYLED_FEATURE))){
+            //feature have self defined styles.
+            renderStyledFeature(renderingContext);
+            return;
+        }
+        
         //first extract the valid rules at this scale
         final List<Rule> validRules = getValidRules(renderingContext,item,item.getCollection().getFeatureType());
 
@@ -160,8 +172,8 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
         } catch (Exception ex) {
             renderingContext.getMonitor().exceptionOccured(ex, Level.WARNING);
             return;
-        }
-
+        }        
+                
         //get the expected result type
         final FeatureType expected = candidates.getFeatureType();
 
@@ -171,6 +183,55 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
         paintVectorLayer(rules, candidates, renderingContext);
     }
 
+    /**
+     * Render styled features.
+     * 
+     * @param context 
+     */
+    private void renderStyledFeature(final RenderingContext2D context){
+        
+        final CanvasMonitor monitor = context.getMonitor();
+        final StatelessContextParams params = getStatefullParameters(context);
+        final FeatureCollection<Feature> candidates;
+        try {
+            candidates = (FeatureCollection<Feature>)optimizeCollection(context);
+        } catch (Exception ex) {
+            context.getMonitor().exceptionOccured(ex, Level.WARNING);
+            return;
+        }
+        final RenderingIterator statefullIterator = getIterator(candidates, context, params);
+        
+        //prepare the rendering parameters
+        if(monitor.stopRequested()) return;
+        
+        try{
+            while(statefullIterator.hasNext()){
+                if(monitor.stopRequested()) return;
+                final ProjectedObject projectedCandidate = statefullIterator.next();
+                final Feature feature = (Feature) projectedCandidate.getCandidate();
+                final List<Symbolizer> symbolizers = (List<Symbolizer>) feature.getUserData().get(MapLayer.USERKEY_STYLED_FEATURE);
+                if(symbolizers==null) continue;
+                for(Symbolizer symbolizer : symbolizers){
+                    final SymbolizerRendererService srs = GO2Utilities.findRenderer(symbolizer.getClass());
+                    final CachedSymbolizer cs = srs.createCachedSymbolizer(symbolizer);
+                    final SymbolizerRenderer sr = srs.createRenderer(cs, context);
+                    try {
+                        sr.portray(projectedCandidate);
+                    } catch (PortrayalException ex) {
+                        monitor.exceptionOccured(ex, Level.WARNING);
+                    }
+                }
+            }
+        }finally{
+            try {
+                statefullIterator.close();
+            } catch (IOException ex) {
+                getLogger().log(Level.WARNING, null, ex);
+            }
+        }
+        
+    }
+    
     @Override
     protected Collection<?> optimizeCollection(final RenderingContext2D context,
             final Set<String> requieredAtts, final List<Rule> rules) throws Exception {
@@ -182,6 +243,17 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
         col = GenericCachedFeatureIterator.wrap(col, 1000);
         return col;
     }
+    
+    protected Collection<?> optimizeCollection(final RenderingContext2D context) throws Exception {
+        currentQuery = prepareQuery(context, item);
+        //we detach feature since we are going to use a cache.
+        currentQuery.getHints().put(HintsPending.FEATURE_DETACHED,Boolean.TRUE);
+        final Query query = currentQuery;
+        FeatureCollection col = ((FeatureCollection<Feature>)item.getCollection()).subCollection(query);
+        col = GenericCachedFeatureIterator.wrap(col, 1000);
+        return col;
+    }
+    
 
     @Override
     protected FeatureId id(Object candidate) {
@@ -326,53 +398,10 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
         final FeatureCollection<? extends Feature> fs            = layer.getCollection();
         final FeatureType schema                                 = fs.getFeatureType();
         final GeometryDescriptor geomDesc                        = schema.getGeometryDescriptor();
-        BoundingBox bbox                                         = renderingContext.getPaintingObjectiveBounds2D();
-        final CoordinateReferenceSystem bboxCRS                  = bbox.getCoordinateReferenceSystem();
-        final CanvasMonitor monitor                              = renderingContext.getMonitor();
+        BoundingBox bbox                                         = optimizeBBox(renderingContext, layer);
         final CoordinateReferenceSystem layerCRS                 = schema.getCoordinateReferenceSystem();
         final String geomAttName                                 = (geomDesc!=null)? geomDesc.getLocalName() : null;
         final RenderingHints hints                               = renderingContext.getRenderingHints();
-
-        //layer crs may be null if it define an abstract collection
-        //or if the crs is defined only on the feature geometry
-        if(layerCRS != null && !org.geotoolkit.referencing.CRS.equalsIgnoreMetadata(layerCRS,bboxCRS)){
-            //BBox and layer bounds have different CRS. reproject bbox bounds
-            Envelope env;
-
-            try{
-                env = org.geotoolkit.referencing.CRS.transform(bbox, layerCRS);
-            }catch(TransformException ex){
-                //TODO is fixed in geotidy, the result envelope will have infinte values where needed
-                //TODO should do something about this, since canvas bounds may be over the crs bounds
-                monitor.exceptionOccured(ex, Level.WARNING);
-                env = new Envelope2D();
-            }catch(IllegalArgumentException ex){
-                //looks like the coordinate of the bbox are outside of the crs valide area.
-                //some crs raise this error, other not.
-                //if so we should reduce our bbox to the valide extent of the crs.
-                monitor.exceptionOccured(ex, Level.WARNING);
-
-                final GeographicBoundingBox gbox = CRS.getGeographicBoundingBox(layerCRS);
-
-                if(gbox == null){
-                    env = new GeneralEnvelope(layerCRS);
-                }else{
-                    env = new GeneralEnvelope(gbox);
-                }
-
-            }catch(Exception ex){
-                //we should not catch this but we must not block the canvas
-                monitor.exceptionOccured(ex, Level.WARNING);
-                return null;
-            }
-
-            //TODO looks like the envelope after transform operation doesnt have always exactly the same CRS.
-            //fix CRS classes method and remove the two next lines.
-            env = new GeneralEnvelope(env);
-            ((GeneralEnvelope)env).setCoordinateReferenceSystem(layerCRS);
-
-            bbox = new DefaultBoundingBox(env);
-        }
 
         Filter filter;
 
@@ -576,7 +605,178 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
         qb.setHints(queryHints);
         return qb.buildQuery();
     }
+    
+    /**
+     * Creates an optimal query to send to the datastore, knowing which properties are knowned and
+     * the appropriate bounding box to filter.
+     */
+    protected static Query prepareQuery(final RenderingContext2D renderingContext, 
+            final FeatureMapLayer layer) throws PortrayalException{
 
+        final FeatureCollection<? extends Feature> fs            = layer.getCollection();
+        final FeatureType schema                                 = fs.getFeatureType();
+        final GeometryDescriptor geomDesc                        = schema.getGeometryDescriptor();
+        BoundingBox bbox                                         = optimizeBBox(renderingContext, layer);
+        final CoordinateReferenceSystem layerCRS                 = schema.getCoordinateReferenceSystem();
+        final String geomAttName                                 = (geomDesc!=null)? geomDesc.getLocalName() : null;
+        final RenderingHints hints                               = renderingContext.getRenderingHints();
+
+        Filter filter;
+
+        //final Envelope layerBounds = layer.getBounds();
+        //we better not do any call to the layer bounding box before since it can be
+        //really expensive, the featurestore is the best placed to check if he might
+        //optimize the filter.
+        //if( ((BoundingBox)bbox).contains(new DefaultBoundingBox(layerBounds))){
+            //the layer bounds overlaps the bbox, no need for a spatial filter
+        //   filter = Filter.INCLUDE;
+        //}else{
+        //make a bbox filter
+        if(geomAttName != null){
+            if (layerCRS != null) {
+                filter = new UnreprojectedLooseBBox(FILTER_FACTORY.property(geomAttName),new DefaultLiteral<BoundingBox>(bbox));
+            } else {
+                filter = new LooseBBox(FILTER_FACTORY.property(geomAttName),new DefaultLiteral<BoundingBox>(bbox));
+            }
+        }else{
+            filter = Filter.EXCLUDE;
+        }
+        //}
+
+        //concatenate geographic filter with data filter if there is one
+        if(layer.getQuery() != null && layer.getQuery().getFilter() != null){
+            filter = FILTER_FACTORY.and(filter,layer.getQuery().getFilter());
+        }
+
+        final Set<String> copy = new HashSet<String>();
+
+        //concatenate with temporal range if needed ----------------------------
+        for (final FeatureMapLayer.DimensionDef def : layer.getExtraDimensions()) {
+            final CoordinateReferenceSystem crs = def.getCrs();
+            final Envelope canvasEnv = renderingContext.getCanvasObjectiveBounds();
+            final Envelope dimEnv;
+            try {
+                dimEnv = org.geotoolkit.referencing.CRS.transform(canvasEnv, crs);
+            } catch (TransformException ex) {
+                continue;
+            }
+
+            final Filter dimFilter = FILTER_FACTORY.and(
+                    FILTER_FACTORY.lessOrEqual(FILTER_FACTORY.literal(dimEnv.getMinimum(0)), def.getLower()),
+                    FILTER_FACTORY.greaterOrEqual(FILTER_FACTORY.literal(dimEnv.getMaximum(0)), def.getUpper()));
+
+            filter = FILTER_FACTORY.and(filter, dimFilter);
+
+            //add extra dimension property name on attributes list for retype.
+            if (def.getLower() instanceof DefaultPropertyName) {
+                copy.add(((DefaultPropertyName)def.getLower()).getPropertyName());
+            }
+
+            if (def.getUpper() instanceof DefaultPropertyName) {
+                copy.add(((DefaultPropertyName)def.getUpper()).getPropertyName());
+            }
+        }
+
+        //optimize the filter---------------------------------------------------
+        filter = FilterUtilities.prepare(filter,Feature.class,schema);
+
+        final Hints queryHints = new Hints();
+        final QueryBuilder qb = new QueryBuilder();
+        qb.setTypeName(schema.getName());
+        qb.setFilter(filter);
+
+        //resampling and ignore flag only works when we know the layer crs
+        if(layerCRS != null){
+            //add resampling -------------------------------------------------------
+            Boolean resample = (hints == null) ? null : (Boolean) hints.get(GO2Hints.KEY_GENERALIZE);
+            if(!Boolean.FALSE.equals(resample)){
+                //we only disable resampling if it is explictly specified
+                final double[] res = renderingContext.getResolution(layerCRS);
+
+                //adjust with the generalization factor
+                final Number n =  (hints==null) ? null : (Number)hints.get(GO2Hints.KEY_GENERALIZE_FACTOR);
+                final double factor;
+                if(n != null){
+                    factor = n.doubleValue();
+                }else{
+                    factor = GO2Hints.GENERALIZE_FACTOR_DEFAULT.doubleValue();
+                }
+                res[0] *= factor;
+                res[1] *= factor;
+                qb.setResolution(res);
+            }
+
+            //add ignore flag ------------------------------------------------------
+            //TODO this is efficient but erases values, when plenty of then are to be rendered
+            //we should find another way to handle this
+            //if(!GO2Utilities.visibleMargin(rules, 1.01f, renderingContext)){
+            //    //style does not expend itself further than the feature geometry
+            //    //that mean geometries smaller than a pixel will not be renderer or barely visible
+            //    queryHints.put(HintsPending.KEY_IGNORE_SMALL_FEATURES, renderingContext.getResolution(layerCRS));
+            //}
+        }
+
+        //add reprojection -----------------------------------------------------
+        //we don't reproject, the reprojection may produce curves but JTS can not represent those.
+        //so we generate those curves in java2d shapes by doing the transformation ourself.
+        //TODO wait for a new geometry implementation
+        //qb.setCRS(renderingContext.getObjectiveCRS2D());
+
+        //set the acumulated hints
+        qb.setHints(queryHints);
+        return qb.buildQuery();
+    }
+
+    private static BoundingBox optimizeBBox(RenderingContext2D renderingContext, FeatureMapLayer layer){
+        BoundingBox bbox                                         = renderingContext.getPaintingObjectiveBounds2D();
+        final CoordinateReferenceSystem bboxCRS                  = bbox.getCoordinateReferenceSystem();
+        final CanvasMonitor monitor                              = renderingContext.getMonitor();
+        final CoordinateReferenceSystem layerCRS                 = layer.getCollection().getFeatureType().getCoordinateReferenceSystem();
+        
+        //layer crs may be null if it define an abstract collection
+        //or if the crs is defined only on the feature geometry
+        if(layerCRS != null && !org.geotoolkit.referencing.CRS.equalsIgnoreMetadata(layerCRS,bboxCRS)){
+            //BBox and layer bounds have different CRS. reproject bbox bounds
+            Envelope env;
+
+            try{
+                env = org.geotoolkit.referencing.CRS.transform(bbox, layerCRS);
+            }catch(TransformException ex){
+                //TODO is fixed in geotidy, the result envelope will have infinte values where needed
+                //TODO should do something about this, since canvas bounds may be over the crs bounds
+                monitor.exceptionOccured(ex, Level.WARNING);
+                env = new Envelope2D();
+            }catch(IllegalArgumentException ex){
+                //looks like the coordinate of the bbox are outside of the crs valide area.
+                //some crs raise this error, other not.
+                //if so we should reduce our bbox to the valide extent of the crs.
+                monitor.exceptionOccured(ex, Level.WARNING);
+
+                final GeographicBoundingBox gbox = CRS.getGeographicBoundingBox(layerCRS);
+
+                if(gbox == null){
+                    env = new GeneralEnvelope(layerCRS);
+                }else{
+                    env = new GeneralEnvelope(gbox);
+                }
+
+            }catch(Exception ex){
+                //we should not catch this but we must not block the canvas
+                monitor.exceptionOccured(ex, Level.WARNING);
+                return null;
+            }
+
+            //TODO looks like the envelope after transform operation doesnt have always exactly the same CRS.
+            //fix CRS classes method and remove the two next lines.
+            env = new GeneralEnvelope(env);
+            ((GeneralEnvelope)env).setCoordinateReferenceSystem(layerCRS);
+
+            bbox = new DefaultBoundingBox(env);
+        }
+        
+        return bbox;
+    }
+    
     private static class GraphicIterator implements RenderingIterator{
 
         private final FeatureIterator<? extends Feature> ite;

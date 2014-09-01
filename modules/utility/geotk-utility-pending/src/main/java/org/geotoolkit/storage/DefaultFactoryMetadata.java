@@ -14,30 +14,31 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
+
 package org.geotoolkit.storage;
 
 /**
- * Base class for {@link org.geotoolkit.storage.DataStoreFactory} metadata. It should be retrived via {@link DataStoreFactory#getMetadata()}.
  *
- * @author Alexis Manin (Geomatys)
  * @author Johann Sorel (Geomatys)
  */
-public interface FactoryMetadata {
+public class DefaultFactoryMetadata implements FactoryMetadata {
 
-    /**
-     * Data types stores.
-     * 
-     * @return DataType
-     */
-    DataType getDataType();
+    private final DataType dataType;
+    private final boolean styledFeature;
+
+    public DefaultFactoryMetadata(DataType dataType, boolean styledFeature) {
+        this.dataType = dataType;
+        this.styledFeature = styledFeature;
+    }
     
-    /**
-     * Feature store may produce 2 kinds of features.
-     * Standard unstyled features like : shapefile, postgresql, 
-     * 
-     * @return true if features are styled.
-     */
-    boolean produceStyledFeature();
-    
+    @Override
+    public DataType getDataType() {
+        return dataType;
+    }
+
+    @Override
+    public boolean produceStyledFeature() {
+        return styledFeature;
+    }
     
 }

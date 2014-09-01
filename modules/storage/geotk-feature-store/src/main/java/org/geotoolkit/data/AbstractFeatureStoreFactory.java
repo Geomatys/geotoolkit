@@ -31,6 +31,7 @@ import org.geotoolkit.storage.FactoryMetadata;
 import org.geotoolkit.util.collection.MapUtilities;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.iso.ResourceInternationalString;
+import org.geotoolkit.storage.DefaultFactoryMetadata;
 import org.opengis.metadata.quality.ConformanceResult;
 import org.opengis.parameter.GeneralParameterValue;
 import org.opengis.parameter.InvalidParameterValueException;
@@ -290,11 +291,6 @@ public abstract class AbstractFeatureStoreFactory extends Factory implements Fea
 
     @Override
     public FactoryMetadata getMetadata() {
-        return new FactoryMetadata() {
-            @Override
-            public DataType getDataType() {
-                return DataType.VECTOR;
-            }
-        };
+        return new DefaultFactoryMetadata(DataType.VECTOR, false);
     }
 }

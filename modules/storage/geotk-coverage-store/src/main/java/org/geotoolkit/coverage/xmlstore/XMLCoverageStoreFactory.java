@@ -29,6 +29,7 @@ import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
 import org.geotoolkit.storage.DataType;
+import org.geotoolkit.storage.DefaultFactoryMetadata;
 import org.geotoolkit.storage.FactoryMetadata;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.identification.Identification;
@@ -117,11 +118,6 @@ public class XMLCoverageStoreFactory extends AbstractCoverageStoreFactory {
 
     @Override
     public FactoryMetadata getMetadata() {
-        return new FactoryMetadata() {
-            @Override
-            public DataType getDataType() {
-                return DataType.PYRAMID;
-            }
-        };
+        return new DefaultFactoryMetadata(DataType.PYRAMID, false);
     }
 }

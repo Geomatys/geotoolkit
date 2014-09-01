@@ -42,6 +42,15 @@ public interface MapLayer extends MapItem {
     public static final String SELECTION_STYLE_PROPERTY = "selection_style";
     
     /**
+     * Use this key in the User map properties and add a Boolean.TRUE
+     * to indicate if features store their own Symbolizer.
+     * Symbolizer should be stored in the user map of each feature with this key.
+     * 
+     * TODO make a special feature and feature collection implementation to define this case.
+     */
+    public static final String USERKEY_STYLED_FEATURE = "styled_feature";
+    
+    /**
      * Convinient method to test if the current layer is well knowned, it means
      * using conventional types : Features or Coverages. Other layer types
      * like WMS or KML are unusual types.

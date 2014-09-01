@@ -44,6 +44,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.geotoolkit.storage.DefaultFactoryMetadata;
 
 /**
  * WMS Server factory.
@@ -137,11 +138,6 @@ public class WMSClientFactory extends AbstractClientFactory implements CoverageC
 
     @Override
     public FactoryMetadata getMetadata() {
-        return new FactoryMetadata() {
-            @Override
-            public DataType getDataType() {
-                return DataType.GRID;
-            }
-        };
+        return new DefaultFactoryMetadata(DataType.GRID, false);
     }
 }

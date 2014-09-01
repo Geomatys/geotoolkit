@@ -35,6 +35,7 @@ import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.storage.DataType;
+import org.geotoolkit.storage.DefaultFactoryMetadata;
 import org.geotoolkit.storage.FactoryMetadata;
 import org.geotoolkit.wmts.xml.WMTSVersion;
 import org.opengis.metadata.Identifier;
@@ -142,11 +143,6 @@ public class WMTSClientFactory extends AbstractClientFactory implements Coverage
 
     @Override
     public FactoryMetadata getMetadata() {
-        return new FactoryMetadata() {
-            @Override
-            public DataType getDataType() {
-                return DataType.PYRAMID;
-            }
-        };
+        return new DefaultFactoryMetadata(DataType.PYRAMID, false);
     }
 }

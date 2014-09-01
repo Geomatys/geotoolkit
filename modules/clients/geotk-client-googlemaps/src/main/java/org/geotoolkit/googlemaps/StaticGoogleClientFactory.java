@@ -31,6 +31,7 @@ import org.geotoolkit.coverage.CoverageStore;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.storage.DataType;
+import org.geotoolkit.storage.DefaultFactoryMetadata;
 import org.geotoolkit.storage.FactoryMetadata;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.identification.Identification;
@@ -117,11 +118,6 @@ public class StaticGoogleClientFactory extends AbstractClientFactory implements 
 
     @Override
     public FactoryMetadata getMetadata() {
-        return new FactoryMetadata() {
-            @Override
-            public DataType getDataType() {
-                return DataType.GRID;
-            }
-        };
+        return new DefaultFactoryMetadata(DataType.GRID, false);
     }
 }
