@@ -17,7 +17,6 @@
 
 package org.geotoolkit.gui.javafx.contexttree;
 
-import java.util.ArrayList;
 import java.util.List;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -25,6 +24,7 @@ import javafx.collections.ObservableList;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.SelectionMode;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableView;
@@ -67,6 +67,7 @@ public class FXMapContextTree extends BorderPane{
         treetable.setContextMenu(menu);
         
         //update context menu based on selected items
+        treetable.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         treetable.getSelectionModel().getSelectedItems().addListener(new ListChangeListener() {
             @Override
             public void onChanged(ListChangeListener.Change c) {

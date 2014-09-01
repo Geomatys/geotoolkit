@@ -25,7 +25,10 @@ import java.text.NumberFormat;
 import java.util.logging.Level;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.Event;
 import javafx.event.EventHandler;
+import javafx.event.EventType;
+import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ToolBar;
@@ -34,8 +37,10 @@ import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.RowConstraints;
+import javafx.scene.paint.Color;
 import javafx.util.converter.LongStringConverter;
 import org.apache.sis.geometry.DirectPosition2D;
+import org.geotoolkit.display2d.canvas.painter.SolidColorPainter;
 import org.geotoolkit.internal.Loggers;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
@@ -84,6 +89,7 @@ public class FXCoordinateBar extends GridPane {
     
     private final Label coordText = new Label("");
     private final ComboBox cbox = new ComboBox();
+    private final ColorPicker colorPicker = new ColorPicker(Color.WHITE);
 
     public FXCoordinateBar(FXMap map) {
         this.map = map;
@@ -117,14 +123,30 @@ public class FXCoordinateBar extends GridPane {
         cbox.setConverter(new LongStringConverter());
         
         barRight.getItems().add(cbox);
+        barRight.getItems().add(colorPicker);
         
         map.addEventHandler(MouseEvent.ANY, new myListener());
         
         if (this.map != null) {
             this.map.getCanvas().addPropertyChangeListener(listener);
         }        
+        
+        colorPicker.setOnAction(new EventHandler() {
+            public void handle(Event t) {
+                if (map != null) {
+                    map.getCanvas().setBackgroundPainter(new SolidColorPainter(toSwingColor(colorPicker.getValue())));
+                }     
+            }
+        });
     }
     
+    private java.awt.Color toSwingColor(Color fxColor){
+        int r = (int) (fxColor.getRed() * 255);
+        int g = (int) (fxColor.getGreen() * 255);
+        int b = (int) (fxColor.getBlue() * 255);
+        int rgb = (r << 16) + (g << 8) + b;
+        return new java.awt.Color(rgb);
+    }
     
     private class myListener implements EventHandler<MouseEvent>{
 

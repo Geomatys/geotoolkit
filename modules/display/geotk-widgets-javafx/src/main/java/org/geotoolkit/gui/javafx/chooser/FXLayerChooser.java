@@ -25,12 +25,10 @@ import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.logging.Level;
 import javafx.collections.FXCollections;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.control.ListCell;
@@ -45,6 +43,7 @@ import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.coverage.CoverageStore;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureStore;
+import org.geotoolkit.data.FeatureStoreFactory;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.FactoryFinder;
@@ -53,8 +52,8 @@ import org.geotoolkit.feature.type.DefaultName;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.GeometryDescriptor;
 import org.geotoolkit.feature.type.Name;
+import org.geotoolkit.filter.DefaultFilterFactory2;
 import org.geotoolkit.internal.GeotkFXIconBundle;
-import org.geotoolkit.internal.Loggers;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapBuilder;
@@ -63,6 +62,7 @@ import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.RandomStyleBuilder;
 import org.geotoolkit.style.StyleConstants;
+import org.opengis.filter.FilterFactory2;
 
 /**
  *
@@ -100,7 +100,6 @@ public class FXLayerChooser extends BorderPane{
 
     private Object source = null;
     
-    
     private final ListView<Object>layerNames = new ListView<>();
     private final ScrollPane scroll = new ScrollPane(layerNames);
     
@@ -111,15 +110,15 @@ public class FXLayerChooser extends BorderPane{
         
         layerNames.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         layerNames.setCellFactory((ListView<Object> param) -> new LayerCell());
-        
     }
-    
     
     public List<MapLayer> getLayers() throws DataStoreException{
 
         final MutableStyleFactory styleFactory = (MutableStyleFactory) FactoryFinder.getStyleFactory(
                             new Hints(Hints.STYLE_FACTORY, MutableStyleFactory.class));
 
+        final FilterFactory2 FF = new DefaultFilterFactory2();
+        final MutableStyleFactory SF = styleFactory;
         
         final List values = layerNames.getSelectionModel().getSelectedItems();
         final List<MapLayer> layers = new ArrayList<>();
@@ -135,13 +134,25 @@ public class FXLayerChooser extends BorderPane{
 
                 if(source instanceof FeatureStore){
                     final FeatureStore store = (FeatureStore) source;
+                    final FeatureStoreFactory factory = store.getFactory();
                     final Session session = store.createSession(true);
                     final FeatureCollection collection = session.getFeatureCollection(QueryBuilder.all(name));
-                    final MutableStyle style = RandomStyleBuilder.createRandomVectorStyle(collection.getFeatureType());
+                    
+                    final MutableStyle style;
+                    
+                    if(factory.getMetadata().produceStyledFeature()){
+                        //do not create a style, each feature defines it's own symbolizers
+                        style = SF.style();
+                        
+                    }else{
+                        style = RandomStyleBuilder.createRandomVectorStyle(collection.getFeatureType());
+                    }
+                    
                     final FeatureMapLayer layer = MapBuilder.createFeatureLayer(collection, style);
                     layer.setName(name.getLocalPart());
                     layer.setDescription(styleFactory.description(name.getLocalPart(), name.toString()));
-                    layers.add(layer);
+                    layer.setUserProperty(MapLayer.USERKEY_STYLED_FEATURE, factory.getMetadata().produceStyledFeature());
+                    layers.add(layer);                    
 
                 }else if(source instanceof CoverageStore){
                     final CoverageStore store = (CoverageStore) source;

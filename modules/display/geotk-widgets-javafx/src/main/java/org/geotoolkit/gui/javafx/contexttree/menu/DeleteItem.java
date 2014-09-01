@@ -17,6 +17,7 @@
 package org.geotoolkit.gui.javafx.contexttree.menu;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.List;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.EventHandler;
@@ -40,7 +41,7 @@ public class DeleteItem extends TreeMenuItem{
     private static final Image ICON = SwingFXUtils.toFXImage(
             IconBuilder.createImage(FontAwesomeIcons.ICON_TRASH_O, 16, FontAwesomeIcons.DEFAULT_COLOR), null);
     
-    private WeakReference<TreeItem> itemRef;
+    private List<WeakReference<TreeItem>> itemRefs;
 
     /**
      * delete item for contexttree
@@ -53,24 +54,41 @@ public class DeleteItem extends TreeMenuItem{
 
             @Override
             public void handle(javafx.event.ActionEvent event) {
-                if(itemRef == null) return;
-                TreeItem path = itemRef.get();
-                if(path == null) return;
-                final MapItem parent = (MapItem) path.getParent().getValue();
-                final MapItem candidate = (MapItem) path.getValue();
-                parent.items().remove(candidate);
+                if(itemRefs == null) return;
+                new Thread(){
+                    @Override
+                    public void run() {
+                        for(WeakReference<TreeItem> itemRef : itemRefs){
+                            TreeItem path = itemRef.get();
+                            if(path == null) return;
+                            if(path.getParent() == null) return;
+                            final MapItem parent = (MapItem) path.getParent().getValue();
+                            final MapItem candidate = (MapItem) path.getValue();
+                            parent.items().remove(candidate);
+                        }
+                    }
+                }.start();
+                
             }
         });
     }
 
     @Override
     public MenuItem init(List<? extends TreeItem> selection) {
-        boolean valid = uniqueAndType(selection,MapItem.class);
-        if(valid && selection.get(0).getParent()!=null){
-            itemRef = new WeakReference<>(selection.get(0));
-            return item;
+        if(selection.isEmpty()) return null;
+        
+        boolean valid = true;
+        itemRefs = new ArrayList<>();
+        for(TreeItem<? extends TreeItem> ti : selection){
+            if(ti==null) continue;
+            valid &= MapItem.class.isInstance(ti.getValue());
+            if(!valid) return null;
+            itemRefs.add(new WeakReference<>(ti));
         }
-        return null;
+        
+        if(itemRefs.isEmpty()) return null;
+        
+        return item;
     }
 
 }

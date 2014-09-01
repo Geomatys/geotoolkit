@@ -21,6 +21,7 @@ import java.beans.PropertyChangeEvent;
 import java.util.Collection;
 import java.util.IdentityHashMap;
 import java.util.Map;
+import javafx.application.Platform;
 import javafx.scene.control.TreeItem;
 import org.apache.sis.measure.NumberRange;
 import org.geotoolkit.map.ItemListener;
@@ -54,22 +55,30 @@ public class TreeMapItem extends TreeItem<MapItem> implements ItemListener {
         final int type = event.getType();
         if(type != CollectionChangeEvent.ITEM_ADDED && type != CollectionChangeEvent.ITEM_REMOVED) return;
         
-        final MapItem item = getValue();
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                final MapItem item = getValue();
+
+                //rebuild structure
+                final Map<MapItem,TreeMapItem> cache = new IdentityHashMap<>();
+                for(TreeItem ti : getChildren()){
+                    cache.put((MapItem)ti.getValue(), (TreeMapItem)ti);
+                }
+
+                getChildren().clear();
+
+                for(int i=item.items().size()-1;i>=0;i--){
+                    final MapItem child = item.items().get(i);
+                    TreeMapItem tmi = cache.get(child);
+                    if(tmi==null) tmi = new TreeMapItem(child);
+                    getChildren().add(tmi);
+                }
+            }
+        });
         
-        //rebuild structure
-        final Map<MapItem,TreeMapItem> cache = new IdentityHashMap<>();
-        for(TreeItem ti : getChildren()){
-            cache.put((MapItem)ti.getValue(), (TreeMapItem)ti);
-        }
         
-        getChildren().clear();
         
-        for(int i=item.items().size()-1;i>=0;i--){
-            final MapItem child = item.items().get(i);
-            TreeMapItem tmi = cache.get(child);
-            if(tmi==null) tmi = new TreeMapItem(child);
-            getChildren().add(tmi);
-        }
         
         
 //        final MapItem parent = getValue();

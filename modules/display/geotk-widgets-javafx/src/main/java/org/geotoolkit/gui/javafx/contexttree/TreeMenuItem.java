@@ -48,6 +48,7 @@ public class TreeMenuItem {
     protected static boolean uniqueAndType(final List<? extends TreeItem> selection, final Class C) {
         if (selection != null && selection.size() == 1){
             final TreeItem ca = selection.get(0);
+            if(ca==null) return false;
             return C.isInstance(ca.getValue());
         }
         return false;
