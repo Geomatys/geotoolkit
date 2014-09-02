@@ -31,7 +31,7 @@ import org.opengis.parameter.ParameterValueGroup;
  *
  * @since 4.0
  */
-public abstract class AbstractRollbackProcess extends AbstractProcess {
+public abstract class AbstractRollbackProcess extends AbstractProcess implements RollbackableProcess {
 
     /**
      * Flag for allow auto rollback if process execution fail.
@@ -83,10 +83,9 @@ public abstract class AbstractRollbackProcess extends AbstractProcess {
     }
 
     /**
-     * Rollback {@link #execute()} call.
-     *
-     * @throws ProcessException if something when wrong during rollback.
+     * {@inheritDoc}
      */
+    @Override
     public void rollback() throws ProcessException {
         if (!rollbackDone) {
             executeRollback();
