@@ -27,6 +27,7 @@ import javax.imageio.ImageTypeSpecifier;
 import org.geotoolkit.image.io.plugin.TiffImageWriter;
 import org.geotoolkit.image.iterator.PixelIterator;
 import org.geotoolkit.image.iterator.PixelIteratorFactory;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -45,6 +46,7 @@ public strictfp class UncompressedTiffWriterTest extends TestTiffImageWriter {
      * 
      * @throws IOException 
      */
+//    @Test
     public void writeEmptyTest() throws IOException {
         //-- 1 band byte --//
         TestWriteEmpty("TestWriteEmpty : 1 band Byte", Byte.SIZE, 1, PHOTOMETRIC_MINISBLACK, SAMPLEFORMAT_UINT);
@@ -97,7 +99,7 @@ public strictfp class UncompressedTiffWriterTest extends TestTiffImageWriter {
         
         writer.prepareWriteEmpty(null, sourceImgSpec, width, height, null, null, writerParam);
         
-        //-- create an empty source mage to simulate write empty --//
+        //-- create an empty source image to simulate write empty --//
         final WritableRenderedImage sourceImage = sourceImgSpec.createBufferedImage(width, height);
         
         replacePixels(sourceImage, sampleBitsSize, numBand, photometricInterpretation, sampleFormat);
@@ -115,6 +117,7 @@ public strictfp class UncompressedTiffWriterTest extends TestTiffImageWriter {
      * @throws IOException if problem during I/O action.
      */
     @Test
+//    @Ignore
     public void replacePixelTest() throws IOException {
         //-- 1 band byte --//
         TestReplacePixel("replacePixel : 1 band Byte", Byte.SIZE, 1, PHOTOMETRIC_MINISBLACK, SAMPLEFORMAT_UINT);
@@ -173,12 +176,23 @@ public strictfp class UncompressedTiffWriterTest extends TestTiffImageWriter {
         final int regionMinY = random.nextInt(h_2);
         final Rectangle repRegion = new Rectangle(regionMinX, regionMinY, w_2 , h_2);
         
+//        System.out.println("regionOffset : ("+regionMinX+", "+regionMinY+")");
+        
         writer.prepareReplacePixels(0, repRegion);
         
         //-- replace region lower left corner --//
         WritableRenderedImage imgLLC = createImageTest(w_4, h_4, sampleBitsSize, numBand, photometricInterpretation, sampleFormat);
+        
+//        //-- --- --- --- --- --- --//
+//        TiffImageWriter tiw2 = new TiffImageWriter(null);
+//        tiw2.setOutput(new File("/home/rmarechal/Documents/image/llCPix.tiff"));
+//        tiw2.write(imgLLC );
+//        tiw2.dispose();
+//        //------------------------------//
+        
         int dstOffX = regionMinX - w_8 + random.nextInt(w_8);
         int dstOffY = regionMinY - h_8 + random.nextInt(h_8);
+//        Point destOffset = new Point(regionMinX, regionMinY);
         Point destOffset = new Point(dstOffX, dstOffY);
         replacePixelsInResultImage(sourceImage, repRegion, imgLLC, destOffset);
         writerParam.setDestinationOffset(destOffset);
@@ -233,24 +247,40 @@ public strictfp class UncompressedTiffWriterTest extends TestTiffImageWriter {
      * @param sampleFormat
      * @throws IOException if problem during I/O action.
      */
-    private void TestReplacePixel (final String message, final int sampleBitsSize, final int numBand, 
+    protected void TestReplacePixel (final String message, final int sampleBitsSize, final int numBand, 
             final short photometricInterpretation, final short sampleFormat) throws IOException {
         
         final File fileTest = File.createTempFile(message, "tiff", tempDir);
         
         final int width  = random.nextInt(256) + 16;
         final int height = random.nextInt(256) + 16;
+//        final int width  = 8;
+//        final int height = 8;
         final WritableRenderedImage sourceImage = createImageTest(width, height, sampleBitsSize, numBand, photometricInterpretation, sampleFormat);
+        
+//        //-- --- --- --- --- --- --//
+//        TiffImageWriter tiw = new TiffImageWriter(null);
+//        tiw.setOutput(new File("/home/rmarechal/Documents/image/srcPix.tiff"));
+//        tiw.write(sourceImage);
+//        tiw.dispose();
+//        //------------------------------//
         
         writer.setOutput(fileTest); //-- to initialize writer
         writerParam.setDestinationOffset(new Point());
-         writer.write(sourceImage, writerParam);
+        writer.write(sourceImage, writerParam);
         
         replacePixels(sourceImage, sampleBitsSize, numBand, photometricInterpretation, sampleFormat);
         
         reader.setInput(fileTest); 
         final RenderedImage tested = reader.read(0);
         reader.dispose();
+        
+//        //-- --- --- --- --- --- --//
+//        TiffImageWriter tiw2 = new TiffImageWriter(null);
+//        tiw2.setOutput(new File("/home/rmarechal/Documents/image/resultPix.tiff"));
+//        tiw2.write(tested );
+//        tiw2.dispose();
+//        //------------------------------//
         
         checkImage(message, sourceImage, tested);
     }

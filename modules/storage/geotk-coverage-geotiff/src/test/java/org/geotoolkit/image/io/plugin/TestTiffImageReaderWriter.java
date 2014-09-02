@@ -36,7 +36,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -51,9 +50,7 @@ import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 import javax.imageio.stream.FileImageInputStream;
-import javax.imageio.stream.FileImageOutputStream;
 import javax.imageio.stream.ImageInputStream;
-import javax.imageio.stream.ImageOutputStream;
 import org.apache.sis.test.TestUtilities;
 import org.geotoolkit.image.io.UnsupportedImageFormatException;
 import org.geotoolkit.image.iterator.*;
@@ -357,7 +354,7 @@ public strictfp abstract class TestTiffImageReaderWriter {
     @Test
 //    @Ignore
     public void centerTest() throws IOException {
-        regionTest("centerAreaTest", IMAGE_CENTER);
+        regionTest("CenterAreaTest", IMAGE_CENTER);
     }
     
     /**
@@ -372,7 +369,7 @@ public strictfp abstract class TestTiffImageReaderWriter {
      * @see #IMAGE_CENTER
      * @throws IOException if problem during reading/writing action.
      */
-    private void regionTest(final String message, final ImageOrientation imageOrientation) throws IOException {
+    protected void regionTest(final String message, final ImageOrientation imageOrientation) throws IOException {
         final File fileTest = File.createTempFile(message, "tiff", tempDir);
         
         //-------------------- test : 1 band -----------------------------------// 
@@ -440,7 +437,6 @@ public strictfp abstract class TestTiffImageReaderWriter {
         final int height = random.nextInt(256) + 16;
         final RenderedImage expected = createImageTest(width, height, sampleBitsSize, numBand, photometricInterpretation, sampleFormat);
         
-        
         final int outType = random.nextInt(2);
         final Object out  = (outType == 0) ? new FileOutputStream(fileTest) : fileTest ;
         
@@ -497,12 +493,21 @@ public strictfp abstract class TestTiffImageReaderWriter {
      * @see #IMAGE_CENTER
      * @throws IOException if problem during reading/writing action.
      */
-    private void generalTest(final String message, final File fileTest, final int sampleBitsSize, final int numBand, 
+    protected void generalTest(final String message, final File fileTest, final int sampleBitsSize, final int numBand, 
             final short photometricInterpretation, final short sampleFormat, final ImageOrientation imageOrientation) throws IOException {
         int width  = random.nextInt(256) + 16;
         int height = random.nextInt(256) + 16;
+//        int width  = 8;
+//        int height = 8;
         
         final RenderedImage sourceImage = createImageTest(width, height, sampleBitsSize, numBand, photometricInterpretation, sampleFormat);
+        
+//        //-- --- --- --- --- --- --//
+//        TiffImageWriter tiw = new TiffImageWriter(null);
+//        tiw.setOutput(new File("/home/rmarechal/Documents/image/bandSRC.tiff"));
+//        tiw.write(sourceImage);
+//        tiw.dispose();
+//        //------------------------------//
         
         final int srcRegionX, srcRegionY;
         switch (imageOrientation) {
@@ -534,6 +539,14 @@ public strictfp abstract class TestTiffImageReaderWriter {
         }
         
         final Rectangle sourceRegion = new Rectangle(srcRegionX, srcRegionY, width >> 1, height >> 1);
+        
+//        final int subsampleX       = /*random.nextInt((width >> 1) - 1) +*/ 1;
+//        final int subsampleY       = /*random.nextInt((height >> 1) - 1) +*/ 1;
+//        
+//        final int subsampleXOffset = 0;//Math.max(0, random.nextInt(subsampleX) - 1);
+//        final int subsampleYOffset = 0;//Math.max(0, random.nextInt(subsampleY) - 1);
+//        
+//        final Point destOffset = new Point(0,0);//random.nextInt(width), random.nextInt(height));
         
         final int subsampleX       = random.nextInt((width >> 1) - 1) + 1;
         final int subsampleY       = random.nextInt((height >> 1) - 1) + 1;
@@ -620,7 +633,7 @@ public strictfp abstract class TestTiffImageReaderWriter {
                 int b = 0;
                 while (b++ < expectedNumband) {
                     testedPix.next();
-                    assertEquals(message+"pixel at coordinate : (x, y, b) : ("+sourcePix.getX()+", "+sourcePix.getY()+", "+b+") : ",  
+                    assertEquals(message+"pixel at coordinate : (x, y, b) : ("+sourcePix.getX()+", "+sourcePix.getY()+", "+(b - 1)+") : ",  
                     sourcePix.getSampleDouble(), testedPix.getSampleDouble(), DEFAULT_TOLERANCE);
                     sourcePix.next();
                 }
@@ -723,7 +736,7 @@ public strictfp abstract class TestTiffImageReaderWriter {
      * @return created {@link RenderedImage}.
      * @throws UnsupportedImageFormatException if sampleBitsSize has a wrong value of photometricInterpretation is not supported.
      */
-    protected final WritableRenderedImage createImageTest(final int width, final int height, final int sampleBitsSize, 
+    protected WritableRenderedImage createImageTest(final int width, final int height, final int sampleBitsSize, 
             final int numBand, final short photometricInterpretation, final short sampleFormat) throws UnsupportedImageFormatException {
         
         final ImageTypeSpecifier imgType = buildImageTypeSpecifier(sampleBitsSize, numBand, photometricInterpretation, sampleFormat);

@@ -35,5 +35,4 @@ public class LZWTiledWriterTest extends LZWTiffWriterTest {
         final int tileHeight = (random.nextInt(7) + 1) * 16;
         writerParam.setTiling(tileWidth, tileHeight, 0, 0);
     }
-    
 }
