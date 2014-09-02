@@ -1,0 +1,40 @@
+
+.default {
+    -fx-fill: black;
+}
+
+.comment {
+    -fx-fill: gray;
+}
+
+.literal {
+    -fx-fill: #009600;
+}
+
+.function {
+    -fx-fill: magenta;
+}
+
+.parenthese {
+    -fx-fill: black;
+}
+
+.operator {
+    -fx-fill: black;
+    -fx-font-weight: bold;
+}
+
+.binary {
+    -fx-fill: black;
+    -fx-font-weight: bold;
+}
+
+.property {
+    -fx-fill: blue;
+    -fx-font-weight: bold;
+}
+
+.error {
+    -fx-fill: red;
+    -fx-font-weight: bold;
+}
