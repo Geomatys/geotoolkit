@@ -34,7 +34,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * failure.
  *
  * @author Johann Sorel (Geomatys)
- * @version 3.19
+ * @version 4.0
  *
  * @see ExecutorService
  *
@@ -64,9 +64,6 @@ public interface Process extends Callable<ParameterValueGroup> {
 
     /**
      * Executes the process and returns the output in a new {@link ParameterValueGroup}.
-     * Some details about the work which has been performed (processing date, reports, <i>etc.</i>)
-     * may be included as a {@link ProcessStep} instance associated to the
-     * {@link ProcessDescriptor#PROCESS_STEP} parameter descriptor.
      *
      * {@note Returning a parameter object may sound strange, since parameters are usually for
      *        input values rather than output values. Note however that ISO 19115 do the same,
@@ -105,6 +102,24 @@ public interface Process extends Callable<ParameterValueGroup> {
      */
     @Override
     ParameterValueGroup call() throws ProcessException;
+
+    /**
+     * Returns a description of the process, the geographic inputs and outputs and other metadata.
+     * Those metadata are suitable to processes on geographic data and may not be applicable to every kind of processes.
+     * If this parameter is provided, then:
+     * <p>
+     * <ul>
+     *   <li>{@link ProcessStep#getDate()} is the execution date and time of the process.</li>
+     *   <li>{@link ProcessStep#getSources()} are the geographic {@linkplain Process#getInput() process inputs}.</li>
+     *   <li>{@link ProcessStep#getOutputs()} are the geographic {@linkplain Process#call() process outputs}.</li>
+     *   <li>{@link ProcessStep#getProcessingInformation()} is the {@linkplain Process#getDescriptor() process descriptor}.</li>
+     * </ul>
+     *
+     * @return A description of the process, the geographic inputs and outputs and other metadata.
+     *
+     * @since 4.0
+     */
+    ProcessStep getMetadata();
 
     /**
      * Adds a listener to the list of objects to inform about the process progress.

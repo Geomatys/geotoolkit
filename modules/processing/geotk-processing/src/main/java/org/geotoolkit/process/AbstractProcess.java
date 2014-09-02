@@ -17,11 +17,14 @@
 
 package org.geotoolkit.process;
 
+import java.util.Date;
 import java.util.concurrent.CancellationException;
-import org.opengis.parameter.ParameterValueGroup;
-import org.opengis.metadata.quality.ConformanceResult;
-import org.geotoolkit.parameter.Parameters;
 import javax.swing.event.EventListenerList;
+import org.opengis.metadata.quality.ConformanceResult;
+import org.opengis.parameter.ParameterValueGroup;
+import org.apache.sis.metadata.iso.lineage.DefaultProcessing;
+import org.apache.sis.metadata.iso.lineage.DefaultProcessStep;
+import org.geotoolkit.parameter.Parameters;
 
 import static org.apache.sis.util.ArgumentChecks.*;
 
@@ -83,10 +86,7 @@ public abstract class AbstractProcess implements Process {
         try {
             execute();
             success = true;
-        } catch (ProcessException e) {
-            exception = e;
-            throw e; // Will execute 'finally' before to exit.
-        } catch (RuntimeException e) {
+        } catch (ProcessException | RuntimeException e) {
             exception = e;
             throw e; // Will execute 'finally' before to exit.
         } finally {
@@ -98,6 +98,33 @@ public abstract class AbstractProcess implements Process {
         }
         return outputParameters;
     }
+
+    /**
+     * Returns a description of the process, the geographic inputs and outputs and other metadata.
+     * The default implementation performs the following mapping:
+     *
+     * <ul>
+     *   <li>{@link ProcessDescriptor#getIdentifier()}  → {@link DefaultProcessing#getIdentifier()}.</li>
+     *   <li>{@link ProcessDescriptor#getDisplayName()} → {@link DefaultProcessStep#getDescription()}.</li>
+     *   <li>Current time → {@link DefaultProcessStep#getDate()}.</li>
+     * </ul>
+     *
+     * Subclasses are encouraged to complete the metadata with their own information.
+     *
+     * @return A description of the process, the geographic inputs and outputs and other metadata.
+     */
+    @Override
+    public DefaultProcessStep getMetadata() {
+        final DefaultProcessStep step = new DefaultProcessStep(descriptor.getDisplayName());
+        step.setDate(new Date()); // Set to current time.
+
+        final DefaultProcessing processing = new DefaultProcessing();
+        processing.setIdentifier(descriptor.getIdentifier());
+        step.setProcessingInformation(processing);
+
+        return step;
+    }
+
 
     /**
      * {@linkplain #cancelProcess() CancelProcess} set the {@code isCanceled} flag to {@code true}.
@@ -251,7 +278,6 @@ public abstract class AbstractProcess implements Process {
      * {@link ProcessListener#paused(ProcessEvent)} for all registered listeners.
      *
      * @param task A description of the task that being paused, or {@code null} if none.
-     * @param exception The exception which occurred, or {@code null} if unavailable.
      */
     protected void fireProcessPaused(final CharSequence task, final float progress) {
         final ProcessEvent event = new ProcessEvent(this, task, progress);
@@ -265,7 +291,6 @@ public abstract class AbstractProcess implements Process {
      * {@link ProcessListener#resumed(ProcessEvent)} for all registered listeners.
      *
      * @param task A description of the task that being resumed, or {@code null} if none.
-     * @param exception The exception which occurred, or {@code null} if unavailable.
      */
     protected void fireProcessResumed(final CharSequence task, final float progress) {
         final ProcessEvent event = new ProcessEvent(this, task, progress);

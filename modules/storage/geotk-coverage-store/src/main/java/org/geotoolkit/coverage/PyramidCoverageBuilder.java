@@ -51,6 +51,7 @@ import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.coverage.grid.GridGeometry;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
+import org.opengis.metadata.lineage.ProcessStep;
 import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -161,6 +162,10 @@ public class PyramidCoverageBuilder {
         }
         @Override
         public ParameterValueGroup call() throws ProcessException {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+        @Override
+        public ProcessStep getMetadata() {
             throw new UnsupportedOperationException("Not supported yet.");
         }
         @Override

@@ -49,7 +49,7 @@ import org.geotoolkit.internal.simple.SimpleParameterDescriptor;
  *
  * @author Johann Sorel (Geomatys)
  * @author Quentin Boileau (Geomatys)
- * @version 3.20
+ * @version 4.0
  *
  * @since 3.19
  * @module
@@ -69,7 +69,10 @@ public interface ProcessDescriptor extends Processing {
      *   <li>{@link ProcessStep#getOutputs()} are the geographic {@linkplain Process#call() process outputs}.</li>
      *   <li>{@link ProcessStep#getProcessingInformation()} is the {@linkplain Process#getDescriptor() process descriptor}.</li>
      * </ul>
+     *
+     * @deprecated Moved to an explicit method as {@link Process#getMetadata()}.
      */
+    @Deprecated
     ParameterDescriptor<ProcessStep> PROCESS_STEP = new SimpleParameterDescriptor<>(ProcessStep.class, "Geotk", "ProcessStep");
 
     /**
@@ -121,9 +124,6 @@ public interface ProcessDescriptor extends Processing {
      * Those {@linkplain ParameterValueGroup parameter values} include output data
      * (for example the output images) and optionally some metadata related to those outputs
      * (for example statistics).
-     * <p>
-     * While not mandatory, it is recommended that the returned descriptor contains the
-     * {@link #PROCESS_STEP} parameter.
      *
      * @return Description of the output parameters.
      *
