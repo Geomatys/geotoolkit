@@ -24,6 +24,7 @@ import javafx.beans.property.adapter.JavaBeanFloatPropertyBuilder;
 import javafx.beans.property.adapter.JavaBeanIntegerPropertyBuilder;
 import javafx.beans.property.adapter.JavaBeanLongPropertyBuilder;
 import javafx.beans.property.adapter.JavaBeanObjectPropertyBuilder;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 
 /**
@@ -69,5 +70,22 @@ public final class FXUtilities {
 //            }
 //        };
 //    }
+    
+    
+    public static java.awt.Color toSwingColor(Color fxColor){
+        final int r = (int) (fxColor.getRed() * 255);
+        final int g = (int) (fxColor.getGreen() * 255);
+        final int b = (int) (fxColor.getBlue() * 255);
+        final int rgb = (r << 16) + (g << 8) + b;
+        return new java.awt.Color(rgb);
+    }
+    
+    public static Color toFxColor(java.awt.Color swingColor){
+        final double r = (double)swingColor.getRed() / 255.0;
+        final double g = (double)swingColor.getGreen() / 255.0;
+        final double b = (double)swingColor.getBlue() / 255.0;
+        final double a = (double)swingColor.getBlue() / 255.0;
+        return new Color(r, g, b, a);
+    }
     
 }

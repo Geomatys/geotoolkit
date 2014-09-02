@@ -25,6 +25,8 @@ import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingFXUtils;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -32,7 +34,6 @@ import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SelectionMode;
-import javafx.scene.control.SplitPane;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
@@ -42,7 +43,6 @@ import javafx.scene.layout.BorderStroke;
 import javafx.scene.layout.BorderStrokeStyle;
 import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -67,6 +67,8 @@ public class FXLayerStylesPane extends FXPropertyPane{
     private final FXLayerStylePane[] editors;
     
     private FXLayerStylePane currentEditor = null;
+    
+    private MapLayer candidate;
     
     public FXLayerStylesPane(FXLayerStylePane ... styleEditors) {
         this.editors = styleEditors;
@@ -136,6 +138,13 @@ public class FXLayerStylesPane extends FXPropertyPane{
             }
         });
         
+        apply.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                if(currentEditor==null || candidate==null) return;
+                candidate.setStyle(currentEditor.getMutableStyle());
+            }
+        });
         
     }
 
@@ -147,6 +156,7 @@ public class FXLayerStylesPane extends FXPropertyPane{
     @Override
     public boolean init(Object candidate) {
         if(!(candidate instanceof MapLayer)) return false;
+        this.candidate = (MapLayer) candidate;
         for(FXLayerStylePane editor : editors){
             editor.init(candidate);
         }

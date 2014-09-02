@@ -1,0 +1,8 @@
+
+# global style elements
+
+# symbolizer editors
+org.geotoolkit.gui.javafx.style.FXLineSymbolizer
+org.geotoolkit.gui.javafx.style.FXPolygonSymbolizer
+
+# extension editors

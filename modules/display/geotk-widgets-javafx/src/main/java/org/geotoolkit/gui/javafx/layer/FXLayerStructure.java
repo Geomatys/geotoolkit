@@ -52,28 +52,24 @@ import org.opengis.util.InternationalString;
  */
 public class FXLayerStructure extends FXPropertyPane {
     
-    private final WebView textPane = new WebView();
+    private static final String CSS;
+    static {
+        CSS = "<style type=\"text/css\">"
+        + "body {padding:10px; width:250px; background-color:#ffffff; font-family:Monospaced;}\n"
+        + "h1 {font-size:14px; font-weight:bold; text-align:left;}\n"
+        + "table{margin-left: 15px;}\n"
+        + "tr {border-width: 1px; border-style:solid; border-color:black;}\n"
+        + "td {border-width: 1px; text-align: center; padding:5px;}\n"
+        + ".data {text-align:right;}\n"
+        + "#error {color:red;}\n"
+        + "</style>";
+    }
+    
+    private final WebView webPane = new WebView();
     private MapLayer layer;
 
     public FXLayerStructure() {
-        //super(MessageBundle.getString("dataStructure"), null, null, null);
-//        textPane.setEditable(false);
-//        textPane.setContentType("text/html");
-//        textPane.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 11));
-//        textPane.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-
-        //CSS
-//        final StyleSheet styles = new StyleSheet();
-//        styles.addRule("body {padding:10px; width:250px; background-color:#ffffff; font-family:Monospaced;}");
-//        styles.addRule("h1 {font-size:14px; font-weight:bold; text-align:left;}");
-//        styles.addRule("table {margin-left: 15px; }");
-//        styles.addRule("tr {border-width: 1px; border-style:solid; border-color:black;}");
-//        styles.addRule("td {border-width: 1px; text-align: center; padding:5px;}");
-//        styles.addRule(".data {text-align:right;}");
-//        styles.addRule("#error {color:red;}");
-//        textPane.setStyledDocument(new HTMLDocument(styles));
-
-        setCenter(textPane);
+        setCenter(webPane);
     }
 
     @Override
@@ -91,12 +87,14 @@ public class FXLayerStructure extends FXPropertyPane {
         }
         
         this.layer = (MapLayer) target;
-        WebEngine webEngine = textPane.getEngine();
-        webEngine.loadContent("<html>/html>");
+        final WebEngine webEngine = webPane.getEngine();
+        webEngine.loadContent("<html></html>");
         
 
         final StringBuilder sb = new StringBuilder();
-        sb.append("<html><body>");
+        sb.append("<html><head>");
+        sb.append(CSS);
+        sb.append("</head><body>");
         if(layer instanceof FeatureMapLayer){
             final FeatureMapLayer fml = (FeatureMapLayer) layer;
             final FeatureType type = fml.getCollection().getFeatureType();

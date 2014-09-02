@@ -34,10 +34,11 @@ import org.opengis.filter.FilterFactory2;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class FXStyleElementController<E extends FXStyleElementController<E,T>,T> extends BorderPane {
+public abstract class FXStyleElementController<E extends FXStyleElementController<E,T>,T> extends BorderPane {
         
-    private static final String PATH = "org/geotoolkit/gui/javafx/internal/Bundle";
-    private static final ResourceBundle BUNDLE = ResourceBundle.getBundle(PATH);
+    private static final String BUNDLE_PATH = "org/geotoolkit/gui/javafx/internal/Bundle";
+    private static final String CSS_PATH = "/org/geotoolkit/gui/javafx/style/StyleEditor.css";
+    private static final ResourceBundle BUNDLE = ResourceBundle.getBundle(BUNDLE_PATH);
     private static FilterFactory2 FF;
     private static MutableStyleFactory SF;
         
@@ -59,6 +60,7 @@ public class FXStyleElementController<E extends FXStyleElementController<E,T>,T>
         } catch (IOException ex) {
             throw new IllegalArgumentException(ex.getMessage(), ex);
         }
+        getStylesheets().add(CSS_PATH);
     }
     
     /**
@@ -73,6 +75,8 @@ public class FXStyleElementController<E extends FXStyleElementController<E,T>,T>
         });
     }
 
+    public abstract Class<T> getEditedClass();
+    
     public MapLayer getLayer() {
         return layer;
     }
@@ -89,6 +93,16 @@ public class FXStyleElementController<E extends FXStyleElementController<E,T>,T>
         return value;
     }
     
+    /**
+     * Create a value object editable by this controller.
+     * @return 
+     */
+    public abstract T newValue();
+    
+    /**
+     * Called when to value property changes.
+     * @param styleElement 
+     */
     protected void updateEditor(T styleElement){
         
     }

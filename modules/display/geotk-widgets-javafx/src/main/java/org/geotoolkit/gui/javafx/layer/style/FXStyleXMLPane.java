@@ -20,6 +20,7 @@ package org.geotoolkit.gui.javafx.layer.style;
 import org.geotoolkit.gui.javafx.layer.FXLayerStylePane;
 import org.geotoolkit.internal.GeotkFXBundle;
 import org.geotoolkit.map.MapLayer;
+import org.geotoolkit.style.MutableStyle;
 
 /**
  *
@@ -44,6 +45,11 @@ public class FXStyleXMLPane extends FXLayerStylePane {
     public boolean init(Object candidate) {
         if(!(candidate instanceof MapLayer)) return false;        
         return true;
+    }
+    
+    @Override
+    public MutableStyle getMutableStyle() {
+        return null;
     }
     
 }

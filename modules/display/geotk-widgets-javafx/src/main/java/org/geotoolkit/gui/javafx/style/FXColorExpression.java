@@ -16,14 +16,14 @@
  */
 package org.geotoolkit.gui.javafx.style;
 
+import java.awt.Color;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.TextField;
-import org.geotoolkit.cql.CQL;
-import org.geotoolkit.cql.CQLException;
+import javafx.scene.control.ColorPicker;
+import org.geotoolkit.gui.javafx.util.FXUtilities;
 import org.geotoolkit.style.StyleConstants;
 import org.opengis.filter.expression.Expression;
 
@@ -31,15 +31,15 @@ import org.opengis.filter.expression.Expression;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class FXNumberExpression extends FXStyleElementController<FXNumberExpression, Expression> {
+public class FXColorExpression extends FXStyleElementController<FXColorExpression, Expression> {
 
     @FXML
-    private FXSpecialExpressionButton special;
+    private FXSpecialExpressionButton uiSpecial;
 
     @FXML
-    private TextField textField;
+    private ColorPicker uiPicker;
     
-    public FXNumberExpression(){
+    public FXColorExpression(){
     }
     
     @Override
@@ -49,37 +49,37 @@ public class FXNumberExpression extends FXStyleElementController<FXNumberExpress
 
     @Override
     public Expression newValue() {
-        return StyleConstants.DEFAULT_STROKE_WIDTH;
+        return StyleConstants.DEFAULT_FILL_COLOR;
     }
 
     @Override
     public void initialize() {
         super.initialize();
         
-        textField.setOnAction(new EventHandler<ActionEvent>() {
+        uiPicker.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                try{
-                    value.set(CQL.parseExpression(textField.getText()));
-                    special.valueProperty().setValue(value.get());
-                }catch(CQLException ex){
-                }
+                value.set(getFilterFactory().literal(FXUtilities.toSwingColor(uiPicker.getValue())));
+                uiSpecial.valueProperty().setValue(value.get());
             }
         });
         
-        special.valueProperty().addListener(new ChangeListener<Expression>() {
+        uiSpecial.valueProperty().addListener(new ChangeListener<Expression>() {
             @Override
             public void changed(ObservableValue observable, Expression oldValue, Expression newValue) {
                 value.set(newValue);
             }
-        });        
+        });
     }
-
+    
     @Override
     protected void updateEditor(Expression styleElement) {
         super.updateEditor(styleElement);
-        special.valueProperty().set(styleElement);
-        textField.setText(CQL.write(styleElement));
+        uiSpecial.valueProperty().set(styleElement);
+        final Color color = styleElement.evaluate(null,Color.class);
+        if(color!=null){
+            uiPicker.setValue(FXUtilities.toFxColor(color));
+        }
     }
     
 }

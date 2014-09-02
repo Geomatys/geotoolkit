@@ -18,19 +18,37 @@
 package org.geotoolkit.gui.javafx.style;
 
 import javafx.fxml.FXML;
-import javafx.scene.control.TextField;
-import org.opengis.style.Stroke;
+import org.geotoolkit.style.StyleConstants;
+import org.opengis.style.LineSymbolizer;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
-public class FXLineSymbolizer extends FXStyleElementController<FXLineSymbolizer,Stroke> {
+public class FXLineSymbolizer extends FXStyleElementController<FXLineSymbolizer,LineSymbolizer> {
     
     @FXML
-    protected TextField test123;
+    protected FXStroke uiStroke;
 
-    @FXML
-    protected FXStroke strokeEditor;
-            
+    @Override
+    public Class<LineSymbolizer> getEditedClass() {
+        return LineSymbolizer.class;
+    }
+    
+    @Override
+    public void initialize() {
+        super.initialize();
+    }
+
+    @Override
+    public LineSymbolizer newValue() {
+        return StyleConstants.DEFAULT_LINE_SYMBOLIZER;
+    }
+    
+    @Override
+    protected void updateEditor(LineSymbolizer styleElement) {
+        super.updateEditor(styleElement);
+        uiStroke.valueProperty().setValue(styleElement.getStroke());
+    }
+
 }

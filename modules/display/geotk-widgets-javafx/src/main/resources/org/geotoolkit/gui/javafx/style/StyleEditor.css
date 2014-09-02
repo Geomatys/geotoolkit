@@ -1,0 +1,12 @@
+
+.property-group-title {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+    -fx-padding: 8;
+    -fx-background-color: #888888;
+}
+
+.property-key {
+    -fx-padding: 8px;
+}

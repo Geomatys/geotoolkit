@@ -17,14 +17,18 @@
 
 package org.geotoolkit.gui.javafx.layer;
 
+import org.geotoolkit.style.MutableStyle;
+
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
-public class FXLayerStylePane extends FXPropertyPane{
+public abstract class FXLayerStylePane extends FXPropertyPane{
     
     public String getCategory(){
         return "";
     }
+    
+    public abstract MutableStyle getMutableStyle();
     
 }

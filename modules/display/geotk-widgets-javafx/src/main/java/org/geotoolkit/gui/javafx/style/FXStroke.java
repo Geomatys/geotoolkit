@@ -17,7 +17,6 @@
 
 package org.geotoolkit.gui.javafx.style;
 
-import java.awt.Color;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -35,72 +34,84 @@ public class FXStroke extends FXStyleElementController<FXStroke,Stroke> {
 
     @FXML
     private FXNumberExpression uiOpacity;
+    
+    @FXML
+    private FXColorExpression uiColor;
 
-    private final ChangeListener changeListener = new ChangeListener() {
-
-        @Override
-        public void changed(ObservableValue observable, Object oldValue, Object newValue) {
-            
-            final Stroke stroke;
-//            if (guiGraphicFill.isSelected() && graphicFill != null) {
-//                stroke = getStyleFactory().stroke(
-//                        graphicFill,
-//                        GuiStrokeColor.create(),
-//                        GuiStrokeAlpha.create(),
-//                        GuiStrokeWidth.create(),
-//                        GuiStrokeLineJoin.create(),
-//                        GuiStrokeLineCap.create(),
-//                        GuiStrokeDashes.getDashes(),
-//                        GuiStrokeDashes.getOffset());
-//            } else if (guiGraphicStroke.isSelected() && graphicStroke != null) {
-//                stroke = getStyleFactory().stroke(
-//                        graphicStroke,
-//                        GuiStrokeColor.create(),
-//                        GuiStrokeAlpha.create(),
-//                        GuiStrokeWidth.create(),
-//                        GuiStrokeLineJoin.create(),
-//                        GuiStrokeLineCap.create(),
-//                        GuiStrokeDashes.getDashes(),
-//                        GuiStrokeDashes.getOffset());
-//            } else {
-//                stroke = getStyleFactory().stroke(
-//                        GuiStrokeColor.create(),
-//                        GuiStrokeAlpha.create(),
-//                        GuiStrokeWidth.create(),
-//                        GuiStrokeLineJoin.create(),
-//                        GuiStrokeLineCap.create(),
-//                        GuiStrokeDashes.getDashes(),
-//                        GuiStrokeDashes.getOffset());
-                stroke = getStyleFactory().stroke(
-                        getFilterFactory().literal(Color.BLACK),
-                        uiOpacity.valueProperty().get(),
-                        uiWidth.valueProperty().get(),
-                        StyleConstants.DEFAULT_STROKE_JOIN,
-                        StyleConstants.DEFAULT_STROKE_CAP,
-                        new float[0],
-                        StyleConstants.DEFAULT_STROKE_OFFSET);
-//            }
-            
-            value.set(stroke);
-        }
-
-    };
+    private ChangeListener changeListener;
             
     @Override
-    public void initialize() {
-        super.initialize();
-        uiWidth.valueProperty().addListener(changeListener);
-        uiOpacity.valueProperty().addListener(changeListener);
+    public Class<Stroke> getEditedClass() {
+        return Stroke.class;
     }
     
+    @Override
+    public Stroke newValue() {
+        return StyleConstants.DEFAULT_STROKE;
+    }
     
+    @Override
+    public void initialize() {
+        super.initialize();        
+        changeListener = new ChangeListener() {
+            @Override
+            public void changed(ObservableValue observable, Object oldValue, Object newValue) {
+                final Stroke stroke;
+    //            if (guiGraphicFill.isSelected() && graphicFill != null) {
+    //                stroke = getStyleFactory().stroke(
+    //                        graphicFill,
+    //                        GuiStrokeColor.create(),
+    //                        GuiStrokeAlpha.create(),
+    //                        GuiStrokeWidth.create(),
+    //                        GuiStrokeLineJoin.create(),
+    //                        GuiStrokeLineCap.create(),
+    //                        GuiStrokeDashes.getDashes(),
+    //                        GuiStrokeDashes.getOffset());
+    //            } else if (guiGraphicStroke.isSelected() && graphicStroke != null) {
+    //                stroke = getStyleFactory().stroke(
+    //                        graphicStroke,
+    //                        GuiStrokeColor.create(),
+    //                        GuiStrokeAlpha.create(),
+    //                        GuiStrokeWidth.create(),
+    //                        GuiStrokeLineJoin.create(),
+    //                        GuiStrokeLineCap.create(),
+    //                        GuiStrokeDashes.getDashes(),
+    //                        GuiStrokeDashes.getOffset());
+    //            } else {
+    //                stroke = getStyleFactory().stroke(
+    //                        GuiStrokeColor.create(),
+    //                        GuiStrokeAlpha.create(),
+    //                        GuiStrokeWidth.create(),
+    //                        GuiStrokeLineJoin.create(),
+    //                        GuiStrokeLineCap.create(),
+    //                        GuiStrokeDashes.getDashes(),
+    //                        GuiStrokeDashes.getOffset());
+                    stroke = getStyleFactory().stroke(
+                            uiColor.valueProperty().get(),
+                            uiOpacity.valueProperty().get(),
+                            uiWidth.valueProperty().get(),
+                            StyleConstants.DEFAULT_STROKE_JOIN,
+                            StyleConstants.DEFAULT_STROKE_CAP,
+                            null,
+                            StyleConstants.DEFAULT_STROKE_OFFSET);
+    //            }
+
+                value.set(stroke);
+            }
+
+        };
+        
+        uiWidth.valueProperty().addListener(changeListener);
+        uiOpacity.valueProperty().addListener(changeListener);
+        uiColor.valueProperty().addListener(changeListener);
+    }
     
     @Override
     protected void updateEditor(Stroke styleElement) {
         super.updateEditor(styleElement);
         uiWidth.valueProperty().setValue(styleElement.getWidth());
         uiOpacity.valueProperty().setValue(styleElement.getOpacity());
-        
+        uiColor.valueProperty().setValue(styleElement.getColor());
     }
 
 }

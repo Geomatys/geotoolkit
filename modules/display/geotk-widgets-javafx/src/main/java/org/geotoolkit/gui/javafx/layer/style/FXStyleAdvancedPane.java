@@ -21,6 +21,7 @@ import org.geotoolkit.gui.javafx.layer.FXLayerStylePane;
 import org.geotoolkit.gui.javafx.style.FXUserStyle;
 import org.geotoolkit.internal.GeotkFXBundle;
 import org.geotoolkit.map.MapLayer;
+import org.geotoolkit.style.MutableStyle;
 
 /**
  *
@@ -53,6 +54,11 @@ public class FXStyleAdvancedPane extends FXLayerStylePane {
         pane.setLayer(layer);
         
         return true;
+    }
+
+    @Override
+    public MutableStyle getMutableStyle() {
+        return pane.valueProperty().get();
     }
     
 }

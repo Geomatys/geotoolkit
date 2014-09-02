@@ -41,6 +41,7 @@ import javafx.scene.paint.Color;
 import javafx.util.converter.LongStringConverter;
 import org.apache.sis.geometry.DirectPosition2D;
 import org.geotoolkit.display2d.canvas.painter.SolidColorPainter;
+import org.geotoolkit.gui.javafx.util.FXUtilities;
 import org.geotoolkit.internal.Loggers;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
@@ -134,20 +135,12 @@ public class FXCoordinateBar extends GridPane {
         colorPicker.setOnAction(new EventHandler() {
             public void handle(Event t) {
                 if (map != null) {
-                    map.getCanvas().setBackgroundPainter(new SolidColorPainter(toSwingColor(colorPicker.getValue())));
+                    map.getCanvas().setBackgroundPainter(new SolidColorPainter(FXUtilities.toSwingColor(colorPicker.getValue())));
                 }     
             }
         });
     }
-    
-    private java.awt.Color toSwingColor(Color fxColor){
-        int r = (int) (fxColor.getRed() * 255);
-        int g = (int) (fxColor.getGreen() * 255);
-        int b = (int) (fxColor.getBlue() * 255);
-        int rgb = (r << 16) + (g << 8) + b;
-        return new java.awt.Color(rgb);
-    }
-    
+        
     private class myListener implements EventHandler<MouseEvent>{
 
         @Override

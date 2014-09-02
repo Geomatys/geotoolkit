@@ -21,8 +21,10 @@
             <RowConstraints />
          </rowConstraints>
          <children>
-            <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="property-group-title" text="%org.geotoolkit.gui.javafx.style.FXLineSymbolizer.stroke" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-            <FXStroke fx:id="uiStroke" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="property-group-title" text="%org.geotoolkit.gui.javafx.style.FXPolygonSymbolizer.stroke" GridPane.rowIndex="2" />
+            <FXStroke fx:id="uiStroke" GridPane.rowIndex="3" />
+            <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="property-group-title" text="%org.geotoolkit.gui.javafx.style.FXPolygonSymbolizer.fill" />
+            <FXFill fx:id="uiFill" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.rowIndex="1" />
          </children>
       </GridPane>
    </center>
