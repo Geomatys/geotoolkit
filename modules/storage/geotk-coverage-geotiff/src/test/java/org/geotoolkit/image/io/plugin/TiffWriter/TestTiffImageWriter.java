@@ -27,7 +27,7 @@ import org.geotoolkit.image.io.plugin.TestTiffImageReaderWriter;
 /**
  * Implement abstract method from {@link TestTiffImageReaderWriter} adapted for tests.
  *
- * @author Remi MArechal (Geomatys).
+ * @author Remi Marechal (Geomatys).
  */
 public abstract class TestTiffImageWriter extends TestTiffImageReaderWriter {
 

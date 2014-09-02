@@ -21,12 +21,14 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Transparency;
 import java.awt.color.ColorSpace;
+import java.awt.image.BandedSampleModel;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.ComponentColorModel;
 import java.awt.image.DataBuffer;
 import java.awt.image.DataBufferByte;
 import java.awt.image.IndexColorModel;
+import java.awt.image.PixelInterleavedSampleModel;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
@@ -497,17 +499,8 @@ public strictfp abstract class TestTiffImageReaderWriter {
             final short photometricInterpretation, final short sampleFormat, final ImageOrientation imageOrientation) throws IOException {
         int width  = random.nextInt(256) + 16;
         int height = random.nextInt(256) + 16;
-//        int width  = 8;
-//        int height = 8;
         
         final RenderedImage sourceImage = createImageTest(width, height, sampleBitsSize, numBand, photometricInterpretation, sampleFormat);
-        
-//        //-- --- --- --- --- --- --//
-//        TiffImageWriter tiw = new TiffImageWriter(null);
-//        tiw.setOutput(new File("/home/rmarechal/Documents/image/bandSRC.tiff"));
-//        tiw.write(sourceImage);
-//        tiw.dispose();
-//        //------------------------------//
         
         final int srcRegionX, srcRegionY;
         switch (imageOrientation) {
@@ -640,20 +633,18 @@ public strictfp abstract class TestTiffImageReaderWriter {
             }
         }
     }
-    
+     
     /**
-     * Build an appropriate {@link ImageTypeSpecifier} in function of given parameter.
      * 
-     * @param sampleBitsSize bit size for each sample.
-     * @param numBand expected band number
-     * @param photometricInterpretation 
+     * @param sampleBitsSize
+     * @param numBand
+     * @param photometricInterpretation
      * @param sampleFormat
-     * @return {@link ImageTypeSpecifier}.
-     * @throws UnsupportedImageFormatException if photometricInterpretation or sampleFormat are not in accordance with other parameters.
+     * @param planarConfiguration 1 for {@link PixelInterleavedSampleModel} and 2 for {@link BandedSampleModel}
+     * @return
+     * @throws UnsupportedImageFormatException 
      */
-    protected ImageTypeSpecifier buildImageTypeSpecifier(final int sampleBitsSize, final int numBand, 
-            final short photometricInterpretation, final short sampleFormat) throws UnsupportedImageFormatException {
-        
+    private ColorModel createColorModel(int sampleBitsSize, int numBand, short photometricInterpretation, short sampleFormat) throws UnsupportedImageFormatException { 
         final int dataBufferType;
                 
         if (sampleFormat == 3) {
@@ -706,7 +697,7 @@ public strictfp abstract class TestTiffImageReaderWriter {
                  * Create a SampleModel with size of 1x1 volontary just to know image properties.
                  * Image with correctively size will be create later with getDestination() in #read(int index, param) method.
                  */
-                return new ImageTypeSpecifier(cm, cm.createCompatibleSampleModel(1, 1));
+                return cm;
             }
             default : {
                 throw new UnsupportedImageFormatException( "photometricInterpretation : "+photometricInterpretation);
@@ -715,13 +706,125 @@ public strictfp abstract class TestTiffImageReaderWriter {
         final boolean hasAlpha = numBand > cs.getNumComponents();
         final int[] bits = new int[numBand];
         Arrays.fill(bits, sampleBitsSize);
-        final ColorModel cm = new ComponentColorModel(cs, bits, hasAlpha, false,
+        return new ComponentColorModel(cs, bits, hasAlpha, false,
                 hasAlpha ? Transparency.TRANSLUCENT : Transparency.OPAQUE, dataBufferType);
-        /*
-         * Create a SampleModel with size of 1x1 volontary just to know image properties.
-         * Image with correctively size will be create later with getDestination() in #read(int index, param) method.
-         */  
-        return new ImageTypeSpecifier(cm, cm.createCompatibleSampleModel(1, 1));
+    }
+    
+    /**
+     * Build an appropriate {@link ImageTypeSpecifier} in function of given parameter.
+     * 
+     * @param sampleBitsSize bit size for each sample.
+     * @param numBand expected band number
+     * @param photometricInterpretation 
+     * @param sampleFormat
+     * @param planarConfiguration
+     * @return {@link ImageTypeSpecifier}.
+     * @throws UnsupportedImageFormatException if photometricInterpretation or sampleFormat are not in accordance with other parameters.
+     */
+    protected final ImageTypeSpecifier buildImageTypeSpecifier(final int sampleBitsSize, final int numBand, 
+            final short photometricInterpretation, final short sampleFormat, final short planarConfiguration) throws UnsupportedImageFormatException {
+        final ColorModel cm = createColorModel(sampleBitsSize, numBand, photometricInterpretation, sampleFormat);
+        final SampleModel sm; 
+        switch (planarConfiguration) {
+            case 1 : {
+                sm = cm.createCompatibleSampleModel(1, 1);
+                break;
+            }
+            case 2 : {
+                final int[] bankIndices = new int[numBand];
+                int b = -1;
+                while (++b < numBand) bankIndices[b] = b;
+                final int[] bandOff = new int[numBand];
+                sm = new BandedSampleModel(cm.getTransferType(), 1, 1, sampleBitsSize, bankIndices, bandOff);
+                break;
+            }
+            default : throw new IllegalArgumentException("unknow planarConfiguration type");
+        }
+        return new ImageTypeSpecifier(cm, sm);
+    }
+    
+    /**
+     * Build an appropriate {@link ImageTypeSpecifier} in function of given parameter.
+     * 
+     * @param sampleBitsSize bit size for each sample.
+     * @param numBand expected band number
+     * @param photometricInterpretation 
+     * @param sampleFormat
+     * @return {@link ImageTypeSpecifier}.
+     * @throws UnsupportedImageFormatException if photometricInterpretation or sampleFormat are not in accordance with other parameters.
+     */
+    protected ImageTypeSpecifier buildImageTypeSpecifier(final int sampleBitsSize, final int numBand, 
+            final short photometricInterpretation, final short sampleFormat) throws UnsupportedImageFormatException {
+        
+//        final int dataBufferType;
+//                
+//        if (sampleFormat == 3) {
+//            /*
+//             * Case to defferency 32 bits Float to 32 bits Integer. 
+//             */
+//            switch (sampleBitsSize) {
+//                case Float.SIZE  : dataBufferType = DataBuffer.TYPE_FLOAT; break;
+//                case Double.SIZE : dataBufferType = DataBuffer.TYPE_DOUBLE; break;
+//                default : {
+//                    throw new UnsupportedImageFormatException( "unsupported bitsPerSample size : "+sampleBitsSize);
+//                }
+//            }
+//        } else {
+//
+//           /*
+//            * We require exact value, because the reading process read all sample values
+//            * in one contiguous read operation.
+//            */
+//           switch (sampleBitsSize) {
+//               case Byte   .SIZE : dataBufferType = DataBuffer.TYPE_BYTE;   break;
+//               case Short  .SIZE : dataBufferType = DataBuffer.TYPE_USHORT; break;
+//               case Integer.SIZE : dataBufferType = DataBuffer.TYPE_INT;    break;
+//               case Double.SIZE  : dataBufferType = DataBuffer.TYPE_DOUBLE; break;
+//               default : {
+//                    throw new UnsupportedImageFormatException( "unsupported bitsPerSample size : "+sampleBitsSize);
+//               }
+//           }
+//        }
+//
+//        final ColorSpace cs;
+//        switch (photometricInterpretation) {
+//            case 0 :   //--minIsWhite
+//            case 1 : { //-- minIsBlack
+//                if (numBand > 1) {
+//                    cs = new ScaledColorSpace(numBand, 0, Double.MIN_VALUE, Double.MAX_VALUE);
+//                } else {
+//                    cs = ColorSpace.getInstance(ColorSpace.CS_GRAY); 
+//                }
+//                break;
+//            }
+//            case 2 : { //-- RGB
+//                cs = ColorSpace.getInstance(ColorSpace.CS_sRGB);
+//                break;
+//            }
+//            case 3 : {//-- palette
+//                final int[] indexes = buildColorMapArray(dataBufferType);
+//                final ColorModel cm = new IndexColorModel(sampleBitsSize, indexes.length, indexes, 0, true, -1, dataBufferType);
+//                /*
+//                 * Create a SampleModel with size of 1x1 volontary just to know image properties.
+//                 * Image with correctively size will be create later with getDestination() in #read(int index, param) method.
+//                 */
+//                return new ImageTypeSpecifier(cm, cm.createCompatibleSampleModel(1, 1));
+//            }
+//            default : {
+//                throw new UnsupportedImageFormatException( "photometricInterpretation : "+photometricInterpretation);
+//            }
+//        }
+//        final boolean hasAlpha = numBand > cs.getNumComponents();
+//        final int[] bits = new int[numBand];
+//        Arrays.fill(bits, sampleBitsSize);
+//        final ColorModel cm = new ComponentColorModel(cs, bits, hasAlpha, false,
+//                hasAlpha ? Transparency.TRANSLUCENT : Transparency.OPAQUE, dataBufferType);
+//        /*
+//         * Create a SampleModel with size of 1x1 volontary just to know image properties.
+//         * Image with correctively size will be create later with getDestination() in #read(int index, param) method.
+//         */  
+//        return new ImageTypeSpecifier(cm, cm.createCompatibleSampleModel(1, 1));
+        return buildImageTypeSpecifier(sampleBitsSize, numBand, photometricInterpretation, sampleFormat, (short)1);
     }
     
     /**

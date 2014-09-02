@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.image.io.plugin.TiffWriter;
 
-import java.awt.image.BandedSampleModel;
 import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageTypeSpecifier;
@@ -30,11 +29,12 @@ import org.junit.Test;
  * 
  * @author Remi Marechal (Geomatys) 
  */
-public strictfp class BandUncompressedTiffWriterTest extends UncompressedTiffWriterTest {
+public class BandTestTiffImageWriter extends TestTiffImageWriter {
 
-    public BandUncompressedTiffWriterTest() throws IOException {
+    public BandTestTiffImageWriter(String compression) throws IOException {
+        super(compression);
     }
-
+    
     @Override
     protected ImageTypeSpecifier buildImageTypeSpecifier(int sampleBitsSize, int numBand, short photometricInterpretation, short sampleFormat) throws UnsupportedImageFormatException {
         return buildImageTypeSpecifier(sampleBitsSize, numBand, photometricInterpretation, sampleFormat, (short) 2);
@@ -43,35 +43,6 @@ public strictfp class BandUncompressedTiffWriterTest extends UncompressedTiffWri
     @Override
     public void defaultColorMapTest() throws IOException {
         //-- do nothing has no sens to test color map
-    }
-    
-    /**
-     * Improve method {@link TIFFImageWriter#replacePixels(java.awt.image.RenderedImage, javax.imageio.ImageWriteParam) }.
-     * 
-     * @throws IOException if problem during I/O action.
-     */
-    @Test
-    @Override
-    public void replacePixelTest() throws IOException {
-        //-- 1 band byte --//
-        TestReplacePixel("replacePixel : 2 band Byte", Byte.SIZE, 2, PHOTOMETRIC_MINISBLACK, SAMPLEFORMAT_UINT);
-        
-        //-- 1 band short --//
-        TestReplacePixel("replacePixel : 2 band Short", Short.SIZE, 2, PHOTOMETRIC_MINISBLACK, SAMPLEFORMAT_UINT);
-        
-        //-- 1 band int --//
-        TestReplacePixel("replacePixel : 5 band Integer", Integer.SIZE, 5, PHOTOMETRIC_MINISBLACK, SAMPLEFORMAT_UINT);
-        
-        //-- 1 band Float --//
-        TestReplacePixel("replacePixel : 4 band Float", Float.SIZE, 4, PHOTOMETRIC_MINISBLACK, SAMPLEFORMAT_IEEEFP);
-        
-        //-- 1 band double --//
-        TestReplacePixel("replacePixel : 2 Double Byte", Double.SIZE, 2, PHOTOMETRIC_MINISBLACK, SAMPLEFORMAT_IEEEFP);
-        
-        //-- 3 bands RGB --//
-        TestReplacePixel("replacePixel : 3 bands Byte", Byte.SIZE, 3, PHOTOMETRIC_RGB, SAMPLEFORMAT_UINT);
-        //-- 4 band RGB --//
-        TestReplacePixel("replacePixel : 4 bands Byte", Byte.SIZE, 4, PHOTOMETRIC_RGB, SAMPLEFORMAT_UINT);
     }
 
     /**

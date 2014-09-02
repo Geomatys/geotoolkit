@@ -24,10 +24,8 @@ import java.awt.image.WritableRenderedImage;
 import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageTypeSpecifier;
-import org.geotoolkit.image.io.plugin.TiffImageWriter;
 import org.geotoolkit.image.iterator.PixelIterator;
 import org.geotoolkit.image.iterator.PixelIteratorFactory;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -176,23 +174,13 @@ public strictfp class UncompressedTiffWriterTest extends TestTiffImageWriter {
         final int regionMinY = random.nextInt(h_2);
         final Rectangle repRegion = new Rectangle(regionMinX, regionMinY, w_2 , h_2);
         
-//        System.out.println("regionOffset : ("+regionMinX+", "+regionMinY+")");
-        
         writer.prepareReplacePixels(0, repRegion);
         
         //-- replace region lower left corner --//
         WritableRenderedImage imgLLC = createImageTest(w_4, h_4, sampleBitsSize, numBand, photometricInterpretation, sampleFormat);
         
-//        //-- --- --- --- --- --- --//
-//        TiffImageWriter tiw2 = new TiffImageWriter(null);
-//        tiw2.setOutput(new File("/home/rmarechal/Documents/image/llCPix.tiff"));
-//        tiw2.write(imgLLC );
-//        tiw2.dispose();
-//        //------------------------------//
-        
         int dstOffX = regionMinX - w_8 + random.nextInt(w_8);
         int dstOffY = regionMinY - h_8 + random.nextInt(h_8);
-//        Point destOffset = new Point(regionMinX, regionMinY);
         Point destOffset = new Point(dstOffX, dstOffY);
         replacePixelsInResultImage(sourceImage, repRegion, imgLLC, destOffset);
         writerParam.setDestinationOffset(destOffset);
@@ -254,16 +242,7 @@ public strictfp class UncompressedTiffWriterTest extends TestTiffImageWriter {
         
         final int width  = random.nextInt(256) + 16;
         final int height = random.nextInt(256) + 16;
-//        final int width  = 8;
-//        final int height = 8;
         final WritableRenderedImage sourceImage = createImageTest(width, height, sampleBitsSize, numBand, photometricInterpretation, sampleFormat);
-        
-//        //-- --- --- --- --- --- --//
-//        TiffImageWriter tiw = new TiffImageWriter(null);
-//        tiw.setOutput(new File("/home/rmarechal/Documents/image/srcPix.tiff"));
-//        tiw.write(sourceImage);
-//        tiw.dispose();
-//        //------------------------------//
         
         writer.setOutput(fileTest); //-- to initialize writer
         writerParam.setDestinationOffset(new Point());
@@ -274,13 +253,6 @@ public strictfp class UncompressedTiffWriterTest extends TestTiffImageWriter {
         reader.setInput(fileTest); 
         final RenderedImage tested = reader.read(0);
         reader.dispose();
-        
-//        //-- --- --- --- --- --- --//
-//        TiffImageWriter tiw2 = new TiffImageWriter(null);
-//        tiw2.setOutput(new File("/home/rmarechal/Documents/image/resultPix.tiff"));
-//        tiw2.write(tested );
-//        tiw2.dispose();
-//        //------------------------------//
         
         checkImage(message, sourceImage, tested);
     }

@@ -17,14 +17,8 @@
  */
 package org.geotoolkit.image.io.plugin.TiffWriter;
 
-import java.awt.image.BandedSampleModel;
-import java.awt.image.ColorModel;
-import java.awt.image.SampleModel;
-import java.io.File;
 import java.io.IOException;
-import javax.imageio.ImageTypeSpecifier;
-import org.geotoolkit.image.io.UnsupportedImageFormatException;
-import org.geotoolkit.image.io.plugin.ImageOrientation;
+import javax.imageio.ImageWriteParam;
 
 /**
  * {@link TestTiffImageWriter} implementation which write image with LZW compression.
@@ -32,52 +26,13 @@ import org.geotoolkit.image.io.plugin.ImageOrientation;
  * @author Remi Marechal (Geomatys).
  * @see TiffImageWriteParam#compressionTypes
  */
-public class LZWBandTiledWriterTest extends LZWTiledWriterTest{
+public class LZWBandTiledWriterTest extends LZWBandWriterTest {
 
     public LZWBandTiledWriterTest() throws IOException {
-    }
-    
-    @Override
-    protected strictfp ImageTypeSpecifier buildImageTypeSpecifier(int sampleBitsSize, int numBand, short photometricInterpretation, short sampleFormat) throws UnsupportedImageFormatException {
-        final ImageTypeSpecifier imgTypeSpec = super.buildImageTypeSpecifier(sampleBitsSize, numBand, photometricInterpretation, sampleFormat); //To change body of generated methods, choose Tools | Templates.
-        final ColorModel cm                  = imgTypeSpec.getColorModel();
-        final int[] bankIndices = new int[numBand];
-        int b = -1;
-        while (++b < numBand) bankIndices[b] = b;
-        final int[] bandOff = new int[numBand];
-        final SampleModel sm = new BandedSampleModel(cm.getTransferType(), 1, 1, sampleBitsSize, bankIndices, bandOff);
-        return new ImageTypeSpecifier(cm, sm);
-    }
-
-    @Override
-    public void defaultColorMapTest() throws IOException {
-        //-- do nothing has no sens to test color map
-    }
-
-    @Override
-    protected void regionTest(String message, ImageOrientation imageOrientation) throws IOException {
-        final File fileTest = File.createTempFile(message, "tiff", tempDir);
-        //-- Short --//
-        generalTest(message+" : 2 bands, type : Short.", fileTest, Byte.SIZE, 2,
-                PHOTOMETRIC_MINISBLACK, SAMPLEFORMAT_UINT, imageOrientation);
+        writerParam.setTilingMode(ImageWriteParam.MODE_EXPLICIT);
         
-        //-- Int --//
-        generalTest(message+" : 5 bands, type : Int.", fileTest, Integer.SIZE, 5,
-                PHOTOMETRIC_MINISBLACK, SAMPLEFORMAT_UINT, imageOrientation);
-        
-        //-- Float --//
-        generalTest(message+" : 5 bands, type : Float.", fileTest, Float.SIZE, 5,
-                PHOTOMETRIC_MINISBLACK, SAMPLEFORMAT_IEEEFP, imageOrientation);
-        
-        //-- Double --//
-        generalTest(message+" : 5 bands, type : Double.", fileTest, Double.SIZE, 5,
-                PHOTOMETRIC_MINISBLACK, SAMPLEFORMAT_IEEEFP, imageOrientation);
-        
-        //-- RGB --//
-        //-- type Byte RGB
-        generalTest(message+" : 3 bands RGB, type : Byte.", fileTest, Byte.SIZE, 3,
-                PHOTOMETRIC_RGB, SAMPLEFORMAT_UINT, imageOrientation);
-        generalTest(message+" : 4 bands RGB, type : Byte.", fileTest, Byte.SIZE, 4,
-                PHOTOMETRIC_RGB, SAMPLEFORMAT_UINT, imageOrientation);
+        final int tileWidth  = (random.nextInt(7) + 1) * 16;
+        final int tileHeight = (random.nextInt(7) + 1) * 16;
+        writerParam.setTiling(tileWidth, tileHeight, 0, 0);
     }
 }
