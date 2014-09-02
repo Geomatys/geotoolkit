@@ -16,7 +16,7 @@
     </personname></author>
     <abstract><para>
       Cette page a déménagée. Son contenu se trouve maintenant à la page
-      <link xlink:href="http://builds.apache.org/job/sis-trunk/site/book/fr.xhtml">Introduction à Apache SIS™</link>.
+      <link xlink:href="http://sis.apache.org/book/fr/developer-guide.html">Introduction à Apache SIS™</link>.
     </para></abstract>
     <keywordset>
       <keyword>Geotoolkit.org</keyword> <keyword>Geotk</keyword> <keyword>GeoAPI</keyword>
