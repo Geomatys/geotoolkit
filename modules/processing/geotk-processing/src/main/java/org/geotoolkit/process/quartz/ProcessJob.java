@@ -125,7 +125,9 @@ public class ProcessJob implements Job{
 
         @Override
         public void failed(ProcessEvent event) {
-            failed = new JobExecutionException(String.valueOf(event.getTask()), event.getException(),false);
+            final Exception exception = event.getException();
+            final String message = String.valueOf(event.getTask()) + (exception != null ? " : "+exception.getMessage() : "");
+            failed = new JobExecutionException(message, exception,false);
         }
 
         @Override
