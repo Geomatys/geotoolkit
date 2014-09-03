@@ -533,14 +533,6 @@ public strictfp abstract class TestTiffImageReaderWriter {
         
         final Rectangle sourceRegion = new Rectangle(srcRegionX, srcRegionY, width >> 1, height >> 1);
         
-//        final int subsampleX       = /*random.nextInt((width >> 1) - 1) +*/ 1;
-//        final int subsampleY       = /*random.nextInt((height >> 1) - 1) +*/ 1;
-//        
-//        final int subsampleXOffset = 0;//Math.max(0, random.nextInt(subsampleX) - 1);
-//        final int subsampleYOffset = 0;//Math.max(0, random.nextInt(subsampleY) - 1);
-//        
-//        final Point destOffset = new Point(0,0);//random.nextInt(width), random.nextInt(height));
-        
         final int subsampleX       = random.nextInt((width >> 1) - 1) + 1;
         final int subsampleY       = random.nextInt((height >> 1) - 1) + 1;
         
@@ -635,6 +627,7 @@ public strictfp abstract class TestTiffImageReaderWriter {
     }
      
     /**
+     * Create an adapted {@link ColorModel} from given parameter.
      * 
      * @param sampleBitsSize
      * @param numBand
@@ -755,75 +748,6 @@ public strictfp abstract class TestTiffImageReaderWriter {
      */
     protected ImageTypeSpecifier buildImageTypeSpecifier(final int sampleBitsSize, final int numBand, 
             final short photometricInterpretation, final short sampleFormat) throws UnsupportedImageFormatException {
-        
-//        final int dataBufferType;
-//                
-//        if (sampleFormat == 3) {
-//            /*
-//             * Case to defferency 32 bits Float to 32 bits Integer. 
-//             */
-//            switch (sampleBitsSize) {
-//                case Float.SIZE  : dataBufferType = DataBuffer.TYPE_FLOAT; break;
-//                case Double.SIZE : dataBufferType = DataBuffer.TYPE_DOUBLE; break;
-//                default : {
-//                    throw new UnsupportedImageFormatException( "unsupported bitsPerSample size : "+sampleBitsSize);
-//                }
-//            }
-//        } else {
-//
-//           /*
-//            * We require exact value, because the reading process read all sample values
-//            * in one contiguous read operation.
-//            */
-//           switch (sampleBitsSize) {
-//               case Byte   .SIZE : dataBufferType = DataBuffer.TYPE_BYTE;   break;
-//               case Short  .SIZE : dataBufferType = DataBuffer.TYPE_USHORT; break;
-//               case Integer.SIZE : dataBufferType = DataBuffer.TYPE_INT;    break;
-//               case Double.SIZE  : dataBufferType = DataBuffer.TYPE_DOUBLE; break;
-//               default : {
-//                    throw new UnsupportedImageFormatException( "unsupported bitsPerSample size : "+sampleBitsSize);
-//               }
-//           }
-//        }
-//
-//        final ColorSpace cs;
-//        switch (photometricInterpretation) {
-//            case 0 :   //--minIsWhite
-//            case 1 : { //-- minIsBlack
-//                if (numBand > 1) {
-//                    cs = new ScaledColorSpace(numBand, 0, Double.MIN_VALUE, Double.MAX_VALUE);
-//                } else {
-//                    cs = ColorSpace.getInstance(ColorSpace.CS_GRAY); 
-//                }
-//                break;
-//            }
-//            case 2 : { //-- RGB
-//                cs = ColorSpace.getInstance(ColorSpace.CS_sRGB);
-//                break;
-//            }
-//            case 3 : {//-- palette
-//                final int[] indexes = buildColorMapArray(dataBufferType);
-//                final ColorModel cm = new IndexColorModel(sampleBitsSize, indexes.length, indexes, 0, true, -1, dataBufferType);
-//                /*
-//                 * Create a SampleModel with size of 1x1 volontary just to know image properties.
-//                 * Image with correctively size will be create later with getDestination() in #read(int index, param) method.
-//                 */
-//                return new ImageTypeSpecifier(cm, cm.createCompatibleSampleModel(1, 1));
-//            }
-//            default : {
-//                throw new UnsupportedImageFormatException( "photometricInterpretation : "+photometricInterpretation);
-//            }
-//        }
-//        final boolean hasAlpha = numBand > cs.getNumComponents();
-//        final int[] bits = new int[numBand];
-//        Arrays.fill(bits, sampleBitsSize);
-//        final ColorModel cm = new ComponentColorModel(cs, bits, hasAlpha, false,
-//                hasAlpha ? Transparency.TRANSLUCENT : Transparency.OPAQUE, dataBufferType);
-//        /*
-//         * Create a SampleModel with size of 1x1 volontary just to know image properties.
-//         * Image with correctively size will be create later with getDestination() in #read(int index, param) method.
-//         */  
-//        return new ImageTypeSpecifier(cm, cm.createCompatibleSampleModel(1, 1));
         return buildImageTypeSpecifier(sampleBitsSize, numBand, photometricInterpretation, sampleFormat, (short)1);
     }
     
