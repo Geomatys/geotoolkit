@@ -728,6 +728,7 @@ public final class JTS {
             return;
         }
 
+        int srid = SRIDGenerator.toSRID(crs, SRIDGenerator.Version.V1);
         Object userData = geom.getUserData();
         if (userData instanceof CoordinateReferenceSystem) {
             userData = crs;
@@ -741,8 +742,9 @@ public final class JTS {
         if (userData == null) {
             userData = crs;
         }
-
+        
         geom.setUserData(userData);
+        geom.setSRID(srid);
     }
 
     /**

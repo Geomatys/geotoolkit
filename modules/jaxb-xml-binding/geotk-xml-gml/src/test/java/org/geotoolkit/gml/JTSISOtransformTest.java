@@ -47,11 +47,10 @@ public class JTSISOtransformTest {
         poly.setSRID(2154);
         
         AbstractGeometry gml = JTStoGeometry.toGML("3.2.1", poly);
-        System.out.println(gml);
-        //GMLMarshallerPool.getInstance().acquireMarshaller().marshal(JTStoGeometry.toGML("3.2.1", geom), System.out);
         final Geometry geom = GeometrytoJTS.toJTS(gml);
         
-        System.out.println(geom);
+         //System.out.println(geom);
+        System.out.println("SRID:"+ geom.getSRID());
         
     }
     
@@ -88,11 +87,10 @@ public class JTSISOtransformTest {
         m.setSRID(2154);
         
         AbstractGeometry gml = JTStoGeometry.toGML("3.2.1", m);
-        System.out.println(gml);
-        //GMLMarshallerPool.getInstance().acquireMarshaller().marshal(JTStoGeometry.toGML("3.2.1", geom), System.out);
         final Geometry geom = GeometrytoJTS.toJTS(gml);
         
-        System.out.println(geom);
+        //System.out.println(geom);
+        System.out.println("SRID:"+ geom.getSRID());
         
     }
 }
