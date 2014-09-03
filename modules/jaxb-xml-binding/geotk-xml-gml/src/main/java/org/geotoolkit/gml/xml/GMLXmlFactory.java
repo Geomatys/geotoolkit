@@ -128,7 +128,7 @@ public class GMLXmlFactory {
     
     public static Polygon buildPolygon(final String version, final AbstractRing gmlExterior, final List<AbstractRing> gmlInterior, final String srsName) {
         if ("3.2.1".equals(version)) {
-            final List<org.geotoolkit.gml.xml.v321.AbstractRingType> interiors = new ArrayList<org.geotoolkit.gml.xml.v321.AbstractRingType>();
+            final List<org.geotoolkit.gml.xml.v321.AbstractRingType> interiors = new ArrayList<>();
             if (gmlInterior != null) {
                 for (AbstractRing ar : gmlInterior) {
                     if (ar != null && !(ar instanceof org.geotoolkit.gml.xml.v321.AbstractRingType)) {
@@ -140,7 +140,7 @@ public class GMLXmlFactory {
             }
             return new org.geotoolkit.gml.xml.v321.PolygonType(srsName, (org.geotoolkit.gml.xml.v321.AbstractRingType) gmlExterior, interiors);
         } else if ("3.1.1".equals(version)) {
-            final List<org.geotoolkit.gml.xml.v311.AbstractRingType> interiors = new ArrayList<org.geotoolkit.gml.xml.v311.AbstractRingType>();
+            final List<org.geotoolkit.gml.xml.v311.AbstractRingType> interiors = new ArrayList<>();
             if (gmlInterior != null) {
                 for (AbstractRing ar : gmlInterior) {
                     if (ar != null && !(ar instanceof org.geotoolkit.gml.xml.v311.AbstractRingType)) {

@@ -109,9 +109,23 @@ public class PolygonType extends AbstractSurfaceType implements Polygon {
     @Override
     public List<AbstractRingPropertyType> getInterior() {
         if (interior == null) {
-            interior = new ArrayList<AbstractRingPropertyType>();
+            interior = new ArrayList<>();
         }
         return this.interior;
     }
 
+    public String toString() {
+        final StringBuilder sb = new StringBuilder(super.toString());
+        if (interior != null && !interior.isEmpty()) {
+            sb.append("interior:\n");
+            for (AbstractRingPropertyType s : interior) {
+                sb.append(s).append('\n');
+            }
+        }
+        
+        if (exterior != null) {
+            sb.append("exterior:").append(exterior).append('\n');
+        }
+        return sb.toString();
+    }
 }

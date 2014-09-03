@@ -29,7 +29,6 @@ import javax.xml.bind.annotation.*;
 import org.geotoolkit.gml.xml.AbstractGeometry;
 import org.geotoolkit.referencing.CRS;
 import org.apache.sis.util.ComparisonMode;
-import org.geotoolkit.util.Utilities;
 import org.opengis.filter.expression.Expression;
 import org.opengis.geometry.*;
 import org.opengis.geometry.complex.Complex;
@@ -185,7 +184,7 @@ public abstract class AbstractGeometryType extends AbstractGMLType implements Ge
      */
     public List<String> getUomLabels() {
         if (uomLabels == null) {
-            uomLabels = new ArrayList<String>();
+            uomLabels = new ArrayList<>();
         }
         return this.uomLabels;
     }
@@ -411,4 +410,33 @@ public abstract class AbstractGeometryType extends AbstractGMLType implements Ge
     public AbstractGeometryType clone() throws CloneNotSupportedException {
         throw new CloneNotSupportedException();
     }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder(super.toString());
+        if (axisLabels != null && !axisLabels.isEmpty()) {
+            sb.append("axisLabels:\n");
+            for (String s : axisLabels) {
+                sb.append(s).append('\n');
+            }
+        }
+        if (uomLabels != null && !uomLabels.isEmpty()) {
+            sb.append("uomLabels:\n");
+            for (String s : uomLabels) {
+                sb.append(s).append('\n');
+            }
+        }
+        if (srsName != null) {
+            sb.append("srsName:").append(srsName).append('\n');
+        }
+        if (precision != null) {
+            sb.append("precision:").append(precision).append('\n');
+        }
+        if (srsDimension != null) {
+            sb.append("srsDimension:").append(srsDimension).append('\n');
+        }
+        return sb.toString();
+    }
+    
+    
 }
