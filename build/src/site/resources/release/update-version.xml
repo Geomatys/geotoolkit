@@ -8,7 +8,7 @@
   <target name="update">
     <replace dir="clone">
       <include name="pom.xml"/>
-      <replacefilter token="3.1-SNAPSHOT" value="3.1-M04"/> <!-- The GeoAPI version -->
+      <replacefilter token="4.0-SNAPSHOT" value="4.0-M01"/> <!-- The GeoAPI version -->
     </replace>
 
     <replace dir="clone">
