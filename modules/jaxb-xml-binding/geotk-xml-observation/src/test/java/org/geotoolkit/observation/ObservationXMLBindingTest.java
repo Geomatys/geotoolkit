@@ -178,8 +178,8 @@ public class ObservationXMLBindingTest {
         assertXmlEquals(expResult, result, "xmlns:*");
 
 
-        UnitOfMeasureEntry uom  = new UnitOfMeasureEntry("m", "meters", "distance", null);
-        MeasureType meas       = new MeasureType("result-1", uom, 7);
+        UnitOfMeasureEntry uom  = new UnitOfMeasureEntry("m", "meters", "distance", "meters");
+        MeasureType meas       = new MeasureType(uom, 7);
         MeasurementType measmt = new MeasurementType("urn:Observation-007", "observation definition", sp, observedProperty, "urn:sensor:007", meas, samplingTime);
 
         sw = new StringWriter();
@@ -223,14 +223,7 @@ public class ObservationXMLBindingTest {
                            "            </sampling:position>" + '\n' +
                            "        </sampling:SamplingPoint>" + '\n' +
                            "    </om:featureOfInterest>" + '\n' +
-                           "    <om:result xsi:type=\"om:Measure\" >" + '\n' +
-                           "        <om:name>result-1</om:name>" + '\n' +
-                           "        <om:uom id=\"m\">" + '\n' +
-                           "            <gml:name>meters</gml:name>" + '\n' +
-                           "            <gml:quantityType>distance</gml:quantityType>" + '\n' +
-                           "        </om:uom>" + '\n' +
-                           "        <om:value>7.0</om:value>" + '\n' +
-                           "    </om:result>" + '\n' +
+                           "    <om:result xsi:type=\"om:MeasureType\" uom=\"meters\">7.0</om:result>" + '\n' +
                            "</om:Measurement>\n";
         assertXmlEquals(expResult, result, "xmlns:*");
 
@@ -367,7 +360,7 @@ public class ObservationXMLBindingTest {
 
         xml =  "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" + '\n' +
                "<om:Measurement xmlns:om=\"http://www.opengis.net/om/1.0\" xmlns:sampling=\"http://www.opengis.net/sampling/1.0\" " +
-               " xmlns:gml=\"http://www.opengis.net/gml\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:swe=\"http://www.opengis.net/swe/1.0.1\">" + '\n' +
+               " xmlns:gml=\"http://www.opengis.net/gml\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:swe=\"http://www.opengis.net/swe/1.0.1\">" + '\n' +
                "    <gml:name>urn:Observation-007</gml:name>" + '\n' +
                "    <om:samplingTime>" + '\n' +
                "        <gml:TimePeriod gml:id=\"t1\">" + '\n' +
@@ -396,14 +389,7 @@ public class ObservationXMLBindingTest {
                "            </sampling:position>" + '\n' +
                "        </sampling:SamplingPoint>" + '\n' +
                "    </om:featureOfInterest>" + '\n' +
-               "    <om:result xsi:type=\"om:Measure\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">" + '\n' +
-               "        <om:name>result-1</om:name>" + '\n' +
-               "        <om:uom id=\"m\">" + '\n' +
-               "            <gml:name>meters</gml:name>" + '\n' +
-               "            <gml:quantityType>distance</gml:quantityType>" + '\n' +
-               "        </om:uom>" + '\n' +
-               "        <om:value>7.0</om:value>" + '\n' +
-               "    </om:result>" + '\n' +
+               "    <om:result xsi:type=\"om:MeasureType\" uom=\"meters\">7.0</om:result>" + '\n' +
                "</om:Measurement>\n";
 
         sr = new StringReader(xml);
@@ -411,8 +397,8 @@ public class ObservationXMLBindingTest {
         jb =  (JAXBElement) unmarshaller.unmarshal(sr);
         MeasurementType result2 =  (MeasurementType) jb.getValue();
 
-        UnitOfMeasureEntry uom  = new UnitOfMeasureEntry("m", "meters", "distance", null);
-        MeasureType meas       = new MeasureType("result-1", uom, 7);
+        UnitOfMeasureEntry uom  = new UnitOfMeasureEntry("m", null, null, "meters");
+        MeasureType meas       = new MeasureType(uom, 7);
 
         MeasurementType expResult2 = new MeasurementType("urn:Observation-007", null, sp, observedProperty, "urn:sensor:007", meas, samplingTime);
 

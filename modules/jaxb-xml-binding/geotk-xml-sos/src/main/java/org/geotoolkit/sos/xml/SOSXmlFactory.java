@@ -744,7 +744,7 @@ public class SOSXmlFactory {
         if ("2.0.0".equals(version)) {
             return new org.geotoolkit.gml.xml.v321.MeasureType(uom, value);
         } else if ("1.0.0".equals(version)) {
-            return new org.geotoolkit.observation.xml.v100.MeasureType(name, uom, value.floatValue());
+            return new org.geotoolkit.observation.xml.v100.MeasureType(uom, value.floatValue());
         } else {
             throw new IllegalArgumentException("unexpected sos version number:" + version);
         }

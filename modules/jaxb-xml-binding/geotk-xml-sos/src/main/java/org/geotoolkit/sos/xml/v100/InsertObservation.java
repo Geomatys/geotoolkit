@@ -22,9 +22,11 @@ import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.observation.xml.v100.MeasurementType;
 import org.geotoolkit.observation.xml.v100.ObservationType;
 
 
@@ -60,7 +62,11 @@ public class InsertObservation extends RequestBaseType implements org.geotoolkit
     @XmlElement(name = "AssignedSensorId", required = true)
     @XmlSchemaType(name = "anyURI")
     private String assignedSensorId;
-    @XmlElement(name = "Observation", namespace = "http://www.opengis.net/om/1.0", required = true)
+    @XmlElements({
+       @XmlElement(name = "Measurement", namespace = "http://www.opengis.net/om/1.0", type = MeasurementType.class),
+       @XmlElement(name = "Observation", namespace = "http://www.opengis.net/om/1.0", type = ObservationType.class)
+       
+    })
     private ObservationType observation;
 
     /**

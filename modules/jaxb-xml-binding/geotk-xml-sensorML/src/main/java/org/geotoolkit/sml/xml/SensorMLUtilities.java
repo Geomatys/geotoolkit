@@ -115,7 +115,8 @@ public class SensorMLUtilities {
         for(AbstractIdentification ident : idents) {
             if (ident.getIdentifierList() != null) {
                 for (AbstractIdentifier identifier: ident.getIdentifierList().getIdentifier()) {
-                    if ("uniqueID".equals(identifier.getName()) && identifier.getTerm() != null) {
+                    if (("uniqueID".equals(identifier.getName()) && identifier.getTerm() != null) ||
+                        (identifier.getTerm() != null && identifier.getTerm().getDefinition() != null && identifier.getTerm().getDefinition().toString().equals("urn:ogc:def:identifier:OGC:uniqueID"))) {
                         return identifier.getTerm().getValue();
                     }
                 }

@@ -168,6 +168,16 @@ public interface ObservationReader {
     Observation getObservation(final String identifier, final QName resultModel, final ResponseModeType mode, final String version) throws DataStoreException;
 
     /**
+     * return an observation template for the specified procedure.
+     * 
+     * @param procedure a procedure identifier.
+     * @param version output version of the template.
+     * @return
+     * @throws DataStoreException 
+     */
+    Observation getTemplateForProcedure(final String procedure, final String version) throws DataStoreException;
+    
+    /**
      * Return a result for the specified identifier.
      *
      * @param identifier

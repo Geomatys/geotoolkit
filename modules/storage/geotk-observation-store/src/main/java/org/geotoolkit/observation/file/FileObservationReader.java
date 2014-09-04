@@ -231,4 +231,9 @@ public class FileObservationReader implements ObservationReader {
     public List<ObservationOffering> getObservationOfferings(final String version) throws DataStoreException {
         throw new DataStoreException("offerings are not handled in File observation reader.");
     }
+
+    @Override
+    public Observation getTemplateForProcedure(final String procedure, final String version) throws DataStoreException {
+        throw new DataStoreException("Not supported yet in this this implementation.");
+    }
 }

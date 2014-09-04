@@ -22,12 +22,14 @@ import java.util.Map;
 import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlValue;
 import org.geotoolkit.gml.xml.v311.UnitOfMeasureEntry;
 
 // GeotoolKit dependencies
-import org.geotoolkit.internal.sql.table.Entry;
 import org.opengis.observation.Measure;
 
 
@@ -41,24 +43,22 @@ import org.opengis.observation.Measure;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "MeasureType")
 @XmlRootElement(name = "Measure")
-public class MeasureType implements Measure, Entry{
+public class MeasureType implements Measure {
     
-    /**
-     * Le non de l'unité de mesure.
-     */
-    private String name;
-
     /**
      * L'unite de la mesure
      */
-    private UnitOfMeasureEntry uom;
+    @XmlAttribute(required = true)
+    @XmlSchemaType(name = "anyURI")
+    private String uom;
     
     /**
      * La valeur de la mesure
      */
+    @XmlValue
     private float value;
     
-    private static final Map<String, String> idMap = new HashMap<String, String>();
+    private static final Map<String, String> idMap = new HashMap<>();
     static {
         idMap.put("°C", "degrees");
         idMap.put("m", "meters");
@@ -71,37 +71,23 @@ public class MeasureType implements Measure, Entry{
     /** 
      * crée un nouveau resultat de mesure.
      *
-     * @param name  Le nom/identifiant du resultat.
      * @param uom   L'unité de mesure.
      * @param value La valeur mesurée.
      */
-    public MeasureType(final String             name,
-                        final UnitOfMeasureEntry uom,
-                        final float              value)
+    public MeasureType(final UnitOfMeasureEntry uom,
+                       final float              value)
     {
-        this.name = name;
-        this.uom   = uom;
-        this.value = value;        
-    }
-    
-    public MeasureType(final String name, final String uom, final float value) {
-        this.name = name;
         if (uom != null) {
-            final String id = idMap.get(uom);
-            this.uom = new UnitOfMeasureEntry(id, null, null, uom);
+            this.uom   = uom.getUnitsSystem();
         }
         this.value = value;        
     }
-
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public String getIdentifier() {
-        return name;
-    }
     
+    public MeasureType(final String uom, final float value) {
+        this.uom = uom;
+        this.value = value;        
+    }
+
     /**
      * {@inheritDoc}
      *
@@ -109,7 +95,11 @@ public class MeasureType implements Measure, Entry{
      */
     @Override
     public UnitOfMeasureEntry getUom() {
-        return uom;
+        if (uom != null) {
+            final String id = idMap.get(uom);
+            return new UnitOfMeasureEntry(id, null, null, uom);
+        }
+        return null;
     }
 
     /**
@@ -128,8 +118,11 @@ public class MeasureType implements Measure, Entry{
      * Retourne un code représentant ce resultat de mesure.
      */
     @Override
-    public final int hashCode() {
-        return name.hashCode();
+    public int hashCode() {
+        int hash = 5;
+        hash = 23 * hash + Objects.hashCode(this.uom);
+        hash = 23 * hash + Float.floatToIntBits(this.value);
+        return hash;
     }
 
     /**
@@ -143,13 +136,12 @@ public class MeasureType implements Measure, Entry{
         
         if (object instanceof MeasureType) {
             final MeasureType that = (MeasureType) object;
-            return Objects.equals(this.name,  that.name) &&
-                   Objects.equals(this.uom,   that.uom) &&
+            return Objects.equals(this.uom,   that.uom) &&
                    Objects.equals(this.value, that.value) ;
         }
         return false;
     }
-    
+
     
     /**
      * Retourne une description de l'objet (debug).
@@ -157,11 +149,8 @@ public class MeasureType implements Measure, Entry{
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder();
-        if (name != null) {
-            s.append("name=").append(name).append('\n');
-        }
         if (uom != null) {
-            s.append("uom =").append(uom.toString()).append('\n');
+            s.append("uom =").append(uom).append('\n');
         }
         
         s.append(" value=").append(value).append('\n');
