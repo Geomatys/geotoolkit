@@ -23,10 +23,13 @@ import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.observation.xml.v100.MeasurementType;
 import org.geotoolkit.observation.xml.v100.ObservationType;
 import org.geotoolkit.observation.xml.v100.ProcessType;
+import org.geotoolkit.swe.xml.PhenomenonProperty;
 
 
 /**
@@ -56,7 +59,9 @@ import org.geotoolkit.observation.xml.v100.ProcessType;
 @XmlRootElement(name = "ObservationTemplate")
 public class ObservationTemplate implements org.geotoolkit.swes.xml.ObservationTemplate {
 
-    @XmlElement(name = "Observation", namespace = "http://www.opengis.net/om/1.0", required = true)
+    @XmlElements({
+        @XmlElement(name = "Observation", namespace = "http://www.opengis.net/om/1.0", type = ObservationType.class),
+        @XmlElement(name = "Measurement", namespace = "http://www.opengis.net/om/1.0", type = MeasurementType.class)})
     private ObservationType observation;
 
     /**
@@ -126,7 +131,15 @@ public class ObservationTemplate implements org.geotoolkit.swes.xml.ObservationT
         if (observation != null && observation.getObservedProperty() != null) {
             return Arrays.asList(observation.getObservedProperty().getId());
         }
-        return new ArrayList<String>();
+        return new ArrayList<>();
+    }
+    
+    @Override
+    public List<PhenomenonProperty> getFullObservedProperties() {
+        if (observation != null && observation.getPropertyObservedProperty() != null) {
+            return Arrays.asList((PhenomenonProperty)observation.getPropertyObservedProperty());
+        }
+        return new ArrayList<>();
     }
     
     @Override

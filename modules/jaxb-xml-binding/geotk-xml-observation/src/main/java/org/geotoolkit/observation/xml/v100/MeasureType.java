@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.v311.UnitOfMeasureEntry;
 
@@ -38,7 +39,8 @@ import org.opengis.observation.Measure;
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "Measure")
+@XmlType(name = "MeasureType")
+@XmlRootElement(name = "Measure")
 public class MeasureType implements Measure, Entry{
     
     /**

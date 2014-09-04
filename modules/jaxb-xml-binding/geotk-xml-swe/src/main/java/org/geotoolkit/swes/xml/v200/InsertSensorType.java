@@ -26,6 +26,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.swe.xml.Phenomenon;
+import org.geotoolkit.swe.xml.PhenomenonProperty;
 import org.geotoolkit.swes.xml.InsertSensor;
 import org.geotoolkit.swes.xml.ObservationTemplate;
 import org.opengis.observation.Observation;
@@ -280,6 +282,31 @@ public class InsertSensorType extends ExtensibleRequestType implements InsertSen
         public Observation getObservation() {
             return null;
         }
+
+        @Override
+        public List<PhenomenonProperty> getFullObservedProperties() {
+            final List<PhenomenonProperty> results = new ArrayList<>();
+            if (observableProperty != null) {
+                for (final String phen : observableProperty) {
+                    results.add(new PhenomenonProperty() {
+                        @Override
+                        public String getHref() {
+                            return phen;
+                        }
+                        @Override
+                        public void setToHref() {
+                            // do nothing
+                        }
+                        @Override
+                        public Phenomenon getPhenomenon() {
+                            return null;
+                        }
+                    });
+                }
+            }
+            return results;
+        }
+        
     }
 
     /**

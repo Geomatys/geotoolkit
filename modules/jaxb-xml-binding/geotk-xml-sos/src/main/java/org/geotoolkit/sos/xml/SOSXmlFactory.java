@@ -676,11 +676,13 @@ public class SOSXmlFactory {
                 throw new IllegalArgumentException("unexpected object version for time element");
             }
             final List<org.geotoolkit.swe.xml.v101.PhenomenonPropertyType> phenProp = new ArrayList<>();
-            for (PhenomenonProperty phen : observedProperties) {
-                if (!(phen instanceof org.geotoolkit.swe.xml.v101.PhenomenonPropertyType)) {
-                     throw new IllegalArgumentException("unexpected object version for phenomenon element");
+            if (observedProperties != null) {
+                for (PhenomenonProperty phen : observedProperties) {
+                    if (!(phen instanceof org.geotoolkit.swe.xml.v101.PhenomenonPropertyType)) {
+                         throw new IllegalArgumentException("unexpected object version for phenomenon element");
+                    }
+                    phenProp.add((org.geotoolkit.swe.xml.v101.PhenomenonPropertyType)phen);
                 }
-                phenProp.add((org.geotoolkit.swe.xml.v101.PhenomenonPropertyType)phen);
             }
             return new org.geotoolkit.sos.xml.v100.ObservationOfferingType(
                                             id,

@@ -17,6 +17,7 @@
 package org.geotoolkit.swes.xml;
 
 import java.util.List;
+import org.geotoolkit.swe.xml.PhenomenonProperty;
 import org.opengis.observation.Observation;
 
 /**
@@ -32,6 +33,8 @@ public interface ObservationTemplate {
     void setName(final String name);
     
     List<String> getObservedProperties();
+    
+    List<PhenomenonProperty> getFullObservedProperties();
     
     String getFeatureOfInterest();
     

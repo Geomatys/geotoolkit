@@ -94,7 +94,7 @@ public class ObservationType implements Entry, AbstractObservation {
     /**
      * A logger (debugging purpose)
      */
-    private static final Logger LOGGER = Logging.getLogger("observationType");
+    protected static final Logger LOGGER = Logging.getLogger(ObservationType.class);
     
     /**
      *The observation name

@@ -122,7 +122,11 @@ public class MeasurementType extends ObservationType implements Measurement {
     
     @Override
     public Measure getResult() {
-       return (Measure)super.getResult();
+        final Object result = super.getResult();
+        if (!(result instanceof Measure) && result != null) {
+            LOGGER.warning("Unexpected result type for measurement:" + result.getClass().getName());
+        }
+       return (Measure)result;
     }
 
 
