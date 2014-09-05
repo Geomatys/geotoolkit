@@ -1048,7 +1048,7 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
          *     target CRS
          */
         final CartesianCS STANDARD = PredefinedCS.GEOCENTRIC;
-        final MatrixSIS matrix;
+        MatrixSIS matrix;
         ReferenceIdentifier identifier = DATUM_SHIFT;
         try {
             Matrix datumShift = null;
@@ -1077,8 +1077,8 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
              * We compute: matrix = normalizeTarget * datumShift * normalizeSource
              */
             matrix = MatrixSIS.castOrCopy(normalizeTarget);
-            matrix.multiply(datumShift);
-            matrix.multiply(normalizeSource);
+            matrix = matrix.multiply(datumShift);
+            matrix = matrix.multiply(normalizeSource);
         } catch (SingularMatrixException cause) {
             throw new OperationNotFoundException(getErrorMessage(sourceDatum, targetDatum), cause);
         }
