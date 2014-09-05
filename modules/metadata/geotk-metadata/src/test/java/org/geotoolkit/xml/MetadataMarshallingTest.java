@@ -38,6 +38,7 @@ import org.apache.sis.metadata.iso.quality.*;
 import org.apache.sis.metadata.iso.citation.*;
 import org.apache.sis.metadata.iso.distribution.*;
 import org.apache.sis.metadata.iso.identification.*;
+import org.apache.sis.metadata.iso.maintenance.DefaultScope;
 import org.apache.sis.util.iso.DefaultInternationalString;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.apache.sis.util.ComparisonMode;
