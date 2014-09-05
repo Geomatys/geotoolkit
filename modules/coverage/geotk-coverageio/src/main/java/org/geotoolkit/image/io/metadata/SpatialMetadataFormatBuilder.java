@@ -46,6 +46,7 @@ import org.opengis.metadata.acquisition.*;
 import org.opengis.metadata.maintenance.*;
 import org.opengis.metadata.distribution.*;
 import org.opengis.metadata.identification.*;
+import org.opengis.metadata.maintenance.Scope;
 
 import org.opengis.parameter.*;
 import org.opengis.referencing.*;
