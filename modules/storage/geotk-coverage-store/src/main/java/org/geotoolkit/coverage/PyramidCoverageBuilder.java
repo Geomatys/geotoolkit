@@ -31,6 +31,7 @@ import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.feature.type.Name;
+import org.geotoolkit.geometry.Envelopes;
 import org.geotoolkit.image.coverage.CombineIterator;
 import org.geotoolkit.image.interpolation.Interpolation;
 import org.geotoolkit.image.interpolation.InterpolationCase;
@@ -108,6 +109,7 @@ import org.opengis.util.FactoryException;
  * {@code pgcb.create(myGridCoverage, myCoverageStore, name, resolution_Per_Envelope, fillValue);}</p>
  *
  * @author Rémi Marechal (Geomatys).
+ * @author Quentin Boileau (Geomatys).
  */
 public class PyramidCoverageBuilder {
 
@@ -515,6 +517,7 @@ public class PyramidCoverageBuilder {
             throws NoninvertibleTransformException, FactoryException, TransformException, DataStoreException {
 
         final GridGeometry2D gg2d   = gridCoverage2D.getGridGeometry();
+        final Envelope covEnv       = gg2d.getEnvelope2D();
         final RenderedImage baseImg = gridCoverage2D.getRenderedImage();
         // work on pixels coordinates.
         final MathTransform2D coverageCRS_to_grid = gg2d.getGridToCRS2D(PixelOrientation.CENTER).inverse();
@@ -537,18 +540,29 @@ public class PyramidCoverageBuilder {
             final double imgHeight = envHeight / pixelScal;
             final double sx     = envWidth  / imgWidth;
             final double sy     = envHeight / imgHeight;
+            final MathTransform2D globalGridDest_to_crs = new AffineTransform2D(sx, 0, 0, -sy, min0, max1);
+            final MathTransform covCRS_to_gridDest      = MathTransforms.concatenate(globalGridDest_to_crs, destCrs_to_coverageCRS).inverse();
 
             //mosaic size
             final int nbrTileX  = (int)Math.ceil(imgWidth/tileWidth);
             final int nbrTileY  = (int)Math.ceil(imgHeight/tileHeight);
+
+            //coverage extent on mosaic space
+            final GeneralEnvelope coverageExtent = Envelopes.transform(covCRS_to_gridDest, covEnv);
+
+            //coverage intersection tile index
+            final int startTileX = (int)coverageExtent.getMinimum(widthAxis) / tileWidth;
+            final int startTileY = (int)coverageExtent.getMinimum(heightAxis) / tileHeight;
+            final int endTileX   = (int)(coverageExtent.getMaximum(widthAxis) + tileWidth - 1) / tileWidth;
+            final int endTileY   = (int)(coverageExtent.getMaximum(heightAxis) + tileHeight - 1) / tileHeight;
 
             final GridMosaic mosaic = getOrCreateMosaic(pm, pyramidID, new Dimension(nbrTileX, nbrTileY), tileSize, upperLeft, pixelScal);
             final String mosaicId   = mosaic.getId();
 
             final Interpolation interpolation = Interpolation.create(PixelIteratorFactory.createRowMajorIterator(baseImg), interpolationCase, lanczosWindow);
 
-            for (int cTY = 0; cTY < nbrTileY; cTY++) {
-                for (int cTX = 0; cTX < nbrTileX; cTX++) {
+            for (int cTY = startTileY; cTY < endTileY; cTY++) {
+                for (int cTX = startTileX; cTX < endTileX; cTX++) {
                     final int destMinX  = cTX * tileWidth;
                     final int destMinY  = cTY * tileHeight;
                     final WritableRenderedImage destImg = BufferedImageUtilities.createImage(tileWidth, tileHeight, baseImg);
@@ -672,7 +686,7 @@ public class PyramidCoverageBuilder {
                 return gm;
             }
         }
-        return pm.createMosaic(pyramidID, tileSize, tileSize, upperLeft, pixelScal);
+        return pm.createMosaic(pyramidID, gridsize, tileSize, upperLeft, pixelScal);
     }
 
 }
