@@ -138,7 +138,7 @@ public class FilterType implements Filter, XMLFilter {
                         final GmlObjectIdType raid = (GmlObjectIdType) aid;
                         this.id.add(FACTORY.createGmlObjectId(new GmlObjectIdType(raid)));
                     } else {
-                        throw new IllegalArgumentException("exexpected ID type in filter:" + aid.getClass().getName());
+                        throw new IllegalArgumentException("Unexpected ID type in filter:" + aid.getClass().getName());
                     }
                 }
             }
