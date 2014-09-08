@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.coverage.xmlstore;
 
-import java.awt.Dimension;
+import java.awt.*;
 import java.awt.image.ColorModel;
 import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
@@ -292,6 +292,9 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
         return mosaic;
     }
 
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public void deleteMosaic(String pyramidId, String mosaicId) throws DataStoreException {
         throw new DataStoreException("Not supported yet.");
@@ -301,6 +304,9 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
         return new XMLTileWriter(tilesToWrite, this);
     }
 
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public void writeTile(String pyramidId, String mosaicId, int col, int row, RenderedImage image) throws DataStoreException {
         final XMLPyramidSet set = getPyramidSet();
@@ -311,18 +317,34 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
             save();
         }
     }
-    
+
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public void writeTiles(String pyramidId, String mosaicId, RenderedImage image, boolean onlyMissing, ProgressMonitor monitor) throws DataStoreException {
+        final Rectangle fullArea = new Rectangle(0, 0, image.getNumXTiles(), image.getNumYTiles());
+        writeTiles(pyramidId, mosaicId, image, fullArea, onlyMissing, monitor);
+    }
+
+    /**
+     * {@inheritDoc }.
+     */
+    @Override
+    public void writeTiles(final String pyramidId, final String mosaicId, final RenderedImage image, final Rectangle area,
+                           final boolean onlyMissing, final ProgressMonitor monitor) throws DataStoreException {
         final XMLPyramidSet set = getPyramidSet();
         final XMLPyramid pyramid = (XMLPyramid) set.getPyramid(pyramidId);
         final XMLMosaic mosaic = pyramid.getMosaic(mosaicId);
-        mosaic.writeTiles(image,onlyMissing, monitor);
+        mosaic.writeTiles(image, area, onlyMissing, monitor);
         if (!mosaic.cacheTileState && mosaic.tileExist != null) {
             save();
         }
     }
 
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public void deleteTile(String pyramidId, String mosaicId, int col, int row) throws DataStoreException {
         throw new DataStoreException("Not supported yet.");

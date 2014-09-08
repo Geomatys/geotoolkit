@@ -16,9 +16,7 @@
  */
 package org.geotoolkit.coverage.postgresql;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Point;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
@@ -31,6 +29,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.RejectedExecutionHandler;
@@ -308,19 +307,43 @@ public class PGCoverageReference extends AbstractPyramidalCoverageReference {
         }
     }
 
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public void writeTiles(final String pyramidId, final String mosaicId,
             final RenderedImage image, final boolean onlyMissing, final ProgressMonitor monitor) throws DataStoreException {
+        final Rectangle fullArea = new Rectangle(image.getNumXTiles(), image.getNumYTiles());
+        writeTiles(pyramidId, mosaicId, image, fullArea, onlyMissing, monitor);
+    }
+
+    /**
+     * {@inheritDoc }.
+     */
+    @Override
+    public void writeTiles(final String pyramidId, final String mosaicId, final RenderedImage image, final Rectangle area,
+                           final boolean onlyMissing, final ProgressMonitor monitor) throws DataStoreException {
+
         final int offsetX = image.getMinTileX();
         final int offsetY = image.getMinTileY();
+
+        final int startX = (int)area.getMinX();
+        final int startY = (int)area.getMinY();
+        final int endX = (int)area.getMaxX();
+        final int endY = (int)area.getMaxY();
+
+        assert startX >= 0;
+        assert startY >= 0;
+        assert endX > startX && endX <= image.getNumXTiles();
+        assert endY > startY && endY <= image.getNumYTiles();
 
         final RejectedExecutionHandler rejectHandler = new ThreadPoolExecutor.CallerRunsPolicy();
         final BlockingQueue queue = new ArrayBlockingQueue(Runtime.getRuntime().availableProcessors());
         final ThreadPoolExecutor executor = new ThreadPoolExecutor(
-            0, Runtime.getRuntime().availableProcessors(), 1, TimeUnit.MINUTES, queue, rejectHandler);
+                0, Runtime.getRuntime().availableProcessors(), 1, TimeUnit.MINUTES, queue, rejectHandler);
 
-        for(int y=0; y<image.getNumYTiles();y++){
-            for(int x=0;x<image.getNumXTiles();x++){
+        for(int y=startY; y<=endY;y++){
+            for(int x=startX;x<=endX;x++){
                 final Raster raster = image.getTile(offsetX+x, offsetY+y);
                 final RenderedImage img = new BufferedImage(image.getColorModel(),
                         (WritableRaster)raster, image.getColorModel().isAlphaPremultiplied(), null);

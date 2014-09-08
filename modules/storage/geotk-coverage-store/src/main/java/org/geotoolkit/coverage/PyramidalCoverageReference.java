@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.coverage;
 
-import java.awt.Dimension;
+import java.awt.*;
 import java.awt.image.ColorModel;
 import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
@@ -171,6 +171,22 @@ public interface PyramidalCoverageReference extends CoverageReference{
      * @throws DataStoreException
      */
     void writeTiles(String pyramidId, String mosaicId, RenderedImage image, boolean onlyMissing, ProgressMonitor monitor) throws DataStoreException;
+
+    /**
+     * Write a part of mosaic level from the given rendered image and rectangle area
+     * The rendered image size and tile size must match the mosaic definition.
+     *
+     * @param pyramidId
+     * @param mosaicId
+     * @param image
+     * @param area Rectangle2D that define area to copy in grid system (edges inclusive)
+     * @param onlyMissing : set to true to fill only missing tiles
+     * @param monitor A progress monitor in order to eventually cancel the process. May be {@code null}.
+     * @throws DataStoreException
+     */
+    void writeTiles(String pyramidId, String mosaicId, RenderedImage image, Rectangle area, boolean onlyMissing,
+                    ProgressMonitor monitor) throws DataStoreException;
+
 
     /**
      * Write or update a single tile in the mosaic.

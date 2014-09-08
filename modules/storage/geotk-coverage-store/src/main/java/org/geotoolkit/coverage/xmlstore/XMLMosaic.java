@@ -16,8 +16,7 @@
  */
 package org.geotoolkit.coverage.xmlstore;
 
-import java.awt.Dimension;
-import java.awt.Point;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.Raster;
@@ -31,6 +30,7 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.text.DecimalFormatSymbols;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.*;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.logging.Level;
@@ -445,10 +445,21 @@ public class XMLMosaic implements GridMosaic {
         }
     }
 
-    void writeTiles(final RenderedImage image, final boolean onlyMissing, final ProgressMonitor monitor) throws DataStoreException{
+    void writeTiles(final RenderedImage image, final Rectangle area, final boolean onlyMissing, final ProgressMonitor monitor) throws DataStoreException{
+
+        final int startX = (int)area.getMinX();
+        final int startY = (int)area.getMinY();
+        final int endX = (int)area.getMaxX();
+        final int endY = (int)area.getMaxY();
+
+        assert startX >= 0;
+        assert startY >= 0;
+        assert endX > startX && endX <= image.getNumXTiles();
+        assert endY > startY && endY <= image.getNumYTiles();
+
         final List<Future> futurs = new ArrayList<>();
-        for(int y=0,ny=image.getNumYTiles(); y<ny; y++){
-            for(int x=0,nx=image.getNumXTiles(); x<nx; x++){
+        for(int y=startY; y <= endY; y++){
+            for(int x=startX; x <= endX; x++){
                 if (monitor != null && monitor.isCanceled()) {
                     // Stops submitting new thread
                     return;
@@ -587,6 +598,7 @@ public class XMLMosaic implements GridMosaic {
             this.cm = cm;
             this.formatName = formatName;
             this.monitor = monitor;
+
         }
 
         @Override
@@ -599,10 +611,13 @@ public class XMLMosaic implements GridMosaic {
             ImageWriter writer = null;
             ImageOutputStream out = null;
             try {
-                Raster raster = image.getTile(idx, idy);
+                final int offsetX = image.getMinTileX();
+                final int offsetY = image.getMinTileY();
+                Raster raster = image.getTile(offsetX+idx, offsetY+idy);
 
                 //check if image is empty
                 if (tileEmpty != null && (raster == null || isEmpty(raster))) {
+
                     bitsetLock.writeLock().lock();
                     try {
                         tileExist.set(tileIndex, true);
