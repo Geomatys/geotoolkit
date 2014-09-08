@@ -25,6 +25,8 @@ import java.io.IOException;
 import javax.imageio.IIOException;
 import javax.measure.unit.SI;
 
+import org.apache.sis.referencing.IdentifiedObjects;
+import org.apache.sis.referencing.crs.*;
 import ucar.nc2.Dimension;
 import ucar.nc2.units.DateUnit;
 import ucar.nc2.constants.AxisType;
@@ -67,11 +69,7 @@ import org.apache.sis.referencing.datum.DefaultTemporalDatum;
 import org.apache.sis.referencing.datum.DefaultGeodeticDatum;
 import org.geotoolkit.referencing.cs.DiscreteReferencingFactory;
 import org.geotoolkit.referencing.cs.DiscreteCoordinateSystemAxis;
-import org.apache.sis.referencing.crs.DefaultVerticalCRS;
-import org.apache.sis.referencing.crs.DefaultTemporalCRS;
-import org.apache.sis.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.crs.DefaultProjectedCRS;
-import org.apache.sis.referencing.crs.DefaultCompoundCRS;
 import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
 import org.geotoolkit.io.wkt.Formattable;
 import org.apache.sis.referencing.CommonCRS;
@@ -463,7 +461,14 @@ public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateRefer
          */
         @Override
         public String formatTo(final Formatter formatter) {
-            return new DefaultCompoundCRS(this) {
+            final CompoundCRS regularized = (CompoundCRS) this.regularize();
+            final CoordinateReferenceSystem[] systems = new CoordinateReferenceSystem[regularized.getComponents().size()];
+            int i = 0;
+            for (final CoordinateReferenceSystem component : regularized.getComponents()) {
+                systems[i++] = AbstractCRS.castOrCopy(component);
+            }
+
+            return new DefaultCompoundCRS(IdentifiedObjects.getProperties(regularized), systems) {
                 @Override public String formatTo(final Formatter formatter) {
                     return super.formatTo(formatter);
                 }
