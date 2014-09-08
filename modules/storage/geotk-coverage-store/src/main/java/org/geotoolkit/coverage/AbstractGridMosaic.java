@@ -34,6 +34,7 @@ import org.geotoolkit.metadata.iso.spatial.PixelTranslation;
 import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 
@@ -106,29 +107,33 @@ public abstract class AbstractGridMosaic implements GridMosaic{
     @Override
     public Envelope getEnvelope(final int col, final int row) {
         final GeneralDirectPosition ul = new GeneralDirectPosition(getUpperLeftCorner());
-        final double minX = ul.getOrdinate(0);
-        final double maxY = ul.getOrdinate(1);
+        final int xAxis = Math.max(CoverageUtilities.getMinOrdinate(ul.getCoordinateReferenceSystem()), 0);
+        final int yAxis = xAxis + 1;
+        final double minX = ul.getOrdinate(xAxis);
+        final double maxY = ul.getOrdinate(yAxis);
         final double spanX = tileSize.width * scale;
         final double spanY = tileSize.height * scale;
 
         final GeneralEnvelope envelope = new GeneralEnvelope(ul,ul);
-        envelope.setRange(0, minX + col*spanX, minX + (col+1)*spanX);
-        envelope.setRange(1, maxY - (row+1)*spanY, maxY - row*spanY);
+        envelope.setRange(xAxis, minX + col*spanX, minX + (col+1)*spanX);
+        envelope.setRange(yAxis, maxY - (row+1)*spanY, maxY - row*spanY);
 
         return envelope;
     }
 
     @Override
-    public Envelope getEnvelope(){
+    public Envelope getEnvelope() {
         final GeneralDirectPosition ul = new GeneralDirectPosition(getUpperLeftCorner());
-        final double minX = ul.getOrdinate(0);
-        final double maxY = ul.getOrdinate(1);
+        final int xAxis = Math.max(CoverageUtilities.getMinOrdinate(ul.getCoordinateReferenceSystem()), 0);
+        final int yAxis = xAxis + 1;
+        final double minX = ul.getOrdinate(xAxis);
+        final double maxY = ul.getOrdinate(yAxis);
         final double spanX = getTileSize().width * getGridSize().width * getScale();
         final double spanY = getTileSize().height* getGridSize().height* getScale();
 
         final GeneralEnvelope envelope = new GeneralEnvelope(ul,ul);
-        envelope.setRange(0, minX, minX + spanX);
-        envelope.setRange(1, maxY - spanY, maxY );
+        envelope.setRange(xAxis, minX, minX + spanX);
+        envelope.setRange(yAxis, maxY - spanY, maxY );
 
         return envelope;
     }

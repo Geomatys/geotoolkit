@@ -79,11 +79,11 @@ public class XMLMosaic implements GridMosaic {
             0, Runtime.getRuntime().availableProcessors(), 1, TimeUnit.MINUTES, IMAGEQUEUE, LOCAL_REJECT_EXECUTION_HANDLER);
 
     /*
-     * Used only if we use the tile state cache mecanism, which means we don't use XML document to read / write tile states.
+     * Used only if we use the tile state cache mechanism, which means we don't use XML document to read / write tile states.
      */
     private final Cache<Point, Boolean> isMissingCache = new Cache<>(1000, 1000, false);
 
-    //empty tile informations
+    //empty tile information
     private byte[] emptyTileEncoded = null;
 
     //written values
@@ -267,31 +267,35 @@ public class XMLMosaic implements GridMosaic {
     }
 
     @Override
-    public Envelope getEnvelope(){
+    public Envelope getEnvelope(final int col, final int row) {
         final GeneralDirectPosition ul = new GeneralDirectPosition(getUpperLeftCorner());
-        final double minX = ul.getOrdinate(0);
-        final double maxY = ul.getOrdinate(1);
-        final double spanX = getTileSize().width * getGridSize().width * scale;
-        final double spanY = getTileSize().height* getGridSize().height* scale;
+        final int xAxis = Math.max(CoverageUtilities.getMinOrdinate(ul.getCoordinateReferenceSystem()), 0);
+        final int yAxis = xAxis + 1;
+        final double minX = ul.getOrdinate(xAxis);
+        final double maxY = ul.getOrdinate(yAxis);
+        final double spanX = tileWidth * scale;
+        final double spanY = tileHeight * scale;
 
         final GeneralEnvelope envelope = new GeneralEnvelope(ul,ul);
-        envelope.setRange(0, minX, minX + spanX);
-        envelope.setRange(1, maxY - spanY, maxY );
+        envelope.setRange(xAxis, minX + col*spanX, minX + (col+1)*spanX);
+        envelope.setRange(yAxis, maxY - (row+1)*spanY, maxY - row*spanY);
 
         return envelope;
     }
 
     @Override
-    public Envelope getEnvelope(int col, int row) {
+    public Envelope getEnvelope() {
         final GeneralDirectPosition ul = new GeneralDirectPosition(getUpperLeftCorner());
-        final double minX = ul.getOrdinate(0);
-        final double maxY = ul.getOrdinate(1);
-        final double spanX = getTileSize().width * scale;
-        final double spanY = getTileSize().height * scale;
+        final int xAxis = Math.max(CoverageUtilities.getMinOrdinate(ul.getCoordinateReferenceSystem()), 0);
+        final int yAxis = xAxis + 1;
+        final double minX = ul.getOrdinate(xAxis);
+        final double maxY = ul.getOrdinate(yAxis);
+        final double spanX = tileWidth * gridWidth * getScale();
+        final double spanY = tileHeight * gridHeight * getScale();
 
         final GeneralEnvelope envelope = new GeneralEnvelope(ul,ul);
-        envelope.setRange(0, minX + col*spanX, minX + (col+1)*spanX);
-        envelope.setRange(1, maxY - (row+1)*spanY, maxY - row*spanY);
+        envelope.setRange(xAxis, minX, minX + spanX);
+        envelope.setRange(yAxis, maxY - spanY, maxY );
 
         return envelope;
     }

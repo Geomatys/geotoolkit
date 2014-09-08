@@ -28,14 +28,14 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlTransient;
 import net.iharder.Base64;
-import org.apache.sis.io.wkt.Convention;
-import org.apache.sis.io.wkt.FormattableObject;
+import org.apache.sis.io.wkt.*;
+import org.apache.sis.io.wkt.Formatter;
+import org.apache.sis.io.wkt.WKTFormat;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.GridMosaic;
-import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.Pyramid;
 import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.referencing.CRS;
@@ -71,7 +71,7 @@ public class XMLPyramid implements Pyramid {
      */
     private XMLPyramid() {}
 
-    public XMLPyramid(CoordinateReferenceSystem pyramidCRS) {
+    XMLPyramid(CoordinateReferenceSystem pyramidCRS) throws DataStoreException {
         setCoordinateReferenceSystem(pyramidCRS);
     }
 
@@ -144,14 +144,27 @@ public class XMLPyramid implements Pyramid {
         return crsobj;
     }
 
-    void setCoordinateReferenceSystem(CoordinateReferenceSystem crs) {
+    void setCoordinateReferenceSystem(CoordinateReferenceSystem crs) throws DataStoreException {
         ArgumentChecks.ensureNonNull("Input CRS", crs);
         crsobj = crs;
-        this.crs = ((FormattableObject)crs).toString(Convention.WKT1);
-        try {
-            this.serializedCrs = Base64.encodeObject((Serializable)crs);
-        } catch (IOException ex) {
-            Logging.getLogger(this.getClass()).log(Level.WARNING, ex.getMessage(), ex);
+        this.crs = null;
+        this.serializedCrs = null;
+        if (crs instanceof FormattableObject) {
+            this.crs = ((FormattableObject)crs).toString(Convention.WKT1);
+        } else if (crs instanceof org.geotoolkit.io.wkt.Formattable) {
+            this.crs = ((org.geotoolkit.io.wkt.Formattable)crs).formatTo(new Formatter(Convention.WKT1, Symbols.getDefault(), WKTFormat.SINGLE_LINE));
+        }
+
+        if (crs instanceof Serializable) {
+            try {
+                this.serializedCrs = Base64.encodeObject((Serializable)crs);
+            } catch (IOException ex) {
+                Logging.getLogger(this.getClass()).log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
+
+        if (this.crs == null && serializedCrs == null) {
+            throw new DataStoreException("Input CRS cannot be serialized :\n"+crs);
         }
     }
 
