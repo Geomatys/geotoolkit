@@ -158,18 +158,18 @@ public class RandomStyleBuilder extends Factory {
 
             final MutableRule rulePoint = SF.rule(StyleConstants.DEFAULT_POINT_SYMBOLIZER);
             rulePoint.setFilter(FF.or(
-                                    FF.equals(FF.function("geometryType", FF.property("geometry")), FF.literal("Point")),
-                                    FF.equals(FF.function("geometryType", FF.property("geometry")), FF.literal("MultiPoint"))
+                                    FF.equals(FF.function("geometryType", FF.property(att.getLocalName())), FF.literal("Point")),
+                                    FF.equals(FF.function("geometryType", FF.property(att.getLocalName())), FF.literal("MultiPoint"))
                                 ));
             final MutableRule ruleLine = SF.rule(StyleConstants.DEFAULT_LINE_SYMBOLIZER);
             ruleLine.setFilter(FF.or(
-                                    FF.equals(FF.function("geometryType", FF.property("geometry")), FF.literal("LineString")),
-                                    FF.equals(FF.function("geometryType", FF.property("geometry")), FF.literal("MultiLineString"))
+                                    FF.equals(FF.function("geometryType", FF.property(att.getLocalName())), FF.literal("LineString")),
+                                    FF.equals(FF.function("geometryType", FF.property(att.getLocalName())), FF.literal("MultiLineString"))
                                 ));
             final MutableRule rulePolygon = SF.rule(StyleConstants.DEFAULT_POLYGON_SYMBOLIZER);
             rulePolygon.setFilter(FF.or(
-                                    FF.equals(FF.function("geometryType", FF.property("geometry")), FF.literal("Polygon")),
-                                    FF.equals(FF.function("geometryType", FF.property("geometry")), FF.literal("MultiPolygon"))
+                                    FF.equals(FF.function("geometryType", FF.property(att.getLocalName())), FF.literal("Polygon")),
+                                    FF.equals(FF.function("geometryType", FF.property(att.getLocalName())), FF.literal("MultiPolygon"))
                                 ));
 
             fts.rules().add(rulePoint);
@@ -208,18 +208,18 @@ public class RandomStyleBuilder extends Factory {
 
             final MutableRule rulePoint = SF.rule(createRandomPointSymbolizer());
             rulePoint.setFilter(FF.or(
-                                    FF.equals(FF.function("geometryType", FF.property("geometry")), FF.literal("Point")),
-                                    FF.equals(FF.function("geometryType", FF.property("geometry")), FF.literal("MultiPoint"))
+                                    FF.equals(FF.function("geometryType", FF.property(att.getLocalName())), FF.literal("Point")),
+                                    FF.equals(FF.function("geometryType", FF.property(att.getLocalName())), FF.literal("MultiPoint"))
                                 ));
             final MutableRule ruleLine = SF.rule(createRandomLineSymbolizer());
             ruleLine.setFilter(FF.or(
-                                    FF.equals(FF.function("geometryType", FF.property("geometry")), FF.literal("LineString")),
-                                    FF.equals(FF.function("geometryType", FF.property("geometry")), FF.literal("MultiLineString"))
+                                    FF.equals(FF.function("geometryType", FF.property(att.getLocalName())), FF.literal("LineString")),
+                                    FF.equals(FF.function("geometryType", FF.property(att.getLocalName())), FF.literal("MultiLineString"))
                                 ));
             final MutableRule rulePolygon = SF.rule(createRandomPolygonSymbolizer());
             rulePolygon.setFilter(FF.or(
-                                    FF.equals(FF.function("geometryType", FF.property("geometry")), FF.literal("Polygon")),
-                                    FF.equals(FF.function("geometryType", FF.property("geometry")), FF.literal("MultiPolygon"))
+                                    FF.equals(FF.function("geometryType", FF.property(att.getLocalName())), FF.literal("Polygon")),
+                                    FF.equals(FF.function("geometryType", FF.property(att.getLocalName())), FF.literal("MultiPolygon"))
                                 ));
 
             fts.rules().add(rulePoint);
