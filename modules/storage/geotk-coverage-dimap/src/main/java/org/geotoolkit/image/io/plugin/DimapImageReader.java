@@ -25,6 +25,7 @@ import java.awt.image.renderable.ParameterBlock;
 import java.io.File;
 import java.io.IOException;
 import java.util.Locale;
+import java.util.logging.Level;
 import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
 import javax.imageio.spi.IIORegistry;
@@ -133,14 +134,19 @@ public class DimapImageReader extends ImageReaderAdapter {
             buffer.createGraphics().drawRenderedImage(image, new AffineTransform());
         }
 
-        //remove black borders+
-        FloodFill.fill(buffer, new Color[]{Color.BLACK}, new Color(0f,0f,0f,0f),
-                new Point(0,0),
-                new Point(buffer.getWidth()-1,0),
-                new Point(buffer.getWidth()-1,buffer.getHeight()-1),
-                new Point(0,buffer.getHeight()-1)
+        if (buffer.getWidth() > 1 && buffer.getHeight() > 1) {
+            try {
+                //remove black borders+
+                FloodFill.fill(buffer, new Color[]{Color.BLACK}, new Color(0f, 0f, 0f, 0f),
+                        new Point(0, 0),
+                        new Point(buffer.getWidth() - 1, 0),
+                        new Point(buffer.getWidth() - 1, buffer.getHeight() - 1),
+                        new Point(0, buffer.getHeight() - 1)
                 );
-
+            } catch (Exception ex) {
+                LOGGER.log(Level.WARNING, "Unable to remove black borders");
+            }
+        }
         return buffer;
     }
 
