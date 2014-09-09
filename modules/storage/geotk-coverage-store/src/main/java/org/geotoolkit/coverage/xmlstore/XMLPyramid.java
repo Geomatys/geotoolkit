@@ -152,7 +152,10 @@ public class XMLPyramid implements Pyramid {
         if (crs instanceof FormattableObject) {
             this.crs = ((FormattableObject)crs).toString(Convention.WKT1);
         } else if (crs instanceof org.geotoolkit.io.wkt.Formattable) {
-            this.crs = ((org.geotoolkit.io.wkt.Formattable)crs).formatTo(new Formatter(Convention.WKT1, Symbols.getDefault(), WKTFormat.SINGLE_LINE));
+            WKTFormat f = new WKTFormat(null, null);
+            f.setConvention(Convention.WKT1);
+
+            this.crs = f.format(crs);
         }
 
         if (crs instanceof Serializable) {
