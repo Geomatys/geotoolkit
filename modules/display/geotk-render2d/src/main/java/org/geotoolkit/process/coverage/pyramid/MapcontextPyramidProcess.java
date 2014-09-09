@@ -17,10 +17,16 @@
 
 package org.geotoolkit.process.coverage.pyramid;
 
-import java.awt.Dimension;
+import java.awt.*;
+import java.io.IOException;
 import java.util.concurrent.CancellationException;
 import javax.swing.JLabel;
 import javax.swing.ProgressMonitor;
+
+import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
+import org.apache.sis.referencing.operation.transform.MathTransforms;
+import org.geotoolkit.coverage.CoverageUtilities;
 import org.geotoolkit.coverage.GridMosaic;
 import org.geotoolkit.coverage.Pyramid;
 import org.geotoolkit.coverage.PyramidalCoverageReference;
@@ -30,6 +36,8 @@ import org.geotoolkit.display2d.service.SceneDef;
 import org.geotoolkit.display2d.service.ViewDef;
 import org.geotoolkit.factory.Hints;
 import org.apache.sis.geometry.GeneralDirectPosition;
+import org.geotoolkit.geometry.Envelopes;
+import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.process.AbstractProcess;
 import org.geotoolkit.process.ProcessException;
@@ -46,6 +54,11 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import static org.geotoolkit.parameter.Parameters.*;
 import static org.geotoolkit.process.coverage.pyramid.MapcontextPyramidDescriptor.*;
 import org.opengis.geometry.DirectPosition;
+import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.MathTransform2D;
+import org.opengis.referencing.operation.TransformException;
+import org.opengis.util.FactoryException;
+
 /**
  * Create a pyramid in the given PyramidalModel.
  * If a pyramid with the given CRS already exist it will be reused.
@@ -86,10 +99,26 @@ public final class MapcontextPyramidProcess extends AbstractProcess {
             // Get the hint parameter if exist, otherwise keep it to null.
         }
 
+        final Envelope ctxEnv;
+        try {
+            ctxEnv = context.getBounds();
+        } catch (IOException e) {
+            throw new ProcessException(e.getMessage(), this, e);
+        }
+
+        final CoordinateReferenceSystem ctxCRS = context.getCoordinateReferenceSystem();
+        final CoordinateReferenceSystem destCRS = envelope.getCoordinateReferenceSystem();
+
+        final int widthAxis = CoverageUtilities.getMinOrdinate(destCRS);
+        final int heightAxis = widthAxis + 1;
+
         //calculate the number of tile to generate
+        double destEnvWidth = envelope.getSpan(widthAxis);
+        double destEnvHeight = envelope.getSpan(heightAxis);
+
         for(double scale : scales){
-            final double gridWidth  = envelope.getSpan(0) / (scale*tileSize.width);
-            final double gridHeight = envelope.getSpan(1) / (scale*tileSize.height);
+            final double gridWidth  = destEnvWidth / (scale*tileSize.width);
+            final double gridHeight = destEnvHeight / (scale*tileSize.height);
             total += Math.ceil(gridWidth) * Math.ceil(gridHeight);
         }
 
@@ -99,10 +128,12 @@ public final class MapcontextPyramidProcess extends AbstractProcess {
 
         //find if we already have a pyramid in the given CRS
         Pyramid pyramid = null;
-        final CoordinateReferenceSystem crs = envelope.getCoordinateReferenceSystem();
         try {
+
+            final MathTransform destCRS_to_ctxCRS = CRS.findMathTransform(CRSUtilities.getCRS2D(destCRS), CRSUtilities.getCRS2D(ctxCRS), true);
+
             for (Pyramid candidate : container.getPyramidSet().getPyramids()) {
-                if (CRS.equalsApproximatively(crs, candidate.getCoordinateReferenceSystem())) {
+                if (CRS.equalsApproximatively(destCRS, candidate.getCoordinateReferenceSystem())) {
                     pyramid = candidate;
                     break;
                 }
@@ -110,7 +141,7 @@ public final class MapcontextPyramidProcess extends AbstractProcess {
 
             if (pyramid == null) {
                 //we didn't find a pyramid, create one
-                pyramid = container.createPyramid(crs);
+                pyramid = container.createPyramid(destCRS);
             }
 
             //generate each mosaic
@@ -119,13 +150,13 @@ public final class MapcontextPyramidProcess extends AbstractProcess {
                     throw new CancellationException();
                 }
 
-                final double gridWidth  = envelope.getSpan(0) / (scale*tileSize.width);
-                final double gridHeight = envelope.getSpan(1) / (scale*tileSize.height);
+                final double gridWidth  = destEnvWidth / (scale*tileSize.width);
+                final double gridHeight = destEnvHeight / (scale*tileSize.height);
 
                 //those parameters can change if another mosaic already exist
-                DirectPosition upperleft = new GeneralDirectPosition(crs);
-                upperleft.setOrdinate(0, envelope.getMinimum(0));
-                upperleft.setOrdinate(1, envelope.getMaximum(1));
+                DirectPosition upperleft = new GeneralDirectPosition(destCRS);
+                upperleft.setOrdinate(widthAxis, envelope.getMinimum(widthAxis));
+                upperleft.setOrdinate(heightAxis, envelope.getMaximum(heightAxis));
                 Dimension tileDim = tileSize;
                 Dimension gridSize = new Dimension( (int)(Math.ceil(gridWidth)), (int)(Math.ceil(gridHeight)));
 
@@ -163,7 +194,23 @@ public final class MapcontextPyramidProcess extends AbstractProcess {
                     }
                 });
 
-                container.writeTiles(pyramid.getId(), mosaic.getId(), image, true, new MapcontextPyramidMonitor(this));
+                // Transform context envelope into mosaic grid system to
+                // find tiles impacted on container mosaic
+                final double sx = destEnvWidth / mosaic.getGridSize().width;
+                final double sy = destEnvHeight / mosaic.getGridSize().height;
+                final double min0 = envelope.getMinimum(widthAxis);
+                final double max1 = envelope.getMaximum(heightAxis);
+                final MathTransform2D gridDest_to_crs = new AffineTransform2D(sx, 0, 0, -sy, min0, max1);
+                final MathTransform ctxCRS_to_gridDest = MathTransforms.concatenate(gridDest_to_crs, destCRS_to_ctxCRS).inverse();
+
+                final GeneralEnvelope ctxExtent = Envelopes.transform(ctxCRS_to_gridDest, ctxEnv);
+                final int startTileX = (int)ctxExtent.getMinimum(widthAxis);
+                final int startTileY = (int)ctxExtent.getMinimum(heightAxis);
+                final int endTileX   = (int)ctxExtent.getMaximum(widthAxis) - startTileX;
+                final int endTileY   = (int)ctxExtent.getMaximum(heightAxis) - startTileY;
+                final Rectangle area = new Rectangle(startTileX, startTileY, endTileX, endTileY);
+
+                container.writeTiles(pyramid.getId(), mosaic.getId(), image, area, false, new MapcontextPyramidMonitor(this));
                 if (isCanceled()) {
                     throw new CancellationException();
                 }
@@ -171,9 +218,7 @@ public final class MapcontextPyramidProcess extends AbstractProcess {
                 getOrCreate(OUT_CONTAINER, outputParameters).setValue(container);
             }
 
-        } catch (DataStoreException ex) {
-            throw new ProcessException(ex.getMessage(), this, ex);
-        } catch (PortrayalException ex) {
+        } catch (DataStoreException | FactoryException | TransformException | PortrayalException ex) {
             throw new ProcessException(ex.getMessage(), this, ex);
         }
     }
