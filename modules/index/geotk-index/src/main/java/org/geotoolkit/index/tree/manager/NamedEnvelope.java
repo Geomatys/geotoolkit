@@ -93,6 +93,10 @@ public class NamedEnvelope extends GeneralEnvelope implements Externalizable {
         return nbEnv;
     }
 
+    public void setNbEnv(int nbEnv) {
+        this.nbEnv = nbEnv;
+    }
+    
     /**
      * {@inheritDoc }
      */
