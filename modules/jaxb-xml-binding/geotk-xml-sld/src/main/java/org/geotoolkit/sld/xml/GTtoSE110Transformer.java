@@ -292,7 +292,7 @@ public class GTtoSE110Transformer implements StyleVisitor {
             if(value instanceof Color){
                 value = colorToString((Color)value);
             }
-            literal.setContent(value.toString());
+            literal.setContent(value != null ? value.toString(): null);
             jax = ogc_factory.createLiteral(literal);
         } else if (exp instanceof Add) {
             final Add add = (Add) exp;

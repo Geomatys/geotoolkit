@@ -572,7 +572,7 @@ public class FilterToCQLVisitor implements FilterVisitor, ExpressionVisitor {
             final String wkt = writer.write(geometry);
             sb.append(wkt);
         }else{
-            sb.append('\'').append(value.toString()).append('\'');
+            sb.append('\'').append(value != null ? value.toString() : null).append('\'');
         }
         return sb;
     }
