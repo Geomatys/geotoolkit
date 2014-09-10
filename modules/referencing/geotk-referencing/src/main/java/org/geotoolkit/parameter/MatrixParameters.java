@@ -34,6 +34,7 @@ import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.GeneralParameterValue;
 import org.opengis.parameter.GeneralParameterDescriptor;
+import org.opengis.parameter.ParameterDirection;
 import org.opengis.parameter.ParameterNotFoundException;
 
 import org.geotoolkit.io.TableWriter;
@@ -134,6 +135,11 @@ public class MatrixParameters extends ParameterGroup implements ParameterDescrip
         return descriptor.getIdentifiers();
     }
 
+    @Override
+    public InternationalString getDescription() {
+        return null;
+    }
+
     /**
      * Forwards the call to the {@linkplain MatrixParameterDescriptors matrix parameter descriptors}
      * specified at construction time.
@@ -141,6 +147,11 @@ public class MatrixParameters extends ParameterGroup implements ParameterDescrip
     @Override
     public InternationalString getRemarks() {
         return descriptor.getRemarks();
+    }
+
+    @Override
+    public ParameterDirection getDirection() {
+        return null;
     }
 
     /**

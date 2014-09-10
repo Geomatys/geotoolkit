@@ -30,6 +30,8 @@ import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.InvalidParameterTypeException;
 import org.opengis.parameter.InvalidParameterValueException;
 
+import org.opengis.parameter.ParameterDirection;
+import org.opengis.util.InternationalString;
 import org.apache.sis.internal.util.Numerics;
 import org.geotoolkit.util.Cloneable;
 import org.geotoolkit.resources.Errors;
@@ -99,6 +101,16 @@ final class NetcdfParameter<T> extends NetcdfIdentifiedObject implements
     @Override
     public String getCode() {
         return parameter.getName();
+    }
+
+    @Override
+    public ParameterDirection getDirection() {
+        return null;
+    }
+
+    @Override
+    public InternationalString getDescription() {
+        return null;
     }
 
     /**

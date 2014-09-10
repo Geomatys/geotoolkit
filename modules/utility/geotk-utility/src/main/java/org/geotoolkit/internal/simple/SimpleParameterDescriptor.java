@@ -26,6 +26,7 @@ import org.opengis.util.GenericName;
 import org.opengis.util.InternationalString;
 import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.ParameterDescriptor;
+import org.opengis.parameter.ParameterDirection;
 import org.opengis.referencing.ReferenceIdentifier;
 
 
@@ -37,7 +38,7 @@ import org.opengis.referencing.ReferenceIdentifier;
  * @param <T> The type of value. This type is returned by {@link #getValueClass()}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.19
+ * @version 4.0
  *
  * @since 3.19
  * @module
@@ -77,7 +78,9 @@ public class SimpleParameterDescriptor<T> extends SimpleReferenceIdentifier impl
     @Override public Unit<?>                  getUnit()          {return null;}
     @Override public int                      getMinimumOccurs() {return 0;}
     @Override public int                      getMaximumOccurs() {return 1;}
+    @Override public InternationalString      getDescription()   {return null;}
     @Override public InternationalString      getRemarks()       {return null;}
+    @Override public ParameterDirection       getDirection()     {return null;}
     @Override public String                   toWKT()            {throw new UnsupportedOperationException();}
     @Override public ParameterValue<T>        createValue()      {return new SimpleParameterValue<>(this);}
 
