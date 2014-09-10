@@ -1,6 +1,8 @@
 package org.geotoolkit.io;
 
+import org.apache.sis.test.PlatformDependent;
 import org.junit.After;
+import org.junit.Assume;
 import org.junit.Before;
 
 import java.io.IOException;
@@ -26,6 +28,10 @@ public class DirectoryWatcherTest {
 
     protected Path rootDir;
     protected final ArrayList<PathChangedEvent> results = new ArrayList<>();
+
+    public DirectoryWatcherTest() {
+        Assume.assumeTrue(System.getProperty("os.name").toLowerCase().contains("linux"));
+    }
 
     @Before
     public void initTestDirectory() throws IOException {
