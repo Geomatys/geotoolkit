@@ -322,15 +322,6 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
      * {@inheritDoc }.
      */
     @Override
-    public void writeTiles(String pyramidId, String mosaicId, RenderedImage image, boolean onlyMissing, ProgressMonitor monitor) throws DataStoreException {
-        final Rectangle fullArea = new Rectangle(0, 0, image.getNumXTiles(), image.getNumYTiles());
-        writeTiles(pyramidId, mosaicId, image, fullArea, onlyMissing, monitor);
-    }
-
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
     public void writeTiles(final String pyramidId, final String mosaicId, final RenderedImage image, final Rectangle area,
                            final boolean onlyMissing, final ProgressMonitor monitor) throws DataStoreException {
         final XMLPyramidSet set = getPyramidSet();

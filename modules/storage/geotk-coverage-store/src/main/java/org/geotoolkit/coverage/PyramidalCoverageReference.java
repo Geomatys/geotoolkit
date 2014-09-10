@@ -179,7 +179,7 @@ public interface PyramidalCoverageReference extends CoverageReference{
      * @param pyramidId
      * @param mosaicId
      * @param image
-     * @param area Rectangle2D that define area to copy in grid system (edges inclusive)
+     * @param area Rectangle2D that define area to copy in grid system (edges exclusive)
      * @param onlyMissing : set to true to fill only missing tiles
      * @param monitor A progress monitor in order to eventually cancel the process. May be {@code null}.
      * @throws DataStoreException

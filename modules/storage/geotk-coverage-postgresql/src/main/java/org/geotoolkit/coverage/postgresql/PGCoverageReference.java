@@ -311,16 +311,6 @@ public class PGCoverageReference extends AbstractPyramidalCoverageReference {
      * {@inheritDoc }.
      */
     @Override
-    public void writeTiles(final String pyramidId, final String mosaicId,
-            final RenderedImage image, final boolean onlyMissing, final ProgressMonitor monitor) throws DataStoreException {
-        final Rectangle fullArea = new Rectangle(image.getNumXTiles(), image.getNumYTiles());
-        writeTiles(pyramidId, mosaicId, image, fullArea, onlyMissing, monitor);
-    }
-
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
     public void writeTiles(final String pyramidId, final String mosaicId, final RenderedImage image, final Rectangle area,
                            final boolean onlyMissing, final ProgressMonitor monitor) throws DataStoreException {
 
@@ -342,8 +332,8 @@ public class PGCoverageReference extends AbstractPyramidalCoverageReference {
         final ThreadPoolExecutor executor = new ThreadPoolExecutor(
                 0, Runtime.getRuntime().availableProcessors(), 1, TimeUnit.MINUTES, queue, rejectHandler);
 
-        for(int y=startY; y<=endY;y++){
-            for(int x=startX;x<=endX;x++){
+        for(int y=startY; y<endY;y++){
+            for(int x=startX;x<endX;x++){
                 final Raster raster = image.getTile(offsetX+x, offsetY+y);
                 final RenderedImage img = new BufferedImage(image.getColorModel(),
                         (WritableRaster)raster, image.getColorModel().isAlphaPremultiplied(), null);

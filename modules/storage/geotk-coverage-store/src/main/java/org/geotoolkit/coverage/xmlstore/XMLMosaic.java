@@ -458,8 +458,8 @@ public class XMLMosaic implements GridMosaic {
         assert endY > startY && endY <= image.getNumYTiles();
 
         final List<Future> futurs = new ArrayList<>();
-        for(int y=startY; y <= endY; y++){
-            for(int x=startX; x <= endX; x++){
+        for(int y=startY; y < endY; y++){
+            for(int x=startX; x < endX; x++){
                 if (monitor != null && monitor.isCanceled()) {
                     // Stops submitting new thread
                     return;

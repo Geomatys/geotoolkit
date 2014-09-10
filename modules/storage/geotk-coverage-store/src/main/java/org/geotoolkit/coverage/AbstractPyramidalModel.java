@@ -105,8 +105,8 @@ public abstract class AbstractPyramidalModel extends AbstractCoverageReference i
         final ThreadPoolExecutor executor = new ThreadPoolExecutor(
                 0, Runtime.getRuntime().availableProcessors(), 1, TimeUnit.MINUTES, queue, rejectHandler);
 
-        for(int y=startY; y<=endY;y++){
-            for(int x=startX;x<=endX;x++){
+        for(int y=startY; y<endY;y++){
+            for(int x=startX;x<endX;x++){
                 final Raster raster = image.getTile(offsetX+x, offsetY+y);
                 final RenderedImage img = new BufferedImage(image.getColorModel(),
                         (WritableRaster)raster, image.getColorModel().isAlphaPremultiplied(), null);
