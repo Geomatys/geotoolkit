@@ -596,6 +596,9 @@ public class ImageCoverageReader extends GridCoverageReader {
                     if (crs == null || crs == PredefinedCRS.GRID_2D) {
                         crs = coverageBuilder.getCoordinateReferenceSystem();
                     }
+                    if (crs == null) {
+                        crs = PredefinedCRS.GRID_2D;
+                    }
                     if (crs instanceof GridGeometry) { // Some formats (e.g. NetCDF) do that.
                         gridToCRS = ((GridGeometry) crs).getGridToCRS();
                     } else {
