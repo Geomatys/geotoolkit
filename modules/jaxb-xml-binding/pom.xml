@@ -72,6 +72,12 @@
       <artifactId>sis-utility</artifactId>
       <version>${sis.version}</version>
     </dependency>
+      <dependency>
+          <groupId>org.apache.derby</groupId>
+          <artifactId>derby</artifactId>
+          <version>${derby.version}</version>
+          <scope>test</scope>
+      </dependency>
   </dependencies>
 
 
