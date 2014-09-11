@@ -47,6 +47,7 @@ import org.geotoolkit.process.ProcessListener;
 import org.geotoolkit.referencing.CRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
+import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.util.BufferedImageUtilities;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.coverage.grid.GridGeometry;
@@ -516,8 +517,10 @@ public class PyramidCoverageBuilder {
             DirectPosition upperLeft, Envelope envDest, int widthAxis, int heightAxis, double[] fillValue, ProcessListener processListener)
             throws NoninvertibleTransformException, FactoryException, TransformException, DataStoreException {
 
-        final GridGeometry2D gg2d   = gridCoverage2D.getGridGeometry();
-        final Envelope covEnv       = gg2d.getEnvelope2D();
+        final GridGeometry2D gg2d       = gridCoverage2D.getGridGeometry();
+        final Envelope covEnv           = gg2d.getEnvelope2D();
+        final GeneralEnvelope clipEnv   = ReferencingUtilities.intersectEnvelopes(covEnv, envDest);
+
         final RenderedImage baseImg = gridCoverage2D.getRenderedImage();
         // work on pixels coordinates.
         final MathTransform2D coverageCRS_to_grid = gg2d.getGridToCRS2D(PixelOrientation.CENTER).inverse();
@@ -548,7 +551,7 @@ public class PyramidCoverageBuilder {
             final int nbrTileY  = (int)Math.ceil(imgHeight/tileHeight);
 
             //coverage extent on mosaic space
-            final GeneralEnvelope coverageExtent = Envelopes.transform(covCRS_to_gridDest, covEnv);
+            final GeneralEnvelope coverageExtent = Envelopes.transform(covCRS_to_gridDest, clipEnv);
 
             //coverage intersection tile index
             final int startTileX = (int)coverageExtent.getMinimum(widthAxis) / tileWidth;

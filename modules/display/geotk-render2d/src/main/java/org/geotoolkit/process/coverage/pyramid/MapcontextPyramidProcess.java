@@ -45,6 +45,7 @@ import org.geotoolkit.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.display2d.service.PortrayalRenderedImage;
+import org.geotoolkit.referencing.ReferencingUtilities;
 import org.opengis.geometry.Envelope;
 import org.opengis.parameter.ParameterNotFoundException;
 import org.opengis.parameter.ParameterValueGroup;
@@ -129,7 +130,7 @@ public final class MapcontextPyramidProcess extends AbstractProcess {
         //find if we already have a pyramid in the given CRS
         Pyramid pyramid = null;
         try {
-
+            final Envelope clipEnv = ReferencingUtilities.intersectEnvelopes(ctxEnv, envelope);
             final MathTransform destCRS_to_ctxCRS = CRS.findMathTransform(CRSUtilities.getCRS2D(destCRS), CRSUtilities.getCRS2D(ctxCRS), true);
 
             for (Pyramid candidate : container.getPyramidSet().getPyramids()) {
@@ -203,7 +204,7 @@ public final class MapcontextPyramidProcess extends AbstractProcess {
                 final MathTransform2D gridDest_to_crs = new AffineTransform2D(sx, 0, 0, -sy, min0, max1);
                 final MathTransform ctxCRS_to_gridDest = MathTransforms.concatenate(gridDest_to_crs, destCRS_to_ctxCRS).inverse();
 
-                final GeneralEnvelope ctxExtent = Envelopes.transform(ctxCRS_to_gridDest, ctxEnv);
+                final GeneralEnvelope ctxExtent = Envelopes.transform(ctxCRS_to_gridDest, clipEnv);
                 final int startTileX = (int)ctxExtent.getMinimum(widthAxis);
                 final int startTileY = (int)ctxExtent.getMinimum(heightAxis);
                 final int endTileX   = (int)ctxExtent.getMaximum(widthAxis) - startTileX;
