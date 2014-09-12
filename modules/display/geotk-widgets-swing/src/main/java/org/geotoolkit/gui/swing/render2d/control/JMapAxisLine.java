@@ -25,10 +25,11 @@ import java.awt.Graphics2D;
 import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.Comparator;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.AbstractAction;
@@ -42,6 +43,7 @@ import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import org.apache.sis.measure.Range;
 import org.geotoolkit.gui.swing.render2d.JMap2D;
 import org.geotoolkit.gui.swing.navigator.DoubleRenderer;
 import org.geotoolkit.gui.swing.navigator.JNavigator;
@@ -54,6 +56,8 @@ import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.referencing.operation.TransformException;
+
+import static java.awt.event.KeyEvent.*;
 
 /**
  * A {@link JNavigator} to display a scroll bar. It allows the user to browse
@@ -547,6 +551,78 @@ import org.opengis.referencing.operation.TransformException;
         }
     }
 
+    /**
+     * Change behavior of key pressed events to navigate from one element to the next.
+     * @param e
+     */
+    @Override
+    public void keyPressed(KeyEvent e) {
+        final int code = e.getKeyCode();
+
+        boolean next = false;
+        boolean previous = false;
+        switch(code){
+            case VK_UP :
+            case VK_RIGHT :next=true;break;
+            case VK_LEFT :
+            case VK_DOWN :previous=true;break;
+        }
+
+        Double[] current = getCurrentRange();
+        if(current != null && (next || previous)){
+            //find all elements
+            final SortedSet<Double> steps = new TreeSet<Double>();
+            final List<JNavigatorBand> bands = getBands();
+            for(JNavigatorBand band : bands){
+                final JLayerBand lb = (JLayerBand) band;
+                final List<Range<Double>> ranges = lb.getRanges();
+                final List<Double> ponctuals = lb.getPonctuals();
+                if(ranges != null){
+                    for(Range<Double> range :ranges){
+                        steps.add(range.getMinValue());
+                        steps.add(range.getMaxValue());
+                    }
+                }
+                if(ponctuals != null){
+                    steps.addAll(ponctuals);
+                }
+            }
+            final Double[] array = steps.toArray(new Double[0]);
+
+            boolean range;
+            double middle;
+            if(current[0] == null || Double.isInfinite(current[0]) ){
+                range = false;
+                middle = current[1];
+            }else if(current[1] == null || Double.isInfinite(current[1]) ){
+                range = false;
+                middle = current[0];
+            }else{
+                middle = (current[1] + current[0]) / 2.0;
+            }
+
+            int index = Arrays.binarySearch(array, ((Double) middle));
+            if(index < 0){
+                //(-(insertion point) - 1)
+                index = (-(index))-1;
+                if(previous){
+                    index--;
+                }
+            }else{
+                if(next){
+                    //move the closest element above current value
+                    index++;
+                }else if(previous){
+                    index--;
+                }
+            }
+
+            if(index<0) index = 0;
+            if(index>=array.length) index = array.length-1;
+
+            moveTo(array[index]);
+        }
+    }
 
     @Override
     public void propertyChange(final PropertyChangeEvent evt) {
@@ -592,6 +668,14 @@ import org.opengis.referencing.operation.TransformException;
             }
             JMapAxisLine.this.repaint();
         }
+    }
+
+    private Double[] getCurrentRange(){
+        if (getMap() != null) {
+            final Double[] range = getMap().getCanvas().getAxisRange(axisIndexFinder);
+            return range;
+        }
+        return null;
     }
 
     @Override

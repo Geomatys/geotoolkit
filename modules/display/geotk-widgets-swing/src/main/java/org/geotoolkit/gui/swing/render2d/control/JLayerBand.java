@@ -150,6 +150,15 @@ public class JLayerBand extends JNavigatorBand implements LayerListener {
         repaint();
     }
 
+    public List<Range<Double>> getRanges() {
+        return ranges;
+    }
+
+    public List<Double> getPonctuals() {
+        return ponctuals;
+    }
+
+
     private String getLayerName() {
         final Description desc = layer.getDescription();
         if (desc != null) {
