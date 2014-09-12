@@ -104,11 +104,11 @@ public class LuceneSearcherEnvelopeOnlyTest {
         
         //creating tree (R-Tree)------------------------------------------------
 
-        final Analyzer analyzer  = new StandardAnalyzer(org.apache.lucene.util.Version.LUCENE_46);
+        final Analyzer analyzer  = new StandardAnalyzer(org.apache.lucene.util.Version.LUCENE_4_9);
         final DocumentIndexer indexer = new DocumentIndexer(directory, fillTestData(), analyzer);
         indexer.createIndex();
         indexer.destroy();
-        searcher = new LuceneIndexSearcher(directory, null, new StandardAnalyzer(org.apache.lucene.util.Version.LUCENE_46), true);
+        searcher = new LuceneIndexSearcher(directory, null, new StandardAnalyzer(org.apache.lucene.util.Version.LUCENE_4_9), true);
         
     }
 
@@ -2140,13 +2140,13 @@ public class LuceneSearcherEnvelopeOnlyTest {
         /* 
          * we remove a document
          */ 
-        final Analyzer analyzer = new StandardAnalyzer(org.apache.lucene.util.Version.LUCENE_46);
+        final Analyzer analyzer = new StandardAnalyzer(org.apache.lucene.util.Version.LUCENE_4_9);
         DocumentIndexer indexer = new DocumentIndexer(directory, null, analyzer);
         indexer.removeDocument("box 2 projected");
         indexer.destroy();
         searcher.destroy();
 
-        searcher = new LuceneIndexSearcher(directory, null, new ClassicAnalyzer(org.apache.lucene.util.Version.LUCENE_46), true);
+        searcher = new LuceneIndexSearcher(directory, null, new ClassicAnalyzer(org.apache.lucene.util.Version.LUCENE_4_9), true);
         
         //we perform a lucene query
         results = searcher.doSearch(bboxQuery);
@@ -2175,7 +2175,7 @@ public class LuceneSearcherEnvelopeOnlyTest {
         indexer.destroy();
         searcher.destroy();
 
-        searcher = new LuceneIndexSearcher(directory, null, new StandardAnalyzer(org.apache.lucene.util.Version.LUCENE_46), true);
+        searcher = new LuceneIndexSearcher(directory, null, new StandardAnalyzer(org.apache.lucene.util.Version.LUCENE_4_9), true);
         
          //we perform a lucene query
         results = searcher.doSearch(bboxQuery);

@@ -19,14 +19,14 @@ package org.geotoolkit.lucene.analysis.standard;
 
 import java.io.IOException;
 import java.io.Reader;
-
 import org.apache.lucene.analysis.Tokenizer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.analysis.standard.StandardTokenizerInterface;
+import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.apache.lucene.analysis.tokenattributes.OffsetAttribute;
 import org.apache.lucene.analysis.tokenattributes.PositionIncrementAttribute;
-import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.apache.lucene.analysis.tokenattributes.TypeAttribute;
+import org.apache.lucene.util.AttributeFactory;
 import org.apache.lucene.util.Version;
 
 /** A grammar-based tokenizer constructed with JFlex
