@@ -24,7 +24,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.renderable.ParameterBlock;
 import java.io.File;
 import java.io.IOException;
-import java.util.Locale;
+import java.util.*;
 import java.util.logging.Level;
 import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
@@ -34,12 +34,33 @@ import javax.imageio.spi.ServiceRegistry;
 import javax.media.jai.JAI;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
+import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.referencing.crs.DefaultCompoundCRS;
+import org.apache.sis.referencing.operation.transform.LinearTransform;
+import org.apache.sis.referencing.operation.transform.PassThroughTransform;
+import org.geotoolkit.coverage.GridSampleDimension;
+import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
+import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.geotoolkit.image.io.ImageMetadataException;
+import org.geotoolkit.image.io.metadata.*;
+import org.geotoolkit.internal.image.io.DimensionAccessor;
+import org.geotoolkit.internal.image.io.GridDomainAccessor;
+import org.opengis.coverage.grid.GridEnvelope;
+import org.opengis.coverage.grid.GridGeometry;
+import org.opengis.coverage.grid.RectifiedGrid;
+import org.opengis.referencing.IdentifiedObject;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.crs.TemporalCRS;
+import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.TransformException;
+import org.apache.sis.referencing.operation.transform.MathTransforms;
+import org.opengis.util.FactoryException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
 import org.geotoolkit.image.io.ImageReaderAdapter;
-import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.jai.FloodFill;
 import org.geotoolkit.internal.image.io.Formats;
 import org.geotoolkit.internal.io.IOUtilities;
@@ -48,9 +69,11 @@ import org.geotoolkit.metadata.dimap.DimapAccessor;
 import org.geotoolkit.metadata.dimap.DimapMetadataFormat;
 import org.geotoolkit.util.DomUtilities;
 import org.geotoolkit.util.Utilities;
-import org.apache.sis.util.Version;
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.logging.Logging;
+
+import static org.geotoolkit.image.io.MultidimensionalImageStore.X_DIMENSION;
+import static org.geotoolkit.image.io.MultidimensionalImageStore.Y_DIMENSION;
 
 /**
  * Reader for the <cite>Dimap</cite> format. This reader wraps an other image reader
@@ -92,70 +115,11 @@ public class DimapImageReader extends ImageReaderAdapter {
     }
 
     /**
-     * Apply the band selection indexes provided in the dimap file.
-     */
-    private RenderedImage changeColorModel(RenderedImage image, final boolean bufferedImage) throws IOException{
-        LOGGER.info("Dimap: changing color model");
-        if(image == null) return image;
-
-        final boolean oldState = ignoreMetadata;
-        ignoreMetadata = false;
-        final SpatialMetadata metadata;
-        try {
-            metadata = getImageMetadata(0);
-        } finally {
-            ignoreMetadata = oldState;
-        }
-        if(metadata == null){
-            //TODO geotiff did not returned the metadata
-            //find solution to pass the ignoreMetadata flag down in the reader stack.
-            return image;
-        }
-
-        //apply the band <-> color mapping -------------------------------------
-        final int[] colorMapping = DimapAccessor.readColorBandMapping((Element)metadata.getAsTree(DimapMetadataFormat.NATIVE_FORMAT));
-        if(colorMapping == null){
-            //we have no default styling
-            return image;
-        }
-
-        // select the visible bands
-        final ParameterBlock pb = new ParameterBlock();
-        pb.addSource(image);
-        pb.add(colorMapping);
-        image = JAI.create("bandSelect",pb);
-
-        //ensure we have a bufferedImage for floodfill operation
-        final BufferedImage buffer;
-        if(image instanceof BufferedImage){
-            buffer = (BufferedImage) image;
-        }else{
-            buffer = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
-            buffer.createGraphics().drawRenderedImage(image, new AffineTransform());
-        }
-
-        if (buffer.getWidth() > 1 && buffer.getHeight() > 1) {
-            try {
-                //remove black borders+
-                FloodFill.fill(buffer, new Color[]{Color.BLACK}, new Color(0f, 0f, 0f, 0f),
-                        new Point(0, 0),
-                        new Point(buffer.getWidth() - 1, 0),
-                        new Point(buffer.getWidth() - 1, buffer.getHeight() - 1),
-                        new Point(0, buffer.getHeight() - 1)
-                );
-            } catch (Exception ex) {
-                LOGGER.log(Level.WARNING, "Unable to remove black borders");
-            }
-        }
-        return buffer;
-    }
-
-    /**
      * {@inheritDoc }
      */
     @Override
     public BufferedImage read(final int imageIndex) throws IOException {
-        return (BufferedImage) changeColorModel(super.read(imageIndex),true);
+        return super.read(imageIndex);
     }
 
     /**
@@ -163,7 +127,7 @@ public class DimapImageReader extends ImageReaderAdapter {
      */
     @Override
     public BufferedImage read(final int imageIndex, final ImageReadParam param) throws IOException {
-        return (BufferedImage) changeColorModel(super.read(imageIndex,param),true);
+        return super.read(imageIndex,param);
     }
 
     /**
@@ -171,7 +135,7 @@ public class DimapImageReader extends ImageReaderAdapter {
      */
     @Override
     public RenderedImage readAsRenderedImage(final int imageIndex, final ImageReadParam param) throws IOException {
-        return changeColorModel(super.readAsRenderedImage(imageIndex, param),false);
+        return super.readAsRenderedImage(imageIndex, param);
     }
 
     /**
@@ -179,7 +143,7 @@ public class DimapImageReader extends ImageReaderAdapter {
      */
     @Override
     public BufferedImage readTile(final int imageIndex, final int tileX, final int tileY) throws IOException {
-        return (BufferedImage) changeColorModel(super.readTile(imageIndex, tileX, tileY),true);
+        return super.readTile(imageIndex, tileX, tileY);
     }
 
     @Override
@@ -202,16 +166,133 @@ public class DimapImageReader extends ImageReaderAdapter {
         final Document doc;
         try {
             doc = DomUtilities.read(metaFile);
-        } catch (ParserConfigurationException ex) {
-            throw new IOException(ex);
-        } catch (SAXException ex) {
+        } catch (ParserConfigurationException | SAXException ex) {
             throw new IOException(ex);
         }
         final Element dimapNode = doc.getDocumentElement();
 
         final SpatialMetadata dimapMeta = new SpatialMetadata(DimapMetadataFormat.INSTANCE, this, metadata);
         dimapMeta.mergeTree(DimapMetadataFormat.NATIVE_FORMAT, dimapNode);
+
+        boolean geotkFormat = false;
+        final String[] formatNames = dimapMeta.getMetadataFormatNames();
+        for (int i = 0; i < formatNames.length; i++) {
+            String formatName = formatNames[i];
+            if (formatName.equals(SpatialMetadataFormat.GEOTK_FORMAT_NAME)) {
+                geotkFormat = true;
+            }
+        }
+
+        //ensure GEOTK format before override parts of metadata
+        if (!geotkFormat) {
+            return dimapMeta;
+        }
+
+        try {
+            // add temporal to CRS
+            final CoordinateReferenceSystem crs3D = fixCRS(dimapMeta);
+
+            //override GridGeometry
+            fixGridGeometry(imageIndex, dimapMeta, dimapNode, crs3D);
+
+            //TODO fix sample dimension override
+            //addSampleDimensions(dimapMeta, dimapNode);
+
+            dimapMeta.clearInstancesCache();
+        } catch (FactoryException | TransformException e) {
+            throw new IOException(e.getMessage(), e);
+        }
+
         return dimapMeta;
+    }
+
+    /**
+     * Add temporal CRS to image geographic CRS extracted from sub-reader metadata.
+     * @param dimapMeta SpacialMetadata generated from sub-reader.
+     * @return CoordinateReferenceSystem 3D
+     * @throws FactoryException
+     */
+    private CoordinateReferenceSystem fixCRS(final SpatialMetadata dimapMeta) throws FactoryException {
+        final ReferencingBuilder refBuilder = new ReferencingBuilder(dimapMeta);
+        final CoordinateReferenceSystem originalCRS = refBuilder.getCoordinateReferenceSystem(CoordinateReferenceSystem.class);
+
+        final TemporalCRS temporalCRS = CommonCRS.Temporal.JAVA.crs();
+
+        final String crs3DName = originalCRS.getName().getCode() + "+time" ;
+        final Map<String,?> name = Collections.singletonMap(IdentifiedObject.NAME_KEY, crs3DName);
+        final CoordinateReferenceSystem crs3D = new DefaultCompoundCRS(name, originalCRS, temporalCRS);
+        refBuilder.setCoordinateReferenceSystem(crs3D);
+
+        return crs3D;
+    }
+
+    /**
+     *
+     * @param imageIndex
+     * @param dimapMeta
+     * @param dimapNode
+     * @param crs3D
+     * @throws FactoryException
+     * @throws TransformException
+     * @throws IOException
+     */
+    private void fixGridGeometry(int imageIndex, final SpatialMetadata dimapMeta, final Element dimapNode, final CoordinateReferenceSystem crs3D)
+            throws FactoryException, TransformException, IOException {
+
+        MathTransform gridToCRS2D;
+        MetadataHelper helper = new MetadataHelper(null);
+        final RectifiedGrid grid = dimapMeta.getInstanceForType(RectifiedGrid.class);
+        if (grid != null) {
+            gridToCRS2D = helper.getGridToCRS(grid);
+            dimapMeta.clearInstancesCache();
+        } else {
+            final AffineTransform at2D = DimapAccessor.readGridToCRS2D(dimapNode);
+            gridToCRS2D = new AffineTransform2D(at2D);
+        }
+
+        //temporal
+        final Date prodDate = DimapAccessor.getProductionDate(dimapNode);
+        final LinearTransform gridToCRSTime = MathTransforms.linear(1, prodDate.getTime());
+
+        // concatenate transforms
+        final MathTransform gridToCRS2DPassThrough = PassThroughTransform.create(0, gridToCRS2D, 1);
+        final MathTransform gridToCRSTimePassThrough = PassThroughTransform.create(2, gridToCRSTime, 0);
+        final MathTransform gridToCRS3D = MathTransforms.concatenate(gridToCRS2DPassThrough, gridToCRSTimePassThrough);
+
+        // GridEnvelope
+        int[] low = new int[3];
+        int[] high = new int[3];
+        Arrays.fill(high, 1);
+        high[X_DIMENSION] = super.getWidth(imageIndex);
+        high[Y_DIMENSION] = super.getHeight(imageIndex);
+
+        //only one slice for time dimension and high excluded -> {0,1}
+        final GeneralGridEnvelope extend3D = new GeneralGridEnvelope(low, high, false);
+
+        //finally rebuild gridGeometry
+        final GridGeometry gridGeometry = new GeneralGridGeometry(extend3D, gridToCRS3D, crs3D);
+
+        //override GridGeometry
+        final GridDomainAccessor gridAccessor = new GridDomainAccessor(dimapMeta);
+        gridAccessor.setGridGeometry(gridGeometry, null, null);
+    }
+
+    /**
+     * Add sample dimensions extracted from Dimap native metadata in SpatialMetadata.
+     * @param dimapMeta geotk spacial metadata
+     * @param dimapNode native Dimap metadata
+     */
+    private void addSampleDimensions(SpatialMetadata dimapMeta, Element dimapNode) {
+        final DimensionAccessor dimAccessor = new DimensionAccessor(dimapMeta);
+        dimAccessor.selectParent();
+        dimAccessor.removeChildren();
+        final GridSampleDimension[] gridSampleDimensions = DimapAccessor.readSampleDimensions(dimapNode);
+
+        for (final GridSampleDimension sampleDimension : gridSampleDimensions) {
+            dimAccessor.selectChild(dimAccessor.appendChild()); //new child
+            dimAccessor.setDimension(sampleDimension, Locale.ENGLISH);
+            dimAccessor.selectParent();
+        }
     }
 
     public static class Spi extends ImageReaderAdapter.Spi {

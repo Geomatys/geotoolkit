@@ -16,142 +16,8 @@
  */
 package org.geotoolkit.metadata.dimap;
 
-import org.opengis.geometry.coordinate.GeometryFactory;
-import static org.geotoolkit.metadata.dimap.DimapConstants.ATTRIBUTE_HREF;
-import static org.geotoolkit.metadata.dimap.DimapConstants.ATT_HREF;
-import static org.geotoolkit.metadata.dimap.DimapConstants.ATT_VERSION;
-import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_AFFINE_X0;
-import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_AFFINE_X1;
-import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_AFFINE_X2;
-import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_AFFINE_Y0;
-import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_AFFINE_Y1;
-import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_AFFINE_Y2;
-import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_BANDS_LAYOUT;
-import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_BAND_DESCRIPTION;
-import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_BAND_DISPLAY_ORDER;
-import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_BAND_INDEX;
-import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_BAND_STATISTICS;
-import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_BLUE_CHANNEL;
-import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_BYTEORDER;
-import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_CRS;
-import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_DATASET_COPYRIGHT;
-import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_DATASET_FRAME;
-import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_DATASET_ID;
-import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_DATASET_NAME;
-import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_DATASET_PRODUCER_NAME;
-import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_DATASET_PRODUCER_URL;
-import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_DATASET_PRODUCTION_DATE;
-import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_DATASET_QL_PATH;
-import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_DATASET_SOURCES;
-import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_DATASET_TN_PATH;
-import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_DATA_ACCESS;
-import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_DATA_FILE_FORMAT;
-import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_DATA_PROCESSING;
-import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_DATA_PROCESSING_ALGORITHM_NAME;
-import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_DATA_PROCESSING_ALGORITHM_TYPE;
-import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_DATA_PROCESSING_PROCESSING_LEVEL;
-import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_DATA_TYPE;
-import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_DYNAMIC_STRETCH;
-import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_GEOPOSITION;
-import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_GEOPOSITION_AFFINE;
-import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_GEOPOSITION_INSERT;
-import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_GEOPOSITION_POINTS;
-import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_GREEN_CHANNEL;
-import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_HIGH_THRESHOLD;
-import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_HORIZONTAL_CS_CODE;
-import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_IMAGE_DISPLAY;
-import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_IMAGE_INTERPRETATION;
-import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_JOB_ID;
-import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_LOW_THRESHOLD;
-import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_NBANDS;
-import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_NBITS;
-import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_NCOLS;
-import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_NROWS;
-import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_PHYSICAL_BIAS;
-import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_PHYSICAL_GAIN;
-import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_PHYSICAL_UNIT;
-import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_PROCESSING_OPTIONS;
-import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_PRODUCTION;
-import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_PRODUCTION_FACILITY;
-import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_PRODUCTION_FACILITY_PROCESSING_CENTER;
-import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_PRODUCTION_FACILITY_SOFTWARE_NAME;
-import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_PRODUCTION_FACILITY_SOFTWARE_VERSION;
-import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_PRODUCT_INFO;
-import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_PRODUCT_TYPE;
-import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_RASTER_DIMENSIONS;
-import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_RASTER_ENCODING;
-import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_RED_CHANNEL;
-import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_SCENE_IMAGING_DATE;
-import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_SCENE_IMAGING_TIME;
-import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_SCENE_INCIDENCE_ANGLE;
-import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_SCENE_INSTRUMENT;
-import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_SCENE_INSTRUMENT_INDEX;
-import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_SCENE_MISSION;
-import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_SCENE_MISSION_INDEX;
-import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_SCENE_PROCESSING_LEVEL;
-import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_SCENE_SENSOR_CODE;
-import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_SCENE_SOURCE;
-import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_SCENE_SUN_AZIMUTH;
-import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_SCENE_SUN_ELEVATION;
-import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_SCENE_THEORETICAL_RESOLUTION;
-import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_SCENE_VIEWING_ANGLE;
-import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_SCENE_GRID_REFERENCE;
-import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_SKIP_BYTES;
-import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_SOURCE_DESCRIPTION;
-import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_SOURCE_INFORMATION;
-import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_SOURCE_TYPE;
-import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_SPECTRAL_BAND_INFO;
-import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_STX_LIN_MAX;
-import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_STX_LIN_MIN;
-import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_STX_MAX;
-import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_STX_MEAN;
-import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_STX_MIN;
-import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_STX_STDV;
-import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_TIE_POINT;
-import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_TIE_POINT_CRS_X;
-import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_TIE_POINT_CRS_Y;
-import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_TIE_POINT_DATA_X;
-import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_TIE_POINT_DATA_Y;
-import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_THRESHOLDS;
-import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_ULXMAP;
-import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_ULYMAP;
-import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_XDIM;
-import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_YDIM;
-import static org.geotoolkit.util.DomUtilities.firstElement;
-import static org.geotoolkit.util.DomUtilities.getListElements;
-import static org.geotoolkit.util.DomUtilities.textAttributeValueSafe;
-import static org.geotoolkit.util.DomUtilities.textValueSafe;
-
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Point2D;
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.nio.charset.StandardCharsets;
-
-import javax.measure.unit.Unit;
-import javax.media.jai.Warp;
-import javax.media.jai.WarpAffine;
-import org.apache.sis.util.iso.SimpleInternationalString;
-
-import org.geotoolkit.coverage.Category;
-import org.geotoolkit.coverage.GridSampleDimension;
-import org.geotoolkit.coverage.TypeMap;
-import org.geotoolkit.geometry.isoonjts.GeometryUtils;
-import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSGeometryFactory;
 import org.apache.sis.internal.jaxb.gmi.MI_Metadata;
-import org.geotoolkit.lang.Static;
-import org.geotoolkit.metadata.dimap.DimapConstants.DataType;
+import org.apache.sis.measure.NumberRange;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.metadata.iso.acquisition.DefaultAcquisitionInformation;
@@ -181,21 +47,36 @@ import org.apache.sis.metadata.iso.quality.DefaultDataQuality;
 import org.apache.sis.metadata.iso.spatial.AbstractSpatialRepresentation;
 import org.apache.sis.metadata.iso.spatial.DefaultDimension;
 import org.apache.sis.metadata.iso.spatial.DefaultGridSpatialRepresentation;
+import org.apache.sis.referencing.operation.transform.LinearTransform;
+import org.apache.sis.referencing.operation.transform.MathTransforms;
+import org.apache.sis.referencing.operation.transform.TransferFunction;
 import org.apache.sis.util.iso.DefaultNameFactory;
+import org.apache.sis.util.iso.SimpleInternationalString;
+import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.coverage.Category;
+import org.geotoolkit.coverage.GridSampleDimension;
+import org.geotoolkit.coverage.TypeMap;
+import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
+import org.geotoolkit.geometry.isoonjts.GeometryUtils;
+import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSGeometryFactory;
+import org.geotoolkit.lang.Static;
+import org.geotoolkit.metadata.dimap.DimapConstants.*;
 import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.referencing.operation.transform.WarpTransform2D;
 import org.geotoolkit.temporal.object.ISODateParser;
-import org.apache.sis.measure.NumberRange;
-import org.apache.sis.util.logging.Logging;
 import org.opengis.coverage.SampleDimensionType;
+import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Geometry;
+import org.opengis.geometry.coordinate.GeometryFactory;
 import org.opengis.metadata.acquisition.AcquisitionInformation;
 import org.opengis.metadata.citation.DateType;
 import org.opengis.metadata.citation.Role;
 import org.opengis.metadata.constraint.Restriction;
 import org.opengis.metadata.content.ContentInformation;
 import org.opengis.metadata.content.RangeDimension;
+import org.opengis.metadata.content.TransferFunctionType;
 import org.opengis.metadata.extent.Extent;
 import org.opengis.metadata.identification.Identification;
 import org.opengis.metadata.lineage.Lineage;
@@ -206,12 +87,32 @@ import org.opengis.metadata.spatial.DimensionNameType;
 import org.opengis.metadata.spatial.SpatialRepresentation;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 import org.opengis.util.MemberName;
 import org.opengis.util.TypeName;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
+
+import javax.measure.unit.Unit;
+import javax.media.jai.Warp;
+import javax.media.jai.WarpAffine;
+import java.awt.*;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Point2D;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import static org.geotoolkit.metadata.dimap.DimapConstants.*;
+import static org.geotoolkit.util.DomUtilities.*;
 
 /**
  * Utility class to access usable objects from a dimap file.
@@ -243,6 +144,27 @@ public final class DimapAccessor extends Static {
         return CRS.decode(code.getTextContent());
     }
 
+
+    public static GridEnvelope getGridExtent2D(Element doc) {
+        final Element datasetFrame = firstElement(doc, TAG_DATASET_FRAME);
+        final List<Element> vertexs = getListElements(datasetFrame, TAG_VERTEX);
+
+        int[] low = new int[2];
+        int[] high = new int[2];
+
+        for (final Element vertex : vertexs) {
+            final Integer row = textValueSafe(vertex, TAG_FRAME_ROW, Integer.class);
+            final Integer col = textValueSafe(vertex, TAG_FRAME_COL, Integer.class);
+
+            low[0]  = Math.min(low[0], row);
+            low[1]  = Math.min(low[1], col);
+            high[0] = Math.max(high[0], row);
+            high[1] = Math.max(high[1], col);
+        }
+
+        return new GeneralGridEnvelope(low, high, false);
+    }
+
     /**
      * Read the Grid to CRS transform.
      * Those informations are provided by the Geoposition tag.
@@ -252,7 +174,7 @@ public final class DimapAccessor extends Static {
      * @throws FactoryException
      * @throws TransformException
      */
-    public static AffineTransform readGridToCRS(final Element doc) throws FactoryException, TransformException {
+    public static AffineTransform readGridToCRS2D(final Element doc) throws FactoryException, TransformException {
         final Element ele = firstElement(doc, TAG_GEOPOSITION);
         final Element insert = firstElement(ele, TAG_GEOPOSITION_INSERT);
         final Element points = firstElement(ele, TAG_GEOPOSITION_POINTS);
@@ -280,17 +202,17 @@ public final class DimapAccessor extends Static {
             // transformation in not accurate if the method has been defined.
             // read the points and calculate an average transform from them.
             final NodeList tiePoints = ele.getElementsByTagName(TAG_TIE_POINT);
-            final List<Point2D> sources = new ArrayList<Point2D>();
-            final List<Point2D> dests = new ArrayList<Point2D>();
+            final List<Point2D> sources = new ArrayList<>();
+            final List<Point2D> dests = new ArrayList<>();
 
             for (int i = 0, n = tiePoints.getLength(); i < n; i++) {
                 final Element vertex = (Element) tiePoints.item(i);
                 final double coordX = textValueSafe(vertex, TAG_TIE_POINT_CRS_X, Double.class);
                 final double coordY = textValueSafe(vertex, TAG_TIE_POINT_CRS_Y, Double.class);
-                final int dataY = textValueSafe(vertex, TAG_TIE_POINT_DATA_X, Integer.class);
-                final int dataX = textValueSafe(vertex, TAG_TIE_POINT_DATA_Y, Integer.class);
-                sources.add(new Point2D.Double(dataX, dataY));
+                final int dataY     = textValueSafe(vertex, TAG_TIE_POINT_DATA_X, Double.class).intValue();
+                final int dataX     = textValueSafe(vertex, TAG_TIE_POINT_DATA_Y, Double.class).intValue();
                 dests.add(new Point2D.Double(coordX, coordY));
+                sources.add(new Point2D.Double(dataX, dataY));
             }
 
             final WarpTransform2D warptrs = new WarpTransform2D(
@@ -372,7 +294,7 @@ public final class DimapAccessor extends Static {
      * @param doc
      * @return GridSampleDimension
      */
-    public static GridSampleDimension[] readSampleDimensions(final Element doc, final String coverageName, final int nbbands) {
+    public static GridSampleDimension[] readSampleDimensions(final Element doc) {
 
         // read raster encoding informations -----------------------------------
         final Element nodeEncoding = firstElement(doc, TAG_RASTER_ENCODING);
@@ -391,10 +313,20 @@ public final class DimapAccessor extends Static {
         final Integer green = textValueSafe(nodeBandOrder, TAG_GREEN_CHANNEL, Integer.class);
         final Integer blue = textValueSafe(nodeBandOrder, TAG_BLUE_CHANNEL, Integer.class);
 
+        // special values
+        final Map<String, Integer> specialValues = new HashMap<>();
+        final NodeList nodeSpecialValues = nodeDisplay.getElementsByTagName(TAG_SPECIAL_VALUE);
+        for (int i = 0; i < nodeSpecialValues.getLength(); i++) {
+            final Element nodeSpecialValue = (Element) nodeSpecialValues.item(i);
+            final Integer valueIndex = textValueSafe(nodeSpecialValue, TAG_SPECIAL_VALUE_INDEX, Integer.class);
+            final String valueText = textValueSafe(nodeSpecialValue, TAG_SPECIAL_VALUE_TEXT, String.class);
+            specialValues.put(valueText, valueIndex);
+        }
+
 
         // read band statistics ------------------------------------------------
         final NodeList nodeStats = nodeDisplay.getElementsByTagName(TAG_BAND_STATISTICS);
-        final Map<Integer, NumberRange> valueRanges = new HashMap<Integer, NumberRange>();
+        final Map<Integer, NumberRange> valueRanges = new HashMap<>();
         for (int i = 0, n = nodeStats.getLength(); i < n; i++) {
             final Element bandStat = (Element) nodeStats.item(i);
             final double stxMin = textValueSafe(bandStat, TAG_STX_MIN, Double.class);
@@ -410,7 +342,7 @@ public final class DimapAccessor extends Static {
         // read dimensions -----------------------------------------------------
         final Element nodeInterpretation = firstElement(doc, TAG_IMAGE_INTERPRETATION);
         final NodeList spectrals = nodeInterpretation.getElementsByTagName(TAG_SPECTRAL_BAND_INFO);
-        final Map<Integer, GridSampleDimension> dimensions = new HashMap<Integer, GridSampleDimension>();
+        final Map<Integer, GridSampleDimension> dimensions = new HashMap<>();
 
         for (int i = 0, n = spectrals.getLength(); i < n; i++) {
             final Element spectre = (Element) spectrals.item(i);
@@ -440,19 +372,47 @@ public final class DimapAccessor extends Static {
                 unit = Unit.ONE;
             }
 
-            //range is in geophysic values, can not use it, todo convert it.
-            final NumberRange range = valueRanges.get(bandIndex);
+            //transform sample to geophysics
+            final TransferFunction f = new TransferFunction();
+            f.setType(TransferFunctionType.LINEAR);
+            f.setScale(1 / physicGain);
+            f.setOffset(physicBias);
+            final MathTransform1D sampleToGeo = f.getTransform();
 
-            final Category[] cats = new Category[]{
-                new Category("vals", null, Integer.MIN_VALUE, Integer.MAX_VALUE, 1 / physicGain, physicBias)
-            };
+            List<Category> cats = new ArrayList<>();
 
-            final GridSampleDimension dim = new GridSampleDimension(bandDesc, cats, unit);
+            NumberRange range = valueRanges.get(bandIndex);
+            if (range != null) {
+                //range is in geophysic values, can not use it, todo convert it.
+
+            } else {
+                range = getThreshold(doc, bandIndex);
+            }
+
+            if (range == null) {
+                range = new NumberRange(Integer.class, Integer.MIN_VALUE, true, Integer.MAX_VALUE, true);
+            }
+
+            double min = range.getMinDouble();
+            double max = range.getMaxDouble();
+            for (Map.Entry<String, Integer> entry : specialValues.entrySet()) {
+                if (entry.getValue().doubleValue() == min) {
+                    min++;
+                    cats.add(new Category(entry.getKey(), new Color(0,0,0,0), entry.getValue()));
+                } else if (entry.getValue().doubleValue() == max) {
+                    max--;
+                    cats.add(new Category(entry.getKey(), new Color(0,0,0,0), entry.getValue()));
+                }
+            }
+            range = new NumberRange(Double.class, min, true, max, true);
+            cats.add(new Category("data", null, range, sampleToGeo));
+
+            final GridSampleDimension dim = new GridSampleDimension(bandDesc, cats.toArray(new Category[cats.size()]), unit);
             dimensions.put(bandIndex, dim);
         }
 
-        final GridSampleDimension[] dims = new GridSampleDimension[nbbands];
-        for (int i = 0; i < nbbands; i++) {
+        final GridSampleDimension[] dims = new GridSampleDimension[dimensions.size()];
+        for (int i = 0; i < dimensions.size(); i++) {
             GridSampleDimension dim = dimensions.get(i + 1);
             if (dim == null) {
                 //no information on this band, create an empty one
@@ -464,8 +424,32 @@ public final class DimapAccessor extends Static {
         return dims;
     }
 
+    private static NumberRange getThreshold(Element doc, int bandIndex) {
+
+        final Element nodeDataProcessing = firstElement(doc, TAG_DATA_PROCESSING);
+
+
+        final Element processingOptions = firstElement(nodeDataProcessing, TAG_PROCESSING_OPTIONS);
+        final Element dynamicStrech = firstElement(processingOptions, TAG_DYNAMIC_STRETCH);
+
+
+        final NodeList thresholds = dynamicStrech.getElementsByTagName(TAG_THRESHOLDS);
+        for (int i = 0; i < thresholds.getLength(); i++) {
+            final Element threshold = (Element) thresholds.item(i);
+
+            final int idx = textValueSafe(threshold, TAG_BAND_INDEX, Integer.class);
+            if (idx == bandIndex) {
+
+                final double low = textValueSafe(threshold, TAG_LOW_THRESHOLD, Double.class);
+                final double high = textValueSafe(threshold, TAG_HIGH_THRESHOLD, Double.class);
+                return new NumberRange(Double.class, low, true, high, true);
+            }
+        }
+        return null;
+    }
+
     /**
-     * @return DatasetName from Dataset_ID tag.
+     * @return Dataset Name from Dataset_ID tag.
      */
     public static String readDatasetName(final Element doc) {
         final Element datasetID = firstElement(doc, TAG_DATASET_ID);
@@ -474,11 +458,11 @@ public final class DimapAccessor extends Static {
     }
 
     /**
-     * @return DatasetThumbnail from Dataset_ID tag.
+     * @return Dataset orthorectified envelope from Dataset_Frame tag.
      */
     public static Geometry readDatasetVertex(final Element doc) throws NoSuchAuthorityCodeException, FactoryException {
         final Element datasetFrame = firstElement(doc, TAG_DATASET_FRAME);
-        final List<Element> vertexs = getListElements(datasetFrame, "Vertex");
+        final List<Element> vertexs = getListElements(datasetFrame, TAG_VERTEX);
 
         final CoordinateReferenceSystem crs = readCRS(doc);
         final GeometryFactory geometryFact = new JTSGeometryFactory(crs);
@@ -488,8 +472,8 @@ public final class DimapAccessor extends Static {
         DirectPosition first = null;
         for (int i = 0; i < len; i++) {
             final Element vertex = vertexs.get(i);
-            final Double lon = textValueSafe(vertex, "FRAME_LON", Double.class);
-            final Double lat = textValueSafe(vertex, "FRAME_LAT", Double.class);
+            final Double lon = textValueSafe(vertex, TAG_FRAME_LON, Double.class);
+            final Double lat = textValueSafe(vertex, TAG_FRAME_LAT, Double.class);
 
             final double[] coords = new double[2];
             coords[0] = lon;
@@ -686,8 +670,9 @@ public final class DimapAccessor extends Static {
             //    <FRAME_LAT/>          → ?
             //    <FRAME_ROW/>          → ?
             //    <FRAME_COL/>          → ?
-            //    <SCENE_ORIENTATION/>  → ?
             //</Scene_Center>
+            //<SCENE_ORIENTATION/>  → ?
+            //
 
             if (metadata instanceof MI_Metadata) {
                 Geometry geometry = null;
@@ -722,7 +707,7 @@ public final class DimapAccessor extends Static {
                     }
                     geographicDesc.setGeographicIdentifier(new DefaultIdentifier(geographicId));
 
-                    final DefaultExtent extent = (DefaultExtent) getExtent(metadata);
+                    final DefaultExtent extent = getExtent(metadata);
                     extent.getGeographicElements().add(boundingPolygon);
                     extent.getGeographicElements().add(geographicDesc);
                 }
@@ -1208,6 +1193,11 @@ public final class DimapAccessor extends Static {
         return metadata;
     }
 
+    public static Date getProductionDate(Element doc) {
+        final Element production = firstElement(doc, TAG_PRODUCTION);
+        return textValueSafe(production, TAG_DATASET_PRODUCTION_DATE, Date.class);
+    }
+
     private static URI generateFileName(String name, String extention) {
         try {
             return new URI(name.replaceAll(":", "_").replaceAll(" ", "_").replaceAll("/", "_").concat(extention));
@@ -1436,4 +1426,5 @@ public final class DimapAccessor extends Static {
         }
 
     }
+
 }

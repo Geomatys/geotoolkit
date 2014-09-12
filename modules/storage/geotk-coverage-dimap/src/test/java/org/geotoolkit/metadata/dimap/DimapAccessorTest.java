@@ -16,34 +16,14 @@
  */
 package org.geotoolkit.metadata.dimap;
 
-import org.opengis.metadata.acquisition.Instrument;
-import org.opengis.metadata.distribution.Format;
-import org.opengis.metadata.lineage.Processing;
-import java.text.ParseException;
-import org.opengis.metadata.citation.Citation;
-import java.util.Collection;
-import java.awt.geom.AffineTransform;
-import java.io.IOException;
-import javax.xml.parsers.ParserConfigurationException;
-
 import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.util.DomUtilities;
-
-import org.opengis.referencing.NoSuchAuthorityCodeException;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.TransformException;
-import org.opengis.util.FactoryException;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.*;
 import org.opengis.metadata.acquisition.AcquisitionInformation;
+import org.opengis.metadata.acquisition.Instrument;
 import org.opengis.metadata.acquisition.Operation;
+import org.opengis.metadata.citation.Citation;
 import org.opengis.metadata.citation.Responsibility;
 import org.opengis.metadata.citation.ResponsibleParty;
 import org.opengis.metadata.constraint.Constraints;
@@ -51,12 +31,26 @@ import org.opengis.metadata.constraint.LegalConstraints;
 import org.opengis.metadata.constraint.Restriction;
 import org.opengis.metadata.content.ContentInformation;
 import org.opengis.metadata.content.ImageDescription;
+import org.opengis.metadata.distribution.Format;
 import org.opengis.metadata.identification.Identification;
 import org.opengis.metadata.lineage.Algorithm;
 import org.opengis.metadata.lineage.Lineage;
 import org.opengis.metadata.lineage.ProcessStep;
+import org.opengis.metadata.lineage.Processing;
 import org.opengis.metadata.quality.DataQuality;
+import org.opengis.referencing.NoSuchAuthorityCodeException;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.TransformException;
+import org.opengis.util.FactoryException;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
+
+import javax.xml.parsers.ParserConfigurationException;
+import java.awt.geom.AffineTransform;
+import java.io.IOException;
+import java.text.ParseException;
+import java.util.Collection;
 
 import static org.junit.Assert.*;
 
@@ -104,7 +98,7 @@ public class DimapAccessorTest {
 
     @Test
     public void testReadAffine() throws FactoryException, TransformException{
-        final AffineTransform trs = DimapAccessor.readGridToCRS(docSample);
+        final AffineTransform trs = DimapAccessor.readGridToCRS2D(docSample);
 
         final AffineTransform expected = new AffineTransform(10, 0, 0, -20, 300, 700);
 
