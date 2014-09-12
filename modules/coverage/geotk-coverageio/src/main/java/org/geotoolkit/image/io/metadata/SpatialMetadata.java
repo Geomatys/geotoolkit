@@ -493,6 +493,15 @@ public class SpatialMetadata extends IIOMetadata implements WarningProducer {
     }
 
     /**
+     * Clear all type instances cached.
+     * This method should be called is metadata is updated and we want to force futures
+     * {@link #getInstanceForType(Class)} calls to return new type instances on updated metadata.
+     */
+    public void clearInstancesCache() {
+        instances.clear();
+    }
+
+    /**
      * Returns an instance of the given type extracted from this {@code IIOMetadata} at the given
      * path. This method performs the same work than {@link #getInstanceForType(Class)}, except
      * that the path is explicitly specified instead than automatically inferred from the type.
