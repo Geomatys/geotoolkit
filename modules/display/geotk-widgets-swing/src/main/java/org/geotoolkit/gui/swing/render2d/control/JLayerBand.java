@@ -32,16 +32,21 @@ import java.awt.event.MouseEvent;
 import java.awt.font.GlyphVector;
 import java.awt.geom.AffineTransform;
 import java.beans.PropertyChangeEvent;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.EventObject;
-import java.util.List;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.AbstractAction;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingConstants;
 
+import org.apache.sis.referencing.operation.transform.MathTransforms;
+import org.apache.sis.referencing.operation.transform.PassThroughTransform;
+import org.geotoolkit.coverage.CoverageReference;
+import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
+import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.geotoolkit.coverage.io.CoverageReader;
+import org.geotoolkit.coverage.io.CoverageStoreException;
+import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
@@ -67,14 +72,17 @@ import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.measure.Range;
 import org.geotoolkit.gui.swing.util.SwingEventPassThrough;
+import org.geotoolkit.temporal.object.TemporalUtilities;
 import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.apache.sis.util.logging.Logging;
 
 import org.geotoolkit.feature.Feature;
+import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.PropertyName;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.crs.TemporalCRS;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
@@ -95,8 +103,8 @@ public class JLayerBand extends JNavigatorBand implements LayerListener {
     private final float width = 2f;
     private final float circleSize = 8f;
     private boolean analyzed = false;
-    private List<Range<Double>> ranges = new ArrayList<Range<Double>>();
-    private List<Double> ponctuals = new ArrayList<Double>();
+    private List<Range<Double>> ranges = new ArrayList<>();
+    private List<Double> ponctuals = new ArrayList<>();
     private final ActionMenu popupmenu = new ActionMenu();
     private final passthrought listener = new passthrought();
     //used by the popup menu
@@ -165,21 +173,41 @@ public class JLayerBand extends JNavigatorBand implements LayerListener {
         final CoordinateReferenceSystem axis = getModel().getCRS();
 
         if (layer instanceof CoverageMapLayer) {
-            final Envelope env = layer.getBounds();
+            final CoverageMapLayer coverageLayer = (CoverageMapLayer) layer;
+            final Envelope env = coverageLayer.getBounds();
             if (env == null) {
                 return;
             }
+
+            GeneralGridGeometry gridGeometry;
+            try {
+                final CoverageReference covRef = coverageLayer.getCoverageReference();
+                final GridCoverageReader reader = covRef.acquireReader();
+                gridGeometry = reader.getGridGeometry(covRef.getImageIndex());
+                covRef.recycle(reader);
+            } catch (CoverageStoreException ex) {
+                LOGGER.log(Level.FINE, ex.getMessage(), ex);
+                return;
+            }
+
             Double min = null;
             Double max = null;
 
+            final GeneralGridEnvelope gridExtent = new GeneralGridEnvelope(gridGeometry.getExtent());
+            final MathTransform gridToCRS = gridGeometry.getGridToCRS();
+            final int nbDim = gridExtent.getDimension();
+
             final CoordinateReferenceSystem dataCRS = env.getCoordinateReferenceSystem();
-            final List<CoordinateReferenceSystem> sourceParts = ReferencingUtilities.decompose(dataCRS);
+            final Map<Integer, CoordinateReferenceSystem> sourceParts = ReferencingUtilities.indexedDecompose(dataCRS);
 
-            for (CoordinateReferenceSystem sourcePart : sourceParts) {
-
+            for (Map.Entry<Integer, CoordinateReferenceSystem> entry : sourceParts.entrySet()) {
+                int dimIdx = entry.getKey();
+                CoordinateReferenceSystem sourceCRS = entry.getValue();
                 try {
-                    final MathTransform trs = CRS.findMathTransform(sourcePart, axis, true);
-                    final CoordinateSystemAxis sourceAxi = sourcePart.getCoordinateSystem().getAxis(0);
+                    final MathTransform dataCRSToDispCRS = CRS.findMathTransform(sourceCRS, axis, true);
+                    final CoordinateSystemAxis sourceAxi = sourceCRS.getCoordinateSystem().getAxis(0);
+
+                    //This case should be soon deprecated because Discrete Axis and CRS will no longer exist
                     if (sourceAxi instanceof DiscreteCoordinateSystemAxis) {
                         final double[] incoord = new double[1];
                         final double[] outcoord = new double[1];
@@ -189,7 +217,7 @@ public class JLayerBand extends JNavigatorBand implements LayerListener {
                             final double d;
                             if (c instanceof Number) {
                                 incoord[0] = ((Number) c).doubleValue();
-                                trs.transform(incoord, 0, outcoord, 0, 1);
+                                dataCRSToDispCRS.transform(incoord, 0, outcoord, 0, 1);
                                 d = outcoord[0];
                             } else if (c instanceof Date) {
                                 d = ((Date) c).getTime();
@@ -203,6 +231,29 @@ public class JLayerBand extends JNavigatorBand implements LayerListener {
                             }
                             if (max == null || max < d) {
                                 max = d;
+                            }
+                        }
+                    } else {
+                        // Default case
+                        // Search point from grid extent and gridToCRS transform
+                        int gridSpan = gridExtent.getSpan(dimIdx);
+
+                        final MathTransform axisTransform = PassThroughTransform.create(dimIdx, dataCRSToDispCRS, nbDim - dimIdx - 1);
+                        final MathTransform gridToDisp = MathTransforms.concatenate(gridToCRS, axisTransform);
+
+                        double[] pointGrid = new double[nbDim];
+                        double[] pointCRS = new double[nbDim];
+                        for (int i = 0; i < gridSpan; i++) {
+                            pointGrid[dimIdx] = i;
+                            gridToDisp.transform(pointGrid, 0, pointCRS, 0, 1);
+                            double value = pointCRS[dimIdx];
+
+                            ponctuals.add(value);
+                            if (min == null || min > value) {
+                                min = value;
+                            }
+                            if (max == null || max < value) {
+                                max = value;
                             }
                         }
                     }
