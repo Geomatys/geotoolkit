@@ -183,6 +183,8 @@ public final class GridDomainAccessor extends MetadataNodeAccessor {
                 origin[j] = matrix.getElement(j, gridDimension);
             }
             setOrigin(fixRoundingError(origin));
+
+            clearOffsetVecors();
             final double[] vector = new double[gridDimension];
             for (int j=0; j<crsDimension; j++) {
                 for (int i=0; i<gridDimension; i++) {
@@ -219,6 +221,7 @@ public final class GridDomainAccessor extends MetadataNodeAccessor {
             gridToCRS.getTranslateY()  // Y_DIMENSION
         };
         setOrigin(fixRoundingError(vector));
+        clearOffsetVecors();
         vector[X_DIMENSION]=gridToCRS.getScaleX(); vector[Y_DIMENSION]=gridToCRS.getShearY(); addOffsetVector(fixRoundingError(vector));
         vector[X_DIMENSION]=gridToCRS.getShearX(); vector[Y_DIMENSION]=gridToCRS.getScaleY(); addOffsetVector(fixRoundingError(vector));
     }
@@ -246,6 +249,17 @@ public final class GridDomainAccessor extends MetadataNodeAccessor {
         }
         accessor.selectChild(accessor.appendChild());
         accessor.setAttribute(ARRAY_ATTRIBUTE_NAME, values);
+    }
+
+    /**
+     * Remove all children of {@code "OffsetVector"} node.
+     */
+    private void clearOffsetVecors() {
+        MetadataNodeAccessor accessor = offsetVectors;
+        if (accessor == null) {
+            offsetVectors = accessor = new MetadataNodeAccessor(this, "OffsetVectors", "OffsetVector");
+        }
+        accessor.removeChildren();
     }
 
     /**
@@ -405,6 +419,7 @@ public final class GridDomainAccessor extends MetadataNodeAccessor {
             checkDimension("gridToCrsDim", gridToCrsDim.length, gridDim);
         }
         setOrigin(origin);
+        clearOffsetVecors();
         final double[] vector = new double[crsDim];
         for (int i=0; i<gridDim; i++) {
             final int j = (gridToCrsDim != null) ? gridToCrsDim[i] : i;
