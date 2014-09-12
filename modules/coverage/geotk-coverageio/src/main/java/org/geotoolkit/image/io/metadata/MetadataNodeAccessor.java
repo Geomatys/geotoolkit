@@ -387,6 +387,43 @@ public class MetadataNodeAccessor extends MetadataNodeParser {
     }
 
     /**
+     * Remove a child
+     * @param childIndex
+     * @return
+     * @throws UnsupportedOperationException
+     * @throws IndexOutOfBoundsException
+     */
+    public Node removeChild(int childIndex) throws UnsupportedOperationException, IndexOutOfBoundsException {
+        if (isReadOnly()) {
+            throw new UnsupportedOperationException(getErrorResources()
+                    .getString(Errors.Keys.UNMODIFIABLE_METADATA));
+        }
+
+        Node child = childs.get(childIndex);
+        if (child instanceof Element) {
+            return removeChild(parent, childPath, child);
+        } else {
+            throw new UnsupportedImplementationException(child.getClass());
+        }
+    }
+
+    /**
+     * Remove all child node of current element parent.
+     * @throws UnsupportedOperationException
+     */
+    public void removeChildren() throws UnsupportedOperationException {
+        if (isReadOnly()) {
+            throw new UnsupportedOperationException(getErrorResources()
+                    .getString(Errors.Keys.UNMODIFIABLE_METADATA));
+        }
+
+        if (childCount() > 0) {
+            removeChildren(parent, childPath);
+            childs.clear();
+        }
+    }
+
+    /**
      * Returns {@code true} if values of the specified type can be formatted as a
      * text. We allows formatting only for reasonably cheap objects, for example
      * a Number but not a CoordinateReferenceSystem.

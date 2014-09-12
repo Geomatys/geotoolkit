@@ -629,6 +629,67 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
     }
 
     /**
+     * Remove a child from a parent
+     * @param parent The parent to add a child to.
+     * @param path   The path of the child to add.
+     * @param child  The child to remove
+     * @return element The removed child
+     */
+    Node removeChild(Node parent, final String path, Node child) {
+        int lower = 0;
+search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upper+1) {
+            final String name = path.substring(lower, upper).trim();
+            final NodeList list = parent.getChildNodes();
+            final int length = list.getLength();
+            for (int i=length; --i>=0;) {
+                final Node candidate = list.item(i);
+                if (name.equals(candidate.getNodeName())) {
+                    parent = candidate;
+                    continue search;
+                }
+            }
+            parent = parent.appendChild(new IIONode(name.intern()));
+        }
+        Node removed = parent.removeChild(child);
+        if (current.equals(removed)) {
+            if (parent instanceof Element) {
+                current = (Element) parent;
+            }
+        }
+        return removed;
+    }
+
+    /**
+     * Remove all child node from parent.
+     * @param parent The parent to add a child to.
+     * @param path   The path of the child to add.
+     */
+    void removeChildren(Node parent, final String path) {
+        int lower = 0;
+        search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upper+1) {
+            final String name = path.substring(lower, upper).trim();
+            final NodeList list = parent.getChildNodes();
+            final int length = list.getLength();
+            for (int i=length; --i>=0;) {
+                final Node candidate = list.item(i);
+                if (name.equals(candidate.getNodeName())) {
+                    parent = candidate;
+                    continue search;
+                }
+            }
+            parent = parent.appendChild(new IIONode(name.intern()));
+        }
+
+        while (parent.hasChildNodes()) {
+            parent.removeChild(parent.getLastChild());
+        }
+
+        if (parent instanceof Element) {
+            current = (Element) parent;
+        }
+    }
+
+    /**
      * Returns the paths to every {@linkplain Element elements} declared in the given format which
      * accept a {@linkplain IIOMetadataNode#getUserObject() user object} of the given type. If no
      * path is found, returns an empty list.
