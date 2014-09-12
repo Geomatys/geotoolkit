@@ -4,6 +4,7 @@
 .DS_Store
 .hg
 .hgtags
+.hgignore
 
 # Maven files
 target/
