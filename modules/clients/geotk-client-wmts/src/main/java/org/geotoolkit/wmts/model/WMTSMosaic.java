@@ -134,7 +134,7 @@ public class WMTSMosaic implements GridMosaic{
     
     @Override
     public boolean isMissing(int col, int row) throws PointOutsideCoverageException {
-        if (col < 0 || row < 0 || col > matrix.getMatrixHeight() || row > matrix.getMatrixWidth()) {
+        if (col < 0 || row < 0 || col > matrix.getMatrixWidth() || row > matrix.getMatrixHeight()) {
             throw new PointOutsideCoverageException("Queried tile position is outside matrix dimension.", new GeneralDirectPosition(col, row));
         }
         if(limit == null) return false;
