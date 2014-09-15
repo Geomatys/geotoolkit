@@ -4,11 +4,16 @@ package org.geotoolkit.pending.demo.clients.csw;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
+import org.apache.sis.internal.storage.IOUtilities;
+import org.apache.sis.xml.MarshalContext;
 import org.geotoolkit.csw.CatalogServicesClient;
 import org.geotoolkit.csw.GetCapabilitiesRequest;
 import org.geotoolkit.csw.GetRecordByIdRequest;
@@ -21,6 +26,10 @@ import org.geotoolkit.csw.xml.v202.Capabilities;
 import org.geotoolkit.csw.xml.v202.GetRecordsResponseType;
 import org.geotoolkit.pending.demo.Demos;
 import org.apache.sis.xml.MarshallerPool;
+import org.apache.sis.xml.ValueConverter;
+import org.apache.sis.xml.XML;
+import org.geotoolkit.csw.xml.ElementSetType;
+import org.geotoolkit.ows.xml.v100.ExceptionReport;
 import org.opengis.metadata.Metadata;
 
 /**
@@ -34,9 +43,11 @@ public class CSWClientDemo {
 
         final MarshallerPool pool = CSWMarshallerPool.getInstance();
         final Unmarshaller um = pool.acquireUnmarshaller();
-
+        final MarshallWarnings warnings = new MarshallWarnings();
+        um.setProperty(XML.CONVERTER, warnings);
+        
         // build a new CSW client
-        final CatalogServicesClient cswServer = new CatalogServicesClient(new URL("http://demo.geomatys.com/mdweb-demo/WS/csw/default?"), "2.0.2");
+        final CatalogServicesClient cswServer = new CatalogServicesClient(new URL("http://catalog.data.gov/csw?"), "2.0.2");
 
 
         /**
@@ -60,12 +71,22 @@ public class CSWClientDemo {
         getRecords.setTypeNames("gmd:MD_Metadata");
         getRecords.setConstraintLanguage("CQL");
         getRecords.setConstraintLanguageVersion("1.1.0");
-        getRecords.setConstraint("Title like '%'");
+        getRecords.setConstraint("apiso:Title like '%'");
+        getRecords.setElementSetName(ElementSetType.FULL);
         is = getRecords.getResponseStream();
 
         // unmarshall the response
-        GetRecordsResponseType response = ((JAXBElement<GetRecordsResponseType>) um.unmarshal(is)).getValue();
+        Object obj = um.unmarshal(is);
+        GetRecordsResponseType response;
+        
+        if (obj instanceof ExceptionReport) {
+            System.out.println("Error received:" + obj);
+            return;
+        } else {
+            response = ((JAXBElement<GetRecordsResponseType>) obj).getValue();
+        }
 
+        
         // print the number of result matching the request
         System.out.println(response.getSearchResults().getNumberOfRecordsMatched());
 
@@ -77,8 +98,15 @@ public class CSWClientDemo {
 
         is = getRecords.getResponseStream();
 
+        obj = um.unmarshal(is);
+        
         // unmarshall the response
-        response = ((JAXBElement<GetRecordsResponseType>) um.unmarshal(is)).getValue();
+        if (obj instanceof ExceptionReport) {
+            System.out.println("Error received:" + obj);
+            return;
+        } else {
+            response = ((JAXBElement<GetRecordsResponseType>) obj).getValue();
+        }
 
         // print the first result (Dublin core)
         AbstractRecord record = (AbstractRecord) response.getSearchResults().getAny().get(0);
@@ -93,7 +121,15 @@ public class CSWClientDemo {
         is = getRecords.getResponseStream();
 
         // unmarshall the response
-        response = ((JAXBElement<GetRecordsResponseType>) um.unmarshal(is)).getValue();
+        obj = um.unmarshal(is);
+        
+        // unmarshall the response
+        if (obj instanceof ExceptionReport) {
+            System.out.println("Error received:" + obj);
+            return;
+        } else {
+            response = ((JAXBElement<GetRecordsResponseType>) obj).getValue();
+        }
 
         // print the first result (ISO 19139)
         Metadata meta = (Metadata) response.getSearchResults().getAny().get(0);
@@ -112,7 +148,16 @@ public class CSWClientDemo {
         is = getRecordById.getResponseStream();
 
         // unmarshall the response
-        GetRecordByIdResponse responseBi = ((JAXBElement<GetRecordByIdResponse>) um.unmarshal(is)).getValue();
+        obj = um.unmarshal(is);
+        
+        // unmarshall the response
+        GetRecordByIdResponse responseBi;
+        if (obj instanceof ExceptionReport) {
+            System.out.println("Error received:" + obj);
+            return;
+        } else {
+            responseBi = ((JAXBElement<GetRecordByIdResponse>) obj).getValue();
+        }
 
         // print the result (same as getRecords first result)
         meta = (Metadata) responseBi.getAny().get(0);
@@ -120,5 +165,47 @@ public class CSWClientDemo {
 
         pool.recycle(um);
 
+    }
+    
+    private static class MarshallWarnings extends ValueConverter {
+
+        // The warnings collected during (un)marshalling.
+        private final List<String> messages = new ArrayList<>();
+
+        // Collects the warnings and allows the process to continue.
+        @Override
+        protected <T> boolean exceptionOccured(final MarshalContext context, final T value, final Class<T> sourceType, final Class<?> targetType, final Exception exception) {
+            messages.add(exception.getLocalizedMessage() + " value=[" + value + "] sourceType:" + sourceType + " targetType:" + targetType);
+            return true;
+        }
+
+        /**
+         * @return the messages
+         */
+        public List<String> getMessages() {
+            return messages;
+        }
+
+        public boolean isEmpty() {
+            return messages.isEmpty();
+        }
+
+        @Override
+        public URI toURI(final MarshalContext context, String value) throws URISyntaxException {
+            if (value != null && !(value = value.trim()).isEmpty()) {
+                try {
+                    value = IOUtilities.encodeURI(value);
+                    if (value.contains("\\")) {
+                        value = value.replace("\\", "%5C");
+                    }
+                    return new URI(value);
+                } catch (URISyntaxException e) {
+                    if (!exceptionOccured(context, value, String.class, URI.class, e)) {
+                        throw e;
+                    }
+                }
+            }
+            return null;
+        }
     }
 }
