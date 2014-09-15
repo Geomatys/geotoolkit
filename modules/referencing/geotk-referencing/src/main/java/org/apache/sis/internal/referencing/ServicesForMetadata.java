@@ -23,6 +23,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import org.opengis.util.FactoryException;
+import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.referencing.crs.TemporalCRS;
 import org.opengis.referencing.crs.VerticalCRS;
 import org.opengis.referencing.crs.GeographicCRS;
@@ -58,6 +59,7 @@ import org.geotoolkit.internal.TemporalUtilities;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.io.wkt.FormattableObject;
+import org.apache.sis.parameter.DefaultParameterDescriptor;
 import org.apache.sis.referencing.CommonCRS;
 
 import static org.geotoolkit.internal.InternalUtilities.isPoleToPole;
@@ -123,6 +125,17 @@ public final class ServicesForMetadata extends ReferencingServices implements Ch
     @Override
     public Matrix getMatrix(final MathTransform tr) {
         return MathTransforms.getMatrix(tr);
+    }
+
+    /**
+     * Returns a fully implemented parameter descriptor.
+     *
+     * @param  parameter A partially implemented parameter descriptor, or {@code null}.
+     * @return A fully implemented parameter descriptor, or {@code null} if the given argument was null.
+     */
+    @Override
+    public ParameterDescriptor<?> toImplementation(final ParameterDescriptor<?> parameter) {
+        return DefaultParameterDescriptor.castOrCopy(parameter);
     }
 
     /**
