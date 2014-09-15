@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URL;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.*;
 import java.util.Set;
@@ -759,7 +760,7 @@ public class WPSConvertersUtils {
 
         List<File> inputFiles = null;
 
-        inputFiles = FileUtilities.unzip(archive, tmpDir, null);
+        inputFiles = FileUtilities.unzip(archive, tmpDir.toPath(), null);
 
         // Try to find the image file to treat
         // TODO : Change for a better verification. Here we should get a specific parameter with the image file name.

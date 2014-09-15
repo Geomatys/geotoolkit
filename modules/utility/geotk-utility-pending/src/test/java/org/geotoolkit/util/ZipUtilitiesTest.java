@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -112,13 +113,13 @@ public class ZipUtilitiesTest {
         archive.deleteOnExit();
 
         FileUtilities.zip(archive, ZipOutputStream.DEFLATED, 9, CHECKSUM, dir);
-        final File extract = File.createTempFile("extract", null);
-        extract.delete();
+        final Path extract = File.createTempFile("extract", null).toPath();
+        extract.toFile().delete();
 
         FileUtilities.unzip(archive, extract, CHECKSUM);
 
         final List<String> files = new ArrayList<String>();
-        for (String file : extract.list()) {
+        for (String file : extract.toFile().list()) {
             files.add(file);
         }
 
@@ -127,7 +128,7 @@ public class ZipUtilitiesTest {
 
         // Checking dir content
         files.clear();
-        File currentFile = new File(extract, dir.getName());
+        File currentFile = new File(extract.toFile(), dir.getName());
         assertEquals(dir.listFiles().length, currentFile.listFiles().length);
         for (String file : currentFile.list()) {
             files.add(file);
@@ -149,7 +150,7 @@ public class ZipUtilitiesTest {
             assertTrue(files.contains(element));
         }
 
-        org.geotoolkit.util.FileUtilities.deleteDirectory(extract);
+        org.geotoolkit.util.FileUtilities.deleteDirectory(extract.toFile());
     }
 
     @Test
@@ -164,7 +165,7 @@ public class ZipUtilitiesTest {
         String archivePath = archive.getAbsolutePath();
 
         FileUtilities.zip(archivePath, ZipOutputStream.DEFLATED, 9, CHECKSUM, file1Path);
-        FileUtilities.unzip(archivePath, CHECKSUM);
+        FileUtilities.unzip(archive, CHECKSUM);
 
         List<String> zipContent = listContent(archive);
         assertEquals(zipContent.get(0), file1.getName());
@@ -182,7 +183,7 @@ public class ZipUtilitiesTest {
         URL urlArchive = archive.toURI().toURL();
 
         FileUtilities.zip(archive, ZipOutputStream.DEFLATED, 9, CHECKSUM, url1);
-        FileUtilities.unzip(urlArchive, CHECKSUM);
+        FileUtilities.unzip(archive, CHECKSUM);
 
         List<String> zipContent = listContent(archive);
         assertEquals(zipContent.get(0), file1.getName());
@@ -200,7 +201,7 @@ public class ZipUtilitiesTest {
         URI uriArchive = archive.toURI();
 
         FileUtilities.zip(archive, ZipOutputStream.DEFLATED, 9, CHECKSUM, uri1);
-        FileUtilities.unzip(uriArchive, CHECKSUM);
+        FileUtilities.unzip(archive, CHECKSUM);
 
         List<String> zipContent = listContent(archive);
         assertEquals(zipContent.get(0), file1.getName());

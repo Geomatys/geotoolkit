@@ -19,6 +19,7 @@ package org.geotoolkit.process.io.unpackfile;
 
 import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
+import java.nio.file.Paths;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.xeustechnologies.jtar.TarEntry;
@@ -83,7 +84,7 @@ public class UnpackFile extends AbstractProcess {
 
         if (name.endsWith(".zip") || name.endsWith(".jar")) {
             try {
-                final List<File> files = FileUtilities.unzip(src, trg, null);                
+                final List<File> files = FileUtilities.unzip(src, trg.toPath(), null);
                 for(File f : files){
                     urls.add(f.toURI().toURL());
                 }
