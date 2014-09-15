@@ -51,7 +51,6 @@ import org.opengis.parameter.ParameterNotFoundException;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
-
 import static org.geotoolkit.parameter.Parameters.*;
 import static org.geotoolkit.process.coverage.pyramid.MapcontextPyramidDescriptor.*;
 import org.opengis.geometry.DirectPosition;
@@ -197,18 +196,16 @@ public final class MapcontextPyramidProcess extends AbstractProcess {
 
                 // Transform context envelope into mosaic grid system to
                 // find tiles impacted on container mosaic
-                final double sx = destEnvWidth / mosaic.getGridSize().width;
-                final double sy = destEnvHeight / mosaic.getGridSize().height;
                 final double min0 = envelope.getMinimum(widthAxis);
                 final double max1 = envelope.getMaximum(heightAxis);
-                final MathTransform2D gridDest_to_crs = new AffineTransform2D(sx, 0, 0, -sy, min0, max1);
+                final MathTransform2D gridDest_to_crs = new AffineTransform2D(scale, 0, 0, -scale, min0, max1);
                 final MathTransform ctxCRS_to_gridDest = MathTransforms.concatenate(gridDest_to_crs, destCRS_to_ctxCRS).inverse();
 
                 final GeneralEnvelope ctxExtent = Envelopes.transform(ctxCRS_to_gridDest, clipEnv);
-                final int startTileX = (int)ctxExtent.getMinimum(widthAxis);
-                final int startTileY = (int)ctxExtent.getMinimum(heightAxis);
-                final int endTileX   = (int)ctxExtent.getMaximum(widthAxis) - startTileX;
-                final int endTileY   = (int)ctxExtent.getMaximum(heightAxis) - startTileY;
+                final int startTileX = (int)ctxExtent.getMinimum(widthAxis) / tileSize.width;
+                final int startTileY = (int)ctxExtent.getMinimum(heightAxis) / tileSize.height;
+                final int endTileX   = ((int)(ctxExtent.getMaximum(widthAxis) + tileSize.width - 1) / tileSize.width) - startTileX;
+                final int endTileY   = ((int)(ctxExtent.getMaximum(heightAxis) + tileSize.height - 1) / tileSize.height) - startTileY;
                 final Rectangle area = new Rectangle(startTileX, startTileY, endTileX, endTileY);
 
                 container.writeTiles(pyramid.getId(), mosaic.getId(), image, area, false, new MapcontextPyramidMonitor(this));
