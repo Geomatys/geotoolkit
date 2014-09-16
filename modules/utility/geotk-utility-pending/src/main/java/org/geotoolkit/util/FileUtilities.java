@@ -21,9 +21,6 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -37,7 +34,6 @@ import java.util.zip.CheckedInputStream;
 import java.util.zip.CheckedOutputStream;
 import java.util.zip.Checksum;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 import org.geotoolkit.internal.io.IOUtilities;
@@ -119,7 +115,7 @@ public final class FileUtilities extends Static {
     /**
      * This method delete recursively a file or a folder.
      *
-     * @param dir The File or directory to delete.
+     * @param file The File or directory to delete.
      */
     public static boolean deleteDirectory(final File dir) {
         if (dir.isDirectory()) {
@@ -198,7 +194,7 @@ public final class FileUtilities extends Static {
     /**
      * Read the contents of a stream into string.
      *
-     * @param stream the file name
+     * @param f the file name
      * @return The file contents as string
      * @throws IOException if the file does not exist or cannot be read.
      */
@@ -462,7 +458,7 @@ public final class FileUtilities extends Static {
      * Searches in the Context ClassLoader for the named files and returns a
      * {@code List<String>} with, for each named package,
      *
-     * @param packagee The names of the packages to scan in Java format, i.e.
+     * @param packages The names of the packages to scan in Java format, i.e.
      *                   using the "." separator, may be null.
      *
      * @return A list of package names.
@@ -708,7 +704,7 @@ public final class FileUtilities extends Static {
     /**
      * <p>This method creates an OutputStream with ZIP archive from the list of resources parameter.</p>
      *
-     * @param entryPath OutputStrem on ZIP archive that will contain archives of resource files.
+     * @param zip OutputStrem on ZIP archive that will contain archives of resource files.
      * @param method The compression method is a static int constant from ZipOutputSteeam with
      * two theorical possible values :
      * <ul>
@@ -795,8 +791,8 @@ public final class FileUtilities extends Static {
      * @param checksum Checksum object (instance of Alder32 or CRC32).
      * @throws IOException
      */
-    public static List<File> unzip(final File zip, final Checksum checksum) throws IOException {
-        return unzip(zip, Paths.get(zip.toURI()).getParent(), checksum);
+    public static List<File> unzip(final Object zip, final Checksum checksum) throws IOException {
+        return unzip(zip, getParent(zip), checksum);
     }
 
     /**
@@ -812,11 +808,16 @@ public final class FileUtilities extends Static {
      * @param checksum Checksum object (instance of Alder32 or CRC32).
      * @throws IOException
      */
-    public static List<File> unzip(final File zip, final Path resource, final Checksum checksum)
+    public static List<File> unzip(final Object zip, final Object resource, final Checksum checksum)
             throws IOException {
-
-
-        return unzipCore(new ZipFile(zip), resource);
+        final BufferedInputStream buffi;
+        if (checksum != null) {
+            final CheckedInputStream cis = new CheckedInputStream(toInputStream(zip), checksum);
+            buffi = new BufferedInputStream(cis);
+        } else {
+            buffi = new BufferedInputStream(toInputStream(zip));
+        }
+        return unzipCore(buffi, resource);
     }
 
     /**
@@ -828,19 +829,19 @@ public final class FileUtilities extends Static {
      * Must be instance of File or a String path. This argument cannot be null.
      * @throws IOException
      */
-    private static List<File> unzipCore(final ZipFile zip, final Path resource)
+    private static List<File> unzipCore(final InputStream zip, final Object resource)
             throws IOException {
 
         final byte[] data = new byte[BUFFER];
-
+        final ZipInputStream zis = new ZipInputStream(zip);
 
         final List<File> unzipped = new ArrayList<File>();
 
         try {
-            final Enumeration<? extends ZipEntry> entries = zip.entries();
-            while (entries.hasMoreElements()) {
-                final ZipEntry entry = entries.nextElement();
-                final File file = new File(resource.toString(), entry.getName());
+            final String extractPath = getPath(resource);
+            ZipEntry entry;
+            while ((entry = zis.getNextEntry()) != null) {
+                final File file = new File(extractPath, entry.getName());
                 if (entry.isDirectory()) {
                     file.mkdirs();
                     continue;
@@ -851,7 +852,7 @@ public final class FileUtilities extends Static {
                 final BufferedOutputStream dest = new BufferedOutputStream(fos, BUFFER);
                 try {
                     int count;
-                    while ((count = zip.getInputStream(entry).read(data, 0, BUFFER)) != -1) {
+                    while ((count = zis.read(data, 0, BUFFER)) != -1) {
                         dest.write(data, 0, count);
                     }
                     dest.flush();
@@ -860,7 +861,7 @@ public final class FileUtilities extends Static {
                 }
             }
         } finally {
-            zip.close();
+            zis.close();
         }
 
         return unzipped;
@@ -933,7 +934,7 @@ public final class FileUtilities extends Static {
      * Extract the file extension from a string.
      * If the there is no extension, return null.
      *
-     * @param fileName A zipEntry file name.
+     * @param name A zipEntry file name.
      * @return The zipEntry extension, or null if not found.
      */
     private static String extractExtension(final String fileName) {
@@ -1024,29 +1025,6 @@ public final class FileUtilities extends Static {
         return fit;
     }
 
-
-    /**
-     * <p>This method gives the resource file name.
-     * Resource can be an instance of File, URL, URI or String path.
-     * Return snull in other cases.</p>
-     *
-     * @param resource instance of File, URL, URI, or String path.
-     * @return
-     * @throws MalformedURLException
-     */
-    private static String getFileName(final Object resource)
-            throws MalformedURLException {
-
-        String fileName = null;
-        if (resource instanceof File) {
-            fileName = ((File) resource).getName();
-        } else {
-            fileName = getPath(resource);
-            fileName = fileName.substring(fileName.lastIndexOf(File.separator) + 1, fileName.length());
-        }
-        return fileName;
-    }
-
     /**
      * <p>This method returns the path of a given resource which can be
      * instance of File, URL, URI or String. Returns null in other cases.</p>
@@ -1069,6 +1047,50 @@ public final class FileUtilities extends Static {
             extractPath = (String) resource;
         }
         return extractPath;
+    }
+
+    /**
+     * <p>This method returs the path of the resource container (parent directory).
+     * Resource can be an instance of File, URL, URI or String path.
+     * Return snull in other cases.</p>
+     *
+     * @param resource instance of File, URL, URI, or String path.
+     * @return The path of the resource container.
+     * @throws MalformedURLException
+     */
+    private static String getParent(final Object resource)
+            throws MalformedURLException {
+
+        String extractPath = null;
+        if (resource instanceof File) {
+            extractPath = ((File) resource).getParent();
+        } else {
+            extractPath = getPath(resource);
+            extractPath = extractPath.substring(0, extractPath.lastIndexOf(File.separator) + 1);
+        }
+        return extractPath;
+    }
+
+    /**
+     * <p>This method gives the resource file name.
+     * Resource can be an instance of File, URL, URI or String path.
+     * Return snull in other cases.</p>
+     *
+     * @param resource instance of File, URL, URI, or String path.
+     * @return
+     * @throws MalformedURLException
+     */
+    private static String getFileName(final Object resource)
+            throws MalformedURLException {
+
+        String fileName = null;
+        if (resource instanceof File) {
+            fileName = ((File) resource).getName();
+        } else {
+            fileName = getPath(resource);
+            fileName = fileName.substring(fileName.lastIndexOf(File.separator) + 1, fileName.length());
+        }
+        return fileName;
     }
 
     /**
