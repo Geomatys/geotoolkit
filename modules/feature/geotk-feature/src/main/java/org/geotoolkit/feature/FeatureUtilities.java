@@ -607,6 +607,8 @@ public final class FeatureUtilities {
      *
      * @param source : parameter to convert
      * @return Map
+     *
+     * @deprecated Use method {@link Parameters#toMap(org.opengis.parameter.ParameterValueGroup)} instead.
      */
     public static Map<String,Object> toMap(final ParameterValueGroup source) {
         ArgumentChecks.ensureNonNull("source", source);
@@ -621,6 +623,8 @@ public final class FeatureUtilities {
      * @param params
      * @param desc
      * @return
+     *
+     * @deprecated Use method {@link Parameters#toParameter(java.util.Map, org.opengis.parameter.ParameterDescriptorGroup)} instead.
      */
     public static ParameterValueGroup toParameter(final Map<String, ?> params, final ParameterDescriptorGroup desc) {
         ArgumentChecks.ensureNonNull("params", params);
@@ -638,6 +642,8 @@ public final class FeatureUtilities {
      * @param checkMandatory : will return a parameter only if all mandatory values
      *      have been found in the map.
      * @return
+     *
+     * @deprecated Use method {@link Parameters#toParameter(java.util.Map, org.opengis.parameter.ParameterDescriptorGroup, boolean)} instead.
      */
     public static ParameterValueGroup toParameter(final Map<String, ?> params,
             final ParameterDescriptorGroup desc, final boolean checkMandatory) {

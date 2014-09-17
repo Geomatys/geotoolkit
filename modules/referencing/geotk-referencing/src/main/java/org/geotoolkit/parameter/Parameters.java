@@ -29,6 +29,9 @@ import javax.measure.unit.Unit;
 import javax.measure.unit.NonSI;
 import javax.measure.unit.SI;
 
+import org.apache.sis.util.ArgumentChecks;
+import org.apache.sis.util.ObjectConverters;
+import org.apache.sis.util.UnconvertibleObjectException;
 import org.opengis.util.CodeList;
 import org.opengis.util.InternationalString;
 import org.opengis.parameter.ParameterValue;
@@ -223,7 +226,7 @@ public final class Parameters extends Static {
      * If one implementation is modified, the other one should be updated accordingly.
      *
      * @param <T> The expected type of value.
-     * @param parameter The parameter to test.
+     * @param value The parameter to test.
      * @param localized {@code true} if a fully localized message is wanted in case of failure,
      *        or {@code false} for a sentinel value (not useful for reporting to the user).
      * @param descriptor The descriptor to use for fetching the conditions.
@@ -878,4 +881,124 @@ public final class Parameters extends Static {
         }
         return true;
     }
+
+
+    /**
+     * Convert a ParameterValueGroup in a Map of values. Map keys will be parameter names, and their associated value are
+     * indeed map values. For nested Parameter group, a list of maps will be created inside the output map. Theorically,
+     * this allows infinite group depth.
+     *
+     * @param source : Group of parametrs to convert.
+     * @return A map which contains all parameters and groups of input Parameter group.
+     */
+    public static Map<String,Object> toMap(final ParameterValueGroup source) {
+        ArgumentChecks.ensureNonNull("source", source);
+        final HashMap<String, Object> result = new HashMap<>();
+        String parameterName;
+        for (GeneralParameterValue value : source.values()) {
+            parameterName = value.getDescriptor().getName().getCode();
+            if (value instanceof ParameterValue) {
+                result.put(parameterName, ((ParameterValue) value).getValue());
+            } else if (value instanceof ParameterValueGroup) {
+                Collection<Map<String, Object>> subGroup = (List<Map<String, Object>>) result.get(parameterName);
+                if (subGroup == null) {
+                    subGroup = new ArrayList<>();
+                    result.put(parameterName, subGroup);
+                }
+                subGroup.add(toMap((ParameterValueGroup) value));
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Transform a Map in a ParameterValueGroup. A default parameter is first created and all key found in the map
+     * that match the descriptor will be completed.
+     *
+     * @param params
+     * @param desc
+     * @return
+     */
+    public static ParameterValueGroup toParameter(final Map<String, ?> params, final ParameterDescriptorGroup desc) {
+        ArgumentChecks.ensureNonNull("params", params);
+        ArgumentChecks.ensureNonNull("desc", desc);
+        return toParameter(params, desc, true);
+    }
+
+    /**
+     * Transform a Map in a ParameterValueGroup. A default parameter is first created and all key found in the map
+     * that match the descriptor will be completed.
+     *
+     * @param params         The map containing entries to put in a ParameterValueGroup
+     * @param desc           The descriptor for the group to create.
+     * @param checkMandatory : will return a parameter only if all mandatory values have been found in the map.
+     * @return A parameter value group matching input descriptor, filled with input map value. Return null if input map
+     * is incompatible with input descriptor.
+     * @throws org.opengis.parameter.ParameterNotFoundException If the map does not contains all needed mandatory
+     *                                                          parameters required by this descriptor.
+     * @throws org.apache.sis.util.UnconvertibleObjectException If an error occurred while putting a value from input map
+     *                                                          to target Parameter group.
+     */
+    public static ParameterValueGroup toParameter(final Map<String, ?> params,
+                                                  final ParameterDescriptorGroup desc, final boolean checkMandatory)
+            throws ParameterNotFoundException, UnconvertibleObjectException {
+
+        ArgumentChecks.ensureNonNull("params", params);
+        ArgumentChecks.ensureNonNull("desc", desc);
+        if (checkMandatory) {
+            for (GeneralParameterDescriptor de : desc.descriptors()) {
+                if (de.getMinimumOccurs() > 0 && !(params.containsKey(de.getName().getCode()))) {
+                    //a mandatory parameter is not present
+                    throw new ParameterNotFoundException("A mandatory parameter cannot be found in source map.", de.getName().getCode());
+                }
+            }
+        }
+
+        final ParameterValueGroup parameter = desc.createValue();
+        GeneralParameterDescriptor subDesc;
+        for (final Map.Entry<String, ?> entry : params.entrySet()) {
+
+            try {
+                subDesc = desc.descriptor(entry.getKey());
+            } catch (ParameterNotFoundException ex) {
+                //do nothing, the map may contain other values for other uses
+                continue;
+            }
+
+            if (subDesc instanceof ParameterDescriptorGroup) {
+                if (entry.getValue() instanceof Map) {
+                    parameter.values().add(
+                            toParameter((Map) entry.getValue(), (ParameterDescriptorGroup) subDesc, checkMandatory));
+                } else if (entry.getValue() instanceof Collection) {
+                    for (Object o : (Collection) entry.getValue()) {
+                        if (o instanceof Map) {
+                            parameter.values().add(
+                                    toParameter((Map) o, (ParameterDescriptorGroup) subDesc, checkMandatory));
+                        }
+                    }
+
+                } else {
+                    throw new IllegalArgumentException("Illegal value for parameter " + entry.getKey() + ". It's a parameter group, so we should have a nested map as input.");
+                }
+
+            } else if (subDesc instanceof ParameterDescriptor) {
+
+                final ParameterDescriptor pdesc = (ParameterDescriptor) subDesc;
+                try {
+                    final ParameterValue param = Parameters.getOrCreate(pdesc, parameter);
+                    param.setValue(
+                            ObjectConverters.convert(entry.getValue(), pdesc.getValueClass()));
+                } catch (ParameterNotFoundException e) {
+                    // If mandatory check is activated, possible errors at this point have already been checked.
+                    continue;
+                }
+
+            } else {
+                throw new IllegalArgumentException("Unsupported parameter type.");
+            }
+        }
+
+        return parameter;
+    }
+
 }

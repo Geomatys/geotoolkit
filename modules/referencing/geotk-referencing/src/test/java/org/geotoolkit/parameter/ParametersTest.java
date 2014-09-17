@@ -119,4 +119,19 @@ public final strictfp class ParametersTest {
         assertEquals(Double .valueOf(1.25),  properties.remove("SubGroup:aRealNumber"));
         assertTrue("Unknown properties remaining.", properties.isEmpty());
     }
+
+    @Test
+    public void parameterMapSwitchTest() {
+            final ParameterDescriptorGroup group = new DefaultParameterDescriptorGroup("Group",
+                    DefaultParameterDescriptor.create("anInteger", 10, 5, 15),
+                    DefaultParameterDescriptor.create("aRealNumber", 0.25, 0.1, 0.5, null),
+                    new DefaultParameterDescriptorGroup("SubGroup",
+                            DefaultParameterDescriptor.create("anInteger", 2, 1, 4),
+                            DefaultParameterDescriptor.create("aRealNumber", 1.25, 0.1, 1.4, null)),
+                    DefaultParameterDescriptor.create("anOtherRealNumber", 0.125, 0.1, 0.4, null));
+
+        final ParameterValueGroup values = group.createValue();
+        final ParameterValueGroup outputParam = Parameters.toParameter(Parameters.toMap(values), group);
+        assertEquals(values, outputParam);
+    }
 }
