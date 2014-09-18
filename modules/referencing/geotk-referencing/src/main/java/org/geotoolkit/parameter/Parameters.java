@@ -931,7 +931,8 @@ public final class Parameters extends Static {
      *
      * @param params         The map containing entries to put in a ParameterValueGroup
      * @param desc           The descriptor for the group to create.
-     * @param checkMandatory : will return a parameter only if all mandatory values have been found in the map.
+     * @param checkMandatory if True, a parameter will be returned only if the map provide all mandatory parameters with
+     *                       no default value.
      * @return A parameter value group matching input descriptor, filled with input map value. Return null if input map
      * is incompatible with input descriptor.
      * @throws org.opengis.parameter.ParameterNotFoundException If the map does not contains all needed mandatory
@@ -948,8 +949,10 @@ public final class Parameters extends Static {
         if (checkMandatory) {
             for (GeneralParameterDescriptor de : desc.descriptors()) {
                 if (de.getMinimumOccurs() > 0 && !(params.containsKey(de.getName().getCode()))) {
-                    //a mandatory parameter is not present
-                    throw new ParameterNotFoundException("A mandatory parameter cannot be found in source map.", de.getName().getCode());
+                    if (de instanceof ParameterDescriptor && ((ParameterDescriptor) de).getDefaultValue() == null) {
+                        //a mandatory parameter is not present
+                        throw new ParameterNotFoundException("Mandatory parameter cannot be found in source map.", de.getName().getCode());
+                    }
                 }
             }
         }
