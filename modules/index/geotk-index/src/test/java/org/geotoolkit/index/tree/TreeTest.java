@@ -59,6 +59,8 @@ public abstract class TreeTest {
         Files.walkFileTree(tempDir.toPath(), new SimpleFileVisitor<Path>() {
             @Override
             public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+                // need for file deletion on windows platform
+                System.gc();
                 Files.delete(dir);
                 return super.postVisitDirectory(dir, exc);
             }
