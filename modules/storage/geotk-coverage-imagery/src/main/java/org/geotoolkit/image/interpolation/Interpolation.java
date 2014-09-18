@@ -294,9 +294,10 @@ public abstract class Interpolation {
      * @throws IllegalArgumentException if pixel coordinates are out of iterate area boundary.
      */
      protected boolean checkInterpolate(double x, double y) {
-        if (x < bminX || x > bmaxX || y < bminY || y > bmaxY) return false; //-- no interpolation available 
         //-- accept extrapolation
         if (borderChoice.equals(ResampleBorderComportement.EXTRAPOLATION)) return true;
+        if (x < bminX || x > bmaxX || y < bminY || y > bmaxY) return false; //-- no interpolation available 
+//        if (borderChoice.equals(ResampleBorderComportement.EXTRAPOLATION)) return true;
         return (!(x < boundMinX || x > boundMaxX
                || y < boundMinY || y > boundMaxY));
     }
