@@ -83,7 +83,8 @@ public class UnpackFile extends AbstractProcess {
 
         if (name.endsWith(".zip") || name.endsWith(".jar")) {
             try {
-                final List<File> files = FileUtilities.unzip(src, trg, null);                
+
+                final List<File> files = FileUtilities.unzip(src.toPath(), trg.toPath());
                 for(File f : files){
                     urls.add(f.toURI().toURL());
                 }

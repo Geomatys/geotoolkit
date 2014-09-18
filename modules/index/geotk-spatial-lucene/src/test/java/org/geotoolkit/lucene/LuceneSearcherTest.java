@@ -98,7 +98,7 @@ public class LuceneSearcherTest {
     @BeforeClass
     public static void setUpMethod() throws Exception {
         if (directory.exists()) {
-            FileUtilities.deleteDirectory(directory);
+            FileUtilities.deleteDirectory(directory.toPath());
         }
         directory.mkdir();
         
@@ -119,7 +119,7 @@ public class LuceneSearcherTest {
     public static void tearDownMethod() throws Exception {
         searcher.destroy();
         
-        FileUtilities.deleteDirectory(directory);
+        FileUtilities.deleteDirectory(directory.toPath());
     }
 
 
@@ -2609,7 +2609,7 @@ public class LuceneSearcherTest {
      * @param y1  the Y coordinate of the first point of the line.
      * @param x2  the X coordinate of the second point of the line.
      * @param y2  the Y coordinate of the first point of the line.
-     * @param crsName The coordinate reference system in witch the coordinates are expressed.
+     * @param srid The coordinate reference system in witch the coordinates are expressed.
      */
     private static NamedEnvelope addLine(final Document doc, final double x1, final double y1, final double x2, final double y2, final int srid) throws Exception {
 
@@ -2632,7 +2632,7 @@ public class LuceneSearcherTest {
      * @param doc     The document to add the geometry
      * @param x       The x coordinate of the point.
      * @param y       The y coordinate of the point.
-     * @param crsName The coordinate reference system in witch the coordinates are expressed.
+     * @param srid The coordinate reference system in witch the coordinates are expressed.
      */
     private static NamedEnvelope addPoint(final Document doc, final double x, final double y, final int srid) throws Exception {
 
@@ -2654,7 +2654,7 @@ public class LuceneSearcherTest {
      * @param maxx the maximum X coordinate of the bounding box.
      * @param miny the minimun Y coordinate of the bounding box.
      * @param maxy the maximum Y coordinate of the bounding box.
-     * @param crsName The coordinate reference system in witch the coordinates are expressed.
+     * @param srid The coordinate reference system in witch the coordinates are expressed.
      */
     private static NamedEnvelope addBoundingBox(final Document doc, final double minx, final double maxx, final double miny, final double maxy, final int srid) throws Exception {
 

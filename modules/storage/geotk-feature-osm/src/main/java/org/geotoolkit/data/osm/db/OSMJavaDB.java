@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.nio.file.Paths;
 import java.sql.Blob;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -60,9 +61,9 @@ public class OSMJavaDB {
     private final PreparedStatement sqlSelectWay;
     private final PreparedStatement sqlSelectRelation;
 
-    public OSMJavaDB(final String name) throws SQLException {
+    public OSMJavaDB(final String name) throws SQLException, IOException {
         final String folder = getTempFolder(name);
-        FileUtilities.deleteDirectory(new File(folder));
+        FileUtilities.deleteDirectory(Paths.get(folder));
 
         final String driver = "org.apache.derby.jdbc.EmbeddedDriver";
         final String conecURL = "jdbc:derby:"+ folder + ";create=true";

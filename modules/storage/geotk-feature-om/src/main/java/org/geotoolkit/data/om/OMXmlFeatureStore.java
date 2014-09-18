@@ -70,7 +70,7 @@ public class OMXmlFeatureStore extends AbstractOMFeatureStore implements DataFil
     private final File source;
     
     public OMXmlFeatureStore(final ParameterValueGroup params, final File source) {
-        super(params, FileUtilities.getFileName(source));
+        super(params, source.getName());
         this.source = source;
     }
 

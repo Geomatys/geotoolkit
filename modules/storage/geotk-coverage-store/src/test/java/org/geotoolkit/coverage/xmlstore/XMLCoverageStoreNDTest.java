@@ -17,6 +17,7 @@
 package org.geotoolkit.coverage.xmlstore;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import org.geotoolkit.coverage.CoverageStore;
@@ -44,9 +45,9 @@ public class XMLCoverageStoreNDTest extends PyramidalModelStoreNDTest {
     }
 
     @After
-    public void cleanup(){
+    public void cleanup() throws IOException {
         for(File f : folders){
-            FileUtilities.deleteDirectory(f);
+            FileUtilities.deleteDirectory(f.toPath());
         }
         folders.clear();
     }

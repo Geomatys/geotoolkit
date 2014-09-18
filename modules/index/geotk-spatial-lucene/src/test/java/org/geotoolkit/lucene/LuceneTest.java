@@ -100,7 +100,7 @@ public class LuceneTest {
     @BeforeClass
     public static void setUpMethod() throws Exception {
         if (directory.exists()) {
-            FileUtilities.deleteDirectory(directory);
+            FileUtilities.deleteDirectory(directory.toPath());
         }
         directory.mkdir();
         
@@ -117,7 +117,7 @@ public class LuceneTest {
 
     @AfterClass
     public static void tearDownMethod() throws Exception {
-        FileUtilities.deleteDirectory(directory);
+        FileUtilities.deleteDirectory(directory.toPath());
     }
 
 

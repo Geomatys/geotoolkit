@@ -20,6 +20,7 @@ import org.geotoolkit.coverage.CoverageStore;
 import org.geotoolkit.coverage.AbstractPyramidalModelStoreTest;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import org.geotoolkit.util.FileUtilities;
@@ -45,9 +46,9 @@ public class XMLCoverageStoreTest extends AbstractPyramidalModelStoreTest {
     }
 
     @AfterClass
-    public static void cleanup(){
+    public static void cleanup() throws IOException {
         for(File f : folders){
-            FileUtilities.deleteDirectory(f);
+            FileUtilities.deleteDirectory(f.toPath());
         }
         folders.clear();
     }

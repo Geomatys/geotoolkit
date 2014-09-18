@@ -19,6 +19,7 @@ package org.geotoolkit.lucene.index;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.logging.Level;
 
@@ -100,7 +101,7 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
      * @param configDirectory
      * @param analyzer
      */
-    public AbstractIndexer(final String indexID, final File configDirectory, final Analyzer analyzer) {
+    public AbstractIndexer(final String indexID, final File configDirectory, final Analyzer analyzer) throws IndexingException {
         super(analyzer);
         
         // we get the last index directory
@@ -144,7 +145,7 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
      * @param indexID
      * @param configDirectory
      */
-    public AbstractIndexer(final String indexID, final File configDirectory) {
+    public AbstractIndexer(final String indexID, final File configDirectory) throws IndexingException {
         this(indexID, configDirectory, null);
     }
 
@@ -155,11 +156,15 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
     /**
      * Replace the precedent index directory by another pre-generated.
      */
-    private void deleteOldIndexDir(final File configDirectory, final String serviceID, final String currentDirName) {
+    private void deleteOldIndexDir(final File configDirectory, final String serviceID, final String currentDirName) throws IndexingException {
         for (File indexDirectory : configDirectory.listFiles(new IndexDirectoryFilter(serviceID))) {
             final String dirName = indexDirectory.getName();
             if (!dirName.equals(currentDirName)) {
-                FileUtilities.deleteDirectory(indexDirectory);
+                try {
+                    FileUtilities.deleteDirectory(indexDirectory.toPath());
+                } catch (IOException e) {
+                    throw new IndexingException("cant delete directory", e);
+                }
             }
         }
         
@@ -354,7 +359,7 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
     private void stopIndexation(final IndexWriter writer, final String serviceID) throws IOException {
         // writer.optimize(); no longer justified
         writer.close();
-        FileUtilities.deleteDirectory(getFileDirectory());
+        FileUtilities.deleteDirectory(getFileDirectory().toPath());
         if (indexationToStop.contains(serviceID)) {
             indexationToStop.remove(serviceID);
         }

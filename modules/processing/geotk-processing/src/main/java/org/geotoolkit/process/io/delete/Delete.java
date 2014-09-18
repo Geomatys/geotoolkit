@@ -58,8 +58,12 @@ public class Delete extends AbstractProcess {
             }
             
             if(path instanceof File){
-                boolean result = FileUtilities.deleteDirectory((File)path);
-                getOrCreate(RESULT_OUT, outputParameters).setValue(result);
+                try {
+                    FileUtilities.deleteDirectory(((File) path).toPath());
+                    getOrCreate(RESULT_OUT, outputParameters).setValue(true);
+                }catch (IOException ex){
+                    getOrCreate(RESULT_OUT, outputParameters).setValue(false);
+                }
             }else{
                 throw new IOException("Path is not a file.");
             }

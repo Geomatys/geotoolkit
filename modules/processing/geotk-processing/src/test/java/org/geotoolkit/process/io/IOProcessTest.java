@@ -134,7 +134,7 @@ public class IOProcessTest {
         archiveZip.deleteOnExit();
         final File archiveTar = File.createTempFile("archive", ".tar.gz");
         archiveTar.deleteOnExit();
-        FileUtilities.zip(archiveZip, null, f);
+        FileUtilities.zip(archiveZip.toPath(),true, f1.toPath(), f2.toPath());
 
         // Create a TarOutputStream
         final TarOutputStream out = new TarOutputStream(
@@ -162,8 +162,8 @@ public class IOProcessTest {
 
         // TEST ZIP UNPACK -----------------------------------------------------
         ParameterValueGroup input = desc.getInputDescriptor().createValue();
-        input.parameter("source").setValue(archiveZip.toURI().toURL());
-        input.parameter("target").setValue(target.toURI().toURL());
+        input.parameter("source").setValue(archiveZip.toURI());
+        input.parameter("target").setValue(target.toURI());
 
         Process process = desc.createProcess(input);
         assertNotNull(process);
@@ -190,7 +190,7 @@ public class IOProcessTest {
 
 
         // TEST TAR.GZ UNPACK --------------------------------------------------
-        FileUtilities.deleteDirectory(target);
+        FileUtilities.deleteDirectory(target.toPath());
         target.delete();
         target.mkdirs();
 

@@ -93,42 +93,42 @@ public class KmzContextInterpreter {
         FILES_DIR.deleteOnExit();
     }
 
-    public void writeKmz(MapContext context, File kmzOutput)
-            throws Exception {
-
-        final Kml kml = KML_FACTORY.createKml();
-        final Feature folder = KML_FACTORY.createFolder();
-        final Collection<Property> folderProperties = folder.getProperties();
-        kml.setAbstractFeature(folder);
-
-        // Creating KML file
-        final File docKml = new File("/tmp", "doc.kml");
-        docKml.deleteOnExit();
-
-        for (final MapLayer layer : context.layers()) {
-            this.writeStyle(layer.getStyle(), folder);
-            if (layer instanceof CoverageMapLayer) {
-                folderProperties.add(
-                        FF.createAttribute(
-                        this.writeCoverageMapLayer((CoverageMapLayer) layer),
-                        KmlModelConstants.ATT_FOLDER_FEATURES, null));
-            } else if (layer instanceof FeatureMapLayer) {
-                folderProperties.add(
-                        FF.createAttribute(
-                        this.writeFeatureMapLayer((FeatureMapLayer) layer),
-                        KmlModelConstants.ATT_FOLDER_FEATURES, null));
-            }
-        }
-
-        // Writing KML file
-        final KmlWriter writer = new KmlWriter();
-        writer.setOutput(docKml);
-        writer.write(kml);
-        writer.dispose();
-
-        // Creating KMZ
-        FileUtilities.zip(kmzOutput, ZipOutputStream.DEFLATED, 9, null, FILES_DIR, docKml);
-    }
+//    public void writeKmz(MapContext context, File kmzOutput)
+//            throws Exception {
+//
+//        final Kml kml = KML_FACTORY.createKml();
+//        final Feature folder = KML_FACTORY.createFolder();
+//        final Collection<Property> folderProperties = folder.getProperties();
+//        kml.setAbstractFeature(folder);
+//
+//        // Creating KML file
+//        final File docKml = new File("/tmp", "doc.kml");
+//        docKml.deleteOnExit();
+//
+//        for (final MapLayer layer : context.layers()) {
+//            this.writeStyle(layer.getStyle(), folder);
+//            if (layer instanceof CoverageMapLayer) {
+//                folderProperties.add(
+//                        FF.createAttribute(
+//                        this.writeCoverageMapLayer((CoverageMapLayer) layer),
+//                        KmlModelConstants.ATT_FOLDER_FEATURES, null));
+//            } else if (layer instanceof FeatureMapLayer) {
+//                folderProperties.add(
+//                        FF.createAttribute(
+//                        this.writeFeatureMapLayer((FeatureMapLayer) layer),
+//                        KmlModelConstants.ATT_FOLDER_FEATURES, null));
+//            }
+//        }
+//
+//        // Writing KML file
+//        final KmlWriter writer = new KmlWriter();
+//        writer.setOutput(docKml);
+//        writer.write(kml);
+//        writer.dispose();
+//
+//        // Creating KMZ
+//        FileUtilities.zip(kmzOutput.toPath(), ZipOutputStream.DEFLATED, 9, null, FILES_DIR, docKml);
+//    }
 
     /**
      * <p>Retrieves a style identificator.</p>

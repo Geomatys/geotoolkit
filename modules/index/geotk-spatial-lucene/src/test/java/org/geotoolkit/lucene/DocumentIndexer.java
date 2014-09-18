@@ -21,7 +21,7 @@ public class DocumentIndexer extends AbstractIndexer<DocumentEnvelope>{
 
     private final List<DocumentEnvelope> docs;
 
-    public DocumentIndexer(final File directory, final List<DocumentEnvelope> docs, final Analyzer analyzer) {
+    public DocumentIndexer(final File directory, final List<DocumentEnvelope> docs, final Analyzer analyzer)  throws IndexingException {
         super("", directory, analyzer);
         this.docs = docs;
     }

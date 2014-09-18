@@ -76,7 +76,7 @@ public class KmlFeatureUtilities {
                     if(LOGGER.isLoggable(Level.FINE)){
                         LOGGER.log(Level.FINE, "getAllKMLGeometriesEntries unzipping kmz file : {0}", fileName);
                     }
-                    FileUtilities.unzip(f, null);
+                    FileUtilities.unzip(f.toPath(), directory.toPath());
 
                 } catch (Exception ex) {
                     LOGGER.log(Level.WARNING, "Error on unzip kmz file", ex);

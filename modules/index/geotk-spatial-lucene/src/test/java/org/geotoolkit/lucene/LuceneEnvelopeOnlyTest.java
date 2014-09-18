@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.lucene;
 
+import java.io.IOException;
 import java.util.logging.Level;
 
 import com.vividsolutions.jts.geom.Coordinate;
@@ -96,9 +97,12 @@ public class LuceneEnvelopeOnlyTest {
 
     @BeforeClass
     public static void setUpMethod() throws Exception {
-
-        FileUtilities.deleteDirectory(directory);
-        directory.mkdir();
+        try {
+            FileUtilities.deleteDirectory(directory.toPath());
+        }catch (IOException ex){
+            //It's OK do nothing.
+        }
+            directory.mkdir();
 
         //creating tree (R-Tree)------------------------------------------------
         final Analyzer analyzer = new StandardAnalyzer(org.apache.lucene.util.Version.LUCENE_4_9);
@@ -114,8 +118,12 @@ public class LuceneEnvelopeOnlyTest {
     }
 
     @AfterClass
-    public static void tearDownMethod() throws Exception {
-        FileUtilities.deleteDirectory(directory);
+    public static void tearDownMethod(){
+        try {
+            FileUtilities.deleteDirectory(directory.toPath());
+        } catch (IOException e) {
+            LOGGER.log(Level.FINE,"can't delete dir", e);
+        }
     }
 
     /**

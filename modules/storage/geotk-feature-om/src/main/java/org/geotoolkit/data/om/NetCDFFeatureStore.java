@@ -70,7 +70,7 @@ public class NetCDFFeatureStore extends AbstractOMFeatureStore implements DataFi
     private final File source;
     
     public NetCDFFeatureStore(final ParameterValueGroup params, final File source) {
-        super(params, FileUtilities.getFileName(source));
+        super(params, source.getName());
         this.source = source;
     }
 

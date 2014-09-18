@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.lucene;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.logging.Level;
 
@@ -96,7 +97,11 @@ public class LuceneSearcherEnvelopeOnlyTest {
     @BeforeClass
     public static void setUpMethod() throws Exception {
 
-        FileUtilities.deleteDirectory(directory);
+        try {
+            FileUtilities.deleteDirectory(directory.toPath());
+        } catch (IOException e) {
+            LOGGER.log(Level.FINE, "can't delete dir", e);
+        }
         directory.mkdir();
         
         // the tree CRS (must be) cartesian
@@ -113,11 +118,15 @@ public class LuceneSearcherEnvelopeOnlyTest {
     }
 
     @AfterClass
-    public static void tearDownMethod() throws Exception {
+    public static void tearDownMethod(){
         try {
             searcher.destroy();
         } finally {
-            FileUtilities.deleteDirectory(directory);
+            try {
+                FileUtilities.deleteDirectory(directory.toPath());
+            } catch (IOException e) {
+                LOGGER.log(Level.FINE, "can't delete dir", e);
+            }
         }
     }
 
@@ -2255,7 +2264,7 @@ public class LuceneSearcherEnvelopeOnlyTest {
      * @param maxx the maximum X coordinate of the bounding box.
      * @param miny the minimun Y coordinate of the bounding box.
      * @param maxy the maximum Y coordinate of the bounding box.
-     * @param crsName The coordinate reference system in witch the coordinates are expressed.
+     * @param srid The coordinate reference system in witch the coordinates are expressed.
      */
     private static NamedEnvelope addBoundingBox(final Document doc, final double minx, final double maxx, final double miny, final double maxy, final int srid) throws FactoryException, TransformException {
 

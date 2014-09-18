@@ -759,7 +759,7 @@ public class WPSConvertersUtils {
 
         List<File> inputFiles = null;
 
-        inputFiles = FileUtilities.unzip(archive, tmpDir, null);
+        inputFiles = FileUtilities.unzip(archive.toPath(), tmpDir.toPath());
 
         // Try to find the image file to treat
         // TODO : Change for a better verification. Here we should get a specific parameter with the image file name.

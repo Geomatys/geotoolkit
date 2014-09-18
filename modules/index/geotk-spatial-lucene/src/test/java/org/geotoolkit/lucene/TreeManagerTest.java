@@ -36,14 +36,14 @@ public class TreeManagerTest {
     @Before
     public void setUpMethod() throws Exception {
         if (directory.exists()) {
-            FileUtilities.deleteDirectory(directory);
+            FileUtilities.deleteDirectory(directory.toPath());
         }
         directory.mkdir();
     }
 
     @After
     public void tearDownMethod() throws Exception {
-        FileUtilities.deleteDirectory(directory);
+        FileUtilities.deleteDirectory(directory.toPath());
     }
 
     @Test

@@ -21,6 +21,7 @@ import org.geotoolkit.util.FileUtilities;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -258,7 +259,7 @@ public class QuadTreeDirectory {
     @Override
     protected void finalize() throws Throwable {
         if (isDeleteOnExit) {
-            FileUtilities.deleteDirectory(new File(treeRootPath));
+            FileUtilities.deleteDirectory(Paths.get(treeRootPath));
         }
         super.finalize();
     }

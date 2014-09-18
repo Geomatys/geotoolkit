@@ -17,6 +17,7 @@
 package org.geotoolkit.wps;
 
 import java.io.File;
+import java.io.IOException;
 import javax.imageio.ImageIO;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.lang.Setup;
@@ -92,8 +93,8 @@ public class WPSConverterTestSuit {
     }
     
     @AfterClass
-    public static void release() {
-        FileUtilities.deleteDirectory(tmpDataDir);
+    public static void release() throws IOException {
+        FileUtilities.deleteDirectory(tmpDataDir.toPath());
         releaseImageIO();
     }
     
