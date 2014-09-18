@@ -519,7 +519,6 @@ public class PyramidCoverageBuilder {
 
         final GridGeometry2D gg2d       = gridCoverage2D.getGridGeometry();
         final Envelope covEnv           = gg2d.getEnvelope2D();
-        final GeneralEnvelope clipEnv   = ReferencingUtilities.intersectEnvelopes(covEnv, envDest);
 
         final RenderedImage baseImg = gridCoverage2D.getRenderedImage();
         // work on pixels coordinates.
@@ -535,6 +534,10 @@ public class PyramidCoverageBuilder {
         final MathTransform destCrs_to_coverageCRS = CRS.findMathTransform(CRSUtilities.getCRS2D(envDest.getCoordinateReferenceSystem()), gridCoverage2D.getCoordinateReferenceSystem2D(), true);
         final MathTransform destCrs_to_covGrid     = MathTransforms.concatenate(destCrs_to_coverageCRS, coverageCRS_to_grid).inverse();
         final Dimension tileSize                   = new Dimension(tileWidth, tileHeight);
+        
+        final GeneralEnvelope covEnvInDestCRS = CRS.transform(destCrs_to_coverageCRS.inverse(), covEnv);
+        final GeneralEnvelope clipEnv   = ReferencingUtilities.intersectEnvelopes(covEnvInDestCRS, envDest);
+        
         //one mosaic for each level scale
         for (double pixelScal : scaleLevel) {
             //output image size
@@ -544,14 +547,14 @@ public class PyramidCoverageBuilder {
             final double sx     = envWidth  / imgWidth;
             final double sy     = envHeight / imgHeight;
             final MathTransform2D globalGridDest_to_crs = new AffineTransform2D(sx, 0, 0, -sy, min0, max1);
-            final MathTransform covCRS_to_gridDest      = MathTransforms.concatenate(globalGridDest_to_crs, destCrs_to_coverageCRS).inverse();
+//            final MathTransform covCRS_to_gridDest      = MathTransforms.concatenate(globalGridDest_to_crs, destCrs_to_coverageCRS).inverse();
 
             //mosaic size
             final int nbrTileX  = (int)Math.ceil(imgWidth/tileWidth);
             final int nbrTileY  = (int)Math.ceil(imgHeight/tileHeight);
 
             //coverage extent on mosaic space
-            final GeneralEnvelope coverageExtent = Envelopes.transform(covCRS_to_gridDest, clipEnv);
+            final GeneralEnvelope coverageExtent = Envelopes.transform(globalGridDest_to_crs.inverse(), clipEnv);
 
             //coverage intersection tile index
             final int startTileX = (int)coverageExtent.getMinimum(widthAxis) / tileWidth;
