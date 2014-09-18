@@ -106,6 +106,10 @@ public class IdentifierList implements AbstractIdentifierList {
         return this.identifier;
     }
 
+    public void setIdentifier(List<Identifier> identifier) {
+        this.identifier = identifier;
+    }
+
     /**
      * Gets the value of the id property.
      *

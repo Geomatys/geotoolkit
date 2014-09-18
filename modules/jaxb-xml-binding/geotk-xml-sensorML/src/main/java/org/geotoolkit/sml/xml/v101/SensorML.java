@@ -49,13 +49,14 @@ import org.geotoolkit.sml.xml.Component;
 import org.geotoolkit.sml.xml.ComponentArray;
 import org.geotoolkit.sml.xml.System;
 import org.geotoolkit.sml.xml.SMLMember;
+import javax.xml.namespace.QName;
 
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -82,8 +83,8 @@ import org.geotoolkit.sml.xml.SMLMember;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -102,7 +103,7 @@ import org.geotoolkit.sml.xml.SMLMember;
     "member"
 })
 @XmlRootElement(name = "SensorML")
-public class SensorML extends AbstractSensorML {
+public class SensorML implements AbstractSensorML {
 
     private List<Keywords> keywords;
     private List<Identification> identification;
@@ -217,6 +218,10 @@ public class SensorML extends AbstractSensorML {
         return this.keywords;
     }
 
+    public void setKeywords(List<Keywords> keywords) {
+        this.keywords = keywords;
+    }
+
     /**
      * Gets the value of the identification property.
      */
@@ -260,13 +265,17 @@ public class SensorML extends AbstractSensorML {
         return this.classification;
     }
 
+    public void setClassification(List<Classification> classification) {
+        this.classification = classification;
+    }
+
     /**
      * Gets the value of the validTime property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ValidTime }
-     *     
+     *
      */
     @Override
     public ValidTime getValidTime() {
@@ -306,9 +315,13 @@ public class SensorML extends AbstractSensorML {
         return this.legalConstraint;
     }
 
+    public void setLegalConstraint(List<LegalConstraint> legalConstraint) {
+        this.legalConstraint = legalConstraint;
+    }
+
     /**
      * Gets the value of the characteristics property.
-     * 
+     *
      */
     @Override
     public List<Characteristics> getCharacteristics() {
@@ -316,6 +329,10 @@ public class SensorML extends AbstractSensorML {
             characteristics = new ArrayList<Characteristics>();
         }
         return this.characteristics;
+    }
+
+    public void setCharacteristics(List<Characteristics> characteristics) {
+        this.characteristics = characteristics;
     }
 
     /**
@@ -329,6 +346,10 @@ public class SensorML extends AbstractSensorML {
         return this.capabilities;
     }
 
+    public void setCapabilities(List<Capabilities> capabilities) {
+        this.capabilities = capabilities;
+    }
+
     /**
      * Gets the value of the contact property.
      */
@@ -338,6 +359,10 @@ public class SensorML extends AbstractSensorML {
             contact = new ArrayList<Contact>();
         }
         return this.contact;
+    }
+
+    public void setContact(List<Contact> contact) {
+        this.contact = contact;
     }
 
     /**
@@ -351,6 +376,10 @@ public class SensorML extends AbstractSensorML {
         return this.documentation;
     }
 
+    public void setDocumentation(List<Documentation> documentation) {
+        this.documentation = documentation;
+    }
+
     /**
      * Gets the value of the history property.
      */
@@ -362,6 +391,10 @@ public class SensorML extends AbstractSensorML {
         return this.history;
     }
 
+    public void setHistory(List<History> history) {
+        this.history = history;
+    }
+
     /**
      * Gets the value of the member property.
      */
@@ -371,6 +404,13 @@ public class SensorML extends AbstractSensorML {
             member = new ArrayList<SensorML.Member>();
         }
         return this.member;
+    }
+
+    /**
+     * Sets the value of the member property.
+     */
+    public void setMember(final List<SensorML.Member> member) {
+        this.member = member;
     }
 
     /**
@@ -467,7 +507,7 @@ public class SensorML extends AbstractSensorML {
         return sb.toString();
     }
 
-     /**
+    /**
      * Verify if this entry is identical to specified object.
      */
     @Override
@@ -516,9 +556,9 @@ public class SensorML extends AbstractSensorML {
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -533,8 +573,8 @@ public class SensorML extends AbstractSensorML {
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -543,6 +583,7 @@ public class SensorML extends AbstractSensorML {
         "contactList"
     })
     public static class Member implements SMLMember {
+        private static final QName PROCESS_NAME = new QName("http://www.opengis.net/sensorML/1.0.1", "System");
 
         @XmlElementRef(name = "AbstractProcess", namespace = "http://www.opengis.net/sensorML/1.0.1", type = JAXBElement.class)
         private JAXBElement<? extends AbstractProcessType> process;
@@ -636,10 +677,10 @@ public class SensorML extends AbstractSensorML {
                 }
             }
         }
-        
+
         /**
          * Gets the value of the process property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link JAXBElement }{@code <}{@link DataSourceType }{@code >}
@@ -649,21 +690,23 @@ public class SensorML extends AbstractSensorML {
          *     {@link JAXBElement }{@code <}{@link ProcessChainType }{@code >}
          *     {@link JAXBElement }{@code <}{@link ComponentArrayType }{@code >}
          *     {@link JAXBElement }{@code <}{@link ComponentType }{@code >}
-         *     
+         *
          */
         public JAXBElement<? extends AbstractProcessType> getProcess() {
             return process;
         }
 
+        @Override
         public AbstractProcess getRealProcess() {
-            if (process != null)
+            if (process != null) {
                 return process.getValue();
+            }
             return null;
         }
 
         /**
          * Sets the value of the process property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link JAXBElement }{@code <}{@link DataSourceType }{@code >}
@@ -673,19 +716,24 @@ public class SensorML extends AbstractSensorML {
          *     {@link JAXBElement }{@code <}{@link ProcessChainType }{@code >}
          *     {@link JAXBElement }{@code <}{@link ComponentArrayType }{@code >}
          *     {@link JAXBElement }{@code <}{@link ComponentType }{@code >}
-         *     
+         *
          */
         public void setProcess(final JAXBElement<? extends AbstractProcessType> value) {
-            this.process = ((JAXBElement<? extends AbstractProcessType> ) value);
+            this.process = value;
+        }
+
+        public void setRealProcess(AbstractProcess process) {
+            this.process = (process != null) ? new JAXBElement<AbstractProcessType>(PROCESS_NAME,
+                    AbstractProcessType.class, (AbstractProcessType) process) : null;
         }
 
         /**
          * Gets the value of the documentList property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link DocumentList }
-         *     
+         *
          */
         public DocumentList getDocumentList() {
             return documentList;
@@ -693,11 +741,11 @@ public class SensorML extends AbstractSensorML {
 
         /**
          * Sets the value of the documentList property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link DocumentList }
-         *     
+         *
          */
         public void setDocumentList(final DocumentList value) {
             this.documentList = value;
@@ -705,11 +753,11 @@ public class SensorML extends AbstractSensorML {
 
         /**
          * Gets the value of the contactList property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link ContactList }
-         *     
+         *
          */
         public ContactList getContactList() {
             return contactList;
@@ -717,11 +765,11 @@ public class SensorML extends AbstractSensorML {
 
         /**
          * Sets the value of the contactList property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link ContactList }
-         *     
+         *
          */
         public void setContactList(final ContactList value) {
             this.contactList = value;
@@ -729,11 +777,11 @@ public class SensorML extends AbstractSensorML {
 
         /**
          * Gets the value of the remoteSchema property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getRemoteSchema() {
             return remoteSchema;
@@ -741,11 +789,11 @@ public class SensorML extends AbstractSensorML {
 
         /**
          * Sets the value of the remoteSchema property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setRemoteSchema(final String value) {
             this.remoteSchema = value;
@@ -753,11 +801,11 @@ public class SensorML extends AbstractSensorML {
 
         /**
          * Gets the value of the type property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getType() {
             return type;
@@ -765,11 +813,11 @@ public class SensorML extends AbstractSensorML {
 
         /**
          * Sets the value of the type property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setType(final String value) {
             this.type = value;
@@ -777,11 +825,11 @@ public class SensorML extends AbstractSensorML {
 
         /**
          * Gets the value of the href property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getHref() {
             return href;
@@ -789,11 +837,11 @@ public class SensorML extends AbstractSensorML {
 
         /**
          * Sets the value of the href property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setHref(final String value) {
             this.href = value;
@@ -801,11 +849,11 @@ public class SensorML extends AbstractSensorML {
 
         /**
          * Gets the value of the role property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getRole() {
             return role;
@@ -813,11 +861,11 @@ public class SensorML extends AbstractSensorML {
 
         /**
          * Sets the value of the role property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setRole(final String value) {
             this.role = value;
@@ -825,11 +873,11 @@ public class SensorML extends AbstractSensorML {
 
         /**
          * Gets the value of the arcrole property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getArcrole() {
             return arcrole;
@@ -837,11 +885,11 @@ public class SensorML extends AbstractSensorML {
 
         /**
          * Sets the value of the arcrole property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setArcrole(final String value) {
             this.arcrole = value;
@@ -849,11 +897,11 @@ public class SensorML extends AbstractSensorML {
 
         /**
          * Gets the value of the title property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getTitle() {
             return title;
@@ -861,11 +909,11 @@ public class SensorML extends AbstractSensorML {
 
         /**
          * Sets the value of the title property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setTitle(final String value) {
             this.title = value;
@@ -873,11 +921,11 @@ public class SensorML extends AbstractSensorML {
 
         /**
          * Gets the value of the show property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getShow() {
             return show;
@@ -885,11 +933,11 @@ public class SensorML extends AbstractSensorML {
 
         /**
          * Sets the value of the show property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setShow(final String value) {
             this.show = value;
@@ -897,11 +945,11 @@ public class SensorML extends AbstractSensorML {
 
         /**
          * Gets the value of the actuate property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getActuate() {
             return actuate;
@@ -909,11 +957,11 @@ public class SensorML extends AbstractSensorML {
 
         /**
          * Sets the value of the actuate property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setActuate(final String value) {
             this.actuate = value;

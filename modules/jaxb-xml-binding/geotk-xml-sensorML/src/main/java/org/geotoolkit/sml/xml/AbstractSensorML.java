@@ -24,7 +24,7 @@ import java.util.List;
  * @author Guilhem Legal (Geomatys)
  * @module pending
  */
-public abstract class AbstractSensorML {
+public abstract interface AbstractSensorML {
 
     public abstract List<? extends SMLMember> getMember();
 

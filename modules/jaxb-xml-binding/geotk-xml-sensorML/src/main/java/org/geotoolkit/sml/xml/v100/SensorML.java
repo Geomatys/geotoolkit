@@ -32,9 +32,9 @@ import org.geotoolkit.sml.xml.AbstractSensorML;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -61,8 +61,8 @@ import org.geotoolkit.sml.xml.AbstractSensorML;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -81,7 +81,7 @@ import org.geotoolkit.sml.xml.AbstractSensorML;
     "member"
 })
 @XmlRootElement(name = "SensorML")
-public class SensorML extends AbstractSensorML {
+public class SensorML implements AbstractSensorML {
 
     private List<Keywords> keywords;
     private List<Identification> identification;
@@ -278,11 +278,11 @@ public class SensorML extends AbstractSensorML {
 
     /**
      * Gets the value of the version property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getVersion() {
         return version;
