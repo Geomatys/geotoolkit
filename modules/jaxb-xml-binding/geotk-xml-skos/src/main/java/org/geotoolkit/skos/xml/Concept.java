@@ -191,7 +191,7 @@ public class Concept implements Serializable {
     @Deprecated
     public Concept(final String about, final String prefLabel) {
         this.about     = about;
-        this.prefLabel = new ArrayList<Value>();
+        this.prefLabel = new ArrayList<>();
         if (prefLabel != null) {
             this.prefLabel.add(new Value(prefLabel));
         }
@@ -199,7 +199,7 @@ public class Concept implements Serializable {
 
     public Concept(final String about, final Value prefLabel) {
         this.about     = about;
-        this.prefLabel = new ArrayList<Value>();
+        this.prefLabel = new ArrayList<>();
         if (prefLabel != null) {
             this.prefLabel.add(prefLabel);
         }
@@ -211,17 +211,17 @@ public class Concept implements Serializable {
     @Deprecated
     public Concept(final String about, final String externalID, final String prefLabel, final String altLabel, final String definition, final String date) {
         this.about      = about;
-        this.altLabel = new ArrayList<Value>();
+        this.altLabel = new ArrayList<>();
         if (altLabel != null) {
             this.altLabel.add(new Value(altLabel));
         }
         this.date       = date;
-        this.definition = new ArrayList<Value>();
+        this.definition = new ArrayList<>();
         if (definition != null) {
             this.definition.add(new Value(definition));
         }
         this.externalID = externalID;
-        this.prefLabel = new ArrayList<Value>();
+        this.prefLabel = new ArrayList<>();
         if (prefLabel != null) {
             this.prefLabel.add(new Value(prefLabel));
         }
@@ -229,17 +229,17 @@ public class Concept implements Serializable {
 
     public Concept(final String about, final String externalID, final Value prefLabel, final Value altLabel, final Value definition, final String date) {
         this.about      = about;
-        this.altLabel = new ArrayList<Value>();
+        this.altLabel = new ArrayList<>();
         if (altLabel != null) {
             this.altLabel.add(altLabel);
         }
         this.date       = date;
-        this.definition = new ArrayList<Value>();
+        this.definition = new ArrayList<>();
         if (definition != null) {
             this.definition.add(definition);
         }
         this.externalID = externalID;
-        this.prefLabel = new ArrayList<Value>();
+        this.prefLabel = new ArrayList<>();
         if (prefLabel != null) {
             this.prefLabel.add(prefLabel);
         }
@@ -249,12 +249,12 @@ public class Concept implements Serializable {
         this.about      = about;
         this.altLabel   = altLabel;
         this.date       = date;
-        this.definition = new ArrayList<Value>();
+        this.definition = new ArrayList<>();
         if (definition != null) {
             this.definition.add(definition);
         }
         this.externalID = externalID;
-        this.prefLabel = new ArrayList<Value>();
+        this.prefLabel = new ArrayList<>();
         if (prefLabel != null) {
             this.prefLabel.add(prefLabel);
         }
@@ -362,7 +362,7 @@ public class Concept implements Serializable {
     }
 
     public Map<String, String> getRelations() {
-        Map<String, String> response = new HashMap<String, String>();
+        Map<String, String> response = new HashMap<>();
         if (narrower != null) {
             for (Concept naro : narrower) {
                 response.put(naro.resource, "http://www.w3.org/2004/02/skos/core#narrower");
@@ -387,7 +387,7 @@ public class Concept implements Serializable {
     }
 
     public List<String> getRelations(final String property) {
-        final List<String> result = new ArrayList<String>();
+        final List<String> result = new ArrayList<>();
         if ("http://www.w3.org/2004/02/skos/core#narrower".equals(property)) {
             if (narrower != null) {
                 for (Concept c : narrower) {
@@ -437,7 +437,7 @@ public class Concept implements Serializable {
 
     public List<Value> getPrefLabel() {
         if (this.prefLabel == null) {
-            this.prefLabel = new ArrayList<Value>();
+            this.prefLabel = new ArrayList<>();
         }
         return prefLabel;
     }
@@ -459,14 +459,14 @@ public class Concept implements Serializable {
     @Deprecated
     public void setPrefLabel(final String prefLabel) {
         if (this.prefLabel == null) {
-            this.prefLabel = new ArrayList<Value>();
+            this.prefLabel = new ArrayList<>();
         }
         this.prefLabel.add(new Value(prefLabel));
     }
 
     public void addPrefLabel(final Value prefLabel) {
         if (this.prefLabel == null) {
-            this.prefLabel = new ArrayList<Value>();
+            this.prefLabel = new ArrayList<>();
         }
         this.prefLabel.add(prefLabel);
     }
@@ -480,7 +480,7 @@ public class Concept implements Serializable {
      */
     public List<Value> getLabel() {
         if (label == null) {
-            this.label = new ArrayList<Value>();
+            this.label = new ArrayList<>();
         }
         return label;
     }
@@ -505,14 +505,14 @@ public class Concept implements Serializable {
     @Deprecated
     public void setLabel(final String label) {
         if (this.label == null) {
-            this.label = new ArrayList<Value>();
+            this.label = new ArrayList<>();
         }
         this.label.add(new Value(label));
     }
 
     public void addLabel(final Value label) {
         if (this.label == null) {
-            this.label = new ArrayList<Value>();
+            this.label = new ArrayList<>();
         }
         this.label.add(label);
     }
@@ -523,13 +523,13 @@ public class Concept implements Serializable {
 
     public List<Value> getAltLabel() {
         if (altLabel == null) {
-            altLabel = new ArrayList<Value>();
+            altLabel = new ArrayList<>();
         }
         return altLabel;
     }
 
     public List<String> getAltLabel(final String language) {
-        final List<String> response = new ArrayList<String>();
+        final List<String> response = new ArrayList<>();
         if (altLabel != null) {
             for (Value v: altLabel) {
                 if (v.getLang() != null &&
@@ -550,36 +550,51 @@ public class Concept implements Serializable {
     @Deprecated
     public void addAltLabel(final String altLabel) {
         if (this.altLabel == null) {
-            this.altLabel = new ArrayList<Value>();
+            this.altLabel = new ArrayList<>();
         }
         this.altLabel.add(new Value(altLabel));
     }
 
     public void addAltLabel(final Value altLabel) {
         if (this.altLabel == null) {
-            this.altLabel = new ArrayList<Value>();
+            this.altLabel = new ArrayList<>();
         }
         this.altLabel.add(altLabel);
     }
 
     public List<Value> getDefinition() {
         if (this.definition == null) {
-            this.definition = new ArrayList<Value>();
+            this.definition = new ArrayList<>();
         }
         return definition;
+    }
+    
+    public List<String> getDefinition(final String language) {
+        final List<String> response = new ArrayList<>();
+        if (definition != null) {
+            for (Value v: definition) {
+                if (v.getLang() != null &&
+                    v.getLang().equalsIgnoreCase(language)) {
+                    response.add(v.getValue());
+                } else if (v.getLang() == null && language == null) {
+                    response.add(v.getValue());
+                }
+            }
+        }
+        return response;
     }
 
     @Deprecated
     public void setDefinition(final String definition) {
         if (this.definition == null) {
-            this.definition = new ArrayList<Value>();
+            this.definition = new ArrayList<>();
         }
         this.definition.add(new Value(definition));
     }
 
     public void addDefinition(final Value definition) {
         if (this.definition == null) {
-            this.definition = new ArrayList<Value>();
+            this.definition = new ArrayList<>();
         }
         this.definition.add(definition);
     }
@@ -619,7 +634,7 @@ public class Concept implements Serializable {
 
     public void addLanguage(final String language) {
         if (this.language == null) {
-            this.language = new ArrayList<String>();
+            this.language = new ArrayList<>();
         }
         this.language.add(language);
     }
@@ -741,7 +756,7 @@ public class Concept implements Serializable {
      */
     public List<Concept> getBroader() {
         if (broader == null) {
-            broader = new ArrayList<Concept>();
+            broader = new ArrayList<>();
         }
         return broader;
     }
@@ -758,7 +773,7 @@ public class Concept implements Serializable {
      */
     public void addBroader(final Concept broader) {
         if (this.broader == null) {
-            this.broader = new ArrayList<Concept>();
+            this.broader = new ArrayList<>();
         }
         if (broader != null) {
             this.broader.add(broader);
@@ -784,7 +799,7 @@ public class Concept implements Serializable {
      */
     public List<Concept> getNarrower() {
         if (this.narrower == null) {
-            this.narrower = new ArrayList<Concept>();
+            this.narrower = new ArrayList<>();
         }
         return narrower;
     }
@@ -801,7 +816,7 @@ public class Concept implements Serializable {
      */
     public void addNarrower(final Concept narrower) {
         if (this.narrower == null) {
-            this.narrower = new ArrayList<Concept>();
+            this.narrower = new ArrayList<>();
         }
         if (narrower != null) {
             this.narrower.add(narrower);
@@ -827,7 +842,7 @@ public class Concept implements Serializable {
      */
     public void addNarrowerTransitive(final Concept narrower) {
         if (this.narrowerTransitive == null) {
-            this.narrowerTransitive = new ArrayList<Concept>();
+            this.narrowerTransitive = new ArrayList<>();
         }
         if (narrower != null) {
             this.narrowerTransitive.add(narrower);
@@ -839,7 +854,7 @@ public class Concept implements Serializable {
      */
     public List<Concept> getRelated() {
         if (this.related == null) {
-            this.related = new ArrayList<Concept>();
+            this.related = new ArrayList<>();
         }
         return related;
     }
@@ -849,7 +864,7 @@ public class Concept implements Serializable {
      */
     public void setRelated(final Concept related) {
         if (this.related == null) {
-            this.related = new ArrayList<Concept>();
+            this.related = new ArrayList<>();
         }
         this.related.add(related);
     }
@@ -863,7 +878,7 @@ public class Concept implements Serializable {
      */
     public void addRelated(final Concept related) {
         if (this.related == null) {
-            this.related = new ArrayList<Concept>();
+            this.related = new ArrayList<>();
         }
         if (related != null) {
             this.related.add(related);
@@ -875,7 +890,7 @@ public class Concept implements Serializable {
      */
     public List<Value> getScopeNote() {
         if (this.scopeNote == null) {
-            this.scopeNote = new ArrayList<Value>();
+            this.scopeNote = new ArrayList<>();
         }
         return scopeNote;
     }
@@ -886,14 +901,14 @@ public class Concept implements Serializable {
     @Deprecated
     public void setScopeNote(final String scopeNote) {
         if (this.scopeNote == null) {
-            this.scopeNote = new ArrayList<Value>();
+            this.scopeNote = new ArrayList<>();
         }
         this.scopeNote.add(new Value(scopeNote));
     }
 
     public void addScopeNote(final Value scopeNote) {
         if (this.scopeNote == null) {
-            this.scopeNote = new ArrayList<Value>();
+            this.scopeNote = new ArrayList<>();
         }
         this.scopeNote.add(scopeNote);
     }
@@ -907,14 +922,14 @@ public class Concept implements Serializable {
      */
     public List<Value> getHistoryNote() {
         if (this.historyNote == null) {
-            this.historyNote = new ArrayList<Value>();
+            this.historyNote = new ArrayList<>();
         }
         return historyNote;
     }
 
     public void addHistoryNote(final Value historyNote) {
         if (this.historyNote == null) {
-            this.historyNote = new ArrayList<Value>();
+            this.historyNote = new ArrayList<>();
         }
         this.historyNote.add(historyNote);
     }
@@ -942,7 +957,7 @@ public class Concept implements Serializable {
      */
     public List<Value> getExample() {
         if (this.example == null) {
-            this.example = new ArrayList<Value>();
+            this.example = new ArrayList<>();
         }
         return example;
     }
@@ -953,14 +968,14 @@ public class Concept implements Serializable {
     @Deprecated
     public void setExample(final String example) {
         if (this.example == null) {
-            this.example = new ArrayList<Value>();
+            this.example = new ArrayList<>();
         }
         this.example.add(new Value(example));
     }
 
     public void addExample(final Value example) {
         if (this.example == null) {
-            this.example = new ArrayList<Value>();
+            this.example = new ArrayList<>();
         }
         this.example.add(example);
     }
@@ -1016,7 +1031,7 @@ public class Concept implements Serializable {
      */
     public List<Concept> getHasTopConcept() {
         if (this.hasTopConcept == null) {
-            this.hasTopConcept = new ArrayList<Concept>();
+            this.hasTopConcept = new ArrayList<>();
         }
         return hasTopConcept;
     }
@@ -1033,7 +1048,7 @@ public class Concept implements Serializable {
      */
     public void addHasTopConcept(final Concept topConcept) {
         if (this.hasTopConcept == null) {
-            this.hasTopConcept = new ArrayList<Concept>();
+            this.hasTopConcept = new ArrayList<>();
         }
         if (hasTopConcept != null) {
             this.hasTopConcept.add(topConcept);
@@ -1115,7 +1130,7 @@ public class Concept implements Serializable {
      */
     public List<Concept> getInScheme() {
         if (this.inScheme == null) {
-            this.inScheme = new ArrayList<Concept>();
+            this.inScheme = new ArrayList<>();
         }
         return inScheme;
     }
@@ -1129,7 +1144,7 @@ public class Concept implements Serializable {
 
     public void addInScheme(final Concept inScheme) {
         if (this.inScheme == null) {
-            this.inScheme = new ArrayList<Concept>();
+            this.inScheme = new ArrayList<>();
         }
         if (inScheme != null) {
             this.inScheme.add(inScheme);
