@@ -58,4 +58,14 @@ abstract class ReadeableBasicRTreeTest extends AbstractTreeTest {
         tEM  = new FileTreeElementMapperTest(treeMapperFile, crs);
         tree = new FileBasicRTree(inOutFile, tEM);
     }
+
+    @Override
+    protected void finalize() throws Throwable {
+        super.finalize();
+        tree.close();
+        tEM.close();
+        assertTrue(tree.isClosed());
+        assertTrue(tEM.isClosed());
+
+    }
 }
