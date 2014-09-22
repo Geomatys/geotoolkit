@@ -18,10 +18,14 @@
 package org.geotoolkit.io.wkt;
 
 import java.util.Map;
+import java.util.Date;
+import java.util.Locale;
+import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.text.DecimalFormat;
 import java.text.ParsePosition;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import org.apache.sis.io.wkt.Accessor;
 import org.apache.sis.io.wkt.Symbols;
 import org.apache.sis.io.wkt.Formatter;
@@ -70,6 +74,11 @@ public abstract class Parser {
     private NumberFormat numberFormat;
 
     /**
+     * The object to use for parsing dates, created when first needed.
+     */
+    private DateFormat dateFormat;
+
+    /**
      * Constructs a parser using the specified set of symbols.
      *
      * @param symbols The set of symbols to use.
@@ -90,7 +99,7 @@ public abstract class Parser {
         if (SCIENTIFIC_NOTATION && numberFormat instanceof DecimalFormat) {
             final DecimalFormat numberFormat = (DecimalFormat) this.numberFormat;
             String pattern = numberFormat.toPattern();
-            if (pattern.indexOf("E0") < 0) {
+            if (!pattern.contains("E0")) {
                 final StringBuilder buffer = new StringBuilder(pattern);
                 final int split = pattern.indexOf(';');
                 if (split >= 0) {
@@ -158,7 +167,7 @@ public abstract class Parser {
             Number number = numberFormat.parse(text, position);
             if (number != null) {
                 int i = position.getIndex();
-                if (i<text.length() && text.charAt(i) == 'e') {
+                if (i<text.length() && text.charAt(i) == 'e') { // TODO: check for DecimalSymbols.getExponentSeparator().
                     final StringBuilder buffer = new StringBuilder(text);
                     buffer.setCharAt(i, 'E');
                     text = buffer.toString();
@@ -170,6 +179,16 @@ public abstract class Parser {
         } else {
             return numberFormat.parse(text, position);
         }
+    }
+
+    /**
+     * Parses the date at the given position.
+     */
+    final Date parseDate(final String text, final ParsePosition position) {
+        if (dateFormat == null) {
+            dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SX", Locale.ROOT); // TODO: creates from the Symbols object.
+        }
+        return dateFormat.parse(text, position);
     }
 
     /**

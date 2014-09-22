@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.io.wkt;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -113,6 +114,11 @@ final class Element {
         keyword = text.substring(lower, upper).toUpperCase(symbols.getLocale());
         position.setIndex(upper);
         /*
+         * Hard-coded list of elements in which to parse values as dates instead than numbers.
+         * We may try to find a more generic approach in a future version.
+         */
+        final boolean isTemporal = "TIMEORIGIN".equals(keyword);
+        /*
          * Parse the opening bracket. According CTS's specification, two characters
          * are acceptable: '[' and '('.  At the end of this method, we will require
          * the matching closing bracket. For example if the opening bracket was '[',
@@ -127,16 +133,16 @@ final class Element {
             }
         }
         while (!parseOptionalSeparator(text, position, symbols.getOpeningBracket(bracketIndex)));
-        list = new LinkedList<>();
         /*
          * Parse all elements inside the bracket. Elements are parsed sequentially
          * and their type are selected according their first character:
          *
-         *   - If the first character is a quote, then the element is parsed as a String.
-         *   - Otherwise, if the first character is a unicode identifier start, then the
-         *     element is parsed as a chidren Element.
-         *   - Otherwise, the element is parsed as a number.
+         *   - If the first character is a quote, then the value is returned as a String.
+         *   - Otherwise, if the first character is a unicode identifier start, then the element is parsed as a chid Element.
+         *   - Otherwise, if the characters are "true" of "false" (ignoring case), then the value is returned as a boolean.
+         *   - Otherwise, the element is parsed as a number or as a date, depending of 'isTemporal' boolean value.
          */
+        list = new LinkedList<>();
         final int separator  = symbols.getSeparator().codePointAt(0); // TODO: check for valid character.
         final int openQuote  = symbols.getOpeningQuote(0);
         final int closeQuote = symbols.getClosingQuote(0);
@@ -165,12 +171,17 @@ final class Element {
             //
             lower = position.getIndex();
             if (!Character.isUnicodeIdentifierStart(text.charAt(lower))) {
-                final Number number = parser.parseNumber(text, position);
-                if (number == null) {
+                final Object value;
+                if (isTemporal) {
+                    value = parser.parseDate(text, position);
+                } else {
+                    value = parser.parseNumber(text, position);
+                }
+                if (value == null) {
                     // Do not update the error index; it is already updated by NumberFormat.
                     throw unparsableString(text, position);
                 }
-                list.add(number);
+                list.add(value);
                 continue;
             }
             //
@@ -375,10 +386,28 @@ final class Element {
     //////////////////////////////////////////////////////////////////////////////////////
 
     /**
+     * Removes the next {@link Date} from the list and returns it.
+     *
+     * @param  key The parameter name. Used for formatting an error message if no date is found.
+     * @return The next {@link Date} on the list.
+     * @throws ParseException if no more date is available.
+     */
+    public Date pullDate(final String key) throws ParseException {
+        final Iterator<Object> iterator = list.iterator();
+        while (iterator.hasNext()) {
+            final Object object = iterator.next();
+            if (object instanceof Date) {
+                iterator.remove();
+                return (Date) object;
+            }
+        }
+        throw missingParameter(key);
+    }
+
+    /**
      * Removes the next {@link Number} from the list and returns it.
      *
-     * @param  key The parameter name. Used for formatting
-     *         an error message if no number are found.
+     * @param  key The parameter name. Used for formatting an error message if no number is found.
      * @return The next {@link Number} on the list as a {@code double}.
      * @throws ParseException if no more number is available.
      */
@@ -395,11 +424,9 @@ final class Element {
     }
 
     /**
-     * Removes the next {@link Number} from the list and returns it
-     * as an integer.
+     * Removes the next {@link Number} from the list and returns it as an integer.
      *
-     * @param  key The parameter name. Used for formatting
-     *         an error message if no number are found.
+     * @param  key The parameter name. Used for formatting an error message if no number is found.
      * @return The next {@link Number} on the list as an {@code int}.
      * @throws ParseException if no more number is available, or the number is not an integer.
      */
@@ -423,8 +450,7 @@ final class Element {
     /**
      * Removes the next {@link Boolean} from the list and returns it.
      *
-     * @param  key The parameter name. Used for formatting
-     *         an error message if no boolean are found.
+     * @param  key The parameter name. Used for formatting an error message if no boolean is found.
      * @return The next {@link Boolean} on the list as a {@code boolean}.
      * @throws ParseException if no more boolean is available.
      */
@@ -434,7 +460,7 @@ final class Element {
             final Object object = iterator.next();
             if (object instanceof Boolean) {
                 iterator.remove();
-                return ((Boolean) object).booleanValue();
+                return (Boolean) object;
             }
         }
         throw missingParameter(key);
@@ -443,8 +469,7 @@ final class Element {
     /**
      * Removes the next {@link String} from the list and returns it.
      *
-     * @param  key The parameter name. Used for formatting
-     *         an error message if no number are found.
+     * @param  key The parameter name. Used for formatting an error message if no number is found.
      * @return The next {@link String} on the list.
      * @throws ParseException if no more string is available.
      */
@@ -463,8 +488,7 @@ final class Element {
     /**
      * Removes the next {@link Object} from the list and returns it.
      *
-     * @param  key The parameter name. Used for formatting
-     *         an error message if no number are found.
+     * @param  key The parameter name. Used for formatting an error message if no number is found.
      * @return The next {@link Object} on the list (never {@code null}).
      * @throws ParseException if no more object is available.
      */
@@ -499,8 +523,7 @@ final class Element {
      * Removes the next {@link Element} from the list and returns it.
      *
      * @param  key The element name (e.g. {@code "PRIMEM"}).
-     * @return The next {@link Element} on the list,
-     *         or {@code null} if no more element is available.
+     * @return The next {@link Element} on the list, or {@code null} if no more element is available.
      */
     public Element pullOptionalElement(String key) {
         key = key.toUpperCase();

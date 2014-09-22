@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.io.wkt;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Collection;
 import java.text.ParseException;
@@ -27,9 +28,12 @@ import java.io.FileNotFoundException;
 import javax.measure.unit.NonSI;
 
 import org.opengis.util.FactoryException;
+import org.opengis.referencing.crs.CompoundCRS;
+import org.opengis.referencing.crs.TemporalCRS;
 import org.opengis.referencing.crs.ProjectedCRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.util.ComparisonMode;
 import org.apache.sis.util.LenientComparable;
 import org.apache.sis.io.wkt.Symbols;
@@ -217,7 +221,7 @@ public final strictfp class ParserTest {
         final ReferencingParser parser = new ReferencingParser();
         final CoordinateReferenceSystem crs1 = parser.parseCoordinateReferenceSystem(wkt);
         final String check = ((FormattableObject) crs1).toString(Convention.WKT1);
-        assertTrue(check.indexOf("TOWGS84[-231") >= 0);
+        assertTrue(check.contains("TOWGS84[-231"));
         final CoordinateReferenceSystem crs2 = parser.parseCoordinateReferenceSystem(check);
         assertTrue(((LenientComparable) crs1).equals(crs2, ComparisonMode.DEBUG));
         assertTrue(((LenientComparable) crs1).equals(crs2, ComparisonMode.BY_CONTRACT));
@@ -291,5 +295,40 @@ public final strictfp class ParserTest {
          */
         parser.setForcedAngularUnit(NonSI.DEGREE_ANGLE);
         verifyLambertII((ProjectedCRS) parser.parseCoordinateReferenceSystem(IGNF_LAMBE), true);
+    }
+
+    /**
+     * Tests the parsing of a compound CRS.
+     *
+     * @throws ParseException If the parsing failed.
+     *
+     * @since 4.0
+     */
+    @Test
+    public void testCompoundCRS() throws ParseException {
+        final String wkt =
+                "COMPD_CS[\"WGS 84 + height + time\",\n" +
+                "  GEOGCS[\"WGS 84\",\n" +
+                "    DATUM[\"World Geodetic System 1984\",\n" +
+                "      SPHEROID[\"WGS84\", 6378137.0, 298.257223563]],\n" +
+                "    PRIMEM[\"Greenwich\", 0.0],\n" +
+                "    UNIT[\"degree\", 0.017453292519943295],\n" +
+                "    AXIS[\"Longitude\", EAST],\n" +
+                "    AXIS[\"Latitude\", NORTH]],\n" +
+                "  VERT_CS[\"Gravity-related height\",\n" +
+                "    VERT_DATUM[\"Mean Sea Level\", 2005],\n" +
+                "    UNIT[\"metre\", 1],\n" +
+                "    AXIS[\"Gravity-related height\", UP]],\n" +
+                "  TIMECRS[\"Time\",\n" +
+                "    TIMEDATUM[\"Modified Julian\", TIMEORIGIN[1858-11-17T00:00:00.0Z]],\n" +
+                "    UNIT[\"day\", 86400],\n" +
+                "    AXIS[\"Time\", FUTURE]]]";
+
+        final ReferencingParser parser = new ReferencingParser();
+        CoordinateReferenceSystem crs = parser.parseCoordinateReferenceSystem(wkt);
+        assertTrue(crs instanceof CompoundCRS);
+        final TemporalCRS timeCRS = CRS.getTemporalComponent(crs);
+        assertNotNull(timeCRS);
+        assertEquals("epoch", new Date(-40587 * (24*60*60*1000L)), timeCRS.getDatum().getOrigin());
     }
 }

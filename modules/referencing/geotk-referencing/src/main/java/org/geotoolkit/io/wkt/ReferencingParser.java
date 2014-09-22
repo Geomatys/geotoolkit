@@ -22,12 +22,14 @@ import java.util.List;
 import java.util.Locale;
 import java.util.HashMap;
 import java.util.ArrayList;
+import java.util.Date;
 import java.text.ParseException;
 import java.text.ParsePosition;
 import javax.measure.unit.Unit;
 import javax.measure.quantity.Angle;
 import javax.measure.quantity.Length;
 import javax.measure.quantity.Quantity;
+import javax.measure.quantity.Duration;
 
 import org.opengis.metadata.citation.Citation;
 import org.opengis.parameter.ParameterValue;
@@ -50,6 +52,7 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.apache.sis.internal.referencing.Legacy;
+import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.referencing.datum.BursaWolfParameters;
 import org.apache.sis.referencing.cs.AbstractCS;
@@ -60,9 +63,9 @@ import org.apache.sis.measure.Units;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.internal.referencing.VerticalDatumTypes;
 
-import org.apache.sis.referencing.CommonCRS;
 import static java.util.Collections.singletonMap;
 import static javax.measure.unit.SI.METRE;
+import static javax.measure.unit.SI.SECOND;
 import static javax.measure.unit.SI.RADIAN;
 import static javax.measure.unit.NonSI.DEGREE_ANGLE;
 
@@ -99,7 +102,7 @@ import static org.apache.sis.referencing.datum.DefaultGeodeticDatum.BURSA_WOLF_K
  *
  * @author Rémi Eve (IRD)
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.20
+ * @version 4.0
  *
  * @see <A HREF="http://www.geoapi.org/snapshot/javadoc/org/opengis/referencing/doc-files/WKT.html">Well Know Text specification</A>
  * @see <A HREF="http://home.gdal.org/projects/opengis/wktproblems.html">OGC WKT Coordinate System Issues</A>
@@ -156,8 +159,7 @@ public class ReferencingParser extends MathTransformParser {
     private Unit<Angle> forcedAngularUnit;
 
     /**
-     * {@code true} if ISO axis identifiers should be used instead than the one defined
-     * by the WKT specification.
+     * {@code true} if ISO axis identifiers should be used instead than the one defined by the WKT specification.
      *
      * @since 3.18
      */
@@ -248,8 +250,8 @@ public class ReferencingParser extends MathTransformParser {
         final AxisDirection[] values = AxisDirection.values();
         Map<String,AxisDirection> directions = new HashMap<>(hashMapCapacity(values.length));
         final Locale locale = symbols.getLocale();
-        for (int i=0; i<values.length; i++) {
-            directions.put(values[i].name().trim().toUpperCase(locale), values[i]);
+        for (final AxisDirection value : values) {
+            directions.put(value.name().trim().toUpperCase(locale), value);
         }
         /*
          * Replaces by the last generated map if it is the same.
@@ -364,7 +366,7 @@ public class ReferencingParser extends MathTransformParser {
             throws ParseException
     {
         final Element element = getTree(text, new ParsePosition(0));
-        final CoordinateReferenceSystem crs = parseCoordinateReferenceSystem(element);
+        final CoordinateReferenceSystem crs = parseCoordinateReferenceSystem(element, false);
         element.close();
         return crs;
     }
@@ -376,7 +378,7 @@ public class ReferencingParser extends MathTransformParser {
      * @return The next element as a {@link CoordinateReferenceSystem} object.
      * @throws ParseException if the next element can't be parsed.
      */
-    private CoordinateReferenceSystem parseCoordinateReferenceSystem(final Element element)
+    private CoordinateReferenceSystem parseCoordinateReferenceSystem(final Element element, final boolean optional)
             throws ParseException
     {
         final Object key = element.peek();
@@ -392,10 +394,14 @@ public class ReferencingParser extends MathTransformParser {
                 case "PROJCS":    return parseProjCS  (element);
                 case "GEOCCS":    return parseGeoCCS  (element);
                 case "VERT_CS":   return parseVertCS  (element);
+                case "TIMECRS":   return parseTimeCRS (element);
                 case "LOCAL_CS":  return parseLocalCS (element);
                 case "COMPD_CS":  return parseCompdCS (element);
                 case "FITTED_CS": return parseFittedCS(element);
             }
+        }
+        if (optional && key == null) {
+            return null;
         }
         throw element.parseFailed(null, Errors.format(Errors.Keys.UNKNOWN_TYPE_1, key));
     }
@@ -429,6 +435,7 @@ public class ReferencingParser extends MathTransformParser {
                 case "PROJCS":    return parseProjCS  (element);
                 case "GEOCCS":    return parseGeoCCS  (element);
                 case "VERT_CS":   return parseVertCS  (element);
+                case "TIMECRS":   return parseTimeCRS (element);
                 case "LOCAL_CS":  return parseLocalCS (element);
                 case "COMPD_CS":  return parseCompdCS (element);
                 case "FITTED_CS": return parseFittedCS(element);
@@ -872,6 +879,32 @@ public class ReferencingParser extends MathTransformParser {
     }
 
     /**
+     * Parses a {@code "TimeDatum"} element. This element has the following pattern:
+     *
+     * {@preformat text
+     *     TimeDatum["<name>", TimeOrigin[<time origin>] {,<authority>}]
+     * }
+     *
+     * @param  parent The parent element.
+     * @return The {@code "TimeDatum"} element as a {@link TemporalDatum} object.
+     * @throws ParseException if the {@code "TimeDatum"} element can't be parsed.
+     */
+    private TemporalDatum parseTimeDatum(final Element parent) throws ParseException {
+        final Element element = parent.pullElement("TIMEDATUM");
+        final String     name = element.pullString ("name");
+        final Element  origin = element.pullElement("TIMEORIGIN");
+        final Date      epoch = origin .pullDate("origin");
+        origin.close();
+        final Map<String,?> properties = parseAuthority(element, name);
+        element.close();
+        try {
+            return datumFactory.createTemporalDatum(properties, epoch);
+        } catch (FactoryException exception) {
+            throw element.parseFailed(exception, null);
+        }
+    }
+
+    /**
      * Parses a {@code "LOCAL_DATUM"} element. This element has the following pattern:
      *
      * {@preformat text
@@ -1013,6 +1046,35 @@ public class ReferencingParser extends MathTransformParser {
     }
 
     /**
+     * Parses an <strong>optional</strong> {@code "TIMECRS"} element.
+     *
+     * @param  parent The parent element.
+     * @return The {@code "TIMECRS"} element as a {@link TemporalCRS} object.
+     * @throws ParseException if the {@code "TIMECRS"} element can't be parsed.
+     */
+    private TemporalCRS parseTimeCRS(final Element parent) throws ParseException {
+        final Element element = parent.pullElement("TIMECRS");
+        if (element == null) {
+            return null;
+        }
+        String               name = element.pullString("name");
+        TemporalDatum       datum = parseTimeDatum(element);
+        Unit<Duration>   timeUnit = parseUnit(element, SECOND);
+        CoordinateSystemAxis axis = parseAxis(element, timeUnit, false);
+        Map<String,?>  properties = parseAuthority(element, name);
+        element.close();
+        try {
+            if (axis == null || axisIgnored) {
+                axis = createAxis(null, "t", AxisDirection.UP, timeUnit);
+            }
+            return crsFactory.createTemporalCRS(properties, datum,
+                    csFactory.createTimeCS(singletonMap("name", name), axis));
+        } catch (FactoryException exception) {
+            throw element.parseFailed(exception, null);
+        }
+    }
+
+    /**
      * Parses a {@code "GEOGCS"} element. This element has the following pattern:
      *
      * {@preformat text
@@ -1105,15 +1167,17 @@ public class ReferencingParser extends MathTransformParser {
      * @throws ParseException if the {@code "COMPD_CS"} element can't be parsed.
      */
     private CompoundCRS parseCompdCS(final Element parent) throws ParseException {
-        final CoordinateReferenceSystem[] CRS = new CoordinateReferenceSystem[2];
+        final List<CoordinateReferenceSystem> components = new ArrayList<>(4);
         Element       element    = parent.pullElement("COMPD_CS");
         String        name       = element.pullString("name");
         Map<String,?> properties = parseAuthority(element, name);
-        CRS[0] = parseCoordinateReferenceSystem(element);
-        CRS[1] = parseCoordinateReferenceSystem(element);
+        CoordinateReferenceSystem crs;
+        while ((crs = parseCoordinateReferenceSystem(element, components.size() >= 2)) != null) {
+            components.add(crs);
+        }
         element.close();
         try {
-            return crsFactory.createCompoundCRS(properties, CRS);
+            return crsFactory.createCompoundCRS(properties, components.toArray(new CoordinateReferenceSystem[components.size()]));
         } catch (FactoryException exception) {
             throw element.parseFailed(exception, null);
         }
@@ -1136,7 +1200,7 @@ public class ReferencingParser extends MathTransformParser {
         String        name       = element.pullString("name");
         Map<String,?> properties = parseAuthority(element, name);
         final MathTransform toBase = parseMathTransform(element, true);
-        final CoordinateReferenceSystem base = parseCoordinateReferenceSystem(element);
+        final CoordinateReferenceSystem base = parseCoordinateReferenceSystem(element, false);
         final OperationMethod method = getOperationMethod();
         element.close();
         /*
