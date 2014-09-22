@@ -30,8 +30,8 @@
             <TextField fx:id="uiTitle" GridPane.columnIndex="1" GridPane.rowIndex="1" />
             <TextField fx:id="uiAbstract" GridPane.columnIndex="1" GridPane.rowIndex="2" />
             <CheckBox fx:id="uiDefault" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-            <Label text="%org.geotoolkit.gui.javafx.style.FXStyle.abstract" GridPane.rowIndex="2" />
-            <Label text="%org.geotoolkit.gui.javafx.style.FXStyle.default" GridPane.rowIndex="3" />
+            <Label styleClass="property-key" text="%org.geotoolkit.gui.javafx.style.FXStyle.abstract" GridPane.rowIndex="2" />
+            <Label styleClass="property-key" text="%org.geotoolkit.gui.javafx.style.FXStyle.default" GridPane.rowIndex="3" />
          </children>
          <padding>
             <Insets left="3.0" />

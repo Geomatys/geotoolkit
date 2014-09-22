@@ -27,10 +27,10 @@
          <children>
             <Label styleClass="property-key" text="%org.geotoolkit.gui.javafx.style.FXRule.name" />
             <Label styleClass="property-key" text="%org.geotoolkit.gui.javafx.style.FXRule.title" GridPane.rowIndex="1" />
-            <Label text="%org.geotoolkit.gui.javafx.style.FXRule.abstract" GridPane.rowIndex="2" />
-            <Label text="%org.geotoolkit.gui.javafx.style.FXRule.iselsefilter" GridPane.rowIndex="3" />
-            <Label text="%org.geotoolkit.gui.javafx.style.FXRule.minscale" GridPane.rowIndex="4" />
-            <Label text="%org.geotoolkit.gui.javafx.style.FXRule.maxscale" GridPane.rowIndex="5" />
+            <Label styleClass="property-key" text="%org.geotoolkit.gui.javafx.style.FXRule.abstract" GridPane.rowIndex="2" />
+            <Label styleClass="property-key" text="%org.geotoolkit.gui.javafx.style.FXRule.iselsefilter" GridPane.rowIndex="3" />
+            <Label styleClass="property-key" text="%org.geotoolkit.gui.javafx.style.FXRule.minscale" GridPane.rowIndex="4" />
+            <Label styleClass="property-key" text="%org.geotoolkit.gui.javafx.style.FXRule.maxscale" GridPane.rowIndex="5" />
             <Button fx:id="uiFilterButton" mnemonicParsing="false" text="%org.geotoolkit.gui.javafx.style.FXRule.filter" GridPane.rowIndex="6" />
             <TextField fx:id="uiName" GridPane.columnIndex="1" />
             <TextField fx:id="uiTitle" GridPane.columnIndex="1" GridPane.rowIndex="1" />

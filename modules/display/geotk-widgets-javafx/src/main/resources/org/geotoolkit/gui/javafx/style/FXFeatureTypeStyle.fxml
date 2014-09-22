@@ -25,7 +25,7 @@
          <children>
             <Label styleClass="property-key" text="%org.geotoolkit.gui.javafx.style.FXFeatureTypeStyle.name" />
             <Label styleClass="property-key" text="%org.geotoolkit.gui.javafx.style.FXFeatureTypeStyle.title" GridPane.rowIndex="1" />
-            <Label text="%org.geotoolkit.gui.javafx.style.FXFeatureTypeStyle.abstract" GridPane.rowIndex="2" />
+            <Label styleClass="property-key" text="%org.geotoolkit.gui.javafx.style.FXFeatureTypeStyle.abstract" GridPane.rowIndex="2" />
             <TextField fx:id="uiAbstract" GridPane.columnIndex="1" GridPane.rowIndex="2" />
             <TextField fx:id="uiTitle" GridPane.columnIndex="1" GridPane.rowIndex="1" />
             <TextField fx:id="uiName" GridPane.columnIndex="1" />
