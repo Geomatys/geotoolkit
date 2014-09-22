@@ -151,7 +151,7 @@ public class FXUserStyle extends FXStyleElementController<FXUserStyle, MutableSt
                 
         final ContextMenu menu = new ContextMenu();
         tree.setContextMenu(menu);
-        tree.getColumns().add(new TreeTableColumn<StyleTreeItem, String>());
+        tree.getColumns().add(new TreeTableColumn<>());
                 
         tree.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         tree.getSelectionModel().getSelectedItems().addListener(new ListChangeListener() {
