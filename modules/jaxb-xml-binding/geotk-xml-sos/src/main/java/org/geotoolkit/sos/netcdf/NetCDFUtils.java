@@ -203,6 +203,12 @@ public class NetCDFUtils {
         } else if (array instanceof ArrayDouble.D1) {
             final Double value = ((ArrayDouble.D1)array).get(i);
             return parseTime(value.longValue(), units);
+        } else if (array instanceof ArrayFloat.D1) {
+            final Float value = ((ArrayFloat.D1)array).get(i);
+            return parseTime(value.longValue(), units);
+        } else if (array instanceof ArrayShort.D1) {
+            final Long value = ((ArrayShort.D1)array).getLong(i);
+            return parseTime(value, units);
         } else {
             throw new IllegalArgumentException("Unexpected Array type for time field:" + array.getClass().getName() + " expecting D1");
         }
