@@ -98,6 +98,17 @@ public class PieSymbolizerRendererService extends AbstractSymbolizerRendererServ
 
             line++;
         }
+
+        g.setStroke(new BasicStroke(1));
+        g.setPaint(Color.BLACK);
+        final Rectangle2D rect = new Rectangle2D.Double(5, line * (fabove + 5), 30, fabove);
+        g.draw(rect);
+
+        g.setPaint(Color.GRAY);
+        g.fill(rect);
+
+        g.setPaint(Color.BLACK);
+        g.drawString("Others", 45, line * (fabove + 5) + fabove);
     }
 
 }

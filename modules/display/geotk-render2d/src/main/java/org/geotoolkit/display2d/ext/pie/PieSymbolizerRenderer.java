@@ -113,26 +113,24 @@ public class PieSymbolizerRenderer extends AbstractSymbolizerRenderer<CachedPieS
 
         for (final PropsPie propsPie : vals.values()) {
             final int pieSize = propsPie.size;
-            double nbValue = 0;
+            double nbTotalValue = 0;
             for (final Double val : propsPie.vals.values()) {
                 if (val != null && !Double.isNaN(val)) {
-                    nbValue += val;
+                    nbTotalValue += val;
                 }
             }
 
-            if (nbValue != 0) {
+            if (nbTotalValue != 0) {
                 double startDegree = 0;
+                double countOthers = 0;
+
                 for (final Map.Entry<Object,Double> entryPropsVal : propsPie.vals.entrySet()) {
                     if (entryPropsVal.getValue() == null || Double.isNaN(entryPropsVal.getValue())) {
                         continue;
                     }
-                    double degrees = entryPropsVal.getValue() * 360 / nbValue;
-                    for (final Geometry geom : propsPie.geometries) {
-                        final Point center = geom.getCentroid();
-                        final Arc2D arc = new Arc2D.Double(center.getX() - pieSize / 2, center.getY() - pieSize / 2, pieSize, pieSize,
-                                startDegree, degrees, Arc2D.PIE);
-                        g.setStroke(new BasicStroke(1));
+                    double degrees = entryPropsVal.getValue() * 360 / nbTotalValue;
 
+                    for (final Geometry geom : propsPie.geometries) {
                         // Try to find the matching color for this quarter of pie
                         Color c = null;
                         for (final PieSymbolizer.ColorQuarter candidate : colorQuarters) {
@@ -142,16 +140,38 @@ public class PieSymbolizerRenderer extends AbstractSymbolizerRenderer<CachedPieS
                             }
                         }
                         if (c == null) {
-                            // Not specified, so give default color values
-                            c = Color.GRAY;
+                            // Not specified, so go to others group
+                            countOthers += entryPropsVal.getValue();
+                            break;
                         }
+
+                        final Point center = geom.getCentroid();
+                        final Arc2D arc = new Arc2D.Double(center.getX() - pieSize / 2, center.getY() - pieSize / 2, pieSize, pieSize,
+                                startDegree, degrees, Arc2D.PIE);
+
                         g.setPaint(c);
                         g.fill(arc);
 
+                        g.setStroke(new BasicStroke(1));
                         g.setPaint(Color.BLACK);
                         g.draw(arc);
 
                         startDegree += degrees;
+                    }
+                }
+
+                if (countOthers > 0) {
+                    for (final Geometry geom : propsPie.geometries) {
+                        double degrees = countOthers * 360 / nbTotalValue;
+                        final Point center = geom.getCentroid();
+                        final Arc2D arc = new Arc2D.Double(center.getX() - pieSize / 2, center.getY() - pieSize / 2, pieSize, pieSize,
+                                startDegree, degrees, Arc2D.PIE);
+                        g.setPaint(Color.GRAY);
+                        g.fill(arc);
+
+                        g.setStroke(new BasicStroke(1));
+                        g.setPaint(Color.BLACK);
+                        g.draw(arc);
                     }
                 }
             }
