@@ -16,50 +16,26 @@
  */
 package org.geotoolkit.display2d.ext.pie;
 
-import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.Point;
-import com.vividsolutions.jts.geom.Polygon;
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.geom.Arc2D;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import org.geotoolkit.display.VisitFilter;
 import org.geotoolkit.display.PortrayalException;
-import org.geotoolkit.display2d.GO2Utilities;
+import org.geotoolkit.display.VisitFilter;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.display2d.container.stateless.StatelessContextParams;
-import org.geotoolkit.display2d.primitive.DefaultProjectedObject;
 import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.primitive.ProjectedFeature;
 import org.geotoolkit.display2d.primitive.ProjectedObject;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
-import org.geotoolkit.display2d.style.CachedPolygonSymbolizer;
 import org.geotoolkit.display2d.style.renderer.AbstractSymbolizerRenderer;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
-import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.feature.FeatureTypeBuilder;
-import org.geotoolkit.feature.FeatureUtilities;
-import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.geometry.jts.JTS;
-import org.geotoolkit.style.MutableStyleFactory;
 import org.opengis.feature.Feature;
 import org.opengis.filter.expression.Expression;
-import org.opengis.geometry.Envelope;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.MathTransform;
-import org.opengis.referencing.operation.TransformException;
-import org.opengis.style.Fill;
-import org.opengis.style.PolygonSymbolizer;
 
-import org.opengis.style.Stroke;
+import java.awt.*;
+import java.awt.geom.Arc2D;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Pie symbolizer renderer.
@@ -68,9 +44,11 @@ import org.opengis.style.Stroke;
  * @author Cédric Briançon (Geomatys)
  */
 public class PieSymbolizerRenderer extends AbstractSymbolizerRenderer<CachedPieSymbolizer> {
-
-    static final MutableStyleFactory SF = (MutableStyleFactory) FactoryFinder.getStyleFactory(null);
-    static final GeometryFactory GF = new GeometryFactory();
+    private static class PropsPie {
+        private Geometry[] geometries;
+        private Map<Object,Double> vals = new HashMap<>();
+        private int size = 100;
+    }
 
     public PieSymbolizerRenderer(final SymbolizerRendererService service, CachedPieSymbolizer cache, RenderingContext2D context){
         super(service, cache, context);
@@ -83,160 +61,100 @@ public class PieSymbolizerRenderer extends AbstractSymbolizerRenderer<CachedPieS
     @Override
     public void portray(Iterator<? extends ProjectedObject> ite) throws PortrayalException {
 
-        final int pieSize = 80;
+        final Expression size = symbol.getSource().getSize();
+        final Expression group = symbol.getSource().getGroup();
+        final Expression quarter = symbol.getSource().getQuarter();
+        final Expression value = symbol.getSource().getValue();
+        final List<PieSymbolizer.ColorQuarter> colorQuarters = symbol.getSource().getColorQuarters();
 
-        //create cells
-        final CoordinateReferenceSystem gridCRS = renderingContext.getObjectiveCRS2D();
-        final Envelope gridEnv = renderingContext.getCanvasObjectiveBounds2D();
-
-        final double step = (pieSize+100) * renderingContext.getDisplayToObjective().getScaleX();
-
-        final double startX = (int)((gridEnv.getMinimum(0) / step)-1) * step  ;
-        final double startY = (int)((gridEnv.getMinimum(1) / step)-1) * step;
-
-        final List<PieSymbolizer.Group> groups = symbol.getSource().getGroups();
-
-
-        final Map<Polygon,Map<PieSymbolizer.Group,Integer>> cells = new LinkedHashMap<>();
-
-        for(double x=startX;x<gridEnv.getMaximum(0);x+=step){
-            for(double y=startY;y<gridEnv.getMaximum(1);y+=step){
-
-                final Coordinate[] coords = new Coordinate[]{
-                        new Coordinate(x, y),
-                        new Coordinate(x, y+step),
-                        new Coordinate(x+step, y+step),
-                        new Coordinate(x+step, y),
-                        new Coordinate(x, y),
-                };
-                final LinearRing ring = GF.createLinearRing(coords);
-                final Polygon poly = GF.createPolygon(ring, new LinearRing[0]);
-                JTS.setCRS(poly, gridCRS);
-
-
-                final Map<PieSymbolizer.Group,Integer> grps = new LinkedHashMap<>();
-                for(PieSymbolizer.Group grp : groups){
-                    grps.put(grp, 0);
-                }
-
-                cells.put(poly, grps);
-            }
+        if (group == null || quarter == null || value == null) {
+            return;
         }
 
-        while(ite.hasNext()){
+        final Map<Object,PropsPie> vals = new HashMap<>();
+        while(ite.hasNext()) {
             try {
                 final Object next = ite.next();
                 final Feature f;
-                if(next instanceof ProjectedFeature){
-                    f = ((ProjectedFeature)next).getCandidate();
-                }else{
+                if (next instanceof ProjectedFeature) {
+                    f = ((ProjectedFeature) next).getCandidate();
+                } else {
                     continue;
                 }
-                ProjectedFeature pf = (ProjectedFeature) next;
-                final Geometry[] geoms = pf.getGeometry(null).getObjectiveGeometryJTS();
 
-entries:        for(Entry<Polygon,Map<PieSymbolizer.Group,Integer>> entry : cells.entrySet()){
-                    for (final Geometry geom : geoms) {
-                        if (entry.getKey().intersects(geom)) {
-                            Map<PieSymbolizer.Group, Integer> grps = entry.getValue();
-                            for (Entry<PieSymbolizer.Group, Integer> group : grps.entrySet()) {
-                                if (group.getKey().getFilter().evaluate(f)) {
-                                    group.setValue(group.getValue() + 1);
-                                }
-                            }
-
-                            break entries; //cells are mutually exclusive
-                        }
-                    }
+                final Object key = group.evaluate(f);
+                final Object quarterKey = quarter.evaluate(f);
+                final Double valueKey = value.evaluate(f, Double.class);
+                PropsPie propsPie = vals.get(key);
+                if (propsPie == null) {
+                    propsPie = new PropsPie();
+                    vals.put(key, propsPie);
                 }
-            } catch (TransformException ex) {
+                propsPie.geometries = ((ProjectedFeature) next).getGeometry(null).getDisplayGeometryJTS();
+                if (size != null) {
+                    propsPie.size = size.evaluate(f, Integer.class);
+                }
+
+                Double oldQuarter = propsPie.vals.get(quarterKey);
+                if (oldQuarter == null) {
+                    oldQuarter = valueKey;
+                } else {
+                    oldQuarter += valueKey;
+                }
+                propsPie.vals.put(quarterKey, oldQuarter);
+
+            } catch (Exception ex) {
                 throw new PortrayalException(ex);
             }
         }
 
-        final MathTransform objtoDisp = renderingContext.getObjectiveToDisplay();
-        final Font font = new Font("Monospaced", Font.BOLD, 12);
-        g2d.setFont(font);
-        final FontMetrics fm = g2d.getFontMetrics(font);
-        final int fabove = fm.getAscent();
+        renderingContext.switchToDisplayCRS();
+        final Graphics2D g = renderingContext.getGraphics();
 
-        try{
-            for(Map.Entry<Polygon,Map<PieSymbolizer.Group,Integer>> entry : cells.entrySet()){
-                final Map<PieSymbolizer.Group,Integer> grps = entry.getValue();
-
-                Point pt = entry.getKey().getCentroid();
-                pt = (Point) JTS.transform(pt, objtoDisp);
-                final int centerX = (int)pt.getX();
-                final int centerY = (int)pt.getY();
-
-                int count = 0;
-                for(Integer i : grps.values()){
-                    count += i;
+        for (final PropsPie propsPie : vals.values()) {
+            final int pieSize = propsPie.size;
+            double nbValue = 0;
+            for (final Double val : propsPie.vals.values()) {
+                if (val != null && !Double.isNaN(val)) {
+                    nbValue += val;
                 }
+            }
 
-                if(count>0){
+            if (nbValue != 0) {
+                double startDegree = 0;
+                for (final Map.Entry<Object,Double> entryPropsVal : propsPie.vals.entrySet()) {
+                    if (entryPropsVal.getValue() == null || Double.isNaN(entryPropsVal.getValue())) {
+                        continue;
+                    }
+                    double degrees = entryPropsVal.getValue() * 360 / nbValue;
+                    for (final Geometry geom : propsPie.geometries) {
+                        final Point center = geom.getCentroid();
+                        final Arc2D arc = new Arc2D.Double(center.getX() - pieSize / 2, center.getY() - pieSize / 2, pieSize, pieSize,
+                                startDegree, degrees, Arc2D.PIE);
+                        g.setStroke(new BasicStroke(1));
 
-                    final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
-                    ftb.setName("arc");
-                    ftb.add("geom", Polygon.class,renderingContext.getDisplayCRS());
-                    final FeatureType ft = ftb.buildFeatureType();
+                        // Try to find the matching color for this quarter of pie
+                        Color c = null;
+                        for (final PieSymbolizer.ColorQuarter candidate : colorQuarters) {
+                            if (entryPropsVal.getKey().equals(candidate.getQuarter().evaluate(null))) {
+                                c = candidate.getColor().evaluate(null, Color.class);
+                                break;
+                            }
+                        }
+                        if (c == null) {
+                            // Not specified, so give default color values
+                            c = Color.GRAY;
+                        }
+                        g.setPaint(c);
+                        g.fill(arc);
 
-                    //draw area ------------------------------------------------
-//                    final Polygon geo = (Polygon) JTS.transform(entry.getKey(), objtoDisp);
-//                    Shape shp = new JTSGeometryJ2D(geo);
-//                    g2d.setColor(Color.LIGHT_GRAY);
-//                    g2d.setStroke(new BasicStroke(1));
-//                    g2d.draw(shp);
-//                    g2d.drawLine((int)geo.getCoordinates()[0].x, (int)geo.getCoordinates()[0].y,
-//                                (int)geo.getCoordinates()[2].x, (int)geo.getCoordinates()[2].y);
-//                    g2d.drawLine((int)geo.getCoordinates()[1].x, (int)geo.getCoordinates()[1].y,
-//                                (int)geo.getCoordinates()[3].x, (int)geo.getCoordinates()[3].y);
+                        g.setPaint(Color.BLACK);
+                        g.draw(arc);
 
-
-
-                    // draw pie ------------------------------------------------
-                    final int nbGroup = grps.size();
-                    final double degrees = -360/nbGroup;
-
-                    double startDegree = 90;
-                    for(Entry<PieSymbolizer.Group,Integer> group : grps.entrySet()){
-                        final PieSymbolizer.Group symbol = group.getKey();
-
-
-                        final Arc2D arc = new Arc2D.Double(centerX-pieSize/2, centerY-pieSize/2, pieSize, pieSize, startDegree, degrees, Arc2D.PIE);
-                        final Geometry arcGeo = JTS.shapeToGeometry(arc, GF);
-                        final double arcCenterX = arcGeo.getCentroid().getX();
-                        final double arcCenterY = arcGeo.getCentroid().getY();
-
-                        final Feature arcFeature = FeatureUtilities.defaultFeature(ft, "0");
-                        arcFeature.setPropertyValue("geom", arcGeo);
-
-                        final StatelessContextParams param = new StatelessContextParams(renderingContext.getCanvas(), null);
-                        param.update(renderingContext);
-                        final DefaultProjectedObject<ProjectedFeature> pf = new DefaultProjectedObject(param, arcFeature);
-
-                        final Fill fill = symbol.getFill();
-                        final Stroke stroke = symbol.getStroke();
-                        final PolygonSymbolizer symbolizer = SF.polygonSymbolizer(stroke, fill, null);
-                        final CachedPolygonSymbolizer cachedFill = (CachedPolygonSymbolizer) GO2Utilities.getCached(symbolizer, ft);
-                        GO2Utilities.portray(pf.getCandidate(), cachedFill, renderingContext);
-
-                        final float[] disp = cachedFill.getDisplacement(pf);
-
-                        final Expression textfill = group.getKey().getText();
-                        final Color color = textfill.evaluate(null, Color.class);
-
-                        final String text = String.valueOf(group.getValue());
-                        final int textSize = fm.stringWidth(text);
-                        g2d.setColor(color);
-                        g2d.drawString(text, (int)(arcCenterX-textSize/2 + disp[0]), (int)(arcCenterY+fabove/2 - disp[1]) );
-
-                        startDegree -= degrees;
+                        startDegree += degrees;
                     }
                 }
             }
-        }catch(Exception ex){
-            ex.printStackTrace();
         }
     }
 

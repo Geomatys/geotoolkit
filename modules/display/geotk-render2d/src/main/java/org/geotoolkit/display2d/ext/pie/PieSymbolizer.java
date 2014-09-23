@@ -16,14 +16,15 @@
  */
 package org.geotoolkit.display2d.ext.pie;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.se.xml.v110.ParameterValueType;
+import org.geotoolkit.se.xml.v110.SymbolizerType;
+import org.geotoolkit.sld.xml.StyleXmlIO;
+import org.geotoolkit.style.visitor.ListingPropertyVisitor;
+import org.opengis.filter.expression.Expression;
+import org.opengis.style.ExtensionSymbolizer;
+import org.opengis.style.StyleVisitor;
+
 import javax.measure.quantity.Length;
 import javax.measure.unit.NonSI;
 import javax.measure.unit.Unit;
@@ -33,23 +34,12 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
-
-import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.ogc.xml.v110.FilterType;
-import org.geotoolkit.se.xml.v110.FillType;
-import org.geotoolkit.se.xml.v110.ParameterValueType;
-import org.geotoolkit.se.xml.v110.StrokeType;
-import org.geotoolkit.se.xml.v110.SymbolizerType;
-import org.geotoolkit.sld.xml.StyleXmlIO;
-import org.geotoolkit.style.visitor.ListingPropertyVisitor;
-import org.opengis.filter.Filter;
-import org.opengis.filter.expression.Expression;
-import org.opengis.style.ExtensionSymbolizer;
-import org.opengis.style.Fill;
-import org.opengis.style.Stroke;
-import org.opengis.style.StyleVisitor;
-import org.opengis.util.FactoryException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Pie symbolizer.
@@ -61,22 +51,50 @@ import org.opengis.util.FactoryException;
 @XmlType(name = "PieSymbolizerType")
 @XmlRootElement(name="PieSymbolizer", namespace="http://geotoolkit.org")
 public final class PieSymbolizer extends SymbolizerType implements ExtensionSymbolizer {
+    /**
+     * Stores the matching between a quarter property name and the chosen color.
+     */
+    @XmlElement(name = "ColorQuarter",namespace="http://geotoolkit.org")
+    private List<ColorQuarter> colorQuarters = new ArrayList<>();
 
-    private static final Logger LOGGER = Logging.getLogger(PieSymbolizer.class);
+    /**
+     * Size of the pie, in pixels. If not specified, 100px
+     */
+    @XmlElement(name = "Size",namespace="http://geotoolkit.org")
+    private ParameterValueType size;
 
+    /**
+     * Property name for identifying geometries. Used for the first regrouping of data.
+     */
     @XmlElement(name = "Group",namespace="http://geotoolkit.org")
-    private List<Group> groups;
+    private ParameterValueType group;
 
-    public PieSymbolizer(){
-        this(null);
-    }
+    /**
+     * Property name on which to split data into quarters. Used in a second time,
+     * to split pie into quarters.
+     */
+    @XmlElement(name = "Quarter",namespace="http://geotoolkit.org")
+    private ParameterValueType quarter;
 
-    public PieSymbolizer(List<Group> groups){
-        if(groups == null) {
-            groups = new ArrayList<Group>();
-        }
-        this.groups = groups;
-    }
+    /**
+     * Property name containing values into the data
+     */
+    @XmlElement(name = "Value",namespace="http://geotoolkit.org")
+    private ParameterValueType value;
+
+    @XmlTransient
+    private Expression pieSize;
+
+    @XmlTransient
+    private Expression groupExp;
+
+    @XmlTransient
+    private Expression quarterExp;
+
+    @XmlTransient
+    private Expression valueExp;
+
+    public PieSymbolizer(){}
 
     @Override
     public Unit<Length> getUnitOfMeasure() {
@@ -101,19 +119,26 @@ public final class PieSymbolizer extends SymbolizerType implements ExtensionSymb
 
         final Set<String> properties = new HashSet<>();
 
-        for(Group g : groups){
-            if(g.getFilter() != null){
-                g.getFilter().accept(ListingPropertyVisitor.VISITOR, properties);
+        for (final ColorQuarter colorQuarter : colorQuarters) {
+            if (colorQuarter.getColor() != null) {
+                colorQuarter.getColor().accept(ListingPropertyVisitor.VISITOR, properties);
             }
-            if(g.getFill() != null){
-                g.getFill().accept(ListingPropertyVisitor.VISITOR, properties);
+            if (colorQuarter.getQuarter() != null) {
+                colorQuarter.getQuarter().accept(ListingPropertyVisitor.VISITOR, properties);
             }
-            if(g.getStroke() != null){
-                g.getStroke().accept(ListingPropertyVisitor.VISITOR, properties);
-            }
-            if(g.getText() != null){
-                g.getText().accept(ListingPropertyVisitor.VISITOR, properties);
-            }
+        }
+
+        if(getSize() != null){
+            getSize().accept(ListingPropertyVisitor.VISITOR, properties);
+        }
+        if(getGroup() != null){
+            getGroup().accept(ListingPropertyVisitor.VISITOR, properties);
+        }
+        if(getQuarter() != null){
+            getQuarter().accept(ListingPropertyVisitor.VISITOR, properties);
+        }
+        if(getValue() != null){
+            getValue().accept(ListingPropertyVisitor.VISITOR, properties);
         }
 
         int i=0;
@@ -123,156 +148,139 @@ public final class PieSymbolizer extends SymbolizerType implements ExtensionSymb
         return config;
     }
 
-    public List<Group> getGroups() {
-        return groups;
+    public List<ColorQuarter> getColorQuarters() {
+        return colorQuarters;
     }
 
+    public Expression getSize() {
+        if(pieSize != null){
+            return pieSize;
+        }else if(size != null){
+            final StyleXmlIO util = new StyleXmlIO();
+            pieSize = util.getTransformer110().visitExpression(size);
+            return pieSize;
+        }
+        return null;
+    }
 
+    public void setSize(Expression pieSize) {
+        this.pieSize = pieSize;
+        final StyleXmlIO util = new StyleXmlIO();
+        this.size = util.getTransformerXMLv110().visitExpression(pieSize);
+    }
+
+    public Expression getGroup() {
+        if(groupExp != null){
+            return groupExp;
+        }else if(group != null){
+            final StyleXmlIO util = new StyleXmlIO();
+            groupExp = util.getTransformer110().visitExpression(group);
+            return groupExp;
+        }
+        return null;
+    }
+
+    public void setGroup(Expression groupExp) {
+        this.groupExp = groupExp;
+        final StyleXmlIO util = new StyleXmlIO();
+        this.group = util.getTransformerXMLv110().visitExpression(groupExp);
+    }
+
+    public Expression getQuarter() {
+        if(quarterExp != null){
+            return quarterExp;
+        }else if(quarter != null){
+            final StyleXmlIO util = new StyleXmlIO();
+            quarterExp = util.getTransformer110().visitExpression(quarter);
+            return quarterExp;
+        }
+        return null;
+    }
+
+    public void setQuarter(Expression quarterExp) {
+        this.quarterExp = quarterExp;
+        final StyleXmlIO util = new StyleXmlIO();
+        this.quarter = util.getTransformerXMLv110().visitExpression(quarterExp);
+    }
+
+    public Expression getValue() {
+        if(valueExp != null){
+            return valueExp;
+        }else if(value != null){
+            final StyleXmlIO util = new StyleXmlIO();
+            valueExp = util.getTransformer110().visitExpression(value);
+            return valueExp;
+        }
+        return null;
+    }
+
+    public void setValue(Expression valueExp) {
+        this.valueExp = valueExp;
+        final StyleXmlIO util = new StyleXmlIO();
+        this.value = util.getTransformerXMLv110().visitExpression(valueExp);
+    }
 
     @Override
     public Object accept(StyleVisitor sv, Object o) {
         return sv.visit(this, o);
     }
 
+
+    /**
+     * Mapping between a quarter name and its color.
+     */
     @XmlAccessorType(XmlAccessType.FIELD)
-    public static class Group{
+    public static class ColorQuarter {
+        /**
+         * Quarter property name.
+         */
+        @XmlElement(name = "Quarter",namespace="http://geotoolkit.org")
+        private ParameterValueType quarter;
 
-        //jaxb binding
-        @XmlElement(name = "Filter",namespace="http://geotoolkit.org")
-        private FilterType filterType;
-        @XmlElement(name = "Fill",namespace="http://geotoolkit.org")
-        protected FillType fillType;
-        @XmlElement(name = "Stroke",namespace="http://geotoolkit.org")
-        protected StrokeType strokeType;
-        @XmlElement(name = "Text",namespace="http://geotoolkit.org")
-        private ParameterValueType textColor;
+        /**
+         * Color assigned to this quarter.
+         */
+        @XmlElement(name = "Color",namespace="http://geotoolkit.org")
+        private ParameterValueType color;
 
-        //real style objects
         @XmlTransient
-        private Filter filter;
+        private Expression quarterExp;
+
         @XmlTransient
-        private Stroke stroke;
-        @XmlTransient
-        private Fill fill;
-        @XmlTransient
-        private Expression text;
+        private Expression colorExp;
 
-        public Group() {
-        }
-
-        public Group(Filter filter, Stroke stroke , Fill fill, Expression text) {
-            setFilter(filter);
-            setFill(fill);
-            setStroke(stroke);
-            setText(text);
-        }
-
-        public FilterType getFilterType() {
-            return filterType;
-        }
-
-        public void setFilterType(FilterType filterType) {
-            this.filterType = filterType;
-            this.filter = null;
-        }
-
-        public FillType getFillType() {
-            return fillType;
-        }
-
-        public void setFillType(FillType fill) {
-            this.fillType = fill;
-            this.fill = null;
-        }
-
-        public StrokeType getStrokeType() {
-            return strokeType;
-        }
-
-        public void setStrokeType(StrokeType stroke) {
-            this.strokeType = stroke;
-            this.stroke = null;
-        }
-
-        public ParameterValueType getTextType() {
-            return textColor;
-        }
-
-        public void setTextType(ParameterValueType textColor) {
-            this.textColor = textColor;
-            this.text = null;
-        }
-
-        public Filter getFilter() {
-            if(filter != null){
-                return filter;
-            }else if(filterType != null){
+        public Expression getQuarter() {
+            if(quarterExp != null){
+                return quarterExp;
+            }else if(quarter != null){
                 final StyleXmlIO util = new StyleXmlIO();
-                try {
-                    filter = util.getTransformer110().visitFilter(filterType);
-                    return filter;
-                } catch (FactoryException ex) {
-                    LOGGER.log(Level.WARNING, ex.getMessage(), ex);
-                }
-            }
-            return Filter.EXCLUDE;
-        }
-
-        public void setFilter(Filter filter) {
-            this.filter = filter;
-            final StyleXmlIO util = new StyleXmlIO();
-            this.filterType = util.getTransformerXMLv110().visit(filter);
-        }
-
-        public Stroke getStroke() {
-            if(stroke != null){
-                return stroke;
-            }else if(strokeType != null){
-                final StyleXmlIO util = new StyleXmlIO();
-                stroke = util.getTransformer110().visit(strokeType);
-                return stroke;
+                quarterExp = util.getTransformer110().visitExpression(quarter);
+                return quarterExp;
             }
             return null;
         }
 
-        public void setStroke(Stroke stroke) {
-            this.stroke = stroke;
+        public void setQuarter(Expression quarterExp) {
+            this.quarterExp = quarterExp;
             final StyleXmlIO util = new StyleXmlIO();
-            this.strokeType = util.getTransformerXMLv110().visit(stroke,null);
+            this.quarter = util.getTransformerXMLv110().visitExpression(quarterExp);
         }
 
-        public Fill getFill() {
-            if(fill != null){
-                return fill;
-            }else if(fillType != null){
+        public Expression getColor() {
+            if(colorExp != null){
+                return colorExp;
+            }else if(color != null){
                 final StyleXmlIO util = new StyleXmlIO();
-                fill = util.getTransformer110().visit(fillType);
-                return fill;
+                colorExp = util.getTransformer110().visitExpression(color);
+                return colorExp;
             }
             return null;
         }
 
-        public void setFill(Fill fill) {
-            this.fill = fill;
+        public void setColor(Expression colorExp) {
+            this.colorExp = colorExp;
             final StyleXmlIO util = new StyleXmlIO();
-            this.fillType = util.getTransformerXMLv110().visit(fill,null);
-        }
-
-        public Expression getText() {
-            if(text != null){
-                return text;
-            }else if(textColor != null){
-                final StyleXmlIO util = new StyleXmlIO();
-                text = util.getTransformer110().visitExpression(textColor);
-                return text;
-            }
-            return null;
-        }
-
-        public void setText(Expression text) {
-            this.text = text;
-            final StyleXmlIO util = new StyleXmlIO();
-            this.textColor = util.getTransformerXMLv110().visitExpression(text);
+            this.color = util.getTransformerXMLv110().visitExpression(colorExp);
         }
 
         @Override
@@ -283,21 +291,14 @@ public final class PieSymbolizer extends SymbolizerType implements ExtensionSymb
             if (getClass() != obj.getClass()) {
                 return false;
             }
-            final Group other = (Group) obj;
-            if (this.filter != other.filter && (this.filter == null || !this.filter.equals(other.filter))) {
+            final ColorQuarter other = (ColorQuarter) obj;
+            if (this.quarter != other.quarter && (this.quarter == null || !this.quarter.equals(other.quarter))) {
                 return false;
             }
-            if (this.stroke != other.stroke && (this.stroke == null || !this.stroke.equals(other.stroke))) {
-                return false;
-            }
-            if (this.fill != other.fill && (this.fill == null || !this.fill.equals(other.fill))) {
-                return false;
-            }
-            if (this.text != other.text && (this.text == null || !this.text.equals(other.text))) {
+            if (this.color != other.color && (this.color == null || !this.color.equals(other.color))) {
                 return false;
             }
             return true;
         }
     }
-
 }
