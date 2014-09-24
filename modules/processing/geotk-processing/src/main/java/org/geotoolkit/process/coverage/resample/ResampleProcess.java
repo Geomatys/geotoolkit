@@ -463,50 +463,11 @@ public class ResampleProcess extends AbstractProcess {
             return create(sourceCoverage, targetImage, targetGG, finalView, hints);
         }
 
-        //try to optimize resample using java wrap operation
-//        if(canUseJavaInterpolation(sourceImage, allSteps2D, interpolationType)){
-//            allSteps2D = PixelTranslation.translate(allSteps2D, PixelOrientation.CENTER,PixelOrientation.UPPER_LEFT,0,1);
-//            try{
-//                return resampleUsingJava(sourceCoverage, sourceImage, interpolationType,
-//                                   allSteps2D, targetImage, targetGG, finalView, hints);
-//            }catch(ImagingOpException ex){
-//                LOGGER.log(Level.WARNING, "Resampling process : Failed to use java affine resampling.");
-//            }
-//        }
-
-        MathTransform targetToSource = allSteps2D;
-        if(!(targetToSource instanceof AffineTransform)){
-            //try to use a grid transform to improve performances
-            try{
-                final TransformGrid tr = TransformGrid.create(
-                        (MathTransform2D)targetToSource,
-                        new Rectangle(targetImage.getWidth(),targetImage.getHeight()) );
-                if(tr.globalTransform!=null){
-                    //we can completly replace it by an affine transform
-                    targetToSource = new AffineTransform2D(tr.globalTransform);
-                    targetToSource = PixelTranslation.translate(targetToSource, PixelOrientation.UPPER_LEFT,PixelOrientation.UPPER_LEFT,0,1);
-
-                    // we should be able to use Java affine op here, but this produces plenty of artifact
-                    // since the transform is approximative, artifact = white pixels on tile borders
-                    //if(canUseJavaInterpolation(sourceImage, targetToSource, interpolationType)){
-                    //    MathTransform inv = targetToSource.inverse();
-                    //    return resampleUsingJava(sourceCoverage, sourceImage, interpolationType,
-                    //                       inv, targetImage, targetGG, finalView, hints);
-                    //}
-                }else{
-                    targetToSource = new GridMathTransform(tr);
-                }
-            }catch(ArithmeticException ex){
-                //could not be optimized
-                LOGGER.log(Level.FINE, ex.getMessage());
-            }
-        }
-
         final double[] fillValue = getFillValue(sourceCoverage);
 
         final Interpolation interpolator = Interpolation.create(
                 PixelIteratorFactory.createDefaultIterator(sourceImage,sourceBB), interpolationType, 2);
-        final Resample resample = new Resample(targetToSource, targetImage,
+        final Resample resample = new Resample(allSteps2D, targetImage,
                 interpolator, fillValue);
         resample.fillImage();
 
