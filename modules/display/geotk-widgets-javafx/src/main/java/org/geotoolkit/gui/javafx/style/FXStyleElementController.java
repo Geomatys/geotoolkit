@@ -42,8 +42,16 @@ public abstract class FXStyleElementController<E extends FXStyleElementControlle
     private static FilterFactory2 FF;
     private static MutableStyleFactory SF;
         
-    protected final SimpleObjectProperty<T> value = new SimpleObjectProperty<>();
+    protected final SimpleObjectProperty<T> value = new SimpleObjectProperty<T>(){
+        @Override
+        public void set(T newValue) {
+            //We do not update value when the editor is in update mode
+            if(updating) return;
+            super.set(newValue);
+        }
+    };
     protected MapLayer layer = null;
+    protected volatile boolean updating = false;
 
     public FXStyleElementController() {
         final Class thisClass = this.getClass();
@@ -70,7 +78,9 @@ public abstract class FXStyleElementController<E extends FXStyleElementControlle
         value.addListener(new ChangeListener<T>() {
             @Override
             public void changed(ObservableValue observable, Object oldValue, Object newValue) {
+                updating = true;
                 updateEditor((T)newValue);
+                updating = false;
             }
         });
     }
@@ -103,9 +113,7 @@ public abstract class FXStyleElementController<E extends FXStyleElementControlle
      * Called when to value property changes.
      * @param styleElement 
      */
-    protected void updateEditor(T styleElement){
-        
-    }
+    protected abstract void updateEditor(T styleElement);
         
     protected synchronized static FilterFactory2 getFilterFactory(){
         if(FF==null)FF = (FilterFactory2) FactoryFinder.getFilterFactory(null);

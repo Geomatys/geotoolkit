@@ -17,6 +17,11 @@
 
 package org.geotoolkit.gui.javafx.style;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.fxml.FXML;
+import javafx.scene.control.TextField;
+import static org.geotoolkit.gui.javafx.style.FXStyleElementController.getStyleFactory;
 import org.opengis.style.ContrastEnhancement;
 import org.opengis.style.SelectedChannelType;
 
@@ -26,6 +31,11 @@ import org.opengis.style.SelectedChannelType;
  */
 public class FXSelectedChannelType extends FXStyleElementController<FXSelectedChannelType, SelectedChannelType>{
 
+    @FXML
+    protected FXContrastEnhancement uiContrast;
+    @FXML
+    protected TextField uiName;
+        
     @Override
     public Class<SelectedChannelType> getEditedClass() {
         return SelectedChannelType.class;
@@ -34,6 +44,24 @@ public class FXSelectedChannelType extends FXStyleElementController<FXSelectedCh
     @Override
     public SelectedChannelType newValue() {
         return getStyleFactory().selectedChannelType("", (ContrastEnhancement)null);
+    }
+    
+    @Override
+    public void initialize() {
+        super.initialize();        
+        final ChangeListener changeListener = (ChangeListener) (ObservableValue observable, Object oldValue, Object newValue) -> {
+            if(updating) return;
+            value.set(getStyleFactory().selectedChannelType(uiName.getText(), uiContrast.valueProperty().get()));
+        };
+        
+        uiContrast.valueProperty().addListener(changeListener);
+        uiName.textProperty().addListener(changeListener);
+    }
+    
+    @Override
+    protected void updateEditor(SelectedChannelType styleElement) {
+        uiContrast.valueProperty().setValue(styleElement.getContrastEnhancement());
+        uiName.textProperty().setValue(styleElement.getChannelName());
     }
     
 }

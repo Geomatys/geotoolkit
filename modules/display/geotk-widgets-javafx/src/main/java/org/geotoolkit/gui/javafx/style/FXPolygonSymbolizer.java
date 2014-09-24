@@ -31,12 +31,10 @@ import org.opengis.style.PolygonSymbolizer;
 public class FXPolygonSymbolizer extends FXStyleElementController<FXPolygonSymbolizer,PolygonSymbolizer> {
     
     @FXML
-    protected FXFill uiFill;
-    
+    protected FXFill uiFill;    
     @FXML
     protected FXStroke uiStroke;
 
-    private ChangeListener changeListener;
     
     @Override
     public Class<PolygonSymbolizer> getEditedClass() {
@@ -51,14 +49,11 @@ public class FXPolygonSymbolizer extends FXStyleElementController<FXPolygonSymbo
     @Override
     public void initialize() {
         super.initialize();
-        changeListener = new ChangeListener() {
-            @Override
-            public void changed(ObservableValue observable, Object oldValue, Object newValue) {
-                final PolygonSymbolizer symbolizer;
-                symbolizer = getStyleFactory().polygonSymbolizer(uiStroke.valueProperty().get(), uiFill.valueProperty().get(), null);
-                value.set(symbolizer);
-            }
-
+        final ChangeListener changeListener = (ChangeListener) (ObservableValue observable, Object oldValue, Object newValue) -> {
+            if(updating) return;
+            final PolygonSymbolizer symbolizer;
+            symbolizer = getStyleFactory().polygonSymbolizer(uiStroke.valueProperty().get(), uiFill.valueProperty().get(), null);
+            value.set(symbolizer);
         };
         uiFill.valueProperty().addListener(changeListener);
         uiStroke.valueProperty().addListener(changeListener);
@@ -66,7 +61,6 @@ public class FXPolygonSymbolizer extends FXStyleElementController<FXPolygonSymbo
     
     @Override
     protected void updateEditor(PolygonSymbolizer styleElement) {
-        super.updateEditor(styleElement);
         uiFill.valueProperty().setValue(styleElement.getFill());
         uiStroke.valueProperty().setValue(styleElement.getStroke());
     }

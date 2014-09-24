@@ -17,6 +17,11 @@
 
 package org.geotoolkit.gui.javafx.style;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.fxml.FXML;
+import javafx.scene.control.CheckBox;
+import static org.geotoolkit.gui.javafx.style.FXStyleElementController.getStyleFactory;
 import org.geotoolkit.style.StyleConstants;
 import org.opengis.style.ShadedRelief;
 
@@ -26,6 +31,11 @@ import org.opengis.style.ShadedRelief;
  */
 public class FXShadedRelief extends FXStyleElementController<FXShadedRelief, ShadedRelief>{
 
+    @FXML
+    private FXNumberExpression uiFactor;
+    @FXML
+    private CheckBox uiBrightness;
+        
     @Override
     public Class<ShadedRelief> getEditedClass() {
         return ShadedRelief.class;
@@ -34,6 +44,24 @@ public class FXShadedRelief extends FXStyleElementController<FXShadedRelief, Sha
     @Override
     public ShadedRelief newValue() {
         return StyleConstants.DEFAULT_SHADED_RELIEF;
+    }
+    
+    @Override
+    public void initialize() {
+        super.initialize();        
+        final ChangeListener changeListener = (ChangeListener) (ObservableValue observable, Object oldValue, Object newValue) -> {
+            if(updating) return;
+            value.set(getStyleFactory().shadedRelief(uiFactor.valueProperty().get(), uiBrightness.isSelected()));
+        };
+        
+        uiFactor.valueProperty().addListener(changeListener);
+        uiBrightness.selectedProperty().addListener(changeListener);
+    }
+    
+    @Override
+    protected void updateEditor(ShadedRelief styleElement) {
+        uiFactor.valueProperty().setValue(styleElement.getReliefFactor());
+        uiBrightness.selectedProperty().setValue(styleElement.isBrightnessOnly());
     }
     
 }

@@ -17,6 +17,8 @@
 
 package org.geotoolkit.gui.javafx.style;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import org.geotoolkit.style.StyleConstants;
 import org.opengis.style.LineSymbolizer;
@@ -29,25 +31,30 @@ public class FXLineSymbolizer extends FXStyleElementController<FXLineSymbolizer,
     
     @FXML
     protected FXStroke uiStroke;
-
+    
     @Override
     public Class<LineSymbolizer> getEditedClass() {
         return LineSymbolizer.class;
     }
     
     @Override
-    public void initialize() {
-        super.initialize();
-    }
-
-    @Override
     public LineSymbolizer newValue() {
-        return StyleConstants.DEFAULT_LINE_SYMBOLIZER;
+        return getStyleFactory().lineSymbolizer(StyleConstants.DEFAULT_STROKE, null);
     }
     
     @Override
+    public void initialize() {
+        super.initialize();
+        final ChangeListener changeListener = (ChangeListener) (ObservableValue observable, Object oldValue, Object newValue) -> {
+            if(updating) return;
+            final LineSymbolizer symbolizer = getStyleFactory().lineSymbolizer(uiStroke.valueProperty().get(), null);
+            value.set(symbolizer);
+        };
+        uiStroke.valueProperty().addListener(changeListener);
+    }
+        
+    @Override
     protected void updateEditor(LineSymbolizer styleElement) {
-        super.updateEditor(styleElement);
         uiStroke.valueProperty().setValue(styleElement.getStroke());
     }
 

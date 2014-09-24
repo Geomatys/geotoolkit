@@ -21,6 +21,7 @@ import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.IdentityHashMap;
 import java.util.List;
@@ -33,17 +34,21 @@ import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.ContextMenu;
+import javafx.scene.control.CustomMenuItem;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
+import javafx.scene.control.TreeTablePosition;
 import javafx.scene.control.TreeTableView;
 import javafx.scene.control.cell.TextFieldTreeTableCell;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
+import javafx.stage.WindowEvent;
 import javafx.util.Callback;
 import org.geotoolkit.display2d.service.DefaultGlyphService;
 import org.geotoolkit.gui.javafx.contexttree.TreeMenuItem;
@@ -70,6 +75,11 @@ import org.opengis.util.GenericName;
  * @author Johann Sorel (Geomatys)
  */
 public class FXUserStyle extends FXStyleElementController<FXUserStyle, MutableStyle>{
+    
+    private static final MenuItem DUMMY = new CustomMenuItem();
+    static {
+        DUMMY.setVisible(false);
+    }
     
     @FXML
     protected TreeTableView tree;
@@ -120,17 +130,16 @@ public class FXUserStyle extends FXStyleElementController<FXUserStyle, MutableSt
     
     @Override
     protected void updateEditor(MutableStyle styleElement) {
-        super.updateEditor(styleElement);
         
         tree.setRoot(new StyleTreeItem(styleElement));
         //this will cause the column width to fit the view area
         tree.setColumnResizePolicy(TreeTableView.CONSTRAINED_RESIZE_POLICY);
         
-        final TreeTableColumn<StyleTreeItem, String> col = new TreeTableColumn<>();
-        col.setCellValueFactory(new Callback<TreeTableColumn.CellDataFeatures<StyleTreeItem, String>, ObservableValue<String>>() {
+        final TreeTableColumn<Object, String> col = new TreeTableColumn<>();
+        col.setCellValueFactory(new Callback<TreeTableColumn.CellDataFeatures<Object, String>, ObservableValue<String>>() {
             @Override
-            public ObservableValue<String> call(TreeTableColumn.CellDataFeatures<StyleTreeItem, String> param) {
-                final Object obj = param.getValue().getValue().getValue();
+            public ObservableValue<String> call(TreeTableColumn.CellDataFeatures<Object, String> param) {
+                final Object obj = param.getValue().getValue();
                 if(obj instanceof Style){
                     return FXUtilities.beanProperty(obj, "name", String.class);
                 }else if(obj instanceof FeatureTypeStyle){
@@ -138,7 +147,7 @@ public class FXUserStyle extends FXStyleElementController<FXUserStyle, MutableSt
                 }else if(obj instanceof Rule){
                     return FXUtilities.beanProperty(obj, "name", String.class);
                 }else if(obj instanceof Symbolizer){
-                    return FXUtilities.beanProperty(obj, "name", String.class);
+                    return new SimpleObjectProperty<>(((Symbolizer)obj).getName());
                 }else{
                     return new SimpleObjectProperty<>("");
                 }
@@ -151,18 +160,25 @@ public class FXUserStyle extends FXStyleElementController<FXUserStyle, MutableSt
                 
         final ContextMenu menu = new ContextMenu();
         tree.setContextMenu(menu);
-        tree.getColumns().add(new TreeTableColumn<>());
-                
+        tree.getColumns().add(col);                
         tree.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
-        tree.getSelectionModel().getSelectedItems().addListener(new ListChangeListener() {
-            @Override
-            public void onChanged(ListChangeListener.Change c) {                
-                final TreeItem treeItem = (TreeItem) tree.getSelectionModel().getSelectedItem();
+        //dummy item to ensure showing will be called
+        menu.getItems().add(DUMMY);
                 
+        menu.setOnShowing(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(WindowEvent event) {                
                 //update menu items
                 final ObservableList items = menu.getItems();
                 items.clear();
-                final List<? extends TreeItem> selection = tree.getSelectionModel().getSelectedItems();
+                items.add(DUMMY);
+                final List<TreeItem> selection = new ArrayList<>();
+                for(Object i : tree.getSelectionModel().getSelectedCells()){
+                    final TreeTablePosition ttp = (TreeTablePosition) i;                    
+                    final TreeItem ti = tree.getTreeItem(ttp.getRow());
+                    if(ti!=null && !selection.contains(ti)) selection.add(ti);
+                }
+                //final List<? extends TreeItem> selection = tree.getSelectionModel().getSelectedItems();
                 for(int i=0,n=menuItems.size();i<n;i++){
                     final Object candidate = menuItems.get(i);
                     if(candidate instanceof TreeMenuItem){
@@ -194,8 +210,13 @@ public class FXUserStyle extends FXStyleElementController<FXUserStyle, MutableSt
                         }
                     }
                 }
+            }
+        });
                 
-                
+        tree.getSelectionModel().getSelectedItems().addListener(new ListChangeListener() {
+            @Override
+            public void onChanged(ListChangeListener.Change c) {                
+                final TreeItem treeItem = (TreeItem) tree.getSelectionModel().getSelectedItem();
                 
 //                //we validate the previous edition pane
 //                if(!applying){
@@ -228,7 +249,7 @@ public class FXUserStyle extends FXStyleElementController<FXUserStyle, MutableSt
         
     }
     
-    private void applyEditor(final TreeItem oldPath){        
+    private void applyEditor(final TreeItem oldPath){
         if(editor == null) return;
 
         //create implies a call to apply if a style element is present
@@ -252,50 +273,62 @@ public class FXUserStyle extends FXStyleElementController<FXUserStyle, MutableSt
                 }
             }
         }
-        
+    }
+    
+    private void hackClearSelection(){
+        //bug in javafx JDK 8u20 : https://javafx-jira.kenai.com/browse/RT-24055
+        //clear the selection rather then have an incorrect selection
+        //tree.getSelectionModel().clearSelection();
     }
     
     private static class StyleTreeItem extends TreeItem<Object> implements StyleListener, FeatureTypeStyleListener, RuleListener{
 
-        public StyleTreeItem(Object val) {            
+        public StyleTreeItem(Object val) {
             valueProperty().addListener(new ChangeListener<Object>() {
                 @Override
                 public void changed(ObservableValue<? extends Object> observable, Object oldValue, Object newValue) {
-                    if (oldValue instanceof MutableStyle) {
-                        final MutableStyle style = (MutableStyle) oldValue;
-                        style.removeListener(StyleTreeItem.this);
-                    } else if (oldValue instanceof MutableFeatureTypeStyle) {
-                        final MutableFeatureTypeStyle fts = (MutableFeatureTypeStyle) oldValue;
-                        fts.removeListener(StyleTreeItem.this);
-                    } else if (oldValue instanceof MutableRule) {
-                        final MutableRule r = (MutableRule) oldValue;
-                        r.removeListener(StyleTreeItem.this);
-                    }
-                    
-                    if (newValue instanceof MutableStyle) {
-                        final MutableStyle style = (MutableStyle) newValue;
-                        style.addListener(StyleTreeItem.this);
-                        setGraphic(new ImageView(Commons.ICON_STYLE));
-                    } else if (newValue instanceof MutableFeatureTypeStyle) {
-                        final MutableFeatureTypeStyle fts = (MutableFeatureTypeStyle) newValue;
-                        fts.addListener(StyleTreeItem.this);
-                        setGraphic(new ImageView(Commons.ICON_FTS));
-                    } else if (newValue instanceof MutableRule) {
-                        final MutableRule r = (MutableRule) newValue;
-                        r.addListener(StyleTreeItem.this);
-                        setGraphic(new ImageView(Commons.ICON_RULE));
-                    } else if (newValue instanceof Symbolizer) {
-                        final Symbolizer symb = (Symbolizer) newValue;
-                        final Dimension dim = DefaultGlyphService.glyphPreferredSize(symb, null, null);
-                        final BufferedImage img = new BufferedImage(dim.width, dim.height, BufferedImage.TYPE_INT_ARGB);
-                        DefaultGlyphService.render(symb, new Rectangle(dim),img.createGraphics(),null);
-                        setGraphic(new ImageView(SwingFXUtils.toFXImage(img, null)));
-                    }
-
+                    updateNode(oldValue, newValue);
                     updateChildren(null, CollectionChangeEvent.ITEM_ADDED);
                 }
             });
             setValue(val);
+        }
+        
+        private void updateNode(Object oldValue, Object newValue){
+            if (oldValue instanceof MutableStyle) {
+                final MutableStyle style = (MutableStyle) oldValue;
+                style.removeListener(StyleTreeItem.this);
+            } else if (oldValue instanceof MutableFeatureTypeStyle) {
+                final MutableFeatureTypeStyle fts = (MutableFeatureTypeStyle) oldValue;
+                fts.removeListener(StyleTreeItem.this);
+            } else if (oldValue instanceof MutableRule) {
+                final MutableRule r = (MutableRule) oldValue;
+                r.removeListener(StyleTreeItem.this);
+            }
+
+            final ImageView img = new ImageView();
+            if (newValue instanceof MutableStyle) {
+                final MutableStyle style = (MutableStyle) newValue;
+                style.addListener(StyleTreeItem.this);
+                img.setImage(Commons.ICON_STYLE);
+            } else if (newValue instanceof MutableFeatureTypeStyle) {
+                final MutableFeatureTypeStyle fts = (MutableFeatureTypeStyle) newValue;
+                fts.addListener(StyleTreeItem.this);
+                img.setImage(Commons.ICON_FTS);
+            } else if (newValue instanceof MutableRule) {
+                final MutableRule r = (MutableRule) newValue;
+                r.addListener(StyleTreeItem.this);
+                img.setImage(Commons.ICON_RULE);
+            } else if (newValue instanceof Symbolizer) {
+                final Symbolizer symb = (Symbolizer) newValue;
+                final Dimension dim = DefaultGlyphService.glyphPreferredSize(symb, null, null);
+                final BufferedImage imge = new BufferedImage(dim.width, dim.height, BufferedImage.TYPE_INT_ARGB);
+                DefaultGlyphService.render(symb, new Rectangle(dim),imge.createGraphics(),null);
+                img.setImage(SwingFXUtils.toFXImage(imge, null));
+            }
+            //lbl.setTextAlignment(TextAlignment.CENTER);
+            //lbl.setContentDisplay(ContentDisplay.LEFT);
+            setGraphic(img);
         }
         
         private void updateChildren(CollectionChangeEvent event, int type){
@@ -323,9 +356,7 @@ public class FXUserStyle extends FXStyleElementController<FXUserStyle, MutableSt
                 itemChildren = ((MutableRule)item).symbolizers();
             }
             
-            //reverse order
-            for(int i=itemChildren.size()-1;i>=0;i--){
-                final Object child = itemChildren.get(i);
+            for(Object child : itemChildren){
                 StyleTreeItem tmi = cache.get(child);
                 if(tmi==null) tmi = new StyleTreeItem(child);
                 getChildren().add(tmi);
@@ -354,7 +385,8 @@ public class FXUserStyle extends FXStyleElementController<FXUserStyle, MutableSt
         public void semanticTypeChange(CollectionChangeEvent<SemanticType> event) {}
         
         @Override
-        public void propertyChange(PropertyChangeEvent evt) {}
+        public void propertyChange(PropertyChangeEvent evt) {
+        }
 
     }
     
@@ -404,6 +436,7 @@ public class FXUserStyle extends FXStyleElementController<FXUserStyle, MutableSt
             final MutableStyle style = (MutableStyle) items.get(0).getValue();
             style.featureTypeStyles().add(getStyleFactory().featureTypeStyle(
                     RandomStyleBuilder.createRandomPointSymbolizer()));
+            hackClearSelection();
         }
     }
 
@@ -424,6 +457,7 @@ public class FXUserStyle extends FXStyleElementController<FXUserStyle, MutableSt
             final MutableFeatureTypeStyle fts = (MutableFeatureTypeStyle) items.get(0).getValue();
             fts.rules().add(getStyleFactory().rule(
                     RandomStyleBuilder.createRandomPointSymbolizer()));
+            hackClearSelection();
         }
     }
 
@@ -445,6 +479,7 @@ public class FXUserStyle extends FXStyleElementController<FXUserStyle, MutableSt
         protected void handle(ActionEvent event) {
             final MutableRule rule = (MutableRule) items.get(0).getValue();
             rule.symbolizers().add((Symbolizer)editor.newValue());
+            hackClearSelection();
         }
     }
 
@@ -484,6 +519,7 @@ public class FXUserStyle extends FXStyleElementController<FXUserStyle, MutableSt
                     ((MutableRule) parent).symbolizers().add(index, symbol);
                 }
             }
+            hackClearSelection();
         }
     }
 
@@ -516,6 +552,7 @@ public class FXUserStyle extends FXStyleElementController<FXUserStyle, MutableSt
                     ((MutableRule)parent).symbolizers().remove(child);
                 }
             }
+            hackClearSelection();
         }
     }
 

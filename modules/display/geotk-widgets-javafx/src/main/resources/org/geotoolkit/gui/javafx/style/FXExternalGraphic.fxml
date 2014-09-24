@@ -10,12 +10,17 @@
       <GridPane BorderPane.alignment="CENTER">
         <columnConstraints>
           <ColumnConstraints hgrow="SOMETIMES" />
+            <ColumnConstraints hgrow="SOMETIMES" />
         </columnConstraints>
         <rowConstraints>
             <RowConstraints vgrow="SOMETIMES" />
+            <RowConstraints vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <Label styleClass="property-key" text="TODO" />
+            <Label styleClass="property-key" text="%org.geotoolkit.gui.javafx.style.FXExternalGraphic.mime" />
+            <Label styleClass="property-key" text="%org.geotoolkit.gui.javafx.style.FXExternalGraphic.url" GridPane.rowIndex="1" />
+            <TextField fx:id="uiMime" GridPane.columnIndex="1" />
+            <TextField fx:id="uiUrl" GridPane.columnIndex="1" GridPane.rowIndex="1" />
          </children>
       </GridPane>
    </center>

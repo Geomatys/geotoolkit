@@ -9,13 +9,17 @@
    <center>
       <GridPane BorderPane.alignment="CENTER">
         <columnConstraints>
-          <ColumnConstraints hgrow="SOMETIMES" />
+          <ColumnConstraints hgrow="NEVER" />
+            <ColumnConstraints hgrow="ALWAYS" maxWidth="1.7976931348623157E308" />
         </columnConstraints>
         <rowConstraints>
-            <RowConstraints vgrow="SOMETIMES" />
+            <RowConstraints vgrow="NEVER" />
+            <RowConstraints vgrow="NEVER" />
         </rowConstraints>
          <children>
-            <Label styleClass="property-key" text="TODO" />
+            <Label styleClass="property-key" text="%org.geotoolkit.gui.javafx.style.FXHalo.radius" />
+            <FXNumberExpression fx:id="uiRadius" GridPane.columnIndex="1" />
+            <FXFill fx:id="uiFill" GridPane.columnSpan="2" GridPane.rowIndex="1" />
          </children>
       </GridPane>
    </center>

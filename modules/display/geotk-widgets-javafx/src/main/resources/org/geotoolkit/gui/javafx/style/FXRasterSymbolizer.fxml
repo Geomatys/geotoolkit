@@ -13,15 +13,78 @@
             <ColumnConstraints />
             <ColumnConstraints />
             <ColumnConstraints />
+            <ColumnConstraints />
          </columnConstraints>
          <rowConstraints>
             <RowConstraints />
             <RowConstraints />
             <RowConstraints />
             <RowConstraints />
+            <RowConstraints />
          </rowConstraints>
          <children>
-            <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="TODO" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="property-key" text="%org.geotoolkit.gui.javafx.style.FXRasterSymbolizer.opacity" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="2">
+               <tabs>
+                  <Tab text="%org.geotoolkit.gui.javafx.style.FXRasterSymbolizer.colors">
+                     <content>
+                        <GridPane>
+                          <columnConstraints>
+                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                          </columnConstraints>
+                          <rowConstraints>
+                            <RowConstraints vgrow="NEVER" />
+                            <RowConstraints maxHeight="1.7976931348623157E308" minHeight="-Infinity" vgrow="ALWAYS" />
+                          </rowConstraints>
+                           <children>
+                              <HBox>
+                                 <children>
+                                    <RadioButton fx:id="uiChoiceColorNone" mnemonicParsing="false" styleClass="property-key" text="%org.geotoolkit.gui.javafx.style.FXRasterSymbolizer.none" />
+                                    <RadioButton fx:id="uiChoiceColorRGB" mnemonicParsing="false" styleClass="property-key" text="%org.geotoolkit.gui.javafx.style.FXRasterSymbolizer.rgb" />
+                                    <RadioButton fx:id="uiChoiceColorMap" mnemonicParsing="false" styleClass="property-key" text="%org.geotoolkit.gui.javafx.style.FXRasterSymbolizer.colormap" />
+                                 </children>
+                              </HBox>
+                              <BorderPane fx:id="uiColorPane" GridPane.rowIndex="1" />
+                           </children>
+                        </GridPane>
+                     </content>
+                  </Tab>
+                  <Tab text="%org.geotoolkit.gui.javafx.style.FXRasterSymbolizer.outline">
+                    <content>
+                        <GridPane>
+                          <columnConstraints>
+                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                          </columnConstraints>
+                          <rowConstraints>
+                            <RowConstraints vgrow="SOMETIMES" />
+                            <RowConstraints maxHeight="1.7976931348623157E308" vgrow="ALWAYS" />
+                          </rowConstraints>
+                           <children>
+                              <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                                 <children>
+                                    <RadioButton fx:id="uiChoiceOutlineNone" mnemonicParsing="false" styleClass="property-key" text="%org.geotoolkit.gui.javafx.style.FXRasterSymbolizer.none" />
+                                    <RadioButton fx:id="uiChoiceOutlineLine" mnemonicParsing="false" styleClass="property-key" text="%org.geotoolkit.gui.javafx.style.FXRasterSymbolizer.line" />
+                                    <RadioButton fx:id="uiChoiceOutlinePolygon" mnemonicParsing="false" styleClass="property-key" text="%org.geotoolkit.gui.javafx.style.FXRasterSymbolizer.polygon" />
+                                 </children>
+                              </HBox>
+                              <BorderPane fx:id="uiOutlinePane" GridPane.rowIndex="1" />
+                           </children>
+                        </GridPane>
+                    </content>
+                  </Tab>
+                  <Tab text="%org.geotoolkit.gui.javafx.style.FXRasterSymbolizer.contrast">
+                    <content>
+                        <FXContrastEnhancement fx:id="uiContrast" layoutX="98.0" layoutY="40.0" />
+                    </content>
+                  </Tab>
+                  <Tab text="%org.geotoolkit.gui.javafx.style.FXRasterSymbolizer.relief">
+                    <content>
+                        <FXShadedRelief fx:id="uiReliefShading" layoutX="102.0" layoutY="60.0" />
+                    </content>
+                  </Tab>
+               </tabs>
+            </TabPane>
+            <FXNumberExpression fx:id="uiOpacity" GridPane.columnIndex="2" GridPane.rowIndex="1" />
          </children>
       </GridPane>
    </center>

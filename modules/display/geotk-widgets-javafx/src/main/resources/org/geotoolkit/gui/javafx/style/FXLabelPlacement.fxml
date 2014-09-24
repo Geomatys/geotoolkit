@@ -12,10 +12,20 @@
           <ColumnConstraints hgrow="SOMETIMES" />
         </columnConstraints>
         <rowConstraints>
+            <RowConstraints vgrow="NEVER" />
+            <RowConstraints vgrow="NEVER" />
+            <RowConstraints vgrow="NEVER" />
             <RowConstraints vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <Label styleClass="property-key" text="TODO" />
+            <FXPointPlacement fx:id="uiPoint" GridPane.rowIndex="1" />
+            <FXLinePlacement fx:id="uiLine" GridPane.rowIndex="2" />
+            <HBox>
+               <children>
+                  <RadioButton fx:id="uiPointCheck" mnemonicParsing="false" onAction="#updateChoice" styleClass="property-key" text="%org.geotoolkit.gui.javafx.style.FXLabelPlacement.point" />
+                  <RadioButton fx:id="uiLineCheck" mnemonicParsing="false" onAction="#updateChoice" styleClass="property-key" text="%org.geotoolkit.gui.javafx.style.FXLabelPlacement.linear" />
+               </children>
+            </HBox>
          </children>
       </GridPane>
    </center>

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.text.*?>
 <?import org.geotoolkit.gui.javafx.style.*?>
 <?import java.lang.*?>
 <?import javafx.scene.control.*?>
@@ -13,9 +14,47 @@
         </columnConstraints>
         <rowConstraints>
             <RowConstraints vgrow="SOMETIMES" />
+            <RowConstraints vgrow="SOMETIMES" />
+            <RowConstraints vgrow="SOMETIMES" />
+            <RowConstraints vgrow="SOMETIMES" />
+            <RowConstraints vgrow="SOMETIMES" />
+            <RowConstraints vgrow="SOMETIMES" />
+            <RowConstraints vgrow="SOMETIMES" />
+            <RowConstraints vgrow="SOMETIMES" />
+            <RowConstraints vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <Label styleClass="property-key" text="TODO" />
+            <FXSelectedChannelType fx:id="uiRed" GridPane.rowIndex="2" />
+            <FXSelectedChannelType fx:id="uiGreen" GridPane.rowIndex="4" />
+            <FXSelectedChannelType fx:id="uiBlue" GridPane.rowIndex="6" />
+            <FXSelectedChannelType fx:id="uiGray" GridPane.rowIndex="8" />
+            <Label fx:id="uiGrayLbl" styleClass="property-key" text="%org.geotoolkit.gui.javafx.style.FXChannelSelection.gray" GridPane.rowIndex="7">
+               <font>
+                  <Font name="System Bold" size="13.0" />
+               </font>
+            </Label>
+            <Label fx:id="uiBlueLbl" styleClass="property-key" text="%org.geotoolkit.gui.javafx.style.FXChannelSelection.blue" GridPane.rowIndex="5">
+               <font>
+                  <Font name="System Bold" size="13.0" />
+               </font>
+            </Label>
+            <Label fx:id="uiGreenLbl" styleClass="property-key" text="%org.geotoolkit.gui.javafx.style.FXChannelSelection.green" GridPane.rowIndex="3">
+               <font>
+                  <Font name="System Bold" size="13.0" />
+               </font>
+            </Label>
+            <Label fx:id="uiRedLbl" styleClass="property-key" text="%org.geotoolkit.gui.javafx.style.FXChannelSelection.red" GridPane.rowIndex="1">
+               <font>
+                  <Font name="System Bold" size="13.0" />
+               </font>
+            </Label>
+            <HBox>
+               <children>
+                  <RadioButton fx:id="uiNone" mnemonicParsing="false" onAction="#updateTypeChoice" styleClass="property-key" text="%org.geotoolkit.gui.javafx.style.FXChannelSelection.natif" />
+                  <RadioButton fx:id="uiRGB" mnemonicParsing="false" onAction="#updateTypeChoice" styleClass="property-key" text="%org.geotoolkit.gui.javafx.style.FXChannelSelection.rgb" />
+                  <RadioButton fx:id="uiSingle" mnemonicParsing="false" onAction="#updateTypeChoice" styleClass="property-key" text="%org.geotoolkit.gui.javafx.style.FXChannelSelection.single" />
+               </children>
+            </HBox>
          </children>
       </GridPane>
    </center>

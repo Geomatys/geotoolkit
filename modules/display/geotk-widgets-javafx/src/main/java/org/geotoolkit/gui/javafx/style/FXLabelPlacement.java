@@ -17,7 +17,16 @@
 
 package org.geotoolkit.gui.javafx.style;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.ToggleGroup;
+import static org.geotoolkit.gui.javafx.style.FXStyleElementController.getStyleFactory;
 import org.opengis.style.LabelPlacement;
+import org.opengis.style.LinePlacement;
+import org.opengis.style.PointPlacement;
 
 /**
  *
@@ -25,6 +34,37 @@ import org.opengis.style.LabelPlacement;
  */
 public class FXLabelPlacement extends FXStyleElementController<FXLabelPlacement, LabelPlacement>{
 
+    @FXML
+    protected RadioButton uiPointCheck;
+    @FXML
+    protected RadioButton uiLineCheck;
+    @FXML
+    protected FXLinePlacement uiLine;
+    @FXML
+    protected FXPointPlacement uiPoint;
+    
+    private final ToggleGroup group = new ToggleGroup();
+    
+    @FXML
+    void updateChoice(ActionEvent event){
+        if(uiLineCheck.isSelected()){
+            uiLine.setVisible(true);
+            uiPoint.setVisible(false);
+        }else{
+            uiLine.setVisible(false);
+            uiPoint.setVisible(true);
+        }
+        rebuildValue();
+    }
+    
+    private void rebuildValue(){
+        if(uiLineCheck.isSelected()){
+            value.set(uiLine.valueProperty().get());
+        }else{
+            value.set(uiPoint.valueProperty().get());
+        }
+    }
+    
     @Override
     public Class<LabelPlacement> getEditedClass() {
         return LabelPlacement.class;
@@ -33,6 +73,32 @@ public class FXLabelPlacement extends FXStyleElementController<FXLabelPlacement,
     @Override
     public LabelPlacement newValue() {
         return getStyleFactory().labelPlacement();
+    }
+    
+    @Override
+    public void initialize() {
+        super.initialize();   
+        uiPointCheck.setToggleGroup(group);
+        uiLineCheck.setToggleGroup(group);
+        
+        final ChangeListener changeListener = (ChangeListener) (ObservableValue observable, Object oldValue, Object newValue) -> {
+            if(updating) return;
+            rebuildValue();
+        };
+        
+        uiPoint.valueProperty().addListener(changeListener);
+        uiLine.valueProperty().addListener(changeListener);
+    }
+    
+    @Override
+    protected void updateEditor(LabelPlacement styleElement) {
+        if(styleElement instanceof LinePlacement){
+            uiPoint.valueProperty().setValue((PointPlacement)null);
+            uiLine.valueProperty().setValue((LinePlacement)styleElement);
+        }else{
+            uiPoint.valueProperty().setValue((PointPlacement)styleElement);
+            uiLine.valueProperty().setValue((LinePlacement)null);
+        }
     }
     
 }

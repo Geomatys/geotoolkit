@@ -17,6 +17,10 @@
 
 package org.geotoolkit.gui.javafx.style;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.fxml.FXML;
+import static org.geotoolkit.gui.javafx.style.FXStyleElementController.getStyleFactory;
 import org.opengis.style.Displacement;
 
 /**
@@ -25,6 +29,11 @@ import org.opengis.style.Displacement;
  */
 public class FXDisplacement extends FXStyleElementController<FXDisplacement, Displacement>{
 
+    @FXML
+    protected FXNumberExpression uiX;    
+    @FXML
+    protected FXNumberExpression uiY;
+        
     @Override
     public Class<Displacement> getEditedClass() {
         return Displacement.class;
@@ -33,6 +42,25 @@ public class FXDisplacement extends FXStyleElementController<FXDisplacement, Dis
     @Override
     public Displacement newValue() {
         return getStyleFactory().displacement();
+    }
+    
+    
+    @Override
+    public void initialize() {
+        super.initialize();        
+        final ChangeListener changeListener = (ChangeListener) (ObservableValue observable, Object oldValue, Object newValue) -> {
+            if(updating) return;
+            value.set(getStyleFactory().displacement(uiX.valueProperty().get(), uiY.valueProperty().get()));
+        };
+        
+        uiX.valueProperty().addListener(changeListener);
+        uiY.valueProperty().addListener(changeListener);
+    }
+    
+    @Override
+    protected void updateEditor(Displacement styleElement) {
+        uiX.valueProperty().setValue(styleElement.getDisplacementX());
+        uiY.valueProperty().setValue(styleElement.getDisplacementY());
     }
     
 }

@@ -17,6 +17,10 @@
 
 package org.geotoolkit.gui.javafx.style;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.fxml.FXML;
+import static org.geotoolkit.gui.javafx.style.FXStyleElementController.getStyleFactory;
 import org.opengis.style.Mark;
 
 /**
@@ -25,6 +29,13 @@ import org.opengis.style.Mark;
  */
 public class FXMark extends FXStyleElementController<FXMark, Mark>{
 
+    @FXML
+    protected FXListExpression uiWkt;    
+    @FXML
+    protected FXStroke uiStroke;    
+    @FXML
+    protected FXFill uiFill;
+        
     @Override
     public Class<Mark> getEditedClass() {
         return Mark.class;
@@ -33,6 +44,29 @@ public class FXMark extends FXStyleElementController<FXMark, Mark>{
     @Override
     public Mark newValue() {
         return getStyleFactory().mark();
+    }
+    
+    @Override
+    public void initialize() {
+        super.initialize();        
+        final ChangeListener changeListener = (ChangeListener) (ObservableValue observable, Object oldValue, Object newValue) -> {
+            if(updating) return;
+            value.set(getStyleFactory().mark(
+                    uiWkt.valueProperty().get(), 
+                    uiStroke.valueProperty().get(), 
+                    uiFill.valueProperty().get()));
+        };
+        
+        uiFill.valueProperty().addListener(changeListener);
+        uiStroke.valueProperty().addListener(changeListener);
+        uiWkt.valueProperty().addListener(changeListener);
+    }
+    
+    @Override
+    protected void updateEditor(Mark styleElement) {
+        uiWkt.valueProperty().setValue(styleElement.getWellKnownName());
+        uiFill.valueProperty().setValue(styleElement.getFill());
+        uiStroke.valueProperty().setValue(styleElement.getStroke());
     }
     
 }

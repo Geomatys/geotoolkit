@@ -9,13 +9,24 @@
    <center>
       <GridPane BorderPane.alignment="CENTER">
         <columnConstraints>
-          <ColumnConstraints hgrow="SOMETIMES" />
+          <ColumnConstraints hgrow="NEVER" />
+            <ColumnConstraints hgrow="ALWAYS" maxWidth="1.7976931348623157E308" />
         </columnConstraints>
         <rowConstraints>
-            <RowConstraints vgrow="SOMETIMES" />
+            <RowConstraints vgrow="NEVER" />
+            <RowConstraints vgrow="NEVER" />
+            <RowConstraints vgrow="NEVER" />
+            <RowConstraints vgrow="NEVER" />
         </rowConstraints>
          <children>
-            <Label styleClass="property-key" text="TODO" />
+            <Label styleClass="property-key" text="%org.geotoolkit.gui.javafx.style.FXFont.family" />
+            <FXListExpression fx:id="uiFamily" GridPane.columnIndex="1" />
+            <Label styleClass="property-key" text="%org.geotoolkit.gui.javafx.style.FXFont.style" GridPane.rowIndex="1" />
+            <Label styleClass="property-key" text="%org.geotoolkit.gui.javafx.style.FXFont.size" GridPane.rowIndex="2" />
+            <Label styleClass="property-key" text="%org.geotoolkit.gui.javafx.style.FXFont.weight" GridPane.rowIndex="3" />
+            <FXListExpression fx:id="uiStyle" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <FXListExpression fx:id="uiWeight" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+            <FXNumberExpression fx:id="uiSize" GridPane.columnIndex="1" GridPane.rowIndex="2" />
          </children>
       </GridPane>
    </center>

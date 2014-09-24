@@ -9,13 +9,24 @@
    <center>
       <GridPane BorderPane.alignment="CENTER">
         <columnConstraints>
-          <ColumnConstraints hgrow="SOMETIMES" />
+          <ColumnConstraints hgrow="NEVER" />
+            <ColumnConstraints hgrow="ALWAYS" />
         </columnConstraints>
         <rowConstraints>
-            <RowConstraints vgrow="SOMETIMES" />
+            <RowConstraints vgrow="NEVER" />
+            <RowConstraints vgrow="NEVER" />
+            <RowConstraints vgrow="NEVER" />
+            <RowConstraints vgrow="NEVER" />
         </rowConstraints>
          <children>
-            <Label styleClass="property-key" text="TODO" />
+            <Label styleClass="property-key" text="%org.geotoolkit.gui.javafx.style.FXContrastEnhancement.gamma" />
+            <FXNumberExpression fx:id="uiGamma" GridPane.columnIndex="1" />
+            <Label styleClass="property-key" text="%org.geotoolkit.gui.javafx.style.FXContrastEnhancement.none" GridPane.rowIndex="1" />
+            <Label styleClass="property-key" text="%org.geotoolkit.gui.javafx.style.FXContrastEnhancement.histogram" GridPane.rowIndex="2" />
+            <Label styleClass="property-key" text="%org.geotoolkit.gui.javafx.style.FXContrastEnhancement.normalize" GridPane.rowIndex="3" />
+            <RadioButton fx:id="uiNone" mnemonicParsing="false" onAction="#updateType" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <RadioButton fx:id="uiHistogram" mnemonicParsing="false" onAction="#updateType" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <RadioButton fx:id="uiNormalize" mnemonicParsing="false" onAction="#updateType" GridPane.columnIndex="1" GridPane.rowIndex="3" />
          </children>
       </GridPane>
    </center>

@@ -30,12 +30,9 @@ import org.opengis.style.Fill;
 public class FXFill extends FXStyleElementController<FXFill,Fill> {
 
     @FXML
-    private FXColorExpression uiColor;
-    
+    private FXColorExpression uiColor;    
     @FXML
     private FXNumberExpression uiOpacity;
-
-    private ChangeListener changeListener;
             
     @Override
     public Class<Fill> getEditedClass() {
@@ -50,15 +47,12 @@ public class FXFill extends FXStyleElementController<FXFill,Fill> {
     @Override
     public void initialize() {
         super.initialize();        
-        changeListener = new ChangeListener() {
-            @Override
-            public void changed(ObservableValue observable, Object oldValue, Object newValue) {
-                final Fill fill;
-                //TODO graphic fill
-                fill = getStyleFactory().fill(uiColor.valueProperty().get(), uiOpacity.valueProperty().get());                
-                value.set(fill);
-            }
-
+        final ChangeListener changeListener = (ChangeListener) (ObservableValue observable, Object oldValue, Object newValue) -> {
+            if(updating) return;
+            final Fill fill;
+            //TODO graphic fill
+            fill = getStyleFactory().fill(uiColor.valueProperty().get(), uiOpacity.valueProperty().get());
+            value.set(fill);
         };
         
         uiColor.valueProperty().addListener(changeListener);
@@ -67,7 +61,6 @@ public class FXFill extends FXStyleElementController<FXFill,Fill> {
     
     @Override
     protected void updateEditor(Fill styleElement) {
-        super.updateEditor(styleElement);
         uiColor.valueProperty().setValue(styleElement.getColor());
         uiOpacity.valueProperty().setValue(styleElement.getOpacity());
     }

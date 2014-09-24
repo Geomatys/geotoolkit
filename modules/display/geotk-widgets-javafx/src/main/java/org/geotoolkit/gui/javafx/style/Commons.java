@@ -26,7 +26,7 @@ import org.geotoolkit.font.IconBuilder;
  *
  * @author Johann Sorel (Geomatys)
  */
-class Commons {
+final class Commons {
     
     public static final Image ICON_STYLE     = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_BOOK,16,FontAwesomeIcons.DEFAULT_COLOR),null);
     public static final Image ICON_FTS       = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_TAG,16,FontAwesomeIcons.DEFAULT_COLOR),null);

@@ -16,14 +16,14 @@
  */
 package org.geotoolkit.gui.javafx.style;
 
-import java.awt.Color;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.ColorPicker;
-import org.geotoolkit.gui.javafx.util.FXUtilities;
+import javafx.scene.control.TextField;
+import org.geotoolkit.cql.CQL;
+import org.geotoolkit.cql.CQLException;
 import org.geotoolkit.style.StyleConstants;
 import org.opengis.filter.expression.Expression;
 
@@ -31,15 +31,15 @@ import org.opengis.filter.expression.Expression;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class FXColorExpression extends FXStyleElementController<FXColorExpression, Expression> {
+public class FXListExpression extends FXStyleElementController<FXListExpression, Expression> {
 
     @FXML
-    private FXSpecialExpressionButton uiSpecial;
+    private FXSpecialExpressionButton special;
 
     @FXML
-    private ColorPicker uiPicker;
+    private TextField textField;
     
-    public FXColorExpression(){
+    public FXListExpression(){
     }
     
     @Override
@@ -49,36 +49,36 @@ public class FXColorExpression extends FXStyleElementController<FXColorExpressio
 
     @Override
     public Expression newValue() {
-        return StyleConstants.DEFAULT_FILL_COLOR;
+        return StyleConstants.DEFAULT_STROKE_WIDTH;
     }
 
     @Override
     public void initialize() {
         super.initialize();
         
-        uiPicker.setOnAction(new EventHandler<ActionEvent>() {
+        textField.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                value.set(getFilterFactory().literal(FXUtilities.toSwingColor(uiPicker.getValue())));
-                uiSpecial.valueProperty().setValue(value.get());
+                try{
+                    value.set(CQL.parseExpression(textField.getText()));
+                    special.valueProperty().setValue(value.get());
+                }catch(CQLException ex){
+                }
             }
         });
         
-        uiSpecial.valueProperty().addListener(new ChangeListener<Expression>() {
+        special.valueProperty().addListener(new ChangeListener<Expression>() {
             @Override
             public void changed(ObservableValue observable, Expression oldValue, Expression newValue) {
                 value.set(newValue);
             }
-        });
+        });        
     }
-    
+
     @Override
     protected void updateEditor(Expression styleElement) {
-        uiSpecial.valueProperty().set(styleElement);
-        final Color color = styleElement.evaluate(null,Color.class);
-        if(color!=null){
-            uiPicker.setValue(FXUtilities.toFxColor(color));
-        }
+        special.valueProperty().set(styleElement);
+        textField.setText(CQL.write(styleElement));
     }
     
 }

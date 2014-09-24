@@ -37,6 +37,10 @@ public class FXColorMap extends FXStyleElementController<FXColorMap,ColorMap> {
     public ColorMap newValue() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
+
+    @Override
+    protected void updateEditor(ColorMap styleElement) {
+    }
     
     
 }

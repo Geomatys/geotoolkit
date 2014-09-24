@@ -17,6 +17,11 @@
 
 package org.geotoolkit.gui.javafx.style;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.fxml.FXML;
+import javafx.scene.control.TextField;
+import static org.geotoolkit.gui.javafx.style.FXStyleElementController.getStyleFactory;
 import org.opengis.style.ExternalGraphic;
 
 /**
@@ -25,6 +30,12 @@ import org.opengis.style.ExternalGraphic;
  */
 public class FXExternalGraphic extends FXStyleElementController<FXExternalGraphic, ExternalGraphic>{
 
+    @FXML
+    protected TextField uiUrl;
+    @FXML
+    protected TextField uiMime;
+    
+    
     @Override
     public Class<ExternalGraphic> getEditedClass() {
         return ExternalGraphic.class;
@@ -33,6 +44,24 @@ public class FXExternalGraphic extends FXStyleElementController<FXExternalGraphi
     @Override
     public ExternalGraphic newValue() {
         return getStyleFactory().externalGraphic("", "");
+    }
+    
+    @Override
+    public void initialize() {
+        super.initialize();        
+        final ChangeListener changeListener = (ChangeListener) (ObservableValue observable, Object oldValue, Object newValue) -> {
+            if(updating) return;
+            value.set(getStyleFactory().externalGraphic(uiUrl.getText(), uiMime.getText()));
+        };
+        
+        uiUrl.textProperty().addListener(changeListener);
+        uiMime.textProperty().addListener(changeListener);
+    }
+    
+    @Override
+    protected void updateEditor(ExternalGraphic styleElement) {
+        uiMime.setText(styleElement.getFormat());
+        uiUrl.setText(styleElement.getOnlineResource().toString());
     }
     
 }

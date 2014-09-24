@@ -10,12 +10,17 @@
       <GridPane BorderPane.alignment="CENTER">
         <columnConstraints>
           <ColumnConstraints hgrow="SOMETIMES" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" />
         </columnConstraints>
         <rowConstraints>
             <RowConstraints vgrow="SOMETIMES" />
+            <RowConstraints vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <Label styleClass="property-key" text="TODO" />
+            <Label styleClass="property-key" text="%org.geotoolkit.gui.javafx.style.FXDisplacement.x" />
+            <FXNumberExpression fx:id="uiX" GridPane.columnIndex="1" />
+            <FXNumberExpression fx:id="uiY" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <Label styleClass="property-key" text="%org.geotoolkit.gui.javafx.style.FXDisplacement.y" GridPane.rowIndex="1" />
          </children>
       </GridPane>
    </center>

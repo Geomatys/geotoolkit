@@ -9,13 +9,39 @@
    <center>
       <GridPane BorderPane.alignment="CENTER">
         <columnConstraints>
-          <ColumnConstraints hgrow="SOMETIMES" />
+          <ColumnConstraints hgrow="NEVER" />
+            <ColumnConstraints hgrow="ALWAYS" />
         </columnConstraints>
         <rowConstraints>
             <RowConstraints vgrow="SOMETIMES" />
+            <RowConstraints vgrow="SOMETIMES" />
+            <RowConstraints vgrow="SOMETIMES" />
+            <RowConstraints vgrow="SOMETIMES" />
+            <RowConstraints vgrow="SOMETIMES" />
+            <RowConstraints vgrow="SOMETIMES" />
+            <RowConstraints vgrow="ALWAYS" />
+            <RowConstraints vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <Label styleClass="property-key" text="TODO" />
+            <Label styleClass="property-key" text="%org.geotoolkit.gui.javafx.style.FXGraphic.size" />
+            <Label styleClass="property-key" text="%org.geotoolkit.gui.javafx.style.FXGraphic.rotation" GridPane.rowIndex="1" />
+            <Label styleClass="property-key" text="%org.geotoolkit.gui.javafx.style.FXGraphic.opacity" GridPane.rowIndex="2" />
+            <FXDisplacement fx:id="uiDisplacement" GridPane.columnSpan="2" GridPane.rowIndex="4" />
+            <FXNumberExpression fx:id="uiSize" GridPane.columnIndex="1" />
+            <FXNumberExpression fx:id="uiRotation" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <FXNumberExpression fx:id="uiOpacity" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <HBox GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="5">
+               <children>
+                  <Button fx:id="uiAddMark" mnemonicParsing="false" onAction="#addMark" text="%org.geotoolkit.gui.javafx.style.FXGraphic.mark" />
+                  <Button fx:id="uiAddExternal" mnemonicParsing="false" onAction="#addExternal" text="%org.geotoolkit.gui.javafx.style.FXGraphic.external" />
+               </children>
+            </HBox>
+            <ScrollPane fitToHeight="true" fitToWidth="true" GridPane.columnSpan="2" GridPane.rowIndex="6">
+               <content>
+                  <TableView fx:id="uiTable" editable="true" />
+               </content>
+            </ScrollPane>
+            <FXAnchorPoint fx:id="uiAnchor" GridPane.columnSpan="2" GridPane.rowIndex="3" />
          </children>
       </GridPane>
    </center>

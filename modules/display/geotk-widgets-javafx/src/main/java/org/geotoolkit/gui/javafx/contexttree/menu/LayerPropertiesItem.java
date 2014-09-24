@@ -84,7 +84,7 @@ public class LayerPropertiesItem extends TreeMenuItem{
                 dialog.setTitle(GeotkFXBundle.getString(LayerPropertiesItem.this,"properties"));
                 dialog.setContent(panel);
                 dialog.getActions().add(new CloseAction(dialog));
-                
+                dialog.setModal(false);
                 dialog.setVisible(map,true);
                 
             }

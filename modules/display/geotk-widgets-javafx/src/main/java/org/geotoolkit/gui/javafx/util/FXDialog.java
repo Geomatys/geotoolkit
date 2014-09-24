@@ -90,7 +90,7 @@ public class FXDialog {
             }
             stage.setTitle(title);
             stage.setScene(new Scene(allPane));
-            stage.initModality(modal?Modality.APPLICATION_MODAL:Modality.NONE);
+            //stage.initModality(modal?Modality.APPLICATION_MODAL:Modality.NONE);
             stage.setWidth(800);
             stage.setHeight(600);
             stage.centerOnScreen();

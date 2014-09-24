@@ -77,7 +77,6 @@ public class FXNumberExpression extends FXStyleElementController<FXNumberExpress
 
     @Override
     protected void updateEditor(Expression styleElement) {
-        super.updateEditor(styleElement);
         special.valueProperty().set(styleElement);
         textField.setText(CQL.write(styleElement));
     }

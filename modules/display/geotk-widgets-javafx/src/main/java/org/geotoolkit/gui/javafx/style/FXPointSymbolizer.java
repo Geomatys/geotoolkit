@@ -17,6 +17,11 @@
 
 package org.geotoolkit.gui.javafx.style;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.fxml.FXML;
+import static org.geotoolkit.gui.javafx.style.FXStyleElementController.getStyleFactory;
+import static org.geotoolkit.style.StyleConstants.DEFAULT_GRAPHIC;
 import org.opengis.style.PointSymbolizer;
 
 /**
@@ -25,6 +30,9 @@ import org.opengis.style.PointSymbolizer;
  */
 public class FXPointSymbolizer extends FXStyleElementController<FXPointSymbolizer, PointSymbolizer>{
 
+    @FXML
+    protected FXGraphic uiGraphic;
+    
     @Override
     public Class<PointSymbolizer> getEditedClass() {
         return PointSymbolizer.class;
@@ -32,7 +40,23 @@ public class FXPointSymbolizer extends FXStyleElementController<FXPointSymbolize
 
     @Override
     public PointSymbolizer newValue() {
-        return getStyleFactory().pointSymbolizer();
+        return getStyleFactory().pointSymbolizer(DEFAULT_GRAPHIC,null);
+    }
+    
+    @Override
+    public void initialize() {
+        super.initialize();        
+        final ChangeListener changeListener = (ChangeListener) (ObservableValue observable, Object oldValue, Object newValue) -> {
+            if(updating) return;
+            value.set(getStyleFactory().pointSymbolizer(uiGraphic.valueProperty().get(), null));
+        };
+        
+        uiGraphic.valueProperty().addListener(changeListener);
+    }
+    
+    @Override
+    protected void updateEditor(PointSymbolizer styleElement) {
+        uiGraphic.valueProperty().setValue(styleElement.getGraphic());
     }
     
 }

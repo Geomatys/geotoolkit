@@ -24,7 +24,7 @@ import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
-import javafx.scene.control.TreeTableCell;
+import javafx.scene.control.TableCell;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.Border;
 
@@ -32,13 +32,13 @@ import javafx.scene.layout.Border;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class ButtonTreeTableCell<S,T> extends TreeTableCell<S,T> {
+public class ButtonTableCell<S,T> extends TableCell<S,T> {
     
     private final Function<T,Boolean> visiblePredicate;
     private final Consumer<T> onAction;
     protected final Button button = new Button();
         
-    public ButtonTreeTableCell(boolean decorated, Node graphic, Function<T,Boolean> visiblePredicate, Consumer<T> onAction){
+    public ButtonTableCell(boolean decorated, Node graphic, Function<T,Boolean> visiblePredicate, Consumer<T> onAction){
         this.visiblePredicate = visiblePredicate;
         this.onAction = onAction;
         if(!decorated){

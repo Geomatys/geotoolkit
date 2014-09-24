@@ -17,6 +17,10 @@
 
 package org.geotoolkit.gui.javafx.style;
 
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.scene.control.RadioButton;
+import javafx.scene.layout.BorderPane;
 import org.opengis.style.RasterSymbolizer;
 
 /**
@@ -24,7 +28,40 @@ import org.opengis.style.RasterSymbolizer;
  * @author Johann Sorel (Geomatys)
  */
 public class FXRasterSymbolizer extends FXStyleElementController<FXRasterSymbolizer, RasterSymbolizer>{
+    
+    @FXML
+    private RadioButton uiChoiceColorNone;
+    @FXML
+    private BorderPane uiColorPane;
+    @FXML
+    private RadioButton uiChoiceOutlineNone;
+    @FXML
+    private RadioButton uiChoiceOutlineLine;
+    @FXML
+    private FXNumberExpression uiOpacity;
+    @FXML
+    private RadioButton uiChoiceColorRGB;
+    @FXML
+    private RadioButton uiChoiceColorMap;
+    @FXML
+    private FXShadedRelief uiReliefShading;
+    @FXML
+    private FXContrastEnhancement uiContrast;
+    @FXML
+    private BorderPane uiOutlinePane;
+    @FXML
+    private RadioButton uiChoiceOutlinePolygon;
+    
+    @FXML
+    void updateColorChoice(ActionEvent event) {
 
+    }
+
+    @FXML
+    void updateOutlineChoice(ActionEvent event) {
+
+    }
+    
     @Override
     public Class<RasterSymbolizer> getEditedClass() {
         return RasterSymbolizer.class;
@@ -33,6 +70,10 @@ public class FXRasterSymbolizer extends FXStyleElementController<FXRasterSymboli
     @Override
     public RasterSymbolizer newValue() {
         return getStyleFactory().rasterSymbolizer();
+    }
+
+    @Override
+    protected void updateEditor(RasterSymbolizer styleElement) {
     }
     
 }

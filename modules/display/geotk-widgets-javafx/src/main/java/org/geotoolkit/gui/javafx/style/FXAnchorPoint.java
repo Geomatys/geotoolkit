@@ -17,6 +17,10 @@
 
 package org.geotoolkit.gui.javafx.style;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.fxml.FXML;
+import static org.geotoolkit.gui.javafx.style.FXStyleElementController.getStyleFactory;
 import org.opengis.style.AnchorPoint;
 
 /**
@@ -25,6 +29,11 @@ import org.opengis.style.AnchorPoint;
  */
 public class FXAnchorPoint extends FXStyleElementController<FXAnchorPoint, AnchorPoint>{
 
+    @FXML
+    protected FXNumberExpression uiX;    
+    @FXML
+    protected FXNumberExpression uiY;
+        
     @Override
     public Class<AnchorPoint> getEditedClass() {
         return AnchorPoint.class;
@@ -33,6 +42,24 @@ public class FXAnchorPoint extends FXStyleElementController<FXAnchorPoint, Ancho
     @Override
     public AnchorPoint newValue() {
         return getStyleFactory().anchorPoint();
+    }
+    
+    @Override
+    public void initialize() {
+        super.initialize();        
+        final ChangeListener changeListener = (ChangeListener) (ObservableValue observable, Object oldValue, Object newValue) -> {
+            if(updating) return;
+            value.set(getStyleFactory().anchorPoint(uiX.valueProperty().get(), uiY.valueProperty().get()));
+        };
+        
+        uiX.valueProperty().addListener(changeListener);
+        uiY.valueProperty().addListener(changeListener);
+    }
+    
+    @Override
+    protected void updateEditor(AnchorPoint styleElement) {
+        uiX.valueProperty().setValue(styleElement.getAnchorPointX());
+        uiY.valueProperty().setValue(styleElement.getAnchorPointY());
     }
     
 }
