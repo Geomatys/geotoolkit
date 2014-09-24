@@ -27,7 +27,7 @@ import org.geotoolkit.font.FontAwesomeIcons;
 import org.geotoolkit.font.IconBuilder;
 import org.geotoolkit.gui.javafx.render2d.FXMap;
 import org.geotoolkit.gui.javafx.render2d.FXMapAction;
-import org.geotoolkit.internal.GeotkFXBundle;
+import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.internal.Loggers;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.operation.TransformException;
@@ -40,7 +40,7 @@ public final class FXZoomAllAction extends FXMapAction {
     public static final Image ICON = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_GLOBE, 16, FontAwesomeIcons.DEFAULT_COLOR), null);
     
     public FXZoomAllAction(FXMap map) {
-        super(map,GeotkFXBundle.getString(FXZoomAllAction.class,"zoom_all"),GeotkFXBundle.getString(FXZoomAllAction.class,"zoom_all"),ICON);
+        super(map,GeotkFX.getString(FXZoomAllAction.class,"zoom_all"),GeotkFX.getString(FXZoomAllAction.class,"zoom_all"),ICON);
     }
 
     @Override

@@ -28,7 +28,7 @@ import javafx.scene.image.ImageView;
 import org.geotoolkit.font.FontAwesomeIcons;
 import org.geotoolkit.font.IconBuilder;
 import org.geotoolkit.gui.javafx.contexttree.TreeMenuItem;
-import org.geotoolkit.internal.GeotkFXBundle;
+import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.map.MapItem;
 
 /**
@@ -47,7 +47,7 @@ public class DeleteItem extends TreeMenuItem{
      * delete item for contexttree
      */
     public DeleteItem(){
-        item = new MenuItem(GeotkFXBundle.getString(this,"delete"));
+        item = new MenuItem(GeotkFX.getString(this,"delete"));
         item.setGraphic(new ImageView(ICON));
 
         item.setOnAction(new EventHandler<javafx.event.ActionEvent>() {

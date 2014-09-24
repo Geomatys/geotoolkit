@@ -26,7 +26,7 @@ import org.geotoolkit.font.IconBuilder;
 import org.geotoolkit.gui.javafx.render2d.FXCanvasHandler;
 import org.geotoolkit.gui.javafx.render2d.FXMap;
 import org.geotoolkit.gui.javafx.render2d.FXMapAction;
-import org.geotoolkit.internal.GeotkFXBundle;
+import org.geotoolkit.internal.GeotkFX;
 
 /**
  *
@@ -38,7 +38,7 @@ public class FXZoomOutAction extends FXMapAction {
     public static final Image ICON = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_SEARCH_MINUS, 16, FontAwesomeIcons.DEFAULT_COLOR), null);
     
     public FXZoomOutAction(FXMap map) {
-        super(map,GeotkFXBundle.getString(FXZoomOutAction.class,"zoom_out"),GeotkFXBundle.getString(FXZoomOutAction.class,"zoom_out"),ICON);
+        super(map,GeotkFX.getString(FXZoomOutAction.class,"zoom_out"),GeotkFX.getString(FXZoomOutAction.class,"zoom_out"),ICON);
         
         map.getHandlerProperty().addListener(new ChangeListener<FXCanvasHandler>() {
             @Override

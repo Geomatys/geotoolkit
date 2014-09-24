@@ -41,6 +41,7 @@ import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.service.DefaultGlyphService;
 import static org.geotoolkit.gui.javafx.style.FXStyleElementController.getStyleFactory;
 import org.geotoolkit.gui.javafx.util.ButtonTableCell;
+import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.style.StyleConstants;
 import org.opengis.metadata.citation.OnlineResource;
 import org.opengis.style.ExternalGraphic;
@@ -204,7 +205,7 @@ public class FXGraphic extends FXStyleElementController<FXGraphic, Graphic>{
     private class DeleteButton extends ButtonTableCell<GraphicalSymbol, GraphicalSymbol>{
 
         public DeleteButton() {
-            super(false, new ImageView(Commons.ICON_DELETE),
+            super(false, new ImageView(GeotkFX.ICON_DELETE),
                    //JavaFX bug : do not use lambda here : java.lang.VerifyError: Bad type on operand stack->invokedynamic
                   (GraphicalSymbol t) -> t instanceof GraphicalSymbol, new Consumer<GraphicalSymbol>() {
                 public void accept(GraphicalSymbol t) {

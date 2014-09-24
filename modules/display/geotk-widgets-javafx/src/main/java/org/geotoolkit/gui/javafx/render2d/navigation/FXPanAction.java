@@ -27,7 +27,7 @@ import org.geotoolkit.font.IconBuilder;
 import org.geotoolkit.gui.javafx.render2d.FXCanvasHandler;
 import org.geotoolkit.gui.javafx.render2d.FXMap;
 import org.geotoolkit.gui.javafx.render2d.FXMapAction;
-import org.geotoolkit.internal.GeotkFXBundle;
+import org.geotoolkit.internal.GeotkFX;
 
 /**
  *
@@ -38,7 +38,7 @@ public final class FXPanAction extends FXMapAction {
     public static final Image ICON = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_ARROWS, 16, FontAwesomeIcons.DEFAULT_COLOR), null);
     
     public FXPanAction(FXMap map, boolean infoOnClick) {
-        super(map,GeotkFXBundle.getString(FXPanAction.class,"pan"),GeotkFXBundle.getString(FXPanAction.class,"pan"),ICON);
+        super(map,GeotkFX.getString(FXPanAction.class,"pan"),GeotkFX.getString(FXPanAction.class,"pan"),ICON);
         this.infoOnClick = infoOnClick;
         
         map.getHandlerProperty().addListener(new ChangeListener<FXCanvasHandler>() {

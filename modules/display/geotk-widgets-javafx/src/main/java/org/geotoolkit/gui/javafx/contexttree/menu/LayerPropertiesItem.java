@@ -36,7 +36,7 @@ import org.geotoolkit.gui.javafx.layer.style.FXStyleSimplePane;
 import org.geotoolkit.gui.javafx.layer.style.FXStyleXMLPane;
 import org.geotoolkit.gui.javafx.render2d.FXMap;
 import org.geotoolkit.gui.javafx.util.FXDialog;
-import org.geotoolkit.internal.GeotkFXBundle;
+import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.map.MapLayer;
 
 /**
@@ -55,7 +55,7 @@ public class LayerPropertiesItem extends TreeMenuItem{
     public LayerPropertiesItem(FXMap map){
         this.map = map;
         
-        item = new MenuItem(GeotkFXBundle.getString(this,"properties"));
+        item = new MenuItem(GeotkFX.getString(this,"properties"));
         //item.setGraphic(new ImageView(ICON));
         item.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
 
@@ -81,7 +81,7 @@ public class LayerPropertiesItem extends TreeMenuItem{
                 );
                 
                 final FXDialog dialog = new FXDialog();
-                dialog.setTitle(GeotkFXBundle.getString(LayerPropertiesItem.this,"properties"));
+                dialog.setTitle(GeotkFX.getString(LayerPropertiesItem.this,"properties"));
                 dialog.setContent(panel);
                 dialog.getActions().add(new CloseAction(dialog));
                 dialog.setModal(false);
@@ -106,7 +106,7 @@ public class LayerPropertiesItem extends TreeMenuItem{
         private final FXDialog dialog;
         
         public CloseAction(FXDialog dialog) {
-            super(GeotkFXBundle.getString(LayerPropertiesItem.class, "close"));
+            super(GeotkFX.getString(LayerPropertiesItem.class, "close"));
             this.dialog = dialog;
         }
 

@@ -27,8 +27,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.gui.javafx.chooser.FXCoverageStoreChooser;
 import org.geotoolkit.gui.javafx.render2d.FXMap;
 import org.geotoolkit.gui.javafx.render2d.FXMapAction;
-import org.geotoolkit.internal.GeotkFXBundle;
-import org.geotoolkit.internal.GeotkFXIconBundle;
+import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.internal.Loggers;
 import org.geotoolkit.map.MapLayer;
 
@@ -37,13 +36,13 @@ import org.geotoolkit.map.MapLayer;
  * @author Johann Sorel (Geomatys)
  */
 public class FXAddCoverageStoreAction extends FXMapAction {
-    public static final Image ICON = SwingFXUtils.toFXImage(GeotkFXIconBundle.getBufferedImage("add-raster", new Dimension(16, 16)), null);
+    public static final Image ICON = SwingFXUtils.toFXImage(GeotkFX.getBufferedImage("add-raster", new Dimension(16, 16)), null);
     
     private final FXMap map;
 
     public FXAddCoverageStoreAction(FXMap map) {
-        super(map,GeotkFXBundle.getString(FXAddCoverageStoreAction.class,"label"),
-                GeotkFXBundle.getString(FXAddCoverageStoreAction.class,"label"),ICON);
+        super(map,GeotkFX.getString(FXAddCoverageStoreAction.class,"label"),
+                GeotkFX.getString(FXAddCoverageStoreAction.class,"label"),ICON);
         this.map = map;
     }
     

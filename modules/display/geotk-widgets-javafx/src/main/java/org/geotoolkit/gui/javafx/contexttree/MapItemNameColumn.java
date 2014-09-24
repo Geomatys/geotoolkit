@@ -20,7 +20,7 @@ package org.geotoolkit.gui.javafx.contexttree;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.cell.TextFieldTreeTableCell;
 import org.geotoolkit.gui.javafx.util.FXUtilities;
-import org.geotoolkit.internal.GeotkFXBundle;
+import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.map.MapItem;
 
 /**
@@ -30,7 +30,7 @@ import org.geotoolkit.map.MapItem;
 public class MapItemNameColumn extends TreeTableColumn<MapItem,String>{
 
     public MapItemNameColumn() {
-        super(GeotkFXBundle.getString(MapItemNameColumn.class,"layers"));
+        super(GeotkFX.getString(MapItemNameColumn.class,"layers"));
         setCellValueFactory(param -> FXUtilities.beanProperty(((CellDataFeatures)param).getValue().getValue(), "name", String.class));     
         setCellFactory(TextFieldTreeTableCell.forTreeTableColumn());
         setEditable(true);

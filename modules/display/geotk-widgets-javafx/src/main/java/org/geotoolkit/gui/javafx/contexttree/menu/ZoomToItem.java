@@ -30,7 +30,7 @@ import org.geotoolkit.font.FontAwesomeIcons;
 import org.geotoolkit.font.IconBuilder;
 import org.geotoolkit.gui.javafx.contexttree.TreeMenuItem;
 import org.geotoolkit.gui.javafx.render2d.FXMap;
-import org.geotoolkit.internal.GeotkFXBundle;
+import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.internal.Loggers;
 import org.geotoolkit.map.MapItem;
 import org.geotoolkit.map.MapLayer;
@@ -54,7 +54,7 @@ public class ZoomToItem extends TreeMenuItem{
      */
     public ZoomToItem(FXMap map){
         this.map = map;
-        item = new MenuItem(GeotkFXBundle.getString(this,"zoomto"));
+        item = new MenuItem(GeotkFX.getString(this,"zoomto"));
         item.setGraphic(new ImageView(ICON));
 
         item.setOnAction(new EventHandler<javafx.event.ActionEvent>() {

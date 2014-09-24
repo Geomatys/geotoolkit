@@ -30,7 +30,7 @@ import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.internal.GeotkFXBundle;
+import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.io.X364;
 import org.geotoolkit.io.wkt.WKTFormat;
 import org.geotoolkit.map.CoverageMapLayer;
@@ -74,7 +74,7 @@ public class FXLayerStructure extends FXPropertyPane {
 
     @Override
     public String getTitle() {
-        return GeotkFXBundle.getString(FXLayerStructure.class, "title");
+        return GeotkFX.getString(FXLayerStructure.class, "title");
     }
     
     public boolean canHandle(Object target) {

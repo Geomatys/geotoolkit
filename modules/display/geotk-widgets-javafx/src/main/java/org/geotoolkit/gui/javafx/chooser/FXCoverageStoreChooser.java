@@ -50,7 +50,7 @@ import org.geotoolkit.coverage.CoverageStoreFinder;
 import org.geotoolkit.gui.javafx.parameter.FXParameterEditor;
 import org.geotoolkit.gui.javafx.parameter.FXValueEditor;
 import org.geotoolkit.gui.javafx.util.FXOptionDialog;
-import org.geotoolkit.internal.GeotkFXBundle;
+import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.internal.Loggers;
 import org.geotoolkit.map.MapLayer;
 import org.opengis.parameter.ParameterValueGroup;
@@ -66,7 +66,7 @@ public class FXCoverageStoreChooser extends SplitPane {
     private final FXLayerChooser layerChooser = new FXLayerChooser();
     private final FXParameterEditor paramEditor = new FXParameterEditor();
     private final ScrollPane listScroll = new ScrollPane(factoryView);
-    private final Button connectButton = new Button(GeotkFXBundle.getString(FXFeatureStoreChooser.class,"apply"));
+    private final Button connectButton = new Button(GeotkFX.getString(FXFeatureStoreChooser.class,"apply"));
     private final Label infoLabel = new Label();
         
     public FXCoverageStoreChooser() {
@@ -106,9 +106,9 @@ public class FXCoverageStoreChooser extends SplitPane {
         final BorderPane vpane = new BorderPane(paramEditor, null, null, hpane, null);
         vpane.setPadding(Insets.EMPTY);
         
-        final TitledPane paneFactory = new TitledPane(GeotkFXBundle.getString(FXFeatureStoreChooser.class,"factory"), listScroll);
+        final TitledPane paneFactory = new TitledPane(GeotkFX.getString(FXFeatureStoreChooser.class,"factory"), listScroll);
         paneFactory.setFont(Font.font(paneFactory.getFont().getFamily(), FontWeight.BOLD, paneFactory.getFont().getSize()));
-        final TitledPane paneConfig = new TitledPane(GeotkFXBundle.getString(FXFeatureStoreChooser.class,"config"), vpane);
+        final TitledPane paneConfig = new TitledPane(GeotkFX.getString(FXFeatureStoreChooser.class,"config"), vpane);
         
         accordion.getPanes().add(paneFactory);
         accordion.getPanes().add(paneConfig);

@@ -49,7 +49,7 @@ import javafx.scene.text.FontWeight;
 import javafx.util.Callback;
 import org.geotoolkit.font.FontAwesomeIcons;
 import org.geotoolkit.font.IconBuilder;
-import org.geotoolkit.internal.GeotkFXBundle;
+import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.map.MapLayer;
 
 /**
@@ -61,8 +61,8 @@ public class FXLayerStylesPane extends FXPropertyPane{
     private final BorderPane parts = new BorderPane();
     private final BorderPane left = new BorderPane();
     private final ListView views = new ListView();
-    private final Button apply = new Button(GeotkFXBundle.getString(this,"apply"));
-    private final Button revert = new Button(GeotkFXBundle.getString(this,"revert"));
+    private final Button apply = new Button(GeotkFX.getString(this,"apply"));
+    private final Button revert = new Button(GeotkFX.getString(this,"revert"));
     
     private final FXLayerStylePane[] editors;
     
@@ -150,7 +150,7 @@ public class FXLayerStylesPane extends FXPropertyPane{
 
     @Override
     public String getTitle() {
-        return GeotkFXBundle.getString(this,"style");
+        return GeotkFX.getString(this,"style");
     }
 
     @Override

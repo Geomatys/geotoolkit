@@ -54,6 +54,7 @@ import org.geotoolkit.display2d.service.DefaultGlyphService;
 import org.geotoolkit.gui.javafx.contexttree.TreeMenuItem;
 import org.geotoolkit.gui.javafx.contexttree.menu.ActionMenuItem;
 import org.geotoolkit.gui.javafx.util.FXUtilities;
+import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.style.FeatureTypeStyleListener;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
@@ -310,15 +311,15 @@ public class FXUserStyle extends FXStyleElementController<FXUserStyle, MutableSt
             if (newValue instanceof MutableStyle) {
                 final MutableStyle style = (MutableStyle) newValue;
                 style.addListener(StyleTreeItem.this);
-                img.setImage(Commons.ICON_STYLE);
+                img.setImage(GeotkFX.ICON_STYLE);
             } else if (newValue instanceof MutableFeatureTypeStyle) {
                 final MutableFeatureTypeStyle fts = (MutableFeatureTypeStyle) newValue;
                 fts.addListener(StyleTreeItem.this);
-                img.setImage(Commons.ICON_FTS);
+                img.setImage(GeotkFX.ICON_FTS);
             } else if (newValue instanceof MutableRule) {
                 final MutableRule r = (MutableRule) newValue;
                 r.addListener(StyleTreeItem.this);
-                img.setImage(Commons.ICON_RULE);
+                img.setImage(GeotkFX.ICON_RULE);
             } else if (newValue instanceof Symbolizer) {
                 final Symbolizer symb = (Symbolizer) newValue;
                 final Dimension dim = DefaultGlyphService.glyphPreferredSize(symb, null, null);
@@ -422,7 +423,7 @@ public class FXUserStyle extends FXStyleElementController<FXUserStyle, MutableSt
     class NewFTSAction extends ActionMenuItem{
 
         NewFTSAction() {
-            super("new FTS",Commons.ICON_NEW);
+            super("new FTS",GeotkFX.ICON_NEW);
         }
 
         @Override
@@ -443,7 +444,7 @@ public class FXUserStyle extends FXStyleElementController<FXUserStyle, MutableSt
     class NewRuleAction extends ActionMenuItem{
 
         NewRuleAction() {
-            super("new Rule",Commons.ICON_NEW);
+            super("new Rule",GeotkFX.ICON_NEW);
         }
 
         @Override
@@ -465,7 +466,7 @@ public class FXUserStyle extends FXStyleElementController<FXUserStyle, MutableSt
         private final FXStyleElementController editor;
 
         NewSymbolizerAction(final FXStyleElementController editor) {
-            super(editor.getEditedClass().getSimpleName(),Commons.ICON_NEW);
+            super(editor.getEditedClass().getSimpleName(),GeotkFX.ICON_NEW);
             this.editor = editor;
         }
 
@@ -486,7 +487,7 @@ public class FXUserStyle extends FXStyleElementController<FXUserStyle, MutableSt
     class DuplicateAction extends ActionMenuItem {
 
         DuplicateAction() {
-            super("Duplicate", Commons.ICON_DUPLICATE);
+            super("Duplicate", GeotkFX.ICON_DUPLICATE);
         }
 
         @Override
@@ -526,7 +527,7 @@ public class FXUserStyle extends FXStyleElementController<FXUserStyle, MutableSt
     class DeleteAction extends ActionMenuItem {
 
         DeleteAction() {
-            super("Delete",Commons.ICON_DELETE);
+            super("Delete",GeotkFX.ICON_DELETE);
         }
 
         @Override

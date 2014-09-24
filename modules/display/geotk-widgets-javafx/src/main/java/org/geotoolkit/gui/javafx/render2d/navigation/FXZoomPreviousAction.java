@@ -26,7 +26,7 @@ import org.geotoolkit.font.FontAwesomeIcons;
 import org.geotoolkit.font.IconBuilder;
 import org.geotoolkit.gui.javafx.render2d.FXMap;
 import org.geotoolkit.gui.javafx.render2d.FXMapAction;
-import org.geotoolkit.internal.GeotkFXBundle;
+import org.geotoolkit.internal.GeotkFX;
 
 /**
  *
@@ -36,7 +36,7 @@ public final class FXZoomPreviousAction extends FXMapAction {
     public static final Image ICON = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_CHEVRON_LEFT, 16, FontAwesomeIcons.DEFAULT_COLOR), null);
     
     public FXZoomPreviousAction(FXMap map) {
-        super(map,GeotkFXBundle.getString(FXZoomPreviousAction.class,"zoom_previous"),GeotkFXBundle.getString(FXZoomPreviousAction.class,"zoom_previous"),ICON);
+        super(map,GeotkFX.getString(FXZoomPreviousAction.class,"zoom_previous"),GeotkFX.getString(FXZoomPreviousAction.class,"zoom_previous"),ICON);
         
         map.getCanvas().addPropertyChangeListener(new PropertyChangeListener() {
             @Override

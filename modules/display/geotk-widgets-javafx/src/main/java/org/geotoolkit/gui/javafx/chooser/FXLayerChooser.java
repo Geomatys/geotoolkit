@@ -53,7 +53,7 @@ import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.GeometryDescriptor;
 import org.geotoolkit.feature.type.Name;
 import org.geotoolkit.filter.DefaultFilterFactory2;
-import org.geotoolkit.internal.GeotkFXIconBundle;
+import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapBuilder;
@@ -224,19 +224,19 @@ public class FXLayerChooser extends BorderPane{
                     BufferedImage icon;
                     final Class binding = desc.getType().getBinding();
                     if(Point.class.isAssignableFrom(binding)){
-                        icon = GeotkFXIconBundle.getBufferedImage("edit_single_point");
+                        icon = GeotkFX.getBufferedImage("edit_single_point");
                     }else if(MultiPoint.class.isAssignableFrom(binding)){
-                        icon = GeotkFXIconBundle.getBufferedImage("edit_multi_point");
+                        icon = GeotkFX.getBufferedImage("edit_multi_point");
                     }else if(LineString.class.isAssignableFrom(binding)){
-                        icon = GeotkFXIconBundle.getBufferedImage("edit_single_line");
+                        icon = GeotkFX.getBufferedImage("edit_single_line");
                     }else if(MultiLineString.class.isAssignableFrom(binding)){
-                        icon = GeotkFXIconBundle.getBufferedImage("edit_multi_line");
+                        icon = GeotkFX.getBufferedImage("edit_multi_line");
                     }else if(Polygon.class.isAssignableFrom(binding)){
-                        icon = GeotkFXIconBundle.getBufferedImage("edit_single_polygon");
+                        icon = GeotkFX.getBufferedImage("edit_single_polygon");
                     }else if(MultiPolygon.class.isAssignableFrom(binding)){
-                        icon = GeotkFXIconBundle.getBufferedImage("edit_multi_polygon");
+                        icon = GeotkFX.getBufferedImage("edit_multi_polygon");
                     }else{
-                        icon = (BufferedImage) GeotkFXIconBundle.EMPTY_ICON_16;
+                        icon = (BufferedImage) GeotkFX.EMPTY_ICON_16;
                     }
 
                      boolean editable = false;
@@ -253,7 +253,7 @@ public class FXLayerChooser extends BorderPane{
                                                         BufferedImage.TYPE_INT_ARGB);
                         final Graphics2D g = img.createGraphics();
                         g.drawImage(icon, 0, 0, null);
-                        final BufferedImage lock = GeotkFXIconBundle.getBufferedImage("lock");
+                        final BufferedImage lock = GeotkFX.getBufferedImage("lock");
                         g.drawImage(lock, 0, 0, null);
                         icon = img;
                     }

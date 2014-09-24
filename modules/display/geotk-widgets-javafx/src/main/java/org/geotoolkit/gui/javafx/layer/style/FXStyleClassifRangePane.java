@@ -18,7 +18,7 @@
 package org.geotoolkit.gui.javafx.layer.style;
 
 import org.geotoolkit.gui.javafx.layer.FXLayerStylePane;
-import org.geotoolkit.internal.GeotkFXBundle;
+import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.MutableStyle;
 
@@ -33,12 +33,12 @@ public class FXStyleClassifRangePane extends FXLayerStylePane {
 
     @Override
     public String getTitle() {
-        return GeotkFXBundle.getString(this,"title");
+        return GeotkFX.getString(this,"title");
     }
     
     @Override
     public String getCategory() {
-        return GeotkFXBundle.getString(this,"category");
+        return GeotkFX.getString(this,"category");
     }
     
     @Override
