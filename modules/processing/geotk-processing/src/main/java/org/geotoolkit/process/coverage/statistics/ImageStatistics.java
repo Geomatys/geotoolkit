@@ -84,6 +84,10 @@ public class ImageStatistics implements Serializable{
             return repartition;
         }
 
+        public void setRepartition(TreeMap<Double, Long> repartition) {
+            this.repartition = repartition;
+        }
+
         public double[] getNoData() {
             return noData;
         }
