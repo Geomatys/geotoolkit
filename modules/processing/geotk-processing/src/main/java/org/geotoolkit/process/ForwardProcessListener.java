@@ -1,5 +1,7 @@
 package org.geotoolkit.process;
 
+import org.opengis.util.InternationalString;
+
 /**
  * A ProcessListener implementation that simplify progressing event spreading to parent process.
  * This listener is used to update parent process progress value from child-process progressing.
@@ -40,13 +42,21 @@ public class ForwardProcessListener implements ProcessListener {
 
     @Override
     public void started(ProcessEvent processEvent) {
-        String processName = processEvent.getSource().getDescriptor().getDisplayName().toString();
+        String processName = "";
+        final InternationalString is = processEvent.getSource().getDescriptor().getDisplayName();
+        if (is != null) {
+            processName = is.toString();
+        }
         fireProgressing(processName+" : Start", taskPercentStart, null);
     }
 
     @Override
     public void progressing(ProcessEvent processEvent) {
-        String processName = processEvent.getSource().getDescriptor().getDisplayName().toString();
+        String processName = "";
+        final InternationalString is = processEvent.getSource().getDescriptor().getDisplayName();
+        if (is != null) {
+            processName = is.toString();
+        }
         String msg = processName + " : " + processEvent.getTask().toString();
 
         float progress = taskPercentStart + (taskWorkLength * (processEvent.getProgress() / 100f));
@@ -73,7 +83,11 @@ public class ForwardProcessListener implements ProcessListener {
 
     @Override
     public void completed(ProcessEvent processEvent) {
-        String processName = processEvent.getSource().getDescriptor().getDisplayName().toString();
+        String processName = "";
+        final InternationalString is = processEvent.getSource().getDescriptor().getDisplayName();
+        if (is != null) {
+            processName = is.toString();
+        }
         fireProgressing(processName+" : Completed", taskPercentStart+ taskWorkLength, null);
     }
 
