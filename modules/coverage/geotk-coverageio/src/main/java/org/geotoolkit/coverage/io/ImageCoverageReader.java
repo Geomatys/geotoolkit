@@ -1230,4 +1230,10 @@ public class ImageCoverageReader extends GridCoverageReader {
         helper = null;
         super.dispose();
     }
+
+    @Override
+    protected void finalize() throws Throwable {
+        dispose();
+        super.finalize();
+    }
 }
