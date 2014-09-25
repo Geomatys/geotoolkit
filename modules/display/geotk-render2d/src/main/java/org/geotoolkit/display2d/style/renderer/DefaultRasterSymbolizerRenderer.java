@@ -40,6 +40,7 @@ import javax.media.jai.operator.BandSelectDescriptor;
 import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.coverage.CoverageReference;
+import org.geotoolkit.coverage.CoverageUtilities;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.*;
 import org.geotoolkit.coverage.io.CoverageStoreException;
@@ -247,7 +248,9 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
                 if (isReprojected) {
                     //calculate best intersection area
                     final GeneralEnvelope tmp = new GeneralEnvelope(renderingContext.getPaintingObjectiveBounds2D());
-                    tmp.intersect(CRS.transform(coverageToObjective, dataCoverage.getEnvelope()));
+                    final int xAxis = Math.max(0, CoverageUtilities.getMinOrdinate(coverageCRS));
+                    tmp.intersect(CRS.transform(coverageToObjective, new GeneralEnvelope(
+                            dataCoverage.getEnvelope()).subEnvelope(xAxis, xAxis + 2)));
 
                     if (tmp.isEmpty()) {
                         dataCoverage = null;
