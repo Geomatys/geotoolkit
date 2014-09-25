@@ -339,5 +339,8 @@ public class DirectoryWatcher implements Closeable {
                 }
             }
         }
+        if (traced != null) {
+            throw traced;
+        }
     }
 }
