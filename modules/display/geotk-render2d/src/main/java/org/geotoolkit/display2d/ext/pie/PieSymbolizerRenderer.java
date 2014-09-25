@@ -47,7 +47,7 @@ public class PieSymbolizerRenderer extends AbstractSymbolizerRenderer<CachedPieS
     private static class PropsPie {
         private Geometry[] geometries;
         private Map<Object,Double> vals = new HashMap<>();
-        private int size = 100;
+        private double size = 100;
     }
 
     public PieSymbolizerRenderer(final SymbolizerRendererService service, CachedPieSymbolizer cache, RenderingContext2D context){
@@ -92,7 +92,10 @@ public class PieSymbolizerRenderer extends AbstractSymbolizerRenderer<CachedPieS
                 }
                 propsPie.geometries = ((ProjectedFeature) next).getGeometry(null).getDisplayGeometryJTS();
                 if (size != null) {
-                    propsPie.size = size.evaluate(f, Integer.class);
+                    final Double s = size.evaluate(f, Double.class);
+                    if (s != null && !Double.isNaN(s) && s > 0) {
+                        propsPie.size = s;
+                    }
                 }
 
                 Double oldQuarter = propsPie.vals.get(quarterKey);
@@ -112,7 +115,7 @@ public class PieSymbolizerRenderer extends AbstractSymbolizerRenderer<CachedPieS
         final Graphics2D g = renderingContext.getGraphics();
 
         for (final PropsPie propsPie : vals.values()) {
-            final int pieSize = propsPie.size;
+            final double pieSize = propsPie.size;
             double nbTotalValue = 0;
             for (final Double val : propsPie.vals.values()) {
                 if (val != null && !Double.isNaN(val)) {
