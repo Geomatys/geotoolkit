@@ -173,17 +173,9 @@ public final strictfp class WebCRSFactoryTest {
 
         assertEqualsIgnoreMetadata(CRS84, CommonCRS.WGS84.normalizedGeographic(), true); // Required condition for next test.
 
-        finder.setFullScanAllowed(false);
-        assertNull("Should not find WGS84 without a full scan, since it doesn't contains the CRS:84 identifier.",
-                   finder.find(CommonCRS.WGS84.normalizedGeographic()));
-
         finder.setFullScanAllowed(true);
         assertSame("A full scan should allow us to find WGS84, since it is equals ignoring metadata to CRS:84.",
                    CRS84, finder.find(CommonCRS.WGS84.normalizedGeographic()));
-
-        finder.setFullScanAllowed(false);
-        assertNull("The scan result should not be cached.",
-                   finder.find(CommonCRS.WGS84.normalizedGeographic()));
 
         // --------------------------------------------------
         // Same test than above, using a CRS created from WKT
@@ -223,10 +215,6 @@ public final strictfp class WebCRSFactoryTest {
         finder.setFullScanAllowed(false);
         assertSame("Should find without the need for scan, since we can use the CRS:84 identifier.",
                    CRS84, finder.find(CRS84));
-
-        finder.setFullScanAllowed(false);
-        assertNull("Should not find WGS84 without a full scan, since it doesn't contains the CRS:84 identifier.",
-                   finder.find(CommonCRS.WGS84.normalizedGeographic()));
 
         finder.setFullScanAllowed(true);
         assertSame("A full scan should allow us to find WGS84, since it is equals ignoring metadata to CRS:84.",
