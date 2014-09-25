@@ -316,15 +316,28 @@ public class DirectoryWatcher implements Closeable {
      * Each time the watch service will catch an event on a file/folder, it will use this method. It allows user defining
      * its own processes over file changes.
      *
+     * N.B : If an exception is thrown by a listener, it is stored and thrown back after all listeners have been executed.
+     * If another listener throw an exception, it is stored via {@link java.lang.Exception#addSuppressed(Throwable)}.
+     *
      * @param target      The file which have been triggered for changes.
      * @param kind        The kind of change which applied on the file. Most likely one of the {@link java.nio.file.StandardWatchEventKinds}.
      * @param isDirectory A boolean which is set to true if the input path is a directory, false otherwise.
      * @param count       Number of times the same event occurred.
+     * @throws java.lang.Exception if a listener throw an exception.
      */
     protected void firePathChanged(Path target, WatchEvent.Kind kind, boolean isDirectory, int count) throws Exception {
         final PathChangedEvent evt = new PathChangedEvent(this, target, kind, isDirectory, count);
+        Exception traced = null;
         for (PathChangeListener l : listeners.getListeners(PathChangeListener.class)) {
-            l.pathChanged(evt);
+            try {
+                l.pathChanged(evt);
+            } catch (Exception e) {
+                if (traced == null) {
+                    traced = e;
+                } else {
+                    traced.addSuppressed(e);
+                }
+            }
         }
     }
 }
