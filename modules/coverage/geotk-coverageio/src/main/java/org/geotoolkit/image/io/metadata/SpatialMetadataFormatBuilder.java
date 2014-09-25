@@ -904,6 +904,7 @@ public class SpatialMetadataFormatBuilder extends Builder<SpatialMetadataFormat>
         substitutions.put(GridEnvelope.class,    null); // CV_Grid.extent (will be added later)
         substitutions.put(GridCoordinates.class, int[].class);    // CV_GridEnvelope.low/high
         substitutions.put(DirectPosition.class,  double[].class); // CV_RectifiedGrid.origin
+        substitutions.put(CoordinateReferenceSystem.class, null);
         standard = MetadataStandard.ISO_19123;
         incompletes = null; // Will consider every RectifiedGridDomain nodes as incomplete.
         addTree(standard, RectifiedGrid.class, "RectifiedGridDomain", addToElement, false);
