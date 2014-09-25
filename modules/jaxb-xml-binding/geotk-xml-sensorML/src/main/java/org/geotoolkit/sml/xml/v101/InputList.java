@@ -95,6 +95,13 @@ public class InputList implements AbstractInputList {
     }
 
     /**
+     * Needed for Java reflection.
+     */
+    public void setInput(List<IoComponentPropertyType> input) {
+        this.input = input;
+    }
+
+    /**
      * Gets the value of the id property.
      *
      * @return

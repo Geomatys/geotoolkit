@@ -33,9 +33,9 @@ import org.geotoolkit.swe.xml.v101.CodeSpacePropertyType;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -49,8 +49,8 @@ import org.geotoolkit.swe.xml.v101.CodeSpacePropertyType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -107,20 +107,20 @@ public class Term implements AbstractTerm {
         this.definition = URI.create(definition);
         this.value      = value;
     }
-    
+
     public Term(final String codeSpace, final String value, final String definition) {
         this.codeSpace  = new CodeSpacePropertyType(codeSpace);
         this.definition = URI.create(definition);
         this.value      = value;
     }
-    
+
     /**
      * Gets the value of the codeSpace property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CodeSpacePropertyType }
-     *     
+     *
      */
     public CodeSpacePropertyType getCodeSpace() {
         return codeSpace;
@@ -128,11 +128,11 @@ public class Term implements AbstractTerm {
 
     /**
      * Sets the value of the codeSpace property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CodeSpacePropertyType }
-     *     
+     *
      */
     public void setCodeSpace(final CodeSpacePropertyType value) {
         this.codeSpace = value;
@@ -140,11 +140,11 @@ public class Term implements AbstractTerm {
 
     /**
      * Gets the value of the value property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getValue() {
         return value;
@@ -152,11 +152,11 @@ public class Term implements AbstractTerm {
 
     /**
      * Sets the value of the value property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setValue(final String value) {
         this.value = value;
@@ -164,23 +164,30 @@ public class Term implements AbstractTerm {
 
     /**
      * Gets the value of the definition property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public URI getDefinition() {
         return definition;
     }
 
     /**
+     * For use with Java reflection.
+     */
+    public void setDefinition(final URI uri) {
+        this.definition = uri;
+    }
+
+    /**
      * Sets the value of the definition property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setDefinition(final String value) {
         this.definition = URI.create(value);

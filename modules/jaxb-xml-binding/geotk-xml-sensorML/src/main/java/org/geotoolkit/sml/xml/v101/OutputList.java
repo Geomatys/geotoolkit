@@ -33,9 +33,9 @@ import org.geotoolkit.sml.xml.IoComponent;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -48,7 +48,7 @@ import org.geotoolkit.sml.xml.IoComponent;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
+ *
  * @author Guilhem Legal (Geomatys)
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -95,12 +95,19 @@ public class OutputList implements AbstractOutputList {
     }
 
     /**
+     * Needed for Java reflection.
+     */
+    public void setOutput(List<IoComponentPropertyType> outputs) {
+        this.output = output;
+    }
+
+    /**
      * Gets the value of the id property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getId() {
         return id;
@@ -108,11 +115,11 @@ public class OutputList implements AbstractOutputList {
 
     /**
      * Sets the value of the id property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setId(final String value) {
         this.id = value;
