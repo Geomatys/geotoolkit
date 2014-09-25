@@ -159,8 +159,6 @@ public final strictfp class AllAuthoritiesFactoryTest extends ReferencingTestBas
     public void testFind() throws FactoryException {
         final AbstractAuthorityFactory all = AllAuthoritiesFactory.getInstance(null);
         final IdentifiedObjectFinder finder = all.getIdentifiedObjectFinder(CoordinateReferenceSystem.class);
-        finder.setFullScanAllowed(false);
-        assertNull("Should not find the CRS without a scan.", finder.find(CommonCRS.WGS84.normalizedGeographic()));
 
         finder.setFullScanAllowed(true);
         final IdentifiedObject find = finder.find(CommonCRS.WGS84.normalizedGeographic());

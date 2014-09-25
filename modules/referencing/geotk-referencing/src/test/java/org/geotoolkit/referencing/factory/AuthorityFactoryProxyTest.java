@@ -152,7 +152,6 @@ public final strictfp class AuthorityFactoryProxyTest {
         assertSame   (expected, proxy.createFromIdentifiers(expected));
         assertNull   (          proxy.createFromNames      (expected));
         assertSame   (expected, proxy.createFromCodes      (CommonCRS.WGS84.normalizedGeographic()));
-        assertNull   (          proxy.createFromIdentifiers(CommonCRS.WGS84.normalizedGeographic()));
         assertNull   (          proxy.createFromNames      (CommonCRS.WGS84.normalizedGeographic()));
 
         expected = factory.createCoordinateReferenceSystem("83");
