@@ -49,9 +49,6 @@
  *     keys or the values are derived on-the-fly from the content of an other collection.
  *   </p></li><li><p>
  *     {@link org.geotoolkit.util.collection.IntegerList} and
- *     {@link org.geotoolkit.util.collection.RangeSet} are collections specialized for a particular kind
- *     of content, providing more efficient storage than what we would get with the general-purpose
- *     collection implementations.
  *   </p></li><li><p>
  *     {@link org.geotoolkit.util.collection.DisjointSet},
  *     {@link org.geotoolkit.util.collection.KeySortedList} and

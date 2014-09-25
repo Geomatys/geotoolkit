@@ -26,7 +26,7 @@ import java.awt.geom.Dimension2D;
 import java.io.IOException;
 
 import org.apache.sis.measure.NumberRange;
-import org.geotoolkit.util.collection.RangeSet;
+import org.apache.sis.util.collection.RangeSet;
 import org.geotoolkit.internal.EmptySortedSet;
 import org.geotoolkit.internal.sql.table.Database;
 import org.geotoolkit.internal.sql.table.SpatialDatabase;
@@ -425,7 +425,7 @@ loop:   for (final GridCoverageEntry newEntry : entries) {
                 final LayerEntry layer  = this.layer; // Don't use getLayerEntry() because we want to accept null.
                 final long timeInterval = (layer != null) ? Math.round(layer.timeInterval * MILLIS_IN_DAY) : 0;
                 if (addTo == null) {
-                    addTo = new RangeSet<>(Date.class);
+                    addTo = RangeSet.create(Date.class, true, false);
                 }
                 while (results.next()) {
                     final Date startTime = results.getTimestamp(startTimeIndex, calendar);
