@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 20014, Geomatys
+ *    (C) 2014, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -25,6 +25,8 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import javafx.embed.swing.SwingFXUtils;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.image.Image;
 import javax.imageio.ImageIO;
 import org.apache.sis.util.iso.ResourceInternationalString;
@@ -49,6 +51,8 @@ public final class GeotkFX {
     public static final Image ICON_NEW       = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_PLUS,16,FontAwesomeIcons.DEFAULT_COLOR),null);
     public static final Image ICON_DUPLICATE = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_FILES_O,16,FontAwesomeIcons.DEFAULT_COLOR),null);
     public static final Image ICON_DELETE    = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_TRASH_O,16,FontAwesomeIcons.DEFAULT_COLOR),null);
+    public static final Image ICON_MOVEUP    = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_CHEVRON_UP,16,FontAwesomeIcons.DEFAULT_COLOR),null);
+    public static final Image ICON_MOVEDOWN  = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_CHEVRON_DOWN,16,FontAwesomeIcons.DEFAULT_COLOR),null);
     
     public static final String BUNDLE_PATH = "org/geotoolkit/gui/javafx/internal/Bundle";
     public static final String CSS_PATH = "/org/geotoolkit/gui/javafx/style/StyleEditor.css";
@@ -85,7 +89,6 @@ public final class GeotkFX {
             return "Missing key : "+key;
         }
     }
-    
     
     /**
      * Get the local string for the given key.
@@ -167,6 +170,28 @@ public final class GeotkFX {
        return SwingFXUtils.toFXImage(getBufferedImage(key), null);
     }
 
+    /**
+     * Load and initialize geotk bundle,css,loader for given object.
+     * 
+     * @param candidate 
+     */
+    public static void loadJRXML(Parent candidate){
+        final Class cdtClass = candidate.getClass();
+        final String fxmlpath = "/"+cdtClass.getName().replace('.', '/')+".fxml";
+        final FXMLLoader loader = new FXMLLoader(cdtClass.getResource(fxmlpath));
+        loader.setResources(GeotkFX.BUNDLE);
+        loader.setController(candidate);
+        loader.setRoot(candidate);
+        //in special environement like osgi or other, we must use the proper class loaders
+        //not necessarly the one who loaded the FXMLLoader class
+        loader.setClassLoader(cdtClass.getClassLoader());
+        try {
+            loader.load();
+        } catch (IOException ex) {
+            throw new IllegalArgumentException(ex.getMessage(), ex);
+        }
+        candidate.getStylesheets().add(GeotkFX.CSS_PATH);
+    }
     
     
     private GeotkFX(){}

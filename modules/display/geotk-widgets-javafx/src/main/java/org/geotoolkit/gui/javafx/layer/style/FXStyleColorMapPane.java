@@ -29,6 +29,7 @@ import org.geotoolkit.style.MutableStyle;
 public class FXStyleColorMapPane extends FXLayerStylePane {
     
     public FXStyleColorMapPane() {
+        GeotkFX.loadJRXML(this);
     }
 
     @Override
@@ -39,6 +40,12 @@ public class FXStyleColorMapPane extends FXLayerStylePane {
     @Override
     public String getCategory() {
         return GeotkFX.getString(this,"category");
+    }
+    
+    /**
+     * Called by FXMLLoader after creating controller.
+     */
+    public void initialize(){
     }
     
     @Override

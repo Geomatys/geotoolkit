@@ -64,6 +64,7 @@
                                         <include>org/geotoolkit/font/**</include>
                                         <include>org/geotoolkit/map/**</include>
                                         <include>org/geotoolkit/cql/**</include>
+                                        <include>org/geotoolkit/internal/**</include>
                                         <include>org/opengis/**</include>
                                         <include>jfxtras/**</include>
                                     </includes>

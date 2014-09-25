@@ -24,8 +24,12 @@ import javafx.beans.property.adapter.JavaBeanFloatPropertyBuilder;
 import javafx.beans.property.adapter.JavaBeanIntegerPropertyBuilder;
 import javafx.beans.property.adapter.JavaBeanLongPropertyBuilder;
 import javafx.beans.property.adapter.JavaBeanObjectPropertyBuilder;
+import javafx.collections.ObservableList;
+import javafx.collections.ObservableListBase;
+import javafx.scene.control.TreeItem;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import org.geotoolkit.util.collection.NotifiedCheckedList;
 
 /**
  *
@@ -87,5 +91,33 @@ public final class FXUtilities {
         final double a = (double)swingColor.getBlue() / 255.0;
         return new Color(r, g, b, a);
     }
+        
+    /**
+     * Expand all nodes from root to given node
+     * @param candidate 
+     */
+    public static void expandRootToItem(TreeItem candidate) {
+        if (candidate != null) {
+            expandRootToItem(candidate.getParent());
+            if (!candidate.isLeaf()) {
+                candidate.setExpanded(true);
+            }
+        }
+    }
     
+    /**
+     * Expand all nodes child node recursively
+     * @param candidate 
+     */
+    public static void expandAll(TreeItem candidate) {
+        if (candidate != null) {
+            candidate.setExpanded(true);
+            for(Object ti : candidate.getChildren()){
+                expandAll((TreeItem)ti);
+            }
+        }
+    }
+    
+    
+
 }

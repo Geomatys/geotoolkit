@@ -17,12 +17,10 @@
 
 package org.geotoolkit.gui.javafx.style;
 
-import java.io.IOException;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.BorderPane;
 import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.map.MapLayer;
@@ -47,21 +45,7 @@ public abstract class FXStyleElementController<E extends FXStyleElementControlle
     protected volatile boolean updating = false;
 
     public FXStyleElementController() {
-        final Class thisClass = this.getClass();
-        final String fxmlpath = "/"+thisClass.getName().replace('.', '/')+".fxml";
-        final FXMLLoader loader = new FXMLLoader(thisClass.getResource(fxmlpath));
-        loader.setResources(GeotkFX.BUNDLE);
-        loader.setController(this);
-        loader.setRoot(this);
-        //in special environement like osgi or other, we must use the proper class loaders
-        //not necessarly the one who loaded the FXMLLoader class
-        loader.setClassLoader(thisClass.getClassLoader());
-        try {
-            loader.load();
-        } catch (IOException ex) {
-            throw new IllegalArgumentException(ex.getMessage(), ex);
-        }
-        getStylesheets().add(GeotkFX.CSS_PATH);
+        GeotkFX.loadJRXML(this);
     }
     
     /**

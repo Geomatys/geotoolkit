@@ -133,16 +133,25 @@ public class FXGraphic extends FXStyleElementController<FXGraphic, Graphic>{
         uiTable.setItems(FXCollections.observableArrayList());
         
         final TableColumn<GraphicalSymbol,GraphicalSymbol> previewCol = new TableColumn<>();
+        previewCol.setEditable(true);
+        previewCol.setPrefWidth(60);
+        previewCol.setMinWidth(40);
         previewCol.setCellValueFactory((CellDataFeatures<GraphicalSymbol, GraphicalSymbol> param) -> new SimpleObjectProperty<>((GraphicalSymbol)param.getValue()));
         previewCol.setCellFactory((TableColumn<GraphicalSymbol, GraphicalSymbol> p) -> new GlyphButton());
         
         final TableColumn<GraphicalSymbol,GraphicalSymbol> deleteCol = new TableColumn<>();
+        deleteCol.setEditable(true);
+        deleteCol.setPrefWidth(30);
+        deleteCol.setMinWidth(30);
+        deleteCol.setMaxWidth(30);
         deleteCol.setCellValueFactory((CellDataFeatures<GraphicalSymbol, GraphicalSymbol> param) -> new SimpleObjectProperty<>((GraphicalSymbol)param.getValue()));
         deleteCol.setCellFactory((TableColumn<GraphicalSymbol, GraphicalSymbol> p) -> new DeleteButton());
         
         
         uiTable.getColumns().add(previewCol);
         uiTable.getColumns().add(deleteCol);
+        uiTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        uiTable.setTableMenuButtonVisible(false);
         
     }
     

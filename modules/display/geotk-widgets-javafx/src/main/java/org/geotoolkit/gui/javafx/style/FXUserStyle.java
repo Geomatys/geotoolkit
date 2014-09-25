@@ -179,7 +179,6 @@ public class FXUserStyle extends FXStyleElementController<FXUserStyle, MutableSt
                     final TreeItem ti = tree.getTreeItem(ttp.getRow());
                     if(ti!=null && !selection.contains(ti)) selection.add(ti);
                 }
-                //final List<? extends TreeItem> selection = tree.getSelectionModel().getSelectedItems();
                 for(int i=0,n=menuItems.size();i<n;i++){
                     final Object candidate = menuItems.get(i);
                     if(candidate instanceof TreeMenuItem){
@@ -248,6 +247,7 @@ public class FXUserStyle extends FXStyleElementController<FXUserStyle, MutableSt
             }
         });
         
+        FXUtilities.expandAll(tree.getRoot());
     }
     
     private void applyEditor(final TreeItem oldPath){
