@@ -40,7 +40,7 @@ public final strictfp class PrjFilesTest {
     private static final String WKT = "GEOGCS[\"WGS 84\", " +
             "DATUM[\"World Geodetic System 1984\", SPHEROID[\"WGS 84\", 6378137.0, 298.257223563]], " +
             "PRIMEM[\"Greenwich\", 0.0], UNIT[\"degree\", 0.017453292519943295], " +
-            "AXIS[\"Longitude\", EAST], AXIS[\"Latitude\", NORTH]]\n";
+            "AXIS[\"Longitude\", EAST], AXIS[\"Latitude\", NORTH], AUTHORITY[\"CRS\", \"84\"]]\n";
 
     /**
      * Tests the read operation.
