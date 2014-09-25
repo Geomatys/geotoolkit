@@ -32,6 +32,7 @@ import static java.lang.Character.*;
  * @since 3.09 (derived from 3.00)
  * @module
  */
+@Deprecated
 public final class Strings extends Static {
     /**
      * Do not allow instantiation of this class.

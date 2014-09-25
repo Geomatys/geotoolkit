@@ -22,6 +22,7 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.geotoolkit.gui.swing.tree.Trees;
+import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.ArraysExt;
 
 
@@ -256,25 +257,6 @@ public final class StringUtilities {
     }
 
     /**
-     * A utility method whitch replace the special character (é, è, à, É).
-     *
-     * @param s the string to clean.
-     * @return a String without special character.
-     *
-     * @deprecated Replaced by {@link org.geotoolkit.internal.StringUtilities#toASCII}.
-     */
-    @Deprecated
-    public static String cleanSpecialCharacter(String s) {
-        if (s != null) {
-            s = s.replace('é', 'e');
-            s = s.replace('è', 'e');
-            s = s.replace('à', 'a');
-            s = s.replace('É', 'E');
-        }
-        return s;
-    }
-
-    /**
      * Clean a string from its leading and trailing whitespaces, and the tabulation or end of line
      * characters.
      *
@@ -328,20 +310,6 @@ public final class StringUtilities {
             }
         }
         return strAvailable;
-    }
-
-    /**
-     * Converts all spaces from a string into the URL convention, %20.
-     * Note that the given string <strong>MUST</strong> not be {@code null}.
-     *
-     * @param s The initial string. Should not be {@code null}.
-     * @return A string with all spaces replaced by the matching URL character %20.
-     *
-     * @deprecated Use {@link java.net.URLEncoder#encode(String, String)} instead.
-     */
-    @Deprecated
-    public static String convertSpacesForUrl(final String s) {
-        return s.replaceAll(" ", "%20");
     }
 
     /**
@@ -470,20 +438,6 @@ public final class StringUtilities {
     }
 
     /**
-     * Returns true if <code>string1</code> starts with <code>string2</code> (ignoring case).
-     * @param string1 the first string
-     * @param string2 the second string
-     * @return true if <code>string1</code> starts with <code>string2</code>; false otherwise
-     *
-     * @deprecated Replaced by {@link org.apache.sis.util.CharSequences#startsWith(CharSequence, CharSequence, boolean)}.
-     */
-    @Deprecated
-    public static boolean startsWithIgnoreCase(final String string1, final String string2) {
-        // this could be optimized, but anyway it doesn't seem to be a performance killer
-        return string1.toUpperCase().startsWith(string2.toUpperCase());
-    }
-
-    /**
      * Returns the values of the list separated by commas.
      *
      * @param values The collection to extract values.
@@ -554,7 +508,7 @@ public final class StringUtilities {
         if (toSplit == null) {
             return Collections.emptyList();
         }
-        final List<String> strings = new ArrayList<String>();
+        final List<String> strings = new ArrayList<>();
         int last = 0;
         toSplit = toSplit.trim();
         for (int i=toSplit.indexOf(separator); i>=0; i=toSplit.indexOf(separator, i)) {
@@ -563,6 +517,58 @@ public final class StringUtilities {
         }
         strings.add(toSplit.substring(last).trim());
         return strings;
+    }
+
+    /**
+     * Formats the given elements as a (typically) comma-separated list. This method is similar to
+     * {@link java.util.AbstractCollection#toString()} or {@link java.util.Arrays#toString(Object[])}
+     * except for the following:
+     *
+     * <ul>
+     *   <li>There is no leading {@code '['} or trailing {@code ']'} characters.</li>
+     *   <li>Null elements are ignored instead than formatted as {@code "null"}.</li>
+     *   <li>If the {@code collection} argument is null or contains only null elements,
+     *       then this method returns {@code null}.</li>
+     *   <li>In the common case where the collection contains a single {@link String} element,
+     *       that string is returned directly (no object duplication).</li>
+     * </ul>
+     *
+     * @param  collection The elements to format in a (typically) comma-separated list, or {@code null}.
+     * @param  separator  The element separator, which is usually {@code ", "}.
+     * @return The (typically) comma-separated list, or {@code null} if the given {@code collection}
+     *         was null or contains only null elements.
+     *
+     * @see java.util.StringJoiner
+     * @see java.util.Arrays#toString(Object[])
+     */
+    public static String toString(final Iterable<?> collection, final String separator) {
+        ArgumentChecks.ensureNonNull("separator", separator);
+        String list = null;
+        if (collection != null) {
+            StringBuilder buffer = null;
+            for (final Object element : collection) {
+                if (element != null) {
+                    if (list == null) {
+                        list = element.toString();
+                    } else {
+                        if (buffer == null) {
+                            buffer = new StringBuilder(list);
+                        }
+                        buffer.append(separator);
+                        if (element instanceof CharSequence) {
+                            // StringBuilder has numerous optimizations for this case.
+                            buffer.append((CharSequence) element);
+                        } else {
+                            buffer.append(element);
+                        }
+                    }
+                }
+            }
+            if (buffer != null) {
+                list = buffer.toString();
+            }
+        }
+        return list;
     }
 
     /**
