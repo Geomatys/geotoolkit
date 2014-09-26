@@ -143,6 +143,8 @@ public class ThirdPartyMetaDataReader {
             }
         }
         
+        if (categories.isEmpty() && noDataCategory == null) return;
+        
         assert bitsPerSamples  != -1;
         assert samplePerPixels != -1;
         
