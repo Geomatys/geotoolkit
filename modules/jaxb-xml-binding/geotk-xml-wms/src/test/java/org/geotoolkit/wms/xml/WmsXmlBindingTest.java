@@ -21,7 +21,7 @@ import java.io.StringReader;
 import java.util.List;
 import org.geotoolkit.inspire.xml.vs.LanguageType;
 import org.opengis.metadata.citation.ResponsibleParty;
-import org.geotoolkit.metadata.iso.citation.Citations;
+import org.geotoolkit.metadata.Citations;
 import java.util.Arrays;
 import java.util.Date;
 import java.net.URI;

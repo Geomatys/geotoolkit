@@ -49,8 +49,8 @@ import org.geotoolkit.referencing.factory.AbstractAuthorityFactory;
 import org.geotoolkit.referencing.factory.epsg.PropertyEpsgFactory;
 import org.apache.sis.referencing.datum.DefaultGeodeticDatum;
 import org.apache.sis.referencing.datum.BursaWolfParameters;
-import org.geotoolkit.metadata.iso.citation.Citations;
 
+import org.geotoolkit.metadata.Citations;
 import org.geotoolkit.referencing.factory.FallbackAuthorityFactory;
 import static org.geotoolkit.referencing.IdentifiedObjects.NAME_COMPARATOR;
 import static org.geotoolkit.console.CommandLine.*;

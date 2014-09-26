@@ -47,7 +47,7 @@ import org.apache.sis.referencing.NamedIdentifier;
 import org.geotoolkit.util.collection.DerivedSet;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.apache.sis.util.collection.BackingStoreException;
-import org.geotoolkit.metadata.iso.citation.Citations;
+import org.geotoolkit.metadata.Citations;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.geotoolkit.referencing.factory.DirectAuthorityFactory;
 import org.geotoolkit.referencing.factory.IdentifiedObjectFinder;

@@ -54,7 +54,7 @@ import org.apache.sis.util.Localized;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.Numbers;
-import org.geotoolkit.metadata.iso.citation.Citations;
+import org.geotoolkit.metadata.Citations;
 import org.apache.sis.util.resources.IndexedResourceBundle;
 
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;

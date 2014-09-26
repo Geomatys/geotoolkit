@@ -742,7 +742,7 @@ public class AuthorityFactoryAdapter extends AbstractAuthorityFactory {
      * @return The authority or the vendor, or {@code UNKNOWN}.
      *
      * @see #availability
-     * @see org.geotoolkit.metadata.iso.citation.Citations#UNKNOWN
+     * @see org.geotoolkit.metadata.Citations#UNKNOWN
      */
     @Override
     final synchronized Citation getCitation(final String method) {

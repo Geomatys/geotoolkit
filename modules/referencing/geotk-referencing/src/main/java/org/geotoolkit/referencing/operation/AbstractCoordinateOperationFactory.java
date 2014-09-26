@@ -57,7 +57,7 @@ import static org.opengis.referencing.IdentifiedObject.NAME_KEY;
 import static org.opengis.referencing.operation.CoordinateOperation.COORDINATE_OPERATION_ACCURACY_KEY;
 import static org.apache.sis.internal.referencing.PositionalAccuracyConstant.DATUM_SHIFT_APPLIED;
 import static org.apache.sis.internal.referencing.PositionalAccuracyConstant.DATUM_SHIFT_OMITTED;
-import static org.geotoolkit.metadata.iso.citation.Citations.GEOTOOLKIT;
+import static org.geotoolkit.metadata.Citations.GEOTOOLKIT;
 import static org.geotoolkit.resources.Vocabulary.formatInternational;
 import static org.geotoolkit.internal.InternalUtilities.debugEquals;
 

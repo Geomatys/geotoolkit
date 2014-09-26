@@ -1,0 +1,1214 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gmi:MI_Metadata xsi:schemaLocation="http://www.isotc211.org/2005/gmi http://www.ngdc.noaa.gov/metadata/published/xsd/schema.xsd"
+xmlns:gco="http://www.isotc211.org/2005/gco" xmlns:gmd="http://www.isotc211.org/2005/gmd"
+  xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:gts="http://www.isotc211.org/2005/gts" xmlns:gmi="http://www.isotc211.org/2005/gmi"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xlink="http://www.w3.org/1999/xlink">
+<gmd:fileIdentifier>
+    <gco:CharacterString>gov.noaa.class:ASCAT</gco:CharacterString>
+  </gmd:fileIdentifier>
+  <gmd:language>
+    <gmd:LanguageCode codeList="http://www.loc.gov/standards/iso639-2/php/code_list.php" codeListValue="eng"/>
+  </gmd:language>
+  <gmd:characterSet>
+    <gmd:MD_CharacterSetCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#MD_CharacterSetCode" codeListValue="UTF8"/>
+  </gmd:characterSet>
+  <gmd:parentIdentifier>
+    <gco:CharacterString/>
+  </gmd:parentIdentifier>
+  <gmd:hierarchyLevel>
+<gmd:MD_ScopeCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#MD_ScopeCode" codeListValue="dataset"/>
+
+  </gmd:hierarchyLevel>
+  <gmd:hierarchyLevelName>
+    <gco:CharacterString/>
+  </gmd:hierarchyLevelName>
+  <gmd:contact>
+<gmd:CI_ResponsibleParty id = "fgdccontact_1215.101320.73952">
+<gmd:individualName><gco:CharacterString>Anna Milan</gco:CharacterString></gmd:individualName>
+<gmd:organisationName><gco:CharacterString>DOC/NOAA/NESDIS/NGDC > National Geophysical Data Center, NESDIS, NOAA, U.S. Department of Commerce</gco:CharacterString></gmd:organisationName>
+<gmd:positionName><gco:CharacterString></gco:CharacterString></gmd:positionName>
+<gmd:contactInfo>
+<gmd:CI_Contact>
+<gmd:phone>
+<gmd:CI_Telephone>
+<gmd:voice>
+<gco:CharacterString>(303) 497-5099</gco:CharacterString>
+</gmd:voice><gmd:facsimile>
+<gco:CharacterString>(303) 497-6513</gco:CharacterString>
+</gmd:facsimile></gmd:CI_Telephone>
+
+</gmd:phone>
+<gmd:address>
+<gmd:CI_Address>
+<gmd:deliveryPoint><gco:CharacterString>325 Broadway, Mail Code E/GC4  </gco:CharacterString></gmd:deliveryPoint>
+<gmd:city><gco:CharacterString>Boulder</gco:CharacterString></gmd:city>
+<gmd:administrativeArea><gco:CharacterString>CO</gco:CharacterString></gmd:administrativeArea>
+<gmd:postalCode><gco:CharacterString>80305-3328</gco:CharacterString></gmd:postalCode>
+<gmd:country><gco:CharacterString>USA</gco:CharacterString></gmd:country>
+<gmd:electronicMailAddress><gco:CharacterString>Anna.Milan@noaa.gov</gco:CharacterString></gmd:electronicMailAddress>
+</gmd:CI_Address>
+
+</gmd:address>
+
+<gmd:hoursOfService><gco:CharacterString>9:00 - 5:00 Mountain</gco:CharacterString></gmd:hoursOfService>
+<gmd:contactInstructions><gco:CharacterString></gco:CharacterString></gmd:contactInstructions></gmd:CI_Contact>
+
+</gmd:contactInfo>
+<gmd:role>
+<gmd:CI_RoleCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_RoleCode" codeListValue="custodian"/>
+</gmd:role>
+</gmd:CI_ResponsibleParty>
+
+  </gmd:contact>
+  <gmd:dateStamp><gco:Date>2007-10-31</gco:Date></gmd:dateStamp>
+  <gmd:metadataStandardName>
+    <gco:CharacterString>ISO 19115 Geographic Information - Metadata First Edition</gco:CharacterString>
+  </gmd:metadataStandardName>
+  <gmd:metadataStandardVersion>
+    <gco:CharacterString>ISO 19115:2003</gco:CharacterString>
+  </gmd:metadataStandardVersion>
+   <gmd:referenceSystemInfo>
+      <gmd:MD_ReferenceSystem>
+         <gmd:referenceSystemIdentifier>
+            <gmd:RS_Identifier>
+               <gmd:authority>
+                  <gmd:CI_Citation>
+                     <gmd:title>
+                        <gco:CharacterString>European Petroleum Survey Group (EPSG) Geodetic Parameter Registry</gco:CharacterString>
+                     </gmd:title>
+                     <gmd:date>
+                        <gmd:CI_Date>
+                           <gmd:date>
+                              <gco:Date>2008-11-12</gco:Date>
+                           </gmd:date>
+                           <gmd:dateType>
+                              <gmd:CI_DateTypeCode
+                                 codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_DateTypeCode"
+                                 codeListValue="publication"/>
+                           </gmd:dateType>
+                        </gmd:CI_Date>
+                     </gmd:date>
+                     <gmd:citedResponsibleParty>
+                        <gmd:CI_ResponsibleParty>
+                           <gmd:organisationName>
+                              <gco:CharacterString>European Petroleum Survey Group</gco:CharacterString>
+                           </gmd:organisationName>
+                           <gmd:contactInfo>
+                              <gmd:CI_Contact>
+                                 <gmd:onlineResource>
+                                    <gmd:CI_OnlineResource>
+                                       <gmd:linkage>
+                                          <gmd:URL>http://www.epsg-registry.org/</gmd:URL>
+                                       </gmd:linkage>
+                                    </gmd:CI_OnlineResource>
+                                 </gmd:onlineResource>
+                              </gmd:CI_Contact>
+                           </gmd:contactInfo>
+                           <gmd:role/>
+                        </gmd:CI_ResponsibleParty>
+                     </gmd:citedResponsibleParty>
+                  </gmd:CI_Citation>
+               </gmd:authority>
+               <gmd:code>
+                  <gco:CharacterString> urn:ogc:def:crs:EPSG:4326</gco:CharacterString>
+               </gmd:code>
+               <gmd:codeSpace>
+                  <gco:CharacterString/>
+               </gmd:codeSpace>
+               <gmd:version>
+                  <gco:CharacterString>6.18.3</gco:CharacterString>
+               </gmd:version>
+            </gmd:RS_Identifier>
+         </gmd:referenceSystemIdentifier>
+      </gmd:MD_ReferenceSystem>
+   </gmd:referenceSystemInfo>
+
+<gmd:identificationInfo>
+<gmd:MD_DataIdentification>
+ <gmd:citation>
+<gmd:CI_Citation id="fgdccitation_30392.101320.83996">
+  <gmd:title><gco:CharacterString>Advanced Scatterometer Level 1B</gco:CharacterString></gmd:title>
+  <gmd:date>
+  <gmd:CI_Date>
+ <gmd:date><gco:Date>2007-05-21</gco:Date></gmd:date>
+ <gmd:dateType><gmd:CI_DateTypeCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_DateTypeCode" codeListValue="publication"/>
+</gmd:dateType>
+</gmd:CI_Date>
+
+  </gmd:date>
+   <gmd:edition><gco:CharacterString></gco:CharacterString></gmd:edition>
+   <gmd:editionDate gco:nilReason = "unknown"/>
+<gmd:identifier><gmd:MD_Identifier><gmd:code><gco:CharacterString>gov.noaa.ngdc.fgdccitation:30392</gco:CharacterString></gmd:code></gmd:MD_Identifier></gmd:identifier>
+<gmd:citedResponsibleParty>
+<gmd:CI_ResponsibleParty id = "fgdccitation_30392.101320.890399.1">
+<gmd:individualName><gco:CharacterString>EUMETSAT > European Meteorological Satellite Organization</gco:CharacterString></gmd:individualName>
+<gmd:role>
+<gmd:CI_RoleCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_RoleCode" codeListValue="originator"/>
+
+</gmd:role>
+</gmd:CI_ResponsibleParty>
+</gmd:citedResponsibleParty>
+
+<gmd:citedResponsibleParty>
+   <gmd:CI_ResponsibleParty id = "fgdccitation_6699.101321.69045.1">
+      <gmd:contactInfo>
+         <gmd:CI_Contact>
+            <gmd:onlineResource>
+<gmd:CI_OnlineResource id="onlineresource_6699.101321.80036">
+<gmd:linkage>
+  <gmd:URL>http://www.class.noaa.gov/saa/products/search?sub_id=0&amp;datatype_family=ASCAT</gmd:URL>
+</gmd:linkage>
+<gmd:protocol>
+  <gco:CharacterString>http</gco:CharacterString>
+</gmd:protocol>
+<gmd:applicationProfile>
+  <gco:CharacterString>web browser</gco:CharacterString>
+</gmd:applicationProfile>
+<gmd:name>
+  <gco:CharacterString>Advanced Scatterometer Level 1B</gco:CharacterString>
+</gmd:name>
+<gmd:description>
+  <gco:CharacterString>Information about Advanced Scatterometer Level 1B archived and distributed at CLASS.</gco:CharacterString>
+</gmd:description>
+<gmd:function><gmd:CI_OnLineFunctionCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_OnLineFunctionCode" codeListValue="information"/>
+</gmd:function>
+</gmd:CI_OnlineResource>
+
+           </gmd:onlineResource>
+         </gmd:CI_Contact>
+      </gmd:contactInfo>
+      <gmd:role>
+<gmd:CI_RoleCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_RoleCode" codeListValue="distributor"/>
+
+      </gmd:role>
+   </gmd:CI_ResponsibleParty>
+</gmd:citedResponsibleParty><gmd:citedResponsibleParty>
+   <gmd:CI_ResponsibleParty id = "fgdccitation_6703.101321.69045.2">
+      <gmd:contactInfo>
+         <gmd:CI_Contact>
+            <gmd:onlineResource>
+<gmd:CI_OnlineResource id="onlineresource_6703.101321.83756">
+<gmd:linkage>
+  <gmd:URL>http://oiswww.eumetsat.org/WEBOPS/eps-pg/ASCAT/ASCAT-PG-index.htm</gmd:URL>
+</gmd:linkage>
+<gmd:protocol>
+  <gco:CharacterString>http</gco:CharacterString>
+</gmd:protocol>
+<gmd:applicationProfile>
+  <gco:CharacterString>web browser</gco:CharacterString>
+</gmd:applicationProfile>
+<gmd:name>
+  <gco:CharacterString>ASCAT Products Guide</gco:CharacterString>
+</gmd:name>
+<gmd:description>
+  <gco:CharacterString>Information about the ASCAT instrument, the data processing, end-product contents and format and potential usage and applications.</gco:CharacterString>
+</gmd:description>
+<gmd:function><gmd:CI_OnLineFunctionCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_OnLineFunctionCode" codeListValue="information"/>
+</gmd:function>
+</gmd:CI_OnlineResource>
+
+           </gmd:onlineResource>
+         </gmd:CI_Contact>
+      </gmd:contactInfo>
+      <gmd:role>
+<gmd:CI_RoleCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_RoleCode" codeListValue="distributor"/>
+
+      </gmd:role>
+   </gmd:CI_ResponsibleParty>
+</gmd:citedResponsibleParty><gmd:citedResponsibleParty>
+   <gmd:CI_ResponsibleParty id = "fgdccitation_6759.101321.69045.3">
+      <gmd:contactInfo>
+         <gmd:CI_Contact>
+            <gmd:onlineResource>
+<gmd:CI_OnlineResource id="onlineresource_6759.101321.87370">
+<gmd:linkage>
+  <gmd:URL>http://www.eumetsat.int/Home/Main/Access_to_Data/Metop__amp__NOAA_Services/Global_Data_Service/index.htm?l=en</gmd:URL>
+</gmd:linkage>
+<gmd:protocol>
+  <gco:CharacterString></gco:CharacterString>
+</gmd:protocol>
+<gmd:applicationProfile>
+  <gco:CharacterString></gco:CharacterString>
+</gmd:applicationProfile>
+<gmd:name>
+  <gco:CharacterString>EPS Product Processing Levels</gco:CharacterString>
+</gmd:name>
+<gmd:description>
+  <gco:CharacterString>Definitions of the different product levels, as understood in the EPS context.</gco:CharacterString>
+</gmd:description>
+<gmd:function><gmd:CI_OnLineFunctionCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_OnLineFunctionCode" codeListValue="information"/>
+</gmd:function>
+</gmd:CI_OnlineResource>
+
+           </gmd:onlineResource>
+         </gmd:CI_Contact>
+      </gmd:contactInfo>
+      <gmd:role>
+<gmd:CI_RoleCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_RoleCode" codeListValue="distributor"/>
+
+      </gmd:role>
+   </gmd:CI_ResponsibleParty>
+</gmd:citedResponsibleParty><gmd:citedResponsibleParty>
+   <gmd:CI_ResponsibleParty id = "fgdccitation_6701.101321.69045.4">
+      <gmd:contactInfo>
+         <gmd:CI_Contact>
+            <gmd:onlineResource>
+<gmd:CI_OnlineResource id="onlineresource_6701.101321.91050">
+<gmd:linkage>
+  <gmd:URL>http://www.eumetsat.int/Home/Main/What_We_Do/Satellites/EUMETSAT_Polar_System/index.htm?l=en</gmd:URL>
+</gmd:linkage>
+<gmd:protocol>
+  <gco:CharacterString>http</gco:CharacterString>
+</gmd:protocol>
+<gmd:applicationProfile>
+  <gco:CharacterString>web browser</gco:CharacterString>
+</gmd:applicationProfile>
+<gmd:name>
+  <gco:CharacterString>EUMETSAT  - What We Do - EUMETSAT Polar System</gco:CharacterString>
+</gmd:name>
+<gmd:description>
+  <gco:CharacterString>Comprehensive information and links about the EUMETSAT Polar System.</gco:CharacterString>
+</gmd:description>
+<gmd:function><gmd:CI_OnLineFunctionCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_OnLineFunctionCode" codeListValue="information"/>
+</gmd:function>
+</gmd:CI_OnlineResource>
+
+           </gmd:onlineResource>
+         </gmd:CI_Contact>
+      </gmd:contactInfo>
+      <gmd:role>
+<gmd:CI_RoleCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_RoleCode" codeListValue="distributor"/>
+
+      </gmd:role>
+   </gmd:CI_ResponsibleParty>
+</gmd:citedResponsibleParty><gmd:citedResponsibleParty>
+   <gmd:CI_ResponsibleParty id = "fgdccitation_6702.101321.69045.5">
+      <gmd:contactInfo>
+         <gmd:CI_Contact>
+            <gmd:onlineResource>
+<gmd:CI_OnlineResource id="onlineresource_6702.101321.94700">
+<gmd:linkage>
+  <gmd:URL>http://oiswww.eumetsat.org/WEBOPS/eps-pg/Common/EPS-PG-AcronymList.htm</gmd:URL>
+</gmd:linkage>
+<gmd:protocol>
+  <gco:CharacterString>http</gco:CharacterString>
+</gmd:protocol>
+<gmd:applicationProfile>
+  <gco:CharacterString>web browser</gco:CharacterString>
+</gmd:applicationProfile>
+<gmd:name>
+  <gco:CharacterString>EPS Products Guide Common Annex: Acronyms and Abbreviations</gco:CharacterString>
+</gmd:name>
+<gmd:description>
+  <gco:CharacterString>Acronyms and abbreviations provided by Eumetsat Polar Satellite Program.</gco:CharacterString>
+</gmd:description>
+<gmd:function><gmd:CI_OnLineFunctionCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_OnLineFunctionCode" codeListValue="information"/>
+</gmd:function>
+</gmd:CI_OnlineResource>
+
+           </gmd:onlineResource>
+         </gmd:CI_Contact>
+      </gmd:contactInfo>
+      <gmd:role>
+<gmd:CI_RoleCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_RoleCode" codeListValue="distributor"/>
+
+      </gmd:role>
+   </gmd:CI_ResponsibleParty>
+</gmd:citedResponsibleParty>
+
+</gmd:CI_Citation>
+
+ </gmd:citation>
+ <gmd:abstract>
+  <gco:CharacterString>ASCAT is a real aperture radar operating at 5.255 GHz (C-band) and using vertically polarized antennae. It transmits a long pulse with Linear Frequency Modulation (&quot;chirp&quot;). Ground echoes are received by the instrument and, after de-chirping, the backscattered signal is spectrally analyzed and detected. In the power spectrum, frequency can be mapped into slant range provided the chirp rate and the Doppler frequency are known. The above processing is in effect a pulse compression, which provides range resolution.</gco:CharacterString>
+ </gmd:abstract>
+ <gmd:purpose>
+  <gco:CharacterString>The prime objective of ASCAT is to measure wind speed and direction over the oceans. In addition, scatterometer data has proved to be very useful in a variety of studies including polar ice and tropical vegetation.</gco:CharacterString>
+ </gmd:purpose>
+ <gmd:credit>
+  <gco:CharacterString></gco:CharacterString>
+ </gmd:credit>
+ <gmd:status>
+<gmd:MD_ProgressCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#MD_ProgressCode" codeListValue="underDevelopment"/>
+</gmd:status>
+ <gmd:pointOfContact>
+<gmd:CI_ResponsibleParty id = "fgdccontact_2273.101321.99625">
+<gmd:individualName><gco:CharacterString>Gene Legg</gco:CharacterString></gmd:individualName>
+<gmd:organisationName><gco:CharacterString>DOC/NOAA/NESDIS/OSDPD> Office of Satellite Data Processing and Distribution, National Environmental Satellite, Data, and Information Service, NOAA, U.S. Department of Commerce</gco:CharacterString></gmd:organisationName>
+<gmd:positionName><gco:CharacterString>non-NOAA Satellite Data Implementation Manager</gco:CharacterString></gmd:positionName>
+<gmd:contactInfo>
+<gmd:CI_Contact>
+<gmd:phone>
+<gmd:CI_Telephone>
+<gmd:voice>
+<gco:CharacterString>301-763-8051 x107</gco:CharacterString>
+</gmd:voice><gmd:facsimile>
+<gco:CharacterString>301-763-8131</gco:CharacterString>
+</gmd:facsimile></gmd:CI_Telephone>
+
+</gmd:phone>
+<gmd:address>
+<gmd:CI_Address>
+<gmd:deliveryPoint><gco:CharacterString>E/SP2, Room 607, NOAA Science Center, 5200 Auth Road  </gco:CharacterString></gmd:deliveryPoint>
+<gmd:city><gco:CharacterString>Camp Springs</gco:CharacterString></gmd:city>
+<gmd:administrativeArea><gco:CharacterString>Maryland</gco:CharacterString></gmd:administrativeArea>
+<gmd:postalCode><gco:CharacterString>20746</gco:CharacterString></gmd:postalCode>
+<gmd:country><gco:CharacterString></gco:CharacterString></gmd:country>
+<gmd:electronicMailAddress><gco:CharacterString>Gene.Legg@noaa.gov</gco:CharacterString></gmd:electronicMailAddress>
+</gmd:CI_Address>
+
+</gmd:address>
+
+<gmd:hoursOfService><gco:CharacterString>8:00AM to 4:30PM EST</gco:CharacterString></gmd:hoursOfService>
+<gmd:contactInstructions><gco:CharacterString></gco:CharacterString></gmd:contactInstructions></gmd:CI_Contact>
+
+</gmd:contactInfo>
+<gmd:role>
+<gmd:CI_RoleCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_RoleCode" codeListValue="pointOfContact"/>
+</gmd:role>
+</gmd:CI_ResponsibleParty>
+
+ </gmd:pointOfContact>
+<gmd:resourceMaintenance><gmd:MD_MaintenanceInformation>
+ <gmd:maintenanceAndUpdateFrequency>
+  <gmd:MD_MaintenanceFrequencyCode codeList="http://www.tc211.org/ISO19139/resources/codeList.xml#MD_MaintenanceFrequencyCode" codeListValue="Unknown">Unknown</gmd:MD_MaintenanceFrequencyCode>
+ </gmd:maintenanceAndUpdateFrequency>
+ <gmd:dateOfNextUpdate><gco:Date xsi:nil="true"/></gmd:dateOfNextUpdate>
+ <gmd:maintenanceNote>
+    <gco:CharacterString>Last Review: </gco:CharacterString>
+ </gmd:maintenanceNote>
+</gmd:MD_MaintenanceInformation>
+
+</gmd:resourceMaintenance>
+<gmd:graphicOverview>
+   <gmd:MD_BrowseGraphic>
+      <gmd:fileName>
+         <gco:CharacterString>http://oiswww.eumetsat.org/WEBOPS/eps-pg/ASCAT/images/Image2.gif</gco:CharacterString>
+      </gmd:fileName>
+      <gmd:fileDescription>
+         <gco:CharacterString>Functional overview of the ASCAT Level 1 ground processing chain.</gco:CharacterString>
+      </gmd:fileDescription>
+      <gmd:fileType>
+         <gco:CharacterString>GIF</gco:CharacterString>
+      </gmd:fileType>
+   </gmd:MD_BrowseGraphic>
+</gmd:graphicOverview>
+
+<gmd:resourceFormat>
+   <gmd:MD_Format>
+      <gmd:name>
+         <gco:CharacterString>EPS Native Format</gco:CharacterString>
+      </gmd:name>
+      <gmd:version>
+        <gco:CharacterString></gco:CharacterString>
+      </gmd:version>
+      <gmd:amendmentNumber>
+         <gco:CharacterString></gco:CharacterString>
+      </gmd:amendmentNumber>
+      <gmd:specification>
+         <gco:CharacterString></gco:CharacterString>
+      </gmd:specification>
+      <gmd:fileDecompressionTechnique>
+         <gco:CharacterString></gco:CharacterString>
+      </gmd:fileDecompressionTechnique>
+   </gmd:MD_Format>
+</gmd:resourceFormat>
+
+<gmd:descriptiveKeywords>
+<gmd:MD_Keywords>
+<gmd:keyword><gco:CharacterString>climatologyMeteorologyAtmosphere</gco:CharacterString></gmd:keyword><gmd:keyword><gco:CharacterString>oceans</gco:CharacterString></gmd:keyword>
+  <gmd:type><gmd:MD_KeywordTypeCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#MD_KeywordTypeCode" codeListValue="theme"/>
+</gmd:type>
+  <gmd:thesaurusName>
+      <gmd:CI_Citation>
+         <gmd:title>
+            <gco:CharacterString>ISO 19115 Topic Category</gco:CharacterString>
+         </gmd:title>
+         <gmd:date>
+            <gmd:CI_Date>
+               <gmd:date>
+                  <gco:Date>2009-01-01</gco:Date>
+               </gmd:date>
+               <gmd:dateType>
+                  <gmd:CI_DateTypeCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_DateTypeCode" codeListValue="revision"/>
+               </gmd:dateType>
+            </gmd:CI_Date>
+         </gmd:date>
+      </gmd:CI_Citation>
+  </gmd:thesaurusName>
+</gmd:MD_Keywords>
+</gmd:descriptiveKeywords><gmd:descriptiveKeywords>
+<gmd:MD_Keywords>
+<gmd:keyword><gco:CharacterString>Earth Science &gt; Spectral/Engineering &gt; Radar &gt; Radar Backscatter</gco:CharacterString></gmd:keyword>
+  <gmd:type><gmd:MD_KeywordTypeCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#MD_KeywordTypeCode" codeListValue="theme"/>
+</gmd:type>
+  <gmd:thesaurusName>
+      <gmd:CI_Citation>
+         <gmd:title>
+            <gco:CharacterString>NASA/GCMD Earth Science Keywords</gco:CharacterString>
+         </gmd:title>
+         <gmd:date>
+            <gmd:CI_Date>
+               <gmd:date>
+                  <gco:Date>2009-01-01</gco:Date>
+               </gmd:date>
+               <gmd:dateType>
+                  <gmd:CI_DateTypeCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_DateTypeCode" codeListValue="revision"/>
+               </gmd:dateType>
+            </gmd:CI_Date>
+         </gmd:date>
+      </gmd:CI_Citation>
+  </gmd:thesaurusName>
+</gmd:MD_Keywords>
+</gmd:descriptiveKeywords><gmd:descriptiveKeywords>
+<gmd:MD_Keywords>
+<gmd:keyword><gco:CharacterString>Geographic Region &gt; Global</gco:CharacterString></gmd:keyword>
+  <gmd:type><gmd:MD_KeywordTypeCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#MD_KeywordTypeCode" codeListValue="place"/>
+</gmd:type>
+  <gmd:thesaurusName>
+      <gmd:CI_Citation>
+         <gmd:title>
+            <gco:CharacterString>NASA/GCMD Location Keywords</gco:CharacterString>
+         </gmd:title>
+         <gmd:date>
+            <gmd:CI_Date>
+               <gmd:date>
+                  <gco:Date>2009-01-01</gco:Date>
+               </gmd:date>
+               <gmd:dateType>
+                  <gmd:CI_DateTypeCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_DateTypeCode" codeListValue="revision"/>
+               </gmd:dateType>
+            </gmd:CI_Date>
+         </gmd:date>
+      </gmd:CI_Citation>
+  </gmd:thesaurusName>
+</gmd:MD_Keywords>
+</gmd:descriptiveKeywords><gmd:descriptiveKeywords>
+<gmd:MD_Keywords>
+<gmd:keyword><gco:CharacterString>Backscatter coefficients</gco:CharacterString></gmd:keyword><gmd:keyword><gco:CharacterString>sea surface wind vectors</gco:CharacterString></gmd:keyword>
+  <gmd:type><gmd:MD_KeywordTypeCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#MD_KeywordTypeCode" codeListValue="theme"/>
+</gmd:type>
+  <gmd:thesaurusName>
+      <gmd:CI_Citation>
+         <gmd:title>
+            <gco:CharacterString>None</gco:CharacterString>
+         </gmd:title>
+         <gmd:date>
+            <gmd:CI_Date>
+               <gmd:date>
+                  <gco:Date>2009-01-01</gco:Date>
+               </gmd:date>
+               <gmd:dateType>
+                  <gmd:CI_DateTypeCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_DateTypeCode" codeListValue="revision"/>
+               </gmd:dateType>
+            </gmd:CI_Date>
+         </gmd:date>
+      </gmd:CI_Citation>
+  </gmd:thesaurusName>
+</gmd:MD_Keywords>
+</gmd:descriptiveKeywords>
+
+<gmd:resourceConstraints>
+<gmd:MD_LegalConstraints>
+   <gmd:useLimitation>
+      <gco:CharacterString>None</gco:CharacterString>
+   </gmd:useLimitation>
+   <gmd:accessConstraints>
+      <gmd:MD_RestrictionCode codeList="" codeListValue=""></gmd:MD_RestrictionCode>
+   </gmd:accessConstraints>
+   <gmd:useConstraints>
+      <gmd:MD_RestrictionCode codeList="" codeListValue=""></gmd:MD_RestrictionCode>
+   </gmd:useConstraints>
+   <gmd:otherConstraints>
+      <gco:CharacterString>Pre-operational MetOp data is available upon request. To request access to this data, send an email to info@class.noaa.gov indicating your affiliation and need for this pre-operational data. CLASS personnel will contact you with access instructions..</gco:CharacterString>
+   </gmd:otherConstraints>
+</gmd:MD_LegalConstraints>
+</gmd:resourceConstraints>
+
+<gmd:language>
+<gmd:LanguageCode codeList="http://www.loc.gov/standards/iso639-2/php/code_list.php" codeListValue="eng">eng</gmd:LanguageCode>
+</gmd:language>
+<gmd:topicCategory>
+<gmd:MD_TopicCategoryCode>climatologyMeteorologyAtmosphere</gmd:MD_TopicCategoryCode>
+</gmd:topicCategory><gmd:topicCategory>
+<gmd:MD_TopicCategoryCode>oceans</gmd:MD_TopicCategoryCode>
+</gmd:topicCategory>
+
+<gmd:extent>
+<gmd:EX_Extent id="boundingExtent">
+  <gmd:description>
+    <gco:CharacterString>gov.noaa.class:ASCAT.BoundingExtent</gco:CharacterString>
+  </gmd:description>
+  <gmd:geographicElement>
+     <gmd:EX_GeographicBoundingBox>
+       <gmd:extentTypeCode>
+         <gco:Boolean>1</gco:Boolean>
+       </gmd:extentTypeCode>
+       <gmd:westBoundLongitude>
+         <gco:Decimal>-180</gco:Decimal>
+       </gmd:westBoundLongitude>
+       <gmd:eastBoundLongitude>
+         <gco:Decimal>180</gco:Decimal>
+       </gmd:eastBoundLongitude>
+       <gmd:southBoundLatitude>
+         <gco:Decimal>-90</gco:Decimal>
+       </gmd:southBoundLatitude>
+       <gmd:northBoundLatitude>
+         <gco:Decimal>90</gco:Decimal>
+       </gmd:northBoundLatitude>
+     </gmd:EX_GeographicBoundingBox>
+  </gmd:geographicElement>
+  <gmd:geographicElement>
+ <gmd:EX_GeographicDescription>
+  <gmd:geographicIdentifier>
+   <gmd:MD_Identifier>
+    <gmd:authority>
+     <gmd:CI_Citation>
+        <gmd:title>
+           <gco:CharacterString>NASA/GCMD Location Keywords</gco:CharacterString>
+        </gmd:title>
+         <gmd:date>
+            <gmd:CI_Date>
+               <gmd:date>
+                  <gco:Date>2009-01-01</gco:Date>
+               </gmd:date>
+               <gmd:dateType>
+                  <gmd:CI_DateTypeCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_DateTypeCode" codeListValue="revision"/>
+               </gmd:dateType>
+            </gmd:CI_Date>
+         </gmd:date>
+     </gmd:CI_Citation>
+    </gmd:authority>
+    <gmd:code>
+     <gco:CharacterString>Geographic Region > Global</gco:CharacterString>
+    </gmd:code>
+   </gmd:MD_Identifier>
+  </gmd:geographicIdentifier>
+ </gmd:EX_GeographicDescription>
+</gmd:geographicElement>
+
+  <gmd:temporalElement>
+    <gmd:EX_TemporalExtent>
+      <gmd:extent>
+        <gml:TimePeriod gml:id="tp_101323.64787">
+          <gml:begin>
+            <gml:TimeInstant gml:id="start_101323.64787"><gml:timePosition>20070521</gml:timePosition></gml:TimeInstant>
+          </gml:begin>
+          <gml:end>
+            <gml:TimeInstant gml:id="end_101323.64787"><gml:timePosition indeterminatePosition="now"></gml:timePosition></gml:TimeInstant>
+          </gml:end>
+        </gml:TimePeriod>
+      </gmd:extent>
+    </gmd:EX_TemporalExtent>
+  </gmd:temporalElement>
+  <gmd:verticalElement/>
+</gmd:EX_Extent>
+
+</gmd:extent>
+</gmd:MD_DataIdentification>
+
+</gmd:identificationInfo>
+<gmd:distributionInfo>
+<gmd:MD_Distribution>
+<gmd:distributor>
+<gmd:MD_Distributor>
+<gmd:distributorContact><gmd:CI_ResponsibleParty id = "fgdccontact_1609.101323.91973">
+<gmd:individualName><gco:CharacterString></gco:CharacterString></gmd:individualName>
+<gmd:organisationName><gco:CharacterString>DOC/NOAA/CLASS > Comprehensive Large Array-data Stewardship System, NOAA, U.S. Department of Commerce</gco:CharacterString></gmd:organisationName>
+<gmd:positionName><gco:CharacterString></gco:CharacterString></gmd:positionName>
+<gmd:contactInfo>
+<gmd:CI_Contact>
+<gmd:phone>
+<gmd:CI_Telephone>
+<gmd:voice>
+<gco:CharacterString>(828) 271-4850 x3183</gco:CharacterString>
+</gmd:voice><gmd:facsimile>
+<gco:CharacterString>(828) 271-4328</gco:CharacterString>
+</gmd:facsimile></gmd:CI_Telephone>
+
+</gmd:phone>
+<gmd:address>
+<gmd:CI_Address>
+<gmd:deliveryPoint><gco:CharacterString>151 Patton Avenue  </gco:CharacterString></gmd:deliveryPoint>
+<gmd:city><gco:CharacterString>Asheville</gco:CharacterString></gmd:city>
+<gmd:administrativeArea><gco:CharacterString>NC</gco:CharacterString></gmd:administrativeArea>
+<gmd:postalCode><gco:CharacterString>28801-5001</gco:CharacterString></gmd:postalCode>
+<gmd:country><gco:CharacterString></gco:CharacterString></gmd:country>
+<gmd:electronicMailAddress><gco:CharacterString>info@class.noaa.gov</gco:CharacterString></gmd:electronicMailAddress>
+</gmd:CI_Address>
+
+</gmd:address>
+
+<gmd:hoursOfService><gco:CharacterString>9 - 5 EST</gco:CharacterString></gmd:hoursOfService>
+<gmd:contactInstructions><gco:CharacterString></gco:CharacterString></gmd:contactInstructions></gmd:CI_Contact>
+
+</gmd:contactInfo>
+<gmd:role>
+<gmd:CI_RoleCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_RoleCode" codeListValue="distributor"/>
+</gmd:role>
+</gmd:CI_ResponsibleParty>
+</gmd:distributorContact>
+<gmd:distributionOrderProcess>
+<gmd:MD_StandardOrderProcess>
+ <gmd:fees>
+  <gco:CharacterString>Electronic download (FTP) of the data is free. There is a fee for copies of data on physical media. Optical disks are $25.00 per unit and magnetic tape is $100 per unit. Price does not include additional service and handling costs.</gco:CharacterString>
+ </gmd:fees>
+ <gmd:plannedAvailableDateTime><gco:DateTime>2007-05-21T00:00:00</gco:DateTime></gmd:plannedAvailableDateTime>
+ <gmd:orderingInstructions>
+  <gco:CharacterString>The option to order data for shipping will occur at the order checkout stage, from which you will then proceed to another NOAA site to provide shipping and billing addresses and credit card information. Contact the CLASS Help Desk (info@class.noaa.gov) for instructions for payment by other means.</gco:CharacterString>
+ </gmd:orderingInstructions>
+ <gmd:turnaround>
+  <gco:CharacterString>Delivery of physical media occurs within 1 to 2 weeks, but may take longer for large orders.</gco:CharacterString>
+ </gmd:turnaround>
+</gmd:MD_StandardOrderProcess>
+</gmd:distributionOrderProcess>
+
+<gmd:distributorFormat>
+<gmd:MD_Format>
+ <gmd:name>
+  <gco:CharacterString>EPS Native Format</gco:CharacterString>
+ </gmd:name>
+ <gmd:version>
+  <gco:CharacterString></gco:CharacterString>
+ </gmd:version>
+ <gmd:amendmentNumber>
+  <gco:CharacterString></gco:CharacterString>
+ </gmd:amendmentNumber>
+ <gmd:specification>
+  <gco:CharacterString></gco:CharacterString>
+ </gmd:specification>
+ <gmd:fileDecompressionTechnique>
+  <gco:CharacterString></gco:CharacterString>
+ </gmd:fileDecompressionTechnique>
+</gmd:MD_Format>
+</gmd:distributorFormat>
+
+<gmd:distributorTransferOptions>
+<gmd:MD_DigitalTransferOptions>
+<gmd:onLine>
+<gmd:CI_OnlineResource id="onlineresource_6704.101324.83908">
+    <gmd:linkage>
+        <gmd:URL>http://www.class.noaa.gov/saa/products/search?sub_id=0&amp;datatype_family=ASCAT</gmd:URL>
+    </gmd:linkage>
+    <gmd:protocol>
+        <gco:CharacterString>http</gco:CharacterString>
+    </gmd:protocol>
+     <gmd:applicationProfile>
+         <gco:CharacterString>web browser</gco:CharacterString>
+    </gmd:applicationProfile>
+    <gmd:name>
+        <gco:CharacterString>Advanced Scatterometer Level 1B</gco:CharacterString>
+    </gmd:name>
+    <gmd:description>
+        <gco:CharacterString>Download options for Advanced Scatterometer Level 1B archived and distributed at CLASS.</gco:CharacterString>
+    </gmd:description>
+    <gmd:function>
+        <gmd:CI_OnLineFunctionCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_OnLineFunctionCode" codeListValue="download"/>
+
+    </gmd:function>
+</gmd:CI_OnlineResource>
+</gmd:onLine>
+</gmd:MD_DigitalTransferOptions>
+</gmd:distributorTransferOptions>
+
+</gmd:MD_Distributor>
+</gmd:distributor></gmd:MD_Distribution>
+</gmd:distributionInfo>
+
+<gmd:dataQualityInfo>
+<gmd:DQ_DataQuality> <!-- From FGDC Reports -->
+<gmd:scope xlink:href="#datasetScope"/>
+    <gmd:report>
+        <gmd:DQ_QuantitativeAttributeAccuracy>
+            <gmd:nameOfMeasure>
+                <gco:CharacterString>FGDC Attribute Accuracy Report</gco:CharacterString>
+            </gmd:nameOfMeasure>
+            <gmd:result>
+                <gmd:DQ_QuantitativeResult>
+                    <gmd:valueUnit gco:nilReason="inapplicable"/>
+                    <gmd:value>
+                        <gco:Record>
+                            <gco:CharacterString>Radiometric (calibration) accuracy is expected to be less than 0.5 dB peak-to-peak and between beams for both resolution products. Radiometric resolution, also called Kp, expected to be from 2 to 5% for the 50 km resolution product and from 4 to 11% for the higher resolution product.Quality flags are generated during the Level 1b processing, associated to every individual normalized backscatter sample along each antenna beam, and included in the Level 1b full resolution products.</gco:CharacterString>
+                        </gco:Record>
+                    </gmd:value>
+                </gmd:DQ_QuantitativeResult>
+            </gmd:result>
+        </gmd:DQ_QuantitativeAttributeAccuracy>
+    </gmd:report>
+    <gmd:report>
+        <gmd:DQ_ConceptualConsistency>
+            <gmd:nameOfMeasure>
+                <gco:CharacterString>FGDC Logical Consistency Report</gco:CharacterString>
+            </gmd:nameOfMeasure>
+            <gmd:result>
+                <gmd:DQ_QuantitativeResult>
+                    <gmd:valueUnit gco:nilReason="inapplicable"/>
+                    <gmd:value>
+                        <gco:Record>
+                            <gco:CharacterString>TBD</gco:CharacterString>
+                        </gco:Record>
+                    </gmd:value>
+                </gmd:DQ_QuantitativeResult>
+            </gmd:result>
+        </gmd:DQ_ConceptualConsistency>
+    </gmd:report>
+    <gmd:report>
+        <gmd:DQ_CompletenessOmission>
+            <gmd:nameOfMeasure>
+                <gco:CharacterString>FGDC Completeness Report</gco:CharacterString>
+            </gmd:nameOfMeasure>
+            <gmd:result>
+                <gmd:DQ_QuantitativeResult>
+                    <gmd:valueUnit gco:nilReason="inapplicable"/>
+                    <gmd:value>
+                        <gco:Record>
+                            <gco:CharacterString>TBD</gco:CharacterString>
+                        </gco:Record>
+                    </gmd:value>
+                </gmd:DQ_QuantitativeResult>
+            </gmd:result>
+        </gmd:DQ_CompletenessOmission>
+    </gmd:report>
+    <gmd:report>
+        <gmd:DQ_AbsoluteExternalPositionalAccuracy>
+            <gmd:nameOfMeasure>
+                <gco:CharacterString>FGDC Horizontal Positional Accuracy Report</gco:CharacterString>
+            </gmd:nameOfMeasure>
+            <gmd:result>
+                <gmd:DQ_QuantitativeResult>
+                    <gmd:valueUnit gco:nilReason="inapplicable"/>
+                    <gmd:value>
+                        <gco:Record>
+                            <gco:CharacterString>Available resolutions are 25 km Resolution, 50 km Resolution and Full Resolution. Localisation accuracy is expected to be of about 4 km for both resolution products.</gco:CharacterString>
+                        </gco:Record>
+                    </gmd:value>
+                </gmd:DQ_QuantitativeResult>
+            </gmd:result>
+        </gmd:DQ_AbsoluteExternalPositionalAccuracy>
+    </gmd:report>
+    <gmd:report>
+        <gmd:DQ_AbsoluteExternalPositionalAccuracy>
+            <gmd:nameOfMeasure>
+                <gco:CharacterString>FGDC Vertical Positional Accuracy Report</gco:CharacterString>
+            </gmd:nameOfMeasure>
+            <gmd:result>
+                <gmd:DQ_QuantitativeResult>
+                    <gmd:valueUnit gco:nilReason="inapplicable"/>
+                    <gmd:value>
+                        <gco:Record>
+                            <gco:CharacterString></gco:CharacterString>
+                        </gco:Record>
+                    </gmd:value>
+                </gmd:DQ_QuantitativeResult>
+            </gmd:result>
+        </gmd:DQ_AbsoluteExternalPositionalAccuracy>
+    </gmd:report>
+</gmd:DQ_DataQuality>
+</gmd:dataQualityInfo>
+
+<gmd:dataQualityInfo>
+<gmd:DQ_DataQuality>
+<gmd:scope>
+<gmd:DQ_Scope id="datasetScope">
+  <gmd:level>
+    <gmd:MD_ScopeCode codeList="./resources/codeList.xml#MD_ScopeCode" codeListValue="dataset"/>
+  </gmd:level>
+  <gmd:extent xlink:href="#boundingExtent"/>
+  <gmd:levelDescription>
+    <gmd:MD_ScopeDescription>
+      <gmd:dataset>
+        <gco:CharacterString>gov.noaa.class:ASCAT</gco:CharacterString>
+      </gmd:dataset>
+    </gmd:MD_ScopeDescription>
+  </gmd:levelDescription>
+</gmd:DQ_Scope>
+</gmd:scope>
+<gmd:lineage>
+<gmd:LI_Lineage>
+<gmd:processStep>
+<gmi:LE_ProcessStep id="ps_168">
+ <gmd:description>
+  <gco:CharacterString>The Level 1 ground processing for ASCAT generates the radiometrically calibrated Level 1b backscatter product, namely normalized backscatter values.   1. Front-end corrections,    2. Normalization, and   3. Smoothing.</gco:CharacterString>
+ </gmd:description>
+ <gmd:dateTime gco:nilReason="Not complete"/>
+ <gmd:processor><gmd:CI_ResponsibleParty id = "fgdccontact_2233.101325.08216">
+<gmd:individualName><gco:CharacterString></gco:CharacterString></gmd:individualName>
+<gmd:organisationName><gco:CharacterString>EUMETSAT</gco:CharacterString></gmd:organisationName>
+<gmd:positionName><gco:CharacterString>User Service Helpdesk</gco:CharacterString></gmd:positionName>
+<gmd:contactInfo>
+<gmd:CI_Contact>
+<gmd:phone>
+<gmd:CI_Telephone>
+<gmd:voice>
+<gco:CharacterString>+49 6151 807 366/377</gco:CharacterString>
+</gmd:voice><gmd:facsimile>
+<gco:CharacterString>+49 6151 807 379</gco:CharacterString>
+</gmd:facsimile></gmd:CI_Telephone>
+
+</gmd:phone>
+<gmd:address>
+<gmd:CI_Address>
+<gmd:deliveryPoint><gco:CharacterString>Am Kavalleriesand 31, D-64295  </gco:CharacterString></gmd:deliveryPoint>
+<gmd:city><gco:CharacterString>Darmstadt</gco:CharacterString></gmd:city>
+<gmd:administrativeArea><gco:CharacterString>Hessen</gco:CharacterString></gmd:administrativeArea>
+<gmd:postalCode><gco:CharacterString>n/a</gco:CharacterString></gmd:postalCode>
+<gmd:country><gco:CharacterString>Germany</gco:CharacterString></gmd:country>
+<gmd:electronicMailAddress><gco:CharacterString>ops@eumetsat.int</gco:CharacterString></gmd:electronicMailAddress>
+</gmd:CI_Address>
+
+</gmd:address>
+
+<gmd:hoursOfService><gco:CharacterString></gco:CharacterString></gmd:hoursOfService>
+<gmd:contactInstructions><gco:CharacterString></gco:CharacterString></gmd:contactInstructions></gmd:CI_Contact>
+
+</gmd:contactInfo>
+<gmd:role>
+<gmd:CI_RoleCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_RoleCode" codeListValue="processor"/>
+</gmd:role>
+</gmd:CI_ResponsibleParty>
+</gmd:processor>
+<gmd:source xlink:href = "#src_ASCAT_1A" /><gmi:output xlink:href = "#src_gov.noaa.class_ASCAT" />
+
+</gmi:LE_ProcessStep>
+</gmd:processStep>
+
+<gmd:source >
+<gmd:LI_Source id ="src_ASCAT_1A" >
+ <gmd:description>
+  <gco:CharacterString>Level-1A product is reformatted raw data with supplemental information for subsequent processing appended.</gco:CharacterString>
+ </gmd:description>
+<gmd:sourceCitation>
+<gmd:CI_Citation id="fgdccitation_30395.101325.26885">
+  <gmd:title><gco:CharacterString>ASCAT Level 1A</gco:CharacterString></gmd:title>
+  <gmd:date>
+  <gmd:CI_Date>
+ <gmd:date gco:nilReason = "Unknown"/>
+ <gmd:dateType><gmd:CI_DateTypeCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_DateTypeCode" codeListValue="publication"/>
+</gmd:dateType>
+</gmd:CI_Date>
+
+  </gmd:date>
+   <gmd:edition><gco:CharacterString></gco:CharacterString></gmd:edition>
+   <gmd:editionDate gco:nilReason = "unknown"/>
+<gmd:identifier><gmd:MD_Identifier><gmd:code><gco:CharacterString>gov.noaa.ngdc.fgdccitation:30395</gco:CharacterString></gmd:code></gmd:MD_Identifier></gmd:identifier>
+<gmd:citedResponsibleParty>
+<gmd:CI_ResponsibleParty id = "fgdccitation_30395.101325.319252.1">
+<gmd:individualName><gco:CharacterString>EPS > EUMETSAT Polar System</gco:CharacterString></gmd:individualName>
+<gmd:role>
+<gmd:CI_RoleCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_RoleCode" codeListValue="originator"/>
+
+</gmd:role>
+</gmd:CI_ResponsibleParty>
+</gmd:citedResponsibleParty>
+
+
+</gmd:CI_Citation>
+
+</gmd:sourceCitation>
+ <gmd:sourceExtent>
+  <gmd:EX_Extent>
+   <gmd:temporalElement>
+    <gmd:EX_TemporalExtent>
+     <gmd:extent>
+      <gml:TimePeriod gml:id="tp_1101325.25086">
+       <gml:beginPosition></gml:beginPosition>
+       <gml:endPosition></gml:endPosition>
+      </gml:TimePeriod>
+     </gmd:extent>
+    </gmd:EX_TemporalExtent>
+   </gmd:temporalElement>
+  </gmd:EX_Extent>
+ </gmd:sourceExtent>
+<gmd:sourceStep xlink:href = "#ps_168" />
+
+</gmd:LI_Source>
+</gmd:source><gmd:source >
+<gmd:LI_Source id ="src_gov.noaa.class_ASCAT" >
+ <gmd:description>
+  <gco:CharacterString>There are three ASCAT Level 1B products: Level 1B 25 km, Level 1B 50 km and Level 1B Full Resolution.</gco:CharacterString>
+ </gmd:description>
+<gmd:sourceCitation>
+<gmd:CI_Citation id="fgdccitation_30392.101325.38518">
+  <gmd:title><gco:CharacterString>Advanced Scatterometer Level 1B</gco:CharacterString></gmd:title>
+  <gmd:date>
+  <gmd:CI_Date>
+ <gmd:date><gco:Date>2007-05-21</gco:Date></gmd:date>
+ <gmd:dateType><gmd:CI_DateTypeCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_DateTypeCode" codeListValue="publication"/>
+</gmd:dateType>
+</gmd:CI_Date>
+
+  </gmd:date>
+   <gmd:edition><gco:CharacterString></gco:CharacterString></gmd:edition>
+   <gmd:editionDate gco:nilReason = "unknown"/>
+<gmd:identifier><gmd:MD_Identifier><gmd:code><gco:CharacterString>gov.noaa.ngdc.fgdccitation:30392</gco:CharacterString></gmd:code></gmd:MD_Identifier></gmd:identifier>
+<gmd:citedResponsibleParty>
+<gmd:CI_ResponsibleParty id = "fgdccitation_30392.101325.419977.1">
+<gmd:individualName><gco:CharacterString>EUMETSAT > European Meteorological Satellite Organization</gco:CharacterString></gmd:individualName>
+<gmd:role>
+<gmd:CI_RoleCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_RoleCode" codeListValue="originator"/>
+
+</gmd:role>
+</gmd:CI_ResponsibleParty>
+</gmd:citedResponsibleParty>
+
+
+</gmd:CI_Citation>
+
+</gmd:sourceCitation>
+ <gmd:sourceExtent>
+  <gmd:EX_Extent>
+   <gmd:temporalElement>
+    <gmd:EX_TemporalExtent>
+     <gmd:extent>
+      <gml:TimePeriod gml:id="tp_2101325.25086">
+       <gml:beginPosition>2007-05</gml:beginPosition>
+       <gml:endPosition></gml:endPosition>
+      </gml:TimePeriod>
+     </gmd:extent>
+    </gmd:EX_TemporalExtent>
+   </gmd:temporalElement>
+  </gmd:EX_Extent>
+ </gmd:sourceExtent>
+
+</gmd:LI_Source>
+</gmd:source>
+
+</gmd:LI_Lineage>
+</gmd:lineage>
+</gmd:DQ_DataQuality>
+</gmd:dataQualityInfo>
+
+<gmd:dataQualityInfo>
+<gmd:DQ_DataQuality>
+   <gmd:scope>
+     <gmd:DQ_Scope>
+       <gmd:level>
+         <gmd:MD_ScopeCode codeList="./resources/codeList.xml#MD_ScopeCode" codeListValue="dataset"/>
+       </gmd:level>
+<gmd:extent>
+             <gmd:EX_Extent>
+                <gmd:temporalElement>
+                  <gmd:EX_TemporalExtent>
+                     <gmd:extent>
+                        <gml:TimePeriod gml:id="Time_1">
+                           <gml:beginPosition>2006</gml:beginPosition>
+                           <gml:endPosition></gml:endPosition>
+                        </gml:TimePeriod>
+                     </gmd:extent>
+                  </gmd:EX_TemporalExtent>
+               </gmd:temporalElement>
+            </gmd:EX_Extent>
+         </gmd:extent>
+         <gmd:levelDescription>
+            <gmd:MD_ScopeDescription>
+               <gmd:dataset><gco:CharacterString>EPS > EUMETSAT Polar System</gco:CharacterString></gmd:dataset>
+            </gmd:MD_ScopeDescription>
+         </gmd:levelDescription>
+        </gmd:DQ_Scope>
+      </gmd:scope><gmd:lineage>
+      <gmd:LI_Lineage>
+         <gmd:processStep>
+            <gmd:LI_ProcessStep>
+              <gmd:description>
+                <gco:CharacterString>Mission Start</gco:CharacterString>
+              </gmd:description>
+              <gmd:dateTime><gco:DateTime>2006-01-01T00:00:00</gco:DateTime></gmd:dateTime>
+            </gmd:LI_ProcessStep>
+          </gmd:processStep>
+          <gmd:processStep>
+            <gmd:LI_ProcessStep>
+              <gmd:description>
+                <gco:CharacterString>Mission Completion</gco:CharacterString>
+              </gmd:description>
+              <gmd:dateTime gco:nilReason="unknown"/>
+            </gmd:LI_ProcessStep>
+          </gmd:processStep><gmd:processStep>
+            <gmd:LI_ProcessStep>
+              <gmd:description>
+                <gco:CharacterString>EUMETSAT and NOAA signed an agreement to collaborate in the Initial Joint Polar System (IJPS), comprising two polar orbiting satellite systems and their respective ground segments. The EPS programme consists of a series of three Meteorological Operational (MetOp) satellites, to be flown successively for more than 14 years.</gco:CharacterString>
+              </gmd:description>
+              <gmd:dateTime><gco:DateTime>1998-01-01T00:00:00</gco:DateTime></gmd:dateTime>
+            </gmd:LI_ProcessStep>
+          </gmd:processStep><gmd:processStep>
+            <gmd:LI_ProcessStep>
+              <gmd:description>
+                <gco:CharacterString>METOP-A launched. Instruments: A/DCS, AMSU-A1, AMSU-A2, ASCAT, AVHRR, GOME-2, GRAS, HIRS, IASI, MHS, SARP-3, SARR and SEM.</gco:CharacterString>
+              </gmd:description>
+              <gmd:dateTime><gco:DateTime>2006-10-19T00:00:00</gco:DateTime></gmd:dateTime>
+            </gmd:LI_ProcessStep>
+          </gmd:processStep><gmd:processStep>
+            <gmd:LI_ProcessStep>
+              <gmd:description>
+                <gco:CharacterString>METOP-A operational.</gco:CharacterString>
+              </gmd:description>
+              <gmd:dateTime><gco:DateTime>2007-05-21T00:00:00</gco:DateTime></gmd:dateTime>
+            </gmd:LI_ProcessStep>
+          </gmd:processStep></gmd:LI_Lineage>
+</gmd:lineage>
+</gmd:DQ_DataQuality>
+</gmd:dataQualityInfo>
+
+<gmd:metadataConstraints>
+<gmd:MD_LegalConstraints>
+   <gmd:useLimitation>
+      <gco:CharacterString>Disclaimer - While every effort has been made to ensure that these data are accurate and reliable within the limits of the current state of the art, NOAA cannot assume liability for any damages caused by any errors or omissions in the data, nor as a result of the failure of the data to function on a particular system.  NOAA makes no warranty, expressed or implied, nor does the fact of distribution constitute such a warranty.</gco:CharacterString>
+   </gmd:useLimitation>
+   <gmd:accessConstraints>
+      <gmd:MD_RestrictionCode codeList="" codeListValue=""></gmd:MD_RestrictionCode>
+   </gmd:accessConstraints>
+   <gmd:useConstraints>
+      <gmd:MD_RestrictionCode codeList="" codeListValue=""></gmd:MD_RestrictionCode>
+   </gmd:useConstraints>
+   <gmd:otherConstraints>
+      <gco:CharacterString></gco:CharacterString>
+   </gmd:otherConstraints>
+</gmd:MD_LegalConstraints>
+</gmd:metadataConstraints>
+
+<gmd:metadataMaintenance><gmd:MD_MaintenanceInformation>
+ <gmd:maintenanceAndUpdateFrequency>
+  <gmd:MD_MaintenanceFrequencyCode codeList="http://www.tc211.org/ISO19139/resources/codeList.xml#MD_MaintenanceFrequencyCode" codeListValue=""></gmd:MD_MaintenanceFrequencyCode>
+ </gmd:maintenanceAndUpdateFrequency>
+ <gmd:dateOfNextUpdate><gco:Date>2008-06-01</gco:Date></gmd:dateOfNextUpdate>
+ <gmd:maintenanceNote>
+    <gco:CharacterString>Last Review: 20070613</gco:CharacterString>
+ </gmd:maintenanceNote>
+</gmd:MD_MaintenanceInformation>
+</gmd:metadataMaintenance>
+<gmi:acquisitionInformation>
+  <gmi:MI_AcquisitionInformation>
+<gmi:instrument>
+  <gmi:MI_Instrument id="instrument_1118">
+<gmi:citation>
+
+</gmi:citation>
+
+    <gmi:identifier>
+      <gmd:MD_Identifier>
+              <gmd:code>
+                <gco:CharacterString>ASCAT > Advanced Scatterometer</gco:CharacterString>
+              </gmd:code>
+            </gmd:MD_Identifier>
+          </gmi:identifier>
+          <gmi:type>
+            <gco:CharacterString>scatterometer</gco:CharacterString>
+          </gmi:type>
+          <gmi:description>
+            <gco:CharacterString>Instrument Type: scatterometer, Operational Mode: , Collection
+              Type: radar, Other Information: ASCAT is a real aperture radar operating at 5.255 GHz (C-band) and using vertically polarized antennae. It transmits a long pulse with Linear Frequency Modulation ('chirp'). Ground echoes are received by the instrument and, after de-chirping, the backscattered signal is spectrally analysed and detected. In the power spectrum, frequency can be mapped into slant range provided the chirp rate and the Doppler frequency are known. The above processing is in effect a pulse compression, which provides range resolution.
+Its use of six antennas allows the simultaneous coverage of two swaths on either side of the satellite ground track and hence provides twice the information of the earlier instruments. The width of each double swath is 550 km with a gap around satellite track of 700 km. On an experimental basis, ASCAT also provides measurements at a higher than nominal resolution. The ASCAT instrument may operate in three different modes, Measurement, Calibration and Test. Additionally, in Measurement mode the instrument occasionally generates special source packets for Gain Compression Monitoring. The nominal instrument mode, and the only one that generates science data for the users, is Measurement mode.</gco:CharacterString>
+          </gmi:description>
+          <gmi:mountedOn/>
+        </gmi:MI_Instrument>
+      </gmi:instrument>
+
+<gmi:operation>
+<gmi:MI_Operation>
+<gmi:description>
+   <gco:CharacterString>EPS is Europe's first polar orbiting operational meteorological satellite system, and it is the European contribution to the Initial Joint Polar-Orbiting Operational Satellite System (IJPS). This is an agreement between EUMETSAT and NOAA. In this joint European-US polar satellite system, EUMETSAT has the operational responsibility for the "morning orbit" with the MetOp satellites. EUMETSAT is responsible for the definition of the overall EPS system, the development and operations of the ground segment, and for the operation of the whole system.</gco:CharacterString>
+</gmi:description>
+<gmi:identifier>
+<gmd:MD_Identifier>
+   <gmd:authority>
+      <gmd:CI_Citation>
+         <gmd:title>
+            <gco:CharacterString>NASA/Global Change Master Directory (GCMD) Earth Science Keywords</gco:CharacterString>
+         </gmd:title>
+         <gmd:date>
+            <gmd:CI_Date>
+               <gmd:date>
+                  <gco:Date>2007-04</gco:Date>
+               </gmd:date>
+               <gmd:dateType><gmd:CI_DateTypeCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_DateTypeCode" codeListValue="revision"/>
+</gmd:dateType>
+            </gmd:CI_Date>
+         </gmd:date>
+         <gmd:edition>
+            <gco:CharacterString>Version  6.0.0.0.0</gco:CharacterString>
+         </gmd:edition>
+         <gmd:editionDate>
+            <gco:Date>2007-04</gco:Date>
+         </gmd:editionDate>
+         <gmd:citedResponsibleParty>
+            <gmd:CI_ResponsibleParty>
+               <gmd:organisationName>
+                  <gco:CharacterString>NASA/GSFC/SED/ESD/GCDC/GCMD > Global Change Master Directory, Global Change Data Center, Earth Sciences Division, Science and Exploration Directorate, Goddard Space Flight Center, NASA</gco:CharacterString>
+               </gmd:organisationName>
+               <gmd:contactInfo>
+                  <gmd:CI_Contact>
+                     <gmd:onlineResource>
+                        <gmd:CI_OnlineResource>
+                           <gmd:linkage>
+                              <gmd:URL>http://gcmd.gsfc.nasa.gov/Resources/valids/archives/keyword_list.html</gmd:URL>
+                           </gmd:linkage>
+                           <gmd:protocol>
+                              <gco:CharacterString>http</gco:CharacterString>
+                           </gmd:protocol>
+                           <gmd:applicationProfile>
+                              <gco:CharacterString>web browser</gco:CharacterString>
+                           </gmd:applicationProfile>
+                           <gmd:name>
+                              <gco:CharacterString>GCMD Keywords, Version 6.0.0.0.0</gco:CharacterString>
+                           </gmd:name>
+                           <gmd:description>
+                              <gco:CharacterString>Thesuarus for earth science keywords and associated directories hosted and maintained by NASA.</gco:CharacterString>
+                           </gmd:description>
+                           <gmd:function>
+<gmd:CI_OnLineFunctionCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_OnLineFunctionCode" codeListValue="information"/>
+
+                           </gmd:function>
+                        </gmd:CI_OnlineResource>
+                     </gmd:onlineResource>
+                  </gmd:CI_Contact>
+               </gmd:contactInfo>
+               <gmd:role>
+<gmd:CI_RoleCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_RoleCode" codeListValue="resourceProvider"/>
+
+               </gmd:role>
+            </gmd:CI_ResponsibleParty>
+         </gmd:citedResponsibleParty>
+      </gmd:CI_Citation>
+   </gmd:authority>
+   <gmd:code>
+      <gco:CharacterString>EPS > EUMETSAT Polar System</gco:CharacterString>
+   </gmd:code>
+</gmd:MD_Identifier>
+</gmi:identifier>
+<gmi:status>
+<gmd:MD_ProgressCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#MD_ProgressCode" codeListValue="onGoing"/>
+
+</gmi:status>
+<gmi:type>
+<gmi:MI_OperationTypeCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#MI_OperationTypeCode" codeListValue="real"/>
+
+</gmi:type>
+<gmi:parentOperation gco:nilReason="inapplicable"/>
+</gmi:MI_Operation>
+</gmi:operation>
+
+<gmi:platform>
+        <gmi:MI_Platform id="platform_667">
+          <gmi:identifier>
+            <gmd:MD_Identifier>
+              <gmd:code>
+                <gco:CharacterString>METOP-A > Meteorological Operational Satellite - A</gco:CharacterString>
+              </gmd:code>
+            </gmd:MD_Identifier>
+          </gmi:identifier>
+          <gmi:description>
+             <gco:CharacterString>MetOp-A (MetOp-2)
+   Launched: October 19, 2006.
+   Dates of Operation: May 21, 2007 - Present.
+   Instruments: A/DCS, AMSU-A1, AMSU-A2, ASCAT, AVHRR, GOME-2, GRAS, HIRS, IASI, MHS, SARP-3, SARR and SEM.
+   Orbit: Sun-synchronous orbit 09.30 mean local solar time (Equator crossing, descending node), morning satellite.
+   Mission Duration:  Expected to be operational for 4.5 to 5 years operational.
+The NOAA satellites are deployed in "afternoon" orbits and MetOp will take up service in a "morning" orbit. NOAA and EUMETSAT will operate and control their respective polar-orbiting satellites and ground segments. However, data collected by all the satellites will be shared and exchanged between NOAA and EUMETSAT. Under the Initial Joint Polar-orbiting Operational Satellite System (IJPS) agreement between NOAA and EUMETSAT, both parties will cooperatively provide blind orbit coverage and emergency support for global data retrieval as well as for command and telemetry services.</gco:CharacterString>
+          </gmi:description>
+          <gmi:sponsor/>
+          <gmi:instrument/>
+        </gmi:MI_Platform>
+      </gmi:platform>
+</gmi:MI_AcquisitionInformation>
+</gmi:acquisitionInformation>
+
+</gmi:MI_Metadata>

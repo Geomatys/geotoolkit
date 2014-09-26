@@ -41,7 +41,7 @@ import org.geotoolkit.feature.type.DefaultAttributeType;
 import org.geotoolkit.feature.type.DefaultGeometryDescriptor;
 import org.geotoolkit.feature.type.DefaultGeometryType;
 import org.geotoolkit.filter.visitor.FilterAttributeExtractor;
-import org.geotoolkit.metadata.iso.citation.Citations;
+import org.geotoolkit.metadata.Citations;
 import org.geotoolkit.referencing.CRS;
 
 import org.geotoolkit.feature.type.*;

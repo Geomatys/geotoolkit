@@ -37,8 +37,8 @@ import org.apache.sis.measure.NumberRange;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.Numbers;
 import org.apache.sis.util.UnsupportedImplementationException;
-import org.geotoolkit.metadata.iso.citation.Citations;
 
+import org.geotoolkit.metadata.Citations;
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 
 

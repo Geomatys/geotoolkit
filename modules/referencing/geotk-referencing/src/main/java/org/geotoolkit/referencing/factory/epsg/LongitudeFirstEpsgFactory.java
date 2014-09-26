@@ -28,7 +28,7 @@ import org.opengis.referencing.operation.CoordinateOperationAuthorityFactory;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.internal.referencing.factory.ImplementationHints;
 import org.geotoolkit.referencing.factory.OrderedAxisAuthorityFactory;
-import org.geotoolkit.metadata.iso.citation.Citations;
+import org.geotoolkit.metadata.Citations;
 
 
 /**

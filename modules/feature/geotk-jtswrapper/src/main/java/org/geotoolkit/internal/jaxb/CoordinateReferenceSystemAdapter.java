@@ -3,7 +3,7 @@ package org.geotoolkit.internal.jaxb;
 
 import java.util.logging.Level;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
-import org.geotoolkit.metadata.iso.citation.Citations;
+import org.geotoolkit.metadata.Citations;
 import org.geotoolkit.referencing.CRS;
 import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.util.collection.Cache;

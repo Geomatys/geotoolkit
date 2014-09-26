@@ -24,7 +24,7 @@ import javax.measure.unit.Unit;
 import java.io.IOException;
 
 import org.geotoolkit.factory.AuthorityFactoryFinder;
-import org.geotoolkit.metadata.iso.citation.Citations;
+import org.geotoolkit.metadata.Citations;
 import org.apache.sis.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.factory.AbstractAuthorityFactory;
 import org.geotoolkit.referencing.factory.IdentifiedObjectFinder;

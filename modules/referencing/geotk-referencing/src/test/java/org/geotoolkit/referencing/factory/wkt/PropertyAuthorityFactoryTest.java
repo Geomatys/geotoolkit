@@ -35,7 +35,7 @@ import org.opengis.referencing.crs.ProjectedCRS;
 import org.apache.sis.test.DependsOn;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.io.wkt.WKTFormatTest;
-import org.geotoolkit.metadata.iso.citation.Citations;
+import org.geotoolkit.metadata.Citations;
 import org.geotoolkit.referencing.factory.epsg.PropertyEpsgFactory;
 import org.apache.sis.referencing.IdentifiedObjects;
 

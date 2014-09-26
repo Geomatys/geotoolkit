@@ -43,8 +43,8 @@ import org.apache.sis.util.iso.DefaultInternationalString;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.apache.sis.util.ComparisonMode;
 import org.apache.sis.util.Utilities;
-import org.geotoolkit.metadata.iso.citation.Citations;
 
+import org.geotoolkit.metadata.Citations;
 import org.junit.*;
 
 import org.geotoolkit.test.TestData;

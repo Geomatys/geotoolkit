@@ -18,7 +18,7 @@
 package org.geotoolkit.temporal.object;
 
 import org.geotoolkit.temporal.object.DefaultTemporalPosition;
-import org.geotoolkit.metadata.iso.citation.Citations;
+import org.geotoolkit.metadata.Citations;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.geotoolkit.temporal.reference.DefaultTemporalReferenceSystem;
 import org.junit.After;

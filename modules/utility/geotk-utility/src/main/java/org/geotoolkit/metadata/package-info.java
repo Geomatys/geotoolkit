@@ -17,14 +17,12 @@
  */
 
 /**
- * Pre-defined citation constants.
+ * Utility methods for {@code org.opengis.metadata} handling.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @author Touraïvane (IRD)
- * @author Cédric Briançon (Geomatys)
- * @version 3.18
+ * @version 3.19
  *
- * @since 2.1
+ * @since 2.0
  * @module
  */
-package org.geotoolkit.metadata.iso.citation;
+package org.geotoolkit.metadata;

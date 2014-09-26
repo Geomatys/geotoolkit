@@ -37,7 +37,7 @@ import org.geotoolkit.factory.FactoryFinder;
 import org.apache.sis.metadata.iso.ImmutableIdentifier;
 import org.geotoolkit.referencing.operation.MathTransformProvider;
 
-import static org.geotoolkit.metadata.iso.citation.Citations.*;
+import static org.geotoolkit.metadata.Citations.*;
 import static org.apache.sis.util.collection.Containers.hashMapCapacity;
 import static org.geotoolkit.util.collection.XCollections.unmodifiableOrCopy;
 

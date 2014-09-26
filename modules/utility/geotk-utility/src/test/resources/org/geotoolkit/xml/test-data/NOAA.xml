@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gmd:CI_ResponsibleParty xmlns:gmd="http://www.isotc211.org/2005/gmd"
+  xmlns:gco="http://www.isotc211.org/2005/gco" uuid="a9af30e0-5d4d-11df-b0b8-0002a5d5c51b">
+  <gmd:individualName>
+    <gco:CharacterString>John Kozimor</gco:CharacterString>
+  </gmd:individualName>
+  <gmd:organisationName>
+    <gco:CharacterString>DOC/NOAA/NESDIS/NGDC>  National Geophysical Data Center, NESDIS, NOAA, U.S. Department of Commerce DOC/NOAA/NESDIS/NOSA>  NOAA Observing Systems Architecture, NESDIS, NOAA, U.S. Department of Commerce</gco:CharacterString>
+  </gmd:organisationName>
+  <gmd:positionName>
+    <gco:CharacterString>IT Specialist/Data Manager</gco:CharacterString>
+  </gmd:positionName>
+  <gmd:contactInfo>
+    <gmd:CI_Contact>
+      <gmd:phone>
+        <gmd:CI_Telephone>
+          <gmd:voice>
+            <gco:CharacterString>(303)497-3798</gco:CharacterString>
+          </gmd:voice>
+          <gmd:facsimile>
+            <gco:CharacterString>(303)497-6513</gco:CharacterString>
+          </gmd:facsimile>
+        </gmd:CI_Telephone>
+      </gmd:phone>
+      <gmd:address>
+        <gmd:CI_Address>
+          <gmd:deliveryPoint>
+            <gco:CharacterString>NESDIS/NGDC/SEGD E/GC1 325 Broadway</gco:CharacterString>
+          </gmd:deliveryPoint>
+          <gmd:city>
+            <gco:CharacterString>Boulder</gco:CharacterString>
+          </gmd:city>
+          <gmd:administrativeArea>
+            <gco:CharacterString>CO</gco:CharacterString>
+          </gmd:administrativeArea>
+          <gmd:postalCode>
+            <gco:CharacterString>80305-3328</gco:CharacterString>
+          </gmd:postalCode>
+          <gmd:country>
+            <gco:CharacterString>USA</gco:CharacterString>
+          </gmd:country>
+          <gmd:electronicMailAddress>
+            <gco:CharacterString>john.kozimor@noaa.gov</gco:CharacterString>
+          </gmd:electronicMailAddress>
+        </gmd:CI_Address>
+      </gmd:address>
+      <gmd:hoursOfService>
+        <gco:CharacterString>7:30-5:00 Mountain</gco:CharacterString>
+      </gmd:hoursOfService>
+      <gmd:contactInstructions>
+    <gco:CharacterString>Contact the National Geophysical DataCenter</gco:CharacterString>
+      </gmd:contactInstructions>
+    </gmd:CI_Contact>
+  </gmd:contactInfo>
+  <gmd:role>
+    <gmd:CI_RoleCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_RoleCode"
+    codeListValue="pointOfContact">pointOfContact</gmd:CI_RoleCode>
+  </gmd:role>
+</gmd:CI_ResponsibleParty>

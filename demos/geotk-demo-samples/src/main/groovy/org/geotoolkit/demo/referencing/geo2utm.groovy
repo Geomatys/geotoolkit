@@ -16,7 +16,6 @@
     @GrabConfig(systemClassLoader=true),
     @Grab(group = "org.opengis",      module = "geoapi-pending",    version="2.3-M9"),
     @Grab(group = "org.geotoolkit",   module = "geotk-utility",     version="3.16"),
-    @Grab(group = "org.geotoolkit",   module = "geotk-metadata",    version="3.16"),
     @Grab(group = "org.geotoolkit",   module = "geotk-referencing", version="3.16"),
     @Grab(group = "org.geotoolkit",   module = "geotk-epsg",        version="3.16"),
     @Grab(group = "org.apache.derby", module = "derbyclient",       version="10.6.1.0"),

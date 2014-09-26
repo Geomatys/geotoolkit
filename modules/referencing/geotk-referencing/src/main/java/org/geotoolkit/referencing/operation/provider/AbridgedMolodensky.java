@@ -25,7 +25,7 @@ import org.opengis.referencing.ReferenceIdentifier;
 import org.opengis.referencing.crs.GeographicCRS;
 import org.opengis.referencing.crs.GeocentricCRS;
 
-import org.geotoolkit.metadata.iso.citation.Citations;
+import org.geotoolkit.metadata.Citations;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.geotoolkit.referencing.operation.transform.MolodenskyTransform;
 import org.geotoolkit.resources.Vocabulary;

@@ -36,7 +36,7 @@ import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.gml.xml.AbstractGeometricAggregate;
 import org.geotoolkit.gml.xml.AbstractGeometry;
 import org.geotoolkit.gml.xml.AbstractRing;
-import org.geotoolkit.metadata.iso.citation.Citations;
+import org.geotoolkit.metadata.Citations;
 import org.apache.sis.referencing.IdentifiedObjects;
 import static org.geotoolkit.gml.xml.GMLXmlFactory.*;
 

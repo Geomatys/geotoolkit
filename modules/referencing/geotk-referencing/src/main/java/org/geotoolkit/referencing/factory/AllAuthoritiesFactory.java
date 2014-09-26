@@ -37,7 +37,7 @@ import org.opengis.referencing.NoSuchAuthorityCodeException; // For javadoc
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.factory.FactoryRegistryException;
-import org.geotoolkit.metadata.iso.citation.Citations;
+import org.geotoolkit.metadata.Citations;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.apache.sis.util.collection.WeakHashSet;
 import org.geotoolkit.internal.FactoryUtilities;

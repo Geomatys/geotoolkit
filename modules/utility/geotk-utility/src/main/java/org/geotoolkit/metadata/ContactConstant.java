@@ -18,7 +18,7 @@
  *    This package contains documentation from OpenGIS specifications.
  *    OpenGIS consortium's work is fully acknowledged here.
  */
-package org.geotoolkit.metadata.iso.citation;
+package org.geotoolkit.metadata;
 
 import java.net.URI;
 import org.opengis.metadata.citation.Contact;

@@ -29,7 +29,7 @@ import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.factory.AbstractAuthorityFactory;
 import org.geotoolkit.referencing.factory.CachingAuthorityFactory;
 import org.geotoolkit.referencing.factory.IdentifiedObjectFinder;
-import org.geotoolkit.metadata.iso.citation.Citations;
+import org.geotoolkit.metadata.Citations;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 
 import org.apache.sis.referencing.CommonCRS;

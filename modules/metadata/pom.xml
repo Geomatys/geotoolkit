@@ -92,7 +92,6 @@
            Modules included in the build
        =========================================================== -->
   <modules>
-    <module>geotk-metadata</module>
     <module>geotk-metadata-sql</module>
   </modules>
 </project>

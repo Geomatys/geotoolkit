@@ -62,8 +62,8 @@ import org.apache.sis.internal.referencing.AxisDirections;
 import org.geotoolkit.internal.image.io.IIOImageHelper;
 import org.geotoolkit.image.io.DimensionSlice.API;
 import org.geotoolkit.image.io.ImageMetadataException;
-import org.geotoolkit.metadata.iso.citation.Citations;
 
+import org.geotoolkit.metadata.Citations;
 import static org.geotoolkit.image.io.MultidimensionalImageStore.*;
 
 

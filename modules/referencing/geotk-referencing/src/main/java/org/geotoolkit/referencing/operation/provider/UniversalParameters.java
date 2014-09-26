@@ -40,12 +40,12 @@ import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.referencing.IdentifiedObjects;
-import org.geotoolkit.metadata.iso.citation.Citations;
+import org.geotoolkit.metadata.Citations;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 
 import static org.opengis.referencing.operation.SingleOperation.*;
-import static org.geotoolkit.metadata.iso.citation.Citations.*;
+import static org.geotoolkit.metadata.Citations.*;
 import static org.apache.sis.util.collection.Containers.hashMapCapacity;
 
 

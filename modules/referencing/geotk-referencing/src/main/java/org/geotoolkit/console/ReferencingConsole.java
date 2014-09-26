@@ -41,7 +41,7 @@ import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.referencing.cs.PredefinedCS;
 import org.apache.sis.referencing.operation.transform.AbstractMathTransform;
-import org.geotoolkit.metadata.iso.citation.Citations;
+import org.geotoolkit.metadata.Citations;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.geotoolkit.io.ContentFormatException;
 import org.apache.sis.io.wkt.Colors;

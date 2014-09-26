@@ -18,7 +18,6 @@
     <jar href="geotk-coverageio-3.13.jar" download="lazy"/>
     <jar href="geotk-coverage-3.13.jar" download="lazy"/>
     <jar href="geotk-referencing-3.13.jar" download="lazy"/>
-    <jar href="geotk-metadata-3.13.jar" download="lazy"/>
     <jar href="geotk-utility-3.13.jar" download="lazy"/>
     <jar href="geoapi-pending-2.3-M8.jar" download="lazy"/>
     <jar href="vecmath-1.5.2.jar" download="lazy"/>

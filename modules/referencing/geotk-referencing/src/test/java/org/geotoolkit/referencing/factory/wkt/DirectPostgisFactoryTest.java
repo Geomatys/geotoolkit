@@ -36,7 +36,7 @@ import org.opengis.referencing.crs.VerticalCRS;
 import org.apache.sis.test.DependsOn;
 import org.geotoolkit.io.wkt.WKTFormatTest;
 import org.geotoolkit.internal.io.Installation;
-import org.geotoolkit.metadata.iso.citation.Citations;
+import org.geotoolkit.metadata.Citations;
 import org.apache.sis.referencing.CommonCRS;
 
 import org.junit.*;

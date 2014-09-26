@@ -18,7 +18,7 @@
 package org.geotoolkit.referencing.factory.epsg;
 
 import java.io.IOException;
-import org.geotoolkit.metadata.iso.citation.Citations;
+import org.geotoolkit.metadata.Citations;
 
 
 /**

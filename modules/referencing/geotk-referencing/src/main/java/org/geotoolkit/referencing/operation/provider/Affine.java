@@ -30,7 +30,7 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.ReferenceIdentifier;
 
 import org.geotoolkit.resources.Vocabulary;
-import org.geotoolkit.metadata.iso.citation.Citations;
+import org.geotoolkit.metadata.Citations;
 import org.geotoolkit.parameter.MatrixParameterDescriptors;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.referencing.operation.transform.MathTransforms;

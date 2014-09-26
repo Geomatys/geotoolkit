@@ -63,7 +63,7 @@ package org.geotoolkit.lang;
  * <tr><td colspan="2"><hr></td></tr>
  *
  * <tr><th colspan="2" bgcolor="lightblue">Metadata and referencing (except I/O)</th></tr>
- * <tr><td>{@link org.geotoolkit.metadata.iso.citation.Citations}</td>
+ * <tr><td>{@link org.geotoolkit.metadata.Citations}</td>
  *     <td>Get a predefined constant from a name. Test if the identifiers of two citations match.</td></tr>
  * <tr><td>{@link org.geotoolkit.referencing.CRS}</td>
  *     <td>Create {@linkplain org.opengis.referencing.crs.CoordinateReferenceSystem Coordinate Reference

@@ -108,7 +108,7 @@
     <replace dir="${user.dir}" summary="yes">
       <include name="**/*.java"/>
       <replacefilter token="org.apache.sis.internal.jaxb.gmd.PT_Locale"           value="org.apache.sis.internal.jaxb.code.PT_Locale"/>
-      <replacefilter token="org.apache.sis.metadata.iso.citation.Citations"       value="org.geotoolkit.metadata.iso.citation.Citations"/>
+      <replacefilter token="org.apache.sis.metadata.iso.citation.Citations"       value="org.geotoolkit.metadata.Citations"/>
       <replacefilter token="org.apache.sis.metadata.iso.spatial.PixelTranslation" value="org.geotoolkit.metadata.iso.spatial.PixelTranslation"/>
     </replace>
   </target>

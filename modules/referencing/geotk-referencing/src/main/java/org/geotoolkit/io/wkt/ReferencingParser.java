@@ -50,7 +50,7 @@ import org.opengis.referencing.operation.*;
 import org.apache.sis.io.wkt.Symbols;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.metadata.iso.citation.Citations;
+import org.geotoolkit.metadata.Citations;
 import org.apache.sis.internal.referencing.Legacy;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.NamedIdentifier;

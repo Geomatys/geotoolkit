@@ -39,7 +39,7 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.referencing.CRS;
 import org.apache.sis.util.logging.Logging;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.geotoolkit.metadata.iso.citation.Citations;
+import org.geotoolkit.metadata.Citations;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.coverage.grid.GridCoverage2D;

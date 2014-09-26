@@ -35,8 +35,8 @@ import org.opengis.coverage.grid.RectifiedGrid;
 import org.apache.sis.test.DependsOn;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.util.iso.SimpleInternationalString;
-import org.geotoolkit.metadata.iso.citation.Citations;
 
+import org.geotoolkit.metadata.Citations;
 import org.junit.*;
 import static org.geotoolkit.test.Assert.*;
 import static org.geotoolkit.test.Commons.*;

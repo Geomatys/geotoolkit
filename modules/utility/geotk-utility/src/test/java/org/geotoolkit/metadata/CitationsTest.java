@@ -15,8 +15,9 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.metadata.iso.citation;
+package org.geotoolkit.metadata;
 
+import org.geotoolkit.metadata.Citations;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.Collections;

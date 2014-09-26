@@ -30,7 +30,7 @@ import org.opengis.referencing.ReferenceIdentifier;
 import org.geotoolkit.resources.Vocabulary;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.geotoolkit.referencing.operation.projection.Equirectangular;
-import org.geotoolkit.metadata.iso.citation.Citations;
+import org.geotoolkit.metadata.Citations;
 
 
 /**

@@ -34,7 +34,7 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.io.TableWriter;
 import org.apache.sis.util.logging.Logging;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
-import org.geotoolkit.metadata.iso.citation.Citations;
+import org.geotoolkit.metadata.Citations;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.util.iso.DefaultNameSpace;
 import org.geotoolkit.resources.Vocabulary;

@@ -37,7 +37,7 @@ import org.opengis.referencing.crs.CRSAuthorityFactory;
 
 import org.geotoolkit.factory.Hints;
 import org.apache.sis.util.iso.SimpleInternationalString;
-import org.geotoolkit.metadata.iso.citation.Citations;
+import org.geotoolkit.metadata.Citations;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.geotoolkit.referencing.cs.PredefinedCS;
 import org.geotoolkit.referencing.factory.DirectAuthorityFactory;

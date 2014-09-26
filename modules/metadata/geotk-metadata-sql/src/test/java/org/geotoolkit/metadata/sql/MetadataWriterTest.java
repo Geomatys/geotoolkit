@@ -26,7 +26,7 @@ import org.opengis.metadata.citation.PresentationForm;
 
 import org.opengis.metadata.citation.ResponsibleParty;
 import org.apache.sis.metadata.MetadataStandard;
-import org.geotoolkit.metadata.iso.citation.Citations;
+import org.geotoolkit.metadata.Citations;
 import org.apache.sis.internal.referencing.PositionalAccuracyConstant;
 import org.geotoolkit.internal.sql.DefaultDataSource;
 

@@ -23,11 +23,11 @@ Geotoolkit.org installer
   interface provided by this module. To launch the application, first create a directory which
   contain at least the following JAR files (omitting version numbers):
 
+    * Apache SIS jar files.
+
     * <<<geotk-setup.jar>>>
 
     * <<<geotk-utility.jar>>>
-
-    * <<<geotk-metadata.jar>>>
 
     * <<<geotk-metadata-sql.jar>>>
 

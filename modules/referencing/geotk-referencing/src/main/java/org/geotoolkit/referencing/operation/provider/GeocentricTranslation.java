@@ -27,7 +27,7 @@ import org.opengis.referencing.ReferenceIdentifier;
 import org.geotoolkit.parameter.Parameters;
 import org.apache.sis.referencing.datum.BursaWolfParameters;
 import org.apache.sis.referencing.NamedIdentifier;
-import org.geotoolkit.metadata.iso.citation.Citations;
+import org.geotoolkit.metadata.Citations;
 
 
 /**

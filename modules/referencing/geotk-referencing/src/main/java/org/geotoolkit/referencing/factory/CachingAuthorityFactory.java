@@ -401,7 +401,7 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
      * @return The authority or the vendor, or {@code UNKNOWN}.
      *
      * @see #availability
-     * @see org.geotoolkit.metadata.iso.citation.Citations#UNKNOWN
+     * @see org.geotoolkit.metadata.Citations#UNKNOWN
      */
     @Override
     final Citation getCitation(final String method) {

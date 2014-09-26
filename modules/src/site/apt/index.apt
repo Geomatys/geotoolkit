@@ -15,11 +15,6 @@ Geotoolkit.org modules
       * {{{./utility/geotk-utility/index.html}Utility core}} -
         Collections and miscellaneous utilities
 
-   * {{{./metadata/index.html}Metadata}}
-
-      * {{{./metadata/geotk-metadata/index.html}Metadata core}} -
-        Metadata structures (ISO 19115) and their XML representation (ISO 19139)
-
    * {{{./referencing/index.html}Referencing}}
 
       * {{{./referencing/geotk-referencing/index.html}Referencing core}} -

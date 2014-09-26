@@ -31,8 +31,8 @@ import org.geotoolkit.referencing.factory.AllAuthoritiesFactoryTest;
 import org.geotoolkit.referencing.factory.IdentifiedObjectFinder;
 import org.geotoolkit.referencing.factory.AbstractAuthorityFactory;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.metadata.iso.citation.Citations;
 
+import org.geotoolkit.metadata.Citations;
 import org.apache.sis.test.DependsOn;
 import org.geotoolkit.test.referencing.ReferencingTestBase;
 import org.apache.sis.referencing.CommonCRS;

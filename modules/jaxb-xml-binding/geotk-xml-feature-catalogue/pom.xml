@@ -51,7 +51,7 @@
   <dependencies>
     <dependency>
       <groupId>org.geotoolkit</groupId>
-      <artifactId>geotk-metadata</artifactId>
+      <artifactId>geotk-utility</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

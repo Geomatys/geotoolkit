@@ -32,7 +32,7 @@ import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.geotoolkit.referencing.operation.MathTransformProvider;
 import org.apache.sis.referencing.operation.transform.TransferFunction;
-import org.geotoolkit.metadata.iso.citation.Citations;
+import org.geotoolkit.metadata.Citations;
 import org.geotoolkit.resources.Vocabulary;
 
 import static org.geotoolkit.parameter.Parameters.*;
