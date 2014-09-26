@@ -233,30 +233,6 @@ public final class StringUtilities {
     }
 
     /**
-     * This method clean a string encoded in a database LATIN1, this is a performed method.
-     * @param str
-     * @return
-     *
-     * @deprecated Try to specify the right encoding to {@link java.io.InputStreamReader} instead.
-     */
-    @Deprecated
-    public static String cleanString(String str) {
-        if (str != null) {
-            str = str.replaceAll("Ã©", "é");
-            str = str.replaceAll("Ãª", "ê");
-            str = str.replaceAll("Ã¨", "è");
-            str = str.replaceAll("\"", "'");
-            str = str.replaceAll("Â°", "°");
-            str = str.replaceAll("Ã¯", "ï");
-            str = str.replaceAll("Ã´", "ô");
-            str = str.replaceAll("à§", "ç");
-            str = str.replaceAll("Ã", "à");
-            str = str.replaceAll("Â", "");
-        }
-        return str;
-    }
-
-    /**
      * Clean a string from its leading and trailing whitespaces, and the tabulation or end of line
      * characters.
      *

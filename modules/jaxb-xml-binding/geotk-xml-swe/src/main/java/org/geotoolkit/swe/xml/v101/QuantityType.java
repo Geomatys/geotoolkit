@@ -53,7 +53,7 @@ public class QuantityType extends AbstractDataComponentType implements Quantity 
      * A empty contructor used by JAXB
      */
     public QuantityType() {
-        
+
     }
 
     public QuantityType(final Quantity q) {
@@ -76,7 +76,7 @@ public class QuantityType extends AbstractDataComponentType implements Quantity 
             }
         }
     }
-    
+
     /**
      * Build a new QuantityType
      */
@@ -106,7 +106,7 @@ public class QuantityType extends AbstractDataComponentType implements Quantity 
         this.uom    = uom;
         this.value  = value;
     }
-    
+
     /**
      * Gets the value of the uom property.
     */
@@ -116,11 +116,25 @@ public class QuantityType extends AbstractDataComponentType implements Quantity 
     }
 
     /**
+     * Invoked through Java reflection.
+     */
+    public void setUom(UomPropertyType uom) {
+        this.uom = uom;
+    }
+
+    /**
      * Gets the value of the value property.
      */
     @Override
     public Double getValue() {
         return value;
+    }
+
+    /**
+     * Invoked through Java reflection.
+     */
+    public void setValue(Double value) {
+        this.value = value;
     }
 
     /**
@@ -138,7 +152,7 @@ public class QuantityType extends AbstractDataComponentType implements Quantity 
     public void setAxisID(final String value) {
         this.axisID = value;
     }
-    
+
     /**
      * Gets the value of the referenceFrame property.
      */
@@ -219,8 +233,8 @@ public class QuantityType extends AbstractDataComponentType implements Quantity 
         return hash;
     }
 
-    
-    
+
+
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder();

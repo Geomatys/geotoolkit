@@ -30,9 +30,9 @@ import org.geotoolkit.swe.xml.UomProperty;
 
 /**
  * <p>Java class for UomPropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="UomPropertyType">
  *   &lt;complexContent>
@@ -59,8 +59,8 @@ import org.geotoolkit.swe.xml.UomProperty;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -72,7 +72,7 @@ public class UomPropertyType implements UomProperty {
 
     public static final UomPropertyType DEGREE = new UomPropertyType("degree", null);
     public static final UomPropertyType METER  = new UomPropertyType("m", null);
-            
+
     @XmlElement(name = "UnitDefinition", namespace = "http://www.opengis.net/gml")
     private UnitDefinitionType unitDefinition;
     @XmlElement(name = "BaseUnit", namespace = "http://www.opengis.net/gml")
@@ -98,7 +98,7 @@ public class UomPropertyType implements UomProperty {
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     private String type;
 
-    
+
     public UomPropertyType() {}
 
     public UomPropertyType(final UomProperty uom) {
@@ -117,12 +117,12 @@ public class UomPropertyType implements UomProperty {
             this.unitDefinition = uom.getUnitDefinition();
         }
     }
-    
+
     public UomPropertyType(final String code, final String href) {
         this.code = code;
         this.href = href;
     }
-    
+
     /**
      * Gets the value of the unitDefinition property.
      */
@@ -146,7 +146,7 @@ public class UomPropertyType implements UomProperty {
 
     /**
      * Gets the value of the nilReason property.
-     * 
+     *
      */
     public List<String> getNilReason() {
         if (nilReason == null) {
@@ -255,7 +255,7 @@ public class UomPropertyType implements UomProperty {
         hash = 41 * hash + (this.type != null ? this.type.hashCode() : 0);
         return hash;
     }
-    
+
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder();
@@ -302,6 +302,8 @@ public class UomPropertyType implements UomProperty {
     }
 
     /**
+     * Invoked through Java reflection.
+     *
      * @param code the code to set
      */
     public void setCode(final String code) {

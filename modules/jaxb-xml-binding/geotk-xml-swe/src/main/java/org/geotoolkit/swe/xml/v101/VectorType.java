@@ -31,9 +31,9 @@ import org.apache.sis.util.ComparisonMode;
 
 /**
  * <p>Java class for VectorType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="VectorType">
  *   &lt;complexContent>
@@ -54,8 +54,8 @@ import org.apache.sis.util.ComparisonMode;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -104,6 +104,13 @@ public class VectorType extends AbstractVectorType implements Vector {
             coordinate = new ArrayList<CoordinateType>();
         }
         return this.coordinate;
+    }
+
+    /**
+     * Invoked through Java reflection.
+     */
+    public void setCoordinate(List<CoordinateType> coordinate) {
+        this.coordinate = coordinate;
     }
 
     /**
