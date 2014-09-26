@@ -38,12 +38,12 @@ import org.geotoolkit.feature.type.AttributeType;
 import org.geotoolkit.feature.type.PropertyType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
+import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.AbstractMap;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.logging.Level;
@@ -335,7 +335,16 @@ public class GeoJSONReader implements FeatureReader<FeatureType, Feature> {
 
     @Override
     public void close() {
-        rwlock.readLock().unlock();
+        try {
+            // If our object is a feature collection, it could get an opened connexion to a file. We must dispose it.
+            if (jsonObj instanceof Closeable) {
+                ((Closeable) jsonObj).close();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            rwlock.readLock().unlock();
+        }
     }
 
 }
