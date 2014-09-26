@@ -17,9 +17,17 @@
 
 package org.geotoolkit.gui.javafx.style;
 
+import java.awt.GraphicsEnvironment;
+import java.util.Arrays;
+import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
+import org.geotoolkit.filter.DefaultLiteral;
+import org.geotoolkit.style.StyleConstants;
+import org.opengis.filter.expression.Expression;
+import org.opengis.filter.expression.Literal;
 import org.opengis.style.Font;
 
 /**
@@ -36,7 +44,7 @@ public class FXFont extends FXStyleElementController<FXFont, Font>{
     protected FXListExpression uiStyle;
     @FXML
     protected FXListExpression uiFamily;
-        
+    
     @Override
     public Class<Font> getEditedClass() {
         return Font.class;
@@ -50,6 +58,24 @@ public class FXFont extends FXStyleElementController<FXFont, Font>{
     @Override
     public void initialize() {
         super.initialize();        
+        
+        uiWeight.getChoiceBox().setItems(FXCollections.observableArrayList(
+                StyleConstants.FONT_WEIGHT_NORMAL,StyleConstants.FONT_WEIGHT_BOLD));
+        uiStyle.getChoiceBox().setItems(FXCollections.observableArrayList(
+                StyleConstants.FONT_STYLE_NORMAL,StyleConstants.FONT_STYLE_ITALIC,StyleConstants.FONT_STYLE_OBLIQUE));
+        
+        //Initialize family font list with available font family
+        final GraphicsEnvironment environment = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        final String[] fontNames = environment.getAvailableFontFamilyNames();
+        final List<String> fontNamesList = Arrays.asList(fontNames);
+        final int nbFamilies = fontNamesList.size();
+        final Literal[] fontFamilies = new Literal[nbFamilies];
+        for (int i=0; i<nbFamilies; i++) {
+            fontFamilies[i] = new DefaultLiteral(fontNamesList.get(i));
+        }
+        
+        uiFamily.getChoiceBox().setItems(FXCollections.observableArrayList(fontFamilies));
+        
         final ChangeListener changeListener = (ChangeListener) (ObservableValue observable, Object oldValue, Object newValue) -> {
             if(updating) return;
             value.set(getStyleFactory().font(
@@ -70,7 +96,13 @@ public class FXFont extends FXStyleElementController<FXFont, Font>{
         uiSize.valueProperty().setValue(styleElement.getSize());
         uiWeight.valueProperty().setValue(styleElement.getWeight());
         uiStyle.valueProperty().setValue(styleElement.getStyle());
-        uiFamily.valueProperty().setValue(styleElement.getFamily().get(0));
+        final List<Expression> exps = styleElement.getFamily();
+        if(!exps.isEmpty()){
+            uiFamily.valueProperty().setValue(styleElement.getFamily().get(0));
+        }else{
+            //TODO set to default family
+        }
+        
     }
     
 }

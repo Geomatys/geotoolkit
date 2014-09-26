@@ -79,6 +79,12 @@
             <artifactId>richtextfx</artifactId>
             <version>0.4.4</version>
         </dependency>
+        <dependency>
+            <groupId>com.jidesoft</groupId>
+            <artifactId>jidefx-fields</artifactId>
+            <version>0.9.1</version>
+    </dependency>
+
             
     </dependencies>
 

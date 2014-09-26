@@ -11,6 +11,6 @@
       <FXSpecialExpressionButton fx:id="special" BorderPane.alignment="CENTER" />
    </right>
    <center>
-      <TextField fx:id="textField" BorderPane.alignment="CENTER" />
+      <ChoiceBox fx:id="uiChoice" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" BorderPane.alignment="CENTER" />
    </center>
 </fx:root>

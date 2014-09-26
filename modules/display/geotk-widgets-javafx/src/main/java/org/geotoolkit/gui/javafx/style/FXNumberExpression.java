@@ -18,12 +18,10 @@ package org.geotoolkit.gui.javafx.style;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.TextField;
 import org.geotoolkit.cql.CQL;
-import org.geotoolkit.cql.CQLException;
+import static org.geotoolkit.gui.javafx.style.FXStyleElementController.getFilterFactory;
+import org.geotoolkit.gui.javafx.util.FXNumberSpinner;
 import org.geotoolkit.style.StyleConstants;
 import org.opengis.filter.expression.Expression;
 
@@ -37,9 +35,10 @@ public class FXNumberExpression extends FXStyleElementController<FXNumberExpress
     private FXSpecialExpressionButton special;
 
     @FXML
-    private TextField textField;
+    private FXNumberSpinner uiNumber;
     
     public FXNumberExpression(){
+        super();
     }
     
     @Override
@@ -52,18 +51,19 @@ public class FXNumberExpression extends FXStyleElementController<FXNumberExpress
         return StyleConstants.DEFAULT_STROKE_WIDTH;
     }
 
+    public FXNumberSpinner getNumberField() {
+        return uiNumber;
+    }
+    
     @Override
     public void initialize() {
         super.initialize();
         
-        textField.setOnAction(new EventHandler<ActionEvent>() {
+        uiNumber.valueProperty().addListener(new ChangeListener<Number>() {
             @Override
-            public void handle(ActionEvent event) {
-                try{
-                    value.set(CQL.parseExpression(textField.getText()));
-                    special.valueProperty().setValue(value.get());
-                }catch(CQLException ex){
-                }
+            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                value.set(getFilterFactory().literal(uiNumber.valueProperty().get()));
+                special.valueProperty().setValue(value.get());
             }
         });
         
@@ -78,7 +78,7 @@ public class FXNumberExpression extends FXStyleElementController<FXNumberExpress
     @Override
     protected void updateEditor(Expression styleElement) {
         special.valueProperty().set(styleElement);
-        textField.setText(CQL.write(styleElement));
+        uiNumber.getNumberField().setText(CQL.write(styleElement));
     }
     
 }

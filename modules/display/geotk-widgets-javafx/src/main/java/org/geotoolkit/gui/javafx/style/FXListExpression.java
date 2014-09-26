@@ -18,12 +18,8 @@ package org.geotoolkit.gui.javafx.style;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.TextField;
-import org.geotoolkit.cql.CQL;
-import org.geotoolkit.cql.CQLException;
+import javafx.scene.control.ChoiceBox;
 import org.geotoolkit.style.StyleConstants;
 import org.opengis.filter.expression.Expression;
 
@@ -35,9 +31,8 @@ public class FXListExpression extends FXStyleElementController<FXListExpression,
 
     @FXML
     private FXSpecialExpressionButton special;
-
     @FXML
-    private TextField textField;
+    private ChoiceBox<Expression> uiChoice;
     
     public FXListExpression(){
     }
@@ -52,21 +47,23 @@ public class FXListExpression extends FXStyleElementController<FXListExpression,
         return StyleConstants.DEFAULT_STROKE_WIDTH;
     }
 
+    public ChoiceBox<Expression> getChoiceBox() {
+        return uiChoice;
+    }
+
     @Override
     public void initialize() {
         super.initialize();
         
-        textField.setOnAction(new EventHandler<ActionEvent>() {
+        uiChoice.valueProperty().addListener(new ChangeListener<Expression>() {
+
             @Override
-            public void handle(ActionEvent event) {
-                try{
-                    value.set(CQL.parseExpression(textField.getText()));
-                    special.valueProperty().setValue(value.get());
-                }catch(CQLException ex){
-                }
+            public void changed(ObservableValue<? extends Expression> observable, Expression oldValue, Expression newValue) {
+                value.set(uiChoice.valueProperty().get());
+                special.valueProperty().setValue(value.get());
             }
         });
-        
+                
         special.valueProperty().addListener(new ChangeListener<Expression>() {
             @Override
             public void changed(ObservableValue observable, Expression oldValue, Expression newValue) {
@@ -78,7 +75,7 @@ public class FXListExpression extends FXStyleElementController<FXListExpression,
     @Override
     protected void updateEditor(Expression styleElement) {
         special.valueProperty().set(styleElement);
-        textField.setText(CQL.write(styleElement));
+        uiChoice.valueProperty().set(styleElement);
     }
     
 }

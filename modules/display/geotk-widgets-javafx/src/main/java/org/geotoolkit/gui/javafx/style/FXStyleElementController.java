@@ -45,7 +45,11 @@ public abstract class FXStyleElementController<E extends FXStyleElementControlle
     protected volatile boolean updating = false;
 
     public FXStyleElementController() {
-        GeotkFX.loadJRXML(this);
+        try{
+            GeotkFX.loadJRXML(this);
+        }catch(Throwable ex){
+            ex.printStackTrace();
+        }
     }
     
     /**

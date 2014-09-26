@@ -17,7 +17,9 @@
 
 package org.geotoolkit.gui.javafx.layer.style;
 
+import javafx.fxml.FXML;
 import org.geotoolkit.gui.javafx.layer.FXLayerStylePane;
+import org.geotoolkit.gui.javafx.style.FXColorMap;
 import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.MutableStyle;
@@ -27,6 +29,9 @@ import org.geotoolkit.style.MutableStyle;
  * @author Johann Sorel (Geomatys)
  */
 public class FXStyleColorMapPane extends FXLayerStylePane {
+    
+    @FXML
+    private FXColorMap uiColorMap;
     
     public FXStyleColorMapPane() {
         GeotkFX.loadJRXML(this);

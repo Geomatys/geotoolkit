@@ -11,17 +11,19 @@
    <center>
       <GridPane hgap="10.0" vgap="10.0" BorderPane.alignment="CENTER">
         <columnConstraints>
-          <ColumnConstraints halignment="CENTER" hgrow="NEVER" />
-          <ColumnConstraints halignment="CENTER" hgrow="NEVER" />
-            <ColumnConstraints hgrow="NEVER" />
+          <ColumnConstraints />
+            <ColumnConstraints />
         </columnConstraints>
         <rowConstraints>
-          <RowConstraints vgrow="NEVER" />
-            <RowConstraints valignment="CENTER" vgrow="NEVER" />
+          <RowConstraints />
+            <RowConstraints />
         </rowConstraints>
          <padding>
-            <Insets bottom="10.0" left="10.0" top="10.0" />
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
          </padding>
+         <children>
+            <FXColorMap fx:id="uiColorMap" />
+         </children>
       </GridPane>
    </center>
 </fx:root>

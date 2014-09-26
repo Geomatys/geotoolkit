@@ -67,6 +67,8 @@
                                         <include>org/geotoolkit/internal/**</include>
                                         <include>org/opengis/**</include>
                                         <include>jfxtras/**</include>
+                                        <include>jidefx/**</include>
+                                        <include>com/fxexperience/**</include>
                                     </includes>
                                 </filter>
                             </filters>

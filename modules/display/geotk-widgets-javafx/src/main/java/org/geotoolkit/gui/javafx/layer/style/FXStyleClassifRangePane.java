@@ -17,9 +17,15 @@
 
 package org.geotoolkit.gui.javafx.layer.style;
 
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import org.geotoolkit.gui.javafx.layer.FXLayerStylePane;
 import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.map.MapLayer;
+import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyle;
 
 /**
@@ -28,10 +34,43 @@ import org.geotoolkit.style.MutableStyle;
  */
 public class FXStyleClassifRangePane extends FXLayerStylePane {
     
+    @FXML
+    private ComboBox<?> uiProperty;
+    @FXML
+    private ComboBox<?> uiMethod;
+    @FXML
+    private ComboBox<?> uiNormalize;
+    @FXML
+    private TextField uiClasses;
+    @FXML
+    private ComboBox<?> uiPalette;    
+    @FXML
+    private TableView<MutableRule> uiTable;
+
     public FXStyleClassifRangePane() {
         GeotkFX.loadJRXML(this);
     }
 
+    @FXML
+    void editTemplate(ActionEvent event) {
+
+    }
+
+    @FXML
+    void generate(ActionEvent event) {
+
+    }
+
+    @FXML
+    void addValue(ActionEvent event) {
+
+    }
+
+    @FXML
+    void removeAll(ActionEvent event) {
+
+    }
+    
     @Override
     public String getTitle() {
         return GeotkFX.getString(this,"title");

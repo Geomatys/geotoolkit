@@ -17,9 +17,15 @@
 
 package org.geotoolkit.gui.javafx.layer.style;
 
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.TableView;
 import org.geotoolkit.gui.javafx.layer.FXLayerStylePane;
 import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.map.MapLayer;
+import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyle;
 
 /**
@@ -27,11 +33,40 @@ import org.geotoolkit.style.MutableStyle;
  * @author Johann Sorel (Geomatys)
  */
 public class FXStyleClassifSinglePane extends FXLayerStylePane {
+        
+    @FXML
+    private ComboBox<?> uiProperty;
+    @FXML
+    private CheckBox uiOther;
+    @FXML
+    private TableView<MutableRule> uiTable;
+    @FXML
+    private ComboBox<?> uiPalette;
     
     public FXStyleClassifSinglePane() {
         GeotkFX.loadJRXML(this);
     }
 
+    @FXML
+    void editTemplate(ActionEvent event) {
+
+    }
+
+    @FXML
+    void generate(ActionEvent event) {
+
+    }
+
+    @FXML
+    void addValue(ActionEvent event) {
+
+    }
+
+    @FXML
+    void removeAll(ActionEvent event) {
+
+    }
+    
     @Override
     public String getTitle() {
         return GeotkFX.getString(this,"title");

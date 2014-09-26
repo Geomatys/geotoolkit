@@ -17,6 +17,13 @@
 
 package org.geotoolkit.gui.javafx.style;
 
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import org.opengis.style.ColorMap;
 
 /**
@@ -25,9 +32,50 @@ import org.opengis.style.ColorMap;
  */
 public class FXColorMap extends FXStyleElementController<FXColorMap,ColorMap> {
 
+    @FXML
+    private Label uiNoData;
+    @FXML
+    private CheckBox uiInvert;
+    @FXML
+    private TextField uiMinimum;
+    @FXML
+    private CheckBox uiNaN;
+    @FXML
+    private ComboBox<?> uiMethod;
+    @FXML
+    private TextField uiBand;
+    @FXML
+    private TextField uiDivision;
+    @FXML
+    private TextField uiMaximum;
+    @FXML
+    private TableView<?> uiTable;
+    @FXML
+    private ComboBox<?> uiPalette;
+    
     public FXColorMap() {
     }
 
+    @FXML
+    void addValue(ActionEvent event) {
+
+    }
+
+    @FXML
+    void removeAll(ActionEvent event) {
+
+    }
+
+    @FXML
+    void fitToData(ActionEvent event) {
+
+    }
+
+    @FXML
+    void generate(ActionEvent event) {
+
+    }
+    
     @Override
     public Class<ColorMap> getEditedClass() {
         return ColorMap.class;
@@ -41,6 +89,12 @@ public class FXColorMap extends FXStyleElementController<FXColorMap,ColorMap> {
     @Override
     protected void updateEditor(ColorMap styleElement) {
     }
+
+    @Override
+    public void initialize() {
+        super.initialize();
+    }
+    
     
     
 }
