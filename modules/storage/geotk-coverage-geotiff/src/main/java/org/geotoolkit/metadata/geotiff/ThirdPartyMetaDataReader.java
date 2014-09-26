@@ -198,7 +198,7 @@ public class ThirdPartyMetaDataReader {
             final Category[] cats = new Category[categoriArrayLength];
             cats[0] = categories.get(c);
             if (noDataCategory != null) cats[1] = noDataCategory;
-            final GridSampleDimension dim = new GridSampleDimension("samples", cats, null);
+            final GridSampleDimension dim = new GridSampleDimension(""+c, cats, null);
             accessor.setDimension(dim, Locale.ENGLISH);
             if (realFillValue != null) {
                 accessor.setAttribute("realFillValue", realFillValue);
