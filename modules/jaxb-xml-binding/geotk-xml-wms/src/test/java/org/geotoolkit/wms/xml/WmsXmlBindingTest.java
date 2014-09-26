@@ -278,7 +278,7 @@ public class WmsXmlBindingTest {
         DefaultConformanceResult cresult =  new DefaultConformanceResult(Citations.EPSG, new DefaultInternationalString("see the referenced specification"), true);
         ext.setConformity(cresult);
 
-        ResponsibleParty party = org.geotoolkit.metadata.iso.citation.DefaultResponsibleParty.EPSG;
+        ResponsibleParty party = DefaultResponsibleParty.castOrCopy(Citations.EPSG.getCitedResponsibleParties().iterator().next());
         ext.setMetadataPointOfContact(party);
 
         ext.setMetadataDate(new Date(82800000));
@@ -613,7 +613,7 @@ public class WmsXmlBindingTest {
         DefaultConformanceResult cresult =  new DefaultConformanceResult(citation, new DefaultInternationalString("see the referenced specification"), true);
         ext.setConformity(cresult);
 
-        ResponsibleParty party = org.geotoolkit.metadata.iso.citation.DefaultResponsibleParty.EPSG;
+        ResponsibleParty party = DefaultResponsibleParty.castOrCopy(Citations.EPSG.getCitedResponsibleParties().iterator().next());
         ext.setMetadataPointOfContact(party);
 
         ext.setMetadataDate(new Date(82800000));

@@ -48,7 +48,7 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.io.wkt.Formattable;
 import org.apache.sis.io.wkt.Formatter;
 import org.apache.sis.referencing.AbstractIdentifiedObject;
-import org.geotoolkit.metadata.iso.quality.AbstractPositionalAccuracy;
+import org.apache.sis.internal.referencing.PositionalAccuracyConstant;
 import org.apache.sis.internal.referencing.Semaphores;
 import org.apache.sis.measure.Units;
 import org.apache.sis.internal.referencing.WKTUtilities;
@@ -428,8 +428,8 @@ public class AbstractCoordinateOperation extends AbstractIdentifiedObject implem
          * See javadoc for a rational about the return values chosen.
          */
         if (operation instanceof Transformation) {
-            if (!accuracies.contains(AbstractPositionalAccuracy.DATUM_SHIFT_OMITTED)) {
-                if (accuracies.contains(AbstractPositionalAccuracy.DATUM_SHIFT_APPLIED)) {
+            if (!accuracies.contains(PositionalAccuracyConstant.DATUM_SHIFT_OMITTED)) {
+                if (accuracies.contains(PositionalAccuracyConstant.DATUM_SHIFT_APPLIED)) {
                     return 25;
                 }
             }

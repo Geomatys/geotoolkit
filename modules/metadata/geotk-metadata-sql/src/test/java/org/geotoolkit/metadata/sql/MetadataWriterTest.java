@@ -27,7 +27,7 @@ import org.opengis.metadata.citation.PresentationForm;
 import org.opengis.metadata.citation.ResponsibleParty;
 import org.apache.sis.metadata.MetadataStandard;
 import org.geotoolkit.metadata.iso.citation.Citations;
-import org.geotoolkit.metadata.iso.quality.AbstractPositionalAccuracy;
+import org.apache.sis.internal.referencing.PositionalAccuracyConstant;
 import org.geotoolkit.internal.sql.DefaultDataSource;
 
 import org.junit.*;
@@ -115,8 +115,8 @@ public final strictfp class MetadataWriterTest {
      * @throws SQLException If an error occurred while writing or reading the database.
      */
     private void writeHierarchical() throws SQLException {
-        assertNotNull(source.add(AbstractPositionalAccuracy.DATUM_SHIFT_APPLIED));
-        assertNotNull(source.add(AbstractPositionalAccuracy.DATUM_SHIFT_OMITTED));
+        assertNotNull(source.add(PositionalAccuracyConstant.DATUM_SHIFT_APPLIED));
+        assertNotNull(source.add(PositionalAccuracyConstant.DATUM_SHIFT_OMITTED));
     }
 
     /**

@@ -65,7 +65,7 @@ import org.geotoolkit.metadata.iso.citation.Citations;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.extent.DefaultExtent;
 import org.apache.sis.metadata.iso.extent.DefaultGeographicBoundingBox;
-import org.geotoolkit.metadata.iso.quality.DefaultQuantitativeResult;
+import org.apache.sis.metadata.iso.quality.DefaultQuantitativeResult;
 import org.apache.sis.metadata.iso.quality.DefaultAbsoluteExternalPositionalAccuracy;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
@@ -84,6 +84,7 @@ import org.geotoolkit.referencing.operation.DefaultConcatenatedOperation;
 import org.geotoolkit.internal.referencing.factory.ImplementationHints;
 import org.geotoolkit.internal.referencing.DeprecatedCode;
 import org.geotoolkit.internal.referencing.CRSUtilities;
+import org.geotoolkit.internal.referencing.SimpleRecord;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Vocabulary;
@@ -2577,7 +2578,8 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
         if (element == null) {
             final DefaultQuantitativeResult accuracyResult;
             final DefaultAbsoluteExternalPositionalAccuracy accuracyElement;
-            accuracyResult = new DefaultQuantitativeResult(new double[] {accuracy});
+            accuracyResult = new DefaultQuantitativeResult();
+            SimpleRecord.setValues(accuracyResult, accuracy);
             accuracyResult.setValueUnit(SI.METRE); // In metres by definition in the EPSG database.
             accuracyElement = new DefaultAbsoluteExternalPositionalAccuracy(accuracyResult);
             accuracyElement.setMeasureDescription(TRANSFORMATION_ACCURACY);

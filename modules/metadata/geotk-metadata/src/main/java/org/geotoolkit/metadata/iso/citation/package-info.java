@@ -17,21 +17,7 @@
  */
 
 /**
- * {@linkplain org.geotoolkit.metadata.iso.citation.DefaultCitation Citation} implementation. An explanation
- * for this package is provided in the {@linkplain org.opengis.metadata.citation OpenGIS&reg; javadoc}.
- * The remaining discussion on this page is specific to the Geotk implementation.
- *
- * {@section Overview}
- * For a global overview of metadata in Geotk, see the
- * <a href="{@docRoot}/../modules/metadata/index.html">Metadata page on the project web site</a>.
- *
- * {@section Parameterized types}
- * In GeoAPI interfaces, most collections are typed with wildcards, for example
- * {@code Collection<? extends Citation>}. The Geotk implementation removes the
- * wildcards and declares {@code Collection<Citation>} instead. This allows collections
- * to be <cite>live</cite>. Consequently it is possible to add new elements directly in
- * an existing collection using code like {@code getCitations().add(myCitation)} instead
- * than setting the collection as a whole with {@code setCitations(myCitations)}.
+ * Pre-defined citation constants.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Touraïvane (IRD)

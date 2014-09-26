@@ -21,10 +21,9 @@
 package org.geotoolkit.metadata.iso.citation;
 
 import java.net.URI;
-import javax.xml.bind.annotation.XmlTransient;
 import org.opengis.metadata.citation.Contact;
 import org.opengis.metadata.citation.OnLineFunction;
-import org.opengis.metadata.citation.OnlineResource;
+import org.apache.sis.metadata.iso.citation.DefaultContact;
 import org.apache.sis.metadata.iso.citation.DefaultOnlineResource;
 
 
@@ -42,12 +41,9 @@ import org.apache.sis.metadata.iso.citation.DefaultOnlineResource;
  * @deprecated Moved to the {@link org.apache.sis.metadata.iso} package.
  */
 @Deprecated
-@XmlTransient
-public class DefaultContact extends org.apache.sis.metadata.iso.citation.DefaultContact {
-    /**
-     * Serial number for inter-operability with different versions.
-     */
-    private static final long serialVersionUID = 3283637180253117382L;
+final class ContactConstant {
+    private ContactConstant() {
+    }
 
     static DefaultOnlineResource resource(final String linkage) {
         final DefaultOnlineResource r = new DefaultOnlineResource();
@@ -64,8 +60,7 @@ public class DefaultContact extends org.apache.sis.metadata.iso.citation.Default
      */
     static final Contact ISO;
     static {
-        final org.apache.sis.metadata.iso.citation.DefaultContact c =
-                new org.apache.sis.metadata.iso.citation.DefaultContact(resource("http://www.iso.org/"));
+        final DefaultContact c = new DefaultContact(resource("http://www.iso.org/"));
         c.freeze();
         ISO = c;
     }
@@ -78,8 +73,7 @@ public class DefaultContact extends org.apache.sis.metadata.iso.citation.Default
      */
     static final Contact OGC;
     static {
-        final org.apache.sis.metadata.iso.citation.DefaultContact c =
-                new org.apache.sis.metadata.iso.citation.DefaultContact(resource("http://www.opengeospatial.org/"));
+        final DefaultContact c = new DefaultContact(resource("http://www.opengeospatial.org/"));
         c.freeze();
         OGC = c;
     }
@@ -92,8 +86,7 @@ public class DefaultContact extends org.apache.sis.metadata.iso.citation.Default
      */
     static final Contact OPEN_GIS;
     static {
-        final org.apache.sis.metadata.iso.citation.DefaultContact c =
-                new org.apache.sis.metadata.iso.citation.DefaultContact(resource("http://www.opengis.org"));
+        final DefaultContact c = new DefaultContact(resource("http://www.opengis.org"));
         c.freeze();
         OPEN_GIS = c;
     }
@@ -103,8 +96,7 @@ public class DefaultContact extends org.apache.sis.metadata.iso.citation.Default
      */
     static final Contact IHO;
     static {
-        final org.apache.sis.metadata.iso.citation.DefaultContact c =
-                new org.apache.sis.metadata.iso.citation.DefaultContact(resource("http://www.iho.int"));
+        final DefaultContact c = new DefaultContact(resource("http://www.iho.int"));
         c.freeze();
         IHO = c;
     }
@@ -117,8 +109,7 @@ public class DefaultContact extends org.apache.sis.metadata.iso.citation.Default
      */
     static final Contact EPSG;
     static {
-        final org.apache.sis.metadata.iso.citation.DefaultContact c =
-                new org.apache.sis.metadata.iso.citation.DefaultContact(resource("http://www.epsg.org"));
+        final DefaultContact c = new DefaultContact(resource("http://www.epsg.org"));
         c.freeze();
         EPSG = c;
     }
@@ -133,8 +124,7 @@ public class DefaultContact extends org.apache.sis.metadata.iso.citation.Default
      */
     static final Contact NETCDF;
     static {
-        final org.apache.sis.metadata.iso.citation.DefaultContact c =
-                new org.apache.sis.metadata.iso.citation.DefaultContact(resource("http://www.unidata.ucar.edu/software/netcdf-java"));
+        final DefaultContact c = new DefaultContact(resource("http://www.unidata.ucar.edu/software/netcdf-java"));
         c.freeze();
         NETCDF = c;
     }
@@ -147,8 +137,7 @@ public class DefaultContact extends org.apache.sis.metadata.iso.citation.Default
      */
     static final Contact GEOTIFF;
     static {
-        final org.apache.sis.metadata.iso.citation.DefaultContact c =
-                new org.apache.sis.metadata.iso.citation.DefaultContact(resource("http://www.remotesensing.org/geotiff"));
+        final DefaultContact c = new DefaultContact(resource("http://www.remotesensing.org/geotiff"));
         c.freeze();
         GEOTIFF = c;
     }
@@ -162,8 +151,7 @@ public class DefaultContact extends org.apache.sis.metadata.iso.citation.Default
      */
     static final Contact PROJ4;
     static {
-        final org.apache.sis.metadata.iso.citation.DefaultContact c =
-                new org.apache.sis.metadata.iso.citation.DefaultContact(resource("http://trac.osgeo.org/proj"));
+        final DefaultContact c = new DefaultContact(resource("http://trac.osgeo.org/proj"));
         c.freeze();
         PROJ4 = c;
     }
@@ -175,8 +163,7 @@ public class DefaultContact extends org.apache.sis.metadata.iso.citation.Default
      */
     static final Contact ESRI;
     static {
-        final org.apache.sis.metadata.iso.citation.DefaultContact c =
-                new org.apache.sis.metadata.iso.citation.DefaultContact(resource("http://www.esri.com"));
+        final DefaultContact c = new DefaultContact(resource("http://www.esri.com"));
         c.freeze();
         ESRI = c;
     }
@@ -188,8 +175,7 @@ public class DefaultContact extends org.apache.sis.metadata.iso.citation.Default
      */
     static final Contact ORACLE;
     static {
-        final org.apache.sis.metadata.iso.citation.DefaultContact c =
-                new org.apache.sis.metadata.iso.citation.DefaultContact(resource("http://www.oracle.com"));
+        final DefaultContact c = new DefaultContact(resource("http://www.oracle.com"));
         c.freeze();
         ORACLE = c;
     }
@@ -203,8 +189,7 @@ public class DefaultContact extends org.apache.sis.metadata.iso.citation.Default
      */
     static final Contact POSTGIS;
     static {
-        final org.apache.sis.metadata.iso.citation.DefaultContact c =
-                new org.apache.sis.metadata.iso.citation.DefaultContact(resource("http://postgis.refractions.net"));
+        final DefaultContact c = new DefaultContact(resource("http://postgis.refractions.net"));
         c.freeze();
         POSTGIS = c;
     }
@@ -216,8 +201,7 @@ public class DefaultContact extends org.apache.sis.metadata.iso.citation.Default
      */
     static final Contact SUN_MICROSYSTEMS;
     static {
-        final org.apache.sis.metadata.iso.citation.DefaultContact c =
-                new org.apache.sis.metadata.iso.citation.DefaultContact(resource("http://java.sun.com"));
+        final DefaultContact c = new DefaultContact(resource("http://java.sun.com"));
         c.freeze();
         SUN_MICROSYSTEMS = c;
     }
@@ -229,8 +213,7 @@ public class DefaultContact extends org.apache.sis.metadata.iso.citation.Default
      */
     static final Contact GEOTOOLKIT;
     static {
-        final org.apache.sis.metadata.iso.citation.DefaultContact c =
-                new org.apache.sis.metadata.iso.citation.DefaultContact(resource("http://www.geotoolkit.org"));
+        final DefaultContact c = new DefaultContact(resource("http://www.geotoolkit.org"));
         c.freeze();
         GEOTOOLKIT = c;
     }
@@ -242,38 +225,8 @@ public class DefaultContact extends org.apache.sis.metadata.iso.citation.Default
      */
     static final Contact GEOTOOLS;
     static {
-        final org.apache.sis.metadata.iso.citation.DefaultContact c =
-                new org.apache.sis.metadata.iso.citation.DefaultContact(resource("http://www.geotools.org"));
+        final DefaultContact c = new DefaultContact(resource("http://www.geotools.org"));
         c.freeze();
         GEOTOOLS = c;
-    }
-
-    /**
-     * Constructs an initially empty contact.
-     */
-    public DefaultContact() {
-    }
-
-    /**
-     * Constructs a metadata entity initialized with the values from the specified metadata.
-     *
-     * @param source The metadata to copy, or {@code null} if none.
-     *
-     * @since 2.4
-     */
-    public DefaultContact(final Contact source) {
-        super(source);
-    }
-
-    /**
-     * Constructs a contact initialized to the specified online resource.
-     *
-     * @param resource The on-line information that can be used to contact the individual or
-     *        organization, or {@code null} if none.
-     */
-    public DefaultContact(final OnlineResource resource) {
-        if (resource != null) {
-            setOnlineResource(resource);
-        }
     }
 }
