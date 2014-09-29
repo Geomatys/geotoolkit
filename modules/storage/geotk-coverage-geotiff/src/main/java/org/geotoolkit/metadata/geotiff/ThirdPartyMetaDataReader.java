@@ -20,6 +20,7 @@ package org.geotoolkit.metadata.geotiff;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.logging.Level;
@@ -76,6 +77,8 @@ public class ThirdPartyMetaDataReader {
         int samplePerPixels = -1;
         int bitsPerSamples = -1;
         int sampleFormat = -1;
+        long[] minSampleValues = null;
+        long[] maxSampleValues = null;
         
         final NodeList children = root.getChildNodes();
         for(int i=0, n=children.getLength(); i<n; i++){
@@ -140,10 +143,20 @@ public class ThirdPartyMetaDataReader {
                     sampleFormat = (int) GeoTiffMetaDataUtils.readTiffLongs(sfNode)[0];
                     break;
                 }
+                case 280 : { //-- min sample Value
+                    final Node sppNode = child.getChildNodes().item(0);
+                    minSampleValues =  GeoTiffMetaDataUtils.readTiffLongs(sppNode);
+                    break;
+                }
+                case 281 : { //-- max sample value
+                    final Node sfNode = child.getChildNodes().item(0);
+                    maxSampleValues = GeoTiffMetaDataUtils.readTiffLongs(sfNode);
+                    break;
+                }
             }
         }
         
-        if (categories.isEmpty() && noDataCategory == null) return;
+        if (categories.isEmpty() && noDataCategory == null && minSampleValues == null && maxSampleValues == null) return;
         
         assert bitsPerSamples  != -1;
         assert samplePerPixels != -1;
@@ -151,41 +164,61 @@ public class ThirdPartyMetaDataReader {
         final DimensionAccessor accessor = new DimensionAccessor(metadata);
         final int categoriArrayLength = (noDataCategory != null) ? 2 : 1;
         if (categories.isEmpty()) {
-            double min;
-            double max;
-            switch (bitsPerSamples) {
-                case Byte.SIZE : {
-                    min = 0;
-                    max = 255;
-                    break;
+            double[] minSV = new double[samplePerPixels];
+            double[] maxSV = new double[samplePerPixels];
+            if (minSampleValues != null) {
+                assert minSampleValues.length == samplePerPixels;
+                for (int i = 0; i < samplePerPixels; i++) {
+                    minSV[i] = minSampleValues[i];
                 }
-                case Short.SIZE : {
-                    min = 0;
-                    max = 0xFFFF;
-                    break;
-                }
-                case Integer.SIZE : {
-                    if (sampleFormat == 3) {
-                        //-- Float
-                        min = Float.MIN_VALUE;
-                        max = Float.MAX_VALUE;
-                    } else {
-                        //-- integer
-                        min = Integer.MIN_VALUE;
-                        max = Integer.MAX_VALUE;
-                    }
-                    break;
-                }
-                case Double.SIZE : {
-                    min = Double.MIN_VALUE;
-                    max = Double.MAX_VALUE;
-                    break;
-                }
-                default : throw new IllegalStateException("Unknow sample type");
             }
+            if (maxSampleValues != null) {
+                assert maxSampleValues.length == samplePerPixels;
+                for (int i = 0; i < samplePerPixels; i++) {
+                    maxSV[i] = maxSampleValues[i];
+                }
+            }
+            
+            if (minSampleValues == null || maxSampleValues == null) {
+                double min;
+                double max;
+                switch (bitsPerSamples) {
+                    case Byte.SIZE : {
+                        min = 0;
+                        max = 255;
+                        break;
+                    }
+                    case Short.SIZE : {
+                        min = 0;
+                        max = 0xFFFF;
+                        break;
+                    }
+                    case Integer.SIZE : {
+                        if (sampleFormat == 3) {
+                            //-- Float
+                            min = Float.MIN_VALUE;
+                            max = Float.MAX_VALUE;
+                        } else {
+                            //-- integer
+                            min = Integer.MIN_VALUE;
+                            max = Integer.MAX_VALUE;
+                        }
+                        break;
+                    }
+                    case Double.SIZE : {
+                        min = Double.MIN_VALUE;
+                        max = Double.MAX_VALUE;
+                        break;
+                    }
+                    default : throw new IllegalStateException("Unknow sample type");
+                }
+                if (minSampleValues == null) Arrays.fill(minSV, min);
+                if (maxSampleValues == null) Arrays.fill(maxSV, max);                
+            }
+                
             for (int s = 0; s < samplePerPixels; s++) {
                 categories.add(new Category("data", null, 
-                                        NumberRange.create(1, true, 100, true), NumberRange.create(min, true, max, true)));
+                                        NumberRange.create(1, true, 100, true), NumberRange.create(minSV[s], true, maxSV[s], true)));
             }
         } 
         
