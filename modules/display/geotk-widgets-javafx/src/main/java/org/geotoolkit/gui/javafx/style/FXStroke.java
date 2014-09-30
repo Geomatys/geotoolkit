@@ -20,6 +20,7 @@ package org.geotoolkit.gui.javafx.style;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import org.geotoolkit.gui.javafx.util.FXNumberSpinner;
 import org.geotoolkit.style.StyleConstants;
 import org.opengis.style.Stroke;
 
@@ -34,7 +35,18 @@ public class FXStroke extends FXStyleElementController<FXStroke,Stroke> {
     @FXML
     private FXNumberExpression uiOpacity;    
     @FXML
-    private FXColorExpression uiColor;
+    private FXColorExpression uiColor;    
+    @FXML
+    private FXNumberSpinner uiDash1;
+    @FXML
+    private FXNumberSpinner uiDash2;
+    @FXML
+    private FXNumberSpinner uiDash3;
+    @FXML
+    private FXLineCapExpression uiLineCap;
+    @FXML
+    private FXLineJoinExpression uiLineJoin;
+
             
     @Override
     public Class<Stroke> getEditedClass() {
@@ -48,7 +60,15 @@ public class FXStroke extends FXStyleElementController<FXStroke,Stroke> {
     
     @Override
     public void initialize() {
-        super.initialize();        
+        super.initialize();     
+        
+        uiWidth.getNumberField().minValueProperty().set(0);
+        uiOpacity.getNumberField().minValueProperty().set(0);
+        uiOpacity.getNumberField().maxValueProperty().set(1);
+        uiDash1.minValueProperty().set(0);
+        uiDash2.minValueProperty().set(0);
+        uiDash3.minValueProperty().set(0);
+        
         final ChangeListener changeListener = (ChangeListener) (ObservableValue observable, Object oldValue, Object newValue) -> {
             if(updating) return;
             final Stroke stroke;
@@ -81,13 +101,16 @@ public class FXStroke extends FXStyleElementController<FXStroke,Stroke> {
             //                        GuiStrokeLineCap.create(),
             //                        GuiStrokeDashes.getDashes(),
             //                        GuiStrokeDashes.getOffset());
+            final float d0 = uiDash1.valueProperty().get().floatValue();
+            final float d1 = uiDash2.valueProperty().get().floatValue();
+            final float d2 = uiDash3.valueProperty().get().floatValue();
             stroke = getStyleFactory().stroke(
                     uiColor.valueProperty().get(),
                     uiOpacity.valueProperty().get(),
                     uiWidth.valueProperty().get(),
-                    StyleConstants.DEFAULT_STROKE_JOIN,
-                    StyleConstants.DEFAULT_STROKE_CAP,
-                    null,
+                    uiLineJoin.valueProperty().get(),
+                    uiLineCap.valueProperty().get(),
+                    (d0!=0&&d1!=0&&d2!=0)?new float[]{d0,d1,d2}:null,
                     StyleConstants.DEFAULT_STROKE_OFFSET);
             //            }
             
@@ -97,6 +120,11 @@ public class FXStroke extends FXStyleElementController<FXStroke,Stroke> {
         uiWidth.valueProperty().addListener(changeListener);
         uiOpacity.valueProperty().addListener(changeListener);
         uiColor.valueProperty().addListener(changeListener);
+        uiLineCap.valueProperty().addListener(changeListener);
+        uiLineJoin.valueProperty().addListener(changeListener);
+        uiDash1.valueProperty().addListener(changeListener);
+        uiDash2.valueProperty().addListener(changeListener);
+        uiDash3.valueProperty().addListener(changeListener);
     }
     
     @Override
@@ -104,6 +132,22 @@ public class FXStroke extends FXStyleElementController<FXStroke,Stroke> {
         uiWidth.valueProperty().setValue(styleElement.getWidth());
         uiOpacity.valueProperty().setValue(styleElement.getOpacity());
         uiColor.valueProperty().setValue(styleElement.getColor());
+        uiLineCap.valueProperty().setValue(styleElement.getLineCap());
+        uiLineJoin.valueProperty().setValue(styleElement.getLineJoin());
+        
+        final Double d = styleElement.getDashOffset().evaluate(null, Double.class);
+        final float[] dashes = styleElement.getDashArray();
+        float d0 = 0f;
+        float d1 = 0f;
+        float d2 = 0f;
+        if(dashes!=null){
+            if(dashes.length>0) d0 = dashes[0];
+            if(dashes.length>1) d1 = dashes[1];
+            if(dashes.length>2) d2 = dashes[2];
+        }
+        uiDash1.valueProperty().set(d0);
+        uiDash2.valueProperty().set(d1);
+        uiDash3.valueProperty().set(d2);
     }
 
 }

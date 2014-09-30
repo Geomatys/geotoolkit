@@ -43,10 +43,11 @@ public class FXLabelPlacement extends FXStyleElementController<FXLabelPlacement,
     @FXML
     protected FXPointPlacement uiPoint;
     
-    private final ToggleGroup group = new ToggleGroup();
+    private ToggleGroup group;
     
     @FXML
     void updateChoice(ActionEvent event){
+        if(updating) return;
         if(uiLineCheck.isSelected()){
             uiLine.setVisible(true);
             uiPoint.setVisible(false);
@@ -78,6 +79,7 @@ public class FXLabelPlacement extends FXStyleElementController<FXLabelPlacement,
     @Override
     public void initialize() {
         super.initialize();   
+        group = new ToggleGroup();
         uiPointCheck.setToggleGroup(group);
         uiLineCheck.setToggleGroup(group);
         
@@ -92,10 +94,15 @@ public class FXLabelPlacement extends FXStyleElementController<FXLabelPlacement,
     
     @Override
     protected void updateEditor(LabelPlacement styleElement) {
+        uiLine.setVisible(styleElement instanceof LinePlacement);
+        uiPoint.setVisible(!(styleElement instanceof LinePlacement));
+        
         if(styleElement instanceof LinePlacement){
+            uiLineCheck.setSelected(true);
             uiPoint.valueProperty().setValue((PointPlacement)null);
             uiLine.valueProperty().setValue((LinePlacement)styleElement);
         }else{
+            uiPointCheck.setSelected(true);
             uiPoint.valueProperty().setValue((PointPlacement)styleElement);
             uiLine.valueProperty().setValue((LinePlacement)null);
         }

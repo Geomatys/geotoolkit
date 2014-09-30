@@ -21,6 +21,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import static org.geotoolkit.gui.javafx.style.FXStyleElementController.getStyleFactory;
+import org.geotoolkit.style.StyleConstants;
 import org.opengis.style.PointPlacement;
 
 /**
@@ -64,9 +65,15 @@ public class FXPointPlacement extends FXStyleElementController<FXPointPlacement,
     
     @Override
     protected void updateEditor(PointPlacement styleElement) {
-        uiAnchor.valueProperty().setValue(styleElement.getAnchorPoint());
-        uiDisplacement.valueProperty().setValue(styleElement.getDisplacement());
-        uiRotation.valueProperty().setValue(styleElement.getRotation());
+        if(styleElement != null){
+            uiAnchor.valueProperty().setValue(styleElement.getAnchorPoint());
+            uiDisplacement.valueProperty().setValue(styleElement.getDisplacement());
+            uiRotation.valueProperty().setValue(styleElement.getRotation());
+        }else{
+            uiAnchor.valueProperty().setValue(StyleConstants.DEFAULT_ANCHOR_POINT);
+            uiDisplacement.valueProperty().setValue(StyleConstants.DEFAULT_DISPLACEMENT);
+            uiRotation.valueProperty().setValue(StyleConstants.LITERAL_ZERO_FLOAT);
+        }
     }
     
 }

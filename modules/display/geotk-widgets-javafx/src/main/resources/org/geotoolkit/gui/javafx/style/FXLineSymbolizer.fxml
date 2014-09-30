@@ -11,17 +11,18 @@
       <GridPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" BorderPane.alignment="CENTER">
          <columnConstraints>
             <ColumnConstraints />
-            <ColumnConstraints />
+            <ColumnConstraints hgrow="NEVER" />
+            <ColumnConstraints hgrow="ALWAYS" />
             <ColumnConstraints />
          </columnConstraints>
          <rowConstraints>
             <RowConstraints />
-            <RowConstraints />
-            <RowConstraints />
+            <RowConstraints vgrow="NEVER" />
+            <RowConstraints vgrow="NEVER" />
             <RowConstraints />
          </rowConstraints>
          <children>
-            <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="property-group-title" text="%org.geotoolkit.gui.javafx.style.FXLineSymbolizer.stroke" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="property-group-title" text="%org.geotoolkit.gui.javafx.style.FXLineSymbolizer.stroke" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="1" />
             <FXStroke fx:id="uiStroke" GridPane.columnIndex="1" GridPane.rowIndex="2" />
          </children>
       </GridPane>

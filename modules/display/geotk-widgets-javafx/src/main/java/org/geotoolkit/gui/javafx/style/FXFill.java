@@ -46,7 +46,11 @@ public class FXFill extends FXStyleElementController<FXFill,Fill> {
     
     @Override
     public void initialize() {
-        super.initialize();        
+        super.initialize();   
+        
+        uiOpacity.getNumberField().minValueProperty().set(0);
+        uiOpacity.getNumberField().maxValueProperty().set(1);
+        
         final ChangeListener changeListener = (ChangeListener) (ObservableValue observable, Object oldValue, Object newValue) -> {
             if(updating) return;
             final Fill fill;

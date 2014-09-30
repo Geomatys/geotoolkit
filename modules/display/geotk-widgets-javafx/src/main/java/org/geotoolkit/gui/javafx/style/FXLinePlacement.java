@@ -78,6 +78,8 @@ public class FXLinePlacement extends FXStyleElementController<FXLinePlacement, L
     
     @Override
     protected void updateEditor(LinePlacement styleElement) {
+        if(styleElement==null) styleElement = StyleConstants.DEFAULT_LINEPLACEMENT;
+        
         uiOffset.valueProperty().set(styleElement.getPerpendicularOffset());
         uiInitialGap.valueProperty().set(styleElement.getInitialGap());
         uiGap.valueProperty().set(styleElement.getGap());

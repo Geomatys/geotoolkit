@@ -24,6 +24,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
+import javafx.scene.control.ToggleGroup;
 import org.geotoolkit.filter.DefaultLiteral;
 import org.geotoolkit.style.StyleConstants;
 import org.opengis.filter.expression.Expression;
@@ -44,7 +45,7 @@ public class FXFont extends FXStyleElementController<FXFont, Font>{
     protected FXListExpression uiStyle;
     @FXML
     protected FXListExpression uiFamily;
-    
+        
     @Override
     public Class<Font> getEditedClass() {
         return Font.class;
@@ -58,6 +59,8 @@ public class FXFont extends FXStyleElementController<FXFont, Font>{
     @Override
     public void initialize() {
         super.initialize();        
+                
+        uiSize.getNumberField().minValueProperty().set(0);
         
         uiWeight.getChoiceBox().setItems(FXCollections.observableArrayList(
                 StyleConstants.FONT_WEIGHT_NORMAL,StyleConstants.FONT_WEIGHT_BOLD));

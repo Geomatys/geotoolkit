@@ -16,14 +16,12 @@
  */
 package org.geotoolkit.gui.javafx.style;
 
-import java.text.DecimalFormat;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
-import javafx.util.converter.NumberStringConverter;
-import org.geotoolkit.cql.CQL;
-import static org.geotoolkit.gui.javafx.style.FXStyleElementController.getFilterFactory;
-import org.geotoolkit.gui.javafx.util.FXNumberSpinner;
+import javafx.scene.control.Toggle;
+import javafx.scene.control.ToggleButton;
+import javafx.scene.control.ToggleGroup;
 import org.geotoolkit.style.StyleConstants;
 import org.opengis.filter.expression.Expression;
 
@@ -31,15 +29,20 @@ import org.opengis.filter.expression.Expression;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class FXNumberExpression extends FXStyleElementController<FXNumberExpression, Expression> {
+public class FXLineJoinExpression extends FXStyleElementController<FXLineJoinExpression, Expression> {
 
     @FXML
     private FXSpecialExpressionButton special;
-
     @FXML
-    private FXNumberSpinner uiNumber;
+    private ToggleButton uiBevel;
+    @FXML
+    private ToggleButton uiMiter;
+    @FXML
+    private ToggleButton uiRound;
+
+    private ToggleGroup group;
     
-    public FXNumberExpression(){
+    public FXLineJoinExpression(){
         super();
     }
     
@@ -50,30 +53,33 @@ public class FXNumberExpression extends FXStyleElementController<FXNumberExpress
 
     @Override
     public Expression newValue() {
-        return StyleConstants.DEFAULT_STROKE_WIDTH;
+        return StyleConstants.STROKE_JOIN_BEVEL;
     }
 
-    public FXNumberSpinner getNumberField() {
-        return uiNumber;
-    }
     
     @Override
     public void initialize() {
         super.initialize();
         
-        //none work
-//        uiNumber.getNumberField().setDecimalFormat(new DecimalFormat("##0.0##"));
-//        uiNumber.getNumberField().setStringConverter(new NumberStringConverter(new DecimalFormat("##0.0##")));
-//        uiNumber.getNumberField().setPattern("##0.0##");
+        group = new ToggleGroup();
+        uiRound.setToggleGroup(group);
+        uiMiter.setToggleGroup(group);
+        uiBevel.setToggleGroup(group);
         
-        uiNumber.valueProperty().addListener(new ChangeListener<Number>() {
+        group.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
             @Override
-            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                value.set(getFilterFactory().literal(uiNumber.valueProperty().get()));
+            public void changed(ObservableValue<? extends Toggle> observable, Toggle oldValue, Toggle newValue) {
+                if(newValue==uiBevel){
+                    value.set(StyleConstants.STROKE_JOIN_BEVEL);
+                }else if(newValue==uiMiter){
+                    value.set(StyleConstants.STROKE_JOIN_MITRE);
+                }else if(newValue==uiRound){
+                    value.set(StyleConstants.STROKE_JOIN_ROUND);
+                }
                 special.valueProperty().setValue(value.get());
             }
         });
-        
+                
         special.valueProperty().addListener(new ChangeListener<Expression>() {
             @Override
             public void changed(ObservableValue observable, Expression oldValue, Expression newValue) {
@@ -85,7 +91,17 @@ public class FXNumberExpression extends FXStyleElementController<FXNumberExpress
     @Override
     protected void updateEditor(Expression styleElement) {
         special.valueProperty().set(styleElement);
-        uiNumber.getNumberField().setText(CQL.write(styleElement));
+        
+        final Toggle selected = group.getSelectedToggle();
+        if(StyleConstants.STROKE_JOIN_BEVEL.equals(styleElement)){
+            if(selected!=uiBevel) group.selectToggle(uiBevel);
+        }else if(StyleConstants.STROKE_JOIN_MITRE.equals(styleElement)){
+            if(selected!=uiMiter) group.selectToggle(uiMiter);
+        }else if(StyleConstants.STROKE_JOIN_ROUND.equals(styleElement)){
+            if(selected!=uiRound) group.selectToggle(uiRound);
+        }else{
+            group.selectToggle(null);
+        }
     }
     
 }

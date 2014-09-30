@@ -16,14 +16,12 @@
  */
 package org.geotoolkit.gui.javafx.style;
 
-import java.text.DecimalFormat;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
-import javafx.util.converter.NumberStringConverter;
-import org.geotoolkit.cql.CQL;
-import static org.geotoolkit.gui.javafx.style.FXStyleElementController.getFilterFactory;
-import org.geotoolkit.gui.javafx.util.FXNumberSpinner;
+import javafx.scene.control.Toggle;
+import javafx.scene.control.ToggleButton;
+import javafx.scene.control.ToggleGroup;
 import org.geotoolkit.style.StyleConstants;
 import org.opengis.filter.expression.Expression;
 
@@ -31,15 +29,20 @@ import org.opengis.filter.expression.Expression;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class FXNumberExpression extends FXStyleElementController<FXNumberExpression, Expression> {
+public class FXLineCapExpression extends FXStyleElementController<FXLineCapExpression, Expression> {
 
     @FXML
     private FXSpecialExpressionButton special;
-
     @FXML
-    private FXNumberSpinner uiNumber;
+    private ToggleButton uiRound;
+    @FXML
+    private ToggleButton uiSquare;
+    @FXML
+    private ToggleButton uiButt;
     
-    public FXNumberExpression(){
+    private ToggleGroup group;
+        
+    public FXLineCapExpression(){
         super();
     }
     
@@ -50,30 +53,32 @@ public class FXNumberExpression extends FXStyleElementController<FXNumberExpress
 
     @Override
     public Expression newValue() {
-        return StyleConstants.DEFAULT_STROKE_WIDTH;
-    }
-
-    public FXNumberSpinner getNumberField() {
-        return uiNumber;
+        return StyleConstants.STROKE_CAP_BUTT;
     }
     
     @Override
     public void initialize() {
         super.initialize();
         
-        //none work
-//        uiNumber.getNumberField().setDecimalFormat(new DecimalFormat("##0.0##"));
-//        uiNumber.getNumberField().setStringConverter(new NumberStringConverter(new DecimalFormat("##0.0##")));
-//        uiNumber.getNumberField().setPattern("##0.0##");
+        group = new ToggleGroup();
+        uiRound.setToggleGroup(group);
+        uiSquare.setToggleGroup(group);
+        uiButt.setToggleGroup(group);
         
-        uiNumber.valueProperty().addListener(new ChangeListener<Number>() {
+        group.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
             @Override
-            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                value.set(getFilterFactory().literal(uiNumber.valueProperty().get()));
+            public void changed(ObservableValue<? extends Toggle> observable, Toggle oldValue, Toggle newValue) {
+                if(newValue==uiButt){
+                    value.set(StyleConstants.STROKE_CAP_BUTT);
+                }else if(newValue==uiRound){
+                    value.set(StyleConstants.STROKE_CAP_ROUND);
+                }else if(newValue==uiSquare){
+                    value.set(StyleConstants.STROKE_CAP_SQUARE);
+                }
                 special.valueProperty().setValue(value.get());
             }
         });
-        
+                
         special.valueProperty().addListener(new ChangeListener<Expression>() {
             @Override
             public void changed(ObservableValue observable, Expression oldValue, Expression newValue) {
@@ -85,7 +90,17 @@ public class FXNumberExpression extends FXStyleElementController<FXNumberExpress
     @Override
     protected void updateEditor(Expression styleElement) {
         special.valueProperty().set(styleElement);
-        uiNumber.getNumberField().setText(CQL.write(styleElement));
+        
+        final Toggle selected = group.getSelectedToggle();
+        if(StyleConstants.STROKE_CAP_BUTT.equals(styleElement)){
+            if(selected!=uiButt) group.selectToggle(uiButt);
+        }else if(StyleConstants.STROKE_CAP_ROUND.equals(styleElement)){
+            if(selected!=uiRound) group.selectToggle(uiRound);
+        }else if(StyleConstants.STROKE_CAP_SQUARE.equals(styleElement)){
+            if(selected!=uiSquare) group.selectToggle(uiSquare);
+        }else{
+            group.selectToggle(null);
+        }
     }
     
 }

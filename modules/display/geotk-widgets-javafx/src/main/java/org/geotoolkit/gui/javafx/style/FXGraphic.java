@@ -121,6 +121,10 @@ public class FXGraphic extends FXStyleElementController<FXGraphic, Graphic>{
             rebuildValue();
         };
         
+        uiOpacity.getNumberField().minValueProperty().set(0);
+        uiOpacity.getNumberField().maxValueProperty().set(1);
+        uiSize.getNumberField().minValueProperty().set(0);
+        
         uiSize.valueProperty().addListener(changeListener);
         uiOpacity.valueProperty().addListener(changeListener);
         uiRotation.valueProperty().addListener(changeListener);
