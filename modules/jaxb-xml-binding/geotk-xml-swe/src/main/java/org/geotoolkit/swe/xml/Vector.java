@@ -26,4 +26,14 @@ import java.util.List;
 public interface Vector extends AbstractVector {
 
     public List<? extends Coordinate> getCoordinate();
+
+    /**
+     * Returns the coordinate having the {@code "urn:ogc:def:phenomenon:latitude"} definition, or {@code null} if none.
+     */
+    public Coordinate getLatitude();
+
+    /**
+     * Returns the coordinate having the {@code "urn:ogc:def:phenomenon:longitude"} definition, or {@code null} if none.
+     */
+    public Coordinate getLongitude();
 }

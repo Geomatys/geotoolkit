@@ -113,6 +113,66 @@ public class VectorType extends AbstractVectorType implements Vector {
         this.coordinate = coordinate;
     }
 
+    private CoordinateType getCoordinate(final String def) {
+        if (coordinate != null) {
+            for (final CoordinateType c : coordinate) {
+                final QuantityType q = c.getQuantity();
+                if (q != null && def.equals(q.getDefinition())) {
+                    return c;
+                }
+            }
+        }
+        return null;
+    }
+
+    private void setCoordinate(final String def, final CoordinateType coord) {
+        if (coordinate != null) {
+            final int size = coordinate.size();
+            for (int i=0; i<size; i++) {
+                final QuantityType q = coordinate.get(i).getQuantity();
+                if (q != null && def.equals(q.getDefinition())) {
+                    coordinate.set(i, coord);
+                    return;
+                }
+            }
+        } else {
+            coordinate = new ArrayList<>(3);
+        }
+        coordinate.add(coord);
+    }
+
+    /**
+     * Returns the coordinate having the {@code "urn:ogc:def:phenomenon:latitude"} definition, or {@code null} if none.
+     */
+    @Override
+    public CoordinateType getLatitude() {
+        return getCoordinate("urn:ogc:def:phenomenon:latitude");
+    }
+
+    /**
+     * Replaces the coordinate having the {@code "urn:ogc:def:phenomenon:latitude"} definition, by the given {@code coord},
+     * or add the given {@code coord} to the list of coordinates if no latitude existed before this method call.
+     */
+    public void setLatitude(final CoordinateType coord) {
+        setCoordinate("urn:ogc:def:phenomenon:latitude", coord);
+    }
+
+    /**
+     * Returns the coordinate having the {@code "urn:ogc:def:phenomenon:longitude"} definition, or {@code null} if none.
+     */
+    @Override
+    public CoordinateType getLongitude() {
+        return getCoordinate("urn:ogc:def:phenomenon:longitude");
+    }
+
+    /**
+     * Replaces the coordinate having the {@code "urn:ogc:def:phenomenon:longitude"} definition, by the given {@code coord},
+     * or add the given {@code coord} to the list of coordinates if no latitude existed before this method call.
+     */
+    public void setLongitude(final CoordinateType coord) {
+        setCoordinate("urn:ogc:def:phenomenon:longitude", coord);
+    }
+
     /**
      * Verify if this entry is identical to specified object.
      */

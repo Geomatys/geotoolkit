@@ -50,7 +50,7 @@ public class QuantityType extends AbstractDataComponentType implements Quantity 
     private String referenceFrame;
 
     /**
-     * A empty contructor used by JAXB
+     * A empty constructor used by JAXB
      */
     public QuantityType() {
 
