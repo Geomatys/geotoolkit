@@ -91,7 +91,14 @@ public class ComponentList implements AbstractComponentList {
         }
         return this.component;
     }
-    
+
+    /**
+     * Invoked through Java reflection.
+     */
+    public void setComponent(final List<ComponentPropertyType> components) {
+        this.component = components;
+    }
+
     @Override
     public void removeComponent(final String href) {
         for (ComponentPropertyType compo : component) {
