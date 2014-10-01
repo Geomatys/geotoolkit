@@ -35,24 +35,24 @@ import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.image.iterator.PixelIterator;
 import org.geotoolkit.image.iterator.PixelIteratorFactory;
+import javax.imageio.spi.ImageReaderSpi;
+import org.apache.sis.util.Disposable;
 
 /**
- * <p>
  * Define "Large" {@link RenderedImage} which is an image with a large size.<br/>
- * It can contain more data than computer ram memory capacity, in cause of {@link TileCache} 
+ * It can contain more data than computer ram memory capacity, in cause of {@link TileCache}
  * mechanic which store some image tiles on hard drive.
- * </p>
- * 
+ *
  * TODO : Change mecanism to get a source data as entry, not a reader ? It would allow multi-threading
  * on tile reading, by allocating a reader on the fly.
- * 
+ *
  * @author Remi Marechal (Geomatys)
  * @author Alexis Manin  (Geomatys)
  */
-public class LargeRenderedImage implements RenderedImage {
+public class LargeRenderedImage implements RenderedImage, Disposable {
 
     private static final Logger LOGGER = Logging.getLogger(LargeRenderedImage.class);
-    
+
     /**
      * Mechanic to store tile on hard drive.
      */
@@ -62,17 +62,17 @@ public class LargeRenderedImage implements RenderedImage {
      * Default tile size.
      */
     private static final int DEFAULT_TILE_SIZE = 256;
-    
+
     /**
      * Minimum required tile size.
      */
     private static final int MIN_TILE_SIZE = 64;
-    
+
     /**
      * Maximum allowed tile size.
      */
     private static final int MAX_TILE_SIZE = 2048;
-    
+
     /** Maximum dimension which will be allowed for {@link #getData(java.awt.Rectangle) } method. */
     private static final Dimension RASTER_MAX_SIZE = new Dimension(10000, 10000);
 
@@ -82,27 +82,41 @@ public class LargeRenderedImage implements RenderedImage {
     private static final long DEFAULT_MEMORY_CAPACITY = 64000000;
 
     /**
-     * {@link ImageReader} where is read each image tile.
+     * The provider for {@link #imageReader}, or {@code null} if none.
+     *
+     * @see #imageReader
+     * @see #input
      */
-    private final ImageReader imageReader;
+    private final ImageReaderSpi spi;
+
+    /**
+     * {@link ImageReader} where is read each image tile, or {@code null} if not yet created.
+     */
+    private ImageReader imageReader;
 
     /**
      * {@link javax.imageio.ImageReadParam} which specify how to read the source image (subsampling, cropping).
      */
     private final ImageReadParam sourceReadParam;
-    
+
+    /**
+     * The input to give to {@link #imageReader}, or {@code null} is unspecified.
+     * This is non-null only if {@link #spi} is non-null.
+     */
+    private final Object input;
+
     /**
      * Tile number in X direction.
      */
     private final int nbrTileX;
-    
+
     /**
      * Tile number in Y direction.
      */
     private final int nbrTileY;
 
     /**
-     * Define if tile will be read from {@link #imageReader} or call from {@link #tilecache}. 
+     * Define if tile will be read from {@link #imageReader} or call from {@link #tilecache}.
      */
     private final boolean[][] isRead;
 
@@ -126,9 +140,9 @@ public class LargeRenderedImage implements RenderedImage {
     private final SampleModel sm;
 
     /**
-     * Create a {@link LargeRenderedImage} object with a default {@link TileCache} 
-     * with 64Mo memory capacity and a default tile size of 256 x 256 piels.
-     * 
+     * Create a {@link LargeRenderedImage} object with a default {@link TileCache}
+     * with 64 Mb memory capacity and a default tile size of 256 x 256 pixels.
+     *
      * @param imageReader reader which target at image stored on disk.
      * @param imageIndex the index of the image to be retrieved.
      * @throws IOException if an error occurs during reading.
@@ -136,15 +150,15 @@ public class LargeRenderedImage implements RenderedImage {
     public LargeRenderedImage(ImageReader imageReader, int imageIndex) throws IOException{
         this(imageReader, imageIndex, null, null);
     }
-    
+
     /**
      * Create {@link LargeRenderedImage} object.
-     * 
+     *
      * @param imageReader reader which target at image stored on disk.
      * @param imageIndex the index of the image to be retrieved.
-     * @param tilecache cache mechanic class. if {@code null} a default {@link TileCache} 
-     *                  is define with a default memory capacity of 64 Mo.
-     * @param tileSize internal {@link Raster} (tile) dimension. if {@code null} 
+     * @param tilecache cache mechanic class. if {@code null} a default {@link TileCache}
+     *                  is define with a default memory capacity of 64 Mb.
+     * @param tileSize internal {@link Raster} (tile) dimension. if {@code null}
      *                 a default tile size is chosen (256x256 pixels).
      * @throws IOException if an error occurs during reading.
      */
@@ -152,10 +166,28 @@ public class LargeRenderedImage implements RenderedImage {
         this(imageReader, null, imageIndex, tilecache, tileSize);
     }
 
-    public LargeRenderedImage(ImageReader imageReader, ImageReadParam readParam, int imageIndex, TileCache tilecache, Dimension tileSize) throws IOException {
+    public LargeRenderedImage(ImageReader imageReader, ImageReadParam readParam, int imageIndex,
+            TileCache tilecache, Dimension tileSize) throws IOException
+    {
+        this(null, imageReader, readParam, null, imageIndex, tilecache, tileSize);
         ArgumentChecks.ensureNonNull("imageReader", imageReader);
+    }
+
+    public LargeRenderedImage(ImageReaderSpi spi, ImageReadParam readParam, final Object input, int imageIndex,
+            TileCache tilecache, Dimension tileSize) throws IOException
+    {
+        this(spi, null, readParam, input, imageIndex, tilecache, tileSize);
+        ArgumentChecks.ensureNonNull("spi",   spi);
+        ArgumentChecks.ensureNonNull("input", input);
+    }
+
+    private LargeRenderedImage(ImageReaderSpi spi, ImageReader imageReader, ImageReadParam readParam,
+            final Object input, int imageIndex, TileCache tilecache, Dimension tileSize) throws IOException
+    {
         ArgumentChecks.ensurePositive("image index", imageIndex);
+        this.spi         = spi;
         this.imageReader = imageReader;
+        this.input       = input;
         this.imageIndex  = imageIndex;
 
         // To initialize the color model, we must read a little piece of the source image.
@@ -358,13 +390,15 @@ public class LargeRenderedImage implements RenderedImage {
      */
     @Override
     public Raster getTile(int tileX, int tileY) {
-        
+
         final ReadWriteLock tileLock = tileLocks[tileY * nbrTileX + tileX];
         tileLock.readLock().lock();
         try {
-            if (isRead[tileY][tileX]) return tilecache.getTile(this, tileX, tileY);
+            if (isRead[tileY][tileX]) {
+                return tilecache.getTile(this, tileX, tileY);
+            }
         } catch (Exception e) {
-            /* This block is because of possible runtime exception if there's a cache problem, 
+            /* This block is because of possible runtime exception if there's a cache problem,
              * we don't throw error, just reload the tile.
              */
             LOGGER.log(Level.WARNING, "Cannot get tile from cache system, but it should be here !", e);
@@ -382,7 +416,12 @@ public class LargeRenderedImage implements RenderedImage {
             } catch (Exception e) {
                  // Do not log again, it must have been done above.
             }
-            
+
+            if (imageReader == null) {
+                imageReader = spi.createReaderInstance();
+                imageReader.setInput(input);
+            }
+
             // Compute tile position in source image
             final int minRx = tileX * tileWidth;
             final int minRy = tileY * tileHeight;
@@ -394,7 +433,7 @@ public class LargeRenderedImage implements RenderedImage {
             // no subsampling nor offset, read directly the specified region.
             if (sourceReadParam == null) {
                 imgParam.setSourceRegion(new Rectangle(minRx, minRy, tileWidth, tileHeight));
-                // TODO : Modify reading mecanism to allow multi-threading ?
+                // TODO : Modify reading mechanism to allow multi-threading ?
                 synchronized (imageReader) {
                     result = imageReader.read(imageIndex, imgParam);
                 }
@@ -426,7 +465,7 @@ public class LargeRenderedImage implements RenderedImage {
                             (tileHeight + Math.min(0, readOffsetY)) * ssY));
                     imgParam.setSourceSubsampling(ssX, ssY, 0, 0);
 
-                    // TODO : Modify reading mecanism to allow multi-threading ?
+                    // TODO : Modify reading mechanism to allow multi-threading ?
                     synchronized (imageReader) {
                         result = imageReader.read(imageIndex, imgParam);
                     }
@@ -444,7 +483,7 @@ public class LargeRenderedImage implements RenderedImage {
             tileLock.writeLock().unlock();
         }
     }
-    
+
     /**
      * {@inheritDoc }.
      */
@@ -530,12 +569,21 @@ public class LargeRenderedImage implements RenderedImage {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
+    public void dispose() {
+        tilecache.removeTiles(this);
+        if (spi != null && imageReader != null) {
+            imageReader.dispose();
+            imageReader = null;
+        }
+    }
+
     /**
-     * {@inheritDoc }.
+     * {@inheritDoc}.
      */
-//    @Override
-//    protected void finalize() throws Throwable {
-//        tilecache.removeTiles(this);
-//        super.finalize();
-//    }
+    @Override
+    protected void finalize() throws Throwable {
+        dispose();
+        super.finalize();
+    }
 }
