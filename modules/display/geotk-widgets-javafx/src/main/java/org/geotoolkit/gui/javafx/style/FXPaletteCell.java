@@ -17,6 +17,7 @@
 package org.geotoolkit.gui.javafx.style;
 
 import java.awt.Dimension;
+import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.ListCell;
 import javafx.scene.image.ImageView;
 import org.geotoolkit.gui.javafx.util.FXUtilities;
@@ -30,8 +31,9 @@ public class FXPaletteCell extends ListCell<Object>{
     @Override
     protected void updateItem(Object item, boolean empty) {
         setText("");
+        setContentDisplay(ContentDisplay.CENTER);
         if(item!=null){
-            setGraphic(new ImageView(FXUtilities.createPalettePreview(item, new Dimension((int)getWidth(), (int)getHeight()))));
+            setGraphic(new ImageView(FXUtilities.createPalettePreview(item, new Dimension(200,20))));
         }else{
             setGraphic(null);
         }         

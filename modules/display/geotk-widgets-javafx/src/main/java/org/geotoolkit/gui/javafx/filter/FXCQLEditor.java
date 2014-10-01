@@ -33,6 +33,7 @@ import org.geotoolkit.cql.CQLLexer;
 import org.geotoolkit.cql.CQLParser;
 import org.geotoolkit.gui.javafx.util.FXOptionDialog;
 import org.geotoolkit.map.MapLayer;
+import org.opengis.filter.Filter;
 import org.opengis.filter.expression.Expression;
 
 /**
@@ -66,12 +67,20 @@ public class FXCQLEditor extends BorderPane {
         
     }
     
-    public void setExpression(Expression exp){
-        codeArea.replaceText(CQL.write(exp));
+    public void setExpression(Expression candidate){
+        codeArea.replaceText(CQL.write(candidate));
+    }
+    
+    public void setFilter(Filter candidate){
+        codeArea.replaceText(CQL.write(candidate));
     }
     
     public Expression getExpression() throws CQLException{
         return CQL.parseExpression(codeArea.getText());
+    }
+    
+    public Filter getFilter() throws CQLException{
+        return CQL.parseFilter(codeArea.getText());
     }
     
     private void updateHightLight(){
@@ -206,11 +215,18 @@ public class FXCQLEditor extends BorderPane {
         }
     }
     
-    public static Expression showDialog(Node parent, MapLayer layer, SimpleObjectProperty<Expression> exp) throws CQLException {
+    public static Expression showDialog(Node parent, MapLayer layer, Expression candidate) throws CQLException {
         final FXCQLEditor editor = new FXCQLEditor();
-        editor.setExpression(exp.get());
+        editor.setExpression(candidate);
         FXOptionDialog.showOkCancel(parent, editor, "CQL Editor", true);
         return editor.getExpression();
+    }
+    
+    public static Filter showFilterDialog(Node parent, MapLayer layer, Filter candidate) throws CQLException {
+        final FXCQLEditor editor = new FXCQLEditor();
+        editor.setFilter(candidate);
+        FXOptionDialog.showOkCancel(parent, editor, "CQL Editor", true);
+        return editor.getFilter();
     }
     
 }

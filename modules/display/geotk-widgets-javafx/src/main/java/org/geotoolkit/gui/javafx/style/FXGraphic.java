@@ -24,6 +24,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -175,7 +176,7 @@ public class FXGraphic extends FXStyleElementController<FXGraphic, Graphic>{
         public GlyphButton() {
             super(false, null,
                   (GraphicalSymbol t) -> t instanceof GraphicalSymbol,
-                  (GraphicalSymbol t) -> openEditor(t));
+                  (GraphicalSymbol t) -> {openEditor(t);return t;});
         }
 
         @Override
@@ -220,11 +221,8 @@ public class FXGraphic extends FXStyleElementController<FXGraphic, Graphic>{
         public DeleteButton() {
             super(false, new ImageView(GeotkFX.ICON_DELETE),
                    //JavaFX bug : do not use lambda here : java.lang.VerifyError: Bad type on operand stack->invokedynamic
-                  (GraphicalSymbol t) -> t instanceof GraphicalSymbol, new Consumer<GraphicalSymbol>() {
-                public void accept(GraphicalSymbol t) {
-                    uiTable.getItems().remove(t);
-                }
-            });
+                  (GraphicalSymbol t) -> t instanceof GraphicalSymbol, 
+                  (GraphicalSymbol t) -> {uiTable.getItems().remove(t);return t;});
         }
     }
     

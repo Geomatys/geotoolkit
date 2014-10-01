@@ -24,6 +24,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import org.geotoolkit.gui.javafx.layer.FXLayerStylePane;
 import org.geotoolkit.internal.GeotkFX;
+import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyle;
@@ -47,6 +48,8 @@ public class FXStyleClassifRangePane extends FXLayerStylePane {
     @FXML
     private TableView<MutableRule> uiTable;
 
+    private FeatureMapLayer layer;
+    
     public FXStyleClassifRangePane() {
         GeotkFX.loadJRXML(this);
     }
@@ -89,7 +92,10 @@ public class FXStyleClassifRangePane extends FXLayerStylePane {
     
     @Override
     public boolean init(Object candidate) {
-        if(!(candidate instanceof MapLayer)) return false;        
+        if(!(candidate instanceof FeatureMapLayer)) return false;    
+        
+        this.layer = (FeatureMapLayer) candidate;
+        
         return true;
     }
 

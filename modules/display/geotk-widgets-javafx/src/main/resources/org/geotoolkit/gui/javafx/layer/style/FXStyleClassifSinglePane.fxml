@@ -12,7 +12,7 @@
       <GridPane hgap="5.0" vgap="5.0" BorderPane.alignment="CENTER">
         <columnConstraints>
           <ColumnConstraints halignment="CENTER" hgrow="NEVER" />
-            <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" />
+            <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" maxWidth="1.7976931348623157E308" />
             <ColumnConstraints halignment="CENTER" hgrow="NEVER" />
           <ColumnConstraints halignment="CENTER" hgrow="NEVER" />
         </columnConstraints>
@@ -20,23 +20,23 @@
           <RowConstraints vgrow="NEVER" />
             <RowConstraints vgrow="NEVER" />
             <RowConstraints vgrow="NEVER" />
-            <RowConstraints vgrow="ALWAYS" />
+            <RowConstraints maxHeight="1.7976931348623157E308" vgrow="ALWAYS" />
             <RowConstraints vgrow="NEVER" />
         </rowConstraints>
          <children>
             <Label text="%org.geotoolkit.gui.javafx.layer.style.FXStyleClassifSinglePane.property" />
             <Label text="%org.geotoolkit.gui.javafx.layer.style.FXStyleClassifSinglePane.template" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-            <ComboBox fx:id="uiProperty" prefWidth="150.0" GridPane.columnIndex="1" />
-            <ComboBox fx:id="uiPalette" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <ComboBox fx:id="uiProperty" maxWidth="1.7976931348623157E308" prefWidth="150.0" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" />
+            <ComboBox fx:id="uiPalette" maxWidth="1.7976931348623157E308" prefWidth="150.0" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" />
             <Label text="%org.geotoolkit.gui.javafx.layer.style.FXStyleClassifSinglePane.palette" GridPane.rowIndex="1" />
-            <CheckBox fx:id="uiOther" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="%org.geotoolkit.gui.javafx.layer.style.FXStyleClassifSinglePane.otherRule" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.hgrow="ALWAYS" />
-            <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#editTemplate" text="%org.geotoolkit.gui.javafx.layer.style.FXStyleClassifSinglePane.edit" GridPane.columnIndex="3" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" />
-            <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#generate" text="%org.geotoolkit.gui.javafx.layer.style.FXStyleClassifSinglePane.generate" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.rowIndex="2" />
+            <CheckBox fx:id="uiOther" mnemonicParsing="false" text="%org.geotoolkit.gui.javafx.layer.style.FXStyleClassifSinglePane.otherRule" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.hgrow="ALWAYS" />
+            <Button fx:id="uiTemplate" mnemonicParsing="false" onAction="#editTemplate" text="%org.geotoolkit.gui.javafx.layer.style.FXStyleClassifSinglePane.edit" GridPane.columnIndex="3" GridPane.halignment="LEFT" GridPane.hgrow="NEVER" GridPane.rowIndex="1" />
+            <Button mnemonicParsing="false" onAction="#generate" text="%org.geotoolkit.gui.javafx.layer.style.FXStyleClassifSinglePane.generate" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.rowIndex="2" />
             <ScrollPane fitToHeight="true" fitToWidth="true" minHeight="120.0" minWidth="200.0" GridPane.columnSpan="4" GridPane.rowIndex="3">
                <content>
-                  <TableView fx:id="uiTable" />
+                  <TableView fx:id="uiTable" editable="true" />
                </content></ScrollPane>
-            <HBox spacing="10.0" GridPane.columnSpan="4" GridPane.rowIndex="4">
+            <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0" GridPane.columnSpan="4" GridPane.hgrow="ALWAYS" GridPane.rowIndex="4">
                <children>
                   <Button mnemonicParsing="false" onAction="#addValue" text="%org.geotoolkit.gui.javafx.layer.style.FXStyleClassifSinglePane.addvalue" />
                   <Button mnemonicParsing="false" onAction="#removeAll" text="%org.geotoolkit.gui.javafx.layer.style.FXStyleClassifSinglePane.removeall" />

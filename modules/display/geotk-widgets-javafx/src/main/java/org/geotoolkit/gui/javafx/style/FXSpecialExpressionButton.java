@@ -79,7 +79,7 @@ public class FXSpecialExpressionButton extends HBox {
             @Override
             public void handle(javafx.event.ActionEvent event) {
                 try{
-                    final Expression ne = FXCQLEditor.showDialog(FXSpecialExpressionButton.this, layer, exp);
+                    final Expression ne = FXCQLEditor.showDialog(FXSpecialExpressionButton.this, layer, exp.get());
                     if(!Objects.equals(ne, exp.getValue())){
                         exp.set(ne);
                     }

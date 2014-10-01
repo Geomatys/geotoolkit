@@ -25,6 +25,7 @@ import java.beans.PropertyChangeEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -231,8 +232,9 @@ public class FXStyleSimplePane extends FXLayerStylePane {
 
         public GlyphButton() {
             super(false, null,
-                  (Symbolizer t) -> t instanceof Symbolizer,
-                  (Symbolizer t) -> openEditor(t));
+                  (Symbolizer t) -> t instanceof Symbolizer, 
+                  (Symbolizer t) -> {openEditor(t);return t;}
+            );
         }
 
         @Override
@@ -256,9 +258,10 @@ public class FXStyleSimplePane extends FXLayerStylePane {
         public DeleteButton() {
             super(false, new ImageView(GeotkFX.ICON_DELETE),
                    //JavaFX bug : do not use lambda here : java.lang.VerifyError: Bad type on operand stack->invokedynamic
-                  (Symbolizer t) -> t instanceof Symbolizer, new Consumer<Symbolizer>() {
-                public void accept(Symbolizer t) {
+                  (Symbolizer t) -> t instanceof Symbolizer, new Function<Symbolizer,Symbolizer>() {
+                public Symbolizer apply(Symbolizer t) {
                     uiTable.getItems().remove(t);
+                    return t;
                 }
             });
         }
@@ -269,14 +272,15 @@ public class FXStyleSimplePane extends FXLayerStylePane {
         public MoveUpButton() {
             super(false, new ImageView(GeotkFX.ICON_MOVEUP),
                    //JavaFX bug : do not use lambda here : java.lang.VerifyError: Bad type on operand stack->invokedynamic
-                  (Symbolizer t) -> t instanceof Symbolizer, new Consumer<Symbolizer>() {
-                public void accept(Symbolizer t) {
+                  (Symbolizer t) -> t instanceof Symbolizer, new Function<Symbolizer,Symbolizer>() {
+                public Symbolizer apply(Symbolizer t) {
                     int index = identityIndex(t, uiTable.getItems());
                     if(index>0){
                         uiTable.getItems().remove(index);
                         index--;
                         uiTable.getItems().add(index, t);
                     }
+                    return t;
                 }
             });
         }
@@ -287,14 +291,15 @@ public class FXStyleSimplePane extends FXLayerStylePane {
         public MoveDownButton() {
             super(false, new ImageView(GeotkFX.ICON_MOVEDOWN),
                    //JavaFX bug : do not use lambda here : java.lang.VerifyError: Bad type on operand stack->invokedynamic
-                  (Symbolizer t) -> t instanceof Symbolizer, new Consumer<Symbolizer>() {
-                public void accept(Symbolizer t) {
+                  (Symbolizer t) -> t instanceof Symbolizer, new Function<Symbolizer,Symbolizer>() {
+                public Symbolizer apply(Symbolizer t) {
                     int index = identityIndex(t, uiTable.getItems());
                     if(index>=0 && index<uiTable.getItems().size()-1){
                         uiTable.getItems().remove(index);
                         index++;
                         uiTable.getItems().add(index, t);
                     }
+                    return t;
                 }
             });
         }

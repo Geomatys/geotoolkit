@@ -21,6 +21,7 @@ import javafx.fxml.FXML;
 import org.geotoolkit.gui.javafx.layer.FXLayerStylePane;
 import org.geotoolkit.gui.javafx.style.FXColorMap;
 import org.geotoolkit.internal.GeotkFX;
+import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
@@ -38,6 +39,7 @@ public class FXStyleColorMapPane extends FXLayerStylePane {
     @FXML
     private FXColorMap uiColorMap;
     
+    private CoverageMapLayer layer;
     //keep track of where the symbolizer was to avoid rewriting the complete style
     private MutableRule parentRule = null;
     private int parentIndex = 0;
@@ -64,33 +66,33 @@ public class FXStyleColorMapPane extends FXLayerStylePane {
     
     @Override
     public boolean init(Object candidate) {
-        if(!(candidate instanceof MapLayer)) return false;       
+        if(!(candidate instanceof CoverageMapLayer)) return false;       
         
-        final MapLayer layer = (MapLayer) candidate;
+        layer = (CoverageMapLayer)candidate;
         
-        RasterSymbolizer rs = null;
-        parentRule = null;
-        parentIndex = 0;
-        search:
-        for(final MutableFeatureTypeStyle fts : layer.getStyle().featureTypeStyles()){
-            for(MutableRule r : fts.rules()){
-                for(int i=0,n=r.symbolizers().size();i<n;i++){
-                    Symbolizer s = r.symbolizers().get(i);
-                    if(s instanceof RasterSymbolizer){
-                        rs = (RasterSymbolizer) s;
-                        parentRule = r;
-                        parentIndex = i;
-                        break search;
-                    }
-                }
-            }
-        }
-        
-        uiColorMap.setLayer(layer);
-        if(rs!=null){
-            final ColorMap cm = rs.getColorMap();
-            uiColorMap.valueProperty().set(cm);
-        }
+//        RasterSymbolizer rs = null;
+//        parentRule = null;
+//        parentIndex = 0;
+//        search:
+//        for(final MutableFeatureTypeStyle fts : layer.getStyle().featureTypeStyles()){
+//            for(MutableRule r : fts.rules()){
+//                for(int i=0,n=r.symbolizers().size();i<n;i++){
+//                    Symbolizer s = r.symbolizers().get(i);
+//                    if(s instanceof RasterSymbolizer){
+//                        rs = (RasterSymbolizer) s;
+//                        parentRule = r;
+//                        parentIndex = i;
+//                        break search;
+//                    }
+//                }
+//            }
+//        }
+//        
+//        uiColorMap.setLayer(layer);
+//        if(rs!=null){
+//            final ColorMap cm = rs.getColorMap();
+//            uiColorMap.valueProperty().set(cm);
+//        }
         
         return true;
     }
