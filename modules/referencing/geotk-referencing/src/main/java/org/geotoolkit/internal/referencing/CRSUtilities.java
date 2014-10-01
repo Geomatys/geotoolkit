@@ -446,6 +446,49 @@ public final class CRSUtilities extends Static {
     }
 
     /**
+     * Recursively explore given crs, and return a list of distinct single CRS.
+     * @param crs The Coordinate Reference system to decompose.
+     * @return List<CoordinateReferenceSystem> List of all components found in source CRS. If input CRS is not of
+     * {@link org.opengis.referencing.crs.CompoundCRS}, output list will contains only originating system.
+     */
+    public static List<CoordinateReferenceSystem> decompose(CoordinateReferenceSystem crs){
+        final List<CoordinateReferenceSystem> lst = new ArrayList<CoordinateReferenceSystem>();
+        decompose(crs, lst);
+        return lst;
+    }
+
+    private static void decompose(final CoordinateReferenceSystem crs,
+                                  final List<CoordinateReferenceSystem> lst){
+        if(crs instanceof CompoundCRS){
+            final List<CoordinateReferenceSystem> parts = ((CompoundCRS)crs).getComponents();
+            for(CoordinateReferenceSystem part : parts){
+                decompose(part, lst);
+            }
+        }else{
+            lst.add(crs);
+        }
+    }
+
+    /**
+     * Retrieve index of the first axis of the geographic component in the input {@link CoordinateReferenceSystem}.
+     *
+     * @param crs {@link CoordinateReferenceSystem} which is analysed.
+     * @return Index of the first horizontal axis in this CRS
+     * @throws java.lang.IllegalArgumentException if input CRS has no horizontal component.
+     */
+    public static int firstHorizontalAxis(final CoordinateReferenceSystem crs) {
+        int tempOrdinate = 0;
+        for(CoordinateReferenceSystem ccrrss : decompose(crs)) {
+            final CoordinateSystem cs = ccrrss.getCoordinateSystem();
+            if((cs instanceof CartesianCS)
+                    || (cs instanceof SphericalCS)
+                    || (cs instanceof EllipsoidalCS)) return tempOrdinate;
+            tempOrdinate += cs.getDimension();
+        }
+        throw new IllegalArgumentException("crs doesn't have any horizontal crs");
+    }
+
+    /**
      * Returns the group of referencing objects to which the given type belong.
      * The {@code type} argument can be a GeoAPI interface or an implementation class.
      * The value returned by this method will be one of {@link CoordinateReferenceSystem},

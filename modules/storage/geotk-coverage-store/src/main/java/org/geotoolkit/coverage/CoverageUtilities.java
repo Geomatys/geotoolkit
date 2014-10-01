@@ -25,32 +25,23 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageReader;
 
-import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.index.tree.QuadTree;
-import org.apache.sis.measure.NumberRange;
-import org.apache.sis.measure.Range;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.referencing.CRS;
+import org.apache.sis.referencing.CommonCRS;
+
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageStoreException;
-import org.geotoolkit.geometry.Envelopes;
-import org.geotoolkit.referencing.OutOfDomainOfValidityException;
 import org.geotoolkit.referencing.ReferencingUtilities;
-import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.util.ImageIOUtilities;
-import org.opengis.coverage.Coverage;
+
 import org.opengis.coverage.SampleDimensionType;
 import org.opengis.coverage.grid.GridCoverage;
-import org.opengis.coverage.grid.GridEnvelope;
-import org.opengis.coverage.grid.GridGeometry;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
-import org.opengis.metadata.identification.Resolution;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.crs.GeographicCRS;
 import org.opengis.referencing.cs.CartesianCS;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.cs.EllipsoidalCS;
@@ -340,10 +331,13 @@ public final class CoverageUtilities {
     }
 
     /**
-     * Return min geographic index ordinate from {@link CoordinateReferenceSystem} 2d part.
+     * Retrieve index of the first axis of the geographic component in the input {@link CoordinateReferenceSystem}.
      *
-     * @param crs {@link CoordinateReferenceSystem} which is study.
-     * @return min geographic index ordinate from {@link CoordinateReferenceSystem} 2d part.
+     * @param crs {@link CoordinateReferenceSystem} which is analysed.
+     * @return Index of the first horizontal axis in this CRS
+     * @throws java.lang.IllegalArgumentException if input CRS has no horizontal component.
+     *
+     * @deprecated moved to {@link org.geotoolkit.internal.referencing.CRSUtilities#firstHorizontalAxis(org.opengis.referencing.crs.CoordinateReferenceSystem)}
      */
     public static int getMinOrdinate(final CoordinateReferenceSystem crs) {
         int tempOrdinate = 0;
@@ -354,7 +348,7 @@ public final class CoverageUtilities {
             || (cs instanceof EllipsoidalCS)) return tempOrdinate;
             tempOrdinate += cs.getDimension();
         }
-        throw new IllegalArgumentException("crs doesn't have any geoghaphic crs");
+        throw new IllegalArgumentException("crs doesn't have any horizontal crs");
     }
 
     /**
@@ -520,141 +514,6 @@ public final class CoverageUtilities {
             }
         }
         throw new CoverageStoreException("Unknown GridCoverage");
-    }
-
-    /**
-     * Adapt input envelope to fit urn:ogc:def:wkss:OGC:1.0:GoogleCRS84Quad. Also give well known scales into the interval
-     * given in parameter.
-     *
-     * As specified by WMTS draft v1.0.0 :
-     * <p>
-     *     [GoogleCRS84Quad] well-known scale set has been defined to allow quadtree pyramids in CRS84. Level
-     * 0 allows representing the whole world in a single 256x256 pixels (where the first 64 and
-     * last 64 lines of the tile are left blank). The next level represents the whole world in 2x2
-     * tiles of 256x256 pixels and so on in powers of 2. Scale denominator is only accurate near
-     * the equator.
-     * </p>
-     *
-     * /!\ The well-known scales computed here have been designed for CRS:84 and Mercator projected CRS. Using it for
-     * other coordinate reference systems can result in strange results.
-     *
-     * Note : only horizontal part of input envelope is analysed, so returned envelope will have same values as input one
-     * for all additional dimension.
-     *
-     * @param envelope An envelope to adapt to well known scale quad-tree.
-     * @param scaleLimit Minimum and maximum authorized scales. Edge inclusive. Unit must be input envelope horizontal
-     *                    axis unit.
-     * @return An entry with adapted envelope and its well known scales.
-     */
-    public static Map.Entry<Envelope, double[]> toWellKnownScale(final Envelope envelope, final NumberRange<Double> scaleLimit) throws TransformException, OutOfDomainOfValidityException {
-        final CoordinateReferenceSystem targetCRS = CRS.getHorizontalComponent(envelope.getCoordinateReferenceSystem());
-        if (targetCRS == null) {
-            throw new IllegalArgumentException("Input envelope CRS has no defined horizontal component.");
-        }
-
-        /**
-         * First, we retrieve total envelope of our Quad-tree. We try to use domain of validity of our input envelope
-         * CRS. If we cannot, we'll take the world. After that, we'll perform consecutive divisions in order to find
-         * minimal Quad-tree cell in which our envelope can be set. It will give us the result envelope. From this
-         * envelope, we'll be able to build the final scale list.
-         *
-         * Note : final envelope can be the fusion of two neighbour Quad-Tree cells.
-         */
-        final Envelope tmpDomain = Envelopes.getDomainOfValidity(targetCRS);
-        final GeneralEnvelope quadTreeCell;
-        if (tmpDomain == null) {
-            final GeographicCRS crs84 = CommonCRS.defaultGeographic();
-            final Envelope tmpWorld = org.geotoolkit.referencing.CRS.getEnvelope(crs84);
-            quadTreeCell = new GeneralEnvelope(Envelopes.transform(tmpWorld, targetCRS));
-        } else {
-            quadTreeCell = new GeneralEnvelope(tmpDomain);
-        }
-
-        // We check we can perform divisions on computed domain.
-        double min, max;
-        for (int i = 0; i < quadTreeCell.getDimension(); i++) {
-            min = quadTreeCell.getMinimum(i);
-            max = quadTreeCell.getMaximum(i);
-            if (Double.isNaN(min) || Double.isInfinite(min) ||
-                    Double.isNaN(max) || Double.isInfinite(max)) {
-                throw new OutOfDomainOfValidityException("Invalid world bounds " + quadTreeCell);
-            }
-        }
-
-        GeneralEnvelope targetEnv = new GeneralEnvelope(envelope);
-
-        GeneralEnvelope cellX = quadTreeCell.subEnvelope(0, 1);
-        GeneralEnvelope cellY = quadTreeCell.subEnvelope(1, 2);
-
-        final int xAxis = getMinOrdinate(envelope.getCoordinateReferenceSystem());
-        final int yAxis = xAxis + 1;
-        final GeneralEnvelope tmpInput = new GeneralEnvelope(envelope);
-        GeneralEnvelope inputRangeX = tmpInput.subEnvelope(xAxis, xAxis+1);
-        GeneralEnvelope inputRangeY = tmpInput.subEnvelope(yAxis, yAxis+1);
-
-        double midQuadX, midQuadY;
-        boolean containX = cellX.contains(inputRangeX);
-        boolean containY = cellY.contains(inputRangeY);
-        while (containX || containY) {
-            // Resize on longitude
-            if (containX) {
-                targetEnv.setRange(xAxis, cellX.getMinimum(0), cellX.getMaximum(0));
-                midQuadX = cellX.getLower(0) + (cellX.getSpan(0) / 2);
-                if (inputRangeX.getMinimum(0) < midQuadX) {
-                    // west side
-                    cellX.setRange(0, cellX.getMinimum(0), midQuadX);
-                } else {
-                    // east side
-                    cellX.setRange(0, midQuadX, cellX.getMaximum(0));
-                }
-
-                // Update envelope test
-                containX = cellX.contains(inputRangeX);
-            }
-
-            // Resize on latitude
-            if (containY) {
-                targetEnv.setRange(yAxis, cellY.getMinimum(0), cellY.getMaximum(0));
-                midQuadY = cellY.getLower(0) + (cellY.getSpan(0) / 2);
-                if (inputRangeY.getMinimum(0) < midQuadY) {
-                    // south side
-                    cellY.setRange(0, cellY.getMinimum(0), midQuadY);
-                } else {
-                    // north side
-                    cellY.setRange(0, midQuadY, cellY.getMaximum(0));
-                }
-
-                // Update envelope test
-                containY = cellY.contains(inputRangeY);
-            }
-        }
-
-        final double lowestResolution = Math.max(scaleLimit.getMinDouble(), scaleLimit.getMaxDouble());
-        final double highestResolution = Math.min(scaleLimit.getMinDouble(), scaleLimit.getMaxDouble());
-
-        // Go to lowest authorized resolution boundary : A single 256px side tile for output envelope.
-        double minScale = targetEnv.getSpan(xAxis) / 256;
-        while (minScale > lowestResolution) {
-            minScale /= 2;
-        }
-
-        // TODO : find a better way to compute array size ?
-        int scaleCount = 0;
-        double tmpScale = minScale;
-        while (tmpScale > highestResolution) {
-            tmpScale /= 2;
-            scaleCount++;
-        }
-
-        // Save scales until finest authorized resolution.
-        final double[] scales = new double[scaleCount];
-        int i = 0;
-        while (minScale > highestResolution) {
-            scales[i++] = minScale;
-            minScale /= 2;
-        }
-
-        return new AbstractMap.SimpleEntry<Envelope, double[]>(targetEnv, scales);
     }
 
 }

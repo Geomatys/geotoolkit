@@ -31,6 +31,7 @@ import java.util.Collections;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import org.apache.sis.internal.metadata.ReferencingUtilities;
 import org.opengis.geometry.*;
 import org.opengis.referencing.*;
 import org.opengis.referencing.cs.*;

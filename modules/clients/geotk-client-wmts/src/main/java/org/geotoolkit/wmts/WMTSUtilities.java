@@ -17,14 +17,22 @@
 package org.geotoolkit.wmts;
 
 import java.util.List;
+import java.util.Map;
 import javax.measure.unit.NonSI;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
+
 import org.apache.sis.geometry.DirectPosition2D;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.measure.NumberRange;
 import org.apache.sis.util.ArgumentChecks;
+import org.apache.sis.referencing.operation.matrix.MatrixSIS;
+
+import org.geotoolkit.internal.coverage.CoverageUtilities;
+import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.referencing.OutOfDomainOfValidityException;
 import org.geotoolkit.wmts.xml.v100.TileMatrix;
 import org.geotoolkit.wmts.xml.v100.TileMatrixSet;
+
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.cs.CoordinateSystem;
@@ -32,7 +40,6 @@ import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
-import org.apache.sis.referencing.operation.matrix.MatrixSIS;
 
 /**
  * Utility methods for WMTS strange scale calculation
@@ -242,5 +249,34 @@ public final class WMTSUtilities {
             }
         }
         return false;
+    }
+
+    /**
+     * Adapt input envelope to fit urn:ogc:def:wkss:OGC:1.0:GoogleCRS84Quad. Also give well known scales into the interval
+     * given in parameter.
+     *
+     * As specified by WMTS standard v1.0.0 :
+     * <p>
+     *     [GoogleCRS84Quad] well-known scale set has been defined to allow quadtree pyramids in CRS84. Level
+     * 0 allows representing the whole world in a single 256x256 pixels (where the first 64 and
+     * last 64 lines of the tile are left blank). The next level represents the whole world in 2x2
+     * tiles of 256x256 pixels and so on in powers of 2. Scale denominator is only accurate near
+     * the equator.
+     * </p>
+     *
+     * /!\ The well-known scales computed here have been designed for CRS:84 and Mercator projected CRS. Using it for
+     * other coordinate reference systems can result in strange results.
+     *
+     * Note : only horizontal part of input envelope is analysed, so returned envelope will have same values as input one
+     * for all additional dimension.
+     *
+     * @param envelope An envelope to adapt to well known scale quad-tree.
+     * @param scaleLimit Minimum and maximum authorized scales. Edge inclusive. Unit must be input envelope horizontal
+     *                    axis unit.
+     * @return An entry with adapted envelope and its well known scales.
+     */
+    public static Map.Entry<Envelope, double[]> toWellKnownScale(final Envelope envelope, final NumberRange<Double> scaleLimit)
+            throws TransformException, OutOfDomainOfValidityException {
+        return CoverageUtilities.toWellKnownScale(envelope, scaleLimit);
     }
 }

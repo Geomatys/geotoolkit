@@ -15,7 +15,7 @@
  * Lesser General Public License for more details.
  */
 
-package org.geotoolkit.coverage;
+package org.geotoolkit.internal.coverage;
 
 import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.geometry.GeneralEnvelope;

@@ -22,17 +22,22 @@ import java.awt.geom.Rectangle2D;
 import java.util.*;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
+
+import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.geometry.DirectPosition2D;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.internal.referencing.AxisDirections;
-import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.apache.sis.referencing.crs.DefaultCompoundCRS;
-import org.geotoolkit.referencing.operation.projection.Mercator;
-import org.geotoolkit.referencing.operation.transform.LinearInterpolator1D;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.apache.sis.referencing.operation.transform.PassThroughTransform;
+
+import org.geotoolkit.internal.referencing.CRSUtilities;
+import org.geotoolkit.referencing.operation.projection.Mercator;
+import org.geotoolkit.referencing.operation.transform.LinearInterpolator1D;
+
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.IdentifiedObject;
@@ -52,8 +57,6 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
-import org.apache.sis.referencing.CommonCRS;
-import org.apache.sis.referencing.operation.transform.MathTransforms;
 
 import static org.apache.sis.referencing.CRS.getHorizontalComponent;
 import static org.apache.sis.referencing.CRS.getVerticalComponent;
@@ -615,6 +618,7 @@ public final class ReferencingUtilities {
      * Recursively explor given crs, and return a list of distinct unary CRS.
      * @param crs
      * @return List<CoordinateReferenceSystem>
+     * @deprecated moved to {@link org.geotoolkit.internal.referencing.CRSUtilities#decompose(org.opengis.referencing.crs.CoordinateReferenceSystem)}
      */
     public static List<CoordinateReferenceSystem> decompose(CoordinateReferenceSystem crs){
         final List<CoordinateReferenceSystem> lst = new ArrayList<CoordinateReferenceSystem>();
@@ -635,7 +639,7 @@ public final class ReferencingUtilities {
     }
 
     /**
-     * Decompose CRS and return each sub-crs with dimension index.
+     * Decompose CRS and return each sub-crs along with their dimension index.
      * @param crs
      * @return Map of index and sub-crs
      */
