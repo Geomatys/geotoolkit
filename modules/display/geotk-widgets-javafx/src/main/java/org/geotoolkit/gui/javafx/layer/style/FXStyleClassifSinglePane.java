@@ -197,20 +197,7 @@ public class FXStyleClassifSinglePane extends FXLayerStylePane {
         
         //this will cause the column width to fit the view area
         uiTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-        
-//        uiTable.widthProperty().addListener(new ChangeListener<Number>(){
-//            @Override
-//            public void changed(ObservableValue<? extends Number> source, Number oldWidth, Number newWidth){
-//                final Pane header = (Pane) uiTable.lookup("TableHeaderRow");
-//                if (header.isVisible()){
-//                    header.setMaxHeight(0);
-//                    header.setMinHeight(0);
-//                    header.setPrefHeight(0);
-//                    header.setVisible(false);
-//                }
-//            }
-//        });
-        
+                
     }
     
     @Override
@@ -223,12 +210,8 @@ public class FXStyleClassifSinglePane extends FXLayerStylePane {
         uiProperty.setItems(listProperties(layer));
         template = generateTemplate(layer);
         
-        if(uiProperty.getItems().size()>0){
-            uiProperty.getSelectionModel().select(0);
-        }
-        if(uiPalette.getItems().size()>0){
-            uiPalette.getSelectionModel().select(0);
-        }
+        uiProperty.getSelectionModel().selectFirst();
+        uiPalette.getSelectionModel().selectFirst();
         
         updateTemplateGlyph();
         tryRebuildExisting(layer);

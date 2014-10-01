@@ -13,10 +13,9 @@
       <GridPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" BorderPane.alignment="CENTER">
         <columnConstraints>
           <ColumnConstraints hgrow="NEVER" />
-          <ColumnConstraints hgrow="ALWAYS" maxWidth="1.7976931348623157E308" />
-            <ColumnConstraints halignment="CENTER" hgrow="NEVER" />
-            <ColumnConstraints halignment="CENTER" hgrow="NEVER" />
-            <ColumnConstraints />
+          <ColumnConstraints hgrow="NEVER" />
+          <ColumnConstraints halignment="CENTER" hgrow="NEVER" />
+          <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" maxWidth="1.7976931348623157E308" minWidth="1.0" />
         </columnConstraints>
         <rowConstraints>
           <RowConstraints vgrow="NEVER" />
@@ -59,7 +58,7 @@
                <font>
                   <Font name="System Bold" size="13.0" />
                </font></Label>
-            <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnSpan="5" GridPane.rowIndex="9">
+            <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnSpan="4" GridPane.rowIndex="9">
                <content>
                   <TableView fx:id="uiTable" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
                </content>

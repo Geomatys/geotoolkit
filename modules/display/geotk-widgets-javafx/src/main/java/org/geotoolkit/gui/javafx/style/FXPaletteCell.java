@@ -27,11 +27,15 @@ import org.geotoolkit.gui.javafx.util.FXUtilities;
  * @author Johann Sorel (Geomatys)
  */
 public class FXPaletteCell extends ListCell<Object>{
+
+    public FXPaletteCell() {
+        setContentDisplay(ContentDisplay.CENTER);
+    }
     
     @Override
     protected void updateItem(Object item, boolean empty) {
-        setText("");
-        setContentDisplay(ContentDisplay.CENTER);
+        super.updateItem(item, empty);
+        setText(null);
         if(item!=null){
             setGraphic(new ImageView(FXUtilities.createPalettePreview(item, new Dimension(200,20))));
         }else{
