@@ -662,7 +662,7 @@ public final class ReferencingUtilities {
      * @param destination The envelope to set values into. Will be modified.
      * @return The destination envelope that have been modified.
      */
-    public static Envelope transposeEnvelope(final GeneralEnvelope source, GeneralEnvelope destination) {
+    public static GeneralEnvelope transposeEnvelope(final GeneralEnvelope source, GeneralEnvelope destination) {
         ArgumentChecks.ensureNonNull("source envelope", source);
         ArgumentChecks.ensureNonNull("destination envelope", destination);
 
