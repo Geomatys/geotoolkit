@@ -1,5 +1,7 @@
 *.log
 .classpath
+.project
+.settings/
 
 .DS_Store
 .hg
