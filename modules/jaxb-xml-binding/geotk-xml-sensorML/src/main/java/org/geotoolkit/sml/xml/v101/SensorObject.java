@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2008 - 2010, Geomatys
+ *    (C) 2014, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -14,21 +14,22 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
+package org.geotoolkit.sml.xml.v101;
 
-package org.geotoolkit.sml.xml;
+import javax.xml.bind.annotation.XmlTransient;
+import org.apache.sis.metadata.AbstractMetadata;
+import org.apache.sis.metadata.MetadataStandard;
 
-import java.util.List;
 
 /**
+ * Base class of sensor objects.
  *
- * @author Guilhem Legal (Geomatys)
- * @module pending
+ * @author Martin Desruisseaux
  */
-public interface AbstractInterfaceList {
-
-     public List<? extends AbstractInterface> getInterfaces();
-
-     String getId();
-
-     void setId(String value);
+@XmlTransient
+public abstract class SensorObject extends AbstractMetadata {
+    @Override
+    public MetadataStandard getStandard() {
+        return SensorMLStandard.COMPONENT;
+    }
 }

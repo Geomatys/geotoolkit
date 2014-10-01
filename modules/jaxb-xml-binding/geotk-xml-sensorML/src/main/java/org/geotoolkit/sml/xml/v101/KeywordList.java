@@ -31,6 +31,7 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.sml.xml.AbstractKeywordList;
+import org.apache.sis.util.ComparisonMode;
 
 /**
  * <p>Java class for anonymous complex type.
@@ -57,7 +58,7 @@ import org.geotoolkit.sml.xml.AbstractKeywordList;
 @XmlType(name = "", propOrder = {
     "keyword"
 })
-public class KeywordList implements AbstractKeywordList {
+public class KeywordList extends SensorObject implements AbstractKeywordList {
 
     @XmlElement(required = true)
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
@@ -150,7 +151,7 @@ public class KeywordList implements AbstractKeywordList {
      * Verify if this entry is identical to specified object.
      */
     @Override
-    public boolean equals(final Object object) {
+    public boolean equals(final Object object, final ComparisonMode mode) {
         if (object == this) {
             return true;
         }

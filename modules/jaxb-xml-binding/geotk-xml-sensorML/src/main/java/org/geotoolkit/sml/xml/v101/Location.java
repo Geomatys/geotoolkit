@@ -37,9 +37,9 @@ import org.geotoolkit.sml.xml.AbstractLocation;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -53,8 +53,8 @@ import org.geotoolkit.sml.xml.AbstractLocation;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -63,7 +63,7 @@ import org.geotoolkit.sml.xml.AbstractLocation;
     "abstractCurve"
 })
 @XmlRootElement(name = "Location")
-public class Location implements AbstractLocation {
+public class Location extends SensorObject implements AbstractLocation {
 
     @XmlElement(name = "Point", namespace = "http://www.opengis.net/gml")
     private PointType point;
@@ -137,14 +137,14 @@ public class Location implements AbstractLocation {
         }
         return null;
     }
-    
+
     /**
      * Gets the value of the point property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link PointType }
-     *     
+     *
      */
     public PointType getPoint() {
         return point;
@@ -152,11 +152,11 @@ public class Location implements AbstractLocation {
 
     /**
      * Sets the value of the point property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link PointType }
-     *     
+     *
      */
     public void setPoint(final PointType value) {
         this.point = value;
@@ -164,7 +164,7 @@ public class Location implements AbstractLocation {
 
     /**
      * Gets the value of the abstractCurve property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link CompositeCurveType }{@code >}
@@ -172,7 +172,7 @@ public class Location implements AbstractLocation {
      *     {@link JAXBElement }{@code <}{@link CurveType }{@code >}
      *     {@link JAXBElement }{@code <}{@link AbstractCurveType }{@code >}
      *     {@link JAXBElement }{@code <}{@link OrientableCurveType }{@code >}
-     *     
+     *
      */
     public JAXBElement<? extends AbstractCurveType> getAbstractCurve() {
         return abstractCurve;
@@ -187,7 +187,7 @@ public class Location implements AbstractLocation {
 
     /**
      * Sets the value of the abstractCurve property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link CompositeCurveType }{@code >}
@@ -195,7 +195,7 @@ public class Location implements AbstractLocation {
      *     {@link JAXBElement }{@code <}{@link CurveType }{@code >}
      *     {@link JAXBElement }{@code <}{@link AbstractCurveType }{@code >}
      *     {@link JAXBElement }{@code <}{@link OrientableCurveType }{@code >}
-     *     
+     *
      */
     public void setAbstractCurve(final JAXBElement<? extends AbstractCurveType> value) {
         this.abstractCurve = ((JAXBElement<? extends AbstractCurveType> ) value);
@@ -203,11 +203,11 @@ public class Location implements AbstractLocation {
 
     /**
      * Gets the value of the remoteSchema property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getRemoteSchema() {
         return remoteSchema;
@@ -215,11 +215,11 @@ public class Location implements AbstractLocation {
 
     /**
      * Sets the value of the remoteSchema property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRemoteSchema(final String value) {
         this.remoteSchema = value;
@@ -227,11 +227,11 @@ public class Location implements AbstractLocation {
 
     /**
      * Gets the value of the type property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getType() {
         return type;
@@ -239,11 +239,11 @@ public class Location implements AbstractLocation {
 
     /**
      * Sets the value of the type property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setType(final String value) {
         this.type = value;
@@ -251,11 +251,11 @@ public class Location implements AbstractLocation {
 
     /**
      * Gets the value of the href property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getHref() {
         return href;
@@ -263,11 +263,11 @@ public class Location implements AbstractLocation {
 
     /**
      * Sets the value of the href property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setHref(final String value) {
         this.href = value;
@@ -275,11 +275,11 @@ public class Location implements AbstractLocation {
 
     /**
      * Gets the value of the role property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getRole() {
         return role;
@@ -287,11 +287,11 @@ public class Location implements AbstractLocation {
 
     /**
      * Sets the value of the role property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRole(final String value) {
         this.role = value;
@@ -299,11 +299,11 @@ public class Location implements AbstractLocation {
 
     /**
      * Gets the value of the arcrole property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getArcrole() {
         return arcrole;
@@ -311,11 +311,11 @@ public class Location implements AbstractLocation {
 
     /**
      * Sets the value of the arcrole property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setArcrole(final String value) {
         this.arcrole = value;
@@ -323,11 +323,11 @@ public class Location implements AbstractLocation {
 
     /**
      * Gets the value of the title property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getTitle() {
         return title;
@@ -335,11 +335,11 @@ public class Location implements AbstractLocation {
 
     /**
      * Sets the value of the title property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setTitle(final String value) {
         this.title = value;
@@ -347,11 +347,11 @@ public class Location implements AbstractLocation {
 
     /**
      * Gets the value of the show property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getShow() {
         return show;
@@ -359,11 +359,11 @@ public class Location implements AbstractLocation {
 
     /**
      * Sets the value of the show property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setShow(final String value) {
         this.show = value;
@@ -371,11 +371,11 @@ public class Location implements AbstractLocation {
 
     /**
      * Gets the value of the actuate property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getActuate() {
         return actuate;
@@ -383,11 +383,11 @@ public class Location implements AbstractLocation {
 
     /**
      * Sets the value of the actuate property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setActuate(final String value) {
         this.actuate = value;

@@ -27,13 +27,14 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.sml.xml.AbstractResponsibleParty;
+import org.apache.sis.util.ComparisonMode;
 
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -49,8 +50,8 @@ import org.geotoolkit.sml.xml.AbstractResponsibleParty;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -61,7 +62,7 @@ import org.geotoolkit.sml.xml.AbstractResponsibleParty;
     "contactInfo"
 })
 @XmlRootElement(name = "ResponsibleParty")
-public class ResponsibleParty implements AbstractResponsibleParty {
+public class ResponsibleParty extends SensorObject implements AbstractResponsibleParty {
 
     private String individualName;
     private String organizationName;
@@ -99,14 +100,14 @@ public class ResponsibleParty implements AbstractResponsibleParty {
         this.individualName   = individualName;
         this.positionName     = positionName;
     }
-    
+
     /**
      * Gets the value of the individualName property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getIndividualName() {
         return individualName;
@@ -114,11 +115,11 @@ public class ResponsibleParty implements AbstractResponsibleParty {
 
     /**
      * Sets the value of the individualName property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setIndividualName(final String value) {
         this.individualName = value;
@@ -126,11 +127,11 @@ public class ResponsibleParty implements AbstractResponsibleParty {
 
     /**
      * Gets the value of the organizationName property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getOrganizationName() {
         return organizationName;
@@ -138,11 +139,11 @@ public class ResponsibleParty implements AbstractResponsibleParty {
 
     /**
      * Sets the value of the organizationName property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setOrganizationName(final String value) {
         this.organizationName = value;
@@ -150,11 +151,11 @@ public class ResponsibleParty implements AbstractResponsibleParty {
 
     /**
      * Gets the value of the positionName property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getPositionName() {
         return positionName;
@@ -162,11 +163,11 @@ public class ResponsibleParty implements AbstractResponsibleParty {
 
     /**
      * Sets the value of the positionName property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setPositionName(final String value) {
         this.positionName = value;
@@ -174,11 +175,11 @@ public class ResponsibleParty implements AbstractResponsibleParty {
 
     /**
      * Gets the value of the contactInfo property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ContactInfo }
-     *     
+     *
      */
     public ContactInfo getContactInfo() {
         return contactInfo;
@@ -186,11 +187,11 @@ public class ResponsibleParty implements AbstractResponsibleParty {
 
     /**
      * Sets the value of the contactInfo property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ContactInfo }
-     *     
+     *
      */
     public void setContactInfo(final ContactInfo value) {
         this.contactInfo = value;
@@ -198,11 +199,11 @@ public class ResponsibleParty implements AbstractResponsibleParty {
 
     /**
      * Gets the value of the id property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getId() {
         return id;
@@ -210,11 +211,11 @@ public class ResponsibleParty implements AbstractResponsibleParty {
 
     /**
      * Sets the value of the id property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setId(final String value) {
         this.id = value;
@@ -245,7 +246,7 @@ public class ResponsibleParty implements AbstractResponsibleParty {
      * Verify if this entry is identical to specified object.
      */
     @Override
-    public boolean equals(final Object object) {
+    public boolean equals(final Object object, final ComparisonMode mode) {
         if (object == this) {
             return true;
         }

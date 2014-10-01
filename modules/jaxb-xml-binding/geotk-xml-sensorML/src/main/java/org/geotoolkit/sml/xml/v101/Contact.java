@@ -25,13 +25,14 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.sml.xml.AbstractContact;
+import org.apache.sis.util.ComparisonMode;
 
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -45,8 +46,8 @@ import org.geotoolkit.sml.xml.AbstractContact;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -56,7 +57,7 @@ import org.geotoolkit.sml.xml.AbstractContact;
     "contactList"
 })
 @XmlRootElement(name = "Contact")
-public class Contact implements AbstractContact {
+public class Contact extends SensorObject implements AbstractContact {
 
     @XmlElement(name = "Person")
     private Person person;
@@ -92,7 +93,7 @@ public class Contact implements AbstractContact {
     public Contact(final ResponsibleParty responsibleParty) {
         this.responsibleParty = responsibleParty;
     }
-    
+
     public Contact(final AbstractContact contact) {
         if (contact != null) {
             this.actuate = contact.getActuate();
@@ -119,14 +120,14 @@ public class Contact implements AbstractContact {
         this.role             = role;
         this.responsibleParty = responsibleParty;
     }
-    
+
     /**
      * Gets the value of the person property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Person }
-     *     
+     *
      */
     public Person getPerson() {
         return person;
@@ -134,11 +135,11 @@ public class Contact implements AbstractContact {
 
     /**
      * Sets the value of the person property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Person }
-     *     
+     *
      */
     public void setPerson(final Person value) {
         this.person = value;
@@ -146,11 +147,11 @@ public class Contact implements AbstractContact {
 
     /**
      * Gets the value of the responsibleParty property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ResponsibleParty }
-     *     
+     *
      */
     public ResponsibleParty getResponsibleParty() {
         return responsibleParty;
@@ -158,11 +159,11 @@ public class Contact implements AbstractContact {
 
     /**
      * Sets the value of the responsibleParty property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ResponsibleParty }
-     *     
+     *
      */
     public void setResponsibleParty(final ResponsibleParty value) {
         this.responsibleParty = value;
@@ -170,11 +171,11 @@ public class Contact implements AbstractContact {
 
     /**
      * Gets the value of the contactList property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ContactList }
-     *     
+     *
      */
     public ContactList getContactList() {
         return contactList;
@@ -182,11 +183,11 @@ public class Contact implements AbstractContact {
 
     /**
      * Sets the value of the contactList property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ContactList }
-     *     
+     *
      */
     public void setContactList(final ContactList value) {
         this.contactList = value;
@@ -194,11 +195,11 @@ public class Contact implements AbstractContact {
 
     /**
      * Gets the value of the remoteSchema property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getRemoteSchema() {
         return remoteSchema;
@@ -206,11 +207,11 @@ public class Contact implements AbstractContact {
 
     /**
      * Sets the value of the remoteSchema property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRemoteSchema(final String value) {
         this.remoteSchema = value;
@@ -218,11 +219,11 @@ public class Contact implements AbstractContact {
 
     /**
      * Gets the value of the type property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
      public String getType() {
         return type;
@@ -231,11 +232,11 @@ public class Contact implements AbstractContact {
 
     /**
      * Sets the value of the type property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setType(final String value) {
         this.type = value;
@@ -243,11 +244,11 @@ public class Contact implements AbstractContact {
 
     /**
      * Gets the value of the href property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getHref() {
         return href;
@@ -255,11 +256,11 @@ public class Contact implements AbstractContact {
 
     /**
      * Sets the value of the href property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setHref(final String value) {
         this.href = value;
@@ -267,11 +268,11 @@ public class Contact implements AbstractContact {
 
     /**
      * Gets the value of the role property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getRole() {
         return role;
@@ -279,11 +280,11 @@ public class Contact implements AbstractContact {
 
     /**
      * Sets the value of the role property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRole(final String value) {
         this.role = value;
@@ -291,11 +292,11 @@ public class Contact implements AbstractContact {
 
     /**
      * Gets the value of the arcrole property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getArcrole() {
         return arcrole;
@@ -303,11 +304,11 @@ public class Contact implements AbstractContact {
 
     /**
      * Sets the value of the arcrole property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setArcrole(final String value) {
         this.arcrole = value;
@@ -315,11 +316,11 @@ public class Contact implements AbstractContact {
 
     /**
      * Gets the value of the title property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getTitle() {
         return title;
@@ -327,11 +328,11 @@ public class Contact implements AbstractContact {
 
     /**
      * Sets the value of the title property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setTitle(final String value) {
         this.title = value;
@@ -339,11 +340,11 @@ public class Contact implements AbstractContact {
 
     /**
      * Gets the value of the show property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getShow() {
         return show;
@@ -351,11 +352,11 @@ public class Contact implements AbstractContact {
 
     /**
      * Sets the value of the show property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setShow(final String value) {
         this.show = value;
@@ -363,11 +364,11 @@ public class Contact implements AbstractContact {
 
     /**
      * Gets the value of the actuate property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getActuate() {
         return actuate;
@@ -375,11 +376,11 @@ public class Contact implements AbstractContact {
 
     /**
      * Sets the value of the actuate property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setActuate(final String value) {
         this.actuate = value;
@@ -428,7 +429,7 @@ public class Contact implements AbstractContact {
      * Verify if this entry is identical to specified object.
      */
     @Override
-    public boolean equals(final Object object) {
+    public boolean equals(final Object object, final ComparisonMode mode) {
         if (object == this) {
             return true;
         }

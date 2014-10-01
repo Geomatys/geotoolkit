@@ -31,6 +31,7 @@ import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.sml.xml.AbstractClassifier;
 import org.geotoolkit.sml.xml.AbstractClassifierList;
+import org.apache.sis.util.ComparisonMode;
 
 /**
  * <p>Java class for anonymous complex type.
@@ -67,7 +68,7 @@ import org.geotoolkit.sml.xml.AbstractClassifierList;
 @XmlType(name = "", propOrder = {
     "classifier"
 })
-public class ClassifierList implements AbstractClassifierList {
+public class ClassifierList extends SensorObject implements AbstractClassifierList {
 
     @XmlElement(required = true)
     private List<Classifier> classifier;
@@ -147,7 +148,7 @@ public class ClassifierList implements AbstractClassifierList {
      * Verify if this entry is identical to specified object.
      */
     @Override
-    public boolean equals(final Object object) {
+    public boolean equals(final Object object, final ComparisonMode mode) {
         if (object == this) {
             return true;
         }

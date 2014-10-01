@@ -42,7 +42,7 @@ import org.geotoolkit.sml.xml.AbstractObservationReference;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "")
-public class ObservationReference implements AbstractObservationReference {
+public class ObservationReference extends SensorObject implements AbstractObservationReference {
 
     @XmlAttribute(namespace = "http://www.opengis.net/gml")
     @XmlSchemaType(name = "anyURI")

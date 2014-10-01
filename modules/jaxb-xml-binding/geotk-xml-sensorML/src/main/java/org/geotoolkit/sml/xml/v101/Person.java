@@ -31,9 +31,9 @@ import org.geotoolkit.sml.xml.AbstractPerson;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -51,8 +51,8 @@ import org.geotoolkit.sml.xml.AbstractPerson;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -65,7 +65,7 @@ import org.geotoolkit.sml.xml.AbstractPerson;
     "email"
 })
 @XmlRootElement(name = "Person")
-public class Person implements AbstractPerson {
+public class Person extends SensorObject implements AbstractPerson {
 
     @XmlElement(required = true)
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
@@ -115,11 +115,11 @@ public class Person implements AbstractPerson {
 
     /**
      * Gets the value of the surname property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getSurname() {
         return surname;
@@ -127,11 +127,11 @@ public class Person implements AbstractPerson {
 
     /**
      * Sets the value of the surname property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setSurname(final String value) {
         this.surname = value;
@@ -139,11 +139,11 @@ public class Person implements AbstractPerson {
 
     /**
      * Gets the value of the name property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getName() {
         return name;
@@ -151,11 +151,11 @@ public class Person implements AbstractPerson {
 
     /**
      * Sets the value of the name property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setName(final String value) {
         this.name = value;
@@ -163,11 +163,11 @@ public class Person implements AbstractPerson {
 
     /**
      * Gets the value of the userID property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getUserID() {
         return userID;
@@ -175,11 +175,11 @@ public class Person implements AbstractPerson {
 
     /**
      * Sets the value of the userID property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setUserID(final String value) {
         this.userID = value;
@@ -187,11 +187,11 @@ public class Person implements AbstractPerson {
 
     /**
      * Gets the value of the affiliation property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getAffiliation() {
         return affiliation;
@@ -199,11 +199,11 @@ public class Person implements AbstractPerson {
 
     /**
      * Sets the value of the affiliation property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setAffiliation(final String value) {
         this.affiliation = value;
@@ -211,11 +211,11 @@ public class Person implements AbstractPerson {
 
     /**
      * Gets the value of the phoneNumber property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getPhoneNumber() {
         return phoneNumber;
@@ -223,11 +223,11 @@ public class Person implements AbstractPerson {
 
     /**
      * Sets the value of the phoneNumber property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setPhoneNumber(final String value) {
         this.phoneNumber = value;
@@ -235,11 +235,11 @@ public class Person implements AbstractPerson {
 
     /**
      * Gets the value of the email property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getEmail() {
         return email;
@@ -247,11 +247,11 @@ public class Person implements AbstractPerson {
 
     /**
      * Sets the value of the email property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setEmail(final String value) {
         this.email = value;
@@ -259,11 +259,11 @@ public class Person implements AbstractPerson {
 
     /**
      * Gets the value of the id property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getId() {
         return id;
@@ -271,11 +271,11 @@ public class Person implements AbstractPerson {
 
     /**
      * Sets the value of the id property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setId(final String value) {
         this.id = value;

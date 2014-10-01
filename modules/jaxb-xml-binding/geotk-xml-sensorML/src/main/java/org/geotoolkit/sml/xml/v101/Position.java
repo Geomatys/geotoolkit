@@ -38,13 +38,14 @@ import org.geotoolkit.sml.xml.AbstractProcessModel;
 import org.geotoolkit.sml.xml.ComponentArray;
 import org.geotoolkit.swe.xml.v101.PositionType;
 import org.geotoolkit.swe.xml.v101.VectorType;
+import org.apache.sis.util.ComparisonMode;
 
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -60,8 +61,8 @@ import org.geotoolkit.swe.xml.v101.VectorType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -71,7 +72,7 @@ import org.geotoolkit.swe.xml.v101.VectorType;
     "vector"
 })
 @XmlRootElement(name = "Position")
-public class Position implements AbstractPosition {
+public class Position extends SensorObject implements AbstractPosition {
 
     @XmlElementRef(name = "AbstractProcess", namespace = "http://www.opengis.net/sensorML/1.0.1", type = JAXBElement.class)
     private JAXBElement<? extends AbstractProcessType> process;
@@ -156,7 +157,7 @@ public class Position implements AbstractPosition {
         this.name = name;
         this.position = position;
     }
-    
+
     public Position(final String name, final AbstractProcessType process) {
         this.name = name;
         final ObjectFactory facto = new ObjectFactory();
@@ -176,10 +177,10 @@ public class Position implements AbstractPosition {
             throw new IllegalArgumentException("unexepected process type:" + process);
         }
     }
-    
+
     /**
      * Gets the value of the process property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link DataSourceType }{@code >}
@@ -189,7 +190,7 @@ public class Position implements AbstractPosition {
      *     {@link JAXBElement }{@code <}{@link ProcessChainType }{@code >}
      *     {@link JAXBElement }{@code <}{@link ComponentArrayType }{@code >}
      *     {@link JAXBElement }{@code <}{@link ComponentType }{@code >}
-     *     
+     *
      */
     public JAXBElement<? extends AbstractProcessType> getProcess() {
         return process;
@@ -204,7 +205,7 @@ public class Position implements AbstractPosition {
 
     /**
      * Sets the value of the process property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link DataSourceType }{@code >}
@@ -214,7 +215,7 @@ public class Position implements AbstractPosition {
      *     {@link JAXBElement }{@code <}{@link ProcessChainType }{@code >}
      *     {@link JAXBElement }{@code <}{@link ComponentArrayType }{@code >}
      *     {@link JAXBElement }{@code <}{@link ComponentType }{@code >}
-     *     
+     *
      */
     public void setProcess(final JAXBElement<? extends AbstractProcessType> value) {
         this.process = ((JAXBElement<? extends AbstractProcessType> ) value);
@@ -222,11 +223,11 @@ public class Position implements AbstractPosition {
 
     /**
      * Gets the value of the position property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link PositionType }
-     *     
+     *
      */
     public PositionType getPosition() {
         return position;
@@ -234,11 +235,11 @@ public class Position implements AbstractPosition {
 
     /**
      * Sets the value of the position property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link PositionType }
-     *     
+     *
      */
     public void setPosition(final PositionType value) {
         this.position = value;
@@ -246,11 +247,11 @@ public class Position implements AbstractPosition {
 
     /**
      * Gets the value of the vector property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link VectorType }
-     *     
+     *
      */
     public VectorType getVector() {
         return vector;
@@ -258,11 +259,11 @@ public class Position implements AbstractPosition {
 
     /**
      * Sets the value of the vector property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link VectorType }
-     *     
+     *
      */
     public void setVector(final VectorType value) {
         this.vector = value;
@@ -270,11 +271,11 @@ public class Position implements AbstractPosition {
 
     /**
      * Gets the value of the name property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getName() {
         return name;
@@ -282,11 +283,11 @@ public class Position implements AbstractPosition {
 
     /**
      * Sets the value of the name property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setName(final String value) {
         this.name = value;
@@ -294,11 +295,11 @@ public class Position implements AbstractPosition {
 
     /**
      * Gets the value of the remoteSchema property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getRemoteSchema() {
         return remoteSchema;
@@ -306,11 +307,11 @@ public class Position implements AbstractPosition {
 
     /**
      * Sets the value of the remoteSchema property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRemoteSchema(final String value) {
         this.remoteSchema = value;
@@ -318,11 +319,11 @@ public class Position implements AbstractPosition {
 
     /**
      * Gets the value of the type property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getType() {
         return type;
@@ -330,11 +331,11 @@ public class Position implements AbstractPosition {
 
     /**
      * Sets the value of the type property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setType(final String value) {
         this.type = value;
@@ -342,11 +343,11 @@ public class Position implements AbstractPosition {
 
     /**
      * Gets the value of the href property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getHref() {
         return href;
@@ -354,11 +355,11 @@ public class Position implements AbstractPosition {
 
     /**
      * Sets the value of the href property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setHref(final String value) {
         this.href = value;
@@ -366,11 +367,11 @@ public class Position implements AbstractPosition {
 
     /**
      * Gets the value of the role property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getRole() {
         return role;
@@ -378,11 +379,11 @@ public class Position implements AbstractPosition {
 
     /**
      * Sets the value of the role property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRole(final String value) {
         this.role = value;
@@ -390,11 +391,11 @@ public class Position implements AbstractPosition {
 
     /**
      * Gets the value of the arcrole property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getArcrole() {
         return arcrole;
@@ -402,11 +403,11 @@ public class Position implements AbstractPosition {
 
     /**
      * Sets the value of the arcrole property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setArcrole(final String value) {
         this.arcrole = value;
@@ -414,11 +415,11 @@ public class Position implements AbstractPosition {
 
     /**
      * Gets the value of the title property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getTitle() {
         return title;
@@ -426,11 +427,11 @@ public class Position implements AbstractPosition {
 
     /**
      * Sets the value of the title property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setTitle(final String value) {
         this.title = value;
@@ -438,11 +439,11 @@ public class Position implements AbstractPosition {
 
     /**
      * Gets the value of the show property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getShow() {
         return show;
@@ -450,11 +451,11 @@ public class Position implements AbstractPosition {
 
     /**
      * Sets the value of the show property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setShow(final String value) {
         this.show = value;
@@ -462,11 +463,11 @@ public class Position implements AbstractPosition {
 
     /**
      * Gets the value of the actuate property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getActuate() {
         return actuate;
@@ -474,11 +475,11 @@ public class Position implements AbstractPosition {
 
     /**
      * Sets the value of the actuate property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setActuate(final String value) {
         this.actuate = value;
@@ -488,7 +489,7 @@ public class Position implements AbstractPosition {
      * Verify if this entry is identical to specified object.
      */
     @Override
-    public boolean equals(final Object object) {
+    public boolean equals(final Object object, final ComparisonMode mode) {
         if (object == this) {
             return true;
         }
@@ -536,7 +537,7 @@ public class Position implements AbstractPosition {
         hash = 59 * hash + (this.type != null ? this.type.hashCode() : 0);
         return hash;
     }
-    
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("[Position]").append("\n");

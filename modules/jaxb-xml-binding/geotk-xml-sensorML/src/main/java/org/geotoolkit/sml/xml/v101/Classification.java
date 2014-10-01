@@ -27,13 +27,14 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.sml.xml.AbstractClassification;
 import org.geotoolkit.sml.xml.AbstractClassifierList;
+import org.apache.sis.util.ComparisonMode;
 
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -68,8 +69,8 @@ import org.geotoolkit.sml.xml.AbstractClassifierList;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -77,7 +78,7 @@ import org.geotoolkit.sml.xml.AbstractClassifierList;
     "classifierList"
 })
 @XmlRootElement(name = "Classification")
-public class Classification implements AbstractClassification {
+public class Classification extends SensorObject implements AbstractClassification {
 
     @XmlElement(name = "ClassifierList")
     private ClassifierList classifierList;
@@ -109,7 +110,7 @@ public class Classification implements AbstractClassification {
     public Classification(final ClassifierList cl) {
         this.classifierList = cl;
     }
-    
+
     public Classification(final List<Classifier> cl) {
         this.classifierList = new ClassifierList(null, cl);
     }
@@ -129,14 +130,14 @@ public class Classification implements AbstractClassification {
             this.type         = cl.getType();
         }
     }
-    
+
     /**
      * Gets the value of the classifierList property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Classification.ClassifierList }
-     *     
+     *
      */
     public ClassifierList getClassifierList() {
         return classifierList;
@@ -144,11 +145,11 @@ public class Classification implements AbstractClassification {
 
     /**
      * Sets the value of the classifierList property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Classification.ClassifierList }
-     *     
+     *
      */
     public void setClassifierList(final ClassifierList value) {
         this.classifierList = value;
@@ -156,11 +157,11 @@ public class Classification implements AbstractClassification {
 
     /**
      * Gets the value of the remoteSchema property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getRemoteSchema() {
         return remoteSchema;
@@ -168,11 +169,11 @@ public class Classification implements AbstractClassification {
 
     /**
      * Sets the value of the remoteSchema property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRemoteSchema(final String value) {
         this.remoteSchema = value;
@@ -180,11 +181,11 @@ public class Classification implements AbstractClassification {
 
     /**
      * Gets the value of the type property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getType() {
         return type;
@@ -192,11 +193,11 @@ public class Classification implements AbstractClassification {
 
     /**
      * Sets the value of the type property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setType(final String value) {
         this.type = value;
@@ -204,11 +205,11 @@ public class Classification implements AbstractClassification {
 
     /**
      * Gets the value of the href property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getHref() {
         return href;
@@ -216,11 +217,11 @@ public class Classification implements AbstractClassification {
 
     /**
      * Sets the value of the href property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setHref(final String value) {
         this.href = value;
@@ -228,11 +229,11 @@ public class Classification implements AbstractClassification {
 
     /**
      * Gets the value of the role property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getRole() {
         return role;
@@ -240,11 +241,11 @@ public class Classification implements AbstractClassification {
 
     /**
      * Sets the value of the role property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRole(final String value) {
         this.role = value;
@@ -252,11 +253,11 @@ public class Classification implements AbstractClassification {
 
     /**
      * Gets the value of the arcrole property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getArcrole() {
         return arcrole;
@@ -264,11 +265,11 @@ public class Classification implements AbstractClassification {
 
     /**
      * Sets the value of the arcrole property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setArcrole(final String value) {
         this.arcrole = value;
@@ -276,11 +277,11 @@ public class Classification implements AbstractClassification {
 
     /**
      * Gets the value of the title property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getTitle() {
         return title;
@@ -288,11 +289,11 @@ public class Classification implements AbstractClassification {
 
     /**
      * Sets the value of the title property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setTitle(final String value) {
         this.title = value;
@@ -300,11 +301,11 @@ public class Classification implements AbstractClassification {
 
     /**
      * Gets the value of the show property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getShow() {
         return show;
@@ -312,11 +313,11 @@ public class Classification implements AbstractClassification {
 
     /**
      * Sets the value of the show property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setShow(final String value) {
         this.show = value;
@@ -324,11 +325,11 @@ public class Classification implements AbstractClassification {
 
     /**
      * Gets the value of the actuate property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getActuate() {
         return actuate;
@@ -336,11 +337,11 @@ public class Classification implements AbstractClassification {
 
     /**
      * Sets the value of the actuate property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setActuate(final String value) {
         this.actuate = value;
@@ -383,7 +384,7 @@ public class Classification implements AbstractClassification {
      * Verify if this entry is identical to specified object.
      */
     @Override
-    public boolean equals(final Object object) {
+    public boolean equals(final Object object, final ComparisonMode mode) {
         if (object == this) {
             return true;
         }

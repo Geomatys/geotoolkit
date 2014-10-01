@@ -35,9 +35,9 @@ import org.geotoolkit.sml.xml.AbstractOnlineResource;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -55,8 +55,8 @@ import org.geotoolkit.sml.xml.AbstractOnlineResource;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -68,7 +68,7 @@ import org.geotoolkit.sml.xml.AbstractOnlineResource;
     "onlineResource"
 })
 @XmlRootElement(name = "Document")
-public class Document implements AbstractDocument {
+public class Document extends SensorObject implements AbstractDocument {
 
     @XmlElement(namespace = "http://www.opengis.net/gml", required = true)
     private StringOrRefType description;
@@ -120,14 +120,14 @@ public class Document implements AbstractDocument {
         this.format      = format;
         this.onlineResource = onlineResource;
     }
-    
+
     /**
      * Gets the value of the description property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link StringOrRefType }
-     *     
+     *
      */
     public StringOrRefType getDescription() {
         return description;
@@ -135,11 +135,11 @@ public class Document implements AbstractDocument {
 
     /**
      * Sets the value of the description property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link StringOrRefType }
-     *     
+     *
      */
     public void setDescription(final StringOrRefType value) {
         this.description = value;
@@ -147,11 +147,11 @@ public class Document implements AbstractDocument {
 
     /**
      * Gets the value of the date property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getDate() {
         return date;
@@ -159,11 +159,11 @@ public class Document implements AbstractDocument {
 
     /**
      * Sets the value of the date property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setDate(final String value) {
         this.date = value;
@@ -171,11 +171,11 @@ public class Document implements AbstractDocument {
 
     /**
      * Person who is responsible for the document
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Contact }
-     *     
+     *
      */
     public Contact getContact() {
         return contact;
@@ -183,11 +183,11 @@ public class Document implements AbstractDocument {
 
     /**
      * Sets the value of the contact property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Contact }
-     *     
+     *
      */
     public void setContact(final Contact value) {
         this.contact = value;
@@ -195,11 +195,11 @@ public class Document implements AbstractDocument {
 
     /**
      * Gets the value of the format property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getFormat() {
         return format;
@@ -207,11 +207,11 @@ public class Document implements AbstractDocument {
 
     /**
      * Sets the value of the format property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setFormat(final String value) {
         this.format = value;
@@ -219,25 +219,25 @@ public class Document implements AbstractDocument {
 
     /**
      * Points to the actual document corresponding to that version Gets the value of the onlineResource property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the onlineResource property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getOnlineResource().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link OnlineResource }
-     * 
-     * 
+     *
+     *
      */
     public List<OnlineResource> getOnlineResource() {
         if (onlineResource == null) {
@@ -248,11 +248,11 @@ public class Document implements AbstractDocument {
 
     /**
      * Gets the value of the id property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getId() {
         return id;
@@ -260,11 +260,11 @@ public class Document implements AbstractDocument {
 
     /**
      * Sets the value of the id property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setId(final String value) {
         this.id = value;
@@ -272,11 +272,11 @@ public class Document implements AbstractDocument {
 
     /**
      * Gets the value of the version property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getVersion() {
         return version;
@@ -284,11 +284,11 @@ public class Document implements AbstractDocument {
 
     /**
      * Sets the value of the version property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setVersion(final String value) {
         this.version = value;

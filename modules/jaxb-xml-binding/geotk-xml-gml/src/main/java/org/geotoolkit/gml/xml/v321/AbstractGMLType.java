@@ -42,6 +42,7 @@ import org.apache.sis.util.ComparisonMode;
 import org.apache.sis.xml.IdentifierMap;
 import org.apache.sis.xml.IdentifierSpace;
 import org.opengis.metadata.Identifier;
+import org.geotoolkit.gml.GMLStandard;
 import org.apache.sis.xml.IdentifiedObject;
 
 
@@ -85,6 +86,10 @@ import org.apache.sis.xml.IdentifiedObject;
     DefinitionBaseType.class
 })
 public abstract class AbstractGMLType extends AbstractMetadata implements AbstractGML, Serializable, Entry, IdentifiedObject {
+    /**
+     * The value to be returned by {@link #getStandard()}.
+     */
+    private static final GMLStandard STANDARD = new GMLStandard("GML 3.2.1", AbstractGML.class.getPackage(), "v321", MetadataStandard.ISO_19111);
 
     private List<MetaDataPropertyType> metaDataProperty;
     private StringOrRefType description;
@@ -159,7 +164,7 @@ public abstract class AbstractGMLType extends AbstractMetadata implements Abstra
 
     @Override
     public MetadataStandard getStandard() {
-        return MetadataStandard.ISO_19111;
+        return STANDARD;
     }
 
     /**

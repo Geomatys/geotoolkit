@@ -31,6 +31,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.sml.xml.AbstractParameterList;
 import org.geotoolkit.swe.xml.DataComponentProperty;
 import org.geotoolkit.swe.xml.v101.DataComponentPropertyType;
+import org.apache.sis.util.ComparisonMode;
 
 /**
  * <p>Java class for anonymous complex type.
@@ -56,7 +57,7 @@ import org.geotoolkit.swe.xml.v101.DataComponentPropertyType;
 @XmlType(name = "", propOrder = {
     "parameter"
 })
-public class ParameterList implements AbstractParameterList {
+public class ParameterList extends SensorObject implements AbstractParameterList {
 
     @XmlElement(required = true)
     private List<DataComponentPropertyType> parameter;
@@ -123,7 +124,7 @@ public class ParameterList implements AbstractParameterList {
      * Verify if this entry is identical to specified object.
      */
     @Override
-    public boolean equals(final Object object) {
+    public boolean equals(final Object object, final ComparisonMode mode) {
         if (object == this) {
             return true;
         }

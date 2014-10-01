@@ -21,8 +21,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import org.apache.sis.internal.simple.SimpleCitation;
-import org.apache.sis.metadata.MetadataStandard;
 import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.gml.xml.EngineeringCRS;
 
@@ -31,12 +29,12 @@ import org.geotoolkit.gml.xml.EngineeringCRS;
  * A contextually local coordinate reference system; which can be divided into two broad categories:
  * - earth-fixed systems applied to engineering activities on or near the surface of the earth;
  * - CRSs on moving platforms such as road vehicles, vessels, aircraft, or spacecraft.
- * For further information, see OGC Abstract Specification Topic 2. 
- * 
+ * For further information, see OGC Abstract Specification Topic 2.
+ *
  * <p>Java class for EngineeringCRSType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="EngineeringCRSType">
  *   &lt;complexContent>
@@ -49,8 +47,8 @@ import org.geotoolkit.gml.xml.EngineeringCRS;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -77,7 +75,7 @@ public class EngineeringCRSType extends AbstractReferenceSystemType implements E
 
     /**
      * Gets the value of the usesCS property.
-     * 
+     *
      */
     @Override
     public CoordinateSystemRefType getUsesCS() {
@@ -86,7 +84,7 @@ public class EngineeringCRSType extends AbstractReferenceSystemType implements E
 
     /**
      * Sets the value of the usesCS property.
-     * 
+     *
      */
     public void setUsesCS(final CoordinateSystemRefType value) {
         this.usesCS = value;
@@ -94,7 +92,7 @@ public class EngineeringCRSType extends AbstractReferenceSystemType implements E
 
     /**
      * Gets the value of the usesEngineeringDatum property.
-     * 
+     *
     */
     @Override
     public EngineeringDatumRefType getUsesEngineeringDatum() {
@@ -103,7 +101,7 @@ public class EngineeringCRSType extends AbstractReferenceSystemType implements E
 
     /**
      * Sets the value of the usesEngineeringDatum property.
-     * 
+     *
      */
     public void setUsesEngineeringDatum(final EngineeringDatumRefType value) {
         this.usesEngineeringDatum = value;
@@ -143,9 +141,4 @@ public class EngineeringCRSType extends AbstractReferenceSystemType implements E
         }
         return sb.toString();
      }
-
-    @Override
-    public MetadataStandard getStandard() {
-        return new MetadataStandard(new SimpleCitation("GML"), Package.getPackage("org.geotoolkit.gml.xml"));
-    }
 }

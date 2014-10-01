@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.sml.xml.AbstractIdentifier;
+import org.apache.sis.util.ComparisonMode;
 
 /**
  * <p>Java class for anonymous complex type.
@@ -51,7 +52,7 @@ import org.geotoolkit.sml.xml.AbstractIdentifier;
 @XmlType(name = "", propOrder = {
     "term"
 })
-public class Identifier implements AbstractIdentifier {
+public class Identifier extends SensorObject implements AbstractIdentifier {
 
     @XmlElement(name = "Term", required = true)
     private Term term;
@@ -139,7 +140,7 @@ public class Identifier implements AbstractIdentifier {
      * Verify if this entry is identical to specified object.
      */
     @Override
-    public boolean equals(final Object object) {
+    public boolean equals(final Object object, final ComparisonMode mode) {
         if (object == this) {
             return true;
         }

@@ -26,9 +26,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for dataSourcesPropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="dataSourcesPropertyType">
  *   &lt;complexContent>
@@ -41,15 +41,15 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "dataSourcesPropertyType", propOrder = {
     "dataSourceList"
 })
-public class DataSourcesPropertyType {
+public class DataSourcesPropertyType extends SensorObject {
 
     @XmlElement(name = "DataSourceList")
     private AbstractListType dataSourceList;
@@ -76,11 +76,11 @@ public class DataSourcesPropertyType {
 
     /**
      * Gets the value of the dataSourceList property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link AbstractListType }
-     *     
+     *
      */
     public AbstractListType getDataSourceList() {
         return dataSourceList;
@@ -88,11 +88,11 @@ public class DataSourcesPropertyType {
 
     /**
      * Sets the value of the dataSourceList property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link AbstractListType }
-     *     
+     *
      */
     public void setDataSourceList(final AbstractListType value) {
         this.dataSourceList = value;
@@ -100,11 +100,11 @@ public class DataSourcesPropertyType {
 
     /**
      * Gets the value of the remoteSchema property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getRemoteSchema() {
         return remoteSchema;
@@ -112,11 +112,11 @@ public class DataSourcesPropertyType {
 
     /**
      * Sets the value of the remoteSchema property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRemoteSchema(final String value) {
         this.remoteSchema = value;
@@ -124,11 +124,11 @@ public class DataSourcesPropertyType {
 
     /**
      * Gets the value of the type property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getType() {
         return type;
@@ -136,11 +136,11 @@ public class DataSourcesPropertyType {
 
     /**
      * Sets the value of the type property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setType(final String value) {
         this.type = value;
@@ -148,11 +148,11 @@ public class DataSourcesPropertyType {
 
     /**
      * Gets the value of the href property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getHref() {
         return href;
@@ -160,11 +160,11 @@ public class DataSourcesPropertyType {
 
     /**
      * Sets the value of the href property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setHref(final String value) {
         this.href = value;
@@ -172,11 +172,11 @@ public class DataSourcesPropertyType {
 
     /**
      * Gets the value of the role property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getRole() {
         return role;
@@ -184,11 +184,11 @@ public class DataSourcesPropertyType {
 
     /**
      * Sets the value of the role property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRole(final String value) {
         this.role = value;
@@ -196,11 +196,11 @@ public class DataSourcesPropertyType {
 
     /**
      * Gets the value of the arcrole property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getArcrole() {
         return arcrole;
@@ -208,11 +208,11 @@ public class DataSourcesPropertyType {
 
     /**
      * Sets the value of the arcrole property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setArcrole(final String value) {
         this.arcrole = value;
@@ -220,11 +220,11 @@ public class DataSourcesPropertyType {
 
     /**
      * Gets the value of the title property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getTitle() {
         return title;
@@ -232,11 +232,11 @@ public class DataSourcesPropertyType {
 
     /**
      * Sets the value of the title property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setTitle(final String value) {
         this.title = value;
@@ -244,11 +244,11 @@ public class DataSourcesPropertyType {
 
     /**
      * Gets the value of the show property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getShow() {
         return show;
@@ -256,11 +256,11 @@ public class DataSourcesPropertyType {
 
     /**
      * Sets the value of the show property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setShow(final String value) {
         this.show = value;
@@ -268,11 +268,11 @@ public class DataSourcesPropertyType {
 
     /**
      * Gets the value of the actuate property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getActuate() {
         return actuate;
@@ -280,11 +280,11 @@ public class DataSourcesPropertyType {
 
     /**
      * Sets the value of the actuate property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setActuate(final String value) {
         this.actuate = value;

@@ -39,17 +39,18 @@ import org.apache.sis.xml.IdentifiedObject;
 import org.apache.sis.xml.IdentifierMap;
 import org.apache.sis.xml.IdentifierSpace;
 import org.opengis.metadata.Identifier;
+import org.geotoolkit.gml.GMLStandard;
 
 
 /**
- * All complexContent GML elements are directly or indirectly derived from this abstract supertype 
- * 	to establish a hierarchy of GML types that may be distinguished from other XML types by their ancestry. 
+ * All complexContent GML elements are directly or indirectly derived from this abstract supertype
+ * 	to establish a hierarchy of GML types that may be distinguished from other XML types by their ancestry.
  * 	Elements in this hierarchy may have an ID and are thus referenceable.
- * 
+ *
  * <p>Java class for AbstractGMLType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractGMLType">
  *   &lt;complexContent>
@@ -62,8 +63,8 @@ import org.opengis.metadata.Identifier;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -83,6 +84,10 @@ import org.opengis.metadata.Identifier;
     AbstractFeatureType.class
 })
 public abstract class AbstractGMLType extends AbstractMetadata implements AbstractGML, Serializable, Entry, IdentifiedObject  {
+    /**
+     * The value to be returned by {@link #getStandard()}.
+     */
+    public static final GMLStandard STANDARD = new GMLStandard("GML 3.1.1", AbstractGML.class.getPackage(), "v311", MetadataStandard.ISO_19111);
 
     //protected List<MetaDataPropertyType> metaDataProperty;
     private String description;
@@ -100,7 +105,7 @@ public abstract class AbstractGMLType extends AbstractMetadata implements Abstra
      */
     @XmlTransient
     protected Collection<Identifier> identifiers;
-    
+
     /**
      *  Empty constructor used by JAXB.
      */
@@ -113,7 +118,7 @@ public abstract class AbstractGMLType extends AbstractMetadata implements Abstra
         if (a != null) {
             this.description = a.getDescription();
             if (a.getDescriptionReference() != null) {
-                this.descriptionReference = new ReferenceType(a.getDescriptionReference()); 
+                this.descriptionReference = new ReferenceType(a.getDescriptionReference());
             }
             setId(a.getId());
             this.name = a.getName();
@@ -139,11 +144,11 @@ public abstract class AbstractGMLType extends AbstractMetadata implements Abstra
 
     @Override
     public MetadataStandard getStandard() {
-        return MetadataStandard.ISO_19111;
+        return STANDARD;
     }
-    
+
     /**
-     * Gets the value of the description property.    
+     * Gets the value of the description property.
      */
     @Override
     public String getDescription() {
@@ -151,7 +156,7 @@ public abstract class AbstractGMLType extends AbstractMetadata implements Abstra
     }
 
     /**
-     * Sets the value of the description property.    
+     * Sets the value of the description property.
      */
     @Override
     public void setDescription(final String value) {
@@ -159,7 +164,7 @@ public abstract class AbstractGMLType extends AbstractMetadata implements Abstra
     }
 
     /**
-     * Gets the value of the description reference property.    
+     * Gets the value of the description reference property.
      */
     @Override
     public ReferenceType getDescriptionReference() {
@@ -167,7 +172,7 @@ public abstract class AbstractGMLType extends AbstractMetadata implements Abstra
     }
 
     /**
-     * Sets the value of the description reference property.    
+     * Sets the value of the description reference property.
      */
     public void setDescription(final ReferenceType value) {
         this.descriptionReference = value;
@@ -191,11 +196,11 @@ public abstract class AbstractGMLType extends AbstractMetadata implements Abstra
 
     /**
      * Gets the value of the id property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getId() {
@@ -212,11 +217,11 @@ public abstract class AbstractGMLType extends AbstractMetadata implements Abstra
 
     /**
      * Sets the value of the id property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public void setId(final String value) {
@@ -297,7 +302,7 @@ public abstract class AbstractGMLType extends AbstractMetadata implements Abstra
         return hash;
     }
 
-    
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("[").append(this.getClass().getSimpleName()).append(']').append('\n');

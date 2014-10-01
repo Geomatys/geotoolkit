@@ -26,13 +26,14 @@ import org.geotoolkit.gml.xml.v311.TimeInstantType;
 import org.geotoolkit.gml.xml.v311.TimePeriodType;
 import org.geotoolkit.gml.xml.v311.TimePositionType;
 import org.geotoolkit.sml.xml.AbstractValidTime;
+import org.apache.sis.util.ComparisonMode;
 
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -45,8 +46,8 @@ import org.geotoolkit.sml.xml.AbstractValidTime;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -55,7 +56,7 @@ import org.geotoolkit.sml.xml.AbstractValidTime;
     "timePeriod"
 })
 @XmlRootElement(name = "ValidTime")
-public class ValidTime implements AbstractValidTime {
+public class ValidTime extends SensorObject implements AbstractValidTime {
 
     @XmlElement(name = "TimeInstant", namespace = "http://www.opengis.net/gml")
     private TimeInstantType timeInstant;
@@ -91,11 +92,11 @@ public class ValidTime implements AbstractValidTime {
 
     /**
      * Gets the value of the timeInstant property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link TimeInstantType }
-     *     
+     *
      */
     public TimeInstantType getTimeInstant() {
         return timeInstant;
@@ -103,11 +104,11 @@ public class ValidTime implements AbstractValidTime {
 
     /**
      * Sets the value of the timeInstant property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link TimeInstantType }
-     *     
+     *
      */
     public void setTimeInstant(final TimeInstantType value) {
         this.timeInstant = value;
@@ -115,11 +116,11 @@ public class ValidTime implements AbstractValidTime {
 
     /**
      * Gets the value of the timePeriod property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link TimePeriodType }
-     *     
+     *
      */
     public TimePeriodType getTimePeriod() {
         return timePeriod;
@@ -127,11 +128,11 @@ public class ValidTime implements AbstractValidTime {
 
     /**
      * Sets the value of the timePeriod property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link TimePeriodType }
-     *     
+     *
      */
     public void setTimePeriod(final TimePeriodType value) {
         this.timePeriod = value;
@@ -153,7 +154,7 @@ public class ValidTime implements AbstractValidTime {
      * Verify if this entry is identical to specified object.
      */
     @Override
-    public boolean equals(final Object object) {
+    public boolean equals(final Object object, final ComparisonMode mode) {
         if (object == this) {
             return true;
         }

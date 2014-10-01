@@ -28,9 +28,9 @@ import org.geotoolkit.sml.xml.AbstractLinkRef;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -84,8 +84,8 @@ import org.geotoolkit.sml.xml.AbstractLinkRef;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -97,7 +97,7 @@ import org.geotoolkit.sml.xml.AbstractLinkRef;
     "connection"
 })
 @XmlRootElement(name = "ArrayLink")
-public class ArrayLink implements AbstractArrayLink{
+public class ArrayLink extends SensorObject implements AbstractArrayLink{
 
     private LinkRef sourceArray;
     private List<LinkRef> destinationIndex;
@@ -134,10 +134,10 @@ public class ArrayLink implements AbstractArrayLink{
             }
         }
     }
-    
+
     /**
      * Gets the value of the sourceArray property.
-     * 
+     *
      */
     public LinkRef getSourceArray() {
         return sourceArray;
@@ -145,7 +145,7 @@ public class ArrayLink implements AbstractArrayLink{
 
     /**
      * Sets the value of the sourceArray property.
-     * 
+     *
      */
     public void setSourceArray(final LinkRef value) {
         this.sourceArray = value;
@@ -153,7 +153,7 @@ public class ArrayLink implements AbstractArrayLink{
 
     /**
      * Gets the value of the destinationIndex property.
-     * 
+     *
      */
     public List<LinkRef> getDestinationIndex() {
         if (destinationIndex == null) {
@@ -164,7 +164,7 @@ public class ArrayLink implements AbstractArrayLink{
 
     /**
      * Gets the value of the destinationArray property.
-     * 
+     *
      */
     public LinkRef getDestinationArray() {
         return destinationArray;
@@ -172,7 +172,7 @@ public class ArrayLink implements AbstractArrayLink{
 
     /**
      * Sets the value of the destinationArray property.
-     * 
+     *
      */
     public void setDestinationArray(final LinkRef value) {
         this.destinationArray = value;
@@ -180,7 +180,7 @@ public class ArrayLink implements AbstractArrayLink{
 
     /**
      * Gets the value of the sourceIndex property.
-     * 
+     *
      */
     public LinkRef getSourceIndex() {
         return sourceIndex;
@@ -188,7 +188,7 @@ public class ArrayLink implements AbstractArrayLink{
 
     /**
      * Sets the value of the sourceIndex property.
-     * 
+     *
      */
     public void setSourceIndex(final LinkRef value) {
         this.sourceIndex = value;
@@ -196,7 +196,7 @@ public class ArrayLink implements AbstractArrayLink{
 
     /**
      * Gets the value of the connection property.
-     * 
+     *
       */
     public List<Connection> getConnection() {
         if (connection == null) {

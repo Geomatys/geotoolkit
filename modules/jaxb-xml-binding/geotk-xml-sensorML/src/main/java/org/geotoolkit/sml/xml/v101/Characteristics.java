@@ -34,14 +34,15 @@ import org.geotoolkit.swe.xml.SimpleDataRecord;
 import org.geotoolkit.swe.xml.v101.AbstractDataRecordType;
 import org.geotoolkit.swe.xml.v101.DataRecordType;
 import org.geotoolkit.swe.xml.v101.SimpleDataRecordType;
+import org.apache.sis.util.ComparisonMode;
 
 
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -55,8 +56,8 @@ import org.geotoolkit.swe.xml.v101.SimpleDataRecordType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -64,7 +65,7 @@ import org.geotoolkit.swe.xml.v101.SimpleDataRecordType;
     "abstractDataRecord"
 })
 @XmlRootElement(name = "Characteristics")
-public class Characteristics implements AbstractCharacteristics {
+public class Characteristics extends SensorObject implements AbstractCharacteristics {
 
     @XmlElementRef(name = "AbstractDataRecord", namespace = "http://www.opengis.net/swe/1.0.1", type = JAXBElement.class)
     private JAXBElement<? extends AbstractDataRecordType> abstractDataRecord;
@@ -101,7 +102,7 @@ public class Characteristics implements AbstractCharacteristics {
         org.geotoolkit.swe.xml.v101.ObjectFactory facto = new org.geotoolkit.swe.xml.v101.ObjectFactory();
         this.abstractDataRecord = facto.createDataRecord(dataRecord);
     }
-    
+
     public Characteristics(final AbstractCharacteristics capa) {
         if (capa != null) {
             if (capa.getDataRecord() != null) {
@@ -129,7 +130,7 @@ public class Characteristics implements AbstractCharacteristics {
 
     /**
      * Gets the value of the abstractDataRecord property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link AbstractDataRecordType }{@code >}
@@ -142,7 +143,7 @@ public class Characteristics implements AbstractCharacteristics {
      *     {@link JAXBElement }{@code <}{@link ConditionalValueType }{@code >}
      *     {@link JAXBElement }{@code <}{@link SimpleDataRecordType }{@code >}
      *     {@link JAXBElement }{@code <}{@link DataRecordType }{@code >}
-     *     
+     *
      */
     public JAXBElement<? extends AbstractDataRecordType> getAbstractDataRecord() {
         return abstractDataRecord;
@@ -154,10 +155,10 @@ public class Characteristics implements AbstractCharacteristics {
         }
         return null;
     }
-    
+
     /**
      * Sets the value of the abstractDataRecord property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link AbstractDataRecordType }{@code >}
@@ -170,7 +171,7 @@ public class Characteristics implements AbstractCharacteristics {
      *     {@link JAXBElement }{@code <}{@link ConditionalValueType }{@code >}
      *     {@link JAXBElement }{@code <}{@link SimpleDataRecordType }{@code >}
      *     {@link JAXBElement }{@code <}{@link DataRecordType }{@code >}
-     *     
+     *
      */
     public void setAbstractDataRecord(final JAXBElement<? extends AbstractDataRecordType> value) {
         this.abstractDataRecord = ((JAXBElement<? extends AbstractDataRecordType> ) value);
@@ -178,11 +179,11 @@ public class Characteristics implements AbstractCharacteristics {
 
     /**
      * Gets the value of the name property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getName() {
         return name;
@@ -190,11 +191,11 @@ public class Characteristics implements AbstractCharacteristics {
 
     /**
      * Sets the value of the name property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setName(final String value) {
         this.name = value;
@@ -202,11 +203,11 @@ public class Characteristics implements AbstractCharacteristics {
 
     /**
      * Gets the value of the remoteSchema property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getRemoteSchema() {
         return remoteSchema;
@@ -214,11 +215,11 @@ public class Characteristics implements AbstractCharacteristics {
 
     /**
      * Sets the value of the remoteSchema property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRemoteSchema(final String value) {
         this.remoteSchema = value;
@@ -226,11 +227,11 @@ public class Characteristics implements AbstractCharacteristics {
 
     /**
      * Gets the value of the type property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getType() {
         return type;
@@ -238,11 +239,11 @@ public class Characteristics implements AbstractCharacteristics {
 
     /**
      * Sets the value of the type property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setType(final String value) {
         this.type = value;
@@ -250,11 +251,11 @@ public class Characteristics implements AbstractCharacteristics {
 
     /**
      * Gets the value of the href property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getHref() {
         return href;
@@ -262,11 +263,11 @@ public class Characteristics implements AbstractCharacteristics {
 
     /**
      * Sets the value of the href property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setHref(final String value) {
         this.href = value;
@@ -274,11 +275,11 @@ public class Characteristics implements AbstractCharacteristics {
 
     /**
      * Gets the value of the role property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getRole() {
         return role;
@@ -286,11 +287,11 @@ public class Characteristics implements AbstractCharacteristics {
 
     /**
      * Sets the value of the role property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRole(final String value) {
         this.role = value;
@@ -298,11 +299,11 @@ public class Characteristics implements AbstractCharacteristics {
 
     /**
      * Gets the value of the arcrole property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getArcrole() {
         return arcrole;
@@ -310,11 +311,11 @@ public class Characteristics implements AbstractCharacteristics {
 
     /**
      * Sets the value of the arcrole property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setArcrole(final String value) {
         this.arcrole = value;
@@ -322,11 +323,11 @@ public class Characteristics implements AbstractCharacteristics {
 
     /**
      * Gets the value of the title property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getTitle() {
         return title;
@@ -334,11 +335,11 @@ public class Characteristics implements AbstractCharacteristics {
 
     /**
      * Sets the value of the title property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setTitle(final String value) {
         this.title = value;
@@ -346,11 +347,11 @@ public class Characteristics implements AbstractCharacteristics {
 
     /**
      * Gets the value of the show property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getShow() {
         return show;
@@ -358,11 +359,11 @@ public class Characteristics implements AbstractCharacteristics {
 
     /**
      * Sets the value of the show property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setShow(final String value) {
         this.show = value;
@@ -370,11 +371,11 @@ public class Characteristics implements AbstractCharacteristics {
 
     /**
      * Gets the value of the actuate property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getActuate() {
         return actuate;
@@ -382,11 +383,11 @@ public class Characteristics implements AbstractCharacteristics {
 
     /**
      * Sets the value of the actuate property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setActuate(final String value) {
         this.actuate = value;
@@ -429,7 +430,7 @@ public class Characteristics implements AbstractCharacteristics {
      * Verify if this entry is identical to specified object.
      */
     @Override
-    public boolean equals(final Object object) {
+    public boolean equals(final Object object, final ComparisonMode mode) {
         if (object == this) {
             return true;
         }
@@ -442,7 +443,7 @@ public class Characteristics implements AbstractCharacteristics {
             } else if (this.abstractDataRecord == null && that.abstractDataRecord == null) {
                 record = true;
             }
-            
+
             return Objects.equals(this.actuate,      that.actuate)       &&
                    Objects.equals(this.arcrole,      that.arcrole)       &&
                    Objects.equals(this.href,         that.href)          &&

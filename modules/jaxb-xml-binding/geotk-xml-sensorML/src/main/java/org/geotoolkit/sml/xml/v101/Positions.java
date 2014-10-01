@@ -26,12 +26,13 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.sml.xml.AbstractPositions;
+import org.apache.sis.util.ComparisonMode;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -56,8 +57,8 @@ import org.geotoolkit.sml.xml.AbstractPositions;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -65,7 +66,7 @@ import org.geotoolkit.sml.xml.AbstractPositions;
     "positionList"
 })
 @XmlRootElement(name = "Positions")
-public class Positions implements AbstractPositions {
+public class Positions extends SensorObject implements AbstractPositions {
 
     @XmlElement(name = "PositionList")
     private PositionList positionList;
@@ -101,7 +102,7 @@ public class Positions implements AbstractPositions {
     public Positions(final String id , final List<Position> position) {
         this.positionList = new PositionList(id, position);
     }
-    
+
     public Positions(final AbstractPositions positions) {
         if (positions != null) {
             this.actuate      = positions.getActuate();
@@ -120,11 +121,11 @@ public class Positions implements AbstractPositions {
 
     /**
      * Gets the value of the positionList property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Positions.PositionList }
-     *     
+     *
      */
     public PositionList getPositionList() {
         return positionList;
@@ -132,11 +133,11 @@ public class Positions implements AbstractPositions {
 
     /**
      * Sets the value of the positionList property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Positions.PositionList }
-     *     
+     *
      */
     public void setPositionList(final PositionList value) {
         this.positionList = value;
@@ -144,11 +145,11 @@ public class Positions implements AbstractPositions {
 
     /**
      * Gets the value of the remoteSchema property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getRemoteSchema() {
         return remoteSchema;
@@ -156,11 +157,11 @@ public class Positions implements AbstractPositions {
 
     /**
      * Sets the value of the remoteSchema property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRemoteSchema(final String value) {
         this.remoteSchema = value;
@@ -168,11 +169,11 @@ public class Positions implements AbstractPositions {
 
     /**
      * Gets the value of the type property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getType() {
         return type;
@@ -180,11 +181,11 @@ public class Positions implements AbstractPositions {
 
     /**
      * Sets the value of the type property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setType(final String value) {
         this.type = value;
@@ -192,11 +193,11 @@ public class Positions implements AbstractPositions {
 
     /**
      * Gets the value of the href property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getHref() {
         return href;
@@ -204,11 +205,11 @@ public class Positions implements AbstractPositions {
 
     /**
      * Sets the value of the href property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setHref(final String value) {
         this.href = value;
@@ -216,11 +217,11 @@ public class Positions implements AbstractPositions {
 
     /**
      * Gets the value of the role property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getRole() {
         return role;
@@ -228,11 +229,11 @@ public class Positions implements AbstractPositions {
 
     /**
      * Sets the value of the role property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRole(final String value) {
         this.role = value;
@@ -240,11 +241,11 @@ public class Positions implements AbstractPositions {
 
     /**
      * Gets the value of the arcrole property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getArcrole() {
         return arcrole;
@@ -252,11 +253,11 @@ public class Positions implements AbstractPositions {
 
     /**
      * Sets the value of the arcrole property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setArcrole(final String value) {
         this.arcrole = value;
@@ -264,11 +265,11 @@ public class Positions implements AbstractPositions {
 
     /**
      * Gets the value of the title property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getTitle() {
         return title;
@@ -276,11 +277,11 @@ public class Positions implements AbstractPositions {
 
     /**
      * Sets the value of the title property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setTitle(final String value) {
         this.title = value;
@@ -288,11 +289,11 @@ public class Positions implements AbstractPositions {
 
     /**
      * Gets the value of the show property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getShow() {
         return show;
@@ -300,11 +301,11 @@ public class Positions implements AbstractPositions {
 
     /**
      * Sets the value of the show property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setShow(final String value) {
         this.show = value;
@@ -312,11 +313,11 @@ public class Positions implements AbstractPositions {
 
     /**
      * Gets the value of the actuate property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getActuate() {
         return actuate;
@@ -324,16 +325,16 @@ public class Positions implements AbstractPositions {
 
     /**
      * Sets the value of the actuate property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setActuate(final String value) {
         this.actuate = value;
     }
-    
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("[Positions]").append("\n");
@@ -371,14 +372,14 @@ public class Positions implements AbstractPositions {
      * Verify if this entry is identical to specified object.
      */
     @Override
-    public boolean equals(final Object object) {
+    public boolean equals(final Object object, final ComparisonMode mode) {
         if (object == this) {
             return true;
         }
 
         if (object instanceof Positions) {
             final Positions that = (Positions) object;
-            
+
             return Objects.equals(this.actuate,      that.actuate)       &&
                    Objects.equals(this.arcrole,      that.arcrole)       &&
                    Objects.equals(this.href,         that.href)          &&

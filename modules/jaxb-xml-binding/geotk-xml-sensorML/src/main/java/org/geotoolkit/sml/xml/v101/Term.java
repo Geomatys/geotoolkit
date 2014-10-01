@@ -29,6 +29,7 @@ import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.sml.xml.AbstractTerm;
 import org.geotoolkit.swe.xml.v101.CodeSpacePropertyType;
+import org.apache.sis.util.ComparisonMode;
 
 
 /**
@@ -59,7 +60,7 @@ import org.geotoolkit.swe.xml.v101.CodeSpacePropertyType;
     "value"
 })
 @XmlRootElement(name = "Term")
-public class Term implements AbstractTerm {
+public class Term extends SensorObject implements AbstractTerm {
 
     private CodeSpacePropertyType codeSpace;
     @XmlElement(required = true)
@@ -212,7 +213,7 @@ public class Term implements AbstractTerm {
      * Verify if this entry is identical to specified object.
      */
     @Override
-    public boolean equals(final Object object) {
+    public boolean equals(final Object object, final ComparisonMode mode) {
         if (object == this) {
             return true;
         }

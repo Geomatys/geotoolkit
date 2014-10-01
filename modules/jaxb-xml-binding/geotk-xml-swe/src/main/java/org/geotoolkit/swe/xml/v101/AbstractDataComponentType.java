@@ -22,9 +22,11 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.gml.GMLStandard;
 import org.geotoolkit.gml.xml.v311.AbstractGMLType;
 import org.geotoolkit.swe.xml.AbstractDataComponent;
-
+import org.geotoolkit.swe.xml.Position;
+import org.apache.sis.metadata.MetadataStandard;
 import org.apache.sis.util.ComparisonMode;
 
 /**
@@ -33,22 +35,26 @@ import org.apache.sis.util.ComparisonMode;
  * @author Guilhem Legal
  * @module pending
  */
-@XmlSeeAlso({AbstractDataRecordType.class,AbstractDataArrayType.class, TimeType.class, BooleanType.class, 
-             QuantityRange.class, QuantityType.class, Text.class, Count.class, Category.class, TimeRange.class, 
+@XmlSeeAlso({AbstractDataRecordType.class,AbstractDataArrayType.class, TimeType.class, BooleanType.class,
+             QuantityRange.class, QuantityType.class, Text.class, Count.class, Category.class, TimeRange.class,
              CountRange.class, ObservableProperty.class})
 @XmlType(name="AbstractDataComponent")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class AbstractDataComponentType extends AbstractGMLType implements AbstractDataComponent {
-    
+    /**
+     * The value to be returned by {@link #getStandard()}.
+     */
+    public static final GMLStandard STANDARD = new GMLStandard("SWE 1.0.1", Position.class.getPackage(), "v101", AbstractGMLType.STANDARD);
+
     @XmlAttribute
     private Boolean fixed;
-    
+
     /**
      * definition of the record.
      */
     @XmlAttribute
     private String definition;
-    
+
     /**
      * Constructor used by jaxb.
      */
@@ -67,7 +73,7 @@ public class AbstractDataComponentType extends AbstractGMLType implements Abstra
             this.definition = definition;
         }
     }
-    
+
     /**
      * a simple constructor used by the sub classes to initialize l'Type.
      */
@@ -77,6 +83,11 @@ public class AbstractDataComponentType extends AbstractGMLType implements Abstra
             this.definition = definition;
         }
         this.fixed      = fixed;
+    }
+
+    @Override
+    public MetadataStandard getStandard() {
+        return STANDARD;
     }
 
     /**
@@ -97,7 +108,7 @@ public class AbstractDataComponentType extends AbstractGMLType implements Abstra
     public String getDefinition() {
         return definition;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -112,7 +123,7 @@ public class AbstractDataComponentType extends AbstractGMLType implements Abstra
     public void setDefinition(final String definition) {
         this.definition = definition;
     }
-    
+
     /**
      * Verify that this entry is identical to the specified object.
      */
@@ -138,8 +149,8 @@ public class AbstractDataComponentType extends AbstractGMLType implements Abstra
         return hash;
     }
 
-    
-    
+
+
     @Override
     public String toString() {
         final StringBuilder s = new StringBuilder(super.toString());

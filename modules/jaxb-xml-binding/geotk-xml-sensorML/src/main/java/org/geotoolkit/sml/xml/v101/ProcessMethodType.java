@@ -56,15 +56,16 @@ import org.geotoolkit.sml.xml.AbstractSchematron;
 import org.geotoolkit.sml.xml.AbstractSourceRef;
 import org.geotoolkit.sml.xml.AbstractValidTime;
 import org.geotoolkit.swe.xml.v101.DataRecordType;
+import org.apache.sis.metadata.MetadataStandard;
 
 
 /**
  * Complex Type for process methods definition
- * 
+ *
  * <p>Java class for ProcessMethodType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ProcessMethodType">
  *   &lt;complexContent>
@@ -176,8 +177,8 @@ import org.geotoolkit.swe.xml.v101.DataRecordType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -300,7 +301,12 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
             }
         }
     }
-    
+
+    @Override
+    public MetadataStandard getStandard() {
+        return SensorMLStandard.COMPONENT;
+    }
+
     /**
      * Gets the value of the keywords property.
      */
@@ -331,10 +337,10 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
             this.keywords.add(keywords);
         }
     }
-    
+
     /**
      * Gets the value of the identification property.
-     * 
+     *
      */
     public List<Identification> getIdentification() {
         if (identification == null) {
@@ -377,7 +383,7 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
         }
     }
 
-    
+
     /**
      * Gets the value of the classification property.
      */
@@ -421,14 +427,14 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
             this.classification.add(new Classification(classification));
         }
     }
-    
+
     /**
      * Gets the value of the validTime property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ValidTime }
-     *     
+     *
      */
     public ValidTime getValidTime() {
         return validTime;
@@ -457,11 +463,11 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
     /**
      * Gets the value of the securityConstraint property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link SecurityConstraint }
-     *     
+     *
      */
     public SecurityConstraint getSecurityConstraint() {
         return securityConstraint;
@@ -469,11 +475,11 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
     /**
      * Sets the value of the securityConstraint property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link SecurityConstraint }
-     *     
+     *
      */
     public void setSecurityConstraint(final SecurityConstraint value) {
         this.securityConstraint = value;
@@ -610,7 +616,7 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
     public void setCapabilities(final List<Capabilities> capabilities) {
         this.capabilities = capabilities;
     }
-    
+
     /**
      * Gets the value of the contact property.
      */
@@ -654,7 +660,7 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
     public void setContact(final List<Contact> contact) {
         this.contact = contact;
     }
-    
+
     /**
      * Gets the value of the documentation property.
      */
@@ -698,7 +704,7 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
     public void setDocumentation(final List<Documentation> documentation) {
         this.documentation = documentation;
     }
-    
+
     /**
      * Gets the value of the history property.
      */
@@ -727,14 +733,14 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
             this.history.add(history);
         }
     }
-    
+
     /**
      * Gets the value of the rules property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ProcessMethodType.Rules }
-     *     
+     *
      */
     public ProcessMethodType.Rules getRules() {
         return rules;
@@ -742,11 +748,11 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
     /**
      * Sets the value of the rules property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ProcessMethodType.Rules }
-     *     
+     *
      */
     public void setRules(final ProcessMethodType.Rules value) {
         this.rules = value;
@@ -754,11 +760,11 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
     /**
      * Gets the value of the algorithm property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ProcessMethodType.Algorithm }
-     *     
+     *
      */
     public ProcessMethodType.Algorithm getAlgorithm() {
         return algorithm;
@@ -766,11 +772,11 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
     /**
      * Sets the value of the algorithm property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ProcessMethodType.Algorithm }
-     *     
+     *
      */
     public void setAlgorithm(final ProcessMethodType.Algorithm value) {
         this.algorithm = value;
@@ -780,8 +786,8 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
      * Gets the value of the implementation property.
      * Objects of the following type(s) are allowed in the list
      * {@link ProcessMethodType.Implementation }
-     * 
-     * 
+     *
+     *
      */
     public List<ProcessMethodType.Implementation> getImplementation() {
         if (implementation == null) {
@@ -793,9 +799,9 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -829,8 +835,8 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -850,14 +856,14 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
                 this.algorithmDefinition = new AlgorithmDefinition(algo.getAlgorithmDefinition());
             }
         }
-        
+
         /**
          * Gets the value of the algorithmDefinition property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link ProcessMethodType.Algorithm.AlgorithmDefinition }
-         *     
+         *
          */
         public ProcessMethodType.Algorithm.AlgorithmDefinition getAlgorithmDefinition() {
             return algorithmDefinition;
@@ -865,11 +871,11 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
         /**
          * Sets the value of the algorithmDefinition property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link ProcessMethodType.Algorithm.AlgorithmDefinition }
-         *     
+         *
          */
         public void setAlgorithmDefinition(final ProcessMethodType.Algorithm.AlgorithmDefinition value) {
             this.algorithmDefinition = value;
@@ -878,9 +884,9 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
         /**
          * <p>Java class for anonymous complex type.
-         * 
+         *
          * <p>The following schema fragment specifies the expected content contained within this class.
-         * 
+         *
          * <pre>
          * &lt;complexType>
          *   &lt;complexContent>
@@ -904,8 +910,8 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
          *   &lt;/complexContent>
          * &lt;/complexType>
          * </pre>
-         * 
-         * 
+         *
+         *
          */
         @XmlAccessorType(XmlAccessType.FIELD)
         @XmlType(name = "", propOrder = {
@@ -930,14 +936,14 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
                     }
                 }
             }
-            
+
             /**
              * Textual description of the algorithm
-             * 
+             *
              * @return
              *     possible object is
              *     {@link StringOrRefType }
-             *     
+             *
              */
             public StringOrRefType getDescription() {
                 return description;
@@ -945,11 +951,11 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
             /**
              * Sets the value of the description property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link StringOrRefType }
-             *     
+             *
              */
             public void setDescription(final StringOrRefType value) {
                 this.description = value;
@@ -957,11 +963,11 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
             /**
              * Gets the value of the mathML property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link ProcessMethodType.Algorithm.AlgorithmDefinition.MathML }
-             *     
+             *
              */
             public ProcessMethodType.Algorithm.AlgorithmDefinition.MathML getMathML() {
                 return mathML;
@@ -969,11 +975,11 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
             /**
              * Sets the value of the mathML property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link ProcessMethodType.Algorithm.AlgorithmDefinition.MathML }
-             *     
+             *
              */
             public void setMathML(final ProcessMethodType.Algorithm.AlgorithmDefinition.MathML value) {
                 this.mathML = value;
@@ -982,9 +988,9 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
             /**
              * <p>Java class for anonymous complex type.
-             * 
+             *
              * <p>The following schema fragment specifies the expected content contained within this class.
-             * 
+             *
              * <pre>
              * &lt;complexType>
              *   &lt;complexContent>
@@ -997,8 +1003,8 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
              *   &lt;/complexContent>
              * &lt;/complexType>
              * </pre>
-             * 
-             * 
+             *
+             *
              */
             @XmlAccessorType(XmlAccessType.FIELD)
             @XmlType(name = "", propOrder = {
@@ -1049,12 +1055,12 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
                 /**
                  * Gets the value of the any property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link Element }
                  *     {@link Object }
-                 *     
+                 *
                  */
                 public Object getAny() {
                     return any;
@@ -1062,12 +1068,12 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
                 /**
                  * Sets the value of the any property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link Element }
                  *     {@link Object }
-                 *     
+                 *
                  */
                 public void setAny(final Object value) {
                     this.any = value;
@@ -1076,14 +1082,14 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
                 public List<String> getNilReason() {
                     return new ArrayList<String>();
                 }
-                
+
                 /**
                  * Gets the value of the remoteSchema property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getRemoteSchema() {
                     return remoteSchema;
@@ -1091,11 +1097,11 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
                 /**
                  * Sets the value of the remoteSchema property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setRemoteSchema(final String value) {
                     this.remoteSchema = value;
@@ -1103,11 +1109,11 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
                 /**
                  * Gets the value of the type property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getType() {
                     return type;
@@ -1115,11 +1121,11 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
                 /**
                  * Sets the value of the type property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setType(final String value) {
                     this.type = value;
@@ -1127,11 +1133,11 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
                 /**
                  * Gets the value of the href property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getHref() {
                     return href;
@@ -1139,11 +1145,11 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
                 /**
                  * Sets the value of the href property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setHref(final String value) {
                     this.href = value;
@@ -1151,11 +1157,11 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
                 /**
                  * Gets the value of the role property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getRole() {
                     return role;
@@ -1163,11 +1169,11 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
                 /**
                  * Sets the value of the role property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setRole(final String value) {
                     this.role = value;
@@ -1175,11 +1181,11 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
                 /**
                  * Gets the value of the arcrole property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getArcrole() {
                     return arcrole;
@@ -1187,11 +1193,11 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
                 /**
                  * Sets the value of the arcrole property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setArcrole(final String value) {
                     this.arcrole = value;
@@ -1199,11 +1205,11 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
                 /**
                  * Gets the value of the title property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getTitle() {
                     return title;
@@ -1211,11 +1217,11 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
                 /**
                  * Sets the value of the title property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setTitle(final String value) {
                     this.title = value;
@@ -1223,11 +1229,11 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
                 /**
                  * Gets the value of the show property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getShow() {
                     return show;
@@ -1235,11 +1241,11 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
                 /**
                  * Sets the value of the show property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setShow(final String value) {
                     this.show = value;
@@ -1247,11 +1253,11 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
                 /**
                  * Gets the value of the actuate property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getActuate() {
                     return actuate;
@@ -1259,11 +1265,11 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
                 /**
                  * Sets the value of the actuate property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setActuate(final String value) {
                     this.actuate = value;
@@ -1278,9 +1284,9 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -1326,8 +1332,8 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -1387,14 +1393,14 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
         public List<String> getNilReason() {
             return new ArrayList<String>();
         }
-        
+
         /**
          * Gets the value of the processChain property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link ProcessChainType }
-         *     
+         *
          */
         public ProcessChainType getProcessChain() {
             return processChain;
@@ -1402,11 +1408,11 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
         /**
          * Sets the value of the processChain property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link ProcessChainType }
-         *     
+         *
          */
         public void setProcessChain(final ProcessChainType value) {
             this.processChain = value;
@@ -1414,11 +1420,11 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
         /**
          * Gets the value of the implementationCode property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link ProcessMethodType.Implementation.ImplementationCode }
-         *     
+         *
          */
         public ProcessMethodType.Implementation.ImplementationCode getImplementationCode() {
             return implementationCode;
@@ -1426,11 +1432,11 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
         /**
          * Sets the value of the implementationCode property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link ProcessMethodType.Implementation.ImplementationCode }
-         *     
+         *
          */
         public void setImplementationCode(final ProcessMethodType.Implementation.ImplementationCode value) {
             this.implementationCode = value;
@@ -1438,11 +1444,11 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
         /**
          * Gets the value of the remoteSchema property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getRemoteSchema() {
             return remoteSchema;
@@ -1450,11 +1456,11 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
         /**
          * Sets the value of the remoteSchema property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setRemoteSchema(final String value) {
             this.remoteSchema = value;
@@ -1462,11 +1468,11 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
         /**
          * Gets the value of the type property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getType() {
             return type;
@@ -1474,11 +1480,11 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
         /**
          * Sets the value of the type property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setType(final String value) {
             this.type = value;
@@ -1486,11 +1492,11 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
         /**
          * Gets the value of the href property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getHref() {
             return href;
@@ -1498,11 +1504,11 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
         /**
          * Sets the value of the href property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setHref(final String value) {
             this.href = value;
@@ -1510,11 +1516,11 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
         /**
          * Gets the value of the role property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getRole() {
             return role;
@@ -1522,11 +1528,11 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
         /**
          * Sets the value of the role property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setRole(final String value) {
             this.role = value;
@@ -1534,11 +1540,11 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
         /**
          * Gets the value of the arcrole property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getArcrole() {
             return arcrole;
@@ -1546,11 +1552,11 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
         /**
          * Sets the value of the arcrole property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setArcrole(final String value) {
             this.arcrole = value;
@@ -1558,11 +1564,11 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
         /**
          * Gets the value of the title property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getTitle() {
             return title;
@@ -1570,11 +1576,11 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
         /**
          * Sets the value of the title property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setTitle(final String value) {
             this.title = value;
@@ -1582,11 +1588,11 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
         /**
          * Gets the value of the show property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getShow() {
             return show;
@@ -1594,11 +1600,11 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
         /**
          * Sets the value of the show property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setShow(final String value) {
             this.show = value;
@@ -1606,11 +1612,11 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
         /**
          * Gets the value of the actuate property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getActuate() {
             return actuate;
@@ -1618,11 +1624,11 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
         /**
          * Sets the value of the actuate property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setActuate(final String value) {
             this.actuate = value;
@@ -1631,9 +1637,9 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
         /**
          * <p>Java class for anonymous complex type.
-         * 
+         *
          * <p>The following schema fragment specifies the expected content contained within this class.
-         * 
+         *
          * <pre>
          * &lt;complexType>
          *   &lt;complexContent>
@@ -1667,8 +1673,8 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
          *   &lt;/complexContent>
          * &lt;/complexType>
          * </pre>
-         * 
-         * 
+         *
+         *
          */
         @XmlAccessorType(XmlAccessType.FIELD)
         @XmlType(name = "", propOrder = {
@@ -1789,14 +1795,14 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
                     }
                 }
             }
-            
+
             /**
              * Textual description of the algorithm
-             * 
+             *
              * @return
              *     possible object is
              *     {@link StringOrRefType }
-             *     
+             *
              */
             public StringOrRefType getDescription() {
                 return description;
@@ -1804,11 +1810,11 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
             /**
              * Sets the value of the description property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link StringOrRefType }
-             *     
+             *
              */
             public void setDescription(final StringOrRefType value) {
                 this.description = value;
@@ -1816,25 +1822,25 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
             /**
              * Gets the value of the keywords property.
-             * 
+             *
              * <p>
              * This accessor method returns a reference to the live list,
              * not a snapshot. Therefore any modification you make to the
              * returned list will be present inside the JAXB object.
              * This is why there is not a <CODE>set</CODE> method for the keywords property.
-             * 
+             *
              * <p>
              * For example, to add a new item, do as follows:
              * <pre>
              *    getKeywords().add(newItem);
              * </pre>
-             * 
-             * 
+             *
+             *
              * <p>
              * Objects of the following type(s) are allowed in the list
              * {@link Keywords }
-             * 
-             * 
+             *
+             *
              */
             public List<Keywords> getKeywords() {
                 if (keywords == null) {
@@ -1845,25 +1851,25 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
             /**
              * Gets the value of the identification property.
-             * 
+             *
              * <p>
              * This accessor method returns a reference to the live list,
              * not a snapshot. Therefore any modification you make to the
              * returned list will be present inside the JAXB object.
              * This is why there is not a <CODE>set</CODE> method for the identification property.
-             * 
+             *
              * <p>
              * For example, to add a new item, do as follows:
              * <pre>
              *    getIdentification().add(newItem);
              * </pre>
-             * 
-             * 
+             *
+             *
              * <p>
              * Objects of the following type(s) are allowed in the list
              * {@link Identification }
-             * 
-             * 
+             *
+             *
              */
             public List<Identification> getIdentification() {
                 if (identification == null) {
@@ -1874,25 +1880,25 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
             /**
              * Gets the value of the classification property.
-             * 
+             *
              * <p>
              * This accessor method returns a reference to the live list,
              * not a snapshot. Therefore any modification you make to the
              * returned list will be present inside the JAXB object.
              * This is why there is not a <CODE>set</CODE> method for the classification property.
-             * 
+             *
              * <p>
              * For example, to add a new item, do as follows:
              * <pre>
              *    getClassification().add(newItem);
              * </pre>
-             * 
-             * 
+             *
+             *
              * <p>
              * Objects of the following type(s) are allowed in the list
              * {@link Classification }
-             * 
-             * 
+             *
+             *
              */
             public List<Classification> getClassification() {
                 if (classification == null) {
@@ -1903,11 +1909,11 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
             /**
              * Gets the value of the validTime property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link ValidTime }
-             *     
+             *
              */
             public ValidTime getValidTime() {
                 return validTime;
@@ -1915,11 +1921,11 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
             /**
              * Sets the value of the validTime property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link ValidTime }
-             *     
+             *
              */
             public void setValidTime(final ValidTime value) {
                 this.validTime = value;
@@ -1927,11 +1933,11 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
             /**
              * Gets the value of the securityConstraint property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link SecurityConstraint }
-             *     
+             *
              */
             public SecurityConstraint getSecurityConstraint() {
                 return securityConstraint;
@@ -1939,11 +1945,11 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
             /**
              * Sets the value of the securityConstraint property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link SecurityConstraint }
-             *     
+             *
              */
             public void setSecurityConstraint(final SecurityConstraint value) {
                 this.securityConstraint = value;
@@ -1951,25 +1957,25 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
             /**
              * Gets the value of the legalConstraint property.
-             * 
+             *
              * <p>
              * This accessor method returns a reference to the live list,
              * not a snapshot. Therefore any modification you make to the
              * returned list will be present inside the JAXB object.
              * This is why there is not a <CODE>set</CODE> method for the legalConstraint property.
-             * 
+             *
              * <p>
              * For example, to add a new item, do as follows:
              * <pre>
              *    getLegalConstraint().add(newItem);
              * </pre>
-             * 
-             * 
+             *
+             *
              * <p>
              * Objects of the following type(s) are allowed in the list
              * {@link LegalConstraint }
-             * 
-             * 
+             *
+             *
              */
             public List<LegalConstraint> getLegalConstraint() {
                 if (legalConstraint == null) {
@@ -1980,25 +1986,25 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
             /**
              * Gets the value of the characteristics property.
-             * 
+             *
              * <p>
              * This accessor method returns a reference to the live list,
              * not a snapshot. Therefore any modification you make to the
              * returned list will be present inside the JAXB object.
              * This is why there is not a <CODE>set</CODE> method for the characteristics property.
-             * 
+             *
              * <p>
              * For example, to add a new item, do as follows:
              * <pre>
              *    getCharacteristics().add(newItem);
              * </pre>
-             * 
-             * 
+             *
+             *
              * <p>
              * Objects of the following type(s) are allowed in the list
              * {@link Characteristics }
-             * 
-             * 
+             *
+             *
              */
             public List<Characteristics> getCharacteristics() {
                 if (characteristics == null) {
@@ -2009,25 +2015,25 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
             /**
              * Gets the value of the capabilities property.
-             * 
+             *
              * <p>
              * This accessor method returns a reference to the live list,
              * not a snapshot. Therefore any modification you make to the
              * returned list will be present inside the JAXB object.
              * This is why there is not a <CODE>set</CODE> method for the capabilities property.
-             * 
+             *
              * <p>
              * For example, to add a new item, do as follows:
              * <pre>
              *    getCapabilities().add(newItem);
              * </pre>
-             * 
-             * 
+             *
+             *
              * <p>
              * Objects of the following type(s) are allowed in the list
              * {@link Capabilities }
-             * 
-             * 
+             *
+             *
              */
             public List<Capabilities> getCapabilities() {
                 if (capabilities == null) {
@@ -2038,25 +2044,25 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
             /**
              * Gets the value of the contact property.
-             * 
+             *
              * <p>
              * This accessor method returns a reference to the live list,
              * not a snapshot. Therefore any modification you make to the
              * returned list will be present inside the JAXB object.
              * This is why there is not a <CODE>set</CODE> method for the contact property.
-             * 
+             *
              * <p>
              * For example, to add a new item, do as follows:
              * <pre>
              *    getContact().add(newItem);
              * </pre>
-             * 
-             * 
+             *
+             *
              * <p>
              * Objects of the following type(s) are allowed in the list
              * {@link Contact }
-             * 
-             * 
+             *
+             *
              */
             public List<Contact> getContact() {
                 if (contact == null) {
@@ -2067,25 +2073,25 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
             /**
              * Gets the value of the documentation property.
-             * 
+             *
              * <p>
              * This accessor method returns a reference to the live list,
              * not a snapshot. Therefore any modification you make to the
              * returned list will be present inside the JAXB object.
              * This is why there is not a <CODE>set</CODE> method for the documentation property.
-             * 
+             *
              * <p>
              * For example, to add a new item, do as follows:
              * <pre>
              *    getDocumentation().add(newItem);
              * </pre>
-             * 
-             * 
+             *
+             *
              * <p>
              * Objects of the following type(s) are allowed in the list
              * {@link Documentation }
-             * 
-             * 
+             *
+             *
              */
             public List<Documentation> getDocumentation() {
                 if (documentation == null) {
@@ -2096,25 +2102,25 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
             /**
              * Gets the value of the history property.
-             * 
+             *
              * <p>
              * This accessor method returns a reference to the live list,
              * not a snapshot. Therefore any modification you make to the
              * returned list will be present inside the JAXB object.
              * This is why there is not a <CODE>set</CODE> method for the history property.
-             * 
+             *
              * <p>
              * For example, to add a new item, do as follows:
              * <pre>
              *    getHistory().add(newItem);
              * </pre>
-             * 
-             * 
+             *
+             *
              * <p>
              * Objects of the following type(s) are allowed in the list
              * {@link History }
-             * 
-             * 
+             *
+             *
              */
             public List<History> getHistory() {
                 if (history == null) {
@@ -2125,11 +2131,11 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
             /**
              * Gets the value of the sourceRef property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link ProcessMethodType.Implementation.ImplementationCode.SourceRef }
-             *     
+             *
              */
             public ProcessMethodType.Implementation.ImplementationCode.SourceRef getSourceRef() {
                 return sourceRef;
@@ -2137,11 +2143,11 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
             /**
              * Sets the value of the sourceRef property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link ProcessMethodType.Implementation.ImplementationCode.SourceRef }
-             *     
+             *
              */
             public void setSourceRef(final ProcessMethodType.Implementation.ImplementationCode.SourceRef value) {
                 this.sourceRef = value;
@@ -2149,11 +2155,11 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
             /**
              * Gets the value of the binaryRef property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link ProcessMethodType.Implementation.ImplementationCode.BinaryRef }
-             *     
+             *
              */
             public ProcessMethodType.Implementation.ImplementationCode.BinaryRef getBinaryRef() {
                 return binaryRef;
@@ -2161,11 +2167,11 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
             /**
              * Sets the value of the binaryRef property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link ProcessMethodType.Implementation.ImplementationCode.BinaryRef }
-             *     
+             *
              */
             public void setBinaryRef(final ProcessMethodType.Implementation.ImplementationCode.BinaryRef value) {
                 this.binaryRef = value;
@@ -2173,11 +2179,11 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
             /**
              * Gets the value of the language property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link String }
-             *     
+             *
              */
             public String getLanguage() {
                 return language;
@@ -2185,11 +2191,11 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
             /**
              * Sets the value of the language property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link String }
-             *     
+             *
              */
             public void setLanguage(final String value) {
                 this.language = value;
@@ -2197,11 +2203,11 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
             /**
              * Gets the value of the framework property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link String }
-             *     
+             *
              */
             public String getFramework() {
                 return framework;
@@ -2209,11 +2215,11 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
             /**
              * Sets the value of the framework property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link String }
-             *     
+             *
              */
             public void setFramework(final String value) {
                 this.framework = value;
@@ -2221,11 +2227,11 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
             /**
              * Gets the value of the version property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link String }
-             *     
+             *
              */
             public String getVersion() {
                 return version;
@@ -2233,11 +2239,11 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
             /**
              * Sets the value of the version property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link String }
-             *     
+             *
              */
             public void setVersion(final String value) {
                 this.version = value;
@@ -2246,9 +2252,9 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
             /**
              * <p>Java class for anonymous complex type.
-             * 
+             *
              * <p>The following schema fragment specifies the expected content contained within this class.
-             * 
+             *
              * <pre>
              * &lt;complexType>
              *   &lt;complexContent>
@@ -2258,8 +2264,8 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
              *   &lt;/complexContent>
              * &lt;/complexType>
              * </pre>
-             * 
-             * 
+             *
+             *
              */
             @XmlAccessorType(XmlAccessType.FIELD)
             @XmlType(name = "")
@@ -2306,14 +2312,14 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
                 public List<String> getNilReason() {
                     return new ArrayList<String>();
                 }
-                
+
                 /**
                  * Gets the value of the remoteSchema property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getRemoteSchema() {
                     return remoteSchema;
@@ -2321,11 +2327,11 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
                 /**
                  * Sets the value of the remoteSchema property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setRemoteSchema(final String value) {
                     this.remoteSchema = value;
@@ -2333,11 +2339,11 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
                 /**
                  * Gets the value of the type property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getType() {
                     return type;
@@ -2345,11 +2351,11 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
                 /**
                  * Sets the value of the type property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setType(final String value) {
                     this.type = value;
@@ -2357,11 +2363,11 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
                 /**
                  * Gets the value of the href property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getHref() {
                     return href;
@@ -2369,11 +2375,11 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
                 /**
                  * Sets the value of the href property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setHref(final String value) {
                     this.href = value;
@@ -2381,11 +2387,11 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
                 /**
                  * Gets the value of the role property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getRole() {
                     return role;
@@ -2393,11 +2399,11 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
                 /**
                  * Sets the value of the role property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setRole(final String value) {
                     this.role = value;
@@ -2405,11 +2411,11 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
                 /**
                  * Gets the value of the arcrole property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getArcrole() {
                     return arcrole;
@@ -2417,11 +2423,11 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
                 /**
                  * Sets the value of the arcrole property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setArcrole(final String value) {
                     this.arcrole = value;
@@ -2429,11 +2435,11 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
                 /**
                  * Gets the value of the title property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getTitle() {
                     return title;
@@ -2441,11 +2447,11 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
                 /**
                  * Sets the value of the title property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setTitle(final String value) {
                     this.title = value;
@@ -2453,11 +2459,11 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
                 /**
                  * Gets the value of the show property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getShow() {
                     return show;
@@ -2465,11 +2471,11 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
                 /**
                  * Sets the value of the show property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setShow(final String value) {
                     this.show = value;
@@ -2477,11 +2483,11 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
                 /**
                  * Gets the value of the actuate property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getActuate() {
                     return actuate;
@@ -2489,11 +2495,11 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
                 /**
                  * Sets the value of the actuate property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setActuate(final String value) {
                     this.actuate = value;
@@ -2504,9 +2510,9 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
             /**
              * <p>Java class for anonymous complex type.
-             * 
+             *
              * <p>The following schema fragment specifies the expected content contained within this class.
-             * 
+             *
              * <pre>
              * &lt;complexType>
              *   &lt;complexContent>
@@ -2516,8 +2522,8 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
              *   &lt;/complexContent>
              * &lt;/complexType>
              * </pre>
-             * 
-             * 
+             *
+             *
              */
             @XmlAccessorType(XmlAccessType.FIELD)
             @XmlType(name = "")
@@ -2567,11 +2573,11 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
                 }
                 /**
                  * Gets the value of the remoteSchema property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getRemoteSchema() {
                     return remoteSchema;
@@ -2579,11 +2585,11 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
                 /**
                  * Sets the value of the remoteSchema property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setRemoteSchema(final String value) {
                     this.remoteSchema = value;
@@ -2591,11 +2597,11 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
                 /**
                  * Gets the value of the type property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getType() {
                     return type;
@@ -2603,11 +2609,11 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
                 /**
                  * Sets the value of the type property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setType(final String value) {
                     this.type = value;
@@ -2615,11 +2621,11 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
                 /**
                  * Gets the value of the href property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getHref() {
                     return href;
@@ -2627,11 +2633,11 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
                 /**
                  * Sets the value of the href property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setHref(final String value) {
                     this.href = value;
@@ -2639,11 +2645,11 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
                 /**
                  * Gets the value of the role property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getRole() {
                     return role;
@@ -2651,11 +2657,11 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
                 /**
                  * Sets the value of the role property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setRole(final String value) {
                     this.role = value;
@@ -2663,11 +2669,11 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
                 /**
                  * Gets the value of the arcrole property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getArcrole() {
                     return arcrole;
@@ -2675,11 +2681,11 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
                 /**
                  * Sets the value of the arcrole property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setArcrole(final String value) {
                     this.arcrole = value;
@@ -2687,11 +2693,11 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
                 /**
                  * Gets the value of the title property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getTitle() {
                     return title;
@@ -2699,11 +2705,11 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
                 /**
                  * Sets the value of the title property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setTitle(final String value) {
                     this.title = value;
@@ -2711,11 +2717,11 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
                 /**
                  * Gets the value of the show property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getShow() {
                     return show;
@@ -2723,11 +2729,11 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
                 /**
                  * Sets the value of the show property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setShow(final String value) {
                     this.show = value;
@@ -2735,11 +2741,11 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
                 /**
                  * Gets the value of the actuate property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getActuate() {
                     return actuate;
@@ -2747,11 +2753,11 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
                 /**
                  * Sets the value of the actuate property.
-                 * 
+                 *
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setActuate(final String value) {
                     this.actuate = value;
@@ -2766,9 +2772,9 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -2791,8 +2797,8 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -2812,14 +2818,14 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
                 this.rulesDefinition = new RulesDefinition(ar.getRulesDefinition());
             }
         }
-        
+
         /**
          * Gets the value of the rulesDefinition property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link ProcessMethodType.Rules.RulesDefinition }
-         *     
+         *
          */
         public ProcessMethodType.Rules.RulesDefinition getRulesDefinition() {
             return rulesDefinition;
@@ -2827,11 +2833,11 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
         /**
          * Sets the value of the rulesDefinition property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link ProcessMethodType.Rules.RulesDefinition }
-         *     
+         *
          */
         public void setRulesDefinition(final ProcessMethodType.Rules.RulesDefinition value) {
             this.rulesDefinition = value;
@@ -2840,9 +2846,9 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
         /**
          * <p>Java class for anonymous complex type.
-         * 
+         *
          * <p>The following schema fragment specifies the expected content contained within this class.
-         * 
+         *
          * <pre>
          * &lt;complexType>
          *   &lt;complexContent>
@@ -2855,8 +2861,8 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
          *   &lt;/complexContent>
          * &lt;/complexType>
          * </pre>
-         * 
-         * 
+         *
+         *
          */
         @XmlAccessorType(XmlAccessType.FIELD)
         @XmlType(name = "", propOrder = {
@@ -2889,14 +2895,14 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
                     }
                 }
             }
-            
+
             /**
              * Textual description of the i/o structure
-             * 
+             *
              * @return
              *     possible object is
              *     {@link StringOrRefType }
-             *     
+             *
              */
             public StringOrRefType getDescription() {
                 return description;
@@ -2904,11 +2910,11 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
             /**
              * Sets the value of the description property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link StringOrRefType }
-             *     
+             *
              */
             public void setDescription(final StringOrRefType value) {
                 this.description = value;
@@ -2935,13 +2941,13 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
             /**
              * Gets the value of the ruleLanguage property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link JAXBElement }{@code <}{@link Schematron }{@code >}
              *     {@link JAXBElement }{@code <}{@link RelaxNG }{@code >}
              *     {@link JAXBElement }{@code <}{@link RuleLanguageType }{@code >}
-             *     
+             *
              */
             public JAXBElement<? extends RuleLanguageType> getJbRuleLanguage() {
                 return ruleLanguage;
@@ -2949,13 +2955,13 @@ public class ProcessMethodType extends AbstractGMLType implements AbstractProces
 
             /**
              * Sets the value of the ruleLanguage property.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link JAXBElement }{@code <}{@link Schematron }{@code >}
              *     {@link JAXBElement }{@code <}{@link RelaxNG }{@code >}
              *     {@link JAXBElement }{@code <}{@link RuleLanguageType }{@code >}
-             *     
+             *
              */
             public void setJbRuleLanguage(final JAXBElement<? extends RuleLanguageType> value) {
                 this.ruleLanguage = ((JAXBElement<? extends RuleLanguageType> ) value);

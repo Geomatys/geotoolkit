@@ -25,13 +25,14 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.sml.xml.AbstractContactInfo;
 import org.geotoolkit.sml.xml.AbstractOnlineResource;
+import org.apache.sis.util.ComparisonMode;
 
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -73,8 +74,8 @@ import org.geotoolkit.sml.xml.AbstractOnlineResource;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -86,7 +87,7 @@ import org.geotoolkit.sml.xml.AbstractOnlineResource;
     "contactInstructions"
 })
 @XmlRootElement(name = "ContactInfo")
-public class ContactInfo implements AbstractContactInfo {
+public class ContactInfo extends SensorObject implements AbstractContactInfo {
 
     private Phone phone;
     private Address address;
@@ -124,11 +125,11 @@ public class ContactInfo implements AbstractContactInfo {
 
     /**
      * Gets the value of the phone property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ContactInfo.Phone }
-     *     
+     *
      */
     public Phone getPhone() {
         return phone;
@@ -136,11 +137,11 @@ public class ContactInfo implements AbstractContactInfo {
 
     /**
      * Sets the value of the phone property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ContactInfo.Phone }
-     *     
+     *
      */
     public void setPhone(final Phone value) {
         this.phone = value;
@@ -148,11 +149,11 @@ public class ContactInfo implements AbstractContactInfo {
 
     /**
      * Gets the value of the address property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ContactInfo.Address }
-     *     
+     *
      */
     public Address getAddress() {
         return address;
@@ -160,11 +161,11 @@ public class ContactInfo implements AbstractContactInfo {
 
     /**
      * Sets the value of the address property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ContactInfo.Address }
-     *     
+     *
      */
     public void setAddress(final Address value) {
         this.address = value;
@@ -199,11 +200,11 @@ public class ContactInfo implements AbstractContactInfo {
 
     /**
      * Gets the value of the hoursOfService property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getHoursOfService() {
         return hoursOfService;
@@ -211,11 +212,11 @@ public class ContactInfo implements AbstractContactInfo {
 
     /**
      * Sets the value of the hoursOfService property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setHoursOfService(final String value) {
         this.hoursOfService = value;
@@ -223,11 +224,11 @@ public class ContactInfo implements AbstractContactInfo {
 
     /**
      * Gets the value of the contactInstructions property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getContactInstructions() {
         return contactInstructions;
@@ -235,11 +236,11 @@ public class ContactInfo implements AbstractContactInfo {
 
     /**
      * Sets the value of the contactInstructions property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setContactInstructions(final String value) {
         this.contactInstructions = value;
@@ -273,7 +274,7 @@ public class ContactInfo implements AbstractContactInfo {
      * Verify if this entry is identical to specified object.
      */
     @Override
-    public boolean equals(final Object object) {
+    public boolean equals(final Object object, final ComparisonMode mode) {
         if (object == this) {
             return true;
         }

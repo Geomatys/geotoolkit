@@ -40,9 +40,9 @@ import org.geotoolkit.swe.xml.v101.TimeType;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -57,8 +57,8 @@ import org.geotoolkit.swe.xml.v101.TimeType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -67,7 +67,7 @@ import org.geotoolkit.swe.xml.v101.TimeType;
     "process"
 })
 @XmlRootElement(name = "TimePosition")
-public class TimePosition implements AbstractTimePosition {
+public class TimePosition extends SensorObject implements AbstractTimePosition {
 
     @XmlElement(name = "Time", namespace = "http://www.opengis.net/swe/1.0.1")
     private TimeType time;
@@ -139,11 +139,11 @@ public class TimePosition implements AbstractTimePosition {
     }
     /**
      * Gets the value of the time property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Time }
-     *     
+     *
      */
     public TimeType getTime() {
         return time;
@@ -151,11 +151,11 @@ public class TimePosition implements AbstractTimePosition {
 
     /**
      * Sets the value of the time property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Time }
-     *     
+     *
      */
     public void setTime(final TimeType value) {
         this.time = value;
@@ -163,7 +163,7 @@ public class TimePosition implements AbstractTimePosition {
 
     /**
      * Gets the value of the process property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link DataSourceType }{@code >}
@@ -173,7 +173,7 @@ public class TimePosition implements AbstractTimePosition {
      *     {@link JAXBElement }{@code <}{@link ProcessChainType }{@code >}
      *     {@link JAXBElement }{@code <}{@link ComponentArrayType }{@code >}
      *     {@link JAXBElement }{@code <}{@link ComponentType }{@code >}
-     *     
+     *
      */
     public JAXBElement<? extends AbstractProcessType> getRealProcess() {
         return process;
@@ -191,7 +191,7 @@ public class TimePosition implements AbstractTimePosition {
 
     /**
      * Sets the value of the process property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link DataSourceType }{@code >}
@@ -201,7 +201,7 @@ public class TimePosition implements AbstractTimePosition {
      *     {@link JAXBElement }{@code <}{@link ProcessChainType }{@code >}
      *     {@link JAXBElement }{@code <}{@link ComponentArrayType }{@code >}
      *     {@link JAXBElement }{@code <}{@link ComponentType }{@code >}
-     *     
+     *
      */
     public void setProcess(final JAXBElement<? extends AbstractProcessType> value) {
         this.process = ((JAXBElement<? extends AbstractProcessType> ) value);
@@ -209,11 +209,11 @@ public class TimePosition implements AbstractTimePosition {
 
     /**
      * Gets the value of the name property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getName() {
         return name;
@@ -221,11 +221,11 @@ public class TimePosition implements AbstractTimePosition {
 
     /**
      * Sets the value of the name property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setName(final String value) {
         this.name = value;
@@ -233,11 +233,11 @@ public class TimePosition implements AbstractTimePosition {
 
     /**
      * Gets the value of the remoteSchema property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getRemoteSchema() {
         return remoteSchema;
@@ -245,11 +245,11 @@ public class TimePosition implements AbstractTimePosition {
 
     /**
      * Sets the value of the remoteSchema property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRemoteSchema(final String value) {
         this.remoteSchema = value;
@@ -257,11 +257,11 @@ public class TimePosition implements AbstractTimePosition {
 
     /**
      * Gets the value of the type property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getType() {
         return type;
@@ -269,11 +269,11 @@ public class TimePosition implements AbstractTimePosition {
 
     /**
      * Sets the value of the type property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setType(final String value) {
         this.type = value;
@@ -281,11 +281,11 @@ public class TimePosition implements AbstractTimePosition {
 
     /**
      * Gets the value of the href property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getHref() {
         return href;
@@ -293,11 +293,11 @@ public class TimePosition implements AbstractTimePosition {
 
     /**
      * Sets the value of the href property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setHref(final String value) {
         this.href = value;
@@ -305,11 +305,11 @@ public class TimePosition implements AbstractTimePosition {
 
     /**
      * Gets the value of the role property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getRole() {
         return role;
@@ -317,11 +317,11 @@ public class TimePosition implements AbstractTimePosition {
 
     /**
      * Sets the value of the role property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRole(final String value) {
         this.role = value;
@@ -329,11 +329,11 @@ public class TimePosition implements AbstractTimePosition {
 
     /**
      * Gets the value of the arcrole property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getArcrole() {
         return arcrole;
@@ -341,11 +341,11 @@ public class TimePosition implements AbstractTimePosition {
 
     /**
      * Sets the value of the arcrole property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setArcrole(final String value) {
         this.arcrole = value;
@@ -353,11 +353,11 @@ public class TimePosition implements AbstractTimePosition {
 
     /**
      * Gets the value of the title property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getTitle() {
         return title;
@@ -365,11 +365,11 @@ public class TimePosition implements AbstractTimePosition {
 
     /**
      * Sets the value of the title property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setTitle(final String value) {
         this.title = value;
@@ -377,11 +377,11 @@ public class TimePosition implements AbstractTimePosition {
 
     /**
      * Gets the value of the show property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getShow() {
         return show;
@@ -389,11 +389,11 @@ public class TimePosition implements AbstractTimePosition {
 
     /**
      * Sets the value of the show property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setShow(final String value) {
         this.show = value;
@@ -401,11 +401,11 @@ public class TimePosition implements AbstractTimePosition {
 
     /**
      * Gets the value of the actuate property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getActuate() {
         return actuate;
@@ -413,11 +413,11 @@ public class TimePosition implements AbstractTimePosition {
 
     /**
      * Sets the value of the actuate property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setActuate(final String value) {
         this.actuate = value;

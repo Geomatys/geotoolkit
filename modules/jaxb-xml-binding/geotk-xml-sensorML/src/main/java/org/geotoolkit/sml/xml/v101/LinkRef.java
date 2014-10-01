@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.sml.xml.AbstractLinkRef;
+import org.apache.sis.util.ComparisonMode;
 /**
  *
  * @author Guilhem Legal
@@ -33,7 +34,7 @@ import org.geotoolkit.sml.xml.AbstractLinkRef;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "")
-public class LinkRef implements AbstractLinkRef {
+public class LinkRef extends SensorObject implements AbstractLinkRef {
 
     @XmlAttribute(required = true)
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
@@ -61,7 +62,7 @@ public class LinkRef implements AbstractLinkRef {
     }
 
     @Override
-    public boolean equals(final Object object) {
+    public boolean equals(final Object object, final ComparisonMode mode) {
         if (object == this) {
             return true;
         }

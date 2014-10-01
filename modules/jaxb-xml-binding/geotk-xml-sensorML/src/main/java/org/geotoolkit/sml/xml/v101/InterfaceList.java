@@ -30,6 +30,7 @@ import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.sml.xml.AbstractInterface;
 import org.geotoolkit.sml.xml.AbstractInterfaceList;
+import org.apache.sis.util.ComparisonMode;
 
 /**
  * <p>Java class for anonymous complex type.
@@ -55,7 +56,7 @@ import org.geotoolkit.sml.xml.AbstractInterfaceList;
 @XmlType(name = "", propOrder = {
     "_interface"
 })
-public class InterfaceList implements AbstractInterfaceList {
+public class InterfaceList extends SensorObject implements AbstractInterfaceList {
 
     @XmlElement(name = "interface", required = true)
     private List<Interface> _interface;
@@ -71,9 +72,9 @@ public class InterfaceList implements AbstractInterfaceList {
     public InterfaceList(final AbstractInterfaceList al) {
         if (al != null) {
             this.id = al.getId();
-            if (al.getInterface() != null) {
+            if (al.getInterfaces() != null) {
                 this._interface = new ArrayList<Interface>();
-                for (AbstractInterface i : al.getInterface()) {
+                for (AbstractInterface i : al.getInterfaces()) {
                     this._interface.add(new Interface(i));
                 }
             }
@@ -97,7 +98,7 @@ public class InterfaceList implements AbstractInterfaceList {
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
-     *    getInterface().add(newItem);
+     *    getInterfaces().add(newItem);
      * </pre>
      *
      *
@@ -107,7 +108,7 @@ public class InterfaceList implements AbstractInterfaceList {
      *
      *
      */
-    public List<Interface> getInterface() {
+    public List<Interface> getInterfaces() {
         if (_interface == null) {
             _interface = new ArrayList<Interface>();
         }
@@ -139,7 +140,7 @@ public class InterfaceList implements AbstractInterfaceList {
     }
 
     @Override
-    public boolean equals(final Object object) {
+    public boolean equals(final Object object, final ComparisonMode mode) {
         if (object == this) {
             return true;
         }

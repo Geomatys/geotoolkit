@@ -20,7 +20,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
-import org.apache.sis.internal.simple.SimpleCitation;
 import org.apache.sis.metadata.MetadataStandard;
 import org.geotoolkit.gml.xml.v311.AbstractFeatureType;
 import org.geotoolkit.sml.xml.AbstractSML;
@@ -28,11 +27,11 @@ import org.geotoolkit.sml.xml.AbstractSML;
 
 /**
  * Main Abstract SensorML Object
- * 
+ *
  * <p>Java class for AbstractSMLType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractSMLType">
  *   &lt;complexContent>
@@ -50,8 +49,8 @@ import org.geotoolkit.sml.xml.AbstractSML;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -62,7 +61,7 @@ import org.geotoolkit.sml.xml.AbstractSML;
 public abstract class AbstractSMLType extends AbstractFeatureType implements AbstractSML {
 
     public AbstractSMLType() {
-        
+
     }
 
     public AbstractSMLType(final AbstractSML sm) {
@@ -71,6 +70,6 @@ public abstract class AbstractSMLType extends AbstractFeatureType implements Abs
 
     @Override
     public MetadataStandard getStandard() {
-        return  new MetadataStandard(new SimpleCitation("SensorML"), Package.getPackage("org.geotoolkit.sml.xml"));
+        return SensorMLStandard.COMPONENT;
     }
 }

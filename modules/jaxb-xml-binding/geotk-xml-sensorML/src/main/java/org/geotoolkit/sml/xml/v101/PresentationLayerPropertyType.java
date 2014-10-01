@@ -39,9 +39,9 @@ import org.geotoolkit.swe.xml.v101.SimpleDataRecordType;
 
 /**
  * <p>Java class for PresentationLayerPropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="PresentationLayerPropertyType">
  *   &lt;complexContent>
@@ -57,8 +57,8 @@ import org.geotoolkit.swe.xml.v101.SimpleDataRecordType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -68,7 +68,7 @@ import org.geotoolkit.swe.xml.v101.SimpleDataRecordType;
     "dataBlockDefinition",
     "dataStreamDefinition"
 })
-public class PresentationLayerPropertyType implements AbstractPresentationLayerProperty{
+public class PresentationLayerPropertyType extends SensorObject implements AbstractPresentationLayerProperty{
 
     @XmlElementRef(name = "AbstractDataRecord", namespace = "http://www.opengis.net/swe/1.0.1", type = JAXBElement.class)
     private JAXBElement<? extends AbstractDataRecordType> abstractDataRecord;
@@ -100,7 +100,7 @@ public class PresentationLayerPropertyType implements AbstractPresentationLayerP
     private String actuate;
 
     public PresentationLayerPropertyType() {
-        
+
     }
     public PresentationLayerPropertyType(final AbstractPresentationLayerProperty la) {
         if (la != null) {
@@ -137,7 +137,7 @@ public class PresentationLayerPropertyType implements AbstractPresentationLayerP
 
     /**
      * Gets the value of the abstractDataRecord property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link AbstractDataRecordType }{@code >}
@@ -150,7 +150,7 @@ public class PresentationLayerPropertyType implements AbstractPresentationLayerP
      *     {@link JAXBElement }{@code <}{@link ConditionalValueType }{@code >}
      *     {@link JAXBElement }{@code <}{@link SimpleDataRecordType }{@code >}
      *     {@link JAXBElement }{@code <}{@link DataRecordType }{@code >}
-     *     
+     *
      */
     public JAXBElement<? extends AbstractDataRecordType> getAbstractDataRecord() {
         return abstractDataRecord;
@@ -162,10 +162,10 @@ public class PresentationLayerPropertyType implements AbstractPresentationLayerP
         }
         return null;
     }
-    
+
     /**
      * Sets the value of the abstractDataRecord property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link AbstractDataRecordType }{@code >}
@@ -178,7 +178,7 @@ public class PresentationLayerPropertyType implements AbstractPresentationLayerP
      *     {@link JAXBElement }{@code <}{@link ConditionalValueType }{@code >}
      *     {@link JAXBElement }{@code <}{@link SimpleDataRecordType }{@code >}
      *     {@link JAXBElement }{@code <}{@link DataRecordType }{@code >}
-     *     
+     *
      */
     public void setAbstractDataRecord(final JAXBElement<? extends AbstractDataRecordType> value) {
         this.abstractDataRecord = ((JAXBElement<? extends AbstractDataRecordType> ) value);
@@ -186,11 +186,11 @@ public class PresentationLayerPropertyType implements AbstractPresentationLayerP
 
     /**
      * Gets the value of the category property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Category }
-     *     
+     *
      */
     public Category getCategory() {
         return category;
@@ -198,11 +198,11 @@ public class PresentationLayerPropertyType implements AbstractPresentationLayerP
 
     /**
      * Sets the value of the category property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Category }
-     *     
+     *
      */
     public void setCategory(final Category value) {
         this.category = value;
@@ -210,11 +210,11 @@ public class PresentationLayerPropertyType implements AbstractPresentationLayerP
 
     /**
      * Gets the value of the dataBlockDefinition property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link DataBlockDefinitionType }
-     *     
+     *
      */
     public DataBlockDefinitionType getDataBlockDefinition() {
         return dataBlockDefinition;
@@ -222,11 +222,11 @@ public class PresentationLayerPropertyType implements AbstractPresentationLayerP
 
     /**
      * Sets the value of the dataBlockDefinition property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link DataBlockDefinitionType }
-     *     
+     *
      */
     public void setDataBlockDefinition(final DataBlockDefinitionType value) {
         this.dataBlockDefinition = value;
@@ -234,11 +234,11 @@ public class PresentationLayerPropertyType implements AbstractPresentationLayerP
 
     /**
      * Gets the value of the dataStreamDefinition property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link DataStreamDefinitionType }
-     *     
+     *
      */
     public DataStreamDefinitionType getDataStreamDefinition() {
         return dataStreamDefinition;
@@ -246,11 +246,11 @@ public class PresentationLayerPropertyType implements AbstractPresentationLayerP
 
     /**
      * Sets the value of the dataStreamDefinition property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link DataStreamDefinitionType }
-     *     
+     *
      */
     public void setDataStreamDefinition(final DataStreamDefinitionType value) {
         this.dataStreamDefinition = value;
@@ -258,11 +258,11 @@ public class PresentationLayerPropertyType implements AbstractPresentationLayerP
 
     /**
      * Gets the value of the remoteSchema property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getRemoteSchema() {
         return remoteSchema;
@@ -270,11 +270,11 @@ public class PresentationLayerPropertyType implements AbstractPresentationLayerP
 
     /**
      * Sets the value of the remoteSchema property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRemoteSchema(final String value) {
         this.remoteSchema = value;
@@ -282,11 +282,11 @@ public class PresentationLayerPropertyType implements AbstractPresentationLayerP
 
     /**
      * Gets the value of the type property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getType() {
         return type;
@@ -294,11 +294,11 @@ public class PresentationLayerPropertyType implements AbstractPresentationLayerP
 
     /**
      * Sets the value of the type property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setType(final String value) {
         this.type = value;
@@ -306,11 +306,11 @@ public class PresentationLayerPropertyType implements AbstractPresentationLayerP
 
     /**
      * Gets the value of the href property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getHref() {
         return href;
@@ -318,11 +318,11 @@ public class PresentationLayerPropertyType implements AbstractPresentationLayerP
 
     /**
      * Sets the value of the href property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setHref(final String value) {
         this.href = value;
@@ -330,11 +330,11 @@ public class PresentationLayerPropertyType implements AbstractPresentationLayerP
 
     /**
      * Gets the value of the role property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getRole() {
         return role;
@@ -342,11 +342,11 @@ public class PresentationLayerPropertyType implements AbstractPresentationLayerP
 
     /**
      * Sets the value of the role property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRole(final String value) {
         this.role = value;
@@ -354,11 +354,11 @@ public class PresentationLayerPropertyType implements AbstractPresentationLayerP
 
     /**
      * Gets the value of the arcrole property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getArcrole() {
         return arcrole;
@@ -366,11 +366,11 @@ public class PresentationLayerPropertyType implements AbstractPresentationLayerP
 
     /**
      * Sets the value of the arcrole property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setArcrole(final String value) {
         this.arcrole = value;
@@ -378,11 +378,11 @@ public class PresentationLayerPropertyType implements AbstractPresentationLayerP
 
     /**
      * Gets the value of the title property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getTitle() {
         return title;
@@ -390,11 +390,11 @@ public class PresentationLayerPropertyType implements AbstractPresentationLayerP
 
     /**
      * Sets the value of the title property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setTitle(final String value) {
         this.title = value;
@@ -402,11 +402,11 @@ public class PresentationLayerPropertyType implements AbstractPresentationLayerP
 
     /**
      * Gets the value of the show property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getShow() {
         return show;
@@ -414,11 +414,11 @@ public class PresentationLayerPropertyType implements AbstractPresentationLayerP
 
     /**
      * Sets the value of the show property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setShow(final String value) {
         this.show = value;
@@ -426,11 +426,11 @@ public class PresentationLayerPropertyType implements AbstractPresentationLayerP
 
     /**
      * Gets the value of the actuate property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getActuate() {
         return actuate;
@@ -438,11 +438,11 @@ public class PresentationLayerPropertyType implements AbstractPresentationLayerP
 
     /**
      * Sets the value of the actuate property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setActuate(final String value) {
         this.actuate = value;

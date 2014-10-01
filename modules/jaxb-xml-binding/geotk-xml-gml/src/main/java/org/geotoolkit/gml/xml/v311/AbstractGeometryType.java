@@ -129,6 +129,7 @@ public abstract class AbstractGeometryType extends AbstractGMLType implements Ge
     public MetadataStandard getStandard() {
         return new MetadataStandard(new SimpleCitation("Geometry"), Package.getPackage("org.opengis.geometry"));
     }
+
     /**
      * Gets the value of the gid property.
      *

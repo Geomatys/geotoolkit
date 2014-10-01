@@ -34,13 +34,14 @@ import org.geotoolkit.swe.xml.SimpleDataRecord;
 import org.geotoolkit.swe.xml.v101.SimpleDataRecordType;
 import org.geotoolkit.swe.xml.v101.AbstractDataRecordType;
 import org.geotoolkit.swe.xml.v101.DataRecordType;
+import org.apache.sis.util.ComparisonMode;
 
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -54,8 +55,8 @@ import org.geotoolkit.swe.xml.v101.DataRecordType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -63,7 +64,7 @@ import org.geotoolkit.swe.xml.v101.DataRecordType;
     "abstractDataRecord"
 })
 @XmlRootElement(name = "Capabilities")
-public class Capabilities implements AbstractCapabilities {
+public class Capabilities extends SensorObject implements AbstractCapabilities {
 
     @XmlElementRef(name = "AbstractDataRecord", namespace = "http://www.opengis.net/swe/1.0.1", type = JAXBElement.class)
     private JAXBElement<? extends AbstractDataRecordType> abstractDataRecord;
@@ -134,7 +135,7 @@ public class Capabilities implements AbstractCapabilities {
 
     /**
      * Gets the value of the abstractDataRecord property.
-     *     
+     *
      */
     public JAXBElement<? extends AbstractDataRecordType> getAbstractDataRecord() {
         return abstractDataRecord;
@@ -149,7 +150,7 @@ public class Capabilities implements AbstractCapabilities {
 
     /**
      * Sets the value of the abstractDataRecord property.
-     * 
+     *
      */
     public void setAbstractDataRecord(final JAXBElement<? extends AbstractDataRecordType> value) {
         this.abstractDataRecord = ((JAXBElement<? extends AbstractDataRecordType> ) value);
@@ -157,7 +158,7 @@ public class Capabilities implements AbstractCapabilities {
 
     /**
      * Gets the value of the name property.
-     * 
+     *
      */
     public String getName() {
         return name;
@@ -165,7 +166,7 @@ public class Capabilities implements AbstractCapabilities {
 
     /**
      * Sets the value of the name property.
-     * 
+     *
      */
     public void setName(final String value) {
         this.name = value;
@@ -173,7 +174,7 @@ public class Capabilities implements AbstractCapabilities {
 
     /**
      * Gets the value of the remoteSchema property.
-     * 
+     *
      */
     public String getRemoteSchema() {
         return remoteSchema;
@@ -181,7 +182,7 @@ public class Capabilities implements AbstractCapabilities {
 
     /**
      * Sets the value of the remoteSchema property.
-     * 
+     *
     */
     public void setRemoteSchema(final String value) {
         this.remoteSchema = value;
@@ -189,7 +190,7 @@ public class Capabilities implements AbstractCapabilities {
 
     /**
      * Gets the value of the type property.
-     * 
+     *
     */
     public String getType() {
         return type;
@@ -197,7 +198,7 @@ public class Capabilities implements AbstractCapabilities {
 
     /**
      * Sets the value of the type property.
-     * 
+     *
      */
     public void setType(final String value) {
         this.type = value;
@@ -205,7 +206,7 @@ public class Capabilities implements AbstractCapabilities {
 
     /**
      * Gets the value of the href property.
-     * 
+     *
      */
     public String getHref() {
         return href;
@@ -213,7 +214,7 @@ public class Capabilities implements AbstractCapabilities {
 
     /**
      * Sets the value of the href property.
-     * 
+     *
      */
     public void setHref(final String value) {
         this.href = value;
@@ -221,7 +222,7 @@ public class Capabilities implements AbstractCapabilities {
 
     /**
      * Gets the value of the role property.
-     * 
+     *
      */
     public String getRole() {
         return role;
@@ -229,7 +230,7 @@ public class Capabilities implements AbstractCapabilities {
 
     /**
      * Sets the value of the role property.
-     * 
+     *
      */
     public void setRole(final String value) {
         this.role = value;
@@ -237,7 +238,7 @@ public class Capabilities implements AbstractCapabilities {
 
     /**
      * Gets the value of the arcrole property.
-     * 
+     *
      */
     public String getArcrole() {
         return arcrole;
@@ -245,7 +246,7 @@ public class Capabilities implements AbstractCapabilities {
 
     /**
      * Sets the value of the arcrole property.
-     * 
+     *
      */
     public void setArcrole(final String value) {
         this.arcrole = value;
@@ -253,7 +254,7 @@ public class Capabilities implements AbstractCapabilities {
 
     /**
      * Gets the value of the title property.
-     * 
+     *
     */
     public String getTitle() {
         return title;
@@ -261,7 +262,7 @@ public class Capabilities implements AbstractCapabilities {
 
     /**
      * Sets the value of the title property.
-     * 
+     *
      */
     public void setTitle(final String value) {
         this.title = value;
@@ -269,7 +270,7 @@ public class Capabilities implements AbstractCapabilities {
 
     /**
      * Gets the value of the show property.
-     * 
+     *
      */
     public String getShow() {
         return show;
@@ -277,7 +278,7 @@ public class Capabilities implements AbstractCapabilities {
 
     /**
      * Sets the value of the show property.
-     * 
+     *
     */
     public void setShow(final String value) {
         this.show = value;
@@ -285,7 +286,7 @@ public class Capabilities implements AbstractCapabilities {
 
     /**
      * Gets the value of the actuate property.
-     * 
+     *
     */
     public String getActuate() {
         return actuate;
@@ -293,12 +294,12 @@ public class Capabilities implements AbstractCapabilities {
 
     /**
      * Sets the value of the actuate property.
-     * 
+     *
     */
     public void setActuate(final String value) {
         this.actuate = value;
     }
-    
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("[Capabilities]").append("\n");
@@ -336,7 +337,7 @@ public class Capabilities implements AbstractCapabilities {
      * Verify if this entry is identical to specified object.
      */
     @Override
-    public boolean equals(final Object object) {
+    public boolean equals(final Object object, final ComparisonMode mode) {
         if (object == this) {
             return true;
         }
@@ -349,7 +350,7 @@ public class Capabilities implements AbstractCapabilities {
             } else if (this.abstractDataRecord == null && that.abstractDataRecord == null) {
                 record = true;
             }
-            
+
             return Objects.equals(this.actuate,      that.actuate)       &&
                    Objects.equals(this.arcrole,      that.arcrole)       &&
                    Objects.equals(this.href,         that.href)          &&

@@ -29,6 +29,7 @@ import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.sml.xml.AbstractPosition;
 import org.geotoolkit.sml.xml.AbstractPositionList;
+import org.apache.sis.util.ComparisonMode;
 
 /**
  * <p>Java class for anonymous complex type.
@@ -57,7 +58,7 @@ import org.geotoolkit.sml.xml.AbstractPositionList;
     "position",
     "timePosition"
 })
-public class PositionList implements AbstractPositionList {
+public class PositionList extends SensorObject implements AbstractPositionList {
 
     private List<Position> position;
     private TimePosition timePosition;
@@ -148,7 +149,7 @@ public class PositionList implements AbstractPositionList {
     public void setId(final String value) {
         this.id = value;
     }
-    
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("[PositionList]").append("\n");
@@ -171,14 +172,14 @@ public class PositionList implements AbstractPositionList {
      * Verify if this entry is identical to specified object.
      */
     @Override
-    public boolean equals(final Object object) {
+    public boolean equals(final Object object, final ComparisonMode mode) {
         if (object == this) {
             return true;
         }
 
         if (object instanceof PositionList) {
             final PositionList that = (PositionList) object;
-            
+
             return Objects.equals(this.id,           that.id)       &&
                    Objects.equals(this.position,     that.position)       &&
                    Objects.equals(this.timePosition, that.timePosition);

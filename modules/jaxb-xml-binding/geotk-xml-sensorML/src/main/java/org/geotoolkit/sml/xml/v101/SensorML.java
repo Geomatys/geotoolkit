@@ -50,6 +50,7 @@ import org.geotoolkit.sml.xml.ComponentArray;
 import org.geotoolkit.sml.xml.System;
 import org.geotoolkit.sml.xml.SMLMember;
 import javax.xml.namespace.QName;
+import org.apache.sis.util.ComparisonMode;
 
 
 /**
@@ -103,7 +104,7 @@ import javax.xml.namespace.QName;
     "member"
 })
 @XmlRootElement(name = "SensorML")
-public class SensorML implements AbstractSensorML {
+public class SensorML extends SensorObject implements AbstractSensorML {
 
     private List<Keywords> keywords;
     private List<Identification> identification;
@@ -511,7 +512,7 @@ public class SensorML implements AbstractSensorML {
      * Verify if this entry is identical to specified object.
      */
     @Override
-    public boolean equals(final Object object) {
+    public boolean equals(final Object object, final ComparisonMode mode) {
         if (object == this) {
             return true;
         }

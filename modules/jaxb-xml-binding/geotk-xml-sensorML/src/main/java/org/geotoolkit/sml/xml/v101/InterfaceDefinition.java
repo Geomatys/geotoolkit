@@ -30,9 +30,9 @@ import org.geotoolkit.sml.xml.AbstractInterfaceDefinition;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -53,8 +53,8 @@ import org.geotoolkit.sml.xml.AbstractInterfaceDefinition;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -70,7 +70,7 @@ import org.geotoolkit.sml.xml.AbstractInterfaceDefinition;
     "mechanicalLayer"
 })
 @XmlRootElement(name = "InterfaceDefinition")
-public class InterfaceDefinition implements AbstractInterfaceDefinition {
+public class InterfaceDefinition extends SensorObject implements AbstractInterfaceDefinition {
 
     private LayerPropertyType serviceLayer;
     private LayerPropertyType applicationLayer;
@@ -131,14 +131,14 @@ public class InterfaceDefinition implements AbstractInterfaceDefinition {
         this.applicationLayer = applicationLayer;
         this.dataLinkLayer    = dataLinkLayer;
     }
-    
+
     /**
      * Gets the value of the serviceLayer property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link LayerPropertyType }
-     *     
+     *
      */
     public LayerPropertyType getServiceLayer() {
         return serviceLayer;
@@ -146,11 +146,11 @@ public class InterfaceDefinition implements AbstractInterfaceDefinition {
 
     /**
      * Sets the value of the serviceLayer property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link LayerPropertyType }
-     *     
+     *
      */
     public void setServiceLayer(final LayerPropertyType value) {
         this.serviceLayer = value;
@@ -158,11 +158,11 @@ public class InterfaceDefinition implements AbstractInterfaceDefinition {
 
     /**
      * Gets the value of the applicationLayer property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link LayerPropertyType }
-     *     
+     *
      */
     public LayerPropertyType getApplicationLayer() {
         return applicationLayer;
@@ -170,11 +170,11 @@ public class InterfaceDefinition implements AbstractInterfaceDefinition {
 
     /**
      * Sets the value of the applicationLayer property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link LayerPropertyType }
-     *     
+     *
      */
     public void setApplicationLayer(final LayerPropertyType value) {
         this.applicationLayer = value;
@@ -182,11 +182,11 @@ public class InterfaceDefinition implements AbstractInterfaceDefinition {
 
     /**
      * Gets the value of the presentationLayer property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link PresentationLayerPropertyType }
-     *     
+     *
      */
     public PresentationLayerPropertyType getPresentationLayer() {
         return presentationLayer;
@@ -194,11 +194,11 @@ public class InterfaceDefinition implements AbstractInterfaceDefinition {
 
     /**
      * Sets the value of the presentationLayer property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link PresentationLayerPropertyType }
-     *     
+     *
      */
     public void setPresentationLayer(final PresentationLayerPropertyType value) {
         this.presentationLayer = value;
@@ -206,11 +206,11 @@ public class InterfaceDefinition implements AbstractInterfaceDefinition {
 
     /**
      * Gets the value of the sessionLayer property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link LayerPropertyType }
-     *     
+     *
      */
     public LayerPropertyType getSessionLayer() {
         return sessionLayer;
@@ -218,11 +218,11 @@ public class InterfaceDefinition implements AbstractInterfaceDefinition {
 
     /**
      * Sets the value of the sessionLayer property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link LayerPropertyType }
-     *     
+     *
      */
     public void setSessionLayer(final LayerPropertyType value) {
         this.sessionLayer = value;
@@ -230,11 +230,11 @@ public class InterfaceDefinition implements AbstractInterfaceDefinition {
 
     /**
      * Gets the value of the transportLayer property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link LayerPropertyType }
-     *     
+     *
      */
     public LayerPropertyType getTransportLayer() {
         return transportLayer;
@@ -242,11 +242,11 @@ public class InterfaceDefinition implements AbstractInterfaceDefinition {
 
     /**
      * Sets the value of the transportLayer property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link LayerPropertyType }
-     *     
+     *
      */
     public void setTransportLayer(final LayerPropertyType value) {
         this.transportLayer = value;
@@ -254,11 +254,11 @@ public class InterfaceDefinition implements AbstractInterfaceDefinition {
 
     /**
      * Gets the value of the networkLayer property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link LayerPropertyType }
-     *     
+     *
      */
     public LayerPropertyType getNetworkLayer() {
         return networkLayer;
@@ -266,11 +266,11 @@ public class InterfaceDefinition implements AbstractInterfaceDefinition {
 
     /**
      * Sets the value of the networkLayer property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link LayerPropertyType }
-     *     
+     *
      */
     public void setNetworkLayer(final LayerPropertyType value) {
         this.networkLayer = value;
@@ -278,11 +278,11 @@ public class InterfaceDefinition implements AbstractInterfaceDefinition {
 
     /**
      * Gets the value of the dataLinkLayer property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link LayerPropertyType }
-     *     
+     *
      */
     public LayerPropertyType getDataLinkLayer() {
         return dataLinkLayer;
@@ -290,11 +290,11 @@ public class InterfaceDefinition implements AbstractInterfaceDefinition {
 
     /**
      * Sets the value of the dataLinkLayer property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link LayerPropertyType }
-     *     
+     *
      */
     public void setDataLinkLayer(final LayerPropertyType value) {
         this.dataLinkLayer = value;
@@ -302,11 +302,11 @@ public class InterfaceDefinition implements AbstractInterfaceDefinition {
 
     /**
      * Gets the value of the physicalLayer property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link LayerPropertyType }
-     *     
+     *
      */
     public LayerPropertyType getPhysicalLayer() {
         return physicalLayer;
@@ -314,11 +314,11 @@ public class InterfaceDefinition implements AbstractInterfaceDefinition {
 
     /**
      * Sets the value of the physicalLayer property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link LayerPropertyType }
-     *     
+     *
      */
     public void setPhysicalLayer(final LayerPropertyType value) {
         this.physicalLayer = value;
@@ -326,11 +326,11 @@ public class InterfaceDefinition implements AbstractInterfaceDefinition {
 
     /**
      * Gets the value of the mechanicalLayer property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link LayerPropertyType }
-     *     
+     *
      */
     public LayerPropertyType getMechanicalLayer() {
         return mechanicalLayer;
@@ -338,11 +338,11 @@ public class InterfaceDefinition implements AbstractInterfaceDefinition {
 
     /**
      * Sets the value of the mechanicalLayer property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link LayerPropertyType }
-     *     
+     *
      */
     public void setMechanicalLayer(final LayerPropertyType value) {
         this.mechanicalLayer = value;
@@ -350,11 +350,11 @@ public class InterfaceDefinition implements AbstractInterfaceDefinition {
 
     /**
      * Gets the value of the id property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getId() {
         return id;
@@ -362,11 +362,11 @@ public class InterfaceDefinition implements AbstractInterfaceDefinition {
 
     /**
      * Sets the value of the id property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setId(final String value) {
         this.id = value;

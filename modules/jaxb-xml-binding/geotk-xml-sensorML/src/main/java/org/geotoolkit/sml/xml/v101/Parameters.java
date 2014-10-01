@@ -25,13 +25,14 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.sml.xml.AbstractParameters;
+import org.apache.sis.util.ComparisonMode;
 
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -55,8 +56,8 @@ import org.geotoolkit.sml.xml.AbstractParameters;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -64,7 +65,7 @@ import org.geotoolkit.sml.xml.AbstractParameters;
     "parameterList"
 })
 @XmlRootElement(name = "Parameters")
-public class Parameters implements AbstractParameters {
+public class Parameters extends SensorObject implements AbstractParameters {
 
     @XmlElement(name = "ParameterList")
     private ParameterList parameterList;
@@ -115,11 +116,11 @@ public class Parameters implements AbstractParameters {
 
     /**
      * Gets the value of the parameterList property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Parameters.ParameterList }
-     *     
+     *
      */
     public ParameterList getParameterList() {
         return parameterList;
@@ -127,11 +128,11 @@ public class Parameters implements AbstractParameters {
 
     /**
      * Sets the value of the parameterList property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Parameters.ParameterList }
-     *     
+     *
      */
     public void setParameterList(final ParameterList value) {
         this.parameterList = value;
@@ -139,11 +140,11 @@ public class Parameters implements AbstractParameters {
 
     /**
      * Gets the value of the remoteSchema property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getRemoteSchema() {
         return remoteSchema;
@@ -151,11 +152,11 @@ public class Parameters implements AbstractParameters {
 
     /**
      * Sets the value of the remoteSchema property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRemoteSchema(final String value) {
         this.remoteSchema = value;
@@ -163,11 +164,11 @@ public class Parameters implements AbstractParameters {
 
     /**
      * Gets the value of the type property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getType() {
         return type;
@@ -175,11 +176,11 @@ public class Parameters implements AbstractParameters {
 
     /**
      * Sets the value of the type property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setType(final String value) {
         this.type = value;
@@ -187,11 +188,11 @@ public class Parameters implements AbstractParameters {
 
     /**
      * Gets the value of the href property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getHref() {
         return href;
@@ -199,11 +200,11 @@ public class Parameters implements AbstractParameters {
 
     /**
      * Sets the value of the href property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setHref(final String value) {
         this.href = value;
@@ -211,11 +212,11 @@ public class Parameters implements AbstractParameters {
 
     /**
      * Gets the value of the role property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getRole() {
         return role;
@@ -223,11 +224,11 @@ public class Parameters implements AbstractParameters {
 
     /**
      * Sets the value of the role property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRole(final String value) {
         this.role = value;
@@ -235,11 +236,11 @@ public class Parameters implements AbstractParameters {
 
     /**
      * Gets the value of the arcrole property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getArcrole() {
         return arcrole;
@@ -247,11 +248,11 @@ public class Parameters implements AbstractParameters {
 
     /**
      * Sets the value of the arcrole property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setArcrole(final String value) {
         this.arcrole = value;
@@ -259,11 +260,11 @@ public class Parameters implements AbstractParameters {
 
     /**
      * Gets the value of the title property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getTitle() {
         return title;
@@ -271,11 +272,11 @@ public class Parameters implements AbstractParameters {
 
     /**
      * Sets the value of the title property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setTitle(final String value) {
         this.title = value;
@@ -283,11 +284,11 @@ public class Parameters implements AbstractParameters {
 
     /**
      * Gets the value of the show property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getShow() {
         return show;
@@ -295,11 +296,11 @@ public class Parameters implements AbstractParameters {
 
     /**
      * Sets the value of the show property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setShow(final String value) {
         this.show = value;
@@ -307,11 +308,11 @@ public class Parameters implements AbstractParameters {
 
     /**
      * Gets the value of the actuate property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getActuate() {
         return actuate;
@@ -319,11 +320,11 @@ public class Parameters implements AbstractParameters {
 
     /**
      * Sets the value of the actuate property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setActuate(final String value) {
         this.actuate = value;
@@ -333,7 +334,7 @@ public class Parameters implements AbstractParameters {
      * Verify if this entry is identical to specified object.
      */
     @Override
-    public boolean equals(final Object object) {
+    public boolean equals(final Object object, final ComparisonMode mode) {
         if (object == this) {
             return true;
         }

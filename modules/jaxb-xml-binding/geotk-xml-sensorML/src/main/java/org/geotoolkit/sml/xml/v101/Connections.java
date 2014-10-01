@@ -26,9 +26,9 @@ import org.geotoolkit.sml.xml.AbstractConnections;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -50,8 +50,8 @@ import org.geotoolkit.sml.xml.AbstractConnections;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -59,7 +59,7 @@ import org.geotoolkit.sml.xml.AbstractConnections;
     "connectionList"
 })
 @XmlRootElement(name = "Connections")
-public class Connections implements AbstractConnections {
+public class Connections extends SensorObject implements AbstractConnections {
 
     @XmlElement(name = "ConnectionList")
     private ConnectionList connectionList;
@@ -77,10 +77,10 @@ public class Connections implements AbstractConnections {
             this.connectionList = new ConnectionList(connections.getConnectionList());
         }
     }
-    
+
     /**
      * Gets the value of the connectionList property.
-     * 
+     *
      * @return possible object is {@link Connections.ConnectionList }
      */
     @Override
@@ -90,11 +90,11 @@ public class Connections implements AbstractConnections {
 
     /**
      * Sets the value of the connectionList property.
-     * 
+     *
      * @param value allowed object is {@link Connections.ConnectionList }
      */
     public void setConnectionList(final ConnectionList value) {
         this.connectionList = value;
     }
-   
+
 }

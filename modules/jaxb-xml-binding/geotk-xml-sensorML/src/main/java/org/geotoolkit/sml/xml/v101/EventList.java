@@ -31,13 +31,14 @@ import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.sml.xml.AbstractEventList;
 import org.geotoolkit.sml.xml.AbstractEventListMember;
+import org.apache.sis.util.ComparisonMode;
 
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -62,8 +63,8 @@ import org.geotoolkit.sml.xml.AbstractEventListMember;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -71,7 +72,7 @@ import org.geotoolkit.sml.xml.AbstractEventListMember;
     "member"
 })
 @XmlRootElement(name = "EventList")
-public class EventList implements AbstractEventList {
+public class EventList extends SensorObject implements AbstractEventList {
 
     @XmlElement(required = true)
     private List<EventListMember> member;
@@ -126,11 +127,11 @@ public class EventList implements AbstractEventList {
 
     /**
      * Gets the value of the id property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getId() {
         return id;
@@ -138,11 +139,11 @@ public class EventList implements AbstractEventList {
 
     /**
      * Sets the value of the id property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setId(final String value) {
         this.id = value;
@@ -167,7 +168,7 @@ public class EventList implements AbstractEventList {
      * Verify if this entry is identical to specified object.
      */
     @Override
-    public boolean equals(final Object object) {
+    public boolean equals(final Object object, final ComparisonMode mode) {
         if (object == this) {
             return true;
         }

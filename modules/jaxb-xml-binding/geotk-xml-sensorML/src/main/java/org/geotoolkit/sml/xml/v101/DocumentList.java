@@ -35,9 +35,9 @@ import org.geotoolkit.sml.xml.AbstractDocumentListMember;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -63,8 +63,8 @@ import org.geotoolkit.sml.xml.AbstractDocumentListMember;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -73,7 +73,7 @@ import org.geotoolkit.sml.xml.AbstractDocumentListMember;
     "member"
 })
 @XmlRootElement(name = "DocumentList")
-public class DocumentList implements AbstractDocumentList {
+public class DocumentList extends SensorObject implements AbstractDocumentList {
 
     @XmlElement(namespace = "http://www.opengis.net/gml")
     private StringOrRefType description;
@@ -104,11 +104,11 @@ public class DocumentList implements AbstractDocumentList {
 
     /**
      * Gets the value of the description property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link StringOrRefType }
-     *     
+     *
      */
     public StringOrRefType getDescription() {
         return description;
@@ -116,11 +116,11 @@ public class DocumentList implements AbstractDocumentList {
 
     /**
      * Sets the value of the description property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link StringOrRefType }
-     *     
+     *
      */
     public void setDescription(final StringOrRefType value) {
         this.description = value;
@@ -128,25 +128,25 @@ public class DocumentList implements AbstractDocumentList {
 
     /**
      * Gets the value of the member property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the member property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getMember().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link DocumentList.Member }
-     * 
-     * 
+     *
+     *
      */
     public List<DocumentList.Member> getMember() {
         if (member == null) {
@@ -157,11 +157,11 @@ public class DocumentList implements AbstractDocumentList {
 
     /**
      * Gets the value of the id property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getId() {
         return id;
@@ -169,11 +169,11 @@ public class DocumentList implements AbstractDocumentList {
 
     /**
      * Sets the value of the id property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setId(final String value) {
         this.id = value;
@@ -182,9 +182,9 @@ public class DocumentList implements AbstractDocumentList {
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -198,8 +198,8 @@ public class DocumentList implements AbstractDocumentList {
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -257,11 +257,11 @@ public class DocumentList implements AbstractDocumentList {
 
         /**
          * Gets the value of the document property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link Document }
-         *     
+         *
          */
         public Document getDocument() {
             return document;
@@ -269,11 +269,11 @@ public class DocumentList implements AbstractDocumentList {
 
         /**
          * Sets the value of the document property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link Document }
-         *     
+         *
          */
         public void setDocument(final Document value) {
             this.document = value;
@@ -281,11 +281,11 @@ public class DocumentList implements AbstractDocumentList {
 
         /**
          * Gets the value of the name property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getName() {
             return name;
@@ -293,11 +293,11 @@ public class DocumentList implements AbstractDocumentList {
 
         /**
          * Sets the value of the name property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setName(final String value) {
             this.name = value;
@@ -305,11 +305,11 @@ public class DocumentList implements AbstractDocumentList {
 
         /**
          * Gets the value of the remoteSchema property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getRemoteSchema() {
             return remoteSchema;
@@ -317,11 +317,11 @@ public class DocumentList implements AbstractDocumentList {
 
         /**
          * Sets the value of the remoteSchema property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setRemoteSchema(final String value) {
             this.remoteSchema = value;
@@ -329,11 +329,11 @@ public class DocumentList implements AbstractDocumentList {
 
         /**
          * Gets the value of the type property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getType() {
             return type;
@@ -341,11 +341,11 @@ public class DocumentList implements AbstractDocumentList {
 
         /**
          * Sets the value of the type property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setType(final String value) {
             this.type = value;
@@ -353,11 +353,11 @@ public class DocumentList implements AbstractDocumentList {
 
         /**
          * Gets the value of the href property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getHref() {
             return href;
@@ -365,11 +365,11 @@ public class DocumentList implements AbstractDocumentList {
 
         /**
          * Sets the value of the href property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setHref(final String value) {
             this.href = value;
@@ -377,11 +377,11 @@ public class DocumentList implements AbstractDocumentList {
 
         /**
          * Gets the value of the role property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getRole() {
             return role;
@@ -389,11 +389,11 @@ public class DocumentList implements AbstractDocumentList {
 
         /**
          * Sets the value of the role property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setRole(final String value) {
             this.role = value;
@@ -401,11 +401,11 @@ public class DocumentList implements AbstractDocumentList {
 
         /**
          * Gets the value of the arcrole property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getArcrole() {
             return arcrole;
@@ -413,11 +413,11 @@ public class DocumentList implements AbstractDocumentList {
 
         /**
          * Sets the value of the arcrole property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setArcrole(final String value) {
             this.arcrole = value;
@@ -425,11 +425,11 @@ public class DocumentList implements AbstractDocumentList {
 
         /**
          * Gets the value of the title property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getTitle() {
             return title;
@@ -437,11 +437,11 @@ public class DocumentList implements AbstractDocumentList {
 
         /**
          * Sets the value of the title property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setTitle(final String value) {
             this.title = value;
@@ -449,11 +449,11 @@ public class DocumentList implements AbstractDocumentList {
 
         /**
          * Gets the value of the show property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getShow() {
             return show;
@@ -461,11 +461,11 @@ public class DocumentList implements AbstractDocumentList {
 
         /**
          * Sets the value of the show property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setShow(final String value) {
             this.show = value;
@@ -473,11 +473,11 @@ public class DocumentList implements AbstractDocumentList {
 
         /**
          * Gets the value of the actuate property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getActuate() {
             return actuate;
@@ -485,11 +485,11 @@ public class DocumentList implements AbstractDocumentList {
 
         /**
          * Sets the value of the actuate property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setActuate(final String value) {
             this.actuate = value;

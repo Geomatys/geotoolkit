@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.sml.xml.AbstractDataDefinition;
 import org.geotoolkit.swe.xml.v101.DataBlockDefinitionType;
 import org.geotoolkit.swe.xml.v101.DataStreamDefinitionType;
+import org.apache.sis.util.ComparisonMode;
 
 /**
  * <p>Java class for anonymous complex type.
@@ -53,7 +54,7 @@ import org.geotoolkit.swe.xml.v101.DataStreamDefinitionType;
     "dataBlockDefinition",
     "dataStreamDefinition"
 })
-public class DataDefinition implements AbstractDataDefinition {
+public class DataDefinition extends SensorObject implements AbstractDataDefinition {
 
     @XmlElement(name = "DataBlockDefinition", namespace = "http://www.opengis.net/swe/1.0.1")
     private DataBlockDefinitionType dataBlockDefinition;
@@ -83,7 +84,7 @@ public class DataDefinition implements AbstractDataDefinition {
     public DataDefinition() {
 
     }
-    
+
     public DataDefinition(final DataBlockDefinitionType dataBlockDefinition) {
         this.dataBlockDefinition = dataBlockDefinition;
     }
@@ -345,7 +346,7 @@ public class DataDefinition implements AbstractDataDefinition {
     public void setActuate(final String value) {
         this.actuate = value;
     }
-    
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("[DataDefinition]").append("\n");
@@ -386,7 +387,7 @@ public class DataDefinition implements AbstractDataDefinition {
      * Verify if this entry is identical to specified object.
      */
     @Override
-    public boolean equals(final Object object) {
+    public boolean equals(final Object object, final ComparisonMode mode) {
         if (object == this) {
             return true;
         }

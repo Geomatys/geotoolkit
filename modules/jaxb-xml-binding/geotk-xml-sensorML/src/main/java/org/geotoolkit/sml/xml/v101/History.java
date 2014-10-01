@@ -25,13 +25,14 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.sml.xml.AbstractHistory;
+import org.apache.sis.util.ComparisonMode;
 
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -44,8 +45,8 @@ import org.geotoolkit.sml.xml.AbstractHistory;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -53,7 +54,7 @@ import org.geotoolkit.sml.xml.AbstractHistory;
     "eventList"
 })
 @XmlRootElement(name = "History")
-public class History implements AbstractHistory {
+public class History extends SensorObject implements AbstractHistory {
 
     @XmlElement(name = "EventList")
     private EventList eventList;
@@ -100,11 +101,11 @@ public class History implements AbstractHistory {
 
     /**
      * Gets the value of the eventList property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link EventList }
-     *     
+     *
      */
     public EventList getEventList() {
         return eventList;
@@ -112,11 +113,11 @@ public class History implements AbstractHistory {
 
     /**
      * Sets the value of the eventList property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link EventList }
-     *     
+     *
      */
     public void setEventList(final EventList value) {
         this.eventList = value;
@@ -124,11 +125,11 @@ public class History implements AbstractHistory {
 
     /**
      * Gets the value of the remoteSchema property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getRemoteSchema() {
         return remoteSchema;
@@ -136,11 +137,11 @@ public class History implements AbstractHistory {
 
     /**
      * Sets the value of the remoteSchema property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRemoteSchema(final String value) {
         this.remoteSchema = value;
@@ -148,11 +149,11 @@ public class History implements AbstractHistory {
 
     /**
      * Gets the value of the type property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getType() {
         return type;
@@ -160,11 +161,11 @@ public class History implements AbstractHistory {
 
     /**
      * Sets the value of the type property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setType(final String value) {
         this.type = value;
@@ -172,11 +173,11 @@ public class History implements AbstractHistory {
 
     /**
      * Gets the value of the href property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getHref() {
         return href;
@@ -184,11 +185,11 @@ public class History implements AbstractHistory {
 
     /**
      * Sets the value of the href property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setHref(final String value) {
         this.href = value;
@@ -196,11 +197,11 @@ public class History implements AbstractHistory {
 
     /**
      * Gets the value of the role property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getRole() {
         return role;
@@ -208,11 +209,11 @@ public class History implements AbstractHistory {
 
     /**
      * Sets the value of the role property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRole(final String value) {
         this.role = value;
@@ -220,11 +221,11 @@ public class History implements AbstractHistory {
 
     /**
      * Gets the value of the arcrole property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getArcrole() {
         return arcrole;
@@ -232,11 +233,11 @@ public class History implements AbstractHistory {
 
     /**
      * Sets the value of the arcrole property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setArcrole(final String value) {
         this.arcrole = value;
@@ -244,11 +245,11 @@ public class History implements AbstractHistory {
 
     /**
      * Gets the value of the title property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getTitle() {
         return title;
@@ -256,11 +257,11 @@ public class History implements AbstractHistory {
 
     /**
      * Sets the value of the title property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setTitle(final String value) {
         this.title = value;
@@ -268,11 +269,11 @@ public class History implements AbstractHistory {
 
     /**
      * Gets the value of the show property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getShow() {
         return show;
@@ -280,11 +281,11 @@ public class History implements AbstractHistory {
 
     /**
      * Sets the value of the show property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setShow(final String value) {
         this.show = value;
@@ -292,11 +293,11 @@ public class History implements AbstractHistory {
 
     /**
      * Gets the value of the actuate property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getActuate() {
         return actuate;
@@ -304,11 +305,11 @@ public class History implements AbstractHistory {
 
     /**
      * Sets the value of the actuate property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setActuate(final String value) {
         this.actuate = value;
@@ -351,7 +352,7 @@ public class History implements AbstractHistory {
      * Verify if this entry is identical to specified object.
      */
     @Override
-    public boolean equals(final Object object) {
+    public boolean equals(final Object object, final ComparisonMode mode) {
         if (object == this) {
             return true;
         }

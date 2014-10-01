@@ -30,6 +30,7 @@ import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.sml.xml.AbstractInputList;
 import org.geotoolkit.sml.xml.IoComponent;
+import org.apache.sis.util.ComparisonMode;
 
 /**
  * <p>Java class for anonymous complex type.
@@ -55,7 +56,7 @@ import org.geotoolkit.sml.xml.IoComponent;
 @XmlType(name = "", propOrder = {
     "input"
 })
-public class InputList implements AbstractInputList {
+public class InputList extends SensorObject implements AbstractInputList {
 
     @XmlElement(required = true)
     private List<IoComponentPropertyType> input;
@@ -129,7 +130,7 @@ public class InputList implements AbstractInputList {
      * Verify if this entry is identical to specified object.
      */
     @Override
-    public boolean equals(final Object object) {
+    public boolean equals(final Object object, final ComparisonMode mode) {
         if (object == this) {
             return true;
         }

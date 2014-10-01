@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.sml.xml.AbstractComponentList;
 import org.geotoolkit.sml.xml.ComponentProperty;
+import org.apache.sis.util.ComparisonMode;
 
 /**
  * <p>Java class for anonymous complex type.
@@ -61,7 +62,7 @@ import org.geotoolkit.sml.xml.ComponentProperty;
 @XmlType(name = "", propOrder = {
     "component"
 })
-public class ComponentList implements AbstractComponentList {
+public class ComponentList extends SensorObject implements AbstractComponentList {
 
     @XmlElement(required = true)
     private List<ComponentPropertyType> component;
@@ -110,7 +111,7 @@ public class ComponentList implements AbstractComponentList {
     }
 
     @Override
-    public boolean equals(final Object object) {
+    public boolean equals(final Object object, final ComparisonMode mode) {
         if (object == this) {
             return true;
         }

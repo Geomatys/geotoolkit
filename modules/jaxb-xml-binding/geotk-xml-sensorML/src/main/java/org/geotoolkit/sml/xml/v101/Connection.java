@@ -29,9 +29,9 @@ import org.geotoolkit.sml.xml.AbstractConnection;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -45,8 +45,8 @@ import org.geotoolkit.sml.xml.AbstractConnection;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -55,7 +55,7 @@ import org.geotoolkit.sml.xml.AbstractConnection;
     "arrayLink"
 })
 @XmlRootElement(name = "Connection")
-public class Connection implements AbstractConnection {
+public class Connection extends SensorObject implements AbstractConnection {
 
     @XmlElement(name = "Link")
     private Link link;
@@ -91,14 +91,14 @@ public class Connection implements AbstractConnection {
         this.name      = name;
         this.arrayLink = arraylink;
     }
-    
+
     /**
      * Gets the value of the link property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Link }
-     *     
+     *
      */
     @Override
     public Link getLink() {
@@ -107,11 +107,11 @@ public class Connection implements AbstractConnection {
 
     /**
      * Sets the value of the link property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Link }
-     *     
+     *
      */
     public void setLink(final Link value) {
         this.link = value;
@@ -119,11 +119,11 @@ public class Connection implements AbstractConnection {
 
     /**
      * Gets the value of the arrayLink property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ArrayLink }
-     *     
+     *
      */
     @Override
     public ArrayLink getArrayLink() {
@@ -132,11 +132,11 @@ public class Connection implements AbstractConnection {
 
     /**
      * Sets the value of the arrayLink property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ArrayLink }
-     *     
+     *
      */
     public void setArrayLink(final ArrayLink value) {
         this.arrayLink = value;
@@ -144,11 +144,11 @@ public class Connection implements AbstractConnection {
 
     /**
      * Gets the value of the name property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getName() {
         return name;
@@ -156,11 +156,11 @@ public class Connection implements AbstractConnection {
 
     /**
      * Sets the value of the name property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setName(final String value) {
         this.name = value;

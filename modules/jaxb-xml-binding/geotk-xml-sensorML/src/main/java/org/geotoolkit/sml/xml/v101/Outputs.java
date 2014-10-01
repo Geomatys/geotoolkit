@@ -26,13 +26,14 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.sml.xml.AbstractOutputs;
+import org.apache.sis.util.ComparisonMode;
 
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -56,8 +57,8 @@ import org.geotoolkit.sml.xml.AbstractOutputs;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -65,7 +66,7 @@ import org.geotoolkit.sml.xml.AbstractOutputs;
     "outputList"
 })
 @XmlRootElement(name = "Outputs")
-public class Outputs implements AbstractOutputs {
+public class Outputs extends SensorObject implements AbstractOutputs {
 
     @XmlElement(name = "OutputList")
     private OutputList outputList;
@@ -121,11 +122,11 @@ public class Outputs implements AbstractOutputs {
 
     /**
      * Gets the value of the outputList property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Outputs.OutputList }
-     *     
+     *
      */
     public OutputList getOutputList() {
         return outputList;
@@ -133,11 +134,11 @@ public class Outputs implements AbstractOutputs {
 
     /**
      * Sets the value of the outputList property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Outputs.OutputList }
-     *     
+     *
      */
     public void setOutputList(final OutputList value) {
         this.outputList = value;
@@ -145,11 +146,11 @@ public class Outputs implements AbstractOutputs {
 
     /**
      * Gets the value of the remoteSchema property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getRemoteSchema() {
         return remoteSchema;
@@ -157,11 +158,11 @@ public class Outputs implements AbstractOutputs {
 
     /**
      * Sets the value of the remoteSchema property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRemoteSchema(final String value) {
         this.remoteSchema = value;
@@ -169,11 +170,11 @@ public class Outputs implements AbstractOutputs {
 
     /**
      * Gets the value of the type property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getType() {
         return type;
@@ -181,11 +182,11 @@ public class Outputs implements AbstractOutputs {
 
     /**
      * Sets the value of the type property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setType(final String value) {
         this.type = value;
@@ -193,11 +194,11 @@ public class Outputs implements AbstractOutputs {
 
     /**
      * Gets the value of the href property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getHref() {
         return href;
@@ -205,11 +206,11 @@ public class Outputs implements AbstractOutputs {
 
     /**
      * Sets the value of the href property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setHref(final String value) {
         this.href = value;
@@ -217,11 +218,11 @@ public class Outputs implements AbstractOutputs {
 
     /**
      * Gets the value of the role property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getRole() {
         return role;
@@ -229,11 +230,11 @@ public class Outputs implements AbstractOutputs {
 
     /**
      * Sets the value of the role property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRole(final String value) {
         this.role = value;
@@ -241,11 +242,11 @@ public class Outputs implements AbstractOutputs {
 
     /**
      * Gets the value of the arcrole property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getArcrole() {
         return arcrole;
@@ -253,11 +254,11 @@ public class Outputs implements AbstractOutputs {
 
     /**
      * Sets the value of the arcrole property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setArcrole(final String value) {
         this.arcrole = value;
@@ -265,11 +266,11 @@ public class Outputs implements AbstractOutputs {
 
     /**
      * Gets the value of the title property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getTitle() {
         return title;
@@ -277,11 +278,11 @@ public class Outputs implements AbstractOutputs {
 
     /**
      * Sets the value of the title property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setTitle(final String value) {
         this.title = value;
@@ -289,11 +290,11 @@ public class Outputs implements AbstractOutputs {
 
     /**
      * Gets the value of the show property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getShow() {
         return show;
@@ -301,11 +302,11 @@ public class Outputs implements AbstractOutputs {
 
     /**
      * Sets the value of the show property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setShow(final String value) {
         this.show = value;
@@ -313,11 +314,11 @@ public class Outputs implements AbstractOutputs {
 
     /**
      * Gets the value of the actuate property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getActuate() {
         return actuate;
@@ -325,11 +326,11 @@ public class Outputs implements AbstractOutputs {
 
     /**
      * Sets the value of the actuate property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setActuate(final String value) {
         this.actuate = value;
@@ -340,7 +341,7 @@ public class Outputs implements AbstractOutputs {
      * Verify if this entry is identical to specified object.
      */
     @Override
-    public boolean equals(final Object object) {
+    public boolean equals(final Object object, final ComparisonMode mode) {
         if (object == this) {
             return true;
         }

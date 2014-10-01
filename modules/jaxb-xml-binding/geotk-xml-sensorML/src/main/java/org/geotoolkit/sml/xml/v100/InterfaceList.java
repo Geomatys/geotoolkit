@@ -76,19 +76,19 @@ public class InterfaceList implements AbstractInterfaceList {
     public InterfaceList(final AbstractInterfaceList al) {
         if (al != null) {
             this.id = al.getId();
-            if (al.getInterface() != null) {
+            if (al.getInterfaces() != null) {
                 this._interface = new ArrayList<Interface>();
-                for (AbstractInterface i : al.getInterface()) {
+                for (AbstractInterface i : al.getInterfaces()) {
                     this._interface.add(new Interface(i));
                 }
             }
         }
     }
-    
+
     /**
      * Gets the value of the interface property.
      */
-    public List<Interface> getInterface() {
+    public List<Interface> getInterfaces() {
         if (_interface == null) {
             _interface = new ArrayList<Interface>();
         }

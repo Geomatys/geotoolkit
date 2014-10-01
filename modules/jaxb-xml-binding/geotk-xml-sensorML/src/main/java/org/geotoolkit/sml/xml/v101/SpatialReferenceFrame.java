@@ -27,9 +27,9 @@ import org.geotoolkit.sml.xml.AbstractSpatialReferenceFrame;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -41,8 +41,8 @@ import org.geotoolkit.sml.xml.AbstractSpatialReferenceFrame;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -50,7 +50,7 @@ import org.geotoolkit.sml.xml.AbstractSpatialReferenceFrame;
     "engineeringCRS"
 })
 @XmlRootElement(name = "SpatialReferenceFrame")
-public class SpatialReferenceFrame implements AbstractSpatialReferenceFrame {
+public class SpatialReferenceFrame extends SensorObject implements AbstractSpatialReferenceFrame {
 
     @XmlElement(name = "EngineeringCRS", namespace = "http://www.opengis.net/gml", required = true)
     protected EngineeringCRSType engineeringCRS;
@@ -68,10 +68,10 @@ public class SpatialReferenceFrame implements AbstractSpatialReferenceFrame {
     public SpatialReferenceFrame(final EngineeringCRSType engineeringCRS) {
         this.engineeringCRS = engineeringCRS;
     }
-    
+
     /**
      * Gets the value of the engineeringCRS property.
-     * 
+     *
      */
     public EngineeringCRSType getEngineeringCRS() {
         return engineeringCRS;
@@ -79,7 +79,7 @@ public class SpatialReferenceFrame implements AbstractSpatialReferenceFrame {
 
     /**
      * Sets the value of the engineeringCRS property.
-     * 
+     *
      */
     public void setEngineeringCRS(final EngineeringCRSType value) {
         this.engineeringCRS = value;

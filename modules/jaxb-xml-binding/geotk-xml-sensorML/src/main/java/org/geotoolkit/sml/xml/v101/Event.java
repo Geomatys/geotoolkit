@@ -38,13 +38,14 @@ import org.geotoolkit.sml.xml.AbstractIdentification;
 import org.geotoolkit.sml.xml.AbstractKeywords;
 import org.geotoolkit.swe.xml.DataComponentProperty;
 import org.geotoolkit.swe.xml.v101.DataComponentPropertyType;
+import org.apache.sis.util.ComparisonMode;
 
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -61,8 +62,8 @@ import org.geotoolkit.swe.xml.v101.DataComponentPropertyType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -77,7 +78,7 @@ import org.geotoolkit.swe.xml.v101.DataComponentPropertyType;
     "property"
 })
 @XmlRootElement(name = "Event")
-public class Event implements AbstractEvent {
+public class Event extends SensorObject implements AbstractEvent {
 
     private String date;
     @XmlElement(namespace = "http://www.opengis.net/gml")
@@ -145,11 +146,11 @@ public class Event implements AbstractEvent {
 
     /**
      * Gets the value of the date property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getDate() {
         return date;
@@ -157,11 +158,11 @@ public class Event implements AbstractEvent {
 
     /**
      * Sets the value of the date property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setDate(final String value) {
         this.date = value;
@@ -169,11 +170,11 @@ public class Event implements AbstractEvent {
 
     /**
      * Gets the value of the description property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link StringOrRefType }
-     *     
+     *
      */
     public StringOrRefType getDescription() {
         return description;
@@ -181,11 +182,11 @@ public class Event implements AbstractEvent {
 
     /**
      * Sets the value of the description property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link StringOrRefType }
-     *     
+     *
      */
     public void setDescription(final StringOrRefType value) {
         this.description = value;
@@ -193,7 +194,7 @@ public class Event implements AbstractEvent {
 
     /**
      * Gets the value of the keywords property.
-     * 
+     *
      */
     public List<Keywords> getKeywords() {
         if (keywords == null) {
@@ -222,10 +223,10 @@ public class Event implements AbstractEvent {
             this.keywords.add(keywords);
         }
     }
-    
+
     /**
      * Gets the value of the identification property.
-     * 
+     *
      */
     public List<Identification> getIdentification() {
         if (identification == null) {
@@ -267,10 +268,10 @@ public class Event implements AbstractEvent {
             this.identification.add(new Identification(identification));
         }
     }
-    
+
     /**
      * Gets the value of the classification property.
-     * 
+     *
      */
     public List<Classification> getClassification() {
         if (classification == null) {
@@ -312,7 +313,7 @@ public class Event implements AbstractEvent {
             this.classification.add(new Classification(classification));
         }
     }
-    
+
     /**
      * Gets the value of the contact property.
      */
@@ -356,7 +357,7 @@ public class Event implements AbstractEvent {
     public void setContact(final List<Contact> contact) {
         this.contact = contact;
     }
-    
+
     /**
      * Gets the value of the documentation property.
      */
@@ -400,7 +401,7 @@ public class Event implements AbstractEvent {
     public void setDocumentation(final List<Documentation> documentation) {
         this.documentation = documentation;
     }
-    
+
     /**
      * Gets the value of the property property.
      */
@@ -434,11 +435,11 @@ public class Event implements AbstractEvent {
 
     /**
      * Gets the value of the id property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getId() {
         return id;
@@ -446,11 +447,11 @@ public class Event implements AbstractEvent {
 
     /**
      * Sets the value of the id property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setId(final String value) {
         this.id = value;
@@ -511,7 +512,7 @@ public class Event implements AbstractEvent {
      * Verify if this entry is identical to specified object.
      */
     @Override
-    public boolean equals(final Object object) {
+    public boolean equals(final Object object, final ComparisonMode mode) {
         if (object == this) {
             return true;
         }
@@ -547,5 +548,5 @@ public class Event implements AbstractEvent {
         return hash;
     }
 
-    
+
 }

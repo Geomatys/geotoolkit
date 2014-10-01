@@ -30,6 +30,7 @@ import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.sml.xml.AbstractOutputList;
 import org.geotoolkit.sml.xml.IoComponent;
+import org.apache.sis.util.ComparisonMode;
 
 /**
  * <p>Java class for anonymous complex type.
@@ -55,7 +56,7 @@ import org.geotoolkit.sml.xml.IoComponent;
 @XmlType(name = "", propOrder = {
     "output"
 })
-public class OutputList implements AbstractOutputList {
+public class OutputList extends SensorObject implements AbstractOutputList {
 
     @XmlElement(required = true)
     private List<IoComponentPropertyType> output;
@@ -129,7 +130,7 @@ public class OutputList implements AbstractOutputList {
      * Verify if this entry is identical to specified object.
      */
     @Override
-    public boolean equals(final Object object) {
+    public boolean equals(final Object object, final ComparisonMode mode) {
         if (object == this) {
             return true;
         }

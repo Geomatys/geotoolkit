@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.sml.xml.AbstractPhone;
+import org.apache.sis.util.ComparisonMode;
 
 /**
  * <p>Java class for anonymous complex type.
@@ -49,7 +50,7 @@ import org.geotoolkit.sml.xml.AbstractPhone;
     "voice",
     "facsimile"
 })
-public class Phone implements AbstractPhone {
+public class Phone extends SensorObject implements AbstractPhone {
 
     private List<String> voice;
     private List<String> facsimile;
@@ -121,7 +122,7 @@ public class Phone implements AbstractPhone {
      * Verify if this entry is identical to specified object.
      */
     @Override
-    public boolean equals(final Object object) {
+    public boolean equals(final Object object, final ComparisonMode mode) {
         if (object == this) {
             return true;
         }

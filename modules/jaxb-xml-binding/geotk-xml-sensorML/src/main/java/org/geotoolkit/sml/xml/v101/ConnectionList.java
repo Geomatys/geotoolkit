@@ -49,7 +49,7 @@ import org.geotoolkit.sml.xml.AbstractConnectionList;
 @XmlType(name = "", propOrder = {
     "connection"
 })
-public class ConnectionList implements AbstractConnectionList {
+public class ConnectionList extends SensorObject implements AbstractConnectionList {
 
     @XmlElement(required = true)
     private List<Connection> connection;

@@ -34,6 +34,7 @@ import org.geotoolkit.sml.xml.Component;
 import org.geotoolkit.sml.xml.ComponentArray;
 import org.geotoolkit.sml.xml.System;
 import org.geotoolkit.sml.xml.ComponentProperty;
+import org.apache.sis.util.ComparisonMode;
 
 /**
  * <p>Java class for anonymous complex type.
@@ -61,7 +62,7 @@ import org.geotoolkit.sml.xml.ComponentProperty;
 @XmlType(name = "", propOrder = {
     "process"
 })
-public class ComponentPropertyType implements ComponentProperty {
+public class ComponentPropertyType extends SensorObject implements ComponentProperty {
 
     @XmlElementRef(name = "AbstractProcess", namespace = "http://www.opengis.net/sensorML/1.0.1", type = JAXBElement.class)
     private JAXBElement<? extends AbstractProcessType> process;
@@ -141,7 +142,7 @@ public class ComponentPropertyType implements ComponentProperty {
         this.href    = href;
         this.role    = role;
     }
-    
+
     /**
      * Gets the value of the process property.
      *
@@ -404,7 +405,7 @@ public class ComponentPropertyType implements ComponentProperty {
      * Verify if this entry is identical to specified object.
      */
     @Override
-    public boolean equals(final Object object) {
+    public boolean equals(final Object object, final ComparisonMode mode) {
         if (object == this) {
             return true;
         }

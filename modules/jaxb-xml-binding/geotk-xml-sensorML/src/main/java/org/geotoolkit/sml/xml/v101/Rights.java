@@ -31,9 +31,9 @@ import org.geotoolkit.sml.xml.AbstractRights;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -49,8 +49,8 @@ import org.geotoolkit.sml.xml.AbstractRights;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -58,7 +58,7 @@ import org.geotoolkit.sml.xml.AbstractRights;
     "documentation"
 })
 @XmlRootElement(name = "Rights")
-public class Rights implements AbstractRights{
+public class Rights extends SensorObject implements AbstractRights {
 
     @XmlElement(required = true)
     private Documentation documentation;
@@ -95,14 +95,14 @@ public class Rights implements AbstractRights{
         this.privacyAct = privacyAct;
         this.documentation = docu;
     }
-    
+
     /**
      * Gets the value of the documentation property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Documentation }
-     *     
+     *
      */
     public Documentation getDocumentation() {
         return documentation;
@@ -110,11 +110,11 @@ public class Rights implements AbstractRights{
 
     /**
      * Sets the value of the documentation property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Documentation }
-     *     
+     *
      */
     public void setDocumentation(final Documentation value) {
         this.documentation = value;
@@ -122,11 +122,11 @@ public class Rights implements AbstractRights{
 
     /**
      * Gets the value of the id property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getId() {
         return id;
@@ -134,11 +134,11 @@ public class Rights implements AbstractRights{
 
     /**
      * Sets the value of the id property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setId(final String value) {
         this.id = value;
@@ -146,11 +146,11 @@ public class Rights implements AbstractRights{
 
     /**
      * Gets the value of the privacyAct property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Boolean }
-     *     
+     *
      */
     public Boolean isPrivacyAct() {
         return privacyAct;
@@ -158,11 +158,11 @@ public class Rights implements AbstractRights{
 
     /**
      * Sets the value of the privacyAct property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Boolean }
-     *     
+     *
      */
     public void setPrivacyAct(final Boolean value) {
         this.privacyAct = value;
@@ -170,11 +170,11 @@ public class Rights implements AbstractRights{
 
     /**
      * Gets the value of the intellectualPropertyRights property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Boolean }
-     *     
+     *
      */
     public Boolean isIntellectualPropertyRights() {
         return intellectualPropertyRights;
@@ -182,11 +182,11 @@ public class Rights implements AbstractRights{
 
     /**
      * Sets the value of the intellectualPropertyRights property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Boolean }
-     *     
+     *
      */
     public void setIntellectualPropertyRights(final Boolean value) {
         this.intellectualPropertyRights = value;
@@ -194,11 +194,11 @@ public class Rights implements AbstractRights{
 
     /**
      * Gets the value of the copyRights property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Boolean }
-     *     
+     *
      */
     public Boolean isCopyRights() {
         return copyRights;
@@ -206,11 +206,11 @@ public class Rights implements AbstractRights{
 
     /**
      * Sets the value of the copyRights property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Boolean }
-     *     
+     *
      */
     public void setCopyRights(final Boolean value) {
         this.copyRights = value;

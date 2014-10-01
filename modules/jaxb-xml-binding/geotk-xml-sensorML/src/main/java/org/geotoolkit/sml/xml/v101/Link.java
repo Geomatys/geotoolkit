@@ -27,9 +27,9 @@ import org.geotoolkit.sml.xml.AbstractLink;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -59,8 +59,8 @@ import org.geotoolkit.sml.xml.AbstractLink;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -69,7 +69,7 @@ import org.geotoolkit.sml.xml.AbstractLink;
     "destination"
 })
 @XmlRootElement(name = "Link")
-public class Link implements AbstractLink {
+public class Link extends SensorObject implements AbstractLink {
 
     @XmlElement(required = true)
     private LinkRef source;
@@ -101,14 +101,14 @@ public class Link implements AbstractLink {
         this.source      = source;
         this.type        = type;
     }
-    
+
     /**
      * Gets the value of the source property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Link.Source }
-     *     
+     *
      */
     public LinkRef getSource() {
         return source;
@@ -116,11 +116,11 @@ public class Link implements AbstractLink {
 
     /**
      * Sets the value of the source property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Link.Source }
-     *     
+     *
      */
     public void setSource(final LinkRef value) {
         this.source = value;
@@ -128,11 +128,11 @@ public class Link implements AbstractLink {
 
     /**
      * Gets the value of the destination property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Link.Destination }
-     *     
+     *
      */
     public LinkRef getDestination() {
         return destination;
@@ -140,11 +140,11 @@ public class Link implements AbstractLink {
 
     /**
      * Sets the value of the destination property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Link.Destination }
-     *     
+     *
      */
     public void setDestination(final LinkRef value) {
         this.destination = value;
@@ -152,11 +152,11 @@ public class Link implements AbstractLink {
 
     /**
      * Gets the value of the type property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getType() {
         return type;
@@ -164,14 +164,14 @@ public class Link implements AbstractLink {
 
     /**
      * Sets the value of the type property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setType(final String value) {
         this.type = value;
     }
-   
+
 }

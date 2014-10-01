@@ -28,9 +28,9 @@ import org.geotoolkit.sml.xml.AbstractDocumentation;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -44,8 +44,8 @@ import org.geotoolkit.sml.xml.AbstractDocumentation;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -54,7 +54,7 @@ import org.geotoolkit.sml.xml.AbstractDocumentation;
     "documentList"
 })
 @XmlRootElement(name = "Documentation")
-public class Documentation implements AbstractDocumentation {
+public class Documentation extends SensorObject implements AbstractDocumentation {
 
     @XmlElement(name = "Document")
     private Document document;
@@ -113,14 +113,14 @@ public class Documentation implements AbstractDocumentation {
         this.documentList = documentList;
     }
 
-    
+
     /**
      * Gets the value of the document property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Document }
-     *     
+     *
      */
     public Document getDocument() {
         return document;
@@ -128,11 +128,11 @@ public class Documentation implements AbstractDocumentation {
 
     /**
      * Sets the value of the document property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Document }
-     *     
+     *
      */
     public void setDocument(final Document value) {
         this.document = value;
@@ -140,11 +140,11 @@ public class Documentation implements AbstractDocumentation {
 
     /**
      * Gets the value of the documentList property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link DocumentList }
-     *     
+     *
      */
     public DocumentList getDocumentList() {
         return documentList;
@@ -152,11 +152,11 @@ public class Documentation implements AbstractDocumentation {
 
     /**
      * Sets the value of the documentList property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link DocumentList }
-     *     
+     *
      */
     public void setDocumentList(final DocumentList value) {
         this.documentList = value;
@@ -164,11 +164,11 @@ public class Documentation implements AbstractDocumentation {
 
     /**
      * Gets the value of the remoteSchema property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getRemoteSchema() {
         return remoteSchema;
@@ -176,11 +176,11 @@ public class Documentation implements AbstractDocumentation {
 
     /**
      * Sets the value of the remoteSchema property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRemoteSchema(final String value) {
         this.remoteSchema = value;
@@ -188,11 +188,11 @@ public class Documentation implements AbstractDocumentation {
 
     /**
      * Gets the value of the type property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getType() {
         return type;
@@ -200,11 +200,11 @@ public class Documentation implements AbstractDocumentation {
 
     /**
      * Sets the value of the type property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setType(final String value) {
         this.type = value;
@@ -212,11 +212,11 @@ public class Documentation implements AbstractDocumentation {
 
     /**
      * Gets the value of the href property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getHref() {
         return href;
@@ -224,11 +224,11 @@ public class Documentation implements AbstractDocumentation {
 
     /**
      * Sets the value of the href property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setHref(final String value) {
         this.href = value;
@@ -236,11 +236,11 @@ public class Documentation implements AbstractDocumentation {
 
     /**
      * Gets the value of the role property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getRole() {
         return role;
@@ -248,11 +248,11 @@ public class Documentation implements AbstractDocumentation {
 
     /**
      * Sets the value of the role property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRole(final String value) {
         this.role = value;
@@ -260,11 +260,11 @@ public class Documentation implements AbstractDocumentation {
 
     /**
      * Gets the value of the arcrole property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getArcrole() {
         return arcrole;
@@ -272,11 +272,11 @@ public class Documentation implements AbstractDocumentation {
 
     /**
      * Sets the value of the arcrole property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setArcrole(final String value) {
         this.arcrole = value;
@@ -284,11 +284,11 @@ public class Documentation implements AbstractDocumentation {
 
     /**
      * Gets the value of the title property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getTitle() {
         return title;
@@ -296,11 +296,11 @@ public class Documentation implements AbstractDocumentation {
 
     /**
      * Sets the value of the title property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setTitle(final String value) {
         this.title = value;
@@ -308,11 +308,11 @@ public class Documentation implements AbstractDocumentation {
 
     /**
      * Gets the value of the show property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getShow() {
         return show;
@@ -320,11 +320,11 @@ public class Documentation implements AbstractDocumentation {
 
     /**
      * Sets the value of the show property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setShow(final String value) {
         this.show = value;
@@ -332,11 +332,11 @@ public class Documentation implements AbstractDocumentation {
 
     /**
      * Gets the value of the actuate property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getActuate() {
         return actuate;
@@ -344,11 +344,11 @@ public class Documentation implements AbstractDocumentation {
 
     /**
      * Sets the value of the actuate property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setActuate(final String value) {
         this.actuate = value;

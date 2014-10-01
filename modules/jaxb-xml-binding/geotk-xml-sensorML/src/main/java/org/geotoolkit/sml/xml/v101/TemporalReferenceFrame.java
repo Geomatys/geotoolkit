@@ -27,9 +27,9 @@ import org.geotoolkit.sml.xml.AbstractTemporalReferenceFrame;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -41,8 +41,8 @@ import org.geotoolkit.sml.xml.AbstractTemporalReferenceFrame;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -50,7 +50,7 @@ import org.geotoolkit.sml.xml.AbstractTemporalReferenceFrame;
     "temporalCRS"
 })
 @XmlRootElement(name = "TemporalReferenceFrame")
-public class TemporalReferenceFrame implements AbstractTemporalReferenceFrame {
+public class TemporalReferenceFrame extends SensorObject implements AbstractTemporalReferenceFrame {
 
     @XmlElement(name = "TemporalCRS", namespace = "http://www.opengis.net/gml", required = true)
     private TemporalCRSType temporalCRS;
@@ -68,7 +68,7 @@ public class TemporalReferenceFrame implements AbstractTemporalReferenceFrame {
     public TemporalReferenceFrame(final TemporalCRSType temporalCRS) {
         this.temporalCRS = temporalCRS;
     }
-    
+
     /**
      * Gets the value of the temporalCRS property.
      */
@@ -78,7 +78,7 @@ public class TemporalReferenceFrame implements AbstractTemporalReferenceFrame {
 
     /**
      * Sets the value of the temporalCRS property.
-     * 
+     *
      */
     public void setTemporalCRS(final TemporalCRSType value) {
         this.temporalCRS = value;

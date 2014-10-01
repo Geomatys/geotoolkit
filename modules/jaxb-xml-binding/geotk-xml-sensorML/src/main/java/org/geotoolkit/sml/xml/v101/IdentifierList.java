@@ -30,6 +30,7 @@ import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.sml.xml.AbstractIdentifier;
 import org.geotoolkit.sml.xml.AbstractIdentifierList;
+import org.apache.sis.util.ComparisonMode;
 
 /**
  * <p>Java class for anonymous complex type.
@@ -66,7 +67,7 @@ import org.geotoolkit.sml.xml.AbstractIdentifierList;
 @XmlType(name = "", propOrder = {
     "identifier"
 })
-public class IdentifierList implements AbstractIdentifierList {
+public class IdentifierList extends SensorObject implements AbstractIdentifierList {
 
     @XmlElement(required = true)
     private List<Identifier> identifier;
@@ -152,7 +153,7 @@ public class IdentifierList implements AbstractIdentifierList {
      * Verify if this entry is identical to specified object.
      */
     @Override
-    public boolean equals(final Object object) {
+    public boolean equals(final Object object, final ComparisonMode mode) {
         if (object == this) {
             return true;
         }

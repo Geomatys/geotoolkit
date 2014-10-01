@@ -32,13 +32,14 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.gml.xml.v311.StringOrRefType;
 import org.geotoolkit.sml.xml.AbstractContactList;
 import org.geotoolkit.sml.xml.AbstractContactListMember;
+import org.apache.sis.util.ComparisonMode;
 
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -61,8 +62,8 @@ import org.geotoolkit.sml.xml.AbstractContactListMember;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -71,7 +72,7 @@ import org.geotoolkit.sml.xml.AbstractContactListMember;
     "member"
 })
 @XmlRootElement(name = "ContactList")
-public class ContactList implements AbstractContactList {
+public class ContactList extends SensorObject implements AbstractContactList {
 
     @XmlElement(namespace = "http://www.opengis.net/gml")
     private StringOrRefType description;
@@ -102,11 +103,11 @@ public class ContactList implements AbstractContactList {
 
     /**
      * Gets the value of the description property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link StringOrRefType }
-     *     
+     *
      */
     public StringOrRefType getDescription() {
         return description;
@@ -114,11 +115,11 @@ public class ContactList implements AbstractContactList {
 
     /**
      * Sets the value of the description property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link StringOrRefType }
-     *     
+     *
      */
     public void setDescription(final StringOrRefType value) {
         this.description = value;
@@ -126,7 +127,7 @@ public class ContactList implements AbstractContactList {
 
     /**
      * Gets the value of the member property.
-     * 
+     *
     */
     public List<ContactList.Member> getMember() {
         if (member == null) {
@@ -137,11 +138,11 @@ public class ContactList implements AbstractContactList {
 
     /**
      * Gets the value of the id property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getId() {
         return id;
@@ -149,18 +150,18 @@ public class ContactList implements AbstractContactList {
 
     /**
      * Sets the value of the id property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setId(final String value) {
         this.id = value;
     }
 
     @Override
-    public boolean equals(final Object object) {
+    public boolean equals(final Object object, final ComparisonMode mode) {
         if (object == this) {
             return true;
         }
@@ -186,9 +187,9 @@ public class ContactList implements AbstractContactList {
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -199,8 +200,8 @@ public class ContactList implements AbstractContactList {
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -235,7 +236,7 @@ public class ContactList implements AbstractContactList {
         private String actuate;
 
         public Member() {
-            
+
         }
 
         public Member(final AbstractContactListMember member) {
@@ -258,11 +259,11 @@ public class ContactList implements AbstractContactList {
         }
         /**
          * Gets the value of the person property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link Person }
-         *     
+         *
          */
         public Person getPerson() {
             return person;
@@ -270,11 +271,11 @@ public class ContactList implements AbstractContactList {
 
         /**
          * Sets the value of the person property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link Person }
-         *     
+         *
          */
         public void setPerson(final Person value) {
             this.person = value;
@@ -282,11 +283,11 @@ public class ContactList implements AbstractContactList {
 
         /**
          * Gets the value of the responsibleParty property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link ResponsibleParty }
-         *     
+         *
          */
         public ResponsibleParty getResponsibleParty() {
             return responsibleParty;
@@ -294,11 +295,11 @@ public class ContactList implements AbstractContactList {
 
         /**
          * Sets the value of the responsibleParty property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link ResponsibleParty }
-         *     
+         *
          */
         public void setResponsibleParty(final ResponsibleParty value) {
             this.responsibleParty = value;
@@ -306,11 +307,11 @@ public class ContactList implements AbstractContactList {
 
         /**
          * Gets the value of the remoteSchema property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getRemoteSchema() {
             return remoteSchema;
@@ -318,11 +319,11 @@ public class ContactList implements AbstractContactList {
 
         /**
          * Sets the value of the remoteSchema property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setRemoteSchema(final String value) {
             this.remoteSchema = value;
@@ -330,11 +331,11 @@ public class ContactList implements AbstractContactList {
 
         /**
          * Gets the value of the type property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getType() {
         return type;
@@ -342,11 +343,11 @@ public class ContactList implements AbstractContactList {
 
         /**
          * Sets the value of the type property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setType(final String value) {
             this.type = value;
@@ -354,11 +355,11 @@ public class ContactList implements AbstractContactList {
 
         /**
          * Gets the value of the href property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getHref() {
             return href;
@@ -366,11 +367,11 @@ public class ContactList implements AbstractContactList {
 
         /**
          * Sets the value of the href property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setHref(final String value) {
             this.href = value;
@@ -378,11 +379,11 @@ public class ContactList implements AbstractContactList {
 
         /**
          * Gets the value of the role property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getRole() {
             return role;
@@ -390,11 +391,11 @@ public class ContactList implements AbstractContactList {
 
         /**
          * Sets the value of the role property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setRole(final String value) {
             this.role = value;
@@ -402,11 +403,11 @@ public class ContactList implements AbstractContactList {
 
         /**
          * Gets the value of the arcrole property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getArcrole() {
             return arcrole;
@@ -414,11 +415,11 @@ public class ContactList implements AbstractContactList {
 
         /**
          * Sets the value of the arcrole property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setArcrole(final String value) {
             this.arcrole = value;
@@ -426,11 +427,11 @@ public class ContactList implements AbstractContactList {
 
         /**
          * Gets the value of the title property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getTitle() {
             return title;
@@ -438,11 +439,11 @@ public class ContactList implements AbstractContactList {
 
         /**
          * Sets the value of the title property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setTitle(final String value) {
             this.title = value;
@@ -450,11 +451,11 @@ public class ContactList implements AbstractContactList {
 
         /**
          * Gets the value of the show property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getShow() {
             return show;
@@ -462,11 +463,11 @@ public class ContactList implements AbstractContactList {
 
         /**
          * Sets the value of the show property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setShow(final String value) {
             this.show = value;
@@ -474,11 +475,11 @@ public class ContactList implements AbstractContactList {
 
         /**
          * Gets the value of the actuate property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getActuate() {
             return actuate;
@@ -486,11 +487,11 @@ public class ContactList implements AbstractContactList {
 
         /**
          * Sets the value of the actuate property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setActuate(final String value) {
             this.actuate = value;
