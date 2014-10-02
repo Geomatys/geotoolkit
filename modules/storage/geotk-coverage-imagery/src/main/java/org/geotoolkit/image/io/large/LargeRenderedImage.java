@@ -170,15 +170,12 @@ public class LargeRenderedImage implements RenderedImage, Disposable {
             TileCache tilecache, Dimension tileSize) throws IOException
     {
         this(null, imageReader, readParam, null, imageIndex, tilecache, tileSize);
-        ArgumentChecks.ensureNonNull("imageReader", imageReader);
     }
 
     public LargeRenderedImage(ImageReaderSpi spi, ImageReadParam readParam, final Object input, int imageIndex,
             TileCache tilecache, Dimension tileSize) throws IOException
     {
         this(spi, null, readParam, input, imageIndex, tilecache, tileSize);
-        ArgumentChecks.ensureNonNull("spi",   spi);
-        ArgumentChecks.ensureNonNull("input", input);
     }
 
     private LargeRenderedImage(ImageReaderSpi spi, ImageReader imageReader, ImageReadParam readParam,
@@ -190,7 +187,22 @@ public class LargeRenderedImage implements RenderedImage, Disposable {
         this.input       = input;
         this.imageIndex  = imageIndex;
 
-        // To initialize the color model, we must read a little piece of the source image.
+        /* To initialize the color model, we must read a little piece of the source image.
+         * First, we check we have an initialized reader (containing an input), or an input along with an SPI or a reader.
+         */
+        if ((spi == null || input == null) && (imageReader == null || (imageReader.getInput() == null && input == null))) {
+            throw new IllegalArgumentException("Either a valid image reader or an SPI along with an input object must " +
+                    "be given at built.");
+        }
+
+        if (this.imageReader == null) {
+            this.imageReader = spi.createReaderInstance();
+        }
+
+        if (this.imageReader.getInput() == null) {
+            this.imageReader.setInput(input, false, false);
+        }
+
         final ImageReadParam tmpReadParam = imageReader.getDefaultReadParam();
         tmpReadParam.setSourceRegion(new Rectangle(0, 0, 1, 1));
         final BufferedImage tmpImage = imageReader.read(imageIndex, tmpReadParam);
@@ -415,11 +427,6 @@ public class LargeRenderedImage implements RenderedImage, Disposable {
                 }
             } catch (Exception e) {
                  // Do not log again, it must have been done above.
-            }
-
-            if (imageReader == null) {
-                imageReader = spi.createReaderInstance();
-                imageReader.setInput(input);
             }
 
             // Compute tile position in source image
