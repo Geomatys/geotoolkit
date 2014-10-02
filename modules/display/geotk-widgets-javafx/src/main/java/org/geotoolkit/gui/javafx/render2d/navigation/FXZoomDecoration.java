@@ -20,8 +20,7 @@ import org.geotoolkit.gui.javafx.render2d.FXMap;
 import org.geotoolkit.gui.javafx.render2d.FXMapDecoration;
 import java.awt.Image;
 import javafx.scene.Node;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
@@ -31,7 +30,7 @@ import javafx.scene.shape.Rectangle;
  * @author Johann Sorel
  * @module pending
  */
-public class FXZoomDecoration extends FlowPane implements FXMapDecoration{
+public class FXZoomDecoration extends Pane implements FXMapDecoration{
 
     private final Color TRS = new Color(1, 1, 1, 0.1);
     
@@ -43,15 +42,11 @@ public class FXZoomDecoration extends FlowPane implements FXMapDecoration{
     private boolean fill = false;
 
     public FXZoomDecoration(){
-        final AnchorPane ap = new AnchorPane(rectangle);
-        getChildren().add(ap);
+        getChildren().add(rectangle);
         rectangle.setVisible(false);
         rectangle.setFill(TRS);
         rectangle.setStroke(Color.DARKGREY);
         rectangle.setStrokeWidth(2);
-        ap.setPrefSize(10, 10);
-        ap.setMinSize(10, 10);
-        ap.setMaxSize(10, 10);
     }
 
     public void setFill(final boolean fill){
