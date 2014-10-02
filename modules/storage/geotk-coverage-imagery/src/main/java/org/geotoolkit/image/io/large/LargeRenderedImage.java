@@ -196,7 +196,7 @@ public class LargeRenderedImage implements RenderedImage, Disposable {
         }
 
         if (this.imageReader == null) {
-            this.imageReader = spi.createReaderInstance();
+            this.imageReader = imageReader = spi.createReaderInstance();
         }
 
         if (this.imageReader.getInput() == null) {
