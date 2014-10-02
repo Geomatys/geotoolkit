@@ -18,6 +18,7 @@
  */
 package org.geotoolkit.gui.swing.render2d.control.information;
 
+import org.geotoolkit.display.MeasureUtilities;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.Point;

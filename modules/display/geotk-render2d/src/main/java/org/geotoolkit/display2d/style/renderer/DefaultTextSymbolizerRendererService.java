@@ -85,7 +85,8 @@ public class DefaultTextSymbolizerRendererService extends AbstractSymbolizerRend
         g.setClip(rectangle);
 
         final String family;
-        if(!symbol.getSource().getFont().getFamily().isEmpty()){
+        if(!symbol.getSource().getFont().getFamily().isEmpty() && 
+            symbol.getSource().getFont().getFamily().get(0)!=null){
             family = symbol.getSource().getFont().getFamily().get(0).toString();
         }else{
             family = "Dialog";
