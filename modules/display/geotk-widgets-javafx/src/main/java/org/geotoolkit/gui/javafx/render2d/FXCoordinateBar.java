@@ -24,6 +24,7 @@ import java.beans.PropertyChangeListener;
 import java.text.NumberFormat;
 import java.util.Arrays;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.Event;
@@ -41,6 +42,7 @@ import javafx.scene.paint.Color;
 import javafx.util.converter.LongStringConverter;
 import org.apache.sis.geometry.DirectPosition2D;
 import org.geotoolkit.display2d.canvas.painter.SolidColorPainter;
+import org.geotoolkit.gui.javafx.crs.FXCRSButton;
 import org.geotoolkit.gui.javafx.util.FXUtilities;
 import org.geotoolkit.internal.Loggers;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -91,27 +93,34 @@ public class FXCoordinateBar extends GridPane {
     private final Label coordText = new Label("");
     private final ComboBox cbox = new ComboBox();
     private final ColorPicker colorPicker = new ColorPicker(Color.WHITE);
+    private final FXCRSButton crsButton = new FXCRSButton();
 
     public FXCoordinateBar(FXMap map) {
         this.map = map;
         barLeft.setMaxHeight(Double.MAX_VALUE);
         barCenter.setMaxHeight(Double.MAX_VALUE);
-        barRight.setMaxHeight(Double.MAX_VALUE);
+        barRight.setMaxHeight(Double.MAX_VALUE);        
+        barCenter.setMinWidth(1);
+        
+        colorPicker.setStyle("-fx-color-label-visible:false;");
         
         add(barLeft, 0, 0);
         add(barCenter, 1, 0);
         add(barRight, 2, 0);
         
-        
         final ColumnConstraints col0 = new ColumnConstraints();
         final ColumnConstraints col1 = new ColumnConstraints();
         final ColumnConstraints col2 = new ColumnConstraints();
+        col0.setHgrow(Priority.NEVER);
         col1.setHgrow(Priority.ALWAYS);
+        col1.setMinWidth(1);
+        col2.setHgrow(Priority.NEVER);
         final RowConstraints row0 = new RowConstraints();
         row0.setVgrow(Priority.ALWAYS);
         getColumnConstraints().addAll(col0,col1,col2);
         getRowConstraints().addAll(row0);
         
+        coordText.setMinWidth(1);
         barCenter.getItems().add(coordText);
         
         cbox.getItems().addAll(  1000l,
@@ -125,6 +134,7 @@ public class FXCoordinateBar extends GridPane {
         
         barRight.getItems().add(cbox);
         barRight.getItems().add(colorPicker);
+        barRight.getItems().add(crsButton);
         
         map.addEventHandler(MouseEvent.ANY, new myListener());
         
@@ -139,6 +149,19 @@ public class FXCoordinateBar extends GridPane {
                 }     
             }
         });
+        
+        crsButton.crsProperty().setValue(map.getCanvas().getObjectiveCRS());
+        crsButton.crsProperty().addListener((ObservableValue<? extends CoordinateReferenceSystem> observable, 
+                CoordinateReferenceSystem oldValue, CoordinateReferenceSystem newValue) -> {
+            try {
+                if(newValue!=null){
+                    map.getCanvas().setObjectiveCRS(newValue);
+                }
+            } catch (TransformException ex) {
+                Loggers.JAVAFX.log(Level.INFO, ex.getMessage(), ex);
+            }
+        });
+        
     }
     
     /**
