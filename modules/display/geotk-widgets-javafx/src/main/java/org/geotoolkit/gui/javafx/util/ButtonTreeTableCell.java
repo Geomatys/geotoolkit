@@ -17,7 +17,6 @@
 
 package org.geotoolkit.gui.javafx.util;
 
-import java.util.function.Consumer;
 import java.util.function.Function;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -35,37 +34,60 @@ import javafx.scene.layout.Border;
 public class ButtonTreeTableCell<S,T> extends TreeTableCell<S,T> {
     
     private final Function<T,Boolean> visiblePredicate;
-    private final Consumer<T> onAction;
     protected final Button button = new Button();
         
-    public ButtonTreeTableCell(boolean decorated, Node graphic, Function<T,Boolean> visiblePredicate, Consumer<T> onAction){
+    public ButtonTreeTableCell(boolean decorated, Node graphic, Function<T,Boolean> visiblePredicate, final Function<T,T> onAction){
         this.visiblePredicate = visiblePredicate;
-        this.onAction = onAction;
+        button.setGraphic(graphic);
+        setGraphic(button);
+        
         if(!decorated){
             button.setBackground(Background.EMPTY);
             button.setBorder(Border.EMPTY);
             button.setPadding(Insets.EMPTY);
         }
-        button.setGraphic(graphic);
+        button.disableProperty().bind(editableProperty().not());
                 
         button.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                if(onAction!=null)onAction.accept(getItem());
+                
+                if(onAction!=null){
+                    if(!isEditing()){
+                        getTreeTableView().edit(getTreeTableRow().getIndex(), getTableColumn());
+                    }
+                    
+                    final T item = getItem();
+                    final T res = onAction.apply(item);
+                    if(!res.equals(item)){
+                        try{
+                            itemProperty().set(res);
+                            commitEdit(res);
+                        }catch(Throwable ex){
+                            ex.printStackTrace();
+                        }
+                    }
+                }
             }
         });
-        setGraphic(button);
-                
+        
     }
 
+
+    @Override
+    public void commitEdit(T newValue) {
+        super.commitEdit(newValue);
+        updateItem(newValue, false);
+    }
+    
     @Override
     protected void updateItem(T item, boolean empty) {
         super.updateItem(item, empty);
-        
+        button.setVisible(!empty);
         if(visiblePredicate!=null){
-            button.setVisible(visiblePredicate.apply(getItem()));
+            final boolean visible = visiblePredicate.apply(item);
+            button.setVisible(visible);
         }
-        
     }
     
 }

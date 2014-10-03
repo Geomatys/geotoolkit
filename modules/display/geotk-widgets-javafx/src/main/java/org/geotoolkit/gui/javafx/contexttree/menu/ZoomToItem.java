@@ -37,7 +37,7 @@ import org.geotoolkit.map.MapLayer;
 import org.opengis.referencing.operation.TransformException;
 
 /**
- * Delete item for ContextTree
+ * Zoom on item for ContextTree
  *
  * @author Johann Sorel (Geomatys)
  */
@@ -49,9 +49,6 @@ public class ZoomToItem extends TreeMenuItem{
     private final FXMap map;
     private WeakReference<TreeItem> itemRef;
 
-    /**
-     * delete item for contexttree
-     */
     public ZoomToItem(FXMap map){
         this.map = map;
         item = new MenuItem(GeotkFX.getString(this,"zoomto"));

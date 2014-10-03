@@ -101,7 +101,7 @@ public class LayerPropertiesItem extends TreeMenuItem{
         return null;
     }
 
-    private final class CloseAction extends AbstractAction {
+    public static final class CloseAction extends AbstractAction {
 
         private final FXDialog dialog;
         

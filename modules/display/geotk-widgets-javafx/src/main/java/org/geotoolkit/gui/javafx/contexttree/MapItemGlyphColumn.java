@@ -19,11 +19,22 @@ package org.geotoolkit.gui.javafx.contexttree;
 
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
+import java.util.function.Function;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.image.ImageView;
 import org.geotoolkit.display2d.service.DefaultGlyphService;
+import org.geotoolkit.gui.javafx.contexttree.menu.LayerPropertiesItem;
+import org.geotoolkit.gui.javafx.layer.FXLayerStylesPane;
+import org.geotoolkit.gui.javafx.layer.FXPropertiesPane;
+import org.geotoolkit.gui.javafx.layer.style.FXStyleAdvancedPane;
+import org.geotoolkit.gui.javafx.layer.style.FXStyleClassifRangePane;
+import org.geotoolkit.gui.javafx.layer.style.FXStyleClassifSinglePane;
+import org.geotoolkit.gui.javafx.layer.style.FXStyleColorMapPane;
+import org.geotoolkit.gui.javafx.layer.style.FXStyleSimplePane;
+import org.geotoolkit.gui.javafx.layer.style.FXStyleXMLPane;
 import org.geotoolkit.gui.javafx.util.ButtonTreeTableCell;
+import org.geotoolkit.gui.javafx.util.FXDialog;
 import org.geotoolkit.map.MapItem;
 import org.geotoolkit.map.MapLayer;
 
@@ -45,9 +56,13 @@ public class MapItemGlyphColumn extends TreeTableColumn<MapItem, MapItem>{
     private static class GlyphButton extends ButtonTreeTableCell<MapItem, MapItem>{
 
         public GlyphButton() {
-            super(false, null,
-                  (MapItem t) -> t instanceof MapLayer,
-                  (MapItem t) -> openEditor(t));
+            super(false, null, new Function<MapItem, Boolean>() {
+
+                public Boolean apply(MapItem t) {
+                    return t instanceof MapLayer;
+                }
+            },
+                  (MapItem t) -> {openEditor(t);return t;});
         }
 
         @Override
@@ -65,8 +80,24 @@ public class MapItemGlyphColumn extends TreeTableColumn<MapItem, MapItem>{
             
         }
         
-        private static void openEditor(MapItem t){
-            System.out.println("todo");
+        private static void openEditor(MapItem candidate){
+            final FXPropertiesPane panel = new FXPropertiesPane(
+                    candidate,
+                    new FXLayerStylesPane(
+                            new FXStyleSimplePane(),
+                            new FXStyleColorMapPane(),
+                            new FXStyleClassifSinglePane(),
+                            new FXStyleClassifRangePane(),
+                            new FXStyleAdvancedPane(),
+                            new FXStyleXMLPane()
+                    )
+            );
+
+            final FXDialog dialog = new FXDialog();
+            dialog.setContent(panel);
+            dialog.getActions().add(new LayerPropertiesItem.CloseAction(dialog));
+            dialog.setModal(false);
+            dialog.setVisible(null,true);
         }
         
     }
