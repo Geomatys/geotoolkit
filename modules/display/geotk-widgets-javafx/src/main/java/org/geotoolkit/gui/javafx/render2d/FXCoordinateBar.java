@@ -22,12 +22,12 @@ import java.awt.geom.Point2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.NumberFormat;
+import java.util.Arrays;
 import java.util.logging.Level;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.Event;
 import javafx.event.EventHandler;
-import javafx.event.EventType;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -139,6 +139,15 @@ public class FXCoordinateBar extends GridPane {
                 }     
             }
         });
+    }
+    
+    /**
+     * Set scale values displayed in the right corner combo box.
+     * 
+     * @param scales 
+     */
+    public void setScaleBoxValues(Long[] scales){
+        cbox.getItems().setAll(Arrays.asList(scales));
     }
         
     private class myListener implements EventHandler<MouseEvent>{
