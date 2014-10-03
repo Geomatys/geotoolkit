@@ -19,6 +19,7 @@ package org.geotoolkit.image.iterator;
 import java.awt.Rectangle;
 import java.awt.image.*;
 import java.io.Closeable;
+import java.nio.Buffer;
 
 import org.apache.sis.util.ArgumentChecks;
 import org.opengis.coverage.grid.SequenceType;
@@ -123,6 +124,37 @@ public abstract class PixelIterator implements Closeable {
      * Current y tile position in rendered image tile array.
      */
     protected int tY;
+    
+    /**
+     * Tile width of object that iterate.
+     * @see RenderedImage#getTileWidth() 
+     * @see Raster#getWidth() 
+     */
+    protected final int tileWidth;
+    
+    /**
+     * Tile height of object that iterate.
+     * @see RenderedImage#getTileHeight() 
+     * @see Raster#getHeight() 
+     */
+    protected final int tileHeight;
+    
+    /**
+     * Define area travel by iterator in the current object that iterate.
+     * @see #getBoundary(boolean) 
+     */
+    protected Rectangle areaIterate;
+    
+    /**
+     * Define area of the object that iterate.
+     * @see #getBoundary(boolean) 
+     */
+    protected Rectangle generalObjectArea;
+    
+    /**
+     * {@link SampleModel} from the iterate object.
+     */
+    protected final SampleModel currentSampleModel;
 
     /**
      * Create raster iterator to follow from minX, minY raster and rectangle intersection coordinate.
@@ -137,8 +169,12 @@ public abstract class PixelIterator implements Closeable {
         this.renderedImage = null;
         final int minx  = raster.getMinX();
         final int miny  = raster.getMinY();
-        final int maxx  = minx + raster.getWidth();
-        final int maxy  = miny + raster.getHeight();
+        tileWidth       = raster.getWidth();
+        tileHeight      = raster.getHeight();
+        final int maxx  = minx + tileWidth;
+        final int maxy  = miny + tileHeight;
+        
+        currentSampleModel = raster.getSampleModel();
 
         if (subArea != null) {
             final int sAMX = subArea.x;
@@ -180,10 +216,12 @@ public abstract class PixelIterator implements Closeable {
         final int rImaxX = rIminX + renderedImage.getWidth();
         final int rImaxY = rIminY + renderedImage.getHeight();
 
-        final int rITWidth   = renderedImage.getTileWidth();
-        final int rITHeight  = renderedImage.getTileHeight();
+        tileWidth        = renderedImage.getTileWidth();
+        tileHeight       = renderedImage.getTileHeight();
         final int rIMinTileX = renderedImage.getMinTileX();
         final int rIMinTileY = renderedImage.getMinTileY();
+        
+        currentSampleModel = renderedImage.getSampleModel();
 
         if (subArea != null) {
             final int sAMX = subArea.x;
@@ -206,14 +244,14 @@ public abstract class PixelIterator implements Closeable {
             throw new IllegalArgumentException("invalid subArea coordinate no intersection between it and RenderedImage"+renderedImage+subArea);
 
         //tiles attributs
-        this.tMinX = (areaIterateMinX - rIminX) / rITWidth  + rIMinTileX;
-        this.tMinY = (areaIterateMinY - rIminY) / rITHeight + rIMinTileY;
-        this.tMaxX = (areaIterateMaxX - rIminX + rITWidth - 1)  / rITWidth  + rIMinTileX;
-        this.tMaxY = (areaIterateMaxY - rIminY + rITHeight - 1) / rITHeight + rIMinTileY;
+        this.tMinX = (areaIterateMinX - rIminX) / tileWidth  + rIMinTileX;
+        this.tMinY = (areaIterateMinY - rIminY) / tileHeight + rIMinTileY;
+        this.tMaxX = (areaIterateMaxX - rIminX + tileWidth - 1)  / tileWidth  + rIMinTileX;
+        this.tMaxY = (areaIterateMaxY - rIminY + tileHeight - 1) / tileHeight + rIMinTileY;
 
         //initialize attributs to first iteration
         this.rasterNumBand = this.maxY = this.maxX = 1;
-        this.fixedNumBand = renderedImage.getSampleModel().getNumBands();
+        this.fixedNumBand = currentSampleModel.getNumBands();
     }
 
     /**
@@ -344,21 +382,26 @@ public abstract class PixelIterator implements Closeable {
      * @return {@code Rectangle} which is Image or Raster boundary within this Iterator.
      */
     public Rectangle getBoundary(final boolean areaIterate) {
-        if (areaIterate)
-            return new Rectangle(areaIterateMinX, areaIterateMinY, areaIterateMaxX-areaIterateMinX, areaIterateMaxY-areaIterateMinY);
-        int x, y, w, h;
-        if (renderedImage == null) {
-            x = currentRaster.getMinX();
-            y = currentRaster.getMinY();
-            w = currentRaster.getWidth();
-            h = currentRaster.getHeight();
-        } else {
-            x = renderedImage.getMinX();
-            y = renderedImage.getMinY();
-            w = renderedImage.getWidth();
-            h = renderedImage.getHeight();
+        if (areaIterate){
+            if (this.areaIterate == null) this.areaIterate = new Rectangle(areaIterateMinX, areaIterateMinY, areaIterateMaxX-areaIterateMinX, areaIterateMaxY-areaIterateMinY);
+            return this.areaIterate;
         }
-        return new Rectangle(x, y, w, h);
+        if (generalObjectArea == null) {
+            int x, y, w, h;
+            if (renderedImage == null) {
+                x = currentRaster.getMinX();
+                y = currentRaster.getMinY();
+                w = currentRaster.getWidth();
+                h = currentRaster.getHeight();
+            } else {
+                x = renderedImage.getMinX();
+                y = renderedImage.getMinY();
+                w = renderedImage.getWidth();
+                h = renderedImage.getHeight();
+            }
+            generalObjectArea = new Rectangle(x, y, w, h);
+        }    
+        return generalObjectArea;
     }
 
     /**
@@ -495,7 +538,450 @@ public abstract class PixelIterator implements Closeable {
          || renderedImage.getNumYTiles() != writableRI.getNumYTiles())
          throw new IllegalArgumentException("rendered image and writable rendered image dimensions are not conform"+renderedImage+writableRI);
     }
+    
+    /**
+     * Fill given buffer with samples within the given area at the specified image band.
+     * Adapted for a {@link PixelInterleavedSampleModel} {@link SampleModel} type.
+     * 
+     * @param area define needed samples area.
+     * @param buffer array which will be filled by samples.
+     * @param band the interest band.
+     */
+    private void getAreaByInterleaved(final Rectangle area, final Object buffer, final int band) {
+        rewind();
+        final Rectangle generalArea = getBoundary(false);//-- compute one time
+        final int sourceDataType = getSourceDatatype();
+        
+        final int minTX, minTY, maxTX, maxTY;
+        
+        if (renderedImage != null) {
+            minTX = tMinX + (area.x - generalArea.x) / tileWidth;
+            minTY = tMinY + (area.y - generalArea.y) / tileHeight;
+            maxTX = tMinX + (area.x + area.width + tileWidth - 1) / tileWidth;
+            maxTY = tMinY + (area.y + area.height + tileHeight - 1) / tileHeight;
+        } else {
+            minTX = minTY = 0;
+            maxTX = maxTY = 1;
+        }
+        
+        for (int ty = minTY; ty < maxTY; ty++) {
+            for (int tx = minTX; tx < maxTX; tx++) {
 
+                //-- intersection sur 
+                final Raster rast = (renderedImage != null) ? renderedImage.getTile(tx, ty) : currentRaster;
+                final int minX = Math.max(rast.getMinX(), area.x);
+                final int minY = Math.max(rast.getMinY(), area.y);
+                final int maxX = Math.min(rast.getMinX() + tileWidth, area.x + area.width);
+                final int maxY = Math.min(rast.getMinY() + tileHeight, area.y + area.height);
+                if (minX > maxY || minY > maxY) throw new IllegalArgumentException("Expected area don't intersect internal data.");
+                
+                final int readLength = (maxX - minX);
+                int destId = 0;
+                for (int y = minY; y < maxY; y++) {
+                    moveTo(minX, y, band);
+                    int s = 0;
+                    int id = destId;
+                    while (s < readLength) {
+                        
+                        switch (sourceDataType) {
+                            case DataBuffer.TYPE_BYTE : {
+                                ((byte[])buffer)[id++] = (byte) getSample();
+                                break; 
+                            }
+                            case DataBuffer.TYPE_USHORT :
+                            case DataBuffer.TYPE_SHORT  : {
+                                ((short[])buffer)[id++] = (short) getSample();
+                                break;
+                            }
+                            case DataBuffer.TYPE_INT : {
+                                ((int[])buffer)[id++] = getSample();
+                                break;
+                            }
+                            case DataBuffer.TYPE_FLOAT : {
+                                ((float[])buffer)[id++] = getSampleFloat();
+                                break;
+                            }
+                            case DataBuffer.TYPE_DOUBLE : {
+                                ((double[])buffer)[id++] = getSampleDouble();
+                                break;
+                            }
+                            default : {
+                                throw new IllegalStateException("Unknow datatype.");
+                            }
+                        }
+                        int b = 0;
+                        while (next()) {
+                            if (++b == getNumBands()) break;
+                        }
+                        s++;
+                    }
+                    destId    += area.width;
+                }
+            }
+        }
+    }
+    
+    
+    /**
+     * Fill given buffer with samples within the given area and from all image band.
+     * Adapted for a {@link PixelInterleavedSampleModel} {@link SampleModel} type.
+     * 
+     * @param area define needed samples area.
+     * @param buffer array which will be filled by samples.
+     */
+    private void getAreaByInterleaved(final Rectangle area, final Object[] buffer) {
+        rewind();
+        final Rectangle generalArea = getBoundary(false);//-- compute one time
+        final int sourceDataType = getSourceDatatype();
+        
+        final int minTX, minTY, maxTX, maxTY;
+        
+        if (renderedImage != null) {
+            minTX = tMinX + (area.x - generalArea.x) / tileWidth;
+            minTY = tMinY + (area.y - generalArea.y) / tileHeight;
+            maxTX = tMinX + (area.x + area.width + tileWidth - 1) / tileWidth;
+            maxTY = tMinY + (area.y + area.height + tileHeight - 1) / tileHeight;
+        } else {
+            minTX = minTY = 0;
+            maxTX = maxTY = 1;
+        }
+        
+        for (int ty = minTY; ty < maxTY; ty++) {
+            for (int tx = minTX; tx < maxTX; tx++) {
+
+                //-- intersection sur 
+                final Raster rast = (renderedImage != null) ? renderedImage.getTile(tx, ty) : currentRaster;
+                final int minX = Math.max(rast.getMinX(), area.x);
+                final int minY = Math.max(rast.getMinY(), area.y);
+                final int maxX = Math.min(rast.getMinX() + tileWidth, area.x + area.width);
+                final int maxY = Math.min(rast.getMinY() + tileHeight, area.y + area.height);
+                if (minX > maxY || minY > maxY) throw new IllegalArgumentException("Expected area don't intersect internal data.");
+
+                final int readLength = (maxX - minX);
+                int destId = 0;
+                for (int y = minY; y < maxY; y++) {
+                    moveTo(minX, y, 0);
+                    int s = 0;
+                    int id = destId;
+                    while (s < readLength) {
+                        int b = 0;
+                        while (b < getNumBands()) {
+                            switch (sourceDataType) {
+                                case DataBuffer.TYPE_BYTE : {
+                                    ((byte[])buffer[b])[id++] = (byte) getSample();
+                                    break; 
+                                }
+                                case DataBuffer.TYPE_USHORT :
+                                case DataBuffer.TYPE_SHORT  : {
+                                    ((short[])buffer[b])[id++] = (short) getSample();
+                                    break;
+                                }
+                                case DataBuffer.TYPE_INT : {
+                                    ((int[])buffer[b])[id++] = getSample();
+                                    break;
+                                }
+                                case DataBuffer.TYPE_FLOAT : {
+                                    ((float[])buffer[b])[id++] = getSampleFloat();
+                                    break;
+                                }
+                                case DataBuffer.TYPE_DOUBLE : {
+                                    ((double[])buffer[b])[id++] = getSampleDouble();
+                                    break;
+                                }
+                                default : {
+                                    throw new IllegalStateException("Unknow datatype.");
+                                }
+                            }
+                            b++;
+                            next();
+                        }
+                        s++;
+                    }
+                    destId    += area.width;
+                }
+            }
+        }
+    }
+    
+    /**
+     * Fill given buffer with samples within the given area and from all image band.
+     * Adapted for a {@link BandedSampleModel} {@link SampleModel} type.
+     * 
+     * @param area define needed samples area.
+     * @param buffer array which will be filled by samples.
+     */
+    private void getAreaByBanded (final Rectangle area, final Object[] buffer) {
+        
+        final ComponentSampleModel compSM = (ComponentSampleModel) currentSampleModel;
+        final int[] bankIndices = compSM.getBankIndices();
+        assert bankIndices.length == getNumBands();
+        final int[] bandOffsets = compSM.getBandOffsets();
+        assert bandOffsets.length == getNumBands();
+        
+        final Rectangle generalArea = getBoundary(false);//-- compute one time
+        final int sourceDataType = getSourceDatatype();
+        
+        final int minTX, minTY, maxTX, maxTY;
+        
+        if (renderedImage != null) {
+            minTX = tMinX + (area.x - generalArea.x) / tileWidth;
+            minTY = tMinY + (area.y - generalArea.y) / tileHeight;
+            maxTX = tMinX + (area.x + area.width + tileWidth - 1) / tileWidth;
+            maxTY = tMinY + (area.y + area.height + tileHeight - 1) / tileHeight;
+        } else {
+            minTX = minTY = 0;
+            maxTX = maxTY = 1;
+        }
+        for (int b = 0; b < getNumBands(); b++) {
+            for (int ty = minTY; ty < maxTY; ty++) {
+                for (int tx = minTX; tx < maxTX; tx++) {
+
+                    //-- intersection sur 
+                    final Raster rast = (renderedImage != null) ? renderedImage.getTile(tx, ty) : currentRaster;
+                    final int minX = Math.max(rast.getMinX(), area.x);
+                    final int minY = Math.max(rast.getMinY(), area.y);
+                    final int maxX = Math.min(rast.getMinX() + tileWidth, area.x + area.width);
+                    final int maxY = Math.min(rast.getMinY() + tileHeight, area.y + area.height);
+                    if (minX > maxY || minY > maxY) throw new IllegalArgumentException("Expected area don't intersect internal data.");
+
+                    final DataBuffer databuff = rast.getDataBuffer();
+                    int srcRastId = bandOffsets[b] + ((minY - rast.getMinY()) * tileWidth + minX - rast.getMinX());
+                    final int readLength = (maxX - minX);
+                    int destId = 0;
+                    for (int y = minY; y < maxY; y++) {
+
+                        switch (sourceDataType) {
+                            case DataBuffer.TYPE_BYTE : {
+                                final byte[] src  = ((DataBufferByte) databuff).getData(bankIndices[b]);
+                                System.arraycopy(src, srcRastId, (byte[]) buffer[b], destId, readLength);
+                                break; 
+                            }
+                            case DataBuffer.TYPE_USHORT :
+                            case DataBuffer.TYPE_SHORT  : {
+                                final short[] src  = ((DataBufferShort) databuff).getData(bankIndices[b]);
+                                System.arraycopy(src, srcRastId, (short[]) buffer[b], destId, readLength);
+                                break;
+                            }
+                            case DataBuffer.TYPE_INT : {
+                                final int[] src  = ((DataBufferInt) databuff).getData(bankIndices[b]);
+                                System.arraycopy(src, srcRastId, (int[]) buffer[b], destId, readLength);
+                                break;
+                            }
+                            case DataBuffer.TYPE_FLOAT : {
+                                final float[] src  = ((DataBufferFloat) databuff).getData(bankIndices[b]);
+                                System.arraycopy(src, srcRastId, (float[]) buffer[b], destId, readLength);
+                                break;
+                            }
+                            case DataBuffer.TYPE_DOUBLE : {
+                                final double[] src  = ((DataBufferDouble) databuff).getData(bankIndices[b]);
+                                System.arraycopy(src, srcRastId, (double[]) buffer[b], destId, readLength);
+                                break;
+                            }
+                            default : {
+                                throw new IllegalStateException("Unknow datatype.");
+                            }
+                        }
+                        srcRastId += tileWidth;
+                        destId    += area.width;
+                    }
+                }
+            }
+        }
+    }
+    
+    /**
+     * Fill given buffer with samples within the given area at the specified image band.
+     * 
+     * @param area define needed samples area.
+     * @param buffer array which will be filled by samples.
+     * @param band the interest band.
+     */
+    public void getArea(final Rectangle area, final Object buffer, int band) {
+        ArgumentChecks.ensureNonNull("area", area);
+        ArgumentChecks.ensureNonNull("buffer", buffer);
+        
+        final int sourceDataType = getSourceDatatype();
+        final int areaLength = area.width * area.height;
+        
+        switch (sourceDataType) {
+            case DataBuffer.TYPE_BYTE : {
+                if (!(buffer instanceof byte[])) throw new IllegalArgumentException("Buffer argument must be instance of byte[][] array");
+                if (((byte[]) buffer).length < areaLength) throw new IllegalArgumentException("Buffer must have a length equal or upper than area sample number. Expected : "+areaLength);
+                break;
+            }
+            case DataBuffer.TYPE_USHORT : 
+            case DataBuffer.TYPE_SHORT  : {
+                if (!(buffer instanceof short[])) throw new IllegalArgumentException("Buffer argument must be instance of short[][] array");
+                if (((short[])buffer).length < areaLength) throw new IllegalArgumentException("Buffer must have a length equal or upper than area sample number. Expected : "+areaLength);
+                break;
+            }
+            case DataBuffer.TYPE_INT : {
+                if (!(buffer instanceof int[])) throw new IllegalArgumentException("Buffer argument must be instance of int[][] array");
+                if (((int[])buffer).length < areaLength) throw new IllegalArgumentException("Buffer must have a length equal or upper than area sample number. Expected : "+areaLength);
+                break;
+            }
+            case DataBuffer.TYPE_FLOAT : {
+                if (!(buffer instanceof float[])) throw new IllegalArgumentException("Buffer argument must be instance of float[][] array");
+                if (((float[])buffer).length < areaLength) throw new IllegalArgumentException("Buffer must have a length equal or upper than area sample number. Expected : "+areaLength);
+                break;
+            }
+            case DataBuffer.TYPE_DOUBLE : {
+                if (!(buffer instanceof double[])) throw new IllegalArgumentException("Buffer argument must be instance of double[][] array");
+                if (((double[])buffer).length < areaLength) throw new IllegalArgumentException("Buffer must have a length equal or upper than area sample number. Expected : "+areaLength);
+                break;
+            }
+            default : {
+                throw new IllegalStateException("Unknow datatype.");
+            }
+        }
+        
+        if (currentSampleModel instanceof ComponentSampleModel) { 
+            if (((ComponentSampleModel)currentSampleModel).getPixelStride() == 1) {
+                getAreaByBanded(area, buffer, band);
+                return;
+            }
+        }
+        getAreaByInterleaved(area, buffer, band);
+    }
+    
+    /**
+     * Fill given buffer with samples within the given area at the specified image band.
+     * Adapted for a {@link BandedSampleModel} {@link SampleModel} type.
+     * 
+     * @param area define needed samples area.
+     * @param buffer array which will be filled by samples.
+     * @param band the interest band.
+     */
+    public void getAreaByBanded(final Rectangle area, final Object buffer, final int band) {
+        final ComponentSampleModel compSM = (ComponentSampleModel) currentSampleModel;
+        final int bankIndices = compSM.getBankIndices()[band];
+        final int bandOffsets = compSM.getBandOffsets()[band];
+        
+        final Rectangle generalArea = getBoundary(false);//-- compute one time
+        final int sourceDataType = getSourceDatatype();
+        
+        final int minTX, minTY, maxTX, maxTY;
+        
+        if (renderedImage != null) {
+            minTX = tMinX + (area.x - generalArea.x) / tileWidth;
+            minTY = tMinY + (area.y - generalArea.y) / tileHeight;
+            maxTX = tMinX + (area.x + area.width + tileWidth - 1) / tileWidth;
+            maxTY = tMinY + (area.y + area.height + tileHeight - 1) / tileHeight;
+        } else {
+            minTX = minTY = 0;
+            maxTX = maxTY = 1;
+        }
+        for (int ty = minTY; ty < maxTY; ty++) {
+            for (int tx = minTX; tx < maxTX; tx++) {
+
+                //-- intersection sur 
+                final Raster rast = (renderedImage != null) ? renderedImage.getTile(tx, ty) : currentRaster;
+                final int minX = Math.max(rast.getMinX(), area.x);
+                final int minY = Math.max(rast.getMinY(), area.y);
+                final int maxX = Math.min(rast.getMinX() + tileWidth, area.x + area.width);
+                final int maxY = Math.min(rast.getMinY() + tileHeight, area.y + area.height);
+                if (minX > maxY || minY > maxY) throw new IllegalArgumentException("Expected area don't intersect internal data.");
+
+                final DataBuffer databuff = rast.getDataBuffer();
+                int srcRastId = bandOffsets + ((minY - rast.getMinY()) * tileWidth + minX - rast.getMinX());
+                final int readLength = (maxX - minX);
+                int destId = 0;
+                for (int y = minY; y < maxY; y++) {
+
+                    switch (sourceDataType) {
+                        case DataBuffer.TYPE_BYTE : {
+                            final byte[] src  = ((DataBufferByte) databuff).getData(bankIndices);
+                            System.arraycopy(src, srcRastId, (byte[]) buffer, destId, readLength);
+                            break; 
+                        }
+                        case DataBuffer.TYPE_USHORT :
+                        case DataBuffer.TYPE_SHORT  : {
+                            final short[] src  = ((DataBufferShort) databuff).getData(bankIndices);
+                            System.arraycopy(src, srcRastId, (short[]) buffer, destId, readLength);
+                            break;
+                        }
+                        case DataBuffer.TYPE_INT : {
+                            final int[] src  = ((DataBufferInt) databuff).getData(bankIndices);
+                            System.arraycopy(src, srcRastId, (int[]) buffer, destId, readLength);
+                            break;
+                        }
+                        case DataBuffer.TYPE_FLOAT : {
+                            final float[] src  = ((DataBufferFloat) databuff).getData(bankIndices);
+                            System.arraycopy(src, srcRastId, (float[]) buffer, destId, readLength);
+                            break;
+                        }
+                        case DataBuffer.TYPE_DOUBLE : {
+                            final double[] src  = ((DataBufferDouble) databuff).getData(bankIndices);
+                            System.arraycopy(src, srcRastId, (double[]) buffer, destId, readLength);
+                            break;
+                        }
+                        default : {
+                            throw new IllegalStateException("Unknow datatype.");
+                        }
+                    }
+                    srcRastId += tileWidth;
+                    destId    += area.width;
+                }
+            }
+        }
+    }
+    
+    /**
+     * Fill given buffer with samples within the given area and from all the source image band.
+     * 
+     * @param area define needed samples area.
+     * @param buffer array which will be filled by samples.
+     * @param band the interest band.
+     */
+    public void getArea(final Rectangle area, final Object[] buffer) {
+        ArgumentChecks.ensureNonNull("area", area);
+        ArgumentChecks.ensureNonNull("buffer", buffer);
+        if (buffer.length < getNumBands()) throw new IllegalArgumentException("buffer must have length equals to numbands. Found : "+buffer.length+". Expected : "+getNumBands());
+        
+        final int sourceDataType = getSourceDatatype();
+        final int areaLength = area.width * area.height * getNumBands();
+        
+        switch (sourceDataType) {
+            case DataBuffer.TYPE_BYTE : {
+                if (!(buffer instanceof byte[][])) throw new IllegalArgumentException("Buffer argument must be instance of byte[][] array");
+                if (((byte[][]) buffer)[0].length < areaLength) throw new IllegalArgumentException("Buffer must have a length equal or upper than area sample number. Expected : "+areaLength);
+                break;
+            }
+            case DataBuffer.TYPE_USHORT : 
+            case DataBuffer.TYPE_SHORT  : {
+                if (!(buffer instanceof short[][])) throw new IllegalArgumentException("Buffer argument must be instance of short[][] array");
+                if (((short[][])buffer)[0].length < areaLength) throw new IllegalArgumentException("Buffer must have a length equal or upper than area sample number. Expected : "+areaLength);
+                break;
+            }
+            case DataBuffer.TYPE_INT : {
+                if (!(buffer instanceof int[][])) throw new IllegalArgumentException("Buffer argument must be instance of int[][] array");
+                if (((int[][])buffer)[0].length < areaLength) throw new IllegalArgumentException("Buffer must have a length equal or upper than area sample number. Expected : "+areaLength);
+                break;
+            }
+            case DataBuffer.TYPE_FLOAT : {
+                if (!(buffer instanceof float[][])) throw new IllegalArgumentException("Buffer argument must be instance of float[][] array");
+                if (((float[][])buffer)[0].length < areaLength) throw new IllegalArgumentException("Buffer must have a length equal or upper than area sample number. Expected : "+areaLength);
+                break;
+            }
+            case DataBuffer.TYPE_DOUBLE : {
+                if (!(buffer instanceof double[][])) throw new IllegalArgumentException("Buffer argument must be instance of double[][] array");
+                if (((double[][])buffer)[0].length < areaLength) throw new IllegalArgumentException("Buffer must have a length equal or upper than area sample number. Expected : "+areaLength);
+                break;
+            }
+            default : {
+                throw new IllegalStateException("Unknow datatype.");
+            }
+        }
+        
+        if (currentSampleModel instanceof ComponentSampleModel) { 
+            if (((ComponentSampleModel)currentSampleModel).getPixelStride() == 1) {
+                getAreaByBanded(area, buffer);
+                return;
+            }
+        }
+        getAreaByInterleaved(area, buffer);
+    }
+    
     /**
      * Return type data from iterate source.
      * @return type data from iterate source.
@@ -511,7 +997,7 @@ public abstract class PixelIterator implements Closeable {
      * @param pixelStride The pixel stride value given by {@link java.awt.image.ComponentSampleModel#getPixelStride()}
      * @return An array whose components are the number of elements to skip until the next sample.
      */
-    public static int[] getBandSteps(final int[] bandOffsets, final int pixelStride) {
+     public static int[] getBandSteps(final int[] bandOffsets, final int pixelStride) {
         final int[] bandSteps = new int[bandOffsets.length];
         bandSteps[0] = bandOffsets[0] + pixelStride - bandOffsets[bandOffsets.length-1];
         for (int i = 1 ; i < bandSteps.length ; i++) {

@@ -80,12 +80,13 @@ public class BiCubicTest extends InterpolationTest {
         for (int y = miny+1; y < miny + height-2; y++) {
             for (int x = minx+1; x < minx + width-2; x++) {
                 //-- interpolation verification at center pixel position.
-                interpolVal = interpol.interpolate(x, y,0);
+                interpolVal = interpol.interpolate(x, y, 0);
                 assertTrue(Math.abs(rastertest.getSampleDouble(x, y, 0) - interpolVal) <= 1E-12);
                 interpolVal = interpol.interpolate(x, y)[0];
-                assertTrue(Math.abs(rastertest.getSampleDouble(x, y, 0) - interpolVal) <= 1E-12);
+                assertTrue("At : ("+x+", "+y+  "Expected : "+(rastertest.getSampleDouble(x, y, 0))+" found : "+interpolVal, Math.abs(rastertest.getSampleDouble(x, y, 0) - interpolVal) <= 1E-12);
             }
         }
+        pixIterator.rewind();
         interpol = new BiCubicInterpolation2(pixIterator);
         for (int y = miny+1; y < miny + height-2; y++) {
             for (int x = minx+1; x < minx + width-2; x++) {
@@ -93,7 +94,7 @@ public class BiCubicTest extends InterpolationTest {
                 interpolVal = interpol.interpolate(x, y, 0);
                 assertTrue(Math.abs(rastertest.getSampleDouble(x, y, 0) - interpolVal) <= 1E-12);
                 interpolVal = interpol.interpolate(x, y)[0];
-                assertTrue(Math.abs(rastertest.getSampleDouble(x, y, 0) - interpolVal) <= 1E-12);
+                assertTrue("At : ("+x+", "+y+  "Expected : "+(rastertest.getSampleDouble(x, y, 0))+" found : "+interpolVal, Math.abs(rastertest.getSampleDouble(x, y, 0) - interpolVal) <= 1E-12);
             }
         }
     }

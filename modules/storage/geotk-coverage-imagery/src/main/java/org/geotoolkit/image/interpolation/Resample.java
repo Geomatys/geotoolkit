@@ -22,7 +22,6 @@ import java.awt.image.DataBuffer;
 import java.awt.image.RenderedImage;
 import java.awt.image.WritableRenderedImage;
 import org.apache.sis.geometry.Envelope2D;
-import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.geometry.Envelopes;
@@ -688,6 +687,11 @@ public class Resample {
         }
     }
 
+    /**
+     * Returns {@link Interpolation} object use to resample.
+     * 
+     * @return {@link Interpolation} object use to resample. 
+     */
     public Interpolation getInterpol() {
         return interpol;
     }

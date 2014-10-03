@@ -16,9 +16,10 @@
  */
 package org.geotoolkit.image.interpolation;
 
+import java.awt.Rectangle;
+import java.awt.image.DataBuffer;
+import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.image.iterator.PixelIterator;
-import org.geotoolkit.image.iterator.RowMajorDirectIterator;
-import org.geotoolkit.image.iterator.RowMajorIterator;
 
 /**
  * Interpolation which interpolate in X direction and Y direction independently.
@@ -27,40 +28,88 @@ import org.geotoolkit.image.iterator.RowMajorIterator;
  */
 abstract class SeparableInterpolation extends Interpolation {
 
-    /**
-     * Table used to compute interpolation from rows values.
-     */
-    private final double[] tabInteRow;
-
-    /**
-     * Table used to interpolate values from rows interpolation result.
-     */
-    private final double[] tabInteCol;
-
     /** 2D Array storing row data of each band when an interpolation per pixel is performed. */
-    private final double[][] rows;
+    private final double[] rows;
     
     /** 2D Array storing row interpolated data for each band when an interpolation per pixel is performed. */
-    private final double[][] cols;
-    
-    protected boolean rowMajorBrowsing;
+    private final double[] cols;
     
     /**
+     * {@link Rectangle} which represente pixel area needed to compute interpolation from projected source coordinate.
+     */
+    protected final Rectangle interpolArea;
+    
+    /**
+     * Array which contain all samples values needed to compute interpolation.
+     * Moreover its length equals band number 
+     */
+    protected final Object[] buffer;
+    
+    /**
+     * Build a bi-dimensionale interpolation. 
      * 
-     * @param pixelIterator
-     * @param windowSide
-     * @param rbc
-     * @param fillValue 
+     * @param pixelIterator iterator which travel source image samples.
+     * @param windowSide length of samples in X and Y direction needed from interpolation type.
+     * @param rbc enum which define interpolation comportement at the source image border.
+     * @param fillValue define destination sample value in case where interpolation is out of source image boundary.
      */
     public SeparableInterpolation(PixelIterator pixelIterator, int windowSide, ResampleBorderComportement rbc, double[] fillValue) {
         super(pixelIterator, windowSide, rbc, fillValue);
-        tabInteRow = new double[windowSide];
-        tabInteCol = new double[windowSide];
-        rows = new double[numBands][windowSide];
-        cols = new double[numBands][windowSide];
-        rowMajorBrowsing = (pixelIterator instanceof RowMajorIterator || pixelIterator instanceof RowMajorDirectIterator);
+        rows = new double[windowSide];
+        cols = new double[windowSide];
+        interpolArea = new Rectangle(windowSide, windowSide);
+        
+        switch (pixelIterator.getSourceDatatype()) {
+            case DataBuffer.TYPE_BYTE   : {
+                buffer = new byte[numBands][windowSide * windowSide];
+                break;
+            }
+            case DataBuffer.TYPE_SHORT  : 
+            case DataBuffer.TYPE_USHORT : {
+                buffer = new short[numBands][windowSide * windowSide];
+                break;
+            }
+            case DataBuffer.TYPE_INT    : {
+                buffer = new int[numBands][windowSide * windowSide];
+                break;
+            }
+            case DataBuffer.TYPE_FLOAT  : {
+                buffer = new float[numBands][windowSide * windowSide];
+                break;
+            }
+            case DataBuffer.TYPE_DOUBLE : {
+                buffer = new double[numBands][windowSide * windowSide];
+                break;
+            }
+            default : throw new IllegalArgumentException("Unknow datatype");
+        }
     }
-
+    
+    /**
+     * Returns interpolate value from x, y pixel coordinates and band index.
+     *
+     * @param x pixel x coordinate.
+     * @param y pixel y coordinate.
+     * @param b band index.
+     * @return interpolate value from x, y pixel coordinates and band index.  
+     */
+    @Override
+    public double interpolate(double x, double y, int b) {
+        ArgumentChecks.ensureBetween("band index", 0, getNumBands(), b);
+        if (!checkInterpolate(x, y)) return fillValue[b];
+        setInterpolateMin(x, y);
+        
+        interpolArea.setLocation(minX, minY);
+        pixelIterator.getArea(interpolArea, buffer[b], b);
+        
+        int bufferID = 0;
+        for (int dy = 0; dy < windowSide; dy++) {
+            System.arraycopy(buffer[b], bufferID, rows, 0, windowSide);
+            bufferID += windowSide;
+            cols[dy] = interpolate1D(minX, x, rows);
+        }
+        return interpolate1D(minY, y, cols);
+    }
 
     /**
      * Return interpolate value from x, y pixel coordinate.
@@ -70,57 +119,21 @@ abstract class SeparableInterpolation extends Interpolation {
      * @return interpolate value from x, y pixel coordinate.
      */
     @Override
-    public double interpolate(double x, double y, int b) {
-        if (!checkInterpolate(x, y)) return fillValue[b];
-        setInterpolateMin(x, y);
-        final int wX = minX + windowSide;
-        final int hY = minY + windowSide;
-        for (int dy = minY; dy < hY; dy++) {
-            for (int dx = minX; dx < wX; dx++) {
-                pixelIterator.moveTo(dx, dy, b);
-                tabInteRow[dx - minX] = pixelIterator.getSampleDouble();
-            }
-            tabInteCol[dy-minY] = interpolate1D(minX, x, tabInteRow);
-        }
-        return interpolate1D(minY, y, tabInteCol);
-    }
-
-    @Override
     public double[] interpolate(double x, double y) {
         if (!checkInterpolate(x, y)) return fillValue;
         setInterpolateMin(x, y);
-        final int wX = minX + windowSide;
-        final int hY = minY + windowSide;
-
-        for (int dy = minY; dy < hY; dy++) {
-            //-- First element treatment to avoid un-necessary checks for row major browsing.
-            pixelIterator.moveTo(minX, dy, 0);
-            rows[0][0] = pixelIterator.getSampleDouble();
-            for (int band = 1; band < numBands; band++) {
-                pixelIterator.next();
-                rows[band][0] = pixelIterator.getSampleDouble();
+        
+        interpolArea.setLocation(minX, minY);
+        pixelIterator.getArea(interpolArea, buffer);
+        int bufferID;
+        for (int b = 0; b < numBands; b++) {
+            bufferID = 0;
+            for (int dy = 0; dy < windowSide; dy++) {
+                System.arraycopy(buffer[b], bufferID, rows, 0, windowSide);
+                bufferID += windowSide;
+                cols[dy] = interpolate1D(minX, x, rows);
             }
-            
-            for (int dx = minX + 1; dx < wX; dx++) {
-                if (rowMajorBrowsing) {
-                    pixelIterator.next();
-                } else {
-                    pixelIterator.moveTo(dx, dy, 0);
-                }
-                rows[0][dx - minX] = pixelIterator.getSampleDouble();
-                for (int band = 1; band < numBands; band++) {
-                    pixelIterator.next();
-                    rows[band][dx - minX] = pixelIterator.getSampleDouble();
-                }
-            }
-
-            for (int band = 0; band < numBands; band++) {
-                cols[band][dy - minY] = interpolate1D(minX, x, rows[band]);
-            }
-        }
-
-        for (int band = 0; band < numBands; band++) {
-            result[band] = interpolate1D(minY, y, cols[band]);
+            result[b] = interpolate1D(minY, y, cols);
         }
         return result;
     }

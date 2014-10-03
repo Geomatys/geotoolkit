@@ -739,30 +739,28 @@ public class TiffImageReader extends SpatialImageReader {
         //if the image contains floats or double, datas are already in geophysic type
         //we must replace noData values by NaN.
         final int dataType = image.getSampleModel().getDataType();
-        if(DataBuffer.TYPE_FLOAT==dataType || DataBuffer.TYPE_DOUBLE==dataType){
+        if (DataBuffer.TYPE_FLOAT == dataType || DataBuffer.TYPE_DOUBLE == dataType) {
             final SpatialMetadata metadata = getImageMetadata(imageIndex);
-            if(metadata!=null){
+            if (metadata != null) {
                 final DimensionAccessor accessor = new DimensionAccessor(metadata);
-                if(accessor.childCount()==1){
+                if (accessor.childCount() == 1) {
                     accessor.selectChild(0);
                     Double noDatas = accessor.getAttributeAsDouble("realFillValue");
-                    if(noDatas!=null && noDatas!= null){
+                    if (noDatas != null && noDatas != null) {
                         final double[][][] nodatas = new double[1][2][1];
                         nodatas[0][0][0] = noDatas;
                         Arrays.fill(nodatas[0][1], Double.NaN);
                         final ReplaceProcess process = new ReplaceProcess(image, nodatas);
                         try {
                             process.call();
-                        } catch (ProcessException ex) {
+                         } catch (ProcessException ex) {
                             throw new IOException(ex.getMessage(),ex);
                         }
                     }
                 }
             }
         }
-        
         return image;
-        
     }
     
     /**

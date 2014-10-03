@@ -18,6 +18,7 @@ package org.geotoolkit.image.interpolation;
 
 import java.awt.image.BandedSampleModel;
 import java.awt.image.DataBuffer;
+import java.awt.image.PixelInterleavedSampleModel;
 import javax.media.jai.TiledImage;
 import org.geotoolkit.image.iterator.PixelIterator;
 import org.geotoolkit.image.iterator.PixelIteratorFactory;
@@ -51,6 +52,7 @@ public abstract class InterpolationTest {
      */
     public InterpolationTest() {
         final BandedSampleModel sampleM = new BandedSampleModel(DataBuffer.TYPE_DOUBLE, 3, 3, 1);
+//        final PixelInterleavedSampleModel sampleM = new PixelInterleavedSampleModel(DataBuffer.TYPE_DOUBLE, 3, 3, 1, 3, new int[1]);
         renderedImage = new TiledImage(-1, -1, 3, 3, -1, -1, sampleM, null);
         double val = 0;
         for (int y = -1; y < 2; y++) {
