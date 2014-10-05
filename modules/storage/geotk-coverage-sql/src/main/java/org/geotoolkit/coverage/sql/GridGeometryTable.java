@@ -29,7 +29,7 @@ import java.util.Arrays;
 import java.util.logging.Level;
 
 import org.opengis.util.FactoryException;
-import org.opengis.referencing.ReferenceIdentifier;
+import org.opengis.metadata.Identifier;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransformFactory;
 
@@ -120,7 +120,7 @@ final class GridGeometryTable extends SingletonTable<GridGeometryEntry> {
         final SpatialDatabase database = (SpatialDatabase) getDatabase();
         final AbstractAuthorityFactory factory = (AbstractAuthorityFactory) database.getCRSAuthorityFactory();
         final IdentifiedObjectFinder finder = factory.getIdentifiedObjectFinder(CoordinateReferenceSystem.class);
-        final ReferenceIdentifier srid = IdentifiedObjects.getIdentifier(finder.find(crs), Citations.POSTGIS);
+        final Identifier srid = IdentifiedObjects.getIdentifier(finder.find(crs), Citations.POSTGIS);
         if (srid == null) {
             return 0;
         }

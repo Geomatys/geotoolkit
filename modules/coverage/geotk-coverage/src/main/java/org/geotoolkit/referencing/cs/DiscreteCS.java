@@ -26,7 +26,7 @@ import org.opengis.util.GenericName;
 import org.opengis.util.InternationalString;
 import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.coverage.grid.GridGeometry;
-import org.opengis.referencing.ReferenceIdentifier;
+import org.opengis.metadata.Identifier;
 import org.opengis.referencing.cs.TimeCS;
 import org.opengis.referencing.cs.VerticalCS;
 import org.opengis.referencing.cs.CartesianCS;
@@ -155,7 +155,7 @@ class DiscreteCS implements CoordinateSystem, GridGeometry, Serializable {
      * Returns the name of the wrapped CS.
      */
     @Override
-    public final ReferenceIdentifier getName() {
+    public final Identifier getName() {
         return cs.getName();
     }
 
@@ -171,7 +171,7 @@ class DiscreteCS implements CoordinateSystem, GridGeometry, Serializable {
      * Returns the identifiers of the wrapped CS.
      */
     @Override
-    public final Set<ReferenceIdentifier> getIdentifiers() {
+    public final Set<Identifier> getIdentifiers() {
         return cs.getIdentifiers();
     }
 

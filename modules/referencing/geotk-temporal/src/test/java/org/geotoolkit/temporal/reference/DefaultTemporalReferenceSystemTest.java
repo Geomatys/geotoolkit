@@ -33,7 +33,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 import org.opengis.metadata.extent.Extent;
 import org.opengis.metadata.extent.TemporalExtent;
-import org.opengis.referencing.ReferenceIdentifier;
+import org.opengis.metadata.Identifier;
 import org.opengis.temporal.TemporalReferenceSystem;
 import org.opengis.util.GenericName;
 import org.opengis.util.InternationalString;
@@ -68,7 +68,7 @@ public class DefaultTemporalReferenceSystemTest {
      */
     @Test
     public void testGetName() {
-        ReferenceIdentifier result = temporalReferenceSystem1.getName();
+        Identifier result = temporalReferenceSystem1.getName();
         assertFalse(temporalReferenceSystem2.getName().equals(result));
     }
 
@@ -104,7 +104,7 @@ public class DefaultTemporalReferenceSystemTest {
      */
     @Test
     public void testGetIdentifiers() {
-        Set<ReferenceIdentifier> result = temporalReferenceSystem1.getIdentifiers();
+        Set<Identifier> result = temporalReferenceSystem1.getIdentifiers();
         assertEquals(temporalReferenceSystem2.getIdentifiers(), result);
     }
 
@@ -130,7 +130,7 @@ public class DefaultTemporalReferenceSystemTest {
      */
     @Test
     public void testSetName() {
-        ReferenceIdentifier result = temporalReferenceSystem1.getName();
+        Identifier result = temporalReferenceSystem1.getName();
         ((DefaultTemporalReferenceSystem) temporalReferenceSystem1).setName(new NamedIdentifier(Citations.CRS, "new name"));
         assertFalse(temporalReferenceSystem1.getName().equals(result));
     }

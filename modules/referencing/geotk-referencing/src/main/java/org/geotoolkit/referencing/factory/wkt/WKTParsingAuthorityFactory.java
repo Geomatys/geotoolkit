@@ -34,7 +34,7 @@ import org.opengis.metadata.Identifier;
 import org.opengis.metadata.citation.Citation;
 import org.opengis.metadata.quality.ConformanceResult;
 import org.opengis.referencing.IdentifiedObject;
-import org.opengis.referencing.ReferenceIdentifier;
+import org.opengis.metadata.Identifier;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CRSAuthorityFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -666,9 +666,9 @@ public class WKTParsingAuthorityFactory extends DirectAuthorityFactory {
         protected Map<String,Object> alterProperties(Map<String,Object> properties) {
             final Citation pkAuthority = getPrimaryKeyAuthority();
             final Citation[] authorities;
-            final ReferenceIdentifier[] identifiers;
-            final ReferenceIdentifier declaredIdentifier =
-                    (ReferenceIdentifier) properties.get(IdentifiedObject.IDENTIFIERS_KEY);
+            final Identifier[] identifiers;
+            final Identifier declaredIdentifier =
+                    (Identifier) properties.get(IdentifiedObject.IDENTIFIERS_KEY);
             /*
              * If the WKT does not declare explicitly an authority code, we will adds an
              * identifier for all authorities given at construction time. Otherwise we
@@ -679,7 +679,7 @@ public class WKTParsingAuthorityFactory extends DirectAuthorityFactory {
                 identifiers = new NamedIdentifier[authorities.length];
             } else if (pkAuthority != null) {
                 authorities = new Citation[] {pkAuthority};
-                identifiers = new ReferenceIdentifier[2];
+                identifiers = new Identifier[2];
                 identifiers[0] = declaredIdentifier;
             } else {
                 authorities = null;

@@ -36,7 +36,7 @@ import org.opengis.metadata.citation.Citation;
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
-import org.opengis.referencing.ReferenceIdentifier;
+import org.opengis.metadata.Identifier;
 import org.opengis.util.InternationalString;
 
 /**
@@ -171,7 +171,7 @@ public class ParameterDescriptorReader extends StaxStreamReader {
             throws XMLStreamException, ClassNotFoundException {
 
         Class c = null;
-        ReferenceIdentifier name = null;
+        Identifier name = null;
         SimpleEntry<Object, ValueType>[] values = null;
         ValuesTopology topology = null;
         CharSequence remarks = null;
@@ -330,7 +330,7 @@ public class ParameterDescriptorReader extends StaxStreamReader {
      * @param version
      * @return
      */
-    private ReferenceIdentifier readName(
+    private Identifier readName(
             final String code, final String codeSpace, final String version) {
 
 //        Citation authority = null;

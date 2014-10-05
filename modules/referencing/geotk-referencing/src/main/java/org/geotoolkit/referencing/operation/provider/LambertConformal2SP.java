@@ -25,7 +25,7 @@ import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.ConicProjection;
-import org.opengis.referencing.ReferenceIdentifier;
+import org.opengis.metadata.Identifier;
 
 import org.apache.sis.referencing.NamedIdentifier;
 import org.geotoolkit.referencing.operation.projection.LambertConformal;
@@ -386,7 +386,7 @@ public class LambertConformal2SP extends MapProjection {
      * </table>
      */
     public static final ParameterDescriptorGroup PARAMETERS = UniversalParameters.createDescriptorGroup(
-        new ReferenceIdentifier[] {
+        new Identifier[] {
             new NamedIdentifier(Citations.OGC,     "Lambert_Conformal_Conic_2SP"),
             new NamedIdentifier(Citations.EPSG,    "Lambert Conic Conformal (2SP)"),
             new IdentifierCode (Citations.EPSG,     9802),
@@ -628,7 +628,7 @@ public class LambertConformal2SP extends MapProjection {
          */
         @SuppressWarnings("hiding")
         public static final ParameterDescriptorGroup PARAMETERS = UniversalParameters.createDescriptorGroup(
-            new ReferenceIdentifier[] {
+            new Identifier[] {
                 /*
                  * IMPORTANT: Do not put any name that could be confused with the 1SP or
                  * 2SP cases below, except for the Citations.GEOTOOLKIT authority which is

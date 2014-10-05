@@ -22,7 +22,7 @@ import java.util.Set;
 import javax.imageio.ImageIO;
 import org.apache.sis.referencing.CommonCRS;
 import org.opengis.geometry.Envelope;
-import org.opengis.referencing.ReferenceIdentifier;
+import org.opengis.metadata.Identifier;
 
 
 /**
@@ -67,7 +67,7 @@ public class StringUtilities {
         if (envelope.getCoordinateReferenceSystem().equals(CommonCRS.WGS84.normalizedGeographic())) {
             return "EPSG:4326";
         }
-        final Set<ReferenceIdentifier> identifiers = envelope.getCoordinateReferenceSystem().getIdentifiers();
+        final Set<Identifier> identifiers = envelope.getCoordinateReferenceSystem().getIdentifiers();
         if (identifiers != null && !identifiers.isEmpty()) {
             return identifiers.iterator().next().toString();
         }

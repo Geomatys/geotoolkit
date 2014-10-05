@@ -23,7 +23,7 @@ import org.opengis.metadata.citation.Citation;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
-import org.opengis.referencing.ReferenceIdentifier;
+import org.opengis.metadata.Identifier;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.CylindricalProjection;
 
@@ -313,7 +313,7 @@ public class Mercator1SP extends MapProjection {
                 "FalseNorthing");                   // GeoTIFF
 
         PARAMETERS = UniversalParameters.createDescriptorGroup(
-        new ReferenceIdentifier[] {
+        new Identifier[] {
             new NamedIdentifier(Citations.OGC,     "Mercator_1SP"),
             new NamedIdentifier(Citations.EPSG,    "Mercator (variant A)"), // Starting from 7.6
             new NamedIdentifier(Citations.EPSG,    "Mercator (Spherical)"),

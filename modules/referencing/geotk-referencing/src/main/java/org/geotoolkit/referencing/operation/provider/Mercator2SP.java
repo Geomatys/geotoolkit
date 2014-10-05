@@ -24,7 +24,7 @@ import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.CylindricalProjection;
-import org.opengis.referencing.ReferenceIdentifier;
+import org.opengis.metadata.Identifier;
 
 import org.apache.sis.referencing.NamedIdentifier;
 import org.geotoolkit.referencing.operation.projection.Mercator;
@@ -324,7 +324,7 @@ public class Mercator2SP extends MapProjection {
      * </table>
      */
     public static final ParameterDescriptorGroup PARAMETERS = UniversalParameters.createDescriptorGroup(
-        new ReferenceIdentifier[] {
+        new Identifier[] {
             new NamedIdentifier(Citations.OGC,     "Mercator_2SP"),
             new NamedIdentifier(Citations.EPSG,    "Mercator (variant B)"), // Starting from 7.6
             new DeprecatedName (Citations.EPSG,    "Mercator (2SP)"), // Prior to EPSG version 7.6

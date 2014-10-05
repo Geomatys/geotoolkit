@@ -57,7 +57,7 @@ import org.opengis.filter.expression.Literal;
 import org.geotoolkit.feature.simple.SimpleFeature;
 import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.opengis.geometry.MismatchedDimensionException;
-import org.opengis.referencing.ReferenceIdentifier;
+import org.opengis.metadata.Identifier;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
@@ -616,8 +616,8 @@ public final class FeatureTypeUtilities {
             if (type instanceof GeometryDescriptor) {
                 final GeometryDescriptor gd = (GeometryDescriptor) type;
                 if (gd.getCoordinateReferenceSystem() != null && gd.getCoordinateReferenceSystem().getIdentifiers() != null) {
-                    for (Iterator<ReferenceIdentifier> it = gd.getCoordinateReferenceSystem().getIdentifiers().iterator(); it.hasNext();) {
-                        final ReferenceIdentifier id = (ReferenceIdentifier) it.next();
+                    for (Iterator<Identifier> it = gd.getCoordinateReferenceSystem().getIdentifiers().iterator(); it.hasNext();) {
+                        final Identifier id = (Identifier) it.next();
 
                         if ((id.getAuthority() != null) && id.getAuthority().getTitle().equals(Citations.EPSG.getTitle())) {
                             buf.append(":srid=" + id.getCode());

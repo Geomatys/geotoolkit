@@ -21,7 +21,7 @@ import java.util.Locale;
 
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.IdentifiedObject;
-import org.opengis.referencing.ReferenceIdentifier;
+import org.opengis.metadata.Identifier;
 
 import org.apache.sis.util.ComparisonMode;
 import org.apache.sis.referencing.IdentifiedObjects;
@@ -99,7 +99,7 @@ class FinderAdapter extends IdentifiedObjectFinder {
     public final String findIdentifier(final IdentifiedObject object) throws FactoryException {
         final IdentifiedObject candidate = find(object);
         if (candidate != null) {
-            ReferenceIdentifier identifier = IdentifiedObjects.getIdentifier(object, null);
+            Identifier identifier = IdentifiedObjects.getIdentifier(object, null);
             if (identifier != null || (identifier = object.getName()) != null) {
                 String code      = identifier.getCode();
                 String codespace = identifier.getCodeSpace();
@@ -116,7 +116,7 @@ class FinderAdapter extends IdentifiedObjectFinder {
      * Builds the path to the prepend before the code. Include the character separator
      * between the path and the code, but does not include the code itself.
      */
-    StringBuilder path(final IdentifiedObject object, final ReferenceIdentifier identifier, final String codespace) {
+    StringBuilder path(final IdentifiedObject object, final Identifier identifier, final String codespace) {
         final URN_Type type = URN_Type.getInstance(object.getClass());
         final StringBuilder buffer = new StringBuilder("urn:ogc:def:")
                 .append(type).append(':').append(codespace).append(':');

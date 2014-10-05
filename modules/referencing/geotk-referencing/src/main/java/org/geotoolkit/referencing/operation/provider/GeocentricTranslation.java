@@ -22,7 +22,7 @@ import net.jcip.annotations.Immutable;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
-import org.opengis.referencing.ReferenceIdentifier;
+import org.opengis.metadata.Identifier;
 
 import org.geotoolkit.parameter.Parameters;
 import org.apache.sis.referencing.datum.BursaWolfParameters;
@@ -205,7 +205,7 @@ public class GeocentricTranslation extends PositionVector7Param {
      */
     @SuppressWarnings("hiding")
     public static final ParameterDescriptorGroup PARAMETERS = UniversalParameters.createDescriptorGroup(
-        new ReferenceIdentifier[] {
+        new Identifier[] {
             new NamedIdentifier(Citations.EPSG, "Geocentric translations (geog2D domain)"),
             new NamedIdentifier(Citations.EPSG, "Geocentric Translations"), // Legacy name
             new IdentifierCode (Citations.EPSG,  9603)

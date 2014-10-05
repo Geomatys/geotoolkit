@@ -30,7 +30,7 @@ import org.opengis.referencing.crs.*;
 import org.opengis.referencing.datum.*;
 import org.opengis.referencing.operation.*;
 import org.opengis.referencing.IdentifiedObject;
-import org.opengis.referencing.ReferenceIdentifier;
+import org.opengis.metadata.Identifier;
 import org.opengis.util.FactoryException;
 import org.opengis.util.Factory;
 
@@ -631,7 +631,7 @@ search:     for (final CoordinateReferenceSystem source : sources) {
      * Returns a temporary name for object derived from the specified one.
      */
     private static Map<String,?> getTemporaryName(final IdentifiedObject source) {
-        final ReferenceIdentifier id = source.getName();
+        final Identifier id = source.getName();
         return Collections.singletonMap(IdentifiedObject.NAME_KEY,
                 new ImmutableIdentifier(null, // Null because we are inventing a code.
                     id.getCodeSpace(), id.getCode() + " (3D)"));

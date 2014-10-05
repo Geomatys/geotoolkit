@@ -23,7 +23,7 @@ import org.geotoolkit.referencing.IdentifiedObjects;
 
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
-import org.opengis.referencing.ReferenceIdentifier;
+import org.opengis.metadata.Identifier;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
@@ -65,14 +65,14 @@ public final class SRIDGenerator {
      * return int , 0 if no srid could be generated because the crs has no identifiers.
      */
     public static int toSRID(final CoordinateReferenceSystem crs, final Version version){
-        final Set<ReferenceIdentifier> ids = crs.getIdentifiers();
+        final Set<Identifier> ids = crs.getIdentifiers();
 
         if(ids.isEmpty()){
             return 0;
 //            throw new IllegalArgumentException("CoordinateReferenceSystem has not identifier, impossible to compact it.");
         }
 
-        final ReferenceIdentifier id = ids.iterator().next();
+        final Identifier id = ids.iterator().next();
         final String authority = id.getCodeSpace();
         final int code = Integer.valueOf(id.getCode());
         final int authorityCode;

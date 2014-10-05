@@ -21,7 +21,7 @@ import net.jcip.annotations.Immutable;
 
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
-import org.opengis.referencing.ReferenceIdentifier;
+import org.opengis.metadata.Identifier;
 import org.opengis.referencing.crs.GeographicCRS;
 import org.opengis.referencing.crs.GeocentricCRS;
 
@@ -250,7 +250,7 @@ public class AbridgedMolodensky extends Molodensky {
      */
     @SuppressWarnings("hiding")
     public static final ParameterDescriptorGroup PARAMETERS = createDescriptorGroup(
-        new ReferenceIdentifier[] {
+        new Identifier[] {
             new NamedIdentifier(Citations.OGC,  "Abridged_Molodenski"),
             new NamedIdentifier(Citations.EPSG, "Abridged Molodensky"),
             new IdentifierCode (Citations.EPSG,  9605),

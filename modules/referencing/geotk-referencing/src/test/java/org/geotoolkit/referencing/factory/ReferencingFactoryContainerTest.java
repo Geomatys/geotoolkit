@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Collections;
 
 import org.opengis.util.FactoryException;
-import org.opengis.referencing.ReferenceIdentifier;
+import org.opengis.metadata.Identifier;
 import org.opengis.referencing.crs.CRSFactory;
 import org.opengis.referencing.crs.CompoundCRS;
 import org.opengis.referencing.crs.ProjectedCRS;
@@ -75,7 +75,7 @@ public final strictfp class ReferencingFactoryContainerTest {
 
         // Check the ProjectedCRS.
         CoordinateReferenceSystem result3D = components.get(0);
-        ReferenceIdentifier identifier = result3D.getName();
+        Identifier identifier = result3D.getName();
         assertTrue("Need the Identifier3D hack.", identifier instanceof Identifier3D);
         assertSame(horizontalCRS, ((Identifier3D) identifier).horizontalCRS);
 

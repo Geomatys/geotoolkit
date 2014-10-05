@@ -34,7 +34,7 @@ import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.GeneralParameterDescriptor;
-import org.opengis.referencing.ReferenceIdentifier;
+import org.opengis.metadata.Identifier;
 
 import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.resources.Errors;
@@ -496,7 +496,7 @@ public final class UniversalParameters extends DefaultParameterDescriptor<Double
     private final NamedIdentifier[] identifiers;
 
     /**
-     * Locates the identifiers by their {@linkplain ReferenceIdentifier#getCode() code}.
+     * Locates the identifiers by their {@linkplain Identifier#getCode() code}.
      * If there is more than one parameter instance for the same name, this map contains
      * only the first occurrence. The other occurrences can be obtained by {@link #nextSameName}.
      */
@@ -669,7 +669,7 @@ public final class UniversalParameters extends DefaultParameterDescriptor<Double
     {
         ParameterDescriptor<?> found = null;
         for (final GeneralParameterDescriptor candidate : candidates) {
-            final ReferenceIdentifier candidateId = candidate.getName();
+            final Identifier candidateId = candidate.getName();
             NamedIdentifier identifier = identifiersMap.get(candidateId.getCode());
             while (identifier != null) {
                 final Citation authority = candidateId.getAuthority();
@@ -727,7 +727,7 @@ public final class UniversalParameters extends DefaultParameterDescriptor<Double
      * @return The descriptor for the given identifiers.
      */
     static ParameterDescriptor<Double> createDescriptor(
-            final ReferenceIdentifier[] identifiers, final double defaultValue,
+            final Identifier[] identifiers, final double defaultValue,
             final double minimum, final double maximum, final Unit<?> unit, final boolean required)
     {
         return DefaultParameterDescriptor.create(toMap(identifiers),
@@ -758,7 +758,7 @@ public final class UniversalParameters extends DefaultParameterDescriptor<Double
      *                      {@link MapProjectionDescriptor}, or 0 if none.
      * @return The descriptor for the given identifiers.
      */
-    static ParameterDescriptorGroup createDescriptorGroup(final ReferenceIdentifier[] identifiers,
+    static ParameterDescriptorGroup createDescriptorGroup(final Identifier[] identifiers,
             final Citation[] excludes, final ParameterDescriptor<?>[] parameters, final int supplement)
     {
         if (excludes != null) {
@@ -783,8 +783,8 @@ public final class UniversalParameters extends DefaultParameterDescriptor<Double
                     if (aliases != null) {
                         int n = 0;
                         for (final Object alias : aliases) {
-                            if (alias instanceof ReferenceIdentifier) {
-                                if (ArraysExt.contains(excludes, ((ReferenceIdentifier) alias).getAuthority())) {
+                            if (alias instanceof Identifier) {
+                                if (ArraysExt.contains(excludes, ((Identifier) alias).getAuthority())) {
                                     continue;
                                 }
                             }
@@ -816,13 +816,13 @@ public final class UniversalParameters extends DefaultParameterDescriptor<Double
      * Puts the identifiers into a properties map suitable for {@link ParameterDescriptorGroup}
      * constructor. The first identifier is used as the primary name. All other elements are aliases.
      */
-    private static Map<String,Object> toMap(final ReferenceIdentifier[] identifiers) {
+    private static Map<String,Object> toMap(final Identifier[] identifiers) {
         int idCount    = 0;
         int aliasCount = 0;
         GenericName[] alias = null;
-        ReferenceIdentifier[] id = null;
+        Identifier[] id = null;
         for (int i=0; i<identifiers.length; i++) {
-            final ReferenceIdentifier candidate = identifiers[i];
+            final Identifier candidate = identifiers[i];
             if (candidate instanceof GenericName) {
                 if (alias == null) {
                     alias = new GenericName[identifiers.length - i];
@@ -830,7 +830,7 @@ public final class UniversalParameters extends DefaultParameterDescriptor<Double
                 alias[aliasCount++] = (GenericName) candidate;
             } else {
                 if (id == null) {
-                    id = new ReferenceIdentifier[identifiers.length - i];
+                    id = new Identifier[identifiers.length - i];
                 }
                 id[idCount++] = candidate;
             }

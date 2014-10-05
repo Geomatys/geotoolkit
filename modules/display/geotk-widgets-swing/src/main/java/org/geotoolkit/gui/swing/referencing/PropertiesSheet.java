@@ -36,7 +36,7 @@ import org.jdesktop.swingx.JXLabel;
 import org.opengis.util.InternationalString;
 import org.opengis.metadata.citation.Citation;
 import org.opengis.referencing.IdentifiedObject;
-import org.opengis.referencing.ReferenceIdentifier;
+import org.opengis.metadata.Identifier;
 
 import org.geotoolkit.io.X364;
 import org.apache.sis.io.wkt.Colors;
@@ -167,7 +167,7 @@ public class PropertiesSheet extends JComponent {
      */
     public void setIdentifiedObject(final IdentifiedObject item) {
         final Locale locale = getLocale();
-        final ReferenceIdentifier oid = item.getName();
+        final Identifier oid = item.getName();
         name.setText(oid.getCode());
         final Citation authorityCitation = oid.getAuthority();
         String authorityText = null;
@@ -179,7 +179,7 @@ public class PropertiesSheet extends JComponent {
         }
         authority.setText(authorityText);
         final StringBuilder buffer = new StringBuilder();
-        for (final ReferenceIdentifier id : item.getIdentifiers()) {
+        for (final Identifier id : item.getIdentifiers()) {
             if (buffer.length() != 0) {
                 buffer.append(", ");
             }

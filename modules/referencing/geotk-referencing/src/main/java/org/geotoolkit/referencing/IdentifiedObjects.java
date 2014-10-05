@@ -31,7 +31,7 @@ import org.opengis.util.FactoryException;
 import org.opengis.metadata.citation.Citation;
 import org.opengis.referencing.AuthorityFactory;
 import org.opengis.referencing.IdentifiedObject;
-import org.opengis.referencing.ReferenceIdentifier;
+import org.opengis.metadata.Identifier;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import org.geotoolkit.lang.Static;
@@ -95,7 +95,7 @@ public final class IdentifiedObjects extends Static {
      *
      * @see IdentifiedObject#getIdentifiers()
      */
-    public static final ReferenceIdentifier[] EMPTY_IDENTIFIER_ARRAY = new ReferenceIdentifier[0];
+    public static final Identifier[] EMPTY_IDENTIFIER_ARRAY = new Identifier[0];
 
     /**
      * An empty array of alias. This is useful for fetching alias as an array,
@@ -181,7 +181,7 @@ public final class IdentifiedObjects extends Static {
     }
 
     /**
-     * Looks up an {@linkplain ReferenceIdentifier identifier}, such as {@code "EPSG:4326"},
+     * Looks up an {@linkplain Identifier identifier}, such as {@code "EPSG:4326"},
      * of the specified object. This method searches in registered factories for an object
      * {@linkplain ComparisonMode#APPROXIMATIVE approximatively equals} to the specified
      * object. If such an object is found, then its first identifier is returned. Otherwise
@@ -225,7 +225,7 @@ public final class IdentifiedObjects extends Static {
     }
 
     /**
-     * Looks up an {@linkplain ReferenceIdentifier identifier} in the namespace of the given
+     * Looks up an {@linkplain Identifier identifier} in the namespace of the given
      * authority, such as {@link Citations#EPSG EPSG}, of the specified CRS. Invoking this
      * method is equivalent to invoking
      * <code>{@linkplain #lookupIdentifier(IdentifiedObject, boolean) lookupIdentifier}(object,
@@ -256,7 +256,7 @@ public final class IdentifiedObjects extends Static {
         if (object == null) {
             return null;
         }
-        ReferenceIdentifier id = org.apache.sis.referencing.IdentifiedObjects.getIdentifier(object, authority);
+        Identifier id = org.apache.sis.referencing.IdentifiedObjects.getIdentifier(object, authority);
         if (id != null) {
             return id.getCode();
         }

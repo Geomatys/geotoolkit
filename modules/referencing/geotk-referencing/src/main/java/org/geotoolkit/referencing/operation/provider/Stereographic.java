@@ -23,7 +23,7 @@ import org.opengis.metadata.citation.Citation;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
-import org.opengis.referencing.ReferenceIdentifier;
+import org.opengis.metadata.Identifier;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.PlanarProjection;
 
@@ -320,7 +320,7 @@ public class Stereographic extends MapProjection {
      * </table>
      */
     public static final ParameterDescriptorGroup PARAMETERS = UniversalParameters.createDescriptorGroup(
-        new ReferenceIdentifier[] {
+        new Identifier[] {
             new NamedIdentifier(Citations.OGC,     "Stereographic"),
             new NamedIdentifier(Citations.ESRI,    "Stereographic"),
             new NamedIdentifier(Citations.NETCDF,  "Stereographic"),

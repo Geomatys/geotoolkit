@@ -38,7 +38,7 @@ import org.opengis.metadata.quality.PositionalAccuracy;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.*; // We really use most of them.
 import org.opengis.referencing.IdentifiedObject;
-import org.opengis.referencing.ReferenceIdentifier;
+import org.opengis.metadata.Identifier;
 import org.opengis.util.InternationalString;
 import org.opengis.util.Record;
 
@@ -627,10 +627,10 @@ public class AbstractCoordinateOperation extends AbstractIdentifiedObject implem
     @SuppressWarnings("serial")
     static void append(final Formatter formatter, final IdentifiedObject object, final String type) {
         if (object != null) {
-            final Set<ReferenceIdentifier> identifiers = object.getIdentifiers();
+            final Set<Identifier> identifiers = object.getIdentifiers();
             final Map<String,Object> properties = new HashMap<>(4);
             properties.put(IdentifiedObject.NAME_KEY,        object.getName());
-            properties.put(IdentifiedObject.IDENTIFIERS_KEY, identifiers.toArray(new ReferenceIdentifier[identifiers.size()]));
+            properties.put(IdentifiedObject.IDENTIFIERS_KEY, identifiers.toArray(new Identifier[identifiers.size()]));
             formatter.newLine();
             formatter.append(new AbstractIdentifiedObject(properties) {
                 @Override

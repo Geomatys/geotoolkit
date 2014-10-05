@@ -19,7 +19,9 @@ package org.geotoolkit.internal.simple;
 
 import org.opengis.metadata.citation.Citation;
 import org.opengis.referencing.ReferenceIdentifier;
+import org.opengis.util.InternationalString;
 import org.apache.sis.internal.simple.SimpleCitation;
+
 
 /**
  * A trivial implementation of {@link ReferenceIdentifier}. This is defined as a subtype of
@@ -62,6 +64,7 @@ public class SimpleReferenceIdentifier extends SimpleCitation implements Referen
     @Override public String   getCodeSpace() {return title;}
     @Override public String   getCode()      {return code;}
     @Override public String   getVersion()   {return null;}
+    @Override public InternationalString getDescription() {return null;}
 
     /**
      * Returns a string representation of this identifier.

@@ -43,7 +43,7 @@ import org.geotoolkit.temporal.reference.DefaultTemporalCoordinateSystem;
 import org.geotoolkit.temporal.reference.DefaultTemporalReferenceSystem;
 
 import org.opengis.metadata.extent.Extent;
-import org.opengis.referencing.ReferenceIdentifier;
+import org.opengis.metadata.Identifier;
 import org.opengis.temporal.Calendar;
 import org.opengis.temporal.CalendarDate;
 import org.opengis.temporal.CalendarEra;
@@ -106,7 +106,7 @@ public class DefaultTemporalFactory extends Factory implements TemporalFactory {
      * {@inheritDoc }
      */
     @Override
-    public Calendar createCalendar(final ReferenceIdentifier name, final Extent domainOfValidit) {
+    public Calendar createCalendar(final Identifier name, final Extent domainOfValidit) {
         return new DefaultCalendar(name, domainOfValidit);
     }
 
@@ -133,7 +133,7 @@ public class DefaultTemporalFactory extends Factory implements TemporalFactory {
      * {@inheritDoc }
      */
     @Override
-    public Clock createClock(final ReferenceIdentifier name, final Extent domainOfValidity,
+    public Clock createClock(final Identifier name, final Extent domainOfValidity,
             final InternationalString referenceEvent, final ClockTime referenceTime, final ClockTime utcReference) {
         return new DefaultClock(name, domainOfValidity, referenceEvent, referenceTime, utcReference);
     }
@@ -195,7 +195,7 @@ public class DefaultTemporalFactory extends Factory implements TemporalFactory {
      * {@inheritDoc }
      */
     @Override
-    public OrdinalReferenceSystem createOrdinalReferenceSystem(final ReferenceIdentifier name,
+    public OrdinalReferenceSystem createOrdinalReferenceSystem(final Identifier name,
             final Extent domainOfValidity, final Collection<OrdinalEra> ordinalEraSequence) {
         return new DefaultOrdinalReferenceSystem(name, domainOfValidity, ordinalEraSequence);
     }
@@ -223,7 +223,7 @@ public class DefaultTemporalFactory extends Factory implements TemporalFactory {
      * {@inheritDoc }
      */
     @Override
-    public TemporalCoordinateSystem createTemporalCoordinateSystem(final ReferenceIdentifier name,
+    public TemporalCoordinateSystem createTemporalCoordinateSystem(final Identifier name,
             final Extent domainOfValidity, final Date origin, final InternationalString interval) {
         return new DefaultTemporalCoordinateSystem(name, domainOfValidity, origin, interval);
     }
@@ -241,7 +241,7 @@ public class DefaultTemporalFactory extends Factory implements TemporalFactory {
      * {@inheritDoc }
      */
     @Override
-    public TemporalReferenceSystem createTemporalReferenceSystem(final ReferenceIdentifier name,
+    public TemporalReferenceSystem createTemporalReferenceSystem(final Identifier name,
             final Extent domainOfValidity) {
         return new DefaultTemporalReferenceSystem(name, domainOfValidity);
     }

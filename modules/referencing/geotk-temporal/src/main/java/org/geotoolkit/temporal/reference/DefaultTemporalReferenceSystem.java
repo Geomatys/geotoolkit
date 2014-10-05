@@ -21,7 +21,7 @@ import java.util.Collection;
 import java.util.Objects;
 import java.util.Set;
 import org.opengis.metadata.extent.Extent;
-import org.opengis.referencing.ReferenceIdentifier;
+import org.opengis.metadata.Identifier;
 import org.opengis.temporal.TemporalReferenceSystem;
 import org.opengis.util.GenericName;
 import org.opengis.util.InternationalString;
@@ -36,25 +36,25 @@ public class DefaultTemporalReferenceSystem implements TemporalReferenceSystem {
     /**
      * This is a name that uniquely identifies the temporal reference system.
      */
-    private ReferenceIdentifier name;
+    private Identifier name;
     private Extent domainOfValidity;
     private Extent validArea;
     private InternationalString scope;
     private Collection<GenericName> alias;
-    private Set<ReferenceIdentifier> identifiers;
+    private Set<Identifier> identifiers;
     private InternationalString remarks;
 
     /**
-     * Creates a new instance of TemporalReferenceSystem by passing a ReferenceIdentifier name and a domain of validity.
+     * Creates a new instance of TemporalReferenceSystem by passing a Identifier name and a domain of validity.
      * @param name
      * @param domainOfValidity
      */
-    public DefaultTemporalReferenceSystem(final ReferenceIdentifier name, final Extent domainOfValidity) {
+    public DefaultTemporalReferenceSystem(final Identifier name, final Extent domainOfValidity) {
         this.name = name;
         this.domainOfValidity = domainOfValidity;
     }
 
-    public ReferenceIdentifier getName() {
+    public Identifier getName() {
         return name;
     }
 
@@ -79,7 +79,7 @@ public class DefaultTemporalReferenceSystem implements TemporalReferenceSystem {
         return alias;
     }
 
-    public Set<ReferenceIdentifier> getIdentifiers() {
+    public Set<Identifier> getIdentifiers() {
         return identifiers;
     }
 
@@ -94,7 +94,7 @@ public class DefaultTemporalReferenceSystem implements TemporalReferenceSystem {
     /**
      * This is a name that uniquely identifies the temporal reference system.
      */
-    public void setName(final ReferenceIdentifier name) {
+    public void setName(final Identifier name) {
         this.name = name;
     }
 

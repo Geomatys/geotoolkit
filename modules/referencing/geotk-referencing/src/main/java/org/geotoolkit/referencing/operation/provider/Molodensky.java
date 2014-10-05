@@ -32,7 +32,7 @@ import org.opengis.referencing.operation.Transformation;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.crs.GeographicCRS;
 import org.opengis.referencing.crs.GeocentricCRS;
-import org.opengis.referencing.ReferenceIdentifier;
+import org.opengis.metadata.Identifier;
 
 import org.geotoolkit.metadata.Citations;
 import org.apache.sis.referencing.NamedIdentifier;
@@ -423,7 +423,7 @@ public class Molodensky extends MathTransformProvider {
      * </table>
      */
     public static final ParameterDescriptorGroup PARAMETERS = createDescriptorGroup(
-            new ReferenceIdentifier[] {
+            new Identifier[] {
                 new NamedIdentifier(Citations.OGC,  "Molodenski"),
                 new NamedIdentifier(Citations.EPSG, "Molodensky"),
                 new IdentifierCode (Citations.EPSG,  9604),

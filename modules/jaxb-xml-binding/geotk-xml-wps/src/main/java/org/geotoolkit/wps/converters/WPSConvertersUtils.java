@@ -71,7 +71,7 @@ import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
-import org.opengis.referencing.ReferenceIdentifier;
+import org.opengis.metadata.Identifier;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.cs.CoordinateSystem;
@@ -729,8 +729,8 @@ public class WPSConvertersUtils {
      * @return
      */
     public static String encodeCRS(CoordinateReferenceSystem crs) {
-        final Set<ReferenceIdentifier> identifiers = crs.getIdentifiers();
-        final ReferenceIdentifier id = !identifiers.isEmpty() ? identifiers.iterator().next() : null;
+        final Set<Identifier> identifiers = crs.getIdentifiers();
+        final Identifier id = !identifiers.isEmpty() ? identifiers.iterator().next() : null;
         if (id != null) {
             final Collection<Identifier> authIdentifier = (Collection<Identifier>) id.getAuthority().getIdentifiers();
             final Identifier authId = !authIdentifier.isEmpty() ? authIdentifier.iterator().next() : null;

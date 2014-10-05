@@ -28,6 +28,7 @@ import org.opengis.referencing.crs.*;
 import org.opengis.referencing.datum.*;
 import org.opengis.referencing.operation.*;
 import org.opengis.util.FactoryException;
+import org.opengis.metadata.Identifier;
 import org.opengis.metadata.extent.GeographicBoundingBox;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.geometry.Envelope;
@@ -193,7 +194,7 @@ public final strictfp class ThreadedEpsgFactoryTest extends EpsgFactoryTestBase 
      * Returns the EPSG code of the operation method for the given projected CRS.
      */
     private static String getOperationMethod(final CoordinateReferenceSystem crs) {
-        final ReferenceIdentifier id = ((ProjectedCRS) crs).getConversionFromBase().getMethod().getIdentifiers().iterator().next();
+        final Identifier id = ((ProjectedCRS) crs).getConversionFromBase().getMethod().getIdentifiers().iterator().next();
         return id.getCodeSpace() + ':' + id.getCode();
     }
 

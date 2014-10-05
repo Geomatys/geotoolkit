@@ -23,7 +23,7 @@ import org.opengis.metadata.citation.Citation;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
-import org.opengis.referencing.ReferenceIdentifier;
+import org.opengis.metadata.Identifier;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.CylindricalProjection;
 
@@ -227,7 +227,7 @@ public class PseudoMercator extends MapProjection {
         final Citation[] excludes = {
             Citations.ESRI, Citations.NETCDF, Citations.GEOTIFF, Citations.PROJ4
         };
-        PARAMETERS = UniversalParameters.createDescriptorGroup(new ReferenceIdentifier[] {
+        PARAMETERS = UniversalParameters.createDescriptorGroup(new Identifier[] {
             new NamedIdentifier(Citations.EPSG, "Popular Visualisation Pseudo Mercator"),
             new IdentifierCode (Citations.EPSG,  1024),
             sameNameAs(Citations.GEOTOOLKIT, Mercator1SP.PARAMETERS)

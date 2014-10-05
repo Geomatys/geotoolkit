@@ -31,7 +31,7 @@ import org.opengis.metadata.Identifier;
 import org.opengis.metadata.citation.Citation;
 import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.AuthorityFactory;
-import org.opengis.referencing.ReferenceIdentifier;
+import org.opengis.metadata.Identifier;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 
 import org.geotoolkit.referencing.CRS;
@@ -317,7 +317,7 @@ public class IdentifiedObjectFinder {
              */
             authority = null;
         }
-        ReferenceIdentifier identifier = IdentifiedObjects.getIdentifier(candidate, authority);
+        Identifier identifier = IdentifiedObjects.getIdentifier(candidate, authority);
         if (identifier == null) {
             identifier = candidate.getName();
         }

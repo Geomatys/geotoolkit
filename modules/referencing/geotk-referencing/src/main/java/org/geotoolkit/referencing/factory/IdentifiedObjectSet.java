@@ -37,7 +37,7 @@ import net.jcip.annotations.NotThreadSafe;
 import org.opengis.metadata.Identifier;
 import org.opengis.referencing.AuthorityFactory;
 import org.opengis.referencing.IdentifiedObject;
-import org.opengis.referencing.ReferenceIdentifier;
+import org.opengis.metadata.Identifier;
 import org.opengis.util.FactoryException;
 import org.opengis.util.NoSuchIdentifierException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
@@ -343,7 +343,7 @@ public class IdentifiedObjectSet<T extends IdentifiedObject> extends AbstractSet
      */
     protected String getAuthorityCode(final T object) {
         final Identifier id;
-        final Set<ReferenceIdentifier> identifiers = object.getIdentifiers();
+        final Set<Identifier> identifiers = object.getIdentifiers();
         if (!isNullOrEmpty(identifiers)) {
             id = identifiers.iterator().next();
         } else {

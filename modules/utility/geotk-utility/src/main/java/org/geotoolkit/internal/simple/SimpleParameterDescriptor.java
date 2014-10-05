@@ -27,7 +27,7 @@ import org.opengis.util.InternationalString;
 import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDirection;
-import org.opengis.referencing.ReferenceIdentifier;
+import org.opengis.metadata.Identifier;
 
 
 /**
@@ -67,9 +67,9 @@ public class SimpleParameterDescriptor<T> extends SimpleReferenceIdentifier impl
         this.type = type;
     }
 
-    @Override public ReferenceIdentifier      getName()          {return this;}
+    @Override public Identifier               getName()          {return this;}
     @Override public Collection<GenericName>  getAlias()         {return Collections.emptySet();}
-    @Override public Set<ReferenceIdentifier> getIdentifiers()   {return Collections.emptySet();}
+    @Override public Set<Identifier>          getIdentifiers()   {return Collections.emptySet();}
     @Override public Class<T>                 getValueClass()    {return type;}
     @Override public Set<T>                   getValidValues()   {return null;}
     @Override public T                        getDefaultValue()  {return null;}

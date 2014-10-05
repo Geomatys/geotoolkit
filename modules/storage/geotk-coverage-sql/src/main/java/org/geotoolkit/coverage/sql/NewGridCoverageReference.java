@@ -37,7 +37,7 @@ import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.metadata.content.TransferFunctionType;
 import org.opengis.coverage.grid.RectifiedGrid;
 import org.opengis.referencing.IdentifiedObject;
-import org.opengis.referencing.ReferenceIdentifier;
+import org.opengis.metadata.Identifier;
 import org.opengis.referencing.crs.VerticalCRS;
 import org.opengis.referencing.crs.TemporalCRS;
 import org.opengis.referencing.crs.CRSAuthorityFactory;
@@ -684,7 +684,7 @@ public final class NewGridCoverageReference {
                 identifiedCRS = crs;
             }
             for (final Citation authority : AUTHORITIES) {
-                final ReferenceIdentifier id = IdentifiedObjects.getIdentifier(identifiedCRS, authority);
+                final Identifier id = IdentifiedObjects.getIdentifier(identifiedCRS, authority);
                 if (id != null) {
                     final String code = id.getCode();
                     if (id != null) try {

@@ -24,7 +24,7 @@ import org.opengis.temporal.Clock;
 import org.opengis.temporal.ClockTime;
 import org.opengis.util.InternationalString;
 import org.opengis.metadata.extent.Extent;
-import org.opengis.referencing.ReferenceIdentifier;
+import org.opengis.metadata.Identifier;
 
 /**
  *
@@ -50,7 +50,7 @@ public class DefaultClock extends DefaultTemporalReferenceSystem implements Cloc
      */
     private Collection<Calendar> dateBasis;
 
-    public DefaultClock(final ReferenceIdentifier name, final Extent domainOfValidity, final InternationalString referenceEvent, final ClockTime referenceTime, final ClockTime utcReference) {
+    public DefaultClock(final Identifier name, final Extent domainOfValidity, final InternationalString referenceEvent, final ClockTime referenceTime, final ClockTime utcReference) {
         super(name, domainOfValidity);
         this.referenceEvent = referenceEvent;
         this.referenceTime = referenceTime;

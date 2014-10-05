@@ -51,7 +51,7 @@ import org.opengis.referencing.operation.Projection;
 import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.datum.PrimeMeridian;
 import org.opengis.referencing.datum.Ellipsoid;
-import org.opengis.referencing.ReferenceIdentifier;
+import org.opengis.metadata.Identifier;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.GeocentricCRS;
 import org.opengis.referencing.crs.GeographicCRS;
@@ -599,7 +599,7 @@ final class GeoTiffCRSWriter {
      */
     private static Integer getEPSGCode(final IdentifiedObject candidate) throws FactoryException {
         // looking for an EPSG code
-        for(final ReferenceIdentifier rid : candidate.getIdentifiers()){
+        for(final Identifier rid : candidate.getIdentifiers()){
             final Citation citation = rid.getAuthority();
             if(Citations.identifierMatches(citation, Citations.EPSG)){
                 return Integer.parseInt(rid.getCode());

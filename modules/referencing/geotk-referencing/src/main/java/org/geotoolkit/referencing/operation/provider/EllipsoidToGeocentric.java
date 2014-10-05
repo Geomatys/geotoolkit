@@ -30,7 +30,7 @@ import org.opengis.referencing.crs.GeographicCRS;
 import org.opengis.referencing.crs.GeocentricCRS;
 import org.opengis.referencing.operation.Conversion;
 import org.opengis.referencing.operation.MathTransform;
-import org.opengis.referencing.ReferenceIdentifier;
+import org.opengis.metadata.Identifier;
 
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
@@ -180,7 +180,7 @@ public class EllipsoidToGeocentric extends MathTransformProvider {
      * Constructs the parameters group.
      */
     static ParameterDescriptorGroup createDescriptorGroup(final String ogc) {
-        return UniversalParameters.createDescriptorGroup(new ReferenceIdentifier[] {
+        return UniversalParameters.createDescriptorGroup(new Identifier[] {
                 new NamedIdentifier(Citations.OGC,  ogc),
                 new NamedIdentifier(Citations.EPSG, "Geographic/geocentric conversions"),
                 new IdentifierCode (Citations.EPSG, 9602),

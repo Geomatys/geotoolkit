@@ -38,7 +38,7 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.temporal.object.TemporalUtilities;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.IdentifiedObject;
-import org.opengis.referencing.ReferenceIdentifier;
+import org.opengis.metadata.Identifier;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.TemporalCRS;
 import org.opengis.referencing.crs.VerticalCRS;
@@ -123,7 +123,7 @@ public final class RequestsUtilities {
         if (org.geotoolkit.referencing.CRS.equalsIgnoreMetadata(envelope.getCoordinateReferenceSystem(), CommonCRS.WGS84.normalizedGeographic())) {
             return "EPSG:4326";
         }
-        final Set<ReferenceIdentifier> identifiers = envelope.getCoordinateReferenceSystem().getIdentifiers();
+        final Set<Identifier> identifiers = envelope.getCoordinateReferenceSystem().getIdentifiers();
         if (identifiers != null && !identifiers.isEmpty()) {
             return identifiers.iterator().next().toString();
         }

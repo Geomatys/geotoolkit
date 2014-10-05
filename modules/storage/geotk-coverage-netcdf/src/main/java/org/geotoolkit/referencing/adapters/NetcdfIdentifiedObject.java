@@ -28,7 +28,7 @@ import org.opengis.util.GenericName;
 import org.opengis.util.InternationalString;
 import org.opengis.metadata.citation.Citation;
 import org.opengis.referencing.IdentifiedObject;
-import org.opengis.referencing.ReferenceIdentifier;
+import org.opengis.metadata.Identifier;
 
 import org.geotoolkit.metadata.Citations;
 import org.apache.sis.io.wkt.UnformattableObjectException;
@@ -42,7 +42,7 @@ import org.apache.sis.io.wkt.UnformattableObjectException;
  * to be immutable.
  * <p>
  * This base class assumes that NetCDF objects have a single name and no alias. This assumption
- * allows us to implement directly the {@link ReferenceIdentifier} interface. The NetCDF object
+ * allows us to implement directly the {@link Identifier} interface. The NetCDF object
  * name is returned by the {@link #getCode()} method.
  *
  * @author Martin Desruisseaux (Geomatys)
@@ -56,7 +56,7 @@ import org.apache.sis.io.wkt.UnformattableObjectException;
  * implement more than one GeoAPI interface.  In such case, determining if the type of two
  * classes shall be considered equal may be confusing.
  */
-public abstract class NetcdfIdentifiedObject implements IdentifiedObject, ReferenceIdentifier {
+public abstract class NetcdfIdentifiedObject implements IdentifiedObject, Identifier {
     /**
      * Creates a new {@code NetcdfIdentifiedObject} instance.
      */
@@ -110,7 +110,7 @@ public abstract class NetcdfIdentifiedObject implements IdentifiedObject, Refere
      * the {@link #getCode()} method.
      */
     @Override
-    public ReferenceIdentifier getName() {
+    public Identifier getName() {
         return this;
     }
 
@@ -127,12 +127,21 @@ public abstract class NetcdfIdentifiedObject implements IdentifiedObject, Refere
      * Returns an empty set, since NetCDF objects don't provide other identifiers than the name.
      */
     @Override
-    public Set<ReferenceIdentifier> getIdentifiers() {
+    public Set<Identifier> getIdentifiers() {
         return Collections.emptySet();
     }
 
     /**
      * Returns the NetCDF object description, or {@code null} if none.
+     * The default implementation returns {@code null}.
+     */
+    @Override
+    public InternationalString getDescription() {
+        return null;
+    }
+
+    /**
+     * Returns the NetCDF object remarks, or {@code null} if none.
      * The default implementation returns {@code null}.
      */
     @Override

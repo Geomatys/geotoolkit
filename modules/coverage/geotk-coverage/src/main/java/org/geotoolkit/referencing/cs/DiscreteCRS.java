@@ -28,7 +28,7 @@ import org.apache.sis.io.wkt.FormattableObject;
 import org.opengis.metadata.extent.Extent;
 import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.coverage.grid.GridGeometry;
-import org.opengis.referencing.ReferenceIdentifier;
+import org.opengis.metadata.Identifier;
 import org.opengis.referencing.datum.Datum;
 import org.opengis.referencing.datum.GeodeticDatum;
 import org.opengis.referencing.datum.VerticalDatum;
@@ -106,7 +106,7 @@ class DiscreteCRS<T extends CoordinateReferenceSystem> extends FormattableObject
      * Returns the name of the wrapped CRS.
      */
     @Override
-    public final ReferenceIdentifier getName() {
+    public final Identifier getName() {
         return crs.getName();
     }
 
@@ -122,7 +122,7 @@ class DiscreteCRS<T extends CoordinateReferenceSystem> extends FormattableObject
      * Returns the identifiers of the wrapped CRS.
      */
     @Override
-    public final Set<ReferenceIdentifier> getIdentifiers() {
+    public final Set<Identifier> getIdentifiers() {
         return crs.getIdentifiers();
     }
 

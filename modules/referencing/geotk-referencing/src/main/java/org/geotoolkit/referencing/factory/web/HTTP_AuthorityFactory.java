@@ -22,7 +22,7 @@ import net.jcip.annotations.ThreadSafe;
 import org.opengis.util.FactoryException;
 import org.opengis.metadata.citation.Citation;
 import org.opengis.referencing.IdentifiedObject;
-import org.opengis.referencing.ReferenceIdentifier;
+import org.opengis.metadata.Identifier;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CRSAuthorityFactory;
 import org.opengis.referencing.cs.CSAuthorityFactory;
@@ -214,7 +214,7 @@ public class HTTP_AuthorityFactory extends AuthorityFactoryAdapter implements CR
         }
 
         @Override
-        StringBuilder path(IdentifiedObject object, ReferenceIdentifier identifier, String codespace) {
+        StringBuilder path(IdentifiedObject object, Identifier identifier, String codespace) {
             return new StringBuilder(BASE_URL).append(codespace).append(".xml#");
         }
     }

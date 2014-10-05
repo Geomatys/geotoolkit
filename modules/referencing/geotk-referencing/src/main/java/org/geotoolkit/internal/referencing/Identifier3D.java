@@ -23,7 +23,7 @@ import java.util.Objects;
 
 import org.opengis.referencing.crs.SingleCRS;
 import org.opengis.referencing.datum.GeodeticDatum;
-import org.opengis.referencing.ReferenceIdentifier;
+import org.opengis.metadata.Identifier;
 
 import org.apache.sis.metadata.iso.ImmutableIdentifier;
 
@@ -78,7 +78,7 @@ public final class Identifier3D extends ImmutableIdentifier {
      * @param identifier    The identifier to copy.
      * @param horizontalCRS The horizontal component of the 3D CRS.
      */
-    private Identifier3D(final ReferenceIdentifier identifier, final SingleCRS horizontalCRS) {
+    private Identifier3D(final Identifier identifier, final SingleCRS horizontalCRS) {
         super(identifier);
         this.horizontalCRS = horizontalCRS;
         assert horizontalCRS.getDatum() instanceof GeodeticDatum : horizontalCRS;
@@ -116,7 +116,7 @@ public final class Identifier3D extends ImmutableIdentifier {
      */
     public static Map<String,?> addHorizontalCRS(Map<String,?> properties, final SingleCRS horizontalCRS) {
         final Map<String,Object> copy = new HashMap<>(properties);
-        final ReferenceIdentifier id = (ReferenceIdentifier) copy.get(NAME_KEY);
+        final Identifier id = (Identifier) copy.get(NAME_KEY);
         copy.put(NAME_KEY, new Identifier3D(id, horizontalCRS));
         return copy;
     }

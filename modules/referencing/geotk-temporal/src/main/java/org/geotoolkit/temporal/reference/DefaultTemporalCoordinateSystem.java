@@ -23,7 +23,7 @@ import java.util.Objects;
 import org.geotoolkit.temporal.object.DefaultTemporalCoordinate;
 
 import org.opengis.metadata.extent.Extent;
-import org.opengis.referencing.ReferenceIdentifier;
+import org.opengis.metadata.Identifier;
 import org.opengis.temporal.TemporalCoordinate;
 import org.opengis.temporal.TemporalCoordinateSystem;
 import org.opengis.util.InternationalString;
@@ -47,7 +47,7 @@ public class DefaultTemporalCoordinateSystem extends DefaultTemporalReferenceSys
      */
     private InternationalString interval;
 
-    public DefaultTemporalCoordinateSystem(final ReferenceIdentifier name, final Extent domainOfValidity, final Date origin, final InternationalString interval) {
+    public DefaultTemporalCoordinateSystem(final Identifier name, final Extent domainOfValidity, final Date origin, final InternationalString interval) {
         super(name, domainOfValidity);
         this.origin = origin;
         this.interval = interval;

@@ -33,7 +33,7 @@ import org.opengis.parameter.InvalidParameterNameException;
 import org.opengis.parameter.InvalidParameterValueException;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.IdentifiedObject;
-import org.opengis.referencing.ReferenceIdentifier;
+import org.opengis.metadata.Identifier;
 import org.opengis.referencing.operation.Projection;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.SingleOperation;
@@ -132,7 +132,7 @@ public abstract class MathTransformProvider extends DefaultOperationMethod {
      * @since 3.03
      */
     final boolean identifierMatches(final String codespace, final String code) {
-        for (final ReferenceIdentifier identifier : getIdentifiers()) {
+        for (final Identifier identifier : getIdentifiers()) {
             if (codespace.equals(identifier.getCodeSpace()) && code.equals(identifier.getCode())) {
                 return true;
             }

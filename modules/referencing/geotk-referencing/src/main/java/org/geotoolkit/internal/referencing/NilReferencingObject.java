@@ -25,7 +25,7 @@ import java.util.Collections;
 import java.io.Serializable;
 
 import org.opengis.util.*;
-import org.opengis.referencing.*;
+import org.opengis.metadata.Identifier;
 import org.opengis.referencing.cs.*;
 import org.opengis.referencing.crs.*;
 import org.opengis.referencing.datum.*;
@@ -140,7 +140,7 @@ public final class NilReferencingObject implements GeocentricCRS, GeographicCRS,
 
     /** Returns {@code null} in all cases. */
     @Override
-    public ReferenceIdentifier getName() {
+    public Identifier getName() {
         return null;
     }
 
@@ -152,7 +152,7 @@ public final class NilReferencingObject implements GeocentricCRS, GeographicCRS,
 
     /** Returns an empty set in all cases. */
     @Override
-    public Set<ReferenceIdentifier> getIdentifiers() {
+    public Set<Identifier> getIdentifiers() {
         return Collections.emptySet();
     }
 

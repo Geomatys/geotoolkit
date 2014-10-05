@@ -27,7 +27,7 @@ import java.io.IOException;
 import org.opengis.util.GenericName;
 import org.opengis.util.InternationalString;
 import org.opengis.referencing.operation.Matrix;
-import org.opengis.referencing.ReferenceIdentifier;
+import org.opengis.metadata.Identifier;
 import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptor;
@@ -113,7 +113,7 @@ public class MatrixParameters extends ParameterGroup implements ParameterDescrip
      * specified at construction time.
      */
     @Override
-    public ReferenceIdentifier getName() {
+    public Identifier getName() {
         return descriptor.getName();
     }
 
@@ -131,7 +131,7 @@ public class MatrixParameters extends ParameterGroup implements ParameterDescrip
      * specified at construction time.
      */
     @Override
-    public Set<ReferenceIdentifier> getIdentifiers() {
+    public Set<Identifier> getIdentifiers() {
         return descriptor.getIdentifiers();
     }
 

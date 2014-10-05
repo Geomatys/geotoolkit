@@ -48,7 +48,7 @@ import org.opengis.metadata.citation.ResponsibleParty;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.InvalidParameterNameException;
-import org.opengis.referencing.ReferenceIdentifier;
+import org.opengis.metadata.Identifier;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.metadata.citation.Responsibility;
 import org.opengis.util.InternationalString;
@@ -272,7 +272,7 @@ public class ImagingParameterDescriptors extends DefaultParameterDescriptorGroup
      *       {@linkplain ResponsibleParty#getContactInfo contact information}.</td></td>
      *  </tr>
      *  <tr>
-     *   <td>{@link ReferenceIdentifier#VERSION_KEY VERSION_KEY}</td>
+     *   <td>{@link Identifier#VERSION_KEY VERSION_KEY}</td>
      *   <td>{@code "Version"} {@linkplain OperationDescriptor#getResources resources}</td>
      *  </tr>
      *  <tr>
@@ -369,7 +369,7 @@ public class ImagingParameterDescriptors extends DefaultParameterDescriptorGroup
                     new ImagingParameterDescription(op, "LocalName", "Vendor"));
             properties.put(ALIAS_KEY,   alias);
             properties.put(REMARKS_KEY, description);
-            properties.put(ReferenceIdentifier.VERSION_KEY, bundle.getString("Version"));
+            properties.put(Identifier.VERSION_KEY, bundle.getString("Version"));
             properties.put(Identifier.AUTHORITY_KEY, authority);
         }
         properties.put(NAME_KEY, name);

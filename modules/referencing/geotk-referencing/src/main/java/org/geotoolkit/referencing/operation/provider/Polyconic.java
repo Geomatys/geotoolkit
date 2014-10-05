@@ -23,7 +23,7 @@ import org.opengis.metadata.citation.Citation;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
-import org.opengis.referencing.ReferenceIdentifier;
+import org.opengis.metadata.Identifier;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.ConicProjection;
 
@@ -246,7 +246,7 @@ public class Polyconic extends MapProjection {
                 "False northing",               // EPSG
                 "FalseNorthing");               // GeoTIFF
 
-        PARAMETERS = UniversalParameters.createDescriptorGroup(new ReferenceIdentifier[] {
+        PARAMETERS = UniversalParameters.createDescriptorGroup(new Identifier[] {
             new NamedIdentifier(Citations.OGC,     "Polyconic"),
             new NamedIdentifier(Citations.EPSG,    "American Polyconic"),
             new IdentifierCode (Citations.EPSG,     9818), // The ellipsoidal case

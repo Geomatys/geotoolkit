@@ -20,7 +20,7 @@ package org.geotoolkit.temporal.reference;
 import java.util.Collection;
 import java.util.Objects;
 import org.opengis.metadata.extent.Extent;
-import org.opengis.referencing.ReferenceIdentifier;
+import org.opengis.metadata.Identifier;
 import org.opengis.temporal.OrdinalEra;
 import org.opengis.temporal.OrdinalReferenceSystem;
 
@@ -36,7 +36,7 @@ public class DefaultOrdinalReferenceSystem extends DefaultTemporalReferenceSyste
      */
     private Collection<OrdinalEra> ordinalEraSequence;
 
-    public DefaultOrdinalReferenceSystem(final ReferenceIdentifier name, final Extent domainOfValidity, final Collection<OrdinalEra> ordinalEraSequence) {
+    public DefaultOrdinalReferenceSystem(final Identifier name, final Extent domainOfValidity, final Collection<OrdinalEra> ordinalEraSequence) {
         super(name, domainOfValidity);
         this.ordinalEraSequence = ordinalEraSequence;
     }

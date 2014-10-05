@@ -21,7 +21,7 @@ import org.opengis.util.FactoryException;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
-import org.opengis.referencing.ReferenceIdentifier;
+import org.opengis.metadata.Identifier;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.Transformation;
 
@@ -109,7 +109,7 @@ public class NTv2 extends MathTransformProvider {
      * </table>
      */
     public static final ParameterDescriptorGroup PARAMETERS = UniversalParameters.createDescriptorGroup(
-        new ReferenceIdentifier[] {
+        new Identifier[] {
             new NamedIdentifier(Citations.EPSG, "NTv2"),
             new IdentifierCode (Citations.EPSG,  9615)
         }, null, new ParameterDescriptor<?>[] {

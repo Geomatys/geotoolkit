@@ -32,7 +32,7 @@ import net.jcip.annotations.ThreadSafe;
 import org.opengis.util.FactoryException;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterNotFoundException;
-import org.opengis.referencing.ReferenceIdentifier;
+import org.opengis.metadata.Identifier;
 import org.opengis.referencing.cs.*;
 import org.opengis.referencing.crs.*;
 import org.opengis.referencing.datum.*;
@@ -796,7 +796,7 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
          * in a single affine transform.
          */
         if (molodenskyMethod != null) {
-            ReferenceIdentifier identifier = DATUM_SHIFT;
+            Identifier identifier = DATUM_SHIFT;
             BursaWolfParameters bursaWolf = null;
             if (sourceDatum instanceof DefaultGeodeticDatum) {
                 for (final BursaWolfParameters param : ((DefaultGeodeticDatum) sourceDatum).getBursaWolfParameters()) {
@@ -1049,7 +1049,7 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
          */
         final CartesianCS STANDARD = PredefinedCS.GEOCENTRIC;
         MatrixSIS matrix;
-        ReferenceIdentifier identifier = DATUM_SHIFT;
+        Identifier identifier = DATUM_SHIFT;
         try {
             Matrix datumShift = null;
             final GeodeticDatum datum = TemporaryDatum.unwrap(sourceDatum);

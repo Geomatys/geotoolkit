@@ -21,6 +21,7 @@ import org.opengis.metadata.lineage.Algorithm;
 import java.util.Collections;
 import java.util.Collection;
 import org.apache.sis.util.ArgumentChecks;
+import org.apache.sis.internal.util.Citations;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.citation.Citation;
 import org.opengis.metadata.identification.Identification;
@@ -136,7 +137,7 @@ public abstract class AbstractProcessDescriptor implements ProcessDescriptor {
     }
 
 
-    protected static class DerivateIdentifier implements Identifier{
+    protected static class DerivateIdentifier implements Identifier {
 
         private final String code;
         private final Identification factoryId;
@@ -156,6 +157,21 @@ public abstract class AbstractProcessDescriptor implements ProcessDescriptor {
         @Override
         public Citation getAuthority() {
             return factoryId.getCitation();
+        }
+
+        @Override
+        public String getCodeSpace() {
+            return Citations.getIdentifier(getAuthority());
+        }
+
+        @Override
+        public String getVersion() {
+            return null;
+        }
+
+        @Override
+        public InternationalString getDescription() {
+            return null;
         }
     }
 

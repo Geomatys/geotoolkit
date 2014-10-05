@@ -28,7 +28,7 @@ import org.opengis.util.InternationalString;
 import org.opengis.metadata.citation.Citation;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.IdentifiedObject;
-import org.opengis.referencing.ReferenceIdentifier;
+import org.opengis.metadata.Identifier;
 import org.opengis.referencing.crs.ProjectedCRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.CRSAuthorityFactory;
@@ -141,7 +141,7 @@ public final class IGNF extends DirectAuthorityFactory implements CRSAuthorityFa
         final ParameterValueGroup param = factories.getMathTransformFactory().getDefaultParameters((String) value);
         param.parameter("semi_major").setValue(6378137);
         param.parameter("semi_minor").setValue(6378137);
-        final ReferenceIdentifier[] identifiers = {
+        final Identifier[] identifiers = {
             new NamedIdentifier(Citations.IGNF, "MILLER"),
             new ImmutableIdentifier(Citations.EPSG, "EPSG", "310642901"), // Unofficial
             new ImmutableIdentifier(Citations.EPSG, "EPSG", "54003") // Unofficial

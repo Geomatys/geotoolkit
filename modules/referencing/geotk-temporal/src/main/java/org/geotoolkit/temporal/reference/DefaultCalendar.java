@@ -33,7 +33,7 @@ import org.opengis.temporal.Clock;
 import org.opengis.temporal.ClockTime;
 import org.opengis.temporal.JulianDate;
 import org.opengis.metadata.extent.Extent;
-import org.opengis.referencing.ReferenceIdentifier;
+import org.opengis.metadata.Identifier;
 import org.opengis.temporal.DateAndTime;
 import org.opengis.temporal.TemporalCoordinateSystem;
 
@@ -58,7 +58,7 @@ public class DefaultCalendar extends DefaultTemporalReferenceSystem implements C
      * @param name
      * @param domainOfValidity
      */
-    public DefaultCalendar(final ReferenceIdentifier name, final Extent domainOfValidity) {
+    public DefaultCalendar(final Identifier name, final Extent domainOfValidity) {
         super(name, domainOfValidity);
     }
 

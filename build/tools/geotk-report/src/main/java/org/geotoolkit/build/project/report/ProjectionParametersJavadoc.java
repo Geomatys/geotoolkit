@@ -27,7 +27,7 @@ import javax.measure.unit.Unit;
 
 import org.opengis.util.GenericName;
 import org.opengis.util.FactoryException;
-import org.opengis.referencing.ReferenceIdentifier;
+import org.opengis.metadata.Identifier;
 import org.opengis.referencing.crs.GeneralDerivedCRS;
 import org.opengis.referencing.crs.CRSAuthorityFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -277,7 +277,7 @@ public final class ProjectionParametersJavadoc extends JavadocUpdater {
             names.add(toHTML(name));
         }
         final int firstIdentifier = names.size();
-        for (final ReferenceIdentifier identifier : descriptor.getIdentifiers()) {
+        for (final Identifier identifier : descriptor.getIdentifiers()) {
             names.add(toHTML(identifier));
         }
         lines.add("    <table class=\"compact\">");
@@ -376,7 +376,7 @@ public final class ProjectionParametersJavadoc extends JavadocUpdater {
      * Returns the HTML string for the given identifier.
      * This method uses 2 table columns.
      */
-    private static String toHTML(final ReferenceIdentifier name) {
+    private static String toHTML(final Identifier name) {
         String tip = name.getCode();
         if (((Deprecable) name).isDeprecated()) {
             tip = "<del>" + tip + "</del>";

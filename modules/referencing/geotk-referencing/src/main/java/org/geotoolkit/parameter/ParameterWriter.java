@@ -33,7 +33,7 @@ import javax.measure.unit.UnitFormat;
 import org.opengis.parameter.*;
 import org.opengis.util.GenericName;
 import org.opengis.referencing.IdentifiedObject;
-import org.opengis.referencing.ReferenceIdentifier;
+import org.opengis.metadata.Identifier;
 import org.opengis.referencing.operation.OperationMethod;
 
 import org.geotoolkit.io.X364;
@@ -610,9 +610,9 @@ header: for (int i=0; ; i++) {
              * ensure that if both an identifier and a name is defined for the same column, the
              * name is given precedence.
              */
-            final Collection<ReferenceIdentifier> identifiers = element.getIdentifiers();
+            final Collection<Identifier> identifiers = element.getIdentifiers();
             if (identifiers != null) {
-                for (final ReferenceIdentifier identifier : identifiers) {
+                for (final Identifier identifier : identifiers) {
                     final String scope = identifier.getCodeSpace();
                     final String name = identifier.getCode();
                     final Object columnName = (scope != null) ? scope : ++numUnscoped;

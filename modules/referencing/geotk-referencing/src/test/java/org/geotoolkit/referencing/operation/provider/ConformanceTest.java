@@ -22,7 +22,7 @@ import java.util.*;
 import org.opengis.util.GenericName;
 import org.opengis.util.FactoryException;
 import org.opengis.metadata.citation.Citation;
-import org.opengis.referencing.ReferenceIdentifier;
+import org.opengis.metadata.Identifier;
 import org.opengis.referencing.operation.OperationMethod;
 import org.opengis.referencing.operation.SingleOperation;
 import org.opengis.referencing.operation.MathTransformFactory;
@@ -104,7 +104,7 @@ public final strictfp class ConformanceTest extends ReferencingTestBase {
         final Map<String, Map<OperationMethod,OperationMethod>> names = new LinkedHashMap<>();
         final MathTransformFactory mtFactory = FactoryFinder.getMathTransformFactory(null);
 skip:   for (final OperationMethod method : mtFactory.getAvailableMethods(SingleOperation.class)) {
-            for (final ReferenceIdentifier id : method.getIdentifiers()) {
+            for (final Identifier id : method.getIdentifiers()) {
                 if (Citations.identifierMatches(authority, id.getAuthority())) {
                     final String code = id.getCode().trim();
                     if (code.equals("9602") && codes.containsKey(code)) {
@@ -121,7 +121,7 @@ skip:   for (final OperationMethod method : mtFactory.getAvailableMethods(Single
             }
             final Collection<GenericName> aliases = method.getAlias();
             assertTrue("In Geotk implementation, the aliases shall contain the primary name as a " +
-                    "GenericName in addition of ReferenceIdentifier", aliases.contains(method.getName()));
+                    "GenericName in addition of Identifier", aliases.contains(method.getName()));
             for (final GenericName alias : aliases) {
                 if (Citations.identifierMatches(authority, alias.head().toString())) {
                     final String name = alias.tip().toString().trim();

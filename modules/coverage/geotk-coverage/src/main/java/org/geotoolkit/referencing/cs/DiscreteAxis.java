@@ -25,7 +25,7 @@ import javax.measure.unit.Unit;
 
 import org.opengis.util.GenericName;
 import org.opengis.util.InternationalString;
-import org.opengis.referencing.ReferenceIdentifier;
+import org.opengis.metadata.Identifier;
 import org.opengis.referencing.cs.RangeMeaning;
 import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
@@ -78,7 +78,7 @@ final class DiscreteAxis implements CoordinateSystemAxis, DiscreteCoordinateSyst
      * Returns the name of the wrapped axis.
      */
     @Override
-    public ReferenceIdentifier getName() {
+    public Identifier getName() {
         return axis.getName();
     }
 
@@ -94,7 +94,7 @@ final class DiscreteAxis implements CoordinateSystemAxis, DiscreteCoordinateSyst
      * Returns the identifiers of the wrapped axis.
      */
     @Override
-    public Set<ReferenceIdentifier> getIdentifiers() {
+    public Set<Identifier> getIdentifiers() {
         return axis.getIdentifiers();
     }
 

@@ -23,7 +23,7 @@ import org.opengis.metadata.citation.Citation;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
-import org.opengis.referencing.ReferenceIdentifier;
+import org.opengis.metadata.Identifier;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.CylindricalProjection;
 
@@ -252,7 +252,7 @@ public class MillerCylindrical extends MapProjection {
         FALSE_NORTHING = UniversalParameters.FALSE_NORTHING.select(excludes,
                 "FalseNorthing");      // GeoTIFF
 
-        PARAMETERS = UniversalParameters.createDescriptorGroup(new ReferenceIdentifier[] {
+        PARAMETERS = UniversalParameters.createDescriptorGroup(new Identifier[] {
             new NamedIdentifier(Citations.OGC,     "Miller_Cylindrical"),
             new NamedIdentifier(Citations.IGNF,    "Miller_Cylindrical_Sphere"),
             new ImmutableIdentifier(Citations.IGNF, "IGNF", "PRC9901"),

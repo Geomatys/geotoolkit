@@ -26,7 +26,7 @@ import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterNotFoundException;
 import org.opengis.parameter.InvalidParameterValueException;
-import org.opengis.referencing.ReferenceIdentifier;
+import org.opengis.metadata.Identifier;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.Transformation;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
@@ -484,7 +484,7 @@ public class PositionVector7Param extends MathTransformProvider {
      * Creates a parameters group using the 7 parameters.
      */
     static ParameterDescriptorGroup createDescriptorGroup(final int code, final String name, final String legacyName) {
-        return UniversalParameters.createDescriptorGroup(new ReferenceIdentifier[] {
+        return UniversalParameters.createDescriptorGroup(new Identifier[] {
             new NamedIdentifier(Citations.EPSG, name),
             new NamedIdentifier(Citations.EPSG, legacyName),
             new NamedIdentifier(Citations.EPSG, "Bursa-Wolf"),

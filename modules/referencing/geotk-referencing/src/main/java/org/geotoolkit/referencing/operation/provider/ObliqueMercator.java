@@ -25,7 +25,7 @@ import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.CylindricalProjection;
-import org.opengis.referencing.ReferenceIdentifier;
+import org.opengis.metadata.Identifier;
 
 import org.geotoolkit.resources.Vocabulary;
 import org.apache.sis.referencing.NamedIdentifier;
@@ -381,7 +381,7 @@ public class ObliqueMercator extends MapProjection {
      * </table>
      */
     public static final ParameterDescriptorGroup PARAMETERS = UniversalParameters.createDescriptorGroup(
-        new ReferenceIdentifier[] {
+        new Identifier[] {
             new NamedIdentifier(Citations.OGC,     "Oblique_Mercator"),
             new NamedIdentifier(Citations.EPSG,    "Hotine Oblique Mercator (variant B)"), // Starting from 7.6
             new NamedIdentifier(Citations.EPSG,    "Rectified Skew Orthomorphic (RSO)"),

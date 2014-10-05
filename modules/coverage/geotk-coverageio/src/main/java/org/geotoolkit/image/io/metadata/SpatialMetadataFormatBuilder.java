@@ -936,7 +936,7 @@ public class SpatialMetadataFormatBuilder extends Builder<SpatialMetadataFormat>
         /*
          * Metadata excluded in order to keep the CRS node relatively simple.
          */
-        substitutions.put(ReferenceIdentifier.class, null);  // IO_IdentifiedObject.identifiers
+        substitutions.put(Identifier.class, null);  // IO_IdentifiedObject.identifiers
         substitutions.put(GenericName.class,         null);  // IO_IdentifiedObject.alias
         substitutions.put(String.class,              null);  // IO_IdentifiedObject.toWKT
         substitutions.put(Extent.class,              null);  // RS_ReferenceSystem.domainOfValidity

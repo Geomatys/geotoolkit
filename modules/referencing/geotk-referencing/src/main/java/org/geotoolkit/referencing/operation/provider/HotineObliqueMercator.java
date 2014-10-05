@@ -23,7 +23,7 @@ import net.jcip.annotations.Immutable;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.GeneralParameterDescriptor;
-import org.opengis.referencing.ReferenceIdentifier;
+import org.opengis.metadata.Identifier;
 
 import org.apache.sis.referencing.NamedIdentifier;
 import org.geotoolkit.metadata.Citations;
@@ -276,7 +276,7 @@ public class HotineObliqueMercator extends ObliqueMercator {
      */
     @SuppressWarnings("hiding")
     public static final ParameterDescriptorGroup PARAMETERS = UniversalParameters.createDescriptorGroup(
-        new ReferenceIdentifier[] {
+        new Identifier[] {
             new NamedIdentifier(Citations.OGC,     "Hotine_Oblique_Mercator"),
             new NamedIdentifier(Citations.EPSG,    "Hotine Oblique Mercator (variant A)"), // Starting from 7.6
             new NamedIdentifier(Citations.EPSG,    "Hotine Oblique Mercator"), // Prior to EPSG version 7.6
@@ -536,7 +536,7 @@ public class HotineObliqueMercator extends ObliqueMercator {
         static {
             final List<GeneralParameterDescriptor> param = ObliqueMercator.TwoPoint.PARAMETERS.descriptors();
             PARAMETERS = UniversalParameters.createDescriptorGroup(
-                new ReferenceIdentifier[] {
+                new Identifier[] {
                     new NamedIdentifier(Citations.ESRI, "Hotine_Oblique_Mercator_Two_Point_Natural_Origin"),
                     new IdentifierCode(Citations.MAP_INFO, 7),
                     sameNameAs(Citations.GEOTOOLKIT, HotineObliqueMercator.PARAMETERS)

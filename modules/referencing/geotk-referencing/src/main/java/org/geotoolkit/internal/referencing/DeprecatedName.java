@@ -19,7 +19,7 @@ package org.geotoolkit.internal.referencing;
 
 import net.jcip.annotations.Immutable;
 import org.opengis.metadata.citation.Citation;
-import org.opengis.referencing.ReferenceIdentifier;
+import org.opengis.metadata.Identifier;
 import org.apache.sis.referencing.NamedIdentifier;
 
 
@@ -45,7 +45,7 @@ public final class DeprecatedName extends NamedIdentifier {
      *
      * @param identifier The identifier.
      */
-    public DeprecatedName(final ReferenceIdentifier identifier) {
+    public DeprecatedName(final Identifier identifier) {
         super(identifier);
     }
 

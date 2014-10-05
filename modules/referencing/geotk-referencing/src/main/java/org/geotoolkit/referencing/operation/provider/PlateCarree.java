@@ -22,7 +22,7 @@ import net.jcip.annotations.Immutable;
 import org.opengis.metadata.citation.Citation;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
-import org.opengis.referencing.ReferenceIdentifier;
+import org.opengis.metadata.Identifier;
 
 import org.apache.sis.referencing.NamedIdentifier;
 import org.geotoolkit.metadata.Citations;
@@ -163,7 +163,7 @@ public class PlateCarree extends EquidistantCylindrical {
      */
     @SuppressWarnings("hiding")
     public static final ParameterDescriptorGroup PARAMETERS = UniversalParameters.createDescriptorGroup(
-        new ReferenceIdentifier[] {
+        new Identifier[] {
             new NamedIdentifier(Citations.OGC,  "Plate_Carree"),
             new NamedIdentifier(Citations.EPSG, "Pseudo Plate Carree"),
             new IdentifierCode (Citations.EPSG,  9825),

@@ -24,7 +24,7 @@ import java.util.Collection;
 
 import org.opengis.util.FactoryException;
 import org.opengis.metadata.citation.Citation;
-import org.opengis.referencing.ReferenceIdentifier;
+import org.opengis.metadata.Identifier;
 import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.crs.CRSAuthorityFactory;
@@ -145,7 +145,7 @@ public final strictfp class PropertyEpsgFactoryTest extends ReferencingTestBase 
     public void test27572() throws FactoryException {
         final CoordinateReferenceSystem crs = factory.createCoordinateReferenceSystem("27572");
         assertTrue(crs instanceof ProjectedCRS);
-        final Collection<ReferenceIdentifier> ids = crs.getIdentifiers();
+        final Collection<Identifier> ids = crs.getIdentifiers();
         assertTrue (ids.contains(new NamedIdentifier(Citations.EPSG, "27572")));
         assertFalse(ids.contains(new NamedIdentifier(Citations.ESRI, "27572")));
         assertSame("Should be able to trim the authority namespace",

@@ -50,7 +50,7 @@ import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.ParameterValueGroup;
-import org.opengis.referencing.ReferenceIdentifier;
+import org.opengis.metadata.Identifier;
 import org.opengis.util.InternationalString;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.metadata.Identifier;
@@ -286,7 +286,7 @@ public final class ProcessConsole {
         }
 
         for(final GeneralParameterDescriptor pdesc : params.descriptors()){
-            final ReferenceIdentifier id = pdesc.getName();
+            final Identifier id = pdesc.getName();
             final String code = id.getCode();
             final int minOcc = pdesc.getMinimumOccurs();
             final int maxOcc = pdesc.getMaximumOccurs();

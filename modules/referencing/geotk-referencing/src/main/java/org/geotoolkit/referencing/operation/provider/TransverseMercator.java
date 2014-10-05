@@ -23,7 +23,7 @@ import org.opengis.metadata.citation.Citation;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
-import org.opengis.referencing.ReferenceIdentifier;
+import org.opengis.metadata.Identifier;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.CylindricalProjection;
 
@@ -313,7 +313,7 @@ public class TransverseMercator extends MapProjection {
      * </table>
      */
     public static final ParameterDescriptorGroup PARAMETERS = UniversalParameters.createDescriptorGroup(
-        new ReferenceIdentifier[] {
+        new Identifier[] {
             new NamedIdentifier(Citations.OGC,      "Transverse_Mercator"),
             new NamedIdentifier(Citations.EPSG,     "Transverse Mercator"),
             new NamedIdentifier(Citations.EPSG,     "Gauss-Kruger"),
@@ -543,7 +543,7 @@ public class TransverseMercator extends MapProjection {
                 Citations.ESRI, Citations.NETCDF, Citations.GEOTIFF, Citations.PROJ4
             };
             PARAMETERS = UniversalParameters.createDescriptorGroup(
-                new ReferenceIdentifier[] {
+                new Identifier[] {
                     new NamedIdentifier(Citations.EPSG, "Transverse Mercator (South Orientated)"),
                     new IdentifierCode (Citations.EPSG,  9808),
                     sameNameAs(Citations.GEOTOOLKIT, TransverseMercator.PARAMETERS)

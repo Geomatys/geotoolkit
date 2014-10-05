@@ -24,7 +24,7 @@ import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.operation.MathTransform2D;
-import org.opengis.referencing.ReferenceIdentifier;
+import org.opengis.metadata.Identifier;
 
 import org.apache.sis.referencing.NamedIdentifier;
 import org.geotoolkit.metadata.Citations;
@@ -249,7 +249,7 @@ public class PolarStereographic extends Stereographic {
         LATITUDE_OF_ORIGIN = Mercator1SP.LATITUDE_OF_ORIGIN;
 
         PARAMETERS = UniversalParameters.createDescriptorGroup(
-            new ReferenceIdentifier[] {
+            new Identifier[] {
                 new NamedIdentifier(Citations.OGC,      "Polar_Stereographic"),
                 new NamedIdentifier(Citations.EPSG,     "Polar Stereographic (variant A)"),
                 new IdentifierCode (Citations.EPSG,      9810),
@@ -480,7 +480,7 @@ public class PolarStereographic extends Stereographic {
                     "standard_parallel_1");           // OGC
 
             PARAMETERS = UniversalParameters.createDescriptorGroup(
-                new ReferenceIdentifier[] {
+                new Identifier[] {
                     new NamedIdentifier(Citations.EPSG, "Polar Stereographic (variant B)"),
                     new IdentifierCode (Citations.EPSG,  9829),
 //                    new NamedIdentifier(Citations.S57,  "Polar stereographic"),

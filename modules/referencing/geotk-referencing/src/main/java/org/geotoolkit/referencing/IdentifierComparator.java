@@ -28,7 +28,7 @@ import java.io.Serializable;
 import java.io.ObjectStreamException;
 
 import org.opengis.referencing.IdentifiedObject;
-import org.opengis.referencing.ReferenceIdentifier;
+import org.opengis.metadata.Identifier;
 
 
 /**
@@ -47,12 +47,12 @@ final class IdentifierComparator implements Comparator<IdentifiedObject>, Serial
 
     /** Compares the given identified objects for order. */
     @Override public int compare(final IdentifiedObject o1, final IdentifiedObject o2) {
-        Collection<ReferenceIdentifier> a1 = o1.getIdentifiers();
-        Collection<ReferenceIdentifier> a2 = o2.getIdentifiers();
+        Collection<Identifier> a1 = o1.getIdentifiers();
+        Collection<Identifier> a2 = o2.getIdentifiers();
         if (a1 == null) a1 = Collections.emptySet();
         if (a2 == null) a2 = Collections.emptySet();
-        final Iterator<ReferenceIdentifier> i1 = a1.iterator();
-        final Iterator<ReferenceIdentifier> i2 = a2.iterator();
+        final Iterator<Identifier> i1 = a1.iterator();
+        final Iterator<Identifier> i2 = a2.iterator();
         boolean n1, n2;
         while ((n1 = i1.hasNext()) & (n2 = i2.hasNext())) {  // NOSONAR: Really '&', not '&&'
             final int c = IdentifiedObjects.doCompare(i1.next().getCode(), i2.next().getCode());
