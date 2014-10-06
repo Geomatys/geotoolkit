@@ -18,7 +18,9 @@ package org.geotoolkit.image.interpolation;
 
 import java.awt.Rectangle;
 import java.awt.image.DataBuffer;
+import java.lang.reflect.Array;
 import org.apache.sis.util.ArgumentChecks;
+import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.image.iterator.PixelIterator;
 
 /**
@@ -46,7 +48,12 @@ abstract class SeparableInterpolation extends Interpolation {
     protected final Object[] buffer;
     
     /**
-     * Build a bi-dimensionale interpolation. 
+     * {@link DataBuffer} type of internal datas.
+     */
+    private final int sourceDataType;
+    
+    /**
+     * Build a bi-dimensional interpolation. 
      * 
      * @param pixelIterator iterator which travel source image samples.
      * @param windowSide length of samples in X and Y direction needed from interpolation type.
@@ -58,8 +65,8 @@ abstract class SeparableInterpolation extends Interpolation {
         rows = new double[windowSide];
         cols = new double[windowSide];
         interpolArea = new Rectangle(windowSide, windowSide);
-        
-        switch (pixelIterator.getSourceDatatype()) {
+        sourceDataType = pixelIterator.getSourceDatatype();
+        switch (sourceDataType) {
             case DataBuffer.TYPE_BYTE   : {
                 buffer = new byte[numBands][windowSide * windowSide];
                 break;
@@ -104,7 +111,7 @@ abstract class SeparableInterpolation extends Interpolation {
         
         int bufferID = 0;
         for (int dy = 0; dy < windowSide; dy++) {
-            System.arraycopy(buffer[b], bufferID, rows, 0, windowSide);
+            WriteInInterpolArray(buffer[b], bufferID, rows, 0, windowSide);
             bufferID += windowSide;
             cols[dy] = interpolate1D(minX, x, rows);
         }
@@ -129,13 +136,64 @@ abstract class SeparableInterpolation extends Interpolation {
         for (int b = 0; b < numBands; b++) {
             bufferID = 0;
             for (int dy = 0; dy < windowSide; dy++) {
-                System.arraycopy(buffer[b], bufferID, rows, 0, windowSide);
+                WriteInInterpolArray(buffer[b], bufferID, rows, 0, windowSide);
                 bufferID += windowSide;
                 cols[dy] = interpolate1D(minX, x, rows);
             }
             result[b] = interpolate1D(minY, y, cols);
         }
         return result;
+    }
+    
+    /**
+     * Fill double destination array from unknow type source array.
+     * 
+     * @param src source array.
+     * @param srcPos first copied source array element.
+     * @param dest destination double array which will be filled.
+     * @param destPos first copied destination element.
+     * @param length length of the copy.
+     */
+    private void WriteInInterpolArray (final Object src, int srcPos, final double[] dest, int destPos, final int length) {
+        switch (sourceDataType) {
+            case DataBuffer.TYPE_BYTE   : {
+                int l = -1;
+                while (++l < length) {
+                    dest[destPos++] = (double) Array.getByte(src, srcPos++);
+                }
+                break;
+            }
+            case DataBuffer.TYPE_SHORT  : 
+            case DataBuffer.TYPE_USHORT : {
+                int l = -1;
+                while (++l < length) {
+                    dest[destPos++] = (double) Array.getShort(src, srcPos++);
+                }
+                break;
+            }
+            case DataBuffer.TYPE_INT    : {
+                int l = -1;
+                while (++l < length) {
+                    dest[destPos++] = (double) Array.getInt(src, srcPos++);
+                }
+                break;
+            }
+            case DataBuffer.TYPE_FLOAT  : {
+                int l = -1;
+                while (++l < length) {
+                    dest[destPos++] = (double) Array.getFloat(src, srcPos++);
+                }
+                break;
+            }
+            case DataBuffer.TYPE_DOUBLE : {
+                int l = -1;
+                while (++l < length) {
+                    dest[destPos++] = Array.getDouble(src, srcPos++);
+                }
+                break;
+            }
+            default : throw new IllegalArgumentException("Unknow datatype");
+        }
     }
     
     /**
