@@ -101,7 +101,7 @@ public class LuceneSQLTreeEltMapper implements TreeElementMapper<NamedEnvelope> 
                     stmt.setDouble(3, env.getMinimum(0));
                     stmt.setDouble(4, env.getMaximum(0));
                     stmt.setDouble(5, env.getMinimum(1));
-                    stmt.setDouble(6, env.getMaximum(2));
+                    stmt.setDouble(6, env.getMaximum(1));
 
                     stmt.setInt(7, treeIdentifier);
                     stmt.executeUpdate();
