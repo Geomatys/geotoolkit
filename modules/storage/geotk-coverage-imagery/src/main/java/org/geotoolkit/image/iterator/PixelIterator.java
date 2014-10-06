@@ -573,7 +573,7 @@ public abstract class PixelIterator implements Closeable {
                 final int minY = Math.max(rast.getMinY(), area.y);
                 final int maxX = Math.min(rast.getMinX() + tileWidth, area.x + area.width);
                 final int maxY = Math.min(rast.getMinY() + tileHeight, area.y + area.height);
-                if (minX > maxY || minY > maxY) throw new IllegalArgumentException("Expected area don't intersect internal data.");
+                if (minX > maxX || minY > maxY) throw new IllegalArgumentException("Expected area don't intersect internal data.");
                 
                 final int readLength = (maxX - minX);
                 int destId = 0;
@@ -655,7 +655,7 @@ public abstract class PixelIterator implements Closeable {
                 final int minY = Math.max(rast.getMinY(), area.y);
                 final int maxX = Math.min(rast.getMinX() + tileWidth, area.x + area.width);
                 final int maxY = Math.min(rast.getMinY() + tileHeight, area.y + area.height);
-                if (minX > maxY || minY > maxY) throw new IllegalArgumentException("Expected area don't intersect internal data.");
+                if (minX > maxX || minY > maxY) throw new IllegalArgumentException("Expected area don't intersect internal data.");
 
                 final int readLength = (maxX - minX);
                 int destId = 0;
@@ -742,7 +742,7 @@ public abstract class PixelIterator implements Closeable {
                     final int minY = Math.max(rast.getMinY(), area.y);
                     final int maxX = Math.min(rast.getMinX() + tileWidth, area.x + area.width);
                     final int maxY = Math.min(rast.getMinY() + tileHeight, area.y + area.height);
-                    if (minX > maxY || minY > maxY) throw new IllegalArgumentException("Expected area don't intersect internal data.");
+                    if (minX > maxX || minY > maxY) throw new IllegalArgumentException("Expected area don't intersect internal data.");
 
                     final DataBuffer databuff = rast.getDataBuffer();
                     int srcRastId = bandOffsets[b] + ((minY - rast.getMinY()) * tileWidth + minX - rast.getMinX());
@@ -880,7 +880,7 @@ public abstract class PixelIterator implements Closeable {
                 final int minY = Math.max(rast.getMinY(), area.y);
                 final int maxX = Math.min(rast.getMinX() + tileWidth, area.x + area.width);
                 final int maxY = Math.min(rast.getMinY() + tileHeight, area.y + area.height);
-                if (minX > maxY || minY > maxY) throw new IllegalArgumentException("Expected area don't intersect internal data.");
+                if (minX > maxX || minY > maxY) throw new IllegalArgumentException("Expected area don't intersect internal data.");
 
                 final DataBuffer databuff = rast.getDataBuffer();
                 int srcRastId = bandOffsets + ((minY - rast.getMinY()) * tileWidth + minX - rast.getMinX());
