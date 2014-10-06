@@ -172,6 +172,24 @@ public final class FXUtilities {
         }
     }
     
+    /**
+     * Test if a TreeItem is a parent of another TreeItem.
+     * 
+     * @param parent candidate parent
+     * @param child candidate child
+     * @return true if parent is a parent of child
+     */
+    public static boolean isParent(TreeItem parent, TreeItem child){
+        TreeItem candidate = child;
+        while(candidate!=null){
+            if(candidate==parent){
+                return true;
+            }
+            candidate = candidate.getParent();
+        }
+        return false;
+    }
+    
     public static Image createPalettePreview(Object paletteValue, Dimension size){
         final BufferedImage image = new BufferedImage(size.width, size.height, BufferedImage.TYPE_INT_ARGB);
         final Graphics2D g = image.createGraphics();

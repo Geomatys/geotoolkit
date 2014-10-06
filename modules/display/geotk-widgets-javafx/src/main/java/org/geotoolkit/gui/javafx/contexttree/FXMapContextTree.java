@@ -17,19 +17,33 @@
 
 package org.geotoolkit.gui.javafx.contexttree;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
+import javafx.scene.Parent;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TreeItem;
+import javafx.scene.control.TreeTableRow;
 import javafx.scene.control.TreeTableView;
+import javafx.scene.input.DataFormat;
+import javafx.scene.input.DragEvent;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.BorderPane;
+import javafx.util.Callback;
+import org.geotoolkit.gui.javafx.util.FXUtilities;
 import org.geotoolkit.map.MapItem;
+import org.geotoolkit.map.MapLayer;
 
 /**
  *
@@ -37,8 +51,16 @@ import org.geotoolkit.map.MapItem;
  */
 public class FXMapContextTree extends BorderPane{
 
+    private static final DataFormat MAPITEM_FORMAT = new DataFormat("contextItem");
+    
     private final ObservableList<Object> menuItems = FXCollections.observableArrayList();
-    private final TreeTableView treetable = new TreeTableView();
+    private final TreeTableView<MapItem> treetable = new TreeTableView(){
+        
+        private void test(){
+            Parent p = null;
+        }
+        
+    };
     private final ScrollPane scroll = new ScrollPane(treetable);
     private MapItem mapItem;
     
@@ -59,6 +81,14 @@ public class FXMapContextTree extends BorderPane{
         treetable.setTableMenuButtonVisible(false);
         treetable.setEditable(true);
         treetable.setContextMenu(new ContextMenu());
+        
+        treetable.setRowFactory(new Callback<TreeTableView<MapItem>, TreeTableRow<MapItem>>() {
+            public TreeTableRow<MapItem> call(TreeTableView<MapItem> param) {
+                final TreeTableRow row = new TreeTableRow();
+                initDragAndDrop(row);
+                return row;
+            }
+        });
         
         //this will cause the column width to fit the view area
         treetable.setColumnResizePolicy(TreeTableView.CONSTRAINED_RESIZE_POLICY);
@@ -114,6 +144,84 @@ public class FXMapContextTree extends BorderPane{
         setMapItem(item);
     }
     
+    private void initDragAndDrop(final TreeTableRow row){
+        row.setOnDragDetected(new EventHandler<MouseEvent>() {
+            public void handle(MouseEvent event) {
+                final int selection = treetable.getSelectionModel().getSelectedIndex();
+                final Dragboard db = treetable.startDragAndDrop(TransferMode.MOVE);
+                db.setContent(Collections.singletonMap(MAPITEM_FORMAT, selection));
+                event.consume();
+            }
+        });
+
+        row.setOnDragOver(new EventHandler<DragEvent>() {
+            public void handle(DragEvent event) {
+                if (event.getDragboard().hasContent(MAPITEM_FORMAT)) {
+                    event.acceptTransferModes(TransferMode.MOVE);
+                }
+                event.consume();
+            }
+        });
+
+        row.setOnDragEntered(new EventHandler<DragEvent>() {
+            public void handle(DragEvent event) {                
+                event.consume();
+            }
+        });
+
+        row.setOnDragExited(new EventHandler<DragEvent>() {
+            public void handle(DragEvent event) {
+                event.consume();
+            }
+        });
+        
+        row.setOnDragDropped(new EventHandler<DragEvent>() {
+            public void handle(DragEvent event) {
+                
+                final Dragboard db = event.getDragboard();
+                boolean success = false;
+                
+                conditions:
+                if (db.hasContent(MAPITEM_FORMAT)) {
+                    final int index = (Integer) db.getContent(MAPITEM_FORMAT);
+                    if(index>=0){
+                        final TreeMapItem targetRow = (TreeMapItem)row.getTreeItem();                        
+                        final MapItem targetItem = targetRow.getValue();
+                        final MapItem targetParent = targetRow.getParent().getValue();
+                        
+                        final TreeMapItem movedRow = (TreeMapItem) treetable.getSelectionModel().getSelectedItem();
+                        final MapItem movedItem = movedRow.getValue();
+                        final MapItem movedParent = movedRow.getParent().getValue();
+                                                
+                        if(movedParent!=null && targetItem!=null && movedItem!=targetItem 
+                                && !FXUtilities.isParent(movedRow, targetRow)){
+                            
+                            movedParent.items().remove(movedItem);
+                            if(targetItem instanceof MapLayer){
+                                //insert as sibling
+                                final int insertIndex = targetParent.items().indexOf(targetItem);
+                                targetParent.items().add(insertIndex,movedItem);
+                            }else{
+                                //insert as children
+                                targetItem.items().add(movedItem);
+                            }
+                        }                        
+                    }                    
+                    success = true;
+                }
+                
+                event.setDropCompleted(success);                
+                event.consume();
+            }
+        });
+
+        row.setOnDragDone(new EventHandler<DragEvent>() {
+            public void handle(DragEvent event) {
+                event.consume();
+            }
+        });
+    }
+        
     public TreeTableView getTreetable() {
         return treetable;
     }
@@ -143,7 +251,5 @@ public class FXMapContextTree extends BorderPane{
         
         treetable.setShowRoot(true);
     }
-    
-    
     
 }
