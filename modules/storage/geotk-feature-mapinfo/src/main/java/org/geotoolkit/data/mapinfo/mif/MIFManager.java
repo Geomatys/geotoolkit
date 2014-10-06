@@ -583,7 +583,10 @@ public class MIFManager {
                 triggeredTypes.add(typename);
                 final FeatureType bind = MIFUtils.getGeometryType(typename, mifCRS, mifBaseType);
                 if (bind != null) {
-                    mifChildTypes.add(bind);
+                    FeatureTypeBuilder builder = new FeatureTypeBuilder();
+                    builder.copy(bind);
+                    builder.setName(bind.getName().getNamespaceURI(), mifBaseType.getTypeName()+"_"+bind.getName().getLocalPart());
+                    mifChildTypes.add(builder.buildFeatureType());
                 }
             }
             mifScanner.nextLine();

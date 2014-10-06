@@ -951,7 +951,7 @@ public final class Parameters extends Static {
                 if (de.getMinimumOccurs() > 0 && !(params.containsKey(de.getName().getCode()))) {
                     if (de instanceof ParameterDescriptor && ((ParameterDescriptor) de).getDefaultValue() == null) {
                         //a mandatory parameter is not present
-                        throw new ParameterNotFoundException("Mandatory parameter cannot be found in source map.", de.getName().getCode());
+                        throw new ParameterNotFoundException("A mandatory parameter "+de.getName()+" was not found in the input parameters.", de.getName().getCode());
                     }
                 }
             }
