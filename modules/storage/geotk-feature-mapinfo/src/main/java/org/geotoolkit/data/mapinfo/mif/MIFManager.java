@@ -127,7 +127,7 @@ public class MIFManager {
         final String mifStr = mifPath.getPath();
         int lastSeparatorIndex = mifStr.lastIndexOf(System.getProperty("file.separator"));
         mifName = mifStr.substring(lastSeparatorIndex+1);
-        if (mifName.endsWith(".mif") || mifName.endsWith(".MIF")) {
+        if (mifName.toLowerCase().endsWith(".mif")) {
             mifName = mifName.substring(0, mifName.length() - 4);
         }
         buildMIDPath();
@@ -166,9 +166,9 @@ public class MIFManager {
         if(names.isEmpty()) {
             if(mifBaseType!=null) {
                 names.add(mifBaseType.getName());
-            } else {
+            }/* else {
                 throw new DataStoreException("No valid type can be found into this feature store.");
-            }
+            }*/
         }
 
         return names;

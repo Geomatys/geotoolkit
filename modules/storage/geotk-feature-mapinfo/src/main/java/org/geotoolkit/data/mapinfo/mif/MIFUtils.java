@@ -236,7 +236,7 @@ public final class MIFUtils {
         ArgumentChecks.ensureNonNull("Java class", javaBinding);
         String typename = null;
         for(AttributeType type : AttributeType.values()) {
-            if(javaBinding.equals(type.binding)) {
+            if(type.binding.isAssignableFrom(javaBinding)) {
                 typename = type.name();
 
                 // If we get a char or decimal type, we must set length delimiter on it.

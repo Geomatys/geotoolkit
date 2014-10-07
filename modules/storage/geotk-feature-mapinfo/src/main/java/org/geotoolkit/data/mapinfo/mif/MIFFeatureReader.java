@@ -145,7 +145,12 @@ public class MIFFeatureReader implements FeatureReader<FeatureType, Feature> {
                 while(mifScanner.hasNextLine()) {
                     currentPattern = mifScanner.findInLine(GEOMETRY_ID_PATTERN);
                     if(geometryId.equalsIgnoreCase(currentPattern)) {
-                        geometryType.readGeometry(mifScanner, resFeature, master.getTransform());
+                        //geometryType.readGeometry(mifScanner, resFeature, master.getTransform());
+                        try{
+                            geometryType.readGeometry(mifScanner, resFeature, master.getTransform());
+                        }catch(Exception ex){
+                            LOGGER.log(Level.WARNING,ex.getLocalizedMessage(),ex);
+                        }
                         break;
                         // We must check if we're on a Geometry naming line to increment the counter of past geometries.
                     } else if(currentPattern != null) {
@@ -165,29 +170,40 @@ public class MIFFeatureReader implements FeatureReader<FeatureType, Feature> {
                 final String line = midScanner.nextLine();
                 final CharSequence[] split = CharSequences.split(line, master.mifDelimiter);
                 for (int i = 0; i < split.length; i++) {
-                    AttributeType att = baseType.getType(i);
-                    Object value = null;
-                    if (split[i].length() != 0) {
-                        // We don't use geotoolkit to parse date, because we have to use a specific date pattern.
-                        if(Date.class.isAssignableFrom(att.getBinding())) {
-                            SimpleDateFormat format = new SimpleDateFormat();
-                            if(split[i].length() > 14) {
-                                format.applyPattern("yyyyMMddHHmmss.SSS");
-                            } else if(split[i].length() == 14) {
-                                format.applyPattern("yyyyMMddHHmmss");
-                            } else {
-                                 format.applyPattern("yyyyMMdd");
-                            }
-                            value = format.parse(split[i].toString());
-                        } else try {
-                            value = ObjectConverters.convert(split[i], att.getBinding());
-                        } catch (UnconvertibleObjectException e) {
-                            Logging.recoverableException(MIFFeatureReader.class, "next", e);
-                            value = null;
-                            // TODO - do we really want to ignore the problem?
-                        }
+                    //AttributeType att = baseType.getType(i);
+                    AttributeType att = null;
+                    try{
+                        att = baseType.getType(i);
+                    }catch(Exception ex){
+                        LOGGER.finer(ex.getMessage());
                     }
-                    resFeature.getProperty(att.getName()).setValue(value);
+                    if(att == null) continue;
+                    Object value = null;
+                    try{
+                        if (split[i].length() != 0) {
+                            // We don't use geotoolkit to parse date, because we have to use a specific date pattern.
+                            if(Date.class.isAssignableFrom(att.getBinding())) {
+                                SimpleDateFormat format = new SimpleDateFormat();
+                                if(split[i].length() > 14) {
+                                    format.applyPattern("yyyyMMddHHmmss.SSS");
+                                } else if(split[i].length() == 14) {
+                                    format.applyPattern("yyyyMMddHHmmss");
+                                } else {
+                                     format.applyPattern("yyyyMMdd");
+                                }
+                                value = format.parse(split[i].toString());
+                            } else try {
+                                value = ObjectConverters.convert(split[i], att.getBinding());
+                            } catch (UnconvertibleObjectException e) {
+                                Logging.recoverableException(MIFFeatureReader.class, "next", e);
+                                value = null;
+                                // TODO - do we really want to ignore the problem?
+                            }
+                        }
+                        resFeature.getProperty(att.getName()).setValue(value);
+                    }catch(Exception ex){
+                        LOGGER.finer(ex.getMessage());
+                    }
                 }
                 midCounter++;
             }
