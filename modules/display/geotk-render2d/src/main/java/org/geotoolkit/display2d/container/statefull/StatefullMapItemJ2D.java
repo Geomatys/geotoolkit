@@ -143,7 +143,7 @@ public class StatefullMapItemJ2D<T extends MapItem> extends GraphicJ2D implement
             if(gra != null){
                 gra.paint(renderingContext);
             }else{
-                getLogger().log(Level.WARNING, "GrahicContextJ2D, paint method : strange, no graphic object affected to layer :{0}", child.getName());
+                getLogger().log(Level.WARNING, "GraphicContextJ2D, paint method : strange, no graphic object affected to layer :{0}", child.getName());
             }
         }
     }

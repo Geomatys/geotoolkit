@@ -62,11 +62,16 @@ public class LargeMap extends PhantomReference<RenderedImage> {
 
     final ReentrantReadWriteLock tileLock = new ReentrantReadWriteLock();
 
+    /**
+     * Contains tiles of pointed image.
+     * TODO : Replace LargeRaster type with simple raster ? (Raster weight will be embed in {@link org.geotoolkit.image.io.large.CachedTile}
+     *
+     */
     private final LinkedHashMap<Point, LargeRaster> tiles = new LinkedHashMap<>();
 
     /**
      * <p>List which contain {@link java.awt.image.Raster} from {@link java.awt.image.RenderedImage} owner.<br/>
-     * If somme of {@link java.awt.image.Raster} weight within list exceed memory capacity, {@link java.awt.image.Raster} are stored
+     * If some of {@link java.awt.image.Raster} weight within list exceed memory capacity, {@link java.awt.image.Raster} are stored
      * on hard disk at appropriate quad tree emplacement in temporary system directory.<br/><br/>
      *
      * Note : {@link java.awt.image.Raster} are stored in tiff format to avoid onerous, compression decompression, cost during disk writing reading.</p>
