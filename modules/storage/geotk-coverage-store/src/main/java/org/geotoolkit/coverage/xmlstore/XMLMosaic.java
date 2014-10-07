@@ -432,6 +432,8 @@ public class XMLMosaic implements GridMosaic {
                 } finally {
                     bitsetLock.writeLock().unlock();
                 }
+            } else {
+                isMissingCache.put(new Point(col, row), false);
             }
         } catch (IOException ex) {
             throw new DataStoreException(ex.getMessage(), ex);
@@ -663,6 +665,8 @@ public class XMLMosaic implements GridMosaic {
                     } finally {
                         bitsetLock.writeLock().unlock();
                     }
+                } else {
+                    isMissingCache.put(new Point(idx, idy), false);
                 }
 
             } catch (Exception ex) {
