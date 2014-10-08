@@ -84,7 +84,7 @@ public class ButtonTableCell<S,T> extends TableCell<S,T> {
     protected void updateItem(T item, boolean empty) {
         super.updateItem(item, empty);
         button.setVisible(!empty);
-        if(visiblePredicate!=null){
+        if(visiblePredicate!=null && !empty){
             final boolean visible = visiblePredicate.apply(getItem());
             setVisible(visible);
         }

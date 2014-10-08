@@ -11,7 +11,7 @@
    <center>
       <SplitPane dividerPositions="0.5" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" BorderPane.alignment="CENTER">
          <items>
-            <GridPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+            <GridPane maxHeight="1.7976931348623157E308" maxWidth="250.0" prefWidth="250.0">
               <columnConstraints>
                 <ColumnConstraints hgrow="ALWAYS" />
                 <ColumnConstraints hgrow="NEVER" />
@@ -39,17 +39,11 @@
                   <ComboBox fx:id="uiChoice" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.rowIndex="2" />
                </children>
             </GridPane>
-            <GridPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
-              <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" />
-              </columnConstraints>
-              <rowConstraints>
-                <RowConstraints maxHeight="1.7976931348623157E308" vgrow="ALWAYS" />
-              </rowConstraints>
-               <children>
-                  <BorderPane fx:id="uiSymbolizerPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="300.0" minWidth="300.0" />
-               </children>
-            </GridPane>
+            <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="400.0" prefWidth="400.0">
+               <content>
+                  <BorderPane fx:id="uiSymbolizerPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
+               </content>
+            </ScrollPane>
          </items>
       </SplitPane>
    </center>

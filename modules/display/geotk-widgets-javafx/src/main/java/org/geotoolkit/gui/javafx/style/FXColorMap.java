@@ -51,6 +51,7 @@ import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
+import org.geotoolkit.filter.DefaultLiteral;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import static org.geotoolkit.gui.javafx.style.FXStyleElementController.getFilterFactory;
 import static org.geotoolkit.gui.javafx.style.FXStyleElementController.getStyleFactory;
@@ -86,7 +87,7 @@ import org.opengis.style.ColorMap;
  */
 public class FXColorMap extends FXStyleElementController<FXColorMap,ColorMap> {
     
-    private static final Literal TRS = getStyleFactory().literal(new Color(0, 0, 0, 0));
+    private static final Literal TRS = new DefaultLiteral(new Color(0, 0, 0, 0));
     
     @FXML
     private CheckBox uiInvert;

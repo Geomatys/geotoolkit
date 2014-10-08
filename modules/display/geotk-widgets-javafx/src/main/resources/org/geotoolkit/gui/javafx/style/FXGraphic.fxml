@@ -19,7 +19,7 @@
             <RowConstraints vgrow="SOMETIMES" />
             <RowConstraints vgrow="SOMETIMES" />
             <RowConstraints vgrow="SOMETIMES" />
-            <RowConstraints vgrow="ALWAYS" />
+            <RowConstraints maxHeight="1.7976931348623157E308" vgrow="ALWAYS" />
             <RowConstraints vgrow="SOMETIMES" />
         </rowConstraints>
          <children>

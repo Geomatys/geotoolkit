@@ -23,7 +23,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
@@ -219,10 +218,15 @@ public class FXGraphic extends FXStyleElementController<FXGraphic, Graphic>{
     private class DeleteButton extends ButtonTableCell<GraphicalSymbol, GraphicalSymbol>{
 
         public DeleteButton() {
-            super(false, new ImageView(GeotkFX.ICON_DELETE),
+           super(false, new ImageView(GeotkFX.ICON_DELETE),
                    //JavaFX bug : do not use lambda here : java.lang.VerifyError: Bad type on operand stack->invokedynamic
                   (GraphicalSymbol t) -> t instanceof GraphicalSymbol, 
-                  (GraphicalSymbol t) -> {uiTable.getItems().remove(t);return t;});
+                  new Function<GraphicalSymbol,GraphicalSymbol>() {
+                public GraphicalSymbol apply(GraphicalSymbol t) {
+                    uiTable.getItems().remove(t);
+                    return t;
+                }
+            });
         }
     }
     

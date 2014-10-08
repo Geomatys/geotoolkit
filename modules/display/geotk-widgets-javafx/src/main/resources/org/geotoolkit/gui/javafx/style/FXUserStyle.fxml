@@ -8,12 +8,16 @@
     <center>
         <SplitPane dividerPositions="0.5" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity">
             <items>
-                <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefViewportHeight="200.0" prefViewportWidth="200.0">
+                <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="250.0" minWidth="200.0" prefViewportHeight="200.0" prefViewportWidth="200.0" prefWidth="250.0">
                     <content>
                         <TreeTableView fx:id="tree" layoutX="-64.0" layoutY="32.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="200.0" prefWidth="200.0" />
                     </content>
                 </ScrollPane>
-                <BorderPane fx:id="contentPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="200.0" prefWidth="200.0" />
+            <ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="400.0" prefWidth="400.0">
+               <content>
+                      <BorderPane fx:id="contentPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
+               </content>
+            </ScrollPane>
             </items>
         </SplitPane>
     </center>

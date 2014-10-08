@@ -68,7 +68,7 @@ public class LayerPropertiesItem extends TreeMenuItem{
                                 
                 final FXPropertiesPane panel = new FXPropertiesPane(
                         candidate,
-                        new FXLayerStructure(),
+//                        new FXLayerStructure(),
                         new FXFeatureTable(),
                         new FXLayerStylesPane(
                                 new FXStyleSimplePane(),

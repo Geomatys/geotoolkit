@@ -50,6 +50,7 @@ import org.geotoolkit.client.ClientFinder;
 import org.geotoolkit.gui.javafx.parameter.FXParameterEditor;
 import org.geotoolkit.gui.javafx.parameter.FXValueEditor;
 import org.geotoolkit.gui.javafx.util.FXOptionDialog;
+import org.geotoolkit.gui.javafx.util.FXUtilities;
 import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.internal.Loggers;
 import org.geotoolkit.map.MapLayer;
@@ -87,19 +88,7 @@ public class FXClientStoreChooser extends SplitPane {
         listScroll.setFitToWidth(true);        
         
         //hide the tree table header
-        paramEditor.getTreetable().widthProperty().addListener(new ChangeListener<Number>() {
-            @Override
-            public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
-                Pane header = (Pane)paramEditor.getTreetable().lookup("TableHeaderRow");
-                if(header!=null && header.isVisible()) {
-                  header.setMaxHeight(0);
-                  header.setMinHeight(0);
-                  header.setPrefHeight(0);
-                  header.setVisible(false);
-                  header.setManaged(false);
-                }
-            }
-        });
+        FXUtilities.hideTableColumn(paramEditor.getTreetable());
         
         final BorderPane hpane = new BorderPane(infoLabel, null, connectButton, null, null);        
         hpane.setPadding(new Insets(6, 6, 6, 6));

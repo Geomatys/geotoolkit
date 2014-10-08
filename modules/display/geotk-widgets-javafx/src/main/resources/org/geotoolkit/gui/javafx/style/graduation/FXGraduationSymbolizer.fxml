@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.effect.*?>
+<?import org.geotoolkit.gui.javafx.style.*?>
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<fx:root maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" stylesheets="@StyleEditor.css" type="BorderPane" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <center>
+      <SplitPane fx:id="uiSplit" BorderPane.alignment="CENTER">
+         <items>
+            <GridPane maxHeight="1.7976931348623157E308" maxWidth="150.0" minHeight="-Infinity" minWidth="150.0" prefWidth="150.0">
+               <columnConstraints>
+                  <ColumnConstraints hgrow="ALWAYS" maxWidth="1.7976931348623157E308" />
+               </columnConstraints>
+               <rowConstraints>
+                  <RowConstraints vgrow="NEVER" />
+                  <RowConstraints vgrow="NEVER" />
+                  <RowConstraints maxHeight="1.7976931348623157E308" vgrow="ALWAYS" />
+               </rowConstraints>
+               <children>
+                  <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="property-group-title" text="%org.geotoolkit.gui.javafx.style.graduation.FXGraduationSymbolizer.graduation" />
+                  <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.rowIndex="2">
+                     <content>
+                        <TableView fx:id="uiTable" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
+                     </content>
+                  </ScrollPane>
+                  <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#addGraduation" text="%org.geotoolkit.gui.javafx.style.graduation.FXGraduationSymbolizer.add" GridPane.rowIndex="1" />
+               </children>
+            </GridPane>
+         </items>
+      </SplitPane>
+   </center>
+</fx:root>

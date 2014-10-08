@@ -35,9 +35,15 @@ import javafx.beans.property.adapter.JavaBeanFloatPropertyBuilder;
 import javafx.beans.property.adapter.JavaBeanIntegerPropertyBuilder;
 import javafx.beans.property.adapter.JavaBeanLongPropertyBuilder;
 import javafx.beans.property.adapter.JavaBeanObjectPropertyBuilder;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
+import javafx.scene.control.Control;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TreeItem;
+import javafx.scene.control.TreeTableView;
 import javafx.scene.image.Image;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import org.geotoolkit.image.io.PaletteFactory;
@@ -214,6 +220,32 @@ public final class FXUtilities {
         }
         
         return SwingFXUtils.toFXImage(image, null);
+    }
+    
+    /**
+     * Hide table or treetable view.
+     * 
+     * @param view 
+     */
+    public static void hideTableColumn(final Control view){
+        if( !(view instanceof TreeTableView || view instanceof TableView)){
+            throw new IllegalArgumentException("Control must be a TreeTableView or TableView but was : "+view.getClass());
+        }
+        
+        //hide the header
+        view.widthProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
+                Pane header = (Pane)view.lookup("TableHeaderRow");
+                if(header!=null && header.isVisible()) {
+                  header.setMaxHeight(0);
+                  header.setMinHeight(0);
+                  header.setPrefHeight(0);
+                  header.setVisible(false);
+                  header.setManaged(false);
+                }
+            }
+        });
     }
     
 
