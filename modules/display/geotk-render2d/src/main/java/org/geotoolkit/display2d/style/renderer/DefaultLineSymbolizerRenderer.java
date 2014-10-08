@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2008 - 2010, Geomatys
+ *    (C) 2008 - 2014, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -17,7 +17,9 @@
 package org.geotoolkit.display2d.style.renderer;
 
 import com.vividsolutions.jts.geom.Geometry;
+import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
@@ -40,6 +42,7 @@ import org.geotoolkit.display2d.style.CachedLineSymbolizer;
 import org.geotoolkit.display2d.style.CachedStroke;
 import org.geotoolkit.display2d.style.CachedStrokeGraphic;
 import org.geotoolkit.display2d.style.CachedStrokeSimple;
+import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.geotoolkit.display2d.style.j2d.PathWalker;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
@@ -140,60 +143,13 @@ public class DefaultLineSymbolizerRenderer extends AbstractSymbolizerRenderer<Ca
                     g2d.translate(offset, 0);
                 }
 
-                if(cachedStroke instanceof CachedStrokeSimple){
-                    final CachedStrokeSimple cs = (CachedStrokeSimple)cachedStroke;
-                    g2d.setComposite(cs.getJ2DComposite(feature));
-
-                    if(cs.isMosaicPaint()){
-                        //we need to find the top left bounds of the geometry
-                        final float margin = symbol.getMargin(feature, coeff) /2f;
-                        final Rectangle2D bounds = j2dShape.getBounds2D();
-                        final int x = (int) (bounds.getMinX() - margin);
-                        final int y = (int) (bounds.getMinY() - margin);
-                        g2d.setPaint(cs.getJ2DPaint(feature, x, y, coeff, hints));
-                    }else{
-                        g2d.setPaint(cs.getJ2DPaint(feature, 0, 0, coeff, hints));
-                    }
-                    g2d.setStroke(cs.getJ2DStroke(feature,coeff));
-                    g2d.draw(j2dShape);
-                }else if(cachedStroke instanceof CachedStrokeGraphic){
-                    final CachedStrokeGraphic gc = (CachedStrokeGraphic)cachedStroke;
-                    final float initGap = gc.getInitialGap(feature);
-                    final Point2D pt = new Point2D.Double();
-                    final CachedGraphicStroke cgs = gc.getCachedGraphic();
-                    final Image img = cgs.getImage(feature, 1, hints);
-                    final float imgWidth = img.getWidth(null);
-                    final float imgHeight = img.getHeight(null);
-                    final float gap = gc.getGap(feature)+ imgWidth;
-                    final AffineTransform trs = new AffineTransform();
-
-                    final PathIterator ite = j2dShape.getPathIterator(null);
-                    final PathWalker walker = new PathWalker(ite);
-                    walker.walk(initGap);
-                    while(!walker.isFinished()){
-                        //paint the motif --------------------------------------------------
-                        walker.getPosition(pt);
-                        final float angle = walker.getRotation();
-                        trs.setToTranslation(pt.getX(), pt.getY());
-                        trs.rotate(angle);
-                        final float[] anchor = cgs.getAnchor(feature, null);
-                        final float[] disp = cgs.getDisplacement(feature, null);
-                        trs.translate(-imgWidth*anchor[0], -imgHeight*anchor[1]);
-                        trs.translate(disp[0], -disp[1]);
-
-                        g2d.drawImage(img, trs, null);
-
-                        //walk over the gap ------------------------------------------------
-                        walker.walk(gap);
-                    }
-                }
-
+                portray(symbol, g2d, j2dShape, cachedStroke, feature, coeff, hints);
+                
                 if(offset != 0){
                     g2d.translate(-offset, 0);
                 }
             }
         }
-
     }
 
     private void portray(final ProjectedGeometry projectedGeometry, final Object feature) throws PortrayalException{
@@ -228,60 +184,68 @@ public class DefaultLineSymbolizerRenderer extends AbstractSymbolizerRenderer<Ca
                 g2d.translate(offset, 0);
             }
 
-            if(cachedStroke instanceof CachedStrokeSimple){
-                final CachedStrokeSimple cs = (CachedStrokeSimple)cachedStroke;
-                g2d.setComposite(cs.getJ2DComposite(feature));
-
-                if(cs.isMosaicPaint()){
-                    //we need to find the top left bounds of the geometry
-                    final float margin = symbol.getMargin(feature, coeff) /2f;
-                    final Rectangle2D bounds = j2dShape.getBounds2D();
-                    final int x = (int) (bounds.getMinX() - margin);
-                    final int y = (int) (bounds.getMinY() - margin);
-                    g2d.setPaint(cs.getJ2DPaint(feature, x, y, coeff, hints));
-                }else{
-                    g2d.setPaint(cs.getJ2DPaint(feature, 0, 0, coeff, hints));
-                }
-                g2d.setStroke(cs.getJ2DStroke(feature,coeff));
-                g2d.draw(j2dShape);
-            }else if(cachedStroke instanceof CachedStrokeGraphic){
-                final CachedStrokeGraphic gc = (CachedStrokeGraphic)cachedStroke;
-                g2d.setComposite(GO2Utilities.ALPHA_COMPOSITE_1F);
-                final float initGap = gc.getInitialGap(feature);
-                final Point2D pt = new Point2D.Double();
-                final CachedGraphicStroke cgs = gc.getCachedGraphic();
-                final Image img = cgs.getImage(feature, 1, hints);
-                final float imgWidth = img.getWidth(null);
-                final float imgHeight = img.getHeight(null);
-                final float gap = gc.getGap(feature)+ imgWidth;
-                final AffineTransform trs = new AffineTransform();
-
-                final PathIterator ite = j2dShape.getPathIterator(null);
-                final PathWalker walker = new PathWalker(ite);
-                walker.walk(initGap);
-                while(!walker.isFinished()){
-                    //paint the motif --------------------------------------------------
-                    walker.getPosition(pt);
-                    final float angle = walker.getRotation();
-                    trs.setToTranslation(pt.getX(), pt.getY());
-                    trs.rotate(angle);
-                    final float[] anchor = cgs.getAnchor(feature, null);
-                    final float[] disp = cgs.getDisplacement(feature, null);
-                    trs.translate(-imgWidth*anchor[0], -imgHeight*anchor[1]);
-                    trs.translate(disp[0], -disp[1]);
-
-                    g2d.drawImage(img, trs, null);
-
-                    //walk over the gap ------------------------------------------------
-                    walker.walk(gap);
-                }
-            }
+            portray(symbol, g2d, j2dShape, cachedStroke, feature, coeff, hints);
 
             if(offset != 0){
                 g2d.translate(-offset, 0);
             }
         }
     }
+    
+    public static void portray(CachedSymbolizer symbol, Graphics2D g2d, Shape j2dShape, 
+            CachedStroke cachedStroke, Object feature, float coeff, RenderingHints hints){
+
+        if(cachedStroke instanceof CachedStrokeSimple){
+            final CachedStrokeSimple cs = (CachedStrokeSimple)cachedStroke;
+            g2d.setComposite(cs.getJ2DComposite(feature));
+
+            if(cs.isMosaicPaint()){
+                //we need to find the top left bounds of the geometry
+                final float margin = symbol.getMargin(feature, coeff) /2f;
+                final Rectangle2D bounds = j2dShape.getBounds2D();
+                final int x = (int) (bounds.getMinX() - margin);
+                final int y = (int) (bounds.getMinY() - margin);
+                g2d.setPaint(cs.getJ2DPaint(feature, x, y, coeff, hints));
+            }else{
+                g2d.setPaint(cs.getJ2DPaint(feature, 0, 0, coeff, hints));
+            }
+            g2d.setStroke(cs.getJ2DStroke(feature,coeff));
+            g2d.draw(j2dShape);
+        }else if(cachedStroke instanceof CachedStrokeGraphic){
+            final CachedStrokeGraphic gc = (CachedStrokeGraphic)cachedStroke;
+            g2d.setComposite(GO2Utilities.ALPHA_COMPOSITE_1F);
+            final float initGap = gc.getInitialGap(feature);
+            final Point2D pt = new Point2D.Double();
+            final CachedGraphicStroke cgs = gc.getCachedGraphic();
+            final Image img = cgs.getImage(feature, 1, hints);
+            final float imgWidth = img.getWidth(null);
+            final float imgHeight = img.getHeight(null);
+            final float gap = gc.getGap(feature)+ imgWidth;
+            final AffineTransform trs = new AffineTransform();
+
+            final PathIterator ite = j2dShape.getPathIterator(null);
+            final PathWalker walker = new PathWalker(ite);
+            walker.walk(initGap);
+            while(!walker.isFinished()){
+                //paint the motif --------------------------------------------------
+                walker.getPosition(pt);
+                final float angle = walker.getRotation();
+                trs.setToTranslation(pt.getX(), pt.getY());
+                trs.rotate(angle);
+                final float[] anchor = cgs.getAnchor(feature, null);
+                final float[] disp = cgs.getDisplacement(feature, null);
+                trs.translate(-imgWidth*anchor[0], -imgHeight*anchor[1]);
+                trs.translate(disp[0], -disp[1]);
+
+                g2d.drawImage(img, trs, null);
+
+                //walk over the gap ------------------------------------------------
+                walker.walk(gap);
+            }
+        }
+
+    }
+    
 
     /**
      * {@inheritDoc }

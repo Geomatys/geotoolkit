@@ -8,3 +8,4 @@ org.geotoolkit.display2d.ext.dimrange.DimRangeRendererService
 org.geotoolkit.display2d.ext.pattern.PatternRendererService
 org.geotoolkit.display2d.ext.isoline.symbolizer.IsolineSymbolizerRendererService
 org.geotoolkit.display2d.ext.pie.PieSymbolizerRendererService
+org.geotoolkit.display2d.ext.graduation.GraduationSymbolizerRendererService

@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.display2d.ext.cellular;
 
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import org.geotoolkit.display2d.style.CachedRule;

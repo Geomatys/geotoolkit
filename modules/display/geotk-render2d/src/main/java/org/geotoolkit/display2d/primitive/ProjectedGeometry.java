@@ -121,6 +121,14 @@ public class ProjectedGeometry  {
         }
     }
 
+    public MathTransform2D getDataToDisplay() {
+        return dataToDisplay;
+    }
+
+    public MathTransform2D getDataToObjective() {
+        return dataToObjective;
+    }
+
     public boolean isSet(){
         return this.dataGeometryJTS != null;
     }

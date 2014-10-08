@@ -154,7 +154,7 @@ import org.opengis.util.GenericName;
  */
 public final class GO2Utilities {
 
-    private static final GeometryFactory JTS_FACTORY = new GeometryFactory();
+    public static final GeometryFactory JTS_FACTORY = new GeometryFactory();
 
     private static final Cache<Symbolizer,CachedSymbolizer> CACHE = new Cache<Symbolizer, CachedSymbolizer>(50,50,true);
 

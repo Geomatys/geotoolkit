@@ -141,6 +141,12 @@ public class PointLabelCandidateRenderer implements LabelCandidateRenderer<Point
         g2.setPaint(label.getTextPaint());
         g2.setFont(label.getTextFont());
         g2.drawString(label.getText(), pointCandidate.getCorrectedX(), pointCandidate.getCorrectedY());
+        
+        //reset rotation
+        if(rotation != 0){
+            g2.rotate(-rotation, pointCandidate.getCorrectedX(), pointCandidate.getCorrectedY());
+        }
+        
     }
 
 }

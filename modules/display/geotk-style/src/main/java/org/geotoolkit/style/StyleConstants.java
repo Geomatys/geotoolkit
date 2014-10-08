@@ -18,14 +18,17 @@ package org.geotoolkit.style;
 
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import javax.measure.unit.NonSI;
 import javax.measure.unit.Unit;
 
 import org.geotoolkit.factory.FactoryFinder;
 import org.apache.sis.util.iso.SimpleInternationalString;
+import org.geotoolkit.filter.DefaultLiteral;
 
 import org.opengis.filter.FilterFactory;
+import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Literal;
 import org.opengis.style.AnchorPoint;
 import org.opengis.style.ChannelSelection;
@@ -257,7 +260,7 @@ public final class StyleConstants {
         DEFAULT_FONT_STYLE = FONT_STYLE_NORMAL;
         DEFAULT_FONT_WEIGHT = FONT_WEIGHT_NORMAL;
         DEFAULT_FONT_SIZE = FF.literal(10);
-        DEFAULT_FONT = new DefaultFont(null, DEFAULT_FONT_STYLE, DEFAULT_FONT_WEIGHT, DEFAULT_FONT_SIZE);
+        DEFAULT_FONT = new DefaultFont(Collections.singletonList((Expression)new DefaultLiteral<>("Serif")), DEFAULT_FONT_STYLE, DEFAULT_FONT_WEIGHT, DEFAULT_FONT_SIZE);
         
         DEFAULT_HALO_RADIUS = LITERAL_ONE_FLOAT;
         DEFAULT_HALO_FILL = new DefaultFill(null, SF.literal(Color.WHITE), DEFAULT_FILL_OPACITY);
