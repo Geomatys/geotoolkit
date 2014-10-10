@@ -24,15 +24,17 @@ import java.beans.PropertyChangeListener;
 import java.text.NumberFormat;
 import java.util.Arrays;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToolBar;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
@@ -42,8 +44,10 @@ import javafx.scene.paint.Color;
 import javafx.util.converter.LongStringConverter;
 import org.apache.sis.geometry.DirectPosition2D;
 import org.geotoolkit.display2d.canvas.painter.SolidColorPainter;
+import org.geotoolkit.gui.javafx.crs.FXAxisView;
 import org.geotoolkit.gui.javafx.crs.FXCRSButton;
 import org.geotoolkit.gui.javafx.util.FXUtilities;
+import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.internal.Loggers;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
@@ -94,7 +98,9 @@ public class FXCoordinateBar extends GridPane {
     private final ComboBox cbox = new ComboBox();
     private final ColorPicker colorPicker = new ColorPicker(Color.WHITE);
     private final FXCRSButton crsButton = new FXCRSButton();
-
+    private final ToggleButton sliderButton = new ToggleButton(null, new ImageView(GeotkFX.ICON_SLIDERS));
+    private final FXAxisView sliderview = new FXAxisView();
+    
     public FXCoordinateBar(FXMap map) {
         this.map = map;
         barLeft.setMaxHeight(Double.MAX_VALUE);
@@ -104,9 +110,9 @@ public class FXCoordinateBar extends GridPane {
         
         colorPicker.setStyle("-fx-color-label-visible:false;");
         
-        add(barLeft, 0, 0);
-        add(barCenter, 1, 0);
-        add(barRight, 2, 0);
+        add(barLeft, 0, 1);
+        add(barCenter, 1, 1);
+        add(barRight, 2, 1);
         
         final ColumnConstraints col0 = new ColumnConstraints();
         final ColumnConstraints col1 = new ColumnConstraints();
@@ -117,8 +123,20 @@ public class FXCoordinateBar extends GridPane {
         col2.setHgrow(Priority.NEVER);
         final RowConstraints row0 = new RowConstraints();
         row0.setVgrow(Priority.ALWAYS);
+        final RowConstraints row1 = new RowConstraints();
+        row1.setVgrow(Priority.ALWAYS);
         getColumnConstraints().addAll(col0,col1,col2);
-        getRowConstraints().addAll(row0);
+        getRowConstraints().addAll(row0,row1);
+        
+        sliderview.visibleProperty().bind(sliderButton.selectedProperty());
+        sliderButton.setOnAction((ActionEvent event) -> {
+            if(sliderButton.isSelected()){
+                add(sliderview, 0, 0, 3, 1);
+            }else{
+                getChildren().remove(sliderview);
+            }
+        });
+        barLeft.getItems().add(sliderButton);
         
         coordText.setMinWidth(1);
         barCenter.getItems().add(coordText);
