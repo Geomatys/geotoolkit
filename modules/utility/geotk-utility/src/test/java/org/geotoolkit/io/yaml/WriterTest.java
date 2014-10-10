@@ -100,7 +100,7 @@ public strictfp final class WriterTest {
         metadata.setMetadataStandardName("ISO19115");
         metadata.setMetadataStandardVersion("2003/Cor.1:2006");
         metadata.setIdentificationInfo(singleton(identification));
-        metadata.setDistributionInfo(distribution);
+        metadata.setDistributionInfo(singleton(distribution));
         return metadata;
     }
 

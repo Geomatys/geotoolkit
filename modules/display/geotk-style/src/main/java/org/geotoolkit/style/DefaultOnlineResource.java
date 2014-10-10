@@ -22,6 +22,7 @@ import java.util.Objects;
 import org.opengis.metadata.citation.OnLineFunction;
 import org.opengis.metadata.citation.OnlineResource;
 import org.opengis.util.InternationalString;
+import org.apache.sis.util.iso.SimpleInternationalString;
 
 /**
  * Immutable implementation of Types Online Resource.
@@ -37,7 +38,7 @@ public class DefaultOnlineResource implements OnlineResource{
 
     private final String profil;
 
-    private final String title;
+    private final InternationalString title;
 
     private final InternationalString desc;
 
@@ -54,7 +55,7 @@ public class DefaultOnlineResource implements OnlineResource{
         this.href = uri;
         this.desc = desc;
         this.function = function;
-        this.title = name;
+        this.title = (name != null) ? new SimpleInternationalString(name) : null;
         this.profil = profil;
         this.protocol = protocol;
     }
@@ -95,7 +96,7 @@ public class DefaultOnlineResource implements OnlineResource{
      * {@inheritDoc }
      */
     @Override
-    public String getName() {
+    public InternationalString getName() {
         return title;
     }
 

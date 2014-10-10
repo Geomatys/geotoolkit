@@ -63,6 +63,7 @@ import org.opengis.feature.catalog.DefinitionReference;
 import org.opengis.feature.catalog.ListedValue;
 import org.opengis.feature.catalog.PropertyType;
 import org.opengis.feature.catalog.RoleType;
+import org.opengis.util.InternationalString;
 import org.geotoolkit.util.UnlimitedInteger;
 
 /**
@@ -130,8 +131,8 @@ public class Test_FC {
             phone.setVoices(facsmiles);
             contact.setPhone(phone);
             DefaultAddress address = new DefaultAddress();
-            List<String> dps = new ArrayList<String>();
-            dps.add("12310 Sunrise Valley Drive");
+            List<InternationalString> dps = new ArrayList<InternationalString>();
+            dps.add(new SimpleInternationalString("12310 Sunrise Valley Drive"));
             address.setDeliveryPoints(dps);
             address.setCity(new SimpleInternationalString("Reston"));
             address.setAdministrativeArea(new SimpleInternationalString("Virginia"));

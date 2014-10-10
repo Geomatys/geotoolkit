@@ -50,6 +50,7 @@ import org.junit.*;
 import org.geotoolkit.test.TestData;
 import org.geotoolkit.test.LocaleDependantTestBase;
 
+import static java.util.Collections.singleton;
 import static org.apache.sis.test.Assert.*;
 import static org.apache.sis.test.TestUtilities.getSingleton;
 
@@ -186,7 +187,7 @@ public final strictfp class MetadataMarshallingTest extends LocaleDependantTestB
         distribution.setDistributors(Arrays.asList(
             new DefaultDistributor(getSingleton(Citations.GEOTOOLKIT.getCitedResponsibleParties()))
         ));
-        metadata.setDistributionInfo(distribution);
+        metadata.setDistributionInfo(singleton(distribution));
         /*
          * Data Quality:
          *   Scope:

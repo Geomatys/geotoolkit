@@ -58,6 +58,7 @@ import org.opengis.style.Graphic;
 import org.opengis.style.GraphicalSymbol;
 import org.opengis.style.Mark;
 import org.opengis.style.PointSymbolizer;
+import org.opengis.util.InternationalString;
 
 /**
  * graphic symbol table
@@ -167,7 +168,7 @@ public class JGraphicSymbolTable <T> extends StyleElementEditor<List> {
                 firePropertyChange(PROPERTY_UPDATED, null, create());
             }
         });
-        
+
     }
 
     @Override
@@ -194,7 +195,7 @@ public class JGraphicSymbolTable <T> extends StyleElementEditor<List> {
     protected Object[] getFirstColumnComponents() {
         return new Object[]{};
     }
-    
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -389,7 +390,8 @@ public class JGraphicSymbolTable <T> extends StyleElementEditor<List> {
                 final ExternalGraphic m = (ExternalGraphic) value;
                 final OnlineResource res = m.getOnlineResource();
                 if(res != null && res.getLinkage() != null){
-                    lbl.setText(res.getName());
+                    final InternationalString name = res.getName();
+                    lbl.setText(name != null ? name.toString() : null);
                 }else{
                     lbl.setText("");
                 }

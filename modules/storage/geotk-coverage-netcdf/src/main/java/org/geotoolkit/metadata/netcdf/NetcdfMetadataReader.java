@@ -1165,7 +1165,7 @@ public class NetcdfMetadataReader extends NetcdfMetadata {
             if (party != null) {
                 if (distribution == null) {
                     distribution = new DefaultDistribution();
-                    metadata.setDistributionInfo(distribution);
+                    metadata.setDistributionInfo(singleton(distribution));
                 }
                 final DefaultDistributor distributor = new DefaultDistributor(party);
                 // TODO: There is some transfert option, etc. that we could set there.
