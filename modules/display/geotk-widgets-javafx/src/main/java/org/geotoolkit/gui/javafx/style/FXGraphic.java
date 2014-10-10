@@ -201,7 +201,7 @@ public class FXGraphic extends FXStyleElementController<FXGraphic, Graphic>{
                     final ExternalGraphic m = (ExternalGraphic) item;
                     final OnlineResource res = m.getOnlineResource();
                     if(res != null && res.getLinkage() != null){
-                        button.setText(res.getName());
+                        button.setText(String.valueOf(res.getName()));
                     }else{
                         button.setText("");
                     }
