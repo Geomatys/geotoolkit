@@ -118,7 +118,7 @@ public final strictfp class NetcdfMetadataReaderTest extends NetcdfMetadataTest 
         assertNull(expected.put("contentInfo.dimension.sequenceIdentifier",    "z"));
         super.testTHREDDS();
         assertEquals("hierarchyLevel", new HashSet<>(Arrays.asList(ScopeCode.DATASET, ScopeCode.SERVICE)),
-                metadata.getHierarchyLevels());
+                new HashSet<>(metadata.getHierarchyLevels()));
         /*
          * In the Geotk case, the Metadata/Contact and Metadata/Identification/PointOfContact
          * proprties are not just equals - they are expected to be the exact same instance.
