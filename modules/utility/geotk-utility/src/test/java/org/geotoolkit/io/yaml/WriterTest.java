@@ -47,11 +47,7 @@ public strictfp final class WriterTest {
      */
     static final String JSON =
             "{\n" +
-            "    \"fileIdentifier\": \"An archive\",\n" +
-            "    \"language\": \"en\",\n" +
-            "    \"characterSet\": \"UTF-8\",\n" +
-            "    \"metadataStandardName\": \"ISO19115\",\n" +
-            "    \"metadataStandardVersion\": \"2003/Cor.1:2006\",\n" +
+            "    \"characterSet\": [\"UTF-8\"],\n" +
             "    \"identificationInfo\": [{\n" +
             "        \"citation\": {\n" +
             "            \"title\": \"Data \\\"title\\\"\"\n" +
@@ -66,7 +62,7 @@ public strictfp final class WriterTest {
             "            }]\n" +
             "        }]\n" +
             "    }],\n" +
-            "    \"distributionInfo\": {\n" +
+            "    \"distributionInfo\": [{\n" +
             "        \"distributor\": [{\n" +
             "            \"distributorContact\": {\n" +
             "                \"role\": \"author\"\n" +
@@ -76,7 +72,15 @@ public strictfp final class WriterTest {
             "                \"role\": \"collaborator\"\n" +
             "            }\n" +
             "        }]\n" +
-            "    }\n" +
+            "    }],\n" +
+            "    \"defaultLocale+otherLocale\": [\"en\"],\n" +
+            "    \"metadataIdentifier\": {\n" +
+            "        \"code\": \"An archive\"\n" +
+            "    },\n" +
+            "    \"metadataStandard\": [{\n" +
+            "        \"title\": \"ISO19115\",\n" +
+            "        \"edition\": \"2003/Cor.1:2006\"\n" +
+            "    }]\n" +
             "}";
 
     /**
@@ -111,7 +115,6 @@ public strictfp final class WriterTest {
      */
     @Test
     public void testFormat() throws IOException {
-
         final StringBuilder buffer = new StringBuilder();
         Writer writer = new Writer(buffer);
         writer.format(createMetadata());
