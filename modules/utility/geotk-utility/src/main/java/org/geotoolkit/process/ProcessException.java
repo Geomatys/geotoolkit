@@ -43,6 +43,16 @@ public class ProcessException extends Exception {
     private final Identifier processId;
 
     /**
+     * Creates a new exception with the specified detail message.
+     *
+     * @param message The details message, or {@code null}.
+     * @param process The process that failed, or {@code null}.
+     */
+    public ProcessException(final String message, final Process process) {
+        this(message, process, null);
+    }
+
+    /**
      * Creates a new exception with the specified detail message and cause.
      *
      * @param message The details message, or {@code null}.
