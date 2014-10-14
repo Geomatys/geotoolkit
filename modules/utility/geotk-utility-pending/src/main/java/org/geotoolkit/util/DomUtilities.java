@@ -206,6 +206,25 @@ public final class DomUtilities extends Static {
         if(text == null) return null;
         return ObjectConverters.convert(text, clazz);
     }
+    
+    /**
+     * Search a child node with the given tag name and return it's text value
+     * converted to the given clazz.
+     * The convertion in made using the geotoolkit Converters.
+     *
+     * @param <T> : wished value class
+     * @param parent : node to explore
+     * @param tagName : child node name
+     * @param clazz : wished value class
+     * @return T or null if no node with tagname was found or convertion to given class failed.
+     */
+    public static <T> T textValue(final Element parent, final String tagName, final Class<T> clazz, final boolean recursive) throws UnconvertibleObjectException{
+        final Element ele = firstElement(parent, tagName, recursive);
+        if(ele == null) return null;
+        final String text = ele.getTextContent();
+        if(text == null) return null;
+        return ObjectConverters.convert(text, clazz);
+    }
 
     /**
      * Search a child node with the given tag name and return it's text attribute
@@ -234,6 +253,19 @@ public final class DomUtilities extends Static {
     public static <T> T textValueSafe(final Element parent, final String tagName, final Class<T> clazz) {
         try {
             return textValue(parent, tagName, clazz);
+        } catch (UnconvertibleObjectException ex) {
+            Logger.getLogger(DomUtilities.class.getName()).log(Level.WARNING, null, ex);
+            return null;
+        }
+    }
+    
+    /**
+     * Same as {@link DomUtilities#textValue(org.w3c.dom.Element, java.lang.String, java.lang.Class) }
+     * but dont throw any exception.
+     */
+    public static <T> T textValueSafe(final Element parent, final String tagName, final Class<T> clazz, final boolean recusive) {
+        try {
+            return textValue(parent, tagName, clazz, recusive);
         } catch (UnconvertibleObjectException ex) {
             Logger.getLogger(DomUtilities.class.getName()).log(Level.WARNING, null, ex);
             return null;
