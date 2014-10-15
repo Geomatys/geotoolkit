@@ -17,12 +17,7 @@
 package org.geotoolkit.style.function;
 
 import java.awt.Color;
-import java.awt.image.ColorModel;
-import java.awt.image.ComponentColorModel;
-import java.awt.image.DataBuffer;
-import java.awt.image.DirectColorModel;
-import java.awt.image.IndexColorModel;
-import java.awt.image.RenderedImage;
+import java.awt.image.*;
 import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,6 +30,7 @@ import javax.media.jai.OpImage;
 
 import org.geotoolkit.filter.AbstractExpression;
 import org.geotoolkit.filter.DefaultLiteral;
+import org.geotoolkit.image.RecolorRenderedImage;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.internal.image.ColorUtilities;
 import org.geotoolkit.resources.Errors;
@@ -394,8 +390,8 @@ public class DefaultInterpolate extends AbstractExpression implements Interpolat
             * operation, which merely propagates its first source along the operation chain
             * unmodified (except for the ColorModel given in the layout in this case).
             */
-        final ImageLayout layout = new ImageLayout().setColorModel(model);
-        return new NullOpImage(image, layout, null, OpImage.OP_COMPUTE_BOUND);
+
+        return new RecolorRenderedImage(image, model);
     }
 
     private int[] transformColormap(final int[] ARGB) {
