@@ -23,7 +23,9 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.NumberFormat;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.logging.Level;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -43,12 +45,16 @@ import javafx.scene.layout.RowConstraints;
 import javafx.scene.paint.Color;
 import javafx.util.converter.LongStringConverter;
 import org.apache.sis.geometry.DirectPosition2D;
+import org.apache.sis.measure.NumberRange;
+import org.apache.sis.measure.Range;
+import org.geotoolkit.display.canvas.AbstractCanvas2D;
 import org.geotoolkit.display2d.canvas.painter.SolidColorPainter;
 import org.geotoolkit.gui.javafx.crs.FXAxisView;
 import org.geotoolkit.gui.javafx.crs.FXCRSButton;
 import org.geotoolkit.gui.javafx.util.FXUtilities;
 import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.internal.Loggers;
+import org.geotoolkit.temporal.object.TemporalConstants;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 
@@ -65,14 +71,40 @@ public class FXCoordinateBar extends GridPane {
 
         @Override
         public void propertyChange(PropertyChangeEvent evt) {
-            cbox.valueProperty().removeListener(action);
-            try {
-                final double scale = map.getCanvas().getGeographicScale();
-                cbox.setValue((long)scale);
-                cbox.valueProperty().addListener(action);
-            } catch (TransformException ex) {
-                Loggers.JAVAFX.log(Level.WARNING, null, ex);
+            final String propertyName = evt.getPropertyName();
+            
+            if(AbstractCanvas2D.OBJECTIVE_CRS_KEY.equals(propertyName)){
+                //update crs button
+                crsButton.crsProperty().set((CoordinateReferenceSystem)evt.getNewValue());
+            }else if(AbstractCanvas2D.ENVELOPE_KEY.equals(propertyName)){
+                //range slider
+                final Date[] range = map.getCanvas().getTemporalRange();
+                if(range==null){
+                    sliderview.selectionProperty().set(null);
+                }else{
+                    final boolean wasNull = sliderview.selectionProperty().get() == null;
+                    final double min = range[0].getTime();
+                    final double max = range[1].getTime();
+                    sliderview.selectionProperty().set(NumberRange.create(min, true, max, true));
+                    if(wasNull){
+                        //zoom on selection
+                        sliderview.moveTo((max+min/2.0));
+                    }
+                }
             }
+            
+            //update scale box
+            Platform.runLater(() -> {
+                cbox.valueProperty().removeListener(action);
+                try {
+                    final double scale = map.getCanvas().getGeographicScale();
+                    cbox.setValue((long)scale);
+                    cbox.valueProperty().addListener(action);
+                } catch (TransformException ex) {
+                    Loggers.JAVAFX.log(Level.WARNING, null, ex);
+                }
+            });
+                     
         }
     };
     private final ChangeListener action = new ChangeListener() {
@@ -90,7 +122,6 @@ public class FXCoordinateBar extends GridPane {
     };
     
     
-    private final ToolBar barLeft = new ToolBar();
     private final ToolBar barCenter = new ToolBar();
     private final ToolBar barRight = new ToolBar();
     
@@ -103,16 +134,14 @@ public class FXCoordinateBar extends GridPane {
     
     public FXCoordinateBar(FXMap map) {
         this.map = map;
-        barLeft.setMaxHeight(Double.MAX_VALUE);
-        barCenter.setMaxHeight(Double.MAX_VALUE);
-        barRight.setMaxHeight(Double.MAX_VALUE);        
         barCenter.setMinWidth(1);
+        barCenter.setMaxHeight(Double.MAX_VALUE);  
+        barRight.setMaxHeight(Double.MAX_VALUE);        
         
         colorPicker.setStyle("-fx-color-label-visible:false;");
         
-        add(barLeft, 0, 1);
-        add(barCenter, 1, 1);
-        add(barRight, 2, 1);
+        add(barCenter, 0, 1);
+        add(barRight, 1, 1);
         
         final ColumnConstraints col0 = new ColumnConstraints();
         final ColumnConstraints col1 = new ColumnConstraints();
@@ -128,17 +157,34 @@ public class FXCoordinateBar extends GridPane {
         getColumnConstraints().addAll(col0,col1,col2);
         getRowConstraints().addAll(row0,row1);
         
+        sliderview.scaleProperty().set(1.0/TemporalConstants.DAY_MS);
         sliderview.visibleProperty().bind(sliderButton.selectedProperty());
         sliderButton.setOnAction((ActionEvent event) -> {
+            getChildren().remove(sliderview);
             if(sliderButton.isSelected()){
-                add(sliderview, 0, 0, 3, 1);
-            }else{
-                getChildren().remove(sliderview);
+                add(sliderview, 0, 0, 2, 1);
             }
         });
-        barLeft.getItems().add(sliderButton);
+        sliderview.selectionProperty().addListener(new ChangeListener<Range<? extends Number>>() {
+            @Override
+            public void changed(ObservableValue<? extends Range<? extends Number>> observable, Range<? extends Number> oldValue, Range<? extends Number> newValue) {
+                try {
+                    if(newValue==null){
+                        map.getCanvas().setTemporalRange(null,null);
+                    }else{
+                        final Number minValue = newValue.getMinValue();
+                        final Number maxValue = newValue.getMinValue();
+                        map.getCanvas().setTemporalRange(new Date(minValue.longValue()), new Date(maxValue.longValue()));
+                    }
+                } catch (TransformException ex) {
+                    Loggers.JAVAFX.log(Level.INFO, ex.getMessage(), ex);
+                }
+                
+            }
+        });
         
         coordText.setMinWidth(1);
+        barCenter.getItems().add(sliderButton);
         barCenter.getItems().add(coordText);
         
         cbox.getItems().addAll(  1000l,
@@ -180,6 +226,26 @@ public class FXCoordinateBar extends GridPane {
             }
         });
         
+    }
+    
+    public void setCrsButtonVisible(boolean visible){
+        if(barRight.getItems().contains(crsButton)){
+            barRight.getItems().remove(crsButton);
+        }else{
+            barRight.getItems().add(crsButton);
+        }
+    }
+    
+    public boolean isCrsButtonVisible(){
+        return crsButton.isVisible();
+    }
+
+    /**
+     * TODO change this, we should be able to control multiple crs axis at the same time.
+     * @return temporal axis crs viewer
+     */
+    public FXAxisView getSliderview() {
+        return sliderview;
     }
     
     /**

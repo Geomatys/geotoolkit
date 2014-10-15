@@ -29,7 +29,6 @@ import javax.measure.unit.SI;
 import javax.swing.SwingConstants;
 import org.apache.sis.measure.Range;
 import org.apache.sis.referencing.CommonCRS;
-import org.geotoolkit.math.XMath;
 import org.geotoolkit.temporal.object.TemporalConstants;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -128,9 +127,23 @@ public class FXAxisView extends Control {
         offset.set(newtrs.getTranslateX());
     }
 
+    /**
+     * 
+     * @param tr 
+     */
     public void translate(final double tr) {
         offset.set(offset.get()+tr);
     }
     
+    /**
+     * Set center of the axisview on given position.
+     * 
+     * @param position in crs unit
+     */
+    public void moveTo(double position){
+        final double currentCenter =  getWidth()/2.0;
+        final double newOffset = currentCenter - scale.get()*position;
+        offset.set(newOffset);
+    }
    
 }
