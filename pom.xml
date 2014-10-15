@@ -396,7 +396,7 @@
         <groupId>org.apache.derby</groupId>
         <artifactId>derby</artifactId>
         <version>${derby.version}</version>
-        <scope>provided</scope> <!-- Already included in JDK as JavaDB -->
+        <scope>test</scope> <!-- Already included in JDK as JavaDB -->
       </dependency>
       <dependency>
         <groupId>org.hsqldb</groupId>
