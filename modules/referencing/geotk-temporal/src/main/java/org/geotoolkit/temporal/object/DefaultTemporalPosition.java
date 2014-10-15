@@ -68,10 +68,10 @@ public class DefaultTemporalPosition implements TemporalPosition {
      * if not specified, it is assumed to be an association to the Gregorian calendar and UTC.
      */
     public TemporalReferenceSystem getFrame() {
-        if (frame == null) {
-            frame = new DefaultTemporalReferenceSystem(new NamedIdentifier(
-                    Citations.CRS, new SimpleInternationalString("Gregorian calendar")), null);
-        }
+//        if (frame == null) {
+//            frame = new DefaultTemporalReferenceSystem(new NamedIdentifier(
+//                    Citations.CRS, new SimpleInternationalString("Gregorian calendar")), null);
+//        }
         return frame;
     }
 

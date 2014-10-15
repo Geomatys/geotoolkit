@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<gml:TimeInstant xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:gml="http://www.opengis.net/gml/3.2" 
+                 xsi:schemaLocation = "http://www.opengis.net/gml/3.2 http://schemas.opengis.net/gml/3.2.1/temporal.xsd" gml:id="crs-instantid">
+    <gml:identifier codeSpace="CRS">Instant id</gml:identifier>
+    <gml:name codeSpace="CRS">Instant</gml:name>
+        <gml:timePosition>2014-10-08T16:56:19.908+02:00</gml:timePosition>
+</gml:TimeInstant>

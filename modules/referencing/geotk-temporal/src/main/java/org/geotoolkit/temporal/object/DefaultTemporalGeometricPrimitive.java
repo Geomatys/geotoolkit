@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.temporal.object;
 
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.sis.util.logging.Logging;
@@ -39,6 +40,19 @@ public abstract class DefaultTemporalGeometricPrimitive extends DefaultTemporalP
 
     private static final Logger LOGGER = Logging.getLogger(DefaultTemporalGeometricPrimitive.class);
 
+    /**
+     * 
+     * @param properties
+     * @throws IllegalArgumentException 
+     */
+    public DefaultTemporalGeometricPrimitive(Map<String, ?> properties) throws IllegalArgumentException {
+        super(properties);
+    }
+    
+    protected DefaultTemporalGeometricPrimitive() {
+        super(null);
+    }
+    
     /**
      * Returns the distance from this TM_GeometricPrimitive to another TM_GeometricPrimitive, 
      * i.e. the absolute value of the difference between their temporal positions.

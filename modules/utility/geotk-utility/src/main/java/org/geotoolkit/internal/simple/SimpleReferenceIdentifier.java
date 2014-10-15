@@ -18,13 +18,13 @@
 package org.geotoolkit.internal.simple;
 
 import org.opengis.metadata.citation.Citation;
-import org.opengis.referencing.ReferenceIdentifier;
-import org.opengis.util.InternationalString;
 import org.apache.sis.internal.simple.SimpleCitation;
+import org.opengis.metadata.Identifier;
+import org.opengis.util.InternationalString;
 
 
 /**
- * A trivial implementation of {@link ReferenceIdentifier}. This is defined as a subtype of
+ * A trivial implementation of {@link Identifier}. This is defined as a subtype of
  * {@link SimpleCitation} only as an opportunist way (not something generally recommended).
  *
  * @author Martin Desruisseaux (Geomatys)
@@ -33,7 +33,7 @@ import org.apache.sis.internal.simple.SimpleCitation;
  * @since 3.19
  * @module
  */
-public class SimpleReferenceIdentifier extends SimpleCitation implements ReferenceIdentifier {
+public class SimpleReferenceIdentifier extends SimpleCitation implements Identifier {
     /**
      * For cross-version compatibility.
      */
@@ -57,7 +57,7 @@ public class SimpleReferenceIdentifier extends SimpleCitation implements Referen
     }
 
     /**
-     * Methods inherited from the {@link ReferenceIdentifier} interface
+     * Methods inherited from the {@link Identifier} interface
      * that we implement in a trivial way.
      */
     @Override public Citation getAuthority() {return this;}

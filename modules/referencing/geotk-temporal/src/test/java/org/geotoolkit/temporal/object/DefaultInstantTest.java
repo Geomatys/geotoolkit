@@ -46,12 +46,12 @@ public class DefaultInstantTest {
     @Before
     public void setUp() {
 
-        cal.set(2000, 1, 1);
-        position1 = new DefaultPosition(cal.getTime());
-        cal.set(1998, 1, 1);
-        position2 = new DefaultPosition(cal.getTime());
-        instant1 = new DefaultInstant(position1);
-        instant2 = new DefaultInstant(position2);
+//        cal.set(2000, 1, 1);
+//        position1 = new DefaultPosition(cal.getTime());
+//        cal.set(1998, 1, 1);
+//        position2 = new DefaultPosition(cal.getTime());
+//        instant1 = new DefaultInstant(position1);
+//        instant2 = new DefaultInstant(position2);
     }
 
     @After

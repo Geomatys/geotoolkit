@@ -58,6 +58,7 @@ public class DefaultPeriod extends DefaultTemporalGeometricPrimitive implements 
     /**
      * Links this period to the instant at which it starts.
      */
+    @Override
     public Instant getBeginning() {
         return begining;
     }
@@ -66,17 +67,18 @@ public class DefaultPeriod extends DefaultTemporalGeometricPrimitive implements 
         this.begining = begining;
     }
 
-    public void setBegining(final Date date) {
-        this.begining = new DefaultInstant(new DefaultPosition(date));
-    }
-
-    public void setBegining(final Position pos) {
-        this.begining = new DefaultInstant(pos);
-    }
+//    public void setBegining(final Date date) {
+//        this.begining = new DefaultInstant(new DefaultPosition(date));
+//    }
+//
+//    public void setBegining(final Position pos) {
+//        this.begining = new DefaultInstant(pos);
+//    }
 
     /**
      * Links this period to the instant at which it ends.
      */
+    @Override
     public Instant getEnding() {
         return ending;
     }
@@ -85,38 +87,38 @@ public class DefaultPeriod extends DefaultTemporalGeometricPrimitive implements 
         this.ending = ending;
     }
 
-    public void setEnding(final Position pos) {
-        this.ending = new DefaultInstant(pos);
-    }
+//    public void setEnding(final Position pos) {
+//        this.ending = new DefaultInstant(pos);
+//    }
+//
+//    public void setEnding(final Date date) {
+//        this.ending = new DefaultInstant(new DefaultPosition(date));
+//    }
 
-    public void setEnding(final Date date) {
-        this.ending = new DefaultInstant(new DefaultPosition(date));
-    }
-
-    /**
-     * Verify if this entry is identical to the specified object.
-     */
-    @Override
-    public boolean equals(final Object object) {
-        if (object == this) {
-            return true;
-        }
-        if (object instanceof DefaultPeriod) {
-            final DefaultPeriod that = (DefaultPeriod) object;
-
-            return Objects.equals(this.begining, that.begining) &&
-                    Objects.equals(this.ending, that.ending);
-        }
-        return false;
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 5;
-        hash = 37 * hash + (this.begining != null ? this.begining.hashCode() : 0);
-        hash = 37 * hash + (this.ending != null ? this.ending.hashCode() : 0);
-        return hash;
-    }
+//    /**
+//     * Verify if this entry is identical to the specified object.
+//     */
+//    @Override
+//    public boolean equals(final Object object) {
+//        if (object == this) {
+//            return true;
+//        }
+//        if (object instanceof DefaultPeriod) {
+//            final DefaultPeriod that = (DefaultPeriod) object;
+//
+//            return Objects.equals(this.begining, that.begining) &&
+//                    Objects.equals(this.ending, that.ending);
+//        }
+//        return false;
+//    }
+//
+//    @Override
+//    public int hashCode() {
+//        int hash = 5;
+//        hash = 37 * hash + (this.begining != null ? this.begining.hashCode() : 0);
+//        hash = 37 * hash + (this.ending != null ? this.ending.hashCode() : 0);
+//        return hash;
+//    }
 
     @Override
     public String toString() {

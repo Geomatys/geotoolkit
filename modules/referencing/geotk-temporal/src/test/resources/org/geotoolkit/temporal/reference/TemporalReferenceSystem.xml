@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<gml:TimeReferenceSystem xmlns:gco="http://www.isotc211.org/2005/gco" 
+                         xmlns:gmx="http://www.isotc211.org/2005/gmx" 
+                         xmlns:gmi="http://www.isotc211.org/2005/gmi" 
+                         xmlns:gmd="http://www.isotc211.org/2005/gmd" 
+                         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+                         xmlns:gml="http://www.opengis.net/gml/3.2" 
+                         xmlns:ns7="http://www.w3.org/1999/xlink" 
+                         gml:id="speace-crs-007"
+                         xsi:schemaLocation = "http://www.opengis.net/gml/3.2 http://schemas.opengis.net/gml/3.2.1/temporalReferenceSystems.xsd">   
+    <gml:identifier codeSpace="EPSG">urn:ogc:def:referenceSystem:speace::007</gml:identifier>
+    <gml:name codeSpace="CRS">Gregorian calendar</gml:name>
+    <gml:domainOfValidity>desc</gml:domainOfValidity>
+</gml:TimeReferenceSystem>

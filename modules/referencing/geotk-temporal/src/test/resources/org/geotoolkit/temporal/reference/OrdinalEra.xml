@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<gml:TimeOrdinalEra xmlns:gco="http://www.isotc211.org/2005/gco" 
+                    xmlns:gmx="http://www.isotc211.org/2005/gmx" 
+                    xmlns:gmi="http://www.isotc211.org/2005/gmi" 
+                    xmlns:gmd="http://www.isotc211.org/2005/gmd" 
+                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+                    xmlns:gml="http://www.opengis.net/gml/3.2" 
+                    xmlns:ns7="http://www.w3.org/1999/xlink" 
+                    xsi:schemaLocation = "http://www.opengis.net/gml/3.2 http://schemas.opengis.net/gml/3.2.1/temporalReferenceSystems.xsd"
+                    gml:id="crs-parent">
+    <gml:identifier codeSpace="CRS">Parent</gml:identifier>
+    <gml:name codeSpace="CRS">NameEraparent</gml:name>
+    <gml:start>2014-08-01T11:34:52.192+02:00</gml:start>
+    <gml:end>2014-07-31T15:58:14.658+02:00</gml:end>
+</gml:TimeOrdinalEra>

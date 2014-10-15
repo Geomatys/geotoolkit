@@ -17,6 +17,8 @@
  */
 package org.geotoolkit.temporal.object;
 
+import java.util.Map;
+import org.apache.sis.referencing.AbstractIdentifiedObject;
 import org.opengis.temporal.Instant;
 import org.opengis.temporal.Period;
 import org.opengis.temporal.RelativePosition;
@@ -29,7 +31,21 @@ import org.opengis.temporal.TemporalPrimitive;
  * @author Mehdi Sidhoum (Geomatys)
  * @module pending
  */
-public abstract class DefaultTemporalPrimitive extends DefaultTemporalObject implements TemporalPrimitive, TemporalOrder {
+public abstract class DefaultTemporalPrimitive extends AbstractIdentifiedObject implements TemporalPrimitive, TemporalOrder {
+
+    /**
+     * 
+     * @param properties
+     * @throws IllegalArgumentException 
+     */
+    public DefaultTemporalPrimitive(Map<String, ?> properties) throws IllegalArgumentException {
+        super(properties);
+    }
+    
+//    protected DefaultTemporalPrimitive() {
+//        
+//    }
+    
 
     /**
      * Returns a value for relative position which are provided by the enumerated data type TM_RelativePosition 

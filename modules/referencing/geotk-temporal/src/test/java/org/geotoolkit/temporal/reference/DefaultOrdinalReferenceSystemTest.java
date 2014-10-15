@@ -20,13 +20,21 @@ package org.geotoolkit.temporal.reference;
 import org.geotoolkit.temporal.reference.DefaultOrdinalReferenceSystem;
 import java.util.Collection;
 import org.geotoolkit.metadata.Citations;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.NamedIdentifier;
+import org.apache.sis.referencing.datum.DefaultTemporalDatum;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.opengis.referencing.IdentifiedObject;
+import org.opengis.referencing.datum.TemporalDatum;
 import org.opengis.temporal.OrdinalEra;
 import org.opengis.temporal.OrdinalReferenceSystem;
+import org.opengis.temporal.TemporalReferenceSystem;
 
 
 /**
@@ -41,10 +49,20 @@ public class DefaultOrdinalReferenceSystemTest {
 
     @Before
     public void setUp() {
-        NamedIdentifier name1 = new NamedIdentifier(Citations.CRS, "Ordinal1");
-        NamedIdentifier name2 = new NamedIdentifier(Citations.CRS, "Ordinal2");
-        ordinalReferenceSystem1 = new DefaultOrdinalReferenceSystem(name1, null, null);
-        ordinalReferenceSystem2 = new DefaultOrdinalReferenceSystem(name2, null, null);
+////        TemporalDatum tempdat = CommonCRS.Temporal.UNIX.datum();
+////        NamedIdentifier name1 = new NamedIdentifier(Citations.CRS, "Ordinal1");
+////        final Map<String, Object> properties1 = new HashMap<>();
+////        properties1.put(IdentifiedObject.NAME_KEY, name1);
+//////        TemporalReferenceSystem frame1 = new DefaultTemporalReferenceSystem(properties1, tempdat, null);
+////        
+////        NamedIdentifier name2 = new NamedIdentifier(Citations.CRS, "Ordinal2");
+////        final Map<String, Object> properties2 = new HashMap<>();
+////        properties2.put(IdentifiedObject.NAME_KEY, name2);
+//////        TemporalReferenceSystem frame2 = new DefaultTemporalReferenceSystem(properties2, tempdat, null);
+//////        NamedIdentifier name1 = new NamedIdentifier(Citations.CRS, "Ordinal1");
+//////        NamedIdentifier name2 = new NamedIdentifier(Citations.CRS, "Ordinal2");
+////        ordinalReferenceSystem1 = new DefaultOrdinalReferenceSystem(properties1, tempdat, null, null);
+////        ordinalReferenceSystem2 = new DefaultOrdinalReferenceSystem(properties2, tempdat, null, null);
     }
 
     @After
@@ -58,7 +76,7 @@ public class DefaultOrdinalReferenceSystemTest {
      */
     @Test
     public void testGetOrdinalEraSequence() {
-        Collection<OrdinalEra> result = ordinalReferenceSystem1.getOrdinalEraSequence();
+        Collection<OrdinalEra> result = (Collection<OrdinalEra>) ordinalReferenceSystem1.getOrdinalEraSequence();
         assertEquals(ordinalReferenceSystem2.getOrdinalEraSequence(), result);
     }
 

@@ -3,7 +3,7 @@
  *    http://www.geotoolkit.org
  * 
  *    (C) 2008, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2009, Geomatys
+ *    (C) 2014, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -17,137 +17,119 @@
  */
 package org.geotoolkit.temporal.reference;
 
-import java.util.Collection;
-import java.util.Objects;
-import java.util.Set;
+import java.util.Map;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
+import org.apache.sis.referencing.AbstractReferenceSystem;
+import org.apache.sis.referencing.crs.DefaultTemporalCRS;
+import org.apache.sis.xml.Namespaces;
 import org.opengis.metadata.extent.Extent;
-import org.opengis.metadata.Identifier;
+import org.opengis.referencing.ReferenceSystem;
+import org.opengis.referencing.cs.TimeCS;
+import org.opengis.referencing.datum.TemporalDatum;
 import org.opengis.temporal.TemporalReferenceSystem;
-import org.opengis.util.GenericName;
 import org.opengis.util.InternationalString;
 
 /**
+ * Information about a temporal reference system.
  *
  * @author Mehdi Sidhoum (Geomatys)
  * @module pending
+ * @version 4.0
+ * @since   4.0
  */
-public class DefaultTemporalReferenceSystem implements TemporalReferenceSystem {
-
+@XmlType(name = "TimeReferenceSystem_Type", propOrder = {
+    "scope",
+    "domaineOfValidity"
+})
+@XmlRootElement(name = "TimeReferenceSystem", namespace = Namespaces.GML)
+public class DefaultTemporalReferenceSystem extends AbstractReferenceSystem implements TemporalReferenceSystem {
+    
     /**
-     * This is a name that uniquely identifies the temporal reference system.
+     * Creates a default {@link TemporalReferenceSystem} implementation from the given properties, datum and coordinate system.
+     * The properties given in argument follow the same rules than for the
+     * {@linkplain DefaultTemporalCRS#DefaultTemporalCRS(java.util.Map, org.opengis.referencing.datum.TemporalDatum, org.opengis.referencing.cs.TimeCS)  super-class constructor}.
+     * The following table is a reminder of current main (not all) properties:
+     *
+     * <table class="ISO 19108">
+     *   <caption>Recognized properties (non exhaustive list)</caption>
+     *   <tr>
+     *     <th>Property name</th>
+     *     <th>Value type</th>
+     *     <th>Returned by</th>
+     *   </tr>
+     *   <tr>
+     *     <td>{@value org.opengis.referencing.IdentifiedObject#NAME_KEY}</td>
+     *     <td>{@link org.opengis.referencing.Identifier} or {@link String}</td>
+     *     <td>{@link #getName()}</td>
+     *   </tr>
+     *   <tr>
+     *     <td>{@value org.opengis.referencing.datum.Datum#DOMAIN_OF_VALIDITY_KEY}</td>
+     *     <td>{@link org.opengis.metadata.extent.Extent}</td>
+     *     <td>{@link #getDomainOfValidity()}</td>
+     *   </tr>
+     * </table>
+     *
+     * @param properties The properties to be given to the coordinate reference system.
      */
-    private Identifier name;
-    private Extent domainOfValidity;
-    private Extent validArea;
-    private InternationalString scope;
-    private Collection<GenericName> alias;
-    private Set<Identifier> identifiers;
-    private InternationalString remarks;
-
+    public DefaultTemporalReferenceSystem(Map<String, ?> properties) {
+        super(properties);
+    }
+    
     /**
-     * Creates a new instance of TemporalReferenceSystem by passing a Identifier name and a domain of validity.
-     * @param name
-     * @param domainOfValidity
+     * Empty constructor only use for XML marshalling.
      */
-    public DefaultTemporalReferenceSystem(final Identifier name, final Extent domainOfValidity) {
-        this.name = name;
-        this.domainOfValidity = domainOfValidity;
+    protected DefaultTemporalReferenceSystem() {
+        super((ReferenceSystem)null);
     }
-
-    public Identifier getName() {
-        return name;
-    }
-
-    public Extent getDomainOfValidity() {
-        return domainOfValidity;
-    }
-
+    
     /**
-     * This method is deprecated, please use getDomainOfValidity() method.
-     * @return
+     * Constructs a new instance initialized with the values from the specified metadata object.
+     * This is a <cite>shallow</cite> copy constructor, since the other metadata contained in the
+     * given object are not recursively copied.
+     *
+     * @param object The TemporalReferenceSystem to copy values from, or {@code null} if none.
+     *
+     * @see #castOrCopy(TemporalReferenceSystem)
      */
-    @Deprecated
-    public Extent getValidArea() {
-        return validArea;
-    }
-
-    public InternationalString getScope() {
-        return scope;
-    }
-
-    public Collection<GenericName> getAlias() {
-        return alias;
-    }
-
-    public Set<Identifier> getIdentifiers() {
-        return identifiers;
-    }
-
-    public InternationalString getRemarks() {
-        return remarks;
-    }
-
-    public String toWKT() throws UnsupportedOperationException {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public DefaultTemporalReferenceSystem(final TemporalReferenceSystem object) {
+        super(object);
     }
 
     /**
-     * This is a name that uniquely identifies the temporal reference system.
+     * Returns a Geotk implementation with the values of the given arbitrary implementation.
+     * This method performs the first applicable action in the following choices:
+     *
+     * <ul>
+     *   <li>If the given object is {@code null}, then this method returns {@code null}.</li>
+     *   <li>Otherwise if the given object is already an instance of
+     *       {@code DefaultTemporalReferenceSystem}, then it is returned unchanged.</li>
+     *   <li>Otherwise a new {@code DefaultTemporalReferenceSystem} instance is created using the
+     *       {@linkplain #DefaultTemporalReferenceSystem(TemporalReferenceSystem) copy constructor}
+     *       and returned. Note that this is a <cite>shallow</cite> copy operation, since the other
+     *       metadata contained in the given object are not recursively copied.</li>
+     * </ul>
+     *
+     * @param  object The object to get as a Geotk implementation, or {@code null} if none.
+     * @return A Geotk implementation containing the values of the given object (may be the
+     *         given object itself), or {@code null} if the argument was null.
      */
-    public void setName(final Identifier name) {
-        this.name = name;
-    }
-
-    public void setDomainOfValidity(final Extent domainOfValidity) {
-        this.domainOfValidity = domainOfValidity;
-    }
-
-    public void setValidArea(final Extent validArea) {
-        this.validArea = validArea;
-    }
-
-    public void setScope(final InternationalString scope) {
-        this.scope = scope;
-    }
-
-    @Override
-    public boolean equals(final Object object) {
-        if (object instanceof DefaultTemporalReferenceSystem) {
-            final DefaultTemporalReferenceSystem that = (DefaultTemporalReferenceSystem) object;
-
-            return Objects.equals(this.alias, that.alias) &&
-                    Objects.equals(this.domainOfValidity, that.domainOfValidity) &&
-                    Objects.equals(this.identifiers, that.identifiers) &&
-                    Objects.equals(this.name, that.name) &&
-                    Objects.equals(this.scope, that.scope) &&
-                    Objects.equals(this.validArea, that.validArea) &&
-                    Objects.equals(this.remarks, that.remarks);
+    public static DefaultTemporalReferenceSystem castOrCopy(final TemporalReferenceSystem object) {
+        if (object == null || object instanceof DefaultTemporalReferenceSystem) {
+            return (DefaultTemporalReferenceSystem) object;
         }
-        return false;
+        return new DefaultTemporalReferenceSystem(object);
     }
-
-    @Override
-    public int hashCode() {
-        int hash = 5;
-        hash = 37 * hash + (this.alias != null ? this.alias.hashCode() : 0);
-        hash = 37 * hash + (this.domainOfValidity != null ? this.domainOfValidity.hashCode() : 0);
-        hash = 37 * hash + (this.identifiers != null ? this.identifiers.hashCode() : 0);
-        hash = 37 * hash + (this.name != null ? this.name.hashCode() : 0);
-        hash = 37 * hash + (this.remarks != null ? this.remarks.hashCode() : 0);
-        hash = 37 * hash + (this.scope != null ? this.scope.hashCode() : 0);
-        hash = 37 * hash + (this.validArea != null ? this.validArea.hashCode() : 0);
-        return hash;
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder s = new StringBuilder("TemporalReferenceSystem:").append('\n');
-        if (name != null) {
-            s.append("name:").append(name).append('\n');
-        }
-        if (domainOfValidity != null) {
-            s.append("domainOfValidity:").append(domainOfValidity).append('\n');
-        }
-        return s.toString();
+    
+    /**
+     * Method use for xml.
+     * 
+     * @return {@linkplain Extent#getDescription() extend description} from
+     * {@linkplain #getDomainOfValidity() super class domaine of validity}
+     */
+    @XmlElement(name = "domainOfValidity", required = true)
+    protected InternationalString getdomaineOfValidity() {
+        return super.getDomainOfValidity().getDescription();
     }
 }

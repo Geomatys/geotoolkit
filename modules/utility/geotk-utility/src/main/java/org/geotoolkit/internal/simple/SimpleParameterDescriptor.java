@@ -29,7 +29,6 @@ import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDirection;
 import org.opengis.metadata.Identifier;
 
-
 /**
  * A trivial implementation of {@link ParameterDescriptor}. This is defined as a subtype of
  * {@link SimpleReferenceIdentifier} and {@link SimpleCitation} only as an opportunist way

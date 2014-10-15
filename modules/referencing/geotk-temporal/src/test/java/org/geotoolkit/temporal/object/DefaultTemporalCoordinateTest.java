@@ -18,6 +18,9 @@
 package org.geotoolkit.temporal.object;
 
 import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.Map;
+import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.metadata.Citations;
 import org.apache.sis.referencing.NamedIdentifier;
@@ -29,6 +32,9 @@ import org.opengis.temporal.IndeterminateValue;
 import org.opengis.temporal.TemporalCoordinate;
 import org.opengis.temporal.TemporalCoordinateSystem;
 import static org.junit.Assert.*;
+import org.opengis.referencing.IdentifiedObject;
+import org.opengis.referencing.datum.TemporalDatum;
+import org.opengis.util.InternationalString;
 
 
 /**
@@ -43,15 +49,28 @@ public class DefaultTemporalCoordinateTest {
 
     @Before
     public void setUp() {
-        NamedIdentifier name = new NamedIdentifier(Citations.CRS, "Gregorian calendar");
-        GregorianCalendar gc = new GregorianCalendar(-4713, 1, 1);
-        Number coordinateValue = 100;
-        TemporalCoordinateSystem frame1 = new DefaultTemporalCoordinateSystem(new NamedIdentifier(Citations.CRS, new SimpleInternationalString("Julian calendar")),
-                null, gc.getTime(), new SimpleInternationalString("day"));
-        TemporalCoordinateSystem frame2 = new DefaultTemporalCoordinateSystem(new NamedIdentifier(Citations.CRS, new SimpleInternationalString("Julian calendar")),
-                null, gc.getTime(), new SimpleInternationalString("hour"));
-        temporalCoordinate1 = new DefaultTemporalCoordinate(frame1, IndeterminateValue.NOW, coordinateValue);
-        temporalCoordinate2 = new DefaultTemporalCoordinate(frame2, IndeterminateValue.AFTER, coordinateValue);
+////        NamedIdentifier name = new NamedIdentifier(Citations.CRS, "Gregorian calendar");
+////        GregorianCalendar gc = new GregorianCalendar(-4713, 1, 1);
+////        Number coordinateValue = 100;
+////        TemporalDatum tempdat = CommonCRS.Temporal.UNIX.datum();
+////        NamedIdentifier name1 = new NamedIdentifier(Citations.CRS, new SimpleInternationalString("Julian calendar"));
+////        InternationalString interval1 = new SimpleInternationalString("day");
+////        final Map<String, Object> properties1 = new HashMap<>();
+////        properties1.put(IdentifiedObject.NAME_KEY, name1);
+////        properties1.put(TemporalCoordinateSystem.INTERVAL_KEY, interval1);
+////        TemporalCoordinateSystem frame1 = new DefaultTemporalCoordinateSystem(properties1, tempdat, null, gc.getTime());
+//////        TemporalCoordinateSystem frame1 = new DefaultTemporalCoordinateSystem(new NamedIdentifier(Citations.CRS, new SimpleInternationalString("Julian calendar")),
+//////                null, gc.getTime(), new SimpleInternationalString("day"));
+////        
+////        InternationalString interval2 = new SimpleInternationalString("hour");
+////        final Map<String, Object> properties2 = new HashMap<>();
+////        properties2.put(IdentifiedObject.NAME_KEY, name1);
+////        properties2.put(TemporalCoordinateSystem.INTERVAL_KEY, interval2);
+////        TemporalCoordinateSystem frame2 = new DefaultTemporalCoordinateSystem(properties2, tempdat, null, gc.getTime());
+//////        TemporalCoordinateSystem frame2 = new DefaultTemporalCoordinateSystem(new NamedIdentifier(Citations.CRS, new SimpleInternationalString("Julian calendar")),
+//////                null, gc.getTime(), new SimpleInternationalString("hour"));
+////        temporalCoordinate1 = new DefaultTemporalCoordinate(frame1, IndeterminateValue.NOW, coordinateValue);
+////        temporalCoordinate2 = new DefaultTemporalCoordinate(frame2, IndeterminateValue.AFTER, coordinateValue);
     }
 
     @After

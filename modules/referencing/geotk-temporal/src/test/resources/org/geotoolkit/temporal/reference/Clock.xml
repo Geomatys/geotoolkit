@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<gml:TimeClock xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:gml="http://www.opengis.net/gml/3.2" 
+               xsi:schemaLocation = "http://www.opengis.net/gml/3.2 http://schemas.opengis.net/gml/3.2.1/temporal.xsd"
+               gml:id="crs-referenceSystem-clockid">
+    <gml:identifier codeSpace="CRS">urn:ogc:def:referenceSystem:CRS::Clockid</gml:identifier>
+    <gml:name codeSpace="CRS">Clock</gml:name>
+    <gml:domainOfValidity>Crime of the century</gml:domainOfValidity>
+    <gml:referenceEvent> Clock reference event</gml:referenceEvent>
+    <gml:referenceTime>12:00:00</gml:referenceTime>
+    <gml:utcReference>00:00:00</gml:utcReference>
+</gml:TimeClock>

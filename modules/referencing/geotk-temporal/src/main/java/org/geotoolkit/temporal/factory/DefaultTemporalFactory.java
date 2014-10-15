@@ -19,6 +19,8 @@ package org.geotoolkit.temporal.factory;
 
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import javax.measure.unit.Unit;
 
 import org.geotoolkit.factory.Factory;
@@ -41,9 +43,10 @@ import org.geotoolkit.temporal.reference.DefaultOrdinalEra;
 import org.geotoolkit.temporal.reference.DefaultOrdinalReferenceSystem;
 import org.geotoolkit.temporal.reference.DefaultTemporalCoordinateSystem;
 import org.geotoolkit.temporal.reference.DefaultTemporalReferenceSystem;
+import org.opengis.metadata.Identifier;
 
 import org.opengis.metadata.extent.Extent;
-import org.opengis.metadata.Identifier;
+import org.opengis.referencing.IdentifiedObject;
 import org.opengis.temporal.Calendar;
 import org.opengis.temporal.CalendarDate;
 import org.opengis.temporal.CalendarEra;
@@ -91,7 +94,8 @@ public class DefaultTemporalFactory extends Factory implements TemporalFactory {
      */
     @Override
     public Instant createInstant(final Position instant) {
-        return new DefaultInstant(instant);
+//        return new DefaultInstant(instant); 
+        return null;
     }
 
     /**
@@ -107,7 +111,8 @@ public class DefaultTemporalFactory extends Factory implements TemporalFactory {
      */
     @Override
     public Calendar createCalendar(final Identifier name, final Extent domainOfValidit) {
-        return new DefaultCalendar(name, domainOfValidit);
+//        return new DefaultCalendar(name, domainOfValidit);
+        return null;
     }
 
     /**
@@ -135,7 +140,8 @@ public class DefaultTemporalFactory extends Factory implements TemporalFactory {
     @Override
     public Clock createClock(final Identifier name, final Extent domainOfValidity,
             final InternationalString referenceEvent, final ClockTime referenceTime, final ClockTime utcReference) {
-        return new DefaultClock(name, domainOfValidity, referenceEvent, referenceTime, utcReference);
+//        return new DefaultClock(name, domainOfValidity, referenceEvent, referenceTime, utcReference);
+        return null;
     }
 
     /**
@@ -188,7 +194,7 @@ public class DefaultTemporalFactory extends Factory implements TemporalFactory {
     @Override
     public OrdinalPosition createOrdinalPosition(final TemporalReferenceSystem frame,
             final IndeterminateValue indeterminatePosition, final OrdinalEra ordinalPosition) {
-        return new DefaultOrdinalPosition(frame, indeterminatePosition, ordinalPosition);
+        return new DefaultOrdinalPosition(frame, indeterminatePosition, ordinalPosition); 
     }
 
     /**
@@ -197,7 +203,8 @@ public class DefaultTemporalFactory extends Factory implements TemporalFactory {
     @Override
     public OrdinalReferenceSystem createOrdinalReferenceSystem(final Identifier name,
             final Extent domainOfValidity, final Collection<OrdinalEra> ordinalEraSequence) {
-        return new DefaultOrdinalReferenceSystem(name, domainOfValidity, ordinalEraSequence);
+//        return new DefaultOrdinalReferenceSystem(name, domainOfValidity, ordinalEraSequence);
+        return null;
     }
 
     /**
@@ -225,7 +232,8 @@ public class DefaultTemporalFactory extends Factory implements TemporalFactory {
     @Override
     public TemporalCoordinateSystem createTemporalCoordinateSystem(final Identifier name,
             final Extent domainOfValidity, final Date origin, final InternationalString interval) {
-        return new DefaultTemporalCoordinateSystem(name, domainOfValidity, origin, interval);
+//        return new DefaultTemporalCoordinateSystem(name, domainOfValidity, origin, interval);
+        return null;
     }
 
     /**
@@ -243,7 +251,7 @@ public class DefaultTemporalFactory extends Factory implements TemporalFactory {
     @Override
     public TemporalReferenceSystem createTemporalReferenceSystem(final Identifier name,
             final Extent domainOfValidity) {
-        return new DefaultTemporalReferenceSystem(name, domainOfValidity);
+//        return new DefaultTemporalReferenceSystem(name, domainOfValidity);
+        return null;
     }
-
 }

@@ -22,6 +22,10 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Objects;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlValue;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.opengis.temporal.CalendarDate;
 import org.opengis.temporal.DateAndTime;
@@ -41,23 +45,67 @@ import org.opengis.util.InternationalString;
  * @author Mehdi Sidhoum (Geomatys)
  * @module pending
  */
+@XmlType(name = "timePosition_Type", propOrder = {
+    "date"
+})
+@XmlRootElement(name = "TimePosition")
 public class DefaultPosition implements Position {
 
     /**
      * this object represents one of the data types listed as : Date, Time, DateTime, and TemporalPosition with its subtypes
      */
-    private final Object position;
+    private Object position;
 
     /**
      * An Empty constructor that will be removed later.
-     * This constructor mustn't ber used.
+     * This constructor mustn't be used.
      */
-    public DefaultPosition() {
-        this.position = null;
+    private DefaultPosition() {
+//        this.position = null;
     }
 
     public DefaultPosition(final Date date) {
         this.position = date;
+    }
+    
+    /**
+     * Constructs a new instance initialized with the values from the specified metadata object.
+     * This is a <cite>shallow</cite> copy constructor, since the other metadata contained in the
+     * given object are not recursively copied.
+     *
+     * @param object The Instant to copy values from, or {@code null} if none.
+     *
+     * @see #castOrCopy(Position)
+     */
+    private DefaultPosition(final Position object) {
+        if (object != null) {
+            this.position = object.getDate();
+        }
+    }
+
+    /**
+     * Returns a Geotk implementation with the values of the given arbitrary implementation.
+     * This method performs the first applicable action in the following choices:
+     *
+     * <ul>
+     *   <li>If the given object is {@code null}, then this method returns {@code null}.</li>
+     *   <li>Otherwise if the given object is already an instance of
+     *       {@code DefaultPosition}, then it is returned unchanged.</li>
+     *   <li>Otherwise a new {@code DefaultPosition} instance is created using the
+     *       {@linkplain #DefaultPosition(Position) copy constructor}
+     *       and returned. Note that this is a <cite>shallow</cite> copy operation, since the other
+     *       metadata contained in the given object are not recursively copied.</li>
+     * </ul>
+     *
+     * @param  object The object to get as a Geotk implementation, or {@code null} if none.
+     * @return A Geotk implementation containing the values of the given object (may be the
+     *         given object itself), or {@code null} if the argument was null.
+     */
+    public static DefaultPosition castOrCopy(final Position object) {
+        if (object == null || object instanceof DefaultPosition) {
+            return (DefaultPosition) object;
+        }
+        return new DefaultPosition(object);
     }
 
     /**
@@ -97,6 +145,7 @@ public class DefaultPosition implements Position {
      * @todo all subtypes of TemporalPosition must be implemented.
      */
     @Override
+    @XmlValue
     public Date getDate() {
         if (this.position instanceof Date) {
             return (Date) position;
@@ -161,6 +210,9 @@ public class DefaultPosition implements Position {
         return false;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public int hashCode() {
         int hash = 3;
@@ -168,6 +220,9 @@ public class DefaultPosition implements Position {
         return hash;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder("Position:").append('\n');
