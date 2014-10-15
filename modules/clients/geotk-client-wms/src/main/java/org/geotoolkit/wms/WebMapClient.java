@@ -287,6 +287,8 @@ public class WebMapClient extends AbstractCoverageClient {
             throw new CapabilitiesException("The capabilities document is null.");
         }
 
+        WMSVersion version = WMSVersion.getVersion(this.capabilities.getVersion());
+        Parameters.getOrCreate(WMSClientFactory.VERSION, parameters).setValue(version.getCode());
         return capabilities;
     }
 
