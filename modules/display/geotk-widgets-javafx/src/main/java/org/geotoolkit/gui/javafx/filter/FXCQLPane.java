@@ -17,12 +17,13 @@
 
 package org.geotoolkit.gui.javafx.filter;
 
-import javafx.application.Application;
-import javafx.scene.Scene;
+import javafx.scene.Node;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.web.HTMLEditor;
-import javafx.stage.Stage;
-import org.geotoolkit.gui.javafx.util.FXOptionDialog;
+import org.geotoolkit.cql.CQLException;
+import org.geotoolkit.gui.javafx.contexttree.menu.LayerPropertiesItem;
+import org.geotoolkit.gui.javafx.util.FXDialog;
+import org.geotoolkit.map.MapItem;
+import org.opengis.filter.Filter;
 
 /**
  *
@@ -32,34 +33,19 @@ public class FXCQLPane extends BorderPane {
 
     public FXCQLPane() {
         
-        final HTMLEditor editor = new HTMLEditor();
-        
-        
     }
     
-    public static void main(String[] args) throws Exception {
+    public static Filter show(Node owner, Filter filter, MapItem target) throws CQLException{
+        final FXCQLEditor editor = new FXCQLEditor();
+        editor.setFilter(filter);
         
-        Stage st = new Stage();
-        st.setScene(new Scene(new FXCQLPane()));
+        final FXDialog dialog = new FXDialog();
+        dialog.setContent(editor);
+        dialog.getActions().add(new LayerPropertiesItem.CloseAction(dialog));
+        dialog.setModal(true);
+        dialog.setVisible(owner,true);
         
-        st.show();
-        
-        //new App().launch();
-        
-        
-        
-    }
-    
-    public static class App extends Application{
-
-        @Override
-        public void start(Stage primaryStage) throws Exception {
-            final Scene scene = new Scene(new FXCQLPane());
-                
-                primaryStage.setScene(scene);
-                primaryStage.show();
-        }
-        
+        return editor.getFilter();
     }
     
 }

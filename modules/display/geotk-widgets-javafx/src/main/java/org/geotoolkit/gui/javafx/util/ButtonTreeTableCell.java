@@ -34,10 +34,12 @@ import javafx.scene.layout.Border;
 public class ButtonTreeTableCell<S,T> extends TreeTableCell<S,T> {
     
     private final Function<T,Boolean> visiblePredicate;
+    private final Function<T,T> onAction;
     protected final Button button = new Button();
         
     public ButtonTreeTableCell(boolean decorated, Node graphic, Function<T,Boolean> visiblePredicate, final Function<T,T> onAction){
         this.visiblePredicate = visiblePredicate;
+        this.onAction = onAction;
         button.setGraphic(graphic);
         setGraphic(button);
         
@@ -52,20 +54,18 @@ public class ButtonTreeTableCell<S,T> extends TreeTableCell<S,T> {
             @Override
             public void handle(ActionEvent event) {
                 
-                if(onAction!=null){
-                    if(!isEditing()){
-                        getTreeTableView().edit(getTreeTableRow().getIndex(), getTableColumn());
-                    }
-                    
-                    final T item = getItem();
-                    final T res = onAction.apply(item);
-                    if(!res.equals(item)){
-                        try{
-                            itemProperty().set(res);
-                            commitEdit(res);
-                        }catch(Throwable ex){
-                            ex.printStackTrace();
-                        }
+                if(!isEditing()){
+                    getTreeTableView().edit(getTreeTableRow().getIndex(), getTableColumn());
+                }
+                
+                final T item = getItem();
+                final T res = actionPerformed(item);
+                if(!res.equals(item)){
+                    try{
+                        itemProperty().set(res);
+                        commitEdit(res);
+                    }catch(Throwable ex){
+                        ex.printStackTrace();
                     }
                 }
             }
@@ -73,7 +73,13 @@ public class ButtonTreeTableCell<S,T> extends TreeTableCell<S,T> {
         
     }
 
-
+    public T actionPerformed(T candidate){
+        if(onAction!=null){
+            return onAction.apply(candidate);
+        }
+        return candidate;
+    } 
+    
     @Override
     public void commitEdit(T newValue) {
         super.commitEdit(newValue);

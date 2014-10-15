@@ -19,7 +19,6 @@ package org.geotoolkit.gui.javafx.filter;
 
 import java.util.Collection;
 import java.util.Collections;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.Node;
 import javafx.scene.layout.BorderPane;
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -102,7 +101,7 @@ public class FXCQLEditor extends BorderPane {
                 Token tokenEnd = prc.getStop();
                 if(tokenEnd==null) tokenEnd = tokenStart;
                 final int offset = tokenStart.getStartIndex();
-                final int end = tokenEnd.getStopIndex()+1;
+                final int end = tokenEnd.getStopIndex();
                 codeArea.setStyle(offset, end,STYLE_ERROR);
                 return;
             }
