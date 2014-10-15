@@ -411,8 +411,11 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
                             //raise the original error
                             monitor.exceptionOccured(ex, Level.WARNING);
                         }
+                    } else {
+                        //plenty of errors can happen when painting an image
+                        monitor.exceptionOccured(ex, Level.WARNING);
                     }
-                }else{
+                } else {
                     //plenty of errors can happen when painting an image
                     monitor.exceptionOccured(ex, Level.WARNING);
                 }
