@@ -520,7 +520,8 @@ public class LargeRenderedImage implements RenderedImage, Disposable {
             }
             return wr;
         }
-        throw new UnsupportedOperationException("Not supported yet.");
+        throw new UnsupportedOperationException(String.format("Image width/height exceed max size (%d/%d).",
+                RASTER_MAX_SIZE.width, RASTER_MAX_SIZE.height));
     }
 
     /**
@@ -565,7 +566,8 @@ public class LargeRenderedImage implements RenderedImage, Disposable {
             }
             return wr;
         }
-        throw new UnsupportedOperationException("Not supported yet.");
+        throw new UnsupportedOperationException(String.format("Image width/height exceed max size (%d/%d).",
+                RASTER_MAX_SIZE.width, RASTER_MAX_SIZE.height));
     }
 
     /**
