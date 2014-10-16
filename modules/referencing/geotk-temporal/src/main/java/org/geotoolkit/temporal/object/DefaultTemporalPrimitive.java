@@ -46,6 +46,18 @@ public abstract class DefaultTemporalPrimitive extends AbstractIdentifiedObject 
 //        
 //    }
     
+//    /**
+//     * Constructs a new instance initialized with the values from the specified metadata object.
+//     * This is a <cite>shallow</cite> copy constructor, since the other metadata contained in the
+//     * given object are not recursively copied.
+//     *
+//     * @param object The Instant to copy values from, or {@code null} if none.
+//     *
+//     * @see #castOrCopy(TemporalGeometricPrimitive)
+//     */
+//    protected DefaultTemporalPrimitive(final TemporalPrimitive object) {
+//        super((Map) null);
+//    }
 
     /**
      * Returns a value for relative position which are provided by the enumerated data type TM_RelativePosition 

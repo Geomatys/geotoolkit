@@ -22,11 +22,16 @@ import org.geotoolkit.temporal.object.DefaultPosition;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import org.apache.sis.referencing.NamedIdentifier;
+import org.geotoolkit.metadata.Citations;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.opengis.temporal.Instant;
 import static org.junit.Assert.*;
+import org.opengis.referencing.IdentifiedObject;
 import org.opengis.temporal.Period;
 import org.opengis.temporal.Position;
 
@@ -45,13 +50,19 @@ public class DefaultInstantTest {
 
     @Before
     public void setUp() {
-
-//        cal.set(2000, 1, 1);
-//        position1 = new DefaultPosition(cal.getTime());
-//        cal.set(1998, 1, 1);
-//        position2 = new DefaultPosition(cal.getTime());
-//        instant1 = new DefaultInstant(position1);
-//        instant2 = new DefaultInstant(position2);
+        NamedIdentifier name1 = new NamedIdentifier(Citations.CRS, "position 1");
+        final Map<String, Object> properties1 = new HashMap<>();
+        properties1.put(IdentifiedObject.NAME_KEY, name1);
+        cal.set(2000, 1, 1);
+        position1 = new DefaultPosition(cal.getTime());
+        
+        NamedIdentifier name2 = new NamedIdentifier(Citations.CRS, "position 2");
+        final Map<String, Object> properties2 = new HashMap<>();
+        properties2.put(IdentifiedObject.NAME_KEY, name2);
+        cal.set(1998, 1, 1);
+        position2 = new DefaultPosition(cal.getTime());
+        instant1  = new DefaultInstant(properties1, position1);
+        instant2  = new DefaultInstant(properties2, position2);
     }
 
     @After

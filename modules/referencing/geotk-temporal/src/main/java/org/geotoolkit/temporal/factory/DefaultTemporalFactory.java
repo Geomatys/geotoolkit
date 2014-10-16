@@ -86,7 +86,8 @@ public class DefaultTemporalFactory extends Factory implements TemporalFactory {
      */
     @Override
     public Period createPeriod(final Instant begin, final Instant end) {
-        return new DefaultPeriod(begin, end);
+//        return new DefaultPeriod(begin, end);
+        return null;
     }
 
     /**

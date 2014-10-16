@@ -49,15 +49,15 @@ public class DefaultClockTimeTest {
 
     @Before
     public void setUp() {
-////        NamedIdentifier name = new NamedIdentifier(Citations.CRS, "Gregorian calendar");
-////        final Map<String, Object> properties = new HashMap<>();
-////        properties.put(IdentifiedObject.NAME_KEY, name);
-////        TemporalDatum tempdat = CommonCRS.Temporal.UNIX.datum();
-////        TemporalReferenceSystem frame = new DefaultTemporalReferenceSystem(properties, tempdat, null); 
-////        Number[] clck1 = {8, 16, 25};
-////        Number[] clck2 = {15, 55, 1};
-////        clockTime1 = new DefaultClockTime(frame, null, clck1);
-////        clockTime2 = new DefaultClockTime(frame, null, clck2);
+        NamedIdentifier name = new NamedIdentifier(Citations.CRS, "Gregorian calendar");
+        final Map<String, Object> properties = new HashMap<>();
+        properties.put(IdentifiedObject.NAME_KEY, name);
+        TemporalDatum tempdat = CommonCRS.Temporal.UNIX.datum();
+        TemporalReferenceSystem frame = new DefaultTemporalReferenceSystem(properties); 
+        Number[] clck1 = {8, 16, 25};
+        Number[] clck2 = {15, 55, 1};
+        clockTime1 = new DefaultClockTime(frame, null, clck1);
+        clockTime2 = new DefaultClockTime(frame, null, clck2);
     }
 
     @After

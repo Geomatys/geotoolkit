@@ -22,12 +22,9 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 import javax.measure.quantity.Duration;
 import javax.measure.unit.NonSI;
-import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.apache.sis.util.iso.SimpleInternationalString;
@@ -38,7 +35,6 @@ import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.temporal.object.DefaultCalendarDate;
 import org.geotoolkit.temporal.object.DefaultDateAndTime;
 import org.geotoolkit.temporal.object.DefaultJulianDate;
-import org.opengis.metadata.Identifier;
 import org.opengis.referencing.IdentifiedObject;
 import org.opengis.temporal.Calendar;
 import org.opengis.temporal.CalendarDate;
@@ -51,14 +47,12 @@ import org.opengis.referencing.datum.TemporalDatum;
 import org.opengis.temporal.DateAndTime;
 import org.opengis.temporal.TemporalCoordinateSystem;
 import org.opengis.temporal.TemporalReferenceSystem;
-import org.opengis.util.InternationalString;
 
 /**
  * A discrete temporal reference system that provides a
  * basis for defining temporal position to a resolution of one day.
  *
  * @author Mehdi Sidhoum (Geomatys)
- * @module pending
  * @version 4.0
  * @since   4.0
  * @see TemporalReferenceSystem
@@ -205,7 +199,7 @@ public class DefaultCalendar extends DefaultTemporalReferenceSystem implements C
         
         final Map<String, Object> properties = new HashMap<>();
         final NamedIdentifier name = new NamedIdentifier(Citations.CRS, new SimpleInternationalString("Julian calendar"));
-        final InternationalString interval = new SimpleInternationalString("day");
+//        final InternationalString interval = new SimpleInternationalString("day");
         properties.put(IdentifiedObject.NAME_KEY, name);
 //        properties.put(TemporalCoordinateSystem.INTERVAL_KEY, interval);
         final TemporalCoordinateSystem refSystem = new DefaultTemporalCoordinateSystem(properties, NonSI.DAY, gc.getTime());
@@ -387,9 +381,10 @@ public class DefaultCalendar extends DefaultTemporalReferenceSystem implements C
     public Clock getClock() {
          return timeBasis;
     }
-
-    @Override
-    public Set<Identifier> getIdentifiers() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
+//
+//    @Override
+//    public Set<Identifier> getIdentifiers() {
+//        super.get
+//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+//    }
 }

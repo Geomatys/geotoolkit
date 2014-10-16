@@ -47,19 +47,19 @@ public class DefaultCalendarDateTest {
 
     @Before
     public void setUp() {
-////        NamedIdentifier name = new NamedIdentifier(Citations.CRS, "Gregorian calendar");
-////        final Map<String, Object> properties = new HashMap<>();
-////        properties.put(IdentifiedObject.NAME_KEY, name);
-////        TemporalDatum tempdat = CommonCRS.Temporal.UNIX.datum();
-////        TemporalReferenceSystem frame = new DefaultTemporalReferenceSystem(properties, tempdat, null); 
-////        
-////        
-//////        TemporalReferenceSystem frame = new DefaultTemporalReferenceSystem(name, null);
-////        int[] cal1 = {1981, 6, 25};
-////        int[] cal2 = {2000, 1, 1};
-////        InternationalString cal_era = new SimpleInternationalString("Cenozoic");
-////        calendarDate1 = new DefaultCalendarDate(frame, null, cal_era, cal1);
-////        calendarDate2 = new DefaultCalendarDate(frame, null, cal_era, cal2);
+        NamedIdentifier name = new NamedIdentifier(Citations.CRS, "Gregorian calendar");
+        final Map<String, Object> properties = new HashMap<>();
+        properties.put(IdentifiedObject.NAME_KEY, name);
+        TemporalDatum tempdat = CommonCRS.Temporal.UNIX.datum();
+        TemporalReferenceSystem frame = new DefaultTemporalReferenceSystem(properties); 
+        
+        
+//        TemporalReferenceSystem frame = new DefaultTemporalReferenceSystem(name, null);
+        int[] cal1 = {1981, 6, 25};
+        int[] cal2 = {2000, 1, 1};
+        InternationalString cal_era = new SimpleInternationalString("Cenozoic");
+        calendarDate1 = new DefaultCalendarDate(frame, null, cal_era, cal1);
+        calendarDate2 = new DefaultCalendarDate(frame, null, cal_era, cal2);
     }
 
     @After

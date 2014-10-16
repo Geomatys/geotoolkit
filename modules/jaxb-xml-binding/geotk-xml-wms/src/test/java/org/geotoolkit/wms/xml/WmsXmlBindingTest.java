@@ -70,10 +70,14 @@ import org.opengis.metadata.quality.ConformanceResult;
 import org.opengis.temporal.Period;
 import javax.xml.bind.JAXBContext;
 import org.apache.sis.internal.jaxb.LegacyNamespaces;
+import org.apache.sis.referencing.NamedIdentifier;
 
 import static org.apache.sis.test.TestUtilities.getSingleton;
 
 import static org.apache.sis.test.Assert.*;
+import org.geotoolkit.temporal.object.DefaultInstant;
+import org.geotoolkit.temporal.object.DefaultPosition;
+import org.opengis.referencing.IdentifiedObject;
 
 
 /**
@@ -267,8 +271,13 @@ public class WmsXmlBindingTest {
         DefaultExtent extent = new DefaultExtent();
         DefaultTemporalExtent tempExt = new DefaultTemporalExtent();
         DefaultPeriod period = new DefaultPeriod();
-        period.setBegining(new Date(120000000));
-        period.setEnding(new Date(120000001));
+        
+        NamedIdentifier name = new NamedIdentifier(Citations.CRS, "period");
+        final Map<String, Object> properties = new HashMap<>();
+        properties.put(IdentifiedObject.NAME_KEY, name);
+        
+        period.setBegining(new DefaultInstant(properties, new DefaultPosition(new Date(120000000))));
+        period.setEnding(new DefaultInstant(properties, new DefaultPosition(new Date(120000001))));
 
 //      org.apache.sis.internal.jaxb.gml.GMLAdapter.IDs.setUUID(period, "extent");
         tempExt.setExtent(period);
@@ -594,8 +603,15 @@ public class WmsXmlBindingTest {
         DefaultExtent extent = new DefaultExtent();
         DefaultTemporalExtent tempExt = new DefaultTemporalExtent();
         DefaultPeriod period = new DefaultPeriod();
-        period.setBegining(new Date(120000000));
-        period.setEnding(new Date(120001000));
+        
+        NamedIdentifier name = new NamedIdentifier(Citations.CRS, "period");
+        final Map<String, Object> properties = new HashMap<>();
+        properties.put(IdentifiedObject.NAME_KEY, name);
+        
+        period.setBegining(new DefaultInstant(properties, new DefaultPosition(new Date(120000000))));
+        period.setEnding(new DefaultInstant(properties, new DefaultPosition(new Date(120000001))));
+        
+        
         tempExt.setExtent(period);
         extent.setTemporalElements(Arrays.asList(tempExt));
         ext.setTemporalRefererence(extent);

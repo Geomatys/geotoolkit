@@ -64,6 +64,7 @@ import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.AbstractCoordinateOperationFactory;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
+import org.geotoolkit.image.interpolation.ResampleBorderComportement;
 import org.geotoolkit.referencing.operation.transform.DimensionFilter;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.BufferedImageUtilities;
@@ -463,8 +464,6 @@ public class ResampleProcess extends AbstractProcess {
             return create(sourceCoverage, targetImage, targetGG, finalView, hints);
         }
 
-<<<<<<< Updated upstream
-=======
         //try to optimize resample using java wrap operation
 //        if(canUseJavaInterpolation(sourceImage, allSteps2D, interpolationType)){
 //            allSteps2D = PixelTranslation.translate(allSteps2D, PixelOrientation.CENTER,PixelOrientation.UPPER_LEFT,0,1);
@@ -504,17 +503,12 @@ public class ResampleProcess extends AbstractProcess {
 //            }
 //        }
 
->>>>>>> Stashed changes
         final double[] fillValue = getFillValue(sourceCoverage);
 
-        final Interpolation interpolator = Interpolation.create(
-                PixelIteratorFactory.createDefaultIterator(sourceImage,sourceBB), interpolationType, 2);
-<<<<<<< Updated upstream
-        final Resample resample = new Resample(allSteps2D, targetImage,
-=======
-         final Resample resample = new Resample(targetToSource, targetImage,
->>>>>>> Stashed changes
-                interpolator, fillValue);
+//        final Interpolation interpolator = Interpolation.create(
+//                PixelIteratorFactory.createDefaultIterator(sourceImage,sourceBB), interpolationType, 2);
+         final Resample resample = new Resample(targetToSource, targetImage, sourceImage,
+                interpolationType, ResampleBorderComportement.EXTRAPOLATION, fillValue);
         resample.fillImage();
 
         return create(sourceCoverage, targetImage, targetGG, finalView, hints);

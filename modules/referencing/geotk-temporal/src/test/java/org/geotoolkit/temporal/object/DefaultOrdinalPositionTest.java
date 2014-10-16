@@ -51,25 +51,25 @@ public class DefaultOrdinalPositionTest {
 
     @Before
     public void setUp() {
-////        NamedIdentifier name = new NamedIdentifier(Citations.CRS, "Gregorian calendar");
-////        final Map<String, Object> properties = new HashMap<>();
-////        properties.put(IdentifiedObject.NAME_KEY, name);
-////        TemporalDatum tempdat = CommonCRS.Temporal.UNIX.datum();
-////        TemporalReferenceSystem frame = new DefaultTemporalReferenceSystem(properties, tempdat, null); 
-//////        TemporalReferenceSystem frame = new DefaultTemporalReferenceSystem(name, null);
-////        
-////        cal.set(500, 0, 1);
-////        Date beginning1 = cal.getTime();
-////        cal.set(1000, 0, 1);
-////        Date end1 = cal.getTime();
-////        OrdinalEra ordinalEra1 = new DefaultOrdinalEra(new SimpleInternationalString("Mesozoic"), beginning1, end1);
-////        cal.set(1000, 1, 1);
-////        Date beginning2 = cal.getTime();
-////        cal.set(2000, 0, 1);
-////        Date end2 = cal.getTime();
-////        OrdinalEra ordinalEra2 = new DefaultOrdinalEra(new SimpleInternationalString("Cenozoic"), beginning2, end2);
-////        ordinalPosition1 = new DefaultOrdinalPosition(frame, IndeterminateValue.UNKNOWN, ordinalEra1);
-////        ordinalPosition2 = new DefaultOrdinalPosition(frame, IndeterminateValue.AFTER, ordinalEra2);
+        NamedIdentifier name = new NamedIdentifier(Citations.CRS, "Gregorian calendar");
+        final Map<String, Object> properties = new HashMap<>();
+        properties.put(IdentifiedObject.NAME_KEY, name);
+        TemporalDatum tempdat = CommonCRS.Temporal.UNIX.datum();
+        TemporalReferenceSystem frame = new DefaultTemporalReferenceSystem(properties); 
+//        TemporalReferenceSystem frame = new DefaultTemporalReferenceSystem(name, null);
+        
+        cal.set(500, 0, 1);
+        Date beginning1 = cal.getTime();
+        cal.set(1000, 0, 1);
+        Date end1 = cal.getTime();
+        OrdinalEra ordinalEra1 = new DefaultOrdinalEra(new SimpleInternationalString("Mesozoic"), beginning1, end1);
+        cal.set(1000, 1, 1);
+        Date beginning2 = cal.getTime();
+        cal.set(2000, 0, 1);
+        Date end2 = cal.getTime();
+        OrdinalEra ordinalEra2 = new DefaultOrdinalEra(new SimpleInternationalString("Cenozoic"), beginning2, end2);
+        ordinalPosition1 = new DefaultOrdinalPosition(frame, IndeterminateValue.UNKNOWN, ordinalEra1);
+        ordinalPosition2 = new DefaultOrdinalPosition(frame, IndeterminateValue.AFTER, ordinalEra2);
     }
 
     @After
@@ -92,14 +92,14 @@ public class DefaultOrdinalPositionTest {
      */
     @Test
     public void testSetOrdinalPosition() {
-//        OrdinalEra result = ordinalPosition1.getOrdinalPosition();
-//        cal.set(10, 0, 0);
-//        Date beginning = cal.getTime();
-//        cal.set(2012, 12, 23);
-//        Date end = cal.getTime();
-//        OrdinalEra ordinalEra = new DefaultOrdinalEra(new SimpleInternationalString("Era"), beginning, end);
-//        ((DefaultOrdinalPosition) ordinalPosition1).setOrdinalPosition(ordinalEra);
-//        assertFalse(ordinalPosition1.getOrdinalPosition().equals(result));
+        OrdinalEra result = ordinalPosition1.getOrdinalPosition();
+        cal.set(10, 0, 0);
+        Date beginning = cal.getTime();
+        cal.set(2012, 12, 23);
+        Date end = cal.getTime();
+        OrdinalEra ordinalEra = new DefaultOrdinalEra(new SimpleInternationalString("Era"), beginning, end);
+        ((DefaultOrdinalPosition) ordinalPosition1).setOrdinalPosition(ordinalEra);
+        assertFalse(ordinalPosition1.getOrdinalPosition().equals(result));
     }
 
     /**
