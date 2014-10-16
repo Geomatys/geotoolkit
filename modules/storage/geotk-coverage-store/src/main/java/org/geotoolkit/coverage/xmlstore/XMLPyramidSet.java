@@ -63,7 +63,7 @@ public class XMLPyramidSet extends AbstractPyramidSet{
     public String getFormatName() {
         final String format = ref.getPreferredFormat();
         if(format!=null && !format.isEmpty()) return format;
-        return ref.getPackMode().equals(ViewType.GEOPHYSICS) ? "PostGISWKBraster" : "PNG";
+        return ref.getPackMode().equals(ViewType.GEOPHYSICS) ? "TIFF" : "PNG";
     }
 
     public XMLCoverageReference getRef() {
