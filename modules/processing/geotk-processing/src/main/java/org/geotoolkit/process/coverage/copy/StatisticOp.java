@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.process.coverage.copy;
 
+import java.awt.*;
+import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
 import java.util.Arrays;
@@ -23,8 +25,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.geotoolkit.coverage.CoverageUtilities;
-import org.geotoolkit.coverage.GridSampleDimension;
+import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.coverage.*;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.ViewType;
@@ -52,7 +54,12 @@ public class StatisticOp{
 
     public static final String MINIMUM = "min";
     public static final String MAXIMUM = "max";
-    
+
+    private static class Analysis {
+        double[] min;
+        double[] max;
+    }
+
     private StatisticOp(){
     }
 
@@ -116,6 +123,7 @@ public class StatisticOp{
 
             final GridCoverageReadParam readParam = new GridCoverageReadParam();
             readParam.setEnvelope(CRS.transform(gridToCRS, sliceExtent));
+            readParam.setDeferred(true);
             readParam.setCoordinateReferenceSystem(crs);
 
             final GridCoverage coverage = reader.read(imageIndex, readParam);
@@ -166,8 +174,9 @@ public class StatisticOp{
      * Each Entry have a name ("min", "max") and values are an double[] for each bands.
      */
     public static Map<String,Object> analyze(RenderedImage image, double[][] noData) {
-        final Map<String,Object> analyze = new HashMap<>();
-        if(noData !=null){
+
+        final Map<String,Object> analysisMap = new HashMap<>();
+        if (noData != null) {
             noData = noData.clone();
             for (double[] d : noData) {
                 Arrays.sort(d);
@@ -180,20 +189,70 @@ public class StatisticOp{
         double[] max = new double[nbBands];
         Arrays.fill(min, Double.MAX_VALUE);
         Arrays.fill(max, Double.MIN_VALUE);
-        
-        int b = 0;        
-        final PixelIterator pix = PixelIteratorFactory.createDefaultIterator(image);
+
+        // image from PyramidalCoverage
+        if (image instanceof GridMosaicRenderedImage) {
+            final GridMosaicRenderedImage mosaicImage = (GridMosaicRenderedImage) image;
+            final GridMosaic gridMosaic = mosaicImage.getGridMosaic();
+            final Dimension gridSize = gridMosaic.getGridSize();
+
+            int startX = 0;
+            int startY = 0;
+            int endX = gridSize.width;
+            int endY = gridSize.height;
+
+            final Rectangle dataArea = gridMosaic.getDataArea();
+            if (dataArea != null) {
+                startX = dataArea.x;
+                startY = dataArea.y;
+                endX = dataArea.x + dataArea.width;
+                endY = dataArea.y + dataArea.height;
+            }
+
+            for (int y = startY; y < endY; y++) {
+                for (int x = startX; x < endX; x++) {
+                    if (!gridMosaic.isMissing(x,y)) {
+                        Raster tile = mosaicImage.getTile(x, y);
+                        Analysis analysis = analyze(tile, noData, nbBands);
+                        for (int b = 0; b < nbBands; b++) {
+                            min[b] = Math.min(min[b], analysis.min[b]);
+                            max[b] = Math.max(max[b], analysis.max[b]);
+                        }
+                    }
+                }
+            }
+
+        } else {
+            //standard image
+            Raster data = image.getData();
+            Analysis analysis = analyze(data, noData, nbBands);
+            for (int b = 0; b < nbBands; b++) {
+                min[b] = Math.min(min[b], analysis.min[b]);
+                max[b] = Math.max(max[b], analysis.max[b]);
+            }
+        }
+
+        analysisMap.put(MINIMUM, min);
+        analysisMap.put(MAXIMUM, max);
+        return analysisMap;
+    }
+
+    private static Analysis analyze(Raster raster, double[][] noData, int nbBands) {
+        Analysis analysis = new Analysis();
+        analysis.min = new double[nbBands];
+        analysis.max = new double[nbBands];
+
+        int b = 0;
+        final PixelIterator pix = PixelIteratorFactory.createDefaultIterator(raster);
         while (pix.next()) {
             final double d = pix.getSampleDouble();
-            if (!Double.isNaN(d) && (noData==null || !(Arrays.binarySearch(noData[b],d)>=0)) ) {
-                min[b] = Math.min(min[b], d);
-                max[b] = Math.max(max[b], d);
+            if (!Double.isNaN(d) && (noData == null || !(Arrays.binarySearch(noData[b], d) >= 0))) {
+                analysis.min[b] = Math.min(analysis.min[b], d);
+                analysis.max[b] = Math.max(analysis.max[b], d);
             }
-            if (++b == nbBands) b = 0; 
+            if (++b == nbBands) b = 0;
         }
-        analyze.put(MINIMUM, min);
-        analyze.put(MAXIMUM, max);
-        return analyze;
+        return analysis;
     }
 
 }

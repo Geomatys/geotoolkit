@@ -53,6 +53,16 @@ public class Statistics extends AbstractProcess{
         return params;
     }
 
+    /**
+     * Run Statistics process and return ImageStatistics
+     * @return ImageStatistics
+     * @throws ProcessException
+     */
+    public ImageStatistics analyse() throws ProcessException {
+        execute();
+        return value(OUTCOVERAGE, outputParameters);
+    }
+
     @Override
     protected void execute() throws ProcessException {
         GridCoverage2D coverage = value(COVERAGE, inputParameters);
