@@ -16,8 +16,7 @@
  */
 package org.geotoolkit.wmsc.model;
 
-import java.awt.Dimension;
-import java.awt.Point;
+import java.awt.*;
 import java.util.Collection;
 import java.util.Map;
 import java.util.UUID;
@@ -144,4 +143,8 @@ public class WMSCMosaic implements GridMosaic{
         return ((WMSCPyramidSet)getPyramid().getPyramidSet()).getTiles(this, positions, hints);
     }
 
+    @Override
+    public Rectangle getDataArea() {
+        return new Rectangle(0,0, gridSize.width, gridSize.height);
+    }
 }

@@ -16,8 +16,7 @@
  */
 package org.geotoolkit.wmts.model;
 
-import java.awt.Dimension;
-import java.awt.Point;
+import java.awt.*;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -170,5 +169,9 @@ public class WMTSMosaic implements GridMosaic{
         if(!hints.containsKey(PyramidSet.HINT_FORMAT)) hints.put(PyramidSet.HINT_FORMAT,"image/png");
         return ((WMTSPyramidSet)getPyramid().getPyramidSet()).getTiles(this, positions, hints);
     }
-    
+
+    @Override
+    public Rectangle getDataArea() {
+        return new Rectangle(0,0, getGridSize().width, getGridSize().height);
+    }
 }

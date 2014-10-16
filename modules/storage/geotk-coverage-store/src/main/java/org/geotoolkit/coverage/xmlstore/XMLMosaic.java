@@ -362,6 +362,41 @@ public class XMLMosaic implements GridMosaic {
         return tile;
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public Rectangle getDataArea() {
+        final File folder = getFolder();
+        final String[] tileFiles = folder.list();
+        if (tileFiles != null && tileFiles.length > 0) {
+
+            Point start = new Point(gridWidth, gridHeight);
+            Point end = new Point(0, 0);
+            Point currPos;
+            for (int i = 0; i < tileFiles.length; i++) {
+                currPos = parsePosition(tileFiles[i]);
+                start.x = Math.min(start.x, currPos.x);
+                start.y = Math.min(start.y, currPos.y);
+                end.x = Math.max(end.x, currPos.x);
+                end.y = Math.max(end.y, currPos.y);
+            }
+
+            assert end.x >= start.x;
+            assert end.y >= start.y;
+
+            return new Rectangle(start.x, start.y, end.x - start.x, end.y - start.y);
+        }
+        return null;
+    }
+
+    private Point parsePosition(String tileFile) {
+        int start = tileFile.lastIndexOf('/') + 1;
+        String posStr = tileFile.substring(start, tileFile.lastIndexOf('.'));
+        String[] split = posStr.split("_");
+        return new Point(Integer.valueOf(split[1]), Integer.valueOf(split[0]));
+    }
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder(Classes.getShortClassName(this));

@@ -28,6 +28,7 @@ import java.util.logging.Logger;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.collection.Cache;
+import org.geotoolkit.image.io.mosaic.Tile;
 import org.geotoolkit.math.XMath;
 
 /**
@@ -104,31 +105,18 @@ public class GridMosaicRenderedImage implements RenderedImage {
         if (colorModel == null && sampleModel == null) {
             try {
                 //search the first non missing tile of the Mosaic
-                TileReference tile = null;
+                final Rectangle dataArea = mosaic.getDataArea();
+                if (dataArea != null) {
 
-                exitLoop:
-                if (tile == null) {
-                    final Dimension gridSize = this.mosaic.getGridSize();
-                    for (int y = 0; y < gridSize.height; y++) {
-                        for (int x = 0; x < gridSize.width; x++) {
-                            if (mosaic.isMissing(x, y)) {
-                                continue;
-                            } else {
-                                tile = mosaic.getTile(x, y, null);
-                                break exitLoop;
-                            }
+                    final TileReference tile = mosaic.getTile(dataArea.x, dataArea.y, null);
+                    if (tile != null) {
+                        if (tile.getInput() instanceof RenderedImage) {
+                            firstTile = (RenderedImage) tile.getInput();
+                        } else {
+                            final ImageReader reader = tile.getImageReader();
+                            firstTile = reader.read(0);
+                            reader.dispose();
                         }
-                    }
-                }
-
-                if (tile != null) {
-
-                    if (tile.getInput() instanceof RenderedImage) {
-                        firstTile = (RenderedImage) tile.getInput();
-                    } else {
-                        final ImageReader reader = tile.getImageReader();
-                        firstTile = reader.read(0);
-                        reader.dispose();
                     }
                 }
             } catch (IOException e) {

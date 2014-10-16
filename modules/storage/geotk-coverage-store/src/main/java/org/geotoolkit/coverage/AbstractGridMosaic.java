@@ -16,8 +16,7 @@
  */
 package org.geotoolkit.coverage;
 
-import java.awt.Dimension;
-import java.awt.Point;
+import java.awt.*;
 import java.util.Collection;
 import java.util.Map;
 import java.util.UUID;
@@ -74,36 +73,57 @@ public abstract class AbstractGridMosaic implements GridMosaic{
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getId() {
         return id;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Pyramid getPyramid() {
         return pyramid;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public DirectPosition getUpperLeftCorner() {
         return new GeneralDirectPosition(upperLeft); //defensive copy
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Dimension getGridSize() {
         return (Dimension) gridSize.clone(); //defensive copy
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Dimension getTileSize() {
         return (Dimension) tileSize.clone(); //defensive copy
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public double getScale() {
         return scale;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Envelope getEnvelope(final int col, final int row) {
         final GeneralDirectPosition ul = new GeneralDirectPosition(getUpperLeftCorner());
@@ -121,6 +141,9 @@ public abstract class AbstractGridMosaic implements GridMosaic{
         return envelope;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Envelope getEnvelope() {
         final GeneralDirectPosition ul = new GeneralDirectPosition(getUpperLeftCorner());
@@ -138,15 +161,55 @@ public abstract class AbstractGridMosaic implements GridMosaic{
         return envelope;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean isMissing(int col, int row) {
         return false;
     }
 
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public BlockingQueue<Object> getTiles(Collection<? extends Point> positions, Map hints) throws DataStoreException{
         return getTiles(this, positions, hints);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Rectangle getDataArea() {
+
+        Point start = null;
+        for (int y = 0; y < gridSize.height; y++) {
+            for (int x = 0; x < gridSize.width; x++) {
+                if (!isMissing(x,y)) {
+                    start = new Point(x,y);
+                }
+            }
+        }
+
+        if (start != null) {
+            Point end = new Point(gridSize.width, gridSize.height);
+            for (int y = gridSize.height; y > start.y; y--) {
+                for (int x = gridSize.width; x > start.x; x--) {
+                    if (!isMissing(x, y)) {
+                        end = new Point(x, y);
+                    }
+                }
+            }
+
+            assert end.x >= start.x;
+            assert end.y >= start.y;
+
+            return new Rectangle(start.x, start.y, end.x - start.x, end.y - start.y);
+        } else {
+            //all mosaic tiles are missing
+            return null;
+        }
     }
 
     @Override

@@ -16,8 +16,7 @@
  */
 package org.geotoolkit.coverage;
 
-import java.awt.Dimension;
-import java.awt.Point;
+import java.awt.*;
 import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
@@ -123,5 +122,15 @@ public interface GridMosaic {
      * @throws DataStoreException 
      */
     BlockingQueue<Object> getTiles(Collection<? extends Point> positions, Map hints) throws DataStoreException;
-    
+
+    /**
+     * Method to optimize mosaic browsing by returning a {@link java.awt.Rectangle} of where data are.
+     * This rectangle can contain all grid or a part of it, but it shouldn't never exceed grid size.
+     * It can also be {@code null} if mosaic is empty.
+     *
+     * @return {@link java.awt.Rectangle} of data area or null if all
+     * tiles of the mosaic are missing.
+     */
+    Rectangle getDataArea();
+
 }
