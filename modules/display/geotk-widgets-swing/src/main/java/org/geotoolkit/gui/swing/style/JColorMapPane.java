@@ -104,7 +104,7 @@ import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.LayerListener;
 import org.geotoolkit.map.MapItem;
 import org.geotoolkit.map.MapLayer;
-import org.geotoolkit.process.coverage.copy.StatisticOp;
+import org.geotoolkit.process.coverage.statistics.StatisticOp;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;

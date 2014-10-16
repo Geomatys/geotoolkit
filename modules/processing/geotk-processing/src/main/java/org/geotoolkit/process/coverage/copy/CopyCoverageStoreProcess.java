@@ -60,6 +60,7 @@ import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessException;
 import static org.geotoolkit.process.coverage.copy.CopyCoverageStoreDescriptor.*;
 import org.geotoolkit.process.coverage.reducetodomain.ReduceToDomainDescriptor;
+import org.geotoolkit.process.coverage.statistics.StatisticOp;
 import org.geotoolkit.process.coverage.straighten.StraightenDescriptor;
 import org.geotoolkit.referencing.cs.DiscreteCoordinateSystemAxis;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
