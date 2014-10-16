@@ -112,6 +112,9 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
         this.set                = ref.set;
         this.packMode           = ref.packMode;
         this.sampleDimensions   = ref.sampleDimensions;
+        this.preferredFormat    = ref.preferredFormat;
+        this.sampleType         = ref.sampleType;
+        this.numDimension       = ref.numDimension;
         this.set.setRef(this);
     }
 
