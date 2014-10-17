@@ -169,6 +169,30 @@ public final class DomUtilities extends Static {
 
     }
 
+    /**
+     * Search and return the list node with a given tag name.
+     *
+     * @param parent : node to explore
+     * @param tagName : child node name
+     * @param recursive : search in sub nodes or not
+     * @return first element with tagName in parent node or null
+     */
+    public static List<Element> getListElementsNonRecusive(final Element parent, final String tagName){
+
+
+            final NodeList lst = parent.getChildNodes();
+
+            List<Element> result = new ArrayList<Element>();
+            for(int i=0,n=lst.getLength();i<n;i++){
+                final Node child = lst.item(i);
+                if(child instanceof Element && tagName.equalsIgnoreCase(child.getLocalName())){
+                    result.add((Element) child);
+                }
+            }
+            return result;
+
+    }
+
 
 
     /**
@@ -245,6 +269,26 @@ public final class DomUtilities extends Static {
         if(text == null) return null;
         return ObjectConverters.convert(text, clazz);
     }
+    
+    /**
+     * Search a child node with the given tag name and return it's text attribute
+     * converted to the given clazz.
+     * The convertion in made using the geotoolkit Converters.
+     *
+     * @param <T> : wished value class
+     * @param parent : node to explore
+     * @param tagName : child node name
+     * @param attributeName : child node attibute name
+     * @param clazz : wished value class
+     * @return T or null if no node with tagname was found or convertion to given class failed.
+     */
+    public static <T> T textAttributeValue(final Element parent, final String tagName,final String attributeName, final Class<T> clazz, boolean recursive) throws UnconvertibleObjectException{
+        final Element ele = firstElement(parent, tagName, recursive);
+        if(ele == null) return null;
+        final String text = ele.getAttribute(attributeName);
+        if(text == null) return null;
+        return ObjectConverters.convert(text, clazz);
+    }
 
     /**
      * Same as {@link DomUtilities#textValue(org.w3c.dom.Element, java.lang.String, java.lang.Class) }
@@ -279,6 +323,19 @@ public final class DomUtilities extends Static {
     public static <T> T textAttributeValueSafe(final Element parent, final String tagName, final String attributeName, final Class<T> clazz) {
         try {
             return textAttributeValue(parent, tagName,attributeName,  clazz);
+        } catch (UnconvertibleObjectException ex) {
+            Logger.getLogger(DomUtilities.class.getName()).log(Level.WARNING, null, ex);
+            return null;
+        }
+    }
+    
+    /**
+     * Same as {@link DomUtilities#textAttributeValue(org.w3c.dom.Element, java.lang.String, java.lang.String, java.lang.Class, java.lang.boolean) }
+     * but dont throw any exception.
+     */
+    public static <T> T textAttributeValueSafe(final Element parent, final String tagName, final String attributeName, final Class<T> clazz, final boolean recursive) {
+        try {
+            return textAttributeValue(parent, tagName,attributeName,  clazz, recursive);
         } catch (UnconvertibleObjectException ex) {
             Logger.getLogger(DomUtilities.class.getName()).log(Level.WARNING, null, ex);
             return null;
