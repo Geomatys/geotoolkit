@@ -68,6 +68,7 @@
     <module>geotk-stressor</module>
     <module>geotk-report</module>
     <module>geotk-epsg-pack</module>
+    <module>geotk-provided</module>
   </modules>
 
 </project>
