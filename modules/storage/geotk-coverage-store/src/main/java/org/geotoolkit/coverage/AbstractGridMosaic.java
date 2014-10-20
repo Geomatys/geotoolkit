@@ -184,20 +184,24 @@ public abstract class AbstractGridMosaic implements GridMosaic{
     public Rectangle getDataArea() {
 
         Point start = null;
+        exitStart:
         for (int y = 0; y < gridSize.height; y++) {
             for (int x = 0; x < gridSize.width; x++) {
                 if (!isMissing(x,y)) {
                     start = new Point(x,y);
+                    continue exitStart;
                 }
             }
         }
 
         if (start != null) {
-            Point end = new Point(gridSize.width, gridSize.height);
-            for (int y = gridSize.height; y > start.y; y--) {
-                for (int x = gridSize.width; x > start.x; x--) {
+            Point end = new Point(gridSize.width-1, gridSize.height-1);
+            exitEnd:
+            for (int y = gridSize.height-1; y >= start.y; y--) {
+                for (int x = gridSize.width-1; x >= start.x; x--) {
                     if (!isMissing(x, y)) {
                         end = new Point(x, y);
+                        continue exitEnd;
                     }
                 }
             }
