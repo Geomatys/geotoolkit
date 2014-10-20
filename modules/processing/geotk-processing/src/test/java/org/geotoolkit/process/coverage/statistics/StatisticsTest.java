@@ -29,6 +29,11 @@ import org.junit.Test;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.NoSuchIdentifierException;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.TreeMap;
+
 /**
  * @author bgarcia
  */
@@ -61,8 +66,8 @@ public class StatisticsTest {
         final ParameterValueGroup result = process.call();
         ImageStatistics statistics = (ImageStatistics) result.parameter("outStatistic").getValue();
 
-        Assert.assertTrue(1l == statistics.getBands()[0].getRepartition().get(200d));
-        Assert.assertTrue(8l == statistics.getBands()[0].getRepartition().get(100d));
+        Assert.assertTrue(1l == statistics.getBands()[0].getFullDistribution().get(200d));
+        Assert.assertTrue(8l == statistics.getBands()[0].getFullDistribution().get(100d));
     }
 
     @Test
@@ -88,4 +93,36 @@ public class StatisticsTest {
 
         Assert.assertEquals(200d, statistics.getBands()[0].getMax(), 0d);
     }
+    
+    @Test
+    public void testTightenDistribution() {
+        int fullDistribSize = 223;
+        int tightenDistribSize = 101;
+
+        Map<Double, Long> distribution = new HashMap<>();
+        for (int i = 0; i < fullDistribSize; i++) {
+            distribution.put((double)i, (long)i);
+        }
+
+        ImageStatistics stat = new ImageStatistics(1);
+        ImageStatistics.Band band0 = stat.getBand(0);
+        band0.setFullDistribution(distribution);
+
+        Long[] values = band0.tightenDistribution(tightenDistribSize);
+        Assert.assertEquals(tightenDistribSize, values.length);
+
+        long resultSum = 0;
+        for (int i = 0; i < values.length; i++) {
+            resultSum += values[i];
+        }
+
+        long expectSum = 0;
+        for (int i = 0; i < fullDistribSize; i++) {
+            expectSum += i;
+        }
+
+        Assert.assertEquals(expectSum, resultSum);
+    }
+
+
 }

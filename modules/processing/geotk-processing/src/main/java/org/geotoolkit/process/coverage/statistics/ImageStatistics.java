@@ -17,17 +17,16 @@
 package org.geotoolkit.process.coverage.statistics;
 
 import java.io.Serializable;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 /**
- * @author bgarcia
  * Image statistic from an image :
- * Get min, max and repartition array by bands
+ * Get min, max and fullDistribution array by bands
+ *
+ * @author bgarcia
+ * @author Quentin Boileau (Geomatys)
  */
 public class ImageStatistics implements Serializable{
-
 
     /**
      * Image bands
@@ -41,7 +40,7 @@ public class ImageStatistics implements Serializable{
     public ImageStatistics(int nbBands) {
         bands = new Band[nbBands];
         for (int i = 0; i < bands.length; i++) {
-            bands[i] = new Band();
+            bands[i] = new Band(i);
         }
     }
 
@@ -53,6 +52,18 @@ public class ImageStatistics implements Serializable{
         this.bands = bands;
     }
 
+    public Band getBand(int bandNumber) {
+        return bands[bandNumber];
+    }
+
+    /**
+     * Finalize analysis.
+     */
+    void finish() {
+        for (int i = 0; i < bands.length; i++) {
+            bands[i].finish();
+        }
+    }
 
     @Override
     public String toString() {
@@ -64,28 +75,63 @@ public class ImageStatistics implements Serializable{
     /**
      * Band Inner class
      */
-    public class Band implements Serializable{
+    public class Band implements Serializable {
 
+        private final int bandNumber;
         /**
-         * data repartition map
+         * data fullDistribution map
          */
-        private TreeMap<Double, Long> repartition;
+        private Map<Double, Long> fullDistribution = new HashMap<>();
+
+        private Double min = null;
+        private Double max = null;
 
         /**
          * no data values
          */
         private double[] noData;
 
-        public Band() {
-            repartition = new TreeMap<>();
+        public Band(int bandNumber) {
+            this.bandNumber = bandNumber;
         }
 
-        public Map<Double, Long> getRepartition() {
-            return repartition;
+        public Map<Double, Long> getFullDistribution() {
+            return new TreeMap<>(fullDistribution);
         }
 
-        public void setRepartition(TreeMap<Double, Long> repartition) {
-            this.repartition = repartition;
+        public Long[] tightenDistribution(int distributionSize) {
+            Map<Double, Long> fullDistribution = getFullDistribution();
+            int fullSize = fullDistribution.size();
+            final Long[] fullDistArr = fullDistribution.values().toArray(new Long[fullSize]);
+            if (fullSize < distributionSize) {
+                return fullDistArr;
+            }
+
+            final Long[] distArr = new Long[distributionSize];
+            double steps = (double)fullSize / (double)distributionSize;
+            //int middleStep = (int) Math.ceil(steps / 2f);
+
+            double pos = 0.0;
+            for (int i = 0; i < distributionSize; i++) {
+                long distSum = 0;
+
+                double endStep = pos + steps;
+                int start = (int) pos;
+                int end = (int) endStep;
+
+                for (int j = start; j < end; j++) {
+                    distSum += fullDistArr[j];
+                }
+
+                pos = endStep;
+
+                distArr[i] = distSum;
+            }
+            return distArr;
+        }
+
+        public void setFullDistribution(Map<Double, Long> repartition) {
+            this.fullDistribution = repartition;
         }
 
         public double[] getNoData() {
@@ -97,15 +143,15 @@ public class ImageStatistics implements Serializable{
         }
 
         /**
-         * Increment or create new value on {@link org.geotoolkit.process.coverage.statistics.ImageStatistics.Band#repartition}
-         * @param data data which need to be add on {@link org.geotoolkit.process.coverage.statistics.ImageStatistics.Band#repartition}
+         * Increment or create new value on {@link org.geotoolkit.process.coverage.statistics.ImageStatistics.Band#fullDistribution}
+         * @param data data which need to be add on {@link org.geotoolkit.process.coverage.statistics.ImageStatistics.Band#fullDistribution}
          */
         public void addValue(double data){
-            final Long aLong = repartition.get(data);
-            if(aLong==null){
-                repartition.put(data, 1L);
+            final Long aLong = fullDistribution.get(data);
+            if(aLong == null){
+                fullDistribution.put(data, 1L);
             }else{
-                repartition.put(data, aLong+1L);
+                fullDistribution.put(data, aLong + 1L);
             }
         }
 
@@ -114,24 +160,68 @@ public class ImageStatistics implements Serializable{
          * @return data which have min elements on image
          */
         public double getMin() {
-            return repartition.firstKey();
+            if (min == null) {
+                computeMin();
+            }
+            return min;
         }
-
 
         /**
          * Get image max value
          * @return data which have max elements on image
          */
         public double getMax() {
-            return repartition.lastKey();
+            if (max == null) {
+                computeMax();
+            }
+            return max;
+        }
+
+        private void computeMin() {
+            Double[] values = fullDistribution.keySet().toArray(new Double[fullDistribution.size()]);
+            Double min = null;
+            for (Double value : values) {
+                if (min == null) {
+                    min = value;
+                    continue;
+                }
+
+                min = Math.min(min, value);
+            }
+            this.min = min != null ? min : 0.0;
+        }
+
+        private void computeMax() {
+            Double[] values = fullDistribution.keySet().toArray(new Double[fullDistribution.size()]);
+            Double max = null;
+            for (Double value : values) {
+                if (max == null) {
+                    max = value;
+                    continue;
+                }
+
+                max = Math.max(max, value);
+            }
+            this.max = max != null ? max : 0.0;
+        }
+
+        void finish() {
+            fullDistribution = new TreeMap<>(fullDistribution);
+            this.min = (Double) ((TreeMap)fullDistribution).firstKey();
+            this.max = (Double) ((TreeMap)fullDistribution).lastKey();
         }
 
         @Override
         public String toString() {
-            return "Band{" +
-                    "repartition=" + repartition +
-                    ", noData=" + Arrays.toString(noData) +
-                    "}\n";
+            StringBuilder sb = new StringBuilder();
+            sb.append("Band ").append(bandNumber).append(" {")
+                    .append(" min=").append(min)
+                    .append(", max=").append(max)
+                    .append(", fullDistribution=")
+                    .append(fullDistribution)
+                    .append(", noData=").append(Arrays.toString(noData))
+                    .append("}\n");
+            return sb.toString();
         }
     }
 

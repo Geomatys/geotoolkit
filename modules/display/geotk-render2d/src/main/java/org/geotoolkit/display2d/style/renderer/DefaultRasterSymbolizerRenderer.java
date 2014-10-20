@@ -73,9 +73,11 @@ import org.geotoolkit.map.ElevationModel;
 import org.geotoolkit.parameter.ParametersExt;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
+import org.geotoolkit.process.coverage.statistics.ImageStatistics;
 import org.geotoolkit.process.coverage.statistics.StatisticOp;
 import org.geotoolkit.process.coverage.resample.ResampleDescriptor;
 import org.geotoolkit.process.coverage.shadedrelief.ShadedReliefDescriptor;
+import org.geotoolkit.process.coverage.statistics.Statistics;
 import org.geotoolkit.referencing.CRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
@@ -707,14 +709,12 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
                 //image has it's own color model
                 break recolorCase;
             }
-            final Map res = StatisticOp.analyze(ri);
-            final double[] mins = (double[])res.get("min");
-            final double[] maxs = (double[])res.get("max");
-            final GridSampleDimension dim = coverage.getSampleDimension(0);
+            final ImageStatistics analyse = Statistics.analyse(ri, true);
+            final ImageStatistics.Band band0 = analyse.getBand(0);
             final List<InterpolationPoint> values = new ArrayList<InterpolationPoint>();
             values.add( GO2Utilities.STYLE_FACTORY.interpolationPoint(Float.NaN, GO2Utilities.STYLE_FACTORY.literal(new Color(0,0,0,0))));
-            values.add( GO2Utilities.STYLE_FACTORY.interpolationPoint(mins[0], GO2Utilities.STYLE_FACTORY.literal(Color.BLACK)));
-            values.add( GO2Utilities.STYLE_FACTORY.interpolationPoint(maxs[0], GO2Utilities.STYLE_FACTORY.literal(Color.WHITE)));
+            values.add( GO2Utilities.STYLE_FACTORY.interpolationPoint(band0.getMin(), GO2Utilities.STYLE_FACTORY.literal(Color.BLACK)));
+            values.add( GO2Utilities.STYLE_FACTORY.interpolationPoint(band0.getMax(), GO2Utilities.STYLE_FACTORY.literal(Color.WHITE)));
             final Expression lookup = StyleConstants.DEFAULT_CATEGORIZE_LOOKUP;
             final Literal fallback = StyleConstants.DEFAULT_FALLBACK;
             final Function function = GO2Utilities.STYLE_FACTORY.interpolateFunction(
