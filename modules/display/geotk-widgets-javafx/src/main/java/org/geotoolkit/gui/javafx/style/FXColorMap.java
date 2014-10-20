@@ -60,7 +60,7 @@ import org.geotoolkit.gui.javafx.util.FXUtilities;
 import org.geotoolkit.internal.Loggers;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.MapLayer;
-import org.geotoolkit.process.coverage.copy.StatisticOp;
+import org.geotoolkit.process.coverage.statistics.StatisticOp;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.style.StyleConstants;
 import static org.geotoolkit.style.StyleConstants.DEFAULT_CATEGORIZE_LOOKUP;
