@@ -39,11 +39,12 @@ import static org.apache.sis.util.ArgumentChecks.*;
  * @deprecated Replaced by Apache SIS {@link AbstractIdentifiedType}.
  */
 @Deprecated
-public class DefaultPropertyType<T extends PropertyType> extends AbstractIdentifiedType implements PropertyType {
+public class DefaultPropertyType<T extends PropertyType> implements PropertyType {
 
     private static final List<Filter> NO_RESTRICTIONS = Collections.emptyList();
 
     protected final Name name;
+    private final InternationalString description;
     protected final Class<?> binding;
     protected final boolean isAbstract;
     protected final T superType;
@@ -53,8 +54,8 @@ public class DefaultPropertyType<T extends PropertyType> extends AbstractIdentif
     public DefaultPropertyType(final Name name, final Class<?> binding, final boolean isAbstract,
             final List<Filter> restrictions, final T superType, final InternationalString description)
     {
-        super(properties(name.getLocalPart(), description));
         ensureNonNull("name", name);
+        this.description = description;
 
         if (binding == null) {
             if (superType != null && superType.getBinding() != null) {
@@ -78,19 +79,27 @@ public class DefaultPropertyType<T extends PropertyType> extends AbstractIdentif
         this.userData = new HashMap<Object, Object>();
     }
 
-    private static Map<String,Object> properties(final String name, final InternationalString description) {
-        final Map<String,Object> properties = new HashMap<>(4);
-        properties.put(NAME_KEY, name);
-        properties.put(DESCRIPTION_KEY, description);
-        return properties;
-    }
-
     /**
      * {@inheritDoc }
      */
     @Override
     public Name getName() {
         return name;
+    }
+
+    @Override
+    public InternationalString getDefinition() {
+        return null;
+    }
+
+    @Override
+    public InternationalString getDesignation() {
+        return null;
+    }
+
+    @Override
+    public InternationalString getDescription() {
+        return description;
     }
 
     /**
@@ -130,7 +139,7 @@ public class DefaultPropertyType<T extends PropertyType> extends AbstractIdentif
      */
     @Override
     public int hashCode() {
-        return getName().hashCode() ^ getBinding().hashCode() ^ (getDescription() != null ? getDescription().hashCode() : 17);
+        return getName().hashCode() ^ getBinding().hashCode() ^ (description != null ? description.hashCode() : 17);
     }
 
     /**
@@ -168,7 +177,7 @@ public class DefaultPropertyType<T extends PropertyType> extends AbstractIdentif
             return false;
         }
 
-        if (!Objects.equals(super.getDescription(), prop.getDescription())) {
+        if (!Objects.equals(description, prop.getDescription())) {
             return false;
         }
 
@@ -214,9 +223,9 @@ public class DefaultPropertyType<T extends PropertyType> extends AbstractIdentif
             sb.append(Classes.getShortName(binding));
             sb.append(">");
         }
-        if (super.getDescription() != null) {
+        if (description != null) {
             sb.append("\n\tdescription=");
-            sb.append(super.getDescription());
+            sb.append(description);
         }
         if (restrictions != null && !restrictions.isEmpty()) {
             sb.append("\nrestrictions=");
