@@ -22,7 +22,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  *
   * @author Guilhem Legal (Geomatys)
  */
-public interface AbstractGeometry {
+public interface AbstractGeometry extends AbstractGML {
     
     String getSrsName();
     
