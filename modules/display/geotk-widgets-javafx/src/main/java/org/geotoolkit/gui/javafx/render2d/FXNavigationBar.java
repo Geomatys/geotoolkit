@@ -26,7 +26,7 @@ public class FXNavigationBar extends ToolBar {
     private static final String RIGHT  = "buttongroup-right";
     
     public FXNavigationBar(FXMap map) {
-        getStylesheets().add("/fr/sym/buttonbar.css");
+        getStylesheets().add("/org/geotoolkit/gui/javafx/buttonbar.css");
         
         final Button butAll = new FXZoomAllAction(map).createButton(ActionUtils.ActionTextBehavior.HIDE);
         final Button butRepaint = new FXRepaintAction(map).createButton(ActionUtils.ActionTextBehavior.HIDE);

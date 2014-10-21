@@ -36,7 +36,7 @@ public class FXAddDataBar extends ToolBar {
     private static final String RIGHT  = "buttongroup-right";
     
     public FXAddDataBar(FXMap map) {
-        getStylesheets().add("/fr/sym/buttonbar.css");
+        getStylesheets().add("/org/geotoolkit/gui/javafx/buttonbar.css");
         
         final Button butFeatureStore = new FXAddFeatureStoreAction(map).createButton(ActionUtils.ActionTextBehavior.HIDE);
         final Button butCoverageStore = new FXAddCoverageStoreAction(map).createButton(ActionUtils.ActionTextBehavior.HIDE);
