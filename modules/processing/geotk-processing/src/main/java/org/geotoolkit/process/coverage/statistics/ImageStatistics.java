@@ -78,6 +78,9 @@ public class ImageStatistics implements Serializable{
     public class Band implements Serializable {
 
         private final int bandIndex;
+
+        private String name;
+
         /**
          * data fullDistribution map
          */
@@ -97,6 +100,14 @@ public class ImageStatistics implements Serializable{
 
         public int getBandIndex() {
             return bandIndex;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
         }
 
         public Map<Double, Long> getFullDistribution() {
