@@ -18,11 +18,15 @@
 package org.geotoolkit.temporal.reference;
 
 import java.util.Collection;
+import java.util.Map;
 import java.util.Objects;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import org.apache.sis.referencing.AbstractIdentifiedObject;
 import org.apache.sis.util.ArgumentChecks;
+import org.apache.sis.util.ComparisonMode;
+import org.opengis.referencing.IdentifiedObject;
 import org.opengis.temporal.Calendar;
 import org.opengis.temporal.CalendarDate;
 import org.opengis.temporal.CalendarEra;
@@ -40,20 +44,14 @@ import org.opengis.util.InternationalString;
  * @since   4.0
  */
 @XmlType(name = "TimeCalendarEra_Type", propOrder = {
-    "name",
     "referenceEvent",
     "referenceDate",
     "julianReference",
     "epochOfUse"
 })
 @XmlRootElement(name = "TimeCalendarEra")
-public class DefaultCalendarEra implements CalendarEra {
+public class DefaultCalendarEra extends AbstractIdentifiedObject implements CalendarEra {
 
-    /**
-     * Name by which this calendar is known.
-     */
-    private InternationalString name;
-    
     /**
      * Provide the name or description of a mythical or historic event which fixes the position of the base scale of the calendar era.
      */
@@ -82,38 +80,87 @@ public class DefaultCalendarEra implements CalendarEra {
     private Collection<Calendar> datingSystem;
 
     /**
-     * Create a default {@link CalendarEra} implementation initialize with the given parameters.
-     * 
-     * @param name Name by which this calendar is known.
-     * @param referenceEvent Event used as the datum for this calendar era.
-     * @param referenceDate Date of the reference event in the calendar being described.
-     * @param julianReference {@linkplain JulianDate julian date} that corresponds to the reference date.
-     * @param epochOfUse {@linkplain Period period} for which the calendar era was used as a reference for dating.
+     * Create a new {@link Clock} implementation initialize with the given parameters.<br/>
+     * The properties given in argument follow the same rules than for the
+     * {@linkplain DefaultTemporalCRS#DefaultTemporalCRS(java.util.Map, org.opengis.referencing.datum.TemporalDatum, org.opengis.referencing.cs.TimeCS)  super-class constructor}.
+     * The following table is a reminder of current main (not all) properties:
+     *
+     * <table class="ISO 19108">
+     *   <caption>Recognized properties (non exhaustive list)</caption>
+     *   <tr>
+     *     <th>Property name</th>
+     *     <th>Value type</th>
+     *     <th>Returned by</th>
+     *   </tr>
+     *   <tr>
+     *     <td>{@value org.opengis.referencing.IdentifiedObject#NAME_KEY}</td>
+     *     <td>{@link org.opengis.referencing.ReferenceIdentifier} or {@link String}</td>
+     *     <td>{@link #getName()}</td>
+     *   </tr>
+     *   <tr>
+     *     <td>{@value org.opengis.referencing.datum.Datum#DOMAIN_OF_VALIDITY_KEY}</td>
+     *     <td>{@link org.opengis.metadata.extent.Extent}</td>
+     *     <td>{@link #getDomainOfValidity()}</td>
+     *   </tr>
+     *   <tr>
+     *     <td>{@value org.opengis.temporal.Calendar#REFERENCE_EVENT_KEY}</td>
+     *     <td>{@link org.opengis.util.InternationalString}</td>
+     *     <td>{@link #getReferenceEvent()}</td>
+     *   </tr>
+     * </table>
+     *
+     * @param properties The properties to be given to the coordinate reference system.
+     * @param referenceTime The time of day associated with the reference event expressed as a time of day  in the given clock.
+     * @param utcReference The 24-hour local or UTC time that corresponds to the reference time.
      */
-    public DefaultCalendarEra(final InternationalString name, final InternationalString referenceEvent, 
+    public DefaultCalendarEra(Map<String, ?> properties, 
             final CalendarDate referenceDate, final JulianDate julianReference, final Period epochOfUse) {
-        ArgumentChecks.ensureNonNull("name", name);
+        super(properties);
+        final Object ref = properties.get(Calendar.REFERENCE_EVENT_KEY);
+        ArgumentChecks.ensureNonNull("referenceEvent", ref);
         ArgumentChecks.ensureNonNull("referenceDate", referenceDate);
-        ArgumentChecks.ensureNonNull("referenceEvent", referenceEvent);
         ArgumentChecks.ensureNonNull("julianReference", julianReference);
         ArgumentChecks.ensureNonNull("epochOfUse", epochOfUse);
-        this.name            = name;
         this.referenceDate   = referenceDate;
-        this.referenceEvent  = referenceEvent;
+        this.referenceEvent  = (InternationalString) ref;
         this.julianReference = julianReference;
         this.epochOfUse      = epochOfUse;
     }
+    
+//    /**
+//     * Create a default {@link CalendarEra} implementation initialize with the given parameters.
+//     * 
+//     * @param name Name by which this calendar is known.
+//     * @param referenceEvent Event used as the datum for this calendar era.
+//     * @param referenceDate Date of the reference event in the calendar being described.
+//     * @param julianReference {@linkplain JulianDate julian date} that corresponds to the reference date.
+//     * @param epochOfUse {@linkplain Period period} for which the calendar era was used as a reference for dating.
+//     */
+//    public DefaultCalendarEra(final InternationalString name, final InternationalString referenceEvent, 
+//            final CalendarDate referenceDate, final JulianDate julianReference, final Period epochOfUse) {
+//        
+//        ArgumentChecks.ensureNonNull("name", name);
+//        ArgumentChecks.ensureNonNull("referenceEvent", referenceEvent);
+//        ArgumentChecks.ensureNonNull("referenceDate", referenceDate);
+//        ArgumentChecks.ensureNonNull("julianReference", julianReference);
+//        ArgumentChecks.ensureNonNull("epochOfUse", epochOfUse);
+//        this.name            = name;
+//        this.referenceDate   = referenceDate;
+//        this.referenceEvent  = referenceEvent;
+//        this.julianReference = julianReference;
+//        this.epochOfUse      = epochOfUse;
+//    }
 
-    /**
-     * Returns an uniquely {@code CharacterString} that identify the calendar era within this calendar.
-     * 
-     * @return name by which this calendar is known.
-     */
-    @Override
-    @XmlElement(name = "name", required = true)
-    public InternationalString getName() {
-        return name;
-    }
+//    /**
+//     * Returns an uniquely {@code CharacterString} that identify the calendar era within this calendar.
+//     * 
+//     * @return name by which this calendar is known.
+//     */
+//    @Override
+//    @XmlElement(name = "name", required = true)
+//    public InternationalString getName() {
+//        return name;
+//    }
 
     /**
      * Returns the name or description of a mythical or historic event which fixes the position
@@ -172,16 +219,16 @@ public class DefaultCalendarEra implements CalendarEra {
     public Collection<Calendar> getDatingSystem() {
         return datingSystem;
     }
-
-    /**
-     * Set a new name by which this calendar is known.
-     * 
-     * @param name The new name by which this calendar will be known.
-     */
-    public void setName(final InternationalString name) {
-        ArgumentChecks.ensureNonNull("name", name);
-        this.name = name;
-    }
+//
+//    /**
+//     * Set a new name by which this calendar is known.
+//     * 
+//     * @param name The new name by which this calendar will be known.
+//     */
+//    public void setName(final InternationalString name) {
+//        ArgumentChecks.ensureNonNull("name", name);
+//        this.name = name;
+//    }
 
     /**
      * Set a new name or description of a mythical or historic event which fixes the position
@@ -235,38 +282,57 @@ public class DefaultCalendarEra implements CalendarEra {
         this.datingSystem = newValues;
     }
 
-    /**
-     * {@inheritDoc }
-     */
     @Override
-    public boolean equals(final Object object) {
+    public boolean equals(Object object, ComparisonMode mode) {
         if (object instanceof CalendarEra) {
             final DefaultCalendarEra that = (DefaultCalendarEra) object;
 
             return Objects.equals(this.datingSystem, that.datingSystem) &&
                     Objects.equals(this.epochOfUse, that.epochOfUse) &&
                     Objects.equals(this.julianReference, that.julianReference) &&
-                    Objects.equals(this.name, that.name) &&
+                    Objects.equals(this.getName(), that.getName()) &&
                     Objects.equals(this.referenceDate, that.referenceDate) &&
                     Objects.equals(this.referenceEvent, that.referenceEvent);
         }
         return false;
     }
 
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public int hashCode() {
-        int hash = 5;
-        hash = 37 * hash + (this.datingSystem != null ? this.datingSystem.hashCode() : 0);
-        hash = 37 * hash + (this.epochOfUse != null ? this.epochOfUse.hashCode() : 0);
-        hash = 37 * hash + (this.julianReference != null ? this.julianReference.hashCode() : 0);
-        hash = 37 * hash + (this.name != null ? this.name.hashCode() : 0);
-        hash = 37 * hash + (this.referenceDate != null ? this.referenceDate.hashCode() : 0);
-        hash = 37 * hash + (this.referenceEvent != null ? this.referenceEvent.hashCode() : 0);
-        return hash;
-    }
+    
+    
+//    /**
+//     * {@inheritDoc }
+//     */
+//    @Override
+//    public boolean equals(final Object object) {
+//        if (object instanceof CalendarEra) {
+//            final DefaultCalendarEra that = (DefaultCalendarEra) object;
+//
+//            return Objects.equals(this.datingSystem, that.datingSystem) &&
+//                    Objects.equals(this.epochOfUse, that.epochOfUse) &&
+//                    Objects.equals(this.julianReference, that.julianReference) &&
+//                    Objects.equals(this.name, that.name) &&
+//                    Objects.equals(this.referenceDate, that.referenceDate) &&
+//                    Objects.equals(this.referenceEvent, that.referenceEvent);
+//        }
+//        return false;
+//    }
+
+    
+    
+//    /**
+//     * {@inheritDoc }
+//     */
+//    @Override
+//    public int hashCode() {
+//        int hash = 5;
+//        hash = 37 * hash + (this.datingSystem != null ? this.datingSystem.hashCode() : 0);
+//        hash = 37 * hash + (this.epochOfUse != null ? this.epochOfUse.hashCode() : 0);
+//        hash = 37 * hash + (this.julianReference != null ? this.julianReference.hashCode() : 0);
+//        hash = 37 * hash + (this.name != null ? this.name.hashCode() : 0);
+//        hash = 37 * hash + (this.referenceDate != null ? this.referenceDate.hashCode() : 0);
+//        hash = 37 * hash + (this.referenceEvent != null ? this.referenceEvent.hashCode() : 0);
+//        return hash;
+//    }
 
     /**
      * {@inheritDoc }
@@ -274,8 +340,8 @@ public class DefaultCalendarEra implements CalendarEra {
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder("CalendarEra:").append('\n');
-        if (name != null) {
-            s.append("name:").append(name).append('\n');
+        if (getName() != null) {
+            s.append("name:").append(getName().getCode()).append('\n');
         }
         if (epochOfUse != null) {
             s.append("epochOfUse:").append(epochOfUse).append('\n');

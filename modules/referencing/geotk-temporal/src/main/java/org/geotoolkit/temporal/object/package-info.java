@@ -86,6 +86,9 @@
     @XmlJavaTypeAdapter(InternationalStringConverter.class),
     @XmlJavaTypeAdapter(OrdinalEraAdapter.class),
     @XmlJavaTypeAdapter(ClockAdapter.class),
+    @XmlJavaTypeAdapter(PeriodAdapter.class),
+    @XmlJavaTypeAdapter(TemporalEdgeAdapter.class),
+    @XmlJavaTypeAdapter(TemporalNodeAdapter.class),
     @XmlJavaTypeAdapter(InstantAdapter.class),
     @XmlJavaTypeAdapter(OrdinalReferenceSystemAdapter.class),
     @XmlJavaTypeAdapter(TemporalCoordinateSystemAdapter.class),
@@ -107,6 +110,9 @@ import org.apache.sis.internal.jaxb.gco.*;
 import org.geotoolkit.temporal.reference.xmlAdapter.ClockAdapter;
 import org.geotoolkit.temporal.reference.xmlAdapter.InstantAdapter;
 import org.geotoolkit.temporal.reference.xmlAdapter.OrdinalReferenceSystemAdapter;
+import org.geotoolkit.temporal.reference.xmlAdapter.PeriodAdapter;
 import org.geotoolkit.temporal.reference.xmlAdapter.PositionAdapter;
 import org.geotoolkit.temporal.reference.xmlAdapter.TemporalCoordinateSystemAdapter;
+import org.geotoolkit.temporal.reference.xmlAdapter.TemporalEdgeAdapter;
+import org.geotoolkit.temporal.reference.xmlAdapter.TemporalNodeAdapter;
 import org.geotoolkit.temporal.reference.xmlAdapter.TemporalReferenceSystemAdapter;

@@ -22,8 +22,10 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import javax.measure.unit.Unit;
+import org.apache.sis.referencing.NamedIdentifier;
 
 import org.geotoolkit.factory.Factory;
+import org.geotoolkit.metadata.Citations;
 import org.geotoolkit.temporal.object.DefaultCalendarDate;
 import org.geotoolkit.temporal.object.DefaultClockTime;
 import org.geotoolkit.temporal.object.DefaultDateAndTime;
@@ -132,7 +134,11 @@ public class DefaultTemporalFactory extends Factory implements TemporalFactory {
     @Override
     public CalendarEra createCalendarEra(final InternationalString name, final InternationalString referenceEvent,
             final CalendarDate referenceDate, final JulianDate julianReference, final Period epochOfUse) {
-        return new DefaultCalendarEra(name, referenceEvent, referenceDate, julianReference, epochOfUse);
+        final Map<String, Object> calendarEraProperties = new HashMap<>();
+        calendarEraProperties.put(IdentifiedObject.NAME_KEY, name);
+        calendarEraProperties.put(IdentifiedObject.IDENTIFIERS_KEY, new NamedIdentifier(Citations.CRS, "calendar Era"));
+        calendarEraProperties.put(Calendar.REFERENCE_EVENT_KEY, referenceEvent);
+        return new DefaultCalendarEra(calendarEraProperties, referenceDate, julianReference, epochOfUse);
     }
 
     /**

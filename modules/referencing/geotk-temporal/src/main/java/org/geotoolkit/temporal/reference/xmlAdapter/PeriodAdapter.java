@@ -20,23 +20,28 @@ package org.geotoolkit.temporal.reference.xmlAdapter;
 import javax.xml.bind.annotation.XmlElement;
 import org.apache.sis.internal.jaxb.gco.PropertyType;
 import org.apache.sis.xml.Namespaces;
-import org.geotoolkit.temporal.object.DefaultInstant;
-import org.opengis.temporal.Instant;
+import org.geotoolkit.temporal.object.DefaultPeriod;
+import org.opengis.temporal.Period;
 
 /**
- * JAXB adapter mapping implementing class to the GeoAPI interface. See
- * package documentation for more information about JAXB and interface.
+ * JAXB adapter for {@link DefaultPeriod} values mapped to {@link Period}.
  *
  * @author Remi Marechal (Geomatys).
- * @version 4.0
- * @since   4.0
+ * @author Guilhem Legal (Geomatys).
  */
-public class InstantAdapter extends PropertyType<InstantAdapter, Instant> {
+public class PeriodAdapter extends PropertyType<PeriodAdapter, Period> {
 
     /**
      * Empty constructor for JAXB only.
      */
-    public InstantAdapter() {
+    public PeriodAdapter() {
+    }
+
+    /**
+     * Constructor for the {@link #wrap} method only.
+     */
+    private PeriodAdapter(final Period instant) {
+        super(instant);
     }
 
     /**
@@ -47,47 +52,40 @@ public class InstantAdapter extends PropertyType<InstantAdapter, Instant> {
      * @return {@code TimeCS.class}
      */
     @Override
-    protected Class<Instant> getBoundType() {
-        return Instant.class;
-    }
-
-    /**
-     * Constructor for the {@link #wrap} method only.
-     */
-    private InstantAdapter(final Instant instant) {
-        super(instant);
+    protected Class<Period> getBoundType() {
+        return Period.class;
     }
 
     /**
      * Invoked by {@link PropertyType} at marshalling time for wrapping the given value
-     * in a {@code <gml:Instant>} XML element.
+     * in a {@code <gml:Period>} XML element.
      *
      * @param  instant The element to marshall.
      * @return A {@code PropertyType} wrapping the given the element.
      */
     @Override
-    protected InstantAdapter wrap(final Instant instant) {
-        return new InstantAdapter(instant);
+    protected PeriodAdapter wrap(Period bt) {
+        return new PeriodAdapter(bt);
     }
-
+    
     /**
      * Invoked by JAXB at marshalling time for getting the actual element to write
-     * inside the {@code <gml:Instant>} XML element.
+     * inside the {@code <gml:DefaultPeriod>} XML element.
      * This is the value or a copy of the value given in argument to the {@code wrap} method.
      *
      * @return The element to be marshalled.
      */
-    @XmlElement(name = "TimeInstant", namespace = Namespaces.GML)
-    public DefaultInstant getElement() {
-        return DefaultInstant.castOrCopy(metadata);
+    @XmlElement(name = "TimePeriod", namespace = Namespaces.GML)
+    public DefaultPeriod getElement() {
+        return DefaultPeriod.castOrCopy(metadata);
     }
 
     /**
      * Invoked by JAXB at unmarshalling time for storing the result temporarily.
      *
-     * @param instant The unmarshalled element.
+     * @param node The unmarshalled element.
      */
-    public void setElement(final DefaultInstant instant) {
-        metadata = instant;
+    public void setElement(final DefaultPeriod period) {
+        metadata = period;
     }
 }

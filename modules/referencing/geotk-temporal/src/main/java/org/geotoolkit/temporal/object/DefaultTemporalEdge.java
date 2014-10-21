@@ -14,48 +14,47 @@
  *    but WITHOUT ANY WARRANTY; without even the implied warranty of
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
- */ 
+ */
 package org.geotoolkit.temporal.object;
 
 import java.util.Map;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import org.apache.sis.util.ArgumentChecks;
-import org.apache.sis.util.NullArgumentException;
-import org.opengis.temporal.Instant;
+import org.opengis.temporal.Period;
 import org.opengis.temporal.TemporalEdge;
 import org.opengis.temporal.TemporalNode;
-import org.opengis.util.InternationalString;
 
 /**
- * Zero dimensional topological primitive in time.
- * Its geometric realization is a {@link Instant}.
- *
- * @author Remi Marechal (Geomatys).
+ * One dimensional topological primitive in time.
+ * In other words it coresponds to a {@link Period}.
+ * 
+ * @author remi Marechal (Geomatys).
  */
-@XmlType(name = "TimeNode_Type", propOrder = {
+@XmlType(name = "TimeEdge_Type", propOrder = {
     "realization",
-    "previousEdge",
-    "nextEdge"
+    "start", 
+    "end"
 })
-@XmlRootElement(name = "TimeNode")
-public class DefaultTemporalNode extends DefaultTemporalTopologicalPrimitive implements TemporalNode {
- 
+@XmlRootElement(name = "TimeEdge")
+public class DefaultTemporalEdge extends DefaultTemporalTopologicalPrimitive implements TemporalEdge {
+
     /**
-     * Association that may link this {@link TemporalNode} to its corresponding {@link Instant}.
+     * Association that may link this {@link TemporalEdge} to its corresponding {@link Period}.
      */
-    private Instant realization;
+    private Period realization;
     
     /**
-     * {@link TemporalEdge} for which it is the {@link TemporalNode} start.
+     * {@link TemporalNode} for which it is the {@link TemporalEdge} start.
+     * A {@link TemporalEdge} may have one and only one start node.
      */
-    private TemporalEdge previousEdge;
+    private TemporalNode start;
     
     /**
-     * {@link TemporalEdge} for which it is the {@link TemporalNode} end.
+     * {@link TemporalNode} for which it is the {@link TemporalEdge} end.
+     * A {@link TemporalEdge} may have one and only one end node.
      */
-    private TemporalEdge nextEdge;
+    private TemporalNode end;
     
     /**
      * Creates a default {@link TemporalNode} implementation from the given properties and {@link Instant}.
@@ -90,16 +89,16 @@ public class DefaultTemporalNode extends DefaultTemporalTopologicalPrimitive imp
      * </table>
      * 
      * @param properties The properties to be given to this object.
-     * @param realization association that may link this {@link TemporalNode} to its corresponding {@link Instant}, should be {@code null}.
-     * @param previousEdge {@link TemporalEdge} for which it is the {@link TemporalNode} start, should be {@code null}.
-     * @param nextEdge {@link TemporalEdge} for which it is the {@link TemporalNode} end, should be {@code null}.
+     * @param realization Association that may link this {@link TemporalEdge} to its corresponding {@link Period}, should be {@code null}.
+     * @param start {@link TemporalNode} for which it is the {@link TemporalEdge} start.
+     * @param end {@link TemporalNode} for which it is the {@link TemporalEdge} end.
      * @throws NullArgumentException if properties, start or end are {@code null}. 
      */
-    public DefaultTemporalNode(final Map<String, ?> properties, final Instant realization, final TemporalEdge previousEdge, final TemporalEdge nextEdge) throws NullArgumentException {
+    public DefaultTemporalEdge(final Map<String, ?> properties, final Period realization, final TemporalNode start, final TemporalNode end) {
         super(properties);
-        this.realization  = realization;
-        this.previousEdge = previousEdge;
-        this.nextEdge     = nextEdge;
+        this.realization = realization;
+        this.start       = start;
+        this.end         = end;
     }
     
     /**
@@ -109,14 +108,14 @@ public class DefaultTemporalNode extends DefaultTemporalTopologicalPrimitive imp
      *
      * @param object The Instant to copy values from, or {@code null} if none.
      *
-     * @see #castOrCopy(TemporalNode)
+     * @see #castOrCopy(TemporalEdge)
      */
-    private DefaultTemporalNode(final TemporalNode object) {
+    private DefaultTemporalEdge(final TemporalEdge object) {
         super(object);
         if (object != null) {
-            realization  = object.getRealization();
-            previousEdge = object.getPreviousEdge();
-            nextEdge     = object.getNextEdge();
+            realization = object.getRealization();
+            start       = object.getStart();
+            end         = object.getEnd();
         }
     }
 
@@ -127,9 +126,9 @@ public class DefaultTemporalNode extends DefaultTemporalTopologicalPrimitive imp
      * <ul>
      *   <li>If the given object is {@code null}, then this method returns {@code null}.</li>
      *   <li>Otherwise if the given object is already an instance of
-     *       {@code DefaultTemporalNode}, then it is returned unchanged.</li>
-     *   <li>Otherwise a new {@code DefaultTemporalNode} instance is created using the
-     *       {@linkplain #DefaultTemporalNode(Period) copy constructor}
+     *       {@code DefaultTemporalEdge}, then it is returned unchanged.</li>
+     *   <li>Otherwise a new {@code DefaultTemporalEdge} instance is created using the
+     *       {@linkplain #DefaultTemporalEdge(TemporalEdge) copy constructor}
      *       and returned. Note that this is a <cite>shallow</cite> copy operation, since the other
      *       metadata contained in the given object are not recursively copied.</li>
      * </ul>
@@ -138,55 +137,50 @@ public class DefaultTemporalNode extends DefaultTemporalTopologicalPrimitive imp
      * @return A Geotk implementation containing the values of the given object (may be the
      *         given object itself), or {@code null} if the argument was null.
      */
-    public static DefaultTemporalNode castOrCopy(final TemporalNode object) {
-        if (object == null || object instanceof DefaultTemporalNode) {
-            return (DefaultTemporalNode) object;
+    public static DefaultTemporalEdge castOrCopy(final TemporalEdge object) {
+        if (object == null || object instanceof DefaultTemporalEdge) {
+            return (DefaultTemporalEdge) object;
         }
-        return new DefaultTemporalNode(object);
+        return new DefaultTemporalEdge(object);
     }
     
     /**
      * Empty constructor only use for XML binding.
      */
-    private DefaultTemporalNode() {
+    private DefaultTemporalEdge() {
         super();
-        realization  = null;
-        previousEdge = null;
-        nextEdge     = null;
     }
     
     /**
-     * Returns optional association that may link this {@link TemporalNode} to its corresponding {@link Instant}, or {@code null} if none.
-     * Only one {@link TemporalNode} may be associated with a {@link Instant}, 
-     * and only one {@link Instant} may be associated with this object.
+     * Returns association that may link this {@link TemporalEdge} to its corresponding {@link Period}.
      * 
-     * @return association that may link this {@link TemporalNode} to its corresponding {@link Instant}, or {@code null} if none.
+     * @return association that may link this {@link TemporalEdge} to its corresponding {@link Period}.
      */
     @Override
-    @XmlElement(name = "position")
-    public Instant getRealization() {
+    @XmlElement(name = "extent")
+    public Period getRealization() {
         return realization;
     }
 
     /**
-     * Returns {@link TemporalEdge} for which it is the {@link TemporalNode} start.
+     * Returns {@link TemporalNode} for which it is the {@link TemporalEdge} start.
      * 
-     * @return {@link TemporalEdge} for which it is the {@link TemporalNode} start.
+     * @return {@link TemporalNode} for which it is the {@link TemporalEdge} start.
      */
     @Override
-    @XmlElement(name = "previousEdge")
-    public TemporalEdge getPreviousEdge() {
-        return previousEdge;
+    @XmlElement(name = "start", required = true)
+    public TemporalNode getStart() {
+        return start;
     }
 
     /**
-     * Returns {@link TemporalEdge} for which it is the {@link TemporalNode} end.
+     * Returns {@link TemporalNode} for which it is the {@link TemporalEdge} end.
      * 
-     * @return {@link TemporalEdge} for which it is the {@link TemporalNode} end .
+     * @return {@link TemporalNode} for which it is the {@link TemporalEdge} start.
      */
     @Override
-    @XmlElement(name = "nextEdge")
-    public TemporalEdge getNextEdge() {
-        return nextEdge;
+    @XmlElement(name = "end", required = true)
+    public TemporalNode getEnd() {
+        return end;
     }
 }

@@ -19,6 +19,7 @@ package org.geotoolkit.temporal.object;
 
 import java.util.Map;
 import org.apache.sis.referencing.AbstractIdentifiedObject;
+import org.opengis.referencing.ReferenceSystem;
 import org.opengis.temporal.Instant;
 import org.opengis.temporal.Period;
 import org.opengis.temporal.RelativePosition;
@@ -42,22 +43,22 @@ public abstract class DefaultTemporalPrimitive extends AbstractIdentifiedObject 
         super(properties);
     }
     
-//    protected DefaultTemporalPrimitive() {
-//        
-//    }
+    protected DefaultTemporalPrimitive() {
+        super(org.apache.sis.internal.referencing.NilReferencingObject.INSTANCE);
+    }
     
-//    /**
-//     * Constructs a new instance initialized with the values from the specified metadata object.
-//     * This is a <cite>shallow</cite> copy constructor, since the other metadata contained in the
-//     * given object are not recursively copied.
-//     *
-//     * @param object The Instant to copy values from, or {@code null} if none.
-//     *
-//     * @see #castOrCopy(TemporalGeometricPrimitive)
-//     */
-//    protected DefaultTemporalPrimitive(final TemporalPrimitive object) {
-//        super((Map) null);
-//    }
+    /**
+     * Constructs a new instance initialized with the values from the specified metadata object.
+     * This is a <cite>shallow</cite> copy constructor, since the other metadata contained in the
+     * given object are not recursively copied.
+     *
+     * @param object The Instant to copy values from, or {@code null} if none.
+     *
+     * @see #castOrCopy(TemporalGeometricPrimitive)
+     */
+    protected DefaultTemporalPrimitive(final TemporalPrimitive object) {
+        super(object);
+    }
 
     /**
      * Returns a value for relative position which are provided by the enumerated data type TM_RelativePosition 

@@ -35,6 +35,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.opengis.metadata.Identifier;
 import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.datum.TemporalDatum;
 import org.opengis.temporal.CalendarDate;
@@ -60,42 +61,61 @@ public class DefaultCalendarEraTest {
 
     @Before
     public void setUp() {
-////        TemporalDatum tempdat = CommonCRS.Temporal.UNIX.datum();
-////        NamedIdentifier name1 = new NamedIdentifier(Citations.CRS, "Julian calendar");
-////        final Map<String, Object> properties1 = new HashMap<>();
-////        properties1.put(IdentifiedObject.NAME_KEY, name1);
-////        TemporalReferenceSystem frame1 = new DefaultTemporalReferenceSystem(properties1, tempdat, null);
-////        
-////        NamedIdentifier name2 = new NamedIdentifier(Citations.CRS, "Babylonian calendar");
-////        final Map<String, Object> properties2 = new HashMap<>();
-////        properties2.put(IdentifiedObject.NAME_KEY, name2);
-////        TemporalReferenceSystem frame2 = new DefaultTemporalReferenceSystem(properties2, tempdat, null);
-//////        TemporalReferenceSystem frame1 = new DefaultTemporalReferenceSystem(name1, null);
-//////        TemporalReferenceSystem frame2 = new DefaultTemporalReferenceSystem(name2, null);
-////        int[] calendarDate1 = {1900, 1, 1};
-////        int[] calendarDate2 = {400, 1, 1};
-////        CalendarDate referenceDate1 = new DefaultCalendarDate(frame1, IndeterminateValue.BEFORE, new SimpleInternationalString("Gregorian calendar"), calendarDate1);
-////        CalendarDate referenceDate2 = new DefaultCalendarDate(frame2, IndeterminateValue.NOW, new SimpleInternationalString("Babylonian calendar"), calendarDate2);
-////        JulianDate julianReference = new DefaultJulianDate(frame1, IndeterminateValue.NOW, 123456789);
-////        
-////        cal.set(1900, 0, 1);
-////        Instant begining1 = new DefaultInstant(new DefaultPosition(cal.getTime()));
-////        cal.set(2000, 9, 17);
-////        Instant ending1 = new DefaultInstant(new DefaultPosition(cal.getTime()));
-////        cal.set(2000, 1, 1);
-////        Instant begining2 = new DefaultInstant(new DefaultPosition(cal.getTime()));
-////        cal.set(2012, 1, 1);
-////        Instant ending2 = new DefaultInstant(new DefaultPosition(cal.getTime()));
-////
-////        Period epochOfUse1 = new DefaultPeriod(begining1, ending1);
-////        Period epochOfUse2 = new DefaultPeriod(begining2, ending2);
-////
-////        calendarEra1 = new DefaultCalendarEra(new SimpleInternationalString("Cenozoic"),
-////                new SimpleInternationalString("no description"),
-////                referenceDate1, julianReference, epochOfUse1);
-////        calendarEra2 = new DefaultCalendarEra(new SimpleInternationalString("Mesozoic"),
-////                new SimpleInternationalString(""),
-////                referenceDate2, julianReference, epochOfUse2);
+        TemporalDatum tempdat = CommonCRS.Temporal.UNIX.datum();
+        NamedIdentifier name1 = new NamedIdentifier(Citations.CRS, "Julian calendar");
+        final Map<String, Object> properties1 = new HashMap<>();
+        properties1.put(IdentifiedObject.NAME_KEY, name1);
+//        TemporalReferenceSystem frame1 = new DefaultTemporalReferenceSystem(properties1, tempdat, null);
+        TemporalReferenceSystem frame1 = new DefaultTemporalReferenceSystem(properties1);
+        
+        NamedIdentifier name2 = new NamedIdentifier(Citations.CRS, "Babylonian calendar");
+        final Map<String, Object> properties2 = new HashMap<>();
+        properties2.put(IdentifiedObject.NAME_KEY, name2);
+//        TemporalReferenceSystem frame2 = new DefaultTemporalReferenceSystem(properties2, tempdat, null);
+        TemporalReferenceSystem frame2 = new DefaultTemporalReferenceSystem(properties2);
+//        TemporalReferenceSystem frame1 = new DefaultTemporalReferenceSystem(name1, null);
+//        TemporalReferenceSystem frame2 = new DefaultTemporalReferenceSystem(name2, null);
+        int[] calendarDate1 = {1900, 1, 1};
+        int[] calendarDate2 = {400, 1, 1};
+        CalendarDate referenceDate1 = new DefaultCalendarDate(frame1, IndeterminateValue.BEFORE, new SimpleInternationalString("Gregorian calendar"), calendarDate1);
+        CalendarDate referenceDate2 = new DefaultCalendarDate(frame2, IndeterminateValue.NOW, new SimpleInternationalString("Babylonian calendar"), calendarDate2);
+        JulianDate julianReference = new DefaultJulianDate(frame1, IndeterminateValue.NOW, 123456789);
+        
+        cal.set(1900, 0, 1);
+        
+        //-- Map instant
+        NamedIdentifier nameInstant = new NamedIdentifier(Citations.CRS, "Period instant");
+        final Map<String, Object> propertiesInstant = new HashMap<>();
+        propertiesInstant.put(IdentifiedObject.NAME_KEY, nameInstant);
+        
+        Instant begining1 = new DefaultInstant(propertiesInstant, new DefaultPosition(cal.getTime()));
+        cal.set(2000, 9, 17);
+        Instant ending1 = new DefaultInstant(propertiesInstant, new DefaultPosition(cal.getTime()));
+        cal.set(2000, 1, 1);
+        Instant begining2 = new DefaultInstant(propertiesInstant, new DefaultPosition(cal.getTime()));
+        cal.set(2012, 1, 1);
+        Instant ending2 = new DefaultInstant(propertiesInstant, new DefaultPosition(cal.getTime()));
+
+        //-- map period
+        NamedIdentifier namePeriod = new NamedIdentifier(Citations.CRS, "Period");
+        final Map<String, Object> propertiesPeriod = new HashMap<>();
+        propertiesPeriod.put(IdentifiedObject.NAME_KEY, namePeriod);
+        
+        Period epochOfUse1 = new DefaultPeriod(propertiesPeriod, begining1, ending1);
+        Period epochOfUse2 = new DefaultPeriod(propertiesPeriod, begining2, ending2);
+        
+        final Map<String, Object> calendarEra1Prop = new HashMap<>();
+        calendarEra1Prop.put(IdentifiedObject.NAME_KEY, new SimpleInternationalString("Cenozoic"));
+        calendarEra1Prop.put(IdentifiedObject.IDENTIFIERS_KEY, new SimpleInternationalString("Cenozoic"));
+        calendarEra1Prop.put(org.opengis.temporal.Calendar.REFERENCE_EVENT_KEY, new SimpleInternationalString("no description"));
+
+        calendarEra1 = new DefaultCalendarEra(calendarEra1Prop, referenceDate1, julianReference, epochOfUse1);
+        
+        final Map<String, Object> calendarEra2Prop = new HashMap<>();
+        calendarEra2Prop.put(IdentifiedObject.NAME_KEY, new SimpleInternationalString("Mesozoic"));
+        calendarEra2Prop.put(IdentifiedObject.IDENTIFIERS_KEY, new SimpleInternationalString("Mesozoic"));
+        calendarEra2Prop.put(org.opengis.temporal.Calendar.REFERENCE_EVENT_KEY, new SimpleInternationalString("no description"));
+        calendarEra2 = new DefaultCalendarEra(calendarEra2Prop, referenceDate2, julianReference, epochOfUse2);
     }
 
     @After
@@ -109,7 +129,7 @@ public class DefaultCalendarEraTest {
      */
     @Test
     public void testGetName() {
-        InternationalString result = calendarEra1.getName();
+        Identifier result = calendarEra1.getName();
         assertFalse(calendarEra2.getName().equals(result));
     }
 
@@ -150,15 +170,15 @@ public class DefaultCalendarEraTest {
         assertFalse(calendarEra2.getEpochOfUse().equals(result));
     }
 
-    /**
-     * Test of setName method, of class DefaultCalendarEra.
-     */
-    @Test
-    public void testSetName() {
-        InternationalString result = calendarEra1.getName();
-        ((DefaultCalendarEra)calendarEra1).setName(new SimpleInternationalString("new Era"));
-        assertFalse(calendarEra1.getName().equals(result));
-    }
+//    /**
+//     * Test of setName method, of class DefaultCalendarEra.
+//     */
+//    @Test
+//    public void testSetName() {
+//        InternationalString result = calendarEra1.getName();
+//        ((DefaultCalendarEra)calendarEra1).setName(new SimpleInternationalString("new Era"));
+//        assertFalse(calendarEra1.getName().equals(result));
+//    }
 
     /**
      * Test of setReferenceEvent method, of class DefaultCalendarEra.

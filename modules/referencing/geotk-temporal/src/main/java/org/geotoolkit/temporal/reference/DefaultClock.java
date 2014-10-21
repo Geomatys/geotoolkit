@@ -102,7 +102,7 @@ public class DefaultClock extends DefaultTemporalReferenceSystem implements Cloc
      *     <td>{@link #getDomainOfValidity()}</td>
      *   </tr>
      *   <tr>
-     *     <td>{@value org.opengis.temporal.Clock#REFERENCE_EVENT_KEY}</td>
+     *     <td>{@value org.opengis.temporal.Calendar#REFERENCE_EVENT_KEY}</td>
      *     <td>{@link org.opengis.util.InternationalString}</td>
      *     <td>{@link #getReferenceEvent()}</td>
      *   </tr>
@@ -115,7 +115,7 @@ public class DefaultClock extends DefaultTemporalReferenceSystem implements Cloc
     public DefaultClock(Map<String, ?> properties, 
             ClockTime referenceTime, ClockTime utcReference, Collection<Calendar> dateBasis) {
         super(properties);
-        final Object ref = properties.get(REFERENCE_EVENT_KEY);
+        final Object ref = properties.get(Calendar.REFERENCE_EVENT_KEY);
         ArgumentChecks.ensureNonNull("referenceEvent", ref);
         this.referenceEvent = (InternationalString) ref;
         this.referenceTime  = referenceTime;

@@ -93,6 +93,7 @@ public class DefaultPeriod extends DefaultTemporalGeometricPrimitive implements 
      * @throws IllegalArgumentException 
      */
     public DefaultPeriod(final Map<String , ?> properties, final Instant begining, final Instant ending) {
+        super(properties);
         ArgumentChecks.ensureNonNull("begining", begining);
         ArgumentChecks.ensureNonNull("ending", ending);
 	//-- begining must be before or equals ending
@@ -114,7 +115,7 @@ public class DefaultPeriod extends DefaultTemporalGeometricPrimitive implements 
      * @see #castOrCopy(Period)
      */
     private DefaultPeriod(final Period object) {
-        super(null);
+        super(object);
         if (object != null) {
             begining = object.getBeginning();
             ending = object.getEnding();
@@ -160,7 +161,7 @@ public class DefaultPeriod extends DefaultTemporalGeometricPrimitive implements 
     public Instant getBeginning() {
         return begining;
     }
-
+    
     /**
      * Set {@link Period} to the {@link Instant} at which it starts.
      * 
@@ -180,7 +181,7 @@ public class DefaultPeriod extends DefaultTemporalGeometricPrimitive implements 
     public Instant getEnding() {
         return ending;
     }
-
+    
     /**
      * Set {@link Period} to the {@link Instant} at which it ends.
      * 

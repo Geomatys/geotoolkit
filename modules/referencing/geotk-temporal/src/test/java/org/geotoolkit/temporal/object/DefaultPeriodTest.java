@@ -44,7 +44,7 @@ public class DefaultPeriodTest {
 
     @Before
     public void setUp() {
-        NamedIdentifier name = new NamedIdentifier(Citations.CRS, "Instant");
+        NamedIdentifier name = new NamedIdentifier(Citations.CRS, "Period");
         final Map<String, Object> properties = new HashMap<>();
         properties.put(IdentifiedObject.NAME_KEY, name);
         
@@ -57,8 +57,8 @@ public class DefaultPeriodTest {
         Instant begining2 = new DefaultInstant(properties, new DefaultPosition(cal.getTime()));
         cal.set(2012, 1, 1);
         Instant ending2 = new DefaultInstant(properties, new DefaultPosition(cal.getTime()));
-        period1 = new DefaultPeriod(begining1, ending1);
-        period2 = new DefaultPeriod(begining2, ending2);
+        period1 = new DefaultPeriod(properties, begining1, ending1);
+        period2 = new DefaultPeriod(properties, begining2, ending2);
     }
 
     @After
