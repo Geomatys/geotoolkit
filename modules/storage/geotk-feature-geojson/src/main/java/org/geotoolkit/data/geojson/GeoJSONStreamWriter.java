@@ -1,6 +1,7 @@
 package org.geotoolkit.data.geojson;
 
 import com.fasterxml.jackson.core.JsonEncoding;
+import com.vividsolutions.jts.geom.Geometry;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureWriter;
@@ -41,7 +42,7 @@ public class GeoJSONStreamWriter implements FeatureWriter<FeatureType, Feature> 
      *
      * @param outputStream stream were GeoJSON will be written
      * @param featureType {@link FeatureType} of features to write.
-     * @param encoding
+     * @param encoding character encoding
      * @param doubleAccuracy number of coordinates fraction digits
      * @throws DataStoreException
      */
@@ -62,6 +63,41 @@ public class GeoJSONStreamWriter implements FeatureWriter<FeatureType, Feature> 
             throw new DataStoreException(ex.getMessage(), ex);
         }
     }
+
+    /**
+     * Utility method to write a single Feature into an OutputStream
+     *
+     * @param outputStream
+     * @param feature to write
+     * @param encoding
+     * @param doubleAccuracy
+     * @param prettyPrint
+     */
+    public static void writeSingleFeature(OutputStream outputStream, Feature feature, final JsonEncoding encoding,
+                                          final int doubleAccuracy, boolean prettyPrint) throws IOException {
+
+        try (final GeoJSONWriter writer = new GeoJSONWriter(outputStream, encoding, doubleAccuracy, prettyPrint)) {
+            writer.writeSingleFeature(feature);
+        }
+    }
+
+    /**
+     * Utility method to write a single Geometry into an OutputStream
+     *
+     * @param outputStream
+     * @param geometry to write
+     * @param encoding
+     * @param doubleAccuracy
+     * @param prettyPrint
+     */
+    public static void writeSingleGeometry(OutputStream outputStream,  Geometry geometry, final JsonEncoding encoding,
+                                          final int doubleAccuracy, boolean prettyPrint) throws IOException {
+
+        try (final GeoJSONWriter writer = new GeoJSONWriter(outputStream, encoding, doubleAccuracy, prettyPrint)) {
+            writer.writeSingleGeometry(geometry);
+        }
+    }
+
 
     @Override
     public FeatureType getFeatureType() {

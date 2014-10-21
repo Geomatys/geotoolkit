@@ -1,5 +1,6 @@
 package org.geotoolkit.data.geojson;
 
+import com.fasterxml.jackson.core.JsonEncoding;
 import com.vividsolutions.jts.geom.*;
 import com.vividsolutions.jts.io.WKTReader;
 import org.apache.sis.storage.DataStoreException;
@@ -365,6 +366,51 @@ public class GeoJSONWriteTest {
                 ",{\"type\":\"Feature\",\"id\":\"id-1\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-105.0162,39.5742]},\"properties\":{\"type\":\"feat2\"}}\n" +
                 "]}";
 
+        assertEquals(expected, outputJSON);
+    }
+
+    @Test
+    public void writeStreamSingleFeatureTest() throws Exception {
+        FeatureType validFeatureType = buildGeometryFeatureType("simpleFT", Point.class);
+
+        Point pt = (Point)WKT_READER.read(PROPERTIES.getProperty("point"));
+
+        final String outputJSON;
+        try (final ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+            Feature feature = FeatureUtilities.defaultFeature(validFeatureType, "id-0");
+            feature.getProperty("type").setValue("feat1");
+            feature.getDefaultGeometryProperty().setValue(pt);
+            GeoJSONStreamWriter.writeSingleFeature(baos, feature, JsonEncoding.UTF8, 4, false);
+
+            outputJSON = baos.toString("UTF-8");
+        }
+
+        assertNotNull(outputJSON);
+        assertFalse(outputJSON.isEmpty());
+
+        String expected = "{\"type\":\"Feature\",\"id\":\"id-0\"," +
+                "\"geometry\":{\"type\":\"Point\",\"coordinates\":[-105.0162,39.5742]}," +
+                "\"properties\":{\"type\":\"feat1\"}}";
+        assertEquals(expected, outputJSON);
+    }
+
+    @Test
+    public void writeStreamSingleGeometryTest() throws Exception {
+        FeatureType validFeatureType = buildGeometryFeatureType("simpleFT", Point.class);
+
+        Point pt = (Point)WKT_READER.read(PROPERTIES.getProperty("point"));
+
+        final String outputJSON;
+        try (final ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+            GeoJSONStreamWriter.writeSingleGeometry(baos, pt, JsonEncoding.UTF8, 4, false);
+
+            outputJSON = baos.toString("UTF-8");
+        }
+
+        assertNotNull(outputJSON);
+        assertFalse(outputJSON.isEmpty());
+
+        String expected = "{\"type\":\"Point\",\"coordinates\":[-105.0162,39.5742]}";
         assertEquals(expected, outputJSON);
     }
 

@@ -3,6 +3,8 @@ package org.geotoolkit.data.geojson;
 import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.vividsolutions.jts.geom.Geometry;
+import org.apache.sis.referencing.CRS;
+import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.data.geojson.binding.GeoJSONGeometry;
 import org.geotoolkit.data.geojson.utils.GeoJSONParser;
 import org.geotoolkit.data.geojson.utils.GeoJSONUtils;
@@ -96,7 +98,7 @@ class GeoJSONWriter implements Closeable, Flushable {
         writer.writeStringField(TYPE, FEATURE_COLLECTION);
         writeNewLine();
 
-        if (crs != null) {
+        if (crs != null && org.geotoolkit.referencing.CRS.equalsApproximatively(crs, CommonCRS.defaultGeographic())) {
             writeCRS(crs);
             writeNewLine();
         }
@@ -159,7 +161,10 @@ class GeoJSONWriter implements Closeable, Flushable {
 
         //write CRS
         if (single) {
-            writeCRS(feature.getDefaultGeometryProperty().getType().getCoordinateReferenceSystem());
+            final CoordinateReferenceSystem crs = feature.getDefaultGeometryProperty().getType().getCoordinateReferenceSystem();
+            if (crs != null && !org.geotoolkit.referencing.CRS.equalsApproximatively(crs, CommonCRS.defaultGeographic())) {
+                writeCRS(crs);
+            }
         }
 
         //write geometry
@@ -273,6 +278,19 @@ class GeoJSONWriter implements Closeable, Flushable {
                 "writeSingleGeometry can called only once per GeoJSONWriter.";
         isSingleGeometry = true;
         GeoJSONGeometry jsonGeometry = GeometryUtils.toGeoJSONGeometry((Geometry) geom.getValue());
+        writeGeoJSONGeometry(jsonGeometry);
+    }
+
+    /**
+     * Write a JTS Geometry
+     * @param geom
+     * @throws IOException
+     */
+    void writeSingleGeometry(Geometry geom) throws IOException {
+        assert(!isFeatureCollection && !isSingleFeature && !isSingleGeometry) :
+                "writeSingleGeometry can called only once per GeoJSONWriter.";
+        isSingleGeometry = true;
+        GeoJSONGeometry jsonGeometry = GeometryUtils.toGeoJSONGeometry(geom);
         writeGeoJSONGeometry(jsonGeometry);
     }
 
