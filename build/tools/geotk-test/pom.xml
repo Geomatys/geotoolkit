@@ -80,5 +80,9 @@
       <version>${sis.version}</version>
       <type>test-jar</type>
     </dependency>
+    <dependency>
+      <groupId>javax.media</groupId>
+      <artifactId>jai_core</artifactId>
+     </dependency>
   </dependencies>
 </project>
