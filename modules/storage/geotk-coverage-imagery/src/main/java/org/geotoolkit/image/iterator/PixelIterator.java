@@ -756,7 +756,11 @@ public abstract class PixelIterator implements Closeable {
                                 System.arraycopy(src, srcRastId, (byte[]) buffer[b], destId, readLength);
                                 break; 
                             }
-                            case DataBuffer.TYPE_USHORT :
+                            case DataBuffer.TYPE_USHORT : {
+                                final short[] src  = ((DataBufferUShort) databuff).getData(bankIndices[b]);
+                                System.arraycopy(src, srcRastId, (short[]) buffer[b], destId, readLength);
+                                break;
+                            }
                             case DataBuffer.TYPE_SHORT  : {
                                 final short[] src  = ((DataBufferShort) databuff).getData(bankIndices[b]);
                                 System.arraycopy(src, srcRastId, (short[]) buffer[b], destId, readLength);
@@ -812,7 +816,7 @@ public abstract class PixelIterator implements Closeable {
             case DataBuffer.TYPE_USHORT : 
             case DataBuffer.TYPE_SHORT  : {
                 if (!(buffer instanceof short[])) throw new IllegalArgumentException("Buffer argument must be instance of short[][] array");
-                if (((short[])buffer).length < areaLength) throw new IllegalArgumentException("Buffer must have a length equal or upper than area sample number. Expected : "+areaLength);
+                if (((short[]) buffer).length < areaLength) throw new IllegalArgumentException("Buffer must have a length equal or upper than area sample number. Expected : "+areaLength);
                 break;
             }
             case DataBuffer.TYPE_INT : {
@@ -894,7 +898,11 @@ public abstract class PixelIterator implements Closeable {
                             System.arraycopy(src, srcRastId, (byte[]) buffer, destId, readLength);
                             break; 
                         }
-                        case DataBuffer.TYPE_USHORT :
+                        case DataBuffer.TYPE_USHORT : {
+                            final short[] src  = ((DataBufferUShort) databuff).getData(bankIndices);
+                            System.arraycopy(src, srcRastId, (short[]) buffer, destId, readLength);
+                            break;
+                        }
                         case DataBuffer.TYPE_SHORT  : {
                             final short[] src  = ((DataBufferShort) databuff).getData(bankIndices);
                             System.arraycopy(src, srcRastId, (short[]) buffer, destId, readLength);
