@@ -47,15 +47,20 @@ public class WMTSPyramid extends DefaultPyramid{
             // Note : this is not written in the spec.
             crs = CRS.decode(crsstr,true);
         } catch (NoSuchAuthorityCodeException ex) {
-            Logger.getLogger(WMTSPyramid.class.getName()).log(Level.WARNING, null, ex);
+            try {
+                crs = CRS.decode("EPSG:"+crsstr);
+            } catch (Exception e) {
+                e.addSuppressed(ex);
+                Logger.getLogger(WMTSPyramid.class.getName()).log(Level.WARNING, null, e);
+            }
         } catch (FactoryException ex) {
             Logger.getLogger(WMTSPyramid.class.getName()).log(Level.WARNING, null, ex);
         }
-        
+
         final TileMatrixSetLimits limits = link.getTileMatrixSetLimits();
-        
-        for(final TileMatrix matrix : matrixset.getTileMatrix()){
-                        
+
+        for (final TileMatrix matrix : matrixset.getTileMatrix()) {
+
             TileMatrixLimits limit = null;
             if(limits != null){
                 for(TileMatrixLimits li : limits.getTileMatrixLimits()){
