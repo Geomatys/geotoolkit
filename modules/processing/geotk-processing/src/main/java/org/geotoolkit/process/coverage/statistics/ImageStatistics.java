@@ -77,7 +77,7 @@ public class ImageStatistics implements Serializable{
      */
     public class Band implements Serializable {
 
-        private final int bandNumber;
+        private final int bandIndex;
         /**
          * data fullDistribution map
          */
@@ -91,8 +91,12 @@ public class ImageStatistics implements Serializable{
          */
         private double[] noData;
 
-        public Band(int bandNumber) {
-            this.bandNumber = bandNumber;
+        public Band(int bandIndex) {
+            this.bandIndex = bandIndex;
+        }
+
+        public int getBandIndex() {
+            return bandIndex;
         }
 
         public Map<Double, Long> getFullDistribution() {
@@ -214,7 +218,7 @@ public class ImageStatistics implements Serializable{
         @Override
         public String toString() {
             StringBuilder sb = new StringBuilder();
-            sb.append("Band ").append(bandNumber).append(" {")
+            sb.append("Band ").append(bandIndex).append(" {")
                     .append(" min=").append(min)
                     .append(", max=").append(max)
                     .append(", fullDistribution=")
