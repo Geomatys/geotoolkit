@@ -233,18 +233,21 @@ public class Statistics extends AbstractProcess{
 
             //analyse each tiles of GridMosaicRenderedImage
             Raster tile;
+            PixelIterator pix;
             for (int y = startY; y < endY; y++) {
                 for (int x = startX; x < endX; x++) {
                     if (!gridMosaic.isMissing(x,y)) {
                         tile = mosaicImage.getTile(x, y);
-                        analyseRaster(tile, nbBands, bands, excludeNoData);
+                        pix = PixelIteratorFactory.createDefaultIterator(tile);
+                        analyseRaster(pix, nbBands, bands, excludeNoData);
                     }
                 }
             }
 
         } else {
             //standard image
-            analyseRaster(image.getData(), nbBands, bands, excludeNoData);
+            final PixelIterator pix = PixelIteratorFactory.createDefaultIterator(image);
+            analyseRaster(pix, nbBands, bands, excludeNoData);
         }
 
         // finalize analysis
@@ -255,17 +258,15 @@ public class Statistics extends AbstractProcess{
     }
 
     /**
-     * Analyse each pixels of a Raster
-     * @param raster
+     * Analyse each pixels using a PixelIterator
+     * @param pix PixelIterator
      * @param nbBands
      * @param bands
      */
-    private void analyseRaster(final Raster raster, final int nbBands, final ImageStatistics.Band[] bands,
+    private void analyseRaster(final PixelIterator pix, final int nbBands, final ImageStatistics.Band[] bands,
                                final boolean excludeNoData) {
         // this int permit to loop on images band.
         int b = 0;
-        final PixelIterator pix = PixelIteratorFactory.createDefaultIterator(raster);
-
         if (excludeNoData) {
             while (pix.next()) {
                 final double d = pix.getSampleDouble();
