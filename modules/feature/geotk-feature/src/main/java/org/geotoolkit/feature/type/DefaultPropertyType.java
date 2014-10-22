@@ -19,8 +19,7 @@ package org.geotoolkit.feature.type;
 
 import java.util.*;
 
-import org.geotoolkit.feature.type.Name;
-import org.geotoolkit.feature.type.PropertyType;
+import java.io.Serializable;
 import org.opengis.filter.Filter;
 import org.opengis.util.InternationalString;
 
@@ -39,7 +38,7 @@ import static org.apache.sis.util.ArgumentChecks.*;
  * @deprecated Replaced by Apache SIS {@link AbstractIdentifiedType}.
  */
 @Deprecated
-public class DefaultPropertyType<T extends PropertyType> implements PropertyType {
+public class DefaultPropertyType<T extends PropertyType> implements PropertyType, Serializable {
 
     private static final List<Filter> NO_RESTRICTIONS = Collections.emptyList();
 
