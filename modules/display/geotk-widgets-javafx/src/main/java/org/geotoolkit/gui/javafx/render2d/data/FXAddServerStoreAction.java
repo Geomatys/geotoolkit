@@ -38,16 +38,13 @@ import org.geotoolkit.map.MapLayer;
 public class FXAddServerStoreAction extends FXMapAction {
     public static final Image ICON = SwingFXUtils.toFXImage(GeotkFX.getBufferedImage("add-server", new Dimension(16, 16)), null);
     
-    private final FXMap map;
-
     public FXAddServerStoreAction(FXMap map) {
         super(map,GeotkFX.getString(FXAddServerStoreAction.class,"label"),
                 GeotkFX.getString(FXAddServerStoreAction.class,"label"),ICON);
-        this.map = map;
     }
     
     @Override
-    public void handle(ActionEvent event) {
+    public void accept(ActionEvent event) {
         
         try {
             final List<MapLayer> layers = FXClientStoreChooser.showLayerDialog(null,null);

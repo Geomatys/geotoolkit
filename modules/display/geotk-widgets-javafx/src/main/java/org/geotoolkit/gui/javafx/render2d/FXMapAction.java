@@ -17,36 +17,33 @@
 
 package org.geotoolkit.gui.javafx.render2d;
 
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
+import java.util.function.Consumer;
+import javafx.event.ActionEvent;
 import javafx.scene.control.Button;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import org.controlsfx.control.action.AbstractAction;
+import org.controlsfx.control.action.Action;
 import org.controlsfx.control.action.ActionUtils;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
-public abstract class FXMapAction extends AbstractAction {
-
-    protected final SimpleBooleanProperty selectedProperty = new SimpleBooleanProperty(false);
+public abstract class FXMapAction extends Action implements Consumer<ActionEvent>{
     
     protected FXMap map;
     
     public FXMapAction() {
-        super(null);
+        this((String)null);
     }
     
     public FXMapAction(String text) {
-        super(text);
+        this(null,text,null,null);
     }
     
     public FXMapAction(FXMap map) {
-        super(null);
+        super((String)null);
         setMap(map);
     }
     
@@ -55,6 +52,7 @@ public abstract class FXMapAction extends AbstractAction {
         setLongText(longText);
         if(graphic!=null) graphicProperty().set(new ImageView(graphic));
         setMap(map);
+        setEventHandler(this);
         
     }
 
@@ -67,23 +65,14 @@ public abstract class FXMapAction extends AbstractAction {
         disabledProperty().set(map==null);
     }
 
-    public SimpleBooleanProperty selectedProperty() {
-        return selectedProperty;
-    }
-    
     public Button createButton(ActionUtils.ActionTextBehavior behavior){
         return ActionUtils.createButton(this, behavior);
     }
     
     public ToggleButton createToggleButton(ActionUtils.ActionTextBehavior behavior){
-        final ToggleButton tb = ActionUtils.createToggleButton(this, behavior);
-        selectedProperty.addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                tb.setSelected(newValue);
-            }
-        });
-        return tb;
+        return ActionUtils.createToggleButton(this,behavior);
     }
+    
+    public void dodo(){}
     
 }

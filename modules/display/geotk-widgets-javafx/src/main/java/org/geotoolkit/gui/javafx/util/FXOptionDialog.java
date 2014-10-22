@@ -18,9 +18,10 @@
 package org.geotoolkit.gui.javafx.util;
 
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Consumer;
 import javafx.event.ActionEvent;
 import javafx.scene.Node;
-import org.controlsfx.control.action.AbstractAction;
+import org.controlsfx.control.action.Action;
 import org.controlsfx.dialog.Dialog;
 import org.geotoolkit.internal.GeotkFX;
 
@@ -42,35 +43,37 @@ public class FXOptionDialog {
         return state.get();
     }
     
-    private static class OkAction extends AbstractAction{
+    private static class OkAction extends Action implements Consumer<ActionEvent>{
         private final Dialog dialog;
         private final AtomicBoolean state;
 
         public OkAction(Dialog dialog, AtomicBoolean state) {
             super(GeotkFX.getString(FXOptionDialog.class,"ok"));
+            setEventHandler(this);
             this.dialog = dialog;
             this.state = state;
         }
         
         @Override
-        public void handle(ActionEvent event) {
+        public void accept(ActionEvent event) {
             state.set(true);
             dialog.hide();
         }
     }
     
-    private static class CancelAction extends AbstractAction{
+    private static class CancelAction extends Action implements Consumer<ActionEvent>{
         private final Dialog dialog;
         private final AtomicBoolean state;
 
         public CancelAction(Dialog dialog, AtomicBoolean state) {
             super(GeotkFX.getString(FXOptionDialog.class,"cancel"));
+            setEventHandler(this);
             this.dialog = dialog;
             this.state = state;
         }
         
         @Override
-        public void handle(ActionEvent event) {
+        public void accept(ActionEvent event) {
             state.set(false);
             dialog.hide();
         }

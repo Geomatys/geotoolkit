@@ -37,7 +37,7 @@ public final class FXRepaintAction extends FXMapAction {
     }
 
     @Override
-    public void handle(ActionEvent event) {
+    public void accept(ActionEvent event) {
         if (map != null) {
             map.getCanvas().repaint();
         }

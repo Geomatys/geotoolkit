@@ -22,10 +22,9 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TreeItem;
-import org.controlsfx.control.action.AbstractAction;
+import org.controlsfx.control.action.Action;
 import org.geotoolkit.gui.javafx.contexttree.TreeMenuItem;
 import org.geotoolkit.gui.javafx.layer.FXFeatureTable;
-import org.geotoolkit.gui.javafx.layer.FXLayerStructure;
 import org.geotoolkit.gui.javafx.layer.FXLayerStylesPane;
 import org.geotoolkit.gui.javafx.layer.FXPropertiesPane;
 import org.geotoolkit.gui.javafx.layer.style.FXStyleAdvancedPane;
@@ -101,18 +100,12 @@ public class LayerPropertiesItem extends TreeMenuItem{
         return null;
     }
 
-    public static final class CloseAction extends AbstractAction {
-
-        private final FXDialog dialog;
+    public static final class CloseAction extends Action {
         
-        public CloseAction(FXDialog dialog) {
-            super(GeotkFX.getString(LayerPropertiesItem.class, "close"));
-            this.dialog = dialog;
-        }
-
-        @Override
-        public void handle(ActionEvent event) {
-            dialog.setVisible(null,false);
+        public CloseAction(final FXDialog dialog) {
+            super(GeotkFX.getString(LayerPropertiesItem.class, "close"), (ActionEvent t) -> {
+                dialog.setVisible(null,false);
+            });
         }
         
     }

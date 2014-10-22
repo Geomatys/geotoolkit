@@ -44,14 +44,14 @@ public final class FXPanAction extends FXMapAction {
         map.getHandlerProperty().addListener(new ChangeListener<FXCanvasHandler>() {
             @Override
             public void changed(ObservableValue<? extends FXCanvasHandler> observable, FXCanvasHandler oldValue, FXCanvasHandler newValue) {
-                selectedProperty.set(newValue instanceof FXPanHandler);
+                selectedProperty().set(newValue instanceof FXPanHandler);
             }
         });
         
     }
 
     @Override
-    public void handle(ActionEvent event) {
+    public void accept(ActionEvent event) {
         if (map != null) {
             map.setHandler(new FXPanHandler(map, infoOnClick));
         }

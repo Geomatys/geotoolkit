@@ -44,7 +44,7 @@ public final class FXZoomAllAction extends FXMapAction {
     }
 
     @Override
-    public void handle(ActionEvent event) {
+    public void accept(ActionEvent event) {
         if (map != null) {
             final GraphicContainer container = map.getCanvas().getContainer();
             if (container instanceof ContextContainer2D) {

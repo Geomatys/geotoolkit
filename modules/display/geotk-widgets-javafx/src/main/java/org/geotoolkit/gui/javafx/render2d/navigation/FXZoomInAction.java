@@ -42,14 +42,14 @@ public final class FXZoomInAction extends FXMapAction {
         map.getHandlerProperty().addListener(new ChangeListener<FXCanvasHandler>() {
             @Override
             public void changed(ObservableValue<? extends FXCanvasHandler> observable, FXCanvasHandler oldValue, FXCanvasHandler newValue) {
-                selectedProperty.set(newValue instanceof FXZoomInHandler);
+                selectedProperty().set(newValue instanceof FXZoomInHandler);
             }
         });
         
     }
     
     @Override
-    public void handle(ActionEvent event) {
+    public void accept(ActionEvent event) {
         if (map != null) {
             map.setHandler(new FXZoomInHandler(map));
         }

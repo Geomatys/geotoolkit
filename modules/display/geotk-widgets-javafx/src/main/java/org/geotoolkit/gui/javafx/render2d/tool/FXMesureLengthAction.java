@@ -41,14 +41,14 @@ public class FXMesureLengthAction extends FXMapAction {
         map.getHandlerProperty().addListener(new ChangeListener<FXCanvasHandler>() {
             @Override
             public void changed(ObservableValue<? extends FXCanvasHandler> observable, FXCanvasHandler oldValue, FXCanvasHandler newValue) {
-                selectedProperty.set(newValue instanceof FXMesureLengthHandler);
+                selectedProperty().set(newValue instanceof FXMesureLengthHandler);
             }
         });
         
     }
 
     @Override
-    public void handle(ActionEvent event) {
+    public void accept(ActionEvent event) {
         if (map != null) {
             map.setHandler(new FXMesureLengthHandler(map));
         }

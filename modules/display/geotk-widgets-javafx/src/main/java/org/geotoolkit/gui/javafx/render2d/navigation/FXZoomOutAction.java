@@ -43,7 +43,7 @@ public class FXZoomOutAction extends FXMapAction {
         map.getHandlerProperty().addListener(new ChangeListener<FXCanvasHandler>() {
             @Override
             public void changed(ObservableValue<? extends FXCanvasHandler> observable, FXCanvasHandler oldValue, FXCanvasHandler newValue) {
-                selectedProperty.set(newValue instanceof FXZoomOutHandler);
+                selectedProperty().set(newValue instanceof FXZoomOutHandler);
             }
         });
     }
@@ -52,7 +52,7 @@ public class FXZoomOutAction extends FXMapAction {
      * {@inheritDoc }
      */
     @Override
-    public void handle(ActionEvent event) {
+    public void accept(ActionEvent event) {
         if (map != null ) {
             map.setHandler(new FXZoomOutHandler(map));
         }

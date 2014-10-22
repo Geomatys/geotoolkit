@@ -38,17 +38,13 @@ import org.geotoolkit.map.MapLayer;
 public class FXAddCoverageStoreAction extends FXMapAction {
     public static final Image ICON = SwingFXUtils.toFXImage(GeotkFX.getBufferedImage("add-raster", new Dimension(16, 16)), null);
     
-    private final FXMap map;
-
     public FXAddCoverageStoreAction(FXMap map) {
         super(map,GeotkFX.getString(FXAddCoverageStoreAction.class,"label"),
                 GeotkFX.getString(FXAddCoverageStoreAction.class,"label"),ICON);
-        this.map = map;
     }
     
     @Override
-    public void handle(ActionEvent event) {
-        
+    public void accept(ActionEvent t) {
         try {
             final List<MapLayer> layers = FXCoverageStoreChooser.showLayerDialog(null,null);
 
@@ -60,7 +56,6 @@ public class FXAddCoverageStoreAction extends FXMapAction {
         } catch (DataStoreException ex) {
             Loggers.DATA.log(Level.WARNING, ex.getMessage(), ex);
         }
-        
     }
     
 }
