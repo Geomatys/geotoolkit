@@ -72,7 +72,5 @@ public abstract class FXMapAction extends Action implements Consumer<ActionEvent
     public ToggleButton createToggleButton(ActionUtils.ActionTextBehavior behavior){
         return ActionUtils.createToggleButton(this,behavior);
     }
-    
-    public void dodo(){}
-    
+        
 }

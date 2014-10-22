@@ -17,12 +17,17 @@
 
 package org.geotoolkit.gui.javafx.util;
 
+import java.util.Collections;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 import javafx.event.ActionEvent;
 import javafx.scene.Node;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.DialogPane;
 import org.controlsfx.control.action.Action;
-import org.controlsfx.dialog.Dialog;
+import org.geotoolkit.client.Client;
 import org.geotoolkit.internal.GeotkFX;
 
 /**
@@ -33,14 +38,40 @@ public class FXOptionDialog {
     
     public static boolean showOkCancel(Object owner, Node content, String title, boolean modal){
         
-        final Dialog dialog = new Dialog(owner, title);
-        dialog.setContent(content);
-        dialog.setIconifiable(false);        
-        final AtomicBoolean state = new AtomicBoolean(false);        
-        dialog.getActions().addAll(new OkAction(dialog, state), new CancelAction(dialog, state));
+        final Dialog dia = new Dialog();
+        final DialogPane pane = new DialogPane();
+        pane.getButtonTypes().add(ButtonType.OK);
+        pane.getButtonTypes().add(ButtonType.CANCEL);
+        pane.setContent(content);
+        dia.setTitle(title);
+        dia.setDialogPane(pane);
+        final Optional<ButtonType> result = dia.showAndWait();
         
-        dialog.show();
-        return state.get();
+        return result.isPresent() && result.get() == ButtonType.OK;
+        
+//        if(result.isPresent() && result.get() == ButtonType.OK){
+//            if(layerVisible){
+//                return chooser.getSelectedLayers();
+//            }else{
+//                final Client store = chooser.getStore();
+//                if(store == null){
+//                    return Collections.EMPTY_LIST;
+//                }else{
+//                    return Collections.singletonList(store);
+//                }
+//            }
+//        }else{
+//            return Collections.EMPTY_LIST;
+//        }
+//        
+//        final Dialog dialog = new Dialog();
+//        dialog.setContent(content);
+//        dialog.setIconifiable(false);        
+//        final AtomicBoolean state = new AtomicBoolean(false);        
+//        dialog.getActions().addAll(new OkAction(dialog, state), new CancelAction(dialog, state));
+//        
+//        dialog.show();
+//        return state.get();
     }
     
     private static class OkAction extends Action implements Consumer<ActionEvent>{

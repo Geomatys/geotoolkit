@@ -26,7 +26,6 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
@@ -40,7 +39,6 @@ import javafx.scene.layout.StackPane;
 import javax.swing.Timer;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.util.ArgumentChecks;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.display.canvas.AbstractCanvas;
 import org.geotoolkit.display.canvas.control.NeverFailMonitor;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
@@ -60,7 +58,6 @@ public class FXMap extends BorderPane {
      */
     public static final String HANDLER_PROPERTY = "handler";
     private static final FXMapDecoration[] EMPTY_OVERLAYER_ARRAY = {};
-    private static final Logger LOGGER = Logging.getLogger(FXMap.class);
 
     private final ObjectProperty<FXCanvasHandler> handlerProp = new SimpleObjectProperty<FXCanvasHandler>();
     private final J2DCanvasVolatile canvas;
