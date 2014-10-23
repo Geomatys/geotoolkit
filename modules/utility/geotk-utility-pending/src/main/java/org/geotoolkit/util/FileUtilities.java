@@ -21,6 +21,8 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -1036,17 +1038,24 @@ public final class FileUtilities extends Static {
     private static String getPath(final Object resource)
             throws MalformedURLException {
 
-        String extractPath = null;
-        if (resource instanceof File) {
-            extractPath = ((File) resource).getPath();
-        } else if (resource instanceof URL) {
-            extractPath = ((URL) resource).getPath();
-        } else if (resource instanceof URI) {
-            extractPath = (((URI) resource).toURL()).getPath();
-        } else if (resource instanceof String) {
-            extractPath = (String) resource;
+        if (resource instanceof URL) {
+           return ((URL) resource).getPath();
         }
-        return extractPath;
+
+        Path extractPath = null;
+        if (resource instanceof File) {
+            extractPath = ((File) resource).toPath();
+        } else if (resource instanceof URI) {
+            extractPath = Paths.get((URI) resource);
+        } else if (resource instanceof String) {
+            extractPath = Paths.get((String) resource);
+        }
+
+        if (extractPath == null) {
+            return null;
+        }
+
+        return extractPath.toString();
     }
 
     /**
