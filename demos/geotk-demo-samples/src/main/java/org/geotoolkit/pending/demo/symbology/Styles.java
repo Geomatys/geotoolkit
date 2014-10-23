@@ -2,21 +2,10 @@
 package org.geotoolkit.pending.demo.symbology;
 
 
-import java.awt.Color;
-import java.io.File;
-import java.io.Serializable;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import javax.measure.unit.NonSI;
-import javax.measure.unit.SI;
-import javax.measure.unit.Unit;
+import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.coverage.io.CoverageStoreException;
-import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.FeatureStoreFinder;
@@ -28,7 +17,6 @@ import org.geotoolkit.map.ElevationModel;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
-import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.sld.DefaultSLDFactory;
 import org.geotoolkit.sld.MutableSLDFactory;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
@@ -36,8 +24,6 @@ import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.StyleConstants;
-
-import static org.geotoolkit.style.StyleConstants.*;
 import org.geotoolkit.style.function.InterpolationPoint;
 import org.geotoolkit.style.function.Method;
 import org.geotoolkit.style.function.Mode;
@@ -71,6 +57,20 @@ import org.opengis.style.ShadedRelief;
 import org.opengis.style.Stroke;
 import org.opengis.style.Symbolizer;
 import org.opengis.style.TextSymbolizer;
+
+import javax.measure.unit.NonSI;
+import javax.measure.unit.SI;
+import javax.measure.unit.Unit;
+import java.awt.*;
+import java.io.File;
+import java.io.Serializable;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.geotoolkit.style.StyleConstants.*;
 
 /**
  *
@@ -730,12 +730,13 @@ public class Styles {
         return context;
     }
 
-    public static MapContext createRasterContext(MutableStyle style) throws CoverageStoreException{
+    public static MapContext createRasterContext(MutableStyle style) throws CoverageStoreException, URISyntaxException {
         MapContext context = MapBuilder.createContext(CommonCRS.WGS84.normalizedGeographic());
         context.setName("demo context");
         context.setDescription(SF.description("demo context", ""));
 
-        final MapLayer layer = MapBuilder.createCoverageLayer(new File("data/clouds.jpg"));
+        File cloudFile = new File(Styles.class.getResource("/data/coverage/clouds.jpg").toURI());
+        final MapLayer layer = MapBuilder.createCoverageLayer(cloudFile);
         layer.setDescription(SF.description("raster", ""));
         layer.setName("raster");
         context.layers().add(layer);

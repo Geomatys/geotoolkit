@@ -1,12 +1,6 @@
 
 package org.geotoolkit.pending.demo.coverage;
 
-import java.awt.geom.Rectangle2D;
-import java.awt.image.RenderedImage;
-import java.io.File;
-import java.nio.file.Files;
-
-import net.sf.jasperreports.engine.export.Grid;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageIO;
@@ -19,13 +13,14 @@ import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.pending.demo.Demos;
-import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
-import org.geotoolkit.style.StyleConstants;
 import org.geotoolkit.util.FileUtilities;
 import org.opengis.coverage.grid.GridCoverage;
-import org.opengis.metadata.Metadata;
+
+import java.awt.image.RenderedImage;
+import java.io.File;
+import java.nio.file.Files;
 
 
 public class CoverageReaderDemo {
@@ -76,7 +71,7 @@ public class CoverageReaderDemo {
             }
         }
 
-//        final File input = new File("data/clouds.jpg");
+//        final File input = new File(CoverageReaderDemo.class.getResource("/data/coverage/clouds.jpg").toURI());
 //        final GridCoverageReader reader = CoverageIO.createSimpleReader(input);
                 
 //        //print the iso 19115 metadata

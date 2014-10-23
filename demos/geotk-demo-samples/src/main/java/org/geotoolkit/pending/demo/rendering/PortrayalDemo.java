@@ -1,24 +1,13 @@
 
 package org.geotoolkit.pending.demo.rendering;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.io.CoverageIO;
-
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
+import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.FeatureStoreFinder;
-import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.session.Session;
@@ -30,15 +19,23 @@ import org.geotoolkit.display2d.service.ViewDef;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.image.io.plugin.WorldFileImageReader;
-import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.pending.demo.Demos;
-import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.StyleConstants;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.io.Serializable;
+import java.net.URISyntaxException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class PortrayalDemo {
 
@@ -101,9 +98,10 @@ public class PortrayalDemo {
         return collection;
     }
 
-    private static GridCoverageReader openWorldFile() throws CoverageStoreException {
+    private static GridCoverageReader openWorldFile() throws CoverageStoreException, URISyntaxException {
         WorldFileImageReader.Spi.registerDefaults(null);
-        return CoverageIO.createSimpleReader(new File("data/clouds.jpg"));
+        File cloudFile = new File(PortrayalDemo.class.getResource("/data/coverage/clouds.jpg").toURI());
+        return CoverageIO.createSimpleReader(cloudFile);
     }
 
 }

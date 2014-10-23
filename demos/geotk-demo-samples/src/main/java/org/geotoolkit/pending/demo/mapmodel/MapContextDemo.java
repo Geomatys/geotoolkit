@@ -2,15 +2,11 @@
 
 package org.geotoolkit.pending.demo.mapmodel;
 
-import java.io.File;
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
 import org.geotoolkit.coverage.io.CoverageIO;
 import org.geotoolkit.coverage.io.GridCoverageReader;
+import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.FeatureStoreFinder;
-import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.session.Session;
@@ -27,6 +23,11 @@ import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.StyleConstants;
+
+import java.io.File;
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class MapContextDemo {
@@ -52,7 +53,8 @@ public class MapContextDemo {
         final FeatureMapLayer featureLayer = MapBuilder.createFeatureLayer(features, featureStyle);
 
         //create a coverage layer
-        final CoverageMapLayer coverageLayer = MapBuilder.createCoverageLayer(new File("data/clouds.jpg"));
+        File cloudFile = new File(MapContextDemo.class.getResource("/data/coverage/clouds.jpg").toURI());
+        final CoverageMapLayer coverageLayer = MapBuilder.createCoverageLayer(cloudFile);
 
         //add all layers in the context
         context.layers().add(coverageLayer);
@@ -93,7 +95,8 @@ public class MapContextDemo {
     }
 
     public static GridCoverageReader openWorldFile() throws Exception{
-        return CoverageIO.createSimpleReader(new File("data/clouds.jpg"));
+        File cloudFile = new File(MapContextDemo.class.getResource("/data/coverage/clouds.jpg").toURI());
+        return CoverageIO.createSimpleReader(cloudFile);
     }
 
 

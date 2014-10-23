@@ -5,6 +5,7 @@ import java.awt.BorderLayout;
 import java.awt.geom.NoninvertibleTransformException;
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import org.geotoolkit.coverage.io.CoverageIO;
@@ -22,6 +23,7 @@ import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.pending.demo.Demos;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.pending.demo.rendering.reliefShadow.ReliefShadowDemo;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.StyleConstants;
@@ -34,8 +36,7 @@ public class GraphicDemo {
     private static final MutableStyleFactory SF = (MutableStyleFactory) FactoryFinder.getStyleFactory(
                                                    new Hints(Hints.STYLE_FACTORY, MutableStyleFactory.class));
 
-    public static void main(String[] args) throws DataStoreException, NoninvertibleTransformException,
-                                                  TransformException, IOException {
+    public static void main(String[] args) throws Exception {
         Demos.init();
 
         final MapContext context = createContext();
@@ -69,14 +70,15 @@ public class GraphicDemo {
 
     }
 
-    private static MapContext createContext() throws DataStoreException  {
+    private static MapContext createContext() throws DataStoreException, URISyntaxException {
         WorldFileImageReader.Spi.registerDefaults(null);
 
         //create a map context
         final MapContext context = MapBuilder.createContext();
 
         //create a coverage layer
-        final CoverageMapLayer coverageLayer = MapBuilder.createCoverageLayer(new File("data/clouds.jpg"));
+        File cloudFile = new File(GraphicDemo.class.getResource("/data/coverage/clouds.jpg").toURI());
+        final CoverageMapLayer coverageLayer = MapBuilder.createCoverageLayer(cloudFile);
 
         //add all layers in the context
         context.layers().add(coverageLayer);

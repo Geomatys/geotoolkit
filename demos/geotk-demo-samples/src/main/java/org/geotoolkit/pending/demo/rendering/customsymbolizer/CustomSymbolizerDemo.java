@@ -2,15 +2,7 @@
 
 package org.geotoolkit.pending.demo.rendering.customsymbolizer;
 
-import java.awt.BorderLayout;
-import java.awt.geom.NoninvertibleTransformException;
-import java.io.File;
-import java.io.IOException;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import org.geotoolkit.coverage.io.CoverageIO;
-
-import org.geotoolkit.coverage.io.GridCoverageReader;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.gui.swing.render2d.JMap2D;
@@ -21,20 +13,20 @@ import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.pending.demo.Demos;
-import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.coverage.DefaultCoverageReference;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
 
-import org.opengis.referencing.operation.TransformException;
+import javax.swing.*;
+import java.awt.*;
+import java.io.File;
+import java.net.URISyntaxException;
 
 public class CustomSymbolizerDemo {
 
      private static final MutableStyleFactory SF = (MutableStyleFactory) FactoryFinder.getStyleFactory(
                                                    new Hints(Hints.STYLE_FACTORY, MutableStyleFactory.class));
 
-    public static void main(String[] args) throws DataStoreException, NoninvertibleTransformException,
-                                                  TransformException, IOException {
+    public static void main(String[] args) throws Exception {
         Demos.init();
 
         final MapContext context = createContext();
@@ -59,15 +51,16 @@ public class CustomSymbolizerDemo {
 
     }
 
-    private static MapContext createContext() throws DataStoreException  {
+    private static MapContext createContext() throws DataStoreException, URISyntaxException {
         WorldFileImageReader.Spi.registerDefaults(null);
 
         //create a map context
         final MapContext context = MapBuilder.createContext();
 
         //create a coverage layer
+        File cloudFile = new File(CustomSymbolizerDemo.class.getResource("/data/coverage/clouds.jpg").toURI());
         final MutableStyle coverageStyle = SF.style(new CrystallizeSymbolizer(2));
-        final CoverageMapLayer coverageLayer = MapBuilder.createCoverageLayer(new File("data/clouds.jpg"));
+        final CoverageMapLayer coverageLayer = MapBuilder.createCoverageLayer(cloudFile);
         coverageLayer.setStyle(coverageStyle);
 
         //add all layers in the context

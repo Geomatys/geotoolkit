@@ -2,6 +2,7 @@
 package org.geotoolkit.pending.demo.rendering.reliefShadow;
 
 import java.io.File;
+import java.net.URL;
 import javax.imageio.ImageReader;
 import javax.measure.unit.NonSI;
 import javax.measure.unit.Unit;
@@ -49,15 +50,16 @@ public class ReliefShadowDemo {
     protected static final FilterFactory FF    = FactoryFinder.getFilterFactory(null);
     
     /**
-     * Relief path of Digital Elevation Model (DEM).
-     */
-    final static File reliefPath = new File("data/cloudsRelief.tiff");
-    /**
      * Create {@link GridCoverageReader} which will be return by {@link ElevationModel} to read DEM.
      */
     
     public static void main(String[] args) throws Exception {
         Demos.init();
+
+        //Relief path of Digital Elevation Model (DEM).
+        URL reliefURL = ReliefShadowDemo.class.getResource("/data/coverage/cloudsRelief.tiff");
+        File reliefPath = new File(reliefURL.toURI());
+
         ImageReader covPath = XImageIO.getReaderByFormatName("tiff-wf", reliefPath, Boolean.FALSE, false);
         covPath.setInput(reliefPath);
         
@@ -69,18 +71,20 @@ public class ReliefShadowDemo {
         /*
          * Coverage which will be shadowed.
          */
-//        final File input = new File("data/clouds.jpg");
+//        final File input = new File(ReliefShadowDemo.class.getResource("/data/coverage/clouds.jpg").toURI());
 //        final FileCoverageStore store = new FileCoverageStore(input.toURL(), "JPEG");
 //        final Name name = store.getNames().iterator().next();
 //        final CoverageReference ref = store.getCoverageReference(name);
 //        final GridCoverageReader reader = CoverageIO.createSimpleReader(input);
 //        final GridCoverage2D grid = (GridCoverage2D) reader.read(0, null);
+
+        File cloudFile = new File(ReliefShadowDemo.class.getResource("/data/coverage/clouds.jpg").toURI());
         //create a mapcontext
         final MapContext context  = MapBuilder.createContext();        
-        final CoverageMapLayer cl = MapBuilder.createCoverageLayer(new File("data/clouds.jpg"));
-        final double azimuth = 130;
+        final CoverageMapLayer cl = MapBuilder.createCoverageLayer(cloudFile);
+        final double azimuth = 45;
         final double altitude = 2;
-        final double scale = 55;
+        final double scale = 0.4;
         final ElevationModel elevModel = new ElevationModel(ref, azimuth, altitude, scale, AxisDirection.UP);
         
         /*
@@ -116,7 +120,7 @@ public class ReliefShadowDemo {
          * First argument define in percent the dimming of shadow pixel value.
          * Second argument define if we want increase sunny pixel value.
          */
-        final ShadedRelief relief = SF.shadedRelief(FF.literal(10),false);
+        final ShadedRelief relief = SF.shadedRelief(FF.literal(10),true);
         final Symbolizer outline = null;
 
         final RasterSymbolizer symbol = SF.rasterSymbolizer(
