@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.logging.Level;
 import javafx.beans.property.Property;
 import javafx.beans.property.adapter.JavaBeanBooleanPropertyBuilder;
@@ -38,6 +39,8 @@ import javafx.beans.property.adapter.JavaBeanObjectPropertyBuilder;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
+import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.control.Control;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TreeItem;
@@ -135,6 +138,22 @@ public final class FXUtilities {
 //        };
 //    }
     
+    
+    /**
+     * Recursive loop on node and it's children, calling the consumer for each node.
+     * 
+     * @param node visited node
+     * @param consumer called for each scene node
+     */
+    public static void visit(Node node, Consumer<Node> consumer){
+        consumer.accept(node);
+        if(node instanceof Parent){
+            final Parent parent = (Parent) node;
+            for(Node child : parent.getChildrenUnmodifiable()){
+                visit(child, consumer);
+            }
+        }
+    }
     
     public static java.awt.Color toSwingColor(Color fxColor){
         final int r = (int) (fxColor.getRed() * 255);

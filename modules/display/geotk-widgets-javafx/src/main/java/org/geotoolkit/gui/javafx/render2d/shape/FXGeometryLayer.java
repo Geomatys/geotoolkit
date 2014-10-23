@@ -18,8 +18,6 @@ package org.geotoolkit.gui.javafx.render2d.shape;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import java.awt.image.RenderedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
@@ -34,13 +32,10 @@ import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.scene.Group;
 import javafx.scene.Node;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import org.apache.sis.referencing.CRS;
-import org.apache.sis.referencing.IdentifiedObjects;
-import org.geotoolkit.coverage.ProcessedRenderedImage;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.gui.javafx.render2d.FXMap;
@@ -122,22 +117,24 @@ public class FXGeometryLayer extends Pane implements FXMapDecoration{
             final Group group = new Group();
             group.setCache(false);
             for(Coordinate c : coords){
-                final Circle circle = new Circle(c.x, c.y, 5);
-                group.getChildren().add(circle);
+                final Node vertice = createVerticeNode(c);
+                if(vertice!=null){
+                    group.getChildren().add(vertice);
+                }
             }
             shapes.add(group);
         }
         
-//        shapes.add(new FXGeometry(GF.createMultiPoint(coords.toArray(new Coordinate[0]))));
-        
         //JAVAFX BUG : 
-        
+        //getChildren().setAll(shapes);
         Platform.runLater(() -> {
             getChildren().setAll(shapes);
         });
-        
-                
-//        getChildren().setAll(shapes);
+           
+    }
+    
+    protected Node createVerticeNode(Coordinate c){
+        return new Circle(c.x, c.y, 5);
     }
 
     @Override

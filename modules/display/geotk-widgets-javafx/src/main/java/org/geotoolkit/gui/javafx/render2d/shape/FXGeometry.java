@@ -24,14 +24,23 @@ import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 import javafx.scene.Group;
 import javafx.scene.Node;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
 import javafx.scene.shape.Polyline;
 import javafx.scene.shape.Shape;
+import javafx.scene.shape.StrokeLineCap;
+import javafx.scene.shape.StrokeLineJoin;
+import javafx.scene.shape.StrokeType;
+import org.geotoolkit.gui.javafx.util.FXUtilities;
 
 /**
- *
+ * Convert a JTS Geometry in a JavaFX Shape.
+ * JavaFX has a very limited geometry model, multi part geometries and holes 
+ * can not be create directly.
+ * As a result the jts geometry is translated as a group of smaller geometries.
+ * 
  * @author Johann Sorel (Geomatys)
  */
 public class FXGeometry extends Group {
@@ -44,7 +53,44 @@ public class FXGeometry extends Group {
         this.shape = toShape(geometry);
         getChildren().add(shape);
     }
+    
+    public void setFill(final Paint paint){
+        FXUtilities.visit(this, (Node n) -> {if(n instanceof Shape)((Shape)n).setFill(paint);});
+    }
+    
+    public void setStroke(final Paint paint){
+        FXUtilities.visit(this, (Node n) -> {if(n instanceof Shape)((Shape)n).setStroke(paint);});
+    }
+    
+    public void setStrokeDashOffset(final double offset){
+        FXUtilities.visit(this, (Node n) -> {if(n instanceof Shape)((Shape)n).setStrokeDashOffset(offset);});
+    }
+    
+    public void setStrokeLineCap(final StrokeLineCap cap){
+        FXUtilities.visit(this, (Node n) -> {if(n instanceof Shape)((Shape)n).setStrokeLineCap(cap);});
+    }
+    
+    public void setStrokeLineJoin(final StrokeLineJoin join){
+        FXUtilities.visit(this, (Node n) -> {if(n instanceof Shape)((Shape)n).setStrokeLineJoin(join);});
+    }
+    
+    public void setStrokeMiterLimit(final double value){
+        FXUtilities.visit(this, (Node n) -> {if(n instanceof Shape)((Shape)n).setStrokeMiterLimit(value);});
+    }
+    
+    public void setStrokeType(final StrokeType type){
+        FXUtilities.visit(this, (Node n) -> {if(n instanceof Shape)((Shape)n).setStrokeType(type);});
+    }
+    
+    public void setStrokeWidth(final double value){
+        FXUtilities.visit(this, (Node n) -> {if(n instanceof Shape)((Shape)n).setStrokeWidth(value);});
+    }
+    
+    public void setSmooth(final boolean smooth){
+        FXUtilities.visit(this, (Node n) -> {if(n instanceof Shape)((Shape)n).setSmooth(smooth);});
+    }
         
+            
     private static Node toShape(Geometry jts){
         
         if(jts.isEmpty()){
