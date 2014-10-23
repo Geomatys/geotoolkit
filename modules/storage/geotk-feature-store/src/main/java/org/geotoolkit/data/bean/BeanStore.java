@@ -35,9 +35,10 @@ import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.Name;
 import org.geotoolkit.feature.type.PropertyDescriptor;
+import org.geotoolkit.storage.StorageEvent;
+import org.geotoolkit.storage.StorageListener;
 import org.opengis.filter.Filter;
 import org.opengis.filter.identity.FeatureId;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  * A BeanStore decorate collections of bean objects as FeatureCollections.
@@ -45,7 +46,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * 
  * @author Johann Sorel (Geomatys)
  */
-public class BeanStore extends AbstractFeatureStore{
+public class BeanStore extends AbstractFeatureStore implements StorageListener{
         
     private static final QueryCapabilities CAPABILITIES = new DefaultQueryCapabilities(false);
     
@@ -57,46 +58,14 @@ public class BeanStore extends AbstractFeatureStore{
         Iterable get();
     }
     
-    /**
-     * Definition of a bean mapped as a FeatureType.
-     */
-    public static final class BeanType{
-        private final Class beanClass;
-        private final CoordinateReferenceSystem crs;
-        private final BeanFeature.Mapping mapping;
-        private final FeatureSupplier supplier;
-
-        public BeanType(Class bleanClass, String idField, String namespace, CoordinateReferenceSystem crs, FeatureSupplier supplier) {
-            this.beanClass = bleanClass;
-            this.crs = crs;
-            this.mapping = new BeanFeature.Mapping(beanClass, namespace, crs, idField);
-            this.supplier = supplier;
-        }
-
-        public Class getBeanClass() {
-            return beanClass;
-        }
-
-        public CoordinateReferenceSystem getCoordinateReferenceSystem() {
-            return crs;
-        }
-
-        public BeanFeature.Mapping getMapping() {
-            return mapping;
-        }
-
-        public FeatureSupplier getSupplier() {
-            return supplier;
-        }
-        
-    }
+    private final Map<Name,BeanFeatureSupplier> types = new HashMap<>();
     
-    private final Map<Name,BeanType> types = new HashMap<>();
-    
-    public BeanStore(BeanType ... types) throws DataStoreException {
+    public BeanStore(BeanFeatureSupplier ... types) throws DataStoreException {
         super(null);
-        for(BeanType bt : types){
+        for(BeanFeatureSupplier bt : types){
             this.types.put(bt.mapping.featureType.getName(), bt);
+            //catch events and propage them
+            bt.addStorageListener(this);
         }
     }
     
@@ -120,7 +89,7 @@ public class BeanStore extends AbstractFeatureStore{
     public FeatureReader getFeatureReader(Query query) throws DataStoreException {
         typeCheck(query.getTypeName());
         
-        final BeanType bt = types.get(query.getTypeName());
+        final BeanFeatureSupplier bt = types.get(query.getTypeName());
         final Iterable candidates = bt.supplier.get();
         final BeanFeature.Mapping mapping = bt.mapping;
         
@@ -155,8 +124,22 @@ public class BeanStore extends AbstractFeatureStore{
 
     @Override
     public void refreshMetaModel() {
+        fireFeaturesAdded(null, null);
     }
     
+    ////////////////////////////////////////////////////////////////////////////
+    // BEAN SUPPLIER EVENTS ////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+    
+    @Override
+    public void structureChanged(StorageEvent event) {
+        sendStructureEvent(event.copy(this));
+    }
+
+    @Override
+    public void contentChanged(StorageEvent event) {
+        sendContentEvent(event.copy(this));
+    }
     
     ////////////////////////////////////////////////////////////////////////////
     // NOT SUPPORTED ///////////////////////////////////////////////////////////
