@@ -17,6 +17,7 @@
 
 package org.geotoolkit.gui.javafx.util;
 
+import java.util.Objects;
 import java.util.function.Function;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -59,7 +60,7 @@ public class ButtonTableCell<S,T> extends TableCell<S,T> {
                     
                     final T item = getItem();
                     final T res = onAction.apply(item);
-                    if(!res.equals(item)){
+                    if(!Objects.equals(res,item)){
                         try{
                             itemProperty().set(res);
                             commitEdit(res);
