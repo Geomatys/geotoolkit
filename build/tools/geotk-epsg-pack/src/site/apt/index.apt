@@ -56,8 +56,8 @@ cp $EPSG_SCRIPTS/EPSG_v7_9.mdb_FKeys_MySQL.sql  FKeys.sql
         in the EPSG directory):
 
 ----------------------------------------------------------------------------------------------------------------------------------
-ln $GEOTK_HOME/build/tools/geotk-epsg-pack/target/geotk-epsg-pack-4.x-SNAPSHOT.jar $GEOTK_HOME/target/binaries/
-java -jar $GEOTK_HOME/target/binaries/geotk-epsg-pack-4.x-SNAPSHOT.jar compact $EPSG_SCRIPTS/EPSG_v7_8.mdb_Data_MySQL.sql Data.sql
+ln $GEOTK_HOME/build/tools/geotk-epsg-pack/target/geotk-epsg-pack-4.0-M2.jar $GEOTK_HOME/target/binaries/
+java -jar $GEOTK_HOME/target/binaries/geotk-epsg-pack-4.0-M2.jar compact $EPSG_SCRIPTS/EPSG_v7_8.mdb_Data_MySQL.sql Data.sql
 ----------------------------------------------------------------------------------------------------------------------------------
 
   [[8]] Upgrade the <<<VERSION>>> value defined in the <<<ThreadedEpsgFactory>>> class,

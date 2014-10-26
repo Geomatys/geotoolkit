@@ -8,7 +8,7 @@
 #
 
 # The version of Geotk JAR files to use.
-export GEOTOOLKIT_VERSION=4.x-SNAPSHOT
+export GEOTOOLKIT_VERSION=4.0-M2
 
 # The directory which contains every JAR files.
 export JARS="$BASE_DIR/jar"

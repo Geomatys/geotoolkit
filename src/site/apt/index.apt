@@ -72,7 +72,7 @@ The Geotoolkit.org library
   Maven\ 2 repository enables projects which use that built tool to declare a dependency on
   Geotk and have Maven automatically find and download the required binary archives. The
   automated build page provides bundles which group several Geotk modules into a single JAR
-  file. The bundle <<<geotk-bundle-4.x-SNAPSHOT.pack.gz>>> contains a full set of Geotk modules
+  file. The bundle <<<geotk-bundle-4.0-M2.pack.gz>>> contains a full set of Geotk modules
   providing the full functionality of the library. Other bundles are provided which contain
   different subsets of the project. A source bundle and a Javadoc bundle are also available.
 
