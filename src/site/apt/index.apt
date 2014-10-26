@@ -40,14 +40,14 @@ The Geotoolkit.org library
 
 * Latest releases
 
-  Latest Geotoolkit.org release is Geotk-4.0-M1, released July 2013.
+  Latest Geotoolkit.org release is Geotk-4.0-M2, released October 2014.
   This release is a milestone toward migration to Apache SIS.
 
     * The <<<4.0-M0>>> release contains deprecated classes with links to their SIS replacement, mostly in the utility and metadata modules.
 
     * The <<<4.0-M1>>> release is very similar to the The <<<4.0-M0>>> one, with deprecated classes removed.
 
-  See the {{{http://download.geotoolkit.org/4.0-M1/}download page}} for release notes.
+  See the {{{http://download.geotoolkit.org/4.0-M2/}download page}} for release notes.
 
 
 * License

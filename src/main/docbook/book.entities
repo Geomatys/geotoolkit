@@ -1,5 +1,5 @@
-<!ENTITY geoapi-version "3.1-M04">
+<!ENTITY geoapi-version "4.0-M01">
 <!ENTITY geoapi-release "3.0.0">
-<!ENTITY geotk-release  "4.0-M1">
+<!ENTITY geotk-release  "4.0-M2">
 <!ENTITY gml-version    "3.3">
 <!ENTITY geoapi-javadoc "http://www.geoapi.org/snapshot/javadoc">

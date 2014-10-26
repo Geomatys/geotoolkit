@@ -65,7 +65,7 @@ Downloading Geotoolkit.org Binaries
 </dependencies>
 +---------------------------------------------------------+
 
-  The above example is sufficient for any version ending in <<<-geoapi-3.0>>>. If the <<<3.20>>> or <<<4.0-M1>>>
+  The above example is sufficient for any version ending in <<<-geoapi-3.0>>>. If the <<<3.20>>> or <<<4.0-M2>>>
   version is wanted instead than <<<3.20-geoapi-3.0>>> (in order to use modules that are beyond
   GeoAPI 3.0 interfaces), then the following repository must be declared in the root <<<pom.xml>>>
   file.
@@ -163,11 +163,11 @@ Downloading Geotoolkit.org Binaries
   installation directory.
 
   For example, users who wish to use the georeferencing functionality of Geotk can select the
-  <<<geotk-bundle-referencing-4.0-M1.pack.gz>>> archive for download. Once downloaded, the archive
+  <<<geotk-bundle-referencing-4.0-M2.pack.gz>>> archive for download. Once downloaded, the archive
   can then be expanded with the following command:
 
 -----------------------------------------------------------------------------------------------
-unpack200 --remove-pack-file geotk-bundle-referencing-4.0-M1.pack.gz geotk-bundle-referencing.jar
+unpack200 --remove-pack-file geotk-bundle-referencing-4.0-M2.pack.gz geotk-bundle-referencing.jar
 -----------------------------------------------------------------------------------------------
 
   where the name of the target file, <<<geotk-bundle-referencing.jar>>> in this example, can be any
