@@ -14,7 +14,7 @@
   <parent>
     <groupId>org.geotoolkit.project</groupId>
     <artifactId>maven</artifactId>
-    <version>4.0-M2</version>
+    <version>4.x-SNAPSHOT</version>
   </parent>
 
 

@@ -9,11 +9,11 @@ Creating an image mosaic
 
   Download the latest version of <<<geotk-bundle.pack.gz>>> from {{{http://download.geotoolkit.org}http://download.geotoolkit.org}}.
   Open a command-line window and set the current directory to the directory where the Geotk bundle has
-  been saved. Uncompress the file using the command below (replace <<<4.0-M2>>> by the actual
+  been saved. Uncompress the file using the command below (replace <<<4.x-SNAPSHOT>>> by the actual
   version number):
 
 ------------------------------------------------------------------------
-unpack200 --remove-pack-file geotk-bundle-4.0-M2.pack.gz geotk.jar
+unpack200 --remove-pack-file geotk-bundle-4.x-SNAPSHOT.pack.gz geotk.jar
 ------------------------------------------------------------------------
 
   Execute with a large amount of memory (1 gigabyte in the example below). The wizard can works with
