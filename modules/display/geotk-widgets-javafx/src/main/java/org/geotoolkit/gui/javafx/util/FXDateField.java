@@ -49,6 +49,10 @@ public class FXDateField extends DecorationPane{
     public void setValue(LocalDateTime date){
         field.setValue(date);
     }
+
+    public LocalDateTimeField getField() {
+        return field;
+    }
     
     public ObjectProperty<LocalDateTime> valueProperty(){
         return field.valueProperty();
