@@ -19,6 +19,7 @@ package org.geotoolkit.metadata.cbers;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -140,7 +141,7 @@ public class CBERS {
         isoData.setLanguage(Locale.ENGLISH);
 
         //MI_Metadata/characterSet : (default value) utf8
-        isoData.setCharacterSet(StandardCharsets.UTF_8);
+        isoData.setCharacterSets(Collections.singleton(StandardCharsets.UTF_8));
 
         //MI_Metadata/dateStamp : get current date
         isoData.setDateStamp(new Date());

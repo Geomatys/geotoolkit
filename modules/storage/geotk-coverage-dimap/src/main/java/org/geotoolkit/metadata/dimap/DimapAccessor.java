@@ -612,7 +612,7 @@ public final class DimapAccessor extends Static {
         //<Data_Strip/>                     - Mandatory
 
         //Default values
-        metadata.setCharacterSet(StandardCharsets.UTF_8);
+        metadata.setCharacterSets(Collections.singleton(StandardCharsets.UTF_8));
         metadata.setLanguage(Locale.ENGLISH);
         metadata.setDateStamp(new Date());
 

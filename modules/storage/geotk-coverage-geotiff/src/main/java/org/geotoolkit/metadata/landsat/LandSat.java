@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.metadata.landsat;
 
+import java.util.Collections;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -152,7 +153,7 @@ public final class LandSat {
         final DefaultMetadata metadata = new DefaultMetadata();
 
         //Default values
-        metadata.setCharacterSet(StandardCharsets.UTF_8);
+        metadata.setCharacterSets(Collections.singleton(StandardCharsets.UTF_8));
         metadata.setLanguage(Locale.ENGLISH);
         metadata.setDateStamp(new Date());
 

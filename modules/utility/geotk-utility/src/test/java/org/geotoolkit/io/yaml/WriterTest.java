@@ -100,7 +100,7 @@ public strictfp final class WriterTest {
         final DefaultMetadata metadata = new DefaultMetadata();
         metadata.setFileIdentifier("An archive");
         metadata.setLanguage(Locale.ENGLISH);
-        metadata.setCharacterSet(StandardCharsets.UTF_8);
+        metadata.setCharacterSets(singleton(StandardCharsets.UTF_8));
         metadata.setMetadataStandardName("ISO19115");
         metadata.setMetadataStandardVersion("2003/Cor.1:2006");
         metadata.setIdentificationInfo(singleton(identification));

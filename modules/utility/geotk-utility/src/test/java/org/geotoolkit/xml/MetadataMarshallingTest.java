@@ -112,7 +112,7 @@ public final strictfp class MetadataMarshallingTest extends LocaleDependantTestB
         final DefaultMetadata metadata = new DefaultMetadata();
         metadata.setLocales(Arrays.asList(Locale.CANADA_FRENCH, Locale.UK));
         metadata.setLanguage(Locale.FRENCH);
-        metadata.setCharacterSet(StandardCharsets.UTF_8);
+        metadata.setCharacterSets(singleton(StandardCharsets.UTF_8));
         metadata.setDateStamp(new Date(1260961229580L));
         metadata.setContacts(Arrays.asList(
             (ResponsibleParty) getSingleton(Citations.GEOTOOLKIT.getCitedResponsibleParties()),
