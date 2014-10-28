@@ -18,6 +18,7 @@ package org.geotoolkit.gui.javafx.util;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.geometry.Pos;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ContentDisplay;
 
@@ -40,6 +41,7 @@ public class FXBooleanCell<S> extends FXTableCell<S, Boolean> {
         this.setGraphic(checkBox);
         this.setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
         this.setEditable(true);
+        this.setAlignment(Pos.CENTER);
     }
 
     @Override
@@ -67,7 +69,10 @@ public class FXBooleanCell<S> extends FXTableCell<S, Boolean> {
     @Override
     public void updateItem(Boolean item, boolean empty) {
         super.updateItem(item, empty);
-        if (!isEmpty()) {
+        if(empty){
+            setGraphic(null);
+        }else{
+            setGraphic(checkBox);
             checkBox.setSelected(Boolean.TRUE.equals(item));
         }
     }

@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.gui.javafx.util;
 
+import java.text.DecimalFormat;
 import javafx.geometry.Pos;
 import javafx.scene.control.ContentDisplay;
 import jidefx.scene.control.field.NumberField;
@@ -30,7 +31,7 @@ public class FXNumberCell<S> extends FXTableCell<S, Object> {
     public FXNumberCell(NumberField.NumberType type) {
         field.getNumberField().setNumberType(type);
         setGraphic(field);
-        setAlignment(Pos.CENTER);
+        setAlignment(Pos.CENTER_RIGHT);
         setContentDisplay(ContentDisplay.CENTER);
     }
 
@@ -71,7 +72,14 @@ public class FXNumberCell<S> extends FXTableCell<S, Object> {
         setText(null);
         setGraphic(null);
         if (item != null) {
-            setText(((Number) item).toString());
+            if(item instanceof Float || item instanceof Double){
+                final String str = DecimalFormat.getNumberInstance().format(((Number)item).doubleValue());
+                setText(str);
+            }else{
+                final String str = DecimalFormat.getIntegerInstance().format(((Number)item).doubleValue());
+                setText(str);
+            }
+            
         }
     }
     

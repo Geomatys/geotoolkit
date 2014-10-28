@@ -22,8 +22,10 @@ import java.util.function.Function;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.TableCell;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.Border;
@@ -41,6 +43,8 @@ public class ButtonTableCell<S,T> extends TableCell<S,T> {
         this.visiblePredicate = visiblePredicate;
         button.setGraphic(graphic);
         setGraphic(button);
+        setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
+        setAlignment(Pos.CENTER);
         
         if(!decorated){
             button.setBackground(Background.EMPTY);
