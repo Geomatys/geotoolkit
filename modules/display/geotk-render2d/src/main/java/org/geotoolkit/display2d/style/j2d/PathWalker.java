@@ -154,7 +154,8 @@ public class PathWalker {
     }
 
     public Point2D getPosition(final Point2D pt) {
-        final double perc = 1d - remaining / segmentLenght;
+        //bad geometries have overlaping points
+        final double perc = (segmentLenght>0.0) ? (1d - remaining / segmentLenght) : 0.0;
         final double tlX = (segmentEndX - segmentStartX) * perc + segmentStartX;
         final double tlY = (segmentEndY - segmentStartY) * perc + segmentStartY;
 

@@ -90,6 +90,10 @@ public class BeanFeature extends AbstractFeature<Collection<Property>>{
         public java.beans.PropertyDescriptor idAccessor;
 
         public Mapping(Class clazz, String namespace, CoordinateReferenceSystem crs, String idField) {
+            this(clazz,namespace,crs,idField,null);
+        }
+        
+        public Mapping(Class clazz, String namespace, CoordinateReferenceSystem crs, String idField, String defaultGeom) {
             this.idField = idField;
             final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
             ftb.setName(namespace,clazz.getSimpleName());
@@ -108,7 +112,7 @@ public class BeanFeature extends AbstractFeature<Collection<Property>>{
                     final Class propClazz = readMethod.getReturnType();
                     if(Geometry.class.isAssignableFrom(propClazz)){
                         ftb.add(propName, propClazz, crs);
-                        ftb.setDefaultGeometry(propName);
+                        if(defaultGeom==null)ftb.setDefaultGeometry(propName);
                     }else{
                         ftb.add(propName, propClazz);
                     }
@@ -117,6 +121,7 @@ public class BeanFeature extends AbstractFeature<Collection<Property>>{
             } catch (IntrospectionException e) {
                 throw new RuntimeException(e.getMessage(), e);
             }
+            if(defaultGeom!=null) ftb.setDefaultGeometry(defaultGeom);
             featureType = ftb.buildFeatureType();
         }
         

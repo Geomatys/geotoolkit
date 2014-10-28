@@ -36,10 +36,11 @@ public class BeanFeatureSupplier {
     final BeanStore.FeatureSupplier supplier;
     private final Set<StorageListener> listeners = new HashSet<>();
 
-    public BeanFeatureSupplier(Class bleanClass, String idField, String namespace, CoordinateReferenceSystem crs, BeanStore.FeatureSupplier supplier) {
+    public BeanFeatureSupplier(Class bleanClass, String idField, String defaultGeom, String namespace, 
+            CoordinateReferenceSystem crs, BeanStore.FeatureSupplier supplier) {
         this.beanClass = bleanClass;
         this.crs = crs;
-        this.mapping = new BeanFeature.Mapping(beanClass, namespace, crs, idField);
+        this.mapping = new BeanFeature.Mapping(beanClass, namespace, crs, idField, defaultGeom);
         this.supplier = supplier;
     }
 
