@@ -20,6 +20,8 @@ import java.time.LocalDateTime;
 import javafx.beans.property.ObjectProperty;
 import jidefx.scene.control.decoration.DecorationPane;
 import jidefx.scene.control.field.LocalDateTimeField;
+import jidefx.scene.control.field.popup.LocalDateTimePopupContent;
+import jidefx.scene.control.field.popup.PopupContent;
 
 /**
  * TODO improve control to support all Date type objects.
@@ -65,6 +67,28 @@ public class FXDateField extends DecorationPane{
 
         public DateTimeField(String pattern) {
             super(pattern);
+        }
+
+        /**
+         * Overriden to support null values.
+         * @return 
+         */
+        @Override
+        public LocalDateTime getValue() {
+            
+            String text = getText();
+            LocalDateTime value = super.getValue();
+            
+            if("-- ::".equals(text)){
+                if(value == null) {
+                    super.setValue(LocalDateTime.now());
+                }
+                else{
+                    super.setValue(null);
+                }
+            }
+            
+            return super.getValue();
         }
 
         @Override
