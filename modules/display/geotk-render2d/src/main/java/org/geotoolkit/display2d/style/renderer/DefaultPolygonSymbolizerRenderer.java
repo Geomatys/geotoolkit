@@ -116,7 +116,7 @@ public class DefaultPolygonSymbolizerRenderer extends AbstractSymbolizerRenderer
 
                 //adjust displacement, displacement is expressed in pixel units
                 final AffineTransform inverse = renderingContext.getDisplayToObjective();
-                dispStep = inverse.deltaTransform(dispStep, dispStep);
+                if(dispStep!=null) dispStep = inverse.deltaTransform(dispStep, dispStep);
             }
         }catch (TransformException ex){
             throw new PortrayalException("Could not calculate projected geometry",ex);
