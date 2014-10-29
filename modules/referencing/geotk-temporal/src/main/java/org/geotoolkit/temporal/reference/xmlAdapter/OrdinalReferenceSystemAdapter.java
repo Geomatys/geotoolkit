@@ -17,7 +17,9 @@
  */
 package org.geotoolkit.temporal.reference.xmlAdapter;
 
-import javax.xml.bind.annotation.adapters.XmlAdapter;
+import javax.xml.bind.annotation.XmlElement;
+import org.apache.sis.internal.jaxb.gco.PropertyType;
+import org.apache.sis.xml.Namespaces;
 import org.geotoolkit.temporal.reference.DefaultOrdinalReferenceSystem;
 import org.opengis.temporal.OrdinalReferenceSystem;
 
@@ -26,31 +28,63 @@ import org.opengis.temporal.OrdinalReferenceSystem;
  *
  * @author Remi Marechal (Geomatys).
  */
-public class OrdinalReferenceSystemAdapter extends  XmlAdapter<DefaultOrdinalReferenceSystem, OrdinalReferenceSystem> {
+public class OrdinalReferenceSystemAdapter extends  PropertyType<OrdinalReferenceSystemAdapter, OrdinalReferenceSystem> {
 
     /**
-     * Converts an object read from a XML stream to an {@link OrdinalReferenceSystem}
-     * implementation. JAXB invokes automatically this method at unmarshalling time.
-     * 
-     * @param v the value which will be convert.
-     * @return A {@link OrdinalReferenceSystem} for the {@link DefaultOrdinalReferenceSystem} value.
-     * @throws Exception 
+     * Empty constructor for JAXB only.
+     */
+    public OrdinalReferenceSystemAdapter() {
+    }
+    
+    /**
+     * Constructor for the {@link #wrap} method only.
+     */
+    private OrdinalReferenceSystemAdapter(final OrdinalReferenceSystem ordiRefSystem) {
+        super(ordiRefSystem);
+    }
+    
+    /**
+     * Invoked by JAXB at marshalling time for getting the actual element to write
+     * inside the {@code <gml:Calendar>} XML element.
+     * This is the value or a copy of the value given in argument to the {@code wrap} method.
+     *
+     * @return The element to be marshalled.
+     */
+    @XmlElement(name = "TimeOrdinalReferenceSystem", namespace = Namespaces.GML)
+    public DefaultOrdinalReferenceSystem getElement() {
+        return DefaultOrdinalReferenceSystem.castOrCopy(metadata);
+    }
+    
+    /**
+     * Returns the GeoAPI interface which is bound by this adapter.
+     * This method is indirectly invoked by the private constructor
+     * below, so it shall not depend on the state of this object.
+     *
+     * @return {@code OrdinalReferenceSystem.class}
      */
     @Override
-    public OrdinalReferenceSystem unmarshal(DefaultOrdinalReferenceSystem v) throws Exception {
-        return v;
+    protected Class<OrdinalReferenceSystem> getBoundType() {
+        return OrdinalReferenceSystem.class;
     }
 
     /**
-     * Converts an {@link OrdinalReferenceSystem} to an object to formatted into a
-     * XML stream. JAXB invokes automatically this method at marshalling time.
-     * 
-     * @param v the value which will be convert.
-     * @return The adapter for the {@link OrdinalReferenceSystem}.
-     * @see DefaultOrdinalReferenceSystem#castOrCopy(org.opengis.temporal.OrdinalReferenceSystem) 
+     * Invoked by {@link PropertyType} at marshalling time for wrapping the given value
+     * in a {@code <gml:OrdinalReferenceSystem>} XML element.
+     *
+     * @param  instant The element to marshall.
+     * @return A {@code PropertyType} wrapping the given the element.
      */
     @Override
-    public DefaultOrdinalReferenceSystem marshal(OrdinalReferenceSystem v) throws Exception {
-        return DefaultOrdinalReferenceSystem.castOrCopy(v);
+    protected OrdinalReferenceSystemAdapter wrap(OrdinalReferenceSystem ors) {
+        return new OrdinalReferenceSystemAdapter(ors);
+    }
+    
+    /**
+     * Invoked by JAXB at unmarshalling time for storing the result temporarily.
+     *
+     * @param ordinalRefSystem The unmarshalled element.
+     */
+    public void setElement(final DefaultOrdinalReferenceSystem ordinalRefSystem) {
+        metadata = ordinalRefSystem;
     }
 }

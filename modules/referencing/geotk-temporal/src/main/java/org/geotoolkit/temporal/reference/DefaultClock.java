@@ -30,12 +30,9 @@ import org.opengis.temporal.Clock;
 import org.opengis.temporal.ClockTime;
 import org.opengis.util.InternationalString;
 import org.opengis.metadata.extent.Extent;
-import org.opengis.metadata.Identifier;
 import org.opengis.referencing.cs.TimeCS;
 import org.opengis.referencing.datum.TemporalDatum;
 import org.opengis.temporal.CalendarEra;
-
-///------ XML ok
 
 /**
  * A clock provides a basis for defining temporal position within a day. 
@@ -117,6 +114,8 @@ public class DefaultClock extends DefaultTemporalReferenceSystem implements Cloc
         super(properties);
         final Object ref = properties.get(Calendar.REFERENCE_EVENT_KEY);
         ArgumentChecks.ensureNonNull("referenceEvent", ref);
+        if (!(ref instanceof InternationalString))
+            throw new IllegalArgumentException("reference Event must be instance of refernceEvent");
         this.referenceEvent = (InternationalString) ref;
         this.referenceTime  = referenceTime;
         this.utcReference   = utcReference;
@@ -127,7 +126,7 @@ public class DefaultClock extends DefaultTemporalReferenceSystem implements Cloc
      * Empty constructor only use for XML binding.
      */
     private DefaultClock() {
-        super((Map)null);
+        super();
     }
     
     /**
@@ -303,8 +302,8 @@ public class DefaultClock extends DefaultTemporalReferenceSystem implements Cloc
         int hash = 5;
         hash = 37 * hash + (this.dateBasis != null ? this.dateBasis.hashCode() : 0);
         hash = 37 * hash + (this.referenceEvent != null ? this.referenceEvent.hashCode() : 0);
-        hash = 37 * hash + (this.referenceTime != null ? this.referenceTime.hashCode() : 0);
-        hash = 37 * hash + (this.utcReference != null ? this.utcReference.hashCode() : 0);
+        hash = 37 * hash + (this.referenceTime  != null ? this.referenceTime.hashCode()  : 0);
+        hash = 37 * hash + (this.utcReference   != null ? this.utcReference.hashCode()   : 0);
         return hash;
     }
 

@@ -19,4 +19,5 @@
             <gml:timePosition>2014-10-16T14:26:48.907+02:00</gml:timePosition>
         </gml:TimeInstant>
     </gml:end>
+    <gml:duration>PT30S</gml:duration>
 </gml:TimePeriod>

@@ -13,7 +13,7 @@
                 <gml:TimeInstant gml:id="auto-instantbegin">
                     <gml:identifier codeSpace="AUTO">Instant begin</gml:identifier>
                     <gml:name codeSpace="AUTO">Instant Begin</gml:name>
-                    <gml:timePosition>2014-10-20T15:50:46.273+02:00</gml:timePosition>
+                    <gml:timePosition>2014-10-21T16:26:23.912+02:00</gml:timePosition>
                 </gml:TimeInstant>
             </gml:position>
         </gml:TimeNode>
@@ -26,9 +26,30 @@
                 <gml:TimeInstant gml:id="auto-instantend">
                     <gml:identifier codeSpace="AUTO">Instant End</gml:identifier>
                     <gml:name codeSpace="AUTO">Instant End</gml:name>
-                    <gml:timePosition>2014-10-20T15:50:46.273+02:00</gml:timePosition>
+                    <gml:timePosition>2014-10-21T16:26:23.912+02:00</gml:timePosition>
                 </gml:TimeInstant>
             </gml:position>
         </gml:TimeNode>
     </gml:end>
+    <gml:extent>
+        <gml:TimePeriod gml:id="auto-periodidentifier">
+            <gml:identifier codeSpace="AUTO">period identifier</gml:identifier>
+            <gml:name codeSpace="AUTO">period</gml:name>
+            <gml:begin>
+                <gml:TimeInstant gml:id="auto-start">
+                    <gml:identifier codeSpace="AUTO">start</gml:identifier>
+                    <gml:name codeSpace="AUTO">begiiinn hou hou hou</gml:name>
+                    <gml:timePosition>2014-10-21T16:26:23.907+02:00</gml:timePosition>
+                </gml:TimeInstant>
+            </gml:begin>
+            <gml:end>
+                <gml:TimeInstant gml:id="auto-end">
+                    <gml:identifier codeSpace="AUTO">end</gml:identifier>
+                    <gml:name codeSpace="AUTO">happy ending</gml:name>
+                    <gml:timePosition>2014-10-21T16:26:23.910+02:00</gml:timePosition>
+                </gml:TimeInstant>
+            </gml:end>
+            <gml:duration>P0S</gml:duration>
+        </gml:TimePeriod>
+    </gml:extent>
 </gml:TimeEdge>

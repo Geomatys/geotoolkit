@@ -1,20 +1,95 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<gml:TimeOrdinaleReferenceSystem xmlns:gco="http://www.isotc211.org/2005/gco" 
-                                 xmlns:gmx="http://www.isotc211.org/2005/gmx" 
-                                 xmlns:gmi="http://www.isotc211.org/2005/gmi" 
-                                 xmlns:gmd="http://www.isotc211.org/2005/gmd" 
-                                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+<gml:TimeOrdinalReferenceSystem xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
                                  xmlns:gml="http://www.opengis.net/gml/3.2" 
-                                 xmlns:ns7="http://www.w3.org/1999/xlink" 
-                                 gml:id="ordinalreference-referenceSystem-42"
-                                 xsi:schemaLocation = "http://www.opengis.net/gml/3.2 http://schemas.opengis.net/gml/3.2.1/temporalReferenceSystems.xsd">
+                                 xsi:schemaLocation = "http://www.opengis.net/gml/3.2 http://schemas.opengis.net/gml/3.2.1/temporalReferenceSystems.xsd"
+                                 gml:id="ordinalreference-referenceSystem-42">
     <gml:identifier codeSpace="EPSG">urn:ogc:def:referenceSystem:ordinalReference::42</gml:identifier>
     <gml:name codeSpace="CRS">ordinalSystem</gml:name>
     <gml:domainOfValidity>desc</gml:domainOfValidity>
-    <gml:ordinalEraSequence gml:id="crs-parent">
-        <gml:identifier codeSpace="CRS">Parent</gml:identifier>
-        <gml:name codeSpace="CRS">NameEraparent</gml:name>
-        <gml:begin>2014-07-31T16:20:41.038+02:00</gml:begin>
-        <gml:end>2014-07-31T16:21:11.038+02:00</gml:end>
-    </gml:ordinalEraSequence>
-</gml:TimeOrdinaleReferenceSystem>
+    <gml:component>
+        <gml:TimeOrdinalEra gml:id="crs-parent">
+            <gml:identifier codeSpace="CRS">Parent</gml:identifier>
+            <gml:name codeSpace="CRS">NameEraparent</gml:name>
+            <gml:start>
+                <gml:TimeNode gml:id="NameEraparent_startnode">
+                    <gml:name codeSpace="CRS">NameEraparent_start node</gml:name>
+                    <gml:position>
+                        <gml:TimeInstant gml:id="NameEraparent_begininstant">
+                            <gml:name codeSpace="CRS">NameEraparent_begin instant</gml:name>
+                            <gml:timePosition>2014-10-27T11:28:11.640+01:00</gml:timePosition>
+                        </gml:TimeInstant>
+                    </gml:position>
+                </gml:TimeNode>
+            </gml:start>
+            <gml:end>
+                <gml:TimeNode gml:id="NameEraparent_endnode">
+                    <gml:name codeSpace="CRS">NameEraparent_end node</gml:name>
+                    <gml:position>
+                        <gml:TimeInstant gml:id="NameEraparent_endinstant">
+                            <gml:name codeSpace="CRS">NameEraparent_end instant</gml:name>
+                            <gml:timePosition>2014-10-27T11:28:11.640+01:00</gml:timePosition>
+                        </gml:TimeInstant>
+                    </gml:position>
+                </gml:TimeNode>
+            </gml:end>
+            <gml:member>
+                <gml:TimeOrdinalEra gml:id="crs-era0">
+                    <gml:identifier codeSpace="CRS">era0</gml:identifier>
+                    <gml:name codeSpace="CRS">NameEra0</gml:name>
+                    <gml:remarks>Era0 Remark</gml:remarks>
+                    <gml:start>
+                        <gml:TimeNode gml:id="NameEra0_startnode">
+                            <gml:name codeSpace="CRS">NameEra0_start node</gml:name>
+                            <gml:position>
+                                <gml:TimeInstant gml:id="NameEra0_begininstant">
+                                    <gml:name codeSpace="CRS">NameEra0_begin instant</gml:name>
+                                    <gml:timePosition>2014-10-27T11:28:11.640+01:00</gml:timePosition>
+                                </gml:TimeInstant>
+                            </gml:position>
+                        </gml:TimeNode>
+                    </gml:start>
+                    <gml:end>
+                        <gml:TimeNode gml:id="NameEra0_endnode">
+                            <gml:name codeSpace="CRS">NameEra0_end node</gml:name>
+                            <gml:position>
+                                <gml:TimeInstant gml:id="NameEra0_endinstant">
+                                    <gml:name codeSpace="CRS">NameEra0_end instant</gml:name>
+                                    <gml:timePosition>2014-10-27T11:28:11.640+01:00</gml:timePosition>
+                                </gml:TimeInstant>
+                            </gml:position>
+                        </gml:TimeNode>
+                    </gml:end>
+                </gml:TimeOrdinalEra>
+            </gml:member>
+            <gml:member>
+                <gml:TimeOrdinalEra gml:id="crs-era1">
+                    <gml:identifier codeSpace="CRS">era1</gml:identifier>
+                    <gml:name codeSpace="CRS">NameEra1</gml:name>
+                    <gml:remarks>Era1 Remark</gml:remarks>
+                    <gml:start>
+                        <gml:TimeNode gml:id="NameEra1_startnode">
+                            <gml:name codeSpace="CRS">NameEra1_start node</gml:name>
+                            <gml:position>
+                                <gml:TimeInstant gml:id="NameEra1_begininstant">
+                                    <gml:name codeSpace="CRS">NameEra1_begin instant</gml:name>
+                                    <gml:timePosition>2014-10-27T11:28:11.640+01:00</gml:timePosition>
+                                </gml:TimeInstant>
+                            </gml:position>
+                        </gml:TimeNode>
+                    </gml:start>
+                    <gml:end>
+                        <gml:TimeNode gml:id="NameEra1_endnode">
+                            <gml:name codeSpace="CRS">NameEra1_end node</gml:name>
+                            <gml:position>
+                                <gml:TimeInstant gml:id="NameEra1_endinstant">
+                                    <gml:name codeSpace="CRS">NameEra1_end instant</gml:name>
+                                    <gml:timePosition>2014-10-27T11:28:11.640+01:00</gml:timePosition>
+                                </gml:TimeInstant>
+                            </gml:position>
+                        </gml:TimeNode>
+                    </gml:end>
+                </gml:TimeOrdinalEra>
+            </gml:member>
+        </gml:TimeOrdinalEra>
+    </gml:component>
+</gml:TimeOrdinalReferenceSystem>

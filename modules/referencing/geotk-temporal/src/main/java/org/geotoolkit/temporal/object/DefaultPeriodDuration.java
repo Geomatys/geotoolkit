@@ -30,21 +30,33 @@ import static org.geotoolkit.temporal.object.TemporalConstants.*;
  * 
  * @author Mehdi Sidhoum (Geomatys)
  * @module pending
+ * @since   4.0
+ * @version 4.0
  */
 public class DefaultPeriodDuration extends DefaultDuration implements PeriodDuration {
 
+    /**
+     * {@literal P} is a mandatory element which designates that the following characters represent the duration of a period.
+     */
     private static final InternationalString DESIGNATOR = new SimpleInternationalString("P");
+    
     private InternationalString years;
     private InternationalString months;
     private InternationalString weeks;
     private InternationalString days;
+    
+    /**
+     * {@literal T} shall be included whenever the sequence includes values for units of less than a day.
+     */
     private static final InternationalString TIME_INDICATOR = new SimpleInternationalString("T");
+    
     private InternationalString hours;
     private InternationalString minutes;
     private InternationalString seconds;
 
     /**
      * Creates a new instances of PeriodDuration.
+     * 
      * @param years
      * @param months
      * @param weeks
@@ -55,26 +67,28 @@ public class DefaultPeriodDuration extends DefaultDuration implements PeriodDura
      */
     public DefaultPeriodDuration(final InternationalString years, final InternationalString months, final InternationalString weeks, final InternationalString days,
             final InternationalString hours, final InternationalString minutes, final InternationalString seconds) {
-        this.years = years;
-        this.months = months;
-        this.weeks = weeks;
-        this.days = days;
-        this.hours = hours;
+        this.years   = years;
+        this.months  = months;
+        this.weeks   = weeks;
+        this.days    = days;
+        this.hours   = hours;
         this.minutes = minutes;
         this.seconds = seconds;
     }
 
     /**
      * Creates a new instance of PeriodDuration from a long value passed in parameter.
-     * if the long contains milliseconds, this will be ignored because there is no MilliSeconds specified in the string format PnYnMnDTnHnMnS, see ISO 8601.
+     * if the long contains milliseconds, this will be ignored because there is no 
+     * MilliSeconds specified in the string format PnYnMnDTnHnMnS, see ISO 8601.
+     * 
      * @param durationInMilliSeconds
      */
     public DefaultPeriodDuration(long durationInMilliSeconds) {
-        InternationalString _years = null;
-        InternationalString _months = null;
-        InternationalString _week = null;
-        InternationalString _days = null;
-        InternationalString _hours = null;
+        InternationalString _years   = null;
+        InternationalString _months  = null;
+        InternationalString _week    = null;
+        InternationalString _days    = null;
+        InternationalString _hours   = null;
         InternationalString _minutes = null;
         InternationalString _seconds = null;
 
@@ -134,16 +148,22 @@ public class DefaultPeriodDuration extends DefaultDuration implements PeriodDura
     }
 
     /**
-     * A mandatory element which designates that the returned string
-     * represents the duration of a period.
+     * Returns {@literal P} which is a mandatory element which designates that the following 
+     * characters represent the duration of a period.
+     * 
+     * @return {@literal P} is a mandatory element which designates that the 
+     * following characters represent the duration of a period.
      */
     @Override
     public InternationalString getDesignator() {
         return DESIGNATOR;
     }
-
+    
     /**
-     * A positive integer, followed by the character "Y",
+     * Returns a positive integer, followed by the character "Y",
+     * which indicated the number of years in the period.
+     * 
+     * @return a positive integer, followed by the character "Y",
      * which indicated the number of years in the period.
      */
     @Override
@@ -152,25 +172,34 @@ public class DefaultPeriodDuration extends DefaultDuration implements PeriodDura
     }
 
     /**
-     * A positive integer, followed by the character "M",
+     * Returns a positive integer, followed by the character "M",
+     * which indicated the number of months in the period.
+     * 
+     * @return a positive integer, followed by the character "M",
      * which indicated the number of months in the period.
      */
     @Override
     public InternationalString getMonths() {
         return months;
     }
-
+    
     /**
-     * A positive integer, followed by the character "D",
+     * Returns a positive integer, followed by the character "D",
+     * which indicated the number of days in the period.
+     * 
+     * @return a positive integer, followed by the character "D",
      * which indicated the number of days in the period.
      */
     @Override
     public InternationalString getDays() {
         return days;
     }
-
+    
     /**
-     * Included whenever the sequence includes values for
+     * Returns {@code T} which shall be included whenever the sequence includes values for
+     * units less than a day.
+     * 
+     * @return {@code T} which shall be included whenever the sequence includes values for
      * units less than a day.
      */
     @Override
@@ -179,67 +208,82 @@ public class DefaultPeriodDuration extends DefaultDuration implements PeriodDura
     }
 
     /**
-     * A positive integer, followed by the character "H",
+     * Returns A positive integer, followed by the character "H",
+     * which indicated the number of hours in the period.
+     * 
+     * @return A positive integer, followed by the character "H",
      * which indicated the number of hours in the period.
      */
     @Override
     public InternationalString getHours() {
         return hours;
     }
-
+    
     /**
-     * A positive integer, followed by the character "M",
+     * Returns a positive integer, followed by the character "M",
+     * which indicated the number of minutes in the period.
+     * 
+     * @return A positive integer, followed by the character "M",
      * which indicated the number of minutes in the period.
      */
     @Override
     public InternationalString getMinutes() {
         return minutes;
     }
-
+    
     /**
-     * A positive integer, followed by the character "S",
+     * Returns a positive integer, followed by the character "S",
+     * which indicated the number of seconds in the period.
+     *  
+     * @return a positive integer, followed by the character "S",
      * which indicated the number of seconds in the period.
      */
     @Override
     public InternationalString getSeconds() {
         return seconds;
     }
-
-    public void setYears(final InternationalString years) {
-        this.years = years;
-    }
-
-    public void setMonths(final InternationalString months) {
-        this.months = months;
-    }
-
-    public void setDays(final InternationalString days) {
-        this.days = days;
-    }
-
-    public void setHours(final InternationalString hours) {
-        this.hours = hours;
-    }
-
-    public void setMinutes(final InternationalString minutes) {
-        this.minutes = minutes;
-    }
-
-    public void setSeconds(final InternationalString seconds) {
-        this.seconds = seconds;
-    }
-
+    
+    /**
+     * Returns a positive integer, followed by the character "W",
+     * which indicated the number of week(s) in the period.
+     * 
+     * @return a positive integer, followed by the character "W",
+     * which indicated the number of week(s) in the period.
+     */
     public InternationalString getWeek() {
         return weeks;
     }
 
-    public void setWeek(final InternationalString week) {
+    void setYears(final InternationalString years) {
+        this.years = years;
+    }
+
+    void setMonths(final InternationalString months) {
+        this.months = months;
+    }
+
+    void setDays(final InternationalString days) {
+        this.days = days;
+    }
+
+    void setHours(final InternationalString hours) {
+        this.hours = hours;
+    }
+
+    void setMinutes(final InternationalString minutes) {
+        this.minutes = minutes;
+    }
+
+    void setSeconds(final InternationalString seconds) {
+        this.seconds = seconds;
+    }
+
+    void setWeek(final InternationalString week) {
         this.weeks = week;
     }
 
     /**
-     * Returns a duration in long. note there is no starting instant to accurate the returned value.
-     * @return long duration in milliseconds
+     * {@inheritDoc }
      */
     @Override
     public long getTimeInMillis() {
@@ -311,6 +355,9 @@ public class DefaultPeriodDuration extends DefaultDuration implements PeriodDura
         return response;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean equals(final Object object) {
         if (object == this) {
@@ -329,6 +376,9 @@ public class DefaultPeriodDuration extends DefaultDuration implements PeriodDura
         return false;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public int hashCode() {
         int hash = 5;
@@ -340,11 +390,13 @@ public class DefaultPeriodDuration extends DefaultDuration implements PeriodDura
         hash = 37 * hash + (this.years != null ? this.years.hashCode() : 0);
         return hash;
     }
-
-    @Override
+    
     /**
      * Returns a duration value String in format 8601. the pattern is PnYnMnDTnHnMnS.
+     * 
+     * @return a duration value String in format 8601. the pattern is PnYnMnDTnHnMnS.
      */
+    @Override
     public String toString() {
         StringBuilder s = new StringBuilder();
         s.append(DESIGNATOR);
@@ -360,9 +412,9 @@ public class DefaultPeriodDuration extends DefaultDuration implements PeriodDura
         if (days != null) {
             s.append(days).append('D');
         }
-        if (hours != null || minutes != null || seconds != null) {
+//        if (hours != null || minutes != null || seconds != null) {
             s.append(TIME_INDICATOR);
-        }
+//        }
         if (hours != null) {
             s.append(hours).append('H');
         }
@@ -371,8 +423,9 @@ public class DefaultPeriodDuration extends DefaultDuration implements PeriodDura
         }
         if (seconds != null) {
             s.append(seconds).append('S');
+        } else {
+            s.append("0S");
         }
-
         return s.toString();
     }
 }

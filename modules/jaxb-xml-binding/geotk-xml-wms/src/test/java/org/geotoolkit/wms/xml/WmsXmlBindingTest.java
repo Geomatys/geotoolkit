@@ -270,14 +270,19 @@ public class WmsXmlBindingTest {
 
         DefaultExtent extent = new DefaultExtent();
         DefaultTemporalExtent tempExt = new DefaultTemporalExtent();
-        DefaultPeriod period = new DefaultPeriod();
         
-        NamedIdentifier name = new NamedIdentifier(Citations.CRS, "period");
+        NamedIdentifier periodName = new NamedIdentifier(Citations.CRS, "period");
+        final Map<String, Object> periodProp = new HashMap<>();
+        periodProp.put(IdentifiedObject.NAME_KEY, periodName);
+        
+        NamedIdentifier name = new NamedIdentifier(Citations.CRS, "period instant");
         final Map<String, Object> properties = new HashMap<>();
         properties.put(IdentifiedObject.NAME_KEY, name);
         
-        period.setBegining(new DefaultInstant(properties, new DefaultPosition(new Date(120000000))));
-        period.setEnding(new DefaultInstant(properties, new DefaultPosition(new Date(120000001))));
+        DefaultPeriod period = new DefaultPeriod(periodProp, new DefaultInstant(properties, new DefaultPosition(new Date(120000000))), 
+                                                             new DefaultInstant(properties, new DefaultPosition(new Date(120000001))));
+//        period.setBegining(new DefaultInstant(properties, new DefaultPosition(new Date(120000000))));
+//        period.setEnding(new DefaultInstant(properties, new DefaultPosition(new Date(120000001))));
 
 //      org.apache.sis.internal.jaxb.gml.GMLAdapter.IDs.setUUID(period, "extent");
         tempExt.setExtent(period);
@@ -602,14 +607,19 @@ public class WmsXmlBindingTest {
 
         DefaultExtent extent = new DefaultExtent();
         DefaultTemporalExtent tempExt = new DefaultTemporalExtent();
-        DefaultPeriod period = new DefaultPeriod();
         
-        NamedIdentifier name = new NamedIdentifier(Citations.CRS, "period");
+        
+        NamedIdentifier periodName = new NamedIdentifier(Citations.CRS, "period");
+        final Map<String, Object> periodProp = new HashMap<>();
+        periodProp.put(IdentifiedObject.NAME_KEY, periodName);
+        NamedIdentifier instantName = new NamedIdentifier(Citations.CRS, "period instant");
         final Map<String, Object> properties = new HashMap<>();
-        properties.put(IdentifiedObject.NAME_KEY, name);
+        properties.put(IdentifiedObject.NAME_KEY, instantName);
         
-        period.setBegining(new DefaultInstant(properties, new DefaultPosition(new Date(120000000))));
-        period.setEnding(new DefaultInstant(properties, new DefaultPosition(new Date(120000001))));
+        DefaultPeriod period = new DefaultPeriod(periodProp, new DefaultInstant(properties, new DefaultPosition(new Date(120000000))), new DefaultInstant(properties, new DefaultPosition(new Date(120000001))));
+        
+//        period.setBegining(new DefaultInstant(properties, new DefaultPosition(new Date(120000000))));
+//        period.setEnding(new DefaultInstant(properties, new DefaultPosition(new Date(120000001))));
         
         
         tempExt.setExtent(period);

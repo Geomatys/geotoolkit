@@ -76,8 +76,8 @@ public class DefaultOrdinalReferenceSystemTest {
      */
     @Test
     public void testGetOrdinalEraSequence() {
-        Collection<OrdinalEra> result = (Collection<OrdinalEra>) ordinalReferenceSystem1.getOrdinalEraSequence();
-        assertEquals(ordinalReferenceSystem2.getOrdinalEraSequence(), result);
+        Collection<OrdinalEra> result = (Collection<OrdinalEra>) ordinalReferenceSystem1.getComponents();
+        assertEquals(ordinalReferenceSystem2.getComponents(), result);
     }
 
     /**

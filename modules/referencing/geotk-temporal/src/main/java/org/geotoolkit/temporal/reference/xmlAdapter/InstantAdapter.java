@@ -44,7 +44,7 @@ public class InstantAdapter extends PropertyType<InstantAdapter, Instant> {
      * This method is indirectly invoked by the private constructor
      * below, so it shall not depend on the state of this object.
      *
-     * @return {@code TimeCS.class}
+     * @return {@code Instant.class}
      */
     @Override
     protected Class<Instant> getBoundType() {

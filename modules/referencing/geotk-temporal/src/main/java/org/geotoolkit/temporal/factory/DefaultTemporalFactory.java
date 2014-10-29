@@ -21,7 +21,9 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import javax.measure.quantity.Duration;
 import javax.measure.unit.Unit;
+import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.referencing.NamedIdentifier;
 
 import org.geotoolkit.factory.Factory;
@@ -79,8 +81,20 @@ import org.opengis.util.InternationalString;
  */
 public class DefaultTemporalFactory extends Factory implements TemporalFactory {
 
+    /**
+     * Count to ensure period unicity. 
+     */
+    long periodCount;
+    
+    /**
+     * Count to ensure instant unicity. 
+     */
+    long instantCount;
+    
     public DefaultTemporalFactory() {
         super();
+        periodCount  = 0;
+        instantCount = 0;
     }
 
     /**
@@ -88,8 +102,9 @@ public class DefaultTemporalFactory extends Factory implements TemporalFactory {
      */
     @Override
     public Period createPeriod(final Instant begin, final Instant end) {
-//        return new DefaultPeriod(begin, end);
-        return null;
+        final Map<String, Object> prop = new HashMap<>();
+        prop.put(IdentifiedObject.IDENTIFIERS_KEY, new DefaultIdentifier("period"+(periodCount++)));
+        return new DefaultPeriod(prop, begin, end);
     }
 
     /**
@@ -97,8 +112,9 @@ public class DefaultTemporalFactory extends Factory implements TemporalFactory {
      */
     @Override
     public Instant createInstant(final Position instant) {
-//        return new DefaultInstant(instant); 
-        return null;
+        final Map<String, Object> prop = new HashMap<>();
+        prop.put(IdentifiedObject.IDENTIFIERS_KEY, new DefaultIdentifier("instant"+(instantCount++)));
+        return new DefaultInstant(prop, instant); 
     }
 
     /**
@@ -114,8 +130,10 @@ public class DefaultTemporalFactory extends Factory implements TemporalFactory {
      */
     @Override
     public Calendar createCalendar(final Identifier name, final Extent domainOfValidit) {
-//        return new DefaultCalendar(name, domainOfValidit);
-        return null;
+        final Map<String, Object> prop = new HashMap<>();
+        prop.put(IdentifiedObject.IDENTIFIERS_KEY, name);
+        prop.put(TemporalReferenceSystem.DOMAIN_OF_VALIDITY_KEY, domainOfValidit);
+        return new DefaultCalendar(prop, null, null);
     }
 
     /**
@@ -136,7 +154,6 @@ public class DefaultTemporalFactory extends Factory implements TemporalFactory {
             final CalendarDate referenceDate, final JulianDate julianReference, final Period epochOfUse) {
         final Map<String, Object> calendarEraProperties = new HashMap<>();
         calendarEraProperties.put(IdentifiedObject.NAME_KEY, name);
-        calendarEraProperties.put(IdentifiedObject.IDENTIFIERS_KEY, new NamedIdentifier(Citations.CRS, "calendar Era"));
         calendarEraProperties.put(Calendar.REFERENCE_EVENT_KEY, referenceEvent);
         return new DefaultCalendarEra(calendarEraProperties, referenceDate, julianReference, epochOfUse);
     }
@@ -147,8 +164,11 @@ public class DefaultTemporalFactory extends Factory implements TemporalFactory {
     @Override
     public Clock createClock(final Identifier name, final Extent domainOfValidity,
             final InternationalString referenceEvent, final ClockTime referenceTime, final ClockTime utcReference) {
-//        return new DefaultClock(name, domainOfValidity, referenceEvent, referenceTime, utcReference);
-        return null;
+        final Map<String, Object> calendarEraProperties = new HashMap<>();
+        calendarEraProperties.put(IdentifiedObject.NAME_KEY, name);
+        calendarEraProperties.put(Calendar.REFERENCE_EVENT_KEY, referenceEvent);
+        calendarEraProperties.put(TemporalReferenceSystem.DOMAIN_OF_VALIDITY_KEY, domainOfValidity);
+        return new DefaultClock(calendarEraProperties, referenceTime, utcReference, null);
     }
 
     /**
@@ -190,9 +210,11 @@ public class DefaultTemporalFactory extends Factory implements TemporalFactory {
      * {@inheritDoc }
      */
     @Override
-    public OrdinalEra createOrdinalEra(final InternationalString name, final Date beginning, final Date end,
+    public OrdinalEra createOrdinalEra(final InternationalString name, final Date begin, final Date end,
             final Collection<OrdinalEra> composition) {
-        return new DefaultOrdinalEra(name, beginning, end, composition);
+        final Map<String, Object> ordinalEraProperties = new HashMap<>();
+        ordinalEraProperties.put(IdentifiedObject.NAME_KEY, name);
+        return new DefaultOrdinalEra(ordinalEraProperties, begin, end, composition);
     }
 
     /**
@@ -210,8 +232,11 @@ public class DefaultTemporalFactory extends Factory implements TemporalFactory {
     @Override
     public OrdinalReferenceSystem createOrdinalReferenceSystem(final Identifier name,
             final Extent domainOfValidity, final Collection<OrdinalEra> ordinalEraSequence) {
-//        return new DefaultOrdinalReferenceSystem(name, domainOfValidity, ordinalEraSequence);
-        return null;
+        final Map<String, Object> ordinalEraProp = new HashMap<>();
+        ordinalEraProp.put(IdentifiedObject.NAME_KEY, name.getCode());
+        ordinalEraProp.put(IdentifiedObject.IDENTIFIERS_KEY, name);
+        ordinalEraProp.put(TemporalReferenceSystem.DOMAIN_OF_VALIDITY_KEY, domainOfValidity);
+        return new DefaultOrdinalReferenceSystem(ordinalEraProp, ordinalEraSequence);
     }
 
     /**
@@ -238,9 +263,12 @@ public class DefaultTemporalFactory extends Factory implements TemporalFactory {
      */
     @Override
     public TemporalCoordinateSystem createTemporalCoordinateSystem(final Identifier name,
-            final Extent domainOfValidity, final Date origin, final InternationalString interval) {
-//        return new DefaultTemporalCoordinateSystem(name, domainOfValidity, origin, interval);
-        return null;
+            final Extent domainOfValidity, final Date origin, final Unit<Duration> interval) {
+        final Map<String, Object> coordSystemProp = new HashMap<>();
+        coordSystemProp.put(IdentifiedObject.NAME_KEY, name.getCode());
+        coordSystemProp.put(IdentifiedObject.IDENTIFIERS_KEY, name);
+        coordSystemProp.put(TemporalReferenceSystem.DOMAIN_OF_VALIDITY_KEY, domainOfValidity);
+        return new DefaultTemporalCoordinateSystem(coordSystemProp, interval, origin);
     }
 
     /**
@@ -258,7 +286,10 @@ public class DefaultTemporalFactory extends Factory implements TemporalFactory {
     @Override
     public TemporalReferenceSystem createTemporalReferenceSystem(final Identifier name,
             final Extent domainOfValidity) {
-//        return new DefaultTemporalReferenceSystem(name, domainOfValidity);
-        return null;
+        final Map<String, Object> tempRefSystemProp = new HashMap<>();
+        tempRefSystemProp.put(IdentifiedObject.NAME_KEY, name.getCode());
+        tempRefSystemProp.put(IdentifiedObject.IDENTIFIERS_KEY, name);
+        tempRefSystemProp.put(TemporalReferenceSystem.DOMAIN_OF_VALIDITY_KEY, domainOfValidity);
+        return new DefaultTemporalReferenceSystem(tempRefSystemProp);
     }
 }

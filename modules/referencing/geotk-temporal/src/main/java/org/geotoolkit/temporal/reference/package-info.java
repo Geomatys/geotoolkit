@@ -87,6 +87,11 @@
     @XmlJavaTypeAdapter(OrdinalEraAdapter.class),
     @XmlJavaTypeAdapter(ClockAdapter.class),
     @XmlJavaTypeAdapter(InstantAdapter.class),
+    @XmlJavaTypeAdapter(PeriodAdapter.class),
+    @XmlJavaTypeAdapter(CalendarEraAdapter.class),
+    @XmlJavaTypeAdapter(CalendarAdapter.class),
+    @XmlJavaTypeAdapter(TemporalNodeAdapter.class),
+    @XmlJavaTypeAdapter(TemporalEdgeAdapter.class),
     @XmlJavaTypeAdapter(OrdinalReferenceSystemAdapter.class),
     @XmlJavaTypeAdapter(TemporalCoordinateSystemAdapter.class),
     @XmlJavaTypeAdapter(PositionAdapter.class),
@@ -104,9 +109,15 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapters;
 import org.apache.sis.xml.Namespaces;
 import org.apache.sis.internal.jaxb.gco.*;
+import org.geotoolkit.temporal.reference.xmlAdapter.CalendarAdapter;
+import org.geotoolkit.temporal.reference.xmlAdapter.CalendarEraAdapter;
 import org.geotoolkit.temporal.reference.xmlAdapter.ClockAdapter;
 import org.geotoolkit.temporal.reference.xmlAdapter.InstantAdapter;
 import org.geotoolkit.temporal.reference.xmlAdapter.OrdinalReferenceSystemAdapter;
+import org.geotoolkit.temporal.reference.xmlAdapter.PeriodAdapter;
 import org.geotoolkit.temporal.reference.xmlAdapter.PositionAdapter;
 import org.geotoolkit.temporal.reference.xmlAdapter.TemporalCoordinateSystemAdapter;
+import org.geotoolkit.temporal.reference.xmlAdapter.TemporalEdgeAdapter;
+import org.geotoolkit.temporal.reference.xmlAdapter.TemporalNodeAdapter;
 import org.geotoolkit.temporal.reference.xmlAdapter.TemporalReferenceSystemAdapter;
+import org.opengis.temporal.TemporalNode;

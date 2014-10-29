@@ -17,11 +17,16 @@
  */
 package org.geotoolkit.temporal.object;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.metadata.Citations;
 import org.apache.sis.referencing.NamedIdentifier;
+import org.apache.sis.util.ArgumentChecks;
+import org.apache.sis.util.NullArgumentException;
 import org.geotoolkit.temporal.reference.DefaultTemporalReferenceSystem;
+import org.opengis.referencing.IdentifiedObject;
 import org.opengis.temporal.IndeterminateValue;
 import org.opengis.temporal.TemporalPosition;
 import org.opengis.temporal.TemporalReferenceSystem;
@@ -30,33 +35,60 @@ import org.opengis.temporal.TemporalReferenceSystem;
  * Used for describing temporal positions referenced to other temporal reference systems.
  * 
  * @author Mehdi Sidhoum (Geomatys)
- * @module pending
+ * @author Remi Marechal (Geomatys).
  */
 public class DefaultTemporalPosition implements TemporalPosition {
 
     /**
-     * This is the TM_ReferenceSystem associated with this TM_TemporalPosition, 
+     * A default {@link TemporalReferenceSystem} if {@link #frame} is not specified assume Gregorian calendar.
+     */
+    private static final TemporalReferenceSystem GREGORIAN_CALENDAR;
+    
+    static {
+        final Map<String, Object> gregUTCProp = new HashMap<>();
+        gregUTCProp.put(IdentifiedObject.IDENTIFIERS_KEY, new NamedIdentifier(Citations.CRS, new SimpleInternationalString("Gregorian calendar")));
+        GREGORIAN_CALENDAR = new DefaultTemporalReferenceSystem(gregUTCProp);
+    }
+    
+    /**
+     * This is the {@link TemporalReferenceSystem} associated with this {@link TemporalPosition}, 
      * if not specified, it is assumed to be an association to the Gregorian calendar and UTC.
      */
-    private TemporalReferenceSystem frame;
+    private final TemporalReferenceSystem frame;
+    
     /**
-     * This attribute provides the only value for TM_TemporalPosition unless a subtype of TM_TemporalPosition is used as the data type.
+     * Provide the only value for {@link TemporalPosition} 
+     * unless a subtype of {@link TemporalPosition} is used as the data type, or {@code null} if none.
      */
     private IndeterminateValue indeterminatePosition;
 
     /**
-     * Creates a new instance from a TemporalReferenceSystem and an IndeterminateValue
-     * @param frame cannot be @CODE null
-     * @param indeterminatePosition can be @CODE NULL if none.
+     * Create a default Geotk implementation of {@link TemporalPosition} with the 
+     * {@linkplain #frame associate Temporal Reference system} initialized by Gregorian calendar value. 
+     * 
+     * @param indeterminatePosition Provide the only value for {@link TemporalPosition} 
+     * unless a subtype of {@link TemporalPosition} is used as the data type, or {@code null}.
+     */
+    public DefaultTemporalPosition(final IndeterminateValue indeterminatePosition) {
+        this(GREGORIAN_CALENDAR, indeterminatePosition);
+    }
+    
+    /**
+     * Creates a new instance from a {@link TemporalReferenceSystem} and an {@link IndeterminateValue}.
+     * 
+     * @param frame the associated {@link TemporalReferenceSystem}.
+     * @param indeterminatePosition Provide the only value for {@link TemporalPosition} 
+     * unless a subtype of {@link TemporalPosition} is used as the data type, or {@code null} if none.
+     * @throws NullArgumentException if frame is {@code null}.
      */
     public DefaultTemporalPosition(final TemporalReferenceSystem frame, final IndeterminateValue indeterminatePosition) {
-        this.frame = frame;
+        ArgumentChecks.ensureNonNull("frame", frame);
+        this.frame                 = frame;
         this.indeterminatePosition = indeterminatePosition;
     }
 
     /**
-     * When this attribute is used with a subtype of {@code TemporalPosition}, it provides a qualifier to the specific value
-     * for temporal position provided by the subtype.
+     * {@inheritDoc }
      */
     @Override
     public IndeterminateValue getIndeterminatePosition() {
@@ -64,25 +96,16 @@ public class DefaultTemporalPosition implements TemporalPosition {
     }
 
     /**
-     * Returns the TM_ReferenceSystem associated with this TM_TemporalPosition, 
-     * if not specified, it is assumed to be an association to the Gregorian calendar and UTC.
+     * {@inheritDoc }
      */
+    @Override
     public TemporalReferenceSystem getFrame() {
-//        if (frame == null) {
-//            frame = new DefaultTemporalReferenceSystem(new NamedIdentifier(
-//                    Citations.CRS, new SimpleInternationalString("Gregorian calendar")), null);
-//        }
         return frame;
     }
 
-    public void setFrame(final TemporalReferenceSystem frame) {
-        this.frame = frame;
-    }
-
-    public void setIndeterminatePosition(final IndeterminateValue indeterminatePosition) {
-        this.indeterminatePosition = indeterminatePosition;
-    }
-
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public boolean equals(final Object object) {
         if (object == this) {
@@ -97,6 +120,9 @@ public class DefaultTemporalPosition implements TemporalPosition {
         return false;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public int hashCode() {
         int hash = 5;
@@ -105,6 +131,9 @@ public class DefaultTemporalPosition implements TemporalPosition {
         return hash;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder("TemporalPosition:").append('\n');

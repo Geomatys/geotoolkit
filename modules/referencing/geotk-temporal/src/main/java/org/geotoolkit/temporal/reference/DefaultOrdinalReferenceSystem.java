@@ -53,10 +53,10 @@ import org.opengis.temporal.OrdinalReferenceSystem;
  * @version 4.0
  * @since   4.0
  */
-@XmlType(name = "TimeOrdinaleReferenceSystem_Type", propOrder = {
+@XmlType(name = "TimeOrdinalReferenceSystem_Type", propOrder = {
     "ordinalEraSequence"
 })
-@XmlRootElement(name = "TimeOrdinaleReferenceSystem")
+@XmlRootElement(name = "TimeOrdinalReferenceSystem")
 public class DefaultOrdinalReferenceSystem extends DefaultTemporalReferenceSystem implements OrdinalReferenceSystem {
 
     /**
@@ -71,6 +71,30 @@ public class DefaultOrdinalReferenceSystem extends DefaultTemporalReferenceSyste
      * The properties given in argument follow the same rules than for the
      * {@linkplain DefaultTemporalReferenceSystem#DefaultTemporalReferenceSystem(java.util.Map, org.opengis.referencing.datum.TemporalDatum, org.opengis.referencing.cs.TimeCS)   super-class constructor}.
      * 
+     * <table class="ISO 19108">
+     *   <caption>Recognized properties (non exhaustive list)</caption>
+     *   <tr>
+     *     <th>Property name</th>
+     *     <th>Value type</th>
+     *     <th>Returned by</th>
+     *   </tr>
+     *   <tr>
+     *     <td>{@value org.opengis.referencing.IdentifiedObject#NAME_KEY}</td>
+     *     <td>{@link org.opengis.referencing.ReferenceIdentifier} or {@link String}</td>
+     *     <td>{@link #getName()}</td>
+     *   </tr>
+     *   <tr>
+     *     <td>{@value org.opengis.referencing.datum.Datum#DOMAIN_OF_VALIDITY_KEY}</td>
+     *     <td>{@link org.opengis.metadata.extent.Extent}</td>
+     *     <td>{@link #getDomainOfValidity()}</td>
+     *   </tr>
+     *   <tr>
+     *     <td>{@value org.opengis.temporal.Calendar#REFERENCE_EVENT_KEY}</td>
+     *     <td>{@link org.opengis.util.InternationalString}</td>
+     *     <td>{@link #getReferenceEvent()}</td>
+     *   </tr>
+     * </table>
+     * 
      * @param properties The properties to be given to the coordinate reference system.
      * @param datum The datum.
      * @param cs The coordinate system.
@@ -82,12 +106,12 @@ public class DefaultOrdinalReferenceSystem extends DefaultTemporalReferenceSyste
         this.ordinalEraSequence = ordinalEraSequence;
     }
 
-//    /**
-//     * Empty constructor only use during XML binding.
-//     */
-//    DefaultOrdinalReferenceSystem() {
-//        ordinalEraSequence = null;
-//    }
+    /**
+     * Empty constructor only use during XML binding.
+     */
+    private DefaultOrdinalReferenceSystem() {
+        ordinalEraSequence = null;
+    }
 
     /**
      * Constructs a new instance initialized with the values from the specified metadata object.
@@ -101,7 +125,7 @@ public class DefaultOrdinalReferenceSystem extends DefaultTemporalReferenceSyste
     public DefaultOrdinalReferenceSystem(final OrdinalReferenceSystem object) {
         super(object);
         if (object != null) {
-            Collection<OrdinalEra> ordinalEraSeq = (Collection<OrdinalEra>) object.getOrdinalEraSequence();
+            Collection<OrdinalEra> ordinalEraSeq = (Collection<OrdinalEra>) object.getComponents();
             ArgumentChecks.ensureNonNull("ordinalEraSequence", ordinalEraSeq);
             this.ordinalEraSequence = ordinalEraSeq;
         } else {
@@ -142,17 +166,9 @@ public class DefaultOrdinalReferenceSystem extends DefaultTemporalReferenceSyste
      * @return A hierarchically-structured collection of {@linkplain OrdinalEra ordinal era}.
      */
     @Override
-    @XmlElement(name = "ordinalEraSequence", required = true)
-    public Collection<OrdinalEra> getOrdinalEraSequence() {
+    @XmlElement(name = "component", required = true)
+    public Collection<OrdinalEra> getComponents() {
         return ordinalEraSequence;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public String toWKT() throws UnsupportedOperationException {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     /**

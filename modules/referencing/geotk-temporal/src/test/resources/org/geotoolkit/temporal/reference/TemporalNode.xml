@@ -3,13 +3,119 @@
               xmlns:gml="http://www.opengis.net/gml/3.2" 
               xsi:schemaLocation = "http://www.opengis.net/gml/3.2 http://schemas.opengis.net/gml/3.2.1/temporalTopology.xsd" 
               gml:id="auto-nodeidentifier">
-    <gml:identifier codeSpace="AUTO">Node identifier</gml:identifier>
-    <gml:name codeSpace="AUTO">Node</gml:name>
+    <gml:identifier codeSpace="AUTO">Node nod</gml:identifier>
+    <gml:name codeSpace="AUTO">Nod newd none</gml:name>
+    <gml:previousEdge>
+        <gml:TimeEdge gml:id="auto-tripleedge">
+            <gml:identifier codeSpace="AUTO">Triple Edge</gml:identifier>
+            <gml:name codeSpace="AUTO">Edge</gml:name>
+            <gml:start>
+                <gml:TimeNode gml:id="auto-nodebeginidentifier">
+                    <gml:identifier codeSpace="AUTO">Node begin identifier</gml:identifier>
+                    <gml:name codeSpace="AUTO">NodeBegin</gml:name>
+                    <gml:position>
+                        <gml:TimeInstant gml:id="auto-instantbegin">
+                            <gml:identifier codeSpace="AUTO">Instant begin</gml:identifier>
+                            <gml:name codeSpace="AUTO">Instant Begin</gml:name>
+                            <gml:timePosition>2014-10-24T10:22:34.921+02:00</gml:timePosition>
+                        </gml:TimeInstant>
+                    </gml:position>
+                </gml:TimeNode>
+            </gml:start>
+            <gml:end>
+                <gml:TimeNode gml:id="auto-nodeendidentifier">
+                    <gml:identifier codeSpace="AUTO">Node end identifier</gml:identifier>
+                    <gml:name codeSpace="AUTO">NodeEnd</gml:name>
+                    <gml:position>
+                        <gml:TimeInstant gml:id="auto-instantend">
+                            <gml:identifier codeSpace="AUTO">Instant End</gml:identifier>
+                            <gml:name codeSpace="AUTO">Instant End</gml:name>
+                            <gml:timePosition>2014-10-24T10:22:34.921+02:00</gml:timePosition>
+                        </gml:TimeInstant>
+                    </gml:position>
+                </gml:TimeNode>
+            </gml:end>
+            <gml:extent>
+                <gml:TimePeriod gml:id="auto-periodidentifier">
+                    <gml:identifier codeSpace="AUTO">period identifier</gml:identifier>
+                    <gml:name codeSpace="AUTO">period</gml:name>
+                    <gml:begin>
+                        <gml:TimeInstant gml:id="auto-start">
+                            <gml:identifier codeSpace="AUTO">start</gml:identifier>
+                            <gml:name codeSpace="AUTO">begiiinn hou hou hou</gml:name>
+                            <gml:timePosition>2014-10-24T10:22:04.917+02:00</gml:timePosition>
+                        </gml:TimeInstant>
+                    </gml:begin>
+                    <gml:end>
+                        <gml:TimeInstant gml:id="auto-end">
+                            <gml:identifier codeSpace="AUTO">end</gml:identifier>
+                            <gml:name codeSpace="AUTO">happy ending</gml:name>
+                            <gml:timePosition>2014-10-24T10:22:34.920+02:00</gml:timePosition>
+                        </gml:TimeInstant>
+                    </gml:end>
+                    <gml:duration>PT30S</gml:duration>
+                </gml:TimePeriod>
+            </gml:extent>
+        </gml:TimeEdge>
+    </gml:previousEdge>
+    <gml:nextEdge>
+        <gml:TimeEdge gml:id="auto-tripleedge2">
+            <gml:identifier codeSpace="AUTO">Triple Edge</gml:identifier>
+            <gml:name codeSpace="AUTO">Edge</gml:name>
+            <gml:start>
+                <gml:TimeNode gml:id="auto-nodebeginidentifier2">
+                    <gml:identifier codeSpace="AUTO">Node begin identifier</gml:identifier>
+                    <gml:name codeSpace="AUTO">NodeBegin</gml:name>
+                    <gml:position>
+                        <gml:TimeInstant gml:id="auto-instantbegin2">
+                            <gml:identifier codeSpace="AUTO">Instant begin</gml:identifier>
+                            <gml:name codeSpace="AUTO">Instant Begin</gml:name>
+                            <gml:timePosition>2014-10-24T10:22:34.921+02:00</gml:timePosition>
+                        </gml:TimeInstant>
+                    </gml:position>
+                </gml:TimeNode>
+            </gml:start>
+            <gml:end>
+                <gml:TimeNode gml:id="auto-nodeendidentifier2">
+                    <gml:identifier codeSpace="AUTO">Node end identifier</gml:identifier>
+                    <gml:name codeSpace="AUTO">NodeEnd</gml:name>
+                    <gml:position>
+                        <gml:TimeInstant gml:id="auto-instantend2">
+                            <gml:identifier codeSpace="AUTO">Instant End</gml:identifier>
+                            <gml:name codeSpace="AUTO">Instant End</gml:name>
+                            <gml:timePosition>2014-10-24T10:22:34.921+02:00</gml:timePosition>
+                        </gml:TimeInstant>
+                    </gml:position>
+                </gml:TimeNode>
+            </gml:end>
+            <gml:extent>
+                <gml:TimePeriod gml:id="auto-periodidentifier2">
+                    <gml:identifier codeSpace="AUTO">period identifier</gml:identifier>
+                    <gml:name codeSpace="AUTO">period</gml:name>
+                    <gml:begin>
+                        <gml:TimeInstant gml:id="auto-start2">
+                            <gml:identifier codeSpace="AUTO">start</gml:identifier>
+                            <gml:name codeSpace="AUTO">begiiinn hou hou hou</gml:name>
+                            <gml:timePosition>2014-10-24T10:22:04.917+02:00</gml:timePosition>
+                        </gml:TimeInstant>
+                    </gml:begin>
+                    <gml:end>
+                        <gml:TimeInstant gml:id="auto-end2">
+                            <gml:identifier codeSpace="AUTO">end</gml:identifier>
+                            <gml:name codeSpace="AUTO">happy ending</gml:name>
+                            <gml:timePosition>2014-10-24T10:22:34.920+02:00</gml:timePosition>
+                        </gml:TimeInstant>
+                    </gml:end>
+                    <gml:duration>PT30S</gml:duration>
+                </gml:TimePeriod>
+            </gml:extent>
+        </gml:TimeEdge>
+    </gml:nextEdge>
     <gml:position>
-        <gml:TimeInstant gml:id="auto-start">
-            <gml:identifier codeSpace="AUTO">start</gml:identifier>
-            <gml:name codeSpace="AUTO">begiiinn hou hou hou</gml:name>
-            <gml:timePosition>2014-10-20T10:40:37.611+02:00</gml:timePosition>
+        <gml:TimeInstant gml:id="auto-theinstant">
+            <gml:identifier codeSpace="AUTO">Instant begin</gml:identifier>
+            <gml:name codeSpace="AUTO">Instant Begin</gml:name>
+            <gml:timePosition>2014-10-24T10:22:34.921+02:00</gml:timePosition>
         </gml:TimeInstant>
     </gml:position>
 </gml:TimeNode>

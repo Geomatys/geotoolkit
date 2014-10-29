@@ -639,7 +639,7 @@ public final class TemporalUtilities {
         }
         final OrdinalEra era = ordinalPosition.getOrdinalPosition();
         if (era != null) {
-            final Date beginEra = era.getBeginning();
+            final Date beginEra = era.getBegin();
             final Date endEra = era.getEnd();
             final long middle = (endEra.getTime() + beginEra.getTime()) / 2;
             return new Date(middle);

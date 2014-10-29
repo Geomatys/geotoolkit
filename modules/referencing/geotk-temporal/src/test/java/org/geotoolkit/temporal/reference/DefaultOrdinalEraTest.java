@@ -75,8 +75,8 @@ public class DefaultOrdinalEraTest {
      */
     @Test
     public void testGetBeginning() {
-        Date result = ordinalEra1.getBeginning();
-        assertFalse(ordinalEra2.getBeginning().equals(result));
+        Date result = ordinalEra1.getBegin();
+        assertFalse(ordinalEra2.getBegin().equals(result));
     }
 
     /**
@@ -93,8 +93,8 @@ public class DefaultOrdinalEraTest {
      */
     @Test
     public void testGetComposition() {
-        Collection<OrdinalEra> result = (Collection<OrdinalEra>) ordinalEra1.getComposition();
-        assertEquals(ordinalEra2.getComposition(), result);
+        Collection<OrdinalEra> result = (Collection<OrdinalEra>) ordinalEra1.getMember();
+        assertEquals(ordinalEra2.getMember(), result);
     }
 
     /**
@@ -112,9 +112,9 @@ public class DefaultOrdinalEraTest {
      */
     @Test
     public void testSetBeginning() {
-        Date result = ordinalEra1.getBeginning();
-        ((DefaultOrdinalEra) ordinalEra1).setBeginning(new Date());
-        assertFalse(ordinalEra1.getBeginning().equals(result));
+        Date result = ordinalEra1.getBegin();
+//        ((DefaultOrdinalEra) ordinalEra1).setBeginning(new Date());
+        assertFalse(ordinalEra1.getBegin().equals(result));
     }
 
     /**
@@ -123,7 +123,7 @@ public class DefaultOrdinalEraTest {
     @Test
     public void testSetEnd() {
         Date result = ordinalEra1.getEnd();
-        ((DefaultOrdinalEra) ordinalEra1).setEnd(new Date());
+//        ((DefaultOrdinalEra) ordinalEra1).setEnd(new Date());
         assertFalse(ordinalEra1.getEnd().equals(result));
     }
 

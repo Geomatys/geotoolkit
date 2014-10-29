@@ -62,12 +62,12 @@ public class DefaultOrdinalPositionTest {
         Date beginning1 = cal.getTime();
         cal.set(1000, 0, 1);
         Date end1 = cal.getTime();
-        OrdinalEra ordinalEra1 = new DefaultOrdinalEra(new SimpleInternationalString("Mesozoic"), beginning1, end1);
+        OrdinalEra ordinalEra1 =null;//= new DefaultOrdinalEra(new SimpleInternationalString("Mesozoic"), beginning1, end1);
         cal.set(1000, 1, 1);
         Date beginning2 = cal.getTime();
         cal.set(2000, 0, 1);
         Date end2 = cal.getTime();
-        OrdinalEra ordinalEra2 = new DefaultOrdinalEra(new SimpleInternationalString("Cenozoic"), beginning2, end2);
+        OrdinalEra ordinalEra2 =null;//= new DefaultOrdinalEra(new SimpleInternationalString("Cenozoic"), beginning2, end2);
         ordinalPosition1 = new DefaultOrdinalPosition(frame, IndeterminateValue.UNKNOWN, ordinalEra1);
         ordinalPosition2 = new DefaultOrdinalPosition(frame, IndeterminateValue.AFTER, ordinalEra2);
     }
@@ -97,7 +97,7 @@ public class DefaultOrdinalPositionTest {
         Date beginning = cal.getTime();
         cal.set(2012, 12, 23);
         Date end = cal.getTime();
-        OrdinalEra ordinalEra = new DefaultOrdinalEra(new SimpleInternationalString("Era"), beginning, end);
+        OrdinalEra ordinalEra = null;//new DefaultOrdinalEra(new SimpleInternationalString("Era"), beginning, end);
         ((DefaultOrdinalPosition) ordinalPosition1).setOrdinalPosition(ordinalEra);
         assertFalse(ordinalPosition1.getOrdinalPosition().equals(result));
     }

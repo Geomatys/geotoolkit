@@ -3,7 +3,8 @@
                          xmlns:gml="http://www.opengis.net/gml/3.2" 
                          xsi:schemaLocation = "http://www.opengis.net/gml/3.2 http://schemas.opengis.net/gml/3.2.1/temporalReferenceSystems.xsd"
                          gml:id="speace-crs-007">   
-    <gml:identifier codeSpace="EPSG">urn:ogc:def:referenceSystem:speace::007</gml:identifier>
-    <gml:name codeSpace="CRS">Gregorian calendar</gml:name>
-    <gml:domainOfValidity>desc</gml:domainOfValidity>
+    <gml:identifier codeSpace="EPSG">urn:ogc:def:referenceSystem:ReferenceSystem::42</gml:identifier>
+    <gml:name codeSpace="CRS">ReferenceSystem</gml:name>
+    <gml:remarks>ReferenceRemarks</gml:remarks>
+    <gml:domainOfValidity>extends description</gml:domainOfValidity>
 </gml:TimeReferenceSystem>

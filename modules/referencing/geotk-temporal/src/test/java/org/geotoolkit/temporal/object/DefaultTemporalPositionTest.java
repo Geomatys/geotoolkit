@@ -109,7 +109,7 @@ public class DefaultTemporalPositionTest {
     @Test
     public void testSetIndeterminatePosition() {
         IndeterminateValue result = temporalPosition1.getIndeterminatePosition();
-        ((DefaultTemporalPosition) temporalPosition1).setIndeterminatePosition(IndeterminateValue.BEFORE);
+//        ((DefaultTemporalPosition) temporalPosition1).setIndeterminatePosition(IndeterminateValue.BEFORE);
         assertFalse(temporalPosition1.getIndeterminatePosition().equals(result));
     }
 

@@ -20,7 +20,10 @@ package org.geotoolkit.temporal.object;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.apache.sis.util.ArgumentChecks;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlSeeAlso;
 import org.apache.sis.util.logging.Logging;
 import org.opengis.temporal.Duration;
 import org.opengis.temporal.Instant;
@@ -37,7 +40,9 @@ import org.opengis.temporal.TemporalGeometricPrimitive;
  * @author Mehdi Sidhoum (Geomatys)
  * @module pending
  */
-public class DefaultTemporalGeometricPrimitive extends DefaultTemporalPrimitive implements TemporalGeometricPrimitive, Separation {
+@XmlAccessorType(XmlAccessType.NONE)
+//@XmlSeeAlso({DefaultInstant.class, DefaultPeriod.class})
+ public abstract class DefaultTemporalGeometricPrimitive extends DefaultTemporalPrimitive implements TemporalGeometricPrimitive, Separation {
 
     private static final Logger LOGGER = Logging.getLogger(DefaultTemporalGeometricPrimitive.class);
 
@@ -76,30 +81,30 @@ public class DefaultTemporalGeometricPrimitive extends DefaultTemporalPrimitive 
 //        }
     }
 
-    /**
-     * Returns a Geotk implementation with the values of the given arbitrary implementation.
-     * This method performs the first applicable action in the following choices:
-     *
-     * <ul>
-     *   <li>If the given object is {@code null}, then this method returns {@code null}.</li>
-     *   <li>Otherwise if the given object is already an instance of
-     *       {@code DefaultTemporalGeometricPrimitive}, then it is returned unchanged.</li>
-     *   <li>Otherwise a new {@code DefaultTemporalGeometricPrimitive} instance is created using the
-     *       {@linkplain #DefaultTemporalGeometricPrimitive(TemporalGeometricPrimitive) copy constructor}
-     *       and returned. Note that this is a <cite>shallow</cite> copy operation, since the other
-     *       metadata contained in the given object are not recursively copied.</li>
-     * </ul>
-     *
-     * @param  object The object to get as a Geotk implementation, or {@code null} if none.
-     * @return A Geotk implementation containing the values of the given object (may be the
-     *         given object itself), or {@code null} if the argument was null.
-     */
-    public static DefaultTemporalGeometricPrimitive castOrCopy(final TemporalGeometricPrimitive object) {
-        if (object == null || object instanceof DefaultTemporalGeometricPrimitive) {
-            return (DefaultTemporalGeometricPrimitive) object;
-        }
-        return new DefaultTemporalGeometricPrimitive(object);
-    }
+//    /**
+//     * Returns a Geotk implementation with the values of the given arbitrary implementation.
+//     * This method performs the first applicable action in the following choices:
+//     *
+//     * <ul>
+//     *   <li>If the given object is {@code null}, then this method returns {@code null}.</li>
+//     *   <li>Otherwise if the given object is already an instance of
+//     *       {@code DefaultTemporalGeometricPrimitive}, then it is returned unchanged.</li>
+//     *   <li>Otherwise a new {@code DefaultTemporalGeometricPrimitive} instance is created using the
+//     *       {@linkplain #DefaultTemporalGeometricPrimitive(TemporalGeometricPrimitive) copy constructor}
+//     *       and returned. Note that this is a <cite>shallow</cite> copy operation, since the other
+//     *       metadata contained in the given object are not recursively copied.</li>
+//     * </ul>
+//     *
+//     * @param  object The object to get as a Geotk implementation, or {@code null} if none.
+//     * @return A Geotk implementation containing the values of the given object (may be the
+//     *         given object itself), or {@code null} if the argument was null.
+//     */
+//    public static DefaultTemporalGeometricPrimitive castOrCopy(final TemporalGeometricPrimitive object) {
+//        if (object == null || object instanceof DefaultTemporalGeometricPrimitive) {
+//            return (DefaultTemporalGeometricPrimitive) object;
+//        }
+//        return new DefaultTemporalGeometricPrimitive(object);
+//    }
     
     /**
      * Returns the distance from this TM_GeometricPrimitive to another TM_GeometricPrimitive, 

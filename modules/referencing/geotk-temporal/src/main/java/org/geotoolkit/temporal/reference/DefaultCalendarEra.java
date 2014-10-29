@@ -17,19 +17,25 @@
  */
 package org.geotoolkit.temporal.reference;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import org.apache.sis.internal.referencing.NilReferencingObject;
 import org.apache.sis.referencing.AbstractIdentifiedObject;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.ComparisonMode;
+import org.apache.sis.util.NullArgumentException;
 import org.opengis.referencing.IdentifiedObject;
 import org.opengis.temporal.Calendar;
 import org.opengis.temporal.CalendarDate;
 import org.opengis.temporal.CalendarEra;
+import org.opengis.temporal.Clock;
 import org.opengis.temporal.JulianDate;
 import org.opengis.temporal.Period;
 import org.opengis.util.InternationalString;
@@ -45,13 +51,22 @@ import org.opengis.util.InternationalString;
  */
 @XmlType(name = "TimeCalendarEra_Type", propOrder = {
     "referenceEvent",
-    "referenceDate",
-    "julianReference",
+    "referenceDat",
+    "julianRef",
     "epochOfUse"
 })
 @XmlRootElement(name = "TimeCalendarEra")
 public class DefaultCalendarEra extends AbstractIdentifiedObject implements CalendarEra {
 
+    private static NumberFormat NUMBER_FORMAT;
+    
+    static {
+        DecimalFormatSymbols dfs = new DecimalFormatSymbols();
+        dfs.setDecimalSeparator('.');
+        NUMBER_FORMAT = new DecimalFormat("#", dfs);
+        NUMBER_FORMAT.setMinimumFractionDigits(9);
+    }
+    
     /**
      * Provide the name or description of a mythical or historic event which fixes the position of the base scale of the calendar era.
      */
@@ -121,12 +136,72 @@ public class DefaultCalendarEra extends AbstractIdentifiedObject implements Cale
         ArgumentChecks.ensureNonNull("referenceDate", referenceDate);
         ArgumentChecks.ensureNonNull("julianReference", julianReference);
         ArgumentChecks.ensureNonNull("epochOfUse", epochOfUse);
+        if (!(ref instanceof InternationalString))
+            throw new IllegalArgumentException("reference Event must be instance of refernceEvent");
         this.referenceDate   = referenceDate;
         this.referenceEvent  = (InternationalString) ref;
         this.julianReference = julianReference;
         this.epochOfUse      = epochOfUse;
     }
     
+    /**
+     * Empty constructor only use for XML binding.
+     */
+    private DefaultCalendarEra() {
+        super(NilReferencingObject.INSTANCE);
+    }
+    
+    /**
+     * Constructs a new instance initialized with the values from the specified metadata object.
+     * This is a <cite>shallow</cite> copy constructor, since the other metadata contained in the
+     * given object are not recursively copied.
+     *
+     * @param object The CalendarEra to copy values from, or {@code null} if none.
+     *
+     * @see #castOrCopy(CalendarEra)
+     * @throws NullArgumentException if referenceEvent, referenceDate, julianReference or epochOfUse is {@code null}. 
+     */
+    private DefaultCalendarEra(final CalendarEra object) {
+        super(object);
+        if (object != null) {
+            this.referenceEvent = object.getReferenceEvent();
+            ArgumentChecks.ensureNonNull("referenceEvent", referenceEvent);
+            this.referenceDate  = object.getReferenceDate();
+            ArgumentChecks.ensureNonNull("referenceDate", referenceDate);
+            this.julianReference = object.getJulianReference();
+            ArgumentChecks.ensureNonNull("julianReference", julianReference);
+            this.epochOfUse = object.getEpochOfUse();
+            ArgumentChecks.ensureNonNull("julianReference", julianReference);
+            if (object instanceof DefaultCalendarEra) {
+                this.datingSystem = ((DefaultCalendarEra) object).getDatingSystem();
+            }            
+        }
+    }
+
+    /**
+     * Returns a Geotk implementation with the values of the given arbitrary implementation.
+     * This method performs the first applicable action in the following choices:
+     *
+     * <ul>
+     *   <li>If the given object is {@code null}, then this method returns {@code null}.</li>
+     *   <li>Otherwise if the given object is already an instance of
+     *       {@code DefaultCalendarEra}, then it is returned unchanged.</li>
+     *   <li>Otherwise a new {@code DefaultCalendarEra} instance is created using the
+     *       {@linkplain #DefaultCalendarEra(CalendarEra) copy constructor}
+     *       and returned. Note that this is a <cite>shallow</cite> copy operation, since the other
+     *       metadata contained in the given object are not recursively copied.</li>
+     * </ul>
+     *
+     * @param  object The object to get as a Geotk implementation, or {@code null} if none.
+     * @return A Geotk implementation containing the values of the given object (may be the
+     *         given object itself), or {@code null} if the argument was null.
+     */
+    public static DefaultCalendarEra castOrCopy(final CalendarEra object) {
+        if (object == null || object instanceof DefaultCalendarEra) {
+            return (DefaultCalendarEra) object;
+        }
+        return new DefaultCalendarEra(object);
+    }
 //    /**
 //     * Create a default {@link CalendarEra} implementation initialize with the given parameters.
 //     * 
@@ -182,20 +257,45 @@ public class DefaultCalendarEra extends AbstractIdentifiedObject implements Cale
      * @return Date of the reference event in the calendar being described.
      */
     @Override
-    @XmlElement(name = "referenceDate", required = true)
     public CalendarDate getReferenceDate() {
         return referenceDate;
     }
 
+    /**
+     * Returns {@link #referenceDate} adapted for JAXB Marshalling.
+     * 
+     * @return {@link #referenceDate} adapted for JAXB Marshalling.
+     */
+    @XmlElement(name = "referenceDate", required = true)
+    private String getReferenceDat() {
+        final int[] dat = referenceDate.getCalendarDate();
+        String str = ""+dat[0];
+        for(int i = 1; i < dat.length; i++){
+            str = str + "-";
+            if (dat[i] < 10) str = str+"0";
+            str = str+dat[i];
+        }
+        return str;
+    }
+    
     /**
      * Returns the {@linkplain JulianDate julian date} that corresponds to the reference date.
      * 
      * @return {@linkplain JulianDate julian date} of the reference event.
      */
     @Override
-    @XmlElement(name = "julianReference", required = true)
     public JulianDate getJulianReference() {
         return julianReference;
+    }
+    
+    /**
+     * Returns {@link #julianReference} adapted for JAXB Marshalling.
+     * 
+     * @return {@link #julianReference} adapted for JAXB Marshalling.
+     */
+    @XmlElement(name = "julianReference", required = true)
+    private String getJulianRef() {
+        return NUMBER_FORMAT.format(julianReference.getCoordinateValue().doubleValue());
     }
 
     /**

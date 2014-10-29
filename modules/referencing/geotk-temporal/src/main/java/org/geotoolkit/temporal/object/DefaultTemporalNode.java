@@ -35,9 +35,9 @@ import org.opengis.util.InternationalString;
  * @author Remi Marechal (Geomatys).
  */
 @XmlType(name = "TimeNode_Type", propOrder = {
-    "realization",
     "previousEdge",
-    "nextEdge"
+    "nextEdge",
+    "realization"
 })
 @XmlRootElement(name = "TimeNode")
 public class DefaultTemporalNode extends DefaultTemporalTopologicalPrimitive implements TemporalNode {

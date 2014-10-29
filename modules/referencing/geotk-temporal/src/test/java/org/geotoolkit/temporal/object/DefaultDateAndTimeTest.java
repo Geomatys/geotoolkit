@@ -82,7 +82,7 @@ public class DefaultDateAndTimeTest {
      */
     @Test
     public void testGetCalendarEraName() {
-        InternationalString result = dateAndTime1.getCalendarEraName();
+        InternationalString result = dateAndTime1.getCalendarEraName(); 
         assertTrue(dateAndTime2.getCalendarEraName().equals(result));
     }
 

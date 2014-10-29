@@ -18,8 +18,10 @@
 package org.geotoolkit.temporal.object;
 
 import java.util.Objects;
+import javax.measure.converter.UnitConverter;
+import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
-import org.geotoolkit.util.Utilities;
+import org.apache.sis.util.ArgumentChecks;
 import org.opengis.temporal.IntervalLength;
 
 /**
@@ -32,6 +34,18 @@ import org.opengis.temporal.IntervalLength;
 public class DefaultIntervalLength extends DefaultDuration implements IntervalLength {
 
     /**
+     * Milli second unit.
+     * @see #getTimeInMillis() 
+     */
+    private static Unit MS_UNIT = SI.SECOND.divide(1000);
+    
+    /**
+     * {@link UnitConverter} use to convert any unit into milli seconds if it's possible.
+     * @see #getTimeInMillis() 
+     */
+    private UnitConverter unitConverter;
+    
+    /**
      * This is the name of the unit of measure used to express the length of the interval.
      */
     private Unit unit;
@@ -39,10 +53,12 @@ public class DefaultIntervalLength extends DefaultDuration implements IntervalLe
      * This is the base of the multiplier of the unit.
      */
     private int radix;
+    
     /**
      * This is the exponent of the base.
      */
     private int factor;
+    
     /**
      * This is the length of the time interval as an integer multiple of one radix(exp -factor) of the specified unit.
      */
@@ -50,20 +66,29 @@ public class DefaultIntervalLength extends DefaultDuration implements IntervalLe
 
     /**
      * Creates a new instance of IntervalUnit example : Unit="second" radix=10 factor=3 value=7 specifies a time interval length of 7ms.
-     * @param unit
-     * @param radix
-     * @param factor
-     * @param value
+     * 
+     * @param unit   Unit of measure used to express the length of the interval.
+     * @param radix  positive integer that is the base of the multiplier of the unit.
+     * @param factor integer that is the exposant of the base.
+     * @param value length of the time interval as an integer multiple of one radix^(-factor) of the specified unit.
      */
     public DefaultIntervalLength(final Unit unit, final int radix, final int factor, final int value) {
-        this.unit = unit;
-        this.radix = radix;
-        this.factor = factor;
-        this.value = value;
+        ArgumentChecks.ensureNonNull("unit",   unit);
+        ArgumentChecks.ensureNonNull("radix",  radix);
+        ArgumentChecks.ensureStrictlyPositive("radix", radix);
+        ArgumentChecks.ensureNonNull("factor", factor);
+        ArgumentChecks.ensureNonNull("value",  value);
+        this.unit     = unit;
+        unitConverter = unit.getConverterTo(MS_UNIT);
+        this.radix    = radix;
+        this.factor   = factor;
+        this.value    = value;
     }
-
+    
     /**
-     * The unit of measure used to express the length of the interval.
+     * Returns the {@link Unit} of measure used to express the length of the interval.
+     * 
+     * @return the {@link Unit} of measure used to express the length of the interval.
      */
     @Override
     public Unit getUnit() {
@@ -71,7 +96,9 @@ public class DefaultIntervalLength extends DefaultDuration implements IntervalLe
     }
 
     /**
-     * A positive integer that is the base of the mulitplier of the unit.
+     * Returns positive {@code integer} that is the base of the mulitplier of the {@link Unit}.
+     * 
+     * @return positive {@code integer} that is the base of the mulitplier of the {@link Unit}.
      */
     @Override
     public int getRadix() {
@@ -79,21 +106,29 @@ public class DefaultIntervalLength extends DefaultDuration implements IntervalLe
     }
 
     /**
-     * The exponent of the base.
+     * Returns {@code integer} that is the exponent of the base.
+     * 
+     * @return {@code integer} that is the exponent of the base.
      */
     @Override
     public int getFactor() {
         return factor;
     }
 
+    /**
+     * Returns the length of the time interval as an {@code integer} multiple of one radix^(-factor) of the specified {@link unit}. 
+     * 
+     * @return the length of the time interval as an {@code integer} multiple of one radix^(-factor) of the specified {@link unit}.
+     */
     @Override
     public int getValue() {
         return value;
     }
 
+    
     @Override
     public long getTimeInMillis() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return Double.doubleToLongBits(unitConverter.convert(value * StrictMath.pow(radix, -factor)));
     }
 
     @Override

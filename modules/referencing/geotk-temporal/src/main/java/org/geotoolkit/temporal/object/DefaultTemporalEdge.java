@@ -32,9 +32,9 @@ import org.opengis.temporal.TemporalNode;
  * @author remi Marechal (Geomatys).
  */
 @XmlType(name = "TimeEdge_Type", propOrder = {
-    "realization",
     "start", 
-    "end"
+    "end",
+    "realization"
 })
 @XmlRootElement(name = "TimeEdge")
 public class DefaultTemporalEdge extends DefaultTemporalTopologicalPrimitive implements TemporalEdge {
@@ -93,9 +93,12 @@ public class DefaultTemporalEdge extends DefaultTemporalTopologicalPrimitive imp
      * @param start {@link TemporalNode} for which it is the {@link TemporalEdge} start.
      * @param end {@link TemporalNode} for which it is the {@link TemporalEdge} end.
      * @throws NullArgumentException if properties, start or end are {@code null}. 
+     * @throws IllegalArgumentException if remarks is not null.
      */
     public DefaultTemporalEdge(final Map<String, ?> properties, final Period realization, final TemporalNode start, final TemporalNode end) {
         super(properties);
+        final Object remarks = properties.get(REMARKS_KEY);
+        if (remarks != null) throw new IllegalArgumentException("remarks argument should be null");
         this.realization = realization;
         this.start       = start;
         this.end         = end;

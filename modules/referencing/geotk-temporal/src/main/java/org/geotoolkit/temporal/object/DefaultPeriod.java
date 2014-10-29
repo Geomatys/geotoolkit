@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.ComparisonMode;
+import org.opengis.temporal.Duration;
 import org.opengis.temporal.Instant;
 import org.opengis.temporal.Period;
 import org.opengis.temporal.RelativePosition;
@@ -39,7 +40,8 @@ import org.opengis.temporal.RelativePosition;
  */
 @XmlType(name = "TimePeriod_Type", propOrder = {
     "beginning",
-    "ending"
+    "ending",
+    "duration"
 })
 @XmlRootElement(name = "TimePeriod")
 public class DefaultPeriod extends DefaultTemporalGeometricPrimitive implements Period {
@@ -125,7 +127,7 @@ public class DefaultPeriod extends DefaultTemporalGeometricPrimitive implements 
             }            
         }
     }
-
+    
     /**
      * Returns a Geotk implementation with the values of the given arbitrary implementation.
      * This method performs the first applicable action in the following choices:
@@ -180,6 +182,21 @@ public class DefaultPeriod extends DefaultTemporalGeometricPrimitive implements 
     @XmlElement(name = "end", required = true)
     public Instant getEnding() {
         return ending;
+    }
+    
+    /**
+     * Duration only use for XML binding.
+     * 
+     * @return {@link String} which represent duration for XML binding format.
+     */
+    @XmlElement(name = "duration")
+    private String getDuration() {
+        Duration dur = super.length();
+        if (dur != null && (dur instanceof DefaultDuration)) {
+            final DefaultPeriodDuration defPerDur = (dur instanceof DefaultPeriodDuration) ? (DefaultPeriodDuration) dur : new DefaultPeriodDuration(((DefaultDuration)dur).getTimeInMillis());
+            return defPerDur.toString();
+        }
+        return null;
     }
     
     /**

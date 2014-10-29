@@ -25,6 +25,7 @@ import java.util.Objects;
 import javax.measure.quantity.Duration;
 import javax.measure.unit.NonSI;
 import javax.measure.unit.Unit;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.apache.sis.util.iso.SimpleInternationalString;
@@ -92,6 +93,57 @@ public class DefaultCalendar extends DefaultTemporalReferenceSystem implements C
         ArgumentChecks.ensureNonNull("referenceFrame", referenceFrame);
         this.referenceFrame = referenceFrame;
         this.timeBasis      = timeBasis;
+    }
+    
+    /**
+     * Empty constructor only use for XML binding.
+     */
+    private DefaultCalendar() {
+        super();
+    }
+    
+    /**
+     * Constructs a new instance initialized with the values from the specified metadata object.
+     * This is a <cite>shallow</cite> copy constructor, since the other metadata contained in the
+     * given object are not recursively copied.
+     *
+     * @param object The Calendar to copy values from, or {@code null} if none.
+     *
+     * @see #castOrCopy(Calendar)
+     * @throws NullArgumentException if referenceFrame is {@code null}. 
+     */
+    private DefaultCalendar(final Calendar object) {
+        super(object);
+        if (object != null) {
+            referenceFrame = object.getReferenceFrame();
+            ArgumentChecks.ensureNonNull("referenceFrame", referenceFrame);
+            timeBasis      = object.getTimeBasis();
+        }
+    }
+
+    /**
+     * Returns a Geotk implementation with the values of the given arbitrary implementation.
+     * This method performs the first applicable action in the following choices:
+     *
+     * <ul>
+     *   <li>If the given object is {@code null}, then this method returns {@code null}.</li>
+     *   <li>Otherwise if the given object is already an instance of
+     *       {@code DefaultCalendar}, then it is returned unchanged.</li>
+     *   <li>Otherwise a new {@code DefaultCalendar} instance is created using the
+     *       {@linkplain #DefaultCalendar(CalendarEra) copy constructor}
+     *       and returned. Note that this is a <cite>shallow</cite> copy operation, since the other
+     *       metadata contained in the given object are not recursively copied.</li>
+     * </ul>
+     *
+     * @param  object The object to get as a Geotk implementation, or {@code null} if none.
+     * @return A Geotk implementation containing the values of the given object (may be the
+     *         given object itself), or {@code null} if the argument was null.
+     */
+    public static DefaultCalendar castOrCopy(final Calendar object) {
+        if (object == null || object instanceof DefaultCalendar) {
+            return (DefaultCalendar) object;
+        }
+        return new DefaultCalendar(object);
     }
 
     /**
@@ -373,12 +425,13 @@ public class DefaultCalendar extends DefaultTemporalReferenceSystem implements C
     }
 
     @Override
-    public Collection<CalendarEra> getBasis() {
+    @XmlElement(name = "referenceFrame", required = true)
+    public Collection<CalendarEra> getReferenceFrame() {
         return referenceFrame;
     }
 
     @Override
-    public Clock getClock() {
+    public Clock getTimeBasis() {
          return timeBasis;
     }
 //
