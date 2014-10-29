@@ -18,6 +18,7 @@
 package org.geotoolkit.gui.javafx.render2d;
 
 import java.awt.Dimension;
+import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
@@ -31,11 +32,17 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.embed.swing.SwingFXUtils;
+import javafx.geometry.Insets;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.effect.BlendMode;
 import javafx.scene.image.WritableImage;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
 import javax.swing.Timer;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.util.ArgumentChecks;
@@ -86,6 +93,7 @@ public class FXMap extends BorderPane {
     }
 
     public FXMap(final boolean statefull){
+        setBackground(new Background(new BackgroundFill(javafx.scene.paint.Color.WHITE, CornerRadii.EMPTY, Insets.EMPTY)));
         view.heightProperty().bind(mapDecorationPane.heightProperty());
         view.widthProperty().bind(mapDecorationPane.widthProperty());
         
@@ -102,7 +110,9 @@ public class FXMap extends BorderPane {
         canvas.setMonitor(new NeverFailMonitor());
         canvas.setContainer(new ContextContainer2D(canvas, statefull));
         canvas.setAutoRepaint(true);
-
+//        canvas.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+//        canvas.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+        
         canvas.addPropertyChangeListener(new PropertyChangeListener() {
 
             @Override
@@ -152,15 +162,16 @@ public class FXMap extends BorderPane {
         final Runnable r = new Runnable() {
             @Override
             public void run() {
+                final GraphicsContext g = view.getGraphicsContext2D();
+                g.clearRect(0, 0, view.getWidth(), view.getHeight());
                 final BufferedImage snapshot = (BufferedImage) canvas.getSnapShot();
-                if (snapshot != null) {
-                    image = SwingFXUtils.toFXImage(snapshot, image);
-                    final GraphicsContext g = view.getGraphicsContext2D();
-                    g.clearRect(0, 0, view.getWidth(), view.getHeight());
+                if (snapshot != null && snapshot.getWidth()==view.getWidth() && snapshot.getHeight() == view.getHeight()) {
+                    //JavaFX bug : argb snapshot image from volatile image creates a black background
+                    final BufferedImage img = new BufferedImage((int)view.getWidth(), (int)view.getHeight(), BufferedImage.TYPE_INT_RGB);
+                    img.createGraphics().drawImage(snapshot, 0, 0, null);
+                    image = SwingFXUtils.toFXImage(img, image);
+                    g.setGlobalBlendMode(BlendMode.SRC_OVER);
                     g.drawImage(image, 0, 0);
-                } else {
-                    final GraphicsContext g = view.getGraphicsContext2D();
-                    g.clearRect(0, 0, view.getWidth(), view.getHeight());
                 }
             }
         };
