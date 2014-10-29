@@ -1,0 +1,31 @@
+<gml:TimeCalendarEra xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+                     xmlns:gml="http://www.opengis.net/gml/3.2" 
+                     xsi:schemaLocation = "http://www.opengis.net/gml/3.2 http://schemas.opengis.net/gml/3.2.1/temporalReferenceSystems.xsd"  
+                     gml:id="auto-calendareraidentifier">
+    <gml:identifier codeSpace="AUTO">CalendarEra identifier</gml:identifier>
+    <gml:name codeSpace="AUTO">CalendarEra</gml:name>
+    <gml:remarks>calendar Era Remark</gml:remarks>
+    <gml:referenceEvent>blabla</gml:referenceEvent>
+    <gml:referenceDate>1900-01-01</gml:referenceDate>
+    <gml:julianReference>1578.000000000</gml:julianReference>
+    <gml:epochOfUse>
+        <gml:TimePeriod gml:id="auto-periodidentifier">
+            <gml:identifier codeSpace="AUTO">period identifier</gml:identifier>
+            <gml:name codeSpace="AUTO">period</gml:name>
+            <gml:begin>
+                <gml:TimeInstant gml:id="auto-start">
+                    <gml:identifier codeSpace="AUTO">start</gml:identifier>
+                    <gml:name codeSpace="AUTO">begiiinn hou hou hou</gml:name>
+                    <gml:timePosition>2014-10-21T12:47:58.784+02:00</gml:timePosition>
+                </gml:TimeInstant>
+            </gml:begin>
+            <gml:end>
+                <gml:TimeInstant gml:id="auto-end">
+                    <gml:identifier codeSpace="AUTO">end</gml:identifier>
+                    <gml:name codeSpace="AUTO">happy ending</gml:name>
+                    <gml:timePosition>2014-10-21T12:47:58.788+02:00</gml:timePosition>
+                </gml:TimeInstant>
+            </gml:end>
+        </gml:TimePeriod>
+    </gml:epochOfUse>
+</gml:TimeCalendarEra>
