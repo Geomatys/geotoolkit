@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.swe.xml;
 
+import org.opengis.metadata.Identifier;
+
 /**
  *
  * @author Guilhem Legal (Geomatys)
@@ -23,5 +25,5 @@ package org.geotoolkit.swe.xml;
  */
 public interface Phenomenon extends org.opengis.observation.Phenomenon {
     
-    String getName();
+    Identifier getName();
 }

@@ -344,7 +344,7 @@ public class DataComponentPropertyType implements DataComponentProperty {
             if (d instanceof AbstractCountRange) {
                 this.countRange = new CountRange((AbstractCountRange) d);
             }
-            this.name = d.getName();
+            this.name = d.getName().getCode();
             if (d instanceof Quantity) {
                 this.quantity = new QuantityType((Quantity) d);
             }

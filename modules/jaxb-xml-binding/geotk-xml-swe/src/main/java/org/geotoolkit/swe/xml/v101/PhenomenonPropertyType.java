@@ -127,7 +127,9 @@ public class PhenomenonPropertyType implements PhenomenonProperty {
     public void setToHref() {
         PhenomenonType pheno = getPhenomenon();
         if (pheno != null) {
-            this.href = pheno.getName();
+            if (pheno.getName() != null) {
+                this.href = pheno.getName().getCode();
+            }
             hiddenPhenomenon = pheno;
             setPhenomenon(null);
         }

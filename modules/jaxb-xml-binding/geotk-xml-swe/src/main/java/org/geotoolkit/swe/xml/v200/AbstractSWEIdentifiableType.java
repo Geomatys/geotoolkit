@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import org.opengis.metadata.Identifier;
 
 
 /**
@@ -153,7 +154,7 @@ public class AbstractSWEIdentifiableType extends AbstractSWEType {
         //do nothing
     }
 
-    public String getName() {
+    public Identifier getName() {
         return null;
     }
 

@@ -296,7 +296,7 @@ public class DataComponentPropertyType implements DataComponentProperty {
             if (abstractDataRecord.getValue().getId() != null) {
                 this.setHref(abstractDataRecord.getValue().getId());
             } else if (abstractDataRecord.getValue().getName() != null) {
-                this.setHref(abstractDataRecord.getValue().getName());
+                this.setHref(abstractDataRecord.getValue().getName().getCode());
             } else {
                 this.setHref(name);
             }

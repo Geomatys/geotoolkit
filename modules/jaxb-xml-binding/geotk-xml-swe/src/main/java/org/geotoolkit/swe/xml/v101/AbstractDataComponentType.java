@@ -90,16 +90,16 @@ public class AbstractDataComponentType extends AbstractGMLType implements Abstra
         return STANDARD;
     }
 
-    /**
-     * Return the identifier of this data record.
-     */
-    @Override
-    public String getName() {
-        if (super.getName() != null) {
-            return super.getName();
-        }
-        return super.getId();
-    }
+//    /**
+//     * Return the identifier of this data record.
+//     */
+//    @Override
+//    public String getName() {
+//        if (super.getName() != null) {
+//            return super.getName();
+//        }
+//        return super.getId();
+//    }
 
     /**
      * {@inheritDoc}
