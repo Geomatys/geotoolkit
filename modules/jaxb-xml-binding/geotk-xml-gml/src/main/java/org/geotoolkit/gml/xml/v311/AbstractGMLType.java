@@ -19,7 +19,9 @@ package org.geotoolkit.gml.xml.v311;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -34,12 +36,16 @@ import org.geotoolkit.gml.xml.AbstractGML;
 import org.geotoolkit.internal.sql.table.Entry;
 import org.apache.sis.metadata.AbstractMetadata;
 import org.apache.sis.metadata.MetadataStandard;
+import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.util.ComparisonMode;
+import org.apache.sis.util.iso.SimpleInternationalString;
 import org.apache.sis.xml.IdentifiedObject;
 import org.apache.sis.xml.IdentifierMap;
 import org.apache.sis.xml.IdentifierSpace;
 import org.opengis.metadata.Identifier;
 import org.geotoolkit.gml.GMLStandard;
+import org.opengis.util.GenericName;
+import org.opengis.util.InternationalString;
 
 
 /**
@@ -104,7 +110,7 @@ public abstract class AbstractGMLType extends AbstractMetadata implements Abstra
      * This field is initialized to a non-null value when first needed.
      */
     @XmlTransient
-    protected Collection<Identifier> identifiers;
+    protected Set<Identifier> identifiers;
 
     /**
      *  Empty constructor used by JAXB.
@@ -121,7 +127,9 @@ public abstract class AbstractGMLType extends AbstractMetadata implements Abstra
                 this.descriptionReference = new ReferenceType(a.getDescriptionReference());
             }
             setId(a.getId());
-            this.name = a.getName();
+            if (a.getName() != null) {
+                this.name = a.getName().getCode();
+            }
             if (a.getParameterName() != null){
                 this.parameterName = new CodeType(a.getParameterName().getValue(), a.getParameterName().getCodeSpace());
             }
@@ -182,8 +190,11 @@ public abstract class AbstractGMLType extends AbstractMetadata implements Abstra
      *
      */
     @Override
-    public String getName() {
-        return name;
+    public Identifier getName() {
+        if (name != null) {
+            return new DefaultIdentifier(name);
+        }
+        return null;
     }
 
     /**
@@ -249,9 +260,9 @@ public abstract class AbstractGMLType extends AbstractMetadata implements Abstra
     }
 
     @Override
-    public Collection<Identifier> getIdentifiers() {
+    public Set<Identifier> getIdentifiers() {
         if (identifiers == null) {
-            identifiers = new ArrayList<>();
+            identifiers = new HashSet<>();
         }
         return identifiers;
     }
@@ -263,13 +274,28 @@ public abstract class AbstractGMLType extends AbstractMetadata implements Abstra
          * DefaultObjective override getIdentifiers() in order to return a filtered list.
          */
         if (identifiers == null) {
-            identifiers = new ArrayList<>();
+            identifiers = new HashSet<>();
         }
         /*
          * We do not cache (for now) the IdentifierMap because it is cheap to create, and if were
          * caching it we would need anyway to check if 'identifiers' still references the same list.
          */
         return new IdentifierMapWithSpecialCases(identifiers);
+    }
+    
+    public Collection<GenericName> getAlias() {
+        return null;
+    }
+
+    public InternationalString getRemarks() {
+        if (description != null) {
+            return new SimpleInternationalString(description);
+        }
+        return null;
+    }
+
+    public String toWKT() throws UnsupportedOperationException {
+        return null;
     }
 
     /**

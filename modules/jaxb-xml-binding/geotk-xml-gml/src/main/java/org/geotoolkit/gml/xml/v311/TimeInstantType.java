@@ -20,15 +20,19 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.Objects;
+import java.util.Set;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import org.apache.sis.util.ComparisonMode;
 import org.opengis.filter.expression.Literal;
+import org.opengis.metadata.Identifier;
 import org.opengis.temporal.Instant;
 import org.opengis.temporal.Period;
 import org.opengis.temporal.Position;
+import org.opengis.util.GenericName;
+import org.opengis.util.InternationalString;
 
 
 /**

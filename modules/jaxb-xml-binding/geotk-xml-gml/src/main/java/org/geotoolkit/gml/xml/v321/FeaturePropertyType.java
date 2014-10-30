@@ -111,7 +111,9 @@ public class FeaturePropertyType implements FeatureProperty {
     @Override
     public void setToHref() {
         if (abstractFeature != null && abstractFeature.getValue() != null) {
-            this.href       = abstractFeature.getValue().getName();
+            if (abstractFeature.getValue().getName() != null) {
+                this.href       = abstractFeature.getValue().getName().getCode();
+            }
             hiddenFeature   = abstractFeature.getValue();
             abstractFeature = null;
         }

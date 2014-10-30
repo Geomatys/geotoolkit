@@ -21,6 +21,8 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 import org.apache.sis.util.ComparisonMode;
+import org.apache.sis.util.iso.SimpleInternationalString;
+import org.opengis.util.InternationalString;
 
 
 /**
@@ -82,8 +84,12 @@ public class DefinitionType extends DefinitionBaseType {
     /**
      * Gets the value of the remarks property.
      */
-    public String getRemarks() {
-        return remarks;
+    @Override
+    public InternationalString getRemarks() {
+        if (remarks != null) {
+            return new SimpleInternationalString(remarks);
+        }
+        return null;
     }
 
      /**

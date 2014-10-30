@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.gml.xml;
 
+import org.opengis.metadata.Identifier;
+
 /**
  *
  * @author Guilhem Legal (Geomatys)
@@ -31,7 +33,7 @@ public interface AbstractGML {
 
     void setDescription(String description);
 
-    String getName();
+    Identifier getName();
 
     void setName(String name);
 
