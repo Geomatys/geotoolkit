@@ -124,8 +124,8 @@ public class DefaultCalendarTest {
      */
     @Test
     public void testGetBasis() {
-        Collection<CalendarEra> result = (Collection<CalendarEra>) calendar1.getBasis();
-        assertEquals(calendar2.getBasis(), result);
+        Collection<CalendarEra> result = (Collection<CalendarEra>) calendar1.getReferenceFrame();
+        assertEquals(calendar2.getReferenceFrame(), result);
     }
 
     /**
@@ -133,8 +133,8 @@ public class DefaultCalendarTest {
      */
     @Test
     public void testGetClock() {
-        Clock result = calendar1.getClock();
-        assertEquals(calendar2.getClock(), result);
+        Clock result = calendar1.getTimeBasis();
+        assertEquals(calendar2.getTimeBasis(), result);
     }
 //
 //    /**
