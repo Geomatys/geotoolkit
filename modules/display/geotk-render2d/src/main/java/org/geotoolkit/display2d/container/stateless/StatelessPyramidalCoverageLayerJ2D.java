@@ -93,7 +93,7 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
         super(canvas, layer, false);
         this.coverageFinder = new DefaultCoverageFinder();
         model = (PyramidalCoverageReference)layer.getCoverageReference();
-        tolerance = 0.1; // in % , TODO use a flag to allow change value
+        tolerance = 0.25; // in % , TODO use a flag to allow change value
         this.weakStoreListener.registerSource(layer.getCoverageReference());
     }
 
@@ -101,7 +101,7 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
         super(canvas, layer, false);
         this.coverageFinder = coverageFinder;
         model = (PyramidalCoverageReference)layer.getCoverageReference();
-        tolerance = 0.1; // in % , TODO use a flag to allow change value
+        tolerance = 0.25; // in % , TODO use a flag to allow change value
         this.weakStoreListener.registerSource(layer.getCoverageReference());
     }
 
