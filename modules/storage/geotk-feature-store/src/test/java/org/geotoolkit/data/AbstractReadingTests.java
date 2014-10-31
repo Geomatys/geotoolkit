@@ -51,6 +51,7 @@ import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import static org.junit.Assert.*;
+import org.opengis.metadata.Identifier;
 
 /**
  * Generic reading tests for datastore.
@@ -379,7 +380,9 @@ public abstract class AbstractReadingTests{
                 Comparable last = null;
                 while(reader.hasNext()){
                     final Feature f = reader.next();
-                    final Comparable current = (Comparable) f.getProperty(desc.getName()).getValue();
+                    Object obj = f.getProperty(desc.getName()).getValue();
+                    if (obj instanceof Identifier) obj = ((Identifier) obj).getCode();
+                    final Comparable current = (Comparable) obj;
 
                     if(current != null){
                         if(last != null){
@@ -409,7 +412,9 @@ public abstract class AbstractReadingTests{
                 Comparable last = null;
                 while(reader.hasNext()){
                     final Feature f = reader.next();
-                    final Comparable current = (Comparable) f.getProperty(desc.getName()).getValue();
+                    Object obj = f.getProperty(desc.getName()).getValue();
+                    if (obj instanceof Identifier) obj = ((Identifier) obj).getCode();
+                    final Comparable current = (Comparable) obj;
 
                     if(current != null){
                         if(last != null){
