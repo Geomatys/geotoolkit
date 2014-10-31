@@ -973,13 +973,32 @@ public final class Parameters extends Static {
                     parameter.values().add(
                             toParameter((Map) entry.getValue(), (ParameterDescriptorGroup) subDesc, checkMandatory));
                 } else if (entry.getValue() instanceof Collection) {
-                    for (Object o : (Collection) entry.getValue()) {
-                        if (o instanceof Map) {
-                            parameter.values().add(
-                                    toParameter((Map) o, (ParameterDescriptorGroup) subDesc, checkMandatory));
+
+                    final List values = new ArrayList((Collection) entry.getValue());
+                    final int nbGroups = values.size();
+
+                    //already exist groups
+                    int nbParamGroups = parameter.groups(entry.getKey()).size();
+
+                    //create missing groups
+                    if (nbGroups > nbParamGroups) {
+                        int toAdd = nbGroups - nbParamGroups;
+                        for (int i = 0; i < toAdd; i++) {
+                            parameter.addGroup(entry.getKey());
                         }
                     }
 
+                    // convert and copy map values into parameter groups
+                    final List<ParameterValueGroup> paramGroups = parameter.groups(entry.getKey());
+                    for (int i = 0; i < nbGroups; i++) {
+                        Object valObj = values.get(i);
+                        if (valObj instanceof Map) {
+                            ParameterValueGroup newGroup = toParameter((Map) valObj, (ParameterDescriptorGroup) subDesc, checkMandatory);
+                            copy(newGroup, paramGroups.get(i));
+                        } else {
+                            throw new IllegalArgumentException("Illegal value for parameter " + entry.getKey() + ". It's a parameter group, so we should have a nested map as input.");
+                        }
+                    }
                 } else {
                     throw new IllegalArgumentException("Illegal value for parameter " + entry.getKey() + ". It's a parameter group, so we should have a nested map as input.");
                 }
