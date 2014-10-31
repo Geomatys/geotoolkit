@@ -19,6 +19,7 @@ package org.geotoolkit.sampling.xml;
 import java.util.List;
 import org.geotoolkit.gml.xml.FeatureProperty;
 import org.opengis.geometry.Geometry;
+import org.opengis.metadata.Identifier;
 
 /**
  *
@@ -28,7 +29,7 @@ public interface SamplingFeature extends org.opengis.observation.sampling.Sampli
 
     String getId();
     
-    String getName();
+    Identifier getName();
     
     String getDescription();
     

@@ -22,7 +22,9 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -47,11 +49,13 @@ import org.geotoolkit.swe.xml.v101.SimpleDataRecordType;
 import org.geotoolkit.swe.xml.v101.Text;
 import org.geotoolkit.swe.xml.v101.TextBlockType;
 import javax.xml.bind.JAXBContext;
+import org.apache.sis.internal.jaxb.LegacyNamespaces;
 import org.apache.sis.xml.MarshallerPool;
 import org.junit.*;
 import org.xml.sax.SAXException;
 
 import static org.apache.sis.test.Assert.*;
+import org.apache.sis.xml.XML;
 
 
 /**
@@ -116,7 +120,10 @@ public class ObservationXMLBindingTest {
 
         String result = sw.toString();
         //we remove the first line
-        result = result.substring(result.indexOf("?>") + 3);
+        result = result.substring(result.indexOf("?>") + 2);
+        if (result.startsWith("/n")) {
+            result = result.substring(1);
+        }
 
         String expResult = "<om:Observation xmlns:sampling=\"http://www.opengis.net/sampling/1.0\"" +
                                           " xmlns:om=\"http://www.opengis.net/om/1.0\"" +
@@ -187,7 +194,10 @@ public class ObservationXMLBindingTest {
 
         result = sw.toString();
         //we remove the first line
-        result = result.substring(result.indexOf("?>") + 3);
+       result = result.substring(result.indexOf("?>") + 2);
+        if (result.startsWith("/n")) {
+            result = result.substring(1);
+        }
 
         expResult =        "<om:Measurement xmlns:sampling=\"http://www.opengis.net/sampling/1.0\"" +
                                           " xmlns:om=\"http://www.opengis.net/om/1.0\"" +
@@ -337,7 +347,7 @@ public class ObservationXMLBindingTest {
 
         ObservationType expResult = new ObservationType("urn:Observation-007", null, sp, observedProperty, "urn:sensor:007", arrayProp, samplingTime);
 
-        assertEquals(expResult.getFeatureOfInterest(), result.getFeatureOfInterest());
+         assertEquals(expResult.getFeatureOfInterest(), result.getFeatureOfInterest());
         assertEquals(expResult.getDefinition(), result.getDefinition());
         assertEquals(expResult.getName(), result.getName());
         assertEquals(expResult.getObservationMetadata(), result.getObservationMetadata());

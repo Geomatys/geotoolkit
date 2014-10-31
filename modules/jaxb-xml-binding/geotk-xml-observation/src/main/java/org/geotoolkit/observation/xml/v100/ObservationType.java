@@ -28,6 +28,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
+import org.apache.sis.metadata.iso.DefaultIdentifier;
 
 // openGis dependencies
 import org.geotoolkit.gml.xml.v311.*;
@@ -53,6 +54,7 @@ import org.geotoolkit.sampling.xml.v100.SamplingCurveType;
 import org.geotoolkit.sampling.xml.v100.SamplingSolidType;
 import org.geotoolkit.sampling.xml.v100.SamplingSurfaceType;
 import org.apache.sis.util.logging.Logging;
+import org.opengis.metadata.Identifier;
 import org.opengis.temporal.Period;
 import org.opengis.temporal.TemporalGeometricPrimitive;
 
@@ -370,8 +372,8 @@ public class ObservationType implements Entry, AbstractObservation {
     }
     
     @Override
-    public String getName() {
-        return this.name;
+    public Identifier getName() {
+        return new DefaultIdentifier(this.name);
     }
 
     @Override

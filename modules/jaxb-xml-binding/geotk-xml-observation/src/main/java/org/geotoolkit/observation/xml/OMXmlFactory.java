@@ -22,6 +22,7 @@ import java.util.List;
 import org.geotoolkit.gml.xml.FeatureProperty;
 import org.geotoolkit.gml.xml.GMLXmlFactory;
 import org.geotoolkit.swe.xml.v101.PhenomenonType;
+import org.opengis.metadata.Identifier;
 import org.opengis.observation.Measurement;
 import org.opengis.observation.Observation;
 import org.opengis.observation.sampling.SamplingFeature;
@@ -54,7 +55,7 @@ public class OMXmlFactory {
     }
     
     private static AbstractObservation convertTo100(final Observation observation) {
-        final String name = observation.getName();
+        final String name = (observation.getName() != null) ? observation.getName().getCode() : "";
         final String definition = observation.getDefinition();
         final org.geotoolkit.gml.xml.v311.AbstractTimeGeometricPrimitiveType time;
         if (observation.getSamplingTime() instanceof Period) {
@@ -81,7 +82,8 @@ public class OMXmlFactory {
             time = null;
         }
         final String procedure = ((org.geotoolkit.observation.xml.Process)observation.getProcedure()).getHref();
-        final String phenomenonName = ((org.geotoolkit.swe.xml.Phenomenon)observation.getObservedProperty()).getName();
+        final Identifier idName = ((org.geotoolkit.swe.xml.Phenomenon)observation.getObservedProperty()).getName();
+        final String phenomenonName = (idName != null) ? idName.getCode() : "";
         // extract id
         final String phenId;
         if (phenomenonName.indexOf(':') != -1) {
@@ -129,7 +131,7 @@ public class OMXmlFactory {
     
     private static AbstractObservation convertTo200(final Observation observation) {
        
-        final String name = observation.getName();
+        final String name = (observation.getName() != null) ? observation.getName().getCode() : "";
         final String type;
         if (observation instanceof Measurement) {
             type = "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement";
@@ -161,7 +163,8 @@ public class OMXmlFactory {
             time = null;
         }
         final String procedure            = ((org.geotoolkit.observation.xml.Process)observation.getProcedure()).getHref();
-        final String observedProperty     = ((org.geotoolkit.swe.xml.Phenomenon)observation.getObservedProperty()).getName();
+        final Identifier idOP = ((org.geotoolkit.swe.xml.Phenomenon)observation.getObservedProperty()).getName();
+        final String observedProperty     = (idOP != null) ? idOP.getCode() : "";
         final SamplingFeature sf          = convertTo200((SamplingFeature)observation.getFeatureOfInterest());
         final org.geotoolkit.gml.xml.v321.FeaturePropertyType feature = (org.geotoolkit.gml.xml.v321.FeaturePropertyType) buildFeatureProperty("2.0.0", sf);
         final Object result;
@@ -210,6 +213,7 @@ public class OMXmlFactory {
     
     private static SamplingFeature convertTo100(final SamplingFeature feature) {
         final org.geotoolkit.sampling.xml.v200.SFSamplingFeatureType feature200 = (org.geotoolkit.sampling.xml.v200.SFSamplingFeatureType) feature;
+        final String f200Name = (feature200.getName() != null) ? feature200.getName().getCode() : "";
         final org.geotoolkit.gml.xml.v311.FeaturePropertyType fp;
             if (feature200.getSampledFeatureProperty().getHref() != null) {
                 fp = new org.geotoolkit.gml.xml.v311.FeaturePropertyType(feature200.getSampledFeatureProperty().getHref());
@@ -224,7 +228,7 @@ public class OMXmlFactory {
             } else {
                 pt = null;
             }
-            return new org.geotoolkit.sampling.xml.v100.SamplingPointType(feature200.getId(), feature200.getName(), feature200.getDescription(),
+            return new org.geotoolkit.sampling.xml.v100.SamplingPointType(feature200.getId(), f200Name, feature200.getDescription(),
                     fp, pt);
         } else if (feature200.getType().getHref().equals("http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingCurve")) {
             
@@ -241,11 +245,11 @@ public class OMXmlFactory {
                 pt = null;
             }
             final org.geotoolkit.gml.xml.v311.EnvelopeType env = new org.geotoolkit.gml.xml.v311.EnvelopeType(feature200.getBoundedBy().getEnvelope());
-            return new org.geotoolkit.sampling.xml.v100.SamplingCurveType(feature200.getId(), feature200.getName(), feature200.getDescription(), 
+            return new org.geotoolkit.sampling.xml.v100.SamplingCurveType(feature200.getId(), f200Name, feature200.getDescription(), 
                     fp, new org.geotoolkit.gml.xml.v311.CurvePropertyType(pt), null, env);
         } else if (feature instanceof org.geotoolkit.sampling.xml.v200.SFSamplingFeatureType) {
             
-            return new org.geotoolkit.sampling.xml.v100.SamplingFeatureType(feature200.getId(), feature200.getName(), feature200.getDescription(), fp);
+            return new org.geotoolkit.sampling.xml.v100.SamplingFeatureType(feature200.getId(), f200Name, feature200.getDescription(), fp);
         } else {
             throw new IllegalArgumentException("unexpected feature type.");
         }
@@ -254,6 +258,7 @@ public class OMXmlFactory {
     private static SamplingFeature convertTo200(final SamplingFeature feature) {
         if (feature instanceof  org.geotoolkit.sampling.xml.v100.SamplingPointType) {
             final org.geotoolkit.sampling.xml.v100.SamplingPointType sp = (org.geotoolkit.sampling.xml.v100.SamplingPointType) feature;
+            final String spName = (sp.getName() != null) ? sp.getName().getCode() : "";
             final org.geotoolkit.gml.xml.v321.FeaturePropertyType fp;
             if (sp.getSampledFeatures() != null && !sp.getSampledFeatures().isEmpty()) {
                 fp = new org.geotoolkit.gml.xml.v321.FeaturePropertyType(sp.getSampledFeatures().iterator().next().getHref());
@@ -267,7 +272,7 @@ public class OMXmlFactory {
             } else {
                 pt = null;
             }
-            return new org.geotoolkit.samplingspatial.xml.v200.SFSpatialSamplingFeatureType(sp.getId(), sp.getName(), sp.getDescription(),
+            return new org.geotoolkit.samplingspatial.xml.v200.SFSpatialSamplingFeatureType(sp.getId(), spName, sp.getDescription(),
                     "http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingPoint", fp, pt, null);
         } else if (feature instanceof org.geotoolkit.sampling.xml.v100.SamplingCurveType) {
             final org.geotoolkit.sampling.xml.v100.SamplingCurveType sp = (org.geotoolkit.sampling.xml.v100.SamplingCurveType) feature;
@@ -290,17 +295,18 @@ public class OMXmlFactory {
                 pt = null;
             }
             final org.geotoolkit.gml.xml.v321.EnvelopeType env = new org.geotoolkit.gml.xml.v321.EnvelopeType(sp.getBoundedBy().getEnvelope());
-            return new org.geotoolkit.samplingspatial.xml.v200.SFSpatialSamplingFeatureType(sp.getId(), sp.getName(), sp.getDescription(), 
+            return new org.geotoolkit.samplingspatial.xml.v200.SFSpatialSamplingFeatureType(sp.getId(),((sp.getName() != null)?sp.getName().getCode():""), sp.getDescription(), 
                     "http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingCurve", fp, pt, env);
         } else if (feature instanceof org.geotoolkit.sampling.xml.v100.SamplingFeatureType) {
             final org.geotoolkit.sampling.xml.v100.SamplingFeatureType sp = (org.geotoolkit.sampling.xml.v100.SamplingFeatureType) feature;
+            final String spName = (sp.getName() != null) ? sp.getName().getCode() : "";
             final org.geotoolkit.gml.xml.v321.FeaturePropertyType fp;
             if (sp.getSampledFeatures() != null && !sp.getSampledFeatures().isEmpty()) {
                 fp = new org.geotoolkit.gml.xml.v321.FeaturePropertyType(sp.getSampledFeatures().iterator().next().getHref());
             } else {
                 fp = null;
             }
-            return new org.geotoolkit.sampling.xml.v200.SFSamplingFeatureType(sp.getId(), sp.getName(), sp.getDescription(), 
+            return new org.geotoolkit.sampling.xml.v200.SFSamplingFeatureType(sp.getId(), spName, sp.getDescription(), 
                     "http://www.opengis.net/def/samplingFeatureType/OGC-OM/SF_SamplingFeature", fp, null);
         } else {
             throw new IllegalArgumentException("unexpected feature type.");
@@ -408,12 +414,13 @@ public class OMXmlFactory {
             if (phen != null && !(phen instanceof org.geotoolkit.swe.xml.Phenomenon)) {
                 throw new IllegalArgumentException("unexpected object version for phenomenon element");
             }
+            final String phename = (((org.geotoolkit.swe.xml.Phenomenon)phen).getName() != null)?((org.geotoolkit.swe.xml.Phenomenon)phen).getName().getCode():"";
            return new org.geotoolkit.observation.xml.v200.OMObservationType(id,
                                                                             name, 
                                                                             "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_ComplexObservation", 
                                                                             (org.geotoolkit.gml.xml.v321.AbstractTimeObjectType)time,
                                                                             procedure,
-                                                                            ((org.geotoolkit.swe.xml.Phenomenon)phen).getName(),
+                                                                            phename,
                                                                             (org.geotoolkit.gml.xml.v321.FeaturePropertyType)sampledFeature,
                                                                             result);
         } else {
@@ -456,12 +463,14 @@ public class OMXmlFactory {
             if (result != null && !(result instanceof org.geotoolkit.gml.xml.v321.MeasureType)) {
                 throw new IllegalArgumentException("unexpected object version for result element");
             }
+            final String phename = (((org.geotoolkit.swe.xml.Phenomenon)phen).getName() != null)?((org.geotoolkit.swe.xml.Phenomenon)phen).getName().getCode():"";
+
            return new org.geotoolkit.observation.xml.v200.OMObservationType(id,
                                                                             name, 
                                                                             "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement", 
                                                                             (org.geotoolkit.gml.xml.v321.TimePeriodType)time,
                                                                             procedure,
-                                                                            ((org.geotoolkit.swe.xml.Phenomenon)phen).getName(),
+                                                                            phename,
                                                                             (org.geotoolkit.gml.xml.v321.FeaturePropertyType)sampledFeature,
                                                                             result);
         } else {

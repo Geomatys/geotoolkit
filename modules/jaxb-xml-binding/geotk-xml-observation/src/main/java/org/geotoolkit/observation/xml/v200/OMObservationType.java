@@ -36,6 +36,7 @@ import org.geotoolkit.gml.xml.v321.TimePeriodPropertyType;
 import org.geotoolkit.gml.xml.v321.TimePeriodType;
 import org.apache.sis.internal.jaxb.metadata.DQ_Element;
 import org.apache.sis.internal.jaxb.metadata.MD_Metadata;
+import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.geotoolkit.observation.xml.AbstractObservation;
 import org.geotoolkit.observation.xml.v200.OMObservationType.InternalPhenomenon;
 import org.geotoolkit.sampling.xml.v200.SFSamplingFeatureType;
@@ -44,6 +45,7 @@ import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.gml.xml.v321.TimeInstantType;
 import org.geotoolkit.gml.xml.v321.TimePositionType;
 import org.geotoolkit.swe.xml.PhenomenonProperty;
+import org.opengis.metadata.Identifier;
 import org.opengis.metadata.Metadata;
 import org.opengis.metadata.quality.Element;
 import org.opengis.observation.Observation;
@@ -659,8 +661,8 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
         }
 
         @Override
-        public String getName() {
-            return name;
+        public Identifier getName() {
+            return new DefaultIdentifier(name);
         }
 
         @Override
