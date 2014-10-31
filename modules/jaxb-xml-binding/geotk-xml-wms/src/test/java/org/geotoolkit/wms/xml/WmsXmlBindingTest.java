@@ -616,11 +616,7 @@ public class WmsXmlBindingTest {
         final Map<String, Object> properties = new HashMap<>();
         properties.put(IdentifiedObject.NAME_KEY, instantName);
         
-        DefaultPeriod period = new DefaultPeriod(periodProp, new DefaultInstant(properties, new DefaultPosition(new Date(120000000))), new DefaultInstant(properties, new DefaultPosition(new Date(120000001))));
-        
-//        period.setBegining(new DefaultInstant(properties, new DefaultPosition(new Date(120000000))));
-//        period.setEnding(new DefaultInstant(properties, new DefaultPosition(new Date(120000001))));
-        
+        DefaultPeriod period = new DefaultPeriod(periodProp, new DefaultInstant(properties, new DefaultPosition(new Date(120000000))), new DefaultInstant(properties, new DefaultPosition(new Date(120001000))));
         
         tempExt.setExtent(period);
         extent.setTemporalElements(Arrays.asList(tempExt));
