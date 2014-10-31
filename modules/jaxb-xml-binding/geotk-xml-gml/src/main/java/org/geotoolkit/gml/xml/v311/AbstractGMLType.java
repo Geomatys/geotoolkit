@@ -310,8 +310,8 @@ public abstract class AbstractGMLType extends AbstractMetadata implements Abstra
             final AbstractGMLType that = (AbstractGMLType) obj;
             return Objects.equals(this.description,          that.description)          &&
                    Objects.equals(this.descriptionReference, that.descriptionReference) &&
-                   Objects.equals(this.id,                   that.id)                   &&
-                   Objects.equals(this.getName(),            that.getName())                 &&
+                   Objects.equals(this.getId(),              that.getId())              &&
+                   Objects.equals(this.getName(),            that.getName())            &&
                    Objects.equals(this.parameterName,        that.parameterName);
         }
         return false;
@@ -333,7 +333,7 @@ public abstract class AbstractGMLType extends AbstractMetadata implements Abstra
     public String toString() {
         final StringBuilder sb = new StringBuilder("[").append(this.getClass().getSimpleName()).append(']').append('\n');
         if (id != null) {
-            sb.append("id:").append(id).append('\n');
+            sb.append("id:").append(getId()).append('\n');
         }
         if (name != null) {
             sb.append("name:").append(name).append('\n');
