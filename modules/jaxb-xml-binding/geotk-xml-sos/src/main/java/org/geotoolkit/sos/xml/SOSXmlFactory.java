@@ -729,7 +729,8 @@ public class SOSXmlFactory {
     
     public static PhenomenonProperty buildPhenomenonProperty(final String version, final Phenomenon phenomenon) {
         if ("2.0.0".equals(version)) {
-            return new org.geotoolkit.observation.xml.v200.OMObservationType.InternalPhenomenonProperty(new ReferenceType(phenomenon.getName()));
+            final String href = (phenomenon.getName() != null) ?phenomenon.getName().getCode() :"";
+            return new org.geotoolkit.observation.xml.v200.OMObservationType.InternalPhenomenonProperty(new ReferenceType(href));
         } else if ("1.0.0".equals(version)) {
             if (phenomenon != null && !(phenomenon instanceof org.geotoolkit.swe.xml.v101.PhenomenonType)) {
                 throw new IllegalArgumentException("unexpected object version for phenomenon component element");
@@ -1184,10 +1185,11 @@ public class SOSXmlFactory {
         } else {
             singleProcedure = null;
         }
+        final String offName = (off.getName() != null) ? off.getName().getCode() : "";
         return new org.geotoolkit.sos.xml.v200.ObservationOfferingType(
                                            off.getId(),
                                            off.getId(),
-                                           off.getName(),
+                                           offName,
                                            off.getDescription(),
                                            env,
                                            period,
@@ -1221,9 +1223,10 @@ public class SOSXmlFactory {
         final QName OBSERVATION_QNAME = new QName("http://www.opengis.net/om/1.0", "Observation", "om");
         final QName MEASUREMENT_QNAME = new QName("http://www.opengis.net/om/1.0", "Measurement", "om");
         
+        final String offName = (off.getName() != null) ? off.getName().getCode() : "";
         return new org.geotoolkit.sos.xml.v100.ObservationOfferingType(
                                            off.getId(),
-                                           off.getName(),
+                                           offName,
                                            off.getDescription(),
                                            null,
                                            period,

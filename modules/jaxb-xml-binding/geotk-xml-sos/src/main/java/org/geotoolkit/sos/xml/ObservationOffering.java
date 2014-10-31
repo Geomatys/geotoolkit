@@ -20,6 +20,7 @@ package org.geotoolkit.sos.xml;
 import java.util.List;
 import javax.xml.namespace.QName;
 import org.geotoolkit.gml.xml.Envelope;
+import org.opengis.metadata.Identifier;
 import org.opengis.temporal.TemporalGeometricPrimitive;
 
 /**
@@ -30,7 +31,7 @@ public interface ObservationOffering {
     
     String getId();
     
-    String getName();
+    Identifier getName();
     
     String getDescription();
     /*

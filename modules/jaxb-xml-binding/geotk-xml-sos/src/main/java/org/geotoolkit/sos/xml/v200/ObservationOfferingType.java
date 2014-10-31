@@ -34,6 +34,7 @@ import org.geotoolkit.gml.xml.v321.TimePeriodType;
 import org.geotoolkit.sos.xml.ObservationOffering;
 import org.geotoolkit.sos.xml.ResponseModeType;
 import org.geotoolkit.swes.xml.v200.AbstractOfferingType;
+import org.opengis.metadata.Identifier;
 
 
 /**
@@ -131,7 +132,6 @@ public class ObservationOfferingType extends AbstractOfferingType implements Obs
         }
     }
 
-    
     /**
      * Gets the value of the observedArea property.
      * 
@@ -344,7 +344,7 @@ public class ObservationOfferingType extends AbstractOfferingType implements Obs
     public List<ResponseModeType> getResponseMode() {
         return new ArrayList<>();
     }
-    
+
     /**
      * <p>Java class for anonymous complex type.
      * 
