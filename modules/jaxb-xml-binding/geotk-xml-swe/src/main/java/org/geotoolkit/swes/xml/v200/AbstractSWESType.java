@@ -28,7 +28,10 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.apache.sis.internal.simple.SimpleIdentifier;
+import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.geotoolkit.gml.xml.v321.CodeType;
+import org.opengis.metadata.Identifier;
 
 
 /**
@@ -144,9 +147,9 @@ public abstract class AbstractSWESType {
         this.identifier = value;
     }
 
-    public String getName() {
+    public Identifier getName() {
         if (name != null && !name.isEmpty()) {
-            name.get(0).getValue();
+            return new DefaultIdentifier(name.get(0).getValue());
         }
         return null;
     }
