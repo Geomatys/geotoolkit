@@ -73,6 +73,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import javax.rmi.CORBA.Tie;
 
 //constellation
 import org.geotoolkit.gml.xml.v311.TimePeriodType;
@@ -156,6 +157,15 @@ public class SmlXMLBindingTest {
     public void ComponentMarshalingTest() throws Exception {
 
         ComponentType compo = new ComponentType();
+        compo.setValidTime(new TimePeriodType(new TimePositionType("2004-06-01")));
+        Marshaller marshaller = SensorMLMarshallerPool.getInstance().acquireMarshaller();
+
+        StringWriter sw = new StringWriter();
+        final ObjectFactory factory = new ObjectFactory();
+        marshaller.marshal(factory.createComponent(compo), sw);
+
+        String result = sw.toString();
+        System.out.println("result:" + result);
 
     }
 

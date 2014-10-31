@@ -294,8 +294,9 @@ public class SmlFactory {
             // id
             newProcess.setId(oldProcess.getId());
 
+            final String oldProcName = (oldProcess.getName() != null) ? oldProcess.getName().getCode() : "";
             // name
-            newProcess.setName(oldProcess.getName());
+            newProcess.setName(oldProcName);
 
             // srsName
             newProcess.setSrsName(oldProcess.getSrsName());
