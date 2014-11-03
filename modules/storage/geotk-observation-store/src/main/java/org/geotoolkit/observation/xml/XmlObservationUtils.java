@@ -43,12 +43,12 @@ public class XmlObservationUtils {
             for (Phenomenon phen : comp.getComponent()) {
                 if (phen instanceof org.geotoolkit.swe.xml.Phenomenon) {
                     final org.geotoolkit.swe.xml.Phenomenon p = (org.geotoolkit.swe.xml.Phenomenon) phen;
-                    results.add(p.getName());
+                    results.add((p.getName() != null) ? p.getName().getCode() : "");
                 }
             }
         } else if (phenProp.getPhenomenon() instanceof org.geotoolkit.swe.xml.Phenomenon) {
             final org.geotoolkit.swe.xml.Phenomenon p = (org.geotoolkit.swe.xml.Phenomenon) phenProp.getPhenomenon();
-            results.add(p.getName());
+            results.add((p.getName() != null) ? p.getName().getCode() : "");
         }
         return results;
     }

@@ -202,40 +202,6 @@ public class DefaultCalendarEra extends AbstractIdentifiedObject implements Cale
         }
         return new DefaultCalendarEra(object);
     }
-//    /**
-//     * Create a default {@link CalendarEra} implementation initialize with the given parameters.
-//     * 
-//     * @param name Name by which this calendar is known.
-//     * @param referenceEvent Event used as the datum for this calendar era.
-//     * @param referenceDate Date of the reference event in the calendar being described.
-//     * @param julianReference {@linkplain JulianDate julian date} that corresponds to the reference date.
-//     * @param epochOfUse {@linkplain Period period} for which the calendar era was used as a reference for dating.
-//     */
-//    public DefaultCalendarEra(final InternationalString name, final InternationalString referenceEvent, 
-//            final CalendarDate referenceDate, final JulianDate julianReference, final Period epochOfUse) {
-//        
-//        ArgumentChecks.ensureNonNull("name", name);
-//        ArgumentChecks.ensureNonNull("referenceEvent", referenceEvent);
-//        ArgumentChecks.ensureNonNull("referenceDate", referenceDate);
-//        ArgumentChecks.ensureNonNull("julianReference", julianReference);
-//        ArgumentChecks.ensureNonNull("epochOfUse", epochOfUse);
-//        this.name            = name;
-//        this.referenceDate   = referenceDate;
-//        this.referenceEvent  = referenceEvent;
-//        this.julianReference = julianReference;
-//        this.epochOfUse      = epochOfUse;
-//    }
-
-//    /**
-//     * Returns an uniquely {@code CharacterString} that identify the calendar era within this calendar.
-//     * 
-//     * @return name by which this calendar is known.
-//     */
-//    @Override
-//    @XmlElement(name = "name", required = true)
-//    public InternationalString getName() {
-//        return name;
-//    }
 
     /**
      * Returns the name or description of a mythical or historic event which fixes the position
@@ -319,17 +285,7 @@ public class DefaultCalendarEra extends AbstractIdentifiedObject implements Cale
     public Collection<Calendar> getDatingSystem() {
         return datingSystem;
     }
-//
-//    /**
-//     * Set a new name by which this calendar is known.
-//     * 
-//     * @param name The new name by which this calendar will be known.
-//     */
-//    public void setName(final InternationalString name) {
-//        ArgumentChecks.ensureNonNull("name", name);
-//        this.name = name;
-//    }
-
+    
     /**
      * Set a new name or description of a mythical or historic event which fixes the position
      * of the base scale of the calendar era.
@@ -396,43 +352,6 @@ public class DefaultCalendarEra extends AbstractIdentifiedObject implements Cale
         }
         return false;
     }
-
-    
-    
-//    /**
-//     * {@inheritDoc }
-//     */
-//    @Override
-//    public boolean equals(final Object object) {
-//        if (object instanceof CalendarEra) {
-//            final DefaultCalendarEra that = (DefaultCalendarEra) object;
-//
-//            return Objects.equals(this.datingSystem, that.datingSystem) &&
-//                    Objects.equals(this.epochOfUse, that.epochOfUse) &&
-//                    Objects.equals(this.julianReference, that.julianReference) &&
-//                    Objects.equals(this.name, that.name) &&
-//                    Objects.equals(this.referenceDate, that.referenceDate) &&
-//                    Objects.equals(this.referenceEvent, that.referenceEvent);
-//        }
-//        return false;
-//    }
-
-    
-    
-//    /**
-//     * {@inheritDoc }
-//     */
-//    @Override
-//    public int hashCode() {
-//        int hash = 5;
-//        hash = 37 * hash + (this.datingSystem != null ? this.datingSystem.hashCode() : 0);
-//        hash = 37 * hash + (this.epochOfUse != null ? this.epochOfUse.hashCode() : 0);
-//        hash = 37 * hash + (this.julianReference != null ? this.julianReference.hashCode() : 0);
-//        hash = 37 * hash + (this.name != null ? this.name.hashCode() : 0);
-//        hash = 37 * hash + (this.referenceDate != null ? this.referenceDate.hashCode() : 0);
-//        hash = 37 * hash + (this.referenceEvent != null ? this.referenceEvent.hashCode() : 0);
-//        return hash;
-//    }
 
     /**
      * {@inheritDoc }

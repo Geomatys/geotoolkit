@@ -20,10 +20,12 @@ package org.geotoolkit.temporal.reference;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import org.apache.sis.metadata.iso.extent.DefaultExtent;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.metadata.Citations;
 import org.apache.sis.referencing.NamedIdentifier;
+import org.geotoolkit.temporal.factory.DefaultTemporalFactory;
 import org.geotoolkit.temporal.object.DefaultClockTime;
 import org.junit.After;
 import org.junit.Before;
@@ -34,7 +36,6 @@ import org.opengis.referencing.datum.TemporalDatum;
 import org.opengis.temporal.Calendar;
 import org.opengis.temporal.Clock;
 import org.opengis.temporal.ClockTime;
-import org.opengis.temporal.IndeterminateValue;
 import org.opengis.temporal.TemporalReferenceSystem;
 import org.opengis.util.InternationalString;
 
@@ -48,41 +49,28 @@ public class DefaultClockTest {
 
     private Clock clock1;
     private Clock clock2;
+    private final static DefaultTemporalFactory FACTORY = new DefaultTemporalFactory();
 
     @Before
     public void setUp() {
         
-////        TemporalDatum tempdat = CommonCRS.Temporal.UNIX.datum();
-////        NamedIdentifier name1 = new NamedIdentifier(Citations.CRS, "Gregorian calendar");
-////        final Map<String, Object> properties1 = new HashMap<>();
-////        properties1.put(IdentifiedObject.NAME_KEY, name1);
-////        TemporalReferenceSystem frame1 = new DefaultTemporalReferenceSystem(properties1, tempdat, null);
-////        
-////        NamedIdentifier name2 = new NamedIdentifier(Citations.CRS, "Julian calendar");
-////        final Map<String, Object> properties2 = new HashMap<>();
-////        properties2.put(IdentifiedObject.NAME_KEY, name2);
-////        TemporalReferenceSystem frame2 = new DefaultTemporalReferenceSystem(properties2, tempdat, null);
-////        
-////        
-//////        NamedIdentifier name1 = new NamedIdentifier(Citations.CRS, "Gregorian calendar");
-//////        NamedIdentifier name2 = new NamedIdentifier(Citations.CRS, "Julian calendar");
-//////        TemporalReferenceSystem frame1 = new DefaultTemporalReferenceSystem(name1, null);
-//////        TemporalReferenceSystem frame2 = new DefaultTemporalReferenceSystem(name2, null);
-////        Number[] clockTime1 = {0, 0, 0};
-////        Number[] clockTime2 = {12, 0, 0.0};
-////        ClockTime clocktime1 = new DefaultClockTime(frame1, null, clockTime1);
-////        ClockTime clocktime2 = new DefaultClockTime(frame2, null, clockTime2);
-////        ClockTime utcReference1 = new DefaultClockTime(frame1, null, clockTime1);
-////        ClockTime utcReference2 = new DefaultClockTime(frame2, null, clockTime2);
-////        final Map<String, Object> clockProp1 = new HashMap<>();
-////        clockProp1.put(IdentifiedObject.NAME_KEY, name1);
-////        clockProp1.put(Clock.REFERENCE_EVENT, new SimpleInternationalString("reference event"));
-////        clock1 = new DefaultClock(clockProp1, tempdat, null, clocktime1, utcReference1, null);
-//////        clock1 = new DefaultClock(name1, null, new SimpleInternationalString("reference event"), clocktime1, utcReference1);
-////        final Map<String, Object> clockProp2 = new HashMap<>();
-////        clockProp1.put(IdentifiedObject.NAME_KEY, name2);
-////        clockProp1.put(Clock.REFERENCE_EVENT, new SimpleInternationalString("description"));
-////        clock2 = new DefaultClock(clockProp2, tempdat, null, clocktime2, utcReference2, null);
+        NamedIdentifier name1 = new NamedIdentifier(Citations.CRS, "Gregorian calendar");
+        TemporalReferenceSystem frame1 = FACTORY.createTemporalReferenceSystem(name1, new DefaultExtent());
+         
+        NamedIdentifier name2 = new NamedIdentifier(Citations.CRS, "Julian calendar");
+        TemporalReferenceSystem frame2 = FACTORY.createTemporalReferenceSystem(name2, new DefaultExtent());
+        
+        Number[] clockTime1 = {0, 0, 0};
+        Number[] clockTime2 = {12, 0, 0.0};
+        
+        ClockTime clocktime1 = FACTORY.createClockTime(frame1, null, clockTime1);
+        ClockTime clocktime2 = FACTORY.createClockTime(frame2, null, clockTime2);
+        
+        ClockTime utcReference1 = FACTORY.createClockTime(frame1, null, clockTime1);
+        ClockTime utcReference2 = FACTORY.createClockTime(frame2, null, clockTime2);
+        
+        clock1 = FACTORY.createClock(name1, new DefaultExtent(), new SimpleInternationalString("clock1 reference event"), clocktime1, utcReference1);
+        clock2 = FACTORY.createClock(name2, new DefaultExtent(), new SimpleInternationalString("clock2 reference event"), clocktime2, utcReference2);
     }
 
     @After

@@ -22,10 +22,13 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import org.apache.sis.metadata.iso.DefaultIdentifier;
+import org.apache.sis.metadata.iso.extent.DefaultExtent;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.metadata.Citations;
 import org.apache.sis.referencing.NamedIdentifier;
+import org.geotoolkit.temporal.factory.DefaultTemporalFactory;
 import org.geotoolkit.temporal.object.DefaultCalendarDate;
 import org.geotoolkit.temporal.object.DefaultInstant;
 import org.geotoolkit.temporal.object.DefaultJulianDate;
@@ -58,64 +61,43 @@ public class DefaultCalendarEraTest {
     private CalendarEra calendarEra1;
     private CalendarEra calendarEra2;
     private Calendar cal = Calendar.getInstance();
+    private final static DefaultTemporalFactory FACTORY = new DefaultTemporalFactory();
+    private TemporalReferenceSystem frame1, frame2;
 
     @Before
     public void setUp() {
-        TemporalDatum tempdat = CommonCRS.Temporal.UNIX.datum();
         NamedIdentifier name1 = new NamedIdentifier(Citations.CRS, "Julian calendar");
-        final Map<String, Object> properties1 = new HashMap<>();
-        properties1.put(IdentifiedObject.NAME_KEY, name1);
-//        TemporalReferenceSystem frame1 = new DefaultTemporalReferenceSystem(properties1, tempdat, null);
-        TemporalReferenceSystem frame1 = new DefaultTemporalReferenceSystem(properties1);
+        frame1 = FACTORY.createTemporalReferenceSystem(name1, new DefaultExtent());
         
         NamedIdentifier name2 = new NamedIdentifier(Citations.CRS, "Babylonian calendar");
-        final Map<String, Object> properties2 = new HashMap<>();
-        properties2.put(IdentifiedObject.NAME_KEY, name2);
-//        TemporalReferenceSystem frame2 = new DefaultTemporalReferenceSystem(properties2, tempdat, null);
-        TemporalReferenceSystem frame2 = new DefaultTemporalReferenceSystem(properties2);
-//        TemporalReferenceSystem frame1 = new DefaultTemporalReferenceSystem(name1, null);
-//        TemporalReferenceSystem frame2 = new DefaultTemporalReferenceSystem(name2, null);
+        frame2 = FACTORY.createTemporalReferenceSystem(name2, new DefaultExtent());
+        
         int[] calendarDate1 = {1900, 1, 1};
         int[] calendarDate2 = {400, 1, 1};
-        CalendarDate referenceDate1 = new DefaultCalendarDate(frame1, IndeterminateValue.BEFORE, new SimpleInternationalString("Gregorian calendar"), calendarDate1);
-        CalendarDate referenceDate2 = new DefaultCalendarDate(frame2, IndeterminateValue.NOW, new SimpleInternationalString("Babylonian calendar"), calendarDate2);
-        JulianDate julianReference = new DefaultJulianDate(frame1, IndeterminateValue.NOW, 123456789);
+        
+        CalendarDate referenceDate1 = FACTORY.createCalendarDate(frame1, IndeterminateValue.BEFORE, new SimpleInternationalString("Gregorian calendar"), calendarDate1);
+        CalendarDate referenceDate2 = FACTORY.createCalendarDate(frame2, IndeterminateValue.NOW, new SimpleInternationalString("Babylonian calendar"), calendarDate2);
+        
+        JulianDate julianReference = FACTORY.createJulianDate(frame1, IndeterminateValue.NOW, 123456789);//new DefaultJulianDate(frame1, IndeterminateValue.NOW, 123456789);
         
         cal.set(1900, 0, 1);
-        
-        //-- Map instant
-        NamedIdentifier nameInstant = new NamedIdentifier(Citations.CRS, "Period instant");
-        final Map<String, Object> propertiesInstant = new HashMap<>();
-        propertiesInstant.put(IdentifiedObject.NAME_KEY, nameInstant);
-        
-        Instant begining1 = new DefaultInstant(propertiesInstant, new DefaultPosition(cal.getTime()));
+        Instant begining1 = FACTORY.createInstant(new DefaultPosition(cal.getTime()));//new DefaultInstant(propertiesInstant, new DefaultPosition(cal.getTime()));
+       
         cal.set(2000, 9, 17);
-        Instant ending1 = new DefaultInstant(propertiesInstant, new DefaultPosition(cal.getTime()));
+        Instant ending1 = FACTORY.createInstant(new DefaultPosition(cal.getTime()));
+        
         cal.set(2000, 1, 1);
-        Instant begining2 = new DefaultInstant(propertiesInstant, new DefaultPosition(cal.getTime()));
+        Instant begining2 = FACTORY.createInstant(new DefaultPosition(cal.getTime()));
+        
         cal.set(2012, 1, 1);
-        Instant ending2 = new DefaultInstant(propertiesInstant, new DefaultPosition(cal.getTime()));
+        Instant ending2 = FACTORY.createInstant(new DefaultPosition(cal.getTime()));
 
         //-- map period
-        NamedIdentifier namePeriod = new NamedIdentifier(Citations.CRS, "Period");
-        final Map<String, Object> propertiesPeriod = new HashMap<>();
-        propertiesPeriod.put(IdentifiedObject.NAME_KEY, namePeriod);
+        Period epochOfUse1 = FACTORY.createPeriod(begining1, ending1);
+        Period epochOfUse2 = FACTORY.createPeriod(begining2, ending2);
         
-        Period epochOfUse1 = new DefaultPeriod(propertiesPeriod, begining1, ending1);
-        Period epochOfUse2 = new DefaultPeriod(propertiesPeriod, begining2, ending2);
-        
-        final Map<String, Object> calendarEra1Prop = new HashMap<>();
-        calendarEra1Prop.put(IdentifiedObject.NAME_KEY, new SimpleInternationalString("Cenozoic"));
-        calendarEra1Prop.put(IdentifiedObject.IDENTIFIERS_KEY, new SimpleInternationalString("Cenozoic"));
-        calendarEra1Prop.put(org.opengis.temporal.Calendar.REFERENCE_EVENT_KEY, new SimpleInternationalString("no description"));
-
-        calendarEra1 = new DefaultCalendarEra(calendarEra1Prop, referenceDate1, julianReference, epochOfUse1);
-        
-        final Map<String, Object> calendarEra2Prop = new HashMap<>();
-        calendarEra2Prop.put(IdentifiedObject.NAME_KEY, new SimpleInternationalString("Mesozoic"));
-        calendarEra2Prop.put(IdentifiedObject.IDENTIFIERS_KEY, new SimpleInternationalString("Mesozoic"));
-        calendarEra2Prop.put(org.opengis.temporal.Calendar.REFERENCE_EVENT_KEY, new SimpleInternationalString("no description"));
-        calendarEra2 = new DefaultCalendarEra(calendarEra2Prop, referenceDate2, julianReference, epochOfUse2);
+        calendarEra1 = FACTORY.createCalendarEra(new SimpleInternationalString("Cenozoic"), new SimpleInternationalString("no event for Cenozoic"), referenceDate1, julianReference, epochOfUse1);
+        calendarEra2 = FACTORY.createCalendarEra(new SimpleInternationalString("Mesozoic"), new SimpleInternationalString("no event for Mesozoic"), referenceDate2, julianReference, epochOfUse2);
     }
 
     @After
@@ -197,7 +179,7 @@ public class DefaultCalendarEraTest {
     public void testSetReferenceDate() {
         CalendarDate result = calendarEra1.getReferenceDate();
         int[] date = {1950,6,10};
-        ((DefaultCalendarEra)calendarEra1).setReferenceDate(new DefaultCalendarDate(null, null, null, date));
+        ((DefaultCalendarEra)calendarEra1).setReferenceDate(FACTORY.createCalendarDate(frame1, IndeterminateValue.UNKNOWN, new SimpleInternationalString("new reference Date"), date));
         assertFalse(calendarEra1.getReferenceDate().equals(result));
     }
 
@@ -207,7 +189,7 @@ public class DefaultCalendarEraTest {
     @Test
     public void testSetJulianReference() {
         JulianDate result = calendarEra1.getJulianReference();
-        ((DefaultCalendarEra)calendarEra1).setJulianReference(new DefaultJulianDate(null, null, 785410));
+        ((DefaultCalendarEra)calendarEra1).setJulianReference(FACTORY.createJulianDate(frame1, IndeterminateValue.UNKNOWN, 785410));
         assertFalse(calendarEra1.getJulianReference().equals(result));
     }
 
@@ -216,10 +198,12 @@ public class DefaultCalendarEraTest {
      */
     @Test
     public void testSetEpochOfUse() {
-//        Period result = calendarEra1.getEpochOfUse();
-//        cal.set(1900, 10, 10);
-//        ((DefaultCalendarEra)calendarEra1).setEpochOfUse(new DefaultPeriod(new DefaultInstant(new DefaultPosition(cal.getTime())), new DefaultInstant(new DefaultPosition(new Date()))));
-//        assertFalse(calendarEra1.getEpochOfUse().equals(result));
+        Period result = calendarEra1.getEpochOfUse();
+        cal.set(1900, 10, 10);
+        final Instant nBeg = FACTORY.createInstant(new DefaultPosition(cal.getTime()));
+        final Instant nEnd = FACTORY.createInstant(new DefaultPosition(cal.getTime()));
+        ((DefaultCalendarEra)calendarEra1).setEpochOfUse(FACTORY.createPeriod(nBeg, nEnd));
+        assertFalse(calendarEra1.getEpochOfUse().equals(result));
     }
 
     /**

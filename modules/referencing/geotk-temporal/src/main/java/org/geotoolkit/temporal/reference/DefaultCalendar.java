@@ -358,42 +358,18 @@ public class DefaultCalendar extends DefaultTemporalReferenceSystem implements C
         return response;
     }
 
-//    /**
-//     * Returns the {@linkplain CalendarEra calendar eras} associated with the calendar being described.
-//     * 
-//     * @return the {@linkplain CalendarEra calendar eras} associated with the calendar being described.
-//     */
-//    @Override
-//    @XmlElement(name = "referenceFrame", required = true)
-//    public Collection<CalendarEra> getReferenceFrames() {
-//        return referenceFrame;
-//    }
-
-//    /**
-//     * Returns the {@linkplain Clock time basis} that is use with this calendar to define 
-//     * temporal position within a calendar day.
-//     * <blockquote><font size="-1">Return {@code null} if none.</font></blockquote>
-//     * 
-//     * @return The {@linkplain Clock time basis} that is use with this calendar,
-//     * or {@code null} if none.
-//     */
-//    @Override
-//    public Clock getTimeBasis() {
-//        return timeBasis;
-//    }
-
     /**
      * {@inheritDoc }
      */
     @Override
     public boolean equals(Object object, ComparisonMode mode) {
-        final boolean sup = super.equals(object, mode); 
-        if (!sup) return false;
-        if (object instanceof DefaultCalendar && super.equals(object)) {
-            final DefaultCalendar that = (DefaultCalendar) object;
+        if (object instanceof Calendar) {
+            final Calendar that = (Calendar) object;
 
-            return Objects.equals(this.referenceFrame, that.referenceFrame) &&
-                    Objects.equals(this.timeBasis, that.timeBasis);
+            return Objects.equals(this.getName(), that.getName()) 
+                    && Objects.equals(this.getDomainOfValidity(), that.getDomainOfValidity())
+                    && Objects.equals(this.referenceFrame, that.getReferenceFrame()) 
+                    &&Objects.equals(this.timeBasis, that.getTimeBasis());
         }
         return false;
     }
@@ -403,8 +379,8 @@ public class DefaultCalendar extends DefaultTemporalReferenceSystem implements C
      */
     @Override
     protected long computeHashCode() {
-        int hash = super.hashCode();
-        hash = 37 * hash + (this.timeBasis != null ? this.timeBasis.hashCode() : 0);
+        int hash = this.getName().hashCode() + this.getDomainOfValidity().hashCode();
+        hash = 42 * hash + (this.timeBasis != null ? this.timeBasis.hashCode() : 0);
         hash = 37 * hash + (this.referenceFrame != null ? this.referenceFrame.hashCode() : 0);
         return hash;
     }
@@ -424,20 +400,20 @@ public class DefaultCalendar extends DefaultTemporalReferenceSystem implements C
         return super.toString().concat("\n").concat(s.toString());
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     @XmlElement(name = "referenceFrame", required = true)
     public Collection<CalendarEra> getReferenceFrame() {
         return referenceFrame;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public Clock getTimeBasis() {
          return timeBasis;
     }
-//
-//    @Override
-//    public Set<Identifier> getIdentifiers() {
-//        super.get
-//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-//    }
 }

@@ -114,7 +114,7 @@ public class DefaultTemporalTopologicalComplex extends AbstractIdentifiedObject 
      * @see #castOrCopy(TemporalTopologicalComplex)
      */
     private DefaultTemporalTopologicalComplex (final TemporalTopologicalComplex object) {
-        super(object);
+        super(NilReferencingObject.INSTANCE);
         if (object != null) {
             this.composition = object.getTemporalTopologicalPrimitives();
         } else {

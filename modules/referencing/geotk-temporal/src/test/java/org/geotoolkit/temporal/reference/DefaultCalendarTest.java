@@ -21,11 +21,14 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import org.apache.sis.metadata.iso.extent.DefaultExtent;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.metadata.Citations;
 import org.apache.sis.referencing.NamedIdentifier;
+import org.geotoolkit.temporal.factory.DefaultTemporalFactory;
 import org.geotoolkit.temporal.object.DefaultCalendarDate;
 import org.geotoolkit.temporal.object.DefaultClockTime;
 import org.geotoolkit.temporal.object.DefaultDateAndTime;
@@ -49,7 +52,9 @@ import org.opengis.temporal.Clock;
 import org.opengis.temporal.ClockTime;
 import org.opengis.temporal.DateAndTime;
 import org.opengis.temporal.IndeterminateValue;
+import org.opengis.temporal.Instant;
 import org.opengis.temporal.JulianDate;
+import org.opengis.temporal.Period;
 import org.opengis.temporal.TemporalReferenceSystem;
 
 /**
@@ -61,23 +66,62 @@ public class DefaultCalendarTest {
 
     private Calendar calendar1; 
     private Calendar calendar2;
+    private final static DefaultTemporalFactory FACTORY = new DefaultTemporalFactory();
 
     @Before
     public void setUp() {
         
-//        TemporalDatum tempdat = CommonCRS.Temporal.UNIX.datum();
-//        NamedIdentifier name1 = new NamedIdentifier(Citations.CRS, "Gregorian calendar");
-//        final Map<String, Object> properties1 = new HashMap<>();
-//        properties1.put(IdentifiedObject.NAME_KEY, name1);
-////        TemporalReferenceSystem frame1 = new DefaultTemporalReferenceSystem(properties1, tempdat, null);
-//        
-//        NamedIdentifier name2 = new NamedIdentifier(Citations.CRS, "Julian calendar");
-//        final Map<String, Object> properties2 = new HashMap<>();
-//        properties2.put(IdentifiedObject.NAME_KEY, name2);
-////        TemporalReferenceSystem frame2 = new DefaultTemporalReferenceSystem(properties2, tempdat, null);
-//        
-//        calendar1 = new DefaultCalendar(properties1, tempdat, null, null, null);
-//        calendar2 = new DefaultCalendar(properties2, tempdat, null, null, null);
+        NamedIdentifier name1 = new NamedIdentifier(Citations.CRS, "Gregorian calendar");
+        NamedIdentifier name2 = new NamedIdentifier(Citations.CRS, "Julian calendar");
+        
+        //----------------------- Time Basis ----------------------//
+         TemporalReferenceSystem frame1 = FACTORY.createTemporalReferenceSystem(name1, new DefaultExtent());
+        NamedIdentifier clockName1 = new NamedIdentifier(Citations.CRS, "Gregorian calendar");
+        Number[] clockTime1 = {0, 0, 0};
+        ClockTime clocktime1 = new DefaultClockTime(frame1, null, clockTime1);
+        ClockTime utcReference1 = new DefaultClockTime(frame1, null, clockTime1);
+        Clock clock1 = FACTORY.createClock(clockName1, new DefaultExtent(), new SimpleInternationalString("clock1 reference event"), clocktime1, utcReference1);
+                               //---------------//
+        
+        //-------------------- Reference Frames --------------------//
+        TemporalReferenceSystem frame2 = FACTORY.createTemporalReferenceSystem(name2, new DefaultExtent());
+        
+        int[] calendarDate1 = {1900, 1, 1};
+        int[] calendarDate2 = {400, 1, 1};
+        
+        CalendarDate referenceDate1 = FACTORY.createCalendarDate(frame1, IndeterminateValue.BEFORE, new SimpleInternationalString("Gregorian calendar"), calendarDate1);
+        CalendarDate referenceDate2 = FACTORY.createCalendarDate(frame2, IndeterminateValue.NOW, new SimpleInternationalString("Babylonian calendar"), calendarDate2);
+        
+        JulianDate julianReference = FACTORY.createJulianDate(frame1, IndeterminateValue.NOW, 123456789);//new DefaultJulianDate(frame1, IndeterminateValue.NOW, 123456789);
+        
+        java.util.Calendar cal = java.util.Calendar.getInstance();
+        cal.set(1900, 0, 1);
+        Instant begining1 = FACTORY.createInstant(new DefaultPosition(cal.getTime()));//new DefaultInstant(propertiesInstant, new DefaultPosition(cal.getTime()));
+       
+        cal.set(2000, 9, 17);
+        Instant ending1 = FACTORY.createInstant(new DefaultPosition(cal.getTime()));
+        
+        cal.set(2000, 1, 1);
+        Instant begining2 = FACTORY.createInstant(new DefaultPosition(cal.getTime()));
+        
+        cal.set(2012, 1, 1);
+        Instant ending2 = FACTORY.createInstant(new DefaultPosition(cal.getTime()));
+
+        //-- map period
+        Period epochOfUse1 = FACTORY.createPeriod(begining1, ending1);
+        Period epochOfUse2 = FACTORY.createPeriod(begining2, ending2);
+        
+        CalendarEra calendarEra1 = FACTORY.createCalendarEra(new SimpleInternationalString("Cenozoic"), new SimpleInternationalString("no event for Cenozoic"), referenceDate1, julianReference, epochOfUse1);
+        CalendarEra calendarEra2 = FACTORY.createCalendarEra(new SimpleInternationalString("Mesozoic"), new SimpleInternationalString("no event for Mesozoic"), referenceDate2, julianReference, epochOfUse2);
+        
+        List<CalendarEra> referenceFrame = new ArrayList<>();
+        referenceFrame.add(calendarEra1);
+        referenceFrame.add(calendarEra2);
+        
+                               //---------------//
+
+        calendar1 = FACTORY.createCalendar(name1, new DefaultExtent(), referenceFrame, clock1);
+        calendar2 = FACTORY.createCalendar(name2, new DefaultExtent(), referenceFrame, clock1);
     }
 
     @After

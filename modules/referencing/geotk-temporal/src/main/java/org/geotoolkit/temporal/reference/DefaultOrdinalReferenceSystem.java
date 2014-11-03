@@ -192,7 +192,7 @@ public class DefaultOrdinalReferenceSystem extends DefaultTemporalReferenceSyste
      */
     @Override
     protected long computeHashCode() {
-        return 37 * (this.ordinalEraSequence != null ? this.ordinalEraSequence.hashCode() : 0);
+        return 37 * getName().hashCode() * (this.ordinalEraSequence != null ? this.ordinalEraSequence.hashCode() : 0);
     }
 
     /**

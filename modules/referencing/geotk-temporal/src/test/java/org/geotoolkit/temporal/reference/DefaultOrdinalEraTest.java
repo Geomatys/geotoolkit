@@ -21,12 +21,12 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import org.apache.sis.util.iso.SimpleInternationalString;
+import org.geotoolkit.temporal.factory.DefaultTemporalFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.opengis.temporal.OrdinalEra;
-import org.opengis.util.InternationalString;
 
 
 /**
@@ -39,6 +39,7 @@ public class DefaultOrdinalEraTest {
     private OrdinalEra ordinalEra1;
     private OrdinalEra ordinalEra2;
     private Calendar cal = Calendar.getInstance();
+    private final static DefaultTemporalFactory FACTORY = new DefaultTemporalFactory();
     
     @Before
     public void setUp() {
@@ -51,8 +52,8 @@ public class DefaultOrdinalEraTest {
         Date beginning2 = cal.getTime();
         cal.set(2012, 1, 1);
         Date end2 = cal.getTime();
-//        ordinalEra1 = new DefaultOrdinalEra(new SimpleInternationalString("old Era"), beginning1, end1);
-//        ordinalEra2 = new DefaultOrdinalEra(new SimpleInternationalString("new Era"), beginning2, end2);
+        ordinalEra1 = FACTORY.createOrdinalEra(new SimpleInternationalString("old Era"), beginning1, end1, null);
+        ordinalEra2 = FACTORY.createOrdinalEra(new SimpleInternationalString("new Era"), beginning2, end2, null);
     }
 
     @After
@@ -66,8 +67,7 @@ public class DefaultOrdinalEraTest {
      */
     @Test
     public void testGetName() {
-//        InternationalString result = ordinalEra1.getName();
-//        assertFalse(ordinalEra2.getName().equals(result));
+        assertFalse(ordinalEra2.getName().equals(ordinalEra1.getName()));
     }
 
     /**
@@ -97,35 +97,35 @@ public class DefaultOrdinalEraTest {
         assertEquals(ordinalEra2.getMember(), result);
     }
 
-    /**
-     * Test of setName method, of class DefaultOrdinalEra.
-     */
-    @Test
-    public void testSetName() {
+//    /**
+//     * Test of setName method, of class DefaultOrdinalEra.
+//     */
+//    @Test
+//    public void testSetName() {
 //        InternationalString result = ordinalEra1.getName();
 //        ((DefaultOrdinalEra) ordinalEra1).setName(new SimpleInternationalString(""));
 //        assertFalse(ordinalEra1.getName().equals(result));
-    }
+//    }
 
-    /**
-     * Test of setBeginning method, of class DefaultOrdinalEra.
-     */
-    @Test
-    public void testSetBeginning() {
-        Date result = ordinalEra1.getBegin();
-//        ((DefaultOrdinalEra) ordinalEra1).setBeginning(new Date());
-        assertFalse(ordinalEra1.getBegin().equals(result));
-    }
+//    /**
+//     * Test of setBeginning method, of class DefaultOrdinalEra.
+//     */
+//    @Test
+//    public void testSetBeginning() {
+//        Date result = ordinalEra1.getBegin();
+////        ((DefaultOrdinalEra) ordinalEra1).setBeginning(new Date());
+//        assertFalse(ordinalEra1.getBegin().equals(result));
+//    }
 
-    /**
-     * Test of setEnd method, of class DefaultOrdinalEra.
-     */
-    @Test
-    public void testSetEnd() {
-        Date result = ordinalEra1.getEnd();
-//        ((DefaultOrdinalEra) ordinalEra1).setEnd(new Date());
-        assertFalse(ordinalEra1.getEnd().equals(result));
-    }
+//    /**
+//     * Test of setEnd method, of class DefaultOrdinalEra.
+//     */
+//    @Test
+//    public void testSetEnd() {
+//        Date result = ordinalEra1.getEnd();
+////        ((DefaultOrdinalEra) ordinalEra1).setEnd(new Date());
+//        assertFalse(ordinalEra1.getEnd().equals(result));
+//    }
 
     /**
      * Test of getGroup method, of class DefaultOrdinalEra.
@@ -141,10 +141,10 @@ public class DefaultOrdinalEraTest {
      */
     @Test
     public void testSetGroup() {
-//        DefaultOrdinalEra result = ((DefaultOrdinalEra) ordinalEra1).getGroup();
-//        cal.set(1900, 0, 0);
-//        ((DefaultOrdinalEra) ordinalEra1).setGroup(new DefaultOrdinalEra(new SimpleInternationalString(""), cal.getTime(), new Date()));
-//        assertFalse(((DefaultOrdinalEra) ordinalEra1).getGroup().equals(result));
+        DefaultOrdinalEra result = ((DefaultOrdinalEra) ordinalEra1).getGroup();
+        cal.set(1900, 0, 0);
+        ((DefaultOrdinalEra) ordinalEra1).setGroup((DefaultOrdinalEra) FACTORY.createOrdinalEra(new SimpleInternationalString("grup"), cal.getTime(), new Date(), null));//new DefaultOrdinalEra(new SimpleInternationalString(""), cal.getTime(), new Date()));
+        assertFalse(((DefaultOrdinalEra) ordinalEra1).getGroup().equals(result));
     }
 
     /**

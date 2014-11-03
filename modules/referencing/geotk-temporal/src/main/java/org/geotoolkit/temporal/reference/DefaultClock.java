@@ -115,7 +115,7 @@ public class DefaultClock extends DefaultTemporalReferenceSystem implements Cloc
         final Object ref = properties.get(Calendar.REFERENCE_EVENT_KEY);
         ArgumentChecks.ensureNonNull("referenceEvent", ref);
         if (!(ref instanceof InternationalString))
-            throw new IllegalArgumentException("reference Event must be instance of refernceEvent");
+            throw new IllegalArgumentException("reference Event must be instance of referenceEvent");
         this.referenceEvent = (InternationalString) ref;
         this.referenceTime  = referenceTime;
         this.utcReference   = utcReference;

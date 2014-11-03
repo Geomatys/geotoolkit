@@ -17,24 +17,22 @@
  */
 package org.geotoolkit.temporal.reference;
 
-import org.geotoolkit.temporal.reference.DefaultOrdinalReferenceSystem;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import org.geotoolkit.metadata.Citations;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import org.apache.sis.referencing.CommonCRS;
+import java.util.List;
+import org.apache.sis.metadata.iso.extent.DefaultExtent;
 import org.apache.sis.referencing.NamedIdentifier;
-import org.apache.sis.referencing.datum.DefaultTemporalDatum;
+import org.apache.sis.util.iso.SimpleInternationalString;
+import org.geotoolkit.temporal.factory.DefaultTemporalFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import org.opengis.referencing.IdentifiedObject;
-import org.opengis.referencing.datum.TemporalDatum;
 import org.opengis.temporal.OrdinalEra;
 import org.opengis.temporal.OrdinalReferenceSystem;
-import org.opengis.temporal.TemporalReferenceSystem;
 
 
 /**
@@ -46,23 +44,27 @@ public class DefaultOrdinalReferenceSystemTest {
 
     private OrdinalReferenceSystem ordinalReferenceSystem1;
     private OrdinalReferenceSystem ordinalReferenceSystem2;
+    private final static DefaultTemporalFactory FACTORY = new DefaultTemporalFactory();
 
     @Before
     public void setUp() {
-////        TemporalDatum tempdat = CommonCRS.Temporal.UNIX.datum();
-////        NamedIdentifier name1 = new NamedIdentifier(Citations.CRS, "Ordinal1");
-////        final Map<String, Object> properties1 = new HashMap<>();
-////        properties1.put(IdentifiedObject.NAME_KEY, name1);
-//////        TemporalReferenceSystem frame1 = new DefaultTemporalReferenceSystem(properties1, tempdat, null);
-////        
-////        NamedIdentifier name2 = new NamedIdentifier(Citations.CRS, "Ordinal2");
-////        final Map<String, Object> properties2 = new HashMap<>();
-////        properties2.put(IdentifiedObject.NAME_KEY, name2);
-//////        TemporalReferenceSystem frame2 = new DefaultTemporalReferenceSystem(properties2, tempdat, null);
-//////        NamedIdentifier name1 = new NamedIdentifier(Citations.CRS, "Ordinal1");
-//////        NamedIdentifier name2 = new NamedIdentifier(Citations.CRS, "Ordinal2");
-////        ordinalReferenceSystem1 = new DefaultOrdinalReferenceSystem(properties1, tempdat, null, null);
-////        ordinalReferenceSystem2 = new DefaultOrdinalReferenceSystem(properties2, tempdat, null, null);
+        Calendar cal = Calendar.getInstance();
+        List<OrdinalEra> seq = new ArrayList<>();
+        cal.set(1900, 1, 1);
+        Date beginning1 = cal.getTime();
+        cal.set(2000, 1, 1);
+        Date end1 = cal.getTime();
+        cal.set(2000, 1, 1);
+        Date beginning2 = cal.getTime();
+        cal.set(2012, 1, 1);
+        Date end2 = cal.getTime();
+        seq.add(FACTORY.createOrdinalEra(new SimpleInternationalString("old Era"), beginning1, end1, null));
+        seq.add(FACTORY.createOrdinalEra(new SimpleInternationalString("new Era"), beginning2, end2, null));
+        
+        NamedIdentifier name1 = new NamedIdentifier(Citations.CRS, "Ordinal1");
+        NamedIdentifier name2 = new NamedIdentifier(Citations.CRS, "Ordinal2");
+        ordinalReferenceSystem1 = FACTORY.createOrdinalReferenceSystem(name1, new DefaultExtent(), seq);
+        ordinalReferenceSystem2 = FACTORY.createOrdinalReferenceSystem(name2, new DefaultExtent(), seq);
     }
 
     @After

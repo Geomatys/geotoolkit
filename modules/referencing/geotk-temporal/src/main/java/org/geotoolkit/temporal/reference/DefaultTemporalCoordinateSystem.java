@@ -318,14 +318,14 @@ public class DefaultTemporalCoordinateSystem extends DefaultTemporalReferenceSys
         if (object == this) return true;
         final boolean sup = super.equals(object, mode); 
         if (!sup) return false;
-        if (object instanceof DefaultTemporalCoordinateSystem && super.equals(object)) {
+//        if (object instanceof DefaultTemporalCoordinateSystem && super.equals(object)) {
             if (object instanceof DefaultTemporalCoordinateSystem) {
                 final DefaultTemporalCoordinateSystem that = (DefaultTemporalCoordinateSystem) object;
 
                 return Objects.equals(this.interval, that.interval) &&
                         Objects.equals(this.origin, that.origin);
             }
-        }
+//        }
         return false;
     }
 

@@ -103,7 +103,7 @@ public class DefaultTemporalFactory extends Factory implements TemporalFactory {
     @Override
     public Period createPeriod(final Instant begin, final Instant end) {
         final Map<String, Object> prop = new HashMap<>();
-        prop.put(IdentifiedObject.IDENTIFIERS_KEY, new DefaultIdentifier("period"+(periodCount++)));
+        prop.put(IdentifiedObject.NAME_KEY, new DefaultIdentifier("period"+(periodCount++)));
         return new DefaultPeriod(prop, begin, end);
     }
 
@@ -113,7 +113,7 @@ public class DefaultTemporalFactory extends Factory implements TemporalFactory {
     @Override
     public Instant createInstant(final Position instant) {
         final Map<String, Object> prop = new HashMap<>();
-        prop.put(IdentifiedObject.IDENTIFIERS_KEY, new DefaultIdentifier("instant"+(instantCount++)));
+        prop.put(IdentifiedObject.NAME_KEY, new DefaultIdentifier("instant"+(instantCount++)));
         return new DefaultInstant(prop, instant); 
     }
 
@@ -129,11 +129,19 @@ public class DefaultTemporalFactory extends Factory implements TemporalFactory {
      * {@inheritDoc }
      */
     @Override
-    public Calendar createCalendar(final Identifier name, final Extent domainOfValidit) {
+    public Calendar createCalendar(final Identifier name, final Extent domainOfValidity) {
+        return createCalendar(name, domainOfValidity, null, null);
+    }
+    
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public Calendar createCalendar(Identifier name, Extent domainOfValidity, Collection<CalendarEra> referenceFrame, Clock timeBasis) {
         final Map<String, Object> prop = new HashMap<>();
-        prop.put(IdentifiedObject.IDENTIFIERS_KEY, name);
-        prop.put(TemporalReferenceSystem.DOMAIN_OF_VALIDITY_KEY, domainOfValidit);
-        return new DefaultCalendar(prop, null, null);
+        prop.put(IdentifiedObject.NAME_KEY, name);
+        prop.put(TemporalReferenceSystem.DOMAIN_OF_VALIDITY_KEY, domainOfValidity);
+        return new DefaultCalendar(prop, referenceFrame, timeBasis);
     }
 
     /**
@@ -153,7 +161,7 @@ public class DefaultTemporalFactory extends Factory implements TemporalFactory {
     public CalendarEra createCalendarEra(final InternationalString name, final InternationalString referenceEvent,
             final CalendarDate referenceDate, final JulianDate julianReference, final Period epochOfUse) {
         final Map<String, Object> calendarEraProperties = new HashMap<>();
-        calendarEraProperties.put(IdentifiedObject.NAME_KEY, name);
+        calendarEraProperties.put(IdentifiedObject.NAME_KEY, name.toString());
         calendarEraProperties.put(Calendar.REFERENCE_EVENT_KEY, referenceEvent);
         return new DefaultCalendarEra(calendarEraProperties, referenceDate, julianReference, epochOfUse);
     }
@@ -213,7 +221,7 @@ public class DefaultTemporalFactory extends Factory implements TemporalFactory {
     public OrdinalEra createOrdinalEra(final InternationalString name, final Date begin, final Date end,
             final Collection<OrdinalEra> composition) {
         final Map<String, Object> ordinalEraProperties = new HashMap<>();
-        ordinalEraProperties.put(IdentifiedObject.NAME_KEY, name);
+        ordinalEraProperties.put(IdentifiedObject.NAME_KEY, new DefaultIdentifier(name.toString()));
         return new DefaultOrdinalEra(ordinalEraProperties, begin, end, composition);
     }
 
