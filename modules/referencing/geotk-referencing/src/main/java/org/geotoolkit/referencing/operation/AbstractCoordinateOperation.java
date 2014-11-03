@@ -49,7 +49,7 @@ import org.geotoolkit.io.wkt.Formattable;
 import org.apache.sis.io.wkt.Formatter;
 import org.apache.sis.referencing.AbstractIdentifiedObject;
 import org.apache.sis.internal.referencing.PositionalAccuracyConstant;
-import org.apache.sis.internal.referencing.Semaphores;
+import org.apache.sis.internal.system.Semaphores;
 import org.apache.sis.measure.Units;
 import org.apache.sis.internal.referencing.WKTUtilities;
 

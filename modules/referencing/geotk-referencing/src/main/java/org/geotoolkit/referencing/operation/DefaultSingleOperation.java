@@ -40,7 +40,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.apache.sis.parameter.Parameterized;
 import org.apache.sis.referencing.operation.transform.PassThroughTransform;
 import org.geotoolkit.internal.referencing.ParameterizedAffine;
-import org.apache.sis.internal.referencing.Semaphores;
+import org.apache.sis.internal.system.Semaphores;
 import org.apache.sis.io.wkt.Formatter;
 import org.apache.sis.util.ComparisonMode;
 import org.apache.sis.util.Classes;
