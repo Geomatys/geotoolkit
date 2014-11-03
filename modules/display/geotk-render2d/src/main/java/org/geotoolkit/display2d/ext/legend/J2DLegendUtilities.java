@@ -202,7 +202,16 @@ public class J2DLegendUtilities {
                 if (title != null && !title.isEmpty()) {
                     moveY += layerFontMetric.getLeading() + layerFontMetric.getAscent();
                     g2d.setFont(template.getLayerFont());
-                    g2d.setColor(Color.BLACK);
+                    Color layerFontColor = template.getLayerFontColor();
+                    if (layerFontColor != null) {
+                        if (template.getLayerFontOpacity() != null) {
+                            layerFontColor = new Color(layerFontColor.getRed(), layerFontColor.getGreen(),
+                                    layerFontColor.getBlue(), template.getLayerFontOpacity());
+                        }
+                    } else {
+                        layerFontColor = Color.BLACK;
+                    }
+                    g2d.setColor(layerFontColor);
                     g2d.drawString(title, 0, moveY);
                     moveY += layerFontMetric.getDescent();
                     moveY += gapSize;

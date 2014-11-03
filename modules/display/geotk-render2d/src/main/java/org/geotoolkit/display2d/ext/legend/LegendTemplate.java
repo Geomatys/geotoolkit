@@ -16,8 +16,8 @@
  */
 package org.geotoolkit.display2d.ext.legend;
 
-import java.awt.Dimension;
-import java.awt.Font;
+import java.awt.*;
+
 import org.geotoolkit.display2d.ext.BackgroundTemplate;
 
 /**
@@ -52,6 +52,16 @@ public interface LegendTemplate {
      * @return Font for the layer name
      */
     Font getLayerFont();
+
+    /**
+     * @return Font for the layer name
+     */
+    Color getLayerFontColor();
+
+    /**
+     * @return Font opacity for the layer name
+     */
+    Float getLayerFontOpacity();
 
     /**
      * @return Font to use for style rules

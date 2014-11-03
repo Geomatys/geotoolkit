@@ -16,8 +16,8 @@
  */
 package org.geotoolkit.display2d.ext.legend;
 
-import java.awt.Dimension;
-import java.awt.Font;
+import java.awt.*;
+
 import org.geotoolkit.display2d.ext.BackgroundTemplate;
 import org.apache.sis.util.ArgumentChecks;
 
@@ -34,6 +34,8 @@ public class DefaultLegendTemplate implements LegendTemplate {
     private final Font rulefont;
     private final boolean layerVisible;
     private final Font layerFont;
+    private Color layerFontColor;
+    private Float layerFontOpacity;
     private boolean onlyVisibleLayers = false;
     private final BackgroundTemplate background;
 
@@ -51,6 +53,14 @@ public class DefaultLegendTemplate implements LegendTemplate {
             final float gap, final Dimension glyphSize, final Font rulefont, final boolean layerVisible, final Font layerFont, boolean displayOnlyTheVisibles) {
         this(background, gap, glyphSize, rulefont, layerVisible, layerFont);
         onlyVisibleLayers = displayOnlyTheVisibles;
+    }
+
+    public DefaultLegendTemplate(final BackgroundTemplate background, final float gap, final Dimension glyphSize,
+                                 final Font rulefont, final boolean layerVisible, final Font layerFont,
+                                 final Color layerFontColor, final Float layerFontOpacity, boolean displayOnlyTheVisibles) {
+        this(background, gap, glyphSize, rulefont, layerVisible, layerFont, displayOnlyTheVisibles);
+        this.layerFontColor = layerFontColor;
+        this.layerFontOpacity = layerFontOpacity;
     }
 
     /**
@@ -97,6 +107,16 @@ public class DefaultLegendTemplate implements LegendTemplate {
     @Override
     public Font getLayerFont() {
         return layerFont;
+    }
+
+    @Override
+    public Color getLayerFontColor() {
+        return layerFontColor;
+    }
+
+    @Override
+    public Float getLayerFontOpacity() {
+        return layerFontOpacity;
     }
 
     @Override
