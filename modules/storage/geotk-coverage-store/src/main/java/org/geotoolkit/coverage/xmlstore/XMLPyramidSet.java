@@ -127,10 +127,10 @@ public class XMLPyramidSet extends AbstractPyramidSet{
      * @return The newly created pyramid.
      * @throws org.apache.sis.storage.DataStoreException If the given CRS is null or invalid.
      */
-    Pyramid createPyramid(CoordinateReferenceSystem crs) throws DataStoreException {
+    Pyramid createPyramid(final String layerName, final CoordinateReferenceSystem crs) throws DataStoreException {
         final XMLPyramid pyramid = new XMLPyramid(crs);
         try {
-            pyramid.id = URLEncoder.encode(IdentifiedObjects.getIdentifierOrName(crs),"UTF-8");
+            pyramid.id = URLEncoder.encode(layerName+"_"+IdentifiedObjects.getIdentifierOrName(crs),"UTF-8");
         } catch (UnsupportedEncodingException ex) {
             throw new DataStoreException("No valid identifier can be created from given CRS.", ex);
         }

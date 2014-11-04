@@ -32,8 +32,6 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
@@ -276,7 +274,7 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
     @Override
     public Pyramid createPyramid(CoordinateReferenceSystem crs) throws DataStoreException {
         final XMLPyramidSet set = getPyramidSet();
-        final Pyramid pyramid = set.createPyramid(crs);
+        final Pyramid pyramid = set.createPyramid(getName().getLocalPart(),crs);
         save();
         return pyramid;
     }
