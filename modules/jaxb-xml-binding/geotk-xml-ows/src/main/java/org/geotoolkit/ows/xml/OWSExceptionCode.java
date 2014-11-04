@@ -147,6 +147,11 @@ public class OWSExceptionCode extends CodeList<OWSExceptionCode> {
     public static final OWSExceptionCode STORAGE_NOT_SUPPORTED = new OWSExceptionCode("StorageNotSupported");
 
     /**
+     * Tile out of range.
+     */
+    public static final OWSExceptionCode TILE_OUT_OF_RANGE = new OWSExceptionCode("TileOutOfRange");
+
+    /**
      * Constructs an enum with the given name. The new enum is
      * automatically added to the list returned by {@link #values}.
      *
