@@ -86,7 +86,7 @@ public class DefaultTextSymbolizerRenderer extends AbstractSymbolizerRenderer<Ca
 
         //test if the symbol is visible on this feature
         if(symbol.isVisible(candidate)){
-            ProjectedGeometry projectedGeometry = projectedFeature.getGeometry(symbol.getSource().getGeometryPropertyName());
+            ProjectedGeometry projectedGeometry = projectedFeature.getGeometry(geomPropertyName);
             portray(projectedGeometry, candidate, projectedFeature);
         }
     }

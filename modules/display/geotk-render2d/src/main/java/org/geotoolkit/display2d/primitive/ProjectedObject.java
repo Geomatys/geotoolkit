@@ -19,6 +19,7 @@ package org.geotoolkit.display2d.primitive;
 import org.geotoolkit.display.canvas.AbstractCanvas2D;
 import org.geotoolkit.map.MapLayer;
 import org.opengis.display.primitive.Graphic;
+import org.opengis.filter.expression.Expression;
 
 /**
  * Convenient representation of a custom object for rendering.
@@ -48,10 +49,10 @@ public interface ProjectedObject<T> extends Graphic {
      * The geometry may be repeated if it overlaps the map world wrap limit or
      * if the scale is too high.
      *
-     * @param name of the wanted geometry.
+     * @param expression of the wanted geometry.
      * @return ProjectedGeometry or null if the named geometry attribute doesn't exist
      */
-    ProjectedGeometry getGeometry(String name);
+    ProjectedGeometry getGeometry(Expression expression);
 
     /**
      * @return original canvas of this graphic

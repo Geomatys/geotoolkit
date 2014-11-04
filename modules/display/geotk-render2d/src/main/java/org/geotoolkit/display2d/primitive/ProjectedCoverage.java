@@ -34,6 +34,7 @@ import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.ElevationModel;
 import org.geotoolkit.referencing.CRS;
+import org.opengis.filter.expression.Expression;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.operation.TransformException;
 
@@ -189,7 +190,7 @@ public class ProjectedCoverage implements ProjectedObject<CoverageMapLayer> {
     }
 
     @Override
-    public ProjectedGeometry getGeometry(String name) {
+    public ProjectedGeometry getGeometry(Expression name) {
         throw new UnsupportedOperationException("Not supported.");
     }
 

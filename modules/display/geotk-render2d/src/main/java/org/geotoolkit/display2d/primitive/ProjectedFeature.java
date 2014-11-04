@@ -35,6 +35,8 @@ import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.GeometryDescriptor;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
+import org.opengis.filter.expression.Expression;
+import org.opengis.filter.expression.PropertyName;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -90,17 +92,23 @@ public class ProjectedFeature extends DefaultProjectedObject<Feature> {
     }
     
     @Override
-    public ProjectedGeometry getGeometry(String name) {
-        if(name == null) name = DEFAULT_GEOM;
-        ProjectedGeometry proj = geometries.get(name);
+    public ProjectedGeometry getGeometry(Expression geomExp) {
+        if(geomExp == null) geomExp = DEFAULT_GEOM;
+        ProjectedGeometry proj = geometries.get(geomExp);
 
         CoordinateReferenceSystem dataCRS = null;
         if(proj == null){
 
             final FeatureType featuretype = candidate.getType();
             final PropertyDescriptor prop;
-            if (name != null && !name.trim().isEmpty()) {
-                prop = featuretype.getDescriptor(name);
+            
+            if(!isNullorEmpty(geomExp)) {
+                if(geomExp instanceof PropertyName){
+                    prop = featuretype.getDescriptor(((PropertyName)geomExp).getPropertyName());
+                }else{
+                    //calculated geometry
+                    prop = null;
+                }
             }else if(featuretype != null){
                 prop = featuretype.getGeometryDescriptor();
             }else{
@@ -112,17 +120,30 @@ public class ProjectedFeature extends DefaultProjectedObject<Feature> {
             }
 
             proj = new ProjectedGeometry(params);
-            geometries.put(name, proj);
+            geometries.put(geomExp, proj);
         }
 
         //check that the geometry is set
         if(!proj.isSet()){
-            proj.setDataGeometry(GO2Utilities.getGeometry(candidate, name),dataCRS);
+            proj.setDataGeometry(GO2Utilities.getGeometry(candidate, geomExp),dataCRS);
         }
 
         return proj;
     }
 
+    private static boolean isNullorEmpty(Expression exp){
+        if(exp==null || exp==Expression.NIL){
+            return true;
+        }else if(exp instanceof PropertyName){
+            final PropertyName pn = (PropertyName) exp;
+            final String str = pn.getPropertyName();
+            if(str==null || str.trim().isEmpty()){
+                return true;
+            }
+        }
+        return false;
+    }
+    
     /**
      * Get the original FeatureMapLayer from where the feature is from.
      *

@@ -93,7 +93,7 @@ public class JPolygonSymbolizerAdvanced extends StyleElementEditor<PolygonSymbol
     public void parse(final PolygonSymbolizer symbol) {
         oldSymbolizer = symbol;
         if (symbol != null) {
-            guiGeom.parse(symbol.getGeometryPropertyName());
+            guiGeom.parse(getSymbolizerGeometryExpression(symbol));
             guiFill.parse(symbol.getFill());
             guiStroke.parse(symbol.getStroke());
             guiOffset.parse(symbol.getPerpendicularOffset());

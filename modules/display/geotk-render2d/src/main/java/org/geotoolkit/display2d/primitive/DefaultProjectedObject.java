@@ -22,6 +22,7 @@ import org.geotoolkit.display.canvas.AbstractCanvas2D;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.container.stateless.StatelessContextParams;
 import org.geotoolkit.map.MapLayer;
+import org.opengis.filter.expression.Expression;
 
 
 /**
@@ -34,10 +35,10 @@ import org.geotoolkit.map.MapLayer;
  */
 public class DefaultProjectedObject<T> implements ProjectedObject {
 
-    protected static final String DEFAULT_GEOM = "";
+    protected static final Expression DEFAULT_GEOM = null;
 
     protected final StatelessContextParams params;
-    protected final Map<String,ProjectedGeometry> geometries =
+    protected final Map<Expression,ProjectedGeometry> geometries =
             new LinkedHashMap<>(); //linked hashmap is faster than hashmap on iteration.
     protected T candidate;
 
@@ -81,18 +82,18 @@ public class DefaultProjectedObject<T> implements ProjectedObject {
     }
 
     @Override
-    public ProjectedGeometry getGeometry(String name) {
-        if(name == null) name = DEFAULT_GEOM;
+    public ProjectedGeometry getGeometry(Expression exp) {
+        if(exp == null) exp = DEFAULT_GEOM;
 
-        ProjectedGeometry proj = geometries.get(name);
+        ProjectedGeometry proj = geometries.get(exp);
         if(proj == null){
             proj = new ProjectedGeometry(params);
-            geometries.put(name, proj);
+            geometries.put(exp, proj);
         }
 
         //check that the geometry is set
         if(!proj.isSet()){
-            proj.setDataGeometry(GO2Utilities.getGeometry(candidate, name),null);
+            proj.setDataGeometry(GO2Utilities.getGeometry(candidate, exp),null);
         }
 
         return proj;

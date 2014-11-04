@@ -84,7 +84,7 @@ public class JPointSymbolizerAdvanced extends StyleElementEditor<PointSymbolizer
     public void parse(final PointSymbolizer symbol) {
         this.oldSymbolizer = symbol;
         if (symbol instanceof PointSymbolizer) {
-            guiGeom.parse(symbol.getGeometryPropertyName());
+            guiGeom.parse(getSymbolizerGeometryExpression(symbol));
             guiUOM.parse(symbol.getUnitOfMeasure());
             guiGraphic.parse(symbol.getGraphic());
         }

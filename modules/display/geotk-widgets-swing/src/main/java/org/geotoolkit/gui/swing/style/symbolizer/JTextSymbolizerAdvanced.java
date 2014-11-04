@@ -117,7 +117,7 @@ public class JTextSymbolizerAdvanced extends StyleElementEditor<TextSymbolizer> 
     public void parse(final TextSymbolizer symbol) {
         oldSymbolizer = symbol;
         if (symbol != null) {
-            guiGeom.parse(symbol.getGeometryPropertyName());
+            guiGeom.parse(getSymbolizerGeometryExpression(symbol));
             guiUOM.parse(symbol.getUnitOfMeasure());
             guiLabel.parse(symbol.getLabel());
             guiFont.parse(symbol.getFont());

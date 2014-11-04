@@ -28,6 +28,9 @@ import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.ProjectedObject;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.display2d.GO2Utilities;
+import org.geotoolkit.style.AbstractSymbolizer;
+import org.opengis.filter.expression.Expression;
 import org.opengis.geometry.Envelope;
 import org.opengis.style.Symbolizer;
 
@@ -52,7 +55,7 @@ public abstract class AbstractSymbolizerRenderer<C extends CachedSymbolizer<? ex
     protected final Unit symbolUnit;
     protected final float coeff;
     protected final boolean dispGeom;
-    protected final String geomPropertyName;
+    protected final Expression geomPropertyName;
 
     public AbstractSymbolizerRenderer(final SymbolizerRendererService service, final C symbol, final RenderingContext2D context){
         this.service = service;
@@ -65,8 +68,12 @@ public abstract class AbstractSymbolizerRenderer<C extends CachedSymbolizer<? ex
         this.symbolUnit = symbol.getSource().getUnitOfMeasure();
         this.coeff = renderingContext.getUnitCoefficient(symbolUnit);
         this.dispGeom = (NonSI.PIXEL == symbolUnit);
-        this.geomPropertyName = symbol.getSource().getGeometryPropertyName();
-
+        final Symbolizer symbolizer = symbol.getSource();
+        if(symbolizer instanceof AbstractSymbolizer){
+            this.geomPropertyName = ((AbstractSymbolizer)symbolizer).getGeometry();
+        }else{
+            this.geomPropertyName = GO2Utilities.FILTER_FACTORY.property(symbol.getSource().getGeometryPropertyName());
+        }
     }
 
     @Override

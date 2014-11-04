@@ -123,6 +123,7 @@ import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.Id;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Literal;
+import org.opengis.filter.expression.PropertyName;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.parameter.ParameterValueGroup;
@@ -949,37 +950,9 @@ public final class GO2Utilities {
         return value;
     }
 
-    public static Geometry getGeometry(final SimpleFeature feature, final String geomName){
-        final Object candidate;
-        if (geomName != null && !geomName.trim().isEmpty()) {
-            candidate = feature.getAttribute(geomName);
-        } else {
-            candidate = feature.getDefaultGeometry();
-        }
-
-        if(candidate instanceof Geometry){
-            return (Geometry) candidate;
-        }else{
-            throw new IllegalStateException("Attribut : " + geomName +" from feature returned value :"+candidate+". " +
-                    "This object is not a geometry, maybe you ask the wrong" +
-                    " attribut or the feature doesnt match it's feature type définition.\n"+
-                    feature);
-        }
+    public static Geometry getGeometry(final Object obj, final Expression geomExp){
+        return geomExp.evaluate(obj, Geometry.class);
     }
-
-    public static Geometry getGeometry(final Object obj, final String geomName){
-        final Object candidateGeom;
-        final Binding acc = Bindings.getBinding(obj.getClass(), geomName);
-        candidateGeom = acc.get(obj, geomName, Geometry.class);
-
-        if(candidateGeom == null || candidateGeom instanceof Geometry){
-            return (Geometry) candidateGeom;
-        }else{
-            throw new IllegalStateException("Attribut : " + geomName +" from object returned value :"+candidateGeom+". " +
-                    "This object is not a geometry, maybe you ask the wrong attribute.\n"+ obj);
-        }
-    }
-
 
     public static Class getGeometryClass(final FeatureType featuretype, final String geomName){
         final PropertyDescriptor prop;
@@ -998,18 +971,11 @@ public final class GO2Utilities {
         }
     }
 
-    public static Geometry getGeometry(final Feature feature, final String geomName){
-        if (geomName != null && !geomName.trim().isEmpty()) {
-            final Property prop = feature.getProperty(geomName);
-            if(prop != null){
-                final Object obj = prop.getValue();
-                if(obj == null || obj instanceof Geometry){
-                    return (Geometry)obj;
-                }
-            }
-            return null;
-        } else {
+    public static Geometry getGeometry(final Feature feature, final Expression geomExp){
+        if(isNullorEmpty(geomExp)){
             return (Geometry) feature.getDefaultGeometryProperty().getValue();
+        }else{
+            return geomExp.evaluate(feature, Geometry.class);
         }
     }
 
@@ -1022,6 +988,28 @@ public final class GO2Utilities {
         return (Boolean) exp.accept(IsStaticExpressionVisitor.VISITOR, null);
     }
 
+    /**
+     * Test if an expression is :
+     * - null
+     * - Expression.NIL
+     * - PropertyName with null or empty name
+     * 
+     * @param exp
+     * @return true if empty
+     */
+    public static boolean isNullorEmpty(Expression exp){
+        if(exp==null || exp==Expression.NIL){
+            return true;
+        }else if(exp instanceof PropertyName){
+            final PropertyName pn = (PropertyName) exp;
+            final String str = pn.getPropertyName();
+            if(str==null || str.trim().isEmpty()){
+                return true;
+            }
+        }
+        return false;
+    }
+    
     /**
      * Returns the symbolizers that apply on the given feature.
      */

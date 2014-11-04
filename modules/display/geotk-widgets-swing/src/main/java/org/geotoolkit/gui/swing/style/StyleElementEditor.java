@@ -35,8 +35,12 @@ import org.geotoolkit.gui.swing.util.JOptionDialog;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.display2d.GO2Utilities;
+import org.geotoolkit.style.AbstractSymbolizer;
 import org.opengis.filter.FilterFactory2;
+import org.opengis.filter.expression.Expression;
 import org.opengis.style.Description;
+import org.opengis.style.Symbolizer;
 import org.opengis.util.InternationalString;
 
 /**
@@ -166,6 +170,14 @@ public abstract class StyleElementEditor<T> extends JPanel {
      * @return never null, but can be empty
      */
     protected abstract Object[] getFirstColumnComponents();
+    
+    protected Expression getSymbolizerGeometryExpression(Symbolizer symbolizer){
+        if(symbolizer instanceof AbstractSymbolizer){
+            return ((AbstractSymbolizer)symbolizer).getGeometry();
+        }else{
+            return GO2Utilities.FILTER_FACTORY.property(symbolizer.getGeometryPropertyName());
+        }
+    }
     
     public static void alignLabelColumnWidth(StyleElementEditor ... editors){
         int width = -1;

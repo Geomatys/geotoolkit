@@ -29,6 +29,7 @@ import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.gui.swing.style.JGeomPane;
 import org.geotoolkit.gui.swing.style.JOffSetPane;
 import org.geotoolkit.gui.swing.style.JStrokePane;
+import org.geotoolkit.gui.swing.style.JTextExpressionPane;
 import org.geotoolkit.gui.swing.style.JUOMPane;
 import org.geotoolkit.gui.swing.style.StyleElementEditor;
 import org.geotoolkit.map.MapLayer;
@@ -43,7 +44,7 @@ import org.opengis.style.LineSymbolizer;
  * @author Johann Sorel
  * @module pending
  */
-public class JLineSymbolizerAdvanced extends  StyleElementEditor<LineSymbolizer> {
+public class JLineSymbolizerAdvanced extends StyleElementEditor<LineSymbolizer> {
     
     private MapLayer layer = null;
     private LineSymbolizer oldSymbolizer = null;
@@ -87,7 +88,7 @@ public class JLineSymbolizerAdvanced extends  StyleElementEditor<LineSymbolizer>
     public void parse(final LineSymbolizer symbol) {
         oldSymbolizer = symbol;
         if (symbol != null) {            
-            guiGeom.parse(symbol.getGeometryPropertyName());
+            guiGeom.parse(getSymbolizerGeometryExpression(symbol));
             guiStroke.parse(symbol.getStroke());
             guiOffset.parse(symbol.getPerpendicularOffset());
             guiUOM.parse(symbol.getUnitOfMeasure());
@@ -144,20 +145,19 @@ public class JLineSymbolizerAdvanced extends  StyleElementEditor<LineSymbolizer>
 
         guiGeom.addPropertyChangeListener(new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent evt) {
-                JLineSymbolizerAdvanced.this.propertyChange(evt);
+                propertyChanguiGeome(evt);
             }
         });
 
         guiUOM.addPropertyChangeListener(new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent evt) {
-                JLineSymbolizerAdvanced.this.propertyChange(evt);
+                propertyChanguiGeome(evt);
             }
         });
 
         GroupLayout jPanel1Layout = new GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(Alignment.LEADING)
+        jPanel1Layout.setHorizontalGroup(jPanel1Layout.createParallelGroup(Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(Alignment.LEADING)
@@ -165,8 +165,7 @@ public class JLineSymbolizerAdvanced extends  StyleElementEditor<LineSymbolizer>
                     .addComponent(guiGeom, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(Alignment.LEADING)
+        jPanel1Layout.setVerticalGroup(jPanel1Layout.createParallelGroup(Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(guiGeom, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
@@ -180,21 +179,19 @@ public class JLineSymbolizerAdvanced extends  StyleElementEditor<LineSymbolizer>
 
         guiStroke.addPropertyChangeListener(new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent evt) {
-                JLineSymbolizerAdvanced.this.propertyChange(evt);
+                propertyChanguiGeome(evt);
             }
         });
 
         GroupLayout jPanel2Layout = new GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(Alignment.LEADING)
+        jPanel2Layout.setHorizontalGroup(jPanel2Layout.createParallelGroup(Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(guiStroke, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(Alignment.LEADING)
+        jPanel2Layout.setVerticalGroup(jPanel2Layout.createParallelGroup(Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(guiStroke, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
@@ -206,21 +203,19 @@ public class JLineSymbolizerAdvanced extends  StyleElementEditor<LineSymbolizer>
 
         guiOffset.addPropertyChangeListener(new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent evt) {
-                JLineSymbolizerAdvanced.this.propertyChange(evt);
+                propertyChanguiGeome(evt);
             }
         });
 
         GroupLayout jPanel3Layout = new GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
-        jPanel3Layout.setHorizontalGroup(
-            jPanel3Layout.createParallelGroup(Alignment.LEADING)
+        jPanel3Layout.setHorizontalGroup(jPanel3Layout.createParallelGroup(Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(guiOffset, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
-        jPanel3Layout.setVerticalGroup(
-            jPanel3Layout.createParallelGroup(Alignment.LEADING)
+        jPanel3Layout.setVerticalGroup(jPanel3Layout.createParallelGroup(Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(guiOffset, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
@@ -229,14 +224,12 @@ public class JLineSymbolizerAdvanced extends  StyleElementEditor<LineSymbolizer>
 
         GroupLayout layout = new GroupLayout(this);
         this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(Alignment.LEADING)
+        layout.setHorizontalGroup(layout.createParallelGroup(Alignment.LEADING)
             .addComponent(jPanel1, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(jPanel2, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(jPanel3, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(Alignment.LEADING)
+        layout.setVerticalGroup(layout.createParallelGroup(Alignment.LEADING)
             .addGroup(Alignment.TRAILING, layout.createSequentialGroup()
                 .addComponent(jPanel1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(ComponentPlacement.RELATED)
@@ -247,11 +240,11 @@ public class JLineSymbolizerAdvanced extends  StyleElementEditor<LineSymbolizer>
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void propertyChange(PropertyChangeEvent evt) {//GEN-FIRST:event_propertyChange
+    private void propertyChanguiGeome(PropertyChangeEvent evt) {//GEN-FIRST:event_propertyChanguiGeome
         if (PROPERTY_UPDATED.equalsIgnoreCase(evt.getPropertyName())) {            
             firePropertyChange(PROPERTY_UPDATED, null, create());
         }
-    }//GEN-LAST:event_propertyChange
+    }//GEN-LAST:event_propertyChanguiGeome
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private JGeomPane guiGeom;

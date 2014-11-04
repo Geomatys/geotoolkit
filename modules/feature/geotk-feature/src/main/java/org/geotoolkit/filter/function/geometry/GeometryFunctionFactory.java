@@ -35,6 +35,7 @@ public class GeometryFunctionFactory extends AbstractFunctionFactory {
     public static final String BOUNDARY = "boundary";
     public static final String BOUNDARY_DIMENSION = "boundaryDimension";
     public static final String BUFFER   = "buffer";
+    public static final String BUFFERGEO   = "bufferGeo";
     public static final String BUFFER_WITH_SEGMENTS = "bufferWithSegments";
     public static final String CENTROID = "centroid";
     public static final String CONTAINS = "contains";
@@ -86,6 +87,7 @@ public class GeometryFunctionFactory extends AbstractFunctionFactory {
         FUNCTIONS.put(BOUNDARY,             BoundaryFunction.class);
         FUNCTIONS.put(BOUNDARY_DIMENSION,   BoundaryDimensionFunction.class);
         FUNCTIONS.put(BUFFER,               BufferFunction.class);
+        FUNCTIONS.put(BUFFERGEO,            BufferGeoFunction.class);
         FUNCTIONS.put(BUFFER_WITH_SEGMENTS, BufferWithSegmentsFunction.class);
         FUNCTIONS.put(CENTROID,             CentroidFunction.class);
         FUNCTIONS.put(CONTAINS,             ContainsFunction.class);

@@ -78,12 +78,12 @@
       <SubComponents>
         <Component class="org.geotoolkit.gui.swing.style.JGeomPane" name="guiGeom">
           <Events>
-            <EventHandler event="propertyChange" listener="java.beans.PropertyChangeListener" parameters="java.beans.PropertyChangeEvent" handler="propertyChange"/>
+            <EventHandler event="propertyChange" listener="java.beans.PropertyChangeListener" parameters="java.beans.PropertyChangeEvent" handler="propertyChanguiGeome"/>
           </Events>
         </Component>
         <Component class="org.geotoolkit.gui.swing.style.JUOMPane" name="guiUOM">
           <Events>
-            <EventHandler event="propertyChange" listener="java.beans.PropertyChangeListener" parameters="java.beans.PropertyChangeEvent" handler="propertyChange"/>
+            <EventHandler event="propertyChange" listener="java.beans.PropertyChangeListener" parameters="java.beans.PropertyChangeEvent" handler="propertyChanguiGeome"/>
           </Events>
         </Component>
       </SubComponents>
@@ -123,7 +123,7 @@
       <SubComponents>
         <Component class="org.geotoolkit.gui.swing.style.JStrokePane" name="guiStroke">
           <Events>
-            <EventHandler event="propertyChange" listener="java.beans.PropertyChangeListener" parameters="java.beans.PropertyChangeEvent" handler="propertyChange"/>
+            <EventHandler event="propertyChange" listener="java.beans.PropertyChangeListener" parameters="java.beans.PropertyChangeEvent" handler="propertyChanguiGeome"/>
           </Events>
         </Component>
       </SubComponents>
@@ -163,7 +163,7 @@
       <SubComponents>
         <Component class="org.geotoolkit.gui.swing.style.JOffSetPane" name="guiOffset">
           <Events>
-            <EventHandler event="propertyChange" listener="java.beans.PropertyChangeListener" parameters="java.beans.PropertyChangeEvent" handler="propertyChange"/>
+            <EventHandler event="propertyChange" listener="java.beans.PropertyChangeListener" parameters="java.beans.PropertyChangeEvent" handler="propertyChanguiGeome"/>
           </Events>
         </Component>
       </SubComponents>

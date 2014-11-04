@@ -16,12 +16,11 @@
  */
 package org.geotoolkit.style.visitor;
 
-import java.util.List;
-import javax.measure.unit.Unit;
 import org.geotoolkit.filter.visitor.PrepareFilterVisitor;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.feature.type.ComplexType;
+import org.geotoolkit.style.AbstractSymbolizer;
 import org.opengis.filter.expression.Expression;
 import org.opengis.style.AnchorPoint;
 import org.opengis.style.ChannelSelection;
@@ -55,6 +54,7 @@ import org.opengis.style.ShadedRelief;
 import org.opengis.style.Stroke;
 import org.opengis.style.Style;
 import org.opengis.style.StyleVisitor;
+import org.opengis.style.Symbolizer;
 import org.opengis.style.TextSymbolizer;
 
 /**
@@ -104,7 +104,7 @@ public class PrepareStyleVisitor extends PrepareFilterVisitor implements StyleVi
         //recreate symbolizer
         return SF.pointSymbolizer(
                 ps.getName(), 
-                ps.getGeometryPropertyName(), 
+                visitGeometryExpression(ps, o),
                 ps.getDescription(), 
                 ps.getUnitOfMeasure(), 
                 opt);
@@ -125,7 +125,7 @@ public class PrepareStyleVisitor extends PrepareFilterVisitor implements StyleVi
         //recreate symbolizer
         return SF.lineSymbolizer(
                 ls.getName(), 
-                ls.getGeometryPropertyName(), 
+                visitGeometryExpression(ls, o),
                 ls.getDescription(), 
                 ls.getUnitOfMeasure(), 
                 stroke,
@@ -154,7 +154,7 @@ public class PrepareStyleVisitor extends PrepareFilterVisitor implements StyleVi
         
         //recreate symbolizer
         return SF.polygonSymbolizer(ps.getName(),
-                ps.getGeometryPropertyName(), 
+                visitGeometryExpression(ps, o),
                 ps.getDescription(), 
                 ps.getUnitOfMeasure(), 
                 stroke, fill, disp, offset);
@@ -186,7 +186,7 @@ public class PrepareStyleVisitor extends PrepareFilterVisitor implements StyleVi
         
         //recreate symbolizer
         return SF.textSymbolizer(ts.getName(), 
-                ts.getGeometryPropertyName(), 
+                visitGeometryExpression(ts, o),
                 ts.getDescription(), 
                 ts.getUnitOfMeasure(), 
                 label, font, place, halo, fill);
@@ -203,6 +203,16 @@ public class PrepareStyleVisitor extends PrepareFilterVisitor implements StyleVi
         return es;
     }
 
+    private Expression visitGeometryExpression(Symbolizer symbolizer, Object o){
+        if(symbolizer instanceof AbstractSymbolizer){
+            final Expression exp = ((AbstractSymbolizer)symbolizer).getGeometry();
+            if(exp==null) return null;
+            return (Expression) exp.accept(this, o);
+        }else{
+            return ff.property(symbolizer.getGeometryPropertyName());
+        }
+    }
+    
     @Override
     public Object visit(Description d, Object o) {
         return d;

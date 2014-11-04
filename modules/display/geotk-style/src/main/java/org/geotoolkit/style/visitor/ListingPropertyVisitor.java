@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2011, Geomatys
+ *    (C) 2011-2014, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -19,6 +19,7 @@ package org.geotoolkit.style.visitor;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import org.geotoolkit.style.AbstractSymbolizer;
 import org.opengis.filter.Filter;
 import org.opengis.filter.Id;
 import org.opengis.filter.expression.Expression;
@@ -119,12 +120,23 @@ public class ListingPropertyVisitor extends org.geotoolkit.filter.visitor.Listin
         return data;
     }
 
+    private void visitGeomName(Symbolizer symbolizer, Object data){
+        if(symbolizer instanceof AbstractSymbolizer){
+            final Expression exp = ((AbstractSymbolizer)symbolizer).getGeometry();
+            if(exp!=null){
+                exp.accept(this, data);
+            }
+        }else{
+            final String geomName = symbolizer.getGeometryPropertyName();
+            if(geomName != null && !geomName.trim().isEmpty()){
+                ((Collection)data).add(geomName);
+            }
+        }
+    }
+    
     @Override
     public Object visit(final PointSymbolizer pointSymbolizer, Object data) {
-        final String geomName = pointSymbolizer.getGeometryPropertyName();
-        if(geomName != null && !geomName.trim().isEmpty()){
-            ((Collection)data).add(geomName);
-        }
+        visitGeomName(pointSymbolizer, data);
         
         final Graphic gra = pointSymbolizer.getGraphic();
         if(gra != null){
@@ -135,10 +147,7 @@ public class ListingPropertyVisitor extends org.geotoolkit.filter.visitor.Listin
 
     @Override
     public Object visit(final LineSymbolizer lineSymbolizer, Object data) {
-        final String geomName = lineSymbolizer.getGeometryPropertyName();
-        if(geomName != null && !geomName.trim().isEmpty()){
-            ((Collection)data).add(geomName);
-        }
+        visitGeomName(lineSymbolizer, data);
         
         final Expression offset = lineSymbolizer.getPerpendicularOffset();
         if(offset != null){
@@ -153,10 +162,7 @@ public class ListingPropertyVisitor extends org.geotoolkit.filter.visitor.Listin
 
     @Override
     public Object visit(final PolygonSymbolizer polygonSymbolizer, Object data) {
-        final String geomName = polygonSymbolizer.getGeometryPropertyName();
-        if(geomName != null && !geomName.trim().isEmpty()){
-            ((Collection)data).add(geomName);
-        }
+        visitGeomName(polygonSymbolizer, data);
         
         final Displacement disp = polygonSymbolizer.getDisplacement();
         if(disp != null){
@@ -179,10 +185,7 @@ public class ListingPropertyVisitor extends org.geotoolkit.filter.visitor.Listin
 
     @Override
     public Object visit(final TextSymbolizer textSymbolizer, Object data) {
-        final String geomName = textSymbolizer.getGeometryPropertyName();
-        if(geomName != null && !geomName.trim().isEmpty()){
-            ((Collection)data).add(geomName);
-        }
+        visitGeomName(textSymbolizer, data);
         
         final Fill fill = textSymbolizer.getFill();
         if(fill != null){
@@ -209,10 +212,7 @@ public class ListingPropertyVisitor extends org.geotoolkit.filter.visitor.Listin
 
     @Override
     public Object visit(final RasterSymbolizer rasterSymbolizer, Object data) {
-        final String geomName = rasterSymbolizer.getGeometryPropertyName();
-        if(geomName != null && !geomName.trim().isEmpty()){
-            ((Collection)data).add(geomName);
-        }
+        visitGeomName(rasterSymbolizer, data);
         
         final ChannelSelection cs = rasterSymbolizer.getChannelSelection();
         if(cs != null){
@@ -243,10 +243,7 @@ public class ListingPropertyVisitor extends org.geotoolkit.filter.visitor.Listin
 
     @Override
     public Object visit(final ExtensionSymbolizer extension, Object data) {
-        final String geomName = extension.getGeometryPropertyName();
-        if(geomName != null && !geomName.trim().isEmpty()){
-            ((Collection)data).add(geomName);
-        }
+        visitGeomName(extension, data);
         
         final Map<String,Expression> exps = extension.getParameters();
         if(exps != null){

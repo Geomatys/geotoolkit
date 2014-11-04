@@ -2,8 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2007 - 2008, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2008 - 2009, Johann Sorel
+ *    (C) 2008 - 2014, Johann Sorel
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -17,14 +16,15 @@
  */
 package org.geotoolkit.gui.swing.style;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.Component;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JLabel;
 import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.SwingConstants;
 import org.geotoolkit.map.MapLayer;
+import org.opengis.filter.expression.Expression;
 
 /**
  * Geometry panel
@@ -32,11 +32,11 @@ import org.geotoolkit.map.MapLayer;
  * @author Johann Sorel
  * @module pending
  */
-public class JGeomPane extends StyleElementEditor<String> {
+public class JGeomPane extends StyleElementEditor<Expression> {
 
     /** Creates new form JGeomPane */
     public JGeomPane() {
-        super(String.class);
+        super(Expression.class);
         initComponents();
     }
 
@@ -49,13 +49,13 @@ public class JGeomPane extends StyleElementEditor<String> {
     }
 
     @Override
-    public void parse(String target) {
-        guiBox.setGeom(target);
+    public void parse(Expression target) {
+        guiBox.parse(target);
     }
 
     @Override
-    public String create() {
-        return guiBox.getGeom();
+    public Expression create() {
+        return guiBox.create();
     }
     
     @Override
@@ -71,44 +71,34 @@ public class JGeomPane extends StyleElementEditor<String> {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        guiBox = new JGeomBox();
         guiLabel = new JLabel();
+        guiBox = new JTextExpressionPane();
 
         setOpaque(false);
-
-        guiBox.setEditable(true);
-        guiBox.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                guiBoxActionPerformed(evt);
-            }
-        });
 
         guiLabel.setText(MessageBundle.getString("geometry")); // NOI18N
 
         GroupLayout layout = new GroupLayout(this);
         this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(Alignment.LEADING)
+        layout.setHorizontalGroup(layout.createParallelGroup(Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(guiLabel)
                 .addPreferredGap(ComponentPlacement.RELATED)
-                .addComponent(guiBox, GroupLayout.PREFERRED_SIZE, 76, Short.MAX_VALUE))
+                .addComponent(guiBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(Alignment.LEADING)
-            .addGroup(layout.createParallelGroup(Alignment.BASELINE)
-                .addComponent(guiLabel, GroupLayout.PREFERRED_SIZE, 17, GroupLayout.PREFERRED_SIZE)
-                .addComponent(guiBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+        layout.setVerticalGroup(layout.createParallelGroup(Alignment.LEADING)
+            .addComponent(guiLabel, GroupLayout.PREFERRED_SIZE, 17, GroupLayout.PREFERRED_SIZE)
+            .addComponent(guiBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
         );
-    }// </editor-fold>//GEN-END:initComponents
 
-    private void guiBoxActionPerformed(ActionEvent evt) {//GEN-FIRST:event_guiBoxActionPerformed
-        firePropertyChange(PROPERTY_UPDATED, null, create());
-    }//GEN-LAST:event_guiBoxActionPerformed
+        layout.linkSize(SwingConstants.VERTICAL, new Component[] {guiBox, guiLabel});
+
+    }// </editor-fold>//GEN-END:initComponents
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private JGeomBox guiBox;
+    private JTextExpressionPane guiBox;
     private JLabel guiLabel;
     // End of variables declaration//GEN-END:variables
 
