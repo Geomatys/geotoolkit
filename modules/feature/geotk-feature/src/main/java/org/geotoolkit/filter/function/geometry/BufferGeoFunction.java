@@ -53,6 +53,8 @@ public class BufferGeoFunction extends AbstractFunction {
                     parameters.get(0)+" "+parameters.get(1)+" "+parameters.get(2));
         }
 
+        if(width==0) return geom;
+        
         final CoordinateReferenceSystem crs;
         try {
             crs = JTS.findCoordinateReferenceSystem(geom);
@@ -67,7 +69,8 @@ public class BufferGeoFunction extends AbstractFunction {
         //TODO find a more accurate method for use in all crs
         width = refUnit.getConverterTo(crsUnit).convert(width);
         
-        
-        return StaticGeometry.buffer(geom, width);
+        final Geometry geomBuf = StaticGeometry.buffer(geom, width);
+        JTS.setCRS(geomBuf, crs);
+        return geomBuf;
     }
 }
