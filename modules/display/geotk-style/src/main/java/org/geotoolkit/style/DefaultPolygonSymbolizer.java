@@ -59,7 +59,7 @@ public class DefaultPolygonSymbolizer extends AbstractSymbolizer implements Poly
      * @param desc : if null will be replaced by default description.
      */
     public DefaultPolygonSymbolizer(final Stroke stroke, final Fill fill, final Displacement disp,
-            final Expression offset, final Unit uom, final String geom, final String name, final Description desc){
+            final Expression offset, final Unit uom, final Expression geom, final String name, final Description desc){
         super(uom,geom,name,desc);
         this.stroke = stroke;
         this.fill = fill;

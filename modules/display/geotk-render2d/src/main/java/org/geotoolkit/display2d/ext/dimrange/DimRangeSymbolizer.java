@@ -38,7 +38,7 @@ public class DimRangeSymbolizer extends AbstractSymbolizer implements ExtensionS
     private final MeasurementRange dimRange;
 
     public DimRangeSymbolizer(final MeasurementRange range) {
-        super(NonSI.PIXEL, "", "", null);
+        super(NonSI.PIXEL, null, "", null);
         this.dimRange = range;
     }
 

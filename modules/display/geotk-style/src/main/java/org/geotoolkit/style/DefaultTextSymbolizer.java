@@ -38,7 +38,7 @@ import static org.apache.sis.util.ArgumentChecks.*;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class DefaultTextSymbolizer implements TextSymbolizer{
+public class DefaultTextSymbolizer extends AbstractSymbolizer implements TextSymbolizer{
 
     private final Expression label;
     
@@ -49,15 +49,7 @@ public class DefaultTextSymbolizer implements TextSymbolizer{
     private final Halo halo;
     
     private final Fill fill;
-    
-    private final Unit uom;
-    
-    private final String geom;
-    
-    private final String name;
-    
-    private final Description desc;
-    
+        
     /**
      * Create a default immutable Text symbolizer.
      * 
@@ -72,17 +64,14 @@ public class DefaultTextSymbolizer implements TextSymbolizer{
      * @param desc : if null will be replaced by default description.
      */
     public DefaultTextSymbolizer(final Expression label, final Font font, final LabelPlacement placement,
-            final Halo halo, final Fill fill, final Unit uom, final String geom, final String name, final Description desc){
+            final Halo halo, final Fill fill, final Unit uom, final Expression geom, final String name, final Description desc){
+        super(uom,geom,name,desc);
         ensureNonNull("label", label);
         this.label = label;
         this.font = (font == null) ? DEFAULT_FONT : font;
         this.placement = (placement == null) ? DEFAULT_POINTPLACEMENT : placement;
         this.halo = (halo == null) ? DEFAULT_HALO : halo;
         this.fill = (fill == null) ? DEFAULT_FILL : fill;
-        this.uom = (uom == null) ? DEFAULT_UOM : uom;
-        this.geom = geom;
-        this.name = name;
-        this.desc = (desc == null) ? DEFAULT_DESCRIPTION : desc;
     }
     
     /**
@@ -123,38 +112,6 @@ public class DefaultTextSymbolizer implements TextSymbolizer{
     @Override
     public Fill getFill() {
         return fill;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Unit getUnitOfMeasure() {
-        return uom;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public String getGeometryPropertyName() {
-        return geom;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Description getDescription() {
-        return desc;
     }
     
     /**

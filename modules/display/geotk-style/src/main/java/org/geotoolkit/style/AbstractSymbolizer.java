@@ -23,6 +23,8 @@ import org.opengis.style.Description;
 import org.opengis.style.Symbolizer;
 
 import static org.geotoolkit.style.StyleConstants.*;
+import org.opengis.filter.expression.Expression;
+import org.opengis.filter.expression.PropertyName;
 
 /**
  * Abstract implementation of Types symbolizer.
@@ -34,7 +36,7 @@ public abstract class AbstractSymbolizer implements Symbolizer{
     
     protected final Unit uom;
     
-    protected final String geom;
+    protected final Expression geom;
     
     protected final String name;
     
@@ -48,7 +50,7 @@ public abstract class AbstractSymbolizer implements Symbolizer{
      * @param name : can be null
      * @param desc : if null will be replaced by default description.
      */
-    protected AbstractSymbolizer(final Unit uom, final String geom, final String name, final Description desc){
+    protected AbstractSymbolizer(final Unit uom, final Expression geom, final String name, final Description desc){
         this.uom = (uom == null) ? DEFAULT_UOM : uom ;
         this.geom = geom;
         this.name = name;
@@ -68,9 +70,21 @@ public abstract class AbstractSymbolizer implements Symbolizer{
      */
     @Override
     public String getGeometryPropertyName() {
-        return geom;
+        if(geom instanceof PropertyName){
+            return ((PropertyName)geom).getPropertyName();
+        }else{
+            return null;
+        }
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    //@Override TODO waiting for geoapi change
+    public Expression getGeometry(){
+        return geom;
+    }
+    
     /**
      * {@inheritDoc }
      */

@@ -51,7 +51,7 @@ public class DefaultLineSymbolizer extends AbstractSymbolizer implements LineSym
      * @param name : can be null
      * @param desc : if null will be replaced by default description.
      */
-    public DefaultLineSymbolizer(final Stroke stroke, final Expression offset, final Unit<?> uom, final String geom,
+    public DefaultLineSymbolizer(final Stroke stroke, final Expression offset, final Unit<?> uom, final Expression geom,
             final String name, final Description desc){
         super(uom, geom, name, desc);
         this.stroke = (stroke == null) ? DEFAULT_STROKE : stroke;

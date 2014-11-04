@@ -27,6 +27,7 @@ import org.opengis.style.PointSymbolizer;
 import org.opengis.style.StyleVisitor;
 
 import static org.geotoolkit.style.StyleConstants.*;
+import org.opengis.filter.expression.Expression;
 
 /**
  * Immutable implementation of Types point symbolizer.
@@ -47,7 +48,7 @@ public class DefaultPointSymbolizer extends AbstractSymbolizer implements PointS
      * @param name : can be null
      * @param desc : if null will be replaced by default description.
      */
-    public DefaultPointSymbolizer(final Graphic graphic, final Unit uom, final String geom, final String name, final Description desc){
+    public DefaultPointSymbolizer(final Graphic graphic, final Unit uom, final Expression geom, final String name, final Description desc){
         super(uom,geom,name,desc);
         this.graphic = (graphic == null) ? DEFAULT_GRAPHIC : graphic ;
     }

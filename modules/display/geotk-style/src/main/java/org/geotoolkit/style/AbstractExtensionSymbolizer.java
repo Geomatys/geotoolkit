@@ -32,7 +32,7 @@ import org.opengis.style.StyleVisitor;
  */
 public abstract class AbstractExtensionSymbolizer extends AbstractSymbolizer implements ExtensionSymbolizer{
 
-    public AbstractExtensionSymbolizer(final Unit uom, final String geom, final String name, final Description desc){
+    public AbstractExtensionSymbolizer(final Unit uom, final Expression geom, final String name, final Description desc){
         super(uom,geom,name,desc);
     }
 

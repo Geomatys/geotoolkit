@@ -72,7 +72,7 @@ public class PatternSymbolizer extends AbstractExtensionSymbolizer{
     private final ThreshholdsBelongTo belongTo;
 
     public PatternSymbolizer(final Expression channel, final Map<Expression,List <Symbolizer>> ranges, final ThreshholdsBelongTo belong) {
-        super(NonSI.PIXEL, "", "", null);
+        super(NonSI.PIXEL, null, "", null);
         this.channel = channel;
         this.thredholds.putAll(ranges);
         this.belongTo = belong;

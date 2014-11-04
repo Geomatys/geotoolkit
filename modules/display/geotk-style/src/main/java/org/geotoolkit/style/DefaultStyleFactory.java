@@ -44,6 +44,7 @@ import org.geotoolkit.style.function.Mode;
 import org.geotoolkit.style.function.ThreshholdsBelongTo;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.filter.DefaultPropertyName;
 
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
@@ -110,46 +111,6 @@ public class DefaultStyleFactory extends Factory implements MutableStyleFactory 
     private static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
 
     // TEMPORARY FIX ///////////////////////////////////////////////////////////
-
-    @Override
-    public LineSymbolizer lineSymbolizer(final String name, final Expression geometry,
-            final Description description, final Unit<?> unit,
-            final Stroke stroke, final Expression offset) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public PointSymbolizer pointSymbolizer(final String name, final Expression geometry,
-            final Description description, final Unit<?> unit, final Graphic graphic) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public PolygonSymbolizer polygonSymbolizer(final String name,
-            final Expression geometry, final Description description,
-            final Unit<?> unit, final Stroke stroke, final Fill fill,
-            final Displacement displacement, final Expression offset) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public RasterSymbolizer rasterSymbolizer(final String name,
-            final Expression geometry, final Description description,
-            final Unit<?> unit, final Expression opacity,
-            final ChannelSelection channelSelection,
-            final OverlapBehavior overlapsBehaviour, final ColorMap colorMap,
-            final ContrastEnhancement contrast, final ShadedRelief shaded,
-            final Symbolizer outline) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public TextSymbolizer textSymbolizer(final String name, final Expression geometry,
-            final Description description, final Unit<?> unit,
-            final Expression label, final Font font, final LabelPlacement placement,
-            final Halo halo, final Fill fill) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
 
     @Override
     public Literal literal(final Color color) {
@@ -298,18 +259,21 @@ public class DefaultStyleFactory extends Factory implements MutableStyleFactory 
     @Override
     public PointSymbolizer pointSymbolizer(final Graphic graphic,
             final String geometryPropertyName){
-        return new DefaultPointSymbolizer(
-                graphic,
-                DEFAULT_UOM,
-                geometryPropertyName,
-                null,
-                DEFAULT_DESCRIPTION);
+        return pointSymbolizer(null, geometryPropertyName,DEFAULT_DESCRIPTION,DEFAULT_UOM,graphic);
     }
 
     @Override
     public PointSymbolizer pointSymbolizer(final String name,
             final String geom, final Description desc,
             final Unit<?> unit, final Graphic graphic) {
+        return pointSymbolizer(name,
+                geom==null ? null : new DefaultPropertyName(geom), 
+                desc, unit, graphic);
+    }
+    
+    @Override
+    public PointSymbolizer pointSymbolizer(final String name, final Expression geom,
+            final Description desc, final Unit<?> unit, final Graphic graphic) {
         return new DefaultPointSymbolizer(graphic, unit, geom, name, desc);
     }
 
@@ -321,22 +285,25 @@ public class DefaultStyleFactory extends Factory implements MutableStyleFactory 
     @Override
     public LineSymbolizer lineSymbolizer(final Stroke stroke,
             final String geometryPropertyName){
-        return new DefaultLineSymbolizer(
-                stroke,
-                FF.literal(0),
-                DEFAULT_UOM,
-                geometryPropertyName,
-                null,
-                DEFAULT_DESCRIPTION);
+        return lineSymbolizer(null, geometryPropertyName, DEFAULT_DESCRIPTION, DEFAULT_UOM, stroke, LITERAL_ZERO_FLOAT);
     }
 
     @Override
     public LineSymbolizer lineSymbolizer(final String name, final String geom,
             final Description desc, final Unit<?> uom,
             final Stroke stroke, final Expression offset) {
-        return new DefaultLineSymbolizer(stroke, offset, uom, geom, name, desc);
+        return lineSymbolizer(name, 
+             geom==null ? null : new DefaultPropertyName(geom),
+             desc, uom, stroke, offset);
     }
 
+    @Override
+    public LineSymbolizer lineSymbolizer(final String name, final Expression geom,
+            final Description desc, final Unit<?> uom,
+            final Stroke stroke, final Expression offset) {
+        return new DefaultLineSymbolizer(stroke, offset, uom, geom, name, desc);
+    }
+    
     @Override
     public PolygonSymbolizer polygonSymbolizer(){
         return DEFAULT_POLYGON_SYMBOLIZER;
@@ -345,21 +312,24 @@ public class DefaultStyleFactory extends Factory implements MutableStyleFactory 
     @Override
     public PolygonSymbolizer polygonSymbolizer(final Stroke stroke, final Fill fill,
         final String geometryPropertyName){
-        return new DefaultPolygonSymbolizer(
-                stroke,
-                fill,
-                DEFAULT_DISPLACEMENT,
-                FF.literal(0),
-                DEFAULT_UOM,
-                geometryPropertyName,
-                null,
-                DEFAULT_DESCRIPTION);
+        return polygonSymbolizer(null, geometryPropertyName,DEFAULT_DESCRIPTION,
+                DEFAULT_UOM, stroke, fill,DEFAULT_DISPLACEMENT, LITERAL_ZERO_FLOAT);
     }
 
     @Override
     public PolygonSymbolizer polygonSymbolizer(final String name, final String geom,
             final Description desc, final Unit<?> uom, final Stroke stroke,
             final Fill fill, final Displacement disp, final Expression offset) {
+        return polygonSymbolizer(name,
+                geom==null ? null : new DefaultPropertyName(geom),
+                desc, uom, stroke, fill, disp, offset);
+    }
+    
+    @Override
+    public PolygonSymbolizer polygonSymbolizer(final String name,
+            final Expression geom, final Description desc,
+            final Unit<?> uom, final Stroke stroke, final Fill fill,
+            final Displacement disp, final Expression offset) {
         return new DefaultPolygonSymbolizer(stroke, fill, disp, offset, uom, geom, name, desc);
     }
 
@@ -371,16 +341,9 @@ public class DefaultStyleFactory extends Factory implements MutableStyleFactory 
     @Override
     public TextSymbolizer textSymbolizer(final Fill fill, final Font font, final Halo halo,
         final Expression label, final LabelPlacement labelPlacement, final String geometryPropertyName){
-        return new DefaultTextSymbolizer(
-                label,
-                font,
-                labelPlacement,
-                halo,
-                fill,
-                DEFAULT_UOM,
-                geometryPropertyName,
-                null,
-                DEFAULT_DESCRIPTION);
+        return textSymbolizer(null,geometryPropertyName,DEFAULT_DESCRIPTION,DEFAULT_UOM,
+                label, font, labelPlacement, halo, fill
+        );
     }
 
     @Override
@@ -388,9 +351,19 @@ public class DefaultStyleFactory extends Factory implements MutableStyleFactory 
             final Description desc, final Unit<?> uom, final Expression label,
             final Font font, final LabelPlacement placement,
             final Halo halo, final Fill fill) {
-        return new DefaultTextSymbolizer(label, font, placement, halo, fill, uom, geom, name, desc);
+        return textSymbolizer(name,
+                geom==null ? null : new DefaultPropertyName(geom),
+                desc, uom, label, font, placement, halo, fill
+        );
     }
 
+    @Override
+    public TextSymbolizer textSymbolizer(final String name, final Expression geom,
+            final Description desc, final Unit<?> uom,
+            final Expression label, final Font font, final LabelPlacement placement,
+            final Halo halo, final Fill fill) {
+        return new DefaultTextSymbolizer(label, font, placement, halo, fill, uom, geom, name, desc);
+    }
 
     @Override
     public RasterSymbolizer rasterSymbolizer(){
@@ -403,18 +376,8 @@ public class DefaultStyleFactory extends Factory implements MutableStyleFactory 
             final OverlapBehavior overlap, final ColorMap colorMap,
             final ContrastEnhancement ce, final ShadedRelief relief,
             final Symbolizer outline){
-        return new DefaultRasterSymbolizer(
-                opacity,
-                channel,
-                overlap,
-                colorMap,
-                ce,
-                relief,
-                outline,
-                DEFAULT_UOM,
-                geometryPropertyName,
-                null,
-                DEFAULT_DESCRIPTION);
+        return rasterSymbolizer(null, geometryPropertyName, DEFAULT_DESCRIPTION,
+                DEFAULT_UOM, opacity, channel, overlap, colorMap, ce, relief, outline);
     }
 
     @Override
@@ -423,13 +386,36 @@ public class DefaultStyleFactory extends Factory implements MutableStyleFactory 
             final ChannelSelection selection, final OverlapBehavior overlap,
             final ColorMap colorMap, final ContrastEnhancement enchance,
             final ShadedRelief relief, final Symbolizer outline) {
+        return rasterSymbolizer(name, 
+                geom==null ? null : new DefaultPropertyName(geom),
+                desc,DEFAULT_UOM, opacity, selection, overlap, colorMap, enchance, relief, outline);
+        
+    }
+    
+    @Override
+    public RasterSymbolizer rasterSymbolizer(final String name,
+            final Expression geom, final Description desc,
+            final Unit<?> uom, final Expression opacity,
+            final ChannelSelection selection,
+            final OverlapBehavior overlap, final ColorMap colorMap,
+            final ContrastEnhancement enchance, final ShadedRelief relief,
+            final Symbolizer outline) {
         return new DefaultRasterSymbolizer(opacity, selection, overlap, colorMap,
                 enchance, relief, outline, uom, geom, name, desc);
     }
 
     @Override
     public ExtensionSymbolizer extensionSymbolizer(final String name,
-            final String geometry, final Description description,
+            final String geom, final Description description,
+            final Unit<?> unit, final String extensionName,
+            final Map<String, Expression> parameters) {
+        return extensionSymbolizer(name, 
+                geom==null ? null : new DefaultPropertyName(geom), 
+                description, unit, extensionName, parameters);
+    }
+    
+    public ExtensionSymbolizer extensionSymbolizer(final String name,
+            final Expression geometry, final Description description,
             final Unit<?> unit, final String extensionName,
             final Map<String, Expression> parameters) {
         throw new UnsupportedOperationException("Not supported yet.");

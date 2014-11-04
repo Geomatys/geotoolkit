@@ -32,7 +32,6 @@ import org.opengis.style.StyleVisitor;
 import org.opengis.style.Symbolizer;
 
 import static org.geotoolkit.style.StyleConstants.*;
-import org.geotoolkit.util.Utilities;
 import static org.opengis.filter.expression.Expression.*;
 
 /**
@@ -64,7 +63,7 @@ public class DefaultRasterSymbolizer extends AbstractSymbolizer implements Raste
      * @param selection : can be null
      * @param overlap : if null will be replaced by default value.
      * @param colorMap : can be null
-     * @param enchance : if null will be replaced by default value.
+     * @param enhance : if null will be replaced by default value.
      * @param relief : if null will be replaced by default value.
      * @param outline : can be null
      * @param uom : if null will be replaced by default value.
@@ -80,7 +79,7 @@ public class DefaultRasterSymbolizer extends AbstractSymbolizer implements Raste
             final ShadedRelief relief,
             final Symbolizer outline,
             final Unit uom,
-            final String geom,
+            final Expression geom,
             final String name,
             final Description desc){
         super(uom,geom,name,desc);
