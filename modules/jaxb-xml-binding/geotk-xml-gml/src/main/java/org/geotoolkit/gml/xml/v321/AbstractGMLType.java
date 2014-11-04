@@ -304,7 +304,10 @@ public abstract class AbstractGMLType extends AbstractMetadata implements Abstra
         if (this.name == null) {
             this.name = new ArrayList<>();
         }
-        this.name.add(0, new DefaultIdentifier(name));
+        this.name.clear();
+        if (name != null) {
+            this.name.add(0, new DefaultIdentifier(name));
+        }
     }
 
     /**
