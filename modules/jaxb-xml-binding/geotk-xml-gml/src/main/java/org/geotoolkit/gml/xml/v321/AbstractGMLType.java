@@ -42,6 +42,7 @@ import org.apache.sis.metadata.AbstractMetadata;
 import org.apache.sis.metadata.MetadataStandard;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.util.ComparisonMode;
+import org.apache.sis.util.Utilities;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.apache.sis.xml.IdentifierMap;
 import org.apache.sis.xml.IdentifierSpace;
@@ -359,7 +360,7 @@ public abstract class AbstractGMLType extends AbstractMetadata implements Abstra
                    Objects.equals(this.id,                   that.id)                   &&
                    Objects.equals(this.identifier,           that.identifier)           &&
                    Objects.equals(this.metaDataProperty,     that.metaDataProperty)     &&
-                   Objects.equals(this.getName(),            that.getName());
+                   Utilities.deepEquals(this.getName(), that.getName(), ComparisonMode.BY_CONTRACT);
         }
         return false;
     }
