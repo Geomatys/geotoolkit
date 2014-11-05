@@ -71,8 +71,10 @@ public abstract class AbstractSymbolizerRenderer<C extends CachedSymbolizer<? ex
         final Symbolizer symbolizer = symbol.getSource();
         if(symbolizer instanceof AbstractSymbolizer){
             this.geomPropertyName = ((AbstractSymbolizer)symbolizer).getGeometry();
-        }else{
+        }else if(symbol.getSource().getGeometryPropertyName() != null){
             this.geomPropertyName = GO2Utilities.FILTER_FACTORY.property(symbol.getSource().getGeometryPropertyName());
+        }else{
+            this.geomPropertyName = null;
         }
     }
 
