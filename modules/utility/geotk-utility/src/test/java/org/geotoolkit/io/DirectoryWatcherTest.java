@@ -1,6 +1,5 @@
 package org.geotoolkit.io;
 
-import org.apache.sis.test.PlatformDependent;
 import org.junit.After;
 import org.junit.Assume;
 import org.junit.Before;
