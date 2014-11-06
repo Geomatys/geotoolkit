@@ -100,9 +100,6 @@ public class SerializationTest {
 
 
         assertSerializedEquals(BasicFeatureTypes.FEATURE);
-        assertSerializedEquals(BasicFeatureTypes.LINE);
-        assertSerializedEquals(BasicFeatureTypes.POINT);
-        assertSerializedEquals(BasicFeatureTypes.POLYGON);
 
     }
 }

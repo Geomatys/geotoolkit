@@ -588,6 +588,7 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
             channel = shpFiles.getReadChannel(PRJ);
             crs = PrjFiles.read(channel, true);
         }catch(IOException ex){
+            getLogger().log(Level.WARNING, ex.getMessage(),ex);
             crs = null;
         }finally{
             //todo replace by ARM in JDK 1.7
@@ -619,25 +620,9 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
         }
 
         //create the feature type //////////////////////////////////////////////
-        final Class<?> geomBinding = geomDescriptor.getType().getBinding();
-
-        SimpleFeatureType parent = null;
-        if ((geomBinding == Point.class) || (geomBinding == MultiPoint.class)) {
-            parent = BasicFeatureTypes.POINT;
-        } else if ((geomBinding == Polygon.class)
-                || (geomBinding == MultiPolygon.class)) {
-            parent = BasicFeatureTypes.POLYGON;
-        } else if ((geomBinding == LineString.class)
-                || (geomBinding == MultiLineString.class)) {
-            parent = BasicFeatureTypes.LINE;
-        }
-
         final FeatureTypeBuilder builder = new FeatureTypeBuilder(null,false);
         builder.setName(namespace,shpFiles.getTypeName());
         builder.setAbstract(false);
-        if (parent != null) {
-            builder.setSuperType(parent);
-        }
         builder.addAll(attributes);
         builder.setDefaultGeometry(geomDescriptor.getLocalName());
 

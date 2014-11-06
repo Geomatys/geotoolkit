@@ -57,18 +57,6 @@ public class BasicFeatureTypes {
      */
     public static final SimpleFeatureType FEATURE;
     /**
-     * The FeatureType reference that should be used for Polygons
-     */
-    public static final SimpleFeatureType POLYGON;
-    /**
-     * The FeatureType reference that should be used for Points
-     */
-    public static final SimpleFeatureType POINT;
-    /**
-     * The FeatureType reference that should be used for Lines
-     */
-    public static final SimpleFeatureType LINE;
-    /**
      * The attribute name used to store the geometry
      */
     public static final String GEOMETRY_ATTRIBUTE_NAME = "the_geom";
@@ -79,36 +67,11 @@ public class BasicFeatureTypes {
     // Static initializer for the tyoe variables
 
     static {
-        SimpleFeatureType tmpPoint = null;
-        SimpleFeatureType tmpPolygon = null;
-        SimpleFeatureType tmpLine = null;
-
         // Feature is the base of everything else, must be created directly instead
         // of going thru the builder because the builder assumes it as the default base type
         FEATURE = new DefaultSimpleFeatureType(new DefaultName("Feature"),
                 Collections.EMPTY_LIST, null, true,
                 Collections.EMPTY_LIST, null, null);
-
-        try {
-            FeatureTypeBuilder build = new FeatureTypeBuilder();
-
-            //AttributeDescriptor[] types =  new AttributeDescriptor[] {};
-
-            build.setName(DEFAULT_NAMESPACE,"pointFeature");
-            tmpPoint = build.buildSimpleFeatureType();
-
-            build.setName(DEFAULT_NAMESPACE,"lineFeature");
-            tmpLine = build.buildSimpleFeatureType();
-
-            build.setName(DEFAULT_NAMESPACE,"polygonFeature");
-            tmpPolygon = build.buildSimpleFeatureType();
-        } catch (Exception ex) {
-            org.apache.sis.util.logging.Logging.getLogger("org.geotoolkit.feature.type.BasicFeatureTypes").log(
-                    Level.WARNING, "Error creating basic feature types", ex);
-        }
-        POINT = tmpPoint;
-        LINE = tmpLine;
-        POLYGON = tmpPolygon;
     }
 
     /**

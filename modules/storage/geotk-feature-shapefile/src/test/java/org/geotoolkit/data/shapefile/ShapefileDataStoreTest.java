@@ -226,11 +226,10 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
     }
 
     @Test
-    public void testLoadAndCheckParentTypeIsPolygon() throws Exception {
+    public void testLoadAndCheckPolygon() throws Exception {
         FeatureCollection<SimpleFeature> features = loadFeatures(STATE_POP, QueryBuilder.all(new DefaultName("statepop")));
         SimpleFeatureType schema = firstFeature(features).getFeatureType();
 
-        assertTrue(FeatureTypeUtilities.isDecendedFrom(schema, BasicFeatureTypes.POLYGON));
         assertTrue(FeatureTypeUtilities.isDecendedFrom(schema, FeatureTypeUtilities.DEFAULT_NAMESPACE.toString(), "polygonFeature"));
     }
 
