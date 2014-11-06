@@ -32,6 +32,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -62,7 +63,11 @@ public class FXFeatureTable extends FXPropertyPane{
     private FeatureMapLayer layer;
     
     public FXFeatureTable() {
-        setCenter(table);
+        final ScrollPane scroll = new ScrollPane(table);
+        scroll.setFitToHeight(true);
+        scroll.setFitToWidth(true);
+        table.setColumnResizePolicy(TableView.UNCONSTRAINED_RESIZE_POLICY);
+        setCenter(scroll);
         
         //listen to table selection
         table.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
