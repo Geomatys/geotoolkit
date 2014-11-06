@@ -574,6 +574,36 @@ public final strictfp class WKTFormatTest {
     }
 
     /**
+     * Tests parsing a WKT with a missing Geographic CRS name.
+     * This should be considered invalid, but happen in practice.
+     *
+     * @throws ParseException Should never happen.
+     *
+     * @since 4.0
+     */
+    @Test
+    public void testParseWithMissingName() throws ParseException {
+        final String wkt = decodeQuotes(
+                "PROJCS[“FRANCE/NTF/Lambert III”,"
+                + "GEOGCS[“”," // Missing name (the purpose of this test).
+                + "DATUM[“NTF=GR3DF97A”,SPHEROID[“Clarke 1880 (IGN)”,6378249.2,293.466021293627] ," // Intentionally misplaced coma.
+                + "TOWGS84[-168, -60, 320, 0, 0, 0, 0]],"
+                + "PRIMEM[“Greenwich”,0],UNIT[“Degrees”,0.0174532925199433],"
+                + "AXIS[“Long”,East],AXIS[“Lat”,North]],"
+                + "PROJECTION[“Lambert_Conformal_Conic_1SP\"],"
+                + "PARAMETER[“latitude_of_origin”,44.1],"
+                + "PARAMETER[“central_meridian”,2.33722917],"
+                + "PARAMETER[“scale_factor”,0.999877499],"
+                + "PARAMETER[“false_easting”,600000],"
+                + "PARAMETER[“false_northing”,200000],"
+                + "UNIT[“Meter”,1],"
+                + "AXIS[“East”,East],AXIS[“North”,North]]");
+        final WKTFormat wktFormat = new WKTFormat();
+        final ProjectedCRS crs = wktFormat.parse(wkt, 0, ProjectedCRS.class);
+        assertEquals("NTF=GR3DF97A", crs.getBaseCRS().getName().getCode());
+    }
+
+    /**
      * Tests the parsing and formatting of a WKT using ESRI conventions.
      *
      * @throws ParseException Should never happen.

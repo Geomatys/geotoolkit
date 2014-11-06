@@ -31,6 +31,7 @@ import javax.measure.quantity.Length;
 import javax.measure.quantity.Quantity;
 import javax.measure.quantity.Duration;
 
+import org.opengis.metadata.Identifier;
 import org.opengis.metadata.citation.Citation;
 import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.ParameterValueGroup;
@@ -486,17 +487,18 @@ public class ReferencingParser extends MathTransformParser {
      * }
      *
      * @param  parent The parent element.
-     * @param  name The name of the parent object being parsed.
+     * @param  name The name of the parent object being parsed, either a {@link String} or {@link Identifier} instance.
      * @return A properties map with the parent name and the optional authority code.
      * @throws ParseException if the {@code "AUTHORITY"} can't be parsed.
      */
-    private Map<String,Object> parseAuthority(final Element parent, final String name)
+    private Map<String,Object> parseAuthority(final Element parent, Object name)
             throws ParseException
     {
+        assert (name instanceof String) || (name instanceof Identifier);
         final boolean  isRoot = parent.isRoot();
         final Element element = parent.pullOptionalElement("AUTHORITY");
         if (element == null && !isRoot) {
-            return singletonMap(IdentifiedObject.NAME_KEY, (Object) name);
+            return singletonMap(IdentifiedObject.NAME_KEY, name);
         }
         Map<String,Object> properties = new HashMap<>(4);
         properties.put(IdentifiedObject.NAME_KEY, name);
@@ -506,7 +508,10 @@ public class ReferencingParser extends MathTransformParser {
             element.close();
             final Citation authority = Citations.fromName(auth);
             if (ASSIGN_AUTHORITY_TO_NAME) {
-                properties.put(IdentifiedObject.NAME_KEY, new NamedIdentifier(authority, name));
+                if (name instanceof String) {
+                    name = new NamedIdentifier(authority, (String) name);
+                }
+                properties.put(IdentifiedObject.NAME_KEY, name);
             }
             properties.put(IdentifiedObject.IDENTIFIERS_KEY, new NamedIdentifier(authority, code));
         }
@@ -1086,12 +1091,20 @@ public class ReferencingParser extends MathTransformParser {
      * @throws ParseException if the {@code "GEOGCS"} element can't be parsed.
      */
     private GeographicCRS parseGeoGCS(final Element parent) throws ParseException {
-        Element            element = parent.pullElement("GEOGCS");
-        String                name = element.pullString("name");
+        Element         element = parent.pullElement("GEOGCS");
+        Object             name = element.pullString("name");
+        Unit<Angle> angularUnit = parseUnit     (element, RADIAN);
+        PrimeMeridian  meridian = parsePrimem   (element, angularUnit);
+        GeodeticDatum     datum = parseDatum    (element, meridian);
+        if (((String) name).isEmpty()) {
+            /*
+             * GeographicCRS name is a mandatory property, but some invalid WKT with an empty string exist.
+             * In such case, we will use the name of the enclosed datum. Indeed, it is not uncommon to have
+             * the same name for a geographic CRS and its geodetic datum.
+             */
+            name = datum.getName();
+        }
         Map<String,?>   properties = parseAuthority(element, name);
-        Unit<Angle>    angularUnit = parseUnit     (element, RADIAN);
-        PrimeMeridian     meridian = parsePrimem   (element, angularUnit);
-        GeodeticDatum        datum = parseDatum    (element, meridian);
         CoordinateSystemAxis axis0 = parseAxis     (element, angularUnit, false);
         CoordinateSystemAxis axis1 = null;
         try {
