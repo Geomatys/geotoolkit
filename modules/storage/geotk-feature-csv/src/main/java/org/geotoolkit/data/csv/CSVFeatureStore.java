@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2010, Geomatys
+ *    (C) 2010-2014, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -89,8 +89,6 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 public class CSVFeatureStore extends AbstractFeatureStore implements DataFileStore {
 
-    private static final Logger LOGGER = Logging.getLogger(CSVFeatureStore.class);
-
     protected final FilterFactory FF = FactoryFinder.getFilterFactory(null);
 
     static final String BUNDLE_PATH = "org/geotoolkit/csv/bundle";
@@ -174,7 +172,7 @@ public class CSVFeatureStore extends AbstractFeatureStore implements DataFileSto
         try (final Scanner scanner = new Scanner(file)) {
             line = getNextLine(scanner);
         } catch (FileNotFoundException ex) {
-            LOGGER.log(Level.INFO, ex.getLocalizedMessage());
+            getLogger().log(Level.INFO, ex.getLocalizedMessage());
             // File does not exists.
             return null;
         } finally {
@@ -185,10 +183,16 @@ public class CSVFeatureStore extends AbstractFeatureStore implements DataFileSto
             return null;
         }
 
-        final String[] fields = line.split("" + separator);
+        int unnamed = 0;
+        final String[] fields = line.split("" + separator, -1);
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName(getDefaultNamespace(), name);
         for (String field : fields) {
+            field = field.trim();
+            if(field.isEmpty()){
+                field = "unamed"+(unnamed++);
+            }
+            
             final int dep = field.indexOf('(');
             final int fin = field.lastIndexOf(')');
 
@@ -222,9 +226,9 @@ public class CSVFeatureStore extends AbstractFeatureStore implements DataFileSto
                             crs = CRS.decode(name);
                             type = Geometry.class;
                         } catch (NoSuchAuthorityCodeException ex) {
-                            LOGGER.log(Level.SEVERE, null, ex);
+                            getLogger().log(Level.SEVERE, null, ex);
                         } catch (FactoryException ex) {
-                            LOGGER.log(Level.SEVERE, null, ex);
+                            getLogger().log(Level.SEVERE, null, ex);
                         }
                     }
                 }
