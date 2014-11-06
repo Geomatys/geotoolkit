@@ -43,6 +43,7 @@ import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.type.FeatureType;
+import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.geotoolkit.internal.Loggers;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.opengis.feature.PropertyType;
@@ -116,7 +117,7 @@ public class FXFeatureTable extends FXPropertyPane{
         
         table.getColumns().clear();        
         final FeatureType ft = col.getFeatureType();
-        for(PropertyType prop : ft.getProperties(true)){
+        for(PropertyDescriptor prop : ft.getDescriptors()){
             final TableColumn<Feature,String> tc = new TableColumn<Feature,String>(prop.getName().toString());
             tc.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Feature, String>, ObservableValue<String>>() {
                 @Override
