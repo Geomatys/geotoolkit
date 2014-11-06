@@ -21,14 +21,18 @@ import com.vividsolutions.jts.geom.Geometry;
 import java.util.AbstractSequentialList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.ListIterator;
+import java.util.Set;
 import java.util.logging.Level;
 import javafx.beans.InvalidationListener;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.TextFieldTableCell;
@@ -36,11 +40,14 @@ import javafx.util.Callback;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.query.QueryBuilder;
+import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.internal.Loggers;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.opengis.feature.PropertyType;
+import org.opengis.filter.Id;
+import org.opengis.filter.identity.Identifier;
 
 /**
  *
@@ -49,9 +56,31 @@ import org.opengis.feature.PropertyType;
 public class FXFeatureTable extends FXPropertyPane{
     
     private final TableView<Feature> table = new TableView<>();
+    private boolean loadAll = false;
 
+    private FeatureMapLayer layer;
+    
     public FXFeatureTable() {
         setCenter(table);
+        
+        //listen to table selection
+        table.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        table.getSelectionModel().getSelectedItems().addListener(new ListChangeListener<Feature>() {
+
+            @Override
+            public void onChanged(ListChangeListener.Change<? extends Feature> c) {
+                final Iterator<Feature> ite = table.getSelectionModel().getSelectedItems().iterator();
+                final Set<Identifier> set = new HashSet<>();
+                while(ite.hasNext()){
+                    set.add(ite.next().getIdentifier());
+                }
+                final Id selection = GO2Utilities.FILTER_FACTORY.id(set);
+                if(layer!=null){
+                    layer.setSelectionFilter(selection);
+                }
+                
+            }
+        });
     }
 
     @Override
@@ -62,18 +91,30 @@ public class FXFeatureTable extends FXPropertyPane{
     public String getCategory(){
         return "";
     }
+
+    public boolean isLoadAll() {
+        return loadAll;
+    }
+
+    public void setLoadAll(boolean loadAll) {
+        this.loadAll = loadAll;
+    }
+    
+    public void setEditable(boolean editable){
+        table.setEditable(editable);
+    }
+
+    public boolean isEditable(){
+        return table.isEditable();
+    }
     
     public boolean init(Object candidate){
         if(!(candidate instanceof FeatureMapLayer)) return false;
         
-        final FeatureMapLayer layer = (FeatureMapLayer) candidate;
+        layer = (FeatureMapLayer) candidate;
         final FeatureCollection<? extends Feature> col = layer.getCollection();
         
-        //TODO make a caching versio, this is too slow for today use.
-//        final ObservableFeatureCollection obsCol = new ObservableFeatureCollection((FeatureCollection<Feature>) col);
-//        table.setItems(obsCol);
-//        table.getColumns().clear();
-        
+        table.getColumns().clear();        
         final FeatureType ft = col.getFeatureType();
         for(PropertyType prop : ft.getProperties(true)){
             final TableColumn<Feature,String> tc = new TableColumn<Feature,String>(prop.getName().toString());
@@ -91,6 +132,14 @@ public class FXFeatureTable extends FXPropertyPane{
             tc.setCellFactory(TextFieldTableCell.forTableColumn());
             table.getColumns().add(tc);
         }
+        
+        if(loadAll){
+            table.setItems(FXCollections.observableArrayList((Feature[])col.toArray(new Feature[0])));
+        }
+        
+        //TODO make a caching version, this is too slow for today use.
+        //final ObservableFeatureCollection obsCol = new ObservableFeatureCollection((FeatureCollection<Feature>) col);
+        //table.setItems(obsCol);
         
         return true;
     }

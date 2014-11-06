@@ -93,7 +93,7 @@ public class FXMap extends BorderPane {
     }
 
     public FXMap(final boolean statefull){
-        setBackground(new Background(new BackgroundFill(javafx.scene.paint.Color.WHITE, CornerRadii.EMPTY, Insets.EMPTY)));
+//        setBackground(new Background(new BackgroundFill(javafx.scene.paint.Color.WHITE, CornerRadii.EMPTY, Insets.EMPTY)));
         view.heightProperty().bind(mapDecorationPane.heightProperty());
         view.widthProperty().bind(mapDecorationPane.widthProperty());
         
