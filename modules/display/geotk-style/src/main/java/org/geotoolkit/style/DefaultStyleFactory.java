@@ -388,7 +388,7 @@ public class DefaultStyleFactory extends Factory implements MutableStyleFactory 
             final ShadedRelief relief, final Symbolizer outline) {
         return rasterSymbolizer(name, 
                 geom==null ? null : new DefaultPropertyName(geom),
-                desc,DEFAULT_UOM, opacity, selection, overlap, colorMap, enchance, relief, outline);
+                desc,uom, opacity, selection, overlap, colorMap, enchance, relief, outline);
         
     }
     
