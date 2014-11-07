@@ -288,7 +288,15 @@ public class TiffImageReader extends SpatialImageReader {
      */
     private Object currentInput;
     
+    /**
+     * Channel position at the channel openning.
+     */
     private long portosfileChannelPositionBegin;
+    
+    /**
+     * Define the databuffer type of the current read layer.
+     */
+    private int sourceDataBufferType;
         
     /**
      * Creates a new reader.
@@ -559,8 +567,8 @@ public class TiffImageReader extends SpatialImageReader {
             final Map<String, Object> bitsPerSamples = (headProperties.get(BitsPerSample));
             final Map<String, Object> sampleFormat   = (headProperties.get(SampleFormat));
             
-            //-- find appropriate databuffer image type from size of sample or sample format or both of them. --//
-            int databufferType;
+            //-- find appropriate databuffer image type from bit per sample or sample format, planar configuration or both of them. --//
+//            int sourceDataBufferType;
             
             //-- bits per sample study --//
             int[] bits = null;
@@ -600,7 +608,7 @@ public class TiffImageReader extends SpatialImageReader {
                     /*
                     * If bitsPerSample and sample format fields were not specified, assume bytes.
                     */
-                   databufferType = DataBuffer.TYPE_BYTE;
+                   sourceDataBufferType = DataBuffer.TYPE_BYTE;
                    bits           = new int[samplesPerPixel];
                    Arrays.fill(bits, 8);
                 } else {
@@ -609,10 +617,10 @@ public class TiffImageReader extends SpatialImageReader {
                      * in one contiguous read operation.
                      */
                     switch (sampleBitSize) {
-                        case Byte   .SIZE : databufferType = DataBuffer.TYPE_BYTE;   break;
-                        case Short  .SIZE : databufferType = DataBuffer.TYPE_USHORT; break;
-                        case Integer.SIZE : databufferType = DataBuffer.TYPE_INT;    break;
-                        case Double.SIZE  : databufferType = DataBuffer.TYPE_DOUBLE; break;
+                        case Byte   .SIZE : sourceDataBufferType = DataBuffer.TYPE_BYTE;   break;
+                        case Short  .SIZE : sourceDataBufferType = DataBuffer.TYPE_USHORT; break;
+                        case Integer.SIZE : sourceDataBufferType = DataBuffer.TYPE_INT;    break;
+                        case Double.SIZE  : sourceDataBufferType = DataBuffer.TYPE_DOUBLE; break;
                         default: {
                             throw new UnsupportedImageFormatException(error(
                                     Errors.Keys.ILLEGAL_PARAMETER_VALUE_2, "bitsPerSample", sampleBitSize));
@@ -634,8 +642,8 @@ public class TiffImageReader extends SpatialImageReader {
                      * Case to defferency 32 bits Float to 32 bits Integer. 
                      */
                     switch (sampleBitSize) {
-                        case Float.SIZE  : databufferType = DataBuffer.TYPE_FLOAT; break;
-                        case Double.SIZE : databufferType = DataBuffer.TYPE_DOUBLE; break;
+                        case Float.SIZE  : sourceDataBufferType = DataBuffer.TYPE_FLOAT; break;
+                        case Double.SIZE : sourceDataBufferType = DataBuffer.TYPE_DOUBLE; break;
                         default : {
                             throw new UnsupportedImageFormatException(error(
                                     Errors.Keys.ILLEGAL_PARAMETER_VALUE_2, "bitsPerSample", sampleBitSize));
@@ -652,10 +660,10 @@ public class TiffImageReader extends SpatialImageReader {
                     * in one contiguous read operation.
                     */
                    switch (sampleBitSize) {
-                       case Byte   .SIZE : databufferType = DataBuffer.TYPE_BYTE;   break;
-                       case Short  .SIZE : databufferType = DataBuffer.TYPE_USHORT; break;
-                       case Integer.SIZE : databufferType = DataBuffer.TYPE_INT;    break;
-                       case Double.SIZE  : databufferType = DataBuffer.TYPE_DOUBLE; break;
+                       case Byte   .SIZE : sourceDataBufferType = DataBuffer.TYPE_BYTE;   break;
+                       case Short  .SIZE : sourceDataBufferType = DataBuffer.TYPE_USHORT; break;
+                       case Integer.SIZE : sourceDataBufferType = DataBuffer.TYPE_INT;    break;
+                       case Double.SIZE  : sourceDataBufferType = DataBuffer.TYPE_DOUBLE; break;
                        default : {
                            throw new UnsupportedImageFormatException(error(
                                    Errors.Keys.ILLEGAL_PARAMETER_VALUE_2, "bitsPerSample", sampleBitSize));
@@ -684,7 +692,7 @@ public class TiffImageReader extends SpatialImageReader {
                         throw new UnsupportedImageFormatException("image should own colorMap informations.");
                     final long[] index  = (long[]) colorMod.get(ATT_VALUE);
                     final int[] indexes = buildColorMapArray(index);
-                    final ColorModel cm = new IndexColorModel(sampleBitSize, indexes.length, indexes, 0, true, -1, databufferType);
+                    final ColorModel cm = new IndexColorModel(sampleBitSize, indexes.length, indexes, 0, true, -1, sourceDataBufferType);
                     /*
                      * Create a SampleModel with size of 1x1 volontary just to know image properties.
                      * Image with correctively size will be create later with getDestination() in #read(int index, param) method.
@@ -699,7 +707,7 @@ public class TiffImageReader extends SpatialImageReader {
             }
             final boolean hasAlpha = bits.length > cs.getNumComponents();
             final ColorModel cm = new ComponentColorModel(cs, bits, hasAlpha, false,
-                    hasAlpha ? Transparency.TRANSLUCENT : Transparency.OPAQUE, databufferType);
+                    hasAlpha ? Transparency.TRANSLUCENT : Transparency.OPAQUE, sourceDataBufferType);
            /*
             * Create a SampleModel with size of 1x1 volontary just to know image properties.
             * Image with correctively size will be create later with getDestination() in #read(int index, param) method.
@@ -1623,6 +1631,11 @@ public class TiffImageReader extends SpatialImageReader {
         final Rectangle srcRegion = new Rectangle();
         final Rectangle dstRegion = new Rectangle();
         final BufferedImage image = getDestination(param, getImageTypes(layerIndex), imageWidth, imageHeight);
+                
+        if (image.getRaster().getDataBuffer().getDataType() != sourceDataBufferType) 
+            throw new IllegalArgumentException("The destination image datatype doesn't match with read source image datatype. "
+                    + "Expected Datatype : "+sourceDataBufferType+" found : "+image.getRaster().getDataBuffer().getDataType());
+        
         /*
          * compute region : ajust les 2 rectangles src region et dest region en fonction des coeff subsampling present dans Imagereadparam.
          */
