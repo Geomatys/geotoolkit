@@ -18,9 +18,11 @@ package org.geotoolkit.lucene.index;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.HashSet;
+import java.util.Map;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.util.CharArraySet;
@@ -31,6 +33,7 @@ import org.geotoolkit.index.tree.Tree;
 import org.geotoolkit.lucene.analysis.standard.ClassicAnalyzer;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.index.tree.StoreIndexException;
+import org.geotoolkit.index.tree.TreeElementMapper;
 import org.geotoolkit.index.tree.manager.NamedEnvelope;
 import org.geotoolkit.index.tree.manager.SQLRtreeManager;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -162,5 +165,20 @@ public abstract class IndexLucene {
         } catch (StoreIndexException | IOException ex) {
             LOGGER.log(Level.WARNING, null, ex);
         }
+    }
+    
+    public Map<Integer, NamedEnvelope> getMapperContent() throws IOException {
+        if (rTree != null) {
+            TreeElementMapper mapper = rTree.getTreeElementMapper();
+            return mapper.getFullMap();
+        }
+        return new HashMap<>();
+    }
+    
+    public String getTreeRepresentation() {
+        if (rTree != null) {
+            return rTree.toString();
+        }
+        return null;
     }
 }
