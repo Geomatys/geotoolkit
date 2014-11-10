@@ -22,6 +22,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 import javax.sql.DataSource;
 import org.geotoolkit.index.tree.TreeElementMapper;
 import org.geotoolkit.internal.sql.DefaultDataSource;
@@ -94,18 +96,20 @@ public class LuceneSQLTreeEltMapper implements TreeElementMapper<NamedEnvelope> 
                 existStmt.close();
                 if (exist) {
                     final PreparedStatement stmt = conT.prepareStatement("UPDATE \"treemap\".\"records\" "
-                                                                       + "SET \"identifier\"=?, \"nbenv\"=?, \"minx\"=?, \"maxx\"=?, \"miny\"=?, \"maxy\"=? "
-                                                                       + "WHERE \"id\"=?");
+                                                                           + "SET \"identifier\"=?, \"nbenv\"=?, \"minx\"=?, \"maxx\"=?, \"miny\"=?, \"maxy\"=? "
+                                                                           + "WHERE \"id\"=?");
                     stmt.setString(1, env.getId());
                     stmt.setInt(2, env.getNbEnv());
                     stmt.setDouble(3, env.getMinimum(0));
                     stmt.setDouble(4, env.getMaximum(0));
                     stmt.setDouble(5, env.getMinimum(1));
                     stmt.setDouble(6, env.getMaximum(1));
-
                     stmt.setInt(7, treeIdentifier);
-                    stmt.executeUpdate();
-                    stmt.close();
+                    try {
+                        stmt.executeUpdate();
+                    } finally {
+                        stmt.close();
+                    }
                     conT.commit();
                 } else {
                     final PreparedStatement stmt = conT.prepareStatement("INSERT INTO \"treemap\".\"records\" "
@@ -117,20 +121,25 @@ public class LuceneSQLTreeEltMapper implements TreeElementMapper<NamedEnvelope> 
                     stmt.setDouble(5, env.getMaximum(0));
                     stmt.setDouble(6, env.getMinimum(1));
                     stmt.setDouble(7, env.getMaximum(1));
-
+                    try {
                     stmt.executeUpdate();
-                    stmt.close();
+                    } finally {
+                        stmt.close();
+                    }
                     conT.commit();
                 }
             } else {
                 final PreparedStatement remove = conT.prepareStatement("DELETE FROM \"treemap\".\"records\" WHERE \"id\"=?");
                 remove.setInt(1, treeIdentifier);
-                remove.executeUpdate();
-                remove.close();
+                try {
+                    remove.executeUpdate();
+                } finally {
+                    remove.close();
+                }
                 conT.commit();
             }
         } catch (SQLException ex) {
-            throw new IOException("Error while getting tree identifier for envelope", ex);
+            throw new IOException("Error while setting tree identifier for envelope :" + env, ex);
         }
     }
 
@@ -159,6 +168,34 @@ public class LuceneSQLTreeEltMapper implements TreeElementMapper<NamedEnvelope> 
         }
         return result;
     }
+    
+    @Override
+    public Map<Integer, NamedEnvelope> getFullMap() throws IOException {
+        Map<Integer, NamedEnvelope> result = new HashMap<>();
+        try {
+            final PreparedStatement stmt = conRO.prepareStatement("SELECT * FROM \"treemap\".\"records\"");
+            final ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                final String identifier = rs.getString("identifier");
+                final int treeId        = rs.getInt("id");
+                final int nbEnv         = rs.getInt("nbenv");
+                final double minx       = rs.getDouble("minx");
+                final double maxx       = rs.getDouble("maxx");
+                final double miny       = rs.getDouble("miny");
+                final double maxy       = rs.getDouble("maxy");
+                final NamedEnvelope env = new NamedEnvelope(crs, identifier, nbEnv);
+                env.setRange(0, minx, maxx);
+                env.setRange(1, miny, maxy);
+                result.put(treeId, env);
+            }
+            rs.close();
+            stmt.close();
+        } catch (SQLException ex) {
+            throw new IOException("Error while getting envelope", ex);
+        }
+        return result;
+    }
+
 
     @Override
     public void clear() throws IOException {

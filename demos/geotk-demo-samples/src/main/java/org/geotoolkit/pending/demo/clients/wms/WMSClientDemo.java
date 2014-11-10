@@ -26,14 +26,14 @@ public class WMSClientDemo {
         final GetLegendRequest getLegend = wmsServer.createGetLegend();
 
         //simplify usage for map layer
-        final WMSMapLayer layer = new WMSMapLayer(wmsServer, "layerTest");
-        final WMSMapLayer layer3 = new WMSMapLayer(wmsServer, "layerTest2");
+        final WMSMapLayer layer = new WMSMapLayer(wmsServer, "spot2");
+        //final WMSMapLayer layer3 = new WMSMapLayer(wmsServer, "layerTest2");
         final WMSMapLayer layer2 = new WMSMapLayer(wmsServer, "Countries");
 
         final MapContext context = MapBuilder.createContext();        
         context.layers().add(layer);
         context.layers().add(layer2);
-        context.layers().add(layer3);
+        //context.layers().add(layer3);
         JMap2DFrame.show(context);
     }
 

@@ -19,7 +19,9 @@ package org.geotoolkit.index.tree;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -116,5 +118,10 @@ public class TreeElementMapperTest implements TreeElementMapper<double[]> {
     @Override
     public void flush() throws IOException {
         // do nothing
+    }
+    
+    @Override
+    public Map<Integer, double[]> getFullMap() throws IOException {
+        return new HashMap<>();
     }
 }

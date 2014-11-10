@@ -28,7 +28,9 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -314,5 +316,10 @@ class TreeXElementMapperTest implements TreeElementMapper<Envelope> {
     @Override
     public void flush() throws IOException {
         // do nothing
+    }
+
+    @Override
+    public Map<Integer, Envelope> getFullMap() throws IOException {
+        return new HashMap<>();
     }
 }

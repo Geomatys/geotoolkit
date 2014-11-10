@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.index.tree.StoreIndexException;
@@ -148,6 +150,11 @@ public class TreeDemo {
             public void flush() throws IOException {
                 //do nothing
             }
+           
+            @Override
+	    public Map<Integer, Envelope> getFullMap() throws IOException {
+		return new HashMap<>();
+	    }
         };
 
         /*

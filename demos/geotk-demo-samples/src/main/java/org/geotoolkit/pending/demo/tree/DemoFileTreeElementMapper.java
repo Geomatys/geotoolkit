@@ -3,6 +3,8 @@ package org.geotoolkit.pending.demo.tree;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.index.tree.FileTreeElementMapper;
 import org.opengis.geometry.Envelope;
@@ -76,5 +78,10 @@ final class DemoFileTreeElementMapper extends FileTreeElementMapper<Envelope>{
     @Override
     public Envelope getEnvelope(Envelope object) throws IOException {
         return object;
+    }
+
+    @Override
+    public Map<Integer, Envelope> getFullMap() throws IOException {
+        return new HashMap<>();
     }
 }

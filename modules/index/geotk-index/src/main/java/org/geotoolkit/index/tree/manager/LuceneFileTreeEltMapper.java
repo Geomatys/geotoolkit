@@ -24,6 +24,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.RandomAccessFile;
 import java.nio.channels.FileChannel;
+import java.util.Map;
 import org.geotoolkit.index.tree.FileTreeElementMapper;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -219,6 +220,11 @@ public final class LuceneFileTreeEltMapper extends FileTreeElementMapper<NamedEn
         idMapInOutStream.getChannel().position(0);
         idMapInOutStream.writeLong(idMapCurrentPosition);
         idMapInOutStream.close();
+    }
+
+    @Override
+    public Map<Integer, NamedEnvelope> getFullMap() throws IOException {
+        throw new UnsupportedOperationException("Not supported yet int File implementation.");
     }
 }
 

@@ -19,6 +19,8 @@ package org.geotoolkit.index.tree;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -80,5 +82,10 @@ public class FileTreeElementMapperTest extends FileTreeElementMapper<double[]> {
             result[i] = byteBuffer.getDouble();
         }
         return result;
+    }
+    
+    @Override
+    public Map<Integer, double[]> getFullMap() throws IOException {
+        return new HashMap<>();
     }
 }

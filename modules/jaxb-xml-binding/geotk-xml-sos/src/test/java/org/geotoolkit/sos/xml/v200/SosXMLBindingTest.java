@@ -29,6 +29,8 @@ import org.apache.sis.test.XMLComparator;
 import org.geotoolkit.sos.xml.SOSMarshallerPool;
 
 import org.apache.sis.xml.MarshallerPool;
+import org.geotoolkit.gml.xml.v321.CodeType;
+import org.geotoolkit.observation.xml.v200.NamedValueType;
 
 //Junit dependencies
 import org.junit.*;
@@ -93,6 +95,13 @@ public class SosXMLBindingTest {
                            "</sos:InsertObservationResponse>\n" ;
         final ExtendedDOMComparator comparator = new ExtendedDOMComparator(expResult, result);
         comparator.compare();
+        
+        final GetObservationType go = new GetObservationType();
+        go.getExtension().add("responseMode: out-of-band");
+        
+        marshaller.marshal(go, sw);
+
+        System.out.println(sw.toString());
 
     }
 

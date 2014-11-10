@@ -17,6 +17,7 @@
 package org.geotoolkit.index.tree;
 
 import java.io.IOException;
+import java.util.Map;
 import org.opengis.geometry.Envelope;
 
 /**
@@ -59,6 +60,15 @@ public interface TreeElementMapper<E> {
      * @return object from its tree identifier.
      */
     public E getObjectFromTreeIdentifier(int treeIdentifier) throws IOException;
+    
+    /**
+     * Return the full map of object.
+     * This method should be used carrefully with a large number of object.
+     * Mostly used for debugging purpose.
+     * 
+     * @return 
+     */
+    public Map<Integer, E> getFullMap() throws IOException;
     
     /**
      * Initialize attributs like just after class constructor.
