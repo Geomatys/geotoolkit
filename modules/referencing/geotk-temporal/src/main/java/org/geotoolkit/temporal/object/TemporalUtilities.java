@@ -251,7 +251,7 @@ public final class TemporalUtilities {
             }
         }
 
-        return null;
+        throw new ParseException("Unable to parse given string as a date with regular date formats", 0);
     }
 
     public static String getTimeZone(final String dateString) {
