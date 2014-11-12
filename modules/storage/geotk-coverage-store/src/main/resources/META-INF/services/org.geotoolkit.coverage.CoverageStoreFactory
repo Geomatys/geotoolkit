@@ -1,3 +1,2 @@
 org.geotoolkit.coverage.filestore.FileCoverageStoreFactory
-org.geotoolkit.coverage.xmlstore.XMLCoverageStoreFactory
 org.geotoolkit.coverage.sql.CoverageSQLStoreFactory

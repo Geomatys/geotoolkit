@@ -71,10 +71,10 @@ public class XMLCoverageStoreFactory extends AbstractCoverageStoreFactory {
     static {
         ParameterBuilder builder = new ParameterBuilder();
         PATH = builder.addName("path")
-                .setRemarks(new ResourceInternationalString("org/geotoolkit/coverage/bundle", "coverageXMLPathRemarks"))
+                .setRemarks(new ResourceInternationalString("org/geotoolkit/coverage/xmlstore/bundle", "coverageXMLPathRemarks"))
                 .setRequired(true).create(URL.class, null);
         CACHE_TILE_STATE = builder.addName("cacheTileState")
-                .setRemarks(new ResourceInternationalString("org/geotoolkit/coverage/bundle", "coverageXMLTileStateRemarks"))
+                .setRemarks(new ResourceInternationalString("org/geotoolkit/coverage/xmlstore/bundle", "coverageXMLTileStateRemarks"))
                 .setRequired(false).create(Boolean.class, false);
         PARAMETERS_DESCRIPTOR = builder.addName("XMLCoverageStoreParameters").createGroup(IDENTIFIER, PATH, NAMESPACE, CACHE_TILE_STATE);
     }
@@ -86,12 +86,12 @@ public class XMLCoverageStoreFactory extends AbstractCoverageStoreFactory {
 
     @Override
     public CharSequence getDescription() {
-        return new ResourceInternationalString("org/geotoolkit/coverage/bundle", "coverageXMLDescription");
+        return new ResourceInternationalString("org/geotoolkit/coverage/xmlstore/bundle", "coverageXMLDescription");
     }
 
     @Override
     public CharSequence getDisplayName() {
-        return new ResourceInternationalString("org/geotoolkit/coverage/bundle", "coverageXMLTitle");
+        return new ResourceInternationalString("org/geotoolkit/coverage/xmlstore/bundle", "coverageXMLTitle");
     }
 
     @Override

@@ -43,7 +43,6 @@ import net.iharder.Base64;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.referencing.operation.transform.TransferFunction;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.util.ObjectConverters;
 import org.geotoolkit.coverage.AbstractPyramidalCoverageReference;
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.CoverageStoreContentEvent;
@@ -72,9 +71,6 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.util.FactoryException;
-
-import static org.geotoolkit.coverage.xmlstore.XMLCategory.FUNCTION_EXPONENTIAL;
-import static org.geotoolkit.coverage.xmlstore.XMLCategory.FUNCTION_LINEAR;
 
 /**
  *

@@ -136,6 +136,12 @@
             <version>${project.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.geotoolkit</groupId>
+            <artifactId>geotk-coverage-xml</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
         <!-- processing -->
         <dependency>
             <groupId>org.geotoolkit</groupId>

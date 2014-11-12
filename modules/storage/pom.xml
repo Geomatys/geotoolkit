@@ -116,6 +116,7 @@
     <module>geotk-coverage-imagery</module>
     <module>geotk-coverage-netcdf</module>
     <module>geotk-coverage-postgresql</module>
+    <module>geotk-coverage-xml</module>
     <module>geotk-coverage-store</module>
     <module>geotk-coverage-sql</module>
     <module>geotk-coverage-wkb</module>
