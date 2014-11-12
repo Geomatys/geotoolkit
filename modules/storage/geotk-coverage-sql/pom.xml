@@ -83,6 +83,11 @@
     </dependency>
     <dependency>
       <groupId>org.geotoolkit</groupId>
+      <artifactId>geotk-coverage-store</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.geotoolkit</groupId>
       <artifactId>geotk-coverage-netcdf</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>

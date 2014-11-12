@@ -45,7 +45,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.apache.sis.referencing.CommonCRS;
 
 /**
- * Abstract pyramide store test.
+ * Abstract pyramid store test.
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
