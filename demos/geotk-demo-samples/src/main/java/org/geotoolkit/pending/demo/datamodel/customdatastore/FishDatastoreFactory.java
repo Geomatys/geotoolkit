@@ -12,6 +12,9 @@ import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.storage.DataType;
+import org.geotoolkit.storage.DefaultFactoryMetadata;
+import org.geotoolkit.storage.FactoryMetadata;
 
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.identification.Identification;
@@ -69,6 +72,11 @@ public class FishDatastoreFactory extends AbstractFileFeatureStoreFactory{
     @Override
     public String[] getFileExtensions() {
         return new String[]{".fsh"};
+    }
+
+    @Override
+    public FactoryMetadata getMetadata() {
+        return new DefaultFactoryMetadata(DataType.VECTOR, true, false, false, false, GEOMS_ALL);
     }
 
 }
