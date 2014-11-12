@@ -23,12 +23,29 @@ package org.geotoolkit.storage;
  */
 public class DefaultFactoryMetadata implements FactoryMetadata {
 
+    public static final Class[] GEOMS_NONE = new Class[0];
+    
     private final DataType dataType;
     private final boolean styledFeature;
+    private final boolean supportStoreReading;
+    private final boolean supportStoreCreation;
+    private final boolean supportStoreWriting;
+    private final Class[] supportedGeomClasses;
 
-    public DefaultFactoryMetadata(DataType dataType, boolean styledFeature) {
+    public DefaultFactoryMetadata(DataType dataType, boolean supportStoreReading, 
+            boolean supportStoreCreation, boolean supportStoreWriting) {
+        this(dataType,supportStoreReading,supportStoreCreation,supportStoreWriting,false,GEOMS_NONE);
+    }
+    
+    public DefaultFactoryMetadata(DataType dataType, boolean supportStoreReading, 
+            boolean supportStoreCreation, boolean supportStoreWriting, 
+            boolean styledFeature, Class[] supportedGeomClasses) {
         this.dataType = dataType;
+        this.supportStoreReading = supportStoreReading;
+        this.supportStoreCreation = supportStoreCreation;
+        this.supportStoreWriting = supportStoreWriting;
         this.styledFeature = styledFeature;
+        this.supportedGeomClasses = supportedGeomClasses == null ? GEOMS_NONE : supportedGeomClasses;
     }
     
     @Override
@@ -39,6 +56,26 @@ public class DefaultFactoryMetadata implements FactoryMetadata {
     @Override
     public boolean produceStyledFeature() {
         return styledFeature;
+    }
+
+    @Override
+    public boolean supportStoreReading() {
+        return supportStoreReading;
+    }
+
+    @Override
+    public boolean supportStoreCreation() {
+        return supportStoreCreation;
+    }
+
+    @Override
+    public boolean supportStoreWriting() {
+        return supportStoreWriting;
+    }
+
+    @Override
+    public Class[] supportedGeometryTypes() {
+        return supportedGeomClasses.clone();
     }
     
 }

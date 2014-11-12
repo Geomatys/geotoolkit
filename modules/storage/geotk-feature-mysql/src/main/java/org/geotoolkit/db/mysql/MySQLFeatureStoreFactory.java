@@ -23,10 +23,14 @@ import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.apache.sis.util.iso.ResourceInternationalString;
+import static org.geotoolkit.data.AbstractFeatureStoreFactory.GEOMS_ALL;
 import org.geotoolkit.db.AbstractJDBCFeatureStoreFactory;
 import org.geotoolkit.db.DefaultJDBCFeatureStore;
 import org.geotoolkit.db.JDBCFeatureStore;
 import org.geotoolkit.db.dialect.SQLDialect;
+import org.geotoolkit.storage.DataType;
+import org.geotoolkit.storage.DefaultFactoryMetadata;
+import org.geotoolkit.storage.FactoryMetadata;
 
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.identification.Identification;
@@ -112,6 +116,11 @@ public class MySQLFeatureStoreFactory extends AbstractJDBCFeatureStoreFactory {
     protected MySQLFeatureStore toFeatureStore(ParameterValueGroup params, String factoryId) {
         //add versioning support
         return new MySQLFeatureStore(params, factoryId);
+    }
+    
+    @Override
+    public FactoryMetadata getMetadata() {
+        return new DefaultFactoryMetadata(DataType.VECTOR, true, true, true, false, DefaultFactoryMetadata.GEOMS_NONE);
     }
     
 }

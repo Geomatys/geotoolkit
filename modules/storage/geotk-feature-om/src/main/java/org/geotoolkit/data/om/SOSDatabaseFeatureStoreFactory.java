@@ -44,6 +44,9 @@ import org.opengis.parameter.ParameterValueGroup;
 
 import static org.geotoolkit.db.AbstractJDBCFeatureStoreFactory.*;
 import org.apache.sis.util.iso.ResourceInternationalString;
+import org.geotoolkit.storage.DataType;
+import org.geotoolkit.storage.DefaultFactoryMetadata;
+import org.geotoolkit.storage.FactoryMetadata;
 
 /**
  *
@@ -239,5 +242,10 @@ public class SOSDatabaseFeatureStoreFactory extends AbstractFeatureStoreFactory 
         DefaultConformanceResult result =  new DefaultConformanceResult();
         result.setPass(true);
         return result;
+    }
+    
+    @Override
+    public FactoryMetadata getMetadata() {
+        return new DefaultFactoryMetadata(DataType.VECTOR, true, false, false, false, GEOMS_ALL);
     }
 }

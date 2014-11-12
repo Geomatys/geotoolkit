@@ -125,9 +125,8 @@ public class OSMTMSClientFactory extends AbstractClientFactory implements Covera
         throw new DataStoreException("Can not create new OSM TMS coverage store.");
     }
 
-
     @Override
     public FactoryMetadata getMetadata() {
-        return new DefaultFactoryMetadata(DataType.PYRAMID, false);
+        return new DefaultFactoryMetadata(DataType.PYRAMID, true, false, false);
     }
 }

@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2009-2012, Geomatys
+ *    (C) 2009-2014, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -16,6 +16,13 @@
  */
 package org.geotoolkit.data;
 
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.LineString;
+import com.vividsolutions.jts.geom.MultiLineString;
+import com.vividsolutions.jts.geom.MultiPoint;
+import com.vividsolutions.jts.geom.MultiPolygon;
+import com.vividsolutions.jts.geom.Point;
+import com.vividsolutions.jts.geom.Polygon;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -26,12 +33,9 @@ import org.geotoolkit.feature.FeatureUtilities;
 import org.apache.sis.metadata.iso.quality.DefaultConformanceResult;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.Parameters;
-import org.geotoolkit.storage.DataType;
-import org.geotoolkit.storage.FactoryMetadata;
 import org.geotoolkit.util.collection.MapUtilities;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.iso.ResourceInternationalString;
-import org.geotoolkit.storage.DefaultFactoryMetadata;
 import org.opengis.metadata.quality.ConformanceResult;
 import org.opengis.parameter.GeneralParameterValue;
 import org.opengis.parameter.InvalidParameterValueException;
@@ -50,6 +54,16 @@ import org.opengis.referencing.IdentifiedObject;
  */
 public abstract class AbstractFeatureStoreFactory extends Factory implements FeatureStoreFactory {
 
+    public static final Class[] GEOMS_ALL = new Class[]{
+        Geometry.class,
+        Point.class,
+        LineString.class,
+        Polygon.class,
+        MultiPoint.class,
+        MultiLineString.class,
+        MultiPolygon.class
+    };
+    
     private static final String BUNDLE_PATH = "org/geotoolkit/data/bundle";
 
     /**
@@ -289,8 +303,4 @@ public abstract class AbstractFeatureStoreFactory extends Factory implements Fea
                 possibleValues, defaultValue, min, max, unit, requiered);
     }
 
-    @Override
-    public FactoryMetadata getMetadata() {
-        return new DefaultFactoryMetadata(DataType.VECTOR, false);
-    }
 }

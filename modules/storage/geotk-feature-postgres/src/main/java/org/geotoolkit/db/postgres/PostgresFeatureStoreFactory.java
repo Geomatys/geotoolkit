@@ -24,8 +24,12 @@ import org.geotoolkit.db.dialect.SQLDialect;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
+import static org.geotoolkit.data.AbstractFeatureStoreFactory.GEOMS_ALL;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
+import org.geotoolkit.storage.DataType;
+import org.geotoolkit.storage.DefaultFactoryMetadata;
+import org.geotoolkit.storage.FactoryMetadata;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.identification.Identification;
 import org.opengis.parameter.ParameterDescriptor;
@@ -106,6 +110,11 @@ public class PostgresFeatureStoreFactory extends AbstractJDBCFeatureStoreFactory
     protected DefaultJDBCFeatureStore toFeatureStore(ParameterValueGroup params, String factoryId) {
         //add versioning support
         return new PostgresFeatureStore(params, factoryId);
+    }
+    
+    @Override
+    public FactoryMetadata getMetadata() {
+        return new DefaultFactoryMetadata(DataType.VECTOR, true, false, true, false, GEOMS_ALL);
     }
 
 }

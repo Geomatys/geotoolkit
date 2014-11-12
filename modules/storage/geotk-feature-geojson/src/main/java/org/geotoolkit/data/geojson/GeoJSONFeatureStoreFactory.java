@@ -33,6 +33,10 @@ import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
 
 import java.util.Collections;
+import static org.geotoolkit.data.AbstractFeatureStoreFactory.GEOMS_ALL;
+import org.geotoolkit.storage.DataType;
+import org.geotoolkit.storage.DefaultFactoryMetadata;
+import org.geotoolkit.storage.FactoryMetadata;
 
 /**
  * @author Quentin Boileau (Geomatys)
@@ -120,6 +124,11 @@ public class GeoJSONFeatureStoreFactory extends AbstractFileFeatureStoreFactory 
     @Override
     public FeatureStore create(final ParameterValueGroup params) throws DataStoreException {
         return open(params);
+    }
+    
+    @Override
+    public FactoryMetadata getMetadata() {
+        return new DefaultFactoryMetadata(DataType.VECTOR, true, true, true, false, GEOMS_ALL);
     }
 
 }

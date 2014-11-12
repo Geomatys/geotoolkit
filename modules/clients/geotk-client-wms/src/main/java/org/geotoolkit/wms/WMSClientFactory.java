@@ -138,6 +138,6 @@ public class WMSClientFactory extends AbstractClientFactory implements CoverageC
 
     @Override
     public FactoryMetadata getMetadata() {
-        return new DefaultFactoryMetadata(DataType.GRID, false);
+        return new DefaultFactoryMetadata(DataType.GRID, true, false, false);
     }
 }

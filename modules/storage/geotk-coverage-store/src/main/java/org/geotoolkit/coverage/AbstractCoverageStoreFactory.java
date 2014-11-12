@@ -236,9 +236,4 @@ public abstract class AbstractCoverageStoreFactory extends Factory implements Co
         }
     }
 
-    @Override
-    public FactoryMetadata getMetadata() {
-        return new DefaultFactoryMetadata(DataType.GRID, false);
-    }
-
 }

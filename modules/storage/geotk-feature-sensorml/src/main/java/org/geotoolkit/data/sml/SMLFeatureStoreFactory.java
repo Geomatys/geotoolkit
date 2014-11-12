@@ -35,6 +35,10 @@ import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.parameter.Parameters;
 import org.apache.sis.util.iso.ResourceInternationalString;
+import static org.geotoolkit.data.AbstractFeatureStoreFactory.GEOMS_ALL;
+import org.geotoolkit.storage.DataType;
+import org.geotoolkit.storage.DefaultFactoryMetadata;
+import org.geotoolkit.storage.FactoryMetadata;
 
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.identification.Identification;
@@ -238,4 +242,10 @@ public class SMLFeatureStoreFactory extends AbstractFeatureStoreFactory {
         result.setPass(true);
         return result;
     }
+    
+    @Override
+    public FactoryMetadata getMetadata() {
+        return new DefaultFactoryMetadata(DataType.VECTOR, true, false, false, false, GEOMS_ALL);
+    }
+    
 }

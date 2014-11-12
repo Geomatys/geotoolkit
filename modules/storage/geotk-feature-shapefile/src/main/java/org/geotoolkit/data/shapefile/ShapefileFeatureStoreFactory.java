@@ -36,12 +36,20 @@ import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.data.shapefile.indexed.IndexType;
 
 import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.MultiLineString;
+import com.vividsolutions.jts.geom.MultiPoint;
+import com.vividsolutions.jts.geom.MultiPolygon;
+import com.vividsolutions.jts.geom.Point;
 
 import java.util.Collections;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
 import org.apache.sis.util.iso.ResourceInternationalString;
+import static org.geotoolkit.data.AbstractFeatureStoreFactory.GEOMS_ALL;
+import org.geotoolkit.storage.DataType;
+import org.geotoolkit.storage.DefaultFactoryMetadata;
+import org.geotoolkit.storage.FactoryMetadata;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.identification.Identification;
 import org.opengis.metadata.quality.ConformanceResult;
@@ -294,6 +302,13 @@ public class ShapefileFeatureStoreFactory extends AbstractFileFeatureStoreFactor
         } catch (MalformedURLException mue) {
             throw new DataStoreException("Url for shapefile malformed: " + url, mue);
         }
+    }
+    
+    @Override
+    public FactoryMetadata getMetadata() {
+        return new DefaultFactoryMetadata(DataType.VECTOR, true, true, true, false, new Class[]{
+            Point.class, MultiPoint.class, MultiLineString.class, MultiPolygon.class
+        });
     }
 
 }

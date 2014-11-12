@@ -33,6 +33,9 @@ import org.geotoolkit.client.FeatureClientFactory;
 import org.geotoolkit.data.AbstractFeatureStoreFactory;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
+import org.geotoolkit.storage.DataType;
+import org.geotoolkit.storage.DefaultFactoryMetadata;
+import org.geotoolkit.storage.FactoryMetadata;
 import org.geotoolkit.wfs.xml.WFSVersion;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.identification.Identification;
@@ -146,5 +149,10 @@ public class WFSFeatureStoreFactory extends AbstractFeatureStoreFactory implemen
     @Override
     public WebFeatureClient create(final ParameterValueGroup params) throws DataStoreException {
         throw new DataStoreException("Can not create any new WFS DataStore");
+    }
+    
+    @Override
+    public FactoryMetadata getMetadata() {
+        return new DefaultFactoryMetadata(DataType.VECTOR, true, false, true, false, GEOMS_ALL);
     }
 }

@@ -127,7 +127,7 @@ public class NcWMSClientFactory extends AbstractClientFactory implements Coverag
 
     @Override
     public FactoryMetadata getMetadata() {
-        return new DefaultFactoryMetadata(DataType.GRID, false);
+        return new DefaultFactoryMetadata(DataType.GRID, true, false, false);
     }
 
 }

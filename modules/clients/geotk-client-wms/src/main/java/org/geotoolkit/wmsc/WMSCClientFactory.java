@@ -130,6 +130,6 @@ public class WMSCClientFactory extends AbstractClientFactory implements Coverage
 
     @Override
     public FactoryMetadata getMetadata() {
-        return new DefaultFactoryMetadata(DataType.GRID, false);
+        return new DefaultFactoryMetadata(DataType.PYRAMID, true, false, false);
     }
 }

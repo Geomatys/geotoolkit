@@ -35,6 +35,10 @@ import java.net.URL;
 import java.util.Collections;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import static org.geotoolkit.data.AbstractFeatureStoreFactory.GEOMS_ALL;
+import org.geotoolkit.storage.DataType;
+import org.geotoolkit.storage.DefaultFactoryMetadata;
+import org.geotoolkit.storage.FactoryMetadata;
 
 /**
  * Class Description
@@ -125,5 +129,10 @@ public class MIFFeatureStoreFactory extends AbstractFileFeatureStoreFactory impl
         final String namespace = (String) params.parameter(NAMESPACE.getName().toString()).getValue();
 
         return new MIFFeatureStore(filePath, namespace);
+    }
+    
+    @Override
+    public FactoryMetadata getMetadata() {
+        return new DefaultFactoryMetadata(DataType.VECTOR, true, false, false, false, GEOMS_ALL);
     }
 }

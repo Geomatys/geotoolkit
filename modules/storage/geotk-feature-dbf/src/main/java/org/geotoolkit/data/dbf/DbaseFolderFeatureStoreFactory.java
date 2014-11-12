@@ -31,6 +31,10 @@ import java.io.FilenameFilter;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.logging.Level;
+import static org.geotoolkit.data.AbstractFeatureStoreFactory.GEOMS_ALL;
+import org.geotoolkit.storage.DataType;
+import org.geotoolkit.storage.DefaultFactoryMetadata;
+import org.geotoolkit.storage.FactoryMetadata;
 
 /**
  * FeatureStore for a folder of DBF files.
@@ -132,4 +136,10 @@ public class DbaseFolderFeatureStoreFactory extends AbstractFolderFeatureStoreFa
             return name.toLowerCase().endsWith(ext);
         }
     }
+    
+    @Override
+    public FactoryMetadata getMetadata() {
+        return new DefaultFactoryMetadata(DataType.VECTOR, true, true, true, false, DefaultFactoryMetadata.GEOMS_NONE);
+    }
+    
 }

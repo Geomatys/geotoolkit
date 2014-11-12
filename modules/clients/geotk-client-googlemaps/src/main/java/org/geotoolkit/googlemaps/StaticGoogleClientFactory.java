@@ -118,6 +118,6 @@ public class StaticGoogleClientFactory extends AbstractClientFactory implements 
 
     @Override
     public FactoryMetadata getMetadata() {
-        return new DefaultFactoryMetadata(DataType.GRID, false);
+        return new DefaultFactoryMetadata(DataType.GRID, true, false, false);
     }
 }

@@ -27,11 +27,15 @@ import org.apache.sis.metadata.iso.quality.DefaultConformanceResult;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.iso.ResourceInternationalString;
 import org.geotoolkit.data.AbstractFeatureStoreFactory;
+import static org.geotoolkit.data.AbstractFeatureStoreFactory.GEOMS_ALL;
 import static org.geotoolkit.data.AbstractFeatureStoreFactory.NAMESPACE;
 import static org.geotoolkit.data.AbstractFeatureStoreFactory.createFixedIdentifier;
 import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
+import org.geotoolkit.storage.DataType;
+import org.geotoolkit.storage.DefaultFactoryMetadata;
+import org.geotoolkit.storage.FactoryMetadata;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.identification.Identification;
 import org.opengis.metadata.quality.ConformanceResult;
@@ -124,4 +128,10 @@ public class OMXmlFeatureStoreFactory extends AbstractFeatureStoreFactory {
         result.setPass(true);
         return result;
     }
+    
+    @Override
+    public FactoryMetadata getMetadata() {
+        return new DefaultFactoryMetadata(DataType.VECTOR, true, false, false, false, GEOMS_ALL);
+    }
+    
 }

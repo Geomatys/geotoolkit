@@ -16,6 +16,10 @@
  */
 package org.geotoolkit.data.shapefile;
 
+import com.vividsolutions.jts.geom.MultiLineString;
+import com.vividsolutions.jts.geom.MultiPoint;
+import com.vividsolutions.jts.geom.MultiPolygon;
+import com.vividsolutions.jts.geom.Point;
 import org.geotoolkit.data.FeatureStoreFinder;
 import org.geotoolkit.data.FileFeatureStoreFactory;
 import org.geotoolkit.data.AbstractFolderFeatureStoreFactory;
@@ -32,6 +36,9 @@ import java.io.FilenameFilter;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.logging.Level;
+import org.geotoolkit.storage.DataType;
+import org.geotoolkit.storage.DefaultFactoryMetadata;
+import org.geotoolkit.storage.FactoryMetadata;
 
 /**
  * FeatureStore for a folder of Shapefiles.
@@ -129,4 +136,11 @@ public class ShapefileFolderFeatureStoreFactory extends AbstractFolderFeatureSto
 
     }
 
+    @Override
+    public FactoryMetadata getMetadata() {
+        return new DefaultFactoryMetadata(DataType.VECTOR, true, true, true, false, new Class[]{
+            Point.class, MultiPoint.class, MultiLineString.class, MultiPolygon.class
+        });
+    }
+    
 }

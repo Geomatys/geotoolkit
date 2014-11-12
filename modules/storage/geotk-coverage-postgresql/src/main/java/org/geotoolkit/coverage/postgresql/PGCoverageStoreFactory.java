@@ -325,6 +325,6 @@ public class PGCoverageStoreFactory extends AbstractCoverageStoreFactory{
 
     @Override
     public FactoryMetadata getMetadata() {
-        return new DefaultFactoryMetadata(DataType.PYRAMID, false);
+        return new DefaultFactoryMetadata(DataType.PYRAMID, true, false, true);
     }
 }
