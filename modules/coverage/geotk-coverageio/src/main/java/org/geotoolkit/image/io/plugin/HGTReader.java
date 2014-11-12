@@ -175,9 +175,11 @@ public class HGTReader extends RawImageReader {
      */
     public static RawImageInputStream buildIIStream(final File input) throws IOException {
         final int width = (int) Math.round(Math.sqrt(input.length() / (Short.SIZE / Byte.SIZE)));
-        return new RawImageInputStream(
-                ImageIO.createImageInputStream(input), IMAGE_TYPE,
-                new long[]{0}, new Dimension[]{new Dimension(width, width)});
+        final ImageInputStream wrapped = ImageIO.createImageInputStream(input);
+        if (wrapped == null) {
+            throw new IOException("Input file cannot be read : "+input);
+        }
+        return new RawImageInputStream(wrapped, IMAGE_TYPE, new long[]{0}, new Dimension[]{new Dimension(width, width)});
     }
 
     @Override
