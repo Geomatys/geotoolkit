@@ -226,14 +226,6 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
     }
 
     @Test
-    public void testLoadAndCheckPolygon() throws Exception {
-        FeatureCollection<SimpleFeature> features = loadFeatures(STATE_POP, QueryBuilder.all(new DefaultName("statepop")));
-        SimpleFeatureType schema = firstFeature(features).getFeatureType();
-
-        assertTrue(FeatureTypeUtilities.isDecendedFrom(schema, FeatureTypeUtilities.DEFAULT_NAMESPACE.toString(), "polygonFeature"));
-    }
-
-    @Test
     public void testCreateSchemaWithEmptyCRS() throws Exception {
         File file = new File("test.shp");
         URL toURL = file.toURI().toURL();
