@@ -18,7 +18,6 @@ package org.geotoolkit.data.bean;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.function.Predicate;
 import org.geotoolkit.data.FeatureStoreContentEvent;
 import org.geotoolkit.storage.StorageEvent;
 import org.geotoolkit.storage.StorageListener;
