@@ -310,7 +310,6 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
         if(change.isIdentity()) return;
         objToDisp.concatenate(change);
         XAffineTransform.roundIfAlmostInteger(objToDisp, EPS);
-        updateEnvelope();
 
         fixScale:
         if(!Double.isNaN(minscale) || !Double.isNaN(maxscale)){
@@ -345,12 +344,12 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
 
                 objToDisp.concatenate(change);
                 XAffineTransform.roundIfAlmostInteger(objToDisp, EPS);
-                updateEnvelope();
             }
 
         }
 
         firePropertyChange(TRANSFORM_KEY, null, change);
+        updateEnvelope();
         repaintIfAuto();
     }
 
@@ -363,8 +362,11 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
             getLogger().log(Level.SEVERE, "Failed to calculate canvas objective bounds", ex);
             return;
         }
+        final Envelope old = new GeneralEnvelope(envelope);
         envelope.setRange(0, canvasObjectiveBounds.getMinX(), canvasObjectiveBounds.getMaxX());
         envelope.setRange(1, canvasObjectiveBounds.getMinY(), canvasObjectiveBounds.getMaxY());
+        
+        firePropertyChange(ENVELOPE_KEY, old, envelope.clone());
     }
 
     /**
