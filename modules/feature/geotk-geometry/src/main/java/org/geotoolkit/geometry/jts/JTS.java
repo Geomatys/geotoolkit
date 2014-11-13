@@ -1234,11 +1234,8 @@ public final class JTS {
         final CoordinateReferenceSystem crs1 = findCoordinateReferenceSystem(geom1);
         final CoordinateReferenceSystem crs2 = findCoordinateReferenceSystem(geom2);
 
-        //if crs1 and crs2 are different and not null
-        if (crs1 != null && crs2 != null && (!crs1.equals(crs2))) {
-            return true;
-        }
-        return false;
+        return crs1 != null && crs2 != null && (!crs1.equals(crs2));
 
     }
+        
 }

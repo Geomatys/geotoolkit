@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2011, Geomatys
+ *    (C) 2011-2014, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -15,7 +15,7 @@
  *    Lesser General Public License for more details.
  */
 
-package org.geotoolkit.data.memory.mapping;
+package org.geotoolkit.geometry.jts;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
@@ -31,42 +31,59 @@ import com.vividsolutions.jts.geom.Polygon;
 
 /**
  * Set of Utility function and methods for mapping
- * @author Quentin Boileau
- * @module pending
+ * 
+ * @author Quentin Boileau (Geomatys)
+ * @author Johann Sorel (Geomatys)
  */
-public final class MappingUtils {
+public final class JTSMapping {
 
-
-     private MappingUtils(){}
-
-
-     public static Geometry convertType(final Geometry geom, final Class targetClass){
+    private static final GeometryFactory GF = new GeometryFactory();
+    
+     private JTSMapping(){}
+    
+    /**
+     * Force geometry type.
+     * If the given geometry is not of given class it will be adapted.
+     * 
+     * @param <T>
+     * @param geom
+     * @param targetClass
+     * @return 
+     */
+    public static <T extends Geometry> T convertType(final Geometry geom, final Class<T> targetClass){
         if(geom == null) return null;
 
         if(targetClass.isInstance(geom)){
-            return geom;
+            return (T) geom;
         }
 
+        Geometry result;
         if(targetClass == Point.class){
-            return convertToPoint(geom);
+            result = convertToPoint(geom);
         }else if(targetClass == MultiPoint.class){
-            return convertToMultiPoint(geom);
+            result = convertToMultiPoint(geom);
         }else if(targetClass == LineString.class){
-            return convertToLineString(geom);
+            result = convertToLineString(geom);
         }else if(targetClass == MultiLineString.class){
-            return convertToMultiLineString(geom);
+            result = convertToMultiLineString(geom);
         }else if(targetClass == Polygon.class){
-            return convertToPolygon(geom);
+            result = convertToPolygon(geom);
         }else if(targetClass == MultiPolygon.class){
-            return convertToMultiPolygon(geom);
+            result = convertToMultiPolygon(geom);
         }else if(targetClass == GeometryCollection.class){
-            return convertToGeometryCollection(geom);
+            result = convertToGeometryCollection(geom);
+        }else{
+            result = null;
         }
 
-        return null;
+        if(result!=null){
+            //copy srid and user data
+            result.setSRID(geom.getSRID());
+            result.setUserData(geom.getUserData());
+        }
+        
+        return targetClass.cast(result);
     }
-
-    private static GeometryFactory GF = new GeometryFactory();
 
     // Convert to Point --------------------------------------------------------
 

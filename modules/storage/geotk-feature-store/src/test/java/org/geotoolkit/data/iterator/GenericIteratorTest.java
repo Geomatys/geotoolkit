@@ -273,16 +273,26 @@ public class GenericIteratorTest extends TestCase{
 
         ite = GenericCachedFeatureIterator.wrap(collection.iterator(), 1);
 
-        Feature s1 = ite.next();
-        Feature s2 = ite.next();
-        Feature s3 = ite.next();
+        int mask = 0;
+        Feature f;
+        while(ite.hasNext()){
+            f = ite.next();
+            final String id = f.getIdentifier().getID();
+                        
+            if(id1.equals(id)){
+                mask |= 1<<0;
+            }else if(id2.equals(id)){
+                mask |= 1<<1;
+            }else if(id3.equals(id)){
+                mask |= 1<<2;
+            }
+        }
 
-        assertEquals(s1.getIdentifier().getID(),id1);
-        assertEquals(s2.getIdentifier().getID(),id2);
-        assertEquals(s3.getIdentifier().getID(),id3);
-
+        if(mask!=7){
+            fail("missing features in iterations");
+        }
+        
     }
-
 
     @Test
     public void testFilterIterator(){
@@ -414,23 +424,31 @@ public class GenericIteratorTest extends TestCase{
         FeatureReader retyped = GenericReprojectFeatureIterator.wrap(reader, targetCRS, new Hints());
         assertEquals(reprojectedType,retyped.getFeatureType());
 
+        int mask = 0;
         Feature f;
+        while(retyped.hasNext()){
+            f = retyped.next();
+            final String id = f.getIdentifier().getID();
+            
+            assertEquals(3, f.getProperties().size());
+            assertEquals(targetCRS,JTS.findCoordinateReferenceSystem((Geometry)f.getProperty("att_geom").getValue()));
+            
+            if(id1.equals(id)){
+                mask |= 1<<0;
+                assertEquals(GF.createPoint(new Coordinate(0, 3)).toString(), f.getProperty("att_geom").getValue().toString());
+            }else if(id2.equals(id)){
+                mask |= 1<<1;
+                assertEquals(GF.createPoint(new Coordinate(0, 1)).toString(), f.getProperty("att_geom").getValue().toString());
+            }else if(id3.equals(id)){
+                mask |= 1<<2;
+                assertEquals(GF.createPoint(new Coordinate(0, 2)).toString(), f.getProperty("att_geom").getValue().toString());
+            }
+        }
 
-        f = retyped.next();
-        assertEquals(3, f.getProperties().size());
-        assertEquals(GF.createPoint(new Coordinate(0, 3)).toString(), f.getProperty("att_geom").getValue().toString());
-        assertEquals(targetCRS,JTS.findCoordinateReferenceSystem((Geometry)f.getProperty("att_geom").getValue()));
-
-        f = retyped.next();
-        assertEquals(3, f.getProperties().size());
-        assertEquals(GF.createPoint(new Coordinate(0, 1)).toString(), f.getProperty("att_geom").getValue().toString());
-        assertEquals(targetCRS,JTS.findCoordinateReferenceSystem((Geometry)f.getProperty("att_geom").getValue()));
-
-        f = retyped.next();
-        assertEquals(3, f.getProperties().size());
-        assertEquals(GF.createPoint(new Coordinate(0, 2)).toString(), f.getProperty("att_geom").getValue().toString());
-        assertEquals(targetCRS,JTS.findCoordinateReferenceSystem((Geometry)f.getProperty("att_geom").getValue()));
-
+        if(mask!=7){
+            fail("missing features in iterations");
+        }
+        
 
         //check has next do not iterate
         reader = collection.getSession().getFeatureStore().getFeatureReader(query);
@@ -550,21 +568,30 @@ public class GenericIteratorTest extends TestCase{
         FeatureReader retyped = GenericRetypeFeatureIterator.wrap(reader,reducedType,null);
         assertEquals(reducedType,retyped.getFeatureType());
 
+        int mask = 0;
         Feature f;
+        while(retyped.hasNext()){
+            f = retyped.next();
+            final String id = f.getIdentifier().getID();
+            
+            assertEquals(1, f.getProperties().size());
+            
+            if(id1.equals(id)){
+                mask |= 1<<0;
+                assertEquals(3d, (Double)f.getProperty("att_double").getValue(), DELTA);
+            }else if(id2.equals(id)){
+                mask |= 1<<1;
+                assertEquals(1d, (Double)f.getProperty("att_double").getValue(), DELTA);
+            }else if(id3.equals(id)){
+                mask |= 1<<2;
+                assertEquals(2d, (Double)f.getProperty("att_double").getValue(), DELTA);
+            }
+        }
 
-        f = retyped.next();
-        assertEquals(1, f.getProperties().size());
-        assertEquals(3d, (Double)f.getProperty("att_double").getValue(), DELTA);
-
-        f = retyped.next();
-        assertEquals(1, f.getProperties().size());
-        assertEquals(1d, (Double)f.getProperty("att_double").getValue(), DELTA);
-
-        f = retyped.next();
-        assertEquals(1, f.getProperties().size());
-        assertEquals(2d, (Double)f.getProperty("att_double").getValue(), DELTA);
-
-
+        if(mask!=7){
+            fail("missing features in iterations");
+        }
+        
         //check has next do not iterate
         reader = collection.getSession().getFeatureStore().getFeatureReader(query);
         retyped = GenericRetypeFeatureIterator.wrap(reader,reducedType,null);
@@ -592,9 +619,9 @@ public class GenericIteratorTest extends TestCase{
 
 
         ite = GenericSortByFeatureIterator.wrap(collection.iterator(), sorts);
-        assertEquals(ite.next().getIdentifier().getID(),id3);
-        assertEquals(ite.next().getIdentifier().getID(),id1);
-        assertEquals(ite.next().getIdentifier().getID(),id2);
+        assertEquals(id3,ite.next().getIdentifier().getID());
+        assertEquals(id1,ite.next().getIdentifier().getID());
+        assertEquals(id2,ite.next().getIdentifier().getID());
 
         try{
             ite.next();
@@ -699,7 +726,7 @@ public class GenericIteratorTest extends TestCase{
         assertEquals(2, FeatureStoreUtilities.calculateCount(ite));
 
         ite = GenericStartIndexFeatureIterator.wrap(collection.iterator(), 2);
-        assertEquals(ite.next().getIdentifier().getID(),id3);
+        assertTrue(ite.next() != null);
         try{
             ite.next();
             fail("Should have raise a no such element exception.");

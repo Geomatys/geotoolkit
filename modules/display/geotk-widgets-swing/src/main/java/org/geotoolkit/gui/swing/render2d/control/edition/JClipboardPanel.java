@@ -32,7 +32,7 @@ import java.util.logging.Logger;
 
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
-import org.geotoolkit.data.memory.mapping.MappingUtils;
+import org.geotoolkit.geometry.jts.JTSMapping;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
@@ -152,7 +152,7 @@ public class JClipboardPanel extends javax.swing.JPanel {
         
         //ensure the geometry type match
         if(current != null && original != null){
-            current = MappingUtils.convertType(current,original.getClass());
+            current = JTSMapping.convertType(current,original.getClass());
         }
         
         return false;

@@ -25,6 +25,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
@@ -90,15 +91,21 @@ public class BeanFeature extends AbstractFeature<Collection<Property>>{
         public java.beans.PropertyDescriptor idAccessor;
 
         public Mapping(Class clazz, String namespace, CoordinateReferenceSystem crs, String idField) {
-            this(clazz,namespace,crs,idField,null);
+            this(clazz,namespace,crs,idField,null, new Predicate<java.beans.PropertyDescriptor>() {
+                @Override
+                public boolean test(java.beans.PropertyDescriptor t) {
+                    return true;
+                }
+            });
         }
         
-        public Mapping(Class clazz, String namespace, CoordinateReferenceSystem crs, String idField, String defaultGeom) {
+        public Mapping(Class clazz, String namespace, CoordinateReferenceSystem crs, String idField, String defaultGeom, Predicate<java.beans.PropertyDescriptor> filter) {
             this.idField = idField;
             final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
             ftb.setName(namespace,clazz.getSimpleName());
             try {
                 for (java.beans.PropertyDescriptor pd : Introspector.getBeanInfo(clazz).getPropertyDescriptors()) {
+                    
                     final String propName = pd.getName();
                     if(propName.equals(idField)){
                         //ignore the id field, it will be used as featureId
@@ -108,6 +115,8 @@ public class BeanFeature extends AbstractFeature<Collection<Property>>{
                     
                     final Method readMethod = pd.getReadMethod();
                     if(readMethod==null) continue;
+                    
+                    if(!filter.test(pd)) continue;
                     
                     final Class propClazz = readMethod.getReturnType();
                     if(Geometry.class.isAssignableFrom(propClazz)){

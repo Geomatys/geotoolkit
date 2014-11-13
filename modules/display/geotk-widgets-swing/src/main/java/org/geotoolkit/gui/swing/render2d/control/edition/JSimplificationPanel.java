@@ -21,7 +21,7 @@ import com.vividsolutions.jts.simplify.DouglasPeuckerSimplifier;
 import com.vividsolutions.jts.simplify.TopologyPreservingSimplifier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.geotoolkit.data.memory.mapping.MappingUtils;
+import org.geotoolkit.geometry.jts.JTSMapping;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.gui.swing.render2d.JMap2D;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
@@ -119,7 +119,7 @@ public class JSimplificationPanel extends javax.swing.JPanel {
             }
             
             //ensure geometry type is preserved
-            current = MappingUtils.convertType(current, clazz);
+            current = JTSMapping.convertType(current, clazz);
             
             guiError.setText("");
             return true;

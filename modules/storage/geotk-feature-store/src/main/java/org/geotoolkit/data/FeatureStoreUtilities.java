@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.data;
 
+import com.vividsolutions.jts.geom.Geometry;
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -41,10 +42,19 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import static org.apache.sis.util.ArgumentChecks.*;
 import org.geotoolkit.util.collection.CloseableIterator;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.data.memory.GenericMappingFeatureCollection;
+import org.geotoolkit.data.memory.GenericRetypeFeatureIterator;
+import org.geotoolkit.data.memory.mapping.DefaultFeatureMapper;
+import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.Property;
+import org.geotoolkit.feature.type.DefaultName;
 import org.geotoolkit.feature.type.FeatureType;
+import org.geotoolkit.feature.type.GeometryDescriptor;
+import org.geotoolkit.feature.type.Name;
 import org.opengis.filter.Filter;
+import org.opengis.filter.FilterFactory;
+import org.opengis.filter.expression.Expression;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.filter.sort.SortBy;
 import org.opengis.geometry.BoundingBox;
@@ -287,6 +297,47 @@ public class FeatureStoreUtilities {
         return ite;
     }
 
+    /**
+     * Split the collection by geometry types.
+     * Multiple feature store can only support a limited number of geometry types.
+     * This method will split the content of the given collection in collections with a
+     * simple geometry type.
+     * 
+     * Collection datas are not copied, result collections are filtered collections
+     * 
+     * @param col
+     * @param geomClasses
+     * @return splitted collections
+     */
+    public static FeatureCollection[] decomposeByGeometryType(FeatureCollection col, Class ... geomClasses) throws DataStoreException{
+        
+        final FilterFactory FF = FactoryFinder.getFilterFactory(null);
+        final FeatureType baseType = col.getFeatureType();
+        final Name name = baseType.getName();
+        final GeometryDescriptor geomDesc = baseType.getGeometryDescriptor();
+        final Name geomPropName = geomDesc.getName();
+        
+        final FeatureCollection[] cols = new FeatureCollection[geomClasses.length];
+        for(int i=0; i<geomClasses.length;i++){
+            final String geomTypeName = geomClasses[i].getSimpleName();
+            final Filter filter = FF.equals(
+                    FF.function("geometryType", FF.property(geomPropName.getLocalPart())),
+                    FF.literal(geomTypeName));
+            cols[i] = col.subCollection( QueryBuilder.filtered(name, filter) );
+            
+            //retype the collection
+            final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
+            ftb.copy(baseType);
+            ftb.setName(new DefaultName(name.getNamespaceURI(), name.getLocalPart()+"_"+geomTypeName));
+            ftb.remove(geomPropName.getLocalPart());
+            ftb.add(geomPropName, geomClasses[i], geomDesc.getCoordinateReferenceSystem());
+            
+            cols[i] = new GenericMappingFeatureCollection(cols[i],new DefaultFeatureMapper(baseType, ftb.buildFeatureType()));
+        }
+        
+        return cols;
+    }
+    
     /**
      * Provide a collection that link several collections in one.
      * All collection are appended in the order they are given like a sequence.
@@ -714,5 +765,5 @@ public class FeatureStoreUtilities {
         }
 
     }
-
+    
 }

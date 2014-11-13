@@ -18,6 +18,7 @@ package org.geotoolkit.data.bean;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.function.Predicate;
 import org.geotoolkit.data.FeatureStoreContentEvent;
 import org.geotoolkit.storage.StorageEvent;
 import org.geotoolkit.storage.StorageListener;
@@ -38,9 +39,20 @@ public class BeanFeatureSupplier {
 
     public BeanFeatureSupplier(Class bleanClass, String idField, String defaultGeom, String namespace, 
             CoordinateReferenceSystem crs, BeanStore.FeatureSupplier supplier) {
+        this(bleanClass,idField,defaultGeom,new Predicate<java.beans.PropertyDescriptor>() {
+            @Override
+            public boolean test(java.beans.PropertyDescriptor t) {
+                return true;
+            }
+        }, namespace, crs, supplier);
+    }
+    
+    public BeanFeatureSupplier(Class bleanClass, String idField, String defaultGeom, 
+            Predicate<java.beans.PropertyDescriptor> propertyFilter, String namespace, 
+            CoordinateReferenceSystem crs, BeanStore.FeatureSupplier supplier) {
         this.beanClass = bleanClass;
         this.crs = crs;
-        this.mapping = new BeanFeature.Mapping(beanClass, namespace, crs, idField, defaultGeom);
+        this.mapping = new BeanFeature.Mapping(beanClass, namespace, crs, idField, defaultGeom, propertyFilter);
         this.supplier = supplier;
     }
 

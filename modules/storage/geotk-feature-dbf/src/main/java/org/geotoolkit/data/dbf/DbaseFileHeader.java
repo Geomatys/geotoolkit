@@ -798,7 +798,8 @@ public class DbaseFileHeader {
             } else if (Geometry.class.isAssignableFrom(colType)) {
                 continue;
             } else {
-                throw new IOException("Unable to write : " + colType.getName());
+                //fallback : write as string
+                header.addColumn(colName, 'C', Math.min(254, fieldLen), 0);
             }
         }
 

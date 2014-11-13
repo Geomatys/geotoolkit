@@ -23,7 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.data.memory.mapping.MappingUtils;
+import org.geotoolkit.geometry.jts.JTSMapping;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.process.AbstractProcess;
 import org.apache.sis.util.ObjectConverters;
@@ -173,7 +173,7 @@ public class MergeProcess extends AbstractProcess {
 
         @Override
         public Object apply(final Object s) throws UnconvertibleObjectException {
-            return MappingUtils.convertType((Geometry)s, getTargetClass());
+            return JTSMapping.convertType((Geometry)s, getTargetClass());
         }
     }
 }

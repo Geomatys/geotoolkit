@@ -16,15 +16,17 @@
  */
 package org.geotoolkit.data.memory.mapping;
 
+import org.geotoolkit.geometry.jts.JTSMapping;
 import com.vividsolutions.jts.geom.Geometry;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.referencing.CRS;
 import org.apache.sis.util.ObjectConverters;
 import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.simple.SimpleFeatureType;
+import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.GeometryDescriptor;
@@ -38,14 +40,35 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 public class DefaultFeatureMapper implements FeatureMapper {
 
-    private final SimpleFeatureBuilder builder;
-    private final SimpleFeatureType typeSource;
-    private final SimpleFeatureType typeTarget;
+    private final FeatureType typeSource;
+    private final FeatureType typeTarget;
     private final Map<PropertyDescriptor, Object> defaults;
     private final Map<PropertyDescriptor, List<PropertyDescriptor>> mapping;
     private int id = 1;
 
-    public DefaultFeatureMapper(final SimpleFeatureType typeSource, final SimpleFeatureType typeTarget,
+    /**
+     * Create a default mapping for properties with the same names.
+     * 
+     * @param typeSource
+     * @param typeTarget 
+     */
+    public DefaultFeatureMapper(final FeatureType typeSource, final FeatureType typeTarget) {
+        this.typeSource = typeSource;
+        this.typeTarget = typeTarget;
+        
+        mapping = new HashMap<>();
+        defaults = new HashMap<>();
+
+        for(PropertyDescriptor desc : typeSource.getDescriptors()){
+            final PropertyDescriptor targetDesc = typeTarget.getDescriptor(desc.getName());
+            if(targetDesc!=null){
+                mapping.put(desc, Collections.singletonList(targetDesc));
+            }
+        }
+        
+    }
+    
+    public DefaultFeatureMapper(final FeatureType typeSource, final FeatureType typeTarget,
             final Map<PropertyDescriptor, List<PropertyDescriptor>> mapping,
             final Map<PropertyDescriptor, Object> defaults) {
         this.typeSource = typeSource;
@@ -53,7 +76,6 @@ public class DefaultFeatureMapper implements FeatureMapper {
         this.mapping = mapping;
         this.defaults = defaults;
 
-        this.builder = new SimpleFeatureBuilder(typeTarget);
     }
 
     @Override
@@ -68,16 +90,16 @@ public class DefaultFeatureMapper implements FeatureMapper {
 
     @Override
     public Feature transform(final Feature feature) {
-        builder.reset();
+        final Feature res = FeatureUtilities.defaultFeature(typeTarget, ""+id++);
 
         //set all default values
-        for (final PropertyDescriptor desc : typeTarget.getAttributeDescriptors()) {
+        for (final PropertyDescriptor desc : typeTarget.getDescriptors()) {
             Object val = defaults.get(desc);
             if (val == null) {
                 val = ((AttributeDescriptor) desc).getDefaultValue();
             }
             try {
-                builder.set(desc.getName(), ObjectConverters.convert(val, desc.getType().getBinding()));
+                res.getProperty(desc.getName()).setValue(ObjectConverters.convert(val, desc.getType().getBinding()));
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -95,15 +117,13 @@ public class DefaultFeatureMapper implements FeatureMapper {
             for (final PropertyDescriptor targetDesc : links) {
                 Object converted = convert(value, sourceDesc, targetDesc);
                 if (converted != null) {
-                    builder.set(targetDesc.getName(), converted);
+                    res.getProperty(targetDesc.getName()).setValue(converted);
                 }
             }
         }
 
-        final Feature f =  builder.buildFeature("" + id++);
-        f.getUserData().clear();
-        f.getUserData().putAll(feature.getUserData());
-        return f;
+        res.getUserData().putAll(feature.getUserData());
+        return res;
     }
 
 
@@ -130,7 +150,7 @@ public class DefaultFeatureMapper implements FeatureMapper {
                     }
                 }
 
-                candidateGeom = MappingUtils.convertType(candidateGeom,targetGeomDesc.getType().getBinding());
+                candidateGeom = JTSMapping.convertType(candidateGeom, (Class<Geometry>) targetGeomDesc.getType().getBinding());
                 return candidateGeom;
 
             }else{
