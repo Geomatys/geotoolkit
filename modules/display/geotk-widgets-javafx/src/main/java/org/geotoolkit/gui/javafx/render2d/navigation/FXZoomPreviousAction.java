@@ -17,8 +17,7 @@
 
 package org.geotoolkit.gui.javafx.render2d.navigation;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
+import java.awt.geom.AffineTransform;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.scene.image.Image;
@@ -37,20 +36,21 @@ public final class FXZoomPreviousAction extends FXMapAction {
     
     public FXZoomPreviousAction(FXMap map) {
         super(map,GeotkFX.getString(FXZoomPreviousAction.class,"zoom_previous"),GeotkFX.getString(FXZoomPreviousAction.class,"zoom_previous"),ICON);
-        
-        map.getCanvas().addPropertyChangeListener(new PropertyChangeListener() {
-            @Override
-            public void propertyChange(PropertyChangeEvent evt) {
-                
-            }
-        });
-        
+    }
+    
+    @Override
+    public void setMap(FXMap map) {
+        super.setMap(map);
+        disabledProperty().unbind();
+        disabledProperty().bind(map.getNextPreviousList().previousProperty().isNull());
     }
     
     @Override
     public void accept(ActionEvent event) {
         if (map != null) {
-            map.setHandler(new FXZoomInHandler(map));
+            final AffineTransform env = map.getNextPreviousList().previousProperty().get();
+            map.getCanvas().setCenterTransform(env);
+            map.getNextPreviousList().previous();
         }
     }
     

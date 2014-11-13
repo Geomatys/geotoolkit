@@ -17,6 +17,7 @@
 
 package org.geotoolkit.gui.javafx.render2d.navigation;
 
+import java.awt.geom.AffineTransform;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.scene.image.Image;
@@ -36,11 +37,20 @@ public final class FXZoomNextAction extends FXMapAction {
     public FXZoomNextAction(FXMap map) {
         super(map,GeotkFX.getString(FXZoomNextAction.class,"zoom_next"),GeotkFX.getString(FXZoomNextAction.class,"zoom_next"),ICON);
     }
+
+    @Override
+    public void setMap(FXMap map) {
+        super.setMap(map);
+        disabledProperty().unbind();
+        disabledProperty().bind(map.getNextPreviousList().nextProperty().isNull());
+    }
     
     @Override
     public void accept(ActionEvent event) {
         if (map != null) {
-            map.setHandler(new FXZoomInHandler(map));
+            final AffineTransform env = map.getNextPreviousList().nextProperty().get();
+            map.getCanvas().setCenterTransform(env);
+            map.getNextPreviousList().next();
         }
     }
     

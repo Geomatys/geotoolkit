@@ -18,9 +18,9 @@
 package org.geotoolkit.gui.javafx.render2d;
 
 import java.awt.Dimension;
-import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -32,17 +32,12 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.embed.swing.SwingFXUtils;
-import javafx.geometry.Insets;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.effect.BlendMode;
 import javafx.scene.image.WritableImage;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
 import javax.swing.Timer;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.util.ArgumentChecks;
@@ -51,7 +46,9 @@ import org.geotoolkit.display.canvas.control.NeverFailMonitor;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.J2DCanvasVolatile;
 import org.geotoolkit.display2d.container.ContextContainer2D;
+import org.geotoolkit.gui.javafx.util.NextPreviousList;
 import org.geotoolkit.internal.Loggers;
+import org.opengis.geometry.Envelope;
 
 /**
  *
@@ -84,6 +81,7 @@ public class FXMap extends BorderPane {
     private final StackPane mapDecorationPane = new StackPane();
     private final StackPane userDecorationPane = new StackPane();
     private final StackPane mainDecorationPane = new StackPane();
+    private final NextPreviousList<AffineTransform> nextPreviousList = new NextPreviousList<>(10);
     private int nextMapDecorationIndex = 1;
     private FXInformationDecoration informationDecoration = new DefaultInformationDecoration();
     private FXMapDecoration backDecoration = new FXColorDecoration();
@@ -136,6 +134,8 @@ public class FXMap extends BorderPane {
                         }
                     });
                     
+                }else if(J2DCanvas.TRANSFORM_KEY.equals(evt.getPropertyName())){
+                    nextPreviousList.put(canvas.getCenterTransform());
                 }
             }
         });
@@ -143,6 +143,10 @@ public class FXMap extends BorderPane {
     }
 
     private boolean first = true;
+
+    public NextPreviousList<AffineTransform> getNextPreviousList() {
+        return nextPreviousList;
+    }
     
     @Override
     protected void updateBounds() {
