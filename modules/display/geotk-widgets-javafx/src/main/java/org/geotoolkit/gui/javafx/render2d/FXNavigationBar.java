@@ -35,19 +35,15 @@ public class FXNavigationBar extends ToolBar {
         butAll.getStyleClass().add(LEFT);
         butRepaint.getStyleClass().add(CENTER);
         butPrevious.getStyleClass().add(CENTER);
-        butNext.getStyleClass().add(RIGHT);
-        final HBox hboxAction = new HBox(butAll,butRepaint,butPrevious,butNext);
-        
+        butNext.getStyleClass().add(RIGHT);        
         final ToggleButton butIn = new FXZoomInAction(map).createToggleButton(ActionUtils.ActionTextBehavior.HIDE);
         final ToggleButton butOut = new FXZoomOutAction(map).createToggleButton(ActionUtils.ActionTextBehavior.HIDE);
         final ToggleButton butPan = new FXPanAction(map,false).createToggleButton(ActionUtils.ActionTextBehavior.HIDE);
-        butIn.getStyleClass().add(LEFT);
+        butIn.getStyleClass().add(CENTER);
         butOut.getStyleClass().add(CENTER);
-        butPan.getStyleClass().add(RIGHT);
-        final HBox hboxHandler = new HBox(butIn,butOut,butPan);
+        butPan.getStyleClass().add(CENTER);
+        final HBox hboxHandler = new HBox(butAll,butIn,butOut,butPan,butRepaint,butPrevious,butNext);
         
-        
-        getItems().add(hboxAction);
         getItems().add(hboxHandler);
         
     }
