@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2009-2011, Geomatys
+ *    (C) 2009-2014, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -376,8 +376,12 @@ public final class FeatureUtilities {
             return src; // inmutable
         }
 
+        if(src instanceof org.geotoolkit.util.Cloneable){
+            return ((org.geotoolkit.util.Cloneable)src).clone();
+        }
+        
         //can't find a solution to duplicate this object
-        LOGGER.log(Level.WARNING, "",new SimpleIllegalAttributeException(
+        LOGGER.log(Level.INFO, "",new SimpleIllegalAttributeException(
                 "Do not know how to deep copy " + type.getName()));
         return src;
     }
