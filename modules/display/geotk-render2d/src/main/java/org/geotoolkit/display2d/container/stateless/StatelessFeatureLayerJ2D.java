@@ -444,8 +444,13 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
             }
 
             final Filter dimFilter = FILTER_FACTORY.and(
-                    FILTER_FACTORY.lessOrEqual(FILTER_FACTORY.literal(dimEnv.getMinimum(0)), def.getLower()),
-                    FILTER_FACTORY.greaterOrEqual(FILTER_FACTORY.literal(dimEnv.getMaximum(0)), def.getUpper()));
+                    FILTER_FACTORY.or(
+                            FILTER_FACTORY.isNull(def.getLower()),
+                            FILTER_FACTORY.lessOrEqual(def.getLower(), FILTER_FACTORY.literal(dimEnv.getMaximum(0)) )),
+                    FILTER_FACTORY.or(
+                            FILTER_FACTORY.isNull(def.getUpper()),
+                            FILTER_FACTORY.greaterOrEqual(def.getUpper(), FILTER_FACTORY.literal(dimEnv.getMinimum(0)) ))
+            );
 
             filter = FILTER_FACTORY.and(filter, dimFilter);
 
