@@ -115,7 +115,8 @@ public class FXAxisViewSkin extends SkinBase<FXAxisView> {
         control.crsProperty().addListener(listener);
         control.widthProperty().addListener(listener);
         control.heightProperty().addListener(listener);
-        control.selectionProperty().addListener(listener);
+        control.rangeMinProperty().addListener(listener);
+        control.rangeMaxProperty().addListener(listener);
         
         updateGraphic();
         
@@ -139,7 +140,8 @@ public class FXAxisViewSkin extends SkinBase<FXAxisView> {
         removeRange.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                control.selectionProperty().set(null);
+                control.rangeMinProperty().set(null);
+                control.rangeMaxProperty().set(null);
             }
         });
         final MenuItem markRange = new MenuItem("mark range");
@@ -147,7 +149,8 @@ public class FXAxisViewSkin extends SkinBase<FXAxisView> {
             @Override
             public void handle(ActionEvent event) {
                 final double val = control.getAxisValueAt(lastMouseCoord);
-                control.selectionProperty().set(NumberRange.create(val, true, val, true));
+                control.rangeMinProperty().set(val);
+                control.rangeMaxProperty().set(val);
             }
         });
         
@@ -339,10 +342,11 @@ public class FXAxisViewSkin extends SkinBase<FXAxisView> {
         
         
         //update the selection
-        final Range<? extends Number> selection = view.selectionProperty().get();
-        if(selection!=null){
-            double min = view.getGraphicValueAt(selection.getMinValue().doubleValue());
-            double max = view.getGraphicValueAt(selection.getMaxValue().doubleValue());
+        final Number rangeMin = view.rangeMinProperty().get();
+        final Number rangeMax = view.rangeMaxProperty().get();
+        if(rangeMin!=null && rangeMax!=null){
+            double min = view.getGraphicValueAt(rangeMin.doubleValue());
+            double max = view.getGraphicValueAt(rangeMax.doubleValue());
             
             if(max > 0 && min < area.getWidth()){
                 //clip value in visible range

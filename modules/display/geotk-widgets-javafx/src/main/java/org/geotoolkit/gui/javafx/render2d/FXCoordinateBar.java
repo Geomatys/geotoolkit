@@ -79,12 +79,14 @@ public class FXCoordinateBar extends GridPane {
                 //range slider
                 final Date[] range = map.getCanvas().getTemporalRange();
                 if(range==null){
-                    sliderview.selectionProperty().set(null);
+                    sliderview.rangeMinProperty().set(null);
+                    sliderview.rangeMaxProperty().set(null);
                 }else{
-                    final boolean wasNull = sliderview.selectionProperty().get() == null;
+                    final boolean wasNull = sliderview.rangeMinProperty().get() == null;
                     final double min = range[0].getTime();
                     final double max = range[1].getTime();
-                    sliderview.selectionProperty().set(NumberRange.create(min, true, max, true));
+                    sliderview.rangeMinProperty().set(min);
+                    sliderview.rangeMaxProperty().set(max);
                     if(wasNull){
                         //zoom on selection
                         sliderview.moveTo((max+min/2.0));
@@ -145,7 +147,7 @@ public class FXCoordinateBar extends GridPane {
         getColumnConstraints().addAll(col0);
         getRowConstraints().addAll(row0,row1);
         
-        sliderview.scaleProperty().set(1.0/TemporalConstants.DAY_MS);
+        sliderview.scaleProperty().set( (1.0/TemporalConstants.DAY_MS)*30 );
         sliderview.visibleProperty().bind(sliderButton.selectedProperty());
         sliderButton.setOnAction((ActionEvent event) -> {
             getChildren().remove(sliderview);
@@ -153,23 +155,28 @@ public class FXCoordinateBar extends GridPane {
                 add(sliderview, 0, 0, 1, 1);
             }
         });
-        sliderview.selectionProperty().addListener(new ChangeListener<Range<? extends Number>>() {
+        
+        final ChangeListener rangeListener = new ChangeListener() {
             @Override
-            public void changed(ObservableValue<? extends Range<? extends Number>> observable, Range<? extends Number> oldValue, Range<? extends Number> newValue) {
+            public void changed(ObservableValue observable, Object oldValue, Object newValue) {
                 try {
                     if(newValue==null){
                         map.getCanvas().setTemporalRange(null,null);
                     }else{
-                        final Number minValue = newValue.getMinValue();
-                        final Number maxValue = newValue.getMinValue();
-                        map.getCanvas().setTemporalRange(new Date(minValue.longValue()), new Date(maxValue.longValue()));
+                        final Number minValue = sliderview.rangeMinProperty().get();
+                        final Number maxValue = sliderview.rangeMaxProperty().get();
+                        map.getCanvas().setTemporalRange(
+                                minValue!=null ? new Date(minValue.longValue()) : null, 
+                                maxValue!=null ? new Date(maxValue.longValue()) : null);
                     }
                 } catch (TransformException ex) {
                     Loggers.JAVAFX.log(Level.INFO, ex.getMessage(), ex);
                 }
-                
             }
-        });
+        };
+        
+        sliderview.rangeMinProperty().addListener(rangeListener);
+        sliderview.rangeMaxProperty().addListener(rangeListener);
         
         
         statusBar.getLeftItems().add(sliderButton);

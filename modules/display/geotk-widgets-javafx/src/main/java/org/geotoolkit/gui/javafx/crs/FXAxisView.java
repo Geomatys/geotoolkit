@@ -57,7 +57,8 @@ public class FXAxisView extends Control {
     private final DoubleProperty offset = new SimpleDoubleProperty(0.0);
     private final IntegerProperty orientation = new SimpleIntegerProperty(SwingConstants.SOUTH);
     private final ObjectProperty<SelectionType> selectionType = new SimpleObjectProperty<>();
-    private final ObjectProperty<Range<? extends Number>> selection = new SimpleObjectProperty<>();
+    private final ObjectProperty<Number> rangeMin = new SimpleObjectProperty<>();
+    private final ObjectProperty<Number> rangeMax = new SimpleObjectProperty<>();
     
     public FXAxisView(){
         getStyleClass().add("axis-view");
@@ -105,8 +106,12 @@ public class FXAxisView extends Control {
         return selectionType;
     }
     
-    public ObjectProperty<Range<? extends Number>> selectionProperty() {
-        return selection;
+    public ObjectProperty<Number> rangeMinProperty() {
+        return rangeMin;
+    }
+    
+    public ObjectProperty<Number> rangeMaxProperty() {
+        return rangeMax;
     }
     
     public double getGraphicValueAt(final double d) {
