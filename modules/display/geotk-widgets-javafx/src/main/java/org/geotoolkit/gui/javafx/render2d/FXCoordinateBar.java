@@ -197,6 +197,7 @@ public class FXCoordinateBar extends GridPane {
             public void handle(Event t) {
                 if (map != null) {
                     map.getCanvas().setBackgroundPainter(new SolidColorPainter(FXUtilities.toSwingColor(colorPicker.getValue())));
+                    map.getCanvas().repaint();
                 }     
             }
         });

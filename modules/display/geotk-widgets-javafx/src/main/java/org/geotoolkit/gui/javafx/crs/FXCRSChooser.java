@@ -20,9 +20,11 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import org.geotoolkit.gui.javafx.util.FXOptionDialog;
 import org.geotoolkit.internal.GeotkFX;
@@ -49,16 +51,15 @@ public class FXCRSChooser extends BorderPane {
     public FXCRSChooser() {
         GeotkFX.loadJRXML(this);
         
-    }
-    
-    public ObjectProperty<CoordinateReferenceSystem> crsProperty(){
-        return crsProperty;
-    }
-    
-    /**
-     * Called by FXMLLoader after creating controller.
-     */
-    public void initialize(){
+        uiSearch.addEventHandler(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+
+            @Override
+            public void handle(KeyEvent event) {
+                if(updateText)return;
+                uiTable.searchCRS(uiSearch.getText());
+            }
+        });
+        
         uiTable = new FXCRSTable();
         uiPane.setCenter(uiTable);
         
@@ -77,14 +78,13 @@ public class FXCRSChooser extends BorderPane {
                 updateText = false;
             }
         });
+        
     }
     
-    @FXML
-    void searchChange(ActionEvent event) {
-        if(updateText)return;
-        uiTable.searchCRS(uiSearch.getText());
+    public ObjectProperty<CoordinateReferenceSystem> crsProperty(){
+        return crsProperty;
     }
-    
+        
     public static CoordinateReferenceSystem showDialog(Object parent, CoordinateReferenceSystem crs){
         final FXCRSChooser chooser = new FXCRSChooser();
         chooser.crsProperty.set(crs);

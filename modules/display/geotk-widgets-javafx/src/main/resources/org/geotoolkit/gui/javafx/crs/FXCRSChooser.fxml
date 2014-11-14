@@ -7,24 +7,27 @@
 <?import javafx.scene.layout.*?>
 
 <fx:root maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" type="BorderPane" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
-   <center>
+   <top>
       <GridPane hgap="10.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" vgap="10.0" BorderPane.alignment="CENTER">
         <columnConstraints>
           <ColumnConstraints hgrow="NEVER" />
-          <ColumnConstraints hgrow="NEVER" />
-            <ColumnConstraints hgrow="ALWAYS" maxWidth="1.7976931348623157E308" minWidth="1.0" prefWidth="1.0" />
+          <ColumnConstraints hgrow="ALWAYS" maxWidth="1.7976931348623157E308" />
         </columnConstraints>
         <rowConstraints>
             <RowConstraints vgrow="NEVER" />
             <RowConstraints vgrow="NEVER" />
-          <RowConstraints maxHeight="1.7976931348623157E308" vgrow="ALWAYS" />
         </rowConstraints>
          <children>
             <Label styleClass="property-key" text="%org.geotoolkit.gui.javafx.crs.FXCRSChooser.crs" />
-            <CheckBox fx:id="uiLongFirst" mnemonicParsing="false" styleClass="property-key" text="%org.geotoolkit.gui.javafx.crs.FXCRSChooser.longfirst" GridPane.columnIndex="1" />
-            <TextField fx:id="uiSearch" onKeyTyped="#searchChange" GridPane.columnSpan="3" GridPane.rowIndex="1" />
-            <BorderPane fx:id="uiPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnSpan="3" GridPane.rowIndex="2" />
+            <CheckBox fx:id="uiLongFirst" mnemonicParsing="false" styleClass="property-key" text="%org.geotoolkit.gui.javafx.crs.FXCRSChooser.longfirst" GridPane.columnIndex="1" GridPane.halignment="LEFT" />
+            <TextField fx:id="uiSearch" GridPane.columnSpan="2" GridPane.rowIndex="1" />
          </children>
+         <BorderPane.margin>
+            <Insets bottom="10.0" left="10.0" right="10.0" />
+         </BorderPane.margin>
       </GridPane>
+   </top>
+   <center>
+      <BorderPane fx:id="uiPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" BorderPane.alignment="CENTER" />
    </center>
 </fx:root>
