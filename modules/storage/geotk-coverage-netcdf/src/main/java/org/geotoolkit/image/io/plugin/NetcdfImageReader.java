@@ -1040,6 +1040,11 @@ public class NetcdfImageReader extends FileImageReader implements
                     return variable;
                 }
             }
+            for (final Variable variable : variables) {
+                if (variable!=null && name.equalsIgnoreCase(variable.getShortName())) {
+                    return variable;
+                }
+            }
         }
         throw new IIOException(errors().getString(
                 Errors.Keys.VARIABLE_NOT_FOUND_IN_FILE_2, name, dataset.getLocation()));
