@@ -661,7 +661,7 @@ public class TiffImageReader extends SpatialImageReader {
                     */
                    switch (sampleBitSize) {
                        case Byte   .SIZE : sourceDataBufferType = DataBuffer.TYPE_BYTE;   break;
-                       case Short  .SIZE : sourceDataBufferType = DataBuffer.TYPE_USHORT; break;
+                       case Short  .SIZE : sourceDataBufferType = (samplFormat == 2) ? DataBuffer.TYPE_SHORT : DataBuffer.TYPE_USHORT; break;
                        case Integer.SIZE : sourceDataBufferType = DataBuffer.TYPE_INT;    break;
                        case Double.SIZE  : sourceDataBufferType = DataBuffer.TYPE_DOUBLE; break;
                        default : {

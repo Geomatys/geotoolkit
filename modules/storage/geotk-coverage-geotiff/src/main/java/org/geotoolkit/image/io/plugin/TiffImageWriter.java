@@ -1376,7 +1376,7 @@ public class TiffImageWriter extends SpatialImageWriter {
         addProperty(BitsPerSample, TYPE_USHORT, sampleSize.length, bitspersample, properties);
         
         //-- sample format --//
-        if (bitPerSample == Float.SIZE || bitPerSample == Double.SIZE) {
+        if (bitPerSample >= Short.SIZE) {
             final int dataType = sm.getDataType();
             short sampleFormat = 0;
             switch (dataType) {
@@ -1385,13 +1385,14 @@ public class TiffImageWriter extends SpatialImageWriter {
                     sampleFormat = 3; //-- type floating point --//
                     break;
                 } 
-                case DataBuffer.TYPE_INT : {
+                case DataBuffer.TYPE_SHORT :
+                case DataBuffer.TYPE_INT   : {
                     sampleFormat = 2; //-- type 32 bits Int --//
                     break;
                 }
                 default : {
-                    assert bitPerSample == Long.SIZE : "Define sample format : expected bitpersample equals to Long.SIZE = 64. Found : "+Arrays.toString(bitspersample);
-                    sampleFormat = 1; //-- type UInt --//
+                    assert bitPerSample == Long.SIZE || bitPerSample == Short.SIZE : "Define sample format : expected bitpersample equals to Long.SIZE = 64 or UShort.SIZE = 16. Found : "+Arrays.toString(bitspersample);
+                    sampleFormat = 1; //-- type UInt or UShort--//
                     break;
                 }
             }
