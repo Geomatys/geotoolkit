@@ -16,8 +16,7 @@
  */
 package org.geotoolkit.process.quartz;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.geotoolkit.process.AbstractProcess;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessEvent;
@@ -26,10 +25,14 @@ import org.geotoolkit.process.ProcessFinder;
 import org.geotoolkit.process.ProcessListener;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.NoSuchIdentifierException;
-import org.quartz.Job;
+import org.quartz.InterruptableJob;
 import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
+import org.quartz.UnableToInterruptJobException;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Quartz job executing a geotoolkit process.
@@ -37,12 +40,14 @@ import org.quartz.JobExecutionException;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class ProcessJob implements Job{
+public class ProcessJob implements InterruptableJob {
 
     public static final String KEY_FACTORY_ID = "factoryID";
     public static final String KEY_PROCESS_ID = "processID";
     public static final String KEY_PARAMETERS = "processParams";
     public static final String KEY_PROCESS    = "processObj";
+
+    private Process process = null;
 
     private final List<ProcessListener> listeners = new ArrayList<>();
     
@@ -75,7 +80,7 @@ public class ProcessJob implements Job{
         final String factoryId = (String) objFactoryId;
         final String processId = (String) objProcessId;
         final ParameterValueGroup params = (ParameterValueGroup) objProcessParams;
-        Process process = (Process) objProcess;
+        process = (Process) objProcess;
 
         if(process == null){
             final ProcessDescriptor desc;
@@ -105,6 +110,13 @@ public class ProcessJob implements Job{
         }
         jec.setResult(result);
 
+    }
+
+    @Override
+    public void interrupt() throws UnableToInterruptJobException {
+        if (process != null) {
+            ((AbstractProcess) process).cancelProcess();
+        }
     }
 
     private final class StoreExceptionMonitor implements ProcessListener{
