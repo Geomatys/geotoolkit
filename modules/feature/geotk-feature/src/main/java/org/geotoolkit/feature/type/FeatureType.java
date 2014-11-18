@@ -32,6 +32,7 @@
 package org.geotoolkit.feature.type;
 
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.geotoolkit.feature.Feature;
 
 /**
  * The type of a Feature.
@@ -83,4 +84,7 @@ public interface FeatureType extends org.opengis.feature.FeatureType, ComplexTyp
      * @return The coordinate referencing system, or <code>null</code>.
      */
     CoordinateReferenceSystem getCoordinateReferenceSystem();
+
+    @Override
+    Feature newInstance();
 }

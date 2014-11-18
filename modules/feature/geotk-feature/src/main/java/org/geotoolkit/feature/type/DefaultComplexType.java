@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.*;
 
+import org.opengis.feature.Attribute;
 import org.geotoolkit.feature.type.DefaultName;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.apache.sis.util.Classes;
@@ -161,6 +162,11 @@ public class DefaultComplexType extends DefaultAttributeType<AttributeType> impl
         //JD: at this point "inlining" is unused... we might want to kill it
         // from the interface
         return false;
+    }
+
+    @Override
+    public Attribute<Object> newInstance() {
+        throw new UnsupportedOperationException();
     }
 
     /**
@@ -366,5 +372,4 @@ public class DefaultComplexType extends DefaultAttributeType<AttributeType> impl
         }
         return sb.toString();
     }
-
 }

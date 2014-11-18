@@ -19,6 +19,7 @@ package org.geotoolkit.feature.type;
 import java.util.List;
 import java.util.Objects;
 
+import org.opengis.feature.FeatureAssociation;
 import org.opengis.feature.FeatureType;
 import org.geotoolkit.feature.type.AssociationDescriptor;
 import org.geotoolkit.feature.type.AssociationType;
@@ -79,6 +80,11 @@ public class DefaultAssociationType extends DefaultPropertyType<AssociationType>
     @Override
     public int getMaximumOccurs() {
         return (descriptor != null) ? descriptor.getMaxOccurs() : Integer.MAX_VALUE;
+    }
+
+    @Override
+    public FeatureAssociation newInstance() {
+        throw new UnsupportedOperationException();
     }
 
     /**

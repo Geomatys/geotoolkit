@@ -1,7 +1,7 @@
 /*
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
- * 
+ *
  *    (C) 2002-2008, Open Source Geospatial Foundation (OSGeo)
  *
  *    This library is free software; you can redistribute it and/or
@@ -48,13 +48,12 @@ public class DefaultGeometryType extends DefaultAttributeType<AttributeType> imp
     public CoordinateReferenceSystem getCoordinateReferenceSystem() {
         return crs;
     }
-    
+
     /**
      * Set the CoordinateReferenceSystem to the GeometryType
-     * @param crs 
+     * @param crs
      */
     public void setCoordinateReferenceSystem(CoordinateReferenceSystem crs) {
         this.crs = crs;
     }
-    
 }

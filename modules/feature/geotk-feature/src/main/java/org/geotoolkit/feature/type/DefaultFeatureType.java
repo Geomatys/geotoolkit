@@ -33,6 +33,7 @@ import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.InternationalString;
+import org.geotoolkit.feature.Feature;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
 
 /**
@@ -154,6 +155,11 @@ public class DefaultFeatureType extends DefaultComplexType implements FeatureTyp
             }
         }
         return defaultGeometry;
+    }
+
+    @Override
+    public Feature newInstance() throws IllegalStateException {
+        throw new UnsupportedOperationException();
     }
 
     /**

@@ -19,6 +19,7 @@ package org.geotoolkit.feature.type;
 
 import java.util.List;
 
+import org.opengis.feature.Attribute;
 import org.apache.sis.util.Classes;
 
 import org.geotoolkit.feature.type.AttributeType;
@@ -117,6 +118,11 @@ public class DefaultAttributeType<T extends AttributeType> extends DefaultProper
 
     public Object createDefaultValue() {
         return null;
+    }
+
+    @Override
+    public Attribute<Object> newInstance() {
+        throw new UnsupportedOperationException();
     }
 
     /**
