@@ -72,10 +72,6 @@ public final strictfp class GridGeometryTest {
         assertEquals(AffineTransform.TYPE_TRANSLATION, tr.getType());
         assertEquals(-0.5, tr.getTranslateX(), 0);
         assertEquals(-0.5, tr.getTranslateY(), 0);
-        tr = (AffineTransform) gg.getGridToCRS2D(PixelOrientation.valueOf("LOWER"));
-        assertEquals(AffineTransform.TYPE_TRANSLATION, tr.getType());
-        assertEquals(0.0, tr.getTranslateX(), 0);
-        assertEquals(0.5, tr.getTranslateY(), 0);
     }
 
     /**
