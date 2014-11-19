@@ -244,12 +244,12 @@ public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<C
             candidate = projectedobj.getCandidate();
 
             //test if the symbol is visible on this feature
-            if(!symbol.isVisible(candidate)) return;
+            if(!symbol.isVisible(candidate)) continue;
 
             final ProjectedGeometry projectedGeometry = projectedobj.getGeometry(geomPropertyName);
 
             //symbolizer doesnt match the featuretype, no geometry found with this name.
-            if(projectedGeometry == null) return;
+            if(projectedGeometry == null) continue;
 
             //create the image--------------------------------------------------
             final BufferedImage img = symbol.getImage(candidate,coeff,hints);
