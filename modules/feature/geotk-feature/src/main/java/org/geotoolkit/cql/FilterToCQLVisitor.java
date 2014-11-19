@@ -22,6 +22,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.SimpleTimeZone;
 import java.util.TimeZone;
+import java.util.regex.Pattern;
+
 import org.geotoolkit.filter.DefaultPropertyIsLike;
 import org.geotoolkit.temporal.object.TemporalUtilities;
 import org.opengis.filter.And;
@@ -88,6 +90,11 @@ public class FilterToCQLVisitor implements FilterVisitor, ExpressionVisitor {
 
     public static final FilterToCQLVisitor INSTANCE = new FilterToCQLVisitor();
     private static final TimeZone TZ = new SimpleTimeZone(0, "Out Timezone");
+
+    /**
+     * Pattern to check for property name to escape against regExp
+     */
+    private final Pattern patternPropertyName = Pattern.compile("[,+\\-/*\\t\\n\\r\\d\\s]");
 
     private FilterToCQLVisitor() {
     }
@@ -581,8 +588,8 @@ public class FilterToCQLVisitor implements FilterVisitor, ExpressionVisitor {
     public Object visit(final PropertyName exp, final Object o) {
         final StringBuilder sb = toStringBuilder(o);
         final String name = exp.getPropertyName();
-        if(name.contains(" ")){
-            //contain spaces, we escape it
+        if(patternPropertyName.matcher(name).find()){
+            //escape for special chars
             sb.append('"').append(name).append('"');
         }else{
             sb.append(name);

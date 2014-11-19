@@ -79,7 +79,7 @@ public class FilterWritingTest {
                 }));
         final String cql = CQL.write(filter);
         assertNotNull(cql);
-        assertEquals("(att1 = 15 AND att2 = 30 AND att3 = 50)", cql);
+        assertEquals("(\"att1\" = 15 AND \"att2\" = 30 AND \"att3\" = 50)", cql);
     }
 
     @Test
@@ -92,7 +92,7 @@ public class FilterWritingTest {
                 }));
         final String cql = CQL.write(filter);
         assertNotNull(cql);
-        assertEquals("(att1 = 15 OR att2 = 30 OR att3 = 50)", cql);
+        assertEquals("(\"att1\" = 15 OR \"att2\" = 30 OR \"att3\" = 50)", cql);
     }
 
     @Test
