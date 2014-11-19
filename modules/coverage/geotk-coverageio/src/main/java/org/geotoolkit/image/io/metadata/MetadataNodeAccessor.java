@@ -27,7 +27,7 @@ import javax.measure.unit.Unit;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-import org.opengis.util.CodeList;
+import org.opengis.util.Enumerated;
 import org.opengis.metadata.citation.Citation;
 
 import org.geotoolkit.resources.Errors;
@@ -561,7 +561,7 @@ public class MetadataNodeAccessor extends MetadataNodeParser {
      *
      * @since 3.06
      */
-    public void setAttribute(final String attribute, final CodeList<?> value) {
+    public void setAttribute(final String attribute, final Enumerated value) {
         setAttribute(attribute, Types.getCodeName(value));
     }
 

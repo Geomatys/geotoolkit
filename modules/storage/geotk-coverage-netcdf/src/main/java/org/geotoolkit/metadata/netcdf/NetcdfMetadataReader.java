@@ -694,7 +694,7 @@ public class NetcdfMetadataReader extends NetcdfMetadata {
                 if (identification == null) {
                     identification = new DefaultDataIdentification();
                 }
-                if (topic    != null) addIfAbsent(identification.getTopicCategories(), Types.forCodeName(TopicCategory.class, topic, true));
+                if (topic    != null) addIfAbsent(identification.getTopicCategories(), Types.forEnumName(TopicCategory.class, topic));
                 if (type     != null) addIfAbsent(identification.getSpatialRepresentationTypes(), Types.forCodeName(SpatialRepresentationType.class, type, true));
                 if (standard != null) addIfAbsent(identification.getDescriptiveKeywords(), standard);
                 if (keywords != null) addIfAbsent(identification.getDescriptiveKeywords(), keywords);
