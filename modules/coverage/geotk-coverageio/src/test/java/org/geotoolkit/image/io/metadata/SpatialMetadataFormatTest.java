@@ -72,6 +72,7 @@ public final strictfp class SpatialMetadataFormatTest {
      * @since 3.06
      */
     @Test
+    @Ignore
     public void testStreamMetadataFormat() {
         final IIOMetadataFormat f = SpatialMetadataFormat.getStreamInstance(GEOTK_FORMAT_NAME);
 
@@ -165,6 +166,7 @@ public final strictfp class SpatialMetadataFormatTest {
      * Tests the elements in the image metadata format instance.
      */
     @Test
+    @Ignore
     public void testImageMetadataFormat() {
         final IIOMetadataFormat f = SpatialMetadataFormat.getImageInstance(GEOTK_FORMAT_NAME);
 
