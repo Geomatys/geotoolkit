@@ -116,10 +116,6 @@ public final class PixelTranslation extends Static implements Serializable {
         new PixelTranslation(UPPER_RIGHT,  0.5, -0.5);
         new PixelTranslation(LOWER_LEFT,  -0.5,  0.5);
         new PixelTranslation(LOWER_RIGHT,  0.5,  0.5);
-        new PixelTranslation("LEFT",      -0.5,  0.0);
-        new PixelTranslation("RIGHT",      0.5,  0.0);
-        new PixelTranslation("UPPER",      0.0, -0.5);
-        new PixelTranslation("LOWER",      0.0,  0.5);
     }
 
     /**
