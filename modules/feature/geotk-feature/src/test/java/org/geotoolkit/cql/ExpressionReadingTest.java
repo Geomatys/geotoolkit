@@ -40,7 +40,6 @@ import org.opengis.filter.expression.Literal;
 import org.opengis.filter.expression.Multiply;
 import org.opengis.filter.expression.PropertyName;
 import org.opengis.filter.expression.Subtract;
-import org.opengis.temporal.Duration;
 
 /**
  * Test reading CQL expressions.
@@ -574,6 +573,25 @@ public class ExpressionReadingTest {
                         )
                 , rootAdd);     
        
+    }
+
+    @Test
+    public void testCombine5() throws CQLException{
+        final String cql = "(\"NB-Curistes\"*50)/12000";
+        final Object obj = CQL.parseExpression(cql);
+        assertTrue(obj instanceof Divide);
+        final Divide result = (Divide) obj;
+
+        assertEquals(
+                FF.divide(
+                        FF.multiply(
+                                FF.property("NB-Curistes"),
+                                FF.literal(50)
+                        ),
+                        FF.literal(12000)
+                )
+                , result);
+
     }
     
 }
