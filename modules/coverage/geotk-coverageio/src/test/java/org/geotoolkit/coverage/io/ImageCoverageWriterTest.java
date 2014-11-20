@@ -173,7 +173,6 @@ public final strictfp class ImageCoverageWriterTest extends ImageTestBase {
      * @throws ParseException Should not happen.
      */
     @Test
-    @Ignore
     public void writeFull() throws IOException, CoverageStoreException, ParseException {
         final GridCoverage2D coverage = read("matrix.txt");
         final ImageCoverageWriterInspector writer = new ImageCoverageWriterInspector("writeFull", "matrix");
@@ -198,7 +197,6 @@ public final strictfp class ImageCoverageWriterTest extends ImageTestBase {
      * @throws ParseException Should not happen.
      */
     @Test
-    @Ignore
     public void writeRegion() throws IOException, CoverageStoreException, ParseException {
         final GridCoverage2D coverage = read("matrix.txt");
         final ImageCoverageWriterInspector writer = new ImageCoverageWriterInspector("writeRegion");
@@ -241,7 +239,6 @@ public final strictfp class ImageCoverageWriterTest extends ImageTestBase {
      * @throws ParseException Should not happen.
      */
     @Test
-    @Ignore
     public void writeSubsampledRegion() throws IOException, CoverageStoreException, ParseException {
         final GridCoverage2D coverage = read("matrix.txt");
         final ImageCoverageWriterInspector writer = new ImageCoverageWriterInspector("writeSubsampledRegion");
@@ -277,7 +274,6 @@ public final strictfp class ImageCoverageWriterTest extends ImageTestBase {
      * @throws ParseException Should not happen.
      */
     @Test
-    @Ignore
     public void writeScaledRegion() throws IOException, CoverageStoreException, ParseException {
         final GridCoverage2D coverage = read("matrix.txt");
         final ImageCoverageWriterInspector writer = new ImageCoverageWriterInspector("writeScaledRegion");
@@ -339,7 +335,6 @@ public final strictfp class ImageCoverageWriterTest extends ImageTestBase {
      *       class (nearest neighbor interpolation of floating point values).
      */
     @Test
-    @Ignore
     @PlatformDependentTest
     public void writeExpandedUpperLeftRegion() throws IOException, CoverageStoreException, ParseException {
         assumeTrue(OS.current() == OS.MAC_OS);

@@ -1136,6 +1136,27 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
     }
 
     /**
+     * Returns an attribute as an enumeration value for the {@linkplain #selectChild selected element},
+     * or {@code null} if none. If the enumeration value stored in the given attribute is not a known
+     * element, then this method logs a warning and returns {@code null}.
+     *
+     * @param  <T> The type of the enumeration.
+     * @param  attribute The attribute to fetch.
+     * @param  codeType The type of the enumeration. This is used for determining the expected values.
+     * @return The attribute value, or {@code null} if none or unknown.
+     *
+     * @since 4.0
+     */
+    public <T extends Enum<T>> T getAttributeAsEnum(final String attribute, final Class<T> codeType) {
+        final String value = getAttribute(attribute);
+        final T code = Types.forEnumName(codeType, value);
+        if (code == null && value != null) {
+            warning("getAttributeAsEnum", Errors.Keys.ILLEGAL_PARAMETER_VALUE_2, attribute, value);
+        }
+        return code;
+    }
+
+    /**
      * Returns an attribute as a boolean for the {@linkplain #selectChild selected element},
      * or {@code null} if none. If the attribute can't be parsed as a boolean, then this
      * method logs a warning and returns {@code null}.

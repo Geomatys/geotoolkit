@@ -82,7 +82,6 @@ public final strictfp class CoverageIOTest extends ImageTestBase {
      * @throws CoverageStoreException If an error occurred while reading of writing the file.
      */
     @Test
-    @Ignore
     public void testReadWrite() throws IOException, CoverageStoreException {
         final GridCoverage coverage = CoverageIO.read(TestData.file(TileTest.class, "A2.png"));
         verify(coverage.getGridGeometry(), 90, 90, 0);

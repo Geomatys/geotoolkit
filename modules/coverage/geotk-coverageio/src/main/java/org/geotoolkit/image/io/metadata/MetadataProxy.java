@@ -28,7 +28,6 @@ import java.util.NoSuchElementException;
 import java.lang.reflect.Proxy;
 import java.lang.reflect.Method;
 import java.lang.reflect.InvocationHandler;
-import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.metadata.IIOMetadataFormat;
 import javax.measure.quantity.Quantity;
 import javax.measure.unit.Unit;
@@ -515,6 +514,11 @@ final class MetadataProxy<T> implements InvocationHandler {
         if (CodeList.class.isAssignableFrom(targetType)) {
             @SuppressWarnings({"unchecked","rawtypes"})
             final CodeList code = accessor.getAttributeAsCode(name, (Class) targetType);
+            return code;
+        }
+        if (Enum.class.isAssignableFrom(targetType)) {
+            @SuppressWarnings({"unchecked","rawtypes"})
+            final Enum code = accessor.getAttributeAsEnum(name, (Class) targetType);
             return code;
         }
         /*

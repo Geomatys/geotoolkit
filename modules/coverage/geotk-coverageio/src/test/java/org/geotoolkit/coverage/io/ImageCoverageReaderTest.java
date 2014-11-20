@@ -136,7 +136,6 @@ public final strictfp class ImageCoverageReaderTest extends ImageTestBase {
      * @throws CoverageStoreException Should not happen.
      */
     @Test
-    @Ignore
     public void readFull() throws IOException, CoverageStoreException {
         final ImageCoverageReaderInspector reader = new ImageCoverageReaderInspector("readFull");
         reader.setInput(TestData.file(TextMatrixImageReaderTest.class, "matrix.txt"));
@@ -198,7 +197,6 @@ public final strictfp class ImageCoverageReaderTest extends ImageTestBase {
      * @throws CoverageStoreException Should not happen.
      */
     @Test
-    @Ignore
     public void readRegion() throws IOException, CoverageStoreException {
         final ImageCoverageReaderInspector reader = new ImageCoverageReaderInspector("readRegion");
         reader.setInput(TestData.file(TextMatrixImageReaderTest.class, "matrix.txt"));
@@ -247,7 +245,6 @@ public final strictfp class ImageCoverageReaderTest extends ImageTestBase {
      * @throws CoverageStoreException Should not happen.
      */
     @Test
-    @Ignore
     public void readSubsampledRegion() throws IOException, CoverageStoreException {
         final ImageCoverageReaderInspector reader = new ImageCoverageReaderInspector("readSubsampledRegion");
         reader.setInput(TestData.file(TextMatrixImageReaderTest.class, "matrix.txt"));

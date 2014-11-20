@@ -49,7 +49,6 @@ import org.opengis.metadata.identification.*;
 import org.opengis.metadata.maintenance.Scope;
 
 import org.opengis.parameter.*;
-import org.opengis.referencing.*;
 import org.opengis.referencing.cs.*;
 import org.opengis.referencing.crs.*;
 import org.opengis.referencing.datum.*;
@@ -64,6 +63,7 @@ import org.opengis.coverage.grid.GridCoordinates;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.primitive.Point;
 import org.opengis.temporal.Duration;
+import org.opengis.util.Enumerated;
 import org.opengis.util.InternationalString;
 import org.opengis.util.GenericName;
 
@@ -387,9 +387,9 @@ public class SpatialMetadataFormatBuilder extends Builder<SpatialMetadataFormat>
          *
          * The enums are the code list elements. There is no default value.
          */
-        if (CodeList.class.isAssignableFrom(type)) {
+        if (Enumerated.class.isAssignableFrom(type)) {
             @SuppressWarnings("unchecked")
-            final Class<CodeList<?>> codeType = (Class<CodeList<?>>) type;
+            final Class<Enumerated> codeType = (Class<Enumerated>) type;
             metadata.addEnumeration(parentName, elementName, (minOccurrence != 0), getCodeList(codeType));
             return elementName;
         }
@@ -493,7 +493,7 @@ public class SpatialMetadataFormatBuilder extends Builder<SpatialMetadataFormat>
                 // policy. Note that a null 'incomplete' map means that every types are incomplete.
                 continue;
             }
-            if (standard.isMetadata(candidate) && !CodeList.class.isAssignableFrom(candidate)) {
+            if (standard.isMetadata(candidate) && !Enumerated.class.isAssignableFrom(candidate)) {
                 final ValueRestriction vr = ValueRestriction.create(restrictions.get(entry.getKey()));
                 if (vr != null) {
                     final Obligation c = vr.obligation;
@@ -647,8 +647,8 @@ public class SpatialMetadataFormatBuilder extends Builder<SpatialMetadataFormat>
      *
      * @since 3.03
      */
-    private static String[] identifiers(final Class<? extends CodeList<?>> codeType) {
-        final CodeList<?>[] codes = Types.getCodeValues(codeType);
+    private static String[] identifiers(final Class<? extends Enumerated> codeType) {
+        final Enumerated[] codes = Types.getCodeValues(codeType);
         final String[] ids = new String[codes.length];
         for (int i=0; i<codes.length; i++) {
             ids[i] = Types.getCodeName(codes[i]);
@@ -660,7 +660,7 @@ public class SpatialMetadataFormatBuilder extends Builder<SpatialMetadataFormat>
      * Returns the code list identifiers, with some changes for code inherited from
      * legacy specifications.
      */
-    private static String[] getCodeList(final Class<? extends CodeList<?>> codeType) {
+    private static String[] getCodeList(final Class<? extends Enumerated> codeType) {
         String[] identifiers = identifiers(codeType);
         if (codeType == AxisDirection.class) {
             for (int i=0; i<identifiers.length; i++) {
