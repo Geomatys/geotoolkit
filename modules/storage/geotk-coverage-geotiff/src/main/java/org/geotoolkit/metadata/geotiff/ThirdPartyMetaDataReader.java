@@ -17,6 +17,7 @@
 
 package org.geotoolkit.metadata.geotiff;
 
+import java.awt.Color;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -36,6 +37,7 @@ import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.internal.image.io.DimensionAccessor;
+import org.geotoolkit.resources.Vocabulary;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -121,7 +123,7 @@ public class ThirdPartyMetaDataReader {
                     final String str = GeoTiffMetaDataUtils.readTiffAsciis(valueNode);
                     try {
                         realFillValue = Double.valueOf(str);
-                        noDataCategory = Category.NODATA;
+                        noDataCategory = new Category(Vocabulary.formatInternational(Vocabulary.Keys.NODATA), new Color(0,0,0,0), realFillValue);
                     } catch (NumberFormatException e) {
                         LOGGER.log(Level.INFO, "No data value cannot be read.", e);
                     }
@@ -179,7 +181,15 @@ public class ThirdPartyMetaDataReader {
                 }
             }
             
-            if (minSampleValues == null || maxSampleValues == null) {
+           /*
+            * If min and max sample values are not stipulate in metadata, we assume 
+            * that min and max interval is with exclusives terminal because in lot of case 
+            * the "No category Data" has often a value at interval terminals.
+            */
+            boolean isMinExcluded = minSampleValues == null;
+            boolean isMaxExcluded = maxSampleValues == null;
+            
+            if (isMinExcluded || isMaxExcluded) {
                 double min;
                 double max;
                 switch (bitsPerSamples) {
@@ -189,8 +199,13 @@ public class ThirdPartyMetaDataReader {
                         break;
                     }
                     case Short.SIZE : {
-                        min = 0;
-                        max = 0xFFFF;
+                        if (sampleFormat == 2) {
+                            min = -32768;
+                            max = 32767;
+                        } else {
+                            min = 0;
+                            max = 0xFFFF;
+                        }
                         break;
                     }
                     case Integer.SIZE : {
@@ -212,13 +227,13 @@ public class ThirdPartyMetaDataReader {
                     }
                     default : throw new IllegalStateException("Unknow sample type");
                 }
-                if (minSampleValues == null) Arrays.fill(minSV, min);
-                if (maxSampleValues == null) Arrays.fill(maxSV, max);                
+                if (isMinExcluded) Arrays.fill(minSV, min);
+                if (isMaxExcluded) Arrays.fill(maxSV, max);                
             }
-                
+                 
             for (int s = 0; s < samplePerPixels; s++) {
                 categories.add(new Category("data", null, 
-                                        NumberRange.create(1, true, 100, true), NumberRange.create(minSV[s], true, maxSV[s], true)));
+                                        NumberRange.create(minSV[s], !isMinExcluded, maxSV[s], !isMaxExcluded), 1, 0/*NumberRange.create(minSV[s], true, maxSV[s], true)*/));
             }
         } 
         
