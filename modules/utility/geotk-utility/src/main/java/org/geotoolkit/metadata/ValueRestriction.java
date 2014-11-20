@@ -151,7 +151,7 @@ public class ValueRestriction implements Serializable {
      */
     public static ValueRestriction create(final ExtendedElementInformation info) {
         if (info != null) {
-            final org.opengis.metadata.Obligation o = info.getObligation();
+            final Obligation o = info.getObligation();
             final InternationalString domain = info.getDomainValue();
             return create((o != null) ? Obligation.valueOf(o.name()) : null,
                     (domain instanceof NumberRange<?>) ? (NumberRange<?>) domain : null,
