@@ -120,7 +120,12 @@ public class ThirdPartyMetaDataReader {
                 }
                 case 42113 : {// no data value as ascii text
                     final Node valueNode = child.getChildNodes().item(0);
-                    final String str = GeoTiffMetaDataUtils.readTiffAsciis(valueNode);
+                    String str = GeoTiffMetaDataUtils.readTiffAsciis(valueNode);
+                    if (str.contains(",")) {
+                        final String[] strs = str.split(",");
+                        assert strs.length == 2 : "Unfomatted no data string value. Found : ("+str+")";
+                        str = strs[0] +"."+ strs[1];
+                    }
                     try {
                         realFillValue = Double.valueOf(str);
                         noDataCategory = new Category(Vocabulary.formatInternational(Vocabulary.Keys.NODATA), new Color(0,0,0,0), realFillValue);
