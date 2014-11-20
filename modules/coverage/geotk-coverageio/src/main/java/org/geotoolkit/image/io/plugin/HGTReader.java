@@ -1,22 +1,5 @@
 /*
- * Geotoolkit.org - An Open Source Java GIS Toolkit
- * http://www.geotoolkit.org
- *
- * (C) 2014, Geomatys
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation;
- * version 2.1 of the License.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- */
-
-/*
- *    Geotoolkit - An Open Source Java GIS Toolkit
+ *    Geotoolkit.org - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
  *    (C) 2014, Geomatys
@@ -184,6 +167,10 @@ public class HGTReader extends RawImageReader {
 
     @Override
     protected SpatialMetadata createMetadata(int imageIndex) throws IOException {
+        if (imageIndex < 0) {
+            // Stream metadata.
+            return null;
+        }
         SpatialMetadata md = new SpatialMetadata(false, this, null);
 
         final DimensionAccessor dac = new DimensionAccessor(md);
@@ -203,7 +190,7 @@ public class HGTReader extends RawImageReader {
                 final ReferencingBuilder builder = new ReferencingBuilder(md);
                 builder.setCoordinateReferenceSystem(geographicCRS);
 
-                final GridEnvelope2D gridEnv = new GridEnvelope2D(0, 0, getWidth(0), getHeight(0));
+                final GridEnvelope2D gridEnv = new GridEnvelope2D(0, 0, getWidth(imageIndex), getHeight(imageIndex));
                 final GeneralEnvelope envelope = new GeneralEnvelope(geographicCRS);
                 final int latitude = matcher.group(1).toLowerCase().startsWith("n")?
                         Integer.parseInt(matcher.group(2)) : -Integer.parseInt(matcher.group(2));
