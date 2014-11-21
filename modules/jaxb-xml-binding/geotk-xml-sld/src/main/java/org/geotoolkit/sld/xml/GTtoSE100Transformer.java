@@ -350,6 +350,9 @@ public class GTtoSE100Transformer implements StyleVisitor{
             final LiteralType lt = ogc_factory.createLiteralType();
             lt.getContent().add(pis.getLiteral());
             bot.setLiteral( lt );
+            if(!(pis.getExpression() instanceof PropertyName)){
+                throw new IllegalArgumentException("PropertyIsLike can support PropertyName only, but was a "+pis.getExpression());
+            }
             final PropertyNameType pnt = (PropertyNameType) extract(pis.getExpression()).getValue();
             bot.setPropertyName(pnt);
             bot.setSingleChar(pis.getSingleChar());
