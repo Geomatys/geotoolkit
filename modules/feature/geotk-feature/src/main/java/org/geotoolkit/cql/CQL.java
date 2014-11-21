@@ -554,6 +554,7 @@ public final class CQL {
             //            | NOT? IN LPAREN (expressionFctParam )?  RPAREN
             //            | BETWEEN expression AND expression
             //            | NOT? LIKE expression
+            //            | NOT? ILIKE expression
             //            | IS NOT? NULL
             //            | AFTER expression
             //            | ANYINTERACTS expression
@@ -637,9 +638,19 @@ public final class CQL {
                 final Expression left = convertExpression(exps.get(0), ff);
                 final Expression right = convertExpression(exps.get(1), ff);
                 if(exp.NOT()!=null){
-                    return ff.not(ff.like(left, right.evaluate(null, String.class), "%", "_", "\\"));
+                    return ff.not(ff.like(left, right.evaluate(null, String.class), "%", "_", "\\",true));
                 }else{
-                    return ff.like(left, right.evaluate(null, String.class), "%", "_", "\\");
+                    return ff.like(left, right.evaluate(null, String.class), "%", "_", "\\",true);
+                }
+                
+            }else if(exp.ILIKE()!=null){
+                // expression NOT? LIKE expression                
+                final Expression left = convertExpression(exps.get(0), ff);
+                final Expression right = convertExpression(exps.get(1), ff);
+                if(exp.NOT()!=null){
+                    return ff.not(ff.like(left, right.evaluate(null, String.class), "%", "_", "\\",false));
+                }else{
+                    return ff.like(left, right.evaluate(null, String.class), "%", "_", "\\",false);
                 }
                 
             }else if(exp.IS()!=null){

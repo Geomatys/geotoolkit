@@ -252,15 +252,13 @@ public class FilterToCQLVisitor implements FilterVisitor, ExpressionVisitor {
         final String literal = filter.getLiteral();
         final String pattern = DefaultPropertyIsLike.convertToSQL92(escape, wildCard, singleChar, literal);
 
+        filter.getExpression().accept(this,sb);
+            
         if(matchingCase){
-            filter.getExpression().accept(this,sb);
+            sb.append(" LIKE ");
         }else{
-            sb.append("strToUpperCase(");
-            filter.getExpression().accept(this,sb);
-            sb.append(')');
+            sb.append(" ILIKE ");
         }
-        
-        sb.append(" LIKE ");
         sb.append('\'');
         sb.append(pattern);
         sb.append('\'');

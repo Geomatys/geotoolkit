@@ -139,7 +139,7 @@ public class FilterReadingTest {
 
     @Test
     public void testOrAnd1() throws CQLException {
-        final String cql = "Title = 'VMAI' OR (Title LIKE 'LO?Li' AND DWITHIN(BoundingBox, POINT(12.1 28.9), 10, meters))";
+        final String cql = "Title = 'VMAI' OR (Title ILIKE 'LO?Li' AND DWITHIN(BoundingBox, POINT(12.1 28.9), 10, meters))";
         final Object obj = CQL.parseFilter(cql);
         assertTrue(obj instanceof Filter);
         final Filter filter = (Filter) obj;
@@ -305,7 +305,7 @@ public class FilterReadingTest {
         final Object obj = CQL.parseFilter(cql);
         assertTrue(obj instanceof PropertyIsLike);
         final PropertyIsLike filter = (PropertyIsLike) obj;
-        assertEquals(FF.like(FF.property("att"),"%hello_", "%", "_", "\\"), filter);
+        assertEquals(FF.like(FF.property("att"),"%hello_", "%", "_", "\\",true), filter);
     }
 
     @Test
@@ -314,9 +314,18 @@ public class FilterReadingTest {
         final Object obj = CQL.parseFilter(cql);
         assertTrue(obj instanceof Not);
         final Not filter = (Not) obj;
-        assertEquals(FF.not(FF.like(FF.property("att"),"%hello_", "%", "_", "\\")), filter);
+        assertEquals(FF.not(FF.like(FF.property("att"),"%hello_", "%", "_", "\\",true)), filter);
     }
 
+    @Test
+    public void testPropertyIsLikeInsensitive() throws CQLException {
+        final String cql = "att ILIKE '%hello_'";
+        final Object obj = CQL.parseFilter(cql);
+        assertTrue(obj instanceof PropertyIsLike);
+        final PropertyIsLike filter = (PropertyIsLike) obj;
+        assertEquals(FF.like(FF.property("att"),"%hello_", "%", "_", "\\",false), filter);
+    }
+    
     @Test
     public void testPropertyIsNull() throws CQLException {
         final String cql = "att IS NULL";

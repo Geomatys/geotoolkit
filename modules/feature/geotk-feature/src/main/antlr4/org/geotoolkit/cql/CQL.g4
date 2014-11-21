@@ -94,6 +94,7 @@ fragment EQUAL      : '=' ;
 fragment ABOVE      : '>' ;
 fragment UNDER      : '<' ;
 LIKE    : L I K E;
+ILIKE   : I L I K E;
 	
 IS      : I S ;
 NULL    : N U L L ;
@@ -247,6 +248,7 @@ filterTerm 	: expression
                             | NOT? IN LPAREN (expressionFctParam )?  RPAREN
                             | BETWEEN expression AND expression
                             | NOT? LIKE expression
+                            | NOT? ILIKE expression
                             | IS NOT? NULL
                             | AFTER  expression
                             | ANYINTERACTS expression

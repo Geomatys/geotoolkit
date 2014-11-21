@@ -381,8 +381,7 @@ public final class FeatureUtilities {
         }
         
         //can't find a solution to duplicate this object
-        LOGGER.log(Level.INFO, "",new SimpleIllegalAttributeException(
-                "Do not know how to deep copy " + type.getName()));
+        LOGGER.log(Level.FINEST, "Do not know how to deep copy {0}", type.getName());
         return src;
     }
 

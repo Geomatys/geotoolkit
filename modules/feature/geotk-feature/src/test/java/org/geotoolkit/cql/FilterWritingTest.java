@@ -175,7 +175,7 @@ public class FilterWritingTest {
         final Filter filter = FF.like(FF.property("att"),"%hello");
         final String cql = CQL.write(filter);
         assertNotNull(cql);
-        assertEquals("strToUpperCase(att) LIKE '%hello'", cql);
+        assertEquals("att ILIKE '%hello'", cql);
     }
 
     @Test
