@@ -47,6 +47,7 @@ public strictfp final class WriterTest {
      */
     static final String JSON =
             "{\n" +
+            "    \"language\": [\"en\"],\n" +
             "    \"characterSet\": [\"UTF-8\"],\n" +
             "    \"identificationInfo\": [{\n" +
             "        \"citation\": {\n" +
@@ -73,7 +74,6 @@ public strictfp final class WriterTest {
             "            }\n" +
             "        }]\n" +
             "    }],\n" +
-            "    \"defaultLocale+otherLocale\": [\"en\"],\n" +
             "    \"metadataIdentifier\": {\n" +
             "        \"code\": \"An archive\"\n" +
             "    },\n" +
