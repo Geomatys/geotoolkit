@@ -69,6 +69,7 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 
 import static org.apache.sis.util.ArgumentChecks.*;
+import static org.geotoolkit.display2d.GO2Utilities.FILTER_FACTORY;
 import org.geotoolkit.gui.javafx.render2d.FXMap;
 
 /**
@@ -325,9 +326,14 @@ public class EditionHelper {
                     continue;
                 }
 
-                final Filter dimFilter = FF.and(
-                        FF.lessOrEqual(FF.literal(dimEnv.getMinimum(0)), def.getLower()),
-                        FF.greaterOrEqual(FF.literal(dimEnv.getMaximum(0)), def.getUpper()));
+                final Filter dimFilter = FILTER_FACTORY.and(
+                    FF.or(
+                            FF.isNull(def.getLower()),
+                            FF.lessOrEqual(def.getLower(), FF.literal(dimEnv.getMaximum(0)) )),
+                    FF.or(
+                            FF.isNull(def.getUpper()),
+                            FF.greaterOrEqual(def.getUpper(), FF.literal(dimEnv.getMinimum(0)) ))
+                );
 
                 flt = FF.and(flt, dimFilter);
             }
