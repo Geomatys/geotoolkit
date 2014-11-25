@@ -318,6 +318,7 @@ public class EquidistantCylindrical extends MapProjection {
         }, excludes, new ParameterDescriptor<?>[] {
             SEMI_MAJOR,       SEMI_MINOR, ROLL_LONGITUDE,
             CENTRAL_MERIDIAN, LATITUDE_OF_ORIGIN,
+            Mercator2SP.SCALE_FACTOR, // Not an official parameter, provided for compatibility with those who still use it.
             FALSE_EASTING,    FALSE_NORTHING
         }, MapProjectionDescriptor.ADD_EARTH_RADIUS);
     }

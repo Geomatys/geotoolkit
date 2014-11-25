@@ -77,46 +77,6 @@ public class Polyconic extends MapProjection {
     private static final long serialVersionUID = 1681887819214500096L;
 
     /**
-     * The operation parameter descriptor for the {@linkplain
-     * org.geotoolkit.referencing.operation.projection.UnitaryProjection.Parameters#centralMeridian
-     * central meridian} parameter value.
-     *
-     * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
-     * Valid values range is [-180 &hellip; 180]&deg; and default value is 0&deg;.
-     */
-    static final ParameterDescriptor<Double> CENTRAL_MERIDIAN;
-
-    /**
-     * The operation parameter descriptor for the {@linkplain
-     * org.geotoolkit.referencing.operation.projection.UnitaryProjection.Parameters#latitudeOfOrigin
-     * latitude of origin} parameter value.
-     *
-     * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
-     * Valid values range is [-90 &hellip; 90]&deg; and default value is 0&deg;.
-     */
-    static final ParameterDescriptor<Double> LATITUDE_OF_ORIGIN;
-
-    /**
-     * The operation parameter descriptor for the {@linkplain
-     * org.geotoolkit.referencing.operation.projection.UnitaryProjection.Parameters#falseEasting
-     * false easting} parameter value.
-     *
-     * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
-     * Valid values range is unrestricted and default value is 0 metre.
-     */
-    static final ParameterDescriptor<Double> FALSE_EASTING;
-
-    /**
-     * The operation parameter descriptor for the {@linkplain
-     * org.geotoolkit.referencing.operation.projection.UnitaryProjection.Parameters#falseNorthing
-     * false northing} parameter value.
-     *
-     * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
-     * Valid values range is unrestricted and default value is 0 metre.
-     */
-    static final ParameterDescriptor<Double> FALSE_NORTHING;
-
-    /**
      * The group of all parameters expected by this coordinate operation.
      * The following table lists the operation names and the parameters recognized by Geotk:
      * <p>
@@ -231,21 +191,6 @@ public class Polyconic extends MapProjection {
         final Citation[] excludes = {
             Citations.ESRI, Citations.NETCDF, Citations.PROJ4
         };
-        CENTRAL_MERIDIAN = UniversalParameters.CENTRAL_MERIDIAN.select(excludes,
-                "Longitude of natural origin",  // EPSG
-                "central_meridian",             // OGC
-                "NatOriginLong");               // GeoTIFF
-        LATITUDE_OF_ORIGIN = UniversalParameters.LATITUDE_OF_ORIGIN.select(excludes,
-                "Latitude of natural origin",   // EPSG
-                "latitude_of_origin",           // OGC
-                "NatOriginLat");                // GeoTIFF
-        FALSE_EASTING = UniversalParameters.FALSE_EASTING.select(excludes,
-                "False easting",                // EPSG
-                "FalseEasting");                // GeoTIFF
-        FALSE_NORTHING = UniversalParameters.FALSE_NORTHING.select(excludes,
-                "False northing",               // EPSG
-                "FalseNorthing");               // GeoTIFF
-
         PARAMETERS = UniversalParameters.createDescriptorGroup(new Identifier[] {
             new NamedIdentifier(Citations.OGC,     "Polyconic"),
             new NamedIdentifier(Citations.EPSG,    "American Polyconic"),
@@ -255,8 +200,21 @@ public class Polyconic extends MapProjection {
             new IdentifierCode (Citations.MAP_INFO, 27)
         }, excludes, new ParameterDescriptor<?>[] {
             SEMI_MAJOR, SEMI_MINOR, ROLL_LONGITUDE,
-            LATITUDE_OF_ORIGIN, CENTRAL_MERIDIAN,
-            FALSE_EASTING, FALSE_NORTHING
+            UniversalParameters.LATITUDE_OF_ORIGIN.select(excludes,
+                "Latitude of natural origin",   // EPSG
+                "latitude_of_origin",           // OGC
+                "NatOriginLat"),                // GeoTIFF
+            UniversalParameters.CENTRAL_MERIDIAN.select(excludes,
+                "Longitude of natural origin",  // EPSG
+                "central_meridian",             // OGC
+                "NatOriginLong"),               // GeoTIFF
+            PseudoMercator.SCALE_FACTOR, // Not an official parameter, provided for compatibility with those who still use it.
+            UniversalParameters.FALSE_EASTING.select(excludes,
+                "False easting",                // EPSG
+                "FalseEasting"),                // GeoTIFF
+            UniversalParameters.FALSE_NORTHING.select(excludes,
+                "False northing",               // EPSG
+                "FalseNorthing")                // GeoTIFF
         }, MapProjectionDescriptor.ADD_EARTH_RADIUS);
     }
 

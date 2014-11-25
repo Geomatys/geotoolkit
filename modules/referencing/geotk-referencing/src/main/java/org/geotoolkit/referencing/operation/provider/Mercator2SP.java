@@ -24,6 +24,7 @@ import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.CylindricalProjection;
+import org.opengis.metadata.citation.Citation;
 import org.opengis.metadata.Identifier;
 
 import org.apache.sis.referencing.NamedIdentifier;
@@ -120,6 +121,15 @@ public class Mercator2SP extends MapProjection {
     public static final ParameterDescriptor<Double> STANDARD_PARALLEL;
 
     /**
+     * The scale factor. This is normally not a parameter for this projection, but is still defined
+     * as an optional parameter for compatibility with users who specify it.
+     *
+     * This parameter is <a href="package-summary.html#Obligation">optional</a>.
+     * Valid values range is (0 &hellip; &infin;) and default value is 1.
+     */
+    static final ParameterDescriptor<Double> SCALE_FACTOR;
+
+    /**
      * The operation parameter descriptor for the {@linkplain
      * org.geotoolkit.referencing.operation.projection.UnitaryProjection.Parameters#falseEasting
      * false easting} parameter value.
@@ -167,6 +177,9 @@ public class Mercator2SP extends MapProjection {
                 "standard_parallel_1",               // OGC
                 "Standard_Parallel_1",               // ESRI
                 "standard_parallel");                // NetCDF
+        SCALE_FACTOR = UniversalParameters.SCALE_FACTOR.select(false, null, new Citation[] {
+            Citations.EPSG, Citations.NETCDF, Citations.GEOTIFF
+        }, null);
         FALSE_EASTING = UniversalParameters.FALSE_EASTING.select(null,
                 "False easting",    // EPSG
                 "FalseEasting");    // GeoTIFF
@@ -340,7 +353,7 @@ public class Mercator2SP extends MapProjection {
         }, null, new ParameterDescriptor<?>[] {
             SEMI_MAJOR, SEMI_MINOR, ROLL_LONGITUDE,
             STANDARD_PARALLEL, LATITUDE_OF_ORIGIN, CENTRAL_MERIDIAN,
-            FALSE_EASTING, FALSE_NORTHING
+            SCALE_FACTOR, FALSE_EASTING, FALSE_NORTHING
         }, MapProjectionDescriptor.ADD_EARTH_RADIUS);
 
     /**

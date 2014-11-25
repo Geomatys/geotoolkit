@@ -307,6 +307,7 @@ public class LambertAzimuthalEqualArea extends MapProjection {
         }, null, new ParameterDescriptor<?>[] {
                 SEMI_MAJOR,         SEMI_MINOR, ROLL_LONGITUDE,
                 LATITUDE_OF_CENTRE, LONGITUDE_OF_CENTRE,
+                Mercator2SP.SCALE_FACTOR, // Not an official parameter, provided for compatibility with those who still use it.
                 FALSE_EASTING,      FALSE_NORTHING
         }, MapProjectionDescriptor.ADD_EARTH_RADIUS);
 

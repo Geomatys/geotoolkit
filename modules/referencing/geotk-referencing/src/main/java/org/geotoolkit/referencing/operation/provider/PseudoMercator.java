@@ -81,44 +81,13 @@ public class PseudoMercator extends MapProjection {
     private static final long serialVersionUID = -8126827491349984471L;
 
     /**
-     * The operation parameter descriptor for the {@linkplain
-     * org.geotoolkit.referencing.operation.projection.UnitaryProjection.Parameters#centralMeridian
-     * central meridian} parameter value.
+     * The scale factor. This is normally not a parameter for this projection, but is still defined
+     * as an optional parameter for compatibility with users who specify it.
      *
-     * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
-     * Valid values range is [-180 &hellip; 180]&deg; and default value is 0&deg;.
+     * This parameter is <a href="package-summary.html#Obligation">optional</a>.
+     * Valid values range is (0 &hellip; &infin;) and default value is 1.
      */
-    static final ParameterDescriptor<Double> CENTRAL_MERIDIAN = Mercator1SP.CENTRAL_MERIDIAN;
-
-    /**
-     * The operation parameter descriptor for the {@linkplain
-     * org.geotoolkit.referencing.operation.projection.UnitaryProjection.Parameters#latitudeOfOrigin
-     * latitude of origin} parameter value.
-     *
-     * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
-     * Valid values range is [-90 &hellip; 90]&deg; and default value is 0&deg;.
-     */
-    static final ParameterDescriptor<Double> LATITUDE_OF_ORIGIN = Mercator1SP.LATITUDE_OF_ORIGIN;
-
-    /**
-     * The operation parameter descriptor for the {@linkplain
-     * org.geotoolkit.referencing.operation.projection.UnitaryProjection.Parameters#falseEasting
-     * false easting} parameter value.
-     *
-     * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
-     * Valid values range is unrestricted and default value is 0 metre.
-     */
-    static final ParameterDescriptor<Double> FALSE_EASTING = Mercator1SP.FALSE_EASTING;
-
-    /**
-     * The operation parameter descriptor for the {@linkplain
-     * org.geotoolkit.referencing.operation.projection.UnitaryProjection.Parameters#falseNorthing
-     * false northing} parameter value.
-     *
-     * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
-     * Valid values range is unrestricted and default value is 0 metre.
-     */
-    static final ParameterDescriptor<Double> FALSE_NORTHING = Mercator1SP.FALSE_NORTHING;
+    static final ParameterDescriptor<Double> SCALE_FACTOR;
 
     /**
      * The group of all parameters expected by this coordinate operation.
@@ -227,14 +196,20 @@ public class PseudoMercator extends MapProjection {
         final Citation[] excludes = {
             Citations.ESRI, Citations.NETCDF, Citations.GEOTIFF, Citations.PROJ4
         };
+        SCALE_FACTOR = UniversalParameters.SCALE_FACTOR.select(false, null, new Citation[] {
+            Citations.EPSG, Citations.ESRI, Citations.NETCDF, Citations.GEOTIFF, Citations.PROJ4
+        }, null);
         PARAMETERS = UniversalParameters.createDescriptorGroup(new Identifier[] {
             new NamedIdentifier(Citations.EPSG, "Popular Visualisation Pseudo Mercator"),
             new IdentifierCode (Citations.EPSG,  1024),
             sameNameAs(Citations.GEOTOOLKIT, Mercator1SP.PARAMETERS)
         }, excludes, new ParameterDescriptor<?>[] {
             SEMI_MAJOR, SEMI_MINOR, ROLL_LONGITUDE,
-            LATITUDE_OF_ORIGIN, CENTRAL_MERIDIAN,
-            FALSE_EASTING, FALSE_NORTHING
+            Mercator1SP.LATITUDE_OF_ORIGIN,
+            Mercator1SP.CENTRAL_MERIDIAN,
+            SCALE_FACTOR, // Not an official parameter, provided for compatibility with those who still use it.
+            Mercator1SP.FALSE_EASTING,
+            Mercator1SP.FALSE_NORTHING
         }, MapProjectionDescriptor.ADD_EARTH_RADIUS);
     }
 

@@ -158,21 +158,6 @@ public class LambertConformal2SP extends MapProjection {
                     "Latitude of 2nd standard parallel");
 
     /**
-     * The ESRI operation parameter descriptor for the {@linkplain
-     * org.geotoolkit.referencing.operation.projection.UnitaryProjection.Parameters#scaleFactor
-     * scale factor} parameter value.
-     *
-     * This parameter is <a href="package-summary.html#Obligation">optional</a>, because not
-     * defined by EPSG. Valid values range is (0 &hellip; &infin;) and default value is 1.
-     *
-     * @since 3.20
-     */
-    static final ParameterDescriptor<Double> SCALE_FACTOR =
-            UniversalParameters.SCALE_FACTOR.select(false, null, new Citation[] {
-                Citations.EPSG, Citations.OGC, Citations.NETCDF, Citations.GEOTIFF, Citations.PROJ4
-            }, null);
-
-    /**
      * The operation parameter descriptor for the {@linkplain
      * org.geotoolkit.referencing.operation.projection.UnitaryProjection.Parameters#falseEasting
      * false easting} parameter value.
@@ -405,7 +390,8 @@ public class LambertConformal2SP extends MapProjection {
             SEMI_MAJOR,          SEMI_MINOR,
             ROLL_LONGITUDE,
             CENTRAL_MERIDIAN,    LATITUDE_OF_ORIGIN,
-            STANDARD_PARALLEL_1, STANDARD_PARALLEL_2, SCALE_FACTOR,
+            STANDARD_PARALLEL_1, STANDARD_PARALLEL_2,
+            Mercator2SP.SCALE_FACTOR, // Not an official parameter, provided for compatibility with those who still use it.
             FALSE_EASTING,       FALSE_NORTHING
         }, MapProjectionDescriptor.ADD_EARTH_RADIUS |
            MapProjectionDescriptor.ADD_STANDARD_PARALLEL);

@@ -386,6 +386,7 @@ public class AlbersEqualArea extends MapProjection {
             SEMI_MAJOR,          SEMI_MINOR, ROLL_LONGITUDE,
             CENTRAL_MERIDIAN,    LATITUDE_OF_ORIGIN,
             STANDARD_PARALLEL_1, STANDARD_PARALLEL_2,
+            Mercator2SP.SCALE_FACTOR, // Not an official parameter, provided for compatibility with those who still use it.
             FALSE_EASTING,       FALSE_NORTHING
         }, MapProjectionDescriptor.ADD_EARTH_RADIUS |
            MapProjectionDescriptor.ADD_STANDARD_PARALLEL);
