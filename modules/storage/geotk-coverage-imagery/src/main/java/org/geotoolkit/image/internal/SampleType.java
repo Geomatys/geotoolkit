@@ -17,6 +17,7 @@
 package org.geotoolkit.image.internal;
 
 import java.awt.image.ColorModel;
+import java.awt.image.DataBuffer;
 
 /**
  * Define internaly {@link ColorModel} data type.
@@ -32,8 +33,13 @@ public enum SampleType {
     /**
      * Data type {@link Short}.
      */
-    Short, 
-    
+    Short,
+
+    /**
+     * Data type {@link Short}.
+     */
+    UShort,
+
     /**
      * Data type {@link Integer}.
      */
@@ -47,5 +53,25 @@ public enum SampleType {
     /**
      * Data type {@link Double}.
      */
-    Double
+    Double;
+
+    /**
+     * Mapping between {@link java.awt.image.SampleModel#getDataType()} and
+     * {@link org.geotoolkit.image.internal.SampleType} enum.
+     *
+     * @param dataType integer from {@link java.awt.image.DataBuffer} constants
+     * @return {@link org.geotoolkit.image.internal.SampleType} or null if type undefined.
+     */
+    public static SampleType valueOf(int dataType) {
+        switch (dataType) {
+            case DataBuffer.TYPE_BYTE : return Byte;
+            case DataBuffer.TYPE_SHORT : return Short;
+            case DataBuffer.TYPE_USHORT : return UShort;
+            case DataBuffer.TYPE_INT: return Integer;
+            case DataBuffer.TYPE_FLOAT : return Float;
+            case DataBuffer.TYPE_DOUBLE : return Double;
+            case DataBuffer.TYPE_UNDEFINED: //fall through
+            default: return null;
+        }
+    }
 }
