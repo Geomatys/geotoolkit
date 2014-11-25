@@ -16,19 +16,6 @@
  */
 package org.geotoolkit.image.io.plugin;
 
-import com.sun.media.imageio.stream.RawImageInputStream;
-import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.referencing.CommonCRS;
-import org.geotoolkit.coverage.grid.GridEnvelope2D;
-import org.geotoolkit.coverage.grid.GridGeometry2D;
-import org.geotoolkit.image.io.metadata.ReferencingBuilder;
-import org.geotoolkit.image.io.metadata.SpatialMetadata;
-import org.geotoolkit.internal.image.io.DimensionAccessor;
-import org.geotoolkit.internal.image.io.GridDomainAccessor;
-import org.opengis.metadata.spatial.CellGeometry;
-import org.opengis.referencing.crs.GeographicCRS;
-import org.opengis.referencing.datum.PixelInCell;
-
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
@@ -44,6 +31,20 @@ import java.nio.file.Path;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import com.sun.media.imageio.stream.RawImageInputStream;
+import org.opengis.metadata.content.TransferFunctionType;
+import org.opengis.metadata.spatial.CellGeometry;
+import org.opengis.referencing.crs.GeographicCRS;
+import org.opengis.referencing.datum.PixelInCell;
+import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.referencing.CommonCRS;
+import org.geotoolkit.coverage.grid.GridEnvelope2D;
+import org.geotoolkit.coverage.grid.GridGeometry2D;
+import org.geotoolkit.image.io.metadata.ReferencingBuilder;
+import org.geotoolkit.image.io.metadata.SpatialMetadata;
+import org.geotoolkit.internal.image.io.DimensionAccessor;
+import org.geotoolkit.internal.image.io.GridDomainAccessor;
+
 
 /**
  * An image reader to read SRTM data in .hgt format.
@@ -59,8 +60,6 @@ public class HGTReader extends RawImageReader {
      * HGT file name pattern. Give lower-left geographic position (CRS:84) of the current tile.
      */
     private static final Pattern FILENAME_PATTERN = Pattern.compile("(?i)(N|S)(\\d+)(E|W)(\\d+)");
-
-    private static final short NO_DATA = -32768;
 
     private static final ImageTypeSpecifier IMAGE_TYPE = ImageTypeSpecifier.createGrayscale(16, DataBuffer.TYPE_SHORT, true);
 
@@ -174,7 +173,10 @@ public class HGTReader extends RawImageReader {
         SpatialMetadata md = new SpatialMetadata(false, this, null);
 
         final DimensionAccessor dac = new DimensionAccessor(md);
-        dac.setFillSampleValues(NO_DATA);
+        dac.selectChild(dac.appendChild());
+        dac.setFillSampleValues(Short.MIN_VALUE);
+        dac.setValidSampleValue(Short.MIN_VALUE + 1, Short.MAX_VALUE);
+        dac.setTransfertFunction(1, 0, TransferFunctionType.LINEAR);
         dac.setUnits(SI.METRE);
 
         try {
