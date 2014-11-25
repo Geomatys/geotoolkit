@@ -16,12 +16,14 @@
  */
 package org.geotoolkit.process.coverage.statistics;
 
+import org.geotoolkit.image.internal.SampleType;
+
 import java.io.Serializable;
 import java.util.*;
 
 /**
  * Image statistic from an image :
- * Get min, max and fullDistribution array by bands
+ * Get min, max, datatype and histogram array by bands
  *
  * @author bgarcia
  * @author Quentin Boileau (Geomatys)
@@ -33,14 +35,18 @@ public class ImageStatistics implements Serializable{
      */
     private Band[] bands;
 
+    public ImageStatistics(int nbBands) {
+        this(nbBands, null);
+    }
+
     /**
      * constructor with a band numbers to create bands
      * @param nbBands image band numbers
      */
-    public ImageStatistics(int nbBands) {
+    public ImageStatistics(int nbBands, SampleType dataType) {
         bands = new Band[nbBands];
         for (int i = 0; i < bands.length; i++) {
-            bands[i] = new Band(i);
+            bands[i] = new Band(i, dataType);
         }
     }
 
@@ -54,15 +60,6 @@ public class ImageStatistics implements Serializable{
 
     public Band getBand(int bandNumber) {
         return bands[bandNumber];
-    }
-
-    /**
-     * Finalize analysis.
-     */
-    void finish() {
-        for (int i = 0; i < bands.length; i++) {
-            bands[i].finish();
-        }
     }
 
     @Override
@@ -81,10 +78,7 @@ public class ImageStatistics implements Serializable{
 
         private String name;
 
-        /**
-         * data fullDistribution map
-         */
-        private Map<Double, Long> fullDistribution = new HashMap<>();
+        private SampleType dataType;
 
         private Double min = null;
         private Double max = null;
@@ -93,9 +87,15 @@ public class ImageStatistics implements Serializable{
          * no data values
          */
         private double[] noData;
+        private long[] histogram;
 
         public Band(int bandIndex) {
+            this(bandIndex, null);
+        }
+
+        public Band(int bandIndex, SampleType dataType) {
             this.bandIndex = bandIndex;
+            this.dataType = dataType;
         }
 
         public int getBandIndex() {
@@ -110,19 +110,43 @@ public class ImageStatistics implements Serializable{
             this.name = name;
         }
 
-        public Map<Double, Long> getFullDistribution() {
-            return new TreeMap<>(fullDistribution);
+        public SampleType getDataType() {
+            return dataType;
         }
 
-        public Long[] tightenDistribution(int distributionSize) {
-            Map<Double, Long> fullDistribution = getFullDistribution();
-            int fullSize = fullDistribution.size();
-            final Long[] fullDistArr = fullDistribution.values().toArray(new Long[fullSize]);
+        public void setDataType(SampleType dataType) {
+            this.dataType = dataType;
+        }
+
+        public void setHistogram(long[] histogram) {
+            this.histogram = histogram;
+        }
+
+        public long[] getHistogram() {
+            return histogram;
+        }
+
+        public Map<Double, Long> getDistribution() {
+
+            int nbBins = histogram.length;
+            final Map<Double, Long> map = new HashMap(nbBins);
+
+            double binSize = (max - min) / ((double)nbBins-1.0);
+            for (int j = 0; j <nbBins; j++) {
+                double value = min+binSize*j;
+                long occurs = histogram[j];
+                map.put(value, occurs);
+            }
+            return new TreeMap<>(map);
+        }
+
+        public long[] tightenHistogram(int distributionSize) {
+            int fullSize = histogram.length;
             if (fullSize < distributionSize) {
-                return fullDistArr;
+                return histogram;
             }
 
-            final Long[] distArr = new Long[distributionSize];
+            final long[] distArr = new long[distributionSize];
             double steps = (double)fullSize / (double)distributionSize;
             //int middleStep = (int) Math.ceil(steps / 2f);
 
@@ -135,7 +159,7 @@ public class ImageStatistics implements Serializable{
                 int end = (int) endStep;
 
                 for (int j = start; j < end; j++) {
-                    distSum += fullDistArr[j];
+                    distSum += histogram[j];
                 }
 
                 pos = endStep;
@@ -143,10 +167,6 @@ public class ImageStatistics implements Serializable{
                 distArr[i] = distSum;
             }
             return distArr;
-        }
-
-        public void setFullDistribution(Map<Double, Long> repartition) {
-            this.fullDistribution = repartition;
         }
 
         public double[] getNoData() {
@@ -158,26 +178,10 @@ public class ImageStatistics implements Serializable{
         }
 
         /**
-         * Increment or create new value on {@link org.geotoolkit.process.coverage.statistics.ImageStatistics.Band#fullDistribution}
-         * @param data data which need to be add on {@link org.geotoolkit.process.coverage.statistics.ImageStatistics.Band#fullDistribution}
-         */
-        public void addValue(double data){
-            final Long aLong = fullDistribution.get(data);
-            if(aLong == null){
-                fullDistribution.put(data, 1L);
-            }else{
-                fullDistribution.put(data, aLong + 1L);
-            }
-        }
-
-        /**
          * Get image min value
          * @return data which have min elements on image
          */
         public double getMin() {
-            if (min == null) {
-                computeMin();
-            }
             return min;
         }
 
@@ -186,44 +190,15 @@ public class ImageStatistics implements Serializable{
          * @return data which have max elements on image
          */
         public double getMax() {
-            if (max == null) {
-                computeMax();
-            }
             return max;
         }
 
-        private void computeMin() {
-            Double[] values = fullDistribution.keySet().toArray(new Double[fullDistribution.size()]);
-            Double min = null;
-            for (Double value : values) {
-                if (min == null) {
-                    min = value;
-                    continue;
-                }
-
-                min = Math.min(min, value);
-            }
-            this.min = min != null ? min : 0.0;
+        public void setMin(Double min) {
+            this.min = min;
         }
 
-        private void computeMax() {
-            Double[] values = fullDistribution.keySet().toArray(new Double[fullDistribution.size()]);
-            Double max = null;
-            for (Double value : values) {
-                if (max == null) {
-                    max = value;
-                    continue;
-                }
-
-                max = Math.max(max, value);
-            }
-            this.max = max != null ? max : 0.0;
-        }
-
-        void finish() {
-            fullDistribution = new TreeMap<>(fullDistribution);
-            this.min = (Double) ((TreeMap)fullDistribution).firstKey();
-            this.max = (Double) ((TreeMap)fullDistribution).lastKey();
+        public void setMax(Double max) {
+            this.max = max;
         }
 
         @Override
@@ -232,12 +207,14 @@ public class ImageStatistics implements Serializable{
             sb.append("Band ").append(bandIndex).append(" {")
                     .append(" min=").append(min)
                     .append(", max=").append(max)
-                    .append(", fullDistribution=")
-                    .append(fullDistribution)
+                    .append(", dataType=").append(dataType.name())
+                    .append(", histogram=")
+                    .append(Arrays.toString(histogram))
                     .append(", noData=").append(Arrays.toString(noData))
                     .append("}\n");
             return sb.toString();
         }
+
     }
 
 }

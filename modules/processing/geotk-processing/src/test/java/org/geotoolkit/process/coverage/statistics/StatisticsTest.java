@@ -20,6 +20,7 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
+import org.geotoolkit.image.internal.SampleType;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.process.ProcessFinder;
@@ -29,13 +30,9 @@ import org.junit.Test;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.NoSuchIdentifierException;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.TreeMap;
-
 /**
- * @author bgarcia
+ * @author bgarcia (Geomatys)
+ * @author Quentin Boileau (Geomatys)
  */
 public class StatisticsTest {
 
@@ -66,49 +63,103 @@ public class StatisticsTest {
         final ParameterValueGroup result = process.call();
         ImageStatistics statistics = (ImageStatistics) result.parameter("outStatistic").getValue();
 
-        Assert.assertTrue(1l == statistics.getBands()[0].getFullDistribution().get(200d));
-        Assert.assertTrue(8l == statistics.getBands()[0].getFullDistribution().get(100d));
+        ImageStatistics.Band band0 = statistics.getBands()[0];
+
+        //test min / max values
+        Assert.assertEquals(100d, band0.getMin(), 0d);
+        Assert.assertEquals(200d, band0.getMax(), 0d);
+
+        // test distribution
+        Assert.assertTrue(1l == band0.getDistribution().get(200d));
+        Assert.assertTrue(8l == band0.getDistribution().get(100d));
     }
 
     @Test
-    public void executionTestMin() throws NoSuchIdentifierException, ProcessException {
-        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("coverage", "statistic");
-        final ParameterValueGroup procparams = desc.getInputDescriptor().createValue();
-        procparams.parameter("inCoverage").setValue(coverage);
-        final org.geotoolkit.process.Process process = desc.createProcess(procparams);
-        final ParameterValueGroup result = process.call();
-        ImageStatistics statistics = (ImageStatistics) result.parameter("outStatistic").getValue();
+    public void performanceTest() {
+        double max = 100000.0;
+        NumericHistogram histogram = new NumericHistogram(1000, 0.0, 100000.0);
 
-        Assert.assertEquals(100d, statistics.getBands()[0].getMin(), 0d);
+        long start = System.currentTimeMillis();
+        for (long i = 1; i <= 100000000l; i++) {
+            histogram.addValue(Math.random()*max);
+        }
+        long end = System.currentTimeMillis();
+        System.out.println("Histogram computed for 100.000.000 values finished in "+(end-start)+" ms");
     }
 
     @Test
-    public void executionTestMax() throws NoSuchIdentifierException, ProcessException {
-        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("coverage", "statistic");
-        final ParameterValueGroup procparams = desc.getInputDescriptor().createValue();
-        procparams.parameter("inCoverage").setValue(coverage);
-        final org.geotoolkit.process.Process process = desc.createProcess(procparams);
-        final ParameterValueGroup result = process.call();
-        ImageStatistics statistics = (ImageStatistics) result.parameter("outStatistic").getValue();
+    public void mergeHistogramTest() {
 
-        Assert.assertEquals(200d, statistics.getBands()[0].getMax(), 0d);
+        long[] expectHisto = new long[] {1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
+        long[] expectMerge = new long[] {3, 2, 2, 2, 2, 2, 2, 2, 2, 1};
+
+        NumericHistogram histo1 = new NumericHistogram(10, 0.0, 10.0);
+        NumericHistogram histo2 = new NumericHistogram(10, 1.0, 11.0);
+
+        for (long i = 0; i < 10; i++) {
+            histo1.addValue((double)i, 1);
+            histo2.addValue((double)i+histo2.getMin(), 1);
+        }
+
+        Assert.assertArrayEquals(expectHisto, histo1.getHist());
+        Assert.assertArrayEquals(expectHisto, histo2.getHist());
+
+        NumericHistogram merged = Statistics.mergeHistograms(histo1, histo2);
+        //System.out.println(Arrays.toString(merged.getHist()));
+        Assert.assertArrayEquals(expectMerge, merged.getHist());
+
+        // test 2
+        expectMerge = new long[] {2, 2, 2, 2, 2, 2, 2, 2, 2, 2};
+
+        histo1 = new NumericHistogram(10, 0.0, 10.0);
+        histo2 = new NumericHistogram(10, 0.0, 10.0);
+
+        for (long i = 0; i < 10; i++) {
+            histo1.addValue((double)i, 1);
+            histo2.addValue((double)i+histo2.getMin(), 1);
+        }
+
+        Assert.assertArrayEquals(expectHisto, histo1.getHist());
+        Assert.assertArrayEquals(expectHisto, histo2.getHist());
+
+        merged = Statistics.mergeHistograms(histo1, histo2);
+        //System.out.println(Arrays.toString(merged.getHist()));
+        Assert.assertArrayEquals(expectMerge, merged.getHist());
+
+        // test 3
+        expectMerge = new long[] {3, 2, 3, 2, 0, 0, 3, 2, 3, 2};
+
+        histo1 = new NumericHistogram(10, 0.0, 10.0);
+        histo2 = new NumericHistogram(10, 15.0, 25.0);
+
+        for (long i = 0; i < 10; i++) {
+            histo1.addValue((double)i, 1);
+            histo2.addValue((double)i+histo2.getMin(), 1);
+        }
+
+        Assert.assertArrayEquals(expectHisto, histo1.getHist());
+        Assert.assertArrayEquals(expectHisto, histo2.getHist());
+
+        merged = Statistics.mergeHistograms(histo1, histo2);
+        //System.out.println(Arrays.toString(merged.getHist()));
+        Assert.assertArrayEquals(expectMerge, merged.getHist());
     }
-    
+
     @Test
     public void testTightenDistribution() {
         int fullDistribSize = 223;
         int tightenDistribSize = 101;
 
-        Map<Double, Long> distribution = new HashMap<>();
+        long[] histo = new long[fullDistribSize];
         for (int i = 0; i < fullDistribSize; i++) {
-            distribution.put((double)i, (long)i);
+            histo[i] = (long)i;
         }
 
-        ImageStatistics stat = new ImageStatistics(1);
+        ImageStatistics stat = new ImageStatistics(1, SampleType.Byte);
         ImageStatistics.Band band0 = stat.getBand(0);
-        band0.setFullDistribution(distribution);
+        band0.setHistogram(histo);
 
-        Long[] values = band0.tightenDistribution(tightenDistribSize);
+        long[] values = band0.tightenHistogram(tightenDistribSize);
         Assert.assertEquals(tightenDistribSize, values.length);
 
         long resultSum = 0;
@@ -123,6 +174,5 @@ public class StatisticsTest {
 
         Assert.assertEquals(expectSum, resultSum);
     }
-
 
 }
