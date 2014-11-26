@@ -308,8 +308,8 @@ public final class VectorProcessUtils extends Static {
     /**
      * Re-project a geometry from geometryCRS to wandedCRS. If geometryCRS and wantedCRS are equals,
      * the input geometry will be returned.
-     * @param sourceCRS
-     * @param targetCRS
+     * @param wantedCRS
+     * @param geometryCRS
      * @param inputGeom
      * @return the re-projected Geometry
      * @throws TransformException
@@ -319,7 +319,7 @@ public final class VectorProcessUtils extends Static {
             final Geometry inputGeom) throws TransformException, FactoryException{
 
         if (!(wantedCRS.equals(geometryCRS))) {
-            final MathTransform transform = CRS.findMathTransform(wantedCRS, geometryCRS);
+            final MathTransform transform = CRS.findMathTransform(geometryCRS, wantedCRS);
             return JTS.transform(inputGeom, transform);
         }else{
             return inputGeom;
