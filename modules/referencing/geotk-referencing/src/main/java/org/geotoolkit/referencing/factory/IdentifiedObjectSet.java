@@ -32,12 +32,10 @@ import java.util.NoSuchElementException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.LogRecord;
-import net.jcip.annotations.NotThreadSafe;
 
 import org.opengis.metadata.Identifier;
 import org.opengis.referencing.AuthorityFactory;
 import org.opengis.referencing.IdentifiedObject;
-import org.opengis.metadata.Identifier;
 import org.opengis.util.FactoryException;
 import org.opengis.util.NoSuchIdentifierException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
@@ -77,15 +75,17 @@ import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
  * {@linkplain IdentifiedObject identified objects} not yet created.
  * The serialized set is disconnected from the {@linkplain #getAuthorityFactory underlying factory}.
  *
+ * {@section Thread safety}
+ * This class is thread-safe, for allowing caching by {@link ThreadedAuthorityFactory}.
+ *
  * @param <T> The type of objects to be included in this set.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.18
+ * @version 4.00
  *
  * @since 2.2
  * @module
  */
-@NotThreadSafe
 public class IdentifiedObjectSet<T extends IdentifiedObject> extends AbstractSet<T> implements Serializable {
     /**
      * For cross-version compatibility during serialisation.
@@ -95,8 +95,19 @@ public class IdentifiedObjectSet<T extends IdentifiedObject> extends AbstractSet
     /**
      * The map of object codes (keys), and the actual identified objects (values) when it has
      * been created. Each entry has a null value until the corresponding object is created.
+     *
+     * <p><b>Note:</b> using {@code ConcurrentHahMap} would be more efficient.
+     * But the later does not support null values and does not preserve insertion order.</p>
      */
-    private final Map<String,T> objects = new LinkedHashMap<>();
+    final Map<String,T> objects = new LinkedHashMap<>();
+
+    /**
+     * The {@link #objects} entries, created for iteration purpose when first needed
+     * and cleared when the map is modified. We need to use such array as a snapshot
+     * of the map state at the time the iterator was created because the map may be
+     * modified during iteration.
+     */
+    private transient Map.Entry<String,T>[] entries;
 
     /**
      * The authority factory given at construction time.
@@ -134,7 +145,10 @@ public class IdentifiedObjectSet<T extends IdentifiedObject> extends AbstractSet
      */
     @Override
     public void clear() {
-        objects.clear();
+        synchronized (objects) {
+            entries = null;
+            objects.clear();
+        }
     }
 
     /**
@@ -144,7 +158,9 @@ public class IdentifiedObjectSet<T extends IdentifiedObject> extends AbstractSet
      */
     @Override
     public int size() {
-        return objects.size();
+        synchronized (objects) {
+            return objects.size();
+        }
     }
 
     /**
@@ -156,14 +172,18 @@ public class IdentifiedObjectSet<T extends IdentifiedObject> extends AbstractSet
      * @return {@code true} if this set changed as a result of this call.
      */
     public boolean addAuthorityCode(final String code) {
-        final boolean already = objects.containsKey(code);
-        final T old = objects.put(code, null);
-        if (old != null) {
-            // A fully created object was already there. Keep it.
-            objects.put(code, old);
-            return false;
+        final boolean wasPresent;
+        synchronized (objects) {
+            wasPresent = objects.containsKey(code);
+            final T old = objects.put(code, null);
+            if (old != null) {
+                // A fully created object was already there. Keep it.
+                objects.put(code, old);
+                return false;
+            }
+            entries = null;
         }
-        return !already;
+        return !wasPresent;
     }
 
     /**
@@ -179,7 +199,12 @@ public class IdentifiedObjectSet<T extends IdentifiedObject> extends AbstractSet
     @Override
     public boolean add(final T object) {
         final String code = getAuthorityCode(object);
-        return !Objects.equals(objects.put(code, object), object);
+        final T previous;
+        synchronized (objects) {
+            entries = null;
+            previous = objects.put(code, object);
+        }
+        return !Objects.equals(previous, object);
     }
 
     /**
@@ -189,6 +214,7 @@ public class IdentifiedObjectSet<T extends IdentifiedObject> extends AbstractSet
      * @throws BackingStoreException if the object creation failed.
      */
     private T get(final String code) throws BackingStoreException {
+        assert Thread.holdsLock(objects);
         T object = objects.get(code);
         if (object == null && objects.containsKey(code)) {
             try {
@@ -200,6 +226,7 @@ public class IdentifiedObjectSet<T extends IdentifiedObject> extends AbstractSet
                 }
                 log(exception, code);
                 objects.remove(code);
+                entries = null;
             }
         }
         return object;
@@ -214,8 +241,23 @@ public class IdentifiedObjectSet<T extends IdentifiedObject> extends AbstractSet
     @Override
     public boolean contains(final Object object) {
         final String code = getAuthorityCode(type.cast(object));
-        final T current = get(code);
+        final T current;
+        synchronized (objects) {
+            current = get(code);
+        }
         return object.equals(current);
+    }
+
+    /**
+     * Removes the object for the given code.
+     *
+     * @param code The code of the object to remove.
+     */
+    final void removeAuthorityCode(final String code) {
+        synchronized (objects) {
+            objects.remove(code);
+            entries = null;
+        }
     }
 
     /**
@@ -228,10 +270,13 @@ public class IdentifiedObjectSet<T extends IdentifiedObject> extends AbstractSet
     @Override
     public boolean remove(final Object object) {
         final String code = getAuthorityCode(type.cast(object));
-        final T current = get(code);
-        if (object.equals(current)) {
-            objects.remove(code);
-            return true;
+        synchronized (objects) {
+            final T current = get(code);
+            if (object.equals(current)) {
+                objects.remove(code);
+                entries = null;
+                return true;
+            }
         }
         return false;
     }
@@ -247,9 +292,7 @@ public class IdentifiedObjectSet<T extends IdentifiedObject> extends AbstractSet
     public boolean removeAll(final Collection<?> collection) {
         boolean modified = false;
         for (final Object object : collection) {
-            if (remove(object)) {
-                modified = true;
-            }
+            modified |= remove(object);
         }
         return modified;
     }
@@ -263,8 +306,14 @@ public class IdentifiedObjectSet<T extends IdentifiedObject> extends AbstractSet
      *         first coordinate operation in the set.
      */
     @Override
+    @SuppressWarnings({"unchecked","rawtypes"})
     public Iterator<T> iterator() throws BackingStoreException {
-        return new Iter(objects.entrySet().iterator());
+        synchronized (objects) {
+            if (entries == null) {
+                this.entries = objects.entrySet().toArray(new Map.Entry[objects.size()]);
+            }
+            return new Iter(entries);
+        }
     }
 
     /**
@@ -305,8 +354,10 @@ public class IdentifiedObjectSet<T extends IdentifiedObject> extends AbstractSet
      * @return The authority codes in iteration order.
      */
     public String[] getAuthorityCodes() {
-        final Set<String> codes = objects.keySet();
-        return codes.toArray(new String[codes.size()]);
+        synchronized (objects) {
+            final Set<String> codes = objects.keySet();
+            return codes.toArray(new String[codes.size()]);
+        }
     }
 
     /**
@@ -325,10 +376,12 @@ public class IdentifiedObjectSet<T extends IdentifiedObject> extends AbstractSet
      * @see #addAuthorityCode
      */
     public void setAuthorityCodes(final String[] codes) {
-        final Map<String,T> copy = new HashMap<>(objects);
-        objects.clear();
-        for (final String code : codes) {
-            objects.put(code, copy.get(code));
+        synchronized (objects) {
+            final Map<String,T> copy = new HashMap<>(objects);
+            objects.clear();
+            for (final String code : codes) {
+                objects.put(code, copy.get(code));
+            }
         }
     }
 
@@ -432,25 +485,37 @@ public class IdentifiedObjectSet<T extends IdentifiedObject> extends AbstractSet
     }
 
     /**
-     * The iterator over the entries in the enclosing set. This iterator will creates the
+     * The iterator over the elements in the enclosing set. This iterator will creates the
      * {@linkplain IdentifiedObject identified objects} when first needed.
      *
-     * @author Martin Desruisseaux (IRD)
-     * @version 3.00
+     * @author Martin Desruisseaux (IRD, Geomatys)
+     * @version 4.00
      *
      * @since 2.2
      * @module
      */
     private final class Iter implements Iterator<T> {
         /**
-         * The iterator over the entries from the underlying map.
+         * The entries from the underlying map, as a snapshot taken at the time the iterator has been created.
+         * We need to take a snapshot because the underlying {@link IdentifiedObjectSet#objects} map may be
+         * modified concurrently in other threads.
          */
-        private final Iterator<Map.Entry<String,T>> iterator;
+        private final Map.Entry<String,T>[] entries;
 
         /**
-         * The next object to returns, or {@code null} if the iteration is over.
+         * Index of the next element to return.
          */
-        private T element;
+        private int index;
+
+        /**
+         * The next element to return, or {@code null} if the iteration is over.
+         */
+        private T next;
+
+        /**
+         * The key of the last element returned, or {@code null} if none or if the element has been removed.
+         */
+        private String previous;
 
         /**
          * Creates a new instance of this iterator.
@@ -458,9 +523,9 @@ public class IdentifiedObjectSet<T extends IdentifiedObject> extends AbstractSet
          * @throws BackingStoreException if the underlying factory failed to creates the
          *         first coordinate operation in the set.
          */
-        public Iter(final Iterator<Map.Entry<String,T>> iterator) throws BackingStoreException {
-            this.iterator = iterator;
-            toNext();
+        public Iter(final Map.Entry<String,T>[] entries) throws BackingStoreException {
+            this.entries = entries;
+            move();
         }
 
         /**
@@ -469,27 +534,20 @@ public class IdentifiedObjectSet<T extends IdentifiedObject> extends AbstractSet
          * @throws BackingStoreException if the underlying factory failed to creates the
          *         coordinate operation.
          */
-        private void toNext() throws BackingStoreException {
-            while (iterator.hasNext()) {
-                final Map.Entry<String,T> entry = iterator.next();
-                element = entry.getValue();
-                if (element == null) {
-                    final String code = entry.getKey();
-                    try {
-                        element = createObject(code);
-                    } catch (FactoryException exception) {
-                        if (!isRecoverableFailure(exception)) {
-                            throw new BackingStoreException(exception);
-                        }
-                        log(exception, code);
-                        iterator.remove();
-                        continue;
-                    }
-                    entry.setValue(element);
+        private void move() throws BackingStoreException {
+            assert Thread.holdsLock(objects);
+            while (index < entries.length) {
+                final Map.Entry<String,T> entry = entries[index++];
+                if ((next = entry.getValue()) != null) {
+                    return; // Element has been found.
                 }
-                return; // Element found.
+                if ((next = get(entry.getKey())) != null) {
+                    return; // Element has been created.
+                }
+                // Note: we do not create and store the element ourself with entry.setValue(…) because
+                // that element may have been created in another thread between two calls to next().
             }
-            element = null; // No more element found.
+            next = null; // No more element found.
         }
 
         /**
@@ -497,7 +555,7 @@ public class IdentifiedObjectSet<T extends IdentifiedObject> extends AbstractSet
          */
         @Override
         public boolean hasNext() {
-            return element != null;
+            return next != null;
         }
 
         /**
@@ -507,12 +565,15 @@ public class IdentifiedObjectSet<T extends IdentifiedObject> extends AbstractSet
          */
         @Override
         public T next() throws NoSuchElementException {
-            final T next = element;
-            if (next == null) {
+            final T element = next;
+            if (element == null) {
                 throw new NoSuchElementException();
             }
-            toNext();
-            return next;
+            synchronized (objects) {
+                previous = entries[index - 1].getKey();
+                move();
+            }
+            return element;
         }
 
         /**
@@ -520,7 +581,11 @@ public class IdentifiedObjectSet<T extends IdentifiedObject> extends AbstractSet
          */
         @Override
         public void remove() {
-            iterator.remove();
+            if (previous == null) {
+                throw new IllegalStateException();
+            }
+            removeAuthorityCode(previous);
+            previous = null;
         }
     }
 }
