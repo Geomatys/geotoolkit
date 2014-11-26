@@ -89,6 +89,9 @@ public abstract class AbstractProcess implements Process {
         } catch (ProcessException | RuntimeException e) {
             exception = e;
             throw e; // Will execute 'finally' before to exit.
+        } catch (Throwable t) {
+            exception = new ProcessException(t.getMessage(), this, t);
+            throw (ProcessException)exception; // Will execute 'finally' before to exit.
         } finally {
             if (success) {
                 fireProcessCompleted(null);
