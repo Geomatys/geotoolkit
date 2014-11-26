@@ -176,6 +176,9 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
                 //which causes the disjoint domain exception
                 final GeneralEnvelope objCovEnv = new GeneralEnvelope(CRS.transform(layerBounds, bounds.getCoordinateReferenceSystem()));
                 objCovEnv.intersect(bounds);
+                if(objCovEnv.isEmpty()){
+                    return; //the coverage envelope does not intersect the canvas envelope.
+                }
                 param.setEnvelope(objCovEnv);
                 try {
                     dataCoverage = projectedCoverage.getCoverage(param);
@@ -251,8 +254,12 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
                     //calculate best intersection area
                     final GeneralEnvelope tmp = new GeneralEnvelope(renderingContext.getPaintingObjectiveBounds2D());
                     final int xAxis = Math.max(0, CoverageUtilities.getMinOrdinate(coverageCRS));
-                    tmp.intersect(CRS.transform(coverageToObjective, new GeneralEnvelope(
-                            dataCoverage.getEnvelope()).subEnvelope(xAxis, xAxis + 2)));
+
+//                    tmp.intersect(CRS.transform(coverageToObjective, new GeneralEnvelope(
+//                            dataCoverage.getEnvelope()).subEnvelope(xAxis, xAxis + 2)));
+                    final GeneralEnvelope coverageEnv2D =new GeneralEnvelope(dataCoverage.getEnvelope2D());
+                    final Envelope transformed = CRS.transform(coverageEnv2D, renderingContext.getObjectiveCRS2D());
+                    tmp.intersect(transformed);
 
                     if (tmp.isEmpty()) {
                         dataCoverage = null;
