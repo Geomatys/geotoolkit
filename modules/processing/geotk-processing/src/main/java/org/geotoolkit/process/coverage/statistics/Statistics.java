@@ -159,6 +159,7 @@ public class Statistics extends AbstractProcess{
         final RenderedImage inImage = value(IMAGE, inputParameters);
         final boolean excludeNoData = value(EXCLUDE_NO_DATA, inputParameters);
 
+        fireProgressing("Pre-analysing", 0f, false);
         final RenderedImage image;
         final ImageStatistics sc;
         if (inImage != null) {
@@ -169,6 +170,7 @@ public class Statistics extends AbstractProcess{
             final int nbBands = sm.getNumBands();
             //create empty statistic object
             sc = new ImageStatistics(nbBands, sampleType);
+            getOrCreate(OUTCOVERAGE, outputParameters).setValue(sc);
 
         } else {
 
@@ -208,7 +210,13 @@ public class Statistics extends AbstractProcess{
             for (int i = 0; i < sampleDimensions.length; i++) {
                 sc.getBand(i).setNoData(sampleDimensions[i].getNoDataValues());
                 sc.getBand(i).setName(sampleDimensions[i].getDescription().toString());
+                sc.getBand(i).setMin(sampleDimensions[i].getMinimumValue());
+                sc.getBand(i).setMax(sampleDimensions[i].getMaximumValue());
             }
+
+            getOrCreate(OUTCOVERAGE, outputParameters).setValue(sc);
+            fireProgressing("Pre-analysing finished", 10f, true);
+            fireProgressing("Start range/histogram computing", 10f, true);
         }
 
         final ImageStatistics.Band[] bands = sc.getBands();
@@ -225,6 +233,7 @@ public class Statistics extends AbstractProcess{
             int startY = 0;
             int endX = gridSize.width;
             int endY = gridSize.height;
+            int totalTiles = gridSize.width * gridSize.height;
 
             final Rectangle dataArea = gridMosaic.getDataArea();
             if (dataArea != null) {
@@ -232,36 +241,56 @@ public class Statistics extends AbstractProcess{
                 startY = dataArea.y;
                 endX = dataArea.x + dataArea.width;
                 endY = dataArea.y + dataArea.height;
+                totalTiles = dataArea.width * dataArea.height;
             }
 
             //analyse each tiles of GridMosaicRenderedImage
             Raster tile;
             PixelIterator pix;
+            int step = 1;
             for (int y = startY; y < endY; y++) {
                 for (int x = startX; x < endX; x++) {
                     if (!gridMosaic.isMissing(x,y)) {
                         tile = mosaicImage.getTile(x, y);
                         pix = PixelIteratorFactory.createDefaultIterator(tile);
-                        mergeHistograms(histo, analyseRaster(pix, nbBands, bands, excludeNoData));
+
+                        analyseRange(pix, bands, true);
+                        pix.rewind();
+
+                        mergeHistograms(histo, analyseHistogram(pix, bands, excludeNoData));
+
+                        updateBands(bands, histo);
+                        fireProgressing("Histogram progressing", (step/totalTiles)*0.9f, true);
                     }
+                    step++;
                 }
             }
 
         } else {
             //standard image
             final PixelIterator pix = PixelIteratorFactory.createDefaultIterator(image);
-            histo = analyseRaster(pix, nbBands, bands, excludeNoData);
-        }
 
-        for (int i = 0; i < nbBands; i++) {
+            //get min/max
+            analyseRange(pix, bands, false);
+            fireProgressing("Start histogram computing", 55f, true);
+
+            //reset iterator
+            pix.rewind();
+
+            //compute histogram
+            histo = analyseHistogram(pix, bands, excludeNoData);
+            updateBands(bands, histo);
+        }
+    }
+
+    private void updateBands(ImageStatistics.Band[] bands,NumericHistogram[] histo) {
+
+        for (int i = 0; i < bands.length; i++) {
             final NumericHistogram histogram = histo[i];
             bands[i].setMin(histogram.getMin());
             bands[i].setMax(histogram.getMax());
             bands[i].setHistogram(histogram.getHist());
         }
-
-        //return ImageStatistics
-        getOrCreate(OUTCOVERAGE, outputParameters).setValue(sc);
     }
 
     private void mergeHistograms(NumericHistogram[] histo, NumericHistogram[] tileHisto) {
@@ -272,7 +301,6 @@ public class Statistics extends AbstractProcess{
             histo[i] = mergeHistograms(histo1, histo2);
         }
     }
-
 
     static NumericHistogram mergeHistograms(NumericHistogram histo1, NumericHistogram histo2) {
 
@@ -307,17 +335,9 @@ public class Statistics extends AbstractProcess{
         return resultHisto;
     }
 
-    /**
-     * Analyse each pixels using a PixelIterator
-     * @param pix PixelIterator
-     * @param nbBands
-     * @param bands
-     */
-    private NumericHistogram[] analyseRaster(final PixelIterator pix, final int nbBands, final ImageStatistics.Band[] bands,
-                               final boolean excludeNoData) {
+    private void analyseRange(final PixelIterator pix, final ImageStatistics.Band[] bands, boolean mergeWithBands) {
 
-        final NumericHistogram[] histograms = new NumericHistogram[nbBands];
-
+        int nbBands = bands.length;
         double[][] ranges = new double[nbBands][2];
         for (double[] range : ranges) {
             range[0] = Double.MAX_VALUE;
@@ -340,8 +360,30 @@ public class Statistics extends AbstractProcess{
         }
 
         for (int i = 0; i < nbBands; i++) {
+            if (mergeWithBands) {
+                bands[i].setMin(Math.min(bands[i].getMin(), ranges[i][0]));
+                bands[i].setMax(Math.max(bands[i].getMax(), ranges[i][1]));
+            } else {
+                bands[i].setMin(ranges[i][0]);
+                bands[i].setMax(ranges[i][1]);
+            }
+        }
+    }
+
+    /**
+     * Analyse each pixels using a PixelIterator
+     * @param pix PixelIterator
+     * @param bands
+     * @param excludeNoData
+     */
+    private NumericHistogram[] analyseHistogram(final PixelIterator pix, final ImageStatistics.Band[] bands,
+                                                final boolean excludeNoData) {
+
+        int nbBands = bands.length;
+        final NumericHistogram[] histograms = new NumericHistogram[nbBands];
+        for (int i = 0; i < nbBands; i++) {
             int nbBins = getNbBins(bands[i].getDataType());
-            histograms[i] = new NumericHistogram(nbBins, ranges[i][0], ranges[i][1]);
+            histograms[i] = new NumericHistogram(nbBins, bands[i].getMin(), bands[i].getMax());
         }
 
         //reset iterator
@@ -349,7 +391,7 @@ public class Statistics extends AbstractProcess{
 
         //second pass to compute histogram
         // this int permit to loop on images band.
-        b = 0;
+        int b = 0;
         if (excludeNoData) {
             while (pix.next()) {
                 final double d = pix.getSampleDouble();

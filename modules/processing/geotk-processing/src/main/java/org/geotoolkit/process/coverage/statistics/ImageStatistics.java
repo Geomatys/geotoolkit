@@ -76,9 +76,9 @@ public class ImageStatistics implements Serializable{
 
         private final int bandIndex;
 
-        private String name;
+        private String name = null;
 
-        private SampleType dataType;
+        private SampleType dataType = null;
 
         private Double min = null;
         private Double max = null;
@@ -86,8 +86,8 @@ public class ImageStatistics implements Serializable{
         /**
          * no data values
          */
-        private double[] noData;
-        private long[] histogram;
+        private double[] noData = null;
+        private long[] histogram = null;
 
         public Band(int bandIndex) {
             this(bandIndex, null);
