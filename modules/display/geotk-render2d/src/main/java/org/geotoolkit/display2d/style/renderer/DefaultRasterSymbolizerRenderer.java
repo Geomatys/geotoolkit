@@ -711,11 +711,12 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
         //cheat on the colormap if we have only one band and no colormap
         recolorCase:
         if((recolor==null || recolor.getFunction()==null) && nbDim==1){
-            final RenderedImage ri = coverage.getRenderedImage();
+            RenderedImage ri = coverage.getRenderedImage();
             if( (ri.getColorModel() instanceof IndexColorModel) && (recolor==null || recolor.getFunction()==null)){
                 //image has it's own color model
                 break recolorCase;
             }
+            ri = coverage.view(ViewType.GEOPHYSICS).getRenderedImage();
             final ImageStatistics analyse = Statistics.analyse(ri, true);
             final ImageStatistics.Band band0 = analyse.getBand(0);
             final List<InterpolationPoint> values = new ArrayList<InterpolationPoint>();
