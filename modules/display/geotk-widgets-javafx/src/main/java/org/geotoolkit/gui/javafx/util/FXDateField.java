@@ -20,8 +20,6 @@ import java.time.LocalDateTime;
 import javafx.beans.property.ObjectProperty;
 import jidefx.scene.control.decoration.DecorationPane;
 import jidefx.scene.control.field.LocalDateTimeField;
-import jidefx.scene.control.field.popup.LocalDateTimePopupContent;
-import jidefx.scene.control.field.popup.PopupContent;
 
 /**
  * TODO improve control to support all Date type objects.
