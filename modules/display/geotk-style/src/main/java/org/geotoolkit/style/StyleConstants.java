@@ -346,7 +346,7 @@ public final class StyleConstants {
         
         DEFAULT_LINE_SYMBOLIZER = new DefaultLineSymbolizer(
                 DEFAULT_STROKE, 
-                DEFAULT_STROKE_WIDTH, 
+                DEFAULT_LINE_OFFSET, 
                 DEFAULT_UOM, 
                 null, 
                 null, 
