@@ -33,6 +33,7 @@ import javax.imageio.metadata.IIOMetadataNode;
 import javax.measure.unit.NonSI;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
+import javax.measure.converter.ConversionException;
 
 import org.w3c.dom.Node;
 
@@ -52,6 +53,7 @@ import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.util.GenericName;
 import org.apache.sis.util.ArraysExt;
 
+import org.apache.sis.measure.Units;
 import org.apache.sis.measure.MeasurementRange;
 import org.apache.sis.util.collection.BackingStoreException;
 import org.apache.sis.util.logging.Logging;
@@ -407,31 +409,41 @@ public abstract class GridCoverageReader extends GridCoverageStore implements Co
                 }
                 if (computeResolutions || computeExtents) {
                     /*
-                    * Resolution along the horizontal axes only, ignoring all other axes.
-                    */
+                     * Resolution along the horizontal axes only, ignoring all other axes. For linear units (feet,
+                     * kilometres, etc.), we convert the units to metres for compliance with a current limitation
+                     * of Apache SIS, which can handle only metres. For angular resolution (typically in degrees),
+                     * we perform an APPROXIMATIVE conversion to metres using the nautical mile definition. This
+                     * conversion is only valid along the latitudes axis (the number is wrong along the longitude
+                     * axis), and more accurate for mid-latitude (the numbers are differents close to equator or
+                     * to the poles).
+                     */
                     final GeneralGridGeometry gg = getGridGeometry(i);
                     if (computeResolutions) {
                         final Measure m = CRSUtilities.getHorizontalResolution(
                                 gg.getCoordinateReferenceSystem(), gg.getResolution());
                         if (m != null) {
-                            final DefaultResolution resolution = new DefaultResolution();
-                            double measureValue = m.doubleValue();
-                            final Unit unit = m.getUnit();
-                            //Try to convert the value to meter
-                            if(NonSI.DEGREE_ANGLE.equals(unit)){
-                                measureValue = measureValue*1852*60;//converting to meters
-                            }else if(SI.METRE.isCompatible(unit)){
-                                try {
-                                    measureValue = unit.getConverterTo(SI.METRE).convert(measureValue);
-                                }catch(UnsupportedOperationException ex){
-                                    Logging.recoverableException(LOGGER, GridCoverageReader.class, "getMetadata", ex);
+                            double  measureValue = m.doubleValue();
+                            final Unit<?>   unit = m.getUnit();
+                            Unit<?> standardUnit = null;
+                            double  scaleFactor = 1;
+                            if (Units.isAngular(unit)) {
+                                standardUnit = NonSI.DEGREE_ANGLE;
+                                scaleFactor  = (1852*60); // From definition of nautical miles.
+                            } else if (Units.isLinear(unit)) {
+                                standardUnit = SI.METRE;
+                            }
+                            if (standardUnit != null) try {
+                                measureValue = unit.getConverterToAny(standardUnit).convert(measureValue) * scaleFactor;
+                                final DefaultResolution resolution = new DefaultResolution();
+                                resolution.setDistance(measureValue);
+                                if (resolutions == null) {
+                                    resolutions = new LinkedHashSet<>();
                                 }
+                                resolutions.add(resolution);
+                            } catch (ConversionException e) {
+                                // In case of failure, do not create a Resolution object.
+                                Logging.recoverableException(LOGGER, GridCoverageReader.class, "getMetadata", e);
                             }
-                            resolution.setDistance(measureValue); // TODO: take unit in account.
-                            if (resolutions == null) {
-                                resolutions = new LinkedHashSet<>();
-                            }
-                            resolutions.add(resolution);
                         }
                     }
                     /*
