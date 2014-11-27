@@ -197,7 +197,7 @@ public class Statistics extends AbstractProcess{
             }
 
             //TODO extract view as process input parameter.
-            candidate = candidate.view(ViewType.GEOPHYSICS);
+            //candidate = candidate.view(ViewType.GEOPHYSICS);
             image = candidate.getRenderedImage();
 
             final SampleModel sm = image.getSampleModel();

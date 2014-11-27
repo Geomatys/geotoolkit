@@ -142,7 +142,7 @@ public class ImageStatistics implements Serializable{
 
         public long[] tightenHistogram(int distributionSize) {
             int fullSize = histogram.length;
-            if (fullSize < distributionSize) {
+            if (fullSize <= distributionSize) {
                 return histogram;
             }
 
