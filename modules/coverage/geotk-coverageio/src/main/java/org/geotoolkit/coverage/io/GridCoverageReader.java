@@ -30,6 +30,10 @@ import java.io.IOException;
 import javax.imageio.ImageReader;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.metadata.IIOMetadataNode;
+import javax.measure.unit.NonSI;
+import javax.measure.unit.SI;
+import javax.measure.unit.Unit;
+
 import org.w3c.dom.Node;
 
 import org.opengis.metadata.Metadata;
@@ -411,7 +415,19 @@ public abstract class GridCoverageReader extends GridCoverageStore implements Co
                                 gg.getCoordinateReferenceSystem(), gg.getResolution());
                         if (m != null) {
                             final DefaultResolution resolution = new DefaultResolution();
-                            resolution.setDistance(m.doubleValue()*1852*60); // TODO: take unit in account.
+                            double measureValue = m.doubleValue();
+                            final Unit unit = m.getUnit();
+                            //Try to convert the value to meter
+                            if(NonSI.DEGREE_ANGLE.equals(unit)){
+                                measureValue = measureValue*1852*60;//converting to meters
+                            }else if(SI.METRE.isCompatible(unit)){
+                                try {
+                                    measureValue = unit.getConverterTo(SI.METRE).convert(measureValue);
+                                }catch(UnsupportedOperationException ex){
+                                    Logging.recoverableException(LOGGER, GridCoverageReader.class, "getMetadata", ex);
+                                }
+                            }
+                            resolution.setDistance(measureValue); // TODO: take unit in account.
                             if (resolutions == null) {
                                 resolutions = new LinkedHashSet<>();
                             }
