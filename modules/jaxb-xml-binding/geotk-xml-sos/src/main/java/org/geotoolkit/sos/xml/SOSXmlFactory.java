@@ -730,7 +730,7 @@ public class SOSXmlFactory {
     public static PhenomenonProperty buildPhenomenonProperty(final String version, final Phenomenon phenomenon) {
         if ("2.0.0".equals(version)) {
             final String href = (phenomenon.getName() != null) ?phenomenon.getName().getCode() :"";
-            return new org.geotoolkit.observation.xml.v200.OMObservationType.InternalPhenomenonProperty(new ReferenceType(href));
+            return new org.geotoolkit.observation.xml.v200.OMObservationType.InternalPhenomenonProperty(new ReferenceType(href), phenomenon);
         } else if ("1.0.0".equals(version)) {
             if (phenomenon != null && !(phenomenon instanceof org.geotoolkit.swe.xml.v101.PhenomenonType)) {
                 throw new IllegalArgumentException("unexpected object version for phenomenon component element");

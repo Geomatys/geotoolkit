@@ -38,13 +38,18 @@ import org.apache.sis.internal.jaxb.metadata.DQ_Element;
 import org.apache.sis.internal.jaxb.metadata.MD_Metadata;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.geotoolkit.observation.xml.AbstractObservation;
-import org.geotoolkit.observation.xml.v200.OMObservationType.InternalPhenomenon;
 import org.geotoolkit.sampling.xml.v200.SFSamplingFeatureType;
 import org.geotoolkit.swe.xml.v200.DataArrayPropertyType;
 import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.gml.xml.v321.TimeInstantType;
 import org.geotoolkit.gml.xml.v321.TimePositionType;
+import org.geotoolkit.swe.xml.AnyScalar;
+import org.geotoolkit.swe.xml.DataArray;
+import org.geotoolkit.swe.xml.DataArrayProperty;
+import org.geotoolkit.swe.xml.DataComponentProperty;
+import org.geotoolkit.swe.xml.DataRecord;
 import org.geotoolkit.swe.xml.PhenomenonProperty;
+import org.geotoolkit.swe.xml.SimpleDataRecord;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.Metadata;
 import org.opengis.metadata.quality.Element;
@@ -96,7 +101,7 @@ import org.opengis.temporal.TemporalObject;
     "resultQuality",
     "result"
 })
-@XmlSeeAlso(InternalPhenomenon.class)
+@XmlSeeAlso({OMObservationType.InternalPhenomenon.class, OMObservationType.InternalCompositePhenomenon.class})
 @XmlRootElement(name = "Observation")
 public class OMObservationType extends AbstractFeatureType implements AbstractObservation {
 
@@ -430,6 +435,14 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
     @Override
     public Phenomenon getObservedProperty() {
         if (observedProperty != null) {
+            if (result instanceof DataArrayProperty) {
+                final List<String> fields = getFieldsFromResult((DataArrayProperty) result);
+                final List<InternalPhenomenon> phenomenons = new ArrayList<>();
+                for (String field : fields) {
+                    phenomenons.add(new InternalPhenomenon(field));
+                }
+                return new InternalCompositePhenomenon(observedProperty.getHref(), phenomenons);
+            }
             return new InternalPhenomenon(observedProperty.getHref());
         }
         return null;
@@ -450,7 +463,8 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
     @Override
     public PhenomenonProperty getPropertyObservedProperty() {
         if (observedProperty != null) {
-            return new InternalPhenomenonProperty(observedProperty);
+            final Phenomenon phen = getObservedProperty();
+            return new InternalPhenomenonProperty(observedProperty, (org.geotoolkit.swe.xml.Phenomenon) phen);
         }
         return null;
     }
@@ -550,6 +564,26 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    private List<String> getFieldsFromResult(final DataArrayProperty arrayProp) {
+        final List<String> fields = new ArrayList<>();
+        if (arrayProp.getDataArray() != null) {
+            final DataArray array = arrayProp.getDataArray();
+            if (array.getPropertyElementType().getAbstractRecord() instanceof DataRecord) {
+                final DataRecord record = (DataRecord)array.getPropertyElementType().getAbstractRecord();
+                for (DataComponentProperty field : record.getField()) {
+                    fields.add(field.getName());
+                }
+
+            } else if (array.getPropertyElementType().getAbstractRecord() instanceof SimpleDataRecord) {
+                final SimpleDataRecord record = (SimpleDataRecord)array.getPropertyElementType().getAbstractRecord();
+                for (AnyScalar field : record.getField()) {
+                    fields.add(field.getName());
+                }
+            }
+        }
+        return fields;
+    }
+    
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder(super.toString());
@@ -688,16 +722,88 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
     }
     
     @XmlRootElement
+    public static class InternalCompositePhenomenon implements org.geotoolkit.swe.xml.CompositePhenomenon {
+
+        private final String name;
+        
+        private final List<InternalPhenomenon> phenomenons;
+
+        public InternalCompositePhenomenon() {
+            this.name = null;
+            this.phenomenons = new ArrayList<>();
+        }
+
+        public InternalCompositePhenomenon(final String name, List<InternalPhenomenon> phenomenons) {
+            this.name = name;
+            this.phenomenons = phenomenons;
+        }
+
+        @Override
+        public Identifier getName() {
+            return new DefaultIdentifier(name);
+        }
+        
+        @Override
+        public List<? extends PhenomenonProperty> getRealComponent() {
+            final List<InternalPhenomenonProperty> phenProps = new ArrayList<>();
+            for (InternalPhenomenon phen : phenomenons) {
+                phenProps.add(new InternalPhenomenonProperty(new ReferenceType(phen.name), phen));
+            }
+            return phenProps;
+        }
+
+        @Override
+        public List<? extends Phenomenon> getComponent() {
+            return phenomenons;
+        }
+
+        @Override
+        public Phenomenon getBase() {
+            return null;
+        }
+
+        @Override
+        public int getDimension() {
+            return phenomenons.size();
+        }
+
+        @Override
+        public boolean equals(final Object obj) {
+            if (obj instanceof Phenomenon) {
+                final org.geotoolkit.swe.xml.Phenomenon that = (org.geotoolkit.swe.xml.Phenomenon) obj;
+                return Objects.equals(this.getName(), that.getName());
+            }
+            return false;
+        }
+
+        @Override
+        public String toString() {
+            return "[Anonymous composite Phenomenon] name:" + getName();
+        }
+
+        @Override
+        public int hashCode() {
+            int hash = 7;
+            hash = 7 * hash + (this.getName() != null ? this.getName().hashCode() : 0);
+            return hash;
+        }
+    }
+    
+    @XmlRootElement
     public static class InternalPhenomenonProperty implements org.geotoolkit.swe.xml.PhenomenonProperty {
 
         private final String href;
+        
+        private final org.geotoolkit.swe.xml.Phenomenon phenomenon;
 
         public InternalPhenomenonProperty() {
             this.href = null;
+            this.phenomenon = null;
         }
 
-        public InternalPhenomenonProperty(final ReferenceType phenRef) {
+        public InternalPhenomenonProperty(final ReferenceType phenRef, final org.geotoolkit.swe.xml.Phenomenon phenomenon) {
             this.href = phenRef.getHref();
+            this.phenomenon = phenomenon;
         }
 
         @Override
@@ -712,7 +818,7 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
 
         @Override
         public org.geotoolkit.swe.xml.Phenomenon getPhenomenon() {
-            return new InternalPhenomenon(href);
+            return phenomenon;
         }
 
         @Override

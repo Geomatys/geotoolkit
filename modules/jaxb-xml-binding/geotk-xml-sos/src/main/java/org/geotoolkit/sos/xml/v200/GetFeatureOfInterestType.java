@@ -23,6 +23,7 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElementRef;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ogc.xml.v200.FilterType;
@@ -71,6 +72,7 @@ import org.opengis.filter.Filter;
     "featureOfInterest",
     "spatialFilter"
 })
+@XmlRootElement(name = "GetFeatureOfInterest")
 public class GetFeatureOfInterestType extends ExtensibleRequestType implements GetFeatureOfInterest {
 
     @XmlSchemaType(name = "anyURI")
