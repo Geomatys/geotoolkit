@@ -411,7 +411,7 @@ public abstract class GridCoverageReader extends GridCoverageStore implements Co
                                 gg.getCoordinateReferenceSystem(), gg.getResolution());
                         if (m != null) {
                             final DefaultResolution resolution = new DefaultResolution();
-                            resolution.setDistance(m.doubleValue()); // TODO: take unit in account.
+                            resolution.setDistance(m.doubleValue()*1852*60); // TODO: take unit in account.
                             if (resolutions == null) {
                                 resolutions = new LinkedHashSet<>();
                             }
