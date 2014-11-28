@@ -27,6 +27,9 @@ import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.swe.xml.Coordinate;
 import org.geotoolkit.swe.xml.Vector;
 import org.apache.sis.util.ComparisonMode;
+import org.geotoolkit.gml.xml.AbstractGeometry;
+import org.geotoolkit.gml.xml.v311.DirectPositionType;
+import org.geotoolkit.gml.xml.v311.PointType;
 
 
 /**
@@ -179,13 +182,33 @@ public class VectorType extends AbstractVectorType implements Vector {
         }
         coordinate.add(coord);
     }
+    
+    @Override
+    public AbstractGeometry getGeometry(final URI crs) {
+        final org.geotoolkit.swe.xml.v100.CoordinateType lat = getLatitude();
+        final org.geotoolkit.swe.xml.v100.CoordinateType lon = getLongitude();
+        if (lat != null && lon != null) {
+            final DirectPositionType dp = new DirectPositionType(lat.getQuantity().getValue(), lon.getQuantity().getValue());
+            final PointType pt =  new PointType(dp);
+            if (crs != null) {
+                pt.setSrsName(crs.toString());
+            }
+            return pt;
+        }
+        return null;
+    }
+
 
     /**
      * Returns the coordinate having the {@code "urn:ogc:def:phenomenon:latitude"} definition, or {@code null} if none.
      */
     @Override
     public CoordinateType getLatitude() {
-        return getCoordinate("urn:ogc:def:phenomenon:latitude");
+        CoordinateType c = getCoordinate("urn:ogc:def:phenomenon:latitude");
+        if (c == null) {
+            c = getCoordinate("northing");
+        }
+        return c;
     }
 
     /**
@@ -201,7 +224,11 @@ public class VectorType extends AbstractVectorType implements Vector {
      */
     @Override
     public CoordinateType getLongitude() {
-        return getCoordinate("urn:ogc:def:phenomenon:longitude");
+        CoordinateType c = getCoordinate("urn:ogc:def:phenomenon:longitude");
+        if (c == null) {
+            c = getCoordinate("easting");
+        }
+        return c;
     }
 
     /**

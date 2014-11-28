@@ -27,6 +27,9 @@ import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.swe.xml.Coordinate;
 import org.geotoolkit.swe.xml.Vector;
 import org.apache.sis.util.ComparisonMode;
+import org.geotoolkit.gml.xml.AbstractGeometry;
+import org.geotoolkit.gml.xml.v311.DirectPositionType;
+import org.geotoolkit.gml.xml.v311.PointType;
 
 
 /**
@@ -74,7 +77,7 @@ public class VectorType extends AbstractVectorType implements Vector {
     public VectorType(final Vector v) {
         super(v);
         if (v != null && v.getCoordinate() != null) {
-            this.coordinate = new ArrayList<CoordinateType>();
+            this.coordinate = new ArrayList<>();
             for (Coordinate c : v.getCoordinate()) {
                 this.coordinate.add(new CoordinateType(c));
             }
@@ -124,6 +127,17 @@ public class VectorType extends AbstractVectorType implements Vector {
         }
         return null;
     }
+    
+    private CoordinateType getCoordinateByName(final String name) {
+        if (coordinate != null) {
+            for (final CoordinateType c : coordinate) {
+                if (c != null && name.equals(c.getName())) {
+                    return c;
+                }
+            }
+        }
+        return null;
+    }
 
     private void setCoordinate(final String def, final CoordinateType coord) {
         if (coordinate != null) {
@@ -140,13 +154,36 @@ public class VectorType extends AbstractVectorType implements Vector {
         }
         coordinate.add(coord);
     }
+    
+    @Override
+    public AbstractGeometry getGeometry(final URI crs) {
+        final CoordinateType lat = getLatitude();
+        final CoordinateType lon = getLongitude();
+        if (isComplete(lat) && isComplete(lon)) {
+            final DirectPositionType dp = new DirectPositionType(lat.getQuantity().getValue(), lon.getQuantity().getValue());
+            final PointType pt =  new PointType(dp);
+            if (crs != null) {
+                pt.setSrsName(crs.toString());
+            }
+            return pt;
+        }
+        return null;
+    }
+    
+    private boolean isComplete(final CoordinateType c) {
+        return c != null && c.getQuantity() != null && c.getQuantity().getValue() != null;
+    }
 
     /**
      * Returns the coordinate having the {@code "urn:ogc:def:phenomenon:latitude"} definition, or {@code null} if none.
      */
     @Override
     public CoordinateType getLatitude() {
-        return getCoordinate("urn:ogc:def:phenomenon:latitude");
+        CoordinateType c = getCoordinate("urn:ogc:def:phenomenon:latitude");
+        if (c == null) {
+            c = getCoordinateByName("northing");
+        }
+        return c;
     }
 
     /**
@@ -162,7 +199,11 @@ public class VectorType extends AbstractVectorType implements Vector {
      */
     @Override
     public CoordinateType getLongitude() {
-        return getCoordinate("urn:ogc:def:phenomenon:longitude");
+        CoordinateType c = getCoordinate("urn:ogc:def:phenomenon:longitude");
+        if (c == null) {
+            c = getCoordinateByName("easting");
+        }
+        return c;
     }
 
     /**

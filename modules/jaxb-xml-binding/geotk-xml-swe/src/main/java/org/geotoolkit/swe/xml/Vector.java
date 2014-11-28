@@ -16,7 +16,9 @@
  */
 package org.geotoolkit.swe.xml;
 
+import java.net.URI;
 import java.util.List;
+import org.geotoolkit.gml.xml.AbstractGeometry;
 
 /**
  *
@@ -36,4 +38,6 @@ public interface Vector extends AbstractVector {
      * Returns the coordinate having the {@code "urn:ogc:def:phenomenon:longitude"} definition, or {@code null} if none.
      */
     public Coordinate getLongitude();
+    
+    AbstractGeometry getGeometry(final URI crs);
 }
