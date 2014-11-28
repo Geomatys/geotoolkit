@@ -596,10 +596,10 @@ public class ImageUtils extends Static{
             * in one contiguous read operation.
             */
            switch (sampleBitsSize) {
-               case java.lang.Byte   .SIZE : dataBufferType = DataBuffer.TYPE_BYTE;   break;
-               case java.lang.Short  .SIZE : dataBufferType = DataBuffer.TYPE_USHORT; break;
-               case Integer.SIZE : dataBufferType = DataBuffer.TYPE_INT;    break;
-               case Double.SIZE  : dataBufferType = DataBuffer.TYPE_DOUBLE; break;
+               case java.lang.Byte.SIZE  : dataBufferType = DataBuffer.TYPE_BYTE;   break;
+               case java.lang.Short.SIZE : dataBufferType = DataBuffer.TYPE_USHORT; break;
+               case Integer.SIZE         : dataBufferType = DataBuffer.TYPE_INT;    break;
+               case Double.SIZE          : dataBufferType = DataBuffer.TYPE_DOUBLE; break;
                default : {
                     throw new UnsupportedOperationException( "unsupported bitsPerSample size : "+sampleBitsSize);
                }

@@ -90,6 +90,9 @@ import org.apache.sis.referencing.operation.transform.MathTransforms;
 import static org.geotoolkit.image.io.MultidimensionalImageStore.*;
 import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMAT_NAME;
 import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
+import org.geotoolkit.internal.image.io.DimensionAccessor;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 
 /**
@@ -681,6 +684,31 @@ public class ImageCoverageReader extends GridCoverageReader {
     }
 
     /**
+     * Return {@code true} if metadata contains Dimension informations from image descriptions else false.
+     * 
+     * @param metadata current image description.
+     * @return {@code true} if metadata contains Dimension informations from image descriptions else false.
+     */
+    private boolean hasDimensionMetadata(final IIOMetadata metadata) {
+        final Node asTree = metadata.getAsTree(GEOTK_FORMAT_NAME);
+        if (asTree.hasChildNodes()) {
+            final NodeList nl = asTree.getChildNodes();
+            final int length = nl.getLength();
+            for (int i = 0; i < length; i++) {
+                 final Node current = nl.item(i);
+                 if (current.getNodeName().equalsIgnoreCase("ImageDescription")) {
+                     final NodeList idnl = asTree.getChildNodes();
+                     final int l = idnl.getLength();
+                     for (int j = 0; j < l; j++) {
+                         if (idnl.item(j).getNodeName().equalsIgnoreCase("Dimensions")) return true; 
+                     }
+                 }
+            }
+        }
+        return false;
+    }
+    
+    /**
      * {@inheritDoc}
      */
     @Override
@@ -698,8 +726,11 @@ public class ImageCoverageReader extends GridCoverageReader {
             List<SampleDimension> bands = null;
             try {
                 final SpatialMetadata metadata = getImageMetadata(imageReader, index);
-                if (metadata != null) {
-                    bands = metadata.getListForType(SampleDimension.class);
+                if (metadata != null && hasDimensionMetadata(metadata)) {
+                    DimensionAccessor accessor = new DimensionAccessor(metadata);
+                    sd = accessor.getGridSampleDimensions();
+                    if (sd != null) return sd;
+                    bands = metadata.getListForType(SampleDimension.class); 
                 }
             } catch (IOException e) {
                 throw new CoverageStoreException(formatErrorMessage(e), e);

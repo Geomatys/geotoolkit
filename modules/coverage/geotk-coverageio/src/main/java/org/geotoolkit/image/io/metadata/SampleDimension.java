@@ -23,6 +23,7 @@ import org.opengis.metadata.content.RangeDimension;
 import org.opengis.metadata.content.TransferFunctionType;
 
 import org.apache.sis.measure.NumberRange;
+import org.geotoolkit.coverage.GridSampleDimension;
 
 
 /**
@@ -168,4 +169,6 @@ public interface SampleDimension extends RangeDimension, SampleDomain {
      * @see org.opengis.metadata.content.Band#getTransferFunctionType()
      */
     TransferFunctionType getTransferFunctionType();
+    
+    GridSampleDimension getGridSampleDimension();
 }

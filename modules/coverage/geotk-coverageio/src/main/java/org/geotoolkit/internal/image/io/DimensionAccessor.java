@@ -19,6 +19,9 @@ package org.geotoolkit.internal.image.io;
 
 import java.util.Locale;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import javax.imageio.ImageReader;
 import javax.imageio.metadata.IIOMetadata;
 import javax.media.jai.iterator.RectIter;
@@ -83,6 +86,9 @@ public final class DimensionAccessor extends MetadataNodeAccessor {
      * @since 3.17
      */
     public void setDimension(final SampleDimension band, final Locale locale) {
+        if (band instanceof GridSampleDimension) {
+            setUserObject(band);
+        }
         final InternationalString description = band.getDescription();
         if (description != null) {
             setDescriptor(description.toString(locale));
@@ -393,4 +399,36 @@ nextPixel:          do {
         }
         return values;
     }
+
+    /**
+     * Temporary Method in attemp to generalize comportement with reflexivity.
+     * @param i
+     * @return 
+     */
+    public GridSampleDimension getGridSampleDimension(int i) {
+        selectParent();
+        selectChild(i);
+        final Object userObject = getUserObject();
+        if (userObject != null && userObject instanceof GridSampleDimension) {
+            return (GridSampleDimension) userObject;
+        }
+        return null;
+    }
+    
+    public List<GridSampleDimension> getGridSampleDimensions() {
+        selectParent();
+        final Object userObj = getUserObject();
+        if (userObj != null && userObj instanceof List) return (List<GridSampleDimension>) userObj;
+        
+        final int nbC = childCount();
+        if (nbC == 0) return null; 
+        final List<GridSampleDimension> gsD = new ArrayList<>(nbC);
+        for (int i = 0; i < nbC; i++) {
+            selectChild(i);
+            final Object obj = getUserObject();
+            if (obj != null) gsD.add((GridSampleDimension) obj);
+        }
+        return (gsD.isEmpty()) ? null : gsD; 
+    }
 }
+ 

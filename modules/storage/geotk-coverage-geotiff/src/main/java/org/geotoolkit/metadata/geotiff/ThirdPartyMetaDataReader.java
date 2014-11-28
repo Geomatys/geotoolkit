@@ -56,7 +56,7 @@ import org.xml.sax.SAXException;
  * @author Johann Sorel  (Geomatys)
  * @author Marechal Remi (Geomatys).
  */
-public class ThirdPartyMetaDataReader {
+public strictfp class ThirdPartyMetaDataReader {
 
     private static final Logger LOGGER = Logging.getLogger(ThirdPartyMetaDataReader.class);
 
@@ -70,25 +70,66 @@ public class ThirdPartyMetaDataReader {
     /**
      * Fill the given Spatial Metadatas with additional informations.
      */
-    public void fillSpatialMetaData(SpatialMetadata metadata) throws IOException{
-        
-        final List<Category> categories = new ArrayList<>();
-        Category noDataCategory = null;
-        Double realFillValue = null;
+    public void fillSpatialMetaData(SpatialMetadata metadata) throws IOException {
+        double[] realFillValue = null;
         
         int samplePerPixels = -1;
         int bitsPerSamples = -1;
         int sampleFormat = -1;
+        
         long[] minSampleValues = null;
         long[] maxSampleValues = null;
+        double[] gDalMinSampleValue = null;
+        double[] gDalMaxSampleValue = null;
         
+        double[] modelTransformation = null;
+        double[] modelPixelScale = null;
+        double scaleZ  = 1;
+        double offsetZ = 0;
+        boolean scaleFound = false;
+        
+        //-- get sample per pixel and scale / offset
         final NodeList children = root.getChildNodes();
-        for(int i=0, n=children.getLength(); i<n; i++){
+        for(int i = 0, n = children.getLength(); i < n; i++) {
+            final IIOMetadataNode child = (IIOMetadataNode) children.item(i);
+            final int number = Integer.valueOf(child.getAttribute("number"));
+            switch (number) {
+                case 277 : { //-- samples per pixel
+                    final Node sppNode = child.getChildNodes().item(0);
+                    samplePerPixels = (int) GeoTiffMetaDataUtils.readTiffLongs(sppNode)[0];
+                    break;
+                }
+                case 34264 : { //-- ModelTransformationTag
+                    scaleFound = true;
+                    final Node mdTransNode = child.getChildNodes().item(0);
+                    modelTransformation = GeoTiffMetaDataUtils.readTiffDoubles(mdTransNode);
+                    
+                   /*
+                    * get pixelScaleZ at coordinate 10 and pixelOffsetZ at coordinate 11.
+                    * always array of length 16 like follow.
+                    * |Sx, 0, 0, Tx|
+                    * |0, Sy, 0, Ty|
+                    * |0, 0, Sz, Tz|
+                    * |0, 0,  0, 1 |
+                    */
+                    //-- scaleZ
+                    if (StrictMath.abs(modelTransformation[10]) > 1E-9) {
+                        if (modelPixelScale != null) assert StrictMath.abs(StrictMath.abs(modelTransformation[10]) - StrictMath.abs(modelPixelScale[2])) < 1E-9;
+                        scaleZ = modelTransformation[10];
+                    }
+                    offsetZ = modelTransformation[11];
+                    break;
+                }
+            }
+            if (scaleFound && samplePerPixels != -1) break;
+        }
+        
+        for(int i = 0, n = children.getLength(); i < n; i++){
             final IIOMetadataNode child = (IIOMetadataNode) children.item(i);
             final int number = Integer.valueOf(child.getAttribute("number"));
             
             switch (number) {
-
+                //-- apparemment meme categories pour tout les gridSampleDimensions ...??? (à definir pas rencontrer pour le moment).
                 //GDAL tags
                 case 42112 :  {//metadatas as xml
                     final Node valueNode = child.getChildNodes().item(0);
@@ -98,9 +139,9 @@ public class ThirdPartyMetaDataReader {
                     Double max = null;
                     try {
                         final DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-                        final Document doc = db.parse(new ByteArrayInputStream(stats.getBytes()));
+                        final Document doc = db.parse(new ByteArrayInputStream(stats.getBytes())); 
                         final NodeList lst = doc.getElementsByTagName("Item");
-                        for(int k=0,kn=lst.getLength();k<kn;k++){
+                        for (int k = 0, kn = lst.getLength(); k < kn; k++) {
                             final Element node = (Element) lst.item(k);
                             final String name  = node.getAttribute("name");
                             if ("STATISTICS_MINIMUM".equals(name)) {
@@ -108,10 +149,18 @@ public class ThirdPartyMetaDataReader {
                             } else if ("STATISTICS_MAXIMUM".equals(name)) {
                                 max = Double.valueOf(node.getTextContent());
                             }
-                            if (min != null && max != null) {
-                                categories.add(new Category("data", null, 
-                                        NumberRange.create(1, true, 100, true), NumberRange.create(min, true, max, true)));
-                            }
+                        }
+                        
+                       /*
+                        * Pour le moment fill les valeurs. Peut etre GDAL defini un min et max par bands.
+                        * Pas encore rencontré.
+                        * Tableau en prevision.
+                        */
+                        if (min != null && max != null) {
+                            gDalMinSampleValue = new double[samplePerPixels];
+                            Arrays.fill(gDalMinSampleValue, min);
+                            gDalMaxSampleValue = new double[samplePerPixels];
+                            Arrays.fill(gDalMaxSampleValue, max);
                         }
                     } catch (ParserConfigurationException | SAXException | NumberFormatException ex) {
                         LOGGER.log(Level.WARNING, ex.getMessage(), ex);
@@ -119,30 +168,40 @@ public class ThirdPartyMetaDataReader {
                     break;
                 }
                 case 42113 : {// no data value as ascii text
+                   /* 
+                    * Il est possible avec geotiff que des nodata differents soient present pour chaque bandes de l'image.
+                    * On peut donc potentiellement avoir un nodata different sur chacune de nos bandes -> String[].
+                    * (Jamais rencontrer encore a voir ...)
+                    */
                     final Node valueNode = child.getChildNodes().item(0);
                     String str = GeoTiffMetaDataUtils.readTiffAsciis(valueNode);
                     if (str.contains(",")) {
                         final String[] strs = str.split(",");
-                        assert strs.length == 2 : "Unfomatted no data string value. Found : ("+str+")";
+                        assert strs.length == 2 : "Unformat nodata string value. Found : ("+str+")";
                         str = strs[0] +"."+ strs[1];
                     }
                     try {
-                        realFillValue = Double.valueOf(str);
-                        noDataCategory = new Category(Vocabulary.formatInternational(Vocabulary.Keys.NODATA), new Color(0,0,0,0), realFillValue);
+                        final double realFillVal = Double.valueOf(str).doubleValue(); 
+                        realFillValue = new double[samplePerPixels];
+                        Arrays.fill(realFillValue, realFillVal);
                     } catch (NumberFormatException e) {
                         LOGGER.log(Level.INFO, "No data value cannot be read.", e);
                     }
-                    //categories.add(new Category(Vocabulary.formatInternational(Vocabulary.Keys.NODATA), new Color(0,0,0,0), noData));
+                    break;
+                }
+                case 33550 : { //-- ModelPixelScaleTag
+                    final Node mdptNode = child.getChildNodes().item(0);
+                    modelPixelScale = GeoTiffMetaDataUtils.readTiffDoubles(mdptNode);
+                    //-- get pixel scale Z. Always array of length 3 (ScaleX, ScaleY, ScaleZ).
+                    if (StrictMath.abs(modelPixelScale[2]) > 1E-9) {
+                        if (modelTransformation != null) assert StrictMath.abs(StrictMath.abs(modelTransformation[10]) - StrictMath.abs(modelPixelScale[2])) < 1E-9;
+                        scaleZ = modelPixelScale[2];
+                    }
                     break;
                 }
                 case 258 : { //-- bits per sample
                     final Node bpsNode = child.getChildNodes().item(0);
                     bitsPerSamples = (int) GeoTiffMetaDataUtils.readTiffLongs(bpsNode)[0];
-                    break;
-                }
-                case 277 : { //-- samples per pixel
-                    final Node sppNode = child.getChildNodes().item(0);
-                    samplePerPixels = (int) GeoTiffMetaDataUtils.readTiffLongs(sppNode)[0];
                     break;
                 }
                 case 339 : { //-- sample format 
@@ -163,38 +222,34 @@ public class ThirdPartyMetaDataReader {
             }
         }
         
-        if (categories.isEmpty() && noDataCategory == null && minSampleValues == null && maxSampleValues == null) return;
+        if (realFillValue == null && gDalMinSampleValue == null && gDalMaxSampleValue == null && minSampleValues == null && maxSampleValues == null) return;
+        
+        final DimensionAccessor accessor = new DimensionAccessor(metadata);
         
         assert bitsPerSamples  != -1;
         assert samplePerPixels != -1;
         
-        final DimensionAccessor accessor = new DimensionAccessor(metadata);
-        final int categoriArrayLength = (noDataCategory != null) ? 2 : 1;
-        if (categories.isEmpty()) {
-            double[] minSV = new double[samplePerPixels];
-            double[] maxSV = new double[samplePerPixels];
-            if (minSampleValues != null) {
-                assert minSampleValues.length == samplePerPixels;
-                for (int i = 0; i < samplePerPixels; i++) {
-                    minSV[i] = minSampleValues[i];
-                }
+        double[] minSV = new double[samplePerPixels];
+        double[] maxSV = new double[samplePerPixels];
+        
+        if (minSampleValues != null && maxSampleValues != null) {  
+            assert minSampleValues.length == samplePerPixels;            
+            assert maxSampleValues.length == samplePerPixels;
+            for (int i = 0; i < samplePerPixels; i++) {
+                minSV[i] = Double.longBitsToDouble(minSampleValues[i]);
             }
-            if (maxSampleValues != null) {
-                assert maxSampleValues.length == samplePerPixels;
-                for (int i = 0; i < samplePerPixels; i++) {
-                    maxSV[i] = maxSampleValues[i];
-                }
+            for (int i = 0; i < samplePerPixels; i++) {
+                maxSV[i] = Double.longBitsToDouble(maxSampleValues[i]);
             }
-            
+        } else if (gDalMinSampleValue != null) {
+            minSV = gDalMinSampleValue;
+            maxSV = gDalMaxSampleValue;
+        } else {
            /*
             * If min and max sample values are not stipulate in metadata, we assume 
             * that min and max interval is with exclusives terminal because in lot of case 
             * the "No category Data" has often a value at interval terminals.
             */
-            boolean isMinExcluded = minSampleValues == null;
-            boolean isMaxExcluded = maxSampleValues == null;
-            
-            if (isMinExcluded || isMaxExcluded) {
                 double min;
                 double max;
                 switch (bitsPerSamples) {
@@ -232,32 +287,38 @@ public class ThirdPartyMetaDataReader {
                     }
                     default : throw new IllegalStateException("Unknow sample type");
                 }
-                if (isMinExcluded) Arrays.fill(minSV, min);
-                if (isMaxExcluded) Arrays.fill(maxSV, max);                
-            }
-                 
-            for (int s = 0; s < samplePerPixels; s++) {
-                categories.add(new Category("data", null, 
-                                        NumberRange.create(minSV[s], !isMinExcluded, maxSV[s], !isMaxExcluded), 1, 0/*NumberRange.create(minSV[s], true, maxSV[s], true)*/));
-            }
+                Arrays.fill(minSV, min);
+                Arrays.fill(maxSV, max);
         } 
         
-        final int categoriesNumber = categories.size();
-        for (int c = 0; c < categoriesNumber; c++) {
-            if (accessor.childCount() >= categoriesNumber) {
-                accessor.selectChild(c); 
+        for (int b = 0; b < samplePerPixels; b++) {
+            if (accessor.childCount() >= samplePerPixels) {
+                accessor.selectChild(b); 
             } else {
                 accessor.selectChild(accessor.appendChild());
             }
-
-            final Category[] cats = new Category[categoriArrayLength];
-            cats[0] = categories.get(c);
-            if (noDataCategory != null) cats[1] = noDataCategory;
-            final GridSampleDimension dim = new GridSampleDimension(""+c, cats, null);
+            
+            final List<Category> categories = new ArrayList<>();
+            if (realFillValue != null) {
+                    categories.add(new Category(Vocabulary.formatInternational(Vocabulary.Keys.NODATA), new Color(0,0,0,0), realFillValue[b]));
+                    if (minSV[b] < realFillValue[b] && realFillValue[b] < maxSV[b]) {
+                        categories.add(new Category("data", null, 
+                            NumberRange.create(minSV[b], true, realFillValue[b], false), scaleZ, offsetZ));
+                        categories.add(new Category("data", null, 
+                            NumberRange.create(realFillValue[b], false, maxSV[b], true), scaleZ, offsetZ));
+                    } else {
+                        categories.add(new Category("data", null, 
+                            NumberRange.create(minSV[b], !(minSV[b] == realFillValue[b]), maxSV[b], !(maxSV[b] == realFillValue[b])), scaleZ, offsetZ));
+                    }
+                } else {
+                    categories.add(new Category("data", null, 
+                            NumberRange.create(minSV[b], true, maxSV[b], true), scaleZ, offsetZ));
+                }
+            final GridSampleDimension dim = new GridSampleDimension(""+b, categories.toArray(new Category[categories.size()]), null);
             accessor.setDimension(dim, Locale.ENGLISH);
             if (realFillValue != null) {
-                accessor.setAttribute("realFillValue", realFillValue);
+                accessor.setAttribute("realFillValue", realFillValue[b]);
             }
-        }    
+        }
     }
 }
