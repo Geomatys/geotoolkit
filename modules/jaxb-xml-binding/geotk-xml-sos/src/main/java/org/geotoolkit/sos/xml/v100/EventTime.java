@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.ogc.xml.v110.BinaryTemporalOpType;
 import org.geotoolkit.ogc.xml.v110.TemporalOpsType;
 import org.geotoolkit.ogc.xml.v110.TimeAfterType;
 import org.geotoolkit.ogc.xml.v110.TimeBeforeType;
@@ -97,33 +98,39 @@ public class EventTime {
 
      }
      
-    /**
-     * Build a new Event time with T_After parameter
-     */
-     public EventTime(final TimeAfterType tAfter){
-         this.tAfter  = tAfter;
-     }
-     
-    /**
-     * Build a new Event time with T_Before parameter
-     */
-     public EventTime(final TimeBeforeType tBefore){
-         this.tBefore = tBefore;
-     }
-     
-    /**
-     * Build a new Event time with T_After parameter or T_Before or T_During
-     */
-     public EventTime(final TimeDuringType tDuring){
-         this.tDuring = tDuring;
-     }
-     
-     /**
-     * Build a new Event time with T_Equals.
-     */
-     public EventTime(final TimeEqualsType tEquals){
-         this.tEquals = tEquals;
-     }
+     public EventTime(final BinaryTemporalOpType tempOp) {
+
+        if (tempOp instanceof TimeOverlapsType) {
+            this.tOveralps = (TimeOverlapsType) tempOp;
+        } else if (tempOp instanceof TimeEqualsType) {
+            this.tEquals = (TimeEqualsType) tempOp;
+        } else if (tempOp instanceof TimeMeetsType) {
+            this.tMeets = (TimeMeetsType) tempOp;
+        } else if (tempOp instanceof TimeOverlappedByType) {
+            this.tOverlappedBy = (TimeOverlappedByType) tempOp;
+        } else if (tempOp instanceof TimeEndedByType) {
+            this.tEndedBy = (TimeEndedByType) tempOp;
+        } else if (tempOp instanceof TimeEndsType) {
+            this.tEnds = (TimeEndsType) tempOp;
+        } else if (tempOp instanceof TimeAfterType) {
+            this.tAfter = (TimeAfterType) tempOp;
+        } else if (tempOp instanceof TimeMetByType) {
+            this.tMetBy = (TimeMetByType) tempOp;
+        } else if (tempOp instanceof TimeBeginsType) {
+            this.tBegins = (TimeBeginsType) tempOp;
+        } else if (tempOp instanceof TimeBeforeType) {
+            this.tBefore = (TimeBeforeType) tempOp;
+        } else if (tempOp instanceof TimeBegunByType) {
+            this.tBegunBy = (TimeBegunByType) tempOp;
+        } else if (tempOp instanceof TimeContainsType) {
+            this.tContains = (TimeContainsType) tempOp;
+        } else if (tempOp instanceof TimeDuringType) {
+            this.tDuring = (TimeDuringType) tempOp;
+        } else if (tempOp instanceof TemporalOpsType) {
+            this.temporalOps = (TemporalOpsType) tempOp;
+        }
+
+    }
      
     /**
      * Gets the value of the temporalOps property.

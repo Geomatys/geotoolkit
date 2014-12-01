@@ -81,9 +81,10 @@ public abstract class AbstractFeatureCollectionType extends AbstractFeatureType 
      * 
      * 
      */
+    @Override
     public List<FeaturePropertyType> getFeatureMember() {
         if (featureMember == null) {
-            featureMember = new ArrayList<FeaturePropertyType>();
+            featureMember = new ArrayList<>();
         }
         return this.featureMember;
     }

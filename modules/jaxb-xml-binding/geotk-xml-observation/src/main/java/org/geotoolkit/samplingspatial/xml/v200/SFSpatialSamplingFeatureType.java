@@ -23,6 +23,7 @@ import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.gml.xml.v321.AbstractGeometryType;
@@ -74,6 +75,7 @@ import org.opengis.metadata.quality.PositionalAccuracy;
     "positionalAccuracy",
     "shape"
 })
+@XmlRootElement(name = "SF_SpatialSamplingFeature")
 public class SFSpatialSamplingFeatureType extends SFSamplingFeatureType {
 
     private List<OMProcessPropertyType> hostedProcedure;

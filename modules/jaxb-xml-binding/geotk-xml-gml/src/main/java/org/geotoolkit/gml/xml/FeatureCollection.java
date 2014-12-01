@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.gml.xml;
 
+import java.util.List;
+
 
 /**
  *
@@ -25,4 +27,6 @@ package org.geotoolkit.gml.xml;
 public interface FeatureCollection extends AbstractFeature {
     
     void computeBounds();
+    
+    List<? extends FeatureProperty> getFeatureMember();
 }
