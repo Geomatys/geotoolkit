@@ -645,7 +645,7 @@ public class ImageCoverageReader extends GridCoverageReader {
             upper[X_DIMENSION] = width;
             upper[Y_DIMENSION] = height;
             final GridEnvelope gridExtent = new GeneralGridEnvelope(lower, upper, false);
-            gridGeometry = new GridGeometry2D(gridExtent, pointInPixel, gridToCRS, crs, null);
+            gridGeometry = new GridGeometry2D(gridExtent, pointInPixel, gridToCRS, crs, null); 
             Map.Entry<Map<Integer,GridGeometry2D>,GridGeometry2D> entry = setCached(gridGeometry, gridGeometries, index);
             gridGeometries = entry.getKey();
             gridGeometry = entry.getValue();
@@ -697,7 +697,7 @@ public class ImageCoverageReader extends GridCoverageReader {
             for (int i = 0; i < length; i++) {
                  final Node current = nl.item(i);
                  if (current.getNodeName().equalsIgnoreCase("ImageDescription")) {
-                     final NodeList idnl = asTree.getChildNodes();
+                     final NodeList idnl = current.getChildNodes();
                      final int l = idnl.getLength();
                      for (int j = 0; j < l; j++) {
                          if (idnl.item(j).getNodeName().equalsIgnoreCase("Dimensions")) return true; 

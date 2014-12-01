@@ -348,7 +348,7 @@ public class TiffImageReader extends SpatialImageReader {
      * {@inheritDoc }.
      * May return {@code null} if there are no metadatas.
      */
-    @Override
+    @Override 
     protected SpatialMetadata createMetadata(final int imageIndex) throws IOException {
         if(imageIndex < 0){
             //stream metadata

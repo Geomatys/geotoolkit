@@ -236,10 +236,8 @@ public strictfp class ThirdPartyMetaDataReader {
             assert minSampleValues.length == samplePerPixels;            
             assert maxSampleValues.length == samplePerPixels;
             for (int i = 0; i < samplePerPixels; i++) {
-                minSV[i] = Double.longBitsToDouble(minSampleValues[i]);
-            }
-            for (int i = 0; i < samplePerPixels; i++) {
-                maxSV[i] = Double.longBitsToDouble(maxSampleValues[i]);
+                minSV[i] = minSampleValues[i];
+                maxSV[i] = maxSampleValues[i];
             }
         } else if (gDalMinSampleValue != null) {
             minSV = gDalMinSampleValue;
