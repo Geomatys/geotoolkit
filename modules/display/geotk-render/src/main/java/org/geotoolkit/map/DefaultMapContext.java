@@ -120,7 +120,7 @@ final class DefaultMapContext extends DefaultMapItem implements MapContext, Laye
             env = new GeneralEnvelope(layer.getBounds());
             sourceCrs = env.getCoordinateReferenceSystem();
 
-            if (env == null) {
+            if (env == null || env.isAllNaN()) {
                 continue;
             } else {
 
@@ -134,7 +134,7 @@ final class DefaultMapContext extends DefaultMapItem implements MapContext, Laye
                     }
                 }
 
-                if (result == null ) {
+                if (result == null) {
                     result = env;
                 } else {
                     result.add(env);

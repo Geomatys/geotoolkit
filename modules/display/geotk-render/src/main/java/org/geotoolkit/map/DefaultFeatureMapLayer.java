@@ -150,15 +150,19 @@ final class DefaultFeatureMapLayer extends DefaultCollectionMapLayer implements 
         }
 
         if(env == null){
-            Envelope crsEnv = CRS.getEnvelope(sourceCrs);
-            if(crsEnv != null){
-                //we couldn't estime the features envelope, return the crs envelope if possible
-                //we assume the features are not out of the crs valide envelope
-                env = new GeneralEnvelope(crsEnv);
-            }else{
-                //never return a null envelope, we better return an infinite envelope
-                env = new Envelope2D(sourceCrs,Double.NaN,Double.NaN,Double.NaN,Double.NaN);
-            }
+            //no data
+            //never return a null envelope, we better return an infinite envelope
+            env = new Envelope2D(sourceCrs,Double.NaN,Double.NaN,Double.NaN,Double.NaN);
+            
+//            Envelope crsEnv = CRS.getEnvelope(sourceCrs);
+//            if(crsEnv != null){
+//                //we couldn't estime the features envelope, return the crs envelope if possible
+//                //we assume the features are not out of the crs valide envelope
+//                env = new GeneralEnvelope(crsEnv);
+//            }else{
+//                //never return a null envelope, we better return an infinite envelope
+//                env = new Envelope2D(sourceCrs,Double.NaN,Double.NaN,Double.NaN,Double.NaN);
+//            }
         }
 
         return env;
