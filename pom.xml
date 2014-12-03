@@ -60,8 +60,9 @@
            Issue managements and mailing lists.
        =========================================================== -->
   <scm>
-    <connection>scm:hg:http://hg.geotoolkit.org/geotoolkit/</connection>
-    <url>http://hg.geotoolkit.org/geotoolkit/</url>
+    <connection>scm:git:https://github.com/Geomatys/geotoolkit.git</connection>
+    <url>https://github.com/Geomatys/geotoolkit.git</url>
+    <developerConnection>scm:git:https://github.com/Geomatys/geotoolkit.git</developerConnection>
   </scm>
 
   <ciManagement>
