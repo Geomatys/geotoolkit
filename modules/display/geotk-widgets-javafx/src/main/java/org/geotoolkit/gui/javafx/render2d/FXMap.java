@@ -46,6 +46,7 @@ import org.geotoolkit.display.canvas.control.NeverFailMonitor;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.J2DCanvasVolatile;
 import org.geotoolkit.display2d.container.ContextContainer2D;
+import org.geotoolkit.factory.Hints;
 import org.geotoolkit.gui.javafx.util.NextPreviousList;
 import org.geotoolkit.internal.Loggers;
 import org.opengis.geometry.Envelope;
@@ -87,10 +88,10 @@ public class FXMap extends BorderPane {
     private FXMapDecoration backDecoration = new FXColorDecoration();
     
     public FXMap(){
-        this(false);
+        this(false,null);
     }
 
-    public FXMap(final boolean statefull){
+    public FXMap(final boolean statefull, Hints hints){
 //        setBackground(new Background(new BackgroundFill(javafx.scene.paint.Color.WHITE, CornerRadii.EMPTY, Insets.EMPTY)));
         view.heightProperty().bind(mapDecorationPane.heightProperty());
         view.widthProperty().bind(mapDecorationPane.widthProperty());
@@ -104,7 +105,7 @@ public class FXMap extends BorderPane {
         setCenter(mainDecorationPane);
         
         
-        canvas = new J2DCanvasVolatile(CommonCRS.WGS84.normalizedGeographic(), new Dimension(100, 100));
+        canvas = new J2DCanvasVolatile(CommonCRS.WGS84.normalizedGeographic(), new Dimension(100, 100), hints);
         canvas.setMonitor(new NeverFailMonitor());
         canvas.setContainer(new ContextContainer2D(canvas, statefull));
         canvas.setAutoRepaint(true);

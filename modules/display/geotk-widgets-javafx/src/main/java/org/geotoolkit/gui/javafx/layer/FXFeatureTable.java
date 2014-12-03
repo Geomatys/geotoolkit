@@ -32,6 +32,8 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableColumn;
@@ -47,7 +49,6 @@ import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.geotoolkit.internal.Loggers;
 import org.geotoolkit.map.FeatureMapLayer;
-import org.opengis.feature.PropertyType;
 import org.opengis.filter.Id;
 import org.opengis.filter.identity.Identifier;
 
@@ -87,6 +88,10 @@ public class FXFeatureTable extends FXPropertyPane{
                 
             }
         });
+        
+        final Button loadButton = new Button("Load datas");
+        loadButton.setOnAction(this::loadData);
+        table.setPlaceholder(loadButton);
     }
 
     @Override
@@ -148,6 +153,11 @@ public class FXFeatureTable extends FXPropertyPane{
         //table.setItems(obsCol);
         
         return true;
+    }
+    
+    private void loadData(ActionEvent event){
+        final FeatureCollection<? extends Feature> col = layer.getCollection();
+        table.setItems(FXCollections.observableArrayList((Feature[])col.toArray(new Feature[0])));
     }
         
     private static class ObservableFeatureCollection extends AbstractSequentialList<Feature> implements ObservableList<Feature>{

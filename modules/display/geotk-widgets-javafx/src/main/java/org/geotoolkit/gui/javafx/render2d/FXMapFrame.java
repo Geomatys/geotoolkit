@@ -56,10 +56,12 @@ public class FXMapFrame {
     private final FXMapContextTree tree;
     
     public FXMapFrame(MapContext context){
+        this(context, new Hints());
+    }
+    
+    public FXMapFrame(MapContext context, Hints hints){
         
-        
-        
-        map = new FXMap();
+        map = new FXMap(false,hints);
         map.getContainer().setContext(context);
         tree = new FXMapContextTree(context);
         tree.getTreetable().setShowRoot(false);
@@ -141,7 +143,7 @@ public class FXMapFrame {
         //Init JavaFX, ugly, but we only have 2 choices, extent Application or create this.
         new JFXPanel(); 
         
-        Platform.runLater(() -> new FXMapFrame(mc));
+        Platform.runLater(() -> new FXMapFrame(mc,hints));
         
     }
     
