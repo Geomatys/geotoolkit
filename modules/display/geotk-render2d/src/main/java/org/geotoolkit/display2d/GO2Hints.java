@@ -19,6 +19,7 @@ package org.geotoolkit.display2d;
 import java.awt.RenderingHints.Key;
 import java.awt.image.ColorModel;
 import org.geotoolkit.display.HintKey;
+import org.geotoolkit.display2d.container.stateless.StatelessMapItemJ2D;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.map.ElevationModel;
@@ -150,6 +151,15 @@ public final class GO2Hints extends Static {
      * Default value is null.
      */
     public static final Key KEY_ELEVATION_MODEL = new NamedKey(ElevationModel.class, "GO2 - Default Elevation Model");
+    
+    /**
+     * Configure the PyramidalCoverageReference view, false by default in stateless mode, 
+     * true in statefull mode.
+     * If true the graphic rendering is tile by tile else all the view is filled. 
+     * 
+     * @see StatelessMapItemJ2D#parseChild(org.geotoolkit.map.MapItem) 
+     */
+    public static final Key KEY_VIEW_TILE = new NamedKey(Boolean.class, "GO2 - View Tiles");
 
     /**
      * Used only by J2DCanvasVolatile.
@@ -174,6 +184,8 @@ public final class GO2Hints extends Static {
     public static final Boolean COVERAGE_WRITER_OFF = Boolean.FALSE;
     public static final Boolean PARALLAL_BUFFER_ON = Boolean.TRUE;
     public static final Boolean PARALLAL_BUFFER_OFF = Boolean.FALSE;
+    public static final Boolean VIEW_TILE_ON  = Boolean.TRUE;
+    public static final Boolean VIEW_TILE_OFF = Boolean.FALSE;
 
     /**
      * A value of 1.3 looks like the best average generalisation.
