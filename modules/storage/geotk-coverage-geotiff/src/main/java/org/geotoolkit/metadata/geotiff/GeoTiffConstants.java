@@ -74,7 +74,9 @@ public final class GeoTiffConstants {
     public static final int PageNumber                  = 0x0129;  
     public static final int TransferFunction            = 0x012D; 
     public static final int Software                    = 0x0131; 
-    public static final int DateTime                    = 0x0132; 
+    public static final int DateTime                    = 0x0132;  
+    public static final int DateTimeOriginal            = 0x9003; 
+    public static final int DateTimeDigitized           = 0x9004;
     public static final int Artist                      = 0x013B; 
     public static final int HostComputer                = 0x013C; 
     public static final int Predictor                   = 0x013D; 

@@ -73,6 +73,19 @@ public class ResampleTest {
                                                            0,0,           0,           0,           0,           0,           0, 0,0};
     
     /**
+     * Expected result about bilinear interpolation.
+     */
+    private static double[] BILINEAR_RESULT_W_F = new double[]{-1000,-1000,       -1000,      -1000,        -1000,       -1000,       -1000, -1000,-1000,
+                                                               -1000,    1,           1,           1,           1,           1,           1,     1,-1000,
+                                                               -1000,    1, 1.111111111, 1.222222222, 1.333333333, 1.222222222, 1.111111111,     1,-1000,
+                                                               -1000,    1, 1.222222222, 1.444444444, 1.666666666, 1.444444444, 1.222222222,     1,-1000,
+                                                               -1000,    1, 1.333333333, 1.666666666,           2, 1.666666666, 1.333333333,     1,-1000,
+                                                               -1000,    1, 1.222222222, 1.444444444, 1.666666666, 1.444444444, 1.222222222,     1,-1000,
+                                                               -1000,    1, 1.111111111, 1.222222222, 1.333333333, 1.222222222, 1.111111111,     1,-1000,
+                                                               -1000,    1,           1,           1,           1,           1,           1,     1,-1000,
+                                                               -1000,-1000,       -1000,       -1000,       -1000,       -1000,       -1000, -1000,-1000};
+    
+    /**
      * Expected result about bicubic interpolation.
      */
     private static double[] BICUBIC_Result = new double[]{0.0, 0.0,                0.0,                0.0,                0.0,                0.0,                0.0,                0.0,                0.0,                0.0, 0.0, 0.0, 
@@ -181,6 +194,31 @@ public class ResampleTest {
         final Raster coverageRaster = targetImage.getTile(0, 0);
         java.awt.image.DataBufferDouble datadouble = (java.awt.image.DataBufferDouble) coverageRaster.getDataBuffer();
         assertArrayEquals(BILINEAR_RESULT, datadouble.getData(0), 1E-9);
+    }
+    
+    /**
+     * Test result obtained from biLinear interpolation and a resampling and without any fillvalue.
+     *
+     * @throws NoninvertibleTransformException
+     * @throws FactoryException
+     * @throws TransformException
+     */
+    @Test
+//    @Ignore
+    public void withoutFillValueBiLinearTest() throws NoninvertibleTransformException, FactoryException, TransformException {
+
+        setTargetImage(9, 9, DataBuffer.TYPE_DOUBLE,  -1000);
+        setAffineMathTransform(MathTransforms.concatenate(pixelInCellCenter, new AffineTransform2D(3, 0, 0, 3, 0, 0), pixelInCellCenter.inverse()));
+
+        /*
+         * Resampling
+         */
+        final Resample resample = new Resample(mathTransform.inverse(), targetImage, sourceImg,
+                InterpolationCase.BILINEAR, ResampleBorderComportement.FILL_VALUE, null);
+        resample.fillImage();
+        final Raster coverageRaster = targetImage.getTile(0, 0);
+        java.awt.image.DataBufferDouble datadouble = (java.awt.image.DataBufferDouble) coverageRaster.getDataBuffer();
+        assertArrayEquals(BILINEAR_RESULT_W_F, datadouble.getData(0), 1E-9);
     }
 
     /**

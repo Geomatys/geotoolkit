@@ -168,6 +168,7 @@ public abstract class Interpolation {
      *
      * @param x pixel x coordinate.
      * @param y pixel y coordinate.
+     * @param band index of band where sample are interpolate.
      * @return interpolate value from x, y pixel coordinate.
      */
     public abstract double interpolate(double x, double y, int band);
@@ -309,7 +310,6 @@ public abstract class Interpolation {
      * @param x pixel x coordinate.
      * @param y pixel y coordinate.
      * @throws IllegalArgumentException if there are necessary pixels out of boundary.
-     * @return appropriate interpolation minX and minY coordinates.
      */
     protected void setInterpolateMin(double x, double y) {
         final int boundW = boundary.width;
@@ -381,6 +381,8 @@ public abstract class Interpolation {
      * @param pixelIterator Iterator which iterate to compute interpolation.
      * @param interpolationCase case of interpolation.
      * @param lanczosWindow only use about Lanczos interpolation.
+     * @param rbc comportement of the destination image border. 
+     * @param fillValue contains value use when pixel transformation is out of source image boundary.
      * @return interpolation asked by caller.
      * @see LanczosInterpolation#LanczosInterpolation(org.geotoolkit.image.iterator.PixelIterator, int)
      */

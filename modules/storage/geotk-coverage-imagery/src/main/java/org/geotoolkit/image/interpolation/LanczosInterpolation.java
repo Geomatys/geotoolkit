@@ -121,14 +121,15 @@ public class LanczosInterpolation extends Interpolation {
     }
 
     /**
-     * {@inheritDoc }.
-     * <br/>
-     * In other words, interpolate result is compute from bounding box centered<br/>
-     * from pixel coordinates with side length equal to 2 * lanczos window.
+     * {@inheritDoc }
+     * 
+     * <p> In other words, interpolate result is compute from bounding box centered
+     * from pixel coordinates with side length equal to 2 * lanczos window.</p>
+     * 
      */
     @Override
     public double interpolate(double x, double y, int b) {
-        if (!checkInterpolate(x, y)) return fillValue[b];
+//        if (!checkInterpolate(x, y)) return fillValue[b];
         setInterpolateMin(x, y);
         final int hY = minY + windowSide;
         final int wX = minX + windowSide;

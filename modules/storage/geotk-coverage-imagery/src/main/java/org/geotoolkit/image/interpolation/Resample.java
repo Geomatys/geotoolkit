@@ -97,6 +97,8 @@ public class Resample {
      */
     protected final double[] clamp;
     
+    private double[] fillValue;
+    
     /**
      * On the border of the destination image, projection of destination border 
      * pixel coordinates should be out of source image boundary.
@@ -168,7 +170,7 @@ public class Resample {
      * @param mathTransform Transformation use to transform target point to source point.
      * @param imageDest image will be fill by image source pixel interpolation.
      * @param imageSrc source image which contain pixel values which will be interpolate. 
-     * @param interpolationCase case of interpolation.
+     * @param interpolation case of interpolation.
      * @throws NoninvertibleTransformException if it is impossible to invert {@code MathTransform} parameter.
      * @see ResampleBorderComportement
      * @see LanczosInterpolation#LanczosInterpolation(org.geotoolkit.image.iterator.PixelIterator, int) 
@@ -190,8 +192,7 @@ public class Resample {
      * @param mathTransform Transformation use to transform target point to source point.
      * @param imageDest image will be fill by image source pixel interpolation.
      * @param imageSrc source image which contain pixel values which will be interpolate. 
-     * @param interpolationCase case of interpolation.
-     * @param lanczosWindow only use about Lanczos interpolation.
+     * @param interpolation case of interpolation.
      * @param rbc comportement of the destination image border. 
      * @param fillValue contains value use when pixel transformation is out of source image boundary.
      * @throws NoninvertibleTransformException if it is impossible to invert {@code MathTransform} parameter.
@@ -212,10 +213,10 @@ public class Resample {
      * @param mathTransform Transformation use to transform target point to source point.
      * @param imageDest image will be fill by image source pixel interpolation.
      * @param imageSrc source image which contain pixel values which will be interpolate. 
-     * @param interpolationCase case of interpolation.
+     * @param interpolation case of interpolation.
      * @param lanczosWindow only use about Lanczos interpolation.
      * @param rbc comportement of the destination image border. 
-     * @param fillValue contains value use when pixel transformation is out of source image boundary.
+     * @param fillValue contains value use when pixel transformation is out of source image boundary, or {@code null}.
      * @throws NoninvertibleTransformException if it is impossible to invert {@code MathTransform} parameter.
      * @see ResampleBorderComportement
      */
@@ -229,13 +230,17 @@ public class Resample {
      * Source pixel coordinates is obtained from invert transformation of destination pixel coordinates.<br/><br/>
      * <strong>
      * Moreover : the specified MathTransform should be from CENTER of target image point to CENTER of source image point.<br/>
-     * The used MathTransform is consider as {@link PixelInCell#CELL_CENTER} configuration.</strong></p>
+     * The used MathTransform is consider as {@link PixelInCell#CELL_CENTER} configuration.</strong>
+     * <strong>
+     * fillValue parameter should be {@code null}, in case where fillValue is null, when destination 
+     * coordinates pixel transformation is out of source boundary the destination pixel has no setted sample values.<br/>
+     * In other words resampling has no impact on destination pixel samples values when transformation is outside source image boundary.<br/></strong></p>
      * 
      * @param mathTransform Transformation use to transform target point to source point.
      * @param imageDest image will be fill by image source pixel interpolation.
      * @param resampleArea destination image area within pixels are resample.
      * @param imageSrc source image which contain pixel values which will be interpolate. 
-     * @param interpolationCase case of interpolation.
+     * @param interpolation case of interpolation.
      * @param lanczosWindow only use about Lanczos interpolation.
      * @param rbc comportement of the destination image border. 
      * @param fillValue contains value use when pixel transformation is out of source image boundary.
@@ -247,7 +252,7 @@ public class Resample {
         ArgumentChecks.ensureNonNull("mathTransform", mathTransform);
         ArgumentChecks.ensureNonNull("imageSrc", imageSrc);
         ArgumentChecks.ensureNonNull("ResampleBorderComportement", rbc);
-        ArgumentChecks.ensureNonNull("FillValue", fillValue);
+//        ArgumentChecks.ensureNonNull("FillValue", fillValue);
         if (imageDest == null) {
             final Envelope2D srcGrid = new Envelope2D();
             srcGrid.setFrame(imageSrc.getMinX() + 0.5, imageSrc.getMinY() + 0.5, imageSrc.getWidth() - 1, imageSrc.getHeight() - 1);
@@ -266,11 +271,13 @@ public class Resample {
             this.imageDest = imageDest;
         }
         this.numBands = imageSrc.getSampleModel().getNumBands();
-        if (fillValue.length != numBands)
-            throw new IllegalArgumentException("fillValue table length and numbands are different : "+fillValue.length+" numbands = "+this.numBands);
+        this.fillValue = fillValue;
+        if (fillValue != null) 
+            if (fillValue.length != numBands)
+                throw new IllegalArgumentException("fillValue table length and numbands are different : "+fillValue.length+" numbands = "+this.numBands);
         assert(numBands == imageDest.getWritableTile(imageDest.getMinTileX(), imageDest.getMinTileY()).getNumBands())
                 : "destination image numbands different from source image numbands";
-        this.destIterator        = PixelIteratorFactory.createDefaultWriteableIterator(this.imageDest, this.imageDest, resampleArea);
+        this.destIterator              = PixelIteratorFactory.createDefaultWriteableIterator(this.imageDest, this.imageDest, resampleArea);
         this.destToSourceMathTransform = mathTransform;
         
         srcCoords  = new double[2];
@@ -322,28 +329,30 @@ public class Resample {
                 throw new IllegalArgumentException("It is impossible to define appropriate border comportement with a given image and crop request.");
             this.imageDest = imageDest;
         }
-        this.numBands = interpol.getNumBands();
-        if (fillValue.length != numBands)
-            throw new IllegalArgumentException("fillValue table length and numbands are different : "+fillValue.length+" numbands = "+this.numBands);
+        this.numBands  = interpol.getNumBands();
+        this.fillValue = fillValue;
+        if (fillValue != null)
+            if (fillValue.length != numBands)
+                throw new IllegalArgumentException("fillValue table length and numbands are different : "+fillValue.length+" numbands = "+this.numBands);
         assert(numBands == imageDest.getWritableTile(imageDest.getMinTileX(), imageDest.getMinTileY()).getNumBands())
                 : "destination image numbands different from source image numbands";
-        this.destIterator        = PixelIteratorFactory.createDefaultWriteableIterator(this.imageDest, this.imageDest, resampleArea);
+        this.destIterator              = PixelIteratorFactory.createDefaultWriteableIterator(this.imageDest, this.imageDest, resampleArea);
         this.destToSourceMathTransform = mathTransform;
-        this.interpol            = interpol;
+        this.interpol                  = interpol;
         srcCoords  = new double[2];
         destCoords = new double[2];
         this.rbc   = rbc;
         this.clamp = getClamp(imageDest.getSampleModel().getDataType());
     }
     
-    private static double[] getClamp(int dataType){
+    private static double[] getClamp(int dataType) {
         switch (dataType) {
             /* Because DataBuffer.TYPE_BYTE is define as UByte. */
-            case DataBuffer.TYPE_BYTE : return CLAMP_BYTE;
-            case DataBuffer.TYPE_SHORT : return CLAMP_SHORT;
+            case DataBuffer.TYPE_BYTE   : return CLAMP_BYTE;
+            case DataBuffer.TYPE_SHORT  : return CLAMP_SHORT;
             case DataBuffer.TYPE_USHORT : return CLAMP_USHORT;
-            case DataBuffer.TYPE_INT: return CLAMP_INT;
-            default : return null;
+            case DataBuffer.TYPE_INT    : return CLAMP_INT;
+            default                     : return null;
         }
     }
 
@@ -551,7 +560,6 @@ public class Resample {
                             }
                         }
                         
-                        int band = 0;
                         //-- coordinate interpolation
                         final double destX = (px + imageDest.getMinX()) / ((double) stepX); //-- remonter cette addition pour eviter n *
                         
@@ -565,23 +573,28 @@ public class Resample {
                         //-- interpolation on Y coordinates
                         final double srcY = tx_t0x * (coeff1Y + v10Y - v00Y) + (1 - tx_t0x) * coeff0Y + v00Y;
                         
-                         
+                        int band = 0;
                         //-- pixel value interpolation
-                        destIterator.next();
-                        double sample = interpol.interpolate(srcX, srcY, band);
-                        if (clamp != null) sample = XMath.clamp(sample, clamp[0], clamp[1]);
-                        destIterator.setSampleDouble(sample);
-                        while (++band != numBands && destIterator.next()) {
-                            sample = interpol.interpolate(srcX, srcY, band);
-                            if (clamp != null) sample = XMath.clamp(sample, clamp[0], clamp[1]);
-                            destIterator.setSampleDouble(sample);
+                        //-- if destination coordinate transformation is out of source boundary.
+                        if (!interpol.checkInterpolate(srcX, srcY)) {
+                            do {
+                                destIterator.next();
+                                if (fillValue != null) destIterator.setSampleDouble(fillValue[band]);
+                            } while (++band < numBands);
+                        } else {
+                            do {
+                                destIterator.next();
+                                double sample = interpol.interpolate(srcX, srcY, band);
+                                if (clamp != null) sample = XMath.clamp(sample, clamp[0], clamp[1]);
+                                destIterator.setSampleDouble(sample);
+                            } while (++band < numBands);
                         }
                         px++;
                     }
                     py++;
                 }
-                //------------------------- grid working -------------------------//
                 
+                //------------------------- grid working -------------------------//
                 rX += tileWidth;
                 rMaxX += tileWidth;
             }
@@ -595,7 +608,7 @@ public class Resample {
      * 
      * @throws TransformException 
      */
-    private void fillImageByAffineTransform(AffineTransform destCoordToSource ) throws TransformException {
+    private void fillImageByAffineTransform(AffineTransform destCoordToSource) throws TransformException {
         int band;
         while (destIterator.next()) {
             band = 0;
@@ -604,14 +617,17 @@ public class Resample {
             destCoords[1] = destIterator.getY();
             destCoordToSource.transform(destCoords, 0, srcCoords, 0, 1);
             
-            //-- Compute interpolation from source image pixel value and computed source coordinates.
-            double sample = interpol.interpolate(srcCoords[0], srcCoords[1], band);
-            if (clamp != null) sample = XMath.clamp(sample, clamp[0], clamp[1]);
-            destIterator.setSampleDouble(sample);
-            while (++band != numBands && destIterator.next()) {
-                sample = interpol.interpolate(srcCoords[0], srcCoords[1], band);
-                if (clamp != null) sample = XMath.clamp(sample, clamp[0], clamp[1]);
-                destIterator.setSampleDouble(sample);
+            //-- if destination coordinate transformation is out of source boundary.
+            if (!interpol.checkInterpolate(srcCoords[0], srcCoords[1])) {
+                do {
+                    if (fillValue != null) destIterator.setSampleDouble(fillValue[band]);
+                } while (++band < numBands);
+            } else {
+                do {
+                    double sample = interpol.interpolate(srcCoords[0], srcCoords[1], band);
+                    if (clamp != null) sample = XMath.clamp(sample, clamp[0], clamp[1]);
+                    destIterator.setSampleDouble(sample);
+                } while (++band < numBands);
             }
         }
     }
@@ -631,14 +647,17 @@ public class Resample {
             destCoords[1] = destIterator.getY();
             destToSourceMathTransform.transform(destCoords, 0, srcCoords, 0, 1);
             
-            //-- Compute interpolation from source image pixel value and computed source coordinates.
-            double sample = interpol.interpolate(srcCoords[0], srcCoords[1], band);
-            if (clamp != null) sample = XMath.clamp(sample, clamp[0], clamp[1]);
-            destIterator.setSampleDouble(sample);
-            while (++band != numBands && destIterator.next()) {
-                sample = interpol.interpolate(srcCoords[0], srcCoords[1], band);
-                if (clamp != null) sample = XMath.clamp(sample, clamp[0], clamp[1]);
-                destIterator.setSampleDouble(sample);
+            //-- if destination coordinate transformation is out of source boundary.
+            if (!interpol.checkInterpolate(srcCoords[0], srcCoords[1])) {
+                do {
+                    if (fillValue != null) destIterator.setSampleDouble(fillValue[band]);
+                } while (++band < numBands);
+            } else {
+                do {
+                    double sample = interpol.interpolate(srcCoords[0], srcCoords[1], band);
+                    if (clamp != null) sample = XMath.clamp(sample, clamp[0], clamp[1]);
+                    destIterator.setSampleDouble(sample);
+                } while (++band < numBands);
             }
         }
     }
@@ -676,14 +695,17 @@ public class Resample {
             destCoords[1] = destIterator.getY();
             destToSourceMathTransform.transform(destCoords, 0, srcCoords, 0, 1);
             
-            //-- Compute interpolation from source image pixel value and computed source coordinates.
-            pixelValue = interpol.interpolate(srcCoords[0], srcCoords[1]);
-            if(clamp!=null) pixelValue[band] = XMath.clamp(pixelValue[band], clamp[0], clamp[1]);
-            destIterator.setSampleDouble(pixelValue[band]);
-            while (++band < numBands) {
-                destIterator.next();
-                if(clamp!=null) pixelValue[band] = XMath.clamp(pixelValue[band], clamp[0], clamp[1]);
-                destIterator.setSampleDouble(pixelValue[band]);
+            //-- if destination coordinate transformation is out of source boundary.
+            if (!interpol.checkInterpolate(srcCoords[0], srcCoords[1])) {
+                do {
+                    if (fillValue != null) destIterator.setSampleDouble(fillValue[band]);
+                } while (++band < numBands);
+            } else {
+                do {
+                    double sample = interpol.interpolate(srcCoords[0], srcCoords[1], band);
+                    if (clamp != null) sample = XMath.clamp(sample, clamp[0], clamp[1]);
+                    destIterator.setSampleDouble(sample);
+                } while (++band < numBands);
             }
         }
     }

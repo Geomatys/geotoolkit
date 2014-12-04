@@ -20,7 +20,6 @@ import java.awt.Rectangle;
 import java.awt.image.DataBuffer;
 import java.lang.reflect.Array;
 import org.apache.sis.util.ArgumentChecks;
-import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.image.iterator.PixelIterator;
 
 /**
@@ -103,7 +102,7 @@ abstract class SeparableInterpolation extends Interpolation {
     @Override
     public double interpolate(double x, double y, int b) {
         ArgumentChecks.ensureBetween("band index", 0, getNumBands(), b);
-        if (!checkInterpolate(x, y)) return fillValue[b];
+//        if (!checkInterpolate(x, y)) return fillValue[b];
         setInterpolateMin(x, y);
         
         interpolArea.setLocation(minX, minY);
@@ -127,7 +126,7 @@ abstract class SeparableInterpolation extends Interpolation {
      */
     @Override
     public double[] interpolate(double x, double y) {
-        if (!checkInterpolate(x, y)) return fillValue;
+//        if (!checkInterpolate(x, y)) return fillValue;
         setInterpolateMin(x, y);
         
         interpolArea.setLocation(minX, minY);

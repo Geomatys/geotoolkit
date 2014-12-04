@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.awt.image.RenderedImage;
+import java.util.Date;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageReadParam;
@@ -614,7 +615,7 @@ public class ImageCoverageReader extends GridCoverageReader {
                             pointInPixel = georect.getPointInPixel();
                         }
                     }
-                }
+                        }
             } catch (IOException e) {
                 throw new CoverageStoreException(formatErrorMessage(e), e);
             }
@@ -773,7 +774,7 @@ public class ImageCoverageReader extends GridCoverageReader {
     private GridSampleDimension[] getSampleDimensions(final int index, final int[] srcBands, final int[] dstBands)
             throws CoverageStoreException
     {
-        final List<GridSampleDimension> bands = getSampleDimensions(index);
+         final List<GridSampleDimension> bands = getSampleDimensions(index);
         if (bands != null) {
             int bandCount = bands.size();
             if (bandCount != 0) {
