@@ -42,21 +42,29 @@ public class ForwardProcessListener implements ProcessListener {
 
     @Override
     public void started(ProcessEvent processEvent) {
-        String processName = "";
-        final InternationalString is = processEvent.getSource().getDescriptor().getDisplayName();
-        if (is != null) {
-            processName = is.toString();
-        }
+        String processName = getProcessName(processEvent);
         fireProgressing(processName+" : Start", taskPercentStart, null);
+    }
+
+    private String getProcessName(ProcessEvent processEvent) {
+        String processName = null;
+        try {
+            final InternationalString is = processEvent.getSource().getDescriptor().getDisplayName();
+            if (is != null) {
+                processName = is.toString();
+            }
+            if (processName == null) {
+                processName = processEvent.getSource().getDescriptor().getIdentifier().getCode();
+            }
+        } catch (Exception ex) {
+            processName = "";
+        }
+        return processName;
     }
 
     @Override
     public void progressing(ProcessEvent processEvent) {
-        String processName = "";
-        final InternationalString is = processEvent.getSource().getDescriptor().getDisplayName();
-        if (is != null) {
-            processName = is.toString();
-        }
+        String processName = getProcessName(processEvent);
         String msg = processName + " : " + processEvent.getTask().toString();
 
         float progress = taskPercentStart + (taskWorkLength * (processEvent.getProgress() / 100f));
@@ -83,11 +91,7 @@ public class ForwardProcessListener implements ProcessListener {
 
     @Override
     public void completed(ProcessEvent processEvent) {
-        String processName = "";
-        final InternationalString is = processEvent.getSource().getDescriptor().getDisplayName();
-        if (is != null) {
-            processName = is.toString();
-        }
+        String processName = getProcessName(processEvent);
         fireProgressing(processName+" : Completed", taskPercentStart+ taskWorkLength, null);
     }
 
