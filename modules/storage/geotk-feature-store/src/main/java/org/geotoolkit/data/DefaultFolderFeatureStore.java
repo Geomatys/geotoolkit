@@ -153,6 +153,9 @@ public class DefaultFolderFeatureStore extends AbstractFeatureStore implements D
     }
 
     private void explore(final File candidate, boolean recursive){
+        if(candidate.isHidden()){//skip for hidden files
+            return;
+        }
         if(candidate.isDirectory()){
             if(recursive){
                 for(File f : candidate.listFiles()){

@@ -121,6 +121,9 @@ public class ShapefileFolderFeatureStoreFactory extends AbstractFolderFeatureSto
     private static boolean containsShp(File folder, boolean recursive){
         final File[] children = folder.listFiles();
         for(File f : children){
+            if(f.isHidden()){//skip for hidden files
+                break;
+            }
             if(f.isDirectory()){
                if(recursive && containsShp(f, recursive)){
                    return true;
