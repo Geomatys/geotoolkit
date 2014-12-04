@@ -108,17 +108,29 @@ public class ShapefileFolderFeatureStoreFactory extends AbstractFolderFeatureSto
         }
 
         final Boolean emptyDirectory = (Boolean) params.parameter(EMPTY_DIRECTORY.getName().toString()).getValue();
+        final Boolean recursive = (Boolean) params.parameter(RECURSIVE.getName().toString()).getValue();
         if (pathFile.exists() && pathFile.isDirectory()){
-            if(emptyDirectory.booleanValue()){
+            if(Boolean.TRUE.equals(emptyDirectory)){
                 return true;
             }
-           File[] shapeFiles = pathFile.listFiles(new ExtentionFileNameFilter(".shp"));
-           return shapeFiles.length>0;
+            return containsShp(pathFile, Boolean.TRUE.equals(recursive));
         }
         return false;
     }
 
-
+    private static boolean containsShp(File folder, boolean recursive){
+        final File[] children = folder.listFiles();
+        for(File f : children){
+            if(f.isDirectory()){
+               if(recursive && containsShp(f, recursive)){
+                   return true;
+               }
+            }else if(f.getName().toLowerCase().endsWith(".shp")){
+                return true;
+            }
+        }
+        return false;
+    }
 
 
     //FileNameFilter implementation
