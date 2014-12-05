@@ -36,6 +36,8 @@ public class GeometryFunctionFactory extends AbstractFunctionFactory {
     public static final String STARTPOINT   = "startPoint";
     public static final String ENDPOINT     = "endPoint";
     public static final String ALLPOINTS    = "allPoints";
+    public static final String STARTANGLE   = "startAngle";
+    public static final String ENDANGLE     = "endAngle";
 
     private static final Map<String,Class> FUNCTIONS = new HashMap<>();
 
@@ -46,6 +48,8 @@ public class GeometryFunctionFactory extends AbstractFunctionFactory {
         FUNCTIONS.put(STARTPOINT,   StartPointFunction.class);
         FUNCTIONS.put(ENDPOINT,     EndPointFunction.class);
         FUNCTIONS.put(ALLPOINTS,    AllPointsFunction.class);
+        FUNCTIONS.put(STARTANGLE,   StartAngleFunction.class);
+        FUNCTIONS.put(ENDANGLE,     EndAngleFunction.class);
     }
 
     public GeometryFunctionFactory() {
