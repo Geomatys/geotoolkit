@@ -577,7 +577,7 @@ public class JColorMapPane extends StyleElementEditor<ColorMap> implements Prope
                     GridCoverageReadParam readParam = new GridCoverageReadParam();
                     readParam.setEnvelope(CRS.transform(gridToCRS, sliceExtent));
                     readParam.setCoordinateReferenceSystem(gridGeometry.getCoordinateReferenceSystem());
-
+                    readParam.setDeferred(true);
                     final GridCoverage coverage = reader.read(covRef.getImageIndex(), readParam);
                     int nbBands = coverage.getNumSampleDimensions() - 1;
                     guiBand.setModel(new SpinnerNumberModel(0, 0, nbBands, 1));
