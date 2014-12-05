@@ -30,12 +30,16 @@ import org.geotoolkit.filter.function.AbstractFunctionFactory;
  */
 public class GeometryFunctionFactory extends AbstractFunctionFactory {
 
-    public static final String BUFFERGEO   = "bufferGeo";
+    public static final String BUFFER       = "buffer";
+    public static final String BUFFERGEO    = "bufferGeo";
+    public static final String GEOMETRYTYPE = "geometryType";
 
     private static final Map<String,Class> FUNCTIONS = new HashMap<>();
 
     static {
-        FUNCTIONS.put(BUFFERGEO,            BufferGeoFunction.class);
+        FUNCTIONS.put(BUFFER,       BufferFunction.class);
+        FUNCTIONS.put(BUFFERGEO,    BufferGeoFunction.class);
+        FUNCTIONS.put(GEOMETRYTYPE, GeometryTypeFunction.class);
     }
 
     public GeometryFunctionFactory() {
