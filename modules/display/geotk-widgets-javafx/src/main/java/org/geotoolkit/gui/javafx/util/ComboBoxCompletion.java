@@ -38,7 +38,6 @@ public class ComboBoxCompletion {
     public ComboBoxCompletion(final ComboBox comboBox) {
         this.comboBox = comboBox;
         this.baseData = comboBox.getItems();
-        this.comboBox.setEditable(true);
         this.comboBox.setOnKeyPressed((KeyEvent t)->comboBox.hide());
         this.comboBox.setOnKeyReleased(this::onKeyPress);
     }
