@@ -80,7 +80,7 @@ public abstract class AbstractSymbolizer implements Symbolizer{
     /**
      * {@inheritDoc }
      */
-    //@Override TODO waiting for geoapi change
+    @Override
     public Expression getGeometry(){
         return geom;
     }

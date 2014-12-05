@@ -30,6 +30,8 @@ import javax.measure.unit.Unit;
 import java.awt.*;
 import java.util.regex.Pattern;
 import org.apache.sis.util.iso.SimpleInternationalString;
+import org.geotoolkit.factory.FactoryFinder;
+import org.opengis.filter.expression.Expression;
 
 /**
  * Class Description
@@ -81,6 +83,11 @@ public class Symbol implements MIFSymbolizer, PointSymbolizer {
         this.geometryName = geometryName;
     }
 
+    @Override
+    public Expression getGeometry() {
+        return FactoryFinder.getFilterFactory(null).property(getGeometryPropertyName());
+    }
+    
     @Override
     public String toMIFText() {
         return NAME.getLocalPart()+"("+shape+","+colorCode+","+size+")";

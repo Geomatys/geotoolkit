@@ -118,6 +118,11 @@ public class CellSymbolizer extends SymbolizerType implements ExtensionSymbolize
     }
 
     @Override
+    public Expression getGeometry() {
+        return null;
+    }
+    
+    @Override
     public String getExtensionName() {
         return NAME;
     }

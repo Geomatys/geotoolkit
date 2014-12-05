@@ -107,6 +107,11 @@ public final class PieSymbolizer extends SymbolizerType implements ExtensionSymb
     }
 
     @Override
+    public Expression getGeometry() {
+        return null;
+    }
+    
+    @Override
     public String getExtensionName() {
         return "pie";
     }

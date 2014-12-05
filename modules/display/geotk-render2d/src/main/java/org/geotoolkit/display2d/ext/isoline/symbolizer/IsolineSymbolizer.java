@@ -151,6 +151,11 @@ public class IsolineSymbolizer extends SymbolizerType implements ExtensionSymbol
     }
 
     @Override
+    public Expression getGeometry() {
+        return null;
+    }
+    
+    @Override
     public Object accept(StyleVisitor visitor, Object extraData) {
         return visitor.visit(this, extraData);
     }

@@ -28,8 +28,6 @@ import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.ProjectedObject;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.display2d.GO2Utilities;
-import org.geotoolkit.style.AbstractSymbolizer;
 import org.opengis.filter.expression.Expression;
 import org.opengis.geometry.Envelope;
 import org.opengis.style.Symbolizer;
@@ -69,13 +67,7 @@ public abstract class AbstractSymbolizerRenderer<C extends CachedSymbolizer<? ex
         this.coeff = renderingContext.getUnitCoefficient(symbolUnit);
         this.dispGeom = (NonSI.PIXEL == symbolUnit);
         final Symbolizer symbolizer = symbol.getSource();
-        if(symbolizer instanceof AbstractSymbolizer){
-            this.geomPropertyName = ((AbstractSymbolizer)symbolizer).getGeometry();
-        }else if(symbol.getSource().getGeometryPropertyName() != null){
-            this.geomPropertyName = GO2Utilities.FILTER_FACTORY.property(symbol.getSource().getGeometryPropertyName());
-        }else{
-            this.geomPropertyName = null;
-        }
+        this.geomPropertyName = symbolizer.getGeometry();
     }
 
     @Override

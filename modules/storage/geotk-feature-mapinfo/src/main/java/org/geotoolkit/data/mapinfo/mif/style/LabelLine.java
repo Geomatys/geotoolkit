@@ -25,6 +25,8 @@ import org.opengis.style.StyleVisitor;
 import javax.measure.quantity.Length;
 import javax.measure.unit.Unit;
 import java.util.regex.Pattern;
+import org.geotoolkit.factory.FactoryFinder;
+import org.opengis.filter.expression.Expression;
 
 /**
  * Class Description
@@ -60,6 +62,11 @@ public class LabelLine implements MIFSymbolizer {
         throw new UnsupportedOperationException("No implementation exists for this method.");
     }
 
+    @Override
+    public Expression getGeometry() {
+        return FactoryFinder.getFilterFactory(null).property(getGeometryPropertyName());
+    }
+    
     @Override
     public String getName() {
         return NAME.getLocalPart();

@@ -204,13 +204,9 @@ public class PrepareStyleVisitor extends PrepareFilterVisitor implements StyleVi
     }
 
     private Expression visitGeometryExpression(Symbolizer symbolizer, Object o){
-        if(symbolizer instanceof AbstractSymbolizer){
-            final Expression exp = ((AbstractSymbolizer)symbolizer).getGeometry();
-            if(exp==null) return null;
-            return (Expression) exp.accept(this, o);
-        }else{
-            return ff.property(symbolizer.getGeometryPropertyName());
-        }
+        final Expression exp = symbolizer.getGeometry();
+        if(exp==null) return null;
+        return (Expression) exp.accept(this, o);
     }
     
     @Override

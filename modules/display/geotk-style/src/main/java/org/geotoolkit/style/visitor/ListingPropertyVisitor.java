@@ -19,7 +19,6 @@ package org.geotoolkit.style.visitor;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import org.geotoolkit.style.AbstractSymbolizer;
 import org.opengis.filter.Filter;
 import org.opengis.filter.Id;
 import org.opengis.filter.expression.Expression;
@@ -121,16 +120,9 @@ public class ListingPropertyVisitor extends org.geotoolkit.filter.visitor.Listin
     }
 
     private void visitGeomName(Symbolizer symbolizer, Object data){
-        if(symbolizer instanceof AbstractSymbolizer){
-            final Expression exp = ((AbstractSymbolizer)symbolizer).getGeometry();
-            if(exp!=null){
-                exp.accept(this, data);
-            }
-        }else{
-            final String geomName = symbolizer.getGeometryPropertyName();
-            if(geomName != null && !geomName.trim().isEmpty()){
-                ((Collection)data).add(geomName);
-            }
+        final Expression exp = symbolizer.getGeometry();
+        if(exp!=null){
+            exp.accept(this, data);
         }
     }
     

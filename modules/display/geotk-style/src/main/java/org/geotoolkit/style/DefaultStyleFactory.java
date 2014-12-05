@@ -414,6 +414,7 @@ public class DefaultStyleFactory extends Factory implements MutableStyleFactory 
                 description, unit, extensionName, parameters);
     }
     
+    @Override
     public ExtensionSymbolizer extensionSymbolizer(final String name,
             final Expression geometry, final Description description,
             final Unit<?> unit, final String extensionName,
