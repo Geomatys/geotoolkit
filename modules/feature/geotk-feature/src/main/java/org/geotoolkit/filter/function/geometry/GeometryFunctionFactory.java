@@ -29,10 +29,13 @@ import org.geotoolkit.filter.function.AbstractFunctionFactory;
  * @module pending
  */
 public class GeometryFunctionFactory extends AbstractFunctionFactory {
-
+    
     public static final String BUFFER       = "buffer";
     public static final String BUFFERGEO    = "bufferGeo";
     public static final String GEOMETRYTYPE = "geometryType";
+    public static final String STARTPOINT   = "startPoint";
+    public static final String ENDPOINT     = "endPoint";
+    public static final String ALLPOINTS    = "allPoints";
 
     private static final Map<String,Class> FUNCTIONS = new HashMap<>();
 
@@ -40,6 +43,9 @@ public class GeometryFunctionFactory extends AbstractFunctionFactory {
         FUNCTIONS.put(BUFFER,       BufferFunction.class);
         FUNCTIONS.put(BUFFERGEO,    BufferGeoFunction.class);
         FUNCTIONS.put(GEOMETRYTYPE, GeometryTypeFunction.class);
+        FUNCTIONS.put(STARTPOINT,   StartPointFunction.class);
+        FUNCTIONS.put(ENDPOINT,     EndPointFunction.class);
+        FUNCTIONS.put(ALLPOINTS,    AllPointsFunction.class);
     }
 
     public GeometryFunctionFactory() {
