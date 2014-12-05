@@ -17,7 +17,6 @@
 package org.geotoolkit.filter.function.other;
 
 import org.geotoolkit.filter.function.AbstractFunction;
-import org.geotoolkit.filter.function.geometry.StaticGeometry;
 import org.opengis.filter.expression.Expression;
 
 
@@ -39,6 +38,6 @@ public class IsNullFunction extends AbstractFunction {
                     "Filter Function problem for function isNull argument #0 - expected type Object");
         }
 
-        return StaticGeometry.isNull(arg0);
+        return StaticUtils.isNull(arg0);
     }
 }

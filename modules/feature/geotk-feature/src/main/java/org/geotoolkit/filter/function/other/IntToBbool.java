@@ -17,7 +17,6 @@
 package org.geotoolkit.filter.function.other;
 
 import org.geotoolkit.filter.function.AbstractFunction;
-import org.geotoolkit.filter.function.geometry.StaticGeometry;
 import org.opengis.filter.expression.Expression;
 
 
@@ -39,6 +38,6 @@ public class IntToBbool extends AbstractFunction {
                     "Filter Function problem for function int2bbool argument #0 - expected type int");
         }
 
-        return StaticGeometry.int2bbool(arg0);
+        return StaticUtils.int2bbool(arg0);
     }
 }

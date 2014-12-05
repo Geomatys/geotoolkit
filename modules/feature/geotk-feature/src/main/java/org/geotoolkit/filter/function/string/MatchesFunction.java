@@ -17,7 +17,7 @@
 package org.geotoolkit.filter.function.string;
 
 import org.geotoolkit.filter.function.AbstractFunction;
-import org.geotoolkit.filter.function.geometry.StaticGeometry;
+import org.geotoolkit.filter.function.other.StaticUtils;
 import org.opengis.filter.expression.Expression;
 
 
@@ -54,6 +54,6 @@ public class MatchesFunction extends AbstractFunction {
                     "Filter Function problem for function strMatches argument #1 - expected type String");
         }
 
-        return StaticGeometry.strMatches(arg0, arg1);
+        return StaticUtils.strMatches(arg0, arg1);
     }
 }

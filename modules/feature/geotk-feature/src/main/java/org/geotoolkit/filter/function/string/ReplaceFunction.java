@@ -17,7 +17,7 @@
 package org.geotoolkit.filter.function.string;
 
 import org.geotoolkit.filter.function.AbstractFunction;
-import org.geotoolkit.filter.function.geometry.StaticGeometry;
+import org.geotoolkit.filter.function.other.StaticUtils;
 import org.opengis.filter.expression.Expression;
 
 
@@ -79,6 +79,6 @@ public class ReplaceFunction extends AbstractFunction {
         if ( arg3 == null ) {
             arg3 = Boolean.FALSE;
         }
-        return StaticGeometry.strReplace(arg0, arg1, arg2, arg3);
+        return StaticUtils.strReplace(arg0, arg1, arg2, arg3);
     }
 }

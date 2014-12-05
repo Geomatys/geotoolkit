@@ -18,7 +18,6 @@ package org.geotoolkit.filter.function.other;
 
 import com.vividsolutions.jts.geom.Geometry;
 import org.geotoolkit.filter.function.AbstractFunction;
-import org.geotoolkit.filter.function.geometry.StaticGeometry;
 import org.opengis.filter.expression.Expression;
 
 
@@ -49,6 +48,6 @@ public class EqualsExactFunction extends AbstractFunction {
                     "Filter Function problem for function equalsExact argument #1 - expected type Geometry");
         }
 
-        return StaticGeometry.equalsExact(arg0, arg1);
+        return StaticUtils.equalsExact(arg0, arg1);
     }
 }

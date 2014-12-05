@@ -15,163 +15,18 @@
  *    Lesser General Public License for more details.
  *
  */
-package org.geotoolkit.filter.function.geometry;
+package org.geotoolkit.filter.function.other;
 
 import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryCollection;
-import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.Point;
-import com.vividsolutions.jts.geom.Polygon;
-import com.vividsolutions.jts.io.WKTReader;
 
 
 /**
  * @author David Blasby (The Open Planning Project)
  * @module pending
  */
-public class StaticGeometry {
+public class StaticUtils {
 
-    private StaticGeometry(){}
-
-    //--------------------------------------------------------------------------
-    //JTS SF SQL functions
-    public static Geometry geomFromWKT(final String wkt) {
-        final WKTReader wktreader = new WKTReader();
-
-        try {
-            return wktreader.read(wkt);
-        } catch (Exception e) {
-            throw new IllegalArgumentException("bad wkt");
-        }
-    }
-
-    public static String toWKT(final Geometry geom) {
-        return geom.toString();
-    }
-
-    public static boolean contains(final Geometry geom1, final Geometry geom2) {
-        return geom1.contains(geom2);
-    }
-
-    public static boolean isEmpty(final Geometry geom) {
-        return geom.isEmpty();
-    }
-
-    public static double geomLength(final Geometry geom) {
-        return geom.getLength();
-    }
-
-    public static boolean intersects(final Geometry geom1, final Geometry geom2) {
-        return geom1.intersects(geom2);
-    }
-
-    public static boolean isValid(final Geometry geom) {
-        return geom.isValid();
-    }
-
-    public static String geometryType(final Geometry geom) {
-        return geom.getGeometryType();
-    }
-
-    public static int numPoints(final Geometry geom) {
-        return geom.getNumPoints();
-    }
-
-    public static boolean isSimple(final Geometry geom) {
-        return geom.isSimple();
-    }
-
-    public static double distance(final Geometry geom1, final Geometry geom2) {
-        return geom1.distance(geom2);
-    }
-
-    public static boolean isWithinDistance(final Geometry geom1, final Geometry geom2, final double dist) {
-        return geom1.isWithinDistance(geom2, dist);
-    }
-
-    public static double area(final Geometry geom) {
-        return geom.getArea();
-    }
-
-    public static Geometry centroid(final Geometry geom) {
-        return geom.getCentroid();
-    }
-
-    public static Geometry interiorPoint(final Geometry geom) {
-        return geom.getInteriorPoint();
-    }
-
-    public static int dimension(final Geometry geom) {
-        return geom.getDimension();
-    }
-
-    public static Geometry boundary(final Geometry geom) {
-        return geom.getBoundary();
-    }
-
-    public static int boundaryDimension(final Geometry geom) {
-        return geom.getBoundaryDimension();
-    }
-
-    public static Geometry envelope(final Geometry geom) {
-        return geom.getEnvelope();
-    }
-
-    public static boolean disjoint(final Geometry geom, final Geometry geom2) {
-        return geom.disjoint(geom2);
-    }
-
-    public static boolean touches(final Geometry geom, final Geometry geom2) {
-        return geom.touches(geom2);
-    }
-
-    public static boolean crosses(final Geometry geom, final Geometry geom2) {
-        return geom.crosses(geom2);
-    }
-
-    public static boolean within(final Geometry geom, final Geometry geom2) {
-        return geom.within(geom2);
-    }
-
-    public static boolean overlaps(final Geometry geom, final Geometry geom2) {
-        return geom.overlaps(geom2);
-    }
-
-    public static boolean relatePattern(final Geometry geom, final Geometry geom2, final String pattern) {
-        return geom.relate(geom2, pattern);
-    }
-
-    public static String relate(final Geometry geom, final Geometry geom2) {
-        return geom.relate(geom2).toString();
-    }
-
-    public static Geometry bufferWithSegments(final Geometry geom, final double dist, final int nbAngle) {
-        return geom.buffer(dist, nbAngle);
-    }
-
-    public static Geometry buffer(final Geometry geom, final double dist) {
-        return geom.buffer(dist);
-    }
-
-    public static Geometry convexHull(final Geometry geom) {
-        return geom.convexHull();
-    }
-
-    public static Geometry intersection(final Geometry geom, final Geometry geom2) {
-        return geom.intersection(geom2);
-    }
-
-    public static Geometry union(final Geometry geom, final Geometry geom2) {
-        return geom.union(geom2);
-    }
-
-    public static Geometry difference(final Geometry geom, final Geometry geom2) {
-        return geom.difference(geom2);
-    }
-
-    public static Geometry symDifference(final Geometry geom, final Geometry geom2) {
-        return geom.symDifference(geom2);
-    }
+    private StaticUtils(){}
 
     public static boolean equalsExactTolerance(final Geometry geom, final Geometry geom2, final double tolerance) {
         return geom.equalsExact(geom2, tolerance);
@@ -181,65 +36,6 @@ public class StaticGeometry {
         return geom.equalsExact(geom2);
     }
 
-    public static int numGeometries(final Geometry geom) {
-        final GeometryCollection multiGeom = (GeometryCollection) geom;
-        return multiGeom.getNumGeometries();
-    }
-
-    public static Geometry getGeometryN(final Geometry geom, final int index) {
-        final GeometryCollection multiGeom = (GeometryCollection) geom;
-        return multiGeom.getGeometryN(index);
-    }
-
-    public static double getX(final Geometry geom) {
-        final Point point = (Point) geom;
-        return point.getX();
-    }
-
-    public static double getY(final Geometry geom) {
-        final Point point = (Point) geom;
-        return point.getY();
-    }
-
-    public static boolean isClosed(final Geometry geom) {
-        final LineString line = (LineString) geom;
-        return line.isClosed();
-    }
-
-    public static Geometry pointN(final Geometry geom, final int index) {
-        final LineString line = (LineString) geom;
-        return line.getPointN(index);
-    }
-
-    public static Geometry startPoint(final Geometry geom) {
-        final LineString line = (LineString) geom;
-        return line.getStartPoint();
-    }
-
-    public static Geometry endPoint(final Geometry geom) {
-        final LineString line = (LineString) geom;
-        return line.getEndPoint();
-    }
-
-    public static boolean isRing(final Geometry geom) {
-        final LineString line = (LineString) geom;
-        return line.isRing();
-    }
-
-    public static Geometry exteriorRing(final Geometry geom) {
-        final Polygon poly = (Polygon) geom;
-        return poly.getExteriorRing();
-    }
-
-    public static int numInteriorRing(final Geometry geom) {
-        final Polygon poly = (Polygon) geom;
-        return poly.getNumInteriorRing();
-    }
-
-    public static Geometry interiorRingN(final Geometry geom, final int index) {
-        final Polygon poly = (Polygon) geom;
-        return poly.getInteriorRingN(index);
-    }
 
     //--------------------------------------------------------------------------
     //JAVA String functions
@@ -443,7 +239,7 @@ public class StaticGeometry {
     }
 
     public static boolean between(final Object o, final Object min, final Object max) {
-        return StaticGeometry.greaterEqualThan(o, min) && StaticGeometry.lessEqualThan(o, max);
+        return StaticUtils.greaterEqualThan(o, min) && StaticUtils.lessEqualThan(o, max);
     }
 
     public static boolean not(final boolean b) {

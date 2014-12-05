@@ -17,7 +17,6 @@
 package org.geotoolkit.filter.function.other;
 
 import org.geotoolkit.filter.function.AbstractFunction;
-import org.geotoolkit.filter.function.geometry.StaticGeometry;
 import org.opengis.filter.expression.Expression;
 
 
@@ -48,6 +47,6 @@ public class NotEqualToFunction extends AbstractFunction {
                     "Filter Function problem for function notEqualTo argument #1 - expected type Object");
         }
 
-        return StaticGeometry.notEqualTo(arg0, arg1);
+        return StaticUtils.notEqualTo(arg0, arg1);
     }
 }

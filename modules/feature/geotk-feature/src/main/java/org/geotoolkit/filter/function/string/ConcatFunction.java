@@ -17,7 +17,7 @@
 package org.geotoolkit.filter.function.string;
 
 import org.geotoolkit.filter.function.AbstractFunction;
-import org.geotoolkit.filter.function.geometry.StaticGeometry;
+import org.geotoolkit.filter.function.other.StaticUtils;
 import org.opengis.filter.expression.Expression;
 
 
@@ -49,6 +49,6 @@ public class ConcatFunction extends AbstractFunction {
                     "Filter Function problem for function strConcat argument #1 - expected type String");
         }
 
-        return StaticGeometry.strConcat(arg0, arg1);
+        return StaticUtils.strConcat(arg0, arg1);
     }
 }

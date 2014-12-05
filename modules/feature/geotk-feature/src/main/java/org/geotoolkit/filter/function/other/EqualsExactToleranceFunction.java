@@ -18,7 +18,6 @@ package org.geotoolkit.filter.function.other;
 
 import com.vividsolutions.jts.geom.Geometry;
 import org.geotoolkit.filter.function.AbstractFunction;
-import org.geotoolkit.filter.function.geometry.StaticGeometry;
 import org.opengis.filter.expression.Expression;
 
 
@@ -58,6 +57,6 @@ public class EqualsExactToleranceFunction extends AbstractFunction {
                     "Filter Function problem for function equalsExactTolerance argument #2 - expected type double");
         }
 
-        return StaticGeometry.equalsExactTolerance(arg0, arg1, arg2);
+        return StaticUtils.equalsExactTolerance(arg0, arg1, arg2);
     }
 }

@@ -66,7 +66,6 @@ public class OtherFunctionFactory extends AbstractFunctionFactory{
     static{
         FUNCTIONS.put(CONVERT,                  ConvertFunction.class);
         FUNCTIONS.put(DATE_FORMAT,              DateFormatFunction.class);
-        FUNCTIONS.put(DOUBLE_TO_BOOL,           DoubleToBoolFunction.class);
         FUNCTIONS.put(DATE_PARSE,               DateParseFunction.class);
         FUNCTIONS.put(EQUAL_TO,                 EqualToFunction.class);
         FUNCTIONS.put(EQUALS_EXACT,             EqualsExactFunction.class);

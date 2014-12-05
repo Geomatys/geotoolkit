@@ -17,7 +17,6 @@
 package org.geotoolkit.filter.function.other;
 
 import org.geotoolkit.filter.function.AbstractFunction;
-import org.geotoolkit.filter.function.geometry.StaticGeometry;
 import org.opengis.filter.expression.Expression;
 
 
@@ -51,6 +50,6 @@ public class InFunction extends AbstractFunction {
             }
         }
 
-        return StaticGeometry.in(arg0, args);
+        return StaticUtils.in(arg0, args);
     }
 }

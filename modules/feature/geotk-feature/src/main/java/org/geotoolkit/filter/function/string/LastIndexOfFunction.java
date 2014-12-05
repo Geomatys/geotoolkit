@@ -17,7 +17,7 @@
 package org.geotoolkit.filter.function.string;
 
 import org.geotoolkit.filter.function.AbstractFunction;
-import org.geotoolkit.filter.function.geometry.StaticGeometry;
+import org.geotoolkit.filter.function.other.StaticUtils;
 import org.opengis.filter.expression.Expression;
 
 
@@ -54,6 +54,6 @@ public class LastIndexOfFunction extends AbstractFunction {
                     "Filter Function problem for function strLastIndexOf argument #1 - expected type String");
         }
 
-        return StaticGeometry.strLastIndexOf(arg0, arg1);
+        return StaticUtils.strLastIndexOf(arg0, arg1);
     }
 }

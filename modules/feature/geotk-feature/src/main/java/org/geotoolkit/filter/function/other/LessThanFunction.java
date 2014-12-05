@@ -17,7 +17,6 @@
 package org.geotoolkit.filter.function.other;
 
 import org.geotoolkit.filter.function.AbstractFunction;
-import org.geotoolkit.filter.function.geometry.StaticGeometry;
 import org.opengis.filter.expression.Expression;
 
 
@@ -48,6 +47,6 @@ public class LessThanFunction extends AbstractFunction {
                     "Filter Function problem for function lessThan argument #1 - expected type Object");
         }
 
-        return StaticGeometry.lessThan(arg0, arg1);
+        return StaticUtils.lessThan(arg0, arg1);
     }
 }

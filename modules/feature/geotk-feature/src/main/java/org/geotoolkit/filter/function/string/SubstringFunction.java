@@ -17,7 +17,7 @@
 package org.geotoolkit.filter.function.string;
 
 import org.geotoolkit.filter.function.AbstractFunction;
-import org.geotoolkit.filter.function.geometry.StaticGeometry;
+import org.geotoolkit.filter.function.other.StaticUtils;
 import org.opengis.filter.expression.Expression;
 
 
@@ -60,6 +60,6 @@ public class SubstringFunction extends AbstractFunction {
                     "Filter Function problem for function strSubstring argument #2 - expected type int");
         }
 
-        return StaticGeometry.strSubstring(arg0, arg1, arg2);
+        return StaticUtils.strSubstring(arg0, arg1, arg2);
     }
 }

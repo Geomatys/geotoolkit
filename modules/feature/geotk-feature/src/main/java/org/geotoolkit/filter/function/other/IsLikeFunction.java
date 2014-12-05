@@ -17,7 +17,6 @@
 package org.geotoolkit.filter.function.other;
 
 import org.geotoolkit.filter.function.AbstractFunction;
-import org.geotoolkit.filter.function.geometry.StaticGeometry;
 import org.opengis.filter.expression.Expression;
 
 
@@ -54,6 +53,6 @@ public class IsLikeFunction extends AbstractFunction {
                     "Filter Function problem for function isLike argument #1 - expected type String");
         }
 
-        return StaticGeometry.isLike(arg0, arg1);
+        return StaticUtils.isLike(arg0, arg1);
     }
 }

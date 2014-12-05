@@ -17,8 +17,6 @@
 package org.geotoolkit.filter.function.geometry;
 
 import com.vividsolutions.jts.geom.Geometry;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.measure.unit.Unit;
 import org.geotoolkit.filter.function.AbstractFunction;
 import org.geotoolkit.geometry.jts.JTS;
@@ -69,7 +67,7 @@ public class BufferGeoFunction extends AbstractFunction {
         //TODO find a more accurate method for use in all crs
         width = refUnit.getConverterTo(crsUnit).convert(width);
         
-        final Geometry geomBuf = StaticGeometry.buffer(geom, width);
+        final Geometry geomBuf = geom.buffer(width);
         JTS.setCRS(geomBuf, crs);
         return geomBuf;
     }

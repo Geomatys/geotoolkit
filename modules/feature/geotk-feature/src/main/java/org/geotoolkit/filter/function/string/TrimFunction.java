@@ -17,7 +17,7 @@
 package org.geotoolkit.filter.function.string;
 
 import org.geotoolkit.filter.function.AbstractFunction;
-import org.geotoolkit.filter.function.geometry.StaticGeometry;
+import org.geotoolkit.filter.function.other.StaticUtils;
 import org.opengis.filter.expression.Expression;
 
 
@@ -42,6 +42,6 @@ public class TrimFunction extends AbstractFunction {
                     "Filter Function problem for function strTrim argument #0 - expected type String");
         }
 
-        return StaticGeometry.strTrim(arg0);
+        return StaticUtils.strTrim(arg0);
     }
 }

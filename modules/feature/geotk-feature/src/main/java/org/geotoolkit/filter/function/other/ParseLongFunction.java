@@ -17,7 +17,6 @@
 package org.geotoolkit.filter.function.other;
 
 import org.geotoolkit.filter.function.AbstractFunction;
-import org.geotoolkit.filter.function.geometry.StaticGeometry;
 import org.opengis.filter.expression.Expression;
 
 
@@ -39,6 +38,6 @@ public class ParseLongFunction extends AbstractFunction {
                     "Filter Function problem for function parseLong argument #0 - expected type String");
         }
 
-        return StaticGeometry.parseLong(arg0);
+        return StaticUtils.parseLong(arg0);
     }
 }

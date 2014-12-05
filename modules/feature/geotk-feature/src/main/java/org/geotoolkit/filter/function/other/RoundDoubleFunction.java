@@ -17,7 +17,6 @@
 package org.geotoolkit.filter.function.other;
 
 import org.geotoolkit.filter.function.AbstractFunction;
-import org.geotoolkit.filter.function.geometry.StaticGeometry;
 import org.opengis.filter.expression.Expression;
 
 
@@ -39,6 +38,6 @@ public class RoundDoubleFunction extends AbstractFunction {
                     "Filter Function problem for function roundDouble argument #0 - expected type double");
         }
 
-        return StaticGeometry.roundDouble(arg0);
+        return StaticUtils.roundDouble(arg0);
     }
 }

@@ -18,7 +18,7 @@
 package org.geotoolkit.filter.function.string;
 
 import org.geotoolkit.filter.function.AbstractFunction;
-import org.geotoolkit.filter.function.geometry.StaticGeometry;
+import org.geotoolkit.filter.function.other.StaticUtils;
 import org.opengis.filter.expression.Expression;
 
 /**
@@ -48,6 +48,6 @@ public class TruncateFirstFunction extends AbstractFunction {
 
         final int lenght = parameters.get(1).evaluate(feature, Integer.class);
 
-        return StaticGeometry.strTruncateFirst(arg0, lenght);
+        return StaticUtils.strTruncateFirst(arg0, lenght);
     }
 }
