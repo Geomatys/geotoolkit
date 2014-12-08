@@ -35,6 +35,7 @@ public class NeighborInterpolation extends Interpolation {
      * Create a NeighBor Interpolator.
      *
      * @param pixelIterator Iterator used to interpolation.
+     * @param fillValue contains value use when pixel transformation is out of source image boundary.
      */
     public NeighborInterpolation(PixelIterator pixelIterator, double[] fillValue) {
         super(pixelIterator, 0, ResampleBorderComportement.EXTRAPOLATION, fillValue);
@@ -44,24 +45,33 @@ public class NeighborInterpolation extends Interpolation {
     }
 
     /**
-     * Return nearest pixel value.
-     *
-     * @param x coordinate cursor position.
-     * @param y coordinate cursor position.
-     * @return nearest pixel value.
+     * {@inheritDoc }
      */
     @Override
-    public double interpolate(double x, double y, int bands) {
-        if (x < bminX || x > bmaxX || y < bminY || y > bmaxY) return fillValue[bands];//-- no interpolation available 
+    protected boolean checkInterpolate(double x, double y) {
+        return !(x < bminX || x > bmaxX || y < bminY || y > bmaxY);
+    }
+
+    /**
+     * Return nearest pixel value.
+     * 
+     * {@inheritDoc }
+     */
+    @Override
+    public double interpolate(double x, double y, int band) {
+//        if (x < bminX || x > bmaxX || y < bminY || y > bmaxY) return fillValue[band];//-- no interpolation available 
         x = Math.round(x);
         y = Math.round(y);
-        pixelIterator.moveTo((int) Math.min(maxxId, x), (int) Math.min(maxyId, y), bands);
+        pixelIterator.moveTo((int) Math.min(maxxId, x), (int) Math.min(maxyId, y), band);
         return pixelIterator.getSampleDouble();
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public double[] interpolate(double x, double y) {
-        if (x < bminX || x > bmaxX || y < bminY || y > bmaxY) return fillValue;//-- no interpolation available 
+//        if (x < bminX || x > bmaxX || y < bminY || y > bmaxY) return fillValue;//-- no interpolation available 
         x = Math.round(x);
         y = Math.round(y);
         pixelIterator.moveTo((int) Math.min(maxxId, x), (int) Math.min(maxyId, y), 0);

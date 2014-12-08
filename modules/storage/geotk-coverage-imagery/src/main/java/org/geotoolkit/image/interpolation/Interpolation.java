@@ -173,11 +173,17 @@ public abstract class Interpolation {
      */
     public abstract double interpolate(double x, double y, int band);
 
+    /**
+     * Returns all pixel samples from interpolation at (x, y) sources coordinates. 
+     * @param x pixel x coordinate.
+     * @param y pixel y coordinate.
+     * @return interpolate value from x, y pixel coordinate.
+     */
     public abstract double[] interpolate(double x, double y);
     
     /**
      * <p>Find minimum and maximum pixels values for each band.<br/>
-     * Moreover double table result has length equal to 6*band number.<br/><br/>
+     * Moreover double table result has length equal to 6 * band number.<br/><br/>
      * <var>min<sub>0</sub></var>  : min from band 0.<br/>
      * <var>minX<sub>0</sub></var> : x coordinate from min value from band 0.<br/>
      * <var>minY<sub>0</sub></var> : y coordinate from min value from band 0.<br/>
