@@ -576,18 +576,30 @@ public class Resample {
                         int band = 0;
                         //-- pixel value interpolation
                         //-- if destination coordinate transformation is out of source boundary.
+                        destIterator.next();
                         if (!interpol.checkInterpolate(srcX, srcY)) {
-                            do {
-                                destIterator.next();
+
+                            if (fillValue != null) destIterator.setSampleDouble(fillValue[band]);
+                            while (++band < numBands && destIterator.next()) {
                                 if (fillValue != null) destIterator.setSampleDouble(fillValue[band]);
-                            } while (++band < numBands);
+                            }
+            //                do {
+            //                    if (fillValue != null) destIterator.setSampleDouble(fillValue[band]);
+            //                } while (++band < numBands);
                         } else {
-                            do {
-                                destIterator.next();
-                                double sample = interpol.interpolate(srcX, srcY, band);
+            //                do {
+            //                    double sample = interpol.interpolate(srcCoords[0], srcCoords[1], band);
+            //                    if (clamp != null) sample = XMath.clamp(sample, clamp[0], clamp[1]);
+            //                    destIterator.setSampleDouble(sample);
+            //                } while (++band < numBands);
+                            double sample = interpol.interpolate(srcX, srcY, band);
+                            if (clamp != null) sample = XMath.clamp(sample, clamp[0], clamp[1]);
+                            destIterator.setSampleDouble(sample);
+                            while (++band < numBands && destIterator.next()) {
+                                sample = interpol.interpolate(srcX, srcY, band);
                                 if (clamp != null) sample = XMath.clamp(sample, clamp[0], clamp[1]);
                                 destIterator.setSampleDouble(sample);
-                            } while (++band < numBands);
+                            }
                         }
                         px++;
                     }
@@ -619,15 +631,30 @@ public class Resample {
             
             //-- if destination coordinate transformation is out of source boundary.
             if (!interpol.checkInterpolate(srcCoords[0], srcCoords[1])) {
-                do {
+                
+                if (fillValue != null) destIterator.setSampleDouble(fillValue[band]);
+                while (++band < numBands) {
+                    destIterator.next();
                     if (fillValue != null) destIterator.setSampleDouble(fillValue[band]);
-                } while (++band < numBands);
+                }
+//                do {
+//                    if (fillValue != null) destIterator.setSampleDouble(fillValue[band]);
+//                } while (++band < numBands);
             } else {
-                do {
-                    double sample = interpol.interpolate(srcCoords[0], srcCoords[1], band);
+//                do {
+//                    double sample = interpol.interpolate(srcCoords[0], srcCoords[1], band);
+//                    if (clamp != null) sample = XMath.clamp(sample, clamp[0], clamp[1]);
+//                    destIterator.setSampleDouble(sample);
+//                } while (++band < numBands);
+                double sample = interpol.interpolate(srcCoords[0], srcCoords[1], band);
+                if (clamp != null) sample = XMath.clamp(sample, clamp[0], clamp[1]);
+                destIterator.setSampleDouble(sample);
+                while (++band < numBands) {
+                    destIterator.next();
+                    sample = interpol.interpolate(srcCoords[0], srcCoords[1], band);
                     if (clamp != null) sample = XMath.clamp(sample, clamp[0], clamp[1]);
                     destIterator.setSampleDouble(sample);
-                } while (++band < numBands);
+                }
             }
         }
     }
@@ -649,15 +676,30 @@ public class Resample {
             
             //-- if destination coordinate transformation is out of source boundary.
             if (!interpol.checkInterpolate(srcCoords[0], srcCoords[1])) {
-                do {
+                
+                if (fillValue != null) destIterator.setSampleDouble(fillValue[band]);
+                while (++band < numBands) {
+                    destIterator.next();
                     if (fillValue != null) destIterator.setSampleDouble(fillValue[band]);
-                } while (++band < numBands);
+                }
+//                do {
+//                    if (fillValue != null) destIterator.setSampleDouble(fillValue[band]);
+//                } while (++band < numBands);
             } else {
-                do {
-                    double sample = interpol.interpolate(srcCoords[0], srcCoords[1], band);
+//                do {
+//                    double sample = interpol.interpolate(srcCoords[0], srcCoords[1], band);
+//                    if (clamp != null) sample = XMath.clamp(sample, clamp[0], clamp[1]);
+//                    destIterator.setSampleDouble(sample);
+//                } while (++band < numBands);
+                double sample = interpol.interpolate(srcCoords[0], srcCoords[1], band);
+                if (clamp != null) sample = XMath.clamp(sample, clamp[0], clamp[1]);
+                destIterator.setSampleDouble(sample);
+                while (++band < numBands) {
+                    destIterator.next();
+                    sample = interpol.interpolate(srcCoords[0], srcCoords[1], band);
                     if (clamp != null) sample = XMath.clamp(sample, clamp[0], clamp[1]);
                     destIterator.setSampleDouble(sample);
-                } while (++band < numBands);
+                }
             }
         }
     }
@@ -697,15 +739,30 @@ public class Resample {
             
             //-- if destination coordinate transformation is out of source boundary.
             if (!interpol.checkInterpolate(srcCoords[0], srcCoords[1])) {
-                do {
+                
+                if (fillValue != null) destIterator.setSampleDouble(fillValue[band]);
+                while (++band < numBands) {
+                    destIterator.next();
                     if (fillValue != null) destIterator.setSampleDouble(fillValue[band]);
-                } while (++band < numBands);
+                }
+//                do {
+//                    if (fillValue != null) destIterator.setSampleDouble(fillValue[band]);
+//                } while (++band < numBands);
             } else {
-                do {
-                    double sample = interpol.interpolate(srcCoords[0], srcCoords[1], band);
+//                do {
+//                    double sample = interpol.interpolate(srcCoords[0], srcCoords[1], band);
+//                    if (clamp != null) sample = XMath.clamp(sample, clamp[0], clamp[1]);
+//                    destIterator.setSampleDouble(sample);
+//                } while (++band < numBands);
+                double sample = interpol.interpolate(srcCoords[0], srcCoords[1], band);
+                if (clamp != null) sample = XMath.clamp(sample, clamp[0], clamp[1]);
+                destIterator.setSampleDouble(sample);
+                while (++band < numBands) {
+                    destIterator.next();
+                    sample = interpol.interpolate(srcCoords[0], srcCoords[1], band);
                     if (clamp != null) sample = XMath.clamp(sample, clamp[0], clamp[1]);
                     destIterator.setSampleDouble(sample);
-                } while (++band < numBands);
+                }
             }
         }
     }
