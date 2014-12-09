@@ -97,6 +97,12 @@
       <artifactId>postgresql</artifactId>
       <scope>test</scope>
     </dependency>
+    
+    <dependency>
+        <groupId>javax.media</groupId>
+        <artifactId>jai_codec</artifactId>
+        <scope>test</scope>
+    </dependency>
   </dependencies>
 
 

@@ -146,5 +146,12 @@
       <artifactId>sis-storage</artifactId>
       <version>${sis.version}</version>
     </dependency>
+    
+    <dependency>
+      <groupId>javax.media</groupId>
+      <artifactId>jai_codec</artifactId>
+      <scope>test</scope>
+    </dependency>
+    
   </dependencies>
 </project>
