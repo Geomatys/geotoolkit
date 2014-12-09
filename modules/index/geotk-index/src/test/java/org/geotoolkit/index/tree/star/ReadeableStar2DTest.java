@@ -37,6 +37,6 @@ public final class ReadeableStar2DTest extends ReadeableStarRTreeTest {
      * @throws ClassNotFoundException if there is a problem during {@link CoordinateReferenceSystem} invert serialization.
      */
     public ReadeableStar2DTest() throws StoreIndexException, IOException, ClassNotFoundException {
-        super(PredefinedCRS.CARTESIAN_2D);
+        super(PredefinedCRS.CARTESIAN_2D, true);
     }
 }

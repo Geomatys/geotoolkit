@@ -54,7 +54,7 @@ public abstract class AbstractTreeTest extends TreeTest {
     /**
      * Tree CRS.
      */
-    private final CoordinateReferenceSystem crs;
+    protected final CoordinateReferenceSystem crs;
     
     /**
      * Dimension of Tree CRS space.
@@ -132,6 +132,7 @@ public abstract class AbstractTreeTest extends TreeTest {
         for (int i = 0, s = lSize; i < s; i++) {
             final double[] envData = lData.get(i).clone();
             tree.insert(envData);
+            tree.flush(); //-- add persistence comportement 
         }
         assertTrue("after massive insertion root node should not be null", tree.getRoot() != null);
     }

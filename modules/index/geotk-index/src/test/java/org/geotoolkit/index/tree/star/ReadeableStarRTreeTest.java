@@ -37,11 +37,12 @@ abstract class ReadeableStarRTreeTest extends AbstractTreeTest {
      * and a {@link CoordinateReferenceSystem} define by user.
      * 
      * @param crs
+     * @param insert {@code true} to insert data into tree during test constructor else no insertion.
      * @throws IOException if problem during head reading from already filled file.
      * @throws StoreIndexException if file isn't already filled by {@link StarRTree} implementation.
      * @throws ClassNotFoundException if there is a problem during {@link CoordinateReferenceSystem} invert serialization.
      */
-    protected ReadeableStarRTreeTest(final CoordinateReferenceSystem crs) throws StoreIndexException, IOException, ClassNotFoundException {
+    protected ReadeableStarRTreeTest(final CoordinateReferenceSystem crs, final boolean insert) throws StoreIndexException, IOException, ClassNotFoundException {
         super(crs);
         final File inOutFile      = File.createTempFile("test", "tree", tempDir);
         final File treeMapperFile = File.createTempFile("test", "mapper", tempDir);
@@ -51,7 +52,7 @@ abstract class ReadeableStarRTreeTest extends AbstractTreeTest {
         tree = new FileStarRTree(inOutFile, 4, crs, tEM);
         
         // close 
-        insert();
+        if (insert) insert();
         tree.close();
         tEM.close();
         assertTrue(tree.isClosed());
