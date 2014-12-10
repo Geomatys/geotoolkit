@@ -212,6 +212,8 @@ public class CSVFeatureStore extends AbstractFeatureStore implements DataFileSto
                 } catch (Exception e) {
                     if ("integer".equalsIgnoreCase(name)) {
                         type = Integer.class;
+                    } else if ("float".equalsIgnoreCase(name)) {
+                        type = Float.class;
                     } else if ("double".equalsIgnoreCase(name)) {
                         type = Double.class;
                     } else if ("string".equalsIgnoreCase(name)) {
@@ -221,14 +223,18 @@ public class CSVFeatureStore extends AbstractFeatureStore implements DataFileSto
                     } else if ("boolean".equalsIgnoreCase(name)) {
                         type = Boolean.class;
                     } else {
-                        try {
-                            //check if it's a geometry type
-                            crs = CRS.decode(name);
-                            type = Geometry.class;
-                        } catch (NoSuchAuthorityCodeException ex) {
-                            getLogger().log(Level.SEVERE, null, ex);
-                        } catch (FactoryException ex) {
-                            getLogger().log(Level.SEVERE, null, ex);
+                        if(name.contains(":")){
+                            try {
+                                //check if it's a geometry type
+                                crs = CRS.decode(name);
+                                type = Geometry.class;
+                            } catch (NoSuchAuthorityCodeException ex) {
+                                getLogger().log(Level.SEVERE, null, ex);
+                            } catch (FactoryException ex) {
+                                getLogger().log(Level.SEVERE, null, ex);
+                            }
+                        }else{
+                            type = String.class;
                         }
                     }
                 }
@@ -261,7 +267,9 @@ public class CSVFeatureStore extends AbstractFeatureStore implements DataFileSto
             sb.append(desc.getName().getLocalPart());
             sb.append('(');
             final Class clazz = desc.getType().getBinding();
-            if(Number.class.isAssignableFrom(clazz)) {
+            if(Number.class.isAssignableFrom(clazz) || float.class.equals(clazz) 
+                    || double.class.equals(clazz) || int.class.equals(clazz)
+                    || short.class.equals(clazz) || byte.class.equals(clazz)) {
                 sb.append(clazz.getSimpleName());
             }else if(clazz.equals(String.class)){
                 sb.append("String");
@@ -277,7 +285,8 @@ public class CSVFeatureStore extends AbstractFeatureStore implements DataFileSto
                     throw new DataStoreException(ex);
                 }
             }else{
-                throw new DataStoreException("Unexpected property type :"+ clazz);
+                //unsuported, output it as text
+                sb.append("String");
             }
 
             sb.append(')');
