@@ -25,6 +25,7 @@ import javafx.scene.control.TreeItem;
 import org.controlsfx.control.action.Action;
 import org.geotoolkit.gui.javafx.contexttree.TreeMenuItem;
 import org.geotoolkit.gui.javafx.layer.FXFeatureTable;
+import org.geotoolkit.gui.javafx.layer.FXLayerStructure;
 import org.geotoolkit.gui.javafx.layer.FXLayerStylesPane;
 import org.geotoolkit.gui.javafx.layer.FXPropertiesPane;
 import org.geotoolkit.gui.javafx.layer.style.FXStyleAdvancedPane;
@@ -67,7 +68,7 @@ public class LayerPropertiesItem extends TreeMenuItem{
                                 
                 final FXPropertiesPane panel = new FXPropertiesPane(
                         candidate,
-//                        new FXLayerStructure(),
+                        new FXLayerStructure(),
                         new FXFeatureTable(),
                         new FXLayerStylesPane(
                                 new FXStyleSimplePane(),

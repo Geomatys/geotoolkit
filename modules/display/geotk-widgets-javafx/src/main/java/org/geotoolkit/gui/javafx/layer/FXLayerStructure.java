@@ -58,8 +58,7 @@ public class FXLayerStructure extends FXPropertyPane {
         + "body {padding:10px; width:250px; background-color:#ffffff; font-family:Monospaced;}\n"
         + "h1 {font-size:14px; font-weight:bold; text-align:left;}\n"
         + "table{margin-left: 15px;}\n"
-        + "tr {border-width: 1px; border-style:solid; border-color:black;}\n"
-        + "td {border-width: 1px; text-align: center; padding:5px;}\n"
+        + "td {border-width: 1px; border-style:solid; border-color:black;text-align: center; padding:5px;}\n"
         + ".data {text-align:right;}\n"
         + "#error {color:red;}\n"
         + "</style>";
