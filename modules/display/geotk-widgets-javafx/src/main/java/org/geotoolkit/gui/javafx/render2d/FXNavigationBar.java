@@ -14,6 +14,7 @@ import javafx.scene.control.ToolBar;
 import javafx.scene.layout.HBox;
 import org.controlsfx.control.action.ActionUtils;
 import org.geotoolkit.gui.javafx.render2d.navigation.FXRepaintAction;
+import org.geotoolkit.gui.javafx.render2d.navigation.FXZoomToAction;
 
 /**
  *
@@ -39,10 +40,12 @@ public class FXNavigationBar extends ToolBar {
         final ToggleButton butIn = new FXZoomInAction(map).createToggleButton(ActionUtils.ActionTextBehavior.HIDE);
         final ToggleButton butOut = new FXZoomOutAction(map).createToggleButton(ActionUtils.ActionTextBehavior.HIDE);
         final ToggleButton butPan = new FXPanAction(map,false).createToggleButton(ActionUtils.ActionTextBehavior.HIDE);
+        final Button butAt = new FXZoomToAction(map).createButton(ActionUtils.ActionTextBehavior.HIDE);
         butIn.getStyleClass().add(CENTER);
         butOut.getStyleClass().add(CENTER);
         butPan.getStyleClass().add(CENTER);
-        final HBox hboxHandler = new HBox(butAll,butIn,butOut,butPan,butRepaint,butPrevious,butNext);
+        butAt.getStyleClass().add(CENTER);
+        final HBox hboxHandler = new HBox(butAll,butIn,butOut,butPan,butAt,butRepaint,butPrevious,butNext);
         
         getItems().add(hboxHandler);
         

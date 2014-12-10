@@ -49,7 +49,6 @@ import org.geotoolkit.display2d.container.ContextContainer2D;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.gui.javafx.util.NextPreviousList;
 import org.geotoolkit.internal.Loggers;
-import org.opengis.geometry.Envelope;
 
 /**
  *
