@@ -214,7 +214,11 @@ public final class QueryBuilder {
     public Query buildQuery(){
         final Source cs = (source == null) ? new DefaultSelector(null, typeName, "s1") : source;
         checkSource(cs,null);
-        return new DefaultQuery(cs, filter, properties, sortBy, crs, startIndex, maxFeatures, resolution, version, hints);
+        if(cs instanceof TextStatement){
+            return new DefaultQuery(language, (TextStatement)cs);
+        }else{
+            return new DefaultQuery(cs, filter, properties, sortBy, crs, startIndex, maxFeatures, resolution, version, hints);
+        }
     }
 
     /**

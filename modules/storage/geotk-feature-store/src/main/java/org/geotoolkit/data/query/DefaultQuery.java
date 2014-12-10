@@ -105,13 +105,30 @@ class DefaultQuery implements Query {
     /**
      * A custom query statement in the given language.
      */
+    DefaultQuery(final String language, TextStatement statement) {
+        this.language = language;
+        this.source = statement;
+        this.properties = null;
+        this.maxFeatures = null;
+        this.startIndex = 0;
+        this.filter = Filter.INCLUDE;
+        this.sortBy = null;
+        this.hints = null;
+        this.crs = null;
+        this.resolution = null;
+        this.version = null;
+    }
+    
+    /**
+     * A custom query statement in the given language.
+     */
     DefaultQuery(final String language, final String statement, final Name name) {
         this.language = language;
         this.source = new DefaultTextStatement(statement,null,name);
         this.properties = null;
         this.maxFeatures = null;
         this.startIndex = 0;
-        this.filter = null;
+        this.filter = Filter.INCLUDE;
         this.sortBy = null;
         this.hints = null;
         this.crs = null;
