@@ -20,6 +20,7 @@ package org.geotoolkit.gui.javafx.style;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.StyleConstants;
 import org.opengis.style.LineSymbolizer;
 
@@ -53,6 +54,12 @@ public class FXLineSymbolizer extends FXStyleElementController<FXLineSymbolizer,
         uiStroke.valueProperty().addListener(changeListener);
     }
         
+    @Override
+    public void setLayer(MapLayer layer) {
+        super.setLayer(layer);
+        uiStroke.setLayer(layer);
+    }
+    
     @Override
     protected void updateEditor(LineSymbolizer styleElement) {
         uiStroke.valueProperty().setValue(styleElement.getStroke());

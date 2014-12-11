@@ -22,6 +22,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import static org.geotoolkit.gui.javafx.style.FXStyleElementController.getStyleFactory;
+import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.StyleConstants;
 import org.opengis.style.ShadedRelief;
 
@@ -56,6 +57,12 @@ public class FXShadedRelief extends FXStyleElementController<FXShadedRelief, Sha
         
         uiFactor.valueProperty().addListener(changeListener);
         uiBrightness.selectedProperty().addListener(changeListener);
+    }
+    
+    @Override
+    public void setLayer(MapLayer layer) {
+        super.setLayer(layer);
+        uiFactor.setLayer(layer);
     }
     
     @Override

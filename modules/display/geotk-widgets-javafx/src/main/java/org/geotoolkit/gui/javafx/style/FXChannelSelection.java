@@ -24,6 +24,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
+import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.StyleConstants;
 import org.opengis.style.ChannelSelection;
 
@@ -144,6 +145,15 @@ public class FXChannelSelection extends FXStyleElementController<FXChannelSelect
             uiGreen.valueProperty().setValue(styleElement.getRGBChannels()[1]);
             uiBlue.valueProperty().setValue(styleElement.getRGBChannels()[2]);
         }
+    }
+    
+    @Override
+    public void setLayer(MapLayer layer) {
+        super.setLayer(layer);
+        uiRed.setLayer(layer);
+        uiGreen.setLayer(layer);
+        uiBlue.setLayer(layer);
+        uiGray.setLayer(layer);
     }
     
 }

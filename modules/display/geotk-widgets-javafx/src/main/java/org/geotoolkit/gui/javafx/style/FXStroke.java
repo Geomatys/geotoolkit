@@ -21,6 +21,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import org.geotoolkit.gui.javafx.util.FXNumberSpinner;
+import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.StyleConstants;
 import org.opengis.style.Stroke;
 
@@ -125,6 +126,16 @@ public class FXStroke extends FXStyleElementController<FXStroke,Stroke> {
         uiDash1.valueProperty().addListener(changeListener);
         uiDash2.valueProperty().addListener(changeListener);
         uiDash3.valueProperty().addListener(changeListener);
+    }
+    
+    @Override
+    public void setLayer(MapLayer layer) {
+        super.setLayer(layer);
+        uiWidth.setLayer(layer);
+        uiOpacity.setLayer(layer);
+        uiColor.setLayer(layer);
+        uiLineCap.setLayer(layer);
+        uiLineJoin.setLayer(layer);
     }
     
     @Override

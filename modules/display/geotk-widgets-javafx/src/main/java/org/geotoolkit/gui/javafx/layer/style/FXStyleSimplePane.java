@@ -24,7 +24,6 @@ import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
@@ -46,6 +45,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.text.TextAlignment;
+import org.geotoolkit.display2d.ext.graduation.GraduationSymbolizer;
 import org.geotoolkit.display2d.service.DefaultGlyphService;
 import org.geotoolkit.gui.javafx.layer.FXLayerStylePane;
 import org.geotoolkit.gui.javafx.style.FXStyleElementController;
@@ -58,8 +58,13 @@ import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.RuleListener;
 import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.opengis.style.FeatureTypeStyle;
+import org.opengis.style.LineSymbolizer;
+import org.opengis.style.PointSymbolizer;
+import org.opengis.style.PolygonSymbolizer;
+import org.opengis.style.RasterSymbolizer;
 import org.opengis.style.Rule;
 import org.opengis.style.Symbolizer;
+import org.opengis.style.TextSymbolizer;
 
 /**
  *
@@ -99,7 +104,7 @@ public class FXStyleSimplePane extends FXLayerStylePane {
     void addSymbol(ActionEvent event) {
         final FXStyleElementController control = uiChoice.getSelectionModel().getSelectedItem();        
         final Symbolizer symbolizer = (Symbolizer) control.newValue();
-        rule.symbolizers().add(symbolizer);
+        uiTable.getItems().add(symbolizer);
     }
     
     /**
@@ -179,7 +184,11 @@ public class FXStyleSimplePane extends FXLayerStylePane {
                         editor.valueProperty().addListener(new ChangeListener() {
                             @Override
                             public void changed(ObservableValue observable, Object oldValue, Object newValue) {
-                                //applyEditor(editorPath);
+                                //apply editor
+                                final int index = uiTable.getSelectionModel().getSelectedIndex();
+                                if(index>=0){
+                                    uiTable.getItems().set(index, (Symbolizer)editor.valueProperty().get());
+                                }
                             }
                         });
                         uiSymbolizerPane.setCenter(editor);
@@ -212,7 +221,7 @@ public class FXStyleSimplePane extends FXLayerStylePane {
         //listen to rule change from other syle editors
         if(this.rule!=rule){
             this.rule = rule;
-            uiTable.setItems(new SymbolizersList(rule));
+            uiTable.setItems(FXCollections.observableList(rule.symbolizers()));
         }
     }
     
@@ -305,59 +314,59 @@ public class FXStyleSimplePane extends FXLayerStylePane {
         }
     }
     
-    private static class SymbolizersList extends ModifiableObservableListBase<Symbolizer> implements RuleListener{
-        
-        private final MutableRule rule;
-        
-        public SymbolizersList(MutableRule rule) {
-            this.rule = rule;
-            rule.addListener(this);
-        }
-        
-        @Override
-        public Symbolizer get(int index) {
-            return rule.symbolizers().get(index);
-        }
-
-        @Override
-        public int size() {
-            return rule.symbolizers().size();
-        }
-
-        @Override
-        protected void doAdd(int index, Symbolizer element) {
-            rule.symbolizers().add(index, element);
-        }
-
-        @Override
-        protected Symbolizer doSet(int index, Symbolizer element) {
-            return rule.symbolizers().set(index, element);
-        }
-
-        @Override
-        protected Symbolizer doRemove(int index) {
-            return rule.symbolizers().remove(index);
-        }
-        
-        @Override
-        public void symbolizerChange(CollectionChangeEvent<Symbolizer> event) {
-            final int type = event.getType();
-            final int min = (int) event.getRange().getMinDouble();
-            final int max = (int) event.getRange().getMaxDouble();
-            if(type==CollectionChangeEvent.ITEM_ADDED){
-                fireChange(new NonIterableChange.SimpleAddChange<>(min,max,this));
-            }else if(type==CollectionChangeEvent.ITEM_REMOVED){
-                fireChange(new NonIterableChange.GenericAddRemoveChange<>(min,max,new ArrayList(event.getItems()),this));
-            }else if(type==CollectionChangeEvent.ITEM_CHANGED){
-                fireChange(new NonIterableChange.SimpleUpdateChange<>(min,max,this));
-            }
-        }
-
-        @Override
-        public void propertyChange(PropertyChangeEvent evt) {
-        }
-
-    }
+//    private static class SymbolizersList extends ModifiableObservableListBase<Symbolizer> implements RuleListener{
+//        
+//        private final MutableRule rule;
+//        
+//        public SymbolizersList(MutableRule rule) {
+//            this.rule = rule;
+//            rule.addListener(this);
+//        }
+//        
+//        @Override
+//        public Symbolizer get(int index) {
+//            return rule.symbolizers().get(index);
+//        }
+//
+//        @Override
+//        public int size() {
+//            return rule.symbolizers().size();
+//        }
+//
+//        @Override
+//        protected void doAdd(int index, Symbolizer element) {
+//            rule.symbolizers().add(index, element);
+//        }
+//
+//        @Override
+//        protected Symbolizer doSet(int index, Symbolizer element) {
+//            return rule.symbolizers().set(index, element);
+//        }
+//
+//        @Override
+//        protected Symbolizer doRemove(int index) {
+//            return rule.symbolizers().remove(index);
+//        }
+//        
+//        @Override
+//        public void symbolizerChange(CollectionChangeEvent<Symbolizer> event) {
+//            final int type = event.getType();
+//            final int min = (int) event.getRange().getMinDouble();
+//            final int max = (int) event.getRange().getMaxDouble();
+//            if(type==CollectionChangeEvent.ITEM_ADDED){
+//                fireChange(new NonIterableChange.SimpleAddChange<>(min,max,this));
+//            }else if(type==CollectionChangeEvent.ITEM_REMOVED){
+//                fireChange(new NonIterableChange.GenericAddRemoveChange<>(min,max,new ArrayList(event.getItems()),this));
+//            }else if(type==CollectionChangeEvent.ITEM_CHANGED){
+//                fireChange(new NonIterableChange.SimpleUpdateChange<>(min,max,this));
+//            }
+//        }
+//
+//        @Override
+//        public void propertyChange(PropertyChangeEvent evt) {
+//        }
+//
+//    }
     
     private static class SymbolizerCell extends ListCell<FXStyleElementController>{
         @Override
@@ -372,7 +381,21 @@ public class FXStyleSimplePane extends FXLayerStylePane {
                 final BufferedImage imge = new BufferedImage(dim.width, dim.height, BufferedImage.TYPE_INT_ARGB);
                 DefaultGlyphService.render(symb, new Rectangle(dim),imge.createGraphics(),null);
                 setGraphic(new ImageView(SwingFXUtils.toFXImage(imge, null)));
-                setText(symb.getName());
+                if(symb instanceof PointSymbolizer){
+                    setText("Point");
+                }else if(symb instanceof LineSymbolizer){
+                    setText("Line");
+                }else if(symb instanceof PolygonSymbolizer){
+                    setText("Polygon");
+                }else if(symb instanceof TextSymbolizer){
+                    setText("Text");
+                }else if(symb instanceof RasterSymbolizer){
+                    setText("Raster");
+                }else if(symb instanceof GraduationSymbolizer){
+                    setText("Graduation");
+                }else{
+                    setText(symb.getClass().getSimpleName());
+                }
                 setContentDisplay(ContentDisplay.LEFT);
                 setTextAlignment(TextAlignment.CENTER);
             }

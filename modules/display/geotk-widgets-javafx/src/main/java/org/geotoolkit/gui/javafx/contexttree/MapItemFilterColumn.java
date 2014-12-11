@@ -23,7 +23,7 @@ import javafx.scene.control.TreeTableColumn;
 import javafx.scene.image.ImageView;
 import org.geotoolkit.cql.CQLException;
 import org.geotoolkit.data.query.QueryBuilder;
-import org.geotoolkit.gui.javafx.filter.FXCQLPane;
+import org.geotoolkit.gui.javafx.filter.FXCQLEditor;
 import org.geotoolkit.gui.javafx.util.ButtonTreeTableCell;
 import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.internal.Loggers;
@@ -63,7 +63,8 @@ public class MapItemFilterColumn extends TreeTableColumn<MapItem, MapItem>{
                 try{
                     final FeatureMapLayer layer = (FeatureMapLayer) candidate;
                     Filter filter = layer.getQuery().getFilter();
-                    filter = FXCQLPane.show(button, filter, layer);
+                    filter = FXCQLEditor.showFilterDialog(button, layer, filter);
+                    
                     final QueryBuilder qb = new QueryBuilder(layer.getQuery());
                     qb.setFilter(filter);
                     layer.setQuery(qb.buildQuery());

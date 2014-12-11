@@ -42,6 +42,7 @@ import org.geotoolkit.display2d.service.DefaultGlyphService;
 import static org.geotoolkit.gui.javafx.style.FXStyleElementController.getStyleFactory;
 import org.geotoolkit.gui.javafx.util.ButtonTableCell;
 import org.geotoolkit.internal.GeotkFX;
+import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.StyleConstants;
 import org.opengis.metadata.citation.OnlineResource;
 import org.opengis.style.ExternalGraphic;
@@ -157,6 +158,16 @@ public class FXGraphic extends FXStyleElementController<FXGraphic, Graphic>{
         uiTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         uiTable.setTableMenuButtonVisible(false);
         
+    }
+    
+    @Override
+    public void setLayer(MapLayer layer) {
+        super.setLayer(layer);
+        uiSize.setLayer(layer);
+        uiOpacity.setLayer(layer);
+        uiRotation.setLayer(layer);
+        uiAnchor.setLayer(layer);
+        uiDisplacement.setLayer(layer);
     }
     
     @Override

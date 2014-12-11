@@ -23,7 +23,6 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import static org.geotoolkit.gui.javafx.style.FXStyleElementController.getStyleFactory;
-import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyle;
 import org.opengis.style.Description;
 import org.opengis.util.InternationalString;

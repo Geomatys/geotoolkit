@@ -22,12 +22,8 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import static org.geotoolkit.gui.javafx.style.FXStyleElementController.getStyleFactory;
-import org.geotoolkit.style.StyleConstants;
-import static org.geotoolkit.style.StyleConstants.DEFAULT_DESCRIPTION;
-import static org.geotoolkit.style.StyleConstants.DEFAULT_FONT;
-import static org.geotoolkit.style.StyleConstants.DEFAULT_HALO;
-import static org.geotoolkit.style.StyleConstants.DEFAULT_POINTPLACEMENT;
-import static org.geotoolkit.style.StyleConstants.DEFAULT_UOM;
+import org.geotoolkit.map.MapLayer;
+import static org.geotoolkit.style.StyleConstants.*;
 import org.opengis.style.TextSymbolizer;
 
 /**
@@ -82,6 +78,16 @@ public class FXTextSymbolizer extends FXStyleElementController<FXTextSymbolizer,
         uiHalo.valueProperty().addListener(changeListener);
         uiText.valueProperty().addListener(changeListener);
         uiPlacement.valueProperty().addListener(changeListener);
+    }
+    
+    @Override
+    public void setLayer(MapLayer layer) {
+        super.setLayer(layer);
+        uiText.setLayer(layer);
+        uiFont.setLayer(layer);
+        uiFill.setLayer(layer);
+        uiHalo.setLayer(layer);
+        uiPlacement.setLayer(layer);
     }
     
     @Override

@@ -20,6 +20,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.ChoiceBox;
+import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.StyleConstants;
 import org.opengis.filter.expression.Expression;
 
@@ -70,6 +71,12 @@ public class FXListExpression extends FXStyleElementController<FXListExpression,
                 value.set(newValue);
             }
         });        
+    }
+    
+    @Override
+    public void setLayer(MapLayer layer) {
+        super.setLayer(layer);
+        special.setLayer(layer);
     }
 
     @Override

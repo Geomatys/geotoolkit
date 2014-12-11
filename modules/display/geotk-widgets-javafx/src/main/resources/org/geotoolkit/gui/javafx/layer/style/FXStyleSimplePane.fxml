@@ -11,37 +11,35 @@
    <center>
       <SplitPane dividerPositions="0.5" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" BorderPane.alignment="CENTER">
          <items>
-            <GridPane maxHeight="1.7976931348623157E308" maxWidth="250.0" prefWidth="250.0">
+            <GridPane hgap="10.0" maxHeight="1.7976931348623157E308" maxWidth="250.0" prefWidth="250.0">
               <columnConstraints>
                 <ColumnConstraints hgrow="ALWAYS" />
                 <ColumnConstraints hgrow="NEVER" />
               </columnConstraints>
               <rowConstraints>
                 <RowConstraints vgrow="NEVER" />
-                <RowConstraints vgrow="ALWAYS" />
                 <RowConstraints vgrow="NEVER" />
-                  <RowConstraints vgrow="NEVER" />
+                <RowConstraints vgrow="ALWAYS" />
                   <RowConstraints vgrow="NEVER" />
               </rowConstraints>
                <children>
-                  <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="property-group-title" text="%org.geotoolkit.gui.javafx.layer.style.FXStyleSimplePane.preview" GridPane.columnSpan="2" GridPane.rowIndex="3" />
                   <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="property-group-title" text="%org.geotoolkit.gui.javafx.layer.style.FXStyleSimplePane.symbols" GridPane.columnSpan="2" />
-                  <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnSpan="2" GridPane.rowIndex="1">
+                  <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnSpan="2" GridPane.rowIndex="2">
                      <content>
-                        <TableView fx:id="uiTable" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
+                        <TableView fx:id="uiTable" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="200.0" />
                      </content>
                   </ScrollPane>
-                  <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#addSymbol" text="+" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                  <ImageView fx:id="uiPreview" fitHeight="120.0" fitWidth="120.0" pickOnBounds="true" preserveRatio="true" GridPane.columnSpan="2" GridPane.rowIndex="4">
+                  <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#addSymbol" text="+" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                  <ImageView fx:id="uiPreview" fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="3">
                      <GridPane.margin>
-                        <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+                        <Insets />
                      </GridPane.margin></ImageView>
-                  <ComboBox fx:id="uiChoice" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.rowIndex="2" />
+                  <ComboBox fx:id="uiChoice" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.rowIndex="1" />
                </children>
             </GridPane>
             <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="400.0" prefWidth="400.0">
                <content>
-                  <BorderPane fx:id="uiSymbolizerPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
+                  <BorderPane fx:id="uiSymbolizerPane" />
                </content>
             </ScrollPane>
          </items>

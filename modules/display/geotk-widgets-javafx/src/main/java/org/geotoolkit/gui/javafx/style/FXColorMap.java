@@ -653,7 +653,7 @@ public class FXColorMap extends FXStyleElementController<FXColorMap,ColorMap> {
         });
         
     }
-    
+        
     private ColorMap buildColorMap(){
           
         

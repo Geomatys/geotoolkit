@@ -24,8 +24,8 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
-import javafx.scene.control.ToggleGroup;
 import org.geotoolkit.filter.DefaultLiteral;
+import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.StyleConstants;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Literal;
@@ -92,6 +92,15 @@ public class FXFont extends FXStyleElementController<FXFont, Font>{
         uiWeight.valueProperty().addListener(changeListener);
         uiStyle.valueProperty().addListener(changeListener);
         uiFamily.valueProperty().addListener(changeListener);
+    }
+    
+    @Override
+    public void setLayer(MapLayer layer) {
+        super.setLayer(layer);
+        uiSize.setLayer(layer);
+        uiWeight.setLayer(layer);
+        uiStyle.setLayer(layer);
+        uiFamily.setLayer(layer);
     }
     
     @Override

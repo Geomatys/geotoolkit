@@ -22,6 +22,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
+import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.StyleConstants;
 import org.opengis.filter.expression.Expression;
 
@@ -87,6 +88,12 @@ public class FXLineCapExpression extends FXStyleElementController<FXLineCapExpre
         });        
     }
 
+    @Override
+    public void setLayer(MapLayer layer) {
+        super.setLayer(layer);
+        special.setLayer(layer);
+    }
+    
     @Override
     protected void updateEditor(Expression styleElement) {
         special.valueProperty().set(styleElement);

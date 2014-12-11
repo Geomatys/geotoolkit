@@ -21,6 +21,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import static org.geotoolkit.gui.javafx.style.FXStyleElementController.getStyleFactory;
+import org.geotoolkit.map.MapLayer;
 import org.opengis.style.Displacement;
 
 /**
@@ -55,6 +56,13 @@ public class FXDisplacement extends FXStyleElementController<FXDisplacement, Dis
         
         uiX.valueProperty().addListener(changeListener);
         uiY.valueProperty().addListener(changeListener);
+    }
+    
+    @Override
+    public void setLayer(MapLayer layer) {
+        super.setLayer(layer);
+        uiX.setLayer(layer);
+        uiY.setLayer(layer);
     }
     
     @Override

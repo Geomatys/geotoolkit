@@ -21,6 +21,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import static org.geotoolkit.gui.javafx.style.FXStyleElementController.getStyleFactory;
+import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.StyleConstants;
 import org.opengis.style.PointPlacement;
 
@@ -61,6 +62,14 @@ public class FXPointPlacement extends FXStyleElementController<FXPointPlacement,
         uiAnchor.valueProperty().addListener(changeListener);
         uiDisplacement.valueProperty().addListener(changeListener);
         uiRotation.valueProperty().addListener(changeListener);
+    }
+    
+    @Override
+    public void setLayer(MapLayer layer) {
+        super.setLayer(layer);
+        uiRotation.setLayer(layer);
+        uiAnchor.setLayer(layer);
+        uiDisplacement.setLayer(layer);
     }
     
     @Override

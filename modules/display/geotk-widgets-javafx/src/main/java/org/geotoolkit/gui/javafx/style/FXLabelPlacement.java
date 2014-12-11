@@ -24,6 +24,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
 import static org.geotoolkit.gui.javafx.style.FXStyleElementController.getStyleFactory;
+import org.geotoolkit.map.MapLayer;
 import org.opengis.style.LabelPlacement;
 import org.opengis.style.LinePlacement;
 import org.opengis.style.PointPlacement;
@@ -90,6 +91,13 @@ public class FXLabelPlacement extends FXStyleElementController<FXLabelPlacement,
         
         uiPoint.valueProperty().addListener(changeListener);
         uiLine.valueProperty().addListener(changeListener);
+    }
+    
+    @Override
+    public void setLayer(MapLayer layer) {
+        super.setLayer(layer);
+        uiLine.setLayer(layer);
+        uiPoint.setLayer(layer);
     }
     
     @Override

@@ -21,6 +21,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import static org.geotoolkit.gui.javafx.style.FXStyleElementController.getStyleFactory;
+import org.geotoolkit.map.MapLayer;
 import static org.geotoolkit.style.StyleConstants.DEFAULT_GRAPHIC;
 import org.opengis.style.PointSymbolizer;
 
@@ -52,6 +53,12 @@ public class FXPointSymbolizer extends FXStyleElementController<FXPointSymbolize
         };
         
         uiGraphic.valueProperty().addListener(changeListener);
+    }
+    
+    @Override
+    public void setLayer(MapLayer layer) {
+        super.setLayer(layer);
+        uiGraphic.setLayer(layer);
     }
     
     @Override

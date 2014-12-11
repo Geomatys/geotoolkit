@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+
+<fx:root maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="600.0" type="BorderPane" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <left>
+      <GridPane hgap="2.0" vgap="2.0" BorderPane.alignment="CENTER">
+        <columnConstraints>
+          <ColumnConstraints hgrow="ALWAYS" prefWidth="50.0" />
+          <ColumnConstraints hgrow="ALWAYS" prefWidth="50.0" />
+            <ColumnConstraints hgrow="ALWAYS" prefWidth="50.0" />
+            <ColumnConstraints hgrow="ALWAYS" prefWidth="50.0" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints vgrow="NEVER" />
+          <RowConstraints vgrow="NEVER" />
+          <RowConstraints vgrow="NEVER" />
+            <RowConstraints vgrow="NEVER" />
+            <RowConstraints vgrow="NEVER" />
+            <RowConstraints vgrow="NEVER" />
+            <RowConstraints vgrow="NEVER" />
+            <RowConstraints vgrow="NEVER" />
+            <RowConstraints vgrow="ALWAYS" />
+        </rowConstraints>
+         <children>
+            <Label maxWidth="1.7976931348623157E308" text="%org.geotoolkit.gui.javafx.filter.FXCQLEditor.operand" GridPane.columnSpan="4" />
+            <Label maxWidth="1.7976931348623157E308" text="%org.geotoolkit.gui.javafx.filter.FXCQLEditor.compare" GridPane.columnSpan="4" GridPane.rowIndex="2" />
+            <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#putShortcut" text="+" GridPane.rowIndex="1" />
+            <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#putShortcut" text="-" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#putShortcut" text="*" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+            <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#putShortcut" text="/" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+            <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#putShortcut" text="=" GridPane.rowIndex="3" />
+            <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#putShortcut" text="&lt;&gt;" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+            <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#putShortcut" text="&gt;" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+            <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#putShortcut" text="&gt;=" GridPane.columnIndex="3" GridPane.rowIndex="3" />
+            <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#putShortcut" text="&lt;" GridPane.rowIndex="4" />
+            <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#putShortcut" text="&lt;=" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+            <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#putShortcut" text="LIKE" GridPane.columnIndex="2" GridPane.rowIndex="4" />
+            <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#putShortcut" text="IS" GridPane.columnIndex="3" GridPane.rowIndex="4" />
+            <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#putShortcut" text="IN" GridPane.rowIndex="5" />
+            <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#putShortcut" text="BETWEEN" GridPane.columnSpan="2" GridPane.rowIndex="6" />
+            <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#putShortcut" text="AND" GridPane.columnIndex="2" GridPane.rowIndex="5" />
+            <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#putShortcut" text="OR" GridPane.columnIndex="3" GridPane.rowIndex="5" />
+            <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#putShortcut" text="NOT" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+            <Label maxWidth="1.7976931348623157E308" text="%org.geotoolkit.gui.javafx.filter.FXCQLEditor.properties" GridPane.columnSpan="4" GridPane.rowIndex="7" />
+            <ScrollPane fitToHeight="true" fitToWidth="true" minHeight="200.0" GridPane.columnSpan="4" GridPane.rowIndex="8">
+               <content>
+                  <ListView fx:id="uiProperties" prefHeight="200.0" prefWidth="200.0" />
+               </content>
+            </ScrollPane>
+         </children>
+         <padding>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </padding>
+      </GridPane>
+   </left>
+</fx:root>

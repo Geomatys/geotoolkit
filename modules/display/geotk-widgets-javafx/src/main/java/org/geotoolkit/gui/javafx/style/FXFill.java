@@ -20,6 +20,7 @@ package org.geotoolkit.gui.javafx.style;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.StyleConstants;
 import org.opengis.style.Fill;
 
@@ -61,6 +62,13 @@ public class FXFill extends FXStyleElementController<FXFill,Fill> {
         
         uiColor.valueProperty().addListener(changeListener);
         uiOpacity.valueProperty().addListener(changeListener);
+    }
+    
+    @Override
+    public void setLayer(MapLayer layer) {
+        super.setLayer(layer);
+        uiColor.setLayer(layer);
+        uiOpacity.setLayer(layer);
     }
     
     @Override

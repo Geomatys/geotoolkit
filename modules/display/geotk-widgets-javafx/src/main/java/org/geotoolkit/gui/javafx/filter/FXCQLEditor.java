@@ -19,7 +19,16 @@ package org.geotoolkit.gui.javafx.filter;
 
 import java.util.Collection;
 import java.util.Collections;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
+import javafx.scene.control.ListView;
+import javafx.scene.control.SelectionMode;
 import javafx.scene.layout.BorderPane;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
@@ -30,13 +39,18 @@ import org.geotoolkit.cql.CQL;
 import org.geotoolkit.cql.CQLException;
 import org.geotoolkit.cql.CQLLexer;
 import org.geotoolkit.cql.CQLParser;
+import org.geotoolkit.data.FeatureCollection;
+import org.geotoolkit.feature.type.FeatureType;
+import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.geotoolkit.gui.javafx.util.FXOptionDialog;
+import org.geotoolkit.internal.GeotkFX;
+import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapLayer;
 import org.opengis.filter.Filter;
 import org.opengis.filter.expression.Expression;
 
 /**
- * TODO
+ * CQL editor
  * 
  * @author Johann Sorel (Geomatys)
  */
@@ -53,10 +67,12 @@ public class FXCQLEditor extends BorderPane {
     private static final Collection STYLE_ERROR = Collections.singleton("error");
     
     
+    @FXML private ListView<String> uiProperties;
     
     private final CodeArea codeArea = new CodeArea();
     
     public FXCQLEditor(){
+        GeotkFX.loadJRXML(this);
         setCenter(codeArea);
         
         codeArea.textProperty().addListener((obs, oldText, newText) -> {
@@ -64,6 +80,43 @@ public class FXCQLEditor extends BorderPane {
             //codeArea.setStyleSpans(0, computeHighlight(newText));
         });
         
+        uiProperties.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+        uiProperties.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                if(newValue!=null){
+                    codeArea.appendText(" "+newValue);
+                    uiProperties.getSelectionModel().clearSelection();
+                }
+            }
+        });
+    }
+    
+    @FXML
+    private void putShortcut(ActionEvent event) {
+        final Button button = (Button) event.getSource();
+        final String text = button.getText();
+        codeArea.appendText(" "+text);
+    }
+    
+    public void setTarget(Object candidate){
+        FeatureType ft = null;
+        if(candidate instanceof FeatureType){
+            ft = (FeatureType) candidate;
+        }else if(candidate instanceof FeatureCollection) {
+            ft = ((FeatureCollection)candidate).getFeatureType();
+        }else if(candidate instanceof FeatureMapLayer){
+            ft = ((FeatureMapLayer)candidate).getCollection().getFeatureType();
+        }
+        
+        final ObservableList properties = FXCollections.observableArrayList();
+        if(ft!=null){
+            for(PropertyDescriptor desc : ft.getDescriptors()){
+                properties.add(desc.getName().getLocalPart());
+            }
+        }
+        
+        uiProperties.setItems(properties);
     }
     
     public void setExpression(Expression candidate){
@@ -217,6 +270,7 @@ public class FXCQLEditor extends BorderPane {
     public static Expression showDialog(Node parent, MapLayer layer, Expression candidate) throws CQLException {
         final FXCQLEditor editor = new FXCQLEditor();
         editor.setExpression(candidate);
+        editor.setTarget(layer);
         FXOptionDialog.showOkCancel(parent, editor, "CQL Editor", true);
         return editor.getExpression();
     }
@@ -224,6 +278,7 @@ public class FXCQLEditor extends BorderPane {
     public static Filter showFilterDialog(Node parent, MapLayer layer, Filter candidate) throws CQLException {
         final FXCQLEditor editor = new FXCQLEditor();
         editor.setFilter(candidate);
+        editor.setTarget(layer);
         FXOptionDialog.showOkCancel(parent, editor, "CQL Editor", true);
         return editor.getFilter();
     }

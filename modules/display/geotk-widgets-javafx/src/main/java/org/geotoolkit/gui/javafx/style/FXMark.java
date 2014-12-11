@@ -21,6 +21,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import static org.geotoolkit.gui.javafx.style.FXStyleElementController.getStyleFactory;
+import org.geotoolkit.map.MapLayer;
 import org.opengis.style.Mark;
 
 /**
@@ -60,6 +61,14 @@ public class FXMark extends FXStyleElementController<FXMark, Mark>{
         uiFill.valueProperty().addListener(changeListener);
         uiStroke.valueProperty().addListener(changeListener);
         uiWkt.valueProperty().addListener(changeListener);
+    }
+    
+    @Override
+    public void setLayer(MapLayer layer) {
+        super.setLayer(layer);
+        uiWkt.setLayer(layer);
+        uiStroke.setLayer(layer);
+        uiFill.setLayer(layer);
     }
     
     @Override

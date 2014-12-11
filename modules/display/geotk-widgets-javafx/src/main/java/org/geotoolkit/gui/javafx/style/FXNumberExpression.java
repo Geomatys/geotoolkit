@@ -16,14 +16,13 @@
  */
 package org.geotoolkit.gui.javafx.style;
 
-import java.text.DecimalFormat;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
-import javafx.util.converter.NumberStringConverter;
 import org.geotoolkit.cql.CQL;
 import static org.geotoolkit.gui.javafx.style.FXStyleElementController.getFilterFactory;
 import org.geotoolkit.gui.javafx.util.FXNumberSpinner;
+import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.StyleConstants;
 import org.opengis.filter.expression.Expression;
 
@@ -86,6 +85,12 @@ public class FXNumberExpression extends FXStyleElementController<FXNumberExpress
     protected void updateEditor(Expression styleElement) {
         special.valueProperty().set(styleElement);
         uiNumber.getNumberField().setText(CQL.write(styleElement));
+    }
+
+    @Override
+    public void setLayer(MapLayer layer) {
+        super.setLayer(layer);
+        special.setLayer(layer);
     }
     
 }

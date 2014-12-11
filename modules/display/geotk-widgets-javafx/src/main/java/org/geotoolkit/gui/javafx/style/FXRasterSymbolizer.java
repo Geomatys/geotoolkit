@@ -21,6 +21,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.RadioButton;
 import javafx.scene.layout.BorderPane;
+import org.geotoolkit.map.MapLayer;
 import org.opengis.style.RasterSymbolizer;
 
 /**
@@ -72,6 +73,14 @@ public class FXRasterSymbolizer extends FXStyleElementController<FXRasterSymboli
         return getStyleFactory().rasterSymbolizer();
     }
 
+    @Override
+    public void setLayer(MapLayer layer) {
+        super.setLayer(layer);
+        uiOpacity.setLayer(layer);
+        uiReliefShading.setLayer(layer);
+        uiContrast.setLayer(layer);
+    }
+    
     @Override
     protected void updateEditor(RasterSymbolizer styleElement) {
     }

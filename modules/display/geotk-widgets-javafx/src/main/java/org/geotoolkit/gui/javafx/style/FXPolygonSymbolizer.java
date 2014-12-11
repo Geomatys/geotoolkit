@@ -21,6 +21,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import static org.geotoolkit.gui.javafx.style.FXStyleElementController.getStyleFactory;
+import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.StyleConstants;
 import org.opengis.style.PolygonSymbolizer;
 
@@ -57,6 +58,13 @@ public class FXPolygonSymbolizer extends FXStyleElementController<FXPolygonSymbo
         };
         uiFill.valueProperty().addListener(changeListener);
         uiStroke.valueProperty().addListener(changeListener);
+    }
+    
+    @Override
+    public void setLayer(MapLayer layer) {
+        super.setLayer(layer);
+        uiFill.setLayer(layer);
+        uiStroke.setLayer(layer);
     }
     
     @Override

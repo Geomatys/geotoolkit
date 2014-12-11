@@ -22,6 +22,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
 import static org.geotoolkit.gui.javafx.style.FXStyleElementController.getStyleFactory;
+import org.geotoolkit.map.MapLayer;
 import org.opengis.style.ContrastEnhancement;
 import org.opengis.style.SelectedChannelType;
 
@@ -56,6 +57,12 @@ public class FXSelectedChannelType extends FXStyleElementController<FXSelectedCh
         
         uiContrast.valueProperty().addListener(changeListener);
         uiName.textProperty().addListener(changeListener);
+    }
+    
+    @Override
+    public void setLayer(MapLayer layer) {
+        super.setLayer(layer);
+        uiContrast.setLayer(layer);
     }
     
     @Override

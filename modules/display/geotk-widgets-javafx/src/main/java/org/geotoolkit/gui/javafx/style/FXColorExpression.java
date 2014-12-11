@@ -24,6 +24,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.ColorPicker;
 import org.geotoolkit.gui.javafx.util.FXUtilities;
+import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.StyleConstants;
 import org.opengis.filter.expression.Expression;
 
@@ -70,6 +71,12 @@ public class FXColorExpression extends FXStyleElementController<FXColorExpressio
                 value.set(newValue);
             }
         });
+    }
+    
+    @Override
+    public void setLayer(MapLayer layer) {
+        super.setLayer(layer);
+        uiSpecial.setLayer(layer);
     }
     
     @Override

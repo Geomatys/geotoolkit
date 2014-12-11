@@ -21,6 +21,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import static org.geotoolkit.gui.javafx.style.FXStyleElementController.getStyleFactory;
+import org.geotoolkit.map.MapLayer;
 import org.opengis.style.AnchorPoint;
 
 /**
@@ -60,6 +61,13 @@ public class FXAnchorPoint extends FXStyleElementController<FXAnchorPoint, Ancho
     protected void updateEditor(AnchorPoint styleElement) {
         uiX.valueProperty().setValue(styleElement.getAnchorPointX());
         uiY.valueProperty().setValue(styleElement.getAnchorPointY());
+    }
+    
+    @Override
+    public void setLayer(MapLayer layer) {
+        super.setLayer(layer);
+        uiX.setLayer(layer);
+        uiY.setLayer(layer);
     }
     
 }

@@ -22,6 +22,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import static org.geotoolkit.gui.javafx.style.FXStyleElementController.getStyleFactory;
+import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.StyleConstants;
 import org.opengis.style.LinePlacement;
 
@@ -74,6 +75,14 @@ public class FXLinePlacement extends FXStyleElementController<FXLinePlacement, L
         uiOffset.valueProperty().addListener(changeListener);
         uiInitialGap.valueProperty().addListener(changeListener);
         uiGap.valueProperty().addListener(changeListener);
+    }
+    
+    @Override
+    public void setLayer(MapLayer layer) {
+        super.setLayer(layer);
+        uiOffset.setLayer(layer);
+        uiInitialGap.setLayer(layer);
+        uiGap.setLayer(layer);
     }
     
     @Override
