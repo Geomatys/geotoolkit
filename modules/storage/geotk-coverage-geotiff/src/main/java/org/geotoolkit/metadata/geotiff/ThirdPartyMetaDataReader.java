@@ -181,7 +181,13 @@ public strictfp class ThirdPartyMetaDataReader {
                         str = strs[0] +"."+ strs[1];
                     }
                     try {
-                        final double realFillVal = Double.valueOf(str).doubleValue(); 
+                        double realFillVal;
+                        if (str.trim().equalsIgnoreCase("nan")) {
+                            realFillVal = Double.NaN;
+                        } else {
+                            realFillVal = Double.valueOf(str).doubleValue(); 
+                        }
+//                        final double realFillVal = Double.valueOf(str).doubleValue(); 
                         realFillValue = new double[samplePerPixels];
                         Arrays.fill(realFillValue, realFillVal);
                     } catch (NumberFormatException e) {
