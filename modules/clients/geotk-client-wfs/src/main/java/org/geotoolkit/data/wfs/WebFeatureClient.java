@@ -22,11 +22,11 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.client.AbstractClient;
 import org.geotoolkit.client.AbstractFeatureClient;
 import org.geotoolkit.client.ClientFinder;
 import org.geotoolkit.data.FeatureReader;
@@ -66,8 +66,15 @@ public class WebFeatureClient extends AbstractFeatureClient {
 
     private static final Logger LOGGER = Logging.getLogger(WebFeatureClient.class);
 
-    private WFSCapabilities capabilities;
-    private WFSFeatureStore store = null; //created when needed
+    /**
+     * Default timeout (in milliseconds).
+     *
+     * @todo Should be a parameter.
+     */
+    private static final long TIMEOUT = 60000;
+
+    private volatile WFSCapabilities capabilities;
+    private WFSFeatureStore store; //created when needed
 
     public WebFeatureClient(final URL serverURL, final String version) {
         this(serverURL,null,version);
@@ -81,7 +88,6 @@ public class WebFeatureClient extends AbstractFeatureClient {
             throw new IllegalArgumentException("unknowned version : "+ version);
         }
         Parameters.getOrCreate(WFSFeatureStoreFactory.POST_REQUEST, parameters).setValue(false);
-        this.capabilities = null;
     }
 
     public WebFeatureClient(final URL serverURL, final ClientSecurity security, final WFSVersion version, final boolean usePost) {
@@ -91,7 +97,6 @@ public class WebFeatureClient extends AbstractFeatureClient {
         }
         Parameters.getOrCreate(WFSFeatureStoreFactory.VERSION, parameters).setValue(version.getCode());
         Parameters.getOrCreate(WFSFeatureStoreFactory.POST_REQUEST, parameters).setValue(usePost);
-        this.capabilities = null;
     }
 
     public WebFeatureClient(final ParameterValueGroup params) {
@@ -125,41 +130,51 @@ public class WebFeatureClient extends AbstractFeatureClient {
     }
 
     /**
-     * @return WFSCapabilitiesType : WFS server capabilities
+     * @return The WFS server capabilities.
+     * @throws WebFeatureException if an error occurred while querying the capabilities from the server.
      */
-    public WFSCapabilities getCapabilities() {
+    public WFSCapabilities getCapabilities() throws WebFeatureException {
+        WFSCapabilities cap = capabilities;
 
-        if (capabilities != null) {
-            return capabilities;
+        if (cap != null) {
+            return cap;
         }
-        //Thread to prevent infinite request on a server
+        // Thread to prevent infinite request on a server
+        // TODO: This is costly - we should use an other mechanism.
+        final AtomicReference<Exception> error = new AtomicReference<>();
         final Thread thread = new Thread() {
             @Override
             public void run() {
                 try {
                     capabilities = (WFSCapabilities) WFSBindingUtilities.unmarshall(createGetCapabilities().getResponseStream(), getVersion());
                 } catch (Exception ex) {
-                    capabilities = null;
-                    try {
-                        LOGGER.log(Level.WARNING, "Wrong URL, the server doesn't answer : " + createGetCapabilities().getURL().toString(), ex);
-                    } catch (MalformedURLException ex1) {
-                        LOGGER.log(Level.WARNING, "Malformed URL, the server doesn't answer. ", ex1);
-                    }
+                    error.set(ex);
                 }
             }
         };
         thread.start();
         final long start = System.currentTimeMillis();
         try {
-            thread.join(10000);
+            thread.join(TIMEOUT);
         } catch (InterruptedException ex) {
-            LOGGER.log(Level.WARNING, "The thread to obtain GetCapabilities doesn't answer.", ex);
+            // Someone doesn't want to let us sleep. Go back to work.
         }
-        if ((System.currentTimeMillis() - start) > 10000) {
-            LOGGER.log(Level.WARNING, "TimeOut error, the server takes too much time to answer. ");
+        cap = capabilities;
+        if (cap == null) {
+            final Exception cause = error.get();
+            if (cause == null) {
+                throw new WebFeatureException("TimeOut error, the server takes too much time to answer.");
+            }
+            String message;
+            try {
+                message = "Can not parse server answer at URL " + createGetCapabilities().getURL().toString();
+            } catch (MalformedURLException ex1) {
+                message = "Malformed URL, can not get server answer.";
+            }
+            throw new WebFeatureException(message, cause);
         }
 
-        return capabilities;
+        return cap;
     }
 
     /**
@@ -259,7 +274,7 @@ public class WebFeatureClient extends AbstractFeatureClient {
     public Session createSession(boolean asynchrone, Version version) {
         return getStore().createSession(asynchrone,version);
     }
-    
+
     @Override
     public VersionControl getVersioning(String typeName) throws VersioningException {
         return store.getVersioning(typeName);
@@ -269,7 +284,7 @@ public class WebFeatureClient extends AbstractFeatureClient {
     public VersionControl getVersioning(Name typeName) throws VersioningException {
         return store.getVersioning(typeName);
     }
-    
+
     @Override
     public String[] getTypeNames() throws DataStoreException {
         return getStore().getTypeNames();

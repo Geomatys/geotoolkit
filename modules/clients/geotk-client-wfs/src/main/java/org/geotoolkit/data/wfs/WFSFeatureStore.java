@@ -100,7 +100,7 @@ public class WFSFeatureStore extends AbstractFeatureStore{
     private final Map<String,String> prefixes = new HashMap<String, String>();
 
 
-    public WFSFeatureStore(WebFeatureClient server){
+    public WFSFeatureStore(WebFeatureClient server) throws WebFeatureException {
         super(server.getConfiguration());
 
         this.server = server;
@@ -108,7 +108,7 @@ public class WFSFeatureStore extends AbstractFeatureStore{
 
     }
 
-	private void checkTypeExist() {
+	private void checkTypeExist() throws WebFeatureException {
 		final WFSCapabilities capabilities = server.getCapabilities();
 
         final FeatureTypeList lst = capabilities.getFeatureTypeList();
