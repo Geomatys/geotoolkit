@@ -23,10 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.client.AbstractFeatureClient;
 import org.geotoolkit.client.ClientFinder;
 import org.geotoolkit.data.FeatureReader;
@@ -63,9 +60,6 @@ import org.opengis.parameter.ParameterValueGroup;
  * @module pending
  */
 public class WebFeatureClient extends AbstractFeatureClient {
-
-    private static final Logger LOGGER = Logging.getLogger(WebFeatureClient.class);
-
     /**
      * Default timeout (in milliseconds).
      *
