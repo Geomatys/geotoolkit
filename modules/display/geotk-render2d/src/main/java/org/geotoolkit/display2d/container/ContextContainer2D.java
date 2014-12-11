@@ -153,7 +153,7 @@ public class ContextContainer2D extends DefaultGraphicContainer implements MapCo
         try {
             final MapContext context = getContext();
             if(context != null){
-                Envelope env = context.getBounds();
+                Envelope env = context.getBounds(true);
                 if( CRS.equalsIgnoreMetadata(env.getCoordinateReferenceSystem(),crs) ){
                     org.geotoolkit.geometry.GeneralEnvelope genv = new org.geotoolkit.geometry.GeneralEnvelope(env);
                     return genv.toRectangle2D();
@@ -191,7 +191,7 @@ public class ContextContainer2D extends DefaultGraphicContainer implements MapCo
             crs = CRSUtilities.getCRS2D(crs);
             final MapContext context = getContext();
             if(context != null){
-                Envelope env = context.getBounds();
+                Envelope env = context.getBounds(true);
 
                 if(env != null){
                     if ( CRS.equalsIgnoreMetadata(env.getCoordinateReferenceSystem(),crs) ) {

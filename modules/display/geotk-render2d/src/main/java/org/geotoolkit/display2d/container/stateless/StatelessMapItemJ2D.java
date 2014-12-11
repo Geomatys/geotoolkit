@@ -107,7 +107,7 @@ public class StatelessMapItemJ2D<T extends MapItem> extends GraphicJ2D implement
     public Envelope getEnvelope() {
         if(item instanceof MapContext){
             try {
-                return ((MapContext)item).getBounds();
+                return ((MapContext)item).getBounds(true);
             } catch (IOException ex) {
                 getLogger().log(Level.WARNING, ex.getMessage(), ex);
                 return null;

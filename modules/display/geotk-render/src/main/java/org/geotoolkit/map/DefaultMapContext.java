@@ -25,7 +25,6 @@ import java.util.EventObject;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
-import org.geotoolkit.geometry.DefaultBoundingBox;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.style.StyleConstants;
@@ -33,7 +32,6 @@ import static org.apache.sis.util.ArgumentChecks.*;
 import org.apache.sis.measure.NumberRange;
 import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.opengis.geometry.Envelope;
-import org.opengis.metadata.extent.GeographicExtent;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 
@@ -112,17 +110,29 @@ final class DefaultMapContext extends DefaultMapItem implements MapContext, Laye
      */
     @Override
     public Envelope getBounds() throws IOException {
+        return getBounds(false);
+    }
+
+    /**
+     * {@inheritDoc }
+     * 
+     * @param onlyVisible
+     * @return
+     * @throws IOException 
+     */
+    @Override
+    public Envelope getBounds(boolean onlyVisible) throws IOException {
         GeneralEnvelope result = null;
 
         GeneralEnvelope env;
         CoordinateReferenceSystem sourceCrs;
         for(final MapLayer layer : layers){
+            if(onlyVisible && !layer.isVisible()) continue;
+            
             env = new GeneralEnvelope(layer.getBounds());
             sourceCrs = env.getCoordinateReferenceSystem();
 
-            if (env == null || env.isAllNaN()) {
-                continue;
-            } else {
+            if (!env.isAllNaN()) {
 
                 if ((sourceCrs != null) && (crs != null) && !CRS.equalsIgnoreMetadata(sourceCrs,crs)) {
                     try {
@@ -140,7 +150,6 @@ final class DefaultMapContext extends DefaultMapItem implements MapContext, Laye
                     result.add(env);
                 }
             }
-
         }
 
         if (result == null|| result.isEmpty()) {
