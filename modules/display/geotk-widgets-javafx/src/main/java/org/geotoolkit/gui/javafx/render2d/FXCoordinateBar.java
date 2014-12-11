@@ -43,8 +43,6 @@ import javafx.scene.layout.RowConstraints;
 import javafx.scene.paint.Color;
 import javafx.util.converter.LongStringConverter;
 import org.apache.sis.geometry.DirectPosition2D;
-import org.apache.sis.measure.NumberRange;
-import org.apache.sis.measure.Range;
 import org.controlsfx.control.StatusBar;
 import org.geotoolkit.display.canvas.AbstractCanvas2D;
 import org.geotoolkit.display2d.canvas.painter.SolidColorPainter;
@@ -84,7 +82,7 @@ public class FXCoordinateBar extends GridPane {
                 }else{
                     final boolean wasNull = sliderview.rangeMinProperty().get() == null;
                     final double min = range[0].getTime();
-                    final double max = range[1].getTime();
+                    final double max = range[1]!=null ? range[1].getTime() : min;
                     sliderview.rangeMinProperty().set(min);
                     sliderview.rangeMaxProperty().set(max);
                     if(wasNull){

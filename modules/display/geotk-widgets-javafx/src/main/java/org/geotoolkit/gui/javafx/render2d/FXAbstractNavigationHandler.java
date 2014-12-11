@@ -123,8 +123,9 @@ public class FXAbstractNavigationHandler implements FXCanvasHandler{
      * {@inheritDoc }
      */
     @Override
-    public void uninstall(final FXMap component) {
+    public boolean uninstall(final FXMap component) {
         map.removeDecoration(decorationPane);
+        return true;
     }
 
     public static Cursor cleanCursor(Image icon, Point focusPoint, String cursorname){

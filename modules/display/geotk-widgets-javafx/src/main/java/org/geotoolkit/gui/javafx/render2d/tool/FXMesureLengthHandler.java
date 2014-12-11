@@ -95,12 +95,13 @@ public class FXMesureLengthHandler extends FXAbstractNavigationHandler {
      * {@inheritDoc }
      */
     @Override
-    public void uninstall(final FXMap component) {
+    public boolean uninstall(final FXMap component) {
         super.uninstall(component);
         component.removeEventHandler(MouseEvent.ANY, mouseInputListener);
         component.removeEventHandler(ScrollEvent.ANY, mouseInputListener);
         map.removeDecoration(layer);
         component.setBottom(null);
+        return true;
     }
     
     private void updateGeometry(){

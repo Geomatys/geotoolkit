@@ -242,7 +242,12 @@ public class FXMap extends BorderPane {
             final FXCanvasHandler old = getHandler();
 
             if (old != null){
-                old.uninstall(this);
+                boolean veto = old.uninstall(this);
+                if(!veto){
+                    //handler can not be removed right now, veto
+                    //could be an edition tool which is in an unfinished state
+                    return;
+                }
             }
 
             handlerProp.setValue(handler);
