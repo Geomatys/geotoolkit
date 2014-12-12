@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import net.iharder.Base64;
-import org.apache.sis.util.Version;
 import org.geotoolkit.db.FilterToSQL;
 import org.geotoolkit.db.JDBCFeatureStore;
 import org.geotoolkit.db.reverse.ColumnMetaModel;
@@ -104,15 +103,13 @@ import org.apache.sis.util.logging.Logging;
  */
 public class H2FilterToSQL implements FilterToSQL {
 
-    private final Version pgVersion;
     private final ComplexType featureType;
     private final PrimaryKey pkey;
     private int currentsrid;
 
-    public H2FilterToSQL(ComplexType featureType, PrimaryKey pkey, Version pgVersion) {
+    public H2FilterToSQL(ComplexType featureType, PrimaryKey pkey) {
         this.featureType = featureType;
         this.pkey = pkey;
-        this.pgVersion = pgVersion;
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -199,7 +196,7 @@ public class H2FilterToSQL implements FilterToSQL {
             // evaluate the literal and store it for later
             Geometry geom = (Geometry)candidate;
 
-            if(geom.isEmpty() && ((Comparable)pgVersion.getMajor()).compareTo((Comparable)Integer.valueOf(2)) < 0){
+            if(geom.isEmpty()){
                 //empty geometries are interpreted as Geometrycollection in postgis < 2
                 //this breaks the column geometry type constraint so we replace those by null
                 sb.append("NULL");

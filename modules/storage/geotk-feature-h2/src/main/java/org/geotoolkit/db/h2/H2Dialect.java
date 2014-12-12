@@ -48,7 +48,6 @@ import net.iharder.Base64;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.Version;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.db.DefaultJDBCFeatureStore;
 import org.geotoolkit.db.FilterToSQL;
 import org.geotoolkit.db.JDBCFeatureStore;
@@ -135,13 +134,13 @@ final class H2Dialect extends AbstractSQLDialect{
         UNKNOWNED
     }
 
-    protected final Map<Integer, CoordinateReferenceSystem> CRS_CACHE = new HashMap<Integer, CoordinateReferenceSystem>();
+    protected final Map<Integer, CoordinateReferenceSystem> CRS_CACHE = new HashMap<>();
     
-    private static final Map<Integer,Class> TYPE_TO_CLASS = new HashMap<Integer, Class>();
-    private static final Map<String,Class> TYPENAME_TO_CLASS = new HashMap<String, Class>();
-    private static final Map<Class,String> CLASS_TO_TYPENAME = new HashMap<Class,String>();
-    private static final Map<String, String> TYPE_TO_ST_TYPE_MAP = new HashMap<String, String>();
-    private static final Set<String> IGNORE_TABLES = new HashSet<String>();
+    private static final Map<Integer,Class> TYPE_TO_CLASS = new HashMap<>();
+    private static final Map<String,Class> TYPENAME_TO_CLASS = new HashMap<>();
+    private static final Map<Class,String> CLASS_TO_TYPENAME = new HashMap<>();
+    private static final Map<String, String> TYPE_TO_ST_TYPE_MAP = new HashMap<>();
+    private static final Set<String> IGNORE_TABLES = new HashSet<>();
         
     private static final FilterCapabilities FILTER_CAPABILITIES;
     
@@ -407,9 +406,7 @@ final class H2Dialect extends AbstractSQLDialect{
             if(featureType!=null){
                 pk = featurestore.getDatabaseModel().getPrimaryKey(featureType.getName());
             }
-            return new H2FilterToSQL(
-                featureType, pk,
-                getVersion(featurestore.getDatabaseSchema()));
+            return new H2FilterToSQL(featureType, pk);
         }catch(DataStoreException ex){
             throw new RuntimeException(ex.getMessage(),ex);
         }
@@ -591,25 +588,13 @@ final class H2Dialect extends AbstractSQLDialect{
 
         if(res > 0){
             if (dimensions > 2) {
-                if (((Comparable)getVersion(null).getMajor()).compareTo((Comparable)Integer.valueOf(2)) >= 0) {
-                    sql.append("ST_AsEWKB(st_simplifyPreserveTopology(");
-                    encodeColumnName(sql, gatt.getLocalName());
-                    sql.append(",").append(res).append(")");
-                } else {
-                    sql.append("ST_AsEWKB(st_simplify(");
-                    encodeColumnName(sql, gatt.getLocalName());
-                    sql.append(",").append(res).append(")");
-                }
+                sql.append("ST_AsEWKB(st_simplify(");
+                encodeColumnName(sql, gatt.getLocalName());
+                sql.append(",").append(res).append(")");
             } else {
-                if (((Comparable)getVersion(null).getMajor()).compareTo((Comparable)Integer.valueOf(2)) >= 0) {
-                    sql.append("ST_AsBinary(st_simplifyPreserveTopology(");
-                    encodeColumnName(sql, gatt.getLocalName());
-                    sql.append(",").append(res).append(")");
-                } else {
-                    sql.append("ST_AsBinary(st_simplify(");
-                    encodeColumnName(sql, gatt.getLocalName());
-                    sql.append(",").append(res).append(")"); 
-                }
+                sql.append("ST_AsBinary(st_simplify(");
+                encodeColumnName(sql, gatt.getLocalName());
+                sql.append(",").append(res).append(")"); 
             }
             sql.append(") ");
         }else{
@@ -653,7 +638,7 @@ final class H2Dialect extends AbstractSQLDialect{
                 value = value.getFactory().createLineString(((LinearRing) value).getCoordinateSequence());
             }
             
-            if(value.isEmpty() && ((Comparable)getVersion(null).getMajor()).compareTo((Comparable)Integer.valueOf(2)) < 0){
+            if(value.isEmpty()){
                 //empty geometries are interpreted as Geometrycollection in postgis < 2
                 //this breaks the column geometry type constraint so we replace those by null
                 sql.append("NULL");
