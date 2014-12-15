@@ -70,7 +70,7 @@ public class FXMap extends BorderPane {
     private WritableImage image = null;
     private final Canvas view = new ResizableCanvas();
     //used to repaint the buffer at regular interval until it is finished
-    private final Timer progressTimer = new Timer(150, new ActionListener() {
+    private final Timer progressTimer = new Timer(250, new ActionListener() {
         public void actionPerformed(ActionEvent e) {
             updateImage();
         }
@@ -111,10 +111,7 @@ public class FXMap extends BorderPane {
         canvas = new J2DCanvasVolatile(CommonCRS.WGS84.normalizedGeographic(), new Dimension(100, 100), hints);
         canvas.setMonitor(new NeverFailMonitor());
         canvas.setContainer(new ContextContainer2D(canvas, statefull));
-        canvas.setAutoRepaint(true);
-//        canvas.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-//        canvas.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-        
+        canvas.setAutoRepaint(true);        
         canvas.addPropertyChangeListener(new PropertyChangeListener() {
 
             @Override
