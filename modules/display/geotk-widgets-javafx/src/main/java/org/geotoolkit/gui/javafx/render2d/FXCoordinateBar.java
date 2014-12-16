@@ -161,8 +161,12 @@ public class FXCoordinateBar extends GridPane {
                     if(newValue==null){
                         map.getCanvas().setTemporalRange(null,null);
                     }else{
-                        final Number minValue = sliderview.rangeMinProperty().get();
-                        final Number maxValue = sliderview.rangeMaxProperty().get();
+                        Number minValue = sliderview.rangeMinProperty().get();
+                        Number maxValue = sliderview.rangeMaxProperty().get();
+                        if(minValue!=null && maxValue!=null && minValue.doubleValue() > maxValue.doubleValue()){
+                            //avoid an invalid range
+                            maxValue = minValue;
+                        }
                         map.getCanvas().setTemporalRange(
                                 minValue!=null ? new Date(minValue.longValue()) : null, 
                                 maxValue!=null ? new Date(maxValue.longValue()) : null);

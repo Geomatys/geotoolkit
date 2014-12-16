@@ -46,8 +46,12 @@ public class TextFieldCompletion {
         this.textField.setOnKeyPressed((KeyEvent t)->popup.hide());
         this.textField.setOnKeyReleased(this::onKeyPress);
         
+        final ScrollPane scroll = new ScrollPane(list);
+        scroll.setFitToWidth(true);
+        scroll.setFitToHeight(true);
+        
         popup.setAutoHide(true);
-        popup.getContent().add(new ScrollPane(list));
+        popup.getContent().add(scroll);
         
         list.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         list.setOnKeyPressed((KeyEvent event) -> {
@@ -79,6 +83,7 @@ public class TextFieldCompletion {
             return;
         } else if (code == KeyCode.DOWN) {
             if (!popup.isShowing()) {
+                popup.setWidth(list.getPrefWidth()+10);
                 popup.show(textField,popupPos.getX(),popupPos.getY());
             }
             caretPos = -1;
@@ -109,6 +114,7 @@ public class TextFieldCompletion {
         
         moveCaret(text.length());
         if (!dataList.isEmpty()) {
+            popup.setWidth(list.getPrefWidth()+10);
             popup.show(textField,popupPos.getX(),popupPos.getY());
         }else{
             popup.hide();
