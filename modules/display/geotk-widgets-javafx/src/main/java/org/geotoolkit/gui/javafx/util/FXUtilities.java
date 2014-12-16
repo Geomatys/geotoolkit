@@ -156,18 +156,18 @@ public final class FXUtilities {
     }
     
     public static java.awt.Color toSwingColor(Color fxColor){
-        final int r = (int) (fxColor.getRed() * 255);
-        final int g = (int) (fxColor.getGreen() * 255);
-        final int b = (int) (fxColor.getBlue() * 255);
-        final int rgb = (r << 16) + (g << 8) + b;
-        return new java.awt.Color(rgb);
+        final float r = (float) fxColor.getRed();
+        final float g = (float) fxColor.getGreen();
+        final float b = (float) fxColor.getBlue();
+        final float a = (float) fxColor.getOpacity();
+        return new java.awt.Color(r,g,b,a);
     }
     
     public static Color toFxColor(java.awt.Color swingColor){
         final double r = (double)swingColor.getRed() / 255.0;
         final double g = (double)swingColor.getGreen() / 255.0;
         final double b = (double)swingColor.getBlue() / 255.0;
-        final double a = (double)swingColor.getBlue() / 255.0;
+        final double a = (double)swingColor.getAlpha() / 255.0;
         return new Color(r, g, b, a);
     }
         
