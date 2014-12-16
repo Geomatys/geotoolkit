@@ -399,7 +399,7 @@ public final class DataBaseModel {
                         FF.and(tableFilter, FF.equals(FF.property(Column.COLUMN_NAME), FF.literal(columnName))));
                 final Map column = cite.next();
 
-                final int sqlType = (Integer)column.get(Column.DATA_TYPE);
+                final int sqlType = ((Number)column.get(Column.DATA_TYPE)).intValue();
                 final String sqlTypeName = (String) column.get(Column.TYPE_NAME);
                 Class columnType = dialect.getJavaType(sqlType, sqlTypeName);
 
@@ -488,7 +488,7 @@ public final class DataBaseModel {
                         continue;
                     }
 
-                    final int sqlType = (Integer) result.get(Column.DATA_TYPE);
+                    final int sqlType = ((Number) result.get(Column.DATA_TYPE)).intValue();
                     final String sqlTypeName = (String) result.get(Column.TYPE_NAME);
                     final Class columnType = dialect.getJavaType(sqlType, sqlTypeName);
                     final ColumnMetaModel col = new ColumnMetaModel(schemaName, tableName, columnName,
@@ -532,7 +532,7 @@ public final class DataBaseModel {
                 final String refSchemaName = (String)result.get(ImportedKey.PKTABLE_SCHEM);
                 final String refTableName = (String)result.get(ImportedKey.PKTABLE_NAME);
                 final String refColumnName = (String)result.get(ImportedKey.PKCOLUMN_NAME);
-                final int deleteRule = (Integer)result.get(ImportedKey.DELETE_RULE);
+                final int deleteRule = ((Number)result.get(ImportedKey.DELETE_RULE)).intValue();
                 final boolean deleteCascade = DatabaseMetaData.importedKeyCascade == deleteRule;
                 final RelationMetaModel relation = new RelationMetaModel(localColumn,
                         refSchemaName, refTableName, refColumnName, true, deleteCascade);
@@ -555,7 +555,7 @@ public final class DataBaseModel {
                 final String refSchemaName = (String)result.get(ExportedKey.FKTABLE_SCHEM);
                 final String refTableName = (String)result.get(ExportedKey.FKTABLE_NAME);
                 final String refColumnName = (String)result.get(ExportedKey.FKCOLUMN_NAME);
-                final int deleteRule = (Integer)result.get(ImportedKey.DELETE_RULE);
+                final int deleteRule = ((Number)result.get(ImportedKey.DELETE_RULE)).intValue();
                 final boolean deleteCascade = DatabaseMetaData.importedKeyCascade == deleteRule;
                 table.exportedKeys.add(new RelationMetaModel(localColumn,
                         refSchemaName, refTableName, refColumnName, false, deleteCascade));
@@ -595,8 +595,8 @@ public final class DataBaseModel {
         final String schemaName     = (String) columnSet.get(Column.TABLE_SCHEM);
         final String tableName      = (String) columnSet.get(Column.TABLE_NAME);
         final String columnName     = (String) columnSet.get(Column.COLUMN_NAME);
-        final int columnSize        = (Integer)columnSet.get(Column.COLUMN_SIZE);
-        final int columnDataType    = (Integer)columnSet.get(Column.DATA_TYPE);
+        final int columnSize        = ((Number)columnSet.get(Column.COLUMN_SIZE)).intValue();
+        final int columnDataType    = ((Number)columnSet.get(Column.DATA_TYPE)).intValue();
         final String columnTypeName = (String) columnSet.get(Column.TYPE_NAME);
         final String columnNullable = (String) columnSet.get(Column.IS_NULLABLE);
 
