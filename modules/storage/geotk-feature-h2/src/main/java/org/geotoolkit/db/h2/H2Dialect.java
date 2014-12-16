@@ -32,6 +32,7 @@ import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.Date;
+import java.sql.NClob;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -78,6 +79,7 @@ import org.geotoolkit.filter.capability.DefaultTemporalCapabilities;
 import org.geotoolkit.filter.capability.DefaultTemporalOperators;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.IdentifiedObjects;
+import org.h2.jdbc.JdbcClob;
 import org.opengis.coverage.Coverage;
 import org.opengis.filter.Filter;
 import org.opengis.filter.PropertyIsBetween;
@@ -391,7 +393,7 @@ final class H2Dialect extends AbstractSQLDialect{
 
     @Override
     public boolean supportGlobalMetadata() {
-        return true;
+        return false;
     }
     
     @Override
@@ -467,24 +469,7 @@ final class H2Dialect extends AbstractSQLDialect{
 
     @Override
     public String getColumnSequence(Connection cx, String schemaName, String tableName, String columnName) throws SQLException {
-        final Statement st = cx.createStatement();
-        try {
-            final StringBuilder sb = new StringBuilder();
-            sb.append("SELECT pg_get_serial_sequence('");
-            encodeSchemaAndTableName(sb, schemaName, tableName);
-            sb.append("', '").append(columnName).append("')");
-            final String sql = sb.toString();
-            final ResultSet rs = st.executeQuery(sql);
-            try {
-                if(rs.next()){
-                    return rs.getString(1);
-                }
-            } finally {
-                closeSafe(featurestore.getLogger(),rs);
-            }
-        } finally {
-            closeSafe(featurestore.getLogger(),st);
-        }
+        //TODO
         return null;
     }
 
@@ -504,25 +489,8 @@ final class H2Dialect extends AbstractSQLDialect{
             return version;
         }
         
-        Connection cx = null;
-        Statement statement = null;
-        ResultSet result = null;        
-        try {
-            cx = featurestore.getDataSource().getConnection();
-            statement = cx.createStatement();
-            result = statement.executeQuery("SELECT postgis_lib_version();");
-
-            if (result.next()) {
-                version = new Version(result.getString(1));
-            }else{
-                version = new Version("0.0.0");
-            }
-        } catch(SQLException ex){
-            featurestore.getLogger().log(Level.WARNING, ex.getMessage(),ex);
-        } finally {
-            JDBCFeatureStoreUtilities.closeSafe(featurestore.getLogger(),cx,statement,result);
-        }
-        
+        //TODO
+        version = new Version("1.0.0");
         return version;
     }
     
@@ -1098,7 +1066,12 @@ final class H2Dialect extends AbstractSQLDialect{
                 return null;
             }
         }else{
-            return rs.getObject(i);
+            if(String.class.equals(binding)){
+                //solve nclob string
+                return rs.getString(i);
+            }else{
+                return rs.getObject(i);
+            }
         }
     }
     
