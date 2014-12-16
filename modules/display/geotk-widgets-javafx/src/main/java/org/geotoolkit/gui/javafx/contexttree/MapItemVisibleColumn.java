@@ -17,17 +17,11 @@
 
 package org.geotoolkit.gui.javafx.contexttree;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.geometry.Insets;
-import javafx.scene.control.ToggleButton;
+import javafx.scene.control.TreeTableCell;
 import javafx.scene.control.TreeTableColumn;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.Border;
-import javafx.util.Callback;
+import javafx.scene.input.MouseEvent;
 import org.geotoolkit.font.FontAwesomeIcons;
 import org.geotoolkit.gui.javafx.util.FXUtilities;
-import org.geotoolkit.gui.javafx.util.ToggleButtonTreeTableCell;
 
 /**
  *
@@ -35,32 +29,41 @@ import org.geotoolkit.gui.javafx.util.ToggleButtonTreeTableCell;
  */
 public class MapItemVisibleColumn extends TreeTableColumn{
 
-    public MapItemVisibleColumn() {
-        setCellValueFactory(param -> FXUtilities.beanProperty(((CellDataFeatures)param).getValue().getValue(), "visible", Boolean.class));     
+    public MapItemVisibleColumn() { 
         setEditable(true);
         setPrefWidth(26);
         setMinWidth(26);
         setMaxWidth(26);
-                        
-        setCellFactory(new Callback() {
-            @Override
-            public Object call(Object param) {
-                final ToggleButtonTreeTableCell tg = new ToggleButtonTreeTableCell();
-                final ToggleButton tb = tg.getToggleButton();
-                tb.setBorder(Border.EMPTY);
-                tb.setFont(FXUtilities.FONTAWESOME);
-                tb.setText(FontAwesomeIcons.ICON_EYE);
-                tb.setBackground(Background.EMPTY);
-                tb.setPadding(Insets.EMPTY);
-                tb.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                    @Override
-                    public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                        tb.setText(newValue ?FontAwesomeIcons.ICON_EYE : FontAwesomeIcons.ICON_EYE_SLASH);
-                    }
-                });
-                return tg;
+                    
+        setCellValueFactory(param -> FXUtilities.beanProperty(((CellDataFeatures)param).getValue().getValue(), "visible", Boolean.class));    
+        setCellFactory((Object param) -> new VisibleCell());
+    }
+    
+    private final class VisibleCell extends TreeTableCell{
+        
+        public VisibleCell() {
+            setFont(FXUtilities.FONTAWESOME);
+            setOnMouseClicked(this::mouseClick);
+        }
+
+        private void mouseClick(MouseEvent event){
+            if(isEditing()){
+                final Boolean val = getText().equals(FontAwesomeIcons.ICON_EYE_SLASH);
+                commitEdit(val);
             }
-        });
+        }
+        
+        @Override
+        protected void updateItem(Object item, boolean empty) {
+            super.updateItem(item, empty);
+            
+            if(!empty){
+                setText(Boolean.TRUE.equals(item) ? FontAwesomeIcons.ICON_EYE : FontAwesomeIcons.ICON_EYE_SLASH);
+            }else{
+                setText(null);
+            }
+            
+        }
     }
     
 }
