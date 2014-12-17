@@ -14,9 +14,8 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.db.postgres;
+package org.geotoolkit.db.h2;
 
-import org.geotoolkit.db.h2.H2FeatureStoreFactory;
 import java.util.Iterator;
 import org.geotoolkit.data.FeatureStoreFactory;
 import org.geotoolkit.data.FeatureStoreFinder;

@@ -43,7 +43,7 @@ import org.opengis.parameter.ParameterValueGroup;
 public class H2FeatureStoreFactory extends AbstractJDBCFeatureStoreFactory{
 
     /** factory identification **/
-    public static final String NAME = "h2";
+    public static final String NAME = "h2gis";
     public static final DefaultServiceIdentification IDENTIFICATION;
     static {
         IDENTIFICATION = new DefaultServiceIdentification();
@@ -114,5 +114,5 @@ public class H2FeatureStoreFactory extends AbstractJDBCFeatureStoreFactory{
     public FactoryMetadata getMetadata() {
         return new DefaultFactoryMetadata(DataType.VECTOR, false, false, false);
     }
-
+    
 }

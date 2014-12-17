@@ -27,12 +27,12 @@ import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.WKBReader;
+import com.vividsolutions.jts.io.WKTReader;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.Date;
-import java.sql.NClob;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -45,7 +45,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
-import net.iharder.Base64;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.Version;
@@ -53,7 +52,6 @@ import org.geotoolkit.db.DefaultJDBCFeatureStore;
 import org.geotoolkit.db.FilterToSQL;
 import org.geotoolkit.db.JDBCFeatureStore;
 import org.geotoolkit.db.JDBCFeatureStoreUtilities;
-import static org.geotoolkit.db.JDBCFeatureStoreUtilities.*;
 import org.geotoolkit.db.dialect.AbstractSQLDialect;
 import org.geotoolkit.db.reverse.ColumnMetaModel;
 import org.geotoolkit.db.reverse.MetaDataConstants;
@@ -79,7 +77,6 @@ import org.geotoolkit.filter.capability.DefaultTemporalCapabilities;
 import org.geotoolkit.filter.capability.DefaultTemporalOperators;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.IdentifiedObjects;
-import org.h2.jdbc.JdbcClob;
 import org.opengis.coverage.Coverage;
 import org.opengis.filter.Filter;
 import org.opengis.filter.PropertyIsBetween;
@@ -128,6 +125,7 @@ import org.opengis.util.FactoryException;
  */
 final class H2Dialect extends AbstractSQLDialect{
 
+    private static final String SCHEMA_PUBLIC = "PUBLIC";
     private static final String GEOM_ENCODING = "Encoding";
     private static enum GeometryEncoding{
         RAW,
@@ -269,7 +267,7 @@ final class H2Dialect extends AbstractSQLDialect{
         CLASS_TO_TYPENAME.put(Coverage.class, "raster");
 
 
-        //POSTGIS extension
+        //H2GIS extension
         TYPENAME_TO_CLASS.put("GEOMETRY", Geometry.class);
         TYPENAME_TO_CLASS.put("GEOGRAPHY", Geometry.class);
         TYPENAME_TO_CLASS.put("POINT", Point.class);
@@ -286,7 +284,6 @@ final class H2Dialect extends AbstractSQLDialect{
         TYPENAME_TO_CLASS.put("MULTIPOLYGONM", MultiPolygon.class);
         TYPENAME_TO_CLASS.put("GEOMETRYCOLLECTION", GeometryCollection.class);
         TYPENAME_TO_CLASS.put("GEOMETRYCOLLECTIONM", GeometryCollection.class);
-        TYPENAME_TO_CLASS.put("RASTER", Coverage.class);
         
         CLASS_TO_TYPENAME.put(Geometry.class, "GEOMETRY");
         CLASS_TO_TYPENAME.put(Point.class, "POINT");
@@ -310,9 +307,6 @@ final class H2Dialect extends AbstractSQLDialect{
         IGNORE_TABLES.add("spatial_ref_sys");
         IGNORE_TABLES.add("geometry_columns");
         IGNORE_TABLES.add("geography_columns");
-        //postgis 2 raster
-        IGNORE_TABLES.add("raster_columns");
-        IGNORE_TABLES.add("raster_overviews");
      
         
         //filter capabilities
@@ -540,43 +534,18 @@ final class H2Dialect extends AbstractSQLDialect{
             res = Double.MAX_VALUE;
         }
 
-        //postgis raster type
-        final Class binding = gatt.getType().getBinding();
-        if(Coverage.class.isAssignableFrom(binding)){
-            sql.append("encode(st_asbinary(");
-            encodeColumnName(sql, gatt.getLocalName());
-            sql.append("),'base64')");
-            return;
-        }
-                
-        
         final CoordinateReferenceSystem crs = gatt.getCoordinateReferenceSystem();
         final int dimensions = (crs == null) ? 2 : crs.getCoordinateSystem().getDimension();
-        sql.append("encode(");
-
         if(res > 0){
-            if (dimensions > 2) {
-                sql.append("ST_AsEWKB(st_simplify(");
-                encodeColumnName(sql, gatt.getLocalName());
-                sql.append(",").append(res).append(")");
-            } else {
-                sql.append("ST_AsBinary(st_simplify(");
-                encodeColumnName(sql, gatt.getLocalName());
-                sql.append(",").append(res).append(")"); 
-            }
+            sql.append("ST_AsBinary(st_simplify(");
+            encodeColumnName(sql, gatt.getLocalName());
+            sql.append(",").append(res).append(")");
             sql.append(") ");
         }else{
-            if (dimensions > 2) {
-                sql.append("ST_AsEWKB(");
-                encodeColumnName(sql, gatt.getLocalName());
-            } else {
-                sql.append("ST_AsBinary(");
-                encodeColumnName(sql, gatt.getLocalName());
-            }
+            sql.append("ST_AsBinary(");
+            encodeColumnName(sql, gatt.getLocalName());
             sql.append(") ");
         }
-
-        sql.append(",'base64')");
     }
 
     @Override
@@ -611,7 +580,17 @@ final class H2Dialect extends AbstractSQLDialect{
                 //this breaks the column geometry type constraint so we replace those by null
                 sql.append("NULL");
             }else{
-                sql.append("st_geomfromtext('").append(value.toText()).append("', ").append(srid).append(")");
+                
+                try{
+                    final WKTReader reader = new WKTReader();
+                    Geometry g = reader.read(value.toText());
+                    System.out.println(g);
+                }catch(Exception ex){
+                    ex.printStackTrace();
+                }
+                
+                //sql.append("'").append(value.toText()).append("'");
+                sql.append("ST_GeomFromText('").append(value.toText()).append("', ").append(srid).append(")");
             }
         }
     }
@@ -637,7 +616,7 @@ final class H2Dialect extends AbstractSQLDialect{
     public void postCreateTable(String schemaName, final FeatureType featureType,
             final Connection cx) throws SQLException{
         if (schemaName == null) {
-            schemaName = "public";
+            schemaName = SCHEMA_PUBLIC;
         }
         final String tableName = featureType.getName().getLocalPart();
 
@@ -711,17 +690,26 @@ final class H2Dialect extends AbstractSQLDialect{
                     featurestore.getLogger().fine( sql );
                     st.execute( sql );
 
-                    sb = new StringBuilder("INSERT INTO GEOMETRY_COLUMNS VALUES ('',");
-                    sb.append('\'').append(schemaName).append("',");
-                    sb.append('\'').append(tableName).append("',");
-                    sb.append('\'').append(gd.getLocalName()).append("',");
-                    sb.append(dimensions).append(',');
-                    sb.append(srid).append(',');
-                    sb.append('\'').append(geomType).append("')");
+                    sb = new StringBuilder("ALTER TABLE ");
+                    encodeSchemaAndTableName(sb, schemaName, tableName);
+                    sb.append(" ALTER COLUMN ");
+                    sb.append('\"').append(gd.getLocalName()).append('\"');
+                    sb.append(" TYPE ");
+                    sb.append(geomType);
                     sql = sb.toString();
                     featurestore.getLogger().fine( sql );
                     st.execute( sql );
-
+                    
+                    sb = new StringBuilder("ALTER TABLE ");
+                    encodeSchemaAndTableName(sb, schemaName, tableName);
+                    sb.append(" ADD CONSTRAINT SRIDCONSTR CHECK ST_SRID(");
+                    sb.append('\"').append(gd.getLocalName()).append('\"');
+                    sb.append(") = ");
+                    sb.append(srid);
+                    sql = sb.toString();
+                    featurestore.getLogger().fine( sql );
+                    st.execute( sql );
+                    
                     // add srid checks
                     if (srid > -1) {
                         sb = new StringBuilder("ALTER TABLE ");
@@ -735,40 +723,15 @@ final class H2Dialect extends AbstractSQLDialect{
                         featurestore.getLogger().fine( sql );
                         st.execute(sql);
                     }
-
-                    // add dimension checks
-
-                    sb = new StringBuilder("ALTER TABLE ");
-                    encodeSchemaAndTableName(sb, schemaName, tableName);
-                    sb.append(" ADD CONSTRAINT \"enforce_dims_");
-                    sb.append(gd.getLocalName()).append('"');
-                    sb.append(" CHECK (st_ndims(\"").append(gd.getLocalName()).append("\") = 2)");
-                    sql = sb.toString();
-                    featurestore.getLogger().fine(sql);
-                    st.execute(sql);
-
-                    // add geometry type checks
-                    if(!"geometry".equalsIgnoreCase(geomType)){
-                        sb = new StringBuilder("ALTER TABLE ");
-                        encodeSchemaAndTableName(sb, schemaName, tableName);
-                        sb.append(" ADD CONSTRAINT \"enforce_geotype_");
-                        sb.append(gd.getLocalName()).append('"');
-                        sb.append(" CHECK (st_geometrytype(");
-                        sb.append('"').append(gd.getLocalName()).append('"');
-                        sb.append(") = '").append(TYPE_TO_ST_TYPE_MAP.get(geomType)).append("'::text OR \"");
-                        sb.append(gd.getLocalName()).append('"').append(" IS NULL)");
-                        sql = sb.toString();
-                        featurestore.getLogger().fine(sql);
-                        st.execute(sql);
-                    }
-
+                    
                     // add the spatial index
-                    sb = new StringBuilder("CREATE INDEX \"spatial_").append(tableName);
+                    sb = new StringBuilder("CREATE SPATIAL INDEX \"spatial_").append(tableName);
                     sb.append('_').append(gd.getLocalName().toLowerCase()).append('"');
                     sb.append(" ON ");
                     encodeSchemaAndTableName(sb, schemaName, tableName);
-                    sb.append(" USING GIST (");
-                    sb.append('"').append(gd.getLocalName()).append('"').append(')');
+                    sb.append("(");
+                    sb.append('"').append(gd.getLocalName()).append('"');
+                    sb.append(")");
                     sql = sb.toString();
                     featurestore.getLogger().fine(sql);
                     st.execute(sql);
@@ -1109,7 +1072,7 @@ final class H2Dialect extends AbstractSQLDialect{
                     wkbReader.set(reader);
                 }
                 try {
-                    return (Geometry) reader.read(Base64.decode(rs.getBytes(column)));
+                    return (Geometry) reader.read(rs.getBytes(column));
                 } catch (ParseException ex) {
                     throw new IOException(ex.getMessage(),ex);
                 }
@@ -1150,7 +1113,7 @@ final class H2Dialect extends AbstractSQLDialect{
                 final byte[] encodedValue = rs.getBytes(column);
                 if (encodedValue != null) {
                     try {
-                        return (Geometry) reader.read(Base64.decode(encodedValue));
+                        return (Geometry) reader.read(encodedValue);
                     } catch (ParseException ex) {
                         throw new IOException(ex.getMessage(),ex);
                     }

@@ -21,6 +21,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import javax.sql.DataSource;
 import org.geotoolkit.data.query.DefaultQueryCapabilities;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryCapabilities;
@@ -35,6 +36,7 @@ import org.geotoolkit.version.VersionControl;
 import org.geotoolkit.version.VersioningException;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.Name;
+import org.h2gis.h2spatial.CreateSpatialExtension;
 import org.opengis.parameter.ParameterValueGroup;
 
 /**
@@ -69,6 +71,25 @@ public class H2FeatureStore extends DefaultJDBCFeatureStore{
         Parameters.getOrCreate(H2FeatureStoreFactory.USER,    params).setValue(user);
         Parameters.getOrCreate(H2FeatureStoreFactory.PASSWORD,params).setValue(password);
         return params;
+    }
+
+    @Override
+    public void setDataSource(DataSource ds) {
+        super.setDataSource(ds);
+        initH2GIS(ds);
+    }
+    
+    public static void initH2GIS(DataSource ds){
+        try (Connection cnx = ds.getConnection()) {
+            CreateSpatialExtension.initSpatialExtension(cnx);
+//            final Statement stmt = cnx.createStatement();
+//            stmt.execute("CREATE ALIAS IF NOT EXISTS SPATIAL_INIT FOR" +
+//                    " \"org.h2gis.h2spatial.CreateSpatialExtension.initSpatialExtension\";");
+//            stmt.execute("CALL SPATIAL_INIT();");
+            cnx.commit();
+        }catch(SQLException ex){
+            ex.printStackTrace();
+        }
     }
     
     @Override
