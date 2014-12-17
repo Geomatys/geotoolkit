@@ -269,11 +269,11 @@ public class FXStyleClassifSinglePane extends FXLayerStylePane {
             final MutableStyleFactory sf = GeotkFX.getStyleFactory();
             final FilterFactory ff = GeotkFX.getFilterFactory();
             
-            if(Polygon.class.isAssignableFrom(geoClass) || MultiPolygon.class.isAssignableFrom(geoClass)){
+            if(geoClass!=null && (Polygon.class.isAssignableFrom(geoClass) || MultiPolygon.class.isAssignableFrom(geoClass))){
                 final Stroke stroke = sf.stroke(Color.BLACK, 1);
                 final Fill fill = sf.fill(Color.BLUE);
                 template = sf.polygonSymbolizer(stroke,fill,null);
-            }else if(LineString.class.isAssignableFrom(geoClass) || MultiLineString.class.isAssignableFrom(geoClass)){
+            }else if(geoClass!=null && (LineString.class.isAssignableFrom(geoClass) || MultiLineString.class.isAssignableFrom(geoClass))){
                 final Stroke stroke = sf.stroke(Color.BLUE, 2);
                 template = sf.lineSymbolizer(stroke,null);
             }else{
