@@ -192,6 +192,7 @@ public final class DimapConstants {
 
     // RASTER CS tag group -----------------------------------------------------
     public static final String TAG_RASTER_CS = "Raster_CS";
+    public static final String TAG_RASTER_CS_TYPE = "RASTER_CS_TYPE";
     
 
     // Image display information -----------------------------------------------
@@ -249,6 +250,20 @@ public final class DimapConstants {
     public static final String TAG_THRESHOLDS = "Thresholds";
     public static final String TAG_LOW_THRESHOLD = "LOW_THRESHOLD";
     public static final String TAG_HIGH_THRESHOLD = "HIGH_THRESHOLD";
+    
+    //Data Strip tag group ------------------------------------------------
+    public static final String TAG_DATA_STRIP = "Data_Strip";
+    public static final String TAG_SENSOR_CALIBRATION = "Sensor_Calibration";
+    
+    public static final String TAG_SPECTRAL_SENSITIVITIES = "Spectral_Sensitivities";
+    public static final String TAG_BAND_SPECTRAL_SENSITIVITIES = "Band_Spectral_Sensitivities";
+    public static final String TAG_WAVELENGTH_STEP = "WAVELENGTH_STEP";
+    public static final String TAG_FIRST_WAVELENGTH_VALUE = "FIRST_WAVELENGTH_VALUE";
+    
+    public static final String TAG_SOLAR_IRRADIANCE = "Solar_Irradiance";
+    public static final String TAG_BAND_SOLAR_IRRADIANCE = "Band_Solar_Irradiance";
+    public static final String TAG_SOLAR_IRRADIANCE_VALUE = "SOLAR_IRRADIANCE_VALUE";
+    
     
     private DimapConstants(){}
 
