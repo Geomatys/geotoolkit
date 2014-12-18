@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2011-2013, Geomatys
+ *    (C) 2014, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -54,7 +54,6 @@ import org.geotoolkit.db.JDBCFeatureStore;
 import org.geotoolkit.db.JDBCFeatureStoreUtilities;
 import org.geotoolkit.db.dialect.AbstractSQLDialect;
 import org.geotoolkit.db.reverse.ColumnMetaModel;
-import org.geotoolkit.db.reverse.MetaDataConstants;
 import org.geotoolkit.db.reverse.PrimaryKey;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.AttributeTypeBuilder;
@@ -929,45 +928,6 @@ final class H2Dialect extends AbstractSQLDialect{
             JDBCFeatureStoreUtilities.closeSafe(featurestore.getLogger(), null,statement,result);
         }
         
-        if(srid==null || srid==0){
-            //search the raster columns view
-            try {
-                final StringBuilder sb = new StringBuilder("SELECT SRID FROM RASTER_COLUMNS WHERE ");
-                if (schemaName != null && !schemaName.isEmpty()) {
-                    sb.append("R_TABLE_SCHEMA = '").append(schemaName).append("' ");
-                    sb.append(" AND ");
-                }
-                sb.append("R_TABLE_NAME = '").append(tableName).append("' ");
-                sb.append("AND R_RASTER_COLUMN = '").append(columnName).append('\'');
-                final String sqlStatement = sb.toString();
-
-                featurestore.getLogger().log(Level.FINE, "Raster type check; {0} ", sqlStatement);
-                statement = cx.createStatement();
-                result = statement.executeQuery(sqlStatement);
-
-                if (result.next()) {
-                    srid = result.getInt(1);
-                }
-            } finally {
-                JDBCFeatureStoreUtilities.closeSafe(featurestore.getLogger(), null,statement,result);
-            }
-        }
-        
-        if(srid==null || srid==0){
-            //still nothing ? search in the comment, if it is a raster column the srid
-            //can not be set until there is a real data. so we stored the srid in the comment
-            final String comments = (String) metas.get(MetaDataConstants.Column.REMARKS);
-            if(comments != null){
-                try{
-                    srid = Integer.valueOf(comments);
-                }catch(NumberFormatException ex){
-                    //we tryed
-                }
-            }
-            
-        }
-        
-
         return srid;
     }
 

@@ -37,6 +37,7 @@ import org.geotoolkit.version.VersioningException;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.Name;
 import org.h2gis.h2spatial.CreateSpatialExtension;
+import org.h2gis.utilities.JDBCUtilities;
 import org.opengis.parameter.ParameterValueGroup;
 
 /**
@@ -81,12 +82,22 @@ public class H2FeatureStore extends DefaultJDBCFeatureStore{
     
     public static void initH2GIS(DataSource ds){
         try (Connection cnx = ds.getConnection()) {
-            CreateSpatialExtension.initSpatialExtension(cnx);
-//            final Statement stmt = cnx.createStatement();
+            
+            //check if the spatial extension is already set
+            try{
+                final Statement stmt = cnx.createStatement();
+                final ResultSet rs = stmt.executeQuery("SELECT * FROM geometry_columns LIMIT 1");
+                rs.close();
+                stmt.close();
+            }catch(SQLException ex){
+                //init spatial extension
+                CreateSpatialExtension.initSpatialExtension(cnx);
+                cnx.commit();
 //            stmt.execute("CREATE ALIAS IF NOT EXISTS SPATIAL_INIT FOR" +
 //                    " \"org.h2gis.h2spatial.CreateSpatialExtension.initSpatialExtension\";");
 //            stmt.execute("CALL SPATIAL_INIT();");
-            cnx.commit();
+            }
+            
         }catch(SQLException ex){
             ex.printStackTrace();
         }
