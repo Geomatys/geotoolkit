@@ -69,6 +69,10 @@ public class BeanStore extends AbstractFeatureStore implements StorageListener{
         }
     }
     
+    public Collection<BeanFeatureSupplier> getBeanSuppliers(){
+        return Collections.unmodifiableCollection(types.values());
+    }
+    
     @Override
     public FeatureStoreFactory getFactory() {
         return null;
