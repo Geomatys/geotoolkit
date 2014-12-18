@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.data.memory.GenericQueryFeatureIterator;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.query.QueryUtilities;
@@ -64,7 +65,9 @@ public class DefaultTextStmtFeatureCollection extends AbstractFeatureCollection<
      */
     @Override
     public FeatureCollection<Feature> subCollection(final Query query) throws DataStoreException {
-        return getSession().getFeatureCollection(QueryUtilities.subQuery(this.query, query));
+        //we can't make a subcollection, use generic wrapping
+        final FeatureCollection col = getSession().getFeatureCollection(this.query);
+        return GenericQueryFeatureIterator.wrap(col, query);
     }
 
     /**

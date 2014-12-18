@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2011-2013, Geomatys
+ *    (C) 2011-2014, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -20,6 +20,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.logging.Level;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
@@ -43,7 +44,7 @@ import org.opengis.filter.identity.FeatureId;
  * @module pending
  */
 public class JDBCFeatureReader implements FeatureReader<FeatureType, Feature> {
-
+    
     protected final FeatureType type;
     protected final DefaultJDBCFeatureStore store;
     protected final PrimaryKey pkey;
@@ -64,6 +65,7 @@ public class JDBCFeatureReader implements FeatureReader<FeatureType, Feature> {
     protected final boolean release ;
     /** the next feature */
     private Feature feature = null;
+    protected boolean closed = false;
     
     public JDBCFeatureReader(final DefaultJDBCFeatureStore store, final String sql, 
             final FeatureType type, Connection cnx, boolean release, final Hints hints) throws SQLException,DataStoreException {
@@ -155,6 +157,7 @@ public class JDBCFeatureReader implements FeatureReader<FeatureType, Feature> {
     
     @Override
     public void close() {
+        closed = true;
         closeSafe(store.getLogger(),(release)?cx:null,st,rs);
     }
 
@@ -162,5 +165,16 @@ public class JDBCFeatureReader implements FeatureReader<FeatureType, Feature> {
     public void remove() {
         throw new UnsupportedOperationException("Not supported.");
     }
+
+    @Override
+    protected void finalize() throws Throwable {
+        if(release && !closed){
+            store.getLogger().log(Level.WARNING, "A JDBC Reader has not been closed");
+            close();
+        }
+        super.finalize();
+    }
+    
+    
     
 }
