@@ -836,7 +836,8 @@ final class H2Dialect extends AbstractSQLDialect{
 
 
     @Override
-    public void decodeGeometryColumnType(final AttributeTypeBuilder atb, final Connection cx, final ResultSet rs, final int columnIndex) throws SQLException {
+    public void decodeGeometryColumnType(final AttributeTypeBuilder atb, final Connection cx, 
+            final ResultSet rs, final int columnIndex, boolean customQuery) throws SQLException {
 
         final ResultSetMetaData metadata = (ResultSetMetaData)rs.getMetaData();
         //TODO
