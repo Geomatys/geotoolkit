@@ -932,7 +932,8 @@ final class PostgresDialect extends AbstractSQLDialect{
 
 
     @Override
-    public void decodeGeometryColumnType(final AttributeTypeBuilder atb, final Connection cx, final ResultSet rs, final int columnIndex) throws SQLException {
+    public void decodeGeometryColumnType(final AttributeTypeBuilder atb, final Connection cx, 
+            final ResultSet rs, final int columnIndex, boolean customQuery) throws SQLException {
 
         final Jdbc4ResultSetMetaData metadata = (Jdbc4ResultSetMetaData)rs.getMetaData();
 
@@ -949,7 +950,7 @@ final class PostgresDialect extends AbstractSQLDialect{
         }
 
         String gType = null;
-        if(tableName == null || tableName.isEmpty()){
+        if(tableName == null || tableName.isEmpty() || customQuery){
             //this column informations seems to come from a custom sql query
             //the result will be the natural encoding of postgis which is hexadecimal EWKB
             atb.addUserData(GEOM_ENCODING, PostgresDialect.GeometryEncoding.HEXEWKB);

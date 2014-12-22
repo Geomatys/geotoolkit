@@ -141,7 +141,8 @@ public interface SQLDialect {
             final String typeName, final int datatype, final String schemaName,
             final String tableName, final String columnName) throws SQLException;
 
-    void decodeGeometryColumnType(final AttributeTypeBuilder atb, final Connection cx, final ResultSet rs, final int columnIndex) throws SQLException;
+    void decodeGeometryColumnType(final AttributeTypeBuilder atb, final Connection cx, 
+            final ResultSet rs, final int columnIndex, boolean customquery) throws SQLException;
     
     Integer getGeometrySRID(final String schemaName, final String tableName,
             final String columnName, Map metas, final Connection cx) throws SQLException;

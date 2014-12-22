@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2011, Geomatys
+ *    (C) 2011-2014, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -16,10 +16,8 @@
  */
 package org.geotoolkit.db.mysql;
 
-import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryCollection;
-import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.MultiLineString;
 import com.vividsolutions.jts.geom.MultiPoint;
@@ -502,7 +500,7 @@ public class MySQLDialect extends AbstractSQLDialect {
     }
 
     @Override
-    public void decodeGeometryColumnType(AttributeTypeBuilder atb, Connection cx, ResultSet rs, int columnIndex) throws SQLException {
+    public void decodeGeometryColumnType(AttributeTypeBuilder atb, Connection cx, ResultSet rs, int columnIndex, boolean customQuery) throws SQLException {
         throw new UnsupportedOperationException("Geometry types not supported in MySQL.");
     }
 

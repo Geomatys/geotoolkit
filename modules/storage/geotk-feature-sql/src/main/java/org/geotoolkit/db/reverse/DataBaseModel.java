@@ -683,7 +683,7 @@ public final class DataBaseModel {
                     final Class type = dialect.getJavaType(sqlType, sqlTypeName);
                     if (type.equals(Geometry.class)) {
                         // try to determine the real geometric type
-                        dialect.decodeGeometryColumnType(atb, cx, result, i);
+                        dialect.decodeGeometryColumnType(atb, cx, result, i, true);
                     } else {
                         atb.setName(columnName); // why so this a sencond time ?
                         atb.setBinding(type);

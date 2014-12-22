@@ -67,7 +67,10 @@ public abstract class AbstractSQLDialect implements SQLDialect {
 
     @Override
     public void encodeTableName(StringBuilder sql, String name) {
-        sql.append(getTableEscape()).append(name).append(getTableEscape());
+        final String tableEscape = getTableEscape();
+        //we double the character to escape it
+        name = name.replaceAll(tableEscape,tableEscape+tableEscape);
+        sql.append(tableEscape).append(name).append(tableEscape);
     }
     
     @Override

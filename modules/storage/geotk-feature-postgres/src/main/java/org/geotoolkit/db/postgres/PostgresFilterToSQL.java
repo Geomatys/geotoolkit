@@ -239,7 +239,7 @@ public class PostgresFilterToSQL implements FilterToSQL {
                     String encoding = null;
                     try {
                         encoding = ObjectConverters.convert(o, String.class);
-                    } catch (UnconvertibleObjectException e) {
+                    } catch (UnconvertibleObjectException | UnsupportedOperationException e) {
                         Logging.recoverableException(PostgresFilterToSQL.class, "writeValue", e);
                     }
                     if (encoding == null) {
@@ -260,7 +260,7 @@ public class PostgresFilterToSQL implements FilterToSQL {
             String encoded = null;
             try {
                 encoded = ObjectConverters.convert(candidate, String.class);
-            } catch (UnconvertibleObjectException e) {
+            } catch (UnconvertibleObjectException | UnsupportedOperationException e) {
                 Logging.recoverableException(PostgresFilterToSQL.class, "writeValue", e);
             }
             if (encoded == null) {

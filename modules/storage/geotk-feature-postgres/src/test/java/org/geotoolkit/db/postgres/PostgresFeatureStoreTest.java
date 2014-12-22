@@ -1205,5 +1205,49 @@ public class PostgresFeatureStoreTest {
         
     }
     
+    /**
+     * Test ugly named table
+     * 
+     * @throws DataStoreException
+     * @throws VersioningException 
+     */
+    @Test
+    public void testUglyTableName() throws Exception{
+        reload(true);            
+        
+        final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
+        ftb.setName("test'te#st$'test\"'test");
+        ftb.add("text", String.class);
+        final FeatureType ft = ftb.buildFeatureType();
+        
+        store.createFeatureType(ft.getName(), ft);
+        final FeatureType resType = store.getFeatureType(store.getNames().iterator().next());
+        
+        final Feature record = FeatureUtilities.defaultFeature(resType, "0");
+        record.getProperty("text").setValue("un'deux'trois'quatre");
+                
+        List<FeatureId> addedIds = store.addFeatures(resType.getName(), Collections.singleton(record));
+
+        assertEquals(1, addedIds.size());
+        assertEquals(new DefaultFeatureId("test'te#st$'test\"'test.1"), addedIds.get(0));
+        
+        final Query query = QueryBuilder.all(resType.getName());
+        final FeatureReader ite = store.getFeatureReader(query);
+        boolean found = false;
+        try{
+            while(ite.hasNext()){
+                final Feature feature = ite.next();
+                Object val = feature.getPropertyValue("text");
+                assertEquals("un'deux'trois'quatre", val);
+                found = true;
+            }
+        }finally{
+            ite.close();
+        }
+        
+        assertTrue(found);        
+        
+    }
+    
     
 }
