@@ -72,6 +72,7 @@ import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.geotoolkit.feature.type.ComplexType;
 import org.geotoolkit.feature.type.PropertyType;
 import org.opengis.util.FactoryException;
+import org.apache.sis.util.Numbers;
 
 
 /**
@@ -472,7 +473,7 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                 LOGGER.log(Level.INFO, "Failed to parser binary64 : "+ex.getMessage(),ex);
             }
         }else{
-            value = ObjectConverters.convert(value, type.getBinding());
+            value = ObjectConverters.convert(value, Numbers.primitiveToWrapper(type.getBinding()));
         }
         return value;
     }
