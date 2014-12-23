@@ -391,6 +391,11 @@ public class WarpTransform2D extends AbstractMathTransform2D implements Serializ
         return ptDst;
     }
 
+    @Override
+    public Matrix derivative(Point2D point) throws TransformException {
+        throw new TransformException("Derivative not implemented yet.");
+    }
+    
     /**
      * Transforms a single source coordinate (usually pixel indices) into destination coordinate
      * (usually "real world" coordinates).
