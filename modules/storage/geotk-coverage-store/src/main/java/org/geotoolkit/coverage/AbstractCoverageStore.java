@@ -60,6 +60,7 @@ public abstract class AbstractCoverageStore extends CoverageStore {
     protected final ParameterValueGroup parameters;
     protected final Set<StorageListener> listeners = new HashSet<>();
 
+    private final HashMap<Name, CoverageReference> cachedRefs = new HashMap<>();
 
     protected AbstractCoverageStore(final ParameterValueGroup params) {
         this.parameters = params;
@@ -136,13 +137,13 @@ public abstract class AbstractCoverageStore extends CoverageStore {
 
     @Override
     public final Set<Name> getNames() throws DataStoreException {
-        final Map<Name,CoverageReference> map = listReferences(getRootNode(), new HashMap<Name, CoverageReference>());
+        final Map<Name,CoverageReference> map = listReferences();
         return map.keySet();
     }
 
     @Override
     public final CoverageReference getCoverageReference(Name name) throws DataStoreException {
-        final Map<Name,CoverageReference> map = listReferences(getRootNode(), new HashMap<Name, CoverageReference>());
+        final Map<Name,CoverageReference> map = listReferences();
         final CoverageReference ref = map.get(name);
         if(ref==null){
             final StringBuilder sb = new StringBuilder("Type name : ");
@@ -154,6 +155,13 @@ public abstract class AbstractCoverageStore extends CoverageStore {
             throw new DataStoreException(sb.toString());
         }
         return ref;
+    }
+
+    protected Map<Name,CoverageReference> listReferences() throws DataStoreException {
+        if (cachedRefs.isEmpty()) {
+            listReferences(getRootNode(), cachedRefs);
+        }
+        return cachedRefs;
     }
 
     private Map<Name,CoverageReference> listReferences(Node node, Map<Name,CoverageReference> map){
@@ -311,6 +319,7 @@ public abstract class AbstractCoverageStore extends CoverageStore {
      * @param event , event to send to listeners.
      */
     protected void sendStructureEvent(final StorageEvent event){
+        cachedRefs.clear();
         final StorageListener[] lst;
         synchronized (listeners) {
             lst = listeners.toArray(new StorageListener[listeners.size()]);
