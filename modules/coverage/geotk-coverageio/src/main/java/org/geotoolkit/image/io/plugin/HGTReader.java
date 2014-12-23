@@ -16,22 +16,28 @@
  */
 package org.geotoolkit.image.io.plugin;
 
-import javax.imageio.ImageIO;
 import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.stream.ImageInputStream;
 import javax.measure.unit.SI;
-import java.awt.Dimension;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBuffer;
+import java.awt.image.DataBufferShort;
+import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.channels.SeekableByteChannel;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Locale;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import com.sun.media.imageio.stream.RawImageInputStream;
+import org.apache.sis.internal.storage.ChannelImageInputStream;
+import org.geotoolkit.image.io.SpatialImageReader;
 import org.opengis.metadata.content.TransferFunctionType;
 import org.opengis.metadata.spatial.CellGeometry;
 import org.opengis.referencing.crs.GeographicCRS;
@@ -54,7 +60,7 @@ import org.geotoolkit.internal.image.io.GridDomainAccessor;
  *
  * @author Alexis Manin (Geomatys)
  */
-public class HGTReader extends RawImageReader {
+public class HGTReader extends SpatialImageReader {
 
     /**
      * HGT file name pattern. Give lower-left geographic position (CRS:84) of the current tile.
@@ -62,6 +68,8 @@ public class HGTReader extends RawImageReader {
     private static final Pattern FILENAME_PATTERN = Pattern.compile("(?i)(N|S)(\\d+)(E|W)(\\d+)");
 
     private static final ImageTypeSpecifier IMAGE_TYPE = ImageTypeSpecifier.createGrayscale(16, DataBuffer.TYPE_SHORT, true);
+
+    static final int SAMPLE_SIZE = Short.SIZE / Byte.SIZE;
 
     private File fileInput;
 
@@ -75,18 +83,14 @@ public class HGTReader extends RawImageReader {
     }
 
     @Override
-    public Object getInput() {
-        // CRAPPY HACK : Get input must return file when queried outside read method, but stream whe Extended Raw reader
-        // needs to read data.
-        return (input == null)? fileInput : input;
-    }
-
-    @Override
     public void setInput(Object input, boolean seekForwardOnly, boolean ignoreMetadata) {
+        super.setInput(input, seekForwardOnly, ignoreMetadata);
         if (input instanceof Path) {
             fileInput = ((Path) input).toFile();
         } else if (input instanceof File) {
             fileInput = (File) input;
+        } else {
+            fileInput = null;
         }
     }
 
@@ -104,6 +108,9 @@ public class HGTReader extends RawImageReader {
     @Override
     public int getWidth(final int imageIndex) throws IOException {
         checkImageIndex(imageIndex);
+        if (fileInput == null) {
+            throw new IOException("No valid input set.");
+        }
         return (int) Math.round(Math.sqrt(fileInput.length() / (Short.SIZE / Byte.SIZE)));
     }
 
@@ -113,6 +120,9 @@ public class HGTReader extends RawImageReader {
     @Override
     public int getHeight(final int imageIndex) throws IOException {
         checkImageIndex(imageIndex);
+        if (fileInput == null) {
+            throw new IOException("No valid input set.");
+        }
         return (int) Math.round(Math.sqrt(fileInput.length() / (Short.SIZE / Byte.SIZE)));
     }
 
@@ -152,24 +162,8 @@ public class HGTReader extends RawImageReader {
         return true;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public static RawImageInputStream buildIIStream(final File input) throws IOException {
-        final int width = (int) Math.round(Math.sqrt(input.length() / (Short.SIZE / Byte.SIZE)));
-        final ImageInputStream wrapped = ImageIO.createImageInputStream(input);
-        if (wrapped == null) {
-            throw new IOException("Input file cannot be read : "+input);
-        }
-        return new RawImageInputStream(wrapped, IMAGE_TYPE, new long[]{0}, new Dimension[]{new Dimension(width, width)});
-    }
-
     @Override
     protected SpatialMetadata createMetadata(int imageIndex) throws IOException {
-        if (imageIndex < 0) {
-            // Stream metadata.
-            return null;
-        }
         SpatialMetadata md = new SpatialMetadata(false, this, null);
 
         final DimensionAccessor dac = new DimensionAccessor(md);
@@ -178,6 +172,10 @@ public class HGTReader extends RawImageReader {
         dac.setValidSampleValue(Short.MIN_VALUE + 1, Short.MAX_VALUE);
         dac.setTransfertFunction(1, 0, TransferFunctionType.LINEAR);
         dac.setUnits(SI.METRE);
+
+        if (fileInput == null) {
+            throw new IOException("No valid input set.");
+        }
 
         try {
             // Set Geo-spatial information.
@@ -211,16 +209,96 @@ public class HGTReader extends RawImageReader {
 
     @Override
     public BufferedImage read(int imageIndex, ImageReadParam param) throws IOException {
-        input = buildIIStream(fileInput);
-        try {
-            return super.read(imageIndex, param);
-        } finally {
-            ((ImageInputStream)input).close();
-            input = null;
+        final int width = (int) StrictMath.round(StrictMath.sqrt(fileInput.length() / (Short.SIZE / Byte.SIZE)));
+        final Rectangle srcRegion = new Rectangle();
+        final Rectangle dstRegion = new Rectangle();
+
+        final BufferedImage image = getDestination(param, getImageTypes(imageIndex), width, width);
+        computeRegions(param, width, width, image, srcRegion, dstRegion);
+        readLayer(image.getRaster(), param, srcRegion, dstRegion, width);
+        return image;
+    }
+
+    /**
+     * Processes to the image reading, and stores the pixels in the given raster.<br/>
+     * Process fill raster from informations stored in stripOffset made.
+     *
+     * @param  raster    The raster where to store the pixel values.
+     * @param  param     Parameters used to control the reading process, or {@code null}.
+     * @param  srcRegion The region to read in source image.
+     * @param  dstRegion The region to write in the given raster.
+     * @throws IOException If an error occurred while reading the image.
+     */
+    private void readLayer(final WritableRaster raster, final ImageReadParam param,
+                           final Rectangle srcRegion, final Rectangle dstRegion, int srcImgWidth) throws IOException {
+
+        try (final ImageInputStream imageStream = getImageInputStream()) {
+            final DataBufferShort dataBuffer = (DataBufferShort) raster.getDataBuffer();
+            final short[] data = dataBuffer.getData(0);
+
+            final double stepX = (param == null)? 1 : param.getSourceXSubsampling();
+            final double stepY = (param == null)? 1 : param.getSourceYSubsampling();
+
+            // Current position (in byte) from source file.
+            long srcBuffPos = (srcRegion.y * srcImgWidth + srcRegion.x) * SAMPLE_SIZE;
+            long srcScanLineStride = srcImgWidth * SAMPLE_SIZE;
+
+            // Current position in destination array (short)
+            int destPosition = dstRegion.y * raster.getWidth() + dstRegion.x;
+            int destScanLineStride = raster.getWidth();
+
+            final int srcMaxY = srcRegion.y + srcRegion.height;
+            if (stepX == 1) {
+                for (int y = srcRegion.y; y < srcMaxY; y += stepY) {
+
+                    imageStream.seek(srcBuffPos);
+
+                    imageStream.readFully(data, destPosition, srcRegion.width);
+
+                    // Prepare to go on the next line of source image
+                    srcBuffPos += srcScanLineStride * stepY;
+
+                    // Prepare to go on the next line of destination image
+                    destPosition += destScanLineStride;
+                }
+
+            } else {
+                for (int y = srcRegion.y; y < srcMaxY; y += stepY) {
+
+                    int tmpDestPosition = destPosition;
+                    for (int i = 0; i < srcRegion.width; i += stepX, tmpDestPosition++) {
+//                        data[tmpDestPosition] = tmpLine[i];
+                        imageStream.seek(srcBuffPos+(i*SAMPLE_SIZE));
+                        imageStream.readFully(data, tmpDestPosition, 1);
+                    }
+
+                    // Prepare to go on the next line of source image
+                    srcBuffPos += srcScanLineStride * stepY;
+
+                    // Prepare to go on the next line of destination image
+                    destPosition += destScanLineStride;
+                }
+            }
         }
     }
 
-    public static class Spi extends RawImageReader.Spi {
+    private ImageInputStream getImageInputStream() throws IOException {
+        return new ChannelImageInputStream(null, openChannel(fileInput), ByteBuffer.allocateDirect(8192), false);
+    }
+
+    private static SeekableByteChannel openChannel(Object input) throws IOException {
+        final Path inputPath;
+        if (input instanceof File) {
+            inputPath = ((File) input).toPath();
+        } else if (input instanceof Path) {
+            inputPath = (Path) input;
+        } else {
+            throw new IOException("Input object is not a valid file or path.");
+        }
+        return Files.newByteChannel(inputPath);
+    }
+
+    public static class Spi extends SpatialImageReader.Spi {
 
         /**
          * The list of valid input types.
@@ -241,6 +319,7 @@ public class HGTReader extends RawImageReader {
          * Subclasses can assign new arrays, but should not modify the default array content.
          */
         public Spi() {
+            names = SUFFIXES;
             suffixes = SUFFIXES;
             inputTypes      = INPUT_TYPES;
             pluginClassName = HGTReader.class.getName();
@@ -250,14 +329,22 @@ public class HGTReader extends RawImageReader {
         }
 
         @Override
+        public String getDescription(Locale locale) {
+            return "NASA HGT format for SRTM distribution.";
+        }
+
+        @Override
         public boolean canDecodeInput(Object source) throws IOException {
+            final Path temp;
             if (source instanceof File) {
-                try (final RawImageInputStream stream = buildIIStream((File)source)) {
-                    return super.canDecodeInput(stream);
-                }
+                temp = ((File) source).toPath();
+            } else if (source instanceof  Path) {
+                temp = (Path) source;
             } else {
                 return false;
             }
+
+            return (FILENAME_PATTERN.matcher(temp.getFileName().toString()).find() && Files.isReadable(temp));
         }
 
         @Override
