@@ -317,8 +317,14 @@ public class DefaultInterpolate extends AbstractExpression implements Interpolat
         final ColorModel model;
 
         // As index color model cannot manage negative values, we must use our own in this case.
-        if (points[0].getData().doubleValue() < 0) {
-            model = new CompatibleColorModel(candidate.getPixelSize(), this);
+        if (points[0].getData().doubleValue() < 0 || candidate==null) {
+            final int pixelSize;
+            if(candidate!=null){
+                pixelSize = candidate.getPixelSize();
+            }else{
+                pixelSize = 16;
+            }
+            model = new CompatibleColorModel(pixelSize, this);
 
         } else if (candidate instanceof IndexColorModel) {
             final IndexColorModel colors = (IndexColorModel) candidate;
