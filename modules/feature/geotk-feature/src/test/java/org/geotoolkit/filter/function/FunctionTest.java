@@ -44,7 +44,7 @@ public class FunctionTest {
     public void testFunctionLenght() {
 
         Function f = FF.function(OtherFunctionFactory.EXPRESSION_VALUE_LENGHT, FF.property("."));
-        assertTrue(f instanceof LengthFunction);
+        assertInstanceOf("EXPRESSION_VALUE_LENGHT", LengthFunction.class, f);
         assertSerializedEquals(f); //test serialize
 
     }
