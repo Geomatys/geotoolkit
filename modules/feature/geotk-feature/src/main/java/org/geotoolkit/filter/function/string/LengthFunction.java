@@ -32,12 +32,8 @@ public class LengthFunction extends AbstractFunction {
         String arg0;
 
         try { // attempt to get value and perform conversion
-            arg0 = parameters.get(0).evaluate(feature, String.class); // extra
-                                                                    // protection
-                                                                    // for
-                                                                    // strings
-        } catch (Exception e) // probably a type error
-        {
+            arg0 = parameters.get(0).evaluate(feature, String.class); // extra protection for strings
+        } catch (Exception e) { // probably a type error
             throw new IllegalArgumentException(
                     "Filter Function problem for function strLength argument #0 - expected type String");
         }
