@@ -34,7 +34,6 @@ import org.geotoolkit.factory.FactoryRegistryException;
 import org.geotoolkit.factory.HintsPending;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.feature.simple.DefaultSimpleFeatureType;
-import org.geotoolkit.filter.function.other.LengthFunction;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.feature.type.DefaultAttributeDescriptor;
 import org.geotoolkit.feature.type.DefaultAttributeType;
@@ -73,6 +72,7 @@ import com.vividsolutions.jts.geom.Polygon;
 import java.util.Collection;
 import java.util.Objects;
 import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.filter.function.string.LengthFunction;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.expression.Function;
 

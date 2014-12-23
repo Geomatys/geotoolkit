@@ -34,6 +34,7 @@ import org.geotoolkit.feature.type.FeatureTypeFactory;
 import org.geotoolkit.feature.type.GeometryType;
 import org.geotoolkit.feature.type.Name;
 import org.geotoolkit.feature.type.PropertyType;
+import org.geotoolkit.filter.function.string.StringFunctionFactory;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.expression.Expression;
@@ -376,7 +377,7 @@ public class AttributeTypeBuilder {
         if (length < 0) {
             return null;
         }
-        final Expression lengthFunction = FF.function(OtherFunctionFactory.EXPRESSION_VALUE_LENGHT,FF.property(name));
+        final Expression lengthFunction = FF.function(StringFunctionFactory.LENGTH,FF.property(name));
         if (lengthFunction == null) {
             return null;
         }

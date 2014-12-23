@@ -17,7 +17,6 @@
 package org.geotoolkit.filter.function.string;
 
 import org.geotoolkit.filter.function.AbstractFunction;
-import org.geotoolkit.filter.function.other.StaticUtils;
 import org.opengis.filter.expression.Expression;
 
 
@@ -31,13 +30,17 @@ public class LengthFunction extends AbstractFunction {
     public Object evaluate(final Object feature) {
         String arg0;
 
+        if(feature instanceof CharSequence){
+            return ((CharSequence)feature).length();
+        }
+        
         try { // attempt to get value and perform conversion
-            arg0 = parameters.get(0).evaluate(feature, String.class); // extra protection for strings
+            arg0 = parameters.get(0).evaluate(feature, String.class);
         } catch (Exception e) { // probably a type error
             throw new IllegalArgumentException(
                     "Filter Function problem for function strLength argument #0 - expected type String");
         }
 
-        return StaticUtils.strLength(arg0);
+        return arg0==null ? 0 : arg0.length();
     }
 }

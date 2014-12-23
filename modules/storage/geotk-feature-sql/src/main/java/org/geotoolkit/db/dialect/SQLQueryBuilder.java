@@ -43,6 +43,7 @@ import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.GeometryDescriptor;
 import org.geotoolkit.feature.type.Name;
 import org.geotoolkit.feature.type.PropertyDescriptor;
+import org.geotoolkit.filter.function.string.StringFunctionFactory;
 import org.opengis.filter.Filter;
 import org.opengis.filter.PropertyIsLessThanOrEqualTo;
 import org.opengis.filter.expression.Function;
@@ -584,7 +585,7 @@ public class SQLQueryBuilder {
             if (r instanceof PropertyIsLessThanOrEqualTo) {
                 final PropertyIsLessThanOrEqualTo c = (PropertyIsLessThanOrEqualTo) r;
                 if (c.getExpression1() instanceof Function &&
-                        ((Function) c.getExpression1()).getName().toLowerCase().endsWith("length")) {
+                        ((Function) c.getExpression1()).getName().toLowerCase().endsWith(StringFunctionFactory.LENGTH)) {
                     if (c.getExpression2() instanceof Literal) {
                         final Integer length = c.getExpression2().evaluate(null, Integer.class);
                         if (length != null) {

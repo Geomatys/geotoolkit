@@ -40,7 +40,6 @@ public class OtherFunctionFactory extends AbstractFunctionFactory{
     public static final String EQUAL_TO = "equalTo";
     public static final String EQUALS_EXACT = "equalsExact";
     public static final String EQUALS_EXACT_TOLERANCE = "equalsExactTolerance";
-    public static final String EXPRESSION_VALUE_LENGHT  = "length";
     public static final String GREATER_EQUAL_THAN = "greaterEqualThan";
     public static final String GREATER_THAN = "greaterThan";
     public static final String IF_THEN_ELSE = "if_then_else";
@@ -70,7 +69,6 @@ public class OtherFunctionFactory extends AbstractFunctionFactory{
         FUNCTIONS.put(EQUAL_TO,                 EqualToFunction.class);
         FUNCTIONS.put(EQUALS_EXACT,             EqualsExactFunction.class);
         FUNCTIONS.put(EQUALS_EXACT_TOLERANCE,   EqualsExactToleranceFunction.class);
-        FUNCTIONS.put(EXPRESSION_VALUE_LENGHT,  LengthFunction.class);
         FUNCTIONS.put(GREATER_EQUAL_THAN,       GreaterEqualThanFunction.class);
         FUNCTIONS.put(GREATER_THAN,             GreaterThanFunction.class);
         FUNCTIONS.put(IF_THEN_ELSE,             IfThenElseFunction.class);

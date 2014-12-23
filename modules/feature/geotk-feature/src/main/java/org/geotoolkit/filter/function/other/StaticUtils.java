@@ -63,10 +63,6 @@ public class StaticUtils {
         return s1.lastIndexOf(s2);
     }
 
-    public static int strLength(final String s1) {
-        return s1.length();
-    }
-
     public static String strToLowerCase(final String s1) {
         return s1.toLowerCase();
     }

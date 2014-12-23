@@ -18,14 +18,14 @@
 package org.geotoolkit.filter.function;
 
 
-import org.geotoolkit.filter.function.other.LengthFunction;
-import org.geotoolkit.filter.function.other.OtherFunctionFactory;
 import org.junit.Test;
 
 import org.opengis.filter.expression.Function;
 
 import static org.geotoolkit.test.Assert.*;
 import static org.geotoolkit.filter.FilterTestConstants.*;
+import org.geotoolkit.filter.function.string.LengthFunction;
+import org.geotoolkit.filter.function.string.StringFunctionFactory;
 
 
 /**
@@ -43,7 +43,7 @@ public class FunctionTest {
     @Test
     public void testFunctionLenght() {
 
-        Function f = FF.function(OtherFunctionFactory.EXPRESSION_VALUE_LENGHT, FF.property("."));
+        Function f = FF.function(StringFunctionFactory.LENGTH, FF.property("."));
         assertInstanceOf("EXPRESSION_VALUE_LENGHT", LengthFunction.class, f);
         assertSerializedEquals(f); //test serialize
 
