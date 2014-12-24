@@ -18,12 +18,14 @@
 package org.geotoolkit.gui.javafx.chooser;
 
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.function.Predicate;
 import java.util.logging.Level;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -44,15 +46,14 @@ import javafx.scene.control.TitledPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.Pane;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
-import javafx.util.Callback;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.client.ClientFactory;
+import org.geotoolkit.client.ClientFinder;
 import org.geotoolkit.coverage.CoverageStoreFactory;
+import org.geotoolkit.coverage.CoverageStoreFinder;
 import org.geotoolkit.data.AbstractFolderFeatureStoreFactory;
-import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.FeatureStoreFactory;
 import org.geotoolkit.data.FeatureStoreFinder;
 import org.geotoolkit.data.FileFeatureStoreFactory;
@@ -73,13 +74,17 @@ import org.opengis.parameter.ParameterValueGroup;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class FXFeatureStoreChooser extends SplitPane {
+public class FXStoreChooser extends SplitPane {
 
+    public static final Predicate FEATUREFACTORY_ONLY = (Object t) -> t instanceof FeatureStoreFactory;
+    public static final Predicate COVERAGEFACTORY_ONLY = (Object t) -> t instanceof CoverageStoreFactory;
+    public static final Predicate CLIENTFACTORY_ONLY = (Object t) -> t instanceof ClientFactory;
+    
     static final Comparator<Object> SORTER = new Comparator<Object>() {
         @Override
         public int compare(Object o1, Object o2) {
             final String o1Name = getText(o1);
-            final String o2Name = getText(o1);
+            final String o2Name = getText(o2);
             return o1Name.compareTo(o2Name);
         }
         
@@ -95,27 +100,32 @@ public class FXFeatureStoreChooser extends SplitPane {
     };
     
     private final Accordion accordion = new Accordion();
-    private final ListView<FeatureStoreFactory> factoryView = new ListView<>();
+    private final ListView<Object> factoryView = new ListView<>();
     private final FXLayerChooser layerChooser = new FXLayerChooser();
     private final FXParameterEditor paramEditor = new FXParameterEditor();
     private final ScrollPane listScroll = new ScrollPane(factoryView);
-    private final Button connectButton = new Button(GeotkFX.getString(FXFeatureStoreChooser.class,"apply"));
+    private final Button connectButton = new Button(GeotkFX.getString(FXStoreChooser.class,"apply"));
     private final Label infoLabel = new Label();
         
-    public FXFeatureStoreChooser() {
+    public FXStoreChooser() {
+        this(null);
+    }
+    
+    public FXStoreChooser(Predicate factoryFilter) {
         
-        final ObservableList<FeatureStoreFactory> factories = FXCollections.observableArrayList(FeatureStoreFinder.getAvailableFactories(null));
+        final Set factoriesLst = new HashSet();
+        factoriesLst.addAll(FeatureStoreFinder.getAvailableFactories(null));
+        factoriesLst.addAll(CoverageStoreFinder.getAvailableFactories(null));
+        factoriesLst.addAll(ClientFinder.getAvailableFactories(null));
+        
+        ObservableList factories = FXCollections.observableArrayList(factoriesLst);
         Collections.sort(factories, SORTER);
+        if(factoryFilter!=null){
+            factories = factories.filtered(factoryFilter);
+        }
 
         factoryView.setItems(factories);
-        factoryView.setCellFactory(new Callback<ListView<FeatureStoreFactory>, ListCell<FeatureStoreFactory>>() {
-
-            @Override
-            public ListCell<FeatureStoreFactory> call(ListView<FeatureStoreFactory> param) {
-                return new FactoryCell();
-            }
-        });
-        
+        factoryView.setCellFactory((ListView<Object> param) -> new FactoryCell());
         listScroll.setFitToHeight(true);
         listScroll.setFitToWidth(true);        
         
@@ -127,9 +137,9 @@ public class FXFeatureStoreChooser extends SplitPane {
         final BorderPane vpane = new BorderPane(paramEditor, null, null, hpane, null);
         vpane.setPadding(Insets.EMPTY);
         
-        final TitledPane paneFactory = new TitledPane(GeotkFX.getString(FXFeatureStoreChooser.class,"factory"), listScroll);
+        final TitledPane paneFactory = new TitledPane(GeotkFX.getString(FXStoreChooser.class,"factory"), listScroll);
         paneFactory.setFont(Font.font(paneFactory.getFont().getFamily(), FontWeight.BOLD, paneFactory.getFont().getSize()));
-        final TitledPane paneConfig = new TitledPane(GeotkFX.getString(FXFeatureStoreChooser.class,"config"), vpane);
+        final TitledPane paneConfig = new TitledPane(GeotkFX.getString(FXStoreChooser.class,"config"), vpane);
         
         accordion.getPanes().add(paneFactory);
         accordion.getPanes().add(paneConfig);
@@ -140,13 +150,22 @@ public class FXFeatureStoreChooser extends SplitPane {
         getItems().add(layerChooser);
         
         factoryView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
-        factoryView.getSelectionModel().getSelectedItems().addListener(new ListChangeListener<FeatureStoreFactory>() {
+        factoryView.getSelectionModel().getSelectedItems().addListener(new ListChangeListener<Object>() {
 
             @Override
-            public void onChanged(ListChangeListener.Change<? extends FeatureStoreFactory> c) {
-                final FeatureStoreFactory factory = factoryView.getSelectionModel().getSelectedItem();
-                if(factory==null) return;
-                final ParameterValueGroup param = factory.getParametersDescriptor().createValue();
+            public void onChanged(ListChangeListener.Change<? extends Object> c) {
+                final Object factory = factoryView.getSelectionModel().getSelectedItem();
+                
+                final ParameterValueGroup param;
+                if(factory instanceof FeatureStoreFactory){
+                    param = ((FeatureStoreFactory)factory).getParametersDescriptor().createValue();
+                }else if(factory instanceof CoverageStoreFactory){
+                    param = ((CoverageStoreFactory)factory).getParametersDescriptor().createValue();
+                }else if(factory instanceof ClientFactory){
+                    param = ((ClientFactory)factory).getParametersDescriptor().createValue();
+                }else{
+                    return;
+                }
                 paramEditor.setParameter(param);        
                 accordion.setExpandedPane(paneConfig);
             }
@@ -157,10 +176,9 @@ public class FXFeatureStoreChooser extends SplitPane {
 
             @Override
             public void handle(ActionEvent event) {
-                FeatureStore store = null;
                 try {
                     layerChooser.setSource(null);
-                    store = getStore();
+                    final Object store = getStore();
                     layerChooser.setSource(store);
                 } catch (DataStoreException ex) {
                     infoLabel.setText("Error "+ex.getMessage());
@@ -175,16 +193,24 @@ public class FXFeatureStoreChooser extends SplitPane {
         layerChooser.setVisible(layerVisible);
     }
     
-    
-    private FeatureStore getStore() throws DataStoreException {
-        final FeatureStoreFactory factory = factoryView.getSelectionModel().getSelectedItem();
+    /**
+     * 
+     * @return FeatureStore, CoverageStore or Client
+     * @throws DataStoreException 
+     */
+    private Object getStore() throws DataStoreException {
+        final Object factory = factoryView.getSelectionModel().getSelectedItem();
+        final ParameterValueGroup param = (ParameterValueGroup) paramEditor.getParameter();
 
-        if(factory == null){
+        if(factory instanceof FeatureStoreFactory){
+            return ((FeatureStoreFactory)factory).open(param);
+        }else if(factory instanceof CoverageStoreFactory){
+            return ((CoverageStoreFactory)factory).open(param);
+        }else if(factory instanceof ClientFactory){
+            return ((ClientFactory)factory).open(param);
+        }else{
             return null;
         }
-
-        final ParameterValueGroup param = (ParameterValueGroup) paramEditor.getParameter();
-        return factory.open(param);
     }
     
     private List<MapLayer> getSelectedLayers() throws DataStoreException {
@@ -195,22 +221,29 @@ public class FXFeatureStoreChooser extends SplitPane {
     /**
      * Display a modal dialog.
      *
-     * @return
+     * @param parent
+     * @return FeatureStore, CoverageStore or Client
      * @throws DataStoreException
      */
-    public static List<FeatureStore> showDialog(Node parent) throws DataStoreException{
-        return showDialog(parent,Collections.EMPTY_LIST);
+    public static Object showDialog(Node parent) throws DataStoreException{
+        return showDialog(parent, null, null);
     }
 
     /**
      * Display a modal dialog.
      *
+     * @param parent
      * @param editors : additional FeatureOutline editors
-     * @return
+     * @return FeatureStore, CoverageStore or Client
      * @throws DataStoreException
      */
-    public static List<FeatureStore> showDialog(Node parent, List<FXValueEditor> editors) throws DataStoreException{
-        return showDialog(parent,editors, false);
+    public static Object showDialog(Node parent, Predicate predicate, List<FXValueEditor> editors) throws DataStoreException{
+        final List lst = showDialog(parent,predicate,editors,false);
+        if(lst.isEmpty()){
+            return null;
+        }else{
+            return lst.get(0);
+        }
     }
 
     /**
@@ -220,12 +253,12 @@ public class FXFeatureStoreChooser extends SplitPane {
      * @return
      * @throws DataStoreException
      */
-    public static List<MapLayer> showLayerDialog(Node parent, List<FXValueEditor> editors) throws DataStoreException{
-        return showDialog(parent,editors, true);
+    public static List<MapLayer> showLayerDialog(Node parent, Predicate predicate, List<FXValueEditor> editors) throws DataStoreException{
+        return showDialog(parent,predicate, editors, true);
     }
 
-    private static List showDialog(Node parent, List<FXValueEditor> editors, boolean layerVisible) throws DataStoreException{
-        final FXFeatureStoreChooser chooser = new FXFeatureStoreChooser();
+    private static List showDialog(Node parent, Predicate predicate, List<FXValueEditor> editors, boolean layerVisible) throws DataStoreException{
+        final FXStoreChooser chooser = new FXStoreChooser(predicate);
         if(editors != null){
             chooser.paramEditor.setAvailableEditors(editors);
         }
@@ -238,7 +271,7 @@ public class FXFeatureStoreChooser extends SplitPane {
             if(layerVisible){
                 return chooser.getSelectedLayers();
             }else{
-                final FeatureStore store = chooser.getStore();
+                final Object store = chooser.getStore();
                 if(store == null){
                     return Collections.EMPTY_LIST;
                 }else{

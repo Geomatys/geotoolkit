@@ -22,6 +22,7 @@ import javafx.scene.control.ToolBar;
 import javafx.scene.layout.HBox;
 import org.controlsfx.control.action.ActionUtils;
 import org.geotoolkit.gui.javafx.render2d.data.FXAddCoverageStoreAction;
+import org.geotoolkit.gui.javafx.render2d.data.FXAddDataStoreAction;
 import org.geotoolkit.gui.javafx.render2d.data.FXAddFeatureStoreAction;
 import org.geotoolkit.gui.javafx.render2d.data.FXAddServerStoreAction;
 
@@ -35,19 +36,23 @@ public class FXAddDataBar extends ToolBar {
     private static final String CENTER = "buttongroup-center";
     private static final String RIGHT  = "buttongroup-right";
     
-    public FXAddDataBar(FXMap map) {
+    public FXAddDataBar(FXMap map, boolean singleButon) {
         getStylesheets().add("/org/geotoolkit/gui/javafx/buttonbar.css");
         
-        final Button butFeatureStore = new FXAddFeatureStoreAction(map).createButton(ActionUtils.ActionTextBehavior.HIDE);
-        final Button butCoverageStore = new FXAddCoverageStoreAction(map).createButton(ActionUtils.ActionTextBehavior.HIDE);
-        final Button butServerStore = new FXAddServerStoreAction(map).createButton(ActionUtils.ActionTextBehavior.HIDE);
-        butFeatureStore.getStyleClass().add(LEFT);
-        butCoverageStore.getStyleClass().add(CENTER);
-        butServerStore.getStyleClass().add(RIGHT);
-        final HBox hboxAction = new HBox(butFeatureStore,butCoverageStore,butServerStore);
-    
-        getItems().add(hboxAction);
-        
+        if(singleButon){
+            final Button butStore = new FXAddDataStoreAction(map).createButton(ActionUtils.ActionTextBehavior.HIDE);
+            final HBox hboxAction = new HBox(butStore);
+            getItems().add(hboxAction);
+        }else{
+            final Button butFeatureStore = new FXAddFeatureStoreAction(map).createButton(ActionUtils.ActionTextBehavior.HIDE);
+            final Button butCoverageStore = new FXAddCoverageStoreAction(map).createButton(ActionUtils.ActionTextBehavior.HIDE);
+            final Button butServerStore = new FXAddServerStoreAction(map).createButton(ActionUtils.ActionTextBehavior.HIDE);
+            butFeatureStore.getStyleClass().add(LEFT);
+            butCoverageStore.getStyleClass().add(CENTER);
+            butServerStore.getStyleClass().add(RIGHT);
+            final HBox hboxAction = new HBox(butFeatureStore,butCoverageStore,butServerStore);
+            getItems().add(hboxAction);
+        }
     }
     
     

@@ -74,7 +74,7 @@ public class FXMapFrame {
         tree.getTreetable().getColumns().add(2,new MapItemFilterColumn());
         tree.getTreetable().getColumns().add(3,new MapItemSelectableColumn());
         
-        dataBar = new FXAddDataBar(map);
+        dataBar = new FXAddDataBar(map,true);
         navBar = new FXNavigationBar(map);
         geotoolBar = new FXGeoToolBar(map);
         coordBar = new FXCoordinateBar(map);

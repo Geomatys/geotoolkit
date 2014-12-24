@@ -24,7 +24,7 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.scene.image.Image;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.gui.javafx.chooser.FXFeatureStoreChooser;
+import org.geotoolkit.gui.javafx.chooser.FXStoreChooser;
 import org.geotoolkit.gui.javafx.render2d.FXMap;
 import org.geotoolkit.gui.javafx.render2d.FXMapAction;
 import org.geotoolkit.internal.GeotkFX;
@@ -47,7 +47,7 @@ public class FXAddFeatureStoreAction extends FXMapAction {
     public void accept(ActionEvent event) {
         
         try {
-            final List<MapLayer> layers = FXFeatureStoreChooser.showLayerDialog(null,null);
+            final List<MapLayer> layers = FXStoreChooser.showLayerDialog(null,FXStoreChooser.FEATUREFACTORY_ONLY,null);
 
             for(MapLayer layer : layers){
                 if(layer == null) continue;

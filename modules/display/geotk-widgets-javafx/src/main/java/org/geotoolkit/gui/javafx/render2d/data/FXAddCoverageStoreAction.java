@@ -24,7 +24,7 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.scene.image.Image;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.gui.javafx.chooser.FXCoverageStoreChooser;
+import org.geotoolkit.gui.javafx.chooser.FXStoreChooser;
 import org.geotoolkit.gui.javafx.render2d.FXMap;
 import org.geotoolkit.gui.javafx.render2d.FXMapAction;
 import org.geotoolkit.internal.GeotkFX;
@@ -46,7 +46,7 @@ public class FXAddCoverageStoreAction extends FXMapAction {
     @Override
     public void accept(ActionEvent t) {
         try {
-            final List<MapLayer> layers = FXCoverageStoreChooser.showLayerDialog(null,null);
+            final List<MapLayer> layers = FXStoreChooser.showLayerDialog(null,FXStoreChooser.COVERAGEFACTORY_ONLY,null);
 
             for(MapLayer layer : layers){
                 if(layer == null) continue;
