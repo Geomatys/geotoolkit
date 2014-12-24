@@ -58,6 +58,8 @@ public final class GeotkFX {
     public static final Image ICON_CALENDAR  = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_CALENDAR,16,FontAwesomeIcons.DEFAULT_COLOR),null);
     public static final Image ICON_EDIT      = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_PENCIL,16,FontAwesomeIcons.DEFAULT_COLOR),null);
     public static final Image ICON_ADD       = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_PLUS,16,FontAwesomeIcons.DEFAULT_COLOR),null);
+    public static final Image ICON_OPEN      = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_FOLDER_OPEN,16,FontAwesomeIcons.DEFAULT_COLOR),null);
+    public static final Image ICON_SAVE      = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_SAVE_ALIAS,16,FontAwesomeIcons.DEFAULT_COLOR),null);
     
     public static final String BUNDLE_PATH = "org/geotoolkit/gui/javafx/internal/Bundle";
     public static final String CSS_PATH = "/org/geotoolkit/gui/javafx/style/StyleEditor.css";
