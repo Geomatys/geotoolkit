@@ -34,13 +34,14 @@ public class OwcMarshallerPool {
     static {
         try {
             final JAXBContext jaxbCtxt = JAXBContext.newInstance(
-                    "org.geotoolkit.owc.xml.v10"
-                            + ":org.w3._2005.atom"
-                            + ":org.geotoolkit.georss.xml.v100"
-                            + ":org.geotoolkit.gml.xml.v311"
-                            + ":org.geotoolkit.sld.xml.v110"
-                            + ":org.apache.sis.internal.jaxb.geometry"
-                            + ":org.geotoolkit.wms.xml.v130");
+                       "org.geotoolkit.owc.xml.v10"
+                    + ":org.w3._2005.atom"
+                    + ":org.geotoolkit.georss.xml.v100"
+                    + ":org.geotoolkit.gml.xml.v311"
+                    + ":org.geotoolkit.sld.xml.v110"
+                    + ":org.apache.sis.internal.jaxb.geometry"
+                    + ":org.geotoolkit.wms.xml.v130"
+                    + ":org.geotoolkit.owc.gtkext");
             POOL = new MarshallerPool(jaxbCtxt, null);
         } catch (JAXBException ex) {
             // Should never happen, unless we have a build configuration problem.

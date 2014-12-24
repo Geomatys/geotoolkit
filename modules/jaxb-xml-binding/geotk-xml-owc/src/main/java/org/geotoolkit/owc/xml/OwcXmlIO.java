@@ -22,6 +22,7 @@ import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ServiceLoader;
@@ -36,6 +37,7 @@ import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
+import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.xml.MarshallerPool;
 import org.geotoolkit.georss.xml.v100.WhereType;
 import org.geotoolkit.gml.xml.v311.DirectPositionType;
@@ -78,6 +80,8 @@ public class OwcXmlIO {
         final Iterator<OwcExtension> ite = loader.iterator();
         final List<OwcExtension> lst = new ArrayList<>();
         while(ite.hasNext()) lst.add(ite.next());
+        //sort by priority
+        Collections.sort(lst,Collections.reverseOrder());
         EXTENSIONS = lst.toArray(new OwcExtension[0]);
     }
     
@@ -193,7 +197,7 @@ public class OwcXmlIO {
         return styleSet;
     }
     
-    public static MapContext read(final Object input) throws JAXBException, FactoryException{
+    public static MapContext read(final Object input) throws JAXBException, FactoryException, DataStoreException{
         final MarshallerPool pool = OwcMarshallerPool.getPool();
         final Unmarshaller unmarshaller = pool.acquireUnmarshaller();
         
@@ -219,7 +223,7 @@ public class OwcXmlIO {
         return read(feed);
     }
     
-    private static MapContext read(final FeedType feed) throws JAXBException, FactoryException{
+    private static MapContext read(final FeedType feed) throws JAXBException, FactoryException, DataStoreException{
         final MapContext context = MapBuilder.createContext();
         
         for(Object o : feed.getAuthorOrCategoryOrContributor()){
@@ -243,7 +247,7 @@ public class OwcXmlIO {
         return context;
     }
         
-    private static MapItem readEntry(final EntryType entry) throws JAXBException, FactoryException{
+    private static MapItem readEntry(final EntryType entry) throws JAXBException, FactoryException, DataStoreException{
         final List<Object> entryContent = entry.getAuthorOrCategoryOrContent();
         
         MapItem mapItem = null;

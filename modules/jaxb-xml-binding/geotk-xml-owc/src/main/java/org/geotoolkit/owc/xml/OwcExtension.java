@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.owc.xml;
 
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.owc.xml.v10.OfferingType;
 
@@ -25,18 +26,41 @@ import org.geotoolkit.owc.xml.v10.OfferingType;
  * @author Samuel Andrés (Geomatys)
  * @author Johann Sorel (Geomatys)
  */
-public interface OwcExtension {
+public abstract class OwcExtension implements Comparable<OwcExtension>{
+    
+    private final float priority;
+    private final String code;
+
+    public OwcExtension(String code, float priority) {
+        this.code = code;
+        this.priority = priority;
+    }
+    
+    /**
+     * Sorting property.
+     * @return higher priority extensions must be tested first
+     */
+    public float getPriority(){
+        return priority;
+    }
     
     /**
      * Extension code.
      * @return extension code, must be unique for each extension
      */
-    String getCode();
+    public String getCode(){
+        return code;
+    }
     
-    boolean canHandle(MapLayer layer);
+    public abstract boolean canHandle(MapLayer layer);
     
-    MapLayer createLayer(OfferingType offering);
+    public abstract MapLayer createLayer(OfferingType offering) throws DataStoreException;
     
-    OfferingType createOffering(MapLayer mapLayer);
+    public abstract OfferingType createOffering(MapLayer mapLayer);
+
+    @Override
+    public int compareTo(OwcExtension o) {
+        return Float.compare(priority, o.priority);
+    }
     
 }
