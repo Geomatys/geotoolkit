@@ -310,6 +310,8 @@ public class HGTReader extends SpatialImageReader {
          */
         private static final String[] SUFFIXES = new String[] {"hgt"};
 
+        private static final String[] MIME_TYPES = new String[] {"application/x-ogc-srtmhgt"};
+
         /**
          * Constructs a default {@code RawImageReader.Spi}. The fields are initialized as
          * documented in the <a href="#skip-navbar_top">class javadoc</a>. Subclasses can
@@ -321,6 +323,7 @@ public class HGTReader extends SpatialImageReader {
         public Spi() {
             names = SUFFIXES;
             suffixes = SUFFIXES;
+            MIMETypes = MIME_TYPES;
             inputTypes      = INPUT_TYPES;
             pluginClassName = HGTReader.class.getName();
             // This reader does not support any metadata.

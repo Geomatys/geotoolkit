@@ -107,6 +107,18 @@ public final strictfp class XImageIOTest extends ImageTestBase {
      * Tests that every plugins are correctly registered. In particular,
      * we need to ensure that the MIME type is declared for each plugin.
      *
+     * <p>Issue: {@link ImageReaderSpi#getMIMETypes()} javadoc said that the MIME type array can be null.
+     * However if we let it be null, then we get a {@link NullPointerException} when invoking
+     * {@link javax.imageio.ImageIO#getReaderMIMETypes()}. There is a bug in Image I/O code,
+     * which appear to not check if the MIME type array is null. Stack trace is:</p>
+     *
+     * {@preformat text
+     *   java.lang.NullPointerException
+     *      at java.util.Collections.addAll(Collections.java:5400)
+     *      at javax.imageio.ImageIO.getReaderWriterInfo(ImageIO.java:468)
+     *      at javax.imageio.ImageIO.getReaderMIMETypes(ImageIO.java:496)
+     * }
+     *
      * @since 3.10
      */
     @Test
@@ -121,7 +133,7 @@ public final strictfp class XImageIOTest extends ImageTestBase {
                 final String name = Classes.getShortClassName(spi);
                 assertNotNull(name, spi.getFormatNames());
                 assertNotNull(name, spi.getInputTypes());
-                assertNotNull(name, spi.getMIMETypes());
+                assertNotNull(name, spi.getMIMETypes()); // See method javadoc.
             }
             // Following line was used to throw a NullPointerException
             // if a plugin declare a null array of MIME types.
