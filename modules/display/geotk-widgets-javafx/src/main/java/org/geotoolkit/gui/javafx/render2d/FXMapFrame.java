@@ -17,6 +17,7 @@
 package org.geotoolkit.gui.javafx.render2d;
 
 import javafx.application.Platform;
+import javafx.beans.property.Property;
 import javafx.embed.swing.JFXPanel;
 import javafx.event.ActionEvent;
 import javafx.scene.Scene;
@@ -31,6 +32,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.RowConstraints;
 import javafx.stage.Stage;
+import org.geotoolkit.display2d.container.ContextContainer2D;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.gui.javafx.contexttree.FXMapContextTree;
 import org.geotoolkit.gui.javafx.contexttree.MapItemFilterColumn;
@@ -39,6 +41,7 @@ import org.geotoolkit.gui.javafx.contexttree.menu.DeleteItem;
 import org.geotoolkit.gui.javafx.contexttree.menu.LayerPropertiesItem;
 import org.geotoolkit.gui.javafx.contexttree.menu.OpacityItem;
 import org.geotoolkit.gui.javafx.contexttree.menu.ZoomToItem;
+import org.geotoolkit.gui.javafx.util.FXUtilities;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 
@@ -64,7 +67,7 @@ public class FXMapFrame {
         
         map = new FXMap(false,hints);
         map.getContainer().setContext(context);
-        tree = new FXMapContextTree(context);
+        tree = new FXMapContextTree();
         tree.getTreetable().setShowRoot(false);
         tree.getMenuItems().add(new OpacityItem());
         tree.getMenuItems().add(new SeparatorMenuItem());
@@ -74,6 +77,8 @@ public class FXMapFrame {
         tree.getMenuItems().add(new DeleteItem());
         tree.getTreetable().getColumns().add(2,new MapItemFilterColumn());
         tree.getTreetable().getColumns().add(3,new MapItemSelectableColumn());
+        final Property<MapContext> prop = FXUtilities.beanProperty(map.getContainer(),ContextContainer2D.CONTEXT_PROPERTY, MapContext.class);
+        tree.mapItemProperty().bind(prop);
         
         contextBar = new FXContextBar(map);
         dataBar = new FXAddDataBar(map,true);

@@ -18,14 +18,15 @@
 package org.geotoolkit.gui.javafx.contexttree;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
-import javafx.scene.Parent;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
@@ -42,6 +43,7 @@ import javafx.scene.input.TransferMode;
 import javafx.scene.layout.BorderPane;
 import javafx.util.Callback;
 import org.geotoolkit.gui.javafx.util.FXUtilities;
+import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapItem;
 import org.geotoolkit.map.MapLayer;
 
@@ -54,22 +56,16 @@ public class FXMapContextTree extends BorderPane{
     private static final DataFormat MAPITEM_FORMAT = new DataFormat("contextItem");
     
     private final ObservableList<Object> menuItems = FXCollections.observableArrayList();
-    private final TreeTableView<MapItem> treetable = new TreeTableView(){
-        
-        private void test(){
-            Parent p = null;
-        }
-        
-    };
+    private final TreeTableView<MapItem> treetable = new TreeTableView();
     private final ScrollPane scroll = new ScrollPane(treetable);
-    private MapItem mapItem;
+    private final ObjectProperty<MapContext> itemProperty = new SimpleObjectProperty<>();
     
     
     public FXMapContextTree() {
         this(null);
     }
     
-    public FXMapContextTree(MapItem item){    
+    public FXMapContextTree(MapContext item){    
         scroll.setFitToHeight(true);
         scroll.setFitToWidth(true);
         setCenter(scroll);
@@ -137,10 +133,22 @@ public class FXMapContextTree extends BorderPane{
                     }
                 }
                 
-                
             }
         });
                 
+        
+        treetable.setShowRoot(true);
+        itemProperty.addListener(new ChangeListener<MapItem>() {
+            @Override
+            public void changed(ObservableValue<? extends MapItem> observable, MapItem oldValue, MapItem newValue) {
+                 if(newValue==null){
+                    treetable.setRoot(null);
+                }else{
+                    treetable.setRoot(new TreeMapItem(newValue));
+                }
+            }
+        });
+        
         setMapItem(item);
     }
     
@@ -235,21 +243,16 @@ public class FXMapContextTree extends BorderPane{
         return menuItems;
     }
     
-    public MapItem getMapItem() {
-        return mapItem;
+    public ObjectProperty<MapContext> mapItemProperty(){
+        return itemProperty;
+    }
+    
+    public MapContext getMapItem() {
+        return itemProperty.get();
     }
 
-    public void setMapItem(MapItem mapItem) {
-        if(this.mapItem == mapItem) return;
-        this.mapItem = mapItem;
-        
-        if(mapItem==null){
-            treetable.setRoot(null);
-        }else{
-            treetable.setRoot(new TreeMapItem(mapItem));
-        }
-        
-        treetable.setShowRoot(true);
+    public void setMapItem(MapContext mapItem) {
+        itemProperty.set(mapItem);
     }
     
 }

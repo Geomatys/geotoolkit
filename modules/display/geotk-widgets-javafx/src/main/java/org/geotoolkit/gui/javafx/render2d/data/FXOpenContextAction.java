@@ -20,6 +20,7 @@ package org.geotoolkit.gui.javafx.render2d.data;
 import java.util.logging.Level;
 import javafx.event.ActionEvent;
 import javax.xml.bind.JAXBException;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.gui.javafx.chooser.FXContextChooser;
 import org.geotoolkit.gui.javafx.render2d.FXMap;
 import org.geotoolkit.gui.javafx.render2d.FXMapAction;
@@ -45,9 +46,11 @@ public class FXOpenContextAction extends FXMapAction {
         
         try {
             final MapContext context = FXContextChooser.showOpenChooser(map.getScene().getWindow());
-            map.getContainer().setContext(context);
+            if(context!=null){
+                map.getContainer().setContext(context);
+            }
 
-        } catch (JAXBException | FactoryException ex) {
+        } catch (JAXBException | FactoryException | DataStoreException ex) {
             Loggers.DATA.log(Level.WARNING, ex.getMessage(), ex);
         }
         
