@@ -60,7 +60,7 @@ public class BeanStore extends AbstractFeatureStore implements StorageListener{
     
     private final Map<Name,BeanFeatureSupplier> types = new HashMap<>();
     
-    public BeanStore(BeanFeatureSupplier ... types) throws DataStoreException {
+    public BeanStore(BeanFeatureSupplier ... types) {
         super(null);
         for(BeanFeatureSupplier bt : types){
             this.types.put(bt.mapping.featureType.getName(), bt);
@@ -71,6 +71,11 @@ public class BeanStore extends AbstractFeatureStore implements StorageListener{
     
     public Collection<BeanFeatureSupplier> getBeanSuppliers(){
         return Collections.unmodifiableCollection(types.values());
+    }
+    
+    public BeanFeatureSupplier getBeanSupplier(Name typeName) throws DataStoreException{
+        typeCheck(typeName);
+        return types.get(typeName);
     }
     
     @Override

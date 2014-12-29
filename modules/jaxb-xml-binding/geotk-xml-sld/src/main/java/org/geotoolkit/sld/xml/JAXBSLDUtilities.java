@@ -55,17 +55,7 @@ public class JAXBSLDUtilities {
 
     public static MarshallerPool getMarshallerPoolSLD100() {
         if (POOL_100 == null) {
-
-            final List<Class> classes = new ArrayList<Class>();
-            classes.add(org.geotoolkit.sld.xml.v100.StyledLayerDescriptor.class);
-
-            final ServiceLoader<org.geotoolkit.sld.xml.v100.SymbolizerType> additionalTypes = ServiceLoader.load(org.geotoolkit.sld.xml.v100.SymbolizerType.class);
-            final Iterator<org.geotoolkit.sld.xml.v100.SymbolizerType> ite = additionalTypes.iterator();
-            while(ite.hasNext()){
-                org.geotoolkit.sld.xml.v100.SymbolizerType st = ite.next();
-                classes.add(st.getClass());
-            }
-
+            final List<Class> classes = getSLD100PoolClasses();
             try {
                 POOL_100 = new MarshallerPool(JAXBContext.newInstance(classes.toArray(new Class[classes.size()])), null);
             } catch (JAXBException ex) {
@@ -77,26 +67,7 @@ public class JAXBSLDUtilities {
 
     public static MarshallerPool getMarshallerPoolSLD110() {
         if (POOL_110 == null) {
-
-            final List<Class> classes = new ArrayList<Class>();
-            classes.add(org.geotoolkit.sld.xml.v110.StyledLayerDescriptor.class);
-            classes.add(org.apache.sis.internal.jaxb.geometry.ObjectFactory.class);
-
-            final ServiceLoader<org.geotoolkit.se.xml.v110.SymbolizerType> additionalTypes = ServiceLoader.load(org.geotoolkit.se.xml.v110.SymbolizerType.class);
-            final Iterator<org.geotoolkit.se.xml.v110.SymbolizerType> ite = additionalTypes.iterator();
-            while(ite.hasNext()){
-                org.geotoolkit.se.xml.v110.SymbolizerType st = ite.next();
-                final Class sc = st.getClass();
-                classes.add(sc);
-
-                final String factoryClassName = sc.getName()+"ObjectFactory";
-                try {
-                    classes.add(sc.getClassLoader().loadClass(factoryClassName));
-                } catch (ClassNotFoundException ex) {
-                    throw new RuntimeException("Could not load Extension symbolizer object factory : "+factoryClassName,ex);
-                }
-            }
-
+            final List<Class> classes = getSLD110PoolClasses();
             try {
                 POOL_110 = new MarshallerPool(JAXBContext.newInstance(classes.toArray(new Class[classes.size()])), null);
             } catch (JAXBException ex) {
@@ -106,6 +77,42 @@ public class JAXBSLDUtilities {
         return POOL_110;
     }
 
+    public static List<Class> getSLD100PoolClasses(){
+        final List<Class> classes = new ArrayList<>();
+        classes.add(org.geotoolkit.sld.xml.v100.StyledLayerDescriptor.class);
+
+        final ServiceLoader<org.geotoolkit.sld.xml.v100.SymbolizerType> additionalTypes = ServiceLoader.load(org.geotoolkit.sld.xml.v100.SymbolizerType.class);
+        final Iterator<org.geotoolkit.sld.xml.v100.SymbolizerType> ite = additionalTypes.iterator();
+        while(ite.hasNext()){
+            org.geotoolkit.sld.xml.v100.SymbolizerType st = ite.next();
+            classes.add(st.getClass());
+        }
+        
+        return classes;
+    }
+    
+    public static List<Class> getSLD110PoolClasses(){
+        final List<Class> classes = new ArrayList<>();
+        classes.add(org.geotoolkit.sld.xml.v110.StyledLayerDescriptor.class);
+        classes.add(org.apache.sis.internal.jaxb.geometry.ObjectFactory.class);
+
+        final ServiceLoader<org.geotoolkit.se.xml.v110.SymbolizerType> additionalTypes = ServiceLoader.load(org.geotoolkit.se.xml.v110.SymbolizerType.class);
+        final Iterator<org.geotoolkit.se.xml.v110.SymbolizerType> ite = additionalTypes.iterator();
+        while(ite.hasNext()){
+            org.geotoolkit.se.xml.v110.SymbolizerType st = ite.next();
+            final Class sc = st.getClass();
+            classes.add(sc);
+
+            final String factoryClassName = sc.getName()+"ObjectFactory";
+            try {
+                classes.add(sc.getClassLoader().loadClass(factoryClassName));
+            } catch (ClassNotFoundException ex) {
+                throw new RuntimeException("Could not load Extension symbolizer object factory : "+factoryClassName,ex);
+            }
+        }
+        
+        return classes;
+    }
 
     public JAXBSLDUtilities(final FilterFactory2 filterFactory, final MutableStyleFactory styleFactory, final MutableSLDFactory sldFactory) {
         this.filterFactory = filterFactory;

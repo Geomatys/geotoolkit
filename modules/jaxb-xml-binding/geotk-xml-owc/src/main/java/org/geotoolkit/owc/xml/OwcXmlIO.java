@@ -148,16 +148,17 @@ public class OwcXmlIO {
         }
         
         for(final MapItem mapItem : context.items()){
-            feed.getAuthorOrCategoryOrContributor().add(ATOM_FACTORY.createFeedTypeEntry(toEntry(mapItem)));
+            toEntry(null, mapItem, feed.getAuthorOrCategoryOrContributor());
         }
         return feed;
     }
         
-    private static EntryType toEntry(final MapItem item){
+    private static void toEntry(String parentPath, final MapItem item, List entries){
         final EntryType entry = ATOM_FACTORY.createEntryType();
+        entries.add(ATOM_FACTORY.createFeedTypeEntry(entry));
         
         //store other informations
-        final String name = item.getName();
+        final String name = ((parentPath!=null)?parentPath:"") + item.getName();
         final Description description = item.getDescription();
         
         if(name!=null){
@@ -214,12 +215,11 @@ public class OwcXmlIO {
             content.setType(item.getName());
             //encode children
             for(MapItem child : item.items()){
-                content.getContent().add(ATOM_FACTORY.createEntry(toEntry(child)));
+                toEntry(name+"/", child, entries);
             }
             entry.getAuthorOrCategoryOrContent().add(OWC_FACTORY.createOfferingTypeContent(content));
         }
         
-        return entry;
     }
     
     private static StyleSetType toStyleSet(MutableStyle style, boolean def){
@@ -279,13 +279,33 @@ public class OwcXmlIO {
                 context.setAreaOfInterest(envelopeType);
             }else if(o instanceof EntryType){
                 final EntryType entry = (EntryType) o;
-                context.items().add(readEntry(entry));
+                final MapItem item = readEntry(entry);
+                //find insert parent
+                final String[] path = item.getName().split("/");
+                MapItem parent = context;
+                for(int i=0;i<path.length-1;i++){
+                    parent = findItem(parent, path[i]);
+                }
+                item.setName(path[path.length-1]);
+                parent.items().add(item);
             }
         }
         
         return context;
     }
         
+    private static MapItem findItem(MapItem parent, String name){
+        for(MapItem mi : parent.items()){
+            if(mi.getName().equals(name)){
+                return mi;
+            }
+        }
+        //does not exist, create it
+        final MapItem np = MapBuilder.createItem();
+        parent.items().add(np);
+        return np;
+    }
+    
     private static MapItem readEntry(final EntryType entry) throws JAXBException, FactoryException, DataStoreException{
         final List<Object> entryContent = entry.getAuthorOrCategoryOrContent();
         

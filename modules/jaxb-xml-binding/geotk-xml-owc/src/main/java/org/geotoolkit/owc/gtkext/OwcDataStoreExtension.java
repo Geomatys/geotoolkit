@@ -19,8 +19,6 @@ package org.geotoolkit.owc.gtkext;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.bind.JAXBElement;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ObjectConverters;

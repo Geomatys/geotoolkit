@@ -16,9 +16,14 @@
  */
 package org.geotoolkit.owc.xml;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ServiceLoader;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import org.apache.sis.xml.MarshallerPool;
+import org.geotoolkit.sld.xml.JAXBSLDUtilities;
 
 /**
  *
@@ -33,15 +38,17 @@ public class OwcMarshallerPool {
     private static final MarshallerPool POOL;
     static {
         try {
-            final JAXBContext jaxbCtxt = JAXBContext.newInstance(
-                       "org.geotoolkit.owc.xml.v10"
-                    + ":org.w3._2005.atom"
-                    + ":org.geotoolkit.georss.xml.v100"
-                    + ":org.geotoolkit.gml.xml.v311"
-                    + ":org.geotoolkit.sld.xml.v110"
-                    + ":org.apache.sis.internal.jaxb.geometry"
-                    + ":org.geotoolkit.wms.xml.v130"
-                    + ":org.geotoolkit.owc.gtkext");
+            final List<Class> classes = new ArrayList<>();
+            classes.add(org.apache.sis.internal.jaxb.geometry.ObjectFactory.class);
+            classes.add(org.geotoolkit.owc.gtkext.ObjectFactory.class);
+            classes.add(org.geotoolkit.wms.xml.v130.ObjectFactory.class);
+            classes.add(org.geotoolkit.gml.xml.v311.ObjectFactory.class);
+            classes.add(org.geotoolkit.georss.xml.v100.ObjectFactory.class);
+            classes.add(org.w3._2005.atom.ObjectFactory.class);
+            classes.add(org.geotoolkit.owc.xml.v10.ObjectFactory.class);
+            classes.addAll(JAXBSLDUtilities.getSLD110PoolClasses());
+                        
+            final JAXBContext jaxbCtxt = JAXBContext.newInstance(classes.toArray(new Class[classes.size()]));
             POOL = new MarshallerPool(jaxbCtxt, null);
         } catch (JAXBException ex) {
             // Should never happen, unless we have a build configuration problem.
