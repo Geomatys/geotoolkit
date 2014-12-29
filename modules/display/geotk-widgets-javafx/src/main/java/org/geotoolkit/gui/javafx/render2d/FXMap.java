@@ -140,6 +140,14 @@ public class FXMap extends BorderPane {
                 }
             }
         });
+        canvas.getContainer().addPropertyChangeListener(new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent evt) {
+                if(ContextContainer2D.CONTEXT_PROPERTY.equals(evt.getPropertyName())){
+                    canvas.repaint();
+                }
+            }
+        });
         
     }
 

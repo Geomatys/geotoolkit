@@ -83,9 +83,17 @@ public class FXStoreChooser extends SplitPane {
     static final Comparator<Object> SORTER = new Comparator<Object>() {
         @Override
         public int compare(Object o1, Object o2) {
-            final String o1Name = getText(o1);
-            final String o2Name = getText(o2);
-            return o1Name.compareTo(o2Name);
+            //sort by type first
+            final int o1p = getPriority(o1);
+            final int o2p = getPriority(o2);
+            
+            if(o1p == o2p){
+                final String o1Name = getText(o1);
+                final String o2Name = getText(o2);
+                return o1Name.compareTo(o2Name);
+            }else{
+                return Integer.compare(o1p, o2p);
+            }
         }
         
         private String getText(Object candidate){
@@ -97,6 +105,23 @@ public class FXStoreChooser extends SplitPane {
                 return "";
             }
         }
+        
+        private int getPriority(Object o){
+            if(o instanceof FileFeatureStoreFactory){
+                return 1;
+            }else if(o instanceof CoverageStoreFactory && !(o instanceof ClientFactory)){
+                return 2;
+            }else if(o instanceof AbstractFolderFeatureStoreFactory){
+                return 3;
+            }else if(o instanceof AbstractJDBCFeatureStoreFactory){
+                return 4;
+            }else if(o instanceof ClientFactory){
+                return 6;
+            }else{
+                return 5;
+            }
+        }
+        
     };
     
     private final Accordion accordion = new Accordion();
