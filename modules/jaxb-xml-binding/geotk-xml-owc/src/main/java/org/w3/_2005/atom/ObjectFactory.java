@@ -49,27 +49,27 @@ import javax.xml.namespace.QName;
 @XmlRegistry
 public class ObjectFactory {
 
-    private final static QName _EntryTypeTitle_QNAME = new QName("http://www.w3.org/2005/Atom", "title");
-    private final static QName _EntryTypeCategory_QNAME = new QName("http://www.w3.org/2005/Atom", "category");
-    private final static QName _EntryTypeAuthor_QNAME = new QName("http://www.w3.org/2005/Atom", "author");
-    private final static QName _EntryTypeSummary_QNAME = new QName("http://www.w3.org/2005/Atom", "summary");
-    private final static QName _EntryTypeId_QNAME = new QName("http://www.w3.org/2005/Atom", "id");
-    private final static QName _EntryTypeContent_QNAME = new QName("http://www.w3.org/2005/Atom", "content");
-    private final static QName _EntryTypeLink_QNAME = new QName("http://www.w3.org/2005/Atom", "link");
-    private final static QName _EntryTypeContributor_QNAME = new QName("http://www.w3.org/2005/Atom", "contributor");
-    private final static QName _EntryTypeUpdated_QNAME = new QName("http://www.w3.org/2005/Atom", "updated");
-    private final static QName _EntryTypeSource_QNAME = new QName("http://www.w3.org/2005/Atom", "source");
-    private final static QName _EntryTypeRights_QNAME = new QName("http://www.w3.org/2005/Atom", "rights");
-    private final static QName _EntryTypePublished_QNAME = new QName("http://www.w3.org/2005/Atom", "published");
-    private final static QName _Entry_QNAME = new QName("http://www.w3.org/2005/Atom", "entry");
-    private final static QName _Feed_QNAME = new QName("http://www.w3.org/2005/Atom", "feed");
-    private final static QName _PersonTypeName_QNAME = new QName("http://www.w3.org/2005/Atom", "name");
-    private final static QName _PersonTypeEmail_QNAME = new QName("http://www.w3.org/2005/Atom", "email");
-    private final static QName _PersonTypeUri_QNAME = new QName("http://www.w3.org/2005/Atom", "uri");
-    private final static QName _FeedTypeGenerator_QNAME = new QName("http://www.w3.org/2005/Atom", "generator");
-    private final static QName _FeedTypeSubtitle_QNAME = new QName("http://www.w3.org/2005/Atom", "subtitle");
-    private final static QName _FeedTypeIcon_QNAME = new QName("http://www.w3.org/2005/Atom", "icon");
-    private final static QName _FeedTypeLogo_QNAME = new QName("http://www.w3.org/2005/Atom", "logo");
+    public final static QName _EntryTypeTitle_QNAME = new QName("http://www.w3.org/2005/Atom", "title");
+    public final static QName _EntryTypeCategory_QNAME = new QName("http://www.w3.org/2005/Atom", "category");
+    public final static QName _EntryTypeAuthor_QNAME = new QName("http://www.w3.org/2005/Atom", "author");
+    public final static QName _EntryTypeSummary_QNAME = new QName("http://www.w3.org/2005/Atom", "summary");
+    public final static QName _EntryTypeId_QNAME = new QName("http://www.w3.org/2005/Atom", "id");
+    public final static QName _EntryTypeContent_QNAME = new QName("http://www.w3.org/2005/Atom", "content");
+    public final static QName _EntryTypeLink_QNAME = new QName("http://www.w3.org/2005/Atom", "link");
+    public final static QName _EntryTypeContributor_QNAME = new QName("http://www.w3.org/2005/Atom", "contributor");
+    public final static QName _EntryTypeUpdated_QNAME = new QName("http://www.w3.org/2005/Atom", "updated");
+    public final static QName _EntryTypeSource_QNAME = new QName("http://www.w3.org/2005/Atom", "source");
+    public final static QName _EntryTypeRights_QNAME = new QName("http://www.w3.org/2005/Atom", "rights");
+    public final static QName _EntryTypePublished_QNAME = new QName("http://www.w3.org/2005/Atom", "published");
+    public final static QName _Entry_QNAME = new QName("http://www.w3.org/2005/Atom", "entry");
+    public final static QName _Feed_QNAME = new QName("http://www.w3.org/2005/Atom", "feed");
+    public final static QName _PersonTypeName_QNAME = new QName("http://www.w3.org/2005/Atom", "name");
+    public final static QName _PersonTypeEmail_QNAME = new QName("http://www.w3.org/2005/Atom", "email");
+    public final static QName _PersonTypeUri_QNAME = new QName("http://www.w3.org/2005/Atom", "uri");
+    public final static QName _FeedTypeGenerator_QNAME = new QName("http://www.w3.org/2005/Atom", "generator");
+    public final static QName _FeedTypeSubtitle_QNAME = new QName("http://www.w3.org/2005/Atom", "subtitle");
+    public final static QName _FeedTypeIcon_QNAME = new QName("http://www.w3.org/2005/Atom", "icon");
+    public final static QName _FeedTypeLogo_QNAME = new QName("http://www.w3.org/2005/Atom", "logo");
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: org.w3._2005.atom

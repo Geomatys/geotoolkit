@@ -31,6 +31,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.PropertyException;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLEventWriter;
 import javax.xml.stream.XMLStreamReader;
@@ -38,6 +39,7 @@ import javax.xml.stream.XMLStreamWriter;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.util.iso.SimpleInternationalString;
 import org.apache.sis.xml.MarshallerPool;
 import org.geotoolkit.georss.xml.v100.WhereType;
 import org.geotoolkit.gml.xml.v311.DirectPositionType;
@@ -46,6 +48,7 @@ import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapItem;
 import org.geotoolkit.map.MapLayer;
+import org.geotoolkit.owc.gtkext.ObjectFactory;
 import org.geotoolkit.owc.xml.v10.ContentType;
 import org.geotoolkit.owc.xml.v10.OfferingType;
 import org.geotoolkit.referencing.IdentifiedObjects;
@@ -59,8 +62,12 @@ import org.geotoolkit.owc.xml.v10.StyleSetType;
 import org.geotoolkit.sld.xml.Specification;
 import org.geotoolkit.sld.xml.StyleXmlIO;
 import org.geotoolkit.sld.xml.v110.UserStyle;
+import org.geotoolkit.style.DefaultDescription;
 import org.geotoolkit.style.MutableStyle;
 import org.opengis.geometry.Envelope;
+import org.opengis.style.Description;
+import org.w3._2005.atom.IdType;
+import org.w3._2005.atom.TextTypeType;
 import org.w3c.dom.Node;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
@@ -72,6 +79,8 @@ import org.xml.sax.InputSource;
  * @author Johann Sorel (Geomatys)
  */
 public class OwcXmlIO {
+    
+    private static final ObjectFactory GEOTK_FACTORY = new ObjectFactory();
     
     private static final OwcExtension[] EXTENSIONS;
     
@@ -147,9 +156,39 @@ public class OwcXmlIO {
     private static EntryType toEntry(final MapItem item){
         final EntryType entry = ATOM_FACTORY.createEntryType();
         
+        //store other informations
+        final String name = item.getName();
+        final Description description = item.getDescription();
+        
+        if(name!=null){
+            final IdType atom = new IdType();
+            atom.setValue(name);
+            entry.getAuthorOrCategoryOrContent().add(ATOM_FACTORY.createEntryTypeId(atom));
+        }
+
+        if(description!=null && description.getTitle()!=null){
+            final TextType atom = new TextType();
+            atom.setType(TextTypeType.TEXT);
+            atom.getContent().add(description.getTitle().toString());
+            entry.getAuthorOrCategoryOrContent().add(ATOM_FACTORY.createEntryTypeTitle(atom));
+        }
+
+        if(description!=null && description.getAbstract()!=null){
+            final TextType atom = new TextType();
+            atom.setType(TextTypeType.TEXT);
+            atom.getContent().add(description.getAbstract().toString());
+            entry.getAuthorOrCategoryOrContent().add(ATOM_FACTORY.createEntryTypeSummary(atom));
+        }
+        
+            
         if(item instanceof MapLayer){
-            OfferingType offering = null;
             final MapLayer layer = (MapLayer) item;
+            
+            entry.getAuthorOrCategoryOrContent().add(GEOTK_FACTORY.createVisible(layer.isVisible()));
+            entry.getAuthorOrCategoryOrContent().add(GEOTK_FACTORY.createSelectable(layer.isSelectable()));       
+            entry.getAuthorOrCategoryOrContent().add(GEOTK_FACTORY.createOpacity(layer.getOpacity()));               
+            
+            OfferingType offering = null;
             for(OwcExtension ext : getExtensions()){
                 if(ext.canHandle(layer)){
                     offering = ext.createOffering(layer);
@@ -250,14 +289,31 @@ public class OwcXmlIO {
     private static MapItem readEntry(final EntryType entry) throws JAXBException, FactoryException, DataStoreException{
         final List<Object> entryContent = entry.getAuthorOrCategoryOrContent();
         
+        String layerName = "";
+        String layerTitle = "";
+        String layerAbstract = "";
+        boolean visible = true;
+        boolean selectable = true;
+        double layerOpacity = 1.0;
         MapItem mapItem = null;
         MutableStyle baseStyle = null;
         MutableStyle selectionStyle = null;
         final List<MapItem> children = new ArrayList<>();
         
         for(Object o : entryContent){
+            QName name = null;
             if(o instanceof JAXBElement){
-                o = ((JAXBElement)o).getValue();
+                final JAXBElement jax = (JAXBElement) o;
+                name = jax.getName();
+                o = jax.getValue();
+                
+                if(GEOTK_FACTORY._Visible_QNAME.equals(name)){
+                    visible = (Boolean)o;
+                }else if(GEOTK_FACTORY._Selectable_QNAME.equals(name)){
+                    selectable = (Boolean)o;
+                }else if(GEOTK_FACTORY._Opacity_QNAME.equals(name)){
+                    layerOpacity = (Double)o;
+                }
             }
             
             if(o instanceof OfferingType){
@@ -285,7 +341,23 @@ public class OwcXmlIO {
                         children.add(readEntry((EntryType)co));
                     }
                 }
+            }else if(o instanceof IdType){
+                final IdType idType = (IdType) o;
+                final String value = idType.getValue();
+                layerName = value;
+            }else if(o instanceof TextType){
+                final TextType tt = (TextType) o;
+                if(ATOM_FACTORY._EntryTypeTitle_QNAME.equals(name)){
+                    if(!tt.getContent().isEmpty()){
+                        layerTitle = (String) tt.getContent().get(0);
+                    }
+                }else if(ATOM_FACTORY._EntryTypeSummary_QNAME.equals(name)){
+                    if(!tt.getContent().isEmpty()){
+                        layerAbstract = (String) tt.getContent().get(0);
+                    }
+                }
             }
+            
         }
         
         if(mapItem==null){
@@ -297,7 +369,16 @@ public class OwcXmlIO {
             if(selectionStyle!=null){
                 ((MapLayer)mapItem).setSelectionStyle(selectionStyle);
             }
+            ((MapLayer)mapItem).setSelectable(selectable);
+            ((MapLayer)mapItem).setOpacity(layerOpacity);
         }
+        mapItem.setName(layerName);
+        mapItem.setDescription(new DefaultDescription(
+                new SimpleInternationalString(layerTitle), 
+                new SimpleInternationalString(layerAbstract)));
+        mapItem.setName(layerName);
+        mapItem.setVisible(visible);
+        
         mapItem.items().addAll(children);
         
         return mapItem;

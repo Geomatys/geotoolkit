@@ -136,8 +136,12 @@ public class OwcDataStoreExtension extends OwcExtension {
         final OfferingType offering = new OfferingType();
         offering.setCode(getCode());
         
-        //write factory type
+        //write the type name
         final List<Object> fieldList = offering.getOperationOrContentOrStyleSet();
+        final Name typeName = getTypeName(mapLayer);
+        if(typeName!=null){
+            fieldList.add(new ParameterType(KEY_DATANAME,String.class.getName(),DefaultName.toJCRExtendedForm(typeName)));
+        }
                        
         //write store creation parameters
         final ParameterValueGroup params = getParams(mapLayer);
