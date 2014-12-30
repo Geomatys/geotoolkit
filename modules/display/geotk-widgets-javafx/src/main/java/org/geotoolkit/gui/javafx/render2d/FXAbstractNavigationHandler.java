@@ -28,6 +28,7 @@ import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import javafx.scene.input.MouseEvent;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 
 
@@ -157,6 +158,16 @@ public class FXAbstractNavigationHandler implements FXCanvasHandler{
         }
         
         return Toolkit.getDefaultToolkit().createCustomCursor(bufferARGB,focusPoint,cursorname);
+    }
+    
+    protected double getMouseX(MouseEvent event){
+        final javafx.geometry.Point2D pt = map.localToScreen(0, 0);
+        return event.getScreenX()- pt.getX();
+    }
+
+    protected double getMouseY(MouseEvent event){
+        final javafx.geometry.Point2D pt = map.localToScreen(0, 0);
+        return event.getScreenY() - pt.getY();
     }
     
 }

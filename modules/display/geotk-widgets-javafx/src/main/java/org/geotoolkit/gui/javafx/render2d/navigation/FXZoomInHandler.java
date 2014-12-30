@@ -73,8 +73,9 @@ public class FXZoomInHandler extends FXAbstractNavigationHandler {
 
         @Override
         public void mouseClicked(final MouseEvent e) {
-            startX = e.getX();
-            startY = e.getY();
+            if(!e.isStillSincePress()) return;
+            startX = getMouseX(e);
+            startY = getMouseY(e);
             lastX = startX;
             lastY = startY;
             mousebutton = e.getButton();
@@ -88,8 +89,9 @@ public class FXZoomInHandler extends FXAbstractNavigationHandler {
 
         @Override
         public void mousePressed(final MouseEvent e) {
-            startX = e.getX();
-            startY = e.getY();
+            
+            startX = getMouseX(e);
+            startY = getMouseY(e);
             lastX = 0;
             lastY = 0;
 
@@ -107,8 +109,8 @@ public class FXZoomInHandler extends FXAbstractNavigationHandler {
 
         @Override
         public void mouseReleased(final MouseEvent e) {
-            double endX = e.getX();
-            double endY = e.getY();
+            double endX = getMouseX(e);
+            double endY = getMouseY(e);
 
             decorationPane.setBuffer(null);
 
@@ -135,6 +137,7 @@ public class FXZoomInHandler extends FXAbstractNavigationHandler {
 
             lastX = 0;
             lastY = 0;
+            e.consume();
         }
 
         @Override
@@ -145,16 +148,12 @@ public class FXZoomInHandler extends FXAbstractNavigationHandler {
 
         @Override
         public void mouseMoved(final MouseEvent e){
-            startX = e.getX();
-            startY = e.getY();
-            lastX = startX;
-            lastY = startY;
         }
         
         @Override
         public void mouseDragged(final MouseEvent e) {
-            double x = e.getX();
-            double y = e.getY();
+            double x = getMouseX(e);
+            double y = getMouseY(e);
 
             // left mouse button
             if (mousebutton == MouseButton.PRIMARY) {
