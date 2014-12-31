@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2008 - 2011, Geomatys
+ *    (C) 2008 - 2014, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -20,12 +20,16 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.logging.Level;
 import javax.swing.Icon;
+import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display.shape.TransformedShape;
 import org.geotoolkit.display2d.GO2Utilities;
-import org.geotoolkit.renderer.style.TTFMarkFactory;
-import org.geotoolkit.renderer.style.WellKnownMarkFactory;
+import org.geotoolkit.renderer.style.DynamicSymbolFactoryFinder;
+import org.geotoolkit.renderer.style.MarkFactory;
 import org.opengis.filter.expression.Expression;
 import org.opengis.metadata.citation.OnlineResource;
 import org.opengis.style.ExternalMark;
@@ -39,9 +43,16 @@ import org.opengis.style.Mark;
  */
 public class CachedMark extends Cache<Mark>{
 
-    private static final WellKnownMarkFactory WKMF = new WellKnownMarkFactory();
-    private static final TTFMarkFactory TTFMF = new TTFMarkFactory();
-
+    private static final MarkFactory[] MARK_FACTORIES;
+    static {
+        final List<MarkFactory> lst = new ArrayList<>();
+        final Iterator<MarkFactory> ite = DynamicSymbolFactoryFinder.getMarkFactories();
+        while(ite.hasNext()){
+            lst.add(ite.next());
+        }
+        MARK_FACTORIES = lst.toArray(new MarkFactory[0]);
+    }
+    
     //IDS for cache map
     private Shape cachedWKN = null;
 
@@ -97,20 +108,16 @@ public class CachedMark extends Cache<Mark>{
             isWKN = false;
         }else if(GO2Utilities.isStatic(expWKN)){
 
-            try {
-                cachedWKN = WKMF.getShape(null, expWKN, null);
-            } catch (Exception ex) {
-                LOGGER.log(Level.WARNING, ex.getLocalizedMessage(),ex);
-            }
-
-            if(cachedWKN == null){
+            Object markRef = expWKN.evaluate(null);
+            
+            for(int i=0; i<MARK_FACTORIES.length && cachedWKN==null; i++){
                 try {
-                    cachedWKN = TTFMF.getShape(null, expWKN, null);
-                } catch (Exception ex) {
+                    cachedWKN = MARK_FACTORIES[i].evaluateShape(null, markRef, 0);
+                } catch (PortrayalException ex) {
                     LOGGER.log(Level.WARNING, ex.getLocalizedMessage(),ex);
                 }
             }
-
+            
             //we return false, invalid marker
             if(cachedWKN == null){
                 isStaticVisible = VisibilityState.UNVISIBLE;
@@ -151,6 +158,38 @@ public class CachedMark extends Cache<Mark>{
         return styleElement.getWellKnownName()!= null || styleElement.getExternalMark() != null ;
     }
 
+    public Shape getShape(final Object candidate, final RenderingHints hints){
+        evaluate();
+        
+        final Expression wkn = styleElement.getWellKnownName();
+        final ExternalMark external = styleElement.getExternalMark();
+        
+        Shape candidateShape = cachedWKN;
+
+        if(candidateShape == null){
+            String format = null;
+            Object markRef = null;
+            int markIndex = 0;
+            if(wkn!=null){
+                markRef = wkn.evaluate(candidate);
+            }else if(external!=null){
+                format = external.getFormat();
+                markRef = external.getOnlineResource().getLinkage().toString();
+                markIndex = external.getMarkIndex();
+            }
+            
+            for(int i=0; i<MARK_FACTORIES.length && candidateShape==null; i++){
+                try {
+                    candidateShape = MARK_FACTORIES[i].evaluateShape(format, markRef, markIndex);
+                } catch (PortrayalException ex) {
+                    LOGGER.log(Level.WARNING, ex.getLocalizedMessage(),ex);
+                }
+            }
+        }
+        
+        return candidateShape;
+    }
+    
     public BufferedImage getImage(final Object candidate, final Float size, final RenderingHints hints){
         evaluate();
 
@@ -161,36 +200,21 @@ public class CachedMark extends Cache<Mark>{
         float margin = 0;
         int maxWidth = 0;
         int center = 0;
+        
+        Shape candidateShape = getShape(candidate, hints);
 
-        Shape candidateWKN = cachedWKN;
-
-        if(candidateWKN == null){
-            try {
-                candidateWKN = WKMF.getShape(null, wkn, candidate);
-            } catch (Exception ex) {
-                LOGGER.log(Level.WARNING, ex.getLocalizedMessage(),ex);
-            }
-        }
-
-        if(candidateWKN == null){
-            try {
-                candidateWKN = TTFMF.getShape(null, wkn, candidate);
-            } catch (Exception ex) {
-                LOGGER.log(Level.WARNING, ex.getLocalizedMessage(),ex);
-            }
-        }
 
         if(wkn != null || external != null){
             j2dSize = (size != null) ? size.intValue() : 16;
             if(j2dSize <0) j2dSize = 0;
             margin = cachedStroke.getMargin(candidate,1);
-            maxWidth = (int)(margin+0.5f)+ j2dSize ;
+            maxWidth = (int)(margin*2+0.5f)+ j2dSize ;
             center = maxWidth/2  ;
         }
 
-        if(maxWidth < 1)maxWidth =1;
+        if(maxWidth < 1) maxWidth =1;
 
-        if(candidateWKN != null){
+        if(candidateShape != null){
 
             BufferedImage buffer = new BufferedImage( maxWidth , maxWidth, BufferedImage.TYPE_INT_ARGB);
             Graphics2D g2 = (Graphics2D) buffer.getGraphics();
@@ -199,7 +223,7 @@ public class CachedMark extends Cache<Mark>{
             g2.translate(center,center);
 
             TransformedShape trs = new TransformedShape();
-            trs.setOriginalShape(candidateWKN);
+            trs.setOriginalShape(candidateShape);
             trs.scale(j2dSize,j2dSize);
             Shape shp = trs; //trs.createTransformedShape(marker);
 

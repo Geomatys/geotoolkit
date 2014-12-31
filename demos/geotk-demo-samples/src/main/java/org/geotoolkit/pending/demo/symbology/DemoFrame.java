@@ -91,6 +91,7 @@ public class DemoFrame extends JFrame{
         pointsNode.add(new PanelNode("Default point", Styles.createWorldContext(Styles.defaultPoint())));
         pointsNode.add(new PanelNode("Mark point", Styles.createWorldContext(Styles.markPoint())));
         pointsNode.add(new PanelNode("Image point", Styles.createWorldContext(Styles.imagePoint())));
+        pointsNode.add(new PanelNode("TTF point", Styles.createWorldContext(Styles.ttfPoint())));
         root.add(pointsNode);
 
         // Line demo -------------------------------------------------------

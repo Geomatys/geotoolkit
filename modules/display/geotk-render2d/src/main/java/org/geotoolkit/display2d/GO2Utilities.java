@@ -95,15 +95,12 @@ import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.CRS;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
-import org.geotoolkit.renderer.style.WellKnownMarkFactory;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.StyleConstants;
 import org.geotoolkit.style.visitor.PrepareStyleVisitor;
 import static org.apache.sis.util.ArgumentChecks.*;
 import org.apache.sis.util.NullArgumentException;
 import org.apache.sis.util.collection.Cache;
-import org.geotoolkit.filter.binding.Binding;
-import org.geotoolkit.filter.binding.Bindings;
 import org.geotoolkit.parameter.ParametersExt;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
@@ -111,14 +108,13 @@ import org.geotoolkit.process.coverage.resample.ResampleDescriptor;
 import org.opengis.coverage.Coverage;
 import org.opengis.coverage.grid.GridCoverage;
 import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.Property;
-import org.geotoolkit.feature.simple.SimpleFeature;
 import org.geotoolkit.feature.type.ComplexType;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.GeometryDescriptor;
 import org.geotoolkit.feature.type.GeometryType;
 import org.geotoolkit.feature.type.Name;
 import org.geotoolkit.feature.type.PropertyDescriptor;
+import org.geotoolkit.renderer.style.WKMMarkFactory;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.Id;
 import org.opengis.filter.expression.Expression;
@@ -371,17 +367,17 @@ public final class GO2Utilities {
         final Shape shape;
 
         if(StyleConstants.MARK_CIRCLE.equals(wkn)){
-            shape = WellKnownMarkFactory.CIRCLE;
+            shape = WKMMarkFactory.CIRCLE;
         }else if(StyleConstants.MARK_CROSS.equals(wkn)){
-            shape = WellKnownMarkFactory.CROSS;
+            shape = WKMMarkFactory.CROSS;
         }else if(StyleConstants.MARK_SQUARE.equals(wkn)){
-            shape = WellKnownMarkFactory.SQUARE;
+            shape = WKMMarkFactory.SQUARE;
         }else if(StyleConstants.MARK_STAR.equals(wkn)){
-            shape = WellKnownMarkFactory.STAR;
+            shape = WKMMarkFactory.STAR;
         }else if(StyleConstants.MARK_TRIANGLE.equals(wkn)){
-            shape = WellKnownMarkFactory.TRIANGLE;
+            shape = WKMMarkFactory.TRIANGLE;
         }else if(StyleConstants.MARK_X.equals(wkn)){
-            shape = WellKnownMarkFactory.X;
+            shape = WKMMarkFactory.X;
         }else{
             shape = null;
         }

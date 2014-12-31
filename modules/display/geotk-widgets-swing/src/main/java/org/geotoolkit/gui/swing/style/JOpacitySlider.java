@@ -33,7 +33,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JComponent;
 import javax.swing.event.MouseInputListener;
-import org.geotoolkit.renderer.style.WellKnownMarkFactory;
+import org.geotoolkit.renderer.style.WKMMarkFactory;
 
 /**
  *
@@ -49,7 +49,7 @@ public class JOpacitySlider extends JComponent implements MouseInputListener{
     static{
         AffineTransform trs = new AffineTransform();
         trs.translate(0d, -0.5d);
-        Shape topCentred = trs.createTransformedShape(WellKnownMarkFactory.TRIANGLE);
+        Shape topCentred = trs.createTransformedShape(WKMMarkFactory.TRIANGLE);
         trs.setToIdentity();
         trs.scale(10, 10);
         trs.rotate(Math.PI);

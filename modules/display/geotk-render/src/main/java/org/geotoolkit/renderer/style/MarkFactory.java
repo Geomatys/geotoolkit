@@ -2,8 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2002 - 2008, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2008 - 2009, Geomatys
+ *    (C) 2014, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -17,33 +16,65 @@
  */
 package org.geotoolkit.renderer.style;
 
-import java.awt.Graphics2D;
 import java.awt.Shape;
-
-import org.opengis.filter.expression.Expression;
+import java.util.AbstractMap;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import org.geotoolkit.display.PortrayalException;
 
 /**
- * Symbol handler for a Mark.
- * @module pending
+ * Build mark shapes.
+ * 
+ * @author Johann Sorel (Geomatys)
  */
-public interface MarkFactory {
+public abstract class MarkFactory {
+    
     /**
-     * Turns the specified URL into an Shape, eventually using the Feature
-     * attributes to evaluate the expression, or returns <code>null</code> if
-     * the factory cannot evaluate this symbolUrl.
      * 
-     * @param symbolUrl
-     *            the expression that will return the symbol name. Once
-     *            evaluated the expression should return something like
-     *            <code>plainName</code> or like <code>protocol://path</code>.
-     *            See the actual implementations for details on the kind of
-     *            supported name.
-     * @param candidate
-     *            The feature that will be used to evaluate the symbolURL
-     *            expression (or to extract data from it, think complex attributes, in that
-     *            case a visit to the expression and some direct attribute value extraction 
-     *            might be needed instead)
-     * 
+     * @param format : defined in ExternalMark
+     * @param markRef : WKT Make name or ExternalMark OnlineResource
+     * @param markIndex : defined in ExternalMark
+     * @return Mark shape or null is factory does not handle the parameters
      */
-    public Shape getShape(Graphics2D graphics, Expression symbolUrl, Object candidate) throws Exception;
+    public abstract Shape evaluateShape(String format, Object markRef, int markIndex) throws PortrayalException;
+    
+    /**
+     * Split a path in N parts :
+     * 0 : protocol
+     * 1 : main path
+     * 2+ : arguments as entries
+     * 
+     * @param path
+     * @return 
+     */
+    protected static List<Object> splitPath(String path){
+        final List<Object> splits = new ArrayList<>();
+        final int protocolSplit = path.indexOf(':');
+        if(protocolSplit>=0){
+            splits.add(path.substring(0, protocolSplit));
+            path = path.substring(protocolSplit);
+        }else{
+            splits.add(null);
+        }
+        
+        final int argsSplit = path.indexOf('?');
+        if(argsSplit>=0){
+            String args = path.substring(argsSplit);
+            String[] parts = args.split("&");
+            for(String part : parts){
+                final String[] split = part.split("=");
+                final String value = (split.length>1) ? split[1] : null;
+                splits.add(new AbstractMap.SimpleImmutableEntry<>(split[0],value));
+            }
+            
+        }else{
+            splits.add(path);
+        }
+        
+        return splits;
+    }
+    
+    
 }
+

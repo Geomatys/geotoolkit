@@ -1,2 +1,2 @@
-org.geotoolkit.renderer.style.WellKnownMarkFactory
+org.geotoolkit.renderer.style.WKMMarkFactory
 org.geotoolkit.renderer.style.TTFMarkFactory

@@ -25,6 +25,7 @@ import java.awt.RenderingHints;
 import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.InputStream;
+import java.net.URL;
 import javax.swing.ImageIcon;
 
 /**
@@ -34,6 +35,7 @@ import javax.swing.ImageIcon;
  */
 public final class IconBuilder {
     
+    public static final URL FONTAWESOME = IconBuilder.class.getResource("/org/geotoolkit/font/fontawesome-webfont.ttf");
     public static Font FONT;
 
     static{
