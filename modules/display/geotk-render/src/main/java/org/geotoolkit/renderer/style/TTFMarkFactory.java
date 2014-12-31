@@ -76,18 +76,18 @@ public class TTFMarkFactory extends MarkFactory {
             throw new PortrayalException("Unkown font "+fontPath);
         }
         
-        final GlyphVector glyph = font.createGlyphVector(FONT_RENDER_CONTEXT,new char[]{(char)markIndex});
+        final GlyphVector glyph = font.createGlyphVector(FONT_RENDER_CONTEXT,new String(new int[]{markIndex}, 0, 1));
         final Shape shape = glyph.getOutline();
         final Rectangle2D bounds = shape.getBounds2D();
-        final double largest = Math.max(bounds.getWidth(), bounds.getHeight());
+        final double scale = 1.0 / Math.max(bounds.getWidth(), bounds.getHeight());
         //center and downscale glyph
         final AffineTransform atrs = new AffineTransform(
-                1.0/largest,
+                scale,
                 0.0,
                 0.0,
-                1.0/largest,
-                -bounds.getCenterX(),
-                -bounds.getCenterY());
+                scale,
+                -bounds.getCenterX()*scale,
+                -bounds.getCenterY()*scale);
         return atrs.createTransformedShape(shape);
     }
     

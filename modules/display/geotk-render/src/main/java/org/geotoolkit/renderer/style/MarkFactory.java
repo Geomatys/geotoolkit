@@ -53,14 +53,15 @@ public abstract class MarkFactory {
         final int protocolSplit = path.indexOf(':');
         if(protocolSplit>=0){
             splits.add(path.substring(0, protocolSplit));
-            path = path.substring(protocolSplit);
+            path = path.substring(protocolSplit+1);
         }else{
             splits.add(null);
         }
         
         final int argsSplit = path.indexOf('?');
         if(argsSplit>=0){
-            String args = path.substring(argsSplit);
+            splits.add(path.substring(0, argsSplit));
+            String args = path.substring(argsSplit+1);
             String[] parts = args.split("&");
             for(String part : parts){
                 final String[] split = part.split("=");

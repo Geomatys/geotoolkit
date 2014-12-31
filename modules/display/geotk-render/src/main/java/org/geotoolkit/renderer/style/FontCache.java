@@ -123,7 +123,7 @@ public class FontCache {
         // may be its a file or url
         InputStream is = null;
 
-        if (fontUrl.startsWith("http") || fontUrl.startsWith("file:")) {
+        if (fontUrl.startsWith("http") || fontUrl.startsWith("file:") || fontUrl.startsWith("jar:")) {
             try {
                 URL url = new URL(fontUrl);
                 is = url.openStream();

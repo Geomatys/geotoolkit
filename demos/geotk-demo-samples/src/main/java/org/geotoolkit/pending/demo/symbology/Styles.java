@@ -175,7 +175,7 @@ public class Styles {
         final Fill fill = SF.fill(Color.RED);
         final ExternalMark external = SF.externalMark(
                     SF.onlineResource(IconBuilder.FONTAWESOME.toURI()),
-                    "ttf",FontAwesomeIcons.ICON_ANCHOR.codePointAt(0));
+                    "ttf",FontAwesomeIcons.ICON_DELICIOUS.codePointAt(0));
         final Mark mark = SF.mark(external, fill, stroke);
         
         symbols.add(mark);
@@ -185,6 +185,37 @@ public class Styles {
         final MutableStyle style = SF.style(symbolizer);
         return style;
     }
+    
+    public static MutableStyle ttfPoint2() throws URISyntaxException{
+
+        //general informations
+        final String name = "mySymbol";
+        final Description desc = DEFAULT_DESCRIPTION;
+        final String geometry = null; //use the default geometry of the feature
+        final Unit unit = NonSI.PIXEL;
+
+        //the visual element
+        final Expression size = FF.literal(12);
+        final Expression opacity = LITERAL_ONE_FLOAT;
+        final Expression rotation = LITERAL_ONE_FLOAT;
+        final AnchorPoint anchor = DEFAULT_ANCHOR_POINT;
+        final Displacement disp = DEFAULT_DISPLACEMENT;
+
+        final List<GraphicalSymbol> symbols = new ArrayList<GraphicalSymbol>();
+        
+        final Stroke stroke = SF.stroke(Color.BLACK, 1);
+        final Fill fill = SF.fill(Color.RED);
+        final Expression external = FF.literal("ttf:Dialog?char=0x2A");
+        final Mark mark = SF.mark(external, fill, stroke);
+        
+        symbols.add(mark);
+        final Graphic graphic = SF.graphic(symbols, opacity, size, rotation, anchor, disp);
+
+        final PointSymbolizer symbolizer = SF.pointSymbolizer(name,geometry,desc,unit, graphic);
+        final MutableStyle style = SF.style(symbolizer);
+        return style;
+    }
+    
 
     //////////////////////////////////////////////////////////////////////
     // LINE SYMBOLIZER //////////////////////////////////////////////////
