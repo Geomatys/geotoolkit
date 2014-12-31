@@ -18,26 +18,31 @@
 package org.apache.sis.internal.referencing;
 
 import java.util.Date;
+import java.util.Iterator;
+import java.util.Collection;
 import java.util.logging.LogRecord;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import org.opengis.util.FactoryException;
 import org.opengis.parameter.ParameterDescriptor;
+import org.opengis.referencing.IdentifiedObject;
+import org.opengis.referencing.crs.SingleCRS;
 import org.opengis.referencing.crs.TemporalCRS;
 import org.opengis.referencing.crs.VerticalCRS;
 import org.opengis.referencing.crs.GeographicCRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.Matrix;
+import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.operation.CoordinateOperation;
 import org.opengis.referencing.operation.CoordinateOperationFactory;
-import org.opengis.referencing.operation.TransformException;
 import org.opengis.metadata.extent.GeographicBoundingBox;
+import org.opengis.metadata.extent.GeographicExtent;
 import org.opengis.geometry.Envelope;
-
-import org.opengis.referencing.IdentifiedObject;
-import org.opengis.referencing.operation.MathTransform;
-import org.opengis.referencing.operation.Matrix;
+import org.opengis.metadata.extent.VerticalExtent;
 import org.opengis.temporal.TemporalPrimitive;
+
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.Factories;
 import org.geotoolkit.factory.FactoryFinder;
@@ -150,21 +155,33 @@ public final class ServicesForMetadata extends ReferencingServices implements Ch
     }
 
     /**
-     * Initializes a geographic bounding box from the specified envelope. If the envelope contains
-     * a CRS, then the bounding box will be projected to a geographic CRS. Otherwise, the envelope
-     * is assumed already in appropriate CRS.
-     *
-     * @param  envelope The source envelope.
-     * @param  target The target bounding box.
-     * @throws TransformException If the given envelope can't be transformed.
+     * Returns {@code true} if the specified {@code crs} starts with the specified {@code head} component.
      */
-    @Override
-    public void setBounds(Envelope envelope, final DefaultGeographicBoundingBox target)
+    private static boolean startsWith(final CoordinateReferenceSystem crs,
+                                      final CoordinateReferenceSystem head)
+    {
+        final int dimension = head.getCoordinateSystem().getDimension();
+        return crs.getCoordinateSystem().getDimension() >= dimension &&
+               org.geotoolkit.referencing.CRS.equalsIgnoreMetadata(
+                       org.geotoolkit.referencing.CRS.getSubCRS(crs, 0, dimension), head);
+    }
+
+    /**
+     * Implementation of the public {@code setBounds} methods for the horizontal extent.
+     * If the {@code crs} argument is null, then it is caller's responsibility to ensure
+     * that the given envelope is two-dimensional.
+     *
+     * @param  envelope    The source envelope.
+     * @param  target      The target bounding box.
+     * @param  crs         The envelope CRS, or {@code null} if unknown.
+     * @param  standardCRS The horizontal component of the given CRS, or null if the {@code crs} argument is null.
+     * @throws TransformException If the given envelope can not be transformed.
+     */
+    private void setGeographicExtent(Envelope envelope, final DefaultGeographicBoundingBox target,
+            final CoordinateReferenceSystem crs, final GeographicCRS standardCRS)
             throws TransformException
     {
-        final CoordinateReferenceSystem crs = envelope.getCoordinateReferenceSystem();
-        if (crs != null) {
-            final GeographicCRS standardCRS = CRSUtilities.getStandardGeographicCRS2D(crs);
+        if (standardCRS != null) {
             if (!startsWith(crs, standardCRS) &&
                 !startsWith(crs, CommonCRS.WGS84.normalizedGeographic()) &&
                 !startsWith(crs, PredefinedCRS.WGS84_3D))
@@ -202,61 +219,17 @@ public final class ServicesForMetadata extends ReferencingServices implements Ch
     }
 
     /**
-     * Returns {@code true} if the specified {@code crs} starts with the specified {@code head}.
-     */
-    private static boolean startsWith(final CoordinateReferenceSystem crs,
-                                      final CoordinateReferenceSystem head)
-    {
-        final int dimension = head.getCoordinateSystem().getDimension();
-        return crs.getCoordinateSystem().getDimension() >= dimension &&
-               org.geotoolkit.referencing.CRS.equalsIgnoreMetadata(
-                       org.geotoolkit.referencing.CRS.getSubCRS(crs, 0, dimension), head);
-    }
-
-    /**
-     * Initializes a vertical extent with the value inferred from the given envelope.
-     * Only the vertical ordinates are extracted; all other ordinates are ignored.
+     * Implementation of the public {@code setBounds} methods for the vertical extent.
+     * If the {@code crs} argument is null, then it is caller's responsibility to ensure
+     * that the given envelope is one-dimensional.
      *
-     * @param  envelope The source envelope.
-     * @param  target The target vertical extent.
-     * @throws TransformException If no vertical component can be extracted from the given envelope.
+     * @param  envelope    The source envelope.
+     * @param  target      The target vertical extent.
+     * @param  crs         The envelope CRS, or {@code null} if unknown.
+     * @param  verticalCRS The vertical component of the given CRS, or null if the {@code crs} argument is null.
      */
-    @Override
-    public void setBounds(final Envelope envelope, final DefaultVerticalExtent target) throws TransformException {
-        final CoordinateReferenceSystem crs = envelope.getCoordinateReferenceSystem();
-        final VerticalCRS verticalCRS = CRS.getVerticalComponent(crs, true);
-        if (verticalCRS == null && envelope.getDimension() != 1) {
-            throw new TransformPathNotFoundException(Errors.format(
-                    Errors.Keys.ILLEGAL_COORDINATE_REFERENCE_SYSTEM));
-        }
-        setBounds(envelope, target, crs, verticalCRS);
-    }
-
-    /**
-     * Initializes a temporal extent with the value inferred from the given envelope.
-     * Only the vertical ordinates are extracted; all other ordinates are ignored.
-     *
-     * @param  envelope The source envelope.
-     * @param  target The target temporal extent.
-     * @throws TransformException If no temporal component can be extracted from the given envelope.
-     */
-    @Override
-    public void setBounds(final Envelope envelope, final DefaultTemporalExtent target) throws TransformException {
-        final CoordinateReferenceSystem crs = envelope.getCoordinateReferenceSystem();
-        final TemporalCRS temporalCRS = CRS.getTemporalComponent(crs);
-        if (temporalCRS == null) {
-            throw new TransformPathNotFoundException(Errors.format(
-                    Errors.Keys.ILLEGAL_COORDINATE_REFERENCE_SYSTEM));
-        }
-        setBounds(envelope, target, crs, temporalCRS);
-    }
-
-    /**
-     * Implementation of the public {@code copy} methods for the vertical extent.
-     */
-    private void setBounds(final Envelope envelope, final DefaultVerticalExtent target,
+    private static void setVerticalExtent(final Envelope envelope, final DefaultVerticalExtent target,
             final CoordinateReferenceSystem crs, final VerticalCRS verticalCRS)
-            throws TransformException
     {
         final int dim = (verticalCRS == null) ? 0 : CRSUtilities.dimensionColinearWith(
                 crs.getCoordinateSystem(), verticalCRS.getCoordinateSystem());
@@ -269,10 +242,14 @@ public final class ServicesForMetadata extends ReferencingServices implements Ch
 
     /**
      * Implementation of the public {@code setBounds} methods for the temporal extent.
+     *
+     * @param  envelope    The source envelope.
+     * @param  target      The target temporal extent.
+     * @param  crs         The envelope CRS (mandatory, can not be {@code null}).
+     * @param  verticalCRS The temporal component of the given CRS (mandatory).
      */
-    private void setBounds(final Envelope envelope, final DefaultTemporalExtent target,
+    private static void setTemporalExtent(final Envelope envelope, final DefaultTemporalExtent target,
             final CoordinateReferenceSystem crs, final TemporalCRS temporalCRS)
-            throws TransformException
     {
         final int dim = CRSUtilities.dimensionColinearWith(
                 crs.getCoordinateSystem(), temporalCRS.getCoordinateSystem());
@@ -301,9 +278,139 @@ public final class ServicesForMetadata extends ReferencingServices implements Ch
         }
     }
 
+    /**
+     * Sets a geographic bounding box from the specified envelope.
+     * If the envelope contains a CRS which is not geographic, then the bounding box will be transformed
+     * to a geographic CRS (without datum shift if possible). Otherwise, the envelope is assumed already
+     * in a geographic CRS using (<var>longitude</var>, <var>latitude</var>) axis order.
+     *
+     * @param  envelope The source envelope.
+     * @param  target The target bounding box.
+     * @throws TransformException If the given envelope can not be transformed.
+     */
     @Override
-    public void setBounds(Envelope envelope, DefaultSpatialTemporalExtent target) throws TransformException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void setBounds(Envelope envelope, final DefaultGeographicBoundingBox target)
+            throws TransformException
+    {
+        final CoordinateReferenceSystem crs = envelope.getCoordinateReferenceSystem();
+        GeographicCRS standardCRS = null;
+        if (crs != null) {
+            standardCRS = CRSUtilities.getStandardGeographicCRS2D(crs);
+        } else if (envelope.getDimension() != 2) {
+            throw new TransformPathNotFoundException(Errors.format(
+                    Errors.Keys.ILLEGAL_COORDINATE_REFERENCE_SYSTEM));
+        }
+        setGeographicExtent(envelope, target, crs, standardCRS);
+    }
+
+    /**
+     * Sets a vertical extent with the value inferred from the given envelope.
+     * Only the vertical ordinates are extracted; all other ordinates are ignored.
+     *
+     * @param  envelope The source envelope.
+     * @param  target The target vertical extent.
+     * @throws TransformException If no vertical component can be extracted from the given envelope.
+     */
+    @Override
+    public void setBounds(final Envelope envelope, final DefaultVerticalExtent target) throws TransformException {
+        final CoordinateReferenceSystem crs = envelope.getCoordinateReferenceSystem();
+        final VerticalCRS verticalCRS = CRS.getVerticalComponent(crs, true);
+        if (verticalCRS == null && envelope.getDimension() != 1) {
+            throw new TransformPathNotFoundException(Errors.format(
+                    Errors.Keys.ILLEGAL_COORDINATE_REFERENCE_SYSTEM));
+        }
+        setVerticalExtent(envelope, target, crs, verticalCRS);
+    }
+
+    /**
+     * Sets a temporal extent with the value inferred from the given envelope.
+     * Only the vertical ordinates are extracted; all other ordinates are ignored.
+     *
+     * @param  envelope The source envelope.
+     * @param  target The target temporal extent.
+     * @throws TransformException If no temporal component can be extracted from the given envelope.
+     */
+    @Override
+    public void setBounds(final Envelope envelope, final DefaultTemporalExtent target) throws TransformException {
+        final CoordinateReferenceSystem crs = envelope.getCoordinateReferenceSystem();
+        if (crs == null) { // Mandatory for the conversion from numbers to dates.
+            throw new TransformPathNotFoundException(Errors.format(Errors.Keys.UNSPECIFIED_CRS));
+        }
+        final TemporalCRS temporalCRS = CRS.getTemporalComponent(crs);
+        if (temporalCRS == null) {
+            throw new TransformPathNotFoundException(Errors.format(
+                    Errors.Keys.ILLEGAL_COORDINATE_REFERENCE_SYSTEM));
+        }
+        setTemporalExtent(envelope, target, crs, temporalCRS);
+    }
+
+    /**
+     * Sets the geographic, vertical and temporal extents with the values inferred from the given envelope.
+     * If the given {@code target} has more geographic or vertical extents than needed (0 or 1), then the
+     * extraneous extents are removed.
+     *
+     * @param  envelope The source envelope.
+     * @param  target The target spatio-temporal extent.
+     * @throws TransformException If no temporal component can be extracted from the given envelope.
+     */
+    @Override
+    public void setBounds(final Envelope envelope, final DefaultSpatialTemporalExtent target) throws TransformException {
+        final CoordinateReferenceSystem crs = envelope.getCoordinateReferenceSystem();
+        if (crs == null) { // Mandatory for decomposing the envelope into spatial and temporal parts.
+            throw new TransformPathNotFoundException(Errors.format(Errors.Keys.UNSPECIFIED_CRS));
+        }
+        final SingleCRS horizontalCRS = CRS.getHorizontalComponent(crs);
+        final VerticalCRS verticalCRS = CRS.getVerticalComponent(crs, true);
+        final TemporalCRS temporalCRS = CRS.getTemporalComponent(crs);
+        if (horizontalCRS == null && verticalCRS == null && temporalCRS == null) {
+            throw new TransformPathNotFoundException(Errors.format(
+                    Errors.Keys.ILLEGAL_COORDINATE_REFERENCE_SYSTEM));
+        }
+        /*
+         * Try to set the geographic bounding box first, because this operation may fail with a
+         * TransformException while the other operations (vertical and temporal) should not fail.
+         * So doing the geographic part first help us to get a "all or nothing" behavior.
+         */
+        DefaultGeographicBoundingBox box = null;
+        boolean takeBox = (horizontalCRS != null);
+        final Collection<GeographicExtent> spatialExtents = target.getSpatialExtent();
+        final Iterator<GeographicExtent> it = spatialExtents.iterator();
+        while (it.hasNext()) {
+            final GeographicExtent extent = it.next();
+            if (extent instanceof GeographicBoundingBox) {
+                if (takeBox && extent instanceof DefaultGeographicBoundingBox) {
+                    box = (DefaultGeographicBoundingBox) extent;
+                    takeBox = false;
+                } else {
+                    it.remove();
+                }
+            }
+        }
+        if (horizontalCRS != null) {
+            if (box == null) {
+                box = new DefaultGeographicBoundingBox();
+                spatialExtents.add(box);
+            }
+            setGeographicExtent(envelope, box, crs, CRSUtilities.getStandardGeographicCRS2D(horizontalCRS));
+        }
+        /*
+         * Other dimensions (vertical and temporal).
+         */
+        if (verticalCRS != null) {
+            VerticalExtent e = target.getVerticalExtent();
+            if (!(e instanceof DefaultVerticalExtent)) {
+                e = new DefaultVerticalExtent();
+                target.setVerticalExtent(e);
+            }
+            setVerticalExtent(envelope, (DefaultVerticalExtent) e, crs, verticalCRS);
+        } else {
+            target.setVerticalExtent(null);
+        }
+        if (temporalCRS != null) {
+            setTemporalExtent(envelope, target, crs, temporalCRS);
+        } else {
+            target.setExtent(null);
+        }
     }
 
     /**
@@ -317,6 +424,9 @@ public final class ServicesForMetadata extends ReferencingServices implements Ch
     @Override
     public void addElements(final Envelope envelope, final DefaultExtent target) throws TransformException {
         final CoordinateReferenceSystem crs = envelope.getCoordinateReferenceSystem();
+        if (crs == null) {
+            throw new TransformPathNotFoundException(Errors.format(Errors.Keys.UNSPECIFIED_CRS));
+        }
         if (CRS.getHorizontalComponent(crs) != null) {
             final DefaultGeographicBoundingBox extent = new DefaultGeographicBoundingBox();
             extent.setInclusion(Boolean.TRUE);
@@ -326,13 +436,13 @@ public final class ServicesForMetadata extends ReferencingServices implements Ch
         final VerticalCRS verticalCRS = CRS.getVerticalComponent(crs, true);
         if (verticalCRS != null) {
             final DefaultVerticalExtent extent = new DefaultVerticalExtent();
-            setBounds(envelope, extent, crs, verticalCRS);
+            setVerticalExtent(envelope, extent, crs, verticalCRS);
             target.getVerticalElements().add(extent);
         }
         final TemporalCRS temporalCRS = CRS.getTemporalComponent(crs);
         if (temporalCRS != null) {
             final DefaultTemporalExtent extent = new DefaultTemporalExtent();
-            setBounds(envelope, extent, crs, temporalCRS);
+            setTemporalExtent(envelope, extent, crs, temporalCRS);
             target.getTemporalElements().add(extent);
         }
     }
