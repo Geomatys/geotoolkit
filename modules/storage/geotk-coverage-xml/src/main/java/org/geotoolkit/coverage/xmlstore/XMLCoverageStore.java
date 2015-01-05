@@ -30,6 +30,7 @@ import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.coverage.CoverageStoreFactory;
 import org.geotoolkit.coverage.CoverageStoreFinder;
 import org.geotoolkit.coverage.CoverageType;
+import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.feature.type.DefaultName;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.parameter.Parameters;
@@ -138,6 +139,20 @@ public class XMLCoverageStore extends AbstractCoverageStore {
 
     @Override
     public CoverageReference create(Name name) throws DataStoreException {
+        return create(name, null, null);
+    }
+
+    /**
+     * Create a CoverageReference with a specific data type and preferred image tile format.
+     * Default is ViewType.RENDERED and PNG tile format.
+     *
+     * @param name name of the new CoverageReference.
+     * @param packMode data type (Geophysic or Rendered). Can be null.
+     * @param preferredFormat pyramid tile format. Can be null.
+     * @return new CoverageReference.
+     * @throws DataStoreException
+     */
+    public CoverageReference create(Name name, ViewType packMode, String preferredFormat) throws DataStoreException {
         if (root.isFile()) {
             throw new DataStoreException("Store root is a file, not a directory, no reference creation allowed.");
         }
@@ -150,6 +165,15 @@ public class XMLCoverageStore extends AbstractCoverageStore {
         final XMLPyramidSet set = new XMLPyramidSet();
         final XMLCoverageReference ref = new XMLCoverageReference(this,name,set);
         ref.initialize(new File(root, name.getLocalPart()+".xml"));
+
+        if (packMode != null) {
+            ref.setPackMode(packMode);
+        }
+
+        if (preferredFormat != null) {
+            ref.setPreferredFormat(preferredFormat);
+        }
+
         rootNode.getChildren().add(ref);
         ref.save();
         return ref;
