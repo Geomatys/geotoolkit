@@ -17,20 +17,15 @@
 
 package org.geotoolkit.gui.javafx.layer.style;
 
-import com.sun.javafx.collections.NonIterableChange;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
-import java.beans.PropertyChangeEvent;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Function;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
-import javafx.collections.ModifiableObservableListBase;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -51,12 +46,13 @@ import org.geotoolkit.gui.javafx.layer.FXLayerStylePane;
 import org.geotoolkit.gui.javafx.style.FXStyleElementController;
 import org.geotoolkit.gui.javafx.style.FXStyleElementEditor;
 import org.geotoolkit.gui.javafx.util.ButtonTableCell;
+import org.geotoolkit.gui.javafx.util.FXDeleteTableColumn;
+import org.geotoolkit.gui.javafx.util.FXMoveDownTableColumn;
+import org.geotoolkit.gui.javafx.util.FXMoveUpTableColumn;
 import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyle;
-import org.geotoolkit.style.RuleListener;
-import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.opengis.style.FeatureTypeStyle;
 import org.opengis.style.LineSymbolizer;
 import org.opengis.style.PointSymbolizer;
@@ -123,35 +119,10 @@ public class FXStyleSimplePane extends FXLayerStylePane {
         previewCol.setCellValueFactory((TableColumn.CellDataFeatures<Symbolizer, Symbolizer> param) -> new SimpleObjectProperty<>((Symbolizer)param.getValue()));
         previewCol.setCellFactory((TableColumn<Symbolizer, Symbolizer> p) -> new GlyphButton());
         
-        final TableColumn<Symbolizer,Symbolizer> moveUpCol = new TableColumn<>();
-        moveUpCol.setEditable(true);
-        moveUpCol.setPrefWidth(30);
-        moveUpCol.setMinWidth(30);
-        moveUpCol.setMaxWidth(30);
-        moveUpCol.setCellValueFactory((TableColumn.CellDataFeatures<Symbolizer, Symbolizer> param) -> new SimpleObjectProperty<>((Symbolizer)param.getValue()));
-        moveUpCol.setCellFactory((TableColumn<Symbolizer, Symbolizer> p) -> new MoveUpButton());
-        
-        final TableColumn<Symbolizer,Symbolizer> moveDownCol = new TableColumn<>();
-        moveDownCol.setEditable(true);
-        moveDownCol.setPrefWidth(30);
-        moveDownCol.setMinWidth(30);
-        moveDownCol.setMaxWidth(30);
-        moveDownCol.setCellValueFactory((TableColumn.CellDataFeatures<Symbolizer, Symbolizer> param) -> new SimpleObjectProperty<>((Symbolizer)param.getValue()));
-        moveDownCol.setCellFactory((TableColumn<Symbolizer, Symbolizer> p) -> new MoveDownButton());
-        
-        final TableColumn<Symbolizer,Symbolizer> deleteCol = new TableColumn<>();
-        deleteCol.setEditable(true);
-        deleteCol.setPrefWidth(30);
-        deleteCol.setMinWidth(30);
-        deleteCol.setMaxWidth(30);
-        deleteCol.setCellValueFactory((TableColumn.CellDataFeatures<Symbolizer, Symbolizer> param) -> new SimpleObjectProperty<>((Symbolizer)param.getValue()));
-        deleteCol.setCellFactory((TableColumn<Symbolizer, Symbolizer> p) -> new DeleteButton());
-        
-        
         uiTable.getColumns().add(previewCol);
-        uiTable.getColumns().add(moveUpCol);
-        uiTable.getColumns().add(moveDownCol);
-        uiTable.getColumns().add(deleteCol);
+        uiTable.getColumns().add(new FXMoveUpTableColumn());
+        uiTable.getColumns().add(new FXMoveDownTableColumn());
+        uiTable.getColumns().add(new FXDeleteTableColumn(false));
         uiTable.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         uiTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         uiTable.setTableMenuButtonVisible(false);
@@ -261,59 +232,7 @@ public class FXStyleSimplePane extends FXLayerStylePane {
         private static void openEditor(Symbolizer t){
         }
     }
-
-    private class DeleteButton extends ButtonTableCell<Symbolizer, Symbolizer>{
-
-        public DeleteButton() {
-            super(false, new ImageView(GeotkFX.ICON_DELETE),
-                   //JavaFX bug : do not use lambda here : java.lang.VerifyError: Bad type on operand stack->invokedynamic
-                  (Symbolizer t) -> t instanceof Symbolizer, new Function<Symbolizer,Symbolizer>() {
-                public Symbolizer apply(Symbolizer t) {
-                    uiTable.getItems().remove(t);
-                    return t;
-                }
-            });
-        }
-    }
-    
-    private class MoveUpButton extends ButtonTableCell<Symbolizer, Symbolizer>{
-
-        public MoveUpButton() {
-            super(false, new ImageView(GeotkFX.ICON_MOVEUP),
-                   //JavaFX bug : do not use lambda here : java.lang.VerifyError: Bad type on operand stack->invokedynamic
-                  (Symbolizer t) -> t instanceof Symbolizer, new Function<Symbolizer,Symbolizer>() {
-                public Symbolizer apply(Symbolizer t) {
-                    int index = identityIndex(t, uiTable.getItems());
-                    if(index>0){
-                        uiTable.getItems().remove(index);
-                        index--;
-                        uiTable.getItems().add(index, t);
-                    }
-                    return t;
-                }
-            });
-        }
-    }
-    
-    private class MoveDownButton extends ButtonTableCell<Symbolizer, Symbolizer>{
-
-        public MoveDownButton() {
-            super(false, new ImageView(GeotkFX.ICON_MOVEDOWN),
-                   //JavaFX bug : do not use lambda here : java.lang.VerifyError: Bad type on operand stack->invokedynamic
-                  (Symbolizer t) -> t instanceof Symbolizer, new Function<Symbolizer,Symbolizer>() {
-                public Symbolizer apply(Symbolizer t) {
-                    int index = identityIndex(t, uiTable.getItems());
-                    if(index>=0 && index<uiTable.getItems().size()-1){
-                        uiTable.getItems().remove(index);
-                        index++;
-                        uiTable.getItems().add(index, t);
-                    }
-                    return t;
-                }
-            });
-        }
-    }
-    
+        
 //    private static class SymbolizersList extends ModifiableObservableListBase<Symbolizer> implements RuleListener{
 //        
 //        private final MutableRule rule;
