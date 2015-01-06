@@ -154,8 +154,10 @@ public class FXCQLEditor extends BorderPane {
                 Token tokenEnd = prc.getStop();
                 if(tokenEnd==null) tokenEnd = tokenStart;
                 final int offset = tokenStart.getStartIndex();
-                final int end = tokenEnd.getStopIndex();
-                codeArea.setStyle(offset, end,STYLE_ERROR);
+                final int end = tokenEnd.getStopIndex()+1;
+                if(end>offset){
+                    codeArea.setStyle(offset, end,STYLE_ERROR);
+                }
                 return;
             }
             
@@ -172,7 +174,9 @@ public class FXCQLEditor extends BorderPane {
                             final Token token = tn.getSymbol();
                             final int offset = token.getStartIndex();
                             final int end = token.getStopIndex()+1;
-                            codeArea.setStyle(offset, end,STYLE_FUNCTION);
+                            if(end>offset){
+                                codeArea.setStyle(offset, end,STYLE_FUNCTION);
+                            }
                         }else{
                             syntaxHighLight(pt);
                         }
