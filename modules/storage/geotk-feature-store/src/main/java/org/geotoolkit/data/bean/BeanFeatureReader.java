@@ -53,6 +53,13 @@ public class BeanFeatureReader implements FeatureReader<FeatureType, Feature>{
 
     @Override
     public void close() {
+        if(candidates instanceof AutoCloseable){
+            try {
+                ((AutoCloseable)candidates).close();
+            } catch (Exception ex) {
+                throw new FeatureStoreRuntimeException(ex.getMessage(),ex);
+            }
+        }
     }
 
     @Override
