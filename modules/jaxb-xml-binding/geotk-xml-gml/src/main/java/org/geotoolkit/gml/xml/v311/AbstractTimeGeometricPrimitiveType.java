@@ -71,6 +71,13 @@ public abstract class AbstractTimeGeometricPrimitiveType extends AbstractTimePri
         super(id);
     }
     
+    public AbstractTimeGeometricPrimitiveType(TemporalGeometricPrimitive that) {
+        super(that);
+        if (that instanceof AbstractTimeGeometricPrimitiveType) {
+            this.frame = ((AbstractTimeGeometricPrimitiveType)that).frame;
+        }
+    }
+    
     /**
      * Gets the value of the frame property.
      * 

@@ -65,6 +65,17 @@ public abstract class AbstractTimePrimitiveType extends AbstractTimeObjectType i
         super(id);
     }
     
+    public AbstractTimePrimitiveType(final TemporalPrimitive tp) {
+        super(tp);
+        if (tp instanceof AbstractTimePrimitiveType) {
+            final AbstractTimePrimitiveType that = (AbstractTimePrimitiveType) tp;
+            this.relatedTime = new ArrayList<>();
+            for (RelatedTimeType rt : that.getRelatedTime()) {
+                this.relatedTime.add(new RelatedTimeType(rt));
+            }
+        }
+    }
+    
     private List<RelatedTimeType> relatedTime;
 
     /**
@@ -77,7 +88,7 @@ public abstract class AbstractTimePrimitiveType extends AbstractTimeObjectType i
      */
     public List<RelatedTimeType> getRelatedTime() {
         if (relatedTime == null) {
-            relatedTime = new ArrayList<RelatedTimeType>();
+            relatedTime = new ArrayList<>();
         }
         return this.relatedTime;
     }

@@ -100,6 +100,7 @@ public class TimeInstantType extends AbstractTimeGeometricPrimitiveType implemen
     }
 
     public TimeInstantType(final Instant instant) {
+        super(instant);
         if (instant != null && instant.getPosition() != null) {
             this.timePosition = new TimePositionType(instant.getPosition());
         }

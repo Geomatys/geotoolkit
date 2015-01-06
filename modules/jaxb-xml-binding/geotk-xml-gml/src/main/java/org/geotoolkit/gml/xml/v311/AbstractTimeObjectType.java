@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlType;
 import org.apache.sis.metadata.MetadataStandard;
 import org.opengis.temporal.TemporalObject;
 import org.apache.sis.internal.simple.SimpleCitation;
+import org.geotoolkit.gml.xml.AbstractGML;
 
 
 /**
@@ -58,6 +59,10 @@ public abstract class AbstractTimeObjectType extends AbstractGMLType implements 
 
     public AbstractTimeObjectType(final String id) {
         super(id);
+    }
+    
+    public AbstractTimeObjectType(final TemporalObject that) {
+        super((AbstractGML)that);// unsafe
     }
 
     @Override
