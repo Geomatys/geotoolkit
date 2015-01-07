@@ -42,6 +42,7 @@ public class LargeMap extends PhantomReference<RenderedImage> {
 
     private long memoryCapacity;
     private long remainingCapacity;
+    private ColorModel cm;
     private final int minTileX;
     private final int minTileY;
     private final int numTilesX;
@@ -86,6 +87,7 @@ public class LargeMap extends PhantomReference<RenderedImage> {
         this.memoryCapacity = memoryCapacity;
         isWritableRenderedImage = ri instanceof WritableRenderedImage;
         //image owner properties.
+        this.cm                = ri.getColorModel();
         this.remainingCapacity = memoryCapacity;
         this.numTilesX         = ri.getNumXTiles();
         this.numTilesY         = ri.getNumYTiles();
@@ -104,7 +106,7 @@ public class LargeMap extends PhantomReference<RenderedImage> {
 //        this.imgReader = XImageIO.getReaderByFormatName(FORMAT, null, Boolean.FALSE, Boolean.TRUE);
 //        this.imgWriter = XImageIO.getWriterByFormatName(FORMAT, null, null);
 
-        final int datatype = ri.getColorModel().createCompatibleSampleModel(riTileWidth, riTileHeight).getDataType();
+        final int datatype = cm.createCompatibleSampleModel(riTileWidth, riTileHeight).getDataType();
         switch (datatype) {
             case DataBuffer.TYPE_BYTE      : dataTypeWeight = 1; break;
             case DataBuffer.TYPE_DOUBLE    : dataTypeWeight = 8; break;
@@ -279,14 +281,10 @@ public class LargeMap extends PhantomReference<RenderedImage> {
      * @throws java.io.IOException if impossible to write raster on disk.
      */
     private void writeRaster(LargeRaster lRaster) throws IOException {
-        final RenderedImage img = get();
-        if (img == null) {
-            throw new IOException("Source data not available anymore !");
-        }
         final File tileFile = new File(qTD.getPath(lRaster.getGridX(), lRaster.getGridY()));
         if (!tileFile.exists() || isWritableRenderedImage) {
             final BufferedImage toWrite = new BufferedImage(
-                    img.getColorModel(), RasterFactory.createWritableRaster(lRaster.getRaster().getSampleModel(), lRaster.getRaster().getDataBuffer(), WPOINT), true, null);
+                    cm, RasterFactory.createWritableRaster(lRaster.getRaster().getSampleModel(), lRaster.getRaster().getDataBuffer(), WPOINT), true, null);
             // TODO : Optimize using a "writer pool" instead of creating one each time ?
             final ImageWriter imgWriter = getImageWriter();
             imgWriter.setOutput(tileFile);
@@ -320,7 +318,7 @@ public class LargeMap extends PhantomReference<RenderedImage> {
      */
     private synchronized void checkMap() {
         // We need to write tiles in the quad-tree, and no worker is doing it.
-        if (remainingCapacity < 0 && flushState != null && flushState.isDone()) {
+        if (remainingCapacity < 0 && (flushState == null || flushState.isDone())) {
             final ExecutorService service = Executors.newSingleThreadExecutor();
             flushState = service.submit(new FlushWorker());
             service.shutdown();
@@ -353,7 +351,6 @@ public class LargeMap extends PhantomReference<RenderedImage> {
 
         @Override
         public Boolean call() {
-            System.out.println("Entered flush");
             final Thread currentThread = Thread.currentThread();
             final LinkedList<LargeRaster> toFlush = new LinkedList<>();
 
@@ -384,7 +381,6 @@ public class LargeMap extends PhantomReference<RenderedImage> {
                 }
 
                 if (remainingCapacity < 0) {
-                    LOGGER.log(Level.WARNING, "Error raised !");
                     throw new IllegalStateException("No tile available for flushing, but cache size has been exceeded.");
                 }
                 return true;
@@ -393,7 +389,6 @@ public class LargeMap extends PhantomReference<RenderedImage> {
                     tileLock.writeLock().unlock();
                 }
                 tileLock.readLock().unlock();
-                System.out.println("Exit flush.");
             }
         }
     }

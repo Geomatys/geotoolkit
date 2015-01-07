@@ -47,7 +47,7 @@ public class LargeCache implements TileCache {
     private static final Logger LOGGER = Logging.getLogger(LargeCache.class.getName());
 
     /** Default cache capacity. 256 grayscale raster of 1024px width by 1024 px height. */
-    private static final long DEFAULT_CAPACITY = 1024l*1024l*8l*256l;
+    private static final long DEFAULT_CAPACITY = 1024l*1024l*256l;
 
     private final ReferenceQueue<RenderedImage> phantomQueue = new ReferenceQueue<RenderedImage>();
 
