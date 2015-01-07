@@ -297,6 +297,7 @@ public class PyramidCoverageBuilder {
                 }
                 final GridCoverageReadParam rp = new GridCoverageReadParam();
                 rp.setEnvelope(envDest);
+                rp.setDeferred(true);
                 final GridCoverageReader reader = gridCoverageRef.acquireReader();
                 final GridCoverage gridCoverage = reader.read(gridCoverageRef.getImageIndex(), rp);
                 final GridGeometry gg           = gridCoverage.getGridGeometry();
@@ -476,6 +477,7 @@ public class PyramidCoverageBuilder {
                 }
                 rp.clear();
                 rp.setEnvelope(envDest);
+                rp.setDeferred(true);
                 final GridCoverage gridCoverage = reader.read(0, rp);
                 final GridGeometry gg           = gridCoverage.getGridGeometry();
                 if (!(gg instanceof GridGeometry2D)) {
