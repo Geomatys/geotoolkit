@@ -258,8 +258,18 @@ public class QuadTreeDirectory {
     @Override
     protected void finalize() throws Throwable {
         if (isDeleteOnExit) {
-            FileUtilities.deleteDirectory(new File(treeRootPath));
+            cleanDirectory();
         }
         super.finalize();
+    }
+
+    /**
+     * Delete root directory recursively.
+     */
+    void cleanDirectory() {
+        File rootDir = new File(treeRootPath);
+        if (rootDir.exists()) {
+            FileUtilities.deleteDirectory(rootDir);
+        }
     }
 }

@@ -106,7 +106,7 @@ public class LargeMap extends PhantomReference<RenderedImage> {
 //        this.imgReader = XImageIO.getReaderByFormatName(FORMAT, null, Boolean.FALSE, Boolean.TRUE);
 //        this.imgWriter = XImageIO.getWriterByFormatName(FORMAT, null, null);
 
-        final int datatype = cm.createCompatibleSampleModel(riTileWidth, riTileHeight).getDataType();
+        final int datatype = ri.getSampleModel().getDataType();
         switch (datatype) {
             case DataBuffer.TYPE_BYTE      : dataTypeWeight = 1; break;
             case DataBuffer.TYPE_DOUBLE    : dataTypeWeight = 8; break;
@@ -237,6 +237,7 @@ public class LargeMap extends PhantomReference<RenderedImage> {
             tileLock.writeLock().lock();
             remainingCapacity = memoryCapacity;
             tiles.clear();
+            qTD.cleanDirectory();
         } finally {
             tileLock.writeLock().unlock();
         }
