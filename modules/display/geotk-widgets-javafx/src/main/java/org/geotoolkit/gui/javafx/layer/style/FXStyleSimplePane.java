@@ -68,14 +68,10 @@ import org.opengis.style.TextSymbolizer;
  */
 public class FXStyleSimplePane extends FXLayerStylePane {
     
-    @FXML
-    private ImageView uiPreview;
-    @FXML
-    private TableView<Symbolizer> uiTable;
-    @FXML
-    private BorderPane uiSymbolizerPane;
-    @FXML
-    private ComboBox<FXStyleElementController> uiChoice;
+    @FXML private ImageView uiPreview;
+    @FXML private TableView<Symbolizer> uiTable;
+    @FXML private BorderPane uiSymbolizerPane;
+    @FXML private ComboBox<FXStyleElementController> uiChoice;
     
     private FXStyleElementController editor = null;
     private MapLayer layer;
@@ -88,12 +84,12 @@ public class FXStyleSimplePane extends FXLayerStylePane {
 
     @Override
     public String getTitle() {
-        return GeotkFX.getString(this,"title");
+        return GeotkFX.getString(this, "title");
     }
     
     @Override
     public String getCategory() {
-        return GeotkFX.getString(this,"category");
+        return GeotkFX.getString(this, "category");
     }
     
     @FXML
@@ -127,16 +123,16 @@ public class FXStyleSimplePane extends FXLayerStylePane {
         uiTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         uiTable.setTableMenuButtonVisible(false);
         
-        //update preview on events
-        uiTable.getItems().addListener(new ListChangeListener<Symbolizer>() {
-            @Override
-            public void onChanged(ListChangeListener.Change<? extends Symbolizer> c) {
-                final Dimension dim = new Dimension(120, 120);
-                final BufferedImage imge = new BufferedImage(dim.width, dim.height, BufferedImage.TYPE_INT_ARGB);
-                DefaultGlyphService.render(rule, new Rectangle(dim),imge.createGraphics(),null);
-                uiPreview.setImage(SwingFXUtils.toFXImage(imge, null));
-            }
-        });
+//        //update preview on events
+//        uiTable.getItems().addListener(new ListChangeListener<Symbolizer>() {
+//            @Override
+//            public void onChanged(ListChangeListener.Change<? extends Symbolizer> c) {
+//                final Dimension dim = new Dimension(120, 120);
+//                final BufferedImage imge = new BufferedImage(dim.width, dim.height, BufferedImage.TYPE_INT_ARGB);
+//                DefaultGlyphService.render(rule, new Rectangle(dim), imge.createGraphics(), null);
+//                uiPreview.setImage(SwingFXUtils.toFXImage(imge, null));
+//            }
+//        });
         
         //change symbolizer editor visible
         uiTable.getSelectionModel().getSelectedCells().addListener(new ListChangeListener<TablePosition>() {
@@ -165,6 +161,11 @@ public class FXStyleSimplePane extends FXLayerStylePane {
                         uiSymbolizerPane.setCenter(editor);
                     }
                 }
+                
+                final Dimension dim = new Dimension(120, 120);
+                final BufferedImage imge = new BufferedImage(dim.width, dim.height, BufferedImage.TYPE_INT_ARGB);
+                DefaultGlyphService.render(rule, new Rectangle(dim), imge.createGraphics(), null);
+                uiPreview.setImage(SwingFXUtils.toFXImage(imge, null));
             }
         });
         

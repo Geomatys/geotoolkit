@@ -11,7 +11,7 @@
    <center>
       <SplitPane dividerPositions="0.5" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" BorderPane.alignment="CENTER">
          <items>
-            <GridPane hgap="10.0" maxHeight="1.7976931348623157E308" maxWidth="250.0" prefWidth="250.0">
+            <GridPane hgap="10.0" maxHeight="1.7976931348623157E308">
               <columnConstraints>
                 <ColumnConstraints hgrow="ALWAYS" />
                 <ColumnConstraints hgrow="NEVER" />

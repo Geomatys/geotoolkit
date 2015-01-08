@@ -58,9 +58,9 @@ import org.geotoolkit.map.MapLayer;
  */
 public class FXLayerStylesPane extends FXPropertyPane{
     
-    private final BorderPane parts = new BorderPane();
-    private final BorderPane left = new BorderPane();
-    private final ListView views = new ListView();
+    private final BorderPane mainPane = new BorderPane();
+    private final BorderPane leftPane = new BorderPane();
+    private final ListView listView = new ListView();
     private final Button apply = new Button(GeotkFX.getString(this,"apply"));
     private final Button revert = new Button(GeotkFX.getString(this,"revert"));
     
@@ -73,64 +73,67 @@ public class FXLayerStylesPane extends FXPropertyPane{
     public FXLayerStylesPane(FXLayerStylePane ... styleEditors) {
         this.editors = styleEditors;
         
+        mainPane.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+        setCenter(mainPane);  
+        
         apply.setGraphic(new ImageView(SwingFXUtils.toFXImage(
-                IconBuilder.createImage(FontAwesomeIcons.ICON_CHECK,16,FontAwesomeIcons.DEFAULT_COLOR),null)));
+                IconBuilder.createImage(FontAwesomeIcons.ICON_CHECK, 
+                        16, FontAwesomeIcons.DEFAULT_COLOR), null)));
         revert.setGraphic(new ImageView(SwingFXUtils.toFXImage(
-                IconBuilder.createImage(FontAwesomeIcons.ICON_ROTATE_LEFT_ALIAS,16,FontAwesomeIcons.DEFAULT_COLOR),null)));
+                IconBuilder.createImage(FontAwesomeIcons.ICON_ROTATE_LEFT_ALIAS,
+                        16, FontAwesomeIcons.DEFAULT_COLOR), null)));
         
-        final HBox vbox = new HBox(10, apply, revert);
-        vbox.setPadding(new Insets(10, 10, 10, 10));
-        vbox.setAlignment(Pos.CENTER);
+        final HBox hbox = new HBox(10, apply, revert);
+        hbox.setPadding(new Insets(10, 10, 10, 10));
+        hbox.setAlignment(Pos.CENTER);
         
-        final ScrollPane scroll = new ScrollPane(views);
+        final ScrollPane scroll = new ScrollPane(listView);
         scroll.setFitToHeight(true);
         scroll.setFitToWidth(true);
         scroll.setMinSize(300, 250);
-        left.setCenter(scroll);
-        left.setBottom(vbox);
-        
-        parts.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
-        setCenter(parts);        
-        parts.setLeft(left);
+        leftPane.setCenter(scroll);
+        leftPane.setBottom(hbox);
+        mainPane.setLeft(leftPane);      
         
         //build index
-        final LinkedHashMap<String,List<FXLayerStylePane>> index = new LinkedHashMap<>();
-        for(FXLayerStylePane st : styleEditors){
-            List<FXLayerStylePane> lst = index.get(st.getCategory());
-            if(lst==null){
-                lst = new ArrayList<>();
-                index.put(st.getCategory(), lst);
+        final LinkedHashMap<String, List<FXLayerStylePane>> indexByCategory = new LinkedHashMap<>();
+        for(final FXLayerStylePane styleEditor : styleEditors){
+            List<FXLayerStylePane> editorOfCategory = indexByCategory.get(styleEditor.getCategory());
+            if(editorOfCategory==null){
+                editorOfCategory = new ArrayList<>();
+                indexByCategory.put(styleEditor.getCategory(), editorOfCategory);
             }
-            lst.add(st);
+            editorOfCategory.add(styleEditor);
         }
-        final ObservableList lst = FXCollections.observableArrayList();
-        for(Entry<String,List<FXLayerStylePane>> entry : index.entrySet()){
-            lst.add(entry.getKey());
-            lst.addAll(entry.getValue());
+        
+        final ObservableList itemCollection = FXCollections.observableArrayList();
+        for(final Entry<String, List<FXLayerStylePane>> entry : indexByCategory.entrySet()){
+            itemCollection.add(entry.getKey());
+            itemCollection.addAll(entry.getValue());
         }
-        views.setItems(lst);
+        listView.setItems(itemCollection);
         
                 
         //listen to list selection
-        views.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
-        views.getSelectionModel().getSelectedItems().addListener(new ListChangeListener() {
+        listView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+        listView.getSelectionModel().getSelectedItems().addListener(new ListChangeListener() {
             @Override
             public void onChanged(ListChangeListener.Change c) {
-                final Object item = views.getSelectionModel().getSelectedItem();
+                final Object item = listView.getSelectionModel().getSelectedItem();
                 if(item instanceof FXLayerStylePane){
-                    parts.setCenter(null);
+                    mainPane.setCenter(null);
                     currentEditor = (FXLayerStylePane) item;
-                    parts.setCenter(currentEditor);
+                    mainPane.setCenter(currentEditor);
                 }
             }
         });
         
         //select first editor by default
         if(styleEditors.length>0){
-            views.getSelectionModel().selectFirst();
+            listView.getSelectionModel().selectFirst();
         }
         
-        views.setCellFactory(new Callback() {
+        listView.setCellFactory(new Callback() {
 
             @Override
             public Object call(Object param) {
@@ -163,7 +166,10 @@ public class FXLayerStylesPane extends FXPropertyPane{
         return true;
     }
     
-    static class EditorCell extends ListCell{
+    /**
+     * Controls the style of cells.
+     */
+    static private class EditorCell extends ListCell {
         
         @Override
         protected void updateItem(Object item, boolean empty) {
@@ -177,7 +183,7 @@ public class FXLayerStylesPane extends FXPropertyPane{
                     setFont(Font.font(getFont().getFamily(), FontWeight.BOLD, getFont().getSize()));
                     setBorder(new Border(new BorderStroke(Color.GRAY, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderStroke.THIN)));
                     setBackground(new Background(new BackgroundFill(Color.LIGHTGREY, CornerRadii.EMPTY, Insets.EMPTY)));
-                }else if(item instanceof FXLayerStylePane){
+                } else if(item instanceof FXLayerStylePane){
                     setText(((FXLayerStylePane)item).getTitle());
                 }
             }

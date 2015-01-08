@@ -56,14 +56,15 @@ public class LayerPropertiesItem extends TreeMenuItem{
         this.map = map;
         
         menuItem = new MenuItem(GeotkFX.getString(this,"properties"));
-        //item.setGraphic(new ImageView(ICON));
         menuItem.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
 
             @Override
             public void handle(javafx.event.ActionEvent event) {
                 if(itemRef == null) return;
-                TreeItem path = itemRef.get();
+                
+                final TreeItem path = itemRef.get();
                 if(path == null) return;
+                
                 final MapLayer candidate = (MapLayer) path.getValue();
                                 
                 final FXPropertiesPane panel = new FXPropertiesPane(

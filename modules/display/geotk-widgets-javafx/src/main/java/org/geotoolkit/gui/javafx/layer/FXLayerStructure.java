@@ -88,7 +88,6 @@ public class FXLayerStructure extends FXPropertyPane {
         this.layer = (MapLayer) target;
         final WebEngine webEngine = webPane.getEngine();
         webEngine.loadContent("<html></html>");
-        
 
         final StringBuilder sb = new StringBuilder();
         sb.append("<html><head>");
