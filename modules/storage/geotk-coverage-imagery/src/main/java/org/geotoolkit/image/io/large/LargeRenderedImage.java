@@ -77,11 +77,6 @@ public class LargeRenderedImage implements RenderedImage, Disposable {
     private static final Dimension RASTER_MAX_SIZE = new Dimension(10000, 10000);
 
     /**
-     * Default store memory capacity.
-     */
-    private static final long DEFAULT_MEMORY_CAPACITY = 64000000;
-
-    /**
      * The provider for {@link #imageReader}, or {@code null} if none.
      *
      * @see #imageReader
@@ -231,7 +226,7 @@ public class LargeRenderedImage implements RenderedImage, Disposable {
             sourceReadParam = null;
         }
 
-        this.tilecache = (tilecache != null) ? tilecache : LargeCache.getInstance(DEFAULT_MEMORY_CAPACITY);
+        this.tilecache = (tilecache != null) ? tilecache : LargeCache.getInstance();
         this.tileGridXOffset = 0;
         this.tileGridYOffset = 0;
         if (tileSize != null) {

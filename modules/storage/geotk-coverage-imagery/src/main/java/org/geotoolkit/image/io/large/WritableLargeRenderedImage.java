@@ -51,11 +51,6 @@ public class WritableLargeRenderedImage implements WritableRenderedImage {
     private static final Point ptOffset = new Point();
     
     /**
-     * Default store memory capacity.
-     */
-    private static final long DEFAULT_MEMORY_CAPACITY = 64000000;
-    
-    /**
      * Upper left corner of all image tiles.
      */
     private Point[] tileIndices = null;
@@ -112,7 +107,7 @@ public class WritableLargeRenderedImage implements WritableRenderedImage {
         ArgumentChecks.ensureNonNull("ColorModel", colorModel);
         ArgumentChecks.ensureStrictlyPositive("image width", width);
         ArgumentChecks.ensureStrictlyPositive("image height", height);
-        this.tilecache = LargeCache.getInstance(DEFAULT_MEMORY_CAPACITY);
+        this.tilecache = LargeCache.getInstance();
         this.minX      = minX;
         this.minY      = minY;
         this.width     = width;

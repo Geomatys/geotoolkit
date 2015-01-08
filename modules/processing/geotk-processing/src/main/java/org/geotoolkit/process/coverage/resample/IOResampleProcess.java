@@ -69,12 +69,6 @@ public class IOResampleProcess extends AbstractProcess {
     private static final int LANCZOS_WINDOW = 2;
 
     /**
-     * Maximum size for image cache as bytes. To make it easier to understand (and modify), we decompose it as :
-     * tile width(px) * tile height(px) * band number * component type size (byte) * number of images.
-     */
-    public final static long BASE_MEMORY_SIZE = 1024l * 1024 * 1 * 1 * 64;
-
-    /**
      * Timeout parameters for queue transactions.
      */
     public static final int TIMEOUT = 100;
@@ -156,7 +150,7 @@ public class IOResampleProcess extends AbstractProcess {
             // Prepare the input image. We use a LargeRenderedImage, because we'll get random access to pixels, and if it's too big, we need a cache system.
             final ImageTypeSpecifier rawImageType = inImage.getRawImageType(0);
             final ColorModel colorModel = rawImageType.getColorModel();
-            final LargeRenderedImage rawImage = new LargeRenderedImage(inImage, 0, LargeCache.getInstance(BASE_MEMORY_SIZE), tileSize);
+            final LargeRenderedImage rawImage = new LargeRenderedImage(inImage, 0, LargeCache.getInstance(), tileSize);
 
             /*
              * Prepare output image for writing. If no file location is given, we create a new TIF temporary file to

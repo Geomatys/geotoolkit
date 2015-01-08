@@ -46,9 +46,6 @@ public class LargeCache implements TileCache {
 
     private static final Logger LOGGER = Logging.getLogger(LargeCache.class.getName());
 
-    /** Default cache capacity. 256 grayscale raster of 1024px width by 1024 px height. */
-    private static final long DEFAULT_CAPACITY = 1024l*1024l*256l;
-
     private final ReferenceQueue<RenderedImage> phantomQueue = new ReferenceQueue<RenderedImage>();
 
     private long memoryCapacity;
@@ -95,14 +92,10 @@ public class LargeCache implements TileCache {
     /**<p>Construct tile cache mechanic.<br/>
      * Stock Raster while memory capacity does not exceed else write in temporary file.</p>
      *
-     * @param memoryCapacity memory allocation authorized for all stored image.
-     *                       Size in byte unit. If <= 0, we put a default capacity.
      * @return TileCache
      */
-    public static LargeCache getInstance(long memoryCapacity) {
-        if (memoryCapacity <= 0) {
-            memoryCapacity = DEFAULT_CAPACITY;
-        }
+    public static LargeCache getInstance() {
+        long memoryCapacity = ImageCacheConfiguration.getCacheMemorySize();
         if (INSTANCE == null) INSTANCE = new LargeCache(memoryCapacity);
         return INSTANCE;
     }
