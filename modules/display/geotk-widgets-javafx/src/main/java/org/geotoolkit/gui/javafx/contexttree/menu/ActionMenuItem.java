@@ -38,10 +38,10 @@ public class ActionMenuItem extends TreeMenuItem{
     public ActionMenuItem(String title, Image icon) {
         super(new MenuItem(title));
         if(icon!=null){
-            item.setGraphic(new ImageView(icon));
+            menuItem.setGraphic(new ImageView(icon));
         }
         
-        item.setOnAction(new EventHandler<ActionEvent>() {
+        menuItem.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 ActionMenuItem.this.handle(event);

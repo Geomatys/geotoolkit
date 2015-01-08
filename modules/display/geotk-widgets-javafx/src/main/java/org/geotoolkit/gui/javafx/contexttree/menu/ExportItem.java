@@ -71,8 +71,8 @@ public class ExportItem extends TreeMenuItem {
     
     public ExportItem() {
         
-        item = new Menu(GeotkFX.getString(this,"export"));
-        item.setGraphic(new ImageView(ICON));
+        menuItem = new Menu(GeotkFX.getString(this,"export"));
+        menuItem.setGraphic(new ImageView(ICON));
         
         //select file factories which support writing
         final Set<FileFeatureStoreFactory> factories = FeatureStoreFinder.getAvailableFactories(FileFeatureStoreFactory.class);
@@ -84,7 +84,7 @@ public class ExportItem extends TreeMenuItem {
                 final FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter(name, exts);
                 index.put(filter, ff);
                 
-                ((Menu)item).getItems().add(new ExportSub(ff));
+                ((Menu)menuItem).getItems().add(new ExportSub(ff));
             }
         }
         
@@ -96,7 +96,7 @@ public class ExportItem extends TreeMenuItem {
         if(valid && selection.get(0).getParent()!=null){
             final FeatureMapLayer layer = (FeatureMapLayer) (selection.get(0)).getValue();
             itemRef = new WeakReference<>(selection.get(0));
-            return item;
+            return menuItem;
         }
         return null;
     }

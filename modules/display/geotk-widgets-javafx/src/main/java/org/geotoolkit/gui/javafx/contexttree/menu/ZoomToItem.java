@@ -51,10 +51,10 @@ public class ZoomToItem extends TreeMenuItem{
 
     public ZoomToItem(FXMap map){
         this.map = map;
-        item = new MenuItem(GeotkFX.getString(this,"zoomto"));
-        item.setGraphic(new ImageView(ICON));
+        menuItem = new MenuItem(GeotkFX.getString(this,"zoomto"));
+        menuItem.setGraphic(new ImageView(ICON));
 
-        item.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
+        menuItem.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
 
             @Override
             public void handle(javafx.event.ActionEvent event) {
@@ -80,7 +80,7 @@ public class ZoomToItem extends TreeMenuItem{
         boolean valid = uniqueAndType(selection,MapLayer.class);
         if(valid && selection.get(0).getParent()!=null){
             itemRef = new WeakReference<>(selection.get(0));
-            return item;
+            return menuItem;
         }
         return null;
     }

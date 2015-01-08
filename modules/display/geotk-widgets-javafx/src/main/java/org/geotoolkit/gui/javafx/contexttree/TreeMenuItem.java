@@ -27,29 +27,35 @@ import javafx.scene.control.TreeItem;
  */
 public class TreeMenuItem {
     
-    protected MenuItem item;
+    protected MenuItem menuItem;
 
     public TreeMenuItem() {
     }
 
     public TreeMenuItem(MenuItem item) {
-        this.item = item;
+        this.menuItem = item;
     }
     
     /**
      * 
-     * @param selectedItems currently seelcted items.
-     * @return Menu Item if valid for current selection. null if not valid
+     * @param selectedItems currently selected items.
+     * @return MenuItem if valid for current selection. null if not valid
      */
     public MenuItem init(List<? extends TreeItem> selectedItems){
-        return item;
+        return menuItem;
     }
     
-    protected static boolean uniqueAndType(final List<? extends TreeItem> selection, final Class C) {
+    /**
+     * 
+     * @param selection
+     * @param type
+     * @return true if selection is unique and the selected item is instance of type. 
+     */
+    protected static boolean uniqueAndType(final List<? extends TreeItem> selection, final Class type) {
         if (selection != null && selection.size() == 1){
-            final TreeItem ca = selection.get(0);
-            if(ca==null) return false;
-            return C.isInstance(ca.getValue());
+            final TreeItem selectedItem = selection.get(0);
+            if(selectedItem==null) return false;
+            return type.isInstance(selectedItem.getValue());
         }
         return false;
     }

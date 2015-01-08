@@ -51,7 +51,7 @@ public class OpacityItem extends TreeMenuItem{
         slider.showTickLabelsProperty().set(true);
         slider.showTickMarksProperty().set(true);
         
-        item = new CustomMenuItem(slider, false);
+        menuItem = new CustomMenuItem(slider, false);
         
         slider.valueProperty().addListener(new ChangeListener<Number>() {
             @Override
@@ -75,7 +75,7 @@ public class OpacityItem extends TreeMenuItem{
             final MapLayer layer = (MapLayer) (selection.get(0)).getValue();
             slider.setValue(layer.getOpacity());
             itemRef = new WeakReference<>(selection.get(0));
-            return item;
+            return menuItem;
         }
         return null;
     }

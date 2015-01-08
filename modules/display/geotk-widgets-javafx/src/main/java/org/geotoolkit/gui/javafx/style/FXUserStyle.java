@@ -429,7 +429,7 @@ public class FXUserStyle extends FXStyleElementController<FXUserStyle, MutableSt
         @Override
         public MenuItem init(List<? extends TreeItem> selectedItems) {
             super.init(selectedItems);
-            return uniqueAndType(selectedItems, MutableStyle.class) ? item : null;
+            return uniqueAndType(selectedItems, MutableStyle.class) ? menuItem : null;
         }
 
         @Override
@@ -450,7 +450,7 @@ public class FXUserStyle extends FXStyleElementController<FXUserStyle, MutableSt
         @Override
         public MenuItem init(List<? extends TreeItem> selectedItems) {
             super.init(selectedItems);
-            return uniqueAndType(selectedItems, MutableFeatureTypeStyle.class) ? item : null;
+            return uniqueAndType(selectedItems, MutableFeatureTypeStyle.class) ? menuItem : null;
         }
         
         @Override
@@ -473,7 +473,7 @@ public class FXUserStyle extends FXStyleElementController<FXUserStyle, MutableSt
         @Override
         public MenuItem init(List<? extends TreeItem> selectedItems) {
             super.init(selectedItems);
-            return uniqueAndType(selectedItems, MutableRule.class) ? item : null;
+            return uniqueAndType(selectedItems, MutableRule.class) ? menuItem : null;
         }
         
         @Override
@@ -493,7 +493,7 @@ public class FXUserStyle extends FXStyleElementController<FXUserStyle, MutableSt
         @Override
         public MenuItem init(List<? extends TreeItem> selectedItems) {
             super.init(selectedItems);
-            return uniqueAndType(selectedItems, Object.class) ? item : null;
+            return uniqueAndType(selectedItems, Object.class) ? menuItem : null;
         }
         
         @Override
@@ -534,7 +534,7 @@ public class FXUserStyle extends FXStyleElementController<FXUserStyle, MutableSt
         public MenuItem init(List<? extends TreeItem> selectedItems) {
             super.init(selectedItems);
             if(selectedItems.isEmpty()) return null;
-            return item;
+            return menuItem;
         }
 
         @Override
