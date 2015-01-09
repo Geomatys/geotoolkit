@@ -27,6 +27,9 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.TableCell;
+import javafx.scene.control.TableRow;
+import javafx.scene.control.TableView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.Border;
 
@@ -73,6 +76,18 @@ public class ButtonTableCell<S,T> extends TableCell<S,T> {
                         }
                     }
                 }
+            }
+        });
+        
+        button.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                TableRow row = ButtonTableCell.this.getTableRow();
+                TableView table = ButtonTableCell.this.getTableView();
+                table.getSelectionModel().clearSelection();
+                table.requestFocus();
+                table.getSelectionModel().select((S) row.getItem());
+                table.getFocusModel().focus(row.getIndex());
             }
         });
         

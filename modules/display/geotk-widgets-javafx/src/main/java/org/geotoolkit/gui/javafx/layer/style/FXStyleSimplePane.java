@@ -34,12 +34,14 @@ import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TablePosition;
 import javafx.scene.control.TableView;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.text.TextAlignment;
+import javafx.util.Callback;
 import org.geotoolkit.display2d.ext.graduation.GraduationSymbolizer;
 import org.geotoolkit.display2d.service.DefaultGlyphService;
 import org.geotoolkit.gui.javafx.layer.FXLayerStylePane;
@@ -123,25 +125,15 @@ public class FXStyleSimplePane extends FXLayerStylePane {
         uiTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         uiTable.setTableMenuButtonVisible(false);
         
-//        //update preview on events
-//        uiTable.getItems().addListener(new ListChangeListener<Symbolizer>() {
-//            @Override
-//            public void onChanged(ListChangeListener.Change<? extends Symbolizer> c) {
-//                final Dimension dim = new Dimension(120, 120);
-//                final BufferedImage imge = new BufferedImage(dim.width, dim.height, BufferedImage.TYPE_INT_ARGB);
-//                DefaultGlyphService.render(rule, new Rectangle(dim), imge.createGraphics(), null);
-//                uiPreview.setImage(SwingFXUtils.toFXImage(imge, null));
-//            }
-//        });
-        
         //change symbolizer editor visible
         uiTable.getSelectionModel().getSelectedCells().addListener(new ListChangeListener<TablePosition>() {
             @Override
             public void onChanged(ListChangeListener.Change<? extends TablePosition> c) {
                 uiSymbolizerPane.setCenter(null);
-                for(Object i : uiTable.getSelectionModel().getSelectedCells()){
-                    final TablePosition ttp = (TablePosition) i;                    
-                    final Symbolizer symbol = uiTable.getItems().get(ttp.getRow());
+                
+                for(final TablePosition tablePosition : uiTable.getSelectionModel().getSelectedCells()){
+                    
+                    final Symbolizer symbol = uiTable.getItems().get(tablePosition.getRow());
                     editor = FXStyleElementEditor.findEditor(symbol);
                     if(editor != null){
                         editor.setLayer(layer);
@@ -178,8 +170,8 @@ public class FXStyleSimplePane extends FXLayerStylePane {
         this.layer = (MapLayer) candidate;
         
         rule = null;        
-        for(final FeatureTypeStyle fts : layer.getStyle().featureTypeStyles()){
-            for(final Rule rule : fts.rules()){
+        for(final FeatureTypeStyle typeStyle : layer.getStyle().featureTypeStyles()){
+            for(final Rule rule : typeStyle.rules()){
                 parse((MutableRule)rule);
                 break; //we only retrieve the first rule.
             }
@@ -190,7 +182,7 @@ public class FXStyleSimplePane extends FXLayerStylePane {
     
     private void parse(final MutableRule rule) {
 
-        //listen to rule change from other syle editors
+        //listen to rule change from other style editors
         if(this.rule!=rule){
             this.rule = rule;
             uiTable.setItems(FXCollections.observableList(rule.symbolizers()));

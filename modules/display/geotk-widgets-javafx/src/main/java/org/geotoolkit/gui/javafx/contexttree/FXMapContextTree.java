@@ -100,7 +100,7 @@ public class FXMapContextTree extends BorderPane{
                 final ObservableList items = menu.getItems();
                 items.clear();
                 final List<? extends TreeItem> selection = treetable.getSelectionModel().getSelectedItems();
-                for(int i=0,n=menuItems.size();i<n;i++){
+                for(int i=0,n=menuItems.size(); i<n; i++){
                     final Object candidate = menuItems.get(i);
                     if(candidate instanceof TreeMenuItem){
                         final MenuItem mc = ((TreeMenuItem)candidate).init(selection);
