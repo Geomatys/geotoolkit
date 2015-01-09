@@ -36,13 +36,13 @@ import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.osm.xml.OSMXMLConstants;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.feature.Feature;
 import org.geotoolkit.filter.DefaultPropertyName;
 import org.geotoolkit.filter.sort.DefaultSortBy;
 
 import org.jdesktop.swingx.JXErrorPane;
 import org.jdesktop.swingx.combobox.ListComboBoxModel;
 
-import org.geotoolkit.feature.simple.SimpleFeature;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.sort.SortBy;
 import org.opengis.filter.sort.SortOrder;
@@ -306,8 +306,8 @@ public class JOSMAnalyzeResultPane extends javax.swing.JPanel {
             try{
                 String lastId = "-1";
                 while(reader.hasNext()){
-                    final SimpleFeature f = (SimpleFeature) reader.next();
-                    final String currentID = f.getAttribute(idField).toString();
+                    final Feature f = reader.next();
+                    final String currentID = f.getPropertyValue(idField).toString();
                     if(!lastId.equals(currentID)){
                         final AnalyzeResult res = byId.get(result.tagKey);
                         if(res == null || (tagValue != null && !res.values.containsKey(tagValue))){
@@ -331,8 +331,8 @@ public class JOSMAnalyzeResultPane extends javax.swing.JPanel {
                         lastId = currentID;
                     }
 
-                    final String key = f.getAttribute(OSMXMLConstants.ATT_TAG_KEY).toString();
-                    final String value = f.getAttribute(OSMXMLConstants.ATT_TAG_VALUE).toString();
+                    final String key = f.getPropertyValue(OSMXMLConstants.ATT_TAG_KEY).toString();
+                    final String value = f.getPropertyValue(OSMXMLConstants.ATT_TAG_VALUE).toString();
 
                     AnalyzeResult ar = byId.get(key);
                     if(ar == null){
@@ -438,8 +438,8 @@ public class JOSMAnalyzeResultPane extends javax.swing.JPanel {
             StringBuilder sb = new StringBuilder();
             try{
                 while(reader.hasNext()){
-                    SimpleFeature f = (SimpleFeature)reader.next();
-                    sb.append(f.getAttribute(idField)).append(',');
+                    Feature f = reader.next();
+                    sb.append(f.getPropertyValue(idField)).append(',');
                 }
             }finally{
                 reader.close();

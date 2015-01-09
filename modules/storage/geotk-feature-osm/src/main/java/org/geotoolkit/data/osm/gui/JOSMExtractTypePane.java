@@ -18,7 +18,6 @@
 package org.geotoolkit.data.osm.gui;
 
 import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.Polygon;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -40,9 +39,9 @@ import org.geotoolkit.data.query.QueryUtilities;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.feature.FeatureTypeBuilder;
+import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.referencing.CRS;
 import org.jdesktop.swingx.JXErrorPane;
-import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.opengis.filter.FilterFactory;
 import org.opengis.util.FactoryException;
@@ -101,9 +100,9 @@ public class JOSMExtractTypePane extends javax.swing.JPanel {
         sftb.add("id", Long.class, 1,1,false, FeatureTypeBuilder.PRIMARY_KEY);
         sftb.add("geometry", LineString.class, EPSG_4326);
         sftb.add("type", String.class);
-        final SimpleFeatureType sft = sftb.buildSimpleFeatureType();
+        final FeatureType sft = sftb.buildFeatureType();
         store.createFeatureType(sft.getName(), sft);
-        final SimpleFeatureType targetType = (SimpleFeatureType) store.getFeatureType("RailWay");
+        final FeatureType targetType = store.getFeatureType("RailWay");
         //final SimpleFeatureType targetType = sft;
 
         //source datas----------------------------------------------------------
@@ -118,7 +117,7 @@ public class JOSMExtractTypePane extends javax.swing.JPanel {
         qb.setSource(join1);
         qb.setFilter(FF.equals(FF.property("k"), FF.literal("railway")));
         final FeatureCollection col = QueryUtilities.evaluate("translateCol", qb.buildQuery());
-        final SimpleFeatureType sourceType = (SimpleFeatureType) col.getFeatureType();
+        final FeatureType sourceType = col.getFeatureType();
 
 
         //insert the datas------------------------------------------------------
@@ -153,9 +152,9 @@ public class JOSMExtractTypePane extends javax.swing.JPanel {
         sftb.add("id", Long.class, 1,1,false, FeatureTypeBuilder.PRIMARY_KEY);
         sftb.add("geometry", LineString.class, EPSG_4326);
         sftb.add("type", String.class);
-        final SimpleFeatureType sft = sftb.buildSimpleFeatureType();
+        final FeatureType sft = sftb.buildFeatureType();
         store.createFeatureType(sft.getName(), sft);
-        final SimpleFeatureType targetType = (SimpleFeatureType) store.getFeatureType("Natural");
+        final FeatureType targetType = store.getFeatureType("Natural");
         //final SimpleFeatureType targetType = sft;
 
         //source datas----------------------------------------------------------
@@ -170,7 +169,7 @@ public class JOSMExtractTypePane extends javax.swing.JPanel {
         qb.setSource(join1);
         qb.setFilter(FF.equals(FF.property("k"), FF.literal("natural")));
         final FeatureCollection col = QueryUtilities.evaluate("translateCol", qb.buildQuery());
-        final SimpleFeatureType sourceType = (SimpleFeatureType) col.getFeatureType();
+        final FeatureType sourceType = col.getFeatureType();
 
 
         //insert the datas------------------------------------------------------
@@ -205,9 +204,9 @@ public class JOSMExtractTypePane extends javax.swing.JPanel {
         sftb.add("id", Long.class, 1,1,false, FeatureTypeBuilder.PRIMARY_KEY);
         sftb.add("geometry", LineString.class, EPSG_4326);
         sftb.add("type", String.class);
-        final SimpleFeatureType sft = sftb.buildSimpleFeatureType();
+        final FeatureType sft = sftb.buildSimpleFeatureType();
         store.createFeatureType(sft.getName(), sft);
-        final SimpleFeatureType targetType = (SimpleFeatureType) store.getFeatureType("Building");
+        final FeatureType targetType = store.getFeatureType("Building");
         //final SimpleFeatureType targetType = sft;
 
         //source datas----------------------------------------------------------
@@ -222,7 +221,7 @@ public class JOSMExtractTypePane extends javax.swing.JPanel {
         qb.setSource(join1);
         qb.setFilter(FF.equals(FF.property("k"), FF.literal("building")));
         final FeatureCollection col = QueryUtilities.evaluate("translateCol", qb.buildQuery());
-        final SimpleFeatureType sourceType = (SimpleFeatureType) col.getFeatureType();
+        final FeatureType sourceType = col.getFeatureType();
 
 
         //insert the datas------------------------------------------------------
@@ -257,9 +256,9 @@ public class JOSMExtractTypePane extends javax.swing.JPanel {
         sftb.add("id", Long.class, 1,1,false, FeatureTypeBuilder.PRIMARY_KEY);
         sftb.add("geometry", LineString.class, EPSG_4326);
         sftb.add("type", String.class);
-        final SimpleFeatureType sft = sftb.buildSimpleFeatureType();
+        final FeatureType sft = sftb.buildSimpleFeatureType();
         store.createFeatureType(sft.getName(), sft);
-        final SimpleFeatureType targetType = (SimpleFeatureType) store.getFeatureType("Landuse");
+        final FeatureType targetType = store.getFeatureType("Landuse");
         //final SimpleFeatureType targetType = sft;
 
         //source datas----------------------------------------------------------
@@ -274,7 +273,7 @@ public class JOSMExtractTypePane extends javax.swing.JPanel {
         qb.setSource(join1);
         qb.setFilter(FF.equals(FF.property("k"), FF.literal("landuse")));
         final FeatureCollection col = QueryUtilities.evaluate("translateCol", qb.buildQuery());
-        final SimpleFeatureType sourceType = (SimpleFeatureType) col.getFeatureType();
+        final FeatureType sourceType = col.getFeatureType();
 
 
         //insert the datas------------------------------------------------------
@@ -309,9 +308,9 @@ public class JOSMExtractTypePane extends javax.swing.JPanel {
         sftb.add("id", Long.class, 1,1,false, FeatureTypeBuilder.PRIMARY_KEY);
         sftb.add("geometry", LineString.class, EPSG_4326);
         sftb.add("type", String.class);
-        final SimpleFeatureType sft = sftb.buildSimpleFeatureType();
+        final FeatureType sft = sftb.buildFeatureType();
         store.createFeatureType(sft.getName(), sft);
-        final SimpleFeatureType targetType = (SimpleFeatureType) store.getFeatureType("Leisure");
+        final FeatureType targetType = store.getFeatureType("Leisure");
         //final SimpleFeatureType targetType = sft;
 
         //source datas----------------------------------------------------------
@@ -326,7 +325,7 @@ public class JOSMExtractTypePane extends javax.swing.JPanel {
         qb.setSource(join1);
         qb.setFilter(FF.equals(FF.property("k"), FF.literal("leisure")));
         final FeatureCollection col = QueryUtilities.evaluate("translateCol", qb.buildQuery());
-        final SimpleFeatureType sourceType = (SimpleFeatureType) col.getFeatureType();
+        final FeatureType sourceType = col.getFeatureType();
 
 
         //insert the datas------------------------------------------------------
@@ -361,9 +360,9 @@ public class JOSMExtractTypePane extends javax.swing.JPanel {
         sftb.add("id", Long.class, 1,1,false, FeatureTypeBuilder.PRIMARY_KEY);
         sftb.add("geometry", LineString.class, EPSG_4326);
         sftb.add("type", String.class);
-        final SimpleFeatureType sft = sftb.buildSimpleFeatureType();
+        final FeatureType sft = sftb.buildFeatureType();
         store.createFeatureType(sft.getName(), sft);
-        final SimpleFeatureType targetType = (SimpleFeatureType) store.getFeatureType("Waterway");
+        final FeatureType targetType = store.getFeatureType("Waterway");
         //final SimpleFeatureType targetType = sft;
 
         //source datas----------------------------------------------------------
@@ -378,7 +377,7 @@ public class JOSMExtractTypePane extends javax.swing.JPanel {
         qb.setSource(join1);
         qb.setFilter(FF.equals(FF.property("k"), FF.literal("waterway")));
         final FeatureCollection col = QueryUtilities.evaluate("translateCol", qb.buildQuery());
-        final SimpleFeatureType sourceType = (SimpleFeatureType) col.getFeatureType();
+        final FeatureType sourceType = col.getFeatureType();
 
 
         //insert the datas------------------------------------------------------
@@ -413,9 +412,9 @@ public class JOSMExtractTypePane extends javax.swing.JPanel {
         sftb.add("id", Long.class, 1,1,false, FeatureTypeBuilder.PRIMARY_KEY);
         sftb.add("geometry", LineString.class, EPSG_4326);
         sftb.add("type", String.class);
-        final SimpleFeatureType sft = sftb.buildSimpleFeatureType();
+        final FeatureType sft = sftb.buildSimpleFeatureType();
         store.createFeatureType(sft.getName(), sft);
-        final SimpleFeatureType targetType = (SimpleFeatureType) store.getFeatureType("Highway");
+        final FeatureType targetType = store.getFeatureType("Highway");
         //final SimpleFeatureType targetType = sft;
 
         //source datas----------------------------------------------------------
@@ -430,7 +429,7 @@ public class JOSMExtractTypePane extends javax.swing.JPanel {
         qb.setSource(join1);
         qb.setFilter(FF.equals(FF.property("k"), FF.literal("highway")));
         final FeatureCollection col = QueryUtilities.evaluate("translateCol", qb.buildQuery());
-        final SimpleFeatureType sourceType = (SimpleFeatureType) col.getFeatureType();
+        final FeatureType sourceType = col.getFeatureType();
 
 
         //insert the datas------------------------------------------------------

@@ -28,10 +28,8 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
@@ -53,9 +51,9 @@ import org.geotoolkit.data.osm.model.Relation;
 import org.geotoolkit.data.osm.model.Way;
 import org.geotoolkit.data.osm.xml.OSMXMLConstants;
 import org.geotoolkit.data.query.QueryBuilder;
+import org.geotoolkit.feature.Feature;
 
 import org.jdesktop.swingx.JXErrorPane;
-import org.geotoolkit.feature.simple.SimpleFeature;
 
 /**
  *
@@ -374,9 +372,9 @@ public class JOSMAnalyzePane extends javax.swing.JPanel {
             final Map<String,AnalyzeResult> analyze = new HashMap<String, AnalyzeResult>();
             try{
                 while(reader.hasNext()){
-                    final SimpleFeature f = (SimpleFeature) reader.next();
-                    final String key = f.getAttribute(OSMXMLConstants.ATT_TAG_KEY).toString();
-                    final String value = f.getAttribute(OSMXMLConstants.ATT_TAG_VALUE).toString();
+                    final Feature f = reader.next();
+                    final String key = f.getPropertyValue(OSMXMLConstants.ATT_TAG_KEY).toString();
+                    final String value = f.getPropertyValue(OSMXMLConstants.ATT_TAG_VALUE).toString();
 
                     AnalyzeResult result = analyze.get(key);
                     if(result == null){
