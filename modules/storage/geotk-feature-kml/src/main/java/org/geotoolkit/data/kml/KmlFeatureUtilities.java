@@ -23,7 +23,6 @@ import org.geotoolkit.data.kml.model.SchemaData;
 import org.geotoolkit.data.kml.model.SimpleData;
 import org.geotoolkit.data.kml.xml.KmlReader;
 import org.geotoolkit.feature.FeatureTypeBuilder;
-import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.geometry.jts.JTS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
@@ -31,8 +30,8 @@ import org.geotoolkit.util.FileUtilities;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.FeatureFactory;
 import org.geotoolkit.feature.Property;
-import org.geotoolkit.feature.simple.SimpleFeature;
-import org.geotoolkit.feature.simple.SimpleFeatureType;
+import org.geotoolkit.feature.FeatureUtilities;
+import org.geotoolkit.feature.type.FeatureType;
 import org.opengis.referencing.operation.TransformException;
 
 import java.io.File;
@@ -64,8 +63,8 @@ public class KmlFeatureUtilities {
      * @param directory folder which have kml files
      * @return a {@link SimpleFeature} {@link List}
      */
-    public static List<SimpleFeature> getAllKMLGeometriesEntries(final File directory) {
-        final List<SimpleFeature> results = new ArrayList<SimpleFeature>();
+    public static List<Feature> getAllKMLGeometriesEntries(final File directory) {
+        final List<Feature> results = new ArrayList<>();
         final KmlReader reader = new KmlReader();
 
         //first loop to unzip kmz files
@@ -99,7 +98,7 @@ public class KmlFeatureUtilities {
                     final Kml kmlObject = reader.read();
 
                     // find features and add it on lisr
-                    final List<SimpleFeature> simplefeatList = resolveFeaturesFromKml(kmlObject);
+                    final List<Feature> simplefeatList = resolveFeaturesFromKml(kmlObject);
                     results.addAll(simplefeatList);
                 } catch (Exception ex) {
                     LOGGER.log(Level.WARNING, ex.getMessage(), ex);
@@ -122,8 +121,8 @@ public class KmlFeatureUtilities {
      * @param kmlObject : object which can have feature to extract
      * @return {@link SimpleFeature} {@link List} include in kml file
      */
-    public static List<SimpleFeature> resolveFeaturesFromKml(final Kml kmlObject) {
-        final List<SimpleFeature> results = new ArrayList<SimpleFeature>();
+    public static List<Feature> resolveFeaturesFromKml(final Kml kmlObject) {
+        final List<Feature> results = new ArrayList<>();
         if (kmlObject != null) {
             final org.geotoolkit.feature.Feature document = kmlObject.getAbstractFeature();
             final Iterator propertiesFeat = document.getProperties(KmlModelConstants.ATT_DOCUMENT_FEATURES.getName()).iterator();
@@ -145,7 +144,7 @@ public class KmlFeatureUtilities {
                     if (!geometries.isEmpty()) {
                         //loop to create simpleFeature from geometry
                         for (final Map.Entry<Object, Map<String, String>> geometry : geometries) {
-                            SimpleFeature simpleFeature = extractFeature(idgeom, geometry);
+                            Feature simpleFeature = extractFeature(idgeom, geometry);
 
                             //test if geometry already exist
                             if(simpleFeature!=null){
@@ -168,7 +167,7 @@ public class KmlFeatureUtilities {
      * @param geometry : {@link Map.Entry} which contains a geometry
      * @return a {@link SimpleFeature}
      */
-    private static SimpleFeature extractFeature(int idgeom, Map.Entry<Object, Map<String, String>> geometry) {
+    private static Feature extractFeature(int idgeom, Map.Entry<Object, Map<String, String>> geometry) {
         final Object geom = geometry.getKey();
         Geometry finalGeom = null;
         //if it's a simple geometry
@@ -223,7 +222,7 @@ public class KmlFeatureUtilities {
      * @param finalGeom geometry need to be insert in feature
      * @return a {@link SimpleFeature}
      */
-    private static SimpleFeature BuildSimpleFeature(int idgeom, Map<String, String> values, Geometry finalGeom) {
+    private static Feature BuildSimpleFeature(int idgeom, Map<String, String> values, Geometry finalGeom) {
         //Building simplefeature
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         final String name = "Geometry";
@@ -236,22 +235,17 @@ public class KmlFeatureUtilities {
         }
 
 
-        final SimpleFeatureType sft = ftb.buildSimpleFeatureType();
-        final SimpleFeatureBuilder sfb = new SimpleFeatureBuilder(sft);
-
-        //Clear the feature builder before creating a new feature.
-        sfb.reset();
+        final FeatureType sft = ftb.buildFeatureType();
+        final Feature simpleFeature = FeatureUtilities.defaultFeature(sft, "feature" + idgeom);
 
         //add geometry
-        sfb.set("geometry", finalGeom);
-
+        simpleFeature.setPropertyValue("geometry", finalGeom);
+        
         //add other data
         for (String valName : values.keySet()) {
-            sfb.set(valName, values.get(valName));
+            simpleFeature.setPropertyValue(valName, values.get(valName));
         }
 
-        //create simple feature
-        final SimpleFeature simpleFeature = sfb.buildFeature("feature" + idgeom);
         simpleFeature.validate();
         return simpleFeature;
     }
