@@ -29,7 +29,7 @@ public class PolygonPropertyAdapter extends XmlAdapter<PolygonPropertyAdapter, J
     @Override
     public JTSPolygon unmarshal(final PolygonPropertyAdapter v) throws Exception {
         if (v != null && v.polygon != null) {
-            return new JTSPolygon(v.polygon.getSurfaceBoundary());
+            return v.polygon.getJTSPolygon();
         }
         return null;
     }
