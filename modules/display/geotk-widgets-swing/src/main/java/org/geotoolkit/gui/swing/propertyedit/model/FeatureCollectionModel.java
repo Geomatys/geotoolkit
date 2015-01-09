@@ -40,7 +40,6 @@ import org.apache.sis.util.ObjectConverters;
 import org.geotoolkit.version.Versioned;
 
 import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.simple.SimpleFeature;
 import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.GeometryDescriptor;
@@ -95,9 +94,9 @@ public class FeatureCollectionModel extends DefaultTableModel {
             columns.add(desc);
         }
 
-        FeatureIterator<SimpleFeature> fi = null;
+        FeatureIterator<Feature> fi = null;
         try {
-            fi = (FeatureIterator<SimpleFeature>)  featureCollection.iterator();
+            fi = featureCollection.iterator();
             while (fi.hasNext()) {
                 features.add(FeatureUtilities.deepCopy(fi.next()));
             }

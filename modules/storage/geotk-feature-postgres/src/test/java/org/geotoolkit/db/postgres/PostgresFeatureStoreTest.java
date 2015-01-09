@@ -68,7 +68,6 @@ import org.junit.Test;
 
 import org.geotoolkit.feature.ComplexAttribute;
 import org.geotoolkit.feature.Property;
-import org.geotoolkit.feature.simple.SimpleFeature;
 import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.geotoolkit.feature.type.AttributeType;
 import org.geotoolkit.feature.type.ComplexType;
@@ -621,7 +620,6 @@ public class PostgresFeatureStoreTest {
         try{
             final Feature resFeature = ite.next();
             assertNotNull(resFeature);
-            assertTrue(resFeature instanceof SimpleFeature);
             assertEquals(true, resFeature.getProperty("boolean").getValue());
             assertEquals(45, resFeature.getProperty("byte").getValue());
             assertEquals(963, resFeature.getProperty("short").getValue());
@@ -663,7 +661,6 @@ public class PostgresFeatureStoreTest {
         try{
             final Feature resFeature = ite.next();
             assertNotNull(resFeature);
-            assertTrue(resFeature instanceof SimpleFeature);
             assertEquals(true, resFeature.getProperty("boolean").getValue());
             assertEquals(45, resFeature.getProperty("byte").getValue());
             assertEquals(963, resFeature.getProperty("short").getValue());
@@ -711,7 +708,6 @@ public class PostgresFeatureStoreTest {
         try{
             final Feature resFeature = ite.next();
             assertNotNull(resFeature);
-            assertTrue(resFeature instanceof SimpleFeature);
             assertArrayEquals(new Boolean[]{true,false,true},       (Boolean[])resFeature.getProperty("boolean").getValue());
             assertArrayEquals(new Short[]{3,6,9},                   (Short[])resFeature.getProperty("byte").getValue());
             assertArrayEquals(new Short[]{-5,12,-50},               (Short[])resFeature.getProperty("short").getValue());
@@ -757,7 +753,6 @@ public class PostgresFeatureStoreTest {
         try{
             final Feature resFeature = ite.next();
             assertNotNull(resFeature);
-            assertTrue(resFeature instanceof SimpleFeature);
             assertArrayEquals((Boolean[][])feature.getProperty("boolean").getValue(),       (Boolean[][])resFeature.getProperty("boolean").getValue());
             assertArrayEquals((Short[][])feature.getProperty("byte").getValue(),       (Short[][])resFeature.getProperty("byte").getValue());
             assertArrayEquals((Short[][])feature.getProperty("short").getValue(),       (Short[][])resFeature.getProperty("short").getValue());
@@ -844,7 +839,6 @@ public class PostgresFeatureStoreTest {
         try{
             final Feature resFeature = ite.next();
             assertNotNull(resFeature);
-            assertTrue(resFeature instanceof SimpleFeature);
             Geometry geom;
             geom = (Geometry)resFeature.getProperty("geometry").getValue();
             assertEquals(point,geom);
@@ -922,7 +916,6 @@ public class PostgresFeatureStoreTest {
         try{
             final Feature resFeature = ite.next();
             assertNotNull(resFeature);
-            assertTrue(!(resFeature instanceof SimpleFeature));
             
             assertEquals(120l, resFeature.getProperty("identifier").getValue());
             
@@ -1008,7 +1001,6 @@ public class PostgresFeatureStoreTest {
         try{
             final Feature resFeature = ite.next();
             assertNotNull(resFeature);
-            assertTrue(!(resFeature instanceof SimpleFeature));
             
             assertEquals(120l, resFeature.getProperty("identifier").getValue());
             
@@ -1116,7 +1108,6 @@ public class PostgresFeatureStoreTest {
         try{
             final Feature resFeature = ite.next();
             assertNotNull(resFeature);
-            assertTrue(!(resFeature instanceof SimpleFeature));
             
             assertEquals(120l, resFeature.getProperty("identifier").getValue());
             

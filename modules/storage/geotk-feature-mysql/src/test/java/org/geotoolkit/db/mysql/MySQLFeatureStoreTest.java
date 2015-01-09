@@ -31,8 +31,6 @@ import com.vividsolutions.jts.geom.Polygon;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -68,7 +66,6 @@ import org.junit.Test;
 
 import org.geotoolkit.feature.ComplexAttribute;
 import org.geotoolkit.feature.Property;
-import org.geotoolkit.feature.simple.SimpleFeature;
 import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.geotoolkit.feature.type.AttributeType;
 import org.geotoolkit.feature.type.ComplexType;
@@ -86,7 +83,6 @@ import org.opengis.util.FactoryException;
 import static org.geotoolkit.db.mysql.MySQLFeatureStoreFactory.*;
 import static org.junit.Assert.*;
 import org.junit.Ignore;
-import org.geotoolkit.feature.type.AssociationType;
 
 /**
  *
@@ -474,7 +470,6 @@ public class MySQLFeatureStoreTest {
         try{
             final Feature resFeature = ite.next();
             assertNotNull(resFeature);
-            assertTrue(resFeature instanceof SimpleFeature);
             assertEquals(true, resFeature.getProperty("boolean").getValue());
             assertEquals(45, resFeature.getProperty("byte").getValue());
             assertEquals(963, resFeature.getProperty("short").getValue());
@@ -513,7 +508,6 @@ public class MySQLFeatureStoreTest {
         try{
             final Feature resFeature = ite.next();
             assertNotNull(resFeature);
-            assertTrue(resFeature instanceof SimpleFeature);
             assertEquals(true, resFeature.getProperty("boolean").getValue());
             assertEquals(45, resFeature.getProperty("byte").getValue());
             assertEquals(963, resFeature.getProperty("short").getValue());
@@ -598,7 +592,6 @@ public class MySQLFeatureStoreTest {
         try{
             final Feature resFeature = ite.next();
             assertNotNull(resFeature);
-            assertTrue(resFeature instanceof SimpleFeature);
             Geometry geom;
             geom = (Geometry)resFeature.getProperty("geometry").getValue();
             assertEquals(point,geom);
@@ -674,7 +667,6 @@ public class MySQLFeatureStoreTest {
         try{
             final Feature resFeature = ite.next();
             assertNotNull(resFeature);
-            assertTrue(!(resFeature instanceof SimpleFeature));
             
             assertEquals(120l, resFeature.getProperty("identifier").getValue());
             
@@ -758,7 +750,6 @@ public class MySQLFeatureStoreTest {
         try{
             final Feature resFeature = ite.next();
             assertNotNull(resFeature);
-            assertTrue(!(resFeature instanceof SimpleFeature));
             
             assertEquals(120l, resFeature.getProperty("identifier").getValue());
             
@@ -862,7 +853,6 @@ public class MySQLFeatureStoreTest {
         try{
             final Feature resFeature = ite.next();
             assertNotNull(resFeature);
-            assertTrue(!(resFeature instanceof SimpleFeature));
             
             assertEquals(120l, resFeature.getProperty("identifier").getValue());
             
