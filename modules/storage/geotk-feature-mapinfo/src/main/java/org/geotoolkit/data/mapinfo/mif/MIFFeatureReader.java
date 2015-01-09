@@ -23,12 +23,10 @@ import org.geotoolkit.feature.FeatureUtilities;
 import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.CharSequences;
 import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.simple.SimpleFeature;
-import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.geotoolkit.feature.type.AttributeType;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.Name;
-import org.opengis.referencing.operation.MathTransform;
+import org.geotoolkit.feature.type.PropertyDescriptor;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -91,6 +89,7 @@ public class MIFFeatureReader implements FeatureReader<FeatureType, Feature> {
 
     final MIFManager master;
     final FeatureType readType;
+    final PropertyDescriptor[] baseTypeAtts;
 
     final MIFUtils.GeometryType geometryType;
     final String geometryId;
@@ -114,6 +113,8 @@ public class MIFFeatureReader implements FeatureReader<FeatureType, Feature> {
             geometryId = null;
             geometryPattern = null;
         }
+        
+        baseTypeAtts = master.getBaseType().getDescriptors().toArray(new PropertyDescriptor[0]);
     }
 
     /**
@@ -131,7 +132,7 @@ public class MIFFeatureReader implements FeatureReader<FeatureType, Feature> {
     public Feature next() throws FeatureStoreRuntimeException {
 
         Feature resFeature = null;
-        final SimpleFeature mifFeature;
+        final Feature mifFeature;
 
         try {
             checkScanners();
@@ -161,7 +162,6 @@ public class MIFFeatureReader implements FeatureReader<FeatureType, Feature> {
             }
 
             if(readMid) {
-                final SimpleFeatureType baseType = master.getBaseType();
                 //parse MID line.
                 while(midCounter < mifCounter) {
                     midScanner.nextLine();
@@ -173,7 +173,7 @@ public class MIFFeatureReader implements FeatureReader<FeatureType, Feature> {
                     //AttributeType att = baseType.getType(i);
                     AttributeType att = null;
                     try{
-                        att = baseType.getType(i);
+                        att = (AttributeType)baseTypeAtts[i].getType();
                     }catch(Exception ex){
                         LOGGER.finer(ex.getMessage());
                     }
