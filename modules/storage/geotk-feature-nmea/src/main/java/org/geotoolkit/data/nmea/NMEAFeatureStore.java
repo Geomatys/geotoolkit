@@ -41,7 +41,6 @@ import org.geotoolkit.feature.type.DefaultName;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.Name;
 import org.geotoolkit.feature.type.PropertyDescriptor;
@@ -67,7 +66,7 @@ public class NMEAFeatureStore extends AbstractFeatureStore {
     public final static Name SPEED_NAME = new DefaultName(null, "Speed");
 
     /** Feature type to use for nmea data encapsulation */
-    public static final SimpleFeatureType NMEA_TYPE;
+    public static final FeatureType NMEA_TYPE;
     static {
         final FeatureTypeBuilder builder = new FeatureTypeBuilder();
         builder.setName(TYPE_NAME);
@@ -77,7 +76,7 @@ public class NMEAFeatureStore extends AbstractFeatureStore {
         builder.add(DEPTH_NAME, Double.class);
         builder.add(DATE_NAME, java.util.Date.class);
         builder.add(SPEED_NAME, Double.class);
-        NMEA_TYPE = builder.buildSimpleFeatureType();
+        NMEA_TYPE = builder.buildFeatureType();
     }
 
     public NMEAFeatureStore(final ParameterValueGroup input) {

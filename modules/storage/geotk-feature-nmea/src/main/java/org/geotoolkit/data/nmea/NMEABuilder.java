@@ -46,8 +46,8 @@ import net.sf.marineapi.nmea.util.Time;
 import net.sf.marineapi.provider.event.ProviderEvent;
 import net.sf.marineapi.provider.event.ProviderListener;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
-import org.geotoolkit.feature.simple.SimpleFeature;
+import org.geotoolkit.feature.Feature;
+import org.geotoolkit.feature.FeatureUtilities;
 
 /**
  * Create features of type {@link NMEAFeatureStore#NMEA_TYPE} from
@@ -78,12 +78,11 @@ public class NMEABuilder implements SentenceListener {
     private static final Logger LOGGER = Logging.getLogger(NMEABuilder.class);
     private static final GeometryFactory GFACTORY = new GeometryFactory();
 
-    private final SimpleFeatureBuilder builder = new SimpleFeatureBuilder(NMEAFeatureStore.NMEA_TYPE);
     private final SentenceReader sReader;
     private final HashMap<String, Sentence> cache = new HashMap<>();
     private final EventListenerList listeners = new EventListenerList();
 
-    private SimpleFeature next = null;
+    private Feature next = null;
 
     public NMEABuilder() {
         this(null);
@@ -178,9 +177,10 @@ public class NMEABuilder implements SentenceListener {
         }
 
         if (position != null) {
+            next = FeatureUtilities.defaultFeature(NMEAFeatureStore.NMEA_TYPE, FeatureUtilities.createDefaultFeatureId());
             final Point geom = GFACTORY.createPoint(new Coordinate(position.getLongitude(), position.getLatitude(), position.getAltitude()));
-            builder.set(GEOM_NAME, geom);
-            builder.set(ALT_NAME, position.getAltitude());
+            next.setPropertyValue(GEOM_NAME.toString(), geom);
+            next.setPropertyValue(ALT_NAME.toString(), position.getAltitude());
         } else {
             // We don't get geographic coordinate, so we give up the current feature.
             next = null;
@@ -192,22 +192,21 @@ public class NMEABuilder implements SentenceListener {
             final java.util.Date trueDate = new java.util.Date(
                     date.toDate().getTime()
                     + ((time == null) ? 0 : time.getMilliseconds()));
-            builder.set(DATE_NAME, trueDate);
+            next.setPropertyValue(DATE_NAME.toString(), trueDate);
         }
 
         if (speed != null) {
-            builder.set(SPEED_NAME, speed);
+            next.setPropertyValue(SPEED_NAME.toString(), speed);
         }
 
         if (depth != null) {
-            builder.set(DEPTH_NAME, depth);
+            next.setPropertyValue(DEPTH_NAME.toString(), depth);
         }
 
-        next = builder.buildFeature(null);
     }
 
-    public SimpleFeature next() {
-        final SimpleFeature tmp = next;
+    public Feature next() {
+        final Feature tmp = next;
         next = null;
         return tmp;
     }
@@ -279,14 +278,14 @@ public class NMEABuilder implements SentenceListener {
      */
     public class FeatureEvent extends ProviderEvent {
 
-        private final SimpleFeature data;
+        private final Feature data;
 
-        public FeatureEvent(Object source, final SimpleFeature f) {
+        public FeatureEvent(Object source, final Feature f) {
             super(source);
             data = f;
         }
 
-        public SimpleFeature getData() {
+        public Feature getData() {
             return data;
         }
     }
