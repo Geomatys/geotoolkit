@@ -56,8 +56,6 @@ public final class MIFPointBuilder extends MIFGeometryBuilder {
      *
      * @param scanner The scanner to use for data reading (must be pointing on a mif POINT element).
      * @param toFill
-     * @return a {@link SimpleFeature} matching the {@link SimpleFeatureType} given by
-     * {@link MIFGeometryBuilder#buildType(org.opengis.referencing.crs.CoordinateReferenceSystem, org.opengis.feature.type.FeatureType)}.
      * @throws DataStoreException If there's a problem while parsing stream of the given Scanner.
      */
     @Override

@@ -20,14 +20,12 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.mapinfo.ProjectionUtils;
 import org.geotoolkit.feature.type.DefaultName;
 import org.geotoolkit.feature.FeatureTypeBuilder;
-import org.geotoolkit.feature.simple.DefaultSimpleFeatureType;
 import org.geotoolkit.feature.type.DefaultAttributeDescriptor;
 import org.geotoolkit.feature.type.DefaultAttributeType;
 import org.geotoolkit.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.geotoolkit.feature.type.*;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
@@ -47,6 +45,7 @@ import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.NullArgumentException;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.feature.FeatureTypeUtilities;
+import org.geotoolkit.feature.FeatureUtilities;
 
 /**
  * Read types of .mif file, and manage readers / writers (from mif/mid mapinfo exchange format).
@@ -104,7 +103,7 @@ public class MIFManager {
      * Type and data containers
      */
     private Set<Name> names = null;
-    private SimpleFeatureType mifBaseType = null;
+    private FeatureType mifBaseType = null;
     private ArrayList<FeatureType> mifChildTypes = new ArrayList<FeatureType>();
 
 
@@ -216,9 +215,7 @@ public class MIFManager {
             refreshMetaModel();
         }
 
-        if (!(toAdd instanceof SimpleFeatureType)
-                && (toAdd.getSuper() == null || !(toAdd.getSuper() instanceof SimpleFeatureType))) {
-
+        if(!FeatureTypeUtilities.isSimple(toAdd)){
             throw new DataStoreException("Only Simple Features, or features with a Simple Feature as parent can be added.");
         }
 
@@ -230,12 +227,12 @@ public class MIFManager {
         // we save it as our base type. Otherwise, we set it's super type as base type, and if there's not, we set it as
         // base type, but we extract geometry first.
         if (mifBaseType == null) {
-            if (toAdd.getGeometryDescriptor() == null && toAdd instanceof SimpleFeatureType) {
-                mifBaseType = (SimpleFeatureType) toAdd;
+            if (toAdd.getGeometryDescriptor() == null) {
+                mifBaseType = toAdd;
                 isBaseType = true;
 
-            } else if (toAdd.getSuper() != null && toAdd.getSuper() instanceof SimpleFeatureType && ((SimpleFeatureType) toAdd.getSuper()).getAttributeCount()>0) {
-                mifBaseType = (SimpleFeatureType) toAdd.getSuper();
+            } else if (toAdd.getSuper() != null && ((FeatureType) toAdd.getSuper()).getDescriptors().size()>0) {
+                mifBaseType = (FeatureType) toAdd.getSuper();
                 checkTypeCRS(toAdd);
 
             } else {
@@ -248,7 +245,7 @@ public class MIFManager {
 
                 mifBaseType = builder.buildSimpleFeatureType();
             }
-            mifColumnsCount = mifBaseType.getAttributeCount();
+            mifColumnsCount = mifBaseType.getDescriptors().size();
 
             flushHeader();
         }
@@ -341,7 +338,7 @@ public class MIFManager {
     }
 
 
-    public SimpleFeatureType getBaseType() throws DataStoreException {
+    public FeatureType getBaseType() throws DataStoreException {
         if(mifBaseType == null && mifColumnsCount <0) {
             parseHeader();
         }
@@ -585,7 +582,7 @@ public class MIFManager {
                 if (bind != null) {
                     FeatureTypeBuilder builder = new FeatureTypeBuilder();
                     builder.copy(bind);
-                    builder.setName(bind.getName().getNamespaceURI(), mifBaseType.getTypeName()+"_"+bind.getName().getLocalPart());
+                    builder.setName(bind.getName().getNamespaceURI(), mifBaseType.getName().getLocalPart()+"_"+bind.getName().getLocalPart());
                     mifChildTypes.add(builder.buildFeatureType());
                 }
             }
@@ -599,7 +596,7 @@ public class MIFManager {
     private void parseColumns() throws DataStoreException {
 
         // Check the attributes
-        final ArrayList<AttributeDescriptor> schema = new ArrayList<AttributeDescriptor>();
+        final List<PropertyDescriptor> schema = new ArrayList<>();
         for (int i = 0; i < mifColumnsCount; i++) {
             mifScanner.nextLine();
             final String attName = mifScanner.findInLine(ALPHA_PATTERN);
@@ -620,7 +617,7 @@ public class MIFManager {
             schema.add(desc);
         }
         Name name = new DefaultName(mifName);
-        mifBaseType = new DefaultSimpleFeatureType(name, schema, null, false, null, null, null);
+        mifBaseType = new DefaultFeatureType(name, schema, null, false, null, null, null);
     }
 
     /**
@@ -668,12 +665,9 @@ public class MIFManager {
      * problem while writing the featureType in MIF header.
      */
     public String buildHeader() throws DataStoreException {
-        if (!(mifBaseType instanceof SimpleFeatureType)) {
-            throw new DataStoreException("Only simple schema can be written in MIF file header. Given is : \n" + mifBaseType);
-        }
 
-        final SimpleFeatureType toWorkWith = (SimpleFeatureType) mifBaseType;
-        int tmpCount = toWorkWith.getAttributeCount();
+        final FeatureType toWorkWith = mifBaseType;
+        int tmpCount = toWorkWith.getDescriptors().size();
         final StringBuilder headBuilder = new StringBuilder();
         try {
             headBuilder.append(MIFUtils.HeaderCategory.VERSION).append(' ').append(mifVersion).append('\n');
@@ -691,7 +685,7 @@ public class MIFManager {
 
             // Check the number of attributes, as the fact we've got at most one geometry.
             boolean geometryFound = false;
-            for (AttributeDescriptor desc : toWorkWith.getAttributeDescriptors()) {
+            for (PropertyDescriptor desc : toWorkWith.getDescriptors()) {
                 if (desc instanceof GeometryDescriptor) {
                     if (geometryFound) {
                         throw new DataStoreException("Only mono geometry types are managed for MIF format, but given featureType get at least 2 geometry descriptor.");
@@ -809,14 +803,15 @@ public class MIFManager {
          final StringBuilder builder = new StringBuilder();
         final FeatureType fType = toParse.getType();
 
-
+        
         if(mifBaseType.equals(fType) || mifBaseType.equals(fType.getSuper())
                 || fType.getDescriptors().containsAll(mifBaseType.getDescriptors())) {
-            final Name name = mifBaseType.getType(0).getName();
+            final PropertyDescriptor[] atts = mifBaseType.getDescriptors().toArray(new PropertyDescriptor[0]);
+            final Name name = atts[0].getType().getName();
             builder.append(MIFUtils.getStringValue(toParse.getProperty(name)));
 
-            for(int i = 1 ; i < mifBaseType.getTypes().size() ; i++) {
-                final Name propName = mifBaseType.getType(i).getName();
+            for(int i = 1 ; i < atts.length ; i++) {
+                final Name propName = atts[i].getType().getName();
                 builder.append(mifDelimiter).append(MIFUtils.getStringValue(toParse.getProperty(propName)));
             }
             builder.append('\n');

@@ -149,7 +149,7 @@ public class MIFFeatureWriter implements FeatureWriter {
         }
 
         try {
-            if (master.getBaseType() != null && master.getBaseType().getAttributeCount() > 0) {
+            if (master.getBaseType() != null && master.getBaseType().getDescriptors().size()> 0) {
                 final String midAttributes = master.buildMIDAttributes(currentFeature);
                 tmpMidWriter.write(midAttributes);
             }

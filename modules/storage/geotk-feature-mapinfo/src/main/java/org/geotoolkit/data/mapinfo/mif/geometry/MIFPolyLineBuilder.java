@@ -29,7 +29,6 @@ import org.geotoolkit.feature.type.DefaultAttributeDescriptor;
 import org.geotoolkit.feature.type.DefaultAttributeType;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.Property;
-import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.geotoolkit.feature.type.AttributeType;
 import org.geotoolkit.feature.type.Name;
@@ -41,6 +40,7 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.regex.Pattern;
+import org.geotoolkit.feature.type.FeatureType;
 
 /**
  * Util class to build a feature from Multi line object of a MIF file.
@@ -64,7 +64,7 @@ public class MIFPolyLineBuilder extends MIFGeometryBuilder {
         SMOOTH = new DefaultAttributeDescriptor(smoothType, SMOOTH_NAME, 1, 1, false, Boolean.FALSE);
     }
 
-    public SimpleFeatureType featureType;
+    public FeatureType featureType;
 
     /**
      * {@inheritDoc}

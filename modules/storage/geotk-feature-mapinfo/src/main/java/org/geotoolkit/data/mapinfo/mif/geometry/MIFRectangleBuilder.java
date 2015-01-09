@@ -27,7 +27,6 @@ import org.geotoolkit.feature.type.DefaultName;
 import org.geotoolkit.feature.type.DefaultAttributeDescriptor;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.Property;
-import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.geotoolkit.feature.type.Name;
 import org.opengis.referencing.operation.MathTransform;
@@ -40,6 +39,7 @@ import java.util.Scanner;
 import java.util.logging.Level;
 import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.util.ArgumentChecks;
+import org.geotoolkit.feature.type.FeatureType;
 
 /**
  * The class used to build Feature from MIF rectangle or MIF Round rectangle.
@@ -63,7 +63,7 @@ public class MIFRectangleBuilder extends MIFGeometryBuilder {
         BRUSH = new DefaultAttributeDescriptor(STRING_TYPE, Brush.NAME, 1, 1, true, null);
     }
 
-    public SimpleFeatureType featureType;
+    public FeatureType featureType;
 
     @Override
     public void buildGeometry(Scanner scanner, Feature toFill, MathTransform toApply) throws DataStoreException {

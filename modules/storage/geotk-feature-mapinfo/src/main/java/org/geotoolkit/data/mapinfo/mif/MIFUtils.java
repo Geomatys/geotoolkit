@@ -21,8 +21,6 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.mapinfo.mif.geometry.*;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.Property;
-import org.geotoolkit.feature.simple.SimpleFeatureType;
-import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.GeometryDescriptor;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -38,6 +36,7 @@ import java.util.Date;
 import java.util.Scanner;
 import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.util.ArgumentChecks;
+import org.geotoolkit.feature.type.PropertyDescriptor;
 
 /**
  * Utility methods and constants for mif/mid parsing.
@@ -310,11 +309,11 @@ public final class MIFUtils {
 
 
     /**
-     * Parse the given {@link SimpleFeatureType} to build a list of types in MIF format (as header COLUMNS category describes them).
+     * Parse the given {@link FeatureType} to build a list of types in MIF format (as header COLUMNS category describes them).
      * @param toWorkWith The FeatureType to parse, can't be null.
      * @param builder A StringBuilder in which we'll append generated types. If null, a new one is created.
      */
-    public static void featureTypeToMIFSyntax(SimpleFeatureType toWorkWith, StringBuilder builder) throws DataStoreException {
+    public static void featureTypeToMIFSyntax(FeatureType toWorkWith, StringBuilder builder) throws DataStoreException {
         ArgumentChecks.ensureNonNull("FeatureType to convert", toWorkWith);
 
         if(builder == null) {
@@ -325,7 +324,7 @@ public final class MIFUtils {
             builder.append('\n');
         }
 
-        for(AttributeDescriptor desc : toWorkWith.getAttributeDescriptors()) {
+        for(PropertyDescriptor desc : toWorkWith.getDescriptors()) {
             // geometries are not specified in MIF columns.
             if (desc instanceof GeometryDescriptor) {
                 continue;
@@ -334,7 +333,7 @@ public final class MIFUtils {
             if( mifType == null) {
                 throw new DataStoreException("Type "+desc.getType().getBinding()+" has no equivalent in MIF format.");
             }
-            builder.append('\t').append(desc.getLocalName()).append(' ').append(mifType.toLowerCase()).append('\n');
+            builder.append('\t').append(desc.getName().getLocalPart()).append(' ').append(mifType.toLowerCase()).append('\n');
         }
     }
 

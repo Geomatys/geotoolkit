@@ -21,7 +21,6 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.mapinfo.mif.MIFUtils;
 import org.geotoolkit.feature.type.DefaultName;
 import org.geotoolkit.feature.FeatureUtilities;
-import org.geotoolkit.feature.simple.DefaultSimpleFeatureType;
 import org.geotoolkit.feature.type.DefaultAttributeDescriptor;
 import org.geotoolkit.feature.type.DefaultAttributeType;
 import org.geotoolkit.feature.Feature;
@@ -36,6 +35,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
+import org.geotoolkit.feature.type.DefaultFeatureType;
+import org.geotoolkit.feature.type.PropertyDescriptor;
 
 /**
  * Build features representing MIF Collection geometries.
@@ -76,11 +77,11 @@ public class MIFCollectionBuilder extends MIFGeometryBuilder {
     @Override
     public FeatureType buildType(CoordinateReferenceSystem crs, FeatureType parent) {
         AttributeType type = new DefaultAttributeType(NAME, Feature.class, false, false, null, null, null);
-        AttributeDescriptor desc = new DefaultAttributeDescriptor(type, NAME, 1, 3, false, null);
+        PropertyDescriptor desc = new DefaultAttributeDescriptor(type, NAME, 1, 3, false, null);
 
         collectionCRS = crs;
 
-        return new DefaultSimpleFeatureType(NAME, Collections.singletonList(desc), null, false, null, parent, null);
+        return new DefaultFeatureType(NAME, Collections.singletonList(desc), null, false, null, parent, null);
     }
 
     @Override

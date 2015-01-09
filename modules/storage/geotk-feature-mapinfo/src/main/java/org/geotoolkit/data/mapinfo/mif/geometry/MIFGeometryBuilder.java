@@ -68,7 +68,7 @@ public abstract class MIFGeometryBuilder {
      *
      * @param crs The CRS to put in feature type. If null, no CRS will be pass to the feature type.
      * @param parent
-     * @return A {@link org.geotoolkit.feature.simple.SimpleFeatureType} which describe a geometry (as MIF defines it).
+     * @return A {@link org.geotoolkit.feature.FeatureType} which describe a geometry (as MIF defines it).
      */
     public FeatureType buildType(CoordinateReferenceSystem crs, FeatureType parent) {
         FeatureTypeBuilder builder = new FeatureTypeBuilder();

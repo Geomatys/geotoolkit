@@ -25,13 +25,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.Map;
-import java.util.Collections;
-import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
 import java.io.File;
-import org.geotoolkit.data.AbstractFileFeatureStoreFactory;
 import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.FeatureStoreFinder;
 import org.geotoolkit.data.FeatureReader;
@@ -49,12 +45,10 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.Name;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 import static org.junit.Assert.*;
-import org.junit.Ignore;
 import org.opengis.parameter.ParameterValueGroup;
 
 /**
@@ -125,7 +119,7 @@ public class MIFFeatureStoreTest {
         ftb.add("doubleProp", Double.class);
         ftb.add("stringProp", String.class);
         ftb.add("geometryProp", Point.class, CommonCRS.WGS84.normalizedGeographic());
-        final SimpleFeatureType featureType = ftb.buildSimpleFeatureType();
+        final FeatureType featureType = ftb.buildFeatureType();
         
         ds.createFeatureType(featureType.getName(), featureType);
         assertEquals(1, ds.getNames().size());
