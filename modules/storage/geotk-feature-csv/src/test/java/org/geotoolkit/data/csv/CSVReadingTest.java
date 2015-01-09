@@ -35,10 +35,10 @@ import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.feature.type.DefaultName;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.geotoolkit.feature.Feature;
+import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.referencing.CRS;
 
-import org.geotoolkit.feature.simple.SimpleFeature;
-import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.geotoolkit.feature.type.Name;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
@@ -72,24 +72,24 @@ public class CSVReadingTest extends AbstractReadingTests{
         builder.add(new DefaultName(namespace,"stringProp"), String.class);
         builder.add(new DefaultName(namespace,"intProp"), Integer.class);
         builder.add(new DefaultName(namespace,"doubleProp"), Double.class);
-        final SimpleFeatureType type3 = builder.buildSimpleFeatureType();
+        final FeatureType type3 = builder.buildFeatureType();
         store.createFeatureType(name,type3);
 
         //create a few features
         FeatureWriter writer = store.getFeatureWriterAppend(name);
         try{
-            SimpleFeature f = (SimpleFeature) writer.next();
-            f.setAttribute("geometry", gf.createPoint(new Coordinate(10, 11)));
-            f.setAttribute("stringProp", "hop1");
-            f.setAttribute("intProp", 15);
-            f.setAttribute("doubleProp", 32.2);
+            Feature f = writer.next();
+            f.setPropertyValue("geometry", gf.createPoint(new Coordinate(10, 11)));
+            f.setPropertyValue("stringProp", "hop1");
+            f.setPropertyValue("intProp", 15);
+            f.setPropertyValue("doubleProp", 32.2);
             writer.write();
 
-            f = (SimpleFeature) writer.next();
-            f.setAttribute("geometry", gf.createPoint(new Coordinate(-5, -1)));
-            f.setAttribute("stringProp", "hop3");
-            f.setAttribute("intProp", 18);
-            f.setAttribute("doubleProp", 412.10);
+            f = writer.next();
+            f.setPropertyValue("geometry", gf.createPoint(new Coordinate(-5, -1)));
+            f.setPropertyValue("stringProp", "hop3");
+            f.setPropertyValue("intProp", 18);
+            f.setPropertyValue("doubleProp", 412.10);
             writer.write();
 
 

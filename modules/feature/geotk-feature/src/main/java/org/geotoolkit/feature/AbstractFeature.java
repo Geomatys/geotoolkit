@@ -172,7 +172,8 @@ public abstract class AbstractFeature<C extends Collection<Property>> extends Ab
 
     @Override
     public Object getPropertyValue(String name) throws IllegalArgumentException {
-        return getProperty(name).getValue();
+        final Property prop = getProperty(name);        
+        return prop==null ? null : prop.getValue();
     }
 
     @Override

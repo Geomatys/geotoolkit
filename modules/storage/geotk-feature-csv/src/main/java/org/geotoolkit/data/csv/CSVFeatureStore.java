@@ -37,9 +37,7 @@ import java.util.*;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.data.*;
 import org.geotoolkit.data.query.DefaultQueryCapabilities;
 import org.geotoolkit.data.query.Query;
@@ -51,27 +49,30 @@ import org.geotoolkit.factory.HintsPending;
 import org.geotoolkit.feature.type.DefaultName;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.FeatureUtilities;
-import org.geotoolkit.feature.simple.DefaultSimpleFeature;
-import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.storage.DataFileStore;
 import org.geotoolkit.temporal.object.TemporalUtilities;
 import org.apache.sis.util.ObjectConverters;
+import org.geotoolkit.feature.ComplexAttribute;
+import org.geotoolkit.feature.DefaultFeature;
 import org.geotoolkit.util.StringUtilities;
 
 import org.geotoolkit.feature.Feature;
+import org.geotoolkit.feature.FeatureTypeUtilities;
+import static org.geotoolkit.feature.FeatureUtilities.defaultProperty;
 import org.geotoolkit.feature.Property;
-import org.geotoolkit.feature.simple.SimpleFeature;
-import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.geotoolkit.feature.type.AttributeDescriptor;
+import org.geotoolkit.feature.type.ComplexType;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.GeometryDescriptor;
 import org.geotoolkit.feature.type.Name;
 import org.geotoolkit.feature.type.PropertyDescriptor;
+import org.geotoolkit.filter.identity.DefaultFeatureId;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.identity.FeatureId;
@@ -101,7 +102,7 @@ public class CSVFeatureStore extends AbstractFeatureStore implements DataFileSto
     private String name;
     private final char separator;
 
-    private SimpleFeatureType featureType;
+    private FeatureType featureType;
 
     protected final Set<Identifier> deletedIds = new HashSet<>();
     protected final Set<Identifier> updatedIds = new HashSet<>();
@@ -115,7 +116,7 @@ public class CSVFeatureStore extends AbstractFeatureStore implements DataFileSto
      * Constructor forcing feature type, if the CSV does not have any header.
      *
      */
-    public CSVFeatureStore(final File f, final String namespace, final char separator, SimpleFeatureType ft) throws MalformedURLException, DataStoreException{
+    public CSVFeatureStore(final File f, final String namespace, final char separator, FeatureType ft) throws MalformedURLException, DataStoreException{
         this(toParameters(f, namespace, separator));
         if(ft!=null){
             this.featureType = ft;
@@ -166,7 +167,7 @@ public class CSVFeatureStore extends AbstractFeatureStore implements DataFileSto
         return (File) IOUtilities.changeExtension(file, "wcsv");
     }
 
-    private SimpleFeatureType readType() throws DataStoreException {
+    private FeatureType readType() throws DataStoreException {
         final String line;
         fileLock.readLock().lock();
         try (final Scanner scanner = new Scanner(file)) {
@@ -254,7 +255,7 @@ public class CSVFeatureStore extends AbstractFeatureStore implements DataFileSto
         return ftb.buildSimpleFeatureType();
     }
 
-    private String createHeader(final SimpleFeatureType type) throws DataStoreException{
+    private String createHeader(final FeatureType type) throws DataStoreException{
         final StringBuilder sb = new StringBuilder();
         boolean first = true;
         for(PropertyDescriptor desc : type.getDescriptors()){
@@ -294,7 +295,7 @@ public class CSVFeatureStore extends AbstractFeatureStore implements DataFileSto
         return sb.toString();
     }
 
-    private void writeType(final SimpleFeatureType type) throws DataStoreException {
+    private void writeType(final FeatureType type) throws DataStoreException {
         defaultNamespace = type.getName().getNamespaceURI();
         Parameters.getOrCreate(CSVFeatureStoreFactory.NAMESPACE, parameters).setValue(defaultNamespace);
         name = type.getName().getLocalPart();
@@ -353,15 +354,13 @@ public class CSVFeatureStore extends AbstractFeatureStore implements DataFileSto
             throw new DataStoreException("Can only have one feature type in CSV dataStore.");
         }
 
-        if (!(featureType instanceof SimpleFeatureType)) {
+        if(!FeatureTypeUtilities.isSimple(featureType)){
             throw new DataStoreException("Feature type must be simple.");
         }
 
-        final SimpleFeatureType sft = (SimpleFeatureType) featureType;
-
         try {
             fileLock.writeLock().lock();
-            writeType(sft);
+            writeType(featureType);
         } finally {
             fileLock.writeLock().unlock();
         }
@@ -374,7 +373,7 @@ public class CSVFeatureStore extends AbstractFeatureStore implements DataFileSto
     public void deleteFeatureType(final Name typeName) throws DataStoreException {
         typeCheck(typeName); //raise error is type doesnt exist
 
-        final SimpleFeatureType oldSchema = featureType;
+        final FeatureType oldSchema = featureType;
 
         try {
             fileLock.writeLock().lock();
@@ -459,16 +458,15 @@ public class CSVFeatureStore extends AbstractFeatureStore implements DataFileSto
 
         private final WKTReader reader = new WKTReader();
         private final Scanner scanner;
-        protected final SimpleFeatureBuilder sfb;
-        protected final DefaultSimpleFeature reuse;
-        protected SimpleFeature current = null;
+        private final PropertyDescriptor[] atts;
+        protected final Feature reuse;
+        protected Feature current = null;
         protected int inc = 0;
 
         private CSVFeatureReader(final boolean reuseFeature) throws DataStoreException{
             fileLock.readLock().lock();
-            sfb = new SimpleFeatureBuilder(featureType);
             if(reuseFeature){
-                reuse = new DefaultSimpleFeature(featureType, null, new Object[featureType.getAttributeCount()], false);
+                reuse = defaultFeature(featureType, "0");
             }else{
                 reuse = null;
             }
@@ -480,6 +478,7 @@ public class CSVFeatureStore extends AbstractFeatureStore implements DataFileSto
             } catch (FileNotFoundException ex) {
                 throw new DataStoreException(ex);
             }
+            atts = featureType.getDescriptors().toArray(new PropertyDescriptor[0]);
         }
 
         @Override
@@ -488,9 +487,9 @@ public class CSVFeatureStore extends AbstractFeatureStore implements DataFileSto
         }
 
         @Override
-        public SimpleFeature next() throws FeatureStoreRuntimeException {
+        public Feature next() throws FeatureStoreRuntimeException {
             read();
-            final SimpleFeature ob = current;
+            final Feature ob = current;
             current = null;
             if(ob == null){
                 throw new FeatureStoreRuntimeException("No more records.");
@@ -511,14 +510,17 @@ public class CSVFeatureStore extends AbstractFeatureStore implements DataFileSto
             if (line != null) {
                 final List<String> fields = StringUtilities.toStringList(line, separator);
 
+                current = null;
                 if (reuse == null) {
-                    sfb.reset();
+                    current = defaultFeature(featureType, Integer.toString(inc++));
+                }else{
+                    ((DefaultFeature)reuse).setIdentifier(new DefaultFeatureId(Integer.toString(inc++)));
+                    current = reuse;
                 }
 
-                final List<AttributeDescriptor> atts = featureType.getAttributeDescriptors();
                 final int fieldSize = fields.size();
-                for (int i = 0, n = atts.size(); i < n; i++) {
-                    final AttributeDescriptor att = atts.get(i);
+                for (int i = 0, n = atts.length; i < n; i++) {
+                    final AttributeDescriptor att = (AttributeDescriptor) atts[i];
                     final Object value;
                     if (i >= fieldSize) {
                         value = null;
@@ -536,19 +538,9 @@ public class CSVFeatureStore extends AbstractFeatureStore implements DataFileSto
                         value = ObjectConverters.convert(fields.get(i), att.getType().getBinding());
                     }
 
-                    if (reuse == null) {
-                        sfb.set(att.getName(), value);
-                    } else {
-                        reuse.setAttribute(att.getName(), value);
-                    }
+                    current.setPropertyValue(att.getName().toString(), value);
                 }
 
-                if (reuse == null) {
-                    current = sfb.buildFeature(Integer.toString(inc++));
-                } else {
-                    reuse.setId(Integer.toString(inc++));
-                    current = reuse;
-                }
             }
         }
 
@@ -570,8 +562,8 @@ public class CSVFeatureStore extends AbstractFeatureStore implements DataFileSto
         private final WKTWriter wktWriter = new WKTWriter(2);
         private final Writer writer;
         private final File writeFile;
-        private SimpleFeature edited = null;
-        private SimpleFeature lastWritten = null;
+        private Feature edited = null;
+        private Feature lastWritten = null;
         private boolean appendMode = false;
 
         private final ReadWriteLock tempLock = new ReentrantReadWriteLock();
@@ -598,7 +590,7 @@ public class CSVFeatureStore extends AbstractFeatureStore implements DataFileSto
         }
 
         @Override
-        public SimpleFeature next() throws FeatureStoreRuntimeException {
+        public Feature next() throws FeatureStoreRuntimeException {
             try {
                 write();
                 edited = super.next();
@@ -606,8 +598,7 @@ public class CSVFeatureStore extends AbstractFeatureStore implements DataFileSto
             } catch (FeatureStoreRuntimeException ex) {
                 //we reach append mode
                 appendMode = true;
-                sfb.reset();
-                edited = sfb.buildFeature(Integer.toString(inc++));
+                edited = defaultFeature(featureType, Integer.toString(inc++));
                 for (Property prop : edited.getProperties()) {
                     try {
                         prop.setValue(FeatureUtilities.defaultValue(prop.getType().getBinding()));
@@ -635,12 +626,13 @@ public class CSVFeatureStore extends AbstractFeatureStore implements DataFileSto
             if(edited == null || lastWritten == edited) return;
             lastWritten = edited;
 
-            final List<AttributeDescriptor> atts = featureType.getAttributeDescriptors();
+            final Collection<PropertyDescriptor> atts = featureType.getDescriptors();
             tempLock.writeLock().lock();
             try {
-                for (int i=0,n=atts.size() ; i<n; i++) {
-                    final AttributeDescriptor att = atts.get(i);
-                    final Object value = edited.getAttribute(att.getName());
+                int i=0;
+                int n=atts.size();
+                for(PropertyDescriptor att : atts){
+                    final Object value = edited.getPropertyValue(att.getName().toString());
 
                     final String str;
                     if(value == null){
@@ -660,6 +652,7 @@ public class CSVFeatureStore extends AbstractFeatureStore implements DataFileSto
                     if (i != n-1) {
                         writer.append(separator);
                     }
+                    i++;
                 }
                 writer.append('\n');
                 writer.flush();
@@ -748,4 +741,18 @@ public class CSVFeatureStore extends AbstractFeatureStore implements DataFileSto
         return null;
     }
 
+    
+    private static DefaultFeature defaultFeature(final FeatureType type, final String id){
+        final Collection<Property> props = new ArrayList<Property>();
+        for(final PropertyDescriptor subDesc : type.getDescriptors()){
+            for(int i=0,n=subDesc.getMinOccurs();i<n;i++){
+                final Property prop = defaultProperty(subDesc);
+                if(prop != null){
+                    props.add(prop);
+                }
+            }
+        }
+        return new DefaultFeature(props, type, new DefaultFeatureId(id));
+    }
+    
 }

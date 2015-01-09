@@ -31,6 +31,8 @@ import org.geotoolkit.data.query.QueryUtilities;
 import org.geotoolkit.feature.type.DefaultName;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.apache.sis.referencing.CommonCRS;
+import org.geotoolkit.feature.Feature;
+import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyle;
 
@@ -40,8 +42,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import org.geotoolkit.feature.simple.SimpleFeature;
-import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.geotoolkit.feature.type.Name;
 import org.opengis.filter.Filter;
 
@@ -127,11 +127,11 @@ public class MapLayerTest extends TestCase{
         final Name name = new DefaultName("test");
         FeatureTypeBuilder builder = new FeatureTypeBuilder();
         builder.setName(name);
-        SimpleFeatureType type = builder.buildSimpleFeatureType();
+        FeatureType type = builder.buildFeatureType();
 
         FeatureStore ds = new MemoryFeatureStore();
         ds.createFeatureType(name,type);
-        FeatureCollection<SimpleFeature> fs = ds.createSession(true).getFeatureCollection(QueryBuilder.all(name));
+        FeatureCollection<Feature> fs = ds.createSession(true).getFeatureCollection(QueryBuilder.all(name));
 
 
         FeatureMapLayer layer = MapBuilder.createFeatureLayer(fs, new DefaultStyleFactory().style());

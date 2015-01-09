@@ -71,6 +71,7 @@ import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 import java.util.Collection;
 import java.util.Objects;
+import org.apache.sis.util.Classes;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.filter.function.string.LengthFunction;
 import org.opengis.filter.FilterFactory;
@@ -992,6 +993,40 @@ public final class FeatureTypeUtilities {
         return isDecendedFrom(featureType, n.getNamespaceURI(), n.getLocalPart());
     }
 
+    public static boolean isSimple(FeatureType type){
+        final Collection<PropertyDescriptor> properties = type.getDescriptors();
+        //verify if we have a simple feature type
+        boolean isSimple = true;
+        for(PropertyDescriptor desc : properties){
+            //to be simple property must have min = 1 and max 1
+            if(desc.getMinOccurs() != 1 || desc.getMaxOccurs() != 1){
+                isSimple = false;
+                break;
+            }
+
+            //to be simple property must be an attribut
+            final Class<?>[] ints = Classes.getAllInterfaces(desc.getType().getClass());
+            boolean found = false;
+            for(Class<?> c : ints){
+                if(AttributeType.class.isAssignableFrom(c)){
+                    if(found){
+                        isSimple = false;
+                        break;
+                    }else{
+                        if(!(GeometryType.class.isAssignableFrom(c))){
+                            found = true;
+                        }
+                    }
+                }
+            }
+            if(!found){
+                isSimple = false;
+                break;
+            }
+        }
+        return isSimple;
+    }
+    
     /** Exact equality based on typeNames, namespace, attributes and ancestors */
     public static boolean equals(final FeatureType typeA, final FeatureType typeB) {
         if (typeA == typeB) {
