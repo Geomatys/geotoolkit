@@ -31,7 +31,6 @@ import java.io.FilenameFilter;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.logging.Level;
-import static org.geotoolkit.data.AbstractFeatureStoreFactory.GEOMS_ALL;
 import org.geotoolkit.storage.DataType;
 import org.geotoolkit.storage.DefaultFactoryMetadata;
 import org.geotoolkit.storage.FactoryMetadata;

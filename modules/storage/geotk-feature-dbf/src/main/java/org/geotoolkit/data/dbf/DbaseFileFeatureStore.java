@@ -39,18 +39,18 @@ import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.HintsPending;
 import org.geotoolkit.feature.FeatureTypeBuilder;
-import org.geotoolkit.feature.simple.DefaultSimpleFeature;
-import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.parameter.Parameters;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.feature.DefaultFeature;
 import org.geotoolkit.storage.DataFileStore;
 import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.simple.SimpleFeature;
-import org.geotoolkit.feature.simple.SimpleFeatureType;
+import static org.geotoolkit.feature.FeatureUtilities.defaultProperty;
+import org.geotoolkit.feature.Property;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.Name;
 import org.geotoolkit.feature.type.PropertyDescriptor;
+import org.geotoolkit.filter.identity.DefaultFeatureId;
 import org.opengis.filter.Filter;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.parameter.ParameterValueGroup;
@@ -69,7 +69,7 @@ public class DbaseFileFeatureStore extends AbstractFeatureStore implements DataF
     private final File file;
     private String name;
 
-    private SimpleFeatureType featureType;
+    private FeatureType featureType;
 
     public DbaseFileFeatureStore(final File f, final String namespace) throws MalformedURLException, DataStoreException{
         this(toParameters(f, namespace));
@@ -127,7 +127,7 @@ public class DbaseFileFeatureStore extends AbstractFeatureStore implements DataF
         return (File) IOUtilities.changeExtension(file, "wdbf");
     }
 
-    private SimpleFeatureType readType() throws DataStoreException{
+    private FeatureType readType() throws DataStoreException{
         RandomAccessFile raf = null;
         try{
             raf = new RandomAccessFile(file, "r");
@@ -137,7 +137,7 @@ public class DbaseFileFeatureStore extends AbstractFeatureStore implements DataF
             final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
             ftb.setName(defaultNs, name);
             ftb.addAll(header.createDescriptors(defaultNs));
-            return ftb.buildSimpleFeatureType();
+            return ftb.buildFeatureType();
         }catch(IOException ex){
             throw new DataStoreException(ex);
         }finally{
@@ -268,16 +268,15 @@ public class DbaseFileFeatureStore extends AbstractFeatureStore implements DataF
 
         private final RandomAccessFile raf;
         protected final DbaseFileReader reader;
-        protected final SimpleFeatureBuilder sfb;
-        protected final DefaultSimpleFeature reuse;
-        protected SimpleFeature current = null;
+        protected final DefaultFeature reuse;
+        protected final String[] attNames;
+        protected Feature current = null;
         protected int inc = 0;
 
         private DBFFeatureReader(final boolean reuseFeature) throws DataStoreException{
             RWLock.readLock().lock();
-            sfb = new SimpleFeatureBuilder(featureType);
             if(reuseFeature){
-                reuse = new DefaultSimpleFeature(featureType, null, new Object[featureType.getAttributeCount()], false);
+                reuse = defaultFeature(featureType, "");
             }else{
                 reuse = null;
             }
@@ -288,6 +287,15 @@ public class DbaseFileFeatureStore extends AbstractFeatureStore implements DataF
             } catch (IOException ex) {
                 throw new DataStoreException(ex);
             }
+            
+            final Collection<PropertyDescriptor> descs = featureType.getDescriptors();
+            attNames = new String[descs.size()];
+            int i=0;
+            for(PropertyDescriptor pd : descs){
+                attNames[i] = pd.getName().toString();
+                i++;
+            }
+            
         }
 
         @Override
@@ -296,9 +304,9 @@ public class DbaseFileFeatureStore extends AbstractFeatureStore implements DataF
         }
 
         @Override
-        public SimpleFeature next() throws FeatureStoreRuntimeException {
+        public Feature next() throws FeatureStoreRuntimeException {
             read();
-            final SimpleFeature ob = current;
+            final Feature ob = current;
             current = null;
             if(ob == null){
                 throw new FeatureStoreRuntimeException("No more records.");
@@ -318,19 +326,22 @@ public class DbaseFileFeatureStore extends AbstractFeatureStore implements DataF
 
             try{
                 final Row row = reader.next();
-                if(reuse != null){
-                    reuse.setAttributes(row.readAll(null));
-                    reuse.setId(String.valueOf(inc++));
+                final Object[] array = row.readAll(null);
+                
+                if(reuse!=null){
+                    reuse.setIdentifier(new DefaultFeatureId(String.valueOf(inc++)));
                     current = reuse;
                 }else{
-                    sfb.reset();
-                    sfb.addAll(row.readAll(null));
-                    current = sfb.buildFeature(Integer.toString(inc++));
+                    current = defaultFeature(featureType, String.valueOf(inc++));
                 }
+                
+                for(int i=0;i<array.length;i++){
+                    current.setPropertyValue(attNames[i], array[i]);
+                }
+                
             }catch(IOException ex){
                 throw new FeatureStoreRuntimeException(ex);
             }
-
         }
 
         @Override
@@ -351,10 +362,22 @@ public class DbaseFileFeatureStore extends AbstractFeatureStore implements DataF
 
     }
 
-	@Override
-	public void refreshMetaModel() {
-		featureType=null;
-		
-	}
+    @Override
+    public void refreshMetaModel() {
+        featureType = null;
+    }
 
+    private static DefaultFeature defaultFeature(final FeatureType type, final String id){
+        final Collection<Property> props = new ArrayList<Property>();
+        for(final PropertyDescriptor subDesc : type.getDescriptors()){
+            for(int i=0,n=subDesc.getMinOccurs();i<n;i++){
+                final Property prop = defaultProperty(subDesc);
+                if(prop != null){
+                    props.add(prop);
+                }
+            }
+        }
+        return new DefaultFeature(props, type, new DefaultFeatureId(id));
+    }
+    
 }

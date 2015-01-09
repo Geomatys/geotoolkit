@@ -40,8 +40,9 @@ import org.geotoolkit.feature.AttributeDescriptorBuilder;
 import org.geotoolkit.feature.AttributeTypeBuilder;
 import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.geotoolkit.feature.type.AttributeDescriptor;
+import org.geotoolkit.feature.type.FeatureType;
+import org.geotoolkit.feature.type.PropertyDescriptor;
 
 /**
  * Class to represent the header of a Dbase III file. Creation date: (5/15/2001
@@ -763,17 +764,16 @@ public class DbaseFileHeader {
      * @throws IOException DOCUMENT ME!
      * @throws DbaseFileException DOCUMENT ME!
      */
-    public static DbaseFileHeader createDbaseHeader(final SimpleFeatureType featureType)
+    public static DbaseFileHeader createDbaseHeader(final FeatureType featureType)
             throws IOException,DbaseFileException {
 
         final DbaseFileHeader header = new DbaseFileHeader();
 
-        for (int i=0, n=featureType.getAttributeCount(); i<n; i++) {
-            final AttributeDescriptor type = featureType.getDescriptor(i);
+        for(PropertyDescriptor type : featureType.getDescriptors()){
             final Class<?> colType = type.getType().getBinding();
-            final String colName = type.getLocalName();
+            final String colName = type.getName().getLocalPart();
 
-            int fieldLen = FeatureTypeUtilities.getFieldLength(type);
+            int fieldLen = FeatureTypeUtilities.getFieldLength((AttributeDescriptor) type);
             if (fieldLen == FeatureTypeUtilities.ANY_LENGTH)
                 fieldLen = 255;
             if ((colType == Integer.class) || (colType == Short.class)
