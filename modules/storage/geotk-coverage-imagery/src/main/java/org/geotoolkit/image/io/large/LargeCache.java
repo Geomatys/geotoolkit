@@ -292,12 +292,17 @@ public class LargeCache implements TileCache {
      * @param listMemoryCapacity new memory capacity.
      */
     private void updateLList(long listMemoryCapacity) {
-        for (RenderedImage r : tileManagers.keySet()) {
-            try {
-                tileManagers.get(r).setCapacity(listMemoryCapacity);
-            } catch (IOException ex) {
-                throw new RuntimeException("Raster too large for remaining memory capacity", ex);
+        cacheLock.readLock().lock();
+        try {
+            for (RenderedImage r : tileManagers.keySet()) {
+                try {
+                    tileManagers.get(r).setCapacity(listMemoryCapacity);
+                } catch (IOException ex) {
+                    throw new RuntimeException("Raster too large for remaining memory capacity", ex);
+                }
             }
+        } finally {
+            cacheLock.readLock().unlock();
         }
     }
 
