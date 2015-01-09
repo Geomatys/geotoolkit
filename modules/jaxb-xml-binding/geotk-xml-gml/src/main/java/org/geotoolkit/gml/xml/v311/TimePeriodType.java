@@ -177,6 +177,7 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType implement
      * Build a new Time period with a duration.
      */
     public TimePeriodType(final Period period){
+        super(period);
         if (period != null) {
             if (period.getBeginning() != null && period.getBeginning().getPosition() != null) {
                 this.beginPosition = new TimePositionType(period.getBeginning().getPosition());
