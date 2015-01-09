@@ -1,3 +1,19 @@
+/*
+ *    Geotoolkit.org - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
+ *
+ *    (C) 2014, Geomatys
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation;
+ *    version 2.1 of the License.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
+ */
 package org.geotoolkit.image.io.large;
 
 import org.apache.sis.util.Static;
@@ -29,6 +45,15 @@ public class ImageCacheConfiguration extends Static {
     public static final String KEY_CACHE_MEMORY_SIZE = "geotk.image.cache.size";
 
     /**
+     *  The {@linkplain System#getProperties() system properties} key which control
+     *  the LargeCache swap on filesystem.
+     *  Valid values : "true", "false"
+     *  If true LargeCache will use a QuadTreeDirectory to write tiles on filesystem, otherwise
+     *  cache will only use memory to store tiles.
+     */
+    public static final String KEY_CACHE_SWAP = "geotk.image.cache.swap";
+
+    /**
      * Default memory size used if {@linkplain System#getProperties() system properties} {@linkplain #KEY_CACHE_MEMORY_SIZE}
      * property is not defined.
      *
@@ -57,6 +82,8 @@ public class ImageCacheConfiguration extends Static {
 
     /**
      * Set cache memory size in {@linkplain System#getProperties() system properties}.
+     * It is not assured that LargeCache will use given value if it was already instantiated.
+     * <b>This memory size should be set during application startup not during his life-cycle.</b>
      *
      * @param candidate memory property value String formatted as <size>[g|G|m|M|k|K]
      * @throws IllegalArgumentException if candidate String doesn't respect <size>[g|G|m|M|k|K] format.
@@ -114,4 +141,24 @@ public class ImageCacheConfiguration extends Static {
         }
     }
 
+    /**
+     * Check in {@linkplain System#getProperties() system properties} for cache swap configuration.
+     *
+     * @return return property value or {@code true} if property not found.
+     */
+    public static boolean isCacheSwapEnable() {
+        final String swap = System.getProperties().getProperty(KEY_CACHE_SWAP);
+        return swap == null || Boolean.parseBoolean(swap);
+    }
+
+    /**
+     * Set cache swap in {@linkplain System#getProperties() system properties}.
+     * It is not assured that LargeCache will use given value if it was already instantiated.
+     * <b>This flag should be set during application startup not during his life-cycle.</b>
+     *
+     * @param allowSwap flag that enable memory swapping on filesystem.
+     */
+    public static synchronized void setCacheSwapEnable(boolean allowSwap) {
+        System.getProperties().setProperty(KEY_CACHE_SWAP, String.valueOf(allowSwap));
+    }
 }

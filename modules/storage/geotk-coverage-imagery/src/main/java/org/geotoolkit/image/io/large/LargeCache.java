@@ -21,7 +21,6 @@ import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.awt.image.WritableRaster;
 import java.io.IOException;
-import java.lang.ref.PhantomReference;
 import java.lang.ref.ReferenceQueue;
 import java.util.*;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -29,7 +28,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.media.jai.TileCache;
 
-import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.logging.Logging;
 
 /**
@@ -50,6 +48,7 @@ public class LargeCache implements TileCache {
 
     private long memoryCapacity;
     private long remainingCapacity;
+    private final boolean enableSwap;
 
     /**
      * References tiles cached over time. Used when we need to free space, we browse it to remove the oldest tiles.
@@ -64,8 +63,9 @@ public class LargeCache implements TileCache {
     private final ReentrantReadWriteLock cacheLock = new ReentrantReadWriteLock();
     private static LargeCache INSTANCE;
 
-    private LargeCache(long memoryCapacity) {
+    private LargeCache(long memoryCapacity, boolean enableSwap) {
         this.memoryCapacity = memoryCapacity;
+        this.enableSwap = enableSwap;
         final Thread phantomCleaner = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -96,7 +96,8 @@ public class LargeCache implements TileCache {
      */
     public static LargeCache getInstance() {
         long memoryCapacity = ImageCacheConfiguration.getCacheMemorySize();
-        if (INSTANCE == null) INSTANCE = new LargeCache(memoryCapacity);
+        boolean enableSwap = ImageCacheConfiguration.isCacheSwapEnable();
+        if (INSTANCE == null) INSTANCE = new LargeCache(memoryCapacity, enableSwap);
         return INSTANCE;
     }
 
@@ -121,7 +122,7 @@ public class LargeCache implements TileCache {
                 final long mC = memoryCapacity / (tileManagers.size() + 1);
                 updateLList(mC);
                 try {
-                    lL = new LargeMap(source, phantomQueue, mC);
+                    lL = new LargeMap(source, phantomQueue, mC, enableSwap);
                     cacheLock.writeLock().lock();
                     tileManagers.put(source, lL);
 
@@ -175,6 +176,9 @@ public class LargeCache implements TileCache {
 
     /**
      * {@inheritDoc }.
+     * @throws java.lang.IllegalArgumentException if TileCache is in memoryMode only and the
+     * requested raster is not found on cache.
+     * @throws java.lang.RuntimeException if raster can't be retrieve from cache (nested IOException).
      */
     @Override
     public Raster getTile(RenderedImage ri, int i, int i1) {

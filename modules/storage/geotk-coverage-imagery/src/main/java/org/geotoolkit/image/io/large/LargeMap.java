@@ -1,3 +1,19 @@
+/*
+ *    Geotoolkit.org - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
+ *
+ *    (C) 2014, Geomatys
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation;
+ *    version 2.1 of the License.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
+ */
 package org.geotoolkit.image.io.large;
 
 import org.apache.sis.util.ArgumentChecks;
@@ -41,6 +57,7 @@ public class LargeMap extends PhantomReference<RenderedImage> {
     private static final Point WPOINT = new Point(0, 0);
 
     private long memoryCapacity;
+    private final boolean enableSwap;
     private long remainingCapacity;
     private ColorModel cm;
     private final int minTileX;
@@ -79,12 +96,14 @@ public class LargeMap extends PhantomReference<RenderedImage> {
      *
      * @param ri {@link java.awt.image.RenderedImage} which contain all raster in list.
      * @param memoryCapacity storage capacity in Byte.
+     * @param enableSwap flag that enable memory swapping on filesystem.
      * @throws java.io.IOException if impossible to create {@link javax.imageio.ImageReader} or {@link javax.imageio.ImageWriter}.
      */
-    LargeMap(RenderedImage ri, ReferenceQueue<RenderedImage> queue, long memoryCapacity) throws IOException {
+    LargeMap(RenderedImage ri, ReferenceQueue<RenderedImage> queue, long memoryCapacity, boolean enableSwap) throws IOException {
         super(ri, queue);
         //cache properties.
         this.memoryCapacity = memoryCapacity;
+        this.enableSwap = enableSwap;
         isWritableRenderedImage = ri instanceof WritableRenderedImage;
         //image owner properties.
         this.cm                = ri.getColorModel();
@@ -99,8 +118,12 @@ public class LargeMap extends PhantomReference<RenderedImage> {
         this.minTileY      = ri.getMinTileY();
 
         //quad tree directory architecture.
-        this.dirPath = TEMPORARY_PATH + "/img_"+ri.hashCode();
-        this.qTD     = new QuadTreeDirectory(dirPath, numTilesX, numTilesY, FORMAT, true);
+        this.dirPath = TEMPORARY_PATH + "/img_" + ri.hashCode();
+        if (enableSwap) {
+            this.qTD = new QuadTreeDirectory(dirPath, numTilesX, numTilesY, FORMAT, true);
+        } else {
+            this.qTD = null;
+        }
 
         //reader writer
 //        this.imgReader = XImageIO.getReaderByFormatName(FORMAT, null, Boolean.FALSE, Boolean.TRUE);
@@ -167,10 +190,12 @@ public class LargeMap extends PhantomReference<RenderedImage> {
             tileLock.writeLock().unlock();
         }
 
-        //quad tree
-        final File removeFile = new File(qTD.getPath(tileCorner.x, tileCorner.y));
-        //delete on hard disk if exist.
-        if (removeFile.exists()) removeFile.delete();
+        if (enableSwap) {
+            //quad tree
+            final File removeFile = new File(qTD.getPath(tileCorner.x, tileCorner.y));
+            //delete on hard disk if exist.
+            if (removeFile.exists()) removeFile.delete();
+        }
     }
 
     /**
@@ -180,8 +205,9 @@ public class LargeMap extends PhantomReference<RenderedImage> {
      * @param tileY mosaic index in Y direction.
      * @return Raster at tileX tileY mosaic coordinates.
      * @throws java.io.IOException if an error occurs during reading..
+     * @throws IllegalArgumentException if raster not found in memory mode.
      */
-    Raster getRaster(int tileX, int tileY) throws IOException {
+    Raster getRaster(int tileX, int tileY) throws IOException, IllegalArgumentException {
         final Point tileCorner = new Point(tileX - minTileX, tileY - minTileY);
         // Check if queried raster is cached.
         try {
@@ -193,20 +219,25 @@ public class LargeMap extends PhantomReference<RenderedImage> {
         } finally {
             tileLock.readLock().unlock();
         }
-        
-        // If not, we must take it from input quad-tree.
-        final File getFile = new File(qTD.getPath(tileCorner.x, tileCorner.y));
-        if (getFile.exists()) {
-            // TODO : Use a "pool" of readers, instead of creating one each time ?
-            final ImageReader imgReader = getImageReader();
-            imgReader.setInput(getFile);
-            final BufferedImage buff = imgReader.read(0);
-            imgReader.setInput(null);
-            imgReader.dispose();
-            //add in cache list.
-            final WritableRaster checkedRaster = checkRaster(buff.getRaster(), tileCorner);
-            add(tileCorner, checkedRaster);
-            return checkedRaster;
+
+        if (!enableSwap) {
+            // raster not found in memory
+            throw new IllegalArgumentException("Tile (" + tileX + ", " + tileY + ") not found in memory.");
+        } else {
+            // If not, we must take it from input quad-tree.
+            final File getFile = new File(qTD.getPath(tileCorner.x, tileCorner.y));
+            if (getFile.exists()) {
+                // TODO : Use a "pool" of readers, instead of creating one each time ?
+                final ImageReader imgReader = getImageReader();
+                imgReader.setInput(getFile);
+                final BufferedImage buff = imgReader.read(0);
+                imgReader.setInput(null);
+                imgReader.dispose();
+                //add in cache list.
+                final WritableRaster checkedRaster = checkRaster(buff.getRaster(), tileCorner);
+                add(tileCorner, checkedRaster);
+                return checkedRaster;
+            }
         }
 
         throw new IOException("Tile (" + tileX + ", " + tileY + ") unknown. Cannot get raster.");
@@ -237,7 +268,9 @@ public class LargeMap extends PhantomReference<RenderedImage> {
             tileLock.writeLock().lock();
             remainingCapacity = memoryCapacity;
             tiles.clear();
-            qTD.cleanDirectory();
+            if (enableSwap) {
+                qTD.cleanDirectory();
+            }
         } finally {
             tileLock.writeLock().unlock();
         }
@@ -366,7 +399,9 @@ public class LargeMap extends PhantomReference<RenderedImage> {
                     if (largeRaster != null) {
                         remainingCapacity += largeRaster.getWeight();
                         tileIterator.remove();
-                        toFlush.add(largeRaster);
+                        if (enableSwap) {
+                            toFlush.add(largeRaster);
+                        }
                     }
                 }
 

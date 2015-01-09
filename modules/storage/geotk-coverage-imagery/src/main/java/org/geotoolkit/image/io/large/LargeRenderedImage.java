@@ -404,11 +404,18 @@ public class LargeRenderedImage implements RenderedImage, Disposable {
             if (isRead[tileY][tileX]) {
                 return tilecache.getTile(this, tileX, tileY);
             }
+        } catch (IllegalArgumentException e) {
+            /*
+             * Should occurs if LargeCache is used in memory mode only and the requested tile
+             * is not anymore in cache.
+             */
+            LOGGER.log(Level.FINER, "Tile not found in cache system.", e);
+            isRead[tileY][tileX] = false;
         } catch (Exception e) {
             /* This block is because of possible runtime exception if there's a cache problem,
              * we don't throw error, just reload the tile.
              */
-            LOGGER.log(Level.WARNING, "Cannot get tile from cache system, but it should be here !", e);
+            LOGGER.log(Level.FINE, "Cannot get tile from cache system, but it should be here !", e);
         } finally {
             tileLock.readLock().unlock();
         }
