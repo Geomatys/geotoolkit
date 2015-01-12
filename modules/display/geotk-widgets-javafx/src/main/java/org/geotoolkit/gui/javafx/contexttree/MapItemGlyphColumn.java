@@ -58,6 +58,7 @@ public class MapItemGlyphColumn extends TreeTableColumn<MapItem, MapItem>{
         public GlyphButton() {
             super(false, null, new Function<MapItem, Boolean>() {
 
+                @Override
                 public Boolean apply(MapItem t) {
                     return t instanceof MapLayer;
                 }
@@ -77,7 +78,6 @@ public class MapItemGlyphColumn extends TreeTableColumn<MapItem, MapItem>{
                         img.createGraphics(), (MapLayer)item);
                 button.setGraphic(new ImageView(SwingFXUtils.toFXImage(img,null)));
             }
-            
         }
         
         private static void openEditor(MapItem candidate){
@@ -101,6 +101,4 @@ public class MapItemGlyphColumn extends TreeTableColumn<MapItem, MapItem>{
         }
         
     }
-    
-    
 }

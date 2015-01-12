@@ -30,13 +30,13 @@ import org.opengis.style.Stroke;
  * @author Johann Sorel (Geomatys)
  */
 public class FXStroke extends FXStyleElementController<FXStroke,Stroke> {
-
+ 
+    @FXML
+    private FXColorExpression uiColor; 
     @FXML
     private FXNumberExpression uiWidth;
     @FXML
-    private FXNumberExpression uiOpacity;    
-    @FXML
-    private FXColorExpression uiColor;    
+    private FXNumberExpression uiOpacity;      
     @FXML
     private FXNumberSpinner uiDash1;
     @FXML

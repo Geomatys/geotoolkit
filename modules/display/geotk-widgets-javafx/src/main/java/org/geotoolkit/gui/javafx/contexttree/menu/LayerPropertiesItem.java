@@ -82,7 +82,7 @@ public class LayerPropertiesItem extends TreeMenuItem{
                 );
                 
                 final FXDialog dialog = new FXDialog();
-                dialog.setTitle(GeotkFX.getString(LayerPropertiesItem.this,"properties"));
+                dialog.setTitle(GeotkFX.getString(LayerPropertiesItem.this, "properties"));
                 dialog.setContent(panel);
                 dialog.getActions().add(new CloseAction(dialog));
                 dialog.setModal(false);
@@ -111,6 +111,4 @@ public class LayerPropertiesItem extends TreeMenuItem{
         }
         
     }
-    
-    
 }

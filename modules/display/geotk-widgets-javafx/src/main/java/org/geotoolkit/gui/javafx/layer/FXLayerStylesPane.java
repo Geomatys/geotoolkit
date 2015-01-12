@@ -58,7 +58,6 @@ import org.geotoolkit.map.MapLayer;
  */
 public class FXLayerStylesPane extends FXPropertyPane{
     
-    private final BorderPane mainPane = new BorderPane();
     private final BorderPane leftPane = new BorderPane();
     private final ListView listView = new ListView();
     private final Button apply = new Button(GeotkFX.getString(this,"apply"));
@@ -73,8 +72,7 @@ public class FXLayerStylesPane extends FXPropertyPane{
     public FXLayerStylesPane(FXLayerStylePane ... styleEditors) {
         this.editors = styleEditors;
         
-        mainPane.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
-        setCenter(mainPane);  
+        setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
         
         apply.setGraphic(new ImageView(SwingFXUtils.toFXImage(
                 IconBuilder.createImage(FontAwesomeIcons.ICON_CHECK, 
@@ -93,7 +91,7 @@ public class FXLayerStylesPane extends FXPropertyPane{
         scroll.setMinSize(300, 250);
         leftPane.setCenter(scroll);
         leftPane.setBottom(hbox);
-        mainPane.setLeft(leftPane);      
+        setLeft(leftPane);      
         
         //build index
         final LinkedHashMap<String, List<FXLayerStylePane>> indexByCategory = new LinkedHashMap<>();
@@ -121,9 +119,9 @@ public class FXLayerStylesPane extends FXPropertyPane{
             public void onChanged(ListChangeListener.Change c) {
                 final Object item = listView.getSelectionModel().getSelectedItem();
                 if(item instanceof FXLayerStylePane){
-                    mainPane.setCenter(null);
+                    setCenter(null);
                     currentEditor = (FXLayerStylePane) item;
-                    mainPane.setCenter(currentEditor);
+                    setCenter(currentEditor);
                 }
             }
         });

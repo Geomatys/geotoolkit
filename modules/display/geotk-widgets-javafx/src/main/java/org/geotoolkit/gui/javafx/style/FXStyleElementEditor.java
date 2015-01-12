@@ -70,7 +70,7 @@ public class FXStyleElementEditor {
     public static synchronized List<FXStyleElementController> findEditorsForType(Class candidate){
         final List<FXStyleElementController> editors = new ArrayList<FXStyleElementController>();
 
-        for(FXStyleElementController editor : LOADER){
+        for(final FXStyleElementController editor : LOADER){
             if(candidate == null || candidate.isAssignableFrom(editor.getEditedClass())){
                 editors.add(editor);
             }

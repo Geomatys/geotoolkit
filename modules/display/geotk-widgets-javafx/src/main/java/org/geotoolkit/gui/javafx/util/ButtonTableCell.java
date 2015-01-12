@@ -42,7 +42,11 @@ public class ButtonTableCell<S,T> extends TableCell<S,T> {
     private final Function<T,Boolean> visiblePredicate;
     protected final Button button = new Button();
         
-    public ButtonTableCell(boolean decorated, Node graphic, Function<T,Boolean> visiblePredicate, final Function<T,T> onAction){
+    public ButtonTableCell(final boolean decorated, 
+            final Node graphic, 
+            final Function<T,Boolean> visiblePredicate, 
+            final Function<T,T> onAction){
+        
         this.visiblePredicate = visiblePredicate;
         button.setGraphic(graphic);
         setGraphic(button);

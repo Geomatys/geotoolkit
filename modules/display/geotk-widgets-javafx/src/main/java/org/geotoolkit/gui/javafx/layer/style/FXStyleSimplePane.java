@@ -21,6 +21,7 @@ import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.util.List;
+import java.util.function.Function;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -34,14 +35,12 @@ import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
-import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TablePosition;
 import javafx.scene.control.TableView;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.text.TextAlignment;
-import javafx.util.Callback;
 import org.geotoolkit.display2d.ext.graduation.GraduationSymbolizer;
 import org.geotoolkit.display2d.service.DefaultGlyphService;
 import org.geotoolkit.gui.javafx.layer.FXLayerStylePane;
@@ -96,8 +95,8 @@ public class FXStyleSimplePane extends FXLayerStylePane {
     
     @FXML
     void addSymbol(ActionEvent event) {
-        final FXStyleElementController control = uiChoice.getSelectionModel().getSelectedItem();        
-        final Symbolizer symbolizer = (Symbolizer) control.newValue();
+        final FXStyleElementController styleController = uiChoice.getSelectionModel().getSelectedItem();        
+        final Symbolizer symbolizer = (Symbolizer) styleController.newValue();
         uiTable.getItems().add(symbolizer);
     }
     
@@ -111,7 +110,6 @@ public class FXStyleSimplePane extends FXLayerStylePane {
         uiChoice.setCellFactory((ListView<FXStyleElementController> param) -> new SymbolizerCell());
         
         final TableColumn<Symbolizer,Symbolizer> previewCol = new TableColumn<>();
-        previewCol.setPrefWidth(60);
         previewCol.setMinWidth(40);
         previewCol.setEditable(false);
         previewCol.setCellValueFactory((TableColumn.CellDataFeatures<Symbolizer, Symbolizer> param) -> new SimpleObjectProperty<>((Symbolizer)param.getValue()));
@@ -205,9 +203,12 @@ public class FXStyleSimplePane extends FXLayerStylePane {
 
         public GlyphButton() {
             super(false, null,
-                  (Symbolizer t) -> t instanceof Symbolizer, 
-                  (Symbolizer t) -> {openEditor(t);return t;}
-            );
+                  (Symbolizer t) -> t instanceof Symbolizer, new Function<Symbolizer, Symbolizer>() {
+
+                public Symbolizer apply(Symbolizer t) {
+                    return t;
+                }
+            });
         }
 
         @Override
@@ -220,9 +221,6 @@ public class FXStyleSimplePane extends FXLayerStylePane {
                 button.setText(item.getName());
             }
             
-        }
-        
-        private static void openEditor(Symbolizer t){
         }
     }
         
@@ -313,6 +311,5 @@ public class FXStyleSimplePane extends FXLayerStylePane {
             }
         }
     }
-    
 }
 
