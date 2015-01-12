@@ -19,10 +19,13 @@ package org.geotoolkit.gui.javafx.contexttree;
 
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
+import java.beans.PropertyChangeEvent;
 import java.util.function.Function;
 import javafx.embed.swing.SwingFXUtils;
+import javafx.scene.control.TreeTableCell;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.image.ImageView;
+import javafx.util.Callback;
 import org.geotoolkit.display2d.service.DefaultGlyphService;
 import org.geotoolkit.gui.javafx.contexttree.menu.LayerPropertiesItem;
 import org.geotoolkit.gui.javafx.layer.FXLayerStylesPane;
@@ -37,6 +40,9 @@ import org.geotoolkit.gui.javafx.util.ButtonTreeTableCell;
 import org.geotoolkit.gui.javafx.util.FXDialog;
 import org.geotoolkit.map.MapItem;
 import org.geotoolkit.map.MapLayer;
+import org.geotoolkit.style.MutableFeatureTypeStyle;
+import org.geotoolkit.style.StyleListener;
+import org.geotoolkit.util.collection.CollectionChangeEvent;
 
 /**
  *
@@ -46,7 +52,13 @@ public class MapItemGlyphColumn extends TreeTableColumn<MapItem, MapItem>{
 
     public MapItemGlyphColumn() {                
         setCellValueFactory(param -> ((CellDataFeatures)param).getValue().valueProperty());     
-        setCellFactory((TreeTableColumn<MapItem, MapItem> p) -> new GlyphButton());
+        setCellFactory(new Callback<TreeTableColumn<MapItem, MapItem>, TreeTableCell<MapItem, MapItem>>() {
+
+            @Override
+            public TreeTableCell<MapItem, MapItem> call(TreeTableColumn<MapItem, MapItem> p) {
+                return new GlyphButton();
+            }
+        });
         setEditable(true);
         setPrefWidth(34);
         setMinWidth(34);
@@ -65,19 +77,32 @@ public class MapItemGlyphColumn extends TreeTableColumn<MapItem, MapItem>{
             },
                   (MapItem t) -> {openEditor(t);return t;});
         }
-
+        
         @Override
-        protected void updateItem(MapItem item, boolean empty) {
-            super.updateItem(item, empty);
-            
-            if(item instanceof MapLayer){
-                final BufferedImage img = new BufferedImage(24, 22, BufferedImage.TYPE_INT_ARGB);
-                DefaultGlyphService.render(
-                        ((MapLayer)item).getStyle(), 
-                        new Rectangle(24, 22), 
-                        img.createGraphics(), (MapLayer)item);
-                button.setGraphic(new ImageView(SwingFXUtils.toFXImage(img,null)));
+        protected void updateItem(MapItem mapItem, boolean empty) {
+            super.updateItem(mapItem, empty);
+            if(mapItem instanceof MapLayer){
+                
+                ((MapLayer)mapItem).getStyle().addListener(new StyleListener() {
+
+                    @Override
+                    public void featureTypeStyleChange(CollectionChangeEvent<MutableFeatureTypeStyle> event) {
+                        updateGlyph((MapLayer)mapItem);
+                    }
+
+                    @Override
+                    public void propertyChange(PropertyChangeEvent evt) {
+                    }
+                });
+                updateGlyph((MapLayer) mapItem);
             }
+        }
+        
+        private void updateGlyph(final MapLayer mapItem){
+            final BufferedImage img = new BufferedImage(24, 22, BufferedImage.TYPE_INT_ARGB);
+            DefaultGlyphService.render(mapItem.getStyle(), 
+                    new Rectangle(24, 22), img.createGraphics(), mapItem);
+            button.setGraphic(new ImageView(SwingFXUtils.toFXImage(img, null)));
         }
         
         private static void openEditor(MapItem candidate){

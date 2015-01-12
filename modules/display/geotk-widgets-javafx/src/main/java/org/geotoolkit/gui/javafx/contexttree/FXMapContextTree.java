@@ -79,6 +79,7 @@ public class FXMapContextTree extends BorderPane{
         treetable.setContextMenu(new ContextMenu());
         
         treetable.setRowFactory(new Callback<TreeTableView<MapItem>, TreeTableRow<MapItem>>() {
+            @Override
             public TreeTableRow<MapItem> call(TreeTableView<MapItem> param) {
                 final TreeTableRow row = new TreeTableRow();
                 initDragAndDrop(row);
@@ -96,7 +97,7 @@ public class FXMapContextTree extends BorderPane{
         treetable.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         treetable.getSelectionModel().getSelectedItems().addListener(new ListChangeListener() {
             @Override
-            public void onChanged(ListChangeListener.Change c) {
+            public void onChanged(ListChangeListener.Change change) {
                 final ObservableList items = menu.getItems();
                 items.clear();
                 final List<? extends TreeItem> selection = treetable.getSelectionModel().getSelectedItems();
@@ -105,7 +106,7 @@ public class FXMapContextTree extends BorderPane{
                     if(candidate instanceof TreeMenuItem){
                         final MenuItem mc = ((TreeMenuItem)candidate).init(selection);
                         if(mc!=null) items.add(mc);
-                    }else if(candidate instanceof SeparatorMenuItem){
+                    } else if(candidate instanceof SeparatorMenuItem){
                         //special case, we don't want any separator at the start or end
                         //or 2 succesive separators
                         if(i==0 || i==n-1 || items.isEmpty()) continue;

@@ -116,7 +116,7 @@ public class FXLayerStylesPane extends FXPropertyPane{
         listView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         listView.getSelectionModel().getSelectedItems().addListener(new ListChangeListener() {
             @Override
-            public void onChanged(ListChangeListener.Change c) {
+            public void onChanged(ListChangeListener.Change change) {
                 final Object item = listView.getSelectionModel().getSelectedItem();
                 if(item instanceof FXLayerStylePane){
                     setCenter(null);
