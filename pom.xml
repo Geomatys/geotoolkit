@@ -163,6 +163,11 @@
         </plugins>
       </build>
     </profile>
+    
+    <!-- this profile is for javafx widgets -->
+    <profile>
+        <id>jdk8</id>
+    </profile>
   </profiles>
 
 

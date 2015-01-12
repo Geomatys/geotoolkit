@@ -80,8 +80,6 @@
        =========================================================== -->
   <modules>
     <module>geotk-widgets-swing</module>
-    <module>geotk-widgets-javafx</module>
-    <module>geotk-widgets-javafx-scenebuilder</module>
     <module>geotk-style</module>
     <module>geotk-svg-batik</module>
     <module>geotk-svg-salamander</module>
@@ -90,4 +88,23 @@
     <module>geotk-render3d</module>
     <module>geotk-jasperreport</module>
   </modules>
+  
+  <profiles>
+      <profile>
+          <id>jdk8</id>
+          <modules>
+            <module>geotk-widgets-swing</module>
+            <module>geotk-widgets-javafx</module>
+            <module>geotk-widgets-javafx-scenebuilder</module>
+            <module>geotk-style</module>
+            <module>geotk-svg-batik</module>
+            <module>geotk-svg-salamander</module>
+            <module>geotk-render</module>
+            <module>geotk-render2d</module>
+            <module>geotk-render3d</module>
+            <module>geotk-jasperreport</module>
+          </modules>
+      </profile>
+  </profiles>
+  
 </project>
