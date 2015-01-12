@@ -422,8 +422,15 @@ public class CachedGraphic<C extends Graphic> extends Cache<C>{
 //        if(img != null){
 //            return (img.getHeight()*coeff > img.getWidth()*coeff) ? img.getHeight()*coeff : img.getWidth()*coeff;
 //        }
-
-
+        
+        //get the displacement margin
+        final float maxDisplacement = cachedDisplacement.getMargin(candidate,coeff);
+        if(Float.isNaN(maxDisplacement)) return Float.NaN;
+        //get anchor margin
+        final float anchorRatio = cachedAnchor.getMarginRatio(candidate,coeff);
+        if(Float.isNaN(anchorRatio)) return Float.NaN;
+        
+        
         float candidateOpacity = cachedOpacity;
         float candidateRotation = cachedRotation;
         float candidateSize = cachedSize;
@@ -505,7 +512,10 @@ public class CachedGraphic<C extends Graphic> extends Cache<C>{
             maxSizeY = (int) trs.getBounds2D().getHeight();
         }
 
-        return (maxSizeX*coeff > maxSizeY*coeff) ? maxSizeX*coeff : maxSizeY*coeff;
+        //consider the anchor value and displacement
+        //max margin is : iconSize/2 + iconSize-0.5 + maxDisplacement
+        final float iconSize = Math.max(maxSizeX, maxSizeY);
+        return (iconSize/2f + (Math.abs(anchorRatio-0.5f)*iconSize) + maxDisplacement) * coeff;
 
     }
 

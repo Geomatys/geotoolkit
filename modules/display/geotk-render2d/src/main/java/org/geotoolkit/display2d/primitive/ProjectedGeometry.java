@@ -41,7 +41,7 @@ import org.opengis.referencing.operation.TransformException;
 /**
  * convenient class to manipulate geometry in the 2d engine.
  * The geometry may be asked in different format depending of the needs.
- * </br>
+ * <br/>
  * For example it is interesting to use the java2d shape for painting and the
  * ISO/JTS geometries for intersections tests.
  *
@@ -53,7 +53,6 @@ public class ProjectedGeometry  {
     private final StatelessContextParams params;
     private MathTransform2D dataToObjective;
     private MathTransform2D dataToDisplay;
-    private Rectangle2D dataClipRectangle;
 
     //Geometry is data CRS
     private com.vividsolutions.jts.geom.Geometry    dataGeometryJTS = null;
@@ -109,12 +108,6 @@ public class ProjectedGeometry  {
                 dataCRS = CRSUtilities.getCRS2D(dataCRS);
                 dataToObjective = (MathTransform2D) CRS.findMathTransform(dataCRS, params.context.getObjectiveCRS2D());
                 dataToDisplay = (MathTransform2D) CRS.findMathTransform(dataCRS, params.displayCRS);
-                final Envelope env = CRS.transform(params.context.getCanvasObjectiveBounds2D(), dataCRS);
-                final double marginX = env.getSpan(0)/10;
-                final double marginY = env.getSpan(1)/10;
-                dataClipRectangle = new Rectangle2D.Double(
-                        env.getMinimum(0)-marginX, env.getMinimum(1)-marginY, 
-                        env.getSpan(0)+marginX*2, env.getSpan(1)+marginY*2);
             }
         } catch (Exception ex) {
             Logger.getLogger(ProjectedGeometry.class.getName()).log(Level.WARNING, null, ex);
@@ -239,17 +232,17 @@ public class ProjectedGeometry  {
                 for(int i=0;i<nbIncRep;i++){
                     //check that the futur geometry will intersect the visible area
                     final com.vividsolutions.jts.geom.Envelope candidate = JTS.transform(objBounds, params.context.wraps.wrapIncObj[i]);
-                    if(candidate.intersects(params.context.wraps.objectiveJTSEnvelope)){
+                    if(candidate.intersects(params.objectiveJTSEnvelope)){
                         objectiveGeometryJTS[n++] = JTS.transform(objBase, params.context.wraps.wrapIncObj[i]);
                     }
                 }
-                if(objBounds.intersects(params.context.wraps.objectiveJTSEnvelope)){
+                if(objBounds.intersects(params.objectiveJTSEnvelope)){
                     objectiveGeometryJTS[n++] = objBase;
                 }
                 for(int i=0;i<nbDecRep;i++){
                     //check that the futur geometry will intersect the visible area
                     final com.vividsolutions.jts.geom.Envelope candidate = JTS.transform(objBounds, params.context.wraps.wrapDecObj[i]);
-                    if(candidate.intersects(params.context.wraps.objectiveJTSEnvelope)){
+                    if(candidate.intersects(params.objectiveJTSEnvelope)){
                         objectiveGeometryJTS[n++] = JTS.transform(objBase, params.context.wraps.wrapDecObj[i]);
                     }
                 }

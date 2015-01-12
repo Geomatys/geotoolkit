@@ -46,6 +46,12 @@ public class StatelessContextParams<T extends MapLayer> {
             new GeometryCSTransformer(new CoordinateSequenceMathTransformer(null));
     public CoordinateReferenceSystem objectiveCRS;
     public CoordinateReferenceSystem displayCRS;
+    
+    /**
+     * This envelope should be the painted are in ojective CRS,
+     * but symbolizer may need to enlarge it because of symbols size.
+     */
+    public com.vividsolutions.jts.geom.Envelope objectiveJTSEnvelope = null;
 
     //clipping geometries
     public Rectangle2D displayClipRect;
@@ -69,6 +75,9 @@ public class StatelessContextParams<T extends MapLayer> {
         this.context = context;
         this.objectiveCRS = context.getObjectiveCRS2D();
         this.displayCRS = context.getDisplayCRS();
+        if(context.wraps!=null){
+            this.objectiveJTSEnvelope = context.wraps.objectiveJTSEnvelope;
+        }
 
         final AffineTransform2D objtoDisp = context.getObjectiveToDisplay();
         if(!objtoDisp.equals(objectiveToDisplay)){
@@ -84,7 +93,6 @@ public class StatelessContextParams<T extends MapLayer> {
                 displayClipRect.getWidth()+2*CLIP_PIXEL_MARGIN, 
                 displayClipRect.getHeight()+2*CLIP_PIXEL_MARGIN);
         displayClip = JTS.toGeometry(context.getCanvasDisplayBounds());
-        
     }
 
 }

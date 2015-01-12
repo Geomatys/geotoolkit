@@ -19,6 +19,7 @@ package org.geotoolkit.display2d.style;
 import java.util.Arrays;
 import java.util.List;
 import org.geotoolkit.display2d.GO2Utilities;
+import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.filter.visitor.ListingPropertyVisitor;
 import org.geotoolkit.feature.Feature;
@@ -110,4 +111,12 @@ public class CachedRule extends Cache<Rule>{
         return false;
     }
 
+    public float getMargin(Object candidate, final RenderingContext2D ctx){
+        float f = 0f;
+        for(CachedSymbolizer cs : symbols){
+            f = Math.max(f, cs.getMargin(candidate, ctx));
+        }
+        return f;
+    }
+    
 }

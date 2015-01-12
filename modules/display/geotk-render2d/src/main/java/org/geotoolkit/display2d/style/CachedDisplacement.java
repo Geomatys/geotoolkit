@@ -107,6 +107,14 @@ public abstract class CachedDisplacement{
 
     }
 
+    /**
+     * 
+     * @param candidate
+     * @param coeff
+     * @return maximum displacement value along x and y.
+     */
+    public abstract float getMargin(Object candidate, float coeff);
+
 
     private static final class StaticDisplacement extends CachedDisplacement{
 
@@ -129,6 +137,11 @@ public abstract class CachedDisplacement{
                 return buffer;
             }
         }
+
+        @Override
+        public float getMargin(Object candidate, float coeff) {
+            return Math.max(cachedX, cachedY);
+        }
     }
 
     private static final class DynamicDisplacement extends CachedDisplacement{
@@ -148,26 +161,37 @@ public abstract class CachedDisplacement{
             if(buffer == null){
                 buffer = new float[2];
             }
-
-            if(Float.isNaN(cachedX)){
-                //if X is null it means it is dynamic
-                final Expression anchorX = styleElement.getDisplacementX();
-                buffer[0] = GO2Utilities.evaluate(anchorX, null, Float.class, StyleConstants.DEFAULT_DISPLACEMENT_Xf);
-            } else {
-                buffer[0] = cachedX;
-            }
-
-            if(Float.isNaN(cachedY)){
-                //if Y is null it means it is dynamic
-                final Expression anchorY = styleElement.getDisplacementY();
-                buffer[1] = GO2Utilities.evaluate(anchorY, null, Float.class, StyleConstants.DEFAULT_DISPLACEMENT_Yf);
-            } else {
-                buffer[1] = cachedY;
-            }
-
+            buffer[0] = evalX(candidate);
+            buffer[1] = evalY(candidate);
             return buffer;
         }
 
+        private float evalX(Object candidate){
+            if(Float.isNaN(cachedX)){
+                //if value is NaN it means it is dynamic
+                final Expression anchorX = styleElement.getDisplacementX();
+                return GO2Utilities.evaluate(anchorX, candidate, Float.class, StyleConstants.DEFAULT_DISPLACEMENT_Xf);
+            } else {
+                return cachedX;
+            }
+        }
+        
+        private float evalY(Object candidate){
+            if(Float.isNaN(cachedY)){
+                //if Y is null it means it is dynamic
+                final Expression anchorY = styleElement.getDisplacementY();
+                return GO2Utilities.evaluate(anchorY, candidate, Float.class, StyleConstants.DEFAULT_DISPLACEMENT_Yf);
+            } else {
+                return cachedY;
+            }
+        }
+        
+        @Override
+        public float getMargin(Object candidate, float coeff) {
+            if(candidate==null) return Float.NaN;
+            return Math.max(evalX(candidate), evalY(candidate));
+        }
+        
     }
 
 }

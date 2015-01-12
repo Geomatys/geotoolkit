@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2010, Geomatys
+ *    (C) 2010-2014, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -32,12 +32,10 @@ import java.awt.image.ColorModel;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.awt.image.WritableRaster;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import javax.imageio.ImageIO;
 import javax.measure.unit.NonSI;
 import javax.measure.unit.Unit;
 import org.apache.sis.geometry.GeneralEnvelope;
@@ -93,8 +91,17 @@ import org.opengis.style.ShadedRelief;
 import org.opengis.style.Symbolizer;
 
 import static org.geotoolkit.style.StyleConstants.*;
-import org.opengis.style.SelectedChannelType;
 import org.apache.sis.referencing.CommonCRS;
+import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.geometry.jts.JTS;
+import org.geotoolkit.map.FeatureMapLayer;
+import org.opengis.filter.FilterFactory;
+import org.opengis.style.Fill;
+import org.opengis.style.Graphic;
+import org.opengis.style.GraphicalSymbol;
+import org.opengis.style.Mark;
+import org.opengis.style.PointSymbolizer;
+import org.opengis.style.Stroke;
 
 /**
  * Testing portrayal service.
@@ -105,6 +112,7 @@ public class PortrayalServiceTest {
 
     private static final double EPS = 0.000000001d;
 
+    private static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
     private static final GeometryFactory GF = new GeometryFactory();
     private static final GridCoverageBuilder GCF = new GridCoverageBuilder();
     private static final MutableStyleFactory SF = new DefaultStyleFactory();
@@ -491,6 +499,53 @@ public class PortrayalServiceTest {
 
     }
 
+    /**
+     * Test that a large graphic outside the map area is still rendered.
+     * 
+     */
+    @Test
+    public void testMarginRendering() throws Exception{
+        final List<GraphicalSymbol> symbols = new ArrayList<>();
+        final Stroke stroke = SF.stroke(Color.BLACK, 0);
+        final Fill fill = SF.fill(Color.BLACK);
+        final Mark mark = SF.mark(MARK_CIRCLE, fill, stroke);
+        symbols.add(mark);
+        final Graphic graphic = SF.graphic(symbols, LITERAL_ONE_FLOAT, FF.literal(8), LITERAL_ONE_FLOAT, DEFAULT_ANCHOR_POINT, DEFAULT_DISPLACEMENT);
+        final PointSymbolizer symbolizer = SF.pointSymbolizer("mySymbol",(String)null,DEFAULT_DESCRIPTION, NonSI.PIXEL, graphic);
+        
+        final CoordinateReferenceSystem crs = CommonCRS.WGS84.normalizedGeographic();
+        
+        
+        final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
+        ftb.setName("test");
+        ftb.add("geom", Point.class,crs);
+        final FeatureType ft = ftb.buildFeatureType();
+        final Feature feature = FeatureUtilities.defaultFeature(ft, "0");
+        final Point pt = GF.createPoint(new Coordinate(12, 5));
+        JTS.setCRS(pt, crs);
+        feature.setPropertyValue("geom", pt);
+        
+        final FeatureCollection col = FeatureStoreUtilities.collection(feature);        
+        final FeatureMapLayer layer = MapBuilder.createFeatureLayer(col,SF.style(symbolizer));
+        final MapContext context = MapBuilder.createContext();
+        context.layers().add(layer);
+        
+        final GeneralEnvelope env = new GeneralEnvelope(crs);
+        env.setRange(0, 0, 10);
+        env.setRange(1, 0, 10);
+        
+        final CanvasDef cdef = new CanvasDef(new Dimension(10, 10), Color.WHITE);
+        final SceneDef sdef = new SceneDef(context);
+        final ViewDef vdef = new ViewDef(env);
+        
+        final BufferedImage img = DefaultPortrayalService.portray(cdef, sdef, vdef);
+        
+        assertEquals(Color.BLACK.getRGB(), img.getRGB(9, 5));
+        assertEquals(Color.BLACK.getRGB(), img.getRGB(8, 5));
+        assertEquals(Color.WHITE.getRGB(), img.getRGB(7, 5));        
+    }
+
+    
     private void testRendering(final MapLayer layer) throws TransformException, PortrayalException{
         final StopOnErrorMonitor monitor = new StopOnErrorMonitor();
 

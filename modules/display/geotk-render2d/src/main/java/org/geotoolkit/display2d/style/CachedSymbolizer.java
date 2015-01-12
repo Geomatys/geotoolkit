@@ -54,7 +54,7 @@ public abstract class CachedSymbolizer<T extends Symbolizer> extends Cache<T>{
      * This is used to calculate the display boundingbox of a feature.
      *
      * @param candidate : feature to evaluate
-     * @param coeff : use to adjust symbolizer size, if in display unit value equals 1
+     * @param ctx : rendering context
      * @return max width of this symbol with the given feature
      *     can be NaN if and only if the given feature is null.
      */

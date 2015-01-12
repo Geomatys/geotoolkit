@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2008 - 2009, Geomatys
+ *    (C) 2008 - 2014, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -20,14 +20,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.coverage.CoverageStoreContentEvent;
 import org.geotoolkit.coverage.CoverageStoreListener;
 import org.geotoolkit.coverage.CoverageStoreManagementEvent;
-import org.geotoolkit.coverage.grid.GeneralGridGeometry;
-import org.geotoolkit.coverage.io.CoverageStoreException;
-import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display.VisitFilter;
 import org.geotoolkit.display.PortrayalException;
@@ -78,9 +73,9 @@ public class StatelessCoverageLayerJ2D extends StatelessMapLayerJ2D<CoverageMapL
     }
 
     private synchronized void updateCache(final RenderingContext2D context){
+        params.update(context);
         params.objectiveCRS = context.getObjectiveCRS();
         params.displayCRS = context.getDisplayCRS();
-        params.context = context;
         boolean objectiveCleared = false;
 
         //clear objective cache is objective crs changed -----------------------
