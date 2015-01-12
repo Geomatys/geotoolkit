@@ -142,9 +142,6 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
                 lenientDatumShift = ((Boolean) candidate).booleanValue();
             }
         }
-        if (lenientDatumShift) { // Temporary hack to be removed on Apache SIS.
-            lenientDatumShift = Boolean.TRUE.equals(Hints.getSystemDefault(Hints.LENIENT_DATUM_SHIFT));
-        }
         //
         // Stores the retained hints
         //
