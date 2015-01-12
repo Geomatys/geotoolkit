@@ -312,29 +312,6 @@ public final strictfp class CRS_Test extends ReferencingTestBase {
         assertNull(       CRS.getCompoundCRS(crs3D, crs2D, ELLIPSOIDAL_HEIGHT, MODIFIED_JULIAN));
         assertSame(crs4D, CRS.getCompoundCRS(crs4D, crs2D, ELLIPSOIDAL_HEIGHT, MODIFIED_JULIAN));
         assertSame(crs4D, CRS.getCompoundCRS(crs4D, ELLIPSOIDAL_HEIGHT, MODIFIED_JULIAN, crs2D));
-        assertNull(       CRS.getSubCRS(crs4D, 0, 1));
-        assertSame(crs2D, CRS.getSubCRS(crs4D, 0, 2));
-        assertSame(crs3D, CRS.getSubCRS(crs4D, 0, 3));
-        assertSame(crs4D, CRS.getSubCRS(crs4D, 0, 4));
-        assertSame(ELLIPSOIDAL_HEIGHT, CRS.getSubCRS(crs4D, 2, 3));
-        assertSame(MODIFIED_JULIAN,    CRS.getSubCRS(crs4D, 3, 4));
-
-        //test separation of components in a compound crs
-        final DefaultCompoundCRS crs0_3part = new DefaultCompoundCRS(singletonMap(NAME_KEY,
-                crs2D.getName() + " with " + ELLIPSOIDAL_HEIGHT.getName()), crs2D, ELLIPSOIDAL_HEIGHT);
-        final DefaultCompoundCRS crs2_4part = new DefaultCompoundCRS(singletonMap(NAME_KEY,
-                ELLIPSOIDAL_HEIGHT.getName() + " with " + MODIFIED_JULIAN.getName()), ELLIPSOIDAL_HEIGHT, MODIFIED_JULIAN);
-        final DefaultCompoundCRS crs4D2 = new DefaultCompoundCRS(singletonMap(NAME_KEY, "NTF 4D2"),
-                crs2D, ELLIPSOIDAL_HEIGHT, MODIFIED_JULIAN);
-        assertNull(         CRS.getSubCRS(crs4D2, 0, 1));
-        assertEquals(crs2D, CRS.getSubCRS(crs4D2, 0, 2));
-//      assertEquals(crs0_3part, CRS.getOrCreateSubCRS(crs4D2, 0, 3));
-        assertSame(crs4D2, CRS.getSubCRS(crs4D2, 0, 4));
-        assertNull(         CRS.getSubCRS(crs4D2, 0, 1));
-        assertNull(         CRS.getSubCRS(crs4D2, 1, 2));
-        assertSame(ELLIPSOIDAL_HEIGHT, CRS.getSubCRS(crs4D2, 2, 3));
-        assertSame(MODIFIED_JULIAN,   CRS.getSubCRS(crs4D2, 3, 4));
-//      assertEquals(crs2_4part,   CRS.getOrCreateSubCRS(crs4D2, 2, 4));
     }
 
     /**

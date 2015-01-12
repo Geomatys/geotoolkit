@@ -26,8 +26,6 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.metadata.spatial.PixelOrientation;
-import org.apache.sis.util.ComparisonMode;
-import org.apache.sis.util.Utilities;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.Cloneable;
 import org.geotoolkit.internal.InternalUtilities;
@@ -171,21 +169,6 @@ public class GeneralEnvelope extends org.apache.sis.geometry.GeneralEnvelope imp
             throw new MismatchedDimensionException(Errors.format(
                     Errors.Keys.MISMATCHED_DIMENSION_2, dim1, dim2));
         }
-    }
-
-    /**
-     * Returns {@code true} if at least one of the specified CRS is null, or both CRS are equals.
-     * This special processing for {@code null} values is different from the usual contract of an
-     * {@code equals} method, but allow to handle the case where the CRS is unknown.
-     * <p>
-     * Note that in debug mode (to be used in assertions only), the comparison are actually a bit
-     * more relax than just "ignoring metadata", since some rounding errors are tolerated.
-     */
-    static boolean equalsIgnoreMetadata(final CoordinateReferenceSystem crs1,
-            final CoordinateReferenceSystem crs2, final boolean debug)
-    {
-        return (crs1 == null) || (crs2 == null) || Utilities.deepEquals(crs1, crs2,
-                debug ? ComparisonMode.DEBUG : ComparisonMode.IGNORE_METADATA);
     }
 
     private double[] ordinates() {

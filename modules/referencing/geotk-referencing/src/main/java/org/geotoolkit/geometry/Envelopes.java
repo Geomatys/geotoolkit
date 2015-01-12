@@ -22,9 +22,7 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.AffineTransform;
 
-import org.opengis.util.FactoryException;
 import org.opengis.geometry.Envelope;
-import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.cs.RangeMeaning;
 import org.opengis.referencing.cs.CoordinateSystem;
@@ -34,12 +32,9 @@ import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.CoordinateOperation;
-import org.opengis.referencing.operation.CoordinateOperationFactory;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
-import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.geometry.AbstractEnvelope;
 import org.geotoolkit.lang.Static;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.display.shape.XRectangle2D;
@@ -137,32 +132,14 @@ public final class Envelopes extends Static {
      * @param  targetCRS The target CRS (may be {@code null}).
      * @return A new transformed envelope, or directly {@code envelope} if no change was required.
      * @throws TransformException If a transformation was required and failed.
+     *
+     * @deprecated Moved to Apache SIS {@link org.apache.sis.geometry.Envelopes}.
      */
+    @Deprecated
     public static Envelope transform(Envelope envelope, final CoordinateReferenceSystem targetCRS)
             throws TransformException
     {
-        if (envelope != null && targetCRS != null) {
-            final CoordinateReferenceSystem sourceCRS = envelope.getCoordinateReferenceSystem();
-            if (sourceCRS != targetCRS) {
-                if (sourceCRS == null) {
-                    // Slight optimization: just copy the given Envelope.
-                    envelope = new GeneralEnvelope(envelope);
-                    ((GeneralEnvelope) envelope).setCoordinateReferenceSystem(targetCRS);
-                } else {
-                    final CoordinateOperationFactory factory = CRS.getCoordinateOperationFactory(true);
-                    final CoordinateOperation operation;
-                    try {
-                        operation = factory.createOperation(sourceCRS, targetCRS);
-                    } catch (FactoryException exception) {
-                        throw new TransformException(Errors.format(
-                                Errors.Keys.CANT_TRANSFORM_ENVELOPE), exception);
-                    }
-                    envelope = transform(operation, envelope);
-                }
-                assert org.geotoolkit.geometry.GeneralEnvelope.equalsIgnoreMetadata(targetCRS, envelope.getCoordinateReferenceSystem(), true);
-            }
-        }
-        return envelope;
+        return org.apache.sis.geometry.Envelopes.transform(envelope, targetCRS);
     }
 
     /**
@@ -181,7 +158,10 @@ public final class Envelopes extends Static {
      * @throws TransformException if a transform failed.
      *
      * @see #transform(CoordinateOperation, Envelope)
+     *
+     * @deprecated Moved to Apache SIS {@link org.apache.sis.geometry.Envelopes}.
      */
+    @Deprecated
     public static GeneralEnvelope transform(final MathTransform transform, final Envelope envelope)
             throws TransformException
     {
@@ -198,204 +178,7 @@ public final class Envelopes extends Static {
                     new double[] {tmp.getMinX(), tmp.getMinY()},
                     new double[] {tmp.getMaxX(), tmp.getMaxY()});
         }
-        return transform(transform, envelope, null);
-    }
-
-    /**
-     * Implementation of {@link #transform(MathTransform, Envelope)} with the opportunity to
-     * save the projected center coordinate.
-     *
-     * @param targetPt After this method call, the center of the source envelope projected to
-     *        the target CRS. The length of this array must be the number of target dimensions.
-     *        May be {@code null} if this information is not needed.
-     */
-    private static GeneralEnvelope transform(final MathTransform transform,
-                                             final Envelope      envelope,
-                                             final double[]      targetPt)
-            throws TransformException
-    {
-        if (transform.isIdentity()) {
-            /*
-             * Slight optimization: Just copy the envelope. Note that we need to set the CRS
-             * to null because we don't know what the target CRS was supposed to be. Even if
-             * an identity transform often imply that the target CRS is the same one than the
-             * source CRS, it is not always the case. The metadata may be differents, or the
-             * transform may be a datum shift without Bursa-Wolf parameters, etc.
-             */
-            final GeneralEnvelope transformed = new GeneralEnvelope(envelope);
-            transformed.setCoordinateReferenceSystem(null);
-            if (targetPt != null) {
-                for (int i=envelope.getDimension(); --i>=0;) {
-                    targetPt[i] = transformed.getMedian(i);
-                }
-            }
-            return transformed;
-        }
-        /*
-         * Checks argument validity: envelope and math transform dimensions must be consistent.
-         */
-        final int sourceDim = transform.getSourceDimensions();
-        final int targetDim = transform.getTargetDimensions();
-        if (envelope.getDimension() != sourceDim) {
-            throw new MismatchedDimensionException(Errors.format(Errors.Keys.MISMATCHED_DIMENSION_2,
-                      sourceDim, envelope.getDimension()));
-        }
-        /*
-         * Allocates all needed objects. The value '3' below is because the following 'while'
-         * loop uses a 'pointIndex' to be interpreted as a number in base 3 (see the comment
-         * inside the loop).  The coordinate to transform must be initialized to the minimal
-         * ordinate values. This coordinate will be updated in the 'switch' statement inside
-         * the 'while' loop.
-         */
-        int             pointIndex            = 0;
-        boolean         isDerivativeSupported = true;
-        GeneralEnvelope transformed           = null;
-        final Matrix[]  derivatives           = new Matrix[(int) Math.round(Math.pow(3, sourceDim))];
-        final double[]  ordinates             = new double[derivatives.length * targetDim];
-        final double[]  sourcePt              = new double[sourceDim];
-        for (int i=sourceDim; --i>=0;) {
-            sourcePt[i] = envelope.getMinimum(i);
-        }
-        // A window over a single coordinate in the 'ordinates' array.
-        final DirectPositionView ordinatesView = new DirectPositionView(ordinates, 0, targetDim);
-        /*
-         * Iterates over every minimal, maximal and median ordinate values (3 points) along each
-         * dimension. The total number of iterations is 3 ^ (number of source dimensions).
-         */
-        transformPoint: while (true) {
-            /*
-             * Compute the derivative (optional operation). If this operation fails, we will
-             * set a flag to 'false' so we don't try again for all remaining points. We try
-             * to compute the derivative and the transformed point in a single operation if
-             * we can. If we can not, we will compute those two information separately.
-             *
-             * Note that the very last point to be projected must be the envelope center.
-             * There is usually no need to calculate the derivative for that last point,
-             * but we let it does anyway for safety.
-             */
-            final int offset = pointIndex * targetDim;
-            try {
-                derivatives[pointIndex] = derivativeAndTransform(transform,
-                        sourcePt, ordinates, offset, isDerivativeSupported);
-            } catch (TransformException e) {
-                if (!isDerivativeSupported) {
-                    throw e; // Derivative were already disabled, so something went wrong.
-                }
-                isDerivativeSupported = false;
-                transform.transform(sourcePt, 0, ordinates, offset, 1);
-                recoverableException(e); // Log only if the above call was successful.
-            }
-            /*
-             * The transformed point has been saved for future reuse after the enclosing
-             * 'while' loop. Now add the transformed point to the destination envelope.
-             */
-            if (transformed == null) {
-                transformed = new GeneralEnvelope(targetDim);
-                for (int i=0; i<targetDim; i++) {
-                    final double value = ordinates[offset + i];
-                    transformed.setRange(i, value, value);
-                }
-            } else {
-                ordinatesView.offset = offset;
-                transformed.add(ordinatesView);
-            }
-            /*
-             * Get the next point coordinate. The 'coordinateIndex' variable is an index in base 3
-             * having a number of digits equals to the number of source dimensions.  For example a
-             * 4-D space have indexes ranging from "0000" to "2222" (numbers in base 3). The digits
-             * are then mapped to minimal (0), maximal (1) or central (2) ordinates. The outer loop
-             * stops when the counter roll back to "0000". Note that 'targetPt' must keep the value
-             * of the last projected point, which must be the envelope center identified by "2222"
-             * in the 4-D case.
-             */
-            int indexBase3 = ++pointIndex;
-            for (int dim=sourceDim; --dim>=0; indexBase3 /= 3) {
-                switch (indexBase3 % 3) {
-                    case 0:  sourcePt[dim] = envelope.getMinimum(dim); break; // Continue the loop.
-                    case 1:  sourcePt[dim] = envelope.getMaximum(dim); continue transformPoint;
-                    case 2:  sourcePt[dim] = envelope.getMedian (dim); continue transformPoint;
-                    default: throw new AssertionError(indexBase3); // Should never happen
-                }
-            }
-            break;
-        }
-        assert pointIndex == derivatives.length : pointIndex;
-        /*
-         * At this point we finished to build an envelope from all sampled positions. Now iterate
-         * over all points. For each point, iterate over all line segments from that point to a
-         * neighbor median point.  Use the derivate information for approximating the transform
-         * behavior in that area by a cubic curve. We can then find analytically the curve extremum.
-         *
-         * The same technic is applied in transform(MathTransform, Rectangle2D), except that in
-         * the Rectangle2D case the calculation was bundled right inside the main loop in order
-         * to avoid the need for storage.
-         */
-        DirectPosition temporary = null;
-        final DirectPositionView sourceView = new DirectPositionView(sourcePt, 0, sourceDim);
-        for (pointIndex=0; pointIndex < derivatives.length; pointIndex++) {
-            final Matrix D1 = derivatives[pointIndex];
-            if (D1 != null) {
-                int indexBase3=pointIndex, power3=1;
-                for (int i=sourceDim; --i>=0; indexBase3 /= 3, power3 *= 3) {
-                    final int digitBase3 = indexBase3 % 3;
-                    if (digitBase3 != 2) { // Process only if we are not already located on the median along the dimension i.
-                        final int medianIndex = pointIndex + power3*(2-digitBase3);
-                        final Matrix D2 = derivatives[medianIndex];
-                        if (D2 != null) {
-                            final double xmin = envelope.getMinimum(i);
-                            final double xmax = envelope.getMaximum(i);
-                            final double x2   = envelope.getMedian (i);
-                            final double x1   = (digitBase3 == 0) ? xmin : xmax;
-                            final int offset1 = targetDim * pointIndex;
-                            final int offset2 = targetDim * medianIndex;
-                            for (int j=0; j<targetDim; j++) {
-                                final Line2D.Double extremum = ShapeUtilities.cubicCurveExtremum(
-                                        x1, ordinates[offset1 + j], D1.getElement(j,i),
-                                        x2, ordinates[offset2 + j], D2.getElement(j,i));
-                                boolean isP2 = false;
-                                do { // Executed exactly twice, one for each extremum point.
-                                    final double x = isP2 ? extremum.x2 : extremum.x1;
-                                    if (x > xmin && x < xmax) {
-                                        final double y = isP2 ? extremum.y2 : extremum.y1;
-                                        if (y < transformed.getMinimum(j) ||
-                                            y > transformed.getMaximum(j))
-                                        {
-                                            /*
-                                             * At this point, we have determined that adding the extremum point
-                                             * would expand the envelope. However we will not add that point
-                                             * directly because its position may not be quite right (since we
-                                             * used a cubic curve approximation). Instead, we project the point
-                                             * on the envelope border which is located vis-à-vis the extremum.
-                                             */
-                                            for (int ib3=pointIndex, dim=sourceDim; --dim>=0; ib3 /= 3) {
-                                                final double ordinate;
-                                                if (dim == i) {
-                                                    ordinate = x; // Position of the extremum.
-                                                } else switch (ib3 % 3) {
-                                                    case 0:  ordinate = envelope.getMinimum(dim); break;
-                                                    case 1:  ordinate = envelope.getMaximum(dim); break;
-                                                    case 2:  ordinate = envelope.getMedian (dim); break;
-                                                    default: throw new AssertionError(ib3); // Should never happen
-                                                }
-                                                sourcePt[dim] = ordinate;
-                                            }
-                                            temporary = transform.transform(sourceView, temporary);
-                                            transformed.add(temporary);
-                                        }
-                                    }
-                                } while ((isP2 = !isP2) == true);
-                            }
-                        }
-                    }
-                }
-                derivatives[pointIndex] = null; // Let GC do its job earlier.
-            }
-        }
-        if (targetPt != null) {
-            // Copy the coordinate of the center point.
-            System.arraycopy(ordinates, ordinates.length - targetDim, targetPt, 0, targetDim);
-        }
-        return transformed;
+        return org.apache.sis.geometry.Envelopes.transform(transform, envelope);
     }
 
     /**
@@ -419,294 +202,14 @@ public final class Envelopes extends Static {
      * @throws TransformException if a transform failed.
      *
      * @see #transform(MathTransform, Envelope)
+     *
+     * @deprecated Moved to Apache SIS {@link org.apache.sis.geometry.Envelopes}.
      */
+    @Deprecated
     public static GeneralEnvelope transform(final CoordinateOperation operation, Envelope envelope)
             throws TransformException
     {
-        ensureNonNull("operation", operation);
-        if (envelope == null) {
-            return null;
-        }
-        final CoordinateReferenceSystem sourceCRS = operation.getSourceCRS();
-        if (sourceCRS != null) {
-            final CoordinateReferenceSystem crs = envelope.getCoordinateReferenceSystem();
-            if (crs != null && !CRS.equalsIgnoreMetadata(crs, sourceCRS)) {
-                /*
-                 * Argument-check: the envelope CRS seems inconsistent with the given operation.
-                 * However we need to push the check a little bit further, since 3D-GeographicCRS
-                 * are considered not equal to CompoundCRS[2D-GeographicCRS + ellipsoidal height].
-                 * Checking for identity MathTransform is a more powerfull (but more costly) check.
-                 * Since we have the MathTransform, perform an opportunist envelope transform if it
-                 * happen to be required.
-                 */
-                final MathTransform mt;
-                try {
-                    mt = CRS.findMathTransform(crs, sourceCRS, false);
-                } catch (FactoryException e) {
-                    throw new TransformException(Errors.format(Errors.Keys.CANT_TRANSFORM_ENVELOPE), e);
-                }
-                if (!mt.isIdentity()) {
-                    envelope = transform(mt, envelope);
-                }
-            }
-        }
-        MathTransform mt = operation.getMathTransform();
-        final double[] centerPt = new double[mt.getTargetDimensions()];
-        final GeneralEnvelope transformed = transform(mt, envelope, centerPt);
-        /*
-         * If the source envelope crosses the expected range of valid coordinates, also projects
-         * the range bounds as a safety. Example: if the source envelope goes from 150 to 200°E,
-         * some map projections will interpret 200° as if it was -160°, and consequently produce
-         * an envelope which do not include the 180°W extremum. We will add those extremum points
-         * explicitly as a safety. It may leads to bigger than necessary target envelope, but the
-         * contract is to include at least the source envelope, not to return the smallest one.
-         */
-        if (sourceCRS != null) {
-            final CoordinateSystem cs = sourceCRS.getCoordinateSystem();
-            if (cs != null) { // Should never be null, but check as a paranoiac safety.
-                DirectPosition sourcePt = null;
-                DirectPosition targetPt = null;
-                final int dimension = cs.getDimension();
-                for (int i=0; i<dimension; i++) {
-                    final CoordinateSystemAxis axis = cs.getAxis(i);
-                    if (axis == null) { // Should never be null, but check as a paranoiac safety.
-                        continue;
-                    }
-                    final double min = envelope.getMinimum(i);
-                    final double max = envelope.getMaximum(i);
-                    final double  v1 = axis.getMinimumValue();
-                    final double  v2 = axis.getMaximumValue();
-                    final boolean b1 = (v1 > min && v1 < max);
-                    final boolean b2 = (v2 > min && v2 < max);
-                    if (!b1 && !b2) {
-                        continue;
-                    }
-                    if (sourcePt == null) {
-                        sourcePt = new GeneralDirectPosition(dimension);
-                        for (int j=0; j<dimension; j++) {
-                            sourcePt.setOrdinate(j, envelope.getMedian(j));
-                        }
-                    }
-                    if (b1) {
-                        sourcePt.setOrdinate(i, v1);
-                        transformed.add(targetPt = mt.transform(sourcePt, targetPt));
-                    }
-                    if (b2) {
-                        sourcePt.setOrdinate(i, v2);
-                        transformed.add(targetPt = mt.transform(sourcePt, targetPt));
-                    }
-                    sourcePt.setOrdinate(i, envelope.getMedian(i));
-                }
-            }
-        }
-        /*
-         * Now takes the target CRS in account...
-         */
-        final CoordinateReferenceSystem targetCRS = operation.getTargetCRS();
-        if (targetCRS == null) {
-            return transformed;
-        }
-        transformed.setCoordinateReferenceSystem(targetCRS);
-        final CoordinateSystem targetCS = targetCRS.getCoordinateSystem();
-        if (targetCS == null) {
-            // It should be an error, but we keep this method tolerant.
-            return transformed;
-        }
-        /*
-         * Checks for singularity points. For example the south pole is a singularity point in
-         * geographic CRS because is is located at the maximal value allowed by one particular
-         * axis, namely latitude. This point is not a singularity in the stereographic projection,
-         * because axes extends toward infinity in all directions (mathematically) and because the
-         * South pole has nothing special apart being the origin (0,0).
-         *
-         * Algorithm:
-         *
-         * 1) Inspect the target axis, looking if there is any bounds. If bounds are found, get
-         *    the coordinates of singularity points and project them from target to source CRS.
-         *
-         *    Example: If the transformed envelope above is (80 … 85°S, 10 … 50°W), and if the
-         *             latitude in the target CRS is bounded at 90°S, then project (90°S, 30°W)
-         *             to the source CRS. Note that the longitude is set to the the center of
-         *             the envelope longitude range (more on this below).
-         *
-         * 2) If the singularity point computed above is inside the source envelope, add that
-         *    point to the target (transformed) envelope.
-         *
-         * 3) If step #2 added the point, iterate over all other axes. If an other bounded axis
-         *    is found and that axis is of kind "WRAPAROUND", test for inclusion the same point
-         *    than the point tested at step #1, except for the ordinate of the axis found in this
-         *    step. That ordinate is set to the minimal and maximal values of that axis.
-         *
-         *    Example: If the above steps found that the point (90°S, 30°W) need to be included,
-         *             then this step #3 will also test phe points (90°S, 180°W) and (90°S, 180°E).
-         *
-         * NOTE: we test (-180°, centerY), (180°, centerY), (centerX, -90°) and (centerX, 90°)
-         * at step #1 before to test (-180°, -90°), (180°, -90°), (-180°, 90°) and (180°, 90°)
-         * at step #3 because the later may not be supported by every projections. For example
-         * if the target envelope is located between 20°N and 40°N, then a Mercator projection
-         * may fail to transform the (-180°, 90°) coordinate while the (-180°, 30°) coordinate
-         * is a valid point.
-         */
-        TransformException warning = null;
-        AbstractEnvelope generalEnvelope = null;
-        DirectPosition sourcePt = null;
-        DirectPosition targetPt = null;
-        long includedMinValue = 0; // A bitmask for each dimension.
-        long includedMaxValue = 0;
-        long isWrapAroundAxis = 0;
-        long dimensionBitMask = 1;
-        final int dimension = targetCS.getDimension();
-        for (int i=0; i<dimension; i++, dimensionBitMask <<= 1) {
-            final CoordinateSystemAxis axis = targetCS.getAxis(i);
-            if (axis == null) { // Should never be null, but check as a paranoiac safety.
-                continue;
-            }
-            boolean testMax = false; // Tells if we are testing the minimal or maximal value.
-            do {
-                final double extremum = testMax ? axis.getMaximumValue() : axis.getMinimumValue();
-                if (Double.isInfinite(extremum) || Double.isNaN(extremum)) {
-                    /*
-                     * The axis is unbounded. It should always be the case when the target CRS is
-                     * a map projection, in which case this loop will finish soon and this method
-                     * will do nothing more (no object instantiated, no MathTransform inversed...)
-                     */
-                    continue;
-                }
-                if (targetPt == null) {
-                    try {
-                        mt = mt.inverse();
-                    } catch (NoninvertibleTransformException exception) {
-                        /*
-                         * If the transform is non invertible, this method can't do anything. This
-                         * is not a fatal error because the envelope has already be transformed by
-                         * the caller. We lost the check for singularity points performed by this
-                         * method, but it make no difference in the common case where the source
-                         * envelope didn't contains any of those points.
-                         *
-                         * Note that this exception is normal if target dimension is smaller than
-                         * source dimension, since the math transform can not reconstituate the
-                         * lost dimensions. So we don't log any warning in this case.
-                         */
-                        if (dimension >= mt.getSourceDimensions()) {
-                            recoverableException(exception);
-                        }
-                        return transformed;
-                    }
-                    targetPt = new GeneralDirectPosition(mt.getSourceDimensions());
-                    for (int j=0; j<dimension; j++) {
-                        targetPt.setOrdinate(j, centerPt[j]);
-                    }
-                    // TODO: avoid the hack below if we provide a contains(DirectPosition)
-                    //       method in the GeoAPI org.opengis.geometry.Envelope interface.
-                    generalEnvelope = AbstractEnvelope.castOrCopy(envelope);
-                }
-                targetPt.setOrdinate(i, extremum);
-                try {
-                    sourcePt = mt.transform(targetPt, sourcePt);
-                } catch (TransformException exception) {
-                    /*
-                     * This exception may be normal. For example if may occur when projecting
-                     * the latitude extremums with a cylindrical Mercator projection.  Do not
-                     * log any message (unless logging level is fine) and try the other points.
-                     */
-                    if (warning == null) {
-                        warning = exception;
-                    } else {
-                        warning.addSuppressed(exception);
-                    }
-                    continue;
-                }
-                if (generalEnvelope.contains(sourcePt)) {
-                    transformed.add(targetPt);
-                    if (testMax) includedMaxValue |= dimensionBitMask;
-                    else         includedMinValue |= dimensionBitMask;
-                }
-            } while ((testMax = !testMax) == true);
-            /*
-             * Keep trace of axes of kind WRAPAROUND, except if the two extremum values of that
-             * axis have been included in the envelope  (in which case the next step after this
-             * loop doesn't need to be executed for that axis).
-             */
-            if ((includedMinValue & includedMaxValue & dimensionBitMask) == 0 && isWrapAround(axis)) {
-                isWrapAroundAxis |= dimensionBitMask;
-            }
-            // Restore 'targetPt' to its initial state, which is equals to 'centerPt'.
-            if (targetPt != null) {
-                targetPt.setOrdinate(i, centerPt[i]);
-            }
-        }
-        /*
-         * Step #3 described in the above "Algorithm" section: iterate over all dimensions
-         * of type "WRAPAROUND" for which minimal or maximal axis values have not yet been
-         * included in the envelope. The set of axes is specified by a bitmask computed in
-         * the above loop.  We examine only the points that have not already been included
-         * in the envelope.
-         */
-        final long includedBoundsValue = (includedMinValue | includedMaxValue);
-        if (includedBoundsValue != 0) {
-            while (isWrapAroundAxis != 0) {
-                final int wrapAroundDimension = Long.numberOfTrailingZeros(isWrapAroundAxis);
-                dimensionBitMask = 1 << wrapAroundDimension;
-                isWrapAroundAxis &= ~dimensionBitMask; // Clear now the bit, for the next iteration.
-                final CoordinateSystemAxis wrapAroundAxis = targetCS.getAxis(wrapAroundDimension);
-                final double min = wrapAroundAxis.getMinimumValue();
-                final double max = wrapAroundAxis.getMaximumValue();
-                /*
-                 * Iterate over all axes for which a singularity point has been previously found,
-                 * excluding the "wrap around axis" currently under consideration.
-                 */
-                for (long am=(includedBoundsValue & ~dimensionBitMask), bm; am != 0; am &= ~bm) {
-                    bm = Long.lowestOneBit(am);
-                    final int axisIndex = Long.numberOfTrailingZeros(bm);
-                    final CoordinateSystemAxis axis = targetCS.getAxis(axisIndex);
-                    /*
-                     * switch (c) {
-                     *   case 0: targetPt = (..., singularityMin, ..., wrapAroundMin, ...)
-                     *   case 1: targetPt = (..., singularityMin, ..., wrapAroundMax, ...)
-                     *   case 2: targetPt = (..., singularityMax, ..., wrapAroundMin, ...)
-                     *   case 3: targetPt = (..., singularityMax, ..., wrapAroundMax, ...)
-                     * }
-                     */
-                    for (int c=0; c<4; c++) {
-                        /*
-                         * Set the ordinate value along the axis having the singularity point
-                         * (cases c=0 and c=2). If the envelope did not included that point,
-                         * then skip completly this case and the next one, i.e. skip c={0,1}
-                         * or skip c={2,3}.
-                         */
-                        double value = max;
-                        if ((c & 1) == 0) { // 'true' if we are testing "wrapAroundMin".
-                            if (((c == 0 ? includedMinValue : includedMaxValue) & bm) == 0) {
-                                c++; // Skip also the case for "wrapAroundMax".
-                                continue;
-                            }
-                            targetPt.setOrdinate(axisIndex, (c == 0) ? axis.getMinimumValue() : axis.getMaximumValue());
-                            value = min;
-                        }
-                        targetPt.setOrdinate(wrapAroundDimension, value);
-                        try {
-                            sourcePt = mt.transform(targetPt, sourcePt);
-                        } catch (TransformException exception) {
-                            if (warning == null) {
-                                warning = exception;
-                            } else {
-                                warning.addSuppressed(exception);
-                            }
-                            continue;
-                        }
-                        if (generalEnvelope.contains(sourcePt)) {
-                            transformed.add(targetPt);
-                        }
-                    }
-                    targetPt.setOrdinate(axisIndex, centerPt[axisIndex]);
-                }
-                targetPt.setOrdinate(wrapAroundDimension, centerPt[wrapAroundDimension]);
-            }
-        }
-        if (warning != null) {
-            recoverableException(warning);
-        }
-        return transformed;
+        return org.apache.sis.geometry.Envelopes.transform(operation, envelope);
     }
 
     /**

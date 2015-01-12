@@ -31,10 +31,8 @@ import java.util.Collections;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import org.apache.sis.internal.metadata.ReferencingUtilities;
 import org.opengis.geometry.*;
 import org.opengis.referencing.*;
-import org.opengis.referencing.cs.*;
 import org.opengis.referencing.crs.*;
 import org.opengis.referencing.datum.*;
 import org.opengis.referencing.operation.*;
@@ -558,37 +556,31 @@ public final class CRS extends Static {
         if (envelope == null) {
             final GeographicBoundingBox bounds = org.apache.sis.referencing.CRS.getGeographicBoundingBox(crs);
             if (bounds != null && !Boolean.FALSE.equals(bounds.getInclusion())) {
-                envelope = merged = new GeneralEnvelope(
-                        new double[] {bounds.getWestBoundLongitude(), bounds.getSouthBoundLatitude()},
-                        new double[] {bounds.getEastBoundLongitude(), bounds.getNorthBoundLatitude()});
                 /*
                  * We do not assign WGS84 unconditionally to the geographic bounding box, because
                  * it is not defined to be on a particular datum; it is only approximative bounds.
-                 * We try to get the GeographicCRS from the user-supplied CRS and fallback on WGS
-                 * 84 only if we found none.
+                 * We try to get the GeographicCRS from the user-supplied CRS in order to reduce
+                 * the amount of transformation needed.
                  */
-                final SingleCRS     targetCRS = org.apache.sis.referencing.CRS.getHorizontalComponent(crs);
-                final GeographicCRS sourceCRS = CRSUtilities.getStandardGeographicCRS2D(targetCRS);
-                merged.setCoordinateReferenceSystem(sourceCRS);
-                try {
-                    envelope = transform(envelope, targetCRS);
-                } catch (TransformException exception) {
-                    /*
-                     * The envelope is probably outside the range of validity for this CRS.
-                     * It should not occurs, since the envelope is supposed to describe the
-                     * CRS area of validity. Logs a warning and returns null, since it is a
-                     * legal return value according this method contract.
-                     */
-                    envelope = null;
-                    unexpectedException("getEnvelope", exception);
+                final SingleCRS targetCRS = org.apache.sis.referencing.CRS.getHorizontalComponent(crs);
+                final GeographicCRS sourceCRS = org.apache.sis.internal.referencing.ReferencingUtilities.toNormalizedGeographicCRS(targetCRS);
+                if (sourceCRS != null) {
+                    envelope = merged = new GeneralEnvelope(bounds);
+                    merged.translate(-org.apache.sis.referencing.CRS.getGreenwichLongitude(sourceCRS), 0);
+                    merged.setCoordinateReferenceSystem(sourceCRS);
+                    try {
+                        envelope = transform(envelope, targetCRS);
+                    } catch (TransformException exception) {
+                        /*
+                         * The envelope is probably outside the range of validity for this CRS.
+                         * It should not occurs, since the envelope is supposed to describe the
+                         * CRS area of validity. Logs a warning and returns null, since it is a
+                         * legal return value according this method contract.
+                         */
+                        unexpectedException("getEnvelope", exception);
+                        envelope = null;
+                    }
                 }
-                /*
-                 * If transform(...) created a new envelope, its CRS is already targetCRS so it
-                 * doesn't matter if 'merged' is not anymore the right instance. If 'transform'
-                 * returned the envelope unchanged, the 'merged' reference still valid and we
-                 * want to ensure that it have the user-supplied CRS.
-                 */
-                merged.setCoordinateReferenceSystem(targetCRS);
             }
         }
         return envelope;
@@ -743,73 +735,9 @@ compare:    for (final SingleCRS component : actualComponents) {
     }
 
     /**
-     * Returns the coordinate reference system in the given range of dimension indices.
-     * This method processes as below:
-     * <p>
-     * <ul>
-     *   <li>If the given {@code crs} is {@code null}, then this method returns {@code null}.</li>
-     *   <li>Otherwise if {@code lower} is 0 and {@code upper} if the number of CRS dimensions,
-     *       then this method returns the given CRS unchanged.</li>
-     *   <li>Otherwise if the given CRS is an instance of {@link CompoundCRS}, then this method
-     *       searches for a {@linkplain CompoundCRS#getComponents() component} where:
-     *       <ul>
-     *         <li>The {@linkplain CoordinateSystem#getDimension() number of dimensions} is
-     *             equals to {@code upper - lower};</li>
-     *         <li>The sum of the number of dimensions of all previous CRS is equals to
-     *             {@code lower}.</li>
-     *       </ul>
-     *       If such component is found, then it is returned.</li>
-     *   <li>Otherwise (i.e. no component match), this method returns {@code null}.</li>
-     * </ul>
-     * <p>
-     * This method does <strong>not</strong> attempt to build new CRS from the components.
-     * For example it does not attempt to create a 3D geographic CRS from a 2D one + a vertical
-     * component. If such functionality is desired, consider using the utility methods in
-     * {@link org.geotoolkit.referencing.factory.ReferencingFactoryContainer} instead.
-     *
-     * @param  crs   The coordinate reference system to decompose, or {@code null}.
-     * @param  lower The first dimension to keep, inclusive.
-     * @param  upper The last  dimension to keep, exclusive.
-     * @return The sub-coordinate system, or {@code null} if the given {@code crs} was {@code null}
-     *         or can't be decomposed for dimensions in the range {@code [lower..upper]}.
-     * @throws IndexOutOfBoundsException If the given index are out of bounds.
-     *
-     * @see org.geotoolkit.referencing.factory.ReferencingFactoryContainer#separate(CoordinateReferenceSystem, int[])
-     *
-     * @since 3.16
-     */
-    public static CoordinateReferenceSystem getSubCRS(CoordinateReferenceSystem crs, int lower, int upper) {
-        if (crs != null) {
-            int dimension = crs.getCoordinateSystem().getDimension();
-            if (lower < 0 || lower > upper || upper > dimension) {
-                throw new IndexOutOfBoundsException(Errors.format(
-                        Errors.Keys.INDEX_OUT_OF_BOUNDS_1, lower < 0 ? lower : upper));
-            }
-check:      while (lower != 0 || upper != dimension) {
-                if (crs instanceof CompoundCRS) {
-                    final List<CoordinateReferenceSystem> components=((CompoundCRS) crs).getComponents();
-                    final int size = components.size();
-                    for (int i=0; i<size; i++) {
-                        crs = components.get(i);
-                        dimension = crs.getCoordinateSystem().getDimension();
-                        if (lower < dimension) {
-                            // The requested dimensions may intersect the dimension of this CRS.
-                            // The outer loop will perform the verification, and eventually go
-                            // down again in the tree of sub-components.
-                            continue check;
-                        }
-                        lower -= dimension;
-                        upper -= dimension;
-                    }
-                }
-                return null;
-            }
-        }
-        return crs;
-    }
-
-    /**
      * @todo Duplicate of {@link org.geotoolkit.referencing.factory.ReferencingFactoryContainer}?
+     *
+     * @see <a href="https://issues.apache.org/jira/browse/SIS-162">https://issues.apache.org/jira/browse/SIS-162</a>
      */
     public static CoordinateReferenceSystem getOrCreateSubCRS(CoordinateReferenceSystem crs, int lower, int upper) {
         if (crs == null) return crs;

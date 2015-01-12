@@ -31,24 +31,20 @@ import org.opengis.referencing.operation.*;
 import org.opengis.geometry.Envelope;
 
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.internal.metadata.ReferencingUtilities;
+import org.apache.sis.internal.referencing.ReferencingUtilities;
 import org.apache.sis.internal.referencing.AxisDirections;
 
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.lang.Workaround;
 import org.apache.sis.referencing.CRS;
-import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.cs.AxesConvention;
-import org.geotoolkit.referencing.cs.PredefinedCS;
 import org.apache.sis.referencing.crs.DefaultCompoundCRS;
 import org.apache.sis.referencing.crs.DefaultGeographicCRS;
-import org.apache.sis.referencing.datum.DefaultGeodeticDatum;
 import org.geotoolkit.measure.Measure;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.measure.Units;
 
 import static java.util.Collections.singletonMap;
-import static org.opengis.referencing.IdentifiedObject.NAME_KEY;
 
 
 /**
@@ -60,7 +56,6 @@ import static org.opengis.referencing.IdentifiedObject.NAME_KEY;
  * <strong>Do not rely on this API!</strong> It may change in incompatible way
  * in any future release.
  *
- * @author Martin Desruisseaux (IRD, Geomatys)
  * @version 3.21
  *
  * @since 2.0
@@ -109,35 +104,6 @@ public final class CRSUtilities extends Static {
      * Do not allow creation of instances of this class.
      */
     private CRSUtilities() {
-    }
-
-    /**
-     * Returns the index of the first dimension in {@code fullCS} where axes colinear with
-     * the {@code subCS} axes are found. If no such dimension is found, returns -1.
-     *
-     * @param  fullCS The coordinate system which contains all axes.
-     * @param  subCS  The coordinate system to search into {@code fullCS}.
-     * @return The first dimension of a sequence of axes colinear with {@code subCS} axes,
-     *         or {@code -1} if none.
-     *
-     * @since 3.10
-     */
-    public static int dimensionColinearWith(final CoordinateSystem fullCS, final CoordinateSystem subCS) {
-        final int dim = AxisDirections.indexOfColinear(fullCS, subCS.getAxis(0).getDirection());
-        if (dim >= 0) {
-            int i = subCS.getDimension();
-            if (dim + i <= fullCS.getDimension()) {
-                while (--i > 0) { // Intentionally exclude 0.
-                    if (!AxisDirections.absolute(subCS.getAxis(i).getDirection()).equals(
-                         AxisDirections.absolute(fullCS.getAxis(i + dim).getDirection())))
-                    {
-                        return -1;
-                    }
-                }
-                return dim;
-            }
-        }
-        return -1;
     }
 
     /**
@@ -221,7 +187,7 @@ public final class CRSUtilities extends Static {
         final CoordinateSystem currentCS = currentCRS.getCoordinateSystem();
         for (final SingleCRS subCRS : CRS.getSingleComponents(crs)) {
             final CoordinateSystem subCS = subCRS.getCoordinateSystem();
-            if (subCS.getDimension() == 1 && dimensionColinearWith(currentCS, subCS) < 0) {
+            if (subCS.getDimension() == 1 && AxisDirections.indexOfColinear(currentCS, subCS) < 0) {
                 toAdd.add(subCRS);
             }
         }
@@ -254,35 +220,6 @@ public final class CRSUtilities extends Static {
             }
         }
         return unit;
-    }
-
-    /**
-     * Returns the longitude value relative to the Greenwich Meridian,
-     * expressed in the specified units.
-     *
-     * @param  pm   The prime meridian from which to get the Greenwich longitude.
-     * @param  unit The unit for the prime meridian to return.
-     * @return The prime meridian in the given units, or 0 if the given prime meridian was null.
-     *
-     * @since 3.19
-     */
-    public static double getGreenwichLongitude(final PrimeMeridian pm, final Unit<Angle> unit) {
-        if (pm == null) {
-            return 0;
-        }
-        return pm.getAngularUnit().getConverterTo(unit).convert(pm.getGreenwichLongitude());
-    }
-
-    /**
-     * Returns the longitude value relative to the Greenwich Meridian, expressed in decimal degrees.
-     *
-     * @param  pm The prime meridian from which to get the Greenwich longitude.
-     * @return The prime meridian in the given units, or 0 if the given prime meridian was null.
-     *
-     * @since 3.19
-     */
-    public static double getGreenwichLongitude(final PrimeMeridian pm) {
-        return getGreenwichLongitude(pm, NonSI.DEGREE_ANGLE);
     }
 
     /**
@@ -352,38 +289,6 @@ public final class CRSUtilities extends Static {
     }
 
     /**
-     * Derives a geographic CRS with (<var>longitude</var>, <var>latitude</var>) axis order in
-     * decimal degrees, relative to Greenwich. If no such CRS can be obtained of created, returns
-     * {@link DefaultGeographicCRS#WGS84}.
-     *
-     * @param  crs A source CRS.
-     * @return A two-dimensional geographic CRS with standard axis. Never {@code null}.
-     */
-    public static GeographicCRS getStandardGeographicCRS2D(CoordinateReferenceSystem crs) {
-        while (crs instanceof GeneralDerivedCRS) {
-            crs = ((GeneralDerivedCRS) crs).getBaseCRS();
-        }
-        if (!(crs instanceof SingleCRS)) {
-            return CommonCRS.WGS84.normalizedGeographic();
-        }
-        final Datum datum = ((SingleCRS) crs).getDatum();
-        if (!(datum instanceof GeodeticDatum)) {
-            return CommonCRS.WGS84.normalizedGeographic();
-        }
-        GeodeticDatum geoDatum = (GeodeticDatum) datum;
-        if (geoDatum.getPrimeMeridian().getGreenwichLongitude() != 0) {
-            geoDatum = new DefaultGeodeticDatum(singletonMap(NAME_KEY, geoDatum.getName().getCode()),
-                    geoDatum.getEllipsoid(), CommonCRS.WGS84.primeMeridian());
-        } else if (crs instanceof GeographicCRS) {
-            if (org.geotoolkit.referencing.CRS.equalsIgnoreMetadata(PredefinedCS.GEODETIC_2D, crs.getCoordinateSystem())) {
-                return (GeographicCRS) crs;
-            }
-        }
-        return new DefaultGeographicCRS(singletonMap(DefaultGeographicCRS.NAME_KEY, crs.getName().getCode()),
-                geoDatum, PredefinedCS.GEODETIC_2D);
-    }
-
-    /**
      * Computes the resolution of the horizontal component, or {@code null} if it can not be
      * computed.
      *
@@ -401,7 +306,7 @@ public final class CRSUtilities extends Static {
                 final CoordinateSystem hcs = horizontalCRS.getCoordinateSystem();
                 final Unit<?> unit = ReferencingUtilities.getUnit(hcs);
                 if (unit != null) {
-                    final int s = dimensionColinearWith(crs.getCoordinateSystem(), hcs);
+                    final int s = AxisDirections.indexOfColinear(crs.getCoordinateSystem(), hcs);
                     if (s >= 0) {
                         final int dim = hcs.getDimension();
                         double min = Double.POSITIVE_INFINITY;
@@ -446,43 +351,24 @@ public final class CRSUtilities extends Static {
     }
 
     /**
-     * Recursively explore given crs, and return a list of distinct single CRS.
-     * @param crs The Coordinate Reference system to decompose.
-     * @return List<CoordinateReferenceSystem> List of all components found in source CRS. If input CRS is not of
-     * {@link org.opengis.referencing.crs.CompoundCRS}, output list will contains only originating system.
-     */
-    public static List<CoordinateReferenceSystem> decompose(CoordinateReferenceSystem crs){
-        final List<CoordinateReferenceSystem> lst = new ArrayList<CoordinateReferenceSystem>();
-        decompose(crs, lst);
-        return lst;
-    }
-
-    private static void decompose(final CoordinateReferenceSystem crs,
-                                  final List<CoordinateReferenceSystem> lst){
-        if(crs instanceof CompoundCRS){
-            final List<CoordinateReferenceSystem> parts = ((CompoundCRS)crs).getComponents();
-            for(CoordinateReferenceSystem part : parts){
-                decompose(part, lst);
-            }
-        }else{
-            lst.add(crs);
-        }
-    }
-
-    /**
      * Retrieve index of the first axis of the geographic component in the input {@link CoordinateReferenceSystem}.
      *
-     * @param crs {@link CoordinateReferenceSystem} which is analysed.
+     * @param crs {@link CoordinateReferenceSystem} which is analyzed.
      * @return Index of the first horizontal axis in this CRS
-     * @throws java.lang.IllegalArgumentException if input CRS has no horizontal component.
+     * @throws IllegalArgumentException if input CRS has no horizontal component.
+     *
+     * @todo Inaccurate implementation: a Cartesian or spherical CS does not mean that the axes is horizontal.
      */
     public static int firstHorizontalAxis(final CoordinateReferenceSystem crs) {
         int tempOrdinate = 0;
-        for(CoordinateReferenceSystem ccrrss : decompose(crs)) {
-            final CoordinateSystem cs = ccrrss.getCoordinateSystem();
-            if((cs instanceof CartesianCS)
+        for (CoordinateReferenceSystem component : CRS.getSingleComponents(crs)) {
+            final CoordinateSystem cs = component.getCoordinateSystem();
+            if ((cs instanceof CartesianCS)
                     || (cs instanceof SphericalCS)
-                    || (cs instanceof EllipsoidalCS)) return tempOrdinate;
+                    || (cs instanceof EllipsoidalCS)) // Inaccurate check: see TODO in javadoc.
+            {
+                return tempOrdinate;
+            }
             tempOrdinate += cs.getDimension();
         }
         throw new IllegalArgumentException("crs doesn't have any horizontal crs");

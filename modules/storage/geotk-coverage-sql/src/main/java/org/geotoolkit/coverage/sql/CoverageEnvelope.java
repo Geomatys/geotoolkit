@@ -37,10 +37,10 @@ import org.geotoolkit.util.DateRange;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.geometry.AbstractEnvelope;
+import org.apache.sis.internal.referencing.AxisDirections;
 import org.geotoolkit.display.shape.XRectangle2D;
 import org.geotoolkit.display.shape.FloatDimension2D;
 import org.geotoolkit.display.shape.DoubleDimension2D;
-import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.internal.sql.table.SpatialDatabase;
 import org.apache.sis.referencing.crs.DefaultTemporalCRS;
 import org.apache.sis.referencing.CRS;
@@ -237,7 +237,7 @@ public class CoverageEnvelope extends AbstractEnvelope implements Cloneable {
      * with the axes of the given {@code crs}. If none are found, return -1.
      */
     private static int dimensionColinearWith(final CoordinateSystem spatioTemporalCS, final SingleCRS crs) {
-        return (crs != null) ? CRSUtilities.dimensionColinearWith(spatioTemporalCS, crs.getCoordinateSystem()) : -1;
+        return (crs != null) ? AxisDirections.indexOfColinear(spatioTemporalCS, crs.getCoordinateSystem()) : -1;
     }
 
     /**

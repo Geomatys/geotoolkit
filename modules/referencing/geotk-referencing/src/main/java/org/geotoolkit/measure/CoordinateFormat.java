@@ -301,7 +301,7 @@ public class CoordinateFormat extends Format {
              * Type is DATE.
              */
             if (Units.isTemporal(unit)) {
-                final Datum datum = CRS.getDatum(CRS.getSubCRS(crs, i, i+1));
+                final Datum datum = CRS.getDatum(org.apache.sis.referencing.CRS.getComponentAt(crs, i, i+1));
                 if (datum instanceof TemporalDatum) {
                     if (epochs == null) {
                         epochs = new long[dimension];

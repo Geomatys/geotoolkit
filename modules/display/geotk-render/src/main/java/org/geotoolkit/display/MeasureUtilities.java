@@ -35,7 +35,7 @@ import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.GeodeticCalculator;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.geometry.jts.JTS;
-import org.geotoolkit.internal.referencing.CRSUtilities;
+import org.apache.sis.internal.referencing.ReferencingUtilities;
 import org.apache.sis.util.logging.Logging;
 
 import org.opengis.geometry.MismatchedDimensionException;
@@ -107,7 +107,7 @@ public class MeasureUtilities {
         try {
             Envelope env = JTS.toEnvelope(geom);
 
-            final GeographicCRS geoCRS = CRSUtilities.getStandardGeographicCRS2D(geomCRS);
+            final GeographicCRS geoCRS = ReferencingUtilities.toNormalizedGeographicCRS(geomCRS);
 
             final MathTransform step0 = CRS.findMathTransform(geomCRS, geoCRS,true);
             Envelope genv = JTS.transform(env, step0);

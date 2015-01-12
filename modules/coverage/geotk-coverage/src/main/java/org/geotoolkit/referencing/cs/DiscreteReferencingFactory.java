@@ -43,7 +43,7 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.metadata.iso.spatial.PixelTranslation;
 import org.apache.sis.util.NullArgumentException;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.referencing.crs.DefaultTemporalCRS;
 import org.apache.sis.referencing.operation.matrix.Matrices;
@@ -406,7 +406,7 @@ scan:   for (final CoordinateReferenceSystem component : crs.getComponents()) {
                 start = ((Number) first).doubleValue();
                 end   = ((Number) last) .doubleValue();
             } else if (first instanceof Date && last instanceof Date) {
-                CoordinateReferenceSystem temporalCRS = CRS.getSubCRS(crs, i, i+1);
+                CoordinateReferenceSystem temporalCRS = CRS.getComponentAt(crs, i, i+1);
                 if (temporalCRS instanceof DiscreteCRS<?>) {
                     temporalCRS = ((DiscreteCRS<?>) temporalCRS).crs;
                 }

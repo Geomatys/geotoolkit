@@ -796,14 +796,14 @@ final class Resampler2D extends GridCoverage2D {
             throws FactoryException
     {
         final DimensionFilter filter = new DimensionFilter(mtFactory);
-        filter.addSourceDimension(sourceGG.axisDimensionX);
-        filter.addSourceDimension(sourceGG.axisDimensionY);
+        filter.addSourceDimensions(sourceGG.axisDimensionX,
+                                   sourceGG.axisDimensionY);
         MathTransform candidate = filter.separate(transform);
         if (candidate instanceof MathTransform2D) {
             return (MathTransform2D) candidate;
         }
-        filter.addTargetDimension(sourceGG.axisDimensionX);
-        filter.addTargetDimension(sourceGG.axisDimensionY);
+        filter.addTargetDimensions(sourceGG.axisDimensionX,
+                                   sourceGG.axisDimensionY);
         candidate = filter.separate(transform);
         if (candidate instanceof MathTransform2D) {
             return (MathTransform2D) candidate;

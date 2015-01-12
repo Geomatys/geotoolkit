@@ -60,7 +60,7 @@ import org.apache.sis.measure.NumberRange;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.internal.sql.table.DefaultEntry;
 import org.geotoolkit.internal.sql.table.IllegalRecordException;
-import org.geotoolkit.internal.referencing.CRSUtilities;
+import org.apache.sis.internal.referencing.AxisDirections;
 import org.geotoolkit.resources.Errors;
 
 
@@ -340,7 +340,7 @@ final class GridCoverageEntry extends DefaultEntry implements GridCoverageRefere
                  *   2) The temporal dimension is at the same index in
                  *      both the grid CRS and the "real world" CRS.
                  */
-                assert CRSUtilities.dimensionColinearWith(crs.getCoordinateSystem(),
+                assert AxisDirections.indexOfColinear(crs.getCoordinateSystem(),
                         temporalCRS.getCoordinateSystem()) == dimension-1 : crs;
                 assert gridToCRS.getElement(dimension-1, dimension-1) != 0 : gridToCRS;
                 gridToCRS.setElement(dimension-1, dimension-1, max - min);

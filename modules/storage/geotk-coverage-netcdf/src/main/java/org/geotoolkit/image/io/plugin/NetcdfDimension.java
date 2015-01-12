@@ -54,7 +54,7 @@ import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.Utilities;
 import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.referencing.CRS;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.referencing.crs.DefaultTemporalCRS;
 import org.geotoolkit.referencing.cs.DiscreteCoordinateSystemAxis;
@@ -203,7 +203,7 @@ final class NetcdfDimension {
                 ordinates = Array.factory(dataType, new int[] {length});
                 DefaultTemporalCRS converter = null;
                 if (!isNumeric) {
-                    final CoordinateReferenceSystem subCRS = CRS.getSubCRS(
+                    final CoordinateReferenceSystem subCRS = CRS.getComponentAt(
                             image.getCoordinateReferenceSystem(), dimension, dimension+1);
                     if (subCRS instanceof TemporalCRS) {
                         converter = DefaultTemporalCRS.castOrCopy((TemporalCRS) subCRS);

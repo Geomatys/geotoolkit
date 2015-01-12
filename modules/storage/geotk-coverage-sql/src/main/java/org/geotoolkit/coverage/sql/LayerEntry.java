@@ -60,7 +60,7 @@ import org.geotoolkit.internal.sql.table.DefaultEntry;
 import org.geotoolkit.internal.sql.table.TablePool;
 import org.geotoolkit.internal.sql.table.SpatialDatabase;
 import org.geotoolkit.internal.sql.table.NoSuchRecordException;
-import org.geotoolkit.internal.referencing.CRSUtilities;
+import org.apache.sis.internal.referencing.AxisDirections;
 import org.geotoolkit.internal.UnmodifiableArraySortedSet;
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.GridSampleDimension;
@@ -725,8 +725,8 @@ final class LayerEntry extends DefaultEntry implements Layer, Localized {
         if (resolution == null) {
             final SpatialDatabase database = getTableFactory();
             final CoordinateSystem cs = database.spatioTemporalCRS.getCoordinateSystem();
-            final int xPos = CRSUtilities.dimensionColinearWith(cs, database.horizontalCRS.getCoordinateSystem());
-            final int tPos = CRSUtilities.dimensionColinearWith(cs, database.temporalCRS  .getCoordinateSystem());
+            final int xPos = AxisDirections.indexOfColinear(cs, database.horizontalCRS.getCoordinateSystem());
+            final int tPos = AxisDirections.indexOfColinear(cs, database.temporalCRS  .getCoordinateSystem());
             final int dim  = cs.getDimension();
             resolution = new double[dim];
             Arrays.fill(resolution, Double.NaN);
@@ -870,7 +870,7 @@ final class LayerEntry extends DefaultEntry implements Layer, Localized {
                          *   2) The temporal dimension is at the same index in
                          *      both the grid CRS and the "real world" CRS.
                          */
-                        assert CRSUtilities.dimensionColinearWith(cs, temporalCRS.getCoordinateSystem()) == timeDimension : crs;
+                        assert AxisDirections.indexOfColinear(cs, temporalCRS.getCoordinateSystem()) == timeDimension : crs;
                         assert gridToCRS.getElement(timeDimension, timeDimension) != 0 : gridToCRS;
                         gridToCRS.setElement(timeDimension, timeDimension, interval);
                         gridToCRS.setElement(timeDimension, dimension, min);

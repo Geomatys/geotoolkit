@@ -343,7 +343,7 @@ public class OperationJAI extends Operation2D {
         if (lower == upper) {
             return null;
         }
-        final CoordinateReferenceSystem candidate = CRS.getSubCRS(crs, lower, upper);
+        final CoordinateReferenceSystem candidate = org.apache.sis.referencing.CRS.getComponentAt(crs, lower, upper);
         if (candidate == null) {
             throw new InvalidGridGeometryException(unsupported(crs));
         }

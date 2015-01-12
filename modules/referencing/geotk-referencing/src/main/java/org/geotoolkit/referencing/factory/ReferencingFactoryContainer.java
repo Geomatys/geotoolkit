@@ -537,7 +537,7 @@ public class ReferencingFactoryContainer extends ReferencingFactory {
      * @return The CRS with only the specified dimensions.
      * @throws FactoryException if the given dimensions can not be isolated in the given CRS.
      *
-     * @see CRS#getSubCRS(CoordinateReferenceSystem, int, int)
+     * @see org.apache.sis.referencing.CRS#getComponentAt(CoordinateReferenceSystem, int, int)
      */
     public CoordinateReferenceSystem separate(final CoordinateReferenceSystem crs,
                                               final int... dimensions)

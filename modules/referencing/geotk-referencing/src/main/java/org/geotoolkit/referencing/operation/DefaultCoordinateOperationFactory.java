@@ -23,6 +23,7 @@ package org.geotoolkit.referencing.operation;
 import java.util.Map;
 import java.util.List;
 import javax.measure.unit.Unit;
+import javax.measure.unit.NonSI;
 import javax.measure.quantity.Angle;
 import javax.measure.quantity.Duration;
 import javax.measure.quantity.Length;
@@ -59,6 +60,7 @@ import org.apache.sis.referencing.operation.matrix.Matrices;
 import org.apache.sis.internal.referencing.AxisDirections;
 import org.geotoolkit.internal.referencing.OperationContext;
 import org.geotoolkit.internal.referencing.VerticalDatumTypes;
+import org.apache.sis.internal.referencing.ReferencingUtilities;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.operation.matrix.MatrixSIS;
 
@@ -68,7 +70,6 @@ import static org.apache.sis.measure.Units.MILLISECOND;
 import static org.geotoolkit.referencing.CRS.equalsIgnoreMetadata;
 import static org.geotoolkit.referencing.CRS.equalsApproximatively;
 import static org.apache.sis.referencing.IdentifiedObjects.isHeuristicMatchForName;
-import static org.geotoolkit.internal.referencing.CRSUtilities.getGreenwichLongitude;
 
 
 /**
@@ -433,9 +434,7 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
         final CartesianCS   STANDARD  = PredefinedCS.GEOCENTRIC;
         final GeodeticDatum candidate = crs.getDatum();
         if (equalsIgnorePrimeMeridian(candidate, datum)) {
-            if (getGreenwichLongitude(candidate.getPrimeMeridian()) ==
-                getGreenwichLongitude(datum    .getPrimeMeridian()))
-            {
+            if (ReferencingUtilities.isGreenwichLongitudeEquals(datum.getPrimeMeridian(), candidate.getPrimeMeridian())) {
                 if (hasStandardAxis(crs.getCoordinateSystem(), STANDARD)) {
                     return crs;
                 }
@@ -446,26 +445,22 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
     }
 
     /**
-     * Makes sure that the specified geographic CRS uses standard axis (longitude and latitude in
-     * decimal degrees). Optionally, this method can also make sure that the CRS use the Greenwich
-     * prime meridian. Other datum properties are left unchanged. If {@code crs} already meets all
-     * those conditions, then it is returned unchanged. Otherwise, a new normalized geographic CRS
-     * is created and returned.
+     * Makes sure that the specified geographic CRS uses standard axis (longitude and latitude in decimal degrees)
+     * and the Greenwich prime meridian. Other datum properties are left unchanged.
+     * If {@code crs} already meets all those conditions, then it is returned unchanged.
+     * Otherwise, a new normalized geographic CRS is created and returned.
      *
      * @param  crs The geographic coordinate reference system to normalize.
-     * @param  forceGreenwich {@code true} for forcing the Greenwich prime meridian.
      * @return The normalized coordinate reference system.
      * @throws FactoryException if the construction of a new CRS was needed but failed.
      */
-    private GeographicCRS normalize(final GeographicCRS crs, final boolean forceGreenwich)
-            throws FactoryException
-    {
+    private GeographicCRS normalize(final GeographicCRS crs) throws FactoryException {
         GeodeticDatum datum = crs.getDatum();
         final EllipsoidalCS cs = crs.getCoordinateSystem();
         final EllipsoidalCS STANDARD = (cs.getDimension() <= 2) ?
                 PredefinedCS.GEODETIC_2D :
                 PredefinedCS.GEODETIC_3D;
-        if (forceGreenwich && getGreenwichLongitude(datum.getPrimeMeridian()) != 0) {
+        if (!isGreenwich(datum.getPrimeMeridian())) {
             datum = new TemporaryDatum(datum);
         } else if (hasStandardAxis(cs, STANDARD)) {
             return crs;
@@ -627,8 +622,8 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
                  * range.
                  */
                 final Unit<Angle>       unit = axis.getUnit().asType(Angle.class);
-                final double sourceLongitude = getGreenwichLongitude(sourcePM, unit);
-                final double targetLongitude = getGreenwichLongitude(targetPM, unit);
+                final double sourceLongitude = ReferencingUtilities.getGreenwichLongitude(sourcePM, unit);
+                final double targetLongitude = ReferencingUtilities.getGreenwichLongitude(targetPM, unit);
                 final int   lastMatrixColumn = matrix.getNumCol()-1;
                 double rotate = sourceLongitude - targetLongitude;
                 if (AxisDirection.WEST.equals(direction)) {
@@ -869,8 +864,8 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
                             DefaultCoordinateOperationFactory.class, "createOperationStep", e);
                 }
                 if (ready) {
-                    final GeographicCRS normSourceCRS = normalize(sourceCRS, true);
-                    final GeographicCRS normTargetCRS = normalize(targetCRS, true);
+                    final GeographicCRS normSourceCRS = normalize(sourceCRS);
+                    final GeographicCRS normTargetCRS = normalize(targetCRS);
                     return concatenate(
                             createOperationStep(sourceCRS, normSourceCRS),
                             createFromParameters(identifier, normSourceCRS, normTargetCRS, parameters),
@@ -890,7 +885,7 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
         final CartesianCS STANDARD = PredefinedCS.GEOCENTRIC;
         final GeocentricCRS stepCRS;
         final CRSFactory crsFactory = factories.getCRSFactory();
-        if (getGreenwichLongitude(targetPM) == 0) {
+        if (isGreenwich(targetPM)) {
             stepCRS = crsFactory.createGeocentricCRS(
                       getTemporaryName(targetCRS), targetDatum, STANDARD);
         } else {
@@ -1018,23 +1013,19 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
         final GeodeticDatum targetDatum = targetCRS.getDatum();
         final CoordinateSystem sourceCS = sourceCRS.getCoordinateSystem();
         final CoordinateSystem targetCS = targetCRS.getCoordinateSystem();
-        final double sourcePM, targetPM;
-        sourcePM = getGreenwichLongitude(sourceDatum.getPrimeMeridian());
-        targetPM = getGreenwichLongitude(targetDatum.getPrimeMeridian());
-        if (equalsIgnorePrimeMeridian(sourceDatum, targetDatum)) {
-            if (sourcePM == targetPM) {
-                /*
-                 * If both CRS use the same datum and the same prime meridian,
-                 * then the transformation is probably just axis swap or unit
-                 * conversions.
-                 */
-                final Matrix matrix = swapAndScaleAxis(sourceCS, targetCS);
-                return createFromAffineTransform(AXIS_CHANGES, sourceCRS, targetCRS, matrix);
-            }
-            // Prime meridians are differents. Performs the full transformation.
-        }
-        if (sourcePM != targetPM) {
+        if (!ReferencingUtilities.isGreenwichLongitudeEquals(
+                sourceDatum.getPrimeMeridian(), targetDatum.getPrimeMeridian()))
+        {
             throw new OperationNotFoundException("Rotation of prime meridian not yet implemented");
+        }
+        if (equalsIgnorePrimeMeridian(sourceDatum, targetDatum)) {
+            /*
+             * If both CRS use the same datum and the same prime meridian,
+             * then the transformation is probably just axis swap or unit
+             * conversions.
+             */
+            final Matrix matrix = swapAndScaleAxis(sourceCS, targetCS);
+            return createFromAffineTransform(AXIS_CHANGES, sourceCRS, targetCRS, matrix);
         }
         /*
          * Transform between differents ellipsoids using Bursa Wolf parameters.
@@ -1112,7 +1103,7 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
          * units are metres or decimal degrees, prime meridian is Greenwich and height is measured
          * above the ellipsoid. However, the horizontal datum is preserved.
          */
-        final GeographicCRS normSourceCRS = normalize(sourceCRS, true);
+        final GeographicCRS normSourceCRS = normalize(sourceCRS);
         final GeodeticDatum datum         = normSourceCRS.getDatum();
         final GeocentricCRS normTargetCRS = normalize(targetCRS, datum);
         final Ellipsoid         ellipsoid = datum.getEllipsoid();
@@ -1141,7 +1132,7 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
                                                       final GeographicCRS targetCRS)
             throws FactoryException
     {
-        final GeographicCRS normTargetCRS = normalize(targetCRS, true);
+        final GeographicCRS normTargetCRS = normalize(targetCRS);
         final GeodeticDatum datum         = normTargetCRS.getDatum();
         final GeocentricCRS normSourceCRS = normalize(sourceCRS, datum);
         final Ellipsoid         ellipsoid = datum.getEllipsoid();
@@ -1612,6 +1603,18 @@ search: for (int j=0; j<targets.size(); j++) {
             }
         }
         return true;
+    }
+
+    /**
+     * Returns {@code true} if the given prime meridian is the Greenwich one.
+     *
+     * @param primeMeridian The prime meridian to test.
+     * @return {@code true} if the given prime meridian is the Greenwich one.
+     */
+    private static boolean isGreenwich(final PrimeMeridian primeMeridian) {
+        // The conversion to NonSI.DEGREE_ANGLE is a safety against unit which would have an offset.
+        // Such angular unit would be insane, but we are paranoiac...
+        return ReferencingUtilities.getGreenwichLongitude(primeMeridian, NonSI.DEGREE_ANGLE) == 0;
     }
 
     /**
