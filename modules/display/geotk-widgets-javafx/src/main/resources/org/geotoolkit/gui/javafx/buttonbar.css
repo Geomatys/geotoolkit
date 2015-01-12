@@ -1,0 +1,15 @@
+
+.buttongroup-left {
+    -fx-background-radius: 3 0 0 3;
+    -fx-background-insets: -2 0 -2 -2, 0, 1 0 1 1, 2 0 2 2;
+}
+
+.buttongroup-right {
+    -fx-background-radius: 0 3 3 0;
+    -fx-background-insets: -2 -2 -2 0, 0, 1 1 1 0, 2 2 2 0;
+}
+
+.buttongroup-center {
+    -fx-background-radius: 0;
+    -fx-background-insets: -2 0 -2 0, 0, 1 0 1 0, 2 0 2 0;
+}

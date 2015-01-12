@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import org.geotoolkit.gui.javafx.util.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.image.*?>
+<?import org.geotoolkit.gui.javafx.style.*?>
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<fx:root maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" type="BorderPane" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <center>
+      <GridPane hgap="5.0" vgap="5.0" BorderPane.alignment="CENTER">
+        <columnConstraints>
+          <ColumnConstraints halignment="CENTER" hgrow="NEVER" />
+          <ColumnConstraints halignment="CENTER" hgrow="NEVER" />
+            <ColumnConstraints hgrow="NEVER" />
+            <ColumnConstraints hgrow="NEVER" />
+            <ColumnConstraints hgrow="ALWAYS" maxWidth="1.7976931348623157E308" minWidth="1.0" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints vgrow="NEVER" />
+            <RowConstraints vgrow="NEVER" />
+            <RowConstraints vgrow="NEVER" />
+            <RowConstraints vgrow="NEVER" />
+            <RowConstraints maxHeight="1.7976931348623157E308" vgrow="ALWAYS" />
+            <RowConstraints valignment="CENTER" vgrow="NEVER" />
+        </rowConstraints>
+         <padding>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </padding>
+         <children>
+            <Label text="%org.geotoolkit.gui.javafx.layer.style.FXStyleClassifRangePane.property" />
+            <Label text="%org.geotoolkit.gui.javafx.layer.style.FXStyleClassifRangePane.method" GridPane.rowIndex="1" />
+            <ComboBox fx:id="uiProperty" maxWidth="1.7976931348623157E308" onAction="#propertyChange" GridPane.columnIndex="1" />
+            <ComboBox fx:id="uiMethod" maxWidth="1.7976931348623157E308" onAction="#methodChange" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <Label text="%org.geotoolkit.gui.javafx.layer.style.FXStyleClassifRangePane.normalize" GridPane.columnIndex="2" />
+            <ComboBox fx:id="uiNormalize" maxWidth="1.7976931348623157E308" onAction="#normalizeChange" GridPane.columnIndex="3" GridPane.hgrow="ALWAYS" />
+            <Label text="%org.geotoolkit.gui.javafx.layer.style.FXStyleClassifRangePane.classes" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+            <Label text="%org.geotoolkit.gui.javafx.layer.style.FXStyleClassifRangePane.palette" GridPane.rowIndex="2" />
+            <ComboBox fx:id="uiPalette" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <Label text="%org.geotoolkit.gui.javafx.layer.style.FXStyleClassifRangePane.template" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+            <Button fx:id="uiTemplate" mnemonicParsing="false" onAction="#editTemplate" text="%org.geotoolkit.gui.javafx.layer.style.FXStyleClassifRangePane.edit" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+            <Button mnemonicParsing="false" onAction="#generate" text="%org.geotoolkit.gui.javafx.layer.style.FXStyleClassifRangePane.generate" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.rowIndex="3" />
+            <HBox spacing="10.0" GridPane.columnSpan="4" GridPane.rowIndex="5">
+               <children>
+                  <Button mnemonicParsing="false" onAction="#invertValues" text="%org.geotoolkit.gui.javafx.layer.style.FXStyleClassifRangePane.invertValues" />
+                  <Button mnemonicParsing="false" onAction="#removeAll" text="%org.geotoolkit.gui.javafx.layer.style.FXStyleClassifRangePane.removeall" />
+               </children>
+            </HBox>
+            <ScrollPane fitToHeight="true" fitToWidth="true" maxWidth="1.7976931348623157E308" GridPane.columnSpan="5" GridPane.rowIndex="4">
+               <content>
+                  <TableView fx:id="uiTable" maxWidth="1.7976931348623157E308" />
+               </content>
+            </ScrollPane>
+            <FXNumberSpinner fx:id="uiClasses" maxWidth="1.7976931348623157E308" prefWidth="100.0" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+         </children>
+      </GridPane>
+   </center>
+</fx:root>

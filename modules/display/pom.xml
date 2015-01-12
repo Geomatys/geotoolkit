@@ -80,6 +80,8 @@
        =========================================================== -->
   <modules>
     <module>geotk-widgets-swing</module>
+    <module>geotk-widgets-javafx</module>
+    <module>geotk-widgets-javafx-scenebuilder</module>
     <module>geotk-style</module>
     <module>geotk-svg-batik</module>
     <module>geotk-svg-salamander</module>

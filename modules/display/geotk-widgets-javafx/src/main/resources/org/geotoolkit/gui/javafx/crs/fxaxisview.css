@@ -1,0 +1,4 @@
+
+.axis-view{
+    -fx-skin: "org.geotoolkit.gui.javafx.crs.FXAxisViewSkin";
+}

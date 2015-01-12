@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import org.geotoolkit.gui.javafx.style.*?>
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<fx:root maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" type="BorderPane" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <center>
+      <GridPane BorderPane.alignment="CENTER">
+        <columnConstraints>
+          <ColumnConstraints hgrow="SOMETIMES" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" />
+        </columnConstraints>
+        <rowConstraints>
+            <RowConstraints vgrow="SOMETIMES" />
+            <RowConstraints vgrow="SOMETIMES" />
+            <RowConstraints vgrow="SOMETIMES" />
+            <RowConstraints vgrow="SOMETIMES" />
+            <RowConstraints vgrow="SOMETIMES" />
+        </rowConstraints>
+         <children>
+            <Label styleClass="property-key" text="%org.geotoolkit.gui.javafx.style.FXMark.wkn" />
+            <FXStroke fx:id="uiStroke" GridPane.columnSpan="2" GridPane.rowIndex="2" />
+            <FXFill fx:id="uiFill" GridPane.columnSpan="2" GridPane.rowIndex="4" />
+            <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="property-group-title" text="%org.geotoolkit.gui.javafx.style.FXMark.fill" GridPane.columnSpan="2" GridPane.rowIndex="3" />
+            <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="property-group-title" text="%org.geotoolkit.gui.javafx.style.FXMark.stroke" GridPane.columnSpan="2" GridPane.rowIndex="1" />
+            <FXListExpression fx:id="uiWkt" GridPane.columnIndex="1" />
+         </children>
+      </GridPane>
+   </center>
+</fx:root>

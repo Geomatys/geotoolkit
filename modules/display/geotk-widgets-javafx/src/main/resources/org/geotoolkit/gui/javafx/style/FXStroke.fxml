@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import org.geotoolkit.gui.javafx.util.*?>
+<?import org.geotoolkit.gui.javafx.style.*?>
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<fx:root maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" type="BorderPane" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <center>
+      <GridPane BorderPane.alignment="CENTER">
+        <columnConstraints>
+          <ColumnConstraints hgrow="NEVER" />
+          <ColumnConstraints hgrow="ALWAYS" />
+            <ColumnConstraints hgrow="ALWAYS" />
+            <ColumnConstraints hgrow="ALWAYS" />
+            <ColumnConstraints hgrow="NEVER" />
+        </columnConstraints>
+        <rowConstraints>
+            <RowConstraints vgrow="NEVER" />
+            <RowConstraints vgrow="NEVER" />
+          <RowConstraints vgrow="NEVER" />
+          <RowConstraints vgrow="NEVER" />
+            <RowConstraints vgrow="NEVER" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="NEVER" />
+        </rowConstraints>
+         <children>
+            <Label styleClass="property-key" text="%org.geotoolkit.gui.javafx.style.FXStroke.width" GridPane.rowIndex="1" />
+            <Label styleClass="property-key" text="%org.geotoolkit.gui.javafx.style.FXStroke.opacity" GridPane.rowIndex="2" />
+            <Label styleClass="property-key" text="%org.geotoolkit.gui.javafx.style.FXStroke.color" />
+            <Label styleClass="property-key" text="%org.geotoolkit.gui.javafx.style.FXStroke.dashes" GridPane.rowIndex="5" />
+            <Label styleClass="property-key" text="%org.geotoolkit.gui.javafx.style.FXStroke.linecap" GridPane.rowIndex="3" />
+            <Label styleClass="property-key" text="%org.geotoolkit.gui.javafx.style.FXStroke.linejoin" GridPane.rowIndex="4" />
+            <FXNumberExpression fx:id="uiWidth" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.columnSpan="4" GridPane.rowIndex="1" />
+            <FXNumberExpression fx:id="uiOpacity" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.columnSpan="4" GridPane.rowIndex="2" />
+            <FXColorExpression fx:id="uiColor" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.columnSpan="4" />
+            <FXNumberSpinner fx:id="uiDash1" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefWidth="60.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+            <FXNumberSpinner fx:id="uiDash2" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefWidth="60.0" GridPane.columnIndex="2" GridPane.rowIndex="5" />
+            <FXLineCapExpression fx:id="uiLineCap" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.columnSpan="4" GridPane.rowIndex="3" />
+            <FXLineJoinExpression fx:id="uiLineJoin" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.columnSpan="4" GridPane.rowIndex="4" />
+            <FXNumberSpinner fx:id="uiDash3" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefWidth="60.0" GridPane.columnIndex="3" GridPane.rowIndex="5" />
+            <FXSpecialExpressionButton visible="false" GridPane.columnIndex="4" GridPane.rowIndex="5" />
+         </children>
+      </GridPane>
+   </center>
+</fx:root>

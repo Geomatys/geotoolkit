@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import org.geotoolkit.gui.javafx.style.*?>
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<fx:root maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" type="BorderPane" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <center>
+      <GridPane BorderPane.alignment="CENTER">
+        <columnConstraints>
+          <ColumnConstraints hgrow="SOMETIMES" />
+        </columnConstraints>
+        <rowConstraints>
+            <RowConstraints vgrow="NEVER" />
+            <RowConstraints vgrow="NEVER" />
+        </rowConstraints>
+         <children>
+            <FXPointPlacement fx:id="uiPoint" GridPane.rowIndex="1" />
+            <FXLinePlacement fx:id="uiLine" GridPane.rowIndex="1" />
+            <HBox>
+               <children>
+                  <RadioButton fx:id="uiPointCheck" mnemonicParsing="false" onAction="#updateChoice" styleClass="property-key" text="%org.geotoolkit.gui.javafx.style.FXLabelPlacement.point" />
+                  <RadioButton fx:id="uiLineCheck" mnemonicParsing="false" onAction="#updateChoice" styleClass="property-key" text="%org.geotoolkit.gui.javafx.style.FXLabelPlacement.linear" />
+               </children>
+            </HBox>
+         </children>
+      </GridPane>
+   </center>
+</fx:root>

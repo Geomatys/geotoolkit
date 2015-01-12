@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import org.geotoolkit.gui.javafx.style.*?>
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<fx:root maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" type="BorderPane" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <center>
+      <GridPane hgap="10.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" vgap="5.0" BorderPane.alignment="CENTER">
+        <columnConstraints>
+          <ColumnConstraints hgrow="NEVER" />
+          <ColumnConstraints hgrow="ALWAYS" minWidth="-Infinity" />
+        </columnConstraints>
+        <rowConstraints>
+            <RowConstraints vgrow="NEVER" />
+            <RowConstraints vgrow="NEVER" />
+            <RowConstraints vgrow="NEVER" />
+            <RowConstraints vgrow="NEVER" />
+          <RowConstraints vgrow="SOMETIMES" />
+          <RowConstraints vgrow="SOMETIMES" />
+          <RowConstraints maxHeight="0.0" minHeight="0.0" prefHeight="0.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="0.0" minHeight="0.0" prefHeight="0.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+         <children>
+            <Label styleClass="property-key" text="%org.geotoolkit.gui.javafx.style.FXStyle.name" />
+            <Label styleClass="property-key" text="%org.geotoolkit.gui.javafx.style.FXStyle.title" GridPane.rowIndex="1" />
+            <TextField fx:id="uiName" GridPane.columnIndex="1" />
+            <TextField fx:id="uiTitle" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <TextField fx:id="uiAbstract" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <CheckBox fx:id="uiDefault" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+            <Label styleClass="property-key" text="%org.geotoolkit.gui.javafx.style.FXStyle.abstract" GridPane.rowIndex="2" />
+            <Label styleClass="property-key" text="%org.geotoolkit.gui.javafx.style.FXStyle.default" GridPane.rowIndex="3" />
+         </children>
+         <padding>
+            <Insets left="3.0" />
+         </padding>
+      </GridPane>
+   </center>
+</fx:root>

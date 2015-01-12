@@ -1,0 +1,15 @@
+
+# global style elements
+org.geotoolkit.gui.javafx.style.FXStyle
+org.geotoolkit.gui.javafx.style.FXFeatureTypeStyle
+org.geotoolkit.gui.javafx.style.FXRule
+
+# symbolizer editors
+org.geotoolkit.gui.javafx.style.FXPointSymbolizer
+org.geotoolkit.gui.javafx.style.FXLineSymbolizer
+org.geotoolkit.gui.javafx.style.FXPolygonSymbolizer
+org.geotoolkit.gui.javafx.style.FXTextSymbolizer
+org.geotoolkit.gui.javafx.style.FXRasterSymbolizer
+
+# extension editors
+org.geotoolkit.gui.javafx.style.graduation.FXGraduationSymbolizer
