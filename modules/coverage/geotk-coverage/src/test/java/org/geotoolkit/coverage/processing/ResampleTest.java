@@ -248,6 +248,7 @@ public final strictfp class ResampleTest extends GridProcessingTestBase {
      * @since 3.02
      */
     @Test
+    @Ignore("Usage of hints will be removed in Apache SIS.")
     public void testLenientDatumShift() throws FactoryException {
         final CoordinateReferenceSystem sourceCRS = CRS.parseWKT(
                 "PROJCS[\"Bessel_1841_Hotine_Oblique_Mercator_Azimuth_Natural_Origin\"," +

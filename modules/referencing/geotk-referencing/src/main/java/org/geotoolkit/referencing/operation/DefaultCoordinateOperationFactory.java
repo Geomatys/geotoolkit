@@ -154,10 +154,6 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
         this.hints.put(Hints.LENIENT_DATUM_SHIFT, Boolean.valueOf(lenientDatumShift));
     }
 
-    private boolean lenientDatumShift() { // Temporary hack to be removed on Apache SIS.
-        return lenientDatumShift || Boolean.TRUE.equals(Hints.getSystemDefault(Hints.LENIENT_DATUM_SHIFT));
-    }
-
     /**
      * Invoked by {@link org.geotoolkit.factory.FactoryRegistry} in order to set the ordering relative
      * to other factories. The current implementation specifies that this factory should defer to
@@ -822,7 +818,7 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
                          * parameters. Do NOT set the 'bursaWolf' variable: it must stay null, which
                          * means to perform the datum shift using geocentric coordinates.
                          */
-                    } else if (lenientDatumShift()) {
+                    } else if (lenientDatumShift) {
                         /*
                          * No BursaWolf parameters available. No affine transform to be applied in
                          * geocentric coordinates are available neither (the "shift" matrix above),
@@ -1056,7 +1052,7 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
                         TemporaryDatum.unwrap(targetDatum), null);
             }
             if (datumShift == null) {
-                if (lenientDatumShift()) {
+                if (lenientDatumShift) {
                     datumShift = new Matrix4(); // Identity transform.
                     identifier = ELLIPSOID_SHIFT;
                 } else {
@@ -1201,7 +1197,7 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
              * TODO: Search for non-ellipsoidal height, and lets supplemental axis (e.g. time)
              *       pass through. See javadoc comments above.
              */
-            if (!lenientDatumShift() && needsGeodetic3D(sources, targetCRS, false)) {
+            if (!lenientDatumShift && needsGeodetic3D(sources, targetCRS, false)) {
                 throw new OperationNotFoundException(getErrorMessage(sourceCRS, targetCRS));
             }
         }
@@ -1276,7 +1272,7 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
                  * TODO: Search for non-ellipsoidal height, and lets supplemental axis pass through.
                  *       See javadoc comments for createOperation(CompoundCRS, SingleCRS).
                  */
-                if (!lenientDatumShift() && needsGeodetic3D(sources, target, false)) {
+                if (!lenientDatumShift && needsGeodetic3D(sources, target, false)) {
                     throw new OperationNotFoundException(getErrorMessage(sourceCRS, targetCRS));
                 }
             }
