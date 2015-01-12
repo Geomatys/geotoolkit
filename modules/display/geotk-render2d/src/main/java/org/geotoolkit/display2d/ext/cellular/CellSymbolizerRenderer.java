@@ -229,7 +229,15 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
         final ProjectedFeature pf = new ProjectedFeature(params,feature);
 
         final DefaultCachedRule renderers = new DefaultCachedRule(new CachedRule[]{symbol.getCachedRule()},renderingContext);
-
+        
+        //expand the search area by the maximum symbol size
+        float symbolsMargin = renderers.getMargin(null, renderingContext);
+        if(symbolsMargin==0) symbolsMargin = 300f;
+        if(symbolsMargin>0 && params.objectiveJTSEnvelope!=null){
+            params.objectiveJTSEnvelope = new com.vividsolutions.jts.geom.Envelope(params.objectiveJTSEnvelope);
+            params.objectiveJTSEnvelope.expandBy(symbolsMargin);
+        }
+        
         for(int r=0;r<nbRow;r++){
             for(int c=0;c<nbCol;c++){
                 pf.setCandidate(feature);
@@ -318,6 +326,14 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
         //iterator on image
         final CellIterator ite = new CellIterator(image,decimateX,decimateY);
         final DefaultCachedRule renderers = new DefaultCachedRule(new CachedRule[]{symbol.getCachedRule()},renderingContext);
+        
+        //expand the search area by the maximum symbol size
+        float symbolsMargin = renderers.getMargin(null, renderingContext);
+        if(symbolsMargin==0) symbolsMargin = 300f;
+        if(symbolsMargin>0 && params.objectiveJTSEnvelope!=null){
+            params.objectiveJTSEnvelope = new com.vividsolutions.jts.geom.Envelope(params.objectiveJTSEnvelope);
+            params.objectiveJTSEnvelope.expandBy(symbolsMargin);
+        }
 
         //force image interpolation here
         Object oldValue = g2d.getRenderingHint(RenderingHints.KEY_INTERPOLATION);

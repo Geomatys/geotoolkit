@@ -75,4 +75,12 @@ public final class DefaultCachedRule {
         return elseRuleIndex;
     }
 
+    public float getMargin(Object candidate, final RenderingContext2D ctx){
+        float f = 0.0f;
+        for(CachedRule r : rules){
+            f = Math.max(f, r.getMargin(candidate, ctx));
+        }
+        return f;
+    }
+    
 }
