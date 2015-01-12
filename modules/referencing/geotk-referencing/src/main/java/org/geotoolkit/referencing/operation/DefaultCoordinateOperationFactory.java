@@ -142,6 +142,9 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
                 lenientDatumShift = ((Boolean) candidate).booleanValue();
             }
         }
+        if (lenientDatumShift) { // Temporary hack to be removed on Apache SIS.
+            lenientDatumShift = Boolean.TRUE.equals(Hints.getSystemDefault(Hints.LENIENT_DATUM_SHIFT));
+        }
         //
         // Stores the retained hints
         //
@@ -149,6 +152,10 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
         this.lenientDatumShift = lenientDatumShift;
         this.hints.put(Hints.DATUM_SHIFT_METHOD,  (molodenskyMethod != null) ? molodenskyMethod : "Geocentric");
         this.hints.put(Hints.LENIENT_DATUM_SHIFT, Boolean.valueOf(lenientDatumShift));
+    }
+
+    private boolean lenientDatumShift() { // Temporary hack to be removed on Apache SIS.
+        return lenientDatumShift || Boolean.TRUE.equals(Hints.getSystemDefault(Hints.LENIENT_DATUM_SHIFT));
     }
 
     /**
@@ -815,7 +822,7 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
                          * parameters. Do NOT set the 'bursaWolf' variable: it must stay null, which
                          * means to perform the datum shift using geocentric coordinates.
                          */
-                    } else if (lenientDatumShift) {
+                    } else if (lenientDatumShift()) {
                         /*
                          * No BursaWolf parameters available. No affine transform to be applied in
                          * geocentric coordinates are available neither (the "shift" matrix above),
@@ -1049,7 +1056,7 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
                         TemporaryDatum.unwrap(targetDatum), null);
             }
             if (datumShift == null) {
-                if (lenientDatumShift) {
+                if (lenientDatumShift()) {
                     datumShift = new Matrix4(); // Identity transform.
                     identifier = ELLIPSOID_SHIFT;
                 } else {
@@ -1194,7 +1201,7 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
              * TODO: Search for non-ellipsoidal height, and lets supplemental axis (e.g. time)
              *       pass through. See javadoc comments above.
              */
-            if (!lenientDatumShift && needsGeodetic3D(sources, targetCRS, false)) {
+            if (!lenientDatumShift() && needsGeodetic3D(sources, targetCRS, false)) {
                 throw new OperationNotFoundException(getErrorMessage(sourceCRS, targetCRS));
             }
         }
@@ -1269,7 +1276,7 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
                  * TODO: Search for non-ellipsoidal height, and lets supplemental axis pass through.
                  *       See javadoc comments for createOperation(CompoundCRS, SingleCRS).
                  */
-                if (!lenientDatumShift && needsGeodetic3D(sources, target, false)) {
+                if (!lenientDatumShift() && needsGeodetic3D(sources, target, false)) {
                     throw new OperationNotFoundException(getErrorMessage(sourceCRS, targetCRS));
                 }
             }
