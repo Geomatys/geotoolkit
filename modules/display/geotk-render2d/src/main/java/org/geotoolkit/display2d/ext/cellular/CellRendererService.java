@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.display2d.ext.cellular;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
@@ -24,24 +23,19 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.text.NumberFormat;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.display2d.ext.legend.DefaultLegendService;
 import org.geotoolkit.display2d.service.DefaultGlyphService;
-import org.geotoolkit.display2d.style.CachedPointSymbolizer;
 import org.geotoolkit.display2d.style.CachedRule;
 import org.geotoolkit.display2d.style.renderer.AbstractSymbolizerRendererService;
-import org.geotoolkit.display2d.style.renderer.DefaultPointSymbolizerRendererService;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRenderer;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.feature.simple.SimpleFeatureType;
-import org.opengis.filter.expression.Expression;
 import org.opengis.style.PointSymbolizer;
 import org.opengis.style.Rule;
 

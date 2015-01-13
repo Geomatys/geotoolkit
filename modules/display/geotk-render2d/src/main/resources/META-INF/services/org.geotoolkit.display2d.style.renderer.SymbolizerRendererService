@@ -3,6 +3,7 @@ org.geotoolkit.display2d.style.renderer.DefaultPolygonSymbolizerRendererService
 org.geotoolkit.display2d.style.renderer.DefaultPointSymbolizerRendererService
 org.geotoolkit.display2d.style.renderer.DefaultTextSymbolizerRendererService
 org.geotoolkit.display2d.style.renderer.DefaultRasterSymbolizerRendererService
+org.geotoolkit.display2d.ext.band.BandRendererService
 org.geotoolkit.display2d.ext.cellular.CellRendererService
 org.geotoolkit.display2d.ext.dimrange.DimRangeRendererService
 org.geotoolkit.display2d.ext.pattern.PatternRendererService
