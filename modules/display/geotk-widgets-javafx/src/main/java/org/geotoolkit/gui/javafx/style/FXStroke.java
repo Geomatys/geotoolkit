@@ -31,22 +31,14 @@ import org.opengis.style.Stroke;
  */
 public class FXStroke extends FXStyleElementController<FXStroke,Stroke> {
  
-    @FXML
-    private FXColorExpression uiColor; 
-    @FXML
-    private FXNumberExpression uiWidth;
-    @FXML
-    private FXNumberExpression uiOpacity;      
-    @FXML
-    private FXNumberSpinner uiDash1;
-    @FXML
-    private FXNumberSpinner uiDash2;
-    @FXML
-    private FXNumberSpinner uiDash3;
-    @FXML
-    private FXLineCapExpression uiLineCap;
-    @FXML
-    private FXLineJoinExpression uiLineJoin;
+    @FXML private FXColorExpression uiColor; 
+    @FXML private FXNumberExpression uiOpacity;    
+    @FXML private FXNumberExpression uiWidth;
+    @FXML private FXLineCapExpression uiLineCap;
+    @FXML private FXLineJoinExpression uiLineJoin;
+    @FXML private FXNumberSpinner uiDash1;
+    @FXML private FXNumberSpinner uiDash2;
+    @FXML private FXNumberSpinner uiDash3;
 
             
     @Override

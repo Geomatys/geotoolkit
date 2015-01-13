@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.gui.javafx.util;
 
-import java.text.DecimalFormat;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.event.ActionEvent;

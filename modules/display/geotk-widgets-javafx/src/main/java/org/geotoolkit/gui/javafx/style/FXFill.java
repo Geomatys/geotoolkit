@@ -30,10 +30,8 @@ import org.opengis.style.Fill;
  */
 public class FXFill extends FXStyleElementController<FXFill,Fill> {
 
-    @FXML
-    private FXColorExpression uiColor;    
-    @FXML
-    private FXNumberExpression uiOpacity;
+    @FXML private FXColorExpression uiColor;    
+    @FXML private FXNumberExpression uiOpacity;
             
     @Override
     public Class<Fill> getEditedClass() {

@@ -56,7 +56,7 @@ public class MapItemGlyphColumn extends TreeTableColumn<MapItem, MapItem>{
 
             @Override
             public TreeTableCell<MapItem, MapItem> call(TreeTableColumn<MapItem, MapItem> p) {
-                return new GlyphButton();
+                return new MapItemGlyphTableCell();
             }
         });
         setEditable(true);
@@ -65,9 +65,9 @@ public class MapItemGlyphColumn extends TreeTableColumn<MapItem, MapItem>{
         setMaxWidth(34);
     }
     
-    private static class GlyphButton extends ButtonTreeTableCell<MapItem, MapItem>{
+    private static class MapItemGlyphTableCell extends ButtonTreeTableCell<MapItem, MapItem>{
 
-        public GlyphButton() {
+        public MapItemGlyphTableCell() {
             super(false, null, new Function<MapItem, Boolean>() {
 
                 @Override

@@ -155,6 +155,7 @@ public class FXMapContextTree extends BorderPane{
     
     private void initDragAndDrop(final TreeTableRow row){
         row.setOnDragDetected(new EventHandler<MouseEvent>() {
+            @Override
             public void handle(MouseEvent event) {
                 final int selection = treetable.getSelectionModel().getSelectedIndex();
                 final Dragboard db = treetable.startDragAndDrop(TransferMode.MOVE);
@@ -164,6 +165,7 @@ public class FXMapContextTree extends BorderPane{
         });
 
         row.setOnDragOver(new EventHandler<DragEvent>() {
+            @Override
             public void handle(DragEvent event) {
                 if (event.getDragboard().hasContent(MAPITEM_FORMAT)) {
                     event.acceptTransferModes(TransferMode.MOVE);
@@ -179,12 +181,14 @@ public class FXMapContextTree extends BorderPane{
         });
 
         row.setOnDragExited(new EventHandler<DragEvent>() {
+            @Override
             public void handle(DragEvent event) {
                 event.consume();
             }
         });
         
         row.setOnDragDropped(new EventHandler<DragEvent>() {
+            @Override
             public void handle(DragEvent event) {
                 
                 final Dragboard db = event.getDragboard();
@@ -225,6 +229,7 @@ public class FXMapContextTree extends BorderPane{
         });
 
         row.setOnDragDone(new EventHandler<DragEvent>() {
+            @Override
             public void handle(DragEvent event) {
                 event.consume();
             }

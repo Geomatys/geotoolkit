@@ -33,6 +33,8 @@ import javafx.scene.layout.Border;
 /**
  *
  * @author Johann Sorel (Geomatys)
+ * @param <S>
+ * @param <T>
  */
 public class ButtonTreeTableCell<S,T> extends TreeTableCell<S,T> {
     
@@ -100,5 +102,4 @@ public class ButtonTreeTableCell<S,T> extends TreeTableCell<S,T> {
             button.setVisible(visible);
         }
     }
-    
 }

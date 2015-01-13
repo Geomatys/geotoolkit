@@ -34,12 +34,12 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TablePosition;
 import javafx.scene.control.TableView;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.text.TextAlignment;
 import org.geotoolkit.display2d.ext.graduation.GraduationSymbolizer;
 import org.geotoolkit.display2d.service.DefaultGlyphService;
@@ -69,10 +69,10 @@ import org.opengis.style.TextSymbolizer;
  */
 public class FXStyleSimplePane extends FXLayerStylePane {
     
-    @FXML private ImageView uiPreview;
-    @FXML private TableView<Symbolizer> uiTable;
-    @FXML private BorderPane uiSymbolizerPane;
     @FXML private ComboBox<FXStyleElementController> uiChoice;
+    @FXML private TableView<Symbolizer> uiTable;
+    @FXML private ImageView uiPreview;
+    @FXML private ScrollPane uiSymbolizerPane;
     
     private FXStyleElementController editor = null;
     private MapLayer layer;
@@ -127,7 +127,7 @@ public class FXStyleSimplePane extends FXLayerStylePane {
         uiTable.getSelectionModel().getSelectedCells().addListener(new ListChangeListener<TablePosition>() {
             @Override
             public void onChanged(ListChangeListener.Change<? extends TablePosition> c) {
-                uiSymbolizerPane.setCenter(null);
+                uiSymbolizerPane.setContent(null);
                 
                 for(final TablePosition tablePosition : uiTable.getSelectionModel().getSelectedCells()){
                     
@@ -148,7 +148,7 @@ public class FXStyleSimplePane extends FXLayerStylePane {
                                 }
                             }
                         });
-                        uiSymbolizerPane.setCenter(editor);
+                        uiSymbolizerPane.setContent(editor);
                     }
                 }
                 

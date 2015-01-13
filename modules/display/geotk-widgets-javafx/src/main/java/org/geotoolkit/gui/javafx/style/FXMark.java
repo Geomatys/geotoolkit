@@ -30,12 +30,9 @@ import org.opengis.style.Mark;
  */
 public class FXMark extends FXStyleElementController<FXMark, Mark>{
 
-    @FXML
-    protected FXListExpression uiWkt;    
-    @FXML
-    protected FXStroke uiStroke;    
-    @FXML
-    protected FXFill uiFill;
+    @FXML protected FXListExpression uiWkt;    
+    @FXML protected FXStroke uiStroke;    
+    @FXML protected FXFill uiFill;
         
     @Override
     public Class<Mark> getEditedClass() {

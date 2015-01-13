@@ -31,8 +31,7 @@ import org.opengis.style.PointSymbolizer;
  */
 public class FXPointSymbolizer extends FXStyleElementController<FXPointSymbolizer, PointSymbolizer>{
 
-    @FXML
-    protected FXGraphic uiGraphic;
+    @FXML protected FXGraphic uiGraphic;
     
     @Override
     public Class<PointSymbolizer> getEditedClass() {

@@ -30,10 +30,8 @@ import org.opengis.style.Displacement;
  */
 public class FXDisplacement extends FXStyleElementController<FXDisplacement, Displacement>{
 
-    @FXML
-    protected FXNumberExpression uiX;    
-    @FXML
-    protected FXNumberExpression uiY;
+    @FXML protected FXNumberExpression uiX;    
+    @FXML protected FXNumberExpression uiY;
         
     @Override
     public Class<Displacement> getEditedClass() {
@@ -44,7 +42,6 @@ public class FXDisplacement extends FXStyleElementController<FXDisplacement, Dis
     public Displacement newValue() {
         return getStyleFactory().displacement();
     }
-    
     
     @Override
     public void initialize() {

@@ -30,10 +30,8 @@ import org.opengis.style.AnchorPoint;
  */
 public class FXAnchorPoint extends FXStyleElementController<FXAnchorPoint, AnchorPoint>{
 
-    @FXML
-    protected FXNumberExpression uiX;    
-    @FXML
-    protected FXNumberExpression uiY;
+    @FXML protected FXNumberExpression uiX;    
+    @FXML protected FXNumberExpression uiY;
         
     @Override
     public Class<AnchorPoint> getEditedClass() {

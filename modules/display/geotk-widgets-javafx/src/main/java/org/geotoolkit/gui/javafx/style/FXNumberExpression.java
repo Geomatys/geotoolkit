@@ -32,11 +32,8 @@ import org.opengis.filter.expression.Expression;
  */
 public class FXNumberExpression extends FXStyleElementController<FXNumberExpression, Expression> {
 
-    @FXML
-    private FXSpecialExpressionButton special;
-
-    @FXML
-    private FXNumberSpinner uiNumber;
+    @FXML private FXSpecialExpressionButton special;
+    @FXML private FXNumberSpinner uiNumber;
     
     public FXNumberExpression(){
         super();

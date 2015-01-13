@@ -18,8 +18,8 @@
         </rowConstraints>
          <children>
             <Label styleClass="property-key" text="%org.geotoolkit.gui.javafx.style.FXAnchorPoint.x" />
-            <Label styleClass="property-key" text="%org.geotoolkit.gui.javafx.style.FXAnchorPoint.y" GridPane.rowIndex="1" />
             <FXNumberExpression fx:id="uiX" GridPane.columnIndex="1" />
+            <Label styleClass="property-key" text="%org.geotoolkit.gui.javafx.style.FXAnchorPoint.y" GridPane.rowIndex="1" />
             <FXNumberExpression fx:id="uiY" GridPane.columnIndex="1" GridPane.rowIndex="1" />
          </children>
       </GridPane>

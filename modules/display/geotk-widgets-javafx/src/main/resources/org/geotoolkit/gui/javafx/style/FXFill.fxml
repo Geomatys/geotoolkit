@@ -22,9 +22,9 @@
         </rowConstraints>
          <children>
             <Label styleClass="property-key" text="%org.geotoolkit.gui.javafx.style.FXFill.color" />
+            <FXColorExpression fx:id="uiColor" GridPane.columnIndex="1" />
             <Label styleClass="property-key" text="%org.geotoolkit.gui.javafx.style.FXFill.opacity" GridPane.rowIndex="1" />
             <FXNumberExpression fx:id="uiOpacity" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-            <FXColorExpression fx:id="uiColor" GridPane.columnIndex="1" />
          </children>
       </GridPane>
    </center>
