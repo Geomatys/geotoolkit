@@ -51,7 +51,7 @@ import org.opengis.parameter.ParameterValueGroup;
  */
 public class CoverageSQLStore extends AbstractCoverageStore {
 
-    private CoverageDatabase db;
+    private final CoverageDatabase db;
     private final Set<StorageListener> listeners = new HashSet<StorageListener>();
     private final ParameterValueGroup parameters;
 
@@ -85,6 +85,7 @@ public class CoverageSQLStore extends AbstractCoverageStore {
     public CoverageSQLStore(ParameterValueGroup parameters) {
         super(adaptParameter(parameters));
         this.parameters = parameters;
+        this.db = new CoverageDatabase(parameters);
     }
 
     @Override
