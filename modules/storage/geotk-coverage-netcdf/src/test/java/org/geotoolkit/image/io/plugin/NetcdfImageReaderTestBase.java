@@ -27,6 +27,7 @@ import ucar.nc2.NetcdfFile;
 import org.opengis.wrapper.netcdf.IOTestCase;
 import org.opengis.test.coverage.image.ImageReaderTestCase;
 
+import org.geotoolkit.factory.Hints;
 import org.apache.sis.test.DependsOn;
 import org.geotoolkit.test.image.ImageTestBase;
 import org.geotoolkit.referencing.adapters.NetcdfCRSTest;
@@ -48,6 +49,15 @@ import static org.geotoolkit.test.Assert.*;
  */
 @DependsOn(NetcdfCRSTest.class)
 public abstract strictfp class NetcdfImageReaderTestBase extends ImageReaderTestCase {
+    /**
+     * Necessary for some tests for now because GeographicBoundingBox.setBounds(Envelope)
+     * does not have the possibility to specify whether it wants a lenient or non-lenient
+     * factory.
+     */
+    static {
+        Hints.putSystemDefault(Hints.LENIENT_DATUM_SHIFT, Boolean.TRUE);
+    }
+
     /**
      * Default constructor for subclasses.
      */

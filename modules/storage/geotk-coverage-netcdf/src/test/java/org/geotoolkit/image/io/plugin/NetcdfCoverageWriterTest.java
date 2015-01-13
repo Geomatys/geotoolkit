@@ -44,6 +44,7 @@ import org.geotoolkit.coverage.io.CoverageIO;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.ImageCoverageWriter;
 import org.geotoolkit.coverage.io.CoverageStoreException;
+import org.geotoolkit.factory.Hints;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.referencing.CRS;
 import org.apache.sis.referencing.crs.DefaultCompoundCRS;
@@ -67,6 +68,15 @@ import static org.geotoolkit.test.Assert.*;
  * @since 3.20
  */
 public class NetcdfCoverageWriterTest extends ImageTestBase {
+    /**
+     * Necessary for some tests for now because GeographicBoundingBox.setBounds(Envelope)
+     * does not have the possibility to specify whether it wants a lenient or non-lenient
+     * factory.
+     */
+    static {
+        Hints.putSystemDefault(Hints.LENIENT_DATUM_SHIFT, Boolean.TRUE);
+    }
+
     /**
      * Tolerance threshold for floating point number comparisons.
      */
