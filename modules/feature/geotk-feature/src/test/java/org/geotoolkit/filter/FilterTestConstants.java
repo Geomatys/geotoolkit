@@ -18,6 +18,7 @@ package org.geotoolkit.filter;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.logging.Level;
@@ -61,7 +62,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 public class FilterTestConstants {
 
-    
+
     private static final Logger LOGGER = Logging.getLogger(FilterTestConstants.class);
 
     public static final FilterFactory2 FF = (FilterFactory2)
@@ -77,7 +78,7 @@ public class FilterTestConstants {
     public static final Feature FEATURE_1;
     public static final FeatureType CX_FEATURE_TYPE;
     public static final Feature CX_FEATURE;
-    
+
     public static final Object CANDIDATE_1;
 
     static{
@@ -107,7 +108,9 @@ public class FilterTestConstants {
         ring = GF.createLinearRing(coords);
         WRONG_GEOMETRY = GF.createPolygon(ring, new LinearRing[0]);
 
-        DATE = new Date();
+        final Calendar calendar = Calendar.getInstance();
+        calendar.set(2015, 0, 13, 10, 30); // Needs to be in local time zone for this test.
+        DATE = calendar.getTime();
 
         // Builds the test candidate
         final Map<String,Object> candidate = new HashMap<String, Object>();
@@ -132,7 +135,7 @@ public class FilterTestConstants {
 
         // assign the candidate
         CANDIDATE_1 = candidate;
-        
+
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("testFeatureType");
         ftb.add("testGeometry", Polygon.class, crs);

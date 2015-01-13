@@ -118,14 +118,14 @@ public class BinaryComparisonTest {
         assertFalse(filter.evaluate(CANDIDATE_1));
 
         rightliteral = FF.literal(DATE);
-        falseliteral = FF.literal(new Date(DATE.getTime()+360000));
-        Literal falseliteral2 = FF.literal(new Date(DATE.getTime()+ 25*60*60*1000));
+        falseliteral = FF.literal(new Date(DATE.getTime() + 360000)); // Same day
+        Literal falseliteral2 = FF.literal(new Date(DATE.getTime() + 25*60*60*1000)); // Other day
 
         property = FF.property("date");
         filter = FF.equals(property, rightliteral);
         assertTrue(filter.evaluate(CANDIDATE_1));
         filter = FF.equals(property, falseliteral);
-        assertTrue(filter.evaluate(CANDIDATE_1));
+        assertTrue(filter.evaluate(CANDIDATE_1)); // Would be false if we took hours in account, but the filter intentionally ignores hours if a date is java.sql.Date.
 
         filter = FF.equals(property, falseliteral2);
         assertFalse(filter.evaluate(CANDIDATE_1));
@@ -709,7 +709,7 @@ public class BinaryComparisonTest {
         filter = FF.notEqual(property, rightliteral);
         assertFalse(filter.evaluate(CANDIDATE_1));
         filter = FF.notEqual(property, falseliteral);
-        assertFalse(filter.evaluate(CANDIDATE_1));
+        assertFalse(filter.evaluate(CANDIDATE_1)); // Would be false if we took hours in account, but the filter intentionally ignores hours if a date is java.sql.Date.
         filter = FF.notEqual(property, falseliteral2);
         assertTrue(filter.evaluate(CANDIDATE_1));
 
