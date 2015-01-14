@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import org.apache.sis.util.logging.Logging;
+import org.opengis.referencing.operation.MathTransform;
 import org.opengis.temporal.Duration;
 import org.opengis.temporal.Instant;
 import org.opengis.temporal.OrdinalReferenceSystem;
@@ -117,52 +118,52 @@ import org.opengis.temporal.TemporalGeometricPrimitive;
         Duration response = null;
         long diff = 0L;
 
-        if (this instanceof Instant && other instanceof Instant) {
-            if (((Instant) this).getPosition().anyOther() != null && ((Instant) other).getPosition().anyOther() != null) {
-                if (!((DefaultTemporalPosition) ((Instant) this).getPosition().anyOther()).getFrame().equals(((DefaultTemporalPosition) ((Instant) other).getPosition().anyOther()).getFrame())) {
-                    try {
-                        throw new Exception("the TM_TemporalPositions are not both associated with the same TM_ReferenceSystem !");
-                    } catch (Exception ex) {
-                        LOGGER.log(Level.WARNING, null, ex);
-                    }
-                }
-            } else if (((Instant) this).getPosition().anyOther() != null) {
-                if (((Instant) this).getPosition().anyOther().getIndeterminatePosition() != null ||
-                        ((DefaultTemporalPosition) ((Instant) this).getPosition().anyOther()).getFrame() instanceof OrdinalReferenceSystem) {
-                    try {
-                        throw new Exception("either of the two TM_TemporalPositions is indeterminate or is associated with a TM_OrdianlReferenceSystem !");
-                    } catch (Exception ex) {
-                        LOGGER.log(Level.WARNING, null, ex);
-                    }
-                }
-            } else if (((Instant) other).getPosition().anyOther() != null) {
-                if (((Instant) other).getPosition().anyOther().getIndeterminatePosition() != null ||
-                        ((DefaultTemporalPosition) ((Instant) other).getPosition().anyOther()).getFrame() instanceof OrdinalReferenceSystem) {
-                    try {
-                        throw new Exception("either of the two TM_TemporalPositions is indeterminate or is associated with a TM_OrdianlReferenceSystem !");
-                    } catch (Exception ex) {
-                        LOGGER.log(Level.WARNING, null, ex);
-                    }
-                }
-            }
-        }
-
+//        if (this instanceof Instant && other instanceof Instant) {
+//            if (((Instant) this).getPosition().anyOther() != null && ((Instant) other).getPosition().anyOther() != null) {
+//                if (!((DefaultTemporalPosition) ((Instant) this).getPosition().anyOther()).getFrame().equals(((DefaultTemporalPosition) ((Instant) other).getPosition().anyOther()).getFrame())) {
+//                    try {
+//                        throw new Exception("the TM_TemporalPositions are not both associated with the same TM_ReferenceSystem !");
+//                    } catch (Exception ex) {
+//                        LOGGER.log(Level.WARNING, null, ex);
+//                    }
+//                }
+//            } else if (((Instant) this).getPosition().anyOther() != null) {
+//                if (((Instant) this).getPosition().anyOther().getIndeterminatePosition() != null ||
+//                        ((DefaultTemporalPosition) ((Instant) this).getPosition().anyOther()).getFrame() instanceof OrdinalReferenceSystem) {
+//                    try {
+//                        throw new Exception("either of the two TM_TemporalPositions is indeterminate or is associated with a TM_OrdinalReferenceSystem !");
+//                    } catch (Exception ex) {
+//                        LOGGER.log(Level.WARNING, null, ex);
+//                    }
+//                }
+//            } else if (((Instant) other).getPosition().anyOther() != null) {
+//                if (((Instant) other).getPosition().anyOther().getIndeterminatePosition() != null ||
+//                        ((DefaultTemporalPosition) ((Instant) other).getPosition().anyOther()).getFrame() instanceof OrdinalReferenceSystem) {
+//                    try {
+//                        throw new Exception("either of the two TM_TemporalPositions is indeterminate or is associated with a TM_OrdinalReferenceSystem !");
+//                    } catch (Exception ex) {
+//                        LOGGER.log(Level.WARNING, null, ex);
+//                    }
+//                }
+//            }
+//        }
+        
         if (this.relativePosition(other).equals(RelativePosition.BEFORE) || this.relativePosition(other).equals(RelativePosition.AFTER)) {
             if (this instanceof Instant && other instanceof Instant) {
-                diff = Math.min(Math.abs(((Instant) other).getPosition().getDate().getTime() - ((Instant) this).getPosition().getDate().getTime()),
-                        Math.abs(((Instant) this).getPosition().getDate().getTime() - ((Instant) other).getPosition().getDate().getTime()));
+                diff = Math.min(Math.abs(((Instant) other).getDate().getTime() - ((Instant) this).getDate().getTime()),
+                        Math.abs(((Instant) this).getDate().getTime() - ((Instant) other).getDate().getTime()));
             } else {
                 if (this instanceof Instant && other instanceof Period) {
-                    diff = Math.min(Math.abs(((Period) other).getBeginning().getPosition().getDate().getTime() - ((Instant) this).getPosition().getDate().getTime()),
-                            Math.abs(((Period) other).getEnding().getPosition().getDate().getTime() - ((Instant) this).getPosition().getDate().getTime()));
+                    diff = Math.min(Math.abs(((Period) other).getBeginning().getDate().getTime() - ((Instant) this).getDate().getTime()),
+                            Math.abs(((Period) other).getEnding().getDate().getTime() - ((Instant) this).getDate().getTime()));
                 } else {
                     if (this instanceof Period && other instanceof Instant) {
-                        diff = Math.min(Math.abs(((Instant) other).getPosition().getDate().getTime() - ((Period) this).getEnding().getPosition().getDate().getTime()),
-                                Math.abs(((Instant) other).getPosition().getDate().getTime() - ((Period) this).getBeginning().getPosition().getDate().getTime()));
+                        diff = Math.min(Math.abs(((Instant) other).getDate().getTime() - ((Period) this).getEnding().getDate().getTime()),
+                                Math.abs(((Instant) other).getDate().getTime() - ((Period) this).getBeginning().getDate().getTime()));
                     } else {
                         if (this instanceof Period && other instanceof Period) {
-                            diff = Math.min(Math.abs(((Period) other).getEnding().getPosition().getDate().getTime() - ((Period) this).getBeginning().getPosition().getDate().getTime()),
-                                    Math.abs(((Period) other).getBeginning().getPosition().getDate().getTime() - ((Period) this).getEnding().getPosition().getDate().getTime()));
+                            diff = Math.min(Math.abs(((Period) other).getEnding().getDate().getTime() - ((Period) this).getBeginning().getDate().getTime()),
+                                    Math.abs(((Period) other).getBeginning().getDate().getTime() - ((Period) this).getEnding().getDate().getTime()));
                         }
                     }
                 }

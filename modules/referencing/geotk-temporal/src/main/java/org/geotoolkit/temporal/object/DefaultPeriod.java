@@ -47,12 +47,12 @@ import org.opengis.temporal.RelativePosition;
 public class DefaultPeriod extends DefaultTemporalGeometricPrimitive implements Period {
 
     /**
-     * This is the TM_Instant at which this Period starts.
+     * This is the {@link Instant} at which this Period starts.
      */
     private Instant begining;
     
     /**
-     * This is the TM_Instant at which this Period ends.
+     * This is the {@link Instant} at which this Period ends.
      */
     private Instant ending;
 
@@ -202,7 +202,7 @@ public class DefaultPeriod extends DefaultTemporalGeometricPrimitive implements 
     /**
      * Set {@link Period} to the {@link Instant} at which it ends.
      * 
-     * @param begining start {@link Instant} of the {@link Period}.
+     * @param ending ending {@link Instant} of the {@link Period}.
      */
     public void setEnding(final Instant ending) {
         this.ending = ending;

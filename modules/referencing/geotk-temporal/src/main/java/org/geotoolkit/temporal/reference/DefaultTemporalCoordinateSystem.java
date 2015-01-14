@@ -20,11 +20,8 @@ package org.geotoolkit.temporal.reference;
 import java.util.Date;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.TimeUnit;
 import javax.measure.converter.UnitConverter;
 import javax.measure.quantity.Duration;
-import javax.measure.quantity.Quantity;
-import javax.measure.unit.NonSI;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -37,15 +34,8 @@ import org.apache.sis.util.ComparisonMode;
 
 import org.geotoolkit.temporal.object.DefaultTemporalCoordinate;
 
-import org.opengis.metadata.extent.Extent;
-import org.opengis.metadata.Identifier;
 import org.opengis.temporal.TemporalCoordinate;
 import org.opengis.temporal.TemporalCoordinateSystem;
-import org.opengis.util.InternationalString;
-
-import static org.geotoolkit.temporal.object.TemporalConstants.*;
-import org.opengis.referencing.cs.TimeCS;
-import org.opengis.referencing.datum.TemporalDatum;
 
 /**
  * A temporal coordinate system to simplify the computation of temporal distances
@@ -124,8 +114,7 @@ public class DefaultTemporalCoordinateSystem extends DefaultTemporalReferenceSys
      * </table>
      * 
      * @param properties The properties to be given to the coordinate reference system.
-     * @param datum The datum.
-     * @param cs The coordinate system.
+     * @param interval unit of measure used as the base interval for the scale.
      * @param origin position of the origin of the scale on which the temporal coordinate system is based
      * expressed as a date in the Gregorian calendar and time of day in UTC.
      */

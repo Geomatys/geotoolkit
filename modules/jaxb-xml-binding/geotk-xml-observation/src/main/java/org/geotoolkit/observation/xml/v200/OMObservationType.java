@@ -292,7 +292,7 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
         if (period instanceof TimePeriodType) {
             this.phenomenonTime = new TimeObjectPropertyType((TimePeriodType)period);
         } else if (period != null) {
-            final TimePeriodType pt = new TimePeriodType(period.getBeginning().getPosition(), period.getEnding().getPosition());
+            final TimePeriodType pt = new TimePeriodType(period.getBeginning(), period.getEnding());
             this.phenomenonTime = new TimeObjectPropertyType(pt);
         }
     }

@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.gml.xml;
 
-import org.opengis.temporal.Position;
+//import org.opengis.temporal.Position;
 
 /**
  *
@@ -25,9 +25,9 @@ import org.opengis.temporal.Position;
  */
 public interface EnvelopeWithTimePeriod extends Envelope {
  
-    Position getBeginPosition();
+    AbstractTimePosition getBeginPosition();
     
-    Position getEndPosition();
+    AbstractTimePosition getEndPosition();
     
     String getFrame();
 }

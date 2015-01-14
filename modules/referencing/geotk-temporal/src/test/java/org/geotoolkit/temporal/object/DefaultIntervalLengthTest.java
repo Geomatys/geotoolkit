@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.temporal.object;
 
-import org.geotoolkit.temporal.object.DefaultIntervalLength;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 import org.junit.After;

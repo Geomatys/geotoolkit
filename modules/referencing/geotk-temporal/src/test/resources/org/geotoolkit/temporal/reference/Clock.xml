@@ -30,16 +30,17 @@
                                 <gml:TimeInstant gml:id="auto-start">
                                     <gml:identifier codeSpace="AUTO">start</gml:identifier>
                                     <gml:name codeSpace="AUTO">begiiinn hou hou hou</gml:name>
-                                    <gml:timePosition>2014-10-22T11:59:35.455+02:00</gml:timePosition>
+                                    <gml:timePosition>2015-01-06T10:26:14.788+01:00</gml:timePosition>
                                 </gml:TimeInstant>
                             </gml:begin>
                             <gml:end>
                                 <gml:TimeInstant gml:id="auto-end">
                                     <gml:identifier codeSpace="AUTO">end</gml:identifier>
                                     <gml:name codeSpace="AUTO">happy ending</gml:name>
-                                    <gml:timePosition>2014-10-22T11:59:35.458+02:00</gml:timePosition>
+                                    <gml:timePosition>2015-01-06T10:26:14.794+01:00</gml:timePosition>
                                 </gml:TimeInstant>
                             </gml:end>
+                            <gml:duration>PT0S</gml:duration>
                         </gml:TimePeriod>
                     </gml:epochOfUse>
                 </gml:TimeCalendarEra>
@@ -54,22 +55,23 @@
                     <gml:julianReference>42.420000000</gml:julianReference>
                     <gml:epochOfUse>
                         <gml:TimePeriod gml:id="auto-periodidentifier2">
-                            <gml:identifier codeSpace="AUTO">period identifier2</gml:identifier>
+                            <gml:identifier codeSpace="AUTO">period identifier</gml:identifier>
                             <gml:name codeSpace="AUTO">period</gml:name>
                             <gml:begin>
                                 <gml:TimeInstant gml:id="auto-start2">
-                                    <gml:identifier codeSpace="AUTO">start2</gml:identifier>
+                                    <gml:identifier codeSpace="AUTO">start</gml:identifier>
                                     <gml:name codeSpace="AUTO">begiiinn hou hou hou</gml:name>
-                                    <gml:timePosition>2014-10-22T11:59:35.455+02:00</gml:timePosition>
+                                    <gml:timePosition>2015-01-06T10:26:14.788+01:00</gml:timePosition>
                                 </gml:TimeInstant>
                             </gml:begin>
                             <gml:end>
                                 <gml:TimeInstant gml:id="auto-end2">
-                                    <gml:identifier codeSpace="AUTO">end2</gml:identifier>
+                                    <gml:identifier codeSpace="AUTO">end</gml:identifier>
                                     <gml:name codeSpace="AUTO">happy ending</gml:name>
-                                    <gml:timePosition>2014-10-22T11:59:35.458+02:00</gml:timePosition>
+                                    <gml:timePosition>2015-01-06T10:26:14.794+01:00</gml:timePosition>
                                 </gml:TimeInstant>
                             </gml:end>
+                            <gml:duration>PT0S</gml:duration>
                         </gml:TimePeriod>
                     </gml:epochOfUse>
                 </gml:TimeCalendarEra>

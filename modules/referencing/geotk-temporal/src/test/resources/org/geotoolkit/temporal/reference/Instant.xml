@@ -3,5 +3,5 @@
                  xsi:schemaLocation = "http://www.opengis.net/gml/3.2 http://schemas.opengis.net/gml/3.2.1/temporal.xsd" gml:id="crs-instantid">
     <gml:identifier codeSpace="CRS">Instant id</gml:identifier>
     <gml:name codeSpace="CRS">Instant</gml:name>
-        <gml:timePosition>2014-10-08T16:56:19.908+02:00</gml:timePosition>
+    <gml:timePosition>2015-01-06T09:52:33.297+01:00</gml:timePosition>
 </gml:TimeInstant>

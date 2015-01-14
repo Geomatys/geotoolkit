@@ -61,19 +61,19 @@ public class OMXmlFactory {
         if (observation.getSamplingTime() instanceof Period) {
             final Period p = (Period) observation.getSamplingTime();
             String dateBegin = null;
-            if (p.getBeginning() != null && p.getBeginning().getPosition() != null) {
-                dateBegin = p.getBeginning().getPosition().getDateTime().toString();
+            if (p.getBeginning() != null && p.getBeginning().getDate() != null) {
+                dateBegin = p.getBeginning().getDate().toString();
             }
             String dateEnd = null;
-            if (p.getEnding() != null && p.getEnding().getPosition() != null) {
-                dateEnd = p.getEnding().getPosition().getDateTime().toString();
+            if (p.getEnding() != null && p.getEnding().getDate() != null) {
+                dateEnd = p.getEnding().getDate().toString();
             }
             time = (org.geotoolkit.gml.xml.v311.AbstractTimeGeometricPrimitiveType) GMLXmlFactory.createTimePeriod("3.1.1", null, dateBegin, dateEnd);
         } else if (observation.getSamplingTime() instanceof Instant) {
             final Instant p = (Instant) observation.getSamplingTime();
             String date = null;
-            if (p.getPosition() != null) {
-                date = p.getPosition().getDateTime().toString();
+            if (p.getDate() != null) {
+                date = p.getDate().toString();
             }
             time = (org.geotoolkit.gml.xml.v311.AbstractTimeGeometricPrimitiveType) GMLXmlFactory.createTimeInstant("3.1.1", null, date);
         } else if (observation.getSamplingTime() != null) {
@@ -142,19 +142,19 @@ public class OMXmlFactory {
         if (observation.getSamplingTime() instanceof Period) {
             final Period p = (Period) observation.getSamplingTime();
             String dateBegin = null;
-            if (p.getBeginning() != null && p.getBeginning().getPosition() != null) {
-                dateBegin = p.getBeginning().getPosition().getDateTime().toString();
+            if (p.getBeginning() != null && p.getBeginning().getDate() != null) {
+                dateBegin = p.getBeginning().getDate().toString();
             }
             String dateEnd = null;
-            if (p.getEnding() != null && p.getEnding().getPosition() != null) {
-                dateEnd = p.getEnding().getPosition().getDateTime().toString();
+            if (p.getEnding() != null && p.getEnding().getDate() != null) {
+                dateEnd = p.getEnding().getDate().toString();
             }
             time = (org.geotoolkit.gml.xml.v321.AbstractTimeObjectType) GMLXmlFactory.createTimePeriod("3.2.1", null, dateBegin, dateEnd);
         } else if (observation.getSamplingTime() instanceof Instant) {
             final Instant p = (Instant) observation.getSamplingTime();
             String date = null;
-            if (p.getPosition() != null) {
-                date = p.getPosition().getDateTime().toString();
+            if (p.getDate() != null) {
+                date = p.getDate().toString();
             }
             time = (org.geotoolkit.gml.xml.v321.AbstractTimeObjectType) GMLXmlFactory.createTimeInstant("3.2.1", null, date);
         } else if (observation.getSamplingTime() != null) {

@@ -40,9 +40,8 @@ import javax.xml.bind.annotation.XmlValue;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.gml.xml.AbstractTimePosition;
 import org.geotoolkit.gml.xml.TimeIndeterminateValueType;
-import org.opengis.temporal.Position;
+//import org.opengis.temporal.Position;
 import org.opengis.util.InternationalString;
-
 
 /**
  * The method for identifying a temporal position is specific to each temporal reference system.  gml:TimePositionType supports the description of temporal position according to the subtypes described in ISO 19108.
@@ -103,15 +102,16 @@ public class TimePositionType extends AbstractTimePosition implements Serializab
         }
     }
 
-    public TimePositionType(final Position value){
+    public TimePositionType(final AbstractTimePosition value){
         this(value.getDate());
+        this.indeterminatePosition = value.getIndeterminatePosition();
     }
 
     /**
      * build a simple Timposition with an indeterminate value.
      *
      */
-    public TimePositionType(final TimeIndeterminateValueType indeterminatePosition){
+    public TimePositionType(final TimeIndeterminateValueType indeterminatePosition) {
         this.indeterminatePosition = indeterminatePosition;
     }
 
@@ -120,7 +120,7 @@ public class TimePositionType extends AbstractTimePosition implements Serializab
      *
      * @param value a date.
      */
-    public TimePositionType(final Timestamp time){
+    public TimePositionType(final Timestamp time) {
         if (time != null) {
             this.value = Arrays.asList(FORMATTERS.get(0).format(time));
         }
@@ -131,7 +131,7 @@ public class TimePositionType extends AbstractTimePosition implements Serializab
      *
      * @param value a date.
      */
-    public TimePositionType(final Date time){
+    public TimePositionType(final Date time) {
         setValue(time);
     }
     
@@ -142,8 +142,6 @@ public class TimePositionType extends AbstractTimePosition implements Serializab
      *
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     *
-     *
      */
     public List<String> getValues() {
         if (value == null) {
@@ -170,7 +168,7 @@ public class TimePositionType extends AbstractTimePosition implements Serializab
         final Calendar c = Calendar.getInstance();
         c.setTime(value);
         if (c.get(Calendar.HOUR) == 0 && c.get(Calendar.MINUTE) == 0 && c.get(Calendar.SECOND) == 0) {
-            final DateFormat df = FORMATTERS.get(2);
+            final DateFormat df = FORMATTERS.get(3);
             synchronized (df) {
                 this.value = Arrays.asList(df.format(value));
             }
@@ -259,7 +257,7 @@ public class TimePositionType extends AbstractTimePosition implements Serializab
         this.indeterminatePosition = value;
     }
 
-    @Override
+//    @Override
     public Date getDate() {
         if (value!= null && !value.isEmpty()) {
             return parseDate(value.get(0));
@@ -267,7 +265,7 @@ public class TimePositionType extends AbstractTimePosition implements Serializab
         return null;
     }
 
-    @Override
+//    @Override
     public Time getTime() {
         if (value != null && !value.isEmpty()) {
             return Time.valueOf(value.get(0));
@@ -275,7 +273,7 @@ public class TimePositionType extends AbstractTimePosition implements Serializab
         return null;
     }
 
-    @Override
+//    @Override
     public InternationalString getDateTime() {
         if (value != null && !value.isEmpty()) {
             return new SimpleInternationalString(value.get(0));

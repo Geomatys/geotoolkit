@@ -31,7 +31,6 @@ import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.metadata.Citations;
 import org.geotoolkit.temporal.object.DefaultInstant;
-import org.geotoolkit.temporal.object.DefaultPosition;
 import org.geotoolkit.temporal.object.DefaultTemporalNode;
 import org.opengis.metadata.Identifier;
 import static org.opengis.referencing.IdentifiedObject.NAME_KEY;
@@ -278,7 +277,7 @@ public class DefaultOrdinalEra extends AbstractIdentifiedObject implements Ordin
         instantProp.put(NAME_KEY, new NamedIdentifier(Citations.CRS, iden.getCode()+"_begin instant"));
         final Map<String, Object> nodeProp = new HashMap<>();
         nodeProp.put(NAME_KEY, new NamedIdentifier(Citations.CRS, iden.getCode()+"_start node"));
-        final DefaultTemporalNode start = new DefaultTemporalNode(nodeProp, new DefaultInstant(instantProp, new DefaultPosition(begin)), null, null);
+        final DefaultTemporalNode start = new DefaultTemporalNode(nodeProp, new DefaultInstant(instantProp, begin), null, null);
         return start;
     }
     
@@ -294,7 +293,7 @@ public class DefaultOrdinalEra extends AbstractIdentifiedObject implements Ordin
         instantProp.put(NAME_KEY, new NamedIdentifier(Citations.CRS, iden.getCode()+"_end instant"));
         final Map<String, Object> nodeProp = new HashMap<>();
         nodeProp.put(NAME_KEY, new NamedIdentifier(Citations.CRS, iden.getCode()+"_end node"));
-        final DefaultTemporalNode start = new DefaultTemporalNode(nodeProp, new DefaultInstant(instantProp, new DefaultPosition(begin)), null, null);
+        final DefaultTemporalNode start = new DefaultTemporalNode(nodeProp, new DefaultInstant(instantProp, begin), null, null);
         return start;
     }
     

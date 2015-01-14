@@ -35,7 +35,6 @@ import org.geotoolkit.temporal.object.DefaultDateAndTime;
 import org.geotoolkit.temporal.object.DefaultInstant;
 import org.geotoolkit.temporal.object.DefaultJulianDate;
 import org.geotoolkit.temporal.object.DefaultPeriod;
-import org.geotoolkit.temporal.object.DefaultPosition;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -96,16 +95,16 @@ public class DefaultCalendarTest {
         
         java.util.Calendar cal = java.util.Calendar.getInstance();
         cal.set(1900, 0, 1);
-        Instant begining1 = FACTORY.createInstant(new DefaultPosition(cal.getTime()));//new DefaultInstant(propertiesInstant, new DefaultPosition(cal.getTime()));
+        Instant begining1 = FACTORY.createInstant(cal.getTime());
        
         cal.set(2000, 9, 17);
-        Instant ending1 = FACTORY.createInstant(new DefaultPosition(cal.getTime()));
+        Instant ending1 = FACTORY.createInstant(cal.getTime());
         
         cal.set(2000, 1, 1);
-        Instant begining2 = FACTORY.createInstant(new DefaultPosition(cal.getTime()));
+        Instant begining2 = FACTORY.createInstant(cal.getTime());
         
         cal.set(2012, 1, 1);
-        Instant ending2 = FACTORY.createInstant(new DefaultPosition(cal.getTime()));
+        Instant ending2 = FACTORY.createInstant(cal.getTime());
 
         //-- map period
         Period epochOfUse1 = FACTORY.createPeriod(begining1, ending1);

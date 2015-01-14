@@ -20,7 +20,6 @@ package org.geotoolkit.gml.xml.v321;
 
 import java.util.Objects;
 import java.io.Serializable;
-import java.sql.Timestamp;
 import java.util.Date;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -29,9 +28,10 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.Duration;
 import org.geotoolkit.gml.xml.TimeIndeterminateValueType;
 import org.apache.sis.util.ComparisonMode;
+import org.geotoolkit.gml.xml.AbstractTimePosition;
 import org.opengis.temporal.Instant;
 import org.opengis.temporal.Period;
-import org.opengis.temporal.Position;
+//import org.opengis.temporal.Position;
 
 
 /**
@@ -88,7 +88,27 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType implement
     /**
      * Build a new Time period bounded by the begin and end time specified.
      */
-    public TimePeriodType(final Position beginPosition, final Position endPosition){
+    public TimePeriodType(final Instant beginPosition, final Instant endPosition) {
+        this(null, beginPosition, endPosition);
+    }
+    
+    /**
+     * Build a new Time period bounded by the begin and end time specified.
+     */
+    public TimePeriodType(final String id, final Instant beginPosition, final Instant endPosition) {
+        super(id);
+        if (beginPosition != null && beginPosition.getDate() != null) {
+            this.beginPosition = new TimePositionType(beginPosition.getDate());
+        }
+        if (endPosition != null && endPosition.getDate() != null) {
+            this.endPosition = new TimePositionType(endPosition.getDate());
+        }
+    }
+    
+    /**
+     * Build a new Time period bounded by the begin and end time specified.
+     */
+    public TimePeriodType(final AbstractTimePosition beginPosition, final AbstractTimePosition endPosition){
         if (beginPosition instanceof TimePositionType) {
             this.beginPosition = (TimePositionType) beginPosition;
         } else if (beginPosition != null) {
@@ -110,7 +130,7 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType implement
         this.endPosition   = new TimePositionType(endValue);
     }
 
-    public TimePeriodType(final Timestamp beginValue, final Timestamp endValue){
+    public TimePeriodType(final Date beginValue, final Date endValue){
         this.beginPosition = new TimePositionType(beginValue);
         this.endPosition   = new TimePositionType(endValue);
     }
@@ -123,7 +143,7 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType implement
         this.endPosition   = new TimePositionType(TimeIndeterminateValueType.NOW);
     }
 
-    public TimePeriodType(final Timestamp beginPosition){
+    public TimePeriodType(final Date beginPosition){
         this.beginPosition = new TimePositionType(beginPosition);
         this.endPosition   = new TimePositionType(TimeIndeterminateValueType.NOW);
     }
@@ -140,24 +160,37 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType implement
     /**
      * Build a new Time period bounded by an indeterminate time at begin.
      */
-    public TimePeriodType(final TimeIndeterminateValueType indeterminateBegin, final TimePositionType endPosition){
+    public TimePeriodType(final TimeIndeterminateValueType indeterminateBegin, final TimePositionType endPosition) {
         this.beginPosition = new TimePositionType(indeterminateBegin);
         this.endPosition   = endPosition;
     }
+    
+    /**
+     * Build a new Time period bounded by an indeterminate time at begin.
+     */
+    public TimePeriodType(final TimeIndeterminateValueType indeterminateBegin, final Date endPosition) {
+        this.beginPosition = new TimePositionType(indeterminateBegin);
+        this.endPosition   = new TimePositionType(endPosition);
+    }
 
-    public TimePeriodType(final Position beginPosition, final TimeIndeterminateValueType indeterminateEnd){
+    public TimePeriodType(final AbstractTimePosition beginPosition, final TimeIndeterminateValueType indeterminateEnd){
         this.endPosition = new TimePositionType(indeterminateEnd);
         if (beginPosition instanceof TimePositionType) {
             this.beginPosition = (TimePositionType) beginPosition;
         } else if (beginPosition != null) {
-            this.beginPosition = new TimePositionType(beginPosition);
+            this.beginPosition = new TimePositionType(beginPosition.getDate());
         }
     }
 
+    public TimePeriodType(final Date beginPosition, final TimeIndeterminateValueType indeterminateEnd) {
+        this.endPosition = new TimePositionType(endPosition);
+        this.endPosition = new TimePositionType(indeterminateEnd);
+    }
+    
     /**
      * Build a new Time periodwith a duration.
      */
-    public TimePeriodType(final Duration duration){
+    public TimePeriodType(final Duration duration) {
         this.duration = duration;
     }
 

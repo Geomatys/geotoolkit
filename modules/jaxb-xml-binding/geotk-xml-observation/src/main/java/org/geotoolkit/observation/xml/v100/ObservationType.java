@@ -574,7 +574,7 @@ public class ObservationType implements Entry, AbstractObservation {
         if (period instanceof TimePeriodType) {
             this.samplingTime = new TimeGeometricPrimitivePropertyType((TimePeriodType)period);
         } else if (period != null) {
-            final TimePeriodType pt = new TimePeriodType(period.getBeginning().getPosition(), period.getEnding().getPosition());
+            final TimePeriodType pt = new TimePeriodType(period.getBeginning(), period.getEnding());
             this.samplingTime = new TimeGeometricPrimitivePropertyType(pt);
         }
     }

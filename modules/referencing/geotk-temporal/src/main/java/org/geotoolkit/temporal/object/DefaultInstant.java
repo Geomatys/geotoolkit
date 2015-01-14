@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.temporal.object;
 
-import java.util.Collection;
+import java.util.Date;
 import java.util.Map;
 import java.util.Objects;
 import javax.xml.bind.annotation.XmlElement;
@@ -25,9 +25,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.ComparisonMode;
+import org.apache.sis.util.NullArgumentException;
 import org.opengis.temporal.Instant;
-import org.opengis.temporal.Period;
-import org.opengis.temporal.Position;
+import org.opengis.temporal.TemporalPosition;
 import org.opengis.temporal.TemporalReferenceSystem;
 
 /**
@@ -39,37 +39,33 @@ import org.opengis.temporal.TemporalReferenceSystem;
  * @module pending
  */
 @XmlType(name = "TimeInstant_Type", propOrder = {
-    "position"
+    "date"
 })
 @XmlRootElement(name = "TimeInstant")
 public class DefaultInstant extends DefaultTemporalGeometricPrimitive implements Instant {
-
-    /**
-     * This is the Collection of temporal {@link org.opengis.temporal.Period}s,
-     * for which this Instant is the beginning. The collection may be empty.
-     */
-    private Collection<Period> begunBy;
-    
-    /**
-     * This is the Collection of temporal {@link org.opengis.temporal.Period}s,
-     * for which this Instant is the end. The collection may be empty.
-     */
-    private Collection<Period> endBy;
     
     /**
      * This is the position of this {@linkplain Instant TM_Instant}, 
      * it shall be associated with a single {@link TemporalReferenceSystem}.
      */
-    private Position position;
+    private final Date date;
+    
+    /**
+     * Describing internal {@link TemporalPosition temporal positions} referenced 
+     * to other {@linkplain TemporalReferenceSystem temporal reference systems}.
+     */
+    private final TemporalPosition temporalPosition;
 
     /**
      * Empty constructor only use for XML binding.
      */
     public DefaultInstant() {
+        this.date             = null;
+        this.temporalPosition = null;
     }
 
     /**
-     * Creates a default {@link Instant} implementation from the given properties and position.
+     * Creates a default {@link Instant} implementation from the given properties, {@link Date}.
      * The properties given in argument follow the same rules than for the
      * {@linkplain DefaultTemporalGeometricPrimitive#DefaultTemporalGeometricPrimitive(java.util.Map) )  super-class constructor}.
      * 
@@ -96,52 +92,53 @@ public class DefaultInstant extends DefaultTemporalGeometricPrimitive implements
      * </table>
      *
      * @param properties The properties to be given to this object.
-     * @param position the position of this {@linkplain Instant TM_Instant}, it shall be associated with a single {@link TemporalReferenceSystem}.
-     * @throws IllegalArgumentException 
+     * @param date the {@link Date} of this {@linkplain Instant TM_Instant}.
+     * @throws NullArgumentException if date is {@code null}. 
      */
-    public DefaultInstant(Map<String, ?> properties, Position position) {
-        this(properties, position, null, null);
-    }
-
-    /**
-     * Creates a default {@link Instant} implementation from the given properties, position, begin and end.
-     * The properties given in argument follow the same rules than for the
-     * {@linkplain DefaultTemporalGeometricPrimitive#DefaultTemporalGeometricPrimitive(java.util.Map) )  super-class constructor}.
-     * 
-     * <table class="referencingTemporal">
-     *   <caption>Recognized properties (non exhaustive list)</caption>
-     *   <tr>
-     *     <th>Property name</th>
-     *     <th>Value type</th>
-     *     <th>Returned by</th>
-     *   </tr>
-     *   <tr>
-     *     <th colspan="3" class="hsep">Defined in parent class (reminder)</th>
-     *   </tr>
-     *   <tr>
-     *     <td>{@value org.opengis.referencing.IdentifiedObject#NAME_KEY}</td>
-     *     <td>{@link ReferenceIdentifier} or {@link String}</td>
-     *     <td>{@link #getName()}</td>
-     *   </tr>
-     *   <tr>
-     *     <td>{@value org.opengis.referencing.IdentifiedObject#IDENTIFIERS_KEY}</td>
-     *     <td>{@link ReferenceIdentifier} (optionally as array)</td>
-     *     <td>{@link #getIdentifiers()}</td>
-     *   </tr>
-     * </table>
-     *
-     * @param properties The properties to be given to this object.
-     * @param position the position of this {@linkplain Instant TM_Instant}, it shall be associated with a single {@link TemporalReferenceSystem}.
-     * @param begunBy Collection of temporal {@link org.opengis.temporal.Period}s, for which this Instant is the beginning. The collection may be empty.
-     * @param endBy Collection of temporal {@link org.opengis.temporal.Period}s, for which this Instant is the end. The collection may be empty.
-     * @throws IllegalArgumentException 
-     */
-    public DefaultInstant(Map<String, ?> properties,  Position position, Collection<Period> begunBy, Collection<Period> endBy) throws IllegalArgumentException {
+    public DefaultInstant(Map<String, ?> properties,  Date date) throws IllegalArgumentException {
         super(properties);
-        ArgumentChecks.ensureNonNull("position", position);
-        this.position = position;
-        this.begunBy  = begunBy;
-        this.endBy    = endBy;
+        ArgumentChecks.ensureNonNull("position", date);
+        this.date             = date;
+        this.temporalPosition = null;
+    }
+    
+    /**
+     * Creates a default {@link Instant} implementation from the given properties, {@link TemporalPosition}.
+     * The properties given in argument follow the same rules than for the
+     * {@linkplain DefaultTemporalGeometricPrimitive#DefaultTemporalGeometricPrimitive(java.util.Map) )  super-class constructor}.
+     * 
+     * <table class="referencingTemporal">
+     *   <caption>Recognized properties (non exhaustive list)</caption>
+     *   <tr>
+     *     <th>Property name</th>
+     *     <th>Value type</th>
+     *     <th>Returned by</th>
+     *   </tr>
+     *   <tr>
+     *     <th colspan="3" class="hsep">Defined in parent class (reminder)</th>
+     *   </tr>
+     *   <tr>
+     *     <td>{@value org.opengis.referencing.IdentifiedObject#NAME_KEY}</td>
+     *     <td>{@link ReferenceIdentifier} or {@link String}</td>
+     *     <td>{@link #getName()}</td>
+     *   </tr>
+     *   <tr>
+     *     <td>{@value org.opengis.referencing.IdentifiedObject#IDENTIFIERS_KEY}</td>
+     *     <td>{@link ReferenceIdentifier} (optionally as array)</td>
+     *     <td>{@link #getIdentifiers()}</td>
+     *   </tr>
+     * </table>
+     *
+     * @param properties The properties to be given to this object.
+     * @param temporalPosition the {@link TemporalPosition} of this {@link Instant}, 
+     * it shall be associated with a single {@link TemporalReferenceSystem}.
+     * @throws NullArgumentException if temporalPosition is {@code null}. 
+     */
+    public DefaultInstant(final Map<String, ?> properties, final TemporalPosition temporalPosition) throws IllegalArgumentException {
+        super(properties);
+        ArgumentChecks.ensureNonNull("position", temporalPosition);
+        this.date             = null;
+        this.temporalPosition = temporalPosition;
     }
     
     /**
@@ -155,7 +152,11 @@ public class DefaultInstant extends DefaultTemporalGeometricPrimitive implements
      */
     private DefaultInstant(final Instant object) {
         if (object != null) {
-            this.position = object.getPosition();
+            this.date             = object.getDate();
+            this.temporalPosition = object.getTemporalPosition();
+        } else {
+            this.date             = null;
+            this.temporalPosition = null;
         }
     }
 
@@ -185,71 +186,85 @@ public class DefaultInstant extends DefaultTemporalGeometricPrimitive implements
     }
 
     /**
-     * Get the position of this instant.
+     * {@inheritDoc }
+     * <br/>
+     * May returns {@code null} if {@link Instant} was create from 
+     * {@link DefaultInstant#DefaultInstant(java.util.Map, org.opengis.temporal.TemporalPosition) }.
      */
     @Override
     @XmlElement(name = "timePosition", required = true)
-    public Position getPosition() {
-        return position;
+    public Date getDate() {
+        return date;
     }
     
     /**
-     * Returns the Collection of temporal {@link org.opengis.temporal.Period}s,
-     * for which this Instant is the beginning.
-     * 
-     * @return the Collection of temporal {@link org.opengis.temporal.Period}s,
-     * for which this Instant is the beginning. The collection may be empty.
-     * @see org.opengis.temporal.Period#getBeginning()
+     * {@inheritDoc }
+     * <br/>
+     * May returns {@code null} if {@link Instant} was create from 
+     * {@link DefaultInstant#DefaultInstant(java.util.Map, java.util.Date)}.
      */
     @Override
-    public Collection<Period> getBegunBy() {
-        return begunBy;
+    public TemporalPosition getTemporalPosition() {
+        return temporalPosition;
     }
-    
-    /**
-     * Returns the collection of temporal {@link org.opengis.temporal.Period}s,
-     * for which this Instant is the end.
-     * 
-     * @return the Collection of temporal {@link org.opengis.temporal.Period}s,
-     * for which this Instant is the end. The collection may be empty.
-     * @see org.opengis.temporal.Period#getEnding()
-     */
-    @Override
-    public Collection<Period> getEndedBy() {
-        return endBy;
-    }
-
-    /**
-     * Set a new position of this {@linkplain Instant TM_Instant}, 
-     * it shall be associated with a single {@link TemporalReferenceSystem}.
-     * 
-     * @param position The new position of this {@linkplain Instant TM_Instant}.
-     */
-    public void setPosition(final Position position) {
-        this.position = position;
-    }
-
-    /**
-     * Set a new collection of temporal {@link org.opengis.temporal.Period}s,
-     * for which this Instant is the beginning.
-     * 
-     * @param begunBy The new collection of temporal {@link org.opengis.temporal.Period}s,
-     * for which this Instant is the beginning.
-     */
-    public void setBegunBy(final Collection<Period> begunBy) {
-        this.begunBy = begunBy;
-    }
-
-    /**
-     * Set a new collection of temporal {@link org.opengis.temporal.Period}s,
-     * for which this Instant is the end.
-     * 
-     * @param endBy The new collection of temporal {@link org.opengis.temporal.Period}s,
-     * for which this Instant is the end.
-     */
-    public void setEndBy(final Collection<Period> endBy) {
-        this.endBy = endBy;
-    }
+//    
+//    /**
+//     * Returns the Collection of temporal {@link org.opengis.temporal.Period}s,
+//     * for which this Instant is the beginning.
+//     * 
+//     * @return the Collection of temporal {@link org.opengis.temporal.Period}s,
+//     * for which this Instant is the beginning. The collection may be empty.
+//     * @see org.opengis.temporal.Period#getBeginning()
+//     */
+//    @Override
+//    public Collection<Period> getBegunBy() {
+//        return begunBy;
+//    }
+//    
+//    /**
+//     * Returns the collection of temporal {@link org.opengis.temporal.Period}s,
+//     * for which this Instant is the end.
+//     * 
+//     * @return the Collection of temporal {@link org.opengis.temporal.Period}s,
+//     * for which this Instant is the end. The collection may be empty.
+//     * @see org.opengis.temporal.Period#getEnding()
+//     */
+//    @Override
+//    public Collection<Period> getEndedBy() {
+//        return endBy;
+//    }
+//
+//    /**
+//     * Set a new position of this {@linkplain Instant TM_Instant}, 
+//     * it shall be associated with a single {@link TemporalReferenceSystem}.
+//     * 
+//     * @param position The new position of this {@linkplain Instant TM_Instant}.
+//     */
+//    public void setPosition(final Position position) {
+//        this.position = position;
+//    }
+//
+//    /**
+//     * Set a new collection of temporal {@link org.opengis.temporal.Period}s,
+//     * for which this Instant is the beginning.
+//     * 
+//     * @param begunBy The new collection of temporal {@link org.opengis.temporal.Period}s,
+//     * for which this Instant is the beginning.
+//     */
+//    public void setBegunBy(final Collection<Period> begunBy) {
+//        this.begunBy = begunBy;
+//    }
+//
+//    /**
+//     * Set a new collection of temporal {@link org.opengis.temporal.Period}s,
+//     * for which this Instant is the end.
+//     * 
+//     * @param endBy The new collection of temporal {@link org.opengis.temporal.Period}s,
+//     * for which this Instant is the end.
+//     */
+//    public void setEndBy(final Collection<Period> endBy) {
+//        this.endBy = endBy;
+//    }
 
     /**
      * Verify if this entry is identical to the specified object.
@@ -262,9 +277,9 @@ public class DefaultInstant extends DefaultTemporalGeometricPrimitive implements
         if (object instanceof DefaultInstant) {
             final DefaultInstant that = (DefaultInstant) object;
 
-            return Objects.equals(this.position, that.position) &&
-                    Objects.equals(this.begunBy, that.begunBy) &&
-                    Objects.equals(this.endBy, that.endBy);
+            return Objects.equals(this.date, that.date) &&
+                   Objects.equals(this.temporalPosition, that.temporalPosition);// &&
+//                    Objects.equals(this.endBy, that.endBy);
         }
         return false;
     }
@@ -275,9 +290,9 @@ public class DefaultInstant extends DefaultTemporalGeometricPrimitive implements
     @Override
     protected long computeHashCode() {
         int hash = 5;
-        hash = 37 * hash + (this.position != null ? this.position.hashCode() : 0);
-        hash = 37 * hash + (this.begunBy != null ? this.begunBy.hashCode() : 0);
-        hash = 37 * hash + (this.endBy != null ? this.endBy.hashCode() : 0);
+        hash = 37 * hash + (this.date != null ? this.date.hashCode() : 0);
+//        hash = 37 * hash + (this.begunBy != null ? this.begunBy.hashCode() : 0);
+//        hash = 37 * hash + (this.endBy != null ? this.endBy.hashCode() : 0);
         return hash;
     }
 
@@ -287,15 +302,15 @@ public class DefaultInstant extends DefaultTemporalGeometricPrimitive implements
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder(super.toString()).append('\n').append("Instant:").append('\n');
-        if (position != null) {
-            s.append("position:").append(position).append('\n');
+        if (date != null) {
+            s.append("date:").append(date).append('\n');
         }
-        if (begunBy != null) {
-            s.append("begunBy:").append(begunBy).append('\n');
-        }
-        if (endBy != null) {
-            s.append("endBy:").append(endBy).append('\n');
-        }
+        if (temporalPosition != null) {
+            s.append("temporalPosition :").append(temporalPosition).append('\n');
+        } 
+//        if (endBy != null) {
+//            s.append("endBy:").append(endBy).append('\n');
+//        }
         return s.toString();
     }
 }

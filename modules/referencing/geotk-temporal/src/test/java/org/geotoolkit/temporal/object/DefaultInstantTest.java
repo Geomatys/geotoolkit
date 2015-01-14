@@ -17,8 +17,6 @@
  */
 package org.geotoolkit.temporal.object;
 
-import org.geotoolkit.temporal.object.DefaultInstant;
-import org.geotoolkit.temporal.object.DefaultPosition;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
@@ -33,7 +31,6 @@ import org.opengis.temporal.Instant;
 import static org.junit.Assert.*;
 import org.opengis.referencing.IdentifiedObject;
 import org.opengis.temporal.Period;
-import org.opengis.temporal.Position;
 
 /**
  *
@@ -44,8 +41,6 @@ public class DefaultInstantTest {
 
     private Instant instant1;
     private Instant instant2;
-    private Position position1;
-    private Position position2;
     private Calendar cal = Calendar.getInstance();
 
     @Before
@@ -54,23 +49,19 @@ public class DefaultInstantTest {
         final Map<String, Object> properties1 = new HashMap<>();
         properties1.put(IdentifiedObject.NAME_KEY, name1);
         cal.set(2000, 1, 1);
-        position1 = new DefaultPosition(cal.getTime());
+        instant1  = new DefaultInstant(properties1, cal.getTime());
         
         NamedIdentifier name2 = new NamedIdentifier(Citations.CRS, "position 2");
         final Map<String, Object> properties2 = new HashMap<>();
         properties2.put(IdentifiedObject.NAME_KEY, name2);
         cal.set(1998, 1, 1);
-        position2 = new DefaultPosition(cal.getTime());
-        instant1  = new DefaultInstant(properties1, position1);
-        instant2  = new DefaultInstant(properties2, position2);
+        instant2  = new DefaultInstant(properties2, cal.getTime());
     }
 
     @After
     public void tearDown() {
         instant1 = null;
         instant2 = null;
-        position1 = null;
-        position2 = null;
     }
 
     /**
@@ -78,60 +69,60 @@ public class DefaultInstantTest {
      */
     @Test
     public void testGetPosition() {
-        Position result = instant1.getPosition();
-        assertFalse(instant2.getPosition().equals(result));
+        Date result = instant1.getDate();
+        assertFalse(instant2.getDate().equals(result));
     }
 
-    /**
-     * Test of getBegunBy method, of class DefaultInstant.
-     */
-    @Test
-    public void testGetBegunBy() {
-        Collection<Period> result = instant1.getBegunBy();
-        assertEquals(instant2.getBegunBy(), result);
-    }
+//    /**
+//     * Test of getBegunBy method, of class DefaultInstant.
+//     */
+//    @Test
+//    public void testGetBegunBy() {
+//        Collection<Period> result = instant1.getBegunBy();
+//        assertEquals(instant2.getBegunBy(), result);
+//    }
+//
+//    /**
+//     * Test of getEndedBy method, of class DefaultInstant.
+//     */
+//    @Test
+//    public void testGetEndedBy() {
+//        Collection<Period> result = instant1.getEndedBy();
+//        assertEquals(instant2.getEndedBy(), result);
+//    }
 
-    /**
-     * Test of getEndedBy method, of class DefaultInstant.
-     */
-    @Test
-    public void testGetEndedBy() {
-        Collection<Period> result = instant1.getEndedBy();
-        assertEquals(instant2.getEndedBy(), result);
-    }
-
-    /**
-     * Test of setPosition method, of class DefaultInstant.
-     */
-    @Test
-    public void testSetPosition() {
-        Position result = instant1.getPosition();
-        Position position = new DefaultPosition(new Date());
-        ((DefaultInstant) instant1).setPosition(position);
-        assertFalse(instant1.getPosition().equals(result));
-    }
-
-    /**
-     * Test of setBegunBy method, of class DefaultInstant.
-     */
-    @Test
-    public void testSetBegunBy() {
-        Collection<Period> result = instant1.getBegunBy();
-        Collection<Period> begunby = null;
-        ((DefaultInstant) instant1).setBegunBy(begunby);
-        assertEquals(instant1.getBegunBy(), result);
-    }
-
-    /**
-     * Test of setEndBy method, of class DefaultInstant.
-     */
-    @Test
-    public void testSetEndBy() {
-        Collection<Period> result = instant1.getEndedBy();
-        Collection<Period> endedby = null;
-        ((DefaultInstant) instant1).setEndBy(endedby);
-        assertEquals(instant1.getEndedBy(), result);
-    }
+//    /**
+//     * Test of setPosition method, of class DefaultInstant.
+//     */
+//    @Test
+//    public void testSetPosition() {
+//        Position result = instant1.getPosition();
+//        Position position = new DefaultPosition(new Date());
+//        ((DefaultInstant) instant1).setPosition(position);
+//        assertFalse(instant1.getPosition().equals(result));
+//    }
+//
+//    /**
+//     * Test of setBegunBy method, of class DefaultInstant.
+//     */
+//    @Test
+//    public void testSetBegunBy() {
+//        Collection<Period> result = instant1.getBegunBy();
+//        Collection<Period> begunby = null;
+//        ((DefaultInstant) instant1).setBegunBy(begunby);
+//        assertEquals(instant1.getBegunBy(), result);
+//    }
+//
+//    /**
+//     * Test of setEndBy method, of class DefaultInstant.
+//     */
+//    @Test
+//    public void testSetEndBy() {
+//        Collection<Period> result = instant1.getEndedBy();
+//        Collection<Period> endedby = null;
+//        ((DefaultInstant) instant1).setEndBy(endedby);
+//        assertEquals(instant1.getEndedBy(), result);
+//    }
 
     /**
      * Test of equals method, of class DefaultInstant.
@@ -141,7 +132,7 @@ public class DefaultInstantTest {
         cal.set(2000, 1, 1);
 
         assertFalse(instant1.equals(null));
-        assertEquals(cal.getTime().getTime(), instant1.getPosition().getDate().getTime());
+        assertEquals(cal.getTime().getTime(), instant1.getDate().getTime());
         assertFalse(instant1.equals(instant2));
     }
 

@@ -32,7 +32,8 @@ import javax.xml.bind.annotation.XmlValue;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.gml.xml.AbstractTimePosition;
 import org.geotoolkit.gml.xml.TimeIndeterminateValueType;
-import org.opengis.temporal.Position;
+import org.opengis.temporal.IndeterminateValue;
+import org.opengis.temporal.TemporalReferenceSystem;
 import org.opengis.util.InternationalString;
 
 
@@ -89,19 +90,20 @@ public class TimePositionType extends AbstractTimePosition implements Serializab
      *
      * @param value a date.
      */
-    public TimePositionType(final String value){
+    public TimePositionType(final String value) {
         this.value = value;
     }
 
-    public TimePositionType(final Position value){
+    public TimePositionType(final AbstractTimePosition value){
         this(value.getDate());
+        this.indeterminatePosition = value.getIndeterminatePosition();
     }
 
     /**
      * build a simple Timposition with an indeterminate value.
      *
      */
-    public TimePositionType(final TimeIndeterminateValueType indeterminatePosition){
+    public TimePositionType(final TimeIndeterminateValueType indeterminatePosition) {
         this.indeterminatePosition = indeterminatePosition;
         value = "";
     }
@@ -148,7 +150,7 @@ public class TimePositionType extends AbstractTimePosition implements Serializab
             final Calendar c = Calendar.getInstance();
             c.setTime(value);
             if (c.get(Calendar.HOUR) == 0 && c.get(Calendar.MINUTE) == 0 && c.get(Calendar.SECOND) == 0) {
-                final DateFormat df = FORMATTERS.get(2);
+                final DateFormat df = FORMATTERS.get(3);
                 synchronized (df) {
                     this.value = df.format(value);
                 }
@@ -241,12 +243,12 @@ public class TimePositionType extends AbstractTimePosition implements Serializab
         return parseDate(value);
     }
 
-    @Override
+//    @Override
     public Time getTime() {
         return Time.valueOf(value);
     }
 
-    @Override
+//    @Override
     public InternationalString getDateTime() {
         if (value != null) {
             return new SimpleInternationalString(value);
@@ -302,5 +304,4 @@ public class TimePositionType extends AbstractTimePosition implements Serializab
         }
         return s.toString();
     }
-
 }

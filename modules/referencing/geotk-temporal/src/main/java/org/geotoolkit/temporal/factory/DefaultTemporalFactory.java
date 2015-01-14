@@ -37,7 +37,7 @@ import org.geotoolkit.temporal.object.DefaultJulianDate;
 import org.geotoolkit.temporal.object.DefaultOrdinalPosition;
 import org.geotoolkit.temporal.object.DefaultPeriod;
 import org.geotoolkit.temporal.object.DefaultPeriodDuration;
-import org.geotoolkit.temporal.object.DefaultPosition;
+//import org.geotoolkit.temporal.object.DefaultPosition;
 import org.geotoolkit.temporal.object.DefaultTemporalCoordinate;
 import org.geotoolkit.temporal.object.DefaultTemporalPosition;
 import org.geotoolkit.temporal.reference.DefaultCalendar;
@@ -66,7 +66,6 @@ import org.opengis.temporal.OrdinalPosition;
 import org.opengis.temporal.OrdinalReferenceSystem;
 import org.opengis.temporal.Period;
 import org.opengis.temporal.PeriodDuration;
-import org.opengis.temporal.Position;
 import org.opengis.temporal.TemporalCoordinate;
 import org.opengis.temporal.TemporalCoordinateSystem;
 import org.opengis.temporal.TemporalFactory;
@@ -111,19 +110,19 @@ public class DefaultTemporalFactory extends Factory implements TemporalFactory {
      * {@inheritDoc }
      */
     @Override
-    public Instant createInstant(final Position instant) {
+    public Instant createInstant(final Date instant) {
         final Map<String, Object> prop = new HashMap<>();
         prop.put(IdentifiedObject.NAME_KEY, new DefaultIdentifier("instant"+(instantCount++)));
         return new DefaultInstant(prop, instant); 
     }
 
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Position createPosition(final Date position) {
-        return new DefaultPosition(position);
-    }
+//    /**
+//     * {@inheritDoc }
+//     */
+//    @Override
+//    public Position createPosition(final Date position) {
+//        return new DefaultPosition(position);
+//    }
 
     /**
      * {@inheritDoc }

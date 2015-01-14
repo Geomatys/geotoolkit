@@ -198,11 +198,11 @@ public class XmlObservationStore extends AbstractObservationStore implements Dat
     private void appendTime(final TemporalObject time, final GeoSpatialBound spatialBound) {
         if (time instanceof Instant) {
             final Instant i = (Instant) time;
-            spatialBound.addDate(i.getPosition().getDate());
+            spatialBound.addDate(i.getDate());
         } else if (time instanceof Period) {
             final Period p = (Period) time;
-            spatialBound.addDate(p.getBeginning().getPosition().getDate());
-            spatialBound.addDate(p.getEnding().getPosition().getDate());
+            spatialBound.addDate(p.getBeginning().getDate());
+            spatialBound.addDate(p.getEnding().getDate());
         }
     }
     

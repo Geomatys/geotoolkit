@@ -67,6 +67,7 @@ public class DefaultPeriodDuration extends DefaultDuration implements PeriodDura
      */
     public DefaultPeriodDuration(final InternationalString years, final InternationalString months, final InternationalString weeks, final InternationalString days,
             final InternationalString hours, final InternationalString minutes, final InternationalString seconds) {
+        
         this.years   = years;
         this.months  = months;
         this.weeks   = weeks;

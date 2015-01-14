@@ -50,13 +50,13 @@ public class DefaultPeriodTest {
         
         Calendar cal = Calendar.getInstance();
         cal.set(1995, 1, 1);
-        Instant begining1 = new DefaultInstant(properties, new DefaultPosition(cal.getTime()));
+        Instant begining1 = new DefaultInstant(properties, cal.getTime());
         cal.set(2000, 1, 1);
-        Instant ending1 = new DefaultInstant(properties, new DefaultPosition(cal.getTime()));
+        Instant ending1 = new DefaultInstant(properties, cal.getTime());
         cal.set(2000, 1, 1);
-        Instant begining2 = new DefaultInstant(properties, new DefaultPosition(cal.getTime()));
+        Instant begining2 = new DefaultInstant(properties, cal.getTime());
         cal.set(2012, 1, 1);
-        Instant ending2 = new DefaultInstant(properties, new DefaultPosition(cal.getTime()));
+        Instant ending2 = new DefaultInstant(properties, cal.getTime());
         period1 = new DefaultPeriod(properties, begining1, ending1);
         period2 = new DefaultPeriod(properties, begining2, ending2);
     }
@@ -86,7 +86,7 @@ public class DefaultPeriodTest {
         properties.put(IdentifiedObject.NAME_KEY, name);
         
         Instant result = period1.getBeginning();
-        Instant newInstant = new DefaultInstant(properties, new DefaultPosition(new Date()));
+        Instant newInstant = new DefaultInstant(properties, new Date());
         ((DefaultPeriod) period1).setBegining(newInstant);
         assertFalse(period1.getBeginning().equals(result));
     }
@@ -110,7 +110,7 @@ public class DefaultPeriodTest {
         properties.put(IdentifiedObject.NAME_KEY, name);
         
         Instant result = period1.getEnding();
-        Instant newInstant = new DefaultInstant(properties, new DefaultPosition(new Date()));
+        Instant newInstant = new DefaultInstant(properties, new Date());
         ((DefaultPeriod) period1).setEnding(newInstant);
         assertFalse(period1.getEnding().equals(result));
     }

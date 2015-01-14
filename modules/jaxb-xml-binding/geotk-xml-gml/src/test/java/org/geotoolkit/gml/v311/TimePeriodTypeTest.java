@@ -68,25 +68,25 @@ public class TimePeriodTypeTest {
         TimePositionType tn = null;
         TimePositionType tb = new TimePositionType("2008-11-01T02:00:00");
         TimePositionType te = new TimePositionType("2008-11-01T02:01:00");
-        TimePeriodType tp = new TimePeriodType(tb, te);
+        TimePeriodType tp = new TimePeriodType(new TimeInstantType(tb), new TimeInstantType(te));
         assertEquals(60000, tp.getTime());
         
         tb = new TimePositionType("2008-11-01T01:00:00");
         te = new TimePositionType("2008-11-01T02:00:00");
-        tp = new TimePeriodType(tb, te);
+        tp = new TimePeriodType(new TimeInstantType(tb), new TimeInstantType(te));
         assertEquals(3600000, tp.getTime());
         
         
-        tp = new TimePeriodType(tb, tn);
+        tp = new TimePeriodType(new TimeInstantType(tb), new TimeInstantType(tn));
         assertEquals(-1, tp.getTime());
         
         tb = null;
-        tp = new TimePeriodType(tb, te);
+        tp = new TimePeriodType(new TimeInstantType(tb), new TimeInstantType(te));
         assertEquals(-1, tp.getTime());
         
         tb = null;
         te = null;
-        tp = new TimePeriodType(tb, te);
+        tp = new TimePeriodType(new TimeInstantType(tb), new TimeInstantType(te));
         assertEquals(-1, tp.getTime());
         
     }

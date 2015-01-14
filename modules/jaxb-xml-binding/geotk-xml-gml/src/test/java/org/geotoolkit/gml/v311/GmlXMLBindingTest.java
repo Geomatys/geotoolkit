@@ -40,6 +40,7 @@ import org.apache.sis.xml.Namespaces;
 import org.junit.*;
 
 import static org.apache.sis.test.Assert.*;
+import org.geotoolkit.gml.xml.v311.TimeInstantType;
 
 /**
  *
@@ -204,7 +205,7 @@ public class GmlXMLBindingTest {
     public void timePeriodUmarshallingTest() throws Exception {
         TimePositionType begin = new TimePositionType("2002-08-01");
         TimePositionType end = new TimePositionType("2003-08-01");
-        TimePeriodType expResult = new TimePeriodType(begin, end);
+        TimePeriodType expResult = new TimePeriodType(new TimeInstantType(begin), new TimeInstantType(end));
 
 
         String xml = "<gml:TimePeriod xmlns:gml=\"http://www.opengis.net/gml\">" + '\n' +
@@ -219,8 +220,8 @@ public class GmlXMLBindingTest {
         }
         assertEquals(expResult, result);
 
-        end = null;
-        expResult = new TimePeriodType(begin, end);
+        end       = null;
+        expResult = new TimePeriodType(new TimeInstantType(begin), new TimeInstantType(end));
 
 
         xml = "<gml:TimePeriod xmlns:gml=\"http://www.opengis.net/gml\">" + '\n' +

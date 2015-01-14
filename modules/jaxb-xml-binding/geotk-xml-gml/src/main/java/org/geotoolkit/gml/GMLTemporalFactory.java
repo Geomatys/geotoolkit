@@ -19,6 +19,7 @@ package org.geotoolkit.gml;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
+import org.geotoolkit.gml.xml.AbstractTimePosition;
 import org.geotoolkit.gml.xml.v311.TimeInstantType;
 import org.geotoolkit.gml.xml.v311.TimePeriodType;
 import org.geotoolkit.gml.xml.v311.TimePositionType;
@@ -27,7 +28,6 @@ import org.geotoolkit.temporal.factory.DefaultTemporalFactory;
 import org.opengis.temporal.Instant;
 import org.opengis.temporal.Period;
 import org.opengis.temporal.PeriodDuration;
-import org.opengis.temporal.Position;
 import org.opengis.util.InternationalString;
 
 /**
@@ -43,28 +43,28 @@ public class GMLTemporalFactory extends DefaultTemporalFactory {
     }
     
     @Override
-    public Instant createInstant(final Position pstn) {
+    public Instant createInstant(final Date pstn) {
         if (pstn != null) {
-            return new TimeInstantType(pstn);
+            return new TimeInstantType(createPosition(pstn));
         }
         return null;
     }
 
     @Override
     public Period createPeriod(final Instant begin, final Instant end) {
-       Position beginPosition = null;
+       Date beginPosition = null;
        if (begin != null) {
-            beginPosition = begin.getPosition();
+            beginPosition = begin.getDate();
        }
-       Position endPosition = null;
+       Date endPosition = null;
        if (end != null) {
-            endPosition = end.getPosition();
+            endPosition = end.getDate();
        }
-       return new TimePeriodType(beginPosition, endPosition);
+       return new TimePeriodType(createInstant(beginPosition), createInstant(endPosition));
     }
 
-    @Override
-    public Position createPosition(final Date date) {
+//    @Override
+    public AbstractTimePosition createPosition(final Date date) {
         if (date != null) {
             return new TimePositionType(date);
         }

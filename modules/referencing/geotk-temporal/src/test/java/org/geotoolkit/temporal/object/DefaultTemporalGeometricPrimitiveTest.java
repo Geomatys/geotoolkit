@@ -19,7 +19,6 @@ package org.geotoolkit.temporal.object;
 
 import org.geotoolkit.temporal.object.DefaultPeriod;
 import org.geotoolkit.temporal.object.DefaultInstant;
-import org.geotoolkit.temporal.object.DefaultPosition;
 import java.util.Calendar;
 import java.util.Date;
 import org.junit.After;
@@ -28,7 +27,6 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 import org.opengis.temporal.Duration;
 import org.opengis.temporal.Instant;
-import org.opengis.temporal.Position;
 import org.opengis.temporal.TemporalGeometricPrimitive;
 
 
@@ -41,8 +39,6 @@ public class DefaultTemporalGeometricPrimitiveTest {
 
     private TemporalGeometricPrimitive temporalGeomericPrimitive1;
     private TemporalGeometricPrimitive temporalGeomericPrimitive2;
-    private Position position1;
-    private Position position2;
     private Calendar cal = Calendar.getInstance();
 
     @Before
@@ -59,8 +55,6 @@ public class DefaultTemporalGeometricPrimitiveTest {
 
     @After
     public void tearDown() {
-        position1 = null;
-        position2 = null;
         temporalGeomericPrimitive1 = null;
         temporalGeomericPrimitive2 = null;
     }

@@ -94,7 +94,7 @@
     @XmlJavaTypeAdapter(TemporalEdgeAdapter.class),
     @XmlJavaTypeAdapter(OrdinalReferenceSystemAdapter.class),
     @XmlJavaTypeAdapter(TemporalCoordinateSystemAdapter.class),
-    @XmlJavaTypeAdapter(PositionAdapter.class),
+//    @XmlJavaTypeAdapter(PositionAdapter.class),
     @XmlJavaTypeAdapter(TemporalReferenceSystemAdapter.class)
 })
 package org.geotoolkit.temporal.reference;
@@ -115,7 +115,7 @@ import org.geotoolkit.temporal.reference.xmlAdapter.ClockAdapter;
 import org.geotoolkit.temporal.reference.xmlAdapter.InstantAdapter;
 import org.geotoolkit.temporal.reference.xmlAdapter.OrdinalReferenceSystemAdapter;
 import org.geotoolkit.temporal.reference.xmlAdapter.PeriodAdapter;
-import org.geotoolkit.temporal.reference.xmlAdapter.PositionAdapter;
+//import org.geotoolkit.temporal.reference.xmlAdapter.PositionAdapter;
 import org.geotoolkit.temporal.reference.xmlAdapter.TemporalCoordinateSystemAdapter;
 import org.geotoolkit.temporal.reference.xmlAdapter.TemporalEdgeAdapter;
 import org.geotoolkit.temporal.reference.xmlAdapter.TemporalNodeAdapter;

@@ -19,8 +19,8 @@
 package org.geotoolkit.gml.xml.v321;
 
 import java.io.Serializable;
-import java.sql.Timestamp;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -28,9 +28,12 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.apache.sis.util.ComparisonMode;
+import org.geotoolkit.gml.GmlInstant;
+import org.geotoolkit.gml.xml.AbstractTimePosition;
 import org.opengis.temporal.Instant;
 import org.opengis.temporal.Period;
-import org.opengis.temporal.Position;
+import org.opengis.temporal.TemporalPosition;
+//import org.opengis.temporal.Position;
 
 
 /**
@@ -57,7 +60,7 @@ import org.opengis.temporal.Position;
     "timePosition"
 })
 @XmlRootElement(name = "TimeInstant")
-public class TimeInstantType extends AbstractTimeGeometricPrimitiveType implements Instant, Serializable{
+public class TimeInstantType extends AbstractTimeGeometricPrimitiveType implements GmlInstant, Instant, Serializable{
 
     @XmlElement(required = true)
     private TimePositionType timePosition;
@@ -70,11 +73,11 @@ public class TimeInstantType extends AbstractTimeGeometricPrimitiveType implemen
     /**
      * Build a new time instant with the specified timeposition.
      */
-    public TimeInstantType(final Position timePosition) {
-        if (timePosition instanceof TimePositionType) {
+    public TimeInstantType(final AbstractTimePosition timePosition) {
+        if (timePosition instanceof AbstractTimePosition) {
             this.timePosition = (TimePositionType) timePosition;
         } else if (timePosition != null) {
-            this.timePosition = new TimePositionType(timePosition.getDate());
+            this.timePosition = new TimePositionType(timePosition);
         }
     }
 
@@ -87,7 +90,7 @@ public class TimeInstantType extends AbstractTimeGeometricPrimitiveType implemen
        this.timePosition = new TimePositionType(timePosition);
     }
 
-    public TimeInstantType(final Timestamp timePosition) {
+    public TimeInstantType(final Date timePosition) {
        this.timePosition = new TimePositionType(timePosition);
     }
 
@@ -106,20 +109,21 @@ public class TimeInstantType extends AbstractTimeGeometricPrimitiveType implemen
      *     {@link TimePositionType }
      *
      */
+    @Override
     public TimePositionType getTimePosition() {
         return timePosition;
     }
 
     @Override
-    public Position getPosition() {
-        return timePosition;
+    public Date getDate() {
+        return (timePosition != null) ? timePosition.getDate() : null;
     }
 
-    public void setPosition(final Position value) {
+    public void setPosition(final AbstractTimePosition value) {
         if (value instanceof TimePositionType) {
             this.timePosition = (TimePositionType)value;
         } else if (value != null) {
-            this.timePosition = new TimePositionType(value);
+            this.timePosition = new TimePositionType(value.getDate());
         } else {
             this.timePosition = null;
         }
@@ -132,15 +136,15 @@ public class TimeInstantType extends AbstractTimeGeometricPrimitiveType implemen
         return -1;
     }
 
-    @Override
-    public Collection<Period> getBegunBy() {
-        return null;
-    }
-
-    @Override
-    public Collection<Period> getEndedBy() {
-        return null;
-    }
+//    @Override
+//    public Collection<Period> getBegunBy() {
+//        return null;
+//    }
+//
+//    @Override
+//    public Collection<Period> getEndedBy() {
+//        return null;
+//    }
 
     /**
      * Sets the value of the timePosition property.
@@ -188,5 +192,10 @@ public class TimeInstantType extends AbstractTimeGeometricPrimitiveType implemen
     @Override
     public AbstractTimeObjectType getClone() {
         return new TimeInstantType(this);
+    }
+
+    @Override
+    public TemporalPosition getTemporalPosition() {
+        return null;
     }
 }

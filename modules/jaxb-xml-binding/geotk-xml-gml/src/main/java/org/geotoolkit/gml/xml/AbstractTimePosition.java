@@ -27,7 +27,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.bind.annotation.XmlTransient;
 import org.apache.sis.util.logging.Logging;
-import org.opengis.temporal.Position;
 import org.opengis.temporal.TemporalPosition;
 
 /**
@@ -35,24 +34,26 @@ import org.opengis.temporal.TemporalPosition;
  * @author Guilhem Legal (Geomatys)
  */
 @XmlTransient
-public abstract class AbstractTimePosition implements Position {
+public abstract class AbstractTimePosition {
 
     protected static final Logger LOGGER = Logging.getLogger(AbstractTimePosition.class);
 
     protected static final List<DateFormat> FORMATTERS = new ArrayList<DateFormat>();
 
     static {
+        FORMATTERS.add(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SS"));
         FORMATTERS.add(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss"));
         FORMATTERS.add(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
         FORMATTERS.add(new SimpleDateFormat("yyyy-MM-dd"));
         FORMATTERS.add(new SimpleDateFormat("yyyy"));
     }
 
-    @Override
     public TemporalPosition anyOther() {
         return null;
     }
 
+    public abstract Date getDate(); 
+    
     protected Date parseDate(final String value) {
         if (value != null && !value.isEmpty()) {
             for (DateFormat df : FORMATTERS) {
