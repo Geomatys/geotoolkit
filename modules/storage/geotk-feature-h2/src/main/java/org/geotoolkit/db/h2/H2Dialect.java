@@ -936,7 +936,7 @@ final class H2Dialect extends AbstractSQLDialect{
     @Override
     public CoordinateReferenceSystem createCRS(int srid, Connection cx) throws SQLException {
         CoordinateReferenceSystem crs = CRS_CACHE.get(srid);
-        if (crs == null) {
+        if (crs == null && srid!=0) {
             try {
                 crs = CRS.decode("EPSG:" + srid,true);
                 CRS_CACHE.put(srid, crs);
@@ -1094,21 +1094,5 @@ final class H2Dialect extends AbstractSQLDialect{
     public Coverage decodeCoverageValue(GeometryDescriptor descriptor, ResultSet rs, int column) throws IOException, SQLException {
         throw new IOException("Coverage type not supported.");
     }
-    
-    public CoordinateReferenceSystem decodeCRS(final int srid, final Connection cx) throws SQLException{
-        CoordinateReferenceSystem crs = CRS_CACHE.get(srid);
-        if (crs == null) {
-            try {
-                crs = CRS.decode("EPSG:" + srid,true);
-                CRS_CACHE.put(srid, crs);
-            } catch(Exception e) {
-                if(featurestore.getLogger().isLoggable(Level.FINE)) {
-                    featurestore.getLogger().log(Level.FINE, "Could not decode " + srid + " using the built-in EPSG database", e);
-                }
-                return null;
-            }
-        }
-        return crs;
-    }
-    
+        
 }
