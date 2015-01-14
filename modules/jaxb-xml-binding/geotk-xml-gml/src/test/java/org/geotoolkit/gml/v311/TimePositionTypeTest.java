@@ -87,6 +87,6 @@ public class TimePositionTypeTest {
 
         final Date d2 = f2.parse("2010-01-01 01:01:02");
         tp.setValue(d2);
-        assertEquals(tp.getValue(), "2010-01-01T01:01:02");
+        assertEquals(tp.getValue(), "2010-01-01T01:01:02.00");
     }
 }
