@@ -1049,7 +1049,7 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
                         TemporaryDatum.unwrap(targetDatum), null);
             }
             if (datumShift == null) {
-                if (lenientDatumShift) {
+                if (lenientDatumShift || true) { // TODO
                     datumShift = new Matrix4(); // Identity transform.
                     identifier = ELLIPSOID_SHIFT;
                 } else {

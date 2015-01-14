@@ -29,7 +29,6 @@ import java.util.logging.Logger;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.collection.TreeTable.Node;
-import org.geotoolkit.parameter.Parameters;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.parameter.ParametersExt;
 import org.geotoolkit.storage.AbstractDataStore;
@@ -64,7 +63,7 @@ public abstract class AbstractCoverageStore extends CoverageStore {
 
     protected AbstractCoverageStore(final ParameterValueGroup params) {
         this.parameters = params;
-        
+
         ParameterValue pv = ParametersExt.getValue(params, AbstractCoverageStoreFactory.NAMESPACE.getName().getCode());
         String namespace = (pv==null) ? null : pv.stringValue();
 
@@ -81,7 +80,7 @@ public abstract class AbstractCoverageStore extends CoverageStore {
     public Metadata getMetadata() throws DataStoreException {
         return null;
     }
-    
+
     @Override
     public ParameterValueGroup getConfiguration() {
         return parameters;
@@ -95,7 +94,7 @@ public abstract class AbstractCoverageStore extends CoverageStore {
         return Logger;
     }
 
-    
+
     /**
      * Returns the root node of the data store.
      * This node is the main access point to the content of the store.
@@ -120,7 +119,7 @@ public abstract class AbstractCoverageStore extends CoverageStore {
 
         return sb.toString();
     }
-    
+
     @Override
     public CoverageReference create(Name name) throws DataStoreException {
         throw new DataStoreException("Creation of new coverage not supported.");
@@ -360,5 +359,5 @@ public abstract class AbstractCoverageStore extends CoverageStore {
     public void forwardContentEvent(StorageEvent event){
         sendContentEvent(event.copy(this));
     }
-    
+
 }

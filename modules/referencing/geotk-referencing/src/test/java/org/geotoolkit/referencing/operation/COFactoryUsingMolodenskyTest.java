@@ -973,6 +973,7 @@ public strictfp class COFactoryUsingMolodenskyTest extends TransformTestBase {
      *
      * @since 3.16
      */
+    @Ignore("Exception for missing Bursa-Wolf parameters is disabled for now.")
     @Test(expected = OperationNotFoundException.class)
     public void testProjected2D_withMeridianShift() throws Exception {
         final CoordinateReferenceSystem sourceCRS = crsFactory.createFromWKT(WKT.PROJCS_LAMBERT_CONIC_NTF);

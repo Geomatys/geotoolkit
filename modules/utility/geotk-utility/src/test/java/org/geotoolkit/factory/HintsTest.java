@@ -39,7 +39,7 @@ import static org.apache.sis.test.Assert.*;
  */
 public final strictfp class HintsTest {
     /**
-     * Makes sures that J2SE 1.4 assertions are enabled.
+     * Makes sure that J2SE 1.4 assertions are enabled.
      */
     @Test
     public void testAssertionEnabled() {

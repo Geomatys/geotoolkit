@@ -322,6 +322,7 @@ public final strictfp class CRS_Test extends ReferencingTestBase {
      * @throws TransformException Should never happen.
      */
     @Test
+    @Ignore("Exception for missing Bursa-Wolf parameters is disabled for now.")
     public void testTransformationFailure() throws FactoryException, TransformException {
         final CoordinateReferenceSystem mapCRS = CRS.parseWKT(WKT.GEOGCS_WGS84_ALTERED);
         final CoordinateReferenceSystem WGS84  = CommonCRS.WGS84.normalizedGeographic();
