@@ -19,6 +19,7 @@ package org.geotoolkit.gui.javafx.filter;
 
 import java.util.Collection;
 import java.util.Collections;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -86,7 +87,7 @@ public class FXCQLEditor extends BorderPane {
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
                 if(newValue!=null){
                     codeArea.appendText(" "+newValue);
-                    uiProperties.getSelectionModel().clearSelection();
+                    Platform.runLater(uiProperties.getSelectionModel()::clearSelection);
                 }
             }
         });
