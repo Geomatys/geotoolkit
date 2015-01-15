@@ -18,14 +18,13 @@
 package org.geotoolkit.gui.javafx.style;
 
 import java.awt.Dimension;
-import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
-import java.beans.PropertyChangeEvent;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.function.Function;
+import java.util.function.UnaryOperator;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -38,7 +37,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellDataFeatures;
-import javafx.scene.control.TablePosition;
 import javafx.scene.control.TableView;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
@@ -47,12 +45,11 @@ import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.service.DefaultGlyphService;
 import static org.geotoolkit.gui.javafx.style.FXStyleElementController.getStyleFactory;
 import org.geotoolkit.gui.javafx.util.ButtonTableCell;
+import org.geotoolkit.gui.javafx.util.FXMoveDownTableColumn;
+import org.geotoolkit.gui.javafx.util.FXMoveUpTableColumn;
 import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.map.MapLayer;
-import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.StyleConstants;
-import org.geotoolkit.style.StyleListener;
-import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.opengis.metadata.citation.OnlineResource;
 import org.opengis.style.ExternalGraphic;
 import org.opengis.style.Graphic;
@@ -75,7 +72,6 @@ public class FXGraphic extends FXStyleElementController<FXGraphic, Graphic>{
     @FXML protected Button uiAddExternal;
     @FXML protected TableView<GraphicalSymbol> uiTable;
     @FXML protected Pane uiGraphicalSymbol;
-    private FXStyleElementController graphicalSymbolEditor = null;
     
     @FXML
     void addMark(ActionEvent event) {
@@ -84,7 +80,6 @@ public class FXGraphic extends FXStyleElementController<FXGraphic, Graphic>{
                     StyleConstants.DEFAULT_FILL,
                     StyleConstants.DEFAULT_STROKE);
         uiTable.getItems().add(mark);
-        rebuildValue();
     }
 
     @FXML
@@ -92,7 +87,6 @@ public class FXGraphic extends FXStyleElementController<FXGraphic, Graphic>{
         try {
             final GraphicalSymbol external = getStyleFactory().externalGraphic(new URL("file:/..."), "image/png");
             uiTable.getItems().add(external);
-            rebuildValue();
         } catch (MalformedURLException ex) {
             //won't happen
             throw new RuntimeException(ex.getMessage(),ex);
@@ -109,7 +103,8 @@ public class FXGraphic extends FXStyleElementController<FXGraphic, Graphic>{
         return getStyleFactory().graphic();
     }
 
-    private void rebuildValue(){
+    private void resetValue(){
+        System.out.println("Reset !");
         if(updating) return;
         value.set(getStyleFactory().graphic(
                 new ArrayList<GraphicalSymbol>(uiTable.getItems()), 
@@ -124,7 +119,7 @@ public class FXGraphic extends FXStyleElementController<FXGraphic, Graphic>{
     public void initialize() {
         super.initialize();        
         final ChangeListener changeListener = (ChangeListener) (ObservableValue observable, Object oldValue, Object newValue) -> {
-            rebuildValue();
+            resetValue();
         };
         
         uiOpacity.getNumberField().minValueProperty().set(0);
@@ -136,55 +131,12 @@ public class FXGraphic extends FXStyleElementController<FXGraphic, Graphic>{
         uiRotation.valueProperty().addListener(changeListener);
         uiAnchor.valueProperty().addListener(changeListener);
         uiDisplacement.valueProperty().addListener(changeListener);
-        uiTable.getItems().addListener((ListChangeListener.Change<? extends GraphicalSymbol> c) -> {
-            rebuildValue();
-        });
-        
-        
-        uiTable.getSelectionModel().getSelectedCells().addListener(new ListChangeListener<TablePosition>() {
-            @Override
-            public void onChanged(ListChangeListener.Change<? extends TablePosition> c) {
-//                uiSymbolizerPane.setContent(null);
-//                
-                for(final TablePosition tablePosition : uiTable.getSelectionModel().getSelectedCells()){
-                    
-                    final GraphicalSymbol symbol = uiTable.getItems().get(tablePosition.getRow());
-//                    editor = FXStyleElementEditor.findEditor(symbol);
-                    if(graphicalSymbolEditor != null){
-//                        editor.setLayer(layer);
-//                        editor.valueProperty().setValue(symbol);
-//
-//                        //listen to editor change
-                        graphicalSymbolEditor.valueProperty().addListener(new ChangeListener() {
-                            @Override
-                            public void changed(ObservableValue observable, Object oldValue, Object newValue) {
-                                //apply editor
-                                final int index = uiTable.getSelectionModel().getSelectedIndex();
-                                System.out.println("Changed ! :) ");
-                                if(index>=0){
-                                    System.out.println("INDEX : "+index);
-                                    System.out.println(((Mark) symbol).getFill().getColor().toString());
-                                    System.out.println(((Mark) symbol).getStroke().getColor().toString());
-                                    System.out.println(((Mark) graphicalSymbolEditor.valueProperty().get()).getFill().getColor().toString());
-                                    System.out.println(((Mark) graphicalSymbolEditor.valueProperty().get()).getStroke().getColor().toString());
-                                    uiTable.getItems().set(index, (GraphicalSymbol) graphicalSymbolEditor.valueProperty().get());
-                                }
-                            }
-                        });
-//                        uiSymbolizerPane.setContent(editor);
-                    }
-                }
-//                
-//                final Dimension dim = new Dimension(120, 120);
-//                final BufferedImage imge = new BufferedImage(dim.width, dim.height, BufferedImage.TYPE_INT_ARGB);
-//                DefaultGlyphService.render(rule, new Rectangle(dim), imge.createGraphics(), null);
-//                uiPreview.setImage(SwingFXUtils.toFXImage(imge, null));
-            }
-        });
-        
-        
         
         uiTable.setItems(FXCollections.observableArrayList());
+//        uiTable.getItems().addListener((ListChangeListener.Change<? extends GraphicalSymbol> change) -> {
+//            System.out.println("List Change !");
+//            resetValue();
+//        });
         
         final TableColumn<GraphicalSymbol, GraphicalSymbol> previewCol = new TableColumn<>();
         previewCol.setEditable(true);
@@ -205,8 +157,6 @@ public class FXGraphic extends FXStyleElementController<FXGraphic, Graphic>{
             }
         });
         
-        
-        
         final TableColumn<GraphicalSymbol,GraphicalSymbol> deleteCol = new TableColumn<>();
         deleteCol.setEditable(true);
         deleteCol.setPrefWidth(30);
@@ -217,6 +167,8 @@ public class FXGraphic extends FXStyleElementController<FXGraphic, Graphic>{
         
         
         uiTable.getColumns().add(previewCol);
+        uiTable.getColumns().add(new FXMoveUpTableColumn());
+        uiTable.getColumns().add(new FXMoveDownTableColumn());
         uiTable.getColumns().add(deleteCol);
         uiTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         uiTable.setTableMenuButtonVisible(false);
@@ -233,36 +185,47 @@ public class FXGraphic extends FXStyleElementController<FXGraphic, Graphic>{
     }
     
     @Override
-    protected void updateEditor(Graphic styleElement) {
-        uiSize.valueProperty().setValue(styleElement.getSize());
-        uiOpacity.valueProperty().setValue(styleElement.getOpacity());
-        uiRotation.valueProperty().setValue(styleElement.getRotation());
-        uiAnchor.valueProperty().setValue(styleElement.getAnchorPoint());
-        uiDisplacement.valueProperty().setValue(styleElement.getDisplacement());
+    protected void updateEditor(Graphic graphic) {
+        uiSize.valueProperty().setValue(graphic.getSize());
+        uiOpacity.valueProperty().setValue(graphic.getOpacity());
+        uiRotation.valueProperty().setValue(graphic.getRotation());
+        uiAnchor.valueProperty().setValue(graphic.getAnchorPoint());
+        uiDisplacement.valueProperty().setValue(graphic.getDisplacement());
         uiTable.getItems().clear();
-        uiTable.getItems().addAll(styleElement.graphicalSymbols());
-        if(styleElement.graphicalSymbols()!=null 
-                && styleElement.graphicalSymbols().get(0)!=null){
-            openEditor(styleElement.graphicalSymbols().get(0));
+        uiTable.getItems().addAll(graphic.graphicalSymbols());
+        if(graphic.graphicalSymbols()!=null 
+                && graphic.graphicalSymbols().get(0)!=null){
+            openGraphicalSymbolEditor(graphic.graphicalSymbols().get(0));
         }
     }
         
-    private void openEditor(final GraphicalSymbol graphicalSymbol){
-        graphicalSymbolEditor = FXStyleElementEditor.findEditor(graphicalSymbol);
+    private void openGraphicalSymbolEditor(final GraphicalSymbol graphicalSymbol){
+        final FXStyleElementController graphicalSymbolEditor = FXStyleElementEditor.findEditor(graphicalSymbol);
         graphicalSymbolEditor.valueProperty().setValue(graphicalSymbol);
         graphicalSymbolEditor.setLayer(layer);
-        uiGraphicalSymbol.getChildren().clear();
-        uiGraphicalSymbol.getChildren().add(graphicalSymbolEditor);
+        uiTable.getSelectionModel().select(graphicalSymbol);
+                
         graphicalSymbolEditor.valueProperty().addListener(new ChangeListener() {
 
             @Override
             public void changed(ObservableValue observable, Object oldValue, Object newValue) {
-                rebuildValue();
+                uiTable.getItems().replaceAll(new UnaryOperator<GraphicalSymbol>() {
+                    
+                    @Override
+                    public GraphicalSymbol apply(GraphicalSymbol t) {
+                        if(t==oldValue) return (GraphicalSymbol) newValue;
+                        else return t;
+                    }
+                });
+                resetValue();
             }
         });
+        uiGraphicalSymbol.getChildren().clear();
+        uiGraphicalSymbol.getChildren().add(graphicalSymbolEditor);
     }
     
-    private class GlyphButton extends ButtonTableCell<GraphicalSymbol, GraphicalSymbol>{
+    
+    private class GlyphButton extends ButtonTableCell<GraphicalSymbol, GraphicalSymbol> {
 
         public GlyphButton() {
             super(false, null,
@@ -271,7 +234,7 @@ public class FXGraphic extends FXStyleElementController<FXGraphic, Graphic>{
                     new Function<GraphicalSymbol, GraphicalSymbol>() {
                         @Override
                         public GraphicalSymbol apply(GraphicalSymbol graphicalSymbol) {
-                            openEditor(graphicalSymbol);
+                            openGraphicalSymbolEditor(graphicalSymbol);
                             return graphicalSymbol;
                         }
                     });
@@ -281,20 +244,6 @@ public class FXGraphic extends FXStyleElementController<FXGraphic, Graphic>{
         protected void updateItem(GraphicalSymbol item, boolean empty) {
             super.updateItem(item, empty);
             
-            
-            layer.getStyle().addListener(new StyleListener() {
-
-                @Override
-                public void featureTypeStyleChange(CollectionChangeEvent<MutableFeatureTypeStyle> event) {
-                    updateGlyph(item);
-                }
-
-                @Override
-                public void propertyChange(PropertyChangeEvent evt) {
-                    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-                }
-            });
-                
             updateGlyph(item);
 
             if (item instanceof Mark) {
@@ -310,9 +259,8 @@ public class FXGraphic extends FXStyleElementController<FXGraphic, Graphic>{
                 }
             }
         }
-
+        
         private void updateGlyph(final GraphicalSymbol graphicalSymbol){
-            System.out.println("UPDATE GLYPH");
             final Graphic graphic = GO2Utilities.STYLE_FACTORY.graphic(
                         Collections.singletonList(graphicalSymbol),
                         StyleConstants.DEFAULT_GRAPHIC_OPACITY,
@@ -334,9 +282,10 @@ public class FXGraphic extends FXStyleElementController<FXGraphic, Graphic>{
                     (GraphicalSymbol t) -> t instanceof GraphicalSymbol,
                     new Function<GraphicalSymbol, GraphicalSymbol>() {
                         @Override
-                        public GraphicalSymbol apply(GraphicalSymbol t) {
-                            uiTable.getItems().remove(t);
-                            return t;
+                        public GraphicalSymbol apply(GraphicalSymbol graphicalSymbol) {
+                            uiTable.getItems().remove(graphicalSymbol);
+                            resetValue();
+                            return graphicalSymbol;
                         }
                     });
         }

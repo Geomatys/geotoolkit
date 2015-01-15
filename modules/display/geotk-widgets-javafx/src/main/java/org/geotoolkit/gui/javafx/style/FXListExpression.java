@@ -30,10 +30,8 @@ import org.opengis.filter.expression.Expression;
  */
 public class FXListExpression extends FXStyleElementController<FXListExpression, Expression> {
 
-    @FXML
-    private FXSpecialExpressionButton special;
-    @FXML
-    private ChoiceBox<Expression> uiChoice;
+    @FXML private FXSpecialExpressionButton special;
+    @FXML private ChoiceBox<Expression> uiChoice;
     
     public FXListExpression(){
     }

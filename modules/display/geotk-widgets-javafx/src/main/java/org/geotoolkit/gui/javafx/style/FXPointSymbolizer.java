@@ -61,8 +61,8 @@ public class FXPointSymbolizer extends FXStyleElementController<FXPointSymbolize
     }
     
     @Override
-    protected void updateEditor(PointSymbolizer styleElement) {
-        uiGraphic.valueProperty().setValue(styleElement.getGraphic());
+    protected void updateEditor(PointSymbolizer pointSymbolizer) {
+        uiGraphic.valueProperty().setValue(pointSymbolizer.getGraphic());
     }
     
 }

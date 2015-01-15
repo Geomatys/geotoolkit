@@ -27,6 +27,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -69,15 +70,16 @@ import org.opengis.style.TextSymbolizer;
  */
 public class FXStyleSimplePane extends FXLayerStylePane {
     
-    @FXML private ComboBox<FXStyleElementController> uiChoice;
-    @FXML private TableView<Symbolizer> uiTable;
-    @FXML private ImageView uiPreview;
-    @FXML private ScrollPane uiSymbolizerPane;
-    
-    private FXStyleElementController editor = null;
     private MapLayer layer;
     //keep track of where the rule was to avoid rewriting the complete style
     private MutableRule rule;
+    
+    @FXML private ComboBox<FXStyleElementController> uiChoice;
+    @FXML private TableView<Symbolizer> uiTable;
+    @FXML private ImageView uiPreview;
+    @FXML private ScrollPane uiSymbolizerEditorPane;
+    
+    private FXStyleElementController symbolizerEditor = null;
     
     public FXStyleSimplePane() {
         GeotkFX.loadJRXML(this);
@@ -106,14 +108,14 @@ public class FXStyleSimplePane extends FXLayerStylePane {
     public void initialize(){
         final List<FXStyleElementController> editors = FXStyleElementEditor.findEditorsForType(Symbolizer.class);
         uiChoice.setItems(FXCollections.observableArrayList(editors));
-        uiChoice.setButtonCell(new SymbolizerCell());
-        uiChoice.setCellFactory((ListView<FXStyleElementController> param) -> new SymbolizerCell());
+        uiChoice.setButtonCell(new SymbolizerButtonListCell());
+        uiChoice.setCellFactory((ListView<FXStyleElementController> param) -> new SymbolizerButtonListCell());
         
         final TableColumn<Symbolizer,Symbolizer> previewCol = new TableColumn<>();
         previewCol.setMinWidth(40);
         previewCol.setEditable(false);
         previewCol.setCellValueFactory((TableColumn.CellDataFeatures<Symbolizer, Symbolizer> param) -> new SimpleObjectProperty<>((Symbolizer)param.getValue()));
-        previewCol.setCellFactory((TableColumn<Symbolizer, Symbolizer> p) -> new GlyphButton());
+        previewCol.setCellFactory((TableColumn<Symbolizer, Symbolizer> p) -> new GlyphButtonTableCell());
         
         uiTable.getColumns().add(previewCol);
         uiTable.getColumns().add(new FXMoveUpTableColumn());
@@ -127,28 +129,28 @@ public class FXStyleSimplePane extends FXLayerStylePane {
         uiTable.getSelectionModel().getSelectedCells().addListener(new ListChangeListener<TablePosition>() {
             @Override
             public void onChanged(ListChangeListener.Change<? extends TablePosition> c) {
-                uiSymbolizerPane.setContent(null);
+                uiSymbolizerEditorPane.setContent(null);
                 
                 for(final TablePosition tablePosition : uiTable.getSelectionModel().getSelectedCells()){
                     
-                    final Symbolizer symbol = uiTable.getItems().get(tablePosition.getRow());
-                    editor = FXStyleElementEditor.findEditor(symbol);
-                    if(editor != null){
-                        editor.setLayer(layer);
-                        editor.valueProperty().setValue(symbol);
+                    final Symbolizer symbolizer = uiTable.getItems().get(tablePosition.getRow());
+                    symbolizerEditor = FXStyleElementEditor.findEditor(symbolizer);
+                    if(symbolizerEditor != null){
+                        symbolizerEditor.setLayer(layer);
+                        symbolizerEditor.valueProperty().setValue(symbolizer);
 
                         //listen to editor change
-                        editor.valueProperty().addListener(new ChangeListener() {
+                        symbolizerEditor.valueProperty().addListener(new ChangeListener() {
                             @Override
                             public void changed(ObservableValue observable, Object oldValue, Object newValue) {
                                 //apply editor
                                 final int index = uiTable.getSelectionModel().getSelectedIndex();
                                 if(index>=0){
-                                    uiTable.getItems().set(index, (Symbolizer)editor.valueProperty().get());
+                                    uiTable.getItems().set(index, (Symbolizer) symbolizerEditor.valueProperty().get());
                                 }
                             }
                         });
-                        uiSymbolizerPane.setContent(editor);
+                        uiSymbolizerEditorPane.setContent(symbolizerEditor);
                     }
                 }
                 
@@ -170,7 +172,7 @@ public class FXStyleSimplePane extends FXLayerStylePane {
         rule = null;        
         for(final FeatureTypeStyle typeStyle : layer.getStyle().featureTypeStyles()){
             for(final Rule rule : typeStyle.rules()){
-                parse((MutableRule)rule);
+                parse((MutableRule) rule);
                 break; //we only retrieve the first rule.
             }
         }
@@ -192,19 +194,13 @@ public class FXStyleSimplePane extends FXLayerStylePane {
         return layer.getStyle();
     }
     
-    private static int identityIndex(Object obj, List lst){
-        for(int i=0,n=lst.size();i<n;i++){
-            if(lst.get(i)==obj)return i;
-        }
-        return -1;
-    }
-    
-    private static class GlyphButton extends ButtonTableCell<Symbolizer, Symbolizer>{
+    private static class GlyphButtonTableCell extends ButtonTableCell<Symbolizer, Symbolizer>{
 
-        public GlyphButton() {
+        public GlyphButtonTableCell() {
             super(false, null,
                   (Symbolizer t) -> t instanceof Symbolizer, new Function<Symbolizer, Symbolizer>() {
 
+                @Override
                 public Symbolizer apply(Symbolizer t) {
                     return t;
                 }
@@ -220,7 +216,6 @@ public class FXStyleSimplePane extends FXLayerStylePane {
                 button.setGraphic(new ImageView(SwingFXUtils.toFXImage(img,null)));
                 button.setText(item.getName());
             }
-            
         }
     }
         
@@ -278,7 +273,7 @@ public class FXStyleSimplePane extends FXLayerStylePane {
 //
 //    }
     
-    private static class SymbolizerCell extends ListCell<FXStyleElementController>{
+    private static class SymbolizerButtonListCell extends ListCell<FXStyleElementController>{
         @Override
         protected void updateItem(FXStyleElementController item, boolean empty) {
             super.updateItem(item, empty);
@@ -286,25 +281,25 @@ public class FXStyleSimplePane extends FXLayerStylePane {
                 setGraphic(null);
                 setText("");
             } else {
-                final Symbolizer symb = (Symbolizer) item.newValue();
-                final Dimension dim = DefaultGlyphService.glyphPreferredSize(symb, null, null);
+                final Symbolizer symbolizer = (Symbolizer) item.newValue();
+                final Dimension dim = DefaultGlyphService.glyphPreferredSize(symbolizer, null, null);
                 final BufferedImage imge = new BufferedImage(dim.width, dim.height, BufferedImage.TYPE_INT_ARGB);
-                DefaultGlyphService.render(symb, new Rectangle(dim),imge.createGraphics(),null);
+                DefaultGlyphService.render(symbolizer, new Rectangle(dim),imge.createGraphics(),null);
                 setGraphic(new ImageView(SwingFXUtils.toFXImage(imge, null)));
-                if(symb instanceof PointSymbolizer){
+                if(symbolizer instanceof PointSymbolizer){
                     setText("Point");
-                }else if(symb instanceof LineSymbolizer){
+                }else if(symbolizer instanceof LineSymbolizer){
                     setText("Line");
-                }else if(symb instanceof PolygonSymbolizer){
+                }else if(symbolizer instanceof PolygonSymbolizer){
                     setText("Polygon");
-                }else if(symb instanceof TextSymbolizer){
+                }else if(symbolizer instanceof TextSymbolizer){
                     setText("Text");
-                }else if(symb instanceof RasterSymbolizer){
+                }else if(symbolizer instanceof RasterSymbolizer){
                     setText("Raster");
-                }else if(symb instanceof GraduationSymbolizer){
+                }else if(symbolizer instanceof GraduationSymbolizer){
                     setText("Graduation");
                 }else{
-                    setText(symb.getClass().getSimpleName());
+                    setText(symbolizer.getClass().getSimpleName());
                 }
                 setContentDisplay(ContentDisplay.LEFT);
                 setTextAlignment(TextAlignment.CENTER);

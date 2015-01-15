@@ -38,7 +38,7 @@
                   </ImageView>
                </children>
             </GridPane>
-            <ScrollPane fx:id="uiSymbolizerPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
+            <ScrollPane fx:id="uiSymbolizerEditorPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
          </items>
       </SplitPane>
    </center>

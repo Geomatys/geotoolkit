@@ -19,9 +19,12 @@ package org.geotoolkit.gui.javafx.style;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import static org.geotoolkit.gui.javafx.style.FXStyleElementController.getStyleFactory;
 import org.geotoolkit.map.MapLayer;
+import org.opengis.filter.expression.Expression;
 import org.opengis.style.Mark;
 
 /**
@@ -44,16 +47,29 @@ public class FXMark extends FXStyleElementController<FXMark, Mark>{
         return getStyleFactory().mark();
     }
     
-    @Override
-    public void initialize() {
-        super.initialize();        
-        final ChangeListener changeListener = (ChangeListener) (ObservableValue observable, Object oldValue, Object newValue) -> {
-            if(updating) return;
+    private void resetValue(){
+        if(updating) return;
             value.set(getStyleFactory().mark(
                     uiWkt.valueProperty().get(), 
                     uiStroke.valueProperty().get(), 
                     uiFill.valueProperty().get()));
+    }
+    
+    @Override
+    public void initialize() {
+        super.initialize();        
+        final ChangeListener changeListener = (ChangeListener) (ObservableValue observable, Object oldValue, Object newValue) -> {
+            resetValue();
         };
+        
+        final ObservableList<Expression> choices = FXCollections.observableArrayList(
+                getFilterFactory().literal("square"),
+                getFilterFactory().literal("circle"),
+                getFilterFactory().literal("triangle"),
+                getFilterFactory().literal("star"),
+                getFilterFactory().literal("cross"),
+                getFilterFactory().literal("x"));
+        uiWkt.getChoiceBox().setItems(choices);
         
         uiFill.valueProperty().addListener(changeListener);
         uiStroke.valueProperty().addListener(changeListener);
@@ -74,5 +90,4 @@ public class FXMark extends FXStyleElementController<FXMark, Mark>{
         uiFill.valueProperty().setValue(styleElement.getFill());
         uiStroke.valueProperty().setValue(styleElement.getStroke());
     }
-    
 }
