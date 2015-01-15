@@ -1,4 +1,4 @@
-#org.geotoolkit.display2d.ext.band.BandSymbolizer
+org.geotoolkit.display2d.ext.dynamicrange.DynamicRangeSymbolizer
 org.geotoolkit.display2d.ext.cellular.CellSymbolizer
 org.geotoolkit.display2d.ext.pie.PieSymbolizer
 org.geotoolkit.display2d.ext.graduation.GraduationSymbolizer

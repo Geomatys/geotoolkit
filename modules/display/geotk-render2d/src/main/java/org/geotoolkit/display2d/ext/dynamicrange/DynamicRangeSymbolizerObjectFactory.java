@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.display2d.ext.band;
+package org.geotoolkit.display2d.ext.dynamicrange;
 
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlElementDecl;
@@ -26,17 +26,17 @@ import javax.xml.namespace.QName;
  * @author Johann Sorel (Geomatys)
  */
 @XmlRegistry
-public class BandSymbolizerObjectFactory {
+public class DynamicRangeSymbolizerObjectFactory {
     
-    private static final QName _BandSymbolizer_QNAME = new QName("http://geotoolkit.org", "BandSymbolizer");
+    private static final QName _DynamicRangeSymbolizer_QNAME = new QName("http://geotoolkit.org", "DynamicRangeSymbolizer");
     
-    public BandSymbolizer createBandSymbolizer() {
-        return new BandSymbolizer();
+    public DynamicRangeSymbolizer createBandSymbolizer() {
+        return new DynamicRangeSymbolizer();
     }
     
-    @XmlElementDecl(namespace = "http://geotoolkit.org", name = "BandSymbolizer", substitutionHeadNamespace = "http://www.opengis.net/se", substitutionHeadName = "Symbolizer")
-    public JAXBElement<BandSymbolizer> createCellSymbolizer(final BandSymbolizer value) {
-        return new JAXBElement<BandSymbolizer>(_BandSymbolizer_QNAME, BandSymbolizer.class, null, value);
+    @XmlElementDecl(namespace = "http://geotoolkit.org", name = "DynamicRangeSymbolizer", substitutionHeadNamespace = "http://www.opengis.net/se", substitutionHeadName = "Symbolizer")
+    public JAXBElement<DynamicRangeSymbolizer> createCellSymbolizer(final DynamicRangeSymbolizer value) {
+        return new JAXBElement<DynamicRangeSymbolizer>(_DynamicRangeSymbolizer_QNAME, DynamicRangeSymbolizer.class, null, value);
     }
     
 }

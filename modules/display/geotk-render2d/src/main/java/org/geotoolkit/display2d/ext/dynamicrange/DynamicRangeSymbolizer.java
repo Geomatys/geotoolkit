@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.display2d.ext.band;
+package org.geotoolkit.display2d.ext.dynamicrange;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -23,11 +23,9 @@ import java.util.Map;
 import javax.measure.quantity.Length;
 import javax.measure.unit.NonSI;
 import javax.measure.unit.Unit;
-import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
@@ -44,23 +42,23 @@ import org.opengis.style.StyleVisitor;
  * @author Johann Sorel (Geomatys)
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "BandSymbolizerType")
-@XmlRootElement(name="BandSymbolizer",namespace="http://geotoolkit.org")
-public class BandSymbolizer extends SymbolizerType implements ExtensionSymbolizer{
+@XmlType(name = "DynamicRangeSymbolizerType")
+@XmlRootElement(name="DynamicRangeSymbolizer",namespace="http://geotoolkit.org")
+public class DynamicRangeSymbolizer extends SymbolizerType implements ExtensionSymbolizer{
 
-    public static final String NAME = "Band";
+    public static final String NAME = "DynamicRange";
     
-    @XmlElementRef(name = "Channel", namespace = "http://www.opengis.net/se", type = JAXBElement.class)
-    private List<Channel> channels;
+    @XmlElement(name = "Channel",namespace="http://geotoolkit.org")
+    private List<DRChannel> channels;
 
-    public List<Channel> getChannels() {
+    public List<DRChannel> getChannels() {
         if(channels==null){
             channels = new ArrayList<>();
         }
         return channels;
     }
 
-    public void setChannels(List<Channel> channels) {
+    public void setChannels(List<DRChannel> channels) {
         this.channels = channels;
     }
 
@@ -95,18 +93,18 @@ public class BandSymbolizer extends SymbolizerType implements ExtensionSymbolize
     }
 
     @XmlAccessorType(XmlAccessType.FIELD)
-    public static class Channel {
+    public static class DRChannel {
         
         @XmlElement(name = "Band",namespace="http://geotoolkit.org")
         private String band;
         @XmlElement(name = "ColorSpaceComponent",namespace="http://geotoolkit.org")
         private String colorSpaceComponent;
         @XmlElement(name = "LowerBound",namespace="http://geotoolkit.org")
-        private Bound lower;
+        private DRBound lower;
         @XmlElement(name = "UpperBound",namespace="http://geotoolkit.org")
-        private Bound upper;
+        private DRBound upper;
 
-        public Channel() {
+        public DRChannel() {
         }
 
         public String getBand() {
@@ -125,26 +123,26 @@ public class BandSymbolizer extends SymbolizerType implements ExtensionSymbolize
             this.colorSpaceComponent = colorSpaceComponant;
         }
         
-        public Bound getLower() {
+        public DRBound getLower() {
             return lower;
         }
 
-        public void setLower(Bound lower) {
+        public void setLower(DRBound lower) {
             this.lower = lower;
         }
 
-        public Bound getUpper() {
+        public DRBound getUpper() {
             return upper;
         }
 
-        public void setUpper(Bound upper) {
+        public void setUpper(DRBound upper) {
             this.upper = upper;
         }
 
     }
     
     @XmlAccessorType(XmlAccessType.FIELD)
-    public static class Bound {
+    public static class DRBound {
         
         public static final String MODE_EXPRESSION = "EXPRESSION";
         public static final String MODE_PERCENT = "PERCENT";
@@ -157,7 +155,7 @@ public class BandSymbolizer extends SymbolizerType implements ExtensionSymbolize
         @XmlTransient
         private Expression valueExp;
         
-        public Bound() {
+        public DRBound() {
             setMode(MODE_EXPRESSION);
             setValue(new DefaultLiteral(10));
         }

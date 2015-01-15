@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.display2d.ext.band;
+package org.geotoolkit.display2d.ext.dynamicrange;
 
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
@@ -27,7 +27,7 @@ import org.geotoolkit.map.MapLayer;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class BandRendererService extends AbstractSymbolizerRendererService<BandSymbolizer,CachedBandSymbolizer>{
+public class DynamicRangeRendererService extends AbstractSymbolizerRendererService<DynamicRangeSymbolizer,CachedDynamicRangeSymbolizer>{
 
     @Override
     public boolean isGroupSymbolizer() {
@@ -35,27 +35,27 @@ public class BandRendererService extends AbstractSymbolizerRendererService<BandS
     }
 
     @Override
-    public Class<BandSymbolizer> getSymbolizerClass() {
-        return BandSymbolizer.class;
+    public Class<DynamicRangeSymbolizer> getSymbolizerClass() {
+        return DynamicRangeSymbolizer.class;
     }
 
     @Override
-    public Class<CachedBandSymbolizer> getCachedSymbolizerClass() {
-        return CachedBandSymbolizer.class;
+    public Class<CachedDynamicRangeSymbolizer> getCachedSymbolizerClass() {
+        return CachedDynamicRangeSymbolizer.class;
     }
 
     @Override
-    public CachedBandSymbolizer createCachedSymbolizer(BandSymbolizer symbol) {
-        return new CachedBandSymbolizer(symbol, this);
+    public CachedDynamicRangeSymbolizer createCachedSymbolizer(DynamicRangeSymbolizer symbol) {
+        return new CachedDynamicRangeSymbolizer(symbol, this);
     }
 
     @Override
-    public SymbolizerRenderer createRenderer(CachedBandSymbolizer symbol, RenderingContext2D context) {
-        return new BandSymbolizerRenderer(this, symbol, context);
+    public SymbolizerRenderer createRenderer(CachedDynamicRangeSymbolizer symbol, RenderingContext2D context) {
+        return new DynamicRangeSymbolizerRenderer(this, symbol, context);
     }
 
     @Override
-    public void glyph(Graphics2D g, Rectangle2D rect, CachedBandSymbolizer symbol, MapLayer layer) {
+    public void glyph(Graphics2D g, Rectangle2D rect, CachedDynamicRangeSymbolizer symbol, MapLayer layer) {
         //TODO
     }
     

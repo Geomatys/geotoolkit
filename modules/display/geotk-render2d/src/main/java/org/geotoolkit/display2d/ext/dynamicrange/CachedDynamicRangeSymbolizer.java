@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.display2d.ext.band;
+package org.geotoolkit.display2d.ext.dynamicrange;
 
 import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
@@ -23,9 +23,9 @@ import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class CachedBandSymbolizer extends CachedSymbolizer<BandSymbolizer>{
+public class CachedDynamicRangeSymbolizer extends CachedSymbolizer<DynamicRangeSymbolizer>{
 
-    public CachedBandSymbolizer(BandSymbolizer styleElement, SymbolizerRendererService<BandSymbolizer, ? extends CachedSymbolizer<BandSymbolizer>> renderer) {
+    public CachedDynamicRangeSymbolizer(DynamicRangeSymbolizer styleElement, SymbolizerRendererService<DynamicRangeSymbolizer, ? extends CachedSymbolizer<DynamicRangeSymbolizer>> renderer) {
         super(styleElement, renderer);
     }
 

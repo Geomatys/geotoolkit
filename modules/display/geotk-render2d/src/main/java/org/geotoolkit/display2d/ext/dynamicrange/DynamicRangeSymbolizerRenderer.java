@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.display2d.ext.band;
+package org.geotoolkit.display2d.ext.dynamicrange;
 
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
@@ -26,9 +26,9 @@ import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class BandSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<CachedBandSymbolizer>{
+public class DynamicRangeSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<CachedDynamicRangeSymbolizer>{
 
-    public BandSymbolizerRenderer(SymbolizerRendererService service, CachedBandSymbolizer symbol, RenderingContext2D context) {
+    public DynamicRangeSymbolizerRenderer(SymbolizerRendererService service, CachedDynamicRangeSymbolizer symbol, RenderingContext2D context) {
         super(service, symbol, context);
     }
 
