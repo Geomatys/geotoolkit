@@ -23,6 +23,7 @@ import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
 import org.geotoolkit.process.AbstractProcessingRegistry;
 import org.geotoolkit.process.image.bandcombine.BandCombineDescriptor;
 import org.geotoolkit.process.image.bandselect.BandSelectDescriptor;
+import org.geotoolkit.process.image.dynamicrange.DynamicRangeStretchDescriptor;
 import org.geotoolkit.process.image.reformat.ReformatDescriptor;
 import org.geotoolkit.process.image.replace.ReplaceDescriptor;
 import org.opengis.metadata.Identifier;
@@ -50,7 +51,8 @@ public class ImageProcessingRegistry extends AbstractProcessingRegistry{
         super(BandSelectDescriptor.INSTANCE,
               BandCombineDescriptor.INSTANCE,
               ReformatDescriptor.INSTANCE,
-              ReplaceDescriptor.INSTANCE);
+              ReplaceDescriptor.INSTANCE,
+              DynamicRangeStretchDescriptor.INSTANCE);
     }
 
     @Override
