@@ -17,8 +17,10 @@
  */
 package org.geotoolkit.feature.type;
 
+import java.util.Collections;
 import java.util.List;
 
+import java.util.Map;
 import org.opengis.feature.Attribute;
 import org.apache.sis.util.Classes;
 
@@ -118,6 +120,16 @@ public class DefaultAttributeType<T extends AttributeType> extends DefaultProper
 
     public Object createDefaultValue() {
         return null;
+    }
+
+    /**
+     * Not used for this simple attribute type.
+     *
+     * @return Always empty.
+     */
+    @Override
+    public Map<String, org.opengis.feature.AttributeType<?>> characteristics() {
+        return Collections.emptyMap();
     }
 
     @Override

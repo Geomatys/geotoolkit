@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.feature;
 
+import java.util.Collections;
+import java.util.Map;
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -63,6 +65,15 @@ public abstract class AbstractProperty implements Property,Serializable {
             return descriptor.isNillable();
         }
         return false;
+    }
+
+    /**
+     * Not used for this simple attribute type.
+     *
+     * @return Always empty.
+     */
+    public Map<String, org.opengis.feature.Attribute<?>> characteristics() {
+        return Collections.emptyMap();
     }
 
     /**
