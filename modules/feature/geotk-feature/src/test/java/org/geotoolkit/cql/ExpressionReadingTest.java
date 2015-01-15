@@ -191,7 +191,18 @@ public class ExpressionReadingTest {
         final Add expression = (Add) obj;
         assertEquals(FF.add(FF.literal(3), FF.literal(2)), expression);                
     }
-    
+
+    @Test
+    public void testAddition2() throws CQLException{
+        final String cql = "'test' + '23'";
+        final Object obj = CQL.parseExpression(cql);
+        assertTrue(obj instanceof Add);
+        final Add expression = (Add) obj;
+
+        Object res = expression.evaluate(null);
+        assertEquals("test23", res);
+    }
+
     @Test
     public void testSubstract() throws CQLException{
         final String cql = "3 - 2";

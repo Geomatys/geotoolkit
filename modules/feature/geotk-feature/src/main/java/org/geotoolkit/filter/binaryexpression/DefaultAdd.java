@@ -43,7 +43,9 @@ public class DefaultAdd extends AbstractBinaryExpression<Expression,Expression> 
         final Double val2 = right.evaluate(object, Double.class);
 
         if(val1 == null || val2 == null){
-            return null;
+            final Object obj1 = left.evaluate(object);
+            final Object obj2=  right.evaluate(object);
+            return String.valueOf(obj1) + String.valueOf(obj2);
         }
 
         return val1 + val2;
