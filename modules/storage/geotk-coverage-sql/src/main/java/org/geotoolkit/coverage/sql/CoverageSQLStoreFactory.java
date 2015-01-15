@@ -89,7 +89,7 @@ public class CoverageSQLStoreFactory extends AbstractCoverageStoreFactory {
 
     
     public static final ParameterDescriptorGroup PARAMETERS = new DefaultParameterDescriptorGroup("CoverageDatabase", 
-            IDENTIFIER,HOST,PORT,DATABASE,SCHEMA,USER,PASSWORD,ROOTDIRECTORY);
+            IDENTIFIER,HOST,PORT,DATABASE,SCHEMA,USER,PASSWORD,ROOTDIRECTORY,NAMESPACE);
 
     @Override
     public Identification getIdentification() {
