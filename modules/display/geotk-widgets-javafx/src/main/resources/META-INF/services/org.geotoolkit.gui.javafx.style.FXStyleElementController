@@ -13,6 +13,7 @@ org.geotoolkit.gui.javafx.style.FXRasterSymbolizer
 
 # extension editors
 org.geotoolkit.gui.javafx.style.graduation.FXGraduationSymbolizer
+org.geotoolkit.gui.javafx.style.dynamicrange.FXDynamicRangeSymbolizer
 
 # other
 org.geotoolkit.gui.javafx.style.FXMark

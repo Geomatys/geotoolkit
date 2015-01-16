@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import org.geotoolkit.gui.javafx.style.dynamicrange.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<fx:root maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" type="BorderPane" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <center>
+      <VBox BorderPane.alignment="CENTER">
+         <children>
+            <FXDRChannel fx:id="uiChannelR" />
+            <FXDRChannel fx:id="uiChannelG" />
+            <FXDRChannel fx:id="uiChannelB" />
+            <FXDRChannel fx:id="uiChannelA" />
+         </children></VBox>
+   </center>
+</fx:root>

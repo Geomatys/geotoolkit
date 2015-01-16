@@ -29,6 +29,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
+import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.filter.DefaultLiteral;
 import org.geotoolkit.se.xml.v110.ParameterValueType;
 import org.geotoolkit.se.xml.v110.SymbolizerType;
@@ -110,6 +111,10 @@ public class DynamicRangeSymbolizer extends SymbolizerType implements ExtensionS
         private DRBound upper;
 
         public DRChannel() {
+            band = "";
+            colorSpaceComponent = "";
+            lower = new DRBound();
+            upper = new DRBound();
         }
 
         public String getBand() {
@@ -117,6 +122,7 @@ public class DynamicRangeSymbolizer extends SymbolizerType implements ExtensionS
         }
 
         public void setBand(String band) {
+            ArgumentChecks.ensureNonNull("band", band);
             this.band = band;
         }
 
@@ -125,6 +131,7 @@ public class DynamicRangeSymbolizer extends SymbolizerType implements ExtensionS
         }
 
         public void setColorSpaceComponent(String colorSpaceComponant) {
+            ArgumentChecks.ensureNonNull("colorSpaceComponant", colorSpaceComponant);
             this.colorSpaceComponent = colorSpaceComponant;
         }
         
@@ -133,6 +140,7 @@ public class DynamicRangeSymbolizer extends SymbolizerType implements ExtensionS
         }
 
         public void setLower(DRBound lower) {
+            ArgumentChecks.ensureNonNull("lower", lower);
             this.lower = lower;
         }
 
@@ -141,6 +149,7 @@ public class DynamicRangeSymbolizer extends SymbolizerType implements ExtensionS
         }
 
         public void setUpper(DRBound upper) {
+            ArgumentChecks.ensureNonNull("upper", upper);
             this.upper = upper;
         }
 
@@ -173,6 +182,7 @@ public class DynamicRangeSymbolizer extends SymbolizerType implements ExtensionS
         }
 
         public void setMode(String mode) {
+            ArgumentChecks.ensureNonNull("mode", mode);
             this.mode = mode;
         }
         
@@ -184,6 +194,7 @@ public class DynamicRangeSymbolizer extends SymbolizerType implements ExtensionS
         }
 
         public void setValue(Expression value) {
+            ArgumentChecks.ensureNonNull("value", value);
             this.valueExp = value;
             this.value = new StyleXmlIO().getTransformerXMLv110().visitExpression(value);
         }

@@ -73,7 +73,13 @@ public class DynamicRangeSymbolizerRenderer extends AbstractCoverageSymbolizerRe
             final double[][] ranges = new double[][]{{-1,-1},{-1,-1},{-1,-1},{-1,-1}};
             
             for(DynamicRangeSymbolizer.DRChannel channel : symbolizer.getChannels()){
-                final Integer bandIdx = Integer.valueOf(channel.getBand());
+                final Integer bandIdx;
+                try{
+                    bandIdx = Integer.valueOf(channel.getBand());
+                }catch(NumberFormatException ex){
+                    //not a number index
+                    continue;
+                }
                 final String cs = channel.getColorSpaceComponent().trim();
                 final int idx;
                 if(DynamicRangeSymbolizer.DRChannel.BAND_RED.equalsIgnoreCase(cs)) idx=0;
@@ -87,11 +93,9 @@ public class DynamicRangeSymbolizerRenderer extends AbstractCoverageSymbolizerRe
                 
                 bands[idx] = bandIdx;
                 
-                final DynamicRangeSymbolizer.DRBound lower = channel.getLower();
-                final DynamicRangeSymbolizer.DRBound upper = channel.getUpper();
                 final Object stats = null;
-                ranges[idx][0] = evaluate(lower, stats);
-                ranges[idx][1] = evaluate(upper, stats);
+                ranges[idx][0] = evaluate(channel.getLower(), stats);
+                ranges[idx][1] = evaluate(channel.getUpper(), stats);
             }
             
             final DynamicRangeStretchProcess p = new DynamicRangeStretchProcess(ri, bands, ranges);

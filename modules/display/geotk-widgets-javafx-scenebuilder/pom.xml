@@ -58,12 +58,16 @@
                                     <artifact>*:*</artifact>
                                     <includes>
                                         <include>org/apache/sis/util/**</include>
+                                        <include>org/geotoolkit/display2d/**</include>
+                                        <include>org/geotoolkit/cql/**</include>
+                                        <include>org/geotoolkit/factory/**</include>
+                                        <include>org/geotoolkit/font/**</include>
+                                        <include>org/geotoolkit/gui/**</include>
+                                        <include>org/geotoolkit/se/**</include>
                                         <include>org/geotoolkit/sld/**</include>
                                         <include>org/geotoolkit/style/**</include>
-                                        <include>org/geotoolkit/gui/**</include>
-                                        <include>org/geotoolkit/font/**</include>
+                                        <include>org/geotoolkit/lang/**</include>
                                         <include>org/geotoolkit/map/**</include>
-                                        <include>org/geotoolkit/cql/**</include>
                                         <include>org/geotoolkit/internal/**</include>
                                         <include>org/opengis/**</include>
                                         <include>jfxtras/**</include>
