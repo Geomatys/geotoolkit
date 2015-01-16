@@ -16,13 +16,10 @@
  */
 package org.geotoolkit.process.image.dynamicrange;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBuffer;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
-import java.awt.image.SampleModel;
 import java.awt.image.WritableRaster;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.Process;
@@ -49,7 +46,7 @@ public class DynamicRangeStretchTest {
         inputRaster.setPixel(0, 1, new double[]{10, 0});
         inputRaster.setPixel(0, 2, new double[]{20,10});
         inputRaster.setPixel(0, 3, new double[]{28,41});
-        inputRaster.setPixel(0, 4, new double[]{15,5});
+        inputRaster.setPixel(0, 4, new double[]{12,8});
         inputRaster.setPixel(0, 5, new double[]{Double.NaN,Double.NaN});
         
         final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("image", "dynamicrangestretch");
@@ -57,7 +54,8 @@ public class DynamicRangeStretchTest {
         
         final ParameterValueGroup params = desc.getInputDescriptor().createValue();
         params.parameter("image").setValue(inputImage);
-        params.parameter("bands").setValue(new int[]{-1,0,1,-1});
+                                                    //R  G  B  A
+        params.parameter("bands").setValue(new int[]{-1, 0, 1,-1});
         params.parameter("ranges").setValue(new double[][]{{},{10,20},{0,10},{}});
         
         final Process process = desc.createProcess(params);
@@ -72,13 +70,14 @@ public class DynamicRangeStretchTest {
         //check values
         final double[] pixel = new double[4];
         final Raster outRaster = outImage.getData();
-        assertArrayEquals(new double[]{255,  0,  0,255}, outRaster.getPixel(0, 0, pixel), DELTA);
-        assertArrayEquals(new double[]{255,  0,  0,255}, outRaster.getPixel(0, 1, pixel), DELTA);
-        assertArrayEquals(new double[]{255,255,255,255}, outRaster.getPixel(0, 2, pixel), DELTA);
-        assertArrayEquals(new double[]{255,255,255,255}, outRaster.getPixel(0, 3, pixel), DELTA);
-        assertArrayEquals(new double[]{255,127,127,255}, outRaster.getPixel(0, 4, pixel), DELTA);
-        assertArrayEquals(new double[]{255,255,255,  0}, outRaster.getPixel(0, 5, pixel), DELTA);
-        
+                                      // R   G   B   A
+        assertArrayEquals(new double[]{0,  0,  0,255}, outRaster.getPixel(0, 0, pixel), DELTA);
+        assertArrayEquals(new double[]{0,  0,  0,255}, outRaster.getPixel(0, 1, pixel), DELTA);
+        assertArrayEquals(new double[]{0,255,255,255}, outRaster.getPixel(0, 2, pixel), DELTA);
+        assertArrayEquals(new double[]{0,255,255,255}, outRaster.getPixel(0, 3, pixel), DELTA);
+        assertArrayEquals(new double[]{0, 51,204,255}, outRaster.getPixel(0, 4, pixel), DELTA);
+        assertArrayEquals(new double[]{0,  0,  0,  0}, outRaster.getPixel(0, 5, pixel), DELTA);
+                
     }
     
 }

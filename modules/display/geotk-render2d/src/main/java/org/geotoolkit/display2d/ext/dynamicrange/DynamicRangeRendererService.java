@@ -16,7 +16,11 @@
  */
 package org.geotoolkit.display2d.ext.dynamicrange;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.LinearGradientPaint;
+import java.awt.MultipleGradientPaint;
+import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.style.renderer.AbstractSymbolizerRendererService;
@@ -55,8 +59,26 @@ public class DynamicRangeRendererService extends AbstractSymbolizerRendererServi
     }
 
     @Override
-    public void glyph(Graphics2D g, Rectangle2D rect, CachedDynamicRangeSymbolizer symbol, MapLayer layer) {
-        //TODO
+    public void glyph(Graphics2D g, Rectangle2D rectangle, CachedDynamicRangeSymbolizer symbol, MapLayer layer) {
+        
+        float[] fractions;
+        Color[] colors;
+
+        fractions = new float[] {0.0f, 0.5f, 1.0f};
+        colors = new Color[] {Color.RED, Color.GREEN, Color.BLUE};
+
+        final MultipleGradientPaint.CycleMethod cycleMethod = MultipleGradientPaint.CycleMethod.NO_CYCLE;
+
+        final LinearGradientPaint paint = new LinearGradientPaint(
+            new Point2D.Double(rectangle.getMinX(),rectangle.getMinY()),
+            new Point2D.Double(rectangle.getMaxX(),rectangle.getMinY()),
+            fractions,
+            colors,
+            cycleMethod
+        );
+
+        g.setPaint(paint);
+        g.fill(rectangle);
     }
     
 }

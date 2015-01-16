@@ -82,8 +82,8 @@ public class DynamicRangeStretchProcess extends AbstractProcess {
         final double[] pixel = new double[inputNbBand];
         final int[] rgba = new int[4];
         
-        int srcBandIdx = 0;
-        int trgBandIdx = 0;
+        int srcBandIdx;
+        int trgBandIdx;
         while (readIte.next() && writeIte.next()) {
             srcBandIdx = 0;
             trgBandIdx = 0;
@@ -100,7 +100,7 @@ public class DynamicRangeStretchProcess extends AbstractProcess {
             for(int i=0;i<rgba.length;i++){
                 if(bands[i]==-1){
                     //default value
-                    rgba[i] = 255;
+                    rgba[i] = (i==3)?255:0;
                 }else{
                     //calculate value
                     double v = pixel[bands[i]];
@@ -113,7 +113,7 @@ public class DynamicRangeStretchProcess extends AbstractProcess {
             }
             
             if(hasNan){
-                rgba[0]=255;rgba[1]=255;rgba[2]=255;rgba[3]=0;
+                rgba[0]=0;rgba[1]=0;rgba[2]=0;rgba[3]=0;
             }
             
             //write target pixels

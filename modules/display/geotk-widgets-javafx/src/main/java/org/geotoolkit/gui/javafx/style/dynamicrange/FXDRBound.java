@@ -29,7 +29,7 @@ import org.geotoolkit.gui.javafx.style.FXTextExpression;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class FXDRBound extends FXStyleElementController<FXDRBound,DynamicRangeSymbolizer.DRBound> {
+public class FXDRBound extends FXStyleElementController<DynamicRangeSymbolizer.DRBound> {
     
     @FXML
     private ChoiceBox<String> uiMode;

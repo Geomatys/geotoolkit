@@ -29,7 +29,7 @@ import org.geotoolkit.map.MapLayer;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class FXDynamicRangeSymbolizer extends FXStyleElementController<FXDynamicRangeSymbolizer,DynamicRangeSymbolizer> {
+public class FXDynamicRangeSymbolizer extends FXStyleElementController<DynamicRangeSymbolizer> {
     
     @FXML
     private FXDRChannel uiChannelR;

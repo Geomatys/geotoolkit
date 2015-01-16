@@ -37,14 +37,13 @@ import org.geotoolkit.display2d.ext.dynamicrange.DynamicRangeSymbolizer;
 import org.geotoolkit.gui.javafx.style.FXStyleElementController;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.MapLayer;
-import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.geometry.Envelope;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
-public class FXDRChannel extends FXStyleElementController<FXDRChannel,DynamicRangeSymbolizer.DRChannel> {
+public class FXDRChannel extends FXStyleElementController<DynamicRangeSymbolizer.DRChannel> {
     
     @FXML
     private ChoiceBox<String> uiBands;
@@ -103,6 +102,8 @@ public class FXDRChannel extends FXStyleElementController<FXDRChannel,DynamicRan
         if(styleElement!=null){
             uiBands.valueProperty().setValue(styleElement.getBand());
             uiCsComponent.valueProperty().setValue(styleElement.getColorSpaceComponent());
+            uiLower.valueProperty().setValue(styleElement.getLower());
+            uiUpper.valueProperty().setValue(styleElement.getUpper());
         }
     }
 
