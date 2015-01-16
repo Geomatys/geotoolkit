@@ -362,7 +362,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
 
             renderingContext.switchToDisplayCRS();
         } catch (Exception e) {
-            LOGGER.warning(e.getMessage());
+            LOGGER.log(Level.WARNING,"Portrayal exception: "+e.getMessage(),e);
         }
     }
 
