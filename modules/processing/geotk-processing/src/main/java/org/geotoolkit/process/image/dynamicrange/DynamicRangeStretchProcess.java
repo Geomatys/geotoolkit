@@ -25,9 +25,9 @@ import org.geotoolkit.image.iterator.PixelIterator;
 import org.geotoolkit.image.iterator.PixelIteratorFactory;
 import org.geotoolkit.math.XMath;
 import org.geotoolkit.parameter.Parameters;
+import org.geotoolkit.parameter.ParametersExt;
 import org.geotoolkit.process.AbstractProcess;
 import org.geotoolkit.process.ProcessException;
-import static org.geotoolkit.process.image.bandselect.BandSelectDescriptor.OUT_IMAGE;
 import static org.geotoolkit.process.image.dynamicrange.DynamicRangeStretchDescriptor.*;
 import org.opengis.parameter.ParameterValueGroup;
 
@@ -37,10 +37,27 @@ import org.opengis.parameter.ParameterValueGroup;
  */
 public class DynamicRangeStretchProcess extends AbstractProcess {
 
+    public DynamicRangeStretchProcess(RenderedImage input, int[] bands, double[][] ranges) {
+        super(INSTANCE, asParameters(input,bands,ranges));
+    }
+    
+    private static ParameterValueGroup asParameters(RenderedImage input, int[] bands, double[][] ranges){
+        final ParameterValueGroup params = DynamicRangeStretchDescriptor.INPUT_DESC.createValue();
+        ParametersExt.getOrCreateValue(params, IN_IMAGE.getName().getCode()).setValue(input);
+        ParametersExt.getOrCreateValue(params, IN_BANDS.getName().getCode()).setValue(bands);
+        ParametersExt.getOrCreateValue(params, IN_RANGES.getName().getCode()).setValue(ranges);
+        return params;
+    }
+    
     public DynamicRangeStretchProcess(ParameterValueGroup input) {
         super(INSTANCE, input);
     }
 
+    public BufferedImage executeNow() throws ProcessException {
+        execute();
+        return (BufferedImage) outputParameters.parameter(OUT_IMAGE.getName().getCode()).getValue();
+    }
+    
     @Override
     protected void execute() throws ProcessException {
         ArgumentChecks.ensureNonNull("inputParameter", inputParameters);

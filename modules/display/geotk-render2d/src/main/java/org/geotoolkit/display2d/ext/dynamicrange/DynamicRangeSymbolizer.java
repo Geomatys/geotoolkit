@@ -95,6 +95,11 @@ public class DynamicRangeSymbolizer extends SymbolizerType implements ExtensionS
     @XmlAccessorType(XmlAccessType.FIELD)
     public static class DRChannel {
         
+        public static final String BAND_RED = "R";
+        public static final String BAND_GREEN = "G";
+        public static final String BAND_BLUE = "B";
+        public static final String BAND_ALPHA = "A";
+        
         @XmlElement(name = "Band",namespace="http://geotoolkit.org")
         private String band;
         @XmlElement(name = "ColorSpaceComponent",namespace="http://geotoolkit.org")

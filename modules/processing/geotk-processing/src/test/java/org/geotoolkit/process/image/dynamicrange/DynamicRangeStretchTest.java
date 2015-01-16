@@ -52,7 +52,7 @@ public class DynamicRangeStretchTest {
         inputRaster.setPixel(0, 4, new double[]{15,5});
         inputRaster.setPixel(0, 5, new double[]{Double.NaN,Double.NaN});
         
-        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("image", "colorstretch");
+        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("image", "dynamicrangestretch");
         assertNotNull(desc);
         
         final ParameterValueGroup params = desc.getInputDescriptor().createValue();

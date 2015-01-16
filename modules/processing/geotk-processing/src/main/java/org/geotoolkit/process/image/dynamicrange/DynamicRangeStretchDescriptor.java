@@ -42,7 +42,7 @@ import org.opengis.referencing.IdentifiedObject;
  */
 public class DynamicRangeStretchDescriptor extends AbstractProcessDescriptor {
 
-    public static final String NAME = "colorstretch";
+    public static final String NAME = "dynamicrangestretch";
 
     /**
      * Mandatory - image.
