@@ -31,7 +31,7 @@ import org.opengis.style.Mark;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class FXMark extends FXStyleElementController<FXMark, Mark>{
+public class FXMark extends FXStyleElementController<Mark>{
 
     @FXML protected FXListExpression uiWkt;    
     @FXML protected FXStroke uiStroke;    

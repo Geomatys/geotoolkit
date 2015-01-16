@@ -30,7 +30,7 @@ import org.opengis.filter.expression.Expression;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class FXNumberExpression extends FXStyleElementController<FXNumberExpression, Expression> {
+public class FXNumberExpression extends FXStyleElementController<Expression> {
 
     @FXML private FXSpecialExpressionButton special;
     @FXML private FXNumberSpinner uiNumber;

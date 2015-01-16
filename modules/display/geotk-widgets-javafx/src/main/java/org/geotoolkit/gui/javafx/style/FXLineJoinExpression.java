@@ -30,7 +30,7 @@ import org.opengis.filter.expression.Expression;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class FXLineJoinExpression extends FXStyleElementController<FXLineJoinExpression, Expression> {
+public class FXLineJoinExpression extends FXStyleElementController<Expression> {
 
     @FXML
     private FXSpecialExpressionButton special;

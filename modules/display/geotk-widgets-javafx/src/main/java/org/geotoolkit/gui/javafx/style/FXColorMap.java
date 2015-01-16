@@ -85,7 +85,7 @@ import org.opengis.style.ColorMap;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class FXColorMap extends FXStyleElementController<FXColorMap,ColorMap> {
+public class FXColorMap extends FXStyleElementController<ColorMap> {
     
     private static final Literal TRS = new DefaultLiteral(new Color(0, 0, 0, 0));
     

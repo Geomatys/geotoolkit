@@ -29,7 +29,7 @@ import org.opengis.style.Stroke;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class FXStroke extends FXStyleElementController<FXStroke,Stroke> {
+public class FXStroke extends FXStyleElementController<Stroke> {
  
     @FXML private FXColorExpression uiColor; 
     @FXML private FXNumberExpression uiOpacity;    

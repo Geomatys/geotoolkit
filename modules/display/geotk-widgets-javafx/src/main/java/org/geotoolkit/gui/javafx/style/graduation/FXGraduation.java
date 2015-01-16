@@ -34,7 +34,7 @@ import org.opengis.filter.expression.Literal;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class FXGraduation extends FXStyleElementController<FXGraduation,GraduationSymbolizer.Graduation> {
+public class FXGraduation extends FXStyleElementController<GraduationSymbolizer.Graduation> {
     
     @FXML
     private FXNumberExpression uiSize;

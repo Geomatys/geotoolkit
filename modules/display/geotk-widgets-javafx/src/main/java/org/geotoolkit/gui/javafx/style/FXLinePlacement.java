@@ -30,7 +30,7 @@ import org.opengis.style.LinePlacement;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class FXLinePlacement extends FXStyleElementController<FXLinePlacement, LinePlacement>{
+public class FXLinePlacement extends FXStyleElementController<LinePlacement>{
 
     @FXML
     protected FXNumberExpression uiOffset;

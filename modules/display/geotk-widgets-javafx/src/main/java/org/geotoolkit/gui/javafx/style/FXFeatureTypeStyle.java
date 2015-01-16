@@ -30,7 +30,7 @@ import org.opengis.util.InternationalString;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class FXFeatureTypeStyle extends FXStyleElementController<FXFeatureTypeStyle,MutableFeatureTypeStyle> {
+public class FXFeatureTypeStyle extends FXStyleElementController<MutableFeatureTypeStyle> {
     
     @FXML
     protected TextField uiName;    

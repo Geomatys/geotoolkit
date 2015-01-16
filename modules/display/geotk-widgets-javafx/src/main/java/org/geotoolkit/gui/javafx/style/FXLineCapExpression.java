@@ -30,7 +30,7 @@ import org.opengis.filter.expression.Expression;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class FXLineCapExpression extends FXStyleElementController<FXLineCapExpression, Expression> {
+public class FXLineCapExpression extends FXStyleElementController<Expression> {
 
     @FXML
     private FXSpecialExpressionButton special;

@@ -28,7 +28,7 @@ import org.opengis.filter.expression.Expression;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class FXListExpression extends FXStyleElementController<FXListExpression, Expression> {
+public class FXListExpression extends FXStyleElementController<Expression> {
 
     @FXML private FXSpecialExpressionButton special;
     @FXML private ChoiceBox<Expression> uiChoice;

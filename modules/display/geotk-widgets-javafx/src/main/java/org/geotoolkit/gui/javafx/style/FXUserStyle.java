@@ -75,7 +75,7 @@ import org.opengis.util.GenericName;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class FXUserStyle extends FXStyleElementController<FXUserStyle, MutableStyle>{
+public class FXUserStyle extends FXStyleElementController<MutableStyle>{
     
     private static final MenuItem DUMMY = new CustomMenuItem();
     static {

@@ -32,7 +32,7 @@ import org.opengis.filter.expression.Expression;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class FXColorExpression extends FXStyleElementController<FXColorExpression, Expression> {
+public class FXColorExpression extends FXStyleElementController<Expression> {
 
     @FXML
     private FXSpecialExpressionButton uiSpecial;

@@ -28,7 +28,7 @@ import org.opengis.style.AnchorPoint;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class FXAnchorPoint extends FXStyleElementController<FXAnchorPoint, AnchorPoint>{
+public class FXAnchorPoint extends FXStyleElementController<AnchorPoint>{
 
     @FXML protected FXNumberExpression uiX;    
     @FXML protected FXNumberExpression uiY;

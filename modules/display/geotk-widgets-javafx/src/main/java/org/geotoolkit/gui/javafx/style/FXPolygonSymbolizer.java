@@ -29,7 +29,7 @@ import org.opengis.style.PolygonSymbolizer;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class FXPolygonSymbolizer extends FXStyleElementController<FXPolygonSymbolizer,PolygonSymbolizer> {
+public class FXPolygonSymbolizer extends FXStyleElementController<PolygonSymbolizer> {
     
     @FXML
     protected FXFill uiFill;    
@@ -52,9 +52,7 @@ public class FXPolygonSymbolizer extends FXStyleElementController<FXPolygonSymbo
         super.initialize();
         final ChangeListener changeListener = (ChangeListener) (ObservableValue observable, Object oldValue, Object newValue) -> {
             if(updating) return;
-            final PolygonSymbolizer symbolizer;
-            symbolizer = getStyleFactory().polygonSymbolizer(uiStroke.valueProperty().get(), uiFill.valueProperty().get(), null);
-            value.set(symbolizer);
+            value.set(getStyleFactory().polygonSymbolizer(uiStroke.valueProperty().get(), uiFill.valueProperty().get(), null));
         };
         uiFill.valueProperty().addListener(changeListener);
         uiStroke.valueProperty().addListener(changeListener);

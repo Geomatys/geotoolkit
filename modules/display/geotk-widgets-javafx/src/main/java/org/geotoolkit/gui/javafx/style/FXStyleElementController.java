@@ -30,10 +30,9 @@ import org.opengis.filter.FilterFactory2;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @param <E>
  * @param <T>
  */
-public abstract class FXStyleElementController<E extends FXStyleElementController<E,T>,T> extends BorderPane {
+public abstract class FXStyleElementController<T> extends BorderPane {
     
     protected final SimpleObjectProperty<T> value = new SimpleObjectProperty<T>(){
         @Override

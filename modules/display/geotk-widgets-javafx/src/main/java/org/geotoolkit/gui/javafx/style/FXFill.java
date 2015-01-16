@@ -28,7 +28,7 @@ import org.opengis.style.Fill;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class FXFill extends FXStyleElementController<FXFill,Fill> {
+public class FXFill extends FXStyleElementController<Fill> {
 
     @FXML private FXColorExpression uiColor;    
     @FXML private FXNumberExpression uiOpacity;

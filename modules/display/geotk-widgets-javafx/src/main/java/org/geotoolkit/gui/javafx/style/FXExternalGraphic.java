@@ -28,7 +28,7 @@ import org.opengis.style.ExternalGraphic;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class FXExternalGraphic extends FXStyleElementController<FXExternalGraphic, ExternalGraphic>{
+public class FXExternalGraphic extends FXStyleElementController<ExternalGraphic>{
 
     @FXML
     protected TextField uiUrl;

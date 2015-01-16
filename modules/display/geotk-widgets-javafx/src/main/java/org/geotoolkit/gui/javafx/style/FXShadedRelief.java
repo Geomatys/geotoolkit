@@ -30,7 +30,7 @@ import org.opengis.style.ShadedRelief;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class FXShadedRelief extends FXStyleElementController<FXShadedRelief, ShadedRelief>{
+public class FXShadedRelief extends FXStyleElementController<ShadedRelief>{
 
     @FXML
     private FXNumberExpression uiFactor;

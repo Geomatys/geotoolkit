@@ -29,7 +29,7 @@ import org.opengis.style.Halo;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class FXHalo extends FXStyleElementController<FXHalo, Halo>{
+public class FXHalo extends FXStyleElementController<Halo>{
 
     @FXML
     protected FXFill uiFill;

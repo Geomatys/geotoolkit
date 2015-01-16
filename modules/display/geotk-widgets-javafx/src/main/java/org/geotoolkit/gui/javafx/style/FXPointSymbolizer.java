@@ -29,7 +29,7 @@ import org.opengis.style.PointSymbolizer;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class FXPointSymbolizer extends FXStyleElementController<FXPointSymbolizer, PointSymbolizer>{
+public class FXPointSymbolizer extends FXStyleElementController<PointSymbolizer>{
 
     @FXML protected FXGraphic uiGraphic;
     

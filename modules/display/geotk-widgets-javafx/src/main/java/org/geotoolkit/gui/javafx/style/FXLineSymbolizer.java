@@ -28,7 +28,7 @@ import org.opengis.style.LineSymbolizer;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class FXLineSymbolizer extends FXStyleElementController<FXLineSymbolizer,LineSymbolizer> {
+public class FXLineSymbolizer extends FXStyleElementController<LineSymbolizer> {
     
     @FXML
     protected FXStroke uiStroke;

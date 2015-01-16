@@ -44,7 +44,7 @@ import org.geotoolkit.internal.GeotkFX;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class FXGraduationSymbolizer extends FXStyleElementController<FXGraduationSymbolizer,GraduationSymbolizer> {
+public class FXGraduationSymbolizer extends FXStyleElementController<GraduationSymbolizer> {
 
     @FXML
     private TableView<Graduation> uiTable;

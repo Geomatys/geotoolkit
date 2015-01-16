@@ -35,7 +35,7 @@ import org.opengis.style.Font;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class FXFont extends FXStyleElementController<FXFont, Font>{
+public class FXFont extends FXStyleElementController<Font>{
 
     @FXML
     protected FXNumberExpression uiSize;

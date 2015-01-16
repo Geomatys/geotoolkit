@@ -32,7 +32,7 @@ import org.opengis.style.ContrastMethod;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class FXContrastEnhancement extends FXStyleElementController<FXContrastEnhancement, ContrastEnhancement>{
+public class FXContrastEnhancement extends FXStyleElementController<ContrastEnhancement>{
 
     @FXML
     private RadioButton uiNone;    

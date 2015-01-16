@@ -30,7 +30,7 @@ import org.opengis.style.TextSymbolizer;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class FXTextSymbolizer extends FXStyleElementController<FXTextSymbolizer, TextSymbolizer>{
+public class FXTextSymbolizer extends FXStyleElementController<TextSymbolizer>{
 
     @FXML
     protected FXTextExpression uiText;    

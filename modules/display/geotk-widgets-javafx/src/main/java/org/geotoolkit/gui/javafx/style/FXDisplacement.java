@@ -28,7 +28,7 @@ import org.opengis.style.Displacement;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class FXDisplacement extends FXStyleElementController<FXDisplacement, Displacement>{
+public class FXDisplacement extends FXStyleElementController<Displacement>{
 
     @FXML protected FXNumberExpression uiX;    
     @FXML protected FXNumberExpression uiY;

@@ -27,7 +27,6 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
-import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -125,15 +124,20 @@ public class FXStyleSimplePane extends FXLayerStylePane {
         uiTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         uiTable.setTableMenuButtonVisible(false);
         
-        //change symbolizer editor visible
+        // NE CONVIENT PAS, CAR AVEC UN SEUL COMPOSANT, AU BOUT D'UN MOMENT IL Y 
+        // A UN PROBLÈME CAR LE PANNEAU D'ÉDITION DU SYMBOLIZER SE FERME DÈS MODIFICATION…
+        // JE PENSE QUE CELA PROVIENT DU FAIT QUE LE SELECTION MODEL N'EST PLUS TEL QU'IL 
+        // ÉTAIT AU DÉPART, LORS DE L'AJOUT DU LISTENER SUR LES CELLULES INITIALEMENT SELECTIONNÉES ???
         uiTable.getSelectionModel().getSelectedCells().addListener(new ListChangeListener<TablePosition>() {
             @Override
             public void onChanged(ListChangeListener.Change<? extends TablePosition> c) {
+                System.out.println("Change into list !");
                 uiSymbolizerEditorPane.setContent(null);
                 
                 for(final TablePosition tablePosition : uiTable.getSelectionModel().getSelectedCells()){
                     
                     final Symbolizer symbolizer = uiTable.getItems().get(tablePosition.getRow());
+                    System.out.println(symbolizer);
                     symbolizerEditor = FXStyleElementEditor.findEditor(symbolizer);
                     if(symbolizerEditor != null){
                         symbolizerEditor.setLayer(layer);
@@ -169,11 +173,12 @@ public class FXStyleSimplePane extends FXLayerStylePane {
         
         this.layer = (MapLayer) candidate;
         
-        rule = null;        
+        rule = null;
+        loop:
         for(final FeatureTypeStyle typeStyle : layer.getStyle().featureTypeStyles()){
             for(final Rule rule : typeStyle.rules()){
                 parse((MutableRule) rule);
-                break; //we only retrieve the first rule.
+                break loop; //we only retrieve the first rule.
             }
         }
         

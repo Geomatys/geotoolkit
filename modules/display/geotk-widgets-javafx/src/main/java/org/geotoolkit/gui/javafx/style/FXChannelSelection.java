@@ -32,7 +32,7 @@ import org.opengis.style.ChannelSelection;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class FXChannelSelection extends FXStyleElementController<FXChannelSelection, ChannelSelection>{
+public class FXChannelSelection extends FXStyleElementController<ChannelSelection>{
 
     @FXML
     protected FXSelectedChannelType uiRed;

@@ -30,7 +30,7 @@ import org.opengis.style.SelectedChannelType;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class FXSelectedChannelType extends FXStyleElementController<FXSelectedChannelType, SelectedChannelType>{
+public class FXSelectedChannelType extends FXStyleElementController<SelectedChannelType>{
 
     @FXML
     protected FXContrastEnhancement uiContrast;

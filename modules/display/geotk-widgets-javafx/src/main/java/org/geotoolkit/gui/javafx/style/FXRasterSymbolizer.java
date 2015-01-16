@@ -28,7 +28,7 @@ import org.opengis.style.RasterSymbolizer;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class FXRasterSymbolizer extends FXStyleElementController<FXRasterSymbolizer, RasterSymbolizer>{
+public class FXRasterSymbolizer extends FXStyleElementController<RasterSymbolizer>{
     
     @FXML
     private RadioButton uiChoiceColorNone;

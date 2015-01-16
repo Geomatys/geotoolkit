@@ -61,7 +61,7 @@ import org.opengis.style.PointSymbolizer;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class FXGraphic extends FXStyleElementController<FXGraphic, Graphic>{
+public class FXGraphic extends FXStyleElementController<Graphic>{
 
     @FXML protected FXNumberExpression uiSize;
     @FXML protected FXNumberExpression uiOpacity;

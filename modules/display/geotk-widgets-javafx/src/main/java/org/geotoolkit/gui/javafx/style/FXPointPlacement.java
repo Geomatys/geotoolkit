@@ -29,7 +29,7 @@ import org.opengis.style.PointPlacement;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class FXPointPlacement extends FXStyleElementController<FXPointPlacement, PointPlacement>{
+public class FXPointPlacement extends FXStyleElementController<PointPlacement>{
 
     @FXML
     protected FXNumberExpression uiRotation;    

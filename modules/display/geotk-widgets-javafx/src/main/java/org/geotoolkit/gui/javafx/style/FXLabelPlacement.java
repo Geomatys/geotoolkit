@@ -33,7 +33,7 @@ import org.opengis.style.PointPlacement;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class FXLabelPlacement extends FXStyleElementController<FXLabelPlacement, LabelPlacement>{
+public class FXLabelPlacement extends FXStyleElementController<LabelPlacement>{
 
     @FXML
     protected RadioButton uiPointCheck;
