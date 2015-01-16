@@ -81,8 +81,6 @@ public class DefaultCalendar extends DefaultTemporalReferenceSystem implements C
      * {@linkplain DefaultTemporalCRS#DefaultTemporalCRS(java.util.Map, org.opengis.referencing.datum.TemporalDatum, org.opengis.referencing.cs.TimeCS)  super-class constructor}.
      * 
      * @param properties The properties to be given to the coordinate reference system.
-     * @param datum The datum.
-     * @param cs The coordinate system.
      * @param referenceFrame The {@linkplain CalendarEra calendar eras} associated with the calendar being described.
      * @param timeBasis The {@linkplain Clock time basis} that is use with this calendar to define temporal position within a calendar day.
      * @see DefaultTemporalReferenceSystem#DefaultTemporalReferenceSystem(java.util.Map, org.opengis.referencing.datum.TemporalDatum, org.opengis.referencing.cs.TimeCS) 
