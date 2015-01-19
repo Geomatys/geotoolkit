@@ -102,7 +102,10 @@ public final class Parameters extends Static {
 
     /**
      * An empty parameter group. This group contains no parameters.
+     *
+     * @deprecated Will be removed.
      */
+    @Deprecated
     public static final ParameterDescriptorGroup EMPTY_GROUP =
             new DefaultParameterDescriptorGroup(Vocabulary.format(Vocabulary.Keys.EMPTY));
 

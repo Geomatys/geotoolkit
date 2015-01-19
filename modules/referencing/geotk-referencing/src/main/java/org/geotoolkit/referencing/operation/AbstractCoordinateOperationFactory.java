@@ -393,15 +393,16 @@ public abstract class AbstractCoordinateOperationFactory extends ReferencingFact
      * @throws FactoryException if the operation can't be constructed.
      */
     protected CoordinateOperation createFromMathTransform(
-            final Identifier       name,
+            final Identifier                name,
             final CoordinateReferenceSystem sourceCRS,
             final CoordinateReferenceSystem targetCRS,
             final MathTransform             transform) throws FactoryException
     {
         final Map<String,?> properties = singletonMap(NAME_KEY, name);
-        return createFromMathTransform(properties, sourceCRS, targetCRS, transform,
-                createOperationMethod(properties, sourceCRS.getCoordinateSystem().getDimension(),
-                targetCRS.getCoordinateSystem().getDimension(), null), CoordinateOperation.class);
+        OperationMethod method = createOperationMethod(properties,
+                sourceCRS.getCoordinateSystem().getDimension(),
+                targetCRS.getCoordinateSystem().getDimension(), null);
+        return createFromMathTransform(properties, sourceCRS, targetCRS, transform, method, CoordinateOperation.class);
     }
 
     /**

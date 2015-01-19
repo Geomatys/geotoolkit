@@ -22,9 +22,7 @@ package org.geotoolkit.referencing;
 
 import java.util.Map;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Comparator;
-import java.util.Collection;
 
 import org.opengis.util.GenericName;
 import org.opengis.util.FactoryException;
@@ -140,20 +138,6 @@ public final class IdentifiedObjects extends Static {
     }
 
     /**
-     * Returns the collection iterator, or {@code null} if the given collection is null or
-     * empty. We use this method as a paranoiac safety against broken implementations.
-     *
-     * @param  <E> The type of elements in the collection.
-     * @param  collection The collection from which to get the iterator, or {@code null}.
-     * @return The iterator over the given collection elements, or {@code null}.
-     *
-     * @since 3.20
-     */
-    private static <E> Iterator<E> iterator(final Collection<E> collection) {
-        return (collection != null && !collection.isEmpty()) ? collection.iterator() : null;
-    }
-
-    /**
      * Returns the properties to be given to an identified object derived from the specified one.
      * This method returns the same properties than the supplied argument (as of
      * <code>{@linkplain #getProperties(IdentifiedObject) getProperties}(info)</code>), except for
@@ -172,7 +156,10 @@ public final class IdentifiedObjects extends Static {
      * @param  authority The new authority for the object to be created, or {@code null} if it
      *         is not going to have any declared authority.
      * @return The identified object properties in a mutable map.
+     *
+     * @deprecated Will be removed.
      */
+    @Deprecated // Now a package-private method in DefaultOperationMethod.
     public static Map<String,Object> getProperties(final IdentifiedObject info, final Citation authority) {
         final Map<String,Object> properties = new HashMap<>(org.apache.sis.referencing.IdentifiedObjects.getProperties(info));
         properties.put(NAME_KEY, new NamedIdentifier(authority, info.getName().getCode()));

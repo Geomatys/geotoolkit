@@ -50,7 +50,6 @@ import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.ParameterValueGroup;
-import org.opengis.metadata.Identifier;
 import org.opengis.util.InternationalString;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.metadata.Identifier;
