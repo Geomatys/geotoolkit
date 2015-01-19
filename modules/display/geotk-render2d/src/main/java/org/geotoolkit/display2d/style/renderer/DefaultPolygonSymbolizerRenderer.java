@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2008 - 2010, Geomatys
+ *    (C) 2008 - 2015, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -26,6 +26,7 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.logging.Level;
 import javax.measure.unit.Unit;
+import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.geotoolkit.display.VisitFilter;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display.shape.TransformedShape;
@@ -41,7 +42,7 @@ import org.geotoolkit.display2d.style.CachedStroke;
 import org.geotoolkit.display2d.style.CachedStrokeGraphic;
 import org.geotoolkit.display2d.style.CachedStrokeSimple;
 import org.geotoolkit.display2d.style.j2d.PathWalker;
-//import org.opengis.geometry.Geometry;
+import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 
@@ -104,19 +105,33 @@ public class DefaultPolygonSymbolizerRenderer extends AbstractSymbolizerRenderer
             dispStep = new Point2D.Float(disps[0], -disps[1]);
         }
 
+        float sizeCorrection = 1f;
         try {
             if(dispGeom){
                 renderingContext.switchToDisplayCRS();
                 shapes = (offset != 0) ? bufferDisplayGeometry(renderingContext, projectedGeometry, offset)
                                       : projectedGeometry.getDisplayShape();
             }else{
-                renderingContext.switchToObjectiveCRS();
-                shapes = (offset != 0) ? bufferObjectiveGeometry(renderingContext, projectedGeometry, symbolUnit, offset)
-                                      : projectedGeometry.getObjectiveShape();
-
+                //NOTE : Java2d has issues when rendering shapes with large strokes when 
+                //there is a given transform, we cheat by converting the geometry is
+                //display unit.
+                //
+                //renderingContext.switchToObjectiveCRS();
+                //shapes = (offset != 0) ? bufferObjectiveGeometry(renderingContext, projectedGeometry, symbolUnit, offset)
+                //                      : projectedGeometry.getObjectiveShape();
                 //adjust displacement, displacement is expressed in pixel units
-                final AffineTransform inverse = renderingContext.getDisplayToObjective();
-                if(dispStep!=null) dispStep = inverse.deltaTransform(dispStep, dispStep);
+                //final AffineTransform inverse = renderingContext.getDisplayToObjective();
+                //if(dispStep!=null) dispStep = inverse.deltaTransform(dispStep, dispStep);
+                
+                renderingContext.switchToDisplayCRS();
+                final AffineTransform2D displayToObjective = renderingContext.getDisplayToObjective();
+                sizeCorrection = (float)XAffineTransform.getScale(displayToObjective);
+                
+                if(offset!=0){
+                    shapes = bufferDisplayGeometry(renderingContext, projectedGeometry, offset*sizeCorrection);
+                }else{
+                    shapes = projectedGeometry.getDisplayShape();
+                }
             }
         }catch (TransformException ex){
             throw new PortrayalException("Could not calculate projected geometry",ex);
@@ -127,6 +142,8 @@ public class DefaultPolygonSymbolizerRenderer extends AbstractSymbolizerRenderer
             return;
         }
 
+        final float coeff = this.coeff * sizeCorrection;
+        
         for(Shape shape : shapes){
         
             //we apply the displacement ---------------------------------------
