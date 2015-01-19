@@ -25,6 +25,7 @@ import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.feature.type.Name;
 import org.geotoolkit.storage.DataNode;
 import org.geotoolkit.storage.StorageListener;
+import org.opengis.metadata.content.CoverageDescription;
 
 /**
  * Reference to a coverage in the coverage store.
@@ -49,6 +50,13 @@ public interface CoverageReference extends DataNode {
      */
     int getImageIndex();
 
+    /**
+     * Get the coverage description and statistics.
+     * 
+     * @return CoverageDescripion, can be null
+     */
+    CoverageDescription getMetadata();
+    
     /**
      * @return true if coverage is writable
      * @throws org.apache.sis.storage.DataStoreException

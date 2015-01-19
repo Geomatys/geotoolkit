@@ -24,12 +24,14 @@ import org.apache.sis.util.collection.TableColumn;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.io.CoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
-import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.feature.type.Name;
 import org.geotoolkit.storage.DefaultDataNode;
 
 import javax.xml.bind.annotation.XmlTransient;
+import org.apache.sis.math.Statistics;
+import org.apache.sis.metadata.iso.content.DefaultImageDescription;
+import org.opengis.metadata.content.CoverageDescription;
 
 /**
  *
@@ -61,6 +63,12 @@ public abstract class AbstractCoverageReference extends DefaultDataNode implemen
     @Override
     public CoverageStore getStore() {
         return store;
+    }
+
+    @Override
+    public CoverageDescription getMetadata() {
+        //TODO default implementation with cache
+        return null;
     }
 
     /**
