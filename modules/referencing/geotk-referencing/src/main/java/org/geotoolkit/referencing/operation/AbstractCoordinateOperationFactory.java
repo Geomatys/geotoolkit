@@ -40,6 +40,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.*;
 
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.parameter.Parameters;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.collection.WeakHashSet;
 import org.apache.sis.referencing.NamedIdentifier;
@@ -48,6 +49,7 @@ import org.geotoolkit.referencing.factory.ReferencingFactory;
 import org.geotoolkit.referencing.factory.ReferencingFactoryContainer;
 import org.geotoolkit.referencing.operation.provider.Affine;
 import org.apache.sis.referencing.datum.BursaWolfParameters;
+import org.apache.sis.referencing.operation.DefaultOperationMethod;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.referencing.cs.CoordinateSystems;
@@ -490,8 +492,11 @@ public abstract class AbstractCoordinateOperationFactory extends ReferencingFact
     @Override
     public OperationMethod createOperationMethod(final Map<String,?> properties,
             final Integer sourceDimension, final Integer targetDimension,
-            final ParameterDescriptorGroup parameters) throws FactoryException
+            ParameterDescriptorGroup parameters) throws FactoryException
     {
+        if (parameters == null) {
+            parameters = Parameters.EMPTY_GROUP;
+        }
         return new DefaultOperationMethod(properties, sourceDimension, targetDimension, parameters);
     }
 

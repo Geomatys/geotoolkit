@@ -204,7 +204,7 @@ public class GeocentricToEllipsoid extends MathTransformProvider {
         } catch (NoninvertibleTransformException e) {
             throw new AssertionError(e); // Should never happen in Geotk implementation.
         }
-        if (dimension != targetDimension.intValue()) {
+        if (dimension != getTargetDimensions()) {
             transform = new MathTransformDecorator(transform, complement);
         }
         return transform;

@@ -79,7 +79,7 @@ import org.apache.sis.referencing.datum.BursaWolfParameters;
 import org.apache.sis.referencing.datum.DefaultGeodeticDatum;
 import org.geotoolkit.referencing.operation.DefaultSingleOperation;
 import org.geotoolkit.referencing.operation.DefiningConversion;
-import org.geotoolkit.referencing.operation.DefaultOperationMethod;
+import org.apache.sis.referencing.operation.DefaultOperationMethod;
 import org.geotoolkit.referencing.operation.DefaultConcatenatedOperation;
 import org.geotoolkit.internal.referencing.factory.ImplementationHints;
 import org.geotoolkit.internal.referencing.DeprecatedCode;
@@ -2700,15 +2700,11 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                         } catch (NumberFormatException exception) {
                             throw new FactoryException(exception);
                         }
-                        isBursaWolf = (num>=BURSA_WOLF_MIN_CODE && num<=BURSA_WOLF_MAX_CODE);
+                        isBursaWolf = (num >= BURSA_WOLF_MIN_CODE && num <= BURSA_WOLF_MAX_CODE);
                         // Reminder: The source and target dimensions MUST be computed when
                         //           the information is available. Dimension is not always 2!!
                         method = buffered.createOperationMethod(methodCode);
-                        if (!Objects.equals(method.getSourceDimensions(), sourceDimensions) ||
-                            !Objects.equals(method.getTargetDimensions(), targetDimensions))
-                        {
-                            method = new DefaultOperationMethod(method, sourceDimensions, targetDimensions);
-                        }
+                        method = DefaultOperationMethod.redimension(method, sourceDimensions, targetDimensions);
                         /*
                          * Note that some parameters required for MathTransform creation are implicit in
                          * the EPSG database (e.g. semi-major and semi-minor axis length in the case of

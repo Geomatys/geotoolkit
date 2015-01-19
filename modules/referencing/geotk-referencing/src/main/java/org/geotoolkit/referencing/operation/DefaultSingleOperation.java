@@ -37,6 +37,7 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.SingleOperation;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
+import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.apache.sis.parameter.Parameterized;
 import org.apache.sis.referencing.operation.transform.PassThroughTransform;
 import org.geotoolkit.internal.referencing.ParameterizedAffine;
@@ -125,7 +126,7 @@ public class DefaultSingleOperation extends AbstractCoordinateOperation implemen
     {
         super(properties, sourceCRS, targetCRS, transform);
         ensureNonNull("method", method);
-        DefaultOperationMethod.checkDimensions(method, transform);
+        CRSUtilities.checkDimensions(method, transform);
         this.method = method;
         /*
          * Undocumented property. We do not document it because parameters are usually either

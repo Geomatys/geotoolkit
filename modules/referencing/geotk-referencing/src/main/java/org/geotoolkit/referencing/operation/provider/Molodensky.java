@@ -531,8 +531,8 @@ public class Molodensky extends MathTransformProvider {
     protected MathTransform createMathTransform(final ParameterValueGroup values)
             throws ParameterNotFoundException
     {
-        int srcDim = sourceDimension;
-        int tgtDim = targetDimension;
+        int srcDim = getSourceDimensions();
+        int tgtDim = getTargetDimensions();
         int dimension = dimension(DIM, values);
         if (dimension != 0) {
             srcDim = tgtDim = dimension;

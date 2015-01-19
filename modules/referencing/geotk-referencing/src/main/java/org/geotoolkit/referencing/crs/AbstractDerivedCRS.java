@@ -35,7 +35,7 @@ import org.apache.sis.referencing.AbstractReferenceSystem;
 import org.geotoolkit.referencing.operation.DefaultConversion;
 import org.geotoolkit.referencing.operation.DefiningConversion;
 import org.geotoolkit.referencing.operation.DefaultSingleOperation;
-import org.geotoolkit.referencing.operation.DefaultOperationMethod;
+import org.apache.sis.referencing.operation.DefaultOperationMethod;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.apache.sis.internal.system.Semaphores;
 import org.apache.sis.internal.referencing.WKTUtilities;
@@ -152,7 +152,7 @@ public class AbstractDerivedCRS extends AbstractSingleCRS implements GeneralDeri
         ensureNonNull("baseToDerived",      baseToDerived);
         this.baseCRS = base;
         checkDimensions(base, baseToDerived, derivedCS);
-        DefaultOperationMethod.checkDimensions(conversionFromBase.getMethod(), baseToDerived);
+        CRSUtilities.checkDimensions(conversionFromBase.getMethod(), baseToDerived);
         final Class<?> c = (Class<?>) properties.get(CONVERSION_TYPE_KEY);
         Class<? extends Conversion> typeHint = getConversionType();
         if (c != null) {
@@ -224,7 +224,7 @@ public class AbstractDerivedCRS extends AbstractSingleCRS implements GeneralDeri
          */
         checkDimensions(base, baseToDerived, derivedCS);
         final OperationMethod method = new DefaultOperationMethod(baseToDerived);
-        DefaultOperationMethod.checkDimensions(method, baseToDerived);
+        CRSUtilities.checkDimensions(method, baseToDerived);
         this.conversionFromBase = (Conversion) DefaultSingleOperation.create(
             /* properties */ new UnprefixedMap(properties, "conversion."),
             /* sourceCRS  */ base,

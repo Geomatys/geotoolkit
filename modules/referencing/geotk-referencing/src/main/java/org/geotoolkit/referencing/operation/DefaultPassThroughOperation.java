@@ -31,6 +31,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import org.apache.sis.io.wkt.Formatter;
 import org.apache.sis.util.UnsupportedImplementationException;
+import org.apache.sis.referencing.operation.DefaultOperationMethod;
 
 import org.apache.sis.referencing.operation.transform.PassThroughTransform;
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;

@@ -30,6 +30,7 @@ import org.opengis.referencing.datum.*;
 import org.opengis.referencing.operation.*;
 import org.opengis.geometry.Envelope;
 
+import org.opengis.geometry.MismatchedDimensionException;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.referencing.ReferencingUtilities;
 import org.apache.sis.internal.referencing.AxisDirections;
@@ -44,6 +45,9 @@ import org.geotoolkit.measure.Measure;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.measure.Units;
 
+import org.apache.sis.referencing.operation.transform.Accessor;
+import org.apache.sis.referencing.operation.transform.MathTransforms;
+import org.apache.sis.referencing.operation.transform.PassThroughTransform;
 import static java.util.Collections.singletonMap;
 
 
@@ -154,6 +158,7 @@ public final class CRSUtilities extends Static {
             throws TransformException
     {
         if (crs != null) {
+            final CoordinateReferenceSystem original = crs;
             while (crs.getCoordinateSystem().getDimension() != 2) {
                 if (crs instanceof CompoundCRS) {
                     crs = ((CompoundCRS) crs).getComponents().get(0);
@@ -162,7 +167,7 @@ public final class CRSUtilities extends Static {
                     crs = CRS.getHorizontalComponent(crs);
                     if (crs == null) {
                         throw new TransformException(Errors.format(
-                                Errors.Keys.CANT_REDUCE_TO_TWO_DIMENSIONS_1, crs.getName()));
+                                Errors.Keys.CANT_REDUCE_TO_TWO_DIMENSIONS_1, original.getName()));
                     }
                 }
             }
@@ -412,5 +417,48 @@ search:     for (int i=0; ; i++) {
             }
         }
         return found;
+    }
+
+    /**
+     * Checks if an operation method and a math transform have a compatible number of source
+     * and target dimensions. In the particular case of a {@linkplain PassThroughTransform pass
+     * through transform} with more dimension than the expected number, the check will rather be
+     * performed against the {@linkplain PassThroughTransform#getSubTransform sub transform}.
+     *
+     * <p>This convenience method is provided for argument checking.</p>
+     *
+     * @param  method    The operation method to compare to the math transform, or {@code null}.
+     * @param  transform The math transform to compare to the operation method, or {@code null}.
+     * @throws MismatchedDimensionException if the number of dimensions are incompatibles.
+     */
+    public static void checkDimensions(final OperationMethod method, MathTransform transform)
+            throws MismatchedDimensionException
+    {
+        transform = MathTransforms.getCore(transform);
+        if (method == null || transform == null) {
+            return;
+        }
+        Integer expected = method.getSourceDimensions();
+        if (expected == null) {
+            return;
+        }
+        int actual = transform.getSourceDimensions();
+        final String name;
+        if (actual != expected.intValue()) {
+            name = "sourceDimension";
+        } else {
+            expected = method.getTargetDimensions();
+            if (expected == null) {
+                return;
+            }
+            actual = transform.getTargetDimensions();
+            if (actual != expected.intValue()) {
+                name = "targetDimension";
+            } else {
+                return;
+            }
+        }
+        throw new IllegalArgumentException(Errors.format(
+                Errors.Keys.MISMATCHED_DIMENSION_3, name, actual, expected));
     }
 }

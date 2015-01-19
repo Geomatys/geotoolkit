@@ -41,6 +41,7 @@ import org.opengis.referencing.operation.*;
 import org.apache.sis.util.Deprecable;
 import org.apache.sis.metadata.iso.extent.Extents;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
+import org.apache.sis.referencing.operation.DefaultOperationMethod;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.Factory;
 import org.geotoolkit.factory.FactoryRegistryException;
@@ -550,16 +551,9 @@ public class AuthorityBackedFactory extends DefaultCoordinateOperationFactory {
         final Class<? extends CoordinateOperation> type = AbstractCoordinateOperation.getType(operation);
         OperationMethod method = null;
         if (operation instanceof SingleOperation) {
-            method = ((SingleOperation) operation).getMethod();
-            if (method != null) {
-                final Integer sourceDimensions = transform.getSourceDimensions();
-                final Integer targetDimensions = transform.getTargetDimensions();
-                if (!Objects.equals(sourceDimensions, method.getSourceDimensions()) ||
-                    !Objects.equals(targetDimensions, method.getTargetDimensions()))
-                {
-                    method = new DefaultOperationMethod(method, sourceDimensions, targetDimensions);
-                }
-            }
+            method = DefaultOperationMethod.redimension(((SingleOperation) operation).getMethod(),
+                    transform.getSourceDimensions(),
+                    transform.getTargetDimensions());
         }
         return createFromMathTransform(properties, sourceCRS, targetCRS, transform, method, type);
     }
@@ -746,12 +740,7 @@ public class AuthorityBackedFactory extends DefaultCoordinateOperationFactory {
                  * If the original operation was a SingleOperation, make an exact copy of
                  * the original method except for the number of source/target dimensions.
                  */
-                method = ((SingleOperation) operation).getMethod();
-                if (!Objects.equals(srcDim, method.getSourceDimensions()) ||
-                    !Objects.equals(tgtDim, method.getTargetDimensions()))
-                {
-                    method = new DefaultOperationMethod(method, srcDim, tgtDim);
-                }
+                method = DefaultOperationMethod.redimension(((SingleOperation) operation).getMethod(), srcDim, tgtDim);
             } else if (operation instanceof ConcatenatedOperation) {
                 /*
                  * If the original operation was a ConcatenatedOperation, build a SingleOperation

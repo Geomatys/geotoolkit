@@ -48,7 +48,7 @@ import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.apache.sis.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.operation.DefaultProjection;
 import org.geotoolkit.referencing.operation.DefiningConversion;
-import org.geotoolkit.referencing.operation.DefaultOperationMethod;
+import org.apache.sis.referencing.operation.DefaultOperationMethod;
 import org.apache.sis.internal.referencing.ReferencingUtilities;
 import org.apache.sis.internal.referencing.WKTUtilities;
 import org.apache.sis.io.wkt.Formatter;

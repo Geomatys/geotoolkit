@@ -41,6 +41,7 @@ import org.opengis.referencing.operation.SingleOperation;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.io.wkt.Formatter;
 import org.apache.sis.util.ArgumentChecks;
+import org.apache.sis.referencing.operation.DefaultOperationMethod;
 
 import static org.geotoolkit.referencing.IdentifiedObjects.EMPTY_ALIAS_ARRAY;
 import static org.geotoolkit.referencing.IdentifiedObjects.EMPTY_IDENTIFIER_ARRAY;
@@ -153,7 +154,6 @@ public abstract class MathTransformProvider extends DefaultOperationMethod {
      *
      * @return The GeoAPI interface implemented by this operation.
      */
-    @Override
     public Class<? extends SingleOperation> getOperationType() {
         return SingleOperation.class;
     }

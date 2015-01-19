@@ -30,8 +30,9 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.OperationMethod;
 
 import org.apache.sis.io.wkt.Formatter;
-
 import org.apache.sis.internal.referencing.WKTUtilities;
+import org.apache.sis.referencing.operation.DefaultOperationMethod;
+
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 
 

@@ -33,7 +33,7 @@ import org.opengis.geometry.MismatchedDimensionException;
 
 import org.geotoolkit.referencing.operation.DefaultConversion;
 import org.geotoolkit.referencing.operation.DefiningConversion;
-import org.geotoolkit.referencing.operation.DefaultOperationMethod;
+import org.apache.sis.referencing.operation.DefaultOperationMethod;
 
 
 /**

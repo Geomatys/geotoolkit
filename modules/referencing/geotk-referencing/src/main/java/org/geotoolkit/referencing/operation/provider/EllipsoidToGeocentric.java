@@ -262,7 +262,7 @@ public class EllipsoidToGeocentric extends MathTransformProvider {
         final double semiMinor = doubleValue(SEMI_MINOR, values);
         final int    dimension = dimension(values);
         MathTransform transform = GeocentricTransform.create(semiMajor, semiMinor, SI.METRE, dimension != 2);
-        if (dimension != sourceDimension.intValue()) {
+        if (dimension != getSourceDimensions()) {
             transform = new MathTransformDecorator(transform, complement);
         }
         return transform;
