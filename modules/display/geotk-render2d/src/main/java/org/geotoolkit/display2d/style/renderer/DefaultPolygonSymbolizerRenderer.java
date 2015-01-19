@@ -17,8 +17,8 @@
 package org.geotoolkit.display2d.style.renderer;
 
 import com.vividsolutions.jts.geom.Geometry;
-import java.awt.Image;
-import java.awt.Shape;
+
+import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
 import java.awt.geom.PathIterator;
@@ -124,8 +124,7 @@ public class DefaultPolygonSymbolizerRenderer extends AbstractSymbolizerRenderer
                 //if(dispStep!=null) dispStep = inverse.deltaTransform(dispStep, dispStep);
                 
                 renderingContext.switchToDisplayCRS();
-                final AffineTransform2D displayToObjective = renderingContext.getDisplayToObjective();
-                sizeCorrection = (float)XAffineTransform.getScale(displayToObjective);
+                sizeCorrection = (float)XAffineTransform.getScale(renderingContext.getObjectiveToDisplay());
                 
                 if(offset!=0){
                     shapes = bufferDisplayGeometry(renderingContext, projectedGeometry, offset*sizeCorrection);
@@ -178,7 +177,14 @@ public class DefaultPolygonSymbolizerRenderer extends AbstractSymbolizerRenderer
                     g2d.setComposite(cs.getJ2DComposite(candidate));
                     g2d.setPaint(cs.getJ2DPaint(candidate, x, y, coeff, hints));
                     g2d.setStroke(cs.getJ2DStroke(candidate,coeff));
-                    g2d.draw(shape);
+
+                    //NOTE : java2d issue when rendering shapes with size < 1px
+                    final Rectangle bounds = shape.getBounds();
+                    if(bounds.width>1 || bounds.height>1){
+                        g2d.draw(shape);
+                    }else {
+                        g2d.fill(g2d.getStroke().createStrokedShape(shape));
+                    }
                 }else if(cachedStroke instanceof CachedStrokeGraphic){
                     final CachedStrokeGraphic gc = (CachedStrokeGraphic)cachedStroke;
                     final float initGap = gc.getInitialGap(candidate);
