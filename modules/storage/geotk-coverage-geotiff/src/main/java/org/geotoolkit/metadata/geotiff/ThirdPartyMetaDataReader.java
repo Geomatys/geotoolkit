@@ -228,7 +228,7 @@ public strictfp class ThirdPartyMetaDataReader {
             }
         }
         
-        if (realFillValue == null && gDalMinSampleValue == null && gDalMaxSampleValue == null && minSampleValues == null && maxSampleValues == null) return;
+//        if (realFillValue == null && gDalMinSampleValue == null && gDalMaxSampleValue == null && minSampleValues == null && maxSampleValues == null) return;
         
         final DimensionAccessor accessor = new DimensionAccessor(metadata);
         
