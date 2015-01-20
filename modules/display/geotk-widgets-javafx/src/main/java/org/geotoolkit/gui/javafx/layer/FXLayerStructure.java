@@ -19,6 +19,10 @@ package org.geotoolkit.gui.javafx.layer;
 
 import java.awt.Color;
 import java.util.List;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javax.measure.unit.Unit;
@@ -40,6 +44,10 @@ import org.geotoolkit.resources.Vocabulary;
 import org.opengis.coverage.SampleDimensionType;
 import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.geometry.Envelope;
+import org.opengis.metadata.content.AttributeGroup;
+import org.opengis.metadata.content.CoverageDescription;
+import org.opengis.metadata.content.RangeDimension;
+import org.opengis.metadata.content.SampleDimension;
 import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
@@ -68,7 +76,6 @@ public class FXLayerStructure extends FXPropertyPane {
     private MapLayer layer;
 
     public FXLayerStructure() {
-        setCenter(webPane);
     }
 
     @Override
@@ -101,6 +108,7 @@ public class FXLayerStructure extends FXPropertyPane {
             str = str.replaceAll(" ", "&nbsp;");
 
             sb.append(str);
+            setCenter(webPane);
 
 
         }else if(layer instanceof CoverageMapLayer){
@@ -226,6 +234,40 @@ public class FXLayerStructure extends FXPropertyPane {
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
+
+
+
+
+            final CoverageDescription desc = ref.getMetadata();
+            if(desc!=null && !desc.getAttributeGroups().isEmpty()){
+                final TabPane tabs = new TabPane();
+                final Tab tabprops = new Tab("Propriétés");
+                tabprops.setContent(webPane);
+                tabs.getTabs().add(tabprops);
+
+                final Tab tabbands = new Tab("Bands");
+                tabs.getTabs().add(tabbands);
+
+                final VBox vbox = new VBox();
+                final ScrollPane scroll = new ScrollPane(vbox);
+                scroll.setFitToWidth(true);
+                scroll.setFitToHeight(true);
+                tabbands.setContent(scroll);
+
+                final AttributeGroup attg = desc.getAttributeGroups().iterator().next();
+                for(RangeDimension rd : attg.getAttributes()){
+                    if(rd instanceof SampleDimension){
+                        final FXCoverageBand fxcb = new FXCoverageBand();
+                        fxcb.init((SampleDimension) rd);
+                        vbox.getChildren().add(fxcb);
+                    }
+                }
+
+                setCenter(tabs);
+            }else{
+                setCenter(webPane);
+            }
+
         }
 
         sb.append("</body></html>");

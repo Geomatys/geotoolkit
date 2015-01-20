@@ -10,3 +10,10 @@
 .property-key {
     -fx-padding: 8px;
 }
+
+.bordered {
+    -fx-border-radius : 15;
+    -fx-border-color : #DDDDDD;
+    -fx-background-radius : 15;
+    -fx-background-color : #EEEEEE;
+}
