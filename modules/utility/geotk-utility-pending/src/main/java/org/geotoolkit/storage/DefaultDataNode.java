@@ -19,7 +19,6 @@ package org.geotoolkit.storage;
 
 import java.util.HashSet;
 import java.util.Set;
-import org.apache.sis.util.Classes;
 import org.apache.sis.util.collection.DefaultTreeTable;
 import org.apache.sis.util.collection.TableColumn;
 import org.geotoolkit.gui.swing.tree.Trees;

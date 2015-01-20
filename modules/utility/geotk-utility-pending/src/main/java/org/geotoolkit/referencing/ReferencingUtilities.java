@@ -19,6 +19,8 @@ package org.geotoolkit.referencing;
 import java.awt.Dimension;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
@@ -61,6 +63,7 @@ import org.opengis.util.FactoryException;
 import static org.apache.sis.referencing.CRS.getHorizontalComponent;
 import static org.apache.sis.referencing.CRS.getVerticalComponent;
 import static org.apache.sis.referencing.CRS.getTemporalComponent;
+import org.geotoolkit.util.FileUtilities;
 
 
 /**
@@ -890,6 +893,28 @@ public final class ReferencingUtilities {
             }
         }
         return resultEnvelope;
+    }
+
+    /**
+     * Read TFW file and return the content affine transform.
+     *
+     * @param f
+     * @return
+     * @throws IOException
+     * @throws NumberFormatException
+     */
+    public static AffineTransform readTransform(File f) throws IOException, NumberFormatException {
+        final String str = FileUtilities.getStringFromFile(f);
+        final String[] parts = str.split("\n");
+        final double[] vals = new double[6];
+        int idx=0;
+        for(String line : parts){
+            line = line.trim();
+            if(line.isEmpty() || line.startsWith("#") || line.startsWith("//")) continue;
+            vals[idx] = Double.parseDouble(str);
+            idx++;
+        }
+        return new AffineTransform(vals);
     }
 
     private static Map<String,String> name(final String name) {
