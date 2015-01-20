@@ -53,6 +53,7 @@
   <!-- =========================================================== -->
   <modules>
     <module>geotk-mapfile</module>
+    <module>geotk-legacy</module>
   </modules>
 
 </project>
