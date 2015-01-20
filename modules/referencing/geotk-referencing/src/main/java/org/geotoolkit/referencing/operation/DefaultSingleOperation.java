@@ -126,8 +126,10 @@ public class DefaultSingleOperation extends AbstractCoordinateOperation implemen
     {
         super(properties, sourceCRS, targetCRS, transform);
         ensureNonNull("method", method);
-        OperationMethods.checkDimensions(method, transform);
         this.method = method;
+        if (transform != null) {
+            OperationMethods.checkDimensions(method, transform);
+        }
         /*
          * Undocumented property. We do not document it because parameters are usually either
          * inferred from the MathTransform, or specified explicitely in a DefiningConversion.
