@@ -21,9 +21,13 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.ChoiceBox;
+import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.display2d.ext.dynamicrange.DynamicRangeSymbolizer;
+import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.gui.javafx.style.FXStyleElementController;
 import org.geotoolkit.gui.javafx.style.FXTextExpression;
+import org.geotoolkit.map.FeatureMapLayer;
+import org.geotoolkit.map.MapBuilder;
 
 /**
  *
@@ -66,6 +70,10 @@ public class FXDRBound extends FXStyleElementController<DynamicRangeSymbolizer.D
         
         uiMode.valueProperty().addListener(changeListener);
         uiValue.valueProperty().addListener(changeListener);
+
+        //mimic a feature with coverage properties
+        final FeatureType ft = DynamicRangeSymbolizer.buildBandType();
+        uiValue.setLayer(MapBuilder.createFeatureLayer(FeatureStoreUtilities.collection("", ft)));
     }
     
     @Override

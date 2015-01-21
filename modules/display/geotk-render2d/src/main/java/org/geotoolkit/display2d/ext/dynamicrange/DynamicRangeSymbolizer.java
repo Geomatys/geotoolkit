@@ -30,6 +30,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import org.apache.sis.util.ArgumentChecks;
+import org.geotoolkit.feature.FeatureTypeBuilder;
+import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.geotoolkit.filter.DefaultLiteral;
 import org.geotoolkit.se.xml.v110.ParameterValueType;
 import org.geotoolkit.se.xml.v110.SymbolizerType;
@@ -48,6 +50,13 @@ import org.opengis.style.StyleVisitor;
 public class DynamicRangeSymbolizer extends SymbolizerType implements ExtensionSymbolizer{
 
     public static final String NAME = "DynamicRange";
+    public static final String PROPERTY_MIN = "min";
+    public static final String PROPERTY_MAX = "max";
+    public static final String PROPERTY_MEAN = "mean";
+    public static final String PROPERTY_STD = "std";
+    public static final String PROPERTY_HISTO = "histo";
+    public static final String PROPERTY_HISTO_MIN = "histo_min";
+    public static final String PROPERTY_HISTO_MAX = "histo_max";
     
     @XmlElement(name = "Channel",namespace="http://geotoolkit.org")
     private List<DRChannel> channels;
@@ -200,5 +209,18 @@ public class DynamicRangeSymbolizer extends SymbolizerType implements ExtensionS
         }
         
     }
-    
+
+    public static SimpleFeatureType buildBandType(){
+        final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
+        ftb.setName("coverage");
+        ftb.add(PROPERTY_MIN, double.class);
+        ftb.add(PROPERTY_MAX, double.class);
+        ftb.add(PROPERTY_MEAN, double.class);
+        ftb.add(PROPERTY_STD, double.class);
+        ftb.add(PROPERTY_HISTO, long[].class);
+        ftb.add(PROPERTY_HISTO_MIN, double.class);
+        ftb.add(PROPERTY_HISTO_MAX, double.class);
+        return ftb.buildSimpleFeatureType();
+    }
+
 }

@@ -20,11 +20,13 @@ import java.awt.AlphaComposite;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
+import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.coverage.CoverageUtilities;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridEnvelope2D;
@@ -45,6 +47,8 @@ import static org.geotoolkit.display2d.style.renderer.DefaultRasterSymbolizerRen
 import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.map.CoverageMapLayer;
+import org.geotoolkit.math.Histogram;
+import org.geotoolkit.metadata.DefaultSampleDimensionExt;
 import org.geotoolkit.parameter.ParametersExt;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.coverage.resample.ResampleDescriptor;
@@ -52,6 +56,10 @@ import org.geotoolkit.process.image.dynamicrange.DynamicRangeStretchProcess;
 import org.geotoolkit.referencing.CRS;
 import org.opengis.filter.expression.Expression;
 import org.opengis.geometry.Envelope;
+import org.opengis.metadata.content.AttributeGroup;
+import org.opengis.metadata.content.CoverageDescription;
+import org.opengis.metadata.content.RangeDimension;
+import org.opengis.metadata.content.SampleDimension;
 import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -77,6 +85,9 @@ public class DynamicRangeSymbolizerRenderer extends AbstractCoverageSymbolizerRe
             if(dataCoverage == null){
                 return;
             }
+
+            final CoverageReference covref = projectedCoverage.getCandidate().getCoverageReference();
+            final CoverageDescription covdesc = covref.getMetadata();
             
             dataCoverage = dataCoverage.view(ViewType.GEOPHYSICS);
             final RenderedImage ri = dataCoverage.getRenderedImage();
@@ -84,7 +95,9 @@ public class DynamicRangeSymbolizerRenderer extends AbstractCoverageSymbolizerRe
             
             final int[] bands = new int[]{-1,-1,-1,-1};
             final double[][] ranges = new double[][]{{-1,-1},{-1,-1},{-1,-1},{-1,-1}};
-            
+
+            final Map<String,Object> stats = new HashMap<>();
+
             for(DynamicRangeSymbolizer.DRChannel channel : symbolizer.getChannels()){
                 final Integer bandIdx;
                 try{
@@ -105,10 +118,34 @@ public class DynamicRangeSymbolizerRenderer extends AbstractCoverageSymbolizerRe
                 }
                 
                 bands[idx] = bandIdx;
-                
-                final Object stats = null;
+
+                //search for band statistics
+                stats.clear();
+                search:
+                for(AttributeGroup attg : covdesc.getAttributeGroups()){
+                    for(RangeDimension rd : attg.getAttributes()){
+                        if(!(rd instanceof SampleDimension)) continue;
+                        final int i = Integer.parseInt(rd.getSequenceIdentifier().tip().toString());
+                        if(i==bandIdx){
+                            final SampleDimension sd = (SampleDimension) rd;
+                            stats.put(DynamicRangeSymbolizer.PROPERTY_MIN, sd.getMinValue());
+                            stats.put(DynamicRangeSymbolizer.PROPERTY_MAX, sd.getMaxValue());
+                            stats.put(DynamicRangeSymbolizer.PROPERTY_MEAN, sd.getMeanValue());
+                            stats.put(DynamicRangeSymbolizer.PROPERTY_STD, sd.getStandardDeviation());
+                            if(sd instanceof DefaultSampleDimensionExt){
+                                final DefaultSampleDimensionExt dsd = (DefaultSampleDimensionExt) sd;
+                                stats.put(DynamicRangeSymbolizer.PROPERTY_HISTO, dsd.getHistogram());
+                                stats.put(DynamicRangeSymbolizer.PROPERTY_HISTO_MIN, dsd.getHistogramMin());
+                                stats.put(DynamicRangeSymbolizer.PROPERTY_HISTO_MAX, dsd.getHistogramMax());
+                            }
+                            break search;
+                        }
+                    }
+                }
+
                 ranges[idx][0] = evaluate(channel.getLower(), stats);
                 ranges[idx][1] = evaluate(channel.getUpper(), stats);
+                System.out.println(">>> "+ranges[idx][0] +"  "+ranges[idx][1]);
             }
             
             final DynamicRangeStretchProcess p = new DynamicRangeStretchProcess(ri, bands, ranges);
@@ -123,19 +160,28 @@ public class DynamicRangeSymbolizerRenderer extends AbstractCoverageSymbolizerRe
         
     }
     
-    private static double evaluate(DynamicRangeSymbolizer.DRBound bound, Object stats) throws PortrayalException{
+    private static double evaluate(DynamicRangeSymbolizer.DRBound bound, Map<String,Object> stats) throws PortrayalException{
         final String mode = bound.getMode();
         if(DynamicRangeSymbolizer.DRBound.MODE_EXPRESSION.equalsIgnoreCase(mode)){
             final Expression exp = bound.getValue();
-            if(GO2Utilities.isStatic(exp)){
-                final Number val = exp.evaluate(null, Number.class);
-                return val.doubleValue();
+            final Number val = exp.evaluate(stats, Number.class);
+            return (val==null) ? Double.NaN : val.doubleValue();
+        }else if(DynamicRangeSymbolizer.DRBound.MODE_PERCENT.equalsIgnoreCase(mode)){
+            final long[] histo = (long[]) stats.get(DynamicRangeSymbolizer.PROPERTY_HISTO);
+            final Double histoMin = (Double) stats.get(DynamicRangeSymbolizer.PROPERTY_HISTO_MIN);
+            final Double histoMax = (Double) stats.get(DynamicRangeSymbolizer.PROPERTY_HISTO_MAX);
+            if(histo==null || histoMin==null || histoMax==null){
+                //we don't have the informations
+                LOGGER.log(Level.INFO, "Missing histogram information for correct rendering.");
+                return Double.NaN;
             }else{
-                throw new PortrayalException("dynamic expression not supported yet.");
+                final Expression exp = bound.getValue();
+                final Number val = exp.evaluate(stats, Number.class);
+                final Histogram h = new Histogram(histo, histoMin, histoMax);
+                return h.getValueAt(val.doubleValue()/100.0);
             }
 
-        }else if(DynamicRangeSymbolizer.DRBound.MODE_PERCENT.equalsIgnoreCase(mode)){
-            throw new PortrayalException("Percent not supported yet.");
+
         }else{
             throw new PortrayalException("Unknwoned mode "+mode);
         }
