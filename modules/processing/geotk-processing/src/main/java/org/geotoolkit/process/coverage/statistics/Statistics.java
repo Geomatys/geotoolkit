@@ -16,11 +16,11 @@
  */
 package org.geotoolkit.process.coverage.statistics;
 
+import org.geotoolkit.metadata.ImageStatistics;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.coverage.*;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
@@ -38,7 +38,8 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 
-import java.awt.*;
+import java.awt.Dimension;
+import java.awt.Rectangle;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
@@ -47,6 +48,7 @@ import java.util.Arrays;
 import static org.geotoolkit.parameter.Parameters.getOrCreate;
 import static org.geotoolkit.parameter.Parameters.value;
 import static org.geotoolkit.process.coverage.statistics.StatisticsDescriptor.*;
+import org.opengis.geometry.Envelope;
 
 /**
  * Process to create a {@link org.geotoolkit.process.coverage.statistics.ImageStatistics}
@@ -136,6 +138,49 @@ public class Statistics extends AbstractProcess{
         return value(OUTCOVERAGE, out);
     }
 
+    /**
+     * Run Statistics process with a CoverageReference and return ImageStatistics
+     * the process is run on a reduced version of the data to avoid consuming to much resources.
+     *
+     * @param ref CoverageReference
+     * @param excludeNoData exclude no-data flag
+     * @param imageSize sampled image size
+     * @return ImageStatistics
+     * @throws ProcessException
+     */
+    public static ImageStatistics analyse(CoverageReference ref, boolean excludeNoData, int imageSize) throws ProcessException, CoverageStoreException{
+        GridCoverageReader reader = null;
+        try {
+            reader = ref.acquireReader();
+            final GeneralGridGeometry gridGeom = reader.getGridGeometry(ref.getImageIndex());
+            final Envelope env = gridGeom.getEnvelope();
+            final GridEnvelope ext = gridGeom.getExtent();
+
+            final double[] res = new double[ext.getDimension()];
+            double max = 0;
+            for(int i=0;i<res.length;i++){
+                res[i] = (env.getSpan(i) / imageSize);
+                max = Math.max(max,res[i]);
+            }
+            Arrays.fill(res, max);
+
+
+            final GridCoverageReadParam param = new GridCoverageReadParam();
+            param.setEnvelope(env);
+            param.setResolution(res);
+            final GridCoverage coverage = reader.read(ref.getImageIndex(), param);
+
+            org.geotoolkit.process.Process process = new Statistics((GridCoverage2D)coverage, excludeNoData);
+            ParameterValueGroup out = process.call();
+            return value(OUTCOVERAGE, out);
+
+        } finally {
+            if(reader!=null){
+                ref.recycle(reader);
+            }
+        }
+    }
+
 
     /**
      * Run Statistics process with a GridCoverageReader and return ImageStatistics
@@ -210,8 +255,6 @@ public class Statistics extends AbstractProcess{
             for (int i = 0; i < sampleDimensions.length; i++) {
                 sc.getBand(i).setNoData(sampleDimensions[i].getNoDataValues());
                 sc.getBand(i).setName(sampleDimensions[i].getDescription().toString());
-                sc.getBand(i).setMin(sampleDimensions[i].getMinimumValue());
-                sc.getBand(i).setMax(sampleDimensions[i].getMaximumValue());
             }
 
             getOrCreate(OUTCOVERAGE, outputParameters).setValue(sc);
@@ -220,6 +263,8 @@ public class Statistics extends AbstractProcess{
         }
 
         final ImageStatistics.Band[] bands = sc.getBands();
+        final org.apache.sis.math.Statistics[] stats = new org.apache.sis.math.Statistics[bands.length];
+        for(int i=0;i<bands.length;i++) stats[i] = new org.apache.sis.math.Statistics("stats");
         int nbBands = bands.length;
 
         //optimization for GridMosaicRenderedImage impl
@@ -254,10 +299,10 @@ public class Statistics extends AbstractProcess{
                         tile = mosaicImage.getTile(x, y);
                         pix = PixelIteratorFactory.createDefaultIterator(tile);
 
-                        analyseRange(pix, bands, true);
+                        analyseRange(pix, stats);
                         pix.rewind();
 
-                        mergeHistograms(histo, analyseHistogram(pix, bands, excludeNoData));
+                        mergeHistograms(histo, analyseHistogram(pix, bands, stats, excludeNoData));
 
                         updateBands(bands, histo);
                         fireProgressing("Histogram progressing", (step/totalTiles)*0.9f, true);
@@ -271,25 +316,30 @@ public class Statistics extends AbstractProcess{
             final PixelIterator pix = PixelIteratorFactory.createDefaultIterator(image);
 
             //get min/max
-            analyseRange(pix, bands, false);
+            analyseRange(pix, stats);
             fireProgressing("Start histogram computing", 55f, true);
 
             //reset iterator
             pix.rewind();
 
             //compute histogram
-            histo = analyseHistogram(pix, bands, excludeNoData);
+            histo = analyseHistogram(pix, bands, stats, excludeNoData);
             updateBands(bands, histo);
         }
+
+        //copy statistics in band container
+        for(int i=0;i<bands.length;i++){
+            bands[i].setMin(stats[i].minimum());
+            bands[i].setMax(stats[i].maximum());
+            bands[i].setMean(stats[i].mean());
+            bands[i].setStd(stats[i].standardDeviation(true));
+        }
+
     }
 
-    private void updateBands(ImageStatistics.Band[] bands,NumericHistogram[] histo) {
-
+    private void updateBands(ImageStatistics.Band[] bands, NumericHistogram[] histo) {
         for (int i = 0; i < bands.length; i++) {
-            final NumericHistogram histogram = histo[i];
-            bands[i].setMin(histogram.getMin());
-            bands[i].setMax(histogram.getMax());
-            bands[i].setHistogram(histogram.getHist());
+            bands[i].setHistogram(histo[i].getHist());
         }
     }
 
@@ -335,15 +385,7 @@ public class Statistics extends AbstractProcess{
         return resultHisto;
     }
 
-    private void analyseRange(final PixelIterator pix, final ImageStatistics.Band[] bands, boolean mergeWithBands) {
-
-        int nbBands = bands.length;
-        double[][] ranges = new double[nbBands][2];
-        for (double[] range : ranges) {
-            range[0] = Double.MAX_VALUE;
-            range[1] = Double.MIN_VALUE;
-        }
-
+    private void analyseRange(final PixelIterator pix, final org.apache.sis.math.Statistics[] bands) {
         //first pass to compute min/max values
         int b = 0;
         while (pix.next()) {
@@ -351,22 +393,10 @@ public class Statistics extends AbstractProcess{
             if (Double.isNaN(d) || Double.isInfinite(d)) {
                 continue;
             }
-
-            ranges[b][0] = Math.min(ranges[b][0], d);
-            ranges[b][1] = Math.max(ranges[b][1], d);
+            bands[b].accept(d);
 
             //reset b to loop on first band
-            if (++b == nbBands) b = 0;
-        }
-
-        for (int i = 0; i < nbBands; i++) {
-            if (mergeWithBands) {
-                bands[i].setMin(Math.min(bands[i].getMin(), ranges[i][0]));
-                bands[i].setMax(Math.max(bands[i].getMax(), ranges[i][1]));
-            } else {
-                bands[i].setMin(ranges[i][0]);
-                bands[i].setMax(ranges[i][1]);
-            }
+            if (++b == bands.length) b = 0;
         }
     }
 
@@ -377,13 +407,13 @@ public class Statistics extends AbstractProcess{
      * @param excludeNoData
      */
     private NumericHistogram[] analyseHistogram(final PixelIterator pix, final ImageStatistics.Band[] bands,
-                                                final boolean excludeNoData) {
+                                                org.apache.sis.math.Statistics[] stats, final boolean excludeNoData) {
 
         int nbBands = bands.length;
         final NumericHistogram[] histograms = new NumericHistogram[nbBands];
         for (int i = 0; i < nbBands; i++) {
             int nbBins = getNbBins(bands[i].getDataType());
-            histograms[i] = new NumericHistogram(nbBins, bands[i].getMin(), bands[i].getMax());
+            histograms[i] = new NumericHistogram(nbBins, stats[i].minimum(), stats[i].maximum());
         }
 
         //reset iterator

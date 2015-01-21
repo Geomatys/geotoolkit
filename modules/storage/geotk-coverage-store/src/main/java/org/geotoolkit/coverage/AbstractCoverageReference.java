@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2012-2013, Geomatys
+ *    (C) 2012-2015, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -17,8 +17,10 @@
 package org.geotoolkit.coverage;
 
 import java.awt.Point;
+import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.collection.TableColumn;
 import org.apache.sis.util.logging.Logging;
@@ -29,9 +31,27 @@ import org.geotoolkit.feature.type.Name;
 import org.geotoolkit.storage.DefaultDataNode;
 
 import javax.xml.bind.annotation.XmlTransient;
-import org.apache.sis.math.Statistics;
-import org.apache.sis.metadata.iso.content.DefaultImageDescription;
+import org.apache.sis.metadata.iso.ImmutableIdentifier;
+import org.apache.sis.metadata.iso.content.DefaultAttributeGroup;
+import org.apache.sis.metadata.iso.content.DefaultCoverageDescription;
+import org.apache.sis.util.iso.Names;
+import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.geotoolkit.coverage.io.GridCoverageReadParam;
+import org.geotoolkit.coverage.io.GridCoverageReader;
+import org.geotoolkit.metadata.DefaultSampleDimensionExt;
+import org.geotoolkit.metadata.ImageStatistics;
+import org.geotoolkit.metadata.ImageStatistics.Band;
+import org.geotoolkit.parameter.ParametersExt;
+import org.geotoolkit.process.Process;
+import org.geotoolkit.process.ProcessDescriptor;
+import org.geotoolkit.process.ProcessException;
+import org.geotoolkit.process.ProcessFinder;
+import org.opengis.coverage.grid.GridCoverage;
+import org.opengis.coverage.grid.GridEnvelope;
+import org.opengis.geometry.Envelope;
 import org.opengis.metadata.content.CoverageDescription;
+import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.util.NoSuchIdentifierException;
 
 /**
  *
@@ -42,6 +62,8 @@ public abstract class AbstractCoverageReference extends DefaultDataNode implemen
 
     protected final CoverageStore store;
     protected final Name name;
+
+    private DefaultCoverageDescription desc = null;
 
     /**
      *
@@ -66,9 +88,65 @@ public abstract class AbstractCoverageReference extends DefaultDataNode implemen
     }
 
     @Override
-    public CoverageDescription getMetadata() {
-        //TODO default implementation with cache
-        return null;
+    public synchronized CoverageDescription getMetadata() {
+        if(desc!=null) return desc;
+
+        //calculate image statistics
+        desc = new DefaultCoverageDescription();
+        final DefaultAttributeGroup attg = new DefaultAttributeGroup();
+        desc.getAttributeGroups().add(attg);
+
+        try {
+            final GridCoverageReader reader = acquireReader();
+            final GeneralGridGeometry gridGeom = reader.getGridGeometry(getImageIndex());
+            final Envelope env = gridGeom.getEnvelope();
+            final GridEnvelope ext = gridGeom.getExtent();
+
+            final double[] res = new double[ext.getDimension()];
+            double max = 0;
+            for(int i=0;i<res.length;i++){
+                res[i] = (env.getSpan(i) / 1000);
+                max = Math.max(max,res[i]);
+            }
+            Arrays.fill(res, max);
+
+
+            final GridCoverageReadParam param = new GridCoverageReadParam();
+            param.setEnvelope(env);
+            param.setResolution(res);
+            final GridCoverage coverage = reader.read(getImageIndex(), param);
+
+            final ProcessDescriptor processDesc = ProcessFinder.getProcessDescriptor("coverage", "statistic");
+            final ParameterValueGroup processParam = processDesc.getInputDescriptor().createValue();
+            ParametersExt.getOrCreateValue(processParam, "inCoverage").setValue(coverage);
+            final Process process = processDesc.createProcess(processParam);
+            final ParameterValueGroup result = process.call();
+            final ImageStatistics stats = (ImageStatistics) ParametersExt.getOrCreateValue(result, "outStatistic").getValue();
+
+            final Band[] bands = stats.getBands();
+            for(int i=0;i<bands.length;i++){
+                final Band band = bands[i];
+                final DefaultSampleDimensionExt dim = new DefaultSampleDimensionExt();
+                dim.setMinValue(band.getMin());
+                dim.setMaxValue(band.getMax());
+                dim.setMeanValue(band.getMean());
+                dim.setStandardDeviation(band.getStd());
+                dim.setHistogram(band.getHistogram());
+                dim.setHistogramMin(band.getMin());
+                dim.setHistogramMax(band.getMax());
+
+                dim.setSequenceIdentifier(Names.createMemberName(null, "/", ""+i, Integer.class));
+                dim.getIdentifiers().add(new ImmutableIdentifier(null, null, band.getName()));
+                dim.getNames().add(new ImmutableIdentifier(null, null, band.getName()));
+
+                attg.getAttributes().add(dim);
+            }
+
+        } catch (CoverageStoreException | NoSuchIdentifierException | ProcessException ex) {
+            Logger.getLogger(AbstractCoverageReference.class.getName()).log(Level.WARNING, ex.getMessage(), ex);
+        }
+
+        return desc;
     }
 
     /**

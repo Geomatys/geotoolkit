@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.process.coverage.statistics;
+package org.geotoolkit.metadata;
 
 import org.geotoolkit.image.internal.SampleType;
 
@@ -82,6 +82,8 @@ public class ImageStatistics implements Serializable{
 
         private Double min = null;
         private Double max = null;
+        private Double mean = null;
+        private Double std = null;
 
         /**
          * no data values
@@ -181,24 +183,40 @@ public class ImageStatistics implements Serializable{
          * Get image min value
          * @return data which have min elements on image
          */
-        public double getMin() {
+        public Double getMin() {
             return min;
-        }
-
-        /**
-         * Get image max value
-         * @return data which have max elements on image
-         */
-        public double getMax() {
-            return max;
         }
 
         public void setMin(Double min) {
             this.min = min;
         }
 
+        /**
+         * Get image max value
+         * @return data which have max elements on image
+         */
+        public Double getMax() {
+            return max;
+        }
+
         public void setMax(Double max) {
             this.max = max;
+        }
+
+        public Double getMean() {
+            return mean;
+        }
+
+        public void setMean(Double mean) {
+            this.mean = mean;
+        }
+
+        public Double getStd() {
+            return std;
+        }
+
+        public void setStd(Double std) {
+            this.std = std;
         }
 
         @Override
@@ -207,6 +225,8 @@ public class ImageStatistics implements Serializable{
             sb.append("Band ").append(bandIndex).append(" {")
                     .append(" min=").append(min)
                     .append(", max=").append(max)
+                    .append(", mean=").append(mean)
+                    .append(", std=").append(std)
                     .append(", dataType=").append(dataType.name())
                     .append(", histogram=")
                     .append(Arrays.toString(histogram))

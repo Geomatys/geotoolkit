@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.process.coverage.statistics;
 
+import org.geotoolkit.metadata.ImageStatistics;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.CoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
