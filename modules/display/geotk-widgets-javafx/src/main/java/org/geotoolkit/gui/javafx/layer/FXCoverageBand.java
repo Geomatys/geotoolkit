@@ -21,8 +21,6 @@ import java.text.NumberFormat;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.CacheHint;
-import javafx.scene.chart.AreaChart;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.chart.XYChart.Data;
@@ -42,18 +40,19 @@ public class FXCoverageBand extends BorderPane {
 
     private static final NumberFormat NF = new DecimalFormat("0.###");
 
-    @FXML private Label uiMax;
-    @FXML private BarChart<String, Long> uiHisto;
-    @FXML private AreaChart<String, Long> uiArea;
-    @FXML private Label uiMean;
     @FXML private Label uiName;
-    @FXML private Label uiStd;
     @FXML private Label uiMin;
+    @FXML private Label uiMax;
+    @FXML private Label uiMean;
+    @FXML private Label uiStd;
+    @FXML private BarChart<String, Long> uiHisto;
 
     public FXCoverageBand() {
         GeotkFX.loadJRXML(this);
         uiHisto.setCache(false);
-
+        uiHisto.setBarGap(0);
+        uiHisto.setCategoryGap(0);
+        uiHisto.setVerticalGridLinesVisible(false);
     }
 
     public void init(SampleDimension dim){
@@ -76,9 +75,20 @@ public class FXCoverageBand extends BorderPane {
 
         if(dim instanceof DefaultSampleDimensionExt){
             final DefaultSampleDimensionExt ext = (DefaultSampleDimensionExt) dim;
-            final long[] vals = ext.getHistogram();
+            long[] vals = ext.getHistogram();
 
-            final double step = (ext.getHistogramMax()-ext.getHistogramMin())/ vals.length;
+            double step = (ext.getHistogramMax()-ext.getHistogramMin())/ (vals.length-1);
+
+            //NOTE : reduce number of values, javafx is slow and can't handle more then a few hundreds of values
+            //NOTE : we lost a few values here if vals size is not % 2
+            while(vals.length>200){
+                final long[] nvals = new long[vals.length/2];
+                for(int i=0;i<nvals.length;i++){
+                    nvals[i] = vals[i*2] + vals[i*2+1];
+                }
+                step *= 2;
+                vals = nvals;
+            }
 
             double v = ext.getHistogramMin();
 
@@ -93,7 +103,6 @@ public class FXCoverageBand extends BorderPane {
 
             uiHisto.setData(series);
             uiHisto.setVisible(true);
-            uiArea.setVisible(false);
         }
 
 

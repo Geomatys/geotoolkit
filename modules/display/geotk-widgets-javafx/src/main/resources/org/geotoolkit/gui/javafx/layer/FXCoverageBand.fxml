@@ -7,7 +7,6 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-
 <fx:root maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" type="BorderPane" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
    <center>
       <GridPane hgap="5.0" styleClass="bordered" vgap="5.0" BorderPane.alignment="CENTER">
@@ -46,14 +45,6 @@
                   <Font name="System Bold" size="13.0" />
                </font>
             </Label>
-            <AreaChart fx:id="uiArea" GridPane.columnIndex="2" GridPane.rowIndex="1" GridPane.rowSpan="5">
-              <xAxis>
-                <CategoryAxis side="BOTTOM" />
-              </xAxis>
-              <yAxis>
-                <NumberAxis side="LEFT" />
-              </yAxis>
-            </AreaChart>
          </children>
          <BorderPane.margin>
             <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
