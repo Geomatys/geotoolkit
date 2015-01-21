@@ -16,10 +16,11 @@
             <ColumnConstraints hgrow="ALWAYS" />
         </columnConstraints>
         <rowConstraints>
-            <RowConstraints vgrow="ALWAYS" />
+            <RowConstraints vgrow="NEVER" />
           <RowConstraints vgrow="NEVER" />
           <RowConstraints vgrow="NEVER" />
           <RowConstraints vgrow="NEVER" />
+            <RowConstraints vgrow="NEVER" />
             <RowConstraints vgrow="NEVER" />
             <RowConstraints vgrow="ALWAYS" />
         </rowConstraints>
@@ -32,7 +33,7 @@
             <Label fx:id="uiMax" text="0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
             <Label fx:id="uiMean" text="0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
             <Label fx:id="uiStd" text="0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-            <BarChart fx:id="uiHisto" GridPane.columnIndex="2" GridPane.rowIndex="1" GridPane.rowSpan="5">
+            <BarChart fx:id="uiHisto" maxHeight="250.0" GridPane.columnIndex="2" GridPane.rowIndex="1" GridPane.rowSpan="6">
               <xAxis>
                 <CategoryAxis side="BOTTOM" />
               </xAxis>
@@ -45,6 +46,8 @@
                   <Font name="System Bold" size="13.0" />
                </font>
             </Label>
+            <Label text="%org.geotoolkit.gui.javafx.layer.FXCoverageBand.unit" GridPane.rowIndex="5" />
+            <Label fx:id="uiUnit" text="-" GridPane.columnIndex="1" GridPane.rowIndex="5" />
          </children>
          <BorderPane.margin>
             <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />

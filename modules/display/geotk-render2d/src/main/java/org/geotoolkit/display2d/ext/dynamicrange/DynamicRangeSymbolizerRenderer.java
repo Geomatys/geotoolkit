@@ -145,7 +145,6 @@ public class DynamicRangeSymbolizerRenderer extends AbstractCoverageSymbolizerRe
 
                 ranges[idx][0] = evaluate(channel.getLower(), stats);
                 ranges[idx][1] = evaluate(channel.getUpper(), stats);
-                System.out.println(">>> "+ranges[idx][0] +"  "+ranges[idx][1]);
             }
             
             final DynamicRangeStretchProcess p = new DynamicRangeStretchProcess(ri, bands, ranges);
