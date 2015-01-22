@@ -810,7 +810,10 @@ public final class Parameters extends Static {
      *
      * @category update
      * @since 2.2
+     *
+     * @deprecated Moved to Apache SIS as {@link org.apache.sis.parameter.Parameters#copy(ParameterValueGroup, ParameterValueGroup).
      */
+    @Deprecated
     public static void copy(final ParameterValueGroup source, final ParameterValueGroup target) {
         for (final GeneralParameterValue param : source.values()) {
             final String name = param.getDescriptor().getName().getCode();

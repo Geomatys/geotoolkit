@@ -47,10 +47,10 @@ public final strictfp class ObjectiveAnalysisTest {
      */
     @Test
     public void testIntegers() {
-        final int   s = 10;
-        final int[] x = new int[s];
-        final int[] y = new int[s];
-        final int[] z = new int[s];
+        final int      s = 10;
+        final double[] x = new double[s];
+        final double[] y = new double[s];
+        final double[] z = new double[s];
         final Random r = new Random(380951990);
         for (int i=0; i<z.length; i++) {
             x[i] = r.nextInt(s);
@@ -59,12 +59,12 @@ public final strictfp class ObjectiveAnalysisTest {
         }
         final ObjectiveAnalysis ob = new ObjectiveAnalysis(
                 new Rectangle(s-1, s-1), s, s, PixelOrientation.UPPER_LEFT);
-        ob.setInputs(Vector.create(x), Vector.create(y), Vector.create(z));
+        ob.setInputs(x, y, z);
         final double[] computed = ob.interpolate((double[]) null);
         assertEquals(s*s, computed.length);
         for (int i=0; i<z.length; i++) {
-            final int index = x[i] + x.length * (s-1 - y[i]);
-            assertEquals(z[i], computed[index], EPS);
+            final double index = x[i] + x.length * (s-1 - y[i]);
+            assertEquals(z[i], computed[(int) index], EPS);
         }
         /*
          * Tests image creation. For now we merely check that no exception is thrown.

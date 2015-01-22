@@ -164,7 +164,7 @@ public final class CoverageStoreFinder extends Static {
      */
     public static synchronized CoverageStoreFactory getFactoryById(final String identifier) {
         for (final CoverageStoreFactory factory : loader) {
-            if (Citations.identifierMatches(factory.getIdentification().getCitation(), identifier)) {
+            if (Citations.identifierMatches(factory.getIdentification().getCitation(), null, identifier)) {
                 return factory;
             }
         }

@@ -233,7 +233,7 @@ final class DefaultAuthorityFactory extends CachingAuthorityFactory implements C
     static Set<String> getSupportedCodes(final String authority) {
         final Set<String> result = new LinkedHashSet<>(AUTHORITY_LESS);
         for (final CRSAuthorityFactory factory : AuthorityFactoryFinder.getCRSAuthorityFactories(null)) {
-            if (Citations.identifierMatches(factory.getAuthority(), authority)) {
+            if (Citations.identifierMatches(factory.getAuthority(), null, authority)) {
                 final Set<String> codes;
                 try {
                     codes = factory.getAuthorityCodes(CoordinateReferenceSystem.class);

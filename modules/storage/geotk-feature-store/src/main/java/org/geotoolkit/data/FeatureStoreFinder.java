@@ -164,7 +164,7 @@ public final class FeatureStoreFinder extends Static {
      */
     public static synchronized FeatureStoreFactory getFactoryById(final String identifier) {
         for (final FeatureStoreFactory factory : loader) {
-            if (Citations.identifierMatches(factory.getIdentification().getCitation(), identifier)) {
+            if (Citations.identifierMatches(factory.getIdentification().getCitation(), null, identifier)) {
                 return factory;
             }
         }

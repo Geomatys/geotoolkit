@@ -390,7 +390,7 @@ loop:           for (int i=0; ; i++) {
         public boolean filter(final Object provider) {
             if (authority != null) {
                 final Citation declared = ((AuthorityFactory) provider).getAuthority();
-                if (Citations.identifierMatches(declared, authority)) {
+                if (Citations.identifierMatches(declared, null, authority)) {
                     return (filter == null) || filter.filter(provider);
                 }
             }

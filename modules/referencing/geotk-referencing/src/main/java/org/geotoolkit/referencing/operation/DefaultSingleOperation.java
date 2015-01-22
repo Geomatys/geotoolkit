@@ -128,7 +128,7 @@ public class DefaultSingleOperation extends AbstractCoordinateOperation implemen
         ensureNonNull("method", method);
         this.method = method;
         if (transform != null) {
-            OperationMethods.checkDimensions(method, transform);
+            OperationMethods.checkDimensions(method, transform, properties);
         }
         /*
          * Undocumented property. We do not document it because parameters are usually either

@@ -59,7 +59,10 @@ import static org.apache.sis.util.ArgumentChecks.ensureValidIndex;
  *
  * @since 1.0
  * @module
+ *
+ * @deprecated Partially duplicated the work of {@link java.nio.DoubleBuffer}.
  */
+@Deprecated
 public abstract class Vector extends AbstractList<Number> implements CheckedContainer/*<Number>*/, RandomAccess {
     /**
      * A pool of indices used by the {@link Vector.View} inner class.

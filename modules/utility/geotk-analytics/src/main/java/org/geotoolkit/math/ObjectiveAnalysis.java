@@ -92,9 +92,9 @@ public class ObjectiveAnalysis {
     private final double scale;
 
     /**
-     * The input vectors defined by the last call to {@link #setInputs(Vector, Vector, Vector)}.
+     * The input vectors defined by the last call to {@link #setInputs(double[], double[], double[])}.
      */
-    private Vector xp, yp, zp;
+    private double[] xp, yp, zp;
 
     /**
      * Creates a new instance for interpolating values in the given region.
@@ -130,9 +130,6 @@ public class ObjectiveAnalysis {
      * Sets the input values at the given points. Those values will be used by the
      * {@link #interpolate(double[]) interpolate} methods for interpolating new values
      * at the locations defined by {@link #getOutputLocation(int, Point2D.Double)}.
-     * <p>
-     * This convenience method wraps the given arrays in {@link Vector} objects
-     * and delegates to {@link #setInputs(Vector, Vector, Vector)}.
      *
      * @param xp The <var>x</var> ordinates of a random set of points.
      * @param yp The <var>y</var> ordinates of a random set of points.
@@ -140,41 +137,6 @@ public class ObjectiveAnalysis {
      *           defined by the {@code xp} and {@code yp} arguments.
      */
     public void setInputs(final double[] xp, final double[] yp, final double[] zp) {
-        setInputs(new ArrayVector.Double(xp),
-                  new ArrayVector.Double(yp),
-                  new ArrayVector.Double(zp));
-    }
-
-    /**
-     * Sets the input values at the given points. Those values will be used by the
-     * {@link #interpolate(double[]) interpolate} methods for interpolating new values
-     * at the locations defined by {@link #getOutputLocation(int, Point2D.Double)}.
-     * <p>
-     * This convenience method wraps the given arrays in {@link Vector} objects
-     * and delegates to {@link #setInputs(Vector, Vector, Vector)}.
-     *
-     * @param xp The <var>x</var> ordinates of a random set of points.
-     * @param yp The <var>y</var> ordinates of a random set of points.
-     * @param zp The <var>z</var> values at the (<var>x</var>,<var>y</var>) coordinates
-     *           defined by the {@code xp} and {@code yp} arguments.
-     */
-    public void setInputs(final float[] xp, final float[] yp, final float[] zp) {
-        setInputs(new ArrayVector.Float(xp),
-                  new ArrayVector.Float(yp),
-                  new ArrayVector.Float(zp));
-    }
-
-    /**
-     * Sets the input values at the given points. Those values will be used by the
-     * {@link #interpolate(double[]) interpolate} methods for interpolating new values
-     * at the locations defined by {@link #getOutputLocation(int, Point2D.Double)}.
-     *
-     * @param xp The <var>x</var> ordinates of a random set of points.
-     * @param yp The <var>y</var> ordinates of a random set of points.
-     * @param zp The <var>z</var> values at the (<var>x</var>,<var>y</var>) coordinates
-     *           defined by the {@code xp} and {@code yp} arguments.
-     */
-    public void setInputs(final Vector xp, final Vector yp, final Vector zp) {
         this.xp = xp;
         this.yp = yp;
         this.zp = zp;
@@ -264,7 +226,7 @@ public class ObjectiveAnalysis {
     /**
      * Ensures that the given input is non-null.
      */
-    private static void ensureInputSet(final String name, final Vector value) {
+    private static void ensureInputSet(final String name, final double[] value) {
         if (value == null) {
             throw new IllegalStateException(Errors.format(Errors.Keys.NO_PARAMETER_1, name));
         }
@@ -279,9 +241,9 @@ public class ObjectiveAnalysis {
      * @param dest2 If non-null, the results will be stored in this provided array.
      */
     private void interpolate(final float[] dest1, final double[] dest2) {
-        final Vector xp = this.xp;
-        final Vector yp = this.yp;
-        final Vector zp = this.zp;
+        final double[] xp = this.xp;
+        final double[] yp = this.yp;
+        final double[] zp = this.zp;
         ensureInputSet("xp", xp);
         ensureInputSet("yp", yp);
         ensureInputSet("zp", zp);
@@ -295,7 +257,7 @@ public class ObjectiveAnalysis {
          * Create a matrix A(N,N) where N is the number of input data.
          * Note: the object 'GMatrix' is provided with Java3D.
          */
-        final int N = zp.size();
+        final int N = zp.length;
         final GMatrix A = new GMatrix(N,N);
         final GVector X = new GVector(N);
         /*
@@ -305,14 +267,14 @@ public class ObjectiveAnalysis {
         final Point2D.Double P1 = new Point2D.Double();
         final Point2D.Double P2 = new Point2D.Double();
         for (int i=0; i<N; i++){
-            P1.x = xp.doubleValue(i);
-            P1.y = yp.doubleValue(i);
+            P1.x = xp[i];
+            P1.y = yp[i];
             for (int j=0; j<N; j++) {
-                P2.x = xp.doubleValue(j);
-                P2.y = yp.doubleValue(j);
+                P2.x = xp[j];
+                P2.y = yp[j];
                 A.setElement(i, j, correlation(P1, P2));
             }
-            X.setElement(i, zp.doubleValue(i) - P.z(P1.x, P1.y));
+            X.setElement(i, zp[i] - P.z(P1.x, P1.y));
         }
         /*
          * Compute (A⁻¹) × (X) and stores the result into X.
@@ -328,8 +290,8 @@ public class ObjectiveAnalysis {
             double value = P.z(loc.x, loc.y);
             double lowBits = 0;
             for (int k=0; k<N; k++) {
-                P2.x = xp.doubleValue(k);
-                P2.y = yp.doubleValue(k);
+                P2.x = xp[k];
+                P2.y = yp[k];
                 double toAdd = X.getElement(k) * correlation(loc, P2);
                 /*
                  * Compute value += toAdd
