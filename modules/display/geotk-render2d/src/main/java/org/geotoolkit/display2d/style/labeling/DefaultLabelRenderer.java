@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2008 - 2009, Geomatys
+ *    (C) 2008 - 2015, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -16,13 +16,16 @@
  */
 package org.geotoolkit.display2d.style.labeling;
 
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.Point;
 import java.awt.BasicStroke;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.Shape;
-import java.awt.font.FontRenderContext;
-import java.awt.font.GlyphVector;
+import java.awt.geom.Rectangle2D;
+import java.awt.geom.RoundRectangle2D;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -30,7 +33,9 @@ import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.style.j2d.TextStroke;
 import static org.apache.sis.util.ArgumentChecks.*;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.display2d.GO2Utilities;
 import org.opengis.referencing.operation.TransformException;
+import sun.java2d.SunGraphics2D;
 
 /**
  * Default implementation of label renderer.
@@ -40,7 +45,7 @@ import org.opengis.referencing.operation.TransformException;
  */
 public class DefaultLabelRenderer implements LabelRenderer{
 
-    private final List<LabelLayer> layers = new ArrayList<LabelLayer>();
+    private final List<LabelLayer> layers = new ArrayList<>();
     protected RenderingContext2D context = null;
     
     public DefaultLabelRenderer() {
@@ -100,22 +105,29 @@ public class DefaultLabelRenderer implements LabelRenderer{
 
     private void portray(final Graphics2D g2, final PointLabelDescriptor label){
         context.switchToDisplayCRS();
-
         final FontMetrics metric = context.getFontMetrics(label.getTextFont());
         final int textHeight = metric.getHeight();
         final int textWidth = metric.stringWidth(label.getText());
 
-        final Shape[] geoms;
+        final Geometry[] geoms;
         try {
-            geoms = label.getGeometry().getDisplayShape();
+            //we don't use the display geometry because it is clipped to view area
+            //it will move the real geometry centroid, we rendering tiles we don' want the
+            //point to change from tile to tile
+            geoms = label.getGeometry().getDisplayGeometryJTS();
         } catch (TransformException ex) {
             Logging.getLogger(DefaultLabelRenderer.class).log(Level.WARNING, null, ex);
             return;
         }
 
-        for(Shape geom : geoms){
-            float refX = (float) geom.getBounds2D().getCenterX();
-            float refY = (float) geom.getBounds2D().getCenterY();
+        for(Geometry geom : geoms){
+            //get most appropriate point
+            final Point pt = GO2Utilities.getBestPoint(geom);
+            if(pt==null) continue;
+            final Coordinate point = pt.getCoordinate();
+            
+            float refX = (float)point.x;
+            float refY = (float)point.y;
 
             //adjust displacement---------------------------------------------------
             //displacement is oriented above and to the right
@@ -131,19 +143,27 @@ public class DefaultLabelRenderer implements LabelRenderer{
             //text is draw above reference point so use +
             refY = refY + (label.getAnchorY()*textHeight);
 
+            g2.setFont(label.getTextFont());
+
             //paint halo------------------------------------------------------------
+            final float haloWidth = label.getHaloWidth();
             if(label.getHaloWidth() > 0){
-                final FontRenderContext fontContext = g2.getFontRenderContext();
-                final GlyphVector glyph = label.getTextFont().createGlyphVector(fontContext, label.getText());
-                final Shape shape = glyph.getOutline(refX,refY);
+                final float haloWidth2 = haloWidth+haloWidth;
+                final Rectangle2D bounds = metric.getStringBounds(label.getText(), g2);
+                final Shape shape = new RoundRectangle2D.Double(
+                        bounds.getMinX() + refX - haloWidth,
+                        bounds.getMinY() + refY - haloWidth,
+                        bounds.getWidth() + haloWidth2,
+                        bounds.getHeight()+ haloWidth2,
+                        2+haloWidth2,
+                        2+haloWidth2);
+
                 g2.setPaint(label.getHaloPaint());
-                g2.setStroke(new BasicStroke(label.getHaloWidth()*2,BasicStroke.CAP_ROUND,BasicStroke.JOIN_ROUND));
-                g2.draw(shape);
+                g2.fill(shape);
             }
 
             //paint text------------------------------------------------------------
             g2.setPaint(label.getTextPaint());
-            g2.setFont(label.getTextFont());
             g2.drawString(label.getText(), refX, refY);
         }
 

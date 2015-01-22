@@ -18,11 +18,9 @@ package org.geotoolkit.display2d.primitive;
 
 import com.bric.geom.Clipper;
 import java.awt.Shape;
-import java.awt.geom.Rectangle2D;
 import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.geotoolkit.display.shape.ProjectedShape;
 import org.geotoolkit.display2d.container.stateless.StatelessContextParams;
 import org.geotoolkit.display2d.primitive.jts.JTSGeometryJ2D;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
@@ -32,7 +30,6 @@ import org.geotoolkit.geometry.jts.transform.CoordinateSequenceWrapTransformer;
 import org.geotoolkit.geometry.jts.transform.GeometryCSTransformer;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.CRS;
-import org.opengis.geometry.Envelope;
 import org.opengis.geometry.Geometry;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform2D;
@@ -78,19 +75,19 @@ public class ProjectedGeometry  {
     }
 
     public ProjectedGeometry(final ProjectedGeometry copy){
-        this.params = copy.params;
-        this.dataToObjective = copy.dataToObjective;
-        this.dataToDisplay = copy.dataToDisplay;
-        this.dataGeometryJTS = copy.dataGeometryJTS;
-        this.dataGeometryISO = copy.dataGeometryISO;
-        this.dataShape       = copy.dataShape;
-        this.objectiveGeometryJTS = copy.objectiveGeometryJTS;
-        this.objectiveGeometryISO = copy.objectiveGeometryISO;
-        this.objectiveShape       = copy.objectiveShape;
-        this.displayGeometryJTS = null;
-        this.displayGeometryISO = null;
-        this.displayShape       = null;
-        this.geomSet = copy.geomSet;
+        this.params                 = copy.params;
+        this.dataToObjective        = copy.dataToObjective;
+        this.dataToDisplay          = copy.dataToDisplay;
+        this.dataGeometryJTS        = copy.dataGeometryJTS;
+        this.dataGeometryISO        = copy.dataGeometryISO;
+        this.dataShape              = copy.dataShape;
+        this.objectiveGeometryJTS   = copy.objectiveGeometryJTS;
+        this.objectiveGeometryISO   = copy.objectiveGeometryISO;
+        this.objectiveShape         = copy.objectiveShape;
+        this.displayGeometryJTS     = null;
+        this.displayGeometryISO     = null;
+        this.displayShape           = null;
+        this.geomSet                = copy.geomSet;
     }
 
     public void setDataGeometry(final com.vividsolutions.jts.geom.Geometry geom, CoordinateReferenceSystem dataCRS){

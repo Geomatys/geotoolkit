@@ -147,7 +147,8 @@ public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<C
                     }
 
                 }else{
-                    Point pt2d = geom.getCentroid();
+                    //get most appropriate point
+                    final Point pt2d = GO2Utilities.getBestPoint(geom);
                     if(pt2d == null || pt2d.isEmpty()){
                         //no geometry
                         return;
@@ -180,7 +181,8 @@ public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<C
                         g2d.drawImage(img, ptrs, null);
                     }
                 }else{
-                    final Point pt2d = geom.getCentroid();
+                    //get most appropriate point
+                    final Point pt2d = GO2Utilities.getBestPoint(geom);
                     if(pt2d == null || pt2d.isEmpty()){
                         //no geometry
                         return;
@@ -294,7 +296,8 @@ public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<C
 
                 }else if(geom!=null){
 
-                    final Point pt2d = geom.getCentroid();
+                    //get most appropriate point
+                    final Point pt2d = GO2Utilities.getBestPoint(geom);
                     if(pt2d == null || pt2d.isEmpty()){
                         //no geometry
                         return;
@@ -401,7 +404,8 @@ public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<C
                 }
 
             }else{
-                Point pt2d = geom.getCentroid();
+                //get most appropriate point
+                final Point pt2d = GO2Utilities.getBestPoint(geom);
                 Coordinate pcoord = pt2d.getCoordinate();
                 if(Double.isNaN(pcoord.x)){
                     pcoord = geom.getCoordinate();

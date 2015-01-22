@@ -156,11 +156,8 @@ public class CachedTextSymbolizer extends CachedSymbolizer<TextSymbolizer>{
 
     @Override
     public float getMargin(final Object candidate, final float coeff) {
-        if(candidate == null){
-            return Float.NaN;
-        }else{
-            return 0;
-        }
+        //we can not evaluate the size of a text symbolizer
+        return Float.NaN;
     }
 
     @Override

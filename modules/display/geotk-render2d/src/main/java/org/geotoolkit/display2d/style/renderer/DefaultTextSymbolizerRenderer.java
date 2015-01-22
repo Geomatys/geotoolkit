@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2008 - 2010, Geomatys
+ *    (C) 2008 - 2015, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -94,69 +94,53 @@ public class DefaultTextSymbolizerRenderer extends AbstractSymbolizerRenderer<Ca
     public void portray(ProjectedGeometry projectedGeometry, Object candidate, final ProjectedObject projectedFeature) throws PortrayalException{
 
         //test if the symbol is visible on this feature
-        if(symbol.isVisible(candidate)){
+        if(!symbol.isVisible(candidate)) return;
 
-            //we adjust coefficient for rendering ------------------------------
-            float coeff = 1;
-            if(dispGeom){
-                //symbol is in display unit
-                coeff = 1;
-            }else{
-                //we have a special unit we must adjust the coefficient
-                coeff = renderingContext.getUnitCoefficient(symbolUnit);
-                // calculate scale difference between objective and display
-                final AffineTransform inverse = renderingContext.getObjectiveToDisplay();
-                coeff *= Math.abs(XAffineTransform.getScale(inverse));
-            }
-
-
-            //strat to extract label parameters---------------------------------
-            String label = symbol.getLabel(candidate);
-            if(label == null) return; //nothing to paint
-            label = label.trim();
-            if(label.isEmpty()) return; //nothing to paint
-            final CachedHalo halo = symbol.getHalo();
-            final CachedLabelPlacement placement = symbol.getPlacement();
-
-            //extract halo parameters
-            final float haloWidth;
-            final Paint haloPaint;
-            if(halo != null){
-                haloWidth = halo.getWidth(candidate);
-                haloPaint = halo.getJ2DPaint(candidate, 0, 0, hints);
-            }else{
-                haloWidth = 0;
-                haloPaint = Color.WHITE;
-            }
-
-            //extract text parameters
-            final Paint fontPaint = symbol.getFontPaint(candidate, 0,0, coeff, hints);
-            final Font j2dFont = symbol.getJ2dFont(candidate, coeff);
-
-            //symbolizer doesnt match the featuretype, no geometry found with this name.
-            if(projectedGeometry == null) return;
-
-            projectedGeometry = new ProjectedGeometry(projectedGeometry);
-
-            portray(projectedGeometry, renderingContext, projectedFeature, placement, haloWidth, haloPaint, fontPaint, j2dFont, label);
+        //we adjust coefficient for rendering ------------------------------
+        float coeff = 1;
+        if(dispGeom){
+            //symbol is in display unit
+            coeff = 1;
+        }else{
+            //we have a special unit we must adjust the coefficient
+            coeff = renderingContext.getUnitCoefficient(symbolUnit);
+            // calculate scale difference between objective and display
+            final AffineTransform inverse = renderingContext.getObjectiveToDisplay();
+            coeff *= Math.abs(XAffineTransform.getScale(inverse));
         }
-    }
 
-    private void portray(final ProjectedGeometry projectedGeometry, final RenderingContext2D context,
-            final ProjectedObject projectedFeature, final CachedLabelPlacement placement,
-            final float haloWidth, final Paint haloPaint, final Paint fontPaint, final Font j2dFont,
-            final String label) throws PortrayalException{
 
-        final Object candidate = projectedFeature.getCandidate();
+        //start to extract label parameters---------------------------------
+        String label = symbol.getLabel(candidate);
+        if(label == null) return; //nothing to paint
+        label = label.trim();
+        if(label.isEmpty()) return; //nothing to paint
+        final CachedHalo halo = symbol.getHalo();
+        final CachedLabelPlacement placement = symbol.getPlacement();
 
+        //extract halo parameters
+        final float haloWidth;
+        final Paint haloPaint;
+        if(halo != null){
+            haloWidth = halo.getWidth(candidate);
+            haloPaint = halo.getJ2DPaint(candidate, 0, 0, hints);
+        }else{
+            haloWidth = 0;
+            haloPaint = Color.WHITE;
+        }
+
+        //extract text parameters
+        final Paint fontPaint = symbol.getFontPaint(candidate, 0,0, coeff, hints);
+        final Font j2dFont = symbol.getJ2dFont(candidate, coeff);
+
+        //symbolizer doesnt match the featuretype, no geometry found with this name.
+        if(projectedGeometry == null) return;
+
+        projectedGeometry = new ProjectedGeometry(projectedGeometry);
+
+        //add in futur painting layer
         final LabelLayer labelLayer = getLabelLayer();
-        exploreAndPortray(projectedGeometry, candidate, context, placement, haloWidth,
-                haloPaint, fontPaint, j2dFont, label, labelLayer);
-    }
-
-    private static void exploreAndPortray(final ProjectedGeometry projectedGeometry, final Object feature, final RenderingContext2D context,
-            final CachedLabelPlacement placement, final float haloWidth, final Paint haloPaint, final Paint fontPaint, final Font j2dFont,
-            final String label, final LabelLayer layer) throws PortrayalException{
+        final Object feature = projectedFeature.getCandidate();
 
         if(placement instanceof CachedPointPlacement){
             final CachedPointPlacement pp = (CachedPointPlacement) placement;
@@ -170,9 +154,9 @@ public class DefaultTextSymbolizerRenderer extends AbstractSymbolizerRenderer<Ca
                 haloWidth, haloPaint,
                 anchor[0], anchor[1],
                 disp[0], disp[1],
-                rotation, context.getDisplayCRS(),
+                rotation, renderingContext.getDisplayCRS(),
                 projectedGeometry);
-            layer.labels().add(descriptor);
+            labelLayer.labels().add(descriptor);
 
         }else if(placement instanceof CachedLinePlacement){
             final CachedLinePlacement lp = (CachedLinePlacement) placement;
@@ -190,7 +174,7 @@ public class DefaultTextSymbolizerRenderer extends AbstractSymbolizerRenderer<Ca
                     lp.isAligned(),
                     lp.isGeneralizeLine(),
                     projectedGeometry);
-            layer.labels().add(descriptor);
+            labelLayer.labels().add(descriptor);
 
         }else{
             throw new PortrayalException("Text symbolizer has no label placement, this should not be possible.");

@@ -166,6 +166,8 @@ public final class GO2Utilities {
     public static final int SELECTION_PIXEL_MARGIN = 2;
     public static final AlphaComposite ALPHA_COMPOSITE_0F = AlphaComposite.getInstance(AlphaComposite.CLEAR, 0.0f);
     public static final AlphaComposite ALPHA_COMPOSITE_1F = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f);
+    //returned interior point when geometry in unvalid
+    private static final Coordinate INVALID_INTERIOR_POINT = new Coordinate(-0.5, -0.5, Double.NaN);
 
     public static final Shape GLYPH_LINE;
     public static final Shape GLYPH_POLYGON;
@@ -1311,6 +1313,42 @@ public final class GO2Utilities {
         }
 
         return true;
+    }
+
+    /**
+     * Try to get the most representative point of a a geometry.
+     * This is used by PointSymbolizer and TextSymbiolizer.
+     * 
+     * @param geom, not null
+     * @return 
+     */
+    public static Point getBestPoint(Geometry geom){
+        Point pt = null;
+
+        // 1 : try to get an interior point
+        //NOTE : this sometimes fails with TopololyException or IllegalArgumentException
+        try{
+            pt = geom.getInteriorPoint();
+            if(pt.isValid() && !pt.getCoordinate().equals2D(INVALID_INTERIOR_POINT)) return pt;
+        }catch(Throwable ex){
+            //JTS error sometimes happen
+        }
+        // 2 : fallback on centroid
+        //NOTE : even for valid geometries, the centroid happened to be NaN
+        try{
+            pt = geom.getCentroid();
+            if(pt.isValid()) return pt;
+        }catch(Throwable ex){
+            //JTS error sometimes happen
+        }
+
+        // 3 : extract from envelope
+        final com.vividsolutions.jts.geom.Envelope env = geom.getEnvelopeInternal();
+        pt = JTS_FACTORY.createPoint(new Coordinate(
+                (env.getMaxX()+env.getMinX())/2.0,
+                (env.getMaxY()+env.getMinY())/2.0));
+
+        return pt.isValid() ? pt : null;
     }
 
     ////////////////////////////////////////////////////////////////////////////
