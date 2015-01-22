@@ -90,6 +90,7 @@ public class DefaultTemporalPosition implements TemporalPosition {
 
     /**
      * {@inheritDoc }
+     * May return {@code null}.
      */
     @Override
     public IndeterminateValue getIndeterminatePosition() {
