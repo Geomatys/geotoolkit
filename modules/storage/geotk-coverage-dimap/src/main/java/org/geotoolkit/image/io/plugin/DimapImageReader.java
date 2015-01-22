@@ -338,6 +338,16 @@ public class DimapImageReader extends ImageReaderAdapter {
                     if(candidate.isFile()) return candidate;
                 }
 
+                //search for filename.DIM
+                obj = IOUtilities.changeExtension(file, "DIM");
+                if(obj instanceof File){
+                    candidate = (File)obj;
+                    if(candidate.isFile()) return candidate;
+                }else if(obj instanceof String){
+                    candidate = new File((String)obj);
+                    if(candidate.isFile()) return candidate;
+                }
+
                 return null;
             }else{
                 return null;
