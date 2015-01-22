@@ -911,7 +911,7 @@ public final class ReferencingUtilities {
         for(String line : parts){
             line = line.trim();
             if(line.isEmpty() || line.startsWith("#") || line.startsWith("//")) continue;
-            vals[idx] = Double.parseDouble(str);
+            vals[idx] = Double.parseDouble(line);
             idx++;
         }
         return new AffineTransform(vals);
