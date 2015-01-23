@@ -45,8 +45,9 @@ public class Plane extends org.apache.sis.math.Plane {
         if (det == 0) {
             throw new ArithmeticException("Points are colinear.");
         }
-        c  = ((   m00   )*P1.z + (   m01   )*P2.z + (   m02   )*P3.z) / det;
-        cx = ((P2.y-P3.y)*P1.z + (P3.y-P1.y)*P2.z + (P1.y-P2.y)*P3.z) / det;
-        cy = ((P3.x-P2.x)*P1.z + (P1.x-P3.x)*P2.z + (P2.x-P1.x)*P3.z) / det;
+        setEquation(
+                ((P2.y-P3.y)*P1.z + (P3.y-P1.y)*P2.z + (P1.y-P2.y)*P3.z) / det,
+                ((P3.x-P2.x)*P1.z + (P1.x-P3.x)*P2.z + (P2.x-P1.x)*P3.z) / det,
+                ((   m00   )*P1.z + (   m01   )*P2.z + (   m02   )*P3.z) / det);
     }
 }
