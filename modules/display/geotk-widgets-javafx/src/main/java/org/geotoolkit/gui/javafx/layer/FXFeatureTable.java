@@ -21,9 +21,14 @@ import com.vividsolutions.jts.geom.Geometry;
 import java.util.AbstractSequentialList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.ListIterator;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.logging.Level;
 import javafx.beans.InvalidationListener;
@@ -60,8 +65,15 @@ public class FXFeatureTable extends FXPropertyPane{
     
     private final TableView<Feature> table = new TableView<>();
     private boolean loadAll = false;
-
+    
     private FeatureMapLayer layer;
+    
+    // Bundle management
+    /**
+     * bundles contains ResourceBundles indexed by table names.
+     */
+    private final Map<String, ResourceBundle> bundles = new HashMap<>();
+    private String bundlePrefix;
     
     public FXFeatureTable() {
         final ScrollPane scroll = new ScrollPane(table);
@@ -93,7 +105,26 @@ public class FXFeatureTable extends FXPropertyPane{
         loadButton.setOnAction(this::loadData);
         table.setPlaceholder(loadButton);
     }
-
+    
+    public FXFeatureTable(final Map<String, String> bundleMapping){
+        this();
+        for(final String key : bundleMapping.keySet()){
+            final String bundleBaseName = bundleMapping.get(key);
+            try{
+                final ResourceBundle bundle = ResourceBundle.getBundle(bundleBaseName);
+                bundles.put(key, bundle);
+            }
+            catch(Exception ex){
+                Loggers.JAVAFX.log(Level.INFO, ex.getMessage(),ex);
+            }
+        }
+    }
+    
+    public FXFeatureTable(final String bundleBaseNamePrefix){
+        this();
+        bundlePrefix = bundleBaseNamePrefix;
+    }
+    
     @Override
     public String getTitle() {
         return "Feature table";
@@ -125,10 +156,10 @@ public class FXFeatureTable extends FXPropertyPane{
         layer = (FeatureMapLayer) candidate;
         final FeatureCollection<? extends Feature> features = layer.getCollection();
         
-        table.getColumns().clear();        
+        table.getColumns().clear();
         final FeatureType featureType = features.getFeatureType();
         for(PropertyDescriptor prop : featureType.getDescriptors()){
-            final TableColumn<Feature,String> column = new TableColumn<Feature,String>(prop.getName().toString());
+            final TableColumn<Feature,String> column = new TableColumn<Feature,String>(generateFinalColumnName(prop));
             column.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Feature, String>, ObservableValue<String>>() {
                 @Override
                 public ObservableValue<String> call(TableColumn.CellDataFeatures<Feature, String> param) {
@@ -153,6 +184,76 @@ public class FXFeatureTable extends FXPropertyPane{
         //table.setItems(obsCol);
         
         return true;
+    }
+    
+    private String generateFinalColumnName(final PropertyDescriptor prop) {
+        Map<String, Entry<String, String>> labelInfo;
+        try {
+            labelInfo = (Map) prop.getUserData().get("labelInfo");
+        } catch (Exception ex) {
+            Loggers.JAVAFX.log(Level.INFO, ex.getMessage(), ex);
+            labelInfo = null;
+        }
+
+        final String labelName = prop.getName().toString();
+        String columnName = labelName;
+        String tableName = null;
+
+        // If exists, explore labelInfo to retrive table and column respect to this label.
+        if (labelInfo != null) {
+            final Entry<String, String> entry = labelInfo.get(labelName);
+            if (entry != null) {
+                if (entry.getKey() != null) {
+                    tableName = entry.getKey();
+                } else {
+                    tableName = null;
+                }
+                if (entry.getValue() != null) {
+                    columnName = entry.getValue();
+                } else {
+                    columnName = labelName;
+                }
+            }
+        }
+
+        //If table name is not null, try to found resourcebundle for this table.
+        if (tableName != null) {
+
+            // If there isn't resource bundles (or not for the curruen table), try to generate.
+            if (bundles.get(tableName) == null) {
+                if (bundlePrefix != null) {
+                    bundles.put(tableName, ResourceBundle.getBundle(bundlePrefix + tableName));
+                }
+            }
+        }
+
+        final ResourceBundle bundle = bundles.get(tableName);
+
+        String finalColumnName;
+        if (labelName == null) {
+            finalColumnName = "";
+        } else if (bundle == null) {
+            if (!labelName.equals(columnName)) {
+                finalColumnName = columnName + " as " + labelName;
+            } else {
+                finalColumnName = columnName;
+            }
+        } else {
+            try {
+                if (!labelName.equals(columnName)) {
+                    finalColumnName = bundle.getString(columnName) + " as " + labelName;
+                } else {
+                    finalColumnName = bundle.getString(columnName);
+                }
+            } catch (MissingResourceException ex) {
+                if (!labelName.equals(columnName)) {
+                    finalColumnName = columnName + " as " + labelName;
+                } else {
+                    finalColumnName = columnName;
+                }
+            }
+        }
+        return finalColumnName;
     }
     
     private void loadData(ActionEvent event){

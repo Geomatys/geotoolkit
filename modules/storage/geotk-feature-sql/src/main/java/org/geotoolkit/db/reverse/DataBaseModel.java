@@ -644,8 +644,6 @@ public final class DataBaseModel {
 
         final ResultSetMetaData metadata = result.getMetaData();
         final int nbcol = metadata.getColumnCount();
-        
-        final Map<String, Entry<String, String>> labelInfo = new HashMap<>();
 
         for(int i=1; i<=nbcol; i++){
             final String columnName = metadata.getColumnName(i);
@@ -706,10 +704,11 @@ public final class DataBaseModel {
 
                 adb.findBestDefaultValue();
                 desc = adb.buildDescriptor();
-                
-                labelInfo.put(columnLabel, new AbstractMap.SimpleImmutableEntry<>(tableName, columnName));
-                desc.getUserData().put("labelInfo", labelInfo);
             }
+        
+            final Map<String, Entry<String, String>> labelInfo = new HashMap<>();
+            labelInfo.put(columnLabel, new AbstractMap.SimpleImmutableEntry<>(tableName, columnName));
+            desc.getUserData().put("labelInfo", labelInfo);
 
             ftb.add(desc);
         }
