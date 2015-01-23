@@ -10,6 +10,7 @@
 
 # Maven files
 target/
+dependency-reduced-pom.xml
 
 # Netbeans files
 nbactions.xml$

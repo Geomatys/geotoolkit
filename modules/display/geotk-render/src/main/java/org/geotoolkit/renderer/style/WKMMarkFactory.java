@@ -23,7 +23,7 @@ import java.awt.geom.GeneralPath;
 import java.awt.geom.Rectangle2D;
 
 /**
- * Well Knowned Marks factory.
+ * Well Known Mark factory.
  * 
  * @author Johann Sorel (Geomatys)
  */

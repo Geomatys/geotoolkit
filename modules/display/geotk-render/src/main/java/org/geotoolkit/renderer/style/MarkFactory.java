@@ -19,7 +19,6 @@ package org.geotoolkit.renderer.style;
 import java.awt.Shape;
 import java.util.AbstractMap;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import org.geotoolkit.display.PortrayalException;
 
