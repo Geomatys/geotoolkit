@@ -24,6 +24,7 @@ import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -643,9 +644,12 @@ public final class DataBaseModel {
 
         final ResultSetMetaData metadata = result.getMetaData();
         final int nbcol = metadata.getColumnCount();
+        
+        final Map<String, Entry<String, String>> labelInfo = new HashMap<>();
 
         for(int i=1; i<=nbcol; i++){
             final String columnName = metadata.getColumnName(i);
+            final String columnLabel = metadata.getColumnLabel(i);
             final String typeName = metadata.getColumnTypeName(i);
             final String schemaName = metadata.getSchemaName(i);
             final String tableName = metadata.getTableName(i);
@@ -668,7 +672,7 @@ public final class DataBaseModel {
                 final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder(FTF);
                 final AttributeTypeBuilder atb = new AttributeTypeBuilder(FTF);
 
-                adb.setName(ensureGMLNS(namespace, columnName));
+                adb.setName(ensureGMLNS(namespace, columnLabel));
                 adb.setMinOccurs(1);
                 adb.setMaxOccurs(1);
 
@@ -676,7 +680,7 @@ public final class DataBaseModel {
                 adb.setNillable(nullable == metadata.columnNullable);
 
 
-                atb.setName(ensureGMLNS(namespace, columnName));
+                atb.setName(ensureGMLNS(namespace, columnLabel));
                 Connection cx = null;
                 try {
                     cx = store.getDataSource().getConnection();
@@ -685,7 +689,7 @@ public final class DataBaseModel {
                         // try to determine the real geometric type
                         dialect.decodeGeometryColumnType(atb, cx, result, i, true);
                     } else {
-                        atb.setName(columnName); // why so this a sencond time ?
+                        atb.setName(columnLabel); // why so this a sencond time ?
                         atb.setBinding(type);
                     }
                 } catch (SQLException e) {
@@ -702,6 +706,9 @@ public final class DataBaseModel {
 
                 adb.findBestDefaultValue();
                 desc = adb.buildDescriptor();
+                
+                labelInfo.put(columnLabel, new AbstractMap.SimpleImmutableEntry<>(tableName, columnName));
+                desc.getUserData().put("labelInfo", labelInfo);
             }
 
             ftb.add(desc);

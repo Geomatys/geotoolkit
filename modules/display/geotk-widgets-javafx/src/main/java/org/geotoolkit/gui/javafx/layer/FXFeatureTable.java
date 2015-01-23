@@ -123,13 +123,13 @@ public class FXFeatureTable extends FXPropertyPane{
         if(!(candidate instanceof FeatureMapLayer)) return false;
         
         layer = (FeatureMapLayer) candidate;
-        final FeatureCollection<? extends Feature> col = layer.getCollection();
+        final FeatureCollection<? extends Feature> features = layer.getCollection();
         
         table.getColumns().clear();        
-        final FeatureType ft = col.getFeatureType();
-        for(PropertyDescriptor prop : ft.getDescriptors()){
-            final TableColumn<Feature,String> tc = new TableColumn<Feature,String>(prop.getName().toString());
-            tc.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Feature, String>, ObservableValue<String>>() {
+        final FeatureType featureType = features.getFeatureType();
+        for(PropertyDescriptor prop : featureType.getDescriptors()){
+            final TableColumn<Feature,String> column = new TableColumn<Feature,String>(prop.getName().toString());
+            column.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Feature, String>, ObservableValue<String>>() {
                 @Override
                 public ObservableValue<String> call(TableColumn.CellDataFeatures<Feature, String> param) {
                     final Object val = param.getValue().getPropertyValue(prop.getName().toString());
@@ -140,12 +140,12 @@ public class FXFeatureTable extends FXPropertyPane{
                     }
                 }
             });
-            tc.setCellFactory(TextFieldTableCell.forTableColumn());
-            table.getColumns().add(tc);
+            column.setCellFactory(TextFieldTableCell.forTableColumn());
+            table.getColumns().add(column);
         }
         
         if(loadAll){
-            table.setItems(FXCollections.observableArrayList((Feature[])col.toArray(new Feature[0])));
+            table.setItems(FXCollections.observableArrayList((Feature[])features.toArray(new Feature[0])));
         }
         
         //TODO make a caching version, this is too slow for today use.
