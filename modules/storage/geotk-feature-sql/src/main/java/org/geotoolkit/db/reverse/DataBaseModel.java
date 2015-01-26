@@ -63,7 +63,6 @@ import org.geotoolkit.feature.type.*;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.geotoolkit.feature.type.*;
 
 
 /**
@@ -111,6 +110,10 @@ public final class DataBaseModel {
     private CachedResultSet cacheImportedKeys;
     private CachedResultSet cacheExportedKeys;
     private CachedResultSet cacheIndexInfos;
+    //this set contains schema names which are needed to rebuild relations
+    private Set<String> visitedSchemas;
+    private Set<String> requieredSchemas;
+
 
     public DataBaseModel(final JDBCFeatureStore store, final boolean simpleTypes){
         this.store = store;
@@ -189,6 +192,10 @@ public final class DataBaseModel {
         clearCache();
         schemas = new HashMap<>();
         final SQLDialect dialect = store.getDialect();
+        final String databaseSchema = store.getDatabaseSchema();
+
+        visitedSchemas = new HashSet<>();
+        requieredSchemas = new HashSet<>();
 
         Connection cx = null;
         try {
@@ -275,11 +282,21 @@ public final class DataBaseModel {
 
             ////////////////////////////////////////////////////////////////////////////////
 
+            if(databaseSchema!=null){
+                requieredSchemas.add(databaseSchema);
+            }else{
+                final Iterator<Map> ite = cacheSchemas.filter(Filter.INCLUDE);
+                while(ite.hasNext()) {
+                    requieredSchemas.add((String)ite.next().get(Schema.TABLE_SCHEM));
+                }
+            }
 
-            final Iterator<Map> ite = cacheSchemas.filter(Filter.INCLUDE);
-            while(ite.hasNext()) {
-                final String SchemaName = (String)ite.next().get(Schema.TABLE_SCHEM);
-                final SchemaMetaModel schema = analyzeSchema(SchemaName,cx);
+            //we need to analyze requiered schema references
+            while(!requieredSchemas.isEmpty()){
+                final String sn = requieredSchemas.iterator().next();
+                visitedSchemas.add(sn);
+                requieredSchemas.remove(sn);
+                final SchemaMetaModel schema = analyzeSchema(sn,cx);
                 schemas.put(schema.name, schema);
             }
 
@@ -298,6 +315,8 @@ public final class DataBaseModel {
             cacheExportedKeys = null;
             cacheIndexInfos = null;
             metadata = null;
+            visitedSchemas = null;
+            requieredSchemas = null;
         }
 
 
@@ -432,8 +451,8 @@ public final class DataBaseModel {
             // - Unique indexes may indicate 1:1 relations in complexe features
             // - Unique indexes can be used as primary key if no primary key are defined
             final boolean pkEmpty = cols.isEmpty();
-            final List<String> names = new ArrayList<String>();
-            final Map<String,List<String>> uniqueIndexes = new HashMap<String, List<String>>();
+            final List<String> names = new ArrayList<>();
+            final Map<String,List<String>> uniqueIndexes = new HashMap<>();
             String indexname = null;
             //we can't cache this one, seems to be a bug in the driver, it won't find anything for table name like '%'
             cacheIndexInfos = new CachedResultSet(metadata.getIndexInfo(null, schemaName, tableName,true,false),
@@ -449,7 +468,7 @@ public final class DataBaseModel {
 
                 List<String> lst = uniqueIndexes.get(idxName);
                 if(lst == null){
-                    lst = new ArrayList<String>();
+                    lst = new ArrayList<>();
                     uniqueIndexes.put(idxName, lst);
                 }
                 lst.add(columnName);
@@ -539,6 +558,8 @@ public final class DataBaseModel {
                         refSchemaName, refTableName, refColumnName, true, deleteCascade);
                 table.importedKeys.add(relation);
 
+                if(refSchemaName!=null && !visitedSchemas.contains(refSchemaName)) requieredSchemas.add(refSchemaName);
+
                 //set the information
                 for(PropertyDescriptor desc : ftb.getProperties()){
                     if(desc.getName().getLocalPart().equals(localColumn)){
@@ -560,6 +581,8 @@ public final class DataBaseModel {
                 final boolean deleteCascade = DatabaseMetaData.importedKeyCascade == deleteRule;
                 table.exportedKeys.add(new RelationMetaModel(localColumn,
                         refSchemaName, refTableName, refColumnName, false, deleteCascade));
+
+                if(refSchemaName!=null && !visitedSchemas.contains(refSchemaName)) requieredSchemas.add(refSchemaName);
             }
 
             //find parent table if any -----------------------------------------
@@ -634,6 +657,7 @@ public final class DataBaseModel {
      * @param name
      * @return FeatureType
      * @throws SQLException
+     * @throws org.apache.sis.storage.DataStoreException
      */
     public FeatureType analyzeResult(final ResultSet result, final String name) throws SQLException, DataStoreException{
         final SQLDialect dialect = store.getDialect();
@@ -801,11 +825,11 @@ public final class DataBaseModel {
         final AttributeTypeBuilder atb = new AttributeTypeBuilder(FTF);
 
         //result map
-        final Map<String,TableMetaModel> builded = new HashMap<String, TableMetaModel>();
+        final Map<String,TableMetaModel> builded = new HashMap<>();
 
         //first pass to create the real types but without relations types-------
         //since we must have all of them before creating relations
-        final List<Object[]> secondPass = new ArrayList<Object[]>();
+        final List<Object[]> secondPass = new ArrayList<>();
 
         for(final SchemaMetaModel schema : schemas.values()){
             for(final TableMetaModel table : schema.tables.values()){

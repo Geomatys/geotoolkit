@@ -385,7 +385,7 @@ public class OracleDialect extends AbstractSQLDialect{
 
     @Override
     public boolean supportGlobalMetadata() {
-        return false;
+        return true;
     }
 
     @Override
