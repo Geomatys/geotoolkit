@@ -83,7 +83,7 @@ public class TimePositionType extends AbstractTimePosition implements Serializab
     /**
      * empty constructor used by JAXB.
      */
-    TimePositionType() {}
+    public TimePositionType() {}
 
     /**
      * build a simple Timposition with only a value.

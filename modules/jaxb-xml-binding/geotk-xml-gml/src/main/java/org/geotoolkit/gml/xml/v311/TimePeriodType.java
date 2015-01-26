@@ -82,7 +82,7 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType implement
     /**
      * Empty constructor used by JAXB.
      */
-    TimePeriodType(){}
+    public TimePeriodType(){}
 
     /**
      * Build a new Time period bounded by the begin and end time specified.
