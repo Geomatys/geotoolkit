@@ -147,7 +147,7 @@ final class H2Dialect extends AbstractSQLDialect{
         //fill base types
         TYPE_TO_CLASS.put(Types.VARCHAR,        String.class);
         TYPE_TO_CLASS.put(Types.CHAR,           String.class);
-        TYPE_TO_CLASS.put(Types.LONGVARCHAR,   String.class);
+        TYPE_TO_CLASS.put(Types.LONGVARCHAR,    String.class);
         TYPE_TO_CLASS.put(Types.NVARCHAR,       String.class);
         TYPE_TO_CLASS.put(Types.NCHAR,          String.class);
         TYPE_TO_CLASS.put(Types.BIT,            Boolean.class);

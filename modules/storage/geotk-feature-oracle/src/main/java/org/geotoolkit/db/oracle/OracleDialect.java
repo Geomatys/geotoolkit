@@ -19,22 +19,19 @@ package org.geotoolkit.db.oracle;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryCollection;
 import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.MultiLineString;
 import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
-import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.WKBReader;
-import com.vividsolutions.jts.io.WKTReader;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.math.BigDecimal;
+import java.sql.Blob;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Time;
@@ -50,7 +47,6 @@ import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.Version;
 import org.geotoolkit.db.DefaultJDBCFeatureStore;
 import org.geotoolkit.db.FilterToSQL;
-import org.geotoolkit.db.JDBCFeatureStore;
 import org.geotoolkit.db.JDBCFeatureStoreUtilities;
 import org.geotoolkit.db.dialect.AbstractSQLDialect;
 import org.geotoolkit.db.reverse.ColumnMetaModel;
@@ -61,7 +57,6 @@ import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.geotoolkit.feature.type.ComplexType;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.GeometryDescriptor;
-import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.geotoolkit.filter.capability.DefaultArithmeticOperators;
 import org.geotoolkit.filter.capability.DefaultComparisonOperators;
 import org.geotoolkit.filter.capability.DefaultFilterCapabilities;
@@ -75,7 +70,6 @@ import org.geotoolkit.filter.capability.DefaultSpatialOperators;
 import org.geotoolkit.filter.capability.DefaultTemporalCapabilities;
 import org.geotoolkit.filter.capability.DefaultTemporalOperators;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.IdentifiedObjects;
 import org.opengis.coverage.Coverage;
 import org.opengis.filter.Filter;
 import org.opengis.filter.PropertyIsBetween;
@@ -115,22 +109,12 @@ import org.opengis.filter.spatial.Overlaps;
 import org.opengis.filter.spatial.Touches;
 import org.opengis.filter.spatial.Within;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.util.FactoryException;
 
 /**
  *
- * @author husky
+ * @author Johann Sorel (Geomatys)
  */
 public class OracleDialect extends AbstractSQLDialect{
-
-    private static final String SCHEMA_PUBLIC = "PUBLIC";
-    private static final String GEOM_ENCODING = "Encoding";
-    private static enum GeometryEncoding{
-        RAW,
-        WKB,
-        WKT,
-        UNKNOWNED
-    }
 
     protected final Map<Integer, CoordinateReferenceSystem> CRS_CACHE = new HashMap<>();
 
@@ -395,16 +379,15 @@ public class OracleDialect extends AbstractSQLDialect{
 
     @Override
     public FilterToSQL getFilterToSQL(ComplexType featureType) {
-        throw new RuntimeException("TODO");
-//        try{
-//            PrimaryKey pk = null;
-//            if(featureType!=null){
-//                pk = featurestore.getDatabaseModel().getPrimaryKey(featureType.getName());
-//            }
-//            return new H2FilterToSQL(featureType, pk);
-//        }catch(DataStoreException ex){
-//            throw new RuntimeException(ex.getMessage(),ex);
-//        }
+        try{
+            PrimaryKey pk = null;
+            if(featureType!=null){
+                pk = featurestore.getDatabaseModel().getPrimaryKey(featureType.getName());
+            }
+            return new OracleFilterToSQL(featureType, pk);
+        }catch(DataStoreException ex){
+            throw new RuntimeException(ex.getMessage(),ex);
+        }
     }
 
     @Override
@@ -522,29 +505,7 @@ public class OracleDialect extends AbstractSQLDialect{
 
     @Override
     public void encodeGeometryColumn(StringBuilder sql, GeometryDescriptor gatt, int srid, Hints hints) {
-        double res = 0;
-        if(hints != null){
-            double[] ress = (double[]) hints.get(JDBCFeatureStore.RESAMPLING);
-            if(ress != null){
-                res = Math.min(ress[0], ress[1]);
-            }
-        }
-        if(Double.isInfinite(res)){
-            res = Double.MAX_VALUE;
-        }
-
-        final CoordinateReferenceSystem crs = gatt.getCoordinateReferenceSystem();
-        final int dimensions = (crs == null) ? 2 : crs.getCoordinateSystem().getDimension();
-        if(res > 0){
-            sql.append("ST_AsBinary(st_simplify(");
-            encodeColumnName(sql, gatt.getLocalName());
-            sql.append(",").append(res).append(")");
-            sql.append(") ");
-        }else{
-            sql.append("ST_AsBinary(");
-            encodeColumnName(sql, gatt.getLocalName());
-            sql.append(") ");
-        }
+        throw new RuntimeException("Not supported yet.");
     }
 
     @Override
@@ -566,32 +527,7 @@ public class OracleDialect extends AbstractSQLDialect{
 
     @Override
     public void encodeGeometryValue(StringBuilder sql, Geometry value, int srid) throws DataStoreException {
-        if (value == null) {
-            sql.append("NULL");
-        } else {
-            if (value instanceof LinearRing) {
-                //postgis does not handle linear rings, convert to just a line string
-                value = value.getFactory().createLineString(((LinearRing) value).getCoordinateSequence());
-            }
-
-            if(value.isEmpty()){
-                //empty geometries are interpreted as Geometrycollection in postgis < 2
-                //this breaks the column geometry type constraint so we replace those by null
-                sql.append("NULL");
-            }else{
-
-                try{
-                    final WKTReader reader = new WKTReader();
-                    Geometry g = reader.read(value.toText());
-                    System.out.println(g);
-                }catch(Exception ex){
-                    ex.printStackTrace();
-                }
-
-                //sql.append("'").append(value.toText()).append("'");
-                sql.append("ST_GeomFromText('").append(value.toText()).append("', ").append(srid).append(")");
-            }
-        }
+        throw new DataStoreException("Not supported yet.");
     }
 
     @Override
@@ -614,134 +550,6 @@ public class OracleDialect extends AbstractSQLDialect{
     @Override
     public void postCreateTable(String schemaName, final FeatureType featureType,
             final Connection cx) throws SQLException{
-        if (schemaName == null) {
-            schemaName = SCHEMA_PUBLIC;
-        }
-        final String tableName = featureType.getName().getLocalPart();
-
-        Statement st = null;
-        try {
-            st = cx.createStatement();
-
-            // register all geometry columns in the database
-            for (PropertyDescriptor att : featureType.getDescriptors()) {
-                if (att instanceof GeometryDescriptor) {
-                    final GeometryDescriptor gd = (GeometryDescriptor) att;
-
-                    // lookup or reverse engineer the srid
-                    int srid = -1;
-                    if (gd.getUserData().get(JDBCFeatureStore.JDBC_PROPERTY_SRID) != null) {
-                        srid = (Integer) gd.getUserData().get(JDBCFeatureStore.JDBC_PROPERTY_SRID);
-                    } else if (gd.getCoordinateReferenceSystem() != null) {
-                        try {
-                            final Integer result = IdentifiedObjects.lookupEpsgCode(gd.getCoordinateReferenceSystem(), true);
-                            if (result != null) {
-                                srid = result;
-                            }
-                        } catch (FactoryException e) {
-                            featurestore.getLogger().log(Level.FINE, "Error looking up the "
-                                    + "epsg code for metadata "
-                                    + "insertion, assuming -1", e);
-                        }
-                    }
-
-                    Class binding = gd.getType().getBinding();
-                    if(Coverage.class.isAssignableFrom(binding)){
-                        //postgis raster type
-                        final StringBuilder sb = new StringBuilder();
-                        sb.append("select addrasterconstraints('");
-                        sb.append(schemaName);
-                        sb.append("', '");
-                        sb.append(featureType.getName().getLocalPart());
-                        sb.append("', '");
-                        sb.append(att.getName().getLocalPart());
-                        sb.append("', ");
-                        sb.append("true");
-                        sb.append(", false, false, false, false, false, false, false, false, false, false, false);");
-                        final String sql = sb.toString();
-                        featurestore.getLogger().fine( sql );
-                        st.execute( sql );
-
-                        //add the srid in the comments
-                        //the view crs is not set until a first raster in added, so we store it in the comments
-                        st.execute("COMMENT ON COLUMN \""+schemaName+"\".\""+featureType.getName().getLocalPart()+"\".\""+att.getName().getLocalPart()+"\" IS '"+srid+"';");
-
-                        continue;
-                    }
-
-                    // assume 2 dimensions, but ease future customisation
-                    final int dimensions = 2;
-
-                    // grab the geometry type
-                    String geomType = getSQLType(gd.getType().getBinding());
-                    if (geomType == null)
-                        geomType = "GEOMETRY";
-
-                    // register the geometry type, first remove and eventual
-                    // leftover, then write out the real one
-                    StringBuilder sb = new StringBuilder("DELETE FROM GEOMETRY_COLUMNS");
-                    sb.append(" WHERE f_table_catalog=''");
-                    sb.append(" AND f_table_schema = '").append(schemaName).append('\'');
-                    sb.append(" AND f_table_name = '").append(tableName).append('\'');
-                    sb.append(" AND f_geometry_column = '").append(gd.getLocalName()).append('\'');
-                    String sql = sb.toString();
-
-                    featurestore.getLogger().fine( sql );
-                    st.execute( sql );
-
-                    sb = new StringBuilder("ALTER TABLE ");
-                    encodeSchemaAndTableName(sb, schemaName, tableName);
-                    sb.append(" ALTER COLUMN ");
-                    sb.append('\"').append(gd.getLocalName()).append('\"');
-                    sb.append(" TYPE ");
-                    sb.append(geomType);
-                    sql = sb.toString();
-                    featurestore.getLogger().fine( sql );
-                    st.execute( sql );
-
-                    sb = new StringBuilder("ALTER TABLE ");
-                    encodeSchemaAndTableName(sb, schemaName, tableName);
-                    sb.append(" ADD CONSTRAINT SRIDCONSTR CHECK ST_SRID(");
-                    sb.append('\"').append(gd.getLocalName()).append('\"');
-                    sb.append(") = ");
-                    sb.append(srid);
-                    sql = sb.toString();
-                    featurestore.getLogger().fine( sql );
-                    st.execute( sql );
-
-                    // add srid checks
-                    if (srid > -1) {
-                        sb = new StringBuilder("ALTER TABLE ");
-                        encodeSchemaAndTableName(sb, schemaName, tableName);
-                        sb.append(" ADD CONSTRAINT \"enforce_srid_");
-                        sb.append(gd.getLocalName()).append('"');
-                        sb.append(" CHECK (st_srid(");
-                        sb.append('"').append(gd.getLocalName()).append('"');
-                        sb.append(") = ").append(srid).append(')');
-                        sql = sb.toString();
-                        featurestore.getLogger().fine( sql );
-                        st.execute(sql);
-                    }
-
-                    // add the spatial index
-                    sb = new StringBuilder("CREATE SPATIAL INDEX \"spatial_").append(tableName);
-                    sb.append('_').append(gd.getLocalName().toLowerCase()).append('"');
-                    sb.append(" ON ");
-                    encodeSchemaAndTableName(sb, schemaName, tableName);
-                    sb.append("(");
-                    sb.append('"').append(gd.getLocalName()).append('"');
-                    sb.append(")");
-                    sql = sb.toString();
-                    featurestore.getLogger().fine(sql);
-                    st.execute(sql);
-                }
-            }
-            if(!cx.getAutoCommit()){
-                cx.commit();
-            }
-        } finally {
-            JDBCFeatureStoreUtilities.closeSafe(featurestore.getLogger(),st);
-        }
     }
 
 
@@ -784,100 +592,14 @@ public class OracleDialect extends AbstractSQLDialect{
     @Override
     public void decodeGeometryColumnType(final AttributeTypeBuilder atb, final Connection cx,
             final ResultSet rs, final int columnIndex, boolean customQuery) throws SQLException {
-
-        final ResultSetMetaData metadata = (ResultSetMetaData)rs.getMetaData();
-        //TODO
-//
-//        String typeName             = metadata.getColumnTypeName(columnIndex);
-//        final String columnName     = metadata.getColumnName(columnIndex);
-//        final String columnBaseName = metadata.getBaseColumnName(columnIndex);
-//        final String schemaName     = metadata.getBaseSchemaName(columnIndex);
-//        final String tableName      = metadata.getTableName(columnIndex);
-//        final String tableBaseName  = metadata.getBaseTableName(columnIndex);
-//
-//        typeName = typeName.toUpperCase();
-//        if (!TYPE_TO_ST_TYPE_MAP.containsKey(typeName)) {
-//            return;
-//        }
-//
-//        String gType = null;
-//        if(tableName == null || tableName.isEmpty()){
-//            //this column informations seems to come from a custom sql query
-//            //the result will be the natural encoding of postgis which is hexadecimal EWKB
-//            atb.addUserData(GEOM_ENCODING, H2Dialect.GeometryEncoding.RAW);
-//
-//        }else{
-//            //this column informations comes from a real table
-//            atb.addUserData(GEOM_ENCODING, H2Dialect.GeometryEncoding.WKB);
-//        }
-//
-//        //first attempt, try with the geometry metadata
-//        Statement statement = null;
-//        ResultSet result = null;
-//        try {
-//            final StringBuilder sb = new StringBuilder("SELECT TYPE FROM GEOMETRY_COLUMNS WHERE ");
-//            sb.append("F_TABLE_SCHEMA = '").append(schemaName).append("' ");
-//            sb.append("AND F_TABLE_NAME = '").append(tableBaseName).append("' ");
-//            sb.append("AND F_GEOMETRY_COLUMN = '").append(columnBaseName).append('\'');
-//            final String sqlStatement = sb.toString();
-//            featurestore.getLogger().log(Level.FINE, "Geometry type check; {0} ", sqlStatement);
-//            statement = cx.createStatement();
-//            result = statement.executeQuery(sqlStatement);
-//            if (result.next()) {
-//                gType = result.getString(1);
-//            }
-//        } finally {
-//            JDBCFeatureStoreUtilities.closeSafe(featurestore.getLogger(),null,statement,result);
-//        }
-//
-//
-//        // decode the type
-//        Class geometryClass = null;
-//        if (gType != null) {
-//            geometryClass = (Class) TYPENAME_TO_CLASS.get(gType.replaceFirst("ST_", "").toUpperCase());
-//        }
-//        if (geometryClass == null) {
-//            geometryClass = Geometry.class;
-//        }
-//
-//        atb.setName(columnName);
-//        atb.setBinding(geometryClass);
+        throw new SQLException("Not supported yet.");
     }
 
     @Override
     public Integer getGeometrySRID(String schemaName, final String tableName, final String columnName,
             Map metas, final Connection cx) throws SQLException{
-
-        // first attempt, try with the geometry metadata
-        Statement statement = null;
-        ResultSet result = null;
-        Integer srid = null;
-
-        //search in the geometry columns
-        try {
-            final StringBuilder sb = new StringBuilder("SELECT SRID FROM GEOMETRY_COLUMNS WHERE ");
-            if (schemaName != null && !schemaName.isEmpty()) {
-                sb.append("F_TABLE_SCHEMA = '").append(schemaName).append("' ");
-                sb.append(" AND ");
-            }
-            sb.append("F_TABLE_NAME = '").append(tableName).append("' ");
-            sb.append("AND F_GEOMETRY_COLUMN = '").append(columnName).append('\'');
-            final String sqlStatement = sb.toString();
-
-            featurestore.getLogger().log(Level.FINE, "Geometry type check; {0} ", sqlStatement);
-            statement = cx.createStatement();
-            result = statement.executeQuery(sqlStatement);
-
-            if (result.next()) {
-                srid = result.getInt(1);
-            }
-        } finally {
-            JDBCFeatureStoreUtilities.closeSafe(featurestore.getLogger(), null,statement,result);
-        }
-
-        return srid;
+        throw new SQLException("Not supported yet.");
     }
-
 
     @Override
     public CoordinateReferenceSystem createCRS(int srid, Connection cx) throws SQLException {
@@ -901,14 +623,16 @@ public class OracleDialect extends AbstractSQLDialect{
             int i) throws SQLException{
         final Class binding = descriptor.getType().getBinding();
         if(binding.isArray()){
-            if (rs.getArray(i) != null) {
+            if(byte.class.equals(binding.getComponentType())){
+                //blob or binary field type
+                final Blob blob = rs.getBlob(i);
+                return blob.getBytes(1, (int)blob.length());
+
+            }else if(rs.getArray(i) != null) {
                 Object baseArray = rs.getArray(i).getArray();
 
                 final Class c = binding.getComponentType();
                 if(!baseArray.getClass().getComponentType().equals(c)){
-
-                    //postgres handle multi depth array, yet do not declare them as Nd array in metadatas
-                    //find the number of dimensions
                     int nbdim=1;
                     Class base = baseArray.getClass().getComponentType();
                     while(base.isArray()){
@@ -917,24 +641,12 @@ public class OracleDialect extends AbstractSQLDialect{
                     }
 
                     baseArray = rebuildArray(baseArray, c, nbdim);
-
-//                    if(nbdim==1){
-//                        //not exact match retype it
-//                        int size = Array.getLength(baseArray);
-//                        final Object rarray = Array.newInstance(c, size);
-//                        for(int k=0; k<size; k++){
-//                            Array.set(rarray, k, Converters.convert(Array.get(baseArray, k), c));
-//                        }
-//                        baseArray = rarray;
-//                    }else{
-//                        final Object rarray = Array.newInstance(c, new int[nbdim]);
-//
-//                    }
                 }
                 return baseArray;
             } else {
                 return null;
             }
+            
         }else{
             if(String.class.equals(binding)){
                 //solve nclob string
@@ -967,68 +679,13 @@ public class OracleDialect extends AbstractSQLDialect{
     @Override
     public Geometry decodeGeometryValue(GeometryDescriptor descriptor, ResultSet rs,
         String column) throws IOException, SQLException {
-
-        switch((GeometryEncoding)descriptor.getType().getUserData().get(GEOM_ENCODING)){
-            case RAW:
-                //TODO
-                //return ewkbReader.read(rs.getString(column));
-            case WKB:
-                WKBReader reader = wkbReader.get();
-                if (reader == null) {
-                    reader = new WKBReader(featurestore.getGeometryFactory());
-                    wkbReader.set(reader);
-                }
-                try {
-                    return (Geometry) reader.read(rs.getBytes(column));
-                } catch (ParseException ex) {
-                    throw new IOException(ex.getMessage(),ex);
-                }
-            default:
-                throw new IllegalStateException("Can not decode geometry not knowing it's encoding.");
-        }
+        throw new IOException("Not supported yet.");
     }
 
     @Override
     public Geometry decodeGeometryValue(GeometryDescriptor descriptor, ResultSet rs,
         int column) throws IOException, SQLException {
-
-        GeometryEncoding ge = null;
-        final Map userData = descriptor.getType().getUserData();
-        if(userData!=null){
-            ge = (GeometryEncoding)userData.get(GEOM_ENCODING);
-        }
-        if(ge==null){
-            //try to guess type
-            final Object obj = rs.getObject(column);
-            if(obj instanceof String){
-                ge = GeometryEncoding.WKT;
-            }else{
-                ge = GeometryEncoding.RAW;
-            }
-        }
-
-        switch(ge){
-            case RAW:
-                //TODO
-                //return ewkbReader.read(rs.getString(column));
-            case WKB:
-                WKBReader reader = wkbReader.get();
-                if (reader == null) {
-                    reader = new WKBReader(featurestore.getGeometryFactory());
-                    wkbReader.set(reader);
-                }
-                final byte[] encodedValue = rs.getBytes(column);
-                if (encodedValue != null) {
-                    try {
-                        return (Geometry) reader.read(encodedValue);
-                    } catch (ParseException ex) {
-                        throw new IOException(ex.getMessage(),ex);
-                    }
-                }
-                return null;
-            default:
-                throw new IllegalStateException("Can not decode geometry not knowing it's encoding.");
-        }
+        throw new IOException("Not supported yet.");
     }
 
     @Override
