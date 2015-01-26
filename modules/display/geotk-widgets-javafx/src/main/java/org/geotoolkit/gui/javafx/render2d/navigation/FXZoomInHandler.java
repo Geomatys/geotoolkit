@@ -189,7 +189,8 @@ public class FXZoomInHandler extends FXAbstractNavigationHandler {
         @Override
         public void mouseWheelMoved(final ScrollEvent e) {
             final double rotate = -e.getDeltaY();
-
+            startX = getMouseX(e);
+            startY = getMouseY(e);
             if(rotate<0){
                 scale(new Point2D.Double(startX, startY),zoomFactor);
             }else if(rotate>0){
