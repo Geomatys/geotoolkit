@@ -47,6 +47,9 @@
   </developers>
 
   <dependencies>
+    <!-- In the final application if needed the Oracle JDBC driver can be deployed with :
+        mvn install:install-file -DgroupId=com.oracle -DartifactId=ojdbc -Dversion=11.2 -Dpackaging=jar -Dfile=ojdbc7.jar -DgeneratePom=true
+    -->
     <dependency>
       <groupId>org.geotoolkit</groupId>
       <artifactId>geotk-feature-sql</artifactId>
