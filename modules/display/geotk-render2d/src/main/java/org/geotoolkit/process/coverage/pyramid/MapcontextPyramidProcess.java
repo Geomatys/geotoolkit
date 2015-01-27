@@ -38,6 +38,8 @@ import org.geotoolkit.factory.Hints;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.Envelopes;
 import org.geotoolkit.internal.referencing.CRSUtilities;
+import org.geotoolkit.map.DefaultCoverageMapLayer;
+import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.process.AbstractProcess;
 import org.geotoolkit.process.ProcessException;
@@ -87,6 +89,7 @@ public final class MapcontextPyramidProcess extends AbstractProcess {
         final double[] scales = value(IN_SCALES, inputParameters);
         Integer nbpainter = value(IN_NBPAINTER, inputParameters);
         final PyramidalCoverageReference container = value(IN_CONTAINER, inputParameters);
+        final Boolean update = value(IN_UPDATE, inputParameters);
 
         if(nbpainter == null){
             nbpainter = Runtime.getRuntime().availableProcessors();
@@ -104,6 +107,10 @@ public final class MapcontextPyramidProcess extends AbstractProcess {
             ctxEnv = context.getBounds();
         } catch (IOException e) {
             throw new ProcessException(e.getMessage(), this, e);
+        }
+
+        if (update) {
+            context.layers().add(0, MapBuilder.createCoverageLayer(container));
         }
 
         final CoordinateReferenceSystem ctxCRS = context.getCoordinateReferenceSystem();

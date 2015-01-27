@@ -93,10 +93,17 @@ public final class MapcontextPyramidDescriptor extends AbstractProcessDescriptor
      */
     public static final ParameterDescriptor<Hints> IN_HINTS =
             new DefaultParameterDescriptor<Hints>("hints","Rendering hints",Hints.class,null,false);
+
+    /**
+     * Optional - Update mode.
+     * Add new data to old Pyramid without erase.
+     */
+    public static final ParameterDescriptor<Boolean> IN_UPDATE =
+            new DefaultParameterDescriptor<Boolean>("update", "Update mode.", Boolean.class, false, false);
     
     public static final ParameterDescriptorGroup INPUT_DESC =
             new DefaultParameterDescriptorGroup(NAME+"InputParameters",
-                IN_MAPCONTEXT,IN_EXTENT,IN_TILE_SIZE,IN_SCALES,IN_NBPAINTER,IN_CONTAINER,IN_HINTS);
+                IN_MAPCONTEXT,IN_EXTENT,IN_TILE_SIZE,IN_SCALES,IN_NBPAINTER,IN_CONTAINER,IN_HINTS, IN_UPDATE);
 
     public static final ParameterDescriptor<PyramidalCoverageReference> OUT_CONTAINER =
             new DefaultParameterDescriptor<PyramidalCoverageReference>("outContainer",
