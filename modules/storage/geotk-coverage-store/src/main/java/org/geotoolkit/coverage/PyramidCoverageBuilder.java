@@ -16,11 +16,13 @@
  */
 package org.geotoolkit.coverage;
 
-import java.awt.Dimension;
+import java.awt.*;
 import java.awt.image.*;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.CancellationException;
+import javax.imageio.ImageReader;
 import javax.swing.ProgressMonitor;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
@@ -37,6 +39,7 @@ import org.geotoolkit.image.interpolation.Interpolation;
 import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.image.interpolation.LanczosInterpolation;
 import org.geotoolkit.image.interpolation.Resample;
+import org.geotoolkit.image.interpolation.ResampleBorderComportement;
 import org.geotoolkit.image.iterator.PixelIteratorFactory;
 import org.geotoolkit.internal.image.ImageUtilities;
 import org.geotoolkit.internal.referencing.CRSUtilities;
@@ -49,6 +52,7 @@ import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.util.BufferedImageUtilities;
+import org.geotoolkit.util.ImageIOUtilities;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.coverage.grid.GridGeometry;
 import org.opengis.geometry.DirectPosition;
@@ -141,6 +145,12 @@ public class PyramidCoverageBuilder {
     private final int lanczosWindow;
 
     /**
+     * Flag to re-use mosaic tiles if already exist in output pyramid.
+     * Set at false by default.
+     */
+    private boolean reuseTiles = false;
+
+    /**
      * Global number of tiles which will be generate.
      * @see PyramidCoverageBuilder#initListener(java.util.Map, org.geotoolkit.process.ProcessListener)
      */
@@ -190,7 +200,7 @@ public class PyramidCoverageBuilder {
      *
      * Note : if lanczos interpolation doesn't choose lanczosWindow parameter has no impact.</p>
      *
-     * @param tileSize size of tile from mosaic if null a default tile size of 256 x 256 is choosen.
+     * @param tileSize size of tile from mosaic if null a default tile size of 256 x 256 is chosen. Minimum tile size is 64 x 64.
      * @param interpolation pixel operation use during resampling operation.
      * @param lanczosWindow only use about Lanczos interpolation.
      * @see Resample#fillImage()
@@ -198,6 +208,23 @@ public class PyramidCoverageBuilder {
      * @see InterpolationCase
      */
     public PyramidCoverageBuilder(Dimension tileSize, InterpolationCase interpolation, int lanczosWindow) {
+        this(tileSize, interpolation, lanczosWindow, false);
+    }
+
+    /**
+     * <p>Define tile size and interpolation properties use during resampling operation.<br/><br/>
+     *
+     * Note : if lanczos interpolation doesn't choose lanczosWindow parameter has no impact.</p>
+     *
+     * @param tileSize size of tile from mosaic if null a default tile size of 256 x 256 is chosen. Minimum tile size is 64 x 64.
+     * @param interpolation pixel operation use during resampling operation.
+     * @param lanczosWindow only use about Lanczos interpolation.
+     * @param reuseTiles flag to re-use mosaic tiles if already exist in output pyramid.
+     * @see Resample#fillImage()
+     * @see LanczosInterpolation#LanczosInterpolation(org.geotoolkit.image.iterator.PixelIterator, int)
+     * @see InterpolationCase
+     */
+    public PyramidCoverageBuilder(Dimension tileSize, InterpolationCase interpolation, int lanczosWindow, boolean reuseTiles) {
         ArgumentChecks.ensureNonNull("interpolation", interpolation);
         ArgumentChecks.ensureStrictlyPositive("lanczosWindow", lanczosWindow);
         if (tileSize == null) {
@@ -208,6 +235,7 @@ public class PyramidCoverageBuilder {
         }
         this.interpolationCase = interpolation;
         this.lanczosWindow     = lanczosWindow;
+        this.reuseTiles        = reuseTiles;
     }
 
     /**
@@ -230,7 +258,7 @@ public class PyramidCoverageBuilder {
      */
     public void create(GridCoverage gridCoverage, CoverageStore coverageStore, Name coverageName,
             Map<Envelope, double[]> resolution_Per_Envelope, double[] fillValue)
-            throws DataStoreException, TransformException, FactoryException {
+            throws DataStoreException, TransformException, FactoryException, IOException {
         create(gridCoverage, coverageStore, coverageName, resolution_Per_Envelope, fillValue, null, null);
     }
 
@@ -257,9 +285,9 @@ public class PyramidCoverageBuilder {
     public void create(CoverageReference gridCoverageRef, CoverageStore coverageStore, Name coverageName,
             Map<Envelope, double[]> resolution_Per_Envelope, double[] fillValue,
             ProcessListener processListener, ProgressMonitor monitor)
-            throws DataStoreException, TransformException, FactoryException {
+            throws DataStoreException, TransformException, FactoryException, IOException {
         ArgumentChecks.ensureNonNull("CoverageReference"      , gridCoverageRef);
-        ArgumentChecks.ensureNonNull("output CoverageStore"   , coverageStore);
+        ArgumentChecks.ensureNonNull("output CoverageStore", coverageStore);
         ArgumentChecks.ensureNonNull("coverageName"           , coverageName);
         ArgumentChecks.ensureNonNull("resolution_Per_Envelope", resolution_Per_Envelope);
 
@@ -340,7 +368,7 @@ public class PyramidCoverageBuilder {
     public void create(GridCoverage gridCoverage, CoverageStore coverageStore, Name coverageName,
             Map<Envelope, double[]> resolution_Per_Envelope, double[] fillValue,
             ProcessListener processListener, ProgressMonitor monitor)
-            throws DataStoreException, TransformException, FactoryException {
+            throws DataStoreException, TransformException, FactoryException, IOException {
         ArgumentChecks.ensureNonNull("GridCoverage"           , gridCoverage);
         ArgumentChecks.ensureNonNull("output CoverageStore"   , coverageStore);
         ArgumentChecks.ensureNonNull("coverageName"           , coverageName);
@@ -411,7 +439,7 @@ public class PyramidCoverageBuilder {
      */
     public void create(GridCoverageReader reader, CoverageStore coverageStore, Name coverageName,
             Map<Envelope, double[]> resolution_Per_Envelope, double[] fillValue)
-            throws DataStoreException, TransformException, FactoryException  {
+            throws DataStoreException, TransformException, FactoryException, IOException {
         create(reader, coverageStore, coverageName, resolution_Per_Envelope, fillValue, null);
     }
 
@@ -437,7 +465,7 @@ public class PyramidCoverageBuilder {
      */
     public void create(GridCoverageReader reader, CoverageStore coverageStore, Name coverageName,
             Map<Envelope, double[]> resolution_Per_Envelope, double[] fillValue, ProcessListener processListener)
-            throws DataStoreException, TransformException, FactoryException  {
+            throws DataStoreException, TransformException, FactoryException, IOException {
         ArgumentChecks.ensureNonNull("GridCoverageReader"     , reader);
         ArgumentChecks.ensureNonNull("output CoverageStore"   , coverageStore);
         ArgumentChecks.ensureNonNull("coverageName"           , coverageName);
@@ -503,7 +531,7 @@ public class PyramidCoverageBuilder {
      * @param gridCoverage2D source data of pyramid which will be inserted.
      * @param scaleLevel scale values table for each pyramid level. Table length represent pyramid level number.
      * @param upperLeft geographic upper left corner of pyramid will be inserted.
-     * @param envDest envelope which represent ulti-dimensional slice of origine coverage envelope.
+     * @param envDest envelope which represent multi-dimensional slice of origin coverage envelope.
      * @param widthAxis index of X direction from multi-dimensional coverage envelope.
      * @param heightAxis index of Y direction from multi-dimensional coverage envelope.
      * @param fillValue contains value use when pixel transformation is out of source image boundary.(should be {@code null}).
@@ -517,7 +545,7 @@ public class PyramidCoverageBuilder {
      */
     private void resample (PyramidalCoverageReference pm, String pyramidID, GridCoverage2D gridCoverage2D, double[] scaleLevel,
             DirectPosition upperLeft, Envelope envDest, int widthAxis, int heightAxis, double[] fillValue, ProcessListener processListener)
-            throws NoninvertibleTransformException, FactoryException, TransformException, DataStoreException {
+            throws NoninvertibleTransformException, FactoryException, TransformException, DataStoreException, IOException {
 
         final GridGeometry2D gg2d       = gridCoverage2D.getGridGeometry();
         final Envelope covEnv           = gg2d.getEnvelope2D();
@@ -567,31 +595,69 @@ public class PyramidCoverageBuilder {
             final GridMosaic mosaic = getOrCreateMosaic(pm, pyramidID, new Dimension(nbrTileX, nbrTileY), tileSize, upperLeft, pixelScal);
             final String mosaicId   = mosaic.getId();
 
-            final Interpolation interpolation = Interpolation.create(PixelIteratorFactory.createRowMajorIterator(baseImg), interpolationCase, lanczosWindow);
+            //final Interpolation interpolation = Interpolation.create(PixelIteratorFactory.createRowMajorIterator(baseImg), interpolationCase, lanczosWindow);
 
             for (int cTY = startTileY; cTY < endTileY; cTY++) {
                 for (int cTX = startTileX; cTX < endTileX; cTX++) {
-                    final int destMinX  = cTX * tileWidth;
-                    final int destMinY  = cTY * tileHeight;
-                    final WritableRenderedImage destImg = BufferedImageUtilities.createImage(tileWidth, tileHeight, baseImg);
-                    //ensure fill value is set.
-                    ImageUtilities.fill(destImg, fill[0]);
+                    final int destMinX = cTX * tileWidth;
+                    final int destMinY = cTY * tileHeight;
+                    boolean noFill = false;
+
+                    WritableRenderedImage destImg;
+                    if (reuseTiles && !mosaic.isMissing(cTX, cTY)) {
+                        TileReference tile = mosaic.getTile(cTX, cTY, null);
+                        destImg = getImageFromTile(tile);
+                        noFill = true;
+                    } else {
+                        destImg = BufferedImageUtilities.createImage(tileWidth, tileHeight, baseImg);
+                        //ensure fill value is set.
+                        ImageUtilities.fill(destImg, fill[0]);
+                    }
 
                     if (processListener != null) {
-                        processListener.progressing(new ProcessEvent(fakeProcess, (++niemeTile)+"/"+globalTileNumber, (niemeTile * 100 / globalTileNumber)));
+                        processListener.progressing(new ProcessEvent(fakeProcess, (++niemeTile) + "/" + globalTileNumber, (niemeTile * 100 / globalTileNumber)));
                     }
 
                     //dest grid --> dest envelope coordinate --> base envelope --> base grid
                     //concatene : dest grid_to_crs, dest_crs_to_coverageCRS, coverageCRS_to_grid coverage
                     final MathTransform2D gridDest_to_crs = new AffineTransform2D(sx, 0, 0, -sy, min0 + sx * (destMinX + 0.5), max1 - sy * (destMinY + 0.5)).inverse();
-                    final MathTransform mt                = MathTransforms.concatenate(destCrs_to_covGrid, gridDest_to_crs);
+                    final MathTransform mt = MathTransforms.concatenate(destCrs_to_covGrid, gridDest_to_crs);
 
-                    final Resample resample = new Resample(mt.inverse(), destImg, interpolation, fill);
+                    final Resample resample = new Resample(mt.inverse(), destImg, baseImg, interpolationCase, lanczosWindow,
+                            ResampleBorderComportement.FILL_VALUE, (noFill ? null : fill));
                     resample.fillImage();
                     pm.writeTile(pyramidID, mosaicId, cTX, cTY, destImg);
                 }
             }
         }
+    }
+
+    /**
+     * Extract BufferedImage from TileReference.
+     *
+     * @param tile TileReference, should not be null.
+     * @return tile BufferedImage.
+     * @throws IOException if error on reading image from tile ImageReader.
+     */
+    private BufferedImage getImageFromTile(TileReference tile) throws IOException {
+        ArgumentChecks.ensureNonNull("tile", tile);
+
+        final BufferedImage sourceImg;
+        ImageReader reader = null;
+        try {
+            if (tile.getInput() instanceof BufferedImage) {
+                sourceImg = (BufferedImage) tile.getInput();
+            } else {
+                final int imgIdx = tile.getImageIndex();
+                reader = tile.getImageReader();
+                sourceImg = tile.getImageReader().read(imgIdx);
+            }
+        } finally {
+            if (reader != null) {
+                ImageIOUtilities.releaseReader(reader);
+            }
+        }
+        return sourceImg;
     }
 
     private static double[] getFillValue(GridCoverage2D gridCoverage2D, double[] fillValue){

@@ -91,6 +91,15 @@ public class PyramidDescriptor extends AbstractProcessDescriptor{
     public static final ParameterDescriptor<double[]> IN_FILLVALUES =
             new DefaultParameterDescriptor<>("fillvalue",
             "Contains value use when pixel transformation is out of source image boundary during resampling.", double[].class, null, false);
+
+    /**
+     * Double table value used during interpolation if pixel coordinates are out of source image boundary.
+     */
+    public static final ParameterDescriptor<Boolean> IN_REUSETILES =
+            new DefaultParameterDescriptor<>("reuseTile",
+                    "Optional flat that activate the re-using of input CoverageStore tiles if exist instead of override them.", Boolean.class, false, false);
+
+
     /**************************************************************************/
 
                                       /*OUTPUT*/
@@ -108,7 +117,7 @@ public class PyramidDescriptor extends AbstractProcessDescriptor{
     //Input group
     public static final ParameterDescriptorGroup INPUT_DESC =
             new DefaultParameterDescriptorGroup(NAME+"InputParameters",
-                IN_COVERAGEREF, IN_COVERAGESTORE, IN_PYRAMID_NAME, IN_TILE_SIZE, IN_INTERPOLATIONCASE, IN_RES_PER_ENVELOPE, IN_FILLVALUES);
+                IN_COVERAGEREF, IN_COVERAGESTORE, IN_PYRAMID_NAME, IN_TILE_SIZE, IN_INTERPOLATIONCASE, IN_RES_PER_ENVELOPE, IN_FILLVALUES, IN_REUSETILES);
     //Output group
     public static final ParameterDescriptorGroup OUTPUT_DESC =
             new DefaultParameterDescriptorGroup(NAME+"OutputParameters", OUT_COVERAGESTORE);

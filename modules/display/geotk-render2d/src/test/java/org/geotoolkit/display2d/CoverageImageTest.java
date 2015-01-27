@@ -185,7 +185,7 @@ public class CoverageImageTest {
      * @throws FactoryException
      */
     @Test
-    public void pyramidtest() throws PortrayalException, DataStoreException, TransformException, FactoryException {
+    public void pyramidtest() throws PortrayalException, DataStoreException, TransformException, FactoryException, IOException {
 
         ImageIO.scanForPlugins();
         Setup.initialize(null);
