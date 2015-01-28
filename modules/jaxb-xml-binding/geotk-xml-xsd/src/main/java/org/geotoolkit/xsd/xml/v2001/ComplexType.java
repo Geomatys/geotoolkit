@@ -405,8 +405,13 @@ public abstract class ComplexType extends Annotated {
 
     public boolean extendFeature() {
         if (complexContent != null && complexContent.getExtension() != null) {
-            return FEATURE.equals(complexContent.getExtension().getBase()) ||
-                   FEATURE_TYPE.equals(complexContent.getExtension().getBase());
+            final QName base = complexContent.getExtension().getBase();
+            if(base==null || !base.getNamespaceURI().startsWith(FEATURE.getNamespaceURI())){
+                return false;
+            }
+            final String blp = base.getLocalPart();
+            return FEATURE.getLocalPart().equals(blp)
+                || FEATURE_TYPE.getLocalPart().equals(blp);
         }
         return false;
     }

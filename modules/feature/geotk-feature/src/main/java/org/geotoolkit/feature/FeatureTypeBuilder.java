@@ -120,7 +120,7 @@ public class FeatureTypeBuilder {
             if(nameCheck){
                 for(PropertyDescriptor desc : properties){
                     if(desc.getName().equals(n)){
-                        throw new IllegalArgumentException("Descriptor for name : "+n+" already exist.");
+                        throw new IllegalArgumentException("Descriptor for name : "+n+" already exist in type "+name);
                     }
                 }
             }

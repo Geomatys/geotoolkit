@@ -79,6 +79,8 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
     static {
         EXCLUDED_SCHEMA.add("http://schemas.opengis.net/gml/3.1.1/base/gml.xsd");
         EXCLUDED_SCHEMA.add("http://schemas.opengis.net/gml/3.1.1/base/feature.xsd");
+        EXCLUDED_SCHEMA.add("http://schemas.opengis.net/gml/3.2.1/base/gml.xsd");
+        EXCLUDED_SCHEMA.add("http://schemas.opengis.net/gml/3.2.1/base/feature.xsd");
     }
 
     public JAXBFeatureTypeReader() {
@@ -273,7 +275,19 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
             final QName typeName = element.getType();
             if (typeName != null) {
                 final ComplexType type = findComplexType(typeName.getLocalPart());
-                if (type != null && type.extendFeature()) {
+                
+                //loop on parent types until we find a Feature type
+                boolean isFeature = false;
+                ComplexType search = type;
+                while(search!=null){
+                    isFeature = search.extendFeature();
+                    if(isFeature) break;
+                    if(search.getComplexContent()==null || search.getComplexContent().getExtension()==null) break;
+                    final QName base = search.getComplexContent().getExtension().getBase();
+                    search = findComplexType(base.getLocalPart());
+                }
+
+                if (isFeature) {
                     result.add(getFeatureTypeFromSchema(element.getName(), type, typeName.getNamespaceURI(), schema));
 
                 } else if (type == null && findSimpleType(typeName.getLocalPart()) == null) {

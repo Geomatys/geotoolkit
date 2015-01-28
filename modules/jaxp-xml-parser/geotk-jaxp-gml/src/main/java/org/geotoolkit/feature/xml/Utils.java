@@ -133,6 +133,7 @@ public class Utils {
         CLASS_BINDING.put("integerList",        Integer.class);
         CLASS_BINDING.put("time",               Date.class);
         CLASS_BINDING.put("duration",           String.class);
+        CLASS_BINDING.put("CalDate",            String.class); //TODO should be date
 
         // GML geometry types
         CLASS_BINDING.put("GeometryPropertyType",          Geometry.class);
