@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2014, Geomatys
+ *    (C) 2014-2015, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -18,10 +18,12 @@
 package org.geotoolkit.gui.javafx.filter;
 
 import javafx.scene.Node;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.DialogPane;
 import javafx.scene.layout.BorderPane;
+import javafx.stage.Modality;
 import org.geotoolkit.cql.CQLException;
-import org.geotoolkit.gui.javafx.contexttree.menu.LayerPropertiesItem;
-import org.geotoolkit.gui.javafx.util.FXDialog;
 import org.geotoolkit.map.MapItem;
 import org.opengis.filter.Filter;
 
@@ -38,12 +40,12 @@ public class FXCQLPane extends BorderPane {
     public static Filter show(Node owner, Filter filter, MapItem target) throws CQLException{
         final FXCQLEditor editor = new FXCQLEditor();
         editor.setFilter(filter);
-        
-        final FXDialog dialog = new FXDialog();
-        dialog.setContent(editor);
-        dialog.getActions().add(new LayerPropertiesItem.CloseAction(dialog));
-        dialog.setModal(true);
-        dialog.setVisible(owner,true);
+
+        final Dialog dialog = new Dialog();
+        final DialogPane pane = new DialogPane();
+        pane.setContent(editor);
+        pane.getButtonTypes().addAll(ButtonType.CLOSE);
+        dialog.initModality(Modality.APPLICATION_MODAL);
         
         return editor.getFilter();
     }

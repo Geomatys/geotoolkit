@@ -20,14 +20,17 @@ package org.geotoolkit.gui.javafx.contexttree;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.function.Function;
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.DialogPane;
 import javafx.scene.control.TreeTableCell;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.image.ImageView;
+import javafx.stage.Modality;
 import javafx.util.Callback;
 import org.geotoolkit.display2d.service.DefaultGlyphService;
 import org.geotoolkit.gui.javafx.contexttree.menu.LayerPropertiesItem;
@@ -40,7 +43,7 @@ import org.geotoolkit.gui.javafx.layer.style.FXStyleColorMapPane;
 import org.geotoolkit.gui.javafx.layer.style.FXStyleSimplePane;
 import org.geotoolkit.gui.javafx.layer.style.FXStyleXMLPane;
 import org.geotoolkit.gui.javafx.util.ButtonTreeTableCell;
-import org.geotoolkit.gui.javafx.util.FXDialog;
+import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.map.MapItem;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
@@ -147,12 +150,24 @@ public class MapItemGlyphColumn extends TreeTableColumn<MapItem, MapItem>{
                             new FXStyleXMLPane()
                     )
             );
-            
-            final FXDialog dialog = new FXDialog();
-            dialog.setContent(panel);
-            dialog.getActions().add(new LayerPropertiesItem.CloseAction(dialog));
-            dialog.setModal(false);
-            dialog.setVisible(null,true);
+            panel.setPrefSize(900, 700);
+
+            final DialogPane pane = new DialogPane();
+            pane.setContent(panel);
+            pane.getButtonTypes().add(ButtonType.CLOSE);
+
+            final Dialog dialog = new Dialog();
+            dialog.initModality(Modality.NONE);
+            dialog.setResizable(true);
+            dialog.setDialogPane(pane);
+            dialog.resultProperty().addListener(new ChangeListener() {
+                @Override
+                public void changed(ObservableValue observable, Object oldValue, Object newValue) {
+                    //TODO add apply revert buttons
+                    dialog.close();
+                }
+            });
+            dialog.show();
         }
     }
 }

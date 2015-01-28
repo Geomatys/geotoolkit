@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2014, Geomatys
+ *    (C) 2014-2015, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -18,10 +18,8 @@ package org.geotoolkit.gui.javafx.contexttree.menu;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
-import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
@@ -29,7 +27,6 @@ import javafx.scene.control.DialogPane;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TreeItem;
 import javafx.stage.Modality;
-import org.controlsfx.control.action.Action;
 import org.geotoolkit.gui.javafx.contexttree.TreeMenuItem;
 import org.geotoolkit.gui.javafx.layer.FXFeatureTable;
 import org.geotoolkit.gui.javafx.layer.FXLayerStructure;
@@ -42,7 +39,6 @@ import org.geotoolkit.gui.javafx.layer.style.FXStyleColorMapPane;
 import org.geotoolkit.gui.javafx.layer.style.FXStyleSimplePane;
 import org.geotoolkit.gui.javafx.layer.style.FXStyleXMLPane;
 import org.geotoolkit.gui.javafx.render2d.FXMap;
-import org.geotoolkit.gui.javafx.util.FXDialog;
 import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.map.MapLayer;
 
@@ -88,12 +84,12 @@ public class LayerPropertiesItem extends TreeMenuItem{
                         )
                 );
 
-                final Dialog dialog = new Dialog();
-                dialog.setTitle(GeotkFX.getString(LayerPropertiesItem.this, "properties"));
                 final DialogPane pane = new DialogPane();
                 pane.setContent(panel);
                 pane.getButtonTypes().add(ButtonType.CLOSE);
 
+                final Dialog dialog = new Dialog();
+                dialog.setTitle(GeotkFX.getString(LayerPropertiesItem.this, "properties"));
                 dialog.initModality(Modality.NONE);
                 dialog.setResizable(true);
                 dialog.setDialogPane(pane);
@@ -105,7 +101,7 @@ public class LayerPropertiesItem extends TreeMenuItem{
                     }
                 });
 
-                Platform.runLater(dialog::show);
+                dialog.show();
             }
         });
     }
@@ -120,13 +116,4 @@ public class LayerPropertiesItem extends TreeMenuItem{
         return null;
     }
 
-    public static final class CloseAction extends Action {
-        
-        public CloseAction(final FXDialog dialog) {
-            super(GeotkFX.getString(LayerPropertiesItem.class, "close"), (ActionEvent t) -> {
-                dialog.setVisible(null,false);
-            });
-        }
-        
-    }
 }
