@@ -155,7 +155,7 @@ public class FXStoreChooser extends SplitPane {
         listScroll.setFitToWidth(true);        
         
         //hide the tree table header
-        FXUtilities.hideTableColumn(paramEditor.getTreetable());
+        FXUtilities.hideTableHeader(paramEditor.getTreetable());
         
         final BorderPane hpane = new BorderPane(infoLabel, null, connectButton, null, null);        
         hpane.setPadding(new Insets(6, 6, 6, 6));

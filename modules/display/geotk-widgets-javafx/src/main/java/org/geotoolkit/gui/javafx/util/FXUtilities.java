@@ -242,11 +242,11 @@ public final class FXUtilities {
     }
     
     /**
-     * Hide table or treetable view.
+     * Hide table or treetable header.
      * 
      * @param view 
      */
-    public static void hideTableColumn(final Control view){
+    public static void hideTableHeader(final Control view){
         if( !(view instanceof TreeTableView || view instanceof TableView)){
             throw new IllegalArgumentException("Control must be a TreeTableView or TableView but was : "+view.getClass());
         }

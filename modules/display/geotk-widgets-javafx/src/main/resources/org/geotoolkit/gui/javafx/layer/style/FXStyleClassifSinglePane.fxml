@@ -33,7 +33,7 @@
             <CheckBox fx:id="uiOther" mnemonicParsing="false" text="%org.geotoolkit.gui.javafx.layer.style.FXStyleClassifSinglePane.otherRule" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.hgrow="ALWAYS" />
             <Button fx:id="uiTemplate" mnemonicParsing="false" onAction="#editTemplate" text="%org.geotoolkit.gui.javafx.layer.style.FXStyleClassifSinglePane.edit" GridPane.columnIndex="3" GridPane.halignment="LEFT" GridPane.hgrow="NEVER" GridPane.rowIndex="1" />
             <Button mnemonicParsing="false" onAction="#generate" text="%org.geotoolkit.gui.javafx.layer.style.FXStyleClassifSinglePane.generate" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.rowIndex="2" />
-            <ScrollPane fitToHeight="true" fitToWidth="true" maxWidth="1.7976931348623157E308" minHeight="120.0" minWidth="200.0" GridPane.columnSpan="5" GridPane.rowIndex="3">
+            <ScrollPane fitToHeight="true" fitToWidth="true" maxWidth="1.7976931348623157E308" minHeight="50.0" minWidth="200.0" GridPane.columnSpan="5" GridPane.rowIndex="3">
                <content>
                   <TableView fx:id="uiTable" editable="true" maxWidth="1.7976931348623157E308" />
                </content></ScrollPane>

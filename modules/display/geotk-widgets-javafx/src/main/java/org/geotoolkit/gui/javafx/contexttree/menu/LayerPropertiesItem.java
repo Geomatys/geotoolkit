@@ -18,10 +18,17 @@ package org.geotoolkit.gui.javafx.contexttree.menu;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
+import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.DialogPane;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TreeItem;
+import javafx.stage.Modality;
 import org.controlsfx.control.action.Action;
 import org.geotoolkit.gui.javafx.contexttree.TreeMenuItem;
 import org.geotoolkit.gui.javafx.layer.FXFeatureTable;
@@ -80,14 +87,25 @@ public class LayerPropertiesItem extends TreeMenuItem{
                                 new FXStyleXMLPane()
                         )
                 );
-                
-                final FXDialog dialog = new FXDialog();
+
+                final Dialog dialog = new Dialog();
                 dialog.setTitle(GeotkFX.getString(LayerPropertiesItem.this, "properties"));
-                dialog.setContent(panel);
-                dialog.getActions().add(new CloseAction(dialog));
-                dialog.setModal(false);
-                dialog.setVisible(map,true);
-                
+                final DialogPane pane = new DialogPane();
+                pane.setContent(panel);
+                pane.getButtonTypes().add(ButtonType.CLOSE);
+
+                dialog.initModality(Modality.NONE);
+                dialog.setResizable(true);
+                dialog.setDialogPane(pane);
+                dialog.resultProperty().addListener(new ChangeListener() {
+                    @Override
+                    public void changed(ObservableValue observable, Object oldValue, Object newValue) {
+                        //TODO add apply revert buttons
+                        dialog.close();
+                    }
+                });
+
+                Platform.runLater(dialog::show);
             }
         });
     }

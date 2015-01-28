@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2014, Geomatys
+ *    (C) 2014-2015, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -22,13 +22,8 @@ import org.geotoolkit.gui.javafx.layer.FXLayerStylePane;
 import org.geotoolkit.gui.javafx.style.FXColorMap;
 import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.map.CoverageMapLayer;
-import org.geotoolkit.map.MapLayer;
-import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyle;
-import org.opengis.style.ColorMap;
-import org.opengis.style.RasterSymbolizer;
-import org.opengis.style.Symbolizer;
 
 /**
  *

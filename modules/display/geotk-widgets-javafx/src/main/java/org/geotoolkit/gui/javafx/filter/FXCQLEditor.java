@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2014, Geomatys
+ *    (C) 2014-2015, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -25,12 +25,16 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
+import javafx.util.Callback;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -80,15 +84,14 @@ public class FXCQLEditor extends BorderPane {
             updateHightLight();
             //codeArea.setStyleSpans(0, computeHighlight(newText));
         });
-        
+
+        uiProperties.setCellFactory((ListView<String> param) -> new ClickCell());
+
         uiProperties.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         uiProperties.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                if(newValue!=null){
-                    codeArea.appendText(" "+newValue);
-                    Platform.runLater(uiProperties.getSelectionModel()::clearSelection);
-                }
+                Platform.runLater(uiProperties.getSelectionModel()::clearSelection);
             }
         });
     }
@@ -287,5 +290,32 @@ public class FXCQLEditor extends BorderPane {
         FXOptionDialog.showOkCancel(parent, editor, "CQL Editor", true);
         return editor.getFilter();
     }
-    
+
+
+    private class ClickCell extends ListCell<String>{
+
+        public ClickCell() {
+            setOnMouseClicked(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent event) {
+                    final String item = getItem();
+                    if(item!=null){
+                        if(codeArea.getText().endsWith(" ")){
+                            codeArea.appendText(item);
+                        }else{
+                            codeArea.appendText(" "+item);
+                        }
+                    }
+                }
+            });
+        }
+
+        @Override
+        protected void updateItem(String item, boolean empty) {
+            super.updateItem(item, empty);
+            setText(item);
+        }
+
+    }
+
 }

@@ -93,7 +93,7 @@ public class FXGraduationSymbolizer extends FXStyleElementController<GraduationS
                 }
             }
         });
-        FXUtilities.hideTableColumn(uiTable);
+        FXUtilities.hideTableHeader(uiTable);
         
         uiGraduation.valueProperty().addListener(new ChangeListener<Graduation>() {
             @Override

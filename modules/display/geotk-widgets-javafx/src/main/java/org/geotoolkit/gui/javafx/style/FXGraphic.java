@@ -47,6 +47,7 @@ import static org.geotoolkit.gui.javafx.style.FXStyleElementController.getStyleF
 import org.geotoolkit.gui.javafx.util.ButtonTableCell;
 import org.geotoolkit.gui.javafx.util.FXMoveDownTableColumn;
 import org.geotoolkit.gui.javafx.util.FXMoveUpTableColumn;
+import org.geotoolkit.gui.javafx.util.FXUtilities;
 import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.StyleConstants;
@@ -117,7 +118,8 @@ public class FXGraphic extends FXStyleElementController<Graphic>{
     
     @Override
     public void initialize() {
-        super.initialize();        
+        super.initialize();
+        FXUtilities.hideTableHeader(uiTable);
         final ChangeListener changeListener = (ChangeListener) (ObservableValue observable, Object oldValue, Object newValue) -> {
             resetValue();
         };

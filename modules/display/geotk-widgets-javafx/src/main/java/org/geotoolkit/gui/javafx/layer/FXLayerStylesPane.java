@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2014, Geomatys
+ *    (C) 2014-2015, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -41,6 +41,7 @@ import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.BorderStroke;
 import javafx.scene.layout.BorderStrokeStyle;
+import javafx.scene.layout.BorderWidths;
 import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
@@ -62,15 +63,14 @@ public class FXLayerStylesPane extends FXPropertyPane{
     private final ListView listView = new ListView();
     private final Button apply = new Button(GeotkFX.getString(this,"apply"));
     private final Button revert = new Button(GeotkFX.getString(this,"revert"));
-    
-    private final FXLayerStylePane[] editors;
+
+    private final LinkedHashMap<String, List<FXLayerStylePane>> indexByCategory = new LinkedHashMap<>();
     
     private FXLayerStylePane currentEditor = null;
     
     private MapLayer candidate;
     
     public FXLayerStylesPane(FXLayerStylePane ... styleEditors) {
-        this.editors = styleEditors;
         
         setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
         
@@ -94,7 +94,6 @@ public class FXLayerStylesPane extends FXPropertyPane{
         setLeft(leftPane);      
         
         //build index
-        final LinkedHashMap<String, List<FXLayerStylePane>> indexByCategory = new LinkedHashMap<>();
         for(final FXLayerStylePane styleEditor : styleEditors){
             List<FXLayerStylePane> editorOfCategory = indexByCategory.get(styleEditor.getCategory());
             if(editorOfCategory==null){
@@ -158,9 +157,26 @@ public class FXLayerStylesPane extends FXPropertyPane{
     public boolean init(Object candidate) {
         if(!(candidate instanceof MapLayer)) return false;
         this.candidate = (MapLayer) candidate;
-        for(FXLayerStylePane editor : editors){
-            editor.init(candidate);
+
+        //update list values
+        final ObservableList itemCollection = FXCollections.observableArrayList();
+        for(final Entry<String, List<FXLayerStylePane>> entry : indexByCategory.entrySet()){
+            boolean hasValues = false;
+            final List<FXLayerStylePane> valids = new ArrayList<>();
+            for(FXLayerStylePane editor : entry.getValue()){
+                if(editor.init(candidate)){
+                    hasValues = true;
+                    valids.add(editor);
+                }
+            }
+
+            if(hasValues){
+                itemCollection.add(entry.getKey());
+                itemCollection.addAll(valids);
+            }
         }
+        listView.setItems(itemCollection);
+
         return true;
     }
     
@@ -179,7 +195,9 @@ public class FXLayerStylesPane extends FXPropertyPane{
                 if(item instanceof String){
                     setText((String)item);
                     setFont(Font.font(getFont().getFamily(), FontWeight.BOLD, getFont().getSize()));
-                    setBorder(new Border(new BorderStroke(Color.GRAY, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderStroke.THIN)));
+                    setBorder(new Border(new BorderStroke(
+                            null,null,null,Color.BLACK,
+                            null,null,null,BorderStrokeStyle.SOLID,CornerRadii.EMPTY,BorderStroke.THICK,Insets.EMPTY)));
                     setBackground(new Background(new BackgroundFill(Color.LIGHTGREY, CornerRadii.EMPTY, Insets.EMPTY)));
                 } else if(item instanceof FXLayerStylePane){
                     setText(((FXLayerStylePane)item).getTitle());

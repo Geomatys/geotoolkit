@@ -7,11 +7,14 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<fx:root maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" type="BorderPane" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<fx:root maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="700.0" type="BorderPane" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
    <center>
-      <SplitPane dividerPositions="0.5" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-         <items>
-            <GridPane hgap="10.0" maxHeight="1.7976931348623157E308">
+      <ScrollPane fx:id="uiSymbolizerEditorPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="400.0" prefWidth="500.0" BorderPane.alignment="CENTER" />
+   </center>
+   <left>
+      <BorderPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+         <center>
+            <GridPane hgap="5.0" maxHeight="1.7976931348623157E308" minWidth="200.0" vgap="5.0" BorderPane.alignment="CENTER">
               <columnConstraints>
                 <ColumnConstraints hgrow="SOMETIMES" />
                 <ColumnConstraints hgrow="NEVER" />
@@ -23,7 +26,6 @@
                   <RowConstraints vgrow="NEVER" />
               </rowConstraints>
                <children>
-                  <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="property-group-title" text="%org.geotoolkit.gui.javafx.layer.style.FXStyleSimplePane.symbols" GridPane.columnSpan="2" />
                   <ComboBox fx:id="uiChoice" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.rowIndex="1" />
                   <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#addSymbol" text="+" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                   <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnSpan="2" GridPane.rowIndex="2">
@@ -37,9 +39,14 @@
                      </GridPane.margin>
                   </ImageView>
                </children>
+               <BorderPane.margin>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </BorderPane.margin>
             </GridPane>
-            <ScrollPane fx:id="uiSymbolizerEditorPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
-         </items>
-      </SplitPane>
-   </center>
+         </center>
+         <top>
+            <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="property-group-title" text="%org.geotoolkit.gui.javafx.layer.style.FXStyleSimplePane.symbols" BorderPane.alignment="CENTER" />
+         </top>
+      </BorderPane>
+   </left>
 </fx:root>

@@ -48,7 +48,7 @@
                   <Button mnemonicParsing="false" onAction="#removeAll" text="%org.geotoolkit.gui.javafx.layer.style.FXStyleClassifRangePane.removeall" />
                </children>
             </HBox>
-            <ScrollPane fitToHeight="true" fitToWidth="true" maxWidth="1.7976931348623157E308" GridPane.columnSpan="5" GridPane.rowIndex="4">
+            <ScrollPane fitToHeight="true" fitToWidth="true" maxWidth="1.7976931348623157E308" minHeight="50.0" GridPane.columnSpan="5" GridPane.rowIndex="4">
                <content>
                   <TableView fx:id="uiTable" maxWidth="1.7976931348623157E308" />
                </content>

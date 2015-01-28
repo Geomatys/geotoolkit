@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2014, Geomatys
+ *    (C) 2014-2015, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -21,7 +21,6 @@ import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.util.List;
-import java.util.function.Function;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -36,6 +35,7 @@ import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SelectionMode;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TablePosition;
 import javafx.scene.control.TableView;
@@ -46,10 +46,10 @@ import org.geotoolkit.display2d.service.DefaultGlyphService;
 import org.geotoolkit.gui.javafx.layer.FXLayerStylePane;
 import org.geotoolkit.gui.javafx.style.FXStyleElementController;
 import org.geotoolkit.gui.javafx.style.FXStyleElementEditor;
-import org.geotoolkit.gui.javafx.util.ButtonTableCell;
 import org.geotoolkit.gui.javafx.util.FXDeleteTableColumn;
 import org.geotoolkit.gui.javafx.util.FXMoveDownTableColumn;
 import org.geotoolkit.gui.javafx.util.FXMoveUpTableColumn;
+import org.geotoolkit.gui.javafx.util.FXUtilities;
 import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.MutableRule;
@@ -79,7 +79,8 @@ public class FXStyleSimplePane extends FXLayerStylePane {
     @FXML private ScrollPane uiSymbolizerEditorPane;
     
     private FXStyleElementController symbolizerEditor = null;
-    
+    private boolean editing = false;
+
     public FXStyleSimplePane() {
         GeotkFX.loadJRXML(this);
     }
@@ -105,16 +106,20 @@ public class FXStyleSimplePane extends FXLayerStylePane {
      * Called by FXMLLoader after creating controller.
      */
     public void initialize(){
+        FXUtilities.hideTableHeader(uiTable);
         final List<FXStyleElementController> editors = FXStyleElementEditor.findEditorsForType(Symbolizer.class);
         uiChoice.setItems(FXCollections.observableArrayList(editors));
         uiChoice.setButtonCell(new SymbolizerButtonListCell());
         uiChoice.setCellFactory((ListView<FXStyleElementController> param) -> new SymbolizerButtonListCell());
+        if(!editors.isEmpty()){
+            uiChoice.getSelectionModel().select(0);
+        }
         
         final TableColumn<Symbolizer,Symbolizer> previewCol = new TableColumn<>();
         previewCol.setMinWidth(40);
         previewCol.setEditable(false);
         previewCol.setCellValueFactory((TableColumn.CellDataFeatures<Symbolizer, Symbolizer> param) -> new SimpleObjectProperty<>((Symbolizer)param.getValue()));
-        previewCol.setCellFactory((TableColumn<Symbolizer, Symbolizer> p) -> new GlyphButtonTableCell());
+        previewCol.setCellFactory((TableColumn<Symbolizer, Symbolizer> p) -> new GlyphTableCell());
         
         uiTable.getColumns().add(previewCol);
         uiTable.getColumns().add(new FXMoveUpTableColumn());
@@ -131,11 +136,14 @@ public class FXStyleSimplePane extends FXLayerStylePane {
         uiTable.getSelectionModel().getSelectedCells().addListener(new ListChangeListener<TablePosition>() {
             @Override
             public void onChanged(ListChangeListener.Change<? extends TablePosition> c) {
-                System.out.println("Change into list !");
+                if(editing){
+                    updatePreview();
+                    return;
+                }
+
                 uiSymbolizerEditorPane.setContent(null);
                 
                 for(final TablePosition tablePosition : uiTable.getSelectionModel().getSelectedCells()){
-                    
                     final Symbolizer symbolizer = uiTable.getItems().get(tablePosition.getRow());
                     System.out.println(symbolizer);
                     symbolizerEditor = FXStyleElementEditor.findEditor(symbolizer);
@@ -148,25 +156,32 @@ public class FXStyleSimplePane extends FXLayerStylePane {
                             @Override
                             public void changed(ObservableValue observable, Object oldValue, Object newValue) {
                                 //apply editor
+                                editing = true;
                                 final int index = uiTable.getSelectionModel().getSelectedIndex();
                                 if(index>=0){
                                     uiTable.getItems().set(index, (Symbolizer) symbolizerEditor.valueProperty().get());
+                                    uiTable.getSelectionModel().select(index);
                                 }
+                                editing = false;
                             }
                         });
                         uiSymbolizerEditorPane.setContent(symbolizerEditor);
                     }
                 }
                 
-                final Dimension dim = new Dimension(120, 120);
-                final BufferedImage imge = new BufferedImage(dim.width, dim.height, BufferedImage.TYPE_INT_ARGB);
-                DefaultGlyphService.render(rule, new Rectangle(dim), imge.createGraphics(), null);
-                uiPreview.setImage(SwingFXUtils.toFXImage(imge, null));
+                updatePreview();
             }
         });
         
     }
-    
+
+    private void updatePreview(){
+        final Dimension dim = new Dimension(120, 120);
+        final BufferedImage imge = new BufferedImage(dim.width, dim.height, BufferedImage.TYPE_INT_ARGB);
+        DefaultGlyphService.render(rule, new Rectangle(dim), imge.createGraphics(), null);
+        uiPreview.setImage(SwingFXUtils.toFXImage(imge, null));
+    }
+
     @Override
     public boolean init(Object candidate) {
         if(!(candidate instanceof MapLayer)) return false;
@@ -199,27 +214,20 @@ public class FXStyleSimplePane extends FXLayerStylePane {
         return layer.getStyle();
     }
     
-    private static class GlyphButtonTableCell extends ButtonTableCell<Symbolizer, Symbolizer>{
-
-        public GlyphButtonTableCell() {
-            super(false, null,
-                  (Symbolizer t) -> t instanceof Symbolizer, new Function<Symbolizer, Symbolizer>() {
-
-                @Override
-                public Symbolizer apply(Symbolizer t) {
-                    return t;
-                }
-            });
-        }
+    private static class GlyphTableCell extends TableCell<Symbolizer, Symbolizer>{
 
         @Override
         protected void updateItem(Symbolizer item, boolean empty) {
             super.updateItem(item, empty);
-            
             if(item instanceof Symbolizer){
                 final BufferedImage img = DefaultGlyphService.create(item, new Dimension(24, 24), null);
-                button.setGraphic(new ImageView(SwingFXUtils.toFXImage(img,null)));
-                button.setText(item.getName());
+                setGraphic(new ImageView(SwingFXUtils.toFXImage(img,null)));
+                String name = item.getName();
+                if(name==null || name.trim().isEmpty()) name = " - ";
+                setText(name);
+            }else{
+                setGraphic(null);
+                setText("");
             }
         }
     }
