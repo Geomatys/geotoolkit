@@ -339,10 +339,15 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
         return null;
     }
 
-    private org.geotoolkit.feature.type.ComplexType getComplexTypeFromSchema(final Schema schema, final String namespace, final String name) throws SchemaException {
-        final ComplexType complexType    = schema.getComplexTypeByName(name);
-        final FeatureTypeBuilder builder = new FeatureTypeBuilder();
-        if (complexType != null) {
+    private org.geotoolkit.feature.type.ComplexType getComplexTypeFromSchema(final String namespace, final String name) throws SchemaException {
+
+        //search for a schema with given namespace
+        for(Schema schema : knownSchemas.values()){
+            if(!schema.getTargetNamespace().equalsIgnoreCase(namespace)) continue;
+            final ComplexType complexType = schema.getComplexTypeByName(name);
+            if(complexType==null) continue;
+
+            final FeatureTypeBuilder builder = new FeatureTypeBuilder();
             final String properName;
             if (name.endsWith("Type")) {
                 properName = name.substring(0, name.lastIndexOf("Type"));
@@ -357,10 +362,10 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
                 }
             }
             return builder.buildType();
-        } else {
-            LOGGER.log(Level.WARNING, "Unable to find complex type for:{0}", name);
-            return null;
         }
+
+        LOGGER.log(Level.WARNING, "Unable to find complex type for:{0}", name);
+        return null;
     }
 
     private void elementToAttribute(final Element attributeElement, final String namespace, final Schema schema, final FeatureTypeBuilder builder) throws SchemaException {
@@ -410,7 +415,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
             } else {
                 cname = typeName;
             }
-            final org.geotoolkit.feature.type.ComplexType cType = getComplexTypeFromSchema(schema, namespace, cname);
+            final org.geotoolkit.feature.type.ComplexType cType = getComplexTypeFromSchema(elementType.getNamespaceURI(), cname);
             if (cType != null) {
                 builder.add(cType, new DefaultName(namespace, elementName), null, min, max, nillable, null);
             }
