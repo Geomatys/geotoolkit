@@ -124,7 +124,7 @@ public class FactoryRegistry extends ServiceRegistry {
      * Factories under testing for hints compatibility. This is used by
      * {@link #usesAcceptableHints} as a guard against infinite recursivity.
      */
-    private final Set<Factory> testingHints = new HashSet<>();
+    private final Map<Factory,Boolean> testingHints = new IdentityHashMap<>();
 
     /**
      * If a factory is not available because of some exception, the exception. Otherwise {@code null}.
@@ -594,9 +594,7 @@ public class FactoryRegistry extends ServiceRegistry {
                     }
                 }
             } finally {
-                if (!testingAvailability.remove(type)) {
-                    throw new AssertionError(type); // Should never happen.
-                }
+                testingAvailability.remove(type);
             }
         }
         /*
@@ -624,7 +622,7 @@ public class FactoryRegistry extends ServiceRegistry {
                  * for preventing a never-ending loop if we don't put a 'testingHints' guard here.
                  * It is also a safety against broken factory implementations.
                  */
-                if (!testingHints.add(factory)) {
+                if (testingHints.put(factory, Boolean.TRUE) != null) {
                     return false;
                 }
                 try {
@@ -632,9 +630,7 @@ public class FactoryRegistry extends ServiceRegistry {
                         return false;
                     }
                 } finally {
-                    if (!testingHints.remove(factory)) {
-                        throw new AssertionError(factory); // Should never happen.
-                    }
+                    testingHints.remove(factory);
                 }
             }
         }
@@ -741,10 +737,9 @@ public class FactoryRegistry extends ServiceRegistry {
          * other one. Try to remove those dependencies.
          */
         final ClassLoader[] asArray = loaders.toArray(new ClassLoader[loaders.size()]);
-        for (int i=0; i<asArray.length; i++) {
-            ClassLoader loader = asArray[i];
+        for (ClassLoader loader : asArray) {
             try {
-                while ((loader=loader.getParent()) != null) {
+                while ((loader = loader.getParent()) != null) {
                     loaders.remove(loader);
                 }
             } catch (SecurityException exception) {
@@ -816,9 +811,7 @@ public class FactoryRegistry extends ServiceRegistry {
                 log("scanForPlugins", message);
             }
         } finally {
-            if (!scanningCategories.remove(category)) {
-                throw new AssertionError(category);
-            }
+            scanningCategories.remove(category);
         }
         /*
          * After loading all plugins for the current category, gives factories a chance to setup
@@ -1146,22 +1139,20 @@ public class FactoryRegistry extends ServiceRegistry {
                                            final Filter service1, final Filter service2)
     {
         boolean done = false;
-        List<T> precedences = new ArrayList<>(); // The plugins of the service which have precedence.
+        final List<T> precedences = new ArrayList<>(); // The plugins of the service which have precedence.
         for (final Iterator<? extends T> it=getServiceProviders(category, true); it.hasNext();) {
             final T factory = it.next();
             if (service1.filter(factory)) {
                 precedences.add(factory);
             }
         }
-        if (precedences != null) {
-            for (final Iterator<? extends T> it=getServiceProviders(category, false); it.hasNext();) {
-                final T factory = it.next();
-                if (service2.filter(factory)) {
-                    for (final T precedence : precedences) {
-                        if (precedence != factory) {
-                            if (set) done |=   setOrdering(category, precedence, factory);
-                            else     done |= unsetOrdering(category, precedence, factory);
-                        }
+        for (final Iterator<? extends T> it=getServiceProviders(category, false); it.hasNext();) {
+            final T factory = it.next();
+            if (service2.filter(factory)) {
+                for (final T precedence : precedences) {
+                    if (precedence != factory) {
+                        if (set) done |=   setOrdering(category, precedence, factory);
+                        else     done |= unsetOrdering(category, precedence, factory);
                     }
                 }
             }

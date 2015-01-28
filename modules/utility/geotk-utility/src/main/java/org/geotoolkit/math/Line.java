@@ -147,23 +147,23 @@ public class Line extends org.apache.sis.math.Line {
      * @return The intersection point, or {@code null}.
      */
     public Point2D intersectionPoint(final Line line) {
-        double x, y;
+        final double x, y;
         if (isInfinite(slope())) {
             if (isInfinite(line.slope())) {
                 return null;
             }
             x = x0();
-            y = x * line.slope() + line.y0();
+            y = line.y(x);
         } else {
-            if (!isInfinite(line.slope())) {
+            if (isInfinite(line.slope())) {
+                x = line.x0();
+            } else {
                 x = (y0() - line.y0()) / (line.slope() - slope());
                 if (isInfinite(x)) {
                     return null;
                 }
-            } else {
-                x = line.x0();
             }
-            y = x*slope() + y0();
+            y = y(x);
         }
         return new Point2D.Double(x,y);
     }
