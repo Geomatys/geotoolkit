@@ -21,6 +21,7 @@ package org.geotoolkit.util;
 import java.awt.image.RenderedImage;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Locale;
@@ -237,6 +238,30 @@ public final class ImageIOUtilities extends Static {
             }
         }
         reader.dispose();
+    }
+
+    /**
+     * Close writer and close input if it's an ImageOutputStream or OutputStream.
+     * @param writer
+     */
+    public static void releaseWriter(ImageWriter writer){
+        if(writer == null) return;
+
+        Object writerOutput = writer.getOutput();
+        if(writerOutput instanceof OutputStream){
+            try {
+                ((OutputStream)writerOutput).close();
+            } catch (IOException ex) {
+                LOGGER.log(Level.INFO, ex.getMessage(),ex);
+            }
+        }else if(writerOutput instanceof ImageOutputStream){
+            try {
+                ((ImageOutputStream)writerOutput).close();
+            } catch (IOException ex) {
+                LOGGER.log(Level.INFO, ex.getMessage(),ex);
+            }
+        }
+        writer.dispose();
     }
 
     /**
