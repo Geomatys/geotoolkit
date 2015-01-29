@@ -24,32 +24,12 @@ import java.util.Map.Entry;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import javafx.embed.swing.SwingFXUtils;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.control.Button;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SelectionMode;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.BorderStroke;
-import javafx.scene.layout.BorderStrokeStyle;
-import javafx.scene.layout.BorderWidths;
-import javafx.scene.layout.CornerRadii;
-import javafx.scene.layout.HBox;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
 import javafx.util.Callback;
-import org.geotoolkit.font.FontAwesomeIcons;
-import org.geotoolkit.font.IconBuilder;
 import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.map.MapLayer;
 
@@ -61,36 +41,21 @@ public class FXLayerStylesPane extends FXPropertyPane{
     
     private final BorderPane leftPane = new BorderPane();
     private final ListView listView = new ListView();
-    private final Button apply = new Button(GeotkFX.getString(this,"apply"));
-    private final Button revert = new Button(GeotkFX.getString(this,"revert"));
 
-    private final LinkedHashMap<String, List<FXLayerStylePane>> indexByCategory = new LinkedHashMap<>();
-    
-    private FXLayerStylePane currentEditor = null;
-    
+    private final LinkedHashMap<String, List<FXLayerStylePane>> indexByCategory = new LinkedHashMap<>();    
+    private FXLayerStylePane currentEditor = null;    
     private MapLayer candidate;
     
     public FXLayerStylesPane(FXLayerStylePane ... styleEditors) {
+        getStylesheets().add(GeotkFX.CSS_PATH);
         
         setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
-        
-        apply.setGraphic(new ImageView(SwingFXUtils.toFXImage(
-                IconBuilder.createImage(FontAwesomeIcons.ICON_CHECK, 
-                        16, FontAwesomeIcons.DEFAULT_COLOR), null)));
-        revert.setGraphic(new ImageView(SwingFXUtils.toFXImage(
-                IconBuilder.createImage(FontAwesomeIcons.ICON_ROTATE_LEFT_ALIAS,
-                        16, FontAwesomeIcons.DEFAULT_COLOR), null)));
-        
-        final HBox hbox = new HBox(10, apply, revert);
-        hbox.setPadding(new Insets(10, 10, 10, 10));
-        hbox.setAlignment(Pos.CENTER);
-        
+                        
         final ScrollPane scroll = new ScrollPane(listView);
         scroll.setFitToHeight(true);
         scroll.setFitToWidth(true);
         scroll.setMinSize(300, 250);
         leftPane.setCenter(scroll);
-        leftPane.setBottom(hbox);
         setLeft(leftPane);      
         
         //build index
@@ -137,15 +102,7 @@ public class FXLayerStylesPane extends FXPropertyPane{
                 return new EditorCell();
             }
         });
-        
-        apply.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                if(currentEditor==null || candidate==null) return;
-                candidate.setStyle(currentEditor.getMutableStyle());
-            }
-        });
-        
+                
     }
 
     @Override
@@ -191,14 +148,11 @@ public class FXLayerStylesPane extends FXPropertyPane{
 
             setText(null);
             setGraphic(null);
+            getStyleClass().remove("property-group-title");
             if(!empty && item!=null){
                 if(item instanceof String){
+                    getStyleClass().add("property-group-title");
                     setText((String)item);
-                    setFont(Font.font(getFont().getFamily(), FontWeight.BOLD, getFont().getSize()));
-                    setBorder(new Border(new BorderStroke(
-                            null,null,null,Color.BLACK,
-                            null,null,null,BorderStrokeStyle.SOLID,CornerRadii.EMPTY,BorderStroke.THICK,Insets.EMPTY)));
-                    setBackground(new Background(new BackgroundFill(Color.LIGHTGREY, CornerRadii.EMPTY, Insets.EMPTY)));
                 } else if(item instanceof FXLayerStylePane){
                     setText(((FXLayerStylePane)item).getTitle());
                 }

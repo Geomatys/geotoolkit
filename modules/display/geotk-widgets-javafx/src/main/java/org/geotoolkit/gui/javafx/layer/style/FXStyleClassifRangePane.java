@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2014, Geomatys
+ *    (C) 2014-2015, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -28,7 +28,6 @@ import java.util.function.Function;
 import java.util.logging.Level;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.embed.swing.SwingFXUtils;
@@ -57,6 +56,7 @@ import org.geotoolkit.gui.javafx.layer.FXLayerStylePane;
 import org.geotoolkit.gui.javafx.layer.FXPropertyPane;
 import org.geotoolkit.gui.javafx.style.FXPaletteCell;
 import org.geotoolkit.gui.javafx.util.ButtonTableCell;
+import org.geotoolkit.gui.javafx.util.FXDeleteTableColumn;
 import org.geotoolkit.gui.javafx.util.FXNumberSpinner;
 import org.geotoolkit.image.io.PaletteFactory;
 import org.geotoolkit.internal.GeotkFX;
@@ -119,36 +119,36 @@ public class FXStyleClassifRangePane extends FXLayerStylePane {
     }
 
     @FXML
-    void propertyChange(ActionEvent event) {
+    private void propertyChange(ActionEvent event) {
         analyze.setClassification(uiProperty.getSelectionModel().getSelectedItem());
         updateNormalizeList();
     }
 
     @FXML
-    void normalizeChange(ActionEvent event) {
+    private void normalizeChange(ActionEvent event) {
         final PropertyName prop = uiNormalize.getSelectionModel().getSelectedItem();
         analyze.setNormalize(prop);
     }
     
     @FXML
-    void methodChange(ActionEvent event) {
+    private void methodChange(ActionEvent event) {
         analyze.setMethod(uiMethod.getSelectionModel().getSelectedItem());
     }
     
     @FXML
-    void editTemplate(ActionEvent event) {
+    private void editTemplate(ActionEvent event) {
         final Symbolizer template = FXPropertyPane.showSymbolizerDialog(this, analyze.getTemplate(), layer);
         analyze.setTemplate(template);
         updateTemplateGlyph();
     }
 
     @FXML
-    void generate(ActionEvent event) {
+    private void generate(ActionEvent event) {
         uiTable.getItems().setAll(analyze.generateRules((IntervalPalette) uiPalette.getSelectionModel().getSelectedItem()));
     }
 
     @FXML
-    void invertValues(ActionEvent event) {
+    private void invertValues(ActionEvent event) {
         
         final List<MutableRule> rules = new ArrayList<>(uiTable.getItems());
         final Symbolizer[] symbols = new Symbolizer[rules.size()];
@@ -167,10 +167,27 @@ public class FXStyleClassifRangePane extends FXLayerStylePane {
     }
 
     @FXML
-    void removeAll(ActionEvent event) {
+    private void removeAll(ActionEvent event) {
         uiTable.getItems().clear();
     }
-    
+
+    @FXML
+    private void apply(ActionEvent event) {
+        if(layer==null) return;
+
+        final List<MutableFeatureTypeStyle> ftss = layer.getStyle().featureTypeStyles();
+        MutableFeatureTypeStyle fts;
+        if(ftss.isEmpty()){
+            fts = GeotkFX.getStyleFactory().featureTypeStyle();
+            layer.getStyle().featureTypeStyles().add(fts);
+        }else{
+            fts = ftss.get(0);
+        }
+
+        fts.rules().clear();
+        fts.rules().addAll(uiTable.getItems());
+    }
+
     @Override
     public String getTitle() {
         return GeotkFX.getString(this,"title");
@@ -210,7 +227,7 @@ public class FXStyleClassifRangePane extends FXLayerStylePane {
         uiTable.getColumns().add(new GlyphColumn());
         uiTable.getColumns().add(new NameColumn());
         uiTable.getColumns().add(new FilterColumn());
-        uiTable.getColumns().add(new DeleteColumn());
+        uiTable.getColumns().add(new FXDeleteTableColumn(false));
         
         //this will cause the column width to fit the view area
         uiTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
@@ -420,26 +437,4 @@ public class FXStyleClassifRangePane extends FXLayerStylePane {
         }
     }
     
-    private final class DeleteColumn extends TableColumn<MutableRule,MutableRule>{
-
-        public DeleteColumn() {
-            setMinWidth(36);
-            setMaxWidth(36);
-            setEditable(true);
-            setCellValueFactory((TableColumn.CellDataFeatures<MutableRule, MutableRule> param) -> new SimpleObjectProperty<>(param.getValue()));
-            setCellFactory(new Callback<TableColumn<MutableRule, MutableRule>, TableCell<MutableRule, MutableRule>>() {
-                @Override
-                public TableCell<MutableRule, MutableRule> call(TableColumn<MutableRule, MutableRule> param) {
-                    return new ButtonTableCell(false,new ImageView(GeotkFX.ICON_DELETE),null,new Function<MutableRule,MutableRule>() {
-                        @Override
-                        public MutableRule apply(MutableRule t) {
-                            uiTable.getItems().remove(t);
-                            return t;
-                        }
-                    });
-                }
-            });
-        }
-        
-    }
 }

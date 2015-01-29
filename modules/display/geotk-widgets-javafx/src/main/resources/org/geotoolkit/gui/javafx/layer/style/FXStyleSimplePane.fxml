@@ -22,18 +22,18 @@
               <rowConstraints>
                 <RowConstraints vgrow="NEVER" />
                 <RowConstraints vgrow="NEVER" />
+                <RowConstraints vgrow="NEVER" />
                 <RowConstraints vgrow="ALWAYS" />
-                  <RowConstraints vgrow="NEVER" />
               </rowConstraints>
                <children>
-                  <ComboBox fx:id="uiChoice" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.rowIndex="1" />
-                  <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#addSymbol" text="+" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                  <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnSpan="2" GridPane.rowIndex="2">
+                  <ComboBox fx:id="uiChoice" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.rowIndex="2" />
+                  <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#addSymbol" text="+" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                  <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnSpan="2" GridPane.rowIndex="3">
                      <content>
                         <TableView fx:id="uiTable" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="200.0" />
                      </content>
                   </ScrollPane>
-                  <ImageView fx:id="uiPreview" fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="3">
+                  <ImageView fx:id="uiPreview" fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="1">
                      <GridPane.margin>
                         <Insets />
                      </GridPane.margin>

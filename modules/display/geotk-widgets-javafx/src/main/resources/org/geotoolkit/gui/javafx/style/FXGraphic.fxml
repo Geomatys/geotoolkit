@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.*?>
 
 <fx:root maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" type="BorderPane" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
-   <left>
+   <center>
       <GridPane BorderPane.alignment="CENTER">
         <columnConstraints>
           <ColumnConstraints hgrow="NEVER" />
@@ -41,15 +41,12 @@
                   <Insets bottom="5.0" left="5.0" top="5.0" />
                </padding>
             </HBox>
-            <ScrollPane fitToHeight="true" fitToWidth="true" GridPane.columnSpan="2" GridPane.rowIndex="6">
+            <ScrollPane fitToHeight="true" fitToWidth="true" minHeight="50.0" GridPane.columnSpan="2" GridPane.rowIndex="6">
                <content>
-                  <TableView fx:id="uiTable" editable="true" />
+                  <TableView fx:id="uiTable" editable="true" minHeight="50.0" />
                </content>
             </ScrollPane>
          </children>
       </GridPane>
-   </left>
-   <center>
-      <Pane fx:id="uiGraphicalSymbol" BorderPane.alignment="CENTER" />
    </center>
 </fx:root>

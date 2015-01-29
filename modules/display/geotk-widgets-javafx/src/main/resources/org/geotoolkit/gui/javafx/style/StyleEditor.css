@@ -3,12 +3,15 @@
     -fx-font-size: 16px;
     -fx-font-weight: bold;
     -fx-text-fill: white;
-    -fx-padding: 8;
-    -fx-background-color: #888888;
+    -fx-padding: 6;
+    -fx-background-color: #99ccff;
+    -fx-background-radius : 0 0 0 0;
+    -fx-border-width : 0 0 0 2;
+    -fx-border-color : #5599cc;
 }
 
 .property-key {
-    -fx-padding: 8px;
+    -fx-padding: 7px;
 }
 
 .bordered {

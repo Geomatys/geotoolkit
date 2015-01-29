@@ -147,6 +147,9 @@ public class FXStyleXMLPane extends FXLayerStylePane {
      */
     public void initialize(){
         uiVersion.setItems(FXCollections.observableArrayList(Specification.StyledLayerDescriptor.values()));
+        if(!uiVersion.getItems().isEmpty()){
+            uiVersion.getSelectionModel().select(uiVersion.getItems().size()-1);
+        }
     }
     
     @Override

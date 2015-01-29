@@ -84,11 +84,9 @@ public class FXUserStyle extends FXStyleElementController<MutableStyle>{
     
     @FXML
     protected TreeTableView tree;
-
     @FXML
     protected BorderPane contentPane;
 
-    
     private ObservableList<Object> menuItems;
     
     //current style element editor
@@ -117,6 +115,8 @@ public class FXUserStyle extends FXStyleElementController<MutableStyle>{
         menuItems.add(new SeparatorMenuItem());
         menuItems.add(new ExpandAction());
         menuItems.add(new CollapseAction());
+
+        FXUtilities.hideTableHeader(tree);
     }
     
     @Override

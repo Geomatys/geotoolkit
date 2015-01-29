@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2014, Geomatys
+ *    (C) 2014-2015, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -73,7 +73,7 @@ import org.geotoolkit.gui.javafx.layer.FXLayerStylePane;
 import org.geotoolkit.gui.javafx.layer.FXPropertyPane;
 import org.geotoolkit.gui.javafx.style.FXPaletteCell;
 import org.geotoolkit.gui.javafx.util.ButtonTableCell;
-import org.geotoolkit.gui.javafx.util.FXUtilities;
+import org.geotoolkit.gui.javafx.util.FXDeleteTableColumn;
 import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
@@ -130,19 +130,19 @@ public class FXStyleClassifSinglePane extends FXLayerStylePane {
     }
 
     @FXML
-    void editTemplate(ActionEvent event) {
+    private void editTemplate(ActionEvent event) {
         template = FXPropertyPane.showSymbolizerDialog(this, template, layer);
         updateTemplateGlyph();
     }
 
     @FXML
-    void generate(ActionEvent event) {
+    private void generate(ActionEvent event) {
         final ObservableList<MutableRule> rules = create(uiProperty.getSelectionModel().getSelectedItem(), uiOther.isSelected());
         uiTable.setItems(rules);
     }
 
     @FXML
-    void addValue(ActionEvent event) {
+    private void addValue(ActionEvent event) {
         final Optional<String> str = Dialogs.create().message(GeotkFX.getString(FXStyleClassifSinglePane.class,"newvalue")).showTextInput();
         if(str.get()==null)return;
         final String val = str.get();
@@ -151,10 +151,27 @@ public class FXStyleClassifSinglePane extends FXLayerStylePane {
     }
 
     @FXML
-    void removeAll(ActionEvent event) {
+    private void removeAll(ActionEvent event) {
         uiTable.getItems().clear();
     }
-    
+
+    @FXML
+    private void apply(ActionEvent event) {
+        if(layer==null) return;
+
+        final List<MutableFeatureTypeStyle> ftss = layer.getStyle().featureTypeStyles();
+        MutableFeatureTypeStyle fts;
+        if(ftss.isEmpty()){
+            fts = GeotkFX.getStyleFactory().featureTypeStyle();
+            layer.getStyle().featureTypeStyles().add(fts);
+        }else{
+            fts = ftss.get(0);
+        }
+
+        fts.rules().clear();
+        fts.rules().addAll(uiTable.getItems());
+    }
+
     @Override
     public String getTitle() {
         return GeotkFX.getString(this,"title");
@@ -193,7 +210,7 @@ public class FXStyleClassifSinglePane extends FXLayerStylePane {
         uiTable.getColumns().add(new GlyphColumn());
         uiTable.getColumns().add(new NameColumn());
         uiTable.getColumns().add(new FilterColumn());
-        uiTable.getColumns().add(new DeleteColumn());
+        uiTable.getColumns().add(new FXDeleteTableColumn(false));
         
         //this will cause the column width to fit the view area
         uiTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
@@ -454,6 +471,7 @@ public class FXStyleClassifSinglePane extends FXLayerStylePane {
         final MutableRule r = sf.rule(createSymbolizer());
         r.setFilter(ff.equals(property, ff.literal(obj)));
         r.setDescription(sf.description(obj.toString(), obj.toString()));
+        r.setName(obj.toString());
         return r;
     }
     
@@ -588,28 +606,5 @@ public class FXStyleClassifSinglePane extends FXLayerStylePane {
             });
         }
     }
-    
-    private final class DeleteColumn extends TableColumn<MutableRule,MutableRule>{
-
-        public DeleteColumn() {
-            setMinWidth(36);
-            setMaxWidth(36);
-            setEditable(true);
-            setCellValueFactory((CellDataFeatures<MutableRule, MutableRule> param) -> new SimpleObjectProperty<>(param.getValue()));
-            setCellFactory(new Callback<TableColumn<MutableRule, MutableRule>, TableCell<MutableRule, MutableRule>>() {
-                @Override
-                public TableCell<MutableRule, MutableRule> call(TableColumn<MutableRule, MutableRule> param) {
-                    return new ButtonTableCell(false,new ImageView(GeotkFX.ICON_DELETE),null,new Function<MutableRule,MutableRule>() {
-                        @Override
-                        public MutableRule apply(MutableRule t) {
-                            uiTable.getItems().remove(t);
-                            return t;
-                        }
-                    });
-                }
-            });
-        }
         
-    }
-    
 }

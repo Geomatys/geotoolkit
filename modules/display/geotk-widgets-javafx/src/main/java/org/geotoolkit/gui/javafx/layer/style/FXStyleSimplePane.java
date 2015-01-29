@@ -17,15 +17,20 @@
 
 package org.geotoolkit.gui.javafx.layer.style;
 
+import com.sun.javafx.collections.NonIterableChange;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
+import java.beans.PropertyChangeEvent;
+import java.util.ArrayList;
+import java.util.EventObject;
 import java.util.List;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
+import javafx.collections.ModifiableObservableListBase;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -51,9 +56,14 @@ import org.geotoolkit.gui.javafx.util.FXMoveDownTableColumn;
 import org.geotoolkit.gui.javafx.util.FXMoveUpTableColumn;
 import org.geotoolkit.gui.javafx.util.FXUtilities;
 import org.geotoolkit.internal.GeotkFX;
+import org.geotoolkit.map.LayerListener;
+import org.geotoolkit.map.MapItem;
 import org.geotoolkit.map.MapLayer;
+import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyle;
+import org.geotoolkit.style.RuleListener;
+import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.opengis.style.FeatureTypeStyle;
 import org.opengis.style.LineSymbolizer;
 import org.opengis.style.PointSymbolizer;
@@ -67,7 +77,7 @@ import org.opengis.style.TextSymbolizer;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class FXStyleSimplePane extends FXLayerStylePane {
+public class FXStyleSimplePane extends FXLayerStylePane implements LayerListener {
     
     private MapLayer layer;
     //keep track of where the rule was to avoid rewriting the complete style
@@ -77,7 +87,8 @@ public class FXStyleSimplePane extends FXLayerStylePane {
     @FXML private TableView<Symbolizer> uiTable;
     @FXML private ImageView uiPreview;
     @FXML private ScrollPane uiSymbolizerEditorPane;
-    
+
+    private final LayerListener.Weak layerListener = new LayerListener.Weak(this);
     private FXStyleElementController symbolizerEditor = null;
     private boolean editing = false;
 
@@ -129,10 +140,6 @@ public class FXStyleSimplePane extends FXLayerStylePane {
         uiTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         uiTable.setTableMenuButtonVisible(false);
         
-        // NE CONVIENT PAS, CAR AVEC UN SEUL COMPOSANT, AU BOUT D'UN MOMENT IL Y 
-        // A UN PROBLÈME CAR LE PANNEAU D'ÉDITION DU SYMBOLIZER SE FERME DÈS MODIFICATION…
-        // JE PENSE QUE CELA PROVIENT DU FAIT QUE LE SELECTION MODEL N'EST PLUS TEL QU'IL 
-        // ÉTAIT AU DÉPART, LORS DE L'AJOUT DU LISTENER SUR LES CELLULES INITIALEMENT SELECTIONNÉES ???
         uiTable.getSelectionModel().getSelectedCells().addListener(new ListChangeListener<TablePosition>() {
             @Override
             public void onChanged(ListChangeListener.Change<? extends TablePosition> c) {
@@ -185,6 +192,10 @@ public class FXStyleSimplePane extends FXLayerStylePane {
     @Override
     public boolean init(Object candidate) {
         if(!(candidate instanceof MapLayer)) return false;
+
+        if(this.layer!=null){
+            layerListener.unregisterSource(this.layer);
+        }
         
         this.layer = (MapLayer) candidate;
         
@@ -196,22 +207,57 @@ public class FXStyleSimplePane extends FXLayerStylePane {
                 break loop; //we only retrieve the first rule.
             }
         }
+
+        if(this.layer!=null){
+            layerListener.registerSource(this.layer);
+        }
         
         return true;
     }
-    
+
+    public void styleChange(MapLayer source, EventObject event) {
+        //check if the first rule changed
+        final MutableStyle ms = this.layer.getStyle();
+        if(ms.featureTypeStyles().isEmpty()){
+            init(this.layer);
+            return;
+        }
+        final MutableFeatureTypeStyle fts = ms.featureTypeStyles().get(0);
+        if(fts.rules().isEmpty()){
+            init(this.layer);
+            return;
+        }
+        final MutableRule r = fts.rules().get(0);
+        if(this.rule!=r){
+            init(this.layer);
+            return;
+        }
+    }
+
     private void parse(final MutableRule rule) {
 
         //listen to rule change from other style editors
         if(this.rule!=rule){
             this.rule = rule;
-            uiTable.setItems(FXCollections.observableList(rule.symbolizers()));
+            uiTable.setItems(new SymbolizersList(rule));
+            updatePreview();
         }
     }
     
     @Override
     public MutableStyle getMutableStyle() {
         return layer.getStyle();
+    }
+
+    @Override
+    public void itemChange(CollectionChangeEvent<MapItem> event) {
+    }
+
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+        if(MapLayer.STYLE_PROPERTY.equals(evt.getPropertyName()) && evt.getOldValue()!=evt.getNewValue()){
+            init(this.layer);
+        }
     }
     
     private static class GlyphTableCell extends TableCell<Symbolizer, Symbolizer>{
@@ -232,59 +278,59 @@ public class FXStyleSimplePane extends FXLayerStylePane {
         }
     }
         
-//    private static class SymbolizersList extends ModifiableObservableListBase<Symbolizer> implements RuleListener{
-//        
-//        private final MutableRule rule;
-//        
-//        public SymbolizersList(MutableRule rule) {
-//            this.rule = rule;
-//            rule.addListener(this);
-//        }
-//        
-//        @Override
-//        public Symbolizer get(int index) {
-//            return rule.symbolizers().get(index);
-//        }
-//
-//        @Override
-//        public int size() {
-//            return rule.symbolizers().size();
-//        }
-//
-//        @Override
-//        protected void doAdd(int index, Symbolizer element) {
-//            rule.symbolizers().add(index, element);
-//        }
-//
-//        @Override
-//        protected Symbolizer doSet(int index, Symbolizer element) {
-//            return rule.symbolizers().set(index, element);
-//        }
-//
-//        @Override
-//        protected Symbolizer doRemove(int index) {
-//            return rule.symbolizers().remove(index);
-//        }
-//        
-//        @Override
-//        public void symbolizerChange(CollectionChangeEvent<Symbolizer> event) {
-//            final int type = event.getType();
-//            final int min = (int) event.getRange().getMinDouble();
-//            final int max = (int) event.getRange().getMaxDouble();
-//            if(type==CollectionChangeEvent.ITEM_ADDED){
-//                fireChange(new NonIterableChange.SimpleAddChange<>(min,max,this));
-//            }else if(type==CollectionChangeEvent.ITEM_REMOVED){
-//                fireChange(new NonIterableChange.GenericAddRemoveChange<>(min,max,new ArrayList(event.getItems()),this));
-//            }else if(type==CollectionChangeEvent.ITEM_CHANGED){
-//                fireChange(new NonIterableChange.SimpleUpdateChange<>(min,max,this));
-//            }
-//        }
-//
-//        @Override
-//        public void propertyChange(PropertyChangeEvent evt) {
-//        }
-//
-//    }
+    private static class SymbolizersList extends ModifiableObservableListBase<Symbolizer> implements RuleListener{
+        
+        private final MutableRule rule;
+        
+        public SymbolizersList(MutableRule rule) {
+            this.rule = rule;
+            rule.addListener(this);
+        }
+        
+        @Override
+        public Symbolizer get(int index) {
+            return rule.symbolizers().get(index);
+        }
+
+        @Override
+        public int size() {
+            return rule.symbolizers().size();
+        }
+
+        @Override
+        protected void doAdd(int index, Symbolizer element) {
+            rule.symbolizers().add(index, element);
+        }
+
+        @Override
+        protected Symbolizer doSet(int index, Symbolizer element) {
+            return rule.symbolizers().set(index, element);
+        }
+
+        @Override
+        protected Symbolizer doRemove(int index) {
+            return rule.symbolizers().remove(index);
+        }
+        
+        @Override
+        public void symbolizerChange(CollectionChangeEvent<Symbolizer> event) {
+            final int type = event.getType();
+            final int min = (int) event.getRange().getMinDouble();
+            final int max = (int) event.getRange().getMaxDouble();
+            if(type==CollectionChangeEvent.ITEM_ADDED){
+                fireChange(new NonIterableChange.SimpleAddChange<>(min,max,this));
+            }else if(type==CollectionChangeEvent.ITEM_REMOVED){
+                fireChange(new NonIterableChange.GenericAddRemoveChange<>(min,max,new ArrayList(event.getItems()),this));
+            }else if(type==CollectionChangeEvent.ITEM_CHANGED){
+                fireChange(new NonIterableChange.SimpleUpdateChange<>(min,max,this));
+            }
+        }
+
+        @Override
+        public void propertyChange(PropertyChangeEvent evt) {
+        }
+
+    }
     
     private static class SymbolizerButtonListCell extends ListCell<FXStyleElementController>{
         @Override
