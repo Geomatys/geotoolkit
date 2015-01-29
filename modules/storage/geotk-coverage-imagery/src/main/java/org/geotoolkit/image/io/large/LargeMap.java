@@ -18,6 +18,7 @@ package org.geotoolkit.image.io.large;
 
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.util.ImageIOUtilities;
 
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
@@ -231,8 +232,7 @@ public class LargeMap extends PhantomReference<RenderedImage> {
                 final ImageReader imgReader = getImageReader();
                 imgReader.setInput(getFile);
                 final BufferedImage buff = imgReader.read(0);
-                imgReader.setInput(null);
-                imgReader.dispose();
+                ImageIOUtilities.releaseReader(imgReader);
                 //add in cache list.
                 final WritableRaster checkedRaster = checkRaster(buff.getRaster(), tileCorner);
                 add(tileCorner, checkedRaster);
@@ -323,8 +323,7 @@ public class LargeMap extends PhantomReference<RenderedImage> {
             final ImageWriter imgWriter = getImageWriter();
             imgWriter.setOutput(tileFile);
             imgWriter.write(toWrite);
-            imgWriter.setOutput(null);
-            imgWriter.dispose();
+            ImageIOUtilities.releaseWriter(imgWriter);
         }
     }
 
