@@ -64,7 +64,11 @@ public class PyramidProcess extends AbstractProcess implements ProcessListener {
         final String pyramid_name                 = value(IN_PYRAMID_NAME     , inputParameters);
         final Dimension tilesize                  = value(IN_TILE_SIZE        , inputParameters);
         final double[] fillvalue                  = value(IN_FILLVALUES       , inputParameters);
-        final boolean reuseTiles                  = value(IN_REUSETILES       , inputParameters);
+        Boolean reuseTiles                        = value(IN_REUSETILES       , inputParameters);
+
+        if (reuseTiles == null) {
+            reuseTiles = Boolean.FALSE;
+        }
 
         //check map values
         for(Object obj : resolution_per_envelope.keySet()) {
