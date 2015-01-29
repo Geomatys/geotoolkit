@@ -72,6 +72,7 @@
                                         <include>org/opengis/**</include>
                                         <include>jfxtras/**</include>
                                         <include>jidefx/**</include>
+                                        <include>javax/measure/**</include>
                                         <include>com/fxexperience/**</include>
                                     </includes>
                                 </filter>

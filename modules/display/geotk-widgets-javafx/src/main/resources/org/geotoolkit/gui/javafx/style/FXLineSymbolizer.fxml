@@ -19,11 +19,26 @@
             <RowConstraints />
             <RowConstraints vgrow="NEVER" />
             <RowConstraints vgrow="NEVER" />
+            <RowConstraints vgrow="NEVER" />
             <RowConstraints />
          </rowConstraints>
          <children>
-            <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="property-group-title" text="%org.geotoolkit.gui.javafx.style.FXLineSymbolizer.stroke" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="1" />
-            <FXStroke fx:id="uiStroke" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="property-group-title" text="%org.geotoolkit.gui.javafx.style.FXLineSymbolizer.stroke" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="2" />
+            <FXStroke fx:id="uiStroke" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+            <FXSymbolizerInfo fx:id="uiInfo" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="1">
+               <rowConstraints>
+                  <RowConstraints />
+                  <RowConstraints />
+                  <RowConstraints />
+                  <RowConstraints />
+                  <RowConstraints />
+                  <RowConstraints />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" />
+               </rowConstraints>
+               <children>
+                  <FXNumberExpression fx:id="uiOffset" GridPane.columnIndex="1" GridPane.rowIndex="12" />
+                  <Label styleClass="property-key" text="%org.geotoolkit.gui.javafx.style.FXLineSymbolizer.offset" GridPane.rowIndex="12" />
+               </children></FXSymbolizerInfo>
          </children>
       </GridPane>
    </center>

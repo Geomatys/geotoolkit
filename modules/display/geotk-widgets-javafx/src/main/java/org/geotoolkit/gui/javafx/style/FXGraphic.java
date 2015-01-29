@@ -105,7 +105,6 @@ public class FXGraphic extends FXStyleElementController<Graphic>{
     }
 
     private void resetValue(){
-        System.out.println("Reset !");
         if(updating) return;
         value.set(getStyleFactory().graphic(
                 new ArrayList<GraphicalSymbol>(uiTable.getItems()), 

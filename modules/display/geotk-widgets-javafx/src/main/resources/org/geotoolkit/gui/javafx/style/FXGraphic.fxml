@@ -1,54 +1,55 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.*?>
 <?import org.geotoolkit.gui.javafx.style.*?>
 <?import java.lang.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
 <fx:root maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" type="BorderPane" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
-   <center>
-      <SplitPane dividerPositions="0.011661807580174927" BorderPane.alignment="CENTER">
-         <items>
-            <GridPane>
-              <columnConstraints>
-                <ColumnConstraints hgrow="NEVER" />
-                  <ColumnConstraints hgrow="ALWAYS" />
-              </columnConstraints>
-              <rowConstraints>
-                  <RowConstraints vgrow="SOMETIMES" />
-                  <RowConstraints vgrow="SOMETIMES" />
-                  <RowConstraints vgrow="SOMETIMES" />
-                  <RowConstraints vgrow="SOMETIMES" />
-                  <RowConstraints vgrow="SOMETIMES" />
-                  <RowConstraints vgrow="SOMETIMES" />
-                  <RowConstraints maxHeight="1.7976931348623157E308" vgrow="ALWAYS" />
-                  <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" prefHeight="30.0" vgrow="ALWAYS" />
-                  <RowConstraints vgrow="SOMETIMES" />
-              </rowConstraints>
+   <left>
+      <GridPane BorderPane.alignment="CENTER">
+        <columnConstraints>
+          <ColumnConstraints hgrow="NEVER" />
+            <ColumnConstraints hgrow="ALWAYS" />
+        </columnConstraints>
+        <rowConstraints>
+            <RowConstraints vgrow="SOMETIMES" />
+            <RowConstraints vgrow="SOMETIMES" />
+            <RowConstraints vgrow="SOMETIMES" />
+            <RowConstraints vgrow="SOMETIMES" />
+            <RowConstraints vgrow="SOMETIMES" />
+            <RowConstraints vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="1.7976931348623157E308" vgrow="ALWAYS" />
+            <RowConstraints vgrow="SOMETIMES" />
+        </rowConstraints>
+         <children>
+            <Label styleClass="property-key" text="%org.geotoolkit.gui.javafx.style.FXGraphic.size" />
+            <FXNumberExpression fx:id="uiSize" GridPane.columnIndex="1" />
+            <Label styleClass="property-key" text="%org.geotoolkit.gui.javafx.style.FXGraphic.rotation" GridPane.rowIndex="1" />
+            <FXNumberExpression fx:id="uiRotation" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <Label styleClass="property-key" text="%org.geotoolkit.gui.javafx.style.FXGraphic.opacity" GridPane.rowIndex="2" />
+            <FXNumberExpression fx:id="uiOpacity" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <FXAnchorPoint fx:id="uiAnchor" GridPane.columnSpan="2" GridPane.rowIndex="3" />
+            <FXDisplacement fx:id="uiDisplacement" GridPane.columnSpan="2" GridPane.rowIndex="4" />
+            <HBox spacing="5.0" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="5">
                <children>
-                  <Label styleClass="property-key" text="%org.geotoolkit.gui.javafx.style.FXGraphic.size" />
-                  <FXNumberExpression fx:id="uiSize" GridPane.columnIndex="1" />
-                  <Label styleClass="property-key" text="%org.geotoolkit.gui.javafx.style.FXGraphic.rotation" GridPane.rowIndex="1" />
-                  <FXNumberExpression fx:id="uiRotation" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                  <Label styleClass="property-key" text="%org.geotoolkit.gui.javafx.style.FXGraphic.opacity" GridPane.rowIndex="2" />
-                  <FXNumberExpression fx:id="uiOpacity" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                  <FXAnchorPoint fx:id="uiAnchor" GridPane.columnSpan="2" GridPane.rowIndex="3" />
-                  <FXDisplacement fx:id="uiDisplacement" GridPane.columnSpan="2" GridPane.rowIndex="4" />
-                  <HBox GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="5">
-                     <children>
-                        <Button fx:id="uiAddMark" mnemonicParsing="false" onAction="#addMark" text="%org.geotoolkit.gui.javafx.style.FXGraphic.mark" />
-                        <Button fx:id="uiAddExternal" mnemonicParsing="false" onAction="#addExternal" text="%org.geotoolkit.gui.javafx.style.FXGraphic.external" />
-                     </children>
-                  </HBox>
-                  <ScrollPane fitToHeight="true" fitToWidth="true" GridPane.columnSpan="2" GridPane.rowIndex="6">
-                     <content>
-                        <TableView fx:id="uiTable" editable="true" />
-                     </content>
-                  </ScrollPane>
+                  <Button fx:id="uiAddMark" mnemonicParsing="false" onAction="#addMark" text="%org.geotoolkit.gui.javafx.style.FXGraphic.mark" />
+                  <Button fx:id="uiAddExternal" mnemonicParsing="false" onAction="#addExternal" text="%org.geotoolkit.gui.javafx.style.FXGraphic.external" />
                </children>
-            </GridPane>
-            <Pane fx:id="uiGraphicalSymbol" />
-         </items>
-      </SplitPane>
+               <padding>
+                  <Insets bottom="5.0" left="5.0" top="5.0" />
+               </padding>
+            </HBox>
+            <ScrollPane fitToHeight="true" fitToWidth="true" GridPane.columnSpan="2" GridPane.rowIndex="6">
+               <content>
+                  <TableView fx:id="uiTable" editable="true" />
+               </content>
+            </ScrollPane>
+         </children>
+      </GridPane>
+   </left>
+   <center>
+      <Pane fx:id="uiGraphicalSymbol" BorderPane.alignment="CENTER" />
    </center>
 </fx:root>

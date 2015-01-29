@@ -20,9 +20,12 @@ package org.geotoolkit.gui.javafx.style;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javax.measure.unit.Unit;
 import static org.geotoolkit.gui.javafx.style.FXStyleElementController.getStyleFactory;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.StyleConstants;
+import org.opengis.filter.expression.Expression;
+import org.opengis.style.Description;
 import org.opengis.style.PolygonSymbolizer;
 
 /**
@@ -30,11 +33,17 @@ import org.opengis.style.PolygonSymbolizer;
  * @author Johann Sorel (Geomatys)
  */
 public class FXPolygonSymbolizer extends FXStyleElementController<PolygonSymbolizer> {
-    
+
+    @FXML
+    private FXSymbolizerInfo uiInfo;
     @FXML
     protected FXFill uiFill;    
     @FXML
     protected FXStroke uiStroke;
+    @FXML
+    protected FXDisplacement uiDisplacement;
+    @FXML
+    private FXNumberExpression uiOffset;
 
     
     @Override
@@ -52,10 +61,22 @@ public class FXPolygonSymbolizer extends FXStyleElementController<PolygonSymboli
         super.initialize();
         final ChangeListener changeListener = (ChangeListener) (ObservableValue observable, Object oldValue, Object newValue) -> {
             if(updating) return;
-            value.set(getStyleFactory().polygonSymbolizer(uiStroke.valueProperty().get(), uiFill.valueProperty().get(), null));
+            final String name = uiInfo.getName();
+            final Description desc = uiInfo.getDescription();
+            final Unit uom = uiInfo.getUnit();
+            final Expression geom = uiInfo.getGeom();
+            value.set(getStyleFactory().polygonSymbolizer(
+                    name,geom,desc,uom,
+                    uiStroke.valueProperty().get(),
+                    uiFill.valueProperty().get(),
+                    uiDisplacement.valueProperty().get(),
+                    uiOffset.valueProperty().get()));
         };
         uiFill.valueProperty().addListener(changeListener);
         uiStroke.valueProperty().addListener(changeListener);
+        uiInfo.valueProperty().addListener(changeListener);
+        uiOffset.valueProperty().addListener(changeListener);
+        uiDisplacement.valueProperty().addListener(changeListener);
     }
     
     @Override
@@ -63,12 +84,18 @@ public class FXPolygonSymbolizer extends FXStyleElementController<PolygonSymboli
         super.setLayer(layer);
         uiFill.setLayer(layer);
         uiStroke.setLayer(layer);
+        uiInfo.setLayer(layer);
+        uiOffset.setLayer(layer);
+        uiDisplacement.setLayer(layer);
     }
     
     @Override
     protected void updateEditor(PolygonSymbolizer styleElement) {
         uiFill.valueProperty().setValue(styleElement.getFill());
         uiStroke.valueProperty().setValue(styleElement.getStroke());
+        uiInfo.parse(styleElement);
+        uiOffset.valueProperty().set(styleElement.getPerpendicularOffset());
+        uiDisplacement.valueProperty().set(styleElement.getDisplacement());
     }
 
 }

@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2014, Geomatys
+ *    (C) 2014-2015, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -20,9 +20,12 @@ package org.geotoolkit.gui.javafx.style;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javax.measure.unit.Unit;
 import static org.geotoolkit.gui.javafx.style.FXStyleElementController.getStyleFactory;
 import org.geotoolkit.map.MapLayer;
 import static org.geotoolkit.style.StyleConstants.DEFAULT_GRAPHIC;
+import org.opengis.filter.expression.Expression;
+import org.opengis.style.Description;
 import org.opengis.style.PointSymbolizer;
 
 /**
@@ -31,6 +34,7 @@ import org.opengis.style.PointSymbolizer;
  */
 public class FXPointSymbolizer extends FXStyleElementController<PointSymbolizer>{
 
+    @FXML private FXSymbolizerInfo uiInfo;
     @FXML protected FXGraphic uiGraphic;
     
     @Override
@@ -48,21 +52,28 @@ public class FXPointSymbolizer extends FXStyleElementController<PointSymbolizer>
         super.initialize();        
         final ChangeListener changeListener = (ChangeListener) (ObservableValue observable, Object oldValue, Object newValue) -> {
             if(updating) return;
-            value.set(getStyleFactory().pointSymbolizer(uiGraphic.valueProperty().get(), null));
+            final String name = uiInfo.getName();
+            final Description desc = uiInfo.getDescription();
+            final Unit uom = uiInfo.getUnit();
+            final Expression geom = uiInfo.getGeom();
+            value.set(getStyleFactory().pointSymbolizer(name,geom,desc,uom,uiGraphic.valueProperty().get()));
         };
         
         uiGraphic.valueProperty().addListener(changeListener);
+        uiInfo.valueProperty().addListener(changeListener);
     }
     
     @Override
     public void setLayer(MapLayer layer) {
         super.setLayer(layer);
         uiGraphic.setLayer(layer);
+        uiInfo.setLayer(layer);
     }
     
     @Override
     protected void updateEditor(PointSymbolizer pointSymbolizer) {
         uiGraphic.valueProperty().setValue(pointSymbolizer.getGraphic());
+        uiInfo.parse(pointSymbolizer);
     }
     
 }

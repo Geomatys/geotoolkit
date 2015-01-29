@@ -20,12 +20,30 @@
             <RowConstraints />
             <RowConstraints />
             <RowConstraints />
+            <RowConstraints />
          </rowConstraints>
          <children>
-            <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="property-group-title" text="%org.geotoolkit.gui.javafx.style.FXPolygonSymbolizer.stroke" GridPane.columnSpan="2" GridPane.rowIndex="2" />
-            <FXStroke fx:id="uiStroke" GridPane.rowIndex="3" />
-            <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="property-group-title" text="%org.geotoolkit.gui.javafx.style.FXPolygonSymbolizer.fill" GridPane.columnSpan="2" />
-            <FXFill fx:id="uiFill" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.rowIndex="1" />
+            <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="property-group-title" text="%org.geotoolkit.gui.javafx.style.FXPolygonSymbolizer.stroke" GridPane.columnSpan="2" GridPane.rowIndex="3" />
+            <FXStroke fx:id="uiStroke" GridPane.rowIndex="4" />
+            <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="property-group-title" text="%org.geotoolkit.gui.javafx.style.FXPolygonSymbolizer.fill" GridPane.columnSpan="2" GridPane.rowIndex="1" />
+            <FXFill fx:id="uiFill" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.rowIndex="2" />
+            <FXSymbolizerInfo fx:id="uiInfo" maxWidth="1.7976931348623157E308" GridPane.columnSpan="2" GridPane.hgrow="NEVER">
+               <children>
+                  <Label styleClass="property-key" text="%org.geotoolkit.gui.javafx.style.FXPolygonSymbolizer.offset" GridPane.columnIndex="0" GridPane.rowIndex="6" />
+                  <FXNumberExpression fx:id="uiOffset" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                  <FXDisplacement fx:id="uiDisplacement" GridPane.rowIndex="7" GridPane.columnIndex="0" GridPane.columnSpan="2"/>
+               </children>
+               <rowConstraints>
+                  <RowConstraints />
+                  <RowConstraints />
+                  <RowConstraints />
+                  <RowConstraints />
+                  <RowConstraints />
+                  <RowConstraints />
+                  <RowConstraints />
+                  <RowConstraints />
+               </rowConstraints>
+            </FXSymbolizerInfo>
          </children>
       </GridPane>
    </center>

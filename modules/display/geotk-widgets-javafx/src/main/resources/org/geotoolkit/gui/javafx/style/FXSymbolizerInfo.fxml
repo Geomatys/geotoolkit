@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import org.geotoolkit.gui.javafx.style.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<fx:root maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" type="GridPane" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+  <columnConstraints>
+    <ColumnConstraints hgrow="NEVER" />
+    <ColumnConstraints hgrow="NEVER" />
+      <ColumnConstraints hgrow="ALWAYS" minWidth="2.0" prefWidth="2.0" />
+  </columnConstraints>
+  <rowConstraints>
+      <RowConstraints vgrow="NEVER" />
+    <RowConstraints vgrow="NEVER" />
+    <RowConstraints vgrow="NEVER" />
+    <RowConstraints vgrow="NEVER" />
+      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="NEVER" />
+      <RowConstraints vgrow="NEVER" />
+  </rowConstraints>
+   <children>
+      <Label styleClass="property-key" text="%org.geotoolkit.gui.javafx.style.FXSymbolizerInfo.name" GridPane.rowIndex="1" />
+      <Label styleClass="property-key" text="%org.geotoolkit.gui.javafx.style.FXSymbolizerInfo.title" GridPane.rowIndex="2" />
+      <Label styleClass="property-key" text="%org.geotoolkit.gui.javafx.style.FXSymbolizerInfo.abstract" GridPane.rowIndex="3" />
+      <Label styleClass="property-key" text="%org.geotoolkit.gui.javafx.style.FXSymbolizerInfo.unit" GridPane.rowIndex="5" />
+      <Label maxWidth="1.7976931348623157E308" styleClass="property-group-title" text="%org.geotoolkit.gui.javafx.style.FXSymbolizerInfo.info" GridPane.columnSpan="3" />
+      <TextField fx:id="uiName" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+      <TextField fx:id="uititle" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+      <TextField fx:id="uiAbstract" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+      <ChoiceBox fx:id="uiUnit" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+      <Label styleClass="property-key" text="%org.geotoolkit.gui.javafx.style.FXSymbolizerInfo.geometry" GridPane.rowIndex="4" />
+      <FXTextExpression fx:id="uiGeom" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+   </children>
+</fx:root>

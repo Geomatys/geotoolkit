@@ -21,9 +21,12 @@ import java.awt.Color;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javax.measure.unit.Unit;
 import static org.geotoolkit.gui.javafx.style.FXStyleElementController.getStyleFactory;
 import org.geotoolkit.map.MapLayer;
 import static org.geotoolkit.style.StyleConstants.*;
+import org.opengis.filter.expression.Expression;
+import org.opengis.style.Description;
 import org.opengis.style.TextSymbolizer;
 
 /**
@@ -32,6 +35,8 @@ import org.opengis.style.TextSymbolizer;
  */
 public class FXTextSymbolizer extends FXStyleElementController<TextSymbolizer>{
 
+    @FXML
+    private FXSymbolizerInfo uiInfo;
     @FXML
     protected FXTextExpression uiText;    
     @FXML
@@ -64,19 +69,25 @@ public class FXTextSymbolizer extends FXStyleElementController<TextSymbolizer>{
         super.initialize();        
         final ChangeListener changeListener = (ChangeListener) (ObservableValue observable, Object oldValue, Object newValue) -> {
             if(updating) return;
+            final String name = uiInfo.getName();
+            final Description desc = uiInfo.getDescription();
+            final Unit uom = uiInfo.getUnit();
+            final Expression geom = uiInfo.getGeom();
             value.set(getStyleFactory().textSymbolizer(
-                    uiFill.valueProperty().get(), 
+                    name,geom,desc,uom,
+                    uiText.valueProperty().get(),
                     uiFont.valueProperty().get(), 
-                    uiHalo.valueProperty().get(), 
-                    uiText.valueProperty().get(), 
-                    uiPlacement.valueProperty().get(), 
-                    null));
+                    uiPlacement.valueProperty().get(),
+                    uiHalo.valueProperty().get(),
+                    uiFill.valueProperty().get()
+                    ));
         };
         
         uiFill.valueProperty().addListener(changeListener);
         uiFont.valueProperty().addListener(changeListener);
         uiHalo.valueProperty().addListener(changeListener);
         uiText.valueProperty().addListener(changeListener);
+        uiInfo.valueProperty().addListener(changeListener);
         uiPlacement.valueProperty().addListener(changeListener);
     }
     
@@ -87,6 +98,7 @@ public class FXTextSymbolizer extends FXStyleElementController<TextSymbolizer>{
         uiFont.setLayer(layer);
         uiFill.setLayer(layer);
         uiHalo.setLayer(layer);
+        uiInfo.setLayer(layer);
         uiPlacement.setLayer(layer);
     }
     
@@ -96,6 +108,7 @@ public class FXTextSymbolizer extends FXStyleElementController<TextSymbolizer>{
         uiFont.valueProperty().setValue(styleElement.getFont());
         uiHalo.valueProperty().setValue(styleElement.getHalo());
         uiText.valueProperty().setValue(styleElement.getLabel());
+        uiInfo.parse(styleElement);
         uiPlacement.valueProperty().setValue(styleElement.getLabelPlacement());
     }
     
