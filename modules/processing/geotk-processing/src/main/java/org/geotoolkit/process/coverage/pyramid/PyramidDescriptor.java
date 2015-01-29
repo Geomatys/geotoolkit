@@ -93,10 +93,10 @@ public class PyramidDescriptor extends AbstractProcessDescriptor{
             "Contains value use when pixel transformation is out of source image boundary during resampling.", double[].class, null, false);
 
     /**
-     * Double table value used during interpolation if pixel coordinates are out of source image boundary.
+     * Boolean flag that activate the re-using of input CoverageStore tiles.
      */
     public static final ParameterDescriptor<Boolean> IN_REUSETILES =
-            new DefaultParameterDescriptor<>("reuseTile",
+            new DefaultParameterDescriptor<>("reuse_tiles",
                     "Optional flat that activate the re-using of input CoverageStore tiles if exist instead of override them.", Boolean.class, false, false);
 
 
