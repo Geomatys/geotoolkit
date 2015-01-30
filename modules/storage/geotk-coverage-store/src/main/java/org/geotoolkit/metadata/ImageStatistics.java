@@ -20,6 +20,10 @@ import org.geotoolkit.image.internal.SampleType;
 
 import java.io.Serializable;
 import java.util.*;
+import org.opengis.metadata.content.AttributeGroup;
+import org.opengis.metadata.content.CoverageDescription;
+import org.opengis.metadata.content.RangeDimension;
+import org.opengis.metadata.content.SampleDimension;
 
 /**
  * Image statistic from an image :
@@ -72,7 +76,7 @@ public class ImageStatistics implements Serializable{
     /**
      * Band Inner class
      */
-    public class Band implements Serializable {
+    public static class Band implements Serializable {
 
         private final int bandIndex;
 
@@ -235,6 +239,38 @@ public class ImageStatistics implements Serializable{
             return sb.toString();
         }
 
+    }
+
+    public static ImageStatistics transform(CoverageDescription covdesc){
+
+        final List<Band> bands = new ArrayList<>();
+        //search for band statistics
+        search:
+        for(AttributeGroup attg : covdesc.getAttributeGroups()){
+            for(RangeDimension rd : attg.getAttributes()){
+                if(!(rd instanceof SampleDimension)) continue;
+                final int i = Integer.parseInt(rd.getSequenceIdentifier().tip().toString());
+                final SampleDimension sd = (SampleDimension) rd;
+                final Band band = new Band(i);
+                band.setMin(sd.getMinValue());
+                band.setMax(sd.getMaxValue());
+                band.setStd(sd.getStandardDeviation());
+                band.setMean(sd.getMeanValue());
+                
+                if(sd instanceof DefaultSampleDimensionExt){
+                    final DefaultSampleDimensionExt ext = (DefaultSampleDimensionExt) sd;
+                    band.setHistogram(ext.getHistogram());
+                }
+
+                bands.add(band);
+            }
+        }
+
+        if(bands.isEmpty()) return null;
+
+        final ImageStatistics stats = new ImageStatistics(bands.size());
+        stats.setBands(bands.toArray(new Band[0]));
+        return stats;
     }
 
 }

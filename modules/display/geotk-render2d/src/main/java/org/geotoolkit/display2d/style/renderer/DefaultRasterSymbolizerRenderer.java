@@ -73,11 +73,11 @@ import org.geotoolkit.map.ElevationModel;
 import org.geotoolkit.parameter.ParametersExt;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
-import org.geotoolkit.metadata.ImageStatistics;
-import org.geotoolkit.process.coverage.statistics.StatisticOp;
+//import org.geotoolkit.metadata.ImageStatistics;
+//import org.geotoolkit.process.coverage.statistics.StatisticOp;
 import org.geotoolkit.process.coverage.resample.ResampleDescriptor;
 import org.geotoolkit.process.coverage.shadedrelief.ShadedReliefDescriptor;
-import org.geotoolkit.process.coverage.statistics.Statistics;
+//import org.geotoolkit.process.coverage.statistics.Statistics;
 import org.geotoolkit.referencing.CRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
@@ -119,6 +119,9 @@ import org.opengis.style.SelectedChannelType;
 import org.opengis.style.ShadedRelief;
 import org.opengis.util.FactoryException;
 import org.apache.sis.referencing.CommonCRS;
+import org.geotoolkit.metadata.ImageStatistics;
+import org.geotoolkit.process.coverage.statistics.StatisticOp;
+import org.geotoolkit.process.coverage.statistics.Statistics;
 
 /**
  * @author Johann Sorel (Geomatys)
@@ -151,6 +154,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             Envelope bounds = new GeneralEnvelope(renderingContext.getCanvasObjectiveBounds());
             resolution = checkResolution(resolution,bounds);
             final CoverageMapLayer coverageLayer = projectedCoverage.getLayer();
+            final CoverageReference ref = coverageLayer.getCoverageReference();
             final Envelope layerBounds = coverageLayer.getBounds();
             final CoordinateReferenceSystem coverageMapLayerCRS = layerBounds.getCoordinateReferenceSystem();
 
@@ -317,7 +321,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             // 4 - Apply style                                                //
             ////////////////////////////////////////////////////////////////////
 
-            RenderedImage dataImage = applyStyle(dataCoverage, elevationCoverage, coverageLayer.getElevationModel(), sourceSymbol, hints, isReprojected);
+            RenderedImage dataImage = applyStyle(ref, dataCoverage, elevationCoverage, coverageLayer.getElevationModel(), sourceSymbol, hints, isReprojected);
             final MathTransform2D trs2D = dataCoverage.getGridGeometry().getGridToCRS2D(PixelOrientation.UPPER_LEFT);
 
             ////////////////////////////////////////////////////////////////////
@@ -697,7 +701,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
      * @return
      * @throws PortrayalException
      */
-    public static RenderedImage applyStyle(GridCoverage2D coverage, GridCoverage2D elevationCoverage, final ElevationModel elevationModel, final RasterSymbolizer styleElement,
+    public static RenderedImage applyStyle(CoverageReference ref, GridCoverage2D coverage, GridCoverage2D elevationCoverage, final ElevationModel elevationModel, final RasterSymbolizer styleElement,
                 final RenderingHints hints, boolean isReprojected) throws PortrayalException, ProcessException, FactoryException, TransformException, IOException {
 
         //band select ----------------------------------------------------------
@@ -717,9 +721,17 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
                 break recolorCase;
             }
             ri = coverage.view(ViewType.GEOPHYSICS).getRenderedImage();
-            final ImageStatistics analyse = Statistics.analyse(ri, true);
+
+            ImageStatistics analyse = null;
+            if(ref!=null){
+                analyse = ImageStatistics.transform(ref.getMetadata());
+            }
+            if(analyse==null){
+                //calculate it
+                analyse = Statistics.analyse(ri, true);
+            }
             final ImageStatistics.Band band0 = analyse.getBand(0);
-            final List<InterpolationPoint> values = new ArrayList<InterpolationPoint>();
+            final List<InterpolationPoint> values = new ArrayList<>();
             values.add( GO2Utilities.STYLE_FACTORY.interpolationPoint(Float.NaN, GO2Utilities.STYLE_FACTORY.literal(new Color(0,0,0,0))));
             values.add( GO2Utilities.STYLE_FACTORY.interpolationPoint(band0.getMin(), GO2Utilities.STYLE_FACTORY.literal(Color.BLACK)));
             values.add( GO2Utilities.STYLE_FACTORY.interpolationPoint(band0.getMax(), GO2Utilities.STYLE_FACTORY.literal(Color.WHITE)));
