@@ -36,7 +36,7 @@ import javax.media.jai.LookupTableJAI;
 import javax.media.jai.NullOpImage;
 import javax.media.jai.OpImage;
 import javax.media.jai.RenderedOp;
-import javax.media.jai.operator.BandSelectDescriptor;
+
 import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.coverage.CoverageReference;
@@ -78,6 +78,7 @@ import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.process.coverage.resample.ResampleDescriptor;
 import org.geotoolkit.process.coverage.shadedrelief.ShadedReliefDescriptor;
 //import org.geotoolkit.process.coverage.statistics.Statistics;
+import org.geotoolkit.process.image.bandselect.BandSelectDescriptor;
 import org.geotoolkit.referencing.CRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
@@ -102,6 +103,7 @@ import org.opengis.filter.expression.Literal;
 import org.opengis.filter.expression.PropertyName;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.spatial.PixelOrientation;
+import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
@@ -714,7 +716,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
         ColorMap recolor = styleElement.getColorMap();
         //cheat on the colormap if we have only one band and no colormap
         recolorCase:
-        if((recolor==null || recolor.getFunction()==null) && nbDim==1){
+        if((recolor==null || recolor.getFunction()==null) && nbDim<3){
             RenderedImage ri = coverage.getRenderedImage();
             if( (ri.getColorModel() instanceof IndexColorModel) && (recolor==null || recolor.getFunction()==null)){
                 //image has it's own color model
@@ -913,14 +915,22 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
         return new ShadedReliefOp(img, null, null, null);
     }
 
-    private static GridCoverage2D selectBand(GridCoverage2D coverage, final int[] indices){
+    private static GridCoverage2D selectBand(GridCoverage2D coverage, final int[] indices) throws ProcessException {
         if(coverage.getNumSampleDimensions() < indices.length){
             //not enough bands in the image
             LOGGER.log(Level.WARNING, "Raster Style define more bands than the data");
             return coverage;
         }else{
             RenderedImage image = coverage.getRenderedImage();
-            image = BandSelectDescriptor.create(image, indices, null);
+
+            final ProcessDescriptor bandSelectDesc = BandSelectDescriptor.INSTANCE;
+            final ParameterValueGroup param = bandSelectDesc.getInputDescriptor().createValue();
+            ParametersExt.getOrCreateValue(param, BandSelectDescriptor.IN_IMAGE.getName().getCode()).setValue(image);
+            ParametersExt.getOrCreateValue(param, BandSelectDescriptor.IN_BANDS.getName().getCode()).setValue(indices);
+            final org.geotoolkit.process.Process process = bandSelectDesc.createProcess(param);
+
+            final ParameterValueGroup output = process.call();
+            image = (RenderedImage) ParametersExt.getOrCreateValue(output, BandSelectDescriptor.OUT_IMAGE.getName().getCode()).getValue();
             final GridCoverageBuilder builder = new GridCoverageBuilder();
             builder.setGridCoverage(coverage);
             builder.setRenderedImage(image);
