@@ -9,20 +9,39 @@
 <?import javafx.scene.layout.*?>
 
 <fx:root maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" type="BorderPane" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
-   <top>
+   <bottom>
+      <GridPane hgap="5.0" vgap="5.0" BorderPane.alignment="CENTER">
+        <columnConstraints>
+          <ColumnConstraints hgrow="NEVER" />
+          <ColumnConstraints hgrow="NEVER" />
+            <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="10.0" />
+            <ColumnConstraints hgrow="SOMETIMES" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+         <children>
+            <Button fx:id="uiAddOne" mnemonicParsing="false" onAction="#addValue" text="%org.geotoolkit.gui.javafx.style.FXColorMap.addvalue" />
+            <Button fx:id="uiRemoveAll" mnemonicParsing="false" onAction="#removeAll" text="%org.geotoolkit.gui.javafx.style.FXColorMap.removeall" GridPane.columnIndex="1" />
+         </children>
+         <padding>
+            <Insets bottom="5.0" left="5.0" top="5.0" />
+         </padding>
+      </GridPane>
+   </bottom>
+   <center>
       <GridPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" BorderPane.alignment="CENTER">
         <columnConstraints>
           <ColumnConstraints hgrow="NEVER" />
           <ColumnConstraints hgrow="NEVER" />
-          <ColumnConstraints halignment="CENTER" hgrow="NEVER" />
-          <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" maxWidth="1.7976931348623157E308" minWidth="1.0" />
+          <ColumnConstraints hgrow="NEVER" />
+          <ColumnConstraints hgrow="NEVER" />
+            <ColumnConstraints hgrow="ALWAYS" />
         </columnConstraints>
         <rowConstraints>
           <RowConstraints vgrow="NEVER" />
           <RowConstraints vgrow="NEVER" />
           <RowConstraints vgrow="NEVER" />
-            <RowConstraints vgrow="NEVER" />
-            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="NEVER" />
             <RowConstraints vgrow="NEVER" />
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="NEVER" />
             <RowConstraints vgrow="NEVER" />
@@ -33,52 +52,44 @@
          <children>
             <Label fx:id="uiPaletteLbl" styleClass="property-key" text="%org.geotoolkit.gui.javafx.style.FXColorMap.palette" />
             <Label fx:id="uiMethodLbl" styleClass="property-key" text="%org.geotoolkit.gui.javafx.style.FXColorMap.method" GridPane.rowIndex="1" />
-            <Label fx:id="uiNoData" styleClass="property-key" text="%org.geotoolkit.gui.javafx.style.FXColorMap.nodatavalues" GridPane.columnIndex="1" GridPane.columnSpan="4" GridPane.hgrow="ALWAYS" GridPane.rowIndex="2" />
-            <ComboBox fx:id="uiPalette" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" />
-            <ComboBox fx:id="uiMethod" maxWidth="1.7976931348623157E308" onAction="#methodChange" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" />
-            <CheckBox fx:id="uiNaN" mnemonicParsing="false" onAction="#nanChange" text="%org.geotoolkit.gui.javafx.style.FXColorMap.nan" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="1">
+            <Label fx:id="uiNoData" styleClass="property-key" text="%org.geotoolkit.gui.javafx.style.FXColorMap.nodatavalues" GridPane.columnIndex="1" GridPane.columnSpan="4" GridPane.hgrow="ALWAYS" GridPane.rowIndex="5" />
+            <ComboBox fx:id="uiPalette" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.columnSpan="2" />
+            <ComboBox fx:id="uiMethod" maxWidth="1.7976931348623157E308" onAction="#methodChange" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" />
+            <CheckBox fx:id="uiNaN" mnemonicParsing="false" onAction="#nanChange" styleClass="property-key" text="%org.geotoolkit.gui.javafx.style.FXColorMap.nan" GridPane.columnIndex="3" GridPane.halignment="LEFT" GridPane.rowIndex="1">
                <GridPane.margin>
                   <Insets left="10.0" />
                </GridPane.margin></CheckBox>
-            <CheckBox fx:id="uiInvert" mnemonicParsing="false" text="%org.geotoolkit.gui.javafx.style.FXColorMap.invert" GridPane.columnIndex="2" GridPane.halignment="LEFT">
+            <CheckBox fx:id="uiInvert" mnemonicParsing="false" styleClass="property-key" text="%org.geotoolkit.gui.javafx.style.FXColorMap.invert" GridPane.columnIndex="3" GridPane.halignment="LEFT">
                <GridPane.margin>
                   <Insets left="10.0" />
                </GridPane.margin></CheckBox>
-            <Label fx:id="uiDivisionLbl" styleClass="property-key" text="%org.geotoolkit.gui.javafx.style.FXColorMap.division" GridPane.rowIndex="3" />
-            <Label fx:id="uiMinimumLbl" styleClass="property-key" text="%org.geotoolkit.gui.javafx.style.FXColorMap.minimum" GridPane.rowIndex="5" />
-            <Label fx:id="uiBandLbl" styleClass="property-key" text="%org.geotoolkit.gui.javafx.style.FXColorMap.band" GridPane.rowIndex="4" />
-            <Label fx:id="uiMaximumLbl" styleClass="property-key" text="%org.geotoolkit.gui.javafx.style.FXColorMap.maximum" GridPane.rowIndex="6" />
-            <Button mnemonicParsing="false" onAction="#fitToData" text="%org.geotoolkit.gui.javafx.style.FXColorMap.fittodata" GridPane.halignment="LEFT" GridPane.rowIndex="2">
+            <Label fx:id="uiDivisionLbl" styleClass="property-key" text="%org.geotoolkit.gui.javafx.style.FXColorMap.division" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+            <Label fx:id="uiMinimumLbl" styleClass="property-key" text="%org.geotoolkit.gui.javafx.style.FXColorMap.minimum" GridPane.rowIndex="4" />
+            <Label fx:id="uiBandLbl" styleClass="property-key" text="%org.geotoolkit.gui.javafx.style.FXColorMap.band" GridPane.rowIndex="3" />
+            <Label fx:id="uiMaximumLbl" styleClass="property-key" text="%org.geotoolkit.gui.javafx.style.FXColorMap.maximum" GridPane.columnIndex="2" GridPane.rowIndex="4" />
+            <Button mnemonicParsing="false" onAction="#fitToData" text="%org.geotoolkit.gui.javafx.style.FXColorMap.fittodata" GridPane.columnIndex="4" GridPane.halignment="LEFT" GridPane.rowIndex="4">
                <GridPane.margin>
-                  <Insets />
+                  <Insets left="5.0" />
                </GridPane.margin>
             </Button>
-            <Button fx:id="uiGenerate" mnemonicParsing="false" onAction="#generate" text="%org.geotoolkit.gui.javafx.style.FXColorMap.generate" GridPane.columnIndex="2" GridPane.rowIndex="7" />
-            <Label fx:id="uiDynamic" text="%org.geotoolkit.gui.javafx.style.FXColorMap.dynamic" GridPane.columnSpan="5" GridPane.halignment="CENTER" GridPane.rowIndex="9">
+            <Button fx:id="uiGenerate" mnemonicParsing="false" onAction="#generate" text="%org.geotoolkit.gui.javafx.style.FXColorMap.generate" GridPane.columnIndex="4" GridPane.halignment="RIGHT" GridPane.rowIndex="6">
+               <GridPane.margin>
+                  <Insets bottom="5.0" top="5.0" />
+               </GridPane.margin></Button>
+            <Label fx:id="uiDynamic" text="%org.geotoolkit.gui.javafx.style.FXColorMap.dynamic" GridPane.columnSpan="5" GridPane.halignment="CENTER" GridPane.rowIndex="7">
                <font>
                   <Font name="System Bold" size="13.0" />
                </font></Label>
-            <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnSpan="4" GridPane.rowIndex="9">
+            <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnSpan="5" GridPane.rowIndex="7">
                <content>
                   <TableView fx:id="uiTable" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
                </content>
             </ScrollPane>
-            <FXNumberSpinner fx:id="uiDivision" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="3" />
-            <FXNumberSpinner fx:id="uiMinimum" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="5" />
-            <FXNumberSpinner fx:id="uiMaximum" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="6" />
-            <FXNumberSpinner fx:id="uiBand" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="4" />
+            <FXNumberSpinner fx:id="uiDivision" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnIndex="3" GridPane.hgrow="ALWAYS" GridPane.rowIndex="3" />
+            <FXNumberSpinner fx:id="uiMinimum" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="4" />
+            <FXNumberSpinner fx:id="uiMaximum" GridPane.columnIndex="3" GridPane.hgrow="ALWAYS" GridPane.rowIndex="4" />
+            <FXNumberSpinner fx:id="uiBand" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="3" />
          </children>
       </GridPane>
-   </top>
-   <bottom>
-      <HBox spacing="10.0" BorderPane.alignment="CENTER">
-         <children>
-            <Button fx:id="uiAddOne" mnemonicParsing="false" onAction="#addValue" text="%org.geotoolkit.gui.javafx.style.FXColorMap.addvalue" />
-            <Button fx:id="uiRemoveAll" mnemonicParsing="false" onAction="#removeAll" text="%org.geotoolkit.gui.javafx.style.FXColorMap.removeall" />
-         </children>
-         <padding>
-            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-         </padding>
-      </HBox>
-   </bottom>
+   </center>
 </fx:root>

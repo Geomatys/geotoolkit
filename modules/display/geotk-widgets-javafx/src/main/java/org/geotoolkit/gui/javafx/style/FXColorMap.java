@@ -40,8 +40,12 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.util.Callback;
+import javafx.util.StringConverter;
 import jidefx.scene.control.field.NumberField;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.CoverageReference;
@@ -77,6 +81,10 @@ import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Literal;
+import org.opengis.metadata.content.AttributeGroup;
+import org.opengis.metadata.content.CoverageDescription;
+import org.opengis.metadata.content.RangeDimension;
+import org.opengis.metadata.content.SampleDimension;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.style.ColorMap;
@@ -137,7 +145,7 @@ public class FXColorMap extends FXStyleElementController<ColorMap> {
     
     
     @FXML
-    void methodChange(ActionEvent event) {
+    private void methodChange(ActionEvent event) {
         final Object method = uiMethod.getSelectionModel().getSelectedItem();
 
         if(Interpolate.class.equals(method)){
@@ -188,7 +196,7 @@ public class FXColorMap extends FXStyleElementController<ColorMap> {
     }
     
     @FXML
-    void nanChange(ActionEvent event) {
+    private void nanChange(ActionEvent event) {
 
         final boolean withNaN = uiNaN.isSelected();
 
@@ -220,74 +228,105 @@ public class FXColorMap extends FXStyleElementController<ColorMap> {
     }
     
     @FXML
-    void fitToData(ActionEvent event) {
-        if(layer != null && layer instanceof CoverageMapLayer){
-            final CoverageMapLayer cml = (CoverageMapLayer)layer;
-            final CoverageReference cref = cml.getCoverageReference();
-            GridCoverageReader reader = null;
-            GeneralGridGeometry gridGeometry = null;
-            GridCoverageReadParam readParam = null;
-            GridCoverage coverage = null;
-            GridCoverage2D coverage2D = null;
-            RenderedImage image = null;
-            try {
-                reader = cref.acquireReader();
-                gridGeometry = reader.getGridGeometry(cref.getImageIndex());
+    private void fitToData(ActionEvent event) {
+        if(!(layer instanceof CoverageMapLayer)) return;
 
-                if (gridGeometry.isDefined(GeneralGridGeometry.GRID_TO_CRS)
-                        && gridGeometry.isDefined(GeneralGridGeometry.EXTENT)) {
-                    MathTransform gridToCRS = gridGeometry.getGridToCRS();
-                    GridEnvelope extent = gridGeometry.getExtent();
-                    int dim = extent.getDimension();
-                    double[] low = new double[dim];
-                    double[] high = new double[dim];
-                    low[0] = extent.getLow(0);
-                    high[0] = extent.getHigh(0);
-                    low[1] = extent.getLow(1);
-                    high[1] = extent.getHigh(1);
-                    GeneralEnvelope sliceExtent = new GeneralEnvelope(gridGeometry.getCoordinateReferenceSystem());
-                    for (int i = 0; i < dim; i++) {
-                        sliceExtent.setRange(i, low[i], high[i]);
-                    }
+        final CoverageMapLayer cml = (CoverageMapLayer)layer;
+        final CoverageReference cref = cml.getCoverageReference();
 
-                    readParam = new GridCoverageReadParam();
-                    readParam.setEnvelope(CRS.transform(gridToCRS, sliceExtent));
-                    readParam.setCoordinateReferenceSystem(gridGeometry.getCoordinateReferenceSystem());
+        final Double[] range = findMinMaxInMeta();
+        if(range!=null && range[0]!=null && range[1]!=null){
+            uiMinimum.valueProperty().setValue(range[0]);
+            uiMaximum.valueProperty().setValue(range[1]);
+            return;
+        }
 
-                    coverage = reader.read(cref.getImageIndex(), readParam);
-                    coverage2D = CoverageUtilities.firstSlice(coverage);
-                    image = coverage2D.getRenderedImage();
-                    final Map<String, Object> an = StatisticOp.analyze(image);
-                    final double[] minArray = (double[]) an.get(StatisticOp.MINIMUM);
-                    final double[] maxArray = (double[]) an.get(StatisticOp.MAXIMUM);
 
-                    final Integer index = uiBand.valueProperty().get().intValue();
-                    uiMinimum.valueProperty().setValue(minArray[index]);
-                    uiMaximum.valueProperty().setValue(maxArray[index]);
+        GridCoverageReader reader = null;
+        GeneralGridGeometry gridGeometry = null;
+        GridCoverageReadParam readParam = null;
+        GridCoverage coverage = null;
+        GridCoverage2D coverage2D = null;
+        RenderedImage image = null;
+        try {
+            reader = cref.acquireReader();
+            gridGeometry = reader.getGridGeometry(cref.getImageIndex());
+
+            if (gridGeometry.isDefined(GeneralGridGeometry.GRID_TO_CRS)
+                    && gridGeometry.isDefined(GeneralGridGeometry.EXTENT)) {
+                MathTransform gridToCRS = gridGeometry.getGridToCRS();
+                GridEnvelope extent = gridGeometry.getExtent();
+                int dim = extent.getDimension();
+                double[] low = new double[dim];
+                double[] high = new double[dim];
+                low[0] = extent.getLow(0);
+                high[0] = extent.getHigh(0);
+                low[1] = extent.getLow(1);
+                high[1] = extent.getHigh(1);
+                GeneralEnvelope sliceExtent = new GeneralEnvelope(gridGeometry.getCoordinateReferenceSystem());
+                for (int i = 0; i < dim; i++) {
+                    sliceExtent.setRange(i, low[i], high[i]);
                 }
-                cref.recycle(reader);
-            } catch (CoverageStoreException ex) {
-                Loggers.JAVAFX.log(Level.WARNING, ex.getMessage(),ex);
-            } catch (DataStoreException ex) {
-                Loggers.JAVAFX.log(Level.WARNING, ex.getMessage(),ex);
-            } catch (TransformException ex) {
-                Loggers.JAVAFX.log(Level.WARNING, ex.getMessage(), ex);
+
+                readParam = new GridCoverageReadParam();
+                readParam.setEnvelope(CRS.transform(gridToCRS, sliceExtent));
+                readParam.setCoordinateReferenceSystem(gridGeometry.getCoordinateReferenceSystem());
+
+                coverage = reader.read(cref.getImageIndex(), readParam);
+                coverage2D = CoverageUtilities.firstSlice(coverage);
+                image = coverage2D.getRenderedImage();
+                final Map<String, Object> an = StatisticOp.analyze(image);
+                final double[] minArray = (double[]) an.get(StatisticOp.MINIMUM);
+                final double[] maxArray = (double[]) an.get(StatisticOp.MAXIMUM);
+
+                final Integer index = uiBand.valueProperty().get().intValue();
+                uiMinimum.valueProperty().setValue(minArray[index]);
+                uiMaximum.valueProperty().setValue(maxArray[index]);
             }
+            cref.recycle(reader);
+        } catch (CoverageStoreException ex) {
+            Loggers.JAVAFX.log(Level.WARNING, ex.getMessage(),ex);
+        } catch (DataStoreException ex) {
+            Loggers.JAVAFX.log(Level.WARNING, ex.getMessage(),ex);
+        } catch (TransformException ex) {
+            Loggers.JAVAFX.log(Level.WARNING, ex.getMessage(), ex);
         }
     }
-    
+
+    private Double[] findMinMaxInMeta(){
+        final CoverageMapLayer cml = (CoverageMapLayer)layer;
+        final CoverageReference cref = cml.getCoverageReference();
+        final CoverageDescription covdesc = cref.getMetadata();
+        final Integer index = uiBand.valueProperty().get().intValue();
+
+        //search for band statistics
+        search:
+        for(AttributeGroup attg : covdesc.getAttributeGroups()){
+            for(RangeDimension rd : attg.getAttributes()){
+                if(!(rd instanceof SampleDimension)) continue;
+                final int i = Integer.parseInt(rd.getSequenceIdentifier().tip().toString());
+                if(i==index){
+                    final SampleDimension sd = (SampleDimension) rd;
+                    return new Double[]{sd.getMinValue(),sd.getMaxValue()};
+                }
+            }
+        }
+
+        return null;
+    }
+
     @FXML
-    void addValue(ActionEvent event) {
+    private void addValue(ActionEvent event) {
         uiTable.getItems().add(new InterOrCategorize());
     }
 
     @FXML
-    void removeAll(ActionEvent event) {
+    private void removeAll(ActionEvent event) {
         uiTable.getItems().clear();
     }
 
     @FXML
-    void generate(ActionEvent event) {
+    private void generate(ActionEvent event) {
 
         if(!(layer instanceof CoverageMapLayer)){
             return;
@@ -382,7 +421,11 @@ public class FXColorMap extends FXStyleElementController<ColorMap> {
         uiTable.getItems().setAll(lst);
 
     }
-    
+
+    public int getSelectedBand(){
+        return uiBand.getNumberField().valueProperty().get().intValue();
+    }
+
     private List<InterOrCategorize> getInterpolationPoints(final double min, final double max, 
             List<Entry<Double, Color>> steps) throws CoverageStoreException {
         final List<InterOrCategorize> lsts = new ArrayList<>();
@@ -644,13 +687,15 @@ public class FXColorMap extends FXStyleElementController<ColorMap> {
         uiMethod.getSelectionModel().select(Interpolate.class);
         
         uiTable.setItems(FXCollections.observableArrayList());
-//        uiTable.getColumns().add(value1Col);
-//        uiTable.getColumns().add(value2Col);
-//        uiTable.getColumns().add(colorCol);
+        uiTable.getColumns().add(value1Col);
+        uiTable.getColumns().add(value2Col);
+        uiTable.getColumns().add(colorCol);
         
         uiTable.itemsProperty().addListener((ObservableValue<? extends ObservableList<InterOrCategorize>> observable, ObservableList<InterOrCategorize> oldValue, ObservableList<InterOrCategorize> newValue) -> {
             valueProperty().set(buildColorMap());
         });
+
+        FXUtilities.hideTableHeader(uiTable);
         
     }
         
@@ -689,6 +734,25 @@ public class FXColorMap extends FXStyleElementController<ColorMap> {
     private static class Value1Column extends TableColumn<InterOrCategorize, Expression>{
         public Value1Column() {            
             setCellValueFactory((CellDataFeatures<InterOrCategorize, Expression> param) -> (ObservableValue)param.getValue().value);
+
+            setCellFactory(new Callback<TableColumn<InterOrCategorize, Expression>, TableCell<InterOrCategorize, Expression>>() {
+
+                @Override
+                public TableCell<InterOrCategorize, Expression> call(TableColumn<InterOrCategorize, Expression> param) {
+                    return new TextFieldTableCell<>(new StringConverter<Expression>() {
+
+                        @Override
+                        public String toString(Expression object) {
+                            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                        }
+
+                        @Override
+                        public Expression fromString(String string) {
+                            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                        }
+                    });
+                }
+            });
         }
         
     }

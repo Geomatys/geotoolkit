@@ -252,6 +252,7 @@ public class FXLayerStructure extends FXPropertyPane {
                 final ScrollPane scroll = new ScrollPane(vbox);
                 scroll.setFitToWidth(true);
                 scroll.setFitToHeight(true);
+                scroll.setPrefSize(200, 200);
                 tabbands.setContent(scroll);
 
                 final AttributeGroup attg = desc.getAttributeGroups().iterator().next();
