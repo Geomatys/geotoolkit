@@ -109,7 +109,7 @@ public final class MapcontextPyramidProcess extends AbstractProcess {
             throw new ProcessException(e.getMessage(), this, e);
         }
 
-        if (update) {
+        if (update != null && update) {
             context.layers().add(0, MapBuilder.createCoverageLayer(container));
         }
 
