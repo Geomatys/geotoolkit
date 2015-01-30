@@ -19,7 +19,6 @@ package org.geotoolkit.image.iterator;
 import java.awt.Rectangle;
 import java.awt.image.*;
 import java.io.Closeable;
-import java.nio.Buffer;
 
 import org.apache.sis.util.ArgumentChecks;
 import org.opengis.coverage.grid.SequenceType;
@@ -73,7 +72,7 @@ public abstract class PixelIterator implements Closeable {
      * Number of band.
      */
     protected final int fixedNumBand;
-    
+
     /**
      * Number of raster band.
      * WARNING ! this is used a bit everywhere in iterator as a 'updateTileRaster' flag.
@@ -124,33 +123,33 @@ public abstract class PixelIterator implements Closeable {
      * Current y tile position in rendered image tile array.
      */
     protected int tY;
-    
+
     /**
      * Tile width of object that iterate.
-     * @see RenderedImage#getTileWidth() 
-     * @see Raster#getWidth() 
+     * @see RenderedImage#getTileWidth()
+     * @see Raster#getWidth()
      */
     protected final int tileWidth;
-    
+
     /**
      * Tile height of object that iterate.
-     * @see RenderedImage#getTileHeight() 
-     * @see Raster#getHeight() 
+     * @see RenderedImage#getTileHeight()
+     * @see Raster#getHeight()
      */
     protected final int tileHeight;
-    
+
     /**
      * Define area travel by iterator in the current object that iterate.
-     * @see #getBoundary(boolean) 
+     * @see #getBoundary(boolean)
      */
     protected Rectangle areaIterate;
-    
+
     /**
      * Define area of the object that iterate.
-     * @see #getBoundary(boolean) 
+     * @see #getBoundary(boolean)
      */
     protected Rectangle generalObjectArea;
-    
+
     /**
      * {@link SampleModel} from the iterate object.
      */
@@ -164,7 +163,7 @@ public abstract class PixelIterator implements Closeable {
      * @throws IllegalArgumentException if subArea don't intersect raster boundary.
      */
     PixelIterator(final Raster raster, final Rectangle subArea) {
-        ArgumentChecks.ensureNonNull("Raster : ", raster);
+        ArgumentChecks.ensureNonNull("raster", raster);
         this.currentRaster = raster;
         this.renderedImage = null;
         final int minx  = raster.getMinX();
@@ -173,7 +172,7 @@ public abstract class PixelIterator implements Closeable {
         tileHeight      = raster.getHeight();
         final int maxx  = minx + tileWidth;
         final int maxy  = miny + tileHeight;
-        
+
         currentSampleModel = raster.getSampleModel();
 
         if (subArea != null) {
@@ -182,8 +181,8 @@ public abstract class PixelIterator implements Closeable {
             //intersection
             this.areaIterateMinX = Math.max(sAMX, minx);
             this.areaIterateMinY = Math.max(sAMY, miny);
-            this.maxX = this.areaIterateMaxX = Math.min(sAMX + subArea.width, maxx);
-            this.maxY = this.areaIterateMaxY = Math.min(sAMY + subArea.height, maxy);
+            this.maxX = this.areaIterateMaxX = Math.min(sAMX + Math.max(0, subArea.width),  maxx);
+            this.maxY = this.areaIterateMaxY = Math.min(sAMY + Math.max(0, subArea.height), maxy);
         } else {
             //areaIterate
             this.areaIterateMinX = minx;
@@ -193,8 +192,9 @@ public abstract class PixelIterator implements Closeable {
         }
         this.rasterNumBand = raster.getNumBands();
         this.fixedNumBand = this.rasterNumBand;
-        if(areaIterateMinX >= areaIterateMaxX || areaIterateMinY >= areaIterateMaxY)
-            throw new IllegalArgumentException("invalid subArea coordinate no intersection between it and raster"+raster+subArea);
+        if(areaIterateMinX >= areaIterateMaxX || areaIterateMinY >= areaIterateMaxY) {
+            throw new IllegalArgumentException("No intersection between subArea and raster.\n" + raster + '\n' + subArea);
+        }
         this.band = -1;
         tX = tY  = 0;
         tMaxX = tMaxY = 1;
@@ -208,7 +208,7 @@ public abstract class PixelIterator implements Closeable {
      * @throws IllegalArgumentException if subArea don't intersect image boundary.
      */
     PixelIterator(final RenderedImage renderedImage, final Rectangle subArea) {
-        ArgumentChecks.ensureNonNull("RenderedImage : ", renderedImage);
+        ArgumentChecks.ensureNonNull("renderedImage", renderedImage);
         this.renderedImage = renderedImage;
 
         final int rIminX = renderedImage.getMinX();
@@ -220,7 +220,7 @@ public abstract class PixelIterator implements Closeable {
         tileHeight       = renderedImage.getTileHeight();
         final int rIMinTileX = renderedImage.getMinTileX();
         final int rIMinTileY = renderedImage.getMinTileY();
-        
+
         currentSampleModel = renderedImage.getSampleModel();
 
         if (subArea != null) {
@@ -240,9 +240,9 @@ public abstract class PixelIterator implements Closeable {
         }
 
         //intersection test
-        if (areaIterateMinX >= areaIterateMaxX || areaIterateMinY >= areaIterateMaxY)
-            throw new IllegalArgumentException("invalid subArea coordinate no intersection between it and RenderedImage"+renderedImage+subArea);
-
+        if (areaIterateMinX >= areaIterateMaxX || areaIterateMinY >= areaIterateMaxY) {
+            throw new IllegalArgumentException("No intersection between subArea and image.\n" + renderedImage + '\n' + subArea);
+        }
         //tiles attributs
         this.tMinX = (areaIterateMinX - rIminX) / tileWidth  + rIMinTileX;
         this.tMinY = (areaIterateMinY - rIminY) / tileHeight + rIMinTileY;
@@ -400,14 +400,14 @@ public abstract class PixelIterator implements Closeable {
                 h = renderedImage.getHeight();
             }
             generalObjectArea = new Rectangle(x, y, w, h);
-        }    
+        }
         return generalObjectArea;
     }
 
     /**
-     * Return {@link RenderedImage} that this iterator travel. 
-     * 
-     * @return {@link RenderedImage} that this iterator travel. 
+     * Return {@link RenderedImage} that this iterator travel.
+     *
+     * @return {@link RenderedImage} that this iterator travel.
      */
     public RenderedImage getRenderedImage() {
         return renderedImage;
@@ -538,11 +538,11 @@ public abstract class PixelIterator implements Closeable {
          || renderedImage.getNumYTiles() != writableRI.getNumYTiles())
          throw new IllegalArgumentException("rendered image and writable rendered image dimensions are not conform"+renderedImage+writableRI);
     }
-    
+
     /**
      * Fill given buffer with samples within the given area at the specified image band.
      * Adapted for a {@link PixelInterleavedSampleModel} {@link SampleModel} type.
-     * 
+     *
      * @param area define needed samples area.
      * @param buffer array which will be filled by samples.
      * @param band the interest band.
@@ -551,9 +551,9 @@ public abstract class PixelIterator implements Closeable {
         rewind();
         final Rectangle generalArea = getBoundary(false);//-- compute one time
         final int sourceDataType = getSourceDatatype();
-        
+
         final int minTX, minTY, maxTX, maxTY;
-        
+
         if (renderedImage != null) {
             minTX = tMinX + (area.x - generalArea.x) / tileWidth;
             minTY = tMinY + (area.y - generalArea.y) / tileHeight;
@@ -563,18 +563,18 @@ public abstract class PixelIterator implements Closeable {
             minTX = minTY = 0;
             maxTX = maxTY = 1;
         }
-        
+
         for (int ty = minTY; ty < maxTY; ty++) {
             for (int tx = minTX; tx < maxTX; tx++) {
 
-                //-- intersection sur 
+                //-- intersection sur
                 final Raster rast = (renderedImage != null) ? renderedImage.getTile(tx, ty) : currentRaster;
                 final int minX = Math.max(rast.getMinX(), area.x);
                 final int minY = Math.max(rast.getMinY(), area.y);
                 final int maxX = Math.min(rast.getMinX() + tileWidth, area.x + area.width);
                 final int maxY = Math.min(rast.getMinY() + tileHeight, area.y + area.height);
                 if (minX > maxX || minY > maxY) throw new IllegalArgumentException("Expected area don't intersect internal data.");
-                
+
                 final int readLength = (maxX - minX);
                 int destId = 0;
                 for (int y = minY; y < maxY; y++) {
@@ -582,11 +582,11 @@ public abstract class PixelIterator implements Closeable {
                     int s = 0;
                     int id = destId;
                     while (s < readLength) {
-                        
+
                         switch (sourceDataType) {
                             case DataBuffer.TYPE_BYTE : {
                                 ((byte[])buffer)[id++] = (byte) getSample();
-                                break; 
+                                break;
                             }
                             case DataBuffer.TYPE_USHORT :
                             case DataBuffer.TYPE_SHORT  : {
@@ -620,12 +620,12 @@ public abstract class PixelIterator implements Closeable {
             }
         }
     }
-    
-    
+
+
     /**
      * Fill given buffer with samples within the given area and from all image band.
      * Adapted for a {@link PixelInterleavedSampleModel} {@link SampleModel} type.
-     * 
+     *
      * @param area define needed samples area.
      * @param buffer array which will be filled by samples.
      */
@@ -633,9 +633,9 @@ public abstract class PixelIterator implements Closeable {
         rewind();
         final Rectangle generalArea = getBoundary(false);//-- compute one time
         final int sourceDataType = getSourceDatatype();
-        
+
         final int minTX, minTY, maxTX, maxTY;
-        
+
         if (renderedImage != null) {
             minTX = tMinX + (area.x - generalArea.x) / tileWidth;
             minTY = tMinY + (area.y - generalArea.y) / tileHeight;
@@ -645,11 +645,11 @@ public abstract class PixelIterator implements Closeable {
             minTX = minTY = 0;
             maxTX = maxTY = 1;
         }
-        
+
         for (int ty = minTY; ty < maxTY; ty++) {
             for (int tx = minTX; tx < maxTX; tx++) {
 
-                //-- intersection sur 
+                //-- intersection sur
                 final Raster rast = (renderedImage != null) ? renderedImage.getTile(tx, ty) : currentRaster;
                 final int minX = Math.max(rast.getMinX(), area.x);
                 final int minY = Math.max(rast.getMinY(), area.y);
@@ -669,7 +669,7 @@ public abstract class PixelIterator implements Closeable {
                             switch (sourceDataType) {
                                 case DataBuffer.TYPE_BYTE : {
                                     ((byte[])buffer[b])[id++] = (byte) getSample();
-                                    break; 
+                                    break;
                                 }
                                 case DataBuffer.TYPE_USHORT :
                                 case DataBuffer.TYPE_SHORT  : {
@@ -702,27 +702,27 @@ public abstract class PixelIterator implements Closeable {
             }
         }
     }
-    
+
     /**
      * Fill given buffer with samples within the given area and from all image band.
      * Adapted for a {@link BandedSampleModel} {@link SampleModel} type.
-     * 
+     *
      * @param area define needed samples area.
      * @param buffer array which will be filled by samples.
      */
     private void getAreaByBanded (final Rectangle area, final Object[] buffer) {
-        
+
         final ComponentSampleModel compSM = (ComponentSampleModel) currentSampleModel;
         final int[] bankIndices = compSM.getBankIndices();
         assert bankIndices.length == getNumBands();
         final int[] bandOffsets = compSM.getBandOffsets();
         assert bandOffsets.length == getNumBands();
-        
+
         final Rectangle generalArea = getBoundary(false);//-- compute one time
         final int sourceDataType = getSourceDatatype();
-        
+
         final int minTX, minTY, maxTX, maxTY;
-        
+
         if (renderedImage != null) {
             minTX = tMinX + (area.x - generalArea.x) / tileWidth;
             minTY = tMinY + (area.y - generalArea.y) / tileHeight;
@@ -736,7 +736,7 @@ public abstract class PixelIterator implements Closeable {
             for (int ty = minTY; ty < maxTY; ty++) {
                 for (int tx = minTX; tx < maxTX; tx++) {
 
-                    //-- intersection sur 
+                    //-- intersection sur
                     final Raster rast = (renderedImage != null) ? renderedImage.getTile(tx, ty) : currentRaster;
                     final int minX = Math.max(rast.getMinX(), area.x);
                     final int minY = Math.max(rast.getMinY(), area.y);
@@ -754,7 +754,7 @@ public abstract class PixelIterator implements Closeable {
                             case DataBuffer.TYPE_BYTE : {
                                 final byte[] src  = ((DataBufferByte) databuff).getData(bankIndices[b]);
                                 System.arraycopy(src, srcRastId, (byte[]) buffer[b], destId, readLength);
-                                break; 
+                                break;
                             }
                             case DataBuffer.TYPE_USHORT : {
                                 final short[] src  = ((DataBufferUShort) databuff).getData(bankIndices[b]);
@@ -792,10 +792,10 @@ public abstract class PixelIterator implements Closeable {
             }
         }
     }
-    
+
     /**
      * Fill given buffer with samples within the given area at the specified image band.
-     * 
+     *
      * @param area define needed samples area.
      * @param buffer array which will be filled by samples.
      * @param band the interest band.
@@ -803,17 +803,17 @@ public abstract class PixelIterator implements Closeable {
     public void getArea(final Rectangle area, final Object buffer, int band) {
         ArgumentChecks.ensureNonNull("area", area);
         ArgumentChecks.ensureNonNull("buffer", buffer);
-        
+
         final int sourceDataType = getSourceDatatype();
         final int areaLength = area.width * area.height;
-        
+
         switch (sourceDataType) {
             case DataBuffer.TYPE_BYTE : {
                 if (!(buffer instanceof byte[])) throw new IllegalArgumentException("Buffer argument must be instance of byte[][] array");
                 if (((byte[]) buffer).length < areaLength) throw new IllegalArgumentException("Buffer must have a length equal or upper than area sample number. Expected : "+areaLength);
                 break;
             }
-            case DataBuffer.TYPE_USHORT : 
+            case DataBuffer.TYPE_USHORT :
             case DataBuffer.TYPE_SHORT  : {
                 if (!(buffer instanceof short[])) throw new IllegalArgumentException("Buffer argument must be instance of short[][] array");
                 if (((short[]) buffer).length < areaLength) throw new IllegalArgumentException("Buffer must have a length equal or upper than area sample number. Expected : "+areaLength);
@@ -838,8 +838,8 @@ public abstract class PixelIterator implements Closeable {
                 throw new IllegalStateException("Unknow datatype.");
             }
         }
-        
-        if (currentSampleModel instanceof ComponentSampleModel) { 
+
+        if (currentSampleModel instanceof ComponentSampleModel) {
             if (((ComponentSampleModel)currentSampleModel).getPixelStride() == 1) {
                 getAreaByBanded(area, buffer, band);
                 return;
@@ -847,11 +847,11 @@ public abstract class PixelIterator implements Closeable {
         }
         getAreaByInterleaved(area, buffer, band);
     }
-    
+
     /**
      * Fill given buffer with samples within the given area at the specified image band.
      * Adapted for a {@link BandedSampleModel} {@link SampleModel} type.
-     * 
+     *
      * @param area define needed samples area.
      * @param buffer array which will be filled by samples.
      * @param band the interest band.
@@ -860,12 +860,12 @@ public abstract class PixelIterator implements Closeable {
         final ComponentSampleModel compSM = (ComponentSampleModel) currentSampleModel;
         final int bankIndices = compSM.getBankIndices()[band];
         final int bandOffsets = compSM.getBandOffsets()[band];
-        
+
         final Rectangle generalArea = getBoundary(false);//-- compute one time
         final int sourceDataType = getSourceDatatype();
-        
+
         final int minTX, minTY, maxTX, maxTY;
-        
+
         if (renderedImage != null) {
             minTX = tMinX + (area.x - generalArea.x) / tileWidth;
             minTY = tMinY + (area.y - generalArea.y) / tileHeight;
@@ -878,7 +878,7 @@ public abstract class PixelIterator implements Closeable {
         for (int ty = minTY; ty < maxTY; ty++) {
             for (int tx = minTX; tx < maxTX; tx++) {
 
-                //-- intersection sur 
+                //-- intersection sur
                 final Raster rast = (renderedImage != null) ? renderedImage.getTile(tx, ty) : currentRaster;
                 final int minX = Math.max(rast.getMinX(), area.x);
                 final int minY = Math.max(rast.getMinY(), area.y);
@@ -896,7 +896,7 @@ public abstract class PixelIterator implements Closeable {
                         case DataBuffer.TYPE_BYTE : {
                             final byte[] src  = ((DataBufferByte) databuff).getData(bankIndices);
                             System.arraycopy(src, srcRastId, (byte[]) buffer, destId, readLength);
-                            break; 
+                            break;
                         }
                         case DataBuffer.TYPE_USHORT : {
                             final short[] src  = ((DataBufferUShort) databuff).getData(bankIndices);
@@ -933,10 +933,10 @@ public abstract class PixelIterator implements Closeable {
             }
         }
     }
-    
+
     /**
      * Fill given buffer with samples within the given area and from all the source image band.
-     * 
+     *
      * @param area define needed samples area.
      * @param buffer array which will be filled by samples.
      * @param band the interest band.
@@ -945,17 +945,17 @@ public abstract class PixelIterator implements Closeable {
         ArgumentChecks.ensureNonNull("area", area);
         ArgumentChecks.ensureNonNull("buffer", buffer);
         if (buffer.length < getNumBands()) throw new IllegalArgumentException("buffer must have length equals to numbands. Found : "+buffer.length+". Expected : "+getNumBands());
-        
+
         final int sourceDataType = getSourceDatatype();
         final int areaLength = area.width * area.height * getNumBands();
-        
+
         switch (sourceDataType) {
             case DataBuffer.TYPE_BYTE : {
                 if (!(buffer instanceof byte[][])) throw new IllegalArgumentException("Buffer argument must be instance of byte[][] array");
                 if (((byte[][]) buffer)[0].length < areaLength) throw new IllegalArgumentException("Buffer must have a length equal or upper than area sample number. Expected : "+areaLength);
                 break;
             }
-            case DataBuffer.TYPE_USHORT : 
+            case DataBuffer.TYPE_USHORT :
             case DataBuffer.TYPE_SHORT  : {
                 if (!(buffer instanceof short[][])) throw new IllegalArgumentException("Buffer argument must be instance of short[][] array");
                 if (((short[][])buffer)[0].length < areaLength) throw new IllegalArgumentException("Buffer must have a length equal or upper than area sample number. Expected : "+areaLength);
@@ -980,8 +980,8 @@ public abstract class PixelIterator implements Closeable {
                 throw new IllegalStateException("Unknow datatype.");
             }
         }
-        
-        if (currentSampleModel instanceof ComponentSampleModel) { 
+
+        if (currentSampleModel instanceof ComponentSampleModel) {
             if (((ComponentSampleModel)currentSampleModel).getPixelStride() == 1) {
                 getAreaByBanded(area, buffer);
                 return;
@@ -989,7 +989,7 @@ public abstract class PixelIterator implements Closeable {
         }
         getAreaByInterleaved(area, buffer);
     }
-    
+
     /**
      * Return type data from iterate source.
      * @return type data from iterate source.

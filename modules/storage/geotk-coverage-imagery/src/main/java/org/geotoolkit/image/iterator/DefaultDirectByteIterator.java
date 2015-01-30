@@ -37,14 +37,14 @@ import java.awt.image.RenderedImage;
  *
  * Code example :
  * {@code
- *                  final DefaultByteIterator dBI = new DefaultByteIterator(renderedImage);
- *                  while (dBI.next()) {
- *                      dBI.getSample();
- *                  }
+ *    final DefaultByteIterator dBI = new DefaultByteIterator(renderedImage);
+ *    while (dBI.next()) {
+ *        dBI.getSample();
+ *    }
  * }
  *
- * @author Rémi Marechal       (Geomatys).
- * @author Martin Desruisseaux (Geomatys).
+ * @author Rémi Marechal (Geomatys)
+ * @author Martin Desruisseaux (Geomatys)
  */
 class DefaultDirectByteIterator extends DefaultDirectIterator {
 
@@ -63,9 +63,9 @@ class DefaultDirectByteIterator extends DefaultDirectIterator {
     DefaultDirectByteIterator(final Raster raster, final Rectangle subArea) {
         super(raster, subArea);
         final DataBuffer databuf = raster.getDataBuffer();
-        assert (databuf.getDataType() == DataBuffer.TYPE_BYTE) : "raster data or not Byte type"+databuf;
+        assert (databuf.getDataType() == DataBuffer.TYPE_BYTE) : "raster data or not Byte type: " + databuf;
         assert (databuf.getNumBanks() == 1) : "raster contains more than one banks";
-        this.currentDataArray = ((DataBufferByte)databuf).getData();
+        this.currentDataArray = ((DataBufferByte) databuf).getData();
     }
 
     /**
@@ -87,7 +87,7 @@ class DefaultDirectByteIterator extends DefaultDirectIterator {
     @Override
     protected void updateCurrentRaster(final int tileX, final int tileY){
         super.updateCurrentRaster(tileX, tileY);
-        this.currentDataArray = ((DataBufferByte)currentRaster.getDataBuffer()).getData();
+        this.currentDataArray = ((DataBufferByte) currentRaster.getDataBuffer()).getData();
     }
 
     /**

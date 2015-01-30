@@ -37,14 +37,14 @@ import java.awt.image.RenderedImage;
  *
  * Code example :
  * {@code
- *                  final DefaultFloatIterator dBI = new DefaultFloatIterator(renderedImage);
- *                  while (dBI.next()) {
- *                      dBI.getSample();
- *                  }
+ *     final DefaultFloatIterator dBI = new DefaultFloatIterator(renderedImage);
+ *     while (dBI.next()) {
+ *         dBI.getSample();
+ *     }
  * }
  *
- * @author Rémi Marechal       (Geomatys).
- * @author Martin Desruisseaux (Geomatys).
+ * @author Rémi Marechal (Geomatys)
+ * @author Martin Desruisseaux (Geomatys)
  */
 class DefaultDirectFloatIterator extends DefaultDirectIterator {
 
@@ -63,8 +63,8 @@ class DefaultDirectFloatIterator extends DefaultDirectIterator {
     DefaultDirectFloatIterator(final Raster raster, final Rectangle subArea) {
         super(raster, subArea);
         final DataBuffer databuf = raster.getDataBuffer();
-        assert (databuf.getDataType() == DataBuffer.TYPE_FLOAT) : "raster data or not Byte type"+databuf;
-        this.currentDataArray = ((DataBufferFloat)databuf).getData();
+        assert (databuf.getDataType() == DataBuffer.TYPE_FLOAT) : "raster data or not Byte type: " + databuf;
+        this.currentDataArray = ((DataBufferFloat) databuf).getData();
     }
 
     /**
