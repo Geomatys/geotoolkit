@@ -290,7 +290,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
                             final ProcessDescriptor desc = ResampleDescriptor.INSTANCE;
                             final ParameterValueGroup params = desc.getInputDescriptor().createValue();
                             ParametersExt.getOrCreateValue(params, ResampleDescriptor.IN_COVERAGE.getName().getCode()).setValue(dataCoverage);
-                            ParametersExt.getOrCreateValue(params, ResampleDescriptor.IN_COORDINATE_REFERENCE_SYSTEM.getName().getCode()).setValue(renderingContext.getObjectiveCRS2D());
+                            ParametersExt.getOrCreateValue(params, ResampleDescriptor.IN_COORDINATE_REFERENCE_SYSTEM.getName().getCode()).setValue(targetCRS);
                             ParametersExt.getOrCreateValue(params, ResampleDescriptor.IN_GRID_GEOMETRY.getName().getCode()).setValue(gg);
 
                             final org.geotoolkit.process.Process process = desc.createProcess(params);
@@ -318,8 +318,18 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
                 return;
             }
 
-            //we must switch to objectiveCRS for grid coverage
+            if (isReprojected) {
+                /*
+                 * If we have a reprojection we assume all mathtransforms concatenation from dataCrs to displayCrs 
+                 */
+                renderingContext.switchToDisplayCRS(); 
+            } else {
+                /*
+                 * If we haven't got any reprojection we delegate affine transformation to java2D
+                 * we must switch to objectiveCRS for grid coverage
+                 */
                 renderingContext.switchToObjectiveCRS();
+            }
             
             ////////////////////////////////////////////////////////////////////
             // 4 - Apply style                                                //
