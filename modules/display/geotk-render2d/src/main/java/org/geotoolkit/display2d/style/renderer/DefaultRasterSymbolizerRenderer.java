@@ -152,7 +152,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             ////////////////////////////////////////////////////////////////////
             // 1 - Get data and elevation coverage                            //
             ////////////////////////////////////////////////////////////////////
-            double[] resolution = renderingContext.getResolution();
+              double[] resolution = renderingContext.getResolution();
             Envelope bounds = new GeneralEnvelope(renderingContext.getCanvasObjectiveBounds());
             resolution = checkResolution(resolution,bounds);
             final CoverageMapLayer coverageLayer = projectedCoverage.getLayer();
@@ -259,11 +259,11 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
                 if (isReprojected) {
                     //calculate best intersection area
                     final GeneralEnvelope tmp = new GeneralEnvelope(renderingContext.getPaintingObjectiveBounds2D());
-                    final int xAxis = Math.max(0, CoverageUtilities.getMinOrdinate(coverageCRS));
-
+//                    final int xAxis = Math.max(0, CoverageUtilities.getMinOrdinate(coverageCRS));
+                    
 //                    tmp.intersect(CRS.transform(coverageToObjective, new GeneralEnvelope(
 //                            dataCoverage.getEnvelope()).subEnvelope(xAxis, xAxis + 2)));
-                    final GeneralEnvelope coverageEnv2D =new GeneralEnvelope(dataCoverage.getEnvelope2D());
+                    final GeneralEnvelope coverageEnv2D = new GeneralEnvelope(dataCoverage.getEnvelope2D());
                     final Envelope transformed = CRS.transform(coverageEnv2D, renderingContext.getObjectiveCRS2D());
                     tmp.intersect(transformed);
 
@@ -272,23 +272,25 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
 
                     } else {
                         //calculate gridgeometry
-                        final AffineTransform2D trs = renderingContext.getObjectiveToDisplay();
+                        //-- on recupere la taille destination de l'image
+                        final AffineTransform2D trs   = renderingContext.getObjectiveToDisplay();
                         final GeneralEnvelope dispEnv = CRS.transform(trs, tmp);
-                        final int width = (int)Math.ceil(dispEnv.getSpan(0));
-                        final int height = (int)Math.ceil(dispEnv.getSpan(1));
+                        final int width               = (int) Math.ceil(dispEnv.getSpan(0));
+                        final int height              = (int) Math.ceil(dispEnv.getSpan(1));
 
                         if (width <= 0 || height <= 0) {
                             dataCoverage = null;
                         } else {
                             //force alpha if image do not get any "invalid data" rule (Ex : No-data in image or color map).
                             dataCoverage = getReadyToResampleCoverage(dataCoverage, sourceSymbol);
-
+                            
+                            
                             final GridGeometry2D gg = new GridGeometry2D(new GridEnvelope2D(0, 0, width, height), tmp);
 
                             final ProcessDescriptor desc = ResampleDescriptor.INSTANCE;
                             final ParameterValueGroup params = desc.getInputDescriptor().createValue();
                             ParametersExt.getOrCreateValue(params, ResampleDescriptor.IN_COVERAGE.getName().getCode()).setValue(dataCoverage);
-                            ParametersExt.getOrCreateValue(params, ResampleDescriptor.IN_COORDINATE_REFERENCE_SYSTEM.getName().getCode()).setValue(targetCRS);
+                            ParametersExt.getOrCreateValue(params, ResampleDescriptor.IN_COORDINATE_REFERENCE_SYSTEM.getName().getCode()).setValue(renderingContext.getObjectiveCRS2D());
                             ParametersExt.getOrCreateValue(params, ResampleDescriptor.IN_GRID_GEOMETRY.getName().getCode()).setValue(gg);
 
                             final org.geotoolkit.process.Process process = desc.createProcess(params);
@@ -317,8 +319,8 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             }
 
             //we must switch to objectiveCRS for grid coverage
-            renderingContext.switchToObjectiveCRS();
-
+                renderingContext.switchToObjectiveCRS();
+            
             ////////////////////////////////////////////////////////////////////
             // 4 - Apply style                                                //
             ////////////////////////////////////////////////////////////////////
@@ -372,8 +374,8 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
         }
     }
 
-    private static double[] nextDataType(int type){
-        switch(type){
+    private static double[] nextDataType(int type) {
+        switch(type) {
             case DataBuffer.TYPE_BYTE   : return new double[]{DataBuffer.TYPE_SHORT,Short.MIN_VALUE};
             case DataBuffer.TYPE_USHORT : return new double[]{DataBuffer.TYPE_INT,Integer.MIN_VALUE};
             case DataBuffer.TYPE_SHORT  : return new double[]{DataBuffer.TYPE_INT,Integer.MIN_VALUE};

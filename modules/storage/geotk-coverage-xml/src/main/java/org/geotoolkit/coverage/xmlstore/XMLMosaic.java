@@ -19,8 +19,10 @@ package org.geotoolkit.coverage.xmlstore;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
+import java.awt.image.IndexColorModel;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
+import java.awt.image.SampleModel;
 import java.awt.image.WritableRaster;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -53,6 +55,8 @@ import org.apache.sis.util.Classes;
 import org.apache.sis.util.collection.Cache;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.*;
+import org.geotoolkit.image.internal.ImageUtils;
+import org.geotoolkit.image.internal.SampleType;
 import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.util.BufferedImageUtilities;
 import org.opengis.coverage.PointOutsideCoverageException;
@@ -180,17 +184,34 @@ public class XMLMosaic implements GridMosaic {
         }
     }
 
-    private synchronized byte[] createEmptyTile() {
-        if (emptyTileEncoded==null) {
+    private synchronized byte[] createEmptyTile() throws DataStoreException {
+        if (emptyTileEncoded == null) {
+            XMLCoverageReference ref = pyramid.getPyramidSet().getRef();
             //create an empty tile
-            final List<XMLSampleDimension> dims = pyramid.getPyramidSet().getRef().getXMLSampleDimensions();
+            final List<XMLSampleDimension> dims = ref.getXMLSampleDimensions();
             final BufferedImage emptyTile;
-            if(dims!=null && !dims.isEmpty()){
+            if (dims != null && !dims.isEmpty()){
                 emptyTile = BufferedImageUtilities.createImage(tileWidth, tileHeight, dims.size(), dims.get(0).getDataType());
-            }else{
-                emptyTile = new BufferedImage(tileWidth, tileHeight, BufferedImage.TYPE_INT_ARGB);
-            }
+            } else {
+                ColorModel colorModel = ref.getColorModel();
+                SampleModel sampleModel = ref.getSampleModel();
+                
+                if (colorModel != null && sampleModel != null) {
+                    long[] colorMap = null;
+                    if (colorModel instanceof IndexColorModel) {
+                        final IndexColorModel indexColorMod = (IndexColorModel) colorModel;
+                        final int mapSize = indexColorMod.getMapSize();
+                        int[] rgbs  = new int[mapSize];
+                        indexColorMod.getRGBs(rgbs);
+                        colorMap = new long[mapSize];
+                        for (int p = 0; p < mapSize; p++) colorMap[p] = rgbs[p]; 
+                    }
+                    emptyTile = ImageUtils.createImage(tileWidth, tileHeight, SampleType.valueOf(sampleModel.getDataType()), sampleModel.getNumBands(), ImageUtils.getEnumPhotometricInterpretation(colorModel), ImageUtils.getEnumPlanarConfiguration(sampleModel), colorMap);
 
+                } else {
+                    emptyTile = new BufferedImage(tileWidth, tileHeight, BufferedImage.TYPE_INT_ARGB);
+                }
+            }
 
             final ByteArrayOutputStream out = new ByteArrayOutputStream();
             try {

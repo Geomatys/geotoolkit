@@ -48,7 +48,7 @@ public class StrictlyCoverageFinder extends CoverageFinder {
         final List<GridMosaic> goodMosaics;
         
         final GeneralEnvelope findEnvelope = new GeneralEnvelope(env);
-        
+        System.out.println("asked resolution : "+resolution);
         // if crs is compound
         if (env.getDimension() > 2) {
             double bestRatio = Double.NEGATIVE_INFINITY;

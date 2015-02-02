@@ -21,12 +21,16 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
+import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.media.jai.PlanarImage;
 
@@ -36,6 +40,7 @@ import org.apache.sis.storage.DataStoreException;
 
 import org.geotoolkit.coverage.finder.CoverageFinder;
 import org.geotoolkit.coverage.finder.DefaultCoverageFinder;
+import org.geotoolkit.coverage.finder.StrictlyCoverageFinder;
 import org.geotoolkit.coverage.grid.*;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
@@ -306,7 +311,7 @@ public class PyramidalModelReader extends GridCoverageReader{
         Pyramid pyramid;
         try {
 //            pyramid = CoverageUtilities.findPyramid(pyramidSet, crs);
-            pyramid = coverageFinder.findPyramid(pyramidSet, crs);
+             pyramid = coverageFinder.findPyramid(pyramidSet, crs);
         } catch (FactoryException ex) {
             throw new CoverageStoreException(ex);
         }
@@ -330,8 +335,15 @@ public class PyramidalModelReader extends GridCoverageReader{
         }
 
         //the wanted image resolution
-        final double wantedResolution = resolution[0];
+        double wantedResolution = resolution[0];
         final double tolerance = 0.1d;
+        
+        //-- transform resolution into pyramid crs
+        if (!(crs.equals(pyramidCRS))) {
+            final int displayBoundX = (int) ((paramEnv.getSpan(0) + wantedResolution - 1) / wantedResolution); //-- to force minimum mosaic resolution
+            wantedResolution = wantedEnv.getSpan(0) / displayBoundX;
+        }
+        //----------------------------------------
 
         List<GridMosaic> mosaics;
         try {
@@ -341,7 +353,12 @@ public class PyramidalModelReader extends GridCoverageReader{
         }
 
         if(mosaics == null ||mosaics.isEmpty()){
-            //no reliable mosaic
+            try {
+                //no reliable mosaic
+                mosaics = coverageFinder.findMosaics(pyramid, wantedResolution, tolerance, wantedEnv, 100);
+            } catch (FactoryException ex) {
+                Logger.getLogger(PyramidalModelReader.class.getName()).log(Level.SEVERE, null, ex);
+            }
             throw new CoverageStoreException("No mosaic can be found with given parameters.");
         }
 
@@ -382,6 +399,12 @@ public class PyramidalModelReader extends GridCoverageReader{
     private GridCoverage readSlice(GridMosaic mosaic, Envelope wantedEnv, boolean deferred) throws CoverageStoreException{
         
         final CoordinateReferenceSystem wantedCRS = wantedEnv.getCoordinateReferenceSystem();
+        final Envelope mosEnvelope                = mosaic.getEnvelope();
+        
+        //-- check CRS conformity
+        if (!(CRS.equalsIgnoreMetadata(wantedCRS, mosEnvelope.getCoordinateReferenceSystem())))
+            throw new IllegalArgumentException("the wantedEnvelope is not define in same CRS than mosaic. Expected : "
+                                                +mosEnvelope.getCoordinateReferenceSystem()+". Found : "+wantedCRS);
         
         int xAxis = CoverageUtilities.getMinOrdinate(wantedCRS);
         // Well... If the pyramid is not defined on an horizontal CRS, all we can do for now is supposing that the first two axis are the grid axis.
@@ -396,28 +419,51 @@ public class PyramidalModelReader extends GridCoverageReader{
         final double tileMatrixMaxY = ul.getOrdinate(yAxis);
         final Dimension gridSize = mosaic.getGridSize();
         final Dimension tileSize = mosaic.getTileSize();
-        final double scale = mosaic.getScale();
+        
+        final GeneralEnvelope envelopOfInterest = new GeneralEnvelope(wantedEnv);
+        envelopOfInterest.intersect(mosaic.getEnvelope());
+        
+        final double scale     = mosaic.getScale();
         final double tileSpanX = scale * tileSize.width;
         final double tileSpanY = scale * tileSize.height;
-        final int gridWidth = gridSize.width;
-        final int gridHeight = gridSize.height;
+        final int gridWidth    = gridSize.width;
+        final int gridHeight   = gridSize.height;
 
         //find all the tiles we need --------------------------------------
         final double epsilon = 1e-6;
-        final double bBoxMinX = wantedEnv.getMinimum(xAxis);
-        final double bBoxMaxX = wantedEnv.getMaximum(xAxis);
-        final double bBoxMinY = wantedEnv.getMinimum(yAxis);
-        final double bBoxMaxY = wantedEnv.getMaximum(yAxis);
-        double tileMinCol = Math.floor( (bBoxMinX - tileMatrixMinX) / tileSpanX + epsilon);
-        double tileMaxCol = Math.floor( (bBoxMaxX - tileMatrixMinX) / tileSpanX - epsilon)+1;
-        double tileMinRow = Math.floor( (tileMatrixMaxY - bBoxMaxY) / tileSpanY + epsilon);
-        double tileMaxRow = Math.floor( (tileMatrixMaxY - bBoxMinY) / tileSpanY - epsilon)+1;
-
-        //ensure we dont go out of the grid
-        tileMinCol = XMath.clamp(tileMinCol, 0, gridWidth);
-        tileMaxCol = XMath.clamp(tileMaxCol, 0, gridWidth);
-        tileMinRow = XMath.clamp(tileMinRow, 0, gridHeight);
-        tileMaxRow = XMath.clamp(tileMaxRow, 0, gridHeight);
+        final double bBoxMinX = envelopOfInterest.getMinimum(xAxis);
+        final double bBoxMaxX = envelopOfInterest.getMaximum(xAxis);
+        final double bBoxMinY = envelopOfInterest.getMinimum(yAxis);
+        final double bBoxMaxY = envelopOfInterest.getMaximum(yAxis);
+//        final double epsilon = 1e-6;
+//        final double bBoxMinX = wantedEnv.getMinimum(xAxis);
+//        final double bBoxMaxX = wantedEnv.getMaximum(xAxis);
+//        final double bBoxMinY = wantedEnv.getMinimum(yAxis);
+//        final double bBoxMaxY = wantedEnv.getMaximum(yAxis);
+//        double tileMinCol = Math.floor( (bBoxMinX - tileMatrixMinX) / tileSpanX + epsilon);
+//        double tileMaxCol = Math.floor( (bBoxMaxX - tileMatrixMinX) / tileSpanX - epsilon)+1;
+//        double tileMinRow = Math.floor( (tileMatrixMaxY - bBoxMaxY) / tileSpanY + epsilon);
+//        double tileMaxRow = Math.floor( (tileMatrixMaxY - bBoxMinY) / tileSpanY - epsilon)+1;
+        int tileMinCol = (int) ((bBoxMinX - tileMatrixMinX) / tileSpanX);
+//        int tileMaxCol = (int) ((bBoxMaxX - tileMatrixMinX + tileSpanX - 1) / tileSpanX);
+        int tileMaxCol = (int) StrictMath.ceil((bBoxMaxX - tileMatrixMinX) / tileSpanX);
+        int tileMinRow = (int) ((tileMatrixMaxY - bBoxMaxY) / tileSpanY);
+        int tileMaxRow = (int) StrictMath.ceil((tileMatrixMaxY - bBoxMinY) / tileSpanY);
+        
+        double tileMinCol2 = Math.floor( (bBoxMinX - tileMatrixMinX) / tileSpanX + epsilon);
+        double tileMaxCol2 = Math.floor( (bBoxMaxX - tileMatrixMinX) / tileSpanX - epsilon)+1;
+        double tileMinRow2 = Math.floor( (tileMatrixMaxY - bBoxMaxY) / tileSpanY + epsilon);
+        double tileMaxRow2 = Math.floor( (tileMatrixMaxY - bBoxMinY) / tileSpanY - epsilon)+1;
+        System.out.println("before tileMinCol : "+tileMinCol2+" next : "+tileMinCol);
+        System.out.println("before tileMaxCol : "+tileMaxCol2+" next : "+tileMaxCol);
+        System.out.println("before tileMinRow : "+tileMinRow2+" next : "+tileMinRow);
+        System.out.println("before tileMaxRow : "+tileMaxRow2+" next : "+tileMaxRow);
+//
+//        //ensure we dont go out of the grid
+//        tileMinCol = XMath.clamp(tileMinCol, 0, gridWidth);
+//        tileMaxCol = XMath.clamp(tileMaxCol, 0, gridWidth);
+//        tileMinRow = XMath.clamp(tileMinRow, 0, gridHeight);
+//        tileMaxRow = XMath.clamp(tileMaxRow, 0, gridHeight);
 
         RenderedImage image = null;
         if(deferred){
@@ -453,6 +499,8 @@ public class PyramidalModelReader extends GridCoverageReader{
                 throw new CoverageStoreException(ex.getMessage(),ex);
             }
 
+            int n = 0;
+            
             while(true){
                 Object obj = null;
                 try {
@@ -495,6 +543,12 @@ public class PyramidalModelReader extends GridCoverageReader{
                         }
                     }
 
+//                    if (tileImage != null)
+//                    try {
+//                        ImageIO.write(tileImage, "geotiff", new File("/home/rmarechal/Documents/image/test"+(n++)+".tiff"));
+//                    } catch (IOException ex) {
+//                        Logger.getLogger(PyramidalModelReader.class.getName()).log(Level.SEVERE, null, ex);
+//                    }
                     if(image == null){
                         image = BufferedImageUtilities.createImage(
                                 (int)(tileMaxCol-tileMinCol)*tileSize.width, 

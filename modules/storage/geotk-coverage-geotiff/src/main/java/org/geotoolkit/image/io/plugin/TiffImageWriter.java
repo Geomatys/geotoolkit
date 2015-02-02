@@ -63,11 +63,11 @@ import org.apache.sis.internal.storage.ChannelImageOutputStream;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.NullArgumentException;
+import static org.geotoolkit.image.internal.ImageUtils.*;
 import org.geotoolkit.image.io.SpatialImageWriteParam;
 import org.geotoolkit.image.io.SpatialImageWriter;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
-import org.geotoolkit.internal.image.ScaledColorSpace;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.Utilities;
 import static org.geotoolkit.metadata.geotiff.GeoTiffConstants.*;
@@ -3219,49 +3219,6 @@ public class TiffImageWriter extends SpatialImageWriter {
             case TYPE_URATIONAL :
             default : throw new IllegalStateException("unknow type. type : "+tiffType);
         }
-    }
-
-    /**
-     * Define photometric interpretation tiff tag in function of {@link ColorModel} properties.
-     *
-     * @param cm image color model.
-     * @return 1 for gray, 2 for RGB, 3 for indexed colormodel.
-     */
-    private short getPhotometricInterpretation(final ColorModel cm) {
-        final ColorSpace cs = cm.getColorSpace();
-
-        //-- to do : if we need we can also define 1 for an ScaledColorSpace --//
-        if (cs.equals(ColorSpace.getInstance(ColorSpace.CS_GRAY)) || cs instanceof ScaledColorSpace) {
-            // return 0 or 1
-            // return 0 for min is white
-            // return 1 for min is black
-            return 1;
-        } else if (cm instanceof IndexColorModel) {
-            return 3;
-        } else if (cs.isCS_sRGB()) {
-            return 2;
-        } else {
-            throw new IllegalStateException("unknow photometricinterpretation : unknow color model type.");
-        }
-    }
-
-    /**
-     * Define appropriate tiff tag value for planar configuration from {@link SampleModel} properties.
-     *
-     * @param sm needed {@link SampleModel} to define planar configuration.
-     * @return 1 for pixel interleaved or 2 for band interleaved.
-     */
-    private short getPlanarConfiguration(final SampleModel sm) {
-        final int numband  = sm.getNumBands();
-        if (numband > 1 && sm instanceof ComponentSampleModel) {
-            final ComponentSampleModel csm = (ComponentSampleModel) sm;
-            final int[] bankIndice = csm.getBankIndices();
-            if (csm.getPixelStride() != 1 || bankIndice.length == 1) return 1;
-            int b = 0;
-            while (++b < bankIndice.length) if (bankIndice[b] == bankIndice[b - 1]) return 1;
-            return 2;
-        }
-        return 1;
     }
 
     /**

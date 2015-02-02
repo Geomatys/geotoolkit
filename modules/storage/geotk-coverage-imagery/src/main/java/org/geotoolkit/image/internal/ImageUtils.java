@@ -23,6 +23,7 @@ import java.awt.image.BandedSampleModel;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.ComponentColorModel;
+import java.awt.image.ComponentSampleModel;
 import java.awt.image.DataBuffer;
 import java.awt.image.IndexColorModel;
 import java.awt.image.SampleModel;
@@ -53,7 +54,12 @@ public class ImageUtils extends Static{
     private final static short SAMPLEFORMAT_IEEEFP = 3;
     
     /**
-     * Define buffer type as integer point data.
+     * Define buffer type as signed integer point data.
+     */
+    private final static short SAMPLEFORMAT_INT     = 2;
+    
+    /**
+     * Define buffer type as unsigned integer point data.
      */
     private final static short SAMPLEFORMAT_UINT    = 1;
     
@@ -531,17 +537,121 @@ public class ImageUtils extends Static{
     }
     
     /**
+     * Define photometric interpretation tiff tag in function of {@link ColorModel} properties.
+     *
+     * @param cm image color model.
+     * @return 1 for gray, 2 for RGB, 3 for indexed colormodel.
+     */
+    public static short getPhotometricInterpretation(final ColorModel cm) {
+        final ColorSpace cs = cm.getColorSpace();
+
+        //-- to do : if we need we can also define 1 for an ScaledColorSpace --//
+        if (cs.equals(ColorSpace.getInstance(ColorSpace.CS_GRAY)) || cs instanceof ScaledColorSpace) {
+            // return 0 or 1
+            // return 0 for min is white
+            // return 1 for min is black
+            return PHOTOMETRIC_MINISBLACK;
+        } else if (cm instanceof IndexColorModel) {
+            return PHOTOMETRIC_PALETTE;
+        } else if (cs.isCS_sRGB()) {
+            return PHOTOMETRIC_RGB;
+        } else {
+            throw new IllegalStateException("unknow photometricInterpretation : unknow color model type.");
+        }
+    }
+    /**
+     * Define photometric interpretation tiff tag in function of {@link ColorModel} properties.
+     *
+     * @param cm image color model.
+     * @return 1 for gray, 2 for RGB, 3 for indexed colormodel.
+     */
+    public static PhotometricInterpretation getEnumPhotometricInterpretation(final ColorModel cm) {
+        return PhotometricInterpretation.valueOf(getPhotometricInterpretation(cm));
+    }
+    
+    /**
+     * Define appropriate tiff tag value for planar configuration from {@link SampleModel} properties.
+     *
+     * @param sm needed {@link SampleModel} to define planar configuration.
+     * @return 1 for pixel interleaved or 2 for band interleaved.
+     * @see #PLANAR_INTERLEAVED
+     * @see #PLANAR_BANDED
+     */
+    public static short getPlanarConfiguration(final SampleModel sm) {
+        final int numband  = sm.getNumBands();
+        if (numband > 1 && sm instanceof ComponentSampleModel) {
+            final ComponentSampleModel csm = (ComponentSampleModel) sm;
+            final int[] bankIndice = csm.getBankIndices();
+            if (csm.getPixelStride() != 1 || bankIndice.length == 1) return PLANAR_INTERLEAVED;
+            int b = 0;
+            while (++b < bankIndice.length) if (bankIndice[b] == bankIndice[b - 1]) return PLANAR_INTERLEAVED;
+            return PLANAR_BANDED;
+        }
+        return PLANAR_INTERLEAVED;
+    }
+    
+    /**
+     * Define appropriate {@link PlanarConfiguration} enum from its integer planarConfiguration into tiff specification.
+     * 
+     * @param sm needed {@link SampleModel} to define planar configuration.
+     * @return {@link PlanarConfiguration#Interleaved} for an interleaved sampleModel or {@link PlanarConfiguration#Banded}.
+     * @see #PLANAR_INTERLEAVED
+     * @see #PLANAR_BANDED
+     * @see #getPlanarConfiguration(java.awt.image.SampleModel) 
+     */
+    public static PlanarConfiguration getEnumPlanarConfiguration(final SampleModel sm) {
+        return PlanarConfiguration.valueOf(getPlanarConfiguration(sm));
+    }
+    
+    /**
+     * Define appropriate tiff tag value for planar configuration from {@link SampleModel} properties.
+     *
+     * @param sm needed {@link SampleModel} to define planar configuration.
+     * @return 1 for integer format, 2 for integer signed format or 3 for floating format (IEEE).
+     * @see #SAMPLEFORMAT_UINT
+     * @see #SAMPLEFORMAT_INT
+     * @see #SAMPLEFORMAT_IEEEFP
+     */
+    public static int getSampleFormat(final SampleModel sm) {
+        
+        //-- bitpersamples
+        final int[] sampleSize = sm.getSampleSize();// sample size in bits
+        int samplePerPixel = sampleSize.length;
+        assert samplePerPixel == sm.getNumBands() : "samplePerPixel = "+samplePerPixel+". sm.getnumDataElement = "+sm.getNumBands();
+        
+        for (int i = 1; i < samplePerPixel; i++) {
+            if (sampleSize[i-1] != sampleSize[i]) {
+                throw new IllegalStateException("different sample size is not supported in tiff format.");
+            }
+        }
+        assert sampleSize[0] <= 0xFFFF : "BitsPerSample exceed short max value";
+
+        final int dataType = sm.getDataType();
+        switch (dataType) {
+            case DataBuffer.TYPE_FLOAT  :
+            case DataBuffer.TYPE_DOUBLE : {
+                return SAMPLEFORMAT_IEEEFP; //-- type floating point --//
+            }
+            case DataBuffer.TYPE_SHORT :
+            case DataBuffer.TYPE_INT   : {
+                return SAMPLEFORMAT_INT; //-- type signed 32 bits Int --//
+            }
+            default : { return SAMPLEFORMAT_UINT;} //-- type UInt or UShort--//            
+        }
+    }
+    
+    /**
      * Return an appropriate {@link ImageTypeSpecifier} built from given parameter.
      * 
      * @param sampleBitsSize bit size for each sample.
      * @param numBand expected band number
      * @param photometricInterpretation 
      * @param sampleFormat
-     * @param planarConfiguration
+     * @param planarConfiguration define planar configuration of asked {@link ImageTypeSpecifier}, 1 for interveaved 2 for banded sampleModel.
+     * @param colorMap
      * @return {@link ImageTypeSpecifier}.
-     * @throws UnsupportedImageFormatException if photometricInterpretation or sampleFormat are not in accordance with other parameters.
      */
-    private static ImageTypeSpecifier buildImageTypeSpecifier(final int sampleBitsSize, final int numBand, 
+    public static ImageTypeSpecifier buildImageTypeSpecifier(final int sampleBitsSize, final int numBand, 
             final short photometricInterpretation, final short sampleFormat, final short planarConfiguration, final  long[] colorMap) throws UnsupportedOperationException {
         final ColorModel cm = createColorModel(sampleBitsSize, numBand, photometricInterpretation, sampleFormat, colorMap);
         final SampleModel sm; 
@@ -564,17 +674,44 @@ public class ImageUtils extends Static{
     }
     
     /**
-     * Create an adapted {@link ColorModel} from given parameter.
+     * Create and returns appropriate {@link SampleModel} built from given parameters.
+     * 
+     * @param planarConfiguration define planar configuration of asked {@link SampleModel}, 
+     * 1 for {@link PixelInterleavedSampleModel} and 2 for {@link BandedSampleModel}
+     * @param colorModel the associate {@link ColorModel}.
+     * @return {@link ImageTypeSpecifier}.
+     * @see #PLANAR_INTERLEAVED
+     * @see #PLANAR_BANDED
+     */
+    public static SampleModel createSampleModel(final short planarConfiguration, final ColorModel colorModel) throws UnsupportedOperationException {
+        final int numBand        = colorModel.getNumComponents();
+        final int sampleBitsSize = colorModel.getComponentSize()[0];
+        switch (planarConfiguration) {
+            case 1 : return colorModel.createCompatibleSampleModel(1, 1);
+            case 2 : {
+                final int[] bankIndices = new int[numBand];
+                int b = -1;
+                while (++b < numBand) bankIndices[b] = b;
+                final int[] bandOff = new int[numBand];
+                return new BandedSampleModel(colorModel.getTransferType(), 1, 1, sampleBitsSize, bankIndices, bandOff);
+            }
+            default : throw new IllegalArgumentException("unknow planarConfiguration type. Expected 1 for interleaved or 2 for banded. Found : "+planarConfiguration);
+        }
+    }
+    
+    /**
+     * Create and returns an adapted {@link ColorModel} from given parameters.
      * 
      * @param sampleBitsSize
      * @param numBand
      * @param photometricInterpretation
      * @param sampleFormat
-     * @param planarConfiguration 1 for {@link PixelInterleavedSampleModel} and 2 for {@link BandedSampleModel}
-     * @return
-     * @throws UnsupportedImageFormatException 
+     * @param colorMap associate color map array in case where a palette color model is define.
+     * @return an adapted {@link ColorModel} from given parameters.
+     * @throws IllegalArgumentException if photometric interpretation is define 
+     * as palette (photometricInterpretation == 3) and colorMap is {@code null}.
      */
-    private static ColorModel createColorModel(final int sampleBitsSize, final int numBand, final short photometricInterpretation, 
+    public static ColorModel createColorModel(final int sampleBitsSize, final int numBand, final short photometricInterpretation, 
                                                final short sampleFormat, final  long[] colorMap) throws UnsupportedOperationException { 
         final int dataBufferType;
         
@@ -622,6 +759,7 @@ public class ImageUtils extends Static{
                 break;
             }
             case 3 : {//-- palette
+                if (colorMap == null) throw new IllegalArgumentException("Impossible to build palette color model with null color map array.");
                 final int[] indexes = buildColorMapArray(colorMap);
                 final ColorModel cm = new IndexColorModel(sampleBitsSize, indexes.length, indexes, 0, true, -1, dataBufferType);
                 /*

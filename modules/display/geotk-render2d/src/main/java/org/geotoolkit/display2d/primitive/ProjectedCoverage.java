@@ -105,7 +105,7 @@ public class ProjectedCoverage implements ProjectedObject<CoverageMapLayer> {
                     }
                 }
             } finally {
-                handler.putAndUnlock(value);
+                 handler.putAndUnlock(value);
             }
 
         }

@@ -18,6 +18,7 @@ package org.geotoolkit.coverage.xmlstore;
 
 import java.awt.*;
 import java.awt.image.ColorModel;
+import java.awt.image.IndexColorModel;
 import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
 import java.io.File;
@@ -46,12 +47,15 @@ import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.feature.type.DefaultName;
 import org.opengis.coverage.SampleDimensionType;
 import org.geotoolkit.feature.type.Name;
+import org.geotoolkit.image.internal.ImageUtils;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
+ * XML implementation of {@link PyramidalCoverageReference}.
  *
- * @author Johann Sorel (Geomatys)
+ * @author Johann Sorel  (Geomatys)
+ * @author Remi Marechal (Geomatys)
  * @module pending
  */
 @XmlRootElement(name="CoverageReference")
@@ -70,18 +74,94 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
 
     @XmlElement(name="PyramidSet")
     private XMLPyramidSet set;
+
     /** One of geophysics/native */
     @XmlElement(name="packMode")
     private String packMode = ViewType.RENDERED.name();
+
     @XmlElement(name="SampleDimension")
     private List<XMLSampleDimension> sampleDimensions;
+
     @XmlElement(name="NumDimension")
     private int numDimension;
-    @XmlElement(name="Sampletype")
-    private int sampleType;
+
     @XmlElement(name="PreferredFormat")
     private String preferredFormat;
     
+    //-- needed element to define sampleModel of current pyramided tiles
+    
+    /**
+     * Define band number of all internaly pyramid stored tiles.
+     */
+    @XmlElement(name="NumBands")
+    private int nbBands = -1;
+
+    /**
+     * Define internal datatype of all internaly pyramid stored tiles.
+     */
+    @XmlElement(name="SampleType")
+    private int sampleType = -1; 
+    
+    /**
+     * Define bits per sample number of all internaly pyramid stored tiles.
+     */
+    @XmlElement(name="BitPerSample")
+    private int bitPerSample = -1;
+    
+    /**
+     * Define sample number by pixels of all internaly pyramid stored tiles.
+     */
+    @XmlElement(name="SamplePerPixel")
+    private int samplePerPixel = -1;
+    
+    /**
+     * Define planar configuration of all internaly pyramid stored tiles.
+     * 
+     * @see ImageUtils#PLANAR_BANDED
+     * @see ImageUtils#PLANAR_INTERLEAVED
+     */
+    @XmlElement(name="PlanarConfiguration")
+    private int planarConfiguration = -1;
+    
+    /**
+     * Define sample format of all internaly pyramid stored tiles.
+     * 
+     * @see ImageUtils#SAMPLEFORMAT_IEEEFP
+     * @see ImageUtils#SAMPLEFORMAT_INT
+     * @see ImageUtils#SAMPLEFORMAT_UINT
+     */
+    @XmlElement(name="SampleFormat")
+    private int sampleFormat = -1;
+    
+    /**
+     * Define photometric interpretation of all internaly pyramid stored tiles.
+     * 
+     * @see ImageUtils#PHOTOMETRIC_MINISBLACK
+     * @see ImageUtils#PHOTOMETRIC_PALETTE
+     * @see ImageUtils#PHOTOMETRIC_RGB
+     */
+    @XmlElement(name="PhotometricInterpretation")
+    private int photometricInterpretation = -1;
+    
+    /**
+     * Define color map of all internaly pyramid stored tiles.
+     * Only use if photometric interpretation is use as {@linkplain ImageUtils#PHOTOMETRIC_PALETTE palette}.
+     * 
+     * @see ImageUtils#PHOTOMETRIC_PALETTE
+     */
+    @XmlElement(name="ColorMap")
+    private int[] colorMap = null;
+    
+    /**
+     * {@link SampleModel} of all internaly pyramid stored tiles. 
+     */
+    private SampleModel sampleModel;
+    
+    /**
+     * {@link ColorModel} of all internaly pyramid stored tiles. 
+     */
+    private ColorModel colorModel;
+
     private String id;
     private File mainfile;
     //caches
@@ -98,21 +178,19 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
     }
 
     public List<XMLSampleDimension> getXMLSampleDimensions() {
-        if(sampleDimensions==null){
-            sampleDimensions = new ArrayList<>();
-        }
+        if (sampleDimensions == null) sampleDimensions = new ArrayList<>();
         return sampleDimensions;
     }
 
     public void copy(XMLCoverageReference ref){
-        this.id                 = ref.id;
-        this.mainfile           = ref.mainfile;
-        this.set                = ref.set;
-        this.packMode           = ref.packMode;
-        this.sampleDimensions   = ref.sampleDimensions;
-        this.preferredFormat    = ref.preferredFormat;
-        this.sampleType         = ref.sampleType;
-        this.numDimension       = ref.numDimension;
+        this.id               = ref.id;
+        this.mainfile         = ref.mainfile;
+        this.set              = ref.set;
+        this.packMode         = ref.packMode;
+        this.sampleDimensions = ref.sampleDimensions;
+        this.preferredFormat  = ref.preferredFormat;
+        this.sampleType       = ref.sampleType;
+        this.nbBands          = ref.nbBands;
         this.set.setRef(this);
     }
 
@@ -149,7 +227,7 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
      * @return Folder where each pyramid is stored.
      */
     public File getFolder(){
-        return new File(mainfile.getParentFile(),getId());
+        return new File(mainfile.getParentFile(), getId());
     }
     
     @Override
@@ -163,7 +241,7 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
      */
     synchronized void save() throws DataStoreException{
         try {
-            final MarshallerPool pool = getPoolInstance();
+            final MarshallerPool pool   = getPoolInstance();
             final Marshaller marshaller = pool.acquireMarshaller();
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
             marshaller.marshal(this, getMainfile());
@@ -203,29 +281,34 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
         return preferredFormat;
     }
     
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public synchronized List<GridSampleDimension> getSampleDimensions() throws DataStoreException {
-        if(cacheDimensions==null){
-            if(sampleDimensions==null || sampleDimensions.isEmpty()) return null;
+        if (cacheDimensions == null) {
+            if (sampleDimensions == null || sampleDimensions.isEmpty()) return null;
             cacheDimensions = new CopyOnWriteArrayList<>();
-            for(XMLSampleDimension xsd : sampleDimensions){
+            for (XMLSampleDimension xsd : sampleDimensions) {
                 cacheDimensions.add(xsd.buildSampleDimension());
             }
         }
-
         return cacheDimensions;
     }
 
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public void setSampleDimensions(List<GridSampleDimension> dimensions) throws DataStoreException {
-        if(dimensions==null) return;
+        if (dimensions == null) return;
         this.cacheDimensions = null; //clear cache
 
-        if(sampleDimensions==null) sampleDimensions = new CopyOnWriteArrayList<>();
+        if (sampleDimensions == null) sampleDimensions = new CopyOnWriteArrayList<>();
         sampleDimensions.clear();
-        for(GridSampleDimension dimension : dimensions){
+        for (GridSampleDimension dimension : dimensions) {
             final SampleDimensionType sdt = dimension.getSampleDimensionType();
-            final XMLSampleDimension dim = new XMLSampleDimension();
+            final XMLSampleDimension dim  = new XMLSampleDimension();
             dim.fill(dimension);
             dim.setSampleType(sdt);
             sampleDimensions.add(dim);
@@ -233,30 +316,205 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
         save();
     }
 
+    /**
+     * Returns {@link ColorModel} associated with internal pyramid data.
+     * 
+     * Note : if internal {@link ColorModel} is {@code null}, the expected sample 
+     * model is re-built from internal unmarshalling informations which are :<br>
+     * - {@linkplain #bitPerSample bit Per Sample}<br>
+     * - {@linkplain #nbBands band number}<br>
+     * - {@linkplain #samplePerPixel sample Per Pixel}<br>
+     * - {@linkplain #planarConfiguration planar configuration}<br>
+     * - {@linkplain #photometricInterpretation photometric interpretation}<br>
+     * - {@linkplain #sampleFormat sample format}<br><br>
+     * 
+     * Moreover should return {@code null} when old pyramid was unmarshall, where
+     * internal color model informations was missing.
+     * 
+     * @return {@link ColorModel} associated with internal pyramid data.
+     * @throws IllegalArgumentException if photometric interpretation is define 
+     * as palette (photometricInterpretation == 3) and colorMap is {@code null}.
+     * @see ImageUtils#createColorModel(int, int, short, short, long[]) 
+     */
     @Override
     public ColorModel getColorModel() {
-        return null;
-    }
-
-    @Override
-    public void setColorModel(ColorModel colorModel) throws DataStoreException {
-    }
-
-    @Override
-    public SampleModel getSampleModel() throws DataStoreException {
-        return null;
-    }
-
-    @Override
-    public void setSampleModel(SampleModel sampleModel) throws DataStoreException {
-        
+        if (colorModel == null) {
+            if (checkAttributs()) {
+                colorModel = ImageUtils.createColorModel(bitPerSample, nbBands, 
+                        (short) photometricInterpretation, (short) sampleFormat, convertColorMap(colorMap));
+            }
+            //-- else do nothing case where unmarshall old pyramid. older comportement.
+        }
+        return colorModel;
     }
     
+    /**
+     * Convert an integer array into a long array.
+     * 
+     * @param colorMap
+     * @return 
+     */
+    private long[] convertColorMap (final int[] colorMap) {
+        if (colorMap != null) {
+            final int l = colorMap.length;
+            final long[] col = new long[l];
+            for (int p = 0; p < l; p++) col[p] = colorMap[p];
+            return col;
+        }
+        return null;
+    }
+
+    /**
+     * Set the associate internal pyramid data {@link ColorModel}.<br>
+     * 
+     * Note : also set some attributs needed to marshall / unmarshall. 
+     * 
+     * @param colorModel {@code ColorModel} internal data.
+     * @throws DataStoreException 
+     * @see #photometricInterpretation
+     */
+    @Override
+    public void setColorModel(ColorModel colorModel) throws DataStoreException {
+        //--photometric
+        this.photometricInterpretation = ImageUtils.getPhotometricInterpretation(colorModel);
+        if (photometricInterpretation == 3) {
+            assert colorModel instanceof IndexColorModel : "with photometric interpretation "
+                    + "define as palette color model should be instance of IndexColorModel.";
+            final IndexColorModel indexColorMod = ((IndexColorModel) colorModel);
+            int mapSize = indexColorMod.getMapSize();
+            colorMap  = new int[mapSize];
+            indexColorMod.getRGBs(colorMap);
+        }
+        this.colorModel = colorModel;
+        save();
+    }
+
+    /**
+     * Returns {@link SampleModel} associated with internal pyramid data.
+     * 
+     * Note : if internal {@link SampleModel} is {@code null}, the expected sample 
+     * model is re-built from internal unmarshalling informations which are :<br>
+     * - {@linkplain #bitPerSample bit Per Sample}<br>
+     * - {@linkplain #nbBands band number}<br>
+     * - {@linkplain #samplePerPixel sample Per Pixel}<br>
+     * - {@linkplain #planarConfiguration planar configuration}<br>
+     * - {@linkplain #photometricInterpretation photometric interpretation}<br>
+     * - {@linkplain #sampleFormat sample format}<br><br>
+     * 
+     * Moreover should return {@code null} when old pyramid was unmarshall, where
+     * internal sample model informations was missing.
+     * 
+     * @return {@link SampleModel} associated with internal pyramid data.
+     * @see ImageUtils#buildImageTypeSpecifier(int, int, short, short, short, long[]) 
+     */
+    @Override
+    public SampleModel getSampleModel() {
+        if (sampleModel == null) {
+            final ColorModel colMod = getColorModel();
+            if (colMod != null && planarConfiguration != -1) {
+                //-- we can directly create sample model, attributs have already been checked.
+                sampleModel = ImageUtils.createSampleModel((short) planarConfiguration, colorModel);
+                sampleType  = sampleModel.getDataType();
+            }
+            //-- else do nothing case where unmarshall old pyramid. older comportement.
+        }
+        return sampleModel;
+    }
+
+    /**
+     * Returns {@code true} if all needed attributs to re-build appropriate 
+     * {@link SampleModel} and {@link ColorModel} else return {@code false}.
+     * 
+     * @return 
+     */
+    private boolean checkAttributs() {
+        return (bitPerSample != -1) 
+            && (nbBands != -1) 
+            && (samplePerPixel != -1) 
+            && (sampleFormat != -1) 
+            && (planarConfiguration != -1) 
+            && (photometricInterpretation != -1) ;
+    }
+    
+    /**
+     * Set the associate internal pyramid data {@link SampleModel}.<br>
+     * note : also set some attributs needed to marshall/unmarshall pyramid.
+     * 
+     * @param sampleModel expected {@link SampleModel} needed to marshall.
+     * @throws org.apache.sis.storage.DataStoreException if problem during XML save.
+     * @see #nbBands
+     * @see #sampleType
+     * @see #samplePerPixel
+     */
+    @Override
+    public void setSampleModel(SampleModel sampleModel) throws DataStoreException {
+        this.sampleType          = sampleModel.getDataType();
+        this.nbBands             = sampleModel.getNumBands();
+        sampleFormat             = ImageUtils.getSampleFormat(sampleModel);
+        final int[] bitPerSample = sampleModel.getSampleSize();
+        samplePerPixel           = bitPerSample.length;
+        assert bitPerSample.length == nbBands;
+        this.bitPerSample        = bitPerSample[0];
+        planarConfiguration      = ImageUtils.getPlanarConfiguration(sampleModel);
+        this.sampleModel         = sampleModel;
+        save();
+    }
+    
+    /**
+     * Verify conformity between a {@link SampleModel} and {@link ColorModel} given by a tile which WILL BE stored 
+     * into this pyramid and the already pyramid setted sampleModel.
+     * 
+     * If they haven't got any {@link SampleModel} and {@link ColorModel} precedently setted, 
+     * this method set them automaticaly, from image parameter. 
+     * 
+     * @param image {@link RenderedImage} which contain samplemodel color model informations.
+     */
+    private void checkOrSetSampleColor(final RenderedImage image) throws DataStoreException {
+        final SampleModel imgSm = image.getSampleModel();
+        final SampleModel sm = getSampleModel();
+        if (sm != null) {
+            if (imgSm.getDataType() != sampleType) 
+                throw new IllegalArgumentException(String.format("Mismatch sample type. Expected : %d .Found : %d", sampleType, imgSm.getDataType()));
+            
+            if (imgSm.getNumBands() != nbBands) 
+                throw new IllegalArgumentException(String.format("Mismatch bands number. Expected : %d .Found : %d", nbBands, imgSm.getNumBands()));
+            
+            if (ImageUtils.getSampleFormat(imgSm) != sampleFormat) 
+                throw new IllegalArgumentException(String.format("Mismatch sample format. Expected : %d .Found : %d", sampleFormat, ImageUtils.getSampleFormat(imgSm)));
+        
+            if (imgSm.getSampleSize()[0] != bitPerSample) 
+                throw new IllegalArgumentException(String.format("Mismatch sample size (bits per samples). Expected : %d .Found : %d", bitPerSample, imgSm.getSampleSize()[0]));
+            
+            if (imgSm.getSampleSize().length != samplePerPixel) 
+                throw new IllegalArgumentException(String.format("Mismatch sample per pixel. Expected : %d .Found : %d", samplePerPixel, imgSm.getSampleSize().length));
+            
+            if (ImageUtils.getPlanarConfiguration(imgSm) != planarConfiguration) 
+                throw new IllegalArgumentException(String.format("Mismatch planar configuration. Expected : %d .Found : %d", planarConfiguration, ImageUtils.getPlanarConfiguration(imgSm)));
+        } else {
+            setSampleModel(imgSm);
+        }
+        
+        final ColorModel cm    = getColorModel();
+        final ColorModel imgCm = image.getColorModel();
+        if (cm != null) {
+            if (ImageUtils.getPhotometricInterpretation(cm) != photometricInterpretation) 
+                throw new IllegalArgumentException(String.format("Mismatch photometric interpretation. Expected : %d .Found : %d", photometricInterpretation, ImageUtils.getPhotometricInterpretation(cm)));
+        } else {
+            setColorModel(imgCm);
+        }
+    }
+    
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public ViewType getPackMode() {
         return ViewType.valueOf(packMode);
     }
 
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public void setPackMode(ViewType packMode) {
         this.packMode = packMode.name();
@@ -266,11 +524,17 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
     // Creation,Edition methods ////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
     
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public boolean isWritable() throws CoverageStoreException {
         return true;
     }
 
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public Pyramid createPyramid(CoordinateReferenceSystem crs) throws DataStoreException {
         final XMLPyramidSet set = getPyramidSet();
@@ -279,11 +543,17 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
         return pyramid;
     }
 
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public void deletePyramid(String pyramidId) throws DataStoreException {
         throw new DataStoreException("Not supported yet.");
     }
 
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public GridMosaic createMosaic(String pyramidId, Dimension gridSize,
     Dimension tilePixelSize, DirectPosition upperleft, double pixelscale) throws DataStoreException {
@@ -308,12 +578,18 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
 
     /**
      * {@inheritDoc }.
+     * @throws java.lang.IllegalArgumentException if mismatch in image DataType or image band number.
      */
     @Override
     public void writeTile(String pyramidId, String mosaicId, int col, int row, RenderedImage image) throws DataStoreException {
         final XMLPyramidSet set = getPyramidSet();
         final XMLPyramid pyramid = (XMLPyramid) set.getPyramid(pyramidId);
         final XMLMosaic mosaic = pyramid.getMosaic(mosaicId);
+
+        //-- check conformity between internal data and currentImage.
+        //-- if no sm and cm automatical set from image (use for the first insertion)
+        checkOrSetSampleColor(image);
+        
         mosaic.createTile(col,row,image);
         if (!mosaic.cacheTileState && mosaic.tileExist != null) {
             save();
@@ -329,6 +605,11 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
         final XMLPyramidSet set = getPyramidSet();
         final XMLPyramid pyramid = (XMLPyramid) set.getPyramid(pyramidId);
         final XMLMosaic mosaic = pyramid.getMosaic(mosaicId);
+        
+        //-- check conformity between internal data and currentImage.
+        //-- if no sm and cm automatical set from image (use for the first insertion)
+        checkOrSetSampleColor(image);
+        
         mosaic.writeTiles(image, area, onlyMissing, monitor);
         if (!mosaic.cacheTileState && mosaic.tileExist != null) {
             save();
@@ -342,5 +623,4 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
     public void deleteTile(String pyramidId, String mosaicId, int col, int row) throws DataStoreException {
         throw new DataStoreException("Not supported yet.");
     }
-
 }
