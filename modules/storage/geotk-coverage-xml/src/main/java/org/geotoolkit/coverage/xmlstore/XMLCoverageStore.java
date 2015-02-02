@@ -65,7 +65,8 @@ public class XMLCoverageStore extends AbstractCoverageStore {
         final URL rootPath = Parameters.value(XMLCoverageStoreFactory.PATH, params);
         root = new File(rootPath.toURI());
         Boolean tmpCacheState = Parameters.value(XMLCoverageStoreFactory.CACHE_TILE_STATE, params);
-        cacheTileState = (tmpCacheState == null)? false : tmpCacheState;
+        //cacheTileState = (tmpCacheState == null)? false : tmpCacheState;
+        cacheTileState = true;
         explore();
     }
 

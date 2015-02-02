@@ -19,6 +19,9 @@ package org.geotoolkit.gui.javafx.layer.style;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
+import javafx.scene.control.Button;
+import javafx.scene.layout.GridPane;
 import javax.measure.unit.NonSI;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.gui.javafx.layer.FXLayerStylePane;
@@ -50,6 +53,8 @@ public class FXStyleColorMapPane extends FXLayerStylePane {
     
     @FXML
     private FXColorMap uiColorMap;
+    @FXML
+    private Button uiApply;
     
     private CoverageMapLayer layer;
     //keep track of where the symbolizer was to avoid rewriting the complete style
@@ -87,8 +92,7 @@ public class FXStyleColorMapPane extends FXLayerStylePane {
                 selection, OverlapBehavior.LATEST_ON_TOP, colorMap, enchance, relief, null);
 
         if(parentRule!=null){
-            parentRule.symbolizers().remove(parentIndex);
-            parentRule.symbolizers().add(parentIndex,symbol);
+            parentRule.symbolizers().set(parentIndex,symbol);
         }else{
             //style did not exist, add a new feature type style for it
             final MutableFeatureTypeStyle fts = GO2Utilities.STYLE_FACTORY.featureTypeStyle(symbol);
@@ -102,6 +106,11 @@ public class FXStyleColorMapPane extends FXLayerStylePane {
      * Called by FXMLLoader after creating controller.
      */
     public void initialize(){
+        //move apply button on same line as add/remove values of colormap panel
+        final GridPane grid = (GridPane) uiColorMap.getChildren().get(0);
+        getChildren().remove(uiApply);
+
+        grid.add(uiApply, 4, 8);
     }
     
     @Override

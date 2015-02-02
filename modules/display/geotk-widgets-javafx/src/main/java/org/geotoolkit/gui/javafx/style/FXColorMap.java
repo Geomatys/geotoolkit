@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2014, Geomatys
+ *    (C) 2014-2015, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -20,9 +20,12 @@ package org.geotoolkit.gui.javafx.style;
 import java.awt.Color;
 import java.awt.image.RenderedImage;
 import java.io.IOException;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -34,18 +37,23 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.Border;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.CornerRadii;
 import javafx.util.Callback;
-import javafx.util.StringConverter;
 import jidefx.scene.control.field.NumberField;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.CoverageReference;
@@ -55,12 +63,15 @@ import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
+import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.filter.DefaultLiteral;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import static org.geotoolkit.gui.javafx.style.FXStyleElementController.getFilterFactory;
 import static org.geotoolkit.gui.javafx.style.FXStyleElementController.getStyleFactory;
 import org.geotoolkit.gui.javafx.util.FXNumberSpinner;
+import org.geotoolkit.gui.javafx.util.FXTableCell;
 import org.geotoolkit.gui.javafx.util.FXUtilities;
+import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.internal.Loggers;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.MapLayer;
@@ -76,6 +87,7 @@ import org.geotoolkit.style.function.InterpolationPoint;
 import org.geotoolkit.style.function.Jenks;
 import org.geotoolkit.style.function.Method;
 import org.geotoolkit.style.function.Mode;
+import org.geotoolkit.style.function.ThreshholdsBelongTo;
 import org.geotoolkit.style.interval.Palette;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.coverage.grid.GridEnvelope;
@@ -94,21 +106,19 @@ import org.opengis.style.ColorMap;
  * @author Johann Sorel (Geomatys)
  */
 public class FXColorMap extends FXStyleElementController<ColorMap> {
-    
+
+    private static final NumberFormat FORMATTER = new DecimalFormat("#0.000");
+
     private static final Literal TRS = new DefaultLiteral(new Color(0, 0, 0, 0));
     
     @FXML
     private CheckBox uiInvert;
-    @FXML
-    private Label uiMinimumLbl;
     @FXML
     private CheckBox uiNaN;
     @FXML
     private Label uiMethodLbl;
     @FXML
     private FXNumberSpinner uiBand;
-    @FXML
-    private Label uiMaximumLbl;
     @FXML
     private TableView<InterOrCategorize> uiTable;
     @FXML
@@ -126,7 +136,7 @@ public class FXColorMap extends FXStyleElementController<ColorMap> {
     @FXML
     private FXNumberSpinner uiMinimum;
     @FXML
-    private ComboBox<Class> uiMethod;
+    private ComboBox<String> uiMethod;
     @FXML
     private Label uiPaletteLbl;
     @FXML
@@ -139,16 +149,16 @@ public class FXColorMap extends FXStyleElementController<ColorMap> {
     private ComboBox<Object> uiPalette;
 
     private Class function = null;
-    private final Value1Column value1Col = new Value1Column();
-    private final Value2Column value2Col = new Value2Column();
-    private final ColorColumn colorCol = new ColorColumn();
+    private Value1Column value1Col;
+    private Value2Column value2Col;
+    private ColorColumn colorCol;
     
     
     @FXML
     private void methodChange(ActionEvent event) {
-        final Object method = uiMethod.getSelectionModel().getSelectedItem();
+        final String method = uiMethod.getSelectionModel().getSelectedItem();
 
-        if(Interpolate.class.equals(method)){
+        if("Interpolate".equals(method)){
             if(Interpolate.class.isAssignableFrom(function)){
                 //nothing to do
                 return;
@@ -163,13 +173,14 @@ public class FXColorMap extends FXStyleElementController<ColorMap> {
                 uiTable.getItems().clear();
             }
             function = Interpolate.class;
-        }else if(Categorize.class.equals(method)){
+            
+        }else if("Categorize".equals(method)){
             if(Categorize.class.isAssignableFrom(function)){
                 //nothing to do
                 return;
             }else if(Interpolate.class.isAssignableFrom(function)){
                 //we need to convert from interpolate to categorize
-                final List<InterOrCategorize> points = new ArrayList<>(uiTable.getItems());
+                final List<InterOrCategorize> points = new ArrayList<>();
                 points.add(new InterOrCategorize(StyleConstants.CATEGORIZE_LESS_INFINITY, TRS));
                 points.addAll(uiTable.getItems());
                 uiTable.getItems().setAll(points);
@@ -418,8 +429,64 @@ public class FXColorMap extends FXStyleElementController<ColorMap> {
             }
         }
 
-        uiTable.getItems().setAll(lst);
+        final String method = uiMethod.getSelectionModel().getSelectedItem();
+        if("Categorize".equals(method)){
+            if(!lst.isEmpty()){
+                final InterOrCategorize ioc = lst.get(0);
+                if(!StyleConstants.CATEGORIZE_LESS_INFINITY.equals(ioc.value.getValue())){
+                    //first category must contains -inf
+                    lst.add(new InterOrCategorize(StyleConstants.CATEGORIZE_LESS_INFINITY, TRS));
+                }
+            }
+        }
 
+        uiTable.getItems().setAll(lst);
+        updateColumns();
+        updateColorMapValue();
+    }
+
+    private void updateColorMapValue(){
+        final ObservableList<InterOrCategorize> lst = uiTable.getItems();
+        final String method = uiMethod.getSelectionModel().getSelectedItem();
+        if("Interpolate".equals(method)){
+            final List<InterpolationPoint> points = new ArrayList<>();
+            for(InterOrCategorize ioc : lst){
+                points.add(GO2Utilities.STYLE_FACTORY.interpolationPoint(
+                        ioc.value.get().evaluate(null, Number.class),
+                        ioc.color.get()));
+            }
+
+            final Interpolate fct = GO2Utilities.STYLE_FACTORY.interpolateFunction(DEFAULT_CATEGORIZE_LOOKUP, new ArrayList(points),
+                    Method.COLOR, Mode.LINEAR, DEFAULT_FALLBACK);
+            valueProperty().set(GO2Utilities.STYLE_FACTORY.colorMap(fct));
+        }else if("Categorize".equals(method)){
+            final Expression lookup = DEFAULT_CATEGORIZE_LOOKUP;
+            final Literal fallback = DEFAULT_FALLBACK;
+
+            final Map<Expression,Expression> map = new HashMap<>();
+            for(InterOrCategorize ioc : lst){
+                map.put(ioc.value.get(), ioc.color.get());
+            }
+
+            final Categorize fct = GO2Utilities.STYLE_FACTORY.categorizeFunction(lookup, map, ThreshholdsBelongTo.PRECEDING, fallback);
+            valueProperty().set(GO2Utilities.STYLE_FACTORY.colorMap(fct));
+        }
+    }
+
+    private void updateColumns(){
+        final String method = uiMethod.getSelectionModel().getSelectedItem();
+
+        uiTable.getColumns().clear();
+        if("Interpolate".equals(method)){
+            value1Col.setText(GeotkFX.getString(this, "val"));
+            uiTable.getColumns().add(value1Col);
+            uiTable.getColumns().add(colorCol);
+        }else if("Categorize".equals(method)){
+            value1Col.setText(GeotkFX.getString(FXColorMap.class, "valmin"));
+            uiTable.getColumns().add(value1Col);
+            uiTable.getColumns().add(value2Col);
+            uiTable.getColumns().add(colorCol);
+        }
     }
 
     public int getSelectedBand(){
@@ -501,7 +568,7 @@ public class FXColorMap extends FXStyleElementController<ColorMap> {
         uiMaximum.getNumberField().setEditable(true);
 
         if(Interpolate.class.isAssignableFrom(function)){
-            uiMethod.getSelectionModel().select(Interpolate.class);
+            uiMethod.getSelectionModel().select("Interpolate");
             uiPalette.setItems(FXCollections.observableList(FXUtilities.PALETTES));
             value2Col.setVisible(false);
 
@@ -511,8 +578,8 @@ public class FXColorMap extends FXStyleElementController<ColorMap> {
             double min = Double.NaN;
             double max = Double.NaN;
             for(int i=0,n=ips.size();i<n;i++){
-                final double v = ips.get(i).value.get().evaluate(null, Double.class);
-                if(!Double.isNaN(v)){
+                final Double v = ips.get(i).value.get().evaluate(null, Double.class);
+                if(v!=null && !Double.isNaN(v)){
                     min = Double.isNaN(min) ? v : Math.min(v, min);
                     max = Double.isNaN(max) ? v : Math.max(v, max);
                 }else{
@@ -527,7 +594,7 @@ public class FXColorMap extends FXStyleElementController<ColorMap> {
             uiNaN.setSelected(hasNaN);
 
         }else if(Categorize.class.isAssignableFrom(function)){
-            uiMethod.getSelectionModel().select(Categorize.class);
+            uiMethod.getSelectionModel().select("Categorize");
             uiPalette.setItems(FXCollections.observableList(FXUtilities.PALETTES));
             value2Col.setVisible(true);
 
@@ -559,7 +626,7 @@ public class FXColorMap extends FXStyleElementController<ColorMap> {
             uiNaN.setSelected(hasNaN);
 
         }else if(Jenks.class.isAssignableFrom(function)){
-            uiMethod.getSelectionModel().select(Jenks.class);
+            uiMethod.getSelectionModel().select("Jenks");
             uiPalette.setItems(FXCollections.observableList(FXUtilities.PALETTES_NAMED));
             uiInvert.setDisable(true);
             uiMinimum.setDisable(true);
@@ -585,6 +652,8 @@ public class FXColorMap extends FXStyleElementController<ColorMap> {
         uiGenerate.setDisable(da);
         uiDivision.setDisable(da);
         uiDivisionLbl.setDisable(da);
+        
+        updateColumns();
     }
     
     private void initBandSpinner() {
@@ -641,9 +710,12 @@ public class FXColorMap extends FXStyleElementController<ColorMap> {
     public void initialize() {
         super.initialize();
         
+        value1Col = new Value1Column();
+        value2Col = new Value2Column();
+        colorCol = new ColorColumn();
+
         uiNoData.setVisible(false);
         uiDynamic.setVisible(false);
-        //TODO no data editor
         
         uiDivision.getNumberField().setNumberType(NumberField.NumberType.Integer);
         uiDivision.valueProperty().set(10);        
@@ -656,52 +728,44 @@ public class FXColorMap extends FXStyleElementController<ColorMap> {
         uiPalette.setItems(FXCollections.observableList(FXUtilities.PALETTES));        
         uiPalette.setCellFactory((ListView<Object> param) -> new FXPaletteCell());
         uiPalette.setButtonCell((new FXPaletteCell()));
+        if(!uiPalette.getItems().isEmpty()){
+            uiPalette.getSelectionModel().select(0);
+        }
         
-        final List<Class> methods = new ArrayList<Class>();
-        methods.add(Interpolate.class);
-        methods.add(Categorize.class);
-        methods.add(Jenks.class);
+        final List<String> methods = new ArrayList<>();
+        methods.add("Interpolate");
+        methods.add("Categorize");
+        //methods.add(Jenks.class); //TODO
         
-        uiMethod.setItems(FXCollections.observableList(methods));        
-        uiMethod.setCellFactory((ListView<Class> param) -> new ListCell<Class>(){            
-            @Override
-            protected void updateItem(Class item, boolean empty) {
-                if(item instanceof Class){
-                    setText(((Class)item).getSimpleName());
-                }else{
-                    setText("");
-                }  
-            }
-        });
-        uiMethod.setButtonCell(new ListCell<Class>(){            
-            @Override
-            protected void updateItem(Class item, boolean empty) {
-                if(item instanceof Class){
-                    setText(((Class)item).getSimpleName());
-                }else{
-                    setText("");
-                }  
-            }
-        });
+        uiMethod.setItems(FXCollections.observableList(methods));
         function = Interpolate.class;
-        uiMethod.getSelectionModel().select(Interpolate.class);
         
         uiTable.setItems(FXCollections.observableArrayList());
-        uiTable.getColumns().add(value1Col);
-        uiTable.getColumns().add(value2Col);
-        uiTable.getColumns().add(colorCol);
         
         uiTable.itemsProperty().addListener((ObservableValue<? extends ObservableList<InterOrCategorize>> observable, ObservableList<InterOrCategorize> oldValue, ObservableList<InterOrCategorize> newValue) -> {
             valueProperty().set(buildColorMap());
         });
+        uiTable.setEditable(true);
 
-        FXUtilities.hideTableHeader(uiTable);
-        
+        uiMethod.getSelectionModel().select("Interpolate");
+        updateColumns();
     }
         
     private ColorMap buildColorMap(){
-          
-        
+        return null;
+    }
+
+    public InterOrCategorize getNext(InterOrCategorize current){
+        final ObservableList<InterOrCategorize> items = uiTable.getItems();
+        for(int i=0,n=items.size();i<n;i++){
+            if(items.get(i) == current){
+                if(i<n-1){
+                    return items.get(i+1);
+                }else{
+                    return null;
+                }
+            }
+        }
         return null;
     }
     
@@ -728,48 +792,167 @@ public class FXColorMap extends FXStyleElementController<ColorMap> {
             this.value.set(entry.getValue());
         }
         
-        
     }
     
-    private static class Value1Column extends TableColumn<InterOrCategorize, Expression>{
-        public Value1Column() {            
+    private class Value1Column extends TableColumn<InterOrCategorize, Expression>{
+        public Value1Column() {
+            setText(GeotkFX.getString(FXColorMap.class, "valmin"));
+            setEditable(true);
             setCellValueFactory((CellDataFeatures<InterOrCategorize, Expression> param) -> (ObservableValue)param.getValue().value);
-
             setCellFactory(new Callback<TableColumn<InterOrCategorize, Expression>, TableCell<InterOrCategorize, Expression>>() {
-
                 @Override
                 public TableCell<InterOrCategorize, Expression> call(TableColumn<InterOrCategorize, Expression> param) {
-                    return new TextFieldTableCell<>(new StringConverter<Expression>() {
-
-                        @Override
-                        public String toString(Expression object) {
-                            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-                        }
-
-                        @Override
-                        public Expression fromString(String string) {
-                            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-                        }
-                    });
+                    return new FXValueExpressionCell();
                 }
             });
         }
         
     }
     
-    private static class Value2Column extends TableColumn<InterOrCategorize, Expression>{
-        public Value2Column() {            
-            setCellValueFactory((TableColumn.CellDataFeatures<InterOrCategorize, Expression> param) -> (ObservableValue)param.getValue().value);            
+    private class Value2Column extends TableColumn<InterOrCategorize, Expression>{
+        public Value2Column() {
+            setText(GeotkFX.getString(FXColorMap.class, "valmax"));
+            setEditable(false);
+            setCellValueFactory(new Callback<CellDataFeatures<InterOrCategorize, Expression>, ObservableValue<Expression>>() {
+
+                public ObservableValue<Expression> call(TableColumn.CellDataFeatures<InterOrCategorize, Expression> param) {
+                    final InterOrCategorize ioc = param.getValue();
+                    final InterOrCategorize next = getNext(ioc);
+                    if(next!=null){
+                        return (ObservableValue)next.value;
+                    }else{
+                        return new SimpleObjectProperty<>(GO2Utilities.FILTER_FACTORY.literal(Double.POSITIVE_INFINITY));
+                    }
+                }
+            });
+            setCellFactory(new Callback<TableColumn<InterOrCategorize, Expression>, TableCell<InterOrCategorize, Expression>>() {
+                @Override
+                public TableCell<InterOrCategorize, Expression> call(TableColumn<InterOrCategorize, Expression> param) {
+                    return new FXValueExpressionCell();
+                }
+            });
         }
-        
+
     }
-    
+
     private static class ColorColumn extends TableColumn<InterOrCategorize, Expression>{
-        public ColorColumn() {            
-            setCellValueFactory((TableColumn.CellDataFeatures<InterOrCategorize, Expression> param) -> (ObservableValue)param.getValue().color);            
+
+        public ColorColumn() {
+            setText(GeotkFX.getString(FXColorMap.class, "color"));
+            setMinWidth(120);
+            setMaxWidth(120);
+            setPrefWidth(120);
+            setResizable(false);
+            setEditable(false);
+            setCellValueFactory((TableColumn.CellDataFeatures<InterOrCategorize, Expression> param) -> (ObservableValue)param.getValue().color);
+            setCellFactory(new Callback<TableColumn<InterOrCategorize, Expression>, TableCell<FXColorMap.InterOrCategorize, Expression>>() {
+                @Override
+                public TableCell<InterOrCategorize, Expression> call(TableColumn<InterOrCategorize, Expression> param) {
+                    return new TableCell<InterOrCategorize,Expression>(){
+                        private final BorderPane pane = new BorderPane();
+                        {
+                            pane.setBorder(Border.EMPTY);
+                            pane.setPadding(Insets.EMPTY);
+                            setBorder(Border.EMPTY);
+                            setPadding(Insets.EMPTY);
+                        }
+                        @Override
+                        protected void updateItem(Expression item, boolean empty) {
+                            super.updateItem(item, empty);
+
+                            if(!empty && item!=null){
+                                final Color color = item.evaluate(null, Color.class);
+                                if(color!=null){
+                                    setGraphic(pane);
+                                    pane.setBackground(new Background(new BackgroundFill(FXUtilities.toFxColor(color), CornerRadii.EMPTY, Insets.EMPTY)));
+                                }else{
+                                    setGraphic(null);
+                                }
+                            }else{
+                                setGraphic(null);
+                            }
+                        }
+
+                    };
+                }
+            });
         }
-        
+
     }
-    
+
+    private class FXValueExpressionCell extends FXTableCell<InterOrCategorize,Expression>{
+        private final FXNumberSpinner field = new FXNumberSpinner();
+
+        public FXValueExpressionCell() {
+            field.getNumberField().setNumberType(NumberField.NumberType.Normal);
+            setGraphic(field);
+            setAlignment(Pos.CENTER_RIGHT);
+            setContentDisplay(ContentDisplay.CENTER);
+        }
+
+        @Override
+        public void terminateEdit() {
+            final double v = field.valueProperty().get().doubleValue();
+            final Expression exp;
+            if(Double.isInfinite(v) && v<0){
+                exp = StyleConstants.CATEGORIZE_LESS_INFINITY;
+            }else{
+                exp = GO2Utilities.FILTER_FACTORY.literal(v);
+            }
+            commitEdit(exp);
+        }
+
+        @Override
+        public void startEdit() {
+            Number value = getItem().evaluate(null,Double.class);
+            if(StyleConstants.CATEGORIZE_LESS_INFINITY.equals(getItem())){
+                value = Double.NEGATIVE_INFINITY;
+            }
+            if (value == null) {
+                value = 0;
+            }
+            field.valueProperty().set(value);
+            super.startEdit();
+            setText(null);
+            setGraphic(field);
+            field.getNumberField().requestFocus();
+        }
+
+        @Override
+        public void commitEdit(Expression newValue) {
+            itemProperty().set(newValue);
+            super.commitEdit(newValue);
+            updateItem(newValue, false);
+
+            final InterOrCategorize ioc = (InterOrCategorize) getTableRow().getItem();
+            ioc.value.setValue(newValue);
+            updateColorMapValue();
+        }
+
+        @Override
+        public void cancelEdit() {
+            super.cancelEdit();
+            updateItem(getItem(), false);
+        }
+
+        @Override
+        protected void updateItem(Expression item, boolean empty) {
+            super.updateItem(item, empty);
+            setText(null);
+            setGraphic(null);
+            if (item != null) {
+                Object v = item.evaluate(null,Double.class);
+                if(StyleConstants.CATEGORIZE_LESS_INFINITY.equals(item)){
+                    v = Double.NEGATIVE_INFINITY;
+                }
+
+                if(v instanceof Double){
+                    final String str = FORMATTER.format(((Number)v).doubleValue());
+                    setText(str);
+                }
+            }
+        }
+
+    }
     
 }

@@ -19,6 +19,7 @@ package org.geotoolkit.filter;
 
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.AbstractJTSGeometry;
 import org.apache.sis.util.ObjectConverters;
+import org.apache.sis.util.UnconvertibleObjectException;
 import org.opengis.filter.expression.ExpressionVisitor;
 import org.opengis.filter.expression.Literal;
 import org.opengis.geometry.Geometry;
@@ -107,7 +108,13 @@ public class DefaultLiteral<T> extends AbstractExpression implements Literal{
             return false;
         }
 
-        final Object otherVal = ObjectConverters.convert(other.value, this.value.getClass());
+        final Object otherVal;
+        try{
+            otherVal = ObjectConverters.convert(other.value, this.value.getClass());
+        }catch(UnconvertibleObjectException ex){
+            //type can not be matched
+            return false;
+        }
         return this.value.equals(otherVal);
     }
 
