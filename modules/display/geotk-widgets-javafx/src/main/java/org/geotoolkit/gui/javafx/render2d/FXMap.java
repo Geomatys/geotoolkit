@@ -71,6 +71,7 @@ public class FXMap extends BorderPane {
     private final Canvas view = new ResizableCanvas();
     //used to repaint the buffer at regular interval until it is finished
     private final Timer progressTimer = new Timer(250, new ActionListener() {
+        @Override
         public void actionPerformed(ActionEvent e) {
             updateImage();
         }
@@ -137,7 +138,7 @@ public class FXMap extends BorderPane {
                     
                 }else if(J2DCanvas.TRANSFORM_KEY.equals(evt.getPropertyName())){
                     nextPreviousList.put(canvas.getCenterTransform());
-                }
+                } 
             }
         });
         canvas.getContainer().addPropertyChangeListener(new PropertyChangeListener() {

@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.gui.javafx.chooser;
 
+import java.awt.geom.NoninvertibleTransformException;
 import java.io.File;
 import java.util.prefs.Preferences;
 import javafx.scene.layout.BorderPane;
@@ -24,8 +25,10 @@ import javafx.stage.Window;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.PropertyException;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.gui.javafx.render2d.FXMap;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.owc.xml.OwcXmlIO;
+import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 
 /**
@@ -37,7 +40,9 @@ public class FXContextChooser extends BorderPane {
     private FXContextChooser(){
     }
     
-    public static MapContext showOpenChooser(Window owner) throws JAXBException, FactoryException, DataStoreException{
+    public static MapContext showOpenChooser(final FXMap map) throws JAXBException, FactoryException, DataStoreException, NoninvertibleTransformException, TransformException{
+        
+        final Window owner = map.getScene().getWindow();
         final FileChooser chooser = new FileChooser();
         chooser.setSelectedExtensionFilter(new FileChooser.ExtensionFilter("OWC Context", "xml"));        
         
@@ -49,17 +54,20 @@ public class FXContextChooser extends BorderPane {
             }
         }
         
-        
         final File file = chooser.showOpenDialog(owner);
         if(file!=null){
             setPreviousPath(file.getParentFile().getAbsolutePath());
-            return OwcXmlIO.read(file);
+            final MapContext context = OwcXmlIO.read(file);
+            map.getCanvas().setVisibleArea(context.getAreaOfInterest());
+            return context;
         }
         
         return null;
     }
     
-    public static File showSaveChooser(Window owner,MapContext context) throws JAXBException, PropertyException, FactoryException{
+    public static File showSaveChooser(FXMap map) throws JAXBException, PropertyException, FactoryException{
+        
+        final MapContext context = map.getContainer().getContext();
         final FileChooser chooser = new FileChooser();
         chooser.setSelectedExtensionFilter(new FileChooser.ExtensionFilter("OWC Context", "xml"));        
         
@@ -74,6 +82,7 @@ public class FXContextChooser extends BorderPane {
         final File file = chooser.showSaveDialog(null);
         
         if(file!=null){
+            context.setAreaOfInterest(map.getCanvas().getVisibleEnvelope());
             setPreviousPath(file.getParentFile().getAbsolutePath());
             OwcXmlIO.write(file,context);
         }

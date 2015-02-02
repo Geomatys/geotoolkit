@@ -17,7 +17,9 @@
 
 package org.geotoolkit.gui.javafx.render2d.data;
 
+import java.awt.geom.NoninvertibleTransformException;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.event.ActionEvent;
 import javax.xml.bind.JAXBException;
 import org.apache.sis.storage.DataStoreException;
@@ -27,6 +29,7 @@ import org.geotoolkit.gui.javafx.render2d.FXMapAction;
 import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.internal.Loggers;
 import org.geotoolkit.map.MapContext;
+import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 
 /**
@@ -45,13 +48,15 @@ public class FXOpenContextAction extends FXMapAction {
         if(map==null) return;
         
         try {
-            final MapContext context = FXContextChooser.showOpenChooser(map.getScene().getWindow());
+            final MapContext context = FXContextChooser.showOpenChooser(map);
             if(context!=null){
                 map.getContainer().setContext(context);
             }
 
         } catch (JAXBException | FactoryException | DataStoreException ex) {
             Loggers.DATA.log(Level.WARNING, ex.getMessage(), ex);
+        } catch (NoninvertibleTransformException | TransformException ex) {
+            Logger.getLogger(FXOpenContextAction.class.getName()).log(Level.SEVERE, null, ex);
         }
         
     }

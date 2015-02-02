@@ -43,7 +43,7 @@ public class FXSaveContextAction extends FXMapAction {
         if(map==null) return;
         
         try {
-            FXContextChooser.showSaveChooser(map.getScene().getWindow(), map.getContainer().getContext());
+            FXContextChooser.showSaveChooser(map);
 
         } catch (JAXBException | FactoryException ex) {
             Loggers.DATA.log(Level.WARNING, ex.getMessage(), ex);
