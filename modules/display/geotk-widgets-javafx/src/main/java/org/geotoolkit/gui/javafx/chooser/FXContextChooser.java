@@ -65,7 +65,7 @@ public class FXContextChooser extends BorderPane {
         return null;
     }
     
-    public static File showSaveChooser(FXMap map) throws JAXBException, PropertyException, FactoryException{
+    public static File showSaveChooser(FXMap map) throws JAXBException, PropertyException, FactoryException, TransformException{
         
         final MapContext context = map.getContainer().getContext();
         final FileChooser chooser = new FileChooser();
@@ -82,7 +82,7 @@ public class FXContextChooser extends BorderPane {
         final File file = chooser.showSaveDialog(null);
         
         if(file!=null){
-            context.setAreaOfInterest(map.getCanvas().getVisibleEnvelope());
+            context.setAreaOfInterest(map.getCanvas().getVisibleEnvelope2D());
             setPreviousPath(file.getParentFile().getAbsolutePath());
             OwcXmlIO.write(file,context);
         }

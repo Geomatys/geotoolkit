@@ -18,13 +18,16 @@
 package org.geotoolkit.gui.javafx.render2d.data;
 
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.event.ActionEvent;
 import javax.xml.bind.JAXBException;
+import javax.xml.bind.PropertyException;
 import org.geotoolkit.gui.javafx.chooser.FXContextChooser;
 import org.geotoolkit.gui.javafx.render2d.FXMap;
 import org.geotoolkit.gui.javafx.render2d.FXMapAction;
 import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.internal.Loggers;
+import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 
 /**
@@ -47,6 +50,8 @@ public class FXSaveContextAction extends FXMapAction {
 
         } catch (JAXBException | FactoryException ex) {
             Loggers.DATA.log(Level.WARNING, ex.getMessage(), ex);
+        } catch (TransformException ex) {
+            Logger.getLogger(FXSaveContextAction.class.getName()).log(Level.SEVERE, null, ex);
         }
         
     }
