@@ -184,7 +184,7 @@ public final class GridDomainAccessor extends MetadataNodeAccessor {
             }
             setOrigin(fixRoundingError(origin));
 
-            clearOffsetVecors();
+            clearOffsetVectors();
             final double[] vector = new double[gridDimension];
             for (int j=0; j<crsDimension; j++) {
                 for (int i=0; i<gridDimension; i++) {
@@ -209,6 +209,22 @@ public final class GridDomainAccessor extends MetadataNodeAccessor {
     }
 
     /**
+     * Gets the {@code "low"} and {@code "high"} attributes of the
+     * {@code "RectifiedGridDomain/Limits"} node.
+     *
+     * @return int[][] : 
+     *  int[0] is the lower bounds,
+     *  int[1] is the upper bounds
+     */
+    public int[][] getLimits() {
+        final MetadataNodeAccessor accessor = new MetadataNodeAccessor(this, "Limits", null);
+        return new int[][]{
+            accessor.getAttributeAsIntegers("low", false),
+            accessor.getAttributeAsIntegers("high", false)
+        };
+    }
+
+    /**
      * Sets the origin and offset vectors from the given affine transform.
      *
      * @param gridToCRS The affine transform to use for setting the origin and offset vectors.
@@ -221,7 +237,7 @@ public final class GridDomainAccessor extends MetadataNodeAccessor {
             gridToCRS.getTranslateY()  // Y_DIMENSION
         };
         setOrigin(fixRoundingError(vector));
-        clearOffsetVecors();
+        clearOffsetVectors();
         vector[X_DIMENSION]=gridToCRS.getScaleX(); vector[Y_DIMENSION]=gridToCRS.getShearY(); addOffsetVector(fixRoundingError(vector));
         vector[X_DIMENSION]=gridToCRS.getShearX(); vector[Y_DIMENSION]=gridToCRS.getScaleY(); addOffsetVector(fixRoundingError(vector));
     }
@@ -254,7 +270,7 @@ public final class GridDomainAccessor extends MetadataNodeAccessor {
     /**
      * Remove all children of {@code "OffsetVector"} node.
      */
-    private void clearOffsetVecors() {
+    public void clearOffsetVectors() {
         MetadataNodeAccessor accessor = offsetVectors;
         if (accessor == null) {
             offsetVectors = accessor = new MetadataNodeAccessor(this, "OffsetVectors", "OffsetVector");
@@ -419,7 +435,7 @@ public final class GridDomainAccessor extends MetadataNodeAccessor {
             checkDimension("gridToCrsDim", gridToCrsDim.length, gridDim);
         }
         setOrigin(origin);
-        clearOffsetVecors();
+        clearOffsetVectors();
         final double[] vector = new double[crsDim];
         for (int i=0; i<gridDim; i++) {
             final int j = (gridToCrsDim != null) ? gridToCrsDim[i] : i;
