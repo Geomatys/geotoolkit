@@ -2,7 +2,7 @@
  *    Geotoolkit.org - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2014, Geomatys
+ *    (C) 2014-2015, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -20,8 +20,10 @@ package org.geotoolkit.metadata.geotiff;
 import java.awt.Color;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.logging.Level;
@@ -32,12 +34,16 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import org.apache.sis.measure.NumberRange;
+import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.internal.image.io.DimensionAccessor;
+import org.geotoolkit.metadata.GeoTiffExtension;
 import org.geotoolkit.resources.Vocabulary;
+import org.geotoolkit.temporal.object.TemporalUtilities;
+import org.opengis.util.FactoryException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -123,7 +129,11 @@ public strictfp class ThirdPartyMetaDataReader {
             }
             if (scaleFound && samplePerPixels != -1) break;
         }
-        
+
+        String datetime = null;
+        String datetimeDigitized = null;
+        String datetimeOriginal = null;
+
         for(int i = 0, n = children.getLength(); i < n; i++){
             final IIOMetadataNode child = (IIOMetadataNode) children.item(i);
             final int number = Integer.valueOf(child.getAttribute("number"));
@@ -225,9 +235,45 @@ public strictfp class ThirdPartyMetaDataReader {
                     maxSampleValues = GeoTiffMetaDataUtils.readTiffLongs(sfNode);
                     break;
                 }
+                case GeoTiffConstants.DateTime : { //-- image date time
+                    final Node sfNode = child.getChildNodes().item(0);
+                    datetime = GeoTiffMetaDataUtils.readTiffAsciis(sfNode);
+                    break;
+                }
+                case GeoTiffConstants.DateTimeDigitized : { //-- image date time digitized
+                    final Node sfNode = child.getChildNodes().item(0);
+                    datetimeDigitized  = GeoTiffMetaDataUtils.readTiffAsciis(sfNode);
+                    break;
+                }
+                case GeoTiffConstants.DateTimeOriginal : { //-- image date time original
+                    final Node sfNode = child.getChildNodes().item(0);
+                    datetimeDigitized  = GeoTiffMetaDataUtils.readTiffAsciis(sfNode);
+                    break;
+                }
             }
         }
+
         
+        //add another dimension when a date information is available.
+        String date = null;
+        if(datetime!=null) date = datetime;
+        else if(datetimeOriginal!=null) date = datetimeOriginal;
+        else if(datetimeDigitized!=null) date = datetimeDigitized;
+        if(date != null){
+            try{
+                final Date dd = TemporalUtilities.parseDate(date.trim());
+                GeoTiffExtension.setOrCreateSliceDimension(metadata, CommonCRS.Temporal.JAVA.crs(), dd.getTime());
+            } catch (FactoryException | ParseException ex) {
+                // dates are often badly formatted, this is an extra crs information
+                // in the worse case the value will be in the metadatas.
+                // NOTE : should we raise an IOException or just log ?
+                // JSorel : since it doesn't compromise reading or georeferencing
+                //          I don't think it should block the reading
+                LOGGER.log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
+
+
 //        if (realFillValue == null && gDalMinSampleValue == null && gDalMaxSampleValue == null && minSampleValues == null && maxSampleValues == null) return;
         
         final DimensionAccessor accessor = new DimensionAccessor(metadata);

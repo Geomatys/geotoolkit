@@ -74,6 +74,7 @@ import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.internal.image.ScaledColorSpace;
 import org.geotoolkit.internal.image.io.DimensionAccessor;
 import org.geotoolkit.lang.SystemOverride;
+import org.geotoolkit.metadata.GeoTiffExtension;
 import org.geotoolkit.metadata.geotiff.GeoTiffMetaDataReader;
 import org.geotoolkit.resources.Errors;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
@@ -119,6 +120,7 @@ import org.geotoolkit.process.image.replace.ReplaceProcess;
  * @author Martin Desruisseaux (Geomatys)
  * @author Remi Marechal       (Geomatys)
  * @author Alexis Manin        (Geomatys)
+ * @author Johann Sorel        (Geomatys)
  * @version 3.16
  *
  * @since 3.16
@@ -299,6 +301,12 @@ public class TiffImageReader extends SpatialImageReader {
     private int sourceDataBufferType;
 
     /**
+     * Cache the curent geotiff extensions.
+     * To avoid scanning then more then once.
+     */
+    private List<GeoTiffExtension> extensions = null;
+
+    /**
      * Creates a new reader.
      *
      * @param provider The provider, or {@code null} if none.
@@ -375,13 +383,31 @@ public class TiffImageReader extends SpatialImageReader {
         fillRootMetadataNode(layerIndex);
         final IIOMetadata metadata = new IIOTiffMetadata(roots[layerIndex]);
         final GeoTiffMetaDataReader metareader = new GeoTiffMetaDataReader(metadata);
+        final SpatialMetadata spatialMetadata;
         try {
-            return metareader.readSpatialMetaData();
+            spatialMetadata = metareader.readSpatialMetaData();
         } catch (NoSuchAuthorityCodeException ex) {
             throw new IOException(ex);
         } catch (FactoryException ex) {
             throw new IOException(ex);
         }
+
+        //find geotiff extensions
+        if(extensions==null){
+            extensions = new ArrayList<>();
+            for(GeoTiffExtension ext : GeoTiffExtension.getExtensions()){
+                if(ext.isPresent(input)){
+                    extensions.add(ext.newInstance());
+                }
+            }
+        }
+
+        //fill extensions informations
+        for(GeoTiffExtension ext : extensions){
+            ext.fillSpatialMetaData(this,spatialMetadata);
+        }
+
+        return spatialMetadata;
     }
 
     /**
@@ -822,6 +848,9 @@ public class TiffImageReader extends SpatialImageReader {
         //-- to force open
         channel      = null;
         imageStream  = null;
+
+        // clear cache
+        extensions = null;
     }
 
     /**
