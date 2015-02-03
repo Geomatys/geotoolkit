@@ -17,14 +17,11 @@
 package org.geotoolkit.gui.javafx.style;
 
 import java.awt.Color;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.ColorPicker;
 import org.geotoolkit.gui.javafx.util.FXUtilities;
-import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.StyleConstants;
 import org.opengis.filter.expression.Expression;
 
@@ -32,60 +29,38 @@ import org.opengis.filter.expression.Expression;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class FXColorExpression extends FXStyleElementController<Expression> {
+public class FXColorExpression extends FXExpression {
 
-    @FXML
-    private FXSpecialExpressionButton uiSpecial;
-
-    @FXML
-    private ColorPicker uiPicker;
+    private final ColorPicker uiPicker = new ColorPicker();
     
     public FXColorExpression(){
+        uiPicker.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                value.set(getFilterFactory().literal(FXUtilities.toSwingColor(uiPicker.getValue())));
+            }
+        });
+        uiPicker.setMaxWidth(Double.MAX_VALUE);
     }
     
-    @Override
-    public Class<Expression> getEditedClass() {
-        return Expression.class;
-    }
-
     @Override
     public Expression newValue() {
         return StyleConstants.DEFAULT_FILL_COLOR;
     }
 
     @Override
-    public void initialize() {
-        super.initialize();
-        
-        uiPicker.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                value.set(getFilterFactory().literal(FXUtilities.toSwingColor(uiPicker.getValue())));
-                uiSpecial.valueProperty().setValue(value.get());
-            }
-        });
-        
-        uiSpecial.valueProperty().addListener(new ChangeListener<Expression>() {
-            @Override
-            public void changed(ObservableValue observable, Expression oldValue, Expression newValue) {
-                value.set(newValue);
-            }
-        });
+    protected Node getEditor() {
+        return uiPicker;
     }
     
     @Override
-    public void setLayer(MapLayer layer) {
-        super.setLayer(layer);
-        uiSpecial.setLayer(layer);
-    }
-    
-    @Override
-    protected void updateEditor(Expression styleElement) {
-        uiSpecial.valueProperty().set(styleElement);
-        final Color color = styleElement.evaluate(null,Color.class);
+    protected boolean canHandle(Expression exp) {
+        final Color color = exp.evaluate(null,Color.class);
         if(color!=null){
             uiPicker.setValue(FXUtilities.toFxColor(color));
+            return true;
         }
+        return false;
     }
     
 }

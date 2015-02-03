@@ -121,9 +121,9 @@ public class FXGraphic extends FXStyleElementController<Graphic>{
             resetValue();
         };
         
-        uiOpacity.getNumberField().minValueProperty().set(0);
-        uiOpacity.getNumberField().maxValueProperty().set(1);
-        uiSize.getNumberField().minValueProperty().set(0);
+        uiOpacity.getEditor().minValueProperty().set(0);
+        uiOpacity.getEditor().maxValueProperty().set(1);
+        uiSize.getEditor().minValueProperty().set(0);
         
         uiSize.valueProperty().addListener(changeListener);
         uiOpacity.valueProperty().addListener(changeListener);

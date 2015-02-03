@@ -21,14 +21,12 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
-import org.geotoolkit.filter.DefaultLiteral;
 import org.geotoolkit.gui.javafx.style.FXFont;
 import org.geotoolkit.gui.javafx.style.FXListExpression;
 import org.geotoolkit.gui.javafx.style.FXNumberExpression;
 import org.geotoolkit.gui.javafx.style.FXStroke;
 import org.geotoolkit.gui.javafx.style.FXStyleElementController;
 import org.geotoolkit.gui.javafx.style.FXTextExpression;
-import org.opengis.filter.expression.Literal;
 
 /**
  *
@@ -71,11 +69,11 @@ public class FXGraduation extends FXStyleElementController<GraduationSymbolizer.
     public void initialize() {
         super.initialize();
         
-        uiSide.getChoiceBox().setItems(FXCollections.observableArrayList(
+        uiSide.getEditor().setItems(FXCollections.observableArrayList(
                 GraduationSymbolizer.SIDE_LEFT,
                 GraduationSymbolizer.SIDE_RIGHT,
                 GraduationSymbolizer.SIDE_BOTH));
-        uiReverse.getChoiceBox().setItems(FXCollections.observableArrayList(
+        uiReverse.getEditor().setItems(FXCollections.observableArrayList(
                 GraduationSymbolizer.DIRECTION_FORWARD,
                 GraduationSymbolizer.DIRECTION_REVERSE));
         

@@ -55,9 +55,9 @@ public class FXStroke extends FXStyleElementController<Stroke> {
     public void initialize() {
         super.initialize();     
         
-        uiWidth.getNumberField().minValueProperty().set(0);
-        uiOpacity.getNumberField().minValueProperty().set(0);
-        uiOpacity.getNumberField().maxValueProperty().set(1);
+        uiWidth.getEditor().minValueProperty().set(0);
+        uiOpacity.getEditor().minValueProperty().set(0);
+        uiOpacity.getEditor().maxValueProperty().set(1);
         uiDash1.minValueProperty().set(0);
         uiDash2.minValueProperty().set(0);
         uiDash3.minValueProperty().set(0);

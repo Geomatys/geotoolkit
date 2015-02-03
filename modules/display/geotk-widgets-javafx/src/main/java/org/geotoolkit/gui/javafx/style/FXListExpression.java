@@ -18,9 +18,8 @@ package org.geotoolkit.gui.javafx.style;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.fxml.FXML;
 import javafx.scene.control.ChoiceBox;
-import org.geotoolkit.map.MapLayer;
+import jidefx.scene.control.editor.ChoiceBoxEditor;
 import org.geotoolkit.style.StyleConstants;
 import org.opengis.filter.expression.Expression;
 
@@ -28,59 +27,38 @@ import org.opengis.filter.expression.Expression;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class FXListExpression extends FXStyleElementController<Expression> {
+public class FXListExpression extends FXExpression {
 
-    @FXML private FXSpecialExpressionButton special;
-    @FXML private ChoiceBox<Expression> uiChoice;
+    private final ChoiceBox<Expression> uiChoice = new ChoiceBoxEditor<>();
     
     public FXListExpression(){
-    }
-    
-    @Override
-    public Class<Expression> getEditedClass() {
-        return Expression.class;
-    }
-
-    @Override
-    public Expression newValue() {
-        return StyleConstants.DEFAULT_STROKE_WIDTH;
-    }
-
-    public ChoiceBox<Expression> getChoiceBox() {
-        return uiChoice;
-    }
-
-    @Override
-    public void initialize() {
-        super.initialize();
-        
         uiChoice.valueProperty().addListener(new ChangeListener<Expression>() {
 
             @Override
             public void changed(ObservableValue<? extends Expression> observable, Expression oldValue, Expression newValue) {
                 value.set(uiChoice.valueProperty().get());
-                special.valueProperty().setValue(value.get());
             }
         });
-                
-        special.valueProperty().addListener(new ChangeListener<Expression>() {
-            @Override
-            public void changed(ObservableValue observable, Expression oldValue, Expression newValue) {
-                value.set(newValue);
-            }
-        });        
     }
     
     @Override
-    public void setLayer(MapLayer layer) {
-        super.setLayer(layer);
-        special.setLayer(layer);
+    public Expression newValue() {
+        return StyleConstants.DEFAULT_STROKE_WIDTH;
     }
 
     @Override
-    protected void updateEditor(Expression styleElement) {
-        special.valueProperty().set(styleElement);
-        uiChoice.valueProperty().set(styleElement);
+    public ChoiceBox<Expression> getEditor() {
+        return uiChoice;
+    }
+
+    @Override
+    protected boolean canHandle(Expression exp) {
+        if(uiChoice.getItems().contains(exp)){
+            uiChoice.valueProperty().set(exp);
+            return true;
+        }else{
+            return false;
+        }
     }
     
 }

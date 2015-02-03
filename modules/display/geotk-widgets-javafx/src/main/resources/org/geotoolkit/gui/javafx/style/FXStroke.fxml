@@ -39,7 +39,6 @@
             <FXNumberSpinner fx:id="uiDash1" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefWidth="60.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
             <FXNumberSpinner fx:id="uiDash2" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefWidth="60.0" GridPane.columnIndex="2" GridPane.rowIndex="5" />
             <FXNumberSpinner fx:id="uiDash3" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefWidth="60.0" GridPane.columnIndex="3" GridPane.rowIndex="5" />
-            <FXSpecialExpressionButton visible="false" GridPane.columnIndex="4" GridPane.rowIndex="5" />
          </children>
       </GridPane>
    </center>

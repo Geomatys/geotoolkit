@@ -60,11 +60,11 @@ public class FXFont extends FXStyleElementController<Font>{
     public void initialize() {
         super.initialize();        
                 
-        uiSize.getNumberField().minValueProperty().set(0);
+        uiSize.getEditor().minValueProperty().set(0);
         
-        uiWeight.getChoiceBox().setItems(FXCollections.observableArrayList(
+        uiWeight.getEditor().setItems(FXCollections.observableArrayList(
                 StyleConstants.FONT_WEIGHT_NORMAL,StyleConstants.FONT_WEIGHT_BOLD));
-        uiStyle.getChoiceBox().setItems(FXCollections.observableArrayList(
+        uiStyle.getEditor().setItems(FXCollections.observableArrayList(
                 StyleConstants.FONT_STYLE_NORMAL,StyleConstants.FONT_STYLE_ITALIC,StyleConstants.FONT_STYLE_OBLIQUE));
         
         //Initialize family font list with available font family
@@ -77,7 +77,7 @@ public class FXFont extends FXStyleElementController<Font>{
             fontFamilies[i] = new DefaultLiteral(fontNamesList.get(i));
         }
         
-        uiFamily.getChoiceBox().setItems(FXCollections.observableArrayList(fontFamilies));
+        uiFamily.getEditor().setItems(FXCollections.observableArrayList(fontFamilies));
         
         final ChangeListener changeListener = (ChangeListener) (ObservableValue observable, Object oldValue, Object newValue) -> {
             if(updating) return;

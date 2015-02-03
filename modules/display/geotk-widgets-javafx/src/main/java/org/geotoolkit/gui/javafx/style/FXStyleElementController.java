@@ -46,10 +46,16 @@ public abstract class FXStyleElementController<T> extends BorderPane {
     protected volatile boolean updating = false;
 
     public FXStyleElementController() {
-        try{
-            GeotkFX.loadJRXML(this);
-        }catch(Throwable ex){
-            ex.printStackTrace();
+        this(true);
+    }
+
+    public FXStyleElementController(boolean loadFxml) {
+        if(loadFxml){
+            try{
+                GeotkFX.loadJRXML(this);
+            }catch(Throwable ex){
+                ex.printStackTrace();
+            }
         }
     }
     

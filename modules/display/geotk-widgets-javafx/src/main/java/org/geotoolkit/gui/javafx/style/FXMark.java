@@ -69,7 +69,7 @@ public class FXMark extends FXStyleElementController<Mark>{
                 getFilterFactory().literal("star"),
                 getFilterFactory().literal("cross"),
                 getFilterFactory().literal("x"));
-        uiWkt.getChoiceBox().setItems(choices);
+        uiWkt.getEditor().setItems(choices);
         
         uiFill.valueProperty().addListener(changeListener);
         uiStroke.valueProperty().addListener(changeListener);

@@ -16,15 +16,7 @@
  */
 package org.geotoolkit.gui.javafx.style;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.fxml.FXML;
-import javafx.scene.control.TextField;
-import org.geotoolkit.cql.CQL;
-import org.geotoolkit.cql.CQLException;
-import org.geotoolkit.map.MapLayer;
+import javafx.scene.Node;
 import org.geotoolkit.style.StyleConstants;
 import org.opengis.filter.expression.Expression;
 
@@ -32,21 +24,7 @@ import org.opengis.filter.expression.Expression;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class FXTextExpression extends FXStyleElementController<Expression> {
-
-    @FXML
-    private FXSpecialExpressionButton special;
-
-    @FXML
-    private TextField textField;
-    
-    public FXTextExpression(){
-    }
-    
-    @Override
-    public Class<Expression> getEditedClass() {
-        return Expression.class;
-    }
+public class FXTextExpression extends FXExpression {
 
     @Override
     public Expression newValue() {
@@ -54,38 +32,14 @@ public class FXTextExpression extends FXStyleElementController<Expression> {
     }
 
     @Override
-    public void initialize() {
-        super.initialize();
-        
-        textField.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                try{
-                    value.set(CQL.parseExpression(textField.getText()));
-                    special.valueProperty().setValue(value.get());
-                }catch(CQLException ex){
-                }
-            }
-        });
-        
-        special.valueProperty().addListener(new ChangeListener<Expression>() {
-            @Override
-            public void changed(ObservableValue observable, Expression oldValue, Expression newValue) {
-                value.set(newValue);
-            }
-        });        
-    }
-    
-    @Override
-    public void setLayer(MapLayer layer) {
-        super.setLayer(layer);
-        special.setLayer(layer);
+    protected boolean canHandle(Expression exp) {
+        return false;
     }
 
     @Override
-    protected void updateEditor(Expression styleElement) {
-        special.valueProperty().set(styleElement);
-        textField.setText(CQL.write(styleElement));
+    protected Node getEditor() {
+        return null;
     }
+
     
 }

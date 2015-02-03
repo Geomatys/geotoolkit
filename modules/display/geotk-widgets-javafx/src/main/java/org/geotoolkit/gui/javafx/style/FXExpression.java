@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2014, Geomatys
+ *    (C) 2015, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -17,13 +17,13 @@
 package org.geotoolkit.gui.javafx.style;
 
 import java.util.Objects;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
+import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
-import javafx.scene.control.Tooltip;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Background;
@@ -34,54 +34,54 @@ import org.geotoolkit.cql.CQLException;
 import org.geotoolkit.font.FontAwesomeIcons;
 import org.geotoolkit.font.IconBuilder;
 import org.geotoolkit.gui.javafx.filter.FXCQLEditor;
-import org.geotoolkit.map.MapLayer;
 import org.opengis.filter.expression.Expression;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
-public class FXSpecialExpressionButton extends HBox {
+public abstract class FXExpression extends FXStyleElementController<Expression> {
 
-    public static final String EXPRESSION_PROPERTY = "expression";
-
-    private static final Image ICON_EXP_NO = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_PENCIL, 16, FontAwesomeIcons.DISABLE_COLOR),null);
-    private static final Image ICON_EXP_YES = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_PENCIL, 16, FontAwesomeIcons.DEFAULT_COLOR),null);
+    private static final Image ICON_EDIT = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_PENCIL, 16, FontAwesomeIcons.DEFAULT_COLOR),null);
     private static final Image ICON_ERASE = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_ERASER, 16, FontAwesomeIcons.DEFAULT_COLOR),null);
-    
-    private final SimpleObjectProperty<Expression> exp = new SimpleObjectProperty(){
-        @Override
-        public void set(Object newValue) {
-            super.set(newValue);
-            parse((Expression)newValue);
-        }
-        
-    };
-    private MapLayer layer = null;
 
+    private final TextField textfield = new TextField();
     private final Button guiEdit = new Button();
     private final Button guiErase = new Button();
-    
-    public FXSpecialExpressionButton(){
-        setBackground(Background.EMPTY);
-        getChildren().add(guiEdit);
-        getChildren().add(guiErase);
+    private final HBox hbox = new HBox(guiEdit, guiErase);
+
+    public FXExpression() {
+        super(false);
+        setRight(hbox);
+        setCenter(textfield);
+
+        hbox.setBackground(Background.EMPTY);
 
         guiEdit.setBorder(Border.EMPTY);
         guiEdit.setBackground(Background.EMPTY);
-        guiEdit.setGraphic(new ImageView(ICON_EXP_NO));
+        guiEdit.setGraphic(new ImageView(ICON_EDIT));
 
         guiErase.setBorder(Border.EMPTY);
         guiErase.setBackground(Background.EMPTY);
         guiErase.setGraphic(new ImageView(ICON_ERASE));
 
+        textfield.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                try{
+                    value.set(CQL.parseExpression(textfield.getText()));
+                }catch(CQLException ex){
+                }
+            }
+        });
+
         guiEdit.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(javafx.event.ActionEvent event) {
                 try{
-                    final Expression ne = FXCQLEditor.showDialog(FXSpecialExpressionButton.this, layer, exp.get());
-                    if(!Objects.equals(ne, exp.getValue())){
-                        exp.set(ne);
+                    final Expression ne = FXCQLEditor.showDialog(FXExpression.this, layer, value.get());
+                    if(!Objects.equals(ne, value.get())){
+                        value.set(ne);
                     }
                 }catch(CQLException ex){
                     ex.printStackTrace();
@@ -92,36 +92,33 @@ public class FXSpecialExpressionButton extends HBox {
         guiErase.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(javafx.event.ActionEvent event) {
-                exp.set(null);
+                value.set(newValue());
             }
         });
+
+        initialize();
     }
 
-    public void setLayer(final MapLayer layer){
-        this.layer = layer;
+    @Override
+    public Class<Expression> getEditedClass() {
+        return Expression.class;
     }
 
-    public MapLayer getLayer(){
-        return layer;
-    }
+    @Override
+    protected final void updateEditor(Expression exp) {
 
-    public void parse(final Expression exp){
-        String tooltip = null;
-        if(exp==null){
-            guiEdit.setGraphic(new ImageView(ICON_EXP_NO));
+        if(canHandle(exp)){
             guiErase.setVisible(false);
+            Platform.runLater(() -> {setCenter(getEditor());});
         }else{
-            guiEdit.setGraphic(new ImageView(ICON_EXP_YES));
             guiErase.setVisible(true);
-            tooltip = CQL.write(exp);
+            textfield.setText(CQL.write(exp));
+            Platform.runLater(() -> {setCenter(textfield);});
         }
-        
-        guiEdit.setTooltip(new Tooltip(tooltip));
-        guiErase.setTooltip(new Tooltip(tooltip));
     }
 
-    public ObjectProperty<Expression> valueProperty(){
-        return exp;
-    }
-    
+    protected abstract boolean canHandle(Expression exp);
+
+    protected abstract Node getEditor();
+
 }

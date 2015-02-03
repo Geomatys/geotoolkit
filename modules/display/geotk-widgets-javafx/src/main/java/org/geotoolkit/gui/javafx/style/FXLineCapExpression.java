@@ -18,11 +18,12 @@ package org.geotoolkit.gui.javafx.style;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
-import org.geotoolkit.map.MapLayer;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
 import org.geotoolkit.style.StyleConstants;
 import org.opengis.filter.expression.Expression;
 
@@ -30,38 +31,15 @@ import org.opengis.filter.expression.Expression;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class FXLineCapExpression extends FXStyleElementController<Expression> {
+public class FXLineCapExpression extends FXExpression {
 
-    @FXML
-    private FXSpecialExpressionButton special;
-    @FXML
-    private ToggleButton uiRound;
-    @FXML
-    private ToggleButton uiSquare;
-    @FXML
-    private ToggleButton uiButt;
-    
-    private ToggleGroup group;
+    private final ToggleGroup group = new ToggleGroup();
+    private final ToggleButton uiRound = new ToggleButton(null, new ImageView("/org/geotoolkit/gui/javafx/icon/crystalproject/16x16/actions/cap_round.png"));
+    private final ToggleButton uiSquare = new ToggleButton(null, new ImageView("/org/geotoolkit/gui/javafx/icon/crystalproject/16x16/actions/cap_square.png"));
+    private final ToggleButton uiButt = new ToggleButton(null, new ImageView("/org/geotoolkit/gui/javafx/icon/crystalproject/16x16/actions/cap_butt.png"));
+    private final HBox hbox = new HBox(uiRound,uiSquare,uiButt);
         
     public FXLineCapExpression(){
-        super();
-    }
-    
-    @Override
-    public Class<Expression> getEditedClass() {
-        return Expression.class;
-    }
-
-    @Override
-    public Expression newValue() {
-        return StyleConstants.STROKE_CAP_BUTT;
-    }
-    
-    @Override
-    public void initialize() {
-        super.initialize();
-        
-        group = new ToggleGroup();
         uiRound.setToggleGroup(group);
         uiSquare.setToggleGroup(group);
         uiButt.setToggleGroup(group);
@@ -76,38 +54,34 @@ public class FXLineCapExpression extends FXStyleElementController<Expression> {
                 }else if(newValue==uiSquare){
                     value.set(StyleConstants.STROKE_CAP_SQUARE);
                 }
-                special.valueProperty().setValue(value.get());
             }
         });
-                
-        special.valueProperty().addListener(new ChangeListener<Expression>() {
-            @Override
-            public void changed(ObservableValue observable, Expression oldValue, Expression newValue) {
-                value.set(newValue);
-            }
-        });        
     }
 
     @Override
-    public void setLayer(MapLayer layer) {
-        super.setLayer(layer);
-        special.setLayer(layer);
+    public Expression newValue() {
+        return StyleConstants.STROKE_CAP_BUTT;
     }
-    
+
     @Override
-    protected void updateEditor(Expression styleElement) {
-        special.valueProperty().set(styleElement);
-        
-        final Toggle selected = group.getSelectedToggle();
-        if(StyleConstants.STROKE_CAP_BUTT.equals(styleElement)){
-            if(selected!=uiButt) group.selectToggle(uiButt);
-        }else if(StyleConstants.STROKE_CAP_ROUND.equals(styleElement)){
-            if(selected!=uiRound) group.selectToggle(uiRound);
-        }else if(StyleConstants.STROKE_CAP_SQUARE.equals(styleElement)){
-            if(selected!=uiSquare) group.selectToggle(uiSquare);
-        }else{
-            group.selectToggle(null);
-        }
+    protected Node getEditor() {
+        return hbox;
     }
-    
+
+    @Override
+    protected boolean canHandle(Expression exp) {
+        final Toggle selected = group.getSelectedToggle();
+        if(StyleConstants.STROKE_CAP_BUTT.equals(exp)){
+            if(selected!=uiButt) group.selectToggle(uiButt);
+            return true;
+        }else if(StyleConstants.STROKE_CAP_ROUND.equals(exp)){
+            if(selected!=uiRound) group.selectToggle(uiRound);
+            return true;
+        }else if(StyleConstants.STROKE_CAP_SQUARE.equals(exp)){
+            if(selected!=uiSquare) group.selectToggle(uiSquare);
+            return true;
+        }
+        return false;
+    }
+
 }

@@ -18,11 +18,8 @@ package org.geotoolkit.gui.javafx.style;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.fxml.FXML;
-import org.geotoolkit.cql.CQL;
 import static org.geotoolkit.gui.javafx.style.FXStyleElementController.getFilterFactory;
 import org.geotoolkit.gui.javafx.util.FXNumberSpinner;
-import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.StyleConstants;
 import org.opengis.filter.expression.Expression;
 
@@ -30,64 +27,43 @@ import org.opengis.filter.expression.Expression;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class FXNumberExpression extends FXStyleElementController<Expression> {
+public class FXNumberExpression extends FXExpression {
 
-    @FXML private FXSpecialExpressionButton special;
-    @FXML private FXNumberSpinner uiNumber;
+    private FXNumberSpinner uiNumber = new FXNumberSpinner();
     
     public FXNumberExpression(){
         super();
+
+        uiNumber.valueProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                value.set(getFilterFactory().literal(uiNumber.valueProperty().get()));
+            }
+        });
+
     }
     
-    @Override
-    public Class<Expression> getEditedClass() {
-        return Expression.class;
-    }
-
     @Override
     public Expression newValue() {
         return StyleConstants.DEFAULT_STROKE_WIDTH;
     }
 
-    public FXNumberSpinner getNumberField() {
+    @Override
+    protected FXNumberSpinner getEditor() {
         return uiNumber;
     }
-    
-    @Override
-    public void initialize() {
-        super.initialize();
-        
-        //none work
-//        uiNumber.getNumberField().setDecimalFormat(new DecimalFormat("##0.0##"));
-//        uiNumber.getNumberField().setStringConverter(new NumberStringConverter(new DecimalFormat("##0.0##")));
-//        uiNumber.getNumberField().setPattern("##0.0##");
-        
-        uiNumber.valueProperty().addListener(new ChangeListener<Number>() {
-            @Override
-            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                value.set(getFilterFactory().literal(uiNumber.valueProperty().get()));
-                special.valueProperty().setValue(value.get());
-            }
-        });
-        
-        special.valueProperty().addListener(new ChangeListener<Expression>() {
-            @Override
-            public void changed(ObservableValue observable, Expression oldValue, Expression newValue) {
-                value.set(newValue);
-            }
-        });        
-    }
 
     @Override
-    protected void updateEditor(Expression styleElement) {
-        special.valueProperty().set(styleElement);
-        uiNumber.getNumberField().setText(CQL.write(styleElement));
+    protected boolean canHandle(Expression exp) {
+        if(exp==null) return false;
+        try{
+            final Number n = exp.evaluate(exp, Number.class);
+            if(n!=null){
+                uiNumber.getNumberField().setValue(n);
+                return true;
+            }
+        }catch(Exception ex){}
+        return false;
     }
 
-    @Override
-    public void setLayer(MapLayer layer) {
-        super.setLayer(layer);
-        special.setLayer(layer);
-    }
-    
 }
