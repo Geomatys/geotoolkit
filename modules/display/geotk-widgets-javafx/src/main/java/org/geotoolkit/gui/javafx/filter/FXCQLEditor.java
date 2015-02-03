@@ -17,8 +17,10 @@
 
 package org.geotoolkit.gui.javafx.filter;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -32,6 +34,9 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
+import javafx.scene.control.TreeCell;
+import javafx.scene.control.TreeItem;
+import javafx.scene.control.TreeView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.util.Callback;
@@ -47,12 +52,17 @@ import org.geotoolkit.cql.CQLParser;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.PropertyDescriptor;
+import org.geotoolkit.filter.function.FunctionFactory;
+import org.geotoolkit.filter.function.Functions;
 import org.geotoolkit.gui.javafx.util.FXOptionDialog;
 import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapLayer;
 import org.opengis.filter.Filter;
 import org.opengis.filter.expression.Expression;
+import org.opengis.parameter.GeneralParameterDescriptor;
+import org.opengis.parameter.ParameterDescriptorGroup;
+import org.opengis.parameter.ParameterValueGroup;
 
 /**
  * CQL editor
@@ -73,6 +83,7 @@ public class FXCQLEditor extends BorderPane {
     
     
     @FXML private ListView<String> uiProperties;
+    @FXML private TreeView<Object> uiFunctions;
     
     private final CodeArea codeArea = new CodeArea();
     
@@ -86,7 +97,6 @@ public class FXCQLEditor extends BorderPane {
         });
 
         uiProperties.setCellFactory((ListView<String> param) -> new ClickCell());
-
         uiProperties.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         uiProperties.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
             @Override
@@ -94,6 +104,34 @@ public class FXCQLEditor extends BorderPane {
                 Platform.runLater(uiProperties.getSelectionModel()::clearSelection);
             }
         });
+
+        uiFunctions.setShowRoot(false);
+        uiFunctions.setCellFactory((TreeView<Object> param) -> new ClickFCell());
+        uiFunctions.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+        uiFunctions.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<TreeItem<Object>>() {
+            @Override
+            public void changed(ObservableValue<? extends TreeItem<Object>> observable, TreeItem<Object> oldValue, TreeItem<Object> newValue) {
+                Platform.runLater(uiFunctions.getSelectionModel()::clearSelection);
+            }
+        });
+
+        final TreeItem<Object> root = new TreeItem<>("root");
+
+        for(FunctionFactory ff : Functions.getFactories()){
+            final String factoryName = ff.getIdentifier();
+            final TreeItem fnode = new TreeItem(factoryName);
+            String[] names = ff.getNames();
+            Arrays.sort(names);
+            for(String str : names){
+                final ParameterDescriptorGroup desc = ff.describeFunction(str);
+                final TreeItem enode = new TreeItem(desc);
+                fnode.getChildren().add(enode);
+            }
+            root.getChildren().add(fnode);
+        }
+
+        uiFunctions.setRoot(root);
+
     }
     
     @FXML
@@ -314,6 +352,50 @@ public class FXCQLEditor extends BorderPane {
         protected void updateItem(String item, boolean empty) {
             super.updateItem(item, empty);
             setText(item);
+        }
+
+    }
+
+    private class ClickFCell extends TreeCell<Object>{
+
+        public ClickFCell() {
+            setOnMouseClicked(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent event) {
+                    final Object item = getItem();
+                    if(item instanceof ParameterDescriptorGroup){
+                        final ParameterDescriptorGroup desc = (ParameterDescriptorGroup) item;
+                        final StringBuilder sb = new StringBuilder();
+                        sb.append(desc.getName().getCode()).append('(');
+                        final List<GeneralParameterDescriptor> gpds = desc.descriptors();
+                        for(int i=0;i<gpds.size();i++){
+                            if(i>0) sb.append(',');
+                            sb.append(gpds.get(i).getName().getCode());
+                        }
+                        sb.append(')');
+
+                        if(codeArea.getText().endsWith(" ")){
+                            codeArea.appendText(sb.toString());
+                        }else{
+                            codeArea.appendText(" "+sb.toString());
+                        }
+                    }
+                }
+            });
+        }
+
+        @Override
+        protected void updateItem(Object item, boolean empty) {
+            super.updateItem(item, empty);
+            
+            if(item instanceof String){
+                setText((String)item);
+            }else if(item instanceof ParameterDescriptorGroup){
+                final ParameterDescriptorGroup desc = (ParameterDescriptorGroup) item;
+                setText(desc.getName().getCode());
+            }else{
+                setText("");
+            }
         }
 
     }
