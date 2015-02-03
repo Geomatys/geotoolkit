@@ -764,8 +764,23 @@ public final class TemporalUtilities {
 
         final int[] spaceOccurences = StringUtilities.getIndexes(date, ' ');
         final int[] dashOccurences = StringUtilities.getIndexes(date, '-');
+        final int[] dotsOccurences = StringUtilities.getIndexes(date, ':');
 
-        if (spaceOccurences.length == 2) {
+        if(dotsOccurences.length==4 && spaceOccurences.length==1){
+            // date is like 2011:08:11 11:22:22
+            // this form has been found in geotiff datatime fields
+            final int year = parseInt(date.substring(0, dotsOccurences[0]));
+            final int month = parseInt(date.substring(dotsOccurences[0] + 1, dotsOccurences[1])) - 1;
+            final int day = parseInt(date.substring(dotsOccurences[1] + 1, spaceOccurences[0]));
+            final int hour = parseInt(date.substring(spaceOccurences[0] + 1, dotsOccurences[2]));
+            final int min = parseInt(date.substring(dotsOccurences[2] + 1, dotsOccurences[3]));
+            final int sec = parseInt(date.substring(dotsOccurences[3] + 1));
+
+            final Calendar cal = Calendar.getInstance();
+            cal.set(year, month, day, hour, min, sec);
+            cal.set(Calendar.MILLISECOND, 0);
+            return cal.getTime();
+        }else if (spaceOccurences.length == 2) {
             // date is like : 18 janvier 2050
             final int day = parseInt(date.substring(0, spaceOccurences[0]));
             final int month = FR_POOL.indexOf(date.substring(
