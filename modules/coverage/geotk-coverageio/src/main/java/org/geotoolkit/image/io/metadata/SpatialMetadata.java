@@ -498,7 +498,9 @@ public class SpatialMetadata extends IIOMetadata implements WarningProducer {
      * {@link #getInstanceForType(Class)} calls to return new type instances on updated metadata.
      */
     public void clearInstancesCache() {
-        instances.clear();
+        if(instances!=null){
+            instances.clear();
+        }
     }
 
     /**
