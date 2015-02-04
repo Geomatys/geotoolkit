@@ -26,7 +26,6 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.chart.XYChart.Data;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
-import javax.measure.unit.Unit;
 import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.metadata.DefaultSampleDimensionExt;
 import org.opengis.metadata.Identifier;
@@ -39,7 +38,7 @@ import org.opengis.util.MemberName;
  */
 public class FXCoverageBand extends BorderPane {
 
-    private static final NumberFormat NF = new DecimalFormat("0.###");
+    private static final NumberFormat NF = new DecimalFormat("#0.000");
 
     @FXML private Label uiName;
     @FXML private Label uiMin;
@@ -69,10 +68,10 @@ public class FXCoverageBand extends BorderPane {
         }
         uiName.setText(sb.toString());
 
-        uiMin.setText(dim.getMinValue()==null ? "-" : dim.getMinValue().toString());
-        uiMax.setText(dim.getMaxValue()==null ? "-" : dim.getMaxValue().toString());
-        uiMean.setText(dim.getMeanValue()==null ? "-" : dim.getMeanValue().toString());
-        uiStd.setText(dim.getStandardDeviation()==null ? "-" : dim.getStandardDeviation().toString());
+        uiMin.setText(dim.getMinValue()==null ? "-" :  NF.format(dim.getMinValue()));
+        uiMax.setText(dim.getMaxValue()==null ? "-" :  NF.format(dim.getMaxValue()));
+        uiMean.setText(dim.getMeanValue()==null ? "-" : NF.format(dim.getMeanValue()));
+        uiStd.setText(dim.getStandardDeviation()==null ? "-" :  NF.format(dim.getStandardDeviation()));
         uiUnit.setText(dim.getUnits()==null ? "-" : dim.getUnits().toString());
 
         if(dim instanceof DefaultSampleDimensionExt){

@@ -16,14 +16,18 @@
  */
 package org.geotoolkit.gui.javafx.style;
 
+import java.io.IOException;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.Node;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
+import javax.imageio.ImageIO;
 import org.geotoolkit.style.StyleConstants;
 import org.opengis.filter.expression.Expression;
 
@@ -33,10 +37,25 @@ import org.opengis.filter.expression.Expression;
  */
 public class FXLineJoinExpression extends FXExpression {
 
+
+    private static final Image IMG_BEVEL;
+    private static final Image IMG_MITER;
+    private static final Image IMG_ROUND;
+    static {
+        try{
+            //NOTE : for some unknown reason javafx fails to load images if we use new Image(url) in scenebuilder but not in a normal execution
+            IMG_BEVEL = SwingFXUtils.toFXImage(ImageIO.read(FXLineCapExpression.class.getResource("/org/geotoolkit/gui/javafx/icon/crystalproject/16x16/actions/join_bevel.png")), null);
+            IMG_MITER = SwingFXUtils.toFXImage(ImageIO.read(FXLineCapExpression.class.getResource("/org/geotoolkit/gui/javafx/icon/crystalproject/16x16/actions/join_miter.png")), null);
+            IMG_ROUND = SwingFXUtils.toFXImage(ImageIO.read(FXLineCapExpression.class.getResource("/org/geotoolkit/gui/javafx/icon/crystalproject/16x16/actions/join_round.png")), null);
+        }catch(IOException ex){
+            throw new RuntimeException("Failed to load line join icons.");
+        }
+    }
+
     private final ToggleGroup group = new ToggleGroup();
-    private final ToggleButton uiBevel = new ToggleButton(null, new ImageView("/org/geotoolkit/gui/javafx/icon/crystalproject/16x16/actions/join_bevel.png"));
-    private final ToggleButton uiMiter = new ToggleButton(null, new ImageView("/org/geotoolkit/gui/javafx/icon/crystalproject/16x16/actions/join_miter.png"));
-    private final ToggleButton uiRound = new ToggleButton(null, new ImageView("/org/geotoolkit/gui/javafx/icon/crystalproject/16x16/actions/join_round.png"));
+    private final ToggleButton uiBevel = new ToggleButton(null, new ImageView(IMG_BEVEL));
+    private final ToggleButton uiMiter = new ToggleButton(null, new ImageView(IMG_MITER));
+    private final ToggleButton uiRound = new ToggleButton(null, new ImageView(IMG_ROUND));
     private final HBox hbox = new HBox(uiBevel,uiMiter,uiRound);
 
     public FXLineJoinExpression(){

@@ -33,12 +33,12 @@ public class FXListExpression extends FXExpression {
     
     public FXListExpression(){
         uiChoice.valueProperty().addListener(new ChangeListener<Expression>() {
-
             @Override
             public void changed(ObservableValue<? extends Expression> observable, Expression oldValue, Expression newValue) {
                 value.set(uiChoice.valueProperty().get());
             }
         });
+        uiChoice.setMaxWidth(Double.MAX_VALUE);
     }
     
     @Override
