@@ -230,61 +230,6 @@ public abstract class GenericRetypeFeatureIterator<F extends Feature, R extends 
         }
     }
 
-    /**
-     * Wrap a FeatureReader with a new featuretype. reuse the same feature each time.
-     *
-     * @param <T> extends FeatureType
-     * @param <F> extends Feature
-     * @param <R> extends FeatureReader<T,F>
-     */
-    private static final class GenericReuseRetypeFeatureReader<T extends FeatureType, F extends Feature, R extends FeatureReader<T,F>>
-            extends GenericRetypeFeatureIterator<F,R> implements FeatureReader<T,F>{
-
-        /**
-         * The descriptors we are going to from the original reader
-         */
-        private final int[] types;
-
-        private final DefaultSimpleFeature feature;
-
-        /**
-         * Creates retyped features
-         */
-        protected final T mask;
-
-        private GenericReuseRetypeFeatureReader(final R reader, final T mask){
-            super(reader);
-            this.mask = mask;
-            types = typeIndexes((SimpleFeatureType)reader.getFeatureType(), (SimpleFeatureType)mask);
-
-            feature = new DefaultSimpleFeature((SimpleFeatureType) mask, null,new Object[types.length], false);
-        }
-
-        @Override
-        public F next() throws FeatureStoreRuntimeException {
-            final SimpleFeature next = (SimpleFeature) iterator.next();
-            feature.setId(next.getID());
-
-            for (int i = 0; i < types.length; i++) {
-                feature.setAttribute(i, next.getAttribute(types[i]));
-            }
-            //copy user datas
-            feature.getUserData().clear();
-            feature.getUserData().putAll(next.getUserData());
-            return (F) feature;
-        }
-
-        @Override
-        public T getFeatureType() {
-            return mask;
-        }
-
-        @Override
-        public void remove() {
-            iterator.remove();
-        }
-    }
-
     private static final class GenericRetypeFeatureCollection extends WrapFeatureCollection{
 
         private final FeatureType mask;
@@ -325,18 +270,9 @@ public abstract class GenericRetypeFeatureIterator<F extends Feature, R extends 
         if(mask.equals(original)){
             //same type mapping, no need to wrap it
             return reader;
-        }
-
-        final Boolean detached = (hints == null) ? null : (Boolean) hints.get(HintsPending.FEATURE_DETACHED);
-        if(detached == null || detached || !(original instanceof SimpleFeatureType)
-                || original.isAbstract() ){
-            //default behavior, make separate features
+        } else {
             return new GenericSeparateRetypeFeatureReader(reader,mask);
-        }else{
-            //reuse same feature
-            return new GenericReuseRetypeFeatureReader(reader, mask);
         }
-
     }
 
     /**
