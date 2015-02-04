@@ -117,15 +117,29 @@ public class LinearReferencing extends Static{
      *       double[0] = distance alogn the linear
      *       double[1] = distance aside from the linear
      */
-    public static Entry<Integer,double[]> calculateRelative(Geometry geom, Point[] references, Point position){
+    public static Entry<Integer,double[]> calculateRelative(Geometry geom, Point[] references, Point position) {
         ArgumentChecks.ensureNonNull("linear", geom);
+        final LineString linear = asLineString(geom);
+        final SegmentInfo[] segments = buildSegments(linear);
+        return calculateRelative(segments, references, position);
+    }
+    
+    /**
+     * 
+     * @param segments The list of segments which compose source linear.
+     * 
+     * @param references positions
+     * @param position
+     * @return Entry : index of the closest reference point
+     *       double[0] = distance alogn the linear
+     *       double[1] = distance aside from the linear
+     */
+    public static Entry<Integer,double[]> calculateRelative(final SegmentInfo[] segments, Point[] references, Point position){
+        ArgumentChecks.ensureNonNull("linear", segments);
         ArgumentChecks.ensureNonNull("position", position);
         ArgumentChecks.ensureNonNull("references", references);
         ArgumentChecks.ensurePositive("references", references.length);
-        
-        final LineString linear = asLineString(geom);
-        final SegmentInfo[] segments = buildSegments(linear);
-        
+                
         //project target
         final ProjectedReference positionProj = projectReference(segments, position);
         
@@ -147,7 +161,7 @@ public class LinearReferencing extends Static{
     }
     
     /**
-     * Project a point on the linear and obain all related informations.
+     * Project a point on the linear and obtain all related information.
      * 
      * @param segments linear segments
      * @param reference position
