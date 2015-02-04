@@ -23,6 +23,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.TabPane;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.BorderPane;
 import javax.measure.unit.Unit;
@@ -59,6 +60,7 @@ public class FXRasterSymbolizer extends FXStyleElementController<RasterSymbolize
     @FXML private FXShadedRelief uiReliefShading;
     @FXML private FXContrastEnhancement uiContrast;
     @FXML private FXSymbolizerInfo uiInfo;
+    @FXML private TabPane uiTabs;
 
     private FXChannelSelection uiChannelSelection;
     private FXColorMap uiColorMap;
@@ -108,18 +110,27 @@ public class FXRasterSymbolizer extends FXStyleElementController<RasterSymbolize
         if(uiChoiceColorNone.isSelected()){
             Platform.runLater(() -> {
                 uiColorPane.setCenter(null);
+                uiColorPane.autosize();
+                uiTabs.autosize();
                 if(updating) return;
                 value.set(create());
                 });
         }else if(uiChoiceColorRGB.isSelected()){
             Platform.runLater(() -> {
                 uiColorPane.setCenter(uiChannelSelection);
+                uiColorPane.autosize();
+                uiTabs.autosize();
                 if(updating) return;
                 value.set(create());
                 });
-        }else if(uiChoiceColorRGB.isSelected()){
+        }else if(uiChoiceColorMap.isSelected()){
             Platform.runLater(() -> {
                 uiColorPane.setCenter(uiColorMap);
+                if(uiColorMap.valueProperty().get()==null){
+                    uiColorMap.valueProperty().set(uiColorMap.newValue());
+                }
+                uiColorPane.autosize();
+                uiTabs.autosize();
                 if(updating) return;
                 value.set(create());
                 });
@@ -131,18 +142,30 @@ public class FXRasterSymbolizer extends FXStyleElementController<RasterSymbolize
         if(uiChoiceOutlineNone.isSelected()){
             Platform.runLater(() -> {
                 uiOutlinePane.setCenter(null);
+                uiOutlinePane.autosize();
+                uiTabs.autosize();
                 if(updating) return;
                 value.set(create());
                 });
         }else if(uiChoiceOutlineLine.isSelected()){
             Platform.runLater(() -> {
                 uiOutlinePane.setCenter(uiLineSymbolizer);
+                if(uiLineSymbolizer.valueProperty().get()==null){
+                    uiLineSymbolizer.valueProperty().set(uiLineSymbolizer.newValue());
+                }
+                uiOutlinePane.autosize();
+                uiTabs.autosize();
                 if(updating) return;
                 value.set(create());
                 });
         }else if(uiChoiceOutlinePolygon.isSelected()){
             Platform.runLater(() -> {
                 uiOutlinePane.setCenter(uiPolygonSymbolizer);
+                if(uiPolygonSymbolizer.valueProperty().get()==null){
+                    uiPolygonSymbolizer.valueProperty().set(uiPolygonSymbolizer.newValue());
+                }
+                uiOutlinePane.autosize();
+                uiTabs.autosize();
                 if(updating) return;
                 value.set(create());
                 });
@@ -165,6 +188,8 @@ public class FXRasterSymbolizer extends FXStyleElementController<RasterSymbolize
         uiOpacity.setLayer(layer);
         uiReliefShading.setLayer(layer);
         uiContrast.setLayer(layer);
+        uiChannelSelection.setLayer(layer);
+        uiColorMap.setLayer(layer);
     }
 
     public RasterSymbolizer create() {

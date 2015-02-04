@@ -17,13 +17,21 @@
 
 package org.geotoolkit.gui.javafx.style;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import org.apache.sis.util.iso.SimpleInternationalString;
+import org.geotoolkit.cql.CQL;
+import org.geotoolkit.cql.CQLException;
+import org.geotoolkit.gui.javafx.filter.FXCQLEditor;
+import org.geotoolkit.gui.javafx.filter.FXCQLPane;
 import org.geotoolkit.style.MutableRule;
+import org.opengis.filter.Filter;
 import org.opengis.style.Description;
 import org.opengis.util.InternationalString;
 
@@ -33,27 +41,29 @@ import org.opengis.util.InternationalString;
  */
 public class FXRule extends FXStyleElementController<MutableRule> {
     
-    @FXML
-    protected TextField uiName;
-    
-    @FXML
-    protected TextField uiTitle;
-    
-    @FXML
-    protected TextField uiAbstract;
+    @FXML protected TextField uiName;
+    @FXML protected TextField uiTitle;
+    @FXML protected TextField uiAbstract;
+    @FXML protected CheckBox uiIsElse;
+    @FXML protected Button uiFilterButton;
+    @FXML protected TextField uiMinScale;
+    @FXML protected TextField uiMaxScale;
+    @FXML protected Label uiCQL;
 
     @FXML
-    protected CheckBox uiIsElse;
-    
-    @FXML
-    protected Button uiFilterButton;
-
-    @FXML
-    protected TextField uiMinScale;
-    
-    @FXML
-    protected TextField uiMaxScale;
-    
+    private void editFilter(ActionEvent event) {
+        final MutableRule rule = value.get();
+        if(rule==null) return;
+        try {
+            final Filter filter = FXCQLEditor.showFilterDialog(this, layer, rule.getFilter());
+            if(filter!=null){
+                rule.setFilter(filter);
+                uiCQL.setText(CQL.write(filter));
+            }
+        } catch (CQLException ex) {
+            Logger.getLogger(FXRule.class.getName()).log(Level.WARNING, ex.getMessage(), ex);
+        }
+    }
     
     @Override
     public Class<MutableRule> getEditedClass() {
@@ -122,7 +132,11 @@ public class FXRule extends FXStyleElementController<MutableRule> {
         uiAbstract.setText(desc!=null && desc.getAbstract()!=null ? desc.getAbstract().toString() : "");
         uiName.setText(value.get().getName());
         uiIsElse.setSelected(value.get().isElseFilter());
-             
+        uiMinScale.setText(""+styleElement.getMinScaleDenominator());
+        uiMaxScale.setText(""+styleElement.getMaxScaleDenominator());
+
+        uiCQL.setText(CQL.write(styleElement.getFilter()));
+
     }
     
 }

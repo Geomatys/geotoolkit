@@ -24,6 +24,7 @@
           <RowConstraints vgrow="NEVER" />
             <RowConstraints vgrow="NEVER" />
             <RowConstraints vgrow="NEVER" />
+            <RowConstraints minHeight="60.0" vgrow="NEVER" />
         </rowConstraints>
          <children>
             <Label styleClass="property-key" text="%org.geotoolkit.gui.javafx.style.FXRule.name" GridPane.rowIndex="1" />
@@ -32,7 +33,7 @@
             <Label styleClass="property-key" text="%org.geotoolkit.gui.javafx.style.FXRule.iselsefilter" GridPane.rowIndex="4" />
             <Label styleClass="property-key" text="%org.geotoolkit.gui.javafx.style.FXRule.minscale" GridPane.rowIndex="5" />
             <Label styleClass="property-key" text="%org.geotoolkit.gui.javafx.style.FXRule.maxscale" GridPane.rowIndex="6" />
-            <Button fx:id="uiFilterButton" mnemonicParsing="false" text="%org.geotoolkit.gui.javafx.style.FXRule.filter" GridPane.rowIndex="7" />
+            <Button fx:id="uiFilterButton" mnemonicParsing="false" onAction="#editFilter" styleClass="property-key" text="%org.geotoolkit.gui.javafx.style.FXRule.filter" GridPane.rowIndex="7" />
             <TextField fx:id="uiName" GridPane.columnIndex="1" GridPane.rowIndex="1" />
             <TextField fx:id="uiTitle" GridPane.columnIndex="1" GridPane.rowIndex="2" />
             <TextField fx:id="uiAbstract" GridPane.columnIndex="1" GridPane.rowIndex="3" />
@@ -40,6 +41,7 @@
             <TextField fx:id="uiMinScale" GridPane.columnIndex="1" GridPane.rowIndex="5" />
             <TextField fx:id="uiMaxScale" GridPane.columnIndex="1" GridPane.rowIndex="6" />
             <Label maxWidth="1.7976931348623157E308" styleClass="property-group-title" text="%org.geotoolkit.gui.javafx.style.FXRule.info" GridPane.columnSpan="2" />
+            <Label fx:id="uiCQL" alignment="CENTER" disable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnSpan="2" GridPane.rowIndex="8" />
          </children>
       </GridPane>
    </center>

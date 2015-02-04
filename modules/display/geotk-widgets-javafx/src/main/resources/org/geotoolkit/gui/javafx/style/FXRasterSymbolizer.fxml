@@ -21,7 +21,7 @@
             <RowConstraints />
          </rowConstraints>
          <children>
-            <TabPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" GridPane.columnIndex="0" GridPane.columnSpan="1" GridPane.rowIndex="3">
+            <TabPane fx:id="uiTabs" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" GridPane.columnIndex="0" GridPane.columnSpan="1" GridPane.rowIndex="3">
                <tabs>
                   <Tab text="%org.geotoolkit.gui.javafx.style.FXRasterSymbolizer.colors">
                      <content>

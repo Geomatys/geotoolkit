@@ -34,30 +34,20 @@ import org.opengis.style.ChannelSelection;
  */
 public class FXChannelSelection extends FXStyleElementController<ChannelSelection>{
 
-    @FXML
-    protected FXSelectedChannelType uiRed;
-    @FXML
-    protected FXSelectedChannelType uiGreen;
-    @FXML
-    protected FXSelectedChannelType uiBlue;
-    @FXML
-    protected FXSelectedChannelType uiGray;    
-    @FXML
-    protected Label uiRedLbl;
-    @FXML
-    protected Label uiGreenLbl;
-    @FXML
-    protected Label uiBlueLbl;
-    @FXML
-    protected Label uiGrayLbl;
-    @FXML
-    protected RadioButton uiNone;
-    @FXML
-    protected RadioButton uiRGB;
-    @FXML
-    protected RadioButton uiSingle;
+    @FXML protected FXSelectedChannelType uiRed;
+    @FXML protected FXSelectedChannelType uiGreen;
+    @FXML protected FXSelectedChannelType uiBlue;
+    @FXML protected FXSelectedChannelType uiGray;
 
-    private final ToggleGroup group = new ToggleGroup();
+    @FXML protected Label uiRedLbl;
+    @FXML protected Label uiGreenLbl;
+    @FXML protected Label uiBlueLbl;
+    @FXML protected Label uiGrayLbl;
+
+    @FXML protected RadioButton uiNone;
+    @FXML protected RadioButton uiRGB;
+    @FXML protected RadioButton uiSingle;
+    private ToggleGroup group;
     
     @FXML
     void updateTypeChoice(ActionEvent event) {
@@ -104,7 +94,8 @@ public class FXChannelSelection extends FXStyleElementController<ChannelSelectio
     @Override
     public void initialize() {
         super.initialize();
-        
+
+        group = new ToggleGroup();
         uiNone.setToggleGroup(group);
         uiRGB.setToggleGroup(group);
         uiSingle.setToggleGroup(group);
