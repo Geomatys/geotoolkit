@@ -16,38 +16,21 @@
  */
 package org.geotoolkit.image.io.plugin;
 
-import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.referencing.CommonCRS;
-import org.apache.sis.referencing.crs.DefaultCompoundCRS;
-import org.apache.sis.referencing.operation.transform.LinearTransform;
-import org.apache.sis.referencing.operation.transform.MathTransforms;
-import org.apache.sis.referencing.operation.transform.PassThroughTransform;
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.GridSampleDimension;
-import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
-import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.image.io.ImageReaderAdapter;
-import org.geotoolkit.image.io.metadata.MetadataHelper;
-import org.geotoolkit.image.io.metadata.ReferencingBuilder;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
 import org.geotoolkit.internal.image.io.DimensionAccessor;
 import org.geotoolkit.internal.image.io.Formats;
-import org.geotoolkit.internal.image.io.GridDomainAccessor;
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.lang.Configuration;
 import org.geotoolkit.metadata.dimap.DimapAccessor;
 import org.geotoolkit.metadata.dimap.DimapMetadataFormat;
 import org.geotoolkit.util.DomUtilities;
 import org.geotoolkit.util.Utilities;
-import org.opengis.coverage.grid.GridGeometry;
-import org.opengis.coverage.grid.RectifiedGrid;
-import org.opengis.referencing.IdentifiedObject;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.crs.TemporalCRS;
-import org.opengis.referencing.operation.MathTransform;
-import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -59,15 +42,13 @@ import javax.imageio.spi.IIORegistry;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.spi.ServiceRegistry;
 import javax.xml.parsers.ParserConfigurationException;
-import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-import static org.geotoolkit.image.io.MultidimensionalImageStore.X_DIMENSION;
-import static org.geotoolkit.image.io.MultidimensionalImageStore.Y_DIMENSION;
+import org.geotoolkit.metadata.GeoTiffExtension;
 
 /**
  * Reader for the <cite>Dimap</cite> format. This reader wraps an other image reader
@@ -183,92 +164,15 @@ public class DimapImageReader extends ImageReaderAdapter {
         }
 
         try {
-            // add temporal to CRS
-            final CoordinateReferenceSystem crs3D = fixCRS(dimapMeta);
-
-            //override GridGeometry
-            fixGridGeometry(imageIndex, dimapMeta, dimapNode, crs3D);
-
-            //TODO fix sample dimension override
-            //addSampleDimensions(dimapMeta, dimapNode);
-
-            dimapMeta.clearInstancesCache();
-        } catch (FactoryException | TransformException e) {
+            //temporal
+            final Date prodDate = DimapAccessor.getProductionDate(dimapNode);
+            GeoTiffExtension.setOrCreateSliceDimension(metadata, CommonCRS.Temporal.JAVA.crs(), prodDate.getTime());
+            
+        } catch (FactoryException e) {
             throw new IOException(e.getMessage(), e);
         }
 
         return dimapMeta;
-    }
-
-    /**
-     * Add temporal CRS to image geographic CRS extracted from sub-reader metadata.
-     * @param dimapMeta SpacialMetadata generated from sub-reader.
-     * @return CoordinateReferenceSystem 3D
-     * @throws FactoryException
-     */
-    private CoordinateReferenceSystem fixCRS(final SpatialMetadata dimapMeta) throws FactoryException {
-        final ReferencingBuilder refBuilder = new ReferencingBuilder(dimapMeta);
-        final CoordinateReferenceSystem originalCRS = refBuilder.getCoordinateReferenceSystem(CoordinateReferenceSystem.class);
-
-        final TemporalCRS temporalCRS = CommonCRS.Temporal.JAVA.crs();
-
-        final String crs3DName = originalCRS.getName().getCode() + "+time" ;
-        final Map<String,?> name = Collections.singletonMap(IdentifiedObject.NAME_KEY, crs3DName);
-        final CoordinateReferenceSystem crs3D = new DefaultCompoundCRS(name, originalCRS, temporalCRS);
-        refBuilder.setCoordinateReferenceSystem(crs3D);
-
-        return crs3D;
-    }
-
-    /**
-     *
-     * @param imageIndex
-     * @param dimapMeta
-     * @param dimapNode
-     * @param crs3D
-     * @throws FactoryException
-     * @throws TransformException
-     * @throws IOException
-     */
-    private void fixGridGeometry(int imageIndex, final SpatialMetadata dimapMeta, final Element dimapNode, final CoordinateReferenceSystem crs3D)
-            throws FactoryException, TransformException, IOException {
-
-        MathTransform gridToCRS2D;
-        MetadataHelper helper = new MetadataHelper(null);
-        final RectifiedGrid grid = dimapMeta.getInstanceForType(RectifiedGrid.class);
-        if (grid != null) {
-            gridToCRS2D = helper.getGridToCRS(grid);
-            dimapMeta.clearInstancesCache();
-        } else {
-            final AffineTransform at2D = DimapAccessor.readGridToCRS2D(dimapNode);
-            gridToCRS2D = new AffineTransform2D(at2D);
-        }
-
-        //temporal
-        final Date prodDate = DimapAccessor.getProductionDate(dimapNode);
-        final LinearTransform gridToCRSTime = MathTransforms.linear(1, prodDate.getTime());
-
-        // concatenate transforms
-        final MathTransform gridToCRS2DPassThrough = PassThroughTransform.create(0, gridToCRS2D, 1);
-        final MathTransform gridToCRSTimePassThrough = PassThroughTransform.create(2, gridToCRSTime, 0);
-        final MathTransform gridToCRS3D = MathTransforms.concatenate(gridToCRS2DPassThrough, gridToCRSTimePassThrough);
-
-        // GridEnvelope
-        int[] low = new int[3];
-        int[] high = new int[3];
-        Arrays.fill(high, 1);
-        high[X_DIMENSION] = super.getWidth(imageIndex);
-        high[Y_DIMENSION] = super.getHeight(imageIndex);
-
-        //only one slice for time dimension and high excluded -> {0,1}
-        final GeneralGridEnvelope extend3D = new GeneralGridEnvelope(low, high, false);
-
-        //finally rebuild gridGeometry
-        final GridGeometry gridGeometry = new GeneralGridGeometry(extend3D, gridToCRS3D, crs3D);
-
-        //override GridGeometry
-        final GridDomainAccessor gridAccessor = new GridDomainAccessor(dimapMeta);
-        gridAccessor.setGridGeometry(gridGeometry, null, null);
     }
 
     /**

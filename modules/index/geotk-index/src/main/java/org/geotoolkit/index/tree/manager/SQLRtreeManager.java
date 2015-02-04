@@ -55,6 +55,7 @@ public class SQLRtreeManager extends AbstractRtreeManager {
                     tree = new FileStarRTree<>(treeFile, new LuceneSQLTreeEltMapper(DEFAULT_CRS, source));
                 } catch (ClassNotFoundException | IllegalArgumentException | StoreIndexException | IOException ex) {
                     LOGGER.log(Level.SEVERE, null, ex);
+                    return null;
                 }
             } else {
                 tree = buildNewTree(directory);
