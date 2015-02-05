@@ -43,7 +43,7 @@ import org.geotoolkit.util.sql.DerbySqlScriptRunner;
  */
 public class SQLRtreeManager extends AbstractRtreeManager {
 
-    public static Tree<NamedEnvelope> get(final File directory, final Object owner) {
+    public static synchronized Tree<NamedEnvelope> get(final File directory, final Object owner) {
         Tree<NamedEnvelope> tree = CACHED_TREES.get(directory);
         if (tree == null || tree.isClosed()) {
             final File treeFile   = new File(directory, "tree.bin");
