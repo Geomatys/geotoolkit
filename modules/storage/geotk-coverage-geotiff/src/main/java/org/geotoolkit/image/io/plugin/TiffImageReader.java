@@ -52,6 +52,8 @@ import java.nio.channels.SeekableByteChannel;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.imageio.IIOException;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageReadParam;
@@ -293,7 +295,7 @@ public class TiffImageReader extends SpatialImageReader {
     /**
      * Channel position at the channel openning.
      */
-    private long portosfileChannelPositionBegin;
+    private long fileChannelPositionBegin;
 
     /**
      * Define the databuffer type of the current read layer.
@@ -827,6 +829,13 @@ public class TiffImageReader extends SpatialImageReader {
             imageStream = null;
             // Keep the buffer, since we may reuse it for the next image.
         }
+
+        if (channel != null) {
+            if (currentInput instanceof File) {
+                channel.close();
+            }
+            channel = null;
+        }
     }
 
     /**
@@ -846,6 +855,17 @@ public class TiffImageReader extends SpatialImageReader {
         currentImage = -1;
 
         //-- to force open
+        try {
+            if (imageStream != null) {
+                if (currentInput instanceof File) imageStream.close();
+            }
+
+            if (channel != null) {
+                if (currentInput instanceof File) channel.close();
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(TiffImageReader.class.getName()).log(Level.SEVERE, null, ex);
+        }
         channel      = null;
         imageStream  = null;
 
@@ -1474,7 +1494,7 @@ public class TiffImageReader extends SpatialImageReader {
                 currentInput = input;
             }
             if (currentInput instanceof FileInputStream) {
-                portosfileChannelPositionBegin = ((FileInputStream)currentInput).getChannel().position();
+                fileChannelPositionBegin = ((FileInputStream)currentInput).getChannel().position();
             } else if (currentInput instanceof InputStream) {
                 InputStream stream = (InputStream) currentInput;
                 if (stream.markSupported()) {
@@ -2960,7 +2980,7 @@ public class TiffImageReader extends SpatialImageReader {
         }
 
         channel = openChannel(currentInput);
-        if (currentInput instanceof FileInputStream) ((SeekableByteChannel)channel).position(portosfileChannelPositionBegin);
+        if (currentInput instanceof FileInputStream) ((SeekableByteChannel)channel).position(fileChannelPositionBegin);
         buffer = null;
 
         final boolean containData;
