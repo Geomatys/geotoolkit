@@ -217,9 +217,6 @@ public class DimapImageWriter extends ImageWriterAdapter{
                 registry = IIORegistry.getDefaultInstance();
             }
 
-            //dimap requiere geotiff
-            GeoTiffImageWriter.Spi.registerDefaults(registry);
-
             for (int index=0; ;index++) {
                 final Spi provider;
                 try {
