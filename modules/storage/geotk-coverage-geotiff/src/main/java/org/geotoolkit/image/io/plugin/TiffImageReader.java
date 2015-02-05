@@ -70,6 +70,7 @@ import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.image.SampleModels;
 import org.geotoolkit.image.io.InputStreamAdapter;
+import org.geotoolkit.image.io.SampleConverter;
 import org.geotoolkit.image.io.SpatialImageReader;
 import org.geotoolkit.image.io.UnsupportedImageFormatException;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
@@ -1710,6 +1711,122 @@ public class TiffImageReader extends SpatialImageReader {
         }
         return image;
     }
+
+    /**
+     * Returns the <code>BufferedImage</code> to which decoded pixel
+     * data should be written.  The image is determined by inspecting
+     * the supplied <code>ImageReadParam</code> if it is
+     * non-<code>null</code>; if its <code>getDestination</code>
+     * method returns a non-<code>null</code> value, that image is
+     * simply returned.  Otherwise,
+     * <code>param.getDestinationType</code> method is called to
+     * determine if a particular image type has been specified.  If
+     * so, the returned <code>ImageTypeSpecifier</code> is used after
+     * checking that it is equal to one of those included in
+     * <code>imageTypes</code>.
+     *
+     * <p> If <code>param</code> is <code>null</code> or the above
+     * steps have not yielded an image or an
+     * <code>ImageTypeSpecifier</code>, the first value obtained from
+     * the <code>imageTypes</code> parameter is used.  Typically, the
+     * caller will set <code>imageTypes</code> to the value of
+     * <code>getImageTypes(imageIndex)</code>.
+     *
+     * <p> Next, the dimensions of the image are determined by a call
+     * to <code>computeRegions</code>.  The actual width and height of
+     * the image being decoded are passed in as the <code>width</code>
+     * and <code>height</code> parameters.
+     *
+     * @param param an <code>ImageReadParam</code> to be used to get
+     * the destination image or image type, or <code>null</code>.
+     * @param imageTypes an <code>Iterator</code> of
+     * <code>ImageTypeSpecifier</code>s indicating the legal image
+     * types, with the default first.
+     * @param width the true width of the image or tile begin decoded.
+     * @param height the true width of the image or tile being decoded.
+     *
+     * @return the <code>BufferedImage</code> to which decoded pixel
+     * data should be written.
+     *
+     * @exception IIOException if the <code>ImageTypeSpecifier</code>
+     * specified by <code>param</code> does not match any of the legal
+     * ones from <code>imageTypes</code>.
+     * @exception IllegalArgumentException if <code>imageTypes</code>
+     * is <code>null</code> or empty, or if an object not of type
+     * <code>ImageTypeSpecifier</code> is retrieved from it.
+     * @exception IllegalArgumentException if the resulting image would
+     * have a width or height less than 1.
+     * @exception IllegalArgumentException if the product of
+     * <code>width</code> and <code>height</code> of the generated destination image 
+     * is greater than <code>Integer.MAX_VALUE</code>.
+     */
+    protected static BufferedImage getDestination(ImageReadParam param,
+                       Iterator<ImageTypeSpecifier> imageTypes,
+                       int width, int height) throws IIOException {
+        if (imageTypes == null || !imageTypes.hasNext()) {
+            throw new IllegalArgumentException("imageTypes null or empty!");
+        }
+
+        BufferedImage dest = null;
+        ImageTypeSpecifier imageType = null;
+
+        // If param is non-null, use it
+        if (param != null) {
+            // Try to get the image itself
+            dest = param.getDestination();
+            if (dest != null) {
+                return dest;
+            }
+
+            // No image, get the image type
+            imageType = param.getDestinationType();
+        }
+
+        // No info from param, use fallback image type
+        if (imageType == null) {
+            Object o = imageTypes.next();
+            if (!(o instanceof ImageTypeSpecifier)) {
+                throw new IllegalArgumentException
+                    ("Non-ImageTypeSpecifier retrieved from imageTypes!");
+            }
+            imageType = (ImageTypeSpecifier)o;
+        } else {
+            boolean foundIt = false;
+            while (imageTypes.hasNext()) {
+                ImageTypeSpecifier type =
+                    (ImageTypeSpecifier)imageTypes.next();
+                if (type.equals(imageType)) {
+                    foundIt = true;
+                    break;
+                }
+            }
+
+            if (!foundIt) {
+                throw new IIOException
+                    ("Destination type from ImageReadParam does not match!");
+            }
+        }
+
+        Rectangle srcRegion = new Rectangle(0,0,0,0);
+        Rectangle destRegion = new Rectangle(0,0,0,0);
+        computeRegions(param,
+                       width,
+                       height,
+                       null,
+                       srcRegion,
+                       destRegion);
+
+        int destWidth = destRegion.x + destRegion.width;
+        int destHeight = destRegion.y + destRegion.height;
+        
+        if ((long)destWidth * destHeight > Integer.MAX_VALUE) {
+            throw new IllegalArgumentException
+                ("width*height > Integer.MAX_VALUE!");
+        }
+        // Create a new image based on the type specifier
+        return imageType.createBufferedImage(destWidth, destHeight);
+    }
+    
 
     /**
      * Processes to the image reading, and stores the pixels in the given raster.<br/>
