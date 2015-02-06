@@ -137,17 +137,16 @@ final class DefaultMapContext extends DefaultMapItem implements MapContext, Laye
                 if ((sourceCrs != null) && (crs != null) && !CRS.equalsIgnoreMetadata(sourceCrs,crs)) {
                     try {
                         env = new GeneralEnvelope(CRS.transform(env, crs));
+                        if (result == null) {
+                            result = env;
+                        } else {
+                            result.add(env);
+                        }
                     } catch (TransformException e) {
                         LOGGER.log(Level.WARNING,
                                 "Data source and map context coordinate system differ, yet it was not possible to get a projected bounds estimate...",
                                 e);
                     }
-                }
-
-                if (result == null) {
-                    result = env;
-                } else {
-                    result.add(env);
                 }
             }
         }
